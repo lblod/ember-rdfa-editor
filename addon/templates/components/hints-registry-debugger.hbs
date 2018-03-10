@@ -1,0 +1,18 @@
+<h3 class="h3">Hints Registry debugger</h3>
+<h4 class="h4">Active hints</h4>
+
+{{#each hints as |hint index|}}
+  <div>
+    <ul>
+      <li>Item number: {{index}}</li>
+      <li>Plugin name: {{hint.who}}</li>
+      <li>Location: [{{hint.location}}]</li>
+    </ul>
+    <pre>{{hint.info.value}}</pre>
+  </div>
+  <hr />
+{{else}}
+  Geen actieve hints
+{{/each}}
+
+{{yield}}

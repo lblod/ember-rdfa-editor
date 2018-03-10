@@ -1,0 +1,1 @@
+export { default } from 'ember-rdfa-editor/components/hints-registry-debugger';

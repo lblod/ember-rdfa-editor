@@ -1,0 +1,19 @@
+{{wu-checkbox checked=debugEnabled label="Enable debug"}}
+
+{{#if debugEnabled}}
+  <div>
+    <label>Debug mode: </label>
+    <select onchange={{action (mut debugMode) value="target.value"}}>
+      {{#each debugModes as |mode|}}
+        <option value={{mode}} selected={{eq debugMode mode}}>{{mode}}</option>
+      {{/each}}
+    </select>
+  </div>
+  {{#if (eq debugMode "hints-registry")}}
+    {{hints-registry-debugger hintsRegistry=debug.hintsRegistry}}
+  {{else if (eq debugMode "context-scanner")}}
+    {{rdfa-context-debugger editor=debug.editor contextScanner=debug.contextScanner}}
+  {{/if}}
+{{/if}}
+
+{{yield}}

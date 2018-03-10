@@ -1,0 +1,8 @@
+.rdfa-context-debugger-debug-panel {
+  margin-top: 10px;
+  border: 2px solid;
+}
+
+pre {
+  background-color: lightgrey;
+}

@@ -1,0 +1,42 @@
+<div class="editor-container">
+	<div class="grid grid--collapse">
+		<div class="col--12-12 flex">
+			<div class="editor">
+				<div class="grid">
+					<div class="col--7-12">
+		 			  {{#content-editable
+						   class="editor__paper"
+					     textInsert=(action 'handleTextInsert')
+					     textRemove=(action 'handleTextRemove')
+		           handleFullContentUpdate=(action 'handleFullContentUpdate')
+					     selectionUpdate=(action 'handleSelectionChange')
+		           rawEditorInit=(action 'handleRawEditorInit')
+		           elementUpdate=(action 'handleElementUpdate')
+		           editable=true
+		           focused=true
+		           yieldHTML=true
+					  }}
+		        {{{value}}}
+		      {{/content-editable}}
+		      		</div>
+					<div class="col--5-12">
+						<div class="editor-hints">
+							{{#if hasActiveHints}}
+								<div class="annotation-suggestion__suggestion">
+									<div class="modal-dialog modal-dialog--small modal-dialog--static modal-dialog--hint">
+										<ul>
+										  {{#each hintsRegistry.activeHints as |card|}}
+										    <li>{{component card.card info=card.info}}</li>
+										  {{/each}}
+										</ul>
+									</div>
+								</div>
+							{{/if}}
+							{{yield}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

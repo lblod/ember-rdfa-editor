@@ -1,0 +1,20 @@
+<div class="rdfa-context-debugger-debug-panel">
+  <h3 class="h3">RDFa context debugger</h3>
+
+  Scan region van {{input type=number value=start}} tot {{input type=number value=end}}
+  {{wu-button onClick=(action "analyse" start end) disabled=calcRegionDisabled label="Bereken context"}}
+
+  <h4 class="h4">RDFa context</h4>
+  {{#each contexts as |context|}}
+    <h5 class="h5">[{{context.region}}] "{{context.text}}" </h5>
+    {{wu-button onClick=(action "highlight" context.region) label="Highlight"}}
+    <pre>
+      {{#each context.context as |statement|}}
+      &lt;{{statement.subject}}&gt; {{#if (eq statement.predicate 'a')}}{{statement.predicate}}{{else}}&lt;{{statement.predicate}}&gt;{{/if}} {{#if (is-uri statement.object)}}&lt;{{statement.object}}&gt;{{else}}"{{statement.object}}"{{/if}}{{#if statement.datatype}}^^&lt;{{statement.datatype}}&gt;{{/if}}
+      {{/each}}
+    </pre>
+    <hr />
+  {{else}}
+    <p>Selecteer een region of klik op een node om de RDFa context te berekenen</p>
+  {{/each}}
+</div>
