@@ -1,1 +1,1 @@
-export { default } from 'ember-rdfa-editor/utils/hints-registry';
+export { default } from '@lblod/ember-rdfa-editor/utils/hints-registry';

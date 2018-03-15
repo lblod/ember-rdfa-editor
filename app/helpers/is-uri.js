@@ -1,1 +1,1 @@
-export { default, isUri } from 'ember-rdfa-editor/helpers/is-uri';
+export { default, isUri } from '@lblod/ember-rdfa-editor/helpers/is-uri';

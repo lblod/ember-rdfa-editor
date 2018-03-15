@@ -1,1 +1,1 @@
-export { default, rdfaHtml } from 'ember-rdfa-editor/helpers/rdfa-html';
+export { default, rdfaHtml } from '@lblod/ember-rdfa-editor/helpers/rdfa-html';

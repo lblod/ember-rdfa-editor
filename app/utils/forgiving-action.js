@@ -1,1 +1,1 @@
-export { default } from 'ember-rdfa-editor/utils/forgiving-action';
+export { default } from '@lblod/ember-rdfa-editor/utils/forgiving-action';

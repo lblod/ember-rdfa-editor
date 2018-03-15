@@ -1,5 +1,5 @@
 {
-  "name": "ember-rdfa-editor",
+  "name": "@lblod/ember-rdfa-editor",
   "version": "0.12.0",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
@@ -21,12 +21,12 @@
     "test": "ember try:each"
   },
   "dependencies": {
+    "@lblod/ember-contenteditable-editor": "^0.6.0",
+    "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.4.1",
     "@lblod/ember-vo-webuniversum": "^0.7.1",
     "ember-cli-babel": "^6.6.0",
     "ember-cli-htmlbars": "^2.0.1",
     "ember-cli-htmlbars-inline-precompile": "^1.0.0",
-    "ember-contenteditable-editor": "git+https://github.com/lblod/ember-contenteditable-editor.git#v0.6.0",
-    "ember-rdfa-editor-plugin-system-dispatcher": "git+https://github.com/lblod/ember-rdfa-editor-plugin-system-dispatcher.git#v0.4.0",
     "ember-truth-helpers": "^2.0.0"
   },
   "devDependencies": {

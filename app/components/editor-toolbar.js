@@ -1,1 +1,1 @@
-export { default } from 'ember-rdfa-editor/components/editor-toolbar';
+export { default } from '@lblod/ember-rdfa-editor/components/editor-toolbar';

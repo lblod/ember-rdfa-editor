@@ -1,1 +1,1 @@
-export { default } from 'ember-rdfa-editor/components/rdfa-editor-debugger';
+export { default } from '@lblod/ember-rdfa-editor/components/rdfa-editor-debugger';
