@@ -2,6 +2,7 @@ import Controller from '@ember/controller';
 
 export default Controller.extend({
   isEditable: true,
+  domTree:null,
   value: `
   <div resource="#"
        typeof="foaf:Document">
@@ -125,6 +126,9 @@ export default Controller.extend({
   actions: {
     debug(info) {
       this.set('debug', info);
+    },
+    domUpdate(element) {
+      this.set('domTree', element);
     }
   }
 });

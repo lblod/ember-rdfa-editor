@@ -179,19 +179,18 @@ export default Component.extend({
         };
         this.get('initDebug')(debugInfo);
       }
+      forgivingAction('rdfaEditorInit', this)();
     },
 
     /**
-     * Notifies consumer when rdfa-editor should be ready by action call
-     *
+     * handles updates of the editor dom tree
      * @method handleElementUpdate
      *
-     * @param {RawEditor} editor, the editor interface
      *
      * @private
      */
-    handleElementUpdate(editor){
-      forgivingAction('rdfaEditorInit', this)(editor);
+    handleElementUpdate(){
+      forgivingAction("domUpdate", this)(this.get('editor.rootNode'));
     }
   }
   });
