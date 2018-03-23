@@ -7,6 +7,8 @@ import forgivingAction from '@lblod/ember-contenteditable-editor/utils/forgiving
 import { computed, get } from '@ember/object';
 import Object from '@ember/object';
 import { isEmpty } from '@ember/utils';
+import { isBlank } from '@ember/utils';
+
 const isInterestingNode = node => isDisplayedAsBlock(get(node,'domNode')) && isRdfaNode(node);
 const flatten = function(arr, result = []) {
   for (let i = 0, length = arr.length; i < length; i++) {
@@ -40,7 +42,15 @@ export default Component.extend({
     if (isInterestingNode(node)) {
       domNode = get(node, 'domNode');
       subStructures = get(node, 'children').map(child => this.buildStructure(child)).filter(a => ! isEmpty(a));
-      let title = domNode.getAttribute('typeof') ?  domNode.getAttribute('typeof') :  domNode.getAttribute('property');
+
+      let title;
+      ['about', 'property', 'typeof'].forEach( (property) => {
+        if (domNode.getAttribute(property)) {
+          title = domNode.getAttribute(property);
+        }
+      });
+      if (isBlank(title))
+        console.log(node);
       return Object.create({
         node: domNode,
         title: title,

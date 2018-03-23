@@ -136,7 +136,8 @@ export default Controller.extend({
     },
     scrollToNode(node) {
       debug('scrolling to ' + node.offsetTop);
-      document.scrollingElement.scrollTo(0,node.offsetTop);
+      let editorOffset = this.get('rawEditor.rootNode').offsetTop;
+      document.scrollingElement.scrollTo(0,node.offsetTop + editorOffset);
     }
   }
 });
