@@ -179,7 +179,7 @@ export default Component.extend({
         };
         this.get('initDebug')(debugInfo);
       }
-      forgivingAction('rdfaEditorInit', this)();
+      forgivingAction('rdfaEditorInit', this)(editor);
     },
 
     /**

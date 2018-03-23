@@ -4,13 +4,7 @@
 	</div>
 	<div class="sidebar__content">
 	  <div class="side-navigation">
-		  <ul class="side-navigation__group">
-        {{#each items as |item|}}
-          {{item}}
-        {{else}}
-          no structure
-        {{/each}}
-		  </ul>
+      {{document-structure-item items=items itemClicked=(action 'itemClicked')}}
 	  </div>
 	</div>
 </div>
