@@ -5,7 +5,7 @@ import layout from '../templates/components/rdfa-editor';
 import HintsRegistry from '../utils/hints-registry';
 import EventProcessor from '../utils/event-processor';
 import forgivingAction from '../utils/forgiving-action';
-
+import RdfaBackspaceHandler from '../utils/rdfa-backspace-handler';
 /**
 * RDFa editor component
 *
@@ -77,6 +77,8 @@ export default Component.extend({
   * @private
   */
   hasActiveHints: notEmpty('hintsRegistry.activeHints'),
+
+  handlers: null,
 
   init() {
     this._super(...arguments);
@@ -150,6 +152,7 @@ export default Component.extend({
      */
     handleRawEditorInit(editor) {
       this.set('editor', editor);
+      this.set('handlers', [RdfaBackspaceHandler.create({rawEditor: editor })]);
       this.set('hintsRegistry', HintsRegistry.create());
       var eventProcessor = EventProcessor.create({
         registry: this.get('hintsRegistry'),
