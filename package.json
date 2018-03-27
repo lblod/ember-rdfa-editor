@@ -21,7 +21,7 @@
     "test": "ember try:each"
   },
   "dependencies": {
-    "@lblod/ember-contenteditable-editor": "^0.7.0",
+    "@lblod/ember-contenteditable-editor": "^0.7.1",
     "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.4.1",
     "@lblod/ember-vo-webuniversum": "^0.7.1",
     "ember-cli-babel": "^6.6.0",
