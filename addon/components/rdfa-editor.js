@@ -1,6 +1,8 @@
 import { notEmpty } from '@ember/object/computed';
 import Component from '@ember/component';
 import { inject } from '@ember/service';
+import { later } from '@ember/runloop';
+
 import layout from '../templates/components/rdfa-editor';
 import HintsRegistry from '../utils/hints-registry';
 import EventProcessor from '../utils/event-processor';
@@ -194,6 +196,14 @@ export default Component.extend({
      */
     handleElementUpdate(){
       forgivingAction("domUpdate", this)(this.get('editor.rootNode'));
+    },
+    higlightStructureItem(node) {
+      let editorOffset = this.get('editor.rootNode').offsetTop;
+      $(node).addClass('u-marker');
+      later(this, function() {
+        $(node).removeClass('u-marker');
+      }, 1500);
+      document.scrollingElement.scrollTo(0,node.offsetTop + editorOffset);
     }
   }
   });

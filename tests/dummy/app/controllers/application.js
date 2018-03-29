@@ -1,5 +1,7 @@
 import Controller from '@ember/controller';
 import { debug } from '@ember/debug';
+import { later } from '@ember/runloop';
+
 export default Controller.extend({
   isEditable: true,
   domTree:null,
@@ -128,16 +130,10 @@ export default Controller.extend({
       this.set('debug', info);
     },
     domUpdate(element) {
-//      this.set('domTree', null);
       this.set('domTree', element);
     },
     rdfaEditorInit(rawEditor) {
       this.set('rawEditor', rawEditor);
-    },
-    scrollToNode(node) {
-      debug('scrolling to ' + node.offsetTop);
-      let editorOffset = this.get('rawEditor.rootNode').offsetTop;
-      document.scrollingElement.scrollTo(0,node.offsetTop + editorOffset);
     }
   }
 });
