@@ -166,7 +166,7 @@ export default BackspaceHandler.extend({
         this.isEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval(node) ||
         this.isTextNodeWithContent(node);
     };
-    let matchingDomNode = this.cleanLeavesToLeftUntil(isEmptyRdfaOrEmptyTextNode, this.isVoidRdfaElementAndHasNextSibling.binthis.isVoidRdfaElementAndHasNextSibling.bind(this), domNode);
+    let matchingDomNode = this.cleanLeavesToLeftUntil(isEmptyRdfaOrEmptyTextNode, this.isVoidRdfaElementAndHasNextSibling.bind(this), domNode);
 
     if(this.isParentFlaggedForAlmostRemoval(matchingDomNode) || this.isEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval(matchingDomNode)){
       matchingDomNode = this.setDataFlaggedForNode(matchingDomNode);
