@@ -9,6 +9,15 @@ import Object from '@ember/object';
 import { isEmpty } from '@ember/utils';
 import { once } from '@ember/runloop';
 
+const labelForNode =  domNode => {
+  let typeOf = domNode.getAttribute('typeof') ? `(${domNode.getAttribute('typeof')})` : '';
+  let property = domNode.getAttribute('property') ? `--${domNode.getAttribute('property')}->` : '';
+  let resource = domNode.getAttribute('resource') ? `${domNode.getAttribute('resource')}` : '';
+  resource = domNode.getAttribute('about') ? `${domNode.getAttribute('about')}` : resource;
+  resource = domNode.getAttribute('href') ? `${domNode.getAttribute('href')}` : resource;
+
+  return `${property} ${resource} ${typeOf}`;
+};
 const isInterestingNode = node => isDisplayedAsBlock(get(node,'domNode')) && isRdfaNode(node) && ! ['i', 'img'].includes(tagName(get(node,'domNode')));
 const flatten = function(arr, result = []) {
   for (let i = 0, length = arr.length; i < length; i++) {
@@ -23,13 +32,51 @@ const flatten = function(arr, result = []) {
 };
 
 
+/**
+ * Document structure component
+ *
+ * @module editor-core
+ * @class DocumentStructureComponent
+ * @extends Component
+ */
 export default Component.extend({
   layout,
   classNames: ["col--3-12 flex"],
-  node: null,
-  nodeObserver: null,
-  didUpdateAttrs() {
 
+  /**
+   * domNode to monitor
+   * @property node
+   * @type DOMElement
+   * @default null
+   * @public
+   */
+  node: null,
+
+  /**
+   * a MutationObserver on the specified node
+   * @property nodeObserver
+   * @type MutationObserver
+   * @private
+   */
+  nodeObserver: null,
+
+  /**
+   * predicate that verifies whether a node shoud be listed
+   * @property isInterestingNode
+   * @type Function
+   * @public
+   */
+  isInterestingNode: null,
+
+  /**
+   * function that determines the label that should be displayed for a provided node
+   * @property labelForNode
+   * @type Function
+   * @public
+   */
+  labelForNode: null,
+
+  didUpdateAttrs() {
     if (this.get('nodeObserver'))
       this.get('nodeObserver').disconnect();
 
@@ -53,28 +100,28 @@ export default Component.extend({
     }
     this.set('nodeObserver', nodeObserver);
   },
+
   willDestroyElement() {
     this.get('nodeObserver').disconnect();
   },
-  
+
+  /**
+   * filters the dom tree, only maintaining elements that match isInterestingNode
+   * @method buildStructure
+   * @param {DOMNode} node
+   * @return Array
+   * @private
+   */
   buildStructure(node) {
     let subStructures;
     let domNode;
-    if (isInterestingNode(node)) {
+    if (this.isInterestingNode(node)) {
       domNode = get(node, 'domNode');
       subStructures = get(node, 'children').map(child => this.buildStructure(child)).filter(a => ! isEmpty(a));
 
-
-      let typeOf = domNode.getAttribute('typeof') ? `(${domNode.getAttribute('typeof')})` : '';
-      let property = domNode.getAttribute('property') ? `--${domNode.getAttribute('property')}->` : '';
-      let resource = domNode.getAttribute('resource') ? `${domNode.getAttribute('resource')}` : '';
-      resource = domNode.getAttribute('about') ? `${domNode.getAttribute('about')}` : resource;
-      resource = domNode.getAttribute('href') ? `${domNode.getAttribute('href')}` : resource;
-
-      let title = `${property} ${resource} ${typeOf}`;
       return Object.create({
         node: domNode,
-        title: title,
+        title: this.labelForNode(domNode),
         children: flatten(subStructures)
       });
     }
@@ -83,8 +130,13 @@ export default Component.extend({
     }
     return [];
   },
+
   init() {
     this._super(...arguments);
+    if (!this.get('isInterestingNode'))
+      this.set('isInterestingNode', isInterestingNode);
+    if (!this.get('labelForNode'))
+      this.set('labelForNode', labelForNode);
   },
   actions: {
     itemClicked(node) {

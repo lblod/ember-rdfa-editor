@@ -197,11 +197,11 @@ export default Component.extend({
     handleElementUpdate(){
       forgivingAction("domUpdate", this)(this.get('editor.rootNode'));
     },
-    higlightStructureItem(node) {
+    highlightStructureItem(node) {
       let editorOffset = this.get('editor.rootNode').offsetTop;
-      $(node).addClass('u-marker');
+      node.classList.add('u-marker');
       later(this, function() {
-        $(node).removeClass('u-marker');
+        node.classList.remove('u-marker');
       }, 1500);
       document.scrollingElement.scrollTo(0,node.offsetTop + editorOffset);
     }

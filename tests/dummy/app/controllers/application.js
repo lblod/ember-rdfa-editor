@@ -1,6 +1,4 @@
 import Controller from '@ember/controller';
-import { debug } from '@ember/debug';
-import { later } from '@ember/runloop';
 
 export default Controller.extend({
   isEditable: true,
