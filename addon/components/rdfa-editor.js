@@ -203,7 +203,7 @@ export default Component.extend({
       later(this, function() {
         node.classList.remove('u-marker');
       }, 1500);
-      document.scrollingElement.scrollTo(0,node.offsetTop + editorOffset);
+      this.get('element').scrollTo(0,node.offsetTop + editorOffset);
     }
   }
   });
