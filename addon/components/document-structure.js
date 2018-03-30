@@ -18,7 +18,11 @@ const labelForNode =  domNode => {
 
   return `${property} ${resource} ${typeOf}`;
 };
-const isInterestingNode = node => isDisplayedAsBlock(get(node,'domNode')) && isRdfaNode(node) && ! ['i', 'img'].includes(tagName(get(node,'domNode')));
+const isInterestingNode = (node) => {
+  const dontshow = ['http://mu.semte.ch/vocabularies/ext/noHighlight'];
+  const domNode = get(node, 'domNode');
+  return domNode.nodeType === Node.ELEMENT_NODE && ! dontshow.includes(domNode.getAttribute('property')) && isDisplayedAsBlock(domNode) && isRdfaNode(node) && ! ['i', 'img'].includes(tagName(domNode));
+};
 const flatten = function(arr, result = []) {
   for (let i = 0, length = arr.length; i < length; i++) {
     const value = arr[i];
