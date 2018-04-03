@@ -45,7 +45,8 @@ const flatten = function(arr, result = []) {
  */
 export default Component.extend({
   layout,
-  classNames: ["col--3-12 flex"],
+  classNames: ["col--3-12 flex sidebar-wrapper"],
+  classNameBindings: ["isCollapsed:col--collapsed"],
 
   /**
    * domNode to monitor
@@ -79,6 +80,14 @@ export default Component.extend({
    * @public
    */
   labelForNode: null,
+
+  /**
+   * whether the panel is collapsed
+   * @property isCollapsed
+   * @type boolean
+   * @public
+   */
+  isCollapsed: true,
 
   didUpdateAttrs() {
     if (this.get('nodeObserver'))
@@ -145,6 +154,9 @@ export default Component.extend({
   actions: {
     itemClicked(node) {
       forgivingAction('itemClicked',this)(node);
+    },
+    toggleCollapse() {
+      this.toggleProperty('isCollapsed');
     }
   }
 });
