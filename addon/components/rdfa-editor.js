@@ -197,13 +197,20 @@ export default Component.extend({
     handleElementUpdate(){
       forgivingAction("domUpdate", this)(this.get('editor.rootNode'));
     },
+
+    /**
+     * Highlights a node for a short time span and scrolls to it
+     * @method highlightStructuredItem
+     *
+     * @param {DOMNode} node Node to highlight and scroll to
+     */
     highlightStructureItem(node) {
-      let editorOffset = this.get('editor.rootNode').offsetTop;
+      const editorOffset = this.get('editor.rootNode').offsetTop;
       node.classList.add('u-marker');
       later(this, function() {
         node.classList.remove('u-marker');
       }, 1500);
-      this.get('element').scrollTo(0,node.offsetTop + editorOffset);
+      this.get('element').scrollTo(0, node.offsetTop + editorOffset);
     }
   }
-  });
+});

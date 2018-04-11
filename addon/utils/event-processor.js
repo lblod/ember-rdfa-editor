@@ -58,8 +58,10 @@ export default EmberObject.extend({
     if (! this.get('scanner')) {
       this.set('scanner', RdfaContextScanner.create());
     }
-    if (! this.get('profile'))
+    if (! this.get('profile')) {
       this.set('profile', 'default');
+    }
+
     assert(this.get('dispatcher'), "dispatcher should be set");
     assert(this.get('editor'), "editor should be set");
   },
@@ -73,16 +75,15 @@ export default EmberObject.extend({
    * @public
    */
   handleRegistryChange(/*registry*/) {
-    let editor = this.get('editor');
+    const editor = this.get('editor');
     editor.clearHighlightForLocations(this.get('cardsLocationFlaggedRemoved'));
 
     this.get('cardsLocationFlaggedNew').forEach(location => {
-             editor.highlightRange(location[0], location[1]);
+      editor.highlightRange(location[0], location[1]);
     });
 
     this.set('cardsLocationFlaggedRemoved', A());
     this.set('cardsLocationFlaggedNew', A());
-
   },
 
   handleNewCardInRegistry(card){
@@ -100,14 +101,13 @@ export default EmberObject.extend({
    *
    * @method analyseAndDispatch
    *
-   * @param {number} hrIdx Index in the hints registry
-   *
    * @public
    */
   analyseAndDispatch(){
     const node = this.get('editor').get('rootNode');
     const text = this.get('editor').get('currentTextContent');
     const contexts = this.get('scanner').analyse(node, [0, text.length - 1]);
+
     this.get('dispatcher').dispatch(this.get('profile'), this.get('registry').currentIndex(), contexts, this.get('registry'), this.get('editor'));
   },
 
