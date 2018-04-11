@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@lblod/ember-contenteditable-editor": "^0.7.1",
-    "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.4.1",
+    "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.5.0",
     "@lblod/ember-vo-webuniversum": "^0.7.1",
     "ember-cli-babel": "^6.6.0",
     "ember-cli-htmlbars": "^2.0.1",
