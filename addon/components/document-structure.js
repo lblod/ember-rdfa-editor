@@ -115,7 +115,9 @@ export default Component.extend({
   },
 
   willDestroyElement() {
-    this.get('nodeObserver').disconnect();
+    if (this.get('nodeObserver')) {
+      this.get('nodeObserver').disconnect();
+    }
   },
 
   /**
