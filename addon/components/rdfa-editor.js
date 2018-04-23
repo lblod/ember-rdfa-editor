@@ -140,7 +140,7 @@ export default Component.extend({
     * @private
     */
     handleSelectionChange(){
-      this.get('eventProcessor').selectionChanged(this.get('rawEditor.currentSelection'));
+      this.get('eventProcessor').selectionChanged(this.get('editor.currentSelection'));
     },
 
     /**
