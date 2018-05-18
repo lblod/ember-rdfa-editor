@@ -45,7 +45,7 @@ const flatten = function(arr, result = []) {
  */
 export default Component.extend({
   layout,
-  classNames: ["col--3-12 flex sidebar-wrapper"],
+  classNames: ["col--3-12 sidebar-wrapper"],
   classNameBindings: ["isCollapsed:col--collapsed"],
 
   /**

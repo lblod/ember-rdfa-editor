@@ -1,17 +1,19 @@
-<div class="sidebar">
-	<div class="sidebar__header">
-	  <h6 class="h6">
-      Document structuur
-      {{#if isCollapsed}}
-        {{wu-icon "vi-double-arrow" classNames="u-float-right" click=(action "toggleCollapse")}}
-      {{else}}
-        {{wu-icon "vi-cross" classNames="u-float-right" click=(action "toggleCollapse")}}
-      {{/if}}
-    </h6>
-	</div>
-	<div class="sidebar__content">
-	  <div class="side-navigation">
-      {{document-structure-item items=items itemClicked=(action 'itemClicked')}}
-	  </div>
-	</div>
+<div class="container-flex--contain">
+  <div class="sidebar">
+  	<div class="sidebar__header">
+  	  <h6 class="h6">
+        Document structuur
+        {{#if isCollapsed}}
+          {{wu-icon "vi-double-arrow" classNames="u-float-right" click=(action "toggleCollapse")}}
+        {{else}}
+          {{wu-icon "vi-double-arrow" classNames="u-float-right vi-u-180deg" click=(action "toggleCollapse")}}
+        {{/if}}
+      </h6>
+  	</div>
+  	<div class="sidebar__content">
+  	  <div class="side-navigation">
+        {{document-structure-item items=items itemClicked=(action 'itemClicked')}}
+  	  </div>
+  	</div>
+  </div>
 </div>

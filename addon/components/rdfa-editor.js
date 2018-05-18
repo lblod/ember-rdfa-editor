@@ -17,7 +17,7 @@ import RdfaBackspaceHandler from '../utils/rdfa-backspace-handler';
 */
 export default Component.extend({
   layout,
-  classNames: ["editor-grid"],
+  classNames: ["container-flex--contain"],
 
   /**
   * Plugin profile of the RDFa editor
