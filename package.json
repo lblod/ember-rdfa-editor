@@ -22,9 +22,9 @@
     "test:all": "ember try:each"
   },
   "dependencies": {
-    "@lblod/ember-contenteditable-editor": "^0.7.2",
-    "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.5.1",
-    "@lblod/ember-vo-webuniversum": "^0.7.1",
+    "@lblod/ember-contenteditable-editor": "^0.7.3",
+    "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.5.2",
+    "@lblod/ember-vo-webuniversum": "^0.14.1",
     "ember-cli-babel": "^6.6.0",
     "ember-cli-htmlbars": "^2.0.1",
     "ember-cli-htmlbars-inline-precompile": "^1.0.0",
@@ -37,6 +37,7 @@
     "ember-cli-dependency-checker": "^2.0.0",
     "ember-cli-eslint": "^4.2.1",
     "ember-cli-inject-live-reload": "^1.4.1",
+    "ember-cli-moment-shim": "^3.7.1",
     "ember-cli-qunit": "^4.1.1",
     "ember-cli-release": "^1.0.0-beta.2",
     "ember-cli-shims": "^1.2.0",
