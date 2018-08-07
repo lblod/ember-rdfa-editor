@@ -2,7 +2,11 @@ import { set } from '@ember/object';
 import { warn } from '@ember/debug';
 import { get } from '@ember/object';
 import EmberObject from '@ember/object';
-import { rdfaKeywords, prefixableRdfaKeywords, defaultPrefixes } from '../config/rdfa';
+import {
+  rdfaKeywords,
+  prefixableRdfaKeywords,
+  defaultPrefixes
+} from '../config/rdfa';
 import NodeWalker from '@lblod/ember-contenteditable-editor/utils/node-walker';
 
 /**
