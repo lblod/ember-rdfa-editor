@@ -25,7 +25,7 @@
   "dependencies": {
     "@lblod/ember-contenteditable-editor": "^0.7.3",
     "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.5.2",
-    "@lblod/ember-vo-webuniversum": "^0.14.1",
+    "@lblod/ember-vo-webuniversum": "^0.15.0",
     "ember-cli-babel": "^6.6.0",
     "ember-cli-htmlbars": "^2.0.1",
     "ember-cli-htmlbars-inline-precompile": "^1.0.0",
