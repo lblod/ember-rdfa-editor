@@ -1,24 +1,26 @@
-import { moduleForComponent, test } from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-moduleForComponent('rdfa-editor-debugger', 'Integration | Component | rdfa editor debugger', {
-  integration: true
-});
+module('Integration | Component | rdfa editor debugger', function(hooks) {
+  setupRenderingTest(hooks);
 
-test('it renders', function(assert) {
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });
+  test('it renders', async function(assert) {
+    // Set any properties with this.set('myProperty', 'value');
+    // Handle any actions with this.on('myAction', function(val) { ... });
 
-  this.render(hbs`{{rdfa-editor-debugger}}`);
+    await render(hbs`{{rdfa-editor-debugger}}`);
 
-  assert.equal(this.$().text().trim(), '');
+    assert.dom('*').hasText('');
 
-  // Template block usage:
-  this.render(hbs`
-    {{#rdfa-editor-debugger}}
-      template block text
-    {{/rdfa-editor-debugger}}
-  `);
+    // Template block usage:
+    await render(hbs`
+      {{#rdfa-editor-debugger}}
+        template block text
+      {{/rdfa-editor-debugger}}
+    `);
 
-  assert.equal(this.$().text().trim(), 'template block text');
+    assert.dom('*').hasText('template block text');
+  });
 });
