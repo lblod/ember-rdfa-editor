@@ -105,10 +105,11 @@ export default EmberObject.extend({
    */
   analyseAndDispatch(){
     const node = this.get('editor').get('rootNode');
-    const text = this.get('editor').get('currentTextContent');
-    const contexts = this.get('scanner').analyse(node, [0, text.length - 1]);
-
-    this.get('dispatcher').dispatch(this.get('profile'), this.get('registry').currentIndex(), contexts, this.get('registry'), this.get('editor'));
+    const currentNode = this.get('editor').get('currentNode');
+    if (currentNode) {
+      const contexts = this.get('scanner').analyse(node, [currentNode.start, currentNode.end]);
+      this.get('dispatcher').dispatch(this.get('profile'), this.get('registry').currentIndex(), contexts, this.get('registry'), this.get('editor'));
+    }
   },
 
   /**

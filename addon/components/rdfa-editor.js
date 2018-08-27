@@ -2,12 +2,15 @@ import { notEmpty } from '@ember/object/computed';
 import Component from '@ember/component';
 import { inject } from '@ember/service';
 import { later } from '@ember/runloop';
+import { debug, warn } from '@ember/debug';
 
 import layout from '../templates/components/rdfa-editor';
 import HintsRegistry from '../utils/hints-registry';
 import EventProcessor from '../utils/event-processor';
 import forgivingAction from '../utils/forgiving-action';
 import RdfaBackspaceHandler from '../utils/rdfa-backspace-handler';
+import RdfaContextScanner from '../utils/rdfa-context-scanner';
+
 /**
 * RDFa editor component
 *
@@ -79,6 +82,11 @@ export default Component.extend({
   * @private
   */
   hasActiveHints: notEmpty('hintsRegistry.activeHints'),
+
+  /**
+   * @property hasSuggestedHints
+   */
+  hasSuggestedHints: notEmpty('suggestedHints'),
 
   handlers: null,
 
@@ -211,6 +219,28 @@ export default Component.extend({
         node.classList.remove('u-marker');
       }, 1500);
       this.get('element').scrollTo(0, node.offsetTop + editorOffset);
+    },
+
+    /**
+     * requests hints from plugins
+     * @method triggerHints
+     */
+    async triggerHints() {
+      let currentNode = this.get('editor.currentNode');
+      if (!currentNode) {
+        warn('currentNode not set', {id: 'rdfaeditor.state-error'});
+        return;
+      }
+      let context = RdfaContextScanner.create({}).analyse(this.get('editor.rootNode'), [currentNode.start, currentNode.end])[0];
+      console.log(context);
+      if (context) {
+        let hints = await this.get('rdfaEditorDispatcher').requestHints(this.profile, context , this.editor);
+        this.set('suggestedHints', hints);
+      }
+      else {
+        debug('no context for currentNode');
+      }
+
     }
   }
 });

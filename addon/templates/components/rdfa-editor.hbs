@@ -7,6 +7,9 @@
 					<div class="col--7-12">
 						<div class="container-flex--scroll">
 							<div class="editor">
+                <div class="editor-commands">
+                  {{wu-button label="+" size="large" onClick=(action 'triggerHints')}}
+                </div>
 								{{#content-editable
 									class="editor__paper"
 									textInsert=(action 'handleTextInsert')
@@ -22,19 +25,29 @@
 								}}
 								{{{value}}}
 								{{/content-editable}}
-
 								<div class="editor-hints">
-									{{#if hasActiveHints}}
-									<div class="annotation-suggestion__suggestion">
-										<div class="modal-dialog modal-dialog--small modal-dialog--static modal-dialog--hint">
+                  {{#editor-suggested-hints suggestedHints=suggestedHints}}
+                    <div class="annotation-suggestion__suggestion">
+										  <div class="modal-dialog modal-dialog--small modal-dialog--static modal-dialog--hint">
+                        <ul>
+                          {{#each suggestedHints as |hint|}}
+                            <li>{{component hint.component info=hint.info}}</li>
+                          {{/each}}
+                        </ul>
+                      </div>
+                    </div>
+                  {{/editor-suggested-hints}}
+                  {{#if hasActiveHints}}
+                    <div class="annotation-suggestion__suggestion">
+										  <div class="modal-dialog modal-dialog--small modal-dialog--static modal-dialog--hint">
 											<ul>
 												{{#each hintsRegistry.activeHints as |card|}}
-												<li>{{component card.card info=card.info}}</li>
+												  <li>{{component card.card info=card.info}}</li>
 												{{/each}}
 											</ul>
-										</div>
-									</div>
-									{{/if}}
+ 										  </div>
+									  </div>
+                  {{/if}}
 									{{yield}}
 								</div>
 							</div>
