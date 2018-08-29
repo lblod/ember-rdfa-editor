@@ -23,12 +23,10 @@ export default BackspaceHandler.extend({
    */
   handleEvent() {
     let position = this.get('currentSelection')[0];
-    let richNode = this.getMatchingRichNode(position);
-    let textNode = this.getMatchingDomNode(richNode);
+    let textNode = this.get('rawEditor.currentNode');
+    let richNode = this.get('rawEditor').getRichNodeFor(textNode);
 
-    this.set('rawEditor.currentNode', textNode);
-
-    this.get('rawEditor').externalDomUpdate('backspace', () => {
+    this.get('rawEditor').externalDomUpdate('rdfa backspace', () => {
       //enter relative space
       let relPosition = this.absoluteToRelativePosition(richNode, position);
 
@@ -39,7 +37,6 @@ export default BackspaceHandler.extend({
       // post processing
       let postProcessedDomAndPosition = this.postProcessTextNode(processedDomAndPosition.textNode, processedDomAndPosition.position);
 
-    
       // if 2 chars left of a text node richt after A RDFANode should be flagged
       if(this.isAlmostEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval(textNode)){
         let newNode = this.setDataFlaggedForNode(postProcessedDomAndPosition.textNode);
