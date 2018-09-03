@@ -46,7 +46,20 @@ export default EmberObject.extend({
     const rootRdfa = this.calculateRdfaToTop(richNode);
     this.expandRdfaContext(richNode, rootRdfa.context, rootRdfa.prefixes);
 
-    return this.flattenRdfaTree(richNode, [start, end]);
+    const rdfaBlocks = this.flattenRdfaTree(richNode, [start, end]);
+
+    // TODO take [start, end] arguments into account earlier in the process to improve performance
+    if (start && end) {
+      return rdfaBlocks.filter(function(b) {
+        const [startBlock, endBlock] = b.region;
+        return (startBlock >= start && startBlock <= end)
+          || (endBlock >= start && endBlock <= end)
+          || (startBlock <= start && end <= endBlock);
+      });
+    } else {
+      return rdfaBlocks;
+    }
+
   },
 
   /**
