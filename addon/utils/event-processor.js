@@ -1,4 +1,4 @@
-import { assert } from '@ember/debug';
+import { warn, assert } from '@ember/debug';
 import EmberObject from '@ember/object';
 import RdfaContextScanner from '../utils/rdfa-context-scanner';
 import HintsRegistry from '../utils/hints-registry';
@@ -104,10 +104,17 @@ export default EmberObject.extend({
    * @public
    */
   analyseAndDispatch(){
-    const node = this.get('editor').get('rootNode');
-    const currentNode = this.get('editor').get('currentNode');
-    if (currentNode) {
-      const contexts = this.get('scanner').analyse(node, [currentNode.start, currentNode.end]);
+    const rootNode = this.get('editor.rootNode');
+    const currentNode = this.get('editor.currentNode');
+
+    if (!currentNode) {
+      warn('Current node not set. Cannot analyse and dispatch event.', { id: 'rdfaeditor.state-error' });
+      return;
+    }
+
+    const currentRichNode = this.get('editor').getRichNodeFor(currentNode);
+    if (currentRichNode) {
+      const contexts = this.get('scanner').analyse(rootNode, [currentRichNode.start, currentRichNode.end]);
       this.get('dispatcher').dispatch(this.get('profile'), this.get('registry').currentIndex(), contexts, this.get('registry'), this.get('editor'));
     }
   },

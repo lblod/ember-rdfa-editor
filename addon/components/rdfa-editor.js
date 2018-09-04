@@ -226,18 +226,20 @@ export default Component.extend({
      * @method triggerHints
      */
     async triggerHints() {
-      let currentNode = this.get('editor.currentNode');
+      const rootNode = this.get('editor.rootNode');
+      const currentNode = this.get('editor.currentNode');
       if (!currentNode) {
         warn('currentNode not set', {id: 'rdfaeditor.state-error'});
         return;
       }
-      let context = RdfaContextScanner.create({}).analyse(this.get('editor.rootNode'), [currentNode.start, currentNode.end])[0];
-      console.log(context);
-      if (context) {
-        let hints = await this.get('rdfaEditorDispatcher').requestHints(this.profile, context , this.editor);
+      const currentRichNode = this.get('editor').getRichNodeFor(currentNode);
+      const scanner = RdfaContextScanner.create({});
+      const contexts = scanner.analyse(rootNode, [currentRichNode.start, currentRichNode.end]);
+      if (contexts && contexts.length) {
+        const context = contexts[0];
+        const hints = await this.get('rdfaEditorDispatcher').requestHints(this.profile, context, this.editor);
         this.set('suggestedHints', hints);
-      }
-      else {
+      } else {
         debug('no context for currentNode');
       }
 
