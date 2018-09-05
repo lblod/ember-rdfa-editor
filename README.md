@@ -92,5 +92,6 @@ Hints in the editor are displayed as cards that only apply on a specific portion
   - `card` [string]: name of the component to display the hint
   - `location` [int, int]: [start, end] index of the text in the editor the hint must be displayed on
   - `info` [Object]: custom object that will be passed in the `info` property to the card component
+  - `options.noHighlight` [boolean]: Setting this to false removes the highlight by which users know a hint is given.  Use this for passive hints.
   
 The hints registry will render the hints with the specified component when the text the hint applies on is selected.

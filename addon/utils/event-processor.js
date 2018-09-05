@@ -87,11 +87,15 @@ export default EmberObject.extend({
   },
 
   handleNewCardInRegistry(card){
-    this.get('cardsLocationFlaggedNew').push(card.location);
+    if( !card.options || !card.options.noHighlight ) {
+      this.get('cardsLocationFlaggedNew').push(card.location);
+    }
   },
 
   handleRemovedCardInRegistry(card){
-    this.get('cardsLocationFlaggedRemoved').push(card.location);
+    if( !card.options || !card.options.noHighlight ) {
+      this.get('cardsLocationFlaggedRemoved').push(card.location);
+    }
   },
 
 
