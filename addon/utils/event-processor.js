@@ -3,6 +3,7 @@ import EmberObject from '@ember/object';
 import RdfaContextScanner from '../utils/rdfa-context-scanner';
 import HintsRegistry from '../utils/hints-registry';
 import { A } from '@ember/array';
+import scoped from '../utils/scoped-method';
 
 /**
 * Event processor orchastrating the hinting based on incoming editor events
@@ -49,6 +50,7 @@ export default EmberObject.extend({
 
   init() {
     this._super(...arguments);
+
     this.set('cardsLocationFlaggedRemoved', A());
     this.set('cardsLocationFlaggedNew', A());
 
@@ -107,7 +109,7 @@ export default EmberObject.extend({
    *
    * @public
    */
-  analyseAndDispatch(){
+  analyseAndDispatch: scoped( function() {
     const rootNode = this.get('editor.rootNode');
     const currentNode = this.get('editor.currentNode');
 
@@ -121,7 +123,7 @@ export default EmberObject.extend({
       const contexts = this.get('scanner').analyse(rootNode, [currentRichNode.start, currentRichNode.end]);
       this.get('dispatcher').dispatch(this.get('profile'), this.get('registry').currentIndex(), contexts, this.get('registry'), this.get('editor'));
     }
-  },
+  }),
 
   /**
    * Remove text in the specified range and trigger updating of the hints
@@ -133,9 +135,9 @@ export default EmberObject.extend({
    *
    * @public
    */
-  removeText(start, stop) {
-    this.get('registry').removeText(start, stop);
-  },
+  removeText: scoped( function(start,stop) {
+    return this.get('registry').removeText(start, stop);
+  }),
 
   /**
    * Insert text starting at the specified location and trigger updating of the hints
@@ -147,9 +149,9 @@ export default EmberObject.extend({
    *
    * @public
    */
-  insertText(index, text) {
-    this.get('registry').insertText(index, text);
-  },
+  insertText: scoped( function(index, text) {
+    return this.get('registry').insertText(index, text);
+  }),
 
   /**
    * Handling the change of the current selected text/location in the editor
@@ -158,7 +160,7 @@ export default EmberObject.extend({
    *
    * @public
    */
-  selectionChanged() {
+  selectionChanged: scoped( function() {
     this.get('registry').set('activeRegion', this.get('editor.currentSelection'));
-  }
+  })
 });

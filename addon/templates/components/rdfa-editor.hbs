@@ -11,19 +11,19 @@
                   {{wu-button label="+" size="large" onClick=(action 'triggerHints')}}
                 </div>
 								{{#content-editable
-									class="editor__paper"
-									textInsert=(action 'handleTextInsert')
-									textRemove=(action 'handleTextRemove')
-									handleFullContentUpdate=(action 'handleFullContentUpdate')
-									selectionUpdate=(action 'handleSelectionChange')
-									rawEditorInit=(action 'handleRawEditorInit')
-									elementUpdate=(action 'handleElementUpdate')
-									externalHandlers=handlers
-									editable=true
-									focused=true
-									yieldHTML=true
+									 class="editor__paper"
+									 textInsert=(or eventProcessor.insertText warnNotSetup)
+									 textRemove=(or eventProcessor.removeText warnNotSetup)
+									 handleFullContentUpdate=(or eventProcessor.analyseAndDispatch warnNotSetup)
+									 selectionUpdate=(action (or eventProcessor.selectionChanged warnNotSetup) editor.currentSelection)
+									 rawEditorInit=(action 'handleRawEditorInit')
+									 elementUpdate=(action (or domUpdate warnNotSetup) editor.rootNode)
+									 externalHandlers=handlers
+									 editable=true
+									 focused=true
+									 yieldHTML=true
 								}}
-								{{{value}}}
+								  {{{value}}}
 								{{/content-editable}}
 								<div class="editor-hints">
                   {{#editor-suggested-hints suggestedHints=suggestedHints}}
