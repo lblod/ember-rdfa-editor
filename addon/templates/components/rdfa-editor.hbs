@@ -17,7 +17,7 @@
 									 handleFullContentUpdate=(or eventProcessor.analyseAndDispatch warnNotSetup)
 									 selectionUpdate=(action (or eventProcessor.selectionChanged warnNotSetup) editor.currentSelection)
 									 rawEditorInit=(action 'handleRawEditorInit')
-									 elementUpdate=(action (or domUpdate warnNotSetup) editor.rootNode)
+									 elementUpdate=(action (or domUpdate noop) editor.rootNode)
 									 externalHandlers=handlers
 									 editable=true
 									 focused=true

@@ -121,6 +121,13 @@ export default Component.extend({
     warn("An action was fired before the editor was set up", { id: "rdfa-editor.not-setup" } );
   },
 
+  /**
+   * This is called in cases where an optional action is triggered
+   * from the frontend.  This noop can be called as a fallback in case no operation
+   * needs to occur if the action is not defined.
+   */
+  noop(){ return; },
+
   actions: {
     /**
      * Handle init of rawEditor
