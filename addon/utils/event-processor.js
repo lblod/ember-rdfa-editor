@@ -1,8 +1,9 @@
-import { assert } from '@ember/debug';
+import { warn, assert } from '@ember/debug';
 import EmberObject from '@ember/object';
 import RdfaContextScanner from '../utils/rdfa-context-scanner';
 import HintsRegistry from '../utils/hints-registry';
 import { A } from '@ember/array';
+import scoped from '../utils/scoped-method';
 
 /**
 * Event processor orchastrating the hinting based on incoming editor events
@@ -108,11 +109,15 @@ export default EmberObject.extend({
   },
 
   handleNewCardInRegistry(card){
-    this.get('cardsLocationFlaggedNew').push(card.location);
+    if( !card.options || !card.options.noHighlight ) {
+      this.get('cardsLocationFlaggedNew').push(card.location);
+    }
   },
 
   handleRemovedCardInRegistry(card){
-    this.get('cardsLocationFlaggedRemoved').push(card.location);
+    if( !card.options || !card.options.noHighlight ) {
+      this.get('cardsLocationFlaggedRemoved').push(card.location);
+    }
   },
 
 
@@ -124,7 +129,7 @@ export default EmberObject.extend({
    *
    * @public
    */
-  analyseAndDispatch(){
+  analyseAndDispatch: scoped( function() {
     const node = this.get('editor').get('rootNode');
     const contexts = this.get('scanner').analyse(node, this.modifiedRange);
     this.get('dispatcher').dispatch(
@@ -134,8 +139,7 @@ export default EmberObject.extend({
       this.get('registry'),
       this.get('editor')
     );
-
-  },
+  }),
 
   /**
    * Remove text in the specified range and trigger updating of the hints
@@ -147,9 +151,9 @@ export default EmberObject.extend({
    *
    * @public
    */
-  removeText(start, stop) {
-    this.get('registry').removeText(start, stop);
-  },
+  removeText: scoped( function(start,stop) {
+    return this.get('registry').removeText(start, stop);
+  }),
 
   /**
    * Insert text starting at the specified location and trigger updating of the hints
@@ -161,10 +165,10 @@ export default EmberObject.extend({
    *
    * @public
    */
-  insertText(index, text) {
+  insertText: scoped( function(index, text) {
     this.updateModifiedRange(index, index + text.length);
-    this.get('registry').insertText(index, text);
-  },
+    return this.get('registry').insertText(index, text);
+  }),
 
   /**
    * Handling the change of the current selected text/location in the editor
@@ -173,7 +177,7 @@ export default EmberObject.extend({
    *
    * @public
    */
-  selectionChanged() {
+  selectionChanged: scoped( function() {
     this.get('registry').set('activeRegion', this.get('editor.currentSelection'));
-  }
+  })
 });

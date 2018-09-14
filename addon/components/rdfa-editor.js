@@ -1,3 +1,4 @@
+import { A } from '@ember/array';
 import { notEmpty } from '@ember/object/computed';
 import Component from '@ember/component';
 import { inject } from '@ember/service';
@@ -23,14 +24,14 @@ export default Component.extend({
   classNames: ["container-flex--contain"],
 
   /**
-  * Plugin profile of the RDFa editor
-  *
-  * @property profile
-  * @type string
-  * @default 'default'
-  *
-  * @public
-  */
+   * Plugin profile of the RDFa editor
+   *
+   * @property profile
+   * @type string
+   * @default 'default'
+   *
+   * @public
+   */
   profile: 'default',
 
   /**
@@ -40,47 +41,47 @@ export default Component.extend({
    * @type function
    *
    * @public
-  */
+   */
   initDebug: null,
 
   /**
-  * @property rdfaEditorDispatcher
-  * @type RdfaEditorDispatcher
-  *
-  * @private
-  */
+   * @property rdfaEditorDispatcher
+   * @type RdfaEditorDispatcher
+   *
+   * @private
+   */
   rdfaEditorDispatcher: inject(),
 
   /**
-  * @property eventProcessor
-  * @type EventProcessor
-  *
-  * @private
-  */
+   * @property eventProcessor
+   * @type EventProcessor
+   *
+   * @private
+   */
   eventProcessor: null,
 
   /**
-  * @property hinstRegistry
-  * @type HintsRegistry
-  *
-  * @private
-  */
+   * @property hinstRegistry
+   * @type HintsRegistry
+   *
+   * @private
+   */
   hintsRegistry: null,
 
   /**
-  * @property hasHints
-  * @type boolean
-  *
-  * @private
-  */
+   * @property hasHints
+   * @type boolean
+   *
+   * @private
+   */
   hasHints: notEmpty('hintsRegistry.registry'),
 
   /**
-  * @property hasActiveHints
-  * @type boolean
-  *
-  * @private
-  */
+   * @property hasActiveHints
+   * @type boolean
+   *
+   * @private
+   */
   hasActiveHints: notEmpty('hintsRegistry.activeHints'),
 
   /**
@@ -88,69 +89,46 @@ export default Component.extend({
    */
   hasSuggestedHints: notEmpty('suggestedHints'),
 
+  /**
+   * Contains extra handlers for input events on the editor.
+   *
+   * @property handlers
+   * @type Ember.A
+   *
+   * @private
+   */
   handlers: null,
 
   init() {
     this._super(...arguments);
+    this.set('handlers', A());
   },
 
   didUpdateAttrs() {
-    if (this.get('profile') != this.get('eventProcessor.profile')) {
-      this.set('eventProcessor.profile', this.get('profile'));
+    if (this.profile != this.get('eventProcessor.profile')) {
+      this.set('eventProcessor.profile', this.profile);
     }
   },
 
+  /**
+   * This function is called when an action is fired on the editor,
+   * before the editor itself has been set up.  When this happens, we
+   * can't dispatch the action to the correct component.
+   *
+   * @private
+   */
+  warnNotSetup(){
+    warn("An action was fired before the editor was set up", { id: "rdfa-editor.not-setup" } );
+  },
+
+  /**
+   * This is called in cases where an optional action is triggered
+   * from the frontend.  This noop can be called as a fallback in case no operation
+   * needs to occur if the action is not defined.
+   */
+  noop(){ return; },
+
   actions: {
-    /**
-    * Handle the removal of text in a specified region
-    *
-    * @method handleTextRemove
-    *
-    * @param {number} start Start of the text range
-    * @param {number} end End of the text range
-    *
-    * @private
-    */
-    handleTextRemove(start, stop){
-      this.get('eventProcessor').removeText(start, stop);
-    },
-
-    /**
-    * Handle the insertion of text starting at the specified location
-    *
-    * @method handleTextInsert
-    *
-    * @param {number} start Start of the text range
-    * @param {string} text Text to insert
-    *
-    * @private
-    */
-    handleTextInsert(index, text){
-      this.get('eventProcessor').insertText(index, text);
-    },
-
-   /**
-    * Handle the full text change
-    *
-    * @method handleFullContentUpdate
-    *
-    * @private
-    */
-    handleFullContentUpdate(){
-      this.get('eventProcessor').analyseAndDispatch();
-    },
-
-    /**
-    * Handling the change of the current selected text/location in the editor
-    *
-    * @method handleSelectionChange
-    *
-    * @private
-    */
-    handleSelectionChange(){
-      this.get('eventProcessor').selectionChanged(this.get('editor.currentSelection'));
-    },
-
     /**
      * Handle init of rawEditor
      *
@@ -162,48 +140,39 @@ export default Component.extend({
      */
     handleRawEditorInit(editor) {
       this.set('editor', editor);
-      this.set('handlers', [RdfaBackspaceHandler.create({rawEditor: editor })]);
-      this.set('hintsRegistry', HintsRegistry.create());
-      var eventProcessor = EventProcessor.create({
-        registry: this.get('hintsRegistry'),
-        profile: this.get('profile'),
-        dispatcher: this.get('rdfaEditorDispatcher'),
-        editor: this.get('editor')
+      const handlers = [RdfaBackspaceHandler.create({rawEditor: editor })];
+      this.set('handlers', handlers);
+      const hintsRegistry = HintsRegistry.create();
+      this.set('hintsRegistry', hintsRegistry);
+      const eventProcessor = EventProcessor.create({
+        registry: hintsRegistry,
+        profile: this.profile,
+        dispatcher: this.rdfaEditorDispatcher,
+        editor: editor
       });
       this.set('eventProcessor', eventProcessor);
-      this.get('hintsRegistry').addRegistryObserver( function(registry) {
+      hintsRegistry.addRegistryObserver( function(registry) {
         eventProcessor.handleRegistryChange(registry);
       });
 
-      this.get('hintsRegistry').addNewCardObserver( function(card) {
+      hintsRegistry.addNewCardObserver( function(card) {
         eventProcessor.handleNewCardInRegistry(card);
       });
 
-      this.get('hintsRegistry').addRemovedCardObserver( function(card) {
+      hintsRegistry.addRemovedCardObserver( function(card) {
         eventProcessor.handleRemovedCardInRegistry(card);
       });
 
 
-      if (this.get('initDebug')) {
+      if (this.initDebug) {
         const debugInfo = {
-          hintsRegistry: this.get('hintsRegistry'),
-          editor: this.get('eventProcessor.editor'),
-          contextScanner: this.get('eventProcessor.scanner')
+          hintsRegistry: hintsRegistry,
+          editor: eventProcessor.editor,
+          contextScanner: eventProcessor.scanner
         };
-        this.get('initDebug')(debugInfo);
+        this.initDebug(debugInfo);
       }
       forgivingAction('rdfaEditorInit', this)(editor);
-    },
-
-    /**
-     * handles updates of the editor dom tree
-     * @method handleElementUpdate
-     *
-     *
-     * @private
-     */
-    handleElementUpdate(){
-      forgivingAction("domUpdate", this)(this.get('editor.rootNode'));
     },
 
     /**
@@ -213,31 +182,34 @@ export default Component.extend({
      * @param {DOMNode} node Node to highlight and scroll to
      */
     highlightStructureItem(node) {
-      const editorOffset = this.get('editor.rootNode').offsetTop;
+      const editorOffset = this.editor.rootNode.offsetTop;
       node.classList.add('u-marker');
       later(this, function() {
         node.classList.remove('u-marker');
       }, 1500);
-      this.get('element').scrollTo(0, node.offsetTop + editorOffset);
+      this.element.scrollTo(0, node.offsetTop + editorOffset);
     },
 
     /**
      * requests hints from plugins
+     *
      * @method triggerHints
      */
     async triggerHints() {
-      let currentNode = this.get('editor.currentNode');
+      const rootNode = this.editor.rootNode;
+      const currentNode = this.editor.currentNode;
       if (!currentNode) {
-        warn('currentNode not set', {id: 'rdfaeditor.state-error'});
+        warn('currentNode not set', {id: 'rdfa-editor.state-error'});
         return;
       }
-      let context = RdfaContextScanner.create({}).analyse(this.get('editor.rootNode'), [currentNode.start, currentNode.end])[0];
-      console.log(context);
-      if (context) {
-        let hints = await this.get('rdfaEditorDispatcher').requestHints(this.profile, context , this.editor);
+      const currentRichNode = this.editor.getRichNodeFor(currentNode);
+      const scanner = RdfaContextScanner.create({});
+      const contexts = scanner.analyse(rootNode, [currentRichNode.start, currentRichNode.end]);
+      if (contexts && contexts.length) {
+        const context = contexts[0];
+        const hints = await this.rdfaEditorDispatcher.requestHints(this.profile, context, this.editor);
         this.set('suggestedHints', hints);
-      }
-      else {
+      } else {
         debug('no context for currentNode');
       }
 
