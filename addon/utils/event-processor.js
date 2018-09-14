@@ -3,6 +3,7 @@ import EmberObject from '@ember/object';
 import RdfaContextScanner from '../utils/rdfa-context-scanner';
 import HintsRegistry from '../utils/hints-registry';
 import { A } from '@ember/array';
+import { isEmpty } from '@ember/utils';
 import scoped from '../utils/scoped-method';
 
 /**
@@ -81,11 +82,51 @@ export default EmberObject.extend({
    *
    * @param {number} start start index of the update operation
    * @param {number} end end index of the update operation
+   * @param {boolean} isRemove whether this is a remove or insert operation
    * @private
    */
-  updateModifiedRange(start, end) {
-    const [currentStart, currentEnd] = this.modifiedRange;
-    this.set('modifiedRange', [Math.min (currentStart, start), Math.max(currentEnd, end)]);
+  updateModifiedRange(start, end, isRemove = false) {
+    if (isRemove && ! isEmpty(this.modifiedRange)) {
+      const [currentStart, currentEnd] = this.modifiedRange;
+      var newStart, newEnd;
+      const delta = end - start;
+      if (currentStart > start  && currentStart > end) {
+        // |removed text|[inserted text]
+        newStart = currentStart - delta;
+        newEnd = currentEnd - delta;
+        this.set('modifiedRange', [ newStart, newEnd ]);
+      }
+      else if (currentStart == start && currentEnd == end) {
+        // [|removed text inserted text|]
+        this.set('modifiedRange', A());
+      }
+      else if (currentStart > start && currentEnd > end) {
+        // | removed text [ inserted| text]
+        newStart = currentStart - (currentStart - start);
+        newEnd = currentEnd - delta;
+        this.set('modifiedRange', [ newStart, newEnd ]);
+      }
+      else if ( currentStart <= start && currentEnd <= end ) {
+        // [ inserted |removed  text| text]
+        // full equality is handled above
+        newStart = currentStart;
+        newEnd = currentEnd - delta;
+        this.set('modifiedRange', [ newStart, newEnd ]);
+      }
+      else if (currentStart < start && currentEnd < start ) {
+        // no need to update range for [ inserted text][removed text]
+      }
+    }
+    else {
+      // insertText, increase range as necessary
+      if (isEmpty(this.modifiedRange)) {
+        this.set('modifiedRange', [ start, end ]);
+      }
+      else {
+        const [currentStart, currentEnd] = this.modifiedRange;
+        this.set('modifiedRange', [Math.min (currentStart, start), Math.max(currentEnd, end)]);
+      }
+    }
   },
 
   /**
@@ -131,14 +172,17 @@ export default EmberObject.extend({
    */
   analyseAndDispatch: scoped( function() {
     const node = this.get('editor').get('rootNode');
-    const contexts = this.get('scanner').analyse(node, this.modifiedRange);
-    this.get('dispatcher').dispatch(
-      this.get('profile'),
-      this.get('registry').currentIndex(),
-      contexts,
-      this.get('registry'),
-      this.get('editor')
-    );
+    if (! isEmpty(this.modifiedRange)) {
+      const contexts = this.get('scanner').analyse(node, this.modifiedRange);
+      this.get('dispatcher').dispatch(
+        this.get('profile'),
+        this.get('registry').currentIndex(),
+        contexts,
+        this.get('registry'),
+        this.get('editor')
+      );
+      this.set('modifiedRange', A());
+    }
   }),
 
   /**
@@ -152,6 +196,7 @@ export default EmberObject.extend({
    * @public
    */
   removeText: scoped( function(start,stop) {
+    this.updateModifiedRange(start, stop, true);
     return this.get('registry').removeText(start, stop);
   }),
 
