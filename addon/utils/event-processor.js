@@ -24,6 +24,14 @@ export default EmberObject.extend({
   cardsLocationFlaggedNew: null,
 
   /**
+   * this is the range spanning all text inserts as recorded between two dispatchAndAnalyse calls
+   *
+   * @property modifiedRange
+   * @type Array
+   */
+  modifiedRange: null,
+
+  /**
    * @property scanner
    * @type RdfaContextScanner
    */
@@ -51,6 +59,7 @@ export default EmberObject.extend({
     this._super(...arguments);
     this.set('cardsLocationFlaggedRemoved', A());
     this.set('cardsLocationFlaggedNew', A());
+    this.set('modifiedRange', A());
 
     if (! this.get('registry')) {
       this.set('registry', HintsRegistry.create());
@@ -64,6 +73,18 @@ export default EmberObject.extend({
 
     assert(this.get('dispatcher'), "dispatcher should be set");
     assert(this.get('editor'), "editor should be set");
+  },
+
+  /**
+   * @method updateModifiedRange
+   *
+   * @param {number} start start index of the update operation
+   * @param {number} end end index of the update operation
+   * @private
+   */
+  updateModifiedRange(start, end) {
+    const [currentStart, currentEnd] = this.modifiedRange;
+    this.set('modifiedRange', [Math.min (currentStart, start), Math.max(currentEnd, end)]);
   },
 
   /**
@@ -105,11 +126,15 @@ export default EmberObject.extend({
    */
   analyseAndDispatch(){
     const node = this.get('editor').get('rootNode');
-    const currentNode = this.get('editor').get('currentNode');
-    if (currentNode) {
-      const contexts = this.get('scanner').analyse(node, [currentNode.start, currentNode.end]);
-      this.get('dispatcher').dispatch(this.get('profile'), this.get('registry').currentIndex(), contexts, this.get('registry'), this.get('editor'));
-    }
+    const contexts = this.get('scanner').analyse(node, this.modifiedRange);
+    this.get('dispatcher').dispatch(
+      this.get('profile'),
+      this.get('registry').currentIndex(),
+      contexts,
+      this.get('registry'),
+      this.get('editor')
+    );
+
   },
 
   /**
@@ -137,6 +162,7 @@ export default EmberObject.extend({
    * @public
    */
   insertText(index, text) {
+    this.updateModifiedRange(index, index + text.length);
     this.get('registry').insertText(index, text);
   },
 
