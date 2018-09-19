@@ -175,7 +175,7 @@ export default BackspaceHandler.extend({
         return previousBlockSibling(prev);
     };
     let isEmptyRdfaOrEmptyTextNode = node => {
-      var previousBlockSibling = previousBlockSibling(previousBlockSibling(domNode));
+      var previousBlockSibling = getPreviousBlockSibling(getPreviousBlockSibling(domNode));
       return this.isParentFlaggedForAlmostRemoval(node) ||
         this.isEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval(node) ||
         this.isTextNodeWithContent(node) || node.isSameNode(previousBlockSibling);
