@@ -158,7 +158,7 @@ export default BackspaceHandler.extend({
    * @private
    */
   rdfaDomCleanUp(domNode){
-    const previousBlockSibling = function(node) {
+    const getPreviousBlockSibling = function(node) {
       var prev;
       if (node.previousSibling) {
         prev =  node.previousSibling;
@@ -166,13 +166,15 @@ export default BackspaceHandler.extend({
       else
         prev = node.parentNode;
       if (
-        node.nodeType === Node.ELEMENT_NODE &&
-          window.getComputedStyle(prev)['display'] === 'block' ||
-          window.getComputedStyle(prev)['display'] === 'list-item'
-      )
+        prev.nodeType === Node.ELEMENT_NODE &&
+          ( window.getComputedStyle(prev)['display'] === 'block' ||
+           window.getComputedStyle(prev)['display'] === 'list-item' )
+      ){
         return prev;
-      else
-        return previousBlockSibling(prev);
+      }
+      else{
+        return getPreviousBlockSibling(prev);
+      }
     };
     let isEmptyRdfaOrEmptyTextNode = node => {
       var previousBlockSibling = getPreviousBlockSibling(getPreviousBlockSibling(domNode));
