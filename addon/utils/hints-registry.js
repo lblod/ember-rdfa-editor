@@ -35,7 +35,7 @@ export default EmberObject.extend({
   activeHints: computed('activeRegion', 'registry', 'registry.[]', function() {
     const region = this.get('activeRegion');
     return this.get('registry').filter((hint) => {
-      return region[0] >= hint.location[0] && region[1] <= hint.location[1] + 1;
+      return region[0] >= hint.location[0] && region[1] <= hint.location[1];
     });
   }),
 
