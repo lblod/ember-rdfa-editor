@@ -163,12 +163,14 @@ export default BackspaceHandler.extend({
       if (node.previousSibling) {
         prev =  node.previousSibling;
       }
-      else
+      else{
         prev = node.parentNode;
+      }
       if (
         prev.nodeType === Node.ELEMENT_NODE &&
           ( window.getComputedStyle(prev)['display'] === 'block' ||
-           window.getComputedStyle(prev)['display'] === 'list-item' )
+            window.getComputedStyle(prev)['display'] === 'list-item' ) &&
+          !prev.isSameNode(domNode)
       ){
         return prev;
       }
@@ -176,11 +178,17 @@ export default BackspaceHandler.extend({
         return getPreviousBlockSibling(prev);
       }
     };
+
+    //Finds the second occurance of the previous blockSibling
+    //Assumes e.g. <ul><li>[empty textnode]</li><li>[empty textnode]<li></ul>
+    //We want to remove the last <li>, our cursor starts from the empty textnode and stops at the previous (empty) <li>.
+    //Therefore, it needs to go twice to the next blockSibling.
+    let previousBlockSibling = getPreviousBlockSibling(getPreviousBlockSibling(domNode));
+
     let isEmptyRdfaOrEmptyTextNode = node => {
-      var previousBlockSibling = getPreviousBlockSibling(getPreviousBlockSibling(domNode));
       return this.isParentFlaggedForAlmostRemoval(node) ||
         this.isEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval(node) ||
-        this.isTextNodeWithContent(node) || node.isSameNode(previousBlockSibling);
+        this.isTextNodeWithContent(node) || (previousBlockSibling && node.isSameNode(previousBlockSibling));
     };
     let matchingDomNode = this.cleanLeavesToLeftUntil(isEmptyRdfaOrEmptyTextNode, this.isVoidRdfaElementAndHasNextSibling.bind(this), domNode);
 
