@@ -1,7 +1,7 @@
 import BackspaceHandler from '@lblod/ember-contenteditable-editor/utils/backspace-handler';
 import getRichNodeMatchingDomNode from '@lblod/ember-contenteditable-editor/utils/get-rich-node-matching-dom-node';
 import { isRdfaNode } from './rdfa-rich-node-helpers';
-import { isVoidElement } from '@lblod/ember-contenteditable-editor/utils/dom-helpers';
+import { isVoidElement, isEmptyList } from '@lblod/ember-contenteditable-editor/utils/dom-helpers';
 import HandlerResponse from '@lblod/ember-contenteditable-editor/utils/handler-response';
 import NodeWalker from '@lblod/ember-contenteditable-editor/utils/node-walker';
 
@@ -158,37 +158,13 @@ export default BackspaceHandler.extend({
    * @private
    */
   rdfaDomCleanUp(domNode){
-    const getPreviousBlockSibling = function(node) {
-      var prev;
-      if (node.previousSibling) {
-        prev =  node.previousSibling;
-      }
-      else{
-        prev = node.parentNode;
-      }
-      if (
-        prev.nodeType === Node.ELEMENT_NODE &&
-          ( window.getComputedStyle(prev)['display'] === 'block' ||
-            window.getComputedStyle(prev)['display'] === 'list-item' ) &&
-          !prev.isSameNode(domNode)
-      ){
-        return prev;
-      }
-      else{
-        return getPreviousBlockSibling(prev);
-      }
-    };
-
-    //Finds the second occurance of the previous blockSibling
-    //Assumes e.g. <ul><li>[empty textnode]</li><li>[empty textnode]<li></ul>
-    //We want to remove the last <li>, our cursor starts from the empty textnode and stops at the previous (empty) <li>.
-    //Therefore, it needs to go twice to the next blockSibling.
-    let previousBlockSibling = getPreviousBlockSibling(getPreviousBlockSibling(domNode));
+    let previousBlockSibling = this.getPreviousBlockSiblingForUser(domNode);
 
     let isEmptyRdfaOrEmptyTextNode = node => {
       return this.isParentFlaggedForAlmostRemoval(node) ||
         this.isEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval(node) ||
-        this.isTextNodeWithContent(node) || (previousBlockSibling && node.isSameNode(previousBlockSibling));
+        this.isTextNodeWithContent(node) ||
+        (previousBlockSibling && node.isSameNode(previousBlockSibling) && !isEmptyList(node) && !this.isOnlyLiAndEmpty(node));
     };
     let matchingDomNode = this.cleanLeavesToLeftUntil(isEmptyRdfaOrEmptyTextNode, this.isVoidRdfaElementAndHasNextSibling.bind(this), domNode);
 
