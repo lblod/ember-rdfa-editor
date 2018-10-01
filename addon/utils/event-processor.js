@@ -1,4 +1,4 @@
-import { warn, assert } from '@ember/debug';
+import { assert } from '@ember/debug';
 import EmberObject from '@ember/object';
 import RdfaContextScanner from '../utils/rdfa-context-scanner';
 import HintsRegistry from '../utils/hints-registry';
