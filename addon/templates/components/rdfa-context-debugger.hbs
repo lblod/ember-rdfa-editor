@@ -13,7 +13,7 @@
       &lt;{{statement.subject}}&gt; {{#if (eq statement.predicate 'a')}}{{statement.predicate}}{{else}}&lt;{{statement.predicate}}&gt;{{/if}} {{#if (is-uri statement.object)}}&lt;{{statement.object}}&gt;{{else}}"{{statement.object}}"{{/if}}{{#if statement.datatype}}^^&lt;{{statement.datatype}}&gt;{{/if}}
       {{/each}}
     </pre>
-    <hr />
+    <hr>
   {{else}}
     <p>Selecteer een region of klik op een node om de RDFa context te berekenen</p>
   {{/each}}
