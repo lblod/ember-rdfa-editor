@@ -1,4 +1,4 @@
-import { warn, assert } from '@ember/debug';
+import { assert } from '@ember/debug';
 import EmberObject from '@ember/object';
 import RdfaContextScanner from '../utils/rdfa-context-scanner';
 import HintsRegistry from '../utils/hints-registry';
@@ -168,9 +168,11 @@ export default EmberObject.extend({
    *
    * @method analyseAndDispatch
    *
+   * @param @param {Array} Optional argument to contain extra info.
+   *
    * @public
    */
-  analyseAndDispatch: scoped( function() {
+  analyseAndDispatch: scoped( function(extraInfo = []) {
     const node = this.get('editor').get('rootNode');
     if (! isEmpty(this.modifiedRange)) {
       const contexts = this.get('scanner').analyse(node, this.modifiedRange);
@@ -179,7 +181,8 @@ export default EmberObject.extend({
         this.get('registry').currentIndex(),
         contexts,
         this.get('registry'),
-        this.get('editor')
+        this.get('editor'),
+        extraInfo
       );
       this.set('modifiedRange', A());
     }
