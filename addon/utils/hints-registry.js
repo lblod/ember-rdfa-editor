@@ -280,18 +280,19 @@ export default EmberObject.extend({
 
     let isSameCard = (card1, card2) => { return card1.who == card2.who && card1.location[0] == card2.location[0] && card1.location[1] == card2.location[1]; };
 
-    let realRemoves = updatedHintsToRemove.filter(rH => !updatedHintsToInsert.find(iH => isSameCard(iH, rH)));
+    let realRemovesInBatch = updatedHintsToRemove.filter(rH => !updatedHintsToInsert.find(iH => isSameCard(iH, rH)));
 
-    let realInserts = updatedHintsToInsert.filter(iH => !updatedHintsToRemove.find(rH => isSameCard(iH, rH)));
+    let realInsertsInBatch = updatedHintsToInsert.filter(iH => !updatedHintsToRemove.find(rH => isSameCard(iH, rH)));
 
-    if(realInserts.length == 0 && realRemoves.length == 0){
+    if(realInsertsInBatch.length == 0 && realRemovesInBatch.length == 0){
       return;
     }
-    realRemoves.forEach(this.sendRemovedCardToObservers.bind(this));
-    realInserts.forEach(this.sendNewCardToObservers.bind(this));
+    realRemovesInBatch.forEach(this.sendRemovedCardToObservers.bind(this));
+    realInsertsInBatch.forEach(this.sendNewCardToObservers.bind(this));
 
-    let updatedRegistry = (this.get('registry').filter(entry => !realRemoves.find(rM => isSameCard(entry, rM)))).toArray();
-    updatedRegistry = [...updatedRegistry, ...realInserts];
+    let updatedRegistry = (this.get('registry').filter(entry => !realRemovesInBatch.find(rM => isSameCard(entry, rM)))).toArray();
+    let insertsForRegistry = realInsertsInBatch.filter(entry => !updatedRegistry.find(uR => isSameCard(entry, uR)));
+    updatedRegistry = [...updatedRegistry, ...insertsForRegistry];
 
     this.replaceRegistryAndNotify(A(updatedRegistry));
 
