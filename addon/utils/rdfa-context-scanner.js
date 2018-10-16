@@ -38,7 +38,16 @@ export default EmberObject.extend({
     if (domNode == null || start < 0 || end < start)
       return [];
 
-    const nodeWalker = NodeWalker.create();
+    const nodeWalker = NodeWalker.create({
+      createRichNode( content ) {
+        const newObject = Object.assign( {}, content );
+        newObject.get = ( name ) => newObject[name];
+        return newObject;
+      },
+      set( object, key, value ) {
+        object[key] = value;
+      }
+    });
     const richNode = nodeWalker.processDomNode(domNode);
 
     this.enrichRichNodeWithRdfa(richNode);
@@ -49,16 +58,27 @@ export default EmberObject.extend({
     const rdfaBlocks = this.flattenRdfaTree(richNode, [start, end]);
 
     // TODO take [start, end] arguments into account earlier in the process to improve performance
+    let resultingBlocks;
+
     if (start && end) {
-      return rdfaBlocks.filter(function(b) {
-        const [startBlock, endBlock] = b.region;
-        return (startBlock >= start && startBlock <= end)
-          || (endBlock >= start && endBlock <= end)
-          || (startBlock <= start && end <= endBlock);
-      });
+      resultingBlocks =
+        rdfaBlocks
+        .filter(function(b) {
+          const [startBlock, endBlock] = [b.start, b.end || b.start];
+          return (b.start >= start && b.end <= end)
+            || ( b.start <= start && start <= b.end )
+            || ( b.end <= end && end  <= b.end );
+        });
     } else {
-      return rdfaBlocks;
+      resultingBlocks = rdfaBlocks;
     }
+
+    return resultingBlocks.map( (b) => {
+      // make sure contexts have a region
+      this.set( b, 'region', [b.start, b.end] );
+      return b;
+    } );
+
 
   },
 
@@ -72,11 +92,11 @@ export default EmberObject.extend({
    * @private
   */
   enrichRichNodeWithRdfa(richNode) {
-    const rdfaAttributes = this.getRdfaAttributes(get(richNode, 'domNode'));
-    richNode.set('rdfaAttributes', rdfaAttributes);
+    const rdfaAttributes = this.getRdfaAttributes(richNode.domNode);
+    this.set(richNode, 'rdfaAttributes', rdfaAttributes);
 
-    if (get(richNode, 'children')) {
-      get(richNode, 'children').forEach((child) => {
+    if (richNode.children) {
+      richNode.children.forEach((child) => {
         this.enrichRichNodeWithRdfa(child);
       });
     }
@@ -98,7 +118,7 @@ export default EmberObject.extend({
     const resolvedRootContext = [];
     let rootPrefixes = defaultPrefixes;
 
-    const startNode = get(richNode, 'domNode');
+    const startNode = richNode.domNode;
 
     if (startNode.parentNode) { // start 1 level above the rootNode of the NodeWalker
       for(let node = startNode.parentNode; node.parentNode; node = node.parentNode) {
@@ -136,23 +156,23 @@ export default EmberObject.extend({
    * @private
   */
   expandRdfaContext(richNode, parentContext, parentPrefixes) {
-    const nodeRdfaAttributes = get(richNode, 'rdfaAttributes');
+    const nodeRdfaAttributes = richNode.rdfaAttributes;
 
     const prefixes = this.mergePrefixes(parentPrefixes, nodeRdfaAttributes);
-    richNode.set('rdfaPrefixes', prefixes);
+    this.set(richNode,'rdfaPrefixes', prefixes);
 
     if (!this.isEmptyRdfaAttributes(nodeRdfaAttributes)) {
       const resolvedRdfaAttributes = this.resolvePrefixes(nodeRdfaAttributes, prefixes);
-      richNode.set('rdfaContext', parentContext.concat(resolvedRdfaAttributes));
+      this.set(richNode,'rdfaContext', parentContext.concat(resolvedRdfaAttributes));
     }
     else {
-      richNode.set('rdfaContext', parentContext);
+      this.set(richNode,'rdfaContext', parentContext);
     }
 
-    if (get(richNode, 'children')) {
-      get(richNode, 'children').forEach((child) => {
-        const context = get(richNode, 'rdfaContext');
-        const prefixes = get(richNode, 'rdfaPrefixes');
+    if (richNode.children) {
+      richNode.children.forEach((child) => {
+        const context = richNode.rdfaContext;
+        const prefixes = richNode.rdfaPrefixes;
 
         this.expandRdfaContext(child, context, prefixes);
       });
@@ -231,24 +251,42 @@ export default EmberObject.extend({
     // ran before processing the current node
     const preprocessNode = (richNode) => {
       // does this node represent a logical block of content?
-      richNode.set('isLogicalBlock', this.nodeIsLogicalBlock( richNode ));
+      this.set(richNode,'isLogicalBlock', this.nodeIsLogicalBlock( richNode ));
     };
 
     // ran when processing a single child node
     const processChildNode = (node) => {
-      this.flattenRdfaTree( node, [ start, end ] );
+      if ((node.start >= start && node.start <= end)
+          || (node.end >= start && node.end <= end)
+          || (node.start <= start && end <= node.end)) {
+        this.flattenRdfaTree( node, [ start, end ] );
+      } else {
+        this.set(node, 'isLogicalBlock', false);
+        this.set(node, 'isRdfaBlock', false);
+        this.set(node, 'rdfaBlockList', []);
+      }
+
     };
 
     // ran when we're finished processing all child nodes
     const finishChildSteps = (node) => {
-      set( node, 'rdfaBlocks', this.getRdfaBlockList( node ) );
+      let rdfaBlockList = [];
+      if ((node.start >= start && node.start <= end)
+          || (node.end >= start && node.end <= end)
+          || (node.start <= start && end <= node.end)) {
+        rdfaBlockList = this.getRdfaBlockList( node );
+      } else {
+        rdfaBlockList = [];
+      }
+
+      this.set( node, 'rdfaBlocks', rdfaBlockList );
     };
 
     preprocessNode(richNode);
-    (get(richNode, 'children') || []).map( (node) => processChildNode(node) );
+    (richNode.children || []).map( (node) => processChildNode(node) );
     finishChildSteps( richNode );
 
-    return get(richNode, 'rdfaBlocks');
+    return richNode.rdfaBlocks;
   },
 
   /**
@@ -265,7 +303,7 @@ export default EmberObject.extend({
    * @private
    */
   getRdfaBlockList( richNode ){
-    switch( get( richNode, 'type' ) ){
+    switch( richNode.type ){
     case "text":
       return this.createRdfaBlocksFromText( richNode );
     case "tag":
@@ -290,11 +328,13 @@ export default EmberObject.extend({
    */
   createRdfaBlocksFromText( richNode ){
     return [{
-      region: get(richNode, 'region'),
-      text: get(richNode, 'text'),
-      context: this.toTriples(get(richNode, 'rdfaContext')),
+      region: richNode.region,
+      start: richNode.start,
+      end: richNode.end || richNode.start,
+      text: richNode.text,
+      context: this.toTriples(richNode.rdfaContext),
       richNode: richNode,
-      isRdfaBlock: get( richNode, 'isLogicalBlock' )
+      isRdfaBlock: richNode.isLogicalBlock
     }];
   },
 
@@ -324,8 +364,8 @@ export default EmberObject.extend({
   createRdfaBlocksFromTag( richNode ){
     // flatten our children
     const flatRdfaChildren =
-          (get(richNode, 'children') || [])
-          .map( (child) => get( child, 'rdfaBlocks' ) )
+          (richNode.children || [])
+          .map( (child) => child.rdfaBlocks || [] )
           .reduce( (a,b) => a.concat(b), []);
 
     // map & combine children when possible
@@ -335,8 +375,8 @@ export default EmberObject.extend({
     // const clonedChildren = combinedChildren.map( this.shallowClone );
 
     // override isRdfaBlock on each child, based on current node
-    if( get( richNode, 'isLogicalBlock' ) )
-      combinedChildren.forEach( (child) => set( child, 'isRdfaBlock', true ) );
+    if( richNode.isLogicalBlock )
+      combinedChildren.forEach( (child) => this.set( child, 'isRdfaBlock', true ) );
 
     // return new map
     return combinedChildren;
@@ -364,16 +404,18 @@ export default EmberObject.extend({
       [ firstElement, ...restElements ] = nodes;
       const combinedElements =
             restElements.reduce( ([pastElement, ...rest], newElement) => {
-              if( get(pastElement, 'isRdfaBlock') || get(newElement, 'isRdfaBlock') )
+              if( pastElement.isRdfaBlock || newElement.isRdfaBlock )
                 return [newElement, pastElement, ...rest];
               else {
-                const start = get( pastElement, 'region.0' );
-                const end = get( newElement, 'region.1' );
+                const start = pastElement.start;
+                const end = newElement.end || newElement.start;
                 const combinedRdfaNode = {
                   region: [ start, end ],
-                  text: get(pastElement, 'text').concat( get(newElement, 'text' ) ),
-                  context: get( pastElement, 'context' ),  // pick any of the two
-                  richNode: [ get( newElement, 'richNode' ), get( pastElement, 'richNode' )],
+                  start: start,
+                  end: end,
+                  text: pastElement.text.concat( newElement.text ),
+                  context: pastElement.context,  // pick any of the two
+                  richNode: [ newElement.richNode, pastElement.richNode],
                   isRdfaBlock: false // these two nodes are text nodes
                 };
                 return [combinedRdfaNode, ...rest];
@@ -406,10 +448,10 @@ export default EmberObject.extend({
    */
   nodeIsLogicalBlock(richNode) {
     // non-tags are never blocks
-    if( get(richNode, 'type') != "tag" ) {
+    if( richNode.type != "tag" ) {
       return false;
     } else {
-      if( ! this.isEmptyRdfaAttributes( get(richNode, 'rdfaAttributes') )
+      if( ! this.isEmptyRdfaAttributes( richNode.rdfaAttributes )
           || this.isDisplayedAsBlock( richNode ) )
         return true;
       else
@@ -673,11 +715,15 @@ export default EmberObject.extend({
    * @private
    */
   isDisplayedAsBlock(richNode) {
-    if( get( richNode, 'type' ) != 'tag' )
+    if( richNode.type != 'tag' )
       return false;
 
-    const domNode = get(richNode, 'domNode');
+    const domNode = richNode.domNode;
     const displayStyle = window.getComputedStyle(domNode)['display'];
     return displayStyle == 'block' || displayStyle == 'list-item';
+  },
+
+  set( object, key, value ) {
+    object[key] = value;
   }
 });

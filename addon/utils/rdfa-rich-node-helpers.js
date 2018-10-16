@@ -1,3 +1,4 @@
+import { set } from '@ember/object';
 import { get } from '@ember/object';
 import { rdfaKeywords } from '../config/rdfa';
 
@@ -45,7 +46,7 @@ let getRdfaAttributes = function(domNode) {
  */
 let enrichRichNodeWithRdfa = function(richNode) {
   const rdfaAttributes = getRdfaAttributes(get(richNode, 'domNode'));
-  richNode.set('rdfaAttributes', rdfaAttributes);
+  set(richNode,'rdfaAttributes', rdfaAttributes);
 
   if (get(richNode, 'children')) {
     get(richNode, 'children').forEach((child) => {
