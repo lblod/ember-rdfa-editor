@@ -27,7 +27,7 @@
 							<div class="editor-hints">
 								{{#editor-suggested-hints suggestedHints=suggestedHints}}
 								<div class="annotation-suggestion__suggestion">
-									<div class="modal-dialog modal-dialog--small modal-dialog--static modal-dialog--hint">
+									<div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
 										<ul>
 											{{#each suggestedHints as |hint|}}
 											<li>{{component hint.component info=hint.info}}</li>
@@ -38,7 +38,7 @@
 								{{/editor-suggested-hints}}
 								{{#if hasActiveHints}}
 								<div class="annotation-suggestion__suggestion">
-									<div class="modal-dialog modal-dialog--small modal-dialog--static modal-dialog--hint">
+									<div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
 										<ul>
 											{{#each hintsRegistry.activeHints as |card|}}
 											<li>{{component card.card info=card.info}}</li>
