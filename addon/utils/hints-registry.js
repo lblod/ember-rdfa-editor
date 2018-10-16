@@ -1,5 +1,6 @@
 import { A } from '@ember/array';
 import EmberObject, { computed } from '@ember/object';
+import { next } from '@ember/runloop';
 
 /**
 * Bookkeeping of the editor hints
@@ -53,6 +54,8 @@ export default EmberObject.extend({
     this.set('registryObservers', A());
     this.set('newCardObservers', A());
     this.set('removedCardObservers', A());
+    this.set('hintsForFutureRemoval', A());
+    this.set('hintsForFutureInsert', A());
   },
 
   /**
@@ -215,19 +218,13 @@ export default EmberObject.extend({
     }
 
     let updatedRegistry = A();
-    A(this.get('registry').forEach(entry => {
-      if(condition(entry)){
-        updatedRegistry.push(entry);
-      }
-      else{
-        this.sendRemovedCardToObservers(entry);
+    A(this.get('registry').forEach(card => {
+      if(!condition(card)){
+        this.hintsForFutureRemoval.push({card, hrIdx: this.currentIndex()});
       }
     }));
 
-
-    if(updatedRegistry.get('length') !== this.get('registry').get('length')){
-      this.replaceRegistryAndNotify(updatedRegistry);
-    }
+    next(this.batchProcessHintsUpdates.bind(this));
   },
 
   /**
@@ -256,18 +253,49 @@ export default EmberObject.extend({
     }
 
     let updatedRegistry = A();
-    A(this.get('registry').forEach(entry => {
-      if(condition(entry)){
-        updatedRegistry.push(entry);
-      }
-      else{
-        this.sendRemovedCardToObservers(entry);
+    A(this.get('registry').forEach(card => {
+      if(!condition(card)){
+        this.hintsForFutureRemoval.push({card, hrIdx: this.currentIndex()});
       }
     }));
 
-    if(updatedRegistry.get('length') !== this.get('registry').get('length')){
-      this.replaceRegistryAndNotify(updatedRegistry);
+    next(this.batchProcessHintsUpdates.bind(this));
+
+  },
+
+  batchProcessHintsUpdates(){
+    let updatedHintsToRemove = this.hintsForFutureRemoval.map( hint => {
+      hint.card.location = (hint.hrIdx ? this.updateLocationToCurrentIndex(hint.hrIdx, hint.card.location) : hint.card.location);
+      return hint.card;
+    });
+
+    this.set('hintsForFutureRemoval', A());
+
+    let updatedHintsToInsert = this.hintsForFutureInsert.map( hint => {
+      hint.card.location = (hint.hrIdx ? this.updateLocationToCurrentIndex(hint.hrIdx, hint.card.location) : hint.card.location);
+      return hint.card;
+    });
+
+    this.set('hintsForFutureInsert', A());
+
+    let isSameCard = (card1, card2) => { return card1.who == card2.who && card1.location[0] == card2.location[0] && card1.location[1] == card2.location[1]; };
+
+    let realRemovesInBatch = updatedHintsToRemove.filter(rH => !updatedHintsToInsert.find(iH => isSameCard(iH, rH)));
+
+    let realInsertsInBatch = updatedHintsToInsert.filter(iH => !updatedHintsToRemove.find(rH => isSameCard(iH, rH)));
+
+    if(realInsertsInBatch.length == 0 && realRemovesInBatch.length == 0){
+      return;
     }
+    realRemovesInBatch.forEach(this.sendRemovedCardToObservers.bind(this));
+    realInsertsInBatch.forEach(this.sendNewCardToObservers.bind(this));
+
+    let updatedRegistry = (this.get('registry').filter(entry => !realRemovesInBatch.find(rM => isSameCard(entry, rM)))).toArray();
+    let insertsForRegistry = realInsertsInBatch.filter(entry => !updatedRegistry.find(uR => isSameCard(entry, uR)));
+    updatedRegistry = [...updatedRegistry, ...insertsForRegistry];
+
+    this.replaceRegistryAndNotify(A(updatedRegistry));
+
   },
 
   /**
@@ -284,10 +312,9 @@ export default EmberObject.extend({
   addHints(idx, who, cards) {
     cards.map(card => {
       card.who = who;
-      this.updateCardToCurrentIndex(idx, card);
-      this.sendNewCardToObservers(card);
+      this.hintsForFutureInsert.push({card, hrIdx: idx});
     }, this);
-    this.sendRegistryToObservers(this.get('registry'));
+    next(this.batchProcessHintsUpdates.bind(this));
   },
 
   /**
