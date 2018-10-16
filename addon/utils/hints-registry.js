@@ -218,13 +218,20 @@ export default EmberObject.extend({
     }
 
     let updatedRegistry = A();
-    A(this.get('registry').forEach(card => {
-      if(!condition(card)){
-        this.hintsForFutureRemoval.push({card, hrIdx: this.currentIndex()});
+    A(this.get('registry').forEach(entry => {
+      if(condition(entry)){
+        updatedRegistry.push(entry);
+      }
+      else{
+        this.sendRemovedCardToObservers(entry);
       }
     }));
 
-    next(this.batchProcessHintsUpdates.bind(this));
+
+    if(updatedRegistry.get('length') !== this.get('registry').get('length')){
+      this.replaceRegistryAndNotify(updatedRegistry);
+    }
+
   },
 
   /**
