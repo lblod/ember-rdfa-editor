@@ -143,6 +143,7 @@ export default Component.extend({
       const handlers = [RdfaBackspaceHandler.create({rawEditor: editor })];
       this.set('handlers', handlers);
       const hintsRegistry = HintsRegistry.create();
+      hintsRegistry.set('rawEditor', editor);
       this.set('hintsRegistry', hintsRegistry);
       const eventProcessor = EventProcessor.create({
         registry: hintsRegistry,
