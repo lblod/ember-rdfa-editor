@@ -149,16 +149,12 @@ export default EmberObject.extend({
     this.set('cardsLocationFlaggedNew', A());
   },
 
-  handleNewCardInRegistry(card){
-    if( !card.options || !card.options.noHighlight ) {
-      this.get('cardsLocationFlaggedNew').push(card.location);
-    }
+  handleNewCardInRegistry(hightLightLocation){
+      this.get('cardsLocationFlaggedNew').push(hightLightLocation);
   },
 
-  handleRemovedCardInRegistry(card){
-    if( !card.options || !card.options.noHighlight ) {
-      this.get('cardsLocationFlaggedRemoved').push(card.location);
-    }
+  handleRemovedCardInRegistry(hightLightLocation){
+      this.get('cardsLocationFlaggedRemoved').push(hightLightLocation);
   },
 
 
