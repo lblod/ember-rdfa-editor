@@ -8,6 +8,22 @@ import {
 import NodeWalker from '@lblod/ember-contenteditable-editor/utils/node-walker';
 
 /**
+ * Returns whether if range [x, y] (partially) falls in region [start, end]
+ *
+ * @method isInRange
+ *
+ * @private
+ */
+const isInRange = function([x, y], [start, end]) {
+  if (start == undefined || end == undefined)
+    return true;
+
+  return (x >= start && x <= end)
+    || (y >= start && y <= end)
+    || (x <= start && end <= y);
+};
+
+/**
 * Scanner of the RDFa context of DOM nodes
 *
 * @module editor-core
@@ -22,7 +38,8 @@ export default EmberObject.extend({
    * @method analyse
    *
    * @param {Node} domNode Root DOM node containing the text
-   * @param {[number,number]} region Region in the text for which RDFa contexts must be calculated
+   * @param {[number,number]} region Region in the text for which RDFa contexts must be calculated.
+   *                                 Full region if start or end is undefined.
    *
    * @return {Array} Array of contexts mapping text parts from the specified region to their RDFa context
    *               A context element consists of:
@@ -62,9 +79,7 @@ export default EmberObject.extend({
       resultingBlocks =
         rdfaBlocks
         .filter(function(b) {
-          return (b.start >= start && b.end <= end)
-            || ( b.start <= start && start <= b.end )
-            || ( b.end <= end && end  <= b.end );
+          return isInRange([b.start, b.end], [start, end]);
         });
     } else {
       resultingBlocks = rdfaBlocks;
@@ -251,9 +266,7 @@ export default EmberObject.extend({
 
     // ran when processing a single child node
     const processChildNode = (node) => {
-      if ((node.start >= start && node.start <= end)
-          || (node.end >= start && node.end <= end)
-          || (node.start <= start && end <= node.end)) {
+      if (isInRange([node.start, node.end], [start, end])) {
         this.flattenRdfaTree( node, [ start, end ] );
       } else {
         this.set(node, 'isLogicalBlock', false);
@@ -266,9 +279,7 @@ export default EmberObject.extend({
     // ran when we're finished processing all child nodes
     const finishChildSteps = (node) => {
       let rdfaBlockList = [];
-      if ((node.start >= start && node.start <= end)
-          || (node.end >= start && node.end <= end)
-          || (node.start <= start && end <= node.end)) {
+      if (isInRange([node.start, node.end], [start, end])) {
         rdfaBlockList = this.getRdfaBlockList( node );
       } else {
         rdfaBlockList = [];
