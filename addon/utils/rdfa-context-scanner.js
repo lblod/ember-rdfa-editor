@@ -1,6 +1,4 @@
-import { set } from '@ember/object';
 import { warn } from '@ember/debug';
-import { get } from '@ember/object';
 import EmberObject from '@ember/object';
 import {
   rdfaKeywords,
@@ -57,14 +55,13 @@ export default EmberObject.extend({
 
     const rdfaBlocks = this.flattenRdfaTree(richNode, [start, end]);
 
-    // TODO take [start, end] arguments into account earlier in the process to improve performance
     let resultingBlocks;
 
+    // TODO is this still required since we already take start/end into account in flattenRdfaTree
     if (start && end) {
       resultingBlocks =
         rdfaBlocks
         .filter(function(b) {
-          const [startBlock, endBlock] = [b.start, b.end || b.start];
           return (b.start >= start && b.end <= end)
             || ( b.start <= start && start <= b.end )
             || ( b.end <= end && end  <= b.end );
@@ -246,8 +243,6 @@ export default EmberObject.extend({
    * @private
    */
   flattenRdfaTree(richNode, [start, end]) {
-    // TODO take [start, end] argumentns into account
-
     // ran before processing the current node
     const preprocessNode = (richNode) => {
       // does this node represent a logical block of content?
