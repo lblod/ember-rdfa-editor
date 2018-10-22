@@ -48,6 +48,7 @@
     "ember-cli-uglify": "^2.1.0",
     "ember-cli-update": "^0.21.3",
     "ember-cli-yuidoc": "^0.8.8",
+    "ember-concurrency": "^0.8.22",
     "ember-disable-prototype-extensions": "^1.1.3",
     "ember-export-application-global": "^2.0.0",
     "ember-load-initializers": "^1.1.0",
