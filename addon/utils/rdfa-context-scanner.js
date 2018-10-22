@@ -49,7 +49,7 @@ export default EmberObject.extend({
    *
    * @public
    */
-  analyse(domNode, [start, end]) {
+  analyse(domNode, [start, end] = []) {
     if (domNode == null || start < 0 || end < start)
       return [];
 
