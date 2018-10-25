@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "0.17.15",
+  "version": "0.17.18",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -24,7 +24,7 @@
     "test:all": "ember try:each"
   },
   "dependencies": {
-    "@lblod/ember-contenteditable-editor": "^0.13.3",
+    "@lblod/ember-contenteditable-editor": "^0.13.5",
     "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.5.7",
     "@lblod/ember-vo-webuniversum": "^0.16.3",
     "ember-cli-babel": "^6.16.0",
@@ -48,6 +48,7 @@
     "ember-cli-uglify": "^2.1.0",
     "ember-cli-update": "^0.21.3",
     "ember-cli-yuidoc": "^0.8.8",
+    "ember-concurrency": "^0.8.22",
     "ember-disable-prototype-extensions": "^1.1.3",
     "ember-export-application-global": "^2.0.0",
     "ember-load-initializers": "^1.1.0",

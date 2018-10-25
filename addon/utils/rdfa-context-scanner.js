@@ -1,6 +1,4 @@
-import { set } from '@ember/object';
 import { warn } from '@ember/debug';
-import { get } from '@ember/object';
 import EmberObject from '@ember/object';
 import {
   rdfaKeywords,
@@ -8,6 +6,22 @@ import {
   defaultPrefixes
 } from '../config/rdfa';
 import NodeWalker from '@lblod/ember-contenteditable-editor/utils/node-walker';
+
+/**
+ * Returns whether if range [x, y] (partially) falls in region [start, end]
+ *
+ * @method isInRange
+ *
+ * @private
+ */
+const isInRange = function([x, y], [start, end]) {
+  if (start == undefined || end == undefined)
+    return true;
+
+  return (x >= start && x <= end)
+    || (y >= start && y <= end)
+    || (x <= start && end <= y);
+};
 
 /**
 * Scanner of the RDFa context of DOM nodes
@@ -24,7 +38,8 @@ export default EmberObject.extend({
    * @method analyse
    *
    * @param {Node} domNode Root DOM node containing the text
-   * @param {[number,number]} region Region in the text for which RDFa contexts must be calculated
+   * @param {[number,number]} region Region in the text for which RDFa contexts must be calculated.
+   *                                 Full region if start or end is undefined.
    *
    * @return {Array} Array of contexts mapping text parts from the specified region to their RDFa context
    *               A context element consists of:
@@ -34,7 +49,7 @@ export default EmberObject.extend({
    *
    * @public
    */
-  analyse(domNode, [start, end]) {
+  analyse(domNode, [start, end] = []) {
     if (domNode == null || start < 0 || end < start)
       return [];
 
@@ -57,17 +72,14 @@ export default EmberObject.extend({
 
     const rdfaBlocks = this.flattenRdfaTree(richNode, [start, end]);
 
-    // TODO take [start, end] arguments into account earlier in the process to improve performance
     let resultingBlocks;
 
+    // TODO is this still required since we already take start/end into account in flattenRdfaTree
     if (start && end) {
       resultingBlocks =
         rdfaBlocks
         .filter(function(b) {
-          const [startBlock, endBlock] = [b.start, b.end || b.start];
-          return (b.start >= start && b.end <= end)
-            || ( b.start <= start && start <= b.end )
-            || ( b.end <= end && end  <= b.end );
+          return isInRange([b.start, b.end], [start, end]);
         });
     } else {
       resultingBlocks = rdfaBlocks;
@@ -246,8 +258,6 @@ export default EmberObject.extend({
    * @private
    */
   flattenRdfaTree(richNode, [start, end]) {
-    // TODO take [start, end] argumentns into account
-
     // ran before processing the current node
     const preprocessNode = (richNode) => {
       // does this node represent a logical block of content?
@@ -256,9 +266,7 @@ export default EmberObject.extend({
 
     // ran when processing a single child node
     const processChildNode = (node) => {
-      if ((node.start >= start && node.start <= end)
-          || (node.end >= start && node.end <= end)
-          || (node.start <= start && end <= node.end)) {
+      if (isInRange([node.start, node.end], [start, end])) {
         this.flattenRdfaTree( node, [ start, end ] );
       } else {
         this.set(node, 'isLogicalBlock', false);
@@ -271,9 +279,7 @@ export default EmberObject.extend({
     // ran when we're finished processing all child nodes
     const finishChildSteps = (node) => {
       let rdfaBlockList = [];
-      if ((node.start >= start && node.start <= end)
-          || (node.end >= start && node.end <= end)
-          || (node.start <= start && end <= node.end)) {
+      if (isInRange([node.start, node.end], [start, end])) {
         rdfaBlockList = this.getRdfaBlockList( node );
       } else {
         rdfaBlockList = [];
