@@ -316,11 +316,15 @@ export default EmberObject.extend({
 
     let realRemoves = updatedHlToRemove.filter(rH => !this.registry.find(c => hasSameLocation(c.location, rH)));
 
+    //remove duplicates
     let realInserts = updatedHlToInsert.reduce((acc, card) => {
       if(!acc.find(accCardSoFar => hasSameLocation(accCardSoFar, card)))
         acc.push(card);
       return acc;
     }, []);
+
+    //remove obsolete highlights
+    realInserts = realInserts.filter(rI=> this.registry.find(c => hasSameLocation(c.location, rI)));
 
     if(realInserts.length == 0 && realRemoves.length == 0){
       return;
