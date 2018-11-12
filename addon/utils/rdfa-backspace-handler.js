@@ -36,22 +36,6 @@ export default BackspaceHandler.extend({
     return node.parentNode.childNodes.length === 1;
   },
 
-  /**
-   * e.g
-   * <h1 property="eli:title">Me</h1> will return true
-   * <h1 property="eli:title"></h1> will return false
-   * <h1 property="eli:title">Felix</h1> will return false
-   * see implementation for length treshold
-   * @method isAlmostEmptyFirstChildFromRdfaNode
-   * @param {DomNode} textNode
-   * @return {Bool}
-   * @private
-   */
-  isAlmostEmptyOnlyChildFromRdfaNode(node){
-    const isFirstChild = this.isNodeFirstBornRdfaNode(node);
-    const visibleLength = this.visibleText(this.rawEditor.currentNode).length;
-    return visibleLength < 3 && visibleLength > 0 && isFirstChild;
-  },
     /**
    * handles state of parent rdfa node
    * will return true if backspace needs to be avoided.
