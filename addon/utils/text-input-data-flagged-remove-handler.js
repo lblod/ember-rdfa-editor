@@ -1,5 +1,5 @@
-import InputTextHandler from '@lblod/ember-contenteditable-editor/utils/input-text-handler';
-const supportedInputCharacters = /[a-zA-Z0-9.,!@#$%^&*={};'"+-?_()/\\ ]/;
+import InputTextHandler from '@lblod/ember-contenteditable-editor/utils/text-input-handler';
+import HandlerResponse from '@lblod/ember-contenteditable-editor/utils/handler-response';
 
 export default InputTextHandler.extend({
   /**
@@ -9,26 +9,24 @@ export default InputTextHandler.extend({
    * @return boolean
    * @public
    */
-  isHandlerFor(event){
+  isHandlerFor(){
     const currentNode = this.rawEditor.currentNode;
     const parentNode = currentNode.parentNode;
     return this._super(...arguments) &&
-      currentNode.length < 4;
-      parentNode
-      && parentNode.getAttribute('data-flagged-remove');
+      currentNode.length < 4 &&
+      parentNode &&
+      parentNode.getAttribute('data-flagged-remove');
   },
 
   handleEvent(){
     //this is the span
-    this._super();
     const currentNode = this.rawEditor.currentNode;
     const length = currentNode.length;
-    if ( length > 0 && length < 2 ) {
+    if ( length > 0 && length < 3 ) {
       currentNode.parentNode.setAttribute('data-flagged-remove', 'almost-complete');
     }
     else
       currentNode.parentNode.removeAttribute('data-flagged-remove');
-  },
-
-
+    return new HandlerResponse();
+  }
 });

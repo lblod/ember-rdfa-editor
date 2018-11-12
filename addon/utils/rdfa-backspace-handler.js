@@ -23,11 +23,15 @@ export default BackspaceHandler.extend({
     this.rawEditor.externalDomUpdate('backspace', () => {
       const currentTextNode = this.rawEditor.currentNode;
       var cancelBackspace = false;
-      if (this.nodeIsOnlyChild(currentTextNode) && this.visibleText(currentTextNode).length < 4) {
+      if (this.nodeIsOnlyChild(currentTextNode) && this.visibleText(currentTextNode).length < 5) {
         cancelBackspace = this.setDataFlaggedForNode(currentTextNode);
       }
-      if (! cancelBackspace)
+      if (cancelBackspace) {
+        currentTextNode.text = ' ';
+      }
+      else {
         this.backSpace();
+      }
     });
     return HandlerResponse.create({ allowPropagation: false });
   },
@@ -47,15 +51,17 @@ export default BackspaceHandler.extend({
   setDataFlaggedForNode(node){
     const parentNode = node.parentNode;
     if (this.isRdfaNode(parentNode)) {
-      if (! this.isFlaggedForRemoval(parentNode)) {
+      const visibleLength = this.visibleText(node).length - 1;
+      if (! this.isFlaggedForRemoval(parentNode) && visibleLength > 0) {
         parentNode.setAttribute('data-flagged-remove', 'almost-complete');
         return false;
       }
-      if(! this.isFlaggedForRemoval() && this.visibleText(node).length === 0) {
+      if(! this.isFlaggedForRemoval(parentNode) && visibleLength === 0) {
+        console.log('removed');
         parentNode.setAttribute('data-flagged-remove', 'complete');
         return true;
       }
-      if(this.isFlaggedForRemoval() && this.visibleText(node).length === 0) {
+      if(this.isFlaggedForRemoval(parentNode) && this.visibleText(node).length === 0) {
         parentNode.setAttribute('data-flagged-remove', 'complete');
         return false;
       }
