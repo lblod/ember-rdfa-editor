@@ -11,6 +11,7 @@ import EventProcessor from '../utils/event-processor';
 import forgivingAction from '../utils/forgiving-action';
 import RdfaBackspaceHandler from '../utils/rdfa-backspace-handler';
 import RdfaContextScanner from '../utils/rdfa-context-scanner';
+import TextInputDataFlaggedRemoveHandler from '../utils/text-input-data-flagged-remove-handler';
 
 /**
 * RDFa editor component
@@ -140,7 +141,10 @@ export default Component.extend({
      */
     handleRawEditorInit(editor) {
       this.set('editor', editor);
-      const handlers = [RdfaBackspaceHandler.create({rawEditor: editor })];
+      const handlers = [
+        RdfaBackspaceHandler.create({rawEditor: editor }),
+        TextInputDataFlaggedRemoveHandler.create({rawEditor: editor})
+      ];
       this.set('handlers', handlers);
       const hintsRegistry = HintsRegistry.create();
       hintsRegistry.set('rawEditor', editor);
