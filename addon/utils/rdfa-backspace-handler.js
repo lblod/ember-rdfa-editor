@@ -1,7 +1,5 @@
 import BackspaceHandler from '@lblod/ember-contenteditable-editor/utils/backspace-handler';
-import getRichNodeMatchingDomNode from '@lblod/ember-contenteditable-editor/utils/get-rich-node-matching-dom-node';
 import { isRdfaNode } from './rdfa-rich-node-helpers';
-import { isVoidElement, isEmptyList } from '@lblod/ember-contenteditable-editor/utils/dom-helpers';
 import HandlerResponse from '@lblod/ember-contenteditable-editor/utils/handler-response';
 import NodeWalker from '@lblod/ember-contenteditable-editor/utils/node-walker';
 
@@ -22,77 +20,20 @@ export default BackspaceHandler.extend({
    * @public
    */
   handleEvent() {
-    let position = this.get('currentSelection')[0];
-    let textNode = this.get('rawEditor.currentNode');
-    let richNode = this.get('rawEditor').getRichNodeFor(textNode);
-
-    this.get('rawEditor').externalDomUpdate('rdfa backspace', () => {
-      //enter relative space
-      let relPosition = this.absoluteToRelativePosition(richNode, position);
-
-      //the string provided by DOM does not match what is rendered on screen. Basically, a bunch of invisible chars should be removed.
-      let preProcessedDomAndPosition = this.textNodeAndCursorPositionToRendered(textNode, relPosition);
-      //effective backspace handling, i.e. what user expects to see when pressing backspace
-      let processedDomAndPosition = this.removeCharToLeftAndUpdatePosition(preProcessedDomAndPosition.textNode, preProcessedDomAndPosition.position);
-      // post processing
-      let postProcessedDomAndPosition = this.postProcessTextNode(processedDomAndPosition.textNode, processedDomAndPosition.position);
-
-      // if 2 chars left of a text node richt after A RDFANode should be flagged
-      if(this.isAlmostEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval(textNode)){
-        let newNode = this.setDataFlaggedForNode(postProcessedDomAndPosition.textNode);
-        this.get('rawEditor').updateRichNode();
-        let newRichNode = getRichNodeMatchingDomNode(newNode, this.get('richNode'));
-        this.set('rawEditor.currentNode', newRichNode.domNode);
-        this.get('rawEditor').setCurrentPosition(newRichNode.end);
+    this.rawEditor.externalDomUpdate('backspace', () => {
+      const currentTextNode = this.rawEditor.currentNode;
+      var cancelBackspace = false;
+      if (this.nodeIsOnlyChild(currentTextNode) && this.visibleText(currentTextNode).length < 4) {
+        cancelBackspace = this.setDataFlaggedForNode(currentTextNode);
       }
-      //if empty text node, we start cleaning the DOM tree (with specific RDFA flow in mind)
-      else if(this.isEmptyTextNode(postProcessedDomAndPosition.textNode)){
-        let newNode = this.rdfaDomCleanUp(postProcessedDomAndPosition.textNode);
-        this.get('rawEditor').updateRichNode();
-        let newRichNode = getRichNodeMatchingDomNode(newNode, this.get('richNode'));
-        this.set('rawEditor.currentNode', newRichNode.domNode);
-        this.get('rawEditor').setCurrentPosition(newRichNode.end);
-      }
-
-      else {
-        //else we update position and update current position
-        this.get('rawEditor').updateRichNode();
-        let newAbsolutePosition = this.relativeToAbsolutePosition(richNode, postProcessedDomAndPosition.position);
-        this.set('rawEditor.currentNode', postProcessedDomAndPosition.textNode);
-        this.get('rawEditor').setCurrentPosition(newAbsolutePosition);
-
-        //TODO: is it possible that we end up in an empty text node?
-      }
+      if (! cancelBackspace)
+        this.backSpace();
     });
-    return HandlerResponse.create({allowPropagation: false});
+    return HandlerResponse.create({ allowPropagation: false });
   },
 
-  /**
-   * Basically we want to flag text nodes, almost
-   * empty (but not empty) which are first child of RDFA node
-   * e.g.
-   * <h1 property="eli:title">Me</h1> will return true
-   * <h1 property="eli:title" data-flagged-remove='almost-complete'>Me</h1> will return false
-   * @method isAlmostEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval
-   * @param {DomNode} textNode
-   * @return {Bool}
-   * @private
-   */
-  isAlmostEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval(node){
-    return this.isAlmostEmptyFirstChildFromRdfaNode(node) && !node.parentNode.getAttribute('data-flagged-remove');
-  },
-
-  /**
-   * e.g.
-   * <h1 property="eli:title">[EMPTY TEXTNODE]</h1> will return true
-   * <h1 property="eli:title">[A NODE][EMPTY TEXTNODE]</h1> will return false
-   * @method isEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval
-   * @param {DomNode} textNode
-   * @return {Bool}
-   * @private
-   */
-  isEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval(node){
-    return !node.parentNode.getAttribute('data-flagged-remove') && this.isNodeFirstBornRdfaNode(node) && this.isEmptyTextNode(node);
+  nodeIsOnlyChild(node) {
+    return node.parentNode.childNodes.length === 1;
   },
 
   /**
@@ -106,23 +47,47 @@ export default BackspaceHandler.extend({
    * @return {Bool}
    * @private
    */
-  isAlmostEmptyFirstChildFromRdfaNode(node){
-    let isFirstChild = this.isNodeFirstBornRdfaNode(node);
-    return node.nodeType === Node.TEXT_NODE && node.textContent.trim().length < 3 && !this.isEmptyTextNode(node) && isFirstChild;
+  isAlmostEmptyOnlyChildFromRdfaNode(node){
+    const isFirstChild = this.isNodeFirstBornRdfaNode(node);
+    const visibleLength = this.visibleText(this.rawEditor.currentNode).length;
+    return visibleLength < 3 && visibleLength > 0 && isFirstChild;
+  },
+    /**
+   * handles state of parent rdfa node
+   * will return true if backspace needs to be avoided.
+   * @method setDataFlaggedForNode
+   * @param {DomNode} textNode
+   * @return {boolean} can parentNode be removed
+   * @private
+   */
+  setDataFlaggedForNode(node){
+    const parentNode = node.parentNode;
+    if (this.isRdfaNode(parentNode)) {
+      if (! this.isFlaggedForRemoval(parentNode)) {
+        parentNode.setAttribute('data-flagged-remove', 'almost-complete');
+        return false;
+      }
+      if(! this.isFlaggedForRemoval() && this.visibleText(node).length === 0) {
+        parentNode.setAttribute('data-flagged-remove', 'complete');
+        return true;
+      }
+      if(this.isFlaggedForRemoval() && this.visibleText(node).length === 0) {
+        parentNode.setAttribute('data-flagged-remove', 'complete');
+        return false;
+      }
+    }
+    return false;
   },
 
   /**
-   * <h1 property="eli:title">[NODE_TO_CHECK]</h1> will return true
-   * <h1 property="eli:title">[SOME OTHER NODES][NODE_TO_CHECK]</h1> returns false
-   * @method isNodeFirstBornRdfaNode
+   * returns true if the node is flagged for removal
+   * @method isFlaggedForRemoval
    * @param {DomNode} textNode
    * @return {Bool}
    * @private
    */
-  isNodeFirstBornRdfaNode(node){
-    let isParentRdfaNode = this.isRdfaNode(node.parentNode);
-    let firstChild = node.parentNode.firstChild.isSameNode(node);
-    return firstChild && isParentRdfaNode;
+  isFlaggedForRemoval(node){
+    return node.getAttribute('data-flagged-remove') === 'complete';
   },
 
   /**
@@ -135,43 +100,5 @@ export default BackspaceHandler.extend({
   isRdfaNode(node){
     let nodeWalker = NodeWalker.create();
     return isRdfaNode(nodeWalker.processDomNode(node));
-  },
-
-  /**
-   * e.g.
-   * <div> <meta property="eli:title"/>[SOME NODES] </div> will return true
-   * <div>[SOME NODES] <meta property="eli:title"/> </div> will return false
-   * @method isVoidRdfaElementAndHasNextSibling
-   * @param {DomNode} textNode
-   * @return {Bool}
-   * @private
-   */
-  isVoidRdfaElementAndHasNextSibling(node){
-    return this.isRdfaNode(node) && isVoidElement(node) && node.nextSibling;
-  },
-
-  /**
-   * cleans up DOM when pressing backspace and being in an empty node. Takes into account some side RDFA conditions.
-   * @method rdfaDomCleanUp
-   * @param {DomNode} textNode
-   * @return {DomNode} domNode we will use to provide position
-   * @private
-   */
-  rdfaDomCleanUp(domNode){
-    let previousBlockSibling = this.getPreviousBlockSiblingForUser(domNode);
-
-    let isEmptyRdfaOrEmptyTextNode = node => {
-      return this.isParentFlaggedForAlmostRemoval(node) ||
-        this.isEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval(node) ||
-        this.isTextNodeWithContent(node) ||
-        (previousBlockSibling && node.isSameNode(previousBlockSibling) && !isEmptyList(node) && !this.isOnlyLiAndEmpty(node));
-    };
-    let matchingDomNode = this.cleanLeavesToLeftUntil(isEmptyRdfaOrEmptyTextNode, this.isVoidRdfaElementAndHasNextSibling.bind(this), domNode);
-
-    if(this.isParentFlaggedForAlmostRemoval(matchingDomNode) || this.isEmptyFirstChildFromRdfaNodeAndNotFlaggedForRemoval(matchingDomNode)){
-      matchingDomNode = this.setDataFlaggedForNode(matchingDomNode);
-    }
-
-    return matchingDomNode;
   }
 });
