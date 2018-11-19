@@ -27,7 +27,7 @@ export default BackspaceHandler.extend({
         cancelBackspace = this.setDataFlaggedForNode(currentTextNode);
       }
       if (cancelBackspace) {
-        currentTextNode.text = ' ';
+        currentTextNode.textContent = ' ';
       }
       else {
         this.backSpace();
@@ -57,11 +57,10 @@ export default BackspaceHandler.extend({
         return false;
       }
       if(! this.isFlaggedForRemoval(parentNode) && visibleLength === 0) {
-        console.log('removed');
         parentNode.setAttribute('data-flagged-remove', 'complete');
         return true;
       }
-      if(this.isFlaggedForRemoval(parentNode) && this.visibleText(node).length === 0) {
+      if(this.isFlaggedForRemoval(parentNode) && this.visibleText(node).length <= 0) {
         parentNode.setAttribute('data-flagged-remove', 'complete');
         return false;
       }
