@@ -8,6 +8,7 @@
             <div class="editor">
               <div class="editor-commands">
                 {{wu-button label="+" class="annotation-suggestion--trigger" isAlt=true onClick=(action 'triggerHints')}}
+                {{load-monitor editor=eventProcessor.editor}}
               </div>
               {{#content-editable
                 class="editor__paper"

@@ -1,0 +1,11 @@
+{{#if allBusy}}
+  Plugins aan het werken...  {{busyPluginsCount}}/{{pluginsCount}}
+{{else}}
+  {{#if anyPluginBusy}}
+    Plugins aan het werken...  {{busyPluginsCount}}/{{pluginsCount}}
+  {{else if editorBusy}}
+    Aan het laden...
+  {{else}}
+    Klaar met verwerken!
+  {{/if}}
+{{/if}}
