@@ -51,16 +51,16 @@ export default BackspaceHandler.extend({
   setDataFlaggedForNode(node){
     const parentNode = node.parentNode;
     if (this.isRdfaNode(parentNode)) {
-      const visibleLength = this.visibleText(node).length - 1;
+      const visibleLength = this.visibleText(node).length - 1; //length after backspace happened
       if (! this.isFlaggedForRemoval(parentNode) && visibleLength > 0) {
         parentNode.setAttribute('data-flagged-remove', 'almost-complete');
         return false;
       }
-      if(! this.isFlaggedForRemoval(parentNode) && visibleLength === 0) {
+      else if(! this.isFlaggedForRemoval(parentNode) && visibleLength === 0) {
         parentNode.setAttribute('data-flagged-remove', 'complete');
         return true;
       }
-      if(this.isFlaggedForRemoval(parentNode) && this.visibleText(node).length <= 0) {
+      else if(this.isFlaggedForRemoval(parentNode) && this.visibleText(node).length <= 0) {
         parentNode.setAttribute('data-flagged-remove', 'complete');
         return false;
       }

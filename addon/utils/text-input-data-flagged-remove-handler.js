@@ -1,5 +1,6 @@
 import InputTextHandler from '@lblod/ember-contenteditable-editor/utils/text-input-handler';
 import HandlerResponse from '@lblod/ember-contenteditable-editor/utils/handler-response';
+import { isAllWhitespace } from '@lblod/ember-contenteditable-editor/utils/dom-helpers';
 
 export default InputTextHandler.extend({
   /**
@@ -23,6 +24,8 @@ export default InputTextHandler.extend({
     const currentNode = this.rawEditor.currentNode;
     const length = currentNode.length;
     if ( length > 0 && length < 3 ) {
+      if (isAllWhitespace(currentNode))
+        currentNode.textContent = '';
       currentNode.parentNode.setAttribute('data-flagged-remove', 'almost-complete');
     }
     else
