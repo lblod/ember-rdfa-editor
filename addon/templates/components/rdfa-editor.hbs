@@ -1,66 +1,60 @@
 <div class="container-flex--contain editor-container">
-  <div class="grid grid--collapse">
-    <div class="col--12-12">
-      <div class="container-flex--scroll">
-        <div class="grid grid--collapse grid--align-right">
-          <div class="col--8-12">
-            <div class="editor">
-              {{#content-editable
-                class="editor__paper"
-                textInsert=(or eventProcessor.insertText warnNotSetup)
-                textRemove=(or eventProcessor.removeText warnNotSetup)
-                handleFullContentUpdate=(or eventProcessor.analyseAndDispatch warnNotSetup)
-                selectionUpdate=(action (or eventProcessor.selectionChanged warnNotSetup) editor.currentSelection)
-                rawEditorInit=(action 'handleRawEditorInit')
-                elementUpdate=(action (or domUpdate noop) editor.rootNode)
-                externalHandlers=handlers
-                editable=true
-                focused=true
-                yieldHTML=true
-              }}
-              {{{value}}}
-              {{/content-editable}}
+{{!-- 	<div class="toolbar">
+	</div> --}}
+  <div class="container-flex--scroll">
+    <div class="grid grid--collapse grid--align-right">
+      <div class="col--8-12">
+        <div class="editor">
+          {{#content-editable
+            class="editor__paper"
+            textInsert=(or eventProcessor.insertText warnNotSetup)
+            textRemove=(or eventProcessor.removeText warnNotSetup)
+            handleFullContentUpdate=(or eventProcessor.analyseAndDispatch warnNotSetup)
+            selectionUpdate=(action (or eventProcessor.selectionChanged warnNotSetup) editor.currentSelection)
+            rawEditorInit=(action 'handleRawEditorInit')
+            elementUpdate=(action (or domUpdate noop) editor.rootNode)
+            externalHandlers=handlers
+            editable=true
+            focused=true
+            yieldHTML=true
+          }}
+          {{{value}}}
+          {{/content-editable}}
+        </div>
+      </div>
+      <div class="col--2-12">
+        <div class="editor-commands">
+				  <div class="button-group">
+          	{{wu-button label="+" class="annotation-suggestion--trigger" isAlt=true onClick=(action 'triggerHints')}}
+				  </div>
+        </div>
+        <div class="editor-loading-events">
+          {{load-monitor editor=eventProcessor.editor}}
+        </div>
+        <div class="editor-hints">
+          {{#editor-suggested-hints suggestedHints=suggestedHints}}
+          <div class="annotation-suggestion__suggestion">
+            <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
+              <ul>
+                {{#each suggestedHints as |hint|}}
+                <li>{{component hint.component info=hint.info}}</li>
+                {{/each}}
+              </ul>
             </div>
           </div>
-          <div class="col--2-12">
-            <div class="editor-commands">
-						  <div class="button-group">
-              	{{wu-button label="+" class="annotation-suggestion--trigger" isAlt=true onClick=(action 'triggerHints')}}
-						  </div>
-            </div>
-            <div class="editor-loading-events">
-              {{load-monitor editor=eventProcessor.editor}}
-            </div>
-            <div class="editor-hints">
-              {{#editor-suggested-hints suggestedHints=suggestedHints}}
-              <div class="annotation-suggestion__suggestion">
-                <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
-                  <ul>
-                    {{#each suggestedHints as |hint|}}
-                    <li>{{component hint.component info=hint.info}}</li>
-                    {{/each}}
-                  </ul>
-                </div>
-              </div>
-              {{/editor-suggested-hints}}
-              {{#if hasActiveHints}}
-              <div class="annotation-suggestion__suggestion">
-                <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
-                  <ul>
-                    {{#each hintsRegistry.activeHints as |card|}}
-                    <li>{{component card.card info=card.info}}</li>
-                    {{/each}}
-                  </ul>
-                </div>
-              </div>
-              {{/if}}
-              {{yield}}
+          {{/editor-suggested-hints}}
+          {{#if hasActiveHints}}
+          <div class="annotation-suggestion__suggestion">
+            <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
+              <ul>
+                {{#each hintsRegistry.activeHints as |card|}}
+                <li>{{component card.card info=card.info}}</li>
+                {{/each}}
+              </ul>
             </div>
           </div>
-          {{!-- Hide graph until implemented in toolbar <div class="col--5-12">
-            <div class="container-flex--scroll">
-            </div>
-          </div> --}}
+          {{/if}}
+          {{yield}}
         </div>
       </div>
     </div>
