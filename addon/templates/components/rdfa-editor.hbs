@@ -1,24 +1,24 @@
 <div class="container-flex--contain editor-container">
-{{!-- 	<div class="toolbar">
-	</div> --}}
+  {{!-- 	<div class="toolbar">
+	           </div> --}}
   <div class="container-flex--scroll">
     <div class="grid grid--collapse grid--align-right">
       <div class="col--8-12">
         <div class="editor">
           {{#content-editable
-            class="editor__paper"
-            textInsert=(or eventProcessor.insertText warnNotSetup)
-            textRemove=(or eventProcessor.removeText warnNotSetup)
-            handleFullContentUpdate=(or eventProcessor.analyseAndDispatch warnNotSetup)
-            selectionUpdate=(action (or eventProcessor.selectionChanged warnNotSetup) editor.currentSelection)
-            rawEditorInit=(action 'handleRawEditorInit')
-            elementUpdate=(action (or domUpdate noop) editor.rootNode)
-            externalHandlers=handlers
-            editable=true
-            focused=true
-            yieldHTML=true
+             class="editor__paper"
+             textInsert=(or eventProcessor.insertText warnNotSetup)
+             textRemove=(or eventProcessor.removeText warnNotSetup)
+             handleFullContentUpdate=(or eventProcessor.analyseAndDispatch warnNotSetup)
+             selectionUpdate=(action (or eventProcessor.selectionChanged warnNotSetup) editor.currentSelection)
+             rawEditorInit=(action 'handleRawEditorInit')
+             elementUpdate=(action (or domUpdate noop) editor.rootNode)
+             externalHandlers=handlers
+             editable=true
+             focused=true
+             yieldHTML=true
           }}
-          {{{value}}}
+            {{{value}}}
           {{/content-editable}}
         </div>
       </div>
@@ -32,27 +32,17 @@
           {{load-monitor editor=eventProcessor.editor}}
         </div>
         <div class="editor-hints">
-          {{#editor-suggested-hints suggestedHints=suggestedHints}}
-          <div class="annotation-suggestion__suggestion">
-            <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
-              <ul>
-                {{#each suggestedHints as |hint|}}
-                <li>{{component hint.component info=hint.info}}</li>
-                {{/each}}
-              </ul>
-            </div>
-          </div>
-          {{/editor-suggested-hints}}
+          {{editor-suggested-hints suggestedHints=suggestedHints}}
           {{#if hasActiveHints}}
-          <div class="annotation-suggestion__suggestion">
-            <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
-              <ul>
-                {{#each hintsRegistry.activeHints as |card|}}
-                <li>{{component card.card info=card.info}}</li>
-                {{/each}}
-              </ul>
+            <div class="annotation-suggestion__suggestion">
+              <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
+                <ul>
+                  {{#each hintsRegistry.activeHints as |card|}}
+                    <li>{{component card.card info=card.info}}</li>
+                  {{/each}}
+                </ul>
+              </div>
             </div>
-          </div>
           {{/if}}
           {{yield}}
         </div>
