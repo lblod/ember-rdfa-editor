@@ -18,6 +18,15 @@ Next, generate the configuration file for the editor-plugins.
 ember generate @lblod/ember-rdfa-editor-plugin-system-dispatcher
 ```
 
+## Compatibility
+
+* Ember.js v2.18 or above
+* Ember CLI v2.13 or above
+
+## Contributing
+
+See the [Contributing](CONTRIBUTING.md) guide for details.
+
 ## Plugins
 ### Adding a plugin to the editor
 To enrich the editor functionality with rdfa-editor-plugins, execute the following steps:
@@ -68,7 +77,6 @@ __Execute as a restartable task__
 
 ```javascript
 export default Service.extend({
-
   execute: task(function * (hrId, contexts, hintsRegistry, editor) {
     // update hints in the hints registry
   }).restartable()
