@@ -10,7 +10,7 @@ import HintsRegistry from '../utils/hints-registry';
 import EventProcessor from '../utils/event-processor';
 import forgivingAction from '../utils/forgiving-action';
 import RdfaBackspaceHandler from '../utils/rdfa-backspace-handler';
-import RdfaContextScanner from '../utils/rdfa-context-scanner';
+import { analyse as analyseRdfa } from '@lblod/marawa/rdfa-context-scanner';
 import TextInputDataFlaggedRemoveHandler from '../utils/text-input-data-flagged-remove-handler';
 
 /**
@@ -208,8 +208,7 @@ export default Component.extend({
         return;
       }
       const currentRichNode = this.editor.getRichNodeFor(currentNode);
-      const scanner = RdfaContextScanner.create({});
-      const contexts = scanner.analyse(rootNode, [currentRichNode.start, currentRichNode.end]);
+      const contexts = analyseRdfa(rootNode, [currentRichNode.start, currentRichNode.end]);
       if (contexts && contexts.length) {
         const context = contexts[0];
         const hints = await this.rdfaEditorDispatcher.requestHints(this.profile, context, this.editor);

@@ -1,6 +1,6 @@
 import { assert } from '@ember/debug';
 import EmberObject from '@ember/object';
-import RdfaContextScanner from '../utils/rdfa-context-scanner';
+import RdfaContextScanner from '@lblod/marawa/rdfa-context-scanner';
 import HintsRegistry from '../utils/hints-registry';
 import { A } from '@ember/array';
 import { isEmpty } from '@ember/utils';
@@ -67,7 +67,7 @@ export default EmberObject.extend({
       this.set('registry', HintsRegistry.create());
     }
     if (! this.get('scanner')) {
-      this.set('scanner', RdfaContextScanner.create());
+      this.set('scanner', new RdfaContextScanner());
     }
     if (! this.get('profile')) {
       this.set('profile', 'default');
