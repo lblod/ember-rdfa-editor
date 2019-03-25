@@ -289,7 +289,7 @@ export default EmberObject.extend({
    */
   batchProcessHighlightsUpdates: task(function* (){
     //Honestly, I am not fully sure why, but it helps
-    timeout(200);
+    yield timeout(200);
 
     // The hints registry might not be updated by the editor yet,
     // so wait for the editor to inform hintsregistry of the updates on the underlying DOM, so the hint registry
