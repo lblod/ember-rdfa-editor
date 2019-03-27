@@ -1,6 +1,6 @@
 import { assert } from '@ember/debug';
 import EmberObject from '@ember/object';
-import RdfaContextScanner from '@lblod/marawa/rdfa-context-scanner';
+import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 import HintsRegistry from '../utils/hints-registry';
 import { A } from '@ember/array';
 import { isEmpty } from '@ember/utils';
@@ -34,12 +34,6 @@ export default EmberObject.extend({
   modifiedRange: null,
 
   /**
-   * @property scanner
-   * @type RdfaContextScanner
-   */
-  scanner: null,
-
-  /**
    * @property editor
    * @type RdfaEditor
    */
@@ -65,9 +59,6 @@ export default EmberObject.extend({
 
     if (! this.get('registry')) {
       this.set('registry', HintsRegistry.create());
-    }
-    if (! this.get('scanner')) {
-      this.set('scanner', new RdfaContextScanner());
     }
     if (! this.get('profile')) {
       this.set('profile', 'default');
@@ -171,7 +162,8 @@ export default EmberObject.extend({
   analyseAndDispatch: scoped( function(extraInfo = []) {
     const node = this.get('editor').get('rootNode');
     if (! isEmpty(this.modifiedRange)) {
-      const contexts = this.get('scanner').analyse(node, this.modifiedRange);
+      const contexts = analyse(node, this.modifiedRange);
+
       this.get('dispatcher').dispatch(
         this.get('profile'),
         this.get('registry').currentIndex(),
