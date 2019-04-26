@@ -1,11 +1,7 @@
-<div class="container-flex--contain">
-  {{#if this.editor}}
-    {{editor-toolbar contentEditable=editor}}
-  {{/if}}
-</div>
+{{#if this.editor}}
+  {{editor-toolbar contentEditable=editor}}
+{{/if}}
 <div class="container-flex--contain editor-container">
-  {{!-- 	<div class="toolbar">
-	           </div> --}}
   <div class="container-flex--scroll">
     <div class="grid grid--collapse grid--align-right">
       <div class="col--8-12">
@@ -29,9 +25,9 @@
       </div>
       <div class="col--2-12">
         <div class="editor-commands">
-				  <div class="button-group">
-          	{{wu-button label="+" class="annotation-suggestion--trigger" isAlt=true onClick=(action 'triggerHints')}}
-				  </div>
+          <div class="button-group">
+            {{wu-button label="+" class="annotation-suggestion--trigger" isAlt=true onClick=(action 'triggerHints')}}
+          </div>
         </div>
         <div class="editor-loading-events">
           {{load-monitor editor=eventProcessor.editor}}
