@@ -1,6 +1,7 @@
 <div class="grid">
   <div class="col--8-12 toolbar__styling-tools">
-    <div class="button-group u-display-inline-block">
+
+    {{!-- <div class="button-group u-display-inline-block">
       {{#wu-button size="small" isNarrow=true isAlt=true onClick=null}}
         Zoom 125% <i class="fa fa-angle-down"></i>
       {{/wu-button}}
@@ -14,13 +15,18 @@
         <i class="fa fa-scissors"></i>
       {{/wu-button}}
     </div>
+    --}}
+    
     <div class="button-group u-display-inline-block">
       {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "undo")}}
         <i class="fa fa-rotate-left"></i>
       {{/wu-button}}
-      {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
-        <i class="fa fa-rotate-right"></i>
-      {{/wu-button}}
+
+      {{!-- 
+        {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+          <i class="fa fa-rotate-right"></i>
+        {{/wu-button}}
+      --}}
     </div>
     <div class="button-group u-display-inline-block">
       {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "insertUL")}}
@@ -36,7 +42,7 @@
         <i class="fa fa-dedent"></i>
       {{/wu-button}}
     </div>
-    <div class="button-group u-display-inline-block">
+{{!--<div class="button-group u-display-inline-block">
       {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
         <i class="fa fa-link"></i>
       {{/wu-button}}
@@ -49,6 +55,7 @@
         <i class="fa fa-code"></i>
       {{/wu-button}}
     </div>
+    --}}
   </div>
   <div class="col--4-12 u-align-right">
     <div class="button-group">
