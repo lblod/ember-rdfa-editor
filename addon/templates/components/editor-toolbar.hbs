@@ -14,7 +14,7 @@
     {{/wu-button}}
   </div>
   <div class="button-group u-display-inline-block">
-    {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+    {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "undo")}}
       <i class="fa fa-rotate-left"></i>
     {{/wu-button}}
     {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
@@ -22,16 +22,16 @@
     {{/wu-button}}
   </div>
   <div class="button-group u-display-inline-block">
-    {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+    {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "insertUL")}}
       <i class="fa fa-list-ul"></i>
     {{/wu-button}}
-    {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+    {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "insertOL")}}
       <i class="fa fa-list-ol"></i>
     {{/wu-button}}
-    {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+    {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "insertIndent")}}
       <i class="fa fa-indent"></i>
     {{/wu-button}}
-    {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+    {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "insertUnindent")}}
       <i class="fa fa-dedent"></i>
     {{/wu-button}}
   </div>
