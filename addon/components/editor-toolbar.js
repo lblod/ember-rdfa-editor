@@ -3,5 +3,5 @@ import layout from '../templates/components/editor-toolbar';
 
 export default Component.extend({
   layout,
-  classNames: ["toolbar", "grid"]
+  classNames: ["toolbar"]
 });
