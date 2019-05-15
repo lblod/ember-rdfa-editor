@@ -1,8 +1,8 @@
 import { A } from '@ember/array';
 import Component from '@ember/component';
 import layout from '../templates/components/rdfa-context-debugger';
-import { computed } from '@ember/object';
 import { analyse } from '@lblod/marawa/rdfa-context-scanner';
+import { debug } from '@ember/debug';
 
 /**
  * Debugger component for the RDFa context of DOM nodes
@@ -24,19 +24,25 @@ export default Component.extend({
    */
   editor: null,
 
-  /**
-   * The calculated RDFa contexts per region
-   *
-   * @property contexts
-   * @type Ember.Array
-   *
-   * @private
-   */
-  contexts: null,
+  blocks: null,
+  selections: null,
+  selectOptions: null,
+
+  scanStart: 0,
+  scanEnd: 1000,
+  selectStart: 0,
+  selectEnd: 1000,
+  selectScopes: Object.freeze(['auto', 'inner', 'outer']),
 
   init() {
     this._super(...arguments);
-    this.set('contexts', A());
+    this.resetResults();
+    this.set('selectOptions', { scope: 'inner' });
+  },
+
+  resetResults() {
+    this.set('blocks', A());
+    this.set('selections', A());
   },
 
   actions: {
@@ -51,10 +57,12 @@ export default Component.extend({
      * @private
      */
     analyse(start, end) {
+      this.resetResults();
       const node = this.get('editor.rootNode');
 
-      const contexts = analyse(node, [start, end]);
-      this.set('contexts', contexts);
+      const blocks = analyse(node, [start, end]);
+      debug('Finished calculating blocks');
+      this.set('blocks', blocks);
     },
 
     /**
@@ -68,6 +76,21 @@ export default Component.extend({
      */
     highlight(region){
       this.get('editor').highlightRange(region[0], region[1]);
+    },
+
+    selectContext(start, end, options) {
+      this.resetResults();
+
+      const splitValues = function(stringValue) {
+        return (stringValue || "").split('\n').map(s => s.trim()).filter(s => s.length);
+      };
+
+      options.typeof = splitValues(options.typeofString);
+      options.property = splitValues(options.propertyString);
+
+      const selections = this.editor.selectContext([start, end], options);
+      debug('Finished selecting contexts');
+      this.set('selections', selections);
     }
   }
 });
