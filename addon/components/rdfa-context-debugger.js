@@ -2,6 +2,7 @@ import { A } from '@ember/array';
 import Component from '@ember/component';
 import layout from '../templates/components/rdfa-context-debugger';
 import { computed } from '@ember/object';
+import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 
 /**
  * Debugger component for the RDFa context of DOM nodes
@@ -24,16 +25,6 @@ export default Component.extend({
   editor: null,
 
   /**
-   * RDFa Context scanner to use for debugging
-   *
-   * @property contextScanner
-   * @type RdfaContextScanner
-   *
-   * @public
-   */
-  contextScanner: null,
-
-  /**
    * The calculated RDFa contexts per region
    *
    * @property contexts
@@ -42,16 +33,6 @@ export default Component.extend({
    * @private
    */
   contexts: null,
-
-  /**
-   * @property calcRegionDisabled
-   * @type boolean
-   *
-   * @private
-   */
-  calcRegionDisabled: computed('start', 'end', function() {
-    return this.get('start') == null || this.get('end') == null;
-  }),
 
   init() {
     this._super(...arguments);
@@ -72,7 +53,7 @@ export default Component.extend({
     analyse(start, end) {
       const node = this.get('editor.rootNode');
 
-      const contexts = this.get('contextScanner').analyse(node, [start, end]);
+      const contexts = analyse(node, [start, end]);
       this.set('contexts', contexts);
     },
 

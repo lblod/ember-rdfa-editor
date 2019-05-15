@@ -6,3 +6,11 @@
 pre {
   background-color: lightgrey;
 }
+
+[data-editor-highlight="true"] {
+	background-color: #ffe615;
+}
+
+[data-editor-highlight="true"]:empty {
+	display: none;
+}

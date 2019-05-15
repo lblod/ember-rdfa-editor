@@ -2,14 +2,13 @@ import Controller from '@ember/controller';
 
 export default Controller.extend({
   isEditable: true,
-  domTree:null,
   value: `
   <div resource="#"
        typeof="foaf:Document">
     <div typeof="Zitting" resource="#Zitting">
       <span property="heeftNotulen" resource="#"></span>
       <h1 class="h1">Agenda</h1>
-      <div>Gelet op <mark>het</mark> gemeentedecreet</div>
+      <div>Gelet op <span>het gemeentedecreet</span></div>
       <div property="behandelt" resource="#Agendapunt1" typeof="Agendapunt">
         <span property="geplandOpenbaar" datatype="xsd:boolean" content="true">Gepland openbaar:</span>
         <span property="dc:title">
@@ -126,9 +125,6 @@ export default Controller.extend({
   actions: {
     debug(info) {
       this.set('debug', info);
-    },
-    domUpdate(element) {
-      this.set('domTree', element);
     },
     rdfaEditorInit(rawEditor) {
       this.set('rawEditor', rawEditor);
