@@ -11,19 +11,7 @@ export default Component.extend({
     const range = this.contentEditable.currentSelection;
     const selection = this.contentEditable.selectHighlight(range);
     if (range[0]==range[1] && this.contentEditable.currentNode) {
-      // collapsed range, toggling property at cursor position requires more cursor handling atm
-      const wasEnabled = property.enabledAt(this.contentEditable.getRichNodeFor(this.contentEditable.currentNode));
-      this.contentEditable.toggleProperty(selection, property);
-      if (wasEnabled) {
-        const newSelection = this.contentEditable.selectHighlight(range);
-        const disabledNode = newSelection.selections.find( (s) => ! property.enabledAt(s.richNode));
-
-
-        if (disabledNode) {
-          this.contentEditable.setCarret(disabledNode.richNode.domNode, 0);
-        }
-      }
-      this.contentEditable.setCurrentPosition(range[1]);
+      this.contentEditable.togglePropertyAtCurrentPosition(property);
     }
     else {
       // selection
