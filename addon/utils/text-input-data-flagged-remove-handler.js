@@ -12,11 +12,16 @@ export default InputTextHandler.extend({
    */
   isHandlerFor(){
     const currentNode = this.rawEditor.currentNode;
-    const parentNode = currentNode.parentNode;
-    return this._super(...arguments) &&
-      currentNode.length < 4 &&
-      parentNode &&
-      parentNode.getAttribute('data-flagged-remove');
+    if (currentNode) {
+      const parentNode = currentNode.parentNode;
+      return this._super(...arguments) &&
+        currentNode.length < 4 &&
+        parentNode &&
+        parentNode.getAttribute('data-flagged-remove');
+    }
+    else {
+      return false;
+    }
   },
 
   handleEvent(){
