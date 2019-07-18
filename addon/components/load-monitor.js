@@ -3,7 +3,7 @@ import Component from '@ember/component';
 import layout from '../templates/components/load-monitor';
 import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
-import { length, filter } from 'ember-awesome-macros/array';
+import { length } from 'ember-awesome-macros/array';
 import { mapBy } from '@ember/object/computed';
 
 export default Component.extend({
