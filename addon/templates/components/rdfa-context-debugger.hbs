@@ -1,20 +1,70 @@
 <div class="rdfa-context-debugger-debug-panel">
   <h3 class="h3">RDFa context debugger</h3>
 
-  Scan region van {{input type=number value=start}} tot {{input type=number value=end}}
-  {{wu-button onClick=(action "analyse" start end) disabled=calcRegionDisabled label="Bereken context"}}
+  <div>
+    <h4 class="h4">Context scanner</h4>
+    <div>Scan region van {{input type="number" value=scanStart}} tot {{input type="number" value=scanEnd}}</div>
+    <div>{{wu-button onClick=(action "analyse" scanStart scanEnd) label="Bereken context"}}</div>
+  </div>
 
-  <h4 class="h4">RDFa context</h4>
-  {{#each contexts as |context|}}
-    <h5 class="h5">[{{context.region}}] "{{context.text}}" </h5>
-    {{wu-button onClick=(action "highlight" context.region) label="Highlight"}}
-    <pre>
-      {{#each context.context as |statement|}}
+  <div>
+    <h4 class="h4">Context selection</h4>
+    <div>Selecteer context van {{input type="number" value=selectStart}} tot {{input type="number" value=selectEnd}}</div>
+    <div>
+      met scope
+      <select name="scopes" onchange={{action (mut selectOptions.scope) value="target.value"}}>
+        {{#each selectScopes as |scope|}}
+          <option value="{{scope}}" selected={{if (eq scope selectOptions.scope) 'true'}}>{{scope}}</option>
+        {{/each}}
+      </select>
+      en filter:
+      <div>
+        <label>Resource:</label>
+        {{input value=selectOptions.resource class="uri"}}
+      </div>
+      <div>
+        <label>Typeof (1 per line)</label>
+        {{textarea value=selectOptions.typeofString cols="300" rows="5"}}
+      </div>
+      <div>
+        <label>Property (1 per line)</label>
+        {{textarea value=selectOptions.propertyString cols="300" rows="5"}}
+      </div>
+      <div>
+        <label>Datatype:</label>
+        {{input value=selectOptions.datatype class="uri"}}
+      </div>
+    </div>
+    <div>
+      {{wu-button onClick=(action "selectContext" selectStart selectEnd selectOptions) label="Selecteer context"}}
+    </div>
+  </div>
+
+  {{#if blocks}}
+    <h4 class="h4">RDFa context</h4>
+    {{#each blocks as |block|}}
+      <h5 class="h5">[{{block.region}}] "{{block.text}}" {{wu-button isSmall=true onClick=(action "highlight" block.region) label="Highlight"}}</h5>
+      <pre>
+        {{#each block.context as |statement|}}
       &lt;{{statement.subject}}&gt; {{#if (eq statement.predicate 'a')}}{{statement.predicate}}{{else}}&lt;{{statement.predicate}}&gt;{{/if}} {{#if (is-uri statement.object)}}&lt;{{statement.object}}&gt;{{else}}"{{statement.object}}"{{/if}}{{#if statement.datatype}}^^&lt;{{statement.datatype}}&gt;{{/if}}
-      {{/each}}
-    </pre>
-    <hr>
+
+        {{/each}}
+      </pre>
+      <hr>
+    {{/each}}
+  {{else if selections}}
+    <h4 class="h4">RDFa selections</h4>
+    {{#each selections as |selection|}}
+      <h5 class="h5">[{{selection.region}}] "{{selection.richNode.domNode.textContent}}" {{wu-button isSmall=true onClick=(action "highlight" selection.region) label="Highlight"}}</h5>
+      <pre>
+        {{#each selection.context as |statement|}}
+      &lt;{{statement.subject}}&gt; {{#if (eq statement.predicate 'a')}}{{statement.predicate}}{{else}}&lt;{{statement.predicate}}&gt;{{/if}} {{#if (is-uri statement.object)}}&lt;{{statement.object}}&gt;{{else}}"{{statement.object}}"{{/if}}{{#if statement.datatype}}^^&lt;{{statement.datatype}}&gt;{{/if}}
+
+        {{/each}}
+      </pre>
+    {{/each}}
+
   {{else}}
-    <p>Selecteer een region of klik op een node om de RDFa context te berekenen</p>
-  {{/each}}
+    Geen resultaten
+  {{/if}}
 </div>

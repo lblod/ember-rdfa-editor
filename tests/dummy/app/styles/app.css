@@ -6,3 +6,19 @@
 pre {
   background-color: lightgrey;
 }
+
+[data-editor-highlight="true"] {
+	background-color: #ffe615;
+}
+
+[data-editor-highlight="true"]:empty {
+	display: none;
+}
+
+input.uri {
+  width: 400px;
+}
+
+input[type="number"] {
+  width: 100px;
+}
