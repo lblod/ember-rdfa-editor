@@ -43,7 +43,7 @@
   {{#if blocks}}
     <h4 class="h4">RDFa context</h4>
     {{#each blocks as |block|}}
-      <h5 class="h5">[{{block.region}}] "{{block.text}}" {{wu-button isSmall=true onClick=(action "highlight" block.region) label="Highlight"}}</h5>
+      <h5 class="h5">[{{block.region}}] "{{block.text}}" {{wu-button size="small" onClick=(action "highlight" block.region) label="Highlight"}}</h5>
       <pre>
         {{#each block.context as |statement|}}
       &lt;{{statement.subject}}&gt; {{#if (eq statement.predicate 'a')}}{{statement.predicate}}{{else}}&lt;{{statement.predicate}}&gt;{{/if}} {{#if (is-uri statement.object)}}&lt;{{statement.object}}&gt;{{else}}"{{statement.object}}"{{/if}}{{#if statement.datatype}}^^&lt;{{statement.datatype}}&gt;{{/if}}
@@ -55,7 +55,7 @@
   {{else if selections}}
     <h4 class="h4">RDFa selections</h4>
     {{#each selections as |selection|}}
-      <h5 class="h5">[{{selection.region}}] "{{selection.richNode.domNode.textContent}}" {{wu-button isSmall=true onClick=(action "highlight" selection.region) label="Highlight"}}</h5>
+      <h5 class="h5">[{{selection.region}}] "{{selection.richNode.domNode.textContent}}" {{wu-button size="small" onClick=(action "highlight" selection.region) label="Highlight"}}</h5>
       <pre>
         {{#each selection.context as |statement|}}
       &lt;{{statement.subject}}&gt; {{#if (eq statement.predicate 'a')}}{{statement.predicate}}{{else}}&lt;{{statement.predicate}}&gt;{{/if}} {{#if (is-uri statement.object)}}&lt;{{statement.object}}&gt;{{else}}"{{statement.object}}"{{/if}}{{#if statement.datatype}}^^&lt;{{statement.datatype}}&gt;{{/if}}
