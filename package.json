@@ -27,7 +27,7 @@
     "@lblod/ember-contenteditable-editor": "^0.23.1",
     "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.5.8",
     "@lblod/ember-vo-webuniversum": "^0.21.3",
-    "@lblod/marawa": "^0.3.3",
+    "@lblod/marawa": "^0.4.1",
     "ember-awesome-macros": "^3.1.0",
     "ember-cli-babel": "^7.7.3",
     "ember-cli-htmlbars": "^3.0.1",
