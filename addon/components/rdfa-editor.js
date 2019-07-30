@@ -203,18 +203,20 @@ export default Component.extend({
     async triggerHints() {
       const rootNode = this.editor.rootNode;
       const currentNode = this.editor.currentNode;
-      if (!currentNode) {
-        warn('currentNode not set', {id: 'rdfa-editor.state-error'});
-        return;
+      let region = [];
+      if (currentNode) {
+        const currentRichNode = this.editor.getRichNodeFor(currentNode);
+        region = currentRichNode.region;
+      } else {
+        region = this.editor.currentSelection;
       }
-      const currentRichNode = this.editor.getRichNodeFor(currentNode);
-      const contexts = analyseRdfa(rootNode, [currentRichNode.start, currentRichNode.end]);
+      const contexts = analyseRdfa(rootNode, region);
       if (contexts && contexts.length) {
         const context = contexts[0];
         const hints = await this.rdfaEditorDispatcher.requestHints(this.profile, context, this.editor);
         this.set('suggestedHints', hints);
       } else {
-        debug('no context for currentNode');
+        debug('No RDFa blocks found in currentNode. Cannot hint suggestions.');
       }
 
     }
