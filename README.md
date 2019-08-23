@@ -13,8 +13,6 @@ The editor can be enriched with plugins to give hints for specific content enter
 ember install @lblod/ember-rdfa-editor
 ```
 
-```
-
 ## Compatibility
 
 * Ember.js v3.4 or above
