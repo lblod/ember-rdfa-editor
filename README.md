@@ -13,9 +13,6 @@ The editor can be enriched with plugins to give hints for specific content enter
 ember install @lblod/ember-rdfa-editor
 ```
 
-Next, generate the configuration file for the editor-plugins.
-```
-ember generate @lblod/ember-rdfa-editor-plugin-system-dispatcher
 ```
 
 ## Compatibility
