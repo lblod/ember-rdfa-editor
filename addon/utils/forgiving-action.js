@@ -2,8 +2,8 @@
  * Wrapping function to call closure actions and be tolerant if there is no action
  * assigned to it.
  *
+ * @module rdfa-editor
  * @method forgivingAction
- *
  * @param {Object} context context where the potential action should be defined
  * @param {String} name The name of the action
  *

@@ -6,7 +6,7 @@ import { task, timeout } from 'ember-concurrency';
 /**
 * Bookkeeping of the editor hints
 *
-* @module editor-core
+* @module rdfa-editor
 * @class HintsRegistry
 * @constructor
 * @extends EmberObject

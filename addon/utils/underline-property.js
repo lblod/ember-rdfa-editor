@@ -1,5 +1,13 @@
 import EditorProperty from '@lblod/ember-contenteditable-editor/utils/editor-property';
 
+/**
+ * Editor property that represents underlined text.
+ * @module rdfa-editor
+ * @class UnderlineProperty
+ * @constructor
+ * @extends EditorProperty
+ * @public
+ */
 class UnderlineProperty extends EditorProperty {
   constructor({tagName = 'u', newContext = true}) {
     super({tagName, newContext});

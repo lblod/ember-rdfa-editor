@@ -39,7 +39,7 @@ const flatten = function(arr, result = []) {
 /**
  * Document structure component
  *
- * @module editor-core
+ * @module rdfa-editor
  * @class DocumentStructureComponent
  * @extends Component
  */

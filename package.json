@@ -24,7 +24,7 @@
     "test:all": "ember try:each"
   },
   "dependencies": {
-    "@lblod/ember-contenteditable-editor": "^0.24.0",
+    "@lblod/ember-contenteditable-editor": "^0.24.1",
     "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.5.8",
     "@lblod/ember-vo-webuniversum": "^0.21.3",
     "@lblod/marawa": "^0.4.1",
@@ -32,8 +32,8 @@
     "ember-cli-babel": "^7.7.3",
     "ember-cli-htmlbars": "^3.0.1",
     "ember-cli-htmlbars-inline-precompile": "^2.1.0",
-    "ember-truth-helpers": "^2.0.0",
-    "ember-concurrency": "^1.0.0"
+    "ember-concurrency": "^1.0.0",
+    "ember-truth-helpers": "^2.0.0"
   },
   "devDependencies": {
     "@ember/optional-features": "^0.7.0",

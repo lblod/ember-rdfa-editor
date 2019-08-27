@@ -1,12 +1,15 @@
 # @lblod/ember-rdfa-editor
-Addon wrapping an RDFa editor with a public API.
-
-The addon currently consists of the following components:
-* RDFa editor
-* Highlight registry
-* RDFa context scanner
-
+Emberjs addon that provides an RDFa aware rich text editor. This component forms the core of say editor.
 The editor can be enriched with plugins to give hints for specific content entered in the editor (e.g. dates, templates, citations, etc.). The hints will typically insert RDFa annotations in the content.
+
+Main features:
+
+ * toolbar for bold/italic/lists/indentation
+ * support for plugins
+ * support for plugin profiles
+ * hints registry
+ * RDFa aware
+
 
 ## Installation
 ```

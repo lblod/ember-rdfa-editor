@@ -3,9 +3,9 @@ import layout from '../templates/components/hints-registry-debugger';
 import { computed } from '@ember/object';
 
 /**
-* Debugger component for the Hints Registry
+* Debugger component for the {{#crossLink "HintsRegistry"}}Hints Registry{{/crossLink}}
 *
-* @module editor-core
+* @module rdfa-editor
 * @class HintsRegistryDebugger
 * @extends Component
 */

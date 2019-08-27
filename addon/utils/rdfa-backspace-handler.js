@@ -6,7 +6,7 @@ import NodeWalker from '@lblod/ember-contenteditable-editor/utils/node-walker';
 /**
  * Rdfa Backspace Handler, a event handler to handle backspaces while taking rdfa into account
  *
- * @module editor-core
+ * @module rdfa-editor
  * @class RdfaBackspaceHandler
  * @constructor
  * @extends EmberObject
