@@ -8,9 +8,9 @@ export default Controller.extend({
     <div typeof="Zitting" resource="#Zitting">
       <span property="heeftNotulen" resource="#"></span>
       <h1 class="h1">Agenda</h1>
-      <span property="dc:title">Dit is een titel</span>
+      <span property="dc:title foaf:name">Dit is een titel</span>
       <div>Gelet op <span>het gemeentedecreet</span></div>
-      <div property="behandelt" resource="#Agendapunt1" typeof="Agendapunt">
+      <div prefix="ext: http://mu.semte.ch/vocabularies/ext/" property="behandelt ext:behandelt" resource="#Agendapunt1" typeof="Agendapunt">
         <span property="geplandOpenbaar" datatype="xsd:boolean" content="true">Gepland openbaar:</span>
         <span property="dc:title">
           <span property="Agendapunt.type" resource="Kennisname">Kennisname</span> ontslag burgemeester
@@ -21,14 +21,14 @@ export default Controller.extend({
          <span> a nested span no rdfa here </span>
       </div>
       <span> a non-nested span without rdfa</span>
-        <ul class="bullet-list">
-          <li>List Item 1</li>
+        <ul rel="dc:subject" class="bullet-list">
+          <li rev="foaf:name" resource="#Subject1">List Item 1</li>
           <li>List Item 2</li>
-          <li>List Item 3</li>
+          <li href="#Subject3">List Item 3</li>
         </ul>
         <h4 class="h4">Hello world</h4>
-        <ul>
-          <li style="display: inline;">Inline list Item 1,</li>
+        <ul about="#Book" rel="dc:theme">
+          <li resource="#Fiction" style="display: inline;">Inline list Item 1,</li>
           <li style="display: inline;">Inline list Item 2,</li>
           <li style="display: inline;" resource="#Baz" typeof="mandaat:Baz">Inline list Item 3 with different context</li>
         </ul>
