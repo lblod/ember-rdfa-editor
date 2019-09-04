@@ -194,6 +194,19 @@ export default EmberObject.extend({
   },
 
   /**
+   * Returns hints from plugin
+   *
+   * @method getHintsFromPlugin
+   *
+   * @return {Array} Array of hints
+   *
+   * @public
+   */
+  getHintsFromPlugin(who) {
+    return this.get('registry').filter( entry => entry.who == who );
+  },
+
+  /**
    * Removes hints at an exact location.
    *
    * @method removeHintsAtLocation
