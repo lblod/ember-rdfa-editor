@@ -7,7 +7,7 @@ import { debug } from '@ember/debug';
 /**
  * Debugger component for the RDFa context of DOM nodes
  *
- * @module editor-core
+ * @module rdfa-editor
  * @class RdfaContextDebugger
  * @extends Component
  */

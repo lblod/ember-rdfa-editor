@@ -14,9 +14,21 @@ import { analyse as analyseRdfa } from '@lblod/marawa/rdfa-context-scanner';
 import TextInputDataFlaggedRemoveHandler from '../utils/text-input-data-flagged-remove-handler';
 
 /**
+ * RDFa editor
+ *
+ * This module contains all classes and components provided by the @lblod/ember-rdfa-editor addon.
+ * The main entrypoint is the {{#crossLink "RdfaEditorComponent"}}{{/crossLink}}.
+ * @module rdfa-editor
+ * @main rdfa-editor
+ */
+
+/**
 * RDFa editor component
 *
-* @module editor-core
+* This component wraps around a {{#crossLink "ContentEditableComponent"}}{{/crossLink}}
+* and provides an architecture to interact with the document through plugins.
+* {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
+* @module rdfa-editor
 * @class RdfaEditorComponent
 * @extends Component
 */
@@ -116,6 +128,7 @@ export default Component.extend({
    * before the editor itself has been set up.  When this happens, we
    * can't dispatch the action to the correct component.
    *
+   * @method warnNotSetup
    * @private
    */
   warnNotSetup(){
@@ -126,6 +139,7 @@ export default Component.extend({
    * This is called in cases where an optional action is triggered
    * from the frontend.  This noop can be called as a fallback in case no operation
    * needs to occur if the action is not defined.
+   * @method noop
    */
   noop(){ return; },
 

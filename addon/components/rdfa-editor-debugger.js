@@ -2,10 +2,11 @@ import { A } from '@ember/array';
 import Component from '@ember/component';
 import layout from '../templates/components/rdfa-editor-debugger';
 
+
 /**
 * Debugger component for the RDFa Editor
 *
-* @module editor-core
+* @module rdfa-editor
 * @class RdfaEditorDebugger
 * @extends Component
 */

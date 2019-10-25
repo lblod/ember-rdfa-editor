@@ -6,7 +6,7 @@ import { task, timeout } from 'ember-concurrency';
 /**
 * Bookkeeping of the editor hints
 *
-* @module editor-core
+* @module rdfa-editor
 * @class HintsRegistry
 * @constructor
 * @extends EmberObject
@@ -191,6 +191,19 @@ export default EmberObject.extend({
     }
 
     return this.get('registry').filter(condition);
+  },
+
+  /**
+   * Returns hints from plugin
+   *
+   * @method getHintsFromPlugin
+   *
+   * @return {Array} Array of hints
+   *
+   * @public
+   */
+  getHintsFromPlugin(who) {
+    return this.get('registry').filter( entry => entry.who == who );
   },
 
   /**

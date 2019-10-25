@@ -9,7 +9,7 @@ import scoped from '../utils/scoped-method';
 /**
 * Event processor orchastrating the hinting based on incoming editor events
 *
-* @module editor-core
+* @module rdfa-editor
 * @class EventProcessor
 * @constructor
 * @extends EmberObject

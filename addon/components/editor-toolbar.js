@@ -3,6 +3,14 @@ import layout from '../templates/components/editor-toolbar';
 import boldProperty from '../utils/bold-property';
 import italicProperty from '../utils/italic-property';
 import underlineProperty from '../utils/underline-property';
+
+
+/**
+ * RDFa editor toolbar component
+ * @module rdfa-editor
+ * @class RdfaEditorToolbarComponent
+ * @extends Component
+ */
 export default Component.extend({
   layout,
   classNames: ["toolbar"],
