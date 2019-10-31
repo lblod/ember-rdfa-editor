@@ -24,7 +24,7 @@
     "test:all": "ember try:each"
   },
   "dependencies": {
-    "@lblod/ember-contenteditable-editor": "^0.26.6",
+    "@lblod/ember-contenteditable-editor": "^0.26.7",
     "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.5.8",
     "@lblod/ember-vo-webuniversum": "^0.21.3",
     "@lblod/marawa": "^0.5.2",
