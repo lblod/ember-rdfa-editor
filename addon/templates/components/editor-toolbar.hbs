@@ -2,20 +2,20 @@
   <div class="col--8-12 toolbar__styling-tools">
 
     {{!-- <div class="button-group u-display-inline-block">
-      {{#wu-button size="small" isNarrow=true isAlt=true onClick=null}}
-        Zoom 125% <i class="fa fa-angle-down"></i>
-      {{/wu-button}}
-      {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
-        <i class="fa fa-paste"></i>
-      {{/wu-button}}
-      {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
-        <i class="fa fa-copy"></i>
-      {{/wu-button}}
-      {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
-        <i class="fa fa-scissors"></i>
-      {{/wu-button}}
-    </div>
-    --}}
+         {{#wu-button size="small" isNarrow=true isAlt=true onClick=null}}
+         Zoom 125% <i class="fa fa-angle-down"></i>
+         {{/wu-button}}
+         {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+         <i class="fa fa-paste"></i>
+         {{/wu-button}}
+         {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+         <i class="fa fa-copy"></i>
+         {{/wu-button}}
+         {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+         <i class="fa fa-scissors"></i>
+         {{/wu-button}}
+         </div>
+         --}}
     
     <div class="button-group u-display-inline-block">
       {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "undo")}}
@@ -23,10 +23,10 @@
       {{/wu-button}}
 
       {{!-- 
-        {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
-          <i class="fa fa-rotate-right"></i>
-        {{/wu-button}}
-      --}}
+         {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+         <i class="fa fa-rotate-right"></i>
+         {{/wu-button}}
+         --}}
     </div>
     <div class="button-group u-display-inline-block">
       {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action 'toggleBold')}}
@@ -38,7 +38,9 @@
       {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action 'toggleUnderline')}}
         <i class="fa fa-underline"></i>
       {{/wu-button}}
-
+      {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action 'toggleStrikethrough')}}
+        <i class="fa fa-strikethrough"></i>
+      {{/wu-button}}
       {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "insertUL")}}
         <i class="fa fa-list-ul"></i>
       {{/wu-button}}
@@ -52,20 +54,20 @@
         <i class="fa fa-indent"></i>
       {{/wu-button}}
     </div>
-{{!--<div class="button-group u-display-inline-block">
-      {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+    {{!--<div class="button-group u-display-inline-block">
+        {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
         <i class="fa fa-link"></i>
-      {{/wu-button}}
-      {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+        {{/wu-button}}
+        {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
         <i class="fa fa-table"></i>
-      {{/wu-button}}
-    </div>
-    <div class="button-group u-display-inline-block">
-      {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
+        {{/wu-button}}
+        </div>
+        <div class="button-group u-display-inline-block">
+        {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
         <i class="fa fa-code"></i>
-      {{/wu-button}}
-    </div>
-    --}}
+        {{/wu-button}}
+        </div>
+        --}}
   </div>
   <div class="col--4-12 u-align-right">
     <div class="button-group">
