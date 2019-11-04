@@ -43,12 +43,15 @@ export default Component.extend({
     insertUnindent(){
       this.contentEditable.insertUnindent();
     },
+
     toggleItalic() {
       this.toggleProperty(italicProperty);
     },
+
     toggleBold() {
       this.toggleProperty(boldProperty);
     },
+
     toggleUnderline() {
       this.toggleProperty(underlineProperty);
     },
