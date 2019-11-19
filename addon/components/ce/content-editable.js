@@ -1,7 +1,7 @@
 import Component from '@ember/component';
 import { computed } from '@ember/object';
 import { alias, union } from '@ember/object/computed';
-import layout from '../templates/components/content-editable';
+import layout from '../../templates/components/content-editable';
 import forgivingAction from '../utils/forgiving-action';
 import RawEditor from '../utils/raw-editor';
 import EnterHandler from '../utils/handlers/enter-handler';
