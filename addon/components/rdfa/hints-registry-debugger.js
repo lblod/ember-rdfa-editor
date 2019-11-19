@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import layout from '../../templates/components/hints-registry-debugger';
+import layout from '../../templates/components/rdfa/hints-registry-debugger';
 import { computed } from '@ember/object';
 
 /**

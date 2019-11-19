@@ -1,6 +1,6 @@
 import { A } from '@ember/array';
 import Component from '@ember/component';
-import layout from '../../templates/components/rdfa-context-debugger';
+import layout from '../../templates/components/rdfa/rdfa-context-debugger';
 import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 import { debug } from '@ember/debug';
 

@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import layout from '../../templates/components/editor-suggested-hints';
+import layout from '../../templates/components/rdfa/editor-suggested-hints';
 import { A } from '@ember/array';
 /**
  * @module rdfa-editor
