@@ -2,7 +2,7 @@ import Component from '@ember/component';
 import layout from '../../templates/components/rdfa/document-structure';
 import NodeWalker from '../../utils/ce/node-walker';
 import { tagName, isDisplayedAsBlock } from '../../utils/ce/dom-helpers';
-import { isRdfaNode } from '../utils/rdfa-rich-node-helpers';
+import { isRdfaNode } from '../../utils/rdfa/rdfa-rich-node-helpers';
 import forgivingAction from '../../utils/ce/forgiving-action';
 import { get } from '@ember/object';
 import Object from '@ember/object';

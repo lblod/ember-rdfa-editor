@@ -1,10 +1,10 @@
 import { assert } from '@ember/debug';
 import EmberObject from '@ember/object';
 import { analyse } from '@lblod/marawa/rdfa-context-scanner';
-import HintsRegistry from '../utils/hints-registry';
+import HintsRegistry from './hints-registry';
 import { A } from '@ember/array';
 import { isEmpty } from '@ember/utils';
-import scoped from '../utils/scoped-method';
+import scoped from './scoped-method';
 
 /**
 * Event processor orchastrating the hinting based on incoming editor events

@@ -6,7 +6,7 @@
     <div class="grid grid--collapse grid--align-right">
       <div class="col--8-12">
         <div class="editor">
-          {{#content-editable
+          {{#ec/content-editable
              class="editor__paper"
              textInsert=(or eventProcessor.insertText warnNotSetup)
              textRemove=(or eventProcessor.removeText warnNotSetup)
@@ -20,7 +20,7 @@
              yieldHTML=true
           }}
             {{{value}}}
-          {{/content-editable}}
+          {{/ec/content-editable}}
         </div>
       </div>
       <div class="col--2-12">
@@ -33,7 +33,7 @@
           {{load-monitor editor=eventProcessor.editor}}
         </div>
         <div class="editor-hints">
-          {{editor-suggested-hints suggestedHints=suggestedHints}}
+          {{rdfa/editor-suggested-hints suggestedHints=suggestedHints}}
           {{#if hasActiveHints}}
             <div class="annotation-suggestion__suggestion">
               <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">

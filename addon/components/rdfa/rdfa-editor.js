@@ -6,12 +6,12 @@ import { later } from '@ember/runloop';
 import { debug, warn } from '@ember/debug';
 
 import layout from '../../templates/components/rdfa/rdfa-editor';
-import HintsRegistry from '../utils/hints-registry';
-import EventProcessor from '../utils/event-processor';
-import forgivingAction from '../utils/forgiving-action';
-import RdfaBackspaceHandler from '../utils/handlers/rdfa-backspace-handler';
+import HintsRegistry from '../../utils/rdfa/hints-registry';
+import EventProcessor from '../../utils/rdfa/event-processor';
+import forgivingAction from '../../utils/rdfa/forgiving-action';
+import RdfaBackspaceHandler from '../../utils/rdfa/handlers/rdfa-backspace-handler';
 import { analyse as analyseRdfa } from '@lblod/marawa/rdfa-context-scanner';
-import TextInputDataFlaggedRemoveHandler from '../utils/handlers/text-input-data-flagged-remove-handler';
+import TextInputDataFlaggedRemoveHandler from '../../utils/rdfa/handlers/text-input-data-flagged-remove-handler';
 
 /**
  * RDFa editor
