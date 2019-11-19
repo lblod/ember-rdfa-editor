@@ -2,7 +2,7 @@ import EmberObject from '@ember/object';
 import { reads, alias } from '@ember/object/computed';
 import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
-import { invisibleSpace } from './dom-helpers';
+import { invisibleSpace } from '../dom-helpers';
 
 
 let OLMARKDOWN = /(1\.\s)(.*)/;

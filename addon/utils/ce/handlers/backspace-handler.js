@@ -10,8 +10,8 @@ import {
   isAllWhitespace,
   isLI,
   findPreviousLi
-} from './dom-helpers';
-import previousTextNode from './previous-text-node';
+} from '../dom-helpers';
+import previousTextNode from '../previous-text-node';
 import { warn, debug } from '@ember/debug';
 import { A } from '@ember/array';
 

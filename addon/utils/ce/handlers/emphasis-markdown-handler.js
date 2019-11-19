@@ -1,10 +1,10 @@
 import EmberObject from '@ember/object';
 import { reads, alias } from '@ember/object/computed';
-import getRichNodeMatchingDomNode from './get-rich-node-matching-dom-node';
+import getRichNodeMatchingDomNode from '../get-rich-node-matching-dom-node';
 import { get } from '@ember/object';
 import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
-import { invisibleSpace } from './dom-helpers';
+import { invisibleSpace } from '../dom-helpers';
 
 
 let BOLDMARKDOWN = /(\*\*)(.*?)\1/;

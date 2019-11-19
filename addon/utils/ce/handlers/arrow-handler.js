@@ -1,8 +1,8 @@
 import EmberObject from '@ember/object';
 import { reads } from '@ember/object/computed';
 import HandlerResponse from './handler-response';
-import previousTextNode from './previous-text-node';
-import nextTextNode from './next-text-node';
+import previousTextNode from '../previous-text-node';
+import nextTextNode from '../next-text-node';
 import { warn } from '@ember/debug';
 
 /**

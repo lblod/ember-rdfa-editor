@@ -1,7 +1,7 @@
-import BackspaceHandler from '../ce/backspace-handler';
-import { isRdfaNode } from './rdfa-rich-node-helpers';
-import HandlerResponse from '../ce/handler-response';
-import NodeWalker from '../ce/node-walker';
+import BackspaceHandler from '../../ce/handlers/backspace-handler';
+import { isRdfaNode } from '../rdfa-rich-node-helpers';
+import HandlerResponse from '../../ce/handlers/handler-response';
+import NodeWalker from '../../ce/node-walker';
 
 /**
  * Rdfa Backspace Handler, a event handler to handle backspaces while taking rdfa into account

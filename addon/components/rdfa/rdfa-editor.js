@@ -9,9 +9,9 @@ import layout from '../templates/components/rdfa-editor';
 import HintsRegistry from '../utils/hints-registry';
 import EventProcessor from '../utils/event-processor';
 import forgivingAction from '../utils/forgiving-action';
-import RdfaBackspaceHandler from '../utils/rdfa-backspace-handler';
+import RdfaBackspaceHandler from '../utils/handlers/rdfa-backspace-handler';
 import { analyse as analyseRdfa } from '@lblod/marawa/rdfa-context-scanner';
-import TextInputDataFlaggedRemoveHandler from '../utils/text-input-data-flagged-remove-handler';
+import TextInputDataFlaggedRemoveHandler from '../utils/handlers/text-input-data-flagged-remove-handler';
 
 /**
  * RDFa editor

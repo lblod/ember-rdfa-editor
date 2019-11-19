@@ -1,6 +1,6 @@
 import EmberObject from '@ember/object';
 import HandlerResponse from './handler-response';
-import nextTextNode from './next-text-node';
+import nextTextNode from '../next-text-node';
 
 export default EmberObject.extend({
   isHandlerFor(event) {
@@ -17,4 +17,3 @@ export default EmberObject.extend({
     return nextTextNode(current, this.rawEditor.rootNode);
   }
 });
-

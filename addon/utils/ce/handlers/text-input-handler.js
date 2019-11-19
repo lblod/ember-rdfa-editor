@@ -1,7 +1,6 @@
-import EmberObject from '@ember/object';
+import EmberObject, { get } from '@ember/object';
 import { reads, alias } from '@ember/object/computed';
 import HandlerResponse from './handler-response';
-import { get } from '@ember/object';
 
 const supportedInputCharacters = /[a-zA-Z0-9.,!@#$%^&*={};'"+-?_()/\\ ]/;
 /**
