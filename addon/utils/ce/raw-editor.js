@@ -1,8 +1,8 @@
 import EmberObject, { get, computed } from '@ember/object';
-import classic from 'ember-classic-decorator';
 import { debug, warn } from '@ember/debug';
 import { A } from '@ember/array';
-import { task, timeout } from 'ember-concurrency';
+import { timeout } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
 import DiffMatchPatch from 'diff-match-patch';
 import { walk as walkDomNode } from '@lblod/marawa/node-walker';
 import { positionInRange } from '@lblod/marawa/range-helpers';
@@ -47,6 +47,7 @@ import {
   triplesDefinedInResource,
   isEmpty
 } from './editor';
+import classic from 'ember-classic-decorator';
 
 const NON_BREAKING_SPACE = '\u00A0';
 
@@ -59,7 +60,7 @@ const NON_BREAKING_SPACE = '\u00A0';
  * @extends EmberObject
  */
 @classic
-class RawEditor extends EmberObject.extend({
+class RawEditor extends EmberObject {
   /**
    * Called after relevant input. Checks content and calls closureActions when changes detected
    * handleTextInsert, handleTextRemove, handleFullContentUpdate
@@ -68,7 +69,8 @@ class RawEditor extends EmberObject.extend({
    * @param {Array} Optional argument pass info to event consumers.
    * @public
    */
-  generateDiffEvents: task(function* (extraInfo = []){
+  @task({ restartable: true })
+  *generateDiffEvents(extraInfo = []) {
     yield timeout(320);
 
     let newText = getTextContent(this.get('rootNode'));
@@ -102,8 +104,7 @@ class RawEditor extends EmberObject.extend({
       }
       forgivingAction('handleFullContentUpdate', this)(extraInfo);
     }
-  }).restartable()
-}) {
+  }
 
   /**
    * root node of the editor

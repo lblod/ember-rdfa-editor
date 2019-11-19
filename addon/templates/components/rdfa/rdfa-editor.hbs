@@ -1,12 +1,12 @@
 {{#if this.editor}}
-  {{editor-toolbar contentEditable=editor}}
+  {{rdfa/editor-toolbar contentEditable=editor}}
 {{/if}}
 <div class="container-flex--contain editor-container">
   <div class="container-flex--scroll">
     <div class="grid grid--collapse grid--align-right">
       <div class="col--8-12">
         <div class="editor">
-          {{#ec/content-editable
+          {{#ce/content-editable
              class="editor__paper"
              textInsert=(or eventProcessor.insertText warnNotSetup)
              textRemove=(or eventProcessor.removeText warnNotSetup)
@@ -20,7 +20,7 @@
              yieldHTML=true
           }}
             {{{value}}}
-          {{/ec/content-editable}}
+          {{/ce/content-editable}}
         </div>
       </div>
       <div class="col--2-12">
@@ -30,7 +30,7 @@
           </div>
         </div>
         <div class="editor-loading-events">
-          {{load-monitor editor=eventProcessor.editor}}
+          {{rdfa/load-monitor editor=eventProcessor.editor}}
         </div>
         <div class="editor-hints">
           {{rdfa/editor-suggested-hints suggestedHints=suggestedHints}}

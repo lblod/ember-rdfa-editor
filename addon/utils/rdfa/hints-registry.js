@@ -1,7 +1,9 @@
 import { A } from '@ember/array';
 import EmberObject, { computed } from '@ember/object';
+import classic from 'ember-classic-decorator';
 import { next } from '@ember/runloop';
-import { task, timeout } from 'ember-concurrency';
+import { timeout } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
 
 /**
 * Bookkeeping of the editor hints
@@ -11,42 +13,44 @@ import { task, timeout } from 'ember-concurrency';
 * @constructor
 * @extends EmberObject
 */
-export default EmberObject.extend({
+@classic
+export default class HinstRegistry extends EmberObject {
   /**
   * @property index
   * @type Array
   */
-  index: null,
+  index = null;
 
   /**
   * @property registry
   * @type Array
   */
-  registry: null,
+  registry = null;
 
   /**
   * @property activeRegion
   * @type Array
   */
-  activeRegion: null,
+  activeRegion = null;
 
   /**
   * @property activeHints
   * @type Array
   */
-  activeHints: computed('activeRegion', 'registry', 'registry.[]', function() {
+  @computed('activeRegion', 'registry', 'registry.[]')
+  get activeHints() {
     const region = this.get('activeRegion');
     return this.get('registry').filter((hint) => {
       return region[0] >= hint.location[0] && region[1] <= hint.location[1];
     });
-  }),
+  }
 
   /**
    * @property registryObservers
    * @type Array
    * @private
    */
-  registryObservers: null,
+  registryObservers = null;
 
   init() {
     this.set('index', A());
@@ -57,7 +61,7 @@ export default EmberObject.extend({
     this.set('removedCardObservers', A());
     this.set('higlightsForFutureRemoval', A());
     this.set('higlightsForFutureInsert', A());
-  },
+  }
 
   /**
    *
@@ -71,15 +75,15 @@ export default EmberObject.extend({
    */
   addRegistryObserver(observer) {
     this.get('registryObservers').push(observer);
-  },
+  }
 
   addNewCardObserver(observer) {
     this.get('newCardObservers').push(observer);
-  },
+  }
 
   addRemovedCardObserver(observer) {
     this.get('removedCardObservers').push(observer);
-  },
+  }
 
   /**
    * Handles an insert text event from the editor.
@@ -104,7 +108,7 @@ export default EmberObject.extend({
     this.updateRegistry(index);
     this.appendToIndex(index);
     return index;
-  },
+  }
 
   /**
    * Handles removal text event from the editor.
@@ -131,7 +135,7 @@ export default EmberObject.extend({
     this.updateRegistry(index);
     this.appendToIndex(index);
     return index;
-  },
+  }
 
   /**
    * Returns hints exactly at a provided location.
@@ -161,7 +165,7 @@ export default EmberObject.extend({
     }
 
     return this.get('registry').filter(condition);
-  },
+  }
 
   /**
    * Returns hints in a provided region.
@@ -191,7 +195,7 @@ export default EmberObject.extend({
     }
 
     return this.get('registry').filter(condition);
-  },
+  }
 
   /**
    * Returns hints from plugin
@@ -204,7 +208,7 @@ export default EmberObject.extend({
    */
   getHintsFromPlugin(who) {
     return this.get('registry').filter( entry => entry.who == who );
-  },
+  }
 
   /**
    * Removes hints at an exact location.
@@ -246,7 +250,7 @@ export default EmberObject.extend({
       this.replaceRegistryAndNotify(updatedRegistry);
     }
 
-  },
+  }
 
   /**
    * Removes hints in a region.
@@ -282,7 +286,7 @@ export default EmberObject.extend({
 
     next(() => { this.batchProcessHighlightsUpdates.perform(); });
 
-  },
+  }
 
   /**
    * This function executes multiple hints updates as a batch.
@@ -295,7 +299,8 @@ export default EmberObject.extend({
    * -------
    * Experimental, so probably will change
    */
-  batchProcessHighlightsUpdates: task(function* (){
+  @task({ restartable: true })
+  *batchProcessHighlightsUpdates() {
     yield timeout(50);
 
     // The hints registry might not be updated by the editor yet,
@@ -340,8 +345,7 @@ export default EmberObject.extend({
     realInserts.forEach(this.sendNewCardToObservers.bind(this));
 
     this.replaceRegistryAndNotify(this.registry);
-
-  }).restartable(),
+  }
 
   /**
    * Adds collection of hints.
@@ -363,7 +367,7 @@ export default EmberObject.extend({
     }, this);
 
     next(() => { this.batchProcessHighlightsUpdates.perform(); });
-  },
+  }
 
   /**
    * Provided a location and hrId, give back the current location for the actual state of the registry.
@@ -379,7 +383,7 @@ export default EmberObject.extend({
   updateLocationToCurrentIndex(indexEntry, location) {
     let remainingIndexes = this.getRemainingIndexes(indexEntry);
     return remainingIndexes.length === 0 ? location : remainingIndexes.reduce(this.updateLocationWithIndex.bind(this), location);
-  },
+  }
 
   /**
    * Gets next index id.
@@ -395,7 +399,7 @@ export default EmberObject.extend({
       return 0;
     }
     return this.currentIndex().idx + 1;
-  },
+  }
 
   /**
    * Gets current index.
@@ -408,7 +412,7 @@ export default EmberObject.extend({
    */
   currentIndex() {
     return this.get('index').slice(-1)[0];
-  },
+  }
 
   /**
    * Inits index entry object.
@@ -422,7 +426,7 @@ export default EmberObject.extend({
   initIndexEntry(operation, startIdx, endIdx, delta) {
     let idx = this.nextIndexId();
     return {idx: idx, operation, startIdx, endIdx, delta};
-  },
+  }
 
   /**
    * Appends index entry to index.
@@ -433,7 +437,7 @@ export default EmberObject.extend({
    */
   appendToIndex(indexEntry) {
     this.get('index').pushObject(indexEntry);
-  },
+  }
 
   /**
    * Updates collection of cards with collection of index entries.
@@ -455,7 +459,7 @@ export default EmberObject.extend({
       }
     }
     return {hasChanged, cards: updatedCards};
-  },
+  }
 
   /**
    * Updates card with collection of indexes
@@ -488,7 +492,7 @@ export default EmberObject.extend({
       }
     }
     return {hasChanged, isValid, card};
-  },
+  }
 
 
   /**
@@ -505,7 +509,7 @@ export default EmberObject.extend({
     if(updatedRegistry.hasChanged) {
       this.replaceRegistryAndNotify(A(updatedRegistry.cards));
     }
-  },
+  }
 
   /**
    * Checks whether a location is valid.
@@ -523,7 +527,7 @@ export default EmberObject.extend({
       return false;
     }
     return true;
-  },
+  }
 
   /**
    * Given an index entry, check whether it affects location.
@@ -542,7 +546,7 @@ export default EmberObject.extend({
       return true;
     }
     return false;
-  },
+  }
 
   /**
    * Given an index entry, check wether the location moves as block to left or right.
@@ -570,7 +574,7 @@ export default EmberObject.extend({
     }
 
     return false;
-  },
+  }
 
   /**
    * Given an index entry, update the location.
@@ -601,7 +605,7 @@ export default EmberObject.extend({
       return [location[0], location[1] + index.delta - 1];
     }
     return [location[0], location[1] + index.delta];
-  },
+  }
 
 
   /**
@@ -627,7 +631,7 @@ export default EmberObject.extend({
     }
 
     this.get('registry').pushObject(card);
-  },
+  }
 
   /**
    * Given an index entry, give back the remaining index entries which lead to the head of the index.
@@ -640,7 +644,7 @@ export default EmberObject.extend({
    */
   getRemainingIndexes(indexEntry) {
     return this.get('index').slice(indexEntry.idx + 1);
-  },
+  }
 
 
   /**
@@ -655,7 +659,7 @@ export default EmberObject.extend({
   replaceRegistryAndNotify(registry) {
     this.set('registry', registry);
     this.sendRegistryToObservers(registry);
-  },
+  }
 
   /**
    * send registry to registry observers
@@ -668,17 +672,17 @@ export default EmberObject.extend({
     this.get('registryObservers').forEach(obs => {
       obs(registry);
     });
-  },
+  }
 
   sendNewCardToObservers(card){
     this.get('newCardObservers').forEach(obs => {
       obs(card);
     });
-  },
+  }
 
   sendRemovedCardToObservers(card){
     this.get('removedCardObservers').forEach(obs => {
       obs(card);
     });
   }
-});
+}

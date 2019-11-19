@@ -14,10 +14,10 @@ import strikethroughProperty from '../../utils/rdfa/strikethrough-property';
  * @class RdfaEditorToolbarComponent
  * @extends Component
  */
-@classic
 @templateLayout(layout)
-@classNames("toolbar")
 export default class EditorToolbar extends Component {
+  tagName = "";
+
   toggleProperty(property) {
     const range = this.contentEditable.currentSelection;
     const selection = this.contentEditable.selectHighlight(range);
