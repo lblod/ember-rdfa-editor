@@ -1,9 +1,9 @@
 import Component from '@ember/component';
 import layout from '../templates/components/document-structure';
-import NodeWalker from '@lblod/ember-contenteditable-editor/utils/node-walker';
-import { tagName, isDisplayedAsBlock } from '@lblod/ember-contenteditable-editor/utils/dom-helpers';
+import NodeWalker from '../../utils/ce/node-walker';
+import { tagName, isDisplayedAsBlock } from '../../utils/ce/dom-helpers';
 import { isRdfaNode } from '../utils/rdfa-rich-node-helpers';
-import forgivingAction from '@lblod/ember-contenteditable-editor/utils/forgiving-action';
+import forgivingAction from '../../utils/ce/forgiving-action';
 import { get } from '@ember/object';
 import Object from '@ember/object';
 import { isEmpty } from '@ember/utils';
