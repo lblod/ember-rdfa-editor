@@ -1,4 +1,5 @@
 import EmberObject, { get, computed } from '@ember/object';
+import classic from 'ember-classic-decorator';
 import { debug, warn } from '@ember/debug';
 import { A } from '@ember/array';
 import { task, timeout } from 'ember-concurrency';
@@ -57,6 +58,7 @@ const NON_BREAKING_SPACE = '\u00A0';
  * @constructor
  * @extends EmberObject
  */
+@classic
 class RawEditor extends EmberObject.extend({
   /**
    * Called after relevant input. Checks content and calls closureActions when changes detected
