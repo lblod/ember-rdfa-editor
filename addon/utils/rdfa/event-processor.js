@@ -139,13 +139,12 @@ export default EmberObject.extend({
     this.set('cardsLocationFlaggedRemoved', A());
     this.set('cardsLocationFlaggedNew', A());
   },
-
   handleNewCardInRegistry(hightLightLocation){
-      this.get('cardsLocationFlaggedNew').push(hightLightLocation);
+    this.get('cardsLocationFlaggedNew').push(hightLightLocation);
   },
 
   handleRemovedCardInRegistry(hightLightLocation){
-      this.get('cardsLocationFlaggedRemoved').push(hightLightLocation);
+    this.get('cardsLocationFlaggedRemoved').push(hightLightLocation);
   },
 
 

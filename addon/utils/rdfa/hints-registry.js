@@ -262,26 +262,21 @@ export default EmberObject.extend({
   removeHintsInRegion(region, hrIdx, who) {
    let updatedRegion = (hrIdx ? this.updateLocationToCurrentIndex(hrIdx, region) : region);
 
-    const notInRegion = (location, region) => {
-      return region[0] > location[0] || region[1] < location[1];
+    const inRegion = (location, region) => {
+      return location[0] >= region[0] && location[1] <= region[1];
     };
 
-    let condition = null;
-    if (who) {
-      condition = (entry) => { return (notInRegion(entry.location, updatedRegion) && entry.who == who) || entry.who !== who; };
-    } else {
-      condition = (entry) => { return notInRegion(entry.location, updatedRegion); };
-    }
-
     let updatedRegistry = A();
-    this.get('registry').forEach(entry => {
-      if(condition(entry)){
-        updatedRegistry.push(entry);
-      }
-      else{
-        this.higlightsForFutureRemoval.push({location: entry.location, hrIdx});
-      }
-    });
+
+    this.get('registry').forEach( (entry) => {
+        const matchingPlugin = ! who || entry.who == who;
+        const matchingRegion = inRegion( entry.location, updatedRegion );
+
+        if( matchingPlugin && matchingRegion )
+          this.higlightsForFutureRemoval.push({location: entry.location, hrIdx});
+        else
+          updatedRegistry.push(entry);
+      });
 
     this.set('registry', updatedRegistry);
 
