@@ -1,4 +1,4 @@
-import EditorProperty from '@lblod/ember-contenteditable-editor/utils/editor-property';
+import EditorProperty from '../ce/editor-property';
 
 /**
  * Editor property that represents bold text.

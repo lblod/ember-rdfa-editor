@@ -1,7 +1,7 @@
-import BackspaceHandler from '@lblod/ember-contenteditable-editor/utils/backspace-handler';
+import BackspaceHandler from '../ce/backspace-handler';
 import { isRdfaNode } from './rdfa-rich-node-helpers';
-import HandlerResponse from '@lblod/ember-contenteditable-editor/utils/handler-response';
-import NodeWalker from '@lblod/ember-contenteditable-editor/utils/node-walker';
+import HandlerResponse from '../ce/handler-response';
+import NodeWalker from '../ce/node-walker';
 
 /**
  * Rdfa Backspace Handler, a event handler to handle backspaces while taking rdfa into account

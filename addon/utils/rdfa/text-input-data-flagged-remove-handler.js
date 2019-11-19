@@ -1,6 +1,6 @@
-import InputTextHandler from '@lblod/ember-contenteditable-editor/utils/text-input-handler';
-import HandlerResponse from '@lblod/ember-contenteditable-editor/utils/handler-response';
-import { isAllWhitespace } from '@lblod/ember-contenteditable-editor/utils/dom-helpers';
+import InputTextHandler from '../ce/text-input-handler';
+import HandlerResponse from '../ce/handler-response';
+import { isAllWhitespace } from '../ce/dom-helpers';
 
 export default InputTextHandler.extend({
   /**
