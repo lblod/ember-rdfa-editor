@@ -251,9 +251,9 @@ const createElementsFromHTML = function(htmlString){
  * find previous list item
  */
 function findPreviousLi(currLI) {
-  var previousElement;
+  let previousElement = currLI;
   do {
-    previousElement = currLI.previousSibling;
+    previousElement = previousElement.previousSibling;
   } while(previousElement && tagName(previousElement) !== 'li')
   return previousElement;
 }
