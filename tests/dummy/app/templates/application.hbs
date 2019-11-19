@@ -1,17 +1,4 @@
-<h1 class="h4">Ember RDFa editor addon</h1>
-<div class="grid grid--collapse">
-  <div class="col--8-12 flex">
-    <div vocab="http://data.vlaanderen.be/ns/foo#" resource="#Foo" typeof="Foo">
-      <div vocab="http://data.vlaanderen.be/ns/besluit#"
-           prefix="eli: http://data.europa.eu/eli/ontology# prov: http://www.w3.org/ns/prov# mandaat: http://data.vlaanderen.be/ns/mandaat# besluit: http://data.vlaanderen.be/ns/besluit#"
-           class="app-view">
-        {{rdfa-editor value=(rdfa-html value) rdfaEditorInit=(action "rdfaEditorInit") initDebug=(action "debug") profile="default"}}
-      </div>
-    </div>
-  </div>
-  <div class="col--4-12 flex">
-    {{rdfa-editor-debugger debug=debug}}
-  </div>
-</div>
-
+<h1>Dummy app </h1>
+{{#link-to 'ce'}} Check out the CE dummy app{{/link-to}} <br>
+{{#link-to 'rdfa'}} Check out the RDFA dummy app {{/link-to}} <br>
 {{outlet}}
