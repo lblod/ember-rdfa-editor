@@ -1,1 +1,1 @@
-export { default } from '@lblod/ember-contenteditable-editor/components/content-editable';
+export { default } from '@lblod/ember-rdfa-editor/components/ce/content-editable';

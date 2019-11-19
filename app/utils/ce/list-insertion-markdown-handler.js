@@ -1,1 +1,1 @@
-export { default } from '@lblod/ember-contenteditable-editor/utils/list-insertion-markdown-handler';
+export { default } from '@lblod/ember-rdfa-editor/utils/ce/list-insertion-markdown-handler';

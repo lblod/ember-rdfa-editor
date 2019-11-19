@@ -1,1 +1,1 @@
-export { default } from '@lblod/ember-contenteditable-editor/utils/highlight-property';
+export { default } from '@lblod/ember-rdfa-editor/utils/ce/highlight-property';

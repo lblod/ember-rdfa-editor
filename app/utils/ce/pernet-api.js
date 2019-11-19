@@ -1,1 +1,1 @@
-export { default } from '@lblod/ember-contenteditable-editor/utils/pernet-api';
+export { default } from '@lblod/ember-rdfa-editor/utils/ce/pernet-api';

@@ -1,1 +1,1 @@
-export { default } from '@lblod/ember-contenteditable-editor/utils/handler-response';
+export { default } from '@lblod/ember-rdfa-editor/utils/ce/handler-response';

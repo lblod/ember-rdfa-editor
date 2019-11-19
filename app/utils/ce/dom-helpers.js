@@ -1,1 +1,1 @@
-export { default } from '@lblod/ember-contenteditable-editor/utils/dom-helpers';
+export { default } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';

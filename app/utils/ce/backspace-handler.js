@@ -1,1 +1,1 @@
-export { default } from '@lblod/ember-contenteditable-editor/utils/backspace-handler';
+export { default } from '@lblod/ember-rdfa-editor/utils/ce/backspace-handler';

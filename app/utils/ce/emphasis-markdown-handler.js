@@ -1,1 +1,1 @@
-export { default } from '@lblod/ember-contenteditable-editor/utils/emphasis-markdown-handler';
+export { default } from '@lblod/ember-rdfa-editor/utils/ce/emphasis-markdown-handler';

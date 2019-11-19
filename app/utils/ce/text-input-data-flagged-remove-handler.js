@@ -1,1 +1,1 @@
-export { default } from '@lblod/ember-contenteditable-editor/utils/text-input-data-flagged-remove-handler';
+export { default } from '@lblod/ember-rdfa-editor/utils/ce/text-input-data-flagged-remove-handler';
