@@ -538,7 +538,7 @@ export default EmberObject.extend({
    * @private
    */
   doesLocationChange(index, location) {
-    if(index.startIdx <= location[1] - 1) {
+    if(index.startIdx <= location[1]) {
       return true;
     }
     return false;

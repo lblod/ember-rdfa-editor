@@ -3,7 +3,7 @@ import layout from '../templates/components/editor-toolbar';
 import boldProperty from '../utils/bold-property';
 import italicProperty from '../utils/italic-property';
 import underlineProperty from '../utils/underline-property';
-
+import strikethroughProperty from '../utils/strikethrough-property';
 
 /**
  * RDFa editor toolbar component
@@ -43,15 +43,23 @@ export default Component.extend({
     insertUnindent(){
       this.contentEditable.insertUnindent();
     },
+
     toggleItalic() {
       this.toggleProperty(italicProperty);
     },
+
     toggleBold() {
       this.toggleProperty(boldProperty);
     },
+
     toggleUnderline() {
       this.toggleProperty(underlineProperty);
     },
+
+    toggleStrikethrough(){
+      this.toggleProperty(strikethroughProperty);
+    },
+
     undo(){
       this.contentEditable.undo();
     }
