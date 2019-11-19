@@ -5,7 +5,7 @@
   <button {{action 'insertIndent'}}> indent </button>
   <button {{action 'insertUnindent'}}> unindent </button>
 </div>
-{{#content-editable editable=true focused=true yieldHTML=true
+{{#ce/content-editable editable=true focused=true yieldHTML=true
    textInsert=(action 'handleTextInsert')
    textRemove=(action 'handleTextRemove')
    selectionUpdate=(action 'selectionUpdate')
@@ -203,4 +203,4 @@
     </p>
 </div>
   {{/if}}
-{{/content-editable}}
+{{/ce/content-editable}}
