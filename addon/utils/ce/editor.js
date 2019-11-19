@@ -1,4 +1,8 @@
-import { selectCurrentSelection, selectHighlight, selectContext } from './editor/select';
+import {
+  selectCurrentSelection,
+  selectHighlight,
+  selectContext
+} from './editor/select';
 import { update } from './editor/update';
 import { triplesDefinedInResource } from './editor/triplestore';
 import { replaceDomNode } from './editor/operation';

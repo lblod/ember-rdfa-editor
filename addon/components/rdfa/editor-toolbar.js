@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import layout from '../templates/components/editor-toolbar';
+import layout from '../../../templates/components/editor-toolbar';
 import boldProperty from '../utils/bold-property';
 import italicProperty from '../utils/italic-property';
 import underlineProperty from '../utils/underline-property';
