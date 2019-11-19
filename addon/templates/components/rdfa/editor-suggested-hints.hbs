@@ -1,8 +1,8 @@
-{{#if suggestedHints.length}}
+{{#if this.suggestedHints.length}}
   <div class="annotation-suggestion__suggestion">
     <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
       <ul>
-        {{#each suggestedHints as |hint|}}
+        {{#each this.suggestedHints as |hint|}}
           <li>{{component hint.component info=hint.info closeHints=(action 'closeHints')}}</li>
         {{/each}}
       </ul>

@@ -1,18 +1,18 @@
-{{wu-checkbox checked=debugEnabled label="Enable debug"}}
+{{wu-checkbox checked=this.debugEnabled label="Enable debug"}}
 
-{{#if debugEnabled}}
+{{#if this.debugEnabled}}
   <div>
     <label>Debug mode: </label>
-    <select onchange={{action (mut debugMode) value="target.value"}}>
-      {{#each debugModes as |mode|}}
-        <option value={{mode}} selected={{eq debugMode mode}}>{{mode}}</option>
+    <select onchange={{action (mut this.debugMode) value="target.value"}}>
+      {{#each this.debugModes as |mode|}}
+        <option value={{mode}} selected={{eq this.debugMode mode}}>{{mode}}</option>
       {{/each}}
     </select>
   </div>
-  {{#if (eq debugMode "hints-registry")}}
-    {{rdfa/hints-registry-debugger hintsRegistry=debug.hintsRegistry}}
-  {{else if (eq debugMode "context-scanner")}}
-    {{rdfa/rdfa-context-debugger editor=debug.editor contextScanner=debug.contextScanner}}
+  {{#if (eq this.debugMode "hints-registry")}}
+    {{rdfa/hints-registry-debugger hintsRegistry=this.debug.hintsRegistry}}
+  {{else if (eq this.debugMode "context-scanner")}}
+    {{rdfa/rdfa-context-debugger editor=this.debug.editor contextScanner=this.debug.contextScanner}}
   {{/if}}
 {{/if}}
 

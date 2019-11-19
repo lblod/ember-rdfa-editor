@@ -1,4 +1,4 @@
-{{#each items as |item|}}
+{{#each this.items as |item|}}
   <li class="side-navigation__item">
     <a href="#" onclick={{action 'itemClicked' item.node}}>{{item.title}}</a>
     {{#if item.children}}

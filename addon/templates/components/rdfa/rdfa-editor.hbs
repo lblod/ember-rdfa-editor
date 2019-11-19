@@ -8,18 +8,18 @@
         <div class="editor">
           {{#ce/content-editable
              class="editor__paper"
-             textInsert=(or eventProcessor.insertText warnNotSetup)
-             textRemove=(or eventProcessor.removeText warnNotSetup)
-             handleFullContentUpdate=(or eventProcessor.analyseAndDispatch warnNotSetup)
-             selectionUpdate=(action (or eventProcessor.selectionChanged warnNotSetup) editor.currentSelection)
+             textInsert=(or this.eventProcessor.insertText this.warnNotSetup)
+             textRemove=(or this.eventProcessor.removeText this.warnNotSetup)
+             handleFullContentUpdate=(or this.eventProcessor.analyseAndDispatch this.warnNotSetup)
+             selectionUpdate=(action (or this.eventProcessor.selectionChanged this.warnNotSetup) editor.currentSelection)
              rawEditorInit=(action 'handleRawEditorInit')
-             elementUpdate=(action (or domUpdate noop) editor.rootNode)
-             externalHandlers=handlers
+             elementUpdate=(action (or this.domUpdate this.noop) editor.rootNode)
+             externalHandlers=this.handlers
              editable=true
              focused=true
              yieldHTML=true
           }}
-            {{{value}}}
+            {{{this.value}}}
           {{/ce/content-editable}}
         </div>
       </div>
@@ -30,15 +30,15 @@
           </div>
         </div>
         <div class="editor-loading-events">
-          {{rdfa/load-monitor editor=eventProcessor.editor}}
+          {{rdfa/load-monitor editor=this.eventProcessor.editor}}
         </div>
         <div class="editor-hints">
-          {{rdfa/editor-suggested-hints suggestedHints=suggestedHints}}
-          {{#if hasActiveHints}}
+          {{rdfa/editor-suggested-hints suggestedHints=this.suggestedHints}}
+          {{#if this.hasActiveHints}}
             <div class="annotation-suggestion__suggestion">
               <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
                 <ul>
-                  {{#each hintsRegistry.activeHints as |card|}}
+                  {{#each this.hintsRegistry.activeHints as |card|}}
                     <li>{{component card.card info=card.info}}</li>
                   {{/each}}
                 </ul>

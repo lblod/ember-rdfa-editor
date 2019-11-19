@@ -1,4 +1,4 @@
-{{#if yieldHTML}}
+{{#if this.yieldHTML}}
   {{{yield}}}
 {{else}}
   {{yield}}
@@ -6,7 +6,7 @@
 &nbsp;
 
 <!-- components -->
-{{#each components as |config|}}
+{{#each this.components as |config|}}
   <!-- component {{config.id}} -->
   {{log config}}
   {{#ember-wormhole destinationElement=config.element}}
