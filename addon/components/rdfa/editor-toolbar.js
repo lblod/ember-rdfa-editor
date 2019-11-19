@@ -1,9 +1,9 @@
 import Component from '@ember/component';
-import layout from '../../../templates/components/rdfa/editor-toolbar';
-import boldProperty from '../utils/bold-property';
-import italicProperty from '../utils/italic-property';
-import underlineProperty from '../utils/underline-property';
-import strikethroughProperty from '../utils/strikethrough-property';
+import layout from '../../templates/components/rdfa/editor-toolbar';
+import boldProperty from '../../utils/rdfa/bold-property';
+import italicProperty from '../../utils/rdfa/italic-property';
+import underlineProperty from '../../utils/rdfa/underline-property';
+import strikethroughProperty from '../../utils/rdfa/strikethrough-property';
 
 /**
  * RDFa editor toolbar component

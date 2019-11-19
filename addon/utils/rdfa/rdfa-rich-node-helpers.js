@@ -1,6 +1,6 @@
 import { set } from '@ember/object';
 import { get } from '@ember/object';
-import { rdfaKeywords } from '../config/rdfa';
+import { rdfaKeywords } from '../../config/rdfa';
 
 // TODO: content-editable should not be rdfa aware
 

@@ -10,9 +10,9 @@
     </select>
   </div>
   {{#if (eq debugMode "hints-registry")}}
-    {{hints-registry-debugger hintsRegistry=debug.hintsRegistry}}
+    {{rdfa/hints-registry-debugger hintsRegistry=debug.hintsRegistry}}
   {{else if (eq debugMode "context-scanner")}}
-    {{rdfa-context-debugger editor=debug.editor contextScanner=debug.contextScanner}}
+    {{rdfa/rdfa-context-debugger editor=debug.editor contextScanner=debug.contextScanner}}
   {{/if}}
 {{/if}}
 
