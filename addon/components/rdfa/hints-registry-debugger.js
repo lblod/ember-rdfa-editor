@@ -1,6 +1,8 @@
+import classic from "ember-classic-decorator";
+import { layout as templateLayout } from "@ember-decorators/component";
+import { computed } from "@ember/object";
 import Component from '@ember/component';
 import layout from '../../templates/components/rdfa/hints-registry-debugger';
-import { computed } from '@ember/object';
 
 /**
 * Debugger component for the {{#crossLink "HintsRegistry"}}Hints Registry{{/crossLink}}
@@ -9,9 +11,9 @@ import { computed } from '@ember/object';
 * @class HintsRegistryDebugger
 * @extends Component
 */
-export default Component.extend({
-  layout,
-
+@classic
+@templateLayout(layout)
+export default class HintsRegistryDebugger extends Component {
   /**
   * Hints registry to use for debugging
   *
@@ -20,7 +22,7 @@ export default Component.extend({
   *
   * @public
   */
-  hintsRegistry: null,
+  hintsRegistry = null;
 
   /**
   * Hints currently stored in the hints registry
@@ -30,7 +32,8 @@ export default Component.extend({
   *
   * @private
   */
-  hints: computed('hintsRegistry.registry', 'hintsRegisty.registry.[]', function(){
+  @computed('hintsRegistry.registry', 'hintsRegisty.registry.[]')
+  get hints() {
     return this.get('hintsRegistry.registry');
-  })
-});
+  }
+}

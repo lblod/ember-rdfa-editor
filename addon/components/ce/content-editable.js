@@ -1,6 +1,8 @@
+import classic from "ember-classic-decorator";
+import { attributeBindings, layout as templateLayout } from "@ember-decorators/component";
+import { action, computed } from "@ember/object";
+import { union, alias } from "@ember/object/computed";
 import Component from '@ember/component';
-import { computed } from '@ember/object';
-import { alias, union } from '@ember/object/computed';
 import layout from '../../templates/components/ce/content-editable';
 import forgivingAction from '../../utils/ce/forgiving-action';
 import RawEditor from '../../utils/ce/raw-editor';
@@ -37,10 +39,10 @@ import { next } from '@ember/runloop';
  * @class ContentEditableComponent
  * @extends Component
  */
-export default Component.extend({
-  layout,
-  attributeBindings: ['isEditable:contenteditable'],
-
+@classic
+@templateLayout(layout)
+@attributeBindings('isEditable:contenteditable')
+export default class ContentEditable extends Component {
   /**
    * latest cursor position in the contenteditable, it is aliased to the rawEditor.currentSelection
    *
@@ -49,7 +51,8 @@ export default Component.extend({
    *
    * @private
    */
-  currentSelection: alias('rawEditor.currentSelection'),
+  @alias('rawEditor.currentSelection')
+  currentSelection;
 
   /**
    * latest text content in the contenteditable, it is aliased to the rawEditor.currentTextContent
@@ -60,7 +63,8 @@ export default Component.extend({
    *
    * @private
    */
-  currentTextContent: alias('rawEditor.currentTextContent'),
+  @alias('rawEditor.currentTextContent')
+  currentTextContent;
 
   /**
    * element of the component, it is aliased to the rawEditor.rootNode
@@ -70,7 +74,7 @@ export default Component.extend({
    *
    * @private
    */
-  rootNode: null,
+  rootNode = null;
 
   /**
    * string representation of editable
@@ -79,9 +83,10 @@ export default Component.extend({
    * @type string
    * @private
    */
-  isEditable: computed('editable', function() {
+  @computed('editable')
+  get isEditable() {
     return this.get('editable').toString();
-  }),
+  }
 
   /**
    * richNode is the rich representation of the component element,
@@ -91,14 +96,15 @@ export default Component.extend({
    * @type RichNode
    * @private
    */
-  richNode: alias('rawEditor.richNode'),
+  @alias('rawEditor.richNode')
+  richNode;
 
   /**
    *
    * @property rawEditor
    * @type RawEditor
    */
-  rawEditor: null,
+  rawEditor = null;
 
   /**
    * components present in the editor
@@ -106,7 +112,8 @@ export default Component.extend({
    * @type {Object}
    * @public
    */
-  components: alias('rawEditor.components'),
+  @alias('rawEditor.components')
+  components;
 
   /**
    * ordered set of input handlers
@@ -114,7 +121,8 @@ export default Component.extend({
    * @type Array
    * @public
    */
-  inputHandlers: union('externalHandlers', 'defaultHandlers'),
+  @union('externalHandlers', 'defaultHandlers')
+  inputHandlers;
 
   /**
    * default input handlers
@@ -122,7 +130,7 @@ export default Component.extend({
    * @type Array
    * @private
    */
-  defaultHandlers: null,
+  defaultHandlers = null;
 
   /**
    * external input handlersg
@@ -130,12 +138,13 @@ export default Component.extend({
    * @type Array
    * @private
    */
-  externalHandlers: null,
+  externalHandlers = null;
+
   /**
    * @constructor
    */
   init() {
-    this._super(...arguments);
+    super.init(...arguments);
     const rawEditor = RawEditor.create({
       handleFullContentUpdate: this.get('handleFullContentUpdate'),
       textInsert: this.get('textInsert'),
@@ -162,16 +171,16 @@ export default Component.extend({
     if( ! this.externalHandlers ) {
       this.set('externalHandlers', []);
     }
-  },
+  }
 
-  didUpdateAttrs(){
+  didUpdateAttrs() {
     this.rawEditor.set('textInsert',this.textInsert);
     this.rawEditor.set('textRemove',this.textRemove);
     this.rawEditor.set('handleFullContentUpdate',this.handleFullContentUpdate);
     this.rawEditor.set('selectionUpdate',this.selectionUpdate);
     this.rawEditor.set('elementUpdate',this.elementUpdate);
 		this.rawEditor.set('handleFullContentUpdate',this.handleFullContentUpdate);
-  },
+  }
 
   /**
    * specify whether the editor should autofocus the contenteditable field
@@ -182,7 +191,7 @@ export default Component.extend({
    *
    * @public
    */
-  focused: false,
+  focused = false;
 
   /**
    * specify whether the editor should be contenteditable
@@ -193,7 +202,7 @@ export default Component.extend({
    *
    * @public
    */
-  editable: true,
+  editable = true;
 
   /**
    * specify whether yielded value should escape html syntax
@@ -204,7 +213,7 @@ export default Component.extend({
    *
    * @public
    */
-  yieldHTML: true,
+  yieldHTML = true;
 
   /**
    * didRender hook, makes sure the element is focused
@@ -212,8 +221,8 @@ export default Component.extend({
    *
    * @method didRender
    */
-  didInsertElement(){
-    this._super(...arguments);
+  didInsertElement() {
+    super.didInsertElement(...arguments);
     this.set('rawEditor.rootNode', this.get('element'));
     let el = this.get('element');
     // TODO: mapping using customEvents currently doesn't work, remove when it does
@@ -228,7 +237,7 @@ export default Component.extend({
       this.extractAndInsertComponents();
       this.get('rawEditor').updateRichNode();
     });
-  },
+  }
 
   /**
    * willDestroyElement, calls the rootNodeUpdated action
@@ -240,7 +249,7 @@ export default Component.extend({
     this.set('richNode', null);
     this.set('rawEditor.rootNode', null);
     forgivingAction('elementUpdate', this)();
-  },
+  }
 
   /**
    * keyDown events are handled for simple input we take over from
@@ -279,7 +288,7 @@ export default Component.extend({
         console.warn('unhandled keydown', event); //eslint-disable-line no-console
       });
     }
-  },
+  }
 
   /**
    * currently we disable paste
@@ -299,14 +308,15 @@ export default Component.extend({
     }
     event.preventDefault();
     return false;
-  },
+  }
+
   /**
    * keyUp events are parsed for complex input, for uncaptured events we update
    * the internal state to be inline with reality
    */
   keyUp(event) {
     this.handleUncapturedEvent(event);
-  },
+  }
 
   /**
    * compositionEnd events are parsed for complex input, for uncaptured events we update
@@ -314,13 +324,13 @@ export default Component.extend({
    */
   compositionEnd(event) {
     this.handleUncapturedEvent(event);
-  },
+  }
 
   mouseUp(event) {
     this.get('rawEditor').updateRichNode();
     this.get('rawEditor').updateSelectionAfterComplexInput(event);
     this.get('rawEditor').generateDiffEvents.perform();
-  },
+  }
 
   handleUncapturedEvent(event) {
     event = normalizeEvent(event);
@@ -330,7 +340,7 @@ export default Component.extend({
     }
     else
       this.capturedEvents.shiftObject();
-  },
+  }
 
   /**
    * find defined components, and recreate them
@@ -344,7 +354,7 @@ export default Component.extend({
       parent.innerHTML = '';
       this.rawEditor.insertComponent(parent, name, content, id);
     }
-  },
+  }
 
   /**
    * specifies whether an input event is "simple" or not
@@ -359,14 +369,14 @@ export default Component.extend({
   isHandledInputEvent(event) {
     event = normalizeEvent(event);
     return this.isCtrlZ(event) || this.get('inputHandlers').filter(h => h.isHandlerFor(event)).length > 0;
-  },
+  }
 
   isCtrlZ(event) {
     return event.ctrlKey && event.key === 'z';
-  },
-  actions: {
-    removeComponent(id) {
-      this.rawEditor.removeComponent(id);
-    }
   }
-});
+
+  @action
+  removeComponent(id) {
+    this.rawEditor.removeComponent(id);
+  }
+}
