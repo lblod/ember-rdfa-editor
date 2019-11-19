@@ -1,6 +1,6 @@
 import { A } from '@ember/array';
 import Component from '@ember/component';
-import layout from '../../templates/components/rdfa-editor-debugger';
+import layout from '../../templates/components/rdfa/rdfa-editor-debugger';
 
 
 /**

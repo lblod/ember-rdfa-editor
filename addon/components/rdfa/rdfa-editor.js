@@ -5,7 +5,7 @@ import { inject } from '@ember/service';
 import { later } from '@ember/runloop';
 import { debug, warn } from '@ember/debug';
 
-import layout from '../../templates/components/rdfa-editor';
+import layout from '../../templates/components/rdfa/rdfa-editor';
 import HintsRegistry from '../utils/hints-registry';
 import EventProcessor from '../utils/event-processor';
 import forgivingAction from '../utils/forgiving-action';

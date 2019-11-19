@@ -1,6 +1,6 @@
 import { and } from '@ember/object/computed';
 import Component from '@ember/component';
-import layout from '../../templates/components/load-monitor';
+import layout from '../../templates/components/rdfa/load-monitor';
 import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import { length } from 'ember-awesome-macros/array';
