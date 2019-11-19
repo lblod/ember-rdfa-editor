@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import layout from '../templates/components/document-structure';
+import layout from '../../templates/components/document-structure';
 import NodeWalker from '../../utils/ce/node-walker';
 import { tagName, isDisplayedAsBlock } from '../../utils/ce/dom-helpers';
 import { isRdfaNode } from '../utils/rdfa-rich-node-helpers';
