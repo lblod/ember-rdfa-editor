@@ -1,4 +1,4 @@
-import pernetApi from 'dummy/utils/pernet-api';
+import pernetApi from 'dummy/utils/ce/pernet-api';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | pernet-api', function() {

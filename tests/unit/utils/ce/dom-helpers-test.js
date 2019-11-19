@@ -1,4 +1,4 @@
-import domHelpers from 'dummy/utils/dom-helpers';
+import domHelpers from 'dummy/utils/ce/dom-helpers';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | dom helpers', function() {

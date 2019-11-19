@@ -1,7 +1,7 @@
 import { setupRenderingTest } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import { render } from '@ember/test-helpers';
-import NodeWalker from 'dummy/utils/node-walker';
+import NodeWalker from 'dummy/utils/ce/node-walker';
 import { module, test } from 'qunit';
 import 'ember-qunit';
 

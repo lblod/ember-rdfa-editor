@@ -1,4 +1,4 @@
-import propertyHelpers from 'dummy/utils/property-helpers';
+import propertyHelpers from 'dummy/utils/ce/property-helpers';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | property-helpers', function() {

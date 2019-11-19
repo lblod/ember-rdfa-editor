@@ -1,4 +1,4 @@
-import handlerResponse from 'dummy/utils/handler-response';
+import handlerResponse from 'dummy/utils/ce/handler-response';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | handler response', function() {

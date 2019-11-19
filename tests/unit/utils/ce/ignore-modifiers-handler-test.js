@@ -1,4 +1,4 @@
-import ignoreModifiersHandler from 'dummy/utils/ignore-modifiers-handler';
+import ignoreModifiersHandler from 'dummy/utils/ce/ignore-modifiers-handler';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | ignore-modifiers-handler', function(/*hooks*/) {

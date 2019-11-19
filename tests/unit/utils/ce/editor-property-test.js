@@ -1,4 +1,4 @@
-import editorProperty from 'dummy/utils/editor-property';
+import editorProperty from 'dummy/utils/ce/editor-property';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | editor-property', function() {

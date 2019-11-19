@@ -1,4 +1,4 @@
-import listHelpers from 'dummy/utils/list-helpers';
+import listHelpers from 'dummy/utils/ce/list-helpers';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | list-helpers', function() {

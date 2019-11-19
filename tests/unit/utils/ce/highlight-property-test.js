@@ -1,4 +1,4 @@
-import highlightProperty from 'dummy/utils/highlight-property';
+import highlightProperty from 'dummy/utils/ce/highlight-property';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | highlight-property', function() {

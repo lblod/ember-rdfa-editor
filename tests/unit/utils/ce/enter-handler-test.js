@@ -1,4 +1,4 @@
-import enterHandler from 'dummy/utils/enter-handler';
+import enterHandler from 'dummy/utils/ce/enter-handler';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | enter handler', function() {

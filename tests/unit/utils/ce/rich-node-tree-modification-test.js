@@ -1,4 +1,4 @@
-import richNodeTreeModification from 'dummy/utils/rich-node-tree-modification';
+import richNodeTreeModification from 'dummy/utils/ce/rich-node-tree-modification';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | rich-node-tree-modification', function() {

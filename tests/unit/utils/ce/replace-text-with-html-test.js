@@ -1,8 +1,8 @@
 import { setupRenderingTest } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import { render } from '@ember/test-helpers';
-import replaceTextWithHtml from 'dummy/utils/replace-text-with-html';
-import NodeWalker from 'dummy/utils/node-walker';
+import replaceTextWithHtml from 'dummy/utils/ce/replace-text-with-html';
+import NodeWalker from 'dummy/utils/ce/node-walker';
 import { module, test } from 'qunit';
 import 'ember-qunit';
 

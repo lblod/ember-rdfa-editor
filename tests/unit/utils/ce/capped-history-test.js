@@ -1,4 +1,4 @@
-import cappedHistory from 'dummy/utils/capped-history';
+import cappedHistory from 'dummy/utils/ce/capped-history';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | capped history', function() {

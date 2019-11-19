@@ -1,4 +1,4 @@
-import getRichNodeMatchingDomNode from 'dummy/utils/get-rich-node-matching-dom-node';
+import getRichNodeMatchingDomNode from 'dummy/utils/ce/get-rich-node-matching-dom-node';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | get rich node matching dom node', function() {
