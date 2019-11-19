@@ -1,0 +1,15 @@
+{{#if yieldHTML}}
+  {{{yield}}}
+{{else}}
+  {{yield}}
+{{/if}}
+&nbsp;
+
+<!-- components -->
+{{#each components as |config|}}
+  <!-- component {{config.id}} -->
+  {{log config}}
+  {{#ember-wormhole destinationElement=config.element}}
+    {{component-wrapper id=config.id name=config.name content=config.content removeComponent=(action 'removeComponent')}}
+  {{/ember-wormhole}}
+{{/each}}
