@@ -1,3 +1,5 @@
+import classic from "ember-classic-decorator";
+import { layout as templateLayout } from "@ember-decorators/component";
 import { A } from '@ember/array';
 import Component from '@ember/component';
 import layout from '../../templates/components/rdfa/rdfa-editor-debugger';
@@ -10,9 +12,9 @@ import layout from '../../templates/components/rdfa/rdfa-editor-debugger';
 * @class RdfaEditorDebugger
 * @extends Component
 */
-export default Component.extend({
-  layout,
-
+@classic
+@templateLayout(layout)
+export default class RdfaEditorDebugger extends Component {
   /**
   * Objects used for debugging containing the hints registry, context scanner and editor
   *
@@ -21,7 +23,7 @@ export default Component.extend({
   *
   * @public
   */
-  debug: null,
+  debug = null;
 
   /**
   * Whether the debug panel is enabled
@@ -31,7 +33,7 @@ export default Component.extend({
   *
   * @public
   */
-  debugEnabled: false,
+  debugEnabled = false;
 
   /**
   * Currently active debug mode
@@ -42,7 +44,7 @@ export default Component.extend({
   *
   * @public
   */
-  debugMode: 'context-scanner',
+  debugMode = 'context-scanner';
 
   /**
   * Available debug modes
@@ -52,10 +54,10 @@ export default Component.extend({
   *
   * @private
   */
-  debugModes: null,
+  debugModes = null;
 
   init() {
-    this._super(...arguments);
+    super.init(...arguments);
     this.set('debugModes', A(['hints-registry', 'context-scanner']));
   }
-});
+}

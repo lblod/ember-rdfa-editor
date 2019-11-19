@@ -1,10 +1,11 @@
-import { and } from '@ember/object/computed';
+import classic from "ember-classic-decorator";
+import { layout as templateLayout } from "@ember-decorators/component";
+import { computed } from "@ember/object";
+import { inject as service } from "@ember/service";
 import Component from '@ember/component';
 import layout from '../../templates/components/rdfa/load-monitor';
-import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
 import { length } from 'ember-awesome-macros/array';
-import { mapBy } from '@ember/object/computed';
+import { mapBy, and } from '@ember/object/computed';
 
 /**
  * Load monitor
@@ -12,78 +13,87 @@ import { mapBy } from '@ember/object/computed';
  * @class RdfaEditorLoadMonitor
  * @construct
  */
-export default Component.extend({
-  layout,
-  /**
-   * editor dispatcher
-   * @property rdfaEditorDispatcher
-   * @type {Service}
-   * @private
-   */
-  rdfaEditorDispatcher: service(),
+@classic
+@templateLayout(layout)
+export default class LoadMonitor extends Component {
+ /**
+  * editor dispatcher
+  * @property rdfaEditorDispatcher
+  * @type {Service}
+  * @private
+  */
+ @service
+ rdfaEditorDispatcher;
 
-  /**
-   * plugins available in the dispatcher
-   * @property tasks
-   * @type array
-   * @protected
-   */
-  tasks: mapBy('rdfaEditorDispatcher.pluginServices', 'execute'),
+ /**
+  * plugins available in the dispatcher
+  * @property tasks
+  * @type array
+  * @protected
+  */
+ @mapBy('rdfaEditorDispatcher.pluginServices', 'execute')
+ tasks;
 
-  /**
-   * is the editor working
-   * @property editorBusy
-   * @type boolean
-   * @protected
-   */
-  editorBusy: computed('editor.generateDiffEvents.isRunning', function(){
-    if(!this.editor) return true;
-    return this.get('editor.generateDiffEvents.isRunning') == true;
-  }),
+ /**
+  * is the editor working
+  * @property editorBusy
+  * @type boolean
+  * @protected
+  */
+ @computed('editor.generateDiffEvents.isRunning')
+ get editorBusy() {
+   if(!this.editor) return true;
+   return this.get('editor.generateDiffEvents.isRunning') == true;
+ }
 
-  /**
-   * is any plugin scheduled or running
-   * @property anyPluginBusy
-   * @type boolean
-   * @protected
-   */
-  anyPluginBusy: computed('tasks.@each.isRunning', function(){
-    return this.tasks.find(t => t.get('isRunning') == true);
-  }),
+ /**
+  * is any plugin scheduled or running
+  * @property anyPluginBusy
+  * @type boolean
+  * @protected
+  */
+ @computed('tasks.@each.isRunning')
+ get anyPluginBusy() {
+   return this.tasks.find(t => t.get('isRunning') == true);
+ }
 
-  /**
-   * is the editor blocked or is any plugin running
-   * @property allBusy
-   * @type boolean
-   * @protected
-   */
-  allBusy: and('editorBusy', 'anyPluginBusy'),
+ /**
+  * is the editor blocked or is any plugin running
+  * @property allBusy
+  * @type boolean
+  * @protected
+  */
+ @and('editorBusy', 'anyPluginBusy')
+ allBusy;
 
-  /**
-   * Total number of plugins available
-   * @property pluginsCount
-   * @type number
-   * @readOny
-   */
-  pluginsCount: length('tasks'),
+ /**
+  * Total number of plugins available
+  * @property pluginsCount
+  * @type number
+  * @readOny
+  */
+ @length('tasks')
+ pluginsCount;
 
-  /**
-   * Number of plugins that are currently running or scheduled to run
-   * @property busyPluginsCount
-   * @type number
-   * @protected
-   */
-  busyPluginsCount: computed('tasks.@each.isRunning', function(){
-    return this.tasks.filter(t => t.get('isRunning') == true).length;
-  }),
+ /**
+  * Number of plugins that are currently running or scheduled to run
+  * @property busyPluginsCount
+  * @type number
+  * @protected
+  */
+ @computed('tasks.@each.isRunning')
+ get busyPluginsCount() {
+   return this.tasks.filter(t => t.get('isRunning') == true).length;
+ }
 
-  /**
-   * Plugins that are currently running or scheduled to run
-   * @property runningPlugins
-   * @type Array
-   * @protected
-   */
-  runningPlugins: computed('tasks.@each.isRunning', function(){
-    return this.get('rdfaEditorDispatcher.pluginServices').filter(p => p.get('execute.isRunning') == true);
-  })
-});
+ /**
+  * Plugins that are currently running or scheduled to run
+  * @property runningPlugins
+  * @type Array
+  * @protected
+  */
+ @computed('tasks.@each.isRunning')
+ get runningPlugins() {
+   return this.get('rdfaEditorDispatcher.pluginServices').filter(p => p.get('execute.isRunning') == true);
+ }
+}
