@@ -103,7 +103,7 @@ function findPreviousApplicableNode(node, rootNode) {
  *
  * @method nextTextNode
  *
- * @param {TextNode} textNode
+ * @param {Node} node (warning: please note; non textNodes as input are lightly tested)
  * @param {DOMElement} root of the dom tree, don't move outside of this root
  * @return {TextNode} nextNode or null if textNode is at the end of the tree
  * @public

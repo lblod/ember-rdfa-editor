@@ -103,14 +103,11 @@ function findNextApplicableNode(node, rootNode) {
  *
  * @method nextTextNode
  *
- * @param {TextNode} textNode
+ * @param {Node} node (warning: please note; non textNodes as input are lightly tested)
  * @param {DOMElement} root of the dom tree, don't move outside of this root
  * @return {TextNode} nextNode or null if textNode is at the end of the tree
  */
 export default function nextTextNode(textNode, rootNode) {
-  if (textNode.nodeType !== Node.TEXT_NODE) {
-    throw `invalid node type ${textNode.nodeType} for argument textNode`;
-  }
   const nextNode = findNextApplicableNode(textNode, rootNode);
   if (nextNode === rootNode) {
     // next node is rootNode, so I'm at the end of the tree
