@@ -4,6 +4,7 @@ import HandlerResponse from './handler-response';
 import previousTextNode from '../previous-text-node';
 import nextTextNode from '../next-text-node';
 import { warn } from '@ember/debug';
+import { isInLumpNode, getNextNonLumpTextNode, getPreviousNonLumpTextNode } from '../lump-node-utils';
 
 /**
  * Arrow Handler, a event handler to handle arrow keys.
@@ -53,7 +54,10 @@ export default EmberObject.extend({
     else if (richNode.start === position) {
       // start of node
       if (isLeft) {
-        const newNode = previousTextNode(textNode, this.rawEditor.rootNode);
+        let newNode = previousTextNode(textNode, this.rawEditor.rootNode);
+        if(isInLumpNode(newNode)){
+          newNode = getPreviousNonLumpTextNode(newNode, this.rawEditor.rootNode);
+        }
         this.rawEditor.updateRichNode();
         this.rawEditor.setCarret(newNode,newNode.textContent.length);
       }
@@ -64,7 +68,10 @@ export default EmberObject.extend({
     else if (richNode.end === position){
       // end of node
       if (isRight) {
-        const newNode = nextTextNode(textNode, this.rawEditor.rootNode);
+        let newNode = nextTextNode(textNode, this.rawEditor.rootNode);
+        if(isInLumpNode(newNode)){
+          newNode = getNextNonLumpTextNode(newNode, this.rawEditor.rootNode);
+        }
         this.rawEditor.updateRichNode();
         this.rawEditor.setCarret(newNode, 0);
       }
