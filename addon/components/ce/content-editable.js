@@ -11,8 +11,7 @@ import IgnoreModifiersHandler from '../../utils/ce/handlers/ignore-modifiers-han
 import BackspaceHandler from '../../utils/ce/handlers/backspace-handler';
 import TextInputHandler from '../../utils/ce/handlers/text-input-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
-// import EmphasisMarkdownHandler from '../../utils/ce/handlers/emphasis-markdown-handler';
-// import ListInsertionMarkdownHandler from '../../utils/ce/handlers/list-insertion-markdown-handler';
+import ClickHandler from '../../utils/ce/handlers/click-handler';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import TabHandler from '../../utils/ce/handlers/tab-handler';
 import { normalizeEvent } from 'ember-jquery-legacy';
@@ -158,6 +157,7 @@ export default class ContentEditable extends Component {
                                    HeaderMarkdownHandler.create({rawEditor}),
                                    // EmphasisMarkdownHandler.create({rawEditor}),
                                    // ListInsertionMarkdownHandler.create({rawEditor}),
+                                   ClickHandler.create({rawEditor}),
                                    EnterHandler.create({rawEditor}),
                                    BackspaceHandler.create({rawEditor}),
                                    TextInputHandler.create({rawEditor}),
@@ -330,6 +330,37 @@ export default class ContentEditable extends Component {
     this.get('rawEditor').updateRichNode();
     this.get('rawEditor').updateSelectionAfterComplexInput(event);
     this.get('rawEditor').generateDiffEvents.perform();
+  }
+
+  mouseDown(event){
+    event = normalizeEvent(event);
+
+    // TODO: merge handling flow
+    if (!this.isHandledInputEvent(event)) {
+      runInDebug( () => {
+        console.warn('unhandled mouseDown', event); //eslint-disable-line no-console
+      });
+    }
+    else {
+
+      let handlers = this.get('inputHandlers').filter(h => h.isHandlerFor(event));
+
+      try {
+        for(let handler of handlers){
+          let response = handler.handleEvent(event);
+          if (!response.get('allowBrowserDefault'))
+            event.preventDefault();
+          if (!response.get('allowPropagation'))
+            break;
+        }
+      }
+      catch(e){
+        warn(`handler failure`, {id: 'contenteditable.mousedown.handler'});
+        warn(e, {id: 'contenteditable.mousedown.handler'});
+      }
+      this.get('rawEditor').updateRichNode();
+      this.get('rawEditor').generateDiffEvents.perform();
+    }
   }
 
   handleUncapturedEvent(event) {
