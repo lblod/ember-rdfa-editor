@@ -14,6 +14,7 @@ import {
 import previousTextNode from '../previous-text-node';
 import { warn, debug } from '@ember/debug';
 import { A } from '@ember/array';
+import { isInLumpNode, getParentLumpNode, getPreviousNonLumpTextNode } from '../lump-node-utils';
 
 /**
  * Backspace Handler, a event handler to handle the generic backspace case
@@ -42,6 +43,7 @@ export default EmberObject.extend({
       && this.get('rawEditor.currentSelectionIsACursor')
       && this.doesCurrentNodeBelongsToContentEditable();
   },
+
   deleteCharacter(textNode, trueRelativePosition) {
     const text = textNode.textContent;
     const slicedText = text.slice(trueRelativePosition - 1 , trueRelativePosition);
@@ -53,6 +55,7 @@ export default EmberObject.extend({
   doesCurrentNodeBelongsToContentEditable(){
     return this.currentNode.parentNode && this.currentNode.parentNode.isContentEditable;
   },
+
   /**
    * given richnode and absolute position, matches position within text node
    * @method absoluteToRelativePostion
@@ -75,6 +78,7 @@ export default EmberObject.extend({
     this.rawEditor.externalDomUpdate('backspace', () => this.backSpace());
     return HandlerResponse.create({ allowPropagation: false });
   },
+
   /**
    * return to visible text of a node,
    * e.g. removes invisibleSpaces and compacts consecutive spaces to 1 space
@@ -86,6 +90,7 @@ export default EmberObject.extend({
   visibleText(node) {
     return this.stringToVisibleText(node.textContent);
   },
+
   /**
    * removes invisibleSpaces and compacts consecutive spaces to 1 space
    * @method stringToVisibleText
@@ -96,6 +101,7 @@ export default EmberObject.extend({
   stringToVisibleText(string) {
     return string.replace(invisibleSpace,'').replace(/\s+/,' ');
   },
+
   /**
    * executes a backspace
    * @method backspace
@@ -110,7 +116,7 @@ export default EmberObject.extend({
       const visibleText = this.visibleText(textNode);
       const visibleLength = visibleText.length;
       textNode.textContent = visibleText;
-      if (visibleLength > 0 && ! isAllWhitespace(textNode)) {
+      if (visibleLength > 0 && !isAllWhitespace(textNode)) {
         // non empty node
         const relPosition = this.absoluteToRelativePosition(richNode, position);
         const textBeforeCursor = originalText.slice(0, relPosition);
@@ -125,6 +131,7 @@ export default EmberObject.extend({
           if (previousNode) {
             this.rawEditor.updateRichNode();
             this.rawEditor.setCarret(previousNode, previousNode.length);
+
             if (isLI(textNode.parentNode) && richNode.start === richNode.parent.start) {
               // we're at the start of an li and need to handle this
               this.removeLI(textNode.parentNode);
@@ -139,18 +146,31 @@ export default EmberObject.extend({
           }
         }
         else {
+
+          if(isInLumpNode(textNode, this.rawEditor.rootNode)){
+            this.handleLumpRemoval(textNode, this.rawEditor.rootNode);
+          }
+
           // not empty and we're not at the start, delete character before the carret
-          this.deleteCharacter(textNode, trueRelativePosition);
+          else this.deleteCharacter(textNode, trueRelativePosition);
         }
       }
       else {
         // empty node, move to previous text node and remove nodes in between
-        const previousNode = previousTextNode(textNode, this.rawEditor.rootNode);
+        let previousNode = previousTextNode(textNode, this.rawEditor.rootNode);
         if (previousNode) {
-          // if previousNode is null we should be at the start of the editor and do nothing
-          this.removeNodesFromTo(textNode, previousNode);
-          this.rawEditor.updateRichNode();
-          this.rawEditor.setCarret(previousNode, previousNode.length);
+
+          // Moving to the new node, means we need to check whether our current node needs to be removed as block
+          if(isInLumpNode(textNode, this.rawEditor.rootNode)){
+              this.handleLumpRemoval(textNode, this.rawEditor.rootNode);
+          }
+
+          else {
+            // if previousNode is null we should be at the start of the editor and do nothing
+            this.removeNodesFromTo(textNode, previousNode);
+            this.rawEditor.updateRichNode();
+            this.rawEditor.setCarret(previousNode, previousNode.length);
+          }
         }
         else {
           debug('empty previousnode, not doing anything');
@@ -162,6 +182,7 @@ export default EmberObject.extend({
       warn(e, { id: 'rdfaeditor.invalidState'});
     }
   },
+
   previousNode(node) {
     /* backwards walk of dom tree */
     var previousNode;
@@ -178,6 +199,7 @@ export default EmberObject.extend({
     }
     return previousNode;
   },
+
   removeNodesFromTo(nodeAfter, nodeBefore, nodes = A()) {
     var previousNode = this.previousNode(nodeAfter);
     if (previousNode === nodeBefore) {
@@ -205,6 +227,7 @@ export default EmberObject.extend({
       this.removeNodesFromTo(previousNode, nodeBefore, nodes);
     }
   },
+
   /**
    * handles node removal for list items
    * list items can also be removed when not empty yet, most online editors seem to move content to a previous or parent node
@@ -231,5 +254,15 @@ export default EmberObject.extend({
     else {
       // no parent, do nothing for now
     }
+  },
+
+  handleLumpRemoval(node, rootNode){
+    const nodeToDeleteAsBlock = getParentLumpNode(node, this.rawEditor.rootNode);
+    const previousNode = getPreviousNonLumpTextNode(nodeToDeleteAsBlock, this.rawEditor.rootNode);
+    this.removeNodesFromTo(previousNode, nodeToDeleteAsBlock);
+    nodeToDeleteAsBlock.remove();
+    this.rawEditor.updateRichNode();
+    this.rawEditor.setCarret(previousNode, previousNode.length);
   }
+
 });
