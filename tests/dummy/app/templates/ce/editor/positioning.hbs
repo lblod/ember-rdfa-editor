@@ -1,0 +1,81 @@
+<h2 id="title">Testing update before after</h2>
+<button {{action 'reload'}}> reload </button>
+{{#ce/content-editable editable=true focused=true yieldHTML=true
+   textInsert=(action 'handleTextInsert')
+   textRemove=(action 'handleTextRemove')
+   selectionUpdate=(action 'selectionUpdate')
+   elementUpdate=(action 'elementUpdate')
+   rawEditorInit=(action 'rawEditorInit')
+}}
+  <div
+    vocab="http://test/editor/update-before-after/"
+    prefix="foaf: http://xmlns.com/foaf/0.1/"
+    resource="#"
+    typeof="foaf:Document">
+    <h1>Standard cases</h1>
+
+    <h1>Cases with block </h1>
+    <p>You will have to check the code of this file, in comments is explained what the expected behaviour is, and where to put your cursor</p>
+    <h2>case 1</h2>
+    <!--
+         INPUT
+         *****
+         baz<nodeAsBlock><textNode>bar<textNode></nodeAsBlock>|->arrow left
+         EXPECTED
+         ********
+         baz|<nodeAsBlock><textNode>bar<textNode></nodeAsBlock>->arrow left
+
+    -->
+    baz<div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:green"> bar</div>|->arrow left
+
+    <h2>case 2</h2>
+    <!--
+         INPUT
+         *****
+         baz arrow right|<nodeAsBlock><textNode>bar<textNode></nodeAsBlock>bar
+         EXPECTED
+         ********
+         baz arrow right<nodeAsBlock><textNode>bar<textNode></nodeAsBlock>|bar
+
+    -->
+    baz arrow right|<div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:green"> bar</div>|bar
+
+    <h2>case 3</h2>
+    <!--
+         INPUT
+         *****
+         baz tab|<nodeAsBlock><textNode>bar<textNode></nodeAsBlock>bar
+         EXPECTED
+         ********
+         baz tab<nodeAsBlock><textNode>bar<textNode></nodeAsBlock>|bar
+
+    -->
+    baz tab|<div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:green"> bar</div>bar
+
+    <h2>case 4</h2>
+    <!--
+         INPUT
+         *****
+         click on image|<nodeAsBlock><textNode>bar<textNode><img/><textNode>bar<textNode></nodeAsBlock>bar
+         EXPECTED
+         ********
+         click on image<nodeAsBlock><textNode>bar<textNode><img/><textNode>bar<textNode></nodeAsBlock>|bar
+
+    -->
+    click on image|<div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:green" spellcheck=false> bar
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Large_format_camera_lens.jpg"/>
+      baz</div>bar
+
+    <h2>case 5 (does not work as expected)</h2>
+      <!--
+           INPUT
+           *****
+           baz tab|<nodeAsBlock><textNode>bar<textNode></nodeAsBlock><nodeAsBlock><textNode>bar<textNode></nodeAsBlock>bar
+           EXPECTED
+           ********
+           baz tab<nodeAsBlock><textNode>bar<textNode></nodeAsBlock><nodeAsBlock><textNode>bar<textNode></nodeAsBlock>|bar
+
+      -->
+      baz tab|<div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:green"> bar</div><span property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:red"> bar</span>bar
+  </div>
+{{/ce/content-editable}}
