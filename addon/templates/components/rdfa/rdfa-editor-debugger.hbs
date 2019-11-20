@@ -1,4 +1,4 @@
-{{wu-checkbox checked=this.debugEnabled label="Enable debug"}}
+<WuCheckbox @checked={{this.debugEnabled}} @label="Enable debug" />
 
 {{#if this.debugEnabled}}
   <div>
@@ -10,9 +10,9 @@
     </select>
   </div>
   {{#if (eq this.debugMode "hints-registry")}}
-    {{rdfa/hints-registry-debugger hintsRegistry=this.debug.hintsRegistry}}
+    <Rdfa::HintsRegistryDebugger @hintsRegistry={{this.debug.hintsRegistry}} />
   {{else if (eq this.debugMode "context-scanner")}}
-    {{rdfa/rdfa-context-debugger editor=this.debug.editor contextScanner=this.debug.contextScanner}}
+    <Rdfa::RdfaContextDebugger @editor={{this.debug.editor}} @contextScanner={{this.debug.contextScanner}} />
   {{/if}}
 {{/if}}
 

@@ -9,7 +9,7 @@
 {{#each this.components as |config|}}
   <!-- component {{config.id}} -->
   {{log config}}
-  {{#ember-wormhole destinationElement=config.element}}
-    {{ce/component-wrapper id=config.id name=config.name content=config.content removeComponent=(action 'removeComponent')}}
-  {{/ember-wormhole}}
+  <EmberWormhole @destinationElement={{config.element}}>
+    <Ce::ComponentWrapper @id={{config.id}} @name={{config.name}} @content={{config.content}} @removeComponent={{action "removeComponent"}} />
+  </EmberWormhole>
 {{/each}}

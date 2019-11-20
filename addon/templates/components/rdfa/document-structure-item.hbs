@@ -2,7 +2,7 @@
   <li class="side-navigation__item">
     <a href="#" onclick={{action 'itemClicked' item.node}}>{{item.title}}</a>
     {{#if item.children}}
-      {{rdfa/document-structure-item items=item.children itemClicked=(action 'itemClicked')}}
+      <Rdfa::DocumentStructureItem @items={{item.children}} @itemClicked={{action "itemClicked"}} />
     {{/if}}
   </li>
 {{/each}}

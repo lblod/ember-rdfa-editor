@@ -19,9 +19,9 @@
          --}}
 
       <div class="button-group u-display-inline-block">
-        {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "undo")}}
+        <WuButton @isLink={{true}} @isDark={{true}} @isNarrow={{true}} @onClick={{action "undo"}}>
           <i class="fa fa-rotate-left"></i>
-        {{/wu-button}}
+        </WuButton>
 
         {{!--
          {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
@@ -30,30 +30,30 @@
          --}}
       </div>
       <div class="button-group u-display-inline-block">
-        {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action 'toggleBold')}}
+        <WuButton @isLink={{true}} @isDark={{true}} @isNarrow={{true}} @onClick={{action "toggleBold"}}>
           <i class="fa fa-bold"></i>
-        {{/wu-button}}
-        {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action 'toggleItalic')}}
+        </WuButton>
+        <WuButton @isLink={{true}} @isDark={{true}} @isNarrow={{true}} @onClick={{action "toggleItalic"}}>
           <i class="fa fa-italic"></i>
-        {{/wu-button}}
-        {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action 'toggleUnderline')}}
+        </WuButton>
+        <WuButton @isLink={{true}} @isDark={{true}} @isNarrow={{true}} @onClick={{action "toggleUnderline"}}>
           <i class="fa fa-underline"></i>
-        {{/wu-button}}
-        {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action 'toggleStrikethrough')}}
+        </WuButton>
+        <WuButton @isLink={{true}} @isDark={{true}} @isNarrow={{true}} @onClick={{action "toggleStrikethrough"}}>
           <i class="fa fa-strikethrough"></i>
-        {{/wu-button}}
-        {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "insertUL")}}
+        </WuButton>
+        <WuButton @isLink={{true}} @isDark={{true}} @isNarrow={{true}} @onClick={{action "insertUL"}}>
           <i class="fa fa-list-ul"></i>
-        {{/wu-button}}
-        {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "insertOL")}}
+        </WuButton>
+        <WuButton @isLink={{true}} @isDark={{true}} @isNarrow={{true}} @onClick={{action "insertOL"}}>
           <i class="fa fa-list-ol"></i>
-        {{/wu-button}}
-        {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "insertUnindent")}}
+        </WuButton>
+        <WuButton @isLink={{true}} @isDark={{true}} @isNarrow={{true}} @onClick={{action "insertUnindent"}}>
           <i class="fa fa-dedent"></i>
-        {{/wu-button}}
-        {{#wu-button isLink=true isDark=true isNarrow=true onClick=(action "insertIndent")}}
+        </WuButton>
+        <WuButton @isLink={{true}} @isDark={{true}} @isNarrow={{true}} @onClick={{action "insertIndent"}}>
           <i class="fa fa-indent"></i>
-        {{/wu-button}}
+        </WuButton>
       </div>
       {{!--<div class="button-group u-display-inline-block">
         {{#wu-button isLink=true isDark=true isNarrow=true onClick=null}}
@@ -77,7 +77,7 @@
           <label class="checkbox--switch__label" for="toggle-1"></label>
           <span>Toon annotaties</span>
         </div>
-        {{wu-button label="Voeg annotatie in +" size="small" isNarrow=true isAlt=true isBlue=true onClick=null}}
+        <WuButton @label="Voeg annotatie in +" @size="small" @isNarrow={{true}} @isAlt={{true}} @isBlue={{true}} @onClick={{null}} />
       </div>
     </div>
   </div>

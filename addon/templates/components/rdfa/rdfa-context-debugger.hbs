@@ -3,13 +3,13 @@
 
   <div>
     <h4 class="h4">Context scanner</h4>
-    <div>Scan region van {{input type="number" value=this.scanStart}} tot {{input type="number" value=this.scanEnd}}</div>
-    <div>{{wu-button onClick=(action "analyse" this.scanStart this.scanEnd) label="Bereken context"}}</div>
+    <div>Scan region van <Input @type="number" @value={{this.scanStart}} /> tot <Input @type="number" @value={{this.scanEnd}} /></div>
+    <div><WuButton @onClick={{action "analyse" this.scanStart this.scanEnd}} @label="Bereken context" /></div>
   </div>
 
   <div>
     <h4 class="h4">Context selection</h4>
-    <div>Selecteer context van {{input type="number" value=this.selectStart}} tot {{input type="number" value=this.selectEnd}}</div>
+    <div>Selecteer context van <Input @type="number" @value={{this.selectStart}} /> tot <Input @type="number" @value={{this.selectEnd}} /></div>
     <div>
       met scope
       <select name="scopes" onchange={{action (mut this.selectOptions.scope) value="target.value"}}>
@@ -20,30 +20,30 @@
       en filter:
       <div>
         <label>Resource:</label>
-        {{input value=this.selectOptions.resource class="uri"}}
+        <Input @value={{this.selectOptions.resource}} class="uri" />
       </div>
       <div>
         <label>Typeof (1 per line)</label>
-        {{textarea value=this.selectOptions.typeofString cols="300" rows="5"}}
+        <Textarea @value={{this.selectOptions.typeofString}} @cols="300" @rows="5" />
       </div>
       <div>
         <label>Property (1 per line)</label>
-        {{textarea value=this.selectOptions.propertyString cols="300" rows="5"}}
+        <Textarea @value={{this.selectOptions.propertyString}} @cols="300" @rows="5" />
       </div>
       <div>
         <label>Datatype:</label>
-        {{input value=this.selectOptions.datatype class="uri"}}
+        <Input @value={{this.selectOptions.datatype}} class="uri" />
       </div>
     </div>
     <div>
-      {{wu-button onClick=(action "selectContext" this.selectStart this.selectEnd this.selectOptions) label="Selecteer context"}}
+      <WuButton @onClick={{action "selectContext" this.selectStart this.selectEnd this.selectOptions}} @label="Selecteer context" />
     </div>
   </div>
 
   {{#if this.blocks}}
     <h4 class="h4">RDFa context</h4>
     {{#each this.blocks as |block|}}
-      <h5 class="h5">[{{block.region}}] "{{block.text}}" {{wu-button size="small" onClick=(action "highlight" block.region) label="Highlight"}}</h5>
+      <h5 class="h5">[{{block.region}}] "{{block.text}}" <WuButton @size="small" @onClick={{action "highlight" block.region}} @label="Highlight" /></h5>
       <pre>
         {{#each block.context as |statement|}}
       &lt;{{statement.subject}}&gt; {{#if (eq statement.predicate 'a')}}{{statement.predicate}}{{else}}&lt;{{statement.predicate}}&gt;{{/if}} {{#if (is-uri statement.object)}}&lt;{{statement.object}}&gt;{{else}}"{{statement.object}}"{{/if}}{{#if statement.datatype}}^^&lt;{{statement.datatype}}&gt;{{/if}}
@@ -55,7 +55,7 @@
   {{else if this.selections}}
     <h4 class="h4">RDFa selections</h4>
     {{#each this.selections as |selection|}}
-      <h5 class="h5">[{{selection.region}}] "{{selection.richNode.domNode.textContent}}" {{wu-button size="small" onClick=(action "highlight" selection.region) label="Highlight"}}</h5>
+      <h5 class="h5">[{{selection.region}}] "{{selection.richNode.domNode.textContent}}" <WuButton @size="small" @onClick={{action "highlight" selection.region}} @label="Highlight" /></h5>
       <pre>
         {{#each selection.context as |statement|}}
       &lt;{{statement.subject}}&gt; {{#if (eq statement.predicate 'a')}}{{statement.predicate}}{{else}}&lt;{{statement.predicate}}&gt;{{/if}} {{#if (is-uri statement.object)}}&lt;{{statement.object}}&gt;{{else}}"{{statement.object}}"{{/if}}{{#if statement.datatype}}^^&lt;{{statement.datatype}}&gt;{{/if}}
