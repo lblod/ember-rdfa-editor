@@ -41,19 +41,15 @@ export default EmberObject.extend({
   handleEvent(event){
     if(this.isMouseDownInLumpNode(event)) {
       //Note: now only mousdown in lumpnode is taken care of. All remaining will be default content editable.
-      const nextNode = this.nextNode(event.target);
+      const nextNode = this.setTargetOutsideLumpNode(event.target);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret(nextNode, 0);
     }
     return HandlerResponse.create({ allowPropagation: false });
   },
 
-  nextNode(current) {
-    let newNode = nextTextNode(current, this.rawEditor.rootNode);
-    if(isInLumpNode(newNode)){
-      animateLumpNode(getParentLumpNode(newNode));
-      return getNextNonLumpTextNode(newNode, this.rawEditor.rootNode);
-    }
-    return newNode;
+  setTargetOutsideLumpNode(target) {
+    animateLumpNode(getParentLumpNode(target));
+    return getNextNonLumpTextNode(target, this.rawEditor.rootNode);
   }
 });
