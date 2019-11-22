@@ -19,7 +19,7 @@ import { warn, runInDebug } from '@ember/debug';
 import { A } from '@ember/array';
 import { isEmpty } from '@ember/utils';
 import { next } from '@ember/runloop';
-
+import { isInLumpNode, getNextNonLumpTextNode, getPreviousNonLumpTextNode } from '../../utils/ce/lump-node-utils';
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
  * It provides handlers for input events, a component to display a contenteditable element and an api for interaction with the document and its internal document representation.
@@ -179,7 +179,7 @@ export default class ContentEditable extends Component {
     this.rawEditor.set('handleFullContentUpdate',this.handleFullContentUpdate);
     this.rawEditor.set('selectionUpdate',this.selectionUpdate);
     this.rawEditor.set('elementUpdate',this.elementUpdate);
-		this.rawEditor.set('handleFullContentUpdate',this.handleFullContentUpdate);
+    this.rawEditor.set('handleFullContentUpdate',this.handleFullContentUpdate);
   }
 
   /**
@@ -358,9 +358,9 @@ export default class ContentEditable extends Component {
         warn(`handler failure`, {id: 'contenteditable.mousedown.handler'});
         warn(e, {id: 'contenteditable.mousedown.handler'});
       }
-      this.get('rawEditor').updateRichNode();
-      this.get('rawEditor').generateDiffEvents.perform();
     }
+    this.get('rawEditor').updateRichNode();
+    this.get('rawEditor').generateDiffEvents.perform();
   }
 
   handleUncapturedEvent(event) {
@@ -404,6 +404,41 @@ export default class ContentEditable extends Component {
 
   isCtrlZ(event) {
     return event.ctrlKey && event.key === 'z';
+  }
+
+  /**
+   * This is a brutal repositioning of the cursor where in ends up in forbidden zones.
+   * This is method exists because some elegant handling (ArrowUp,-Down, PageUp)
+   * When there are some extra rules of where the cursor should be placed in the DOM-tree, which is too complex
+   * for the current handlers, or not implemented yet in the handlers, this method is your last resort.
+   * It performs a rather brutal re-positioning, so this could have some funky effect for the users.
+   * Current implemenation only cares about situations where this repositioning would matter less to the user.
+   */
+  performBrutalRepositioningForLumpNode(){
+    const editor = this.rawEditor;
+    const previousEvent = this.potentialLumpNodeEvent;
+    const textNode = editor.currentNode;
+    const rootNode = editor.rootNode;
+
+    if(!previousEvent) return;
+
+    //Handle the lumpNode (the 'lumpNode is lava!'-game) cases
+    let nextValidTextNode = null;
+    if(isInLumpNode(textNode, rootNode)){
+      const position = this.rawEditor.currentSelection[0];
+      if(previousEvent.type === "keydown" && (previousEvent.key === 'ArrowUp' || previousEvent.key === 'PageUp')) {
+        nextValidTextNode = getPreviousNonLumpTextNode(textNode, rootNode);
+        editor.updateRichNode();
+        editor.setCarret(nextValidTextNode, nextValidTextNode.length);
+      }
+
+      else if(previousEvent.type === "keydown" && previousEvent.key === 'ArrowDown' || previousEvent.key === 'PageDown'){
+        nextValidTextNode = getNextNonLumpTextNode(textNode, rootNode);
+        editor.updateRichNode();
+        editor.setCarret(nextValidTextNode, 0);
+      }
+    }
+
   }
 
   @action
