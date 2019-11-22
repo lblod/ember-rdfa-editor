@@ -37,7 +37,8 @@
     "ember-concurrency": "^1.0.0",
     "ember-classic-decorator": "^1.0.3",
     "ember-truth-helpers": "^2.0.0",
-    "ember-concurrency-decorators": "^1.0.0"
+    "ember-concurrency-decorators": "^1.0.0",
+    "ember-decorators": "^6.1.1"
   },
   "devDependencies": {
     "@ember/optional-features": "^1.0.0",
@@ -55,7 +56,6 @@
     "ember-cli-uglify": "^3.0.0",
     "ember-cli-update": "^0.45.0",
     "ember-cli-yuidoc": "^0.8.8",
-    "ember-decorators": "^6.1.1",
     "ember-disable-prototype-extensions": "^1.1.3",
     "ember-export-application-global": "^2.0.0",
     "ember-font-awesome": "^4.0.0-rc.4",
