@@ -19,7 +19,11 @@ import { warn, runInDebug } from '@ember/debug';
 import { A } from '@ember/array';
 import { isEmpty } from '@ember/utils';
 import { next } from '@ember/runloop';
-import { isInLumpNode, getNextNonLumpTextNode, getPreviousNonLumpTextNode } from '../../utils/ce/lump-node-utils';
+import { isInLumpNode,
+         getNextNonLumpTextNode,
+         getPreviousNonLumpTextNode,
+         getParentLumpNode
+       } from '../../utils/ce/lump-node-utils';
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
  * It provides handlers for input events, a component to display a contenteditable element and an api for interaction with the document and its internal document representation.
@@ -281,13 +285,14 @@ export default class ContentEditable extends Component {
       }
       this.get('rawEditor').updateRichNode();
       this.get('rawEditor').generateDiffEvents.perform();
-      this.capturedEvents.pushObject(event);
+      this.capturedEvents.pushObject(event); // TODO: figure this out again
     }
     else {
       runInDebug( () => {
         console.warn('unhandled keydown', event); //eslint-disable-line no-console
       });
     }
+    this.lastKeyDown = event;
   }
 
   /**
@@ -369,8 +374,10 @@ export default class ContentEditable extends Component {
       this.set('capturedEvents', A()); // TODO: added this because tracking of captured events is broken, fix it
       this.get('rawEditor').externalDomUpdate('uncaptured input event', () => {});
     }
-    else
+    else {
       this.capturedEvents.shiftObject();
+    }
+    this.performBrutalRepositioningForLumpNode(this.lastKeyDown);
   }
 
   /**
@@ -414,17 +421,19 @@ export default class ContentEditable extends Component {
    * It performs a rather brutal re-positioning, so this could have some funky effect for the users.
    * Current implemenation only cares about situations where this repositioning would matter less to the user.
    */
-  performBrutalRepositioningForLumpNode(){
+  performBrutalRepositioningForLumpNode(previousEvent){
     const editor = this.rawEditor;
-    const previousEvent = this.potentialLumpNodeEvent;
     const textNode = editor.currentNode;
     const rootNode = editor.rootNode;
-
     if(!previousEvent) return;
 
     //Handle the lumpNode (the 'lumpNode is lava!'-game) cases
     let nextValidTextNode = null;
     if(isInLumpNode(textNode, rootNode)){
+      const parentLumpNode = getParentLumpNode(textNode, rootNode);
+      let animationClass = 'scrollto-highlight';
+      parentLumpNode.classList.add(animationClass);
+      window.setTimeout(() => parentLumpNode.classList.remove(animationClass), 500);
       const position = this.rawEditor.currentSelection[0];
       if(previousEvent.type === "keydown" && (previousEvent.key === 'ArrowUp' || previousEvent.key === 'PageUp')) {
         nextValidTextNode = getPreviousNonLumpTextNode(textNode, rootNode);
