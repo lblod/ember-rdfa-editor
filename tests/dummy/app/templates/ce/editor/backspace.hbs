@@ -95,18 +95,6 @@
     <!--
          INPUT
          *****
-         <textNode>baz</textNode><nodeForBlockRemoval> <textNode>b|ar</textNode> </nodeForBlockRemoval> <textNode> foo </textNode>
-         EXPECTED
-         ********
-         <textNode>baz |</textNode><textNode>foo</textNode>
-
-    -->
-    baz <div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:green"> bar</div>foo
-
-    <h2>case 2</h2>
-    <!--
-         INPUT
-         *****
          <textNode>baz</textNode><nodeForBlockRemoval><textNode>bar</textNode></nodeForBlockRemoval><textNode>|foo</textNode>
          EXPECTED
          ********
@@ -115,54 +103,20 @@
     -->
     baz <div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:green">bar</div>foo
 
-    <h2>case 3</h2>
+    <h2>case 2</h2>
     <!--
          INPUT
          *****
          <textNode>baz</textNode><nodeForBlockRemoval> <textNode>bar</textNode> </nodeForBlockRemoval> <invisibleTextNode>|</invisibleTextNode>
          EXPECTED
          ********
-         <textNode>baz</textNode><textNode>bar|</textNode> </nodeForBlockRemoval>
+         <textNode>baz|</textNode>
 
     -->
     baz <div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:green">bar</div>
     <div style="background-color:red">place cursor right before the red  div</div>
 
-    <h2>case 4</h2>
-    <!--
-         INPUT
-         *****
-         <textNode>baz</textNode><nodeForBlockRemoval><textNode>| bar</textNode> </nodeForBlockRemoval> <textNode>foo</textNode>
-         EXPECTED
-         ********
-         <textNode>ba|</textNode><nodeForBlockRemoval><textNode>bar</textNode> </nodeForBlockRemoval> <textNode>foo</textNode>
-
-         NOTE
-         ****
-         Not entirely sure about what we want here, but this behaviour seems the closest our current backspace handling
-    -->
-    baz<div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:green">bar</div>foo
-
-    <h2>case 5</h2>
-    <!--
-         INPUT
-         *****
-         <textNode>baz</textNode>
-         <nodeForBlockRemoval>
-           <span><textNode>some textNode</textNode></span><span><textNode>| bar</textNode></span>
-         </nodeForBlockRemoval>
-         <textNode>foo</textNode>
-         EXPECTED
-         ********
-         <textNode>baz |</textNode> <textNode>foo</textNode>
-
-    -->
-    baz
-    <div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:green">
-      <span style="background-color:grey">some textNode</span><span style="background-color:pink">bar</span>
-    </div>foo
-
-    <h2>case 6</h2>
+    <h2>case 3</h2>
     <!--
          INPUT
          *****
@@ -171,9 +125,9 @@
            <span><textNode>some textNode number 1</textNode></span><span><textNode>bar number 1</textNode></span>
          </nodeForBlockRemoval>
          <nodeForBlockRemoval>
-           <invisibleTextNode></invisibleTextNode><span><textNode>| some textNode number 2</textNode></span><span><textNode>bar number 2</textNode></span>
+           <invisibleTextNode></invisibleTextNode><span><textNode> some textNode number 2</textNode></span><span><textNode>bar number 2</textNode></span>
          </nodeForBlockRemoval>
-         <textNode>foo</textNode>
+         <textNode>|foo</textNode>
          EXPECTED
          ********
          <textNode>baz</textNode>
@@ -189,38 +143,6 @@
       <span style="background-color:pink">bar number 1</span>
     </div><div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:red">
       <span style="background-color:teal">some textNode number 2</span>
-      <span style="background-color:aqua">bar number 2</span>
-    </div>
-    foo
-
-    <h2>case 7 (not working)</h2>
-    <!--
-         INPUT
-         *****
-         <textNode>baz</textNode>
-         <nodeForBlockRemoval>
-         <span><textNode>some textNode number 1</textNode></span><span><textNode>bar number 1</textNode></span>
-         </nodeForBlockRemoval>
-         <nodeForBlockRemoval>
-         <span><textNode>| some textNode number 2</textNode></span><span><textNode>bar number 2</textNode></span>
-         </nodeForBlockRemoval>
-         <textNode>foo</textNode>
-         EXPECTED
-         ********
-         <textNode>baz</textNode>
-         <nodeForBlockRemoval>
-         <span><textNode>some textNode number 1</textNode></span><span><textNode>bar number 1</textNode></span>
-         </nodeForBlockRemoval>|
-         <textNode>foo</textNode>
-         NOTE
-         ****
-         This is not working, because previousTextNode creates a textnode bewteen two div which get immediatly deleted
-    -->
-    baz
-    <div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:green">
-      <span style="background-color:grey">some textNode number 1</span>
-      <span style="background-color:pink">bar number 1</span>
-    </div><div property="http://lblod.data.gift/vocabularies/editor/isBlockRemovalNode" style="background-color:red"><span style="background-color:teal">some textNode number 2</span>
       <span style="background-color:aqua">bar number 2</span>
     </div>
     foo
