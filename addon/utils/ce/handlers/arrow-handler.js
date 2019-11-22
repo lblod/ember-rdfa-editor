@@ -4,7 +4,7 @@ import HandlerResponse from './handler-response';
 import previousTextNode from '../previous-text-node';
 import nextTextNode from '../next-text-node';
 import { warn } from '@ember/debug';
-import { isInLumpNode, getNextNonLumpTextNode, getPreviousNonLumpTextNode } from '../lump-node-utils';
+import { isInLumpNode, getNextNonLumpTextNode, getPreviousNonLumpTextNode, animateLumpNode, getParentLumpNode } from '../lump-node-utils';
 
 /**
  * Arrow Handler, a event handler to handle arrow keys.
@@ -56,6 +56,7 @@ export default EmberObject.extend({
       if (isLeft) {
         let newNode = previousTextNode(textNode, this.rawEditor.rootNode);
         if(isInLumpNode(newNode)){
+          animateLumpNode(getParentLumpNode(newNode));
           newNode = getPreviousNonLumpTextNode(newNode, this.rawEditor.rootNode);
         }
         this.rawEditor.updateRichNode();
@@ -70,6 +71,7 @@ export default EmberObject.extend({
       if (isRight) {
         let newNode = nextTextNode(textNode, this.rawEditor.rootNode);
         if(isInLumpNode(newNode)){
+          animateLumpNode(getParentLumpNode(newNode));
           newNode = getNextNonLumpTextNode(newNode, this.rawEditor.rootNode);
         }
         this.rawEditor.updateRichNode();

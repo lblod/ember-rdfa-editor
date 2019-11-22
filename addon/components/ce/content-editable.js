@@ -22,7 +22,8 @@ import { next } from '@ember/runloop';
 import { isInLumpNode,
          getNextNonLumpTextNode,
          getPreviousNonLumpTextNode,
-         getParentLumpNode
+         getParentLumpNode,
+         animateLumpNode
        } from '../../utils/ce/lump-node-utils';
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -431,9 +432,7 @@ export default class ContentEditable extends Component {
     let nextValidTextNode = null;
     if(isInLumpNode(textNode, rootNode)){
       const parentLumpNode = getParentLumpNode(textNode, rootNode);
-      let animationClass = 'scrollto-highlight';
-      parentLumpNode.classList.add(animationClass);
-      window.setTimeout(() => parentLumpNode.classList.remove(animationClass), 500);
+      animateLumpNode(parentLumpNode);
       const position = this.rawEditor.currentSelection[0];
       if(previousEvent.type === "keydown" && (previousEvent.key === 'ArrowUp' || previousEvent.key === 'PageUp')) {
         nextValidTextNode = getPreviousNonLumpTextNode(textNode, rootNode);

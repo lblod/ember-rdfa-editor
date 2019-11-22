@@ -66,4 +66,10 @@ function hasLumpNodeProperty(node){
   return false;
 }
 
-export { isInLumpNode, getParentLumpNode, hasLumpNodeProperty, getNextNonLumpTextNode, getPreviousNonLumpTextNode }
+function animateLumpNode(node){
+  let animationClass = 'lump-node-highlight';
+  node.classList.add(animationClass);
+  window.setTimeout(() => node.classList.remove(animationClass), 500);
+}
+
+export { isInLumpNode, getParentLumpNode, hasLumpNodeProperty, getNextNonLumpTextNode, getPreviousNonLumpTextNode, animateLumpNode }

@@ -3,7 +3,7 @@ import { reads } from '@ember/object/computed';
 import HandlerResponse from './handler-response';
 import nextTextNode from '../next-text-node';
 import { warn } from '@ember/debug';
-import { isInLumpNode, getNextNonLumpTextNode } from '../lump-node-utils';
+import { isInLumpNode, getNextNonLumpTextNode, animateLumpNode, getParentLumpNode } from '../lump-node-utils';
 
 /**
  * Click Handler, a event handler to handle click events.
@@ -51,6 +51,7 @@ export default EmberObject.extend({
   nextNode(current) {
     let newNode = nextTextNode(current, this.rawEditor.rootNode);
     if(isInLumpNode(newNode)){
+      animateLumpNode(getParentLumpNode(newNode));
       return getNextNonLumpTextNode(newNode, this.rawEditor.rootNode);
     }
     return newNode;
