@@ -157,20 +157,11 @@ export default EmberObject.extend({
       }
       else {
         // empty node, move to previous text node and remove nodes in between
-        let previousNode = previousTextNode(textNode, this.rawEditor.rootNode);
+        let previousNode = getPreviousNonLumpTextNode(textNode, this.rawEditor.rootNode);
         if (previousNode) {
-
-          // Moving to the new node, means we need to check whether our current node needs to be removed as block
-          if(isInLumpNode(textNode, this.rawEditor.rootNode)){
-              this.handleLumpRemoval(textNode, this.rawEditor.rootNode);
-          }
-
-          else {
-            // if previousNode is null we should be at the start of the editor and do nothing
-            this.removeNodesFromTo(textNode, previousNode);
-            this.rawEditor.updateRichNode();
-            this.rawEditor.setCarret(previousNode, previousNode.length);
-          }
+          this.removeNodesFromTo(textNode, previousNode);
+          this.rawEditor.updateRichNode();
+          this.rawEditor.setCarret(previousNode, previousNode.length);
         }
         else {
           debug('empty previousnode, not doing anything');
@@ -182,7 +173,7 @@ export default EmberObject.extend({
       warn(e, { id: 'rdfaeditor.invalidState'});
     }
 
-    //Brutal repositioning if cursor ends in lumpnode; 'lump-node-is-lava'
+//    Brutal repositioning if cursor ends in lumpnode; 'lump-node-is-lava'
     if(isInLumpNode(this.rawEditor.currentNode, this.rawEditor.rootNode)){
       const previousNonLump = getPreviousNonLumpTextNode(this.rawEditor.currentNode, this.rawEditor.rootNode);
       this.rawEditor.updateRichNode();
@@ -212,7 +203,14 @@ export default EmberObject.extend({
     if (previousNode === nodeBefore) {
       nodes.pushObject(nodeAfter);
       for (const node of nodes) {
-        if (node.nodeType === Node.TEXT_NODE) {
+
+        if (isInLumpNode(node, this.rawEditor.rootNode)){
+          const nodeToDeleteAsBlock = getParentLumpNode(node, this.rawEditor.rootNode);
+          if(nodeToDeleteAsBlock){
+            nodeToDeleteAsBlock.remove();
+          }
+        }
+        else if (node.nodeType === Node.TEXT_NODE) {
           removeNode(node);
         }
         else if (isLI(node)) {
