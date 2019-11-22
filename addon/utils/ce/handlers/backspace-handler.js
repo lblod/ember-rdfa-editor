@@ -181,6 +181,13 @@ export default EmberObject.extend({
     catch(e) {
       warn(e, { id: 'rdfaeditor.invalidState'});
     }
+
+    //Brutal repositioning if cursor ends in lumpnode; 'lump-node-is-lava'
+    if(isInLumpNode(this.rawEditor.currentNode, this.rawEditor.rootNode)){
+      const previousNonLump = getPreviousNonLumpTextNode(this.rawEditor.currentNode, this.rawEditor.rootNode);
+      this.rawEditor.updateRichNode();
+      this.rawEditor.setCarret(previousNonLump, previousNonLump.length);
+    }
   },
 
   previousNode(node) {
