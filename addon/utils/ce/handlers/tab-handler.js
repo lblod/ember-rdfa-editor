@@ -13,7 +13,7 @@ export default EmberObject.extend({
     const nextNode = this.nextNode(currentNode);
     this.rawEditor.updateRichNode();
     this.rawEditor.setCarret(nextNode, 0);
-    return new HandlerResponse({ allowPropagation: false });
+    return HandlerResponse.create({ allowPropagation: false });
   },
 
   nextNode(current) {
