@@ -1095,12 +1095,15 @@ class RawEditor extends EmberObject {
       }
       else {
         // no suitable text node is present, so we create a textnode
-        // TODO: handle empty node
         var textNode;
-        if (richNodeAfterCarret){
+        if (richNodeAfterCarret){ // insert text node before the offset
           textNode = insertTextNodeWithSpace(node, richNodeAfterCarret.domNode);
         }
-        else{
+        else if  (richNode.children.length === 0 && offset === 0) { // the node is empty (no child at position 0), offset should be zero
+          // TODO: what if void element?
+          textNode = insertTextNodeWithSpace(node);
+        }
+        else { // no node at offset, insert after the previous node
           textNode = insertTextNodeWithSpace(node, richNode.children[offset-1].domNode, true);
         }
         this.updateRichNode();
