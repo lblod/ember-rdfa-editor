@@ -22,3 +22,10 @@ input.uri {
 input[type="number"] {
   width: 100px;
 }
+
+.editor > *[contenteditable="true"] {
+    min-height: 200px;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+}

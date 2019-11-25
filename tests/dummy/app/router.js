@@ -7,6 +7,7 @@ const Router = EmberRouter.extend( {
 });
 
 Router.map(function() {
+
   this.route('ce', function(){
     this.route('playground');
     this.route('lists');
@@ -16,7 +17,12 @@ Router.map(function() {
       this.route('backspace');
     });
   });
-  this.route('rdfa', () => {});
+
+  this.route('rdfa', function(){
+    this.route('playground');
+    this.route('playground-with-content');
+  });
+
 });
 
 export default Router;
