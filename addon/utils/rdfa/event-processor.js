@@ -64,8 +64,8 @@ export default EmberObject.extend({
       this.set('profile', 'default');
     }
 
-    assert(this.get('dispatcher'), "dispatcher should be set");
-    assert(this.get('editor'), "editor should be set");
+    assert("dispatcher should be set", this.get('dispatcher'));
+    assert("editor should be set", this.get('editor'));
   },
 
   /**

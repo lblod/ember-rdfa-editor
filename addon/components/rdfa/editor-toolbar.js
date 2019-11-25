@@ -1,6 +1,5 @@
-import classic from "ember-classic-decorator";
 import { action } from "@ember/object";
-import { classNames, layout as templateLayout } from "@ember-decorators/component";
+import { layout as templateLayout } from "@ember-decorators/component";
 import Component from '@ember/component';
 import layout from '../../templates/components/rdfa/editor-toolbar';
 import boldProperty from '../../utils/rdfa/bold-property';

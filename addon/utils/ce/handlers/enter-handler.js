@@ -87,7 +87,6 @@ export default EmberObject.extend({
     let currentNode = this.currentNode;
     let richNode = getRichNodeMatchingDomNode(currentNode, this.richNode);
     let currentPosition = this.currentSelection[0];
-    let nodeForEnter = this.relevantNodeForEnter(richNode);
 
     let splitAt = currentPosition - richNode.start;
     let above = document.createTextNode(currentNode.textContent.slice(0,splitAt));

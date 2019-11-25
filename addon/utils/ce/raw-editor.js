@@ -5,7 +5,6 @@ import { timeout } from 'ember-concurrency';
 import { task } from 'ember-concurrency-decorators';
 import DiffMatchPatch from 'diff-match-patch';
 import { walk as walkDomNode } from '@lblod/marawa/node-walker';
-import { positionInRange } from '@lblod/marawa/range-helpers';
 import {
   isDisplayedAsBlock,
   invisibleSpace,

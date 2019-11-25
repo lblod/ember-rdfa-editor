@@ -120,8 +120,6 @@ function updateDomNodes( selection, rootNode, { remove, add, set, before, after,
  * @method updateEditorStateAfterUpdate
  */
 function updateEditorStateAfterUpdate(selection, relativePosition, currentNode) {
-  const start = Math.min(...selection.selections.map((element) => element.richNode.start));
-  const end = Math.max(...selection.selections.map((element) => element.richNode.end));
   // TODO: cursor handling is suboptimal, should be incorporated in update itself.
   // eg if we're clearing the node that contains our cursor, what would be a good strategy?
   this.updateRichNode();

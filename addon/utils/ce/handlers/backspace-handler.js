@@ -5,7 +5,6 @@ import { get } from '@ember/object';
 import {
   invisibleSpace,
   isEmptyList,
-  isList,
   removeNode,
   isAllWhitespace,
   isLI,
@@ -148,7 +147,7 @@ export default EmberObject.extend({
         else {
 
           if(isInLumpNode(textNode, this.rawEditor.rootNode)){
-            this.handleLumpRemoval(textNode, this.rawEditor.rootNode);
+            this.handleLumpRemoval(textNode);
           }
 
           // not empty and we're not at the start, delete character before the carret
@@ -261,7 +260,7 @@ export default EmberObject.extend({
     }
   },
 
-  handleLumpRemoval(node, rootNode){
+  handleLumpRemoval(node){
     const nodeToDeleteAsBlock = getParentLumpNode(node, this.rawEditor.rootNode);
     const previousNode = getPreviousNonLumpTextNode(nodeToDeleteAsBlock, this.rawEditor.rootNode);
     this.removeNodesFromTo(previousNode, nodeToDeleteAsBlock);

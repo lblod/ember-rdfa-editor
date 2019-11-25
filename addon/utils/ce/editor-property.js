@@ -73,7 +73,6 @@ export default class EditorProperty {
         }
         return true;
       }
-      return true;
     }
     return this.enabledAt(richNode.parent);
   }

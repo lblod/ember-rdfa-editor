@@ -33,7 +33,7 @@ function sliceTextIntoTextNode(textNode, text, start) {
   content.push(text);
   content.push(textContent.slice(start));
   textNode.textContent = content.join('');
-};
+}
 
 /**
  * dom helper to insert a text node with an invisible space into a DOMElement.
@@ -58,7 +58,7 @@ function insertTextNodeWithSpace(parentDomNode, relativeToSibling = null, after 
     parentDomNode.appendChild(textNode);
   }
   return textNode;
-};
+}
 /**
  * dom helper to remove a node from the dom tree
  * this inserts replaces the node with its child nodes
@@ -76,7 +76,7 @@ function removeNodeFromTree(node) {
     baseNode = nodeToInsert;
   }
   parent.removeChild(node);
-};
+}
 
 /**
  * polyfill for ChildNode.remove. Removes node and children from tree.
@@ -89,7 +89,7 @@ function removeNode(node){
   let parent = node.parentNode;
   if(parent)
     parent.removeChild(node);
-};
+}
 
 /**
  * dom helper to check whether a node is a "void element"
@@ -102,7 +102,7 @@ function removeNode(node){
  */
 function isVoidElement(node) {
   return node.nodeType === Node.ELEMENT_NODE && /^(AREA|BASE|BR|COL|COMMAND|EMBED|HR|IMG|INPUT|KEYGEN|LINK|META|PARAM|SOURCE|TRACK|WBR|I)$/i.test(node.tagName);
-};
+}
 
 /**
  * Determine whether a node's text content is entirely whitespace.
@@ -151,7 +151,7 @@ const smartSplitTextNode = function(textNode, splitAt) {
   insertNodeBAfterNodeA(grandParent, parent, extraParent);
   extraParent.appendChild(lastTextNode);
   return [parent, extraParent];
-};
+}
 
 /** list helpers **/
 
@@ -229,10 +229,10 @@ const insertNodeBAfterNodeA = function(parent, nodeA, nodeB) {
  * @return {boolean}
  * @public
  */
-const tagName = function(node) {
+function tagName(node) {
   if(!node) return '';
   return node.nodeType === node.ELEMENT_NODE ? node.tagName.toLowerCase() : '';
-};
+}
 
 /**
  * given html string, convert it into DomElements
@@ -240,11 +240,11 @@ const tagName = function(node) {
  * @param {String} string containing html
  * @public
  */
-const createElementsFromHTML = function(htmlString){
+function createElementsFromHTML(htmlString){
   let div = document.createElement('div');
   div.innerHTML = htmlString.trim();
   return Array.from(div.childNodes);
-};
+}
 
 
 /**
@@ -262,11 +262,11 @@ function getParentLI(node) {
   if(!node.parentNode) return null;
   if(isLI(node.parentNode)) return node.parentNode;
   return getParentLI(node.parentNode);
-};
+}
 
 function isLI( node ) {
   return node.nodeType === node.ELEMENT_NODE && tagName(node) === 'li';
-};
+}
 
 function isTextNode( node ) {
   return node.nodeType === Node.TEXT_NODE;

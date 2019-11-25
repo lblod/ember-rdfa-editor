@@ -1,8 +1,6 @@
 import EmberObject from '@ember/object';
 import { reads } from '@ember/object/computed';
 import HandlerResponse from './handler-response';
-import nextTextNode from '../next-text-node';
-import { warn } from '@ember/debug';
 import { isInLumpNode, getNextNonLumpTextNode, animateLumpNode, getParentLumpNode } from '../lump-node-utils';
 
 /**

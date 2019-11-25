@@ -2,7 +2,6 @@ import {
   invisibleSpace,
   isDisplayedAsBlock,
   isList,
-  tagName,
   isLI,
   getParentLI,
   isTextNode,

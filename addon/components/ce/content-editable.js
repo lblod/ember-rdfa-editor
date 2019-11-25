@@ -433,7 +433,6 @@ export default class ContentEditable extends Component {
     if(isInLumpNode(textNode, rootNode)){
       const parentLumpNode = getParentLumpNode(textNode, rootNode);
       animateLumpNode(parentLumpNode);
-      const position = this.rawEditor.currentSelection[0];
       if(previousEvent.type === "keydown" && (previousEvent.key === 'ArrowUp' || previousEvent.key === 'PageUp')) {
         nextValidTextNode = getPreviousNonLumpTextNode(textNode, rootNode);
         editor.updateRichNode();
