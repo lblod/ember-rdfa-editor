@@ -6,8 +6,5 @@ WORKDIR /app
 COPY package.json .
 RUN npm install
 COPY . .
-RUN ember build -prod
-
-FROM semtech/ember-proxy-service:1.4.0
-
-COPY --from=builder /app/dist /app
+EXPOSE 80
+CMD ["ember", "s", "--port", "80"]
