@@ -91,19 +91,15 @@ function findSuitableNodesToApplyOrCancelProperty(selection) {
       }
     }
   }
-  // clean up empty nodes at start and end
-  let actualNodes = [];
-  if (start === end) {
-    // it's a position, just take the first element
-    // TODO: this could be smarter
-    actualNodes=[nodes[0]];
+  // remove nodes that are contained within other nodes
+  let actualNodes = A();
+  for (let possibleNode of nodes) {
+    const containedInAnotherPossibleNode = nodes.any((otherNode) => otherNode !== possibleNode && otherNode.richNode.domNode.contains(possibleNode.richNode.domNode));
+    if (! containedInAnotherPossibleNode) {
+      actualNodes.pushObject(possibleNode);
+    }
   }
-  else {
-    //adjacent check here
-    actualNodes = nodes.filter( function(sel) {
-      return !isEmptyRange(sel.range) || !isAdjacentRange(sel.range, selection.selectedHighlightRange);
-    });
-  }
+  actualNodes.filter((node) => isAdjacentRange(node.range, selection.selectedHighlightRange));
   return actualNodes;
 }
 
