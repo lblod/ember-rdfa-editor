@@ -284,15 +284,13 @@ function rawCancelProperty(richNode, property) {
         replaceRichNodeWith(richNode, [newRichNode]);
       }
     }
-    else if (richNode.children && richNode.children.length > 0) {
-      // walk down, property was not defined here
+    if (richNode.children && richNode.children.length > 0) {
+      // walk down, make sure property is also cancelled on children.
+      // gets rid of nested tags e.g. <strong><strong></strong></strong>
       for (let child of richNode.children) {
         if (child.type === 'tag')
           rawCancelProperty(child, property);
       }
-    }
-    else {
-      //no children but it's a tag, so nothing to do ?
     }
   }
   else {
