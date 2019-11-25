@@ -426,7 +426,7 @@ export default class ContentEditable extends Component {
     const editor = this.rawEditor;
     const textNode = editor.currentNode;
     const rootNode = editor.rootNode;
-    if(!previousEvent) return;
+    if(! previousEvent || ! textNode) return;
 
     //Handle the lumpNode (the 'lumpNode is lava!'-game) cases
     let nextValidTextNode = null;
