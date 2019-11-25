@@ -6,13 +6,14 @@ import {
 } from './dom-helpers';
 import ReplaceWithPolyfill from 'mdn-polyfills/Node.prototype.replaceWith';
 import RichNode from '@lblod/marawa/rich-node';
-import { isAdjacentRange, isEmptyRange } from '@lblod/marawa/range-helpers';
+import { isAdjacentRange } from '@lblod/marawa/range-helpers';
 import { DEFAULT_TAG_NAME } from './editor-property';
 import {
   replaceRichNodeWith,
   wrapRichNode,
   unwrapRichNode
 } from './rich-node-tree-modification';
+import { A } from '@ember/array';
 
 // TODO: find a clean spot for this polyfill
 if (!Element.prototype.replaceWith)
@@ -94,12 +95,11 @@ function findSuitableNodesToApplyOrCancelProperty(selection) {
   // remove nodes that are contained within other nodes
   let actualNodes = A();
   for (let possibleNode of nodes) {
-    const containedInAnotherPossibleNode = nodes.any((otherNode) => otherNode !== possibleNode && otherNode.richNode.domNode.contains(possibleNode.richNode.domNode));
+    const containedInAnotherPossibleNode = nodes.some((otherNode) => otherNode !== possibleNode && otherNode.richNode.domNode.contains(possibleNode.richNode.domNode));
     if (! containedInAnotherPossibleNode) {
       actualNodes.pushObject(possibleNode);
     }
   }
-  actualNodes.filter((node) => isAdjacentRange(node.range, selection.selectedHighlightRange));
   return actualNodes;
 }
 
