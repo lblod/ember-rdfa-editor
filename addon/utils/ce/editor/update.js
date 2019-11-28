@@ -134,7 +134,7 @@ function updateEditorStateAfterUpdate(selection, relativePosition, currentNode) 
 }
 
 // rdfa attributes we understand, currently ignoring src and href
-const RDFAKeys = ['about', 'property','datatype','typeof','resource', 'rel', 'rev', 'content', 'vocab', 'prefix'];
+const RDFAKeys = ['about', 'property','datatype','typeof','resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'tag'];
 const WRAP = "wrap";
 const UPDATE = "update";
 const NEST = "nest";
@@ -162,6 +162,15 @@ function insertNodeOnSelection(rootNode, selection, domPosition){
     console.warn('Currently we assume if highlight is selected, only textNodes will be selected. Prepend/Append not possible'); // eslint-disable-line no-console
     return;
   }
+
+  // If a tag is specified we use it, otherwise we set <div> as default
+  let tag = (before ? before.tag : false) ||  (after ? after.tag : false) || (prepend ? prepend.tag : false) || (append ? append.tag : false) || "div";
+  const allowedTags = ["div", "p", "span", "a", "li"]
+  if(!allowedTags.includes(tag)){
+    console.warn('We currently support only the following tags: "div", "p", "span", "a", "li"'); // eslint-disable-line no-console
+    return;
+  }
+
   let selectionOfInterest = null;
   if(selection.selectedHighlightRange){
     let cleanedSelections = splitSelectionsToPotentiallyFitInRange(selection.selectedHighlightRange, selection.selections);
@@ -184,7 +193,7 @@ function insertNodeOnSelection(rootNode, selection, domPosition){
 
   if (isRDFAUpdate({ before, after, prepend, append }) || isInnerContentUpdate({ before, after, prepend, append })) {
     let referenceNode = selectionOfInterest.richNode.domNode;
-    let newDomNode = document.createElement('div'); //TODO: now only div, but this must be determined in a smart way.
+    let newDomNode = document.createElement(tag);
 
     if(isRDFAUpdate({ before, after, prepend, append }) && isInnerContentUpdate({ before, after, prepend, append })){
       updateRDFA([ newDomNode ], { set: (before || after || prepend || append) });
