@@ -29,15 +29,15 @@ if (!DocumentType.prototype.replaceWith)
  * you can apply or cancel a property on a selection, created with editor.selectHighlight
  * NOTE: support for selections based on editor.selectContext and (tbd) editor.selectCursorPosition needs to be added.
  * both apply and cancel will call findSuitableNodesToApplyOrCancelProperty on the selection to walk up the tree and find a set of suitable nodes to work on.
- * The current implementation of suitable nodes stops on blocks and list items, but in some cases walks up higher
+ * The current implementation of suitable nodes walks up as long as the range of the parentNode fits within the selected range
  * (e.g. if a sibling text node of a block is included it might walk up to the block and text node's parent)
  *
- * cancel will recursively cancel downwards, starting on the suitable nodes. if an edge needs to be split, it will first cancel and then call apply on the split of part.
+ * cancel will recursively cancel downwards, starting on the suitable nodes. if an edge node needs to be split, it will first cancel on the entire node and then call apply on the split of range.
  * applying needs to be smarter and depends on an attribute (newContext) and function (permittedContent) of the property.
  * 1. it will first call cancel on the suitable nodes, in an effort to clean up the tree and avoid double application of a property
- * 2. it calls property.permittedContent on the suitable nodes
+ * 2. it calls property.permittedContent on each the suitable nodes
  * 3. for each of the permitted nodes it tries to apply the property
- * 4a. if property.newContext is truthy it will always create a wrapper around the permitted node
+ * 4a. if property.newContext is truthy it will create a wrapper around the permitted node
  * 4b. if property.newContext is false it will only create a wrapper if the permitted node is not a tag or the tagname doesn't match or property.tagName is set and doesn't match the tagname of the node.
  */
 
@@ -91,17 +91,9 @@ function findSuitableNodesToApplyOrCancelProperty(selection) {
       }
     }
     else {
-      // walk up the tree as longs as we fit within the range and don't encounter a block or list item
+      // walk up the tree as longs as we fit within the range
       let current = richNode;
-      const isBlock = function(node) {
-        if (node.type !== "tag")
-          return false;
-        else {
-          const displayStyle = window.getComputedStyle(node.domNode)['display'];
-          return displayStyle == 'block' || displayStyle == 'list-item';
-        }
-      };
-      while(current.parent && current.parent.start >= start && current.parent.end <= end && ! isBlock(current)) {
+      while(current.parent && current.parent.start >= start && current.parent.end <= end) {
         current = current.parent;
       }
       if (!domNodes.includes(current.domNode)) {
