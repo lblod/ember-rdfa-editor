@@ -549,7 +549,7 @@ class RawEditor extends EmberObject {
     }
     // NOTE: we assume applying a highlight does not update any text ranges, e.g. start and end of all nodes remains the same
     // TODO: this entire function seems to assume a position and not a selection
-    const richNodeContainingCursor = this.getRichNodeFor(this.currentNode);
+    const richNodeContainingCursor = this.getRichNodeFor(this.currentNode) || this.findSuitableNodeForPosition(this.currentPosition);
     const selection = this.selectHighlight([start,end]);
     applyProperty(selection, this, highlightProperty); // TODO: replace 'this' with proper interface
     // reset the cursor so the browser shows cursor in the correct position
