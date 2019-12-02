@@ -134,7 +134,7 @@ function updateEditorStateAfterUpdate(selection, relativePosition, currentNode) 
 }
 
 // rdfa attributes we understand, currently ignoring src and href
-const RDFAKeys = ['about', 'property','datatype','typeof','resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'tag'];
+const RDFAKeys = ['about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'tag'];
 const WRAP = "wrap";
 const UPDATE = "update";
 const NEST = "nest";
@@ -221,7 +221,7 @@ function updateNodeOnSelection(selection, {remove, add, set, desc}) {
   const bestApproach = newContextHeuristic( selection, {remove, add, set, desc});
   let nodes = [];
   if (bestApproach === WRAP) {
-    nodes = wrapSelection(selection);
+    nodes = wrapSelection(selection, {remove, add, set, desc});
   }
   else if (bestApproach === WRAPALL) {
     console.warn(`New context approach ${WRAPALL} is currently not supported.`); // eslint-disable-line no-console
@@ -492,10 +492,12 @@ function addDomAttributeValue(domNode, attribute, value) {
 }
 
 function setDomAttributeValue(domNode, attribute, value) {
-  if (value instanceof Array) {
-    value = value.join(" "); // Supports multiple values (ex. typeof)
+  if (!(attribute == "tag")) { // tag is an option of the update but not an attribute
+    if (value instanceof Array) {
+      value = value.join(" "); // Supports multiple values (ex. typeof)
+    }
+    domNode.setAttribute(attribute, value);
   }
-  domNode.setAttribute(attribute, value);
 }
 
 function mergePrefixValue(previousValue, newValue){
@@ -524,10 +526,20 @@ function cleanPrefixObject(prefixes){
  * @method wrapSelection
  * @private
  */
-function wrapSelection(selection) {
+function wrapSelection(selection, {remove, add, set, desc}) {
+  // If a tag is specified we use it, otherwise we set <div> as default
+  let tag = (remove ? remove.tag : false) ||  (add ? add.tag : false) || (set ? set.tag : false) || (desc ? desc.tag : false) || "div";
+  const allowedTags = ["div", "p", "span", "a", "li"]
+  if(!allowedTags.includes(tag)){
+    console.warn('We currently support only the following tags: "div", "p", "span", "a", "li"'); // eslint-disable-line no-console
+    return;
+  }
+
+//  debugger; // TODO : remove "tag='a'" in the <a> tag of the decision
+
   if (selection.selectedHighlightRange) {
     const selections = splitSelectionsToPotentiallyFitInRange(selection.selectedHighlightRange, selection.selections);
-    const newContext = document.createElement('div'); //TODO: this should be smarter
+    const newContext = document.createElement(tag);
     // find the actual nodes to move, these might be higher up in the tree.
     // can assume the nodes in selections can be completely wrapped
     // (prefix and postfix is taken care of above this comment)
