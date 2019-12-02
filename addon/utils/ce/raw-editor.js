@@ -1031,7 +1031,7 @@ class RawEditor extends EmberObject {
       position = get(richNode, 'end');
     }
     let node = this.findSuitableNodeForPosition(position);
-    this.moveCaretInTextNode(get(node,'domNode'), position - node.start);
+    this.moveCaretInTextNode(node.domNode, position - node.start);
     this.set('currentNode', node.domNode);
     this.set('currentSelection', [ position, position ]);
     if (notify)

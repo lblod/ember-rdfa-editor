@@ -1,4 +1,6 @@
-import { tagName }  from './dom-helpers';
+import { tagName, isList }  from './dom-helpers';
+import { A } from '@ember/array';
+
 /**
  * default tag name for creating a property
  * @for EditorProperty
@@ -44,7 +46,11 @@ export default class EditorProperty {
    */
   attributes;
 
-  constructor({tagName = DEFAULT_TAG_NAME, newContext = false, attributes = {}}){
+  constructor({
+    tagName = null,
+    newContext = false,
+    attributes = {}
+  }){
     this.tagName = tagName;
     this.newContext = newContext;
     this.attributes = attributes;
@@ -76,6 +82,24 @@ export default class EditorProperty {
     }
     return this.enabledAt(richNode.parent);
   }
+
+  /**
+   * walks down the richnode and returns a flatmap of richnodes with permitted content for this property
+   * for example a strong tag would only allow phrasing content.
+   * the resulting set should not contain double content
+   * the property will be applied to each of the returned nodes, wrapping it when required to do so.
+   * you should extend/overwrite this method when defining a property
+   * @param {RichNode} richNode to verify
+   * @return {Array} richNodes
+   */
+  permittedContent(richNode) {
+    const permittedNodes = A();
+    const isTextNodeUnderList = (richNode.type === "text" && richNode.parent && isList(richNode.parent.domNode));
+    if (!isTextNodeUnderList) {
+      permittedNodes.pushObject(richNode);
+    }
+    return permittedNodes;
+  };
 }
 
 export { DEFAULT_TAG_NAME };

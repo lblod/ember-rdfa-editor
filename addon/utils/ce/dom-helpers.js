@@ -156,6 +156,17 @@ const smartSplitTextNode = function(textNode, splitAt) {
 /** list helpers **/
 
 /**
+ * check if the provided node is phrasing content
+ * @method isPhrasingContent
+ * @param {Node} node
+ * @return {boolean}
+ * @public
+ */
+function isPhrasingContent(node) {
+  return node.nodeType !== Node.ELEMENT_NODE ||
+  ['abbr' , 'audio' , 'b' , 'bdo' , 'br' , 'button' , 'canvas' , 'cite' , 'code' , 'command' , 'data' , 'datalist' , 'dfn' , 'em' , 'embed' , 'i' , 'iframe' , 'img' , 'input' , 'kbd' , 'keygen' , 'label' , 'mark' , 'math' , 'meter' , 'noscript' , 'object' , 'output' , 'picture' , 'progress' , 'q' , 'ruby' , 'samp' , 'script' , 'select' , 'small' , 'span' , 'strong' , 'sub' , 'sup' , 'svg' , 'textarea' , 'time' , 'var' , 'video' ].includes(tagName(node));
+}
+/**
  * check if the provided node is a list (e.g ol or ul)
  * @method isList
  * @param {DOMNode} node
@@ -297,5 +308,6 @@ export {
   isLI,
   isTextNode,
   getListTagName,
-  findPreviousLi
+  findPreviousLi,
+  isPhrasingContent
 };

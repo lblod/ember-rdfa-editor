@@ -1,4 +1,4 @@
-import { warn } from '@ember/debug';
+import { debug, warn } from '@ember/debug';
 import flatMap from './flat-map';
 import {
   tagName,
@@ -24,6 +24,24 @@ if (!DocumentType.prototype.replaceWith)
   DocumentType.prototype.replaceWith = ReplaceWithPolyfill;
 
 /**
+ * so how does this work?
+ *
+ * you can apply or cancel a property on a selection, created with editor.selectHighlight
+ * NOTE: support for selections based on editor.selectContext and (tbd) editor.selectCursorPosition needs to be added.
+ * both apply and cancel will call findSuitableNodesToApplyOrCancelProperty on the selection to walk up the tree and find a set of suitable nodes to work on.
+ * The current implementation of suitable nodes stops on blocks and list items, but in some cases walks up higher
+ * (e.g. if a sibling text node of a block is included it might walk up to the block and text node's parent)
+ *
+ * cancel will recursively cancel downwards, starting on the suitable nodes. if an edge needs to be split, it will first cancel and then call apply on the split of part.
+ * applying needs to be smarter and depends on an attribute (newContext) and function (permittedContent) of the property.
+ * 1. it will first call cancel on the suitable nodes, in an effort to clean up the tree and avoid double application of a property
+ * 2. it calls property.permittedContent on the suitable nodes
+ * 3. for each of the permitted nodes it tries to apply the property
+ * 4a. if property.newContext is truthy it will always create a wrapper around the permitted node
+ * 4b. if property.newContext is false it will only create a wrapper if the permitted node is not a tag or the tagname doesn't match or property.tagName is set and doesn't match the tagname of the node.
+ */
+
+/**
  * verifies if a property is enabled on all leaf nodes of the supplied richNode
  * @method propertyIsEnabledOnLeafNodes
  * @return boolean
@@ -31,7 +49,7 @@ if (!DocumentType.prototype.replaceWith)
  * @private
  */
 function propertyIsEnabledOnLeafNodes(richnode, property) {
-  const hasChildren = child => { return ( child && ((! child.children) ||  child.children.length === 0))};
+  const hasChildren = node => { return ( node && ((! node.children) ||  node.children.length === 0));};
   const leafNodes = flatMap(richnode, hasChildren);
   const leafNodesWhereStyleIsNotAppliedExists =  leafNodes.some((n) => n.type !== "other" && !property.enabledAt(n)) ;
   return ! leafNodesWhereStyleIsNotAppliedExists;
@@ -127,7 +145,8 @@ function rawApplyProperty(domNode, property) {
  * @param EditorProperty property
  */
 function createWrapperForProperty(property) {
-  const tag = document.createElement(property.tagName);
+  const tagName = property.tagName ? property.tagName : DEFAULT_TAG_NAME;
+  const tag = document.createElement(tagName);
   for (let attribute of Object.keys(property.attributes)) {
     tag.setAttribute(attribute, property.attributes[attribute]);
   }
@@ -153,27 +172,44 @@ function applyProperty(selection, doc, property, calledFromCancel) {
     // cancel first to avoid duplicate tags
     cancelProperty(selection, doc, property);
   }
-  let nodesToApplyPropertyOn = findSuitableNodesToApplyOrCancelProperty(selection);
-  for( let {richNode, range} of nodesToApplyPropertyOn) {
+  const startingNodes = findSuitableNodesToApplyOrCancelProperty(selection);
+  for( let {richNode, range} of startingNodes ) {
     const [start,end] = range;
-    if (richNode.type ===  "tag" ) {
-      if (richNode.start < start || richNode.end > end) {
+    if (richNode.type ===  "tag" && (richNode.start < start || richNode.end > end)) {
         warn(`applyProperty does not support applying a property to a tag that only partially matches the range`, {id: "content-editable.highlight"});
+    }
+    else {
+      for (const permittedNode of property.permittedContent(richNode)) {
+        const nodeStart = Math.max(permittedNode.start, start);
+        const nodeEnd = Math.min(permittedNode.end, end);
+        applyPropertyOnNode(property, permittedNode, [nodeStart, nodeEnd]);
       }
-      else if (!domNodeContainsProperty(richNode.domNode, property)) {
-        const domNode = richNode.domNode;
-        let node;
-        if (property.newContext) {
-          node = createWrapperForProperty(property);
-          domNode.prepend(node); // add node as child
-          while(node.nextSibling) { // move other children to wrapper
-            node.append(node.nextSibling);
-          }
-          wrapRichNode(richNode, node);
-        }
-        else {
-          rawApplyProperty(richNode.domNode, property);
-        }
+    }
+  }
+}
+
+function applyPropertyOnNode(property, richNode, [start,end]) {
+  try {
+    if (richNode.type === "tag") {
+      const domNode = richNode.domNode;
+      let wrappingDomNode;
+      if (property.newContext) {
+        const parentNode = domNode.parentNode;
+        wrappingDomNode = createWrapperForProperty(property);
+        parentNode.replaceChild(wrappingDomNode, domNode);
+        wrappingDomNode.append(domNode);
+        const richNodeForWrapper = new RichNode({
+          domNode: wrappingDomNode,
+          parent: richNode.parent,
+          children: [richNode],
+          start: richNode.start,
+          end: richNode.end,
+          type: "tag"
+        });
+        replaceRichNodeWith(richNode, [richNodeForWrapper]);
+      }
+      else {
+        rawApplyProperty(richNode.domNode, property);
       }
     }
     else if (richNode.type === "text") {
@@ -198,20 +234,20 @@ function applyProperty(selection, doc, property, calledFromCancel) {
         end: start,
         text: preText,
         type: "text"
-      });
+    });
       const infixRichNode = ! infixNode ? null : new RichNode({
         domNode: infixNode,
         parent: richNode.parent,
-        start: start,
-        end: end,
+        start,
+        end,
         text: infixText,
         type: "tag"
       });
       infixRichNode.children = [ new RichNode({
-        domNode: infixTextNode,
+      domNode: infixTextNode,
         parent: infixRichNode,
-        start: start,
-        end: end,
+        start,
+        end,
         text: infixText, // TODO: remove if consuming code doesn't use the TextNodeWalker
         type: "text"
       }) ];
@@ -222,16 +258,17 @@ function applyProperty(selection, doc, property, calledFromCancel) {
         end: end + postText.length,
         text: postText,
         type: "text"
-      });
+    });
       const newRichNodes = [];
       if( preRichNode ) { newRichNodes.push( preRichNode ); }
       newRichNodes.push( infixRichNode );
       if( postfixRichNode ) { newRichNodes.push( postfixRichNode ); }
       replaceRichNodeWith(richNode, newRichNodes);
     }
-    else {
-      warn( "applying a property can only occur on text nodes or on tag nodes", {id: "content-editable.editor-property"} );
-    }
+  }
+  catch(e) {
+    console.log(e);
+    debugger;
   }
 }
 
@@ -258,7 +295,7 @@ function rawCancelProperty(richNode, property) {
         else
           richNode.domNode.setAttribute(key, updatedValue);
       }
-      if (tagName(richNode.domNode) === property.tagName && property.tagName !== DEFAULT_TAG_NAME) {
+      if (tagName(richNode.domNode) === property.tagName) {
         // change the tagname to a neutral tag name, assumes tagname of property has semantic or graphical meaning
         // this can't be done dynamically so we have to create new node and replace the previous one
         const newNode = document.createElement(DEFAULT_TAG_NAME); // TODO have to pick a default, is this sane?
@@ -293,40 +330,40 @@ function rawCancelProperty(richNode, property) {
     // can only cancel on a tag, do nothing
   }
 }
+
 /*
  * predicate to evaluate if a property completely matches a dom node
  */
 function domNodeIsEqualToProperty(domNode, property) {
-  const tagNameMatch = property.tagName === tagName(domNode);
   let attributesMatch = true;
   for (let key of Object.keys(property.attributes)) {
     if (!domNode.hasAttribute(key) || domNode.getAttribute(key) !== new String(property.attributes[key]).toString()) {
       attributesMatch = false;
     }
   }
+
   for (let attribute of domNode.attributes) {
     if (!property.attributes[attribute.nodeName]) {
       attributesMatch = false;
     }
   }
-  return tagNameMatch && attributesMatch;
+  return property.tagName === tagName(domNode) && attributesMatch;
 }
 
 /*
  * predicate to evaluate if a property matches a dom node, other attributes can be present on the dom node
  */
 function domNodeContainsProperty(domNode, property) {
-  const tagNameMatch = property.tagName === tagName(domNode);
   let attributesMatch = true;
   for (let key of Object.keys(property.attributes)) {
     if (!domNode.hasAttribute(key) || ! domNode.getAttribute(key).includes(property.attributes[key]))
       attributesMatch = false;
   }
-  return (tagNameMatch || ! property.newContext) && attributesMatch; //TODO is this correct?!
+  return (! property.tagName || property.tagName === tagName(domNode)) && attributesMatch;
 }
 
 
- /**
+/**
  * cancel a property on a selection
  * @method cancelProperty
  * @param selection
@@ -378,11 +415,11 @@ function cancelProperty(selection, doc, property) {
       }
       else {
         // property doesn't seem to be enabled at all
-        warn(`request to cancel a property, but it wasn't enabled`, {id: 'contenteditable.property'});
+        debug(`request to cancel a property, but it wasn't enabled`);
       }
     }
     else {
-      warn( "cancelling a property can only occur on text nodes or on tag nodes", {id: "content-editable.editor-property"} );
+      debug( "cancelling a property can only occur on text nodes or on tag nodes");
     }
   }
 }

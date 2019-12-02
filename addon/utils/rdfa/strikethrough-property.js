@@ -1,4 +1,6 @@
 import EditorProperty from '../ce/editor-property';
+import { isList, isPhrasingContent } from '../ce/dom-helpers';
+import { A } from '@ember/array';
 
 /**
  * Editor property that represents underlined text.
@@ -24,6 +26,25 @@ class StrikethroughProperty extends EditorProperty {
     else
       return false;
   }
+
+  permittedContent(richNode) {
+    const nodes = A();
+    const isTextNodeUnderList = (richNode.type === "text" && richNode.parent && isList(richNode.parent.domNode));
+    if (isPhrasingContent(richNode.domNode)) {
+      if (!isTextNodeUnderList)
+        nodes.pushObject(richNode);
+    }
+    else {
+      if (richNode.children) {
+        for(let child of richNode.children) {
+          nodes.pushObjects(this.permittedContent(child));
+        }
+      }
+    }
+    return nodes;
+  }
+
 }
+
 const strikethroughProperty = new StrikethroughProperty({});
 export default strikethroughProperty;
