@@ -99,7 +99,7 @@ export default class EditorProperty {
       permittedNodes.pushObject(richNode);
     }
     return permittedNodes;
-  };
+  }
 }
 
 export { DEFAULT_TAG_NAME };

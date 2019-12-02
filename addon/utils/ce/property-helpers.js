@@ -6,11 +6,9 @@ import {
 } from './dom-helpers';
 import ReplaceWithPolyfill from 'mdn-polyfills/Node.prototype.replaceWith';
 import RichNode from '@lblod/marawa/rich-node';
-import { isAdjacentRange } from '@lblod/marawa/range-helpers';
 import { DEFAULT_TAG_NAME } from './editor-property';
 import {
   replaceRichNodeWith,
-  wrapRichNode,
   unwrapRichNode
 } from './rich-node-tree-modification';
 import { A } from '@ember/array';
@@ -259,8 +257,7 @@ function applyPropertyOnNode(property, richNode, [start,end]) {
     }
   }
   catch(e) {
-    console.log(e);
-    debugger;
+    console.warn(e); // eslint-disable-line no-console
   }
 }
 
