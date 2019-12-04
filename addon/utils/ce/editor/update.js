@@ -134,7 +134,7 @@ function updateEditorStateAfterUpdate(selection, relativePosition, currentNode) 
 }
 
 // rdfa attributes we understand, currently ignoring src and href
-const RDFAKeys = ['about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'tag'];
+const RDFAKeys = ['about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix'];
 const WRAP = "wrap";
 const UPDATE = "update";
 const NEST = "nest";
@@ -165,9 +165,9 @@ function insertNodeOnSelection(rootNode, selection, domPosition){
 
   // If a tag is specified we use it, otherwise we set <div> as default
   let tag = (before ? before.tag : false) ||  (after ? after.tag : false) || (prepend ? prepend.tag : false) || (append ? append.tag : false) || "div";
-  const allowedTags = ["div", "p", "span", "a", "li"]
+  const allowedTags = ["div", "p", "span", "li", "a", "link"]
   if(!allowedTags.includes(tag)){
-    console.warn('We currently support only the following tags: "div", "p", "span", "a", "li"'); // eslint-disable-line no-console
+    console.warn('We currently support only the following tags: "div", "p", "span", "li", "a", "link"'); // eslint-disable-line no-console
     return;
   }
 
@@ -529,9 +529,9 @@ function cleanPrefixObject(prefixes){
 function wrapSelection(selection, {remove, add, set, desc}) {
   // If a tag is specified we use it, otherwise we set <div> as default
   let tag = (remove ? remove.tag : false) ||  (add ? add.tag : false) || (set ? set.tag : false) || (desc ? desc.tag : false) || "div";
-  const allowedTags = ["div", "p", "span", "a", "li"]
+  const allowedTags = ["div", "p", "span", "li", "a", "link"]
   if(!allowedTags.includes(tag)){
-    console.warn('We currently support only the following tags: "div", "p", "span", "a", "li"'); // eslint-disable-line no-console
+    console.warn('We currently support only the following tags: "div", "p", "span", "li", "a", "link"'); // eslint-disable-line no-console
     return;
   }
 
