@@ -133,8 +133,8 @@ function updateEditorStateAfterUpdate(selection, relativePosition, currentNode) 
   }
 }
 
-// rdfa attributes we understand, currently ignoring src and href
-const RDFAKeys = ['about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix'];
+// rdfa attributes we understand, currently ignoring src
+const RDFAKeys = ['about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href'];
 const WRAP = "wrap";
 const UPDATE = "update";
 const NEST = "nest";
@@ -165,7 +165,7 @@ function insertNodeOnSelection(rootNode, selection, domPosition){
 
   // If a tag is specified we use it, otherwise we set <div> as default
   let tag = (before ? before.tag : false) ||  (after ? after.tag : false) || (prepend ? prepend.tag : false) || (append ? append.tag : false) || "div";
-  const allowedTags = ["div", "p", "span", "li", "a", "link"]
+  const allowedTags = ["div", "p", "span", "li", "a", "link"];
   if(!allowedTags.includes(tag)){
     console.warn('We currently support only the following tags: "div", "p", "span", "li", "a", "link"'); // eslint-disable-line no-console
     return;
@@ -529,13 +529,11 @@ function cleanPrefixObject(prefixes){
 function wrapSelection(selection, {remove, add, set, desc}) {
   // If a tag is specified we use it, otherwise we set <div> as default
   let tag = (remove ? remove.tag : false) ||  (add ? add.tag : false) || (set ? set.tag : false) || (desc ? desc.tag : false) || "div";
-  const allowedTags = ["div", "p", "span", "li", "a", "link"]
-  if(!allowedTags.includes(tag)){
+  const allowedTags = ["div", "p", "span", "li", "a", "link"];
+  if(!allowedTags.includes(tag)) {
     console.warn('We currently support only the following tags: "div", "p", "span", "li", "a", "link"'); // eslint-disable-line no-console
     return;
   }
-
-//  debugger; // TODO : remove "tag='a'" in the <a> tag of the decision
 
   if (selection.selectedHighlightRange) {
     const selections = splitSelectionsToPotentiallyFitInRange(selection.selectedHighlightRange, selection.selections);
@@ -789,6 +787,11 @@ function selectedAttributeValues(domNode, attribute, specification) {
  * - content – optional attribute that overrides the content of the element when using the property attribute
  * - datatype – optional attribute that specifies the datatype of text specified for use with the property attribute
  * - typeof – optional attribute that specifies the RDF type(s) of the subject or the partner resource (the resource that the metadata is about).
+ * - href – attribute that can only be applied to <a> or <link> tags
+ * - href and resource – the href property is not required if a resource is
+ *    defined. If both are defined, the most recently added will be used.
+ *    If both are defined at the same time, both will be applied but the resource
+ *    is the one that will be linked to the property according to the rdfa standards.
  * @method updateRDFA
  * @private
  */
@@ -805,15 +808,30 @@ function updateRDFA(domNodes, { remove, add, set } ) {
           }
         }
       }
-      if (add && add[attribute]) {
-        const values = add[attribute] instanceof Array ? add[attribute] : [add[attribute]];
-        for (let value of values) {
-          addDomAttributeValue(domNode, attribute, value);
+      if ((set && set[attribute]) || (add && add[attribute])) {
+        const tagIsHrefCompatible = domNode.tagName == "A" || domNode.tagName == "LINK";
+        const nodeHasResourceOrHref = domNode.attributes.getNamedItem("resource")!=null || domNode.attributes.getNamedItem("href")!=null;
+        const optionHasResourceOrHref = set["href"]!=null || set["resource"]!=null || add["href"]!=null || add["resource"]!=null;
+
+        if (tagIsHrefCompatible && !(nodeHasResourceOrHref || optionHasResourceOrHref)) {
+          console.warn(`<${domNode.tagName}> tag should have a resource or a href.`);
+          return true;
         }
-      }
-      if (set && set[attribute]) {
-        const value = set[attribute];
-        setDomAttributeValue(domNode, attribute, value)
+
+        // If the node previously had a resource and the user wants to set an href, resource gets replaced by href
+        if (attribute == "href" && tagIsHrefCompatible && domNode.attributes.getNamedItem("resource")) {
+          domNode.attributes.removeNamedItem("resource");
+        }
+
+        if (set && set[attribute]) {
+          const value = set[attribute];
+          setDomAttributeValue(domNode, attribute, value);
+        } else { // add && add[attribute]
+          const values = add[attribute] instanceof Array ? add[attribute] : [add[attribute]];
+          for (let value of values) {
+            addDomAttributeValue(domNode, attribute, value);
+          }
+        }
       }
     }
   }
