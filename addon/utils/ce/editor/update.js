@@ -814,7 +814,7 @@ function updateRDFA(domNodes, { remove, add, set } ) {
         const optionHasResourceOrHref = set["href"]!=null || set["resource"]!=null || add["href"]!=null || add["resource"]!=null;
 
         if (tagIsHrefCompatible && !(nodeHasResourceOrHref || optionHasResourceOrHref)) {
-          console.warn(`<${domNode.tagName}> tag should have a resource or a href.`);
+          console.warn(`<${domNode.tagName}> tag should have a resource or a href.`); // eslint-disable-line no-console
           return true;
         }
 
