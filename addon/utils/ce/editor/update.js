@@ -133,8 +133,8 @@ function updateEditorStateAfterUpdate(selection, relativePosition, currentNode) 
   }
 }
 
-// rdfa attributes we understand, currently ignoring src and href
-const RDFAKeys = ['about', 'property','datatype','typeof','resource', 'rel', 'rev', 'content', 'vocab', 'prefix'];
+// rdfa attributes we understand, currently ignoring src
+const RDFAKeys = ['about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href'];
 const WRAP = "wrap";
 const UPDATE = "update";
 const NEST = "nest";
@@ -162,6 +162,15 @@ function insertNodeOnSelection(rootNode, selection, domPosition){
     console.warn('Currently we assume if highlight is selected, only textNodes will be selected. Prepend/Append not possible'); // eslint-disable-line no-console
     return;
   }
+
+  // If a tag is specified we use it, otherwise we set <div> as default
+  let tag = (before ? before.tag : false) ||  (after ? after.tag : false) || (prepend ? prepend.tag : false) || (append ? append.tag : false) || "div";
+  const allowedTags = ["div", "p", "span", "li", "a", "link"];
+  if(!allowedTags.includes(tag)){
+    console.warn('We currently support only the following tags: "div", "p", "span", "li", "a", "link"'); // eslint-disable-line no-console
+    return;
+  }
+
   let selectionOfInterest = null;
   if(selection.selectedHighlightRange){
     let cleanedSelections = splitSelectionsToPotentiallyFitInRange(selection.selectedHighlightRange, selection.selections);
@@ -184,7 +193,7 @@ function insertNodeOnSelection(rootNode, selection, domPosition){
 
   if (isRDFAUpdate({ before, after, prepend, append }) || isInnerContentUpdate({ before, after, prepend, append })) {
     let referenceNode = selectionOfInterest.richNode.domNode;
-    let newDomNode = document.createElement('div'); //TODO: now only div, but this must be determined in a smart way.
+    let newDomNode = document.createElement(tag);
 
     if(isRDFAUpdate({ before, after, prepend, append }) && isInnerContentUpdate({ before, after, prepend, append })){
       updateRDFA([ newDomNode ], { set: (before || after || prepend || append) });
@@ -212,7 +221,7 @@ function updateNodeOnSelection(selection, {remove, add, set, desc}) {
   const bestApproach = newContextHeuristic( selection, {remove, add, set, desc});
   let nodes = [];
   if (bestApproach === WRAP) {
-    nodes = wrapSelection(selection);
+    nodes = wrapSelection(selection, {remove, add, set, desc});
   }
   else if (bestApproach === WRAPALL) {
     console.warn(`New context approach ${WRAPALL} is currently not supported.`); // eslint-disable-line no-console
@@ -483,10 +492,12 @@ function addDomAttributeValue(domNode, attribute, value) {
 }
 
 function setDomAttributeValue(domNode, attribute, value) {
-  if (value instanceof Array) {
-    value = value.join(" "); // Supports multiple values (ex. typeof)
+  if (!(attribute == "tag")) { // tag is an option of the update but not an attribute
+    if (value instanceof Array) {
+      value = value.join(" "); // Supports multiple values (ex. typeof)
+    }
+    domNode.setAttribute(attribute, value);
   }
-  domNode.setAttribute(attribute, value);
 }
 
 function mergePrefixValue(previousValue, newValue){
@@ -515,10 +526,18 @@ function cleanPrefixObject(prefixes){
  * @method wrapSelection
  * @private
  */
-function wrapSelection(selection) {
+function wrapSelection(selection, {remove, add, set, desc}) {
+  // If a tag is specified we use it, otherwise we set <div> as default
+  let tag = (remove ? remove.tag : false) ||  (add ? add.tag : false) || (set ? set.tag : false) || (desc ? desc.tag : false) || "div";
+  const allowedTags = ["div", "p", "span", "li", "a", "link"];
+  if(!allowedTags.includes(tag)) {
+    console.warn('We currently support only the following tags: "div", "p", "span", "li", "a", "link"'); // eslint-disable-line no-console
+    return;
+  }
+
   if (selection.selectedHighlightRange) {
     const selections = splitSelectionsToPotentiallyFitInRange(selection.selectedHighlightRange, selection.selections);
-    const newContext = document.createElement('div'); //TODO: this should be smarter
+    const newContext = document.createElement(tag);
     // find the actual nodes to move, these might be higher up in the tree.
     // can assume the nodes in selections can be completely wrapped
     // (prefix and postfix is taken care of above this comment)
@@ -768,6 +787,11 @@ function selectedAttributeValues(domNode, attribute, specification) {
  * - content – optional attribute that overrides the content of the element when using the property attribute
  * - datatype – optional attribute that specifies the datatype of text specified for use with the property attribute
  * - typeof – optional attribute that specifies the RDF type(s) of the subject or the partner resource (the resource that the metadata is about).
+ * - href – attribute that can only be applied to <a> or <link> tags
+ * - href and resource – the href property is not required if a resource is
+ *    defined. If both are defined, the most recently added will be used.
+ *    If both are defined at the same time, both will be applied but the resource
+ *    is the one that will be linked to the property according to the rdfa standards.
  * @method updateRDFA
  * @private
  */
@@ -784,15 +808,30 @@ function updateRDFA(domNodes, { remove, add, set } ) {
           }
         }
       }
-      if (add && add[attribute]) {
-        const values = add[attribute] instanceof Array ? add[attribute] : [add[attribute]];
-        for (let value of values) {
-          addDomAttributeValue(domNode, attribute, value);
+      if ((set && set[attribute]) || (add && add[attribute])) {
+        const tagIsHrefCompatible = domNode.tagName == "A" || domNode.tagName == "LINK";
+        const nodeHasResourceOrHref = domNode.attributes.getNamedItem("resource")!=null || domNode.attributes.getNamedItem("href")!=null;
+        const optionHasResourceOrHref = set["href"]!=null || set["resource"]!=null || add["href"]!=null || add["resource"]!=null;
+
+        if (tagIsHrefCompatible && !(nodeHasResourceOrHref || optionHasResourceOrHref)) {
+          console.warn(`<${domNode.tagName}> tag should have a resource or a href.`); // eslint-disable-line no-console
+          return true;
         }
-      }
-      if (set && set[attribute]) {
-        const value = set[attribute];
-        setDomAttributeValue(domNode, attribute, value)
+
+        // If the node previously had a resource and the user wants to set an href, resource gets replaced by href
+        if (attribute == "href" && tagIsHrefCompatible && domNode.attributes.getNamedItem("resource")) {
+          domNode.attributes.removeNamedItem("resource");
+        }
+
+        if (set && set[attribute]) {
+          const value = set[attribute];
+          setDomAttributeValue(domNode, attribute, value);
+        } else { // add && add[attribute]
+          const values = add[attribute] instanceof Array ? add[attribute] : [add[attribute]];
+          for (let value of values) {
+            addDomAttributeValue(domNode, attribute, value);
+          }
+        }
       }
     }
   }
