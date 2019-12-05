@@ -6,7 +6,8 @@ import {
   getParentLI,
   isTextNode,
   getListTagName,
-  findPreviousLi
+  findPreviousLi,
+  tagNameIsBr
 } from './dom-helpers';
 import { warn } from '@ember/debug';
 
@@ -507,14 +508,14 @@ function doesActionSwitchListType( node, listAction ) {
  * Best to use an example. "|" is cursor.
  * ```
  * <p>
- *  bla bal <span><a href="#"> foo | <br></a> test <div> a block </div>
+ *  blabla<br>bloublou <span><a href="#"> foo | <br></a></span> test <div> a block </div>
  * </p>
  * ```
  *
  *  The region we return.
  *
  *  ```
- *  bla bal <span><a href="#"> foo | <br></a> test
+ *  bloublou <span><a href="#"> foo | <br></a></span> test
  *  ```
  * @method getLogicalBlockContentsForNewList
  *
@@ -526,8 +527,8 @@ function doesActionSwitchListType( node, listAction ) {
  */
 function getLogicalBlockContentsForNewList( node ) {
   let baseNode = returnParentNodeBeforeBlockElement(node);
-  //left and right adjacent siblings should be added until we hit a block node.
-  return growNeighbouringSiblingsUntil(isDisplayedAsBlock, baseNode);
+  //left and right adjacent siblings should be added until we hit a br (before) and a block node (after).
+  return growNeighbouringSiblingsUntil(tagNameIsBr, isDisplayedAsBlock, baseNode);
 }
 
 /**
@@ -612,7 +613,7 @@ function getLogicalBlockContentsForIndentationAction( node ){
     return [ potentialBlockParentCurrentNode ];
 
   let baseNode = returnParentNodeBeforeBlockElement(node);
-  return growNeighbouringSiblingsUntil(isDisplayedAsBlock, baseNode);
+  return growNeighbouringSiblingsUntil(isDisplayedAsBlock, isDisplayedAsBlock, baseNode);
 }
 
 /**
@@ -645,13 +646,13 @@ function returnParentNodeBeforeBlockElement( node ) {
  * Given a node, we want to grow a region (a list of sibling nodes)
  * until we match a condition
  */
-function growNeighbouringSiblingsUntil( condition, node ) {
+function growNeighbouringSiblingsUntil( conditionLeft, conditionRight, node ) {
   let nodes = [];
   let currNode = node;
 
   //lefties
   while(currNode){
-    if(condition(currNode)){
+    if(conditionLeft(currNode)){
       break;
     }
     nodes.push(currNode);
@@ -663,7 +664,7 @@ function growNeighbouringSiblingsUntil( condition, node ) {
   //righties
   currNode = node.nextSibling;
   while(currNode){
-    if(condition(currNode)){
+    if(conditionRight(currNode)){
       break;
     }
     nodes.push(currNode);

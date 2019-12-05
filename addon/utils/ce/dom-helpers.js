@@ -3,7 +3,7 @@ import { A } from '@ember/array';
  * Fake class to list helper functions
  * these functions can be included using
  *
- *`import { function } from @lblod/ember-contenteditable/utils/dom-helpers;` 
+ *`import { function } from @lblod/ember-contenteditable/utils/dom-helpers;`
  * @module contenteditable-editor
  * @class DomHelpers
  * @constructor
@@ -246,6 +246,17 @@ function tagName(node) {
 }
 
 /**
+ * check if the node is a <br> tag
+ * @method tagNameIsBr
+ * @param {DOMNode} node
+ * @return {boolean}
+ * @public
+ */
+function tagNameIsBr(node) {
+  return tagName(node) == 'br';
+}
+
+/**
  * given html string, convert it into DomElements
  * @function createElementsFromHtml
  * @param {String} string containing html
@@ -309,5 +320,6 @@ export {
   isTextNode,
   getListTagName,
   findPreviousLi,
-  isPhrasingContent
+  isPhrasingContent,
+  tagNameIsBr
 };
