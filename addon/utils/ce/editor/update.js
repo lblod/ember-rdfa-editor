@@ -3,7 +3,7 @@ import { isAdjacentRange, isEmptyRange } from '@lblod/marawa/range-helpers';
 import { wrapRichNode } from '../rich-node-tree-modification';
 import { runInDebug } from '@ember/debug';
 import { parsePrefixString } from '@lblod/marawa/rdfa-attributes';
-import { isVoidElement } from '../dom-helpers';
+import { isVoidElement, tagName } from '../dom-helpers';
 /**
  * Alters a selection from the API described above.
  *
@@ -809,9 +809,9 @@ function updateRDFA(domNodes, { remove, add, set } ) {
         }
       }
       if ((set && set[attribute]) || (add && add[attribute])) {
-        const tagIsHrefCompatible = domNode.tagName == "A" || domNode.tagName == "LINK";
-        const nodeHasResourceOrHref = domNode.attributes.getNamedItem("resource")!=null || domNode.attributes.getNamedItem("href")!=null;
-        const optionHasResourceOrHref = set["href"]!=null || set["resource"]!=null || add["href"]!=null || add["resource"]!=null;
+        const tagIsHrefCompatible = tagName(domNode) === "a" || tagName(domNode) == "link";
+        const nodeHasResourceOrHref = domNode.hasAttribute("resource") || domNode.hasAttribute("href");
+        const optionHasResourceOrHref = set["href"] || set["resource"] || add["href"] || add["resource"];
 
         if (tagIsHrefCompatible && !(nodeHasResourceOrHref || optionHasResourceOrHref)) {
           console.warn(`<${domNode.tagName}> tag should have a resource or a href.`); // eslint-disable-line no-console
@@ -819,8 +819,8 @@ function updateRDFA(domNodes, { remove, add, set } ) {
         }
 
         // If the node previously had a resource and the user wants to set an href, resource gets replaced by href
-        if (attribute == "href" && tagIsHrefCompatible && domNode.attributes.getNamedItem("resource")) {
-          domNode.attributes.removeNamedItem("resource");
+        if (attribute == "href" && tagIsHrefCompatible && domNode.hasAttribute("resource")) {
+          domNode.removeAttribute("resource");
         }
 
         if (set && set[attribute]) {
