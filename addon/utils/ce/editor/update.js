@@ -811,7 +811,7 @@ function updateRDFA(domNodes, { remove, add, set } ) {
       if ((set && set[attribute]) || (add && add[attribute])) {
         const tagIsHrefCompatible = tagName(domNode) === "a" || tagName(domNode) == "link";
         const nodeHasResourceOrHref = domNode.hasAttribute("resource") || domNode.hasAttribute("href");
-        const optionHasResourceOrHref = set["href"] || set["resource"] || add["href"] || add["resource"];
+        const optionHasResourceOrHref = (set && (set["href"] || set["resource"])) || (add && (add["href"] || add["resource"]));
 
         if (tagIsHrefCompatible && !(nodeHasResourceOrHref || optionHasResourceOrHref)) {
           console.warn(`<${domNode.tagName}> tag should have a resource or a href.`); // eslint-disable-line no-console
@@ -826,7 +826,8 @@ function updateRDFA(domNodes, { remove, add, set } ) {
         if (set && set[attribute]) {
           const value = set[attribute];
           setDomAttributeValue(domNode, attribute, value);
-        } else { // add && add[attribute]
+        }
+        else if (add && add[attribute]) {
           const values = add[attribute] instanceof Array ? add[attribute] : [add[attribute]];
           for (let value of values) {
             addDomAttributeValue(domNode, attribute, value);
