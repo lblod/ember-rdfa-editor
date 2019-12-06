@@ -542,7 +542,7 @@ export default class HinstRegistry extends EmberObject {
    * @private
    */
   doesLocationChange(index, location) {
-    if(index.startIdx <= location[1]) {
+    if(index.startIdx <= location[1] - 1) {
       return true;
     }
     return false;

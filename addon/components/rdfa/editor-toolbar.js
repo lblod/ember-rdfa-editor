@@ -18,6 +18,9 @@ export default class EditorToolbar extends Component {
   tagName = "";
 
   toggleProperty(property) {
+    // TODO: the following line was added to make sure the selection is set correctly before toggling a property
+    // if text is selected with the mouse and the mouseUp event happens outside the editor we don't capture it at the moment, this is a workaround
+    this.contentEditable.updateSelectionAfterComplexInput(); 
     const range = this.contentEditable.currentSelection;
     const selection = this.contentEditable.selectHighlight(range);
     if (range[0]==range[1] && this.contentEditable.currentNode) {
