@@ -37,11 +37,11 @@ import { analyse as scanContexts } from '@lblod/marawa/rdfa-context-scanner';
 function selectCurrentSelection() {
   // the following line was added to make sure the selection is set correctly before toggling a property
   // if text is selected with the mouse and the mouseUp event happens outside the editor we don't capture it at the moment, this is a workaround
-  this.contentEditable.updateSelectionAfterComplexInput();
+  this.updateSelectionAfterComplexInput();
   const richNode = this.getRichNodeFor(this.currentNode);
   if (this.currentSelection[0] === this.currentSelection[1] && richNode) {
     // it's a collapsed selection, return the currentNode
-    return { selections: { richNode, range: this.currentSelection }, selectedHighlightRange: this.currentSelection  };
+    return { selections: [{ richNode, range: this.currentSelection }], selectedHighlightRange: this.currentSelection  };
   }
   else {
     return selectHighlight.bind(this)(this.currentSelection);
