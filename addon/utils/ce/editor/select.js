@@ -41,7 +41,7 @@ function selectCurrentSelection() {
   const richNode = this.getRichNodeFor(this.currentNode);
   if (this.currentSelection[0] === this.currentSelection[1] && richNode) {
     // it's a collapsed selection, return the currentNode
-    return { selections: [{ richNode, range: this.currentSelection }], selectedHighlightRange: this.currentSelection  };
+    return { selections: [{ richNode, range: this.currentSelection }], selectedHighlightRange: this.currentSelection, collapsed: true  };
   }
   else {
     return selectHighlight.bind(this)(this.currentSelection);
