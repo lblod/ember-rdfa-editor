@@ -35,7 +35,14 @@ import { analyse as scanContexts } from '@lblod/marawa/rdfa-context-scanner';
  * Current selection may be a cursor or a range.
  */
 function selectCurrentSelection() {
-  return selectHighlight.bind(this)(this.currentSelection);
+  const richNode = this.getRichNodeFor(this.currentNode);
+  if (this.currentSelection[0] === this.currentSelection[1] && richNode) {
+    // it's a collapsed selection, return the currentNode
+    return { selections: { richNode, range: this.currentSelection }, selectedHighlightRange: this.currentSelection  };
+  }
+  else {
+    return selectHighlight.bind(this)(this.currentSelection);
+  }
 }
 
 /**
