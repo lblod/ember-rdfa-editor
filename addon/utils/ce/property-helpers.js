@@ -157,7 +157,6 @@ function applyProperty(selection, doc, property, calledFromCancel) {
     warn(`can't apply property to empty selection`, {id: 'content-editable.editor-property'});
     return;
   }
-
   if (!calledFromCancel) {
     // cancel first to avoid duplicate tags
     cancelProperty(selection, doc, property);
@@ -295,15 +294,7 @@ function rawCancelProperty(richNode, property) {
           newNode.appendChild(richNode.domNode.firstChild);
         }
         richNode.domNode.replaceWith(newNode);
-        const newRichNode = new RichNode({
-          type: 'tag',
-          domNode: newNode,
-          start: richNode.start,
-          end: richNode.end,
-          children: richNode.children,
-          parent: richNode.parent
-        });
-        replaceRichNodeWith(richNode, [newRichNode]);
+        richNode.domNode = newNode;
       }
     }
     if (richNode.children && richNode.children.length > 0) {
