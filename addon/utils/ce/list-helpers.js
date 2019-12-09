@@ -9,6 +9,10 @@ import {
   findPreviousLi,
   tagNameIsBr
 } from './dom-helpers';
+import {
+  findSuitableNodesToApplyOrCancelProperty
+} from './property-helpers';
+
 import { warn } from '@ember/debug';
 
 /**
@@ -230,11 +234,26 @@ import { warn } from '@ember/debug';
 function unorderedListAction( rawEditor ) {
   const currentNode = rawEditor.currentNode;
 
-  if(!isEligibleForListAction(currentNode)) return;
+  // TODO: abstract the way we get the node to do the externalDomUpdate.
+  // We'll use it in orderedListAction, indentAction, unindentAction
+  if(isEligibleForListAction(currentNode)) {
+    rawEditor.externalDomUpdate('handle unorderedListAction',
+                                handleListAction(rawEditor, currentNode, unorderedListAction, 'ul'),
+                                true);
+  } else  if (rawEditor.currentSelection) {
+    const range = rawEditor.currentSelection;
+    const selection = rawEditor.selectHighlight(range);
+    const suitableNodes = findSuitableNodesToApplyOrCancelProperty(selection); // TODO: abstract/rename/move findSuitableNodesToApplyOrCancelProperty
+    const node = suitableNodes.firstObject.richNode.domNode;
 
-  rawEditor.externalDomUpdate('handle unorderedListAction',
-                              handleListAction(rawEditor, currentNode, unorderedListAction, 'ul'),
-                             true);
+    rawEditor.externalDomUpdate('handle unorderedListAction',
+                                handleListAction(rawEditor, node, unorderedListAction, 'ul'),
+                                true);
+
+    rawEditor.setCurrentPosition(range[1]);
+  } else {
+    return;
+  }
 }
 
 /**
@@ -674,7 +693,7 @@ function growNeighbouringSiblingsUntil( conditionLeft, conditionRight, node ) {
 }
 
 function isEligibleForListAction( node ){
-  if(!isTextNode(node)){
+  if(node==null || !isTextNode(node)){
     warn('Current action only supported for textNodes', {id: 'list-helpers:isEligibleForListAction'});
     return false;
   }
