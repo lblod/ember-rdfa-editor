@@ -59,7 +59,7 @@ function findNextApplicableNode(node, rootNode) {
   if (tagName(node) === 'li') {
     const siblings = siblingLis(node);
     const index = siblings.indexOf(node);
-    if (index < siblings.length)
+    if (index < siblings.length - 1)
       return firstTextChild(siblings[index+1]);
     else
       return findNextApplicableNode(node.parentNode);

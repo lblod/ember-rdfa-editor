@@ -247,30 +247,6 @@ class RawEditor extends EmberObject {
   }
 
   /**
-   * toggle a property at the current cursor position, this method ensure the cursor is correctly placed after toggling
-   * @method togglePropertyAtCurrentPosition
-   * @param {Object} selection a selection created using selectHighlight or selectContext
-   */
-  togglePropertyAtCurrentPosition(property) {
-    const wasEnabled = property.enabledAt(this.getRichNodeFor(this.currentNode));
-    const selection = this.selectHighlight(this.currentSelection);
-    const textNodeAtCurrentPosition = (node) => node.type === 'text' && node.start <= this.currentPosition && node.end >= this.currentPosition;
-    if (wasEnabled) {
-      cancelProperty(selection, this, property);
-      const correctNode = flatMap(this.richNode, (node) => textNodeAtCurrentPosition(node) && ! property.enabledAt(node), true)[0];
-      if (correctNode) {
-        this.setCarret(correctNode.domNode, this.currentPosition - correctNode.start);
-      }
-    }
-    else {
-      applyProperty(selection, this, property);
-      const correctNode = flatMap(this.richNode, (node) => textNodeAtCurrentPosition(node) && property.enabledAt(node), true)[0];
-      if (correctNode) {
-        this.setCarret(correctNode.domNode, this.currentPosition - correctNode.start);
-      }
-    }
-  }
-  /**
    * toggle a property on the provided selection
    * @method toggleProperty
    * @param {Object} selection a selection created using selectHighlight or selectContext
@@ -278,8 +254,14 @@ class RawEditor extends EmberObject {
    */
   toggleProperty(selection, property) {
     const richNodes = selection.selections.map((s) => s.richNode);
-    const start = richNodes.map((n) => n.start).sort()[0];
-    const end = richNodes.map((n) => n.end).sort().reverse()[0];
+    let start, end;
+    if (selection.selectedHighlightRange) {
+      [start, end] = selection.selectedHighlightRange;
+    }
+    else {
+      start = richNodes.map((n) => n.start).sort()[0];
+      end = richNodes.map((n) => n.end).sort().reverse()[0];
+    }
 
     // check if property is enabled on any non empty text node, these are the only visible nodes
     const filteredNodes = richNodes.filter((node) => !(node.start === start && node.end === start)).filter((node) => !(node.start === end && node.end === end));
@@ -289,6 +271,14 @@ class RawEditor extends EmberObject {
     }
     else {
       this.applyProperty(selection, property);
+    }
+    if (selection.collapsed) {
+      // property was toggled on a current cursor position, move cursor to the correct node
+      const textNodeAtCurrentPosition = (node) => node.type === 'text' && node.start <= this.currentPosition && node.end >= this.currentPosition;
+      const correctNode = flatMap(this.richNode, (node) => textNodeAtCurrentPosition(node) && property.enabledAt(node) !== enabled, true)[0];
+      if (correctNode) {
+        this.setCarret(correctNode.domNode, this.currentPosition - correctNode.start);
+      }
     }
   }
 

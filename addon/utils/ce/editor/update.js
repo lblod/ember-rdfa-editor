@@ -4,6 +4,7 @@ import { wrapRichNode } from '../rich-node-tree-modification';
 import { runInDebug } from '@ember/debug';
 import { parsePrefixString } from '@lblod/marawa/rdfa-attributes';
 import { isVoidElement, tagName } from '../dom-helpers';
+import { A } from '@ember/array';
 /**
  * Alters a selection from the API described above.
  *
@@ -536,6 +537,7 @@ function wrapSelection(selection, {remove, add, set, desc}) {
   }
 
   if (selection.selectedHighlightRange) {
+
     const selections = splitSelectionsToPotentiallyFitInRange(selection.selectedHighlightRange, selection.selections);
     const newContext = document.createElement(tag);
     // find the actual nodes to move, these might be higher up in the tree.
@@ -609,81 +611,67 @@ function findNodesToWrap(richNodes, [start, end] ) {
  * @method splitSelectionsToPotentiallyFitInRange
  * @private
  */
-function splitSelectionsToPotentiallyFitInRange(range, providedSelections){
-  // this is a non complex text selection so a useful common parent exists/can be created
-  // we assume all selections are text nodes (current implementation of selectHighlightRange)
-  // the text nodes should form a consecutive range, but do not have to be in order
-  let selections = [ ...providedSelections ];
-  selections = selections.sort((a,b) => {
-    if (a.range[0] <= b.range[0] && a.range[1] <= b.range[0]) {
-      return -1;
+function splitSelectionsToPotentiallyFitInRange([start, end], providedSelections){
+   const actualSelections = A();
+  for (let selection of providedSelections) {
+    if (selection.richNode.start < start && selection.richNode.end < end && selection.richNode.type == "text") {
+      // should split at start
+      const richNode = selection.richNode;
+      const relativeStart = Math.min( start - richNode.start, richNode.text.length);
+      const [preText, infixText] = [ richNode.text.slice( 0, relativeStart ),
+                                     richNode.text.slice( relativeStart ) ];
+      const prefixNode = document.createTextNode(preText);
+      richNode.domNode.before(prefixNode);
+      const preRichNode = new RichNode({
+        domNode: prefixNode,
+        parent: richNode.parent,
+        start: richNode.start,
+        end: richNode.start + relativeStart,
+        text: preText,
+        type: "text"
+      });
+      const prefixSelection = { range: [ preRichNode.start, start ], richNode: preRichNode };
+      const parent = richNode.parent;
+      const index = parent.children.indexOf(richNode);
+      parent.children.splice(index, 0, preRichNode);
+      richNode.start = richNode.start + relativeStart;
+      richNode.text = infixText;
+      richNode.domNode.textContent = infixText;
+      actualSelections.pushObjects([prefixSelection, selection]);
     }
-    else if (a.range[0] === b.range[0] && a.range[1] === b.range[1]) {
-      return 0; // TODO: not really correct, use DOM to define actual position?
-    }
-    else {
-      return 1;
-    }
-  });
-  // selections are now ordered
-  const firstSelection = selections[0];
-  const lastSelection = selections[selections.length - 1];
-
-  if (firstSelection.richNode.start < range[0]) {
-    // not the entire node was selected, will need to split
-    const richNode = firstSelection.richNode;
-    const relativeStart = Math.min( range[0] - richNode.start, richNode.text.length);
-    const [preText, infixText] = [ richNode.text.slice( 0, relativeStart ),
-                                   richNode.text.slice( relativeStart ) ];
-    const prefixNode = document.createTextNode(preText);
-    richNode.domNode.before(prefixNode);
-    const preRichNode = new RichNode({
-      domNode: prefixNode,
-      parent: richNode.parent,
-      start: richNode.start,
-      end: richNode.start + relativeStart,
-      text: preText,
+    actualSelections.pushObject(selection);
+    if (selection.richNode.start >= start && selection.richNode.end > end && selection.richNode.type == "text") {
+      // should split end
+      const richNode = selection.richNode;
+      const relativeEnd = Math.min( end - richNode.start, richNode.text.length);
+      const [infixText, postText] = [ richNode.text.slice( 0, relativeEnd ),
+                                      richNode.text.slice( relativeEnd ) ];
+      const postfixNode = document.createTextNode(postText);
+      richNode.domNode.after(postfixNode);
+      const postfixRichNode = new RichNode({
+        domNode: postfixNode,
+        parent: richNode.parent,
+        start: richNode.start + relativeEnd,
+        end: richNode.end,
+        text: postText,
       type: "text"
-    });
-    const prefixSelection = { range: [ preRichNode.start, range[0] ], richNode: preRichNode };
-    const parent = richNode.parent;
-    const index = parent.children.indexOf(richNode);
-    parent.children.splice(index, 0, preRichNode);
-    richNode.start = richNode.start + relativeStart;
-    richNode.text = infixText;
-    richNode.domNode.textContent = infixText;
+      });
 
-    selections = [ prefixSelection, ...selections ];
+      const postfixSelection = { range: [ end, postfixRichNode.end ], richNode: postfixRichNode };
+      const parent = richNode.parent;
+      const index = parent.children.indexOf(richNode);
+      parent.children.splice(index+1, 0, postfixRichNode);
+      richNode.end = richNode.start + relativeEnd;
+      richNode.text = infixText;
+      richNode.domNode.textContent = infixText;
+      actualSelections.pushObjects([selection, postfixSelection]);
+    }
+    if (selection.type !== "text" && (selection.richNode.start < start || selection.richNode.end > end)) {
+      // i forgot a case? did not expect selectHighlight to return a tag with a non matching range
+      console.warn("unhandled",selection); // eslint-ignore-line no-console
+    }
   }
-  if (lastSelection.richNode.end > range[1]) {
-    // not the entire node was selected, will need to split
-    const richNode = lastSelection.richNode;
-    const relativeEnd = Math.min( range[1] - richNode.start, richNode.text.length);
-    const [infixText, postText] = [ richNode.text.slice( 0, relativeEnd ),
-                                    richNode.text.slice( relativeEnd ) ];
-    const postfixNode = document.createTextNode(postText);
-    richNode.domNode.after(postfixNode);
-    const postfixRichNode = new RichNode({
-      domNode: postfixNode,
-      parent: richNode.parent,
-      start: richNode.start + relativeEnd,
-      end: richNode.end,
-      text: postText,
-      type: "text"
-    });
-
-    const postfixSelection = { range: [ range[1], postfixRichNode.end ], richNode: postfixRichNode };
-    const parent = richNode.parent;
-    const index = parent.children.indexOf(richNode);
-    parent.children.splice(index+1, 0, postfixRichNode);
-    richNode.end = richNode.start + relativeEnd;
-    richNode.text = infixText;
-    richNode.domNode.textContent = infixText;
-
-    selections = [ ...selections, postfixSelection ];
-  }
-
-  return selections;
+  return actualSelections;
 }
 
 /**

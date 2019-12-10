@@ -35,7 +35,17 @@ import { analyse as scanContexts } from '@lblod/marawa/rdfa-context-scanner';
  * Current selection may be a cursor or a range.
  */
 function selectCurrentSelection() {
-  return selectHighlight.bind(this)(this.currentSelection);
+  // the following line was added to make sure the selection is set correctly before toggling a property
+  // if text is selected with the mouse and the mouseUp event happens outside the editor we don't capture it at the moment, this is a workaround
+  this.updateSelectionAfterComplexInput();
+  const richNode = this.getRichNodeFor(this.currentNode);
+  if (this.currentSelection[0] === this.currentSelection[1] && richNode) {
+    // it's a collapsed selection, return the currentNode
+    return { selections: [{ richNode, range: this.currentSelection }], selectedHighlightRange: this.currentSelection, collapsed: true  };
+  }
+  else {
+    return selectHighlight.bind(this)(this.currentSelection);
+  }
 }
 
 /**
