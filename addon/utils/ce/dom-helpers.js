@@ -298,6 +298,63 @@ function getListTagName( listElement ) {
   return tagName(listElement) === 'ul' ? 'ul' : 'ol';
 }
 
+/**
+ * We need to apply or remove a property to all portions of text based on the output
+ * contained in them.  We can split the important nodes in three
+ * pieces:
+ *
+ * - start: text nodes which contain partial content to highlight
+ * - middle: rich nodes which are the highest parent of a text node that are still contained in the selected range
+ * - end: trailing text nodes which contain partial content to highlight
+ *
+ * Detecting this range is tricky
+ *
+ * @method findWrappingSuitableNodes
+ * @param Selection selection
+ * @for PropertyHelpers
+ * @return Array array of selections
+ */
+function findWrappingSuitableNodes(selection) {
+  if (!selection.selectedHighlightRange) {
+    // TODO: support context selections as well
+    // this might be fairly trivial but focussing on text selection for now
+    throw new Error('currently only selectedHighlightRange is supported');
+  }
+  const nodes = [];
+  const domNodes = [];
+  const [start, end] = selection.selectedHighlightRange;
+  for (let {richNode, range} of selection.selections) {
+    if (richNode.start < start || richNode.end > end) {
+      // this node only partially matches the selected range
+      // so it needs to be split up later and we can't walk up the tree.
+      if (!domNodes.includes(richNode.domNode)) {
+        nodes.push({richNode, range, split:true});
+        domNodes.push(richNode.domNode);
+      }
+    }
+    else {
+      // walk up the tree as longs as we fit within the range
+      let current = richNode;
+      while(current.parent && current.parent.start >= start && current.parent.end <= end) {
+        current = current.parent;
+      }
+      if (!domNodes.includes(current.domNode)) {
+        nodes.push({richNode: current, range: [current.start, current.end], split:false});
+        domNodes.push(current.domNode);
+      }
+    }
+  }
+  // remove nodes that are contained within other nodes
+  let actualNodes = A();
+  for (let possibleNode of nodes) {
+    const containedInAnotherPossibleNode = nodes.some((otherNode) => otherNode !== possibleNode && otherNode.richNode.domNode.contains(possibleNode.richNode.domNode));
+    if (! containedInAnotherPossibleNode) {
+      actualNodes.pushObject(possibleNode);
+    }
+  }
+  return actualNodes;
+}
+
 export {
   tagName,
   isDisplayedAsBlock,
@@ -321,5 +378,6 @@ export {
   getListTagName,
   findPreviousLi,
   isPhrasingContent,
-  tagNameIsBr
+  tagNameIsBr,
+  findWrappingSuitableNodes
 };

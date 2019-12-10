@@ -2,7 +2,8 @@ import { debug, warn } from '@ember/debug';
 import flatMap from './flat-map';
 import {
   tagName,
-  removeNodeFromTree as unwrapDOMNode
+  removeNodeFromTree as unwrapDOMNode,
+  findWrappingSuitableNodes
 } from './dom-helpers';
 import ReplaceWithPolyfill from 'mdn-polyfills/Node.prototype.replaceWith';
 import RichNode from '@lblod/marawa/rich-node';
@@ -26,7 +27,7 @@ if (!DocumentType.prototype.replaceWith)
  *
  * you can apply or cancel a property on a selection, created with editor.selectHighlight
  * NOTE: support for selections based on editor.selectContext and (tbd) editor.selectCursorPosition needs to be added.
- * both apply and cancel will call findSuitableNodesToApplyOrCancelProperty on the selection to walk up the tree and find a set of suitable nodes to work on.
+ * both apply and cancel will call findWrappingSuitableNodes on the selection to walk up the tree and find a set of suitable nodes to work on.
  * The current implementation of suitable nodes walks up as long as the range of the parentNode fits within the selected range
  * (e.g. if a sibling text node of a block is included it might walk up to the block and text node's parent)
  *
@@ -51,64 +52,6 @@ function propertyIsEnabledOnLeafNodes(richnode, property) {
   const leafNodes = flatMap(richnode, hasChildren);
   const leafNodesWhereStyleIsNotAppliedExists =  leafNodes.some((n) => n.type !== "other" && !property.enabledAt(n)) ;
   return ! leafNodesWhereStyleIsNotAppliedExists;
-}
-
-
-/**
- * We need to apply or remove a property to all portions of text based on the output
- * contained in them.  We can split the important nodes in three
- * pieces:
- *
- * - start: text nodes which contain partial content to highlight
- * - middle: rich nodes which are the highest parent of a text node that are still contained in the selected range
- * - end: trailing text nodes which contain partial content to highlight
- *
- * Detecting this range is tricky
- *
- * @method findSuitableNodesToApplyOrCancelProperty
- * @param Selection selection
- * @for PropertyHelpers
- * @return Array array of selections
- */
-function findSuitableNodesToApplyOrCancelProperty(selection) {
-  if (!selection.selectedHighlightRange) {
-    // TODO: support context selections as well
-    // this might be fairly trivial but focussing on text selection for now
-    throw new Error('currently only selectedHighlightRange is supported');
-  }
-  const nodes = [];
-  const domNodes = [];
-  const [start, end] = selection.selectedHighlightRange;
-  for (let {richNode, range} of selection.selections) {
-    if (richNode.start < start || richNode.end > end) {
-      // this node only partially matches the selected range
-      // so it needs to be split up later and we can't walk up the tree.
-      if (!domNodes.includes(richNode.domNode)) {
-        nodes.push({richNode, range, split:true});
-        domNodes.push(richNode.domNode);
-      }
-    }
-    else {
-      // walk up the tree as longs as we fit within the range
-      let current = richNode;
-      while(current.parent && current.parent.start >= start && current.parent.end <= end) {
-        current = current.parent;
-      }
-      if (!domNodes.includes(current.domNode)) {
-        nodes.push({richNode: current, range: [current.start, current.end], split:false});
-        domNodes.push(current.domNode);
-      }
-    }
-  }
-  // remove nodes that are contained within other nodes
-  let actualNodes = A();
-  for (let possibleNode of nodes) {
-    const containedInAnotherPossibleNode = nodes.some((otherNode) => otherNode !== possibleNode && otherNode.richNode.domNode.contains(possibleNode.richNode.domNode));
-    if (! containedInAnotherPossibleNode) {
-      actualNodes.pushObject(possibleNode);
-    }
-  }
-  return actualNodes;
 }
 
 /**
@@ -162,7 +105,7 @@ function applyProperty(selection, doc, property, calledFromCancel) {
     // cancel first to avoid duplicate tags
     cancelProperty(selection, doc, property);
   }
-  const startingNodes = findSuitableNodesToApplyOrCancelProperty(selection);
+  const startingNodes = findWrappingSuitableNodes(selection);
   for( let {richNode, range} of startingNodes ) {
     const [start,end] = range;
     if (richNode.type ===  "tag" && (richNode.start < start || richNode.end > end)) {
@@ -365,7 +308,7 @@ function cancelProperty(selection, doc, property) {
     warn(`can't cancel property on empty selection`, {id: 'content-editable.editor-property'});
     return;
   }
-  const nodesToCancelPropertyOn = findSuitableNodesToApplyOrCancelProperty(selection);
+  const nodesToCancelPropertyOn = findWrappingSuitableNodes(selection);
   for( let {richNode, range} of nodesToCancelPropertyOn) {
     const [start,end] = range;
     if (richNode.type ===  "tag") {
@@ -414,4 +357,4 @@ function cancelProperty(selection, doc, property) {
 }
 
 
-export { cancelProperty, applyProperty, findSuitableNodesToApplyOrCancelProperty }
+export { cancelProperty, applyProperty }

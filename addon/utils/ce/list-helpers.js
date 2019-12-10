@@ -7,11 +7,9 @@ import {
   isTextNode,
   getListTagName,
   findPreviousLi,
-  tagNameIsBr
+  tagNameIsBr,
+  findWrappingSuitableNodes
 } from './dom-helpers';
-import {
-  findSuitableNodesToApplyOrCancelProperty
-} from './property-helpers';
 
 import { warn } from '@ember/debug';
 
@@ -818,7 +816,7 @@ function getNodeFromCursorOrSelection(rawEditor) {
   } else if (rawEditor.currentSelection) {
     const range = rawEditor.currentSelection;
     const selection = rawEditor.selectHighlight(range);
-    const suitableNodes = findSuitableNodesToApplyOrCancelProperty(selection); // TODO: abstract/rename/move findSuitableNodesToApplyOrCancelProperty
+    const suitableNodes = findWrappingSuitableNodes(selection); // TODO: abstract/rename/move findWrappingSuitableNodes
     return suitableNodes.firstObject.richNode.domNode;
   } else {
     return null;
