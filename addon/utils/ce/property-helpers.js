@@ -12,7 +12,6 @@ import {
   replaceRichNodeWith,
   unwrapRichNode
 } from './rich-node-tree-modification';
-import { A } from '@ember/array';
 
 // TODO: find a clean spot for this polyfill
 if (!Element.prototype.replaceWith)
