@@ -232,65 +232,65 @@ import { warn } from '@ember/debug';
  * handles unordered list
  */
 function unorderedListAction( rawEditor ) {
-  const currentNode = rawEditor.currentNode;
+  const node = getNodeFromCursorOrSelection(rawEditor);
 
-  // TODO: abstract the way we get the node to do the externalDomUpdate.
-  // We'll use it in orderedListAction, indentAction, unindentAction
-  if(isEligibleForListAction(currentNode)) {
-    rawEditor.externalDomUpdate('handle unorderedListAction',
-                                handleListAction(rawEditor, currentNode, unorderedListAction, 'ul'),
-                                true);
-  } else  if (rawEditor.currentSelection) {
-    const range = rawEditor.currentSelection;
-    const selection = rawEditor.selectHighlight(range);
-    const suitableNodes = findSuitableNodesToApplyOrCancelProperty(selection); // TODO: abstract/rename/move findSuitableNodesToApplyOrCancelProperty
-    const node = suitableNodes.firstObject.richNode.domNode;
+  if (node == null) return;
 
-    rawEditor.externalDomUpdate('handle unorderedListAction',
-                                handleListAction(rawEditor, node, unorderedListAction, 'ul'),
-                                true);
-
-    rawEditor.setCurrentPosition(range[1]);
-  } else {
-    return;
+  if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
+    rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
   }
+
+  rawEditor.externalDomUpdate(
+    'handle unorderedListAction',
+    handleListAction(rawEditor, node, unorderedListAction, 'ul'),
+    true
+  );
 }
 
 /**
  * handles ordered list
  */
 function orderedListAction( rawEditor ) {
-  const currentNode = rawEditor.currentNode;
+  const node = getNodeFromCursorOrSelection(rawEditor);
 
-  if(!isEligibleForListAction(currentNode)) return;
+  if (node == null) return;
 
-  rawEditor.externalDomUpdate('handle orderedListAction',
-                              handleListAction(rawEditor, currentNode, orderedListAction, 'ol'),
-                             true);
+  if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
+    rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
+  }
+
+  rawEditor.externalDomUpdate(
+    'handle unorderedListAction',
+    handleListAction(rawEditor, node, orderedListAction, 'ol'),
+    true
+  );
 }
 
 /**
  * handles indent Action
  */
 function indentAction( rawEditor ) {
-  const currentNode = rawEditor.currentNode;
+  const node = getNodeFromCursorOrSelection(rawEditor);
 
-  if(!isEligibleForListAction(currentNode)) return;
+  if (node == null) return;
 
   let handleAction = () => {
-    if(!isEligibleForIndentAction(currentNode)) return;
-
-    let currLI = getParentLI(currentNode);
+    if(!isEligibleForIndentAction(node)) return;
+    let currLI = getParentLI(node);
     let currlistE = currLI.parentNode;
     let currlistType = getListTagName(currlistE);
     let previousLi = findPreviousLi(currLI);
-    let logicalBlockContents = getLogicalBlockContentsForIndentationAction(currentNode);
+    let logicalBlockContents = getLogicalBlockContentsForIndentationAction(node);
     insertNewList(rawEditor, logicalBlockContents, currlistType, previousLi);
     if (previousLi) {
       // contents of the current LI was moved into the new LI (now available in a nested list under the previous sibling)
       currLI.remove();
     }
   };
+
+  if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
+    rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
+  }
 
   rawEditor.externalDomUpdate('handle indentAction', handleAction, true);
 }
@@ -299,16 +299,20 @@ function indentAction( rawEditor ) {
  * handles unindent Action
  */
 function unindentAction( rawEditor ) {
-  const currentNode = rawEditor.currentNode;
+  const node = getNodeFromCursorOrSelection(rawEditor);
 
-  if(!isEligibleForListAction(currentNode)) return;
+  if (node == null) return;
 
   let handleAction = () => {
-    if(!isEligibleForIndentAction(currentNode)) return;
+    if(!isEligibleForIndentAction(node)) return;
 
-    let logicalBlockContents = getLogicalBlockContentsForIndentationAction(currentNode);
+    let logicalBlockContents = getLogicalBlockContentsForIndentationAction(node);
     unindentLogicalBlockContents(rawEditor, logicalBlockContents);
   };
+
+  if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
+    rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
+  }
 
   rawEditor.externalDomUpdate('handle unindentAction', handleAction, true);
 }
@@ -801,4 +805,24 @@ function makeLogicalBlockCursorSafe( logicalBlockContents ) {
 
   return logicalBlockContents;
 }
+
+/**
+ * Gets the node pointed by the cursor or the selection.
+ * Cursor : returns the current node of the raw editor
+ * Selection : returns the first suitable node found around the range of the selection
+ */
+function getNodeFromCursorOrSelection(rawEditor) {
+  const node = rawEditor.currentNode;
+  if(isEligibleForListAction(node)) {
+    return node;
+  } else if (rawEditor.currentSelection) {
+    const range = rawEditor.currentSelection;
+    const selection = rawEditor.selectHighlight(range);
+    const suitableNodes = findSuitableNodesToApplyOrCancelProperty(selection); // TODO: abstract/rename/move findSuitableNodesToApplyOrCancelProperty
+    return suitableNodes.firstObject.richNode.domNode;
+  } else {
+    return null;
+  }
+}
+
 export { unorderedListAction, orderedListAction, indentAction, unindentAction }
