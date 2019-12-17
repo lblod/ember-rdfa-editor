@@ -900,27 +900,4 @@ function makeLogicalBlockCursorSafe( logicalBlockContents ) {
   return logicalBlockContents;
 }
 
-/**
- * Gets the node pointed by the cursor or the selection.
- * Cursor : returns the current node of the raw editor
- * Selection : returns the first suitable node found around the range of the selection
- */
-function getNodeFromCursorOrSelection(rawEditor) {
-  const node = rawEditor.currentNode;
-  if(isEligibleForListAction(node)) {
-    return node;
-  } else if (rawEditor.currentSelection) {
-    const range = rawEditor.currentSelection;
-    const selection = rawEditor.selectHighlight(range);
-    const suitableNodes = findWrappingSuitableNodes(selection);
-
-    const filteredSuitableNodes = suitableNodes.filter(node => {
-      return !isAdjacentRange(node.range, range);
-    })
-    return filteredSuitableNodes.map(node => node.richNode.domNode)[0];
-  } else {
-    return null;
-  }
-}
-
 export { unorderedListAction, orderedListAction, indentAction, unindentAction }
