@@ -16,6 +16,7 @@
     <h3>UNORDERED LIST CASES</h3>
     <p> The symbol "-|" means place cursor right before "-|" </p>
     <p> The symbol "|-" means place cursor right after "|-" </p>
+    <p> The symbol "-| ... |-" means select the " ... " part</p>
 
     <div style="margin-left:10px">
     <h4>case 1 </h4>
@@ -199,6 +200,56 @@
         <li>
           other text
         </li>
+      </ul>
+    </p>
+    <h4>case 23 : create list from multiple selected lines</h4>
+    <p>
+      <div>Sauté de v-|eau</div>
+      <div><i>Crêpes</i></div>
+      <div><b>Raclet|-te</b> au comté</div>
+    </p>
+    Should give
+    <p>
+      <ul>
+        <li>Sauté de veau</li>
+        <li><i>Crêpes</i></li>
+        <li><b>Raclette</b> au comté</li>
+      </ul>
+    </p>
+    <h4>case 24 : indent list from multiple selected lines</h4>
+    <p>
+      <ul>
+        <li>Pot au feu</li>
+        <li><i>Tarte a|ux pommes</i></li>
+        <li><b>Croziflette</b> au vi-|n blanc</li>
+      </ul>
+    </p>
+    Should give
+    <p>
+      <ul>
+        <li>Pot au feu</li>
+        <ul>
+          <li><i>Tarte aux pommes</i></li>
+          <li><b>Croziflette</b> au vin blanc</li>
+        </ul>
+      </ul>
+    </p>
+    <h4>case 25 : unindent list from multiple selected lines</h4>
+    <p>
+      <ul>
+        <li>Choucroute</li>
+        <ul>
+          <li><i>Baba a-|u rhum</i></li>
+          <li><b>Pâté</b> aux pru|-nes</li>
+        </ul>
+      </ul>
+    </p>
+    Should give
+    <p>
+      <ul>
+        <li>Choucroute</li>
+        <li><i>Baba au rhum</i></li>
+        <li><b>Pâté</b> aux prunes</li>
       </ul>
     </p>
 </div>
