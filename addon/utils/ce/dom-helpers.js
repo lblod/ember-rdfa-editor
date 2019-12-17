@@ -247,13 +247,13 @@ function tagName(node) {
 
 /**
  * check if the node is a <br> tag
- * @method tagNameIsBr
+ * @method isBlockOrBr
  * @param {DOMNode} node
  * @return {boolean}
  * @public
  */
-function tagNameIsBr(node) {
-  return tagName(node) == 'br';
+function isBlockOrBr(node) {
+  return tagName(node) == 'br' || isDisplayedAsBlock(node);
 }
 
 /**
@@ -378,6 +378,6 @@ export {
   getListTagName,
   findPreviousLi,
   isPhrasingContent,
-  tagNameIsBr,
+  isBlockOrBr,
   findWrappingSuitableNodes
 };

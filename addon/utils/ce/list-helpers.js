@@ -7,10 +7,10 @@ import {
   isTextNode,
   getListTagName,
   findPreviousLi,
-  tagNameIsBr,
+  isBlockOrBr,
   findWrappingSuitableNodes
 } from './dom-helpers';
-
+import { isAdjacentRange } from '@lblod/marawa/range-helpers';
 import { warn } from '@ember/debug';
 
 /**
@@ -230,89 +230,157 @@ import { warn } from '@ember/debug';
  * handles unordered list
  */
 function unorderedListAction( rawEditor ) {
-  const node = getNodeFromCursorOrSelection(rawEditor);
+  const node = rawEditor.currentNode;
+  let filteredSuitableNodes = null;
 
-  if (node == null) return;
+  if(isEligibleForListAction(node)) { // cursor placed in the text
+    filteredSuitableNodes = node;
+  } else if (rawEditor.currentSelection) { // selection of the text
+    const range = rawEditor.currentSelection;
+    const selection = rawEditor.selectHighlight(range);
+    const suitableNodes = findWrappingSuitableNodes(selection);
 
-  if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
-    rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
+    filteredSuitableNodes = suitableNodes.filter(node => {
+      return !(isAdjacentRange(node.range, range) && node.split);
+    })
+
+    if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
+      rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
+    }
   }
 
-  rawEditor.externalDomUpdate(
-    'handle unorderedListAction',
-    handleListAction(rawEditor, node, unorderedListAction, 'ul'),
-    true
-  );
+  if (filteredSuitableNodes) {
+    rawEditor.externalDomUpdate(
+      'handle unorderedListAction',
+      handleListAction(rawEditor, filteredSuitableNodes, unorderedListAction, 'ul'),
+      true
+    );
+  }
 }
 
 /**
  * handles ordered list
  */
 function orderedListAction( rawEditor ) {
-  const node = getNodeFromCursorOrSelection(rawEditor);
+  const node = rawEditor.currentNode;
+  let filteredSuitableNodes = null;
 
-  if (node == null) return;
+  if(isEligibleForListAction(node)) { // cursor placed in the text
+    filteredSuitableNodes = node;
+  } else if (rawEditor.currentSelection) { // selection of the text
+    const range = rawEditor.currentSelection;
+    const selection = rawEditor.selectHighlight(range);
+    const suitableNodes = findWrappingSuitableNodes(selection);
 
-  if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
-    rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
+    filteredSuitableNodes = suitableNodes.filter(node => {
+      return !(isAdjacentRange(node.range, range) && node.split);
+    })
+
+    if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
+      rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
+    }
   }
 
-  rawEditor.externalDomUpdate(
-    'handle unorderedListAction',
-    handleListAction(rawEditor, node, orderedListAction, 'ol'),
-    true
-  );
+  if (filteredSuitableNodes) {
+    rawEditor.externalDomUpdate(
+      'handle unorderedListAction',
+      handleListAction(rawEditor, filteredSuitableNodes, orderedListAction, 'ol'),
+      true
+    );
+  }
 }
 
 /**
  * handles indent Action
  */
 function indentAction( rawEditor ) {
-  const node = getNodeFromCursorOrSelection(rawEditor);
+  const node = rawEditor.currentNode;
+  let filteredSuitableNodes = null;
 
-  if (node == null) return;
+  if(isEligibleForListAction(node)) { // cursor placed in the text
+    filteredSuitableNodes = [node];
+  } else if (rawEditor.currentSelection) { // selection of the text
+    const range = rawEditor.currentSelection;
+    const selection = rawEditor.selectHighlight(range);
+    const suitableNodes = findWrappingSuitableNodes(selection);
 
-  let handleAction = () => {
-    if(!isEligibleForIndentAction(node)) return;
-    let currLI = getParentLI(node);
-    let currlistE = currLI.parentNode;
-    let currlistType = getListTagName(currlistE);
-    let previousLi = findPreviousLi(currLI);
-    let logicalBlockContents = getLogicalBlockContentsForIndentationAction(node);
-    insertNewList(rawEditor, logicalBlockContents, currlistType, previousLi);
-    if (previousLi) {
-      // contents of the current LI was moved into the new LI (now available in a nested list under the previous sibling)
-      currLI.remove();
+    filteredSuitableNodes = suitableNodes.filter(node => {
+      return !(isAdjacentRange(node.range, range) && node.split);
+    })
+
+    filteredSuitableNodes = filteredSuitableNodes.map(node => node.richNode.domNode);
+
+    if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
+      rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
     }
-  };
-
-  if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
-    rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
   }
 
-  rawEditor.externalDomUpdate('handle indentAction', handleAction, true);
+  if (filteredSuitableNodes) {
+    let handleAction = () => {
+      // TODO: For now we assume the selection of an indent will only be in one <li>. Its evolution will be handling multiple <li> in a selection.
+
+      let logicalBlockContents = [];
+      filteredSuitableNodes.forEach(node => {
+        if(!isEligibleForIndentAction(node)) return;
+        logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
+      })
+      logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
+
+      const firstNode = filteredSuitableNodes[0]; // Assuming we only handle one <li> for now (see todo above)
+      let currLI = getParentLI(firstNode);
+      let currlistE = currLI.parentNode;
+      let currlistType = getListTagName(currlistE);
+      let previousLi = findPreviousLi(currLI);
+
+      insertNewList(rawEditor, logicalBlockContents, currlistType, previousLi);
+      if (previousLi) {
+        // contents of the current LI was moved into the new LI (now available in a nested list under the previous sibling)
+        currLI.remove();
+      }
+    };
+
+    rawEditor.externalDomUpdate('handle indentAction', handleAction, true);
+  }
 }
 
 /**
  * handles unindent Action
  */
 function unindentAction( rawEditor ) {
-  const node = getNodeFromCursorOrSelection(rawEditor);
+  const node = rawEditor.currentNode;
+  let filteredSuitableNodes = null;
 
-  if (node == null) return;
+  if(isEligibleForListAction(node)) { // cursor placed in the text
+    filteredSuitableNodes = [node];
+  } else if (rawEditor.currentSelection) { // selection of the text
+    const range = rawEditor.currentSelection;
+    const selection = rawEditor.selectHighlight(range);
+    const suitableNodes = findWrappingSuitableNodes(selection);
 
-  let handleAction = () => {
-    if(!isEligibleForIndentAction(node)) return;
+    filteredSuitableNodes = suitableNodes.filter(node => {
+      return !(isAdjacentRange(node.range, range) && node.split);
+    })
 
-    let logicalBlockContents = getLogicalBlockContentsForIndentationAction(node);
-    unindentLogicalBlockContents(rawEditor, logicalBlockContents);
-  };
+    filteredSuitableNodes = filteredSuitableNodes.map(node => node.richNode.domNode);
 
-  if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
-    rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
+    if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
+      rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
+    }
   }
 
-  rawEditor.externalDomUpdate('handle unindentAction', handleAction, true);
+  if (filteredSuitableNodes) {
+    let handleAction = () => {
+      let logicalBlockContents = [];
+      filteredSuitableNodes.forEach(node => {
+        if(!isEligibleForIndentAction(node)) return;
+        logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
+      });
+      logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
+      unindentLogicalBlockContents(rawEditor, logicalBlockContents);
+    };
+
+    rawEditor.externalDomUpdate('handle unindentAction', handleAction, true);
+  }
 }
 
 
@@ -327,7 +395,21 @@ function unindentAction( rawEditor ) {
 function handleListAction( rawEditor, currentNode, actionType, listType) {
   return () => {
     if(!isInList(currentNode)){
-      let logicalBlockContents = getLogicalBlockContentsForNewList(currentNode);
+
+      let logicalBlockContents = [];
+      if (Array.isArray(currentNode)) {
+        currentNode.forEach(node => {
+          logicalBlockContents.push({
+            nodes: getLogicalBlockContentsForNewList(node.richNode.domNode),
+            range: node.range
+          });
+        })
+        logicalBlockContents = reorderBlocks(logicalBlockContents).map(block => block.nodes);
+        logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
+      } else {
+        logicalBlockContents = getLogicalBlockContentsForNewList(currentNode);
+      }
+
       insertNewList(rawEditor, logicalBlockContents, listType);
       return;
     }
@@ -341,6 +423,15 @@ function handleListAction( rawEditor, currentNode, actionType, listType) {
     let logicalBlockContents = getLogicalBlockContentsForIndentationAction(currentNode);
     unindentLogicalBlockContents(rawEditor, logicalBlockContents);
   };
+}
+
+function reorderBlocks(blocks) {
+  return blocks.sort((a, b) => {
+    if (a.range[0] > b.range[0])
+      return true;
+    if (a.range[0] == b.range[0])
+      return a.range[1] > b.range[1]
+  })
 }
 
 /**
@@ -413,7 +504,7 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
   }
   logicalListBlocks.forEach(n => li.appendChild(n));
   makeLogicalBlockCursorSafe([listE]);
-}
+ }
 
 /**
  * Unindents logical block contents from context it resides in.
@@ -549,7 +640,8 @@ function doesActionSwitchListType( node, listAction ) {
 function getLogicalBlockContentsForNewList( node ) {
   let baseNode = returnParentNodeBeforeBlockElement(node);
   //left and right adjacent siblings should be added until we hit a br (before) and a block node (after).
-  return growNeighbouringSiblingsUntil(tagNameIsBr, isDisplayedAsBlock, baseNode);
+  return growAdjacentNodesUntil(isBlockOrBr, isDisplayedAsBlock, baseNode, true);
+
 }
 
 /**
@@ -634,7 +726,7 @@ function getLogicalBlockContentsForIndentationAction( node ){
     return [ potentialBlockParentCurrentNode ];
 
   let baseNode = returnParentNodeBeforeBlockElement(node);
-  return growNeighbouringSiblingsUntil(isDisplayedAsBlock, isDisplayedAsBlock, baseNode);
+  return growAdjacentNodesUntil(isDisplayedAsBlock, isDisplayedAsBlock, baseNode);
 }
 
 /**
@@ -667,8 +759,12 @@ function returnParentNodeBeforeBlockElement( node ) {
  * Given a node, we want to grow a region (a list of sibling nodes)
  * until we match a condition
  */
-function growNeighbouringSiblingsUntil( conditionLeft, conditionRight, node ) {
+function growAdjacentNodesUntil( conditionLeft, conditionRight, node, includeMyself=false ) {
   let nodes = [];
+  if (includeMyself) {
+    nodes.push(node);
+  }
+
   let currNode = node;
 
   //lefties
@@ -816,8 +912,12 @@ function getNodeFromCursorOrSelection(rawEditor) {
   } else if (rawEditor.currentSelection) {
     const range = rawEditor.currentSelection;
     const selection = rawEditor.selectHighlight(range);
-    const suitableNodes = findWrappingSuitableNodes(selection); // TODO: abstract/rename/move findWrappingSuitableNodes
-    return suitableNodes.firstObject.richNode.domNode;
+    const suitableNodes = findWrappingSuitableNodes(selection);
+
+    const filteredSuitableNodes = suitableNodes.filter(node => {
+      return !isAdjacentRange(node.range, range);
+    })
+    return filteredSuitableNodes.map(node => node.richNode.domNode)[0];
   } else {
     return null;
   }
