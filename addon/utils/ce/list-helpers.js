@@ -8,7 +8,9 @@ import {
   getListTagName,
   findPreviousLi,
   isBlockOrBr,
-  findWrappingSuitableNodes
+  findWrappingSuitableNodes,
+  isAllWhitespace,
+  tagName
 } from './dom-helpers';
 import { isAdjacentRange } from '@lblod/marawa/range-helpers';
 import { warn } from '@ember/debug';
@@ -395,7 +397,6 @@ function unindentAction( rawEditor ) {
 function handleListAction( rawEditor, currentNode, actionType, listType) {
   return () => {
     if(!isInList(currentNode)){
-
       let logicalBlockContents = [];
       if (Array.isArray(currentNode)) {
         currentNode.forEach(node => {
@@ -406,6 +407,7 @@ function handleListAction( rawEditor, currentNode, actionType, listType) {
         })
         logicalBlockContents = reorderBlocks(logicalBlockContents).map(block => block.nodes);
         logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
+        logicalBlockContents = keepHighestNodes(logicalBlockContents);
       } else {
         logicalBlockContents = getLogicalBlockContentsForNewList(currentNode);
       }
@@ -425,6 +427,7 @@ function handleListAction( rawEditor, currentNode, actionType, listType) {
   };
 }
 
+// TODO: documentation
 function reorderBlocks(blocks) {
   return blocks.sort((a, b) => {
     if (a.range[0] > b.range[0])
@@ -432,6 +435,44 @@ function reorderBlocks(blocks) {
     if (a.range[0] == b.range[0])
       return a.range[1] > b.range[1]
   })
+}
+
+// TODO: documentation
+function keepHighestNodes(nodes) {
+  nodes = nodes.filter(node => {
+    return !(node.parentNode && nodes.includes(node.parentNode));
+  });
+  return nodes;
+}
+
+// TODO: documentation
+// Groups the blocks belonging to the same logical line group (a block is a line, a br splits two blocks)
+function splitLogicalBlocks(blocks) {
+  let splitedBlocks = [];
+  let i = 0;
+  let tmp = [];
+
+  blocks.forEach(block => {
+    if (isBlockOrBr(block)) {
+      if (tmp.length > 0) {
+        splitedBlocks.splice(i, 0, tmp);
+        i++;
+      }
+      if (tagName(block) != "br") {
+        splitedBlocks.splice(i, 0, [block]);
+        i++;
+      }
+      tmp = [];
+    } else {
+      tmp.push(block);
+    }
+  });
+
+  if (tmp.length > 0) {
+    splitedBlocks.splice(i, 0, tmp);
+  }
+
+  return splitedBlocks;
 }
 
 /**
@@ -487,8 +528,6 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
   let listELocationRef = logicalListBlocks[0];
 
   let listE = document.createElement(listType);
-  let li = document.createElement('li');
-  listE.append(li);
 
   if (parentNode) {
     parentNode.append(listE);
@@ -502,7 +541,19 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
     parent.insertBefore(document.createTextNode(invisibleSpace), listELocationRef);
     parent.insertBefore(listE, listELocationRef);
   }
-  logicalListBlocks.forEach(n => li.appendChild(n));
+
+  const logicalListBlocksWithoutWhiteSpaces = logicalListBlocks.filter(block => {
+    return !(isAllWhitespace(block) && tagName(block) != "br");
+  });
+
+  const splitedLogicalBlocks = splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
+
+  splitedLogicalBlocks.forEach(splitedBlocks => {
+    const li = document.createElement('li');
+    listE.append(li);
+    splitedBlocks.forEach(n => li.appendChild(n));
+  })
+
   makeLogicalBlockCursorSafe([listE]);
  }
 
@@ -640,8 +691,7 @@ function doesActionSwitchListType( node, listAction ) {
 function getLogicalBlockContentsForNewList( node ) {
   let baseNode = returnParentNodeBeforeBlockElement(node);
   //left and right adjacent siblings should be added until we hit a br (before) and a block node (after).
-  return growAdjacentNodesUntil(isBlockOrBr, isDisplayedAsBlock, baseNode, true);
-
+  return growAdjacentNodesUntil(isBlockOrBr, isBlockOrBr, baseNode, true);
 }
 
 /**
@@ -760,19 +810,18 @@ function returnParentNodeBeforeBlockElement( node ) {
  * until we match a condition
  */
 function growAdjacentNodesUntil( conditionLeft, conditionRight, node, includeMyself=false ) {
+  // TODO: remove includeMyself param
+  // TODO: better documentation
   let nodes = [];
-  if (includeMyself) {
-    nodes.push(node);
-  }
 
   let currNode = node;
 
   //lefties
   while(currNode){
+    nodes.push(currNode); // We start from the base node, that we want to include in our selection, hence before the break
     if(conditionLeft(currNode)){
       break;
     }
-    nodes.push(currNode);
     currNode = currNode.previousSibling ;
   }
 
@@ -784,9 +833,10 @@ function growAdjacentNodesUntil( conditionLeft, conditionRight, node, includeMys
     if(conditionRight(currNode)){
       break;
     }
-    nodes.push(currNode);
+    nodes.push(currNode); // We want to check what the next sibling will be before adding it to the nodes, hence after the break
     currNode = currNode.nextSibling;
   }
+
   return nodes;
 }
 
