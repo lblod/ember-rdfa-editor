@@ -301,6 +301,7 @@ function indentAction( rawEditor ) {
 
   if(isEligibleForListAction(node)) { // cursor placed in the text
     filteredSuitableNodes = [node];
+
   } else if (rawEditor.currentSelection) { // selection of the text
     const range = rawEditor.currentSelection;
     const selection = rawEditor.selectHighlight(range);
@@ -310,7 +311,7 @@ function indentAction( rawEditor ) {
       return !(isAdjacentRange(node.range, range) && node.split);
     })
 
-    filteredSuitableNodes = filteredSuitableNodes.map(node => node.richNode.domNode);
+    filteredSuitableNodes = reorderBlocks(filteredSuitableNodes).map(node => node.richNode.domNode);
 
     if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
       rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
@@ -319,26 +320,32 @@ function indentAction( rawEditor ) {
 
   if (filteredSuitableNodes) {
     let handleAction = () => {
-      // TODO: For now we assume the selection of an indent will only be in one <li>. Its evolution will be handling multiple <li> in a selection.
-
       let logicalBlockContents = [];
       filteredSuitableNodes.forEach(node => {
-        if(!isEligibleForIndentAction(node)) return;
+        if(!(isEligibleForIndentAction(node) || (node.firstChild && isEligibleForIndentAction(node.firstChild)))) return; // firstChild : handles the case where we have a full li in the selection
         logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
-      })
+      });
       logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
+      logicalBlockContents = keepHighestNodes(logicalBlockContents);
+      const logicalBlocksWithoutWhiteSpaces = logicalBlockContents.filter(block => {
+        return !(isAllWhitespace(block));
+      });
 
-      const firstNode = filteredSuitableNodes[0]; // Assuming we only handle one <li> for now (see todo above)
-      let currLI = getParentLI(firstNode);
+      // let firstNode = logicalBlockContents[0];
+      // let currLI = firstNode.parentNode;
+
+      let currLI = logicalBlockContents[0];
       let currlistE = currLI.parentNode;
       let currlistType = getListTagName(currlistE);
       let previousLi = findPreviousLi(currLI);
 
       insertNewList(rawEditor, logicalBlockContents, currlistType, previousLi);
-      if (previousLi) {
-        // contents of the current LI was moved into the new LI (now available in a nested list under the previous sibling)
-        currLI.remove();
-      }
+
+      // TODO: remove, became useless now that we deal directly with lis
+      // if (previousLi) {
+      //   // contents of the current LI was moved into the new LI (now available in a nested list under the previous sibling)
+      //   currLI.remove();
+      // }
     };
 
     rawEditor.externalDomUpdate('handle indentAction', handleAction, true);
@@ -378,6 +385,7 @@ function unindentAction( rawEditor ) {
         logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
       });
       logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
+      logicalBlockContents = keepHighestNodes(logicalBlockContents);
       unindentLogicalBlockContents(rawEditor, logicalBlockContents);
     };
 
@@ -422,6 +430,7 @@ function handleListAction( rawEditor, currentNode, actionType, listType) {
       return;
     }
 
+    // TODO: check if it's used ?
     let logicalBlockContents = getLogicalBlockContentsForIndentationAction(currentNode);
     unindentLogicalBlockContents(rawEditor, logicalBlockContents);
   };
@@ -546,13 +555,23 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
     return !(isAllWhitespace(block) && tagName(block) != "br");
   });
 
-  const splitedLogicalBlocks = splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
+  // We have lists full of <li> or without any <li> depending if we insert a list or indent a list.
+  // If we have <li>, the blocks are already splitted.
+  if (tagName(logicalListBlocksWithoutWhiteSpaces[0]) != "li") {
+    const splitedLogicalBlocks = splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
 
-  splitedLogicalBlocks.forEach(splitedBlocks => {
-    const li = document.createElement('li');
-    listE.append(li);
-    splitedBlocks.forEach(n => li.appendChild(n));
-  })
+    splitedLogicalBlocks.forEach(splitedBlocks => {
+      console.log(splitedBlocks);
+      const li = document.createElement('li');
+      listE.append(li);
+      splitedBlocks.forEach(n => li.appendChild(n));
+    });
+  } else {
+    logicalListBlocksWithoutWhiteSpaces.forEach(n => listE.appendChild(n));
+  }
+
+
+
 
   makeLogicalBlockCursorSafe([listE]);
  }
@@ -767,8 +786,8 @@ function getLogicalBlockContentsSwitchListType( node ) {
  *
  * @public
  */
-function getLogicalBlockContentsForIndentationAction( node ){
-  let currLI = getParentLI(node);
+function getLogicalBlockContentsForIndentationAction(node) {
+  let currLI = getParentLI(node) || node;
   let currLiNodes = [...currLI.childNodes];
   let potentialBlockParentCurrentNode = currLiNodes.find(n => isDisplayedAsBlock(n) && n.contains(node));
 
@@ -776,7 +795,19 @@ function getLogicalBlockContentsForIndentationAction( node ){
     return [ potentialBlockParentCurrentNode ];
 
   let baseNode = returnParentNodeBeforeBlockElement(node);
-  return growAdjacentNodesUntil(isDisplayedAsBlock, isDisplayedAsBlock, baseNode);
+
+  // TODO: remove this comment below
+  // Test : use the parent node of the base node. I'm wondering if here we shouldn't work with <li> as we worked with block elements before.
+  // Because inside of the selection we might have some <li>s
+  const nodes = growAdjacentNodesUntil(isDisplayedAsBlock, isDisplayedAsBlock, baseNode);
+  // return nodes;
+  return nodes.map(node => {
+    if (tagName(node) == 'li') {
+      return node; // For the case where there is a full <li> inside the selection
+    } else {
+      return node.parentNode;
+    }
+  });
 }
 
 /**
