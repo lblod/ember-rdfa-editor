@@ -301,6 +301,7 @@ function indentAction( rawEditor ) {
 
   if(isEligibleForListAction(node)) { // cursor placed in the text
     filteredSuitableNodes = [node];
+
   } else if (rawEditor.currentSelection) { // selection of the text
     const range = rawEditor.currentSelection;
     const selection = rawEditor.selectHighlight(range);
@@ -310,7 +311,14 @@ function indentAction( rawEditor ) {
       return !(isAdjacentRange(node.range, range) && node.split);
     })
 
-    filteredSuitableNodes = filteredSuitableNodes.map(node => node.richNode.domNode);
+    filteredSuitableNodes = reorderBlocks(filteredSuitableNodes).map(node => {
+      const domNode = node.richNode.domNode;
+      if (tagName(domNode) == 'li') {
+        return [...domNode.childNodes];
+      } else {
+        return domNode;
+      }
+    }).flat();
 
     if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
       rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
@@ -319,26 +327,29 @@ function indentAction( rawEditor ) {
 
   if (filteredSuitableNodes) {
     let handleAction = () => {
-      // TODO: For now we assume the selection of an indent will only be in one <li>. Its evolution will be handling multiple <li> in a selection.
-
       let logicalBlockContents = [];
       filteredSuitableNodes.forEach(node => {
-        if(!isEligibleForIndentAction(node)) return;
+        if(!(isEligibleForIndentAction(node) || (node.firstChild && isEligibleForIndentAction(node.firstChild)))) return; // firstChild : handles the case where we have a full li in the selection
         logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
-      })
+      });
       logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
+      logicalBlockContents = keepHighestNodes(logicalBlockContents);
 
-      const firstNode = filteredSuitableNodes[0]; // Assuming we only handle one <li> for now (see todo above)
-      let currLI = getParentLI(firstNode);
-      let currlistE = currLI.parentNode;
-      let currlistType = getListTagName(currlistE);
-      let previousLi = findPreviousLi(currLI);
+      const logicalListBlocksWithoutWhiteSpaces = logicalBlockContents.filter(block => {
+        return !(isAllWhitespace(block));
+      });
 
-      insertNewList(rawEditor, logicalBlockContents, currlistType, previousLi);
-      if (previousLi) {
-        // contents of the current LI was moved into the new LI (now available in a nested list under the previous sibling)
-        currLI.remove();
-      }
+      const splitedLogicalBlocks = splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
+
+      const firstNodes = splitedLogicalBlocks.map(block => block[0]);
+      const currLis = firstNodes.map(node => node.parentNode);
+      const currListEs = currLis.map(node => node.parentNode);
+      const currlistTypes = currListEs.map(node => getListTagName(node));
+      const previousLis = currLis.map(node => findPreviousLi(node));
+
+      insertNewList(rawEditor, splitedLogicalBlocks, currlistTypes[0], previousLis[0]); // Assuming all the indents are from the same parent list
+
+      currLis.forEach(node => node.remove());
     };
 
     rawEditor.externalDomUpdate('handle indentAction', handleAction, true);
@@ -378,6 +389,7 @@ function unindentAction( rawEditor ) {
         logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
       });
       logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
+      logicalBlockContents = keepHighestNodes(logicalBlockContents);
       unindentLogicalBlockContents(rawEditor, logicalBlockContents);
     };
 
@@ -412,7 +424,13 @@ function handleListAction( rawEditor, currentNode, actionType, listType) {
         logicalBlockContents = getLogicalBlockContentsForNewList(currentNode);
       }
 
-      insertNewList(rawEditor, logicalBlockContents, listType);
+      const logicalListBlocksWithoutWhiteSpaces = logicalBlockContents.filter(block => {
+        return !(isAllWhitespace(block) && tagName(block) != "br");
+      });
+
+      const splitedLogicalBlocks = splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
+
+      insertNewList(rawEditor, splitedLogicalBlocks, listType);
       return;
     }
 
@@ -422,6 +440,7 @@ function handleListAction( rawEditor, currentNode, actionType, listType) {
       return;
     }
 
+    // TODO: check if it's used ?
     let logicalBlockContents = getLogicalBlockContentsForIndentationAction(currentNode);
     unindentLogicalBlockContents(rawEditor, logicalBlockContents);
   };
@@ -446,32 +465,49 @@ function keepHighestNodes(nodes) {
 }
 
 // TODO: documentation
-// Groups the blocks belonging to the same logical line group (a block is a line, a br splits two blocks)
+// Groups the blocks belonging to the same logical line group (a block is a line, a br splits two blocks, if the li parent is the same)
 function splitLogicalBlocks(blocks) {
   let splitedBlocks = [];
-  let i = 0;
-  let tmp = [];
+  if (tagName(blocks[0].parentNode) == 'li') {
+    let parentNodes = [];
+    let replace = 0;
+    blocks.forEach(block => {
+      const parentNode = block.parentNode;
+      if (!parentNodes.includes(parentNode)) {
+        parentNodes.push(parentNode);
+      } else {
+        replace = 1; // If we already have an entry for the parent, we replace the current value (replace=1). Else we insert a brand new one
+      }
 
-  blocks.forEach(block => {
-    if (isBlockOrBr(block)) {
-      if (tmp.length > 0) {
-        splitedBlocks.splice(i, 0, tmp);
-        i++;
+      const index = parentNodes.indexOf(parentNode);
+      const value = splitedBlocks[index] ? [...splitedBlocks[index], block] : [block];
+      splitedBlocks.splice(index, replace, value);
+      replace = 0;
+    });
+  } else {
+    let i = 0;
+    let tmp = [];
+
+    blocks.forEach(block => {
+      if (isBlockOrBr(block)) {
+        if (tmp.length > 0) {
+          splitedBlocks.splice(i, 0, tmp);
+          i++;
+        }
+        if (tagName(block) != "br") {
+          splitedBlocks.splice(i, 0, [block]);
+          i++;
+        }
+        tmp = [];
+      } else {
+        tmp.push(block);
       }
-      if (tagName(block) != "br") {
-        splitedBlocks.splice(i, 0, [block]);
-        i++;
-      }
-      tmp = [];
-    } else {
-      tmp.push(block);
+    });
+
+    if (tmp.length > 0) {
+      splitedBlocks.splice(i, 0, tmp);
     }
-  });
-
-  if (tmp.length > 0) {
-    splitedBlocks.splice(i, 0, tmp);
   }
-
   return splitedBlocks;
 }
 
@@ -525,7 +561,10 @@ function isInList( node ) {
  *
  */
 function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNode ) {
-  let listELocationRef = logicalListBlocks[0];
+  let listELocationRef = logicalListBlocks[0][0];
+  if (tagName(listELocationRef.parentNode) == 'li') {
+    listELocationRef = listELocationRef.parentNode;
+  }
 
   let listE = document.createElement(listType);
 
@@ -538,21 +577,16 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
       warn('Lists assume a parent node', {id: 'list-helpers:insertNewList'});
       return;
     }
+
     parent.insertBefore(document.createTextNode(invisibleSpace), listELocationRef);
     parent.insertBefore(listE, listELocationRef);
   }
 
-  const logicalListBlocksWithoutWhiteSpaces = logicalListBlocks.filter(block => {
-    return !(isAllWhitespace(block) && tagName(block) != "br");
-  });
-
-  const splitedLogicalBlocks = splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
-
-  splitedLogicalBlocks.forEach(splitedBlocks => {
+  logicalListBlocks.forEach(listBlocks => {
     const li = document.createElement('li');
     listE.append(li);
-    splitedBlocks.forEach(n => li.appendChild(n));
-  })
+    listBlocks.forEach(n => li.appendChild(n));
+  });
 
   makeLogicalBlockCursorSafe([listE]);
  }
@@ -767,8 +801,8 @@ function getLogicalBlockContentsSwitchListType( node ) {
  *
  * @public
  */
-function getLogicalBlockContentsForIndentationAction( node ){
-  let currLI = getParentLI(node);
+function getLogicalBlockContentsForIndentationAction(node) {
+  let currLI = getParentLI(node) || node;
   let currLiNodes = [...currLI.childNodes];
   let potentialBlockParentCurrentNode = currLiNodes.find(n => isDisplayedAsBlock(n) && n.contains(node));
 
@@ -776,6 +810,7 @@ function getLogicalBlockContentsForIndentationAction( node ){
     return [ potentialBlockParentCurrentNode ];
 
   let baseNode = returnParentNodeBeforeBlockElement(node);
+
   return growAdjacentNodesUntil(isDisplayedAsBlock, isDisplayedAsBlock, baseNode);
 }
 
