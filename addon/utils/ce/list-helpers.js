@@ -576,12 +576,22 @@ function isInList( node ) {
  *
  */
 function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNode ) {
+
+  // Actually if it has children, it should merge with them no ?
+
   let listELocationRef = logicalListBlocks[0][0];
+
+  // If the list has a child list, we should add the new indent to this existing list instead of creating a new one
+  let listE = null;
+  if (tagName(listELocationRef.nextSibling) == 'ul' || tagName(listELocationRef.nextSibling) == 'ol') {
+    listE = listELocationRef.nextSibling;
+  } else {
+    listE = document.createElement(listType);
+  }
+
   if (tagName(listELocationRef.parentNode) == 'li') {
     listELocationRef = listELocationRef.parentNode;
   }
-
-  let listE = document.createElement(listType);
 
   if (parentNode) {
     parentNode.append(listE);
@@ -599,7 +609,7 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
 
   logicalListBlocks.forEach(listBlocks => {
     const li = document.createElement('li');
-    listE.append(li);
+    listE.prepend(li);
     listBlocks.forEach(n => li.appendChild(n));
   });
 
