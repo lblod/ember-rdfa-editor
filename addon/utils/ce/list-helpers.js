@@ -653,6 +653,7 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
         parentE.insertBefore(listBefore, listE);
       }
 
+      parentE.insertBefore(document.createElement('br'), listE);
       block.forEach(n => parentE.insertBefore(n, listE));
 
       if(LIsAfter.length > 0){
