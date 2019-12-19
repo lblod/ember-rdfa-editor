@@ -374,7 +374,14 @@ function unindentAction( rawEditor ) {
       return !(isAdjacentRange(node.range, range) && node.split);
     })
 
-    filteredSuitableNodes = filteredSuitableNodes.map(node => node.richNode.domNode);
+    filteredSuitableNodes = reorderBlocks(filteredSuitableNodes).map(node => {
+      const domNode = node.richNode.domNode;
+      if (tagName(domNode) == 'li') {
+        return [...domNode.childNodes];
+      } else {
+        return domNode;
+      }
+    }).flat();
 
     if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
       rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
@@ -388,9 +395,17 @@ function unindentAction( rawEditor ) {
         if(!isEligibleForIndentAction(node)) return;
         logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
       });
+
       logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
       logicalBlockContents = keepHighestNodes(logicalBlockContents);
-      unindentLogicalBlockContents(rawEditor, logicalBlockContents);
+
+      const logicalListBlocksWithoutWhiteSpaces = logicalBlockContents.filter(block => {
+        return !(isAllWhitespace(block));
+      });
+
+      const splitedLogicalBlocks = splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
+
+      unindentLogicalBlockContents(rawEditor, splitedLogicalBlocks);
     };
 
     rawEditor.externalDomUpdate('handle unindentAction', handleAction, true);
@@ -595,74 +610,82 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
  * Unindents logical block contents from context it resides in.
  */
 function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneListUpwards= false ) {
-  let currLI = getParentLI(logicalBlockContents[0]);
-  let listE = currLI.parentNode;
-  let listType = getListTagName(listE);
-  let parentE = listE.parentNode;
-  let allLIs = [...listE.children];
+  logicalBlockContents.forEach(block => {
 
-  if(!currLI || !listE || !parentE){
-    warn('No wrapping LI/List/Parent of list found!', {id: 'list-helpers:unindentLIAndSplitList'});
-    return;
-  }
+    let currLI = getParentLI(block[0]); // || block : to handle recursion
+    if (currLI == null) return; // Means we have a ul somewhere. TODO : filter out the uls somewhere ?
 
-  let [LIsBefore, LIsAfter] = siblingsBeforeAndAfterLogicalBlockContents(allLIs, [currLI]);
-  let [siblingsBefore, siblingsAfter] = siblingsBeforeAndAfterLogicalBlockContents([...currLI.childNodes], logicalBlockContents);
+    let listE = currLI.parentNode;
+    let listType = getListTagName(listE);
+    let parentE = listE.parentNode;
+    let allLIs = [...listE.children];
 
-  logicalBlockContents = makeLogicalBlockCursorSafe(logicalBlockContents);
-  [siblingsBefore, siblingsAfter] = [ makeLogicalBlockCursorSafe(siblingsBefore), makeLogicalBlockCursorSafe(siblingsAfter)];
-
-  if(siblingsBefore.length > 0){
-    let li = createParentWithLogicalBlockContents(siblingsBefore, 'li');
-    LIsBefore.push(li);
-  }
-
-  if(siblingsAfter.length > 0){
-    let li = createParentWithLogicalBlockContents(siblingsAfter, 'li');
-    LIsAfter = [li, ...LIsAfter];
-  }
-
-  //If we don't need to move our logical block on list up,
-  //we will split the list in two and make sure the logicalBlock
-  //resides in between
-  if(!moveOneListUpwards){
-
-    if(LIsBefore.length > 0){
-      let listBefore = createParentWithLogicalBlockContents(LIsBefore, listType);
-      parentE.insertBefore(listBefore, listE);
+    if(!currLI || !listE || !parentE){
+      warn('No wrapping LI/List/Parent of list found!', {id: 'list-helpers:unindentLIAndSplitList'});
+      return;
     }
 
-    logicalBlockContents.forEach(n => parentE.insertBefore(n, listE));
+    console.log(allLIs);
+    let [LIsBefore, LIsAfter] = siblingsBeforeAndAfterLogicalBlockContents(allLIs, [currLI]);
+    let [siblingsBefore, siblingsAfter] = siblingsBeforeAndAfterLogicalBlockContents([...currLI.childNodes], block);
 
-    if(LIsAfter.length > 0){
-      let listAfter = createParentWithLogicalBlockContents(LIsAfter, listType);
-      parentE.insertBefore(listAfter, listE);
+    siblingsBefore = siblingsBefore.filter(node => !isAllWhitespace(node));
+    siblingsAfter = siblingsAfter.filter(node => !isAllWhitespace(node));
+
+    block = makeLogicalBlockCursorSafe(block);
+    [siblingsBefore, siblingsAfter] = [ makeLogicalBlockCursorSafe(siblingsBefore), makeLogicalBlockCursorSafe(siblingsAfter)];
+
+    if(siblingsBefore.length > 0){
+      let li = createParentWithLogicalBlockContents(siblingsBefore, 'li');
+      LIsBefore.push(li);
     }
-  }
 
-  //We are in highest list in context, and we didn't start from nested context
-  if(!isInList(listE) && !moveOneListUpwards){
-    makeLogicalBlockCursorSafe([listE]);
-    listE.removeChild(currLI);
-    parentE.removeChild(listE); //we don't need the original list
-    return;
-  }
+    if(siblingsAfter.length > 0){
+      let li = createParentWithLogicalBlockContents(siblingsAfter, 'li');
+      LIsAfter = [li, ...LIsAfter];
+    }
 
-  //Current list is a nested list, and the block needs to move one LI up
-  if(isInList(listE) && !moveOneListUpwards){
-    listE.removeChild(currLI);
-    parentE.removeChild(listE); //we don't need the original list
-    unindentLogicalBlockContents(rawEditor, logicalBlockContents, true);
-    return;
-  }
+    //If we don't need to move our logical block on list up,
+    //we will split the list in two and make sure the logicalBlock
+    //resides in between
+    if(!moveOneListUpwards){
+      if(LIsBefore.length > 0){
+        let listBefore = createParentWithLogicalBlockContents(LIsBefore, listType);
+        parentE.insertBefore(listBefore, listE);
+      }
 
-  //We don't care wether our current list is nested. We just need to add the new LI's
-  if(moveOneListUpwards){
-    let li = createParentWithLogicalBlockContents(logicalBlockContents, 'li');
-    let newLIs = [...LIsBefore, li, ...LIsAfter];
-    newLIs.forEach(n => listE.appendChild(n));
-    listE.removeChild(currLI);
-  }
+      block.forEach(n => parentE.insertBefore(n, listE));
+
+      if(LIsAfter.length > 0){
+        let listAfter = createParentWithLogicalBlockContents(LIsAfter, listType);
+        parentE.insertBefore(listAfter, listE);
+      }
+    }
+
+    //We are in highest list in context, and we didn't start from nested context
+    if(!isInList(listE) && !moveOneListUpwards){
+      makeLogicalBlockCursorSafe([listE]);
+      listE.removeChild(currLI);
+      parentE.removeChild(listE); //we don't need the original list
+      return;
+    }
+
+    //Current list is a nested list, and the block needs to move one LI up
+    if(isInList(listE) && !moveOneListUpwards){
+      listE.removeChild(currLI);
+      parentE.removeChild(listE); //we don't need the original list
+      unindentLogicalBlockContents(rawEditor, [block], true);
+      return;
+    }
+
+    //We don't care wether our current list is nested. We just need to add the new LI's
+    if(moveOneListUpwards){
+      let li = createParentWithLogicalBlockContents(block, 'li');
+      let newLIs = [...LIsBefore, li, ...LIsAfter];
+      newLIs.forEach(n => listE.appendChild(n));
+      listE.removeChild(currLI);
+    }
+  });
 }
 
 /**
@@ -896,8 +919,8 @@ function siblingsBeforeAndAfterLogicalBlockContents( allSiblings, logicalBlockCo
   let siblingsAfter = [];
   let nodeListToUpdate = siblingsBefore;
 
-  for(var node of allSiblings){
-    if(logicalBlockContents.some(n => n.isSameNode(node))){
+  for(var node of allSiblings) {
+    if(logicalBlockContents.some(n => n.isSameNode(node))) {
       nodeListToUpdate = siblingsAfter;
       continue;
     }
