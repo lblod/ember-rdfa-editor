@@ -625,7 +625,6 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
       return;
     }
 
-    console.log(allLIs);
     let [LIsBefore, LIsAfter] = siblingsBeforeAndAfterLogicalBlockContents(allLIs, [currLI]);
     let [siblingsBefore, siblingsAfter] = siblingsBeforeAndAfterLogicalBlockContents([...currLI.childNodes], block);
 
@@ -748,7 +747,7 @@ function doesActionSwitchListType( node, listAction ) {
 function getLogicalBlockContentsForNewList( node ) {
   let baseNode = returnParentNodeBeforeBlockElement(node);
   //left and right adjacent siblings should be added until we hit a br (before) and a block node (after).
-  return growAdjacentNodesUntil(isBlockOrBr, isBlockOrBr, baseNode, true);
+  return growAdjacentNodesUntil(isBlockOrBr, isBlockOrBr, baseNode);
 }
 
 /**
@@ -867,8 +866,7 @@ function returnParentNodeBeforeBlockElement( node ) {
  * Given a node, we want to grow a region (a list of sibling nodes)
  * until we match a condition
  */
-function growAdjacentNodesUntil( conditionLeft, conditionRight, node, includeMyself=false ) {
-  // TODO: remove includeMyself param
+function growAdjacentNodesUntil( conditionLeft, conditionRight, node ) {
   // TODO: better documentation
   let nodes = [];
 
