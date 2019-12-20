@@ -576,15 +576,16 @@ function isInList( node ) {
  *
  */
 function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNode ) {
-
-  // Actually if it has children, it should merge with them no ?
-
   let listELocationRef = logicalListBlocks[0][0];
 
   // If the list has a child list, we should add the new indent to this existing list instead of creating a new one
   let listE = null;
-  if (tagName(listELocationRef.nextSibling) == 'ul' || tagName(listELocationRef.nextSibling) == 'ol') {
-    listE = listELocationRef.nextSibling;
+  let shouldPrepend = false;
+
+  const lastSelectedBlockLocationRef = logicalListBlocks[logicalListBlocks.length-1][0];
+  if (tagName(lastSelectedBlockLocationRef.nextSibling) == 'ul' || tagName(lastSelectedBlockLocationRef.nextSibling) == 'ol') { // If the selection is followed by a list element
+    listE = lastSelectedBlockLocationRef.nextSibling;
+    shouldPrepend = true; // to move a parent node down to its child list we need to prepend the ex-parent to the child list
   } else {
     listE = document.createElement(listType);
   }
@@ -602,14 +603,17 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
       warn('Lists assume a parent node', {id: 'list-helpers:insertNewList'});
       return;
     }
-
     parent.insertBefore(document.createTextNode(invisibleSpace), listELocationRef);
     parent.insertBefore(listE, listELocationRef);
   }
 
   logicalListBlocks.forEach(listBlocks => {
     const li = document.createElement('li');
-    listE.prepend(li);
+    if (shouldPrepend) {
+      listE.prepend(li);
+    } else {
+      listE.append(li);
+    }
     listBlocks.forEach(n => li.appendChild(n));
   });
 
