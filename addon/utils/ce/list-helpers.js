@@ -883,16 +883,16 @@ function returnParentNodeBeforeBlockElement( node ) {
  */
 function growAdjacentNodesUntil( conditionLeft, conditionRight, node ) {
   // TODO: better documentation
-  let nodes = [];
+  let nodes = [node];
 
   let currNode = node;
 
   //lefties
   while(currNode){
-    nodes.push(currNode); // We start from the base node, that we want to include in our selection, hence before the break
     if(conditionLeft(currNode)){
       break;
     }
+    nodes.push(currNode);
     currNode = currNode.previousSibling ;
   }
 
@@ -904,7 +904,7 @@ function growAdjacentNodesUntil( conditionLeft, conditionRight, node ) {
     if(conditionRight(currNode)){
       break;
     }
-    nodes.push(currNode); // We want to check what the next sibling will be before adding it to the nodes, hence after the break
+    nodes.push(currNode);
     currNode = currNode.nextSibling;
   }
 
