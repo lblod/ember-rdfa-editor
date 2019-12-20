@@ -526,6 +526,21 @@ function splitLogicalBlocks(blocks) {
   return splitedBlocks;
 }
 
+// TODO: documentation
+function getNextNonWhitespaceSibling(node) {
+  let nextSibling = node.nextSibling;
+
+  if (nextSibling) {
+    if (isAllWhitespace(nextSibling)) {
+      return getNextNonWhitespaceSibling(nextSibling);
+    } else {
+      return nextSibling;
+    }
+  } else {
+    return null;
+  }
+}
+
 /**
  * Checks whether node is in a list
  *
@@ -583,8 +598,10 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
   let shouldPrepend = false;
 
   const lastSelectedBlockLocationRef = logicalListBlocks[logicalListBlocks.length-1][0];
-  if (tagName(lastSelectedBlockLocationRef.nextSibling) == 'ul' || tagName(lastSelectedBlockLocationRef.nextSibling) == 'ol') { // If the selection is followed by a list element
-    listE = lastSelectedBlockLocationRef.nextSibling;
+  const nextNonWhitespaceSibling = getNextNonWhitespaceSibling(lastSelectedBlockLocationRef);
+
+  if (nextNonWhitespaceSibling && (tagName(nextNonWhitespaceSibling) == 'ul' || tagName(nextNonWhitespaceSibling) == 'ol')) { // If the selection is followed by a list element
+    listE = nextNonWhitespaceSibling;
     shouldPrepend = true; // to move a parent node down to its child list we need to prepend the ex-parent to the child list
   } else {
     listE = document.createElement(listType);
