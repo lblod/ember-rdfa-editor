@@ -251,7 +251,7 @@ function orderedListAction( rawEditor ) {
 
   if (filteredSuitableNodes) {
     rawEditor.externalDomUpdate(
-      'handle unorderedListAction',
+      'handle orderedListAction',
       handleListAction(rawEditor, filteredSuitableNodes, orderedListAction, 'ol'),
       true
     );
