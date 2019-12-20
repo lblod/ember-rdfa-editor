@@ -640,7 +640,7 @@ function doesActionSwitchListType( node, listAction ) {
 function getLogicalBlockContentsForNewList( node ) {
   let baseNode = returnParentNodeBeforeBlockElement(node);
   //left and right adjacent siblings should be added until we hit a br (before) and a block node (after).
-  return growAdjacentNodesUntil(isBlockOrBr, isDisplayedAsBlock, baseNode, true);
+  return growAdjacentNodesUntil(isBlockOrBr, isBlockOrBr, baseNode, true);
 
 }
 
