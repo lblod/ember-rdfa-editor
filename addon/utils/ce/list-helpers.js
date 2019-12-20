@@ -232,24 +232,7 @@ import { warn } from '@ember/debug';
  * handles unordered list
  */
 function unorderedListAction( rawEditor ) {
-  const node = rawEditor.currentNode;
-  let filteredSuitableNodes = null;
-
-  if(isEligibleForListAction(node)) { // cursor placed in the text
-    filteredSuitableNodes = node;
-  } else if (rawEditor.currentSelection) { // selection of the text
-    const range = rawEditor.currentSelection;
-    const selection = rawEditor.selectHighlight(range);
-    const suitableNodes = findWrappingSuitableNodes(selection);
-
-    filteredSuitableNodes = suitableNodes.filter(node => {
-      return !(isAdjacentRange(node.range, range) && node.split);
-    })
-
-    if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
-      rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
-    }
-  }
+  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
 
   if (filteredSuitableNodes) {
     rawEditor.externalDomUpdate(
@@ -264,24 +247,7 @@ function unorderedListAction( rawEditor ) {
  * handles ordered list
  */
 function orderedListAction( rawEditor ) {
-  const node = rawEditor.currentNode;
-  let filteredSuitableNodes = null;
-
-  if(isEligibleForListAction(node)) { // cursor placed in the text
-    filteredSuitableNodes = node;
-  } else if (rawEditor.currentSelection) { // selection of the text
-    const range = rawEditor.currentSelection;
-    const selection = rawEditor.selectHighlight(range);
-    const suitableNodes = findWrappingSuitableNodes(selection);
-
-    filteredSuitableNodes = suitableNodes.filter(node => {
-      return !(isAdjacentRange(node.range, range) && node.split);
-    })
-
-    if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
-      rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
-    }
-  }
+  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
 
   if (filteredSuitableNodes) {
     rawEditor.externalDomUpdate(
@@ -416,6 +382,39 @@ function unindentAction( rawEditor ) {
 /***************************************************
  * HELPERS
  ***************************************************/
+
+ /**
+  * Gets the nodes that are suitable for an action from the editor.
+  * Will get the current node if there is a cursor in the text
+  * Will get the wrapping nodes around a selection if the user selected text, in which
+  *    case the nodes are filtered: we only keep the nodes if there are not adjacent and splited
+  *
+  * @method getFilteredSuitableNodes
+  * @param rawEditor
+  * @return Array the filtered suitable nodes
+  */
+function getFilteredSuitableNodes(rawEditor) {
+  const node = rawEditor.currentNode;
+  let filteredSuitableNodes = null;
+
+  if(isEligibleForListAction(node)) { // cursor placed in the text
+    filteredSuitableNodes = node;
+  } else if (rawEditor.currentSelection) { // selection of the text
+    const range = rawEditor.currentSelection;
+    const selection = rawEditor.selectHighlight(range);
+    const suitableNodes = findWrappingSuitableNodes(selection);
+
+    filteredSuitableNodes = suitableNodes.filter(node => {
+      return !(isAdjacentRange(node.range, range) && node.split);
+    })
+
+    if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
+      rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
+    }
+  }
+
+  return filteredSuitableNodes;
+}
 
 /**
  * Boilerplate to handle List action
