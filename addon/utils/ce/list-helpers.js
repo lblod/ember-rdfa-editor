@@ -266,32 +266,7 @@ function indentAction( rawEditor ) {
 
   if (filteredSuitableNodes) {
     let handleAction = () => {
-      // If the filteredSuitableNodes are an array rich nodes and ranges, we reorder the nodes and flatten it
-      if (filteredSuitableNodes[0] && filteredSuitableNodes[0].range) {
-        filteredSuitableNodes = reorderBlocks(filteredSuitableNodes).map(node => {
-          const domNode = node.richNode.domNode;
-          if (tagName(domNode) == 'li') {
-            return [...domNode.childNodes];
-          } else {
-            return domNode;
-          }
-        }).flat();
-      }
-
-      let logicalBlockContents = [];
-      filteredSuitableNodes.forEach(node => {
-        if(!(isEligibleForIndentAction(node) || (node.firstChild && isEligibleForIndentAction(node.firstChild)))) return; // firstChild : handles the case where we have a full li in the selection
-        logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
-      });
-
-      logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
-      logicalBlockContents = keepHighestNodes(logicalBlockContents);
-
-      const logicalListBlocksWithoutWhiteSpaces = logicalBlockContents.filter(block => {
-        return !(isAllWhitespace(block));
-      });
-
-      const splitedLogicalBlocks = splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
+      const splitedLogicalBlocks = getSplitedLogicalBlocks(filteredSuitableNodes);
 
       const firstNodes = splitedLogicalBlocks.map(block => block[0]);
       const currLis = firstNodes.map(node => node.parentNode);
@@ -316,32 +291,7 @@ function unindentAction( rawEditor ) {
 
   if (filteredSuitableNodes) {
     let handleAction = () => {
-      // If the filteredSuitableNodes are an array rich nodes and ranges, we reorder the nodes and flatten it
-      if (filteredSuitableNodes[0] && filteredSuitableNodes[0].range) {
-        filteredSuitableNodes = reorderBlocks(filteredSuitableNodes).map(node => {
-          const domNode = node.richNode.domNode;
-          if (tagName(domNode) == 'li') {
-            return [...domNode.childNodes];
-          } else {
-            return domNode;
-          }
-        }).flat();
-      }
-
-      let logicalBlockContents = [];
-      filteredSuitableNodes.forEach(node => {
-        if(!isEligibleForIndentAction(node)) return;
-        logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
-      });
-
-      logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
-      logicalBlockContents = keepHighestNodes(logicalBlockContents);
-
-      const logicalListBlocksWithoutWhiteSpaces = logicalBlockContents.filter(block => {
-        return !(isAllWhitespace(block));
-      });
-
-      const splitedLogicalBlocks = splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
+      const splitedLogicalBlocks = getSplitedLogicalBlocks(filteredSuitableNodes);
 
       unindentLogicalBlockContents(rawEditor, splitedLogicalBlocks);
     };
@@ -390,6 +340,43 @@ function getFilteredSuitableNodes(rawEditor, actionType) {
   }
 
   return filteredSuitableNodes;
+}
+
+/**
+ * From the suitable nodes given for the task, we order them, get their logical blocks
+ * and clean them to keep the highest non-all-whitespace nodes.
+ *
+ * @method getSplitedLogicalBlocks
+ * @param filteredSuitableNodes
+ * @return Array the splited logical blocks
+ */
+function getSplitedLogicalBlocks(filteredSuitableNodes) {
+  // If the filteredSuitableNodes are an array rich nodes and ranges, we reorder the nodes and flatten it
+  if (filteredSuitableNodes[0] && filteredSuitableNodes[0].range) {
+    filteredSuitableNodes = reorderBlocks(filteredSuitableNodes).map(node => {
+      const domNode = node.richNode.domNode;
+      if (tagName(domNode) == 'li') {
+        return [...domNode.childNodes];
+      } else {
+        return domNode;
+      }
+    }).flat();
+  }
+
+  let logicalBlockContents = [];
+  filteredSuitableNodes.forEach(node => {
+    if(!isEligibleForIndentAction(node)) return;
+    logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
+  });
+
+  logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
+  logicalBlockContents = keepHighestNodes(logicalBlockContents);
+
+  const logicalListBlocksWithoutWhiteSpaces = logicalBlockContents.filter(block => {
+    return !(isAllWhitespace(block));
+  });
+
+  return splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
 }
 
 /**
