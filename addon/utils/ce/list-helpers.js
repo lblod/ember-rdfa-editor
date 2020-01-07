@@ -383,7 +383,7 @@ function getSplitedLogicalBlocks(filteredSuitableNodes) {
  * Boilerplate to handle List action
  * Both for UL and OL
  */
-function handleListAction( rawEditor, currentNode, actionType, listType) {
+function handleListAction(rawEditor, currentNode, actionType, listType) {
   return () => {
     if(!isInList(currentNode)){
       let logicalBlockContents = [];
@@ -406,7 +406,6 @@ function handleListAction( rawEditor, currentNode, actionType, listType) {
       });
 
       const splitedLogicalBlocks = splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
-
       insertNewList(rawEditor, splitedLogicalBlocks, listType);
       return;
     }
@@ -417,8 +416,7 @@ function handleListAction( rawEditor, currentNode, actionType, listType) {
       return;
     }
 
-    // TODO: check if it's used ?
-    let logicalBlockContents = getLogicalBlockContentsForIndentationAction(currentNode);
+    let logicalBlockContents = getSplitedLogicalBlocks([currentNode]);
     unindentLogicalBlockContents(rawEditor, logicalBlockContents);
   };
 }
@@ -602,7 +600,7 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
 /**
  * Unindents logical block contents from context it resides in.
  */
-function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneListUpwards= false ) {
+function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneListUpwards=false ) {
   logicalBlockContents.forEach(block => {
 
     let currLI = getParentLI(block[0]); // || block : to handle recursion
@@ -637,9 +635,9 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
       LIsAfter = [li, ...LIsAfter];
     }
 
-    //If we don't need to move our logical block on list up,
-    //we will split the list in two and make sure the logicalBlock
-    //resides in between
+    // If we don't need to move our logical block on list up,
+    // we will split the list in two and make sure the logicalBlock
+    // resides in between
     if(!moveOneListUpwards){
       if(LIsBefore.length > 0){
         let listBefore = createParentWithLogicalBlockContents(LIsBefore, listType);
@@ -655,7 +653,7 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
       }
     }
 
-    //We are in highest list in context, and we didn't start from nested context
+    // We are in highest list in context, and we didn't start from nested context
     if(!isInList(listE) && !moveOneListUpwards){
       makeLogicalBlockCursorSafe([listE]);
       listE.removeChild(currLI);
@@ -663,7 +661,7 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
       return;
     }
 
-    //Current list is a nested list, and the block needs to move one LI up
+    // Current list is a nested list, and the block needs to move one LI up
     if(isInList(listE) && !moveOneListUpwards){
       listE.removeChild(currLI);
       parentE.removeChild(listE); //we don't need the original list
@@ -671,7 +669,7 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
       return;
     }
 
-    //We don't care wether our current list is nested. We just need to add the new LI's
+    // We don't care wether our current list is nested. We just need to add the new LI's
     if(moveOneListUpwards){
       let li = createParentWithLogicalBlockContents(block, 'li');
       let newLIs = [...LIsBefore, li, ...LIsAfter];
