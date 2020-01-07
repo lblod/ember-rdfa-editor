@@ -376,7 +376,7 @@ function getSplitedLogicalBlocks(filteredSuitableNodes) {
     return !(isAllWhitespace(block));
   });
 
-  return splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
+  return groupLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
 }
 
 /**
@@ -405,7 +405,7 @@ function handleListAction(rawEditor, currentNode, actionType, listType) {
         return !(isAllWhitespace(block) && tagName(block) != "br");
       });
 
-      const splitedLogicalBlocks = splitLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
+      const splitedLogicalBlocks = groupLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
       insertNewList(rawEditor, splitedLogicalBlocks, listType);
       return;
     }
@@ -421,7 +421,13 @@ function handleListAction(rawEditor, currentNode, actionType, listType) {
   };
 }
 
-// TODO: documentation
+/**
+ * Put blocks in the right order according to their range
+ *
+ * @method reorderBlocks
+ * @param blocks
+ * @return Array the ordered blocks
+ */
 function reorderBlocks(blocks) {
   return blocks.sort((a, b) => {
     if (a.range[0] > b.range[0])
@@ -431,7 +437,14 @@ function reorderBlocks(blocks) {
   })
 }
 
-// TODO: documentation
+/**
+ * Filtering out the nodes that have a parent in the array to avoid duplicated
+ * information
+ *
+ * @method keepHighestNodes
+ * @param nodes
+ * @return Array the highest nodes
+ */
 function keepHighestNodes(nodes) {
   nodes = nodes.filter(node => {
     return !(node.parentNode && nodes.includes(node.parentNode));
@@ -439,10 +452,23 @@ function keepHighestNodes(nodes) {
   return nodes;
 }
 
-// TODO: documentation
-// Groups the blocks belonging to the same logical line group (a block is a line, a br splits two blocks, if the li parent is the same)
-function splitLogicalBlocks(blocks) {
-  let splitedBlocks = [];
+/**
+ * Grouping the blocks belonging to the same logical line group.
+ * Two behaviours :
+ * - In the case of a list, we group the blocks that have the same parent (<li>)
+ * - In the other cases, we group the blocks while we don't find a separation
+ *   (end of a block or <br>)
+ * The goal of the manoeuvre is to have an array of logical blocks that will be
+ * handled together (for ex. if we indent <li><i>hello</i> it's <b>me</b>, the
+ * three blocks <i>hello</i>, it's and <b>me</b>) will be treated as blocks
+ * belonging the the same line.
+ *
+ * @method groupLogicalBlocks
+ * @param blocks
+ * @return Array Grouped logical blocks
+ */
+function groupLogicalBlocks(blocks) {
+  let groupedBlocks = [];
   if (tagName(blocks[0].parentNode) == 'li') {
     let parentNodes = [];
     let replace = 0;
@@ -455,8 +481,8 @@ function splitLogicalBlocks(blocks) {
       }
 
       const index = parentNodes.indexOf(parentNode);
-      const value = splitedBlocks[index] ? [...splitedBlocks[index], block] : [block];
-      splitedBlocks.splice(index, replace, value);
+      const value = groupedBlocks[index] ? [...groupedBlocks[index], block] : [block];
+      groupedBlocks.splice(index, replace, value);
       replace = 0;
     });
   } else {
@@ -466,11 +492,11 @@ function splitLogicalBlocks(blocks) {
     blocks.forEach(block => {
       if (isBlockOrBr(block)) {
         if (tmp.length > 0) {
-          splitedBlocks.splice(i, 0, tmp);
+          groupedBlocks.splice(i, 0, tmp);
           i++;
         }
         if (tagName(block) != "br") {
-          splitedBlocks.splice(i, 0, [block]);
+          groupedBlocks.splice(i, 0, [block]);
           i++;
         }
         tmp = [];
@@ -480,13 +506,19 @@ function splitLogicalBlocks(blocks) {
     });
 
     if (tmp.length > 0) {
-      splitedBlocks.splice(i, 0, tmp);
+      groupedBlocks.splice(i, 0, tmp);
     }
   }
-  return splitedBlocks;
+  return groupedBlocks;
 }
 
-// TODO: documentation
+/**
+ * Browse the next siblings of a node to find the next non-whitespace one
+ *
+ * @method getNextNonWhitespaceSibling
+ * @param node
+ * @return Object The next non-whitespace sibling, null if none found
+ */
 function getNextNonWhitespaceSibling(node) {
   let nextSibling = node.nextSibling;
 
