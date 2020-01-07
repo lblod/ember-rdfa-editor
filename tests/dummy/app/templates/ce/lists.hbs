@@ -19,28 +19,6 @@
     <p> The symbol "-| ... |-" means select the " ... " part</p>
 
     <div style="margin-left:10px">
-      <h4>case 25 : unindent list from multiple selected lines</h4>
-      <p>
-        <ul>
-          <li>
-            Choucroute
-            <ul>
-              <li><i>Baba a-|u rhum</i></li>
-              <li><b>Pâté</b> aux pru|-nes</li>
-            </ul>
-          </li>
-        </ul>
-      </p>
-      Should give
-      <p>
-        <ul>
-          <li>Choucroute</li>
-          <li><i>Baba au rhum</i></li>
-          <li><b>Pâté</b> aux prunes</li>
-        </ul>
-      </p>
-
-
       <h4>case 1 </h4>
       <p>
         -| some text
@@ -266,6 +244,26 @@
               <li><b>Croziflette</b> au vin blanc</li>
             </ul>
           </li>
+        </ul>
+      </p>
+      <h4>case 25 : unindent list from multiple selected lines</h4>
+      <p>
+        <ul>
+          <li>
+            Choucroute
+            <ul>
+              <li><i>Baba a-|u rhum</i></li>
+              <li><b>Pâté</b> aux pru|-nes</li>
+            </ul>
+          </li>
+        </ul>
+      </p>
+      Should give
+      <p>
+        <ul>
+          <li>Choucroute</li>
+          <li><i>Baba au rhum</i></li>
+          <li><b>Pâté</b> aux prunes</li>
         </ul>
       </p>
     </div>

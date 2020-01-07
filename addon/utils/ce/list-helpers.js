@@ -232,7 +232,7 @@ import { warn } from '@ember/debug';
  * handles unordered list
  */
 function unorderedListAction( rawEditor ) {
-  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor, 'creation');
+  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
 
   if (filteredSuitableNodes) {
     rawEditor.externalDomUpdate(
@@ -247,7 +247,7 @@ function unorderedListAction( rawEditor ) {
  * handles ordered list
  */
 function orderedListAction( rawEditor ) {
-  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor, 'creation');
+  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
 
   if (filteredSuitableNodes) {
     rawEditor.externalDomUpdate(
@@ -262,19 +262,19 @@ function orderedListAction( rawEditor ) {
  * handles indent Action
  */
 function indentAction( rawEditor ) {
-  let filteredSuitableNodes = getFilteredSuitableNodes(rawEditor, 'indentation');
+  let filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
 
   if (filteredSuitableNodes) {
     let handleAction = () => {
-      const splitedLogicalBlocks = getSplitedLogicalBlocks(filteredSuitableNodes);
+      const groupedLogicalBlocks = getGroupedLogicalBlocks(filteredSuitableNodes);
 
-      const firstNodes = splitedLogicalBlocks.map(block => block[0]);
+      const firstNodes = groupedLogicalBlocks.map(block => block[0]);
       const currLis = firstNodes.map(node => node.parentNode);
       const currListEs = currLis.map(node => node.parentNode);
       const currlistTypes = currListEs.map(node => getListTagName(node));
       const previousLis = currLis.map(node => findPreviousLi(node));
 
-      insertNewList(rawEditor, splitedLogicalBlocks, currlistTypes[0], previousLis[0]); // Assuming all the indents are from the same parent list
+      insertNewList(rawEditor, groupedLogicalBlocks, currlistTypes[0], previousLis[0]); // Assuming all the indents are from the same parent list
 
       currLis.forEach(node => node.remove());
     };
@@ -291,9 +291,9 @@ function unindentAction( rawEditor ) {
 
   if (filteredSuitableNodes) {
     let handleAction = () => {
-      const splitedLogicalBlocks = getSplitedLogicalBlocks(filteredSuitableNodes);
+      const groupedLogicalBlocks = getGroupedLogicalBlocks(filteredSuitableNodes);
 
-      unindentLogicalBlockContents(rawEditor, splitedLogicalBlocks);
+      unindentLogicalBlockContents(rawEditor, groupedLogicalBlocks);
     };
 
     rawEditor.externalDomUpdate('handle unindentAction', handleAction, true);
@@ -315,26 +315,22 @@ function unindentAction( rawEditor ) {
   * @param rawEditor
   * @return Array the filtered suitable nodes
   */
-function getFilteredSuitableNodes(rawEditor, actionType) {
+function getFilteredSuitableNodes(rawEditor) {
   const node = rawEditor.currentNode;
   let filteredSuitableNodes = null;
 
-  if(isEligibleForListAction(node)) { // cursor placed in the text
-    if (actionType == 'creation') {
-      filteredSuitableNodes = node;
-    } else if (actionType == 'indentation') {
-      filteredSuitableNodes = [node];
-    }
-  } else if (rawEditor.currentSelection) { // selection of the text
+  if (node) { // The cursor is placed in the text
+    filteredSuitableNodes = [node];
+  } else if (rawEditor.currentSelection) { // Selection of a portion of the text
     const range = rawEditor.currentSelection;
     const selection = rawEditor.selectHighlight(range);
     const suitableNodes = findWrappingSuitableNodes(selection);
 
     filteredSuitableNodes = suitableNodes.filter(node => {
       return !(isAdjacentRange(node.range, range) && node.split);
-    })
+    });
 
-    if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
+    if (rawEditor.currentSelection) { // If selection, we set the cursor at the end of the selection
       rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
     }
   }
@@ -343,17 +339,19 @@ function getFilteredSuitableNodes(rawEditor, actionType) {
 }
 
 /**
- * From the suitable nodes given for the task, we order them, get their logical blocks
- * and clean them to keep the highest non-all-whitespace nodes.
+ * From the suitable nodes given for the task, we order them, get their logical
+ * blocks, clean them to keep the highest non-all-whitespace nodes and group them
+ * by same parent.
  *
- * @method getSplitedLogicalBlocks
- * @param filteredSuitableNodes
- * @return Array the splited logical blocks
+ * @method getGroupedLogicalBlocks
+ * @param suitableNodes
+ * @return Array the group logical blocks
  */
-function getSplitedLogicalBlocks(filteredSuitableNodes) {
-  // If the filteredSuitableNodes are an array rich nodes and ranges, we reorder the nodes and flatten it
-  if (filteredSuitableNodes[0] && filteredSuitableNodes[0].range) {
-    filteredSuitableNodes = reorderBlocks(filteredSuitableNodes).map(node => {
+function getGroupedLogicalBlocks(suitableNodes) {
+  // If the suitableNodes are an array of rich nodes and ranges, we reorder the nodes and flatten it
+  let orderedNodes = [];
+  if (suitableNodes[0] && suitableNodes[0].range) {
+    orderedNodes = reorderBlocks(suitableNodes).map(node => {
       const domNode = node.richNode.domNode;
       if (tagName(domNode) == 'li') {
         return [...domNode.childNodes];
@@ -361,63 +359,91 @@ function getSplitedLogicalBlocks(filteredSuitableNodes) {
         return domNode;
       }
     }).flat();
+  } else {
+    orderedNodes = suitableNodes;
   }
 
-  let logicalBlockContents = [];
-  filteredSuitableNodes.forEach(node => {
+  let eligibleNodes = [];
+  orderedNodes.forEach(node => {
     if(!isEligibleForIndentAction(node)) return;
-    logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
+    eligibleNodes.push(getLogicalBlockContentsForIndentationAction(node));
   });
 
-  logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
-  logicalBlockContents = keepHighestNodes(logicalBlockContents);
+  const uniqueNodes = Array.from(new Set(eligibleNodes.flat()));
+  const highestNodes = keepHighestNodes(uniqueNodes);
+  const cleanedNodes = removeWhitespaceNodes(highestNodes);
 
-  const logicalListBlocksWithoutWhiteSpaces = logicalBlockContents.filter(block => {
-    return !(isAllWhitespace(block));
-  });
-
-  return groupLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
+  return groupNodesByLogicalBlocks(cleanedNodes);
 }
 
 /**
  * Boilerplate to handle List action
  * Both for UL and OL
  */
-function handleListAction(rawEditor, currentNode, actionType, listType) {
+function handleListAction(rawEditor, currentNodes, actionType, listType) {
   return () => {
-    if(!isInList(currentNode)){
-      let logicalBlockContents = [];
-      if (Array.isArray(currentNode)) {
-        currentNode.forEach(node => {
-          logicalBlockContents.push({
-            nodes: getLogicalBlockContentsForNewList(node.richNode.domNode),
-            range: node.range
-          });
-        });
-        logicalBlockContents = reorderBlocks(logicalBlockContents).map(block => block.nodes);
-        logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
-        logicalBlockContents = keepHighestNodes(logicalBlockContents);
-      } else {
-        logicalBlockContents = getLogicalBlockContentsForNewList(currentNode);
-      }
+    if (areInList(currentNodes).length == 0) { // Create a new list when we don't have nodes in an existing list
+      let logicalBlocks = [];
 
-      const logicalListBlocksWithoutWhiteSpaces = logicalBlockContents.filter(block => {
-        return !(isAllWhitespace(block) && tagName(block) != "br");
+      currentNodes.forEach(node => {
+        const domNode = node.richNode ? node.richNode.domNode : node;
+        // If the range is null, reordering is not possible. But range is null
+        // only when currentNodes.length == 1 (case of cursor placed in the text,
+        // not selection) so no need to reorder a single node
+        const range = node.range ? node.range : null;
+
+        logicalBlocks.push({
+          nodes: getLogicalBlockContentsForNewList(domNode),
+          range: range
+        });
       });
 
-      const splitedLogicalBlocks = groupLogicalBlocks(logicalListBlocksWithoutWhiteSpaces);
-      insertNewList(rawEditor, splitedLogicalBlocks, listType);
+      /* From the cursor's position / selection, we have retrieved the corresponding
+      logical blocks with getLogicalBlockContentsForNewList(). But because we
+      grow the region of each block until we hit a block or br, we might end
+      up with duplicated blocks, ordered badly.
+
+      Example: (|- -| shows the selected zone)
+          He|-llo <b>you</b>
+          <br>
+          How are you ?
+          <div>I am <i>fin-|e</i></div>
+
+      The logicalBlocks might be the following nodes, probably in an other order:
+          [ Hello, <b>you</b>, <br>, How are you ?, <div>I am <i>fine</i></div>, <i>fine</i>, I am ]
+
+      So we first need to reorder them:
+          [ Hello, <b>you</b>, <br>, How are you ?, <div>I am <i>fine</i></div>, I am, <i>fine</i> ]
+
+      We then remove duplicated nodes (N/A in our example) and only keep the
+      highest nodes to remove duplicated content:
+          [ Hello, <b>you</b>, <br>, How are you ?, <div>I am <i>fine</i></div> ]
+      -> "I am" and "<i>fine</i>" are contained in the div and hence can be removed
+
+      Finally we clean the nodes that are all whitespaces (N/A in our example).
+      However we need to keep the <br> ndoes to then group the nodes by logical block. */
+
+      const orderedNodes = reorderBlocks(logicalBlocks).map(block => block.nodes);
+      const uniqueNodes = Array.from(new Set(orderedNodes.flat()));
+      const highestNodes = keepHighestNodes(uniqueNodes);
+      const cleanedNodes = removeWhitespaceNodes(highestNodes);
+
+      /* We group the nodes by line, which will allow us to then insert each line
+      as a bullet of the list:
+          [ [Hello, <b>you</b>], [How are you ?], [<div>I am <i>fine</i></div>] ] */
+      const groupedNodes = groupNodesByLogicalBlocks(cleanedNodes);
+      insertNewList(rawEditor, groupedNodes, listType);
       return;
     }
 
-    if(doesActionSwitchListType(currentNode, actionType)){
-      let logicalBlockContents = getLogicalBlockContentsSwitchListType(currentNode);
-      shuffleListType(rawEditor, logicalBlockContents);
+    if (doesActionSwitchListType(currentNodes, actionType)) { // Create a list of a different type in a context that's a list => switching the type of the existing list
+      let logicalBlocks = getLogicalBlockContentsSwitchListType(currentNodes);
+      shuffleListType(rawEditor, logicalBlocks);
       return;
     }
 
-    let logicalBlockContents = getSplitedLogicalBlocks([currentNode]);
-    unindentLogicalBlockContents(rawEditor, logicalBlockContents);
+    let logicalBlocks = getGroupedLogicalBlocks(currentNodes); // Last possible case: user wants to revert the existing list
+    unindentLogicalBlockContents(rawEditor, logicalBlocks);
   };
 }
 
@@ -429,12 +455,14 @@ function handleListAction(rawEditor, currentNode, actionType, listType) {
  * @return Array the ordered blocks
  */
 function reorderBlocks(blocks) {
+  if (blocks.length == 1) return blocks;
+
   return blocks.sort((a, b) => {
     if (a.range[0] > b.range[0])
       return true;
     if (a.range[0] == b.range[0])
       return a.range[1] > b.range[1]
-  })
+  });
 }
 
 /**
@@ -446,6 +474,8 @@ function reorderBlocks(blocks) {
  * @return Array the highest nodes
  */
 function keepHighestNodes(nodes) {
+  if (nodes.length == 1) return nodes;
+
   nodes = nodes.filter(node => {
     return !(node.parentNode && nodes.includes(node.parentNode));
   });
@@ -453,63 +483,82 @@ function keepHighestNodes(nodes) {
 }
 
 /**
- * Grouping the blocks belonging to the same logical line group.
+ * Remove the nodes that are full of whitespaces but that are not br tags.
+ *
+ * @method removeWhitespaceNodes
+ * @param nodes
+ * @return Array the cleaned nodes
+ */
+function removeWhitespaceNodes(nodes) {
+  return nodes.filter(node => {
+    return !(isAllWhitespace(node) && tagName(node) != "br");
+  });
+}
+
+/**
+ * Grouping the nodes belonging to the same logical group.
  * Two behaviours :
- * - In the case of a list, we group the blocks that have the same parent (<li>)
- * - In the other cases, we group the blocks while we don't find a separation
- *   (end of a block or <br>)
+ * - In the case of a list, we group the nodes that have the same parent (<li>)
+ * - In the other cases, we group the nodes belonging to the same line, so until
+ *   we find a separation (end of a block or <br>)
  * The goal of the manoeuvre is to have an array of logical blocks that will be
  * handled together (for ex. if we indent <li><i>hello</i> it's <b>me</b>, the
- * three blocks <i>hello</i>, it's and <b>me</b>) will be treated as blocks
+ * three nodes <i>hello</i>, it's and <b>me</b>) will be treated as nodes
  * belonging the the same line.
  *
- * @method groupLogicalBlocks
- * @param blocks
+ * @method groupNodesByLogicalBlocks
+ * @param nodes
  * @return Array Grouped logical blocks
  */
-function groupLogicalBlocks(blocks) {
-  let groupedBlocks = [];
-  if (tagName(blocks[0].parentNode) == 'li') {
-    let parentNodes = [];
-    let replace = 0;
-    blocks.forEach(block => {
-      const parentNode = block.parentNode;
-      if (!parentNodes.includes(parentNode)) {
-        parentNodes.push(parentNode);
-      } else {
-        replace = 1; // If we already have an entry for the parent, we replace the current value (replace=1). Else we insert a brand new one
-      }
+function groupNodesByLogicalBlocks(nodes) {
+  let groupedNodes = [];
+  if (tagName(nodes[0].parentNode) == 'li') { // (Un)indent case
+    /* We group together the nodes that have the same parent.
+    Example (|- -| shows the selected zone):
+        <ul>
+          <li>He|-llo <b>friend</b></li>
+          <li>Good-|bye</li>
+        </ul>
+    Will, when grown, give us three nodes : "Hello", "<b>friend</b>" and "Goodbye".
+    The first two have the same parent, we want to group them (they form a line).
+    The third one is a line by himself, so we want it to be separated.
+    The result will be [ [Hello, <b>friend</b>], [Goodbye] ] */
 
-      const index = parentNodes.indexOf(parentNode);
-      const value = groupedBlocks[index] ? [...groupedBlocks[index], block] : [block];
-      groupedBlocks.splice(index, replace, value);
-      replace = 0;
+    const parents = nodes.map(node => node.parentNode);
+    const uniqueParentNodes = Array.from(new Set(parents.flat()));
+
+    groupedNodes = uniqueParentNodes.map(parent => { // We find the children of each parent
+      return nodes.filter( node => node.parentNode == parent );
     });
-  } else {
-    let i = 0;
-    let tmp = [];
+  } else { // New list case
+    /* We group together the nodes that belong to the same line.
 
-    blocks.forEach(block => {
-      if (isBlockOrBr(block)) {
-        if (tmp.length > 0) {
-          groupedBlocks.splice(i, 0, tmp);
-          i++;
+    Example (|- -| shows the selected zone):
+    The following HTML
+        He|-llo <b>you</b>
+        <br>
+        How are you ?
+        <div>I am <i>fin-|e</i></div>
+    Will give the nodes
+        [ Hello, <b>you</b>, <br>, How are you ?, <div>I am <i>fine</i></div> ]
+
+    We are going to separate them by logical lines by spotting the block elements
+    and the line breaks <br>, to end up with
+        [ [Hello, <b>you</b>], [How are you ?], [<div>I am <i>fine</i></div>] ]*/
+
+    groupedNodes.push([]); // Initialization with an empty array for the first line
+    nodes.map(node => {
+      if (isBlockOrBr(node)) {
+        if (tagName(node) != "br") {
+          groupedNodes.push([node]);
         }
-        if (tagName(block) != "br") {
-          groupedBlocks.splice(i, 0, [block]);
-          i++;
-        }
-        tmp = [];
+        groupedNodes.push([]); // If we hit a block or a br, the following blocks will be of a new line
       } else {
-        tmp.push(block);
+        groupedNodes[groupedNodes.length-1].push(node); // If we don't hit a block or br, we're still in the same line so we push our node to the currently building line
       }
     });
-
-    if (tmp.length > 0) {
-      groupedBlocks.splice(i, 0, tmp);
-    }
   }
-  return groupedBlocks;
+  return groupedNodes;
 }
 
 /**
@@ -566,16 +615,27 @@ function getNextNonWhitespaceSibling(node) {
  *   </ul>
  *   ```
  */
-function isInList( node ) {
+function isInList(node) {
   let currNode = node.parentNode;
   while(currNode){
-
     if(isLI(currNode)) return true;
-
     currNode = currNode.parentNode;
   }
-
   return false;
+}
+
+/**
+ * Checks for each node of an array if it is in a list
+ *
+ * @method areInList
+ * @param [Array] nodes The nodes to check
+ * @return [Array] the nodes that are in a list
+ */
+function areInList(nodes) {
+  return nodes.filter(node => {
+    const domNode = node.richNode ? node.richNode.domNode : node;
+    return isInList(domNode);
+  });
 }
 
 /**
@@ -587,14 +647,18 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
 
   // If the list has a child list, we should add the new indent to this existing list instead of creating a new one
   let listE = null;
-  let shouldPrepend = false;
 
   const lastSelectedBlockLocationRef = logicalListBlocks[logicalListBlocks.length-1][0];
   const nextNonWhitespaceSibling = getNextNonWhitespaceSibling(lastSelectedBlockLocationRef);
+  const shouldMergeWithChildList = nextNonWhitespaceSibling && (tagName(nextNonWhitespaceSibling) == 'ul' || tagName(nextNonWhitespaceSibling) == 'ol');
 
-  if (nextNonWhitespaceSibling && (tagName(nextNonWhitespaceSibling) == 'ul' || tagName(nextNonWhitespaceSibling) == 'ol')) { // If the selection is followed by a list element
+  // This condition is for the case when we indent a bullet to the level of its
+  // child: we need to merge them to form a single list. If not, we create a new
+  // list element to insert the logical blocks.
+  let shouldPrepend = false;
+  if (shouldMergeWithChildList) {
     listE = nextNonWhitespaceSibling;
-    shouldPrepend = true; // to move a parent node down to its child list we need to prepend the ex-parent to the child list
+    shouldPrepend = true; // To move a parent node down to its child list we need to prepend the ex-parent to the child list
   } else {
     listE = document.createElement(listType);
   }
@@ -605,8 +669,7 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
 
   if (parentNode) {
     parentNode.append(listE);
-  }
-  else {
+  } else {
     let parent = listELocationRef.parentNode;
     if(!parent){
       warn('Lists assume a parent node', {id: 'list-helpers:insertNewList'});
@@ -713,24 +776,29 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
 /**
  * Switches list type where currentNode is situated in.
  */
-function shuffleListType( rawEditor, logicalBlockContents) {
-  let currlistE = logicalBlockContents[0];
-  let currlistType = getListTagName(currlistE);
-  let targetListType = currlistType == 'ul'?'ol':'ul';
-  let parentE = currlistE.parentNode;
-  let allLIs = [...currlistE.children];
+function shuffleListType(rawEditor, logicalBlockContents) {
+  const currlistE = logicalBlockContents[0];
+  const currlistType = getListTagName(currlistE);
+  const targetListType = currlistType == 'ul'?'ol':'ul';
+  const parentE = currlistE.parentNode;
+  const allLIs = [...currlistE.children];
 
-  let listE = document.createElement(targetListType);
+  const listE = document.createElement(targetListType);
   allLIs.forEach(li => listE.append(li));
 
   parentE.insertBefore(listE, currlistE);
   parentE.removeChild(currlistE);
 }
 
-function doesActionSwitchListType( node, listAction ) {
-  let li = getParentLI(node);
-  let listE = li.parentElement;
-  let listType = getListTagName(listE);
+function doesActionSwitchListType(nodes, listAction) {
+  // We assume all the nodes belong to the same <ul>/<ol>
+  const domNodes = nodes.map(node => node.richNode ? node.richNode.domNode : node);
+  const nonEmptyNodes = removeWhitespaceNodes(domNodes);
+  const firstDomNode = nonEmptyNodes[0];
+  const li = getParentLI(firstDomNode);
+  const listE = li.parentElement;
+
+  const listType = getListTagName(listE);
   if(listType == 'ul' && listAction == unorderedListAction){
     return false;
   }
@@ -787,8 +855,10 @@ function getLogicalBlockContentsForNewList( node ) {
  *
  * @public
  */
-function getLogicalBlockContentsSwitchListType( node ) {
-  let currLI = getParentLI(node);
+function getLogicalBlockContentsSwitchListType( nodes ) {
+  const domNodes = nodes.map(node => node.richNode ? node.richNode.domNode : node);
+  const nonEmptyNodes = removeWhitespaceNodes(domNodes);
+  const currLI = getParentLI(nonEmptyNodes[0]); // No need to process all the list of nodes. From the first node we will be able to get the list element that we want to switch
   return [ currLI.parentNode ];
 }
 
