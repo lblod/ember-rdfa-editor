@@ -634,9 +634,8 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
  */
 function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneListUpwards=false ) {
   logicalBlockContents.forEach(block => {
-
-    let currLI = getParentLI(block[0]); // || block : to handle recursion
-    if (currLI == null) return; // Means we have a ul somewhere. TODO : filter out the uls somewhere ?
+    let currLI = getParentLI(block[0]);
+    if (currLI == null) return;
 
     let listE = currLI.parentNode;
     let listType = getListTagName(listE);
@@ -891,9 +890,7 @@ function returnParentNodeBeforeBlockElement( node ) {
  * until we match a condition
  */
 function growAdjacentNodesUntil( conditionLeft, conditionRight, node ) {
-  // TODO: better documentation
   let nodes = [node];
-
   let currNode = node;
 
   //lefties
