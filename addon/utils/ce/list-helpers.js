@@ -232,7 +232,7 @@ import { warn } from '@ember/debug';
  * handles unordered list
  */
 function unorderedListAction( rawEditor ) {
-  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
+  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor, 'creation');
 
   if (filteredSuitableNodes) {
     rawEditor.externalDomUpdate(
@@ -247,7 +247,7 @@ function unorderedListAction( rawEditor ) {
  * handles ordered list
  */
 function orderedListAction( rawEditor ) {
-  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
+  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor, 'creation');
 
   if (filteredSuitableNodes) {
     rawEditor.externalDomUpdate(
@@ -262,42 +262,28 @@ function orderedListAction( rawEditor ) {
  * handles indent Action
  */
 function indentAction( rawEditor ) {
-  const node = rawEditor.currentNode;
-  let filteredSuitableNodes = null;
-
-  if(isEligibleForListAction(node)) { // cursor placed in the text
-    filteredSuitableNodes = [node];
-
-  } else if (rawEditor.currentSelection) { // selection of the text
-    const range = rawEditor.currentSelection;
-    const selection = rawEditor.selectHighlight(range);
-    const suitableNodes = findWrappingSuitableNodes(selection);
-
-    filteredSuitableNodes = suitableNodes.filter(node => {
-      return !(isAdjacentRange(node.range, range) && node.split);
-    })
-
-    filteredSuitableNodes = reorderBlocks(filteredSuitableNodes).map(node => {
-      const domNode = node.richNode.domNode;
-      if (tagName(domNode) == 'li') {
-        return [...domNode.childNodes];
-      } else {
-        return domNode;
-      }
-    }).flat();
-
-    if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
-      rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
-    }
-  }
+  let filteredSuitableNodes = getFilteredSuitableNodes(rawEditor, 'indentation');
 
   if (filteredSuitableNodes) {
     let handleAction = () => {
+      // If the filteredSuitableNodes are an array rich nodes and ranges, we reorder the nodes and flatten it
+      if (filteredSuitableNodes[0] && filteredSuitableNodes[0].range) {
+        filteredSuitableNodes = reorderBlocks(filteredSuitableNodes).map(node => {
+          const domNode = node.richNode.domNode;
+          if (tagName(domNode) == 'li') {
+            return [...domNode.childNodes];
+          } else {
+            return domNode;
+          }
+        }).flat();
+      }
+
       let logicalBlockContents = [];
       filteredSuitableNodes.forEach(node => {
         if(!(isEligibleForIndentAction(node) || (node.firstChild && isEligibleForIndentAction(node.firstChild)))) return; // firstChild : handles the case where we have a full li in the selection
         logicalBlockContents.push(getLogicalBlockContentsForIndentationAction(node));
       });
+
       logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
       logicalBlockContents = keepHighestNodes(logicalBlockContents);
 
@@ -326,36 +312,22 @@ function indentAction( rawEditor ) {
  * handles unindent Action
  */
 function unindentAction( rawEditor ) {
-  const node = rawEditor.currentNode;
-  let filteredSuitableNodes = null;
-
-  if(isEligibleForListAction(node)) { // cursor placed in the text
-    filteredSuitableNodes = [node];
-  } else if (rawEditor.currentSelection) { // selection of the text
-    const range = rawEditor.currentSelection;
-    const selection = rawEditor.selectHighlight(range);
-    const suitableNodes = findWrappingSuitableNodes(selection);
-
-    filteredSuitableNodes = suitableNodes.filter(node => {
-      return !(isAdjacentRange(node.range, range) && node.split);
-    })
-
-    filteredSuitableNodes = reorderBlocks(filteredSuitableNodes).map(node => {
-      const domNode = node.richNode.domNode;
-      if (tagName(domNode) == 'li') {
-        return [...domNode.childNodes];
-      } else {
-        return domNode;
-      }
-    }).flat();
-
-    if (rawEditor.currentSelection) { // if selection, we set the cursor at the end of the selection
-      rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
-    }
-  }
+  let filteredSuitableNodes = getFilteredSuitableNodes(rawEditor, 'indentation');
 
   if (filteredSuitableNodes) {
     let handleAction = () => {
+      // If the filteredSuitableNodes are an array rich nodes and ranges, we reorder the nodes and flatten it
+      if (filteredSuitableNodes[0] && filteredSuitableNodes[0].range) {
+        filteredSuitableNodes = reorderBlocks(filteredSuitableNodes).map(node => {
+          const domNode = node.richNode.domNode;
+          if (tagName(domNode) == 'li') {
+            return [...domNode.childNodes];
+          } else {
+            return domNode;
+          }
+        }).flat();
+      }
+
       let logicalBlockContents = [];
       filteredSuitableNodes.forEach(node => {
         if(!isEligibleForIndentAction(node)) return;
@@ -393,12 +365,16 @@ function unindentAction( rawEditor ) {
   * @param rawEditor
   * @return Array the filtered suitable nodes
   */
-function getFilteredSuitableNodes(rawEditor) {
+function getFilteredSuitableNodes(rawEditor, actionType) {
   const node = rawEditor.currentNode;
   let filteredSuitableNodes = null;
 
   if(isEligibleForListAction(node)) { // cursor placed in the text
-    filteredSuitableNodes = node;
+    if (actionType == 'creation') {
+      filteredSuitableNodes = node;
+    } else if (actionType == 'indentation') {
+      filteredSuitableNodes = [node];
+    }
   } else if (rawEditor.currentSelection) { // selection of the text
     const range = rawEditor.currentSelection;
     const selection = rawEditor.selectHighlight(range);
@@ -430,7 +406,7 @@ function handleListAction( rawEditor, currentNode, actionType, listType) {
             nodes: getLogicalBlockContentsForNewList(node.richNode.domNode),
             range: node.range
           });
-        })
+        });
         logicalBlockContents = reorderBlocks(logicalBlockContents).map(block => block.nodes);
         logicalBlockContents = Array.from(new Set(logicalBlockContents.flat()));
         logicalBlockContents = keepHighestNodes(logicalBlockContents);
