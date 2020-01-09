@@ -231,7 +231,7 @@ import { warn } from '@ember/debug';
 /**
  * handles unordered list
  */
-function unorderedListAction( rawEditor ) {
+function unorderedListAction(rawEditor) {
   const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
 
   if (filteredSuitableNodes) {
@@ -246,7 +246,7 @@ function unorderedListAction( rawEditor ) {
 /**
  * handles ordered list
  */
-function orderedListAction( rawEditor ) {
+function orderedListAction(rawEditor) {
   const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
 
   if (filteredSuitableNodes) {
@@ -261,7 +261,7 @@ function orderedListAction( rawEditor ) {
 /**
  * handles indent Action
  */
-function indentAction( rawEditor ) {
+function indentAction(rawEditor) {
   let filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
 
   if (filteredSuitableNodes) {
@@ -286,7 +286,7 @@ function indentAction( rawEditor ) {
 /**
  * handles unindent Action
  */
-function unindentAction( rawEditor ) {
+function unindentAction(rawEditor) {
   let filteredSuitableNodes = getFilteredSuitableNodes(rawEditor, 'indentation');
 
   if (filteredSuitableNodes) {
@@ -305,16 +305,16 @@ function unindentAction( rawEditor ) {
  * HELPERS
  ***************************************************/
 
- /**
-  * Gets the nodes that are suitable for an action from the editor.
-  * Will get the current node if there is a cursor in the text
-  * Will get the wrapping nodes around a selection if the user selected text, in which
-  *    case the nodes are filtered: we only keep the nodes if there are not adjacent and splited
-  *
-  * @method getFilteredSuitableNodes
-  * @param rawEditor
-  * @return Array the filtered suitable nodes
-  */
+/**
+ * Gets the nodes that are suitable for an action from the editor.
+ * Will get the current node if there is a cursor in the text
+ * Will get the wrapping nodes around a selection if the user selected text, in which
+ *    case the nodes are filtered: we only keep the nodes if there are not adjacent and splited
+ *
+ * @method getFilteredSuitableNodes
+ * @param rawEditor
+ * @return Array the filtered suitable nodes
+ */
 function getFilteredSuitableNodes(rawEditor) {
   const node = rawEditor.currentNode;
   let filteredSuitableNodes = null;
@@ -365,7 +365,7 @@ function getGroupedLogicalBlocks(suitableNodes) {
 
   let eligibleNodes = [];
   orderedNodes.forEach(node => {
-    if(!isEligibleForIndentAction(node)) return;
+    if (!isEligibleForIndentAction(node)) return;
     eligibleNodes.push(getLogicalBlockContentsForIndentationAction(node));
   });
 
@@ -528,7 +528,7 @@ function groupNodesByLogicalBlocks(nodes) {
     const uniqueParentNodes = Array.from(new Set(parents.flat()));
 
     groupedNodes = uniqueParentNodes.map(parent => { // We find the children of each parent
-      return nodes.filter( node => node.parentNode == parent );
+      return nodes.filter(node => node.parentNode == parent);
     });
   } else { // New list case
     /* We group together the nodes that belong to the same line.
@@ -554,7 +554,7 @@ function groupNodesByLogicalBlocks(nodes) {
         }
         groupedNodes.push([]); // If we hit a block or a br, the following blocks will be of a new line
       } else {
-        groupedNodes[groupedNodes.length-1].push(node); // If we don't hit a block or br, we're still in the same line so we push our node to the currently building line
+        groupedNodes[groupedNodes.length - 1].push(node); // If we don't hit a block or br, we're still in the same line so we push our node to the currently building line
       }
     });
   }
@@ -617,8 +617,8 @@ function getNextNonWhitespaceSibling(node) {
  */
 function isInList(node) {
   let currNode = node.parentNode;
-  while(currNode){
-    if(isLI(currNode)) return true;
+  while (currNode) {
+    if (isLI(currNode)) return true;
     currNode = currNode.parentNode;
   }
   return false;
@@ -642,13 +642,13 @@ function areInList(nodes) {
  * Inserts a new list.
  *
  */
-function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNode ) {
+function insertNewList(rawEditor, logicalListBlocks, listType = 'ul', parentNode) {
   let listELocationRef = logicalListBlocks[0][0];
 
   // If the list has a child list, we should add the new indent to this existing list instead of creating a new one
   let listE = null;
 
-  const lastSelectedBlockLocationRef = logicalListBlocks[logicalListBlocks.length-1][0];
+  const lastSelectedBlockLocationRef = logicalListBlocks[logicalListBlocks.length - 1][0];
   const nextNonWhitespaceSibling = getNextNonWhitespaceSibling(lastSelectedBlockLocationRef);
   const shouldMergeWithChildList = nextNonWhitespaceSibling && (tagName(nextNonWhitespaceSibling) == 'ul' || tagName(nextNonWhitespaceSibling) == 'ol');
 
@@ -671,8 +671,10 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
     parentNode.append(listE);
   } else {
     let parent = listELocationRef.parentNode;
-    if(!parent){
-      warn('Lists assume a parent node', {id: 'list-helpers:insertNewList'});
+    if (!parent) {
+      warn('Lists assume a parent node', {
+        id: 'list-helpers:insertNewList'
+      });
       return;
     }
     parent.insertBefore(document.createTextNode(invisibleSpace), listELocationRef);
@@ -690,12 +692,12 @@ function insertNewList( rawEditor, logicalListBlocks, listType = 'ul', parentNod
   });
 
   makeLogicalBlockCursorSafe([listE]);
- }
+}
 
 /**
  * Unindents logical block contents from context it resides in.
  */
-function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneListUpwards=false ) {
+function unindentLogicalBlockContents(rawEditor, logicalBlockContents, moveOneListUpwards = false) {
   logicalBlockContents.forEach(block => {
     let currLI = getParentLI(block[0]);
     if (currLI == null) return;
@@ -705,8 +707,10 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
     let parentE = listE.parentNode;
     let allLIs = [...listE.children];
 
-    if(!currLI || !listE || !parentE){
-      warn('No wrapping LI/List/Parent of list found!', {id: 'list-helpers:unindentLIAndSplitList'});
+    if (!currLI || !listE || !parentE) {
+      warn('No wrapping LI/List/Parent of list found!', {
+        id: 'list-helpers:unindentLIAndSplitList'
+      });
       return;
     }
 
@@ -717,14 +721,14 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
     siblingsAfter = siblingsAfter.filter(node => !isAllWhitespace(node));
 
     block = makeLogicalBlockCursorSafe(block);
-    [siblingsBefore, siblingsAfter] = [ makeLogicalBlockCursorSafe(siblingsBefore), makeLogicalBlockCursorSafe(siblingsAfter)];
+    [siblingsBefore, siblingsAfter] = [makeLogicalBlockCursorSafe(siblingsBefore), makeLogicalBlockCursorSafe(siblingsAfter)];
 
-    if(siblingsBefore.length > 0){
+    if (siblingsBefore.length > 0) {
       let li = createParentWithLogicalBlockContents(siblingsBefore, 'li');
       LIsBefore.push(li);
     }
 
-    if(siblingsAfter.length > 0){
+    if (siblingsAfter.length > 0) {
       let li = createParentWithLogicalBlockContents(siblingsAfter, 'li');
       LIsAfter = [li, ...LIsAfter];
     }
@@ -732,8 +736,8 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
     // If we don't need to move our logical block on list up,
     // we will split the list in two and make sure the logicalBlock
     // resides in between
-    if(!moveOneListUpwards){
-      if(LIsBefore.length > 0){
+    if (!moveOneListUpwards) {
+      if (LIsBefore.length > 0) {
         let listBefore = createParentWithLogicalBlockContents(LIsBefore, listType);
         parentE.insertBefore(listBefore, listE);
       }
@@ -741,14 +745,14 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
       parentE.insertBefore(document.createElement('br'), listE);
       block.forEach(n => parentE.insertBefore(n, listE));
 
-      if(LIsAfter.length > 0){
+      if (LIsAfter.length > 0) {
         let listAfter = createParentWithLogicalBlockContents(LIsAfter, listType);
         parentE.insertBefore(listAfter, listE);
       }
     }
 
     // We are in highest list in context, and we didn't start from nested context
-    if(!isInList(listE) && !moveOneListUpwards){
+    if (!isInList(listE) && !moveOneListUpwards) {
       makeLogicalBlockCursorSafe([listE]);
       listE.removeChild(currLI);
       parentE.removeChild(listE); //we don't need the original list
@@ -756,7 +760,7 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
     }
 
     // Current list is a nested list, and the block needs to move one LI up
-    if(isInList(listE) && !moveOneListUpwards){
+    if (isInList(listE) && !moveOneListUpwards) {
       listE.removeChild(currLI);
       parentE.removeChild(listE); //we don't need the original list
       unindentLogicalBlockContents(rawEditor, [block], true);
@@ -764,7 +768,7 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
     }
 
     // We don't care wether our current list is nested. We just need to add the new LI's
-    if(moveOneListUpwards){
+    if (moveOneListUpwards) {
       let li = createParentWithLogicalBlockContents(block, 'li');
       let newLIs = [...LIsBefore, li, ...LIsAfter];
       newLIs.forEach(n => listE.appendChild(n));
@@ -779,7 +783,7 @@ function unindentLogicalBlockContents( rawEditor, logicalBlockContents, moveOneL
 function shuffleListType(rawEditor, logicalBlockContents) {
   const currlistE = logicalBlockContents[0];
   const currlistType = getListTagName(currlistE);
-  const targetListType = currlistType == 'ul'?'ol':'ul';
+  const targetListType = currlistType == 'ul' ? 'ol' : 'ul';
   const parentE = currlistE.parentNode;
   const allLIs = [...currlistE.children];
 
@@ -799,10 +803,10 @@ function doesActionSwitchListType(nodes, listAction) {
   const listE = li.parentElement;
 
   const listType = getListTagName(listE);
-  if(listType == 'ul' && listAction == unorderedListAction){
+  if (listType == 'ul' && listAction == unorderedListAction) {
     return false;
   }
-  if(listType == 'ol' && listAction == orderedListAction){
+  if (listType == 'ol' && listAction == orderedListAction) {
     return false;
   }
   return true;
@@ -835,7 +839,7 @@ function doesActionSwitchListType(nodes, listAction) {
  *
  * @public
  */
-function getLogicalBlockContentsForNewList( node ) {
+function getLogicalBlockContentsForNewList(node) {
   let baseNode = returnParentNodeBeforeBlockElement(node);
   //left and right adjacent siblings should be added until we hit a br (before) and a block node (after).
   return growAdjacentNodesUntil(isBlockOrBr, isBlockOrBr, baseNode);
@@ -855,11 +859,11 @@ function getLogicalBlockContentsForNewList( node ) {
  *
  * @public
  */
-function getLogicalBlockContentsSwitchListType( nodes ) {
+function getLogicalBlockContentsSwitchListType(nodes) {
   const domNodes = nodes.map(node => node.richNode ? node.richNode.domNode : node);
   const nonEmptyNodes = removeWhitespaceNodes(domNodes);
   const currLI = getParentLI(nonEmptyNodes[0]); // No need to process all the list of nodes. From the first node we will be able to get the list element that we want to switch
-  return [ currLI.parentNode ];
+  return [currLI.parentNode];
 }
 
 /**
@@ -921,8 +925,8 @@ function getLogicalBlockContentsForIndentationAction(node) {
   let currLiNodes = [...currLI.childNodes];
   let potentialBlockParentCurrentNode = currLiNodes.find(n => isDisplayedAsBlock(n) && n.contains(node));
 
-  if(potentialBlockParentCurrentNode)
-    return [ potentialBlockParentCurrentNode ];
+  if (potentialBlockParentCurrentNode)
+    return [potentialBlockParentCurrentNode];
 
   let baseNode = returnParentNodeBeforeBlockElement(node);
 
@@ -945,10 +949,10 @@ function getLogicalBlockContentsForIndentationAction(node) {
  *  <span> foo <a href="#"> current node | </a></span>
  *  ```
  */
-function returnParentNodeBeforeBlockElement( node ) {
-  if(!node.parentNode) return node;
+function returnParentNodeBeforeBlockElement(node) {
+  if (!node.parentNode) return node;
 
-  if(isDisplayedAsBlock(node.parentNode)) {
+  if (isDisplayedAsBlock(node.parentNode)) {
     return node;
   }
 
@@ -959,25 +963,25 @@ function returnParentNodeBeforeBlockElement( node ) {
  * Given a node, we want to grow a region (a list of sibling nodes)
  * until we match a condition
  */
-function growAdjacentNodesUntil( conditionLeft, conditionRight, node ) {
+function growAdjacentNodesUntil(conditionLeft, conditionRight, node) {
   let nodes = [node];
   let currNode = node;
 
   //lefties
-  while(currNode){
-    if(conditionLeft(currNode)){
+  while (currNode) {
+    if (conditionLeft(currNode)) {
       break;
     }
     nodes.push(currNode);
-    currNode = currNode.previousSibling ;
+    currNode = currNode.previousSibling;
   }
 
   nodes.reverse();
 
   //righties
   currNode = node.nextSibling;
-  while(currNode){
-    if(conditionRight(currNode)){
+  while (currNode) {
+    if (conditionRight(currNode)) {
       break;
     }
     nodes.push(currNode);
@@ -987,39 +991,43 @@ function growAdjacentNodesUntil( conditionLeft, conditionRight, node ) {
   return nodes;
 }
 
-function isEligibleForListAction( node ){
-  if(node==null || !isTextNode(node)){
-    warn('Current action only supported for textNodes', {id: 'list-helpers:isEligibleForListAction'});
+function isEligibleForListAction(node) {
+  if (node == null || !isTextNode(node)) {
+    warn('Current action only supported for textNodes', {
+      id: 'list-helpers:isEligibleForListAction'
+    });
     return false;
   }
   return true;
 }
 
-function isEligibleForIndentAction( node ){
-  if(!isInList(node)){
-      warn('Indent only supported in context of list', {id: 'list-helpers:isEligibleForIndentAction'});
-      return false;
+function isEligibleForIndentAction(node) {
+  if (!isInList(node)) {
+    warn('Indent only supported in context of list', {
+      id: 'list-helpers:isEligibleForIndentAction'
+    });
+    return false;
   }
   return true;
 }
 
-function siblingsBeforeAndAfterLogicalBlockContents( allSiblings, logicalBlockContents ) {
+function siblingsBeforeAndAfterLogicalBlockContents(allSiblings, logicalBlockContents) {
   let siblingsBefore = [];
   let siblingsAfter = [];
   let nodeListToUpdate = siblingsBefore;
 
-  for(var node of allSiblings) {
-    if(logicalBlockContents.some(n => n.isSameNode(node))) {
+  for (var node of allSiblings) {
+    if (logicalBlockContents.some(n => n.isSameNode(node))) {
       nodeListToUpdate = siblingsAfter;
       continue;
     }
     nodeListToUpdate.push(node);
   }
 
-  return [ siblingsBefore, siblingsAfter ];
+  return [siblingsBefore, siblingsAfter];
 }
 
-function createParentWithLogicalBlockContents( logicalBlockContents, type ){
+function createParentWithLogicalBlockContents(logicalBlockContents, type) {
   let element = document.createElement(type);
   logicalBlockContents.forEach(n => element.appendChild(n));
   return element;
@@ -1028,30 +1036,28 @@ function createParentWithLogicalBlockContents( logicalBlockContents, type ){
 /**
  * Checks wether node is safe to put a cursor in. Checks either left or right from the node.
  */
-function isNodeCursorSafe( node, before = true ) {
-  if(node.nodeType == Node.TEXT_NODE)
+function isNodeCursorSafe(node, before = true) {
+  if (node.nodeType == Node.TEXT_NODE)
     return true;
 
-  if(isLI(node))
+  if (isLI(node))
     return true;
 
   let parent = node.parentNode;
 
-  if(!parent)
+  if (!parent)
     return true;
 
-  if(before){
+  if (before) {
     let prevSibling = node.previousSibling;
 
-   if(isList(node) && isInList(node) && !prevSibling) return true; //if <li><ul><li>pure nested list is ok </li></ul></li>
+    if (isList(node) && isInList(node) && !prevSibling) return true; //if <li><ul><li>pure nested list is ok </li></ul></li>
 
-    if(!prevSibling || prevSibling.nodeType!= Node.TEXT_NODE) return false;
-  }
-
-  else {
+    if (!prevSibling || prevSibling.nodeType != Node.TEXT_NODE) return false;
+  } else {
     let nextSibling = node.nextSibling;
-    if(isList(node) && isInList(node) && !nextSibling) return true; //if <li><ul><li>pure nested list is ok </li></ul></li>
-    if(!nextSibling || nextSibling.nodeType!= Node.TEXT_NODE) return false;
+    if (isList(node) && isInList(node) && !nextSibling) return true; //if <li><ul><li>pure nested list is ok </li></ul></li>
+    if (!nextSibling || nextSibling.nodeType != Node.TEXT_NODE) return false;
   }
 
   return true;
@@ -1066,12 +1072,12 @@ function isNodeCursorSafe( node, before = true ) {
  * The inbetween elements are ignored.
  * (This function is basically something which should be executed at anthoer level)
  */
-function makeLogicalBlockCursorSafe( logicalBlockContents ) {
-  if(logicalBlockContents.length == 0) return logicalBlockContents;
+function makeLogicalBlockCursorSafe(logicalBlockContents) {
+  if (logicalBlockContents.length == 0) return logicalBlockContents;
 
   let firstNode = logicalBlockContents[0];
 
-  if(!isNodeCursorSafe(firstNode)){
+  if (!isNodeCursorSafe(firstNode)) {
     let textNode = document.createTextNode(invisibleSpace);
     firstNode.parentNode.insertBefore(textNode, firstNode);
     logicalBlockContents = [textNode, ...logicalBlockContents];
@@ -1079,16 +1085,15 @@ function makeLogicalBlockCursorSafe( logicalBlockContents ) {
 
   let lastNode = logicalBlockContents.slice(-1)[0];
 
-  if(isNodeCursorSafe(lastNode, false))
+  if (isNodeCursorSafe(lastNode, false))
     return logicalBlockContents;
 
   let textNode = document.createTextNode(invisibleSpace);
   let nextSibling = lastNode.nextSibling;
 
-  if(!nextSibling){
+  if (!nextSibling) {
     lastNode.parentNode.append(textNode);
-  }
-  else{
+  } else {
     lastNode.parentNode.insertBefore(textNode, nextSibling);
   }
 
