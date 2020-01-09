@@ -991,16 +991,6 @@ function growAdjacentNodesUntil(conditionLeft, conditionRight, node) {
   return nodes;
 }
 
-function isEligibleForListAction(node) {
-  if (node == null || !isTextNode(node)) {
-    warn('Current action only supported for textNodes', {
-      id: 'list-helpers:isEligibleForListAction'
-    });
-    return false;
-  }
-  return true;
-}
-
 function isEligibleForIndentAction(node) {
   if (!isInList(node)) {
     warn('Indent only supported in context of list', {
