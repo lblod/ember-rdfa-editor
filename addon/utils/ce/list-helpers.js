@@ -4,7 +4,6 @@ import {
   isList,
   isLI,
   getParentLI,
-  isTextNode,
   getListTagName,
   findPreviousLi,
   isBlockOrBr,
