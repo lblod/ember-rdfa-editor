@@ -557,7 +557,8 @@ function groupNodesByLogicalBlocks(nodes) {
       }
     });
   }
-  return groupedNodes;
+  // We may generate too many blank lines above, so we remove them
+  return groupedNodes.filter(group => group.length > 0);
 }
 
 /**
@@ -969,6 +970,9 @@ function growAdjacentNodesUntil(conditionLeft, conditionRight, node) {
   //lefties
   while (currNode) {
     if (conditionLeft(currNode)) {
+      if (isDisplayedAsBlock(currNode)) {
+        nodes.push(currNode);
+      }
       break;
     }
     nodes.push(currNode);
@@ -981,6 +985,9 @@ function growAdjacentNodesUntil(conditionLeft, conditionRight, node) {
   currNode = node.nextSibling;
   while (currNode) {
     if (conditionRight(currNode)) {
+      if (isDisplayedAsBlock(currNode)) {
+        nodes.push(currNode);
+      }
       break;
     }
     nodes.push(currNode);
