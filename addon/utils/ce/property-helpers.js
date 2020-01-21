@@ -278,7 +278,8 @@ function domNodeIsEqualToProperty(domNode, property) {
       attributesMatch = false;
     }
   }
-  return property.tagName === tagName(domNode) && attributesMatch;
+  const propertyTagName = property.tagName ? property.tagName : DEFAULT_TAG_NAME;
+  return propertyTagName === tagName(domNode) && attributesMatch;
 }
 
 /*
