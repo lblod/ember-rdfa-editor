@@ -646,35 +646,26 @@ class RawEditor extends EmberObject {
       this.updateRichNode();
     }
     const textNode = this.findSuitableNodeForPosition(position);
-    const type = get(textNode, 'type');
+    const type = textNode.type;
     let domNode;
     if (type === 'text') {
-      if (text === " ")
+      if (text === " ") {
         text = NON_BREAKING_SPACE;
-      const parent = get(textNode, 'parent');
-      if (position === get(textNode, 'end') && tagName(get(parent, 'domNode')) === 'mark') {
-        const mark = get(parent, 'domNode');
-        const markParent = get(parent, 'parent.domNode');
-        // there is no inserting at the end of highlight, we insert next to the highlight
-        domNode = document.createTextNode(text);
-        insertNodeBAfterNodeA(markParent, mark, domNode);
       }
-      else {
-        domNode = get(textNode, 'domNode');
-        const relativePosition = position - get(textNode, 'start');
-        if (text !== NON_BREAKING_SPACE && relativePosition > 0 &&
-            domNode.textContent[relativePosition-1] === NON_BREAKING_SPACE) {
-          let content = domNode.textContent;
-          domNode.textContent = content.slice(0, relativePosition -1) + " " + content.slice(relativePosition);
-        }
-        sliceTextIntoTextNode(domNode, text, relativePosition);
+      const parent = textNode.parent;
+      domNode = textNode.domNode;
+      const relativePosition = position - textNode.start;
+      sliceTextIntoTextNode(domNode, text, relativePosition);
+      if (relativePosition > 0 && text !== NON_BREAKING_SPACE &&  domNode.textContent[relativePosition-1] === NON_BREAKING_SPACE) {
+        // replace non breaking space preceeding this input with a regular space
+        let content = domNode.textContent;
+        domNode.textContent = content.slice(0, relativePosition - 1) + " " + content.slice(relativePosition);
       }
       this.set('currentNode', domNode);
     }
     else {
-      // we should always have a suitable node... last attempt to safe things somewhat
-      warn(`no text node found at position ${position}`, {id: 'content-editable.no-text-node-found'});
-      warn('inconsistent state in editor!', {id: 'content-editable.no-text-node-found'});
+      // we should always have a suitable text node... last attempt to safe things somewhat
+      warn(`no text node found at position ${position} (editor empty?)`, {id: 'content-editable.no-text-node-found'});
       domNode = document.createTextNode(text);
       get(textNode, 'domNode').appendChild(domNode);
       this.set('currentNode', domNode);
