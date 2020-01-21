@@ -6,7 +6,8 @@ class HighlightProperty extends EditorProperty {
   }
   permittedContent(richNode) {
     const length = richNode.end - richNode.start;
-    if (length > 0 && (richNode.domNode.textContent.trim().length > 0))
+    const text = new String(richNode.domNode.textContent);
+    if (length > 0 && (text.trim().length > 0))
       return [richNode];
     else
       return [];
