@@ -52,7 +52,7 @@ export default EmberObject.extend({
   },
 
   doesCurrentNodeBelongsToContentEditable(){
-    return this.currentNode.parentNode && this.currentNode.parentNode.isContentEditable;
+    return this.currentNode && this.currentNode.parentNode && this.currentNode.parentNode.isContentEditable;
   },
 
   /**
