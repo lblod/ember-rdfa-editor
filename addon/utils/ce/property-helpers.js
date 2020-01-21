@@ -7,11 +7,14 @@ import {
 } from './dom-helpers';
 import ReplaceWithPolyfill from 'mdn-polyfills/Node.prototype.replaceWith';
 import RichNode from '@lblod/marawa/rich-node';
+import { isAdjacentRange } from '@lblod/marawa/range-helpers';
 import { DEFAULT_TAG_NAME } from './editor-property';
 import {
   replaceRichNodeWith,
   unwrapRichNode
 } from './rich-node-tree-modification';
+
+const IGNORABLE_ATTRIBUTES=["data-editor-position-level", "data-editor-rdfa-position-level"];
 
 // TODO: find a clean spot for this polyfill
 if (!Element.prototype.replaceWith)
@@ -103,7 +106,13 @@ function applyProperty(selection, doc, property, calledFromCancel) {
     // cancel first to avoid duplicate tags
     cancelProperty(selection, doc, property);
   }
-  const startingNodes = findWrappingSuitableNodes(selection);
+
+  let startingNodes = findWrappingSuitableNodes(selection);
+  if (selection.selectedHighlightRange) {
+    startingNodes = startingNodes.filter(node => {
+      return !(isAdjacentRange(node.range, selection.selectedHighlightRange) && node.split);
+    });
+  }
   for( let {richNode, range} of startingNodes ) {
     const [start,end] = range;
     if (richNode.type ===  "tag" && (richNode.start < start || richNode.end > end)) {
@@ -265,7 +274,7 @@ function domNodeIsEqualToProperty(domNode, property) {
   }
 
   for (let attribute of domNode.attributes) {
-    if (!property.attributes[attribute.nodeName]) {
+    if (! IGNORABLE_ATTRIBUTES.includes(attribute.nodeName) && !property.attributes[attribute.nodeName]) {
       attributesMatch = false;
     }
   }
