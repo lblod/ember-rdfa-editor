@@ -1,5 +1,5 @@
 import EmberObject, { get, computed } from '@ember/object';
-import { debug, warn } from '@ember/debug';
+import { runInDebug, debug, warn } from '@ember/debug';
 import { A } from '@ember/array';
 import { timeout } from 'ember-concurrency';
 import { task } from 'ember-concurrency-decorators';
@@ -299,20 +299,10 @@ class RawEditor extends EmberObject {
    * @public
    */
   replaceTextWithHTML(start, end, html, extraInfo = []) {
+    deprecate('deprecated call to replaceTextWithHTML in rawEditor, please use the pernet api with set.innerHTML');
     this.createSnapshot();
-    let newNodes = replaceTextWithHtml(this.richNode, start, end, html);
-    let contentLength = newNodes.map( node => getTextContent(node).length).reduce( (total, i) => total + i);
-    var nextSibling = newNodes[newNodes.length-1].nextSibling;
-    if (nextSibling === null || nextSibling.nodeType !== Node.TEXT_NODE) {
-      nextSibling = document.createTextNode(invisibleSpace);
-      insertNodeBAfterNodeA(newNodes[0].parentNode, newNodes[newNodes.length-1], nextSibling);
-    }
-    this.updateRichNode();
-    this.set('currentNode', nextSibling );
-    this.setCurrentPosition(start + contentLength);
-    this.generateDiffEvents.perform(extraInfo);
-    forgivingAction('elementUpdate', this)();
-    return newNodes;
+    const selection = this.selectHighlight([start, end]);
+    this.update(selection, {set: {innerHTML: html}});
   }
 
   /**
@@ -570,7 +560,7 @@ class RawEditor extends EmberObject {
    * @public
    */
   clearHighlightForRange(start,end) {
-    console.warn('deprecated call to clearHightlightForRange, use clearHighlightForLocations', console.trace()); // eslint-disable-line no-console
+    deprecate('deprecated call to clearHightlightForRange, use clearHighlightForLocations');
     this.clearHighlightForLocations([start, end]);
   }
 
@@ -1146,9 +1136,11 @@ class RawEditor extends EmberObject {
     return selectContext.bind(this)(...arguments);
   }
   update() {
+    this.createSnapshot();
     return update.bind(this)(...arguments);
   }
   replaceDomNode() {
+    this.createSnapshot();
     return replaceDomNode.bind(this)(...arguments);
   }
   triplesDefinedInResource() {
@@ -1159,6 +1151,9 @@ class RawEditor extends EmberObject {
   }
 }
 
+function deprecate(message) {
+  runInDebug( () => console.trace(`DEPRECATION: ${message}`)); // eslint-disable-line no-console
+}
 function uuidv4() {
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => {
     return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);

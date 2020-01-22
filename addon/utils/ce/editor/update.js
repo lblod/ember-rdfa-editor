@@ -3,7 +3,7 @@ import { isAdjacentRange, isEmptyRange } from '@lblod/marawa/range-helpers';
 import { wrapRichNode } from '../rich-node-tree-modification';
 import { runInDebug } from '@ember/debug';
 import { parsePrefixString } from '@lblod/marawa/rdfa-attributes';
-import { isVoidElement, tagName } from '../dom-helpers';
+import { isLI, findWrappingSuitableNodes, createElementsFromHTML, isVoidElement, tagName } from '../dom-helpers';
 import { A } from '@ember/array';
 /**
  * Alters a selection from the API described above.
@@ -101,11 +101,7 @@ function updateDomNodes( selection, rootNode, { remove, add, set, before, after,
     console.warn(`Received empty selection set on update. Nothing will be updated.`); // eslint-disable-line no-console
 
   verifySpecification({ remove, add, set ,before, after, append, prepend, desc });
-  if ( selection.selectedHighlightRange && isComplexSelection(selection)) {
-    // TODO: find a sensible region to apply the update to
-    console.warn('Handling of complex selection not yet implemented. Nothing will be updated at the moment.', selection); // eslint-disable-line no-console
-  }
-  else if(before || after || append || prepend){
+  if(before || after || append || prepend){
     insertNodeOnSelection(rootNode, selection, { before, after, append, prepend });
   }
   else {
@@ -136,10 +132,13 @@ function updateEditorStateAfterUpdate(selection, relativePosition, currentNode) 
 
 // rdfa attributes we understand, currently ignoring src
 const RDFAKeys = ['about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href'];
+
+// possible actions to take for an update
 const WRAP = "wrap";
 const UPDATE = "update";
 const NEST = "nest";
 const WRAPALL = "wrap-all"; // only sensible for contextSelection
+const REPLACE = "replace"; // currently only makes sense for a selectedHighlightRange when providing set.innerHTML
 
 /*** private HELPERS ***/
 
@@ -221,6 +220,11 @@ function insertNodeOnSelection(rootNode, selection, domPosition){
 function updateNodeOnSelection(selection, {remove, add, set, desc}) {
   const bestApproach = newContextHeuristic( selection, {remove, add, set, desc});
   let nodes = [];
+  if ( bestApproach !== REPLACE && isComplexSelection(selection)) {
+    // TODO: find a sensible region to apply the update to
+    console.warn('Handling of complex selection not yet implemented. Nothing will be updated at the moment.', selection); // eslint-disable-line no-console
+  }
+
   if (bestApproach === WRAP) {
     nodes = wrapSelection(selection, {remove, add, set, desc});
   }
@@ -233,11 +237,101 @@ function updateNodeOnSelection(selection, {remove, add, set, desc}) {
   else {
     nodes = selection.selections.map((sel) => sel.richNode.domNode );
   }
-  if (isRDFAUpdate({remove,add,set})) {
-    updateRDFA(nodes, {remove, add, set});
+  if (bestApproach === REPLACE) {
+    // NOTE: assumes selection is a highlight selection
+    // NOTE: findWrappingSuitableNodes returns an array of objects with attributes {richNode, split}
+    nodes = findWrappingSuitableNodes(selection);
+    const bestNodes = nodes.filter(node =>  ! isAdjacentRange(node.range, selection.selectedHighlightRange));
+    if (bestNodes.length > 0 ) {
+      replaceNodesWithHtml(bestNodes, selection.selectedHighlightRange, set);
+    }
+    else {
+      // we only have adjacent nodes to work with
+      replaceNodesWithHtml(nodes, selection.selectedHighlightRange, set);
+    }
   }
-  if (isInnerContentUpdate({remove,add,set})) {
-    updateInnerContent(nodes, {remove, add, set});
+  else {
+    if (isRDFAUpdate({remove,add,set})) {
+      updateRDFA(nodes, {remove, add, set});
+    }
+    if (isInnerContentUpdate({remove,add,set})) {
+      updateInnerContent(nodes, {remove, add, set});
+    }
+  }
+}
+
+
+/**
+ * replacement of what was previously replaceTextWithHTML
+ * this function tries to smartly insert the new HTML, so it doesn't break too much HTML
+ */
+function replaceNodesWithHtml(nodes, [start, end], set) {
+  let newElements;
+  if (set.tag) {
+    const el = document.createElement(set.tag);
+    el.innerHTML = set.innerHTML;
+    newElements = [el];
+  }
+  else {
+    newElements = createElementsFromHTML(set.innerHTML);
+  }
+  // what we will attempt here is to replace the most suitable node and just remove the others
+  // initial version just replaces at first possible moment node and removes the others
+  let insertedElements = false;
+  for (let i=0; i<nodes.length; i++) {
+    const node = nodes[i];
+    const richNode = node.richNode;
+    const domNode = richNode.domNode;
+    if (!insertedElements) {
+      if(!node.split) {
+        if (isLI(domNode) || hasRDFAKeys(domNode.attributes)) {
+          // for a node with rdfa or list items (because that seems to be expected behaviour  ¯\_(ツ)_/¯ ), do things differently
+          domNode.children = newElements;
+        }
+        else {
+          domNode.replaceWith(...newElements);
+        }
+        insertedElements = true;
+      }
+      else if ( richNode.type === "text") {
+        if (richNode.start < start) {
+          const prefixTextNode = document.createTextNode(domNode.textContent.slice(0, start - richNode.start));
+          newElements.unshift(prefixTextNode);
+        }
+        if (richNode.end > end) {
+          const postfixTextNode = document.createTextNode(domNode.textContent.slice(end - richNode.start));
+          newElements.push(postfixTextNode);
+        }
+        domNode.replaceWith(...newElements);
+        insertedElements = true;
+      }
+      else if ( i === nodes.length - 1) {
+        // we're at the end and didn't encounter a splitable text or replacable node of type tag/other
+        // this shouldn't happen, but if it does append after the node and log to console
+        console.warn(`PERNET: received a non text node to split and replace, this shouldn't happen!`);
+        domNode.replaceWith(node.richNode.domNode, ...newElements);
+        insertedElements = true;
+      }
+      else {
+        domNode.remove();
+      }
+    }
+    else if(node.split && richNode.type ==="text") {
+      // elements are already inserted, so we just have to cut off
+      const replacements = [];
+      if (richNode.start < start) {
+        const prefixTextNode = document.createTextNode(domNode.textContent.slice(0, start - richNode.start));
+        replacements.unshift(prefixTextNode);
+      }
+      if (richNode.end > end) {
+        const postfixTextNode = document.createTextNode(domNode.textContent.slice(end - richNode.start));
+        replacements.push(postfixTextNode);
+      }
+      domNode.replaceWith(...replacements);
+    }
+    else {
+      domNode.remove();
+    }
   }
 }
 
@@ -301,9 +395,13 @@ function insertNodes(rootNode, referenceNode, newNodes, { before, after, prepend
  */
 function newContextHeuristic( selection, {remove, add, set}) {
   if (selection.selectedHighlightRange) {
-    // always wrap a text selection for now
-    // this could be overwritten in a smarter nodesToWrap method
-    return WRAP;
+    if (set && set.innerHTML)
+      return REPLACE;
+    else {
+      // default to wrap a text selection for now
+      // this could be overwritten in a smarter nodesToWrap method
+      return WRAP;
+    }
   }
   else {
     // it's a context selection take into account existing RDFA if possible
@@ -330,13 +428,7 @@ function newContextHeuristic( selection, {remove, add, set}) {
           }
         }
         else {
-          // check if set has a specification
-          if (set && (set.resource)) {
-            return UPDATE;
-          }
-          else {
-            return UPDATE;
-          }
+          return UPDATE;
         }
       }
       else {
@@ -666,7 +758,7 @@ function splitSelectionsToPotentiallyFitInRange([start, end], providedSelections
       richNode.domNode.textContent = infixText;
       actualSelections.pushObjects([selection, postfixSelection]);
     }
-    if (selection.type !== "text" && (selection.richNode.start < start || selection.richNode.end > end)) {
+    if (selection.richNode.type !== "text" && (selection.richNode.start < start || selection.richNode.end > end)) {
       // i forgot a case? did not expect selectHighlight to return a tag with a non matching range
       console.warn("unhandled",selection); // eslint-ignore-line no-console
     }
