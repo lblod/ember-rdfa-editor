@@ -220,7 +220,7 @@ function insertNodeOnSelection(rootNode, selection, domPosition){
 function updateNodeOnSelection(selection, {remove, add, set, desc}) {
   const bestApproach = newContextHeuristic( selection, {remove, add, set, desc});
   let nodes = [];
-  if ( bestApproach !== REPLACE && isComplexSelection(selection)) {
+  if ( bestApproach !== REPLACE && selection.selectedHighlightRange && isComplexSelection(selection)) {
     // TODO: find a sensible region to apply the update to
     console.warn('Handling of complex selection not yet implemented. Nothing will be updated at the moment.', selection); // eslint-disable-line no-console
   }
