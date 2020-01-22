@@ -20,7 +20,6 @@ import {
 import getRichNodeMatchingDomNode from './get-rich-node-matching-dom-node';
 import CappedHistory from './capped-history';
 import forgivingAction from './forgiving-action';
-import replaceTextWithHtml from './replace-text-with-html';
 import flatMap from './flat-map';
 import {
   getTextContent,
