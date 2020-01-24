@@ -286,7 +286,10 @@ function replaceNodesWithHtml(nodes, [start, end], set) {
       if(!node.split) {
         if (isLI(domNode) || hasRDFAKeys(domNode.attributes)) {
           // for a node with rdfa or list items (because that seems to be expected behaviour  ¯\_(ツ)_/¯ ), do things differently
-          domNode.children = newElements;
+          while (domNode.firstChild) {
+            domNode.removeChild(domNode.firstChild);
+          }
+          domNode.append(...newElements);
         }
         else {
           domNode.replaceWith(...newElements);
