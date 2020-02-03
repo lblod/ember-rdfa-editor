@@ -663,13 +663,13 @@ function insertNewList(rawEditor, logicalListBlocks, listType = 'ul', parentNode
     listE = document.createElement(listType);
   }
 
-  if (tagName(listELocationRef.parentNode) == 'li') {
-    listELocationRef = listELocationRef.parentNode;
-  }
-
   if (parentNode) {
     parentNode.append(listE);
   } else {
+    if (tagName(listELocationRef.parentNode) == 'li') {
+      listELocationRef = listELocationRef.parentNode;
+    }
+
     let parent = listELocationRef.parentNode;
     if (!parent) {
       warn('Lists assume a parent node', {
@@ -678,7 +678,16 @@ function insertNewList(rawEditor, logicalListBlocks, listType = 'ul', parentNode
       return;
     }
     parent.insertBefore(document.createTextNode(invisibleSpace), listELocationRef);
-    parent.insertBefore(listE, listELocationRef);
+
+    if (tagName(listELocationRef) == 'li') { // If we are in an indent case (our selection is in a list)
+      // If we have no parent node passed by indentAction (no previous li --> our selection is on top of the list)
+      // We need to create a new <li> in which our new list will be created
+      const parentListE = document.createElement('li');
+      parent.insertBefore(parentListE, listELocationRef);
+      parentListE.insertBefore(listE, parentListE.firstChild);
+    } else {
+      parent.insertBefore(listE, listELocationRef);
+    }
   }
 
   logicalListBlocks.forEach(listBlocks => {
