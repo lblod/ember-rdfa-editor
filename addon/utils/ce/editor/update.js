@@ -105,7 +105,7 @@ function updateDomNodes( selection, rootNode, { remove, add, set, before, after,
     insertNodeOnSelection(rootNode, selection, { before, after, append, prepend });
   }
   else {
-    updateNodeOnSelection(selection, { remove, add, set, desc });
+    updateNodeOnSelection(selection, rootNode, { remove, add, set, desc });
   }
 }
 
@@ -217,7 +217,7 @@ function insertNodeOnSelection(rootNode, selection, domPosition){
  *
  * @method updateNodeOnSelection
  */
-function updateNodeOnSelection(selection, {remove, add, set, desc}) {
+function updateNodeOnSelection(selection, rootNode, {remove, add, set, desc}) {
   const bestApproach = newContextHeuristic( selection, {remove, add, set, desc});
   let nodes = [];
   if ( bestApproach !== REPLACE && selection.selectedHighlightRange && isComplexSelection(selection)) {
@@ -243,11 +243,11 @@ function updateNodeOnSelection(selection, {remove, add, set, desc}) {
     nodes = findWrappingSuitableNodes(selection);
     const bestNodes = nodes.filter(node =>  ! isAdjacentRange(node.range, selection.selectedHighlightRange));
     if (bestNodes.length > 0 ) {
-      replaceNodesWithHtml(bestNodes, selection.selectedHighlightRange, set);
+      replaceNodesWithHtml(bestNodes, rootNode, selection.selectedHighlightRange, set);
     }
     else {
       // we only have adjacent nodes to work with
-      replaceNodesWithHtml(nodes, selection.selectedHighlightRange, set);
+      replaceNodesWithHtml(nodes, rootNode, selection.selectedHighlightRange, set);
     }
   }
   else {
@@ -265,7 +265,7 @@ function updateNodeOnSelection(selection, {remove, add, set, desc}) {
  * replacement of what was previously replaceTextWithHTML
  * this function tries to smartly insert the new HTML, so it doesn't break too much HTML
  */
-function replaceNodesWithHtml(nodes, [start, end], set) {
+function replaceNodesWithHtml(nodes, rootNode, [start, end], set) {
   let newElements;
   if (set.tag) {
     const el = document.createElement(set.tag);
@@ -284,8 +284,9 @@ function replaceNodesWithHtml(nodes, [start, end], set) {
     const domNode = richNode.domNode;
     if (!insertedElements) {
       if(!node.split) {
-        if (isLI(domNode) || hasRDFAKeys(domNode.attributes)) {
-          // for a node with rdfa or list items (because that seems to be expected behaviour  ¯\_(ツ)_/¯ ), do things differently
+        if (rootNode == domNode || isLI(domNode) || hasRDFAKeys(domNode.attributes)) {
+          // for the rootNode or a node with rdfa or list items don't actually replace but nest
+          // (because that seems to be expected behaviour  ¯\_(ツ)_/¯ )
           while (domNode.firstChild) {
             domNode.removeChild(domNode.firstChild);
           }
