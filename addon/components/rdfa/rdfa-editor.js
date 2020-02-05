@@ -198,7 +198,7 @@ export default class RdfaEditor extends Component {
       };
       this.initDebug(debugInfo);
     }
-    const rdfaDocument = new RdfaDocument(editor.rootNode);
+    const rdfaDocument = new RdfaDocument(editor);
     forgivingAction('rdfaEditorInit', this)(rdfaDocument);
   }
 
