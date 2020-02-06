@@ -5,7 +5,6 @@ import { rdfaKeywords } from '../../config/rdfa';
 // TODO: content-editable should not be rdfa aware
 
 
-
 /**
  * Get the RDFa attributes of a DOM node
  *
@@ -74,8 +73,53 @@ let isEmptyRdfaAttributes = function(rdfaAttributes) {
 
 
 let isRdfaNode = function(richNode){
-    enrichRichNodeWithRdfa(richNode);
-    return !isEmptyRdfaAttributes(richNode.rdfaAttributes);
+  enrichRichNodeWithRdfa(richNode);
+  return !isEmptyRdfaAttributes(richNode.rdfaAttributes);
 };
 
-export { getRdfaAttributes,isRdfaNode, isEmptyRdfaAttributes,  enrichRichNodeWithRdfa  };
+let findRichNode = function(rdfaBlock, { resource, property, type, datatype }) { // TODO: scope ?
+  // TODO: check at least one criterion
+
+  // Check if the rdfaBlock has a suitable node in its context
+  const hasSuitableNode = rdfaBlock.context.filter( o => { // TODO Check all cases
+    let condition = true;
+    // We have at least one criterion so if it's not filled the condition will turn false
+    condition = resource ? condition && o.subject.includes(resource) : condition;
+    condition = property ? condition && o.property.includes(property): condition;
+    condition = type ? condition && o.object.includes(type) : condition;
+    condition = datatype ? condition && o.datatype.includes(datatype) : condition;
+    return condition;
+  }).length > 0;
+
+  if (!hasSuitableNode) return null;
+
+  // Find the suitable node by walking up the dom tree
+  let besluitNode = null;
+  let currentNode = rdfaBlock.semanticNode;
+
+  while (!besluitNode) {
+    if (currentNode.rdfaAttributes) {
+      let condition = true;
+      condition = resource ? condition && currentNode.rdfaAttributes.resource && currentNode.rdfaAttributes.resource.includes(resource) : condition;
+      condition = property ? condition && currentNode.rdfaAttributes.property && currentNode.rdfaAttributes.property.includes(property): condition;
+      condition = type ? condition && currentNode.rdfaAttributes.typeof && currentNode.rdfaAttributes.typeof.includes(type) : condition;
+      condition = datatype ? condition && currentNode.rdfaAttributes.datatype && currentNode.rdfaAttributes.datatype.includes(datatype) : condition;
+
+      if (condition) {
+        besluitNode = currentNode;
+      } else {
+        currentNode = currentNode.parent;
+      }
+    } else {
+      currentNode = currentNode.parent;
+    }
+  }
+
+  return besluitNode;
+}
+
+// let findUniqueRichNodes = function(rdfaBlocks, { resource, property, typeof, datatype }) {
+//
+// }
+
+export { getRdfaAttributes, isRdfaNode, isEmptyRdfaAttributes, enrichRichNodeWithRdfa, findRichNode };

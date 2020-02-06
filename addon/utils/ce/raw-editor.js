@@ -45,6 +45,7 @@ import {
   triplesDefinedInResource,
   isEmpty
 } from './editor';
+import { findRichNode } from '../rdfa/rdfa-rich-node-helpers';
 import classic from 'ember-classic-decorator';
 
 const NON_BREAKING_SPACE = '\u00A0';
@@ -1147,6 +1148,13 @@ class RawEditor extends EmberObject {
   }
   isEmpty() {
     return isEmpty.bind(this)(...arguments);
+  }
+
+  /**
+   * Helpers
+   */
+  findRichNode() {
+    return findRichNode.bind(this)(...arguments);
   }
 }
 
