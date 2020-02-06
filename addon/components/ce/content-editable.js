@@ -355,7 +355,7 @@ export default class ContentEditable extends Component {
           }
         }
       }
-      if (cleanedNode && cleanedNode.attributes.length == 0 && (cleanedNode.childNodes.length == 0 || new String(cleanedNode.textContent).trim().length == 0)) {
+      if (cleanedNode && cleanedNode.attributes.length == 0 && cleanedNode.childNodes.length == 0 && new String(cleanedNode.textContent).trim().length == 0) {
         return null;
       }
     }
