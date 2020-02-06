@@ -11,6 +11,17 @@ pre {
 	background-color: #ffe615;
 }
 
+[data-flagged-remove="almost-complete"] {
+  background-color: #666;
+}
+
+[data-flagged-remove="complete"] {
+  background-color: red;
+  display:block;
+  border: 1px dotted black;
+  min-width:10px;
+  min-height: 10px;
+}
 [data-editor-highlight="true"]:empty {
 	display: none;
 }

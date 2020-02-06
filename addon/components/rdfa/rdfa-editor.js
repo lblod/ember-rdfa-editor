@@ -12,7 +12,6 @@ import layout from '../../templates/components/rdfa/rdfa-editor';
 import HintsRegistry from '../../utils/rdfa/hints-registry';
 import EventProcessor from '../../utils/rdfa/event-processor';
 import forgivingAction from '../../utils/rdfa/forgiving-action';
-import RdfaBackspaceHandler from '../../utils/rdfa/handlers/rdfa-backspace-handler';
 import { analyse as analyseRdfa } from '@lblod/marawa/rdfa-context-scanner';
 import TextInputDataFlaggedRemoveHandler from '../../utils/rdfa/handlers/text-input-data-flagged-remove-handler';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
@@ -163,7 +162,6 @@ export default class RdfaEditor extends Component {
   handleRawEditorInit(editor) {
     this.set('editor', editor);
     const handlers = [
-      RdfaBackspaceHandler.create({rawEditor: editor }),
       TextInputDataFlaggedRemoveHandler.create({rawEditor: editor})
     ];
     this.set('handlers', handlers);
