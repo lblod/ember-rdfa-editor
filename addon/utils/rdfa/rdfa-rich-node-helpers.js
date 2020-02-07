@@ -78,7 +78,10 @@ let isRdfaNode = function(richNode){
 };
 
 let findRichNode = function(rdfaBlock, { resource, property, type, datatype }) { // TODO: scope ?
-  // TODO: check at least one criterion
+  if ( !resource && !property && !type && !datatype ) {
+    console.warn('At least one of the following parameters should be filled: resource, property, type or datatype'); // eslint-disable-line no-console
+    return;
+  }
 
   // Check if the rdfaBlock has a suitable node in its context
   const hasSuitableNode = rdfaBlock.context.filter( o => { // TODO Check all cases
@@ -94,10 +97,10 @@ let findRichNode = function(rdfaBlock, { resource, property, type, datatype }) {
   if (!hasSuitableNode) return null;
 
   // Find the suitable node by walking up the dom tree
-  let besluitNode = null;
+  let suitableNode = null;
   let currentNode = rdfaBlock.semanticNode;
 
-  while (!besluitNode) {
+  while (!suitableNode) {
     if (currentNode.rdfaAttributes) {
       let condition = true;
       condition = resource ? condition && currentNode.rdfaAttributes.resource && currentNode.rdfaAttributes.resource.includes(resource) : condition;
@@ -106,7 +109,7 @@ let findRichNode = function(rdfaBlock, { resource, property, type, datatype }) {
       condition = datatype ? condition && currentNode.rdfaAttributes.datatype && currentNode.rdfaAttributes.datatype.includes(datatype) : condition;
 
       if (condition) {
-        besluitNode = currentNode;
+        suitableNode = currentNode;
       } else {
         currentNode = currentNode.parent;
       }
@@ -115,7 +118,7 @@ let findRichNode = function(rdfaBlock, { resource, property, type, datatype }) {
     }
   }
 
-  return besluitNode;
+  return suitableNode;
 }
 
 // let findUniqueRichNodes = function(rdfaBlocks, { resource, property, typeof, datatype }) {
