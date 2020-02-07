@@ -45,7 +45,10 @@ import {
   triplesDefinedInResource,
   isEmpty
 } from './editor';
-import { findRichNode } from '../rdfa/rdfa-rich-node-helpers';
+import {
+  findRichNode,
+  findUniqueRichNodes
+} from '../rdfa/rdfa-rich-node-helpers';
 import classic from 'ember-classic-decorator';
 
 const NON_BREAKING_SPACE = '\u00A0';
@@ -1155,6 +1158,9 @@ class RawEditor extends EmberObject {
    */
   findRichNode() {
     return findRichNode.bind(this)(...arguments);
+  }
+  findUniqueRichNodes() {
+    return findUniqueRichNodes.bind(this)(...arguments);
   }
 }
 

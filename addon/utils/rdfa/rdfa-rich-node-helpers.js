@@ -77,23 +77,19 @@ let isRdfaNode = function(richNode){
   return !isEmptyRdfaAttributes(richNode.rdfaAttributes);
 };
 
-let findRichNode = function(rdfaBlock, { resource, property, type, datatype }) { // TODO: scope ?
-  if ( !resource && !property && !type && !datatype ) {
-    console.warn('At least one of the following parameters should be filled: resource, property, type or datatype'); // eslint-disable-line no-console
+// TODO: Document
+let findRichNode = function(rdfaBlock, options={}) { // TODO: scope ?
+  if ( !options.resource && !options.property && !options.typeof && !options.datatype ) {
+    console.warn('At least one of the following parameters should be filled: resource, property, typeof or datatype'); // eslint-disable-line no-console
     return;
   }
 
-  // Check if the rdfaBlock has a suitable node in its context
-  const hasSuitableNode = rdfaBlock.context.filter( o => { // TODO Check all cases
-    let condition = true;
-    // We have at least one criterion so if it's not filled the condition will turn false
-    condition = resource ? condition && o.subject.includes(resource) : condition;
-    condition = property ? condition && o.property.includes(property): condition;
-    condition = type ? condition && o.object.includes(type) : condition;
-    condition = datatype ? condition && o.datatype.includes(datatype) : condition;
-    return condition;
-  }).length > 0;
+  const filter = {};
+  singleFilterKeywords.forEach( key => filter[key] = options[key] );
+  listFilterKeywords.forEach( key => filter[key] = options[key] ? [ options[key] ].flat() : [] );
 
+  // Check if the rdfaBlock has a suitable node in its context
+  const hasSuitableNode = rdfaBlock.semanticNode.rdfaAttributes ? isMatchingContext(rdfaBlock, filter) : false;
   if (!hasSuitableNode) return null;
 
   // Find the suitable node by walking up the dom tree
@@ -102,13 +98,8 @@ let findRichNode = function(rdfaBlock, { resource, property, type, datatype }) {
 
   while (!suitableNode) {
     if (currentNode.rdfaAttributes) {
-      let condition = true;
-      condition = resource ? condition && currentNode.rdfaAttributes.resource && currentNode.rdfaAttributes.resource.includes(resource) : condition;
-      condition = property ? condition && currentNode.rdfaAttributes.property && currentNode.rdfaAttributes.property.includes(property): condition;
-      condition = type ? condition && currentNode.rdfaAttributes.typeof && currentNode.rdfaAttributes.typeof.includes(type) : condition;
-      condition = datatype ? condition && currentNode.rdfaAttributes.datatype && currentNode.rdfaAttributes.datatype.includes(datatype) : condition;
-
-      if (condition) {
+      const nodeIsMatching = isMatchingRdfaAttribute(currentNode.rdfaAttributes, filter, ['resource', 'property', 'typeof', 'datatype']);
+      if (nodeIsMatching) {
         suitableNode = currentNode;
       } else {
         currentNode = currentNode.parent;
@@ -117,12 +108,116 @@ let findRichNode = function(rdfaBlock, { resource, property, type, datatype }) {
       currentNode = currentNode.parent;
     }
   }
-
   return suitableNode;
 }
 
-// let findUniqueRichNodes = function(rdfaBlocks, { resource, property, typeof, datatype }) {
-//
-// }
+// TODO: Document
+let findUniqueRichNodes = function(rdfaBlocks, options={}) {
+  let uniqueRichNodes = [];
+  rdfaBlocks.forEach( rdfaBlock => {
+    const richNode = findRichNode(rdfaBlock, options);
+    if (richNode && !uniqueRichNodes.includes(richNode)) {
+      uniqueRichNodes.push(richNode);
+    }
+  });
+  return uniqueRichNodes;
+}
 
-export { getRdfaAttributes, isRdfaNode, isEmptyRdfaAttributes, enrichRichNodeWithRdfa, findRichNode };
+
+
+
+
+
+
+// TODO: import those from select.js ?
+
+/* HELPERS */
+
+// Make an array of all filter criteria that support values
+const singleFilterKeywords = ['resource', 'datatype'];
+
+// Make an array of all filter criteria that support arrays
+const listFilterKeywords = ['typeof', 'property'];
+
+/**
+* Validates if the RDFa context a block matches all filter criteria
+* In case a criteria has multiple values, all values must appear on the same node
+*     (TODO context scanner currently only supports multi-value on typeof)
+* In case resource and type are defined, they must appear on the same node
+* In case property and datatype are defined, they must appear on the same node
+* In case resource/typeof and property are defined, property must appear as inner context
+*   of the typeof/resource node without any other typeof/resource being defined in between
+*/
+function isMatchingContext(block, filter) {
+  // Validates if the scope in which a given property appears matches the resource/typeof filter criteria
+  // The function assumes the context that is passed is retrieved from the semantic node that contains the given
+  // property as an RDFa attribute. Therefore we start walking the context array from end to start to find
+  // the triple matching the given property.
+  const isMatchingScopeForProperty = function(context, property, resource, types) {
+    let i = context.length;
+    let matchingTriple = null;
+
+    while ( !matchingTriple && i > 0 ) {
+      i--;
+      if ( context[i].predicate == property )
+        matchingTriple = context[i];
+    }
+
+    const subject = matchingTriple.subject;
+    if (resource && subject != resource)
+      return false;
+
+    if ( types.length ) {
+      const typesOfSubject = context.filter(t => t.subject == subject && t.predicate == 'a').map(t => t.object);
+      const matchesAllTypes = types.reduce( (isMatch, t) => isMatch && typesOfSubject.includes(t) , true);
+      if ( !matchesAllTypes )
+        return false;
+    }
+
+    return true;
+  };
+
+
+  if ( filter.property.length || filter.datatype ) {
+    let isMatch = isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['property', 'datatype']);
+
+    if ( isMatch && (filter.resource || filter.typeof.length) ) {
+      // we already know the properties match and appear on the same node
+      // Hence, they all have the same subject and it's sufficient to only pass the first property
+      return isMatchingScopeForProperty(block.context, filter.property[0], filter.resource, filter.typeof);
+    }
+
+    return isMatch;
+  } else if ( filter.resource || filter.typeof.length ) {
+    return isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['resource', 'typeof']);
+  }
+
+  return false; // no filter criteria defined?
+}
+
+/**
+ * Validates if the RDFa attributes of a node matches a specifc set of keys
+*/
+function isMatchingRdfaAttribute(rdfaAttributes, filter, keys) {
+  const isMatchingValue = function(rdfaAttributes, key, value) {
+    if ( listFilterKeywords.includes(key) ) {
+      return value.reduce( (isMatch, v) => isMatch && (rdfaAttributes[key] || []).includes(v) , true);
+    } else {
+      if ( key == 'resource') {
+        return rdfaAttributes['resource'] == value || rdfaAttributes['about'] == value;
+      } else {
+        return rdfaAttributes[key] == value;
+      }
+    }
+  };
+
+  const nonEmptyKeys = keys.filter( key => filter[key] && filter[key].length );
+  return nonEmptyKeys.reduce( (isMatch, key) => isMatch && isMatchingValue(rdfaAttributes, key, filter[key]), true);
+}
+
+
+
+
+
+export { getRdfaAttributes, isRdfaNode, isEmptyRdfaAttributes, enrichRichNodeWithRdfa, findRichNode, findUniqueRichNodes };
+// export { getRdfaAttributes, isRdfaNode, isEmptyRdfaAttributes, enrichRichNodeWithRdfa, findUniqueRichNodes };
