@@ -11,8 +11,12 @@ import highlightProperty from '../ce/highlight-property';
  * This is both to protect the internal dom of the editor and to remove internals
  */
 export default class RdfaDocument {
-  constructor(rootNode) {
-    this._rootNode = rootNode;
+  constructor(editor) {
+    this._rootNode = editor.rootNode;
+    this.setHtmlContent = function(html) {
+      const selection = editor.selectHighlight(editor.richNode.region);
+      editor.update(selection, { set: { innerHTML: html}});
+    };
   }
 
   get rootNode() {
