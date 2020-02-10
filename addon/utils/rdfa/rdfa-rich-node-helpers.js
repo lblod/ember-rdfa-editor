@@ -122,6 +122,8 @@ let findRichNode = function(rdfaBlock, options={}) {
   let currentNode = rdfaBlock.semanticNode;
 
   while (!suitableNode) {
+    if (!currentNode) break;
+
     if (currentNode.rdfaAttributes) {
       const nodeIsMatching = isMatchingRdfaAttribute(currentNode.rdfaAttributes, filter, ['resource', 'property', 'typeof', 'datatype']);
       if (nodeIsMatching) {
