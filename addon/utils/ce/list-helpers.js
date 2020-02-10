@@ -346,13 +346,13 @@ function getFilteredSuitableNodes(rawEditor) {
  * @param suitableNodes
  * @return Array the group logical blocks
  */
-function getGroupedLogicalBlocks(suitableNodes) {
+function getGroupedLogicalBlocks(suitableNodes, rootNode) {
   // If the suitableNodes are an array of rich nodes and ranges, we reorder the nodes and flatten it
   let orderedNodes = [];
   if (suitableNodes[0] && suitableNodes[0].range) {
     orderedNodes = reorderBlocks(suitableNodes).map(node => {
       const domNode = node.richNode.domNode;
-      if (tagName(domNode) == 'li') {
+      if (tagName(domNode) == 'li' || domNode == rootNode) {
         return [...domNode.childNodes];
       } else {
         return domNode;
