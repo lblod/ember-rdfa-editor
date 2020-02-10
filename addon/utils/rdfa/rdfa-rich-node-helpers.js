@@ -84,8 +84,26 @@ let isRdfaNode = function(richNode){
   return !isEmptyRdfaAttributes(richNode.rdfaAttributes);
 };
 
-// TODO: Document
-let findRichNode = function(rdfaBlock, options={}) { // TODO: scope ?
+/**
+ * Find the first rich node corresponding to the given options starting from the
+ * semantic node of a rdfaBlock and walking up its tree.
+ *
+ * @method findRichNode
+ *
+ * @param {Object} rdfaBlock An RDFa block
+ * @param {Object} options The options for filtering the nodes. Should have at
+ *                         least one of the following parameters:
+ *                         options = {
+ *                           resource: resource,
+ *                           property: property,
+ *                           typeof: typeof,
+ *                           datatype: datatype
+ *                         }
+ *                         Note: property and typeof can be arrays.
+ *
+ * @return {Object} The first rich node in the tree complying to the conditions.
+ */
+let findRichNode = function(rdfaBlock, options={}) {
   if ( !options.resource && !options.property && !options.typeof && !options.datatype ) {
     console.warn('At least one of the following parameters should be filled: resource, property, typeof or datatype'); // eslint-disable-line no-console
     return;
@@ -118,7 +136,26 @@ let findRichNode = function(rdfaBlock, options={}) { // TODO: scope ?
   return suitableNode;
 }
 
-// TODO: Document
+/**
+ * Given an array of rdfaBlocks and options, loop over the rdfaBlocks to find an
+ * array of unique rich nodes matching the options in the upper tree of each
+ * rdfaBlock's node
+ *
+ * @method findUniqueRichNodes
+ *
+ * @param {Array} rdfaBlocks An array of RDFa blocks
+ * @param {Object} options The options for filtering the nodes. Should have at
+ *                         least one of the following parameters:
+ *                         options = {
+ *                           resource: resource,
+ *                           property: property,
+ *                           typeof: typeof,
+ *                           datatype: datatype
+ *                         }
+ *                         Note: property and typeof can be arrays.
+ *
+ * @return {Array} An array of unique rich nodes complying to the conditions.
+ */
 let findUniqueRichNodes = function(rdfaBlocks, options={}) {
   let uniqueRichNodes = [];
   rdfaBlocks.forEach( rdfaBlock => {
