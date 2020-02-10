@@ -274,8 +274,6 @@ function indentAction(rawEditor) {
       const previousLis = currLis.map(node => findPreviousLi(node));
 
       insertNewList(rawEditor, groupedLogicalBlocks, currlistTypes[0], previousLis[0]); // Assuming all the indents are from the same parent list
-
-      currLis.forEach(node => node.remove());
     };
 
     rawEditor.externalDomUpdate('handle indentAction', handleAction, true);
@@ -562,27 +560,6 @@ function groupNodesByLogicalBlocks(nodes) {
 }
 
 /**
- * Browse the next siblings of a node to find the next non-whitespace one
- *
- * @method getNextNonWhitespaceSibling
- * @param node
- * @return Object The next non-whitespace sibling, null if none found
- */
-function getNextNonWhitespaceSibling(node) {
-  let nextSibling = node.nextSibling;
-
-  if (nextSibling) {
-    if (isAllWhitespace(nextSibling)) {
-      return getNextNonWhitespaceSibling(nextSibling);
-    } else {
-      return nextSibling;
-    }
-  } else {
-    return null;
-  }
-}
-
-/**
  * Checks whether node is in a list
  *
  *   EXAMPLES NOT IN A LIST
@@ -643,63 +620,27 @@ function areInList(nodes) {
  *
  */
 function insertNewList(rawEditor, logicalListBlocks, listType = 'ul', parentNode) {
-  let listELocationRef = logicalListBlocks[0][0];
+  let newListElementLocation = logicalListBlocks[0][0];
 
   // If the list has a child list, we should add the new indent to this existing list instead of creating a new one
   let listE = null;
 
-  const lastSelectedBlockLocationRef = logicalListBlocks[logicalListBlocks.length - 1][0];
-  const nextNonWhitespaceSibling = getNextNonWhitespaceSibling(lastSelectedBlockLocationRef);
-  const shouldMergeWithChildList = nextNonWhitespaceSibling && (tagName(nextNonWhitespaceSibling) == 'ul' || tagName(nextNonWhitespaceSibling) == 'ol');
+  if (tagName(newListElementLocation.parentNode) != "li") { // New list
+    createNewList(logicalListBlocks, parentNode, newListElementLocation, listType);
+  } else { // Indent case
+    const lastSelectedBlockLocationRef = logicalListBlocks[logicalListBlocks.length - 1][0];
+    const nextSibling = lastSelectedBlockLocationRef.nextElementSibling;
+    const shouldMergeWithChildList = nextSibling && (tagName(nextSibling) == 'ul' || tagName(nextSibling) == 'ol');
 
-  // This condition is for the case when we indent a bullet to the level of its
-  // child: we need to merge them to form a single list. If not, we create a new
-  // list element to insert the logical blocks.
-  let shouldPrepend = false;
-  if (shouldMergeWithChildList) {
-    listE = nextNonWhitespaceSibling;
-    shouldPrepend = true; // To move a parent node down to its child list we need to prepend the ex-parent to the child list
-  } else {
     listE = document.createElement(listType);
-  }
 
-  if (parentNode) {
-    parentNode.append(listE);
-  } else {
-    if (tagName(listELocationRef.parentNode) == 'li') {
-      listELocationRef = listELocationRef.parentNode;
-    }
-
-    let parent = listELocationRef.parentNode;
-    if (!parent) {
-      warn('Lists assume a parent node', {
-        id: 'list-helpers:insertNewList'
-      });
-      return;
-    }
-    parent.insertBefore(document.createTextNode(invisibleSpace), listELocationRef);
-
-    if (tagName(listELocationRef) == 'li') { // If we are in an indent case (our selection is in a list)
-      // If we have no parent node passed by indentAction (no previous li --> our selection is on top of the list)
-      // We need to create a new <li> in which our new list will be created
-      const parentListE = document.createElement('li');
-      parent.insertBefore(parentListE, listELocationRef);
-      parentListE.insertBefore(listE, parentListE.firstChild);
-    } else {
-      parent.insertBefore(listE, listELocationRef);
+    if (shouldMergeWithChildList) { // Indent selection that is going to be at the same level as its child
+      listE = nextSibling;
+      mergeWithChildList(logicalListBlocks, listE);
+    } else { // Regular
+      indentRegularCase(logicalListBlocks, parentNode, listE, newListElementLocation);
     }
   }
-
-  logicalListBlocks.forEach(listBlocks => {
-    const li = document.createElement('li');
-    if (shouldPrepend) {
-      listE.prepend(li);
-    } else {
-      listE.append(li);
-    }
-    listBlocks.forEach(n => li.appendChild(n));
-  });
-
   makeLogicalBlockCursorSafe([listE]);
 }
 
@@ -751,7 +692,6 @@ function unindentLogicalBlockContents(rawEditor, logicalBlockContents, moveOneLi
         parentE.insertBefore(listBefore, listE);
       }
 
-      parentE.insertBefore(document.createElement('br'), listE);
       block.forEach(n => parentE.insertBefore(n, listE));
 
       if (LIsAfter.length > 0) {
@@ -994,9 +934,9 @@ function growAdjacentNodesUntil(conditionLeft, conditionRight, node) {
   currNode = node.nextSibling;
   while (currNode) {
     if (conditionRight(currNode)) {
-      if (isDisplayedAsBlock(currNode)) {
-        nodes.push(currNode);
-      }
+      // if (isDisplayedAsBlock(currNode)) { // TODO : Remove that part once sure it's not needed. Has been commented out to not have sublists included that would then cause hierarchy errors when indenting.
+      //   nodes.push(currNode);
+      // }
       break;
     }
     nodes.push(currNode);
@@ -1105,6 +1045,94 @@ function makeLogicalBlockCursorSafe(logicalBlockContents) {
   logicalBlockContents.push(textNode);
 
   return logicalBlockContents;
+}
+
+/**
+ * @param logicalListBlocks Array of logical blocks belonging to the same line
+ * @param listE The list element to which we append the indented blocks
+ */
+function mergeWithChildList(logicalListBlocks, listE) {
+  listE.parentNode.insertBefore(document.createTextNode(invisibleSpace), listE);
+
+  const reversedLogicalListBlocks = logicalListBlocks.reverse();
+  for ( let i=0 ; i<reversedLogicalListBlocks.length ; i++) {
+    const listBlocks = reversedLogicalListBlocks[i];
+    let oldLi = null;
+    if (listBlocks[0]) {
+      oldLi = listBlocks[0].parentNode;
+    }
+
+    const li = document.createElement('li');
+    listE.prepend(li);
+    listBlocks.forEach(n => {
+      li.appendChild(n);
+    });
+
+    if (i != 0) {
+      oldLi.remove();
+    }
+  };
+}
+
+/**
+ * @param logicalListBlocks Array of logical blocks belonging to the same line
+ * @param parentNode If provided, the parent node where we want to insert the list in
+ * @param listE The list element to which we append the indented blocks
+ * @param newListElementLocation If no parent node, it's the element from which
+ *                               we will deduce the position of our new list
+ */
+function indentRegularCase(logicalListBlocks, parentNode, listE, newListElementLocation) {
+  if (parentNode) { // Indent -> regular -> parent node
+    parentNode.append(document.createTextNode(invisibleSpace));
+    parentNode.append(listE);
+  } else { // Indent -> regular -> no parent node : Case when the selection is the first li of the list
+    newListElementLocation = newListElementLocation.parentNode; // <li> node
+
+    // Create a ul --> fill the ul
+    newListElementLocation.append(document.createTextNode(invisibleSpace));
+    newListElementLocation.append(listE);
+  }
+  logicalListBlocks.forEach(listBlocks => {
+    const li = document.createElement('li');
+    listE.append(li);
+    let oldLi = null;
+    if (listBlocks[0]) {
+      oldLi = listBlocks[0].parentNode;
+    }
+    listBlocks.forEach(n => li.appendChild(n));
+    if (oldLi && parentNode) oldLi.remove();
+  });
+}
+
+/**
+ * @param logicalListBlocks Array of logical blocks belonging to the same line
+ * @param parentNode If provided, the parent node where we want to insert the list in
+ * @param newListElementLocation If no parent node, it's the element from which
+ *                               we will deduce the position of our new list
+ * @param listType The type of list to be inserted (ul / ol)
+ */
+function createNewList(logicalListBlocks, parentNode, newListElementLocation, listType) {
+  const listE = document.createElement(listType);
+
+  if (parentNode) {
+    parentNode.append(listE);
+  } else {
+    let parent = newListElementLocation.parentNode;
+    if (!parent) {
+      warn('Lists assume a parent node', {
+        id: 'list-helpers:insertNewList'
+      });
+      return;
+    }
+    parent.insertBefore(document.createTextNode(invisibleSpace), newListElementLocation);
+    parent.insertBefore(listE, newListElementLocation);
+  }
+
+  logicalListBlocks.forEach(listBlocks => {
+    const li = document.createElement('li');
+    listE.append(li);
+    listBlocks.forEach(n => li.appendChild(n));
+  });
 }
 
 export { unorderedListAction, orderedListAction, indentAction, unindentAction }
