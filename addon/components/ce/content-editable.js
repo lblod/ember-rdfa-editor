@@ -5,6 +5,7 @@ import { union, alias } from "@ember/object/computed";
 import Component from '@ember/component';
 import layout from '../../templates/components/ce/content-editable';
 import forgivingAction from '../../utils/ce/forgiving-action';
+import { tagName } from '../../utils/ce/dom-helpers';
 import RawEditor from '../../utils/ce/raw-editor';
 import EnterHandler from '../../utils/ce/handlers/enter-handler';
 import IgnoreModifiersHandler from '../../utils/ce/handlers/ignore-modifiers-handler';
@@ -14,8 +15,10 @@ import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handl
 import ClickHandler from '../../utils/ce/handlers/click-handler';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import TabHandler from '../../utils/ce/handlers/tab-handler';
+import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
 import { warn, runInDebug } from '@ember/debug';
+import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
 import { isEmpty } from '@ember/utils';
 import { next } from '@ember/runloop';
@@ -47,6 +50,8 @@ import { isInLumpNode,
 @templateLayout(layout)
 @attributeBindings('isEditable:contenteditable')
 export default class ContentEditable extends Component {
+  @service() features;
+
   /**
    * latest cursor position in the contenteditable, it is aliased to the rawEditor.currentSelection
    *
@@ -300,17 +305,27 @@ export default class ContentEditable extends Component {
    * currently we disable paste
    */
   paste(event) {
-    // TODO support clipboardData, we want to filter on type text/plain and use that
-    // see https://www.w3.org/TR/clipboard-apis/#paste-action
-    const paste = (event.clipboardData || window.clipboardData).getData('text'); // use 'text/html' later on for parseable content
-    const [ start , end ] = this.rawEditor.currentSelection;
-    if ( start === end ) {
-      // it's a regular cursor, not a selection
-      this.rawEditor.insertText(paste, this.rawEditor.currentPosition);
-      this.rawEditor.setCurrentPosition(start + paste.length);
+    // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
+    if (this.features.isEnabled('editor-html-paste')) {
+      try {
+        const inputParser = new HTMLInputParser({});
+        const htmlPaste = (event.clipboardData || window.clipboardData).getData('text/html');
+        const cleanHTML = inputParser.cleanupHTML(htmlPaste);
+        const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
+        this.rawEditor.update(sel, {set: { innerHTML: cleanHTML}});
+      }
+      catch(e) {
+        // fall back to text pasting
+        console.warn(e);
+        const text = (event.clipboardData || window.clipboardData).getData('text');
+        const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
+        this.rawEditor.update(sel, {set: { innerHTML: text}});
+      }
     }
     else {
-      alert('plakken over selecties wordt niet ondersteund');
+      const text = (event.clipboardData || window.clipboardData).getData('text');
+      const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
+      this.rawEditor.update(sel, {set: { innerHTML: text}});
     }
     event.preventDefault();
     return false;
