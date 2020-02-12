@@ -326,10 +326,6 @@ function getFilteredSuitableNodes(rawEditor) {
     filteredSuitableNodes = suitableNodes.filter(node => {
       return !(isAdjacentRange(node.range, range) && node.split);
     });
-
-    if (rawEditor.currentSelection) { // If selection, we set the cursor at the end of the selection
-      rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
-    }
   }
 
   return filteredSuitableNodes;
@@ -640,6 +636,10 @@ function insertNewList(rawEditor, logicalListBlocks, listType = 'ul', parentNode
     } else { // Regular
       indentRegularCase(logicalListBlocks, parentNode, listE, newListElementLocation);
     }
+  }
+
+  if (rawEditor.currentSelection) { // If selection, we set the cursor at the end of the selection
+    rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
   }
   makeLogicalBlockCursorSafe([listE]);
 }
