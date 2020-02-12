@@ -15,8 +15,10 @@ import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handl
 import ClickHandler from '../../utils/ce/handlers/click-handler';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import TabHandler from '../../utils/ce/handlers/tab-handler';
+import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
 import { warn, runInDebug } from '@ember/debug';
+import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
 import { isEmpty } from '@ember/utils';
 import { next } from '@ember/runloop';
@@ -297,85 +299,17 @@ export default class ContentEditable extends Component {
     this.lastKeyDown = event;
   }
 
-  cleanupHTML(html) {
-    const parser = new DOMParser();
-    const document = parser.parseFromString(html, "text/html");
-    const rootNode = document.querySelector('body');
-    const cleanedNode = this.cleanupNode(rootNode);
-    return cleanedNode.innerHTML;
-  }
-
-  cleanupNode(node) {
-    const SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
-    const UNEDITABLE_TAGS = [];
-    const SAFE_TAGS = ['a', 'br', 'body', 'code', 'data', 'datalist', 'div', 'dl', 'dt', 'dd', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'li', 'link', 'meta', 'nav', 'ol', 'p', 'pre', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'template', 'th', 'thead',  'time', 'tr', 'ul', 'var', 'wbr' ];
-    const TAG_MAP = {
-      b: 'strong',
-      i: 'em',
-      del: 's',
-      mark: 'span'
-    };
-    let cleanedNode;
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      const tag = tagName(node);
-      if (TAG_MAP[tag]) {
-        cleanedNode = document.createElement(TAG_MAP[tag]);
-      }
-      else if (!SAFE_TAGS.includes(tag)) {
-        if (node.childNodes.length > 0) {
-          cleanedNode = document.createElement('div');
-        }
-      }
-      else {
-        cleanedNode = document.createElement(tag);
-      }
-
-      if (UNEDITABLE_TAGS.includes(tag)) {
-        cleanedNode.setAttribute('contenteditable', false);
-      }
-      for (let attribute of SAFE_ATTRIBUTES) {
-        if (node.hasAttribute(attribute))
-          cleanedNode.setAttribute(attribute, node.getAttribute(attribute));
-      }
-
-      if (node.hasChildNodes()) {
-        let children = node.childNodes;
-        for (let i = 0; i < children.length; i++) {
-          const cleanedChild = this.cleanupNode(children[i]);
-          if (cleanedChild) {
-            if (UNEDITABLE_TAGS.includes(tag)) {
-              // make sure we can place the cursor before the non editable element
-              cleanedNode.appendChild(document.createTextNode(""));
-            }
-            cleanedNode.appendChild(cleanedChild);
-            if (UNEDITABLE_TAGS.includes(tag)) {
-              // make sure we can place the cursor after the non editable element
-              cleanedNode.appendChild(document.createTextNode(""));
-            }
-          }
-        }
-      }
-      if (cleanedNode && cleanedNode.attributes.length == 0 && cleanedNode.childNodes.length == 0 && new String(cleanedNode.textContent).trim().length == 0) {
-        return null;
-      }
-    }
-    else if (node.nodeType === Node.TEXT_NODE) {
-      cleanedNode = node.cloneNode();
-    }
-    return cleanedNode;
-  }
-
   /**
    * currently we disable paste
    */
   paste(event) {
-    // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
     try {
-      const htmlPaste = (event.clipboardData || window.clipboardData).getData('text/html');
-      const cleanHTML = this.cleanupHTML(htmlPaste);
-      console.log(cleanHTML);
-      const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
-      this.rawEditor.update(sel, {set: { innerHTML: cleanHTML}});
+      // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
+        const inputParser = new HTMLInputParser({});
+        const htmlPaste = (event.clipboardData || window.clipboardData).getData('text/html');
+        const cleanHTML = inputParser.cleanupHTML(htmlPaste);
+        const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
+        this.rawEditor.update(sel, {set: { innerHTML: cleanHTML}});
     }
     catch(e) {
       // fall back to text pasting
@@ -384,8 +318,8 @@ export default class ContentEditable extends Component {
       const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
       this.rawEditor.update(sel, {set: { innerHTML: text}});
     }
-      event.preventDefault();
-      return false;
+    event.preventDefault();
+    return false;
   }
 
   /**
