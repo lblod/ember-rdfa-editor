@@ -50,6 +50,8 @@ import { isInLumpNode,
 @templateLayout(layout)
 @attributeBindings('isEditable:contenteditable')
 export default class ContentEditable extends Component {
+  @service() features;
+
   /**
    * latest cursor position in the contenteditable, it is aliased to the rawEditor.currentSelection
    *
@@ -303,17 +305,24 @@ export default class ContentEditable extends Component {
    * currently we disable paste
    */
   paste(event) {
-    try {
-      // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
+    // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
+    if (this.features.isEnabled('editor-html-paste')) {
+      try {
         const inputParser = new HTMLInputParser({});
         const htmlPaste = (event.clipboardData || window.clipboardData).getData('text/html');
         const cleanHTML = inputParser.cleanupHTML(htmlPaste);
         const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
         this.rawEditor.update(sel, {set: { innerHTML: cleanHTML}});
+      }
+      catch(e) {
+        // fall back to text pasting
+        console.warn(e);
+        const text = (event.clipboardData || window.clipboardData).getData('text');
+        const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
+        this.rawEditor.update(sel, {set: { innerHTML: text}});
+      }
     }
-    catch(e) {
-      // fall back to text pasting
-      console.warn(e);
+    else {
       const text = (event.clipboardData || window.clipboardData).getData('text');
       const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
       this.rawEditor.update(sel, {set: { innerHTML: text}});
