@@ -33,9 +33,6 @@ class HTMLInputParser {
     const parser = new DOMParser();
     const document = parser.parseFromString(html, "text/html");
     const rootNode = document.body;
-    if (!rootNode) {
-      // no body was found assume this is a html snippet and take all nodes
-    }
     const cleanedNode = this.cleanupNode(rootNode);
     return cleanedNode.innerHTML;
   }

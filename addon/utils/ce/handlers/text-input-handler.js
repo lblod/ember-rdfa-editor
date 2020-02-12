@@ -54,7 +54,6 @@ export default EmberObject.extend({
       let endNode = rawEditor.getRichNodeFor(range.endContainer);
       let end = rawEditor.calculatePosition(endNode, range.endOffset);
       let elements = rawEditor.replaceTextWithHTML(start, end, input);
-      this.set('currentNode', elements[0]);
       rawEditor.setCurrentPosition(start + input.length);
     }
     return HandlerResponse.create(

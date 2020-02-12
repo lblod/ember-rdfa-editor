@@ -1,33 +1,26 @@
 import classic from "ember-classic-decorator";
-import { attributeBindings, layout as templateLayout } from "@ember-decorators/component";
-import { action, computed } from "@ember/object";
+import { layout as templateLayout } from "@ember-decorators/component";
+import { action } from "@ember/object";
 import { union, alias } from "@ember/object/computed";
 import Component from '@ember/component';
 import layout from '../../templates/components/ce/content-editable';
 import forgivingAction from '../../utils/ce/forgiving-action';
-import { tagName } from '../../utils/ce/dom-helpers';
 import RawEditor from '../../utils/ce/raw-editor';
 import EnterHandler from '../../utils/ce/handlers/enter-handler';
 import IgnoreModifiersHandler from '../../utils/ce/handlers/ignore-modifiers-handler';
 import BackspaceHandler from '../../utils/ce/handlers/backspace-handler';
 import TextInputHandler from '../../utils/ce/handlers/text-input-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
+import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
 import ClickHandler from '../../utils/ce/handlers/click-handler';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import TabHandler from '../../utils/ce/handlers/tab-handler';
 import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
-import { warn, runInDebug } from '@ember/debug';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
-import { isEmpty } from '@ember/utils';
 import { next } from '@ember/runloop';
-import { isInLumpNode,
-         getNextNonLumpTextNode,
-         getPreviousNonLumpTextNode,
-         getParentLumpNode,
-         animateLumpNode
-       } from '../../utils/ce/lump-node-utils';
+
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
  * It provides handlers for input events, a component to display a contenteditable element and an api for interaction with the document and its internal document representation.
@@ -48,8 +41,8 @@ import { isInLumpNode,
  */
 @classic
 @templateLayout(layout)
-@attributeBindings('isEditable:contenteditable')
 export default class ContentEditable extends Component {
+  tagName = ''
   @service() features;
 
   /**
@@ -84,18 +77,6 @@ export default class ContentEditable extends Component {
    * @private
    */
   rootNode = null;
-
-  /**
-   * string representation of editable
-   *
-   * @property isEditable
-   * @type string
-   * @private
-   */
-  @computed('editable')
-  get isEditable() {
-    return this.get('editable').toString();
-  }
 
   /**
    * richNode is the rich representation of the component element,
@@ -165,14 +146,14 @@ export default class ContentEditable extends Component {
 
     const defaultInputHandlers = [ ArrowHandler.create({rawEditor}),
                                    HeaderMarkdownHandler.create({rawEditor}),
-                                   // EmphasisMarkdownHandler.create({rawEditor}),
-                                   // ListInsertionMarkdownHandler.create({rawEditor}),
                                    ClickHandler.create({rawEditor}),
                                    EnterHandler.create({rawEditor}),
                                    BackspaceHandler.create({rawEditor}),
                                    TextInputHandler.create({rawEditor}),
                                    TabHandler.create({rawEditor}),
-                                   IgnoreModifiersHandler.create({rawEditor})];
+                                   IgnoreModifiersHandler.create({rawEditor}),
+                                   new FallbackInputHandler({rawEditor})
+                                 ];
 
     this.set('currentTextContent', '');
     this.set('currentSelection', [0,0]);
@@ -229,24 +210,15 @@ export default class ContentEditable extends Component {
    * didRender hook, makes sure the element is focused
    * and calls the rootNodeUpdated action
    *
-   * @method didRender
+   * @method insertedEditorElement
    */
-  didInsertElement() {
-    super.didInsertElement(...arguments);
-    this.set('rawEditor.rootNode', this.get('element'));
-    let el = this.get('element');
-    // TODO: mapping using customEvents currently doesn't work, remove when it does
-    el.onpaste = (event) => this.paste(event);
-    if (this.get('focused'))
-      el.focus();
-    this.set('rawEditor.currentNode', this.rawEditor.rootNode);
-    forgivingAction('rawEditorInit', this)(this.get('rawEditor'));
-    next( () => {
-      forgivingAction('elementUpdate', this)();
-      this.get('rawEditor').generateDiffEvents.perform();
-      this.extractAndInsertComponents();
-      this.get('rawEditor').updateRichNode();
-    });
+  @action
+  insertedEditorElement(element) {
+    this.rawEditor.rootNode =  element;
+    this.rawEditor.updateRichNode();
+    this.rawEditor.setCurrentPosition(0);
+    this.rawEditor.generateDiffEvents.perform();
+    forgivingAction('rawEditorInit', this)(this.rawEditor);
   }
 
   /**
@@ -261,49 +233,83 @@ export default class ContentEditable extends Component {
     forgivingAction('elementUpdate', this)();
   }
 
+
+  /**
+   * the following block handles input, as it's taken some research I'll dump some knowledge and assumptions here
+   * take this with a grain of salt, because the spec is somewhat unclear and not all browser implement the same order:
+   *
+   * Chain 1: (regular input)
+   * keydown (captured if you want to prevent the key from doing something do it here, preventdefault will prevent keypress and input from firing)
+   * keypress (we ignore this, it's badly spec'ed and behaves differently in different browsers)
+   * keyup (we should ignore this, because it fires even if keydown does a preventDefault. however it is one of the few places we can capture page up, page down, arrow up and down so we capture those here using the fallback input handler)
+   * input (captured, input has happened and all you can down is clean up)
+   *
+   * Chain 2 ( in FF input fires after compositionend): compositions (mostly on mac)
+   * compositionupdate (we ignore this)
+   * input (we capture this)
+   * compositionend (we capture this, if input has preventdefault this doesn't fire. not well tested)
+   *
+   * Chain 3: copy, cut, paste, undo (may be broken if event order changes)
+   * keydown (captured, we try to ignore the event here and let it bubble)
+   * keypress (we ignore this, see above)
+   * keyup (we ignore this, see above)
+   * paste/copy/cut/undo (we capture these)
+   * input (prevent default prevents this one from triggering)
+   */
+
   /**
    * keyDown events are handled for simple input we take over from
    * browser input.
    */
-  keyDown(event) {
-    event = normalizeEvent(event);
-    if (this.isHandledInputEvent(event)) {
-      if (this.isCtrlZ(event)) {
+
+  @action
+  handleKeyDown(event) {
+    if (! this.keydownMapsToOtherEvent(event)) {
+      const preventDefault = this.passEventToHandlers( event );
+      if (preventDefault) {
         event.preventDefault();
-        this.get('rawEditor').undo();
       }
-      else {
-        let handlers = this.get('inputHandlers').filter(h => h.isHandlerFor(event));
-        try {
-          handlers.some( handler => {
-            let response = handler.handleEvent(event);
-            if (!response.get('allowBrowserDefault'))
-              event.preventDefault();
-            if (!response.get('allowPropagation'))
-              return true;
-            return false;
-          });
-        }
-        catch(e) {
-          warn(`handler failure`, {id: 'contenteditable.keydown.handler'});
-          warn(e, {id: 'contenteditable.keydown.handler'});
-        }
-      }
-      this.get('rawEditor').updateRichNode();
-      this.get('rawEditor').generateDiffEvents.perform();
-      this.capturedEvents.pushObject(event); // TODO: figure this out again
     }
-    else {
-      runInDebug( () => {
-        console.warn('unhandled keydown', event); //eslint-disable-line no-console
-      });
-    }
-    this.lastKeyDown = event;
   }
 
   /**
-   * currently we disable paste
+   * keyDown events are handled for simple input we take over from
+   * browser input.
    */
+
+  @action
+  handleKeyUp(event) {
+    const preventDefault = this.passEventToHandlers( event );
+    if (preventDefault) {
+      event.preventDefault();
+    }
+  }
+  /**
+   * reading of blogs and part of the spec seems to indicate capture input is the safest way to capture input
+   * this method is only called for input that hasn't been handled in earlier events (like keydown)
+   */
+  @action
+  handleInput(event) {
+    const preventDefault = this.passEventToHandlers( event );
+    if (preventDefault)
+      event.preventDefault();
+  }
+
+  /**
+   * compositionEnd events are parsed for complex input, for uncaptured events we update
+   * the internal state to be inline with reality
+   */
+  @action
+  compositionEnd(event) {
+    const preventDefault = this.passEventToHandlers( event );
+    if (preventDefault)
+      event.preventDefault();
+  }
+
+  /**
+   * paste events are parsed and handled as good as possible
+   */
+  @action
   paste(event) {
     // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
     if (this.features.isEnabled('editor-html-paste')) {
@@ -316,7 +322,7 @@ export default class ContentEditable extends Component {
       }
       catch(e) {
         // fall back to text pasting
-        console.warn(e);
+        console.warn(e); //eslint-ignore-line no-console
         const text = (event.clipboardData || window.clipboardData).getData('text');
         const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
         this.rawEditor.update(sel, {set: { innerHTML: text}});
@@ -332,139 +338,74 @@ export default class ContentEditable extends Component {
   }
 
   /**
-   * keyUp events are parsed for complex input, for uncaptured events we update
-   * the internal state to be inline with reality
+   * cut isn't allowed at the moment
    */
-  keyUp(event) {
-    this.handleUncapturedEvent(event);
+  @action
+  cut(event) {
+    event.preventDefault();
   }
 
   /**
-   * compositionEnd events are parsed for complex input, for uncaptured events we update
-   * the internal state to be inline with reality
+   * copy is relegated to the browser for now
    */
-  compositionEnd(event) {
-    this.handleUncapturedEvent(event);
-  }
-
-  mouseUp(event) {
-    this.get('rawEditor').updateRichNode();
-    this.get('rawEditor').updateSelectionAfterComplexInput(event);
-    this.get('rawEditor').generateDiffEvents.perform();
-  }
-
-  mouseDown(event){
-    event = normalizeEvent(event);
-
-    // TODO: merge handling flow
-    if (!this.isHandledInputEvent(event)) {
-      runInDebug( () => {
-        console.warn('unhandled mouseDown', event); //eslint-disable-line no-console
-      });
-    }
-    else {
-
-      let handlers = this.get('inputHandlers').filter(h => h.isHandlerFor(event));
-
-      try {
-        for(let handler of handlers){
-          let response = handler.handleEvent(event);
-          if (!response.get('allowBrowserDefault'))
-            event.preventDefault();
-          if (!response.get('allowPropagation'))
-            break;
-        }
-      }
-      catch(e){
-        warn(`handler failure`, {id: 'contenteditable.mousedown.handler'});
-        warn(e, {id: 'contenteditable.mousedown.handler'});
-      }
-    }
-    this.get('rawEditor').updateRichNode();
-    this.get('rawEditor').generateDiffEvents.perform();
-  }
-
-  handleUncapturedEvent(event) {
-    event = normalizeEvent(event);
-    if (isEmpty(this.capturedEvents) || this.capturedEvents[0].key !== event.key || this.capturedEvents[0].target !== event.target) {
-      this.set('capturedEvents', A()); // TODO: added this because tracking of captured events is broken, fix it
-      this.get('rawEditor').externalDomUpdate('uncaptured input event', () => {});
-    }
-    else {
-      this.capturedEvents.shiftObject();
-    }
-    this.performBrutalRepositioningForLumpNode(this.lastKeyDown);
-  }
-
-  /**
-   * find defined components, and recreate them
-   */
-  extractAndInsertComponents() {
-    for (let element of this.get('element').querySelectorAll('[data-contenteditable-cw-id]')) {
-      let name = element.getAttribute('data-contenteditable-cw-name');
-      let content = JSON.parse(element.getAttribute('data-contenteditable-cw-content'));
-      let id = element.getAttribute('data-contenteditable-cw-id');
-      let parent = element.parentNode;
-      parent.innerHTML = '';
-      this.rawEditor.insertComponent(parent, name, content, id);
-    }
-  }
-
-  /**
-   * specifies whether an input event is "simple" or not
-   * simple events can be translated to a increment of the cursor position
-   *
-   * @method isSimpleTextInputEvent
-   * @param {DOMEvent} event
-   *
-   * @return {Boolean}
-   * @private
-   */
-  isHandledInputEvent(event) {
-    event = normalizeEvent(event);
-    return this.isCtrlZ(event) || this.get('inputHandlers').filter(h => h.isHandlerFor(event)).length > 0;
-  }
-
-  isCtrlZ(event) {
-    return event.ctrlKey && event.key === 'z';
-  }
-
-  /**
-   * This is a brutal repositioning of the cursor where in ends up in forbidden zones.
-   * This is method exists because some elegant handling (ArrowUp,-Down, PageUp)
-   * When there are some extra rules of where the cursor should be placed in the DOM-tree, which is too complex
-   * for the current handlers, or not implemented yet in the handlers, this method is your last resort.
-   * It performs a rather brutal re-positioning, so this could have some funky effect for the users.
-   * Current implemenation only cares about situations where this repositioning would matter less to the user.
-   */
-  performBrutalRepositioningForLumpNode(previousEvent){
-    const editor = this.rawEditor;
-    const textNode = editor.currentNode;
-    const rootNode = editor.rootNode;
-    if(! previousEvent || ! textNode) return;
-
-    //Handle the lumpNode (the 'lumpNode is lava!'-game) cases
-    let nextValidTextNode = null;
-    if(isInLumpNode(textNode, rootNode)){
-      const parentLumpNode = getParentLumpNode(textNode, rootNode);
-      animateLumpNode(parentLumpNode);
-      if(previousEvent.type === "keydown" && (previousEvent.key === 'ArrowUp' || previousEvent.key === 'PageUp')) {
-        nextValidTextNode = getPreviousNonLumpTextNode(textNode, rootNode);
-        editor.updateRichNode();
-        editor.setCarret(nextValidTextNode, nextValidTextNode.length);
-      }
-
-      else if(previousEvent.type === "keydown" && previousEvent.key === 'ArrowDown' || previousEvent.key === 'PageDown'){
-        nextValidTextNode = getNextNonLumpTextNode(textNode, rootNode);
-        editor.updateRichNode();
-        editor.setCarret(nextValidTextNode, 0);
-      }
-    }
-
+  @action
+  copy( /* event */) {
+    //not handling just yet
   }
 
   @action
-  removeComponent(id) {
-    this.rawEditor.removeComponent(id);
+  handleMouseUp(event) {
+    const preventDefault = this.passEventToHandlers( event );
+    if (preventDefault)
+      event.preventDefault();
+  }
+
+  @action
+  handleMouseDown(/* event */){
+    // not handling just yet
+  }
+
+  @action
+  undo( /* event */) {
+    this.rawEditor.undo();
+  }
+
+  /**
+   * passes an event to handlers and returns whether the event default should be prevented or not
+   * @method passEventToHandlers
+   * @param {DOMEvent} event
+   * @return {Boolean}
+   * @private
+   */
+  passEventToHandlers(event) {
+    event = normalizeEvent(event);
+    const handlers = this.inputHandlers.filter( h => h.isHandlerFor(event));
+    if (handlers.length > 0) {
+      let preventDefault = false;
+      for (let handler of handlers) {
+        const handlerResponse = handler.handleEvent(event);
+        if (! handlerResponse.allowBrowserDefault) {
+          // if one handler decided the event default (e.g. browser bubbling) should be prevented we do so.
+          preventDefault = true;
+        }
+        if (! handlerResponse.allowPropagation) {
+          // handler does not allow this event to be passed to other handlers return immediately
+          break;
+        }
+      }
+      return preventDefault;
+    }
+    else {
+      return false;
+    }
+  }
+
+  /**
+   * tries to find and identify common keyboard shortcuts which emit other events we can tap in to
+   * currently tries to catch copy, paste, cut and undo. definitly needs testing on mac
+   * @method keydownMapsToOtherEvent
+   */
+  keydownMapsToOtherEvent(event) {
+    return (event.ctrlKey || event.metaKey ) && ["z","v","c","x"].includes(event.key);
   }
 }
