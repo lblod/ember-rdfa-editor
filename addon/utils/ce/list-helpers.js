@@ -1034,7 +1034,7 @@ function isNodeCursorSafe(node, before = true) {
  * (This function is basically something which should be executed at anthoer level)
  */
 function makeLogicalBlockCursorSafe(logicalBlockContents) {
-  if (logicalBlockContents.length == 0) return logicalBlockContents;
+  if (logicalBlockContents.length == 0 || logicalBlockContents[0] == null) return logicalBlockContents;
 
   let firstNode = logicalBlockContents[0];
 
