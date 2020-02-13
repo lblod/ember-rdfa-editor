@@ -692,7 +692,13 @@ function unindentLogicalBlockContents(rawEditor, logicalBlockContents, moveOneLi
         parentE.insertBefore(listBefore, listE);
       }
 
-      block.forEach(n => parentE.insertBefore(n, listE));
+      block.forEach( n => {
+        if (!isInList(listE) && !moveOneListUpwards) { // We are in highest list in context --> need brs to materialize the different lines after removing the list structure
+          let br = document.createElement('br');
+          parentE.insertBefore(br, listE);
+        }
+        parentE.insertBefore(n, listE);
+      });
 
       if (LIsAfter.length > 0) {
         let listAfter = createParentWithLogicalBlockContents(LIsAfter, listType);
@@ -720,7 +726,7 @@ function unindentLogicalBlockContents(rawEditor, logicalBlockContents, moveOneLi
     if (moveOneListUpwards) {
       let li = createParentWithLogicalBlockContents(block, 'li');
       let newLIs = [...LIsBefore, li, ...LIsAfter];
-      newLIs.forEach(n => listE.appendChild(n));
+      newLIs.forEach( n => listE.appendChild(n) );
       listE.removeChild(currLI);
     }
   });
@@ -978,7 +984,13 @@ function siblingsBeforeAndAfterLogicalBlockContents(allSiblings, logicalBlockCon
 
 function createParentWithLogicalBlockContents(logicalBlockContents, type) {
   let element = document.createElement(type);
-  logicalBlockContents.forEach(n => element.appendChild(n));
+  logicalBlockContents.forEach(n => {
+    // If it's the child of a <ul> but not the first, insert an invisible space to have a line break (avoid having two dots on the same line)
+    if ((tagName(n.parentNode) == 'ul') && (n.parentNode.firstChild != n)) {
+      element.appendChild(document.createTextNode(invisibleSpace));
+    }
+    element.appendChild(n);
+  });
   return element;
 }
 
