@@ -1108,6 +1108,7 @@ function indentRegularCase(logicalListBlocks, parentNode, listE, newListElementL
     newListElementLocation.append(document.createTextNode(invisibleSpace));
     newListElementLocation.append(listE);
   }
+
   logicalListBlocks.forEach(listBlocks => {
     const li = document.createElement('li');
     listE.append(li);
@@ -1116,7 +1117,7 @@ function indentRegularCase(logicalListBlocks, parentNode, listE, newListElementL
       oldLi = listBlocks[0].parentNode;
     }
     listBlocks.forEach(n => li.appendChild(n));
-    if (oldLi && parentNode) oldLi.remove();
+    if (oldLi && (oldLi.childElementCount == 0)) oldLi.remove();
   });
 }
 
