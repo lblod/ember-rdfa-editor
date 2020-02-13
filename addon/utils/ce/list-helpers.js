@@ -724,6 +724,10 @@ function unindentLogicalBlockContents(rawEditor, logicalBlockContents, moveOneLi
       listE.removeChild(currLI);
     }
   });
+
+  if (rawEditor.currentSelection) { // If selection, we set the cursor at the end of the selection
+    rawEditor.setCurrentPosition(rawEditor.currentSelection[1]);
+  }
 }
 
 /**
