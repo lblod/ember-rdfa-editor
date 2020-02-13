@@ -343,5 +343,9 @@ function filterOuter(blocks, filter, [start, end]) {
 export {
   selectCurrentSelection,
   selectHighlight,
-  selectContext
+  selectContext,
+  singleFilterKeywords,
+  listFilterKeywords,
+  isMatchingContext,
+  isMatchingRdfaAttribute
 }

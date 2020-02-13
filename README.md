@@ -21,11 +21,32 @@ To include the editor in a template
     {{rdfa-editor class="rdfa-editor" profile=profile value=editorDocument.content rdfaEditorInit=(action "handleRdfaEditorInit")}}
 
 ```
+
+## Feature flags
+Some experimental features of the editor are hidden behind feature flags. They can be enabled for testing, but probably should not be enabled on a production system. 
+The flags can be set in the config/environment.js of your application.
+
+```
+// config/environment.js
+module.exports = function(environment) {
+  var ENV = {
+    featureFlags: {
+      'editor-html-paste': true,
+    }
+  };
+
+  if (environment === 'production') {
+    ENV.featureFlags['editor-html-paste'] = false;
+  }
+
+  return ENV;
+};
+```
+* editor-html-paste
+
 ## Compatibility
 
-* Ember.js v3.4 or above
-* Ember CLI v2.13 or above
-* Node.js v8 or above
+* Ember.js v3.12 or above
 
 ## Contributing
 
