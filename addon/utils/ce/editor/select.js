@@ -128,7 +128,7 @@ function selectHighlight([start,end], options = {}) {
  * - typeof: string of URI or array of URIs containing the types which must apply.
  * - datatype: string of URI containing the datatype which must apply.
  * - resource: string of URI containing the resource which must apply.
- * - TODO content: string or regular expression of RDFa content.
+ * - content: string or regular expression of RDFa content.
  * - TODO attribute: string or regular expression of attribute available on the node.
  */
 function selectContext([start,end], options = {}) {
@@ -175,7 +175,7 @@ function selectContext([start,end], options = {}) {
 /**
  * List of keywords to filter contexts on that can only contain a single value
 */
-const singleFilterKeywords = ['resource', 'datatype'];
+const singleFilterKeywords = ['resource', 'datatype', 'content'];
 
 /**
  * List of keywords to filter contexts on that can be either a single value or an array
@@ -232,7 +232,7 @@ function isMatchingContext(block, filter) {
 
     if ( types.length ) {
       const typesOfSubject = context.filter(t => t.subject == subject && t.predicate == 'a').map(t => t.object);
-      const matchesAllTypes = types.reduce( (isMatch, t) => isMatch && typesOfSubject.includes(t) , true);
+      const matchesAllTypes = types.reduce( (isMatch, t) => isMatch && (t instanceof RegExp && typesOfSubject.match(t)) && typesOfSubject.includes(t) , true);
       if ( !matchesAllTypes )
         return false;
     }
@@ -240,22 +240,24 @@ function isMatchingContext(block, filter) {
     return true;
   };
 
-
+  let isMatch = true;
   if ( filter.property.length || filter.datatype ) {
-    let isMatch = isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['property', 'datatype']);
+    isMatch = isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['property', 'datatype']);
 
     if ( isMatch && (filter.resource || filter.typeof.length) ) {
       // we already know the properties match and appear on the same node
       // Hence, they all have the same subject and it's sufficient to only pass the first property
-      return isMatchingScopeForProperty(block.context, filter.property[0], filter.resource, filter.typeof);
+      isMatch = isMatchingScopeForProperty(block.context, filter.property[0], filter.resource, filter.typeof);
     }
-
-    return isMatch;
   } else if ( filter.resource || filter.typeof.length ) {
-    return isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['resource', 'typeof']);
+    isMatch = isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['resource', 'typeof']);
   }
 
-  return false; // no filter criteria defined?
+  if(isMatch && filter.content) {
+    isMatch = isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['content'])
+  }
+
+  return isMatch; // If no filter criteria matches all by default
 }
 
 /**
