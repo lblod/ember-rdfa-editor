@@ -184,8 +184,15 @@ const listFilterKeywords = ['typeof', 'property'];
 
 /**
  * Validates if the RDFa attributes of a node matches a specifc set of keys
+ * Options:
+ *  - matching: Sets the way the matching works, if full the property must be exactly equal to the value provided,
+ *    if partial the property must contain the value provided
+ * TODO: allow RegEx to use on properties with multiple values
 */
-function isMatchingRdfaAttribute(rdfaAttributes, filter, keys) {
+function isMatchingRdfaAttribute(rdfaAttributes, filter, keys, options = {}) {
+  if(!options.matching) {
+    options.matching = 'full'
+  }
   const isMatchingValue = function(rdfaAttributes, key, value) {
     if ( listFilterKeywords.includes(key) ) {
       return value.reduce( (isMatch, v) => isMatch && (rdfaAttributes[key] || []).includes(v) , true);
@@ -193,12 +200,21 @@ function isMatchingRdfaAttribute(rdfaAttributes, filter, keys) {
       if ( key == 'resource') {
         return rdfaAttributes['resource'] == value || rdfaAttributes['about'] == value;
       } else {
-        return rdfaAttributes[key] == value;
+        if(!rdfaAttributes[key]) {
+          return false
+        }
+        if(value instanceof RegExp) {
+          return rdfaAttributes[key].match(value)
+        } else if(options.matching === 'partial') {
+          return rdfaAttributes[key].includes(value);
+        } else {
+          return rdfaAttributes[key] == value;
+        }
       }
     }
   };
 
-  const nonEmptyKeys = keys.filter( key => filter[key] && filter[key].length );
+  const nonEmptyKeys = keys.filter( key => filter[key] && (filter[key] instanceof RegExp || filter[key].length) );
   return nonEmptyKeys.reduce( (isMatch, key) => isMatch && isMatchingValue(rdfaAttributes, key, filter[key]), true);
 }
 
@@ -232,7 +248,7 @@ function isMatchingContext(block, filter) {
 
     if ( types.length ) {
       const typesOfSubject = context.filter(t => t.subject == subject && t.predicate == 'a').map(t => t.object);
-      const matchesAllTypes = types.reduce( (isMatch, t) => isMatch && (t instanceof RegExp && typesOfSubject.match(t)) && typesOfSubject.includes(t) , true);
+      const matchesAllTypes = types.reduce( (isMatch, t) => isMatch && ((t instanceof RegExp && typesOfSubject.match(t)) || (typeof t === 'string' && typesOfSubject.includes(t))) , true);
       if ( !matchesAllTypes )
         return false;
     }
