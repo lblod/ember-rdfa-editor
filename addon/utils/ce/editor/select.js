@@ -189,10 +189,7 @@ const listFilterKeywords = ['typeof', 'property'];
  *    if partial the property must contain the value provided
  * TODO: allow RegEx to use on properties with multiple values
 */
-function isMatchingRdfaAttribute(rdfaAttributes, filter, keys, options = {}) {
-  if(!options.matching) {
-    options.matching = 'full'
-  }
+function isMatchingRdfaAttribute(rdfaAttributes, filter, keys) {
   const isMatchingValue = function(rdfaAttributes, key, value) {
     if ( listFilterKeywords.includes(key) ) {
       return value.reduce( (isMatch, v) => isMatch && (rdfaAttributes[key] || []).includes(v) , true);
@@ -205,8 +202,6 @@ function isMatchingRdfaAttribute(rdfaAttributes, filter, keys, options = {}) {
         }
         if(value instanceof RegExp) {
           return rdfaAttributes[key].match(value)
-        } else if(options.matching === 'partial') {
-          return rdfaAttributes[key].includes(value);
         } else {
           return rdfaAttributes[key] == value;
         }
