@@ -249,7 +249,9 @@ function isMatchingContext(block, filter) {
   };
 
   let isMatch = true;
+  let hasAnyFilters = false;
   if ( filter.property.length || filter.datatype ) {
+    hasAnyFilters = true;
     isMatch = isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['property', 'datatype']);
 
     if ( isMatch && (filter.resource || filter.typeof.length) ) {
@@ -258,14 +260,16 @@ function isMatchingContext(block, filter) {
       isMatch = isMatchingScopeForProperty(block.context, filter.property[0], filter.resource, filter.typeof);
     }
   } else if ( filter.resource || filter.typeof.length ) {
+    hasAnyFilters = true;
     isMatch = isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['resource', 'typeof']);
   }
 
   if(isMatch && filter.content) {
+    hasAnyFilters = true;
     isMatch = isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['content'])
   }
 
-  return isMatch; // If no filter criteria matches all by default
+  return isMatch && hasAnyFilters; // If no filter criteria matches nothing by default
 }
 
 /**
