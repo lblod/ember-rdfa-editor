@@ -184,9 +184,6 @@ const listFilterKeywords = ['typeof', 'property'];
 
 /**
  * Validates if the RDFa attributes of a node matches a specifc set of keys
- * Options:
- *  - matching: Sets the way the matching works, if full the property must be exactly equal to the value provided,
- *    if partial the property must contain the value provided
  * TODO: allow RegEx to use on properties with multiple values
 */
 function isMatchingRdfaAttribute(rdfaAttributes, filter, keys) {
