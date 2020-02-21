@@ -194,7 +194,7 @@ function isMatchingRdfaAttribute(rdfaAttributes, filter, keys) {
       if ( key == 'resource') {
         return rdfaAttributes['resource'] == value || rdfaAttributes['about'] == value;
       } else {
-        if(!rdfaAttributes[key]) {
+        if(!rdfaAttributes.hasOwnProperty(key)) {
           return false
         }
         if(value instanceof RegExp) {
