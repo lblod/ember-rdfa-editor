@@ -11,21 +11,21 @@ import { A } from '@ember/array';
  * Any selected range can be manipulated.  This method allows such
  * changes to happen on following key terms: property, typeof,
  * dataType, resource, content, (TODO: attribute), innerContent,
- * innerHtml
+ * innerHTML
  *
  * - selection: Object retrieved from #selectContext or
  *   #selectHighlight.
  * - options: Object specifying desired behaviour.
  * - options.remove: Removes RDFa content that was already there.
  *     Allows removing any of property, typeof, datatype, resource,
- *     content, (TODO: attribute), innerContent, innerHtml
+ *     content, (TODO: attribute), innerContent, innerHTML
  * - options.add: Adds specific content to the selection, pushing
  *     nvalues on top of already existing values.  Allows adding any
  *     of property, typeof, datatype, resource.  Set the
  *     forceNewContext property to true to force a new context if a
  *     full tag is selected.
  * - options.set: Allows setting any of property, typeof, datatype,
- *     resource content attribute innerContent innerHtml.  Set the
+ *     resource content attribute innerContent innerHTML.  Set the
  *     newContext property to true to force a new context if a full
  *     tag is selected.
  * - options.desc: You are oncouraged to write a brief description
