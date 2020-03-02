@@ -15,11 +15,7 @@ class FallbackInputHandler {
   }
 
   isHandlerFor(event) {
-    if (event.type == "keydown" && ["ArrowUp", "ArrowDown", "PageUp", "PageDown"].includes(event.key)) {
-      // we capture these on key up and not down (e.g after the motion was applied)
-      return false;
-    }
-    if (event.type == "keyup" && ["ArrowUp", "ArrowDown", "PageUp", "PageDown"].includes(event.key)) {
+    if (event.type == "keyup" && ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(event.key)) {
       return true;
     }
     if (! ["keydown", "keyup", "mousedown"].includes(event.type)){
@@ -28,6 +24,7 @@ class FallbackInputHandler {
       // mousedown is not interesting at the moment, only mouse up
       return true;
     }
+    return false;
   }
 
 
