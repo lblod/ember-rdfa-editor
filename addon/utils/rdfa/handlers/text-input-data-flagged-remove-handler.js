@@ -35,6 +35,6 @@ export default InputTextHandler.extend({
     }
     else
       currentNode.parentNode.removeAttribute('data-flagged-remove');
-    return new HandlerResponse();
+    return HandlerResponse.create({});
   }
 });
