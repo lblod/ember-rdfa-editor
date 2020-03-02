@@ -10,7 +10,6 @@ import {
   invisibleSpace,
   insertTextNodeWithSpace,
   insertNodeBAfterNodeA,
-  sliceTextIntoTextNode,
   removeNode,
   isVoidElement,
   isIgnorableElement,
@@ -50,8 +49,6 @@ import {
   findUniqueRichNodes
 } from '../rdfa/rdfa-rich-node-helpers';
 import classic from 'ember-classic-decorator';
-
-const NON_BREAKING_SPACE = '\u00A0';
 
 /**
  * raw contenteditable editor, a utility class that shields editor internals from consuming applications.
@@ -621,50 +618,6 @@ class RawEditor extends EmberObject {
    */
   textInsert( /*position, text*/ ) {
     warn("textInsert was called on raw-editor without listeners being set.", { id: 'content-editable.invalid-state'});
-  }
-
-  /**
-   * Insert text at provided position,
-   *
-   * @method insertText
-   * @param {String} text to insert
-   * @param {Number} position
-   *
-   * @return {DOMNode} node
-   * @public
-   */
-  insertText(text, position) {
-    if (!this.get('richNode')) {
-      warn(`richNode wasn't set before inserting text onposition ${position}`,{id: 'content-editable.rich-node-not-set'});
-      this.updateRichNode();
-    }
-    const textNode = this.findSuitableNodeForPosition(position);
-    const type = textNode.type;
-    let domNode;
-    if (type === 'text') {
-      if (text === " ") {
-        text = NON_BREAKING_SPACE;
-      }
-      const parent = textNode.parent;
-      domNode = textNode.domNode;
-      const relativePosition = position - textNode.start;
-      sliceTextIntoTextNode(domNode, text, relativePosition);
-      if (relativePosition > 0 && text !== NON_BREAKING_SPACE &&  domNode.textContent[relativePosition-1] === NON_BREAKING_SPACE) {
-        // replace non breaking space preceeding this input with a regular space
-        let content = domNode.textContent;
-        domNode.textContent = content.slice(0, relativePosition - 1) + " " + content.slice(relativePosition);
-      }
-      this.set('currentNode', domNode);
-    }
-    else {
-      // we should always have a suitable text node... last attempt to safe things somewhat
-      warn(`no text node found at position ${position} (editor empty?)`, {id: 'content-editable.no-text-node-found'});
-      domNode = document.createTextNode(text);
-      get(textNode, 'domNode').appendChild(domNode);
-      this.set('currentNode', domNode);
-    }
-    this.updateRichNode();
-    return domNode;
   }
 
   /**
