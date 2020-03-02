@@ -1,7 +1,6 @@
-import EmberObject, { get } from '@ember/object';
-import { reads, alias } from '@ember/object/computed';
 import { sliceTextIntoTextNode } from '../dom-helpers';
 import HandlerResponse from './handler-response';
+import { warn } from '@ember/debug';
 
 const supportedInputCharacters = /[a-zA-Z0-9.,!@#$%^&*={};'"+-?_()/\\ ]/;
 const NON_BREAKING_SPACE = '\u00A0';
@@ -12,14 +11,14 @@ const NON_BREAKING_SPACE = '\u00A0';
  * @module contenteditable-editor
  * @class TextInputHandler
  * @constructor
- * @extends EmberObject
  */
-export default EmberObject.extend({
-  currentNode: alias('rawEditor.currentNode'),
-  currentSelection: reads('rawEditor.currentSelection'),
-  currentSelectionIsACursor: reads('rawEditor.currentSelectionIsACursor'),
-  richNode: reads('rawEditor.richNode'),
-  rootNode: reads('rawEditor.rootNode'),
+export default class TextInputHandler {
+  rawEditor;
+  forceParagraph;
+  constructor({rawEditor, forceParagraph = false}) {
+    this.rawEditor = rawEditor;
+    this.forceParagraph = forceParagraph;
+  }
   /**
    * tests this handler can handle the specified event
    * @method isHandlerFor
@@ -31,9 +30,9 @@ export default EmberObject.extend({
     if (event.type !== "keydown")
       return false;
     let inp = event.key;
-    return ( this.get('currentSelectionIsACursor') || this.aSelectionWeUnderstand() ) &&
+    return ( this.rawEditor.get('currentSelectionIsACursor') || this.aSelectionWeUnderstand() ) &&
       inp.length === 1 && ! event.ctrlKey && !event.altKey && supportedInputCharacters.test(inp);
-  },
+  }
 
 
   /**
@@ -44,19 +43,19 @@ export default EmberObject.extend({
    */
   handleEvent(event) {
     let input = event.key;
-    if (this.get('currentSelectionIsACursor')) {
-      let position = this.get('currentSelection')[0];
-      const domNode = this.insertText(input, position);
+    if (this.rawEditor.currentSelectionIsACursor) {
+      const position = this.rawEditor.currentPosition;
+      this.insertText(input, position);
       this.rawEditor.setCurrentPosition(position + input.length);
     }
     else {
       let range = window.getSelection().getRangeAt(0);
-      let rawEditor = this.get('rawEditor');
+      let rawEditor = this.rawEditor;
       let startNode = rawEditor.getRichNodeFor(range.startContainer);
       let start = rawEditor.calculatePosition(startNode, range.startOffset);
       let endNode = rawEditor.getRichNodeFor(range.endContainer);
       let end = rawEditor.calculatePosition(endNode, range.endOffset);
-      let elements = rawEditor.replaceTextWithHTML(start, end, input);
+      rawEditor.replaceTextWithHTML(start, end, input);
       rawEditor.setCurrentPosition(start + input.length);
     }
     return HandlerResponse.create(
@@ -64,22 +63,22 @@ export default EmberObject.extend({
         allowPropagation: false
       }
     );
-  },
+  }
 
   aSelectionWeUnderstand() {
     let windowSelection = window.getSelection();
     if (windowSelection.rangeCount === 0)
       return false;
     let range = windowSelection.getRangeAt(0);
-    if (this.get('rootNode').contains(range.commonAncestorContainer)) {
-      let startNode = this.get('rawEditor').getRichNodeFor(range.startContainer);
-      let endNode = this.get('rawEditor').getRichNodeFor(range.endContainer);
-      if (startNode && startNode === endNode && get(startNode,'type') === 'text')
+    if (this.rawEditor.rootNode.contains(range.commonAncestorContainer)) {
+      let startNode = this.rawEditor.getRichNodeFor(range.startContainer);
+      let endNode = this.rawEditor.getRichNodeFor(range.endContainer);
+      if (startNode && startNode === endNode && startNode.type === 'text')
         return true;
     }
     else
       return false;
-  },
+  }
 
   /**
    * Insert text at provided position,
@@ -92,7 +91,7 @@ export default EmberObject.extend({
    * @public
    */
   insertText(text, position) {
-    if (!this.rawEditor.get('richNode')) {
+    if (!this.rawEditor.richNode) {
       warn(`richNode wasn't set before inserting text onposition ${position}`,{id: 'content-editable.rich-node-not-set'});
       this.rawEditor.updateRichNode();
     }
@@ -103,7 +102,6 @@ export default EmberObject.extend({
       if (text === " ") {
         text = NON_BREAKING_SPACE;
       }
-      const parent = textNode.parent;
       domNode = textNode.domNode;
       const relativePosition = position - textNode.start;
       sliceTextIntoTextNode(domNode, text, relativePosition);
@@ -118,11 +116,16 @@ export default EmberObject.extend({
       // we should always have a suitable text node... last attempt to safe things somewhat
       warn(`no text node found at position ${position} (editor empty?)`, {id: 'content-editable.no-text-node-found'});
       domNode = document.createTextNode(text);
-      get(textNode, 'domNode').appendChild(domNode);
+      textNode.domNode.appendChild(domNode);
       this.rawEditor.set('currentNode', domNode);
+    }
+    if (this.forceParagraph &&  domNode.parentNode === this.rawEditor.rootNode) {
+      const paragraph = document.createElement('p');
+      domNode.replaceWith(paragraph);
+      paragraph.append(domNode);
     }
     this.rawEditor.updateRichNode();
     return domNode;
   }
-});
+}
 export { supportedInputCharacters } ;

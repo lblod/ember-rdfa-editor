@@ -162,7 +162,7 @@ export default class RdfaEditor extends Component {
   handleRawEditorInit(editor) {
     this.set('editor', editor);
     const handlers = [
-      TextInputDataFlaggedRemoveHandler.create({rawEditor: editor})
+      new TextInputDataFlaggedRemoveHandler({rawEditor: editor})
     ];
     this.set('handlers', handlers);
     const hintsRegistry = HintsRegistry.create();
