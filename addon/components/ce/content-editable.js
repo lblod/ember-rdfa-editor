@@ -12,6 +12,7 @@ import BackspaceHandler from '../../utils/ce/handlers/backspace-handler';
 import TextInputHandler from '../../utils/ce/handlers/text-input-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
+import UndoHandler from '../../utils/ce/handlers/undo-hander';
 import ClickHandler from '../../utils/ce/handlers/click-handler';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import TabHandler from '../../utils/ce/handlers/tab-handler';
@@ -152,6 +153,7 @@ export default class ContentEditable extends Component {
                                    TextInputHandler.create({rawEditor}),
                                    TabHandler.create({rawEditor}),
                                    IgnoreModifiersHandler.create({rawEditor}),
+                                   new UndoHandler({rawEditor}),
                                    new FallbackInputHandler({rawEditor})
                                  ];
 
@@ -249,7 +251,7 @@ export default class ContentEditable extends Component {
    * input (we capture this)
    * compositionend (we capture this, if input has preventdefault this doesn't fire. not well tested)
    *
-   * Chain 3: copy, cut, paste, undo (may be broken if event order changes)
+   * Chain 3: copy, cut, paste (may be broken if event order changes)
    * keydown (captured, we try to ignore the event here and let it bubble)
    * keypress (we ignore this, see above)
    * keyup (we ignore this, see above)
@@ -406,6 +408,6 @@ export default class ContentEditable extends Component {
    * @method keydownMapsToOtherEvent
    */
   keydownMapsToOtherEvent(event) {
-    return (event.ctrlKey || event.metaKey ) && ["z","v","c","x"].includes(event.key);
+    return (event.ctrlKey || event.metaKey ) && ["v","c","x"].includes(event.key);
   }
 }
