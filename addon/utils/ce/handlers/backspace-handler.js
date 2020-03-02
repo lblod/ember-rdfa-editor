@@ -11,9 +11,11 @@ import {
   findPreviousLi
 } from '../dom-helpers';
 import previousTextNode from '../previous-text-node';
+import { isRdfaNode } from '../../rdfa/rdfa-rich-node-helpers';
 import { warn, debug } from '@ember/debug';
 import { A } from '@ember/array';
 import { isInLumpNode, getParentLumpNode, getPreviousNonLumpTextNode } from '../lump-node-utils';
+import NodeWalker from '@lblod/marawa/node-walker';
 
 /**
  * Backspace Handler, a event handler to handle the generic backspace case
@@ -110,6 +112,7 @@ export default EmberObject.extend({
     const position = this.currentSelection[0];
     const textNode = this.currentNode;
     const richNode = this.rawEditor.getRichNodeFor(textNode);
+    this.mergeSiblingTextNodes(this.currentNode, this.richNode);
     try {
       const originalText = textNode.textContent;
       const visibleText = this.visibleText(textNode);
@@ -145,19 +148,28 @@ export default EmberObject.extend({
           }
         }
         else {
-
           if(isInLumpNode(textNode, this.rawEditor.rootNode)){
             this.handleLumpRemoval(textNode);
           }
-
-          // not empty and we're not at the start, delete character before the carret
-          else this.deleteCharacter(textNode, trueRelativePosition);
+          else {
+            // not empty and we're not at the start, delete character before the carret
+            this.deleteCharacter(textNode, trueRelativePosition);
+            if (this.shouldHighlightParentNode(textNode.parentNode, visibleLength)) {
+              const removeType = visibleLength > 1 ? 'almost-complete' : 'complete';
+              textNode.parentNode.setAttribute('data-flagged-remove', removeType);
+            }
+          }
         }
       }
       else {
         // empty node, move to previous text node and remove nodes in between
+        console.log('empty node', textNode.parentNode.getAttribute('data-flagged-remove'));
         let previousNode = getPreviousNonLumpTextNode(textNode, this.rawEditor.rootNode);
-        if (previousNode) {
+        if (textNode.parentNode.getAttribute('data-flagged-remove') != "complete" && this.shouldHighlightParentNode(textNode.parentNode, visibleLength)) {
+          console.log('setting complete');
+          textNode.parentNode.setAttribute('data-flagged-remove', 'complete');
+        }
+        else if (previousNode) {
           this.removeNodesFromTo(textNode, previousNode);
           this.rawEditor.updateRichNode();
           this.rawEditor.setCarret(previousNode, previousNode.length);
@@ -215,7 +227,7 @@ export default EmberObject.extend({
         else if (isLI(node)) {
           this.removeLI(node);
         }
-        else if (node.children.length === 0 || isEmptyList(node)) {
+        else if (node.children && node.children.length === 0 || isEmptyList(node)) {
           removeNode(node);
         }
         else {
@@ -267,6 +279,27 @@ export default EmberObject.extend({
     nodeToDeleteAsBlock.remove();
     this.rawEditor.updateRichNode();
     this.rawEditor.setCarret(previousNode, previousNode.length);
+  },
+  shouldHighlightParentNode(parentNode, visibleLength) {
+    let nodeWalker = new NodeWalker();
+    return visibleLength < 5 && parentNode.childNodes.length == 1 && isRdfaNode(nodeWalker.processDomNode(parentNode));
+  },
+  mergeSiblingTextNodes(textNode, richNode) {
+    while (textNode.previousSibling && textNode.previousSibling.nodeType === Node.TEXT_NODE) {
+      const previousDOMSibling = textNode.previousSibling;
+      const indexOfRichNode = richNode.parent.children.indexOf(richNode);
+      const previousRichSibling = richNode.parent.chidlren(indexOfRichNode-1);
+      textNode.textContent = `${previousDOMSibling.textContent}${textNode.textContent}`;
+      richNode.start = previousRichSibling.start;
+      richNode.parent.children.splice(indexOfRichNode - 1, 1);
+    }
+    while (textNode.nextSibling && textNode.nextSibling.nodeType === Node.TEXT_NODE) {
+      const nextDOMSibling = textNode.nextSibling;
+      const indexOfRichNode = richNode.parent.children.indexOf(richNode);
+      const nextRichSibling = richNode.parent.chidlren(indexOfRichNode+1);
+      textNode.textContent = `${nextDOMSibling.textContent}${textNode.textContent}`;
+      richNode.start = nextRichSibling.start;
+      richNode.parent.children.splice(indexOfRichNode + 1 , 1);
+    }
   }
-
 });
