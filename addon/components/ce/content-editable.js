@@ -12,6 +12,7 @@ import BackspaceHandler from '../../utils/ce/handlers/backspace-handler';
 import TextInputHandler from '../../utils/ce/handlers/text-input-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
+import BoldItalicUnderlineHandler from '../../utils/ce/handlers/bold-italic-underline-handler'
 import UndoHandler from '../../utils/ce/handlers/undo-hander';
 import ClickHandler from '../../utils/ce/handlers/click-handler';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
@@ -154,6 +155,7 @@ export default class ContentEditable extends Component {
                                    TabHandler.create({rawEditor}),
                                    IgnoreModifiersHandler.create({rawEditor}),
                                    new UndoHandler({rawEditor}),
+                                   new BoldItalicUnderlineHandler({rawEditor}),
                                    new FallbackInputHandler({rawEditor})
                                  ];
 
