@@ -397,12 +397,12 @@ export default class ContentEditable extends Component {
           break;
         }
       }
+      this.rawEditor.generateDiffEvents.perform();
       return preventDefault;
     }
     else {
       return false;
     }
-    this.rawEditor.generateDiffEvents.perform();
   }
 
   /**
