@@ -402,6 +402,7 @@ export default class ContentEditable extends Component {
     else {
       return false;
     }
+    this.rawEditor.generateDiffEvents.perform();
   }
 
   /**
