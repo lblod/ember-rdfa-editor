@@ -6,7 +6,7 @@
     <div class="grid grid--collapse grid--align-right">
       <div class="col--8-12">
         <div class="editor">
-          <Ce::ContentEditable @class="editor__paper" @textInsert={{or this.eventProcessor.insertText this.warnNotSetup}} @textRemove={{or this.eventProcessor.removeText this.warnNotSetup}} @handleFullContentUpdate={{or this.eventProcessor.analyseAndDispatch this.warnNotSetup}} @selectionUpdate={{action (or this.eventProcessor.selectionChanged this.warnNotSetup) editor.currentSelection}} @rawEditorInit={{action "handleRawEditorInit"}} @elementUpdate={{action (or this.domUpdate this.noop) editor.rootNode}} @externalHandlers={{this.handlers}} @editable={{true}} @focused={{true}} @yieldHTML={{true}}>
+          <Ce::ContentEditable class="editor__paper" @textInsert={{or this.eventProcessor.insertText this.warnNotSetup}} @textRemove={{or this.eventProcessor.removeText this.warnNotSetup}} @handleFullContentUpdate={{or this.eventProcessor.analyseAndDispatch this.warnNotSetup}} @selectionUpdate={{action (or this.eventProcessor.selectionChanged this.warnNotSetup) editor.currentSelection}} @rawEditorInit={{action "handleRawEditorInit"}} @elementUpdate={{action (or this.domUpdate this.noop) editor.rootNode}} @externalHandlers={{this.handlers}} @editable={{true}} @focused={{true}} @yieldHTML={{true}}>
             {{{this.value}}}
           </Ce::ContentEditable>
         </div>
