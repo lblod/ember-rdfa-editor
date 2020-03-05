@@ -9,7 +9,7 @@
   {{on "mousedown" this.handleMouseDown}}
   {{on "input" this.handleInput}}
   {{did-insert this.insertedEditorElement}}
-  contenteditable={{@editable}} ...attributes>
+  contenteditable={{@editable}} class={{@class}} ...attributes>
 {{#if this.yieldHTML}}
   {{{yield}}}
 {{else}}
