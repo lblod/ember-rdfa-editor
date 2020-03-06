@@ -12,7 +12,9 @@ import BackspaceHandler from '../../utils/ce/handlers/backspace-handler';
 import TextInputHandler from '../../utils/ce/handlers/text-input-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
-import BoldItalicUnderlineHandler from '../../utils/ce/handlers/bold-italic-underline-handler'
+import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
+import LegacyMovementObserver from '../../utils/ce/movement-observers/legacy-movement-observer';
+import BoldItalicUnderlineHandler from '../../utils/ce/handlers/bold-italic-underline-handler';
 import UndoHandler from '../../utils/ce/handlers/undo-hander';
 import ClickHandler from '../../utils/ce/handlers/click-handler';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
@@ -141,9 +143,10 @@ export default class ContentEditable extends Component {
       handleFullContentUpdate: this.get('handleFullContentUpdate'),
       textInsert: this.get('textInsert'),
       textRemove: this.get('textRemove'),
-      selectionUpdate: this.get('selectionUpdate'),
       elementUpdate: this.get('elementUpdate')
     });
+    rawEditor.registerMovementObserver(new LegacyMovementObserver({notify: this.selectionUpdate}));
+    rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
     this.set('rawEditor', rawEditor);
     const forceParagraph = this.features.isEnabled('editor-force-paragraph');
     const defaultInputHandlers = [ ArrowHandler.create({rawEditor}),
@@ -160,7 +163,6 @@ export default class ContentEditable extends Component {
                                  ];
 
     this.set('currentTextContent', '');
-    this.set('currentSelection', [0,0]);
     this.set('defaultHandlers', defaultInputHandlers);
     this.set('capturedEvents', A());
     if( ! this.externalHandlers ) {

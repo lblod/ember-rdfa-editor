@@ -124,23 +124,64 @@ class RawEditor extends EmberObject {
   /**
    * the current selection in the editor
    *
-   * __NOTE__: don't change this in place
    * @property currentSelection
    * @type Array
    * @protected
    */
-  currentSelection = null
+  get currentSelection() {
+    if (this._currentSelection)
+      return [this._currentSelection.startNode.position, this._currentSelection.endNode.position];
+    else
+      return [0,0];
+  }
+
+  set currentSelection({startNode, endNode}) {
+    const oldSelection = this._currentSelection;
+    this._currentSelection = {startNode, endNode};
+    if (startNode.domNode === endNode.domNode) {
+      this.currentNode = startNode.domNode;
+    }
+    else {
+      this.currentNode = null;
+    }
+
+    if (oldSelection && (
+      oldSelection.startNode.domNode != startNode.domNode ||
+        oldSelection.startNode.position != startNode.position ||
+        oldSelection.endNode.domNode != endNode.domNode ||
+        oldSelection.endNode.position != endNode.position
+    )) {
+      // position changed, call movement observers
+      // we assume observers make sure the rich node is up to date after their actions
+      // only a limited interface is provided to the observers
+      const documentInterface = {
+        rootNode: this.rootNode,
+        getRichNodeFor(node) { return this.getRichNodeFor.bind(this)(node); },
+        selectHighlight(range, options) { return selectHighlight.bind(this)(range, options); },
+        selectContext(region, options) { return selectContext.bind(this)(region, options); },
+        update(selection, operation) { return update.bind(this)(selection, operation); },
+        updateRichNode() { this.updateRichNode.bind(this)(); },
+        setCurrentPosition(position) { this.setCurrentPosition(position); },
+        setCarret(node, relativePostion) { this.setCarret(node, relativePostion);}
+      };
+      for (const obs of this.movementObservers) {
+        obs.handleMovement(documentInterface, oldSelection, {startNode, endNode});
+      }
+      this.generateDiffEvents.perform();
+    }
+  }
+
+  registerMovementObserver(observer) {
+    this.movementObservers.push(observer);
+  }
 
   /**
    * the start of the current range
    *
-   * __NOTE__: this is correctly bound because currentSelection is never
-   * changed in place
    * @property currentPosition
    * @type number
    * @protected
    */
-  @computed('currentSelection')
   get currentPosition() {
     return this.currentSelection[0];
   }
@@ -286,6 +327,7 @@ class RawEditor extends EmberObject {
     super(...arguments);
     this.set('history', CappedHistory.create({ maxItems: 100}));
     this.set('components', A());
+    this.movementObservers = A();
   }
 
   /**
@@ -752,7 +794,7 @@ class RawEditor extends EmberObject {
    * @private
    */
   findSuitableNodeForPosition(position) {
-    let currentRichNode = this.getRichNodeFor(this.get('currentNode'));
+    let currentRichNode = this.getRichNodeFor(this.currentNode);
     let richNode = this.get('richNode');
     if (currentRichNode && get(currentRichNode, 'start') <= position && get(currentRichNode, 'end') >= position) {
       let node = this.findSuitableNodeInRichNode(currentRichNode, position);
@@ -900,10 +942,7 @@ class RawEditor extends EmberObject {
           let endNode = this.getRichNodeFor(range.endContainer);
           let start = this.calculatePosition(startNode, range.startOffset);
           let end = this.calculatePosition(endNode, range.endOffset);
-          let newSelection  = [start, end];
-          this.set('currentNode', null);
-          this.set('currentSelection', newSelection);
-          forgivingAction('selectionUpdate', this)(this.get('currentSelection'));
+          this.currentSelection = { startNode: {position: start, domNode: startNode.domNode}, endNode: {position: end, domNode: endNode.domNode}};
         }
       }
     }
@@ -1003,17 +1042,17 @@ class RawEditor extends EmberObject {
       const richNodeAfterCarret = richNode.children[offset];
       if (richNodeAfterCarret && richNodeAfterCarret.type === 'text') {
         // the node after the carret is a text node, so we can set the cursor at the start of that node
-        this.set('currentNode', richNodeAfterCarret.domNode);
         const absolutePosition = richNodeAfterCarret.start;
-        this.set('currentSelection', [absolutePosition, absolutePosition]);
+        const position = {domNode: richNodeAfterCarret.domNode, position: absolutePosition};
+        this.currentSelection = { startNode: position, endNode: position};
         this.moveCaretInTextNode(richNodeAfterCarret.domNode, 0);
       }
       else if (offset > 0 && richNode.children[offset-1].type === 'text') {
         // the node before the carret is a text node, so we can set the cursor at the end of that node
         const richNodeBeforeCarret = richNode.children[offset-1];
-        this.set('currentNode', richNodeBeforeCarret.domNode);
         const absolutePosition = richNodeBeforeCarret.end;
-        this.set('currentSelection', [absolutePosition, absolutePosition]);
+        const position = {domNode: richNodeBeforeCarret.domNode, position: absolutePosition};
+        this.currentSelection = { startNode: position, endNode: position};
         this.moveCaretInTextNode(richNodeBeforeCarret.domNode, richNodeBeforeCarret.domNode.textContent.length);
       }
       else {
@@ -1030,23 +1069,21 @@ class RawEditor extends EmberObject {
           textNode = insertTextNodeWithSpace(node, richNode.children[offset-1].domNode, true);
         }
         this.updateRichNode();
-        this.set('currentNode', textNode);
         const absolutePosition = this.getRichNodeFor(textNode).start;
-        this.set('currentSelection', [absolutePosition, absolutePosition]);
+        const position = {domNode: textNode.domNode, position: absolutePosition};
+        this.currentSelection = { startNode: position, endNode: position};
         this.moveCaretInTextNode(textNode, 0);
       }
     }
     else if (richNode.type === 'text') {
-      this.set('currentNode', node);
       const absolutePosition = richNode.start + offset;
-      this.set('currentSelection', [absolutePosition, absolutePosition]);
+      const position = {domNode: node, position: absolutePosition};
+      this.currentSelection = { startNode: position, endNode: position};
       this.moveCaretInTextNode(node, offset);
     }
     else {
       warn(`invalid node ${tagName(node.domNode)} provided to setCarret`, {id: 'contenteditable.invalid-start'});
     }
-    if (notify)
-      forgivingAction('selectionUpdate', this)(this.currentSelection);
   }
 
   insertUL() {

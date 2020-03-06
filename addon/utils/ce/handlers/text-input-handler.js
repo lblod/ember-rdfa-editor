@@ -110,7 +110,7 @@ export default class TextInputHandler {
         let content = domNode.textContent;
         domNode.textContent = content.slice(0, relativePosition - 1) + " " + content.slice(relativePosition);
       }
-      this.rawEditor.set('currentNode', domNode);
+      this.rawEditor.setCarret(textNode, relativePosition + 1);
     }
     else {
       // we should always have a suitable text node... last attempt to safe things somewhat
