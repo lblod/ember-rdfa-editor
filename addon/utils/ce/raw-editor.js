@@ -952,17 +952,13 @@ class RawEditor extends EmberObject {
    * @public
    */
   setCurrentPosition(position, notify = true) {
-    let richNode = this.get('richNode');
-    if (get(richNode, 'end') < position || get(richNode, 'start') > position) {
-      warn(`received invalid position, resetting to ${get(richNode,'end')} end of document`, {id: 'contenteditable-editor.invalid-position'});
+    let richNode = this.richNode;
+    if (richNode.end < position || richNode.start > position) {
+      warn(`received invalid position, resetting to ${richNode.end} end of document`, {id: 'contenteditable-editor.invalid-position'});
       position = get(richNode, 'end');
     }
     let node = this.findSuitableNodeForPosition(position);
-    this.moveCaretInTextNode(node.domNode, position - node.start);
-    this.set('currentNode', node.domNode);
-    this.set('currentSelection', [ position, position ]);
-    if (notify)
-      forgivingAction('selectionUpdate', this)(this.currentSelection);
+    this.setCarret(node.domNode, position - node.start, notify);
   }
 
   getRelativeCursorPosition(){
