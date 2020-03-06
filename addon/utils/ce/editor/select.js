@@ -2,6 +2,9 @@ import { positionInRange } from '@lblod/marawa/range-helpers';
 import { analyse as scanContexts } from '@lblod/marawa/rdfa-context-scanner';
 
 /**
+ * Fake class to list helper functions
+ * these functions can be used from the editor : editor.{function}
+ *
  * SELECTION API RESULT
  *
  * This is an internal API.  It is subject to change.
@@ -28,11 +31,18 @@ import { analyse as scanContexts } from '@lblod/marawa/rdfa-context-scanner';
  *   highlighted.  Described by start and end.
  * @param {RichNode} selections.richNode Rich Node to which the
  *   selection applies.
+ *
+ * @module contenteditable-editor
+ * @class Select
+ * @constructor
  */
 
 /**
  * Selects the current selection, for applying operations to.
  * Current selection may be a cursor or a range.
+ *
+ * @method selectCurrentSelection
+ * @public
  */
 function selectCurrentSelection() {
   // the following line was added to make sure the selection is set correctly before toggling a property
@@ -52,7 +62,7 @@ function selectCurrentSelection() {
  * Selects the highlighted range, or part of it, for applying
  * operations to.
  *
- * With no arguments, this method selects the full highlighted range
+ * Without options, this method selects the full highlighted range
  * in order to apply operations to it.  The options hash can be used
  * to supply constraints:
  *
@@ -62,6 +72,11 @@ function selectCurrentSelection() {
  *   characters to strip off the right.
  * - TODO { regex } : Regular expression to run against the matching
  *   string.  Full matching string is used for manipulation.
+ *
+ * @method selectHighlight
+ * @param {Array} region
+ * @param {} options
+ * @public
  */
 function selectHighlight([start,end], options = {}) {
 
@@ -130,6 +145,11 @@ function selectHighlight([start,end], options = {}) {
  * - resource: string of URI containing the resource which must apply.
  * - TODO content: string or regular expression of RDFa content.
  * - TODO attribute: string or regular expression of attribute available on the node.
+ *
+ * @method selectContext
+ * @param {Array} region
+ * @param {} options
+ * @public
  */
 function selectContext([start,end], options = {}) {
   if ( !options.scope ) {

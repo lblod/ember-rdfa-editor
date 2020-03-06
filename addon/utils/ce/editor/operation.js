@@ -1,7 +1,14 @@
 import { warn } from '@ember/debug';
 
 /**
+ * Fake class to list helper functions
+ * these functions can be used from the editor : editor.{function}
+ *
  * OPERATION API
+ *
+ * @module contenteditable-editor
+ * @class Operation
+ * @constructor
  */
 
 /**
@@ -24,6 +31,11 @@ import { warn } from '@ember/debug';
  *   explanation as to why the execution could not happen
  * - motivation: Obligatory statement explaining why you need
  *   replaceDomNode and cannot use one of the other methods.
+ *
+ * @method replaceDomNode
+ * @param {DomNode} domNode
+ * @param {callback, failedCallback, motivation} callback, failedCallback, motivation
+ * @public
  */
 function replaceDomNode( domNode, { callback, failedCallback, motivation } ){
   const richNode = this.getRichNodeFor(domNode);
