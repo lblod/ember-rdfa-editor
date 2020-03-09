@@ -1,14 +1,23 @@
-import { isInLumpNode, getNextNonLumpTextNode, animateLumpNode, getParentLumpNode } from '../lump-node-utils';
+import { isInLumpNode, getNextNonLumpTextNode, getPreviousNonLumpTextNode, animateLumpNode, getParentLumpNode } from '../lump-node-utils';
+
 export default class LumpNodeMovementObserver {
   handleMovement(document, oldSelection, newSelection) {
-    if (isInLumpNode(newSelection.startNode) && !isInLumpNode(oldSelection.startNode)) {
-      document.setCurrentPosition(oldSelection.startNode.position);
-      animateLumpNode(getParentLumpNode(newSelection.startNode));
-    }
-    else if (isInLumpNode(newSelection.startNode) && isInLumpNode(oldSelection.startNode)) {
-      // how could this happen?
-      const newNode = getNextNonLumpTextNode(newSelection.startNode, document.rootNode);
-      document.setCarret(newNode, 0);
+    if (isInLumpNode(newSelection.startNode.domNode, document.rootNode)) {
+      let newNode;
+      let relativePosition;
+      if (oldSelection && oldSelection.startNode.absolutePosition >= newSelection.startNode.absolutePosition) {
+        // seems a backward movement, set cursor before lump node
+        newNode = getPreviousNonLumpTextNode(newSelection.startNode.domNode, document.rootNode);
+        relativePosition = newNode.length;
+      }
+      else {
+        // seems a forward movement, set cursor after lump node
+        newNode = getNextNonLumpTextNode(newSelection.startNode.domNode, document.rootNode);
+        relativePosition = 0;
+      }
+      animateLumpNode(getParentLumpNode(newSelection.startNode.domNode));
+      document.updateRichNode();
+      document.setCarret(newNode, relativePosition);
     }
   }
 }

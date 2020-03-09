@@ -145,27 +145,14 @@ class RawEditor extends EmberObject {
       this.currentNode = null;
     }
 
-    if (oldSelection && (
+    if (!oldSelection || (
       oldSelection.startNode.domNode != startNode.domNode ||
-        oldSelection.startNode.position != startNode.position ||
+        oldSelection.startNode.absolutePosition != startNode.absolutePosition ||
         oldSelection.endNode.domNode != endNode.domNode ||
-        oldSelection.endNode.position != endNode.position
+        oldSelection.endNode.absolutePosition != endNode.absolutePosition
     )) {
-      // position changed, call movement observers
-      // we assume observers make sure the rich node is up to date after their actions
-      // only a limited interface is provided to the observers
-      const documentInterface = {
-        rootNode: this.rootNode,
-        getRichNodeFor(node) { return this.getRichNodeFor.bind(this)(node); },
-        selectHighlight(range, options) { return selectHighlight.bind(this)(range, options); },
-        selectContext(region, options) { return selectContext.bind(this)(region, options); },
-        update(selection, operation) { return update.bind(this)(selection, operation); },
-        updateRichNode() { this.updateRichNode.bind(this)(); },
-        setCurrentPosition(position) { this.setCurrentPosition(position); },
-        setCarret(node, relativePostion) { this.setCarret(node, relativePostion);}
-      };
       for (const obs of this.movementObservers) {
-        obs.handleMovement(documentInterface, oldSelection, {startNode, endNode});
+        obs.handleMovement(this, oldSelection, {startNode, endNode});
       }
       this.generateDiffEvents.perform();
     }
