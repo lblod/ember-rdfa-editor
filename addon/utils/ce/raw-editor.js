@@ -130,7 +130,7 @@ class RawEditor extends EmberObject {
    */
   get currentSelection() {
     if (this._currentSelection)
-      return [this._currentSelection.startNode.position, this._currentSelection.endNode.position];
+      return [this._currentSelection.startNode.absolutePosition, this._currentSelection.endNode.absolutePosition];
     else
       return [0,0];
   }
@@ -940,9 +940,11 @@ class RawEditor extends EmberObject {
         else {
           let startNode = this.getRichNodeFor(range.startContainer);
           let endNode = this.getRichNodeFor(range.endContainer);
-          let start = this.calculatePosition(startNode, range.startOffset);
-          let end = this.calculatePosition(endNode, range.endOffset);
-          this.currentSelection = { startNode: {position: start, domNode: startNode.domNode}, endNode: {position: end, domNode: endNode.domNode}};
+          let startPosition = this.calculatePosition(startNode, range.startOffset);
+          let endPosition = this.calculatePosition(endNode, range.endOffset);
+          let start = {relativePosition: startPosition - startNode.start, absolutePosition: startPosition, domNode: startNode.domNode};
+          let end = { relativePosition: endPosition - endNode.start, absolutePosition: endPosition, domNode: endNode.domNode};
+          this.currentSelection = { startNode: start , endNode: end };
         }
       }
     }
@@ -1043,7 +1045,7 @@ class RawEditor extends EmberObject {
       if (richNodeAfterCarret && richNodeAfterCarret.type === 'text') {
         // the node after the carret is a text node, so we can set the cursor at the start of that node
         const absolutePosition = richNodeAfterCarret.start;
-        const position = {domNode: richNodeAfterCarret.domNode, position: absolutePosition};
+        const position = {domNode: richNodeAfterCarret.domNode, absolutePosition, relativePosition: 0};
         this.currentSelection = { startNode: position, endNode: position};
         this.moveCaretInTextNode(richNodeAfterCarret.domNode, 0);
       }
@@ -1051,7 +1053,7 @@ class RawEditor extends EmberObject {
         // the node before the carret is a text node, so we can set the cursor at the end of that node
         const richNodeBeforeCarret = richNode.children[offset-1];
         const absolutePosition = richNodeBeforeCarret.end;
-        const position = {domNode: richNodeBeforeCarret.domNode, position: absolutePosition};
+        const position = {domNode: richNodeBeforeCarret.domNode, absolutePosition, relativePosition: richNodeBeforeCarret.end - richNodeBeforeCarret.start};
         this.currentSelection = { startNode: position, endNode: position};
         this.moveCaretInTextNode(richNodeBeforeCarret.domNode, richNodeBeforeCarret.domNode.textContent.length);
       }
@@ -1070,14 +1072,14 @@ class RawEditor extends EmberObject {
         }
         this.updateRichNode();
         const absolutePosition = this.getRichNodeFor(textNode).start;
-        const position = {domNode: textNode.domNode, position: absolutePosition};
+        const position = {domNode: textNode.domNode, relativePosition: 0, absolutePosition};
         this.currentSelection = { startNode: position, endNode: position};
         this.moveCaretInTextNode(textNode, 0);
       }
     }
     else if (richNode.type === 'text') {
       const absolutePosition = richNode.start + offset;
-      const position = {domNode: node, position: absolutePosition};
+      const position = {domNode: node, absolutePosition, relativePosition: offset};
       this.currentSelection = { startNode: position, endNode: position};
       this.moveCaretInTextNode(node, offset);
     }
