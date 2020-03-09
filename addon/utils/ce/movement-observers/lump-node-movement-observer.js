@@ -19,5 +19,11 @@ export default class LumpNodeMovementObserver {
       document.updateRichNode();
       document.setCarret(newNode, relativePosition);
     }
+    else if (isInLumpNode(newSelection.endNode.domNode, document.rootNode)) {
+      // startNode != endNode, a selection ending in a lumpNode, for now
+      // for now just reset to start of the selection
+      animateLumpNode(getParentLumpNode(newSelection.endNode.domNode, document.rootNode));
+      document.setCarret(newSelection.startNode.domNode, newSelection.startNode.relativePosition);
+    }
   }
 }
