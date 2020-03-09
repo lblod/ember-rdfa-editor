@@ -139,6 +139,7 @@ class RawEditor extends EmberObject {
     const oldSelection = this._currentSelection;
     this._currentSelection = {startNode, endNode};
     if (startNode.domNode === endNode.domNode) {
+      this.moveCaretInTextNode(startNode.domNode, startNode.relativePosition);
       this.currentNode = startNode.domNode;
     }
     else {
@@ -1034,7 +1035,6 @@ class RawEditor extends EmberObject {
         const absolutePosition = richNodeAfterCarret.start;
         const position = {domNode: richNodeAfterCarret.domNode, absolutePosition, relativePosition: 0};
         this.currentSelection = { startNode: position, endNode: position};
-        this.moveCaretInTextNode(richNodeAfterCarret.domNode, 0);
       }
       else if (offset > 0 && richNode.children[offset-1].type === 'text') {
         // the node before the carret is a text node, so we can set the cursor at the end of that node
@@ -1042,7 +1042,6 @@ class RawEditor extends EmberObject {
         const absolutePosition = richNodeBeforeCarret.end;
         const position = {domNode: richNodeBeforeCarret.domNode, absolutePosition, relativePosition: richNodeBeforeCarret.end - richNodeBeforeCarret.start};
         this.currentSelection = { startNode: position, endNode: position};
-        this.moveCaretInTextNode(richNodeBeforeCarret.domNode, richNodeBeforeCarret.domNode.textContent.length);
       }
       else {
         // no suitable text node is present, so we create a textnode
@@ -1061,14 +1060,13 @@ class RawEditor extends EmberObject {
         const absolutePosition = this.getRichNodeFor(textNode).start;
         const position = {domNode: textNode.domNode, relativePosition: 0, absolutePosition};
         this.currentSelection = { startNode: position, endNode: position};
-        this.moveCaretInTextNode(textNode, 0);
       }
     }
     else if (richNode.type === 'text') {
+      console.log(richNode);
       const absolutePosition = richNode.start + offset;
       const position = {domNode: node, absolutePosition, relativePosition: offset};
-      this.currentSelection = { startNode: position, endNode: position};
-      this.moveCaretInTextNode(node, offset);
+      this.currentSelection = { startNode: position, endNode: position };
     }
     else {
       warn(`invalid node ${tagName(node.domNode)} provided to setCarret`, {id: 'contenteditable.invalid-start'});
