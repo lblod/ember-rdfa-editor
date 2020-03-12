@@ -1,3 +1,4 @@
+import { get } from '@ember/object';
 import classic from "ember-classic-decorator";
 import { layout as templateLayout } from "@ember-decorators/component";
 import { computed } from "@ember/object";
@@ -54,7 +55,7 @@ export default class LoadMonitor extends Component {
   */
  @computed('tasks.@each.isRunning')
  get anyPluginBusy() {
-   return this.tasks.find(t => t.get('isRunning') == true);
+   return this.tasks.find(t => get( t, 'isRunning') == true);
  }
 
  /**
@@ -83,7 +84,7 @@ export default class LoadMonitor extends Component {
   */
  @computed('tasks.@each.isRunning')
  get busyPluginsCount() {
-   return this.tasks.filter(t => t.get('isRunning') == true).length;
+   return this.tasks.filter(t => get( t, 'isRunning') == true).length;
  }
 
  /**
