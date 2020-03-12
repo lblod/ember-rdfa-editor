@@ -10,6 +10,7 @@ import RawEditor from '../../utils/ce/raw-editor';
 import EnterHandler from '../../utils/ce/handlers/enter-handler';
 import IgnoreModifiersHandler from '../../utils/ce/handlers/ignore-modifiers-handler';
 import BackspaceHandler from '../../utils/ce/handlers/backspace-handler';
+import DeleteHandler from '../../utils/ce/handlers/delete-handler'
 import TextInputHandler from '../../utils/ce/handlers/text-input-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import ClickHandler from '../../utils/ce/handlers/click-handler';
@@ -170,6 +171,7 @@ export default class ContentEditable extends Component {
                                    ClickHandler.create({rawEditor}),
                                    EnterHandler.create({rawEditor}),
                                    BackspaceHandler.create({rawEditor}),
+                                   DeleteHandler.create({rawEditor}),
                                    TextInputHandler.create({rawEditor}),
                                    TabHandler.create({rawEditor}),
                                    IgnoreModifiersHandler.create({rawEditor})];
