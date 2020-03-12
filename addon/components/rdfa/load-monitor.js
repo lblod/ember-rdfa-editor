@@ -27,12 +27,29 @@ export default class LoadMonitor extends Component {
  rdfaEditorDispatcher;
 
  /**
+  * All services which have an async task
+  * @property taskServices
+  * @type array
+  * @private
+  */
+ @computed('rdfaEditorDispatcher.pluginServices.[]')
+ get taskServices(){
+   const tasks = [];
+   for ( const thing of get( this, "rdfaEditorDispatcher.pluginServices") || [] ) {
+     if( get( thing, "execute.perform") )
+       tasks.push( thing );
+   }
+
+   return tasks;
+ }
+
+ /**
   * plugins available in the dispatcher
   * @property tasks
   * @type array
   * @protected
   */
- @mapBy('rdfaEditorDispatcher.pluginServices', 'execute')
+ @mapBy('taskServices', 'execute')
  tasks;
 
  /**
