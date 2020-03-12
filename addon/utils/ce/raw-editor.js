@@ -10,7 +10,6 @@ import {
   invisibleSpace,
   insertTextNodeWithSpace,
   insertNodeBAfterNodeA,
-  sliceTextIntoTextNode,
   removeNode,
   isVoidElement,
   isIgnorableElement,
@@ -50,8 +49,6 @@ import {
   findUniqueRichNodes
 } from '../rdfa/rdfa-rich-node-helpers';
 import classic from 'ember-classic-decorator';
-
-const NON_BREAKING_SPACE = '\u00A0';
 
 /**
  * raw contenteditable editor, a utility class that shields editor internals from consuming applications.
@@ -127,23 +124,52 @@ class RawEditor extends EmberObject {
   /**
    * the current selection in the editor
    *
-   * __NOTE__: don't change this in place
    * @property currentSelection
    * @type Array
    * @protected
    */
-  currentSelection = null
+  get currentSelection() {
+    if (this._currentSelection)
+      return [this._currentSelection.startNode.absolutePosition, this._currentSelection.endNode.absolutePosition];
+    else
+      return [0,0];
+  }
+
+  set currentSelection({startNode, endNode}) {
+    const oldSelection = this._currentSelection;
+    this._currentSelection = {startNode, endNode};
+    if (startNode.domNode === endNode.domNode) {
+      this.moveCaretInTextNode(startNode.domNode, startNode.relativePosition);
+      this.currentNode = startNode.domNode;
+    }
+    else {
+      this.currentNode = null;
+    }
+
+    if (!oldSelection || (
+      oldSelection.startNode.domNode != startNode.domNode ||
+        oldSelection.startNode.absolutePosition != startNode.absolutePosition ||
+        oldSelection.endNode.domNode != endNode.domNode ||
+        oldSelection.endNode.absolutePosition != endNode.absolutePosition
+    )) {
+      for (const obs of this.movementObservers) {
+        obs.handleMovement(this, oldSelection, {startNode, endNode});
+      }
+      this.generateDiffEvents.perform();
+    }
+  }
+
+  registerMovementObserver(observer) {
+    this.movementObservers.push(observer);
+  }
 
   /**
    * the start of the current range
    *
-   * __NOTE__: this is correctly bound because currentSelection is never
-   * changed in place
    * @property currentPosition
    * @type number
    * @protected
    */
-  @computed('currentSelection')
   get currentPosition() {
     return this.currentSelection[0];
   }
@@ -289,6 +315,7 @@ class RawEditor extends EmberObject {
     super(...arguments);
     this.set('history', CappedHistory.create({ maxItems: 100}));
     this.set('components', A());
+    this.movementObservers = A();
   }
 
   /**
@@ -624,50 +651,6 @@ class RawEditor extends EmberObject {
   }
 
   /**
-   * Insert text at provided position,
-   *
-   * @method insertText
-   * @param {String} text to insert
-   * @param {Number} position
-   *
-   * @return {DOMNode} node
-   * @public
-   */
-  insertText(text, position) {
-    if (!this.get('richNode')) {
-      warn(`richNode wasn't set before inserting text onposition ${position}`,{id: 'content-editable.rich-node-not-set'});
-      this.updateRichNode();
-    }
-    const textNode = this.findSuitableNodeForPosition(position);
-    const type = textNode.type;
-    let domNode;
-    if (type === 'text') {
-      if (text === " ") {
-        text = NON_BREAKING_SPACE;
-      }
-      const parent = textNode.parent;
-      domNode = textNode.domNode;
-      const relativePosition = position - textNode.start;
-      sliceTextIntoTextNode(domNode, text, relativePosition);
-      if (relativePosition > 0 && text !== NON_BREAKING_SPACE &&  domNode.textContent[relativePosition-1] === NON_BREAKING_SPACE) {
-        // replace non breaking space preceeding this input with a regular space
-        let content = domNode.textContent;
-        domNode.textContent = content.slice(0, relativePosition - 1) + " " + content.slice(relativePosition);
-      }
-      this.set('currentNode', domNode);
-    }
-    else {
-      // we should always have a suitable text node... last attempt to safe things somewhat
-      warn(`no text node found at position ${position} (editor empty?)`, {id: 'content-editable.no-text-node-found'});
-      domNode = document.createTextNode(text);
-      get(textNode, 'domNode').appendChild(domNode);
-      this.set('currentNode', domNode);
-    }
-    this.updateRichNode();
-    return domNode;
-  }
-
-  /**
    * insert a component at the provided position
    * @method insertComponent
    * @param {Number} position
@@ -799,7 +782,7 @@ class RawEditor extends EmberObject {
    * @private
    */
   findSuitableNodeForPosition(position) {
-    let currentRichNode = this.getRichNodeFor(this.get('currentNode'));
+    let currentRichNode = this.getRichNodeFor(this.currentNode);
     let richNode = this.get('richNode');
     if (currentRichNode && get(currentRichNode, 'start') <= position && get(currentRichNode, 'end') >= position) {
       let node = this.findSuitableNodeInRichNode(currentRichNode, position);
@@ -945,12 +928,11 @@ class RawEditor extends EmberObject {
         else {
           let startNode = this.getRichNodeFor(range.startContainer);
           let endNode = this.getRichNodeFor(range.endContainer);
-          let start = this.calculatePosition(startNode, range.startOffset);
-          let end = this.calculatePosition(endNode, range.endOffset);
-          let newSelection  = [start, end];
-          this.set('currentNode', null);
-          this.set('currentSelection', newSelection);
-          forgivingAction('selectionUpdate', this)(this.get('currentSelection'));
+          let startPosition = this.calculatePosition(startNode, range.startOffset);
+          let endPosition = this.calculatePosition(endNode, range.endOffset);
+          let start = {relativePosition: startPosition - startNode.start, absolutePosition: startPosition, domNode: startNode.domNode};
+          let end = { relativePosition: endPosition - endNode.start, absolutePosition: endPosition, domNode: endNode.domNode};
+          this.currentSelection = { startNode: start , endNode: end };
         }
       }
     }
@@ -999,17 +981,13 @@ class RawEditor extends EmberObject {
    * @public
    */
   setCurrentPosition(position, notify = true) {
-    let richNode = this.get('richNode');
-    if (get(richNode, 'end') < position || get(richNode, 'start') > position) {
-      warn(`received invalid position, resetting to ${get(richNode,'end')} end of document`, {id: 'contenteditable-editor.invalid-position'});
+    let richNode = this.richNode;
+    if (richNode.end < position || richNode.start > position) {
+      warn(`received invalid position, resetting to ${richNode.end} end of document`, {id: 'contenteditable-editor.invalid-position'});
       position = get(richNode, 'end');
     }
     let node = this.findSuitableNodeForPosition(position);
-    this.moveCaretInTextNode(node.domNode, position - node.start);
-    this.set('currentNode', node.domNode);
-    this.set('currentSelection', [ position, position ]);
-    if (notify)
-      forgivingAction('selectionUpdate', this)(this.currentSelection);
+    this.setCarret(node.domNode, position - node.start, notify);
   }
 
   getRelativeCursorPosition(){
@@ -1054,18 +1032,16 @@ class RawEditor extends EmberObject {
       const richNodeAfterCarret = richNode.children[offset];
       if (richNodeAfterCarret && richNodeAfterCarret.type === 'text') {
         // the node after the carret is a text node, so we can set the cursor at the start of that node
-        this.set('currentNode', richNodeAfterCarret.domNode);
         const absolutePosition = richNodeAfterCarret.start;
-        this.set('currentSelection', [absolutePosition, absolutePosition]);
-        this.moveCaretInTextNode(richNodeAfterCarret.domNode, 0);
+        const position = {domNode: richNodeAfterCarret.domNode, absolutePosition, relativePosition: 0};
+        this.currentSelection = { startNode: position, endNode: position};
       }
       else if (offset > 0 && richNode.children[offset-1].type === 'text') {
         // the node before the carret is a text node, so we can set the cursor at the end of that node
         const richNodeBeforeCarret = richNode.children[offset-1];
-        this.set('currentNode', richNodeBeforeCarret.domNode);
         const absolutePosition = richNodeBeforeCarret.end;
-        this.set('currentSelection', [absolutePosition, absolutePosition]);
-        this.moveCaretInTextNode(richNodeBeforeCarret.domNode, richNodeBeforeCarret.domNode.textContent.length);
+        const position = {domNode: richNodeBeforeCarret.domNode, absolutePosition, relativePosition: richNodeBeforeCarret.end - richNodeBeforeCarret.start};
+        this.currentSelection = { startNode: position, endNode: position};
       }
       else {
         // no suitable text node is present, so we create a textnode
@@ -1081,23 +1057,19 @@ class RawEditor extends EmberObject {
           textNode = insertTextNodeWithSpace(node, richNode.children[offset-1].domNode, true);
         }
         this.updateRichNode();
-        this.set('currentNode', textNode);
         const absolutePosition = this.getRichNodeFor(textNode).start;
-        this.set('currentSelection', [absolutePosition, absolutePosition]);
-        this.moveCaretInTextNode(textNode, 0);
+        const position = {domNode: textNode.domNode, relativePosition: 0, absolutePosition};
+        this.currentSelection = { startNode: position, endNode: position};
       }
     }
     else if (richNode.type === 'text') {
-      this.set('currentNode', node);
       const absolutePosition = richNode.start + offset;
-      this.set('currentSelection', [absolutePosition, absolutePosition]);
-      this.moveCaretInTextNode(node, offset);
+      const position = {domNode: node, absolutePosition, relativePosition: offset};
+      this.currentSelection = { startNode: position, endNode: position };
     }
     else {
       warn(`invalid node ${tagName(node.domNode)} provided to setCarret`, {id: 'contenteditable.invalid-start'});
     }
-    if (notify)
-      forgivingAction('selectionUpdate', this)(this.currentSelection);
   }
 
   insertUL() {
