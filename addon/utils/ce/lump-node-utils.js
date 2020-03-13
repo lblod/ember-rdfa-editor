@@ -33,7 +33,7 @@ function getParentLumpNode(node, rootNode){
   if(hasLumpNodeProperty(node)){
     return node;
   }
-  if(node.isSameNode(rootNode)){
+  if(node == rootNode){
     return null;
   }
   if(node.parentNode){

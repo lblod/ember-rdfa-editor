@@ -42,7 +42,8 @@ module.exports = function(environment) {
   return ENV;
 };
 ```
-* editor-html-paste
+* editor-html-paste: if enabled, support html paste input
+* editor-force-paragraph: if enabled, wrap text input in a paragraph if it's not already wrapped.
 
 ## Compatibility
 

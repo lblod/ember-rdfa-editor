@@ -63,7 +63,7 @@ export default EmberObject.extend({
         this.rawEditor.setCarret(newNode,newNode.textContent.length);
       }
       else {
-        this.rawEditor.setCarret(textNode, 1);
+        this.rawEditor.setCarret(textNode, 0);
       }
     }
     else if (richNode.end === position){

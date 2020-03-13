@@ -1,7 +1,7 @@
 import {tagName} from './ce/dom-helpers';
 
 const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
-const DEFAULT_LUMP_TAGS = [];
+const DEFAULT_LUMP_TAGS = ["table"];
 const DEFAULT_SAFE_TAGS = ['a', 'br', 'body', 'code', 'data', 'datalist', 'div', 'dl', 'dt', 'dd', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'li', 'link', 'meta', 'nav', 'ol', 'p', 'pre', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'template', 'th', 'thead',  'time', 'tr', 'ul', 'var', 'wbr' ];
 const DEFAULT_TAG_MAP = {
   b: 'strong',
@@ -33,9 +33,6 @@ class HTMLInputParser {
     const parser = new DOMParser();
     const document = parser.parseFromString(html, "text/html");
     const rootNode = document.body;
-    if (!rootNode) {
-      // no body was found assume this is a html snippet and take all nodes
-    }
     const cleanedNode = this.cleanupNode(rootNode);
     return cleanedNode.innerHTML;
   }
@@ -57,7 +54,7 @@ class HTMLInputParser {
       }
 
       if (this.lumpTags.includes(tag)) {
-        cleanedNode.setAttribute('contenteditable', false);
+        cleanedNode.setAttribute("property", "http://lblod.data.gift/vocabularies/editor/isLumpNode");
       }
       for (let attribute of this.safeAttributes) {
         if (node.hasAttribute(attribute))

@@ -11,9 +11,11 @@ import {
   findPreviousLi
 } from '../dom-helpers';
 import previousTextNode from '../previous-text-node';
+import { isRdfaNode } from '../../rdfa/rdfa-rich-node-helpers';
 import { warn, debug } from '@ember/debug';
 import { A } from '@ember/array';
 import { isInLumpNode, getParentLumpNode, getPreviousNonLumpTextNode } from '../lump-node-utils';
+import NodeWalker from '@lblod/marawa/node-walker';
 
 /**
  * Backspace Handler, a event handler to handle the generic backspace case
@@ -36,7 +38,7 @@ export default EmberObject.extend({
    * @return boolean
    * @public
    */
-  isHandlerFor(event){
+  isHandlerFor(event) {
     return event.type === "keydown"
       && event.key === 'Backspace'
       && this.get('rawEditor.currentSelectionIsACursor')
@@ -51,7 +53,7 @@ export default EmberObject.extend({
     this.rawEditor.setCarret(textNode, trueRelativePosition - slicedText.length);
   },
 
-  doesCurrentNodeBelongsToContentEditable(){
+  doesCurrentNodeBelongsToContentEditable() {
     return this.currentNode && this.currentNode.parentNode && this.currentNode.parentNode.isContentEditable;
   },
 
@@ -63,7 +65,7 @@ export default EmberObject.extend({
    * @return {RichNode}
    * @private
    */
-  absoluteToRelativePosition(richNode, position){
+  absoluteToRelativePosition(richNode, position) {
     return Math.max(position -  get(richNode, 'start'), 0);
   },
 
@@ -110,6 +112,7 @@ export default EmberObject.extend({
     const position = this.currentSelection[0];
     const textNode = this.currentNode;
     const richNode = this.rawEditor.getRichNodeFor(textNode);
+    this.mergeSiblingTextNodes(this.currentNode, richNode);
     try {
       const originalText = textNode.textContent;
       const visibleText = this.visibleText(textNode);
@@ -125,14 +128,14 @@ export default EmberObject.extend({
         const posCorrection = textBeforeCursor.length - this.stringToVisibleText(textBeforeCursor).length;
         const trueRelativePosition = relPosition - posCorrection;
         if (trueRelativePosition === 0) {
-          // start of node, move to previous node an start backspacing there
+          // start of non empty node, find valid position before current position
           const previousNode = previousTextNode(textNode, this.rawEditor.rootNode);
           if (previousNode) {
+            // move cursor to previous node
             this.rawEditor.updateRichNode();
             this.rawEditor.setCarret(previousNode, previousNode.length);
-
             if (isLI(textNode.parentNode) && richNode.start === richNode.parent.start) {
-              // we're at the start of an li and need to handle this
+              // starting position was at the start of an li and we can merge them
               this.removeLI(textNode.parentNode);
               this.rawEditor.updateRichNode();
             }
@@ -145,19 +148,26 @@ export default EmberObject.extend({
           }
         }
         else {
-
           if(isInLumpNode(textNode, this.rawEditor.rootNode)){
             this.handleLumpRemoval(textNode);
           }
-
-          // not empty and we're not at the start, delete character before the carret
-          else this.deleteCharacter(textNode, trueRelativePosition);
+          else {
+            // not empty and we're not at the start, delete character before the carret
+            this.deleteCharacter(textNode, trueRelativePosition);
+            if (this.shouldHighlightParentNode(textNode.parentNode, visibleLength)) {
+              const removeType = visibleLength > 1 ? 'almost-complete' : 'complete';
+              textNode.parentNode.setAttribute('data-flagged-remove', removeType);
+            }
+          }
         }
       }
       else {
         // empty node, move to previous text node and remove nodes in between
         let previousNode = getPreviousNonLumpTextNode(textNode, this.rawEditor.rootNode);
-        if (previousNode) {
+        if (textNode.parentNode.getAttribute('data-flagged-remove') != "complete" && this.shouldHighlightParentNode(textNode.parentNode, visibleLength)) {
+          textNode.parentNode.setAttribute('data-flagged-remove', 'complete');
+        }
+        else if (previousNode) {
           this.removeNodesFromTo(textNode, previousNode);
           this.rawEditor.updateRichNode();
           this.rawEditor.setCarret(previousNode, previousNode.length);
@@ -172,7 +182,8 @@ export default EmberObject.extend({
       warn(e, { id: 'rdfaeditor.invalidState'});
     }
 
-//    Brutal repositioning if cursor ends in lumpnode; 'lump-node-is-lava'
+    // Brutal repositioning if cursor ends in lumpnode; 'lump-node-is-lava'
+    // TODO: this can go if we properly act on repositioning
     if(isInLumpNode(this.rawEditor.currentNode, this.rawEditor.rootNode)){
       const previousNonLump = getPreviousNonLumpTextNode(this.rawEditor.currentNode, this.rawEditor.rootNode);
       this.rawEditor.updateRichNode();
@@ -215,7 +226,7 @@ export default EmberObject.extend({
         else if (isLI(node)) {
           this.removeLI(node);
         }
-        else if (node.children.length === 0 || isEmptyList(node)) {
+        else if (node.children && node.children.length === 0 || isEmptyList(node)) {
           removeNode(node);
         }
         else {
@@ -260,13 +271,36 @@ export default EmberObject.extend({
     }
   },
 
-  handleLumpRemoval(node){
+  handleLumpRemoval(node) {
     const nodeToDeleteAsBlock = getParentLumpNode(node, this.rawEditor.rootNode);
     const previousNode = getPreviousNonLumpTextNode(nodeToDeleteAsBlock, this.rawEditor.rootNode);
     this.removeNodesFromTo(previousNode, nodeToDeleteAsBlock);
     nodeToDeleteAsBlock.remove();
     this.rawEditor.updateRichNode();
     this.rawEditor.setCarret(previousNode, previousNode.length);
+  },
+  shouldHighlightParentNode(parentNode, visibleLength) {
+    let nodeWalker = new NodeWalker();
+    return visibleLength < 5 && parentNode.childNodes.length == 1 && isRdfaNode(nodeWalker.processDomNode(parentNode));
+  },
+  mergeSiblingTextNodes(textNode, richNode) {
+    while (textNode.previousSibling && textNode.previousSibling.nodeType === Node.TEXT_NODE) {
+      const previousDOMSibling = textNode.previousSibling;
+      const indexOfRichNode = richNode.parent.children.indexOf(richNode);
+      const previousRichSibling = richNode.parent.children[indexOfRichNode-1];
+      textNode.textContent = `${previousDOMSibling.textContent}${textNode.textContent}`;
+      richNode.start = previousRichSibling.start;
+      richNode.parent.children.splice(indexOfRichNode - 1, 1);
+      previousDOMSibling.remove();
+    }
+    while (textNode.nextSibling && textNode.nextSibling.nodeType === Node.TEXT_NODE) {
+      const nextDOMSibling = textNode.nextSibling;
+      const indexOfRichNode = richNode.parent.children.indexOf(richNode);
+      const nextRichSibling = richNode.parent.children[indexOfRichNode+1];
+      textNode.textContent = `${textNode.textContent}${nextDOMSibling.textContent}`;
+      richNode.end = nextRichSibling.end;
+      richNode.parent.children.splice(indexOfRichNode + 1 , 1);
+      nextDOMSibling.remove();
+    }
   }
-
 });

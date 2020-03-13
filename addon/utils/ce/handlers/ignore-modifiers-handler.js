@@ -25,9 +25,7 @@ export default EmberObject.extend( {
   },
 
   /**
-   * There is no desire to actually handle this event.  Other inputs
-   * may choose to also act on this behaviour, hence we allow
-   * propagation.
+   * There is no desire to actually handle this event. we prevent bubbling here so it's not picked up by the fallback
    */
   handleEvent() {
     return HandlerResponse.create(

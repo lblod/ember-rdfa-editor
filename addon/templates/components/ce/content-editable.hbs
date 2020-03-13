@@ -1,15 +1,19 @@
+<div
+  {{on "paste" this.paste}}
+  {{on "cut" this.cut}}
+  {{on "copy" this.copy}}
+  {{on "keydown" this.handleKeyDown}}
+  {{on "keyup" this.handleKeyUp}}
+  {{on "compositionend" this.compositionEnd}}
+  {{on "mouseup" this.handleMouseUp}}
+  {{on "mousedown" this.handleMouseDown}}
+  {{on "input" this.handleInput}}
+  {{did-insert this.insertedEditorElement}}
+  contenteditable={{@editable}} class={{@class}} ...attributes>
 {{#if this.yieldHTML}}
   {{{yield}}}
 {{else}}
   {{yield}}
 {{/if}}
 &nbsp;
-
-<!-- components -->
-{{#each this.components as |config|}}
-  <!-- component {{config.id}} -->
-  {{log config}}
-  <EmberWormhole @destinationElement={{config.element}}>
-    <Ce::ComponentWrapper @id={{config.id}} @name={{config.name}} @content={{config.content}} @removeComponent={{action "removeComponent"}} />
-  </EmberWormhole>
-{{/each}}
+</div>

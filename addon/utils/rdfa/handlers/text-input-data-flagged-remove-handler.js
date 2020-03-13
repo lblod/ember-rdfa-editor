@@ -1,8 +1,8 @@
-import InputTextHandler from '../../ce/handlers/text-input-handler';
+import TextInputHandler from '../../ce/handlers/text-input-handler';
 import HandlerResponse from '../../ce/handlers/handler-response';
 import { isAllWhitespace } from '../../ce/dom-helpers';
 
-export default InputTextHandler.extend({
+export default class InputDataRemovedHandler extends TextInputHandler {
   /**
    * tests this handler can handle the specified event
    * @method isHandlerFor
@@ -14,7 +14,7 @@ export default InputTextHandler.extend({
     const currentNode = this.rawEditor.currentNode;
     if (currentNode) {
       const parentNode = currentNode.parentNode;
-      return this._super(...arguments) &&
+      return super.isHandlerFor(...arguments) &&
         currentNode.length < 4 &&
         parentNode &&
         parentNode.getAttribute('data-flagged-remove');
@@ -22,7 +22,7 @@ export default InputTextHandler.extend({
     else {
       return false;
     }
-  },
+  }
 
   handleEvent(){
     //this is the span
@@ -35,6 +35,6 @@ export default InputTextHandler.extend({
     }
     else
       currentNode.parentNode.removeAttribute('data-flagged-remove');
-    return new HandlerResponse();
+    return HandlerResponse.create({});
   }
-});
+}
