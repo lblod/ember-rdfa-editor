@@ -16,7 +16,6 @@ import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-nod
 import LegacyMovementObserver from '../../utils/ce/movement-observers/legacy-movement-observer';
 import BoldItalicUnderlineHandler from '../../utils/ce/handlers/bold-italic-underline-handler';
 import UndoHandler from '../../utils/ce/handlers/undo-hander';
-import ClickHandler from '../../utils/ce/handlers/click-handler';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import TabHandler from '../../utils/ce/handlers/tab-handler';
 import HTMLInputParser from '../../utils/html-input-parser';
@@ -151,7 +150,6 @@ export default class ContentEditable extends Component {
     const forceParagraph = this.features.isEnabled('editor-force-paragraph');
     const defaultInputHandlers = [ ArrowHandler.create({rawEditor}),
                                    HeaderMarkdownHandler.create({rawEditor}),
-                                   ClickHandler.create({rawEditor}),
                                    EnterHandler.create({rawEditor}),
                                    BackspaceHandler.create({rawEditor}),
                                    new TextInputHandler({rawEditor, forceParagraph }),
