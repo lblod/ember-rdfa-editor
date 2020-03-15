@@ -1,0 +1,45 @@
+/* ==================================
+   #SAY EDITOR
+   ================================== */
+
+/**
+ * A base theme for the say editor
+ */
+
+/**
+ * CONTENTS
+ * ---
+ * SETTINGS: Project settings and variables
+ * TOOLS: Mixins
+ * COMPONENTS: Components (namespace: '.say-...')
+ */
+
+
+// VARIABLES
+@import "ember-rdfa-editor/s-colors";
+@import "ember-rdfa-editor/s-settings";
+@import "ember-rdfa-editor/s-say-theme";
+
+
+// TOOLS
+@import "ember-rdfa-editor/t-font-size";
+@import "ember-rdfa-editor/t-sass-mq";
+
+
+// COMPONENTS
+@import "ember-rdfa-editor/c-container";
+@import "ember-rdfa-editor/c-editor";
+@import "ember-rdfa-editor/c-toolbar";
+@import "ember-rdfa-editor/c-switch";
+@import "ember-rdfa-editor/c-icon";
+@import "ember-rdfa-editor/c-button";
+@import "ember-rdfa-editor/c-toast";
+@import "ember-rdfa-editor/c-typography";
+
+// RDFA AND ANNOTATION COMPONENTS
+@import "ember-rdfa-editor/c-annotations";
+@import "ember-rdfa-editor/c-annotations-hover";
+
+
+// LEGACY STYLES
+@import "ember-rdfa-editor/legacy";

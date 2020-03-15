@@ -1,9 +1,13 @@
-<h1 id="title">Content editable dummy app</h1>
-{{#link-to 'ce.playground'}} general playground {{/link-to}} &nbsp;
-{{#link-to 'ce.lists'}} test lists {{/link-to}} &nbsp;
-{{#link-to 'ce.editor.update-before-after'}} Editor test update before/after {{/link-to}} &nbsp;
-{{#link-to 'ce.editor.backspace'}} Test backspace {{/link-to}} &nbsp;
-{{#link-to 'ce.editor.positioning'}} Test positioning {{/link-to}}
-
-
-{{outlet}}
+<div class="c-dummy__header">
+  <h1 id="title">Content editable dummy app</h1>
+  <p>
+    {{#link-to 'ce.playground'}} general playground {{/link-to}} &nbsp;
+    {{#link-to 'ce.lists'}} test lists {{/link-to}} &nbsp;
+    {{#link-to 'ce.editor.update-before-after'}} Editor test update before/after {{/link-to}} &nbsp;
+    {{#link-to 'ce.editor.backspace'}} Test backspace {{/link-to}} &nbsp;
+    {{#link-to 'ce.editor.positioning'}} Test positioning {{/link-to}}
+  </p>
+</div>
+<div class="c-dummy__content c-dummy__content--scroll">
+  {{outlet}}
+</div>

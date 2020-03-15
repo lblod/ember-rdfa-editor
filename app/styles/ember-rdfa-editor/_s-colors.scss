@@ -1,0 +1,97 @@
+// ==================================
+// #COLORS
+// ==================================
+
+// Tint & shade helper functions
+// ---
+// Makes a color lighter
+@function tint($color, $percent) {
+  @return mix(#fff, $color, $percent);
+}
+
+// Makes a color darker
+@function shade($color, $percent) {
+  @return mix(#000, $color, $percent);
+}
+
+// Color palette
+// ---
+$say-white                    : #FFFFFF;
+$say-black                    : #202326;
+
+$say-gray                     : #6D7783;
+$say-gray-light               : #CBD2DA;
+$say-gray-lighter             : #E8EBEE;
+$say-gray-lightest            : #F3F5F6;
+$say-gray-dark                : #545B63;
+$say-gray-darker              : #3b4146;
+$say-gray-darkest             : #202326;
+
+$say-yellow                   : #FEE539;
+
+$say-purple                   : #9000FA;
+$say-purple-light             : lighten($say-purple,10);
+$say-purple-lighter           : lighten($say-purple,40);
+$say-purple-lightest          : lighten($say-purple,70);
+$say-purple-dark              : darken($say-purple,20);
+
+$say-red                      : #DB3434;
+$say-red-light                : #FF3333;
+$say-red-lighter              : #FBE6E6;
+$say-red-lightest             : #FCF3F3;
+$say-red-dark                 : #C32323;
+$say-red-darker               : #470000;
+
+$say-green                    : #8BAE00;
+$say-green-light              : #B3E000;
+$say-green-lighter            : #E8EFC2;
+$say-green-lightest           : #F7FAE5;
+$say-green-dark               : #637A0B;
+$say-green-darker             : #323D08;
+
+$say-orange                   : #FFC515;
+$say-orange-light             : #FEE539;
+$say-orange-lighter           : #FFF29B;
+$say-orange-lightest          : #FFF9D5;
+$say-orange-dark              : #7C6B3A;
+$say-orange-darker            : #5C4F2B;
+
+
+// Semantic color variables
+// ---
+$say-neutral                  : $say-gray;
+$say-neutral-light            : $say-gray-light;
+$say-neutral-lighter          : $say-gray-lighter ;
+$say-neutral-lightest         : $say-gray-lightest;
+$say-neutral-dark             : $say-gray-dark;
+$say-neutral-darker           : $say-gray-darker;
+$say-neutral-darkest          : $say-gray-darkest;
+
+$say-primary                  : $say-purple;
+$say-primary-light            : $say-purple-light;
+$say-primary-lighter          : $say-purple-lighter;
+$say-primary-lightest         : $say-purple-lightest;
+$say-primary-dark             : $say-purple-dark;
+
+$say-error                    : $say-red;
+$say-error-light              : $say-red-light;
+$say-error-lighter            : $say-red-lighter;
+$say-error-lightest           : $say-red-lightest;
+$say-error-dark               : $say-red-dark;
+$say-error-darker             : $say-red-darker;
+
+$say-success                  : $say-green;
+$say-success-light            : $say-green-light;
+$say-success-lighter          : $say-green-lighter;
+$say-success-lightest         : $say-green-lightest;
+$say-success-dark             : $say-green-dark;
+$say-success-darker           : $say-green-darker;
+
+$say-warning                  : $say-orange;
+$say-warning-light            : $say-orange-light;
+$say-warning-lighter          : $say-orange-lighter;
+$say-warning-lightest         : $say-orange-lightest;
+$say-warning-dark             : $say-orange-dark;
+$say-warning-darker           : $say-orange-darker;
+
+$say-outline-color            : $say-primary-lighter;

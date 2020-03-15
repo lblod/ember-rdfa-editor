@@ -1,0 +1,156 @@
+/* ==================================
+   #SAY ANNOTATIONS
+   Shared styling (hover, click, show, regular)
+   ================================== */
+
+$say-annotation-width-content : $say-annotation-width - $say-unit !default;
+
+@if $say-show-rdfa == true {
+  .rdfa-annotations {
+    span { //	making sure elements are easier to style and handle
+      display: inline-block;
+    }
+
+    [property="prov:value"] > div > span,
+    [property="ext:behandelt"] > div > span {
+      display: block; // remove when span is gone from the template "nieuw generiek besluit"
+    }
+
+    // Hide empty field
+    [property="heeftNotulen"] {
+      border: 0;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+    }
+
+    [data-editor-highlight="true"],
+    [property],
+    [typeof]:not([typeof="foaf:Document"]),
+    [data-type],
+    .mark-highlight-manual {
+      border-bottom: 2px dotted $say-neutral-light;
+      padding-bottom: .4rem;
+      transition: border $say-transition;
+
+      // invisible styling of annotations, before they are shown
+      &:not([data-flagged-remove="complete"]):before {
+        // positioning
+        content:  attr(property) " " attr(typeof) " " attr(data-type);
+        position: absolute;
+        pointer-events: none;
+        transition: opacity $say-transition;
+        z-index: $say-z-index-beta;
+        right: calc(100% + #{$say-unit});
+        width: $say-annotation-width-content;
+
+        // Text
+        @include say-font-size($say-base,1.4);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: $say-medium;
+        font-size: 1.2rem;
+        color: $say-neutral-dark;
+        font-family: $say-font;
+        display: block;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+
+        // Hide text
+        opacity: 0;
+        right: calc(100% + #{$say-unit});
+      }
+
+      .mark-highlight-manual,
+      [typeof],
+      [property],
+      [data-type] {
+        padding-bottom: .2rem;
+      }
+
+      [typeof] .mark-highlight-manual,
+      [property] .mark-highlight-manual,
+      [typeof] [data-type],
+      [property] [data-type],
+      [typeof] [typeof],
+      [property] [property] {
+        padding-bottom: .2rem;
+      }
+
+      [typeof] [typeof] .mark-highlight-manual,
+      [property] [property] .mark-highlight-manual,
+      [typeof] [typeof] [data-type],
+      [property] [property] [data-type],
+      [typeof] [typeof] [typeof],
+      [property] [property] [property] {
+        padding-bottom: .2rem;
+      }
+
+      [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] .mark-highlight-manual,
+      [property] [property] [property] [property] [property] [property] .mark-highlight-manual,
+      [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [data-type],
+      [property] [property] [property] [property] [property] [property] [property] [data-type],
+      [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof],
+      [property] [property] [property] [property] [property] [property] [property] {
+        border-bottom: 0;
+      }
+    }
+
+    // making it easy to discover elements that need to be filled out / take action upon
+    [property^="ext:insert"],
+    [data-editor-highlight="true"] {
+      background-color: rgba($say-yellow,.9);
+
+      &::selection {
+        background-color: darken($say-yellow,20%);
+      }
+
+      &:hover {
+        color: $say-neutral-darker;
+        background-color: $say-yellow;
+      }
+    }
+
+    span.mark-highlight-manual {
+      color: $say-neutral-darker !important;
+      font-style: italic;
+    }
+
+    // Hide superfluous annotations
+    [property=""],
+    [typeof=""],
+    [typeof="Zitting"],
+    [property="ext:metadata"],
+    [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
+    [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
+      border-bottom: 0 !important;
+
+      &:after,
+      &:before {
+        content: '' !important;
+        display: none !important;
+      }
+    }
+
+    // @TODO: check these annotations
+    [typeof="mandaat:Baz"],
+    [property="eli:cites"] {
+      border-bottom: 0 !important;
+
+      &:after,
+      &:before {
+        content: '' !important;
+        display: none !important;
+      }
+    }
+  }
+}

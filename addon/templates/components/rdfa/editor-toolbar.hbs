@@ -1,51 +1,38 @@
-<div class="toolbar">
-  <div class="grid">
-    <div class="col--8-12 toolbar__styling-tools">
-      <div class="button-group u-display-inline-block">
-        <button class="button button--narrow button--link button--dark button--link--dark" onclick={{action "undo"}}>
-          <i class="fa fa-rotate-left"></i>
-        </button>
-      </div>
-      <div class="button-group u-display-inline-block">
-        <button class="button button--narrow button--link button--dark button--link--dark" onclick={{action "toggleBold"}}>
-          <i class="fa fa-bold"></i>
-        </button>
-                <button class="button button--narrow button--link button--dark button--link--dark" onclick={{action "toggleItalic"}}>
-          <i class="fa fa-italic"></i>
-        </button>
-                <button class="button button--narrow button--link button--dark button--link--dark" onclick={{action "toggleUnderline"}}>
-          <i class="fa fa-underline"></i>
-        </button>
-                <button class="button button--narrow button--link button--dark button--link--dark" onclick={{action "toggleStrikethrough"}}>
-          <i class="fa fa-strikethrough"></i>
-        </button>
-                <button class="button button--narrow button--link button--dark button--link--dark" onclick={{action "insertUL"}}>
-          <i class="fa fa-list-ul"></i>
-        </button>
-                <button class="button button--narrow button--link button--dark button--link--dark" onclick={{action "insertOL"}}>
-          <i class="fa fa-list-ol"></i>
-        </button>
-                <button class="button button--narrow button--link button--dark button--link--dark" onclick={{action "insertUnindent"}}>
-          <i class="fa fa-dedent"></i>
-        </button>
-                <button class="button button--narrow button--link button--dark button--link--dark" onclick={{action "insertIndent"}}>
-          <i class="fa fa-indent"></i>
-        </button>
-      </div>
+<div class="say-toolbar">
+  <div class="say-toolbar__styling-tools">
+    <div class="say-toolbar__group">
+      <button class="say-toolbar__button" onclick={{action "undo"}}>
+        <i class="fa fa-rotate-left"></i>
+      </button>
     </div>
-    <div class="col--4-12 u-align-right">
-      <div class="button-group">
-        <div class="checkbox--switch__wrapper checkbox--switch--small">
-          <input class="checkbox--switch" type="checkbox" name="toggle" value="" checked="checked">
-          <label class="checkbox--switch__label" for="toggle-1"></label>
-          <span>Toon annotaties</span>
-        </div>
-        <button class="button--alt button--alt--blue button button--small button--narrow">
-          Voeg annotatie in +
-        </button>
-      </div>
+    <div class="say-toolbar__group">
+      <button class="say-toolbar__button" onclick={{action "toggleBold"}}>
+        <i class="fa fa-bold"></i>
+      </button>
+      <button class="say-toolbar__button" onclick={{action "toggleItalic"}}>
+        <i class="fa fa-italic"></i>
+      </button>
+      <button class="say-toolbar__button" onclick={{action "toggleUnderline"}}>
+        <i class="fa fa-underline"></i>
+      </button>
+      <button class="say-toolbar__button" onclick={{action "toggleStrikethrough"}}>
+        <i class="fa fa-strikethrough"></i>
+      </button>
+      <button class="say-toolbar__button" onclick={{action "insertUL"}}>
+        <i class="fa fa-list-ul"></i>
+      </button>
+      <button class="say-toolbar__button" onclick={{action "insertOL"}}>
+        <i class="fa fa-list-ol"></i>
+      </button>
+      <button class="say-toolbar__button" onclick={{action "insertUnindent"}}>
+        <i class="fa fa-dedent"></i>
+      </button>
+      <button class="say-toolbar__button" onclick={{action "insertIndent"}}>
+        <i class="fa fa-indent"></i>
+      </button>
     </div>
   </div>
-
-  {{yield}}
+  <div class="say-toolbar__actions">
+    {{yield}}
+  </div>
 </div>

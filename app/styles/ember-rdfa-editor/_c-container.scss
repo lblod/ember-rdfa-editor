@@ -1,0 +1,55 @@
+/* ==================================
+   #SAY CONTAINER
+   ================================== */
+
+/* Variables
+   ========================================================================== */
+
+$say-aside-shadow   : 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px rgba($say-neutral-darkest, .035), 0 1px 1px rgba($say-neutral-darkest, .025) !default;
+
+/* Component
+   ========================================================================== */
+
+.say-container {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  @if $say-layout-reverse == true {
+    flex-direction: column-reverse;
+  }
+}
+
+  .say-container__main {
+    overflow: auto;
+  }
+
+  .say-container__aside {
+    position: absolute;
+    bottom: $say-unit-small;
+    right: $say-unit-small;
+
+    @if $say-layout-reverse == true {
+      top: $say-unit-small;
+      bottom: auto;
+    }
+
+    @if $say-layout-reverse == true and $say-sidebar == false {
+      top: $say-unit;
+    }
+
+    @if $say-layout-reverse == true and $say-sidebar == true {
+      top: $say-unit;
+    }
+
+    @if $say-sidebar == true {
+      top: calc(44px + #{$say-unit});
+      width: calc(25% - #{$say-unit});
+      box-shadow: none;
+      bottom: auto;
+      right: 0;
+      background-color: $say-neutral-lightest;
+    }
+  }
