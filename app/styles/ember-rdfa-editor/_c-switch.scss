@@ -14,10 +14,14 @@ $say-switch-active-color : $say-primary !default;
    ========================================================================== */
 
 .say-switch {
+  display: none;
   position: relative;
-  display: inline-flex;
   align-items: center;
   margin: $say-unit-small $say-unit-tiny;
+
+  @if $say-show-rdfa == true {
+    display: inline-flex;
+  }
 }
 
   /* Hide the checkbox input (only needed for `:checked` property) */

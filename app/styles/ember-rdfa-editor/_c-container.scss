@@ -46,10 +46,10 @@ $say-aside-shadow   : 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px rgba(
 
     @if $say-sidebar == true {
       top: calc(44px + #{$say-unit});
-      width: calc(25% - #{$say-unit});
+      width: calc(25% - #{$say-unit + $say-unit-small});
       box-shadow: none;
       bottom: auto;
-      right: 0;
+      right: $say-unit-small;
       background-color: $say-neutral-lightest;
     }
   }

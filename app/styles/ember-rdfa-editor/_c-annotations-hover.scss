@@ -2,8 +2,12 @@
    #SAY ANNOTATIONS HOVER
    ================================== */
 
-$say-annotation-width-content : $say-annotation-width - $say-unit !default;
+/* Variables
+   ========================================================================== */
 
+
+/* Component
+  ========================================================================== */
 
 @if $say-hover-annotations == true {
   .rdfa-annotations:not(.show-rdfa-blocks) {
@@ -15,7 +19,7 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
     [data-type],
     [data-editor-highlight="true"] {
       &:hover {
-        border-bottom-style: solid;
+        border-bottom-color: tint($say-neutral,20);
       }
 
       &:before,
@@ -23,10 +27,10 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
       &:hover:before,
       &:hover:after {
         position: absolute;
-        transition: padding $say-transition, opacity $say-transition, left $say-transition, border $say-transition;
+        transition: opacity $say-easing .5s, left $say-easing .2s;
+        right: calc(100% + #{$say-annotation-offset*2.1} + #{$say-annotation-gutter});
       }
 
-      /* showing annotations text */
       &[data-editor-position-level]:before,
       &:hover:before {
         display: -webkit-box;
@@ -34,49 +38,44 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
         -webkit-box-orient: vertical;
         text-overflow: ellipsis;
         overflow: hidden;
-        position: absolute;
-        padding-left: $say-unit-small;
-        margin-top: $say-unit-tiny/2;
-        right: calc(100% + #{$say-unit});
-        width: $say-annotation-width-content;
+        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter});
         text-align: right;
-        background-color: $say-neutral-lightest;
         opacity: 1;
+        padding-right: $say-unit-tiny;
       }
 
-      // Bright highlighted annotation to the front
+      // Bring highlighted annotation to the front
       &[data-editor-position-level]:before {
         z-index: $say-z-index-alpha;
       }
 
-      &:not([data-editor-position-level]):hover:before {
-        // @TODO: Check what this does
-      }
-
-      /* style for lines that accompany annotations */
+      // Show lines on hover and selection
       &[data-editor-position-level]:after,
       &:hover:after {
         position: absolute;
         content: "";
-        display: block;
-        height: 100%;
-        right: calc(100% - #{$say-unit + $say-unit-small});
-        width: $say-unit-large;
+        display: flex;
+        right: calc(100% + #{$say-annotation-gutter});
+        width: $say-annotation-offset*2;
         border-right: 1px dashed $say-neutral-light;
         border-top: 1px dashed $say-neutral-light;
-        margin-top: -$say-unit-small;
+        vertical-align: center;
+        margin-top: calc(-2ex + 1px);
       }
 
+      // Hide right border when not selected
       &:not([data-editor-position-level]):hover:after,
       &:not([data-editor-position-level]):after {
         border-right: 0;
       }
 
-      &[data-editor-position-level="0"]:after {
-        border-right: 0;
+      // Make right border solid when selected
+      &[data-editor-position-level]:after {
+        border-right-style: solid;
+        border-top-style: solid;
       }
 
-      /* positioning of annotations (pseudo class elements) */
+      // Positioning of annotations (pseudo class elements) */
       [data-editor-highlight="true"],
       [property],
       [typeof] {
@@ -86,8 +85,8 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
         [typeof],
         [property] {
           &:after {
-            min-height: $say-unit-large;
-            height: calc(100% - #{$say-unit-huge*2});
+            min-height: $say-unit-huge;
+            // height: calc(100% - 30rem);
           }
         }
       }
@@ -103,14 +102,10 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
         [data-type],
         [typeof],
         [property] {
-          &:before,
           &:after {
-            // margin-top: 8rem;
-          }
-
-          &:after {
-            min-height: $say-unit-large;
-            height: calc(100% - #{$say-unit-huge*2});
+            // margin-top: 20rem;
+            // min-height: $say-unit-large;
+            // height: calc(100% - #{$say-unit-huge*2});
           }
         }
       }
@@ -122,14 +117,14 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
         [data-type],
         [typeof],
         [property] {
-          &:before,
           &:after {
             // margin-top: 12rem;
           }
 
           &:after {
-            min-height: $say-unit-large;
-            height: calc(100% - #{$say-unit-huge*2});
+            // margin-top: 12rem;
+            // min-height: $say-unit-large;
+            // height: calc(100% - #{$say-unit-huge*2});
           }
         }
       }
@@ -147,8 +142,8 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
           }
 
           &:after {
-            min-height: $say-unit-large;
-            height: calc(100% - #{$say-unit-huge*2});
+            // min-height: $say-unit-large;
+            // height: calc(100% - #{$say-unit-huge*2});
           }
         }
       }
@@ -166,8 +161,8 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
           }
 
           &:after {
-            min-height: $say-unit-large;
-            height: calc(100% - #{$say-unit-huge*2});
+            // min-height: $say-unit-large;
+            // height: calc(100% - #{$say-unit-huge*2});
           }
         }
       }
@@ -185,8 +180,8 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
           }
 
           &:after {
-            min-height: $say-unit-large;
-            height: calc(100% - #{$say-unit-huge*2});
+            // min-height: $say-unit-large;
+            // height: calc(100% - #{$say-unit-huge*2});
           }
         }
       }
@@ -204,10 +199,10 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
           }
 
           &:after {
-            min-height: $say-unit-large;
-            height: calc(100% - #{$say-unit-huge*2});
-            border-left: 0;
-            border-right: 0;
+            // min-height: $say-unit-large;
+            // height: calc(100% - #{$say-unit-huge*2});
+            // border-left: 0;
+            // border-right: 0;
           }
         }
       }
@@ -227,152 +222,152 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
     [typeof="http://data.vlaanderen.be/ns/besluit#Besluit http://data.vlaanderen.be/ns/besluit#AanvullendReglement"],
     [typeof="besluit:Artikel"],
     [typeof="mobiliteit:Opstelling"] {
-      display: block;
-      position: relative;
+      // display: block;
+      // position: relative;
     }
 
-    // /* temporary way to reposition annotations for big blocks of text */
-    // [typeof~="besluit:Besluit"],
-    // [property="ext:stemmingTable"],
-    // [property="ext:insertStemmingText"],
-    // [property="ext:aanwezigenTable"],
-    // [property="ext:insertAanwezigenText"],
-    // [property="prov:generated"] > [property="besluit:motivering"],
-    // [property="prov:generated"] > [property="prov:value"],
-    // [typeof="besluit:Artikel"] {
-    //   &:not([data-flagged-remove]) {
-    //     &:before,
-    //     &:after {
-    //       margin-top: 0rem !important;
-    //     }
-    //   }
+    /* temporary way to reposition annotations for big blocks of text */
+    [typeof~="besluit:Besluit"],
+    [property="ext:stemmingTable"],
+    [property="ext:insertStemmingText"],
+    [property="ext:aanwezigenTable"],
+    [property="ext:insertAanwezigenText"],
+    [property="prov:generated"] > [property="besluit:motivering"],
+    [property="prov:generated"] > [property="prov:value"],
+    [typeof="besluit:Artikel"] {
+      &:not([data-flagged-remove]) {
+        &:before,
+        &:after {
+          // margin-top: 0rem !important;
+        }
+      }
 
-    //   [data-editor-highlight="true"],
-    //   [data-type],
-    //   [typeof],
-    //   [property] {
-    //     &:not([data-flagged-remove]) {
-    //       &:before,
-    //       &:after {
-    //         // margin-top: 4rem !important;
-    //       }
-    //     }
-    //   }
+      [data-editor-highlight="true"],
+      [data-type],
+      [typeof],
+      [property] {
+        &:not([data-flagged-remove]) {
+          &:before,
+          &:after {
+            // margin-top: 4rem !important;
+          }
+        }
+      }
 
-    //   [property],
-    //   [typeof] {
-    //     .mark-highlight-manual,
-    //     [data-editor-highlight="true"],
-    //     [data-type],
-    //     [typeof],
-    //     [property] {
-    //       &:not([data-flagged-remove]) {
-    //         &:before,
-    //         &:after {
-    //           // margin-top: 8rem !important;
-    //         }
-    //       }
-    //     }
-    //   }
+      [property],
+      [typeof] {
+        .mark-highlight-manual,
+        [data-editor-highlight="true"],
+        [data-type],
+        [typeof],
+        [property] {
+          &:not([data-flagged-remove]) {
+            &:before,
+            &:after {
+              // margin-top: 8rem !important;
+            }
+          }
+        }
+      }
 
-    //   [property] [data-editor-highlight="true"],
-    //   [typeof] [data-editor-highlight="true"],
-    //   [property] [property],
-    //   [typeof] [typeof] {
-    //     .mark-highlight-manual,
-    //     [data-editor-highlight="true"],
-    //     [data-type],
-    //     [typeof],
-    //     [property] {
-    //       &:not([data-flagged-remove]) {
-    //         &:before,
-    //         &:after {
-    //           // margin-top: 12rem !important;
-    //         }
-    //       }
-    //     }
-    //   }
+      [property] [data-editor-highlight="true"],
+      [typeof] [data-editor-highlight="true"],
+      [property] [property],
+      [typeof] [typeof] {
+        .mark-highlight-manual,
+        [data-editor-highlight="true"],
+        [data-type],
+        [typeof],
+        [property] {
+          &:not([data-flagged-remove]) {
+            &:before,
+            &:after {
+              // margin-top: 12rem !important;
+            }
+          }
+        }
+      }
 
-    //   [property] [property] [property],
-    //   [typeof] [typeof] [typeof] {
-    //     .mark-highlight-manual,
-    //     [data-editor-highlight="true"],
-    //     [data-type],
-    //     [typeof],
-    //     [property] {
-    //       &:not([data-flagged-remove]) {
-    //         &:before,
-    //         &:after {
-    //           // margin-top: 16rem !important;
-    //         }
-    //       }
-    //     }
-    //   }
+      [property] [property] [property],
+      [typeof] [typeof] [typeof] {
+        .mark-highlight-manual,
+        [data-editor-highlight="true"],
+        [data-type],
+        [typeof],
+        [property] {
+          &:not([data-flagged-remove]) {
+            &:before,
+            &:after {
+              // margin-top: 16rem !important;
+            }
+          }
+        }
+      }
 
-    //   [property] [property] [property] [property],
-    //   [typeof] [typeof] [typeof] [typeof] {
-    //     .mark-highlight-manual,
-    //     [data-editor-highlight="true"],
-    //     [data-type],
-    //     [typeof],
-    //     [property] {
-    //       &:not([data-flagged-remove]) {
-    //         &:before,
-    //         &:after {
-    //           // margin-top: 20rem !important;
-    //         }
-    //       }
-    //     }
-    //   }
+      [property] [property] [property] [property],
+      [typeof] [typeof] [typeof] [typeof] {
+        .mark-highlight-manual,
+        [data-editor-highlight="true"],
+        [data-type],
+        [typeof],
+        [property] {
+          &:not([data-flagged-remove]) {
+            &:before,
+            &:after {
+              // margin-top: 20rem !important;
+            }
+          }
+        }
+      }
 
-    //   [property] [property] [property] [property] [property],
-    //   [typeof] [typeof] [typeof] [typeof] [typeof] {
-    //     .mark-highlight-manual,
-    //     [data-editor-highlight="true"],
-    //     [data-type],
-    //     [typeof],
-    //     [property] {
-    //       &:not([data-flagged-remove]) {
-    //         &:before,
-    //         &:after {
-    //           // margin-top: 24rem !important;
-    //         }
-    //       }
-    //     }
-    //   }
+      [property] [property] [property] [property] [property],
+      [typeof] [typeof] [typeof] [typeof] [typeof] {
+        .mark-highlight-manual,
+        [data-editor-highlight="true"],
+        [data-type],
+        [typeof],
+        [property] {
+          &:not([data-flagged-remove]) {
+            &:before,
+            &:after {
+              // margin-top: 24rem !important;
+            }
+          }
+        }
+      }
 
-    //   [property] [property] [property] [property] [property] [property],
-    //   [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] {
-    //     .mark-highlight-manual,
-    //     [data-editor-highlight="true"],
-    //     [data-type],
-    //     [typeof],
-    //     [property] {
-    //       &:not([data-flagged-remove]) {
-    //         &:before,
-    //         &:after {
-    //           // margin-top: 28rem !important;
-    //         }
-    //       }
-    //     }
-    //   }
+      [property] [property] [property] [property] [property] [property],
+      [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] {
+        .mark-highlight-manual,
+        [data-editor-highlight="true"],
+        [data-type],
+        [typeof],
+        [property] {
+          &:not([data-flagged-remove]) {
+            &:before,
+            &:after {
+              // margin-top: 28rem !important;
+            }
+          }
+        }
+      }
 
-    //   [property] [property] [property] [property] [property] [property] [property],
-    //   [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] {
-    //     .mark-highlight-manual,
-    //     [data-editor-highlight="true"],
-    //     [data-type],
-    //     [typeof],
-    //     [property] {
-    //       &:not([data-flagged-remove]) {
-    //         &:before,
-    //         &:after {
-    //           // margin-top: 32rem;
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+      [property] [property] [property] [property] [property] [property] [property],
+      [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] {
+        .mark-highlight-manual,
+        [data-editor-highlight="true"],
+        [data-type],
+        [typeof],
+        [property] {
+          &:not([data-flagged-remove]) {
+            &:before,
+            &:after {
+              // margin-top: 32rem;
+            }
+          }
+        }
+      }
+    }
 
     /* making sure list items annotations look good too */
     ul:not(.article-list) {
@@ -416,4 +411,23 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
       display: block !important;
     }
   }
+
+  // Hide superfluous annotations
+  // [property=""],
+  // [typeof=""],
+  // [typeof="Zitting"],
+  // [property="ext:metadata"],
+  // [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
+  // [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
+  //   border-bottom: 0 !important;
+
+  //   &:after,
+  //   &:hover:after,
+  //   &:before,
+  //   &:hover:before, {
+  //     content: '' !important;
+  //     display: none !important;
+  //     opacity: 0 !important;
+  //   }
+  // }
 }

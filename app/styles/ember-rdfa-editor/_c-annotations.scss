@@ -3,11 +3,17 @@
    Shared styling (hover, click, show, regular)
    ================================== */
 
-$say-annotation-width-content : $say-annotation-width - $say-unit !default;
+/* Variables
+   ========================================================================== */
+
+
+/* Component
+   ========================================================================== */
 
 @if $say-show-rdfa == true {
   .rdfa-annotations {
-    span { //	making sure elements are easier to style and handle
+    // making sure elements are easier to style and handle
+    span {
       display: inline-block;
     }
 
@@ -16,27 +22,13 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
       display: block; // remove when span is gone from the template "nieuw generiek besluit"
     }
 
-    // Hide empty field
-    [property="heeftNotulen"] {
-      border: 0;
-      clip: rect(0 0 0 0);
-      clip-path: inset(50%);
-      height: 1px;
-      margin: -1px;
-      overflow: hidden;
-      padding: 0;
-      position: absolute;
-      white-space: nowrap;
-      width: 1px;
-    }
-
     [data-editor-highlight="true"],
     [property],
     [typeof]:not([typeof="foaf:Document"]),
     [data-type],
     .mark-highlight-manual {
       border-bottom: 2px dotted $say-neutral-light;
-      padding-bottom: .4rem;
+      padding-bottom: .2rem;
       transition: border $say-transition;
 
       // invisible styling of annotations, before they are shown
@@ -47,8 +39,9 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
         pointer-events: none;
         transition: opacity $say-transition;
         z-index: $say-z-index-beta;
-        right: calc(100% + #{$say-unit});
         width: $say-annotation-width-content;
+        background-color: $say-annotation-background-color;
+        padding: $say-unit-tiny/3 $say-unit-tiny/2;
 
         // Text
         @include say-font-size($say-base,1.4);
@@ -67,7 +60,6 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
 
         // Hide text
         opacity: 0;
-        right: calc(100% + #{$say-unit});
       }
 
       .mark-highlight-manual,
@@ -108,15 +100,16 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
     // making it easy to discover elements that need to be filled out / take action upon
     [property^="ext:insert"],
     [data-editor-highlight="true"] {
-      background-color: rgba($say-yellow,.9);
+      background-color: $say-orange-lightest;
+      transition: $say-transition;
 
       &::selection {
-        background-color: darken($say-yellow,20%);
+        color: $say-neutral-darkest;
+        background-color: $say-orange-lighter;
       }
 
       &:hover {
-        color: $say-neutral-darker;
-        background-color: $say-yellow;
+        background-color: $say-orange-lighter;
       }
     }
 
@@ -125,31 +118,98 @@ $say-annotation-width-content : $say-annotation-width - $say-unit !default;
       font-style: italic;
     }
 
-    // Hide superfluous annotations
-    [property=""],
-    [typeof=""],
-    [typeof="Zitting"],
-    [property="ext:metadata"],
-    [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
-    [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
-      border-bottom: 0 !important;
+    p[property="dc:subject"] {
+      display: block;
+    }
 
-      &:after,
-      &:before {
-        content: '' !important;
-        display: none !important;
+    [typeof="besluit:BehandelingVanAgendapunt"]:hover {
+      .annotation--agendapunt--besloten__icon,
+      .annotation--agendapunt--open__icon,
+      .annotation--agendapunt--persoonlijk__icon {
+        opacity: 1;
+        left: auto;
       }
     }
 
-    // @TODO: check these annotations
-    [typeof="mandaat:Baz"],
-    [property="eli:cites"] {
-      border-bottom: 0 !important;
+    [typeof="besluit:Agendapunt"] > [property="dc:subject"],
+    [property="ext:behandelt"] > span:first-child,
+    [property="besluit:gebeurtNa"] + span {
+      text-transform: uppercase;
+      color: $say-neutral-light;
+      letter-spacing: 1px;
+      font-size: 1.4rem;
+      line-height: 1.8;
+    }
 
-      &:after,
-      &:before {
-        content: '' !important;
-        display: none !important;
+    [property="besluit:geplandOpenbaar"],
+    [property="besluit:openbaar"] {
+      text-transform: uppercase;
+      color: $say-neutral-light;
+      letter-spacing: 1px;
+      font-size: 1.4rem;
+      line-height: 1.8;
+    }
+
+    // Hide superfluous annotations visualisation
+    [property=""],
+    [typeof=""],
+    [typeof="Zitting"],
+    [property="heeftNotulen"],
+    [property="ext:metadata"],
+    [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
+    [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
+      // border-bottom: 0 !important;
+
+      // &:after,
+      // &:hover:after,
+      // &:before,
+      // &:hover:before, {
+      //   content: '' !important;
+      //   opacity: 0 !important;
+      // }
+    }
+
+    // Hide superfluous annotated fields
+    [property="heeftNotulen"],
+    [property="ext:metadata"] {
+      border: 0;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+    }
+  }
+
+  .rdfa-annotations.show-rdfa-blocks {
+    [data-editor-highlight="true"],
+    [property],
+    [typeof]:not([typeof="foaf:Document"]),
+    [data-type],
+    .mark-highlight-manual {
+      position: relative;
+      border: 1px solid $say-neutral-lighter;
+      display: block !important; // Override inline styles
+      margin: $say-unit-tiny;
+
+      &:not([data-flagged-remove="complete"]):before {
+        position: relative;
+        pointer-events: none;
+        opacity: 1;
+        right: auto;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border-bottom: 1px solid $say-neutral-lighter;
+      }
+
+      &:not([data-flagged-remove="complete"]):after {
+        display: none;
+        transition: none;
       }
     }
   }

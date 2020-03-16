@@ -42,16 +42,21 @@ $say-typography-margin : $say-unit-small !default;
     font-weight: $say-base-font-weight;
   }
 
-  p,
-  ul,
-  ol,
-  div,
-  table {
+  br {
+    display: none !important;
+  }
+
+  p + *,
+  ul + * {
+    margin-top: $say-typography-margin/4;
+  }
+
+
+  h1,
+  .h1 {
     margin-bottom: $say-typography-margin;
   }
 
-  h1,
-  .h1,
   h2,
   .h2,
   h3,
@@ -62,16 +67,12 @@ $say-typography-margin : $say-unit-small !default;
   .h5,
   h6 {
     margin-top: $say-typography-margin;
-    margin-bottom: $say-typography-margin;
-  }
-
-  &:last-child {
-    margin-bottom: 0;
+    margin-bottom: $say-typography-margin/2;
   }
 
   h1,
   .h1 {
-    @include say-font-size($say-h1-font-size,1.3);
+    @include say-font-size($say-h1-font-size,1.1);
     font-family: $say-h1-font-family;
     font-weight: $say-h1-font-weight;
   }
@@ -112,18 +113,16 @@ $say-typography-margin : $say-unit-small !default;
   }
 
   p, li {
-    position: relative;
-
     &.small {
-      @include say-font-size(1.4rem,1.5);
+      @include say-font-size($say-base);
     }
 
     &.smaller {
-      @include say-font-size(1.3rem,1.5);
+      @include say-font-size(1.4rem,1.5);
     }
 
     &.smallest {
-      @include say-font-size(1.2rem,1.5);
+      @include say-font-size(1.3rem,1.5);
     }
   }
 
@@ -154,7 +153,6 @@ $say-typography-margin : $say-unit-small !default;
   }
 
   ul:not(.bullet-list):not(.numbered-list) li {
-
     > ul > li {
       list-style-type: circle;
 
@@ -199,6 +197,10 @@ $say-typography-margin : $say-unit-small !default;
     margin-left: $say-unit;
   }
 
+  li[style="display: inline;"] {
+    display: inline-block !important;
+  }
+
   hr {
     margin: 0;
     margin-top: $say-unit;
@@ -230,6 +232,7 @@ $say-typography-margin : $say-unit-small !default;
   }
 
   a {
+    display: inline-block;
     transition: color $say-transition, text-decoration $say-transition;
     font-weight: $say-regular;
     text-decoration-color: $say-primary-lighter;
@@ -281,36 +284,7 @@ $say-typography-margin : $say-unit-small !default;
   [typeof="besluit:Agendapunt"] {
     margin-bottom: .5rem;
   }
-}
 
-
-
-
-
-
-
-/* TODO DOUBLE CHECK WHEN RDFA IS FIXED */
-[typeof="besluit:Agendapunt"] > [property="dc:subject"],
-[property="ext:behandelt"] > span:first-child,
-[property="besluit:gebeurtNa"] + span {
-  text-transform: uppercase;
-  color: $say-neutral-light;
-  letter-spacing: 1px;
-  font-size: 1.4rem;
-  line-height: 1.8;
-}
-
-[property="besluit:geplandOpenbaar"],
-[property="besluit:openbaar"] {
-  text-transform: uppercase;
-  color: $say-neutral-light;
-  letter-spacing: 1px;
-  font-size: 1.4rem;
-  line-height: 1.8;
-}
-
-.document-print,
-.say-editor__paper {
   [typeof="besluit:BehandelingVanAgendapunt"],
   [property="ext:behandelt"],
   [property="besluit:heeftAgendapunt"],
@@ -332,21 +306,6 @@ $say-typography-margin : $say-unit-small !default;
     [property="besluit:geplandOpenbaar"][content="false"] i,
     [property="besluit:openbaar"][content="false"] i {
       color: darken($say-yellow, 15%);
-    }
-  }
-}
-
-.rdfa-annotations.show-rdfa-blocks {
-  p[property="dc:subject"] {
-    display: block;
-  }
-
-  [typeof="besluit:BehandelingVanAgendapunt"]:hover {
-    .annotation--agendapunt--besloten__icon,
-    .annotation--agendapunt--open__icon,
-    .annotation--agendapunt--persoonlijk__icon {
-      opacity: 1;
-      left: auto;
     }
   }
 }

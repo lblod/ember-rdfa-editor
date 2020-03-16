@@ -5,9 +5,13 @@
 // Display options
 $say-layout-reverse    : false !default;
 $say-sidebar           : true !default;
-$say-annotations       : true !default;
 $say-paper             : true !default;
 $say-show-rdfa         : true !default;
 $say-hover-annotations : false !default;
 
-$say-annotation-width  : $say-unit-huge*3 !default;
+// Annotation options
+$say-annotation-width            : $say-unit-huge*3 !default;
+$say-annotation-offset           : $say-unit !default;
+$say-annotation-gutter           : -$say-unit-small !default;
+$say-annotation-width-content    : $say-annotation-width - $say-unit-large !default;
+$say-annotation-background-color : $say-neutral-lighter !default;

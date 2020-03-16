@@ -19,6 +19,8 @@ $say-paper-box-shadow    : 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px 
 .say-editor {
   background-color: $say-paper-background;
   padding: $say-editor-padding;
+  width: 100%;
+  position: relative;
 
   @if $say-paper == true {
     background-color: $say-editor-background;
@@ -28,8 +30,8 @@ $say-paper-box-shadow    : 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px 
     padding-right: 25%;
   }
 
-  @if $say-annotations == true {
-    padding-left: $say-unit-huge*3;
+  @if $say-hover-annotations == true {
+    padding-left: $say-annotation-width;
   }
 }
 
