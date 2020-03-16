@@ -55,7 +55,8 @@ $say-layout-reverse     : false !default;
     -webkit-appearance: none; // doesn't work without prefix on Safari iOS11
     outline: none;
     border: 0;
-    display: block;
+    display: inline-flex;
+    justify-content: center;
     align-items: center;
     text-align: center;
     color: $say-neutral;
@@ -63,7 +64,7 @@ $say-layout-reverse     : false !default;
     width: $say-toolbar-height;
     background-color: transparent;
     transition: color $say-transition;
-    padding: $say-unit-small;
+    padding: $say-unit-tiny;
     margin: 0;
 
     &:hover,
@@ -76,4 +77,17 @@ $say-layout-reverse     : false !default;
       outline: $say-outline;
       outline-offset: -.4rem;
     }
+  }
+
+  .say-toolbar__hidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
   }

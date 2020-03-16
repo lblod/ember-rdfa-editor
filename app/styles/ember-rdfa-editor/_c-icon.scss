@@ -7,7 +7,7 @@
 
 $say-icon-size        : .75em !default;
 $say-icon-size-medium : 1.25rem !default;
-$say-icon-size-large  : 1.5rem !default;
+$say-icon-size-large  : 1.7rem !default;
 
 
 /* Component
@@ -36,6 +36,7 @@ $say-icon-size-large  : 1.5rem !default;
 .say-icon--large {
   width: $say-icon-size-large;
   height: $say-icon-size-large;
+  vertical-align: center;
 }
 
 .say-icon--left {

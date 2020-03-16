@@ -93,11 +93,11 @@ $say-success-lightest         : $say-green-lightest !default;
 $say-success-dark             : $say-green-dark !default;
 $say-success-darker           : $say-green-darker !default;
 
-$say-warning                  : $say-orange;
-$say-warning-light            : $say-orange-light;
-$say-warning-lighter          : $say-orange-lighter;
-$say-warning-lightest         : $say-orange-lightest;
-$say-warning-dark             : $say-orange-dark;
-$say-warning-darker           : $say-orange-darker;
+$say-warning                  : $say-orange !default;
+$say-warning-light            : $say-orange-light !default;
+$say-warning-lighter          : $say-orange-lighter !default;
+$say-warning-lightest         : $say-orange-lightest !default;
+$say-warning-dark             : $say-orange-dark !default;
+$say-warning-darker           : $say-orange-darker !default;
 
-$say-outline-color            : $say-primary-lighter;
+$say-outline-color            : $say-primary-lighter !default;

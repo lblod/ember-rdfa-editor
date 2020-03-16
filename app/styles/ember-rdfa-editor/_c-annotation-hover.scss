@@ -29,6 +29,7 @@
     .h6,
     ul,
     ol,
+    [property="dc:title"],
     [property="dc:title foaf:name"],
     [typeof~="besluit:Besluit"],
     [property="ext:stemmingTable"],
@@ -92,13 +93,12 @@
       &:hover:after {
         position: absolute;
         content: "";
-        display: flex;
+        display: block;
         right: calc(100% + #{$say-annotation-gutter});
         width: $say-annotation-offset*2;
         border-right: 1px dashed $say-neutral-light;
         border-top: 1px dashed $say-neutral-light;
-        vertical-align: center;
-        margin-top: calc(-2ex + 1px);
+        margin-top: calc(-1.5rem + 1px);
       }
 
       &[data-editor-position-level]:after {
@@ -110,6 +110,13 @@
       &:not([data-editor-position-level]):hover:after,
       &:not([data-editor-position-level]):after {
         border-right: 0;
+      }
+    }
+
+    // Fix H1 spans > DIRTY FIX > @TODO: find something more elegant
+    [property="dc:title"] span {
+      &:after {
+        margin-top: -4.2rem !important;
       }
     }
 
@@ -167,9 +174,14 @@
     border-bottom: 0 !important;
 
     &:after,
-    &:hover:after,
     &:before,
-    &:hover:before, {
+    &[data-editor-position-level]:after,
+    &[data-editor-position-level]:before,
+    &[data-editor-position-level]:hover:after,
+    &[data-editor-position-level]:hover:before,
+    &:hover:after,
+    &:hover:before {
+      display: none !important;
       content: '' !important;
       display: none !important;
       opacity: 0 !important;

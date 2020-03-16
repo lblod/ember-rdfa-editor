@@ -33,17 +33,30 @@ $say-typography-margin : $say-unit-small !default;
    ========================================================================== */
 
 .say-typography {
-  &,
+  // Remove empty whitespace
+  #text {
+    display: none;
+  }
+
+  @if $say-paper == false {
+    * {
+      max-width: 120ch;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
   ul,
   ol,
-  div {
+  div,
+  p {
     @include say-font-size($say-base-font-size);
     font-family: $say-base-font-family;
     font-weight: $say-base-font-weight;
   }
 
   br {
-
+    @include say-font-size(1rem,1);
   }
 
   p + *,
@@ -221,6 +234,43 @@ $say-typography-margin : $say-unit-small !default;
 
   ol:not(.bullet-list):not(.numbered-list) > li {
     list-style-type: decimal;
+
+    > ol > li {
+      > ol {
+        margin-left: $say-unit-small * 2;
+      }
+
+      > ol > li {
+        > ol {
+          margin-left: $say-unit-small * 3;
+        }
+        > ol > li {
+          > ol {
+            margin-left: $say-unit-small * 4;
+          }
+          > ol > li {
+            > ol {
+              margin-left: $say-unit-small * 5;
+            }
+            > ol > li {
+              > ol {
+                margin-left: $say-unit-small * 6;
+              }
+              > ol > li {
+                > ol {
+                  margin-left: $say-unit-small * 7;
+                }
+                > ol > li {
+                  > ol {
+                    margin-left: $say-unit-small * 8;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   ul.bullet-list,
@@ -287,60 +337,68 @@ $say-typography-margin : $say-unit-small !default;
     }
   }
 
-  // table th {
-  //   white-space: initial;
-  //   background-color: $say-white;
-  // }
+  table th {
+    white-space: initial;
+    background-color: $say-white;
+  }
 
-  // .data-table th,
-  // .data-table td {
-  //   @include say-font-size($say-base,1.5);
-  // }
+  .data-table th,
+  .data-table td {
+    @include say-font-size($say-base,1.5);
+  }
 
-  // .data-table--lined.data-table--tight {
-  //   th,
-  //   td {
-  //     font-size: 1.4rem;
-  //     padding: .8rem;
-  //   }
+  .data-table--lined.data-table--tight {
+    th,
+    td {
+      font-size: 1.4rem;
+      padding: .8rem;
+    }
 
-  //   .button--small {
-  //     font-size: 1.3rem;
-  //     font-weight: 400;
-  //   }
+    .button--small {
+      font-size: 1.3rem;
+      font-weight: 400;
+    }
 
-  //   .button-group .button {
-  //     margin-bottom: .5rem;
-  //   }
-  // }
+    .button-group .button {
+      margin-bottom: .5rem;
+    }
+  }
 
-  // [typeof="besluit:Agendapunt"] {
-  //   margin-bottom: .5rem;
-  // }
+  [typeof="besluit:Agendapunt"] {
+    margin-bottom: .5rem;
+  }
 
-  // [typeof="besluit:BehandelingVanAgendapunt"],
-  // [property="ext:behandelt"],
-  // [property="besluit:heeftAgendapunt"],
-  // [typeof="besluit:Agendapunt"] {
-  //   display: block !important;
-  //   position: relative;
+  // Visibility annotations
+  [property="dc:subject"],
+  [property="besluit:geplandOpenbaar"],
+  [property="besluit:openbaar"] {
+    color: $say-neutral !important;
+    font-weight: $say-medium;
+  }
 
-  //   [property="besluit:geplandOpenbaar"] i,
-  //   [property="besluit:openbaar"] i {
-  //     font-size: 1.6rem;
-  //     position: absolute;
-  //     left: -2.75rem;
-  //     top: 0.2rem;
-  //     padding-left: 1px;
-  //     z-index: 2;
-  //     color: $say-neutral-light;
-  //   }
+  [typeof="besluit:BehandelingVanAgendapunt"],
+  [property="ext:behandelt"],
+  [property="besluit:heeftAgendapunt"],
+  [typeof="besluit:Agendapunt"] {
+    display: block !important;
+    position: relative;
+    color: $say-neutral;
 
-  //   [property="besluit:geplandOpenbaar"][content="false"] i,
-  //   [property="besluit:openbaar"][content="false"] i {
-  //     color: darken($say-yellow, 15%);
-  //   }
-  // }
+    [property="besluit:geplandOpenbaar"] i,
+    [property="besluit:openbaar"] i {
+      font-size: 1.5rem;
+      top: .2rem;
+      padding-left: 1px;
+      z-index: 2;
+      color: $say-neutral;
+      opacity: .8;
+    }
+
+    [property="besluit:geplandOpenbaar"][content="false"] i,
+    [property="besluit:openbaar"][content="false"] i {
+      color: $say-orange;
+    }
+  }
 
   // Imported HTML - Used for tables
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
