@@ -9,7 +9,7 @@ import RawEditor from '../../utils/ce/raw-editor';
 import EnterHandler from '../../utils/ce/handlers/enter-handler';
 import IgnoreModifiersHandler from '../../utils/ce/handlers/ignore-modifiers-handler';
 import BackspaceHandler from '../../utils/ce/handlers/backspace-handler';
-import DeleteHandler from '../../utils/ce/handlers/delete-handler'
+import DeleteHandler from '../../utils/ce/handlers/delete-handler';
 import TextInputHandler from '../../utils/ce/handlers/text-input-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
@@ -23,7 +23,6 @@ import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
-import { next } from '@ember/runloop';
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -328,7 +327,7 @@ export default class ContentEditable extends Component {
       }
       catch(e) {
         // fall back to text pasting
-        console.warn(e); //eslint-ignore-line no-console
+        console.warn(e); //eslint-disable-line no-console
         const text = (event.clipboardData || window.clipboardData).getData('text');
         const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
         this.rawEditor.update(sel, {set: { innerHTML: text}});

@@ -22,7 +22,7 @@ class FallbackInputHandler {
   }
 
 
-  handleEvent(event) {
+  handleEvent(/* event */) {
     this.rawEditor.undo();
     return HandlerResponse.create({ allowBrowserDefault: true, allowPropagation: false });
   }

@@ -312,7 +312,7 @@ function replaceNodesWithHtml(nodes, rootNode, [start, end], set) {
       else if ( i === nodes.length - 1) {
         // we're at the end and didn't encounter a splitable text or replacable node of type tag/other
         // this shouldn't happen, but if it does append after the node and log to console
-        console.warn(`PERNET: received a non text node to split and replace, this shouldn't happen!`);
+        console.warn(`PERNET: received a non text node to split and replace, this shouldn't happen!`); // eslint-disable-line no-console
         domNode.replaceWith(node.richNode.domNode, ...newElements);
         insertedElements = true;
       }
@@ -764,7 +764,7 @@ function splitSelectionsToPotentiallyFitInRange([start, end], providedSelections
     }
     if (selection.richNode.type !== "text" && (selection.richNode.start < start || selection.richNode.end > end)) {
       // i forgot a case? did not expect selectHighlight to return a tag with a non matching range
-      console.warn("unhandled",selection); // eslint-ignore-line no-console
+      console.warn("unhandled",selection); // eslint-disable-line no-console
     }
   }
   return actualSelections;
