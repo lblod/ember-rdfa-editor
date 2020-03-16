@@ -1,21 +1,25 @@
+/* ==================================
+   #SAY ANNOTATIONS FLAG
+   ================================== */
+
 .rdfa-annotations {
   [data-flagged-remove="almost-complete"][data-editor-position-level="0"],
   [data-flagged-remove="almost-complete"]:hover {
-    box-shadow: -2px 0 0 black !important;
+    box-shadow: -2px 0 0 $say-neutral-darkest !important;
   }
 
   [data-flagged-remove="complete"][data-editor-position-level="0"],
   [data-flagged-remove="complete"] {
     cursor: text;
-    background-color: rgba($say-neutral, 0.15) !important;
-    box-shadow: -2px 0 0 black, 0 0.3rem 0 rgba($say-primary, 0.25) !important;
+    background-color: rgba($say-neutral-darkest, .15) !important;
+    box-shadow: -2px 0 0 $say-neutral-darkest, 0 0.3rem 0 rgba($say-primary, 0.25) !important;
     color: $say-neutral-dark !important;
     border-bottom: 0;
     font-style: italic;
     position: relative;
 
     &:hover {
-      box-shadow: -2px 0 0 black, 0 0.3rem 0 rgba($say-primary, 0.25) !important;
+      box-shadow: -2px 0 0 $say-neutral-darkest, 0 0.3rem 0 rgba($say-primary, 0.25) !important;
       border-bottom: 0;
     }
   }
@@ -31,7 +35,7 @@
     &:after {
       content: "Vul in:" !important;
       max-width: 3em;
-      padding-left: 0.1em;
+      padding-left: .1em;
     }
 
     &:hover:before,

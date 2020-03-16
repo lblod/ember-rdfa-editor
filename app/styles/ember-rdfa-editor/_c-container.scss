@@ -36,15 +36,15 @@ $say-aside-shadow   : 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px rgba(
       bottom: auto;
     }
 
-    @if $say-layout-reverse == true and $say-sidebar == false {
+    @if $say-paper == true and $say-layout-reverse == true and $say-paper-sidebar == false {
       top: $say-unit;
     }
 
-    @if $say-layout-reverse == true and $say-sidebar == true {
+    @if $say-paper == true and $say-layout-reverse == true and $say-paper-sidebar == true {
       top: $say-unit;
     }
 
-    @if $say-sidebar == true {
+    @if $say-paper == true and $say-paper-sidebar == true {
       top: calc(44px + #{$say-unit});
       width: calc(25% - #{$say-unit + $say-unit-small});
       box-shadow: none;

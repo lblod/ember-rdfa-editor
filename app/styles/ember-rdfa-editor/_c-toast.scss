@@ -19,7 +19,7 @@
   border-radius: .2rem;
   background-color: $say-neutral-darker;
 
-  @if $say-sidebar == true {
+  @if $say-paper == true and $say-paper-sidebar == true {
     padding: $say-unit-tiny 0;
     color: $say-neutral-dark;
     background-color: transparent;

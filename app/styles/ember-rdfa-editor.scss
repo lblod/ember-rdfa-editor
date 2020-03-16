@@ -37,10 +37,10 @@
 @import "ember-rdfa-editor/c-typography";
 
 // RDFA AND ANNOTATION COMPONENTS
-@import "ember-rdfa-editor/c-annotations";
-@import "ember-rdfa-editor/c-annotations-hover";
-// @import "ember-rdfa-editor/c-annotations-flag";
-@import "ember-rdfa-editor/c-annotations-modal";
+@import "ember-rdfa-editor/c-annotation";
+@import "ember-rdfa-editor/c-annotation-hover";
+@import "ember-rdfa-editor/c-annotation-flag";
+@import "ember-rdfa-editor/c-annotation-modal";
 
 
 // LEGACY STYLES

@@ -17,8 +17,44 @@
       display: inline-block;
     }
 
+    // Make block elements
+    div,
+    h1,
+    .h1,
+    h2,
+    .h2,
+    h3,
+    .h3,
+    h4,
+    .h4,
+    h5,
+    .h5,
+    h6,
+    .h6,
+    ul,
+    ol,
+    [property="dc:title foaf:name"],
+    [property="eli:cites"],
+    p[property="dc:subject"],
+    [typeof~="besluit:Besluit"],
+    [property="ext:stemmingTable"],
+    [property="ext:insertStemmingText"],
+    [property="ext:aanwezigenTable"],
+    [property="ext:insertAanwezigenText"],
+    [property="prov:generated"] > [property="besluit:motivering"],
+    [property="prov:generated"] > [property="prov:value"],
+    [typeof="besluit:Zitting"],
+    [property^="ext"]:not([property="ext:heeftAfwezigeBijAgendapunt"]):not(span),
+    [data-editor-highlight="true"]:not(li):not(span),
+    [typeof="http://data.vlaanderen.be/ns/besluit#Besluit http://data.vlaanderen.be/ns/besluit#AanvullendReglement"],
+    [typeof="besluit:Artikel"],
+    [typeof="mobiliteit:Opstelling"] {
+      display: block;
+    }
+
     [property="prov:value"] > div > span,
     [property="ext:behandelt"] > div > span {
+      position: relative;
       display: block; // remove when span is gone from the template "nieuw generiek besluit"
     }
 
@@ -97,7 +133,7 @@
       }
     }
 
-    // making it easy to discover elements that need to be filled out / take action upon
+    // Making it easy to discover elements that need to be filled out / take action upon
     [property^="ext:insert"],
     [data-editor-highlight="true"] {
       background-color: $say-orange-lightest;
@@ -118,10 +154,7 @@
       font-style: italic;
     }
 
-    p[property="dc:subject"] {
-      display: block;
-    }
-
+    // Show some annotations inline
     [typeof="besluit:BehandelingVanAgendapunt"]:hover {
       .annotation--agendapunt--besloten__icon,
       .annotation--agendapunt--open__icon,
@@ -158,15 +191,15 @@
     [property="ext:metadata"],
     [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
     [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
-      // border-bottom: 0 !important;
+      border-bottom: 0 !important;
 
-      // &:after,
-      // &:hover:after,
-      // &:before,
-      // &:hover:before, {
-      //   content: '' !important;
-      //   opacity: 0 !important;
-      // }
+      &:after,
+      &:hover:after,
+      &:before,
+      &:hover:before, {
+        content: '' !important;
+        opacity: 0 !important;
+      }
     }
 
     // Hide superfluous annotated fields
@@ -183,8 +216,16 @@
       white-space: nowrap;
       width: 1px;
     }
+
+    // Display roadsign details
+    [prefix="mobiliteit: https://data.vlaanderen.be/ns/mobiliteit# infrastructuur: https://data.vlaanderen.be/ns/openbaardomein/infrastructuur# besluit: https://data.vlaanderen.be/ns/besluit# geosparql: http://www.opengis.net/ont/geosparql# locn: http://www.w3.org/ns/locn# xsd:http://www.w3.org/2001/XMLSchema# foaf: http://xmlns.com/foaf/0.1/"] {
+      [typeof="mobiliteit:Opstelling"] {
+        display: none;
+      }
+    }
   }
 
+  // Show RDFA blocks
   .rdfa-annotations.show-rdfa-blocks {
     [data-editor-highlight="true"],
     [property],
@@ -210,6 +251,12 @@
       &:not([data-flagged-remove="complete"]):after {
         display: none;
         transition: none;
+      }
+    }
+
+    [prefix="mobiliteit: https://data.vlaanderen.be/ns/mobiliteit# infrastructuur: https://data.vlaanderen.be/ns/openbaardomein/infrastructuur# besluit: https://data.vlaanderen.be/ns/besluit# geosparql: http://www.opengis.net/ont/geosparql# locn: http://www.w3.org/ns/locn# xsd:http://www.w3.org/2001/XMLSchema# foaf: http://xmlns.com/foaf/0.1/"] {
+      [typeof="mobiliteit:Opstelling"] {
+        display: block !important;
       }
     }
   }

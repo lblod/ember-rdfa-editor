@@ -1,0 +1,178 @@
+/* ==================================
+   #SAY ANNOTATIONS HOVER
+   ================================== */
+
+/* Variables
+   ========================================================================== */
+
+
+/* Component
+  ========================================================================== */
+
+@if $say-hover-annotations == true {
+  .rdfa-annotations:not(.show-rdfa-blocks) {
+    overflow: hidden;
+
+    // Make block elements relative
+    div,
+    h1,
+    .h1,
+    h2,
+    .h2,
+    h3,
+    .h3,
+    h4,
+    .h4,
+    h5,
+    .h5,
+    h6,
+    .h6,
+    ul,
+    ol,
+    [property="dc:title foaf:name"],
+    [typeof~="besluit:Besluit"],
+    [property="ext:stemmingTable"],
+    [property="ext:insertStemmingText"],
+    [property="ext:aanwezigenTable"],
+    [property="ext:insertAanwezigenText"],
+    [property="prov:generated"] > [property="besluit:motivering"],
+    [property="prov:generated"] > [property="prov:value"],
+    [typeof="besluit:Zitting"],
+    [property="eli:cites"],
+    [property^="ext"]:not([property="ext:heeftAfwezigeBijAgendapunt"]):not(span),
+    [data-editor-highlight="true"]:not(li):not(span),
+    [typeof="http://data.vlaanderen.be/ns/besluit#Besluit http://data.vlaanderen.be/ns/besluit#AanvullendReglement"],
+    [typeof="besluit:Artikel"],
+    [typeof="mobiliteit:Opstelling"] {
+      position: relative;
+
+      &:after {
+        height: calc(100% - #{$say-unit});
+        top: $say-unit;
+      }
+    }
+
+    // Style before and after elements
+    .mark-highlight-manual,
+    [typeof]:not([typeof="foaf:Document"]),
+    [property],
+    [data-type],
+    [data-editor-highlight="true"] {
+      &:hover {
+        border-bottom-color: tint($say-neutral,20);
+      }
+
+      &:before,
+      &:after {
+        position: absolute;
+        transition: opacity $say-easing .5s, left $say-easing .2s;
+        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter});
+      }
+
+      &[data-editor-position-level]:before,
+      &:hover:before {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter});
+        text-align: right;
+        padding-right: $say-unit-tiny;
+        opacity: 1;
+      }
+
+      // Bring highlighted annotation to the front
+      &[data-editor-position-level]:before {
+        z-index: $say-z-index-alpha;
+      }
+
+      // Show lines on hover and selection
+      &[data-editor-position-level]:after,
+      &:hover:after {
+        position: absolute;
+        content: "";
+        display: flex;
+        right: calc(100% + #{$say-annotation-gutter});
+        width: $say-annotation-offset*2;
+        border-right: 1px dashed $say-neutral-light;
+        border-top: 1px dashed $say-neutral-light;
+        vertical-align: center;
+        margin-top: calc(-2ex + 1px);
+      }
+
+      &[data-editor-position-level]:after {
+        border-top-style: solid;
+        border-right-style: solid;
+      }
+
+      // Hide right border when not selected
+      &:not([data-editor-position-level]):hover:after,
+      &:not([data-editor-position-level]):after {
+        border-right: 0;
+      }
+    }
+
+    // Making sure list items annotations look good too
+    ul:not(.article-list) {
+      .mark-highlight-manual,
+      [typeof],
+      [property],
+      [data-type],
+      [data-editor-highlight="true"] {
+        &:not([data-editor-position-level]):hover:before {
+          right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit});
+        }
+
+        &:not([data-editor-position-level]):hover:after {
+          right: calc(100% + #{$say-annotation-gutter} + #{$say-unit});
+        }
+
+        &[data-editor-position-level]:before {
+          right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit});
+        }
+
+        &[data-editor-position-level]:after {
+          right: calc(100% + #{$say-annotation-gutter} + #{$say-unit});
+        }
+      }
+
+      [style="display: inline;"] {
+        &:not([data-editor-position-level]):hover:before {
+          right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter});
+        }
+
+        &:not([data-editor-position-level]):hover:after {
+          right: calc(100% + #{$say-annotation-gutter});
+        }
+
+        &[data-editor-position-level]:before {
+          right: calc(100% + #{$say-annotation-offset*3});
+        }
+
+        &[data-editor-position-level]:after {
+          right: calc(100% + #{$say-annotation-gutter});
+        }
+      }
+    }
+  }
+
+  // Hide superfluous annotations
+  [property=""],
+  [typeof=""],
+  [typeof="Zitting"],
+  [property="ext:metadata"],
+  [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
+  [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
+    border-bottom: 0 !important;
+
+    &:after,
+    &:hover:after,
+    &:before,
+    &:hover:before, {
+      content: '' !important;
+      display: none !important;
+      opacity: 0 !important;
+    }
+  }
+}

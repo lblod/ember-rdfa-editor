@@ -43,7 +43,7 @@ $say-typography-margin : $say-unit-small !default;
   }
 
   br {
-    display: none !important;
+
   }
 
   p + *,
@@ -153,26 +153,59 @@ $say-typography-margin : $say-unit-small !default;
   }
 
   ul:not(.bullet-list):not(.numbered-list) li {
+    > ul {
+      margin-left: $say-unit-small;
+    }
+
     > ul > li {
       list-style-type: circle;
+
+      > ul {
+        margin-left: $say-unit-small * 2;
+      }
 
       > ul > li {
         list-style-type: square;
 
+        > ul {
+          margin-left: $say-unit-small * 3;
+        }
+
+
         > ul > li {
           list-style-type: initial;
+
+          > ul {
+            margin-left: $say-unit-small * 4;
+          }
 
           > ul > li {
             list-style-type: circle;
 
+            > ul {
+              margin-left: $say-unit-small * 5;
+            }
+
             > ul > li {
               list-style-type: square;
+
+              > ul {
+                margin-left: $say-unit-small * 6;
+              }
 
               > ul > li {
                 list-style-type: initial;
 
+                > ul {
+                  margin-left: $say-unit-small * 7;
+                }
+
                 > ul > li {
                   list-style-type: circle;
+
+                  > ul {
+                    margin-left: $say-unit-small * 8;
+                  }
 
                   > ul > li {
                     list-style-type: square;
@@ -254,58 +287,102 @@ $say-typography-margin : $say-unit-small !default;
     }
   }
 
-  table th {
-    white-space: initial;
-    background-color: $say-white;
-  }
+  // table th {
+  //   white-space: initial;
+  //   background-color: $say-white;
+  // }
 
-  .data-table th,
-  .data-table td {
-    @include say-font-size($say-base,1.5);
-  }
+  // .data-table th,
+  // .data-table td {
+  //   @include say-font-size($say-base,1.5);
+  // }
 
-  .data-table--lined.data-table--tight {
+  // .data-table--lined.data-table--tight {
+  //   th,
+  //   td {
+  //     font-size: 1.4rem;
+  //     padding: .8rem;
+  //   }
+
+  //   .button--small {
+  //     font-size: 1.3rem;
+  //     font-weight: 400;
+  //   }
+
+  //   .button-group .button {
+  //     margin-bottom: .5rem;
+  //   }
+  // }
+
+  // [typeof="besluit:Agendapunt"] {
+  //   margin-bottom: .5rem;
+  // }
+
+  // [typeof="besluit:BehandelingVanAgendapunt"],
+  // [property="ext:behandelt"],
+  // [property="besluit:heeftAgendapunt"],
+  // [typeof="besluit:Agendapunt"] {
+  //   display: block !important;
+  //   position: relative;
+
+  //   [property="besluit:geplandOpenbaar"] i,
+  //   [property="besluit:openbaar"] i {
+  //     font-size: 1.6rem;
+  //     position: absolute;
+  //     left: -2.75rem;
+  //     top: 0.2rem;
+  //     padding-left: 1px;
+  //     z-index: 2;
+  //     color: $say-neutral-light;
+  //   }
+
+  //   [property="besluit:geplandOpenbaar"][content="false"] i,
+  //   [property="besluit:openbaar"][content="false"] i {
+  //     color: darken($say-yellow, 15%);
+  //   }
+  // }
+
+  // Imported HTML - Used for tables
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
+    position: relative;
+    border: .2rem solid $say-white;
+    background-color: $say-neutral-lightest;
+    border-radius: .2rem;
+    outline: .2rem dashed $say-neutral-lightest;
+    margin-top: 1.2rem;
+    margin-bottom: 1.2rem;
+    display: table;
+    width: 100%;
+
+    th {
+      font-weight: $say-medium;
+      border-bottom: 1px solid $say-neutral-lighter;
+      text-align: left;
+    }
+
     th,
     td {
-      font-size: 1.4rem;
-      padding: .8rem;
+      padding: .6rem;
+      background-color: transparent !important;
     }
 
-    .button--small {
-      font-size: 1.3rem;
-      font-weight: 400;
+    th + th {
+      border-left: 1px solid $say-neutral-lighter;
     }
 
-    .button-group .button {
-      margin-bottom: .5rem;
+    td + td {
+      border-left: 1px solid $say-neutral-lighter;
+    }
+
+    tr + tr {
+      border-top: 1px solid $say-neutral-lighter;
     }
   }
 
-  [typeof="besluit:Agendapunt"] {
-    margin-bottom: .5rem;
-  }
-
-  [typeof="besluit:BehandelingVanAgendapunt"],
-  [property="ext:behandelt"],
-  [property="besluit:heeftAgendapunt"],
-  [typeof="besluit:Agendapunt"] {
-    display: block !important;
-    position: relative;
-
-    [property="besluit:geplandOpenbaar"] i,
-    [property="besluit:openbaar"] i {
-      font-size: 1.6rem;
-      position: absolute;
-      left: -2.75rem;
-      top: 0.2rem;
-      padding-left: 1px;
-      z-index: 2;
-      color: $say-neutral-light;
-    }
-
-    [property="besluit:geplandOpenbaar"][content="false"] i,
-    [property="besluit:openbaar"][content="false"] i {
-      color: darken($say-yellow, 15%);
-    }
+  // Set global font-size and show not-allowed cursor
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"],
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] * {
+    font-size: 1.5rem;
+    cursor: not-allowed;
   }
 }
