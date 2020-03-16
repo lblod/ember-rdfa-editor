@@ -63,7 +63,14 @@ export default EmberObject.extend({
         this.rawEditor.setCarret(newNode,newNode.textContent.length);
       }
       else {
-        this.rawEditor.setCarret(textNode, 0);
+        if (textNode.length > 1) {
+          this.rawEditor.setCarret(textNode, 1);
+        }
+        else {
+          let newNode = nextTextNode(textNode, this.rawEditor.rootNode);
+          this.rawEditor.updateRichNode();
+          this.rawEditor.setCarret(newNode, 0);
+        }
       }
     }
     else if (richNode.end === position){
@@ -78,7 +85,14 @@ export default EmberObject.extend({
         this.rawEditor.setCarret(newNode, 0);
       }
       else {
-        this.rawEditor.setCarret(textNode, textNode.textContent.length - 1);
+        if (textNode.length > 1) {
+          this.rawEditor.setCarret(textNode, textNode.textContent.length - 1);
+        }
+        else {
+          let newNode = previousTextNode(textNode, this.rawEditor.rootNode);
+          this.rawEditor.updateRichNode();
+          this.rawEditor.setCarret(newNode, newNode.length);
+        }
       }
     }
     else {
