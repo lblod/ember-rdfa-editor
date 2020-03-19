@@ -17,6 +17,7 @@
   background-color: #e6e6e6;
   border-radius: .2rem;
   outline: 2px dashed #e6e6e6;
+  outline-offset: .2rem;
   margin-top: 1.2rem;
   margin-bottom: 1.2rem;
   display: table;
@@ -46,9 +47,29 @@
   border-top: 1px solid #CCCCCC;
 }
 
+/* Style links as plain text */
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] a,
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] a:hover,
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] a:visited,
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] a:focus {
+  text-decoration: none;
+  color: #79838F;
+}
+
+/* Disable link focus */
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] a:focus {
+  outline: 0;
+}
+
 /* Set global font-size and show not-allowed cursor */
 [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"],
 [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] * {
   font-size: 1.5rem;
   cursor: not-allowed;
+
+  /* Disable selection */
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
