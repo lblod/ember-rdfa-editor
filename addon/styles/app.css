@@ -53,7 +53,7 @@
 [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] a:visited,
 [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] a:focus {
   text-decoration: none;
-  color: #79838F;
+  color: #333;
 }
 
 /* Disable link focus */
