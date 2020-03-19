@@ -5,6 +5,19 @@ import { runInDebug } from '@ember/debug';
 import { parsePrefixString } from '@lblod/marawa/rdfa-attributes';
 import { isLI, findWrappingSuitableNodes, createElementsFromHTML, isVoidElement, tagName } from '../dom-helpers';
 import { A } from '@ember/array';
+
+/**
+ * Fake class to list helper functions
+ * these functions can be used from the editor : editor.{function}
+ *
+ * UPDATE API
+ *
+ * @module contenteditable-editor
+ * @class Update
+ * @constructor
+ */
+
+
 /**
  * Alters a selection from the API described above.
  *
@@ -77,6 +90,10 @@ import { A } from '@ember/array';
  * this case occurs often *and* we can find sensible defaults on
  * updating the selection, we could make this case simpler.  The
  * options hash would also allow an array in that case.
+ *
+ * @method update
+ * @param {Selection} selection retuned by the selectContext method
+ * @param {Options} options
  */
 function update(selection, { remove, add, set, before, after, append, prepend, desc }) {
   const relativePosition = this.getRelativeCursorPosition();
@@ -312,7 +329,7 @@ function replaceNodesWithHtml(nodes, rootNode, [start, end], set) {
       else if ( i === nodes.length - 1) {
         // we're at the end and didn't encounter a splitable text or replacable node of type tag/other
         // this shouldn't happen, but if it does append after the node and log to console
-        console.warn(`PERNET: received a non text node to split and replace, this shouldn't happen!`);
+        console.warn(`PERNET: received a non text node to split and replace, this shouldn't happen!`); // eslint-disable-line no-console
         domNode.replaceWith(node.richNode.domNode, ...newElements);
         insertedElements = true;
       }
@@ -764,7 +781,7 @@ function splitSelectionsToPotentiallyFitInRange([start, end], providedSelections
     }
     if (selection.richNode.type !== "text" && (selection.richNode.start < start || selection.richNode.end > end)) {
       // i forgot a case? did not expect selectHighlight to return a tag with a non matching range
-      console.warn("unhandled",selection); // eslint-ignore-line no-console
+      console.warn("unhandled",selection); // eslint-disable-line no-console
     }
   }
   return actualSelections;

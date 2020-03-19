@@ -3,7 +3,7 @@ import { A } from '@ember/array';
  * Fake class to list helper functions
  * these functions can be included using
  *
- *`import { function } from @lblod/ember-contenteditable/utils/dom-helpers;`
+ *`import { function } from @lblod/ember-rdfa-editor/utils/ce/dom-helpers;`
  * @module contenteditable-editor
  * @class DomHelpers
  * @constructor

@@ -6,7 +6,7 @@ import {
   isList,
   siblingLis
 } from './dom-helpers';
-
+import flatMap from './flat-map';
 /**
  * @method findLastLi
  * @param {DomNode} node the ul node to search in
@@ -45,6 +45,19 @@ function lastTextChild(node) {
 }
 
 /**
+ * @method findLastThOrTd
+ * @param {DomNode} table
+ * @private
+ */
+function findLastThOrTd(table) {
+  let matches = flatMap(table, (node) => { return tagName(node) === 'td'});
+  if (matches.length > 0) {
+    return matches[matches.length - 1];
+  }
+  return null;
+}
+
+/**
  * returns the node we want to place the marker before (or in if it's a text node)
  * @method findPreviousApplicableNode
  * @param {DOMNode} node
@@ -73,7 +86,17 @@ function findPreviousApplicableNode(node, rootNode) {
     else if (isVoidElement(sibling)) {
       return findPreviousApplicableNode(node.parentNode, rootNode);
     }
-    if (isList(sibling)) {
+    else if (tagName(sibling) == 'table') {
+      const validNodeForTable = findLastThOrTd(sibling);
+      if (validNodeForTable) {
+        return lastTextChild(validNodeForTable);
+      }
+      else {
+        // table has no cells, skip the table alltogether
+        return findPreviousApplicableNode(sibling);
+      }
+    }
+    else if (isList(sibling)) {
       const lastLi = findLastLi(sibling);
       if (lastLi) {
         return lastTextChild(lastLi);
