@@ -9,39 +9,46 @@
   float:right;
   margin: 5px;
 }
-.lump-node-highlight {
-  animation: bg 0.5s ease-in;
-  -webkit-animation: bg 0.5s ease-in;
-  -moz-animation: bg 0.5s ease-in;
-  -ms-animation: bg 0.5s ease-in;
-  -o-animation: bg 0.5s ease-in;
+
+/* Imported HTML - Used for tables */
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
+  position: relative;
+  border: 2px solid #fff;
+  background-color: #e6e6e6;
+  border-radius: .2rem;
+  outline: 2px dashed #e6e6e6;
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
+  display: table;
+  width: 100%;
 }
 
-@-webkit-keyframes bg {
-  0% {
-    background: yellow;
-  }
-  20% {
-    background: rgba(255, 255, 0, 0.8);
-  }
-  50% {
-    background: rgba(255, 255, 0, 0.5);
-  }
-  100% {
-    background: rgba(255, 255, 0, 0);
-  }
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] th {
+  font-weight: 500;
+  border-bottom: 1px solid #CCCCCC;
 }
-@-moz-keyframes bg {
-  0% {
-    background: yellow;
-  }
-  20% {
-    background: rgba(255, 255, 0, 0.8);
-  }
-  50% {
-    background: rgba(255, 255, 0, 0.5);
-  }
-  100% {
-    background: rgba(255, 255, 0, 0);
-  }
+
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] th,
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] td {
+  padding: .6rem;
+  background-color: transparent !important;
+}
+
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] th + th {
+  border-left: 1px solid #CCCCCC;
+}
+
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] td + td {
+  border-left: 1px solid #CCCCCC;
+}
+
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] tr + tr {
+  border-top: 1px solid #CCCCCC;
+}
+
+/* Set global font-size and show not-allowed cursor */
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"],
+[property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] * {
+  font-size: 1.5rem;
+  cursor: not-allowed;
 }
