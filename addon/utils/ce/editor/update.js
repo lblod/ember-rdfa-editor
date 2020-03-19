@@ -5,6 +5,19 @@ import { runInDebug } from '@ember/debug';
 import { parsePrefixString } from '@lblod/marawa/rdfa-attributes';
 import { isLI, findWrappingSuitableNodes, createElementsFromHTML, isVoidElement, tagName } from '../dom-helpers';
 import { A } from '@ember/array';
+
+/**
+ * Fake class to list helper functions
+ * these functions can be used from the editor : editor.{function}
+ *
+ * UPDATE API
+ *
+ * @module contenteditable-editor
+ * @class Update
+ * @constructor
+ */
+
+
 /**
  * Alters a selection from the API described above.
  *
@@ -77,6 +90,10 @@ import { A } from '@ember/array';
  * this case occurs often *and* we can find sensible defaults on
  * updating the selection, we could make this case simpler.  The
  * options hash would also allow an array in that case.
+ *
+ * @method update
+ * @param {Selection} selection retuned by the selectContext method
+ * @param {Options} options
  */
 function update(selection, { remove, add, set, before, after, append, prepend, desc }) {
   const relativePosition = this.getRelativeCursorPosition();
