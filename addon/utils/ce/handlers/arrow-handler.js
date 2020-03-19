@@ -4,7 +4,6 @@ import HandlerResponse from './handler-response';
 import previousTextNode from '../previous-text-node';
 import nextTextNode from '../next-text-node';
 import { warn } from '@ember/debug';
-import { isInLumpNode, getNextNonLumpTextNode, getPreviousNonLumpTextNode, animateLumpNode, getParentLumpNode } from '../lump-node-utils';
 
 /**
  * Arrow Handler, a event handler to handle arrow keys.
@@ -55,30 +54,36 @@ export default EmberObject.extend({
       // start of node
       if (isLeft) {
         let newNode = previousTextNode(textNode, this.rawEditor.rootNode);
-        if(isInLumpNode(newNode)){
-          animateLumpNode(getParentLumpNode(newNode));
-          newNode = getPreviousNonLumpTextNode(newNode, this.rawEditor.rootNode);
-        }
         this.rawEditor.updateRichNode();
         this.rawEditor.setCarret(newNode,newNode.textContent.length);
       }
       else {
-        this.rawEditor.setCarret(textNode, 0);
+        if (textNode.length > 1) {
+          this.rawEditor.setCarret(textNode, 1);
+        }
+        else {
+          let newNode = nextTextNode(textNode, this.rawEditor.rootNode);
+          this.rawEditor.updateRichNode();
+          this.rawEditor.setCarret(newNode, 0);
+        }
       }
     }
     else if (richNode.end === position){
       // end of node
       if (isRight) {
         let newNode = nextTextNode(textNode, this.rawEditor.rootNode);
-        if(isInLumpNode(newNode)){
-          animateLumpNode(getParentLumpNode(newNode));
-          newNode = getNextNonLumpTextNode(newNode, this.rawEditor.rootNode);
-        }
         this.rawEditor.updateRichNode();
         this.rawEditor.setCarret(newNode, 0);
       }
       else {
-        this.rawEditor.setCarret(textNode, textNode.textContent.length - 1);
+        if (textNode.length > 1) {
+          this.rawEditor.setCarret(textNode, textNode.textContent.length - 1);
+        }
+        else {
+          let newNode = previousTextNode(textNode, this.rawEditor.rootNode);
+          this.rawEditor.updateRichNode();
+          this.rawEditor.setCarret(newNode, newNode.length);
+        }
       }
     }
     else {

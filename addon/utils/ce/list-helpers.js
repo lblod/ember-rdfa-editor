@@ -1087,7 +1087,7 @@ function mergeWithChildList(logicalListBlocks, listE) {
     if (i != 0) {
       oldLi.remove();
     }
-  };
+  }
 }
 
 /**

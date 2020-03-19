@@ -1058,7 +1058,7 @@ class RawEditor extends EmberObject {
         }
         this.updateRichNode();
         const absolutePosition = this.getRichNodeFor(textNode).start;
-        const position = {domNode: textNode.domNode, relativePosition: 0, absolutePosition};
+        const position = {domNode: textNode, relativePosition: 0, absolutePosition};
         this.currentSelection = { startNode: position, endNode: position};
       }
     }
