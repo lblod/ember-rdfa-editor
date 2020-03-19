@@ -43,19 +43,29 @@ function getParentLumpNode(node, rootNode){
 }
 
 function getPreviousNonLumpTextNode(node, rootNode){
-  let newNode = previousTextNode(node, rootNode);
-  if(isInLumpNode(newNode)){
-    return getPreviousNonLumpTextNode(getParentLumpNode(newNode, rootNode), rootNode);
+  if(isInLumpNode(node)){
+    const parentLumpNode = getParentLumpNode(node, rootNode);
+    const previousNode = previousTextNode(parentLumpNode, rootNode);
+    if (isInLumpNode(previousNode))
+      return getPreviousNonLumpTextNode(previousNode, rootNode);
+    else
+      return previousNode;
   }
-  return newNode;
+  else
+    return previousTextNode(node, rootNode);
 }
 
 function getNextNonLumpTextNode(node, rootNode){
-  let newNode = nextTextNode(node, rootNode);
-  if(isInLumpNode(newNode)){
-    return getNextNonLumpTextNode(getParentLumpNode(newNode, rootNode), rootNode);
+  if(isInLumpNode(node)){
+    const parentLumpNode = getParentLumpNode(node, rootNode);
+    const nextNode = nextTextNode(parentLumpNode, rootNode);
+    if (isInLumpNode(nextNode))
+      return getNextNonLumpTextNode(nextNode, rootNode);
+    else
+      return nextNode;
   }
-  return newNode;
+  else
+    return nextTextNode(node, rootNode);
 }
 
 function hasLumpNodeProperty(node){
