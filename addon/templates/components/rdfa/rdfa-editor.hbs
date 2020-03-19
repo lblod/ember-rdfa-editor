@@ -5,12 +5,14 @@
         <input {{on "click" this.toggleRdfaBlocks}} id="toggle-1" class="say-switch__input" type="checkbox" name="toggle">
         <label class="say-switch__label" for="toggle-1">Toon annotaties</label>
       </div>
+      {{#if editorOptions.insertTemplateButton}}
       <button class="say-button" onclick={{action "triggerHints"}}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" class="say-icon say-icon--left" aria-hidden="true">
           <polygon points="40.5 24.643 24.643 24.643 24.643 40.5 19.357 40.5 19.357 24.643 3.5 24.643 3.5 19.357 19.357 19.357 19.357 3.5 24.643 3.5 24.643 19.357 40.5 19.357"/>
         </svg>
         Voeg sjabloon in
       </button>
+      {{/if}}
     </Rdfa::EditorToolbar>
   {{/if}}
 
@@ -22,14 +24,6 @@
     </div>
 
     <div class="say-container__aside">
-      <div class="say-editor-commands">
-        {{!-- <button class="say-button" onclick={{action "triggerHints"}}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" class="say-icon say-icon--left" aria-hidden="true">
-            <polygon points="42 26 26 26 26 42 18 42 18 26 2 26 2 18 18 18 18 2 26 2 26 18 42 18"/>
-          </svg>
-          Voeg sjabloon in
-        </button> --}}
-      </div>
       <div class="say-editor-hints">
         <Rdfa::EditorSuggestedHints @suggestedHints={{this.suggestedHints}} />
         {{#if this.hasActiveHints}}

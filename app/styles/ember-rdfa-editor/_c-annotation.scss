@@ -6,6 +6,7 @@
 /* Variables
    ========================================================================== */
 
+$say-annotation-text-color : $say-neutral-dark !default;
 
 /* Component
    ========================================================================== */
@@ -86,7 +87,7 @@
         letter-spacing: 1px;
         font-weight: $say-medium;
         font-size: 1.2rem;
-        color: $say-neutral-dark;
+        color: $say-annotation-text-color;
         font-family: $say-font;
         display: block;
         text-overflow: ellipsis;
