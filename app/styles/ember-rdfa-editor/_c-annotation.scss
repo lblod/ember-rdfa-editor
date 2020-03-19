@@ -14,7 +14,7 @@
   .rdfa-annotations {
     // making sure elements are easier to style and handle
     span {
-      display: inline-block;
+      display: inline-block; // @TODO: review > causes issues
     }
 
     // Make block elements
