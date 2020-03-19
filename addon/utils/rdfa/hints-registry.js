@@ -1,3 +1,4 @@
+import { set } from '@ember/object';
 import { A } from '@ember/array';
 import EmberObject, { computed } from '@ember/object';
 import classic from 'ember-classic-decorator';
@@ -546,7 +547,7 @@ export default class HinstRegistry extends EmberObject {
           continue;
       }
 
-      card.set('location', this.updateLocationWithIndex(card.location, index));
+      set( card, 'location', this.updateLocationWithIndex(card.location, index));
       hasChanged = true;
 
       if(!this.isLocationValid(card.location)) {
