@@ -6,7 +6,7 @@ import {
   isList,
   siblingLis
 } from './dom-helpers';
-
+import flatMap from './flat-map';
 /**
  * @method findFirstLi
  * @param {DomNode} node the ul node to search in
@@ -20,6 +20,18 @@ function findFirstLi(ul) {
   return null;
 }
 
+/**
+ * @method findFirstThOrTd
+ * @param {DomNode} table
+ * @private
+ */
+function findFirstThOrTd(table) {
+  let matches = flatMap(table, (node) => { return tagName(node) === 'td'}, true);
+  if (matches.length == 1) {
+    return matches[0];
+  }
+  return null;
+}
 /**
  * @method firstTextChild
  * @param {DOMNode} node
@@ -73,7 +85,17 @@ function findNextApplicableNode(node, rootNode) {
     else if (isVoidElement(sibling)) {
       return findNextApplicableNode(node.parentNode, rootNode);
     }
-    if (isList(sibling)) {
+    else if (tagName(sibling) == 'table') {
+      const validNodeForTable = findFirstThOrTd(sibling);
+      if (validNodeForTable) {
+        return firstTextChild(validNodeForTable);
+      }
+      else {
+        // table has no cells, skip the table alltogether
+        return findNextApplicableNode(sibling);
+      }
+    }
+    else if (isList(sibling)) {
       const firstLi = findFirstLi(sibling);
       if (firstLi) {
         return firstTextChild(firstLi);

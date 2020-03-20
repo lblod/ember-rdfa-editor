@@ -11,7 +11,7 @@ import HandlerResponse from './handler-response';
 
 export default class DeleteHandler {
   constructor({rawEditor}) {
-    this.rawEditor = rawEditor
+    this.rawEditor = rawEditor;
   }
   /**
    * tests this handler can handle the specified event
@@ -22,9 +22,7 @@ export default class DeleteHandler {
    */
   isHandlerFor(event){
     return event.type === "keydown"
-      && event.key === 'Delete'
-      && this.rawEditor.currentSelectionIsACursor
-      && this.doesCurrentNodeBelongsToContentEditable();
+      && event.key === 'Delete';
   }
 
   doesCurrentNodeBelongsToContentEditable(){
