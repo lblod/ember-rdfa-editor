@@ -30,7 +30,7 @@ $say-paper-box-shadow    : 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px 
     }
   }
 
-  @if $say-hover-annotations == true {
+  &.rdfa-annotations-hover {
     padding-left: $say-annotation-width;
   }
 }
