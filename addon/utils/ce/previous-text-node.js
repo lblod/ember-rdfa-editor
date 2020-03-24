@@ -138,7 +138,8 @@ export default function previousTextNode(baseNode, rootNode) {
     return null;
   }
   if (nextNode.nodeType === Node.ELEMENT_NODE) {
-    return insertTextNodeWithSpace(nextNode.parentNode, nextNode, true);
+    // insert a textnode in the returned node
+    return insertTextNodeWithSpace(nextNode);
   }
   else {
     // it's a text node
