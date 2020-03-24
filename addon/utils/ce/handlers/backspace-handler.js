@@ -131,63 +131,63 @@ export default EmberObject.extend({
           // start of non empty node, find valid position before current position
           const previousNode = previousTextNode(textNode, this.rawEditor.rootNode);
           if (previousNode) {
-            // move cursor to previous node
-            this.rawEditor.updateRichNode();
-            this.rawEditor.setCarret(previousNode, previousNode.length);
-            if (isLI(textNode.parentNode) && richNode.start === richNode.parent.start) {
-              // starting position was at the start of an li and we can merge them
-              this.removeLI(textNode.parentNode);
-              this.rawEditor.updateRichNode();
+            if (isInLumpNode(previousNode)) {
+              this.handleLumpRemoval(previousNode);
             }
             else {
-              this.backSpace();
+              // move cursor to previous node
+              this.rawEditor.updateRichNode();
+              this.rawEditor.setCarret(previousNode, previousNode.length);
+              if (isLI(textNode.parentNode) && richNode.start === richNode.parent.start) {
+                // starting position was at the start of an li and we can merge them
+                this.removeLI(textNode.parentNode);
+                this.rawEditor.updateRichNode();
+              }
+              else {
+                this.backSpace();
+              }
             }
           }
           else {
-            debug('empty previousnode, not doing anything');
+            debug('no previousnode, not doing anything');
           }
         }
         else {
-          if(isInLumpNode(textNode, this.rawEditor.rootNode)){
-            this.handleLumpRemoval(textNode);
-          }
-          else {
-            // not empty and we're not at the start, delete character before the carret
-            this.deleteCharacter(textNode, trueRelativePosition);
-            if (this.shouldHighlightParentNode(textNode.parentNode, visibleLength)) {
-              const removeType = visibleLength > 1 ? 'almost-complete' : 'complete';
-              textNode.parentNode.setAttribute('data-flagged-remove', removeType);
-            }
+          // not empty and we're not at the start, delete character before the carret
+          this.deleteCharacter(textNode, trueRelativePosition);
+          if (this.shouldHighlightParentNode(textNode.parentNode, visibleLength)) {
+            const removeType = visibleLength > 1 ? 'almost-complete' : 'complete';
+            textNode.parentNode.setAttribute('data-flagged-remove', removeType);
           }
         }
       }
       else {
-        // empty node, move to previous text node and remove nodes in between
-        let previousNode = getPreviousNonLumpTextNode(textNode, this.rawEditor.rootNode);
+        // empty node
         if (textNode.parentNode.getAttribute('data-flagged-remove') != "complete" && this.shouldHighlightParentNode(textNode.parentNode, visibleLength)) {
+          // if the current node is an empty rdfa node, flag it first and don't delete it yet
           textNode.parentNode.setAttribute('data-flagged-remove', 'complete');
         }
-        else if (previousNode) {
-          this.removeNodesFromTo(textNode, previousNode);
-          this.rawEditor.updateRichNode();
-          this.rawEditor.setCarret(previousNode, previousNode.length);
-        }
         else {
-          debug('empty previousnode, not doing anything');
+          // find valid position before current position
+          const previousNode = previousTextNode(textNode, this.rawEditor.rootNode);
+          if (previousNode) {
+            if (isInLumpNode(previousNode)) {
+              this.handleLumpRemoval(previousNode);
+            }
+            else {
+              this.removeNodesFromTo(textNode, previousNode);
+              this.rawEditor.updateRichNode();
+              this.rawEditor.setCarret(previousNode, previousNode.length);
+            }
+          }
+          else {
+            debug('no previousnode, not doing anything');
+          }
         }
-
       }
     }
     catch(e) {
       warn(e, { id: 'rdfaeditor.invalidState'});
-    }
-
-    // Brutal repositioning if cursor ends in lumpnode; 'lump-node-is-lava'
-    // TODO: this can go if we properly act on repositioning
-    if(isInLumpNode(this.rawEditor.currentNode, this.rawEditor.rootNode)){
-      const previousNonLump = getPreviousNonLumpTextNode(this.rawEditor.currentNode, this.rawEditor.rootNode);
-      this.rawEditor.updateRichNode();
-      this.rawEditor.setCarret(previousNonLump, previousNonLump.length);
     }
   },
 
@@ -272,13 +272,26 @@ export default EmberObject.extend({
   },
 
   handleLumpRemoval(node) {
+    // TODO: This implementation has some issues in that the block may remains highlighted if a user decides not to delete it.
+    // a cleaner way to handle this (which was tried first) would be to first select the entire block
+    // at which point a second selection backspace would delete the entire lump node.
+    // if the user then repositions the cursor the selection would dissapear and he/she can continue as is.
+    // however currently the editor does not provide clean interfaces to select a block and it became hackisch very quickly.
     const nodeToDeleteAsBlock = getParentLumpNode(node, this.rawEditor.rootNode);
-    const previousNode = getPreviousNonLumpTextNode(nodeToDeleteAsBlock, this.rawEditor.rootNode);
-    this.removeNodesFromTo(previousNode, nodeToDeleteAsBlock);
-    nodeToDeleteAsBlock.remove();
-    this.rawEditor.updateRichNode();
-    this.rawEditor.setCarret(previousNode, previousNode.length);
+    if (nodeToDeleteAsBlock.getAttribute('data-flagged-remove') == "complete") {
+      // if the lump node was already flagged, remove it
+      const previousNode = getPreviousNonLumpTextNode(nodeToDeleteAsBlock, this.rawEditor.rootNode);
+      this.removeNodesFromTo(previousNode, nodeToDeleteAsBlock);
+      nodeToDeleteAsBlock.remove();
+      this.rawEditor.updateRichNode();
+      this.rawEditor.setCarret(previousNode, previousNode.length);
+    }
+    else {
+      // if the lump node wasn't flagged yet, flag it first
+      nodeToDeleteAsBlock.setAttribute('data-flagged-remove', 'complete');
+    }
   },
+
   shouldHighlightParentNode(parentNode, visibleLength) {
     let nodeWalker = new NodeWalker();
     return visibleLength < 5 && parentNode.childNodes.length == 1 && isRdfaNode(nodeWalker.processDomNode(parentNode));
