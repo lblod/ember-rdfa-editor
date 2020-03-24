@@ -193,9 +193,12 @@ export default EmberObject.extend({
           else {
             this.removeNodesFromTo(textNode, previousNode);
             this.rawEditor.updateRichNode();
+            textNode = previousNode;
+            shouldContinue = this.visibleText(textNode).length == 0 || isAllWhitespace(textNode);
+            if (!shouldContinue) {
+              this.rawEditor.setCarret(textNode, textNode.length);
+            }
           }
-          textNode = previousNode;
-          shouldContinue = this.visibleText(textNode).length == 0 || isAllWhitespace(textNode);
         }
         else {
           debug('no previousnode, not doing anything');
@@ -203,7 +206,6 @@ export default EmberObject.extend({
         }
       }
     }
-    this.rawEditor.setCarret(textNode, textNode.length);
   },
 
 
