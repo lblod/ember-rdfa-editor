@@ -2,14 +2,6 @@
    #SAY CONTAINER
    ================================== */
 
-/* Variables
-   ========================================================================== */
-
-$say-aside-shadow   : 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px rgba($say-neutral-darkest, .035), 0 1px 1px rgba($say-neutral-darkest, .025) !default;
-
-/* Component
-   ========================================================================== */
-
 .say-container {
   height: 100%;
   position: relative;
@@ -17,7 +9,7 @@ $say-aside-shadow   : 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px rgba(
   display: flex;
   flex-direction: column;
 
-  @if $say-layout-reverse == true {
+  @if $say-toolbar-bottom == true {
     flex-direction: column-reverse;
   }
 }
@@ -31,23 +23,22 @@ $say-aside-shadow   : 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px rgba(
     bottom: $say-unit-small;
     right: $say-unit-small;
 
-    @if $say-layout-reverse == true {
+    @if $say-toolbar-bottom == true {
       top: $say-unit-small;
       bottom: auto;
     }
 
-    @if $say-paper == true and $say-layout-reverse == true and $say-paper-sidebar == false {
+    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == false {
       top: $say-unit;
     }
 
-    @if $say-paper == true and $say-layout-reverse == true and $say-paper-sidebar == true {
+    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == true {
       top: $say-unit;
     }
 
     @if $say-paper == true and $say-paper-sidebar == true {
       top: calc(44px + #{$say-unit});
       width: calc(25% - #{$say-unit + $say-unit-small});
-      box-shadow: none;
       bottom: auto;
       right: $say-unit-small;
       background-color: $say-neutral-lightest;

@@ -3,18 +3,37 @@
    Shared styling (hover, click, show, regular)
    ================================== */
 
-/* Variables
-   ========================================================================== */
-
-$say-annotation-text-color : $say-neutral-dark !default;
-
-/* Component
-   ========================================================================== */
-
 .rdfa-annotations {
-  // making sure elements are easier to style and handle
-  span {
-    display: inline-block; // @TODO: review > causes issues
+  // Visibility annotations
+  [property="dc:subject"],
+  [property="besluit:geplandOpenbaar"],
+  [property="besluit:openbaar"] {
+    color: $say-neutral !important;
+    font-weight: $say-medium;
+  }
+
+  [typeof="besluit:BehandelingVanAgendapunt"],
+  [property="ext:behandelt"],
+  [property="besluit:heeftAgendapunt"],
+  [typeof="besluit:Agendapunt"] {
+    display: block !important;
+    position: relative;
+    color: $say-neutral;
+
+    [property="besluit:geplandOpenbaar"] i,
+    [property="besluit:openbaar"] i {
+      font-size: 1.5rem;
+      top: .2rem;
+      padding-left: 1px;
+      z-index: 2;
+      color: $say-neutral;
+      opacity: .8;
+    }
+
+    [property="besluit:geplandOpenbaar"][content="false"] i,
+    [property="besluit:openbaar"][content="false"] i {
+      color: $say-orange;
+    }
   }
 
   // Make block elements
@@ -44,7 +63,6 @@ $say-annotation-text-color : $say-neutral-dark !default;
   [property="ext:insertAanwezigenText"],
   [property="prov:generated"] > [property="besluit:motivering"],
   [property="prov:generated"] > [property="prov:value"],
-  // [typeof="besluit:Zitting"],
   [property^="ext"]:not([property="ext:heeftAfwezigeBijAgendapunt"]):not(span),
   [data-editor-highlight="true"]:not(li):not(span),
   [typeof="http://data.vlaanderen.be/ns/besluit#Besluit http://data.vlaanderen.be/ns/besluit#AanvullendReglement"],
@@ -69,7 +87,7 @@ $say-annotation-text-color : $say-neutral-dark !default;
     transition: border $say-transition;
 
     // invisible styling of annotations, before they are shown
-    &:not([data-flagged-remove="complete"]):before {
+    &:before {
       // positioning
       content:  attr(property) " " attr(typeof) " " attr(data-type);
       position: absolute;
@@ -229,6 +247,11 @@ $say-annotation-text-color : $say-neutral-dark !default;
       display: none;
     }
   }
+
+  // @TODO: review use
+  [typeof="besluit:Agendapunt"] {
+    margin-bottom: .5rem;
+  }
 }
 
 // Show RDFA blocks
@@ -243,21 +266,32 @@ $say-annotation-text-color : $say-neutral-dark !default;
     display: block !important; // Override inline styles
     margin: $say-unit-tiny;
 
-    &:not([data-flagged-remove="complete"]):before {
-      position: relative;
+    // Style annotation blocks
+    &:before {
+      @include say-font-size($say-tiny,1.2);
+      font-weight: $say-medium;
+      color: $say-neutral;
+      text-transform: uppercase;
       pointer-events: none;
-      opacity: 1;
+      content: attr(property);
+      position: relative;
       right: auto;
       top: 0;
       left: 0;
+      display: block;
       width: 100%;
-      border-bottom: 1px solid $say-neutral-lighter;
-    }
-
-    &:not([data-flagged-remove="complete"]):after {
-      display: none;
       transition: none;
+      padding: $say-unit-tiny/2;
+      transition: none;
+      border-bottom: 1px solid $say-neutral-lighter;
+      background-color: $say-neutral-lightest;
+      opacity: 1;
     }
+  }
+
+  .mark-highlight-manual:hover:after,
+  [data-editor-highlight="true"]:hover:after {
+    content: "Action required";
   }
 
   [prefix="mobiliteit: https://data.vlaanderen.be/ns/mobiliteit# infrastructuur: https://data.vlaanderen.be/ns/openbaardomein/infrastructuur# besluit: https://data.vlaanderen.be/ns/besluit# geosparql: http://www.opengis.net/ont/geosparql# locn: http://www.w3.org/ns/locn# xsd:http://www.w3.org/2001/XMLSchema# foaf: http://xmlns.com/foaf/0.1/"] {

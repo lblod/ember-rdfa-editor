@@ -2,20 +2,6 @@
    #SAY EDITOR STYLES
    ================================== */
 
-/* Variables
-   ========================================================================== */
-
-$say-editor-background   : $say-neutral-lightest !default;
-$say-editor-padding      : $say-unit !default;
-$say-paper-min-height    : calc(100vh + #{$say-unit}) !default;
-$say-paper-padding       : $say-unit-large !default;
-$say-paper-background    : $say-white !default;
-$say-paper-box-shadow    : 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px rgba($say-neutral-darkest, .035), 0 1px 1px rgba($say-neutral-darkest, .025) !default;
-
-
-/* Component
-   ========================================================================== */
-
 .say-editor {
   background-color: $say-paper-background;
   padding: $say-editor-padding;

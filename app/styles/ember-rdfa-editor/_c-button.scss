@@ -2,25 +2,6 @@
    #BUTTONS
    ================================== */
 
-/* Variables
-   ========================================================================== */
-
-$say-button-height             : $say-unit + $say-unit-tiny !default;
-$say-button-font-family        : $say-font !default;
-$say-button-font-size          : $say-base !default;
-$say-button-font-weight        : $say-regular !default;
-$say-button-border             : .1rem !default;
-$say-button-border-color       : $say-primary !default;
-$say-button-border-hover-color : $say-primary-light !default;
-$say-button-color              : $say-white !default;
-$say-button-hover-color        : $say-white !default;
-$say-button-bg-color           : $say-primary !default;
-$say-button-bg-hover-color     : $say-primary-light !default;
-$say-button-radius             : $say-radius !default;
-
-/* Component
-   ========================================================================== */
-
 .say-button {
   @include say-font-size($say-button-font-size);
   font-family: $say-button-font-family;

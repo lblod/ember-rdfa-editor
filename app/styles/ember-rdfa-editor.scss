@@ -18,7 +18,7 @@
 // VARIABLES
 @import "ember-rdfa-editor/s-colors";
 @import "ember-rdfa-editor/s-settings";
-@import "ember-rdfa-editor/s-say-theme";
+@import "ember-rdfa-editor/s-theme";
 
 
 // TOOLS
@@ -39,7 +39,6 @@
 // RDFA AND ANNOTATION COMPONENTS
 @import "ember-rdfa-editor/c-annotation";
 @import "ember-rdfa-editor/c-annotation-hover";
-@import "ember-rdfa-editor/c-annotation-flag";
 @import "ember-rdfa-editor/c-annotation-modal";
 
 

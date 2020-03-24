@@ -2,42 +2,8 @@
    #SAY TYPOGRAPHY STYLES
    ================================== */
 
-/* Variables
-   ========================================================================== */
-
-$say-h1-font-family    : $say-font !default;
-$say-h1-font-weight    : $say-medium !default;
-$say-h1-font-size      : $say-h1 !default;
-$say-h2-font-family    : $say-font !default;
-$say-h2-font-weight    : $say-medium !default;
-$say-h2-font-size      : $say-h2 !default;
-$say-h3-font-family    : $say-font !default;
-$say-h3-font-weight    : $say-medium !default;
-$say-h3-font-size      : $say-h3 !default;
-$say-h4-font-family    : $say-font !default;
-$say-h4-font-weight    : $say-medium !default;
-$say-h4-font-size      : $say-h4 !default;
-$say-h5-font-family    : $say-font !default;
-$say-h5-font-weight    : $say-medium !default;
-$say-h5-font-size      : $say-h5 !default;
-$say-h6-font-family    : $say-font !default;
-$say-h6-font-weight    : $say-medium !default;
-$say-h6-font-size      : $say-h6 !default;
-$say-base-font-family  : $say-font !default;
-$say-base-font-weight  : $say-light !default;
-$say-base-font-size    : $say-base !default;
-$say-typography-margin : $say-unit-small !default;
-
-
-/* Component
-   ========================================================================== */
-
 .say-typography {
-  // Remove empty whitespace
-  #text {
-    display: none;
-  }
-
+  // Add max-width when paper view is disabled
   @if $say-paper == false {
     * {
       max-width: 120ch;
@@ -46,10 +12,11 @@ $say-typography-margin : $say-unit-small !default;
     }
   }
 
+  // Set base font size for elements
+  p,
   ul,
   ol,
-  div,
-  p {
+  div {
     @include say-font-size($say-base-font-size);
     font-family: $say-base-font-family;
     font-weight: $say-base-font-weight;
@@ -57,30 +24,6 @@ $say-typography-margin : $say-unit-small !default;
 
   br {
     @include say-font-size(1rem,1);
-  }
-
-  p + *,
-  ul + * {
-    margin-top: $say-typography-margin/4;
-  }
-
-
-  h1,
-  .h1 {
-    margin-bottom: $say-typography-margin;
-  }
-
-  h2,
-  .h2,
-  h3,
-  .h3,
-  h4,
-  .h4,
-  h5,
-  .h5,
-  h6 {
-    margin-top: $say-typography-margin;
-    margin-bottom: $say-typography-margin/2;
   }
 
   h1,
@@ -127,22 +70,72 @@ $say-typography-margin : $say-unit-small !default;
 
   p, li {
     &.small {
-      @include say-font-size($say-base);
+      @include say-font-size($say-small-font-size);
     }
 
     &.smaller {
-      @include say-font-size(1.4rem,1.5);
+      @include say-font-size($say-smaller-font-size,1.5);
     }
 
     &.smallest {
-      @include say-font-size(1.3rem,1.5);
+      @include say-font-size($say-smallest-font-size,1.5);
     }
   }
 
-  p {
-    display: block;
+  // Setup some margin rules
+  p + *,
+  div + *,
+  span + *,
+  ul + *,
+  ol + *,
+  i + * {
+    margin-top: $say-typography-margin;
   }
 
+  h1,
+  .h1 {
+    margin-top: $say-typography-margin*2;
+    margin-bottom: $say-typography-margin*2;
+  }
+
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6 {
+    margin-top: $say-typography-margin*2;
+    margin-bottom: $say-typography-margin;
+  }
+
+  // Style links
+  a {
+    display: inline-block;
+    transition: color $say-transition, text-decoration $say-transition;
+    font-weight: $say-regular;
+    text-decoration-color: $say-primary-lighter;
+
+    &,
+    &:visited {
+      color: $say-primary;
+    }
+
+    &:hover,
+    &:focus {
+      color: $say-primary-light;
+      text-decoration-color: $say-primary-lighter;
+    }
+
+    &:focus {
+      outline: $say-outline;
+      outline-offset: $say-unit-tiny/2;
+    }
+  }
+
+  // Style lists
   ul {
     list-style: bullet;
   }
@@ -280,10 +273,12 @@ $say-typography-margin : $say-unit-small !default;
     margin-left: $say-unit;
   }
 
+  // Temporary fix for inline lists > @TODO: remove inline styles
   li[style="display: inline;"] {
     display: inline-block !important;
   }
 
+  // Style horizontal rule
   hr {
     margin: 0;
     margin-top: $say-unit;
@@ -292,6 +287,7 @@ $say-typography-margin : $say-unit-small !default;
     border-bottom: 3px solid $say-neutral-lighter;
   }
 
+  // Add custom font styling
   strong,
   b {
     font-weight: $say-medium;
@@ -301,42 +297,11 @@ $say-typography-margin : $say-unit-small !default;
     font-style: italic;
   }
 
-  mark {
-    cursor: pointer;
-  }
-
-  mark table {
-    font-weight: normal;
-    border: 4px solid $say-yellow;
-
-    &:active {
-      opacity: .5;
-    }
-  }
-
-  a {
+  i {
     display: inline-block;
-    transition: color $say-transition, text-decoration $say-transition;
-    font-weight: $say-regular;
-    text-decoration-color: $say-primary-lighter;
-
-    &,
-    &:visited {
-      color: $say-primary;
-    }
-
-    &:hover,
-    &:focus {
-      color: $say-primary-light;
-      text-decoration-color: $say-primary-lighter;
-    }
-
-    &:focus {
-      outline: $say-outline;
-      outline-offset: $say-unit-tiny/2;
-    }
   }
 
+  // Table styling
   table th {
     white-space: initial;
     background-color: $say-white;
@@ -361,42 +326,6 @@ $say-typography-margin : $say-unit-small !default;
 
     .button-group .button {
       margin-bottom: .5rem;
-    }
-  }
-
-  [typeof="besluit:Agendapunt"] {
-    margin-bottom: .5rem;
-  }
-
-  // Visibility annotations
-  [property="dc:subject"],
-  [property="besluit:geplandOpenbaar"],
-  [property="besluit:openbaar"] {
-    color: $say-neutral !important;
-    font-weight: $say-medium;
-  }
-
-  [typeof="besluit:BehandelingVanAgendapunt"],
-  [property="ext:behandelt"],
-  [property="besluit:heeftAgendapunt"],
-  [typeof="besluit:Agendapunt"] {
-    display: block !important;
-    position: relative;
-    color: $say-neutral;
-
-    [property="besluit:geplandOpenbaar"] i,
-    [property="besluit:openbaar"] i {
-      font-size: 1.5rem;
-      top: .2rem;
-      padding-left: 1px;
-      z-index: 2;
-      color: $say-neutral;
-      opacity: .8;
-    }
-
-    [property="besluit:geplandOpenbaar"][content="false"] i,
-    [property="besluit:openbaar"][content="false"] i {
-      color: $say-orange;
     }
   }
 
@@ -462,5 +391,20 @@ $say-typography-margin : $say-unit-small !default;
       -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
+  }
+
+
+  // Not sure why this is here
+  mark {
+    cursor: pointer;
+  }
+
+  mark table {
+    font-weight: normal;
+    border: 4px solid $say-yellow;
+
+    &:active {
+      opacity: .5;
+    }
   }
 }

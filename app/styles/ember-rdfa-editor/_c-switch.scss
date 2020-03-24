@@ -2,17 +2,6 @@
    #SAY TOOLBAR
    ================================== */
 
-/* Variables
-   ========================================================================== */
-
-$say-switch-label-color  : $say-neutral-dark !default;
-$say-switch-color        : $say-neutral-light !default;
-$say-switch-active-color : $say-primary !default;
-
-
-/* Component
-   ========================================================================== */
-
 .say-switch {
   display: inline-flex;
   position: relative;

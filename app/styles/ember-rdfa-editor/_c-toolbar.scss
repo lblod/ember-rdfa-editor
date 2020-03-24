@@ -2,17 +2,6 @@
    #SAY TOOLBAR
    ================================== */
 
-/* Variables
-   ========================================================================== */
-
-$say-toolbar-background : $say-neutral-lighter !default;
-$say-toolbar-border     : tint($say-neutral-light,30) !default;
-$say-toolbar-height     : 44px !default;
-$say-layout-reverse     : false !default;
-
-/* Component
-   ========================================================================== */
-
 .say-toolbar {
   display: flex;
   justify-content: space-between;
@@ -20,7 +9,7 @@ $say-layout-reverse     : false !default;
   background-color: $say-toolbar-background;
   border-bottom: 1px solid $say-toolbar-border;
 
-  @if $say-layout-reverse == true {
+  @if $say-toolbar-bottom == true {
     border-bottom: 0;
     border-top: 1px solid $say-toolbar-border;
   }
