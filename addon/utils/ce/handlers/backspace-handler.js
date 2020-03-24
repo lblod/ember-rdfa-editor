@@ -100,7 +100,7 @@ export default EmberObject.extend({
    * @public
    */
   stringToVisibleText(string) {
-    return string.replace(invisibleSpace,'').replace(/\s+/,' ');
+    return string.replace(invisibleSpace,'').replace(/\s+/g,' ').replace(/\s+/,' ');
   },
 
   /**
@@ -112,84 +112,100 @@ export default EmberObject.extend({
     const position = this.currentSelection[0];
     const textNode = this.currentNode;
     const richNode = this.rawEditor.getRichNodeFor(textNode);
-    this.mergeSiblingTextNodes(this.currentNode, richNode);
+    this.mergeSiblingTextNodes(textNode, richNode);
     try {
-      const originalText = textNode.textContent;
-      const visibleText = this.visibleText(textNode);
-      const visibleLength = visibleText.length;
-      textNode.textContent = visibleText;
+      let visibleText = this.visibleText(textNode);
+      let visibleLength = visibleText.length;
       if (visibleLength > 0 && !isAllWhitespace(textNode)) {
-        // non empty node
-        const relPosition = this.absoluteToRelativePosition(richNode, position);
-        const textBeforeCursor = originalText.slice(0, relPosition);
-        /* we need to correct the position, as we've just modified the text content
-         * this calculates the delta by comparing the length of the original text before the cursor and the new length
-         */
-        const posCorrection = textBeforeCursor.length - this.stringToVisibleText(textBeforeCursor).length;
-        const trueRelativePosition = relPosition - posCorrection;
-        if (trueRelativePosition === 0) {
-          // start of non empty node, find valid position before current position
-          const previousNode = previousTextNode(textNode, this.rawEditor.rootNode);
-          if (previousNode) {
-            if (isInLumpNode(previousNode)) {
-              this.handleLumpRemoval(previousNode);
-            }
-            else {
-              // move cursor to previous node
-              this.rawEditor.updateRichNode();
-              this.rawEditor.setCarret(previousNode, previousNode.length);
-              if (isLI(textNode.parentNode) && richNode.start === richNode.parent.start) {
-                // starting position was at the start of an li and we can merge them
-                this.removeLI(textNode.parentNode);
-                this.rawEditor.updateRichNode();
-              }
-              else {
-                this.backSpace();
-              }
-            }
-          }
-          else {
-            debug('no previousnode, not doing anything');
-          }
-        }
-        else {
-          // not empty and we're not at the start, delete character before the carret
-          this.deleteCharacter(textNode, trueRelativePosition);
-          if (this.shouldHighlightParentNode(textNode.parentNode, visibleLength)) {
-            const removeType = visibleLength > 1 ? 'almost-complete' : 'complete';
-            textNode.parentNode.setAttribute('data-flagged-remove', removeType);
-          }
-        }
+        this.backspaceInNonEmptyNode(richNode, position, visibleLength);
       }
       else {
-        // empty node
-        if (textNode.parentNode.getAttribute('data-flagged-remove') != "complete" && this.shouldHighlightParentNode(textNode.parentNode, visibleLength)) {
-          // if the current node is an empty rdfa node, flag it first and don't delete it yet
-          textNode.parentNode.setAttribute('data-flagged-remove', 'complete');
-        }
-        else {
-          // find valid position before current position
-          const previousNode = previousTextNode(textNode, this.rawEditor.rootNode);
-          if (previousNode) {
-            if (isInLumpNode(previousNode)) {
-              this.handleLumpRemoval(previousNode);
-            }
-            else {
-              this.removeNodesFromTo(textNode, previousNode);
-              this.rawEditor.updateRichNode();
-              this.rawEditor.setCarret(previousNode, previousNode.length);
-            }
-          }
-          else {
-            debug('no previousnode, not doing anything');
-          }
-        }
+        this.backspaceInEmptyNode(textNode, visibleLength);
       }
     }
     catch(e) {
       warn(e, { id: 'rdfaeditor.invalidState'});
     }
+},
+
+  backspaceInNonEmptyNode(richNode, position, visibleLength) {
+    const textNode = richNode.domNode;
+    const originalText = textNode.textContent;
+    const relPosition = this.absoluteToRelativePosition(richNode, position);
+    const textBeforeCursor = originalText.slice(0, relPosition);
+    textNode.textContent = this.stringToVisibleText(originalText);
+    /* we need to correct the position, as we've just modified the text content
+     * this calculates the delta by comparing the length of the original text before the cursor and the new length
+     */
+    const posCorrection = textBeforeCursor.length - this.stringToVisibleText(textBeforeCursor).length;
+    const trueRelativePosition = relPosition - posCorrection;
+    if (trueRelativePosition === 0) {
+      // start of non empty node, find valid position before current position
+      const previousNode = previousTextNode(textNode, this.rawEditor.rootNode);
+      if (previousNode) {
+        if (isInLumpNode(previousNode)) {
+          this.handleLumpRemoval(previousNode);
+        }
+        else {
+          // move cursor to previous node
+          this.rawEditor.updateRichNode();
+          this.rawEditor.setCarret(previousNode, previousNode.length);
+          if (isLI(textNode.parentNode) && richNode.start === richNode.parent.start) {
+            // starting position was at the start of an li and we can merge them
+            this.removeLI(textNode.parentNode);
+            this.rawEditor.updateRichNode();
+          }
+          else {
+            this.backSpace();
+          }
+        }
+      }
+      else {
+        debug('no previousnode, not doing anything');
+      }
+    }
+    else {
+      // not empty and we're not at the start, delete character before the carret
+      this.deleteCharacter(textNode, trueRelativePosition);
+      if (this.shouldHighlightParentNode(textNode.parentNode, visibleLength)) {
+        const removeType = visibleLength > 1 ? 'almost-complete' : 'complete';
+        textNode.parentNode.setAttribute('data-flagged-remove', removeType);
+      }
+    }
   },
+
+  backspaceInEmptyNode(textNode) {
+    let shouldContinue = true;
+    while (shouldContinue) {
+      if (textNode.parentNode.getAttribute('data-flagged-remove') != "complete" && this.shouldHighlightParentNode(textNode.parentNode, 0)) {
+        // if the current node is an empty rdfa node, flag it first and don't delete it yet
+        textNode.parentNode.setAttribute('data-flagged-remove', 'complete');
+        shouldContinue = false;
+      }
+      else {
+        // find valid position before current position
+        let previousNode = previousTextNode(textNode, this.rawEditor.rootNode);
+        if (previousNode) {
+          if (isInLumpNode(previousNode)) {
+            this.handleLumpRemoval(previousNode);
+            shouldContinue = false;
+          }
+          else {
+            this.removeNodesFromTo(textNode, previousNode);
+            this.rawEditor.updateRichNode();
+          }
+          textNode = previousNode;
+          shouldContinue = this.visibleText(textNode).length == 0 || isAllWhitespace(textNode);
+        }
+        else {
+          debug('no previousnode, not doing anything');
+          shouldContinue = false;
+        }
+      }
+    }
+    this.rawEditor.setCarret(textNode, textNode.length);
+  },
+
 
   previousNode(node) {
     /* backwards walk of dom tree */
@@ -213,14 +229,7 @@ export default EmberObject.extend({
     if (previousNode === nodeBefore) {
       nodes.pushObject(nodeAfter);
       for (const node of nodes) {
-
-        if (isInLumpNode(node, this.rawEditor.rootNode)){
-          const nodeToDeleteAsBlock = getParentLumpNode(node, this.rawEditor.rootNode);
-          if(nodeToDeleteAsBlock){
-            nodeToDeleteAsBlock.remove();
-          }
-        }
-        else if (node.nodeType === Node.TEXT_NODE) {
+        if (node.nodeType === Node.TEXT_NODE) {
           removeNode(node);
         }
         else if (isLI(node)) {
