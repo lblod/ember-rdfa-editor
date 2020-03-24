@@ -6,7 +6,6 @@ export default class LumpNodeMovementObserver {
     if (oldSelection) {
       // backspace highlighted the lump node and user is no longer trying to delete it. so remove the highlight
       const previousNode = oldSelection.startNode.domNode;
-      console.log('here', oldSelection, newSelection);
       if (previousNode.parentNode && oldSelection.startNode.absolutePosition !== newSelection.startNode.absolutePosition) {
         // node is still part of the domtree
         const nodeBeforeOldSelection = previousTextNode(oldSelection.startNode.domNode);
