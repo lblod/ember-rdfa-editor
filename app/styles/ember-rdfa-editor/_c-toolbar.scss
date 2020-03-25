@@ -41,7 +41,6 @@
   .say-toolbar__button {
     @include say-font-size($say-base,1);
     appearance: none;
-    -webkit-appearance: none; // doesn't work without prefix on Safari iOS11
     outline: none;
     border: 0;
     display: inline-flex;

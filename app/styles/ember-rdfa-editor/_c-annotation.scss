@@ -77,45 +77,15 @@
     display: block; // remove when span is gone from the template "nieuw generiek besluit"
   }
 
+  // Show underlines on annotation
   [data-editor-highlight="true"],
   [property],
   [typeof]:not([typeof="foaf:Document"]),
   [data-type],
   .mark-highlight-manual {
-    border-bottom: 2px dotted $say-neutral-light;
+    border-bottom: .2rem dotted $say-neutral-light;
     padding-bottom: .2rem;
     transition: border $say-transition;
-
-    // invisible styling of annotations, before they are shown
-    &:before {
-      // positioning
-      content:  attr(property) " " attr(typeof) " " attr(data-type);
-      position: absolute;
-      pointer-events: none;
-      transition: opacity $say-transition;
-      z-index: $say-z-index-beta;
-      width: $say-annotation-width-content;
-      background-color: $say-annotation-background-color;
-      padding: $say-unit-tiny/3 $say-unit-tiny/2;
-
-      // Text
-      @include say-font-size($say-base,1.4);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: $say-medium;
-      font-size: 1.2rem;
-      color: $say-annotation-text-color;
-      font-family: $say-font;
-      display: block;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-
-      // Hide text
-      opacity: 0;
-    }
 
     .mark-highlight-manual,
     [typeof],
@@ -167,91 +137,6 @@
       background-color: $say-orange-lighter;
     }
   }
-
-  span.mark-highlight-manual {
-    color: $say-neutral-darker !important;
-    font-style: italic;
-  }
-
-  // Show some annotations inline
-  [typeof="besluit:BehandelingVanAgendapunt"]:hover {
-    .annotation--agendapunt--besloten__icon,
-    .annotation--agendapunt--open__icon,
-    .annotation--agendapunt--persoonlijk__icon {
-      opacity: 1;
-      left: auto;
-    }
-  }
-
-  [typeof="besluit:Agendapunt"] > [property="dc:subject"],
-  [property="ext:behandelt"] > span:first-child,
-  [property="besluit:gebeurtNa"] + span {
-    text-transform: uppercase;
-    color: $say-neutral-light;
-    letter-spacing: 1px;
-    font-size: 1.4rem;
-    line-height: 1.8;
-  }
-
-  [property="besluit:geplandOpenbaar"],
-  [property="besluit:openbaar"] {
-    text-transform: uppercase;
-    color: $say-neutral-light;
-    letter-spacing: 1px;
-    font-size: 1.4rem;
-    line-height: 1.8;
-  }
-
-  // Hide superfluous annotations visualisation
-  [property=""],
-  [typeof=""],
-  [typeof="Zitting"],
-  [property="ext:metadata"],
-  [property="heeftNotulen"],
-  [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
-  [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
-    border-bottom: 0 !important;
-
-    &:after,
-    &:before,
-    &[data-editor-position-level]:after,
-    &[data-editor-position-level]:before,
-    &[data-editor-position-level]:hover:after,
-    &[data-editor-position-level]:hover:before,
-    &:hover:after,
-    &:hover:before {
-      display: none !important;
-      content: '' !important;
-      opacity: 0 !important;
-    }
-  }
-
-  // Hide superfluous annotated fields
-  [property="heeftNotulen"],
-  [property="ext:metadata"] {
-    border: 0 !important;
-    clip: rect(0 0 0 0) !important;
-    clip-path: inset(50%) !important;
-    height: 1px !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-    position: absolute !important;
-    white-space: nowrap !important;
-    width: 1px !important;
-  }
-
-  // Display roadsign details
-  [prefix="mobiliteit: https://data.vlaanderen.be/ns/mobiliteit# infrastructuur: https://data.vlaanderen.be/ns/openbaardomein/infrastructuur# besluit: https://data.vlaanderen.be/ns/besluit# geosparql: http://www.opengis.net/ont/geosparql# locn: http://www.w3.org/ns/locn# xsd:http://www.w3.org/2001/XMLSchema# foaf: http://xmlns.com/foaf/0.1/"] {
-    [typeof="mobiliteit:Opstelling"] {
-      display: none;
-    }
-  }
-
-  // @TODO: review use
-  [typeof="besluit:Agendapunt"] {
-    margin-bottom: .5rem;
-  }
 }
 
 // Show RDFA blocks
@@ -269,16 +154,18 @@
     // Style annotation blocks
     &:before {
       @include say-font-size($say-tiny,1.2);
-      font-weight: $say-medium;
+      font-weight: $say-regular;
+      letter-spacing: .01rem;
       color: $say-neutral;
       text-transform: uppercase;
       pointer-events: none;
-      content: attr(property);
+      content: attr(property) " " attr(typeof) " " attr(data-type);
       position: relative;
       right: auto;
-      top: 0;
+      top: -.2ex;
+      left: -$say-unit-tiny/2;
       left: 0;
-      display: block;
+      display: inline-flex;
       width: 100%;
       transition: none;
       padding: $say-unit-tiny/2;
@@ -289,14 +176,9 @@
     }
   }
 
+  // Add help text on highlights
   .mark-highlight-manual:hover:after,
   [data-editor-highlight="true"]:hover:after {
     content: "Action required";
-  }
-
-  [prefix="mobiliteit: https://data.vlaanderen.be/ns/mobiliteit# infrastructuur: https://data.vlaanderen.be/ns/openbaardomein/infrastructuur# besluit: https://data.vlaanderen.be/ns/besluit# geosparql: http://www.opengis.net/ont/geosparql# locn: http://www.w3.org/ns/locn# xsd:http://www.w3.org/2001/XMLSchema# foaf: http://xmlns.com/foaf/0.1/"] {
-    [typeof="mobiliteit:Opstelling"] {
-      display: block !important;
-    }
   }
 }

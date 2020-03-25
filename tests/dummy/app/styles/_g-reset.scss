@@ -95,10 +95,7 @@ html {
   min-height: 100%; /* [3] */
   background-color: #ffffff;
   text-rendering: optimizeLegibility;
-  font-feature-settings: 'kern';
   -webkit-overflow-scrolling: touch;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 body {

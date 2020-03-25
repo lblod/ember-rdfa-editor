@@ -137,11 +137,11 @@
 
   // Style lists
   ul {
-    list-style: bullet;
+    list-style-type: bullet;
   }
 
-  ol:not(.bullet-list):not(.numbered-list),
-  ul:not(.bullet-list):not(.numbered-list) {
+  ul:not(.numbered-list),
+  ol:not(.bullet-list) {
     padding-left: 0;
 
     > li {
@@ -158,7 +158,14 @@
     }
   }
 
-  ul:not(.bullet-list):not(.numbered-list) li {
+  ul.bullet-list,
+  ul.numbered-list,
+  ol.bullet-list,
+  ol.numbered-list {
+    margin-left: $say-unit-small;
+  }
+
+  ul:not(.numbered-list) li {
     > ul {
       margin-left: $say-unit-small;
     }
@@ -225,7 +232,7 @@
     }
   }
 
-  ol:not(.bullet-list):not(.numbered-list) > li {
+  ol:not(.bullet-list) > li {
     list-style-type: decimal;
 
     > ol > li {
@@ -264,13 +271,6 @@
         }
       }
     }
-  }
-
-  ul.bullet-list,
-  ul.numbered-list,
-  ol.bullet-list,
-  ol.numbered-list {
-    margin-left: $say-unit;
   }
 
   // Temporary fix for inline lists > @TODO: remove inline styles
@@ -385,12 +385,7 @@
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] * {
     font-size: 1.5rem; // Set global font-size
     cursor: not-allowed; // Show not-allowed cursor
-
-    // Disable selection
-    -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+    user-select: none; // Disable selection
   }
 
 

@@ -10,7 +10,6 @@
   text-decoration: none;
   text-align: center;
   appearance: none;
-  -webkit-appearance: none; // doesn't work without prefix on Safari iOS11
   display: inline-flex;
   align-items: center;
   padding: 0 $say-unit-small .1ex; // Visually center the text in the button

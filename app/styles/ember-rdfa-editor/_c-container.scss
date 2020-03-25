@@ -21,7 +21,7 @@
   .say-container__aside {
     position: absolute;
     bottom: $say-unit-small;
-    right: $say-unit-small;
+    right: $say-unit-small + $say-unit-tiny;
 
     @if $say-toolbar-bottom == true {
       top: $say-unit-small;
@@ -40,7 +40,6 @@
       top: calc(44px + #{$say-unit});
       width: calc(25% - #{$say-unit + $say-unit-small});
       bottom: auto;
-      right: $say-unit-small;
       background-color: $say-neutral-lightest;
     }
   }
