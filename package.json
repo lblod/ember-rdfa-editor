@@ -49,6 +49,7 @@
     "ember-auto-import": "^1.5.2",
     "ember-cli": "~3.14.0",
     "ember-cli-app-version": "^3.2.0",
+    "ember-cli-autoprefixer": "^1.0.0",
     "ember-cli-dependency-checker": "^3.1.0",
     "ember-cli-eslint": "^5.1.0",
     "ember-cli-inject-live-reload": "^2.0.1",
@@ -84,5 +85,14 @@
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
-  }
+  },
+  "browserslist": [
+    "last 1 Chrome version",
+    "last 1 Android version",
+    "last 1 Firefox version",
+    "last 1 FirefoxAndroid version",
+    "last 1 Safari version",
+    "last 1 iOS version",
+    "last 1 Edge version"
+  ]
 }

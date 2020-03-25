@@ -4,7 +4,14 @@ const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function(defaults) {
   let app = new EmberAddon(defaults, {
-
+    sassOptions: {
+      sourceMapEmbed: true
+    },
+    autoprefixer: {
+      enabled: true,
+      cascade: true,
+      sourcemap: true
+    }
   });
 
   /*
