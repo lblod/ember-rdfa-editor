@@ -1,17 +1,17 @@
 /**
- * Documentation interface for plugins.
+ * Editor api for plugins.
  *
- * Plugins can manipulate the document.  Manipulation happens through
- * the methods offered in this interface.
+ * Plugins can manipulate the document and editor state.  Manipulation
+ * happens through the methods offered in this interface.
  *
  * In order to manipulate the document, first a range is selected
  * (either based on its semantics, or based on its range)
  *
- * @module rdfa-editor
- * @class DocumentInterface
+ * @module editor-interface
+ * @class PluginEditorApi
  * @constructor
  */
-export default class DocumentInterface {
+export default class PluginEditorApi {
   constructor(editor) {
     this._editor = editor;
   }
@@ -216,7 +216,7 @@ export default class DocumentInterface {
    * short form (derived from the prefixes available in the context)
    * if it is possible and if it desires to do so.
    *
-   * NOTE: newContext is set to undefined by default and behaves
+   * NOTE: forceNewContext is set to undefined by default and behaves
    * similar to false.  This is because we assume that when you don't
    * care about the context there's a fair chance that we can merge
    * the contexts.  In specific cases you may desire to have things
@@ -240,26 +240,415 @@ export default class DocumentInterface {
    * @method update
    * @param {Selection} selection Region to operate on, as returned by
    *  the selectContext or selectHighlight methods.
-   * @param {Object} operations The intended changes on the document.
+   * @param {Object} operation The intended changes on the document.
    *  You can either add annotations, remove annotations or specificly
    *  set the annotations.  Most plugins use add/remove as that has
    *  less chance to conflict with unexpected situations.
-   * @param {Object} [options.remove] Removes RDFa content that was
-   *  already there.  Allows removing any of property, typeof,
-   *  datatype, resource, content, (TODO: attribute), innerContent,
-   *  innerHTML.
-   * @param {Object} [options.add] Adds specific content to the
+   *
+   * @param {String} [operation.desc] You are encouraged to write a
+   *  brief description of the desired manipulation here for debugging
+   *  needs.  Especially when using set and even more when setting
+   *  html content, describe what the goal is so it can be made more
+   *  descriptive when new APIs arrive.
+   *
+   * @param {Object} [operation.add] Adds specific content to the
    *  selection, pushing nvalues on top of already existing values.
    *  Allows adding any of property, typeof, datatype, resource.  Set
    *  the forceNewContext property to true to force a new context if a
    *  full tag is selected.
-   * @param {Object} [options.set] Allows setting any of property,
+   *
+   * @param {boolean} [operation.add.forceNewContext] Set this to
+   * true to force a new context.  If your selection already contains
+   * some semantic context, a new context will be created.  Use this
+   * if you know you are defining a new entity.
+   *
+   * @param {string|Array} [operation.add.about] Adds one or more
+   * resources to the RDFa `about` property of the selection.
+   * @param {string} [operation.add.about] Adds a value to the RDFa
+   * `about` property of the selection.  This may be merged with
+   * already existing values for the `about` property if that is your
+   * selection.  Use a full URI rather than a prefixed URI, future
+   * versions of this function may auto-shorten for you based on the
+   * available prefixes in the document.
+   * @param {Array} [operation.add.about] An array of strings
+   * indicates each of these strings should be added to the `about`
+   * property of the selection.  See documentation for supplying a
+   * single string for more details.
+   *
+   * @param {string|Array} [operation.add.resource] Adds one or more
+   * resources to the RDFa `resource` property of the selection.
+   * @param {string} [operation.add.resource] Adds a value to the
+   * RDFa `resource` property of the selection.  This may be merged
+   * with already existing values for the `resource` property if that
+   * is your selection.  Use a full URI rather than a prefixed URI,
+   * future versions of this function may auto-shorten for you based on the
+   * available prefixes in the document.
+   * @param {Array} [operation.add.resource] An array of strings
+   * indicates each of these strings should be added to the `resource`
+   * property of the selection.  See documentation for supplying a
+   * single string for more details.
+   *
+   * @param {string|Array} [operation.add.dataType] Adds one or more
+   * resources to the RDFa `dataType` property of the selection.
+   * @param {string} [operation.add.dataType] Adds a value to the
+   * RDFa `dataType` property of the selection.  This may be merged
+   * with already existing values for the `dataType` property if that
+   * is your selection.  Use a full URI rather than a prefixed URI,
+   * future versions of this function may auto-shorten for you based on the
+   * available prefixes in the document.
+   * @param {Array} [operation.add.dataType] An array of strings
+   * indicates each of these strings should be added to the `dataType`
+   * property of the selection.  See documentation for supplying a
+   * single string for more details.
+   *
+   * @param {string|Array} [operation.add.typeof] Adds one or more
+   * resources to the RDFa `typeof` property of the selection.
+   * @param {string} [operation.add.typeof] Adds a value to the RDFa
+   * `typeof` property of the selection.  This may be merged with
+   * already existing values for the `typeof` property if that is your
+   * selection.  Use a full URI rather than a prefixed URI, future
+   * versions of this function may auto-shorten for you based on the
+   * available prefixes in the document.
+   * @param {Array} [operation.add.typeof] An array of strings
+   * indicates each of these strings should be added to the `typeof`
+   * property of the selection.  See documentation for supplying a
+   * single string for more details.
+   *
+   * @param {string|Array} [operation.add.property] Adds one or more
+   * resources to the RDFa `property` property of the selection.
+   * @param {string} [operation.add.property] Adds a value to the
+   * RDFa `property` property of the selection.  This may be merged
+   * with already existing values for the `property` property if that
+   * is your selection.  Use a full URI rather than a prefixed URI,
+   * future versions of this function may auto-shorten for you based on the
+   * available prefixes in the document.
+   * @param {Array} [operation.add.property] An array of strings
+   * indicates each of these strings should be added to the `property`
+   * property of the selection.  See documentation for supplying a
+   * single string for more details.
+   *
+   * @param {string|Array} [operation.add.content] **NOT SUPPORTED**, see append
+   * @param {string} [operation.add.innerHTML]  **NOT SUPPORTED**
+   * @param {string} [operation.add.innerContent] FUTURE
+   * @param {string|Array} [operation.add.attribute] FUTURE
+   * @param {string} [operation.add.tag] **NOT SUPPORTED**
+   *
+   *
+   * @param {Object} [operation.remove] Removes RDFa content that was
+   *  already there.  Allows removing any of property, typeof,
+   *  datatype, resource, content, (TODO: attribute), innerContent,
+   *  innerHTML.
+   *
+   * @param {string|boolean|Array} [operation.remove.about] Removes
+   * information from the selected entity's RDFa about.  Further
+   * detail below.
+   * @param {string} [operation.remove.about] Supplying a string
+   *  requests removal of a single about value.  Use a full URL, not a
+   *  prefixed string, as prefixes will be expanded in the RDFa
+   *  document for matching purposes.
+   * @param {Array} [operation.remove.about] Supplying an arrays of
+   *  strings requests the removal of any matching URLs from the
+   *  `about` property.  Use full URLs, not a prefixed string, as
+   *  prefixes will be expanded in the RDFa document for matching
+   *  purposes.
+   * @param {boolean} [operation.remove.about] The `true` boolean
+   *  removes any available value.  Note that this may remove more than
+   *  intended in cases you did not foresee.
+   *
+   * @param {string|boolean|Array} [operation.remove.resource]
+   * Removes information from the selected entity's RDFa resource.
+   * Further detail below.
+   * @param {string} [operation.remove.resource] Supplying a string
+   *  requests removal of a single resource value.  Use a full URL, not a
+   *  prefixed string, as prefixes will be expanded in the RDFa
+   *  document for matching purposes.
+   * @param {Array} [operation.remove.resource] Supplying an arrays of
+   *  strings requests the removal of any matching URLs from the
+   *  `resource` property.  Use full URLs, not a prefixed string, as
+   *  prefixes will be expanded in the RDFa document for matching
+   *  purposes.
+   * @param {boolean} [operation.remove.resource] The `true` boolean
+   *  removes any available value.  Note that this may remove more than
+   *  intended in cases you did not foresee.
+   *
+   * @param {string|boolean|Array} [operation.remove.dataType] Removes
+   * information from the selected entity's RDFa dataType.  Further
+   * detail below.
+   * @param {string} [operation.remove.dataType] Supplying a string
+   *  requests removal of a single dataType value.  Use a full URL, not a
+   *  prefixed string, as prefixes will be expanded in the RDFa
+   *  document for matching purposes.
+   * @param {Array} [operation.remove.dataType] Supplying an arrays of
+   *  strings requests the removal of any matching URLs from the
+   *  `dataType` property.  Use full URLs, not a prefixed string, as
+   *  prefixes will be expanded in the RDFa document for matching
+   *  purposes.
+   * @param {boolean} [operation.remove.dataType] The `true` boolean
+   *  removes any available value.  Note that this may remove more than
+   *  intended in cases you did not foresee.
+   *
+   * @param {string|boolean|Array} [operation.remove.typeof] Removes
+   * information from the selected entity's RDFa typeof.  Further
+   * detail below.
+   * @param {string} [operation.remove.typeof] Supplying a string
+   *  requests removal of a single typeof value.  Use a full URL, not a
+   *  prefixed string, as prefixes will be expanded in the RDFa
+   *  document for matching purposes.
+   * @param {Array} [operation.remove.typeof] Supplying an arrays of
+   *  strings requests the removal of any matching URLs from the
+   *  `typeof` property.  Use full URLs, not a prefixed string, as
+   *  prefixes will be expanded in the RDFa document for matching
+   *  purposes.
+   * @param {boolean} [operation.remove.typeof] The `true` boolean
+   *  removes any available value.  Note that this may remove more than
+   *  intended in cases you did not foresee.
+   *
+   * @param {string|boolean|Array} [operation.remove.property] Removes
+   * information from the selected entity's RDFa property.  Further
+   * detail below.
+   * @param {string} [operation.remove.property] Supplying a string
+   *  requests removal of a single property value.  Use a full URL, not a
+   *  prefixed string, as prefixes will be expanded in the RDFa
+   *  document for matching purposes.
+   * @param {Array} [operation.remove.property] Supplying an arrays of
+   *  strings requests the removal of any matching URLs from the
+   *  `property` property.  Use full URLs, not a prefixed string, as
+   *  prefixes will be expanded in the RDFa document for matching
+   *  purposes.
+   * @param {boolean} [operation.remove.property] The `true` boolean
+   *  removes any available value.  Note that this may remove more than
+   *  intended in cases you did not foresee.
+   *
+   * @param {string|Regex|boolean} [operation.remove.tag] **NOT SUPPORTED**
+   * @param {string|Regex|boolean} [operation.remove.innerHTML] **NOT SUPPORTED**
+   * @param {string|Regex|boolean} [operation.remove.innerContent] **NOT SUPPORTED**
+   * @param {string|Regex|boolean} [operation.remove.attribute] **FUTURE**
+   * @param {string|Regex|boolean} [operation.remove.content] **NOT SUPPORTED**
+   *
+   *
+   * @param {Object} [operation.set] Allows setting any of property,
    *  typeof, datatype, resource content attribute innerContent
-   *  innerHTML.  Set the newContext property to true to force a new
-   *  context if a full tag is selected.
-   * @param {String} [options.desc] You are encouraged to write a
-   *  brief description of the desired manipulation here for debugging
-   *  needs.
+   *  innerHTML.
+   *
+   * @param {string|Array} [operation.set.resource] Overwrites the
+   * RDFa `resource` property values of the selection with the
+   * supplied content.
+   * @param {string} [operation.set.resource] Overwrites the
+   * `resource` property with this single value.  Use a full URI
+   * rather than a prefixed URI, future versions of this function may
+   * auto-shorten for you based on the available prefixes in the
+   * document.
+   * @param {Array} [operation.set.resource] An array of strings
+   * indicates each of these strings should be set as the `resource`
+   * property of the selection.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
+   *
+   * @param {string|Array} [operation.set.property] Overwrites the
+   * RDFa `property` property values of the selection with the
+   * supplied content.
+   * @param {string} [operation.set.property] Overwrites the
+   * `property` property with this single value.  Use a full URI
+   * rather than a prefixed URI, future versions of this function may
+   * auto-shorten for you based on the available prefixes in the
+   * document.
+   * @param {Array} [operation.set.property] An array of strings
+   * indicates each of these strings should be set as the `property`
+   * property of the selection.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
+   *
+   * @param {string|Array} [operation.set.typeof] Overwrites the
+   * RDFa `typeof` property values of the selection with the
+   * supplied content.
+   * @param {string} [operation.set.typeof] Overwrites the
+   * `typeof` property with this single value.  Use a full URI
+   * rather than a prefixed URI, future versions of this function may
+   * auto-shorten for you based on the available prefixes in the
+   * document.
+   * @param {Array} [operation.set.typeof] An array of strings
+   * indicates each of these strings should be set as the `typeof`
+   * property of the selection.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
+   *
+   * @param {string|Array} [operation.set.about] Overwrites the
+   * RDFa `about` property values of the selection with the
+   * supplied content.
+   * @param {string} [operation.set.about] Overwrites the
+   * `about` property with this single value.  Use a full URI
+   * rather than a prefixed URI, future versions of this function may
+   * auto-shorten for you based on the available prefixes in the
+   * document.
+   * @param {Array} [operation.set.about] An array of strings
+   * indicates each of these strings should be set as the `about`
+   * property of the selection.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
+   *
+   * @param {string|Array} [operation.set.content] Overwrites the
+   * RDFa `content` property values of the selection with the
+   * supplied content.
+   * @param {string} [operation.set.content] Overwrites the
+   * `content` property with this single value.  Use a full URI
+   * rather than a prefixed URI, future versions of this function may
+   * auto-shorten for you based on the available prefixes in the
+   * document.
+   * @param {Array} [operation.set.content] An array of strings
+   * indicates each of these strings should be set as the `content`
+   * property of the selection.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
+   *
+   * @param {string|Array} [operation.set.dataType] Overwrites the
+   * RDFa `dataType` property values of the selection with the
+   * supplied content.
+   * @param {string} [operation.set.dataType] Overwrites the
+   * `dataType` property with this single value.  Use a full URI
+   * rather than a prefixed URI, future versions of this function may
+   * auto-shorten for you based on the available prefixes in the
+   * document.
+   * @param {Array} [operation.set.dataType] An array of strings
+   * indicates each of these strings should be set as the `dataType`
+   * property of the selection.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
+   *
+   * @param {string|Array} [operation.set.innerHTML] Overwrites the
+   * RDFa `innerHTML` property values of the selection with the
+   * supplied content.
+   * @param {string} [operation.set.innerHTML] Overwrites the
+   * `innerHTML` property with this single value.  Use a full URI
+   * rather than a prefixed URI, future versions of this function may
+   * auto-shorten for you based on the available prefixes in the
+   * document.
+   * @param {Array} [operation.set.innerHTML] An array of strings
+   * indicates each of these strings should be set as the `innerHTML`
+   * property of the selection.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
+   *
+   * @param {string|Array} [operation.set.innerContent] Overwrites the
+   * RDFa `innerContent` property values of the selection with the
+   * supplied content.
+   * @param {string} [operation.set.innerContent] Overwrites the
+   * `innerContent` property with this single value.  Use a full URI
+   * rather than a prefixed URI, future versions of this function may
+   * auto-shorten for you based on the available prefixes in the
+   * document.
+   * @param {Array} [operation.set.innerContent] An array of strings
+   * indicates each of these strings should be set as the `innerContent`
+   * property of the selection.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
+   * @param {string|Array} [operation.set.attribute] **FUTURE**
+   *
+   * @param {Object} [operation.append] Appends new content, scoped
+   * inside of the selection.  If you have selected a context, you can
+   * append contents inside of the selection.
+   *
+   * @param {string} [operation.append.tag] The tag to be used for the
+   * new element.  This should be a string of the name of the tag.
+   * @param {string} [operation.append.innerHTML] Html content to
+   * insert into the new tag.  This can be a string.
+   * @param {string|Array} [operation.append.about] The about property
+   * to set on the new context.
+   * @param {string} [operation.append.about] URI of the `about`
+   * property for the new context.  You should use a full URI as
+   * prefixes may not be constant acros documents.  Future versions of
+   * this API may use the existing prefixes to shorten the supplied
+   * URI.
+   * @param {Array} [operation.append.about] Array of strings for the `about` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.append.resource]
+   * @param {string} [operation.append.resource] URI of the `resource` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.append.resource] Array of strings for the `resource` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.append.dataType]
+   * @param {string} [operation.append.dataType] URI of the `dataType` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.append.dataType] Array of strings for the `dataType` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.append.typeof]
+   * @param {string} [operation.append.typeof] URI of the `typeof` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.append.typeof] Array of strings for the `typeof` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.append.property]
+   * @param {string} [operation.append.property] URI of the `property` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.append.property] Array of strings for the `property` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.append.innerContent] *NOT SUPPORTED*
+   * @param {string|Array} [operation.append.attribute] *NOT SUPPORTED*
+   * @param {string|Array} [operation.append.content] *NOT SUPPORTED*
+   *
+   * @param {Object} [operation.prepend] Prepends new content, scoped
+   * inside of the selection.  If you have selected a context, you can
+   * prepend contents inside of the selection.
+   *
+   * @param {string|Array} [operation.prepend.tag] The tag to be used
+   * for the new element.  This should be a string of the name of the
+   * tag.
+   * @param {string} [operation.prepend.innerHTML] Html content to
+   * insert into the new tag.  This can be a string.
+   * @param {Array} [operation.append.about] Array of strings for the `about` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.append.resource]
+   * @param {string} [operation.prepend.resource] URI of the `resource` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.prepend.resource] Array of strings for the `resource` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.prepend.dataType]
+   * @param {string} [operation.prepend.dataType] URI of the `dataType` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.prepend.dataType] Array of strings for the `dataType` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.prepend.typeof]
+   * @param {string} [operation.prepend.typeof] URI of the `typeof` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.prepend.typeof] Array of strings for the `typeof` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.prepend.property]
+   * @param {string} [operation.prepend.property] URI of the `property` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.prepend.property] Array of strings for the `property` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.prepend.innerContent] *NOT SUPPORTED*
+   * @param {string|Array} [operation.prepend.attribute] *NOT SUPPORTED*
+   * @param {string|Array} [operation.prepend.content] *NOT SUPPORTED*
+   *
+   * @param {Object} [operation.after] Insert content after the
+   * selected content in the DOM tree.  If you have selected a
+   * context, a new context will be created after the selected
+   * context.
+   * @param {string|Array} [operation.after.tag] The tag to be used
+   * for the new element.  This should be a string of the name of the
+   * tag.
+   * @param {string} [operation.after.innerHTML] Html content to
+   * insert into the new tag.  This can be a string.
+   * @param {string|Array} [operation.after.about] The about property
+   * to set on the new context.
+   * @param {Array} [operation.after.about] Array of strings for the `about` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.after.resource]
+   * @param {string} [operation.after.resource] URI of the `resource` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.after.resource] Array of strings for the `resource` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.after.dataType]
+   * @param {string} [operation.after.dataType] URI of the `dataType` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.after.dataType] Array of strings for the `dataType` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.after.typeof]
+   * @param {string} [operation.after.typeof] URI of the `typeof` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.after.typeof] Array of strings for the `typeof` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.after.property]
+   * @param {string} [operation.after.property] URI of the `property` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.after.property] Array of strings for the `property` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.after.innerContent] *NOT SUPPORTED*
+   * @param {string|Array} [operation.after.attribute] *NOT SUPPORTED*
+   * @param {string|Array} [operation.after.content] *NOT SUPPORTED*
+   *
+   *
+   * @param {Object} [operation.before] Insert content before the
+   * selected content in the DOM tree.  If you have selected a
+   * context, a new context will be created before the selected
+   * context.
+   * @param {string|Array} [operation.before.tag] The tag to be used
+   * for the new element.  This should be a string of the name of the
+   * tag.
+   * @param {string} [operation.before.innerHTML] Html content to
+   * insert into the new tag.  This can be a string.
+   * @param {Array} [operation.before.about] Array of strings for the `about` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.before.resource]
+   * @param {string} [operation.before.resource] URI of the `resource` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.before.resource] Array of strings for the `resource` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.before.dataType]
+   * @param {string} [operation.before.dataType] URI of the `dataType` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.before.dataType] Array of strings for the `dataType` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.before.typeof]
+   * @param {string} [operation.before.typeof] URI of the `typeof` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.before.typeof] Array of strings for the `typeof` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.before.property]
+   * @param {string} [operation.before.property] URI of the `property` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
+   * @param {Array} [operation.before.property] Array of strings for the `property` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.before.innerContent] *NOT SUPPORTED*
+   * @param {string|Array} [operation.before.attribute] *NOT SUPPORTED*
+   * @param {string|Array} [operation.before.content] *NOT SUPPORTED*
+   *
+   *
    * @example We can add a new type to a selection by running
    *
    *
