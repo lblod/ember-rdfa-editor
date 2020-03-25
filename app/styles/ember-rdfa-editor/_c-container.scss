@@ -20,26 +20,35 @@
 
   .say-container__aside {
     position: absolute;
-    bottom: $say-unit-small;
-    right: $say-unit-small + $say-unit-tiny;
+    bottom: 0;
+    right: 0;
+    max-height: calc(100% - 44px);
+    overflow: auto;
+    padding: $say-unit-small;
 
     @if $say-toolbar-bottom == true {
-      top: $say-unit-small;
+      top: 0;
       bottom: auto;
-    }
-
-    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == false {
-      top: $say-unit;
-    }
-
-    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == true {
-      top: $say-unit;
     }
 
     @if $say-paper == true and $say-paper-sidebar == true {
-      top: calc(44px + #{$say-unit});
-      width: calc(25% - #{$say-unit + $say-unit-small});
-      bottom: auto;
-      background-color: $say-neutral-lightest;
+      top: 44px;
+    }
+
+    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == false {
+      top: 0;
+    }
+
+    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == true {
+      top: 0;
+    }
+
+    @include mq(medium) {
+      @if $say-paper == true and $say-paper-sidebar == true {
+        width: 25%;
+        right: 0;
+        padding: $say-unit;
+        bottom: auto;
+      }
     }
   }

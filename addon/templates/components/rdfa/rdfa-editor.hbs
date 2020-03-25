@@ -27,21 +27,24 @@
 
     <div class="say-container__aside">
       <div class="say-editor-hints">
-        <Rdfa::EditorSuggestedHints @suggestedHints={{this.suggestedHints}} />
-        {{#if this.hasActiveHints}}
-          <div class="annotation-suggestion__suggestion">
-            <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
-              <ul>
-                {{#each this.hintsRegistry.activeHints as |card|}}
-                  <li>{{component card.card info=card.info}}</li>
-                {{/each}}
-              </ul>
-            </div>
-          </div>
-        {{/if}}
-        {{yield}}
+        <ul class="say-editor-hints__list">
+          {{#if this.suggestedHints.length}}
+          <li class="say-editor-hints__list-item">
+            <Rdfa::EditorSuggestedHints @suggestedHints={{this.suggestedHints}} />
+          </li>
+          {{/if}}
+          {{#if this.hasActiveHints}}
+          {{#each this.hintsRegistry.activeHints as |card|}}
+            <li class="say-editor-hints__list-item">
+              <div class="say-modal">
+                {{component card.card info=card.info}}
+              </div>
+            </li>
+          {{/each}}
+          {{/if}}
+        </ul>
       </div>
-
+      {{yield}}
       <Rdfa::LoadMonitor @editor={{this.eventProcessor.editor}} />
     </div>
   </div>

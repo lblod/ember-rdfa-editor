@@ -11,12 +11,6 @@
   border-radius: .2rem;
   background-color: $say-neutral-darker;
 
-  @if $say-paper == true and $say-paper-sidebar == true {
-    padding: $say-unit-tiny 0;
-    color: $say-neutral-dark;
-    background-color: transparent;
-  }
-
   &.is-loaded .say-icon {
     stroke: $say-success;
     fill: $say-success;
@@ -28,6 +22,14 @@
     animation-duration: .3s;
     animation-delay: 1s;
     animation-fill-mode: forwards;
+  }
+
+  @include mq(medium) {
+    @if $say-paper == true and $say-paper-sidebar == true {
+      padding: $say-unit-tiny 0;
+      color: $say-neutral-dark;
+      background-color: transparent;
+    }
   }
 }
 

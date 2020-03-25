@@ -10,14 +10,22 @@
 
   @if $say-paper == true {
     background-color: $say-editor-background;
+  }
 
-    @if $say-paper-sidebar == true {
-      padding-right: 25%;
+
+
+  @include mq(medium) {
+    @if $say-paper == true {
+      @if $say-paper-sidebar == true {
+        padding-right: 25%;
+      }
     }
   }
 
-  &.rdfa-annotations-hover {
-    padding-left: $say-annotation-width;
+  @include mq(large) {
+    &.rdfa-annotations-hover {
+      padding-left: $say-annotation-width;
+    }
   }
 }
 

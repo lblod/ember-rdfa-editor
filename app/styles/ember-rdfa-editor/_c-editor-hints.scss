@@ -1,0 +1,22 @@
+/* ==================================
+   #SAY EDITOR HINTS
+   ================================== */
+
+.say-editor-hints {
+  display: block;
+  position: relative;
+}
+
+  .say-editor-hints__list {
+    position: relative;
+    width: $say-unit-huge*3;
+
+    @include mq(medium) {
+      width: auto;
+      max-width: 100%;
+    }
+  }
+
+  .say-editor-hints__list-item {
+    margin-bottom: $say-unit-small;
+  }

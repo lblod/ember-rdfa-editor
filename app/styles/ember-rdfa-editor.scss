@@ -35,13 +35,14 @@
 @import "ember-rdfa-editor/c-button";
 @import "ember-rdfa-editor/c-toast";
 @import "ember-rdfa-editor/c-typography";
+
+@import "ember-rdfa-editor/c-editor-hints";
+@import "ember-rdfa-editor/c-modal";
+
+// DEPRECATED
 @import "ember-rdfa-editor/c-internal-component";
 
 
 // RDFA AND ANNOTATION COMPONENTS
 @import "ember-rdfa-editor/c-annotation";
 @import "ember-rdfa-editor/c-annotation-hover";
-// @import "ember-rdfa-editor/c-annotation-modal";
-
-
-// @import 'port-to-gn'

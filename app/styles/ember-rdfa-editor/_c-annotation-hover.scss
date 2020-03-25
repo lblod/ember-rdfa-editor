@@ -333,4 +333,19 @@
       opacity: 0 !important;
     }
   }
+
+  @include mq($until: large) {
+    // Hide all hover annotations on small screens
+    .mark-highlight-manual,
+    [typeof]:not([typeof="foaf:Document"]),
+    [property],
+    [data-type],
+    [data-editor-highlight="true"] {
+      &:before,
+      &:after {
+        display: none !important;
+      }
+    }
+
+  }
 }

@@ -44,7 +44,7 @@ $mq-responsive: true !default;
 ///
 /// @type Map
 /// @link https://github.com/sass-mq/sass-mq#seeing-the-currently-active-breakpoint Full documentation and examples
-$mq-breakpoints: (
+$say-breakpoints: (
     mobile:  320px,
     tablet:  740px,
     desktop: 980px,
@@ -53,7 +53,7 @@ $mq-breakpoints: (
 
 /// Static breakpoint (for fixed-width layouts)
 ///
-/// Define the breakpoint from $mq-breakpoints that should
+/// Define the breakpoint from $say-breakpoints that should
 /// be used as the target width for the fixed-width layout
 /// (i.e. when $mq-responsive is set to 'false') in a old-ie.scss
 ///
@@ -120,16 +120,16 @@ $mq-media-type: all !default;
 
 /// Get a breakpoint's width
 ///
-/// @param {String} $name - Name of the breakpoint. One of $mq-breakpoints
+/// @param {String} $name - Name of the breakpoint. One of $say-breakpoints
 ///
 /// @example scss
 ///  $tablet-width: mq-get-breakpoint-width(tablet);
 ///  @media (min-width: mq-get-breakpoint-width(desktop)) {}
 ///
-/// @requires {Variable} $mq-breakpoints
+/// @requires {Variable} $say-breakpoints
 ///
 /// @returns {Number} Value in pixels
-@function mq-get-breakpoint-width($name, $breakpoints: $mq-breakpoints) {
+@function mq-get-breakpoint-width($name, $breakpoints: $say-breakpoints) {
     @if map-has-key($breakpoints, $name) {
         @return map-get($breakpoints, $name);
     } @else {
@@ -139,19 +139,19 @@ $mq-media-type: all !default;
 
 /// Media Query mixin
 ///
-/// @param {String | Boolean} $from [false] - One of $mq-breakpoints
-/// @param {String | Boolean} $until [false] - One of $mq-breakpoints
+/// @param {String | Boolean} $from [false] - One of $say-breakpoints
+/// @param {String | Boolean} $until [false] - One of $say-breakpoints
 /// @param {String | Boolean} $and [false] - Additional media query parameters
 /// @param {String} $media-type [$mq-media-type] - Media type: screen, print…
 ///
 /// @ignore Undocumented API, for advanced use only:
-/// @ignore @param {Map} $breakpoints [$mq-breakpoints]
+/// @ignore @param {Map} $breakpoints [$say-breakpoints]
 /// @ignore @param {String} $static-breakpoint [$mq-static-breakpoint]
 ///
 /// @content styling rules, wrapped into a @media query when $responsive is true
 ///
 /// @requires {Variable} $mq-media-type
-/// @requires {Variable} $mq-breakpoints
+/// @requires {Variable} $say-breakpoints
 /// @requires {Variable} $mq-static-breakpoint
 /// @requires {function} mq-px2em
 /// @requires {function} mq-get-breakpoint-width
@@ -189,7 +189,7 @@ $mq-media-type: all !default;
     $until: false,
     $and: false,
     $media-type: $mq-media-type,
-    $breakpoints: $mq-breakpoints,
+    $breakpoints: $say-breakpoints,
     $responsive: $mq-responsive,
     $static-breakpoint: $mq-static-breakpoint
 ) {
@@ -312,24 +312,24 @@ $mq-media-type: all !default;
 /// @param {String} $name - Name of the breakpoint
 /// @param {Number} $width - Width of the breakpoint
 ///
-/// @requires {Variable} $mq-breakpoints
+/// @requires {Variable} $say-breakpoints
 ///
 /// @example scss
 ///  @include mq-add-breakpoint(tvscreen, 1920px);
 ///  @include mq(tvscreen) {}
 @mixin mq-add-breakpoint($name, $width) {
     $new-breakpoint: ($name: $width);
-    $mq-breakpoints: map-merge($mq-breakpoints, $new-breakpoint) !global;
-    $mq-breakpoints: _mq-map-sort-by-value($mq-breakpoints) !global;
+    $say-breakpoints: map-merge($say-breakpoints, $new-breakpoint) !global;
+    $say-breakpoints: _mq-map-sort-by-value($say-breakpoints) !global;
 }
 
 /// Show the active breakpoint in the top right corner of the viewport
 /// @link https://github.com/sass-mq/sass-mq#seeing-the-currently-active-breakpoint
 ///
 /// @param {List} $show-breakpoints [$mq-show-breakpoints] - List of breakpoints to show in the top right corner
-/// @param {Map} $breakpoints [$mq-breakpoints] - Breakpoint names and sizes
+/// @param {Map} $breakpoints [$say-breakpoints] - Breakpoint names and sizes
 ///
-/// @requires {Variable} $mq-breakpoints
+/// @requires {Variable} $say-breakpoints
 /// @requires {Variable} $mq-show-breakpoints
 ///
 /// @example scss
@@ -338,7 +338,7 @@ $mq-media-type: all !default;
 ///
 ///  // Show breakpoints using custom settings
 ///  @include mq-show-breakpoints((L, XL), (S: 300px, L: 800px, XL: 1200px));
-@mixin mq-show-breakpoints($show-breakpoints: $mq-show-breakpoints, $breakpoints: $mq-breakpoints) {
+@mixin mq-show-breakpoints($show-breakpoints: $mq-show-breakpoints, $breakpoints: $say-breakpoints) {
     body:before {
         background-color: #FCF8E3;
         border-bottom: 1px solid #FBEED5;
