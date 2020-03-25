@@ -8,17 +8,19 @@
   [property="dc:subject"],
   [property="besluit:geplandOpenbaar"],
   [property="besluit:openbaar"] {
-    color: $say-neutral !important;
-    font-weight: $say-medium;
+    font-weight: $say-regular;
+    color: $say-annotation-text-color;
   }
 
   [typeof="besluit:BehandelingVanAgendapunt"],
   [property="ext:behandelt"],
   [property="besluit:heeftAgendapunt"],
   [typeof="besluit:Agendapunt"] {
+    @include say-font-size($say-base);
+    font-weight: $say-regular;
     display: block !important;
     position: relative;
-    color: $say-neutral;
+    color: $say-annotation-text-color;
 
     [property="besluit:geplandOpenbaar"] i,
     [property="besluit:openbaar"] i {
@@ -26,13 +28,14 @@
       top: .2rem;
       padding-left: 1px;
       z-index: 2;
-      color: $say-neutral;
-      opacity: .8;
+      color: $say-annotation-text-color;
     }
 
+    [property="besluit:geplandOpenbaar"][content="false"],
+    [property="besluit:openbaar"][content="false"],
     [property="besluit:geplandOpenbaar"][content="false"] i,
     [property="besluit:openbaar"][content="false"] i {
-      color: $say-orange;
+      color: $say-editor-private-color;
     }
   }
 
@@ -125,17 +128,23 @@
   // Making it easy to discover elements that need to be filled out / take action upon
   [property^="ext:insert"],
   [data-editor-highlight="true"] {
-    background-color: $say-orange-lightest;
-    transition: $say-transition;
+    background-color: $say-editor-highlight-color;
+    transition: background-color $say-transition;
 
     &::selection {
       color: $say-neutral-darkest;
-      background-color: $say-orange-lighter;
+      background-color: $say-editor-highlight-color;
     }
 
     &:hover {
-      background-color: $say-orange-lighter;
+      background-color: $say-editor-highlight-hover-color;
     }
+  }
+
+  span.mark-highlight-manual {
+    color: $say-neutral-dark;
+    background-color: $say-neutral-lightest;
+    font-style: italic;
   }
 }
 
@@ -150,10 +159,12 @@
     border: 1px solid $say-neutral-lighter;
     display: block !important; // Override inline styles
     margin: $say-unit-tiny;
+    padding: 0;
 
     // Style annotation blocks
     &:before {
       @include say-font-size($say-tiny,1.2);
+      font-family: $say-font;
       font-weight: $say-regular;
       letter-spacing: .01rem;
       color: $say-neutral;
@@ -162,12 +173,10 @@
       content: attr(property) " " attr(typeof) " " attr(data-type);
       position: relative;
       right: auto;
-      top: -.2ex;
-      left: -$say-unit-tiny/2;
+      top: 0;
       left: 0;
-      display: inline-flex;
+      display: block;
       width: 100%;
-      transition: none;
       padding: $say-unit-tiny/2;
       transition: none;
       border-bottom: 1px solid $say-neutral-lighter;
@@ -177,8 +186,31 @@
   }
 
   // Add help text on highlights
-  .mark-highlight-manual:hover:after,
-  [data-editor-highlight="true"]:hover:after {
+  .mark-highlight-manual:after,
+  [data-editor-highlight="true"]:after {
+    @include say-font-size($say-tiny,1.2);
     content: "Action required";
+    font-family: $say-font;
+    font-weight: $say-regular;
+    letter-spacing: .01rem;
+    color: $say-neutral;
+    text-transform: uppercase;
+    pointer-events: none;
+    position: relative;
+    right: auto;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    padding: $say-unit-tiny/2;
+    transition: none;
+    border-top: 1px solid $say-neutral-lighter;
+    background-color: $say-white;
+    opacity: 1;
+    margin: 0;
+  }
+
+  span.mark-highlight-manual {
+    background-color: transparent;
   }
 }

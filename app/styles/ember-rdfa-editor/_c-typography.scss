@@ -12,6 +12,10 @@
     }
   }
 
+  #text {
+    display: none !important;
+  }
+
   // Set base font size for elements
   p,
   ul,
@@ -23,7 +27,7 @@
   }
 
   br {
-    @include say-font-size(1rem,1);
+    @include say-font-size(.2rem,1);
   }
 
   h1,
@@ -90,6 +94,16 @@
   ol + *,
   i + * {
     margin-top: $say-typography-margin;
+  }
+
+  p + br,
+  div + br,
+  span + br,
+  ul + br,
+  ol + br,
+  i + br,
+  br + br {
+    margin-top: 0;
   }
 
   h1,
