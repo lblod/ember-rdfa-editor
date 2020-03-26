@@ -27,7 +27,6 @@
   [property="ext:stemmingTable"],
   [property="ext:insertStemmingText"],
   [property="ext:aanwezigenTable"],
-  [property="eli:cites"],
   [property="ext:insertAanwezigenText"],
   [property="prov:generated"] > [property="besluit:motivering"],
   [property="prov:generated"] > [property="prov:value"],
@@ -40,9 +39,9 @@
   [typeof="mobiliteit:Opstelling"] {
     position: relative;
 
-    &:after {
-      height: calc(100% - #{$say-unit});
-      top: $say-unit;
+    &:before {
+      height: 100%;
+      top: 0;
     }
   }
 
@@ -56,11 +55,10 @@
       border-bottom-color: tint($say-neutral,20);
     }
 
-    &:before,
-    &:after {
+    &:before {
       position: absolute;
       transition: opacity $say-easing .5s, left $say-easing .2s;
-      right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter});
+      right: calc(100% + #{$say-annotation-offset});
       opacity: 0;
     }
 
@@ -69,25 +67,35 @@
       content:  attr(property) " " attr(typeof) " " attr(data-type);
       display: block;
       margin-top: .2rem;
-      padding-right: $say-unit-tiny;
+      padding-right: $say-annotation-gutter + $say-unit-small;
+      margin-right: -$say-annotation-gutter + $say-unit-tiny;
       width: $say-annotation-width-content;
       font-family: $say-font;
       font-weight: $say-regular;
       letter-spacing: .01rem;
       text-transform: uppercase;
-      text-align: right;
       text-overflow: ellipsis;
       white-space: nowrap;
       color: $say-neutral;
       background-color: $say-neutral-lightest;
       pointer-events: none;
       overflow: hidden;
-      opacity: 0;
+      min-height: 2rem;
+      border-right: 1px dashed $say-neutral-light;
+      border-top: 1px dashed $say-neutral-light;
+      z-index: $say-z-index-beta;
+      background: linear-gradient(
+        to right,
+          $say-neutral-lightest,
+          $say-neutral-lightest calc(100% - #{$say-annotation-gutter + $say-unit-tiny}),
+          transparent calc(100% - #{$say-annotation-gutter + $say-unit-tiny}),
+          transparent 100%
+      );
     }
 
     &[data-editor-position-level]:before,
     &:hover:before {
-      right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter});
+      right: calc(100% + #{$say-annotation-offset});
       opacity: 1;
     }
 
@@ -96,28 +104,18 @@
       z-index: $say-z-index-alpha;
     }
 
-    // Show lines on hover and selection
-    &[data-editor-position-level]:after,
-    &:hover:after {
-      position: absolute;
-      content: "";
-      display: block;
-      right: calc(100% + #{$say-annotation-gutter});
-      width: $say-annotation-offset*2;
-      border-right: 1px dashed $say-neutral-light;
-      border-top: 1px dashed $say-neutral-light;
-      margin-top: calc(-1.5rem + 1px);
-      opacity: 1;
-    }
-
-    &[data-editor-position-level]:after {
+    &[data-editor-position-level]:before {
       border-top-style: solid;
       border-right-style: solid;
     }
 
+    &[data-editor-position-level="0"]:before {
+      z-index: $say-z-index-gamma;
+    }
+
     // Hide right border when not selected
-    &:not([data-editor-position-level]):hover:after,
-    &:not([data-editor-position-level]):after {
+    &:not([data-editor-position-level]):hover:before,
+    &:not([data-editor-position-level]):before {
       border-right: 0;
     }
   }
@@ -126,22 +124,6 @@
   ul.bullet-list:not(.article-list),
   ol.numbered-list:not(.article-list) {
     // Level 1
-    &.mark-highlight-manual,
-    &[typeof],
-    &[property],
-    &[about],
-    &[resource],
-    &[data-type],
-    &[data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit-small});
-      }
-
-      &:after {
-        right: calc(100% + #{$say-annotation-gutter} + #{$say-unit-small});
-      }
-    }
-
     > li .mark-highlight-manual,
     > li [typeof],
     > li [property],
@@ -150,11 +132,7 @@
     > li [data-type],
     > li [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit-small});
-      }
-
-      &:after {
-        right: calc(100% + #{$say-annotation-gutter} + #{$say-unit-small});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small});
       }
     }
 
@@ -167,11 +145,7 @@
     > li li [data-type],
     > li li [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit-small * 2});
-      }
-
-      &:after {
-        right: calc(100% + #{$say-annotation-gutter} + #{$say-unit-small * 2});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 2});
       }
     }
 
@@ -184,11 +158,7 @@
     > li li li > [data-type],
     > li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit-small * 4});
-      }
-
-      &:after {
-        right: calc(100% + #{$say-annotation-gutter} + #{$say-unit-small * 4});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 3});
       }
     }
 
@@ -201,11 +171,7 @@
     > li li li li > [data-type],
     > li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit-small * 7});
-      }
-
-      &:after {
-        right: calc(100% + #{$say-annotation-gutter} + #{$say-unit-small * 7});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 4});
       }
     }
 
@@ -218,11 +184,7 @@
     > li li li li li > [data-type],
     > li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit-small * 11});
-      }
-
-      &:after {
-        right: calc(100% + #{$say-annotation-gutter} + #{$say-unit-small * 11});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 5});
       }
     }
 
@@ -235,11 +197,7 @@
     > li li li li li li > [data-type],
     > li li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit-small * 16});
-      }
-
-      &:after {
-        right: calc(100% + #{$say-annotation-gutter} + #{$say-unit-small * 16});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 6});
       }
     }
 
@@ -252,11 +210,7 @@
     > li li li li li li li > [data-type],
     > li li li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit-small * 22});
-      }
-
-      &:after {
-        right: calc(100% + #{$say-annotation-gutter} + #{$say-unit-small * 22});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 7});
       }
     }
 
@@ -269,11 +223,7 @@
     > li li li li li li li li > [data-type],
     > li li li li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit-small * 29});
-      }
-
-      &:after {
-        right: calc(100% + #{$say-annotation-gutter} + #{$say-unit-small * 29});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 8});
       }
     }
 
@@ -286,11 +236,7 @@
     > li li li li li li li li li > [data-type],
     > li li li li li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit-small * 37});
-      }
-
-      &:after {
-        right: calc(100% + #{$say-annotation-gutter} + #{$say-unit-small * 37});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 9});
       }
     }
 
@@ -303,11 +249,20 @@
     > li li li li li li li li li li > [data-type],
     > li li li li li li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset*2} + #{$say-annotation-gutter} + #{$say-unit-small * 45});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 10});
       }
+    }
 
-      &:after {
-        right: calc(100% + #{$say-annotation-gutter} + #{$say-unit-small * 45});
+    // Level 11
+    > li li li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li li li > [typeof],
+    > li li li li li li li li li li > [property],
+    > li li li li li li li li li li > [about],
+    > li li li li li li li li li li > [resource],
+    > li li li li li li li li li li > [data-type],
+    > li li li li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 11});
       }
     }
   }
@@ -315,17 +270,14 @@
   // Hide empty properties or flagged as noHighlight
   [property=""],
   [typeof=""],
+  [property="eli:realizes"],
   [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
   [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
     border-bottom: 0 !important;
 
-    &:after,
     &:before,
-    &[data-editor-position-level]:after,
     &[data-editor-position-level]:before,
-    &[data-editor-position-level]:hover:after,
     &[data-editor-position-level]:hover:before,
-    &:hover:after,
     &:hover:before {
       display: none !important;
       content: '' !important;
@@ -341,11 +293,9 @@
     [property],
     [data-type],
     [data-editor-highlight="true"] {
-      &:before,
-      &:after {
+      &:before {
         display: none !important;
       }
     }
-
   }
 }

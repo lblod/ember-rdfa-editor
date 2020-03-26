@@ -26,10 +26,6 @@
     font-weight: $say-base-font-weight;
   }
 
-  br {
-    @include say-font-size(.2rem,1);
-  }
-
   h1,
   .h1 {
     @include say-font-size($say-h1-font-size,1.1);
@@ -173,76 +169,58 @@
   }
 
   ul.bullet-list,
-  ul.numbered-list,
-  ol.bullet-list,
   ol.numbered-list {
     margin-left: $say-unit-small;
-  }
 
-  ul:not(.numbered-list) li {
-    > ul {
+    ul,
+    ol {
       margin-left: $say-unit-small;
     }
+  }
 
-    > ul > li {
+  ul.bullet-list:not(.numbered-list) li {
+    > ul li {
       list-style-type: circle;
+    }
 
-      > ul {
-        margin-left: $say-unit-small * 2;
-      }
+    > ul ul li {
+      list-style-type: square;
+    }
 
-      > ul > li {
-        list-style-type: square;
+    > ul ul ul li {
+      list-style-type: initial;
+    }
 
-        > ul {
-          margin-left: $say-unit-small * 3;
-        }
+    > ul ul ul ul li {
+      list-style-type: circle;
+    }
 
+    > ul ul ul ul ul li {
+      list-style-type: square;
+    }
 
-        > ul > li {
-          list-style-type: initial;
+    > ul ul ul ul ul ul li {
+      list-style-type: initial;
+    }
 
-          > ul {
-            margin-left: $say-unit-small * 4;
-          }
+    > ul ul ul ul ul ul ul li {
+      list-style-type: circle;
+    }
 
-          > ul > li {
-            list-style-type: circle;
+    > ul ul ul ul ul ul ul ul li {
+      list-style-type: square;
+    }
 
-            > ul {
-              margin-left: $say-unit-small * 5;
-            }
+    > ul ul ul ul ul ul ul ul ul li {
+      list-style-type: initial;
+    }
 
-            > ul > li {
-              list-style-type: square;
+    > ul ul ul ul ul ul ul ul ul ul li {
+      list-style-type: circle;
+    }
 
-              > ul {
-                margin-left: $say-unit-small * 6;
-              }
-
-              > ul > li {
-                list-style-type: initial;
-
-                > ul {
-                  margin-left: $say-unit-small * 7;
-                }
-
-                > ul > li {
-                  list-style-type: circle;
-
-                  > ul {
-                    margin-left: $say-unit-small * 8;
-                  }
-
-                  > ul > li {
-                    list-style-type: square;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+    > ul ul ul ul ul ul ul ul ul ul ul {
+      margin-left: 0;
     }
   }
 
@@ -393,6 +371,10 @@
         outline: 0;
       }
     }
+  }
+
+  .annotation:hover {
+    background-color: transparent !important; // override annotation hover background
   }
 
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"],

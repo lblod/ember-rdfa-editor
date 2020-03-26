@@ -52,6 +52,7 @@
   }
 
   .link-list__item__sidenote.uppercase {
+    @include say-font-size($say-tiny,1.3);
     color: $say-neutral;
     padding: 0;
   }

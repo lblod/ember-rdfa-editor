@@ -60,7 +60,6 @@
   p[property="dc:subject"],
   [typeof~="besluit:Besluit"],
   [property="ext:stemmingTable"],
-  [property="eli:cites"],
   [property="ext:insertStemmingText"],
   [property="ext:aanwezigenTable"],
   [property="ext:insertAanwezigenText"],
@@ -78,6 +77,12 @@
   [property="ext:behandelt"] > div > span {
     position: relative;
     display: block; // remove when span is gone from the template "nieuw generiek besluit"
+  }
+
+  // Possible multiline objects
+  [property="eli:cites"] {
+    display: inline-block;
+    max-width: calc(100% - #{$say-unit-small});
   }
 
   // Show underlines on annotation
