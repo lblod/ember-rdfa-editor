@@ -1,7 +1,22 @@
 import { isInLumpNode, getNextNonLumpTextNode, getPreviousNonLumpTextNode, getParentLumpNode } from '../lump-node-utils';
+import previousTextNode from '../previous-text-node';
 
 export default class LumpNodeMovementObserver {
   handleMovement(document, oldSelection, newSelection) {
+    if (oldSelection) {
+      // backspace highlighted the lump node and user is no longer trying to delete it. so remove the highlight
+      const previousNode = oldSelection.startNode.domNode;
+      if (previousNode.parentNode && oldSelection.startNode.absolutePosition !== newSelection.startNode.absolutePosition) {
+        // node is still part of the domtree
+        const nodeBeforeOldSelection = previousTextNode(oldSelection.startNode.domNode);
+        if (isInLumpNode(nodeBeforeOldSelection)) {
+          const lumpNode = getParentLumpNode(nodeBeforeOldSelection);
+          if (lumpNode.hasAttribute('data-flagged-remove')) {
+            lumpNode.removeAttribute('data-flagged-remove');
+          }
+        }
+      }
+    }
     if (isInLumpNode(newSelection.startNode.domNode, document.rootNode)) {
       let newNode;
       let relativePosition;
