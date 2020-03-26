@@ -27,11 +27,11 @@
   [property="ext:stemmingTable"],
   [property="ext:insertStemmingText"],
   [property="ext:aanwezigenTable"],
+  [property="eli:cites"],
   [property="ext:insertAanwezigenText"],
   [property="prov:generated"] > [property="besluit:motivering"],
   [property="prov:generated"] > [property="prov:value"],
   [typeof="besluit:Zitting"],
-  [property="eli:cites"],
   [property="openbaar"],
   [property^="ext"]:not([property="ext:heeftAfwezigeBijAgendapunt"]):not(span),
   [data-editor-highlight="true"]:not(li):not(span),
@@ -51,7 +51,7 @@
   [typeof]:not([typeof="foaf:Document"]),
   [property],
   [data-type],
-  [data-editor-highlight="true"] {
+  [data-editor-highlight="true"]:not(.say-editor__paper) {
     &:hover {
       border-bottom-color: tint($say-neutral,20);
     }

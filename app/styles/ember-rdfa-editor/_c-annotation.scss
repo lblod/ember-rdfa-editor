@@ -57,10 +57,10 @@
   ol,
   [property="dc:title"],
   [property="dc:title foaf:name"],
-  [property="eli:cites"],
   p[property="dc:subject"],
   [typeof~="besluit:Besluit"],
   [property="ext:stemmingTable"],
+  [property="eli:cites"],
   [property="ext:insertStemmingText"],
   [property="ext:aanwezigenTable"],
   [property="ext:insertAanwezigenText"],
@@ -81,7 +81,7 @@
   }
 
   // Show underlines on annotation
-  [data-editor-highlight="true"],
+  [data-editor-highlight="true"]:not(.say-editor__paper),
   [property],
   [typeof]:not([typeof="foaf:Document"]),
   [data-type],
@@ -127,7 +127,7 @@
 
   // Making it easy to discover elements that need to be filled out / take action upon
   [property^="ext:insert"],
-  [data-editor-highlight="true"] {
+  [data-editor-highlight="true"]:not(.say-editor__paper) {
     background-color: $say-editor-highlight-color;
     transition: background-color $say-transition;
 
@@ -187,7 +187,7 @@
 
   // Add help text on highlights
   .mark-highlight-manual:after,
-  [data-editor-highlight="true"]:after {
+  [data-editor-highlight="true"]:not(.say-editor__paper):after {
     @include say-font-size($say-tiny,1.2);
     content: "Action required";
     font-family: $say-font;
