@@ -181,6 +181,8 @@ export default class PluginEditorApi {
    * - `tag`: Indicates the HTML tag which should be used for
    *    `append`, `prepend`, `before` or `after` edits.  Value must be
    *     a string.
+   * - `forceNewContext`: Indicate that a new wrapping or nested
+   *     context should be created. Only available on `add`.
    *
    * **Third level** supplies content to be removed or content to be
    * set.  As such either a selection or a change can be made.
@@ -327,7 +329,12 @@ export default class PluginEditorApi {
    * property of the selection.  See documentation for supplying a
    * single string for more details.
    *
-   * @param {string|Array} [operation.add.content] **NOT SUPPORTED**, see append
+   * @param {string|Array} [operation.add.content]
+   * @param {string} [operation.add.content] Sets the
+   * `content` property of the selection to the current value plus the provided string
+   * @param {Array} [operation.add.content] An array of strings
+   * indicates each of these strings should be added to the `content`
+   * property of the selection.  Works similar to a single string.
    * @param {string} [operation.add.innerHTML]  **NOT SUPPORTED**
    * @param {string} [operation.add.innerContent] FUTURE
    * @param {string|Array} [operation.add.attribute] FUTURE
@@ -410,7 +417,7 @@ export default class PluginEditorApi {
    *  requests removal of a single property value.  Use a full URL, not a
    *  prefixed string, as prefixes will be expanded in the RDFa
    *  document for matching purposes.
-   * @param {Array} [operation.remove.property] Supplying an arrays of
+   * @param {Array} [operation.remove.property] Supplying an array of
    *  strings requests the removal of any matching URLs from the
    *  `property` property.  Use full URLs, not a prefixed string, as
    *  prefixes will be expanded in the RDFa document for matching
@@ -418,12 +425,19 @@ export default class PluginEditorApi {
    * @param {boolean} [operation.remove.property] The `true` boolean
    *  removes any available value.  Note that this may remove more than
    *  intended in cases you did not foresee.
-   *
+   * @param {string|boolean} [operation.remove.content] Removes
+   * information from the selected entity's `content` property.
+   * @param {string} [operation.remove.content] Supplying a string requests
+   * removal of a single content value.
+   * NOTE: This may behave oddly if content has spaces
+   * @param {boolean} [operation.remove.content] Set to `true` removes
+   * the content attribute from the selection.
+   * NOTE: This may behave oddly if content has spaces
+   * NOTE: This may behave oddly if content has spaces
    * @param {string|Regex|boolean} [operation.remove.tag] **NOT SUPPORTED**
    * @param {string|Regex|boolean} [operation.remove.innerHTML] **NOT SUPPORTED**
    * @param {string|Regex|boolean} [operation.remove.innerContent] **NOT SUPPORTED**
    * @param {string|Regex|boolean} [operation.remove.attribute] **FUTURE**
-   * @param {string|Regex|boolean} [operation.remove.content] **NOT SUPPORTED**
    *
    *
    * @param {Object} [operation.set] Allows setting any of property,
@@ -563,9 +577,15 @@ export default class PluginEditorApi {
    * @param {string|Array} [operation.append.property]
    * @param {string} [operation.append.property] URI of the `property` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
    * @param {Array} [operation.append.property] Array of strings for the `property` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.append.content]
+   * @param {string} [operation.append.content] Set the
+   * `content` property of the appended element with this single value.
+   * @param {Array} [operation.append.content] An array of strings
+   * indicates each of these strings should be set as the `content`
+   * property of the appended element.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
    * @param {string|Array} [operation.append.innerContent] *NOT SUPPORTED*
    * @param {string|Array} [operation.append.attribute] *NOT SUPPORTED*
-   * @param {string|Array} [operation.append.content] *NOT SUPPORTED*
    *
    * @param {Object} [operation.prepend] Prepends new content, scoped
    * inside of the selection.  If you have selected a context, you can
@@ -577,7 +597,7 @@ export default class PluginEditorApi {
    * @param {string} [operation.prepend.innerHTML] Html content to
    * insert into the new tag.  This can be a string.
    * @param {Array} [operation.append.about] Array of strings for the `about` property.  All of these will be set.  Refer to the `string` case for further information.
-   * @param {string|Array} [operation.append.resource]
+   * @param {string|Array} [operation.prepend.resource]
    * @param {string} [operation.prepend.resource] URI of the `resource` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
    * @param {Array} [operation.prepend.resource] Array of strings for the `resource` property.  All of these will be set.  Refer to the `string` case for further information.
    * @param {string|Array} [operation.prepend.dataType]
@@ -589,9 +609,15 @@ export default class PluginEditorApi {
    * @param {string|Array} [operation.prepend.property]
    * @param {string} [operation.prepend.property] URI of the `property` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
    * @param {Array} [operation.prepend.property] Array of strings for the `property` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.prepend.content]
+   * @param {string} [operation.prepend.content] Sets the
+   * `content` property of the prepended element with this single value.
+   * @param {Array} [operation.prepend.content] An array of strings
+   * indicates each of these strings should be set as the `content`
+   * property of the selection.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
    * @param {string|Array} [operation.prepend.innerContent] *NOT SUPPORTED*
    * @param {string|Array} [operation.prepend.attribute] *NOT SUPPORTED*
-   * @param {string|Array} [operation.prepend.content] *NOT SUPPORTED*
    *
    * @param {Object} [operation.after] Insert content after the
    * selected content in the DOM tree.  If you have selected a
@@ -617,9 +643,15 @@ export default class PluginEditorApi {
    * @param {string|Array} [operation.after.property]
    * @param {string} [operation.after.property] URI of the `property` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
    * @param {Array} [operation.after.property] Array of strings for the `property` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.after.content]
+   * @param {string} [operation.after.content] Sets the
+   * `content` property of the new element created after the selection with this single value.
+   * @param {Array} [operation.after.content] An array of strings
+   * indicates each of these strings should be set as the `content`
+   * property of the selection.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
    * @param {string|Array} [operation.after.innerContent] *NOT SUPPORTED*
    * @param {string|Array} [operation.after.attribute] *NOT SUPPORTED*
-   * @param {string|Array} [operation.after.content] *NOT SUPPORTED*
    *
    *
    * @param {Object} [operation.before] Insert content before the
@@ -644,9 +676,15 @@ export default class PluginEditorApi {
    * @param {string|Array} [operation.before.property]
    * @param {string} [operation.before.property] URI of the `property` property for the new context.  You should use a full URI as prefixes may not be constant acros documents.  Future versions of this API may use the existing prefixes to shorten the supplied URI.
    * @param {Array} [operation.before.property] Array of strings for the `property` property.  All of these will be set.  Refer to the `string` case for further information.
+   * @param {string|Array} [operation.before.contentt]
+   * @param {string} [operation.before.content] Sets the
+   * `content` property of the element created before the selection with this single value.
+   * @param {Array} [operation.before.content] An array of strings
+   * indicates each of these strings should be set as the `content`
+   * property of the selection.  Works similar to a single string, but
+   * overwrites the value with the set of values supplied here.
    * @param {string|Array} [operation.before.innerContent] *NOT SUPPORTED*
    * @param {string|Array} [operation.before.attribute] *NOT SUPPORTED*
-   * @param {string|Array} [operation.before.content] *NOT SUPPORTED*
    *
    *
    * @example We can add a new type to a selection by running
