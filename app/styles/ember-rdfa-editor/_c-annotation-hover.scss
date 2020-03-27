@@ -113,22 +113,6 @@
       z-index: $say-z-index-gamma;
     }
 
-    // &[data-editor-position-level="0"]:before {
-    //   border-bottom: 2px solid blue;
-    // }
-
-    // &[data-editor-position-level="1"]:before {
-    //   border-bottom: 2px solid red;
-    // }
-
-    // &[data-editor-position-level="2"]:before {
-    //   border-bottom: 2px solid purple;
-    // }
-
-    // &[data-editor-position-level="3"]:before {
-    //   border-bottom: 2px solid yellow;
-    // }
-
     // Hide right border when not selected
     &:not([data-editor-position-level]):hover:before,
     &:not([data-editor-position-level]):before {

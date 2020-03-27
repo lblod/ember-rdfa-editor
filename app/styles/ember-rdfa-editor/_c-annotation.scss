@@ -39,7 +39,7 @@
     }
   }
 
-  // Make block elements
+  // Block elements
   div,
   h1,
   .h1,
@@ -79,7 +79,7 @@
     display: block; // remove when span is gone from the template "nieuw generiek besluit"
   }
 
-  // Possible multiline objects
+  // Multiline elements
   [property="eli:cites"] {
     display: inline-block;
     max-width: calc(100% - #{$say-unit-small});

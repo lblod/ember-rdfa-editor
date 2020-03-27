@@ -3,10 +3,6 @@
    ================================== */
 
 .say-typography {
-  #text {
-    display: none !important;
-  }
-
   // Set base font size for elements
   p,
   ul,
@@ -364,29 +360,10 @@
     }
   }
 
-  .annotation:hover {
-    background-color: transparent !important; // override annotation hover background
-  }
-
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"],
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] * {
     font-size: 1.5rem; // Set global font-size
     cursor: not-allowed; // Show not-allowed cursor
     user-select: none; // Disable selection
-  }
-
-
-  // Not sure why this is here
-  mark {
-    cursor: pointer;
-  }
-
-  mark table {
-    font-weight: normal;
-    border: 4px solid $say-yellow;
-
-    &:active {
-      opacity: .5;
-    }
   }
 }
