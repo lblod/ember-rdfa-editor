@@ -11,7 +11,6 @@
   z-index: $say-z-index-gamma;
   background-color: $say-white;
   box-shadow: 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px rgba($say-neutral-darkest, .035), 0 1px 1px rgba($say-neutral-darkest, .025);
-
 }
 
 // Legacy styles fixes
@@ -20,6 +19,14 @@
   color: $say-neutral-darker;
   padding: $say-unit-small;
   border-bottom: .1rem solid $say-neutral-lighter;
+
+  * {
+    margin-bottom: 0;
+  }
+
+  * + * {
+    margin-top: $say-unit-small;
+  }
 }
 
 .say-modal .modal-dialog__content {
@@ -39,6 +46,12 @@
 
   button {
     margin-bottom: 0;
+  }
+}
+
+.say-modal .link-list {
+  @media screen and (max-width:767px) {
+    margin-bottom: 0 !important;
   }
 }
 

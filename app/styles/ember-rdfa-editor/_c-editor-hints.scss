@@ -9,7 +9,7 @@
 
   .say-editor-hints__list {
     position: relative;
-    width: $say-unit-huge*3;
+    width: 100%;
 
     @include mq(medium) {
       width: auto;

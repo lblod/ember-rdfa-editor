@@ -20,9 +20,11 @@
 
   <div class="say-container__main">
     <div class="say-editor {{if editorOptions.showRdfa "rdfa-annotations" }} {{if editorOptions.showRdfaHighlight "rdfa-annotations-highlight" }} {{if editorOptions.showRdfaHover "rdfa-annotations-hover" }} {{if this.showRdfaBlocks "show-rdfa-blocks"}}">
-      <Ce::ContentEditable @class="say-editor__paper say-typography" @textInsert={{or this.eventProcessor.insertText this.warnNotSetup}} @textRemove={{or this.eventProcessor.removeText this.warnNotSetup}} @handleFullContentUpdate={{or this.eventProcessor.analyseAndDispatch this.warnNotSetup}} @selectionUpdate={{action (or this.eventProcessor.selectionChanged this.warnNotSetup) editor.currentSelection}} @rawEditorInit={{action "handleRawEditorInit"}} @elementUpdate={{action (or this.domUpdate this.noop) editor.rootNode}} @externalHandlers={{this.handlers}} @editable={{true}} @focused={{true}} @yieldHTML={{true}}>
-        {{{this.value}}}
-      </Ce::ContentEditable>
+      <div class="say-editor__paper">
+        <Ce::ContentEditable @class="say-editor__inner say-typography" @textInsert={{or this.eventProcessor.insertText this.warnNotSetup}} @textRemove={{or this.eventProcessor.removeText this.warnNotSetup}} @handleFullContentUpdate={{or this.eventProcessor.analyseAndDispatch this.warnNotSetup}} @selectionUpdate={{action (or this.eventProcessor.selectionChanged this.warnNotSetup) editor.currentSelection}} @rawEditorInit={{action "handleRawEditorInit"}} @elementUpdate={{action (or this.domUpdate this.noop) editor.rootNode}} @externalHandlers={{this.handlers}} @editable={{true}} @focused={{true}} @yieldHTML={{true}}>
+          {{{this.value}}}
+        </Ce::ContentEditable>
+      </div>
     </div>
 
     <div class="say-container__aside">

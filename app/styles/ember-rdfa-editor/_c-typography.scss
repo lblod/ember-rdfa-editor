@@ -3,15 +3,6 @@
    ================================== */
 
 .say-typography {
-  // Add max-width when paper view is disabled
-  @if $say-paper == false {
-    * {
-      max-width: 120ch;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  }
-
   #text {
     display: none !important;
   }

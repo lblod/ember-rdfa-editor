@@ -50,7 +50,7 @@
   [typeof]:not([typeof="foaf:Document"]),
   [property],
   [data-type],
-  [data-editor-highlight="true"]:not(.say-editor__paper) {
+  [data-editor-highlight="true"]:not([contenteditable=""]) {
     &:hover {
       border-bottom-color: tint($say-neutral,20);
     }
@@ -112,6 +112,22 @@
     &[data-editor-position-level="0"]:before {
       z-index: $say-z-index-gamma;
     }
+
+    // &[data-editor-position-level="0"]:before {
+    //   border-bottom: 2px solid blue;
+    // }
+
+    // &[data-editor-position-level="1"]:before {
+    //   border-bottom: 2px solid red;
+    // }
+
+    // &[data-editor-position-level="2"]:before {
+    //   border-bottom: 2px solid purple;
+    // }
+
+    // &[data-editor-position-level="3"]:before {
+    //   border-bottom: 2px solid yellow;
+    // }
 
     // Hide right border when not selected
     &:not([data-editor-position-level]):hover:before,
@@ -270,7 +286,7 @@
   // Hide empty properties or flagged as noHighlight
   [property=""],
   [typeof=""],
-  [property="eli:realizes"],
+  // [property="eli:realizes"],
   [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
   [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
     border-bottom: 0 !important;

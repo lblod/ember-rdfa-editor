@@ -6,7 +6,7 @@
   @include say-font-size($say-h6,1.3);
   display: flex;
   align-items: center;
-  padding: $say-unit-tiny $say-unit-small $say-unit-tiny + .3rem;
+  padding: $say-unit-tiny $say-unit-small;
   color: $say-white;
   border-radius: .2rem;
   background-color: $say-neutral-darker;

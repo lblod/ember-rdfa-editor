@@ -22,9 +22,10 @@
     position: absolute;
     bottom: 0;
     right: 0;
+    width: 380px;
     max-height: calc(100% - 44px);
     overflow: auto;
-    padding: $say-unit-small;
+    padding: $say-unit-small $say-unit-small + $say-unit-tiny;
 
     @if $say-toolbar-bottom == true {
       top: 0;
@@ -44,11 +45,16 @@
     }
 
     @include mq(medium) {
+      width: 30%;
+
       @if $say-paper == true and $say-paper-sidebar == true {
-        width: 25%;
         right: 0;
         padding: $say-unit;
         bottom: auto;
       }
+    }
+
+    @include mq(large) {
+      width: 25%;
     }
   }

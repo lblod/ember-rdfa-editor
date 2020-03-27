@@ -29,6 +29,8 @@
     color: $say-switch-label-color;
     display: block;
     padding-left: $say-unit + $say-unit-tiny;
+    width: $say-unit;
+    overflow: hidden;
 
     &:before,
     &:after {
@@ -58,6 +60,10 @@
       background-color: #fff;
       box-shadow: 0 0 .2rem rgba($say-neutral-darkest, 0.45);
       transition: left $say-transition;
+    }
+
+    @include mq(small) {
+      width: auto;
     }
   }
 

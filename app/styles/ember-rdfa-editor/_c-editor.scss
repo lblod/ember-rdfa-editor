@@ -4,7 +4,7 @@
 
 .say-editor {
   background-color: $say-paper-background;
-  padding: $say-editor-padding;
+  padding: $say-editor-padding $say-editor-padding/2;
   width: 100%;
   position: relative;
 
@@ -12,12 +12,14 @@
     background-color: $say-editor-background;
   }
 
-
+  @include mq(small) {
+    padding: $say-editor-padding;
+  }
 
   @include mq(medium) {
     @if $say-paper == true {
       @if $say-paper-sidebar == true {
-        padding-right: 25%;
+        padding-right: 30%;
       }
     }
   }
@@ -25,6 +27,12 @@
   @include mq(large) {
     &.rdfa-annotations-hover {
       padding-left: $say-annotation-width;
+    }
+
+    @if $say-paper == true {
+      @if $say-paper-sidebar == true {
+        padding-right: 25%;
+      }
     }
   }
 }
@@ -48,4 +56,27 @@
   .say-editor__paper--disabled {
     background-color: $say-editor-background;
     color: $say-neutral-dark;
+  }
+
+  .say-editor__inner {
+    position: relative;
+    min-height: $say-paper-min-height;
+
+    // Remove focus styles
+    &:focus {
+      outline: 0;
+    }
+
+    // Add max-width when paper view is disabled
+    @if $say-paper == false {
+      * {
+        max-width: 120ch;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    @if $say-paper == true {
+      min-height: $say-paper-min-height - $say-paper-padding * 2;
+    }
   }
