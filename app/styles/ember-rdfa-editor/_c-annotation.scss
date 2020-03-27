@@ -9,7 +9,7 @@
   [property="besluit:geplandOpenbaar"],
   [property="besluit:openbaar"] {
     font-weight: $say-regular;
-    color: $say-annotation-text-color;
+    color: $say-annotation-text-color !important;
   }
 
   [typeof="besluit:BehandelingVanAgendapunt"],
@@ -20,7 +20,12 @@
     font-weight: $say-regular;
     display: block !important;
     position: relative;
-    color: $say-annotation-text-color;
+    color: $say-annotation-text-color  !important;
+
+    [property="besluit:geplandOpenbaar"],
+    [property="besluit:openbaar"] {
+      color: $say-neutral !important;
+    }
 
     [property="besluit:geplandOpenbaar"] i,
     [property="besluit:openbaar"] i {
@@ -28,14 +33,14 @@
       top: .2rem;
       padding-left: 1px;
       z-index: 2;
-      color: $say-annotation-text-color;
+      color: $say-neutral !important;
     }
 
     [property="besluit:geplandOpenbaar"][content="false"],
     [property="besluit:openbaar"][content="false"],
     [property="besluit:geplandOpenbaar"][content="false"] i,
     [property="besluit:openbaar"][content="false"] i {
-      color: $say-editor-private-color;
+      color: $say-editor-private-color !important;
     }
   }
 
