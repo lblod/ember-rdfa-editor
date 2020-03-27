@@ -218,12 +218,12 @@ export default class PluginEditorApi {
    * short form (derived from the prefixes available in the context)
    * if it is possible and if it desires to do so.
    *
-   * NOTE: forceNewContext is set to undefined by default and behaves
-   * similar to false.  This is because we assume that when you don't
+   * NOTE: forceNewContext is set to undefined by default.
+   * This is because we assume that when you don't
    * care about the context there's a fair chance that we can merge
-   * the contexts.  In specific cases you may desire to have things
-   * merge (or not) explicitly.  You should set either true or false
-   * in that case.
+   * the contexts. In specific cases you may desire to have things
+   * explicitly control where a new context is created.
+   * In those cases you should set either 'WRAP' or 'NEST'.
    *
    * NOTE/TODO: In order to make plugins simpler, we should look into
    * specifying namespaces in the plugin.  By sharing these namespaces
@@ -256,12 +256,13 @@ export default class PluginEditorApi {
    * @param {Object} [operation.add] Adds specific content to the
    *  selection, pushing nvalues on top of already existing values.
    *  Allows adding any of property, typeof, datatype, resource.  Set
-   *  the forceNewContext property to true to force a new context if a
-   *  full tag is selected.
+   *  the forceNewContext property to 'WRAP' or 'NEST' to force a
+   *  new context if a full tag is selected.
    *
-   * @param {boolean} [operation.add.forceNewContext] Set this to
-   * true to force a new context.  If your selection already contains
-   * some semantic context, a new context will be created.  Use this
+   * @param {String} [operation.add.forceNewContext] Set this to
+   * 'WRAP' or 'NEST' to encourage creation of a new context.
+   * If your selection already contains some semantic context,
+   * a new context will be created.  Use this
    * if you know you are defining a new entity.
    *
    * @param {string|Array} [operation.add.about] Adds one or more
