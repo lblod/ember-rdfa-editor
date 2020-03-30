@@ -125,6 +125,7 @@
     display: inline-block;
   }
 
+  span.mark-highlight-manual:before,
   span.mark-highlight-manual:hover:before {
     content: "Fill in";
     display: inline;
