@@ -49,7 +49,7 @@ module.exports = function(environment) {
 
 If you use vanilla css the `ember-rdfa-editor` will add the default styles to your vendor css file. 
 
-However, if you are using SASS the addon you need to import the addon styles yourself. 
+However, if you are using `ember-cli-sass` the addon you need to import the addon styles yourself. 
 
 ```
 @import "ember-rdfa-editor";
@@ -94,7 +94,7 @@ You can pass basic styling options when you load the editor. Add a value of "tru
 
 ### Customisation
 
-If you are using `SCSS` you can override the variables to provide a custom theme for the editor.
+If you are using `ember-cli-sass` you can override the variables to provide a custom theme for the editor.
 - [_s-colors.scss](https://github.com/lblod/ember-rdfa-editor/blob/master/app/styles/ember-rdfa-editor/_s-colors.scss): Collection of colors used.
 - [_s-settings.scss](https://github.com/lblod/ember-rdfa-editor/blob/master/app/styles/ember-rdfa-editor/_s-settings.scss): General settings (spacing, font family, sizes and weights, media-queries)
 - [_s-theme.scss](https://github.com/lblod/ember-rdfa-editor/blob/master/app/styles/ember-rdfa-editor/_s-theme.scss): Specific theme variables
