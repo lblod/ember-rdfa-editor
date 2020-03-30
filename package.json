@@ -21,7 +21,8 @@
     "lint:js": "eslint .",
     "start": "ember serve",
     "test": "ember test",
-    "test:all": "ember try:each"
+    "test:all": "ember try:each",
+    "css": "node compile-css.js"
   },
   "dependencies": {
     "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.5.8",
@@ -76,6 +77,7 @@
     "eslint-plugin-ember": "^7.1.0",
     "eslint-plugin-node": "^10.0.0",
     "loader.js": "^4.7.0",
+    "node-sass": "^4.13.1",
     "qunit-dom": "^0.9.0",
     "sass": "^1.26.3",
     "yuidoc-ember-theme": "^2.0.1"
