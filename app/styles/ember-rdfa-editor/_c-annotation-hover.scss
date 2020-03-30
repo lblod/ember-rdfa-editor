@@ -120,6 +120,27 @@
     }
   }
 
+  // Add highlight help text
+  span.mark-highlight-manual {
+    display: inline-block;
+  }
+
+  span.mark-highlight-manual:hover:before {
+    content: "Fill in";
+    display: inline;
+    width: auto;
+    line-height: 1;
+    padding-top: $say-unit-tiny/2;
+    padding-bottom: $say-unit-tiny/1.6;
+    padding-left: $say-unit-tiny/2;
+    padding-right: $say-unit-tiny;
+    color: $say-orange-dark;
+    background: $say-orange-lighter;
+    z-index: 5;
+    border: 1px solid $say-orange-light !important;
+    margin-right: -$say-unit;
+  }
+
   // Making sure list items annotations look good too
   ul.bullet-list:not(.article-list),
   ol.numbered-list:not(.article-list) {

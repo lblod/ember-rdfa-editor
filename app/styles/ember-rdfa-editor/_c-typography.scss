@@ -79,6 +79,8 @@
     margin-top: $say-typography-margin;
   }
 
+  // No margin
+  p * + *,
   p + br,
   div + br,
   span + br,
