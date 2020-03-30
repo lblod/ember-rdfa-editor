@@ -175,7 +175,7 @@
     &:before {
       @include say-font-size($say-tiny,1.2);
       font-family: $say-font;
-      font-weight: $say-regular;
+      font-weight: $say-medium;
       letter-spacing: .01rem;
       color: $say-neutral;
       text-transform: uppercase;
