@@ -45,6 +45,19 @@ module.exports = function(environment) {
 * editor-html-paste: if enabled, support html paste input
 * editor-force-paragraph: if enabled, wrap text input in a paragraph if it's not already wrapped.
 
+## Styling
+
+If you use just vanilla css, you're good to go. Ember-rdfa-editor will add the default styles to your vendor css file. 
+
+However, if you are using SASS or LESS the addon won't do that. Instead you need to import the addon styles yourself. 
+
+```
+@import "ember-rdfa-editor";
+```
+
+When installing this through `ember install` the addon will add the snippet above automatically for you in your `app.scss`.
+
+
 ## Compatibility
 
 * Ember.js v3.12 or above
