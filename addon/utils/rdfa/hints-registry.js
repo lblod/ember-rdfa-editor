@@ -292,6 +292,32 @@ export default class HinstRegistry extends EmberObject {
   }
 
   /**
+   * Removes hints which occur in a set of rdfaBlocks.
+   *
+   * This is a helper method which makes functional plugins a lot
+   * easier to write.  These plugins remove all hints as a starting
+   * point, calculate where the hints should be, and supply all of the
+   * new hints to the HinstRegistry.  In case there are no performance
+   * issues to recalculate the hints, this approach is easy to
+   * understand.  This particular call cleans up such plugins.
+   *
+   * @method removeHintsInRdfaBlocks
+   *
+   * @param {Array} rdfaBlocks Objects for which the region is in the
+   * `region` property.
+   * @param {Object} [hrIdx] Index of the registry else registry at
+   * current index is provided
+   * @param {string} [identifier] Name of the plugin to filter on
+   *
+   * @public
+   */
+  removeHintsInRdfaBlocks(rdfaBlocks, hrId, identifier) {
+    rdfaBlocks.forEach( (block) => {
+      this.removeHintsInRegion( block.region, hrId, identifier );
+    });
+  }
+
+  /**
    * This function executes multiple hints updates as a batch.
    * WHY
    * ---
