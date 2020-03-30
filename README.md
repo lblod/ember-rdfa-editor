@@ -47,15 +47,57 @@ module.exports = function(environment) {
 
 ## Styling
 
-If you use just vanilla css, you're good to go. Ember-rdfa-editor will add the default styles to your vendor css file. 
+If you use vanilla css the `ember-rdfa-editor` will add the default styles to your vendor css file. 
 
-However, if you are using SASS or LESS the addon won't do that. Instead you need to import the addon styles yourself. 
+However, if you are using SASS the addon you need to import the addon styles yourself. 
 
 ```
 @import "ember-rdfa-editor";
 ```
 
 When installing this through `ember install` the addon will add the snippet above automatically for you in your `app.scss`.
+
+### Styling options
+
+You can pass basic styling options when you load the editor. Add a value of "true" to enable. Remove option or pass null to disable.
+
+#### Editor Options
+
+- showToggleRdfaAnnotations: Show annotations toggle switch and add rdfa annotations view
+- showInsertButton: Show template insert button
+- showRdfa: Show RDFA in the editor
+- showRdfaHighlight: Show Rdfa information on hover
+- showRdfaHighlight: Show Rdfa information on hover
+
+#### Toolbar Options
+
+- showTextStyleButtons: Show text styling buttons (bold, italic, underline, strikethrough)
+- showListButtons: Show list styling buttons (ordered list, unordered list)
+- showIndentButtons: Show indent buttons (indent, reverse indent)
+
+#### Example usage:
+
+```
+{{rdfa/rdfa-editor value=(rdfa/rdfa-html value) rdfaEditorInit=(action "rdfaEditorInit") profile="default" 
+  editorOptions=(hash 
+    showToggleRdfaAnnotations="true" 
+    showInsertButton=null 
+    showRdfa="true" 
+    showRdfaHighlight="true" 
+    showRdfaHover="true") 
+  toolbarOptions=(hash 
+    showTextStyleButtons="true" 
+    showListButtons="true" 
+    showIndentButtons="true") 
+}}
+```
+
+### Customisation
+
+If you are using `SCSS` you can override the variables to provide a custom theme for the editor.
+- [_s-colors.scss](https://github.com/lblod/ember-rdfa-editor/blob/master/app/styles/ember-rdfa-editor/_s-colors.scss): Collection of colors used.
+- [_s-settings.scss](https://github.com/lblod/ember-rdfa-editor/blob/master/app/styles/ember-rdfa-editor/_s-settings.scss): General settings (spacing, font family, sizes and weights, media-queries)
+- [_s-theme.scss](https://github.com/lblod/ember-rdfa-editor/blob/master/app/styles/ember-rdfa-editor/_s-theme.scss): Specific theme variables
 
 
 ## Compatibility
