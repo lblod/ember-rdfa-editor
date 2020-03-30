@@ -249,5 +249,8 @@ export default class RdfaEditor extends Component {
   @action
   toggleRdfaBlocks() {
     this.showRdfaBlocks = !this.showRdfaBlocks;
+
+    // Focus editor
+    document.getElementsByClassName("say-editor__inner")[0].focus();
   }
 }
