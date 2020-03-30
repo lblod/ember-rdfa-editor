@@ -21,7 +21,7 @@
   .say-container__aside {
     position: absolute;
     bottom: 0;
-    right: 0;
+    right: $say-unit-small + $say-unit-tiny;
     width: 380px;
     max-height: calc(100% - 44px);
     overflow: auto;
@@ -48,13 +48,12 @@
       width: 30%;
 
       @if $say-paper == true and $say-paper-sidebar == true {
-        right: 0;
         padding: $say-unit;
         bottom: auto;
       }
     }
 
     @include mq(large) {
-      width: 25%;
+      width: calc(25% - #{$say-unit-small + $say-unit-tiny});
     }
   }
