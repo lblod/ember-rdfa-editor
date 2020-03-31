@@ -322,28 +322,23 @@
     display: table;
     width: 100%;
 
+    & [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
+      outline: 0;
+      margin: 0;
+    }
+
     // Reset some table styles
     th {
-      font-weight: 500;
+      font-weight: $say-medium;
       border-bottom: 1px solid $say-neutral-light;
     }
 
     th,
     td {
+      vertical-align: top;
       padding: .6rem;
       background-color: transparent !important;
-    }
-
-    th + th {
-      border-left: 1px solid $say-neutral-light;
-    }
-
-    td + td {
-      border-left: 1px solid $say-neutral-light;
-    }
-
-    tr + tr {
-      border-top: 1px solid $say-neutral-light;
+      border: 1px solid $say-neutral-light;
     }
 
     // Style links as plain text
@@ -359,6 +354,12 @@
       &:focus {
         outline: 0;
       }
+    }
+
+    // Style lists
+    ul,
+    ol {
+      margin-left: $say-unit-small + $say-unit-tiny;
     }
   }
 
