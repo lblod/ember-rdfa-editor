@@ -1,4 +1,8 @@
 .rdfa-context-debugger-debug-panel {
+  position: fixed;
+  top: 4rem;
+  right: 2rem;
+  z-index: 2;
   margin-top: 10px;
   border: 2px solid;
 }
@@ -35,8 +39,8 @@ input[type="number"] {
 }
 
 .editor > *[contenteditable="true"] {
-    min-height: 200px;
-    border-color: black;
-    border-style: solid;
-    border-width: 1px;
+  min-height: 200px;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
 }

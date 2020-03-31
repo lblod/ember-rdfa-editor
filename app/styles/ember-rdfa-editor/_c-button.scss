@@ -1,0 +1,38 @@
+/* ==================================
+   #BUTTONS
+   ================================== */
+
+.say-button {
+  @include say-font-size($say-button-font-size);
+  font-family: $say-button-font-family;
+  font-weight: $say-button-font-weight;
+  height: $say-button-height;
+  text-decoration: none;
+  text-align: center;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 $say-unit-small .1ex; // Visually center the text in the button
+  border: $say-button-border solid $say-button-border-color;
+  border-radius: $say-button-radius;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: $say-button-color;
+  background-color: $say-button-bg-color;
+  transition: background-color $say-transition, color $say-transition, border $say-transition;
+  cursor: default;
+
+  &:hover,
+  &:focus {
+    color: $say-button-hover-color;
+    background-color: $say-button-bg-hover-color;
+    border-color: $say-button-border-hover-color;
+    text-decoration: none;
+  }
+
+  &:focus {
+    outline: $say-outline;
+    outline-offset: $say-unit-tiny/2;
+  }
+}

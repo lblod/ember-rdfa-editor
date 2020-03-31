@@ -1,0 +1,226 @@
+/* ==================================
+   #SAY ANNOTATIONS
+   Shared styling (hover, click, show, regular)
+   ================================== */
+
+.rdfa-annotations {
+  // Visibility annotations
+  [property="dc:subject"],
+  [property="besluit:geplandOpenbaar"],
+  [property="besluit:openbaar"] {
+    font-weight: $say-regular;
+    color: $say-annotation-text-color !important;
+  }
+
+  [typeof="besluit:BehandelingVanAgendapunt"],
+  [property="ext:behandelt"],
+  [property="besluit:heeftAgendapunt"],
+  [typeof="besluit:Agendapunt"] {
+    @include say-font-size($say-base);
+    font-weight: $say-regular;
+    display: block !important;
+    position: relative;
+    color: $say-annotation-text-color  !important;
+
+    [property="besluit:geplandOpenbaar"],
+    [property="besluit:openbaar"] {
+      color: $say-neutral !important;
+    }
+
+    [property="besluit:geplandOpenbaar"] i,
+    [property="besluit:openbaar"] i {
+      font-size: 1.5rem;
+      top: .2rem;
+      padding-left: 1px;
+      z-index: 2;
+      color: $say-neutral !important;
+    }
+
+    [property="besluit:geplandOpenbaar"][content="false"],
+    [property="besluit:openbaar"][content="false"],
+    [property="besluit:geplandOpenbaar"][content="false"] i,
+    [property="besluit:openbaar"][content="false"] i {
+      color: $say-editor-private-color !important;
+    }
+  }
+
+  // Block elements
+  div,
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6,
+  ul,
+  ol,
+  [property="dc:title"],
+  [property="dc:title foaf:name"],
+  p[property="dc:subject"],
+  [typeof~="besluit:Besluit"],
+  [property="ext:stemmingTable"],
+  [property="ext:insertStemmingText"],
+  [property="ext:aanwezigenTable"],
+  [property="ext:insertAanwezigenText"],
+  [property="prov:generated"] > [property="besluit:motivering"],
+  [property="prov:generated"] > [property="prov:value"],
+  [property^="ext"]:not([property="ext:heeftAfwezigeBijAgendapunt"]):not(span),
+  [data-editor-highlight="true"]:not(li):not(span),
+  [typeof="http://data.vlaanderen.be/ns/besluit#Besluit http://data.vlaanderen.be/ns/besluit#AanvullendReglement"],
+  [typeof="besluit:Artikel"],
+  [typeof="mobiliteit:Opstelling"] {
+    display: block;
+  }
+
+  [property="prov:value"] > div > span,
+  [property="ext:behandelt"] > div > span {
+    position: relative;
+    display: block; // remove when span is gone from the template "nieuw generiek besluit"
+  }
+
+  // Multiline elements
+  [property="eli:cites"] {
+    display: inline-block;
+    max-width: calc(100% - #{$say-unit-small});
+  }
+
+  // Show underlines on annotation
+  [data-editor-highlight="true"]:not([contenteditable=""]),
+  [property],
+  [typeof]:not([typeof="foaf:Document"]),
+  [data-type],
+  .mark-highlight-manual {
+    border-bottom: .2rem dotted $say-neutral-light;
+    padding-bottom: .2rem;
+    transition: border $say-transition;
+
+    .mark-highlight-manual,
+    [typeof],
+    [property],
+    [data-type] {
+      padding-bottom: .2rem;
+    }
+
+    [typeof] .mark-highlight-manual,
+    [property] .mark-highlight-manual,
+    [typeof] [data-type],
+    [property] [data-type],
+    [typeof] [typeof],
+    [property] [property] {
+      padding-bottom: .2rem;
+    }
+
+    [typeof] [typeof] .mark-highlight-manual,
+    [property] [property] .mark-highlight-manual,
+    [typeof] [typeof] [data-type],
+    [property] [property] [data-type],
+    [typeof] [typeof] [typeof],
+    [property] [property] [property] {
+      padding-bottom: .2rem;
+    }
+
+    [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] .mark-highlight-manual,
+    [property] [property] [property] [property] [property] [property] .mark-highlight-manual,
+    [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [data-type],
+    [property] [property] [property] [property] [property] [property] [property] [data-type],
+    [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof],
+    [property] [property] [property] [property] [property] [property] [property] {
+      border-bottom: 0;
+    }
+  }
+
+  // Making it easy to discover elements that need to be filled out / take action upon
+  [property^="ext:insert"],
+  [data-editor-highlight="true"]:not([contenteditable=""]) {
+    background-color: $say-editor-highlight-color;
+    transition: background-color $say-transition;
+
+    &::selection {
+      color: $say-neutral-darkest;
+      background-color: $say-editor-highlight-color;
+    }
+
+    &:hover {
+      background-color: $say-editor-highlight-hover-color;
+    }
+  }
+
+  span.mark-highlight-manual {
+    color: $say-neutral-dark;
+    background-color: $say-neutral-lightest;
+    font-style: italic;
+  }
+}
+
+// Show RDFA blocks
+.rdfa-annotations.show-rdfa-blocks {
+  [data-editor-highlight="true"],
+  [property],
+  [typeof]:not([typeof="foaf:Document"]),
+  [data-type],
+  .mark-highlight-manual {
+    position: relative;
+    border: 1px solid $say-neutral-lighter;
+    display: block !important; // Override inline styles
+    margin: $say-unit-tiny;
+    padding: 0;
+
+    // Style annotation blocks
+    &:before {
+      @include say-font-size($say-tiny,1.2);
+      font-family: $say-font;
+      font-weight: $say-medium;
+      letter-spacing: .01rem;
+      color: $say-neutral;
+      text-transform: uppercase;
+      pointer-events: none;
+      content: attr(property) " " attr(typeof) " " attr(data-type);
+      position: relative;
+      right: auto;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      padding: $say-unit-tiny/2;
+      transition: none;
+      border-bottom: 1px solid $say-neutral-lighter;
+      background-color: $say-neutral-lightest;
+      opacity: 1;
+    }
+  }
+
+  // Add help text on highlights
+  .mark-highlight-manual:after,
+  [data-editor-highlight="true"]:not([contenteditable=""]):after {
+    @include say-font-size($say-tiny,1.2);
+    content: "Action required";
+    font-family: $say-font;
+    font-weight: $say-regular;
+    letter-spacing: .01rem;
+    color: $say-neutral;
+    text-transform: uppercase;
+    pointer-events: none;
+    position: relative;
+    right: auto;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    padding: $say-unit-tiny/2;
+    transition: none;
+    border-top: 1px solid $say-neutral-lighter;
+    background-color: $say-white;
+    opacity: 1;
+    margin: 0;
+  }
+
+  span.mark-highlight-manual {
+    background-color: transparent;
+  }
+}

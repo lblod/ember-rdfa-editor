@@ -1,0 +1,135 @@
+/* ==========================================================================
+   #SHAME
+   Temporary css
+   Some parts will be reused, but most of them will not.
+   ========================================================================== */
+
+.say-typography {
+  // Hide empty text elements
+  #text {
+    display: none !important;
+  }
+
+  .annotation:hover {
+    background-color: transparent !important; // override annotation hover background
+  }
+
+  // Not sure what this does
+  mark {
+    cursor: pointer;
+  }
+
+  mark table {
+    font-weight: normal;
+    border: 4px solid $say-yellow;
+
+    &:active {
+      opacity: .5;
+    }
+  }
+}
+
+// Not sure if this is used
+.internal-component {
+  display: block;
+  width: 50%;
+  margin: 5px auto;
+  border: 1px solid #333;
+}
+
+.internal-component .close {
+  float: right;
+  margin: 5px;
+}
+
+// Legacy modal style fixes
+.say-modal .modal-dialog {
+  position: relative;
+  top: 0;
+  left: 0;
+  box-shadow: 0;
+  transform: none;
+  padding: 0;
+  width: 100%;
+}
+
+.say-modal ul li div.u-hr {
+  display: none;
+}
+
+.say-modal .modal-dialog__header {
+  @include say-font-size($say-h6);
+  color: $say-neutral-darker;
+  padding: $say-unit-small;
+  border-bottom: .1rem solid $say-neutral-lighter;
+
+  * {
+    margin-bottom: 0;
+  }
+
+  * + * {
+    margin-top: $say-unit-small;
+  }
+
+  .grid {
+    align-items: center;
+  }
+
+  .col--2-12.u-align-right {
+    margin-top: 0;
+    padding-right: $say-unit-tiny;
+  }
+}
+
+.say-modal .modal-dialog__content {
+  padding: $say-unit-small;
+}
+
+.say-modal .modal-dialog__content--sectioned {
+  padding: 0;
+}
+
+.say-modal .modal-dialog__content--sectioned > * {
+  max-height: 50vh;
+}
+
+.say-modal .modal-dialog__footer {
+  padding: $say-unit-small;
+
+  button {
+    margin-bottom: 0;
+  }
+}
+
+.say-modal .link-list {
+  @media screen and (max-width:767px) {
+    margin-bottom: 0 !important;
+  }
+}
+
+.say-modal .link-list.link-list--bordered {
+  .link-list__item.link-list__item--sidenotes a {
+    padding: $say-unit-small !important;
+  }
+
+  .link-list__item.link-list__item--sidenotes a:hover {
+    background-color: $say-neutral-lightest;
+  }
+
+  .link-list__item__sidenote.uppercase {
+    @include say-font-size($say-tiny,1.3);
+    color: $say-neutral;
+    padding: 0;
+  }
+}
+
+.say-modal .modal-dialog__link-list {
+  padding: $say-unit-small;
+  width: 100%;
+  overflow: hidden;
+}
+
+.pager__list {
+  padding: $say-unit-tiny;
+  border-top: .1rem solid $say-neutral-lighter;
+}

@@ -1,0 +1,93 @@
+// ==================================
+// #THEME
+// ==================================
+
+// Define the look of the Say Editor by changing the variables.
+
+
+// UI
+// ---
+// Display options
+$say-paper                       : true !default; // True = displays a paper like background.
+$say-paper-sidebar               : true !default; // True = adds space for a sidebar to the right.
+$say-toolbar-bottom              : false !default; // True = position the toolbar at the bottom.
+
+
+// EDITOR
+// ---
+// Editor spacing and background
+$say-editor-padding              : $say-unit !default;
+$say-editor-background           : $say-neutral-lightest !default;
+
+// Paper spacing and background
+$say-paper-min-height            : calc(100vh + #{$say-unit}) !default;
+$say-paper-padding               : $say-unit-large !default;
+$say-paper-background            : $say-white !default;
+$say-paper-box-shadow            : 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px rgba($say-neutral-darkest, .035), 0 1px 1px rgba($say-neutral-darkest, .025) !default;
+
+// Typography
+$say-h1-font-family              : $say-font !default;
+$say-h1-font-weight              : $say-medium !default;
+$say-h1-font-size                : $say-h1 !default;
+$say-h2-font-family              : $say-font !default;
+$say-h2-font-weight              : $say-medium !default;
+$say-h2-font-size                : $say-h2 !default;
+$say-h3-font-family              : $say-font !default;
+$say-h3-font-weight              : $say-medium !default;
+$say-h3-font-size                : $say-h3 !default;
+$say-h4-font-family              : $say-font !default;
+$say-h4-font-weight              : $say-medium !default;
+$say-h4-font-size                : $say-h4 !default;
+$say-h5-font-family              : $say-font !default;
+$say-h5-font-weight              : $say-medium !default;
+$say-h5-font-size                : $say-h5 !default;
+$say-h6-font-family              : $say-font !default;
+$say-h6-font-weight              : $say-medium !default;
+$say-h6-font-size                : $say-h6 !default;
+$say-base-font-family            : $say-font !default;
+$say-base-font-weight            : $say-light !default;
+$say-base-font-size              : $say-base !default;
+$say-small-font-size             : $say-base !default;
+$say-smaller-font-size           : $say-small !default;
+$say-smallest-font-size          : $say-tiny !default;
+$say-typography-margin           : $say-unit-small !default;
+$say-editor-private-color        : $say-neutral-darkest !default;
+$say-editor-highlight-color      : $say-orange-lighter !default;
+$say-editor-highlight-hover-color: $say-orange-lightest !default;
+
+
+// TOOLBAR
+// ---
+$say-toolbar-background          : $say-neutral-lighter !default;
+$say-toolbar-border              : tint($say-neutral-light,30) !default;
+$say-toolbar-height              : 44px !default;
+
+// Annotation switch styling
+$say-switch-label-color          : $say-neutral-dark !default;
+$say-switch-color                : $say-neutral-light !default;
+$say-switch-active-color         : $say-primary !default;
+
+// Button
+$say-button-height               : $say-unit + $say-unit-tiny !default;
+$say-button-font-family          : $say-font !default;
+$say-button-font-size            : $say-base !default;
+$say-button-font-weight          : $say-regular !default;
+$say-button-border               : .1rem !default;
+$say-button-border-color         : $say-primary !default;
+$say-button-border-hover-color   : $say-primary-light !default;
+$say-button-color                : $say-white !default;
+$say-button-hover-color          : $say-white !default;
+$say-button-bg-color             : $say-primary !default;
+$say-button-bg-hover-color       : $say-primary-light !default;
+$say-button-radius               : $say-radius !default;
+
+
+// ANNOTATIONS
+// ---
+// Annotation options
+$say-annotation-width            : $say-unit-huge*3 !default;
+$say-annotation-offset           : $say-unit-large !default;
+$say-annotation-gutter           : $say-unit !default;
+$say-annotation-width-content    : $say-annotation-width !default;
+$say-annotation-text-color       : $say-neutral-dark !default;
+$say-annotation-background-color : $say-neutral-lightest !default;

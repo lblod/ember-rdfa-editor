@@ -1,11 +1,7 @@
 {{#if this.suggestedHints.length}}
-  <div class="annotation-suggestion__suggestion">
-    <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
-      <ul>
-        {{#each this.suggestedHints as |hint|}}
-          <li>{{component hint.component info=hint.info closeHints=(action 'closeHints')}}</li>
-        {{/each}}
-      </ul>
+  {{#each this.suggestedHints as |hint|}}
+    <div class="say-modal">
+      {{component hint.component info=hint.info closeHints=(action 'closeHints')}}
     </div>
-  </div>
+  {{/each}}
 {{/if}}

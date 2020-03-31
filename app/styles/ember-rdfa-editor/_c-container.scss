@@ -1,0 +1,59 @@
+/* ==================================
+   #SAY CONTAINER
+   ================================== */
+
+.say-container {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  @if $say-toolbar-bottom == true {
+    flex-direction: column-reverse;
+  }
+}
+
+  .say-container__main {
+    overflow: auto;
+  }
+
+  .say-container__aside {
+    position: absolute;
+    bottom: 0;
+    right: $say-unit-small + $say-unit-tiny;
+    width: 380px;
+    max-height: calc(100% - 44px);
+    overflow: auto;
+    padding: $say-unit-small $say-unit-small + $say-unit-tiny;
+
+    @if $say-toolbar-bottom == true {
+      top: 0;
+      bottom: auto;
+    }
+
+    @if $say-paper == true and $say-paper-sidebar == true {
+      top: 44px;
+    }
+
+    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == false {
+      top: 0;
+    }
+
+    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == true {
+      top: 0;
+    }
+
+    @include mq(medium) {
+      width: 30%;
+
+      @if $say-paper == true and $say-paper-sidebar == true {
+        padding: $say-unit;
+        bottom: auto;
+      }
+    }
+
+    @include mq(large) {
+      width: calc(25% - #{$say-unit-small + $say-unit-tiny});
+    }
+  }

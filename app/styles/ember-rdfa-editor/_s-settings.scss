@@ -1,0 +1,79 @@
+// ==================================
+// #GLOBAL
+// ==================================
+
+// The global settings file contains any project-wide variables; things that
+// need to be made available to the entire codebase.
+
+
+// Breakpoints
+// ---
+$say-breakpoints: (
+  xsmall : 500px,
+  small  : 767px,
+  medium : 1023px,
+  large  : 1280px
+) !default;
+
+
+// Typography
+// ---
+// Global font size and line height
+$say-global-font-size   : 1.8rem !default;
+$say-global-line-height : 1.5 !default;
+
+// Font families
+$say-font: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !default;
+
+// Font styles
+$say-light   : 400 !default;
+$say-regular : 500 !default;
+$say-medium  : 600 !default;
+$say-bold    : 700 !default;
+
+
+// Sizes
+$say-tiny  : 1.3rem !default;
+$say-small : 1.4rem !default;
+$say-base  : 1.5rem !default;
+$say-h6    : 1.6rem !default;
+$say-h5    : 1.8rem !default;
+$say-h4    : 2rem !default;
+$say-h3    : 2.4rem !default;
+$say-h2    : 3.4rem !default;
+$say-h1    : 4.8rem !default;
+
+// Spacing units
+// ---
+$say-unit-base  : .6rem !default;
+$say-unit-ratio : 2 !default;
+$say-unit-tiny  : $say-unit-base !default;
+$say-unit-small : $say-unit-tiny * $say-unit-ratio !default;
+$say-unit       : $say-unit-small * $say-unit-ratio !default;
+$say-unit-large : $say-unit * $say-unit-ratio !default;
+$say-unit-huge  : $say-unit-large * $say-unit-ratio !default;
+
+
+// UI
+// ---
+// Global styling
+$say-radius               : 2rem !default;
+$say-border               : .2rem !default;
+$say-outline-border       : $say-border !default;
+$say-outline-border-style : dashed !default;
+$say-outline              : $say-outline-border $say-outline-border-style $say-outline-color !default;
+
+// Transitions
+$say-duration   : (1/8) + s !default;
+$say-easing     : cubic-bezier(0.190,  1.000, 0.220, 1.000) !default;
+$say-transition : $say-duration $say-easing !default;
+
+// Z-indexes
+$say-z-index-alpha : 1 !default;
+$say-z-index-beta  : 2 !default;
+$say-z-index-gamma : 3 !default;
+
+// Icon sizes
+$say-icon-size        : .75em !default;
+$say-icon-size-medium : 1.25rem !default;
+$say-icon-size-large  : 1.7rem !default;

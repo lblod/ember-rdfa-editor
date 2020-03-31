@@ -1,4 +1,8 @@
-<h1>Dummy app </h1>
-App version: {{app-version versionOnly=true showExtended=true}} <br>
-{{#link-to 'ce'}} Check out the CE dummy app{{/link-to}}  &nbsp; &nbsp; {{#link-to 'rdfa'}} Check out the RDFA dummy app {{/link-to}} <br>
-{{outlet}}
+<div class="c-dummy">
+  <div class="c-dummy__header">
+    <h1>Dummy app </h1>
+    <p>App version: {{app-version versionOnly=true showExtended=true}}</p>
+    <p>{{#link-to 'ce'}} Check out the CE dummy app{{/link-to}}  &nbsp; &nbsp; {{#link-to 'rdfa'}} Check out the RDFA dummy app {{/link-to}}</p>
+  </div>
+  {{outlet}}
+</div>
