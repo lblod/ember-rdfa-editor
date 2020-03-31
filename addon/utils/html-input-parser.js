@@ -1,5 +1,6 @@
 import {tagName} from './ce/dom-helpers';
 
+const EMPTY_TAGS_TO_KEEP = ['td','tr','li'];
 const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
 const DEFAULT_LUMP_TAGS = ["table"];
 const DEFAULT_SAFE_TAGS = ['a', 'br', 'body', 'code', 'data', 'datalist', 'div', 'dl', 'dt', 'dd', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'li', 'link', 'meta', 'nav', 'ol', 'p', 'pre', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'template', 'th', 'thead',  'time', 'tr', 'ul', 'var', 'wbr' ];
@@ -78,7 +79,7 @@ class HTMLInputParser {
           }
         }
       }
-      if (cleanedNode && cleanedNode.attributes.length == 0 && cleanedNode.childNodes.length == 0 && new String(cleanedNode.textContent).trim().length == 0) {
+      if (cleanedNode && cleanedNode.attributes.length == 0 && cleanedNode.childNodes.length == 0 && new String(cleanedNode.textContent).trim().length == 0 && ! EMPTY_TAGS_TO_KEEP.includes(tagName(cleanedNode))) {
         return null;
       }
     }
