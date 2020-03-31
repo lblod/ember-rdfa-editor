@@ -1,8 +1,8 @@
 /* ==================================
-   #SAY TYPOGRAPHY STYLES
+   #SAY CONTENT STYLES
    ================================== */
 
-.say-typography {
+.say-content {
   // Set base font size for elements
   p,
   ul,
@@ -367,5 +367,10 @@
     font-size: 1.5rem; // Set global font-size
     cursor: not-allowed; // Show not-allowed cursor
     user-select: none; // Disable selection
+  }
+
+  // Don't show certain properties
+  [property="besluit:gebeurtNa"], [property="besluit:aangebrachtNa"], [property="eli:language"], [typeof="ext:TasklistData"], [class="ext_scroll_to"], [property="ext:variableState"], [property="ext:idInSnippet"], [property="ext:intentionUri"], [typeof="ext:Variable"], [property="ext:metadata"] {
+    display: none !important;
   }
 }
