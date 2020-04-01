@@ -1,0 +1,81 @@
+/* ==================================
+   #SAY TOOLBAR
+   ================================== */
+
+.say-toolbar {
+  display: flex;
+  justify-content: space-between;
+  height: $say-toolbar-height;
+  background-color: $say-toolbar-background;
+  border-bottom: 1px solid $say-toolbar-border;
+
+  @if $say-toolbar-bottom == true {
+    border-bottom: 0;
+    border-top: 1px solid $say-toolbar-border;
+  }
+}
+
+  .say-toolbar__styling-tools {
+    display: flex;
+    align-items: center;
+  }
+
+  .say-toolbar__actions {
+    display: flex;
+    align-items: center;
+    padding: 0 $say-unit-small;
+
+    > * + * {
+      margin-left: $say-unit-small;
+    }
+  }
+
+  .say-toolbar__group {
+    display: flex;
+  }
+
+  .say-toolbar__group + .say-toolbar__group {
+    border-left: 1px solid $say-neutral-light;
+  }
+
+  .say-toolbar__button {
+    @include say-font-size($say-base,1);
+    appearance: none;
+    outline: none;
+    border: 0;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: $say-neutral;
+    height: $say-toolbar-height;
+    width: $say-toolbar-height;
+    background-color: transparent;
+    transition: color $say-transition;
+    padding: $say-unit-tiny;
+    margin: 0;
+
+    &:hover,
+    &:focus {
+      color: $say-neutral-dark;
+      background-color: transparent;
+    }
+
+    &:focus {
+      outline: $say-outline;
+      outline-offset: -.4rem;
+    }
+  }
+
+  .say-toolbar__hidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }

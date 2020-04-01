@@ -1,41 +1,53 @@
-{{#if this.editor}}
-  <Rdfa::EditorToolbar @contentEditable={{editor}} />
-{{/if}}
-<div class="container-flex--contain editor-container">
-  <div class="container-flex--scroll">
-    <div class="grid grid--collapse grid--align-right">
-      <div class="col--8-12">
-        <div class="editor">
-          <Ce::ContentEditable @class="editor__paper" @textInsert={{or this.eventProcessor.insertText this.warnNotSetup}} @textRemove={{or this.eventProcessor.removeText this.warnNotSetup}} @handleFullContentUpdate={{or this.eventProcessor.analyseAndDispatch this.warnNotSetup}} @selectionUpdate={{action (or this.eventProcessor.selectionChanged this.warnNotSetup) editor.currentSelection}} @rawEditorInit={{action "handleRawEditorInit"}} @elementUpdate={{action (or this.domUpdate this.noop) editor.rootNode}} @externalHandlers={{this.handlers}} @editable={{true}} @focused={{true}} @yieldHTML={{true}}>
-            {{{this.value}}}
-          </Ce::ContentEditable>
-        </div>
+<div class="say-container {{if editorOptions.showRdfaHover "say-container--sidebar-left" }}">
+  {{#if this.editor}}
+    <Rdfa::EditorToolbar @contentEditable={{editor}} @showTextStyleButtons="{{if toolbarOptions.showTextStyleButtons "true"}}" @showListButtons="{{if toolbarOptions.showListButtons "true"}}" @showIndentButtons="{{if toolbarOptions.showIndentButtons "true"}}">
+      {{#if editorOptions.showToggleRdfaAnnotations}}
+      <div class="say-switch">
+        <input {{on "click" this.toggleRdfaBlocks}} id="toggle-1" class="say-switch__input" type="checkbox" name="toggle">
+        <label class="say-switch__label" for="toggle-1">Toon annotaties</label>
       </div>
-      <div class="col--2-12">
-        <div class="editor-commands">
-          <div class="button-group">
-            <button class="annotation-suggestion--trigger button--alt button" onclick={{action "triggerHints"}}>+</button>
-          </div>
-        </div>
-        <div class="editor-loading-events">
-          <Rdfa::LoadMonitor @editor={{this.eventProcessor.editor}} />
-        </div>
-        <div class="editor-hints">
-          <Rdfa::EditorSuggestedHints @suggestedHints={{this.suggestedHints}} />
-          {{#if this.hasActiveHints}}
-            <div class="annotation-suggestion__suggestion">
-              <div class="modal-dialog modal-dialog--sectioned modal-dialog--small modal-dialog--static modal-dialog--hint">
-                <ul>
-                  {{#each this.hintsRegistry.activeHints as |card|}}
-                    <li>{{component card.card info=card.info}}</li>
-                  {{/each}}
-                </ul>
-              </div>
-            </div>
+      {{/if}}
+      {{#if editorOptions.showInsertButton}}
+      <button class="say-button" onclick={{action "triggerHints"}}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" class="say-icon say-icon--left" aria-hidden="true">
+          <polygon points="40.5 24.643 24.643 24.643 24.643 40.5 19.357 40.5 19.357 24.643 3.5 24.643 3.5 19.357 19.357 19.357 19.357 3.5 24.643 3.5 24.643 19.357 40.5 19.357"/>
+        </svg>
+        Voeg sjabloon in
+      </button>
+      {{/if}}
+    </Rdfa::EditorToolbar>
+  {{/if}}
+
+  <div class="say-container__main">
+    <div class="say-editor {{if editorOptions.showRdfa "rdfa-annotations" }} {{if editorOptions.showRdfaHighlight "rdfa-annotations-highlight" }} {{if editorOptions.showRdfaHover "rdfa-annotations-hover" }} {{if this.showRdfaBlocks "show-rdfa-blocks"}}">
+      <div class="say-editor__paper">
+        <Ce::ContentEditable @class="say-editor__inner say-content" @textInsert={{or this.eventProcessor.insertText this.warnNotSetup}} @textRemove={{or this.eventProcessor.removeText this.warnNotSetup}} @handleFullContentUpdate={{or this.eventProcessor.analyseAndDispatch this.warnNotSetup}} @selectionUpdate={{action (or this.eventProcessor.selectionChanged this.warnNotSetup) editor.currentSelection}} @rawEditorInit={{action "handleRawEditorInit"}} @elementUpdate={{action (or this.domUpdate this.noop) editor.rootNode}} @externalHandlers={{this.handlers}} @editable={{true}} @focused={{true}} @yieldHTML={{true}}>
+          {{{this.value}}}
+        </Ce::ContentEditable>
+      </div>
+    </div>
+
+    <div class="say-container__aside">
+      <div class="say-editor-hints">
+        <ul class="say-editor-hints__list">
+          {{#if this.suggestedHints.length}}
+          <li class="say-editor-hints__list-item">
+            <Rdfa::EditorSuggestedHints @suggestedHints={{this.suggestedHints}} />
+          </li>
           {{/if}}
-          {{yield}}
-        </div>
+          {{#if this.hasActiveHints}}
+          {{#each this.hintsRegistry.activeHints as |card|}}
+            <li class="say-editor-hints__list-item">
+              <div class="say-modal">
+                {{component card.card info=card.info}}
+              </div>
+            </li>
+          {{/each}}
+          {{/if}}
+        </ul>
       </div>
+      {{yield}}
+      <Rdfa::LoadMonitor @editor={{this.eventProcessor.editor}} />
     </div>
   </div>
 </div>

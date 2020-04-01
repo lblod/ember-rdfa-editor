@@ -1,0 +1,15 @@
+/* ==================================
+   #DUMMY APP
+   ================================== */
+
+// IMPORT ADDON STYLES
+@import 'ember-rdfa-editor';
+
+// GENERIC
+@import 'g-reset.scss';
+
+// COMPONENTS
+@import 'c-dummy.scss';
+
+// LEGACY STYLES > @TODO: REFACTOR
+@import 'legacy.scss';

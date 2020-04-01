@@ -1,0 +1,331 @@
+/* ==================================
+   #SAY ANNOTATIONS HOVER
+   ================================== */
+
+.rdfa-annotations-hover:not(.show-rdfa-blocks) {
+  overflow: hidden;
+
+  // Make block elements relative
+  div,
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6,
+  ul,
+  ol,
+  [property="dc:title"],
+  [property="dc:title foaf:name"],
+  [typeof~="besluit:Besluit"],
+  [property="ext:stemmingTable"],
+  [property="ext:insertStemmingText"],
+  [property="ext:aanwezigenTable"],
+  [property="ext:insertAanwezigenText"],
+  [property="prov:generated"] > [property="besluit:motivering"],
+  [property="prov:generated"] > [property="prov:value"],
+  [typeof="besluit:Zitting"],
+  [property="openbaar"],
+  [property^="ext"]:not([property="ext:heeftAfwezigeBijAgendapunt"]):not(span),
+  [data-editor-highlight="true"]:not(li):not(span),
+  [typeof="http://data.vlaanderen.be/ns/besluit#Besluit http://data.vlaanderen.be/ns/besluit#AanvullendReglement"],
+  [typeof="besluit:Artikel"],
+  [typeof="mobiliteit:Opstelling"] {
+    position: relative;
+
+    &:before {
+      height: 100%;
+      top: 0;
+    }
+  }
+
+  // Style before and after elements
+  .mark-highlight-manual,
+  [typeof]:not([typeof="foaf:Document"]),
+  [property],
+  [data-type],
+  [data-editor-highlight="true"]:not([contenteditable=""]) {
+    &:hover {
+      border-bottom-color: tint($say-neutral,20);
+    }
+
+    &:before {
+      position: absolute;
+      transition: opacity $say-easing .5s, left $say-easing .2s;
+      right: calc(100% + #{$say-annotation-offset});
+      opacity: 0;
+    }
+
+    &:before {
+      @include say-font-size($say-tiny,1.2);
+      content:  attr(property) " " attr(typeof) " " attr(data-type);
+      display: block;
+      margin-top: .2rem;
+      padding-right: $say-annotation-gutter + $say-unit-small;
+      margin-right: -$say-annotation-gutter + $say-unit-tiny;
+      width: $say-annotation-width-content;
+      font-family: $say-font;
+      font-weight: $say-medium;
+      letter-spacing: .01rem;
+      text-transform: uppercase;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: $say-neutral;
+      background-color: $say-neutral-lightest;
+      pointer-events: none;
+      overflow: hidden;
+      min-height: 2rem;
+      border-right: 1px dashed $say-neutral-light;
+      border-top: 1px dashed $say-neutral-light;
+      z-index: $say-z-index-gamma;
+      background: linear-gradient(
+        to right,
+          $say-neutral-lightest,
+          $say-neutral-lightest calc(100% - #{$say-annotation-gutter + $say-unit-tiny}),
+          transparent calc(100% - #{$say-annotation-gutter + $say-unit-tiny}),
+          transparent 100%
+      );
+    }
+
+    &[data-editor-position-level]:before,
+    &:hover:before {
+      right: calc(100% + #{$say-annotation-offset});
+      opacity: 1;
+    }
+
+    // Bring highlighted annotation to the front
+    &[data-editor-position-level]:before {
+      z-index: $say-z-index-alpha;
+    }
+
+    &[data-editor-position-level]:before {
+      border-top-style: solid;
+      border-right-style: solid;
+    }
+
+    &[data-editor-position-level="0"]:before {
+      z-index: $say-z-index-gamma;
+    }
+
+    // Hide right border when not selected
+    &:not([data-editor-position-level]):hover:before,
+    &:not([data-editor-position-level]):before {
+      border-right: 0;
+    }
+  }
+
+  // Add highlight help text
+  span.mark-highlight-manual {
+    display: inline-block;
+  }
+
+  span.mark-highlight-manual:before,
+  span.mark-highlight-manual:hover:before {
+    content: "Fill in";
+    display: inline;
+    width: auto;
+    line-height: 1;
+    padding-top: $say-unit-tiny/2;
+    padding-bottom: $say-unit-tiny/1.6;
+    padding-left: $say-unit-tiny/2;
+    padding-right: $say-unit-tiny;
+    color: $say-orange-dark;
+    background: $say-orange-lighter;
+    z-index: 5;
+    border: 1px solid $say-orange-light !important;
+    margin-right: -$say-unit;
+  }
+
+  // Hide nested lump node annotations
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
+    &:before,
+    &:hover:before {
+      display: none;
+    }
+  }
+
+  // Making sure list items annotations look good too
+  ul.bullet-list:not(.article-list),
+  ol.numbered-list:not(.article-list) {
+    // Level 1
+    > li .mark-highlight-manual,
+    > li [typeof],
+    > li [property],
+    > li [about],
+    > li [resource],
+    > li [data-type],
+    > li [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small});
+      }
+    }
+
+    // Level 2
+    > li li .mark-highlight-manual,
+    > li li [typeof],
+    > li li [property],
+    > li li [about],
+    > li li [resource],
+    > li li [data-type],
+    > li li [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 2});
+      }
+    }
+
+    // Level 3
+    > li li li > .mark-highlight-manual,
+    > li li li > [typeof],
+    > li li li > [property],
+    > li li li > [about],
+    > li li li > [resource],
+    > li li li > [data-type],
+    > li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 3});
+      }
+    }
+
+    // Level 4
+    > li li li li > .mark-highlight-manual,
+    > li li li li > [typeof],
+    > li li li li > [property],
+    > li li li li > [about],
+    > li li li li > [resource],
+    > li li li li > [data-type],
+    > li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 4});
+      }
+    }
+
+    // Level 5
+    > li li li li li > .mark-highlight-manual,
+    > li li li li li > [typeof],
+    > li li li li li > [property],
+    > li li li li li > [about],
+    > li li li li li > [resource],
+    > li li li li li > [data-type],
+    > li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 5});
+      }
+    }
+
+    // Level 6
+    > li li li li li li > .mark-highlight-manual,
+    > li li li li li li > [typeof],
+    > li li li li li li > [property],
+    > li li li li li li > [about],
+    > li li li li li li > [resource],
+    > li li li li li li > [data-type],
+    > li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 6});
+      }
+    }
+
+    // Level 7
+    > li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li > [typeof],
+    > li li li li li li li > [property],
+    > li li li li li li li > [about],
+    > li li li li li li li > [resource],
+    > li li li li li li li > [data-type],
+    > li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 7});
+      }
+    }
+
+    // Level 8
+    > li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li > [typeof],
+    > li li li li li li li li > [property],
+    > li li li li li li li li > [about],
+    > li li li li li li li li > [resource],
+    > li li li li li li li li > [data-type],
+    > li li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 8});
+      }
+    }
+
+    // Level 9
+    > li li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li li > [typeof],
+    > li li li li li li li li li > [property],
+    > li li li li li li li li li > [about],
+    > li li li li li li li li li > [resource],
+    > li li li li li li li li li > [data-type],
+    > li li li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 9});
+      }
+    }
+
+    // Level 10
+    > li li li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li li li > [typeof],
+    > li li li li li li li li li li > [property],
+    > li li li li li li li li li li > [about],
+    > li li li li li li li li li li > [resource],
+    > li li li li li li li li li li > [data-type],
+    > li li li li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 10});
+      }
+    }
+
+    // Level 11
+    > li li li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li li li > [typeof],
+    > li li li li li li li li li li > [property],
+    > li li li li li li li li li li > [about],
+    > li li li li li li li li li li > [resource],
+    > li li li li li li li li li li > [data-type],
+    > li li li li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 11});
+      }
+    }
+  }
+
+  // Hide empty properties or flagged as noHighlight
+  [property=""],
+  [typeof=""],
+  // [property="eli:realizes"],
+  [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
+  [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
+    border-bottom: 0 !important;
+
+    &:before,
+    &[data-editor-position-level]:before,
+    &[data-editor-position-level]:hover:before,
+    &:hover:before {
+      display: none !important;
+      content: '' !important;
+      display: none !important;
+      opacity: 0 !important;
+    }
+  }
+
+  @include mq($until: large) {
+    // Hide all hover annotations on small screens
+    .mark-highlight-manual,
+    [typeof]:not([typeof="foaf:Document"]),
+    [property],
+    [data-type],
+    [data-editor-highlight="true"] {
+      &:before {
+        display: none !important;
+      }
+    }
+  }
+}

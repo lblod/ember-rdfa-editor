@@ -1,0 +1,71 @@
+/* ==================================
+  #REMOVING ANNOTATIONS
+  ================================== */
+
+/* Removing annotations
+ ========================================================================== */
+
+.rdfa-annotations.show-rdfa-blocks,
+.rdfa-annotations:not(.show-rdfa-blocks) {
+  [data-flagged-remove="almost-complete"][data-editor-position-level="0"],
+  [data-flagged-remove="almost-complete"]:hover {
+    box-shadow: -2px 0 0 $say-orange;
+    background-color: $say-orange-lighter;
+
+    &:hover {
+      background-color: $say-orange-lighter !important; // Conflict with .annotation style @TODO: remove when annotation classes are removed
+    }
+  }
+
+  [data-flagged-remove="complete"][data-editor-position-level="0"],
+  [data-flagged-remove="complete"] {
+    cursor: text;
+    box-shadow: none;
+    background-color: $say-neutral-lightest;
+    min-width: $say-unit-tiny;
+    color: $say-neutral-dark;
+    font-style: italic;
+    text-decoration: none;
+    font-weight: $say-light !important;
+
+    &:hover {
+      background-color: $say-neutral-lightest !important; // Conflict with .annotation style @TODO: remove when annotation classes are removed
+    }
+
+    &:after {
+      content: "Fill in";
+    }
+  }
+
+  // Delete tables
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"] {
+    position: relative;
+    font-style: normal;
+    font-weight: $say-regular;
+  }
+
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"]:before {
+    content: "Do you want to delete this block? Press backspace to confirm.";
+  }
+
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"]:after {
+    display: none;
+  }
+
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"]:before,
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"]:hover:before {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba($say-white,.9);
+    opacity: 1;
+    padding: $say-unit;
+    border: 0;
+    margin: 0;
+  }
+}

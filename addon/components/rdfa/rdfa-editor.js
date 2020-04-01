@@ -5,6 +5,7 @@ import { inject } from "@ember/service";
 import { notEmpty } from "@ember/object/computed";
 import { A } from '@ember/array';
 import Component from '@ember/component';
+import { tracked } from "@glimmer/tracking";
 import { later } from '@ember/runloop';
 import { debug, warn } from '@ember/debug';
 
@@ -36,7 +37,6 @@ import RdfaDocument from '../../utils/rdfa/rdfa-document';
 */
 @classic
 @templateLayout(layout)
-@classNames("container-flex--contain")
 export default class RdfaEditor extends Component {
   /**
    * Plugin profile of the RDFa editor
@@ -241,5 +241,16 @@ export default class RdfaEditor extends Component {
       debug('No RDFa blocks found in currentNode. Cannot hint suggestions.');
     }
 
+  }
+
+  // Toggle RDFA blocks
+  @tracked showRdfaBlocks = false;
+
+  @action
+  toggleRdfaBlocks() {
+    this.showRdfaBlocks = !this.showRdfaBlocks;
+
+    // Focus editor
+    document.getElementsByClassName("say-editor__inner")[0].focus();
   }
 }
