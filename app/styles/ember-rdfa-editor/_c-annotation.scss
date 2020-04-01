@@ -130,7 +130,8 @@
     [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [data-type],
     [property] [property] [property] [property] [property] [property] [property] [data-type],
     [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof],
-    [property] [property] [property] [property] [property] [property] [property] {
+    [property] [property] [property] [property] [property] [property] [property],
+    & [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
       border-bottom: 0;
     }
   }
@@ -222,5 +223,15 @@
 
   span.mark-highlight-manual {
     background-color: transparent;
+  }
+
+  // Hide nested lump node annotations
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
+    margin: 0;
+
+    &:before,
+    &:after {
+      display: none;
+    }
   }
 }
