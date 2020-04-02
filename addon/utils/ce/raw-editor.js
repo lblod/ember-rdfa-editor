@@ -138,7 +138,7 @@ class RawEditor extends EmberObject {
   set currentSelection({startNode, endNode}) {
     const oldSelection = this._currentSelection;
     this._currentSelection = {startNode, endNode};
-    if (startNode.domNode === endNode.domNode) {
+    if (startNode.absolutePosition === endNode.absolutePosition) {
       this.moveCaretInTextNode(startNode.domNode, startNode.relativePosition);
       this.currentNode = startNode.domNode;
     }
