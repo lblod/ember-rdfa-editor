@@ -252,7 +252,6 @@ export default class HinstRegistry extends EmberObject {
     if(updatedRegistry.get('length') !== this.get('registry').get('length')){
       this.replaceRegistryAndNotify(updatedRegistry);
     }
-
   }
 
   /**
@@ -288,7 +287,40 @@ export default class HinstRegistry extends EmberObject {
     this.set('registry', updatedRegistry);
 
     next(() => { this.batchProcessHighlightsUpdates.perform(); });
+  }
 
+  /**
+   * Generic interface for removing hints
+   *
+   * @method removeHints
+   *
+   * @param {Object} options Indicates which hints should be removed
+   * @param {Object} options.hrId Index of the HintsRegistry relative
+   * to which the hints should be removed.
+   * @param {String} options.scope Scope for which the hints should be
+   * removed.  This is most often the name of the plugin.
+   * @param {Array} [options.region] If region is supplied, the hints
+   * in the supplied region will be removed.  A region is an array
+   * containing a start and an end.
+   * @param {Array} [options.rdfaBlocks] If an array of rdfaBlocks is
+   * supplied, hinst will be removed for each of the rdfaBlocks.
+   *
+   * @public
+   */
+  removeHints( options ) {
+    const { hrId, scope } = options;
+
+    if( ! options.rdfaBlocks && ! options.region ){
+      console.warn( "HinstRegistry#removeHints was called without rdfaBlocks or location, no hints will be removed." );
+    }
+
+    if( options.rdfaBlocks ) {
+      this.removeHintsInRdfaBlocks( options.rdfaBlocks, hrId, scope );
+    }
+
+    if( options.region ) {
+      this.removeHintsInRegion( options.region, hrId, scope );
+    }
   }
 
   /**
