@@ -25,7 +25,6 @@
     "css": "node compile-css.js"
   },
   "dependencies": {
-    "@lblod/ember-rdfa-editor-plugin-system-dispatcher": "^0.5.8",
     "@lblod/marawa": "^0.6.0",
     "mdn-polyfills": "^5.16.0",
     "diff-match-patch": "^1.0.4",
@@ -86,7 +85,10 @@
     "node": "8.* || >= 10.*"
   },
   "ember-addon": {
-    "configPath": "tests/dummy/config"
+    "configPath": "tests/dummy/config",
+    "paths": [
+      "lib/plugin-system-dispatcher"
+    ]
   },
   "browserslist": [
     "last 1 Chrome version",
