@@ -12,8 +12,10 @@
  * @constructor
  */
 export default class PluginEditorApi {
-  constructor(editor) {
+  constructor(editor, hintsRegistry, hrId) {
     this._editor = editor;
+    this._hintsRegistry = hintsRegistry;
+    this._hrId = hrId;
   }
 
   /**
@@ -65,7 +67,9 @@ export default class PluginEditorApi {
    * on this selection.
    * @public
    */
-  selectHighlight(range, options) { return this._editor.selectHighlight(range, options); }
+  selectHighlight(range, options) {
+    const updatedLocation = this._hintsRegistry.updateLocationToCurrentIndex(this._hrId, range);
+    return this._editor.selectHighlight(updatedLocation, options); }
 
   /**
    * Selects nodes based on an RDFa context that should be applied.
@@ -110,7 +114,9 @@ export default class PluginEditorApi {
    * regular expression of attribute available on the node.
    * @public
    */
-  selectContext(region, options) { return this._editor.selectContext(region, options); }
+  selectContext(region, options) {
+    const updatedLocation = this._hintsRegistry.updateLocationToCurrentIndex(this._hrId, region);
+    return this._editor.selectContext(updatedLocation, options); }
 
   /**
    * Updates a selection as described above.
