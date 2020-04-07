@@ -31,8 +31,5 @@ module.exports = {
         this.ui.writeLine(`Created ${file}`);
       }
     }
-
-    // setting star as version because the dependency is managed in this addons package.json file
-    return this.addAddonToProject('@lblod/ember-rdfa-editor-plugin-system-dispatcher', '*');
   }
 };
