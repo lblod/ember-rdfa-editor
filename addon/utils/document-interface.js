@@ -22,7 +22,8 @@ export default class PluginEditorApi {
    * If the start and end selection are equal, no range is selected
    * and the index is the offset.
    *
-   * TODO: describe how to use this selection.
+   * Useful if you want to insert something at the current cursor position.
+   * A common use case for plugins that implement the `suggestHints` hook.
    *
    * @property currentSelection
    * @return {Array} The region that is currently selected
