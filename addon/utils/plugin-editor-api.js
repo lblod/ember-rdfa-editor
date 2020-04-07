@@ -14,7 +14,7 @@
 export default class PluginEditorApi {
   constructor(editor, hintsRegistry, hrId) {
     this._editor = editor;
-    this._hintsregistry = hintsRegistry;
+    this._hintsRegistry = hintsRegistry;
     this._hrId = hrId;
   }
 
