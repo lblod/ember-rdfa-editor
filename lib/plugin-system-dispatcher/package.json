@@ -6,7 +6,6 @@
   "dependencies": {
     "babel-plugin-htmlbars-inline-precompile": "*",
     "ember-cli-babel": "*",
-    "ember-cli-htmlbars": "*",
-    "ember-cli-htmlbars-inline-precompile": "*"
+    "ember-cli-htmlbars": "*"
   }
 }
