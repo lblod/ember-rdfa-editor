@@ -9,7 +9,7 @@ export default class LumpNodeMovementObserver {
       const previousNode = oldSelection.startNode.domNode;
       if (previousNode.parentNode && oldSelection.startNode.absolutePosition !== newSelection.startNode.absolutePosition) {
         // node is still part of the domtree
-        const nodeBeforeOldSelection = previousTextNode(oldSelection.startNode.domNode, document.rootNode);
+        const nodeBeforeOldSelection = oldSelection.startNode.domNode.previousSibling;
         if (nodeBeforeOldSelection && isInLumpNode(nodeBeforeOldSelection)) {
           const lumpNode = getParentLumpNode(nodeBeforeOldSelection);
           if (lumpNode.hasAttribute('data-flagged-remove')) {
