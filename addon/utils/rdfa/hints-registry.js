@@ -62,8 +62,8 @@ export default class HinstRegistry extends EmberObject {
     this.set('registryObservers', A());
     this.set('newCardObservers', A());
     this.set('removedCardObservers', A());
-    this.set('higlightsForFutureRemoval', A());
-    this.set('higlightsForFutureInsert', A());
+    this.set('highlightsForFutureRemoval', A());
+    this.set('highlightsForFutureInsert', A());
   }
 
   /**
@@ -279,7 +279,7 @@ export default class HinstRegistry extends EmberObject {
         const matchingRegion = inRegion( entry.location, updatedRegion );
 
         if( matchingPlugin && matchingRegion )
-          this.higlightsForFutureRemoval.push({location: entry.location, hrIdx});
+          this.highlightsForFutureRemoval.push({location: entry.location, hrIdx});
         else
           updatedRegistry.push(entry);
       });
@@ -373,17 +373,17 @@ export default class HinstRegistry extends EmberObject {
       return;
     }
 
-    let updatedHlToRemove = this.higlightsForFutureRemoval.map( entry => {
+    let updatedHlToRemove = this.highlightsForFutureRemoval.map( entry => {
       return this.updateLocationToCurrentIndex(entry.hrIdx, entry.location);
     });
 
-    this.set('higlightsForFutureRemoval', A());
+    this.set('highlightsForFutureRemoval', A());
 
-    let updatedHlToInsert = this.higlightsForFutureInsert.map( entry => {
+    let updatedHlToInsert = this.highlightsForFutureInsert.map( entry => {
       return this.updateLocationToCurrentIndex(entry.hrIdx, entry.location);
     });
 
-    this.set('higlightsForFutureInsert', A());
+    this.set('highlightsForFutureInsert', A());
 
     let hasSameLocation = (loc1, loc2) =>  loc1[0] == loc2[0] && loc1[1] == loc2[1];
 
@@ -472,7 +472,7 @@ export default class HinstRegistry extends EmberObject {
     card.who = who;
     this.updateCardToCurrentIndex(hrIdx, card);
     if( !card.options || !card.options.noHighlight)
-      this.higlightsForFutureInsert.push({location: card.location, hrIdx});
+      this.highlightsForFutureInsert.push({location: card.location, hrIdx});
   }
 
   /**
