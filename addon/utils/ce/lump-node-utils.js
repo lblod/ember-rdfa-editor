@@ -16,7 +16,7 @@ import nextTextNode from './next-text-node';
  * ----
  * - 'property='http://lblod.data.gift/vocabularies/editor/isLumpNode': no prefixed URI will work.
  *   This due to performance reasons of MARAWA, which would slow evertything, as long as no incremental changes are supported.
- *  - wiring: there is currently a dichtomy between CE and RDFA editor, and even though this is contained in CE, whilst using RDFA here
+ *  - wiring: there is currently a dichotomy between CE and RDFA editor, and even though this is contained in CE, whilst using RDFA here
  *            this means it probably should not belong here. So location will change.
  */
 
