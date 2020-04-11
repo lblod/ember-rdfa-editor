@@ -10,7 +10,7 @@ import {
   isLI,
   findPreviousLi
 } from '../dom-helpers';
-import previousTextNode from '../previous-text-node';
+import previousTextNode, { previousVisibleNode} from '../previous-text-node';
 import { isRdfaNode } from '../../rdfa/rdfa-rich-node-helpers';
 import { warn, debug } from '@ember/debug';
 import { A } from '@ember/array';
@@ -184,8 +184,15 @@ export default EmberObject.extend({
       }
       else {
         // find valid position before current position
-        let previousNode = previousTextNode(textNode, this.rawEditor.rootNode);
-        if (previousNode) {
+        // let previousNode = previousVisibleNode(textNode, this.rawEditor.rootNode);
+        let previousNodeSpec = previousVisibleNode(textNode, this.rawEditor.rootNode);
+        const previousNode = previousNodeSpec.node;
+
+        if (previousNodeSpec.jumpedVisibleNode) {
+          this.removeNodesFromTo(textNode, previousNode);
+          shouldContinue = false;
+        }
+        else if (previousNode) {
           if (isInLumpNode(previousNode)) {
             this.handleLumpRemoval(previousNode);
             shouldContinue = false;
