@@ -93,14 +93,24 @@ export default EmberObject.extend({
   },
 
   /**
-   * removes invisibleSpaces and compacts consecutive spaces to 1 space
+   * Removes invisibleSpaces and compacts consecutive spaces to 1 space.
+   *
+   * The \s match matches a bunch of content, as per
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Character_Classes
+   * and we do not want to match all of them.  Currently 160 (&nbsp;
+   * A0) is removed from this list.
+   *
    * @method stringToVisibleText
    * @param {String} text
    * @return {String}
    * @public
    */
   stringToVisibleText(string) {
-    return string.replace(invisibleSpace,'').replace(/\s+/g,' ').replace(/\s+/,' ');
+    // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
+
+    return string
+      .replace(invisibleSpace,'') // TODO: check if invisiblespace is in the list already
+      .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,' ');
   },
 
   /**
@@ -126,7 +136,7 @@ export default EmberObject.extend({
     catch(e) {
       warn(e, { id: 'rdfaeditor.invalidState'});
     }
-},
+  },
 
   backspaceInNonEmptyNode(richNode, position, visibleLength) {
     const textNode = richNode.domNode;
