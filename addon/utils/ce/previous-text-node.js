@@ -258,7 +258,8 @@ export default function previousTextNode(baseNode, rootNode) {
  * node, jumpedVisibleNode indicating whether we jumped a visible
  * node, insertedTextNode indicating we tried to jump to a text node
  * or inserted one, noPreviousNode indicating no previous node could
- * be found inside the current parent.
+ * be found inside the current parent, foundTextNode indicating we
+ * found a text node that could be used.
  */
 export function previousVisibleNode(baseNode, rootNode) {
   const nextNode = findPreviousVisibleApplicableNode(baseNode, rootNode);
@@ -266,7 +267,7 @@ export function previousVisibleNode(baseNode, rootNode) {
     // next node is rootNode, so I'm at the start of the tree
     return { noPreviousNode: true, node: null };
   }
-  if (nextNode.nodeType === Node.ELEMENT_NODE) {
+  else if (nextNode.nodeType === Node.ELEMENT_NODE) {
     if( isVoidElement( nextNode ) ) {
       // insert a space before the empty node and yield that
       const textNode = insertTextNodeWithSpace(baseNode.parentNode, nextNode, false);
@@ -276,10 +277,11 @@ export function previousVisibleNode(baseNode, rootNode) {
       return { insertedTextNode: true, node: insertTextNodeWithSpace(nextNode) };
     }
   }
+  else if (nextNode === null ) {
+    return { noPreviousNode: true, node: null };
+  }
   else {
     // it's a text node
-    if (nextNode === null)
-      throw "previous text node failed";
-    return { noPreviousNode: true, node: null };
+    return { foundTextNode: true, node: nextNode };
   }
 }
