@@ -107,15 +107,16 @@ function isVoidElement(node) {
 /**
  * Determine whether a node's text content is entirely whitespace.
  * from https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM
+ *
  * @method isAllWhitespace
- * @param {DOMNode}  A node implementing the |CharacterData| interface (i.e.,
- *             a |Text|, |Comment|, or |CDATASection| node
- * @return {boolean}    True if all of the text content of |nod| is whitespace,
- *             otherwise false.
+ * @param {DOMNode} node A node implementing the `CharacterData`
+ *  interface (i.e., a `Text`, `Comment`, or `CDATASection` node).
+ * @return {boolean} True if all of the text content of `node` is whitespace,
+ *  otherwise false.
  */
-function isAllWhitespace( nod ) {
+function isAllWhitespace( node ) {
   // Use ECMA-262 Edition 3 String and RegExp features
-  return !(/[^\t\n\r ]/.test(nod.textContent));
+  return !(/[^\t\n\r ]/.test(node.textContent));
 }
 
 
