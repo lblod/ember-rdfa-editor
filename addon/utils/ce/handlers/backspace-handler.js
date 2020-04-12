@@ -12,7 +12,7 @@ import {
 } from '../dom-helpers';
 import previousTextNode, { previousVisibleNode} from '../previous-text-node';
 import { isRdfaNode } from '../../rdfa/rdfa-rich-node-helpers';
-import { warn, debug } from '@ember/debug';
+import { warn, debug, deprecate } from '@ember/debug';
 import { A } from '@ember/array';
 import { isInLumpNode, getParentLumpNode, getPreviousNonLumpTextNode } from '../lump-node-utils';
 import NodeWalker from '@lblod/marawa/node-walker';
@@ -76,7 +76,7 @@ export default EmberObject.extend({
    * @public
    */
   handleEvent() {
-    this.rawEditor.externalDomUpdate('backspace', () => this.backSpace());
+    this.rawEditor.externalDomUpdate('backspace', () => this.backspace());
     return HandlerResponse.create({ allowPropagation: false });
   },
 
@@ -118,11 +118,31 @@ export default EmberObject.extend({
   },
 
   /**
+   * This method was being used instead of backSpace.
+   *
+   * It is left here because the other method was documented with
+   * lowercase capitalization but implemented with the other.  The
+   * differently documented method was indicated as being public but
+   * we did not readily find public references to it in this
+   * repository.
+   *
+   * @method backSpace
+   * @private
+   */
+  backSpace() {
+    deprecate( "backspace-handler#backSpace has been changed to backspace as per documentation.  Use lowercased function name (backspace) instead.", false, {
+      id: "rdaf-editor.content-editable.backSpace",
+      until: "proven-stability eta 2020-09-30"
+    });
+    this.backspace(...arguments);
+  },
+
+  /**
    * executes a backspace
    * @method backspace
    * @public
    */
-  backSpace() {
+  backspace() {
     const position = this.currentSelection[0];
     const textNode = this.currentNode;
     const richNode = this.rawEditor.getRichNodeFor(textNode);
@@ -170,7 +190,7 @@ export default EmberObject.extend({
             this.rawEditor.updateRichNode();
           }
           else {
-            this.backSpace();
+            this.backspace();
           }
         }
       }
