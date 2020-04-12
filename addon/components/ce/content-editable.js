@@ -23,6 +23,7 @@ import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
+import makeInstance from '../../utils/make-native-or-classic-instance';
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -148,14 +149,14 @@ export default class ContentEditable extends Component {
     rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
     this.set('rawEditor', rawEditor);
     const forceParagraph = this.features.isEnabled('editor-force-paragraph');
-    const defaultInputHandlers = [ ArrowHandler.create({rawEditor}),
-                                   HeaderMarkdownHandler.create({rawEditor}),
-                                   EnterHandler.create({rawEditor}),
-                                   BackspaceHandler.create({rawEditor}),
+    const defaultInputHandlers = [ makeInstance( ArrowHandler, {rawEditor}),
+                                   makeInstance( HeaderMarkdownHandler, {rawEditor}),
+                                   makeInstance( EnterHandler, {rawEditor}),
+                                   makeInstance( BackspaceHandler, {rawEditor}),
                                    new TextInputHandler({rawEditor, forceParagraph }),
                                    new DeleteHandler({rawEditor}),
-                                   TabHandler.create({rawEditor}),
-                                   IgnoreModifiersHandler.create({rawEditor}),
+                                   makeInstance( TabHandler, {rawEditor}),
+                                   makeInstance( IgnoreModifiersHandler, {rawEditor}),
                                    new UndoHandler({rawEditor}),
                                    new BoldItalicUnderlineHandler({rawEditor}),
                                    new FallbackInputHandler({rawEditor})
