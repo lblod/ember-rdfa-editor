@@ -209,42 +209,46 @@ export default EmberObject.extend({
   },
 
   backspaceInEmptyNode(textNode) {
-    let shouldContinue = true;
-    while (shouldContinue) {
+    while (true) {
+      const previousNodeSpec = previousVisibleNode(textNode, this.rawEditor.rootNode);
+      const previousNode = previousNodeSpec.node;
+      const previousIsOnlyWhitespace = this.visibleText(previousNode).length == 0 || isAllWhitespace(previousNode);
+
+      // Case for flagged nodes
       if (textNode.parentNode.getAttribute('data-flagged-remove') != "complete" && this.shouldHighlightParentNode(textNode.parentNode, 0)) {
         // if the current node is an empty rdfa node, flag it first and don't delete it yet
         textNode.parentNode.setAttribute('data-flagged-remove', 'complete');
-        shouldContinue = false;
+        return;
       }
+      // Case for non-text but visible node (eg: br)
+      else if (previousNodeSpec.jumpedVisibleNode) {
+        this.removeNodesFromTo(textNode, previousNode);
+        return;
+      }
+      // Case for previous node being a lump node
+      else if (previousNode && isInLumpNode(previousNode)) {
+        this.handleLumpRemoval(previousNode);
+        return;
+      }
+      // NORMAL CASE where a previous node is found
+      else if(previousNode) {
+        this.removeNodesFromTo(textNode, previousNode);
+        this.rawEditor.updateRichNode();
+        // TODO: Do we want to treat all whitespace as one blob of
+        // content which may be removed in all cases?  This should
+        // depend on the visual characteristics which the
+        // isAllWhitespace function does not take into account.
+        if ( previousIsOnlyWhitespace ) {
+          // Rerun the loop with a new starting textNode
+          textNode = previousNode;
+        } else {
+          this.rawEditor.setCarret(previousNode, previousNode.length);
+          this.backspace();
+        }
+      }
+      // No previous node was found
       else {
-        // find valid position before current position
-        // let previousNode = previousVisibleNode(textNode, this.rawEditor.rootNode);
-        let previousNodeSpec = previousVisibleNode(textNode, this.rawEditor.rootNode);
-        const previousNode = previousNodeSpec.node;
-
-        if (previousNodeSpec.jumpedVisibleNode) {
-          this.removeNodesFromTo(textNode, previousNode);
-          shouldContinue = false;
-        }
-        else if (previousNode) {
-          if (isInLumpNode(previousNode)) {
-            this.handleLumpRemoval(previousNode);
-            shouldContinue = false;
-          }
-          else {
-            this.removeNodesFromTo(textNode, previousNode);
-            this.rawEditor.updateRichNode();
-            textNode = previousNode;
-            shouldContinue = this.visibleText(textNode).length == 0 || isAllWhitespace(textNode);
-            if (!shouldContinue) {
-              this.rawEditor.setCarret(textNode, textNode.length);
-            }
-          }
-        }
-        else {
-          debug('no previousnode, not doing anything');
-          shouldContinue = false;
-        }
+        throw "No previous node found for backspace";
       }
     }
   },
