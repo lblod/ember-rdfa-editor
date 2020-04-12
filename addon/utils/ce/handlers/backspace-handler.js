@@ -209,47 +209,42 @@ export default EmberObject.extend({
   },
 
   backspaceInEmptyNode(textNode) {
-    while (true) {
-      const previousNodeSpec = previousVisibleNode(textNode, this.rawEditor.rootNode);
-      const previousNode = previousNodeSpec.node;
-      const previousIsOnlyWhitespace = this.visibleText(previousNode).length == 0 || isAllWhitespace(previousNode);
+    const previousNodeSpec = previousVisibleNode(textNode, this.rawEditor.rootNode);
+    const previousNode = previousNodeSpec.node;
+    const previousIsOnlyWhitespace = this.visibleText(previousNode).length == 0 || isAllWhitespace(previousNode);
 
-      // Case for flagged nodes
-      if (textNode.parentNode.getAttribute('data-flagged-remove') != "complete" && this.shouldHighlightParentNode(textNode.parentNode, 0)) {
-        // if the current node is an empty rdfa node, flag it first and don't delete it yet
-        textNode.parentNode.setAttribute('data-flagged-remove', 'complete');
-        return;
+    // Case for flagged nodes
+    if (textNode.parentNode.getAttribute('data-flagged-remove') != "complete" && this.shouldHighlightParentNode(textNode.parentNode, 0)) {
+      // if the current node is an empty rdfa node, flag it first and don't delete it yet
+      textNode.parentNode.setAttribute('data-flagged-remove', 'complete');
+    }
+    // Case for non-text but visible node (eg: br)
+    else if (previousNodeSpec.jumpedVisibleNode) {
+      this.removeNodesFromTo(textNode, previousNode);
+    }
+    // Case for previous node being a lump node
+    else if (previousNode && isInLumpNode(previousNode)) {
+      this.handleLumpRemoval(previousNode);
+    }
+    // NORMAL CASE where a previous node is found
+    else if(previousNode) {
+      this.removeNodesFromTo(textNode, previousNode);
+      this.rawEditor.updateRichNode();
+      // TODO: Do we want to treat all whitespace as one blob of
+      // content which may be removed in all cases?  This should
+      // depend on the visual characteristics which the
+      // isAllWhitespace function does not take into account.
+      if ( previousIsOnlyWhitespace ) {
+        // Rerun the loop with a new starting textNode
+        this.backspaceInemptyNode( previousNode );
+      } else {
+        this.rawEditor.setCarret(previousNode, previousNode.length);
+        this.backspace();
       }
-      // Case for non-text but visible node (eg: br)
-      else if (previousNodeSpec.jumpedVisibleNode) {
-        this.removeNodesFromTo(textNode, previousNode);
-        return;
-      }
-      // Case for previous node being a lump node
-      else if (previousNode && isInLumpNode(previousNode)) {
-        this.handleLumpRemoval(previousNode);
-        return;
-      }
-      // NORMAL CASE where a previous node is found
-      else if(previousNode) {
-        this.removeNodesFromTo(textNode, previousNode);
-        this.rawEditor.updateRichNode();
-        // TODO: Do we want to treat all whitespace as one blob of
-        // content which may be removed in all cases?  This should
-        // depend on the visual characteristics which the
-        // isAllWhitespace function does not take into account.
-        if ( previousIsOnlyWhitespace ) {
-          // Rerun the loop with a new starting textNode
-          textNode = previousNode;
-        } else {
-          this.rawEditor.setCarret(previousNode, previousNode.length);
-          this.backspace();
-        }
-      }
-      // No previous node was found
-      else {
-        throw "No previous node found for backspace";
-      }
+    }
+    // No previous node was found
+    else {
+      throw "No previous node found for backspace";
     }
   },
 
