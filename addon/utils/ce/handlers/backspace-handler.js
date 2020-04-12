@@ -25,11 +25,42 @@ import NodeWalker from '@lblod/marawa/node-walker';
  * @constructor
  * @extends EmberObject
  */
-export default EmberObject.extend({
-  rootNode: reads('rawEditor.rootNode'),
-  currentSelection: reads('rawEditor.currentSelection'),
-  richNode: reads('rawEditor.richNode'),
-  currentNode: reads('rawEditor.currentNode'),
+export default class BackspaceHandler {
+
+  /**
+   * The editor instance on which we can execute changes.
+   *
+   * @property rawEditor
+   * @type RawEditor
+   * @default null
+   */
+  rawEditor = null;
+
+  /**
+   * Constructs a backspaceHandler instance
+   *
+   * @param {RawEditor} options.rawEditor Instance which will be used
+   * to inspect and update the DOM tree.
+   * @public
+   * @constructor
+   */
+  constructor({ rawEditor }){
+    this.rawEditor = rawEditor;
+  }
+
+  get rootNode(){
+    return this.rawEditor.rootNode;
+  }
+
+  get currentSelection(){
+    return this.rawEditor.currentSelection;
+  }
+  get richNode(){
+    return this.rawEditor.richNode;
+  }
+  get currentNode(){
+    return this.rawEditor.currentNode;
+  }
 
   /**
    * tests this handler can handle the specified event
@@ -41,9 +72,9 @@ export default EmberObject.extend({
   isHandlerFor(event) {
     return event.type === "keydown"
       && event.key === 'Backspace'
-      && this.get('rawEditor.currentSelectionIsACursor')
+      && this.rawEditor.currentSelectionIsACursor
       && this.doesCurrentNodeBelongsToContentEditable();
-  },
+  }
 
   deleteCharacter(textNode, trueRelativePosition) {
     const text = textNode.textContent;
@@ -51,11 +82,11 @@ export default EmberObject.extend({
     textNode.textContent = text.slice(0, trueRelativePosition - slicedText.length) + text.slice(trueRelativePosition);
     this.rawEditor.updateRichNode();
     this.rawEditor.setCarret(textNode, trueRelativePosition - slicedText.length);
-  },
+  }
 
   doesCurrentNodeBelongsToContentEditable() {
     return this.currentNode && this.currentNode.parentNode && this.currentNode.parentNode.isContentEditable;
-  },
+  }
 
   /**
    * given richnode and absolute position, matches position within text node
@@ -67,7 +98,7 @@ export default EmberObject.extend({
    */
   absoluteToRelativePosition(richNode, position) {
     return Math.max(position -  get(richNode, 'start'), 0);
-  },
+  }
 
   /**
    * handle backspace event
@@ -78,7 +109,7 @@ export default EmberObject.extend({
   handleEvent() {
     this.rawEditor.externalDomUpdate('backspace', () => this.backspace());
     return HandlerResponse.create({ allowPropagation: false });
-  },
+  }
 
   /**
    * return to visible text of a node,
@@ -90,7 +121,7 @@ export default EmberObject.extend({
    */
   visibleText(node) {
     return this.stringToVisibleText(node.textContent);
-  },
+  }
 
   /**
    * Removes invisibleSpaces and compacts consecutive spaces to 1 space.
@@ -115,7 +146,7 @@ export default EmberObject.extend({
     return string
       .replace(invisibleSpace,'')
       .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,' ');
-  },
+  }
 
   /**
    * This method was being used instead of backSpace.
@@ -135,7 +166,7 @@ export default EmberObject.extend({
       until: "proven-stability eta 2020-09-30"
     });
     this.backspace(...arguments);
-  },
+  }
 
   /**
    * executes a backspace
@@ -160,7 +191,7 @@ export default EmberObject.extend({
     catch(e) {
       warn(e, { id: 'rdfaeditor.invalidState'});
     }
-  },
+  }
 
   backspaceInNonEmptyNode(richNode, position, visibleLength) {
     const textNode = richNode.domNode;
@@ -206,7 +237,7 @@ export default EmberObject.extend({
         textNode.parentNode.setAttribute('data-flagged-remove', removeType);
       }
     }
-  },
+  }
 
   backspaceInEmptyNode(textNode) {
     const previousNodeSpec = previousVisibleNode(textNode, this.rawEditor.rootNode);
@@ -246,7 +277,7 @@ export default EmberObject.extend({
     else {
       throw "No previous node found for backspace";
     }
-  },
+  }
 
 
   previousNode(node) {
@@ -264,7 +295,7 @@ export default EmberObject.extend({
       throw "node does not have a parent node, not part of editor";
     }
     return previousNode;
-  },
+  }
 
   removeNodesFromTo(nodeAfter, nodeBefore, nodes = A()) {
     var previousNode = this.previousNode(nodeAfter);
@@ -292,7 +323,7 @@ export default EmberObject.extend({
       nodes.pushObject(nodeAfter);
       this.removeNodesFromTo(previousNode, nodeBefore, nodes);
     }
-  },
+  }
 
   /**
    * handles node removal for list items
@@ -320,7 +351,7 @@ export default EmberObject.extend({
     else {
       // no parent, do nothing for now
     }
-  },
+  }
 
   handleLumpRemoval(node) {
     // TODO: This implementation has some issues in that the block may remains highlighted if a user decides not to delete it.
@@ -341,12 +372,12 @@ export default EmberObject.extend({
       // if the lump node wasn't flagged yet, flag it first
       nodeToDeleteAsBlock.setAttribute('data-flagged-remove', 'complete');
     }
-  },
+  }
 
   shouldHighlightParentNode(parentNode, visibleLength) {
     let nodeWalker = new NodeWalker();
     return visibleLength < 5 && parentNode.childNodes.length == 1 && isRdfaNode(nodeWalker.processDomNode(parentNode));
-  },
+  }
   mergeSiblingTextNodes(textNode, richNode) {
     while (textNode.previousSibling && textNode.previousSibling.nodeType === Node.TEXT_NODE) {
       const previousDOMSibling = textNode.previousSibling;
@@ -367,4 +398,4 @@ export default EmberObject.extend({
       nextDOMSibling.remove();
     }
   }
-});
+}
