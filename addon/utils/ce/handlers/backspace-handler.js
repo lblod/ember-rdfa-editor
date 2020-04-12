@@ -100,6 +100,11 @@ export default EmberObject.extend({
    * and we do not want to match all of them.  Currently 160 (&nbsp;
    * A0) is removed from this list.
    *
+   * TODO: this function clearly needs to take the CSS styling into
+   * account.  One can only know positions based on the styling of the
+   * document.  Finding visual positions to jump to thus need to take
+   * this into account.
+   *
    * @method stringToVisibleText
    * @param {String} text
    * @return {String}
@@ -107,9 +112,8 @@ export default EmberObject.extend({
    */
   stringToVisibleText(string) {
     // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
-
     return string
-      .replace(invisibleSpace,'') // TODO: check if invisiblespace is in the list already
+      .replace(invisibleSpace,'')
       .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,' ');
   },
 
