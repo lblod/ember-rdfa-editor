@@ -16,6 +16,7 @@ import { warn, debug } from '@ember/debug';
 import { A } from '@ember/array';
 import { isInLumpNode, getParentLumpNode, getPreviousNonLumpTextNode } from '../lump-node-utils';
 import NodeWalker from '@lblod/marawa/node-walker';
+import { mergeSiblingTextNodes } from './rich-node-tree-modification';
 
 /**
  * Backspace Handler, a event handler to handle the generic backspace case
@@ -112,7 +113,7 @@ export default EmberObject.extend({
     const position = this.currentSelection[0];
     const textNode = this.currentNode;
     const richNode = this.rawEditor.getRichNodeFor(textNode);
-    this.mergeSiblingTextNodes(textNode, richNode);
+    mergeSiblingTextNodes(richNode);
     try {
       let visibleText = this.visibleText(textNode);
       let visibleLength = visibleText.length;
@@ -306,25 +307,5 @@ export default EmberObject.extend({
   shouldHighlightParentNode(parentNode, visibleLength) {
     let nodeWalker = new NodeWalker();
     return visibleLength < 5 && parentNode.childNodes.length == 1 && isRdfaNode(nodeWalker.processDomNode(parentNode));
-  },
-  mergeSiblingTextNodes(textNode, richNode) {
-    while (textNode.previousSibling && textNode.previousSibling.nodeType === Node.TEXT_NODE) {
-      const previousDOMSibling = textNode.previousSibling;
-      const indexOfRichNode = richNode.parent.children.indexOf(richNode);
-      const previousRichSibling = richNode.parent.children[indexOfRichNode-1];
-      textNode.textContent = `${previousDOMSibling.textContent}${textNode.textContent}`;
-      richNode.start = previousRichSibling.start;
-      richNode.parent.children.splice(indexOfRichNode - 1, 1);
-      previousDOMSibling.remove();
-    }
-    while (textNode.nextSibling && textNode.nextSibling.nodeType === Node.TEXT_NODE) {
-      const nextDOMSibling = textNode.nextSibling;
-      const indexOfRichNode = richNode.parent.children.indexOf(richNode);
-      const nextRichSibling = richNode.parent.children[indexOfRichNode+1];
-      textNode.textContent = `${textNode.textContent}${nextDOMSibling.textContent}`;
-      richNode.end = nextRichSibling.end;
-      richNode.parent.children.splice(indexOfRichNode + 1 , 1);
-      nextDOMSibling.remove();
-    }
   }
 });
