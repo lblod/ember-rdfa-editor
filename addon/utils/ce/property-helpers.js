@@ -213,22 +213,39 @@ function applyPropertyOnNode(property, richNode, [start,end]) {
 }
 
 /**
+ * for the provided richnode, returns an array with one text node for each group of (child) textnodes that can be merged
+ * NOTE: only goes one level deep!
+ */
+function getMergableChildNodes(richNode) {
+  if (!richNode.children) {
+    return [];
+  }
+  else {
+    const toBeMerged = [];
+    let lastTextChild;
+    for (let child of richNode.children) {
+      if (child.type == 'text') {
+        lastTextChild = child;
+      }
+      else {
+        if (lastTextChild) {
+          toBeMerged.push(lastTextChild);
+          lastTextChild = null;
+        }
+      }
+    }
+    if (lastTextChild) toBeMerged.push(lastTextChild);
+    return toBeMerged;
+  }
+}
+/**
  * remove a property from a richNode
  */
 function rawCancelProperty(richNode, property) {
   if (richNode.type === 'tag') {
-    // merge textnode children before doing anything
-    let alreadyMerged = false;
-    // loop over a copy
-    for (let child of Array.from(richNode.children)) {
-      console.log(child);
-      if (child.type == 'text' && alreadyMerged == false) {
-        mergeSiblingTextNodes(child);
-        alreadyMerged = true;
-      }
-      else {
-        alreadyMerged = false;
-      }
+    const mergableChildNodes = getMergableChildNodes(richNode);
+    for (let child of mergableChildNodes) {
+      mergeSiblingTextNodes(child);
     }
     if (domNodeIsEqualToProperty(richNode.domNode,property)) {
       // dom node matches the property completely, no extra info set
