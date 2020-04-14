@@ -1,5 +1,7 @@
+import EmberObject from '@ember/object';
 import { positionInRange } from '@lblod/marawa/range-helpers';
 import { analyse as scanContexts } from '@lblod/marawa/rdfa-context-scanner';
+import { rdfaAttributesToTriples } from '@lblod/marawa/rdfa-helpers';
 
 /**
  * Fake class to list helper functions
@@ -184,7 +186,17 @@ function selectContext([start,end], options = {}) {
   }
 
   if ( options.scope == 'outer' || ( options.scope == 'auto' && !foundInnerMatch ) ) {
-    selections = filterOuter(rdfaBlocks, filter, [start, end]);
+
+    // The rdfaBlocks returned by the context scanner don't include the upper part of the dom tree.
+    // But as we are filtering on an outer scope, we might need those parent blocks.
+
+    let parents = [];
+
+    rdfaBlocks.forEach(block => {
+      parents = parents.concat(getParentBlocks(block.semanticNode, block.richNodes[0].rdfaContext));
+    });
+
+    selections = filterOuter(rdfaBlocks.concat(parents), filter, [start, end]);
   }
 
   return { selections };
@@ -372,6 +384,24 @@ function filterOuter(blocks, filter, [start, end]) {
     });
 
   return selections;
+}
+
+function getParentBlocks(semanticNode, contexts, parentBlocks=[]) {
+  if (semanticNode.rdfaAttributes) {
+    console.log(contexts);
+    console.log(rdfaAttributesToTriples([semanticNode.rdfaAttributes]))
+
+    parentBlocks.push(EmberObject.create({
+      context: rdfaAttributesToTriples([semanticNode.rdfaAttributes]),
+      semanticNode: semanticNode
+    }));
+  }
+
+  if (!semanticNode.parent) {
+    return parentBlocks;
+  } else {
+    return getParentBlocks(semanticNode.parent, contexts, parentBlocks);
+  }
 }
 
 export {
