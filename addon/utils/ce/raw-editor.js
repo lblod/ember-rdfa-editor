@@ -563,13 +563,28 @@ class RawEditor extends EmberObject {
     const selection = this.selectHighlight([start,end]);
     applyProperty(selection, this, highlightProperty); // TODO: replace 'this' with proper interface
     // reset the cursor so the browser shows cursor in the correct position
-    if (this.rootNode.contains(richNodeContainingCursor.domNode)) {
-      this.setCarret(richNodeContainingCursor.domNode, this.getRelativeCursorPosition());
+    this.resetCursor(richNodeContainingCursor);
+  }
+
+  /**
+   * reposition cursor based on available information,
+   * useful if you modified the tree (splitting up text nodes for example),
+   * but did not change the text content.
+   * this will try to somewhat smartly place the cursor where it should be
+   *
+   * @param currentRichNode the richnode the cursor was in before you started modifying the tree. 
+   * @method resetCursor
+   * @private
+   */
+  resetCursor(currentRichNode) {
+    const richNode = this.getRichNodeFor(this.currentNode);
+    if (richNode && richNode.start >= this.currentPosition && richNode.end <= this.currentPosition) {
+      this.setCarret(richNode.domNode, Math.max(0,this.currentPosition - richNode.start));
     }
     else {
       // domNode containing cursor no longer exists, we have to reset the cursor in a different node
       // first let's try to find a parent that still exists
-      var newNode = richNodeContainingCursor.parent;
+      var newNode = currentRichNode.parent;
       while (newNode !== null && !this.rootNode.contains(newNode.domNode)) {
         newNode = newNode.parent;
       }
@@ -604,20 +619,11 @@ class RawEditor extends EmberObject {
    * @public
    */
   clearHighlightForLocations(locations){
+    const currentNode = this.getRichNodeFor(this.currentNode);
     for (let location of locations) {
       cancelProperty(this.selectHighlight(location), this, highlightProperty); // todo: replace 'this' with proper interface
-      if (this.currentPosition >= location[0] && this.currentPosition <= location[1]) {
-        // cursor was in highlight, reset cursor
-        const richNode = this.getRichNodeFor(this.currentNode);
-        if (richNode) {
-          this.setCarret(richNode.domNode, Math.max(0,this.currentPosition - richNode.start));
-        }
-        else {
-          this.set('currentNode', null);
-          this.setCurrentPosition(this.currentPosition);
-        }
-      }
     }
+    this.resetCursor(currentNode);
   }
 
 
@@ -1022,8 +1028,10 @@ class RawEditor extends EmberObject {
    */
   setCarret(node, offset, notify = true) {
     const richNode = this.getRichNodeFor(node);
-    if (!richNode)
+    if (!richNode) {
+      console.debug('tried to set carret, but did not find a matching richNode for', node);
       return;
+    }
     if (richNode.type === 'tag' && richNode.children) {
       if (richNode.children.length < offset) {
         warn(`invalid offset ${offset} for node ${tagName(richNode.domNode)} with ${richNode.children } provided to setCarret`, {id: 'contenteditable.invalid-start'});
