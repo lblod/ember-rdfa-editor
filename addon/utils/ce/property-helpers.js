@@ -243,10 +243,6 @@ function getMergableChildNodes(richNode) {
  */
 function rawCancelProperty(richNode, property) {
   if (richNode.type === 'tag') {
-    const mergableChildNodes = getMergableChildNodes(richNode);
-    for (let child of mergableChildNodes) {
-      mergeSiblingTextNodes(child);
-    }
     if (domNodeIsEqualToProperty(richNode.domNode,property)) {
       // dom node matches the property completely, no extra info set
       unwrapDOMNode(richNode.domNode);
@@ -347,7 +343,7 @@ function cancelProperty(selection, doc, property) {
         warn(`cancelProperty does not support cancelling a property to a tag that only partially matches the range`, {id: "content-editable.editor-property"} );
       }
       else {
-          rawCancelProperty(richNode, property);
+        rawCancelProperty(richNode, property);
       }
     }
     else if (richNode.type === "text") {
