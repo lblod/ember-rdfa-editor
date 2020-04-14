@@ -16,7 +16,7 @@ import { warn, debug } from '@ember/debug';
 import { A } from '@ember/array';
 import { isInLumpNode, getParentLumpNode, getPreviousNonLumpTextNode } from '../lump-node-utils';
 import NodeWalker from '@lblod/marawa/node-walker';
-import { mergeSiblingTextNodes } from './rich-node-tree-modification';
+import { mergeSiblingTextNodes } from '../rich-node-tree-modification';
 
 /**
  * Backspace Handler, a event handler to handle the generic backspace case
