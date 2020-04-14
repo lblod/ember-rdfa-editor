@@ -18,7 +18,70 @@ import { isInLumpNode, getParentLumpNode, getPreviousNonLumpTextNode } from '../
 import NodeWalker from '@lblod/marawa/node-walker';
 
 /**
- * Backspace Handler, a event handler to handle the generic backspace case
+ * Backspace Handler, an event handler to handle removing content
+ * behind the cursor.
+ *
+ * This handler tries to remove subsequent DOM content until we have a
+ * clue that something has changed.  What "something has changed"
+ * means can be extended so other use-cases can be catered for.
+ *
+ * ## High level operation
+ *
+ * The general idea of the backspace handler goes as follows:
+ *
+ * - find the innermost thing before the cursor.
+ * - try to remove that thing
+ * - repeat until there is a visual difference
+ *
+ * ## Why do we have plugins?
+ *
+ * Different content-editable implementations may show different
+ * information to the user.  What can be removed and what is visible
+ * may therefore differ.  As such, the backspace handler allows
+ * plugins to register and inform the backspace handler on their
+ * extended interpretation of reality.
+ *
+ * Extensions use hooks to indicate their interpretation of reality.
+ * The inner workings of the backspace handler itself are also
+ * governed by these hooks.
+ *
+ * The downside of these hooks is that it may lead to jumping through
+ * the code to random places.  However, we note that although the
+ * backspace handler should have high cohesion, so should features
+ * which have impact on the backspace handling.  By merging the
+ * backspace handler with features which impact the backspace
+ * handling, the code around such features becomes more distributed,
+ * leading to a lower cohesion on that front.  We hope the locations
+ * of the code will interprets certain alterations will be limited in
+ * practice and assume that having code for specific features together
+ * brings more value than embedding them in terms of backspace.
+ *
+ * ## What can plugins do?
+ *
+ * Plugins are called on various hooks depending on the logic they
+ * need.  Because these hooks describe their understanding of the
+ * world, they can be combined at a high level and should thus not
+ * interfece with each other.  Initial implementation will assume no
+ * interference is possible and will warn on unexpected conflicts.
+ *
+ * ### Decide on removal of item
+ *
+ * Each iteration may desire to remove an element from the DOM tree.
+ * A plugin may indicate that this item should be skipped, that it
+ * cannot be removed, or that it will handle the removal.
+ *
+ * ### Remove the thing
+ *
+ * By default the action of removal is executed on the DOM tree.  Any
+ * plugin may decide to handle the action itself, thereby altering the
+ * DOM tree in a different-than-default way.
+ *
+ * ### Detect visual difference
+ *
+ * Whenever the user presses backspace, a visual difference should
+ * occur.  If a plugin has more information on visual changes, it may
+ * inform a visual change has occurred, causing the backspace handler
+ * to stop removing content.
  *
  * @module contenteditable-editor
  * @class BackspaceHandler
