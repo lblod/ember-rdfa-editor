@@ -11,7 +11,8 @@ import { isAdjacentRange } from '@lblod/marawa/range-helpers';
 import { DEFAULT_TAG_NAME } from './editor-property';
 import {
   replaceRichNodeWith,
-  unwrapRichNode
+  unwrapRichNode,
+  mergeSiblingTextNodes
 } from './rich-node-tree-modification';
 
 const IGNORABLE_ATTRIBUTES=["data-editor-position-level", "data-editor-rdfa-position-level"];
@@ -216,6 +217,19 @@ function applyPropertyOnNode(property, richNode, [start,end]) {
  */
 function rawCancelProperty(richNode, property) {
   if (richNode.type === 'tag') {
+    // merge textnode children before doing anything
+    let alreadyMerged = false;
+    // loop over a copy
+    for (let child of Array.from(richNode.children)) {
+      console.log(child);
+      if (child.type == 'text' && alreadyMerged == false) {
+        mergeSiblingTextNodes(child);
+        alreadyMerged = true;
+      }
+      else {
+        alreadyMerged = false;
+      }
+    }
     if (domNodeIsEqualToProperty(richNode.domNode,property)) {
       // dom node matches the property completely, no extra info set
       unwrapDOMNode(richNode.domNode);
