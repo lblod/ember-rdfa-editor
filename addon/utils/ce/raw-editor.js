@@ -1020,7 +1020,7 @@ class RawEditor extends EmberObject {
    *
    * @public
    */
-  setCarret(node, offset, notify = true) {
+  setCarret(node, offset) {
     const richNode = this.getRichNodeFor(node);
     if (!richNode)
       return;
