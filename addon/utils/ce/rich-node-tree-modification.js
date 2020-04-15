@@ -21,6 +21,28 @@ function wrapRichNode(richNode, wrappingdomNode) {
   richNode.parent = wrappingRichNode;
 }
 
+function  mergeSiblingTextNodes(richNode) {
+  const textNode = richNode.domNode;
+  while (textNode.previousSibling && textNode.previousSibling.nodeType === Node.TEXT_NODE) {
+    const previousDOMSibling = textNode.previousSibling;
+    const indexOfRichNode = richNode.parent.children.indexOf(richNode);
+    const previousRichSibling = richNode.parent.children[indexOfRichNode-1];
+    textNode.textContent = `${previousDOMSibling.textContent}${textNode.textContent}`;
+    richNode.start = previousRichSibling.start;
+    richNode.parent.children.splice(indexOfRichNode - 1, 1);
+    previousDOMSibling.remove();
+  }
+  while (textNode.nextSibling && textNode.nextSibling.nodeType === Node.TEXT_NODE) {
+    const nextDOMSibling = textNode.nextSibling;
+    const indexOfRichNode = richNode.parent.children.indexOf(richNode);
+    const nextRichSibling = richNode.parent.children[indexOfRichNode+1];
+    textNode.textContent = `${textNode.textContent}${nextDOMSibling.textContent}`;
+    richNode.end = nextRichSibling.end;
+    richNode.parent.children.splice(indexOfRichNode + 1 , 1);
+    nextDOMSibling.remove();
+  }
+}
+
 // siblings need to be provided in order (left to right) and should be of the same type
 function mergeSiblings(...richNodes) {
   const firstNode = richNodes[0];
@@ -50,4 +72,4 @@ function unwrapRichNode(richNode) {
   replaceRichNodeWith(richNode, richNode.children);
 }
 
-export { replaceRichNodeWith, wrapRichNode, unwrapRichNode, mergeSiblings };
+export { replaceRichNodeWith, wrapRichNode, unwrapRichNode, mergeSiblings, mergeSiblingTextNodes };
