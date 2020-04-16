@@ -1,7 +1,5 @@
-import EmberObject from '@ember/object';
 import { positionInRange } from '@lblod/marawa/range-helpers';
 import { analyse as scanContexts } from '@lblod/marawa/rdfa-context-scanner';
-import { rdfaAttributesToTriples } from '@lblod/marawa/rdfa-helpers';
 
 /**
  * Fake class to list helper functions
