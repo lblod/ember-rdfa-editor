@@ -8,7 +8,6 @@ import Component from '@ember/component';
 import { tracked } from "@glimmer/tracking";
 import { later } from '@ember/runloop';
 import { debug, warn } from '@ember/debug';
-
 import layout from '../../templates/components/rdfa/rdfa-editor';
 import HintsRegistry from '../../utils/rdfa/hints-registry';
 import EventProcessor from '../../utils/rdfa/event-processor';
