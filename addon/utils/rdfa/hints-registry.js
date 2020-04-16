@@ -266,7 +266,10 @@ export default class HinstRegistry extends EmberObject {
    * @public
    */
   removeHintsInRegion(region, hrIdx, who) {
-   let updatedRegion = (hrIdx ? this.updateLocationToCurrentIndex(hrIdx, region) : region);
+    // Clone region in case it gets manipulated elsewhere
+    region = [...region];
+
+    let updatedRegion = (hrIdx ? this.updateLocationToCurrentIndex(hrIdx, region) : region);
 
     const inRegion = (location, region) => {
       return location[0] >= region[0] && location[1] <= region[1];
@@ -470,6 +473,8 @@ export default class HinstRegistry extends EmberObject {
    */
   _addHint(hrIdx, who, card) {
     card.who = who;
+    // clone location to ensure no external edits happen
+    card.location = [...card.location];
     this.updateCardToCurrentIndex(hrIdx, card);
     if( !card.options || !card.options.noHighlight)
       this.higlightsForFutureInsert.push({location: card.location, hrIdx});
