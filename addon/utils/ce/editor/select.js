@@ -186,8 +186,8 @@ function selectContext([start,end], options = {}) {
   }
 
   if ( options.scope == 'outer' || ( options.scope == 'auto' && !foundInnerMatch ) ) {
-    // The rdfaBlocks returned by the context scanner don't include the upper part of the dom tree.
-    // As we are filtering on an outer scope, we might need those parent blocks.
+    /* The rdfaBlocks returned by the context scanner don't include the upper part of the dom tree.
+       As we are filtering on an outer scope, we might need those parent blocks. */
     let parentBlocks = [];
     rdfaBlocks.forEach(block => {
       parentBlocks = parentBlocks.concat(block.getParentBlocks(block));
@@ -382,22 +382,6 @@ function filterOuter(blocks, filter, [start, end]) {
 
   return selections;
 }
-
-/* function getParentBlocks(richNode, parentBlocks=[]) {
-  if (richNode.rdfaAttributes) {
-    parentBlocks.push(EmberObject.create({
-      context: rdfaAttributesToTriples(richNode.rdfaContext),
-      richNode: richNode,
-      semanticNode: richNode
-    }));
-  }
-
-  if (!richNode.parent) {
-    return parentBlocks;
-  } else {
-    return getParentBlocks(richNode.parent, parentBlocks);
-  }
-} */
 
 export {
   selectCurrentSelection,
