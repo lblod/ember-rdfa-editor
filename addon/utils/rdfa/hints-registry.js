@@ -701,7 +701,7 @@ export default class HinstRegistry extends EmberObject {
       // Nothing moved in this index entry
       return false;
     }
-    else if(index.operation === 'insert' && (index.startIdx <= location[0])) {
+    else if(index.operation === 'insert' && (index.startIdx < location[0])) {
       // Insert happened strictly before our location (we want regions to grow)
       return true;
     }
