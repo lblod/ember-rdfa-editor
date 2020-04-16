@@ -44,6 +44,11 @@ function  mergeSiblingTextNodes(richNode) {
 }
 
 // siblings need to be provided in order (left to right) and should be of the same type
+/**
+ * Bluntly merges richnodes, left to right
+ *
+ * @param {Array<RichNode>} richNodes Set of RichNodes which should be merged.
+ */
 function mergeSiblings(...richNodes) {
   const firstNode = richNodes[0];
   if (firstNode.type !== 'text' || firstNode !== 'tag')
