@@ -59,6 +59,7 @@ function propertyIsEnabledOnLeafNodes(richnode, property) {
 
 /**
  * apply a property to an existing dom node
+ *
  * @method rawApplyProperty
  * @param DOMElement domNode
  * @param EditorProperty property
@@ -107,6 +108,9 @@ function applyProperty(selection, doc, property, calledFromCancel) {
     // cancel first to avoid duplicate tags
     cancelProperty(selection, doc, property);
   }
+
+  // TODO: This is probably not the way to go about it, but it addresses the current problem.
+  selection = doc.selectHighlight(selection.selectedHighlightRange);
 
   let startingNodes = findWrappingSuitableNodes(selection);
   if (selection.selectedHighlightRange) {
@@ -362,7 +366,7 @@ function cancelProperty(selection, doc, property) {
         }
         if (currentNode.end > end) {
           // reapply property on postfix
-          const sel = doc.selectHighlight([ end+1, currentNode.end]);
+          const sel = doc.selectHighlight([ end, currentNode.end]);
           applyProperty(sel, doc, property, true);
         }
       }
