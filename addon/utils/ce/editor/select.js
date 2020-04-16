@@ -186,17 +186,14 @@ function selectContext([start,end], options = {}) {
   }
 
   if ( options.scope == 'outer' || ( options.scope == 'auto' && !foundInnerMatch ) ) {
-
     // The rdfaBlocks returned by the context scanner don't include the upper part of the dom tree.
-    // But as we are filtering on an outer scope, we might need those parent blocks.
-
-    let parents = [];
-
+    // As we are filtering on an outer scope, we might need those parent blocks.
+    let parentBlocks = [];
     rdfaBlocks.forEach(block => {
-      parents = parents.concat(getParentBlocks(block.semanticNode, block.richNodes[0].rdfaContext));
+      parentBlocks = parentBlocks.concat(block.getParentBlocks(block));
     });
 
-    selections = filterOuter(rdfaBlocks.concat(parents), filter, [start, end]);
+    selections = filterOuter(rdfaBlocks.concat(parentBlocks), filter, [start, end]);
   }
 
   return { selections };
@@ -370,7 +367,7 @@ function filterOuter(blocks, filter, [start, end]) {
   let selections = [];
 
   blocks
-    .filter(block => block.semanticNode.rdfaAttributes)
+    .filter(block => block.semanticNode && block.semanticNode.rdfaAttributes)
     .filter(block => block.semanticNode.containsRegion(start, end))
     .forEach( function(block) {
       if ( isMatchingContext(block, filter) ) {
@@ -386,23 +383,21 @@ function filterOuter(blocks, filter, [start, end]) {
   return selections;
 }
 
-function getParentBlocks(semanticNode, contexts, parentBlocks=[]) {
-  if (semanticNode.rdfaAttributes) {
-    console.log(contexts);
-    console.log(rdfaAttributesToTriples([semanticNode.rdfaAttributes]))
-
+/* function getParentBlocks(richNode, parentBlocks=[]) {
+  if (richNode.rdfaAttributes) {
     parentBlocks.push(EmberObject.create({
-      context: rdfaAttributesToTriples([semanticNode.rdfaAttributes]),
-      semanticNode: semanticNode
+      context: rdfaAttributesToTriples(richNode.rdfaContext),
+      richNode: richNode,
+      semanticNode: richNode
     }));
   }
 
-  if (!semanticNode.parent) {
+  if (!richNode.parent) {
     return parentBlocks;
   } else {
-    return getParentBlocks(semanticNode.parent, contexts, parentBlocks);
+    return getParentBlocks(richNode.parent, parentBlocks);
   }
-}
+} */
 
 export {
   selectCurrentSelection,
