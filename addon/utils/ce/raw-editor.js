@@ -587,8 +587,8 @@ class RawEditor extends EmberObject {
     else if(oldRichNodecontainingCursor) {
       // domNode containing cursor no longer exists, we have to reset the cursor in a different node
       // first let's try to find a parent that still exists
-      var newNode = oldRichNodecontainingCursor.parent;
-      while (newNode !== null && !this.rootNode.contains(newNode.domNode)) {
+      let newNode = oldRichNodecontainingCursor;
+      while (newNode && ! newNode.domNode == this.rootNode && !this.rootNode.contains(newNode.domNode)) {
         newNode = newNode.parent;
       }
       // set the currentnode to that parent for better positioning
