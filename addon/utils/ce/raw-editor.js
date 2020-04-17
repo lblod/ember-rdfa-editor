@@ -570,27 +570,35 @@ class RawEditor extends EmberObject {
    * reposition cursor based on available information,
    * useful if you modified the tree (splitting up text nodes for example),
    * but did not change the text content.
-   * this will try to somewhat smartly place the cursor where it should be
+   * this will try to somewhat smartly place the cursor where it should be.
+   * NOTE: if the currentSelection was a selection, this will place the cursor at the end of the selection!
+   * NOTE: revisit this behaviour if/when the editor supports setting an actual selection and not a cursor position
    *
-   * @param currentRichNode the richnode the cursor was in before you started modifying the tree. 
+   * @param oldRichNodecontainingCursor the richnode the cursor was in before you started modifying the tree.
    * @method resetCursor
    * @private
    */
-  resetCursor(currentRichNode) {
+  resetCursor(oldRichNodecontainingCursor) {
     const richNode = this.getRichNodeFor(this.currentNode);
-    if (richNode && richNode.start >= this.currentPosition && richNode.end <= this.currentPosition) {
-      this.setCarret(richNode.domNode, Math.max(0,this.currentPosition - richNode.start));
+    const currentPosition = this.currentSelection[1];
+    if (richNode && richNode.start >= currentPosition && richNode.end <= currentPosition) {
+      this.setCarret(richNode.domNode, Math.max(0,currentPosition - richNode.start));
     }
-    else {
+    else if(oldRichNodecontainingCursor) {
       // domNode containing cursor no longer exists, we have to reset the cursor in a different node
       // first let's try to find a parent that still exists
-      var newNode = currentRichNode.parent;
+      var newNode = oldRichNodecontainingCursor.parent;
       while (newNode !== null && !this.rootNode.contains(newNode.domNode)) {
         newNode = newNode.parent;
       }
       // set the currentnode to that parent for better positioning
       this.currentNode = newNode.domNode;
-      this.setCurrentPosition(this.currentPosition);
+      this.setCurrentPosition(currentPosition);
+    }
+    else {
+      console.debug("have to guess cursor position, no previous richnode was provided!"); // eslint-disable-line no-console
+      this.currentNode = null;
+      this.setCurrentPosition(currentPosition);
     }
   }
 
@@ -1034,7 +1042,7 @@ class RawEditor extends EmberObject {
   setCarret(node, offset, notify = true) {
     const richNode = this.getRichNodeFor(node);
     if (!richNode) {
-      console.debug('tried to set carret, but did not find a matching richNode for', node);
+      console.debug('tried to set carret, but did not find a matching richNode for', node); // eslint-disable-line no-console
       return;
     }
     if (richNode.type === 'tag' && richNode.children) {
