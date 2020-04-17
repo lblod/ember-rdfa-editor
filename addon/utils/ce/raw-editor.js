@@ -728,63 +728,41 @@ class RawEditor extends EmberObject {
    * @private
    */
   findSuitableNodeInRichNode(node, position) {
-    if (!node)
-      throw new Error('no node provided to findSuitableNodeinRichNode');
-    let type = node.type;
-    // in some browsers voidElements don't implement the interface of an element
-    // for positioning we provide it's own type
-    if (isVoidElement(node.domNode))
-      type = 'void';
-    if (type === 'text') {
-      return node;
+    if (!node) {
+      console.warn('no node provided to findSuitableNodeinRichNode'); // eslint-disable-line no-console
+      return null;
     }
-    else if (type === 'void') {
-      let textNode = document.createTextNode(invisibleSpace);
-      let parent = get(node, 'parent');
-      let parentDomNode = get(parent,'domNode');
-      let children = get(parent, 'children');
-      parentDomNode.replaceChild(textNode, node.domNode);
-      if(children.length > 1 && tagName(get(node,'domNode')) === 'br')
-        parentDomNode.insertBefore(document.createElement('br'), textNode); // new br to work around funky br type="moz"
-      else if (children.length !== 1 || tagName(get(node,'domNode')) !== 'br')
-        parentDomNode.insertBefore(node.domNode, textNode); // restore original void element
-      this.updateRichNode();
-      return this.getRichNodeFor(textNode);
+    const appropriateTextNodeFilter = node =>
+        node.start <= position && node.end >= position
+          && node.type === 'text'
+          && ! isList(node.parent.domNode);
+    let textNodeContainingPosition = flatMap(node, appropriateTextNodeFilter, true);
+    if (textNodeContainingPosition.length == 1) {
+      // we've found a text node! huzah!
+      return textNodeContainingPosition.firstObject;
     }
-    else if (type === 'tag') {
-      if (this.isTagWithOnlyABreakAsChild(node)) {
-        debug('suitable node: is tag with only a break as child');
-        let domNode = node.domNode;
-        let textNode = document.createTextNode(invisibleSpace);
-        domNode.replaceChild(textNode, domNode.firstChild);
+    else {
+      const appropriateElementFilter = node =>
+            node.start <= position && node.end >= position
+            && node.type === 'tag'
+            && ! isList(node.domNode);
+      const elementContainingPosition = flatMap(node, appropriateTextNodeFilter, true);
+      if (elementContainingPosition.length == 1) {
+        const newTextNode = nextTextNode(elementContainingPosition.firstObject);
         this.updateRichNode();
-        return this.getRichNodeFor(textNode);
+        return this.richNodeFor(newTextNode);
       }
       else {
-        debug('suitable node: using deepest matching node');
-        let appropriateNodeFilter = node =>
-            node.start <= position && node.end >= position
-            && ! isVoidElement(node.domNode)
-            && ! isIgnorableElement(node.domNode)
-            && node.type !== 'other';
-        let nodesContainingPosition = flatMap(node, appropriateNodeFilter);
-        if (nodesContainingPosition.length > 0) {
-          let deepestContainingNode = nodesContainingPosition[nodesContainingPosition.length -1];
-          if (deepestContainingNode === node) {
-            debug(`creating new textnode in provided node of type ${node.type} range ${node.start} ${node.end}`);
-            return this.insertTextNodeWithSpace(node);
-          }
-          else {
-            debug('retrying');
-            return this.findSuitableNodeInRichNode(deepestContainingNode, position);
-          }
+        if (node.parent) {
+          console.debug(`no valid node found for provided position ${position} and richNode, going up one node`, node); // eslint-disable-line no-console
+          return this.findSuitableNodeInRichNode(node.parent, position);
         }
         else {
-          return this.insertTextNodeWithSpace(node);
+          console.warn(`no valid node found for provided position ${position} and richNode`, node); // eslint-disable-line no-console
+          return null;
         }
       }
     }
-    throw new Error(`unsupported node type ${type} for richNode`);
   }
 
   /**
