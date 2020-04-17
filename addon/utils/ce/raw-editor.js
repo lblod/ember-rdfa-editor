@@ -13,6 +13,7 @@ import {
   removeNode,
   isVoidElement,
   isIgnorableElement,
+  isList,
   tagName,
   createElementsFromHTML
 } from './dom-helpers';
