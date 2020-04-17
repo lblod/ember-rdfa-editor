@@ -208,19 +208,25 @@ const listFilterKeywords = ['typeof', 'property'];
 */
 function isMatchingRdfaAttribute(rdfaAttributes, filter, keys) {
   const isMatchingValue = function(rdfaAttributes, key, value) {
+    // rdfaAttributes don't match 100% with the pernet keys.  We
+    // should build an extensive map to compare the two and provide
+    // that as a data object to query inside these functions.  The
+    // current solution is a band-aid.
+    const rdfaAttributesKey = key == "property" ? "properties" : key;
+
     if ( listFilterKeywords.includes(key) ) {
-      return value.reduce( (isMatch, v) => isMatch && (rdfaAttributes[key] || []).includes(v) , true);
+      return value.reduce( (isMatch, v) => isMatch && (rdfaAttributes[rdfaAttributesKey] || []).includes(v) , true);
     } else {
       if ( key == 'resource') {
         return rdfaAttributes['resource'] == value || rdfaAttributes['about'] == value;
       } else {
-        if(!rdfaAttributes.hasOwnProperty(key)) {
-          return false
+        if(!rdfaAttributes.hasOwnProperty(rdfaAttributesKey)) {
+          return false;
         }
         if(value instanceof RegExp) {
-          return rdfaAttributes[key].match(value)
+          return rdfaAttributes[rdfaAttributesKey].match(value);
         } else {
-          return rdfaAttributes[key] == value;
+          return rdfaAttributes[rdfaAttributesKey] == value;
         }
       }
     }
@@ -286,7 +292,7 @@ function isMatchingContext(block, filter) {
 
   if(isMatch && filter.content) {
     hasAnyFilters = true;
-    isMatch = isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['content'])
+    isMatch = isMatchingRdfaAttribute(block.semanticNode.rdfaAttributes, filter, ['content']);
   }
 
   return isMatch && hasAnyFilters; // If no filter criteria matches nothing by default
