@@ -747,9 +747,11 @@ class RawEditor extends EmberObject {
             node.start <= position && node.end >= position
             && node.type === 'tag'
             && ! isList(node.domNode);
-      const elementContainingPosition = flatMap(node, appropriateTextNodeFilter, true);
-      if (elementContainingPosition.length == 1) {
-        const newTextNode = nextTextNode(elementContainingPosition.firstObject);
+      const elementContainingPosition = flatMap(node, appropriateTextNodeFilter);
+      if (elementContainingPosition.length > 0) {
+        // we have to guess which element matches, taking the last matching one is a strategy that sort of works
+        // this gives us the deepest/last node matching. it's horrid in the case of consecutive br's for example
+        const newTextNode = nextTextNode(elementContainingPosition.lastObject);
         this.updateRichNode();
         return this.richNodeFor(newTextNode);
       }
