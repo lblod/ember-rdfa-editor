@@ -6,6 +6,7 @@ import { task } from 'ember-concurrency-decorators';
 import DiffMatchPatch from 'diff-match-patch';
 import { walk as walkDomNode } from '@lblod/marawa/node-walker';
 import {
+  isList,
   isDisplayedAsBlock,
   invisibleSpace,
   insertTextNodeWithSpace,
@@ -13,7 +14,6 @@ import {
   removeNode,
   isVoidElement,
   isIgnorableElement,
-  isList,
   tagName,
   createElementsFromHTML
 } from './dom-helpers';
