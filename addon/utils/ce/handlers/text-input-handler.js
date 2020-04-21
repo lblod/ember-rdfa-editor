@@ -80,6 +80,8 @@ export default class TextInputHandler {
       let endNode = this.rawEditor.getRichNodeFor(range.endContainer);
       if (startNode && startNode === endNode && startNode.type === 'text')
         return true;
+      else
+        return false;
     }
     else
       return false;
