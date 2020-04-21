@@ -151,8 +151,8 @@
   }
 
   // Making sure list items annotations look good too
-  ul.bullet-list:not(.article-list),
-  ol.numbered-list:not(.article-list) {
+  ul:not(.article-list),
+  ol:not(.article-list) {
     // Level 1
     > li .mark-highlight-manual,
     > li [typeof],
