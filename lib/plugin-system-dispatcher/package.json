@@ -1,0 +1,11 @@
+{
+  "name": "plugin-system-dispatcher",
+  "keywords": [
+    "ember-addon"
+  ],
+  "dependencies": {
+    "babel-plugin-htmlbars-inline-precompile": "*",
+    "ember-cli-babel": "*",
+    "ember-cli-htmlbars": "*"
+  }
+}

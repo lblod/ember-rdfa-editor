@@ -335,7 +335,8 @@ function findWrappingSuitableNodes(selection) {
     else {
       // walk up the tree as longs as we fit within the range
       let current = richNode;
-      while(current.parent && current.parent.start >= start && current.parent.end <= end) {
+      let isNotRootNode = function(richNode) { return richNode.parent; };
+      while(current.parent && isNotRootNode(current.parent) && current.parent.start >= start && current.parent.end <= end) {
         current = current.parent;
       }
       if (!domNodes.includes(current.domNode)) {

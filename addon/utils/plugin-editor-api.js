@@ -12,8 +12,10 @@
  * @constructor
  */
 export default class PluginEditorApi {
-  constructor(editor) {
+  constructor(editor, hintsRegistry, hrId) {
     this._editor = editor;
+    this._hintsRegistry = hintsRegistry;
+    this._hrId = hrId;
   }
 
   /**
@@ -22,7 +24,8 @@ export default class PluginEditorApi {
    * If the start and end selection are equal, no range is selected
    * and the index is the offset.
    *
-   * TODO: describe how to use this selection.
+   * Useful if you want to insert something at the current cursor position.
+   * A common use case for plugins that implement the `suggestHints` hook.
    *
    * @property currentSelection
    * @return {Array} The region that is currently selected
@@ -64,7 +67,9 @@ export default class PluginEditorApi {
    * on this selection.
    * @public
    */
-  selectHighlight(range, options) { return this._editor.selectHighlight(range, options); }
+  selectHighlight(range, options) {
+    const updatedLocation = this._hintsRegistry.updateLocationToCurrentIndex(this._hrId, range);
+    return this._editor.selectHighlight(updatedLocation, options); }
 
   /**
    * Selects nodes based on an RDFa context that should be applied.
@@ -109,7 +114,9 @@ export default class PluginEditorApi {
    * regular expression of attribute available on the node.
    * @public
    */
-  selectContext(region, options) { return this._editor.selectContext(region, options); }
+  selectContext(region, options) {
+    const updatedLocation = this._hintsRegistry.updateLocationToCurrentIndex(this._hrId, region);
+    return this._editor.selectContext(updatedLocation, options); }
 
   /**
    * Updates a selection as described above.

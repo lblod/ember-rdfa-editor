@@ -11,7 +11,8 @@ import { isAdjacentRange } from '@lblod/marawa/range-helpers';
 import { DEFAULT_TAG_NAME } from './editor-property';
 import {
   replaceRichNodeWith,
-  unwrapRichNode
+  unwrapRichNode,
+  mergeSiblingTextNodes
 } from './rich-node-tree-modification';
 
 const IGNORABLE_ATTRIBUTES=["data-editor-position-level", "data-editor-rdfa-position-level"];
@@ -58,6 +59,7 @@ function propertyIsEnabledOnLeafNodes(richnode, property) {
 
 /**
  * apply a property to an existing dom node
+ *
  * @method rawApplyProperty
  * @param DOMElement domNode
  * @param EditorProperty property
@@ -106,6 +108,9 @@ function applyProperty(selection, doc, property, calledFromCancel) {
     // cancel first to avoid duplicate tags
     cancelProperty(selection, doc, property);
   }
+
+  // TODO: This is probably not the way to go about it, but it addresses the current problem.
+  selection = doc.selectHighlight(selection.selectedHighlightRange);
 
   let startingNodes = findWrappingSuitableNodes(selection);
   if (selection.selectedHighlightRange) {
@@ -212,6 +217,32 @@ function applyPropertyOnNode(property, richNode, [start,end]) {
 }
 
 /**
+ * for the provided richnode, returns an array with one text node for each group of (child) textnodes that can be merged
+ * NOTE: only goes one level deep!
+ */
+function getMergableChildNodes(richNode) {
+  if (!richNode.children) {
+    return [];
+  }
+  else {
+    const toBeMerged = [];
+    let lastTextChild;
+    for (let child of richNode.children) {
+      if (child.type == 'text') {
+        lastTextChild = child;
+      }
+      else {
+        if (lastTextChild) {
+          toBeMerged.push(lastTextChild);
+          lastTextChild = null;
+        }
+      }
+    }
+    if (lastTextChild) toBeMerged.push(lastTextChild);
+    return toBeMerged;
+  }
+}
+/**
  * remove a property from a richNode
  */
 function rawCancelProperty(richNode, property) {
@@ -316,7 +347,7 @@ function cancelProperty(selection, doc, property) {
         warn(`cancelProperty does not support cancelling a property to a tag that only partially matches the range`, {id: "content-editable.editor-property"} );
       }
       else {
-          rawCancelProperty(richNode, property);
+        rawCancelProperty(richNode, property);
       }
     }
     else if (richNode.type === "text") {
@@ -335,7 +366,7 @@ function cancelProperty(selection, doc, property) {
         }
         if (currentNode.end > end) {
           // reapply property on postfix
-          const sel = doc.selectHighlight([ end+1, currentNode.end]);
+          const sel = doc.selectHighlight([ end, currentNode.end]);
           applyProperty(sel, doc, property, true);
         }
       }

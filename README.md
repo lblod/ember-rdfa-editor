@@ -101,8 +101,11 @@ If you are using `ember-cli-sass` you can override the variables to provide a cu
 
 
 ## Compatibility
-
 * Ember.js v3.12 or above
+* Ember CLI v2.13 or above
+* Node.js v10 or above
+
+
 
 ## Contributing
 
