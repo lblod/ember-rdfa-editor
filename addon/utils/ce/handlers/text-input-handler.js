@@ -43,20 +43,24 @@ export default class TextInputHandler {
    */
   handleEvent(event) {
     let input = event.key;
-    if (this.rawEditor.currentSelectionIsACursor) {
+    const range = window.getSelection().getRangeAt(0);
+    if (range.collapsed) {
       const position = this.rawEditor.currentPosition;
       this.insertText(input, position);
       this.rawEditor.setCurrentPosition(position + input.length);
     }
     else {
-      let range = window.getSelection().getRangeAt(0);
-      let rawEditor = this.rawEditor;
-      let startNode = rawEditor.getRichNodeFor(range.startContainer);
-      let start = rawEditor.calculatePosition(startNode, range.startOffset);
-      let endNode = rawEditor.getRichNodeFor(range.endContainer);
-      let end = rawEditor.calculatePosition(endNode, range.endOffset);
-      rawEditor.replaceTextWithHTML(start, end, input);
-      rawEditor.setCurrentPosition(start + input.length);
+      // currently we only support selections inside a text block that start and end in the same text block
+      // this is enforced in the isHandlerFor block.
+      // TODO: should typing over selections move to a separate handler?
+      const rawEditor = this.rawEditor;
+      const textNode = range.startContainer;
+      const prefix = textNode.textContent.slice(0, range.startOffset);
+      const infix = input == " " ? NON_BREAKING_SPACE : input;
+      const postfix = textNode.textContent.slice(range.endOffset);
+      textNode.textContent = `${prefix}${infix}${postfix}`;
+      rawEditor.updateRichNode();
+      rawEditor.setCarret(range.startContainer, range.startOffset + 1);
     }
     return HandlerResponse.create(
       {
