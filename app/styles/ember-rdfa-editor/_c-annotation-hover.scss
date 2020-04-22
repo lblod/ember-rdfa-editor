@@ -19,8 +19,8 @@
   .h5,
   h6,
   .h6,
-  ul,
-  ol,
+  ul:not(ul ul),
+  ol:not(ol ol),
   [property="dc:title"],
   [property="dc:title foaf:name"],
   [typeof~="besluit:Besluit"],
@@ -33,7 +33,7 @@
   [typeof="besluit:Zitting"],
   [property="openbaar"],
   [property^="ext"]:not([property="ext:heeftAfwezigeBijAgendapunt"]):not(span),
-  [data-editor-highlight="true"]:not(li):not(span),
+  [data-editor-highlight="true"]:not(ol):not(ul):not(li):not(span),
   [typeof="http://data.vlaanderen.be/ns/besluit#Besluit http://data.vlaanderen.be/ns/besluit#AanvullendReglement"],
   [typeof="besluit:Artikel"],
   [typeof="mobiliteit:Opstelling"] {
@@ -147,153 +147,6 @@
     &:before,
     &:hover:before {
       display: none;
-    }
-  }
-
-  // Making sure list items annotations look good too
-  ul.bullet-list:not(.article-list),
-  ol.numbered-list:not(.article-list) {
-    // Level 1
-    > li .mark-highlight-manual,
-    > li [typeof],
-    > li [property],
-    > li [about],
-    > li [resource],
-    > li [data-type],
-    > li [data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small});
-      }
-    }
-
-    // Level 2
-    > li li .mark-highlight-manual,
-    > li li [typeof],
-    > li li [property],
-    > li li [about],
-    > li li [resource],
-    > li li [data-type],
-    > li li [data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 2});
-      }
-    }
-
-    // Level 3
-    > li li li > .mark-highlight-manual,
-    > li li li > [typeof],
-    > li li li > [property],
-    > li li li > [about],
-    > li li li > [resource],
-    > li li li > [data-type],
-    > li li li > [data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 3});
-      }
-    }
-
-    // Level 4
-    > li li li li > .mark-highlight-manual,
-    > li li li li > [typeof],
-    > li li li li > [property],
-    > li li li li > [about],
-    > li li li li > [resource],
-    > li li li li > [data-type],
-    > li li li li > [data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 4});
-      }
-    }
-
-    // Level 5
-    > li li li li li > .mark-highlight-manual,
-    > li li li li li > [typeof],
-    > li li li li li > [property],
-    > li li li li li > [about],
-    > li li li li li > [resource],
-    > li li li li li > [data-type],
-    > li li li li li > [data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 5});
-      }
-    }
-
-    // Level 6
-    > li li li li li li > .mark-highlight-manual,
-    > li li li li li li > [typeof],
-    > li li li li li li > [property],
-    > li li li li li li > [about],
-    > li li li li li li > [resource],
-    > li li li li li li > [data-type],
-    > li li li li li li > [data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 6});
-      }
-    }
-
-    // Level 7
-    > li li li li li li li > .mark-highlight-manual,
-    > li li li li li li li > [typeof],
-    > li li li li li li li > [property],
-    > li li li li li li li > [about],
-    > li li li li li li li > [resource],
-    > li li li li li li li > [data-type],
-    > li li li li li li li > [data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 7});
-      }
-    }
-
-    // Level 8
-    > li li li li li li li li > .mark-highlight-manual,
-    > li li li li li li li li > [typeof],
-    > li li li li li li li li > [property],
-    > li li li li li li li li > [about],
-    > li li li li li li li li > [resource],
-    > li li li li li li li li > [data-type],
-    > li li li li li li li li > [data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 8});
-      }
-    }
-
-    // Level 9
-    > li li li li li li li li li > .mark-highlight-manual,
-    > li li li li li li li li li > [typeof],
-    > li li li li li li li li li > [property],
-    > li li li li li li li li li > [about],
-    > li li li li li li li li li > [resource],
-    > li li li li li li li li li > [data-type],
-    > li li li li li li li li li > [data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 9});
-      }
-    }
-
-    // Level 10
-    > li li li li li li li li li li > .mark-highlight-manual,
-    > li li li li li li li li li li > [typeof],
-    > li li li li li li li li li li > [property],
-    > li li li li li li li li li li > [about],
-    > li li li li li li li li li li > [resource],
-    > li li li li li li li li li li > [data-type],
-    > li li li li li li li li li li > [data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 10});
-      }
-    }
-
-    // Level 11
-    > li li li li li li li li li li > .mark-highlight-manual,
-    > li li li li li li li li li li > [typeof],
-    > li li li li li li li li li li > [property],
-    > li li li li li li li li li li > [about],
-    > li li li li li li li li li li > [resource],
-    > li li li li li li li li li li > [data-type],
-    > li li li li li li li li li li > [data-editor-highlight="true"] {
-      &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 11});
-      }
     }
   }
 

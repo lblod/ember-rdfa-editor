@@ -9,7 +9,7 @@ var buf = fs.readFileSync(inputFile, "utf8");
 // Compile main file
 var result = sass.renderSync({
   data: buf,
-  includePaths: ['app/styles', 'node_modules/ember-basic-dropdown/app/styles/']
+  includePaths: ['app/styles']
 });
 
 fs.writeFileSync(outputFile, result.css);

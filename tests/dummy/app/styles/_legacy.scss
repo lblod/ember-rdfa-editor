@@ -11,36 +11,10 @@ pre {
   background-color: lightgrey;
 }
 
-[data-editor-highlight="true"] {
-	background-color: #ffe615;
-}
-
-[data-flagged-remove="almost-complete"] {
-  background-color: #666;
-}
-
-[data-flagged-remove="complete"] {
-  background-color: red;
-  display:block;
-  border: 1px dotted black;
-  min-width:10px;
-  min-height: 10px;
-}
-[data-editor-highlight="true"]:empty {
-	display: none;
-}
-
 input.uri {
   width: 400px;
 }
 
 input[type="number"] {
   width: 100px;
-}
-
-.editor > *[contenteditable="true"] {
-  min-height: 200px;
-  border-color: black;
-  border-style: solid;
-  border-width: 1px;
 }

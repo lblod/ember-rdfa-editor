@@ -4,6 +4,7 @@
 
 .say-content {
   // Set base font size for elements
+  &,
   p,
   ul,
   ol,
@@ -11,6 +12,11 @@
     @include say-font-size($say-base-font-size);
     font-family: $say-base-font-family;
     font-weight: $say-base-font-weight;
+  }
+
+  span,
+  a {
+    font-size: inherit;
   }
 
   h1,
@@ -135,20 +141,43 @@
   }
 
   // Style lists
-  ul {
-    list-style-type: bullet;
-  }
+  ul,
+  ul.bullet-list {
+    list-style-type: initial;
 
-  ul:not(.numbered-list),
-  ol:not(.bullet-list) {
-    padding-left: 0;
+    ul {
+      margin-left: $say-unit-small;
+    }
 
-    > li {
-      list-style-type: initial;
+    // Stop indenting
+    ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul {
+      margin-left: 0;
     }
   }
 
-  ul:not(.bullet-list):not(.numbered-list).article-list {
+  ul.bullet-list {
+    padding-left: 0;
+  }
+
+  ol,
+  ol.numbered-list {
+    list-style-type: decimal;
+
+    ol {
+      margin-left: $say-unit-small;
+    }
+
+    // Stop indenting
+    ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol {
+      margin-left: 0;
+    }
+  }
+
+  ol.numbered-list {
+    padding-left: 0;
+  }
+
+  ul.article-list {
     padding-left: 0;
 
     li {
@@ -157,17 +186,7 @@
     }
   }
 
-  ul.bullet-list,
-  ol.numbered-list {
-    margin-left: $say-unit-small;
-
-    ul,
-    ol {
-      margin-left: $say-unit-small;
-    }
-  }
-
-  ul.bullet-list:not(.numbered-list) li {
+  ul > li {
     > ul li {
       list-style-type: circle;
     }
@@ -208,49 +227,32 @@
       list-style-type: circle;
     }
 
-    > ul ul ul ul ul ul ul ul ul ul ul {
-      margin-left: 0;
+    > ul ul ul ul ul ul ul ul ul ul li {
+      list-style-type: square;
     }
-  }
 
-  ol:not(.bullet-list) > li {
-    list-style-type: decimal;
+    > ul ul ul ul ul ul ul ul ul ul ul li {
+      list-style-type: initial;
+    }
 
-    > ol > li {
-      > ol {
-        margin-left: $say-unit-small * 2;
-      }
+    > ul ul ul ul ul ul ul ul ul ul ul ul li {
+      list-style-type: circle;
+    }
 
-      > ol > li {
-        > ol {
-          margin-left: $say-unit-small * 3;
-        }
-        > ol > li {
-          > ol {
-            margin-left: $say-unit-small * 4;
-          }
-          > ol > li {
-            > ol {
-              margin-left: $say-unit-small * 5;
-            }
-            > ol > li {
-              > ol {
-                margin-left: $say-unit-small * 6;
-              }
-              > ol > li {
-                > ol {
-                  margin-left: $say-unit-small * 7;
-                }
-                > ol > li {
-                  > ol {
-                    margin-left: $say-unit-small * 8;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+    > ul ul ul ul ul ul ul ul ul ul ul ul ul li {
+      list-style-type: square;
+    }
+
+    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul li {
+      list-style-type: initial;
+    }
+
+    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul li {
+      list-style-type: circle;
+    }
+
+    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul li {
+      list-style-type: square;
     }
   }
 
