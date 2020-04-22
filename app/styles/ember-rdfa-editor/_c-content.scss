@@ -8,12 +8,15 @@
   p,
   ul,
   ol,
-  span,
-  a,
   div {
     @include say-font-size($say-base-font-size);
     font-family: $say-base-font-family;
     font-weight: $say-base-font-weight;
+  }
+
+  span,
+  a {
+    font-size: inherit;
   }
 
   h1,
@@ -138,7 +141,8 @@
   }
 
   // Style lists
-  ul {
+  ul,
+  ul.bullet-list {
     list-style-type: initial;
 
     ul {
@@ -151,7 +155,12 @@
     }
   }
 
-  ol {
+  ul.bullet-list {
+    padding-left: 0;
+  }
+
+  ol,
+  ol.numbered-list {
     list-style-type: decimal;
 
     ol {
@@ -162,6 +171,10 @@
     ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol {
       margin-left: 0;
     }
+  }
+
+  ol.numbered-list {
+    padding-left: 0;
   }
 
   ul.article-list {
