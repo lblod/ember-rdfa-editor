@@ -4,9 +4,12 @@
 
 .say-content {
   // Set base font size for elements
+  &,
   p,
   ul,
   ol,
+  span,
+  a,
   div {
     @include say-font-size($say-base-font-size);
     font-family: $say-base-font-family;
