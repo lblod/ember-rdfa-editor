@@ -141,11 +141,24 @@
     ul {
       margin-left: $say-unit-small;
     }
+
+    // Stop indenting
+    ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul {
+      margin-left: 0;
+    }
   }
 
   ol {
     list-style-type: decimal;
-    margin-left: $say-unit-small + $say-unit-tiny;
+
+    ol {
+      margin-left: $say-unit-small;
+    }
+
+    // Stop indenting
+    ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol {
+      margin-left: 0;
+    }
   }
 
   ul.article-list {
@@ -224,11 +237,6 @@
 
     > ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul li {
       list-style-type: square;
-    }
-
-    // Stop indenting
-    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul {
-      margin-left: 0;
     }
   }
 
