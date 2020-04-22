@@ -55,12 +55,13 @@ export default class TextInputHandler {
       // TODO: should typing over selections move to a separate handler?
       const rawEditor = this.rawEditor;
       const textNode = range.startContainer;
+      const startOffset = range.startOffset; // chrome updates the offset in place when we update the text node, so make a copy
       const prefix = textNode.textContent.slice(0, range.startOffset);
       const infix = input == " " ? NON_BREAKING_SPACE : input;
       const postfix = textNode.textContent.slice(range.endOffset);
       textNode.textContent = `${prefix}${infix}${postfix}`;
       rawEditor.updateRichNode();
-      rawEditor.setCarret(range.startContainer, range.startOffset + 1);
+      rawEditor.setCarret(range.startContainer, startOffset + 1);
     }
     return HandlerResponse.create(
       {
@@ -79,6 +80,8 @@ export default class TextInputHandler {
       let endNode = this.rawEditor.getRichNodeFor(range.endContainer);
       if (startNode && startNode === endNode && startNode.type === 'text')
         return true;
+      else
+        return false;
     }
     else
       return false;
