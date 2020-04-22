@@ -162,7 +162,7 @@
     > li [data-type],
     > li [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small});
+        right: calc(100% + #{$say-annotation-offset});
       }
     }
 
@@ -175,7 +175,7 @@
     > li li [data-type],
     > li li [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 2});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small});
       }
     }
 
@@ -188,7 +188,7 @@
     > li li li > [data-type],
     > li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 3});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 2});
       }
     }
 
@@ -201,7 +201,7 @@
     > li li li li > [data-type],
     > li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 4});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 3});
       }
     }
 
@@ -214,7 +214,7 @@
     > li li li li li > [data-type],
     > li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 5});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 4});
       }
     }
 
@@ -227,7 +227,7 @@
     > li li li li li li > [data-type],
     > li li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 6});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 5});
       }
     }
 
@@ -240,7 +240,7 @@
     > li li li li li li li > [data-type],
     > li li li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 7});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 6});
       }
     }
 
@@ -253,7 +253,7 @@
     > li li li li li li li li > [data-type],
     > li li li li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 8});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 7});
       }
     }
 
@@ -266,7 +266,7 @@
     > li li li li li li li li li > [data-type],
     > li li li li li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 9});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 8});
       }
     }
 
@@ -279,20 +279,98 @@
     > li li li li li li li li li li > [data-type],
     > li li li li li li li li li li > [data-editor-highlight="true"] {
       &:before {
-        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 10});
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 9});
       }
     }
 
     // Level 11
-    > li li li li li li li li li li > .mark-highlight-manual,
-    > li li li li li li li li li li > [typeof],
-    > li li li li li li li li li li > [property],
-    > li li li li li li li li li li > [about],
-    > li li li li li li li li li li > [resource],
-    > li li li li li li li li li li > [data-type],
-    > li li li li li li li li li li > [data-editor-highlight="true"] {
+    > li li li li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li li li li > [typeof],
+    > li li li li li li li li li li li > [property],
+    > li li li li li li li li li li li > [about],
+    > li li li li li li li li li li li > [resource],
+    > li li li li li li li li li li li > [data-type],
+    > li li li li li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 10});
+      }
+    }
+
+    // Level 12
+    > li li li li li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li li li li li > [typeof],
+    > li li li li li li li li li li li li > [property],
+    > li li li li li li li li li li li li > [about],
+    > li li li li li li li li li li li li > [resource],
+    > li li li li li li li li li li li li > [data-type],
+    > li li li li li li li li li li li li > [data-editor-highlight="true"] {
       &:before {
         right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 11});
+      }
+    }
+
+    // Level 13
+    > li li li li li li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li li li li li li > [typeof],
+    > li li li li li li li li li li li li li > [property],
+    > li li li li li li li li li li li li li > [about],
+    > li li li li li li li li li li li li li > [resource],
+    > li li li li li li li li li li li li li > [data-type],
+    > li li li li li li li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 12});
+      }
+    }
+
+    // Level 14
+    > li li li li li li li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li li li li li li li > [typeof],
+    > li li li li li li li li li li li li li li > [property],
+    > li li li li li li li li li li li li li li > [about],
+    > li li li li li li li li li li li li li li > [resource],
+    > li li li li li li li li li li li li li li > [data-type],
+    > li li li li li li li li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 13});
+      }
+    }
+
+    // Level 15
+    > li li li li li li li li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li li li li li li li li > [typeof],
+    > li li li li li li li li li li li li li li li > [property],
+    > li li li li li li li li li li li li li li li > [about],
+    > li li li li li li li li li li li li li li li > [resource],
+    > li li li li li li li li li li li li li li li > [data-type],
+    > li li li li li li li li li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 14});
+      }
+    }
+
+    // Level 16
+    > li li li li li li li li li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li li li li li li li li li > [typeof],
+    > li li li li li li li li li li li li li li li li > [property],
+    > li li li li li li li li li li li li li li li li > [about],
+    > li li li li li li li li li li li li li li li li > [resource],
+    > li li li li li li li li li li li li li li li li > [data-type],
+    > li li li li li li li li li li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 15});
+      }
+    }
+
+    // Level 17
+    > li li li li li li li li li li li li li li li li li > .mark-highlight-manual,
+    > li li li li li li li li li li li li li li li li li > [typeof],
+    > li li li li li li li li li li li li li li li li li > [property],
+    > li li li li li li li li li li li li li li li li li > [about],
+    > li li li li li li li li li li li li li li li li li > [resource],
+    > li li li li li li li li li li li li li li li li li > [data-type],
+    > li li li li li li li li li li li li li li li li li > [data-editor-highlight="true"] {
+      &:before {
+        right: calc(100% + #{$say-annotation-offset} + #{$say-unit-small * 16});
       }
     }
   }
