@@ -344,7 +344,7 @@ function getGroupedLogicalBlocks(suitableNodes, rootNode) {
   // If the suitableNodes are an array of rich nodes and ranges, we reorder the nodes and flatten it
   let orderedNodes = [];
   if (suitableNodes[0] && suitableNodes[0].range) {
-    orderedNodes = reorderBlocks(suitableNodes).map(node => {
+    orderedNodes = reorderNodeBlocks(suitableNodes).map(node => {
       const domNode = node.richNode.domNode;
       if (tagName(domNode) == 'li' || domNode == rootNode) {
         return [...domNode.childNodes];
@@ -416,7 +416,7 @@ function handleListAction(rawEditor, currentNodes, actionType, listType) {
       Finally we clean the nodes that are all whitespaces (N/A in our example).
       However we need to keep the <br> ndoes to then group the nodes by logical block. */
 
-      const orderedNodes = reorderBlocks(logicalBlocks).map(block => block.nodes);
+      const orderedNodes = reorderNodeBlocks(logicalBlocks).map(block => block.nodes);
       const uniqueNodes = Array.from(new Set(orderedNodes.flat()));
       const highestNodes = keepHighestNodes(uniqueNodes);
       const cleanedNodes = removeWhitespaceNodes(highestNodes);
@@ -441,13 +441,13 @@ function handleListAction(rawEditor, currentNodes, actionType, listType) {
 }
 
 /**
- * Put blocks in the right order according to their range
+ * Put blocks of nodes and ranges in the right order according to their range
  *
- * @method reorderBlocks
+ * @method reorderNodeBlocks
  * @param blocks
- * @return Array the ordered blocks
+ * @return Array the ordered blocks of nodes and ranges
  */
-function reorderBlocks(blocks) {
+function reorderNodeBlocks(blocks) {
   if (blocks.length == 1) return blocks;
 
   return blocks.sort((a, b) => {
