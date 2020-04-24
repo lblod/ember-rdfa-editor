@@ -1,4 +1,5 @@
 import EditorProperty from './editor-property';
+import { isList } from './dom-helpers';
 
 class HighlightProperty extends EditorProperty {
   constructor({attributes = { 'data-editor-highlight': true}})  {
@@ -6,11 +7,16 @@ class HighlightProperty extends EditorProperty {
   }
   permittedContent(richNode) {
     const length = richNode.end - richNode.start;
-    const text = new String(richNode.domNode.textContent);
-    if (length > 0 && (text.trim().length > 0))
-      return [richNode];
-    else
-      return [];
+    if (richNode.type == 'tag' && isList(richNode.domNode)) {
+      return richNode.children;
+    }
+    else {
+      const text = new String(richNode.domNode.textContent);
+      if (length > 0 && text != " " && (text.trim().length > 0))
+        return [richNode];
+      else
+        return [];
+    }
   }
 }
 const highlightProperty = new HighlightProperty({});
