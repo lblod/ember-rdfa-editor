@@ -349,6 +349,12 @@ export default class HinstRegistry extends EmberObject {
    * @public
    */
   removeHintsInRdfaBlocks(rdfaBlocks, hrId, identifier) {
+    if (rdfaBlocks.length > 0) {
+      // TODO: this should take into account that blocks aren't necessarily sorted or continuous
+      const [start] = rdfaBlocks[0].region;
+      const [_, end] = rdfaBlocks[rdfaBlocks.length-1].region;
+      this.removeHintsInRegion([start, end] , hrId, identifier);
+    }
     rdfaBlocks.forEach( (block) => {
       this.removeHintsInRegion( block.region, hrId, identifier );
     });
