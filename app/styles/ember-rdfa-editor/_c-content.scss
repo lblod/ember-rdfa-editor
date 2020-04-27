@@ -118,7 +118,6 @@
 
   // Style links
   a {
-    display: inline-block;
     transition: color $say-transition, text-decoration $say-transition;
     font-weight: $say-regular;
     text-decoration-color: $say-primary-lighter;
@@ -254,11 +253,6 @@
     > ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul li {
       list-style-type: square;
     }
-  }
-
-  // Temporary fix for inline lists > @TODO: remove inline styles
-  li[style="display: inline;"] {
-    display: inline-block !important;
   }
 
   // Style horizontal rule
