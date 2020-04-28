@@ -5,6 +5,7 @@ import classic from 'ember-classic-decorator';
 import { next } from '@ember/runloop';
 import { timeout } from 'ember-concurrency';
 import { task } from 'ember-concurrency-decorators';
+import { reorderBlocks, getExtendedRegions } from './rdfa-block-helpers';
 
 /**
 * Bookkeeping of the editor hints
@@ -350,10 +351,12 @@ export default class HinstRegistry extends EmberObject {
    */
   removeHintsInRdfaBlocks(rdfaBlocks, hrId, identifier) {
     if (rdfaBlocks.length > 0) {
-      // TODO: this should take into account that blocks aren't necessarily sorted or continuous
-      const [start] = rdfaBlocks[0].region;
-      const [_, end] = rdfaBlocks[rdfaBlocks.length-1].region;
-      this.removeHintsInRegion([start, end] , hrId, identifier);
+      const orderedBlocks = reorderBlocks(rdfaBlocks);
+      const regions = getExtendedRegions(rdfaBlocks.map(region => [region.start, region.end]));
+
+      regions.forEach(region => {
+        this.removeHintsInRegion(region , hrId, identifier);
+      });
     }
     rdfaBlocks.forEach( (block) => {
       this.removeHintsInRegion( block.region, hrId, identifier );
