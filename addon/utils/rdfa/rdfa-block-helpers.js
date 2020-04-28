@@ -28,14 +28,14 @@ function reorderBlocks(blocks) {
  * @return [Array] The extended regions
  */
 function getExtendedRegions(unprocessedOrderedRegions, mergedRegions=[]) {
-  // Initialization
-  if (mergedRegions.length == 0) {
-    return getExtendedRegions(unprocessedOrderedRegions.slice(1), [unprocessedOrderedRegions[0]]);
-  }
-
   // Breaking condition: we processed all the regions
   if (unprocessedOrderedRegions.length == 0) {
     return mergedRegions;
+  }
+
+  // Initialization
+  if (mergedRegions.length == 0) {
+    return getExtendedRegions(unprocessedOrderedRegions.slice(1), [unprocessedOrderedRegions[0]]);
   }
 
   const currentRegion = unprocessedOrderedRegions[0];
