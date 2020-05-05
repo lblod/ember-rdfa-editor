@@ -11,6 +11,14 @@ interface RawEditor {
   setCarret: ( node: Node, position: number ) => void
   setPosition: ( position: number ) => void
   updateRichNode(): () => void
+  rootNode: Node
+  currentSelection: RawEditorSelection
+  richNode: RichNode
+  currentNode: Node
+}
+
+interface RawEditorSelection extends Array<number> {
+
 }
 
 interface RichNode {
@@ -138,7 +146,7 @@ export default class BackspaceHandler {
   rawEditor: RawEditor;
 
   /**
-   *
+   * Array containing all plugins for the backspace handler.
    */
   plugins: Array<BackspacePlugin> = [];
 
