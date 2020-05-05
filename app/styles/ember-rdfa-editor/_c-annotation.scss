@@ -84,12 +84,6 @@
     display: block; // remove when span is gone from the template "nieuw generiek besluit"
   }
 
-  // Multiline elements
-  [property="eli:cites"] {
-    display: inline-block;
-    max-width: calc(100% - #{$say-unit-small});
-  }
-
   // Show underlines on annotation
   [data-editor-highlight="true"]:not([contenteditable=""]),
   [property],

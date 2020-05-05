@@ -120,11 +120,15 @@
     }
   }
 
-  // Add highlight help text
-  span.mark-highlight-manual {
-    display: inline-block;
+  // No right border on inline elements
+  [property="eli:cites"]:hover:before,
+  [property="eli:cites"][data-editor-position-level]:before,
+  [style="display: inline;"]:hover:before,
+  [style="display: inline;"][data-editor-position-level]:before {
+    border-right: 0 !important;
   }
 
+  // Add highlight help text
   span.mark-highlight-manual:before,
   span.mark-highlight-manual:hover:before {
     content: "Fill in";
