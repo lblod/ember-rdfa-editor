@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "0.36.1",
+  "version": "0.37.2",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -95,6 +95,7 @@
     "npm-run-all": "^4.1.5",
     "qunit-dom": "^1.1.0",
     "sass": "^1.26.3",
+    "simple-git": "^1.10.0",
     "yuidoc-ember-theme": "^2.0.1"
   },
   "engines": {

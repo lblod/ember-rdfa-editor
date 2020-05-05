@@ -1,5 +1,6 @@
 import HandlerResponse from './handler-response';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
+import { mergeSiblingTextNodes } from '../rich-node-tree-modification';
 
 interface RawEditor {
   currentSelectionIsACursor: boolean,
@@ -369,7 +370,7 @@ export default class BackspaceHandler {
     const textNode = this.currentNode;
     const richNode = this.rawEditor.getRichNodeFor(textNode);
     // TODO: allow plugins to hook into this?
-    this.mergeSiblingTextNodes(textNode, richNode);
+    mergeSiblingTextNodes(richNode);
     const relPosition = this.absoluteToRelativePosition(richNode, position);
 
     if( relPosition > 1 ) {
@@ -485,37 +486,5 @@ export default class BackspaceHandler {
    */
   absoluteToRelativePosition(richNode: RichNode, position : number) {
     return Math.max(position - ( richNode.start || 0 ));
-  }
-
-  /**
-   * Merges the sibling text nodes together.
-   *
-   * TODO: why do we supply both, does the `richNode` not contain all
-   * necessary information?
-   *
-   * @private
-   * @method mergoSiblingTextNodes
-   * @param textNode {DOMNode} Text node which is considered for merging.
-   * @param richNode {RichNode} Rich node which resembles the same textNode.
-   */
-  mergeSiblingTextNodes(textNode, richNode) {
-    while (textNode.previousSibling && textNode.previousSibling.nodeType === Node.TEXT_NODE) {
-      const previousDOMSibling = textNode.previousSibling;
-      const indexOfRichNode = richNode.parent.children.indexOf(richNode);
-      const previousRichSibling = richNode.parent.children[indexOfRichNode-1];
-      textNode.textContent = `${previousDOMSibling.textContent}${textNode.textContent}`;
-      richNode.start = previousRichSibling.start;
-      richNode.parent.children.splice(indexOfRichNode - 1, 1);
-      previousDOMSibling.remove();
-    }
-    while (textNode.nextSibling && textNode.nextSibling.nodeType === Node.TEXT_NODE) {
-      const nextDOMSibling = textNode.nextSibling;
-      const indexOfRichNode = richNode.parent.children.indexOf(richNode);
-      const nextRichSibling = richNode.parent.children[indexOfRichNode+1];
-      textNode.textContent = `${textNode.textContent}${nextDOMSibling.textContent}`;
-      richNode.end = nextRichSibling.end;
-      richNode.parent.children.splice(indexOfRichNode + 1 , 1);
-      nextDOMSibling.remove();
-    }
   }
 }

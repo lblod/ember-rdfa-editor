@@ -66,8 +66,8 @@ You can pass basic styling options when you load the editor. Add a value of "tru
 - showToggleRdfaAnnotations: Show annotations toggle switch and add rdfa annotations view
 - showInsertButton: Show template insert button
 - showRdfa: Show RDFA in the editor
-- showRdfaHighlight: Show Rdfa information on hover
-- showRdfaHighlight: Show Rdfa information on hover
+- showRdfaHighlight: Show Rdfa highlights
+- showRdfaHover: Show Rdfa information on hover
 
 #### Toolbar Options
 

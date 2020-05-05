@@ -5,6 +5,7 @@
 .say-toolbar {
   display: flex;
   justify-content: space-between;
+  min-height: $say-toolbar-height; // Fixes height bug on Safari
   height: $say-toolbar-height;
   background-color: $say-toolbar-background;
   border-bottom: 1px solid $say-toolbar-border;

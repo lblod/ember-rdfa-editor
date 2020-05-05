@@ -266,23 +266,28 @@ export default class HinstRegistry extends EmberObject {
    * @public
    */
   removeHintsInRegion(region, hrIdx, who) {
-   let updatedRegion = (hrIdx ? this.updateLocationToCurrentIndex(hrIdx, region) : region);
+    // Clone region in case it gets manipulated elsewhere
+    region = [...region];
+
+    let updatedRegion = (hrIdx ? this.updateLocationToCurrentIndex(hrIdx, region) : region);
 
     const inRegion = (location, region) => {
+      // return true iff location is fully in region
       return location[0] >= region[0] && location[1] <= region[1];
     };
 
     let updatedRegistry = A();
 
-    this.get('registry').forEach( (entry) => {
-        const matchingPlugin = ! who || entry.who == who;
-        const matchingRegion = inRegion( entry.location, updatedRegion );
+    for( const hint of this.registry ) {
+      const ourScope = hint.who == who;
+      const matchingRegion = inRegion( hint.location, updatedRegion );
 
-        if( matchingPlugin && matchingRegion )
-          this.highlightsForFutureRemoval.push({location: entry.location, hrIdx});
-        else
-          updatedRegistry.push(entry);
-      });
+
+      if( ourScope && matchingRegion )
+        this.highlightsForFutureRemoval.push({location: hint.location, hrIdx});
+      else
+        updatedRegistry.push(hint);
+    }
 
     this.set('registry', updatedRegistry);
 
@@ -344,6 +349,12 @@ export default class HinstRegistry extends EmberObject {
    * @public
    */
   removeHintsInRdfaBlocks(rdfaBlocks, hrId, identifier) {
+    if (rdfaBlocks.length > 0) {
+      // TODO: this should take into account that blocks aren't necessarily sorted or continuous
+      const [start] = rdfaBlocks[0].region;
+      const [_, end] = rdfaBlocks[rdfaBlocks.length-1].region;
+      this.removeHintsInRegion([start, end] , hrId, identifier);
+    }
     rdfaBlocks.forEach( (block) => {
       this.removeHintsInRegion( block.region, hrId, identifier );
     });
@@ -402,6 +413,7 @@ export default class HinstRegistry extends EmberObject {
     if(realInserts.length == 0 && realRemoves.length == 0){
       return;
     }
+
     realRemoves.forEach(this.sendRemovedCardToObservers.bind(this));
     realInserts.forEach(this.sendNewCardToObservers.bind(this));
 
@@ -470,6 +482,8 @@ export default class HinstRegistry extends EmberObject {
    */
   _addHint(hrIdx, who, card) {
     card.who = who;
+    // clone location to ensure no external edits happen
+    card.location = [...card.location];
     this.updateCardToCurrentIndex(hrIdx, card);
     if( !card.options || !card.options.noHighlight)
       this.highlightsForFutureInsert.push({location: card.location, hrIdx});
@@ -652,12 +666,14 @@ export default class HinstRegistry extends EmberObject {
   }
 
   /**
-   * Given an index entry, check whether it affects location.
+   * Given an index entry, check whether it affects location of the supplied index.
+   *
+   * Any change that happens fully behind our index has no impact on us.
    *
    * @method doesLocationChange
    *
-   * @param {[number, number]} location
    * @param {Object} index
+   * @param {[number, number]} location
    *
    * @return {boolean} Whether the location is affected by the given index entry
    *
@@ -673,10 +689,14 @@ export default class HinstRegistry extends EmberObject {
   /**
    * Given an index entry, check wether the location moves as block to left or right.
    *
+   * This means the change happened fully before the supplied
+   * location, and thus the location cannot grow or shrink but must
+   * move.
+   *
    * @method doesLocationShiftsAsBlock
    *
-   * @param {[number, number]} location
    * @param {Object} index
+   * @param {[number, number]} location
    *
    * @return {boolean} Whether the location shifts as block
    *
@@ -684,18 +704,21 @@ export default class HinstRegistry extends EmberObject {
    */
   doesLocationShiftsAsBlock(index, location) {
     if((location[0] - location[1] - 1) === 0) {
+      // Nothing moved in this index entry
       return false;
     }
-
-    if(index.operation === 'insert' && (index.startIdx <= location[0])) {
+    else if(index.operation === 'insert' && (index.startIdx < location[0])) {
+      // Insert happened strictly before our location (we want regions to grow)
       return true;
     }
-
-    if(index.operation === 'remove' && (index.endIdx - 1< location[0])) {
+    else if(index.operation === 'remove' && (index.endIdx - 1 < location[0])) {
+      // A remove happened before our location (-1 because index of end of selection)
       return true;
     }
-
-    return false;
+    else {
+      // All cases checked, must not shift as a block
+      return false;
+    }
   }
 
   /**
@@ -712,21 +735,22 @@ export default class HinstRegistry extends EmberObject {
    * @private
    */
   updateLocationWithIndex(location, index) {
-    //nothing happens: text inserted or removed after location
     if(!this.doesLocationChange(index, location)) {
+      // nothing happens: text inserted or removed after location
       return location;
     }
-
-    //shift location to right or left
-    if(this.doesLocationShiftsAsBlock(index, location)) {
+    else if(this.doesLocationShiftsAsBlock(index, location)) {
+      // shift location to right or left
       return [location[0] + index.delta,  location[1] + index.delta];
     }
-
-    //shrink or expand location (may lead to negative interval)
-    if(location.startIdx === location[1] - 1 && index.operation === 'insert') {
+    else if(location.startIdx === location[1] - 1 && index.operation === 'insert') {
+      // shrink or expand location (may lead to negative interval)
       return [location[0], location[1] + index.delta - 1];
     }
-    return [location[0], location[1] + index.delta];
+    else {
+      // shrink based on text removal
+      return [location[0], location[1] + index.delta];
+    }
   }
 
 

@@ -6,6 +6,7 @@ import { task } from 'ember-concurrency-decorators';
 import DiffMatchPatch from 'diff-match-patch';
 import { walk as walkDomNode } from '@lblod/marawa/node-walker';
 import {
+  isList,
   isDisplayedAsBlock,
   invisibleSpace,
   insertTextNodeWithSpace,
@@ -563,19 +564,42 @@ class RawEditor extends EmberObject {
     const selection = this.selectHighlight([start,end]);
     applyProperty(selection, this, highlightProperty); // TODO: replace 'this' with proper interface
     // reset the cursor so the browser shows cursor in the correct position
-    if (this.rootNode.contains(richNodeContainingCursor.domNode)) {
-      this.setCarret(richNodeContainingCursor.domNode, this.getRelativeCursorPosition());
+    this.resetCursor(richNodeContainingCursor);
+  }
+
+  /**
+   * reposition cursor based on available information,
+   * useful if you modified the tree (splitting up text nodes for example),
+   * but did not change the text content.
+   * this will try to somewhat smartly place the cursor where it should be.
+   * NOTE: if the currentSelection was a selection, this will place the cursor at the end of the selection!
+   * NOTE: revisit this behaviour if/when the editor supports setting an actual selection and not a cursor position
+   *
+   * @param oldRichNodecontainingCursor the richnode the cursor was in before you started modifying the tree.
+   * @method resetCursor
+   * @private
+   */
+  resetCursor(oldRichNodecontainingCursor) {
+    const richNode = this.getRichNodeFor(this.currentNode);
+    const currentPosition = this.currentSelection[1];
+    if (richNode && richNode.start >= currentPosition && richNode.end <= currentPosition) {
+      this.setCarret(richNode.domNode, Math.max(0,currentPosition - richNode.start));
     }
-    else {
+    else if(oldRichNodecontainingCursor) {
       // domNode containing cursor no longer exists, we have to reset the cursor in a different node
       // first let's try to find a parent that still exists
-      var newNode = richNodeContainingCursor.parent;
-      while (newNode !== null && !this.rootNode.contains(newNode.domNode)) {
+      let newNode = oldRichNodecontainingCursor;
+      while (newNode && ! newNode.domNode == this.rootNode && !this.rootNode.contains(newNode.domNode)) {
         newNode = newNode.parent;
       }
       // set the currentnode to that parent for better positioning
       this.currentNode = newNode.domNode;
-      this.setCurrentPosition(this.currentPosition);
+      this.setCurrentPosition(currentPosition);
+    }
+    else {
+      console.debug("have to guess cursor position, no previous richnode was provided!"); // eslint-disable-line no-console
+      this.currentNode = null;
+      this.setCurrentPosition(currentPosition);
     }
   }
 
@@ -604,20 +628,11 @@ class RawEditor extends EmberObject {
    * @public
    */
   clearHighlightForLocations(locations){
+    const currentNode = this.getRichNodeFor(this.currentNode);
     for (let location of locations) {
       cancelProperty(this.selectHighlight(location), this, highlightProperty); // todo: replace 'this' with proper interface
-      if (this.currentPosition >= location[0] && this.currentPosition <= location[1]) {
-        // cursor was in highlight, reset cursor
-        const richNode = this.getRichNodeFor(this.currentNode);
-        if (richNode) {
-          this.setCarret(richNode.domNode, Math.max(0,this.currentPosition - richNode.start));
-        }
-        else {
-          this.set('currentNode', null);
-          this.setCurrentPosition(this.currentPosition);
-        }
-      }
     }
+    this.resetCursor(currentNode);
   }
 
 
@@ -714,63 +729,43 @@ class RawEditor extends EmberObject {
    * @private
    */
   findSuitableNodeInRichNode(node, position) {
-    if (!node)
-      throw new Error('no node provided to findSuitableNodeinRichNode');
-    let type = node.type;
-    // in some browsers voidElements don't implement the interface of an element
-    // for positioning we provide it's own type
-    if (isVoidElement(node.domNode))
-      type = 'void';
-    if (type === 'text') {
-      return node;
+    if (!node) {
+      console.warn('no node provided to findSuitableNodeinRichNode'); // eslint-disable-line no-console
+      return null;
     }
-    else if (type === 'void') {
-      let textNode = document.createTextNode(invisibleSpace);
-      let parent = get(node, 'parent');
-      let parentDomNode = get(parent,'domNode');
-      let children = get(parent, 'children');
-      parentDomNode.replaceChild(textNode, node.domNode);
-      if(children.length > 1 && tagName(get(node,'domNode')) === 'br')
-        parentDomNode.insertBefore(document.createElement('br'), textNode); // new br to work around funky br type="moz"
-      else if (children.length !== 1 || tagName(get(node,'domNode')) !== 'br')
-        parentDomNode.insertBefore(node.domNode, textNode); // restore original void element
-      this.updateRichNode();
-      return this.getRichNodeFor(textNode);
+    const appropriateTextNodeFilter = node =>
+        node.start <= position && node.end >= position
+          && node.type === 'text'
+          && ! isList(node.parent.domNode);
+    let textNodeContainingPosition = flatMap(node, appropriateTextNodeFilter, true);
+    if (textNodeContainingPosition.length == 1) {
+      // we've found a text node! huzah!
+      return textNodeContainingPosition[0];
     }
-    else if (type === 'tag') {
-      if (this.isTagWithOnlyABreakAsChild(node)) {
-        debug('suitable node: is tag with only a break as child');
-        let domNode = node.domNode;
-        let textNode = document.createTextNode(invisibleSpace);
-        domNode.replaceChild(textNode, domNode.firstChild);
+    else {
+      const appropriateElementFilter = node =>
+            node.start <= position && node.end >= position
+            && node.type === 'tag'
+            && ! isList(node.domNode);
+      const elementContainingPosition = flatMap(node, appropriateTextNodeFilter);
+      if (elementContainingPosition.length > 0) {
+        // we have to guess which element matches, taking the last matching one is a strategy that sort of works
+        // this gives us the deepest/last node matching. it's horrid in the case of consecutive br's for example
+        const newTextNode = nextTextNode(elementContainingPosition[elementContainingPosition.length - 1]);
         this.updateRichNode();
-        return this.getRichNodeFor(textNode);
+        return this.richNodeFor(newTextNode);
       }
       else {
-        debug('suitable node: using deepest matching node');
-        let appropriateNodeFilter = node =>
-            node.start <= position && node.end >= position
-            && ! isVoidElement(node.domNode)
-            && ! isIgnorableElement(node.domNode)
-            && node.type !== 'other';
-        let nodesContainingPosition = flatMap(node, appropriateNodeFilter);
-        if (nodesContainingPosition.length > 0) {
-          let deepestContainingNode = nodesContainingPosition[nodesContainingPosition.length -1];
-          if (deepestContainingNode === node) {
-            debug(`creating new textnode in provided node of type ${node.type} range ${node.start} ${node.end}`);
-            return this.insertTextNodeWithSpace(node);
-          }
-          else {
-            debug('retrying');
-            return this.findSuitableNodeInRichNode(deepestContainingNode, position);
-          }
+        if (node.parent) {
+          console.debug(`no valid node found for provided position ${position} and richNode, going up one node`, node); // eslint-disable-line no-console
+          return this.findSuitableNodeInRichNode(node.parent, position);
         }
         else {
-          return this.insertTextNodeWithSpace(node);
+          console.warn(`no valid node found for provided position ${position} and richNode`, node); // eslint-disable-line no-console
+          return null;
         }
       }
     }
-    throw new Error(`unsupported node type ${type} for richNode`);
   }
 
   /**
@@ -846,13 +841,18 @@ class RawEditor extends EmberObject {
    * @private
    */
   moveCaretInTextNode(textNode, position){
-    let docRange = document.createRange();
-    let currentSelection = window.getSelection();
-    docRange.setStart(textNode, position);
-    docRange.collapse(true);
-    currentSelection.removeAllRanges();
-    currentSelection.addRange(docRange);
-    this.get('rootNode').focus();
+    try {
+      let docRange = document.createRange();
+      let currentSelection = window.getSelection();
+      docRange.setStart(textNode, position);
+      docRange.collapse(true);
+      currentSelection.removeAllRanges();
+      currentSelection.addRange(docRange);
+      this.get('rootNode').focus();
+    }
+    catch(e) {
+      console.trace(e); // eslint-disable-line no-console
+    }
   }
 
    /**
@@ -1022,8 +1022,10 @@ class RawEditor extends EmberObject {
    */
   setCarret(node, offset) {
     const richNode = this.getRichNodeFor(node);
-    if (!richNode)
+    if (!richNode) {
+      console.debug('tried to set carret, but did not find a matching richNode for', node); // eslint-disable-line no-console
       return;
+    }
     if (richNode.type === 'tag' && richNode.children) {
       if (richNode.children.length < offset) {
         warn(`invalid offset ${offset} for node ${tagName(richNode.domNode)} with ${richNode.children } provided to setCarret`, {id: 'contenteditable.invalid-start'});
