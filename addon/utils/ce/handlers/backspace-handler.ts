@@ -32,8 +32,15 @@ interface Manipulation {
   position: number;
 }
 
+/**
+ * A specific location in the document.
+ *
+ * If type is a character, the position indicates the character after
+ * the supplied index.  In the string `hello`, the first l would be index
+ * 2.
+ */
 interface ThingBeforeCursor {
-  type: string;
+  type: "character";
   node: Node;
   position: any;
 }
@@ -309,9 +316,9 @@ export default class BackspaceHandler {
       // const richNode = this.rawEditor.getRichNodeFor( node );
       // const absolutePosition = this.rawEditor.position;
       const nodeText = node.textContent || "";
-      node.textContent = `${nodeText.slice(0, position - 1)}${nodeText.slice( position )}`;
+      node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
       this.rawEditor.updateRichNode();
-      this.rawEditor.setCarret( node, position - 1 );
+      this.rawEditor.setCarret( node, position );
     }
     else if ( manipulation.type == "removeNode") {
       manipulation.node.remove();
@@ -339,7 +346,7 @@ export default class BackspaceHandler {
     const thingBeforeCursor: ThingBeforeCursor = this.getDeepestThingBeforeCursor();
 
     // we are in a text node and we can remove an extra character
-    if( thingBeforeCursor.type == "character" && thingBeforeCursor.position > 0 ) {
+    if( thingBeforeCursor.type == "character" && thingBeforeCursor.position >= 0 ) {
         // character: remove the character
       return {
         type: "removeCharacter",
@@ -386,12 +393,10 @@ export default class BackspaceHandler {
     const textNode = this.currentNode;
     const richNode = this.rawEditor.getRichNodeFor(textNode);
     // TODO: allow plugins to hook into this?
-    // TODO: isn't it weird to change state in a get method
-    mergeSiblingTextNodes(richNode);
     const relPosition = this.absoluteToRelativePosition(richNode, position);
     if( relPosition > 1 ) {
       // the cursor is in a text node
-      return { type: "character", position: relPosition, node: textNode };
+      return { type: "character", position: relPosition - 1, node: textNode };
     }
     if( relPosition == 0 ) {
       // we must jump to the position before the cursor find the DOM
