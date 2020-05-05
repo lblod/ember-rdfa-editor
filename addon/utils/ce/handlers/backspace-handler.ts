@@ -35,7 +35,7 @@ interface Manipulation {
 interface ThingBeforeCursor {
   type: string;
   node: Node;
-  position: number;
+  position: any;
 }
 
 interface BackspacePlugin {
@@ -312,11 +312,11 @@ export default class BackspaceHandler {
       node.textContent = `${nodeText.slice(0, position - 1)}${nodeText.slice( position )}`;
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret( node, position - 1 );
-      // this.rawEditor.setPosition( absolutePosition );
-
-      // this.rawEditor.setCurrentPosition( this.rawEditor.currentPosition - 1 );
-      // this.rawEditor.externalDomUpdate('backspace character', () => {
-      // });
+    }
+    else if ( manipulation.type == "removeNode") {
+      manipulation.node.remove();
+      this.rawEditor.updateRichNode();
+      this.setCarret();
     }
   }
 
@@ -347,6 +347,22 @@ export default class BackspaceHandler {
         position: thingBeforeCursor.position
       };
     }
+    if (thingBeforeCursor.type == "node") {
+      const textNode = this.currentNode;
+      if (textNode && textNode.textContent.length == 0) { // TODO: this should be smarter and take into account visible length
+        return {
+          type: "removeNode",
+          node: textNode,
+          position: 0
+        }
+      }
+      else {
+        return {
+          // jump into next logical text node
+        }
+      }
+    }
+
 
     // TODO: take care of other cases
     throw "Could not find next manipulation";
@@ -370,19 +386,29 @@ export default class BackspaceHandler {
     const textNode = this.currentNode;
     const richNode = this.rawEditor.getRichNodeFor(textNode);
     // TODO: allow plugins to hook into this?
+    // TODO: isn't it weird to change state in a get method
     mergeSiblingTextNodes(richNode);
     const relPosition = this.absoluteToRelativePosition(richNode, position);
-
     if( relPosition > 1 ) {
       // the cursor is in a text node
       return { type: "character", position: relPosition, node: textNode };
-    } if( relPosition == 0 ) {
+    }
+    if( relPosition == 0 ) {
       // we must jump to the position before the cursor find the DOM
       // node before us and go as deep to the right as possible in
       // that.
+      if (textNode.previousSibling) {
+        return { type: "node", position: null, node: textNode.previousSibling };
+      }
+      else if (textNode.parentNode && textNode.parentNode != this.rawEditor.rootNode) {
+        return { type: "node", position: null, node: textNode.parentNode };
+      }
+      else if (textNode.parentNode && textNode.parentNode == this.rawEditor.rootNode) {
+        return { type: "root", position: null, node: textNode.parentNode };
+      }
     }
 
-    throw "Unsupported path in getDeepestThingBeforeCursor"
+    throw "Unsupported path in getDeepestThingBeforeCursor";
 
     // // else if the cursor is inside the only invisible space
     // //   if this is the only node of our parent, delete the parent
