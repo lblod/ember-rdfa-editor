@@ -423,6 +423,21 @@ export default class BackspaceHandler {
   /**
    * Retrieves the thing before the cursor position.
    *
+   * # What is the deepest thing before a cursor position?
+   *
+   * The cursor position is basically always in a text node.  But the
+   * thing before a cursor could be one of many things.  Considering
+   * the following snippet:
+   *
+   *     ab[]cde<span>fg</span>hjk<b><i>lmn</i></b>op.
+   *
+   * Consider [] to be a blank text node.  The carret position is
+   * described as being 'at' or before a character letter.
+   *
+   * ## Case a character
+   *
+   *
+   *
    * @method getDeepestThingBeforeCursor
    * @public
    */
