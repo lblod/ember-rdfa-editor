@@ -450,7 +450,7 @@ export default class BackspaceHandler {
        * element: voidTag
        *
        */
-      if (isVoidElement(elementBeforeCursor)) {
+      if ( isVoidElement(elementBeforeCursor.node) ) {
         return {
           type: "removeVoidElement",
           node: elementBeforeCursor.node as Element
