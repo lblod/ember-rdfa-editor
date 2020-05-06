@@ -456,7 +456,7 @@ export default class BackspaceHandler {
     const relPosition = this.absoluteToRelativePosition(richNode, position);
     if( relPosition >= 1 ) {
       // the cursor is in a text node
-      return { type: "character", position: relPosition - 1, node: textNode };
+      return { type: "character", position: relPosition - 1, node: textNode } as CharacterPosition;
     } else {
       const previousSibling = textNode.previousSibling;
       if( previousSibling ) {
@@ -464,10 +464,10 @@ export default class BackspaceHandler {
           let sibling = previousSibling as Text;
           if( sibling.length > 0 ) {
             // previous is text node with stuff
-            return { type: "character", position: sibling.length - 1, node: sibling }
+            return { type: "character", position: sibling.length - 1, node: sibling } as CharacterPosition
           } else {
             // previous is empty text node
-            return { type: "node", node: sibling };
+            return { type: "textNode", node: sibling } as TextNodePosition;
           }
         } else {
 
