@@ -1,6 +1,6 @@
 import HandlerResponse from './handler-response';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import { mergeSiblingTextNodes } from '../rich-node-tree-modification';
+import { isVoidElement } from '../dom-helpers';
 
 interface RawEditor {
   currentSelectionIsACursor: boolean,
@@ -46,6 +46,19 @@ interface RemoveEmptyElementManipulation extends Manipulation {
   node: Element;
 }
 
+interface RemoveVoidElementManipulation extends Manipulation {
+  type: "removeVoidElement";
+  node: Element;
+}
+
+/**
+ * move the cursor after the last child of node
+ */
+interface MoveCursorToEndOfNodeManipulation extends Manipulation {
+  type: "moveCursorToEndOfNode";
+  node: Element;
+}
+
 /**
  * A specific location in the document.
  *
@@ -54,7 +67,7 @@ interface RemoveEmptyElementManipulation extends Manipulation {
  * 2.
  */
 interface ThingBeforeCursor {
-  type: "character" | "textNode" | "elementEnd"
+  type: "character" | "textNode" | "elementEnd" | "elementStart"
 }
 
 interface CharacterPosition extends ThingBeforeCursor {
@@ -68,7 +81,12 @@ interface TextNodePosition extends ThingBeforeCursor {
   node: Text;
 }
 
-interface ElementPosition extends ThingBeforeCursor {
+interface ElementStartPosition extends ThingBeforeCursor {
+  type: "elementStart";
+  node: Element;
+}
+
+interface ElementEndPosition extends ThingBeforeCursor {
   type: "elementEnd";
   node: Element;
 }
@@ -275,6 +293,7 @@ export default class BackspaceHandler {
 
     // maybe iterate again
     if( pluginSeesChange || this.checkVisibleChange( { previousVisualCursorCoordinates: visualCursorCoordinates } ) ) {
+      // TODO: do we need to make sure cursor state in the editor corresponds with browser state here?
       return;
     } else {
       // debugger;
@@ -361,6 +380,25 @@ export default class BackspaceHandler {
         throw "Requested to remove text node which does not have a parent node";
       }
     }
+    else if ( manipulation.type === "removeEmptyElement" ) {
+      // cursor is at the beginning of the element, need to move it before the element?
+      const voidManipulation = manipulation as RemoveVoidElementManipulation;
+      const voidElement = voidManipulation.node as Element;
+      const parentElement = voidElement.parentElement as Element;
+      const indexOfElement = Array.from(parentElement.childNodes).indexOf(voidElement);
+      voidElement.remove();
+      this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
+      this.rawEditor.updateRichNode();
+    }
+    else if ( manipulation.type === "removeVoidElement" ) {
+      const voidManipulation = manipulation as RemoveVoidElementManipulation;
+      const voidElement = voidManipulation.node as Element;
+      voidElement.remove();
+      this.rawEditor.updateRichNode();
+    }
+    else if ( manipulation.type === "moveCursorToEndOfNodeManipulation" ) {
+      
+    }
     // else if ( manipulation.type == "removeNode") {
     //   manipulation.node.remove();
     //   this.rawEditor.updateRichNode();
@@ -380,7 +418,7 @@ export default class BackspaceHandler {
    * @method getNextManipulation
    * @private
    */
-  getNextManipulation() : RemoveCharacterManipulation | RemoveEmptyTextNodeManipulation | RemoveEmptyElementManipulation
+  getNextManipulation() : RemoveCharacterManipulation | RemoveEmptyTextNodeManipulation | RemoveEmptyElementManipulation | MoveCursorToEndOfNodeManipulation | RemoveVoidElementManipulation
   {
     // check where our cursor is and get the deepest "thing" before
     // the cursor (character or node)
@@ -407,37 +445,49 @@ export default class BackspaceHandler {
         throw "Received text node which is not empty as previous node.  Some assumption broke.";
       }
     } else if( thingBeforeCursor.type == "elementEnd" ) {
-      const elementBeforeCursor = thingBeforeCursor as ElementPosition;
-      if( elementBeforeCursor.node.childNodes.length > 0 ){
-        //TODO: what to return here?
-        // return {
-        //   type: "removeCharacter",
-        //   node: 
-        // };
+      const elementBeforeCursor = thingBeforeCursor as ElementEndPosition;
+      /*
+       * element: voidTag
+       *
+       */
+      if (isVoidElement(elementBeforeCursor)) {
+        return {
+          type: "removeVoidElement",
+          node: elementBeforeCursor.node as Element
+        }
       }
       else {
         return {
-          type: "",
+          type: "moveCursorToEndOfNode",
           node: elementBeforeCursor.node
+        };
+      }
+    } else if ( thingBeforeCursor.type == "elementStart" ) {
+      const elementBeforeCursor = thingBeforeCursor as ElementStartPosition;
+      const element = elementBeforeCursor.node as Element;
+      if (element.childNodes.length == 0) {
+        return {
+          type: "removeEmptyElement",
+          node: element
         };
       }
     }
 
-    if (thingBeforeCursor.type == "node") {
-      const textNode = this.currentNode;
-      if (textNode && textNode.textContent.length == 0) { // TODO: this should be smarter and take into account visible length
-        return {
-          type: "removeNode",
-          node: textNode,
-          position: 0
-        }
-      }
-      else {
-        return {
-          // jump into next logical text node
-        }
-      }
-    }
+    // if (thingBeforeCursor.type == "node") {
+    //   const textNode = this.currentNode;
+    //   if (textNode && textNode.textContent.length == 0) { // TODO: this should be smarter and take into account visible length
+    //     return {
+    //       type: "removeNode",
+    //       node: textNode,
+    //       position: 0
+    //     }
+    //   }
+    //   else {
+    //     return {
+    //       // jump into next logical text node
+    //     }
+    //   }
+    // }
 
 
     // TODO: take care of other cases
@@ -465,7 +515,7 @@ export default class BackspaceHandler {
    * @method getDeepestThingBeforeCursor
    * @public
    */
-  getDeepestThingBeforeCursor() : ThingBeforeCursor
+  getDeepestThingBeforeCursor() : CharacterPosition | TextNodePosition | ElementEndPosition | ElementStartPosition
   {
     // TODO: it is a bit unclear how to best address this.  What
     // should this return exactly in all cases and how should we best
@@ -480,39 +530,49 @@ export default class BackspaceHandler {
     const relPosition = this.absoluteToRelativePosition(richNode, position);
     if( relPosition >= 1 ) {
       // the cursor is in a text node
-      return { type: "character", position: relPosition - 1, node: textNode } as CharacterPosition;
+      return { type: "character", position: relPosition - 1, node: textNode as Text };
     } else {
+      // start of textnode (relposition = 0)
       const previousSibling = textNode.previousSibling;
       if( previousSibling ) {
         if( previousSibling.nodeType === Node.TEXT_NODE ) {
           let sibling = previousSibling as Text;
           if( sibling.length > 0 ) {
             // previous is text node with stuff
-            return { type: "character", position: sibling.length - 1, node: sibling } as CharacterPosition
+            return { type: "character", position: sibling.length - 1, node: sibling};
           } else {
             // previous is empty text node
-            return { type: "textNode", node: sibling } as TextNodePosition;
+            return { type: "textNode", node: sibling};
           }
         } else {
           if( previousSibling.nodeType === Node.ELEMENT_NODE ){
             const sibling  = previousSibling as Element;
-            return { type: "elementEnd", node: sibling } as ElementPosition;
+            return { type: "elementEnd", node: sibling };
           }
         }
       }
+      else if (textNode.parentElement) {
+        if (textNode.parentElement != this.rawEditor.rootNode) {
+          const parent = textNode.parentElement as Element;
+          return { type: "elementStart", node: parent};
+        }
+      }
+      else {
+        throw "no previous sibling or parentnode found"
+      }
 
-      // we must jump to the position before the cursor find the DOM
-      // node before us and go as deep to the right as possible in
-      // that.
-      if (textNode.previousSibling) {
-        return { type: "node", position: null, node: textNode.previousSibling };
-      }
-      else if (textNode.parentNode && textNode.parentNode != this.rawEditor.rootNode) {
-        return { type: "node", position: null, node: textNode.parentNode };
-      }
-      else if (textNode.parentNode && textNode.parentNode == this.rawEditor.rootNode) {
-        return { type: "root", position: null, node: textNode.parentNode };
-      }
+      // // we must jump to the position before the cursor find the DOM
+      // // node before us and go as deep to the right as possible in
+      // // that.
+      // if (textNode.previousSibling) {
+      //   return { type: "node", position: null, node: textNode.previousSibling };
+      // }
+      // else if (textNode.parentNode && textNode.parentNode != this.rawEditor.rootNode) {
+      //   return { type: "node", position: null, node: textNode.parentNode };
+      // }
+      // else if (textNode.parentNode && textNode.parentNode == this.rawEditor.rootNode) {
+      //   return { type: "root", position: null, node: textNode.parentNode };
+      // }
     }
 
     throw "Unsupported path in getDeepestThingBeforeCursor";
