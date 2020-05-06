@@ -28,7 +28,16 @@ interface RichNode {
 
 interface Manipulation {
   type: string;
-  node: Node;
+}
+
+interface RemoveEmptyTextNodeManipulation extends Manipulation {
+  type: "removeEmptyTextNode";
+  node: Text;
+}
+
+interface RemoveCharacterManipulation extends Manipulation {
+  type: "removeCharacter";
+  node: Text;
   position: number;
 }
 
@@ -40,9 +49,18 @@ interface Manipulation {
  * 2.
  */
 interface ThingBeforeCursor {
+  type: "character" | "textNode"
+}
+
+interface CharacterPosition extends ThingBeforeCursor {
   type: "character";
-  node: Node;
+  node: Text;
   position: any;
+}
+
+interface TextNodePosition extends ThingBeforeCursor {
+  type: "textNode";
+  node: Text;
 }
 
 interface BackspacePlugin {
@@ -210,7 +228,7 @@ export default class BackspaceHandler {
    * @method backspace
    * @private
    */
-  async backspace( max_tries = 10000) {
+  async backspace( max_tries = 50 ) {
     if( max_tries == 0 ) {
       warn("Too many backspace tries, giving up removing content");
     }
@@ -311,20 +329,28 @@ export default class BackspaceHandler {
    */
   handleNativeManipulation( manipulation: Manipulation ) {
     if( manipulation.type == "removeCharacter" ) {
-      // TODO: check we have a place to jump to
-      const { node, position } = manipulation;
-      // const richNode = this.rawEditor.getRichNodeFor( node );
-      // const absolutePosition = this.rawEditor.position;
+      const removeCharacterManipulation = manipulation as RemoveCharacterManipulation;
+      const { node, position } = removeCharacterManipulation;
       const nodeText = node.textContent || "";
       node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret( node, position );
     }
-    else if ( manipulation.type == "removeNode") {
-      manipulation.node.remove();
-      this.rawEditor.updateRichNode();
-      this.setCarret();
+    else if( manipulation.type === "removeEmptyTextNode" ) {
+      const removeEmptyTextNodeManipulation = manipulation as RemoveEmptyTextNodeManipulation;
+      const { node: textNode } = removeEmptyTextNodeManipulation;
+      if( textNode.parentNode ) {
+        textNode.parentNode.removeChild( textNode );
+        // TODO: set carrect to correct position based on previous element
+      } else {
+        throw "Requested to remove text node which does not have a parent node";
+      }
     }
+    // else if ( manipulation.type == "removeNode") {
+    //   manipulation.node.remove();
+    //   this.rawEditor.updateRichNode();
+    //   this.setCarret();
+    // }
   }
 
   /**
@@ -339,21 +365,37 @@ export default class BackspaceHandler {
    * @method getNextManipulation
    * @private
    */
-  getNextManipulation() : Manipulation
+  getNextManipulation() : RemoveCharacterManipulation | RemoveEmptyTextNodeManipulation
   {
     // check where our cursor is and get the deepest "thing" before
     // the cursor (character or node)
     const thingBeforeCursor: ThingBeforeCursor = this.getDeepestThingBeforeCursor();
 
     // we are in a text node and we can remove an extra character
-    if( thingBeforeCursor.type == "character" && thingBeforeCursor.position >= 0 ) {
-        // character: remove the character
+    if( thingBeforeCursor.type == "character" ) {
+      // character: remove the character
+      const characterBeforeCursor = thingBeforeCursor as CharacterPosition;
       return {
         type: "removeCharacter",
-        node: thingBeforeCursor.node,
-        position: thingBeforeCursor.position
+        node: characterBeforeCursor.node,
+        position: characterBeforeCursor.position
       };
+    } else if( thingBeforeCursor.type == "textNode" ) {
+      // empty text node: remove the text node
+      const textNodeBeforeCursor = thingBeforeCursor as TextNodePosition;
+      if( textNodeBeforeCursor.node.length === 0 ) {
+        return {
+          type: "removeEmptyTextNode",
+          node: textNodeBeforeCursor.node
+        };
+      } else {
+        throw "Received text node which is not empty as previous node.  Some assumption broke.";
+      }
     }
+
+
+
+
     if (thingBeforeCursor.type == "node") {
       const textNode = this.currentNode;
       if (textNode && textNode.textContent.length == 0) { // TODO: this should be smarter and take into account visible length
@@ -394,11 +436,26 @@ export default class BackspaceHandler {
     const richNode = this.rawEditor.getRichNodeFor(textNode);
     // TODO: allow plugins to hook into this?
     const relPosition = this.absoluteToRelativePosition(richNode, position);
-    if( relPosition > 1 ) {
+    if( relPosition >= 1 ) {
       // the cursor is in a text node
       return { type: "character", position: relPosition - 1, node: textNode };
-    }
-    if( relPosition == 0 ) {
+    } else {
+      const previousSibling = textNode.previousSibling;
+      if( previousSibling ) {
+        if( previousSibling.nodeType === Node.TEXT_NODE ) {
+          let sibling = previousSibling as Text;
+          if( sibling.length > 0 ) {
+            // previous is text node with stuff
+            return { type: "character", position: sibling.length - 1, node: sibling }
+          } else {
+            // previous is empty text node
+            return { type: "node", node: sibling };
+          }
+        } else {
+
+        }
+      }
+
       // we must jump to the position before the cursor find the DOM
       // node before us and go as deep to the right as possible in
       // that.
@@ -486,17 +543,17 @@ export default class BackspaceHandler {
     return reports.length > 0;
   }
 
-  get rootNode(){
+  get rootNode() : Node {
     return this.rawEditor.rootNode;
   }
 
   get currentSelection(){
     return this.rawEditor.currentSelection;
   }
-  get richNode(){
+  get richNode() : RichNode {
     return this.rawEditor.richNode;
   }
-  get currentNode(){
+  get currentNode() : Node {
     return this.rawEditor.currentNode;
   }
 
