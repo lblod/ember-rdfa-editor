@@ -57,7 +57,7 @@
     "@types/qunit": "^2.9.0",
     "@types/rsvp": "^4.0.3",
     "@types/ember-data": "^3.1.9",
-    "typescript": "^3.8.3",
+    "typescript": "^3.9.1-rc",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-auto-import": "^1.5.2",
