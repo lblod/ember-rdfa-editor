@@ -41,6 +41,11 @@ interface RemoveCharacterManipulation extends Manipulation {
   position: number;
 }
 
+interface RemoveEmptyElementManipulation extends Manipulation {
+  type: "removeEmptyElement";
+  node: Element;
+}
+
 /**
  * A specific location in the document.
  *
@@ -49,7 +54,7 @@ interface RemoveCharacterManipulation extends Manipulation {
  * 2.
  */
 interface ThingBeforeCursor {
-  type: "character" | "textNode"
+  type: "character" | "textNode" | "elementEnd"
 }
 
 interface CharacterPosition extends ThingBeforeCursor {
@@ -62,6 +67,12 @@ interface TextNodePosition extends ThingBeforeCursor {
   type: "textNode";
   node: Text;
 }
+
+interface ElementPosition extends ThingBeforeCursor {
+  type: "elementEnd";
+  node: Element;
+}
+
 
 interface BackspacePlugin {
   label: string;
@@ -345,7 +356,7 @@ export default class BackspaceHandler {
       const { node: textNode } = removeEmptyTextNodeManipulation;
       if( textNode.parentNode ) {
         textNode.parentNode.removeChild( textNode );
-        // TODO: set carrect to correct position based on previous element
+        // TODO: we explicitly do NOT set carret to trigger a next iteration in backspace()
       } else {
         throw "Requested to remove text node which does not have a parent node";
       }
@@ -369,7 +380,7 @@ export default class BackspaceHandler {
    * @method getNextManipulation
    * @private
    */
-  getNextManipulation() : RemoveCharacterManipulation | RemoveEmptyTextNodeManipulation
+  getNextManipulation() : RemoveCharacterManipulation | RemoveEmptyTextNodeManipulation | RemoveEmptyElementManipulation
   {
     // check where our cursor is and get the deepest "thing" before
     // the cursor (character or node)
@@ -395,10 +406,22 @@ export default class BackspaceHandler {
       } else {
         throw "Received text node which is not empty as previous node.  Some assumption broke.";
       }
+    } else if( thingBeforeCursor.type == "elementEnd" ) {
+      const elementBeforeCursor = thingBeforeCursor as ElementPosition;
+      if( elementBeforeCursor.node.childNodes.length > 0 ){
+        //TODO: what to return here?
+        // return {
+        //   type: "removeCharacter",
+        //   node: 
+        // };
+      }
+      else {
+        return {
+          type: "",
+          node: elementBeforeCursor.node
+        };
+      }
     }
-
-
-
 
     if (thingBeforeCursor.type == "node") {
       const textNode = this.currentNode;
@@ -471,7 +494,10 @@ export default class BackspaceHandler {
             return { type: "textNode", node: sibling } as TextNodePosition;
           }
         } else {
-
+          if( previousSibling.nodeType === Node.ELEMENT_NODE ){
+            const sibling  = previousSibling as Element;
+            return { type: "elementEnd", node: sibling } as ElementPosition;
+          }
         }
       }
 
