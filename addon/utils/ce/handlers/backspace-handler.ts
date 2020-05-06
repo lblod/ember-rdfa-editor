@@ -397,7 +397,7 @@ export default class BackspaceHandler {
       this.rawEditor.updateRichNode();
     }
     else if ( manipulation.type === "moveCursorToEndOfNodeManipulation" ) {
-      
+
     }
     // else if ( manipulation.type == "removeNode") {
     //   manipulation.node.remove();
@@ -444,7 +444,8 @@ export default class BackspaceHandler {
       } else {
         throw "Received text node which is not empty as previous node.  Some assumption broke.";
       }
-    } else if( thingBeforeCursor.type == "elementEnd" ) {
+    }
+    else if( thingBeforeCursor.type == "elementEnd" ) {
       const elementBeforeCursor = thingBeforeCursor as ElementEndPosition;
       /*
        * element: voidTag
@@ -462,7 +463,8 @@ export default class BackspaceHandler {
           node: elementBeforeCursor.node
         };
       }
-    } else if ( thingBeforeCursor.type == "elementStart" ) {
+    }
+    else if ( thingBeforeCursor.type == "elementStart" ) {
       const elementBeforeCursor = thingBeforeCursor as ElementStartPosition;
       const element = elementBeforeCursor.node as Element;
       if (element.childNodes.length == 0) {
