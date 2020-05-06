@@ -380,25 +380,26 @@ export default class BackspaceHandler {
         throw "Requested to remove text node which does not have a parent node";
       }
     }
-    else if ( manipulation.type === "removeEmptyElement" ) {
-      // cursor is at the beginning of the element, need to move it before the element?
-      const voidManipulation = manipulation as RemoveVoidElementManipulation;
-      const voidElement = voidManipulation.node as Element;
-      const parentElement = voidElement.parentElement as Element;
-      const indexOfElement = Array.from(parentElement.childNodes).indexOf(voidElement);
-      voidElement.remove();
-      this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
-      this.rawEditor.updateRichNode();
-    }
+    // else if ( manipulation.type === "removeEmptyElement" ) {
+    //   // cursor is at the beginning of the element, need to move it before the element?
+    //   const voidManipulation = manipulation as RemoveVoidElementManipulation;
+    //   const voidElement = voidManipulation.node as Element;
+    //   const parentElement = voidElement.parentElement as Element;
+    //   const indexOfElement = Array.from(parentElement.childNodes).indexOf(voidElement);
+    //   voidElement.remove();
+    //   this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
+    //   this.rawEditor.updateRichNode();
+    // }
     else if ( manipulation.type === "removeVoidElement" ) {
       const voidManipulation = manipulation as RemoveVoidElementManipulation;
       const voidElement = voidManipulation.node as Element;
       voidElement.remove();
       this.rawEditor.updateRichNode();
     }
-    else if ( manipulation.type === "moveCursorToEndOfNodeManipulation" ) {
+    // TODO
+    // else if ( manipulation.type === "moveCursorToEndOfNodeManipulation" ) {
 
-    }
+    // }
     // else if ( manipulation.type == "removeNode") {
     //   manipulation.node.remove();
     //   this.rawEditor.updateRichNode();
@@ -433,7 +434,8 @@ export default class BackspaceHandler {
         node: characterBeforeCursor.node,
         position: characterBeforeCursor.position
       };
-    } else if( thingBeforeCursor.type == "textNode" ) {
+    }
+    else if( thingBeforeCursor.type == "textNode" ) {
       // empty text node: remove the text node
       const textNodeBeforeCursor = thingBeforeCursor as TextNodePosition;
       if( textNodeBeforeCursor.node.length === 0 ) {
@@ -457,23 +459,26 @@ export default class BackspaceHandler {
           node: elementBeforeCursor.node as Element
         }
       }
-      else {
-        return {
-          type: "moveCursorToEndOfNode",
-          node: elementBeforeCursor.node
-        };
-      }
+      //TODO
+      // else {
+      //   return {
+      //     type: "moveCursorToEndOfNode",
+      //     node: elementBeforeCursor.node
+      //   };
+      // }
     }
-    else if ( thingBeforeCursor.type == "elementStart" ) {
-      const elementBeforeCursor = thingBeforeCursor as ElementStartPosition;
-      const element = elementBeforeCursor.node as Element;
-      if (element.childNodes.length == 0) {
-        return {
-          type: "removeEmptyElement",
-          node: element
-        };
-      }
-    }
+
+    //TODO
+    // else if ( thingBeforeCursor.type == "elementStart" ) {
+    //   const elementBeforeCursor = thingBeforeCursor as ElementStartPosition;
+    //   const element = elementBeforeCursor.node as Element;
+    //   if (element.childNodes.length == 0) {
+    //     return {
+    //       type: "removeEmptyElement",
+    //       node: element
+    //     };
+    //   }
+    // }
 
     // if (thingBeforeCursor.type == "node") {
     //   const textNode = this.currentNode;
@@ -553,12 +558,13 @@ export default class BackspaceHandler {
           }
         }
       }
-      else if (textNode.parentElement) {
-        if (textNode.parentElement != this.rawEditor.rootNode) {
-          const parent = textNode.parentElement as Element;
-          return { type: "elementStart", node: parent};
-        }
-      }
+      //TODO
+      // else if (textNode.parentElement) {
+      //   if (textNode.parentElement != this.rawEditor.rootNode) {
+      //     const parent = textNode.parentElement as Element;
+      //     return { type: "elementStart", node: parent};
+      //   }
+      // }
       else {
         throw "no previous sibling or parentnode found"
       }
