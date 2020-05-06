@@ -85,8 +85,11 @@ interface Task {
  */
 function paintCycleHappened() : Promise<void> {
   return new Promise( (cb) => {
-    window.requestAnimationFrame( () => window.setTimeout(0, () => cb()) );
-  });
+    requestAnimationFrame( () =>
+      setTimeout(() => {
+        cb();
+      }, 0 ) );
+  } );
 }
 
 /**
