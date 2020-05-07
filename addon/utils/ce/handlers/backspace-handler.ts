@@ -540,19 +540,22 @@ export default class BackspaceHandler {
         break;
 
       case "elementStart":
-        //   const elementBeforeCursor = thingBeforeCursor as ElementStartPosition;
-        //   const element = elementBeforeCursor.node as Element;
-        //   if (element.childNodes.length == 0) {
-        //     return {
-        //       type: "removeEmptyElement",
-        //       node: element
-        //     };
-        //   }
+        const parentBeforeCursor = thingBeforeCursor as ElementStartPosition;
+        const element = parentBeforeCursor.node as Element;
+        if (element.childNodes.length == 0) {
+          return {
+            type: "removeEmptyElement",
+            node: element
+          };
+        }
+        else {
+          console.debug("currently unsupported: at start of element, but it's not empty", element);
+        }
         break;
     }
 
     // TODO: take care of other cases
-    throw "Could not find manipulation to suggest for backspace";
+    throw `Could not find manipulation to suggest for backspace ${thingBeforeCursor.type}`;
   }
 
   /**
