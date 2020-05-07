@@ -547,60 +547,74 @@ export default class BackspaceHandler {
    * executed on the DOM tree.
    */
   handleNativeManipulation( manipulation: Manipulation ) {
-    if( manipulation.type == "removeCharacter" ) {
-      const removeCharacterManipulation = manipulation as RemoveCharacterManipulation;
-      const { node, position } = removeCharacterManipulation;
-      const nodeText = node.textContent || "";
-      node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
-      this.rawEditor.updateRichNode();
-      this.rawEditor.setCarret( node, position );
-    }
-    else if( manipulation.type === "removeEmptyTextNode" ) {
-      const removeEmptyTextNodeManipulation = manipulation as RemoveEmptyTextNodeManipulation;
-      const { node: textNode } = removeEmptyTextNodeManipulation;
-      if( textNode.parentNode ) {
-        textNode.parentNode.removeChild( textNode );
-        // TODO: we explicitly do NOT set carret to trigger a next iteration in backspace()
-        //       NOTE: if no other iteration follows, we might not end in valid editor state
-      } else {
-        throw "Requested to remove text node which does not have a parent node";
-      }
-    }
-    else if ( manipulation.type === "removeEmptyElement" ) {
-      const removeEmptyElementManipulation = manipulation as RemoveEmptyElementManipulation;
-      const emptyElement = removeEmptyElementManipulation.node;
-      const parentElement = emptyElement.parentElement as Element;
-      const indexOfElement = Array.from(parentElement.childNodes).indexOf(emptyElement);
-      this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
-      emptyElement.remove();
-      this.rawEditor.updateRichNode();
-    }
-    else if ( manipulation.type === "removeOtherNode") {
-      const removeOtherNodeManipulation = manipulation as RemoveOtherNodeManipulation;
-      const otherNode = removeOtherNodeManipulation.node;
-      const parentElement = otherNode.parentElement as Element;
-      const indexOfElement = Array.from(parentElement.childNodes).indexOf(otherNode);
-      this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
-      parentElement.removeChild(otherNode);
-      this.rawEditor.updateRichNode();
-    }
-    else if ( manipulation.type === "removeVoidElement" ) {
-      // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
-      const voidManipulation = manipulation as RemoveVoidElementManipulation;
-      const voidElement = voidManipulation.node;
-      const parentElement = voidElement.parentElement as Element;
-      const indexOfElement = Array.from(parentElement.childNodes).indexOf(voidElement);
-      this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
-      voidElement.remove();
-      this.rawEditor.updateRichNode();
-    }
-    else if ( manipulation.type === "moveCursorToEndOfNode" ) {
-      // TODO: should this actually move your cursor at this point?
-      // setCarret creates textnodes if necessary to ensure a cursor can be placed
-      const moveCursorManipulation = manipulation as MoveCursorToEndOfNodeManipulation;
-      const element = moveCursorManipulation.node;
-      const length = element.childNodes.length;
-      this.rawEditor.setCarret(element, length);
+    switch( manipulation.type ) {
+      case "removeCharacter":
+        const removeCharacterManipulation = manipulation as RemoveCharacterManipulation;
+        const { node, position } = removeCharacterManipulation;
+        const nodeText = node.textContent || "";
+        node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
+        this.rawEditor.updateRichNode();
+        this.rawEditor.setCarret( node, position );
+        break;
+      case "removeEmptyTextNode":
+        const removeEmptyTextNodeManipulation = manipulation as RemoveEmptyTextNodeManipulation;
+        const { node: textNode } = removeEmptyTextNodeManipulation;
+        if( textNode.parentNode ) {
+          textNode.parentNode.removeChild( textNode );
+          // TODO: we explicitly do NOT set carret to trigger a next iteration in backspace()
+          //       NOTE: if no other iteration follows, we might not end in valid editor state
+        } else {
+          throw "Requested to remove text node which does not have a parent node";
+        }
+        break;
+      case "removeEmptyElement":
+        const removeEmptyElementManipulation = manipulation as RemoveEmptyElementManipulation;
+        const emptyElement = removeEmptyElementManipulation.node;
+        const emptyElementParent = emptyElement.parentElement as Element;
+        const emptyElementIndex = Array.from(emptyElementParent.childNodes).indexOf(emptyElement);
+        this.rawEditor.setCarret(emptyElementParent, emptyElementIndex); // place the cursor before the removed element
+        emptyElement.remove();
+        this.rawEditor.updateRichNode();
+        break;
+      case "removeOtherNode":
+        // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
+        const removeOtherNodeManipulation = manipulation as RemoveOtherNodeManipulation;
+        if( !removeOtherNodeManipulation.node.parentElement ) {
+          throw "Received other node does not have a parent.  Backspace failed te remove this node."
+        }
+        const otherNode = removeOtherNodeManipulation.node as Node;
+        const otherNodeParent = otherNode.parentElement as Element;
+        // TODO: the following does not work without casting, and I'm
+        // not sure we certainly have the childNode interface as per
+        // https://developer.mozilla.org/en-US/docs/Web/API/ChildNode
+        const otherNodeIndex = Array.from(otherNodeParent.childNodes).indexOf(otherNode);
+        this.rawEditor.setCarret(otherNodeParent, otherNodeIndex); // place the cursor before the removed element
+        otherNodeParent.removeChild(otherNode);
+        this.rawEditor.updateRichNode();
+        break;
+      case "removeVoidElement":
+        // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
+        const voidManipulation = manipulation as RemoveVoidElementManipulation;
+        if( !voidManipulation.node.parentElement ) {
+          throw "Received void element without parent.  Backspace failed to remove this node."
+        }
+        const voidElement = voidManipulation.node;
+        const voidParentElement = voidElement.parentElement as Element;
+        const voidElementIndex = Array.from(voidParentElement.childNodes).indexOf(voidElement);
+        this.rawEditor.setCarret(voidParentElement, voidElementIndex); // place the cursor before the removed element
+        voidElement.remove();
+        this.rawEditor.updateRichNode();
+        break;
+      case "moveCursorToEndOfNode":
+        // TODO: should this actually move your cursor at this point?
+        // setCarret creates textnodes if necessary to ensure a cursor can be placed
+        const moveCursorManipulation = manipulation as MoveCursorToEndOfNodeManipulation;
+        const element = moveCursorManipulation.node;
+        const length = element.childNodes.length;
+        this.rawEditor.setCarret(element, length);
+        break;
+      default:
+        throw `Case ${manipulation.type} was not handled by handleNativeInputManipulation.`
     }
   }
 
@@ -812,7 +826,7 @@ export default class BackspaceHandler {
           }
         }
         else if( previousSibling.nodeType === Node.ELEMENT_NODE ){
-          const sibling  = previousSibling as Element;
+          const sibling = previousSibling as Element;
           if (isVoidElement(sibling)) {
             return { type: "voidElement", node: sibling as VoidElement }
           }
