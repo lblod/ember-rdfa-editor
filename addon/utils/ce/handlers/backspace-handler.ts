@@ -61,24 +61,33 @@ interface RemoveCharacterManipulation extends BaseManipulation {
   position: number;
 }
 
+/**
+ * Represents the removal of an empty Element (so an Element without childNodes)
+ */
 interface RemoveEmptyElementManipulation extends BaseManipulation {
   type: "removeEmptyElement";
   node: Element;
 }
 
+/**
+ * Represents the removal of a void element
+ */
 interface RemoveVoidElementManipulation extends BaseManipulation {
   type: "removeVoidElement";
   node: Element;
 }
 
 /**
- * move the cursor after the last child of node
+ * Represents moving the cursor after the last child of node
  */
 interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
   type: "moveCursorToEndOfNode";
   node: Element;
 }
 
+/**
+ * Represents the removal of a node that is not of type Text of Element
+ */
 interface RemoveOtherNodeManipulation extends BaseManipulation {
   type: "removeOtherNode";
   node: Node;
