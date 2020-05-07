@@ -93,7 +93,7 @@ interface RemoveEmptyElementManipulation extends BaseManipulation {
  */
 interface RemoveVoidElementManipulation extends BaseManipulation {
   type: "removeVoidElement";
-  node: Element;
+  node: VoidElement;
 }
 
 /**
@@ -121,8 +121,10 @@ interface RemoveOtherNodeManipulation extends BaseManipulation {
  */
 type ThingBeforeCursor =
   CharacterPosition
-  | TextNodePosition
+  | EmptyTextNodeStartPosition
+  | EmptyTextNodeEndPosition
   | ElementStartPosition
+  | VoidElementPosition
   | ElementEndPosition
   | OtherNodeEndPosition
   | EditorRootPosition
@@ -150,11 +152,18 @@ interface CharacterPosition extends BaseThingBeforeCursor {
  * We consider the current position of the cursor right after the
  * provided node.
  *
- * TODO: should it matter that it is empty? perhaps rename to empty
- * text node?
  */
-interface TextNodePosition extends BaseThingBeforeCursor {
-  type: "textNode";
+interface EmptyTextNodeEndPosition extends BaseThingBeforeCursor {
+  type: "emptyTextNodeEnd";
+  node: Text;
+}
+
+/**
+ * A Text node before the cursor, the text node is empty
+ * We consider the current position of the cursor at the beginning of the empty text node.
+ */
+interface EmptyTextNodeStartPosition extends BaseThingBeforeCursor {
+  type: "emptyTextNodeStart";
   node: Text;
 }
 
@@ -177,6 +186,16 @@ interface ElementStartPosition extends BaseThingBeforeCursor {
 interface ElementEndPosition extends BaseThingBeforeCursor {
   type: "elementEnd";
   node: Element;
+}
+
+/**
+ * A void element before the cursor
+ *
+ * We consider the cursor to be right after the element
+ */
+interface VoidElementPosition extends BaseThingBeforeCursor {
+  type: "voidElement"
+  node: VoidElement
 }
 
 /**
@@ -567,9 +586,9 @@ export default class BackspaceHandler {
         };
         break;
 
-      case "textNode":
+      case "emptyTextNodeStart":
         // empty text node: remove the text node
-        const textNodeBeforeCursor = thingBeforeCursor as TextNodePosition;
+        const textNodeBeforeCursor = thingBeforeCursor as EmptyTextNodeStartPosition;
         if( textNodeBeforeCursor.node.length === 0 ) {
           return {
             type: "removeEmptyTextNode",
@@ -580,20 +599,33 @@ export default class BackspaceHandler {
         }
         break;
 
+      case "emptyTextNodeEnd":
+        // empty text node: remove the text node
+        const textNodePositionBeforeCursor = thingBeforeCursor as EmptyTextNodeEndPosition;
+        if( textNodePositionBeforeCursor.node.length === 0 ) {
+          return {
+            type: "removeEmptyTextNode",
+            node: textNodePositionBeforeCursor.node
+          };
+        } else {
+          throw "Received text node which is not empty as previous node.  Some assumption broke.";
+        }
+        break;
+
+      case "voidElement":
+        const voidElementBeforeCursor = thingBeforeCursor as VoidElementPosition;
+        return {
+          type: "removeVoidElement",
+          node: voidElementBeforeCursor.node
+        };
+        break;
+
       case "elementEnd":
         const elementBeforeCursor = thingBeforeCursor as ElementEndPosition;
-        if ( isVoidElement(elementBeforeCursor.node) ) {
-          return {
-            type: "removeVoidElement",
-            node: elementBeforeCursor.node as Element
-          }
-        }
-        else {
-          return {
-            type: "moveCursorToEndOfNode",
-            node: elementBeforeCursor.node
-          };
-        }
+        return {
+          type: "moveCursorToEndOfNode",
+          node: elementBeforeCursor.node
+        };
         break;
 
       case "elementStart":
@@ -639,17 +671,56 @@ export default class BackspaceHandler {
    *
    * ## Case a character
    *
-   * ## Case a textNode
+   * The carret position is inside a textNode and there is a character before
+   * the carret. NOTE: The carret can be behind the last letter of the textnode,
+   * hence we can backspace the last character
+   *
+   * described by CharacterPosition
+   *
+   * ## Case end of an empty textNode
+   *
+   * The carret is directly after an empty text node
+   *
+   * described by EmptyTextNodeEndPosition
+   *
+   * ## Case start of an empty textNode
+   *
+   * The carret is at the beginning of an empty text node
+   *
+   * described by EmptyTextNodeStartPosition
    *
    * ## Case a void element (br, hr, img, meta, ... elements that can't have childNodes)
    *
-   * ## Case an element
+   * The carret is right after a void element
+   *
+   * described by VoidElementPosition
+   *
+   * ## Case an element directly before the carret
+   *
+   * The carret is directly after the element
+   * Example: before o
+   *
+   * described by ElementEndPosition
+   *
+   * ## Case an element as parent of the cursor
+   *
+   * The carret is at the very beginning of the element
+   * Example: before f
+   *
+   * described by ElementStartPosition
    *
    * ## Case a node that is neither element, nor textnode
    *
-   * ## Case nothing, but we have a parentNode (and it's not the editor)
+   * The carret is placed directly after the node
+   * Example: <!-- other -->a , cursor is before a
    *
-   * ## Case nothing, and the editor is our parentNode
+   * described by OtherNodeEndPosition
+   *
+   * ## Case beginning of the editor
+   *
+   * The carret is placed at the very beginning of the editor, no other elements exist before the carret.
+   *
+   * described by EditorRootPosition
    *
    * @method getThingBeforeCursor
    * @public
@@ -676,7 +747,7 @@ export default class BackspaceHandler {
     }
     else if (textNode.length == 0){
       // at the start an empty text node
-      return { type: "textNode", node: textNode};
+      return { type: "emptyTextNodeStart", node: textNode};
     }
     else {
       // start of textnode (relposition = 0)
@@ -689,19 +760,24 @@ export default class BackspaceHandler {
             return { type: "character", position: sibling.length - 1, node: sibling};
           } else {
             // previous is empty text node
-            return { type: "textNode", node: sibling};
+            return { type: "emptyTextNodeEnd", node: sibling};
           }
         }
         else if( previousSibling.nodeType === Node.ELEMENT_NODE ){
           const sibling  = previousSibling as Element;
-          return { type: "elementEnd", node: sibling };
+          if (isVoidElement(sibling)) {
+            return { type: "voidElement", node: sibling as VoidElement }
+          }
+          else {
+            return { type: "elementEnd", node: sibling };
+          }
         }
         else {
           return { type: "otherNodeEnd", node: previousSibling };
         }
       }
       else if (textNode.parentElement) {
-        const parent = textNode.parentElement as Element;
+        const parent = textNode.parentElement;
         if (textNode.parentElement != this.rawEditor.rootNode) {
           return { type: "elementStart", node: parent };
         }
