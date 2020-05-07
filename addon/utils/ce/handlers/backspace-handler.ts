@@ -421,15 +421,14 @@ export default class BackspaceHandler {
       voidElement.remove();
       this.rawEditor.updateRichNode();
     }
-    // TODO
-    // else if ( manipulation.type === "moveCursorToEndOfNodeManipulation" ) {
-
-    // }
-    // else if ( manipulation.type == "removeNode") {
-    //   manipulation.node.remove();
-    //   this.rawEditor.updateRichNode();
-    //   this.setCarret();
-    // }
+    else if ( manipulation.type === "moveCursorToEndOfNode" ) {
+      // TODO: should this actually move your cursor at this point?
+      // setCarret creates textnodes if necessary to ensure a cursor can be placed
+      const moveCursorManipulation = manipulation as MoveCursorToEndOfNodeManipulation;
+      const element = moveCursorManipulation.node;
+      const length = element.childNodes.length;
+      this.rawEditor.setCarret(element, length);
+    }
   }
 
   /**
@@ -483,13 +482,12 @@ export default class BackspaceHandler {
             node: elementBeforeCursor.node as Element
           }
         }
-        //TODO
-        // else {
-        //   return {
-        //     type: "moveCursorToEndOfNode",
-        //     node: elementBeforeCursor.node
-        //   };
-        // }
+        else {
+          return {
+            type: "moveCursorToEndOfNode",
+            node: elementBeforeCursor.node
+          };
+        }
         break;
 
       case "elementStart":
@@ -537,6 +535,8 @@ export default class BackspaceHandler {
     // somewhere in previously written code.
 
     // check where the cursor is
+    // TODO: should we support actual selections here as well or will that be a different handler?
+    // current implementation assumes a collapsed selection (e.g. a carret)
     const position = this.currentSelection[0];
     const textNode = this.currentNode;
     const richNode = this.rawEditor.getRichNodeFor(textNode);
@@ -558,20 +558,22 @@ export default class BackspaceHandler {
             // previous is empty text node
             return { type: "textNode", node: sibling};
           }
-        } else {
-          if( previousSibling.nodeType === Node.ELEMENT_NODE ){
-            const sibling  = previousSibling as Element;
-            return { type: "elementEnd", node: sibling };
-          }
+        }
+        else if( previousSibling.nodeType === Node.ELEMENT_NODE ){
+          const sibling  = previousSibling as Element;
+          return { type: "elementEnd", node: sibling };
+        }
+        else {
+          // TODO: other type of nodes (comment nodes, ...) see https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
+
         }
       }
-      //TODO
-      // else if (textNode.parentElement) {
-      //   if (textNode.parentElement != this.rawEditor.rootNode) {
-      //     const parent = textNode.parentElement as Element;
-      //     return { type: "elementStart", node: parent};
-      //   }
-      // }
+      else if (textNode.parentElement) {
+        if (textNode.parentElement != this.rawEditor.rootNode) {
+          const parent = textNode.parentElement as Element;
+          return { type: "elementStart", node: parent};
+        }
+      }
       else {
         throw "no previous sibling or parentnode found"
       }
