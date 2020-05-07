@@ -405,8 +405,8 @@ export default class BackspaceHandler {
       const emptyElement = removeEmptyElementManipulation.node as Element;
       const parentElement = emptyElement.parentElement as Element;
       const indexOfElement = Array.from(parentElement.childNodes).indexOf(emptyElement);
-      emptyElement.remove();
       this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
+      emptyElement.remove();
       this.rawEditor.updateRichNode();
     }
     else if ( manipulation.type === "removeVoidElement" ) {
