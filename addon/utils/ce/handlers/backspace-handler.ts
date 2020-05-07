@@ -571,7 +571,7 @@ export default class BackspaceHandler {
    *
    * ## Case a textNode
    *
-   * ## Case a void element (br, hr, ...)
+   * ## Case a void element (br, hr, img, meta, ... elements that can't have childNodes)
    *
    * ## Case an element
    *
@@ -621,17 +621,16 @@ export default class BackspaceHandler {
           return { type: "elementEnd", node: sibling };
         }
         else {
-          throw `unsupported node type ${previousSibling.nodeType}`
-          // TODO: other type of nodes (comment nodes, ...) see https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
+          return { type: "otherNodeEnd", node: previousSibling };
         }
       }
       else if (textNode.parentElement) {
+        const parent = textNode.parentElement as Element;
         if (textNode.parentElement != this.rawEditor.rootNode) {
-          const parent = textNode.parentElement as Element;
-          return { type: "elementStart", node: parent};
+          return { type: "elementStart", node: parent };
         }
         else {
-          throw "parentNode is rootelement, not supported yet"
+          return { type: "editorRootStart", node: parent };
         }
       }
       else {
