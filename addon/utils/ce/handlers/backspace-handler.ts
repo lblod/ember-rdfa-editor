@@ -562,8 +562,8 @@ export default class BackspaceHandler {
           return { type: "elementEnd", node: sibling };
         }
         else {
+          throw `unsupported node type ${previousSibling.nodeType}`
           // TODO: other type of nodes (comment nodes, ...) see https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
-
         }
       }
       else if (textNode.parentElement) {
