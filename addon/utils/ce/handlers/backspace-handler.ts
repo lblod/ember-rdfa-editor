@@ -556,7 +556,7 @@ export default class BackspaceHandler {
 
       case "elementStart":
         const parentBeforeCursor = thingBeforeCursor as ElementStartPosition;
-        const element = parentBeforeCursor.node as Element;
+        const element = parentBeforeCursor.node;
         if (element.childNodes.length == 0) {
           return {
             type: "removeEmptyElement",
