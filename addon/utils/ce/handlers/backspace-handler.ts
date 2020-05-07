@@ -358,12 +358,12 @@ export default class BackspaceHandler {
   }
 
   /**
-   * Yields a ClientRect for the current cursor position.
+   * Yields all {ClientRect} for the current cursor position.
    *
-   * @method carretClientRect
+   * @method carretClientRects
    * @private
    *
-   * @return {ClientRect} The first position of the selected range or cursor position.
+   * @return {Array}  A collection of DOMRect objects, one for each CSS border box associated with the current cursor position
    */
   get carretClientRects() : DOMRectList | ClientRectList {
     return window.getSelection().getRangeAt(0).getClientRects();
