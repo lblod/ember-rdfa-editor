@@ -2,6 +2,17 @@ import HandlerResponse from './handler-response';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import { isVoidElement } from '../dom-helpers';
 
+/**
+ * List of all Void elements.
+ *
+ * This list is based on
+ * https://www.w3.org/TR/html/syntax.html#void-elements, we removed
+ * support for those elements which don't have any sane browser
+ * support and for which no typing existed.
+ *
+ * The HTMLWbrElement type is a custom type which we have added
+ * ourselves.  We did not find a type.
+ */
 type VoidElement = HTMLAreaElement
   | HTMLBaseElement
   | HTMLBRElement
@@ -17,6 +28,11 @@ type VoidElement = HTMLAreaElement
   | HTMLTrackElement
   | HTMLWbrElement
 
+/**
+ * There is seemingly no type for this specified by the WHATWG.
+ *
+ * Should this change, this can be removed.
+ */
 interface HTMLWbrElement extends HTMLElement {
   tagName: "wbr" | "WBR"
 }
