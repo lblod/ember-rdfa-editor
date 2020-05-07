@@ -142,7 +142,7 @@ type ThingBeforeCursor =
   | ElementStartPosition
   | VoidElementPosition
   | ElementEndPosition
-  | OtherNodeEndPosition
+  | UncommonNodeEndPosition
   | EditorRootPosition
 
 interface BaseThingBeforeCursor {
@@ -224,9 +224,41 @@ interface VoidElementPosition extends BaseThingBeforeCursor {
  * TODO: do we want to split this up further? In theory the only other
  * expected types are Comment and (possibly) CDATASection
  */
-interface OtherNodeEndPosition extends BaseThingBeforeCursor {
-  type: "otherNodeEnd";
-  node: Node;
+interface UncommonNodeEndPosition extends BaseThingBeforeCursor {
+  type: "uncommonNodeEnd";
+  node: UncommonNode
+}
+
+/**
+ * These are nodes which, to our understanding, normally don't add
+ * value to a text document.  As such, we consider them "Uncommon" by
+ * lack of a better name.  We suspect to support some of these more in
+ * depth as we get to understand how they appear in a text document in
+ * the wild.
+ */
+type UncommonNode = CDATASection | ProcessingInstruction | Comment | Document | DocumentType | DocumentFragment;
+
+/**
+ * Ensures the received node is an UncommonNode.
+ *
+ * Throws an error if this is not the case.
+ *
+ * @param node [Node] The node to be returned.
+ *
+ * @param errorMessage [string] The error message to be printed in
+ * case this is not an UncommonNode.
+ */
+function ensureUncommonNode( node: Node, errorMessage?: string ) : UncommonNode {
+  if( [ Node.CDATA_SECTION_NODE,
+        Node.PROCESSING_INSTRUCTION_NODE,
+        Node.COMMENT_NODE,
+        Node.DOCUMENT_NODE,
+        Node.DOCUMENT_TYPE_NODE,
+        Node.DOCUMENT_FRAGMENT_NODE ].includes( node.nodeType ) ) {
+    return node as UncommonNode;
+  } else {
+    throw errorMessage || `Received node ${node} is not an UncommonNode.`;
+  }
 }
 
 /**
@@ -657,8 +689,8 @@ export default class BackspaceHandler {
           console.debug("currently unsupported: at start of element, but it's not empty", element);
         }
         break;
-      case "otherNodeEnd":
-        const positionBeforeCursor = thingBeforeCursor as OtherNodeEndPosition;
+      case "uncommonNodeEnd":
+        const positionBeforeCursor = thingBeforeCursor as UncommonNodeEndPosition;
         const node = positionBeforeCursor.node;
         return {
           type: "removeOtherNode",
@@ -730,7 +762,7 @@ export default class BackspaceHandler {
    * The carret is placed directly after the node
    * Example: <!-- other -->a , cursor is before a
    *
-   * described by OtherNodeEndPosition
+   * described by UncommonNodeEndPosition
    *
    * ## Case beginning of the editor
    *
@@ -789,7 +821,8 @@ export default class BackspaceHandler {
           }
         }
         else {
-          return { type: "otherNodeEnd", node: previousSibling };
+          const uncommonNode = ensureUncommonNode( previousSibling, "Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node." );
+          return { type: "uncommonNodeEnd", node: uncommonNode };
         }
       }
       else if (textNode.parentElement) {
