@@ -337,9 +337,15 @@ export default class BackspaceHandler {
    * occured.
    */
   checkVisibleChange( options: {previousVisualCursorCoordinates: ClientRectList | DOMRectList}  ) : boolean {
-    const { previousVisualCursorCoordinates } = options;
+
+    const { previousVisualCursorCoordinates } = options
+
+    if(previousVisualCursorCoordinates.length == 0 && this.carretClientRects.length > 0) return true;
 
     const { left: ol, top: ot } = previousVisualCursorCoordinates[0];
+
+    if(this.carretClientRects.length == 0) return true;
+
     const { left: nl, top: nt } = this.carretClientRects[0];
 
     const visibleChange = ol !== nl || ot !== nt;
