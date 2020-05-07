@@ -90,32 +90,72 @@ type ThingBeforeCursor =
   | TextNodePosition
   | ElementStartPosition
   | ElementEndPosition
+  | OtherNodeEndPosition
+  | EditorRootPosition
 
 interface BaseThingBeforeCursor {
   type: string;
 }
 
+/**
+ * There is a character before the cursor.
+ * We consider the current position of the cursor to be either inside the provided node
+ * or in an adjacent text node.
+ */
 interface CharacterPosition extends BaseThingBeforeCursor {
   type: "character";
   node: Text;
   position: any;
 }
 
+
+/**
+ * A Text node before the cursor, the text node is empty
+ * We consider the current position of the cursor right after the provided node
+ * TODO: should it matter that it is empty? perhaps rename to empty text node?
+ */
 interface TextNodePosition extends BaseThingBeforeCursor {
   type: "textNode";
   node: Text;
 }
 
+/**
+ * An element before the cursor and the cursor is currently inside the element
+ * We consider the current position of the cursor at the very beginning of the element
+ */
 interface ElementStartPosition extends BaseThingBeforeCursor {
   type: "elementStart";
   node: Element;
 }
 
+/**
+ * An element before the cursor (cursor currently outside the element)
+ * We consider the cursor to be right after the element
+ */
 interface ElementEndPosition extends BaseThingBeforeCursor {
   type: "elementEnd";
   node: Element;
 }
 
+/**
+ * A node that is not of type Text or Element before the cursor
+ * We consider the current cursor position to be right after the node.
+ * see https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType for all possible types
+ * TODO: do we want to split this up further? In theory the only other expected types are Comment and (possibly) CDATASection
+ */
+interface OtherNodeEndPosition extends BaseThingBeforeCursor {
+  type: "otherNodeEnd";
+  node: Node;
+}
+
+/**
+ * The root element of the editor is right before the cursor
+ * We consider the current cursor position to be at the very beginning of the editor
+ */
+interface EditorRootPosition extends BaseThingBeforeCursor {
+  type: "editorRootStart";
+  node: Element;
+}
 
 interface BackspacePlugin {
   label: string;
