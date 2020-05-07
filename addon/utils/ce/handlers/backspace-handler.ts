@@ -287,7 +287,7 @@ export default class BackspaceHandler {
    */
   async backspace( max_tries = 50 ) {
     if( max_tries == 0 ) {
-      warn("Too many backspace tries, giving up removing content");
+      warn("Too many backspace tries, giving up removing content", { id: "backspace-handler-too-many-tries"});
       return;
     }
 
