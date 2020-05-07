@@ -637,19 +637,6 @@ export default class BackspaceHandler {
       else {
         throw "no previous sibling or parentnode found"
       }
-
-      // // we must jump to the position before the cursor find the DOM
-      // // node before us and go as deep to the right as possible in
-      // // that.
-      // if (textNode.previousSibling) {
-      //   return { type: "node", position: null, node: textNode.previousSibling };
-      // }
-      // else if (textNode.parentNode && textNode.parentNode != this.rawEditor.rootNode) {
-      //   return { type: "node", position: null, node: textNode.parentNode };
-      // }
-      // else if (textNode.parentNode && textNode.parentNode == this.rawEditor.rootNode) {
-      //   return { type: "root", position: null, node: textNode.parentNode };
-      // }
     }
 
     throw "Unsupported path in getDeepestThingBeforeCursor";
