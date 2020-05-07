@@ -26,27 +26,46 @@ interface RichNode {
   start: number;
 }
 
-interface Manipulation {
+/**
+ * Contains a set of all currently supported manipulations.
+ */
+type Manipulation =
+  RemoveEmptyTextNodeManipulation
+  | RemoveCharacterManipulation
+  | RemoveEmptyElementManipulation
+  | RemoveVoidElementManipulation
+  | MoveCursorToEndOfNodeManipulation;
+
+/**
+ * Base type for any manipulation, ensuring the type interface exists.
+ */
+interface BaseManipulation {
   type: string;
 }
 
-interface RemoveEmptyTextNodeManipulation extends Manipulation {
+/**
+ * Represents the removal of an empty text node.
+ */
+interface RemoveEmptyTextNodeManipulation extends BaseManipulation {
   type: "removeEmptyTextNode";
   node: Text;
 }
 
-interface RemoveCharacterManipulation extends Manipulation {
+/**
+ * Represents the removal of a single character from a text node.
+ */
+interface RemoveCharacterManipulation extends BaseManipulation {
   type: "removeCharacter";
   node: Text;
   position: number;
 }
 
-interface RemoveEmptyElementManipulation extends Manipulation {
+interface RemoveEmptyElementManipulation extends BaseManipulation {
   type: "removeEmptyElement";
   node: Element;
 }
 
-interface RemoveVoidElementManipulation extends Manipulation {
+interface RemoveVoidElementManipulation extends BaseManipulation {
   type: "removeVoidElement";
   node: Element;
 }
@@ -54,7 +73,7 @@ interface RemoveVoidElementManipulation extends Manipulation {
 /**
  * move the cursor after the last child of node
  */
-interface MoveCursorToEndOfNodeManipulation extends Manipulation {
+interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
   type: "moveCursorToEndOfNode";
   node: Element;
 }
@@ -66,27 +85,33 @@ interface MoveCursorToEndOfNodeManipulation extends Manipulation {
  * the supplied index.  In the string `hello`, the first l would be index
  * 2.
  */
-interface ThingBeforeCursor {
-  type: "character" | "textNode" | "elementEnd" | "elementStart"
+type ThingBeforeCursor =
+  CharacterPosition
+  | TextNodePosition
+  | ElementStartPosition
+  | ElementEndPosition
+
+interface BaseThingBeforeCursor {
+  type: string;
 }
 
-interface CharacterPosition extends ThingBeforeCursor {
+interface CharacterPosition extends BaseThingBeforeCursor {
   type: "character";
   node: Text;
   position: any;
 }
 
-interface TextNodePosition extends ThingBeforeCursor {
+interface TextNodePosition extends BaseThingBeforeCursor {
   type: "textNode";
   node: Text;
 }
 
-interface ElementStartPosition extends ThingBeforeCursor {
+interface ElementStartPosition extends BaseThingBeforeCursor {
   type: "elementStart";
   node: Element;
 }
 
-interface ElementEndPosition extends ThingBeforeCursor {
+interface ElementEndPosition extends BaseThingBeforeCursor {
   type: "elementEnd";
   node: Element;
 }
@@ -419,86 +444,85 @@ export default class BackspaceHandler {
    * @method getNextManipulation
    * @private
    */
-  getNextManipulation() : RemoveCharacterManipulation | RemoveEmptyTextNodeManipulation | RemoveEmptyElementManipulation | MoveCursorToEndOfNodeManipulation | RemoveVoidElementManipulation
+  getNextManipulation() : Manipulation
   {
     // check where our cursor is and get the deepest "thing" before
     // the cursor (character or node)
     const thingBeforeCursor: ThingBeforeCursor = this.getDeepestThingBeforeCursor();
 
-    // we are in a text node and we can remove an extra character
-    if( thingBeforeCursor.type == "character" ) {
-      // character: remove the character
-      const characterBeforeCursor = thingBeforeCursor as CharacterPosition;
-      return {
-        type: "removeCharacter",
-        node: characterBeforeCursor.node,
-        position: characterBeforeCursor.position
-      };
-    }
-    else if( thingBeforeCursor.type == "textNode" ) {
-      // empty text node: remove the text node
-      const textNodeBeforeCursor = thingBeforeCursor as TextNodePosition;
-      if( textNodeBeforeCursor.node.length === 0 ) {
+    switch( thingBeforeCursor.type ) {
+
+      case "character":
+        // character: remove the character
+        const characterBeforeCursor = thingBeforeCursor as CharacterPosition;
         return {
-          type: "removeEmptyTextNode",
-          node: textNodeBeforeCursor.node
+          type: "removeCharacter",
+          node: characterBeforeCursor.node,
+          position: characterBeforeCursor.position
         };
-      } else {
-        throw "Received text node which is not empty as previous node.  Some assumption broke.";
-      }
-    }
-    else if( thingBeforeCursor.type == "elementEnd" ) {
-      const elementBeforeCursor = thingBeforeCursor as ElementEndPosition;
-      /*
-       * element: voidTag
-       *
-       */
-      if ( isVoidElement(elementBeforeCursor.node) ) {
-        return {
-          type: "removeVoidElement",
-          node: elementBeforeCursor.node as Element
+        break;
+
+      case "textNode":
+        // empty text node: remove the text node
+        const textNodeBeforeCursor = thingBeforeCursor as TextNodePosition;
+        if( textNodeBeforeCursor.node.length === 0 ) {
+          return {
+            type: "removeEmptyTextNode",
+            node: textNodeBeforeCursor.node
+          };
+        } else {
+          throw "Received text node which is not empty as previous node.  Some assumption broke.";
         }
-      }
-      //TODO
-      // else {
-      //   return {
-      //     type: "moveCursorToEndOfNode",
-      //     node: elementBeforeCursor.node
-      //   };
-      // }
+        break;
+
+      case "elementEnd":
+        const elementBeforeCursor = thingBeforeCursor as ElementEndPosition;
+        if ( isVoidElement(elementBeforeCursor.node) ) {
+          return {
+            type: "removeVoidElement",
+            node: elementBeforeCursor.node as Element
+          }
+        }
+        //TODO
+        // else {
+        //   return {
+        //     type: "moveCursorToEndOfNode",
+        //     node: elementBeforeCursor.node
+        //   };
+        // }
+        break;
+
+      case "elementStart":
+        //   const elementBeforeCursor = thingBeforeCursor as ElementStartPosition;
+        //   const element = elementBeforeCursor.node as Element;
+        //   if (element.childNodes.length == 0) {
+        //     return {
+        //       type: "removeEmptyElement",
+        //       node: element
+        //     };
+        //   }
+        break;
+
+      case "node":
+        // TODO: when does this case unfold?  Is this not the case of elementEnd and elementStart?
+        //   const textNode = this.currentNode;
+        //   if (textNode && textNode.textContent.length == 0) { // TODO: this should be smarter and take into account visible length
+        //     return {
+        //       type: "removeNode",
+        //       node: textNode,
+        //       position: 0
+        //     }
+        //   }
+        //   else {
+        //     return {
+        //       // jump into next logical text node
+        //     }
+        //   }
+        break;
     }
-
-    //TODO
-    // else if ( thingBeforeCursor.type == "elementStart" ) {
-    //   const elementBeforeCursor = thingBeforeCursor as ElementStartPosition;
-    //   const element = elementBeforeCursor.node as Element;
-    //   if (element.childNodes.length == 0) {
-    //     return {
-    //       type: "removeEmptyElement",
-    //       node: element
-    //     };
-    //   }
-    // }
-
-    // if (thingBeforeCursor.type == "node") {
-    //   const textNode = this.currentNode;
-    //   if (textNode && textNode.textContent.length == 0) { // TODO: this should be smarter and take into account visible length
-    //     return {
-    //       type: "removeNode",
-    //       node: textNode,
-    //       position: 0
-    //     }
-    //   }
-    //   else {
-    //     return {
-    //       // jump into next logical text node
-    //     }
-    //   }
-    // }
-
 
     // TODO: take care of other cases
-    throw "Could not find next manipulation";
+    throw "Could not find manipulation to suggest for backspace";
   }
 
   /**
@@ -522,7 +546,7 @@ export default class BackspaceHandler {
    * @method getDeepestThingBeforeCursor
    * @public
    */
-  getDeepestThingBeforeCursor() : CharacterPosition | TextNodePosition | ElementEndPosition | ElementStartPosition
+  getDeepestThingBeforeCursor() : ThingBeforeCursor
   {
     // TODO: it is a bit unclear how to best address this.  What
     // should this return exactly in all cases and how should we best
