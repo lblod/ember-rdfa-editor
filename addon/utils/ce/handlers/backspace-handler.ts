@@ -409,8 +409,8 @@ export default class BackspaceHandler {
       const voidElement = voidManipulation.node as Element;
       const parentElement = voidElement.parentElement as Element;
       const indexOfElement = Array.from(parentElement.childNodes).indexOf(voidElement);
-      voidElement.remove();
       this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
+      voidElement.remove();
       this.rawEditor.updateRichNode();
     }
     else if ( manipulation.type === "moveCursorToEndOfNode" ) {
