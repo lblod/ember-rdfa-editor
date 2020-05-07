@@ -340,21 +340,30 @@ export default class BackspaceHandler {
 
     const { previousVisualCursorCoordinates } = options
 
-    if(previousVisualCursorCoordinates.length == 0 && this.carretClientRects.length > 0) return true;
-
-    const { left: ol, top: ot } = previousVisualCursorCoordinates[0];
-
-    if(this.carretClientRects.length == 0) return true;
-
-    const { left: nl, top: nt } = this.carretClientRects[0];
-
-    const visibleChange = ol !== nl || ot !== nt;
-
-    if( !visibleChange ){
-      console.log(`Did not see a visual change when removing character`, { new: this.carretClientRects, old: previousVisualCursorCoordinates });
+    if( ! previousVisualCursorCoordinates.length && ! this.carretClientRects.length ){
+      return false;
     }
+    else if( ! previousVisualCursorCoordinates.length && this.carretClientRects.length ){
+      return true;
+    }
+    else if( previousVisualCursorCoordinates.length && ! this.carretClientRects.length ){
+      return true;
+    }
+    //Previous and current have visual coordinates, we need to compare the contents
+    else {
+      const { left: ol, top: ot } = previousVisualCursorCoordinates[0];
 
-    return visibleChange;
+
+      const { left: nl, top: nt } = this.carretClientRects[0];
+
+      const visibleChange = ol !== nl || ot !== nt;
+
+      if( !visibleChange ){
+        console.log(`Did not see a visual change when removing character`, { new: this.carretClientRects, old: previousVisualCursorCoordinates });
+      }
+
+      return visibleChange;
+    }
   }
 
   /**
