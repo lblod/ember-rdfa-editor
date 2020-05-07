@@ -34,6 +34,7 @@ type Manipulation =
   | RemoveCharacterManipulation
   | RemoveEmptyElementManipulation
   | RemoveVoidElementManipulation
+  | RemoveOtherNodeManipulation
   | MoveCursorToEndOfNodeManipulation;
 
 /**
@@ -76,6 +77,11 @@ interface RemoveVoidElementManipulation extends BaseManipulation {
 interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
   type: "moveCursorToEndOfNode";
   node: Element;
+}
+
+interface RemoveOtherNodeManipulation extends BaseManipulation {
+  type: "removeOtherNode";
+  node: Node;
 }
 
 /**
@@ -460,6 +466,15 @@ export default class BackspaceHandler {
       emptyElement.remove();
       this.rawEditor.updateRichNode();
     }
+    else if ( manipulation.type === "removeOtherNode") {
+      const removeEmptyElementManipulation = manipulation as RemoveEmptyElementManipulation;
+      const emptyElement = removeEmptyElementManipulation.node;
+      const parentElement = emptyElement.parentElement as Element;
+      const indexOfElement = Array.from(parentElement.childNodes).indexOf(emptyElement);
+      this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
+      emptyElement.remove();
+      this.rawEditor.updateRichNode();
+    }
     else if ( manipulation.type === "removeVoidElement" ) {
       // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
       const voidManipulation = manipulation as RemoveVoidElementManipulation;
@@ -551,6 +566,14 @@ export default class BackspaceHandler {
         else {
           console.debug("currently unsupported: at start of element, but it's not empty", element);
         }
+        break;
+      case "otherNodeEnd":
+        const positionBeforeCursor = thingBeforeCursor as OtherNodeEndPosition;
+        const node = positionBeforeCursor.node;
+        return {
+          type: "removeOtherNode",
+          node: node
+        };
         break;
     }
 
