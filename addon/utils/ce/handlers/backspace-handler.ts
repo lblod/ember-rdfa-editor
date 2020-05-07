@@ -381,6 +381,8 @@ export default class BackspaceHandler {
     const { previousVisualCursorCoordinates } = options
 
     if( ! previousVisualCursorCoordinates.length && ! this.carretClientRects.length ){
+      console.log(`Did not see a visual change when removing character, no visualCoordinates whatsoever`,
+                  { new: this.carretClientRects, old: previousVisualCursorCoordinates });
       return false;
     }
     else if( ! previousVisualCursorCoordinates.length && this.carretClientRects.length ){
