@@ -622,15 +622,21 @@ export default class BackspaceHandler {
     // check where the cursor is
     // TODO: should we support actual selections here as well or will that be a different handler?
     // current implementation assumes a collapsed selection (e.g. a carret)
+    // NOTE: currentNode can be null, in case of an actual selection
     const position = this.currentSelection[0];
-    const textNode = this.currentNode;
+    const textNode = this.currentNode as Text;
     const richNode = this.rawEditor.getRichNodeFor(textNode);
     // TODO: allow plugins to hook into this?
     const relPosition = this.absoluteToRelativePosition(richNode, position);
     if( relPosition >= 1 ) {
       // the cursor is in a text node
-      return { type: "character", position: relPosition - 1, node: textNode as Text };
-    } else {
+      return { type: "character", position: relPosition - 1, node: textNode};
+    }
+    else if (textNode.length == 0){
+      // at the start an empty text node
+      return { type: "textNode", node: textNode};
+    }
+    else {
       // start of textnode (relposition = 0)
       const previousSibling = textNode.previousSibling;
       if( previousSibling ) {
@@ -665,7 +671,6 @@ export default class BackspaceHandler {
         throw "no previous sibling or parentnode found"
       }
     }
-
     throw "Unsupported path in getDeepestThingBeforeCursor";
 
     // // else if the cursor is inside the only invisible space
