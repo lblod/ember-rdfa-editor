@@ -502,23 +502,6 @@ export default class BackspaceHandler {
         //     };
         //   }
         break;
-
-      case "node":
-        // TODO: when does this case unfold?  Is this not the case of elementEnd and elementStart?
-        //   const textNode = this.currentNode;
-        //   if (textNode && textNode.textContent.length == 0) { // TODO: this should be smarter and take into account visible length
-        //     return {
-        //       type: "removeNode",
-        //       node: textNode,
-        //       position: 0
-        //     }
-        //   }
-        //   else {
-        //     return {
-        //       // jump into next logical text node
-        //     }
-        //   }
-        break;
     }
 
     // TODO: take care of other cases
