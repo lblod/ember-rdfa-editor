@@ -369,7 +369,7 @@ export default class BackspaceHandler {
   }
 
   /**
-   * Yields a ClientRect for the current cursor position.
+   * Yields all {ClientRect} for the current cursor position.
    *
    * @method carretClientRects
    * @private
@@ -456,7 +456,7 @@ export default class BackspaceHandler {
   {
     // check where our cursor is and get the deepest "thing" before
     // the cursor (character or node)
-    const thingBeforeCursor: ThingBeforeCursor = this.getDeepestThingBeforeCursor();
+    const thingBeforeCursor: ThingBeforeCursor = this.getThingBeforeCursor();
 
     switch( thingBeforeCursor.type ) {
 
@@ -518,7 +518,7 @@ export default class BackspaceHandler {
   /**
    * Retrieves the thing before the cursor position.
    *
-   * # What is the deepest thing before a cursor position?
+   * # What is the thing before a cursor position?
    *
    * The cursor position is basically always in a text node.  But the
    * thing before a cursor could be one of many things.  Considering
@@ -531,12 +531,22 @@ export default class BackspaceHandler {
    *
    * ## Case a character
    *
+   * ## Case a textNode
    *
+   * ## Case a void element (br, hr, ...)
    *
-   * @method getDeepestThingBeforeCursor
+   * ## Case an element
+   *
+   * ## Case a node that is neither element, nor textnode
+   *
+   * ## Case nothing, but we have a parentNode (and it's not the editor)
+   *
+   * ## Case nothing, and the editor is our parentNode
+   *
+   * @method getThingBeforeCursor
    * @public
    */
-  getDeepestThingBeforeCursor() : ThingBeforeCursor
+  getThingBeforeCursor() : ThingBeforeCursor
   {
     // TODO: it is a bit unclear how to best address this.  What
     // should this return exactly in all cases and how should we best
