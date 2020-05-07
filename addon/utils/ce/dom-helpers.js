@@ -101,7 +101,7 @@ function removeNode(node){
  * @public
  */
 function isVoidElement(node) {
-  return node.nodeType === Node.ELEMENT_NODE && /^(AREA|BASE|BR|COL|COMMAND|EMBED|HR|IMG|INPUT|KEYGEN|LINK|META|PARAM|SOURCE|TRACK|WBR|I)$/i.test(node.tagName);
+  return node.nodeType === Node.ELEMENT_NODE && /^(AREA|BASE|BR|COL|EMBED|HR|IMG|INPUT|LINK|META|PARAM|SOURCE|TRACK|WBR)$/i.test(node.tagName);
 }
 
 /**
