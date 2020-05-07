@@ -453,7 +453,7 @@ export default class BackspaceHandler {
     }
     else if ( manipulation.type === "removeEmptyElement" ) {
       const removeEmptyElementManipulation = manipulation as RemoveEmptyElementManipulation;
-      const emptyElement = removeEmptyElementManipulation.node as Element;
+      const emptyElement = removeEmptyElementManipulation.node;
       const parentElement = emptyElement.parentElement as Element;
       const indexOfElement = Array.from(parentElement.childNodes).indexOf(emptyElement);
       this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
@@ -463,7 +463,7 @@ export default class BackspaceHandler {
     else if ( manipulation.type === "removeVoidElement" ) {
       // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
       const voidManipulation = manipulation as RemoveVoidElementManipulation;
-      const voidElement = voidManipulation.node as Element;
+      const voidElement = voidManipulation.node;
       const parentElement = voidElement.parentElement as Element;
       const indexOfElement = Array.from(parentElement.childNodes).indexOf(voidElement);
       this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
