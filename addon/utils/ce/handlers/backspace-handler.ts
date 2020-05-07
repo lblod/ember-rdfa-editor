@@ -414,8 +414,8 @@ export default class BackspaceHandler {
       const emptyElement = removeEmptyElementManipulation.node as Element;
       const parentElement = emptyElement.parentElement as Element;
       const indexOfElement = Array.from(parentElement.childNodes).indexOf(emptyElement);
-      emptyElement.remove();
       this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
+      emptyElement.remove();
       this.rawEditor.updateRichNode();
     }
     else if ( manipulation.type === "removeVoidElement" ) {
@@ -571,14 +571,17 @@ export default class BackspaceHandler {
           return { type: "elementEnd", node: sibling };
         }
         else {
+          throw `unsupported node type ${previousSibling.nodeType}`
           // TODO: other type of nodes (comment nodes, ...) see https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
-
         }
       }
       else if (textNode.parentElement) {
         if (textNode.parentElement != this.rawEditor.rootNode) {
           const parent = textNode.parentElement as Element;
           return { type: "elementStart", node: parent};
+        }
+        else {
+          throw "parentNode is rootelement, not supported yet"
         }
       }
       else {
