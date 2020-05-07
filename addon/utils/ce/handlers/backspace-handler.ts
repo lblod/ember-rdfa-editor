@@ -476,12 +476,12 @@ export default class BackspaceHandler {
       this.rawEditor.updateRichNode();
     }
     else if ( manipulation.type === "removeOtherNode") {
-      const removeEmptyElementManipulation = manipulation as RemoveEmptyElementManipulation;
-      const emptyElement = removeEmptyElementManipulation.node;
-      const parentElement = emptyElement.parentElement as Element;
-      const indexOfElement = Array.from(parentElement.childNodes).indexOf(emptyElement);
+      const removeOtherNodeManipulation = manipulation as RemoveOtherNodeManipulation;
+      const otherNode = removeOtherNodeManipulation.node;
+      const parentElement = otherNode.parentElement as Element;
+      const indexOfElement = Array.from(parentElement.childNodes).indexOf(otherNode);
       this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
-      emptyElement.remove();
+      parentElement.removeChild(otherNode);
       this.rawEditor.updateRichNode();
     }
     else if ( manipulation.type === "removeVoidElement" ) {
