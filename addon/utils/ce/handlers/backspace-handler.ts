@@ -571,6 +571,9 @@ export default class BackspaceHandler {
           const parent = textNode.parentElement as Element;
           return { type: "elementStart", node: parent};
         }
+        else {
+          throw "parentNode is rootelement, not supported yet"
+        }
       }
       else {
         throw "no previous sibling or parentnode found"
