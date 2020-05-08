@@ -574,8 +574,7 @@ export default class BackspaceHandler {
   handleNativeManipulation( manipulation: Manipulation ) {
     switch( manipulation.type ) {
       case "removeCharacter":
-        const removeCharacterManipulation = manipulation as RemoveCharacterManipulation;
-        const { node, position } = removeCharacterManipulation;
+        const { node, position } = manipulation;
         const nodeText = node.textContent || "";
         node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
         if (node.textContent.length == 0) {
@@ -588,8 +587,7 @@ export default class BackspaceHandler {
         this.rawEditor.setCarret( node, position );
         break;
       case "removeEmptyTextNode":
-        const removeEmptyTextNodeManipulation = manipulation as RemoveEmptyTextNodeManipulation;
-        const { node: textNode } = removeEmptyTextNodeManipulation;
+        const { node: textNode } = manipulation;
         if( textNode.parentNode ) {
           textNode.parentNode.removeChild( textNode );
           // TODO: we explicitly do NOT set carret to trigger a next iteration in backspace()
@@ -599,8 +597,7 @@ export default class BackspaceHandler {
         }
         break;
       case "removeEmptyElement":
-        const removeEmptyElementManipulation = manipulation as RemoveEmptyElementManipulation;
-        const emptyElement = removeEmptyElementManipulation.node;
+        const emptyElement = manipulation.node;
         const emptyElementParent = emptyElement.parentElement as Element;
         const emptyElementIndex = Array.from(emptyElementParent.childNodes).indexOf(emptyElement);
         this.rawEditor.setCarret(emptyElementParent, emptyElementIndex); // place the cursor before the removed element
@@ -609,11 +606,10 @@ export default class BackspaceHandler {
         break;
       case "removeOtherNode":
         // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
-        const removeOtherNodeManipulation = manipulation as RemoveOtherNodeManipulation;
-        if( !removeOtherNodeManipulation.node.parentElement ) {
+        if( !manipulation.node.parentElement ) {
           throw "Received other node does not have a parent.  Backspace failed te remove this node."
         }
-        const otherNode = removeOtherNodeManipulation.node as Node;
+        const otherNode = manipulation.node as Node;
         const otherNodeParent = otherNode.parentElement as Element;
         // TODO: the following does not work without casting, and I'm
         // not sure we certainly have the childNode interface as per
@@ -625,11 +621,10 @@ export default class BackspaceHandler {
         break;
       case "removeVoidElement":
         // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
-        const voidManipulation = manipulation as RemoveVoidElementManipulation;
-        if( !voidManipulation.node.parentElement ) {
+        if( !manipulation.node.parentElement ) {
           throw "Received void element without parent.  Backspace failed to remove this node."
         }
-        const voidElement = voidManipulation.node;
+        const voidElement = manipulation.node;
         const voidParentElement = voidElement.parentElement as Element;
         const voidElementIndex = Array.from(voidParentElement.childNodes).indexOf(voidElement);
         this.rawEditor.setCarret(voidParentElement, voidElementIndex); // place the cursor before the removed element
@@ -649,14 +644,12 @@ export default class BackspaceHandler {
       case "moveCursorToEndOfNode":
         // TODO: should this actually move your cursor at this point?
         // setCarret creates textnodes if necessary to ensure a cursor can be placed
-        const moveCursorManipulation = manipulation as MoveCursorToEndOfNodeManipulation;
-        const element = moveCursorManipulation.node;
+        const element = manipulation.node;
         const length = element.childNodes.length;
         this.rawEditor.setCarret(element, length);
         break;
       case "moveCursorBeforeElement":
-        const moveCursorBeforeElementManipulation = manipulation as MoveCursorBeforeElementManipulation
-        const elementOfManipulation = moveCursorBeforeElementManipulation.node
+        const elementOfManipulation = manipulation.node
         const parentOfElement = elementOfManipulation.parentElement;
         if (parentOfElement) {
           const indexOfElement = Array.from(parentOfElement.childNodes).indexOf(elementOfManipulation);
