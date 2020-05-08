@@ -71,7 +71,8 @@ type Manipulation =
   | RemoveVoidElementManipulation
   | RemoveOtherNodeManipulation
   | RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation
-  | MoveCursorToEndOfNodeManipulation;
+  | MoveCursorToEndOfNodeManipulation
+  | MoveCursorBeforeElementManipulation;
 
 /**
  * Base type for any manipulation, ensuring the type interface exists.
@@ -118,6 +119,14 @@ interface RemoveVoidElementManipulation extends BaseManipulation {
  */
 interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
   type: "moveCursorToEndOfNode";
+  node: Element;
+}
+
+/**
+ * Represents moving the cursor before the element
+ */
+interface MoveCursorBeforeElementManipulation extends BaseManipulation {
+  type: "moveCursorBeforeElement";
   node: Element;
 }
 
@@ -639,6 +648,16 @@ export default class BackspaceHandler {
         const length = element.childNodes.length;
         this.rawEditor.setCarret(element, length);
         break;
+      case "moveCursorBeforeElement":
+        const moveCursorBeforeElementManipulation = manipulation as MoveCursorBeforeElementManipulation
+        const elementOfManipulation = moveCursorBeforeElementManipulation.node
+        const parentOfElement = elementOfManipulation.parentElement;
+        if (parentOfElement) {
+          const indexOfElement = Array.from(parentOfElement.childNodes).indexOf(elementOfManipulation);
+          this.rawEditor.setCarret(parentOfElement, indexOfElement); // place the cursor before the element
+          this.rawEditor.updateRichNode();
+        }
+        break;
       default:
         throw `Case ${manipulation.type} was not handled by handleNativeInputManipulation.`
     }
@@ -726,14 +745,19 @@ export default class BackspaceHandler {
           };
         }
         else {
-          // if  an element has no visible nodes do we delete it?
+          // if  an element has no visible text nodes, we remove it
           if (this.allChildrenAreInvisibleTextNodes(element)) {
             return {
               type: "removeElementWithOnlyInvisibleTextNodeChildren",
               node: element
             }
           }
-          console.debug("currently unsupported: at start of element, but it's not empty", element);
+          else {
+            return {
+              type: "moveCursorBeforeElement",
+              node: element
+            }
+          }
         }
         break;
       case "uncommonNodeEnd":
