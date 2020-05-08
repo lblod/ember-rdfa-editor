@@ -71,6 +71,7 @@ type Manipulation =
   | RemoveVoidElementManipulation
   | RemoveOtherNodeManipulation
   | RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation
+  | RemoveElementWithChildrenThatArentVisible
   | MoveCursorToEndOfNodeManipulation
   | MoveCursorBeforeElementManipulation;
 
@@ -140,9 +141,15 @@ interface RemoveOtherNodeManipulation extends BaseManipulation {
 
 /**
  * Represents the removal of an element that has only invisible text nodes as children
+ * TODO: currently replaced by removeElementWithChildrenThatArentVisible
  */
 interface RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation extends BaseManipulation {
   type: "removeElementWithOnlyInvisibleTextNodeChildren"
+  node: Element;
+}
+
+interface RemoveElementWithChildrenThatArentVisible extends BaseManipulation {
+  type: "removeElementWithChildrenThatArentVisible"
   node: Element;
 }
 
@@ -629,14 +636,13 @@ export default class BackspaceHandler {
         voidElement.remove();
         this.rawEditor.updateRichNode();
         break;
-      case "removeElementWithOnlyInvisibleTextNodeChildren":
-        const removeElementWithOnlyInvisibleTextNodesManipulation = manipulation as RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation;
-        const elementWithOnlyInvisibleTextNodes = removeElementWithOnlyInvisibleTextNodesManipulation.node;
-        const parentElement = elementWithOnlyInvisibleTextNodes.parentElement;
+      case "removeElementWithChildrenThatArentVisible":
+        const elementWithOnlyInvisibleNodes = manipulation.node;
+        const parentElement = elementWithOnlyInvisibleNodes.parentElement;
         if (parentElement) {
-          const indexOfElement = Array.from(parentElement.childNodes).indexOf(elementWithOnlyInvisibleTextNodes);
+          const indexOfElement = Array.from(parentElement.childNodes).indexOf(elementWithOnlyInvisibleNodes);
           this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
-          elementWithOnlyInvisibleTextNodes.remove();
+          elementWithOnlyInvisibleNodes.remove();
           this.rawEditor.updateRichNode();
         }
         break;
@@ -746,15 +752,15 @@ export default class BackspaceHandler {
         }
         else {
           // if  an element has no visible text nodes, we remove it
-          if (this.allChildrenAreInvisibleTextNodes(element)) {
+          if (this.hasVisibleChildren(element)) {
             return {
-              type: "removeElementWithOnlyInvisibleTextNodeChildren",
+              type: "moveCursorBeforeElement",
               node: element
             }
           }
           else {
             return {
-              type: "moveCursorBeforeElement",
+              type: "removeElementWithChildrenThatArentVisible",
               node: element
             }
           }
@@ -823,6 +829,63 @@ export default class BackspaceHandler {
       }
     }
     return true;
+  }
+
+  /**
+   * determines if an element has visible children
+   *
+   * we check this by positioning the cursor after each child and see if the
+   * cursor position has visibly changed.
+
+   * TODO: this may cause unwanted side effects, currently it looks at least as
+   * if we manage to securely restore state after the check
+   *
+   * NOTE: we cast window.getSelection because, though it can be null in
+   * theory, according to documentation this only happens when you call it on an
+   * iframe. [ https://developer.mozilla.org/en-US/docs/Web/API/Window/getSelection ]
+   */
+  hasVisibleChildren(element: Element) {
+    if (element.childNodes.length === 0) {
+      // exclude empty elements from check
+      return false;
+    }
+
+    // capture the selected range so we can restore it after the check
+    const selectionBeforeCheck = window.getSelection() as Selection;
+
+    let rangeBeforeCheck = selectionBeforeCheck.getRangeAt(0);
+
+    // place cursor before first child
+    let docRange = document.createRange();
+    let selection = window.getSelection() as Selection;
+    docRange.setStart(element, 0);
+    docRange.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(docRange)
+
+    // place cursor after every child
+    const children = Array.from(element.childNodes);
+    let hasVisibleChildren = false;
+    for (let i = 0; i <= children.length; i++) {
+      const currentRect = this.carretClientRects;
+      let docRange = document.createRange();
+      let currentSelection = window.getSelection() as Selection;
+      docRange.setStart(element, i);
+      docRange.collapse(true);
+      currentSelection.removeAllRanges();
+      currentSelection.addRange(docRange);
+      const visibleChange = this.checkVisibleChange({ previousVisualCursorCoordinates: currentRect });
+      if (visibleChange) {
+        hasVisibleChildren = true;
+      }
+    }
+
+    // restore the original range
+    let currentSelection = window.getSelection() as Selection;
+    currentSelection.removeAllRanges();
+    currentSelection.addRange(rangeBeforeCheck);
+
+    return hasVisibleChildren;
   }
 
   /**
@@ -960,7 +1023,7 @@ export default class BackspaceHandler {
         throw "no previous sibling or parentnode found"
       }
     }
-    throw "Unsupported path in getDeepestThingBeforeCursor";
+    throw "Unsupported path in getThingBeforeCursor";
 
     // // else if the cursor is inside the only invisible space
     // //   if this is the only node of our parent, delete the parent
