@@ -806,6 +806,8 @@ export default class BackspaceHandler {
    * TODO: this should probably move to a
    * helper file like dom-helpers
    *
+   * TODO: no longer used, currently using hasVisibleChildren
+   *
    * @method allChildrenAreInvisibleTextNodes
    * @param {Element} element
    */
