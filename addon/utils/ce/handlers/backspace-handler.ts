@@ -1,6 +1,6 @@
 import HandlerResponse from './handler-response';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import { isVoidElement } from '../dom-helpers';
+import { isVoidElement, invisibleSpace } from '../dom-helpers';
 
 /**
  * List of all Void elements.
@@ -70,6 +70,7 @@ type Manipulation =
   | RemoveEmptyElementManipulation
   | RemoveVoidElementManipulation
   | RemoveOtherNodeManipulation
+  | RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation
   | MoveCursorToEndOfNodeManipulation;
 
 /**
@@ -126,6 +127,14 @@ interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
 interface RemoveOtherNodeManipulation extends BaseManipulation {
   type: "removeOtherNode";
   node: Node;
+}
+
+/**
+ * Represents the removal of an element that has only invisible text nodes as children
+ */
+interface RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation extends BaseManipulation {
+  type: "removeElementWithOnlyInvisibleTextNodeChildren"
+  node: Element;
 }
 
 /**
@@ -520,6 +529,13 @@ export default class BackspaceHandler {
       const { node, position } = removeCharacterManipulation;
       const nodeText = node.textContent || "";
       node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
+      console.log(`new content ${node.textContent.length} ${node.textContent}`);
+      if (node.textContent.length == 0) {
+        // it seems browsers don't like empty textNodes so we add an invisibleSpace. This makes the node visible in browsers
+        // TODO: verify if this is a smart solution, perhaps working with a span or similar is what we want
+        // TODO: this may also imply we never delete TextNodes
+        node.textContent = invisibleSpace;
+      }
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret( node, position );
     }
@@ -542,6 +558,17 @@ export default class BackspaceHandler {
       this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
       emptyElement.remove();
       this.rawEditor.updateRichNode();
+    }
+    else if ( manipulation.type == "removeElementWithOnlyInvisibleTextNodeChildren") {
+      const removeEmptyElementManipulation = manipulation as RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation;
+      const emptyElement = removeEmptyElementManipulation.node;
+      const parentElement = emptyElement.parentElement;
+      if (parentElement) {
+        const indexOfElement = Array.from(parentElement.childNodes).indexOf(emptyElement);
+        this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
+        emptyElement.remove();
+        this.rawEditor.updateRichNode();
+      }
     }
     else if ( manipulation.type === "removeOtherNode") {
       const removeOtherNodeManipulation = manipulation as RemoveOtherNodeManipulation;
@@ -654,6 +681,13 @@ export default class BackspaceHandler {
           };
         }
         else {
+          // if  an element has no visible nodes do we delete it?
+          if (this.allChildrenAreInvisibleTextNodes(element)) {
+            return {
+              type: "removeElementWithOnlyInvisibleTextNodeChildren",
+              node: element
+            }
+          }
           console.debug("currently unsupported: at start of element, but it's not empty", element);
         }
         break;
@@ -669,6 +703,46 @@ export default class BackspaceHandler {
 
     // TODO: take care of other cases
     throw `Could not find manipulation to suggest for backspace ${thingBeforeCursor.type}`;
+  }
+
+  /**
+   * Removes invisibleSpaces and compacts consecutive spaces to 1 space.
+   *
+   * The \s match matches a bunch of content, as per
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Character_Classes
+   * and we do not want to match all of them.  Currently 160 (&nbsp;
+   * A0) is removed from this list.
+   *
+   * TODO: this function clearly needs to take the CSS styling into
+   * account.  One can only know positions based on the styling of the
+   * document.  Finding visual positions to jump to thus need to take
+   * this into account.
+   *
+   * @method stringToVisibleText
+   * @param {String} text
+   * @return {String}
+   * @public
+   */
+  stringToVisibleText(string : string) {
+    // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
+    return string
+      .replace(invisibleSpace,'')
+      .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
+  }
+
+  allChildrenAreInvisibleTextNodes(element : Element) {
+    for (const child of element.childNodes) {
+      if (child.nodeType != Node.TEXT_NODE) {
+        return false;
+      }
+      else {
+        const textNode = child as Text;
+        if (textNode.textContent && this.stringToVisibleText(textNode.textContent).length > 0  ) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   /**
