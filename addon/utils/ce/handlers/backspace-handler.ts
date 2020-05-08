@@ -706,7 +706,7 @@ export default class BackspaceHandler {
   }
 
   /**
-   * Removes invisibleSpaces and compacts consecutive spaces to 1 space.
+   * Removes all whitespace, with the exception of non breaking spaces
    *
    * The \s match matches a bunch of content, as per
    * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Character_Classes
@@ -730,6 +730,17 @@ export default class BackspaceHandler {
       .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
   }
 
+  /**
+   * Verify if an element only has invisible text nodes as children
+   *
+   * NOTE: see TODO of stringToVisibleText, need to research if we can check the
+   * visual width of textNodes somehow
+   * TODO: this should probably move to a
+   * helper file like dom-helpers
+   *
+   * @method allChildrenAreInvisibleTextNodes
+   * @param {Element} element
+   */
   allChildrenAreInvisibleTextNodes(element : Element) {
     for (const child of element.childNodes) {
       if (child.nodeType != Node.TEXT_NODE) {
