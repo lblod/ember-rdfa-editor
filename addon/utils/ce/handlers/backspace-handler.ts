@@ -2,6 +2,8 @@ import HandlerResponse from './handler-response';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import { tagName, isVoidElement, invisibleSpace } from '../dom-helpers';
 
+import ListBackspacePlugin from '../../plugins/lists/backspace-plugin';
+
 /**
  * List of all Void elements.
  *
@@ -411,7 +413,7 @@ export default class BackspaceHandler {
   /**
    * Array containing all plugins for the backspace handler.
    */
-  plugins: Array<BackspacePlugin> = [];
+  plugins: Array<BackspacePlugin> = [ new ListBackspacePlugin() ];
 
   /////////////////////
   // CALLBACK INTERFACE
