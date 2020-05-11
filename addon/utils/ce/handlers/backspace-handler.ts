@@ -1122,3 +1122,4 @@ export default class BackspaceHandler {
     return Math.max(position - ( richNode.start || 0 ));
   }
 }
+export { BackspacePlugin }
