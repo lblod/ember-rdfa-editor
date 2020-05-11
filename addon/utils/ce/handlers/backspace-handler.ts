@@ -55,6 +55,10 @@ interface RawEditor {
   currentNode: Node
 }
 
+interface Editor {
+  setCarret: ( node: Node, position: number ) => void
+}
+
 interface RawEditorSelection extends Array<number> {
 
 }
@@ -301,9 +305,15 @@ interface EditorRootPosition extends BaseThingBeforeCursor {
 
 interface BackspacePlugin {
   label: string;
-  allowManipulation: (manipulation: Manipulation) => boolean;
+  guidanceForManipulation: (manipulation: Manipulation) => ManipulationGuidance | null;
   detectChange: (manipulation: Manipulation) => boolean;
 }
+
+interface ManipulationGuidance {
+  allow: boolean | undefined
+  executor: (manipulation: Manipulation, editor: Editor) => void
+}
+
 
 interface Task {
   perform: () => void;
@@ -330,7 +340,7 @@ function paintCycleHappened() : Promise<void> {
 
 /**
  * Backspace Handler, an event handler to handle removing content
- * behind the cursor.
+ * before the cursor.
  *
  * This handler tries to remove subsequent DOM content until we have a
  * clue that something has changed.  What "something has changed"
@@ -340,7 +350,7 @@ function paintCycleHappened() : Promise<void> {
  *
  * The general idea of the backspace handler goes as follows:
  *
- * - find the innermost thing before the cursor.
+ * - find the thing before the cursor.
  * - try to remove that thing
  * - repeat until there is a visual difference
  *
@@ -1044,22 +1054,31 @@ export default class BackspaceHandler {
     const reports =
           this
           .plugins
-          .map( (plugin) => {
+            .map( (plugin) => {
+              const guidance = plugin.guidanceForManipulation( manipulation );
             return {
               plugin,
-              allow: plugin.allowManipulation( manipulation )
-            }; } )
-          .filter( ({allow}) => !allow );
+              allow: guidance?.allow,
+              executor: guidance?.executor
+            }; } );
 
     // debug reporting
+    if (reports.length > 1) {
+      console.error(`Multiple plugins want to alter this manipulation`, reports);
+    }
     for( const { plugin } of reports ) {
       console.debug(`Was not allowed to execute backspace manipulation by plugin ${plugin.label}`, { manipulation, plugin });
     }
 
-    return {
-      mayExecute: reports.length === 0,
-      dispatchedExecutor: null
-    };
+    if (reports.length > 0) {
+      
+    }
+    else {
+      return {
+        mayExecute: reports.length === 0,
+        dispatchedExecutor: null
+      };
+    }
   }
 
   /**
