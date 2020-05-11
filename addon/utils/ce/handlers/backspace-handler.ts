@@ -1,6 +1,6 @@
 import HandlerResponse from './handler-response';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import { isVoidElement, invisibleSpace } from '../dom-helpers';
+import { tagName, isVoidElement, invisibleSpace } from '../dom-helpers';
 
 /**
  * List of all Void elements.
@@ -829,57 +829,55 @@ export default class BackspaceHandler {
   /**
    * determines if an element has visible children
    *
-   * we check this by positioning the cursor after each child and see if the
-   * cursor position has visibly changed.
-
-   * TODO: this may cause unwanted side effects, currently it looks at least as
-   * if we manage to securely restore state after the check
+   * this is a heuristic which is going to change over time
    *
-   * NOTE: we cast window.getSelection because, though it can be null in
-   * theory, according to documentation this only happens when you call it on an
-   * iframe. [ https://developer.mozilla.org/en-US/docs/Web/API/Window/getSelection ]
+   * Currently we assume
+   * 1. that all textnodes with visibleText (as definied in stringToVisibleText) are visible
+   * 2. that elements are visible if their clientWidth is larger than zero or their visible textContent > 0.
+   *
+   * // TODO: shoud we allow plugins to hook into this? that's probably required to this in a smart way?
+   *
+   * @method hasVisibleChildren
+   * @param {Element} element
+   * @return boolean
    */
-  hasVisibleChildren(element: Element) {
-    if (element.childNodes.length === 0) {
-      // exclude empty elements from check
+  hasVisibleChildren(parent: Element) {
+    if (parent.childNodes.length === 0) {
+      // no need to check empty elements from check
       return false;
     }
 
-    // capture the selected range so we can restore it after the check
-    const selectionBeforeCheck = window.getSelection() as Selection;
-
-    let rangeBeforeCheck = selectionBeforeCheck.getRangeAt(0);
-
-    // place cursor before first child
-    let docRange = document.createRange();
-    let selection = window.getSelection() as Selection;
-    docRange.setStart(element, 0);
-    docRange.collapse(true);
-    selection.removeAllRanges();
-    selection.addRange(docRange)
-
-    // place cursor after every child
-    const children = Array.from(element.childNodes);
     let hasVisibleChildren = false;
-    for (let i = 0; i <= children.length; i++) {
-      const currentRect = this.carretClientRects;
-      let docRange = document.createRange();
-      let currentSelection = window.getSelection() as Selection;
-      docRange.setStart(element, i);
-      docRange.collapse(true);
-      currentSelection.removeAllRanges();
-      currentSelection.addRange(docRange);
-      const visibleChange = this.checkVisibleChange({ previousVisualCursorCoordinates: currentRect });
-      if (visibleChange) {
-        hasVisibleChildren = true;
+    for (let child of Array.from(parent.childNodes)) {
+      if (child.nodeType == Node.TEXT_NODE) {
+        const textNode = child as Text;
+        if (textNode.textContent && this.stringToVisibleText(textNode.textContent).length > 0  ) {
+          hasVisibleChildren = true;
+        }
+      }
+      else if (child.nodeType == Node.ELEMENT_NODE ) {
+        const element = child as HTMLElement;
+        if (element.nextSibling && tagName(element) == 'br') {
+          // it's a br, but not the last br which we can ignore (most of the time...)
+          hasVisibleChildren = true;
+        }
+        else if (this.stringToVisibleText(element.textContent)) {
+          // it has visible text content so it is visible
+          hasVisibleChildren = true;
+        }
+        else if (element.clientWidth > 0) {
+          // it has visible width so it is visible
+          hasVisibleChildren = true;
+        }
+        else {
+          console.debug('assuming this node is not visible', child);
+        }
+      }
+      else {
+        // we assume other nodes can be ignored for now
+        console.debug('ignoring node, assuming non visible', child);
       }
     }
-
-    // restore the original range
-    let currentSelection = window.getSelection() as Selection;
-    currentSelection.removeAllRanges();
-    currentSelection.addRange(rangeBeforeCheck);
-
     return hasVisibleChildren;
   }
 
