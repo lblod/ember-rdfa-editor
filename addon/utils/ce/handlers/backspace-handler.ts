@@ -55,12 +55,12 @@ interface RawEditor {
   currentNode: Node
 }
 
-interface Editor {
-  setCarret: ( node: Node, position: number ) => void
-}
-
 interface RawEditorSelection extends Array<number> {
 
+}
+
+export interface Editor {
+  setCarret: ( node: Node, position: number ) => void
 }
 
 interface RichNode {
@@ -70,7 +70,7 @@ interface RichNode {
 /**
  * Contains a set of all currently supported manipulations.
  */
-type Manipulation =
+export type Manipulation =
   RemoveEmptyTextNodeManipulation
   | RemoveCharacterManipulation
   | RemoveEmptyElementManipulation
@@ -84,14 +84,15 @@ type Manipulation =
 /**
  * Base type for any manipulation, ensuring the type interface exists.
  */
-interface BaseManipulation {
+export interface BaseManipulation {
   type: string;
+  node?: Node;
 }
 
 /**
  * Represents the removal of an empty text node.
  */
-interface RemoveEmptyTextNodeManipulation extends BaseManipulation {
+export interface RemoveEmptyTextNodeManipulation extends BaseManipulation {
   type: "removeEmptyTextNode";
   node: Text;
 }
@@ -99,7 +100,7 @@ interface RemoveEmptyTextNodeManipulation extends BaseManipulation {
 /**
  * Represents the removal of a single character from a text node.
  */
-interface RemoveCharacterManipulation extends BaseManipulation {
+export interface RemoveCharacterManipulation extends BaseManipulation {
   type: "removeCharacter";
   node: Text;
   position: number;
@@ -108,7 +109,7 @@ interface RemoveCharacterManipulation extends BaseManipulation {
 /**
  * Represents the removal of an empty Element (so an Element without childNodes)
  */
-interface RemoveEmptyElementManipulation extends BaseManipulation {
+export interface RemoveEmptyElementManipulation extends BaseManipulation {
   type: "removeEmptyElement";
   node: Element;
 }
@@ -116,7 +117,7 @@ interface RemoveEmptyElementManipulation extends BaseManipulation {
 /**
  * Represents the removal of a void element
  */
-interface RemoveVoidElementManipulation extends BaseManipulation {
+export interface RemoveVoidElementManipulation extends BaseManipulation {
   type: "removeVoidElement";
   node: VoidElement;
 }
@@ -124,7 +125,7 @@ interface RemoveVoidElementManipulation extends BaseManipulation {
 /**
  * Represents moving the cursor after the last child of node
  */
-interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
+export interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
   type: "moveCursorToEndOfNode";
   node: Element;
 }
@@ -132,7 +133,7 @@ interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
 /**
  * Represents moving the cursor before the element
  */
-interface MoveCursorBeforeElementManipulation extends BaseManipulation {
+export interface MoveCursorBeforeElementManipulation extends BaseManipulation {
   type: "moveCursorBeforeElement";
   node: Element;
 }
@@ -140,7 +141,7 @@ interface MoveCursorBeforeElementManipulation extends BaseManipulation {
 /**
  * Represents the removal of a node that is not of type Text of Element
  */
-interface RemoveOtherNodeManipulation extends BaseManipulation {
+export interface RemoveOtherNodeManipulation extends BaseManipulation {
   type: "removeOtherNode";
   node: Node;
 }
@@ -149,12 +150,12 @@ interface RemoveOtherNodeManipulation extends BaseManipulation {
  * Represents the removal of an element that has only invisible text nodes as children
  * TODO: currently replaced by removeElementWithChildrenThatArentVisible
  */
-interface RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation extends BaseManipulation {
+export interface RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation extends BaseManipulation {
   type: "removeElementWithOnlyInvisibleTextNodeChildren"
   node: Element;
 }
 
-interface RemoveElementWithChildrenThatArentVisible extends BaseManipulation {
+export interface RemoveElementWithChildrenThatArentVisible extends BaseManipulation {
   type: "removeElementWithChildrenThatArentVisible"
   node: Element;
 }
@@ -303,16 +304,44 @@ interface EditorRootPosition extends BaseThingBeforeCursor {
   node: Element;
 }
 
-interface BackspacePlugin {
+/**
+ * Interface for specific plugins.
+ */
+export interface BackspacePlugin {
+  /**
+   * One-liner explaining what the plugin solves.
+   */
   label: string;
+
+  /**
+   * Callback executed to see if the plugin allows a certain
+   * manipulation and/or if it intends to handle the manipulation
+   * itself.
+   */
   guidanceForManipulation: (manipulation: Manipulation) => ManipulationGuidance | null;
+
+  /**
+   * Callback to let the plugin indicate whether or not it discovered
+   * a change.
+   *
+   * Hint: return false if you don't detect location updates.
+   */
   detectChange: (manipulation: Manipulation) => boolean;
 }
 
-interface ManipulationGuidance {
+export interface ManipulationGuidance {
   allow: boolean | undefined
-  executor: (manipulation: Manipulation, editor: Editor) => void
+  executor: ManipulationExecutor | undefined
 }
+
+/**
+ * Executor of a single Manipulation, as offered by plugins.
+ *
+ * The plugin receives a Manipulation and an Editor, and can use both
+ * to handle the manipulation.  Returning such manipulation is
+ * optional.  A plugin need not handle a manipulation.
+ */
+type ManipulationExecutor = (manipulation: Manipulation, editor: Editor) => void;
 
 
 interface Task {
@@ -499,7 +528,8 @@ export default class BackspaceHandler {
 
     // run the manipulation
     if( dispatchedExecutor ) {
-      dispatchedExecutor( manipulation );
+      // NOTE: we should pass some sort of editor interface here in the future.
+      dispatchedExecutor( manipulation, this.rawEditor );
     } else {
       this.handleNativeManipulation( manipulation );
     }
@@ -1050,35 +1080,44 @@ export default class BackspaceHandler {
    * @param {Manipulation} manipulation DOM manipulation which will be
    * checked by plugins.
    **/
-  checkManipulationByPlugins(manipulation: Manipulation) : { mayExecute: boolean, dispatchedExecutor: ( (manipulation: Manipulation) => void ) | null } {
-    const reports =
-          this
-          .plugins
-            .map( (plugin) => {
-              const guidance = plugin.guidanceForManipulation( manipulation );
-            return {
-              plugin,
-              allow: guidance?.allow,
-              executor: guidance?.executor
-            }; } );
+  checkManipulationByPlugins(manipulation: Manipulation) : { mayExecute: boolean, dispatchedExecutor: ManipulationExecutor | null } {
+
+    // calculate reports submitted by each plugin
+    const reports : Array<{ plugin: BackspacePlugin, allow: boolean, executor: ManipulationExecutor | undefined }> = [];
+    for ( const plugin of this.plugins ) {
+      const guidance = plugin.guidanceForManipulation( manipulation );
+      if( guidance ) {
+        const allow = guidance.allow === undefined ? true : guidance.allow;
+        const executor = guidance.executor;
+        reports.push( { plugin, allow, executor } );
+      }
+    }
+
+    // filter reports based on our interests
+    const reportsNoExecute = reports.filter( ({allow}) => allow );
+    const reportsWithExecutor = reports.filter( ({executor}) => executor );
 
     // debug reporting
     if (reports.length > 1) {
-      console.error(`Multiple plugins want to alter this manipulation`, reports);
+      console.warn(`Multiple plugins want to alter this manipulation`, reports);
     }
+    if (reportsNoExecute.length > 1 && reportsWithExecutor.length > 1) {
+      console.error(`Some plugins don't want execution, others want custom execution`, { reportsNoExecute, reportsWithExecutor });
+    }
+    if (reportsWithExecutor.length > 1) {
+      console.error(`Multiple plugins want to execute this plugin`);
+      throw "Multiple backspace plugins want to execute backspace with no resolution";
+    }
+
     for( const { plugin } of reports ) {
       console.debug(`Was not allowed to execute backspace manipulation by plugin ${plugin.label}`, { manipulation, plugin });
     }
 
-    if (reports.length > 0) {
-      
-    }
-    else {
-      return {
-        mayExecute: reports.length === 0,
-        dispatchedExecutor: null
-      };
-    }
+    // yield result
+    return {
+      mayExecute: reports.length === 0,
+      dispatchedExecutor: reportsWithExecutor.length ? reportsWithExecutor[0].executor as ManipulationExecutor : null
+    };
   }
 
   /**
