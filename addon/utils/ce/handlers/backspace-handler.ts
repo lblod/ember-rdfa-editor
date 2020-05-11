@@ -1019,12 +1019,6 @@ export default class BackspaceHandler {
       }
     }
     throw "Unsupported path in getThingBeforeCursor";
-
-    // // else if the cursor is inside the only invisible space
-    // //   if this is the only node of our parent, delete the parent
-    // //   if this is not the only node of our parent
-    // //     jump over invisible space, suggest deletion one character back
-    // // ACTUAL LOGIC MAY BE MORE COMPLEX: can we figure out if we need the invisible space or not?
   }
 
   /**
