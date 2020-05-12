@@ -27,16 +27,17 @@
 
 
 // COMPONENTS
+@import "ember-rdfa-editor/c-button";
 @import "ember-rdfa-editor/c-container";
+@import "ember-rdfa-editor/c-content";
 @import "ember-rdfa-editor/c-editor";
 @import "ember-rdfa-editor/c-editor-hints";
-@import "ember-rdfa-editor/c-toolbar";
-@import "ember-rdfa-editor/c-switch";
 @import "ember-rdfa-editor/c-icon";
-@import "ember-rdfa-editor/c-button";
-@import "ember-rdfa-editor/c-content";
+@import "ember-rdfa-editor/c-list";
 @import "ember-rdfa-editor/c-modal";
+@import "ember-rdfa-editor/c-switch";
 @import "ember-rdfa-editor/c-toast";
+@import "ember-rdfa-editor/c-toolbar";
 
 
 // RDFA AND ANNOTATION COMPONENTS
