@@ -65,19 +65,19 @@ $say-orange-darker            : #5C4F2B;
 
 // Semantic color variables
 // ---
-$say-neutral                  : $say-gray !default;
-$say-neutral-light            : $say-gray-light !default;
-$say-neutral-lighter          : $say-gray-lighter !default;
-$say-neutral-lightest         : $say-gray-lightest !default;
-$say-neutral-dark             : $say-gray-dark !default;
-$say-neutral-darker           : $say-gray-darker !default;
-$say-neutral-darkest          : $say-gray-darkest !default;
+$say-neutral                  : $say-gray !default; // 600
+$say-neutral-light            : $say-gray-light !default; // 300
+$say-neutral-lighter          : $say-gray-lighter !default; // 200
+$say-neutral-lightest         : $say-gray-lightest !default; // 100
+$say-neutral-dark             : $say-gray-dark !default; // 700
+$say-neutral-darker           : $say-gray-darker !default; // 800
+$say-neutral-darkest          : $say-gray-darkest !default; // 900
 
-$say-primary                  : $say-purple !default;
-$say-primary-light            : $say-purple-light !default;
-$say-primary-lighter          : $say-purple-lighter !default;
-$say-primary-lightest         : $say-purple-lightest !default;
-$say-primary-dark             : $say-purple-dark !default;
+$say-primary                  : $say-purple !default; // 700
+$say-primary-light            : $say-purple-light !default; // 600
+$say-primary-lighter          : $say-purple-lighter !default; // 300
+$say-primary-lightest         : $say-purple-lightest !default; // 200
+$say-primary-dark             : $say-purple-dark !default; //900
 
 $say-error                    : $say-red !default;
 $say-error-light              : $say-red-light !default;
