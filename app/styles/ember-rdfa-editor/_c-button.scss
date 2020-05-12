@@ -36,3 +36,49 @@
     outline-offset: $say-unit-tiny/2;
   }
 }
+
+// Secondary button
+.say-button--secondary {
+  background-color: $say-button-secondary-bg-color;
+  color: $say-button-secondary-color;
+  border-color: tint($say-button-secondary-color,50);
+
+  &,
+  &:visited {
+    color: $say-button-secondary-color;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: $say-button-secondary-hover-color;
+    background-color: $say-button-secondary-bg-hover-color;
+    border-color: $say-button-secondary-border-hover-color;
+  }
+}
+
+// Link button
+.say-button--tertiary {
+  font-size: inherit;
+  color: $say-button-tertiary-color;
+  background-color: $say-button-tertiary-bg-color;
+  border-color: $say-button-tertiary-border-color;
+  padding: 0 $say-unit-tiny 0;
+  height: $say-button-tertiary-height;
+  line-height: $say-button-tertiary-height;
+
+  &,
+  &:visited {
+    color: $say-button-tertiary-color;
+    background-color: $say-button-tertiary-bg-hover-color;
+  }
+
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: $say-button-tertiary-hover-color;
+    background-color: $say-button-tertiary-bg-hover-color;
+    border-color: $say-button-tertiary-border-hover-color;
+  }
+}
