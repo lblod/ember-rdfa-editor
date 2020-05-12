@@ -93,6 +93,10 @@
   max-height: 50vh;
 }
 
+.say-modal .modal-dialog__content--sectioned .modal-dialog__footer {
+  border-top: 1px solid $say-neutral-lighter;
+}
+
 .say-modal .modal-dialog__footer {
   padding: $say-unit-small;
 
@@ -132,4 +136,22 @@
 .pager__list {
   padding: $say-unit-tiny;
   border-top: .1rem solid $say-neutral-lighter;
+}
+
+
+
+a.say-link {
+  color: $say-primary;
+
+  &:hover {
+    color: $say-primary-light;
+  }
+
+  &.say-link--neutral {
+    color: $say-neutral-dark;
+
+    &:hover {
+      color: $say-neutral;
+    }
+  }
 }
