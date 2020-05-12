@@ -10,8 +10,9 @@
 
 .say-link-list__item a {
   display: block;
-  padding: $say-unit $say-unit-large $say-unit $say-unit;
   position: relative;
+  padding: $say-unit-small;
+  font-size: $say-h6;
 
   &:hover {
     background: $say-neutral-lightest;
@@ -26,11 +27,44 @@
   overflow: hidden;
 }
 
-.say-link-list {
+.say-link-list__item--quote {
+  a {
+    padding-left: $say-unit-large + $say-unit-tiny;
+  }
+
   svg {
+    color: $say-primary;
     position: absolute;
-    right: $say-unit-small;
-    top: calc(50% - #{$say-unit-small + $say-unit-tiny});;
+    left: $say-unit-small + $say-unit-tiny;
+    top: calc(50% - #{$say-unit-tiny  });;
+  }
+}
+
+.say-link-list__item--arrow {
+  a {
+    padding-right: $say-unit-large + $say-unit-tiny;
+  }
+
+  svg {
+    color: $say-primary;
+    position: absolute;
+    right: $say-unit-small + $say-unit-tiny;
+    top: calc(50% - #{$say-unit-tiny  });;
+  }
+}
+
+.say-link-list--large {
+  .say-link-list__item a {
+    padding: $say-unit;
+    font-size: $say-h5;
+  }
+
+  .say-link-list__item--arrow a {
+    padding-right: $say-unit-large + $say-unit-large;
+  }
+
+  .say-link-list__item--quote a {
+    padding-left: $say-unit-large + $say-unit-large;
   }
 }
 
@@ -38,7 +72,7 @@
 
 .say-link-list.say-link-list--dark {
   .say-link-list__item--capped a.au-c-link.au-c-link--secondary {
-    color: $au-neutral-darker;
+    color: $say-neutral-darker;
     text-decoration: underline;
   }
 

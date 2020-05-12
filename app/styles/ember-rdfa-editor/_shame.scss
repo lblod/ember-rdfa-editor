@@ -133,10 +133,10 @@
   overflow: hidden;
 }
 
-.pager__list {
-  padding: $say-unit-tiny;
-  border-top: .1rem solid $say-neutral-lighter;
-}
+// .pager__list {
+//   padding: $say-unit-tiny;
+//   border-top: .1rem solid $say-neutral-lighter;
+// }
 
 
 
@@ -153,5 +153,58 @@ a.say-link {
     &:hover {
       color: $say-neutral;
     }
+  }
+}
+
+.modal-dialog.modal-dialog--sectioned .modal-dialog__content.modal-dialog__content--sidebar-grid {
+  padding: 0;
+  overflow: hidden;
+
+  > .grid {
+    max-height: 60vh;
+    overflow: hidden;
+  }
+
+  > .grid > div:first-child {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  > .grid > div:nth-child(2) {
+    max-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    > div:first-child {
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    > div:nth-child(2) {
+      flex-grow: 0;
+    }
+  }
+}
+
+
+.say-button--tooltip:hover {
+  position: relative;
+  overflow: visible;
+
+  .u-visually-hidden {
+    position: absolute!important;
+    height: auto;
+    width: auto;
+    overflow: visible;
+    clip: unset;
+    margin: auto;
+    padding: $say-unit-tiny $say-unit-small;
+    color: $say-white;
+    background-color: $say-neutral-darker;
+    border-radius: $say-radius/3;
+    border: 0;
+    left: $say-unit + $say-unit-tiny;
+    margin-top: -$say-unit-tiny;
   }
 }
