@@ -145,21 +145,6 @@
 
 
 
-a.say-link {
-  color: $say-primary-700;
-
-  &:hover {
-    color: $say-primary-600;
-  }
-
-  &.say-link--neutral {
-    color: $say-neutral-700;
-
-    &:hover {
-      color: $say-neutral-600;
-    }
-  }
-}
 
 .modal-dialog.modal-dialog--sectioned .modal-dialog__content.modal-dialog__content--sidebar-grid {
   padding: 0;
@@ -225,4 +210,27 @@ a.say-link {
   position: absolute !important;
   white-space: nowrap !important;
   width: 1px !important;
+}
+
+.say-modal__body > .grid {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+
+  > .col--3-12 {
+    height: 100%;
+    overflow: auto;
+  }
+
+  > .col--9-12 {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  > .col--9-12 > .container-flex--scroll {
+    height: 100%;
+    flex-basis: 0;
+    flex-grow: 999;
+  }
 }

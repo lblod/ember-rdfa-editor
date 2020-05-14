@@ -1,0 +1,25 @@
+/* ==================================
+   #SAY LINK
+   ================================== */
+
+.say-link {
+  color: $say-primary-700;
+  text-decoration-color: $say-primary-300;
+
+  &:hover,
+  &:focus {
+    color: $say-primary-600;
+    text-decoration-color: $say-primary-300;
+  }
+}
+
+.say-link--secondary {
+  color: $say-neutral-700;
+  text-decoration-color: $say-neutral-300;
+
+  &:hover,
+  &:focus {
+    color: $say-neutral-600;
+    text-decoration-color: $say-neutral-300;
+  }
+}

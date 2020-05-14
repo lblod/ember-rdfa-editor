@@ -16,6 +16,12 @@
   }
 }
 
+// temporary link fix {
+.say-link-list__item .say-link {
+  display: block;
+  padding: $say-unit-small;
+}
+
 .say-link-list__link {
   display: block;
   padding: $say-unit-small;
