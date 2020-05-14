@@ -27,6 +27,17 @@
   overflow: auto;
 }
 
+.say-card__info {
+  @include say-font-size($say-h6);
+  padding: $say-unit-small;
+  color: $say-neutral-600;
+  font-style: italic;
+
+  * + * {
+    margin-top: $say-unit-small;
+  }
+}
+
 .say-card__footer {
   @include say-font-size($say-h6);
   padding: $say-unit-small;
