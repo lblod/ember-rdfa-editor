@@ -234,3 +234,53 @@
     flex-grow: 999;
   }
 }
+
+/* ==================================
+   #INPUT
+   ================================== */
+
+.say-input--select,
+.say-input--search,
+.say-input--calendar {
+  background-repeat: no-repeat;
+  background-size: 1.5rem;
+  background-position: 95% 50%;
+  padding-right: $say-unit-large - $say-unit-tiny;
+}
+
+.say-input--select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url(/@lblod/ember-rdfa-editor/icons/nav-down.svg);
+}
+
+.say-input--search {
+  background-image: url(/@lblod/ember-rdfa-editor/icons/search.svg);
+}
+
+.say-input--calendar {
+  background-image: url(/@lblod/ember-rdfa-editor/icons/calendar.svg);
+}
+
+.say-input--pre {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  width: $say-unit-large;
+  background-color: $say-input-disabled-background-color;
+  padding-left: $say-unit-small;
+  padding-right: $say-unit-small;
+  overflow: visible;
+  font-size: $say-small;
+  font-weight: $say-medium;
+  color: $say-input-disabled-color;
+  pointer-events: none;
+  float: left;
+}
+
+.say-input--pre + input {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: -1px;
+}
+
