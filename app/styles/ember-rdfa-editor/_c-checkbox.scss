@@ -1,0 +1,54 @@
+/* ==================================
+   #CHECKBOX
+   ================================== */
+
+
+.say-checkbox-wrapper label {
+  position: relative;
+  display: block;
+  padding-left: $say-input-height;
+  font-weight: $say-regular;
+}
+
+.say-checkbox-wrapper input {
+  position: absolute;
+  width: $say-unit;
+  height: $say-unit;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.say-checkbox-wrapper input + label::before {
+  content: "";
+  position: absolute;
+  background-color: $say-input-background-color;
+  border: .1rem solid $say-input-border-color;
+  border-radius: $say-input-radius;
+  width: $say-unit;
+  height: $say-unit;
+  top: 0;
+  left: 0;
+}
+
+.say-checkbox-wrapper input + label::after {
+  content: "";
+  background-image: url(/@lblod/ember-rdfa-editor/icons/check.svg);
+  background-repeat: no-repeat;
+  height: $say-unit;
+  width: $say-unit;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0;
+}
+
+.say-checkbox-wrapper input:checked + label::after {
+  opacity: 1;
+}
+
+.say-checkbox-wrapper input:focus + label::before {
+  box-shadow: inset 0 0 0 .2rem $say-input-focus-border-color;
+  outline: none;
+}
