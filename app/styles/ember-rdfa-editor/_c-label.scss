@@ -1,0 +1,21 @@
+/* ==================================
+   #LABEL
+   ================================== */
+
+/* Component
+  ========================================================================== */
+
+.say-label {
+  color: $say-label-color;
+  font-family: $say-font;
+  font-weight: $say-medium;
+  margin-bottom: $say-unit-tiny;
+}
+
+
+/* Modifiers
+  ========================================================================== */
+
+.say-label--block {
+  display: block;
+}
