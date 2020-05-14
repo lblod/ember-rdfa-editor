@@ -39,9 +39,9 @@
 
 // Secondary button
 .say-button--secondary {
-  background-color: $say-button-secondary-bg-color;
   color: $say-button-secondary-color;
-  border-color: tint($say-button-secondary-color,50);
+  background-color: $say-button-secondary-bg-color;
+  border-color: $say-button-secondary-border-color;
 
   &,
   &:visited {

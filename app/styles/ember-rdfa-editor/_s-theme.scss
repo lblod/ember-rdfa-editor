@@ -87,19 +87,19 @@ $say-button-radius               : $say-radius !default;
 // Secondary button
 $say-button-secondary-color                : $say-neutral-darker !default;
 $say-button-secondary-hover-color          : $say-neutral-dark !default;
-$say-button-secondary-border-color         : $say-neutral-light;
-$say-button-secondary-border-hover-color   : $say-neutral-light;
-$say-button-secondary-bg-color             : $say-white;
-$say-button-secondary-bg-hover-color       : transparent;
+$say-button-secondary-border-color         : $say-neutral-light !default;
+$say-button-secondary-border-hover-color   : $say-neutral-light !default;
+$say-button-secondary-bg-color             : $say-white !default;
+$say-button-secondary-bg-hover-color       : transparent !default;
 
 // // Tertiary button
 $say-button-tertiary-height                : $say-unit !default;
 $say-button-tertiary-color                 : $say-neutral-darker !default;
 $say-button-tertiary-hover-color           : $say-neutral-dark !default;
-$say-button-tertiary-border-color          : transparent;
-$say-button-tertiary-border-hover-color    : transparent;
-$say-button-tertiary-bg-color              : $say-white;
-$say-button-tertiary-bg-hover-color        : transparent;
+$say-button-tertiary-border-color          : transparent !default;
+$say-button-tertiary-border-hover-color    : transparent !default;
+$say-button-tertiary-bg-color              : $say-white !default;
+$say-button-tertiary-bg-hover-color        : transparent !default;
 
 // ANNOTATIONS
 // ---
