@@ -14,90 +14,92 @@
   @return mix(#000, $color, $percent);
 }
 
+
 // Color palette
 // ---
 $say-white                    : #FFFFFF;
-$say-black                    : #202326;
 
-$say-gray                     : #6D7783;
-$say-gray-light               : #CBD2DA;
-$say-gray-lighter             : #E8EBEE;
-$say-gray-lightest            : #F3F5F6;
-$say-gray-dark                : #545B63;
-$say-gray-darker              : #3b4146;
-$say-gray-darkest             : #202326;
+$say-gray-100                 : #F4F5F6;
+$say-gray-200                 : #E6E8EB;
+$say-gray-300                 : #CCD1D9;
+$say-gray-400                 : #A1ABBA;
+$say-gray-500                 : #8E98A6;
+$say-gray-600                 : #69717C;
+$say-gray-700                 : #545961;
+$say-gray-800                 : #2A2D31;
+$say-gray-900                 : #212326;
+$say-gray-1000                : #000000;
 
-$say-yellow                   : #FEE539;
+$say-blue-100                 : #EDF6FF;
+$say-blue-200                 : #DCECFD;
+$say-blue-300                 : #C1DDFB;
+$say-blue-600                 : #0F6FD7;
+$say-blue-700                 : #0E5EB8;
+$say-blue-900                 : #073261;
 
-$say-purple                   : #9000FA;
-$say-purple-light             : lighten($say-purple,10);
-$say-purple-lighter           : lighten($say-purple,40);
-$say-purple-lightest          : lighten($say-purple,70);
-$say-purple-dark              : darken($say-purple,20);
+$say-purple-200               : #F2E0FF;
+$say-purple-300               : #E1B8FF;
+$say-purple-600               : #A933FF;
+$say-purple-700               : #9000FA;
+$say-purple-900               : #550094;
 
-$say-blue                     : #0F68C9;
-$say-blue-light               : #1075E2;
-$say-blue-lighter             : #AAD0F9;
-$say-blue-lightest            : #DCECFD;
-$say-blue-dark                : #0C56A6;
+$say-yellow-100               : #FFF9D5;
+$say-yellow-200               : #FFF29B;
+$say-yellow-300               : #FEE539;
+$say-yellow-400               : #FFC515;
+$say-yellow-600               : #7F6E3B;
+$say-yellow-900               : #473D21;
 
-$say-red                      : #DB3434;
-$say-red-light                : #FF3333;
-$say-red-lighter              : #FBE6E6;
-$say-red-lightest             : #FCF3F3;
-$say-red-dark                 : #C32323;
-$say-red-darker               : #470000;
+$say-red-100                  : #FCF3F3;
+$say-red-200                  : #F7E3E3;
+$say-red-500                  : #FF4141;
+$say-red-600                  : #D92626;
+$say-red-700                  : #AB1F1F;
+$say-red-900                  : #470000;
 
-$say-green                    : #8BAE00;
-$say-green-light              : #B3E000;
-$say-green-lighter            : #E8EFC2;
-$say-green-lightest           : #F7FAE5;
-$say-green-dark               : #637A0B;
-$say-green-darker             : #323D08;
-
-$say-orange                   : #FFC515;
-$say-orange-light             : #FEE539;
-$say-orange-lighter           : #FFF29B;
-$say-orange-lightest          : #FFF9D5;
-$say-orange-dark              : #7C6B3A;
-$say-orange-darker            : #5C4F2B;
+$say-green-100                : #F7FAE5;
+$say-green-200                : #ECF2CD;
+$say-green-400                : #B3E000;
+$say-green-500                : #8BAE00;
+$say-green-700                : #5F750B;
+$say-green-900                : #323D08;
 
 
 // Semantic color variables
 // ---
-$say-neutral                  : $say-gray !default; // 600
-$say-neutral-light            : $say-gray-light !default; // 300
-$say-neutral-lighter          : $say-gray-lighter !default; // 200
-$say-neutral-lightest         : $say-gray-lightest !default; // 100
-$say-neutral-dark             : $say-gray-dark !default; // 700
-$say-neutral-darker           : $say-gray-darker !default; // 800
-$say-neutral-darkest          : $say-gray-darkest !default; // 900
+$say-neutral-100              : $say-gray-100 !default;
+$say-neutral-200              : $say-gray-200 !default;
+$say-neutral-300              : $say-gray-300 !default;
+$say-neutral-600              : $say-gray-600 !default;
+$say-neutral-700              : $say-gray-700 !default;
+$say-neutral-800              : $say-gray-800 !default;
+$say-neutral-900              : $say-gray-900 !default;
 
-$say-primary                  : $say-purple !default; // 700
-$say-primary-light            : $say-purple-light !default; // 600
-$say-primary-lighter          : $say-purple-lighter !default; // 300
-$say-primary-lightest         : $say-purple-lightest !default; // 200
-$say-primary-dark             : $say-purple-dark !default; //900
+$say-primary-200              : $say-purple-200 !default;
+$say-primary-300              : $say-purple-300 !default;
+$say-primary-600              : $say-purple-600 !default;
+$say-primary-700              : $say-purple-700 !default;
+$say-primary-900              : $say-purple-900 !default;
 
-$say-error                    : $say-red !default;
-$say-error-light              : $say-red-light !default;
-$say-error-lighter            : $say-red-lighter !default;
-$say-error-lightest           : $say-red-lightest !default;
-$say-error-dark               : $say-red-dark !default;
-$say-error-darker             : $say-red-darker !default;
+$say-error-100                : $say-red-100 !default;
+$say-error-200                : $say-red-200 !default;
+$say-error-500                : $say-red-500 !default;
+$say-error-600                : $say-red-600 !default;
+$say-error-700                : $say-red-700 !default;
+$say-error-900                : $say-red-900 !default;
 
-$say-success                  : $say-green !default;
-$say-success-light            : $say-green-light !default;
-$say-success-lighter          : $say-green-lighter !default;
-$say-success-lightest         : $say-green-lightest !default;
-$say-success-dark             : $say-green-dark !default;
-$say-success-darker           : $say-green-darker !default;
+$say-success-100              : $say-green-100 !default;
+$say-success-200              : $say-green-200 !default;
+$say-success-400              : $say-green-400 !default;
+$say-success-500              : $say-green-500 !default;
+$say-success-700              : $say-green-700 !default;
+$say-success-900              : $say-green-900 !default;
 
-$say-warning                  : $say-orange !default;
-$say-warning-light            : $say-orange-light !default;
-$say-warning-lighter          : $say-orange-lighter !default;
-$say-warning-lightest         : $say-orange-lightest !default;
-$say-warning-dark             : $say-orange-dark !default;
-$say-warning-darker           : $say-orange-darker !default;
+$say-warning-100              : $say-yellow-100 !default;
+$say-warning-200              : $say-yellow-200 !default;
+$say-warning-300              : $say-yellow-300 !default;
+$say-warning-400              : $say-yellow-400 !default;
+$say-warning-600              : $say-yellow-600 !default;
+$say-warning-900              : $say-yellow-900 !default;
 
-$say-outline-color            : $say-primary-lighter !default;
+$say-outline-color            : $say-purple-300 !default;

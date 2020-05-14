@@ -21,7 +21,7 @@
 
   mark table {
     font-weight: normal;
-    border: 4px solid $say-yellow;
+    border: 4px solid $say-warning-400;
 
     &:active {
       opacity: .5;
@@ -59,9 +59,9 @@
 
 .say-modal .modal-dialog__header {
   @include say-font-size($say-h6);
-  color: $say-neutral-darker;
+  color: $say-neutral-800;
   padding: $say-unit-small;
-  border-bottom: .1rem solid $say-neutral-lighter;
+  border-bottom: .1rem solid $say-neutral-200;
 
   * {
     margin-bottom: 0;
@@ -94,7 +94,7 @@
 }
 
 .say-modal .modal-dialog__content--sectioned .modal-dialog__footer {
-  border-top: 1px solid $say-neutral-lighter;
+  border-top: 1px solid $say-neutral-200;
 }
 
 .say-modal .modal-dialog__footer {
@@ -117,12 +117,12 @@
   }
 
   .link-list__item.link-list__item--sidenotes a:hover {
-    background-color: $say-neutral-lightest;
+    background-color: $say-neutral-100;
   }
 
   .link-list__item__sidenote.uppercase {
     @include say-font-size($say-tiny,1.3);
-    color: $say-neutral;
+    color: $say-neutral-600;
     padding: 0;
   }
 }
@@ -135,23 +135,23 @@
 
 // .pager__list {
 //   padding: $say-unit-tiny;
-//   border-top: .1rem solid $say-neutral-lighter;
+//   border-top: .1rem solid $say-neutral-200;
 // }
 
 
 
 a.say-link {
-  color: $say-primary;
+  color: $say-primary-700;
 
   &:hover {
-    color: $say-primary-light;
+    color: $say-primary-600;
   }
 
   &.say-link--neutral {
-    color: $say-neutral-dark;
+    color: $say-neutral-700;
 
     &:hover {
-      color: $say-neutral;
+      color: $say-neutral-600;
     }
   }
 }
@@ -201,7 +201,7 @@ a.say-link {
     margin: auto;
     padding: $say-unit-tiny $say-unit-small;
     color: $say-white;
-    background-color: $say-neutral-darker;
+    background-color: $say-neutral-800;
     border-radius: $say-radius/3;
     border: 0;
     left: $say-unit + $say-unit-tiny;

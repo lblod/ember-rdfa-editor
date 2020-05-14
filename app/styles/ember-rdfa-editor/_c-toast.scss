@@ -9,11 +9,11 @@
   padding: $say-unit-tiny $say-unit-small;
   color: $say-white;
   border-radius: .2rem;
-  background-color: $say-neutral-darker;
+  background-color: $say-neutral-800;
 
   &.is-loaded .say-icon {
-    stroke: $say-success;
-    fill: $say-success;
+    stroke: $say-success-500;
+    fill: $say-success-500;
   }
 
   &.is-loaded {
@@ -27,7 +27,7 @@
   @include mq(medium) {
     @if $say-paper == true and $say-paper-sidebar == true {
       padding: $say-unit-tiny 0;
-      color: $say-neutral-dark;
+      color: $say-neutral-700;
       background-color: transparent;
     }
   }

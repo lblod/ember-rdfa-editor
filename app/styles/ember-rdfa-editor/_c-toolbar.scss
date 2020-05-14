@@ -36,7 +36,7 @@
   }
 
   .say-toolbar__group + .say-toolbar__group {
-    border-left: 1px solid $say-neutral-light;
+    border-left: 1px solid $say-neutral-300;
   }
 
   .say-toolbar__button {
@@ -48,7 +48,7 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    color: $say-neutral;
+    color: $say-neutral-600;
     height: $say-toolbar-height;
     width: $say-toolbar-height;
     background-color: transparent;
@@ -58,7 +58,7 @@
 
     &:hover,
     &:focus {
-      color: $say-neutral-dark;
+      color: $say-neutral-700;
       background-color: transparent;
     }
 

@@ -52,7 +52,7 @@
   [data-type],
   [data-editor-highlight="true"]:not([contenteditable=""]) {
     &:hover {
-      border-bottom-color: tint($say-neutral,20);
+      border-bottom-color: tint($say-neutral-600,20);
     }
 
     &:before {
@@ -76,18 +76,18 @@
       text-transform: uppercase;
       text-overflow: ellipsis;
       white-space: nowrap;
-      color: $say-neutral;
-      background-color: $say-neutral-lightest;
+      color: $say-neutral-600;
+      background-color: $say-neutral-100;
       pointer-events: none;
       overflow: hidden;
       min-height: 2rem;
-      border-right: 1px dashed $say-neutral-light;
-      border-top: 1px dashed $say-neutral-light;
+      border-right: 1px dashed $say-neutral-300;
+      border-top: 1px dashed $say-neutral-300;
       z-index: $say-z-index-gamma;
       background: linear-gradient(
         to right,
-          $say-neutral-lightest,
-          $say-neutral-lightest calc(100% - #{$say-annotation-gutter + $say-unit-tiny}),
+          $say-neutral-100,
+          $say-neutral-100 calc(100% - #{$say-annotation-gutter + $say-unit-tiny}),
           transparent calc(100% - #{$say-annotation-gutter + $say-unit-tiny}),
           transparent 100%
       );
@@ -139,10 +139,10 @@
     padding-bottom: $say-unit-tiny/1.6;
     padding-left: $say-unit-tiny/2;
     padding-right: $say-unit-tiny;
-    color: $say-orange-dark;
-    background: $say-orange-lighter;
+    color: $say-warning-600;
+    background: $say-warning-200;
     z-index: 5;
-    border: 1px solid $say-orange-light !important;
+    border: 1px solid $say-warning-300 !important;
     margin-right: -$say-unit;
   }
 
