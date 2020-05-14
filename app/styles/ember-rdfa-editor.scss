@@ -28,11 +28,15 @@
 
 // COMPONENTS
 @import "ember-rdfa-editor/c-button";
+@import "ember-rdfa-editor/c-checkbox";
 @import "ember-rdfa-editor/c-container";
 @import "ember-rdfa-editor/c-content";
 @import "ember-rdfa-editor/c-editor";
 @import "ember-rdfa-editor/c-editor-hints";
+@import "ember-rdfa-editor/c-help-text";
 @import "ember-rdfa-editor/c-icon";
+@import "ember-rdfa-editor/c-input";
+@import "ember-rdfa-editor/c-label";
 @import "ember-rdfa-editor/c-list";
 @import "ember-rdfa-editor/c-modal";
 @import "ember-rdfa-editor/c-switch";
@@ -40,11 +44,17 @@
 @import "ember-rdfa-editor/c-toolbar";
 
 
+// UTILITIES
+@import "ember-rdfa-editor/u-align-text";
+@import "ember-rdfa-editor/u-hide";
+
+
 // PLUGIN COMPONENTS
 @import "ember-rdfa-editor/c-card";
 @import "ember-rdfa-editor/c-link-list";
 @import "ember-rdfa-editor/c-loader";
 @import "ember-rdfa-editor/c-link";
+
 
 // RDFA AND ANNOTATION COMPONENTS
 @import "ember-rdfa-editor/c-annotation";
