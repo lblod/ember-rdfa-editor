@@ -38,7 +38,7 @@
           {{#if this.hasActiveHints}}
           {{#each this.hintsRegistry.activeHints as |card|}}
             <li class="say-editor-hints__list-item">
-              <div class="say-modal">
+              <div class="say-card">
                 {{component card.card info=card.info}}
               </div>
             </li>

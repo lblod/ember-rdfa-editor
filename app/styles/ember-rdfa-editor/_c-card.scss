@@ -1,0 +1,34 @@
+/* ==================================
+   #SAY CARD
+   ================================== */
+
+.say-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: $say-z-index-gamma;
+  background-color: $say-white;
+  box-shadow: 0 1px 3px rgba($say-neutral-900, .1), 0 4px 20px rgba($say-neutral-900, .035), 0 1px 1px rgba($say-neutral-900, .025);
+}
+
+.say-card__header {
+  padding: $say-unit-small;
+  border-bottom: .1rem solid $say-neutral-200;
+}
+
+.say-card__title {
+  @include say-font-size($say-h6);
+  font-weight: $say-medium;
+  color: $say-neutral-800;
+}
+
+.say-card__content {
+  max-height: 45vh;
+  overflow: auto;
+}
+
+.say-card__footer {
+  @include say-font-size($say-h6);
+  padding: $say-unit-small;
+  border-top: .1rem solid $say-neutral-200;
+}

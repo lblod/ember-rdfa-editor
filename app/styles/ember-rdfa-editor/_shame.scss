@@ -43,21 +43,26 @@
 }
 
 // Legacy modal style fixes
-.say-modal .modal-dialog {
+.say-card .modal-dialog {
   position: relative;
   top: 0;
   left: 0;
-  box-shadow: 0;
+  box-shadow: none;
   transform: none;
   padding: 0;
   width: 100%;
 }
 
-.say-modal ul li div.u-hr {
+// Temporary fix for nested cards
+.say-card .say-card {
+  box-shadow: none;
+}
+
+.say-card ul li div.u-hr {
   display: none;
 }
 
-.say-modal .modal-dialog__header {
+.say-card .modal-dialog__header {
   @include say-font-size($say-h6);
   color: $say-neutral-800;
   padding: $say-unit-small;
@@ -81,23 +86,23 @@
   }
 }
 
-.say-modal .modal-dialog__content {
+.say-card .modal-dialog__content {
   padding: $say-unit-small;
 }
 
-.say-modal .modal-dialog__content--sectioned {
+.say-card .modal-dialog__content--sectioned {
   padding: 0;
 }
 
-.say-modal .modal-dialog__content--sectioned > * {
+.say-card .modal-dialog__content--sectioned > * {
   max-height: 50vh;
 }
 
-.say-modal .modal-dialog__content--sectioned .modal-dialog__footer {
+.say-card .modal-dialog__content--sectioned .modal-dialog__footer {
   border-top: 1px solid $say-neutral-200;
 }
 
-.say-modal .modal-dialog__footer {
+.say-card .modal-dialog__footer {
   padding: $say-unit-small;
 
   button {
@@ -105,13 +110,13 @@
   }
 }
 
-.say-modal .link-list {
+.say-card .link-list {
   @media screen and (max-width:767px) {
     margin-bottom: 0 !important;
   }
 }
 
-.say-modal .link-list.link-list--bordered {
+.say-card .link-list.link-list--bordered {
   .link-list__item.link-list__item--sidenotes a {
     padding: $say-unit-small !important;
   }
@@ -127,7 +132,7 @@
   }
 }
 
-.say-modal .modal-dialog__link-list {
+.say-card .modal-dialog__link-list {
   padding: $say-unit-small;
   width: 100%;
   overflow: hidden;
