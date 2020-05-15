@@ -57,11 +57,11 @@
 }
 
 .say-modal--fullscreen {
-  max-width: calc(100% - #{$say-unit-small});
-  max-height: calc(100% - #{$say-unit-small});
-  width: calc(100% - #{$say-unit-small});
-  height: calc(100% - #{$say-unit-small});
-  left: $say-unit-tiny;
+  max-width: calc(100% - #{$say-unit});
+  max-height: calc(100% - #{$say-unit});
+  width: calc(100% - #{$say-unit});
+  height: calc(100% - #{$say-unit});
+  left: $say-unit-small;
 }
 
 .say-modal__header {

@@ -74,6 +74,19 @@
 }
 
 
+.say-link-list__item--arrow {
+  position: relative;
+  padding-right: $say-unit-large;
+
+  .au-c-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: $say-unit-small;
+  }
+}
+
+
 
 // Disable fixed scrollbars on html element > @TODO: remove with new version of appuniversum
 .say-link-list--dark {
