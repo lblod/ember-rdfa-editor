@@ -241,7 +241,7 @@
 
 .say-input--select,
 .say-input--search,
-.say-input--calendar {
+.say-input[type="date"] {
   background-repeat: no-repeat;
   background-size: 1.5rem;
   background-position: 95% 50%;
@@ -259,7 +259,7 @@
   background-image: url(/@lblod/ember-rdfa-editor/icons/search.svg);
 }
 
-.say-input--calendar {
+.say-input[type="date"] {
   background-image: url(/@lblod/ember-rdfa-editor/icons/calendar.svg);
 }
 
