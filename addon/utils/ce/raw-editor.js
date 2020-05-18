@@ -753,7 +753,7 @@ class RawEditor extends EmberObject {
         // this gives us the deepest/last node matching. it's horrid in the case of consecutive br's for example
         const newTextNode = nextTextNode(elementContainingPosition[elementContainingPosition.length - 1]);
         this.updateRichNode();
-        return this.richNodeFor(newTextNode);
+        return this.getRichNodeFor(newTextNode);
       }
       else {
         if (node.parent) {
@@ -762,6 +762,13 @@ class RawEditor extends EmberObject {
         }
         else {
           console.warn(`no valid node found for provided position ${position} and richNode`, node); // eslint-disable-line no-console
+          if (node.domNode === this.rootNode && node.start === node.end) {
+            console.debug(`empty editor, creating a textNode`); // eslint-disable-line no-console
+            let newNode = document.createTextNode(invisibleSpace);
+            this.rootNode.appendChild(newNode);
+            this.updateRichNode();
+            return this.getRichNodeFor(newNode);
+          }
           return null;
         }
       }
@@ -987,7 +994,12 @@ class RawEditor extends EmberObject {
       position = get(richNode, 'end');
     }
     let node = this.findSuitableNodeForPosition(position);
-    this.setCarret(node.domNode, position - node.start, notify);
+    if (node) {
+      this.setCarret(node.domNode, position - node.start, notify);
+    }
+    else {
+      console.warn('did not receive a suitable node to set cursor, can\'t set cursor!'); // eslint-disable-line no-console
+    }
   }
 
   getRelativeCursorPosition(){
