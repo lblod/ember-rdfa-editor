@@ -23,7 +23,7 @@
 }
 
 .say-card__content {
-  max-height: 45vh;
+  max-height: 35vh;
   overflow: auto;
 }
 
@@ -40,6 +40,7 @@
 
 .say-card__footer {
   @include say-font-size($say-h6);
-  padding: $say-unit-small;
+  background-color: $say-neutral-100;
+  padding: $say-unit-tiny $say-unit-small;
   border-top: .1rem solid $say-neutral-200;
 }

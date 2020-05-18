@@ -1,0 +1,32 @@
+/* ==================================
+   #SAY PAGINATION
+   ================================== */
+
+.say-pagination {
+  @include say-font-size($say-h6);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: $say-unit-tiny $say-unit-small;
+  border-top: .1rem solid $say-neutral-200;
+}
+
+.say-pagination__info {
+  color: $say-neutral-700;
+  margin-right: $say-unit-tiny;
+}
+
+.say-pagination__list {
+  display: flex;
+  justify-content: flex-end;
+  align-self: flex-end;
+  flex-grow: 1;
+}
+
+.say-pagination__item {
+  & + & {
+    margin-left: $say-unit-tiny;
+    padding-left: $say-unit-tiny;
+    border-left: .1rem dotted $say-neutral-300;
+  }
+}
