@@ -112,22 +112,77 @@
 }
 
 .say-modal__body {
+  display: flex;
+  flex-wrap: wrap;
   flex-grow: 1;
   position: relative;
   height: calc(100% - #{$say-unit-large + $say-unit-small});
   background-color: $say-white;
-  overflow: auto;
+  overflow: hidden;
 
   &:focus {
     outline: 0;
   }
 }
+  .say-modal__body--scroll {
+    overflow: auto;
+  }
 
+.say-modal__sidebar {
+  flex-basis: 100%;
+  padding: $say-unit;
+  height: 100%;
+  overflow: auto;
+  background-color: $say-gray-100;
+  border-right: .1rem solid $say-gray-300;
+
+  @include mq(medium) {
+    height: 100%;
+    flex-basis: 45rem;
+    flex-grow: 1;
+  }
+}
+
+.say-modal__content {
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  flex-basis: 100%;
+  flex-direction: column;
+
+  @include mq(medium) {
+    height: 100%;
+    flex-basis: 0;
+    flex-grow: 999;
+  }
+}
+
+  .say-modal__content--scroll {
+    height: 100%;
+    overflow: auto;
+    display: block;
+  }
+
+/* header, content, footer */
+
+.say-modal__header,
 .say-modal__footer {
   padding: $say-unit-small;
-  border-top: 1px solid $say-gray-300;
+  flex: 0 0 0;
 
   @include mq(medium) {
     padding: $say-unit;
   }
 }
+
+  .say-modal__header {
+    border-bottom: 1px solid $say-gray-300;
+  }
+
+  .say-modal__footer {
+    border-top: 1px solid $say-gray-300;
+  }
+
+
+
+
