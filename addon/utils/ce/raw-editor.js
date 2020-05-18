@@ -994,7 +994,12 @@ class RawEditor extends EmberObject {
       position = get(richNode, 'end');
     }
     let node = this.findSuitableNodeForPosition(position);
-    this.setCarret(node.domNode, position - node.start, notify);
+    if (node) {
+      this.setCarret(node.domNode, position - node.start, notify);
+    }
+    else {
+      console.warn('did not receive a suitable node to set cursor, can\'t set cursor!'); // eslint-disable-line no-console
+    }
   }
 
   getRelativeCursorPosition(){
