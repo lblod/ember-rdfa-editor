@@ -379,7 +379,7 @@ function updateInnerContent(domNodes, {remove, set}) {
     if (remove && remove.innerHTML) {
       domNode.innerHTML = '';
     }
-    if (set && set.innerHTML) {
+    if (operationWantsToSetInnerHTML(set)) {
       domNode.innerHTML = set.innerHTML;
     }
   }
@@ -410,14 +410,25 @@ function insertNodes(rootNode, referenceNode, newNodes, { before, after, prepend
 }
 
 /**
+ * does this operation
+ * @method operationWantsToSetInnerHTML
+ * @private
+ */
+function operationWantsToSetInnerHTML(set) {
+  // also support empty strings for innerHTML (empty string is falsy in JS)
+  return (set && (typeof set.innerHTML == "string" || set.innerHTML));
+}
+
+/**
  * heuristic to determine whether we should wrap, nest or update the current selection
  * @method newContextHeuristic
  * @private
  */
 function newContextHeuristic( selection, {remove, add, set}) {
   if (selection.selectedHighlightRange) {
-    if (set && set.innerHTML)
+    if (operationWantsToSetInnerHTML(set)) {
       return REPLACE;
+    }
     else {
       // default to wrap a text selection for now
       // this could be overwritten in a smarter nodesToWrap method
