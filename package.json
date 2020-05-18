@@ -55,6 +55,7 @@
     "ember-cli-app-version": "^3.2.0",
     "ember-cli-autoprefixer": "^1.0.0",
     "ember-cli-dependency-checker": "^3.2.0",
+    "ember-cli-eslint": "^5.1.0",
     "ember-cli-inject-live-reload": "^2.0.2",
     "ember-cli-moment-shim": "^3.7.1",
     "ember-cli-release": "^1.0.0-beta.2",
