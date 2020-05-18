@@ -11,6 +11,10 @@
   border-top: .1rem solid $say-neutral-200;
 }
 
+.say-pagination--large {
+  padding: $say-unit $say-unit;
+}
+
 .say-pagination__info {
   color: $say-neutral-700;
   margin-right: $say-unit-tiny;

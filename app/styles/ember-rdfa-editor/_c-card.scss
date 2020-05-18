@@ -23,8 +23,12 @@
 }
 
 .say-card__content {
+  position: relative;
+}
+
+.say-card__content--fixed {
   max-height: 35vh;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .say-card__info {

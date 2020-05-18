@@ -3,7 +3,8 @@
    ================================== */
 
 .say-link-list {
-
+  overflow: auto;
+  height: 100%;
 }
 
 .say-link-list__item {
@@ -16,28 +17,45 @@
   }
 }
 
-// temporary link fix {
-.say-link-list__item .say-link {
-  display: block;
-  padding: $say-unit-small;
-}
-
 .say-link-list__link {
   display: block;
   padding: $say-unit-small;
   position: relative;
   color: $say-neutral-700;
   text-decoration-color: $say-neutral-300;
+  transition: color $say-transition;
 
   &:hover,
   &:focus {
     color: $say-neutral-600;
     text-decoration-color: $say-neutral-300;
   }
+
+  &:focus {
+    outline: $say-outline;
+    outline-offset: -.6rem;
+  }
 }
 
 .say-link-list__link--insert {
   margin-left: $say-unit-large;
+}
+
+.say-link-list__link--arrow {
+  position: relative;
+  padding: $say-unit-small $say-unit-large $say-unit-small $say-unit;
+
+  .say-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: $say-unit-small;
+  }
+
+  strong {
+    display: block;
+    margin-top: $say-unit-tiny;
+  }
 }
 
 .say-link-list__insert {
@@ -54,6 +72,7 @@
   align-items: center;
   justify-content: center;
   border-radius: .2rem;
+  transition: color $say-transition, background-color $say-transition;
 
   &:hover,
   &:focus {
@@ -74,29 +93,16 @@
 }
 
 
-.say-link-list__item--arrow {
-  position: relative;
-  padding-right: $say-unit-large;
-
-  .au-c-icon {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: $say-unit-small;
-  }
-}
-
-
 
 // Disable fixed scrollbars on html element > @TODO: remove with new version of appuniversum
-.say-link-list--dark {
-  .say-link-list__item--capped a.au-c-link.au-c-link--secondary {
-    color: $say-neutral-800;
-    text-decoration: underline;
-  }
+// .say-link-list--dark {
+//   .say-link-list__item--capped a.au-c-link.au-c-link--secondary {
+//     color: $say-neutral-800;
+//     text-decoration: underline;
+//   }
 
-  .say-link-list__item--capped:nth-child(4),
-  .say-link-list__item--capped:nth-child(5) {
-    display: none;
-  }
-}
+//   .say-link-list__item--capped:nth-child(4),
+//   .say-link-list__item--capped:nth-child(5) {
+//     display: none;
+//   }
+// }
