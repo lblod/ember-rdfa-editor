@@ -17,6 +17,10 @@
   }
 }
 
+.say-link-list__item--insert {
+  padding-left: $say-unit-large;
+}
+
 .say-link-list__link {
   display: block;
   padding: $say-unit-small;
@@ -37,19 +41,15 @@
   }
 }
 
-.say-link-list__link--insert {
-  margin-left: $say-unit-large;
-}
-
 .say-link-list__link--arrow {
   position: relative;
-  padding: $say-unit-small $say-unit-large $say-unit-small $say-unit;
+  padding: $say-unit-small $say-unit-large + $say-unit-tiny $say-unit-small $say-unit-small;
 
   .say-icon {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    right: $say-unit-small;
+    right: $say-unit-small + $say-unit-tiny;
   }
 
   strong {
@@ -80,10 +80,6 @@
   }
 }
 
-.say-link-list__content {
-
-}
-
 .say-link-list__content--capped {
   display: -webkit-box;
   -webkit-line-clamp: 4;
@@ -95,14 +91,14 @@
 
 
 // Disable fixed scrollbars on html element > @TODO: remove with new version of appuniversum
-// .say-link-list--dark {
-//   .say-link-list__item--capped a.au-c-link.au-c-link--secondary {
-//     color: $say-neutral-800;
-//     text-decoration: underline;
-//   }
+.say-link-list--dark {
+  .say-link-list__item--capped a.au-c-link.au-c-link--secondary {
+    color: $say-neutral-800;
+    text-decoration: underline;
+  }
 
-//   .say-link-list__item--capped:nth-child(4),
-//   .say-link-list__item--capped:nth-child(5) {
-//     display: none;
-//   }
-// }
+  .say-link-list__item--capped:nth-child(4),
+  .say-link-list__item--capped:nth-child(5) {
+    display: none;
+  }
+}

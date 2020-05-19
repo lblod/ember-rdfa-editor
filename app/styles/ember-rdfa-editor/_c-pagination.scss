@@ -15,9 +15,20 @@
   padding: $say-unit $say-unit;
 }
 
+.say-pagination__group {
+  display: flex;
+  align-items: center;
+  margin-right: $say-unit-tiny;
+
+  > * + * {
+    margin-left: $say-unit-small;
+    padding-left: $say-unit-small;
+    border-left: .1rem dotted $say-neutral-300;
+  }
+}
+
 .say-pagination__info {
   color: $say-neutral-700;
-  margin-right: $say-unit-tiny;
 }
 
 .say-pagination__list {

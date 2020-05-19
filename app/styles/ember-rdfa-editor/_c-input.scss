@@ -16,12 +16,12 @@
   padding: 0 $say-unit-small .1ex;
   background-color: $say-input-background-color;
   border-radius: $say-input-radius;
-}
 
-.say-input:focus {
-  outline: none;
-  border-color: $say-input-focus-border-color;
-  box-shadow: inset 0 0 0 .1rem $say-input-focus-border-color;
+  &:focus {
+    outline: none;
+    border-color: $say-input-focus-border-color;
+    box-shadow: inset 0 0 0 .1rem $say-input-focus-border-color;
+  }
 }
 
 /* Modifiers
@@ -41,4 +41,47 @@
   border-color: $say-input-disabled-border-color;
   color: $say-input-disabled-color;
   cursor: not-allowed;
+}
+
+.say-input--select,
+.say-input--search,
+.say-input[type="date"] {
+  background-repeat: no-repeat;
+  background-size: 1.5rem;
+  background-position: 95% 50%;
+  padding-right: $say-unit-large - $say-unit-tiny;
+}
+
+.say-input--select {
+  appearance: none;
+  background-image: url('/@lblod/ember-rdfa-editor/icons/nav-down.svg');
+}
+
+.say-input--search {
+  background-image: url('/@lblod/ember-rdfa-editor/icons/search.svg');
+}
+
+.say-input[type="date"] {
+  background-image: url('/@lblod/ember-rdfa-editor/icons/calendar.svg');
+}
+
+.say-input--pre {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  width: $say-unit-large;
+  background-color: $say-input-disabled-background-color;
+  padding-left: $say-unit-small;
+  padding-right: $say-unit-small;
+  overflow: visible;
+  font-size: $say-small;
+  font-weight: $say-medium;
+  color: $say-input-disabled-color;
+  pointer-events: none;
+  float: left;
+}
+
+.say-input--pre + input {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: -1px;
 }

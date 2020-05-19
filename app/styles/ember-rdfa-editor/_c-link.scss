@@ -3,13 +3,20 @@
    ================================== */
 
 .say-link {
+  display: inline-flex;
+  align-items: center;
   color: $say-primary-700;
   text-decoration-color: $say-primary-300;
+  transition: color $say-transition;
 
   &:hover,
   &:focus {
     color: $say-primary-600;
     text-decoration-color: $say-primary-300;
+  }
+
+  &:focus {
+    outline: $say-outline;
   }
 }
 

@@ -95,19 +95,25 @@
 }
 
 .say-modal__close {
+  @include say-font-size($say-base);
+  font-family: $say-font;
   display: flex;
   align-items: center;
   justify-content: center;
+  align-self: flex-start;
   appearance: none;
   border: 0;
   padding: 0;
   text-align: center;
-  color: $say-gray-700;
+  color: $say-neutral-700;
   transition: color $say-transition;
+  text-decoration: underline;
+  text-decoration-color: $say-neutral-300;
 
   &:hover,
   &:focus {
-    color: $say-gray-600;
+    color: $say-neutral-600;
+    text-decoration: none;
   }
 }
 
@@ -135,12 +141,14 @@
 .say-modal__sidebar {
   flex-basis: 100%;
   padding: $say-unit;
-  height: 100%;
+  padding-bottom: 0;
   overflow: auto;
   background-color: $say-gray-100;
-  border-right: .1rem solid $say-gray-200;
+  border-bottom: .1rem solid $say-gray-200;
 
   @include mq(medium) {
+    border-bottom: 0;
+    border-right: .1rem solid $say-gray-200;
     height: 100%;
     flex-basis: 35rem;
     flex-grow: 1;

@@ -82,3 +82,46 @@
     border-color: $say-button-tertiary-border-hover-color;
   }
 }
+
+.say-button--tooltip {
+  position: relative;
+  bottom: -.3rem;
+  margin-top: -1rem;
+
+  .say-icon {
+    width: 1.7rem;
+    height: 1.7rem;
+  }
+}
+
+.say-button__tooltip-text {
+  position: relative;
+  opacity: 0;
+  transition: opacity $say-transition;
+  margin-left: $say-unit-small;
+  color: $say-neutral-700;
+  background-color: $say-neutral-200;
+  padding-left: $say-unit-tiny;
+  padding-right: $say-unit-tiny;
+  border-radius: .3rem;
+
+  &:after {
+    right: 100%;
+    top: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-color: rgba($say-white, 0);
+    border-right-color: $say-neutral-200;
+    border-width: .6rem;
+    margin-top: -.6rem;
+  }
+
+  .say-button:hover &,
+  .say-button:focus & {
+    opacity: 1;
+  }
+}
