@@ -1,7 +1,7 @@
 {{#if this.suggestedHints.length}}
   {{#each this.suggestedHints as |hint|}}
-    <div class="say-modal">
       {{component hint.component info=hint.info closeHints=(action 'closeHints')}}
+    <div class="say-card">
     </div>
   {{/each}}
 {{/if}}
