@@ -94,6 +94,29 @@
   }
 }
 
+.say-modal__back {
+  @include say-font-size($say-base);
+  font-family: $say-font;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  appearance: none;
+  border: 0;
+  padding: 0;
+  text-align: center;
+  color: $say-neutral-700;
+  transition: color $say-transition;
+  text-decoration: underline;
+  text-decoration-color: $say-neutral-300;
+
+  &:hover,
+  &:focus {
+    color: $say-neutral-600;
+    text-decoration: none;
+  }
+}
+
 .say-modal__close {
   @include say-font-size($say-base);
   font-family: $say-font;
@@ -173,22 +196,8 @@
   overflow: auto;
 }
 
-/* header, content, footer */
-
-// .say-modal__header,
-// .say-modal__footer {
-//   padding: $say-unit-small;
-//   flex: 0 0 0;
-
-//   @include mq(medium) {
-//     padding: $say-unit;
-//   }
-// }
-
-// .say-modal__header {
-//   border-bottom: 1px solid $say-gray-200;
-// }
-
-// .say-modal__footer {
-//   border-top: 1px solid $say-gray-200;
-// }
+.say-modal__info {
+  @include say-font-size($say-h6);
+  color: $say-gray-700;
+  padding: $say-unit;
+}
