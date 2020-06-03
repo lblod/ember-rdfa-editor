@@ -1,0 +1,22 @@
+/* ==================================
+   #SAY FORM
+   ================================== */
+
+.say-form {
+  @include say-font-size($say-h6);
+  margin-bottom: $say-unit;
+}
+
+.say-form__fieldset {
+  & + & {
+    margin-top: $say-unit;
+    padding-top: $say-unit;
+    border-top: .1rem solid $say-neutral-300;
+  }
+}
+
+.say-form__row {
+  & + & {
+    margin-top: $say-unit-small;
+  }
+}

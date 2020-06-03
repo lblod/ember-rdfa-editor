@@ -2,13 +2,202 @@
    #SAY MODAL
    ================================== */
 
+.say-modal-holder {
+  position: relative;
+}
+
+.say-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($say-gray-1000,.4);
+  z-index: 999;
+  display: none;
+
+  &.is-visible {
+    display: block;
+  }
+}
+
+// Modal Dialog base styling
 .say-modal {
+  background: $say-white;
+  margin: auto;
+  height: auto;
+  max-height: calc(100% - #{$say-unit});
+  width: calc(100% - #{$say-unit});
+  max-width: 760px;
+  opacity: 1;
+  overflow: auto;
+  position: fixed;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  right: $say-unit-small;
+  left: $say-unit-small;
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  visibility: visible;
+  border-radius: .2rem;
+  z-index: 9999;
+  box-shadow: 0 1px 3px rgba($say-gray-1000, .1), 0 4px 20px rgba($say-gray-1000, .035), 0 1px 1px rgba($say-gray-1000, .025);
+  transition: $say-transition;
+  display: none;
+
+  &:focus {
+    outline: 0 !important;
+  }
+
+  &.is-visible {
+    display: flex;
+  }
+}
+
+.say-modal--fullscreen {
+  max-width: calc(100% - #{$say-unit});
+  max-height: calc(100% - #{$say-unit});
+  width: calc(100% - #{$say-unit});
+  height: calc(100% - #{$say-unit});
+  left: $say-unit-small;
+}
+
+.say-modal__header {
   position: relative;
-  overflow-y: auto;
-  max-height: 70vh;
-  z-index: $say-z-index-gamma;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $say-unit-small;
+  border-bottom: 1px solid $say-gray-200;
+
+  @include mq(medium) {
+    padding: $say-unit;
+  }
+}
+
+.say-modal__prefix {
+  @include say-font-size($say-base);
+  margin-bottom: $say-unit-tiny;
+}
+
+.say-modal__title {
+  @include say-font-size($say-h2-font-size);
+  font-family: $say-h2-font-family;
+  font-weight: $say-h2-font-weight;
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+.say-modal__back {
+  @include say-font-size($say-base);
+  font-family: $say-font;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  appearance: none;
+  border: 0;
+  padding: 0;
+  text-align: center;
+  color: $say-neutral-700;
+  transition: color $say-transition;
+  text-decoration: underline;
+  text-decoration-color: $say-neutral-300;
+
+  &:hover,
+  &:focus {
+    color: $say-neutral-600;
+    text-decoration: none;
+  }
+}
+
+.say-modal__close {
+  @include say-font-size($say-base);
+  font-family: $say-font;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  appearance: none;
+  border: 0;
+  padding: 0;
+  text-align: center;
+  color: $say-neutral-700;
+  transition: color $say-transition;
+  text-decoration: underline;
+  text-decoration-color: $say-neutral-300;
+
+  &:hover,
+  &:focus {
+    color: $say-neutral-600;
+    text-decoration: none;
+  }
+}
+
+.say-modal__body {
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  position: relative;
+  height: calc(100% - #{$say-unit-large + $say-unit-small});
   background-color: $say-white;
-  box-shadow: 0 1px 3px rgba($say-neutral-darkest, .1), 0 4px 20px rgba($say-neutral-darkest, .035), 0 1px 1px rgba($say-neutral-darkest, .025);
+
+  &:focus {
+    outline: 0;
+  }
+
+  @include mq(medium) {
+    overflow: hidden;
+  }
+}
+
+.say-modal__body--scroll {
+  overflow: auto;
+}
+
+.say-modal__sidebar {
+  flex-basis: 100%;
+  padding: $say-unit;
+  padding-bottom: 0;
+  overflow: auto;
+  background-color: $say-gray-100;
+  border-bottom: .1rem solid $say-gray-200;
+
+  @include mq(medium) {
+    border-bottom: 0;
+    border-right: .1rem solid $say-gray-200;
+    height: 100%;
+    flex-basis: 35rem;
+    flex-grow: 1;
+  }
+}
+
+.say-modal__content {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-grow: 1;
+  flex-basis: 100%;
+  flex-direction: column;
+
+  @include mq(medium) {
+    height: 100%;
+    flex-basis: 0;
+    flex-grow: 999;
+  }
+}
+
+.say-modal__content--scroll {
+  overflow: auto;
+}
+
+.say-modal__info {
+  @include say-font-size($say-h6);
+  color: $say-gray-700;
+  padding: $say-unit;
 }

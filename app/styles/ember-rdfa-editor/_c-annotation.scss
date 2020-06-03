@@ -24,7 +24,7 @@
 
     [property="besluit:geplandOpenbaar"],
     [property="besluit:openbaar"] {
-      color: $say-neutral !important;
+      color: $say-neutral-600 !important;
     }
 
     [property="besluit:geplandOpenbaar"] i,
@@ -33,7 +33,7 @@
       top: .2rem;
       padding-left: 1px;
       z-index: 2;
-      color: $say-neutral !important;
+      color: $say-neutral-600 !important;
     }
 
     [property="besluit:geplandOpenbaar"][content="false"],
@@ -90,7 +90,7 @@
   [typeof]:not([typeof="foaf:Document"]),
   [data-type],
   .mark-highlight-manual {
-    border-bottom: .2rem dotted $say-neutral-light;
+    border-bottom: .2rem dotted $say-neutral-300;
     padding-bottom: .2rem;
     transition: border $say-transition;
 
@@ -137,7 +137,7 @@
     transition: background-color $say-transition;
 
     &::selection {
-      color: $say-neutral-darkest;
+      color: $say-neutral-900;
       background-color: $say-editor-highlight-color;
     }
 
@@ -147,8 +147,8 @@
   }
 
   span.mark-highlight-manual {
-    color: $say-neutral-dark;
-    background-color: $say-neutral-lightest;
+    color: $say-neutral-700;
+    background-color: $say-neutral-100;
     font-style: italic;
   }
 }
@@ -161,7 +161,7 @@
   [data-type],
   .mark-highlight-manual {
     position: relative;
-    border: 1px solid $say-neutral-lighter;
+    border: 1px solid $say-neutral-200;
     display: block !important; // Override inline styles
     margin: $say-unit-tiny;
     padding: 0;
@@ -172,7 +172,7 @@
       font-family: $say-font;
       font-weight: $say-medium;
       letter-spacing: .01rem;
-      color: $say-neutral;
+      color: $say-neutral-600;
       text-transform: uppercase;
       pointer-events: none;
       content: attr(property) " " attr(typeof) " " attr(data-type);
@@ -184,8 +184,8 @@
       width: 100%;
       padding: $say-unit-tiny/2;
       transition: none;
-      border-bottom: 1px solid $say-neutral-lighter;
-      background-color: $say-neutral-lightest;
+      border-bottom: 1px solid $say-neutral-200;
+      background-color: $say-neutral-100;
       opacity: 1;
     }
   }
@@ -198,7 +198,7 @@
     font-family: $say-font;
     font-weight: $say-regular;
     letter-spacing: .01rem;
-    color: $say-neutral;
+    color: $say-neutral-600;
     text-transform: uppercase;
     pointer-events: none;
     position: relative;
@@ -209,7 +209,7 @@
     width: 100%;
     padding: $say-unit-tiny/2;
     transition: none;
-    border-top: 1px solid $say-neutral-lighter;
+    border-top: 1px solid $say-neutral-200;
     background-color: $say-white;
     opacity: 1;
     margin: 0;
