@@ -148,7 +148,8 @@ export default class ContentEditable extends Component {
     rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
     this.set('rawEditor', rawEditor);
     const forceParagraph = this.features.isEnabled('editor-force-paragraph');
-    const defaultInputHandlers = [ ArrowHandler.create({rawEditor}),
+    const defaultInputHandlers = [ 
+                                  new ArrowHandler({rawEditor}),
                                    HeaderMarkdownHandler.create({rawEditor}),
                                    EnterHandler.create({rawEditor}),
                                    BackspaceHandler.create({rawEditor}),
