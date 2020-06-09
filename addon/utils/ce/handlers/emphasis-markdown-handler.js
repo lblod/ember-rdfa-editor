@@ -1,5 +1,3 @@
-import EmberObject from '@ember/object';
-import { reads, alias } from '@ember/object/computed';
 import getRichNodeMatchingDomNode from '../get-rich-node-matching-dom-node';
 import { get } from '@ember/object';
 import { isBlank } from '@ember/utils';
@@ -20,26 +18,29 @@ let MARKDOWNS = [
 /**
  * handles emphasis markdown
  *
+ * It checks for `*some text here*` `_some text here_` and `**some text here**` 
+ * and then triggers if you put a space behind those snippets
+ * 
  * @module contenteditable-editor
  * @class EmphasisMarkdownHandler
  * @constructor
  * @extends EmberObject
  */
-export default EmberObject.extend({
-  currentNode: alias('rawEditor.currentNode'),
-  currentSelection: reads('rawEditor.currentSelection'),
-  richNode: reads('rawEditor.richNode'),
-  rootNode: reads('rawEditor.rootNode'),
+export default class EmphasisMarkdownHandler {
+  constructor({rawEditor}) {
+    this.rawEditor = rawEditor;
+  }
 
   nodeContainsRelevantMarkdown(node){
     if(!node.nodeType === Node.TEXT_NODE)
       return false;
     return this.findMarkdown(node.textContent);
-  },
+  }
 
   findMarkdown(text){
     return MARKDOWNS.find(m => { return text.match(m.pattern); });
-  },
+  }
+
 
   /**
    * tests this handler can handle the specified event
@@ -48,23 +49,23 @@ export default EmberObject.extend({
    * @return boolean
    * @public
    */
-  isHandlerFor(event) {
+  isHandlerFor(event){
     return event.type === "keydown" &&
-      this.get('rawEditor.currentSelectionIsACursor') &&
+      this.rawEditor.currentSelectionIsACursor &&
       event.key == ' ' &&
-      this.nodeContainsRelevantMarkdown(this.get('currentNode'));
-  },
+      this.nodeContainsRelevantMarkdown(this.rawEditor.currentNode);
+  }
 
   /**
-   * handle the event
+   * handle arrow event
    * @method handleEvent
-   * @param {DOMEvent} event
-   * @return {HandlerResponse} response
+   * @return {HandlerResponse}
+   * @public
    */
   handleEvent() {
-    let currentNode = this.get('currentNode');
-    let node = getRichNodeMatchingDomNode(currentNode, this.get('richNode'));
-    let currentPosition = this.get('currentSelection')[0];
+    let currentNode = this.rawEditor.currentNode;
+    let node = getRichNodeMatchingDomNode(currentNode, this.rawEditor.richNode);
+    let currentPosition = this.rawEditor.currentSelection[0];
     let newCurrentNode;
 
     let markdown = this.findMarkdown(currentNode.textContent).pattern;
@@ -96,10 +97,12 @@ export default EmberObject.extend({
       newCurrentNode = afterContentNode;
     };
 
-    this.get('rawEditor').externalDomUpdate('inserting markdown', insertElement);
-    this.get('rawEditor').updateRichNode();
-    let richNode = getRichNodeMatchingDomNode(newCurrentNode, this.get('richNode'));
-    this.get('rawEditor').setCurrentPosition(get(richNode, 'start'));
+    this.rawEditor.externalDomUpdate('inserting markdown', insertElement);
+    this.rawEditor.updateRichNode();
+    let richNode = getRichNodeMatchingDomNode(newCurrentNode, this.rawEditor.richNode);
+    this.rawEditor.setCurrentPosition(get(richNode, 'start'));
     return HandlerResponse.create({allowPropagation: false});
   }
-});
+
+}
+
