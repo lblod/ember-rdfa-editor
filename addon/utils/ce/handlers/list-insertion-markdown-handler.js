@@ -1,5 +1,3 @@
-import EmberObject from '@ember/object';
-import { reads, alias } from '@ember/object/computed';
 import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
 import { invisibleSpace } from '../dom-helpers';
@@ -21,44 +19,31 @@ let MARKDOWNS = [
  * @constructor
  * @extends EmberObject
  */
-export default EmberObject.extend({
-  currentNode: alias('rawEditor.currentNode'),
-  currentSelection: reads('rawEditor.currentSelection'),
-  richNode: reads('rawEditor.richNode'),
-  rootNode: reads('rawEditor.rootNode'),
+export default class ListInsertionMarkdownHandler {
+  constructor({rawEditor}) {
+    this.rawEditor = rawEditor;
+  }
 
   nodeContainsRelevantMarkdown(node){
     if(!node.nodeType === Node.TEXT_NODE)
       return false;
     return this.findMarkdown(node.textContent);
-  },
+  }
 
   findMarkdown(text){
     return MARKDOWNS.find(m => { return text.match(m.pattern); });
-  },
+  }
 
-  /**
-   * tests this handler can handle the specified event
-   * @method isHandlerFor
-   * @param {DOMEvent} event
-   * @return boolean
-   * @public
-   */
   isHandlerFor(event) {
     return event.type === 'keydown' &&
-      this.get('rawEditor.currentSelectionIsACursor') &&
+      this.rawEditor.currentSelectionIsACursor &&
       event.key == 'Enter' &&
-      this.nodeContainsRelevantMarkdown(this.get('currentNode'));
-  },
+      this.nodeContainsRelevantMarkdown(this.rawEditor.currentNode);
+  }
 
-  /**
-   * handle the event
-   * @method handleEvent
-   * @param {DOMEvent} event
-   * @return {HandlerResponse} response
-   */
+
   handleEvent() {
-    const currentNode = this.get('currentNode');
+    const currentNode = this.rawEditor.currentNode;
     const markdown = this.findMarkdown(currentNode.textContent).pattern;
 
     let insertElement = () => {
@@ -93,19 +78,17 @@ export default EmberObject.extend({
       currentNode.parentNode.insertBefore(document.createTextNode(invisibleSpace), currentNode);
       currentNode.parentNode.removeChild(currentNode);
       newCurrentNode = liNodeForCursor.childNodes[0];
-      this.get('rawEditor').updateRichNode();
-      this.get('rawEditor').set('currentNode', newCurrentNode);
-      const richNode = this.get('rawEditor').getRichNodeFor(newCurrentNode);
-      this.get('rawEditor').setCurrentPosition(richNode.start);
+      this.rawEditor.updateRichNode();
+      this.rawEditor.set('currentNode', newCurrentNode);
+      const richNode = this.rawEditor.getRichNodeFor(newCurrentNode);
+      this.rawEditor.setCurrentPosition(richNode.start);
     };
 
-    this.get('rawEditor').externalDomUpdate('inserting markdown', insertElement);
+    this.rawEditor.externalDomUpdate('inserting markdown', insertElement);
     return HandlerResponse.create({allowPropagation: false});
-  },
+  }
 
   isVisiblyEmptyString(string_instance){
     return string_instance.length === 0 || (new RegExp( '^' + invisibleSpace + '+$')).test(string_instance);
   }
-
-
-});
+}
