@@ -14,7 +14,7 @@ import { warn } from '@ember/debug';
  */
 export default class ArrowHandler {
   constructor({rawEditor}) {
-    this.rawEditor = rawEditor
+    this.rawEditor = rawEditor;
   }
   /**
    * tests this handler can handle the specified event
