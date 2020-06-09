@@ -8,7 +8,7 @@ import HandlerResponse from './handler-response';
  * @constructor
  */
 
-class IgnoreModifiersHandler {
+export default class IgnoreModifiersHandler {
   constructor({rawEditor}) {
     this.rawEditor = rawEditor;
   }
@@ -26,5 +26,3 @@ class IgnoreModifiersHandler {
     );
   }
 }
-
-export default IgnoreModifiersHandler;
