@@ -156,7 +156,7 @@ export default class ContentEditable extends Component {
                                    new TextInputHandler({rawEditor, forceParagraph }),
                                    new DeleteHandler({rawEditor}),
                                    new TabHandler({rawEditor}),
-                                   IgnoreModifiersHandler.create({rawEditor}),
+                                   new IgnoreModifiersHandler({rawEditor}),
                                    new UndoHandler({rawEditor}),
                                    new BoldItalicUnderlineHandler({rawEditor}),
                                    new FallbackInputHandler({rawEditor})
