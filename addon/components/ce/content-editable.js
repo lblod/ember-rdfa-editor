@@ -151,7 +151,7 @@ export default class ContentEditable extends Component {
     const defaultInputHandlers = [ 
                                   new ArrowHandler({rawEditor}),
                                    HeaderMarkdownHandler.create({rawEditor}),
-                                   EnterHandler.create({rawEditor}),
+                                   new EnterHandler({rawEditor}),
                                    BackspaceHandler.create({rawEditor}),
                                    new TextInputHandler({rawEditor, forceParagraph }),
                                    new DeleteHandler({rawEditor}),

@@ -1,5 +1,3 @@
-import EmberObject from '@ember/object';
-import { reads, alias } from '@ember/object/computed';
 import getRichNodeMatchingDomNode from '../get-rich-node-matching-dom-node';
 import {
   tagName,
@@ -19,11 +17,11 @@ import { isBlank } from '@ember/utils';
  * @constructor
  * @extends EmberObject
  */
-export default EmberObject.extend({
-  currentNode: alias('rawEditor.currentNode'),
-  currentSelection: reads('rawEditor.currentSelection'),
-  richNode: reads('rawEditor.richNode'),
-  rootNode: reads('rawEditor.rootNode'),
+export default class EnterHandler {
+  constructor({rawEditor}) {
+    this.rawEditor = rawEditor;
+  }
+
   /**
    * tests this handler can handle the specified event
    * @method isHandlerFor
@@ -31,20 +29,20 @@ export default EmberObject.extend({
    * @return boolean
    * @public
    */
-  isHandlerFor(event) {
-    return this.currentNode && event.type === "keydown" && event.key === "Enter" && this.get('rawEditor.currentSelectionIsACursor');
-  },
+  isHandlerFor(event){
+    return this.currentNode && event.type === "keydown" && event.key === "Enter" && this.rawEditor.currentSelectionIsACursor;
+  }
 
   /**
-   * handle the event
+   * handle arrow event
    * @method handleEvent
-   * @param {DOMEvent} event
-   * @return {HandlerResponse} response
+   * @return {HandlerResponse}
+   * @public
    */
-  handleEvent( event ) {
-    let currentNode = this.currentNode;
-    let node = getRichNodeMatchingDomNode(currentNode, this.richNode);
-    let currentPosition = this.currentSelection[0];
+  handleEvent() {
+    let currentNode = this.rawEditor.currentNode;
+    let node = getRichNodeMatchingDomNode(currentNode, this.rawEditor.richNode);
+    let currentPosition = this.rawEditor.currentSelection[0];
     let nodeForEnter = this.relevantNodeForEnter(node);
     if (event.shiftKey && currentNode && currentNode.nodeType === Node.TEXT_NODE) {
       debug('shift enter');
@@ -80,13 +78,13 @@ export default EmberObject.extend({
       debug('-------------- not handling this enter yet------------------');
       return HandlerResponse.create({allowPropagation: true, allowBrowserDefault: true});
     }
-  },
+  }
 
   insertBr() {
     debug('placing br');
-    let currentNode = this.currentNode;
-    let richNode = getRichNodeMatchingDomNode(currentNode, this.richNode);
-    let currentPosition = this.currentSelection[0];
+    let currentNode = this.rawEditor.currentNode;
+    let richNode = getRichNodeMatchingDomNode(currentNode, this.rawEditor.richNode);
+    let currentPosition = this.rawEditor.currentSelection[0];
 
     let splitAt = currentPosition - richNode.start;
     let above = document.createTextNode(currentNode.textContent.slice(0,splitAt));
@@ -103,7 +101,7 @@ export default EmberObject.extend({
 
     this.rawEditor.updateRichNode();
     this.rawEditor.setCarret(below, 0);
-  },
+  }
 
   /**
    * @method relevantNodeForEnter
@@ -111,11 +109,11 @@ export default EmberObject.extend({
    * @private
    */
   relevantNodeForEnter(node) {
-    while(! isDisplayedAsBlock(node.domNode) && ! this.rootNode.isSameNode(node.domNode)) {
+    while(! isDisplayedAsBlock(node.domNode) && ! this.rawEditor.rootNode.isSameNode(node.domNode)) {
       node = node.parent;
     }
     return node;
-  },
+  }
 
   /**
    * @method lisIsEmpty
@@ -125,7 +123,7 @@ export default EmberObject.extend({
   liIsEmpty(node) {
     let re = new RegExp(invisibleSpace,"g");
     return isBlank(node.domNode.textContent.replace(re, ''));
-  },
+  }
 
   /**
    * @method insertEnterInLi
@@ -167,7 +165,7 @@ export default EmberObject.extend({
     }
     this.rawEditor.updateRichNode();
     this.rawEditor.setCarret(textNode, 0);
-  },
+  }
 
   /**
    * @method insertEnterInP
@@ -209,4 +207,5 @@ export default EmberObject.extend({
 
     return undefined;
   }
-});
+
+}
