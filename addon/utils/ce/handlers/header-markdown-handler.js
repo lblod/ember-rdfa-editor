@@ -1,5 +1,3 @@
-import EmberObject from '@ember/object';
-import { reads, alias } from '@ember/object/computed';
 import getRichNodeMatchingDomNode from '../get-rich-node-matching-dom-node';
 import { get } from '@ember/object';
 import { isBlank } from '@ember/utils';
@@ -17,16 +15,15 @@ let HEADERMARKDOWN = /(#+)(.*)/;
  * @constructor
  * @extends EmberObject
  */
-export default EmberObject.extend({
-  currentNode: alias('rawEditor.currentNode'),
-  currentSelection: reads('rawEditor.currentSelection'),
-  richNode: reads('rawEditor.richNode'),
-  rootNode: reads('rawEditor.rootNode'),
+export default class EnterHandler {
+  constructor({rawEditor}) {
+    this.rawEditor = rawEditor;
+  }
 
   nodeContainsHeaderMarkdown(node){
     return  node.nodeType === Node.TEXT_NODE &&
       node.textContent.match(HEADERMARKDOWN);
-  },
+  }
 
   /**
    * tests this handler can handle the specified event
@@ -35,23 +32,23 @@ export default EmberObject.extend({
    * @return boolean
    * @public
    */
-  isHandlerFor(event) {
+  isHandlerFor(event){
     return event.type === "keydown" &&
       event.key === "Enter" &&
-      this.get('rawEditor.currentSelectionIsACursor') &&
-      this.nodeContainsHeaderMarkdown(this.get('currentNode'));
-  },
+      this.rawEditor.currentSelectionIsACursor &&
+      this.nodeContainsHeaderMarkdown(this.rawEditor.currentNode);
+  }
 
   /**
-   * handle the event
+   * handle arrow event
    * @method handleEvent
-   * @param {DOMEvent} event
-   * @return {HandlerResponse} response
+   * @return {HandlerResponse}
+   * @public
    */
   handleEvent() {
-    let currentNode = this.get('currentNode');
-    let node = getRichNodeMatchingDomNode(currentNode, this.get('richNode'));
-    let currentPosition = this.get('currentSelection')[0];
+    let currentNode = this.rawEditor.currentNode;
+    let node = getRichNodeMatchingDomNode(currentNode, this.rawEditor.richNode);
+    let currentPosition = this.rawEditor.currentSelection[0];
     let newCurrentNode;
 
     let insertHeader = () => {
@@ -82,10 +79,10 @@ export default EmberObject.extend({
       newCurrentNode = afterHeader;
     };
 
-    this.get('rawEditor').externalDomUpdate('inserting header', insertHeader);
-    this.get('rawEditor').updateRichNode();
-    let richNode = getRichNodeMatchingDomNode(newCurrentNode, this.get('richNode'));
-    this.get('rawEditor').setCurrentPosition(get(richNode, 'start'));
+    this.rawEditor.externalDomUpdate('inserting header', insertHeader);
+    this.rawEditor.updateRichNode();
+    let richNode = getRichNodeMatchingDomNode(newCurrentNode, this.rawEditor.richNode);
+    this.rawEditor.setCurrentPosition(get(richNode, 'start'));
     return HandlerResponse.create({allowPropagation: false});
-    }
-  });
+  }
+}

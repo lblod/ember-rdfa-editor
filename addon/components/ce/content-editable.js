@@ -150,7 +150,7 @@ export default class ContentEditable extends Component {
     const forceParagraph = this.features.isEnabled('editor-force-paragraph');
     const defaultInputHandlers = [ 
                                   new ArrowHandler({rawEditor}),
-                                   HeaderMarkdownHandler.create({rawEditor}),
+                                   new HeaderMarkdownHandler({rawEditor}),
                                    new EnterHandler({rawEditor}),
                                    BackspaceHandler.create({rawEditor}),
                                    new TextInputHandler({rawEditor, forceParagraph }),
