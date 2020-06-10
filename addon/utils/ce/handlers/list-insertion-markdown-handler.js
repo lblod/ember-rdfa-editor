@@ -17,7 +17,6 @@ let MARKDOWNS = [
  * @module contenteditable-editor
  * @class ListInsertionMarkdownHandler
  * @constructor
- * @extends EmberObject
  */
 export default class ListInsertionMarkdownHandler {
   constructor({rawEditor}) {

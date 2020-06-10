@@ -2,13 +2,12 @@ import HandlerResponse from './handler-response';
 import nextTextNode from '../next-text-node';
 
 /**
- * Enter Handler, a event handler to handle the generic enter case
  * @module contenteditable-editor
- * @class EnterHandler
+ * @class TabHandler
  * @constructor
  * @extends EmberObject
  */
-export default class EnterHandler {
+export default class TabHandler {
   constructor({rawEditor}) {
     this.rawEditor = rawEditor;
   }
@@ -25,7 +24,7 @@ export default class EnterHandler {
   }
 
   /**
-   * handle arrow event
+   * handle tab event
    * @method handleEvent
    * @return {HandlerResponse}
    * @public

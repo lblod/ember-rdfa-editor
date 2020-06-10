@@ -24,7 +24,6 @@ let MARKDOWNS = [
  * @module contenteditable-editor
  * @class EmphasisMarkdownHandler
  * @constructor
- * @extends EmberObject
  */
 export default class EmphasisMarkdownHandler {
   constructor({rawEditor}) {
@@ -57,7 +56,7 @@ export default class EmphasisMarkdownHandler {
   }
 
   /**
-   * handle arrow event
+   * handle emphasis markdown event
    * @method handleEvent
    * @return {HandlerResponse}
    * @public

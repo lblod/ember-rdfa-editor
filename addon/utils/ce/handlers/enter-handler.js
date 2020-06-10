@@ -15,7 +15,6 @@ import { isBlank } from '@ember/utils';
  * @module contenteditable-editor
  * @class EnterHandler
  * @constructor
- * @extends EmberObject
  */
 export default class EnterHandler {
   constructor({rawEditor}) {
@@ -34,7 +33,7 @@ export default class EnterHandler {
   }
 
   /**
-   * handle arrow event
+   * handle enter event
    * @method handleEvent
    * @return {HandlerResponse}
    * @public

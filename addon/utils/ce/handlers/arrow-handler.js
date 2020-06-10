@@ -10,7 +10,6 @@ import { warn } from '@ember/debug';
  * @module contenteditable-editor
  * @class ArrowHandler
  * @constructor
- * @extends EmberObject
  */
 export default class ArrowHandler {
   constructor({rawEditor}) {
@@ -33,7 +32,7 @@ export default class ArrowHandler {
    * @return {HandlerResponse}
    * @public
    */
-  handleEvent() {
+  handleEvent(event) {
     const position = this.rawEditor.currentSelection[0];
     const textNode = this.rawEditor.currentNode;
     const richNode = this.rawEditor.getRichNodeFor(textNode);

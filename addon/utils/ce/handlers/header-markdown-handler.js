@@ -13,9 +13,8 @@ let HEADERMARKDOWN = /(#+)(.*)/;
  * @module contenteditable-editor
  * @class HeaderMarkdownHandler
  * @constructor
- * @extends EmberObject
  */
-export default class EnterHandler {
+export default class HeaderMarkdownHandler {
   constructor({rawEditor}) {
     this.rawEditor = rawEditor;
   }
@@ -40,7 +39,7 @@ export default class EnterHandler {
   }
 
   /**
-   * handle arrow event
+   * handle header markdown event
    * @method handleEvent
    * @return {HandlerResponse}
    * @public
