@@ -1,4 +1,5 @@
 import {tagName} from './ce/dom-helpers';
+import DomPurify from 'dompurify';
 
 const EMPTY_TAGS_TO_KEEP = ['td','tr','li'];
 const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
@@ -35,6 +36,11 @@ class HTMLInputParser {
     const document = parser.parseFromString(html, "text/html");
     const rootNode = document.body;
     const cleanedNode = this.cleanupNode(rootNode);
+    const purifyParsed =  parser.parseFromString(html, "text/html");
+    console.log(cleanedNode.innerHTML);
+    const purifyCleaned = this.addLumpNodes(purifyParsed.body);
+    const purifyHtml = DomPurify.sanitize(purifyCleaned.innerHTML, {ALLOWED_TAGS: this.safeTags, ALLOWED_ATTR: this.safeAttributes});
+    console.log(purifyHtml);
     return cleanedNode.innerHTML;
   }
 
@@ -61,7 +67,6 @@ class HTMLInputParser {
         if (node.hasAttribute(attribute))
           cleanedNode.setAttribute(attribute, node.getAttribute(attribute));
       }
-
       if (node.hasChildNodes()) {
         let children = node.childNodes;
         for (let i = 0; i < children.length; i++) {
@@ -87,6 +92,45 @@ class HTMLInputParser {
       cleanedNode = node.cloneNode();
     }
     return cleanedNode;
+  }
+  addLumpNodes(node) {
+    let cleanedNode = node.cloneNode();
+    
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = tagName(node);
+      if (this.tagMap[tag]) {
+        cleanedNode = document.createElement(this.tagMap[tag]);
+        this.copyAllAttrs(node, cleanedNode);
+      }
+      // Clean all childs childs
+      cleanedNode.textContent = '';
+      if (this.lumpTags.includes(tag)) {
+        cleanedNode.setAttribute("property", "http://lblod.data.gift/vocabularies/editor/isLumpNode");
+      }
+      if (node.hasChildNodes()) {
+        let children = node.childNodes;
+        for (let i = 0; i < children.length; i++) {
+          const cleanedChild = this.addLumpNodes(children[i]);
+          if (cleanedChild) {
+            if (this.lumpTags.includes(tag)) {
+              // make sure we can place the cursor before the non editable element
+              cleanedNode.appendChild(document.createTextNode(""));
+            }
+            cleanedNode.appendChild(cleanedChild);
+            if (this.lumpTags.includes(tag)) {
+              // make sure we can place the cursor after the non editable element
+              cleanedNode.appendChild(document.createTextNode(""));
+            }
+          }
+        }
+      }
+    }
+    return cleanedNode;
+  }
+  copyAllAttrs(src, target) {
+    for(let attr of src.attributes) {
+      target.setAttribute(attr.name, attr.value);
+    }
   }
 }
 
