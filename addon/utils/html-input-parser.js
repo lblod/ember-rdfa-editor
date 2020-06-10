@@ -35,13 +35,9 @@ class HTMLInputParser {
     const parser = new DOMParser();
     const document = parser.parseFromString(html, "text/html");
     const rootNode = document.body;
-    const cleanedNode = this.cleanupNode(rootNode);
-    const purifyParsed =  parser.parseFromString(html, "text/html");
-    console.log(cleanedNode.innerHTML);
-    const purifyCleaned = this.addLumpNodes(purifyParsed.body);
-    const purifyHtml = DomPurify.sanitize(purifyCleaned.innerHTML, {ALLOWED_TAGS: this.safeTags, ALLOWED_ATTR: this.safeAttributes});
-    console.log(purifyHtml);
-    return cleanedNode.innerHTML;
+    const preprocessedNode = this.preprocessNodes(rootNode);
+    const cleanedHtml = DomPurify.sanitize(preprocessedNode.innerHTML, {ALLOWED_TAGS: this.safeTags, ALLOWED_ATTR: this.safeAttributes});
+    return cleanedHtml;
   }
 
   cleanupNode(node) {
@@ -93,16 +89,18 @@ class HTMLInputParser {
     }
     return cleanedNode;
   }
-  addLumpNodes(node) {
+  preprocessNodes(node) {
     let cleanedNode = node.cloneNode();
     
     if (node.nodeType === Node.ELEMENT_NODE) {
       const tag = tagName(node);
+      // If we have to replace the tagname we create another node with the new
+      // tagname and copy all the attribute of the original node
       if (this.tagMap[tag]) {
         cleanedNode = document.createElement(this.tagMap[tag]);
         this.copyAllAttrs(node, cleanedNode);
       }
-      // Clean all childs childs
+      // Clean all node childs 
       cleanedNode.textContent = '';
       if (this.lumpTags.includes(tag)) {
         cleanedNode.setAttribute("property", "http://lblod.data.gift/vocabularies/editor/isLumpNode");
@@ -110,17 +108,15 @@ class HTMLInputParser {
       if (node.hasChildNodes()) {
         let children = node.childNodes;
         for (let i = 0; i < children.length; i++) {
-          const cleanedChild = this.addLumpNodes(children[i]);
-          if (cleanedChild) {
-            if (this.lumpTags.includes(tag)) {
-              // make sure we can place the cursor before the non editable element
-              cleanedNode.appendChild(document.createTextNode(""));
-            }
-            cleanedNode.appendChild(cleanedChild);
-            if (this.lumpTags.includes(tag)) {
-              // make sure we can place the cursor after the non editable element
-              cleanedNode.appendChild(document.createTextNode(""));
-            }
+          const cleanedChild = this.preprocessNodes(children[i]);
+          if (this.lumpTags.includes(tag)) {
+            // make sure we can place the cursor before the non editable element
+            cleanedNode.appendChild(document.createTextNode(""));
+          }
+          cleanedNode.appendChild(cleanedChild);
+          if (this.lumpTags.includes(tag)) {
+            // make sure we can place the cursor after the non editable element
+            cleanedNode.appendChild(document.createTextNode(""));
           }
         }
       }
