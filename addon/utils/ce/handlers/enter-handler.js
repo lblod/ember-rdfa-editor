@@ -38,7 +38,7 @@ export default class EnterHandler {
    * @return {HandlerResponse}
    * @public
    */
-  handleEvent() {
+  handleEvent(event) {
     let currentNode = this.rawEditor.currentNode;
     let node = getRichNodeMatchingDomNode(currentNode, this.rawEditor.richNode);
     let currentPosition = this.rawEditor.currentSelection[0];
