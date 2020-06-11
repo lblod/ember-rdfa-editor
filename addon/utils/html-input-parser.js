@@ -10,6 +10,7 @@ const DEFAULT_TAG_MAP = {
   del: 's',
   mark: 'span'
 };
+const DEFAULT_URI_SAFE_ATTRIBUTES = ['about', 'property', 'datatype', 'typeof', 'resource']
 /**
  * A html input parser for the editor
  * The parser makes the HTML input safe for usage in the editor.
@@ -23,11 +24,12 @@ class HTMLInputParser {
   /**
    * @constructor
    */
-  constructor({ safeAttributes, lumpTags, tagMap, safeTags}) {
+  constructor({ safeAttributes, lumpTags, tagMap, safeTags, uriSafeAttr}) {
     this.safeAttributes = safeAttributes ? safeAttributes : DEFAULT_SAFE_ATTRIBUTES;
     this.lumpTags = lumpTags ? lumpTags : DEFAULT_LUMP_TAGS;
     this.safeTags = safeTags ? safeTags : DEFAULT_SAFE_TAGS;
     this.tagMap = tagMap ? tagMap : DEFAULT_TAG_MAP;
+    this.uriSafeAttr = uriSafeAttr ? uriSafeAttr : DEFAULT_URI_SAFE_ATTRIBUTES;
   }
 
   /**
@@ -41,7 +43,7 @@ class HTMLInputParser {
     const document = parser.parseFromString(html, "text/html");
     const rootNode = document.body;
     const preprocessedNode = this.preprocessNodes(rootNode);
-    const cleanedHtml = DomPurify.sanitize(preprocessedNode.innerHTML, {ALLOWED_TAGS: this.safeTags, ALLOWED_ATTR: this.safeAttributes});
+    const cleanedHtml = DomPurify.sanitize(preprocessedNode.innerHTML, {ALLOWED_TAGS: this.safeTags, ALLOWED_ATTR: this.safeAttributes, ADD_URI_SAFE_ATTR: this.uriSafeAttr});
     return cleanedHtml;
   }
 
