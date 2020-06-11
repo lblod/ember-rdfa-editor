@@ -1,7 +1,6 @@
 import {tagName} from './ce/dom-helpers';
 import DomPurify from 'dompurify';
 
-const EMPTY_TAGS_TO_KEEP = ['td','tr','li'];
 const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
 const DEFAULT_LUMP_TAGS = ["table"];
 const DEFAULT_SAFE_TAGS = ['a', 'br', 'body', 'code', 'data', 'datalist', 'div', 'dl', 'dt', 'dd', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'li', 'link', 'meta', 'nav', 'ol', 'p', 'pre', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'template', 'th', 'thead',  'time', 'tr', 'ul', 'var', 'wbr' ];
@@ -31,6 +30,12 @@ class HTMLInputParser {
     this.tagMap = tagMap ? tagMap : DEFAULT_TAG_MAP;
   }
 
+  /**
+   * Takes an html string, preproccess its nodes and sanitizes the result.
+   * Returns the cleaned html string
+   *
+   * @method cleanupHTML
+   */
   cleanupHTML(html) {
     const parser = new DOMParser();
     const document = parser.parseFromString(html, "text/html");
@@ -40,7 +45,12 @@ class HTMLInputParser {
     return cleanedHtml;
   }
 
-  
+  /**
+   * Preprocess all nodes replacing the tag if it appears on the tagMap variable
+   * and adds the lumpNode property if needed
+   *
+   * @method preprocessNodes
+   */
   preprocessNodes(node) {
     let cleanedNode = node.cloneNode();
     
@@ -75,6 +85,13 @@ class HTMLInputParser {
     }
     return cleanedNode;
   }
+
+  /**
+   * Takes an html string, preproccess its nodes and sanitizes the result.
+   * Returns the cleaned html string
+   *
+   * @method copyAllAttrs
+   */
   copyAllAttrs(src, target) {
     for(let attr of src.attributes) {
       target.setAttribute(attr.name, attr.value);
