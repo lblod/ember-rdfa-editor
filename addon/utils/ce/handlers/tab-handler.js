@@ -5,7 +5,6 @@ import nextTextNode from '../next-text-node';
  * @module contenteditable-editor
  * @class TabHandler
  * @constructor
- * @extends EmberObject
  */
 export default class TabHandler {
   constructor({rawEditor}) {
