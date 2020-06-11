@@ -10,7 +10,7 @@ const DEFAULT_TAG_MAP = {
   del: 's',
   mark: 'span'
 };
-const DEFAULT_URI_SAFE_ATTRIBUTES = ['about', 'property', 'datatype', 'typeof', 'resource']
+const DEFAULT_URI_SAFE_ATTRIBUTES = ['about', 'property', 'datatype', 'typeof', 'resource', 'vocab', 'prefix']
 /**
  * A html input parser for the editor
  * The parser makes the HTML input safe for usage in the editor.
