@@ -394,7 +394,7 @@ function updateInnerContent(domNodes, {remove, set}) {
 function sanitizeHTML(html) {
   console.log(html)
   const safeAttributes = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src', 'style', 'class'];
-  const uriSafeAttr = ['typeof']
+  const uriSafeAttr = ['typeof', 'property']
   const inputParser = new HTMLInputParser({lumpTags: [], safeAttributes, uriSafeAttr});
   const cleanHTML = inputParser.cleanupHTML(html);
   console.log(cleanHTML)
