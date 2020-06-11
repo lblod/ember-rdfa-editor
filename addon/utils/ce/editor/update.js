@@ -5,7 +5,7 @@ import { runInDebug } from '@ember/debug';
 import { parsePrefixString } from '@lblod/marawa/rdfa-attributes';
 import { isLI, findWrappingSuitableNodes, createElementsFromHTML, isVoidElement, tagName } from '../dom-helpers';
 import { A } from '@ember/array';
-import HTMLInputParser from '../../html-input-parser'
+import HTMLInputParser from '../../html-input-parser';
 
 /**
  * Fake class to list helper functions
@@ -393,10 +393,10 @@ function updateInnerContent(domNodes, {remove, set}) {
  */
 function sanitizeHTML(html) {
   const safeAttributes = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src', 'style', 'class'];
-  const uriSafeAttr = ['typeof', 'property']
+  const uriSafeAttr = ['typeof', 'property'];
   const inputParser = new HTMLInputParser({lumpTags: [], safeAttributes, uriSafeAttr});
   const cleanHTML = inputParser.cleanupHTML(html);
-  return cleanHTML
+  return cleanHTML;
 }
 
 function insertNodes(rootNode, referenceNode, newNodes, { before, after, prepend, append }){
