@@ -40,55 +40,7 @@ class HTMLInputParser {
     return cleanedHtml;
   }
 
-  cleanupNode(node) {
-    let cleanedNode;
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      const tag = tagName(node);
-      if (this.tagMap[tag]) {
-        cleanedNode = document.createElement(this.tagMap[tag]);
-      }
-      else if (!this.safeTags.includes(tag)) {
-        if (node.childNodes.length > 0) {
-          cleanedNode = document.createElement('div');
-        }
-      }
-      else {
-        cleanedNode = document.createElement(tag);
-      }
-
-      if (this.lumpTags.includes(tag)) {
-        cleanedNode.setAttribute("property", "http://lblod.data.gift/vocabularies/editor/isLumpNode");
-      }
-      for (let attribute of this.safeAttributes) {
-        if (node.hasAttribute(attribute))
-          cleanedNode.setAttribute(attribute, node.getAttribute(attribute));
-      }
-      if (node.hasChildNodes()) {
-        let children = node.childNodes;
-        for (let i = 0; i < children.length; i++) {
-          const cleanedChild = this.cleanupNode(children[i]);
-          if (cleanedChild) {
-            if (this.lumpTags.includes(tag)) {
-              // make sure we can place the cursor before the non editable element
-              cleanedNode.appendChild(document.createTextNode(""));
-            }
-            cleanedNode.appendChild(cleanedChild);
-            if (this.lumpTags.includes(tag)) {
-              // make sure we can place the cursor after the non editable element
-              cleanedNode.appendChild(document.createTextNode(""));
-            }
-          }
-        }
-      }
-      if (cleanedNode && cleanedNode.attributes.length == 0 && cleanedNode.childNodes.length == 0 && new String(cleanedNode.textContent).trim().length == 0 && ! EMPTY_TAGS_TO_KEEP.includes(tagName(cleanedNode))) {
-        return null;
-      }
-    }
-    else if (node.nodeType === Node.TEXT_NODE) {
-      cleanedNode = node.cloneNode();
-    }
-    return cleanedNode;
-  }
+  
   preprocessNodes(node) {
     let cleanedNode = node.cloneNode();
     
