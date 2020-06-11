@@ -7,7 +7,7 @@ import HandlerResponse from './handler-response';
  * @class FallbackInputHandler
  * @constructor
  */
-class FallbackInputHandler {
+export default class FallbackInputHandler {
 
   rawEditor;
   constructor({rawEditor}) {
@@ -34,5 +34,3 @@ class FallbackInputHandler {
     return HandlerResponse.create({ allowBrowserDefault: true });
   }
 }
-
-export default FallbackInputHandler;

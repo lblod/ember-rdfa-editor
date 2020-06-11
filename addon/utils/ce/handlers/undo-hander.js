@@ -4,10 +4,10 @@ import HandlerResponse from './handler-response';
  * Undo handler, this handler acts on ctrl+z or meta+z and calls undo on the editor
  *
  * @module contenteditable-editor
- * @class TextInputHandler
+ * @class UndoHandler
  * @constructor
  */
-class FallbackInputHandler {
+export default class UndoHandler {
 
   rawEditor;
   constructor({rawEditor}) {
@@ -27,5 +27,3 @@ class FallbackInputHandler {
     return HandlerResponse.create({ allowBrowserDefault: true, allowPropagation: false });
   }
 }
-
-export default FallbackInputHandler;
