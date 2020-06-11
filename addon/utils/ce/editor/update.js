@@ -397,7 +397,6 @@ function sanitizeHTML(html) {
   const uriSafeAttr = ['typeof', 'property']
   const inputParser = new HTMLInputParser({lumpTags: [], safeAttributes, uriSafeAttr});
   const cleanHTML = inputParser.cleanupHTML(html);
-  console.log(cleanHTML)
   return cleanHTML
 }
 
