@@ -1,5 +1,3 @@
-import EmberObject from '@ember/object';
-import { reads } from '@ember/object/computed';
 import HandlerResponse from './handler-response';
 import previousTextNode from '../previous-text-node';
 import nextTextNode from '../next-text-node';
@@ -12,11 +10,11 @@ import { warn } from '@ember/debug';
  * @module contenteditable-editor
  * @class ArrowHandler
  * @constructor
- * @extends EmberObject
  */
-export default EmberObject.extend({
-  currentSelection: reads('rawEditor.currentSelection'),
-
+export default class ArrowHandler {
+  constructor({rawEditor}) {
+    this.rawEditor = rawEditor;
+  }
   /**
    * tests this handler can handle the specified event
    * @method isHandlerFor
@@ -25,17 +23,17 @@ export default EmberObject.extend({
    * @public
    */
   isHandlerFor(event){
-    return event.type === "keydown" && (event.key === 'ArrowLeft' || event.key === 'ArrowRight') && this.get('rawEditor.currentSelectionIsACursor');
-  },
+    return event.type === "keydown" && (event.key === 'ArrowLeft' || event.key === 'ArrowRight') && this.rawEditor.currentSelectionIsACursor;
+  }
 
   /**
-   * handle backspace event
+   * handle arrow event
    * @method handleEvent
-   * @return {Object} HandlerResponse.create({allowPropagation: false})
+   * @return {HandlerResponse}
    * @public
    */
-  handleEvent(event){
-    const position = this.currentSelection[0];
+  handleEvent(event) {
+    const position = this.rawEditor.currentSelection[0];
     const textNode = this.rawEditor.currentNode;
     const richNode = this.rawEditor.getRichNodeFor(textNode);
     const isLeft = event.key === "ArrowLeft";
@@ -91,4 +89,5 @@ export default EmberObject.extend({
     }
     return HandlerResponse.create({allowPropagation: false});
   }
-});
+
+}

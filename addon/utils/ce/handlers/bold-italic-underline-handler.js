@@ -10,7 +10,7 @@ import underlineProperty from '../../rdfa/underline-property';
  * @class BoldItalicUnderlineHandler
  * @constructor
  */
-class BoldItalicUnderlineHandler {
+export default class BoldItalicUnderlineHandler {
 
   rawEditor;
   constructor({rawEditor}) {
@@ -43,5 +43,3 @@ class BoldItalicUnderlineHandler {
     return HandlerResponse.create({ allowBrowserDefault: false, allowPropagation: false });
   }
 }
-
-export default BoldItalicUnderlineHandler;
