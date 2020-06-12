@@ -34,6 +34,7 @@
     "@glimmer/tracking": "^1.0.0",
     "@lblod/marawa": "^0.6.0",
     "diff-match-patch": "^1.0.4",
+    "dompurify": "^2.0.11",
     "ember-auto-import": "^1.5.3",
     "ember-awesome-macros": "^3.1.0",
     "ember-classic-decorator": "^1.0.3",
