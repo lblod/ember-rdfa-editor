@@ -317,7 +317,7 @@ export default class HinstRegistry extends EmberObject {
     const { hrId, scope } = options;
 
     if( ! options.rdfaBlocks && ! options.region ){
-      console.warn( "HinstRegistry#removeHints was called without rdfaBlocks or location, no hints will be removed." );
+      console.warn( "HinstRegistry#removeHints was called without rdfaBlocks or location, no hints will be removed." );  // eslint-disable-line no-console
     }
 
     if( options.rdfaBlocks ) {

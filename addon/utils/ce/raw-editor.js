@@ -12,8 +12,6 @@ import {
   insertTextNodeWithSpace,
   insertNodeBAfterNodeA,
   removeNode,
-  isVoidElement,
-  isIgnorableElement,
   tagName,
   createElementsFromHTML
 } from './dom-helpers';
@@ -325,11 +323,10 @@ class RawEditor extends EmberObject {
    * @param {Number} start index absolute
    * @param {Number} end index absolute
    * @param {String} html string
-   * @param {Array} Optional extra info, which will be passed around when triggering update events.
    * @deprecated please use RawEditor.update
    * @public
    */
-  replaceTextWithHTML(start, end, html, extraInfo = []) {
+  replaceTextWithHTML(start, end, html) {
     deprecate('deprecated call to replaceTextWithHTML in rawEditor, please use the pernet api with set.innerHTML');
     this.createSnapshot();
     const selection = this.selectHighlight([start, end]);
@@ -743,10 +740,6 @@ class RawEditor extends EmberObject {
       return textNodeContainingPosition[0];
     }
     else {
-      const appropriateElementFilter = node =>
-            node.start <= position && node.end >= position
-            && node.type === 'tag'
-            && ! isList(node.domNode);
       const elementContainingPosition = flatMap(node, appropriateTextNodeFilter);
       if (elementContainingPosition.length > 0) {
         // we have to guess which element matches, taking the last matching one is a strategy that sort of works
@@ -1032,7 +1025,7 @@ class RawEditor extends EmberObject {
    *
    * @public
    */
-  setCarret(node, offset, notify = true) {
+  setCarret(node, offset) {
     const richNode = this.getRichNodeFor(node);
     if (!richNode) {
       console.debug('tried to set carret, but did not find a matching richNode for', node); // eslint-disable-line no-console

@@ -12,7 +12,6 @@ import { DEFAULT_TAG_NAME } from './editor-property';
 import {
   replaceRichNodeWith,
   unwrapRichNode,
-  mergeSiblingTextNodes
 } from './rich-node-tree-modification';
 
 const IGNORABLE_ATTRIBUTES=["data-editor-position-level", "data-editor-rdfa-position-level"];
@@ -216,32 +215,6 @@ function applyPropertyOnNode(property, richNode, [start,end]) {
   }
 }
 
-/**
- * for the provided richnode, returns an array with one text node for each group of (child) textnodes that can be merged
- * NOTE: only goes one level deep!
- */
-function getMergableChildNodes(richNode) {
-  if (!richNode.children) {
-    return [];
-  }
-  else {
-    const toBeMerged = [];
-    let lastTextChild;
-    for (let child of richNode.children) {
-      if (child.type == 'text') {
-        lastTextChild = child;
-      }
-      else {
-        if (lastTextChild) {
-          toBeMerged.push(lastTextChild);
-          lastTextChild = null;
-        }
-      }
-    }
-    if (lastTextChild) toBeMerged.push(lastTextChild);
-    return toBeMerged;
-  }
-}
 /**
  * remove a property from a richNode
  */
