@@ -6,7 +6,6 @@ import HandlerResponse from './handler-response';
  * @module contenteditable-editor
  * @class DeleteHandler
  * @constructor
- * @extends EmberObject
  */
 
 export default class DeleteHandler {

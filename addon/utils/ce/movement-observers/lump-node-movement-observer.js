@@ -1,5 +1,4 @@
 import { isInLumpNode, getNextNonLumpTextNode, getPreviousNonLumpTextNode, getParentLumpNode } from '../lump-node-utils';
-import previousTextNode from '../previous-text-node';
 
 export default class LumpNodeMovementObserver {
   handleMovement(document, oldSelection, newSelection) {

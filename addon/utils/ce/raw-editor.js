@@ -12,8 +12,6 @@ import {
   insertTextNodeWithSpace,
   insertNodeBAfterNodeA,
   removeNode,
-  isVoidElement,
-  isIgnorableElement,
   tagName,
   createElementsFromHTML
 } from './dom-helpers';
@@ -325,11 +323,10 @@ class RawEditor extends EmberObject {
    * @param {Number} start index absolute
    * @param {Number} end index absolute
    * @param {String} html string
-   * @param {Array} Optional extra info, which will be passed around when triggering update events.
    * @deprecated please use RawEditor.update
    * @public
    */
-  replaceTextWithHTML(start, end, html, extraInfo = []) {
+  replaceTextWithHTML(start, end, html) {
     deprecate('deprecated call to replaceTextWithHTML in rawEditor, please use the pernet api with set.innerHTML');
     this.createSnapshot();
     const selection = this.selectHighlight([start, end]);
@@ -743,17 +740,13 @@ class RawEditor extends EmberObject {
       return textNodeContainingPosition[0];
     }
     else {
-      const appropriateElementFilter = node =>
-            node.start <= position && node.end >= position
-            && node.type === 'tag'
-            && ! isList(node.domNode);
       const elementContainingPosition = flatMap(node, appropriateTextNodeFilter);
       if (elementContainingPosition.length > 0) {
         // we have to guess which element matches, taking the last matching one is a strategy that sort of works
         // this gives us the deepest/last node matching. it's horrid in the case of consecutive br's for example
         const newTextNode = nextTextNode(elementContainingPosition[elementContainingPosition.length - 1]);
         this.updateRichNode();
-        return this.richNodeFor(newTextNode);
+        return this.getRichNodeFor(newTextNode);
       }
       else {
         if (node.parent) {
@@ -762,6 +755,13 @@ class RawEditor extends EmberObject {
         }
         else {
           console.warn(`no valid node found for provided position ${position} and richNode`, node); // eslint-disable-line no-console
+          if (node.domNode === this.rootNode && node.start === node.end) {
+            console.debug(`empty editor, creating a textNode`); // eslint-disable-line no-console
+            let newNode = document.createTextNode(invisibleSpace);
+            this.rootNode.appendChild(newNode);
+            this.updateRichNode();
+            return this.getRichNodeFor(newNode);
+          }
           return null;
         }
       }
@@ -987,7 +987,12 @@ class RawEditor extends EmberObject {
       position = get(richNode, 'end');
     }
     let node = this.findSuitableNodeForPosition(position);
-    this.setCarret(node.domNode, position - node.start, notify);
+    if (node) {
+      this.setCarret(node.domNode, position - node.start, notify);
+    }
+    else {
+      console.warn('did not receive a suitable node to set cursor, can\'t set cursor!'); // eslint-disable-line no-console
+    }
   }
 
   getRelativeCursorPosition(){

@@ -1,0 +1,25 @@
+/* ==================================
+   #HELP TEXT
+   ================================== */
+
+/* Component
+  ========================================================================== */
+
+.say-help-text {
+  @include say-font-size($say-help-text-font-size);
+  color: $say-help-text-color;
+  margin-top: $say-unit-tiny;
+  font-weight: $say-regular;
+}
+
+.say-help-text + .say-help-text {
+  margin-top: 0;
+}
+
+/* Modifiers
+  ========================================================================== */
+
+.say-help-text--error {
+  color: $say-help-text-error-color;
+  font-weight: $say-medium;
+}

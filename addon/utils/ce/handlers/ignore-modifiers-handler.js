@@ -1,4 +1,3 @@
-import EmberObject from '@ember/object';
 import HandlerResponse from './handler-response';
 
 /**
@@ -8,25 +7,17 @@ import HandlerResponse from './handler-response';
  * @module contenteditable-editor
  * @constructor
  */
-export default EmberObject.extend( {
 
-  /**
-   * Yields a truethy value for all events which we can recognise as
-   * being an unimportant key-press which is there to change state.
-   *
-   * Skips keyboard events for:
-   * - Alt
-   * - Control
-   * - Meta
-   * - Shift
-   */
-  isHandlerFor( event ){
+export default class IgnoreModifiersHandler {
+  constructor({rawEditor}) {
+    this.rawEditor = rawEditor;
+  }
+
+  isHandlerFor(event) {
     return ["Alt","Control","Meta","Shift"].find( (keyName) => keyName == event.key );
-  },
+  }
 
-  /**
-   * There is no desire to actually handle this event. we prevent bubbling here so it's not picked up by the fallback
-   */
+
   handleEvent() {
     return HandlerResponse.create(
       {
@@ -34,4 +25,4 @@ export default EmberObject.extend( {
       }
     );
   }
-});
+}

@@ -1,6 +1,6 @@
 import classic from "ember-classic-decorator";
 import { action } from "@ember/object";
-import { classNames, layout as templateLayout } from "@ember-decorators/component";
+import { layout as templateLayout } from "@ember-decorators/component";
 import { inject } from "@ember/service";
 import { notEmpty } from "@ember/object/computed";
 import { A } from '@ember/array';

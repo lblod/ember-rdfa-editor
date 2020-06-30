@@ -1,0 +1,36 @@
+/* ==================================
+   #SAY LINK
+   ================================== */
+
+.say-link {
+  display: inline-flex;
+  align-items: center;
+  color: $say-primary-700;
+  text-decoration-color: $say-primary-300;
+  transition: color $say-transition;
+
+  &:hover,
+  &:focus {
+    color: $say-primary-600;
+    text-decoration-color: $say-primary-300;
+  }
+
+  &:focus {
+    outline: $say-outline;
+  }
+}
+
+.say-link--secondary {
+  color: $say-neutral-700;
+  text-decoration-color: $say-neutral-300;
+
+  &:hover,
+  &:focus {
+    color: $say-neutral-600;
+    text-decoration-color: $say-neutral-300;
+  }
+}
+
+.say-link__highlight {
+  background-color: $say-warning-200;
+}

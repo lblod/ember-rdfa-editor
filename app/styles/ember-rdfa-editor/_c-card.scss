@@ -1,0 +1,50 @@
+/* ==================================
+   #SAY CARD
+   ================================== */
+
+.say-card {
+  display: flex;
+  flex-direction: column;
+  z-index: $say-z-index-gamma;
+  background-color: $say-white;
+  box-shadow: 0 1px 3px rgba($say-neutral-900, .1), 0 4px 20px rgba($say-neutral-900, .035), 0 1px 1px rgba($say-neutral-900, .025);
+  z-index: 99;
+}
+
+.say-card__header {
+  padding: $say-unit-small;
+  border-bottom: .1rem solid $say-neutral-200;
+}
+
+.say-card__title {
+  @include say-font-size($say-h6);
+  font-weight: $say-medium;
+  color: $say-neutral-800;
+}
+
+.say-card__content {
+  position: relative;
+}
+
+.say-card__content--fixed {
+  max-height: 35vh;
+  overflow: auto;
+}
+
+.say-card__info {
+  @include say-font-size($say-h6);
+  padding: $say-unit-small;
+  color: $say-neutral-600;
+  font-style: italic;
+
+  * + * {
+    margin-top: $say-unit-small;
+  }
+}
+
+.say-card__footer {
+  @include say-font-size($say-h6);
+  background-color: $say-neutral-100;
+  padding: $say-unit-tiny $say-unit-small;
+  border-top: .1rem solid $say-neutral-200;
+}

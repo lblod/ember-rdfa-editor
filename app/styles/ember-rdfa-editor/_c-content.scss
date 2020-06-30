@@ -120,17 +120,17 @@
   a {
     transition: color $say-transition, text-decoration $say-transition;
     font-weight: $say-regular;
-    text-decoration-color: $say-primary-lighter;
+    text-decoration-color: $say-primary-300;
 
     &,
     &:visited {
-      color: $say-primary;
+      color: $say-primary-700;
     }
 
     &:hover,
     &:focus {
-      color: $say-primary-light;
-      text-decoration-color: $say-primary-lighter;
+      color: $say-primary-600;
+      text-decoration-color: $say-primary-300;
     }
 
     &:focus {
@@ -261,7 +261,7 @@
     margin-top: $say-unit;
     margin-bottom: $say-unit;
     border: 0;
-    border-bottom: 3px solid $say-neutral-lighter;
+    border-bottom: 3px solid $say-neutral-200;
   }
 
   // Add custom font styling
@@ -309,9 +309,9 @@
   // Imported HTML - Used for tables
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
     position: relative;
-    background-color: $say-neutral-lighter;
+    background-color: $say-neutral-200;
     border-radius: .2rem;
-    outline: 2px dashed $say-neutral-light;
+    outline: 2px dashed $say-neutral-300;
     outline-offset: .2rem;
     margin-top: 1.2rem;
     margin-bottom: 1.2rem;
@@ -326,7 +326,7 @@
     // Reset some table styles
     th {
       font-weight: $say-medium;
-      border-bottom: 1px solid $say-neutral-light;
+      border-bottom: 1px solid $say-neutral-300;
     }
 
     th,
@@ -334,7 +334,7 @@
       vertical-align: top;
       padding: .6rem;
       background-color: transparent !important;
-      border: 1px solid $say-neutral-light;
+      border: 1px solid $say-neutral-300;
     }
 
     // Style links as plain text
@@ -344,7 +344,7 @@
       &:visited,
       &:focus {
         text-decoration: none;
-        color: $say-neutral-darker;
+        color: $say-neutral-800;
       }
 
       &:focus {

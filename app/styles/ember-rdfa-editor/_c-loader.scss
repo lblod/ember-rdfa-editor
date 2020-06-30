@@ -1,0 +1,44 @@
+.say-loader {
+  position: relative;
+  padding: $say-unit;
+
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -2px;
+    margin-left: -22px;
+    width: 4px;
+    height: 4px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 10px 0 $say-white,20px 0 $say-white,30px 0 $say-white;
+    animation: loader-wave infinite 1s linear;
+  }
+}
+
+
+@keyframes loader-wave {
+  0%,
+  100%,
+  60% {
+    box-shadow:10px 0 $say-neutral-400,20px 0 $say-neutral-400,30px 0 $say-neutral-400
+  }
+  10% {
+    box-shadow:10px -3px $say-neutral-400,20px 0 $say-neutral-400,30px 0 $say-neutral-400
+  }
+  20% {
+    box-shadow:10px -6px $say-neutral-400,20px -3px $say-neutral-400,30px 0 $say-neutral-400
+  }
+  30% {
+    box-shadow:10px -3px $say-neutral-400,20px -6px $say-neutral-400,30px -3px $say-neutral-400
+  }
+  40% {
+    box-shadow:10px 0 $say-neutral-400,20px -3px $say-neutral-400,30px -6px $say-neutral-400
+  }
+  50% {
+    box-shadow:10px 0 $say-neutral-400,20px 0 $say-neutral-400,30px -3px $say-neutral-400
+  }
+}

@@ -142,7 +142,7 @@ function isDisplayedAsBlock(domNode) {
  * @return Array the new dom elements that were inserted [parent, siblingParent]
  * @public
  */
-const smartSplitTextNode = function(textNode, splitAt) {
+function smartSplitTextNode(textNode, splitAt) {
   let parent = textNode.parentNode;
   let grandParent = parent.parentNode;
   let firstTextNode = document.createTextNode(textNode.textContent.slice(0, splitAt));
@@ -277,7 +277,7 @@ function findPreviousLi(currLI) {
   let previousElement = currLI;
   do {
     previousElement = previousElement.previousSibling;
-  } while(previousElement && tagName(previousElement) !== 'li')
+  } while(previousElement && tagName(previousElement) !== 'li');
   return previousElement;
 }
 
