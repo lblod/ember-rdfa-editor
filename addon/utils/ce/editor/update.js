@@ -5,6 +5,7 @@ import { runInDebug } from '@ember/debug';
 import { parsePrefixString } from '@lblod/marawa/rdfa-attributes';
 import { isLI, findWrappingSuitableNodes, createElementsFromHTML, isVoidElement, tagName } from '../dom-helpers';
 import { A } from '@ember/array';
+import HTMLInputParser from '../../html-input-parser';
 
 /**
  * Fake class to list helper functions
@@ -284,13 +285,14 @@ function updateNodeOnSelection(selection, rootNode, {remove, add, set, desc}) {
  */
 function replaceNodesWithHtml(nodes, rootNode, [start, end], set) {
   let newElements;
+  const cleanHTML = sanitizeHTML(set.innerHTML);
   if (set.tag) {
     const el = document.createElement(set.tag);
-    el.innerHTML = set.innerHTML;
+    el.innerHTML = cleanHTML;
     newElements = [el];
   }
   else {
-    newElements = createElementsFromHTML(set.innerHTML);
+    newElements = createElementsFromHTML(cleanHTML);
   }
   // what we will attempt here is to replace the most suitable node and just remove the others
   // initial version just replaces at first possible moment node and removes the others
@@ -380,9 +382,20 @@ function updateInnerContent(domNodes, {remove, set}) {
       domNode.innerHTML = '';
     }
     if (operationWantsToSetInnerHTML(set)) {
-      domNode.innerHTML = set.innerHTML;
+      domNode.innerHTML = sanitizeHTML(set.innerHTML);
     }
   }
+}
+
+/**
+ * Sanitizes the html before inserting it
+ * @method sanitizeHTML
+ */
+function sanitizeHTML(html) {
+  const safeAttributes = HTMLInputParser.DEFAULTS.safeAttributes.concat(['class']);
+  const inputParser = new HTMLInputParser({lumpTags: [], safeAttributes});
+  const cleanHTML = inputParser.cleanupHTML(html);
+  return cleanHTML;
 }
 
 function insertNodes(rootNode, referenceNode, newNodes, { before, after, prepend, append }){
