@@ -21,6 +21,13 @@ const DEFAULT_URI_SAFE_ATTRIBUTES = ['about', 'property', 'datatype', 'typeof', 
  * @extends EmberObject
  */
 class HTMLInputParser {
+  static DEFAULTS = {
+    safeAttributes: DEFAULT_SAFE_ATTRIBUTES,
+    lumpTags: DEFAULT_LUMP_TAGS,
+    safeTags: DEFAULT_SAFE_TAGS,
+    tagMap: DEFAULT_TAG_MAP,
+    uriSafeAttr: DEFAULT_URI_SAFE_ATTRIBUTES
+  }
   /**
    * @constructor
    */
