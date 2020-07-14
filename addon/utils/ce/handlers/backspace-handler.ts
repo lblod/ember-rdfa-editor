@@ -623,6 +623,8 @@ export default class BackspaceHandler {
           // it seems browsers don't like empty textNodes so we add an invisibleSpace. This makes the node visible in browsers
           // TODO: verify if this is a smart solution, perhaps working with a span or similar is what we want
           // TODO: this may also imply we never delete TextNodes
+          // TODO: this doesn't clean up everything from user perspective, e.g
+          //       <span property="test:foo" resource="bar">f|<span> -> <span property="test:foo" resource="bar">&nbsp;<span> (and user clicks away)
           node.textContent = invisibleSpace;
         }
         this.rawEditor.updateRichNode();
