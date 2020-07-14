@@ -8,7 +8,14 @@
 [data--language="en"] .rdfa-annotations [data-type],
 [data--language="en"] .rdfa-annotations .mark-highlight-manual,
 [data--language="en"] .rdfa-annotations.show-rdfa-blocks,
-[data--language="en"] .rdfa-annotations:not(.show-rdfa-blocks) {
+[data--language="en"] .rdfa-annotations:not(.show-rdfa-blocks),
+[lang="en"] .rdfa-annotations [data-editor-highlight="true"],
+[lang="en"] .rdfa-annotations [property],
+[lang="en"] .rdfa-annotations [typeof]:not([typeof="foaf:Document"]),
+[lang="en"] .rdfa-annotations [data-type],
+[lang="en"] .rdfa-annotations .mark-highlight-manual,
+[lang="en"] .rdfa-annotations.show-rdfa-blocks,
+[lang="en"] .rdfa-annotations:not(.show-rdfa-blocks) {
   /* -------------------- Guiding tags ------------------------- */
 
   [property^="ext:insert"]:before,
