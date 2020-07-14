@@ -1000,12 +1000,6 @@ export default class BackspaceHandler {
    */
   getThingBeforeCursor() : ThingBeforeCursor
   {
-    // TODO: it is a bit unclear how to best address this.  What
-    // should this return exactly in all cases and how should we best
-    // implement it.  The implementation itself must be hidden
-    // somewhere in previously written code.
-
-    // check where the cursor is
     // TODO: should we support actual selections here as well or will that be a different handler?
     // current implementation assumes a collapsed selection (e.g. a carret)
     // NOTE: currentNode can be null, in case of an actual selection
