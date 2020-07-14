@@ -639,6 +639,9 @@ export default class BackspaceHandler {
         }
         break;
       case "removeEmptyElement":
+        if( !manipulation.node.parentElement ) {
+          throw "Received other node does not have a parent.  Backspace failed te remove this node."
+        }
         const emptyElement = manipulation.node;
         const emptyElementParent = emptyElement.parentElement as Element;
         const emptyElementIndex = Array.from(emptyElementParent.childNodes).indexOf(emptyElement);
