@@ -9,9 +9,12 @@
 .rdfa-annotations .mark-highlight-manual,
 .rdfa-annotations.show-rdfa-blocks,
 .rdfa-annotations:not(.show-rdfa-blocks) {
+
   /* -------------------- Guiding tags ------------------------- */
+
   [property^="ext:insert"]:before,
-  [data-editor-highlight="true"]:before {
+  [data-editor-highlight="true"]:before,
+  [data-editor-highlight="true"]:not([contenteditable=""]):before {
     content: "Selecteer de juiste optie";
   }
 
@@ -770,5 +773,12 @@
 
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"]:before {
     content: "Wil je deze blok verwijderen? Druk op backspace om te bevestigen.";
+  }
+}
+
+.rdfa-annotations.show-rdfa-blocks {
+  .mark-highlight-manual:after,
+  [data-editor-highlight="true"]:not([contenteditable=""]):after {
+    content: "Actie nodig";
   }
 }
