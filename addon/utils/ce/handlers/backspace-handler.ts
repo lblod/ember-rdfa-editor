@@ -1093,8 +1093,8 @@ export default class BackspaceHandler {
     }
 
     // filter reports based on our interests
-    const reportsNoExecute = reports.filter( ({allow}) => allow );
-    const reportsWithExecutor = reports.filter( ({executor}) => executor );
+    const reportsNoExecute = reports.filter( ({ allow }) => !allow );
+    const reportsWithExecutor = reports.filter( ({ executor }) => executor );
 
     // debug reporting
     if (reports.length > 1) {
@@ -1108,13 +1108,13 @@ export default class BackspaceHandler {
       throw "Multiple backspace plugins want to execute backspace with no resolution";
     }
 
-    for( const { plugin } of reports ) {
+    for( const { plugin } of reportsNoExecute ) {
       console.debug(`Was not allowed to execute backspace manipulation by plugin ${plugin.label}`, { manipulation, plugin });
     }
 
     // yield result
     return {
-      mayExecute: reports.length === 0,
+      mayExecute: reportsNoExecute.length === 0,
       dispatchedExecutor: reportsWithExecutor.length ? reportsWithExecutor[0].executor as ManipulationExecutor : null
     };
   }
