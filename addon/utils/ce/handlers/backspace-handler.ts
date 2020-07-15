@@ -452,7 +452,7 @@ export default class BackspaceHandler {
   /**
    * Array containing all plugins for the backspace handler.
    */
-  plugins: Array<BackspacePlugin> = [ new ListBackspacePlugin() ];
+  plugins: Array<BackspacePlugin> = [];
 
   /////////////////////
   // CALLBACK INTERFACE
@@ -468,6 +468,7 @@ export default class BackspaceHandler {
    */
   constructor({ rawEditor }: { rawEditor: RawEditor }){
     this.rawEditor = rawEditor;
+    this.plugins = [ new ListBackspacePlugin() ];
   }
 
   /**
