@@ -58,6 +58,11 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
     return null;
   }
 
+  /**
+   * This executor removes the LumpNode containing manipulation.node competly.
+   * It assumes manipulation.node is located in a LumpNode
+   * @method removeLumpNode
+   */
   removeLumpNode( manipulation: Manipulation, editor: Editor ) : void {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
@@ -68,36 +73,52 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
     editor.setCarret(previousNode, previousNode.length);
   }
 
+  /**
+   * Allows the plugin to notify the backspace handler a change has occured.
+   * Returns true explicitly when it detects the manipulation.node is in LumpNode.
+   *  This is the case when flag for removal has been set.
+   * Other cases, we rely on the detectVisualChange from backspace handler
+   * @method detectChange
+   */
   detectChange( manipulation: Manipulation ) : boolean {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
 
     if(!node.isConnected){
-      return false; //Node has been removed, relying here on visualChange from backspace handler...
+      return false;
     }
 
     const isElementInLumpNode = isInLumpNode(node, rootNode);
     const isManipulationSupported = this.isSupportedManipulation(manipulation);
 
     if(isElementInLumpNode && isManipulationSupported){
-      //State:
-      // - somehow the manipulation hasn't been removed (either not flagged, or an issue)
-      // We want the user to press again.
       return true;
     }
 
-    // Other cases, we ignore, or this plugin did its job: it removed a lumpNode. We expect visual change
     return false;
   }
 
+
+  /**
+   * checks whether manipulation is supported
+   * @method isSupportedManipulation
+   */
   isSupportedManipulation( manipulation: Manipulation ) : boolean {
     return SUPPORTED_MANIPULATIONS.some( m => m === manipulation.type );
   }
 
+  /**
+   * checks whether element is flagged for removal
+   * @method isElementFlaggedForRemoval
+   */
   isElementFlaggedForRemoval( element: Element ) : boolean {
     return element.getAttribute('data-flagged-remove') === "complete";
   }
 
+  /**
+   * Flags the LumpNode for removal.
+   * @method flagForRemoval
+   */
   flagForRemoval( manipulation: Manipulation, _editor: Editor) : void {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
