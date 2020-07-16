@@ -61,6 +61,7 @@ interface RawEditorSelection extends Array<number> {
 
 export interface Editor {
   setCarret: ( node: Node, position: number ) => void
+  updateRichNode: () => void
 }
 
 interface RichNode {
