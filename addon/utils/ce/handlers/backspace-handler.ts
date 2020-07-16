@@ -3,6 +3,8 @@ import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import { tagName, isVoidElement, invisibleSpace } from '../dom-helpers';
 
 import ListBackspacePlugin from '../../plugins/lists/backspace-plugin';
+import LumpNodeBackspacePlugin from '../../plugins/lump-node/backspace-plugin';
+
 
 /**
  * List of all Void elements.
@@ -61,6 +63,7 @@ interface RawEditorSelection extends Array<number> {
 
 export interface Editor {
   setCarret: ( node: Node, position: number ) => void
+  updateRichNode: () => void
 }
 
 interface RichNode {
@@ -468,7 +471,7 @@ export default class BackspaceHandler {
    */
   constructor({ rawEditor }: { rawEditor: RawEditor }){
     this.rawEditor = rawEditor;
-    this.plugins = [ new ListBackspacePlugin() ];
+    this.plugins = [ new ListBackspacePlugin(), new LumpNodeBackspacePlugin()];
   }
 
   /**
