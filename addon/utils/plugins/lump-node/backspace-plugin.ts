@@ -3,7 +3,7 @@ import { BackspacePlugin,
          Manipulation,
          ManipulationGuidance
        } from '../../ce/handlers/backspace-handler';
-import { isInLumpNode, getParentLumpNode, getPreviousNonLumpTextNode } from '../../ce/lump-node-utils';
+import { isInLumpNode, getParentLumpNode  } from '../../ce/lump-node-utils';
 
 //We favour to be defensive in the stuff we accept.
 const SUPPORTED_MANIPULATIONS = [
@@ -66,11 +66,12 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
   removeLumpNode( manipulation: Manipulation, editor: Editor ) : void {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
-    const nodeToDeleteAsBlock = getParentLumpNode(node, rootNode);
-    const previousNode = getPreviousNonLumpTextNode(nodeToDeleteAsBlock, rootNode);
-    nodeToDeleteAsBlock.remove();
+    const lumpNode = getParentLumpNode(node, rootNode);
+    let parentOfLumpNode = lumpNode.parentNode;
+    let offset = Array.from(parentOfLumpNode.childNodes).indexOf(lumpNode);
+    lumpNode.remove();
     editor.updateRichNode();
-    editor.setCarret(previousNode, previousNode.length);
+    editor.setCarret(parentOfLumpNode, offset);
   }
 
   /**
