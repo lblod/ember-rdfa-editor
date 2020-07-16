@@ -237,20 +237,19 @@ export default class ListBackspacePlugin implements BackspacePlugin {
 
   /**
    * allows the plugin to notify the backspace handler a change has occured.
-   * currently only signals a change when an li has been removed during a "moveCursorBeforeElement" manipulation.
+   * currently signals a change when an li has been removed during a "moveCursorBeforeElement" , "removeEmptyElement" or "removeElementWithChildrenThatArentVisible" manipulation.
    * @method detectChange
    */
   detectChange(manipulation: Manipulation) : boolean {
-    if (manipulation.type == "moveCursorBeforeElement") {
-      manipulation as MoveCursorBeforeElementManipulation;
+    if (["removeEmptyElement", "moveCursorBeforeElement", "removeElementWithChildrenThatArentVisible"].includes(manipulation.type)) {
       const element = manipulation.node;
       if (tagName(element) == "li") {
-        if (element.parentNode == null)
+        if (element.parentNode == null) {
           // list item was removed
           return true;
+        }
       }
     }
-    else
-      return false;
+    return false;
   }
 }
