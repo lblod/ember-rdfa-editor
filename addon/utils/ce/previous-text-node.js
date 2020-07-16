@@ -4,23 +4,11 @@ import {
   insertTextNodeWithSpace,
   invisibleSpace,
   isList,
+  findLastLi,
   siblingLis
 } from './dom-helpers';
 
 import flatMap from './flat-map';
-
-/**
- * @method findLastLi
- * @param {DomNode} node the ul node to search in
- * @private
- */
-function findLastLi(ul) {
-  if (tagName(ul) !== 'ul')
-    throw `invalid argument, expected an ul`;
-  if (ul.children && ul.children.length > 0)
-    return Array.from(ul.children).reverse().find((node) => tagName(node) === 'li');
-  return null;
-}
 
 /**
  * @method firstTextChild
