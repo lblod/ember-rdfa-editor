@@ -51,7 +51,7 @@ interface RawEditor {
   setCarret: ( node: Node, position: number ) => void
   setPosition: ( position: number ) => void
   updateRichNode(): () => void
-  rootNode: Node
+  rootNode: Element
   currentSelection: RawEditorSelection
   richNode: RichNode
   currentNode: Node
