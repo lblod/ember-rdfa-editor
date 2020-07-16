@@ -1,6 +1,14 @@
-import { MoveCursorBeforeElementManipulation, ManipulationGuidance, Manipulation, Editor, RemoveEmptyElementManipulation, RemoveElementWithChildrenThatArentVisible } from '../../ce/handlers/backspace-handler';
+import { MoveCursorBeforeElementManipulation,
+         MoveCursorToEndOfNodeManipulation,
+         ManipulationGuidance,
+         Manipulation,
+         Editor,
+         RemoveEmptyElementManipulation,
+         RemoveElementWithChildrenThatArentVisible
+       } from '../../ce/handlers/backspace-handler';
 import { BackspacePlugin } from '../../ce/handlers/backspace-handler';
 import { runInDebug } from '@ember/debug';
+import { findLastLi } from '../../ce/dom-helpers';
 
 //import { tagName } from '../../ce/dom-helpers';
 function tagName(node: Node | null) : string {
@@ -8,7 +16,7 @@ function tagName(node: Node | null) : string {
   return node.nodeType === node.ELEMENT_NODE ? (node as Element).tagName.toLowerCase() : '';
 }
 
-function debug(message: String, object: Object = null) : void {
+function debug(message: String, object: Object | null = null) : void {
   runInDebug( () => {
     console.debug(`list backspace plugin: ${message}`, object);
   });
@@ -16,7 +24,8 @@ function debug(message: String, object: Object = null) : void {
 
 type ElementRemovalManipulation = RemoveEmptyElementManipulation | RemoveElementWithChildrenThatArentVisible
 /**
- *
+ * This plugin provides sensible behaviour for backspace in lists.
+ * NOTE: assumes a UL or OL has only list items as children elements.
  * @class ListBackspacePlugin
  * @module plugin/lists
  */
@@ -39,6 +48,16 @@ export default class ListBackspacePlugin implements BackspacePlugin {
       const element = manipulation.node;
       if (tagName(element) == "li") {
         return this.guidanceForJumpBeforeLi(element);
+      }
+    }
+    else if (manipulation.type == "moveCursorToEndOfNode") {
+      manipulation as MoveCursorToEndOfNodeManipulation;
+      const element = manipulation.node;
+      if (["ul","ol"].includes(tagName(element))) {
+        return {
+          allow: true,
+          executor: this.jumpToLastLiOfList
+        };
       }
     }
     debug('no guidance for manipulation', manipulation);
@@ -89,6 +108,28 @@ export default class ListBackspacePlugin implements BackspacePlugin {
         allow: true,
         executor: this.removeListItemAndList
       }
+    }
+  }
+
+  /**
+   * This is an executor provided to the backspace handler.
+   * The executor assumes the cursor after a list and is moving inside the list
+   * The executor will move the cursor to the end of the last list item in the list
+   * @method jumpToLastLiOfList
+   */
+  jumpToLastLiOfList(manipulation: MoveCursorToEndOfNodeManipulation , editor: Editor) {
+    const list = manipulation.node;
+    if (["ul","ol"].includes(tagName(list))) {
+      const li =findLastLi(list);
+      if (li) {
+        editor.setCarret(li, li.childNodes.length);
+      }
+      else {
+        console.warn("no list item found in list");
+      }
+    }
+    else {
+      console.warn("element is not a list!");
     }
   }
 
