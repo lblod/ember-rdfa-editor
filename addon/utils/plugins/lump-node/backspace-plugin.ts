@@ -99,7 +99,6 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
     return false;
   }
 
-
   /**
    * checks whether manipulation is supported
    * @method isSupportedManipulation
