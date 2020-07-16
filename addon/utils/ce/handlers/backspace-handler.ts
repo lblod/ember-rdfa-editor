@@ -70,6 +70,20 @@ interface RichNode {
   start: number;
 }
 
+
+/**
+ * Represents the coordinates of a DOMRect relative to RootNode of the editor.
+ * For the definition of a DOMRect see https://developer.mozilla.org/en-US/docs/Web/API/DOMRect
+ * As I understand it, a DOMRect is basically a rectangle with coordinates relative to viewport.
+ * This interface just represents the remapped coordinates.
+ */
+interface DOMRectCoordinatesInEditor {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
 /**
  * Contains a set of all currently supported manipulations.
  */
@@ -516,7 +530,7 @@ export default class BackspaceHandler {
       return;
     }
 
-    const visualCursorCoordinates = this.carretClientRects;
+    const visualCursorCoordinates = this.selectionCoordinatesInEditor;
 
     // search for a manipulation to execute
     const manipulation = this.getNextManipulation();
@@ -555,26 +569,27 @@ export default class BackspaceHandler {
   /**
    * Returns truethy if a visual change could be detected.
    *
+   * TODO: current implementation assumes selection is a carret.
+   *
    * @method checkVisibleChange
    * @private
    *
-   * @param options.previousVisualCursorCoordinates {ClientRect}
-   * Visual coordinates of the carret position before the operation
-   * occured.
+   * @param options.previousVisualCursorCoordinates {Array<DOMRectCoordinatesInEditor>}
+   * Coordinates of the rectangles defining the selection.
    */
-  checkVisibleChange( options: {previousVisualCursorCoordinates: ClientRectList | DOMRectList}  ) : boolean {
+  checkVisibleChange( options: {previousVisualCursorCoordinates: Array<DOMRectCoordinatesInEditor> }  ) : boolean {
 
     const { previousVisualCursorCoordinates } = options
 
-    if( ! previousVisualCursorCoordinates.length && ! this.carretClientRects.length ){
+    if( ! previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
       console.log(`Did not see a visual change when removing character, no visualCoordinates whatsoever`,
-                  { new: this.carretClientRects, old: previousVisualCursorCoordinates });
+                  { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
       return false;
     }
-    else if( ! previousVisualCursorCoordinates.length && this.carretClientRects.length ){
+    else if( ! previousVisualCursorCoordinates.length && this.selectionCoordinatesInEditor.length ){
       return true;
     }
-    else if( previousVisualCursorCoordinates.length && ! this.carretClientRects.length ){
+    else if( previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
       return true;
     }
     //Previous and current have visual coordinates, we need to compare the contents
@@ -582,28 +597,47 @@ export default class BackspaceHandler {
       const { left: ol, top: ot } = previousVisualCursorCoordinates[0];
 
 
-      const { left: nl, top: nt } = this.carretClientRects[0];
+      const { left: nl, top: nt } = this.selectionCoordinatesInEditor[0];
 
       const visibleChange = ol !== nl || ot !== nt;
 
       if( !visibleChange ){
-        console.log(`Did not see a visual change when removing character`, { new: this.carretClientRects, old: previousVisualCursorCoordinates });
+        console.log(`Did not see a visual change when removing character`, { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
       }
 
       return visibleChange;
     }
   }
 
+
   /**
-   * Yields all {ClientRect} for the current cursor position.
+   * Returns the coordinates of a selection, relative to the RootNode of the editor.
+   * An array of DOMRectCoordinatesInEditor is returned, because a selection may consist of multiple lines,
+   * which are divided in multiple rectangles by the underlying method getClientRects.
+   * The outputed coordinates from the latter are then transformed to coordinates in editor space.
+   * See also:
+   *  - https://developer.mozilla.org/en-US/docs/Web/API/Element/getClientRects
+   *  - https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
    *
-   * @method carretClientRects
+   * @method selectionCoordinatesInEditor
    * @private
    *
-   * @return [ { ClientRect } ] The positions of the selected range or cursor position.
    */
-  get carretClientRects() : DOMRectList | ClientRectList {
-    return window.getSelection().getRangeAt(0).getClientRects();
+  get selectionCoordinatesInEditor() : Array<DOMRectCoordinatesInEditor> {
+    const editorDomRect = this.rawEditor.rootNode.getBoundingClientRect();
+    //Note: we select '0' because we only assume one selection. No multi-cursor
+    const clientRects = window.getSelection().getRangeAt(0).getClientRects();
+    const selectionCoordinates = new Array<DOMRectCoordinatesInEditor>();
+    for(let clientRect of Array.from(clientRects)){
+      const normalizedRect = { } as DOMRectCoordinatesInEditor;
+      normalizedRect.top = clientRect.top - editorDomRect.top;
+      normalizedRect.bottom = clientRect.bottom - editorDomRect.bottom;
+      normalizedRect.left = clientRect.left - editorDomRect.left;
+      normalizedRect.right = clientRect.right - editorDomRect.right;
+
+      selectionCoordinates.push(normalizedRect);
+    }
+    return selectionCoordinates;
   }
 
   /**
@@ -1159,7 +1193,6 @@ export default class BackspaceHandler {
   get currentNode() : Node {
     return this.rawEditor.currentNode;
   }
-
 
   doesCurrentNodeBelongToContentEditable() : boolean {
     return this.currentNode && this.currentNode.parentNode && this.currentNode.parentNode.isContentEditable;
