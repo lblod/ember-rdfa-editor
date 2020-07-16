@@ -1,10 +1,17 @@
 import { MoveCursorBeforeElementManipulation, ManipulationGuidance, Manipulation, Editor, RemoveEmptyElementManipulation, RemoveElementWithChildrenThatArentVisible } from '../../ce/handlers/backspace-handler';
 import { BackspacePlugin } from '../../ce/handlers/backspace-handler';
+import { runInDebug } from '@ember/debug';
 
 //import { tagName } from '../../ce/dom-helpers';
 function tagName(node: Node | null) : string {
   if(!node) return '';
   return node.nodeType === node.ELEMENT_NODE ? (node as Element).tagName.toLowerCase() : '';
+}
+
+function debug(message: String, object: Object = null) : void {
+  runInDebug( () => {
+    console.debug(`list backspace plugin: ${message}`, object);
+  });
 }
 
 type ElementRemovalManipulation = RemoveEmptyElementManipulation | RemoveElementWithChildrenThatArentVisible
@@ -30,14 +37,35 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     else if (manipulation.type == "moveCursorBeforeElement") {
       manipulation as MoveCursorBeforeElementManipulation;
       const element = manipulation.node;
-      if (tagName(element) == "li" && tagName( element.previousSibling ) == "li" ) {
-        return  {
-          allow: false,
-          executor: undefined
-        };
+      if (tagName(element) == "li") {
+        return this.guidanceForJumpBeforeLi(element);
       }
     }
+    debug('no guidance for manipulation', manipulation);
     return null;
+  }
+
+  guidanceForJumpBeforeLi(element: Element) : ManipulationGuidance {
+    debug('providing guidance for jump before li');
+    if (element.previousElementSibling && tagName(element.previousElementSibling) == "li") {
+      return {
+        allow: true,
+        executor: this.mergeWithPreviousLi
+      };
+    }
+    else if (! element.previousElementSibling && element.nextElementSibling) {
+      return {
+        allow: true,
+        executor: this.removeListItemAndMoveContentBeforeList
+      }
+    }
+    else {
+      // this case: if (! element.previousElementSibling && ! element.nextElementSibling )
+      return {
+        allow: true,
+        executor: this.removeListItemAndListButKeepContent
+      }
+    }
   }
 
   guidanceForRemoveListItem(element: Element) : ManipulationGuidance {
@@ -64,7 +92,88 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     }
   }
 
-  removeListItemAndMoveToPreviousListItem(manipulation: ElementRemovalManipulation,editor: Editor) : void {
+  /**
+   * This is an executor provided to the backspace handler.
+   * The executor assumes the cursor starts from a non empty list item and that this item is the only item in the list
+   * The executor will remove both list and list item, but keep the contents of the list item. the cursor will be positioned before the first child node of the list item.
+   * @method removeListItemAndListButKeepContent
+   */
+  removeListItemAndListButKeepContent(manipulation: MoveCursorBeforeElementManipulation , editor: Editor) {
+    const element = manipulation.node;
+    const list = element.parentElement;
+    if (list && ["ul","ol"].includes(tagName(list))) {
+      if (list.parentElement) {
+        const parentOfList = list.parentElement;
+        editor.setCarret(list.parentElement, Array.from(parentOfList.childNodes).indexOf(list));
+        list.replaceWith(...element.childNodes);
+        editor.updateRichNode();
+      }
+      else {
+        console.warn("list item has no parent element!");
+      }
+    }
+    else {
+      console.warn("parent of list item is not a list!");
+    }
+  }
+
+  /**
+   * This is an executor provided to the backspace handler.
+   * The executor assumes the cursor starts from a non empty list item, that this item is the first item in the list and that other items exist.
+   * The executor will move the contents of the first list item before the list and remove the list item. the cursor will be positioned before the first child node of the list item.
+   * @method removeListItemAndMoveContentBeforeList
+   */
+  removeListItemAndMoveContentBeforeList(manipulation: MoveCursorBeforeElementManipulation , editor: Editor) {
+    const element = manipulation.node;
+    const list = element.parentElement;
+    if (list && ["ul","ol"].includes(tagName(list))) {
+      if (list.parentElement) {
+        const firstChildOfListItem = element.childNodes[0];
+        list.before(...element.childNodes);
+        element.remove();
+        editor.updateRichNode();
+        const parentOfList = list.parentElement;
+        const index = Array.from(parentOfList.childNodes).indexOf(firstChildOfListItem);
+        editor.setCarret(parentOfList, index);
+      }
+      else {
+        console.warn("list item has no parent element!");
+      }
+    }
+    else {
+      console.warn("parent of list item is not a list!");
+    }
+  }
+
+  /**
+   * This is an executor provided to the backspace handler.
+   * The executor assumes the cursor starts from the beginning of a non empty list item and it has a previous list item it can merge into.
+   * The executor will move the content of the list item to its previous sibling and position the cursor before the first child node of the list item (at the end of the original content of the previous sibling). the list item is removed.
+   * @method mergeWithPreviousLi
+   */
+  mergeWithPreviousLi(manipulation: MoveCursorBeforeElementManipulation, editor: Editor) : void {
+    const element = manipulation.node;
+    if (element.previousElementSibling && tagName(element.previousElementSibling) == "li") {
+      const previousLi = element.previousElementSibling;
+      const firstChildOfListItem = element.childNodes[0];
+      previousLi.append(...element.childNodes);
+      element.remove();
+      editor.updateRichNode();
+      const index = Array.from(previousLi.childNodes).indexOf(firstChildOfListItem);
+      editor.setCarret(previousLi, index);
+    }
+    else {
+      console.warn("previous sibling is not a list item, can't execute merge");
+    }
+  }
+
+  /**
+   * This is an executor provided to the backspace handler.
+   * The executor assumes the cursor starts from an empty list item and a previous list item exists
+   * The executor will remove the list item and position the cursor at the end of the previous list item.
+   * @method removeListItemAndMoveToPreviousListItem
+   */
+  removeListItemAndMoveToPreviousListItem(manipulation: ElementRemovalManipulation, editor: Editor) : void {
     const element = manipulation.node;
     const li = element.previousElementSibling;
     if (li == null) {
@@ -72,23 +181,76 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     }
     else {
       editor.setCarret(li,li.childNodes.length);
+      element.remove();
+      editor.updateRichNode();
     }
   }
 
+  /**
+   * This is an executor provided to the backspace handler.
+   * The executor assumes the cursor starts from the beginning of the first item of list with > 1 item. this item is empt
+   * The executor will remove the item and position the cursor before the list
+   * @method removeListItemAndJumpBeforeList
+   */
   removeListItemAndJumpBeforeList(manipulation: ElementRemovalManipulation, editor: Editor) : void {
-    
+    const element = manipulation.node;
+    const list = element.parentElement;
+    if (list && ["ul","ol"].includes(tagName(list))) {
+      if (list.parentElement) {
+        editor.setCarret(list.parentElement, Array.from(list.parentElement.childNodes).indexOf(list));
+        element.remove();
+        editor.updateRichNode();
+      }
+      else {
+        console.warn("list item has no parent element!");
+      }
+    }
+    else {
+      console.warn("parent of list item is not a list!");
+    }
   }
 
+  /**
+   * This is an executor provided to the backspace handler.
+   * The executor assumes the cursor starts at the beginning of a list item, the item is empty and it's the only item in the list
+   * The executor will position the cursor before the list and remove the list
+   * @method removeListItemAndList
+   */
   removeListItemAndList(manipulation: ElementRemovalManipulation, editor: Editor) : void {
-    
+    const element = manipulation.node;
+    const list = element.parentElement;
+    if (list && ["ul","ol"].includes(tagName(list))) {
+      if (list.parentElement) {
+        editor.setCarret(list.parentElement, Array.from(list.parentElement.childNodes).indexOf(list));
+        element.remove();
+        list.remove();
+        editor.updateRichNode();
+      }
+      else {
+        console.warn("list item has no parent element!");
+      }
+    }
+    else {
+      console.warn("parent of list item is not a list!");
+    }
   }
 
-  detectChange(_manipulation: Manipulation) : boolean {
-    return false;
-  }
-
-  executeManipulation( _manipulation: Manipulation, _editor: Editor ) : void {
-    console.error("Execution for list backspace has not been implemented yet");
-    return;
+  /**
+   * allows the plugin to notify the backspace handler a change has occured.
+   * currently only signals a change when an li has been removed during a "moveCursorBeforeElement" manipulation.
+   * @method detectChange
+   */
+  detectChange(manipulation: Manipulation) : boolean {
+    if (manipulation.type == "moveCursorBeforeElement") {
+      manipulation as MoveCursorBeforeElementManipulation;
+      const element = manipulation.node;
+      if (tagName(element) == "li") {
+        if (element.parentNode == null)
+          // list item was removed
+          return true;
+      }
+    }
+    else
+      return false;
   }
 }
