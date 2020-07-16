@@ -60,7 +60,6 @@ export default class ListBackspacePlugin implements BackspacePlugin {
         };
       }
     }
-    debug('no guidance for manipulation', manipulation);
     return null;
   }
 
