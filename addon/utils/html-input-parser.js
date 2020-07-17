@@ -3,7 +3,7 @@ import DomPurify from 'dompurify';
 
 const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
 const DEFAULT_LUMP_TAGS = ["table"];
-const DEFAULT_SAFE_TAGS = ['a', 'br', 'body', 'code', 'data', 'datalist', 'div', 'dl', 'dt', 'dd', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'li', 'link', 'meta', 'nav', 'ol', 'p', 'pre', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'template', 'th', 'thead',  'time', 'tr', 'ul', 'var', 'wbr' ];
+const DEFAULT_SAFE_TAGS = ['a', 'br', 'body', 'code', 'data', 'datalist', 'div', 'dl', 'dt', 'dd', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'li', 'link', 'meta', 'nav', 'ol', 'p', 'pre', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'template', 'th', 'thead',  'time', 'tr', 'ul', 'var', 'wbr', 'u' ];
 const DEFAULT_TAG_MAP = {
   b: 'strong',
   i: 'em',
@@ -21,6 +21,13 @@ const DEFAULT_URI_SAFE_ATTRIBUTES = ['about', 'property', 'datatype', 'typeof', 
  * @extends EmberObject
  */
 class HTMLInputParser {
+  static DEFAULTS = {
+    safeAttributes: DEFAULT_SAFE_ATTRIBUTES,
+    lumpTags: DEFAULT_LUMP_TAGS,
+    safeTags: DEFAULT_SAFE_TAGS,
+    tagMap: DEFAULT_TAG_MAP,
+    uriSafeAttr: DEFAULT_URI_SAFE_ATTRIBUTES
+  }
   /**
    * @constructor
    */

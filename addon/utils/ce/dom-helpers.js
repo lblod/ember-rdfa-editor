@@ -357,6 +357,22 @@ function findWrappingSuitableNodes(selection) {
   return actualNodes;
 }
 
+/**
+ * @method findLastLi
+ * @param {DomNode} node the ul node to search in
+ * @private
+ */
+function findLastLi(list) {
+  if (['ul','ol'].includes(tagName(list))) {
+    if (list.children && list.children.length > 0)
+      return Array.from(list.children).reverse().find((node) => tagName(node) === 'li');
+    return null;
+  }
+  else {
+    throw `invalid argument, expected a list`;
+  }
+}
+
 export {
   tagName,
   isDisplayedAsBlock,
@@ -381,5 +397,6 @@ export {
   findPreviousLi,
   isPhrasingContent,
   isBlockOrBr,
-  findWrappingSuitableNodes
+  findWrappingSuitableNodes,
+  findLastLi
 };

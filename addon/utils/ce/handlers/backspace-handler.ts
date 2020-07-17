@@ -912,7 +912,7 @@ export default class BackspaceHandler {
           // it's a br, but not the last br which we can ignore (most of the time...)
           hasVisibleChildren = true;
         }
-        else if (this.stringToVisibleText(element.textContent)) {
+        else if (element.textContent && this.stringToVisibleText(element.textContent)) {
           // it has visible text content so it is visible
           hasVisibleChildren = true;
         }
@@ -1179,4 +1179,3 @@ export default class BackspaceHandler {
     return Math.max(position - ( richNode.start || 0 ));
   }
 }
-export { BackspacePlugin }
