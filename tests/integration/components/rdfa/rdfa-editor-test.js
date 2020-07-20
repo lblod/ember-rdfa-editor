@@ -339,4 +339,29 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     assert.equal(cursorPosition, 10);
   });
 
+  test('delete ignores breakline as it doesn\'t render in the editor', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent(`baz
+
+      <span>foo</span>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const fooWordNode = editor.childNodes[1];
+    
+    window.getSelection().collapse(fooWordNode,0);
+    click('div[contenteditable]');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    const innerHtml = editor.innerHTML;
+    assert.equal(innerHtml, `ba<span>foo</span>`);
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 2);
+  });
+
 });
