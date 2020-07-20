@@ -63,6 +63,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <span data-editor-position-level="0">ba</span>foo');
+    const cursorPosition = window.getSelection().anchorOffset
+    assert.equal(cursorPosition, 2);
   });
 
   test('delete tests case 2', async function(assert) {
@@ -83,6 +85,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <span data-editor-position-level="0">ba</span>foo');
+    const cursorPosition = window.getSelection().anchorOffset
+    assert.equal(cursorPosition, 2);
   });
 
   test('delete tests case 3', async function(assert) {
@@ -103,6 +107,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <span>bar</span>oo');
+    const cursorPosition = window.getSelection().anchorOffset
+    assert.equal(cursorPosition, 0);
   });
 
   test('delete tests case 4', async function(assert) {
@@ -123,6 +129,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <span data-editor-position-level="0"></span>foo');
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 0);
   });
 
   test('delete tests case 5', async function(assert) {
@@ -143,6 +151,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <div data-editor-position-level="0"></div>foo');
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 0);
   });
 
   test('delete tests case 6', async function(assert) {
@@ -163,6 +173,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <div data-editor-position-level="0">fo</div> ');
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 2);
   });
 
   test('delete tests block case 1: it flags the block', async function(assert) {
@@ -183,6 +195,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" data-flagged-remove="complete">bar</div>foo');
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 0);
   });
 
   test('delete tests block case 1: it removes the block on the second delete', async function(assert) {
@@ -204,6 +218,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz foo');
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 4);
   });
 
   test('delete tests block case 2: it flags the block', async function(assert) {
@@ -224,6 +240,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" data-flagged-remove="complete">bar</div> ');
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 0);
   });
 
   test('delete tests block case 2: it removes the block on the second delete', async function(assert) {
@@ -245,6 +263,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz  ');
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 4);
   });
 
   test('delete tests block case 3: it flags the block', async function(assert) {
@@ -280,6 +300,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
         <span>some textNode number 2</span>
         <span>bar number 2</span>
       </div> foo`);
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 0);
   });
 
   test('delete tests block case 3: it removes the block on the second delete', async function(assert) {
@@ -313,6 +335,8 @@ module('Integration | Component | rdfa-editor', function(hooks) {
         <span>some textNode number 1</span>
         <span>bar number 1</span>
       ​</div> foo`);
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 10);
   });
 
 });
