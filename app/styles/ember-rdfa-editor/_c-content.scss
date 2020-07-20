@@ -331,6 +331,7 @@
 
     th,
     td {
+      text-align: left;
       vertical-align: top;
       padding: .6rem;
       background-color: transparent !important;
@@ -343,8 +344,8 @@
       &:hover,
       &:visited,
       &:focus {
-        text-decoration: none;
         color: $say-neutral-800;
+        text-decoration: none;
       }
 
       &:focus {
