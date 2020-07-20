@@ -63,7 +63,7 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <span data-editor-position-level="0">ba</span>foo');
-    const cursorPosition = window.getSelection().anchorOffset
+    const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 2);
   });
 
@@ -85,7 +85,7 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <span data-editor-position-level="0">ba</span>foo');
-    const cursorPosition = window.getSelection().anchorOffset
+    const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 2);
   });
 
@@ -107,7 +107,7 @@ module('Integration | Component | rdfa-editor', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <span>bar</span>oo');
-    const cursorPosition = window.getSelection().anchorOffset
+    const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 0);
   });
 
