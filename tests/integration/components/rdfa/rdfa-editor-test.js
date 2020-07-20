@@ -312,7 +312,7 @@ module('Integration | Component | rdfa-editor', function(hooks) {
       <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode">
         <span>some textNode number 1</span>
         <span>bar number 1</span>
-      </div> foo`);
+      ​</div> foo`);
   });
 
 });
