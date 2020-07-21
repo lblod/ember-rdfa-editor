@@ -194,7 +194,6 @@
   .mark-highlight-manual:after,
   [data-editor-highlight="true"]:not([contenteditable=""]):after {
     @include say-font-size($say-tiny,1.2);
-    content: "Action required";
     font-family: $say-font;
     font-weight: $say-regular;
     letter-spacing: .01rem;
