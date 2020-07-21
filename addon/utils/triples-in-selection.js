@@ -8,7 +8,7 @@ import { analyse as scanContexts } from '@lblod/marawa/rdfa-context-scanner';
  * @return { Array } Array of triples
  */
 export default function triplesInSelection(selection) {
-  console.warn('triplesInSelection: Experimental feature, may disappear in subsequent versions.');
+  console.warn('triplesInSelection: Experimental feature, may disappear in subsequent versions.'); // eslint-disable-line no-console
   let contexts = [];
 
   for(let context of selection.selections){

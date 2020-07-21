@@ -26,7 +26,7 @@ function findFirstLi(ul) {
  * @private
  */
 function findFirstThOrTd(table) {
-  let matches = flatMap(table, (node) => { return tagName(node) === 'td'}, true);
+  let matches = flatMap(table, (node) => { return tagName(node) === 'td';}, true);
   if (matches.length == 1) {
     return matches[0];
   }
