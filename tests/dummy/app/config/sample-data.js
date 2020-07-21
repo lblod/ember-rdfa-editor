@@ -14,6 +14,8 @@ export default {
     resource="#"
     typeof="foaf:Document">
 <div>Some content<br></div><p>a paragraph with Lorem ipsum Itaque consequatur maxime repudiandae eos est. Et et officia est dolore eum ipsam laborum recusandae. Ab excepturi cum mollitia ut.… <br>and a break (or two ?)<br></p>
+    <h1>Nested divs</h1>
+     <div><div>foo</div></div>|cursor here
     <h1>Standard cases</h1>
     <p>You will have to check the code of this file, in comments is explained what the expected behaviour is, and where to put your cursor</p>
 
