@@ -4,7 +4,7 @@ import { tagName, isVoidElement, invisibleSpace } from '../dom-helpers';
 
 import ListBackspacePlugin from '../../plugins/lists/backspace-plugin';
 import LumpNodeBackspacePlugin from '../../plugins/lump-node/backspace-plugin';
-
+import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
 
 /**
  * List of all Void elements.
@@ -495,7 +495,7 @@ export default class BackspaceHandler {
    */
   constructor({ rawEditor }: { rawEditor: RawEditor }){
     this.rawEditor = rawEditor;
-    this.plugins = [ new ListBackspacePlugin(), new LumpNodeBackspacePlugin()];
+    this.plugins = [ new ListBackspacePlugin(), new LumpNodeBackspacePlugin(), new EmptyTextNodePlugin()];
   }
 
   /**
@@ -672,14 +672,6 @@ export default class BackspaceHandler {
         const { node, position } = manipulation;
         const nodeText = node.textContent || "";
         node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
-        if (node.textContent.length == 0) {
-          // it seems browsers don't like empty textNodes so we add an invisibleSpace. This makes the node visible in browsers
-          // TODO: verify if this is a smart solution, perhaps working with a span or similar is what we want
-          // TODO: this may also imply we never delete TextNodes
-          // TODO: this doesn't clean up everything from user perspective, e.g
-          //       <span property="test:foo" resource="bar">f|<span> -> <span property="test:foo" resource="bar">&nbsp;<span> (and user clicks away)
-          node.textContent = invisibleSpace;
-        }
         this.rawEditor.updateRichNode();
         this.rawEditor.setCarret( node, position );
         break;
