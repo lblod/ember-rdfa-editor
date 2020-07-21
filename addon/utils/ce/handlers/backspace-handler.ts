@@ -82,7 +82,8 @@ export type Manipulation =
   | RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation
   | RemoveElementWithChildrenThatArentVisible
   | MoveCursorToEndOfNodeManipulation
-  | MoveCursorBeforeElementManipulation;
+  | MoveCursorBeforeElementManipulation
+  | KeepCursorAtStartManipulation;
 
 /**
  * Base type for any manipulation, ensuring the type interface exists.
@@ -108,6 +109,15 @@ export interface RemoveCharacterManipulation extends BaseManipulation {
   node: Text;
   position: number;
 }
+
+/**
+ * Represents keeping the cursor at the start of the editor
+ */
+export interface KeepCursorAtStartManipulation extends BaseManipulation {
+  type: "keepCursorAtStart";
+  node: Element;
+}
+
 
 /**
  * Represents the removal of an empty Element (so an Element without childNodes)
@@ -708,6 +718,9 @@ export default class BackspaceHandler {
           this.rawEditor.updateRichNode();
         }
         break;
+      case "keepCursorAtStart":
+        // do nothing
+        break;
       default:
         throw `Case ${manipulation.type} was not handled by handleNativeInputManipulation.`
     }
@@ -817,6 +830,12 @@ export default class BackspaceHandler {
           type: "removeOtherNode",
           node: node
         };
+        break;
+      case "editorRootStart":
+        return {
+          type: "keepCursorAtStart",
+          node: thingBeforeCursor.node
+        }
         break;
     }
 
