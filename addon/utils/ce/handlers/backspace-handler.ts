@@ -636,18 +636,23 @@ export default class BackspaceHandler {
   get selectionCoordinatesInEditor() : Array<DOMRectCoordinatesInEditor> {
     const editorDomRect = this.rawEditor.rootNode.getBoundingClientRect();
     //Note: we select '0' because we only assume one selection. No multi-cursor
-    const clientRects = window.getSelection().getRangeAt(0).getClientRects();
-    const selectionCoordinates = new Array<DOMRectCoordinatesInEditor>();
-    for(let clientRect of Array.from(clientRects)){
-      const normalizedRect = { } as DOMRectCoordinatesInEditor;
-      normalizedRect.top = clientRect.top - editorDomRect.top;
-      normalizedRect.bottom = clientRect.bottom - editorDomRect.bottom;
-      normalizedRect.left = clientRect.left - editorDomRect.left;
-      normalizedRect.right = clientRect.right - editorDomRect.right;
-
-      selectionCoordinates.push(normalizedRect);
+    if (window.getSelection() != null) {
+      const selection = window.getSelection() as Selection
+      const clientRects = selection.getRangeAt(0).getClientRects();
+      const selectionCoordinates = new Array<DOMRectCoordinatesInEditor>();
+      for(let clientRect of Array.from(clientRects)){
+        const normalizedRect = { } as DOMRectCoordinatesInEditor;
+        normalizedRect.top = clientRect.top - editorDomRect.top;
+        normalizedRect.bottom = clientRect.bottom - editorDomRect.bottom;
+        normalizedRect.left = clientRect.left - editorDomRect.left;
+        normalizedRect.right = clientRect.right - editorDomRect.right;
+        selectionCoordinates.push(normalizedRect);
+      }
+      return selectionCoordinates;
     }
-    return selectionCoordinates;
+    else {
+      return [];
+    }
   }
 
   /**
