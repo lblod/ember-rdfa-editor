@@ -136,7 +136,7 @@ let findRichNode = function(rdfaBlock, options={}) {
     }
   }
   return suitableNode;
-}
+};
 
 /**
  * Given an array of rdfaBlocks and options, loop over the rdfaBlocks to find an
@@ -167,6 +167,6 @@ let findUniqueRichNodes = function(rdfaBlocks, options={}) {
     }
   });
   return uniqueRichNodes;
-}
+};
 
 export { getRdfaAttributes, isRdfaNode, isEmptyRdfaAttributes, enrichRichNodeWithRdfa, findRichNode, findUniqueRichNodes };

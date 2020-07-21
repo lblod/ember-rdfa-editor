@@ -40,7 +40,7 @@ function lastTextChild(node) {
  * @private
  */
 function findLastThOrTd(table) {
-  let matches = flatMap(table, (node) => { return tagName(node) === 'td'});
+  let matches = flatMap(table, (node) => { return tagName(node) === 'td';});
   if (matches.length > 0) {
     return matches[matches.length - 1];
   }

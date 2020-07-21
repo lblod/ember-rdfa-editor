@@ -82,4 +82,4 @@ function animateLumpNode(node){
   window.setTimeout(() => node.classList.remove(animationClass), 500);
 }
 
-export { isInLumpNode, getParentLumpNode, hasLumpNodeProperty, getNextNonLumpTextNode, getPreviousNonLumpTextNode, animateLumpNode }
+export { isInLumpNode, getParentLumpNode, hasLumpNodeProperty, getNextNonLumpTextNode, getPreviousNonLumpTextNode, animateLumpNode };

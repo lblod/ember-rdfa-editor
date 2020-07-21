@@ -361,4 +361,4 @@ function cancelProperty(selection, doc, property) {
 }
 
 
-export { cancelProperty, applyProperty }
+export { cancelProperty, applyProperty };

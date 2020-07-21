@@ -388,4 +388,4 @@ export {
   listFilterKeywords,
   isMatchingContext,
   isMatchingRdfaAttribute
-}
+};

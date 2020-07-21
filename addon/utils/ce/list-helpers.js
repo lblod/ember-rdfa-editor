@@ -454,7 +454,7 @@ function reorderNodeBlocks(blocks) {
     if (a.range[0] > b.range[0])
       return true;
     if (a.range[0] == b.range[0])
-      return a.range[1] > b.range[1]
+      return a.range[1] > b.range[1];
   });
 }
 
@@ -1152,4 +1152,4 @@ function createNewList(logicalListBlocks, parentNode, newListElementLocation, li
   });
 }
 
-export { unorderedListAction, orderedListAction, indentAction, unindentAction }
+export { unorderedListAction, orderedListAction, indentAction, unindentAction };

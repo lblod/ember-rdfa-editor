@@ -60,4 +60,4 @@ function replaceDomNode( domNode, { callback, failedCallback, motivation } ){
 
 export {
   replaceDomNode
-}
+};
