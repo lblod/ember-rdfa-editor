@@ -738,6 +738,11 @@ export default class BackspaceHandler {
         // setCarret creates textnodes if necessary to ensure a cursor can be placed
         const element = manipulation.node;
         const length = element.childNodes.length;
+        // TODO: if we land inside an element with display type "block" that has no text nodes,
+        //       setting a carret will all of a sudden make that block visible. how do we want to tackle this?
+        if (window.getComputedStyle(element).display == "block") {
+          element.style.border = '1px dotted #eee';
+        }
         this.rawEditor.setCarret(element, length);
         break;
       case "moveCursorBeforeElement":
