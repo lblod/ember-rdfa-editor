@@ -28,6 +28,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
   label = 'backspace plugin for handling LumpNodes'
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
+    //TODO: fix case.manipulation.node == lumpnode
     const node = manipulation.node;
     const rootNode = node.getRootNode(); //Assuming here that node is attached.
     const isElementInLumpNode = isInLumpNode(node, rootNode);
