@@ -397,6 +397,81 @@ function paintCycleHappened() : Promise<void> {
 }
 
 /**
+ * Removes all whitespace, with the exception of non breaking spaces
+ *
+ * The \s match matches a bunch of content, as per
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Character_Classes
+ * and we do not want to match all of them.  Currently 160 (&nbsp;
+ * A0) is removed from this list.
+ *
+ * TODO: this function clearly needs to take the CSS styling into
+ * account.  One can only know positions based on the styling of the
+ * document.  Finding visual positions to jump to thus need to take
+ * this into account.
+ *
+ * @method stringToVisibleText
+ * @param {String} text
+ * @return {String}
+ * @public
+ */
+export function stringToVisibleText(string : string) {
+  // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
+  return string
+    .replace(invisibleSpace,'')
+    .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
+}
+
+
+/**
+ * set the carret on the desired position. This function uses the browsers selection api and does not update editor state!
+ *
+ * @method moveCaret
+ * @param {DOMNode} node, a text node or dom element
+ * @param {number} offset, for a text node the relative offset within the text node (i.e. number of characters before the carret).
+ *                         for a dom element the number of childnodes before the carret.
+ * Examples:
+ *     to set the carret after 'c' in a textnode with text content 'abcd' use setCarret(textNode,3)
+ *     to set the carret after the end of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 2) (e.g setCarret(element, element.children.length))
+ *     to set the carret after the b in a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 1) (e.g setCarret(element, indexOfChild + 1))
+ *     to set the carret after the start of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 0)
+ * NOTE: this a blantand copy/adapt from moveCaretInTextNode from raw-editor
+ */
+function moveCaret(node: Node, position: number) {
+  let currentSelection = window.getSelection();
+  if (currentSelection) {
+    let docRange = document.createRange();
+    docRange.setStart(node, position);
+    docRange.collapse(true);
+    currentSelection.removeAllRanges();
+    currentSelection.addRange(docRange);
+  }
+}
+
+/**
+ * move the carret before the provided element, element needs to have a parentElement
+ * @method moveCaretBefore
+ * @param {ChildNode} child
+ */
+export function moveCaretBefore(child: ChildNode) {
+  let currentSelection = window.getSelection();
+  if (currentSelection) {
+    if (child.parentElement) {
+      const range = document.createRange();
+      range.setStartBefore(child);
+      range.collapse(true);
+      currentSelection.removeAllRanges();
+      currentSelection.addRange(range);
+    }
+    else {
+      console.warn("asked to move caret before an element that is no longer connected to the dom tree", child); // esline-disable-line no-console
+    }
+  }
+  else {
+    console.warn("window.getSelection did not return a selection"); // esline-disable-line no-console
+  }
+}
+
+/**
  * Backspace Handler, an event handler to handle removing content
  * before the cursor.
  *
@@ -409,8 +484,10 @@ function paintCycleHappened() : Promise<void> {
  * The general idea of the backspace handler goes as follows:
  *
  * - find the thing before the cursor.
+ * - move the cursor before the thing using the browsers selection api
  * - try to remove that thing
  * - repeat until there is a visual difference
+ * - update editor position with final caret position
  *
  * ## Why do we have plugins?
  *
@@ -525,7 +602,7 @@ export default class BackspaceHandler {
    */
   handleEvent() {
     this.backspace();
-    // this.rawEditor.externalDomUpdate('backspace', () => this.backspace());
+    this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
     return HandlerResponse.create({ allowPropagation: false });
   }
 
@@ -643,21 +720,21 @@ export default class BackspaceHandler {
     //Note: we select '0' because we only assume one selection. No multi-cursor
     if (window.getSelection() != null) {
       const selection = window.getSelection() as Selection
-      const clientRects = selection.getRangeAt(0).getClientRects();
-      const selectionCoordinates = new Array<DOMRectCoordinatesInEditor>();
-      for(let clientRect of Array.from(clientRects)){
-        const normalizedRect = { } as DOMRectCoordinatesInEditor;
-        normalizedRect.top = clientRect.top - editorDomRect.top;
-        normalizedRect.bottom = clientRect.bottom - editorDomRect.bottom;
-        normalizedRect.left = clientRect.left - editorDomRect.left;
-        normalizedRect.right = clientRect.right - editorDomRect.right;
-        selectionCoordinates.push(normalizedRect);
+      if (selection.rangeCount > 0) {
+        const clientRects = selection.getRangeAt(0).getClientRects();
+        const selectionCoordinates = new Array<DOMRectCoordinatesInEditor>();
+        for(let clientRect of Array.from(clientRects)){
+          const normalizedRect = { } as DOMRectCoordinatesInEditor;
+          normalizedRect.top = clientRect.top - editorDomRect.top;
+          normalizedRect.bottom = clientRect.bottom - editorDomRect.bottom;
+          normalizedRect.left = clientRect.left - editorDomRect.left;
+          normalizedRect.right = clientRect.right - editorDomRect.right;
+          selectionCoordinates.push(normalizedRect);
+        }
+        return selectionCoordinates;
       }
-      return selectionCoordinates;
     }
-    else {
-      return [];
-    }
+    return [];
   }
 
   /**
@@ -695,9 +772,7 @@ export default class BackspaceHandler {
           throw "Received other node does not have a parent.  Backspace failed te remove this node."
         }
         const emptyElement = manipulation.node;
-        const emptyElementParent = emptyElement.parentElement as Element;
-        const emptyElementIndex = Array.from(emptyElementParent.childNodes).indexOf(emptyElement);
-        this.rawEditor.setCarret(emptyElementParent, emptyElementIndex); // place the cursor before the removed element
+        moveCaretBefore(emptyElement);
         emptyElement.remove();
         this.rawEditor.updateRichNode();
         break;
@@ -707,14 +782,14 @@ export default class BackspaceHandler {
           throw "Received other node does not have a parent.  Backspace failed te remove this node."
         }
         const otherNode = manipulation.node as Node;
-        const otherNodeParent = otherNode.parentElement as Element;
-        // TODO: the following does not work without casting, and I'm
-        // not sure we certainly have the childNode interface as per
-        // https://developer.mozilla.org/en-US/docs/Web/API/ChildNode
-        const otherNodeIndex = Array.from(otherNodeParent.childNodes).indexOf(otherNode);
-        this.rawEditor.setCarret(otherNodeParent, otherNodeIndex); // place the cursor before the removed element
-        otherNodeParent.removeChild(otherNode);
-        this.rawEditor.updateRichNode();
+        if (otherNode.parentElement) {
+          // TODO: the following does not work without casting, and I'm
+          // not sure we certainly have the childNode interface as per
+          // https://developer.mozilla.org/en-US/docs/Web/API/ChildNode
+          moveCaretBefore(otherNode);
+          otherNode.parentElement.removeChild(otherNode);
+          this.rawEditor.updateRichNode();
+        }
         break;
       case "removeVoidElement":
         // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
@@ -722,9 +797,7 @@ export default class BackspaceHandler {
           throw "Received void element without parent.  Backspace failed to remove this node."
         }
         const voidElement = manipulation.node;
-        const voidParentElement = voidElement.parentElement as Element;
-        const voidElementIndex = Array.from(voidParentElement.childNodes).indexOf(voidElement);
-        this.rawEditor.setCarret(voidParentElement, voidElementIndex); // place the cursor before the removed element
+        moveCaretBefore(voidElement);
         voidElement.remove();
         this.rawEditor.updateRichNode();
         break;
@@ -732,32 +805,19 @@ export default class BackspaceHandler {
         const elementWithOnlyInvisibleNodes = manipulation.node;
         const parentElement = elementWithOnlyInvisibleNodes.parentElement;
         if (parentElement) {
-          const indexOfElement = Array.from(parentElement.childNodes).indexOf(elementWithOnlyInvisibleNodes);
-          this.rawEditor.setCarret(parentElement, indexOfElement); // place the cursor before the removed element
+          moveCaretBefore(elementWithOnlyInvisibleNodes);
           elementWithOnlyInvisibleNodes.remove();
           this.rawEditor.updateRichNode();
         }
         break;
       case "moveCursorToEndOfNode":
-        // TODO: should this actually move your cursor at this point?
-        // setCarret creates textnodes if necessary to ensure a cursor can be placed
         const element = manipulation.node;
         const length = element.childNodes.length;
-        // TODO: if we land inside an element with display type "block" that has no text nodes,
-        //       setting a carret will all of a sudden make that block visible. how do we want to tackle this?
-        if (window.getComputedStyle(element).display == "block") {
-          element.style.border = '1px dotted #eee';
-        }
-        this.rawEditor.setCarret(element, length);
+        moveCaret(element, length);
         break;
       case "moveCursorBeforeElement":
         const elementOfManipulation = manipulation.node
-        const parentOfElement = elementOfManipulation.parentElement;
-        if (parentOfElement) {
-          const indexOfElement = Array.from(parentOfElement.childNodes).indexOf(elementOfManipulation);
-          this.rawEditor.setCarret(parentOfElement, indexOfElement); // place the cursor before the element
-          this.rawEditor.updateRichNode();
-        }
+        moveCaretBefore(elementOfManipulation)
         break;
       case "keepCursorAtStart":
         // do nothing
@@ -885,31 +945,6 @@ export default class BackspaceHandler {
   }
 
   /**
-   * Removes all whitespace, with the exception of non breaking spaces
-   *
-   * The \s match matches a bunch of content, as per
-   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Character_Classes
-   * and we do not want to match all of them.  Currently 160 (&nbsp;
-   * A0) is removed from this list.
-   *
-   * TODO: this function clearly needs to take the CSS styling into
-   * account.  One can only know positions based on the styling of the
-   * document.  Finding visual positions to jump to thus need to take
-   * this into account.
-   *
-   * @method stringToVisibleText
-   * @param {String} text
-   * @return {String}
-   * @public
-   */
-  stringToVisibleText(string : string) {
-    // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
-    return string
-      .replace(invisibleSpace,'')
-      .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
-  }
-
-  /**
    * Verify if an element only has invisible text nodes as children
    *
    * NOTE: see TODO of stringToVisibleText, need to research if we can check the
@@ -929,7 +964,7 @@ export default class BackspaceHandler {
       }
       else {
         const textNode = child as Text;
-        if (textNode.textContent && this.stringToVisibleText(textNode.textContent).length > 0  ) {
+        if (textNode.textContent && stringToVisibleText(textNode.textContent).length > 0  ) {
           return false;
         }
       }
@@ -962,7 +997,7 @@ export default class BackspaceHandler {
     for (let child of Array.from(parent.childNodes)) {
       if (child.nodeType == Node.TEXT_NODE) {
         const textNode = child as Text;
-        if (textNode.textContent && this.stringToVisibleText(textNode.textContent).length > 0  ) {
+        if (textNode.textContent && stringToVisibleText(textNode.textContent).length > 0  ) {
           hasVisibleChildren = true;
         }
       }
@@ -972,7 +1007,7 @@ export default class BackspaceHandler {
           // it's a br, but not the last br which we can ignore (most of the time...)
           hasVisibleChildren = true;
         }
-        else if (element.textContent && this.stringToVisibleText(element.textContent)) {
+        else if (element.innerText.length > 0) {
           // it has visible text content so it is visible
           hasVisibleChildren = true;
         }
@@ -993,13 +1028,12 @@ export default class BackspaceHandler {
   }
 
   /**
-   * Retrieves the thing before the cursor position.
+   * Retrieves the thing before the cursor position provided by the selection api.
    *
    * # What is the thing before a cursor position?
    *
-   * The cursor position is basically always in a text node.  But the
-   * thing before a cursor could be one of many things.  Considering
-   * the following snippet:
+   * The thing before a cursor could be one of many things.
+   * Considering the following snippet:
    *
    *     ab[]cde<span>fg</span>hjk<b><i>lmn</i></b>op.
    *
@@ -1066,62 +1100,110 @@ export default class BackspaceHandler {
   {
     // TODO: should we support actual selections here as well or will that be a different handler?
     // current implementation assumes a collapsed selection (e.g. a carret)
-    // NOTE: currentNode can be null, in case of an actual selection
-    const position = this.currentSelection[0];
-    const textNode = this.currentNode as Text;
-    const richNode = this.rawEditor.getRichNodeFor(textNode);
-    // TODO: allow plugins to hook into this?
-    const relPosition = this.absoluteToRelativePosition(richNode, position);
-    if( relPosition >= 1 ) {
-      // the cursor is in a text node
-      return { type: "character", position: relPosition - 1, node: textNode};
-    }
-    else if (textNode.length == 0){
-      // at the start an empty text node
-      return { type: "emptyTextNodeStart", node: textNode};
-    }
-    else {
-      // start of textnode (relposition = 0)
-      const previousSibling = textNode.previousSibling;
-      if( previousSibling ) {
-        if( previousSibling.nodeType === Node.TEXT_NODE ) {
-          let sibling = previousSibling as Text;
-          if( sibling.length > 0 ) {
-            // previous is text node with stuff
-            return { type: "character", position: sibling.length - 1, node: sibling};
-          } else {
-            // previous is empty text node
-            return { type: "emptyTextNodeEnd", node: sibling};
-          }
-        }
-        else if( previousSibling.nodeType === Node.ELEMENT_NODE ){
-          const sibling = previousSibling as Element;
-          if (isVoidElement(sibling)) {
-            return { type: "voidElement", node: sibling as VoidElement }
+    const windowSelection = window.getSelection();
+    if (windowSelection && windowSelection.rangeCount > 0) {
+      let range = windowSelection.getRangeAt(0);
+      if (range.collapsed) {
+        const node = range.startContainer;
+        const position = range.startOffset;
+        if (node.nodeType == Node.ELEMENT_NODE) {
+          // the cursor is inside an element
+          const element = node as Element;
+          if (position == 0) {
+            if (element == this.rawEditor.rootNode) {
+              // special case, we're at the start of the editor
+              return { type: "editorRootStart", node: element };
+            }
+            else {
+              // at the start of the element
+              return { type: "elementStart", node: element };
+            }
           }
           else {
-            return { type: "elementEnd", node: sibling };
+            // position > 1 so there is a child node before our cursor
+            // position is the number of child nodes between the start of the startNode and our cursor.
+            const child = element.childNodes[position-1] as ChildNode;
+            if (child.nodeType == Node.TEXT_NODE) {
+              const text = child as Text;
+              return { type: "character", position: text.length, node: text};
+            }
+            else if( child.nodeType === Node.ELEMENT_NODE ){
+              const element = child as Element;
+              if (isVoidElement(element)) {
+                return { type: "voidElement", node: element as VoidElement }
+              }
+              else {
+                return { type: "elementEnd", node: element };
+              }
+            }
+            else {
+              const uncommonNode = ensureUncommonNode( child, "Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node." );
+              return { type: "uncommonNodeEnd", node: uncommonNode };
+            }
+          }
+        }
+        else if (node.nodeType == Node.TEXT_NODE) {
+          const text = node as Text;
+          // cursor is in a text node
+          if (position > 0) {
+            // can delete a character
+            return { type: "character", position: position - 1, node: text};
+          }
+          else if (text.length == 0){
+            // at the start an empty text node
+            // TODO: this is a case we normally can't encounter, node should be removed before it's empty (chrome will remove it if we don't)
+            return { type: "emptyTextNodeStart", node: text};
+          }
+          else {
+            // at the start of a non empty text node
+            const previousSibling = text.previousSibling;
+            if( previousSibling ) {
+              if( previousSibling.nodeType === Node.TEXT_NODE ) {
+                let sibling = previousSibling as Text;
+                if( sibling.length > 0 ) {
+                  // previous is text node with stuff
+                  return { type: "character", position: sibling.length - 1, node: sibling};
+                } else {
+                  // previous is empty text node (only possible in non chrome based browsers)
+                  return { type: "emptyTextNodeEnd", node: sibling};
+                }
+              }
+              else if( previousSibling.nodeType === Node.ELEMENT_NODE ){
+                const sibling = previousSibling as Element;
+                if (isVoidElement(sibling)) {
+                  return { type: "voidElement", node: sibling as VoidElement }
+                }
+                else {
+                  return { type: "elementEnd", node: sibling };
+                }
+              }
+              else {
+                const uncommonNode = ensureUncommonNode( previousSibling, "Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node." );
+                return { type: "uncommonNodeEnd", node: uncommonNode };
+              }
+            }
+            else if (text.parentElement) {
+              const parent = text.parentElement;
+              if (parent != this.rawEditor.rootNode) {
+                return { type: "elementStart", node: parent };
+              }
+              else {
+                return { type: "editorRootStart", node: parent };
+              }
+            }
+            else {
+              throw "no previous sibling or parentnode found"
+            }
           }
         }
         else {
-          const uncommonNode = ensureUncommonNode( previousSibling, "Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node." );
-          return { type: "uncommonNodeEnd", node: uncommonNode };
+          console.warn(`did not expect a startcontainer of type ${node.nodeType} from range`); // eslint-disable-line-console
+          // there should not be an else per spec
         }
       }
-      else if (textNode.parentElement) {
-        const parent = textNode.parentElement;
-        if (textNode.parentElement != this.rawEditor.rootNode) {
-          return { type: "elementStart", node: parent };
-        }
-        else {
-          return { type: "editorRootStart", node: parent };
-        }
-      }
-      else {
-        throw "no previous sibling or parentnode found"
-      }
+      throw "backspace handler only understands collapsed ranges";
     }
-    throw "Unsupported path in getThingBeforeCursor";
+    throw "no selection found";
   }
 
   /**
