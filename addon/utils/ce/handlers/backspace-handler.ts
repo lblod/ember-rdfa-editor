@@ -747,7 +747,14 @@ export default class BackspaceHandler {
     switch( manipulation.type ) {
       case "removeCharacter":
         const { node, position } = manipulation;
-        const nodeText = node.textContent || "";
+        let nodeText = node.textContent || "";
+        if (nodeText.length > position + 2 && nodeText.slice(position + 1 , position + 2 ) == " ") {
+          // if the character after our current position is a space, it might become invisible, so we need to convert it to a non breaking space
+          // cases where this happens:
+          // - two spaces becoming neighbours after the delete
+          // - spaces moving to the start of a node
+          nodeText = `${nodeText.slice(0, position + 1)}\u00A0${nodeText.slice(position + 2)}`;
+        }
         node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
         this.rawEditor.updateRichNode();
         moveCaret(node, position);
