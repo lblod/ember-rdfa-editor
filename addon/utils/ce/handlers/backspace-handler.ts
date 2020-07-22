@@ -5,6 +5,8 @@ import { tagName, isVoidElement, invisibleSpace } from '../dom-helpers';
 import ListBackspacePlugin from '../../plugins/lists/backspace-plugin';
 import LumpNodeBackspacePlugin from '../../plugins/lump-node/backspace-plugin';
 import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
+import RdfaBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/backspace-plugin';
+
 
 /**
  * List of all Void elements.
@@ -495,7 +497,10 @@ export default class BackspaceHandler {
    */
   constructor({ rawEditor }: { rawEditor: RawEditor }){
     this.rawEditor = rawEditor;
-    this.plugins = [ new ListBackspacePlugin(), new LumpNodeBackspacePlugin(), new EmptyTextNodePlugin()];
+    this.plugins = [ new ListBackspacePlugin(),
+                     new LumpNodeBackspacePlugin(),
+                     new EmptyTextNodePlugin(),
+                     new RdfaBackspacePlugin() ];
   }
 
   /**
