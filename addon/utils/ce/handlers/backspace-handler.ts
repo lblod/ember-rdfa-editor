@@ -440,7 +440,6 @@ function moveCaret(node: Node, position: number) {
     let docRange = document.createRange();
     docRange.setStart(node, position);
     docRange.collapse(true);
-    console.log(docRange);
     currentSelection.removeAllRanges();
     currentSelection.addRange(docRange);
   }
@@ -1024,13 +1023,12 @@ export default class BackspaceHandler {
   }
 
   /**
-   * Retrieves the thing before the cursor position.
+   * Retrieves the thing before the cursor position provided by the selection api.
    *
    * # What is the thing before a cursor position?
    *
-   * The cursor position is basically always in a text node.  But the
-   * thing before a cursor could be one of many things.  Considering
-   * the following snippet:
+   * The thing before a cursor could be one of many things.
+   * Considering the following snippet:
    *
    *     ab[]cde<span>fg</span>hjk<b><i>lmn</i></b>op.
    *
@@ -1143,7 +1141,7 @@ export default class BackspaceHandler {
           const text = node as Text;
           // cursor is in a text node
           if (position > 0) {
-            // previous is text node with stuff
+            // can delete a character
             return { type: "character", position: position - 1, node: text};
           }
           else if (text.length == 0){
@@ -1152,6 +1150,7 @@ export default class BackspaceHandler {
             return { type: "emptyTextNodeStart", node: text};
           }
           else {
+            // at the start of a non empty text node
             const previousSibling = text.previousSibling;
             if( previousSibling ) {
               if( previousSibling.nodeType === Node.TEXT_NODE ) {
@@ -1160,7 +1159,7 @@ export default class BackspaceHandler {
                   // previous is text node with stuff
                   return { type: "character", position: sibling.length - 1, node: sibling};
                 } else {
-                  // previous is empty text node
+                  // previous is empty text node (only possible in non chrome based browsers)
                   return { type: "emptyTextNodeEnd", node: sibling};
                 }
               }
