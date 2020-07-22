@@ -967,7 +967,7 @@ export default class BackspaceHandler {
           // it's a br, but not the last br which we can ignore (most of the time...)
           hasVisibleChildren = true;
         }
-        else if (element.textContent && this.stringToVisibleText(element.textContent)) {
+        else if (element.innerText.length > 0) {
           // it has visible text content so it is visible
           hasVisibleChildren = true;
         }
