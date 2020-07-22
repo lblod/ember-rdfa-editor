@@ -750,17 +750,13 @@ export default class BackspaceHandler {
         const nodeText = node.textContent || "";
         node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
         this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret( node, position );
+        moveCaret(node, position);
         break;
       case "removeEmptyTextNode":
+        // TODO: I don't think we ever enter this case
         const { node: textNode } = manipulation;
-        if( textNode.parentNode ) {
-          textNode.parentNode.removeChild( textNode );
-          // TODO: we explicitly do NOT set carret to trigger a next iteration in backspace()
-          //       NOTE: if no other iteration follows, we might not end in valid editor state
-        } else {
-          throw "Requested to remove text node which does not have a parent node";
-        }
+        moveCaretBefore(textNode);
+        textNode.remove();
         break;
       case "removeEmptyElement":
         if( !manipulation.node.parentElement ) {
