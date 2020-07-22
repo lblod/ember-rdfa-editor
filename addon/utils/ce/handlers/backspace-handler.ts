@@ -574,10 +574,13 @@ export default class BackspaceHandler {
    */
   constructor({ rawEditor }: { rawEditor: RawEditor }){
     this.rawEditor = rawEditor;
-    this.plugins = [ new ListBackspacePlugin(),
-                     new LumpNodeBackspacePlugin(),
-                     new EmptyTextNodePlugin(),
-                     new RdfaBackspacePlugin() ];
+    // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
+    this.plugins = [
+      new LumpNodeBackspacePlugin(),
+      new RdfaBackspacePlugin(),
+      new ListBackspacePlugin(),
+      new EmptyTextNodePlugin()
+    ];
   }
 
   /**
@@ -1250,8 +1253,7 @@ export default class BackspaceHandler {
       console.error(`Some plugins don't want execution, others want custom execution`, { reportsNoExecute, reportsWithExecutor });
     }
     if (reportsWithExecutor.length > 1) {
-      console.error(`Multiple plugins want to execute this plugin`);
-      throw "Multiple backspace plugins want to execute backspace with no resolution";
+      console.warn(`Multiple plugins want to execute this plugin. First entry in the list wins: ${reportsWithExecutor[0].plugin.label}`);
     }
 
     for( const { plugin } of reportsNoExecute ) {
