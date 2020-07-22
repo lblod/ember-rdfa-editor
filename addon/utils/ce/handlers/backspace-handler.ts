@@ -734,14 +734,16 @@ export default class BackspaceHandler {
         }
         break;
       case "moveCursorToEndOfNode":
-        // TODO: should this actually move your cursor at this point?
         // setCarret creates textnodes if necessary to ensure a cursor can be placed
         const element = manipulation.node;
         const length = element.childNodes.length;
-        // TODO: if we land inside an element with display type "block" that has no text nodes,
-        //       setting a carret will all of a sudden make that block visible. how do we want to tackle this?
         if (window.getComputedStyle(element).display == "block") {
-          element.style.border = '1px dotted #eee';
+          if (length > 0 && tagName(element.childNodes[length-1]) == "br") {
+            // last br in a block element is normally not visible, so jump before the br
+            console.log('jump before br');
+            this.rawEditor.updateRichNode();
+            this.rawEditor.setCarret(element, length - 1);
+          }
         }
         this.rawEditor.setCarret(element, length);
         break;
