@@ -395,6 +395,32 @@ function paintCycleHappened() : Promise<void> {
 }
 
 /**
+ * Removes all whitespace, with the exception of non breaking spaces
+ *
+ * The \s match matches a bunch of content, as per
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Character_Classes
+ * and we do not want to match all of them.  Currently 160 (&nbsp;
+ * A0) is removed from this list.
+ *
+ * TODO: this function clearly needs to take the CSS styling into
+ * account.  One can only know positions based on the styling of the
+ * document.  Finding visual positions to jump to thus need to take
+ * this into account.
+ *
+ * @method stringToVisibleText
+ * @param {String} text
+ * @return {String}
+ * @public
+ */
+export function stringToVisibleText(string : string) {
+  // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
+  return string
+    .replace(invisibleSpace,'')
+    .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
+}
+
+
+/**
  * set the carret on the desired position. This function uses the browsers selection api and does not update editor state!
  *
  * @method moveCaret
@@ -912,31 +938,6 @@ export default class BackspaceHandler {
 
     // TODO: take care of other cases
     throw `Could not find manipulation to suggest for backspace ${thingBeforeCursor.type}`;
-  }
-
-  /**
-   * Removes all whitespace, with the exception of non breaking spaces
-   *
-   * The \s match matches a bunch of content, as per
-   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Character_Classes
-   * and we do not want to match all of them.  Currently 160 (&nbsp;
-   * A0) is removed from this list.
-   *
-   * TODO: this function clearly needs to take the CSS styling into
-   * account.  One can only know positions based on the styling of the
-   * document.  Finding visual positions to jump to thus need to take
-   * this into account.
-   *
-   * @method stringToVisibleText
-   * @param {String} text
-   * @return {String}
-   * @public
-   */
-  stringToVisibleText(string : string) {
-    // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
-    return string
-      .replace(invisibleSpace,'')
-      .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
   }
 
   /**

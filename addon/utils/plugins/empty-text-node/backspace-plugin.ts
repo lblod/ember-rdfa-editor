@@ -2,7 +2,9 @@ import { BackspacePlugin,
          Editor,
          Manipulation,
          ManipulationGuidance,
-         RemoveCharacterManipulation } from '../../ce/handlers/backspace-handler';
+         RemoveCharacterManipulation,
+         moveCaretBefore,
+         stringToVisibleText} from '../../ce/handlers/backspace-handler';
 /**
  * In some cases the browser acts a bit weird when we empty a text node. this plugin tries to handle these edge cases.
  * Specific reasons we do this:
@@ -19,10 +21,21 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
           executor: this.removeTextNode
         }
       }
+      else if (this.manipulationWillResultInTextNodeWithoutText(manipulation)) {
+        return {
+          allow: true,
+          executor: this.removeTextNode
+        }
+      }
     }
     return null;
   }
 
+  manipulationWillResultInTextNodeWithoutText(manipulation: RemoveCharacterManipulation) : boolean {
+    const nodeText = manipulation.node.textContent || "";
+    const position = manipulation.position;
+    return stringToVisibleText(`${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`).length == 0;
+    }
   /**
    * This remove the text node completely
    */
@@ -30,9 +43,8 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
     const { node } = manipulation;
     const parentElement = node.parentElement;
     if (parentElement) {
-      const indexOfElement = Array.from(parentElement.childNodes).indexOf(node);
+      moveCaretBefore(node);
       node.remove();
-      editor.setCarret(parentElement, indexOfElement); // place the cursor before the element
       editor.updateRichNode();
     }
   }
