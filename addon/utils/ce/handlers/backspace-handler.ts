@@ -595,7 +595,9 @@ export default class BackspaceHandler {
    * @return {HandlerResponse}
    * @public
    */
-  handleEvent() {
+  handleEvent(event : Event) {
+    // TODO: reason about async behaviour of backspace. Using .then on backspace causes chrome to not update view before we release the backspace button. 
+    event.preventDefault(); // make sure event propagation is stopped, async behaviour of backspace could cause the browser to execute eventDefault before it is finished
     this.backspace();
     this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
     return HandlerResponse.create({ allowPropagation: false });
