@@ -434,7 +434,7 @@ export function stringToVisibleText(string : string) {
  *     to set the carret after the start of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 0)
  * NOTE: this a blantand copy/adapt from moveCaretInTextNode from raw-editor
  */
-function moveCaret(node: Node, position: number) {
+export function moveCaret(node: Node, position: number) {
   let currentSelection = window.getSelection();
   if (currentSelection) {
     let docRange = document.createRange();
