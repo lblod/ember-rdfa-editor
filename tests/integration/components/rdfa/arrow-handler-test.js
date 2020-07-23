@@ -45,5 +45,48 @@ module('Integration | Component | arrow-handler', function(hooks) {
     assert.equal(cursorPosition, 0);
   });
 
+  test('arrow right works with blocks', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('baz<div>foo</div>');
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const bazWordNode = editor.childNodes[0];
+    window.getSelection().collapse(bazWordNode,0);
+    click('div[contenteditable]');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 0);
+  });
+
+  test('arrow left works with blocks', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('baz<div>foo</div>');
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const bazWordNode = editor.childNodes[1];
+    window.getSelection().collapse(bazWordNode,0);
+    click('div[contenteditable]');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowLeft');
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 3);
+  });
+
 
 });
