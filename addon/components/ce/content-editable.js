@@ -344,9 +344,8 @@ export default class ContentEditable extends Component {
 
   @action
   beforeInput(event) {
-    // for now just disallow all input events
-    if (event.inputType == "deleteContentBackward") {
-      console.log('prevented event', event);
+    const preventDefault = this.passEventToHandlers( event );
+    if (preventDefault) {
       event.preventDefault();
     }
   }

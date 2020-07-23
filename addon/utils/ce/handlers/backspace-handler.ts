@@ -582,9 +582,9 @@ export default class BackspaceHandler {
    * @return boolean
    * @public
    */
-  isHandlerFor(event: KeyboardEvent) {
-    return event.type === "keydown"
-      && event.key === 'Backspace'
+  isHandlerFor(event: KeyboardEvent | InputEvent ) {
+    return ((event.type === "keydown" && (event as KeyboardEvent).key === 'Backspace')
+      || (event.type == "beforeinput" && (event as InputEvent).inputType == "deleteContentsBackwards"))
       && this.rawEditor.currentSelectionIsACursor
       && this.doesCurrentNodeBelongToContentEditable();
   }
@@ -844,7 +844,6 @@ export default class BackspaceHandler {
     // check where our cursor is and get the deepest "thing" before
     // the cursor (character or node)
     const thingBeforeCursor: ThingBeforeCursor = this.getThingBeforeCursor();
-
     switch( thingBeforeCursor.type ) {
 
       case "character":
