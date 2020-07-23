@@ -79,14 +79,16 @@ class HTMLInputParser {
         let children = node.childNodes;
         for (let i = 0; i < children.length; i++) {
           const cleanedChild = this.preprocessNodes(children[i]);
-          if (this.lumpTags.includes(tag)) {
-            // make sure we can place the cursor before the non editable element
-            cleanedNode.appendChild(document.createTextNode(""));
-          }
-          cleanedNode.appendChild(cleanedChild);
-          if (this.lumpTags.includes(tag)) {
-            // make sure we can place the cursor after the non editable element
-            cleanedNode.appendChild(document.createTextNode(""));
+          if (cleanedChild) {
+            if (this.lumpTags.includes(tag)) {
+              // make sure we can place the cursor before the non editable element
+              cleanedNode.appendChild(document.createTextNode(""));
+            }
+            cleanedNode.appendChild(cleanedChild);
+            if (this.lumpTags.includes(tag)) {
+              // make sure we can place the cursor after the non editable element
+              cleanedNode.appendChild(document.createTextNode(""));
+            }
           }
         }
       }
@@ -96,6 +98,8 @@ class HTMLInputParser {
       // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
       cleanedNode.textContent = node.textContent.replace(invisibleSpace,'')
         .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,' ');
+      if (cleanedNode.length == 0)
+        return null;
     }
     return cleanedNode;
   }
