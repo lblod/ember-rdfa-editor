@@ -342,6 +342,15 @@ export default class ContentEditable extends Component {
     return false;
   }
 
+  @action
+  beforeInput(event) {
+    // for now just disallow all input events
+    if (event.inputType == "deleteContentBackward") {
+      console.log('prevented event', event);
+      event.preventDefault();
+    }
+  }
+
   /**
    * cut isn't allowed at the moment
    */
