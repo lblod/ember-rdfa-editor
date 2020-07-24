@@ -98,7 +98,6 @@ export type Manipulation =
   | RemoveElementWithChildrenThatArentVisible
   | MoveCursorToEndOfNodeManipulation
   | MoveCursorBeforeElementManipulation
-  | MoveCursorBeforeTextNodeManipulation
   | KeepCursorAtStartManipulation;
 
 /**
@@ -117,15 +116,6 @@ export interface RemoveEmptyTextNodeManipulation extends BaseManipulation {
   node: Text;
 }
 
-
-/**
- * Represents moving before a text node
- * NOTE: this manipulation is mostly useful to simplify logic and will typically be followed by another backspace run
- */
-export interface MoveCursorBeforeTextNodeManipulation extends BaseManipulation {
-  type: "moveCursorBeforeTextNode";
-  node: Text;
-}
 /**
  * Represents the removal of a single character from a text node.
  */
@@ -209,7 +199,6 @@ type ThingBeforeCursor =
   CharacterPosition
   | EmptyTextNodeStartPosition
   | EmptyTextNodeEndPosition
-  | TextNodeStartPosition
   | ElementStartPosition
   | VoidElementPosition
   | ElementEndPosition
@@ -232,13 +221,6 @@ interface CharacterPosition extends BaseThingBeforeCursor {
   position: any;
 }
 
-/**
- * cursor is at the start of a text node, e.g. there are no characters before the cursor
- */
-interface TextNodeStartPosition extends BaseThingBeforeCursor {
-  type: "textNodeStart";
-  node: Text;
-}
 
 /**
  * A Text node before the cursor, the text node is empty.
@@ -786,10 +768,6 @@ export default class BackspaceHandler {
         moveCaretBefore(textNode);
         textNode.remove();
         break;
-      case "moveCursorBeforeTextNode":
-        const { node: nonEmptyTextNode } = manipulation;
-        moveCaretBefore(nonEmptyTextNode);
-        break;
       case "removeEmptyElement":
         if( !manipulation.node.parentElement ) {
           throw "Received other node does not have a parent.  Backspace failed te remove this node."
@@ -879,13 +857,6 @@ export default class BackspaceHandler {
         };
         break;
 
-      case "textNodeStart":
-        const textNode = thingBeforeCursor.node;
-        return {
-          type: "moveCursorBeforeTextNode",
-          node: textNode
-        }
-        break;
       case "emptyTextNodeStart":
         // empty text node: remove the text node
         const textNodeBeforeCursor = thingBeforeCursor as EmptyTextNodeStartPosition;
@@ -1154,12 +1125,7 @@ export default class BackspaceHandler {
             const child = element.childNodes[position-1] as ChildNode;
             if (child.nodeType == Node.TEXT_NODE) {
               const text = child as Text;
-              if (text.length > 0 ) {
-                return { type: "character", position: text.length, node: text};
-              }
-              else {
-                return { type: "emptyTextNodeStart", node: text};
-              }
+              return { type: "character", position: text.length, node: text};
             }
             else if( child.nodeType === Node.ELEMENT_NODE ){
               const element = child as Element;
@@ -1190,7 +1156,44 @@ export default class BackspaceHandler {
           }
           else {
             // at the start of a non empty text node
-            return { type: "textNodeStart", node: text};
+            const previousSibling = text.previousSibling;
+            if( previousSibling ) {
+              if( previousSibling.nodeType === Node.TEXT_NODE ) {
+                let sibling = previousSibling as Text;
+                if( sibling.length > 0 ) {
+                  // previous is text node with stuff
+                  return { type: "character", position: sibling.length - 1, node: sibling};
+                } else {
+                  // previous is empty text node (only possible in non chrome based browsers)
+                  return { type: "emptyTextNodeEnd", node: sibling};
+                }
+              }
+              else if( previousSibling.nodeType === Node.ELEMENT_NODE ){
+                const sibling = previousSibling as Element;
+                if (isVoidElement(sibling)) {
+                  return { type: "voidElement", node: sibling as VoidElement }
+                }
+                else {
+                  return { type: "elementEnd", node: sibling };
+                }
+              }
+              else {
+                const uncommonNode = ensureUncommonNode( previousSibling, "Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node." );
+                return { type: "uncommonNodeEnd", node: uncommonNode };
+              }
+            }
+            else if (text.parentElement) {
+              const parent = text.parentElement;
+              if (parent != this.rawEditor.rootNode) {
+                return { type: "elementStart", node: parent };
+              }
+              else {
+                return { type: "editorRootStart", node: parent };
+              }
+            }
+            else {
+              throw "no previous sibling or parentnode found"
+            }
           }
         }
         else {
