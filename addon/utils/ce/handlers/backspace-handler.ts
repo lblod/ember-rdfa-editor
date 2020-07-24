@@ -55,6 +55,7 @@ interface RawEditor {
   currentSelection: RawEditorSelection
   richNode: RichNode
   currentNode: Node
+  updateSelectionAfterComplexInput: void
 }
 
 interface RawEditorSelection extends Array<number> {
