@@ -26,6 +26,15 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
       else if (this.manipulationWillResultInTextNodeWithoutText(manipulation)) {
         return {
           allow: true,
+          executor: this.replaceLastCharacterWithInvisibleSpace
+        }
+      }
+    }
+    else if (manipulation.type == "moveCursorBeforeTextNode") {
+      const textNode = manipulation.node as Text;
+      if (stringToVisibleText(textNode.textContent || "").length == 0) {
+        return {
+          allow: true,
           executor: this.removeTextNode
         }
       }
