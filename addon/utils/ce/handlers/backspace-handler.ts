@@ -816,6 +816,12 @@ export default class BackspaceHandler {
         const element = manipulation.node;
         const length = element.childNodes.length;
         moveCaret(element, length);
+        if (window.getComputedStyle(element).display == "block") {
+          if (length > 0 && tagName(element.childNodes[length-1]) == "br") {
+            // last br in a block element is normally not visible, so jump before the br
+            moveCaretBefore(element.childNodes[length-1]);
+          }
+        }
         break;
       case "moveCursorBeforeElement":
         const elementOfManipulation = manipulation.node
