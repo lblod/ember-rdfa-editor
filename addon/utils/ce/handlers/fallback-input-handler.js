@@ -21,7 +21,7 @@ export default class FallbackInputHandler {
     else if (event.type == "input" && event.inputType == "deleteContentBackward") {
       return false;
     }
-    else if (! ["keydown", "keyup", "mousedown"].includes(event.type)){
+    else if (! ["keydown", "keyup", "mousedown","beforeinput"].includes(event.type)){
       // keydown is before anything happens and thus not interesting for fallback
       // motion events were captured above this if we don't want catch other keyup events, they also generate an input event which we do handle
       // mousedown is not interesting at the moment, only mouse up
