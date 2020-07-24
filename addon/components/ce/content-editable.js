@@ -246,8 +246,9 @@ export default class ContentEditable extends Component {
    * Chain 1: (regular input)
    * keydown (captured if you want to prevent the key from doing something do it here, preventdefault will prevent keypress and input from firing)
    * keypress (we ignore this, it's badly spec'ed and behaves differently in different browsers)
+   * beforeinput (sometimes captured, has potential, because it can replace the entire keydown/keypress mess. currently only in chrome)
    * keyup (we should ignore this, because it fires even if keydown does a preventDefault. however it is one of the few places we can capture page up, page down, arrow up and down so we capture those here using the fallback input handler)
-   * input (captured, input has happened and all you can down is clean up)
+   * input (captured, input has happened and all you can do is clean up)
    *
    * Chain 2 ( in FF input fires after compositionend): compositions (mostly on mac)
    * compositionupdate (we ignore this)
