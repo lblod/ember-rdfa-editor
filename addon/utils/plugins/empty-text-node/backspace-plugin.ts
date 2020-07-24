@@ -26,7 +26,7 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
       else if (this.manipulationWillResultInTextNodeWithoutText(manipulation)) {
         return {
           allow: true,
-          executor: this.removeTextNode
+          executor: this.replaceLastCharacterWithInvisibleSpace
         }
       }
     }
