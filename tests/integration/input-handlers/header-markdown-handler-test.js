@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, triggerKeyEvent } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import type from '../../util/type-helper';
+import type from '../util/type-helper';
 
 module('Integration | InputHandler | header-markdown-handler', function(hooks) {
   setupRenderingTest(hooks);
