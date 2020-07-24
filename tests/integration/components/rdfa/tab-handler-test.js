@@ -22,6 +22,7 @@ module('Integration | Component | tab-handler', function(hooks) {
     window.getSelection().collapse(bazWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
+    assert.equal(window.getSelection().baseNode.data, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 0);
   });
@@ -44,6 +45,7 @@ module('Integration | Component | tab-handler', function(hooks) {
     window.getSelection().collapse(bazWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
+    assert.equal(window.getSelection().baseNode.data, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 0);
   });
@@ -65,6 +67,7 @@ module('Integration | Component | tab-handler', function(hooks) {
     window.getSelection().collapse(bazWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
+    assert.equal(window.getSelection().baseNode.data, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 0);
   });
