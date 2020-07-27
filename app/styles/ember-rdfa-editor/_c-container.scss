@@ -22,7 +22,7 @@
     position: absolute;
     bottom: 0;
     left: $say-unit-small + $say-unit-tiny;
-    width: 380px;
+    width: 280px;
     max-height: calc(100% - 44px);
     overflow: auto;
     padding: $say-unit-small $say-unit-small + $say-unit-tiny;
@@ -44,18 +44,11 @@
       top: 0;
     }
 
-    @include mq(medium) {
-      width: 30%;
-
-      @if $say-paper == true and $say-paper-sidebar == true {
-        padding: $say-unit;
-        bottom: auto;
-      }
+    p{
+       overflow-wrap: break-word;
+       width: 240px;
     }
 
-    @include mq(large) {
-      width: calc(25% - #{$say-unit-small + $say-unit-tiny});
-    }
   }
 
   .say-container__aside {
