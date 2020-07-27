@@ -452,7 +452,7 @@ function moveCaret(node: Node, position: number) {
  * @method moveCaretBefore
  * @param {ChildNode} child
  */
-export function moveCaretBefore(child: ChildNode) {
+export function moveCaretBefore(child: ChildNode) : null | Selection {
   let currentSelection = window.getSelection();
   if (currentSelection) {
     if (child.parentElement) {
@@ -461,6 +461,8 @@ export function moveCaretBefore(child: ChildNode) {
       range.collapse(true);
       currentSelection.removeAllRanges();
       currentSelection.addRange(range);
+
+      return currentSelection;
     }
     else {
       console.warn("asked to move caret before an element that is no longer connected to the dom tree", child); // esline-disable-line no-console
@@ -469,6 +471,7 @@ export function moveCaretBefore(child: ChildNode) {
   else {
     console.warn("window.getSelection did not return a selection"); // esline-disable-line no-console
   }
+  return null;
 }
 
 /**
