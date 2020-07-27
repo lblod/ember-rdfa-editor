@@ -4,7 +4,9 @@ import { BackspacePlugin,
          ManipulationGuidance,
          RemoveCharacterManipulation,
          moveCaretBefore,
+         moveCaret,
          stringToVisibleText} from '../../ce/handlers/backspace-handler';
+import { invisibleSpace } from '../../ce/dom-helpers';
 /**
  * In some cases the browser acts a bit weird when we empty a text node. this plugin tries to handle these edge cases.
  * Specific reasons we do this:
@@ -18,13 +20,13 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
       if (manipulation.position == 0 && manipulation.node.textContent?.length == 1) {
         return {
           allow: true,
-          executor: this.removeTextNode
+          executor: this.replaceLastCharacterWithInvisibleSpace
         }
       }
       else if (this.manipulationWillResultInTextNodeWithoutText(manipulation)) {
         return {
           allow: true,
-          executor: this.removeTextNode
+          executor: this.replaceLastCharacterWithInvisibleSpace
         }
       }
     }
@@ -35,7 +37,18 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
     const nodeText = manipulation.node.textContent || "";
     const position = manipulation.position;
     return stringToVisibleText(`${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`).length == 0;
-    }
+  }
+
+  /**
+   * replace textnode content with an invisible space and position cursor at the beginning of the node
+   */
+  replaceLastCharacterWithInvisibleSpace(manipulation: RemoveCharacterManipulation, editor: Editor) {
+    const { node } = manipulation;
+    node.textContent = invisibleSpace;
+    moveCaret(node, 0);
+    editor.updateRichNode();
+  }
+
   /**
    * This remove the text node completely
    */

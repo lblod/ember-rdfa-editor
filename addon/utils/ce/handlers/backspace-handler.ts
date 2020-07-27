@@ -57,6 +57,7 @@ interface RawEditor {
   currentSelection: RawEditorSelection
   richNode: RichNode
   currentNode: Node
+  updateSelectionAfterComplexInput: () => void
 }
 
 interface RawEditorSelection extends Array<number> {
@@ -436,7 +437,7 @@ export function stringToVisibleText(string : string) {
  *     to set the carret after the start of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 0)
  * NOTE: this a blantand copy/adapt from moveCaretInTextNode from raw-editor
  */
-function moveCaret(node: Node, position: number) {
+export function moveCaret(node: Node, position: number) {
   let currentSelection = window.getSelection();
   if (currentSelection) {
     let docRange = document.createRange();
@@ -593,9 +594,9 @@ export default class BackspaceHandler {
    * @return boolean
    * @public
    */
-  isHandlerFor(event: KeyboardEvent) {
-    return event.type === "keydown"
-      && event.key === 'Backspace'
+  isHandlerFor(event: KeyboardEvent | InputEvent ) {
+    return ((event.type === "keydown" && (event as KeyboardEvent).key === 'Backspace')
+      || (event.type == "beforeinput" && (event as InputEvent).inputType == "deleteContentsBackwards"))
       && this.rawEditor.currentSelectionIsACursor
       && this.doesCurrentNodeBelongToContentEditable();
   }
@@ -607,10 +608,11 @@ export default class BackspaceHandler {
    * @public
    */
   handleEvent(event : Event) {
-    // TODO: reason about async behaviour of backspace. Using .then on backspace causes chrome to not update view before we release the backspace button. 
+    // TODO: reason more about async behaviour of backspace.
     event.preventDefault(); // make sure event propagation is stopped, async behaviour of backspace could cause the browser to execute eventDefault before it is finished
-    this.backspace();
-    this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
+    this.backspace().then( () => {
+      this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
+    });
     return HandlerResponse.create({ allowPropagation: false });
   }
 
@@ -825,6 +827,12 @@ export default class BackspaceHandler {
         const element = manipulation.node;
         const length = element.childNodes.length;
         moveCaret(element, length);
+        if (window.getComputedStyle(element).display == "block") {
+          if (length > 0 && tagName(element.childNodes[length-1]) == "br") {
+            // last br in a block element is normally not visible, so jump before the br
+            moveCaretBefore(element.childNodes[length-1]);
+          }
+        }
         break;
       case "moveCursorBeforeElement":
         const elementOfManipulation = manipulation.node
@@ -855,7 +863,6 @@ export default class BackspaceHandler {
     // check where our cursor is and get the deepest "thing" before
     // the cursor (character or node)
     const thingBeforeCursor: ThingBeforeCursor = this.getThingBeforeCursor();
-
     switch( thingBeforeCursor.type ) {
 
       case "character":
