@@ -425,7 +425,7 @@ export function stringToVisibleText(string : string) {
 
 /**
  * set the carret on the desired position. This function uses the browsers selection api and does not update editor state!
- *
+ * when possible places cursor at the end of the textNode before the actual cursor position. This makes it easier to determine coordinates later on.
  * @method moveCaret
  * @param {DOMNode} node, a text node or dom element
  * @param {number} offset, for a text node the relative offset within the text node (i.e. number of characters before the carret).
@@ -435,16 +435,50 @@ export function stringToVisibleText(string : string) {
  *     to set the carret after the end of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 2) (e.g setCarret(element, element.children.length))
  *     to set the carret after the b in a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 1) (e.g setCarret(element, indexOfChild + 1))
  *     to set the carret after the start of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 0)
- * NOTE: this a blantand copy/adapt from moveCaretInTextNode from raw-editor
+ * NOTE: This is similar, but not exactly the same as what setCaret does. Main differences:
+ *           - setCaret will  also consider the textNode after the provided position, which we explicitly don't do here
+ *           - setCaret updates editor state (notably rawEditor.currentSelection), which also causes movementObservers to run
  */
-export function moveCaret(node: Node, position: number) {
+export function moveCaret(node: Node, position: number): null | Selection {
   let currentSelection = window.getSelection();
   if (currentSelection) {
-    let docRange = document.createRange();
-    docRange.setStart(node, position);
-    docRange.collapse(true);
-    currentSelection.removeAllRanges();
-    currentSelection.addRange(docRange);
+    if (node.nodeType == Node.TEXT_NODE) {
+      let docRange = document.createRange();
+      docRange.setStart(node, position);
+      docRange.collapse(true);
+      currentSelection.removeAllRanges();
+      currentSelection.addRange(docRange);
+    }
+    else if (node.nodeType == Node.ELEMENT_NODE) {
+      const element = node as HTMLElement;
+      if (position > 0 && element.childNodes[position-1].nodeType == Node.TEXT_NODE) {
+        // cheat a bit and move cursor inside the previous text node if possible
+        const textNodeBeforeCursor = element.childNodes[position-1] as Text;
+        let docRange = document.createRange();
+        docRange.setStart(textNodeBeforeCursor, textNodeBeforeCursor.length);
+        docRange.collapse(true);
+        currentSelection.removeAllRanges();
+        currentSelection.addRange(docRange);
+      }
+      else {
+        let docRange = document.createRange();
+        docRange.setStart(element, position);
+        docRange.collapse(true);
+        currentSelection.removeAllRanges();
+        currentSelection.addRange(docRange);
+      }
+    }
+    else {
+      let docRange = document.createRange();
+      docRange.setStart(node, position);
+      docRange.collapse(true);
+      currentSelection.removeAllRanges();
+      currentSelection.addRange(docRange);
+    }
+    return currentSelection;
+  }
+  else {
+    throw "window.getSelection did not return a selection";
   }
 }
 
@@ -454,25 +488,15 @@ export function moveCaret(node: Node, position: number) {
  * @param {ChildNode} child
  */
 export function moveCaretBefore(child: ChildNode) : null | Selection {
-  let currentSelection = window.getSelection();
-  if (currentSelection) {
-    if (child.parentElement) {
-      const range = document.createRange();
-      range.setStartBefore(child);
-      range.collapse(true);
-      currentSelection.removeAllRanges();
-      currentSelection.addRange(range);
-
-      return currentSelection;
-    }
-    else {
-      console.warn("asked to move caret before an element that is no longer connected to the dom tree", child); // esline-disable-line no-console
-    }
+  const parentElement = child.parentElement;
+  if (parentElement) {
+    const indexOfChild = Array.from(parentElement.childNodes).indexOf(child);
+    return moveCaret(parentElement, indexOfChild);
   }
   else {
-    console.warn("window.getSelection did not return a selection"); // esline-disable-line no-console
+    console.warn('trying to move cursor before a child that is no longer connected to the dom tree');
+    return null;
   }
-  return null;
 }
 
 /**
