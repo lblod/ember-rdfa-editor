@@ -795,6 +795,13 @@ export default class BackspaceHandler {
           // - spaces moving to the start of a node
           nodeText = `${nodeText.slice(0, position + 1)}\u00A0${nodeText.slice(position + 2)}`;
         }
+        if (nodeText.length - 1 == position && nodeText.length > 1 && nodeText.slice(position - 1 , position) == " ") {
+          // if the character before our new position is a space, it might become invisible, so we need to convert it to a non breaking space
+          // cases where this happens:
+          // - two spaces becoming neighbours after the delete
+          // - spaces moving to the end of a node
+          nodeText = `${nodeText.slice(0, position - 1)}\u00A0${nodeText.slice(position)}`;
+        }
         node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
         this.rawEditor.updateRichNode();
         moveCaret(node, position);
