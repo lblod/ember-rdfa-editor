@@ -4,7 +4,7 @@ import { render, triggerKeyEvent } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import type from '../../util/type-helper';
 
-module('Integration | Component | header-markdown-handler', function(hooks) {
+module('Integration | InputHandler | header-markdown-handler', function(hooks) {
   setupRenderingTest(hooks);
 
   test('h1 test', async function(assert) {

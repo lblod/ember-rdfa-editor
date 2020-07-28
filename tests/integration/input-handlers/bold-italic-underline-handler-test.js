@@ -3,12 +3,12 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, triggerKeyEvent, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-module('Integration | Component | tab-handler', function(hooks) {
+module('Integration | InputHandler | bold-italic-underline-handler', function(hooks) {
   setupRenderingTest(hooks);
 
-  test('tab works with li', async function(assert) {
+  test('converting to bold works', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('<li>baz</li><li>foo</li>');
+      editor.setHtmlContent('baz');
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -18,20 +18,17 @@ module('Integration | Component | tab-handler', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
     var editor = document.querySelector("div[contenteditable]");
-    const bazWordNode = editor.childNodes[0];
-    window.getSelection().collapse(bazWordNode,0);
+    window.getSelection().selectAllChildren(editor);
     click('div[contenteditable]');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().baseNode.data, 'foo');
-    const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 66, {ctrlKey: true});
+
+    const innerHtml = editor.innerHTML;
+    assert.equal(innerHtml, '<strong data-editor-position-level="0">baz</strong>');
   });
 
-
-  //not working
-  test('tab works with p', async function(assert) {
+  test('converting to italic works', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('<p>baz</p><p>foo</p>');
+      editor.setHtmlContent('baz');
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -41,19 +38,17 @@ module('Integration | Component | tab-handler', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
     var editor = document.querySelector("div[contenteditable]");
-    const bazWordNode = editor.childNodes[0];
-    window.getSelection().collapse(bazWordNode,0);
+    window.getSelection().selectAllChildren(editor);
     click('div[contenteditable]');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().baseNode.data, 'foo');
-    const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 73, {ctrlKey: true});
+
+    const innerHtml = editor.innerHTML;
+    assert.equal(innerHtml, '<em data-editor-position-level="0">baz</em>');
   });
 
-  //not working
-  test('tab works with div', async function(assert) {
+  test('converting to underline works', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('<div>baz</div><div>foo</div>');
+      editor.setHtmlContent('baz');
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -63,13 +58,12 @@ module('Integration | Component | tab-handler', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
     var editor = document.querySelector("div[contenteditable]");
-    const bazWordNode = editor.childNodes[0];
-    window.getSelection().collapse(bazWordNode,0);
+    window.getSelection().selectAllChildren(editor);
     click('div[contenteditable]');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().baseNode.data, 'foo');
-    const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 85, {ctrlKey: true});
+
+    const innerHtml = editor.innerHTML;
+    assert.equal(innerHtml, '<u data-editor-position-level="0">baz</u>');
   });
 
 });

@@ -3,51 +3,12 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, triggerKeyEvent, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-module('Integration | Component | arrow-handler', function(hooks) {
+module('Integration | InputHandler | tab-handler', function(hooks) {
   setupRenderingTest(hooks);
 
-  test('arrow right works', async function(assert) {
+  test('tab works with li', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('baz foo');
-    });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
-    var editor = document.querySelector("div[contenteditable]");
-    window.getSelection().collapse(editor,0);
-    click('div[contenteditable]');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
-    const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 1);
-  });
-
-  test('arrow left works', async function(assert) {
-    this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('baz <div>foo</div>');
-    });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
-    var editor = document.querySelector("div[contenteditable]");
-    const bazNode = editor.childNodes[0];
-    window.getSelection().collapse(bazNode,1);
-    click('div[contenteditable]');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowLeft');
-    const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
-  });
-
-  test('arrow right works with blocks', async function(assert) {
-    this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('baz<div>foo</div>');
+      editor.setHtmlContent('<li>baz</li><li>foo</li>');
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -60,17 +21,17 @@ module('Integration | Component | arrow-handler', function(hooks) {
     const bazWordNode = editor.childNodes[0];
     window.getSelection().collapse(bazWordNode,0);
     click('div[contenteditable]');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
+    assert.equal(window.getSelection().baseNode.data, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 0);
   });
 
-  test('arrow left works with blocks', async function(assert) {
+
+  //not working
+  test('tab works with p', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('baz<div>foo</div>');
+      editor.setHtmlContent('<p>baz</p><p>foo</p>');
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -80,13 +41,35 @@ module('Integration | Component | arrow-handler', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
     var editor = document.querySelector("div[contenteditable]");
-    const bazWordNode = editor.childNodes[1];
+    const bazWordNode = editor.childNodes[0];
     window.getSelection().collapse(bazWordNode,0);
     click('div[contenteditable]');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowLeft');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
+    assert.equal(window.getSelection().baseNode.data, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 3);
+    assert.equal(cursorPosition, 0);
   });
 
+  //not working
+  test('tab works with div', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('<div>baz</div><div>foo</div>');
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const bazWordNode = editor.childNodes[0];
+    window.getSelection().collapse(bazWordNode,0);
+    click('div[contenteditable]');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
+    assert.equal(window.getSelection().baseNode.data, 'foo');
+    const cursorPosition = window.getSelection().anchorOffset;
+    assert.equal(cursorPosition, 0);
+  });
 
 });

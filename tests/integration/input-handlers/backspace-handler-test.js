@@ -3,7 +3,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, triggerKeyEvent, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-module('Integration | Component | backspace-handler', function(hooks) {
+module('Integration | InputHandler | backspace-handler', function(hooks) {
   setupRenderingTest(hooks);
 
   test('it renders', async function(assert) {
@@ -22,32 +22,52 @@ module('Integration | Component | backspace-handler', function(hooks) {
 
   });
 
-  test('it deletes properly', async function(assert) {
+  test('it backspaces properly', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('capybaras');
+    });
     await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
-
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 67); //c
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 65); //a
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 80); //p
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 89); //y
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 66); //b
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 65); //a
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 82); //r
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 65); //a
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 83); //s
-
+    var editor = document.querySelector("div[contenteditable]");
+    const wordNode = editor.childNodes[0];
+    window.getSelection().collapse(wordNode,9);
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
-    assert.dom('div[contenteditable]').hasText('capybara ');
+    assert.dom('div[contenteditable]').hasText('capybara');
 
   });
 
-  test('delete tests case 1', async function(assert) {
+  test('backspace tests case 1: consecutive breaks', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('baz <span style="background-color:green">bar</span><!--test -->foo');
+      editor.setHtmlContent('baz<br><br>foo');
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const fooWordNode = editor.childNodes[3];
+    window.getSelection().collapse(fooWordNode,0);
+    click('div[contenteditable]');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 100);
+    const innerHtml = editor.innerHTML;
+    assert.equal(innerHtml, 'baz<br>foo');
+    const cursorPosition = window.getSelection().anchorOffset;
+    const cursorNode = window.getSelection().anchorNode;
+    assert.ok(cursorPosition == 0 && cursorNode.textContent == "foo", "cursor is where it should be");
+  });
+
+  test('backspace tests case 2: invisible spans', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('baz<span></span>foo');
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -61,13 +81,15 @@ module('Integration | Component | backspace-handler', function(hooks) {
     window.getSelection().collapse(fooWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'baz <span data-editor-position-level="0">ba</span>foo');
+    assert.equal(innerHtml, 'bafoo');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 2);
+    const cursorNode = window.getSelection().anchorNode;
+    assert.ok(cursorPosition == 2 && cursorNode.textContent == "ba", "cursor is where it should be");
   });
 
-  test('delete tests case 2', async function(assert) {
+  test('backspace tests case 3: spans with text', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz <span style="background-color:green">bar</span>foo');
     });
@@ -84,14 +106,15 @@ module('Integration | Component | backspace-handler', function(hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
+    await setTimeout(() => {}, 100);
     assert.equal(innerHtml, 'baz <span data-editor-position-level="0">ba</span>foo');
     const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 2);
   });
 
-  test('delete tests case 3', async function(assert) {
+  test('backspace tests case 4: backspacing into a div with a br', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('baz <span style="background-color:green">bar</span>foo');
+      editor.setHtmlContent('<div>foo<br></div>&nbsp;');
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -101,39 +124,18 @@ module('Integration | Component | backspace-handler', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
     var editor = document.querySelector("div[contenteditable]");
-    const fooWordNode = editor.childNodes[2];
-    window.getSelection().collapse(fooWordNode,1);
+    window.getSelection().collapse(editor,1);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'baz <span>bar</span>oo');
+    assert.equal(innerHtml, '<div data-editor-position-level="0">foo<br></div>&nbsp;');
+    const cursorNode = window.getSelection().anchorNode;
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.ok(cursorNode.textContent == "foo" && cursorPosition == 3, "cursor at the end of foo");
   });
 
-  test('delete tests case 4', async function(assert) {
-    this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('baz <span style="background-color:green"></span>foo');
-    });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
-    var editor = document.querySelector("div[contenteditable]");
-    const fooWordNode = editor.childNodes[2];
-    window.getSelection().collapse(fooWordNode,0);
-    click('div[contenteditable]');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
-    const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'baz <span data-editor-position-level="0"></span>foo');
-    const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
-  });
-
-  test('delete tests case 5', async function(assert) {
+  test('backspace tests case 5: backspacing into an empty div', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz <div style="background-color:green"></div>foo');
     });
@@ -149,13 +151,14 @@ module('Integration | Component | backspace-handler', function(hooks) {
     window.getSelection().collapse(fooWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 100);
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'baz <div data-editor-position-level="0"></div>foo');
-    const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.equal(innerHtml, 'baz foo');
+    const cursorPosition = window.getSelection().anchorNode;
+    assert.equal(cursorPosition.textContent, "baz ");
   });
 
-  test('delete tests case 6', async function(assert) {
+  test('backspace tests case 6: backspacing into a div', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz <div style="background-color:green">foo</div>&nbsp;');
     });
@@ -172,12 +175,13 @@ module('Integration | Component | backspace-handler', function(hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'baz <div data-editor-position-level="0">fo</div> ');
+    assert.equal(innerHtml, 'baz <div data-editor-position-level="0">foo</div>&nbsp;');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 2);
+    const cursorNode = window.getSelection().anchorNode;
+    assert.ok(cursorPosition == 3 && cursorNode.textContent == "foo", "cursor at the end of foo");
   });
 
-  test('delete tests block case 1: it flags the block', async function(assert) {
+  test('backspace lump node case 1: it flags the block', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" style="background-color:green">bar</div>foo');
     });
@@ -192,6 +196,7 @@ module('Integration | Component | backspace-handler', function(hooks) {
     const fooWordNode = editor.childNodes[2];
     window.getSelection().collapse(fooWordNode,0);
     click('div[contenteditable]');
+    await setTimeout(() => {}, 100);
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" data-flagged-remove="complete">bar</div>foo');
@@ -199,7 +204,7 @@ module('Integration | Component | backspace-handler', function(hooks) {
     assert.equal(cursorPosition, 0);
   });
 
-  test('delete tests block case 1: it removes the block on the second delete', async function(assert) {
+  test('backspace lump node case 1: it removes the block on the second backspace', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" style="background-color:green">bar</div>foo');
     });
@@ -215,14 +220,14 @@ module('Integration | Component | backspace-handler', function(hooks) {
     window.getSelection().collapse(fooWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 100);
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, 'baz foo');
-    const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 4);
   });
 
-  test('delete tests block case 2: it flags the block', async function(assert) {
+  test('backspace lump node case 2: it flags the block', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" style="background-color:green">bar</div>&nbsp;');
     });
@@ -239,12 +244,12 @@ module('Integration | Component | backspace-handler', function(hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" data-flagged-remove="complete">bar</div> ');
+    assert.equal(innerHtml, 'baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" data-flagged-remove="complete">bar</div>&nbsp;');
     const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 0);
   });
 
-  test('delete tests block case 2: it removes the block on the second delete', async function(assert) {
+  test('backspace lumpnode case 2: it removes the block on the second backspace', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" style="background-color:green">bar</div>&nbsp;');
     });
@@ -260,14 +265,14 @@ module('Integration | Component | backspace-handler', function(hooks) {
     window.getSelection().collapse(fooWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'baz  ');
-    const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 4);
+    assert.equal(innerHtml, 'baz &nbsp;');
   });
 
-  test('delete tests block case 3: it flags the block', async function(assert) {
+  test('backspace lump node case 3: it flags the block', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent(`baz
       <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" style="background-color:green">
@@ -287,24 +292,19 @@ module('Integration | Component | backspace-handler', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
     var editor = document.querySelector("div[contenteditable]");
-    const fooWordNode = editor.childNodes[2];
+    const fooWordNode = editor.childNodes[3];
     window.getSelection().collapse(fooWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
-    const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, `baz
-      <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode">
-        <span>some textNode number 1</span>
-        <span>bar number 1</span>
-      </div><div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" data-flagged-remove="complete">
-        <span>some textNode number 2</span>
-        <span>bar number 2</span>
-      </div> foo`);
+    await setTimeout(() => {}, 500);
+    const lumpNode = editor.childNodes[2];
+    console.warn(lumpNode);
+    assert.equal(lumpNode.getAttribute("data-flagged-remove"),"complete");
     const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 0);
   });
 
-  test('delete tests block case 3: it removes the block on the second delete', async function(assert) {
+  test('backspace lump node case 3: it removes the block on the second backspace', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent(`baz
       <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" style="background-color:green">
@@ -324,22 +324,18 @@ module('Integration | Component | backspace-handler', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
     var editor = document.querySelector("div[contenteditable]");
-    const fooWordNode = editor.childNodes[2];
+    const fooWordNode = editor.childNodes[3];
     window.getSelection().collapse(fooWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, `baz
-      <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode">
-        <span>some textNode number 1</span>
-        <span>bar number 1</span>
-      ​</div> foo`);
-    const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 10);
+    assert.equal(editor.childNodes.length, 3);
   });
 
-  test('delete ignores breakline as it doesn\'t render in the editor', async function(assert) {
+  test('backspace ignores breakline as it doesn\'t render in the editor', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent(`baz
 
@@ -354,10 +350,10 @@ module('Integration | Component | backspace-handler', function(hooks) {
     />`);
     var editor = document.querySelector("div[contenteditable]");
     const fooWordNode = editor.childNodes[1];
-    
     window.getSelection().collapse(fooWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
     const innerHtml = editor.innerHTML;
     assert.equal(innerHtml, `ba<span>foo</span>`);
     const cursorPosition = window.getSelection().anchorOffset;
