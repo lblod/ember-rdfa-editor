@@ -6,7 +6,7 @@ import hbs from 'htmlbars-inline-precompile';
 module('Integration | InputHandler | backspace-handler', function(hooks) {
   setupRenderingTest(hooks);
 
-  test('it renders', async function(assert) {
+  test('editor renders', async function(assert) {
     // Set any properties with this.set('myProperty', 'value');
     // Handle any actions with this.on('myAction', function(val) { ... });
     // this.on('handleRdfaEditorInit', () => {
@@ -41,7 +41,27 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
 
   });
 
-  test('backspace tests case 1: consecutive breaks', async function(assert) {
+  test('backspace on breaks: jump over first break before blocks', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('<div>this is a block and it has a break after it</div><br><div>this block is followed by two breaks</div>');
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const secondDiv = editor.childNodes[2];
+    window.getSelection().collapse(secondDiv,0); // cursor at start of div
+    click('div[contenteditable]'); // ensure editor state
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    const cursorNode = window.getSelection().anchorNode;
+    assert.equal(cursorNode.previousSibling, editor.childNodes[0], "cursor should be after first div");
+  });
+
+  test('backspace on breaks: consecutive breaks', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz<br><br>foo');
     });
@@ -65,7 +85,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     assert.ok(cursorPosition == 0 && cursorNode.textContent == "foo", "cursor is where it should be");
   });
 
-  test('backspace tests case 2: invisible spans', async function(assert) {
+  test('backspace inline elements: invisible span', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz<span></span>foo');
     });
@@ -89,7 +109,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     assert.ok(cursorPosition == 2 && cursorNode.textContent == "ba", "cursor is where it should be");
   });
 
-  test('backspace tests case 3: spans with text', async function(assert) {
+  test('backspace inline elements: spans with text', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz <span style="background-color:green">bar</span>foo');
     });
@@ -112,7 +132,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     assert.equal(cursorPosition, 2);
   });
 
-  test('backspace tests case 4: backspacing into a div with a br', async function(assert) {
+  test('backspace block elements: backspacing into a div with a br', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('<div>foo<br></div>&nbsp;');
     });
@@ -135,7 +155,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     assert.ok(cursorNode.textContent == "foo" && cursorPosition == 3, "cursor at the end of foo");
   });
 
-  test('backspace tests case 5: backspacing into an empty div', async function(assert) {
+  test('backspace block elements: backspacing into an empty div', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz <div style="background-color:green"></div>foo');
     });
@@ -158,7 +178,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     assert.equal(cursorPosition.textContent, "baz ");
   });
 
-  test('backspace tests case 6: backspacing into a div', async function(assert) {
+  test('backspace block elements: backspacing into a div', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz <div style="background-color:green">foo</div>&nbsp;');
     });

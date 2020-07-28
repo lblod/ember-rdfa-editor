@@ -7,7 +7,7 @@ import LumpNodeBackspacePlugin from '../../plugins/lump-node/backspace-plugin';
 import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
 import RdfaBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/backspace-plugin';
 import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-element/backspace-plugin';
-
+import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
 /**
  * List of all Void elements.
  *
@@ -608,7 +608,8 @@ export default class BackspaceHandler {
       new RdfaBackspacePlugin(),
       new ListBackspacePlugin(),
       new EmptyTextNodePlugin(),
-      new EmptyElementBackspacePlugin()
+      new EmptyElementBackspacePlugin(),
+      new BrSkippingBackspacePlugin()
     ];
   }
 
@@ -714,9 +715,11 @@ export default class BackspaceHandler {
       return false;
     }
     else if( ! previousVisualCursorCoordinates.length && this.selectionCoordinatesInEditor.length ){
+      console.log(`no previous coordinates`);
       return true;
     }
     else if( previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
+      console.log('no new coordinates');
       return true;
     }
     //Previous and current have visual coordinates, we need to compare the contents
@@ -859,12 +862,6 @@ export default class BackspaceHandler {
         const element = manipulation.node;
         const length = element.childNodes.length;
         moveCaret(element, length);
-        if (window.getComputedStyle(element).display == "block") {
-          if (length > 0 && tagName(element.childNodes[length-1]) == "br") {
-            // last br in a block element is normally not visible, so jump before the br
-            moveCaretBefore(element.childNodes[length-1]);
-          }
-        }
         break;
       case "moveCursorBeforeElement":
         const elementOfManipulation = manipulation.node
