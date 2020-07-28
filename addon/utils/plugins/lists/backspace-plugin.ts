@@ -4,7 +4,8 @@ import { MoveCursorBeforeElementManipulation,
          Manipulation,
          Editor,
          RemoveEmptyElementManipulation,
-         RemoveElementWithChildrenThatArentVisible
+         RemoveElementWithChildrenThatArentVisible,
+         RemoveEmptyTextNodeManipulation
        } from '../../ce/handlers/backspace-handler';
 import { BackspacePlugin } from '../../ce/handlers/backspace-handler';
 import { runInDebug } from '@ember/debug';
@@ -58,6 +59,14 @@ export default class ListBackspacePlugin implements BackspacePlugin {
           allow: true,
           executor: this.jumpToLastLiOfList
         };
+      }
+    }
+    else if (manipulation.type == "removeEmptyTextNode") {
+      manipulation as RemoveEmptyTextNodeManipulation;
+      const text = manipulation.node;
+      const element = text.parentElement;
+      if (tagName(element) == "li" && element?.firstChild == text) {
+        return this.guidanceForJumpBeforeLi(element);
       }
     }
     return null;
