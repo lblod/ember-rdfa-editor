@@ -1,9 +1,9 @@
 <div>
   {{#each this.rdfaBlocks as |block|}}
     {{#if block.lastContext}}
-      {{#if (and block.lastContext.typeof (gte block.topPosition 0))}}
+      {{#if (and block.lastContext.typeof block.hasTopPosition)}}
         <p style="position: absolute; top: {{block.topPosition}}px;">{{block.lastContext.typeof.[0]}}</p>
-      {{else if (and block.lastContext._property (gte block.topPosition 0))}}
+      {{else if (and block.lastContext._property block.hasTopPosition)}}
         <p style="position: absolute; top: {{block.topPosition}}px;">{{block.lastContext._property}}</p>
       {{/if}}
     {{/if}}

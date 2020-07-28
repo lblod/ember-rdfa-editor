@@ -27,6 +27,7 @@ export default class EditorSuggestedHints extends Component {
           if(node.rdfaContext && node.rdfaContext.length) {
             node.lastContext = node.rdfaContext[node.rdfaContext.length-1]
             if(node.domNode && (node.domNode.offsetTop || node.domNode.offsetTop === 0)) {
+              node.hasTopPosition = true;
               node.topPosition = this.blockPlacement(node.domNode.offsetTop);
               console.log(node.topPosition)
             }
