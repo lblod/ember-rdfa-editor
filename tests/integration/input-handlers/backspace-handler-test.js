@@ -359,7 +359,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 2);
   });
-  test('backspace properly handles spaces at edges', async function(assert) {
+  test('backspace properly handles spaces at end properly', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent(`<div id="spacetest">a visual space test f</div>`);
     });
@@ -377,12 +377,27 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
     assert.equal(divNode.innerText.replace(/\s/g, " "), "a visual space test ");
+  });
+
+    test('backspace properly handles spaces at start properly', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent(`<div id="spacetest">a visual space test f</div>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const divNode = editor.childNodes[0];
     const textNode = divNode.childNodes[0];
     window.getSelection().collapse(textNode,1); // after 'a' inside the textNode
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
-    assert.equal(divNode.innerText.replace(/\s/g, " "), " visual space test ");
+    assert.equal(divNode.innerText.replace(/\s/g, " "), " visual space test f");
   });
 
 });
