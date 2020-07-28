@@ -1,11 +1,10 @@
 <div>
-  Rdfa Annotations
   {{#each this.rdfaBlocks as |block|}}
     {{#if block.lastContext}}
-      {{#if (and block.lastContext.typeOf block.topPosition)}}
-        <p style="position: absolute; top: {{block.topPosition}}px;">{{block.lastContext.typeOf}}</p>
-      {{else if (and block.lastContext.property block.topPosition)}}
-        <p style="position: absolute; top: {{block.topPosition}}px;">{{block.lastContext.property}}</p>
+      {{#if (and block.lastContext.typeof (gte block.topPosition 0))}}
+        <p style="position: absolute; top: {{block.topPosition}}px;">{{block.lastContext.typeof.[0]}}</p>
+      {{else if (and block.lastContext._property (gte block.topPosition 0))}}
+        <p style="position: absolute; top: {{block.topPosition}}px;">{{block.lastContext._property}}</p>
       {{/if}}
     {{/if}}
   {{/each}}
