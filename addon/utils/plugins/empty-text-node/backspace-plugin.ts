@@ -14,7 +14,8 @@ import { invisibleSpace } from '../../ce/dom-helpers';
  *  - firefox and chrome have issues showing the caret where we expect them in some edge cases (empty text node between blocks for example)
  */
 export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
-  label = "backspace plugin for properly handling empty text nodes"
+  label = "backspace plugin for properly handling empty text nodes";
+
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
     if (manipulation.type == "removeCharacter") {
       if (manipulation.position == 0 && manipulation.node.textContent?.length == 1) {

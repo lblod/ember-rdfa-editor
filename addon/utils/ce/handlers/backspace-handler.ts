@@ -6,7 +6,7 @@ import ListBackspacePlugin from '../../plugins/lists/backspace-plugin';
 import LumpNodeBackspacePlugin from '../../plugins/lump-node/backspace-plugin';
 import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
 import RdfaBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/backspace-plugin';
-
+import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-element/backspace-plugin';
 
 /**
  * List of all Void elements.
@@ -583,7 +583,8 @@ export default class BackspaceHandler {
       new LumpNodeBackspacePlugin(),
       new RdfaBackspacePlugin(),
       new ListBackspacePlugin(),
-      new EmptyTextNodePlugin()
+      new EmptyTextNodePlugin(),
+      new EmptyElementBackspacePlugin()
     ];
   }
 
