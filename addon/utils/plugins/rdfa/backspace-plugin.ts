@@ -1,7 +1,8 @@
 import { BackspacePlugin,
          Editor,
          Manipulation,
-         ManipulationGuidance
+         ManipulationGuidance,
+         stringToVisibleText
        } from '../../ce/handlers/backspace-handler';
 import NodeWalker from '@lblod/marawa/node-walker';
 import { isRdfaNode } from '../../rdfa/rdfa-rich-node-helpers';
@@ -141,7 +142,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       const node = manipulation.node;
       const parent = node.parentElement;
 
-      if(parent && this.hasFlagAlmostComplete(parent) && this.stringToVisibleText(parent.innerText).length == 1)
+      if(parent && this.hasFlagAlmostComplete(parent) && stringToVisibleText(parent.innerText).length == 1)
         return true;
 
       else return false;
@@ -166,7 +167,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       const node = manipulation.node;
       const parent = node.parentElement;
 
-      if(parent && this.hasFlagComplete(parent) && this.stringToVisibleText(parent.innerText).length == 0)
+      if(parent && this.hasFlagComplete(parent) && stringToVisibleText(parent.innerText).length == 0)
         return true;
 
       return false;
@@ -268,9 +269,10 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
 
     else if( anchorNode.nodeType == Node.TEXT_NODE ){
       const parentElement = anchorNode.parentElement;
-      if(parentElement && this.stringToVisibleText(parentElement.innerText).length === 0
+      if(parentElement && stringToVisibleText(parentElement.innerText).length === 0
          && this.isRdfaNode(parentElement)){
         parentElement.setAttribute('data-flagged-remove', 'complete');
+        this.setNextBackgroundColorCycleOnComplete(removedElement, parentElement);
       }
 
       else if(parentElement && this.doesElementLengthRequireAlmostComplete(parentElement) &&
@@ -282,10 +284,8 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
 
       let updatedElement = anchorNode as HTMLElement;
 
-      if(this.stringToVisibleText(updatedElement.innerText).length === 0){
+      if(stringToVisibleText(updatedElement.innerText).length === 0){
         updatedElement.setAttribute('data-flagged-remove', 'complete');
-        // TODO: this is rather clumsy.
-        // The idea is, if user comes in a nested RDFA block, he at least sees some changes while pressing backspace.
         this.setNextBackgroundColorCycleOnComplete(removedElement, updatedElement);
       }
       else if(this.doesElementLengthRequireAlmostComplete(updatedElement)){
@@ -296,7 +296,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
   }
 
   doesElementLengthRequireAlmostComplete(element: HTMLElement) : boolean {
-    const visibleLength = this.stringToVisibleText(element.innerText).length;
+    const visibleLength = stringToVisibleText(element.innerText).length;
     const tresholdTextLength = TEXT_LENGTH_ALMOST_COMPLETE_TRESHOLD;
     return visibleLength < tresholdTextLength;
   }
@@ -319,14 +319,6 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
   hasFlagComplete(element: Element) : boolean {
     const attrValue = element.getAttribute('data-flagged-remove');
     return attrValue === 'complete';
-  }
-
-  //TODO: move to util
-  stringToVisibleText(string : string) : string {
-    // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
-    return string
-      .replace(invisibleSpace,'')
-      .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
   }
 
   /*

@@ -39,12 +39,11 @@ export default class InputDataRemovedHandler extends TextInputHandler {
     return HandlerResponse.create({});
   }
 
-
-    //TODO: move to util
-  stringToVisibleText(foo) {
+  //TODO: move to util
+  stringToVisibleText(stringInstance) {
     // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
-    return foo
-      .replace(invisibleSpace,'')
+    return stringInstance
+      .replace(new RegExp(`[${invisibleSpace}]+`,'g'),'')
       .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
   }
 }
