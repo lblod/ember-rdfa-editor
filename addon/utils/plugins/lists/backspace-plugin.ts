@@ -5,9 +5,9 @@ import { MoveCursorBeforeElementManipulation,
          Editor,
          RemoveEmptyElementManipulation,
          RemoveElementWithChildrenThatArentVisible,
-         RemoveEmptyTextNodeManipulation
-       } from '../../ce/handlers/backspace-handler';
-import { BackspacePlugin } from '../../ce/handlers/backspace-handler';
+         RemoveEmptyTextNodeManipulation,
+       }  from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { runInDebug } from '@ember/debug';
 import { findLastLi } from '../../ce/dom-helpers';
 

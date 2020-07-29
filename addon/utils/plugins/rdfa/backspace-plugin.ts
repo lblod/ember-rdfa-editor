@@ -1,13 +1,11 @@
-import { BackspacePlugin,
-         Editor,
+import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import { Editor,
          Manipulation,
-         ManipulationGuidance,
-         stringToVisibleText
-       } from '../../ce/handlers/backspace-handler';
+         ManipulationGuidance
+       } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import NodeWalker from '@lblod/marawa/node-walker';
-import { isRdfaNode } from '../../rdfa/rdfa-rich-node-helpers';
-import { invisibleSpace } from '../../ce/dom-helpers';
-import { moveCaretBefore } from '../../ce/handlers/backspace-handler';
+import { isRdfaNode } from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-rich-node-helpers';
+import { stringToVisibleText, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler'
 
 
 /**

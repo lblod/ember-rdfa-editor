@@ -1,47 +1,12 @@
-import HandlerResponse from './handler-response';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import { tagName, isVoidElement, invisibleSpace } from '../dom-helpers';
-
-import ListBackspacePlugin from '../../plugins/lists/backspace-plugin';
-import LumpNodeBackspacePlugin from '../../plugins/lump-node/backspace-plugin';
+import { tagName, isVoidElement, invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import ListBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/backspace-plugin';
+import LumpNodeBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/backspace-plugin';
 import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
 import RdfaBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/backspace-plugin';
 import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-element/backspace-plugin';
 import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
-/**
- * List of all Void elements.
- *
- * This list is based on
- * https://www.w3.org/TR/html/syntax.html#void-elements, we removed
- * support for those elements which don't have any sane browser
- * support and for which no typing existed.
- *
- * The HTMLWbrElement type is a custom type which we have added
- * ourselves.  We did not find a type.
- */
-type VoidElement = HTMLAreaElement
-  | HTMLBaseElement
-  | HTMLBRElement
-  | HTMLTableColElement
-  | HTMLEmbedElement
-  | HTMLHRElement
-  | HTMLImageElement
-  | HTMLInputElement
-  | HTMLLinkElement
-  | HTMLMetaElement
-  | HTMLParamElement
-  | HTMLSourceElement
-  | HTMLTrackElement
-  | HTMLWbrElement
-
-/**
- * There is seemingly no type for this specified by the WHATWG.
- *
- * Should this change, this can be removed.
- */
-interface HTMLWbrElement extends HTMLElement {
-  tagName: "wbr" | "WBR"
-}
+import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 
 interface RawEditor {
   currentSelectionIsACursor: boolean,
@@ -64,11 +29,6 @@ interface RawEditorSelection extends Array<number> {
 
 }
 
-export interface Editor {
-  setCarret: ( node: Node, position: number ) => void
-  updateRichNode: () => void
-}
-
 interface RichNode {
   start: number;
 }
@@ -85,109 +45,6 @@ interface DOMRectCoordinatesInEditor {
   bottom: number;
   left: number;
   right: number;
-}
-
-/**
- * Contains a set of all currently supported manipulations.
- */
-export type Manipulation =
-  RemoveEmptyTextNodeManipulation
-  | RemoveCharacterManipulation
-  | RemoveEmptyElementManipulation
-  | RemoveVoidElementManipulation
-  | RemoveOtherNodeManipulation
-  | RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation
-  | RemoveElementWithChildrenThatArentVisible
-  | MoveCursorToEndOfNodeManipulation
-  | MoveCursorBeforeElementManipulation
-  | KeepCursorAtStartManipulation;
-
-/**
- * Base type for any manipulation, ensuring the type interface exists.
- */
-export interface BaseManipulation {
-  type: string;
-  node?: Node;
-}
-
-/**
- * Represents the removal of an empty text node.
- */
-export interface RemoveEmptyTextNodeManipulation extends BaseManipulation {
-  type: "removeEmptyTextNode";
-  node: Text;
-}
-
-/**
- * Represents the removal of a single character from a text node.
- */
-export interface RemoveCharacterManipulation extends BaseManipulation {
-  type: "removeCharacter";
-  node: Text;
-  position: number;
-}
-
-/**
- * Represents keeping the cursor at the start of the editor
- */
-export interface KeepCursorAtStartManipulation extends BaseManipulation {
-  type: "keepCursorAtStart";
-  node: Element;
-}
-
-
-/**
- * Represents the removal of an empty Element (so an Element without childNodes)
- */
-export interface RemoveEmptyElementManipulation extends BaseManipulation {
-  type: "removeEmptyElement";
-  node: Element;
-}
-
-/**
- * Represents the removal of a void element
- */
-export interface RemoveVoidElementManipulation extends BaseManipulation {
-  type: "removeVoidElement";
-  node: VoidElement;
-}
-
-/**
- * Represents moving the cursor after the last child of node
- */
-export interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
-  type: "moveCursorToEndOfNode";
-  node: Element;
-}
-
-/**
- * Represents moving the cursor before the element
- */
-export interface MoveCursorBeforeElementManipulation extends BaseManipulation {
-  type: "moveCursorBeforeElement";
-  node: Element;
-}
-
-/**
- * Represents the removal of a node that is not of type Text of Element
- */
-export interface RemoveOtherNodeManipulation extends BaseManipulation {
-  type: "removeOtherNode";
-  node: Node;
-}
-
-/**
- * Represents the removal of an element that has only invisible text nodes as children
- * TODO: currently replaced by removeElementWithChildrenThatArentVisible
- */
-export interface RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation extends BaseManipulation {
-  type: "removeElementWithOnlyInvisibleTextNodeChildren"
-  node: Element;
-}
-
-export interface RemoveElementWithChildrenThatArentVisible extends BaseManipulation {
-  type: "removeElementWithChildrenThatArentVisible"
-  node: Element;
 }
 
 /**
@@ -358,21 +215,6 @@ export interface BackspacePlugin {
    */
   detectChange: (manipulation: Manipulation) => boolean;
 }
-
-export interface ManipulationGuidance {
-  allow: boolean | undefined
-  executor: ManipulationExecutor | undefined
-}
-
-/**
- * Executor of a single Manipulation, as offered by plugins.
- *
- * The plugin receives a Manipulation and an Editor, and can use both
- * to handle the manipulation.  Returning such manipulation is
- * optional.  A plugin need not handle a manipulation.
- */
-type ManipulationExecutor = (manipulation: Manipulation, editor: Editor) => void;
-
 
 interface Task {
   perform: () => void;
@@ -623,7 +465,7 @@ export default class BackspaceHandler {
     this.backspace().then( () => {
       this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
     });
-    return HandlerResponse.create({ allowPropagation: false });
+    return { allowPropagation: false };
   }
 
   /////////////////

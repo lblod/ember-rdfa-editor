@@ -1,8 +1,8 @@
-import TextInputHandler from '../../ce/handlers/text-input-handler';
+//import TextInputHandler from '../../ce/handlers/text-input-handler';
 import HandlerResponse from '../../ce/handlers/handler-response';
 import { isAllWhitespace, invisibleSpace } from '../../ce/dom-helpers';
 
-export default class InputDataRemovedHandler extends TextInputHandler {
+export default class InputDataRemovedHandler /*extends TextInputHandler*/ {
   /**
    * tests this handler can handle the specified event
    * @method isHandlerFor

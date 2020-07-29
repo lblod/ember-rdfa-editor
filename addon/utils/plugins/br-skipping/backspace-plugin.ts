@@ -1,16 +1,9 @@
-import { BackspacePlugin,
-         Editor,
+import { BackspacePlugin, moveCaretBefore, stringToVisibleText }  from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import { Editor,
          Manipulation,
          ManipulationGuidance,
-         moveCaretBefore,
-  MoveCursorToEndOfNodeManipulation,
-  stringToVisibleText,
-  MoveCursorBeforeElementManipulation} from '../../ce/handlers/backspace-handler';
-import { tagName } from '../../ce/dom-helpers';
-
-function isInvisibleTextNode(text: Text) : boolean {
-  return text.textContent != null && stringToVisibleText(text.textContent).length == 0
-}
+         MoveCursorToEndOfNodeManipulation,
+         MoveCursorBeforeElementManipulation} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 
 function isBr(node: Node) : boolean {
   return node.nodeType == Node.ELEMENT_NODE && (node as HTMLElement).tagName.toLowerCase() == "br";
