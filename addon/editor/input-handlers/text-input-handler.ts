@@ -179,8 +179,8 @@ export default class TextInputHandler implements InputHandler {
         throw "unsupported selection";
       }
     }
-    else if (selection) {
-      return { type: "replaceSelectionWithText", selection: selection, text: event.key };
+    else if (selection && this.rawEditor.rootNode.contains(selection.anchorNode)) {
+      return { type: "replaceSelectionWithText", selection: selection, node: (selection.anchorNode as Node), text: event.key };
     }
     throw "selection is required for text input";
   }

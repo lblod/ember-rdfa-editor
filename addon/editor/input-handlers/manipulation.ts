@@ -184,6 +184,7 @@ export interface InsertTextIntoElementManipulation extends BaseManipulation {
  */
 export interface ReplaceSelectionWithTextManipulation extends BaseManipulation {
   type: "replaceSelectionWithText";
+  node: Node; // the anchorNode
   selection: Selection
   text: string;
 }
