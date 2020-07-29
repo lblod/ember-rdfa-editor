@@ -271,6 +271,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       if(parentElement && this.stringToVisibleText(parentElement.innerText).length === 0
          && this.isRdfaNode(parentElement)){
         parentElement.setAttribute('data-flagged-remove', 'complete');
+        this.setNextBackgroundColorCycleOnComplete(removedElement, parentElement);
       }
 
       else if(parentElement && this.doesElementLengthRequireAlmostComplete(parentElement) &&
@@ -284,8 +285,6 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
 
       if(this.stringToVisibleText(updatedElement.innerText).length === 0){
         updatedElement.setAttribute('data-flagged-remove', 'complete');
-        // TODO: this is rather clumsy.
-        // The idea is, if user comes in a nested RDFA block, he at least sees some changes while pressing backspace.
         this.setNextBackgroundColorCycleOnComplete(removedElement, updatedElement);
       }
       else if(this.doesElementLengthRequireAlmostComplete(updatedElement)){
