@@ -7,6 +7,7 @@ import RdfaBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/bac
 import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-element/backspace-plugin';
 import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
 import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { InputHandler } from './input-handler';
 
 interface RawEditor {
   currentSelectionIsACursor: boolean,
@@ -398,7 +399,7 @@ export function moveCaretBefore(child: ChildNode) : null | Selection {
  * @constructor
  * @extends EmberObject
  */
-export default class BackspaceHandler {
+export default class BackspaceHandler implements InputHandler {
 
   /**
    * The editor instance on which we can execute changes.
@@ -446,11 +447,11 @@ export default class BackspaceHandler {
    * @return boolean
    * @public
    */
-  isHandlerFor(event: KeyboardEvent | InputEvent ) {
+  isHandlerFor(event: Event ) {
+    const selection = window.getSelection();
     return ((event.type === "keydown" && (event as KeyboardEvent).key === 'Backspace')
       || (event.type == "beforeinput" && (event as InputEvent).inputType == "deleteContentsBackwards"))
-      && this.rawEditor.currentSelectionIsACursor
-      && this.doesCurrentNodeBelongToContentEditable();
+      && selection != null && selection.isCollapsed;
   }
 
   /**
