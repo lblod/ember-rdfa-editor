@@ -19,7 +19,7 @@
   }
 
   .say-editor__left-aside {
-    position: absolute;
+    position: absolute !important;
     bottom: 0;
     left: $say-unit-small + $say-unit-tiny;
     width: 280px;

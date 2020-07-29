@@ -15,7 +15,7 @@ export default class EditorSuggestedHints extends Component {
   topPositions = {}
   constructor() {
     super(...arguments);
-    this.interval = setInterval(() => {
+    this.interval = setInterval(async () => {
       const cursor = document.querySelector('[data-editor-position-level="0"]');
       const scanner = new RdfaContextScanner();
       const rdfaBlocks = scanner.analyse(cursor)
@@ -29,14 +29,38 @@ export default class EditorSuggestedHints extends Component {
             if(node.domNode && (node.domNode.offsetTop || node.domNode.offsetTop === 0)) {
               node.hasTopPosition = true;
               node.topPosition = this.blockPlacement(node.domNode.offsetTop);
-              console.log(node.topPosition)
             }
           }
-          return node
+          return node;
         })
-        parentArray = parentArray.filter((parent) => parent.lastContext)
-        console.log(parentArray)
-        this.rdfaBlocks = parentArray
+        parentArray = parentArray.filter((parent) => parent.lastContext);
+        parentArray = await Promise.all(parentArray.map(async (parent) => {
+          if(parent.lastContext.typeof) {
+            const response = await fetch('/resource-labels/getInfo', {
+              method: 'POST',
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({term: parent.lastContext.typeof[0]})
+            });
+            const json = await response.json();
+            parent.lastContext.typeof[0] = json.label;
+          }
+          if(parent.lastContext.properties) {
+            const response = await fetch('/resource-labels/getInfo', {
+              method: 'POST',
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({term: parent.lastContext.properties[0]})
+            });
+            const json = await response.json();
+            parent.lastContext.properties[0] = json.label;
+          }
+          return parent;
+        }));
+        console.log(parentArray);
+        this.rdfaBlocks = parentArray;
       }
     }, 5000);
   }
