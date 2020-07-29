@@ -8,32 +8,7 @@ import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/
 import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
 import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { InputHandler } from './input-handler';
-
-interface RawEditor {
-  currentSelectionIsACursor: boolean,
-  getRichNodeFor( node: Node ): RichNode
-  externalDomUpdate: ( description: string, action: () => void ) => void
-  currentPosition: number
-  setCurrentPosition: (position: number) => void
-  generateDiffEvents: Task,
-  setCarret: ( node: Node, position: number ) => void
-  setPosition: ( position: number ) => void
-  updateRichNode(): () => void
-  rootNode: Element
-  currentSelection: RawEditorSelection
-  richNode: RichNode
-  currentNode: Node
-  updateSelectionAfterComplexInput: () => void
-}
-
-interface RawEditorSelection extends Array<number> {
-
-}
-
-interface RichNode {
-  start: number;
-}
-
+import { RawEditor, RichNode } from '../raw-editor';
 
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
@@ -217,9 +192,7 @@ export interface BackspacePlugin {
   detectChange: (manipulation: Manipulation) => boolean;
 }
 
-interface Task {
-  perform: () => void;
-}
+
 
 /**
  * Awaits until just *after* the next animation frame.
@@ -408,7 +381,7 @@ export default class BackspaceHandler implements InputHandler {
    * @type RawEditor
    * @default null
    */
-  rawEditor: RawEditor;
+  rawEditor: RawEditor
 
   /**
    * Array containing all plugins for the backspace handler.
