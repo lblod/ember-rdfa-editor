@@ -842,13 +842,9 @@ class RawEditor extends EmberObject {
    */
   moveCaretInTextNode(textNode, position){
     try {
-      let docRange = document.createRange();
       let currentSelection = window.getSelection();
-      docRange.setStart(textNode, position);
-      docRange.collapse(true);
-      currentSelection.removeAllRanges();
-      currentSelection.addRange(docRange);
-      this.get('rootNode').focus();
+      currentSelection.collapse(textNode,position);
+      this.rootNode.focus();
     }
     catch(e) {
       console.trace(e); // eslint-disable-line no-console

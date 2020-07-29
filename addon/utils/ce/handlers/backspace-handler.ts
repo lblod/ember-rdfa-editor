@@ -443,37 +443,21 @@ export function moveCaret(node: Node, position: number): null | Selection {
   let currentSelection = window.getSelection();
   if (currentSelection) {
     if (node.nodeType == Node.TEXT_NODE) {
-      let docRange = document.createRange();
-      docRange.setStart(node, position);
-      docRange.collapse(true);
-      currentSelection.removeAllRanges();
-      currentSelection.addRange(docRange);
+      currentSelection.collapse(node,position)
     }
     else if (node.nodeType == Node.ELEMENT_NODE) {
       const element = node as HTMLElement;
       if (position > 0 && element.childNodes[position-1].nodeType == Node.TEXT_NODE) {
         // cheat a bit and move cursor inside the previous text node if possible
         const textNodeBeforeCursor = element.childNodes[position-1] as Text;
-        let docRange = document.createRange();
-        docRange.setStart(textNodeBeforeCursor, textNodeBeforeCursor.length);
-        docRange.collapse(true);
-        currentSelection.removeAllRanges();
-        currentSelection.addRange(docRange);
+        currentSelection.collapse(textNodeBeforeCursor, textNodeBeforeCursor.length);
       }
       else {
-        let docRange = document.createRange();
-        docRange.setStart(element, position);
-        docRange.collapse(true);
-        currentSelection.removeAllRanges();
-        currentSelection.addRange(docRange);
+        currentSelection.collapse(node,position);
       }
     }
     else {
-      let docRange = document.createRange();
-      docRange.setStart(node, position);
-      docRange.collapse(true);
-      currentSelection.removeAllRanges();
-      currentSelection.addRange(docRange);
+      currentSelection.collapse(node,position);
     }
     return currentSelection;
   }
@@ -827,7 +811,7 @@ export default class BackspaceHandler {
       case "removeOtherNode":
         // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
         if( !manipulation.node.parentElement ) {
-          throw "Received other node does not have a parent.  Backspace failed te remove this node."
+          throw "Received other node does not have a parent.  Backspace failed to remove this node."
         }
         const otherNode = manipulation.node as Node;
         if (otherNode.parentElement) {
