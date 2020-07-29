@@ -1,8 +1,7 @@
 import { InputHandler } from './input-handler';
 import { Manipulation, ManipulationExecutor, Editor, ManipulationGuidance } from './manipulation';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
-
-const supportedInputCharacters = /[a-zA-Z0-9.,!@#$%^&*={};'"+-?_()/\\ ]/;
+import RdfaTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/text-input-plugin'
 const NON_BREAKING_SPACE = '\u00A0';
 
 
@@ -25,6 +24,22 @@ export interface TextInputPlugin {
 
 
 /**
+ *
+ */
+export function insertTextIntoTextNode(textNode: Node, position: number, inputText: string) {
+  if (inputText === " ") {
+    inputText = NON_BREAKING_SPACE;
+  }
+  const textContent = textNode.textContent || "";
+  textNode.textContent = `${textContent.slice(0, position)}${inputText}${textContent.slice(position)}`;
+  if (position > 0 && inputText !== NON_BREAKING_SPACE && textContent[position - 1] === NON_BREAKING_SPACE) {
+    // replace non breaking space preceeding input with a regular space
+    const content = textNode.textContent;
+    textNode.textContent = content.slice(0, position - 1) + " " + content.slice(position);
+  }
+}
+
+/**
  * Text Input Handler, a event handler to handle text input
  *
  * @module contenteditable-editor
@@ -37,7 +52,7 @@ export default class TextInputHandler implements InputHandler {
 
   constructor( {rawEditor} : { rawEditor: object} ) {
     this.rawEditor = rawEditor;
-    this.plugins = new Array();
+    this.plugins = [ new RdfaTextInputPlugin() ];
   }
 
   isHandlerFor(event: Event) {
@@ -87,23 +102,10 @@ export default class TextInputHandler implements InputHandler {
     return { allowPropagation: false};
   }
 
-  insertTextIntoTextNode(textNode: Node, position: number, inputText: string) {
-    if (inputText === " ") {
-      inputText = NON_BREAKING_SPACE;
-    }
-    const textContent = textNode.textContent || "";
-    textNode.textContent = `${textContent.slice(0, position)}${inputText}${textContent.slice(position)}`;
-    if (position > 0 && inputText !== NON_BREAKING_SPACE && textContent[position - 1] === NON_BREAKING_SPACE) {
-      // replace non breaking space preceeding input with a regular space
-      const content = textNode.textContent;
-      textNode.textContent = content.slice(0, position - 1) + " " + content.slice(position);
-    }
-  }
-
   handleNativeManipulation(manipulation: Manipulation) {
     if (manipulation.type == "insertTextIntoTextNode") {
       const { node: textNode, position, text } = manipulation;
-      this.insertTextIntoTextNode(textNode, position, text);
+      insertTextIntoTextNode(textNode, position, text);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret(textNode, position + 1);
     }
@@ -112,14 +114,14 @@ export default class TextInputHandler implements InputHandler {
       if (element.childNodes[position-1].nodeType == Node.TEXT_NODE) {
         // node before the intented position is a text node, let's append to that one
         const textNode = element.childNodes[position-1] as Text;
-        this.insertTextIntoTextNode(textNode, textNode.length, text);
+        insertTextIntoTextNode(textNode, textNode.length, text);
         this.rawEditor.updateRichNode();
         this.rawEditor.setCarret(textNode, textNode.length);
       }
       else if (element.childNodes[position].nodeType == Node.TEXT_NODE) {
         // node after the intented position is a text node, let's append to that one
         const textNode = element.childNodes[position] as Text;
-        this.insertTextIntoTextNode(textNode, textNode.length, text);
+        insertTextIntoTextNode(textNode, textNode.length, text);
         this.rawEditor.updateRichNode();
         this.rawEditor.setCarret(textNode, text.length);
       }
@@ -137,13 +139,13 @@ export default class TextInputHandler implements InputHandler {
         const {startContainer, endContainer, startOffset, endOffset } = range;
         if (startContainer.nodeType == Node.TEXT_NODE) {
           selection.deleteFromDocument();
-          this.insertTextIntoTextNode(startContainer as Text, startOffset, text);
+          insertTextIntoTextNode(startContainer as Text, startOffset, text);
           this.rawEditor.updateRichNode();
           this.rawEditor.setCarret(startContainer, startOffset + text.length);
         }
         else if (endContainer.nodeType == Node.TEXT_NODE) {
           selection.deleteFromDocument();
-          this.insertTextIntoTextNode(endContainer as Text, endOffset, text);
+          insertTextIntoTextNode(endContainer as Text, endOffset, text);
           this.rawEditor.updateRichNode();
           this.rawEditor.setCarret(endContainer, endOffset + text.length);
         }
