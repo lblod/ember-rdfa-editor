@@ -418,7 +418,7 @@ function paintCycleHappened() : Promise<void> {
 export function stringToVisibleText(string : string) {
   // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
   return string
-    .replace(invisibleSpace,'')
+    .replace(new RegExp(`[${invisibleSpace}]+`,'g'),'')
     .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
 }
 
