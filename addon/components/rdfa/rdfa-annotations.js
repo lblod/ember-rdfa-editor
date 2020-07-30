@@ -25,7 +25,8 @@ export default class EditorSuggestedHints extends Component {
             node.lastContext = node.rdfaContext[node.rdfaContext.length-1]
             if(node.domNode && (node.domNode.offsetTop || node.domNode.offsetTop === 0)) {
               node.hasTopPosition = true;
-              node.topPosition = this.blockPlacement(node.domNode.offsetTop);
+              console.log(this.calculateNodeOffset(node.domNode));
+              node.topPosition = this.blockPlacement(this.calculateNodeOffset(node.domNode) - 96 - 44); // Magic numbers for now, they correspond to the height of the navbar and the toolbar
             }
           }
           return node;
@@ -60,12 +61,19 @@ export default class EditorSuggestedHints extends Component {
     this.topPositions = {};
   }
   blockPlacement(offset) {
-    const offsetToNearest80 = Math.round(offset/80)*80;
-    if(this.topPositions[offsetToNearest80]) {
-      return this.blockPlacement(offsetToNearest80+80);
+    const offsetToNearest20 = Math.round(offset/20)*20;
+    if(this.topPositions[offsetToNearest20]) {
+      return this.blockPlacement(offsetToNearest20+20);
     } else {
-      this.topPositions[offsetToNearest80] = true;
-      return offsetToNearest80;
+      this.topPositions[offsetToNearest20] = true;
+      return offsetToNearest20;
     }
+  }
+  calculateNodeOffset(node) {
+    console.log(node);
+    if(node.offsetParent) {
+      return node.offsetTop + this.calculateNodeOffset(node.offsetParent);
+    }
+    return node.offsetTop;
   }
 }
