@@ -4,6 +4,7 @@ import ListBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/ba
 import LumpNodeBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/backspace-plugin';
 import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
 import RdfaBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/backspace-plugin';
+import ContentEditableFalsePlugin from '@lblod/ember-rdfa-editor/utils/plugins/contenteditable-false/backspace-plugin';
 import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-element/backspace-plugin';
 import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
 import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
@@ -404,6 +405,7 @@ export default class BackspaceHandler implements InputHandler {
     this.rawEditor = rawEditor;
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [
+      new ContentEditableFalsePlugin(),
       new LumpNodeBackspacePlugin(),
       new RdfaBackspacePlugin(),
       new ListBackspacePlugin(),
@@ -1146,10 +1148,6 @@ export default class BackspaceHandler implements InputHandler {
   }
   get currentNode() : Node {
     return this.rawEditor.currentNode;
-  }
-
-  doesCurrentNodeBelongToContentEditable() : boolean {
-    return this.currentNode && this.currentNode.parentNode && this.currentNode.parentNode.isContentEditable;
   }
 
   /**

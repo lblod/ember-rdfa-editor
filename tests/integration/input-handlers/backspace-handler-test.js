@@ -61,6 +61,26 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     assert.equal(cursorNode.previousSibling, editor.childNodes[0], "cursor should be after first div");
   });
 
+    test('backspace on non editable', async function(assert) {
+      this.set('rdfaEditorInit', (editor) => {
+        editor.setHtmlContent('<div contenteditable=false>non-editable</div>foo');
+      });
+      await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+      />`);
+      var editor = document.querySelector("div[contenteditable]");
+      const foo = editor.childNodes[1];
+      window.getSelection().collapse(foo,0); // cursor at start of div
+      click(editor); // ensure editor state
+      await triggerKeyEvent(editor, 'keydown', 'Backspace');
+      assert.dom('div[contenteditable]').hasText('non-editablefoo');
+  });
+
+
   test('backspace on breaks: consecutive breaks', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('baz<br><br>foo');
