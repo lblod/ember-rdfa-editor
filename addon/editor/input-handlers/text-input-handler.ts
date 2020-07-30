@@ -118,7 +118,7 @@ export default class TextInputHandler implements InputHandler {
     }
     else if (manipulation.type == "insertTextIntoElement") {
       const {node: element, position, text } = manipulation;
-      if (element.childNodes[position-1].nodeType == Node.TEXT_NODE) {
+      if (position > 0 && element.childNodes[position-1].nodeType == Node.TEXT_NODE) {
         // node before the intented position is a text node, let's append to that one
         const textNode = element.childNodes[position-1] as Text;
         insertTextIntoTextNode(textNode, textNode.length, text);
@@ -134,7 +134,12 @@ export default class TextInputHandler implements InputHandler {
       }
       else {
         const textNode = document.createTextNode(text);
-        element.childNodes[position - 1].after(textNode);
+        if(position > 0){
+          element.childNodes[position - 1].after(textNode);
+        }
+        else {
+          element.prepend(textNode);
+        }
         this.rawEditor.updateRichNode();
         this.rawEditor.setCarret(textNode, textNode.length);
       }
