@@ -95,6 +95,7 @@ export default class TextInputHandler implements InputHandler {
     // error if we're not allowed to
     if ( ! mayExecute ) {
       warn( `Not allowed to execute manipulation for ${this.constructor}`, { id: "text-input-handler-manipulation-not-allowed" } );
+      return { allowPropagation: false };
     }
 
     // run the manipulation
