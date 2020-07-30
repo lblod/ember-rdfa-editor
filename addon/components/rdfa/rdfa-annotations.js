@@ -16,32 +16,13 @@ export default class EditorSuggestedHints extends Component {
       const cursor = document.querySelector('[data-editor-position-level="0"]');
       const scanner = new RdfaContextScanner();
       const rdfaBlocks = scanner.analyse(cursor);
-      this.resetTopPositions()
+      this.resetTopPositions();
       if(rdfaBlocks.length) {
         let parentArray = this.getParentArray(rdfaBlocks[0].richNodes[0]);
-        parentArray = parentArray.map((node) => {
-          
-          if(node.rdfaContext && node.rdfaContext.length) {
-            node.lastContext = node.rdfaContext[node.rdfaContext.length-1]
-            if(node.domNode && (node.domNode.offsetTop || node.domNode.offsetTop === 0)) {
-              node.hasTopPosition = true;
-              console.log(this.calculateNodeOffset(node.domNode));
-              node.topPosition = this.blockPlacement(this.calculateNodeOffset(node.domNode) - 96 - 44); // Magic numbers for now, they correspond to the height of the navbar and the toolbar
-            }
-          }
-          return node;
-        });
+        parentArray = this.extractLastContext(parentArray);
         parentArray = parentArray.filter((parent) => parent.lastContext);
-        parentArray = await Promise.all(parentArray.map(async (parent) => {
-          if(parent.lastContext.typeof) {
-            parent.lastContext.typeof[0] = (await this.resourceMetadata.fetch(parent.lastContext.typeof[0])).label;
-          }
-          if(parent.lastContext.properties) {
-            parent.lastContext.properties[0] = (await this.resourceMetadata.fetch( parent.lastContext.properties[0])).label;
-          }
-          return parent;
-        }));
-        console.log(parentArray);
+        parentArray = this.addTopPositions(parentArray);
+        parentArray = await this.queryLabels(parentArray);
         this.rdfaBlocks = parentArray;
       }
     }, 5000);
@@ -60,6 +41,27 @@ export default class EditorSuggestedHints extends Component {
   resetTopPositions() {
     this.topPositions = {};
   }
+  extractLastContext(nodeArray) {
+    return nodeArray.map((node) => {
+      if(node.rdfaContext && node.rdfaContext.length) {
+        node.lastContext = node.rdfaContext[node.rdfaContext.length-1];
+      }
+    });
+  }
+  addTopPositions(nodeArray) {
+    return nodeArray.map((node) => {
+      if(node.domNode && (node.domNode.offsetTop || node.domNode.offsetTop === 0)) {
+        node.hasTopPosition = true;
+        node.topPosition = this.blockPlacement(this.calculateNodeOffset(node.domNode) - 96 - 44); // Magic numbers for now, they correspond to the height of the navbar and the toolbar
+      }
+    });
+  }
+  calculateNodeOffset(node) {
+    if(node.offsetParent) {
+      return node.offsetTop + this.calculateNodeOffset(node.offsetParent);
+    }
+    return node.offsetTop;
+  }
   blockPlacement(offset) {
     const offsetToNearest20 = Math.round(offset/20)*20;
     if(this.topPositions[offsetToNearest20]) {
@@ -69,11 +71,15 @@ export default class EditorSuggestedHints extends Component {
       return offsetToNearest20;
     }
   }
-  calculateNodeOffset(node) {
-    console.log(node);
-    if(node.offsetParent) {
-      return node.offsetTop + this.calculateNodeOffset(node.offsetParent);
-    }
-    return node.offsetTop;
+  async queryLabels(nodeArray) {
+    await Promise.all(nodeArray.map(async (node) => {
+      if(node.lastContext.typeof) {
+        node.lastContext.typeof[0] = (await this.resourceMetadata.fetch(node.lastContext.typeof[0])).label;
+      }
+      if(node.lastContext.properties) {
+        node.lastContext.properties[0] = (await this.resourceMetadata.fetch( node.lastContext.properties[0])).label;
+      }
+      return node;
+    }));
   }
 }
