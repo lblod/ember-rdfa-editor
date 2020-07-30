@@ -106,7 +106,7 @@ export default class TextInputHandler implements InputHandler {
     else {
       this.handleNativeManipulation( manipulation );
     }
-    return { allowPropagation: false};
+    return { allowPropagation: false };
   }
 
   handleNativeManipulation(manipulation: Manipulation) {
