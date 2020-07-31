@@ -11,7 +11,7 @@ module('Integration | InputHandler | tab-handler', function(hooks) {
       editor.setHtmlContent('<li>baz</li><li>foo</li>');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -28,13 +28,12 @@ module('Integration | InputHandler | tab-handler', function(hooks) {
   });
 
 
-  //not working
   test('tab works with p', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('<p>baz</p><p>foo</p>');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -45,18 +44,19 @@ module('Integration | InputHandler | tab-handler', function(hooks) {
     window.getSelection().collapse(bazWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().baseNode.data, 'foo');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
+    assert.equal(window.getSelection().baseNode.textContent, "foo");
     const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 0);
   });
 
-  //not working
+
   test('tab works with div', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('<div>baz</div><div>foo</div>');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -67,7 +67,8 @@ module('Integration | InputHandler | tab-handler', function(hooks) {
     window.getSelection().collapse(bazWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().baseNode.data, 'foo');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
+    assert.equal(window.getSelection().baseNode.textContent, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 0);
   });
