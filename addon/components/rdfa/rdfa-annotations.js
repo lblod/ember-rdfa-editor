@@ -13,16 +13,24 @@ export default class EditorSuggestedHints extends Component {
   topPositions = {}
   constructor() {
     super(...arguments);
-    setTimeout(() => {
+    setTimeout(this.setupObserver.bind(this, 1), 250);
+  }
+  setupObserver(callDepth) {
+    try {
+      if(callDepth>100) {
+        console.log("Maximum number of retries for setting up the observer, aborting");
+        return;
+      }
       const editorPaper = document.querySelector('.say-editor__paper');
       const callback = () => {
         this.generateAnnotations.perform();
       };
       const observer = new MutationObserver(callback);
       observer.observe(editorPaper, {attributes: true, subtree: true});
-    }, 250);
-    
-    // this.interval = setInterval(this.generateAnnotations.bind(this), 5000);
+    } catch(e) {
+      setTimeout(this.setupObserver.bind(this, callDepth+1), 250);
+      
+    }
   }
   @task({ restartable: true })
   *generateAnnotations(){
