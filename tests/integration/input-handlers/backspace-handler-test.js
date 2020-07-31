@@ -338,7 +338,6 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
     const lumpNode = editor.childNodes[2];
-    console.warn(lumpNode);
     assert.equal(lumpNode.getAttribute("data-flagged-remove"),"complete");
     const cursorPosition = window.getSelection().anchorOffset;
     assert.equal(cursorPosition, 0);
@@ -371,7 +370,6 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     await setTimeout(() => {}, 500);
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
-    const innerHtml = editor.innerHTML;
     assert.equal(editor.childNodes.length, 3);
   });
 

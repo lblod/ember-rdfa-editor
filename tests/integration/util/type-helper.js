@@ -10,5 +10,5 @@ export default async function type(container, string) {
 
 const specialCharacters = {
   '#' : '#',
-  ' ' : 32,
-}
+  ' ' : 32
+};
