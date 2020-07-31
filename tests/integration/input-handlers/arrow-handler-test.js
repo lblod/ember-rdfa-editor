@@ -11,7 +11,7 @@ module('Integration | InputHandler | arrow-handler', function(hooks) {
       editor.setHtmlContent('baz foo');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -30,7 +30,7 @@ module('Integration | InputHandler | arrow-handler', function(hooks) {
       editor.setHtmlContent('baz <div>foo</div>');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -50,7 +50,7 @@ module('Integration | InputHandler | arrow-handler', function(hooks) {
       editor.setHtmlContent('baz<div>foo</div>');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -73,7 +73,7 @@ module('Integration | InputHandler | arrow-handler', function(hooks) {
       editor.setHtmlContent('baz<div>foo</div>');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
