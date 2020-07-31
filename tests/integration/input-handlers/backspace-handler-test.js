@@ -27,7 +27,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('capybaras');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -46,7 +46,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('<div>this is a block and it has a break after it</div><br><div>this block is followed by two breaks</div>');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -66,7 +66,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
         editor.setHtmlContent('<div contenteditable=false>non-editable</div>foo');
       });
       await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -86,7 +86,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('baz<br><br>foo');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -110,7 +110,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('baz<span></span>foo');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -134,7 +134,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('baz <span style="background-color:green">bar</span>foo');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -157,7 +157,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('<div>foo<br></div>&nbsp;');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -180,7 +180,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('baz <div style="background-color:green"></div>foo');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -203,7 +203,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('baz <div style="background-color:green">foo</div>&nbsp;');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -226,7 +226,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" style="background-color:green">bar</div>foo');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -249,7 +249,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" style="background-color:green">bar</div>foo');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -272,7 +272,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" style="background-color:green">bar</div>&nbsp;');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -294,7 +294,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       editor.setHtmlContent('baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" style="background-color:green">bar</div>&nbsp;');
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -325,7 +325,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       foo`);
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -357,7 +357,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       foo`);
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
@@ -395,12 +395,12 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     assert.equal(divNode.innerText.replace(/\s/g, " "), "a visual space test ");
   });
 
-    test('backspace properly handles spaces at start properly', async function(assert) {
+  test('backspace properly handles spaces at start properly', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent(`<div id="spacetest">a visual space test f</div>`);
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
