@@ -375,36 +375,12 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     assert.equal(editor.childNodes.length, 3);
   });
 
-  test('backspace ignores breakline as it doesn\'t render in the editor', async function(assert) {
-    this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent(`baz
-
-      <span>foo</span>`);
-    });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
-    var editor = document.querySelector("div[contenteditable]");
-    const fooWordNode = editor.childNodes[1];
-    window.getSelection().collapse(fooWordNode,0);
-    click('div[contenteditable]');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
-    await setTimeout(() => {}, 500);
-    const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, `ba<span>foo</span>`);
-    const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 2);
-  });
   test('backspace properly handles spaces at end properly', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent(`<div id="spacetest">a visual space test f</div>`);
     });
     await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{action rdfaEditorInit}}
+      @rdfaEditorInit={{this.rdfaEditorInit}}
       @profile="default"
       class="rdfa-playground"
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
