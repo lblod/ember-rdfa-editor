@@ -15,6 +15,11 @@ export default class RdfaAnnotations extends Component {
     super(...arguments);
     setTimeout(this.setupObserver.bind(this, 1), 250);
   }
+  /*
+   * ###########################
+   * #   Setting up Observer   #
+   * ###########################
+  */
   setupObserver(callDepth) {
     try {
       if(callDepth>100) {
@@ -26,12 +31,26 @@ export default class RdfaAnnotations extends Component {
         this.generateAnnotations.perform();
       };
       const observer = new MutationObserver(callback);
-      observer.observe(editorPaper, {attributes: true, subtree: true, childList: true, attributeFilter: [ 'property', 'typeof', 'data-editor-position-level']});
+      observer.observe(editorPaper, {
+        attributes: true, 
+        subtree: true, 
+        childList: true, 
+        attributeFilter: [ 
+          'property', 
+          'typeof', 
+          'data-editor-position-level'
+        ]
+      });
     } catch(e) {
       setTimeout(this.setupObserver.bind(this, callDepth+1), 250);
       
     }
   }
+  /*
+   * #########################
+   * #   Getting Rdfa Info   #
+   * #########################
+  */
   @task({ restartable: true })
   *generateAnnotations(){
     const cursor = document.querySelector('[data-editor-position-level="0"]');
@@ -58,9 +77,6 @@ export default class RdfaAnnotations extends Component {
 
     return richNodesOnPath;
   }
-  resetTopPositions() {
-    this.topPositions = {};
-  }
   extractLastContext(nodeArray) {
     return nodeArray.map((node) => {
       if(node.rdfaContext && node.rdfaContext.length) {
@@ -69,6 +85,15 @@ export default class RdfaAnnotations extends Component {
       return node;
     });
   }
+
+  /*
+   * #####################################
+   * #   Calculating position of hints   #
+   * #####################################
+  */
+  resetTopPositions() {
+    this.topPositions = {};
+  }
   addTopPositions(nodeArray) {
     return nodeArray.map((node) => {
       if(node.domNode && (node.domNode.offsetTop || node.domNode.offsetTop === 0)) {
@@ -76,7 +101,7 @@ export default class RdfaAnnotations extends Component {
         let nodeOffset = this.calculateNodeOffset(node.domNode);
         let blockPlacement;
         const navbarAndToolbarOffset = 96 + 44; // Magic numbers for now, they correspond to the height of the navbar and the toolbar
-        if(node.lastContext.typeof && node.lastContext.properties) {
+        if(node.lastContext.typeof && node.lastContext.typeof.length && node.lastContext.properties && node.lastContext.properties.length) {
           blockPlacement = this.blockPlacement(nodeOffset - navbarAndToolbarOffset, 2); 
         } else {
           blockPlacement = this.blockPlacement(nodeOffset - navbarAndToolbarOffset);
@@ -95,7 +120,7 @@ export default class RdfaAnnotations extends Component {
   blockPlacement(offset, numberOfBlocks = 1) {
     const offsetToNearest20 = Math.round(offset/20)*20;
     if(this.topPositions[offsetToNearest20]) {
-      return this.blockPlacement(offsetToNearest20+20);
+      return this.blockPlacement(offsetToNearest20+20, numberOfBlocks);
     } else {
       this.topPositions[offsetToNearest20] = true;
       if(numberOfBlocks == 2) {
@@ -104,6 +129,12 @@ export default class RdfaAnnotations extends Component {
       return offsetToNearest20;
     }
   }
+
+  /*
+   * ####################################
+   * #   Getting labels for rdfa uris   #
+   * ####################################
+  */
   async queryLabels(nodeArray) {
     return await Promise.all(nodeArray.map(async (node) => {
       if(node.lastContext.typeof) {
