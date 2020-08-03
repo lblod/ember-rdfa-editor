@@ -5,9 +5,9 @@ import { inject as service } from '@ember/service';
 import { task } from 'ember-concurrency-decorators';
 /**
  * @module rdfa-editor
- * @class RdfaEditorSuggestedHintsComponent
+ * @class RdfaAnnotations
  */
-export default class EditorSuggestedHints extends Component {
+export default class RdfaAnnotations extends Component {
   @tracked rdfaBlocks;
   @service resourceMetadata;
   topPositions = {}
@@ -75,10 +75,11 @@ export default class EditorSuggestedHints extends Component {
         node.hasTopPosition = true;
         let nodeOffset = this.calculateNodeOffset(node.domNode);
         let blockPlacement;
+        const navbarAndToolbarOffset = 96 + 44; // Magic numbers for now, they correspond to the height of the navbar and the toolbar
         if(node.lastContext.typeof && node.lastContext.properties) {
-          blockPlacement = this.blockPlacement(nodeOffset - 96 - 44, 2); // Magic numbers for now, they correspond to the height of the navbar and the toolbar
+          blockPlacement = this.blockPlacement(nodeOffset - navbarAndToolbarOffset, 2); 
         } else {
-          blockPlacement = this.blockPlacement(nodeOffset - 96 - 44); // Magic numbers for now, they correspond to the height of the navbar and the toolbar
+          blockPlacement = this.blockPlacement(nodeOffset - navbarAndToolbarOffset);
         }
         node.topPosition = blockPlacement; 
       }
