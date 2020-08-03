@@ -3,6 +3,7 @@ import RdfaContextScanner from '@lblod/marawa/rdfa-context-scanner';
 import {tracked} from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import { task } from 'ember-concurrency-decorators';
+import { timeout } from 'ember-concurrency';
 /**
  * @module rdfa-editor
  * @class RdfaAnnotations
@@ -35,6 +36,7 @@ export default class RdfaAnnotations extends Component {
         attributes: true, 
         subtree: true, 
         childList: true, 
+        characterData: true,
         attributeFilter: [ 
           'property', 
           'typeof', 
@@ -53,6 +55,7 @@ export default class RdfaAnnotations extends Component {
   */
   @task({ restartable: true })
   *generateAnnotations(){
+    yield timeout(250);
     const cursor = document.querySelector('[data-editor-position-level="0"]');
     const scanner = new RdfaContextScanner();
     const rdfaBlocks = scanner.analyse(cursor);
