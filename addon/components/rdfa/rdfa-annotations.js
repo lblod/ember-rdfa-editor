@@ -26,7 +26,7 @@ export default class EditorSuggestedHints extends Component {
         this.generateAnnotations.perform();
       };
       const observer = new MutationObserver(callback);
-      observer.observe(editorPaper, {attributes: true, subtree: true});
+      observer.observe(editorPaper, {attributes: true, subtree: true, childList: true, attributeFilter: [ 'property', 'typeof', 'data-editor-position-level']});
     } catch(e) {
       setTimeout(this.setupObserver.bind(this, callDepth+1), 250);
       
@@ -73,7 +73,14 @@ export default class EditorSuggestedHints extends Component {
     return nodeArray.map((node) => {
       if(node.domNode && (node.domNode.offsetTop || node.domNode.offsetTop === 0)) {
         node.hasTopPosition = true;
-        node.topPosition = this.blockPlacement(this.calculateNodeOffset(node.domNode) - 96 - 44); // Magic numbers for now, they correspond to the height of the navbar and the toolbar
+        let nodeOffset = this.calculateNodeOffset(node.domNode);
+        let blockPlacement;
+        if(node.lastContext.typeof && node.lastContext.properties) {
+          blockPlacement = this.blockPlacement(nodeOffset - 96 - 44, 2); // Magic numbers for now, they correspond to the height of the navbar and the toolbar
+        } else {
+          blockPlacement = this.blockPlacement(nodeOffset - 96 - 44); // Magic numbers for now, they correspond to the height of the navbar and the toolbar
+        }
+        node.topPosition = blockPlacement; 
       }
       return node;
     });
@@ -84,12 +91,15 @@ export default class EditorSuggestedHints extends Component {
     }
     return node.offsetTop;
   }
-  blockPlacement(offset) {
+  blockPlacement(offset, numberOfBlocks = 1) {
     const offsetToNearest20 = Math.round(offset/20)*20;
     if(this.topPositions[offsetToNearest20]) {
       return this.blockPlacement(offsetToNearest20+20);
     } else {
       this.topPositions[offsetToNearest20] = true;
+      if(numberOfBlocks == 2) {
+        this.topPositions[offsetToNearest20 + 20] = true;
+      }
       return offsetToNearest20;
     }
   }
