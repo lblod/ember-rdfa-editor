@@ -7,6 +7,7 @@ import RdfaBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/bac
 import ContentEditableFalsePlugin from '@lblod/ember-rdfa-editor/utils/plugins/contenteditable-false/backspace-plugin';
 import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-element/backspace-plugin';
 import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
+import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/backspace-plugin';
 import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { InputHandler } from './input-handler';
 import { RawEditor, RichNode } from '../raw-editor';
@@ -411,7 +412,8 @@ export default class BackspaceHandler implements InputHandler {
       new ListBackspacePlugin(),
       new EmptyTextNodePlugin(),
       new EmptyElementBackspacePlugin(),
-      new BrSkippingBackspacePlugin()
+      new BrSkippingBackspacePlugin(),
+      new PlaceholderTextBackspacePlugin()
     ];
   }
 
