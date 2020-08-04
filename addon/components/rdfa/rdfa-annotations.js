@@ -21,6 +21,15 @@ export default class RdfaAnnotations extends Component {
    * #   Setting up Observer   #
    * ###########################
   */
+  /**
+    * Setup the observer to watch for changes in the document
+    *
+    * @method setupObserver
+    *
+    * @param {number} callDepth To avoid stack overflow, must be initialised to 0
+    *
+    * @private
+    */
   setupObserver(callDepth) {
     try {
       if(callDepth>100) {
@@ -53,6 +62,13 @@ export default class RdfaAnnotations extends Component {
    * #   Getting Rdfa Info   #
    * #########################
   */
+  /**
+    * Generates the rdfaBlocks that will be rendered 
+    *
+    * @method generateAnnotations
+    *
+    * @private
+    */
   @task({ restartable: true })
   *generateAnnotations(){
     yield timeout(250);
@@ -69,6 +85,15 @@ export default class RdfaAnnotations extends Component {
       this.rdfaBlocks = parentArray;
     }
   }
+  /**
+    * Get an array of all the ancestors of the given node
+    *
+    * @method generateAnnotations
+    *
+    * @param {RdfaBlock} startNode The first node in order to start generating the parents
+    * @private
+    * @return {[RdfaBlock]} All the ancestors of the start node
+    */
   getParentArray(startNode) {
     const richNodesOnPath = [startNode];
 
@@ -80,6 +105,15 @@ export default class RdfaAnnotations extends Component {
 
     return richNodesOnPath;
   }
+  /**
+    * Process the array of nodes and extract the last context of each one and add it as a property to the node
+    *
+    * @method extractLastContext
+    *
+    * @param {[RdfaBlock]} nodeArray The array of RdfaBlocks
+    * @private
+    * @return {[RdfaBlock]} The array of RdfaBlocks with the lastContext extracted
+    */
   extractLastContext(nodeArray) {
     return nodeArray.map((node) => {
       if(node.rdfaContext && node.rdfaContext.length) {
@@ -94,9 +128,25 @@ export default class RdfaAnnotations extends Component {
    * #   Calculating position of hints   #
    * #####################################
   */
+  /**
+    * Reset the topPositions object
+    *
+    * @method resetTopPositions
+    *
+    * @private
+    */
   resetTopPositions() {
     this.topPositions = {};
   }
+  /**
+    * Process the nodeArray and add the top position for each of the nodes
+    *
+    * @method addTopPositions
+    *
+    * @param {[RdfaBlock]} nodeArray The array of RdfaBlocks
+    * @private
+    * @return {[RdfaBlock]} The array of RdfaBlocks with the top positions added
+    */
   addTopPositions(nodeArray) {
     return nodeArray.map((node) => {
       if(node.domNode && (node.domNode.offsetTop || node.domNode.offsetTop === 0)) {
@@ -114,12 +164,31 @@ export default class RdfaAnnotations extends Component {
       return node;
     });
   }
+  /**
+    * Calculate the offset top of a node taking into account all its parents
+    *
+    * @method calculateNodeOffset
+    *
+    * @param {RdfaBlock} node The node to calculate the offset
+    * @private
+    * @return {number} The top offset of the node
+    */
   calculateNodeOffset(node) {
     if(node.offsetParent) {
       return node.offsetTop + this.calculateNodeOffset(node.offsetParent);
     }
     return node.offsetTop;
   }
+  /**
+    * Tries to place a block the closest possible to its original offset so it doesn't collide with other blocks
+    *
+    * @method blockPlacement
+    *
+    * @param {number} offset The original offset of the node
+    * @param {number} numberOfBlocks The number of blocks that need to be placed
+    * @private
+    * @return {number} The definitive placement of the block
+    */
   blockPlacement(offset, numberOfBlocks = 1) {
     const offsetToNearest20 = Math.round(offset/20)*20;
     if(this.topPositions[offsetToNearest20]) {
@@ -138,6 +207,15 @@ export default class RdfaAnnotations extends Component {
    * #   Getting labels for rdfa uris   #
    * ####################################
   */
+  /**
+    * Replaces each of the uri terms in the RdfaBlock array for its corresponding label
+    *
+    * @method queryLabels
+    *
+    * @param {[RdfaBlock]} nodeArray The array of RdfaBlocks
+    * @private
+    * @return {[RdfaBlock]} The array of RdfaBlocks with the labels added
+    */
   async queryLabels(nodeArray) {
     return await Promise.all(nodeArray.map(async (node) => {
       if(node.lastContext.typeof) {
