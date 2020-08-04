@@ -54,7 +54,6 @@ export default class RdfaAnnotations extends Component {
       });
     } catch(e) {
       setTimeout(this.setupObserver.bind(this, callDepth+1), 250);
-      
     }
   }
   /*
@@ -96,13 +95,10 @@ export default class RdfaAnnotations extends Component {
     */
   getParentArray(startNode) {
     const richNodesOnPath = [startNode];
-
     for(let richNode = startNode.parent; richNode; richNode = richNode.parent) {
       richNodesOnPath.push(richNode);
     }
-
-    richNodesOnPath.reverse(); // get rich nodes from top to bottom
-
+    richNodesOnPath.reverse();
     return richNodesOnPath;
   }
   /**
@@ -153,11 +149,10 @@ export default class RdfaAnnotations extends Component {
         node.hasTopPosition = true;
         let nodeOffset = this.calculateNodeOffset(node.domNode);
         let blockPlacement;
-        const navbarAndToolbarOffset = 96 + 44; // Magic numbers for now, they correspond to the height of the navbar and the toolbar
         if(node.lastContext.typeof && node.lastContext.typeof.length && node.lastContext.properties && node.lastContext.properties.length) {
-          blockPlacement = this.blockPlacement(nodeOffset - navbarAndToolbarOffset, 2); 
+          blockPlacement = this.blockPlacement(nodeOffset, 2); 
         } else {
-          blockPlacement = this.blockPlacement(nodeOffset - navbarAndToolbarOffset);
+          blockPlacement = this.blockPlacement(nodeOffset);
         }
         node.topPosition = blockPlacement; 
       }
@@ -174,7 +169,7 @@ export default class RdfaAnnotations extends Component {
     * @return {number} The top offset of the node
     */
   calculateNodeOffset(node) {
-    if(node.offsetParent) {
+    if(node.offsetParent && !node.offsetParent.classList.contains('say-editor__inner')) {
       return node.offsetTop + this.calculateNodeOffset(node.offsetParent);
     }
     return node.offsetTop;
