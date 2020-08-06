@@ -3,8 +3,8 @@
    ================================== */
 
 .say-annotation-sidebar {
-  display: none;
-  position: absolute;
+  display: none !important; //fix conflict with GN
+  position: absolute !important; //fix conflict with GN
   bottom: 0;
   left: 0;
   width: $say-annotation-width;
@@ -35,7 +35,7 @@
 
   @include mq(large) {
     .rdfa-annotations-hover & {
-      display: block;
+      display: block !important; //fix conflict with GN
     }
   }
 }

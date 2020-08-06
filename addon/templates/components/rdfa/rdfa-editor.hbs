@@ -23,9 +23,7 @@
 
   <div class="say-container__main">
     <div class="say-editor {{if @editorOptions.showRdfa "rdfa-annotations" }} {{if @editorOptions.showRdfaHighlight "rdfa-annotations-highlight" }} {{if @editorOptions.showRdfaHover "rdfa-annotations-hover" }} {{if this.showRdfaBlocks "show-rdfa-blocks"}}">
-      <div class="say-editor__left-aside">
         <Rdfa::RdfaAnnotations />
-      </div>
       <div class="say-editor__paper">
         <Ce::ContentEditable
           @class="say-editor__inner say-content"
