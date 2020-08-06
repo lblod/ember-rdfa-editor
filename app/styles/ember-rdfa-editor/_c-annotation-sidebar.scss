@@ -1,0 +1,71 @@
+/* ==================================
+   #SAY ANNOTATION SIDEBAR
+   ================================== */
+
+.say-annotation-sidebar {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: $say-annotation-width;
+  min-height: $say-paper-min-height;
+  max-height: calc(100% - #{$say-unit*2});
+  overflow: visible;
+  padding: $say-unit-small $say-unit-small + $say-unit-tiny;
+  z-index: $say-z-index-gamma;
+
+  @if $say-toolbar-bottom == true {
+    top: 0;
+    bottom: auto;
+  }
+
+  @if $say-paper == true and $say-paper-sidebar == true {
+    top: 44px;
+    top: $say-unit;
+    padding: $say-paper-padding;
+  }
+
+  @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == false {
+    top: 0;
+  }
+
+  @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == true {
+    top: 0;
+  }
+
+  @include mq(large) {
+    .rdfa-annotations-hover & {
+      display: block;
+    }
+  }
+}
+
+.say-annotation-sidebar__item  {
+  @include say-font-size($say-tiny,1.2);
+  position: absolute;
+  left: $say-annotation-gutter - $say-unit-tiny;
+  font-family: $say-font;
+  font-weight: $say-medium;
+  letter-spacing: .01rem;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: $say-neutral-600;
+  background-color: $say-neutral-100;
+  pointer-events: none;
+  overflow: hidden;
+  min-height: 2rem;
+  border-top: 1px dashed $say-neutral-300;
+  z-index: $say-z-index-gamma;
+  margin-top: .2rem;
+  padding-right: $say-annotation-gutter + $say-unit-small;
+  margin-right: -$say-annotation-gutter + $say-unit-tiny;
+  width: $say-annotation-width-content;
+  background: linear-gradient(
+    to right,
+      $say-neutral-100,
+      $say-neutral-100 calc(100% - #{$say-annotation-gutter + $say-unit-tiny}),
+      transparent calc(100% - #{$say-annotation-gutter + $say-unit-tiny}),
+      transparent 100%
+  );
+}

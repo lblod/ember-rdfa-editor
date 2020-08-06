@@ -1,13 +1,13 @@
-<div>
+<div class="say-annotation-sidebar">
   {{#each this.rdfaBlocks as |block|}}
     {{#if block.lastContext}}
       {{#if (and block.lastContext.typeof block.hasTopPosition)}}
-        <p style="position: absolute; top: {{block.topPosition}}px; z-index: 999; left: 0;">{{block.lastContext.typeof.[0]}}</p>
+        <p class="say-annotation-sidebar__item" style="position: absolute; top: {{block.topPosition}}px;">{{block.lastContext.typeof.[0]}}</p>
         {{#if block.lastContext.properties}}
-          <p style="position: absolute; top: {{sum block.topPosition 20}}px; z-index: 999; left: 0;">{{block.lastContext.properties.[0]}}</p>
+          <p class="say-annotation-sidebar__item" style="position: absolute; top: {{sum block.topPosition 20}}px;">{{block.lastContext.properties.[0]}}</p>
         {{/if}}
       {{else if (and block.lastContext.properties block.hasTopPosition)}}
-        <p style="position: absolute; top: {{block.topPosition}}px; z-index: 999; left: 0;">{{block.lastContext.properties.[0]}}</p>
+        <p class="say-annotation-sidebar__item" style="position: absolute; top: {{block.topPosition}}px;">{{block.lastContext.properties.[0]}}</p>
       {{/if}}
     {{/if}}
   {{/each}}

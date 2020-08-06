@@ -42,12 +42,6 @@
 @import "ember-rdfa-editor/c-toast";
 @import "ember-rdfa-editor/c-toolbar";
 
-
-// UTILITIES
-@import "ember-rdfa-editor/u-align-text";
-@import "ember-rdfa-editor/u-hide";
-
-
 // PLUGIN COMPONENTS
 @import "ember-rdfa-editor/c-card";
 @import "ember-rdfa-editor/c-link-list";
@@ -65,11 +59,16 @@
 @import "ember-rdfa-editor/c-annotation-flag";
 @import "ember-rdfa-editor/c-annotation-content-nl";
 @import "ember-rdfa-editor/c-annotation-content-en";
+@import "ember-rdfa-editor/c-annotation-sidebar";
 
 
 // THIRD PARTY PLUGIN STYLE
 @import "ember-rdfa-editor/p-flatpickr";
 
+
+// UTILITIES
+@import "ember-rdfa-editor/u-align-text";
+@import "ember-rdfa-editor/u-hide";
 
 // TEMPORARY STYLES
 @import "ember-rdfa-editor/shame";

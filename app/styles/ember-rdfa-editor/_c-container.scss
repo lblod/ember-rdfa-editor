@@ -18,39 +18,6 @@
     overflow: auto;
   }
 
-  .say-editor__left-aside {
-    position: absolute !important;
-    bottom: 0;
-    left: $say-unit-small + $say-unit-tiny;
-    width: 280px;
-    max-height: calc(100% - 44px);
-    overflow: auto;
-    padding: $say-unit-small $say-unit-small + $say-unit-tiny;
-
-    @if $say-toolbar-bottom == true {
-      top: 0;
-      bottom: auto;
-    }
-
-    @if $say-paper == true and $say-paper-sidebar == true {
-      top: 44px;
-    }
-
-    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == false {
-      top: 0;
-    }
-
-    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == true {
-      top: 0;
-    }
-
-    p{
-       overflow-wrap: break-word;
-       width: 240px;
-    }
-
-  }
-
   .say-container__aside {
     position: absolute;
     bottom: 0;
