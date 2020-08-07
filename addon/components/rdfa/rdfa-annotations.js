@@ -77,8 +77,8 @@ export default class RdfaAnnotations extends Component {
     this.resetTopPositions();
     if(rdfaBlocks.length) {
       let parentArray = this.getParentArray(rdfaBlocks[0].richNodes[0]);
-      parentArray = this.extractLastContext(parentArray);
-      parentArray = parentArray.filter((parent) => parent.lastContext);
+      parentArray = this.extractMostSpecificContext(parentArray);
+      parentArray = parentArray.filter((parent) => parent.mostSpecificContext);
       parentArray = this.addTopPositions(parentArray);
       parentArray = yield this.queryLabels(parentArray);
       this.rdfaBlocks = parentArray;
@@ -102,18 +102,18 @@ export default class RdfaAnnotations extends Component {
     return richNodesOnPath;
   }
   /**
-    * Process the array of nodes and extract the last context of each one and add it as a property to the node
+    * Process the array of nodes and extract the most specific of each one and add it as a property to the node
     *
-    * @method extractLastContext
+    * @method extractmostSpecificContext
     *
     * @param {[RdfaBlock]} nodeArray The array of RdfaBlocks
     * @private
-    * @return {[RdfaBlock]} The array of RdfaBlocks with the lastContext extracted
+    * @return {[RdfaBlock]} The array of RdfaBlocks with the mostSpecificContext extracted
     */
-  extractLastContext(nodeArray) {
+  extractMostSpecificContext(nodeArray) {
     return nodeArray.map((node) => {
       if(node.rdfaContext && node.rdfaContext.length) {
-        node.lastContext = node.rdfaContext[node.rdfaContext.length-1];
+        node.mostSpecificContext = node.rdfaContext[node.rdfaContext.length-1];
       }
       return node;
     });
@@ -149,7 +149,7 @@ export default class RdfaAnnotations extends Component {
         node.hasTopPosition = true;
         let nodeOffset = this.calculateNodeOffset(node.domNode);
         let blockPlacement;
-        if(node.lastContext.typeof && node.lastContext.typeof.length && node.lastContext.properties && node.lastContext.properties.length) {
+        if(node.mostSpecificContext.typeof && node.mostSpecificContext.typeof.length && node.mostSpecificContext.properties && node.mostSpecificContext.properties.length) {
           blockPlacement = this.blockPlacement(nodeOffset, 2); 
         } else {
           blockPlacement = this.blockPlacement(nodeOffset);
@@ -213,11 +213,11 @@ export default class RdfaAnnotations extends Component {
     */
   async queryLabels(nodeArray) {
     return await Promise.all(nodeArray.map(async (node) => {
-      if(node.lastContext.typeof) {
-        node.lastContext.typeof[0] = (await this.resourceMetadata.fetch(node.lastContext.typeof[0])).label;
+      if(node.mostSpecificContext.typeof) {
+        node.mostSpecificContext.typeof[0] = (await this.resourceMetadata.fetch(node.mostSpecificContext.typeof[0])).label;
       }
-      if(node.lastContext.properties) {
-        node.lastContext.properties[0] = (await this.resourceMetadata.fetch( node.lastContext.properties[0])).label;
+      if(node.mostSpecificContext.properties) {
+        node.mostSpecificContext.properties[0] = (await this.resourceMetadata.fetch( node.mostSpecificContext.properties[0])).label;
       }
       return node;
     }));
