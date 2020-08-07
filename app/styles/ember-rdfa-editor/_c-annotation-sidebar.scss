@@ -11,7 +11,8 @@
   min-height: $say-paper-min-height;
   max-height: calc(100% - #{$say-unit*2});
   overflow: visible;
-  padding: $say-unit-small $say-unit-small + $say-unit-tiny;
+  padding: 0 $say-unit-small $say-unit-small + $say-unit-tiny;
+  margin: $say-unit-small $say-unit-small + $say-unit-tiny 0;
   z-index: $say-z-index-gamma;
 
   @if $say-toolbar-bottom == true {
@@ -22,7 +23,8 @@
   @if $say-paper == true and $say-paper-sidebar == true {
     top: 44px;
     top: $say-unit;
-    padding: $say-paper-padding;
+    padding: 0 $say-paper-padding;
+    margin: $say-paper-padding 0;
   }
 
   @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == false {
