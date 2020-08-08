@@ -149,11 +149,14 @@ export default class RdfaAnnotations extends Component {
         node.hasTopPosition = true;
         let nodeOffset = this.calculateNodeOffset(node.domNode);
         let blockPlacement;
-        if(node.mostSpecificContext.typeof && node.mostSpecificContext.typeof.length && node.mostSpecificContext.properties && node.mostSpecificContext.properties.length) {
-          blockPlacement = this.blockPlacement(nodeOffset, 2); 
-        } else {
-          blockPlacement = this.blockPlacement(nodeOffset);
+        let numberOfHints = 0;
+        if(node.mostSpecificContext.typeof) {
+          numberOfHints += node.mostSpecificContext.typeof.length;
         }
+        if(node.mostSpecificContext.properties) {
+          numberOfHints += node.mostSpecificContext.properties.length;
+        }
+        blockPlacement = this.blockPlacement(nodeOffset, numberOfHints);
         node.topPosition = blockPlacement; 
       }
       return node;
@@ -189,9 +192,8 @@ export default class RdfaAnnotations extends Component {
     if(this.topPositions[offsetToNearest20]) {
       return this.blockPlacement(offsetToNearest20+20, numberOfBlocks);
     } else {
-      this.topPositions[offsetToNearest20] = true;
-      if(numberOfBlocks == 2) {
-        this.topPositions[offsetToNearest20 + 20] = true;
+      for(let i = 0; i < numberOfBlocks; i++) {
+        this.topPositions[offsetToNearest20 + (20 * i)] = true;
       }
       return offsetToNearest20;
     }
@@ -214,10 +216,14 @@ export default class RdfaAnnotations extends Component {
   async queryLabels(nodeArray) {
     return await Promise.all(nodeArray.map(async (node) => {
       if(node.mostSpecificContext.typeof) {
-        node.mostSpecificContext.typeof[0] = (await this.resourceMetadata.fetch(node.mostSpecificContext.typeof[0])).label;
+        for(let i = 0; i < node.mostSpecificContext.typeof.length; i++) {
+          node.mostSpecificContext.typeof[i] = (await this.resourceMetadata.fetch(node.mostSpecificContext.typeof[i])).label;
+        }
       }
       if(node.mostSpecificContext.properties) {
-        node.mostSpecificContext.properties[0] = (await this.resourceMetadata.fetch( node.mostSpecificContext.properties[0])).label;
+        for(let i = 0; i < node.mostSpecificContext.properties.length; i++) {
+          node.mostSpecificContext.properties[i] = (await this.resourceMetadata.fetch(node.mostSpecificContext.properties[i])).label;
+        }
       }
       return node;
     }));

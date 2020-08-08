@@ -2,17 +2,22 @@
   {{#each this.rdfaBlocks as |block|}}
     {{#if block.hasTopPosition}}
       {{#let 
-        (and block.mostSpecificContext block.mostSpecificContext.typeof block.mostSpecificContext.typeof.firstObject)
-        (and block.mostSpecificContext block.mostSpecificContext.properties block.mostSpecificContext.properties.firstObject)
-        as |hasTypeOf hasProperties|
+        (and block.mostSpecificContext.typeof block.mostSpecificContext.typeof.firstObject)
+        (and block.mostSpecificContext.properties block.mostSpecificContext.properties.firstObject)
+        block.mostSpecificContext.typeof
+        block.mostSpecificContext.properties
+        block.mostSpecificContext.typeof.length
+        as |hasTypes hasProperties types properties numberOfTypes|
       }}
-        {{#if hasTypeOf}}
-          <p class="say-annotation-sidebar__item" style="position: absolute; top: {{block.topPosition}}px;">{{block.mostSpecificContext.typeof.firstObject}}</p>
-          {{#if hasProperties}}
-            <p class="say-annotation-sidebar__item" style="position: absolute; top: {{sum block.topPosition 20}}px;">{{block.mostSpecificContext.properties.firstObject}}</p>
-          {{/if}}
-        {{else if hasProperties}}
-          <p class="say-annotation-sidebar__item" style="position: absolute; top: {{block.topPosition}}px;">{{block.mostSpecificContext.properties.firstObject}}</p>
+        {{#if hasTypes}}
+          {{#each types as |type index|}}
+            <p class="say-annotation-sidebar__item" style="position: absolute; top: {{sum block.topPosition (mult 20 index)}}px;">{{type}}</p>
+          {{/each}}
+        {{/if}}
+        {{#if hasProperties}}
+          {{#each properties as |property index|}}
+            <p class="say-annotation-sidebar__item" style="position: absolute; top: {{sum block.topPosition (mult 20 (sum index numberOfTypes))}}px;">{{property}}</p>
+          {{/each}}
         {{/if}}
       {{/let}}
     {{/if}}
