@@ -41,6 +41,7 @@ export default class RdfaAnnotations extends Component {
         this.generateAnnotations.perform();
       };
       const observer = new MutationObserver(callback);
+      // eslint-disable-next-line ember/no-observers
       observer.observe(editorPaper, {
         attributes: true, 
         subtree: true, 
