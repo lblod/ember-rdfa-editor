@@ -324,7 +324,7 @@ export default class ContentEditable extends Component {
     if (this.features.isEnabled('editor-html-paste') && this.hasClipboardHtmlContent(clipboardData) ) {
       try {
         const inputParser = new HTMLInputParser({});
-        const htmlPaste = (event.clipboardData || window.clipboardData).getData('text/html');
+        const htmlPaste = clipboardData.getData('text/html');
         const cleanHTML = inputParser.cleanupHTML(htmlPaste);
         const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
         this.rawEditor.update(sel, {set: { innerHTML: cleanHTML}});
@@ -332,13 +332,13 @@ export default class ContentEditable extends Component {
       catch(e) {
         // fall back to text pasting
         console.warn(e); //eslint-disable-line no-console
-        const text = (event.clipboardData || window.clipboardData).getData('text');
+        const text = this.getClipboardContentAsText(clipboardData);
         const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
         this.rawEditor.update(sel, {set: { innerHTML: text}});
       }
     }
     else {
-      const text = (event.clipboardData || window.clipboardData).getData('text');
+      const text = this.getClipboardContentAsText(clipboardData);
       const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
       this.rawEditor.update(sel, {set: { innerHTML: text}});
     }
@@ -349,6 +349,14 @@ export default class ContentEditable extends Component {
   hasClipboardHtmlContent(clipboardData){
     const potentialContent = clipboardData.getData('text/html') || "";
     return potentialContent.length > 0;
+  }
+
+  getClipboardContentAsText(clipboardData){
+    const text = clipboardData.getData('text/plain') || "";
+    if( text.length === 0 ){
+      return clipboardData.getData('text') || "";
+    }
+    else return text;
   }
 
   @action
