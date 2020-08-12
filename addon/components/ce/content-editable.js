@@ -318,7 +318,10 @@ export default class ContentEditable extends Component {
   @action
   paste(event) {
     // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
-    if (this.features.isEnabled('editor-html-paste') && this.hasClipboardHtmlContent(event) ) {
+    const clipboardData = (event.clipboardData || window.clipboardData);
+
+    //TODO: if no clipboardData found, do we want an error?
+    if (this.features.isEnabled('editor-html-paste') && this.hasClipboardHtmlContent(clipboardData) ) {
       try {
         const inputParser = new HTMLInputParser({});
         const htmlPaste = (event.clipboardData || window.clipboardData).getData('text/html');
@@ -343,8 +346,8 @@ export default class ContentEditable extends Component {
     return false;
   }
 
-  hasClipboardHtmlContent(event){
-    const potentialContent = (event.clipboardData || window.clipboardData).getData('text/html') || "";
+  hasClipboardHtmlContent(clipboardData){
+    const potentialContent = clipboardData.getData('text/html') || "";
     return potentialContent.length > 0;
   }
 
