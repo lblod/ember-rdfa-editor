@@ -9,12 +9,9 @@ import Service from '@ember/service';
 */
 export default class ResourceMetadataService extends Service {
   async fetch(uri) {
-    const response = await fetch('/resource-labels/getInfo', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({term: uri})
+    const termEncoded = encodeURIComponent(uri);
+    const response = await fetch(`/resource-labels/getInfo?term=${termEncoded}`, {
+      method: 'GET',
     });
     const json = await response.json();
     return json;
