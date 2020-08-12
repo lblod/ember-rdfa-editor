@@ -327,21 +327,23 @@ export default class ContentEditable extends Component {
         const htmlPaste = clipboardData.getData('text/html');
         const cleanHTML = inputParser.cleanupHTML(htmlPaste);
         const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
-        this.rawEditor.update(sel, {set: { innerHTML: cleanHTML}});
+        this.rawEditor.update(sel, {set: { innerHTML: cleanHTML } });
       }
       catch(e) {
         // fall back to text pasting
         console.warn(e); //eslint-disable-line no-console
         const text = this.getClipboardContentAsText(clipboardData);
         const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
-        this.rawEditor.update(sel, {set: { innerHTML: text}});
+        this.rawEditor.update(sel, {set: { innerHTML: text } });
       }
     }
+
     else {
       const text = this.getClipboardContentAsText(clipboardData);
       const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
-      this.rawEditor.update(sel, {set: { innerHTML: text}});
+      this.rawEditor.update(sel, {set: { innerHTML: text } });
     }
+
     event.preventDefault();
     return false;
   }
