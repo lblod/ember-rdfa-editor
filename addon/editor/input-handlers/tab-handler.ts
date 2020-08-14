@@ -103,6 +103,11 @@ export default class TabInputHandler implements InputHandler {
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret(textNode, 0);
     }
+    //TODO: this could be moved to a plugin eventually.
+    else if(manipulation.type == 'moveCursorAfterEditor'){
+      const element = manipulation.node as HTMLElement;
+      element.blur();
+    }
     else {
       throw "unsupport manipulation";
     }
@@ -122,9 +127,11 @@ export default class TabInputHandler implements InputHandler {
 
     const parentElement = anchorNode.parentElement;
 
+    let nextManipulation;
+
     //TODO: this first check is to make linter happy.
     if(parentElement.lastChild && parentElement.lastChild.isSameNode(anchorNode)){
-      return { type: "moveCursorAfterElement", node: parentElement };
+      nextManipulation = { type: 'moveCursorAfterElement', node: parentElement };
     }
     else {
 
@@ -137,13 +144,16 @@ export default class TabInputHandler implements InputHandler {
       });
 
       if(nextElementForCursor){
-        return { type: "moveCursorInsideNonVoidAndVisibleElementAtStart", node: nextElementForCursor as HTMLElement};
+        nextManipulation = { type: 'moveCursorInsideNonVoidAndVisibleElementAtStart', node: nextElementForCursor as HTMLElement};
       }
       else {
-        return { type: "moveCursorAfterElement", node: parentElement };
+        nextManipulation = { type: 'moveCursorAfterElement', node: parentElement };
       }
 
+    if(nextManipulation.type === 'moveCursorAfterElement'  && nextManipulation.node.isSameNode(this.rawEditor.rootNode) ){
+      nextManipulation = { type: 'moveCursorAfterEditor', node: nextManipulation.node };
     }
+    return nextManipulation as Manipulation;
   }
 
     /**

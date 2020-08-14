@@ -47,6 +47,7 @@ export type Manipulation =
   | MoveCursorToEndOfNodeManipulation
   | MoveCursorBeforeElementManipulation
   | MoveCursorAfterElementManipulation
+  | MoveCursorAfterEditorManipulation
   | MoveCursorInsideNonVoidAndVisibleElementAtStartManipulation
   | KeepCursorAtStartManipulation
   | InsertTextIntoTextNodeManipulation
@@ -193,6 +194,11 @@ export interface ReplaceSelectionWithTextManipulation extends BaseManipulation {
 export interface MoveCursorAfterElementManipulation extends BaseManipulation {
   type: "moveCursorAfterElement";
   node: HTMLElement;
+}
+
+export interface MoveCursorAfterEditorManipulation extends BaseManipulation {
+  type: "moveCursorAfterEditor";
+  node: HTMLElement; //will be rootNode of editor
 }
 
 export interface MoveCursorInsideNonVoidAndVisibleElementAtStartManipulation extends BaseManipulation {
