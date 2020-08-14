@@ -246,7 +246,7 @@ export default class TextInputHandler implements InputHandler {
     }
 
     for( const { plugin } of reportsNoExecute ) {
-      console.debug(`Was not allowed to execute backspace manipulation by plugin ${plugin.label}`, { manipulation, plugin });
+      console.debug(`Was not allowed to execute text manipulation by plugin ${plugin.label}`, { manipulation, plugin });
     }
 
     // yield result

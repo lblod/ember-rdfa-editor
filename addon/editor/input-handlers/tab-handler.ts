@@ -22,7 +22,6 @@ export interface TabInputPlugin {
   guidanceForManipulation: (manipulation: Manipulation) => ManipulationGuidance | null;
 }
 
-
 /**
  * Tab Input Handler, a event handler to handle tab input
  *
@@ -48,7 +47,7 @@ export default class TabInputHandler implements InputHandler {
 
     const keyboardEvent = event as KeyboardEvent;
     //TODO: include shift key here?
-    return event.type === "keydown" && keyboardEvent.key === "Tab" && this.rawEditor.rootNode.contains(selection.anchorNode)
+    return event.type === 'keydown' && keyboardEvent.key === 'Tab' && this.rawEditor.rootNode.contains(selection.anchorNode)
 
   }
 
@@ -59,7 +58,7 @@ export default class TabInputHandler implements InputHandler {
 
     // error if we're not allowed to
     if ( ! mayExecute ) {
-      warn( `Not allowed to execute manipulation for ${this.constructor}`, { id: "tab-input-handler-manipulation-not-allowed" } );
+      warn( `Not allowed to execute manipulation for ${this.constructor}`, { id: 'tab-input-handler-manipulation-not-allowed' } );
       return { allowPropagation: false };
     }
 
@@ -75,7 +74,7 @@ export default class TabInputHandler implements InputHandler {
   }
 
   handleNativeManipulation(manipulation: Manipulation) {
-    if (manipulation.type == "moveCursorInsideNonVoidAndVisibleElementAtStart") {
+    if (manipulation.type == 'moveCursorInsideNonVoidAndVisibleElementAtStart') {
       const element = manipulation.node as HTMLElement;
       let textNode;
       if(element.firstChild && element.firstChild.nodeType == Node.TEXT_NODE){
@@ -89,7 +88,7 @@ export default class TabInputHandler implements InputHandler {
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret(textNode, 0);
     }
-    else if(manipulation.type == "moveCursorAfterElement"){
+    else if(manipulation.type == 'moveCursorAfterElement'){
       const element = manipulation.node as HTMLElement;
       let textNode;
       if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
@@ -109,7 +108,7 @@ export default class TabInputHandler implements InputHandler {
       element.blur();
     }
     else {
-      throw "unsupport manipulation";
+      throw 'unsupport manipulation';
     }
   }
 
@@ -118,7 +117,7 @@ export default class TabInputHandler implements InputHandler {
     const selection = window.getSelection();
 
     if(!(selection && selection.isCollapsed))
-      throw "selection is required for tab input"
+      throw 'selection is required for tab input'
 
     const { anchorNode } = selection;
 
@@ -149,10 +148,12 @@ export default class TabInputHandler implements InputHandler {
       else {
         nextManipulation = { type: 'moveCursorAfterElement', node: parentElement };
       }
+    }
 
     if(nextManipulation.type === 'moveCursorAfterElement'  && nextManipulation.node.isSameNode(this.rawEditor.rootNode) ){
       nextManipulation = { type: 'moveCursorAfterEditor', node: nextManipulation.node };
     }
+
     return nextManipulation as Manipulation;
   }
 
@@ -164,7 +165,7 @@ export default class TabInputHandler implements InputHandler {
    * negative response, otherwise it yields a positive response.
    *
    * We expect this method to be extended in the future with more rich
-   * responses from plugins.  Something like "skip" or "merge" to
+   * responses from plugins.  Something like 'skip' or 'merge' to
    * indicate this manipulation should be lumped together with a
    * previous manipulation.  Plugins may also want to execute the
    * changes themselves to ensure correct behaviour.
