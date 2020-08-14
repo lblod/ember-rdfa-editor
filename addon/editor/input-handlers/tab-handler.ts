@@ -73,7 +73,7 @@ export default class TabInputHandler implements InputHandler {
   }
 
   handleNativeManipulation(manipulation: Manipulation) {
-    if (manipulation.type == "moveCursorAtStartOfNonVoidAndVisibleElement") {
+    if (manipulation.type == "moveCursorInsideNonVoidAndVisibleElementAtStart") {
       const element = manipulation.node as HTMLElement;
       let textNode;
       if(element.firstChild && element.firstChild.nodeType == Node.TEXT_NODE){
@@ -106,7 +106,7 @@ export default class TabInputHandler implements InputHandler {
     }
   }
 
-  //TODO: fix end of document. fix invisible elements
+  //TODO: fix end of editor.
   getNextManipulation() : Manipulation {
     const selection = window.getSelection();
 
@@ -135,7 +135,7 @@ export default class TabInputHandler implements InputHandler {
       });
 
       if(nextElementForCursor){
-        return { type: "moveCursorAtStartOfNonVoidAndVisibleElement", node: nextElementForCursor as HTMLElement};
+        return { type: "moveCursorInsideNonVoidAndVisibleElementAtStart", node: nextElementForCursor as HTMLElement};
       }
       else {
         return { type: "moveCursorAfterElement", node: parentElement };
