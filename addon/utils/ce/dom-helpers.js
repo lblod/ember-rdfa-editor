@@ -373,6 +373,21 @@ function findLastLi(list) {
   }
 }
 
+/**
+ * From an Element, checks if it is visible or not.
+ * Note: there is an edge case with 'visibility: hidden'.
+ * See: https://stackoverflow.com/a/33456469/1092608 (the comments)
+ * @method isVisibleElement
+ * @param {Boolean}
+ * @public
+ */
+function isVisibleElement(element){
+  //Stolen from https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js
+  //SO likes this answer https://stackoverflow.com/a/33456469/1092608
+  //Note: there is still some edge case (see comments): "This will return true for an element with visibility:hidden"
+  return !!( element.offsetWidth || element.offsetHeight || element.getClientRects().length );
+}
+
 export {
   tagName,
   isDisplayedAsBlock,
@@ -386,6 +401,7 @@ export {
   removeNodeFromTree,
   removeNode,
   isVoidElement,
+  isVisibleElement,
   isIgnorableElement,
   createElementsFromHTML,
   siblingLis,

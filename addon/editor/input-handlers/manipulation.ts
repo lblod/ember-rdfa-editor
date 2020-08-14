@@ -46,6 +46,8 @@ export type Manipulation =
   | RemoveElementWithChildrenThatArentVisible
   | MoveCursorToEndOfNodeManipulation
   | MoveCursorBeforeElementManipulation
+  | MoveCursorAfterElementManipulation
+  | MoveCursorAtStartOfNonVoidAndVisibleElementManipulation
   | KeepCursorAtStartManipulation
   | InsertTextIntoTextNodeManipulation
   | InsertTextIntoElementManipulation
@@ -178,7 +180,6 @@ export interface InsertTextIntoElementManipulation extends BaseManipulation {
   text: string;
 }
 
-
 /**
  * Represents replacing a selection with text
  */
@@ -187,6 +188,16 @@ export interface ReplaceSelectionWithTextManipulation extends BaseManipulation {
   node: Node; // the anchorNode
   selection: Selection
   text: string;
+}
+
+export interface MoveCursorAfterElementManipulation extends BaseManipulation {
+  type: "moveCursorAfterElement";
+  node: HTMLElement;
+}
+
+export interface MoveCursorAtStartOfNonVoidAndVisibleElementManipulation extends BaseManipulation {
+  type: "moveCursorAtStartOfNonVoidAndVisibleElement";
+  node: HTMLElement;
 }
 
 export interface ManipulationGuidance {

@@ -10,6 +10,7 @@ import EnterHandler from '../../utils/ce/handlers/enter-handler';
 import IgnoreModifiersHandler from '../../utils/ce/handlers/ignore-modifiers-handler';
 import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
+import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import DeleteHandler from '../../utils/ce/handlers/delete-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
@@ -18,7 +19,7 @@ import LegacyMovementObserver from '../../utils/ce/movement-observers/legacy-mov
 import BoldItalicUnderlineHandler from '../../utils/ce/handlers/bold-italic-underline-handler';
 import UndoHandler from '../../utils/ce/handlers/undo-hander';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
-import TabHandler from '../../utils/ce/handlers/tab-handler';
+//import TabHandler from '../../utils/ce/handlers/tab-handler';
 import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
 import { inject as service } from '@ember/service';
@@ -152,9 +153,9 @@ export default class ContentEditable extends Component {
                                    new HeaderMarkdownHandler({rawEditor}),
                                    new EnterHandler({rawEditor}),
                                    new BackspaceHandler({rawEditor}),
+                                   new TabHandler({rawEditor}),
                                    new TextInputHandler({rawEditor, forceParagraph }),
                                    new DeleteHandler({rawEditor}),
-                                   new TabHandler({rawEditor}),
                                    new IgnoreModifiersHandler({rawEditor}),
                                    new UndoHandler({rawEditor}),
                                    new BoldItalicUnderlineHandler({rawEditor}),
