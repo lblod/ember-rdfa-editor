@@ -3,6 +3,7 @@ import { Manipulation, ManipulationExecutor, Editor, ManipulationGuidance } from
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import { RawEditor } from '../raw-editor';
 import { isVoidElement, isVisibleElement } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
 
 /**
  * Interface for specific plugins.
@@ -36,6 +37,7 @@ export default class TabInputHandler implements InputHandler {
   constructor( {rawEditor} : { rawEditor: RawEditor} ) {
     this.rawEditor = rawEditor;
     this.plugins = [
+      new LumpNodeTabInputPlugin()
     ];
   }
 
