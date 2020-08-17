@@ -20,8 +20,8 @@
            class="app-view">
 
         <Rdfa::RdfaEditor
-          @rdfaEditorInit={{action "rdfaEditorInit"}}
-          @initDebug={{action "initDebug"}}
+          @rdfaEditorInit={{this.rdfaEditorInit}}
+          @initDebug={{this.initDebug}}
           @profile="default"
           class="rdfa-playground"
           @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
