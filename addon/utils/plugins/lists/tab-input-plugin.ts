@@ -23,7 +23,10 @@ export default class ListTabInputPlugin implements TabInputPlugin {
 
       const listItem = manipulation.node as HTMLElement;
 
-      if(manipulation.selection.anchorOffset === 0){
+      //If cursor at beginning of LI, then do the indent
+      if(manipulation.selection.anchorOffset === 0
+         && manipulation.selection.anchorNode
+         && manipulation.selection.anchorNode.isSameNode(manipulation.node.firstChild) ){
         return { allow: true, executor: this.indentLiContent };
       }
       else {
