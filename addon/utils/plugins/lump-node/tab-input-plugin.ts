@@ -1,6 +1,6 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { isInLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
+import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
 
 /**
  *
@@ -31,7 +31,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
   }
 
   jumpOverLumpNode(manipulation: Manipulation, editor: Editor) : void {
-    const element = manipulation.node as HTMLElement;
+    const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
     let textNode;
     if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
       textNode = element.nextSibling;
