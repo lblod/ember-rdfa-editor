@@ -2,10 +2,10 @@ import { InputHandler } from './input-handler';
 import { Manipulation, ManipulationExecutor, Editor, ManipulationGuidance } from './manipulation';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import { RawEditor } from '../raw-editor';
-import { isVoidElement, isVisibleElement } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { isVoidElement, isVisibleElement, invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
 import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
 import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+
 /**
  * Interface for specific plugins.
  */
@@ -92,17 +92,21 @@ export default class TabInputHandler implements InputHandler {
     }
     else if(manipulation.type == 'moveCursorAfterElement'){
       const element = manipulation.node as HTMLElement;
-      let textNode;
       if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
-        textNode = element.nextSibling;
-      }
-      else {
-        textNode = document.createTextNode('');
-        element.after(textNode);
+        //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
+        const textNode = element.nextSibling;
+        this.rawEditor.updateRichNode();
+        this.rawEditor.setCarret(textNode, 0);
       }
 
-      this.rawEditor.updateRichNode();
-      this.rawEditor.setCarret(textNode, 0);
+      else {
+        //Adding invisibleSpace, to make sure that if LI is last node in parent, the user notices cursor jump
+        //TODO: probably some duplicat logic wit editor.setCarret
+        const textNode = document.createTextNode(invisibleSpace);
+        element.after(textNode);
+        this.rawEditor.updateRichNode();
+        this.rawEditor.setCarret(textNode, textNode.length);
+      }
     }
     //TODO: this could be moved to a plugin eventually.
     else if(manipulation.type == 'moveCursorAfterEditor'){
