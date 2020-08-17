@@ -137,7 +137,7 @@ export default class TabInputHandler implements InputHandler {
 
     //TODO: this first check is to make linter happy.
     if(parentElement.lastChild && parentElement.lastChild.isSameNode(anchorNode)){
-      nextManipulation = { type: 'moveCursorAfterElement', node: parentElement };
+      nextManipulation = { type: 'moveCursorAfterElement', node: parentElement, selection };
     }
     else {
 
@@ -150,10 +150,10 @@ export default class TabInputHandler implements InputHandler {
       });
 
       if(nextElementForCursor){
-        nextManipulation = { type: 'moveCursorInsideNonVoidAndVisibleElementAtStart', node: nextElementForCursor as HTMLElement};
+        nextManipulation = { type: 'moveCursorInsideNonVoidAndVisibleElementAtStart', node: nextElementForCursor as HTMLElement, selection};
       }
       else {
-        nextManipulation = { type: 'moveCursorAfterElement', node: parentElement };
+        nextManipulation = { type: 'moveCursorAfterElement', node: parentElement, selection };
       }
     }
 

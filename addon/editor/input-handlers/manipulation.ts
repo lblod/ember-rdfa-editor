@@ -194,6 +194,7 @@ export interface ReplaceSelectionWithTextManipulation extends BaseManipulation {
 export interface MoveCursorAfterElementManipulation extends BaseManipulation {
   type: "moveCursorAfterElement";
   node: HTMLElement;
+  selection: Selection;
 }
 
 export interface MoveCursorAfterEditorManipulation extends BaseManipulation {
@@ -204,6 +205,7 @@ export interface MoveCursorAfterEditorManipulation extends BaseManipulation {
 export interface MoveCursorInsideNonVoidAndVisibleElementAtStartManipulation extends BaseManipulation {
   type: "moveCursorInsideNonVoidAndVisibleElementAtStart"; //TODO: prettier name
   node: HTMLElement;
+  selection: Selection;
 }
 
 export interface ManipulationGuidance {
