@@ -3,6 +3,7 @@ import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-ed
 import { isList, isLI, getAllLisFromList, isEmptyList, siblingLis, findLastLi, tagName } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
 import { indentAction } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler'
+import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
 
 /**
  *
@@ -46,6 +47,9 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     return null;
   }
 
+  /**
+   * Sets the cursor in the first <li></li>. If list is empty, creates an <li></li>
+   */
   jumpIntoFirstLi(manipulation: Manipulation, editor: Editor) : void {
     const list = manipulation.node as HTMLElement;
     let firstLi;
@@ -58,21 +62,32 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     else {
       firstLi = getAllLisFromList(list)[0] as HTMLElement;
     }
-    setCursorAtBeginningOfElement(firstLi, editor);
+    setCursorAtBeginningOfLi(firstLi, editor);
   }
 
+  /*
+   * Creates nested list
+   * Note: depends on list helpers from a long time ago.
+   * TODO: Indent means the same as nested list, perhaps rename the action
+   */
   indentLiContent(_: Manipulation, editor: Editor) : void {
     indentAction(editor); //TODO: this is legacy, this should be revisited.
   }
 
+  /*
+   * Jumps to next List item. Assumes there is one and current LI is not the last
+   */
   jumpToNextLi(manipulation: Manipulation, editor: Editor) : void {
     //Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLElement;
     const listItems = siblingLis(listItem);
     const indexOfLi = listItems.indexOf(listItem);
-    setCursorAtBeginningOfElement(listItems[indexOfLi + 1], editor);
+    setCursorAtBeginningOfLi(listItems[indexOfLi + 1], editor);
   }
 
+  /*
+   * Jumps outside of list.
+   */
   jumpOutOfList(manipulation: Manipulation, editor: Editor) : void {
     const element = manipulation.node.parentElement; //this is the list
     if(!element) throw 'Tab-input-handler expected list to be attached to DOM';
@@ -94,6 +109,9 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     }
   }
 
+  /*
+   * Jumps to the LI of parent list. Creates a list item in the parent list if non remains.
+   */
   jumpToNextLiOfParentList(manipulation: Manipulation, editor: Editor){
     const list =  manipulation.node.parentElement;
 
@@ -118,18 +136,20 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     else {
       nextLi = listItems[indexOfLi + 1];
     }
-    setCursorAtBeginningOfElement(nextLi, editor);
+    setCursorAtBeginningOfLi(nextLi, editor);
   }
 }
 
-function setCursorAtBeginningOfElement(element : HTMLElement, editor: Editor){
+function setCursorAtBeginningOfLi(listItem : HTMLElement, editor: Editor){
   let textNode;
-  if(element.firstChild && element.firstChild.nodeType == Node.TEXT_NODE){
-    textNode = element.firstChild;
+  if(listItem.firstChild && listItem.firstChild.nodeType == Node.TEXT_NODE){
+    textNode = listItem.firstChild;
   }
   else {
+    //Note: I create an empty textNode, I consider this to be sufficient for the user to see somthing happens on screen.
+    //It kinda assumes this function is called when coming from another listItem
     textNode = document.createTextNode('');
-    element.prepend(textNode);
+    listItem.prepend(textNode);
   }
   editor.updateRichNode();
   editor.setCarret(textNode, 0);
