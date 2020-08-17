@@ -10,7 +10,7 @@ import Service from '@ember/service';
 export default class ResourceMetadataService extends Service {
   async fetch(uri) {
     const termEncoded = encodeURIComponent(uri);
-    const response = await fetch(`/resource-labels/getInfo?term=${termEncoded}`, {
+    const response = await fetch(`/resource-labels/info?term=${termEncoded}`, {
       method: 'GET',
     });
     const json = await response.json();
