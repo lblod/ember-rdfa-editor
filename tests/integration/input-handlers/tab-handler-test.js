@@ -8,7 +8,7 @@ module('Integration | InputHandler | tab-handler', function(hooks) {
 
   test('tab works with li', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('<li>baz</li><li>foo</li>');
+      editor.setHtmlContent('<ul><li>baz</li><li>foo</li></ul>');
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{this.rdfaEditorInit}}
@@ -18,7 +18,7 @@ module('Integration | InputHandler | tab-handler', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
     var editor = document.querySelector("div[contenteditable]");
-    const bazWordNode = editor.childNodes[0];
+    const bazWordNode = editor.childNodes[0].childNodes[0];
     window.getSelection().collapse(bazWordNode,0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
