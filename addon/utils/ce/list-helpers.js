@@ -364,6 +364,7 @@ function getGroupedLogicalBlocks(suitableNodes, rootNode) {
 
   const uniqueNodes = Array.from(new Set(eligibleNodes.flat()));
   const highestNodes = keepHighestNodes(uniqueNodes);
+  //TODO: rethink this. It is not clear why now all whitspacesNodes are removed....
   const cleanedNodes = highestNodes.length > 1 ? removeWhitespaceNodes(highestNodes) : [...highestNodes];
 
   return groupNodesByLogicalBlocks(cleanedNodes);

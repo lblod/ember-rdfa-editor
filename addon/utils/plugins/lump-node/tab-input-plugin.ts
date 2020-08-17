@@ -11,8 +11,6 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
   label = 'Tap input plugin for handling LumpNodes'
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
-    //TODO: fix case.manipulation.node == lumpnode
-
     if( manipulation.type !== 'moveCursorInsideNonVoidAndVisibleElementAtStart' ){
       console.info(`plugins/lump-node/tab-input-plugin: manipulation ${manipulation.type} not supported for lumpNode`);
       return null;
@@ -26,7 +24,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
       return {
         allow: true,
         executor: this.jumpOverLumpNode
-      }
+      };
     }
 
     return null;
@@ -42,7 +40,6 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
       textNode = document.createTextNode('');
       element.after(textNode);
     }
-
     editor.updateRichNode();
     editor.setCarret(textNode, 0);
   }

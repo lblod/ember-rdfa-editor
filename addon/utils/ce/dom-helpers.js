@@ -256,7 +256,7 @@ const insertNodeBAfterNodeA = function(parent, nodeA, nodeB) {
  * return lowercased tagname of a provided node or an empty string for non element nodes
  * @method tagName
  * @param {DOMNode} node
- * @return {boolean}
+ * @return {String}
  * @public
  */
 function tagName(node) {
