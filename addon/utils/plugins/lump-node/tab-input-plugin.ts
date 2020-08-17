@@ -1,6 +1,7 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
+import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
 
 /**
  *
@@ -32,15 +33,20 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
 
   jumpOverLumpNode(manipulation: Manipulation, editor: Editor) : void {
     const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
-    let textNode;
     if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
-      textNode = element.nextSibling;
+      //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
+      const textNode = element.nextSibling;
+      editor.updateRichNode();
+      editor.setCarret(textNode, 0);
     }
+
     else {
-      textNode = document.createTextNode('');
+      //Adding invisibleSpace, to make sure that if LI is last node in parent, the user notices cursor jump
+      //TODO: probably some duplicat logic wit editor.setCarret
+      const textNode = document.createTextNode(invisibleSpace);
       element.after(textNode);
+      editor.updateRichNode();
+      editor.setCarret(textNode, textNode.length);
     }
-    editor.updateRichNode();
-    editor.setCarret(textNode, 0);
   }
 }
