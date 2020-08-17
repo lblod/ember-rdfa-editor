@@ -76,17 +76,22 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   jumpOutOfList(manipulation: Manipulation, editor: Editor) : void {
     const element = manipulation.node.parentElement; //this is the list
     if(!element) throw 'Tab-input-handler expected list to be attached to DOM';
-    let textNode;
+
     if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
-      textNode = element.nextSibling;
-    }
-    else {
-      textNode = document.createTextNode(invisibleSpace);
-      element.after(textNode);
+      //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
+      const textNode = element.nextSibling;
+      editor.updateRichNode();
+      editor.setCarret(textNode, 0);
     }
 
-    editor.updateRichNode();
-    editor.setCarret(textNode, 0);
+    else {
+      //Adding invisibleSpace, to make sure that if LI is last node in parent, the user notices cursor jump
+      //TODO: probably some duplicat logic wit editor.setCarret
+      const textNode = document.createTextNode(invisibleSpace);
+      element.after(textNode);
+      editor.updateRichNode();
+      editor.setCarret(textNode, textNode.length);
+    }
   }
 
   jumpToNextLiOfParentList(manipulation: Manipulation, editor: Editor){
