@@ -110,8 +110,9 @@ export default class TabInputHandler implements InputHandler {
     }
     //TODO: this could be moved to a plugin eventually.
     else if(manipulation.type == 'moveCursorAfterEditor'){
-      const element = manipulation.node as HTMLElement;
-      element.blur();
+      console.warn('editor/tab-handler: handle moveCursorAfterEditor currently disabled until we are sure what we want here')
+      // const element = manipulation.node as HTMLElement;
+      // element.blur();
     }
     else {
       throw 'unsupport manipulation';
