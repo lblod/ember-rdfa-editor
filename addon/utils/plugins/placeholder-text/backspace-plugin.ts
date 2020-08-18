@@ -4,14 +4,14 @@ import { Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/edi
 /**
  *
  * @class PlaceholderTextBackspacePlugin
- * @module plugin/lump-node
+ * @module plugins/placeholder-text
  */
 export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
   label = 'backspace plugin for handling placeholder nodes'
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
     const node = manipulation.node;
-    const parentNode = node.parentNode;
+    const parentNode = node.parentElement;
     if(parentNode && parentNode.classList.contains('mark-highlight-manual')) {
       return {
         allow: true,
@@ -27,7 +27,7 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
    */
   removePlaceholder(manipulation: Manipulation) : void {
     const node = manipulation.node;
-    const parentNode = node.parentNode;
+    const parentNode = node.parentElement;
     if(parentNode) {
       parentNode.remove();
     }
