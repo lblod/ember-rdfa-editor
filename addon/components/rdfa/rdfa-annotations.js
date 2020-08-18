@@ -54,7 +54,7 @@ export default class RdfaAnnotations extends Component {
         ]
       });
     } catch(e) {
-      setTimeout(this.setupObserver.bind(this, callDepth+1), 250);
+      setTimeout(this.setupObserver.bind(this, callDepth+1), 250); // I just try to find the editor and hook into it once I've found it. This could be replaced with a registration mechanism once that exists.
     }
   }
   /*
@@ -189,12 +189,14 @@ export default class RdfaAnnotations extends Component {
     * @return {number} The definitive placement of the block
     */
   blockPlacement(offset, numberOfBlocks = 1) {
-    const offsetToNearest20 = Math.round(offset/20)*20;
+     //This function tries to place the blocks with 20px of separation because that's the height of a rdfa-hint. This avoids overlaps
+    const blockHeight = 20;
+    const offsetToNearest20 = Math.round(offset/blockHeight)*blockHeight;
     if(this.topPositions[offsetToNearest20]) {
-      return this.blockPlacement(offsetToNearest20+20, numberOfBlocks);
+      return this.blockPlacement(offsetToNearest20+blockHeight, numberOfBlocks);
     } else {
       for(let i = 0; i < numberOfBlocks; i++) {
-        this.topPositions[offsetToNearest20 + (20 * i)] = true;
+        this.topPositions[offsetToNearest20 + (blockHeight * i)] = true;
       }
       return offsetToNearest20;
     }
