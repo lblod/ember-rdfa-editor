@@ -1,4 +1,4 @@
-<input type="checkbox" checked={{this.debugEnabled}} /> Enable debug
+<input type="checkbox" checked={{this.debugEnabled}} {{on "click" this.toggleDebug}} /> Enable debug
 
 {{#if this.debugEnabled}}
   <div>
