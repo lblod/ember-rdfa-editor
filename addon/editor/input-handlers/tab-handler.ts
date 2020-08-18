@@ -53,8 +53,8 @@ export default class TabInputHandler implements InputHandler {
 
   }
 
-  handleEvent() {
-    const manipulation = this.getNextManipulation();
+  handleEvent(event : KeyboardEvent) {
+    const manipulation = this.getNextManipulation(event);
     // check if we can execute it
     const { mayExecute, dispatchedExecutor } = this.checkManipulationByPlugins( manipulation );
 
@@ -76,7 +76,50 @@ export default class TabInputHandler implements InputHandler {
   }
 
   handleNativeManipulation(manipulation: Manipulation) {
-    if (manipulation.type == 'moveCursorInsideNonVoidAndVisibleElementAtStart') {
+
+    /************************ SHIFT TAB ************************/
+    if (manipulation.type == 'moveCursorInsideNonVoidAndVisibleElementAtEnd') {
+      const element = manipulation.node as HTMLElement;
+      let textNode;
+      if(element.lastChild && element.lastChild.nodeType == Node.TEXT_NODE){
+        textNode = element.lastChild as Text;
+        this.rawEditor.updateRichNode();
+        this.rawEditor.setCarret(textNode, textNode.length);
+      }
+      else {
+        textNode = document.createTextNode(invisibleSpace);
+        element.append(textNode);
+        this.rawEditor.updateRichNode();
+        this.rawEditor.setCarret(textNode, 0);
+      }
+    }
+
+    else if(manipulation.type == 'moveCursorBeforeElement'){
+      const element = manipulation.node as HTMLElement;
+      if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
+        //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
+        const textNode = element.previousSibling;
+        this.rawEditor.updateRichNode();
+        this.rawEditor.setCarret(textNode, (textNode as Text).length);
+      }
+
+      else {
+        //Adding invisibleSpace, to make sure that if LI is last node in parent, the user notices cursor jump
+        //TODO: probably some duplicat logic wit editor.setCarret
+        const textNode = document.createTextNode(invisibleSpace);
+        element.before(textNode);
+        this.rawEditor.updateRichNode();
+        this.rawEditor.setCarret(textNode, 0);
+      }
+    }
+
+    //TODO: this could be moved to a plugin eventually.
+    else if(manipulation.type == 'moveCursorBeforeEditor'){
+      console.warn('editor/tab-handler: handle moveCursorBeforeEditor currently disabled until we are sure what we want here')
+    }
+
+    /************************ TAB ************************/
+    else if (manipulation.type == 'moveCursorInsideNonVoidAndVisibleElementAtStart') {
       const element = manipulation.node as HTMLElement;
       let textNode;
       if(element.firstChild && element.firstChild.nodeType == Node.TEXT_NODE){
@@ -90,6 +133,7 @@ export default class TabInputHandler implements InputHandler {
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret(textNode, 0);
     }
+
     else if(manipulation.type == 'moveCursorAfterElement'){
       const element = manipulation.node as HTMLElement;
       if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
@@ -98,7 +142,6 @@ export default class TabInputHandler implements InputHandler {
         this.rawEditor.updateRichNode();
         this.rawEditor.setCarret(textNode, 0);
       }
-
       else {
         //Adding invisibleSpace, to make sure that if LI is last node in parent, the user notices cursor jump
         //TODO: probably some duplicat logic wit editor.setCarret
@@ -108,24 +151,35 @@ export default class TabInputHandler implements InputHandler {
         this.rawEditor.setCarret(textNode, textNode.length);
       }
     }
+
     //TODO: this could be moved to a plugin eventually.
     else if(manipulation.type == 'moveCursorAfterEditor'){
       console.warn('editor/tab-handler: handle moveCursorAfterEditor currently disabled until we are sure what we want here')
       // const element = manipulation.node as HTMLElement;
       // element.blur();
     }
+
     else {
       throw 'unsupport manipulation';
     }
   }
 
-  //TODO: fix end of editor.
-  getNextManipulation() : Manipulation {
+  //TODO: fix end or beginning of editor.
+  getNextManipulation(event : KeyboardEvent) : Manipulation {
     const selection = window.getSelection();
 
     if(!(selection && selection.isCollapsed))
       throw 'selection is required for tab input'
 
+    if(event.shiftKey){
+      return this.helpGetShiftTabNextManipulation(selection);
+    }
+    else {
+      return this.helpGetTabNextManipulation(selection);
+    }
+  }
+
+  helpGetShiftTabNextManipulation(selection : Selection) : Manipulation {
     const { anchorNode } = selection;
 
     if(! (anchorNode && anchorNode.parentElement) )
@@ -136,6 +190,46 @@ export default class TabInputHandler implements InputHandler {
     let nextManipulation;
 
     //TODO: this first check is to make linter happy.
+    //TODO: assumes anchorNode is not an element.
+    if(parentElement.firstChild && parentElement.firstChild.isSameNode(anchorNode)){
+      nextManipulation = { type: 'moveCursorBeforeElement', node: parentElement, selection };
+    }
+    else {
+      const childNodes = Array.from(parentElement.childNodes);
+      const offsetAnchorNode = childNodes.indexOf(anchorNode as ChildNode);
+      const remainingSiblings = [ ...childNodes.slice(0, offsetAnchorNode + 1) ].reverse();
+
+      const previousElementForCursor = remainingSiblings.find(node => {
+        return !isVoidElement(node) && node.nodeType == Node.ELEMENT_NODE && isVisibleElement(node);
+      });
+
+      if(previousElementForCursor){
+        nextManipulation = { type: 'moveCursorInsideNonVoidAndVisibleElementAtEnd', node: previousElementForCursor as HTMLElement, selection};
+      }
+      else {
+        nextManipulation = { type: 'moveCursorBeforeElement', node: parentElement, selection };
+      }
+    }
+
+    if(nextManipulation.type === 'moveCursorBeforeElement'  && nextManipulation.node.isSameNode(this.rawEditor.rootNode) ){
+      nextManipulation = { type: 'moveCursorBeforeEditor', node: nextManipulation.node };
+    }
+
+    return nextManipulation as Manipulation;
+  }
+
+  helpGetTabNextManipulation(selection : Selection) : Manipulation {
+    const { anchorNode } = selection;
+
+    if(! (anchorNode && anchorNode.parentElement) )
+      throw 'Tab input expected anchorNode and parentElement';
+
+    const parentElement = anchorNode.parentElement;
+
+    let nextManipulation;
+
+    //TODO: this first check is to make linter happy.
+    //TODO: assumes anchorNode is not an element.
     if(parentElement.lastChild && parentElement.lastChild.isSameNode(anchorNode)){
       nextManipulation = { type: 'moveCursorAfterElement', node: parentElement, selection };
     }
@@ -162,6 +256,7 @@ export default class TabInputHandler implements InputHandler {
     }
 
     return nextManipulation as Manipulation;
+
   }
 
     /**
