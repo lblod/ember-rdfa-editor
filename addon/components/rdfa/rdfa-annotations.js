@@ -191,14 +191,14 @@ export default class RdfaAnnotations extends Component {
   blockPlacement(offset, numberOfBlocks = 1) {
      //This function tries to place the blocks with 20px of separation because that's the height of a rdfa-hint. This avoids overlaps
     const blockHeight = 20;
-    const offsetToNearest20 = Math.round(offset/blockHeight)*blockHeight;
-    if(this.topPositions[offsetToNearest20]) {
-      return this.blockPlacement(offsetToNearest20+blockHeight, numberOfBlocks);
+    const offsetRoundedToNearestBlockHeight = Math.round(offset/blockHeight)*blockHeight;
+    if(this.topPositions[offsetRoundedToNearestBlockHeight]) {
+      return this.blockPlacement(offsetRoundedToNearestBlockHeight+blockHeight, numberOfBlocks);
     } else {
       for(let i = 0; i < numberOfBlocks; i++) {
-        this.topPositions[offsetToNearest20 + (blockHeight * i)] = true;
+        this.topPositions[offsetRoundedToNearestBlockHeight + (blockHeight * i)] = true;
       }
-      return offsetToNearest20;
+      return offsetRoundedToNearestBlockHeight;
     }
   }
 
