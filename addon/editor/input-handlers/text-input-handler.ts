@@ -3,7 +3,7 @@ import { Manipulation, ManipulationExecutor, Editor, ManipulationGuidance } from
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import RdfaTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/text-input-plugin';
 import AnchorTagTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/anchor-tags/text-input-plugin';
-
+import PlaceHolderTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/text-input-plugin';
 import { RawEditor } from '../raw-editor';
 const NON_BREAKING_SPACE = '\u00A0';
 
@@ -57,7 +57,8 @@ export default class TextInputHandler implements InputHandler {
     this.rawEditor = rawEditor;
     this.plugins = [
       new RdfaTextInputPlugin(),
-      new AnchorTagTextInputPlugin()
+      new AnchorTagTextInputPlugin(),
+      new PlaceHolderTextInputPlugin()
     ];
   }
 
