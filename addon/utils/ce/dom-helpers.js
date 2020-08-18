@@ -196,6 +196,24 @@ function siblingLis(node) {
   return lis;
 }
 
+
+/**
+ * returns all LI's from list
+ * @method getAllLisFromList
+ * @param {DOMNode} node
+ * @return {Array}
+ * @public
+ */
+function getAllLisFromList(list){
+  const listItems = [];
+  for(let element of [ ...list.children ]){
+    if (tagName(element) === 'li'){
+      listItems.push(element);
+    }
+  }
+  return listItems;
+}
+
 /**
  * check if the provided node is an empty list (e.g ol or ul without li's)
  * @method isEmptyList
@@ -238,7 +256,7 @@ const insertNodeBAfterNodeA = function(parent, nodeA, nodeB) {
  * return lowercased tagname of a provided node or an empty string for non element nodes
  * @method tagName
  * @param {DOMNode} node
- * @return {boolean}
+ * @return {String}
  * @public
  */
 function tagName(node) {
@@ -405,6 +423,7 @@ export {
   isIgnorableElement,
   createElementsFromHTML,
   siblingLis,
+  getAllLisFromList,
   isAllWhitespace,
   getParentLI,
   isLI,

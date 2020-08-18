@@ -263,7 +263,7 @@ function orderedListAction(rawEditor) {
 function indentAction(rawEditor) {
   let filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
 
-  if (filteredSuitableNodes) {
+  if (filteredSuitableNodes.length) {
     let handleAction = () => {
       const groupedLogicalBlocks = getGroupedLogicalBlocks(filteredSuitableNodes);
 
@@ -286,7 +286,7 @@ function indentAction(rawEditor) {
 function unindentAction(rawEditor) {
   let filteredSuitableNodes = getFilteredSuitableNodes(rawEditor, 'indentation');
 
-  if (filteredSuitableNodes) {
+  if (filteredSuitableNodes.length) {
     let handleAction = () => {
       const groupedLogicalBlocks = getGroupedLogicalBlocks(filteredSuitableNodes);
 
@@ -364,7 +364,8 @@ function getGroupedLogicalBlocks(suitableNodes, rootNode) {
 
   const uniqueNodes = Array.from(new Set(eligibleNodes.flat()));
   const highestNodes = keepHighestNodes(uniqueNodes);
-  const cleanedNodes = removeWhitespaceNodes(highestNodes);
+  //TODO: rethink this. It is not clear why now all whitspacesNodes are removed....
+  const cleanedNodes = highestNodes.length > 1 ? removeWhitespaceNodes(highestNodes) : [...highestNodes];
 
   return groupNodesByLogicalBlocks(cleanedNodes);
 }
