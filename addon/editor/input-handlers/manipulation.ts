@@ -45,7 +45,6 @@ export type Manipulation =
   | RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation
   | RemoveElementWithChildrenThatArentVisible
   | MoveCursorToEndOfNodeManipulation
-  | MoveCursorBeforeElementManipulation
   | MoveCursorAfterElementManipulation
   | MoveCursorBeforeElementManipulation
   | MoveCursorAfterEditorManipulation
@@ -135,7 +134,7 @@ export interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
  */
 export interface MoveCursorBeforeElementManipulation extends BaseManipulation {
   type: "moveCursorBeforeElement";
-  node: Element;
+  node: HTMLElement;
 }
 
 /**
@@ -196,12 +195,6 @@ export interface ReplaceSelectionWithTextManipulation extends BaseManipulation {
 
 export interface MoveCursorAfterElementManipulation extends BaseManipulation {
   type: "moveCursorAfterElement";
-  node: HTMLElement;
-  selection: Selection;
-}
-
-export interface MoveCursorBeforeElementManipulation extends BaseManipulation {
-  type: "moveCursorBeforeElement";
   node: HTMLElement;
   selection: Selection;
 }
