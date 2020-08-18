@@ -8,7 +8,6 @@
           <a {{on "click" (fn this.loadData data)}}>{{name}}</a> |
         {{/each-in}}
       </p>
-
     {{else}}
       Waiting for editor init
     {{/if}}
@@ -29,9 +28,10 @@
         />
       </div>
     </div>
-
-    <div class="c-dummy-debugger">
-      {{rdfa/rdfa-editor-debugger debug=debug}}
-    </div>
+    {{#if this.debug}}
+      <div class="c-dummy-debugger">
+        <Rdfa::RdfaEditorDebugger @debug={{this.debug}} />
+      </div>
+    {{/if}}
   </div>
 </div>

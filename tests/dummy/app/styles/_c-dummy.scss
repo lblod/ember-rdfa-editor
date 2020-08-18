@@ -84,10 +84,13 @@
 }
 
 // Dummy debug styles
-.c-dummy-debugger {
-  position: fixed;
-  z-index: 999;
-  top: 2rem;
-  right: 2rem;
-  font-size: 1.6rem;
+.c-dummy__content > .c-dummy-debugger {
+  position: absolute;
+  bottom: 0;
+  right: 1.8rem;
+  width: 380px;
+  max-height: calc(100% - 44px);
+  overflow: auto;
+  padding: 1.2rem 1.8rem;
+  top: 58px;
 }
