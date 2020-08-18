@@ -13,7 +13,6 @@ import { debug } from '@ember/debug';
  */
 export default Component.extend({
   layout,
-
   /**
    * RDFa editor to debug in
    *

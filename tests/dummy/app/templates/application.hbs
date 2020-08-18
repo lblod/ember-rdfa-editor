@@ -1,7 +1,12 @@
 <div class="c-dummy">
   <div class="c-dummy__header">
     <h1>Dummy app </h1>
-    <p>App version: {{app-version versionOnly=true showExtended=true}}</p>
+    <p>
+      App version: {{app-version versionOnly=true showExtended=true}}
+      {{#if this.debug}}
+        <Rdfa::RdfaEditorDebugger @debug={{this.debug}} />
+      {{/if}}
+    </p>
     {{#if this.rdfaEditor}}
       <p>Sample data:
         {{#each-in model as |name data| }}
@@ -28,10 +33,5 @@
         />
       </div>
     </div>
-    {{#if this.debug}}
-      <div class="c-dummy-debugger">
-        <Rdfa::RdfaEditorDebugger @debug={{this.debug}} />
-      </div>
-    {{/if}}
   </div>
 </div>

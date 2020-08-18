@@ -56,6 +56,7 @@ export default class RdfaEditorDebugger extends Component {
   */
   debugModes = null;
 
+  tagName = '';
   @action
   toggleDebug() {
     this.toggleProperty('debugEnabled');
