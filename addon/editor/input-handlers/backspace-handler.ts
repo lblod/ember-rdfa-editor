@@ -9,8 +9,8 @@ import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/
 import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
 import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/backspace-plugin';
 import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { InputHandler } from './input-handler';
-import { RawEditor, RichNode } from '../raw-editor';
+import { InputHandler, HandlerResponse } from './input-handler';
+import { RawEditor } from '../raw-editor';
 import { runInDebug } from '@ember/debug';
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
@@ -444,7 +444,7 @@ export default class BackspaceHandler implements InputHandler {
    * @return {HandlerResponse}
    * @public
    */
-  handleEvent(event : Event) {
+  handleEvent(event : Event) : HandlerResponse {
     // TODO: reason more about async behaviour of backspace.
     event.preventDefault(); // make sure event propagation is stopped, async behaviour of backspace could cause the browser to execute eventDefault before it is finished
     this.backspace().then( () => {
@@ -1143,33 +1143,5 @@ export default class BackspaceHandler implements InputHandler {
     }
 
     return reports.length > 0;
-  }
-
-  get rootNode() : Node {
-    return this.rawEditor.rootNode;
-  }
-
-  get currentSelection(){
-    return this.rawEditor.currentSelection;
-  }
-  get richNode() : RichNode {
-    return this.rawEditor.richNode;
-  }
-  get currentNode() : Node {
-    return this.rawEditor.currentNode;
-  }
-
-  /**
-   * Given richnode and absolute position, retrieves the relative
-   * position to the text node.
-   *
-   * @method absoluteToRelativePostion
-   * @param {Object} richNode Richnode which contains the cursor.
-   * @param {Int} position Absolute position of the cursor in the document.
-   * @return {Int} Position of the cursor relative to `richNode`.
-   * @private
-   */
-  absoluteToRelativePosition(richNode: RichNode, position : number) {
-    return Math.max(position - ( richNode.start || 0 ));
   }
 }
