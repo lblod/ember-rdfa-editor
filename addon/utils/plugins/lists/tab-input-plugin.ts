@@ -26,6 +26,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
         return { allow: true, executor: this.jumpIntoFirstLi };
       }
     }
+
     else if( manipulation.type == 'moveCursorAfterElement' && isLI(manipulation.node)){
       //Some choices have been made. Let's try to follow more or less the most popular html editor
 
@@ -49,7 +50,35 @@ export default class ListTabInputPlugin implements TabInputPlugin {
           return { allow: true, executor: this.jumpToNextLi };
         }
       }
+    }
 
+    else if( manipulation.type == 'moveCursorInsideNonVoidAndVisibleElementAtEnd' ){
+      if(isList(manipulation.node)){
+        return { allow: true, executor: this.jumpIntoLastLi };
+      }
+    }
+
+    else if ( manipulation.type == 'moveCursorBeforeElement' && isLI(manipulation.node) ){
+      const listItem = manipulation.node as HTMLElement;
+      //If cursor at beginning of LI, then do the unindent
+      //Note: this might be suprising and we also might want the cursor to be at the end of the LI
+      if(manipulation.selection
+         && manipulation.selection.anchorOffset === 0
+         && manipulation.selection.anchorNode
+         && manipulation.selection.anchorNode.isSameNode(listItem.firstChild) ){
+        return { allow: true, executor: this.unindentLiContent };
+      }
+      else {
+        const list = listItem.parentElement;
+        const firstLi = getAllLisFromList(list)[0] as HTMLElement;
+
+        if( firstLi.isSameNode(listItem) ){
+          return { allow: true, executor: this.jumpOutOfListToStart };
+        }
+        else {
+          return { allow: true, executor: this.jumpToPreviousLi };
+        }
+      }
     }
     return null;
   }
@@ -69,7 +98,25 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     else {
       firstLi = getAllLisFromList(list)[0] as HTMLElement;
     }
-    setCursorAtBeginningOfLi(firstLi, editor);
+    setCursorAtStartOfLi(firstLi, editor);
+  }
+
+  /**
+   * Sets the cursor in the last <li></li>. If list is empty, creates an <li></li>
+   */
+  jumpIntoLastLi(manipulation: Manipulation, editor: Editor) : void {
+    const list = manipulation.node as HTMLElement;
+    let lastLi;
+
+    //This branch creates a new LI, but not really sure if we want that.
+    if(isEmptyList(list)){
+      lastLi = document.createElement('li');
+      list.append(lastLi);
+    }
+    else {
+      lastLi = [ ...getAllLisFromList(list) ].reverse()[0] as HTMLElement;
+    }
+    setCursorAtEndOfLi(lastLi, editor);
   }
 
   /*
@@ -82,6 +129,15 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   }
 
   /*
+   * Merges nested list to parent list
+   * Note: depends on list helpers from a long time ago.
+   * TODO: Indent means the same as merge nested list, perhaps rename the action
+   */
+  unindentLiContent(_: Manipulation, editor: Editor) : void {
+    unindentAction(editor); //TODO: this is legacy, this should be revisited.
+  }
+
+  /*
    * Jumps to next List item. Assumes there is one and current LI is not the last
    */
   jumpToNextLi(manipulation: Manipulation, editor: Editor) : void {
@@ -89,7 +145,18 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     const listItem = manipulation.node as HTMLElement;
     const listItems = siblingLis(listItem);
     const indexOfLi = listItems.indexOf(listItem);
-    setCursorAtBeginningOfLi(listItems[indexOfLi + 1], editor);
+    setCursorAtStartOfLi(listItems[indexOfLi + 1], editor);
+  }
+
+  /*
+   * Jumps to next List item. Assumes there is one and current LI is not the first
+   */
+  jumpToPreviousLi(manipulation: Manipulation, editor: Editor) : void {
+    //Assumes the LI is not the last one
+    const listItem = manipulation.node as HTMLElement;
+    const listItems = siblingLis(listItem);
+    const indexOfLi = listItems.indexOf(listItem);
+    setCursorAtEndOfLi(listItems[indexOfLi - 1], editor);
   }
 
   /*
@@ -99,50 +166,82 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     const element = manipulation.node.parentElement; //this is the list
     if(!element) throw 'Tab-input-handler expected list to be attached to DOM';
 
+    let textNode;
     if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
       //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
-      const textNode = element.nextSibling;
-      editor.updateRichNode();
-      editor.setCarret(textNode, 0);
+      textNode = element.nextSibling;
     }
 
     else {
       //Adding invisibleSpace, to make sure that if LI is last node in parent, the user notices cursor jump
       //TODO: probably some duplicat logic wit editor.setCarret
-      const textNode = document.createTextNode(invisibleSpace);
+      textNode = document.createTextNode(invisibleSpace);
       element.after(textNode);
-      editor.updateRichNode();
-      editor.setCarret(textNode, textNode.length);
     }
+    editor.updateRichNode();
+    editor.setCarret(textNode, 0);
   }
 
   /*
+   * Jumps outside of at the start
    */
+  jumpOutOfListToStart(manipulation: Manipulation, editor: Editor) : void {
+    const element = manipulation.node.parentElement; //this is the list
+    if(!element) throw 'Tab-input-handler expected list to be attached to DOM';
 
+    let textNode;
+    if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
+      //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
+      textNode = element.previousSibling;
     }
+
     else {
+      //Adding invisibleSpace, to make sure that if LI is last node in parent, the user notices cursor jump
+      //TODO: probably some duplicat logic wit editor.setCarret
+      textNode = document.createTextNode(invisibleSpace);
+      element.before(textNode);
     }
+
+    editor.updateRichNode();
+    editor.setCarret(textNode, (textNode as Text).length);
   }
 }
 
-function setCursorAtBeginningOfLi(listItem : HTMLElement, editor: Editor){
+function setCursorAtStartOfLi(listItem : HTMLElement, editor: Editor) : void{
   let textNode;
   if(listItem.firstChild && listItem.firstChild.nodeType == Node.TEXT_NODE){
     textNode = listItem.firstChild;
   }
   else {
-    //Note: I create an empty textNode, I consider this to be sufficient for the user to see somthing happens on screen.
-    //It kinda assumes this function is called when coming from another listItem
-    textNode = document.createTextNode('');
+    textNode = document.createTextNode(invisibleSpace);
     listItem.prepend(textNode);
   }
+  //If nextNode is not a textNode, and we want to make sure the user
+  // sees something when jumping at the beginning of the textNode, we have to make sure
+  // a textNode is created which is rendered by the browser
+  if(textNode.nextSibling && textNode.nextSibling.nodeType != Node.TEXT_NODE){
+    textNode = makeTextNodeVisibleInLiWithAdjacentElement(textNode as Text);
+  }
   editor.updateRichNode();
-  editor.setCarret(textNode, 0);
+  editor.setCarret(textNode, 0)
 }
 
+function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor) : void {
+  let textNode;
+  if(listItem.lastChild && listItem.lastChild.nodeType == Node.TEXT_NODE){
+    textNode = listItem.lastChild;
   }
+  else {
+    textNode = document.createTextNode(invisibleSpace);
+    listItem.append(textNode);
   }
+  editor.updateRichNode();
+  editor.setCarret(textNode, (textNode as Text).length);
+}
 
+function makeTextNodeVisibleInLiWithAdjacentElement(textNode : Text): Text {
+  if(isAllWhitespace(textNode)){
+    textNode.textContent = String.fromCharCode(160);
   }
-
+  return textNode;
 }
