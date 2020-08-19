@@ -1,8 +1,16 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { isList, isLI, getAllLisFromList, isEmptyList, siblingLis, findLastLi, tagName } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
-import { indentAction } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { isList,
+         isLI,
+         getAllLisFromList,
+         isEmptyList,
+         siblingLis,
+         findLastLi,
+         tagName,
+         invisibleSpace,
+         isAllWhitespace
+       } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { indentAction, unindentAction } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 
 /**
  *
