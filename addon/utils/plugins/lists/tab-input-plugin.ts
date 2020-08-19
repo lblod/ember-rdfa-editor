@@ -6,14 +6,18 @@ import { isList,
          isEmptyList,
          siblingLis,
          findLastLi,
-         tagName,
          invisibleSpace,
          isAllWhitespace
        } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
 import { indentAction, unindentAction } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 
 /**
+ * Current behaviour
+ * - case not first or last LI:
+ *  - if cursor at at beginning of LI + (shift or shift + tab) indents or unindents
+ *  - if cursor not at the end of LI jumps to next or previous LI
  *
+ * - else: jumps out of list
  * @class ListTabInputPlugin
  * @module plugin/lists
  */
