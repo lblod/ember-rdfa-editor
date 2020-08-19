@@ -1,5 +1,6 @@
 import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import { Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { invisibleSpace } from '../../ce/dom-helpers';
 
 /**
  *
@@ -25,11 +26,14 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
    * This executor removes the placeholder node containing manipulation.node competly.
    * @method removePlaceholder
    */
-  removePlaceholder(manipulation: Manipulation) : void {
+  removePlaceholder(manipulation: Manipulation, editor: Editor) : void {
     const node = manipulation.node;
     const parentNode = node.parentElement;
     if(parentNode) {
-      parentNode.remove();
+      const textNode = document.createTextNode(invisibleSpace);
+      parentNode.replaceWith();
+      editor.updateRichNode();
+      editor.setCarret(textNode, 0);
     }
   }
 
@@ -40,7 +44,7 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
    */
   detectChange( manipulation: Manipulation ) : boolean {
     const node = manipulation.node;
-    const parentNode = node.parentNode;
+    const parentNode = node.parentElement;
     if(parentNode && parentNode.classList.contains('mark-highlight-manual')) {
       return true;
     }
