@@ -1,14 +1,18 @@
 <div class="c-dummy">
   <div class="c-dummy__header">
     <h1>Dummy app </h1>
-    <p>App version: {{app-version versionOnly=true showExtended=true}}</p>
+    <p>
+      App version: {{app-version versionOnly=true showExtended=true}}
+      {{#if this.debug}}
+        <Rdfa::RdfaEditorDebugger @debug={{this.debug}} />
+      {{/if}}
+    </p>
     {{#if this.rdfaEditor}}
       <p>Sample data:
         {{#each-in model as |name data| }}
           <a {{on "click" (fn this.loadData data)}}>{{name}}</a> |
         {{/each-in}}
       </p>
-
     {{else}}
       Waiting for editor init
     {{/if}}
@@ -28,10 +32,6 @@
           @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
         />
       </div>
-    </div>
-
-    <div class="c-dummy-debugger">
-      {{rdfa/rdfa-editor-debugger debug=debug}}
     </div>
   </div>
 </div>

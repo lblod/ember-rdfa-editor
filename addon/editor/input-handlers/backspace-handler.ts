@@ -7,10 +7,11 @@ import RdfaBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/bac
 import ContentEditableFalsePlugin from '@lblod/ember-rdfa-editor/utils/plugins/contenteditable-false/backspace-plugin';
 import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-element/backspace-plugin';
 import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
+import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/backspace-plugin';
 import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { InputHandler } from './input-handler';
-import { RawEditor, RichNode } from '../raw-editor';
-
+import { InputHandler, HandlerResponse } from './input-handler';
+import { RawEditor } from '../raw-editor';
+import { runInDebug } from '@ember/debug';
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
  * For the definition of a DOMRect see https://developer.mozilla.org/en-US/docs/Web/API/DOMRect
@@ -301,6 +302,13 @@ export function moveCaretBefore(child: ChildNode) : null | Selection {
 }
 
 /**
+ * utility function for backspace debug messages, allows messages to easily be disabled
+ */
+export function backspaceDebug(message : String, ...args : any) {
+  runInDebug( () => console.debug(`BACKSPACE: ${message}`, ...args)); // eslint-disable-line no-console
+}
+
+/**
  * Backspace Handler, an event handler to handle removing content
  * before the cursor.
  *
@@ -411,7 +419,8 @@ export default class BackspaceHandler implements InputHandler {
       new ListBackspacePlugin(),
       new EmptyTextNodePlugin(),
       new EmptyElementBackspacePlugin(),
-      new BrSkippingBackspacePlugin()
+      new BrSkippingBackspacePlugin(),
+      new PlaceholderTextBackspacePlugin()
     ];
   }
 
@@ -435,7 +444,7 @@ export default class BackspaceHandler implements InputHandler {
    * @return {HandlerResponse}
    * @public
    */
-  handleEvent(event : Event) {
+  handleEvent(event : Event) : HandlerResponse {
     // TODO: reason more about async behaviour of backspace.
     event.preventDefault(); // make sure event propagation is stopped, async behaviour of backspace could cause the browser to execute eventDefault before it is finished
     this.backspace().then( () => {
@@ -512,16 +521,16 @@ export default class BackspaceHandler implements InputHandler {
     const { previousVisualCursorCoordinates } = options
 
     if( ! previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
-      console.log(`Did not see a visual change when removing character, no visualCoordinates whatsoever`,
+      backspaceDebug(`Did not see a visual change when removing character, no visualCoordinates whatsoever`,
                   { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
       return false;
     }
     else if( ! previousVisualCursorCoordinates.length && this.selectionCoordinatesInEditor.length ){
-      console.log(`no previous coordinates`);
+      backspaceDebug(`no previous coordinates`);
       return true;
     }
     else if( previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
-      console.log('no new coordinates');
+      backspaceDebug('no new coordinates');
       return true;
     }
     //Previous and current have visual coordinates, we need to compare the contents
@@ -534,7 +543,7 @@ export default class BackspaceHandler implements InputHandler {
       const visibleChange = ol !== nl || ot !== nt;
 
       if( !visibleChange ){
-        console.log(`Did not see a visual change when removing character`, { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
+        backspaceDebug(`Did not see a visual change when removing character`, { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
       }
 
       return visibleChange;
@@ -865,12 +874,12 @@ export default class BackspaceHandler implements InputHandler {
           hasVisibleChildren = true;
         }
         else {
-          console.debug('assuming this node is not visible', child);
+          backspaceDebug('assuming this node is not visible', child);
         }
       }
       else {
         // we assume other nodes can be ignored for now
-        console.debug('ignoring node, assuming non visible', child);
+        backspaceDebug('ignoring node, assuming non visible', child);
       }
     }
     return hasVisibleChildren;
@@ -1103,7 +1112,7 @@ export default class BackspaceHandler implements InputHandler {
     }
 
     for( const { plugin } of reportsNoExecute ) {
-      console.debug(`Was not allowed to execute backspace manipulation by plugin ${plugin.label}`, { manipulation, plugin });
+      backspaceDebug(`Was not allowed to execute backspace manipulation by plugin ${plugin.label}`, { manipulation, plugin });
     }
 
     // yield result
@@ -1130,37 +1139,9 @@ export default class BackspaceHandler implements InputHandler {
 
     // debug reporting
     for( const { plugin } of reports ) {
-      console.debug(`Change detected by plugin ${plugin.label}`, { manipulation, plugin });
+      backspaceDebug(`Change detected by plugin ${plugin.label}`, { manipulation, plugin });
     }
 
     return reports.length > 0;
-  }
-
-  get rootNode() : Node {
-    return this.rawEditor.rootNode;
-  }
-
-  get currentSelection(){
-    return this.rawEditor.currentSelection;
-  }
-  get richNode() : RichNode {
-    return this.rawEditor.richNode;
-  }
-  get currentNode() : Node {
-    return this.rawEditor.currentNode;
-  }
-
-  /**
-   * Given richnode and absolute position, retrieves the relative
-   * position to the text node.
-   *
-   * @method absoluteToRelativePostion
-   * @param {Object} richNode Richnode which contains the cursor.
-   * @param {Int} position Absolute position of the cursor in the document.
-   * @return {Int} Position of the cursor relative to `richNode`.
-   * @private
-   */
-  absoluteToRelativePosition(richNode: RichNode, position : number) {
-    return Math.max(position - ( richNode.start || 0 ));
   }
 }

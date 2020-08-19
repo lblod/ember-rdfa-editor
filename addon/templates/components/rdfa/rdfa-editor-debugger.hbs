@@ -1,19 +1,22 @@
-<input type="checkbox" checked={{this.debugEnabled}} /> Enable debug
-
+<button {{on "click" this.toggleDebug}}>debug</button>
 {{#if this.debugEnabled}}
-  <div>
-    <label>Debug mode: </label>
-    <select onchange={{action (mut this.debugMode) value="target.value"}}>
-      {{#each this.debugModes as |mode|}}
-        <option value={{mode}} selected={{eq this.debugMode mode}}>{{mode}}</option>
-      {{/each}}
-    </select>
+  <div class="rdfa-debugger-panel-wrapper">
+    <div class="rdfa-debugger-content">
+      <h1>Debugger</h1>
+      <button {{on "click" this.toggleDebug}} >close</button>
+      <div>
+        <label>Debug mode: </label>
+        <select onchange={{action (mut this.debugMode) value="target.value"}}>
+          {{#each this.debugModes as |mode|}}
+            <option value={{mode}} selected={{eq this.debugMode mode}}>{{mode}}</option>
+          {{/each}}
+        </select>
+      </div>
+      {{#if (eq this.debugMode "hints-registry")}}
+        <Rdfa::HintsRegistryDebugger @hintsRegistry={{this.debug.hintsRegistry}} />
+      {{else if (eq this.debugMode "context-scanner")}}
+        <Rdfa::RdfaContextDebugger @editor={{this.debug.editor}} @contextScanner={{this.debug.contextScanner}} />
+      {{/if}}
+    </div>
   </div>
-  {{#if (eq this.debugMode "hints-registry")}}
-    <Rdfa::HintsRegistryDebugger @hintsRegistry={{this.debug.hintsRegistry}} />
-  {{else if (eq this.debugMode "context-scanner")}}
-    <Rdfa::RdfaContextDebugger @editor={{this.debug.editor}} @contextScanner={{this.debug.contextScanner}} />
-  {{/if}}
 {{/if}}
-
-{{yield}}
