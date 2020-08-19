@@ -135,6 +135,7 @@ export interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
 export interface MoveCursorBeforeElementManipulation extends BaseManipulation {
   type: "moveCursorBeforeElement";
   node: HTMLElement;
+  selection?: Selection;
 }
 
 /**
