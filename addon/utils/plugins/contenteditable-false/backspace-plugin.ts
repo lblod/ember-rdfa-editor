@@ -1,4 +1,4 @@
-import { BackspacePlugin, moveCaretBefore} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import { BackspacePlugin, moveCaretBefore, backspaceDebug} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { Editor,
          Manipulation,
          ManipulationGuidance,
@@ -11,11 +11,11 @@ export default class ContentEditableFalseBackspacePlugin implements BackspacePlu
 
   guidanceForManipulation(manipulation: Manipulation) : ManipulationGuidance | null {
     if (manipulation.type == "moveCursorToEndOfNode") {
-      console.log('possible jump before element', manipulation.node)
+      backspaceDebug('possible jump before element', manipulation.node)
       const element = manipulation.node as HTMLElement;
       if (! element.isContentEditable) {
         // element is not editable
-        console.log('will jump');
+        backspaceDebug('will jump');
         return {
           allow: true,
           executor: this.jumpBeforeElement
