@@ -42,10 +42,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
         const list = manipulation.node.parentElement;
         const lastLi = findLastLi(list);
 
-        if(lastLi.isSameNode(listItem) && isLiInNestedList(listItem) ){
-          return { allow: true, executor: this.jumpToNextLiOfParentList };
-        }
-        else if( lastLi.isSameNode(listItem) ){
+        if( lastLi.isSameNode(listItem) ){
           return { allow: true, executor: this.jumpOutOfList };
         }
         else {
@@ -120,33 +117,11 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   }
 
   /*
-   * Jumps to the LI of parent list. Creates a list item in the parent list if non remains.
    */
-  jumpToNextLiOfParentList(manipulation: Manipulation, editor: Editor){
-    const list =  manipulation.node.parentElement;
 
-    if( !list ) throw 'lists/tab-input-plugin expected list to exist';
-    const parentLi = list.parentElement;
-
-    if( !parentLi ) throw 'lists/tab-input-plugin expected parentLi to exist';
-
-    const parentList = parentLi.parentElement;
-    if( !parentList ) throw 'lists/tab-input-plugin expected parentList to exist';
-
-    //start positioning
-    const listItems = siblingLis(parentLi);
-    const indexOfLi = listItems.indexOf(parentLi);
-
-    let nextLi;
-
-    if(indexOfLi == listItems.length - 1){
-      nextLi = document.createElement('li');
-      parentList.append(nextLi);
     }
     else {
-      nextLi = listItems[indexOfLi + 1];
     }
-    setCursorAtBeginningOfLi(nextLi, editor);
   }
 }
 
@@ -165,27 +140,9 @@ function setCursorAtBeginningOfLi(listItem : HTMLElement, editor: Editor){
   editor.setCarret(textNode, 0);
 }
 
-function isLiInNestedList( li: HTMLElement ) : boolean{
-  const list =  li.parentElement;
-
-  if(!list){
-    return false;
+  }
   }
 
-  const parentLi = list.parentElement;
-
-  if(!parentLi){
-    return false;
   }
 
-  const parentList = parentLi.parentElement;
-  if(!parentList) {
-    return false;
-  }
-
-  if(tagName(parentList) === 'ul' || tagName(parentList) === 'ol'){
-    return true
-  }
-
-  return false;
 }
