@@ -2,7 +2,7 @@ import { InputHandler } from './input-handler';
 import { Manipulation, ManipulationExecutor, Editor, ManipulationGuidance } from './manipulation';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import { RawEditor } from '../raw-editor';
-import { isVoidElement, isVisibleElement, invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { isVoidElement, isVisibleElement, invisibleSpace, isAllWhitespace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
 import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
 import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
 
@@ -83,34 +83,31 @@ export default class TabInputHandler implements InputHandler {
       let textNode;
       if(element.lastChild && element.lastChild.nodeType == Node.TEXT_NODE){
         textNode = element.lastChild as Text;
-        this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(textNode, textNode.length);
       }
       else {
         textNode = document.createTextNode(invisibleSpace);
         element.append(textNode);
-        this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(textNode, 0);
       }
+
+      textNode = ensureVisibleTextNode(textNode as Text);
+      this.rawEditor.updateRichNode();
+      this.rawEditor.setCarret(textNode, textNode.length);
     }
 
     else if(manipulation.type == 'moveCursorBeforeElement'){
       const element = manipulation.node as HTMLElement;
+      let textNode;
       if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
-        //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
-        const textNode = element.previousSibling;
-        this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(textNode, (textNode as Text).length);
+        textNode = element.previousSibling;
+      }
+      else {
+        textNode = document.createTextNode(invisibleSpace);
+        element.before(textNode);
       }
 
-      else {
-        //Adding invisibleSpace, to make sure that if LI is last node in parent, the user notices cursor jump
-        //TODO: probably some duplicat logic wit editor.setCarret
-        const textNode = document.createTextNode(invisibleSpace);
-        element.before(textNode);
-        this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(textNode, 0);
-      }
+      textNode = ensureVisibleTextNode(textNode as Text);
+      this.rawEditor.updateRichNode();
+      this.rawEditor.setCarret(textNode, textNode.length);
     }
 
     //TODO: this could be moved to a plugin eventually.
@@ -126,30 +123,29 @@ export default class TabInputHandler implements InputHandler {
         textNode = element.firstChild;
       }
       else {
-        textNode = document.createTextNode('');
+        textNode = document.createTextNode(invisibleSpace);
         element.prepend(textNode);
       }
 
+      textNode = ensureVisibleTextNode(textNode as Text);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret(textNode, 0);
     }
 
     else if(manipulation.type == 'moveCursorAfterElement'){
       const element = manipulation.node as HTMLElement;
+      let textNode;
       if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
-        //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
-        const textNode = element.nextSibling;
-        this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(textNode, 0);
+        textNode = element.nextSibling;
       }
       else {
-        //Adding invisibleSpace, to make sure that if LI is last node in parent, the user notices cursor jump
-        //TODO: probably some duplicat logic wit editor.setCarret
-        const textNode = document.createTextNode(invisibleSpace);
+        textNode = document.createTextNode(invisibleSpace);
         element.after(textNode);
-        this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(textNode, textNode.length);
       }
+
+      textNode = ensureVisibleTextNode(textNode as Text);
+      this.rawEditor.updateRichNode();
+      this.rawEditor.setCarret(textNode, 0);
     }
 
     //TODO: this could be moved to a plugin eventually.
@@ -316,4 +312,11 @@ export default class TabInputHandler implements InputHandler {
     };
   }
 
+}
+
+function ensureVisibleTextNode(textNode : Text): Text {
+  if(isAllWhitespace(textNode)){
+    textNode.textContent = invisibleSpace;
+  }
+  return textNode;
 }
