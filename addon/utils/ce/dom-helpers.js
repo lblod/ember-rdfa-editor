@@ -378,7 +378,7 @@ function findWrappingSuitableNodes(selection) {
 /**
  * @method findLastLi
  * @param {DomNode} node the ul node to search in
- * @private
+ * @public
  */
 function findLastLi(list) {
   if (['ul','ol'].includes(tagName(list))) {
