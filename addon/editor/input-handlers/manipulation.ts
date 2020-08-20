@@ -44,7 +44,7 @@ export type Manipulation =
   | RemoveOtherNodeManipulation
   | RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation
   | RemoveElementWithChildrenThatArentVisible
-  | MoveCursorToEndOfNodeManipulation
+  | MoveCursorToEndOfElementManipulation
   | MoveCursorAfterElementManipulation
   | MoveCursorBeforeElementManipulation
   | MoveCursorAfterEditorManipulation
@@ -124,9 +124,9 @@ export interface RemoveVoidElementManipulation extends BaseManipulation {
 /**
  * Represents moving the cursor after the last child of node
  */
-export interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
-  type: "moveCursorToEndOfNode";
-  node: Element;
+export interface MoveCursorToEndOfElementManipulation extends BaseManipulation {
+  type: "moveCursorToEndOfElement";
+  node: HTMLElement;
 }
 
 /**

@@ -669,7 +669,7 @@ export default class BackspaceHandler implements InputHandler {
           this.rawEditor.updateRichNode();
         }
         break;
-      case "moveCursorToEndOfNode":
+      case "moveCursorToEndOfElement":
         const element = manipulation.node;
         const length = element.childNodes.length;
         moveCaret(element, length);
@@ -752,7 +752,7 @@ export default class BackspaceHandler implements InputHandler {
       case "elementEnd":
         const elementBeforeCursor = thingBeforeCursor as ElementEndPosition;
         return {
-          type: "moveCursorToEndOfNode",
+          type: "moveCursorToEndOfElement",
           node: elementBeforeCursor.node
         };
         break;
