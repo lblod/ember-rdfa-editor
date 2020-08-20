@@ -77,12 +77,10 @@ export default class RdfaAnnotations extends Component {
     const rdfaBlocks = scanner.analyse(cursor);
     this.resetTopPositions();
     if(rdfaBlocks.length) {
-      let parentArray = this.getParentArray(rdfaBlocks[0].richNodes[0]);
-      parentArray = this.extractMostSpecificContext(parentArray);
-      parentArray = parentArray.filter((parent) => parent.mostSpecificContext);
-      parentArray = this.addTopPositions(parentArray);
-      parentArray = yield this.queryLabels(parentArray);
-      this.rdfaBlocks = parentArray;
+      const parents = this.getParentArray(rdfaBlocks[0].richNodes[0]);
+      const parentsHavingContext = this.enrichWithWithMostSpecificContext(parents).filter((parent) => parent.mostSpecificContext);
+      this.addTopPositions(parentsHavingContext);
+      this.rdfaBlocks = yield this.enrichNodesWithLabels(parentsHavingContext);
     }
   }
   /**
@@ -105,13 +103,13 @@ export default class RdfaAnnotations extends Component {
   /**
     * Process the array of rich nodes and extract the most specific context of each one and add it as a property to the rich node
     *
-    * @method extractMostSpecificContext
+    * @method enrichWithWithMostSpecificContext
     *
     * @param {[RdfaBlock]} nodeArray The array of RdfaBlocks
     * @private
     * @return {[RdfaBlock]} The array of RdfaBlocks with the mostSpecificContext extracted
     */
-  extractMostSpecificContext(richNodeArray) {
+    enrichWithWithMostSpecificContext(richNodeArray) {
     return richNodeArray.map((richNode) => {
       if(richNode.rdfaContext && richNode.rdfaContext.length) {
         richNode.mostSpecificContext = richNode.rdfaContext[richNode.rdfaContext.length-1];
@@ -211,13 +209,13 @@ export default class RdfaAnnotations extends Component {
   /**
     * Replaces each of the uri terms in the RdfaBlock array for its corresponding label
     *
-    * @method queryLabels
+    * @method enrichNodesWithLabels
     *
     * @param {[RdfaBlock]} nodeArray The array of RdfaBlocks
     * @private
     * @return {[RdfaBlock]} The array of RdfaBlocks with the labels added
     */
-  async queryLabels(nodeArray) {
+  async enrichNodesWithLabels(nodeArray) {
     return await Promise.all(nodeArray.map(async (node) => {
       if(node.mostSpecificContext.typeof) {
         for(let i = 0; i < node.mostSpecificContext.typeof.length; i++) {
