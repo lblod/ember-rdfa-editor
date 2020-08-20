@@ -129,6 +129,12 @@ export interface MoveCursorToEndOfElementManipulation extends BaseManipulation {
   selection?: Selection;
 }
 
+export interface MoveCursorToStartOfElementManipulation extends BaseManipulation {
+  type: "moveCursorToStartOfElement";
+  node: HTMLElement;
+  selection: Selection;
+}
+
 /**
  * Represents moving the cursor before the element
  */
@@ -136,6 +142,22 @@ export interface MoveCursorBeforeElementManipulation extends BaseManipulation {
   type: "moveCursorBeforeElement";
   node: HTMLElement;
   selection?: Selection;
+}
+
+export interface MoveCursorAfterElementManipulation extends BaseManipulation {
+  type: "moveCursorAfterElement";
+  node: HTMLElement;
+  selection: Selection;
+}
+
+export interface MoveCursorAfterEditorManipulation extends BaseManipulation {
+  type: "moveCursorAfterEditor";
+  node: HTMLElement; //will be rootNode of editor
+}
+
+export interface MoveCursorBeforeEditorManipulation extends BaseManipulation {
+  type: "moveCursorBeforeEditor";
+  node: HTMLElement; //will be rootNode of editor
 }
 
 /**
@@ -192,28 +214,6 @@ export interface ReplaceSelectionWithTextManipulation extends BaseManipulation {
   node: Node; // the anchorNode
   selection: Selection
   text: string;
-}
-
-export interface MoveCursorAfterElementManipulation extends BaseManipulation {
-  type: "moveCursorAfterElement";
-  node: HTMLElement;
-  selection: Selection;
-}
-
-export interface MoveCursorAfterEditorManipulation extends BaseManipulation {
-  type: "moveCursorAfterEditor";
-  node: HTMLElement; //will be rootNode of editor
-}
-
-export interface MoveCursorBeforeEditorManipulation extends BaseManipulation {
-  type: "moveCursorBeforeEditor";
-  node: HTMLElement; //will be rootNode of editor
-}
-
-export interface MoveCursorToStartOfElementManipulation extends BaseManipulation {
-  type: "moveCursorToStartOfElement";
-  node: HTMLElement;
-  selection: Selection;
 }
 
 export interface ManipulationGuidance {
