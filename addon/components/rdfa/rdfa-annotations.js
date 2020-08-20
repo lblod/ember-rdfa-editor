@@ -88,7 +88,7 @@ export default class RdfaAnnotations extends Component {
   /**
     * Get an array of all the ancestors of the given node
     *
-    * @method generateAnnotations
+    * @method getParentArray
     *
     * @param {RdfaBlock} startNode The first node in order to start generating the parents
     * @private
@@ -103,20 +103,20 @@ export default class RdfaAnnotations extends Component {
     return richNodesOnPath;
   }
   /**
-    * Process the array of nodes and extract the most specific of each one and add it as a property to the node
+    * Process the array of rich nodes and extract the most specific context of each one and add it as a property to the rich node
     *
-    * @method extractmostSpecificContext
+    * @method extractMostSpecificContext
     *
     * @param {[RdfaBlock]} nodeArray The array of RdfaBlocks
     * @private
     * @return {[RdfaBlock]} The array of RdfaBlocks with the mostSpecificContext extracted
     */
-  extractMostSpecificContext(nodeArray) {
-    return nodeArray.map((node) => {
-      if(node.rdfaContext && node.rdfaContext.length) {
-        node.mostSpecificContext = node.rdfaContext[node.rdfaContext.length-1];
+  extractMostSpecificContext(richNodeArray) {
+    return richNodeArray.map((richNode) => {
+      if(richNode.rdfaContext && richNode.rdfaContext.length) {
+        richNode.mostSpecificContext = richNode.rdfaContext[richNode.rdfaContext.length-1];
       }
-      return node;
+      return richNode;
     });
   }
 
@@ -165,10 +165,11 @@ export default class RdfaAnnotations extends Component {
   }
   /**
     * Calculate the offset top of a node taking into account all its parents
+    * TODO: clean the description
     *
     * @method calculateNodeOffset
     *
-    * @param {RdfaBlock} node The node to calculate the offset
+    * @param {DomNode} node The node to calculate the offset
     * @private
     * @return {number} The top offset of the node
     */
