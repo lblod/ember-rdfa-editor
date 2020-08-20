@@ -78,7 +78,7 @@ export default class TabInputHandler implements InputHandler {
   handleNativeManipulation(manipulation: Manipulation) {
 
     /************************ SHIFT TAB ************************/
-    if (manipulation.type == 'moveCursorInsideNonVoidAndVisibleElementAtEnd') {
+    if (manipulation.type == 'moveCursorToEndOfElement') {
       const element = manipulation.node as HTMLElement;
       let textNode;
       if(element.lastChild && element.lastChild.nodeType == Node.TEXT_NODE){
@@ -200,7 +200,7 @@ export default class TabInputHandler implements InputHandler {
       });
 
       if(previousElementForCursor){
-        nextManipulation = { type: 'moveCursorInsideNonVoidAndVisibleElementAtEnd', node: previousElementForCursor as HTMLElement, selection};
+        nextManipulation = { type: 'moveCursorToEndOfElement', node: previousElementForCursor as HTMLElement, selection};
       }
       else {
         nextManipulation = { type: 'moveCursorBeforeElement', node: parentElement, selection };

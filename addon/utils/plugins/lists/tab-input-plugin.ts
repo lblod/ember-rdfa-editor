@@ -56,7 +56,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       }
     }
 
-    else if( manipulation.type == 'moveCursorInsideNonVoidAndVisibleElementAtEnd' ){
+    else if( manipulation.type == 'moveCursorToEndOfElement' ){
       if(isList(manipulation.node)){
         return { allow: true, executor: this.jumpIntoLastLi };
       }

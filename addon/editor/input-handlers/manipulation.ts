@@ -50,7 +50,6 @@ export type Manipulation =
   | MoveCursorAfterEditorManipulation
   | MoveCursorBeforeEditorManipulation
   | MoveCursorInsideNonVoidAndVisibleElementAtStartManipulation
-  | MoveCursorInsideNonVoidAndVisibleElementAtEndManipulation
   | KeepCursorAtStartManipulation
   | InsertTextIntoTextNodeManipulation
   | InsertTextIntoElementManipulation
@@ -127,6 +126,7 @@ export interface RemoveVoidElementManipulation extends BaseManipulation {
 export interface MoveCursorToEndOfElementManipulation extends BaseManipulation {
   type: "moveCursorToEndOfElement";
   node: HTMLElement;
+  selection?: Selection;
 }
 
 /**
@@ -212,12 +212,6 @@ export interface MoveCursorBeforeEditorManipulation extends BaseManipulation {
 
 export interface MoveCursorInsideNonVoidAndVisibleElementAtStartManipulation extends BaseManipulation {
   type: "moveCursorInsideNonVoidAndVisibleElementAtStart"; //TODO: prettier name
-  node: HTMLElement;
-  selection: Selection;
-}
-
-export interface MoveCursorInsideNonVoidAndVisibleElementAtEndManipulation extends BaseManipulation {
-  type: "moveCursorInsideNonVoidAndVisibleElementAtEnd"; //TODO: prettier name
   node: HTMLElement;
   selection: Selection;
 }

@@ -13,7 +13,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
 
   isSupportedManipulation(manipulation : Manipulation) : boolean {
     return manipulation.type  === 'moveCursorInsideNonVoidAndVisibleElementAtStart'
-      || manipulation.type  === 'moveCursorInsideNonVoidAndVisibleElementAtEnd';
+      || manipulation.type  === 'moveCursorToEndOfElement';
   }
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
@@ -32,7 +32,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
         executor: this.jumpOverLumpNode
       };
     }
-    else if(manipulation.type  === 'moveCursorInsideNonVoidAndVisibleElementAtEnd' && isElementInLumpNode){
+    else if(manipulation.type  === 'moveCursorToEndOfElement' && isElementInLumpNode){
       return {
         allow: true,
         executor: this.jumpOverLumpNodeBackwards
