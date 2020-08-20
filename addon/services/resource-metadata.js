@@ -14,6 +14,9 @@ export default class ResourceMetadataService extends Service {
       method: 'GET',
     });
     const json = await response.json();
-    return json;
+    return {
+      label: json.attributes ? json.attributes.label : '',
+      comment: json.attributes ? json.attributes.comment : '',
+    };
   }
 }
