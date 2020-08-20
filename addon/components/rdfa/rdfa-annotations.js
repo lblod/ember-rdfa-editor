@@ -148,7 +148,7 @@ export default class RdfaAnnotations extends Component {
     return nodeArray.map((node) => {
       if(node.domNode && (node.domNode.offsetTop || node.domNode.offsetTop === 0)) {
         node.hasTopPosition = true;
-        let nodeOffset = this.calculateNodeOffset(node.domNode);
+        let nodeOffset = this.calculateVerticalNodePosition(node.domNode);
         let blockPlacement;
         let numberOfHints = 0;
         if(node.mostSpecificContext.typeof) {
@@ -167,15 +167,15 @@ export default class RdfaAnnotations extends Component {
     * Calculate the offset top of a node taking into account all its parents
     * TODO: clean the description
     *
-    * @method calculateNodeOffset
+    * @method calculateVerticalNodePosition
     *
-    * @param {DomNode} node The node to calculate the offset
+    * @param {DomNode} node The node to calculate the vertical position
     * @private
-    * @return {number} The top offset of the node
+    * @return {number} The vertical position of the node
     */
-  calculateNodeOffset(node) {
+  calculateVerticalNodePosition(node) {
     if(node.offsetParent && !node.offsetParent.classList.contains('say-editor__inner')) {
-      return node.offsetTop + this.calculateNodeOffset(node.offsetParent);
+      return node.offsetTop + this.calculateVerticalNodePosition(node.offsetParent);
     }
     return node.offsetTop;
   }
