@@ -25,7 +25,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   label = 'Tap input plugin for handling List interaction'
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
-    if( manipulation.type == 'moveCursorInsideNonVoidAndVisibleElementAtStart' ){
+    if( manipulation.type == 'moveCursorToStartOfElement' ){
       if(isList(manipulation.node)){
         return { allow: true, executor: this.jumpIntoFirstLi };
       }

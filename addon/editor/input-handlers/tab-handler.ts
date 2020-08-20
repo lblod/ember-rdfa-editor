@@ -116,7 +116,7 @@ export default class TabInputHandler implements InputHandler {
     }
 
     /************************ TAB ************************/
-    else if (manipulation.type == 'moveCursorInsideNonVoidAndVisibleElementAtStart') {
+    else if (manipulation.type == 'moveCursorToStartOfElement') {
       const element = manipulation.node as HTMLElement;
       let textNode;
       if(element.firstChild && element.firstChild.nodeType == Node.TEXT_NODE){
@@ -240,7 +240,7 @@ export default class TabInputHandler implements InputHandler {
       });
 
       if(nextElementForCursor){
-        nextManipulation = { type: 'moveCursorInsideNonVoidAndVisibleElementAtStart', node: nextElementForCursor as HTMLElement, selection};
+        nextManipulation = { type: 'moveCursorToStartOfElement', node: nextElementForCursor as HTMLElement, selection};
       }
       else {
         nextManipulation = { type: 'moveCursorAfterElement', node: parentElement, selection };

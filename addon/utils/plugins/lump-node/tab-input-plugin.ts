@@ -12,7 +12,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
   label = 'Tap input plugin for handling LumpNodes'
 
   isSupportedManipulation(manipulation : Manipulation) : boolean {
-    return manipulation.type  === 'moveCursorInsideNonVoidAndVisibleElementAtStart'
+    return manipulation.type  === 'moveCursorToStartOfElement'
       || manipulation.type  === 'moveCursorToEndOfElement';
   }
 
@@ -26,7 +26,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     const rootNode = element.getRootNode(); //Assuming here that node is attached.
     const isElementInLumpNode = isInLumpNode(element, rootNode);
 
-    if(manipulation.type  === 'moveCursorInsideNonVoidAndVisibleElementAtStart' && isElementInLumpNode){
+    if(manipulation.type  === 'moveCursorToStartOfElement' && isElementInLumpNode){
       return {
         allow: true,
         executor: this.jumpOverLumpNode
