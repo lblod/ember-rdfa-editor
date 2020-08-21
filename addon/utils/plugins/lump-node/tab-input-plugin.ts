@@ -1,7 +1,7 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { invisibleSpace, isAllWhitespace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
 
 /**
  *
@@ -44,39 +44,38 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
 
   jumpOverLumpNode(manipulation: Manipulation, editor: Editor) : void {
     const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
+    let textNode;
     if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
-      //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
-      const textNode = element.nextSibling;
-      editor.updateRichNode();
-      editor.setCarret(textNode, 0);
+      textNode = element.nextSibling;
     }
-
     else {
-      //Adding invisibleSpace the user notices cursor jump
-      //TODO: probably some duplicat logic wit editor.setCarret
-      const textNode = document.createTextNode(invisibleSpace);
+      textNode = document.createTextNode(invisibleSpace);
       element.after(textNode);
-      editor.updateRichNode();
-      editor.setCarret(textNode, textNode.length);
     }
+    textNode = ensureVisibleTextNode(textNode as Text);
+    editor.updateRichNode();
+    editor.setCarret(textNode, 0)
   }
 
   jumpOverLumpNodeBackwards( manipulation: Manipulation, editor: Editor ) : void {
     const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
+    let textNode;
     if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
-      //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
-      const textNode = element.previousSibling as Text;
-      editor.updateRichNode();
-      editor.setCarret(textNode, textNode.length);
+      textNode = element.previousSibling;
     }
-
     else {
-      //Adding invisibleSpace the user notices cursor jump
-      //TODO: probably some duplicat logic wit editor.setCarret
-      const textNode = document.createTextNode(invisibleSpace);
+      textNode = document.createTextNode(invisibleSpace);
       element.before(textNode);
-      editor.updateRichNode();
-      editor.setCarret(textNode, 0);
     }
+    textNode = ensureVisibleTextNode(textNode as Text);
+    editor.updateRichNode();
+    editor.setCarret(textNode, textNode.length)
   }
+}
+
+function ensureVisibleTextNode(textNode : Text): Text {
+  if(isAllWhitespace(textNode)){
+    textNode.textContent = invisibleSpace;
+  }
+  return textNode;
 }
