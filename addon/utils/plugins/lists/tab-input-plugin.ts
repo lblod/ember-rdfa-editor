@@ -25,7 +25,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   label = 'Tap input plugin for handling List interaction'
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
-    if( manipulation.type == 'moveCursorInsideNonVoidAndVisibleElementAtStart' ){
+    if( manipulation.type == 'moveCursorToStartOfElement' ){
       if(isList(manipulation.node)){
         return { allow: true, executor: this.jumpIntoFirstLi };
       }
@@ -56,7 +56,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       }
     }
 
-    else if( manipulation.type == 'moveCursorInsideNonVoidAndVisibleElementAtEnd' ){
+    else if( manipulation.type == 'moveCursorToEndOfElement' ){
       if(isList(manipulation.node)){
         return { allow: true, executor: this.jumpIntoLastLi };
       }
@@ -172,16 +172,14 @@ export default class ListTabInputPlugin implements TabInputPlugin {
 
     let textNode;
     if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
-      //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
       textNode = element.nextSibling;
     }
-
     else {
-      //Adding invisibleSpace, to make sure that if LI is last node in parent, the user notices cursor jump
-      //TODO: probably some duplicat logic wit editor.setCarret
       textNode = document.createTextNode(invisibleSpace);
       element.after(textNode);
     }
+
+    textNode = ensureVisibleTextNode(textNode as Text);
     editor.updateRichNode();
     editor.setCarret(textNode, 0);
   }
@@ -195,17 +193,13 @@ export default class ListTabInputPlugin implements TabInputPlugin {
 
     let textNode;
     if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
-      //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
       textNode = element.previousSibling;
     }
-
     else {
-      //Adding invisibleSpace, to make sure that if LI is last node in parent, the user notices cursor jump
-      //TODO: probably some duplicat logic wit editor.setCarret
       textNode = document.createTextNode(invisibleSpace);
       element.before(textNode);
     }
-
+    textNode = ensureVisibleTextNode(textNode as Text);
     editor.updateRichNode();
     editor.setCarret(textNode, (textNode as Text).length);
   }
@@ -220,12 +214,7 @@ function setCursorAtStartOfLi(listItem : HTMLElement, editor: Editor) : void{
     textNode = document.createTextNode(invisibleSpace);
     listItem.prepend(textNode);
   }
-  //If nextNode is not a textNode, and we want to make sure the user
-  // sees something when jumping at the beginning of the textNode, we have to make sure
-  // a textNode is created which is rendered by the browser
-  if(textNode.nextSibling && textNode.nextSibling.nodeType != Node.TEXT_NODE){
-    textNode = makeTextNodeVisibleInLiWithAdjacentElement(textNode as Text);
-  }
+  textNode = ensureVisibleTextNode(textNode as Text);
   editor.updateRichNode();
   editor.setCarret(textNode, 0)
 }
@@ -239,13 +228,14 @@ function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor) : void {
     textNode = document.createTextNode(invisibleSpace);
     listItem.append(textNode);
   }
+  textNode = ensureVisibleTextNode(textNode as Text);
   editor.updateRichNode();
   editor.setCarret(textNode, (textNode as Text).length);
 }
 
-function makeTextNodeVisibleInLiWithAdjacentElement(textNode : Text): Text {
+function ensureVisibleTextNode(textNode : Text): Text {
   if(isAllWhitespace(textNode)){
-    textNode.textContent = String.fromCharCode(160);
+    textNode.textContent = invisibleSpace + textNode.textContent;
   }
   return textNode;
 }

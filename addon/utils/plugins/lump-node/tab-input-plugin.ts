@@ -1,7 +1,7 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { invisibleSpace, isAllWhitespace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
 
 /**
  *
@@ -12,13 +12,12 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
   label = 'Tap input plugin for handling LumpNodes'
 
   isSupportedManipulation(manipulation : Manipulation) : boolean {
-    return manipulation.type  === 'moveCursorInsideNonVoidAndVisibleElementAtStart'
-      || manipulation.type  === 'moveCursorInsideNonVoidAndVisibleElementAtEnd';
+    return manipulation.type  === 'moveCursorToStartOfElement'
+      || manipulation.type  === 'moveCursorToEndOfElement';
   }
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
     if( !this.isSupportedManipulation(manipulation) ){
-      console.info(`plugins/lump-node/tab-input-plugin: manipulation ${manipulation.type} not supported for lumpNode`);
       return null;
     }
 
@@ -26,13 +25,13 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     const rootNode = element.getRootNode(); //Assuming here that node is attached.
     const isElementInLumpNode = isInLumpNode(element, rootNode);
 
-    if(manipulation.type  === 'moveCursorInsideNonVoidAndVisibleElementAtStart' && isElementInLumpNode){
+    if(manipulation.type  === 'moveCursorToStartOfElement' && isElementInLumpNode){
       return {
         allow: true,
         executor: this.jumpOverLumpNode
       };
     }
-    else if(manipulation.type  === 'moveCursorInsideNonVoidAndVisibleElementAtEnd' && isElementInLumpNode){
+    else if(manipulation.type  === 'moveCursorToEndOfElement' && isElementInLumpNode){
       return {
         allow: true,
         executor: this.jumpOverLumpNodeBackwards
@@ -44,39 +43,38 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
 
   jumpOverLumpNode(manipulation: Manipulation, editor: Editor) : void {
     const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
+    let textNode;
     if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
-      //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
-      const textNode = element.nextSibling;
-      editor.updateRichNode();
-      editor.setCarret(textNode, 0);
+      textNode = element.nextSibling;
     }
-
     else {
-      //Adding invisibleSpace the user notices cursor jump
-      //TODO: probably some duplicat logic wit editor.setCarret
-      const textNode = document.createTextNode(invisibleSpace);
+      textNode = document.createTextNode(invisibleSpace);
       element.after(textNode);
-      editor.updateRichNode();
-      editor.setCarret(textNode, textNode.length);
     }
+    textNode = ensureVisibleTextNode(textNode as Text);
+    editor.updateRichNode();
+    editor.setCarret(textNode, 0)
   }
 
   jumpOverLumpNodeBackwards( manipulation: Manipulation, editor: Editor ) : void {
     const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
+    let textNode;
     if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
-      //TODO: what if textNode does contain only invisible white space? Then user won't see any jumps.
-      const textNode = element.previousSibling as Text;
-      editor.updateRichNode();
-      editor.setCarret(textNode, textNode.length);
+      textNode = element.previousSibling;
     }
-
     else {
-      //Adding invisibleSpace the user notices cursor jump
-      //TODO: probably some duplicat logic wit editor.setCarret
-      const textNode = document.createTextNode(invisibleSpace);
+      textNode = document.createTextNode(invisibleSpace);
       element.before(textNode);
-      editor.updateRichNode();
-      editor.setCarret(textNode, 0);
     }
+    textNode = ensureVisibleTextNode(textNode as Text);
+    editor.updateRichNode();
+    editor.setCarret(textNode, textNode.length)
   }
+}
+
+function ensureVisibleTextNode(textNode : Text): Text {
+  if(isAllWhitespace(textNode)){
+    textNode.textContent = invisibleSpace + textNode.textContent;
+  }
+  return textNode;
 }

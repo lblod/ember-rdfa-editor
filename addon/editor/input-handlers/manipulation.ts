@@ -44,13 +44,12 @@ export type Manipulation =
   | RemoveOtherNodeManipulation
   | RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation
   | RemoveElementWithChildrenThatArentVisible
-  | MoveCursorToEndOfNodeManipulation
+  | MoveCursorToEndOfElementManipulation
   | MoveCursorAfterElementManipulation
   | MoveCursorBeforeElementManipulation
   | MoveCursorAfterEditorManipulation
   | MoveCursorBeforeEditorManipulation
-  | MoveCursorInsideNonVoidAndVisibleElementAtStartManipulation
-  | MoveCursorInsideNonVoidAndVisibleElementAtEndManipulation
+  | MoveCursorToStartOfElementManipulation
   | KeepCursorAtStartManipulation
   | InsertTextIntoTextNodeManipulation
   | InsertTextIntoElementManipulation
@@ -124,9 +123,16 @@ export interface RemoveVoidElementManipulation extends BaseManipulation {
 /**
  * Represents moving the cursor after the last child of node
  */
-export interface MoveCursorToEndOfNodeManipulation extends BaseManipulation {
-  type: "moveCursorToEndOfNode";
-  node: Element;
+export interface MoveCursorToEndOfElementManipulation extends BaseManipulation {
+  type: "moveCursorToEndOfElement";
+  node: HTMLElement;
+  selection?: Selection;
+}
+
+export interface MoveCursorToStartOfElementManipulation extends BaseManipulation {
+  type: "moveCursorToStartOfElement";
+  node: HTMLElement;
+  selection: Selection;
 }
 
 /**
@@ -136,6 +142,22 @@ export interface MoveCursorBeforeElementManipulation extends BaseManipulation {
   type: "moveCursorBeforeElement";
   node: HTMLElement;
   selection?: Selection;
+}
+
+export interface MoveCursorAfterElementManipulation extends BaseManipulation {
+  type: "moveCursorAfterElement";
+  node: HTMLElement;
+  selection: Selection;
+}
+
+export interface MoveCursorAfterEditorManipulation extends BaseManipulation {
+  type: "moveCursorAfterEditor";
+  node: HTMLElement; //will be rootNode of editor
+}
+
+export interface MoveCursorBeforeEditorManipulation extends BaseManipulation {
+  type: "moveCursorBeforeEditor";
+  node: HTMLElement; //will be rootNode of editor
 }
 
 /**
@@ -192,34 +214,6 @@ export interface ReplaceSelectionWithTextManipulation extends BaseManipulation {
   node: Node; // the anchorNode
   selection: Selection
   text: string;
-}
-
-export interface MoveCursorAfterElementManipulation extends BaseManipulation {
-  type: "moveCursorAfterElement";
-  node: HTMLElement;
-  selection: Selection;
-}
-
-export interface MoveCursorAfterEditorManipulation extends BaseManipulation {
-  type: "moveCursorAfterEditor";
-  node: HTMLElement; //will be rootNode of editor
-}
-
-export interface MoveCursorBeforeEditorManipulation extends BaseManipulation {
-  type: "moveCursorBeforeEditor";
-  node: HTMLElement; //will be rootNode of editor
-}
-
-export interface MoveCursorInsideNonVoidAndVisibleElementAtStartManipulation extends BaseManipulation {
-  type: "moveCursorInsideNonVoidAndVisibleElementAtStart"; //TODO: prettier name
-  node: HTMLElement;
-  selection: Selection;
-}
-
-export interface MoveCursorInsideNonVoidAndVisibleElementAtEndManipulation extends BaseManipulation {
-  type: "moveCursorInsideNonVoidAndVisibleElementAtEnd"; //TODO: prettier name
-  node: HTMLElement;
-  selection: Selection;
 }
 
 export interface ManipulationGuidance {

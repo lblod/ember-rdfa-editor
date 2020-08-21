@@ -1,5 +1,5 @@
 import { MoveCursorBeforeElementManipulation,
-         MoveCursorToEndOfNodeManipulation,
+         MoveCursorToEndOfElementManipulation,
          ManipulationGuidance,
          Manipulation,
          Editor,
@@ -51,8 +51,8 @@ export default class ListBackspacePlugin implements BackspacePlugin {
         return this.guidanceForJumpBeforeLi(element);
       }
     }
-    else if (manipulation.type == "moveCursorToEndOfNode") {
-      manipulation as MoveCursorToEndOfNodeManipulation;
+    else if (manipulation.type == "moveCursorToEndOfElement") {
+      manipulation as MoveCursorToEndOfElementManipulation;
       const element = manipulation.node;
       if (["ul","ol"].includes(tagName(element))) {
         return {
@@ -125,7 +125,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will move the cursor to the end of the last list item in the list
    * @method jumpToLastLiOfList
    */
-  jumpToLastLiOfList(manipulation: MoveCursorToEndOfNodeManipulation , editor: Editor) {
+  jumpToLastLiOfList(manipulation: MoveCursorToEndOfElementManipulation , editor: Editor) {
     const list = manipulation.node;
     if (["ul","ol"].includes(tagName(list))) {
       const li =findLastLi(list);

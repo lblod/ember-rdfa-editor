@@ -98,7 +98,7 @@ interface ElementStartPosition extends BaseThingBeforeCursor {
  */
 interface ElementEndPosition extends BaseThingBeforeCursor {
   type: "elementEnd";
-  node: Element;
+  node: HTMLElement;
 }
 
 /**
@@ -669,7 +669,7 @@ export default class BackspaceHandler implements InputHandler {
           this.rawEditor.updateRichNode();
         }
         break;
-      case "moveCursorToEndOfNode":
+      case "moveCursorToEndOfElement":
         const element = manipulation.node;
         const length = element.childNodes.length;
         moveCaret(element, length);
@@ -752,7 +752,7 @@ export default class BackspaceHandler implements InputHandler {
       case "elementEnd":
         const elementBeforeCursor = thingBeforeCursor as ElementEndPosition;
         return {
-          type: "moveCursorToEndOfNode",
+          type: "moveCursorToEndOfElement",
           node: elementBeforeCursor.node
         };
         break;
@@ -771,7 +771,7 @@ export default class BackspaceHandler implements InputHandler {
           if (this.hasVisibleChildren(element)) {
             return {
               type: "moveCursorBeforeElement",
-              node: element
+              node: element as HTMLElement
             }
           }
           else {
@@ -986,7 +986,7 @@ export default class BackspaceHandler implements InputHandler {
               return { type: "character", position: text.length, node: text};
             }
             else if( child.nodeType === Node.ELEMENT_NODE ){
-              const element = child as Element;
+              const element = child as HTMLElement;
               if (isVoidElement(element)) {
                 return { type: "voidElement", node: element as VoidElement }
               }
@@ -1027,7 +1027,7 @@ export default class BackspaceHandler implements InputHandler {
                 }
               }
               else if( previousSibling.nodeType === Node.ELEMENT_NODE ){
-                const sibling = previousSibling as Element;
+                const sibling = previousSibling as HTMLElement;
                 if (isVoidElement(sibling)) {
                   return { type: "voidElement", node: sibling as VoidElement }
                 }

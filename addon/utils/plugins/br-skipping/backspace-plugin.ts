@@ -2,7 +2,7 @@ import { BackspacePlugin, moveCaretBefore, stringToVisibleText }  from '@lblod/e
 import { Editor,
          Manipulation,
          ManipulationGuidance,
-         MoveCursorToEndOfNodeManipulation,
+         MoveCursorToEndOfElementManipulation,
          MoveCursorBeforeElementManipulation} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 
 function isBr(node: Node) : boolean {
@@ -17,7 +17,7 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
   label = "This plugin jumps over brs where necessary";
 
   guidanceForManipulation(manipulation: Manipulation) : ManipulationGuidance | null {
-    if (manipulation.type == "moveCursorToEndOfNode") {
+    if (manipulation.type == "moveCursorToEndOfElement") {
       const element = manipulation.node as HTMLElement;
       if (window.getComputedStyle(element).display == "block") {
         const length = element.childNodes.length
@@ -62,7 +62,7 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
   /**
    * executor that will move the cursor before the last br of the element
    */
-  moveCaretBeforeLastBrOfElement( manipulation: MoveCursorToEndOfNodeManipulation, _editor: Editor) {
+  moveCaretBeforeLastBrOfElement( manipulation: MoveCursorToEndOfElementManipulation, _editor: Editor) {
     const element = manipulation.node;
     moveCaretBefore(element.childNodes[element.childNodes.length-1]);
   }

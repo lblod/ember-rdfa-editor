@@ -8,7 +8,7 @@ const SUPPORTED_MANIPULATIONS = [
   "removeCharacter",
   "removeEmptyElement",
   "removeVoidElement",
-  "moveCursorToEndOfNode",
+  "moveCursorToEndOfElement",
   "moveCursorBeforeElement",
   "removeOtherNode",
   "removeElementWithOnlyInvisibleTextNodeChildren",

@@ -2,7 +2,7 @@ import { BackspacePlugin, moveCaretBefore, backspaceDebug} from '@lblod/ember-rd
 import { Editor,
          Manipulation,
          ManipulationGuidance,
-         MoveCursorToEndOfNodeManipulation} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+         MoveCursorToEndOfElementManipulation} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 /**
  * This plugin jumps before uneditable elements
  */
@@ -10,7 +10,7 @@ export default class ContentEditableFalseBackspacePlugin implements BackspacePlu
   label = "backspace plugin to remove empty elements instead of jumping in";
 
   guidanceForManipulation(manipulation: Manipulation) : ManipulationGuidance | null {
-    if (manipulation.type == "moveCursorToEndOfNode") {
+    if (manipulation.type == "moveCursorToEndOfElement") {
       backspaceDebug('possible jump before element', manipulation.node)
       const element = manipulation.node as HTMLElement;
       if (! element.isContentEditable) {
@@ -29,7 +29,7 @@ export default class ContentEditableFalseBackspacePlugin implements BackspacePlu
    * executor that will move the cursor before the element we're supposed to jump into
    * and remove the element
    */
-  jumpBeforeElement( manipulation: MoveCursorToEndOfNodeManipulation, _editor: Editor) {
+  jumpBeforeElement( manipulation: MoveCursorToEndOfElementManipulation, _editor: Editor) {
     const element = manipulation.node;
     moveCaretBefore(element)
   }
