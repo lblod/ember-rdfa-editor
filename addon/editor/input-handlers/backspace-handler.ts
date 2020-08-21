@@ -718,7 +718,7 @@ export default class BackspaceHandler implements InputHandler {
       case "emptyTextNodeStart":
         // empty text node: remove the text node
         const textNodeBeforeCursor = thingBeforeCursor as EmptyTextNodeStartPosition;
-        if( textNodeBeforeCursor.node.length === 0 ) {
+        if( stringToVisibleText(textNodeBeforeCursor.node.textContent || "").length === 0 ) {
           return {
             type: "removeEmptyTextNode",
             node: textNodeBeforeCursor.node
@@ -1007,9 +1007,8 @@ export default class BackspaceHandler implements InputHandler {
             // can delete a character
             return { type: "character", position: position - 1, node: text};
           }
-          else if (text.length == 0){
+          else if (stringToVisibleText(text.textContent || "").length == 0){
             // at the start an empty text node
-            // TODO: this is a case we normally can't encounter, node should be removed before it's empty (chrome will remove it if we don't)
             return { type: "emptyTextNodeStart", node: text};
           }
           else {
