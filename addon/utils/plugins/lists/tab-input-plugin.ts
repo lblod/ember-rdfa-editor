@@ -235,7 +235,7 @@ function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor) : void {
 
 function ensureVisibleTextNode(textNode : Text): Text {
   if(isAllWhitespace(textNode)){
-    textNode.textContent = invisibleSpace;
+    textNode.textContent = invisibleSpace + textNode.textContent;
   }
   return textNode;
 }

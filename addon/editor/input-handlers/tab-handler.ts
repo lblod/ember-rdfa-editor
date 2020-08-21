@@ -316,7 +316,7 @@ export default class TabInputHandler implements InputHandler {
 
 function ensureVisibleTextNode(textNode : Text): Text {
   if(isAllWhitespace(textNode)){
-    textNode.textContent = invisibleSpace;
+    textNode.textContent = invisibleSpace + textNode.textContent;
   }
   return textNode;
 }

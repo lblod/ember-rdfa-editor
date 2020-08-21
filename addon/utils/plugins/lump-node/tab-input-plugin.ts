@@ -74,7 +74,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
 
 function ensureVisibleTextNode(textNode : Text): Text {
   if(isAllWhitespace(textNode)){
-    textNode.textContent = invisibleSpace;
+    textNode.textContent = invisibleSpace + textNode.textContent;
   }
   return textNode;
 }
