@@ -4,21 +4,11 @@ import {
   insertTextNodeWithSpace,
   invisibleSpace,
   isList,
+  findLastLi,
   siblingLis
 } from './dom-helpers';
+
 import flatMap from './flat-map';
-/**
- * @method findLastLi
- * @param {DomNode} node the ul node to search in
- * @private
- */
-function findLastLi(ul) {
-  if (tagName(ul) !== 'ul')
-    throw `invalid argument, expected an ul`;
-  if (ul.children && ul.children.length > 0)
-    return Array.from(ul.children).reverse().find((node) => tagName(node) === 'li');
-  return null;
-}
 
 /**
  * @method firstTextChild
@@ -50,7 +40,7 @@ function lastTextChild(node) {
  * @private
  */
 function findLastThOrTd(table) {
-  let matches = flatMap(table, (node) => { return tagName(node) === 'td'});
+  let matches = flatMap(table, (node) => { return tagName(node) === 'td';});
   if (matches.length > 0) {
     return matches[matches.length - 1];
   }
@@ -59,6 +49,11 @@ function findLastThOrTd(table) {
 
 /**
  * returns the node we want to place the marker before (or in if it's a text node)
+ *
+ * NOTE: A large portion of this code is shared with
+ * findPreviousVisibleApplicableNode.  Could not merge because I'm not
+ * sure what the effects will be elsewhere.
+ *
  * @method findPreviousApplicableNode
  * @param {DOMNode} node
  * @param {DOMElement} rootNode

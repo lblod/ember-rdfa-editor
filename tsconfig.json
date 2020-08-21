@@ -1,0 +1,70 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noEmitOnError": false,
+    "noEmit": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "baseUrl": ".",
+    "module": "es6",
+    "experimentalDecorators": true,
+    "paths": {
+      "dummy/tests/*": [
+        "tests/*"
+      ],
+      "dummy/*": [
+        "tests/dummy/app/*",
+        "app/*",
+        "lib/plugin-system-dispatcher/app/*"
+      ],
+      "@lblod/ember-rdfa-editor": [
+        "addon"
+      ],
+      "@lblod/ember-rdfa-editor/*": [
+        "addon/*"
+      ],
+      "@lblod/ember-rdfa-editor/test-support": [
+        "addon-test-support"
+      ],
+      "@lblod/ember-rdfa-editor/test-support/*": [
+        "addon-test-support/*"
+      ],
+      "plugin-system-dispatcher": [
+        "lib/plugin-system-dispatcher/addon"
+      ],
+      "plugin-system-dispatcher/*": [
+        "lib/plugin-system-dispatcher/addon/*"
+      ],
+      "plugin-system-dispatcher/test-support": [
+        "lib/plugin-system-dispatcher/addon-test-support"
+      ],
+      "plugin-system-dispatcher/test-support/*": [
+        "lib/plugin-system-dispatcher/addon-test-support/*"
+      ],
+      "*": [
+        "types/*"
+      ]
+    }
+  },
+  "include": [
+    "app/**/*",
+    "addon/**/*",
+    "tests/**/*",
+    "types/**/*",
+    "lib/plugin-system-dispatcher/**/*",
+    "test-support/**/*",
+    "addon-test-support/**/*"
+  ]
+}

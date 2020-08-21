@@ -16,11 +16,38 @@ Main features:
 ember install @lblod/ember-rdfa-editor
 ```
 
-To include the editor in a template
+To include the editor in a template (ember octane syntax) you can use the following block:
 ```
-    {{rdfa-editor class="rdfa-editor" profile=profile value=editorDocument.content rdfaEditorInit=(action "handleRdfaEditorInit")}}
+        <Rdfa::RdfaEditor
+          @rdfaEditorInit={{this.rdfaEditorInit}}
+          @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+          @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />
 
 ```
+
+The callback provided to rdfaEditorInit is called when the editor element is inserted and provides an object with the following interface:
+ - property `htmlContent`: a cleaned up (with as much as possible internal state remove) version of the htmlContent
+ - property `richNode`: a copy of the internal representation of the document.
+ - property `rootNode`: a copy of the dom of the editor (includes the editor element)
+ - function `setHtmlContent(html)`: function to set the html content of the editor
+ 
+You can pass basic options when you load the editor. Add a value of "true" to enable. Remove option or pass null to disable.
+
+#### Editor Options
+
+- showToggleRdfaAnnotations: Show annotations toggle switch and add rdfa annotations view
+- showInsertButton: Show template insert button
+- showRdfa: Show RDFA in the editor
+- showRdfaHighlight: Show Rdfa highlights
+- showRdfaHover: Show Rdfa information on hover
+
+#### Toolbar Options
+
+- showTextStyleButtons: Show text styling buttons (bold, italic, underline, strikethrough)
+- showListButtons: Show list styling buttons (ordered list, unordered list)
+- showIndentButtons: Show indent buttons (indent, reverse indent)
+
 
 ## Feature flags
 Some experimental features of the editor are hidden behind feature flags. They can be enabled for testing, but probably should not be enabled on a production system. 
@@ -56,41 +83,6 @@ However, if you are using `ember-cli-sass` the addon you need to import the addo
 ```
 
 When installing this through `ember install` the addon will add the snippet above automatically for you in your `app.scss`.
-
-### Styling options
-
-You can pass basic styling options when you load the editor. Add a value of "true" to enable. Remove option or pass null to disable.
-
-#### Editor Options
-
-- showToggleRdfaAnnotations: Show annotations toggle switch and add rdfa annotations view
-- showInsertButton: Show template insert button
-- showRdfa: Show RDFA in the editor
-- showRdfaHighlight: Show Rdfa highlights
-- showRdfaHover: Show Rdfa information on hover
-
-#### Toolbar Options
-
-- showTextStyleButtons: Show text styling buttons (bold, italic, underline, strikethrough)
-- showListButtons: Show list styling buttons (ordered list, unordered list)
-- showIndentButtons: Show indent buttons (indent, reverse indent)
-
-#### Example usage:
-
-```
-{{rdfa/rdfa-editor value=(rdfa/rdfa-html value) rdfaEditorInit=(action "rdfaEditorInit") profile="default" 
-  editorOptions=(hash 
-    showToggleRdfaAnnotations="true" 
-    showInsertButton=null 
-    showRdfa="true" 
-    showRdfaHighlight="true" 
-    showRdfaHover="true") 
-  toolbarOptions=(hash 
-    showTextStyleButtons="true" 
-    showListButtons="true" 
-    showIndentButtons="true") 
-}}
-```
 
 ### Customisation
 

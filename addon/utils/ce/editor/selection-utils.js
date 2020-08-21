@@ -26,4 +26,4 @@ function isEmpty(selectedContexts) {
 
 export {
   isEmpty
-}
+};

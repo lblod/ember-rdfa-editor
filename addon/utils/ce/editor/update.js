@@ -392,7 +392,7 @@ function updateInnerContent(domNodes, {remove, set}) {
  * @method sanitizeHTML
  */
 function sanitizeHTML(html) {
-  const safeAttributes = HTMLInputParser.DEFAULTS.safeAttributes.concat(['class']);
+  const safeAttributes = HTMLInputParser.DEFAULTS.safeAttributes.concat(['class','id']);
   const inputParser = new HTMLInputParser({lumpTags: [], safeAttributes});
   const cleanHTML = inputParser.cleanupHTML(html);
   return cleanHTML;

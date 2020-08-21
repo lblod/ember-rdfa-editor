@@ -8,13 +8,11 @@ import Component from '@ember/component';
 import { tracked } from "@glimmer/tracking";
 import { later } from '@ember/runloop';
 import { debug, warn } from '@ember/debug';
-
 import layout from '../../templates/components/rdfa/rdfa-editor';
 import HintsRegistry from '../../utils/rdfa/hints-registry';
 import EventProcessor from '../../utils/rdfa/event-processor';
 import forgivingAction from '../../utils/rdfa/forgiving-action';
 import { analyse as analyseRdfa } from '@lblod/marawa/rdfa-context-scanner';
-import TextInputDataFlaggedRemoveHandler from '../../utils/rdfa/handlers/text-input-data-flagged-remove-handler';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
 /**
  * RDFa editor
@@ -161,10 +159,6 @@ export default class RdfaEditor extends Component {
   @action
   handleRawEditorInit(editor) {
     this.set('editor', editor);
-    const handlers = [
-      new TextInputDataFlaggedRemoveHandler({rawEditor: editor})
-    ];
-    this.set('handlers', handlers);
     const hintsRegistry = HintsRegistry.create();
     hintsRegistry.set('rawEditor', editor);
     this.set('hintsRegistry', hintsRegistry);

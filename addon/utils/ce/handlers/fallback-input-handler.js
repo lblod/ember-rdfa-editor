@@ -1,7 +1,7 @@
 import HandlerResponse from './handler-response';
 
 /**
- * Fallback Input Handler, a event handler to restore editor state if all else failed
+ * Fallback Input Handler, a event handler to restore editor state for certain events
  *
  * @module contenteditable-editor
  * @class FallbackInputHandler
@@ -18,8 +18,10 @@ export default class FallbackInputHandler {
     if (event.type == "keyup" && ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(event.key)) {
       return true;
     }
-
-    if (! ["keydown", "keyup", "mousedown"].includes(event.type)){
+    else if (event.type == "input" && event.inputType == "deleteContentBackward") {
+      return false;
+    }
+    else if (! ["keydown", "keyup", "mousedown","beforeinput"].includes(event.type)){
       // keydown is before anything happens and thus not interesting for fallback
       // motion events were captured above this if we don't want catch other keyup events, they also generate an input event which we do handle
       // mousedown is not interesting at the moment, only mouse up

@@ -29,7 +29,7 @@ export default class EnterHandler {
    * @public
    */
   isHandlerFor(event){
-    return this.currentNode && event.type === "keydown" && event.key === "Enter" && this.rawEditor.currentSelectionIsACursor;
+    return this.rawEditor.currentNode && event.type === "keydown" && event.key === "Enter" && this.rawEditor.currentSelectionIsACursor;
   }
 
   /**

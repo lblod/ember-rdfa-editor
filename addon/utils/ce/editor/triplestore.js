@@ -36,4 +36,4 @@ function isSubject(resourceUri){
   return ( triple ) => triple.subject === resourceUri;
 }
 
-export { triplesDefinedInResource }
+export { triplesDefinedInResource };

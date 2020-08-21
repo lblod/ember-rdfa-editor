@@ -11,4 +11,4 @@ export default {
   create() {
     return new ContextScanner();
   }
-}
+};

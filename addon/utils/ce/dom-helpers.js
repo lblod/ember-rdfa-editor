@@ -101,21 +101,22 @@ function removeNode(node){
  * @public
  */
 function isVoidElement(node) {
-  return node.nodeType === Node.ELEMENT_NODE && /^(AREA|BASE|BR|COL|COMMAND|EMBED|HR|IMG|INPUT|KEYGEN|LINK|META|PARAM|SOURCE|TRACK|WBR|I)$/i.test(node.tagName);
+  return node.nodeType === Node.ELEMENT_NODE && /^(AREA|BASE|BR|COL|EMBED|HR|IMG|INPUT|LINK|META|PARAM|SOURCE|TRACK|WBR)$/i.test(node.tagName);
 }
 
 /**
  * Determine whether a node's text content is entirely whitespace.
  * from https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM
+ *
  * @method isAllWhitespace
- * @param {DOMNode}  A node implementing the |CharacterData| interface (i.e.,
- *             a |Text|, |Comment|, or |CDATASection| node
- * @return {boolean}    True if all of the text content of |nod| is whitespace,
- *             otherwise false.
+ * @param {DOMNode} node A node implementing the `CharacterData`
+ *  interface (i.e., a `Text`, `Comment`, or `CDATASection` node).
+ * @return {boolean} True if all of the text content of `node` is whitespace,
+ *  otherwise false.
  */
-function isAllWhitespace( nod ) {
+function isAllWhitespace( node ) {
   // Use ECMA-262 Edition 3 String and RegExp features
-  return !(/[^\t\n\r ]/.test(nod.textContent));
+  return !(/[^\t\n\r ]/.test(node.textContent));
 }
 
 
@@ -195,6 +196,24 @@ function siblingLis(node) {
   return lis;
 }
 
+
+/**
+ * returns all LI's from list
+ * @method getAllLisFromList
+ * @param {DOMNode} node
+ * @return {Array}
+ * @public
+ */
+function getAllLisFromList(list){
+  const listItems = [];
+  for(let element of [ ...list.children ]){
+    if (tagName(element) === 'li'){
+      listItems.push(element);
+    }
+  }
+  return listItems;
+}
+
 /**
  * check if the provided node is an empty list (e.g ol or ul without li's)
  * @method isEmptyList
@@ -237,7 +256,7 @@ const insertNodeBAfterNodeA = function(parent, nodeA, nodeB) {
  * return lowercased tagname of a provided node or an empty string for non element nodes
  * @method tagName
  * @param {DOMNode} node
- * @return {boolean}
+ * @return {String}
  * @public
  */
 function tagName(node) {
@@ -356,6 +375,37 @@ function findWrappingSuitableNodes(selection) {
   return actualNodes;
 }
 
+/**
+ * @method findLastLi
+ * @param {DomNode} node the ul node to search in
+ * @public
+ */
+function findLastLi(list) {
+  if (['ul','ol'].includes(tagName(list))) {
+    if (list.children && list.children.length > 0)
+      return Array.from(list.children).reverse().find((node) => tagName(node) === 'li');
+    return null;
+  }
+  else {
+    throw `invalid argument, expected a list`;
+  }
+}
+
+/**
+ * From an Element, checks if it is visible or not.
+ * Note: there is an edge case with 'visibility: hidden'.
+ * See: https://stackoverflow.com/a/33456469/1092608 (the comments)
+ * @method isVisibleElement
+ * @param {Boolean}
+ * @public
+ */
+function isVisibleElement(element){
+  //Stolen from https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js
+  //SO likes this answer https://stackoverflow.com/a/33456469/1092608
+  //Note: there is still some edge case (see comments): "This will return true for an element with visibility:hidden"
+  return !!( element.offsetWidth || element.offsetHeight || element.getClientRects().length );
+}
+
 export {
   tagName,
   isDisplayedAsBlock,
@@ -369,9 +419,11 @@ export {
   removeNodeFromTree,
   removeNode,
   isVoidElement,
+  isVisibleElement,
   isIgnorableElement,
   createElementsFromHTML,
   siblingLis,
+  getAllLisFromList,
   isAllWhitespace,
   getParentLI,
   isLI,
@@ -380,5 +432,6 @@ export {
   findPreviousLi,
   isPhrasingContent,
   isBlockOrBr,
-  findWrappingSuitableNodes
+  findWrappingSuitableNodes,
+  findLastLi
 };

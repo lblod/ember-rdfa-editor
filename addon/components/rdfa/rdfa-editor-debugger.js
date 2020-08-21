@@ -3,7 +3,7 @@ import { layout as templateLayout } from "@ember-decorators/component";
 import { A } from '@ember/array';
 import Component from '@ember/component';
 import layout from '../../templates/components/rdfa/rdfa-editor-debugger';
-
+import { action } from '@ember/object';
 
 /**
 * Debugger component for the RDFa Editor
@@ -55,6 +55,12 @@ export default class RdfaEditorDebugger extends Component {
   * @private
   */
   debugModes = null;
+
+  tagName = '';
+  @action
+  toggleDebug() {
+    this.toggleProperty('debugEnabled');
+  }
 
   init() {
     super.init(...arguments);

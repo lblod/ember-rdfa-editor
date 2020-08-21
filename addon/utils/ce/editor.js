@@ -71,4 +71,4 @@ export {
   replaceDomNode,
   triplesDefinedInResource,
   isEmpty
-}
+};

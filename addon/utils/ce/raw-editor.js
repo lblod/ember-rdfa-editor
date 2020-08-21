@@ -842,13 +842,9 @@ class RawEditor extends EmberObject {
    */
   moveCaretInTextNode(textNode, position){
     try {
-      let docRange = document.createRange();
       let currentSelection = window.getSelection();
-      docRange.setStart(textNode, position);
-      docRange.collapse(true);
-      currentSelection.removeAllRanges();
-      currentSelection.addRange(docRange);
-      this.get('rootNode').focus();
+      currentSelection.collapse(textNode,position);
+      this.rootNode.focus();
     }
     catch(e) {
       console.trace(e); // eslint-disable-line no-console
@@ -1015,7 +1011,7 @@ class RawEditor extends EmberObject {
    * @method setCarret
    * @param {DOMNode} node, a text node or dom element
    * @param {number} offset, for a text node the relative offset within the text node (i.e. number of characters before the carret).
-   *                         for a dom element the number of children before the carret.
+   *                         for a dom element the number of childnodes before the carret.
    * @return {DOMNode} currentNode of the editor after the operation
    * Examples:
    *     to set the carret after 'c' in a textnode with text content 'abcd' use setCarret(textNode,3)

@@ -1,4 +1,4 @@
-import {tagName} from './ce/dom-helpers';
+import {tagName, invisibleSpace} from './ce/dom-helpers';
 import DomPurify from 'dompurify';
 
 const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
@@ -62,7 +62,6 @@ class HTMLInputParser {
    */
   preprocessNodes(node) {
     let cleanedNode = node.cloneNode();
-    
     if (node.nodeType === Node.ELEMENT_NODE) {
       const tag = tagName(node);
       // If we have to replace the tagname we create another node with the new
@@ -71,7 +70,7 @@ class HTMLInputParser {
         cleanedNode = document.createElement(this.tagMap[tag]);
         this.copyAllAttrs(node, cleanedNode);
       }
-      // Clean all node childs 
+      // Clean all node childs
       cleanedNode.textContent = '';
       if (this.lumpTags.includes(tag)) {
         cleanedNode.setAttribute("property", "http://lblod.data.gift/vocabularies/editor/isLumpNode");
@@ -80,17 +79,27 @@ class HTMLInputParser {
         let children = node.childNodes;
         for (let i = 0; i < children.length; i++) {
           const cleanedChild = this.preprocessNodes(children[i]);
-          if (this.lumpTags.includes(tag)) {
-            // make sure we can place the cursor before the non editable element
-            cleanedNode.appendChild(document.createTextNode(""));
-          }
-          cleanedNode.appendChild(cleanedChild);
-          if (this.lumpTags.includes(tag)) {
-            // make sure we can place the cursor after the non editable element
-            cleanedNode.appendChild(document.createTextNode(""));
+          if (cleanedChild) {
+            if (this.lumpTags.includes(tag)) {
+              // make sure we can place the cursor before the non editable element
+              cleanedNode.appendChild(document.createTextNode(""));
+            }
+            cleanedNode.appendChild(cleanedChild);
+            if (this.lumpTags.includes(tag)) {
+              // make sure we can place the cursor after the non editable element
+              cleanedNode.appendChild(document.createTextNode(""));
+            }
           }
         }
       }
+    }
+    else if (node.nodeType === Node.TEXT_NODE) {
+      // remove invisible whitespace (so keeping non breaking space)
+      // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
+      cleanedNode.textContent = node.textContent.replace(invisibleSpace,'')
+        .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,' ');
+      if (cleanedNode.length == 0)
+        return null;
     }
     return cleanedNode;
   }

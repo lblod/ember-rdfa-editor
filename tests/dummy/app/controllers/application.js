@@ -14,7 +14,6 @@ export default class ApplicationController extends Controller {
 
   @action
   rdfaEditorInit(rdfaEditor) {
-    console.log(rdfaEditor);
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.setHtmlContent('');
   }

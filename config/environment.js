@@ -11,5 +11,5 @@ module.exports = function(environment , appConfig) {
   if (environment === 'production') {
     ENV.featureFlags['editor-html-paste'] = false;
   }
-  return ENV;;
+  return ENV;
 };
