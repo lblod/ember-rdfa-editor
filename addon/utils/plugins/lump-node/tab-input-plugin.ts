@@ -18,7 +18,6 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
     if( !this.isSupportedManipulation(manipulation) ){
-      console.info(`plugins/lump-node/tab-input-plugin: manipulation ${manipulation.type} not supported for lumpNode`);
       return null;
     }
 
