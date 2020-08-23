@@ -186,7 +186,6 @@ export default class TabInputHandler implements InputHandler {
 
     let nextManipulation;
 
-    //TODO: this first check is to make linter happy.
     //TODO: assumes anchorNode is not an element.
     if(parentElement.firstChild && parentElement.firstChild.isSameNode(anchorNode)){
       nextManipulation = { type: 'moveCursorBeforeElement', node: parentElement, selection };
@@ -225,7 +224,6 @@ export default class TabInputHandler implements InputHandler {
 
     let nextManipulation;
 
-    //TODO: this first check is to make linter happy.
     //TODO: assumes anchorNode is not an element.
     if(parentElement.lastChild && parentElement.lastChild.isSameNode(anchorNode)){
       nextManipulation = { type: 'moveCursorAfterElement', node: parentElement, selection };
