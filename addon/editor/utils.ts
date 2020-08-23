@@ -46,13 +46,22 @@ export function ensureValidTextNodeForCaret(textNode : Text): Text {
  */
 export function growAdjacentTextNodeNeighborhood(textNode: Text) : Array<Text> {
   let region = new Array<Text>();
-  if( textNode.previousSibling && textNode.previousSibling.nodeType === Node.TEXT_NODE ){
-    region = [ ...growAdjacentTextNodeNeighborhood(textNode.previousSibling as Text)]
+  let currentNode = textNode;
+
+  while(currentNode.previousSibling && currentNode.previousSibling.nodeType === Node.TEXT_NODE){
+    region.push(currentNode.previousSibling);
+    currentNode = currentNode.previousSibling;
   }
+
   region = [ ...region, textNode];
-  if (textNode.nextSibling && textNode.nextSibling.nodeType === Node.TEXT_NODE){
-    region = [...region, ...growAdjacentTextNodeNeighborhood(textNode.nextSibling as Text)]
+
+  currentNode = textNode;
+
+  while(currentNode.nextSibling && currentNode.nextSibling.nodeType === Node.TEXT_NODE){
+    region.push(currentNode.nextSibling);
+    currentNode = currentNode.nextSibling;
   }
+
   return region;
 }
 
