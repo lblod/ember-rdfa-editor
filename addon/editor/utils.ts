@@ -49,8 +49,8 @@ export function growAdjacentTextNodeNeighborhood(textNode: Text) : Array<Text> {
   let currentNode = textNode;
 
   while(currentNode.previousSibling && currentNode.previousSibling.nodeType === Node.TEXT_NODE){
-    region.push(currentNode.previousSibling);
-    currentNode = currentNode.previousSibling;
+    region.push(currentNode.previousSibling as Text);
+    currentNode = currentNode.previousSibling as Text;
   }
 
   region = [ ...region, textNode];
@@ -58,8 +58,8 @@ export function growAdjacentTextNodeNeighborhood(textNode: Text) : Array<Text> {
   currentNode = textNode;
 
   while(currentNode.nextSibling && currentNode.nextSibling.nodeType === Node.TEXT_NODE){
-    region.push(currentNode.nextSibling);
-    currentNode = currentNode.nextSibling;
+    region.push(currentNode.nextSibling as Text);
+    currentNode = currentNode.nextSibling as Text;
   }
 
   return region;
