@@ -364,10 +364,7 @@ function getGroupedLogicalBlocks(suitableNodes, rootNode) {
 
   const uniqueNodes = Array.from(new Set(eligibleNodes.flat()));
   const highestNodes = keepHighestNodes(uniqueNodes);
-  //TODO: rethink this. It is not clear why now all whitspacesNodes are removed....
-  const cleanedNodes = highestNodes.length > 1 ? removeWhitespaceNodes(highestNodes) : [...highestNodes];
-
-  return groupNodesByLogicalBlocks(cleanedNodes);
+  return groupNodesByLogicalBlocks(highestNodes);
 }
 
 /**
@@ -420,12 +417,10 @@ function handleListAction(rawEditor, currentNodes, actionType, listType) {
       const orderedNodes = reorderNodeBlocks(logicalBlocks).map(block => block.nodes);
       const uniqueNodes = Array.from(new Set(orderedNodes.flat()));
       const highestNodes = keepHighestNodes(uniqueNodes);
-      const cleanedNodes = removeWhitespaceNodes(highestNodes);
-
       /* We group the nodes by line, which will allow us to then insert each line
       as a bullet of the list:
           [ [Hello, <b>you</b>], [How are you ?], [<div>I am <i>fine</i></div>] ] */
-      const groupedNodes = groupNodesByLogicalBlocks(cleanedNodes);
+      const groupedNodes = groupNodesByLogicalBlocks(highestNodes);
       insertNewList(rawEditor, groupedNodes, listType);
       return;
     }
@@ -474,19 +469,6 @@ function keepHighestNodes(nodes) {
     return !(node.parentNode && nodes.includes(node.parentNode));
   });
   return nodes;
-}
-
-/**
- * Remove the nodes that are full of whitespaces but that are not br tags.
- *
- * @method removeWhitespaceNodes
- * @param nodes
- * @return Array the cleaned nodes
- */
-function removeWhitespaceNodes(nodes) {
-  return nodes.filter(node => {
-    return !(isAllWhitespace(node) && tagName(node) != "br");
-  });
 }
 
 /**
@@ -757,8 +739,7 @@ function shuffleListType(rawEditor, logicalBlockContents) {
 function doesActionSwitchListType(nodes, listAction) {
   // We assume all the nodes belong to the same <ul>/<ol>
   const domNodes = nodes.map(node => node.richNode ? node.richNode.domNode : node);
-  const nonEmptyNodes = removeWhitespaceNodes(domNodes);
-  const firstDomNode = nonEmptyNodes[0];
+  const firstDomNode = domNodes[0];
   const li = getParentLI(firstDomNode);
   const listE = li.parentElement;
 
@@ -821,8 +802,7 @@ function getLogicalBlockContentsForNewList(node) {
  */
 function getLogicalBlockContentsSwitchListType(nodes) {
   const domNodes = nodes.map(node => node.richNode ? node.richNode.domNode : node);
-  const nonEmptyNodes = removeWhitespaceNodes(domNodes);
-  const currLI = getParentLI(nonEmptyNodes[0]); // No need to process all the list of nodes. From the first node we will be able to get the list element that we want to switch
+  const currLI = getParentLI(domNodes[0]); // No need to process all the list of nodes. From the first node we will be able to get the list element that we want to switch
   return [currLI.parentNode];
 }
 
