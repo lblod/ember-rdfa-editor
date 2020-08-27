@@ -803,34 +803,6 @@ export default class BackspaceHandler implements InputHandler {
   }
 
   /**
-   * Verify if an element only has invisible text nodes as children
-   *
-   * NOTE: see TODO of stringToVisibleText, need to research if we can check the
-   * visual width of textNodes somehow
-   * TODO: this should probably move to a
-   * helper file like dom-helpers
-   *
-   * TODO: no longer used, currently using hasVisibleChildren
-   *
-   * @method allChildrenAreInvisibleTextNodes
-   * @param {Element} element
-   */
-  allChildrenAreInvisibleTextNodes(element : Element) {
-    for (const child of element.childNodes) {
-      if (child.nodeType != Node.TEXT_NODE) {
-        return false;
-      }
-      else {
-        const textNode = child as Text;
-        if (textNode.textContent && stringToVisibleText(textNode.textContent).length > 0  ) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
-  /**
    * determines if an element has visible children
    *
    * this is a heuristic which is going to change over time
