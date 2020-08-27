@@ -124,12 +124,14 @@ export function hasVisibleChildren(parent: Element) : boolean {
           hasVisibleChildren = true;
         }
         else {
-          editorDebug('assuming this node is not visible', child);
+          editorDebug('hasVisibleChildren',
+                      'assuming this node is not visible', child);
         }
       }
       else {
         // we assume other nodes can be ignored for now
-        editorDebug('ignoring node, assuming non visible', child);
+        editorDebug('hasVisibleChildren',
+                    'ignoring node, assuming non visible', child);
       }
     }
     return hasVisibleChildren;
@@ -232,8 +234,8 @@ export function isWhiteSpaceTextNodesArray(textNodes: Array<Text>) : boolean {
 }
 
 /**
- * utility function for backspace debug messages, allows messages to easily be disabled
+ * utility function for debug messages, allows messages to easily be disabled
  */
-export function editorDebug(message : String, ...args : any) : void {
-  runInDebug( () => console.debug(`BACKSPACE: ${message}`, ...args)); // eslint-disable-line no-console
+export function editorDebug(callerName: String, message : String, ...args : any) : void {
+  runInDebug( () => console.debug(`${callerName}: ${message}`, ...args)); // eslint-disable-line no-console
 }

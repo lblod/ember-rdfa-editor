@@ -13,11 +13,11 @@ export default class ContentEditableFalseBackspacePlugin implements BackspacePlu
 
   guidanceForManipulation(manipulation: Manipulation) : ManipulationGuidance | null {
     if (manipulation.type == "moveCursorToEndOfElement") {
-      editorDebug('possible jump before element', manipulation.node)
+      editorDebug(`plugins.contenteditable-false.guidanceForManipulation`, 'possible jump before element', manipulation.node)
       const element = manipulation.node as HTMLElement;
       if (! element.isContentEditable) {
         // element is not editable
-        editorDebug('will jump');
+        editorDebug(`plugins.contenteditable-false.guidanceForManipulation`,'will jump');
         return {
           allow: true,
           executor: this.jumpBeforeElement

@@ -408,16 +408,17 @@ export default class BackspaceHandler implements InputHandler {
     const { previousVisualCursorCoordinates } = options
 
     if( ! previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
-      editorDebug(`Did not see a visual change when removing character, no visualCoordinates whatsoever`,
+      editorDebug(`backspace-handler.checkVisibleChange`,
+                  `Did not see a visual change when removing character, no visualCoordinates whatsoever`,
                   { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
       return false;
     }
     else if( ! previousVisualCursorCoordinates.length && this.selectionCoordinatesInEditor.length ){
-      editorDebug(`no previous coordinates`);
+      editorDebug(`backspace-handler.checkVisibleChange`, `no previous coordinates`);
       return true;
     }
     else if( previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
-      editorDebug('no new coordinates');
+      editorDebug(`backspace-handler.checkVisibleChange`,'no new coordinates');
       return true;
     }
     //Previous and current have visual coordinates, we need to compare the contents
@@ -430,7 +431,9 @@ export default class BackspaceHandler implements InputHandler {
       const visibleChange = ol !== nl || ot !== nt;
 
       if( !visibleChange ){
-        editorDebug(`Did not see a visual change when removing character`, { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
+        editorDebug(`backspace-handler.checkVisibleChange`,
+                    `Did not see a visual change when removing character`,
+                    { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
       }
 
       return visibleChange;
@@ -915,7 +918,9 @@ export default class BackspaceHandler implements InputHandler {
     }
 
     for( const { plugin } of reportsNoExecute ) {
-      editorDebug(`Was not allowed to execute backspace manipulation by plugin ${plugin.label}`, { manipulation, plugin });
+      editorDebug(`backspace-handler.checkManipulationByPlugins`,
+                  `Was not allowed to execute backspace manipulation by plugin ${plugin.label}`,
+                  { manipulation, plugin });
     }
 
     // yield result
@@ -942,7 +947,7 @@ export default class BackspaceHandler implements InputHandler {
 
     // debug reporting
     for( const { plugin } of reports ) {
-      editorDebug(`Change detected by plugin ${plugin.label}`, { manipulation, plugin });
+      editorDebug(`backspace-handler.runChangeDetectionByPlugins`, `Change detected by plugin ${plugin.label}`, { manipulation, plugin });
     }
 
     return reports.length > 0;
