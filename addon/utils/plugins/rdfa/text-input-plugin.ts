@@ -4,7 +4,7 @@ import { Editor,
   ManipulationGuidance,
   InsertTextIntoTextNodeManipulation
        } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler'
+import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
 
 function updateDataFlaggedRemove(manipulation: InsertTextIntoTextNodeManipulation, editor: Editor) {
   const textNode = manipulation.node;

@@ -1,8 +1,10 @@
-import { BackspacePlugin, moveCaretBefore} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { Editor,
          Manipulation,
          ManipulationGuidance,
          MoveCursorToEndOfElementManipulation} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
+
 /**
  * This plugin removes empty elements instead of jumping into them
  */

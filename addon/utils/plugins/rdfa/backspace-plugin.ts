@@ -5,8 +5,7 @@ import { Editor,
        } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import NodeWalker from '@lblod/marawa/node-walker';
 import { isRdfaNode } from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-rich-node-helpers';
-import { stringToVisibleText, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler'
-
+import { stringToVisibleText, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
 
 /**
  * Class responsible for the handling of RDFA.

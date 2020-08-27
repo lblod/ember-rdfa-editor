@@ -1,9 +1,11 @@
-import { BackspacePlugin, moveCaretBefore, stringToVisibleText }  from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import { BackspacePlugin }  from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { Editor,
          Manipulation,
          ManipulationGuidance,
          MoveCursorToEndOfElementManipulation,
          MoveCursorBeforeElementManipulation} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { stringToVisibleText, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
+
 
 function isBr(node: Node) : boolean {
   return node.nodeType == Node.ELEMENT_NODE && (node as HTMLElement).tagName.toLowerCase() == "br";

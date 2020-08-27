@@ -1,5 +1,5 @@
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import { tagName, isVoidElement, invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { isVoidElement } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
 import ListBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/backspace-plugin';
 import LumpNodeBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/backspace-plugin';
 import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
@@ -11,7 +11,8 @@ import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugi
 import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { InputHandler, HandlerResponse } from './input-handler';
 import { RawEditor } from '../raw-editor';
-import { runInDebug } from '@ember/debug';
+import { paintCycleHappened, editorDebug, stringToVisibleText, hasVisibleChildren, moveCaret, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
+
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
  * For the definition of a DOMRect see https://developer.mozilla.org/en-US/docs/Web/API/DOMRect
@@ -192,120 +193,6 @@ export interface BackspacePlugin {
    * Hint: return false if you don't detect location updates.
    */
   detectChange: (manipulation: Manipulation) => boolean;
-}
-
-
-
-/**
- * Awaits until just *after* the next animation frame.
- *
- * requestAnimationFrame will run just before the paint cycle.
- * Executing a timeout in there will thus make us land in the next
- * animation cycle.  Just what we need for the cursor to be repainted.
- *
- * @return {Promise} A promise which resolves when the paint cycle has
- * occurred.
- */
-function paintCycleHappened() : Promise<void> {
-  return new Promise( (cb) => {
-    requestAnimationFrame( () =>
-      setTimeout(() => {
-        cb();
-      }, 0 ) );
-  } );
-}
-
-/**
- * Removes all whitespace, with the exception of non breaking spaces
- *
- * The \s match matches a bunch of content, as per
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Character_Classes
- * and we do not want to match all of them.  Currently 160 (&nbsp;
- * A0) is removed from this list.
- *
- * TODO: this function clearly needs to take the CSS styling into
- * account.  One can only know positions based on the styling of the
- * document.  Finding visual positions to jump to thus need to take
- * this into account.
- *
- * @method stringToVisibleText
- * @param {String} text
- * @return {String}
- * @public
- */
-export function stringToVisibleText(string : string) {
-  // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
-  return string
-    .replace(new RegExp(`[${invisibleSpace}]+`,'g'),'')
-    .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
-}
-
-
-/**
- * set the carret on the desired position. This function uses the browsers selection api and does not update editor state!
- * when possible places cursor at the end of the textNode before the actual cursor position. This makes it easier to determine coordinates later on.
- * @method moveCaret
- * @param {DOMNode} node, a text node or dom element
- * @param {number} offset, for a text node the relative offset within the text node (i.e. number of characters before the carret).
- *                         for a dom element the number of childnodes before the carret.
- * Examples:
- *     to set the carret after 'c' in a textnode with text content 'abcd' use setCarret(textNode,3)
- *     to set the carret after the end of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 2) (e.g setCarret(element, element.children.length))
- *     to set the carret after the b in a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 1) (e.g setCarret(element, indexOfChild + 1))
- *     to set the carret after the start of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 0)
- * NOTE: This is similar, but not exactly the same as what setCaret does. Main differences:
- *           - setCaret will  also consider the textNode after the provided position, which we explicitly don't do here
- *           - setCaret updates editor state (notably rawEditor.currentSelection), which also causes movementObservers to run
- */
-export function moveCaret(node: Node, position: number): null | Selection {
-  let currentSelection = window.getSelection();
-  if (currentSelection) {
-    if (node.nodeType == Node.TEXT_NODE) {
-      currentSelection.collapse(node,position)
-    }
-    else if (node.nodeType == Node.ELEMENT_NODE) {
-      const element = node as HTMLElement;
-      if (position > 0 && element.childNodes[position-1].nodeType == Node.TEXT_NODE) {
-        // cheat a bit and move cursor inside the previous text node if possible
-        const textNodeBeforeCursor = element.childNodes[position-1] as Text;
-        currentSelection.collapse(textNodeBeforeCursor, textNodeBeforeCursor.length);
-      }
-      else {
-        currentSelection.collapse(node,position);
-      }
-    }
-    else {
-      currentSelection.collapse(node,position);
-    }
-    return currentSelection;
-  }
-  else {
-    throw "window.getSelection did not return a selection";
-  }
-}
-
-/**
- * move the carret before the provided element, element needs to have a parentElement
- * @method moveCaretBefore
- * @param {ChildNode} child
- */
-export function moveCaretBefore(child: ChildNode) : null | Selection {
-  const parentElement = child.parentElement;
-  if (parentElement) {
-    const indexOfChild = Array.from(parentElement.childNodes).indexOf(child);
-    return moveCaret(parentElement, indexOfChild);
-  }
-  else {
-    console.warn('trying to move cursor before a child that is no longer connected to the dom tree');
-    return null;
-  }
-}
-
-/**
- * utility function for backspace debug messages, allows messages to easily be disabled
- */
-export function backspaceDebug(message : String, ...args : any) {
-  runInDebug( () => console.debug(`BACKSPACE: ${message}`, ...args)); // eslint-disable-line no-console
 }
 
 /**
@@ -521,16 +408,16 @@ export default class BackspaceHandler implements InputHandler {
     const { previousVisualCursorCoordinates } = options
 
     if( ! previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
-      backspaceDebug(`Did not see a visual change when removing character, no visualCoordinates whatsoever`,
+      editorDebug(`Did not see a visual change when removing character, no visualCoordinates whatsoever`,
                   { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
       return false;
     }
     else if( ! previousVisualCursorCoordinates.length && this.selectionCoordinatesInEditor.length ){
-      backspaceDebug(`no previous coordinates`);
+      editorDebug(`no previous coordinates`);
       return true;
     }
     else if( previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
-      backspaceDebug('no new coordinates');
+      editorDebug('no new coordinates');
       return true;
     }
     //Previous and current have visual coordinates, we need to compare the contents
@@ -543,7 +430,7 @@ export default class BackspaceHandler implements InputHandler {
       const visibleChange = ol !== nl || ot !== nt;
 
       if( !visibleChange ){
-        backspaceDebug(`Did not see a visual change when removing character`, { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
+        editorDebug(`Did not see a visual change when removing character`, { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
       }
 
       return visibleChange;
@@ -768,7 +655,7 @@ export default class BackspaceHandler implements InputHandler {
         }
         else {
           // if  an element has no visible text nodes, we remove it
-          if (this.hasVisibleChildren(element)) {
+          if (hasVisibleChildren(element)) {
             return {
               type: "moveCursorBeforeElement",
               node: element as HTMLElement
@@ -800,61 +687,6 @@ export default class BackspaceHandler implements InputHandler {
 
     // TODO: take care of other cases
     throw `Could not find manipulation to suggest for backspace ${thingBeforeCursor.type}`;
-  }
-
-  /**
-   * determines if an element has visible children
-   *
-   * this is a heuristic which is going to change over time
-   *
-   * Currently we assume
-   * 1. that all textnodes with visibleText (as definied in stringToVisibleText) are visible
-   * 2. that elements are visible if their clientWidth is larger than zero or their visible textContent > 0.
-   *
-   * // TODO: shoud we allow plugins to hook into this? that's probably required to this in a smart way?
-   *
-   * @method hasVisibleChildren
-   * @param {Element} element
-   * @return boolean
-   */
-  hasVisibleChildren(parent: Element) {
-    if (parent.childNodes.length === 0) {
-      // no need to check empty elements from check
-      return false;
-    }
-
-    let hasVisibleChildren = false;
-    for (let child of Array.from(parent.childNodes)) {
-      if (child.nodeType == Node.TEXT_NODE) {
-        const textNode = child as Text;
-        if (textNode.textContent && stringToVisibleText(textNode.textContent).length > 0  ) {
-          hasVisibleChildren = true;
-        }
-      }
-      else if (child.nodeType == Node.ELEMENT_NODE ) {
-        const element = child as HTMLElement;
-        if (element.nextSibling && tagName(element) == 'br') {
-          // it's a br, but not the last br which we can ignore (most of the time...)
-          hasVisibleChildren = true;
-        }
-        else if (element.innerText.length > 0) {
-          // it has visible text content so it is visible
-          hasVisibleChildren = true;
-        }
-        else if (element.clientWidth > 0) {
-          // it has visible width so it is visible
-          hasVisibleChildren = true;
-        }
-        else {
-          backspaceDebug('assuming this node is not visible', child);
-        }
-      }
-      else {
-        // we assume other nodes can be ignored for now
-        backspaceDebug('ignoring node, assuming non visible', child);
-      }
-    }
-    return hasVisibleChildren;
   }
 
   /**
@@ -1083,7 +915,7 @@ export default class BackspaceHandler implements InputHandler {
     }
 
     for( const { plugin } of reportsNoExecute ) {
-      backspaceDebug(`Was not allowed to execute backspace manipulation by plugin ${plugin.label}`, { manipulation, plugin });
+      editorDebug(`Was not allowed to execute backspace manipulation by plugin ${plugin.label}`, { manipulation, plugin });
     }
 
     // yield result
@@ -1110,7 +942,7 @@ export default class BackspaceHandler implements InputHandler {
 
     // debug reporting
     for( const { plugin } of reports ) {
-      backspaceDebug(`Change detected by plugin ${plugin.label}`, { manipulation, plugin });
+      editorDebug(`Change detected by plugin ${plugin.label}`, { manipulation, plugin });
     }
 
     return reports.length > 0;
