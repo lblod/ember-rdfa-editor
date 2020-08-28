@@ -1,4 +1,4 @@
-import { tagName, isList }  from './dom-helpers';
+import { tagName, isList }  from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { A } from '@ember/array';
 
 /**

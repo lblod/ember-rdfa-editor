@@ -6,7 +6,7 @@ import { BackspacePlugin,
          moveCaretBefore,
          moveCaret,
          stringToVisibleText}  from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 /**
  * In some cases the browser acts a bit weird when we empty a text node. this plugin tries to handle these edge cases.
  * Specific reasons we do this:

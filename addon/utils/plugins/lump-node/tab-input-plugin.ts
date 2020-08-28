@@ -1,7 +1,7 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
-import { invisibleSpace, isAllWhitespace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { invisibleSpace, isAllWhitespace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 /**
  *

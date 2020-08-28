@@ -2,7 +2,7 @@ import getRichNodeMatchingDomNode from '../get-rich-node-matching-dom-node';
 import { get } from '@ember/object';
 import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
-import { invisibleSpace } from '../dom-helpers';
+import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 //'##title' will result in (##title)(##)(title)
 let HEADERMARKDOWN = /(#+)(.*)/;

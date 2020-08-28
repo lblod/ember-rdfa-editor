@@ -2,7 +2,7 @@ import { InputHandler } from './input-handler';
 import { Manipulation, ManipulationExecutor, Editor, ManipulationGuidance } from './manipulation';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import { RawEditor } from '../raw-editor';
-import { isVoidElement, isVisibleElement, invisibleSpace, isAllWhitespace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { isVoidElement, isVisibleElement, invisibleSpace, isAllWhitespace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
 import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
 
@@ -196,7 +196,7 @@ export default class TabInputHandler implements InputHandler {
       const remainingSiblings = [ ...childNodes.slice(0, offsetAnchorNode + 1) ].reverse();
 
       const previousElementForCursor = remainingSiblings.find(node => {
-        return !isVoidElement(node) && node.nodeType == Node.ELEMENT_NODE && isVisibleElement(node);
+        return !isVoidElement(node) && node.nodeType == Node.ELEMENT_NODE && isVisibleElement(node as HTMLElement);
       });
 
       if(previousElementForCursor){
@@ -236,7 +236,7 @@ export default class TabInputHandler implements InputHandler {
       const remainingSiblings = childNodes.slice(offsetAnchorNode + 1);
 
       const nextElementForCursor = remainingSiblings.find(node => {
-        return !isVoidElement(node) && node.nodeType == Node.ELEMENT_NODE && isVisibleElement(node);
+        return !isVoidElement(node) && node.nodeType == Node.ELEMENT_NODE && isVisibleElement(node as HTMLElement);
       });
 
       if(nextElementForCursor){

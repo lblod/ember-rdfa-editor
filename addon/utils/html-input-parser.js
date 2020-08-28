@@ -1,4 +1,4 @@
-import {tagName, invisibleSpace} from './ce/dom-helpers';
+import {tagName, invisibleSpace} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import DomPurify from 'dompurify';
 
 const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
