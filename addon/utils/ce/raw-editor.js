@@ -14,7 +14,7 @@ import {
   removeNode,
   tagName,
   createElementsFromHTML
-} from './dom-helpers';
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import getRichNodeMatchingDomNode from './get-rich-node-matching-dom-node';
 import CappedHistory from './capped-history';
 import forgivingAction from './forgiving-action';

@@ -6,7 +6,7 @@ import { isList,
          isEmptyList,
          siblingLis,
          findLastLi
-       } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+       } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { indentAction, unindentAction } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 
@@ -43,11 +43,10 @@ export default class ListTabInputPlugin implements TabInputPlugin {
         return { allow: true, executor: this.indentLiContent };
       }
       else {
-
-        const list = manipulation.node.parentElement;
+        const list = manipulation.node.parentElement as HTMLUListElement | HTMLOListElement;;
         const lastLi = findLastLi(list);
 
-        if( lastLi.isSameNode(listItem) ){
+        if( lastLi && lastLi.isSameNode(listItem) ){
           return { allow: true, executor: this.jumpOutOfList };
         }
         else {
@@ -73,8 +72,8 @@ export default class ListTabInputPlugin implements TabInputPlugin {
         return { allow: true, executor: this.unindentLiContent };
       }
       else {
-        const list = listItem.parentElement;
-        const firstLi = getAllLisFromList(list)[0] as HTMLElement;
+        const list = listItem.parentElement as HTMLUListElement | HTMLOListElement;
+        const firstLi = getAllLisFromList(list)[0];
 
         if( firstLi.isSameNode(listItem) ){
           return { allow: true, executor: this.jumpOutOfListToStart };
@@ -91,7 +90,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Sets the cursor in the first <li></li>. If list is empty, creates an <li></li>
    */
   jumpIntoFirstLi(manipulation: Manipulation, editor: Editor) : void {
-    const list = manipulation.node as HTMLElement;
+    const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let firstLi;
 
     //This branch creates a new LI, but not really sure if we want that.
@@ -100,7 +99,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       list.append(firstLi);
     }
     else {
-      firstLi = getAllLisFromList(list)[0] as HTMLElement;
+      firstLi = getAllLisFromList(list)[0];
     }
     setCursorAtStartOfLi(firstLi, editor);
   }
@@ -109,7 +108,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Sets the cursor in the last <li></li>. If list is empty, creates an <li></li>
    */
   jumpIntoLastLi(manipulation: Manipulation, editor: Editor) : void {
-    const list = manipulation.node as HTMLElement;
+    const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let lastLi;
 
     //This branch creates a new LI, but not really sure if we want that.
@@ -118,7 +117,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       list.append(lastLi);
     }
     else {
-      lastLi = [ ...getAllLisFromList(list) ].reverse()[0] as HTMLElement;
+      lastLi = [ ...getAllLisFromList(list) ].reverse()[0];
     }
     setCursorAtEndOfLi(lastLi, editor);
   }
@@ -146,7 +145,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpToNextLi(manipulation: Manipulation, editor: Editor) : void {
     //Assumes the LI is not the last one
-    const listItem = manipulation.node as HTMLElement;
+    const listItem = manipulation.node as HTMLLIElement;
     const listItems = siblingLis(listItem);
     const indexOfLi = listItems.indexOf(listItem);
     setCursorAtStartOfLi(listItems[indexOfLi + 1], editor);
@@ -157,7 +156,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpToPreviousLi(manipulation: Manipulation, editor: Editor) : void {
     //Assumes the LI is not the last one
-    const listItem = manipulation.node as HTMLElement;
+    const listItem = manipulation.node as HTMLLIElement;
     const listItems = siblingLis(listItem);
     const indexOfLi = listItems.indexOf(listItem);
     setCursorAtEndOfLi(listItems[indexOfLi - 1], editor);

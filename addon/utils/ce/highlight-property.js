@@ -1,5 +1,5 @@
 import EditorProperty from './editor-property';
-import { isList } from './dom-helpers';
+import { isList } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 class HighlightProperty extends EditorProperty {
   constructor({attributes = { 'data-editor-highlight': true}})  {

@@ -3,9 +3,8 @@ import { Editor,
          ManipulationGuidance,
          RemoveCharacterManipulation } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { BackspacePlugin }  from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
-import { stringToVisibleText, moveCaret, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
-
+import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { moveCaretBefore, moveCaret, stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
 /**
  * In some cases the browser acts a bit weird when we empty a text node. this plugin tries to handle these edge cases.
  * Specific reasons we do this:

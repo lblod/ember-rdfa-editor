@@ -5,7 +5,7 @@ import {
   invisibleSpace,
   insertNodeBAfterNodeA,
   insertTextNodeWithSpace
-} from '../dom-helpers';
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import HandlerResponse from './handler-response';
 import { debug } from '@ember/debug';
 import { isBlank } from '@ember/utils';

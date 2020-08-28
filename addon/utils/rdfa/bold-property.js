@@ -1,5 +1,5 @@
 import EditorProperty from '../ce/editor-property';
-import { isList, isPhrasingContent } from '../ce/dom-helpers';
+import { isList, isPhrasingContent } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { A } from '@ember/array';
 /**
  * Editor property that represents bold text.

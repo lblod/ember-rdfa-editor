@@ -2,9 +2,9 @@ import { debug, warn } from '@ember/debug';
 import flatMap from './flat-map';
 import {
   tagName,
-  removeNodeFromTree as unwrapDOMNode,
+  unwrapElement as unwrapDOMNode,
   findWrappingSuitableNodes
-} from './dom-helpers';
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ReplaceWithPolyfill from 'mdn-polyfills/Node.prototype.replaceWith';
 import RichNode from '@lblod/marawa/rich-node';
 import { isAdjacentRange } from '@lblod/marawa/range-helpers';

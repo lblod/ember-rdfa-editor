@@ -6,7 +6,7 @@ import {
   isList,
   findLastLi,
   siblingLis
-} from './dom-helpers';
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 import flatMap from './flat-map';
 

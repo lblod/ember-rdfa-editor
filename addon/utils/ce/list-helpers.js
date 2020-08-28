@@ -10,7 +10,7 @@ import {
   findWrappingSuitableNodes,
   isAllWhitespace,
   tagName
-} from './dom-helpers';
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { isAdjacentRange } from '@lblod/marawa/range-helpers';
 import { warn } from '@ember/debug';
 

@@ -1,4 +1,4 @@
-import { invisibleSpace, isAllWhitespace, isDisplayedAsBlock, tagName } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { invisibleSpace, isAllWhitespace, isDisplayedAsBlock, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { runInDebug } from '@ember/debug';
 
 /**

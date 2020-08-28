@@ -3,7 +3,7 @@ import { A } from '@ember/array';
  * Fake class to list helper functions
  * these functions can be included using
  *
- *`import { function } from @lblod/ember-rdfa-editor/utils/ce/dom-helpers;`
+ *`import { function } from @lblod/ember-rdfa-editor/utils/dom-helpers;`
  * @module contenteditable-editor
  * @class DomHelpers
  * @constructor
@@ -21,13 +21,10 @@ const invisibleSpace = '\u200B';
  * dom helper to insert extra text into a text node at the provided position
  *
  * @method sliceTextIntoTextNode
- * @param {TextNode} textNode
- * @param {String} text
- * @param {number} start
  * @public
  */
-function sliceTextIntoTextNode(textNode, text, start) {
-  let textContent = textNode.textContent;
+function sliceTextIntoTextNode(textNode: Text, text: string, start: number): void {
+  let textContent = textNode.textContent || "";
   let content = [];
   content.push(textContent.slice(0, start));
   content.push(text);
@@ -39,12 +36,9 @@ function sliceTextIntoTextNode(textNode, text, start) {
  * dom helper to insert a text node with an invisible space into a DOMElement.
  *
  * @method insertTextNodeWithSpace
- * @param {DOMElement} parentDomNode
- * @param {DOMNode} relativeToSibling
- * @param {boolean} after
  * @public
  */
-function insertTextNodeWithSpace(parentDomNode, relativeToSibling = null, after = false) {
+function insertTextNodeWithSpace(parentDomNode: HTMLElement, relativeToSibling: ChildNode | null = null, after: boolean = false): Text {
   let textNode = document.createTextNode(invisibleSpace);
   if (relativeToSibling) {
     if (after) {
@@ -59,35 +53,37 @@ function insertTextNodeWithSpace(parentDomNode, relativeToSibling = null, after 
   }
   return textNode;
 }
+
 /**
- * dom helper to remove a node from the dom tree
- * this inserts replaces the node with its child nodes
+ * dom helper to unwrap an element in the dom tree
+ * this replaces the element with its child nodes
  *
- * @method removeNodeFromTree
- * @param {DOMNode} node
+ * @method unwrapElement
  * @public
  */
-function removeNodeFromTree(node) {
-  let parent = node.parentNode;
-  let baseNode = node;
-  while (node.childNodes && node.childNodes.length > 0) {
-    let nodeToInsert = node.childNodes[node.childNodes.length - 1];
-    parent.insertBefore(nodeToInsert, baseNode);
-    baseNode = nodeToInsert;
+function unwrapElement(node: HTMLElement): void {
+  let parent = node.parentElement;
+  let baseNode: ChildNode = node;
+  if (parent) {
+    while (baseNode.childNodes && baseNode.childNodes.length > 0) {
+      let nodeToInsert = node.childNodes[node.childNodes.length - 1];
+      parent.insertBefore(nodeToInsert, baseNode);
+      baseNode = nodeToInsert;
+    }
+    parent.removeChild(node);
   }
-  parent.removeChild(node);
 }
 
 /**
  * polyfill for ChildNode.remove. Removes node and children from tree.
  *
- * @method removeNodeFrom
- * @param {DOMNode} node
+ * @method removeNode
+ * @deprecate all supported browser have ChildNode.remove
  * @public
  */
-function removeNode(node){
+function removeNode(node: ChildNode) {
   let parent = node.parentNode;
-  if(parent)
+  if (parent)
     parent.removeChild(node);
 }
 
@@ -96,12 +92,10 @@ function removeNode(node){
  * https://www.w3.org/TR/html/syntax.html#void-elements
  *
  * @method isVoidElement
- * @param {DOMNode} node
- * @return {boolean}
  * @public
  */
-function isVoidElement(node) {
-  return node.nodeType === Node.ELEMENT_NODE && /^(AREA|BASE|BR|COL|EMBED|HR|IMG|INPUT|LINK|META|PARAM|SOURCE|TRACK|WBR)$/i.test(node.tagName);
+function isVoidElement(node: Node): boolean {
+  return node.nodeType === Node.ELEMENT_NODE && /^(AREA|BASE|BR|COL|EMBED|HR|IMG|INPUT|LINK|META|PARAM|SOURCE|TRACK|WBR)$/i.test((node as Element).tagName);
 }
 
 /**
@@ -109,25 +103,19 @@ function isVoidElement(node) {
  * from https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM
  *
  * @method isAllWhitespace
- * @param {DOMNode} node A node implementing the `CharacterData`
- *  interface (i.e., a `Text`, `Comment`, or `CDATASection` node).
- * @return {boolean} True if all of the text content of `node` is whitespace,
- *  otherwise false.
  */
-function isAllWhitespace( node ) {
+function isAllWhitespace(node: Text): boolean {
   // Use ECMA-262 Edition 3 String and RegExp features
-  return !(/[^\t\n\r ]/.test(node.textContent));
+  return !(/[^\t\n\r ]/.test(node.textContent || ""));
 }
 
 
 /**
  * Determine whether a node is displayed as a block or is a list item
  * @method isDisplayedAsBlock
- * @param {DOMNode}  node to check
- * @return {boolean}
  */
 
-function isDisplayedAsBlock(domNode) {
+function isDisplayedAsBlock(domNode: HTMLElement): boolean {
   if (domNode.nodeType !== Node.ELEMENT_NODE)
     return false;
   const displayStyle = window.getComputedStyle(domNode)['display'];
@@ -142,16 +130,21 @@ function isDisplayedAsBlock(domNode) {
  * @return Array the new dom elements that were inserted [parent, siblingParent]
  * @public
  */
-function smartSplitTextNode(textNode, splitAt) {
-  let parent = textNode.parentNode;
-  let grandParent = parent.parentNode;
-  let firstTextNode = document.createTextNode(textNode.textContent.slice(0, splitAt));
-  let lastTextNode = document.createTextNode(textNode.textContent.slice(splitAt));
-  let extraParent = parent.cloneNode(false);
-  parent.replaceChild(firstTextNode, textNode);
-  insertNodeBAfterNodeA(grandParent, parent, extraParent);
-  extraParent.appendChild(lastTextNode);
-  return [parent, extraParent];
+function smartSplitTextNode(textNode: Text, splitAt: number): Array<HTMLElement> {
+  let parent = textNode.parentElement;
+  if (parent) {
+    const textContent = textNode.textContent || "";
+    let firstTextNode = document.createTextNode(textContent.slice(0, splitAt));
+    let lastTextNode = document.createTextNode(textContent.slice(splitAt));
+    let extraParent = parent.cloneNode(false) as HTMLElement;
+    parent.replaceChild(firstTextNode, textNode);
+    parent.after(extraParent)
+    extraParent.appendChild(lastTextNode);
+    return [parent, extraParent];
+  }
+  else {
+    return [];
+  }
 }
 
 /** list helpers **/
@@ -159,39 +152,34 @@ function smartSplitTextNode(textNode, splitAt) {
 /**
  * check if the provided node is phrasing content
  * @method isPhrasingContent
- * @param {Node} node
- * @return {boolean}
  * @public
  */
-function isPhrasingContent(node) {
+function isPhrasingContent(node: HTMLElement): boolean {
   return node.nodeType !== Node.ELEMENT_NODE ||
-  ['abbr' , 'audio' , 'b' , 'bdo' , 'br' , 'button' , 'canvas' , 'cite' , 'code' , 'command' , 'data' , 'datalist' , 'dfn' , 'em' , 'embed' , 'i' , 'iframe' , 'img' , 'input' , 'kbd' , 'keygen' , 'label' , 'mark' , 'math' , 'meter' , 'noscript' , 'object' , 'output' , 'picture' , 'progress' , 'q' , 'ruby' , 'samp' , 'script' , 'select' , 'small' , 'span' , 'strong' , 'sub' , 'sup' , 'svg' , 'textarea' , 'time' , 'var' , 'video' ].includes(tagName(node));
+    ['abbr', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'command', 'data', 'datalist', 'dfn', 'em', 'embed', 'i', 'iframe', 'img', 'input', 'kbd', 'keygen', 'label', 'mark', 'math', 'meter', 'noscript', 'object', 'output', 'picture', 'progress', 'q', 'ruby', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'svg', 'textarea', 'time', 'var', 'video'].includes(tagName(node));
 }
+
 /**
  * check if the provided node is a list (e.g ol or ul)
  * @method isList
- * @param {DOMNode} node
- * @return {boolean}
  * @public
  */
-function isList(node) {
-  return node.nodeType === node.ELEMENT_NODE && ['ul','ol'].includes(node.tagName.toLowerCase());
+function isList(node: HTMLElement): boolean {
+  return node.nodeType === node.ELEMENT_NODE && ['ul', 'ol'].includes(node.tagName.toLowerCase());
 }
 
 /**
  * returns all sibling that are an li
  * @method siblingLis
- * @param {DOMNode} node
- * @return {Array}
  * @public
  */
-function siblingLis(node) {
-  const lis = A();
-  if (node.parentNode) {
-    node.parentNode.childNodes.forEach( (el) => {
+function siblingLis(node: HTMLLIElement): Array<HTMLLIElement> {
+  const lis: Array<HTMLLIElement> = [];
+  if (node.parentElement) {
+    for (let el of node.parentElement.children) {
       if (tagName(el) === 'li')
-        lis.pushObject(el);
-    });
+        lis.push(el as HTMLLIElement);
+    }
   }
   return lis;
 }
@@ -200,15 +188,13 @@ function siblingLis(node) {
 /**
  * returns all LI's from list
  * @method getAllLisFromList
- * @param {DOMNode} node
- * @return {Array}
  * @public
  */
-function getAllLisFromList(list){
-  const listItems = [];
-  for(let element of [ ...list.children ]){
-    if (tagName(element) === 'li'){
-      listItems.push(element);
+function getAllLisFromList(list: HTMLUListElement | HTMLOListElement): Array<HTMLLIElement> {
+  const listItems: Array<HTMLLIElement> = [];
+  for (let element of [...list.children]) {
+    if (tagName(element) === 'li') {
+      listItems.push(element as HTMLLIElement);
     }
   }
   return listItems;
@@ -217,71 +203,65 @@ function getAllLisFromList(list){
 /**
  * check if the provided node is an empty list (e.g ol or ul without li's)
  * @method isEmptyList
- * @param {DOMNode} node
- * @return {boolean}
  * @public
  */
-function isEmptyList(node) {
-  if( ! isList(node) ) {
+function isEmptyList(node: HTMLUListElement | HTMLOListElement): boolean {
+  if (!isList(node)) {
     return false;
   }
   //sometimes lists may contain other stuff then li, if so we ignore this because illegal
-  for(var x = 0; x < node.children.length; x++) {
-      if (tagName(node.children[x]) === 'li') {
-        return false;
-      }
+  for (var x = 0; x < node.children.length; x++) {
+    if (tagName(node.children[x]) === 'li') {
+      return false;
+    }
   }
   return true;
 }
 
-const isIgnorableElement = function isIgnorableElement(node) {
-  return node.nodeType === Node.TEXT_NODE && node.parentNode && tagName(node.parentNode) === "ul";
+/**
+ * TODO: is this used anywhere? this seems badly named and was undocumented
+ * @method isIgnorableElement
+ */
+function isIgnorableElement(node: Text): boolean {
+  return node.nodeType === Node.TEXT_NODE && node.parentElement !== null && tagName(node.parentElement) === "ul";
 };
 
 /**
- * check if the provided node is a list (e.g ol or ul)
+ * insert node b after node a
  * @method insertNodeBAfterNodeA
- * @param {DOMNode} parent
- * @param {DOMNode} nodeA
- * @param {DomNode} nodeB
- * @return {boolean}
+ * @deprecate use ChildNode.after
  * @public
  */
-const insertNodeBAfterNodeA = function(parent, nodeA, nodeB) {
-  parent.replaceChild(nodeB, nodeA);
-  parent.insertBefore(nodeA, nodeB);
+function insertNodeBAfterNodeA(_parent: HTMLElement, nodeA: ChildNode, nodeB: ChildNode) {
+  nodeA.after(nodeB);
 };
 
 /**
  * return lowercased tagname of a provided node or an empty string for non element nodes
  * @method tagName
- * @param {DOMNode} node
- * @return {String}
  * @public
  */
-function tagName(node) {
-  if(!node) return '';
+function tagName(node: Element): string {
+  if (!node) return '';
   return node.nodeType === node.ELEMENT_NODE ? node.tagName.toLowerCase() : '';
 }
 
 /**
- * check if the node is a <br> tag
+ * check if the node is a <br> tag or a block
+ * TODO: where it this used?
  * @method isBlockOrBr
- * @param {DOMNode} node
- * @return {boolean}
  * @public
  */
-function isBlockOrBr(node) {
+function isBlockOrBr(node: HTMLElement): boolean {
   return tagName(node) == 'br' || isDisplayedAsBlock(node);
 }
 
 /**
  * given html string, convert it into DomElements
- * @function createElementsFromHtml
- * @param {String} string containing html
+ * @method createElementsFromHtml
  * @public
  */
-function createElementsFromHTML(htmlString){
+function createElementsFromHTML(htmlString: string): Array<Node> {
   let div = document.createElement('div');
   div.innerHTML = htmlString.trim();
   return Array.from(div.childNodes);
@@ -290,30 +270,52 @@ function createElementsFromHTML(htmlString){
 
 /**
  * find previous list item
+ * @method findPreviousLi
+ * @public
  */
-function findPreviousLi(currLI) {
+function findPreviousLi(currLI: HTMLLIElement): HTMLLIElement | null {
   let previousElement = currLI;
   do {
-    previousElement = previousElement.previousSibling;
-  } while(previousElement && tagName(previousElement) !== 'li');
-  return previousElement;
+    previousElement = previousElement.previousElementSibling;
+  } while (previousElement && tagName(previousElement) !== 'li');
+  return previousElement ? previousElement as HTMLLIElement : null;
 }
 
-function getParentLI(node) {
-  if(!node.parentNode) return null;
-  if(isLI(node.parentNode)) return node.parentNode;
+/**
+ * for a given node find the LI containing it, or null if it isn't contained in an LI
+ * @method getParentLI
+ * @public
+ */
+function getParentLI(node: Node): HTMLLIElement | null {
+  if (!node.parentNode) return null;
+  if (isLI(node.parentNode)) return (node.parentNode as HTMLLIElement);
   return getParentLI(node.parentNode);
 }
 
-function isLI( node ) {
-  return node.nodeType === node.ELEMENT_NODE && tagName(node) === 'li';
+/**
+ * determine whether the provided Node is an LI
+ * @method isLi
+ */
+function isLI(node: Node): boolean {
+  return node.nodeType === node.ELEMENT_NODE && tagName(node as Element) === 'li';
 }
 
-function isTextNode( node ) {
+/**
+ * determine whether the provided Node is Text
+ * @method isTextNode
+ * @public
+ */
+function isTextNode(node: Node): boolean {
   return node.nodeType === Node.TEXT_NODE;
 }
 
-function getListTagName( listElement ) {
+/**
+ * TODO: where is this used, seems very specific... why not just use tagName(list) ?
+ * @method getListTagName
+ * @deprecate
+ * @public
+ */
+function getListTagName(listElement: HTMLUListElement | HTMLOListElement): string {
   return tagName(listElement) === 'ul' ? 'ul' : 'ol';
 }
 
@@ -326,6 +328,7 @@ function getListTagName( listElement ) {
  * - middle: rich nodes which are the highest parent of a text node that are still contained in the selected range
  * - end: trailing text nodes which contain partial content to highlight
  *
+ * TODO: not a dom helper!
  * Detecting this range is tricky
  *
  * @method findWrappingSuitableNodes
@@ -333,7 +336,7 @@ function getListTagName( listElement ) {
  * @for PropertyHelpers
  * @return Array array of selections
  */
-function findWrappingSuitableNodes(selection) {
+function findWrappingSuitableNodes(selection: Selection): Array<Node> {
   if (!selection.selectedHighlightRange) {
     // TODO: support context selections as well
     // this might be fairly trivial but focussing on text selection for now
@@ -342,12 +345,12 @@ function findWrappingSuitableNodes(selection) {
   const nodes = [];
   const domNodes = [];
   const [start, end] = selection.selectedHighlightRange;
-  for (let {richNode, range} of selection.selections) {
+  for (let { richNode, range } of selection.selections) {
     if (richNode.start < start || richNode.end > end) {
       // this node only partially matches the selected range
       // so it needs to be split up later and we can't walk up the tree.
       if (!domNodes.includes(richNode.domNode)) {
-        nodes.push({richNode, range, split:true});
+        nodes.push({ richNode, range, split: true });
         domNodes.push(richNode.domNode);
       }
     }
@@ -355,20 +358,20 @@ function findWrappingSuitableNodes(selection) {
       // walk up the tree as longs as we fit within the range
       let current = richNode;
       let isNotRootNode = function(richNode) { return richNode.parent; };
-      while(current.parent && isNotRootNode(current.parent) && current.parent.start >= start && current.parent.end <= end) {
+      while (current.parent && isNotRootNode(current.parent) && current.parent.start >= start && current.parent.end <= end) {
         current = current.parent;
       }
       if (!domNodes.includes(current.domNode)) {
-        nodes.push({richNode: current, range: [current.start, current.end], split:false});
+        nodes.push({ richNode: current, range: [current.start, current.end], split: false });
         domNodes.push(current.domNode);
       }
     }
   }
   // remove nodes that are contained within other nodes
-  let actualNodes = A();
+  let actualNodes: Array<Node> = A();
   for (let possibleNode of nodes) {
     const containedInAnotherPossibleNode = nodes.some((otherNode) => otherNode !== possibleNode && otherNode.richNode.domNode.contains(possibleNode.richNode.domNode));
-    if (! containedInAnotherPossibleNode) {
+    if (!containedInAnotherPossibleNode) {
       actualNodes.pushObject(possibleNode);
     }
   }
@@ -377,11 +380,10 @@ function findWrappingSuitableNodes(selection) {
 
 /**
  * @method findLastLi
- * @param {DomNode} node the ul node to search in
  * @public
  */
-function findLastLi(list) {
-  if (['ul','ol'].includes(tagName(list))) {
+function findLastLi(list: HTMLUListElement | HTMLOListElement): HTMLLIElement | null {
+  if (['ul', 'ol'].includes(tagName(list))) {
     if (list.children && list.children.length > 0)
       return Array.from(list.children).reverse().find((node) => tagName(node) === 'li');
     return null;
@@ -396,14 +398,13 @@ function findLastLi(list) {
  * Note: there is an edge case with 'visibility: hidden'.
  * See: https://stackoverflow.com/a/33456469/1092608 (the comments)
  * @method isVisibleElement
- * @param {Boolean}
  * @public
  */
-function isVisibleElement(element){
+function isVisibleElement(element: HTMLElement): boolean {
   //Stolen from https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js
   //SO likes this answer https://stackoverflow.com/a/33456469/1092608
   //Note: there is still some edge case (see comments): "This will return true for an element with visibility:hidden"
-  return !!( element.offsetWidth || element.offsetHeight || element.getClientRects().length );
+  return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
 }
 
 export {
@@ -416,7 +417,7 @@ export {
   isEmptyList,
   insertNodeBAfterNodeA,
   sliceTextIntoTextNode,
-  removeNodeFromTree,
+  unwrapElement,
   removeNode,
   isVoidElement,
   isVisibleElement,
