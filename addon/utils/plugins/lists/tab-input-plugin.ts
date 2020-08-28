@@ -5,11 +5,11 @@ import { isList,
          getAllLisFromList,
          isEmptyList,
          siblingLis,
-         findLastLi,
-         invisibleSpace,
-         isAllWhitespace
+         findLastLi
        } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { indentAction, unindentAction } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
+import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
+
 
 /**
  * Current behaviour
@@ -174,11 +174,11 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       textNode = element.nextSibling;
     }
     else {
-      textNode = document.createTextNode(invisibleSpace);
+      textNode = document.createTextNode('');
       element.after(textNode);
     }
 
-    textNode = ensureVisibleTextNode(textNode as Text);
+    textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
     editor.setCarret(textNode, 0);
   }
@@ -195,10 +195,10 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       textNode = element.previousSibling;
     }
     else {
-      textNode = document.createTextNode(invisibleSpace);
+      textNode = document.createTextNode('');
       element.before(textNode);
     }
-    textNode = ensureVisibleTextNode(textNode as Text);
+    textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
     editor.setCarret(textNode, (textNode as Text).length);
   }
@@ -210,10 +210,10 @@ function setCursorAtStartOfLi(listItem : HTMLElement, editor: Editor) : void{
     textNode = listItem.firstChild;
   }
   else {
-    textNode = document.createTextNode(invisibleSpace);
+    textNode = document.createTextNode('');
     listItem.prepend(textNode);
   }
-  textNode = ensureVisibleTextNode(textNode as Text);
+  textNode = ensureValidTextNodeForCaret(textNode as Text);
   editor.updateRichNode();
   editor.setCarret(textNode, 0)
 }
@@ -224,17 +224,10 @@ function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor) : void {
     textNode = listItem.lastChild;
   }
   else {
-    textNode = document.createTextNode(invisibleSpace);
+    textNode = document.createTextNode('');
     listItem.append(textNode);
   }
-  textNode = ensureVisibleTextNode(textNode as Text);
+  textNode = ensureValidTextNodeForCaret(textNode as Text);
   editor.updateRichNode();
   editor.setCarret(textNode, (textNode as Text).length);
-}
-
-function ensureVisibleTextNode(textNode : Text): Text {
-  if(isAllWhitespace(textNode)){
-    textNode.textContent = invisibleSpace + textNode.textContent;
-  }
-  return textNode;
 }

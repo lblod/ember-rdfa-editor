@@ -1,7 +1,8 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
-import { invisibleSpace, isAllWhitespace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 
 /**
  *
@@ -48,10 +49,10 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
       textNode = element.nextSibling;
     }
     else {
-      textNode = document.createTextNode(invisibleSpace);
+      textNode = document.createTextNode('');
       element.after(textNode);
     }
-    textNode = ensureVisibleTextNode(textNode as Text);
+    textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
     editor.setCarret(textNode, 0)
   }
@@ -63,18 +64,11 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
       textNode = element.previousSibling;
     }
     else {
-      textNode = document.createTextNode(invisibleSpace);
+      textNode = document.createTextNode('');
       element.before(textNode);
     }
-    textNode = ensureVisibleTextNode(textNode as Text);
+    textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
     editor.setCarret(textNode, textNode.length)
   }
-}
-
-function ensureVisibleTextNode(textNode : Text): Text {
-  if(isAllWhitespace(textNode)){
-    textNode.textContent = invisibleSpace + textNode.textContent;
-  }
-  return textNode;
 }

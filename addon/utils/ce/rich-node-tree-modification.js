@@ -21,7 +21,7 @@ function wrapRichNode(richNode, wrappingdomNode) {
   richNode.parent = wrappingRichNode;
 }
 
-function  mergeSiblingTextNodes(richNode) {
+function mergeSiblingTextNodes(richNode) {
   const textNode = richNode.domNode;
   while (textNode.previousSibling && textNode.previousSibling.nodeType === Node.TEXT_NODE) {
     const previousDOMSibling = textNode.previousSibling;

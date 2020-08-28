@@ -2,9 +2,10 @@ import { InputHandler } from './input-handler';
 import { Manipulation, ManipulationExecutor, Editor, ManipulationGuidance } from './manipulation';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import { RawEditor } from '../raw-editor';
-import { isVoidElement, isVisibleElement, invisibleSpace, isAllWhitespace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { isVoidElement, isVisibleElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
 import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
+import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 
 /**
  * Interface for specific plugins.
@@ -85,11 +86,11 @@ export default class TabInputHandler implements InputHandler {
         textNode = element.lastChild as Text;
       }
       else {
-        textNode = document.createTextNode(invisibleSpace);
+        textNode = document.createTextNode('');
         element.append(textNode);
       }
 
-      textNode = ensureVisibleTextNode(textNode as Text);
+      textNode = ensureValidTextNodeForCaret(textNode as Text);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret(textNode, textNode.length);
     }
@@ -101,11 +102,11 @@ export default class TabInputHandler implements InputHandler {
         textNode = element.previousSibling;
       }
       else {
-        textNode = document.createTextNode(invisibleSpace);
+        textNode = document.createTextNode('');
         element.before(textNode);
       }
 
-      textNode = ensureVisibleTextNode(textNode as Text);
+      textNode = ensureValidTextNodeForCaret(textNode as Text);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret(textNode, textNode.length);
     }
@@ -123,11 +124,11 @@ export default class TabInputHandler implements InputHandler {
         textNode = element.firstChild;
       }
       else {
-        textNode = document.createTextNode(invisibleSpace);
+        textNode = document.createTextNode('');
         element.prepend(textNode);
       }
 
-      textNode = ensureVisibleTextNode(textNode as Text);
+      textNode = ensureValidTextNodeForCaret(textNode as Text);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret(textNode, 0);
     }
@@ -139,11 +140,11 @@ export default class TabInputHandler implements InputHandler {
         textNode = element.nextSibling;
       }
       else {
-        textNode = document.createTextNode(invisibleSpace);
+        textNode = document.createTextNode('');
         element.after(textNode);
       }
 
-      textNode = ensureVisibleTextNode(textNode as Text);
+      textNode = ensureValidTextNodeForCaret(textNode as Text);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCarret(textNode, 0);
     }
@@ -185,7 +186,6 @@ export default class TabInputHandler implements InputHandler {
 
     let nextManipulation;
 
-    //TODO: this first check is to make linter happy.
     //TODO: assumes anchorNode is not an element.
     if(parentElement.firstChild && parentElement.firstChild.isSameNode(anchorNode)){
       nextManipulation = { type: 'moveCursorBeforeElement', node: parentElement, selection };
@@ -224,7 +224,6 @@ export default class TabInputHandler implements InputHandler {
 
     let nextManipulation;
 
-    //TODO: this first check is to make linter happy.
     //TODO: assumes anchorNode is not an element.
     if(parentElement.lastChild && parentElement.lastChild.isSameNode(anchorNode)){
       nextManipulation = { type: 'moveCursorAfterElement', node: parentElement, selection };
@@ -255,7 +254,7 @@ export default class TabInputHandler implements InputHandler {
 
   }
 
-    /**
+  /**
    * Checks whether all plugins agree the manipulation is allowed.
    *
    * This method asks each plugin individually if the manipulation is
@@ -312,11 +311,4 @@ export default class TabInputHandler implements InputHandler {
     };
   }
 
-}
-
-function ensureVisibleTextNode(textNode : Text): Text {
-  if(isAllWhitespace(textNode)){
-    textNode.textContent = invisibleSpace + textNode.textContent;
-  }
-  return textNode;
 }
