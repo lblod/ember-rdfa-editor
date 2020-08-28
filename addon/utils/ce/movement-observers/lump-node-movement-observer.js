@@ -31,12 +31,12 @@ export default class LumpNodeMovementObserver {
         relativePosition = 0;
       }
       document.updateRichNode();
-      document.setCarret(newNode, relativePosition);
+      document.setCaret(newNode, relativePosition);
     }
     else if (isInLumpNode(newSelection.endNode.domNode, document.rootNode)) {
       // startNode != endNode, a selection ending in a lumpNode, for now
       // for now just reset to start of the selection
-      document.setCarret(newSelection.startNode.domNode, newSelection.startNode.relativePosition);
+      document.setCaret(newSelection.startNode.domNode, newSelection.startNode.relativePosition);
     }
   }
 }

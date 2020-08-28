@@ -141,7 +141,7 @@ function updateEditorStateAfterUpdate(selection, relativePosition, currentNode) 
 
   if (this.rootNode.contains(currentNode)) {
     const richNode = this.getRichNodeFor(this.currentNode);
-    this.setCarret(richNode.domNode, Math.min(relativePosition, richNode.end));
+    this.setCaret(richNode.domNode, Math.min(relativePosition, richNode.end));
   } else {
     this.set('currentNode', null);
     this.setCurrentPosition(this.currentPosition);

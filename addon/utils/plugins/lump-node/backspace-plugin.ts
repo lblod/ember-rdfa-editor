@@ -69,7 +69,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
     let offset = Array.from(parentOfLumpNode.childNodes).indexOf(lumpNode);
     lumpNode.remove();
     editor.updateRichNode();
-    editor.setCarret(parentOfLumpNode, offset);
+    editor.setCaret(parentOfLumpNode, offset);
   }
 
   /**

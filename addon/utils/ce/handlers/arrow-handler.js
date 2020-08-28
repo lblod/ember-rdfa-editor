@@ -42,10 +42,10 @@ export default class ArrowHandler {
       // not at the start or end of a node
       const relativePosition = position - richNode.start;
       if (isLeft) {
-        this.rawEditor.setCarret(textNode, relativePosition - 1 );
+        this.rawEditor.setCaret(textNode, relativePosition - 1 );
       }
       else {
-        this.rawEditor.setCarret(textNode, relativePosition + 1);
+        this.rawEditor.setCaret(textNode, relativePosition + 1);
       }
     }
     else if (richNode.start === position) {
@@ -53,16 +53,16 @@ export default class ArrowHandler {
       if (isLeft) {
         let newNode = previousTextNode(textNode, this.rawEditor.rootNode);
         this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(newNode,newNode.textContent.length);
+        this.rawEditor.setCaret(newNode,newNode.textContent.length);
       }
       else {
         if (textNode.length > 1) {
-          this.rawEditor.setCarret(textNode, 1);
+          this.rawEditor.setCaret(textNode, 1);
         }
         else {
           let newNode = nextTextNode(textNode, this.rawEditor.rootNode);
           this.rawEditor.updateRichNode();
-          this.rawEditor.setCarret(newNode, 0);
+          this.rawEditor.setCaret(newNode, 0);
         }
       }
     }
@@ -71,16 +71,16 @@ export default class ArrowHandler {
       if (isRight) {
         let newNode = nextTextNode(textNode, this.rawEditor.rootNode);
         this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(newNode, 0);
+        this.rawEditor.setCaret(newNode, 0);
       }
       else {
         if (textNode.length > 1) {
-          this.rawEditor.setCarret(textNode, textNode.textContent.length - 1);
+          this.rawEditor.setCaret(textNode, textNode.textContent.length - 1);
         }
         else {
           let newNode = previousTextNode(textNode, this.rawEditor.rootNode);
           this.rawEditor.updateRichNode();
-          this.rawEditor.setCarret(newNode, newNode.length);
+          this.rawEditor.setCaret(newNode, newNode.length);
         }
       }
     }

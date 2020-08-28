@@ -46,7 +46,7 @@ function replaceDomNode( domNode, { callback, failedCallback, motivation } ){
     callback(domNode);
     this.updateRichNode();
     if (this.rootNode.contains(currentNode)) {
-      this.setCarret(currentNode,relativePosition);
+      this.setCaret(currentNode,relativePosition);
     }
     else {
       this.updateSelectionAfterComplexInput();

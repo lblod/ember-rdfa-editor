@@ -4,7 +4,7 @@ export interface RawEditor {
   currentPosition: number
   setCurrentPosition: (position: number) => void
   generateDiffEvents: Task,
-  setCarret: ( node: Node, position: number ) => void
+  setCaret: ( node: Node, position: number ) => void
   setPosition: ( position: number ) => void
   updateRichNode(): () => void
   rootNode: Element

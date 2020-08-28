@@ -28,10 +28,10 @@ export function paintCycleHappened() : Promise<void> {
  * @param {number} offset, for a text node the relative offset within the text node (i.e. number of characters before the carret).
  *                         for a dom element the number of childnodes before the carret.
  * Examples:
- *     to set the carret after 'c' in a textnode with text content 'abcd' use setCarret(textNode,3)
- *     to set the carret after the end of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 2) (e.g setCarret(element, element.children.length))
- *     to set the carret after the b in a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 1) (e.g setCarret(element, indexOfChild + 1))
- *     to set the carret after the start of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 0)
+ *     to set the carret after 'c' in a textnode with text content 'abcd' use setCaret(textNode,3)
+ *     to set the carret after the end of a node with innerHTML `<b>foo</b><span>work</span>` use setCaret(element, 2) (e.g setCaret(element, element.children.length))
+ *     to set the carret after the b in a node with innerHTML `<b>foo</b><span>work</span>` use setCaret(element, 1) (e.g setCaret(element, indexOfChild + 1))
+ *     to set the carret after the start of a node with innerHTML `<b>foo</b><span>work</span>` use setCaret(element, 0)
  * NOTE: This is similar, but not exactly the same as what setCaret does. Main differences:
  *           - setCaret will  also consider the textNode after the provided position, which we explicitly don't do here
  *           - setCaret updates editor state (notably rawEditor.currentSelection), which also causes movementObservers to run

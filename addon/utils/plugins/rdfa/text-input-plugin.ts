@@ -20,7 +20,7 @@ function updateDataFlaggedRemove(manipulation: InsertTextIntoTextNodeManipulatio
   }
   insertTextIntoTextNode(textNode, manipulation.position, manipulation.text);
   editor.updateRichNode();
-  editor.setCarret(textNode, manipulation.position + 1);
+  editor.setCaret(textNode, manipulation.position + 1);
 }
 
 export default class RdfaTextInputPlugin implements TextInputPlugin {

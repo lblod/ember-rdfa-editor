@@ -12,7 +12,7 @@ function enterTextAfterAnchor(manipulation: InsertTextIntoTextNodeManipulation, 
     const newNode = document.createTextNode(text);
     anchorTag.after(newNode);
     editor.updateRichNode();
-    editor.setCarret(newNode, newNode.length);
+    editor.setCaret(newNode, newNode.length);
   }
 }
 
@@ -23,7 +23,7 @@ function enterTextBeforeAnchor(manipulation: InsertTextIntoTextNodeManipulation,
     const newNode = document.createTextNode(text);
     anchorTag.before(newNode);
     editor.updateRichNode();
-    editor.setCarret(newNode, newNode.length);
+    editor.setCaret(newNode, newNode.length);
   }
 }
 export default class AnchorTagTextInputPlugin implements TextInputPlugin {

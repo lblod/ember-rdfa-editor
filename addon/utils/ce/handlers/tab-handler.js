@@ -32,7 +32,7 @@ export default class TabHandler {
     const currentNode = this.rawEditor.currentNode;
     const nextNode = nextTextNode(currentNode);
     this.rawEditor.updateRichNode();
-    this.rawEditor.setCarret(nextNode, 0);
+    this.rawEditor.setCaret(nextNode, 0);
     return HandlerResponse.create({ allowPropagation: false });
   }
 }

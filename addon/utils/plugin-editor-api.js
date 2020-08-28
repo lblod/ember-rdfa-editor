@@ -722,7 +722,7 @@ export default class PluginEditorApi {
    * does its best to ensure the supplied position is a valid one to
    * navigate to, and positions the cursor at that spot.
    *
-   * @method setCarret
+   * @method setCaret
    * @param {DOMNode} domNode A text node or dom element as the main
    * scope.
    * @param {number} offset Position relative to the supplied
@@ -739,17 +739,17 @@ export default class PluginEditorApi {
    *
    * @example
    * - to set the carret after `"c"` in a textnode with text content
-   *  `"abcd"` use `setCarret(textNode,3)`
+   *  `"abcd"` use `setCaret(textNode,3)`
    * - to set the carret after the end of a node with innerHTML
-   *   `<b>foo</b><span>work</span>` use `setCarret(element, 2)` (e.g
-   *   `setCarret(element, element.children.length)`)
+   *   `<b>foo</b><span>work</span>` use `setCaret(element, 2)` (e.g
+   *   `setCaret(element, element.children.length)`)
    * - to set the carret after the `"b"` in a node with innerHTML
-   *   `<b>foo</b><span>work</span>` use `setCarret(element, 1)` (e.g
-   *   `setCarret(element, indexOfChild + 1)`)
+   *   `<b>foo</b><span>work</span>` use `setCaret(element, 1)` (e.g
+   *   `setCaret(element, indexOfChild + 1)`)
    * - to set the carret after the start of a node with innerHTML
-   *   `<b>foo</b><span>work</span>` use `setCarret(element, 0)`
+   *   `<b>foo</b><span>work</span>` use `setCaret(element, 0)`
    *
    * @public
    */
-  setCarret(domNode, relativePostion) { this._editor.setCarret(domNode, relativePostion);}
+  setCaret(domNode, relativePostion) { this._editor.setCaret  (domNode, relativePostion);}
 }

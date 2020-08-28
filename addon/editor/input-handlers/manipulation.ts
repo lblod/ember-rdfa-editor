@@ -66,7 +66,7 @@ export type Manipulation =
 export type ManipulationExecutor = (manipulation: Manipulation, editor: Editor) => void;
 
 export interface Editor {
-  setCarret: ( node: Node, position: number ) => void
+  setCaret: ( node: Node, position: number ) => void
   updateRichNode: () => void
 }
 

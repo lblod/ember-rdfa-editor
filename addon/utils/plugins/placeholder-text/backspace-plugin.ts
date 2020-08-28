@@ -33,7 +33,7 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
       const textNode = document.createTextNode(invisibleSpace);
       parentNode.replaceWith(textNode);
       editor.updateRichNode();
-      editor.setCarret(textNode, 0);
+      editor.setCaret(textNode, 0);
     }
   }
 

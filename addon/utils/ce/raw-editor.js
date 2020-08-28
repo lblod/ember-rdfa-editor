@@ -305,7 +305,7 @@ class RawEditor extends EmberObject {
       const textNodeAtCurrentPosition = (node) => node.type === 'text' && node.start <= this.currentPosition && node.end >= this.currentPosition;
       const correctNode = flatMap(this.richNode, (node) => textNodeAtCurrentPosition(node) && property.enabledAt(node) !== enabled, true)[0];
       if (correctNode) {
-        this.setCarret(correctNode.domNode, this.currentPosition - correctNode.start);
+        this.setCaret(correctNode.domNode, this.currentPosition - correctNode.start);
       }
     }
   }
@@ -380,10 +380,10 @@ class RawEditor extends EmberObject {
     this.updateRichNode();
     this.generateDiffEvents.perform(extraInfo);
     if(keepCurrentPosition) {
-      this.setCarret(currentNode, getCurrentCarretPosition);
+      this.setCaret(currentNode, getCurrentCarretPosition);
     }
     else {
-      this.setCarret(textNodeAfterInsert,0);
+      this.setCaret(textNodeAfterInsert,0);
     }
     if(lastInsertedRichElement.domNode.isSameNode(domNodesToInsert.slice(-1)[0]))
       return domNodesToInsert;
@@ -422,7 +422,7 @@ class RawEditor extends EmberObject {
     this.updateRichNode();
     this.generateDiffEvents.perform(extraInfo);
 
-    this.setCarret(nodeToEndIn, carretPositionToEndIn);
+    this.setCaret(nodeToEndIn, carretPositionToEndIn);
 
     return nodeToEndIn;
   }
@@ -463,10 +463,10 @@ class RawEditor extends EmberObject {
     this.updateRichNode();
     this.generateDiffEvents.perform(extraInfo);
     if(keepCurrentPosition) {
-      this.setCarret(currentNode, getCurrentCarretPosition);
+      this.setCaret(currentNode, getCurrentCarretPosition);
     }
     else {
-      this.setCarret(textNodeAfterInsert,0);
+      this.setCaret(textNodeAfterInsert,0);
     }
 
     if(lastInsertedRichElement.domNode.isSameNode(domNodesToInsert.slice(-1)[0]))
@@ -580,7 +580,7 @@ class RawEditor extends EmberObject {
     const richNode = this.getRichNodeFor(this.currentNode);
     const currentPosition = this.currentSelection[1];
     if (richNode && richNode.start >= currentPosition && richNode.end <= currentPosition) {
-      this.setCarret(richNode.domNode, Math.max(0,currentPosition - richNode.start));
+      this.setCaret(richNode.domNode, Math.max(0,currentPosition - richNode.start));
     }
     else if(oldRichNodecontainingCursor) {
       // domNode containing cursor no longer exists, we have to reset the cursor in a different node
@@ -886,7 +886,7 @@ class RawEditor extends EmberObject {
           this.currentNode === currentNode &&
           this.rootNode.contains(currentNode) &&
           currentNode.length >= relativePosition) {
-        this.setCarret(currentNode,relativePosition);
+        this.setCaret(currentNode,relativePosition);
       }
       else {
         this.updateSelectionAfterComplexInput();
@@ -919,7 +919,7 @@ class RawEditor extends EmberObject {
       commonAncestor = commonAncestor.nodeType === Node.TEXT_NODE ? commonAncestor.parentNode : commonAncestor;
       if (this.get('rootNode').contains(commonAncestor)) {
         if (range.collapsed) {
-          this.setCarret(range.startContainer, range.startOffset);
+          this.setCaret(range.startContainer, range.startOffset);
         }
         else {
           let startNode = this.getRichNodeFor(range.startContainer);
@@ -984,7 +984,7 @@ class RawEditor extends EmberObject {
     }
     let node = this.findSuitableNodeForPosition(position);
     if (node) {
-      this.setCarret(node.domNode, position - node.start, notify);
+      this.setCaret(node.domNode, position - node.start, notify);
     }
     else {
       console.warn('did not receive a suitable node to set cursor, can\'t set cursor!'); // eslint-disable-line no-console
@@ -1008,20 +1008,20 @@ class RawEditor extends EmberObject {
   /**
    * set the carret on the desired position. This function ensures a text node is present at the requested position
    *
-   * @method setCarret
+   * @method setCaret
    * @param {DOMNode} node, a text node or dom element
    * @param {number} offset, for a text node the relative offset within the text node (i.e. number of characters before the carret).
    *                         for a dom element the number of childnodes before the carret.
    * @return {DOMNode} currentNode of the editor after the operation
    * Examples:
-   *     to set the carret after 'c' in a textnode with text content 'abcd' use setCarret(textNode,3)
-   *     to set the carret after the end of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 2) (e.g setCarret(element, element.children.length))
-   *     to set the carret after the b in a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 1) (e.g setCarret(element, indexOfChild + 1))
-   *     to set the carret after the start of a node with innerHTML `<b>foo</b><span>work</span>` use setCarret(element, 0)
+   *     to set the carret after 'c' in a textnode with text content 'abcd' use setCaret(textNode,3)
+   *     to set the carret after the end of a node with innerHTML `<b>foo</b><span>work</span>` use setCaret(element, 2) (e.g setCaret(element, element.children.length))
+   *     to set the carret after the b in a node with innerHTML `<b>foo</b><span>work</span>` use setCaret(element, 1) (e.g setCaret(element, indexOfChild + 1))
+   *     to set the carret after the start of a node with innerHTML `<b>foo</b><span>work</span>` use setCaret(element, 0)
    *
    * @public
    */
-  setCarret(node, offset) {
+  setCaret(node, offset) {
     const richNode = this.getRichNodeFor(node);
     if (!richNode) {
       console.debug('tried to set carret, but did not find a matching richNode for', node); // eslint-disable-line no-console
@@ -1029,7 +1029,7 @@ class RawEditor extends EmberObject {
     }
     if (richNode.type === 'tag' && richNode.children) {
       if (richNode.children.length < offset) {
-        warn(`invalid offset ${offset} for node ${tagName(richNode.domNode)} with ${richNode.children } provided to setCarret`, {id: 'contenteditable.invalid-start'});
+        warn(`invalid offset ${offset} for node ${tagName(richNode.domNode)} with ${richNode.children } provided to setCaret`, {id: 'contenteditable.invalid-start'});
         return;
       }
       const richNodeAfterCarret = richNode.children[offset];
@@ -1071,7 +1071,7 @@ class RawEditor extends EmberObject {
       this.currentSelection = { startNode: position, endNode: position };
     }
     else {
-      warn(`invalid node ${tagName(node.domNode)} provided to setCarret`, {id: 'contenteditable.invalid-start'});
+      warn(`invalid node ${tagName(node.domNode)} provided to setCaret`, {id: 'contenteditable.invalid-start'});
     }
   }
 

@@ -180,7 +180,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
 
     textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
-    editor.setCarret(textNode, 0);
+    editor.setCaret(textNode, 0);
   }
 
   /*
@@ -200,7 +200,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     }
     textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
-    editor.setCarret(textNode, (textNode as Text).length);
+    editor.setCaret(textNode, (textNode as Text).length);
   }
 }
 
@@ -215,7 +215,7 @@ function setCursorAtStartOfLi(listItem : HTMLElement, editor: Editor) : void{
   }
   textNode = ensureValidTextNodeForCaret(textNode as Text);
   editor.updateRichNode();
-  editor.setCarret(textNode, 0)
+  editor.setCaret(textNode, 0)
 }
 
 function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor) : void {
@@ -229,5 +229,5 @@ function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor) : void {
   }
   textNode = ensureValidTextNodeForCaret(textNode as Text);
   editor.updateRichNode();
-  editor.setCarret(textNode, (textNode as Text).length);
+  editor.setCaret(textNode, (textNode as Text).length);
 }

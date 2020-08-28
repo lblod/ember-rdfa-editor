@@ -207,12 +207,12 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       parent.removeChild(node);
       parent.setAttribute('data-flagged-remove', 'complete');
       editor.updateRichNode();
-      editor.setCarret(parent, 0); //TODO
+      editor.setCaret(parent, 0); //TODO
     }
     else if(this.isManipulationSupportedFor(SUPPORTED_ELEMENT_MANIPULATIONS, manipulation)){
       (node as Element).setAttribute('data-flagged-remove', 'complete');
       editor.updateRichNode();
-      editor.setCarret(node, 0);
+      editor.setCaret(node, 0);
     }
   }
 

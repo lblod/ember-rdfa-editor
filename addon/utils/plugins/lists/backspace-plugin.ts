@@ -125,7 +125,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     if (["ul", "ol"].includes(tagName(list))) {
       const li = findLastLi(list as HTMLUListElement | HTMLOListElement);
       if (li) {
-        editor.setCarret(li, li.childNodes.length);
+        editor.setCaret(li, li.childNodes.length);
       }
       else {
         console.warn("no list item found in list");
@@ -148,7 +148,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     if (list && ["ul", "ol"].includes(tagName(list))) {
       if (list.parentElement) {
         const parentOfList = list.parentElement;
-        editor.setCarret(list.parentElement, Array.from(parentOfList.childNodes).indexOf(list));
+        editor.setCaret(list.parentElement, Array.from(parentOfList.childNodes).indexOf(list));
         list.replaceWith(...element.childNodes);
         editor.updateRichNode();
       }
@@ -178,7 +178,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
         editor.updateRichNode();
         const parentOfList = list.parentElement;
         const index = Array.from(parentOfList.childNodes).indexOf(firstChildOfListItem);
-        editor.setCarret(parentOfList, index);
+        editor.setCaret(parentOfList, index);
       }
       else {
         console.warn("list item has no parent element!");
@@ -204,7 +204,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
       element.remove();
       editor.updateRichNode();
       const index = Array.from(previousLi.childNodes).indexOf(firstChildOfListItem);
-      editor.setCarret(previousLi, index);
+      editor.setCaret(previousLi, index);
     }
     else {
       console.warn("previous sibling is not a list item, can't execute merge");
@@ -224,7 +224,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
       console.warn('want to move to previous li, but that no longer exists');
     }
     else {
-      editor.setCarret(li, li.childNodes.length);
+      editor.setCaret(li, li.childNodes.length);
       element.remove();
       editor.updateRichNode();
     }
@@ -241,7 +241,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     const list = element.parentElement;
     if (list && ["ul", "ol"].includes(tagName(list))) {
       if (list.parentElement) {
-        editor.setCarret(list.parentElement, Array.from(list.parentElement.childNodes).indexOf(list));
+        editor.setCaret(list.parentElement, Array.from(list.parentElement.childNodes).indexOf(list));
         element.remove();
         editor.updateRichNode();
       }
@@ -265,7 +265,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     const list = element.parentElement;
     if (list && ["ul", "ol"].includes(tagName(list))) {
       if (list.parentElement) {
-        editor.setCarret(list.parentElement, Array.from(list.parentElement.childNodes).indexOf(list));
+        editor.setCaret(list.parentElement, Array.from(list.parentElement.childNodes).indexOf(list));
         element.remove();
         list.remove();
         editor.updateRichNode();

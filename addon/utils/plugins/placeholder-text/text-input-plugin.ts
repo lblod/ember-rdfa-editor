@@ -36,7 +36,7 @@ export default class PlaceholderTextInputPlugin implements TextInputPlugin {
       const textNode = document.createTextNode(manipulation.text);
       parent.replaceWith(textNode);
       editor.updateRichNode();
-      editor.setCarret(textNode, textNode.length);
+      editor.setCaret(textNode, textNode.length);
     }
   }
 }

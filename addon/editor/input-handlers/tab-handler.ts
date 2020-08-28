@@ -92,7 +92,7 @@ export default class TabInputHandler implements InputHandler {
 
       textNode = ensureValidTextNodeForCaret(textNode as Text);
       this.rawEditor.updateRichNode();
-      this.rawEditor.setCarret(textNode, textNode.length);
+      this.rawEditor.setCaret(textNode, textNode.length);
     }
 
     else if(manipulation.type == 'moveCursorBeforeElement'){
@@ -108,7 +108,7 @@ export default class TabInputHandler implements InputHandler {
 
       textNode = ensureValidTextNodeForCaret(textNode as Text);
       this.rawEditor.updateRichNode();
-      this.rawEditor.setCarret(textNode, textNode.length);
+      this.rawEditor.setCaret(textNode, textNode.length);
     }
 
     //TODO: this could be moved to a plugin eventually.
@@ -130,7 +130,7 @@ export default class TabInputHandler implements InputHandler {
 
       textNode = ensureValidTextNodeForCaret(textNode as Text);
       this.rawEditor.updateRichNode();
-      this.rawEditor.setCarret(textNode, 0);
+      this.rawEditor.setCaret(textNode, 0);
     }
 
     else if(manipulation.type == 'moveCursorAfterElement'){
@@ -146,7 +146,7 @@ export default class TabInputHandler implements InputHandler {
 
       textNode = ensureValidTextNodeForCaret(textNode as Text);
       this.rawEditor.updateRichNode();
-      this.rawEditor.setCarret(textNode, 0);
+      this.rawEditor.setCaret(textNode, 0);
     }
 
     //TODO: this could be moved to a plugin eventually.

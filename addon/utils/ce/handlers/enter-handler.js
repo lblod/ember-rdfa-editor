@@ -99,7 +99,7 @@ export default class EnterHandler {
     currentNode.parentNode.removeChild(currentNode);
 
     this.rawEditor.updateRichNode();
-    this.rawEditor.setCarret(below, 0);
+    this.rawEditor.setCaret(below, 0);
   }
 
   /**
@@ -163,7 +163,7 @@ export default class EnterHandler {
       }
     }
     this.rawEditor.updateRichNode();
-    this.rawEditor.setCarret(textNode, 0);
+    this.rawEditor.setCaret(textNode, 0);
   }
 
   /**
@@ -201,7 +201,7 @@ export default class EnterHandler {
         newParagraph.appendChild( newTextNode );
         nodeForEnter.domNode.insertAdjacentElement('afterend', newParagraph);
         this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(newTextNode, 0);
+        this.rawEditor.setCaret(newTextNode, 0);
       });
 
     return undefined;

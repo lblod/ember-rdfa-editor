@@ -115,7 +115,7 @@ export default class TextInputHandler implements InputHandler {
       const { node: textNode, position, text } = manipulation;
       insertTextIntoTextNode(textNode, position, text);
       this.rawEditor.updateRichNode();
-      this.rawEditor.setCarret(textNode, position + 1);
+      this.rawEditor.setCaret(textNode, position + 1);
     }
     else if (manipulation.type == "insertTextIntoElement") {
       const {node: element, position, text } = manipulation;
@@ -124,14 +124,14 @@ export default class TextInputHandler implements InputHandler {
         const textNode = element.childNodes[position-1] as Text;
         insertTextIntoTextNode(textNode, textNode.length, text);
         this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(textNode, textNode.length);
+        this.rawEditor.setCaret(textNode, textNode.length);
       }
       else if (element.childNodes[position].nodeType == Node.TEXT_NODE) {
         // node after the intented position is a text node, let's append to that one
         const textNode = element.childNodes[position] as Text;
         insertTextIntoTextNode(textNode, textNode.length, text);
         this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(textNode, text.length);
+        this.rawEditor.setCaret(textNode, text.length);
       }
       else {
         const textNode = document.createTextNode(text);
@@ -142,7 +142,7 @@ export default class TextInputHandler implements InputHandler {
           element.prepend(textNode);
         }
         this.rawEditor.updateRichNode();
-        this.rawEditor.setCarret(textNode, textNode.length);
+        this.rawEditor.setCaret(textNode, textNode.length);
       }
     }
     else if (manipulation.type == "replaceSelectionWithText") {
@@ -154,20 +154,20 @@ export default class TextInputHandler implements InputHandler {
           selection.deleteFromDocument();
           insertTextIntoTextNode(startContainer as Text, startOffset, text);
           this.rawEditor.updateRichNode();
-          this.rawEditor.setCarret(startContainer, startOffset + text.length);
+          this.rawEditor.setCaret(startContainer, startOffset + text.length);
         }
         else if (endContainer.nodeType == Node.TEXT_NODE) {
           selection.deleteFromDocument();
           insertTextIntoTextNode(endContainer as Text, endOffset, text);
           this.rawEditor.updateRichNode();
-          this.rawEditor.setCarret(endContainer, endOffset + text.length);
+          this.rawEditor.setCaret(endContainer, endOffset + text.length);
         }
         else {
           const textNode = document.createTextNode(text);
           selection.deleteFromDocument();
           startContainer.childNodes[startOffset - 1].after(textNode);
           this.rawEditor.updateRichNode();
-          this.rawEditor.setCarret(textNode, textNode.length);
+          this.rawEditor.setCaret(textNode, textNode.length);
         }
       }
       else {
