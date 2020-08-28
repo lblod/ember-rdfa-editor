@@ -1,4 +1,4 @@
-import { invisibleSpace, isAllWhitespace, isDisplayedAsBlock } from '@lblod/ember-rdfa-editor/utils/ce/dom-helpers';
+import { invisibleSpace, isAllWhitespace, isDisplayedAsBlock } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 /**
  * This method makes sure there is a valid textNode for caret.
