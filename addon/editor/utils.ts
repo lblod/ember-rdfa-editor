@@ -162,8 +162,8 @@ export function stringToVisibleText(string : string) : string {
 
 /**
  * This method makes sure there is a valid textNode for caret.
- * If the rendered line solely consists out of whitespace text node(s), the carret won't behave as expected.
- * Especially in Firefox.
+ * If the rendered line solely consists out of whitespace text node(s), the caret won't behave as expected.
+ * Especially in Firefox. It will dissapear.
  * If the latter is the case, the provided textNode's content is replaced with an invisble whitespace.
  *
  * Notes
@@ -171,6 +171,7 @@ export function stringToVisibleText(string : string) : string {
  * Got inspiration from https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace
  * But needed to come up with own cases.
  *
+ * TODO: this logic will be move inside RawEditor.setCaret
  * @method ensureValidTextNodeForCaret
  * @public
  *
@@ -184,17 +185,25 @@ export function ensureValidTextNodeForCaret(textNode : Text): Text {
 
   if(isWhiteSpaceTextNodesArray(siblingsTextNodeNeighborhood)){
 
+    //Suppose textNode == [whiteSpace] and caret will be set there
+
+    //case ```<div>foo</div>textNode``` -> caret will dissapear
     if (previousSibling && isDisplayedAsBlock(previousSibling)){
       //TODO: In theory the region could be merged.
       // But somewhere it feels better to minify the DOM operations. TBD
        textNode.textContent = invisibleSpace;
-     }
+    }
+
+    //case ```textNode<div>foo</div>``` -> caret will dissapear
      else if(nextSibling && isDisplayedAsBlock(nextSibling)){
        textNode.textContent = invisibleSpace;
      }
+
+    //case ```<div>textNode</div>``` -> caret will dissapear
      else if(parentElement && isDisplayedAsBlock(parentElement)){
        textNode.textContent = invisibleSpace;
      }
+    //Note: There is still a bug. There is no check if sbiling are inline elements...
   }
   return textNode;
 }
