@@ -95,11 +95,12 @@ function selectHighlight([start,end], options = {}) {
     let currentNodes = nextWalkedNodes;
     nextWalkedNodes = [];
     for( let node of currentNodes ){
-      if( !node.children ) {
+      if( !node.children || node.children.length == 0 ) {
         if (positionInRange(node.start, [start, end]) || positionInRange(node.end, [start,end])
             || positionInRange(start, node.region) || positionInRange(end, node.region) ) {
           // handle lowest level node
           if (node.region[1] > end && node.type === 'tag') {
+            // element doens't fully match, not splitting tags at the moment
             console.debug('dropping tag', node); // eslint-disable-line no-console
           }
           else {
