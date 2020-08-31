@@ -126,7 +126,7 @@ export default class TextInputHandler implements InputHandler {
         this.rawEditor.updateRichNode();
         this.rawEditor.setCaret(textNode, textNode.length);
       }
-      else if (element.childNodes[position].nodeType == Node.TEXT_NODE) {
+      else if (element.childNodes.length > position && element.childNodes[position].nodeType == Node.TEXT_NODE) {
         // node after the intented position is a text node, let's append to that one
         const textNode = element.childNodes[position] as Text;
         insertTextIntoTextNode(textNode, textNode.length, text);
