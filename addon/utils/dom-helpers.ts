@@ -42,10 +42,10 @@ function insertTextNodeWithSpace(parentDomNode: HTMLElement, relativeToSibling: 
   let textNode = document.createTextNode(invisibleSpace);
   if (relativeToSibling) {
     if (after) {
-      insertNodeBAfterNodeA(parentDomNode, relativeToSibling, textNode);
+      relativeToSibling.after(textNode);
     }
     else {
-      parentDomNode.insertBefore(textNode, relativeToSibling);
+      relativeToSibling.before(textNode);
     }
   }
   else {
@@ -274,7 +274,7 @@ function createElementsFromHTML(htmlString: string): Array<Node> {
  * @public
  */
 function findPreviousLi(currLI: HTMLLIElement): HTMLLIElement | null {
-  let previousElement = currLI;
+  let previousElement: Element | null = currLI;
   do {
     previousElement = previousElement.previousElementSibling;
   } while (previousElement && tagName(previousElement) !== 'li');
