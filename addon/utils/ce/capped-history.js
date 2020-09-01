@@ -1,30 +1,27 @@
-import EmberObject from '@ember/object';
-import { A } from '@ember/array';
 /**
  * a simple capped collection to store document snap shots
  *
  * @module contenteditable-editor
  * @class CappedHistory
  * @constructor
- * @extends EmberObject
  */
-const CappedHistory = EmberObject.extend({
-  history: null,
-  maxItems: 10,
-  init() {
-    this._super(...arguments);
-    this.set('history', A());
-  },
+export default class CappedHistory {
+  history = []
+  maxItems
+
+  constructor({ maxItems = 10 }) {
+    this.maxItems = maxItems;
+  }
+
   push(document) {
     let hist = this.history;
-    if (hist.firstObject === document)
+    if (hist.length > 0 && [hist.length-1] === document)
       return;
-    if (hist.length ===  this.maxItems)
+    if (hist.length === this.maxItems)
       hist.shift();
-    hist.pushObject(document);
-  },
+    hist.push(document);
+  }
   pop() {
     return this.history.popObject();
   }
-});
-export default CappedHistory;
+};
