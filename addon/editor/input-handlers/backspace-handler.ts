@@ -18,6 +18,10 @@ import { paintCycleHappened, editorDebug, stringToVisibleText, hasVisibleChildre
  * For the definition of a DOMRect see https://developer.mozilla.org/en-US/docs/Web/API/DOMRect
  * As I understand it, a DOMRect is basically a rectangle with coordinates relative to viewport.
  * This interface just represents the remapped coordinates.
+ * Why?
+ *  DomRects are normally relative to viewport.
+ *  If we use this information to detectChange, this will break on longer documents
+ *  Because, at the end of a document, when removing e.g. a div, cursor stays, and editor content moves up. (done by the browser)
  */
 interface DOMRectCoordinatesInEditor {
   top: number;
