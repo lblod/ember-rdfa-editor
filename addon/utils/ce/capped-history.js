@@ -22,6 +22,6 @@ export default class CappedHistory {
     hist.push(document);
   }
   pop() {
-    return this.history.popObject();
+    return this.history.pop();
   }
 };
