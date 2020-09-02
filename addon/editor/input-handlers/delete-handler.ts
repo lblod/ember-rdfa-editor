@@ -54,6 +54,7 @@ class MagicSpan implements VisualChangeReferencePoint {
 
   cleanUp() : void {
     this.span.remove();
+    this.editor.updateRichNode();
   }
 
 }
@@ -534,6 +535,7 @@ export default class DeleteHandler implements InputHandler {
       case "removeEmptyTextNode":
         const { node: textNode } = manipulation;
         textNode.remove();
+        this.rawEditor.updateRichNode();
         break;
       case "removeEmptyElement":
         if( !manipulation.node.parentElement ) {
@@ -642,7 +644,7 @@ export default class DeleteHandler implements InputHandler {
       case "emptyTextNodeEnd":
         // empty text node: remove the text node
         const textNodePositionAfterCursor = thingAfterCursor as EmptyTextNodeEndPosition;
-        if( textNodePositionAfterCursor.node.length === 0 ) {
+        if( stringToVisibleText(textNodePositionAfterCursor.node.textContent || "").length === 0 ) {
           return {
             type: "removeEmptyTextNode",
             node: textNodePositionAfterCursor.node
@@ -830,20 +832,20 @@ export default class DeleteHandler implements InputHandler {
           }
         }
         else if (node.nodeType == Node.TEXT_NODE) {
-          const text = node as Text;
+          const textNode = node as Text;
           // cursor is in a text node
-          if (position < text.length) {
+          if (position < textNode.length) {
             // can delete a character, the position remains the same
-            return { type: "character", position: position, node: text};
+            return { type: "character", position: position, node: textNode};
           }
           //TODO: what do we want here
-          else if (stringToVisibleText(text.textContent || "").length == 0){
+          else if (stringToVisibleText(textNode.textContent || "").length == 0){
             // at the start an empty text node
-            return { type: "emptyTextNodeEnd", node: text};
+            return { type: "emptyTextNodeEnd", node: textNode};
           }
           else {
             // at the end of a non empty text node
-            const nextSibling = text.nextSibling;
+            const nextSibling = textNode.nextSibling;
             if( nextSibling ) {
               if( nextSibling.nodeType === Node.TEXT_NODE ) {
                 let sibling = nextSibling as Text;
@@ -869,8 +871,8 @@ export default class DeleteHandler implements InputHandler {
                 return { type: "uncommonNodeStart", node: uncommonNode };
               }
             }
-            else if (text.parentElement) {
-              const parent = text.parentElement;
+            else if (textNode.parentElement) {
+              const parent = textNode.parentElement;
               if (parent != this.rawEditor.rootNode) {
                 return { type: "elementEnd", node: parent };
               }
