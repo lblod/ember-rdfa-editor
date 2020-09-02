@@ -51,6 +51,7 @@ export type Manipulation =
   | MoveCursorBeforeEditorManipulation
   | MoveCursorToStartOfElementManipulation
   | KeepCursorAtStartManipulation
+  | KeepCursorAtEndManipulation
   | InsertTextIntoTextNodeManipulation
   | InsertTextIntoElementManipulation
   | ReplaceSelectionWithTextManipulation
@@ -103,6 +104,13 @@ export interface KeepCursorAtStartManipulation extends BaseManipulation {
   node: Element;
 }
 
+/**
+ * Represents keeping the cursor at the End of the editor
+ */
+export interface KeepCursorAtEndManipulation extends BaseManipulation {
+  type: "keepCursorAtEnd";
+  node: Element;
+}
 
 /**
  * Represents the removal of an empty Element (so an Element without childNodes)
@@ -132,7 +140,7 @@ export interface MoveCursorToEndOfElementManipulation extends BaseManipulation {
 export interface MoveCursorToStartOfElementManipulation extends BaseManipulation {
   type: "moveCursorToStartOfElement";
   node: HTMLElement;
-  selection: Selection;
+  selection?: Selection;
 }
 
 /**
@@ -147,7 +155,7 @@ export interface MoveCursorBeforeElementManipulation extends BaseManipulation {
 export interface MoveCursorAfterElementManipulation extends BaseManipulation {
   type: "moveCursorAfterElement";
   node: HTMLElement;
-  selection: Selection;
+  selection?: Selection;
 }
 
 export interface MoveCursorAfterEditorManipulation extends BaseManipulation {

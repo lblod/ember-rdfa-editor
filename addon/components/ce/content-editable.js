@@ -11,7 +11,7 @@ import IgnoreModifiersHandler from '../../utils/ce/handlers/ignore-modifiers-han
 import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import DeleteHandler from '../../utils/ce/handlers/delete-handler';
+import DeleteHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
 import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
