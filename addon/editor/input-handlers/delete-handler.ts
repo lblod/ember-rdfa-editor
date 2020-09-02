@@ -813,8 +813,13 @@ export default class DeleteHandler implements InputHandler {
             // position is the number of child nodes between the start of the startNode and our cursor.
             const child = element.childNodes[position] as ChildNode;
             if ( child && child.nodeType == Node.TEXT_NODE) {
-              const text = child as Text;
-              return { type: "character", position: 0, node: text};
+              const textNode = child as Text;
+              if(stringToVisibleText(textNode.textContent || "").length == 0){
+                return { type: "emptyTextNodeStart", node: textNode};
+              }
+              else {
+                return { type: "character", position: 0, node: textNode};
+              }
             }
             else if( child && child.nodeType === Node.ELEMENT_NODE ){
               const element = child as HTMLElement;
@@ -834,14 +839,12 @@ export default class DeleteHandler implements InputHandler {
         else if (node.nodeType == Node.TEXT_NODE) {
           const textNode = node as Text;
           // cursor is in a text node
-          if (position < textNode.length) {
+          if (stringToVisibleText(textNode.textContent || "").length == 0 && position < textNode.length){
+            return { type: "emptyTextNodeEnd", node: textNode};
+          }
+          else if (position < textNode.length) {
             // can delete a character, the position remains the same
             return { type: "character", position: position, node: textNode};
-          }
-          //TODO: what do we want here
-          else if (stringToVisibleText(textNode.textContent || "").length == 0){
-            // at the start an empty text node
-            return { type: "emptyTextNodeEnd", node: textNode};
           }
           else {
             // at the end of a non empty text node
@@ -849,12 +852,12 @@ export default class DeleteHandler implements InputHandler {
             if( nextSibling ) {
               if( nextSibling.nodeType === Node.TEXT_NODE ) {
                 let sibling = nextSibling as Text;
-                if( sibling.length > 0 ) {
-                  // previous is text node with stuff
-                  return { type: "character", position: 0, node: sibling};
-                } else {
-                  // next is empty text node (only possible in non chrome based browsers)
+
+                if (stringToVisibleText(sibling.textContent || "").length == 0){
                   return { type: "emptyTextNodeStart", node: sibling};
+                }
+                else {
+                  return { type: "character", position: 0, node: sibling};
                 }
               }
               else if( nextSibling.nodeType === Node.ELEMENT_NODE ){

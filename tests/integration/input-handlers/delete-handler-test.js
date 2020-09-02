@@ -307,15 +307,33 @@ module('Integration | InputHandler | delete-handler', function(hooks) {
     const spanNode = editor.childNodes[1];
     window.getSelection().collapse(spanNode, 0);
     assert.equal(editor.innerHTML, 'beer<span></span>bar'); //make sure this is not removed somehow
-    const previousCaretPostion = window.getSelection().getRangeAt(0).getClientRects();
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = window.getSelection();
-    //we exepect visual change
     assert.equal(currentSelection.anchorNode.parentElement.innerText, "beerar");
     assert.equal(editor.innerHTML, "beerar");
-    // It seems this is really an edge case, cursors is not placed in this empty node.
-    // const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    // assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+  });
+
+
+  test('it removes a character of a far away in a nested div', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('<div resource="zitting"></div>');
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const divNode = editor.childNodes[0];
+    divNode.appendChild(document.createTextNode('   '));
+    divNode.insertAdjacentHTML('beforeend', '<h1 resource="title">Notulen Van</h1>');
+    window.getSelection().collapse(divNode, 0);
+    assert.equal(divNode.innerHTML, '   <h1 resource="title">Notulen Van</h1>'); //make sure this is not removed somehow
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
+    const resultString = `<h1 resource="title" data-editor-position-level="0" data-editor-rdfa-position-level="0">otulen Van</h1>`;
+    assert.equal(divNode.innerHTML, resultString);
   });
 
 });
