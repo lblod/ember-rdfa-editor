@@ -9,6 +9,37 @@ function replaceRichNodeWith(richNode, richNodes) {
   parent.children.splice(indexOfRichNode, 1, ...richNodes);
 }
 
+/**
+ * split a rich node of type text at the provided (absolute) offset
+ * will split both the richnode and the underlying text node.
+ * NOTE: does not modify richNode parent or dom tree!
+ * returns the two resulting richNodes
+ */
+function splitRichTextNode(richNode, offset) {
+  if (offset <= richNode.start || offset >= richNode.end) {
+    throw 'invalid offset for splitRichTextNode';
+  }
+  const textContent = richNode.text;
+  const relativeOffset = offset - richNode.start;
+  const prefixDomNode = document.createTextNode(textContent.slice(0, relativeOffset));
+  const prefixRichNode = new RichNode({
+    domNode: prefixDomNode,
+    start: richNode.start,
+    end: richNode.start + relativeOffset,
+    type: "text",
+    text: prefixDomNode.textContent
+  });
+  const postfixDomNode = document.createTextNode(textContent.slice(relativeOffset));
+  const postfixRichNode = new RichNode({
+    domNode: postfixDomNode,
+    start: richNode.start + relativeOffset,
+    end: richNode.end,
+    type: "text",
+    text: postfixDomNode.textContent
+  });
+  return [prefixRichNode, postfixRichNode];
+}
+
 function wrapRichNode(richNode, wrappingdomNode) {
   const wrappingRichNode = new RichNode({
     domNode: wrappingdomNode,
@@ -77,4 +108,4 @@ function unwrapRichNode(richNode) {
   replaceRichNodeWith(richNode, richNode.children);
 }
 
-export { replaceRichNodeWith, wrapRichNode, unwrapRichNode, mergeSiblings, mergeSiblingTextNodes };
+export { replaceRichNodeWith, wrapRichNode, unwrapRichNode, mergeSiblings, mergeSiblingTextNodes, splitRichTextNode };
