@@ -1,5 +1,5 @@
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import { isVoidElement, invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { isVoidElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { InputHandler, HandlerResponse } from './input-handler';
 import { RawEditor } from '../raw-editor';
@@ -12,7 +12,48 @@ import { paintCycleHappened,
          moveCaretAfter } from '@lblod/ember-rdfa-editor/editor/utils';
 
 /**
- * Given a reference DOMRect and a target,
+ * Helper to compare 2 Arrays of DOMRect and to see wether any changes between them could be considered as a visual chancge.
+ * TODO: this needs some refurbishing, now unclean absctraction.
+ * @method checkVisibleChange
+ * @private
+ */
+function checkVisibleChange( currentVisualCursorCoordinates: Array<DOMRect>,
+                      previousVisualCursorCoordinates: Array<DOMRect> ) : boolean {
+
+    if( ! previousVisualCursorCoordinates.length && ! currentVisualCursorCoordinates.length ){
+      editorDebug(`delete-handler.checkVisibleChange`,
+                  `Did not see a visual change when removing character, no visualCoordinates whatsoever`,
+                  { new: currentVisualCursorCoordinates, old: previousVisualCursorCoordinates });
+      return false;
+    }
+    else if( ! previousVisualCursorCoordinates.length && currentVisualCursorCoordinates.length ){
+      editorDebug(`delete-handler.checkVisibleChange`, `no previous coordinates`);
+      return true;
+    }
+    else if( previousVisualCursorCoordinates.length && ! currentVisualCursorCoordinates.length ){
+      editorDebug(`delete-handler.checkVisibleChange`,'no new coordinates');
+      return true;
+    }
+    //Previous and current have visual coordinates, we need to compare the contents
+    else {
+      const { left: ol, top: ot } = previousVisualCursorCoordinates[0];
+
+
+      const { left: nl, top: nt } = currentVisualCursorCoordinates[0];
+
+      const visibleChange = ol !== nl || ot !== nt;
+
+      if( !visibleChange ){
+        editorDebug(`delete-handler.checkVisibleChange`,
+                    `Did not see a visual change when removing character`,
+                    { new: currentVisualCursorCoordinates, old: previousVisualCursorCoordinates });
+      }
+      return visibleChange;
+    }
+  }
+
+/**
+ * Helper function: Given a reference DOMRect and a target,
  * re-map the coordinates compared to the reference
  * @method getRelativeDomRectCoordinates
  * @private
@@ -31,31 +72,45 @@ function getRelativeDomRectCoordinates(reference: DOMRect, target: DOMRect) : DO
 /**
  * We introduce an abstract reference point to check for visual changes.
  * In this handler, in some cases, we want the caret to stay, but content to be removed.
- * And sometimes we want the caret to move. Hence, checking for change might imply different logic.
+ * And sometimes we want the caret to move.  Hence, checking for change might imply different logic.
  * Note: this is a first shot at abstraction, might change over time.
  */
 interface VisualChangeReferencePoint {
-  // Note: We explicitly use coordinates in editor and not in viewPort.
-  // because in longer documents, when removing content, document may move up on re-render and
-  // as a result, the viewport coordinates might remain the same.
-  coordinatesInEditor: Array<DOMRect>;
+  storeMeasurePoint(): void;
+  hasChangedVisibly: boolean;
   editor: RawEditor;
   cleanUp(): void;
 }
 
 class MagicSpan implements VisualChangeReferencePoint {
+  // Note: We explicitly use coordinates in editor-space and not in viewPort-space.
+  // because in longer documents, when removing content, document may move up on re-render and
+  // as a result, the viewport coordinates might remain the same.
+  firstMeasurePoint: Array<DOMRect>;
+  secondMeasurePoint: Array<DOMRect>;
   span: Element;
   editor: RawEditor;
 
   constructor(span: Element, editor: RawEditor){
     this.span = span;
     this.editor = editor;
+    this.firstMeasurePoint = [];
+    this.secondMeasurePoint = [];
   }
 
-  get coordinatesInEditor(){
+  storeMeasurePoint() : void {
     const referenceFrame = this.editor.rootNode.getBoundingClientRect();
     const targets = Array.from(this.span.getClientRects());
-    return targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
+    if(!this.firstMeasurePoint.length){
+      this.firstMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
+    }
+    else {
+      this.secondMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
+    }
+  }
+
+  get hasChangedVisibly () : boolean {
+    return checkVisibleChange(this.firstMeasurePoint, this.secondMeasurePoint)
   }
 
   cleanUp() : void {
@@ -66,13 +121,17 @@ class MagicSpan implements VisualChangeReferencePoint {
 }
 
 class Caret implements VisualChangeReferencePoint {
+  firstMeasurePoint: Array<DOMRect>;
+  secondMeasurePoint: Array<DOMRect>;
   editor: RawEditor;
 
   constructor(editor: RawEditor){
     this.editor = editor;
+    this.firstMeasurePoint = [];
+    this.secondMeasurePoint = [];
   }
 
-  get coordinatesInEditor(){
+  private calculateSelectionRects(): Array<DOMRect> {
     if (window.getSelection() != null) {
       const selection = window.getSelection() as Selection
       if (selection.rangeCount > 0) {
@@ -82,6 +141,55 @@ class Caret implements VisualChangeReferencePoint {
       }
     }
     return [];
+  }
+
+  storeMeasurePoint() : void {
+    if(!this.firstMeasurePoint.length){
+      this.firstMeasurePoint = this.calculateSelectionRects();
+    }
+    else {
+      this.secondMeasurePoint = this.calculateSelectionRects();
+    }
+  }
+
+  get hasChangedVisibly () : boolean {
+    return checkVisibleChange(this.firstMeasurePoint, this.secondMeasurePoint)
+  }
+
+  cleanUp() : void {} //nothing to do
+}
+
+class VisibleTextLength implements VisualChangeReferencePoint {
+  firstMeasurePoint: String;
+  secondMeasurePoint: String;
+  textNode: Text;
+  editor: RawEditor;
+
+  constructor(textNode: Text, editor: RawEditor){
+    this.editor = editor;
+    this.firstMeasurePoint = '';
+    this.secondMeasurePoint = '';
+    this.textNode = textNode;
+  }
+
+  private getVisibleText() : String {
+    if(this.textNode.parentElement){
+      return (this.textNode.parentElement as HTMLElement).innerText;
+    }
+    return '';
+  }
+
+  storeMeasurePoint() : void {
+    if(!this.firstMeasurePoint.length){
+      this.firstMeasurePoint = this.getVisibleText();
+    }
+    else {
+      this.secondMeasurePoint = this.getVisibleText();
+    }
+  }
+
+  get hasChangedVisibly () : boolean {
+    return stringToVisibleText(this.firstMeasurePoint as string) !== stringToVisibleText(this.secondMeasurePoint as string)
   }
 
   cleanUp() : void {} //nothing to do
@@ -122,7 +230,6 @@ interface CharacterPosition extends BaseThingAfterCursor {
   node: Text;
   position: any;
 }
-
 
 /**
  * The end of a text node is fter the cursor, the text node is empty.
@@ -371,11 +478,10 @@ export default class DeleteHandler implements InputHandler {
 
     //Add reference point, we can mesure if something changed visually.
     const visualReference = this.ensureVisualChangeReferencePoint(manipulation);
-    const beforeChangeVisualReferenceCoordinates = visualReference.coordinatesInEditor;
+    visualReference.storeMeasurePoint();
 
     //Declare for later use
     let pluginSeesChange;
-    let afterChangeVisualReferenceCoordinates;
 
     try {
       // error if we're not allowed to
@@ -398,7 +504,7 @@ export default class DeleteHandler implements InputHandler {
       await paintCycleHappened();
       pluginSeesChange = this.runChangeDetectionByPlugins( manipulation );
 
-      afterChangeVisualReferenceCoordinates = visualReference.coordinatesInEditor;
+      visualReference.storeMeasurePoint();
     }
 
     finally {
@@ -409,7 +515,7 @@ export default class DeleteHandler implements InputHandler {
     }
 
     // maybe iterate again
-    if( pluginSeesChange || this.checkVisibleChange( afterChangeVisualReferenceCoordinates, beforeChangeVisualReferenceCoordinates) ) {
+    if( pluginSeesChange || visualReference.hasChangedVisibly ) {
       // TODO: do we need to make sure cursor state in the editor corresponds with browser state here?
       return;
     } else {
@@ -423,13 +529,7 @@ export default class DeleteHandler implements InputHandler {
     const node = manipulation.node as ChildNode;
     switch( manipulation.type ) {
       case "removeCharacter":
-        //Note: there is an edge case <span> f|oo   <magispan></magicspan></span> where 'foo' is the textNode to manipulate.
-        // In chrome if you don't add something to the span, this will behave very weirdly
-        // There is a test for this.
-        const span = document.createElement('span');
-        span.appendChild(document.createTextNode('\u00A0'));
-        visualReferencePoint = new MagicSpan(span, this.rawEditor);
-        node.after(visualReferencePoint.span);
+        visualReferencePoint = new VisibleTextLength(node as Text, this.rawEditor)
         break;
       case "removeEmptyTextNode":
         visualReferencePoint = new MagicSpan(document.createElement('span'), this.rawEditor);
@@ -478,41 +578,7 @@ export default class DeleteHandler implements InputHandler {
    * @param options.previousVisualCursorCoordinates {Array<DOMRectCoordinatesInEditor>}
    * Coordinates of the rectangles defining the selection.
    */
-  checkVisibleChange( currentVisualCursorCoordinates: Array<DOMRect>,
-                      previousVisualCursorCoordinates: Array<DOMRect> ) : boolean {
 
-    if( ! previousVisualCursorCoordinates.length && ! currentVisualCursorCoordinates.length ){
-      editorDebug(`delete-handler.checkVisibleChange`,
-                  `Did not see a visual change when removing character, no visualCoordinates whatsoever`,
-                  { new: currentVisualCursorCoordinates, old: previousVisualCursorCoordinates });
-      return false;
-    }
-    else if( ! previousVisualCursorCoordinates.length && currentVisualCursorCoordinates.length ){
-      editorDebug(`delete-handler.checkVisibleChange`, `no previous coordinates`);
-      return true;
-    }
-    else if( previousVisualCursorCoordinates.length && ! currentVisualCursorCoordinates.length ){
-      editorDebug(`delete-handler.checkVisibleChange`,'no new coordinates');
-      return true;
-    }
-    //Previous and current have visual coordinates, we need to compare the contents
-    else {
-      const { left: ol, top: ot } = previousVisualCursorCoordinates[0];
-
-
-      const { left: nl, top: nt } = currentVisualCursorCoordinates[0];
-
-      const visibleChange = ol !== nl || ot !== nt;
-
-      if( !visibleChange ){
-        editorDebug(`delete-handler.checkVisibleChange`,
-                    `Did not see a visual change when removing character`,
-                    { new: currentVisualCursorCoordinates, old: previousVisualCursorCoordinates });
-      }
-
-      return visibleChange;
-    }
-  }
 
   /**
    * Executes a single manipulation on the DOM tree, ensuring the
