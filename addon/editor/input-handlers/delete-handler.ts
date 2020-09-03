@@ -12,23 +12,20 @@ import { paintCycleHappened,
          moveCaretAfter } from '@lblod/ember-rdfa-editor/editor/utils';
 
 /**
- * TODO: document
+ * Given a reference DOMRect and a target,
+ * re-map the coordinates compared to the reference
  * @method getRelativeDomRectCoordinates
  * @private
  *
  */
-function getRelativeDomRectCoordinates(reference: DOMRect, targets: DOMRectList) : Array<DOMRect> {
-  const selectionCoordinates = new Array<DOMRect>();
-  for(let target of Array.from(targets)){
+function getRelativeDomRectCoordinates(reference: DOMRect, target: DOMRect) : DOMRect {
     const normalizedRect = new DOMRect(
       target.x - reference.x,
       target.y - reference.y,
       target.width,
       target.height
     )
-    selectionCoordinates.push(normalizedRect);
-  }
-  return selectionCoordinates;
+  return normalizedRect;
 }
 
 interface VisualChangeReferencePoint {
@@ -48,8 +45,8 @@ class MagicSpan implements VisualChangeReferencePoint {
 
   get coordinates(){
     const referenceFrame = this.editor.rootNode.getBoundingClientRect();
-    const targets = this.span.getClientRects();
-    return getRelativeDomRectCoordinates(referenceFrame as DOMRect, targets as DOMRectList); //TODO: it is weird it needs explicit casting (what is clientREctList?)
+    const targets = Array.from(this.span.getClientRects());
+    return targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
   }
 
   cleanUp() : void {
@@ -71,8 +68,8 @@ class Caret implements VisualChangeReferencePoint {
       const selection = window.getSelection() as Selection
       if (selection.rangeCount > 0) {
         const referenceFrame = this.editor.rootNode.getBoundingClientRect();
-        const targets = selection.getRangeAt(0).getClientRects();
-        return getRelativeDomRectCoordinates(referenceFrame as DOMRect, targets as DOMRectList);
+        const targets = Array.from(selection.getRangeAt(0).getClientRects());
+        return targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
       }
     }
     return [];
