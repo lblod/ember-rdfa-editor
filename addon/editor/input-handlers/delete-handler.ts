@@ -28,8 +28,17 @@ function getRelativeDomRectCoordinates(reference: DOMRect, target: DOMRect) : DO
   return normalizedRect;
 }
 
+/**
+ * We introduce an abstract reference point to check for visual changes.
+ * In this handler, in some cases, we want the caret to stay, but content to be removed.
+ * And sometimes we want the caret to move. Hence, checking for change might imply different logic.
+ * Note: this is a first shot at abstraction, might change over time.
+ */
 interface VisualChangeReferencePoint {
-  coordinates: Array<DOMRect>;
+  // Note: We explicitly use coordinates in editor and not in viewPort.
+  // because in longer documents, when removing content, document may move up on re-render and
+  // as a result, the viewport coordinates might remain the same.
+  coordinatesInEditor: Array<DOMRect>;
   editor: RawEditor;
   cleanUp(): void;
 }
@@ -43,7 +52,7 @@ class MagicSpan implements VisualChangeReferencePoint {
     this.editor = editor;
   }
 
-  get coordinates(){
+  get coordinatesInEditor(){
     const referenceFrame = this.editor.rootNode.getBoundingClientRect();
     const targets = Array.from(this.span.getClientRects());
     return targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
@@ -63,7 +72,7 @@ class Caret implements VisualChangeReferencePoint {
     this.editor = editor;
   }
 
-  get coordinates(){
+  get coordinatesInEditor(){
     if (window.getSelection() != null) {
       const selection = window.getSelection() as Selection
       if (selection.rangeCount > 0) {
@@ -362,7 +371,7 @@ export default class DeleteHandler implements InputHandler {
 
     //Add reference point, we can mesure if something changed visually.
     const visualReference = this.ensureVisualChangeReferencePoint(manipulation);
-    const beforeChangeVisualReferenceCoordinates = visualReference.coordinates;
+    const beforeChangeVisualReferenceCoordinates = visualReference.coordinatesInEditor;
 
     //Declare for later use
     let pluginSeesChange;
@@ -389,7 +398,7 @@ export default class DeleteHandler implements InputHandler {
       await paintCycleHappened();
       pluginSeesChange = this.runChangeDetectionByPlugins( manipulation );
 
-      afterChangeVisualReferenceCoordinates = visualReference.coordinates;
+      afterChangeVisualReferenceCoordinates = visualReference.coordinatesInEditor;
     }
 
     finally {
