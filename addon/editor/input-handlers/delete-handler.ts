@@ -582,15 +582,6 @@ export default class DeleteHandler implements InputHandler {
       case "moveCursorToStartOfElement":
         moveCaretBefore(manipulation.node.childNodes[0]);
         break;
-      case "moveCursorToEndOfElement":
-        const element = manipulation.node;
-        const length = element.childNodes.length;
-        moveCaret(element, length);
-        break;
-      case "moveCursorBeforeElement":
-        const elementOfManipulation = manipulation.node
-        moveCaretBefore(elementOfManipulation)
-        break;
       case "keepCursorAtEnd":
         // do nothing
         break;
