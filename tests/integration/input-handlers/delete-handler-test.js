@@ -285,7 +285,6 @@ module('Integration | InputHandler | delete-handler', function(hooks) {
     const previousCaretPostion = window.getSelection().getRangeAt(0).getClientRects();
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = window.getSelection();
-    //we exepect visual change
     assert.equal(currentSelection.anchorNode.parentElement.innerText, "beerbar");
     assert.equal(editor.innerHTML, "beerbar");
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
@@ -334,6 +333,28 @@ module('Integration | InputHandler | delete-handler', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const resultString = `<h1 resource="title" data-editor-position-level="0" data-editor-rdfa-position-level="0">otulen Van</h1>`;
     assert.equal(divNode.innerHTML, resultString);
+  });
+
+  test('it removes a character as expected [Chromium edge case]', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('<span property="persoon:gebruikteVoornaam"> Piet </span> Pluk');
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const wordNode = editor.childNodes[0].childNodes[0];
+    window.getSelection().collapse(wordNode, 3);
+    const previousCaretPostion = window.getSelection().getRangeAt(0).getClientRects();
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
+    const currentSelection = window.getSelection();
+    assert.equal(currentSelection.anchorNode.parentElement.innerText, "Pit ");
+    const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
+    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
   });
 
 });

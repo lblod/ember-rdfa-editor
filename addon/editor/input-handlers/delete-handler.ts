@@ -413,6 +413,10 @@ export default class DeleteHandler implements InputHandler {
     switch( manipulation.type ) {
       case "removeCharacter":
         visualReferencePoint = new MagicSpan(document.createElement('span'), this.rawEditor);
+        //Note: there is an edge case <span> foo </span> where 'foo' is the textNode to manipulate.
+        // In chrome if you don't add something to the span, this will behave very weirdly
+        // There is a test for this.
+        visualReferencePoint.span.appendChild(document.createTextNode(invisibleSpace))
         node.after(visualReferencePoint.span);
         break;
       case "removeEmptyTextNode":
