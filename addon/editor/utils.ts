@@ -84,6 +84,7 @@ export function moveCaretAfter(child: ChildNode) : null | Selection {
   const parentElement = child.parentElement;
   if (parentElement) {
     const indexOfChild = Array.from(parentElement.childNodes).indexOf(child);
+    //Note: index is always <= position, so no off by one possible
     return moveCaret(parentElement, indexOfChild + 1);
   }
   else {

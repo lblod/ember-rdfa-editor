@@ -1,5 +1,5 @@
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import { isVoidElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { isVoidElement, invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { InputHandler, HandlerResponse } from './input-handler';
 import { RawEditor } from '../raw-editor';
@@ -558,11 +558,12 @@ export default class DeleteHandler implements InputHandler {
         this.rawEditor.updateRichNode();
         break;
       case "removeOtherNode":
-        // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
         if( !manipulation.node.parentElement ) {
           throw "Received other node does not have a parent.  Delete failed to remove this node."
         }
         const otherNode = manipulation.node as Node;
+        //TODO: it is not very clear to me, why we use removeChild here instead of .remove().
+        // taken from backspace-handler
         if (otherNode.parentElement) {
           // TODO: the following does not work without casting, and I'm
           // not sure we certainly have the childNode interface as per
@@ -572,7 +573,6 @@ export default class DeleteHandler implements InputHandler {
         }
         break;
       case "removeVoidElement":
-        // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
         if( !manipulation.node.parentElement ) {
           throw "Received void element without parent.  Delete failed to remove this node."
         }
