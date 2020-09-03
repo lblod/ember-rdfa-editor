@@ -550,17 +550,11 @@ export default class DeleteHandler implements InputHandler {
         this.rawEditor.updateRichNode();
         break;
       case "removeEmptyElement":
-        if( !manipulation.node.parentElement ) {
-          throw "Received other node does not have a parent.  Delete failed te remove this node."
-        }
         const emptyElement = manipulation.node;
         emptyElement.remove();
         this.rawEditor.updateRichNode();
         break;
       case "removeOtherNode":
-        if( !manipulation.node.parentElement ) {
-          throw "Received other node does not have a parent.  Delete failed to remove this node."
-        }
         const otherNode = manipulation.node as Node;
         //TODO: it is not very clear to me, why we use removeChild here instead of .remove().
         // taken from backspace-handler
@@ -573,20 +567,14 @@ export default class DeleteHandler implements InputHandler {
         }
         break;
       case "removeVoidElement":
-        if( !manipulation.node.parentElement ) {
-          throw "Received void element without parent.  Delete failed to remove this node."
-        }
         const voidElement = manipulation.node;
         voidElement.remove();
         this.rawEditor.updateRichNode();
         break;
       case "removeElementWithChildrenThatArentVisible":
         const elementWithOnlyInvisibleNodes = manipulation.node;
-        const parentElement = elementWithOnlyInvisibleNodes.parentElement;
-        if (parentElement) {
-          elementWithOnlyInvisibleNodes.remove();
-          this.rawEditor.updateRichNode();
-        }
+        elementWithOnlyInvisibleNodes.remove();
+        this.rawEditor.updateRichNode();
         break;
       case "moveCursorAfterElement":
         moveCaretAfter(manipulation.node);
