@@ -84,12 +84,7 @@ export function moveCaretAfter(child: ChildNode) : null | Selection {
   const parentElement = child.parentElement;
   if (parentElement) {
     const indexOfChild = Array.from(parentElement.childNodes).indexOf(child);
-    if(indexOfChild < parentElement.childNodes.length - 1){
-      return moveCaret(parentElement, indexOfChild + 1);
-    }
-    else {
-      return moveCaretAfter(parentElement)
-    }
+    return moveCaret(parentElement, indexOfChild + 1);
   }
   else {
     console.warn('trying to move cursor before a child that is no longer connected to the dom tree');
