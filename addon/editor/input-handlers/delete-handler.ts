@@ -372,7 +372,6 @@ export default class DeleteHandler implements InputHandler {
     let afterChangeVisualReferenceCoordinates;
 
     try {
-
       // error if we're not allowed to
       if ( ! mayExecute ) {
         warn( "Not allowed to execute manipulation for delete", { id: "delete-handler-manipulation-not-allowed" } );
@@ -393,9 +392,7 @@ export default class DeleteHandler implements InputHandler {
       await paintCycleHappened();
       pluginSeesChange = this.runChangeDetectionByPlugins( manipulation );
 
-
       afterChangeVisualReferenceCoordinates = visualReference.coordinates;
-
     }
 
     finally {
@@ -526,6 +523,7 @@ export default class DeleteHandler implements InputHandler {
       case "removeCharacter":
         const { node, position } = manipulation;
         let nodeText = node.textContent || "";
+
         if (nodeText.length > position + 2 && nodeText.slice(position + 1 , position + 2 ) == " ") {
           // if the character after our current position is a space, it might become invisible, so we need to convert it to a non breaking space
           // cases where this happens:
@@ -533,6 +531,7 @@ export default class DeleteHandler implements InputHandler {
           // - spaces moving to the start of a node
           nodeText = `${nodeText.slice(0, position + 1)}\u00A0${nodeText.slice(position + 2)}`;
         }
+
         if (nodeText.length - 1 == position && nodeText.length > 1 && nodeText.slice(position - 1 , position) == " ") {
           // if the character before our new position is a space, it might become invisible, so we need to convert it to a non breaking space
           // cases where this happens:
@@ -540,20 +539,24 @@ export default class DeleteHandler implements InputHandler {
           // - spaces moving to the end of a node
           nodeText = `${nodeText.slice(0, position - 1)}\u00A0${nodeText.slice(position)}`;
         }
+
         node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
         this.rawEditor.updateRichNode();
         moveCaret(node, position); //we manipulated the node where the selection was, so needs an update
         break;
+
       case "removeEmptyTextNode":
         const { node: textNode } = manipulation;
         textNode.remove();
         this.rawEditor.updateRichNode();
         break;
+
       case "removeEmptyElement":
         const emptyElement = manipulation.node;
         emptyElement.remove();
         this.rawEditor.updateRichNode();
         break;
+
       case "removeOtherNode":
         const otherNode = manipulation.node as Node;
         //TODO: it is not very clear to me, why we use removeChild here instead of .remove().
@@ -566,25 +569,31 @@ export default class DeleteHandler implements InputHandler {
           this.rawEditor.updateRichNode();
         }
         break;
+
       case "removeVoidElement":
         const voidElement = manipulation.node;
         voidElement.remove();
         this.rawEditor.updateRichNode();
         break;
+
       case "removeElementWithChildrenThatArentVisible":
         const elementWithOnlyInvisibleNodes = manipulation.node;
         elementWithOnlyInvisibleNodes.remove();
         this.rawEditor.updateRichNode();
         break;
+
       case "moveCursorAfterElement":
         moveCaretAfter(manipulation.node);
         break;
+
       case "moveCursorToStartOfElement":
-        moveCaretBefore(manipulation.node.childNodes[0]);
+        moveCaretBefore(manipulation.node.childNodes[0]); //Note: it has been checked it has children
         break;
+
       case "keepCursorAtEnd":
         // do nothing
         break;
+
       default:
         throw `Case ${manipulation.type} was not handled by handleNativeInputManipulation.`
     }
@@ -617,7 +626,6 @@ export default class DeleteHandler implements InputHandler {
           node: characterAfterCursor.node,
           position: characterAfterCursor.position
         };
-        break;
 
       case "emptyTextNodeStart":
         // empty text node: remove the text node
@@ -630,7 +638,6 @@ export default class DeleteHandler implements InputHandler {
         } else {
           throw "Received text node which is not empty as previous node.  Some assumption broke.";
         }
-        break;
 
       case "emptyTextNodeEnd":
         // empty text node: remove the text node
@@ -643,7 +650,6 @@ export default class DeleteHandler implements InputHandler {
         } else {
           throw "Received text node which is not empty as previous node.  Some assumption broke.";
         }
-        break;
 
       case "voidElement":
         const voidElementAfterCursor = thingAfterCursor as VoidElementPosition;
@@ -651,7 +657,6 @@ export default class DeleteHandler implements InputHandler {
           type: "removeVoidElement",
           node: voidElementAfterCursor.node
         };
-        break;
 
       case "elementEnd":
         const elementAfterCursor = thingAfterCursor as ElementEndPosition;
@@ -667,7 +672,6 @@ export default class DeleteHandler implements InputHandler {
             node: elementAfterCursor.node
           };
         }
-        break;
 
       case "elementStart":
         const parentAfterCursor = thingAfterCursor as ElementStartPosition;
@@ -684,7 +688,6 @@ export default class DeleteHandler implements InputHandler {
             node: element
           };
         }
-        break;
 
       case "uncommonNodeStart":
         const positionAfterCursor = thingAfterCursor as UncommonNodeStartPosition;
@@ -693,18 +696,16 @@ export default class DeleteHandler implements InputHandler {
           type: "removeOtherNode",
           node: node
         };
-        break;
 
       case "editorRootEnd":
         return {
           type: "keepCursorAtEnd",
           node: thingAfterCursor.node
         }
-        break;
 
+      default:
+        throw `Could not find manipulation for ${thingAfterCursor.type}`
     }
-    // TODO: take care of other cases
-    throw `Could not find manipulation to suggest for delete ${thingAfterCursor.type}`;
   }
 
   /**
