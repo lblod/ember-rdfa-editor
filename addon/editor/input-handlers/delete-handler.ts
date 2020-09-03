@@ -358,46 +358,54 @@ export default class DeleteHandler implements InputHandler {
     const manipulation = this.getNextManipulation();
 
     // check if we can execute it
+    //TODO: no plugins yet + there is still some communication required between plugin and handler so handler can place
+    // the visual reference point. This will be taken care of when starting implementing plugins.
+    // (probably will contain a location and eventually som textContent)
     const { mayExecute, dispatchedExecutor } = this.checkManipulationByPlugins( manipulation );
 
-    //Add reference point
+    //Add reference point, we can mesure if something changed visually.
     const visualReference = this.ensureVisualChangeReferencePoint(manipulation);
     const beforeChangeVisualReferenceCoordinates = visualReference.coordinates;
-    //do youur thing
-    //locatie span van de span en visual text cont
-    //span achter manipulatie (visual textContent en eindlocatie) ->
 
-    //execute
+    //Declare for later use
+    let pluginSeesChange;
+    let afterChangeVisualReferenceCoordinates;
+
+    try {
+
+      // error if we're not allowed to
+      if ( ! mayExecute ) {
+        warn( "Not allowed to execute manipulation for delete", { id: "delete-handler-manipulation-not-allowed" } );
+        return;
+      }
+
+      // run the manipulation
+      if( dispatchedExecutor ) {
+        // NOTE: we should pass some sort of editor interface here in the future.
+        dispatchedExecutor( manipulation, this.rawEditor );
+      } else {
+        this.handleNativeManipulation( manipulation );
+      }
+
+      editorDebug(`delete-handler.deleteForward`, `------------------Manipulation ${manipulation.type}`);
+
+      // ask plugins if something has changed
+      await paintCycleHappened();
+      pluginSeesChange = this.runChangeDetectionByPlugins( manipulation );
 
 
+      afterChangeVisualReferenceCoordinates = visualReference.coordinates;
 
-    //vichapane spane of text content
-
-
-    //onge span iteratie
-
-
-    // error if we're not allowed to
-    if ( ! mayExecute ) {
-      warn( "Not allowed to execute manipulation for delete", { id: "delete-handler-manipulation-not-allowed" } );
-      return;
     }
 
-    // run the manipulation
-    if( dispatchedExecutor ) {
-      // NOTE: we should pass some sort of editor interface here in the future.
-      dispatchedExecutor( manipulation, this.rawEditor );
-    } else {
-      this.handleNativeManipulation( manipulation );
-    }
+    finally {
 
-    // ask plugins if something has changed
-    await paintCycleHappened();
-    const pluginSeesChange = this.runChangeDetectionByPlugins( manipulation );
+      //make sure the DOM-tree remains clean
+      visualReference.cleanUp();
+
+    }
 
     // maybe iterate again
-    const afterChangeVisualReferenceCoordinates = visualReference.coordinates;
-    visualReference.cleanUp();
     if( pluginSeesChange || this.checkVisibleChange( afterChangeVisualReferenceCoordinates, beforeChangeVisualReferenceCoordinates) ) {
       // TODO: do we need to make sure cursor state in the editor corresponds with browser state here?
       return;
