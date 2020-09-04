@@ -24,4 +24,4 @@ export default class CappedHistory {
   pop() {
     return this.history.pop();
   }
-};
+}
