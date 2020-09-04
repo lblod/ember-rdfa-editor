@@ -328,7 +328,7 @@ export interface DeletePlugin {
  * @extends EmberObject
  */
 export default class DeleteHandler implements InputHandler {
-
+  isLocked: Boolean
   /**
    * The editor instance on which we can execute changes.
    *
@@ -360,6 +360,7 @@ export default class DeleteHandler implements InputHandler {
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [
     ];
+    this.isLocked = false;
   }
 
   /**
@@ -387,6 +388,13 @@ export default class DeleteHandler implements InputHandler {
   handleEvent(event : Event) : HandlerResponse {
     // TODO: reason more about async behaviour of delete.
     event.preventDefault(); // make sure event propagation is stopped, async behaviour of delete could cause the browser to execute eventDefault before it is finished
+
+    //TODO: think harder about managability of the lock state, now a bit all over the place
+    if(this.isLocked){
+      editorDebug(`delete-handler.handleEvent`, `Handler is busy deleting, skipping`);
+      return { allowPropagation: false };
+    }
+
     this.deleteForward().then( () => {
       this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
     });
@@ -404,10 +412,19 @@ export default class DeleteHandler implements InputHandler {
    * @private
    */
   async deleteForward( max_tries = 50 ) {
+
+    if(this.isLocked){
+      editorDebug(`delete-handler.deleteForward`, `Handler is busy deleting, skipping`);
+      return;
+    }
+
     if( max_tries == 0 ) {
       warn("Too many delete tries, giving up removing content", { id: "delete-handler-too-many-tries"});
       return;
     }
+
+    //Lock here
+    this.isLocked = true;
 
     // search for a manipulation to execute
     const manipulation = this.getNextManipulation();
@@ -454,6 +471,8 @@ export default class DeleteHandler implements InputHandler {
       //make sure the DOM-tree remains clean
       visualReference.cleanUp();
 
+      //make sure always unlocked
+      this.isLocked = false;
     }
 
     // maybe iterate again
