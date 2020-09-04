@@ -273,7 +273,7 @@ export interface BackspacePlugin {
  * @extends EmberObject
  */
 export default class BackspaceHandler implements InputHandler {
-
+  isLocked: Boolean
   /**
    * The editor instance on which we can execute changes.
    *
@@ -338,6 +338,13 @@ export default class BackspaceHandler implements InputHandler {
   handleEvent(event : Event) : HandlerResponse {
     // TODO: reason more about async behaviour of backspace.
     event.preventDefault(); // make sure event propagation is stopped, async behaviour of backspace could cause the browser to execute eventDefault before it is finished
+
+   //TODO: think harder about managability of the lock state, now a bit all over the place
+   if(this.isLocked){
+      editorDebug(`backspace-handler.handleEvent`, `Handler is busy removing, skipping`);
+      return { allowPropagation: false };
+    }
+
     this.backspace().then( () => {
       this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
     });
@@ -355,36 +362,55 @@ export default class BackspaceHandler implements InputHandler {
    * @private
    */
   async backspace( max_tries = 50 ) {
+
+    if(this.isLocked){
+      editorDebug(`backspace-handler.backspace`, `Handler is busy removing, skipping`);
+      return;
+    }
+
     if( max_tries == 0 ) {
       warn("Too many backspace tries, giving up removing content", { id: "backspace-handler-too-many-tries"});
       return;
     }
 
-    const visualCursorCoordinates = this.selectionCoordinatesInEditor;
+    //Lock here
+    this.isLocked = true;
 
-    // search for a manipulation to execute
-    const manipulation = this.getNextManipulation();
+    //declare for later use
+    let pluginSeesChange;
+    let visualCursorCoordinates;
 
-    // check if we can execute it
-    const { mayExecute, dispatchedExecutor } = this.checkManipulationByPlugins( manipulation );
+    try {
+      visualCursorCoordinates = this.selectionCoordinatesInEditor;
 
-    // error if we're not allowed to
-    if ( ! mayExecute ) {
-      warn( "Not allowed to execute manipulation for backspace", { id: "backspace-handler-manipulation-not-allowed" } );
-      return;
+      // search for a manipulation to execute
+      const manipulation = this.getNextManipulation();
+
+      // check if we can execute it
+      const { mayExecute, dispatchedExecutor } = this.checkManipulationByPlugins( manipulation );
+
+      // error if we're not allowed to
+      if ( ! mayExecute ) {
+        warn( "Not allowed to execute manipulation for backspace", { id: "backspace-handler-manipulation-not-allowed" } );
+        return;
+      }
+
+      // run the manipulation
+      if( dispatchedExecutor ) {
+        // NOTE: we should pass some sort of editor interface here in the future.
+        dispatchedExecutor( manipulation, this.rawEditor );
+      } else {
+        this.handleNativeManipulation( manipulation );
+      }
+
+      // ask plugins if something has changed
+      await paintCycleHappened();
+      pluginSeesChange = this.runChangeDetectionByPlugins( manipulation );
     }
-
-    // run the manipulation
-    if( dispatchedExecutor ) {
-      // NOTE: we should pass some sort of editor interface here in the future.
-      dispatchedExecutor( manipulation, this.rawEditor );
-    } else {
-      this.handleNativeManipulation( manipulation );
+    finally {
+      //make sure always unlocked
+      this.isLocked = false;
     }
-
-    // ask plugins if something has changed
-    await paintCycleHappened();
-    const pluginSeesChange = this.runChangeDetectionByPlugins( manipulation );
 
     // maybe iterate again
     if( pluginSeesChange || this.checkVisibleChange( { previousVisualCursorCoordinates: visualCursorCoordinates } ) ) {
