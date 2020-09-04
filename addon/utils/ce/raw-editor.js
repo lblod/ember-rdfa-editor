@@ -312,7 +312,7 @@ class RawEditor extends EmberObject {
 
   constructor(){
     super(...arguments);
-    this.set('history', CappedHistory.create({ maxItems: 100}));
+    this.set('history', new CappedHistory({ maxItems: 100}));
     this.set('components', A());
     this.movementObservers = A();
   }

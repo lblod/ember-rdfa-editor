@@ -1,11 +1,12 @@
 import RichNode from '@lblod/marawa/rich-node';
 import { isAdjacentRange, isEmptyRange } from '@lblod/marawa/range-helpers';
-import { wrapRichNode } from '../rich-node-tree-modification';
+import { replaceRichNodeWith, splitRichTextNode, wrapRichNode } from '../rich-node-tree-modification';
 import { runInDebug } from '@ember/debug';
 import { parsePrefixString } from '@lblod/marawa/rdfa-attributes';
 import { isLI, findWrappingSuitableNodes, createElementsFromHTML, isVoidElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { A } from '@ember/array';
 import HTMLInputParser from '../../html-input-parser';
+import { positionInRange } from '@lblod/marawa/range-helpers';
 
 /**
  * Fake class to list helper functions
@@ -749,63 +750,47 @@ function findNodesToWrap(richNodes, [start, end] ) {
  * @private
  */
 function splitSelectionsToPotentiallyFitInRange([start, end], providedSelections){
-   const actualSelections = A();
+  const actualSelections = A();
   for (let selection of providedSelections) {
-    if (selection.richNode.start < start && selection.richNode.end < end && selection.richNode.type == "text") {
-      // should split at start
-      const richNode = selection.richNode;
-      const relativeStart = Math.min( start - richNode.start, richNode.text.length);
-      const [preText, infixText] = [ richNode.text.slice( 0, relativeStart ),
-                                     richNode.text.slice( relativeStart ) ];
-      const prefixNode = document.createTextNode(preText);
-      richNode.domNode.before(prefixNode);
-      const preRichNode = new RichNode({
-        domNode: prefixNode,
-        parent: richNode.parent,
-        start: richNode.start,
-        end: richNode.start + relativeStart,
-        text: preText,
-        type: "text"
-      });
-      const prefixSelection = { range: [ preRichNode.start, start ], richNode: preRichNode };
-      const parent = richNode.parent;
-      const index = parent.children.indexOf(richNode);
-      parent.children.splice(index, 0, preRichNode);
-      richNode.start = richNode.start + relativeStart;
-      richNode.text = infixText;
-      richNode.domNode.textContent = infixText;
-      actualSelections.pushObjects([prefixSelection, selection]);
+    const richNode = selection.richNode;
+    if (selection.richNode.type == "text") {
+      if ( positionInRange(start, richNode.region) || positionInRange(end, richNode.region)) {
+        // selection region partially overlaps or is wholy contained in richNode, so should split the node
+        let prefix, infix, postfix;
+        if (selection.richNode.start < start) {
+          [ prefix, infix ] = splitRichTextNode(richNode, start);
+        }
+        if (selection.richNode.end > end) {
+          if (infix) {
+            [infix, postfix] = splitRichTextNode(infix, end);
+          }
+          else {
+            [infix, postfix] = splitRichTextNode(richNode, end);
+          }
+        }
+        // apply change to dom tree
+        const newRichNodes = [prefix, infix, postfix].filter((x) => !!x);
+        if (newRichNodes.length > 0 ) {
+          replaceRichNodeWith(richNode, newRichNodes);
+          // TODO: should this be done by replaceRichNodeWith ?
+          const newDomNodes = newRichNodes.map( (node) => node.domNode);
+          richNode.domNode.replaceWith(...newDomNodes);
+          for (let newRichNode of newRichNodes) {
+            actualSelections.push({range: newRichNode.region, richNode: newRichNode});
+          }
+        }
+        else {
+          console.warn('no new richnodes');
+          actualSelections.push(selection);
+        }
+      }
+      else {
+        actualSelections.push(selection);
+      }
     }
-    actualSelections.pushObject(selection);
-    if (selection.richNode.start >= start && selection.richNode.end > end && selection.richNode.type == "text") {
-      // should split end
-      const richNode = selection.richNode;
-      const relativeEnd = Math.min( end - richNode.start, richNode.text.length);
-      const [infixText, postText] = [ richNode.text.slice( 0, relativeEnd ),
-                                      richNode.text.slice( relativeEnd ) ];
-      const postfixNode = document.createTextNode(postText);
-      richNode.domNode.after(postfixNode);
-      const postfixRichNode = new RichNode({
-        domNode: postfixNode,
-        parent: richNode.parent,
-        start: richNode.start + relativeEnd,
-        end: richNode.end,
-        text: postText,
-      type: "text"
-      });
-
-      const postfixSelection = { range: [ end, postfixRichNode.end ], richNode: postfixRichNode };
-      const parent = richNode.parent;
-      const index = parent.children.indexOf(richNode);
-      parent.children.splice(index+1, 0, postfixRichNode);
-      richNode.end = richNode.start + relativeEnd;
-      richNode.text = infixText;
-      richNode.domNode.textContent = infixText;
-      actualSelections.pushObjects([selection, postfixSelection]);
-    }
-    if (selection.richNode.type !== "text" && (selection.richNode.start < start || selection.richNode.end > end)) {
-      // i forgot a case? did not expect selectHighlight to return a tag with a non matching range
-      console.warn("unhandled",selection); // eslint-disable-line no-console
+    else {
+      console.debug("not splitting selection",selection); // eslint-disable-line no-console
+      actualSelections.push(selection);
     }
   }
   return actualSelections;

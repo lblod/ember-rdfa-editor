@@ -1,4 +1,6 @@
 import { A } from '@ember/array';
+import { PernetSelection, PernetSelectionBlock } from '@lblod/ember-rdfa-editor/editor/pernet'
+import { RichNode } from '@lblod/ember-rdfa-editor/editor/raw-editor'
 /**
  * Fake class to list helper functions
  * these functions can be included using
@@ -42,10 +44,10 @@ function insertTextNodeWithSpace(parentDomNode: HTMLElement, relativeToSibling: 
   let textNode = document.createTextNode(invisibleSpace);
   if (relativeToSibling) {
     if (after) {
-      insertNodeBAfterNodeA(parentDomNode, relativeToSibling, textNode);
+      relativeToSibling.after(textNode);
     }
     else {
-      parentDomNode.insertBefore(textNode, relativeToSibling);
+      relativeToSibling.before(textNode);
     }
   }
   else {
@@ -274,7 +276,7 @@ function createElementsFromHTML(htmlString: string): Array<Node> {
  * @public
  */
 function findPreviousLi(currLI: HTMLLIElement): HTMLLIElement | null {
-  let previousElement = currLI;
+  let previousElement: Element | null = currLI;
   do {
     previousElement = previousElement.previousElementSibling;
   } while (previousElement && tagName(previousElement) !== 'li');
@@ -336,14 +338,14 @@ function getListTagName(listElement: HTMLUListElement | HTMLOListElement): strin
  * @for PropertyHelpers
  * @return Array array of selections
  */
-function findWrappingSuitableNodes(selection: Selection): Array<Node> {
+function findWrappingSuitableNodes(selection: PernetSelection ): Array<PernetSelectionBlock> {
   if (!selection.selectedHighlightRange) {
     // TODO: support context selections as well
     // this might be fairly trivial but focussing on text selection for now
     throw new Error('currently only selectedHighlightRange is supported');
   }
   const nodes = [];
-  const domNodes = [];
+  const domNodes: Array<Node> = [];
   const [start, end] = selection.selectedHighlightRange;
   for (let { richNode, range } of selection.selections) {
     if (richNode.start < start || richNode.end > end) {
@@ -357,7 +359,7 @@ function findWrappingSuitableNodes(selection: Selection): Array<Node> {
     else {
       // walk up the tree as longs as we fit within the range
       let current = richNode;
-      let isNotRootNode = function(richNode) { return richNode.parent; };
+      let isNotRootNode = function(richNode : RichNode) : boolean { return !!richNode.parent; };
       while (current.parent && isNotRootNode(current.parent) && current.parent.start >= start && current.parent.end <= end) {
         current = current.parent;
       }
@@ -368,11 +370,11 @@ function findWrappingSuitableNodes(selection: Selection): Array<Node> {
     }
   }
   // remove nodes that are contained within other nodes
-  let actualNodes: Array<Node> = A();
+  let actualNodes: Array<PernetSelectionBlock> = A();
   for (let possibleNode of nodes) {
     const containedInAnotherPossibleNode = nodes.some((otherNode) => otherNode !== possibleNode && otherNode.richNode.domNode.contains(possibleNode.richNode.domNode));
     if (!containedInAnotherPossibleNode) {
-      actualNodes.pushObject(possibleNode);
+      actualNodes.push(possibleNode);
     }
   }
   return actualNodes;
@@ -384,9 +386,13 @@ function findWrappingSuitableNodes(selection: Selection): Array<Node> {
  */
 function findLastLi(list: HTMLUListElement | HTMLOListElement): HTMLLIElement | null {
   if (['ul', 'ol'].includes(tagName(list))) {
-    if (list.children && list.children.length > 0)
-      return Array.from(list.children).reverse().find((node) => tagName(node) === 'li');
-    return null;
+    const foundNode = Array.from(list.children).reverse().find((node) => tagName(node) === 'li');
+    if (foundNode) {
+      return foundNode as HTMLLIElement;
+    }
+    else {
+      return null;
+    }
   }
   else {
     throw `invalid argument, expected a list`;
