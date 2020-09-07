@@ -1061,7 +1061,7 @@ function checkVisibleChange( currentVisualCursorCoordinates: Array<DOMRect>,
 
     //TODO: on some screens we might see changes where there are none. Hence the treshold
     //TODO: think harder
-    const visibleChange = Math.abs(ol - nl) > 0.05 || Math.abs(ot - nt) > 0.05;
+    const visibleChange = Math.abs(ol - nl) > 0.1 || Math.abs(ot - nt) > 0.1;
 
     if( !visibleChange ){
       editorDebug(`delete-handler.checkVisibleChange`,
