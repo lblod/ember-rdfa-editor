@@ -264,7 +264,7 @@ module('Integration | InputHandler | delete-handler', function(hooks) {
     assert.equal(currentSelection.anchorNode.parentElement.innerText, "beerbar");
     assert.equal(editor.innerHTML, "beerbar");
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false," did the caret move");
   });
 
   test('it removes element with no visible children', async function(assert) {
@@ -288,7 +288,7 @@ module('Integration | InputHandler | delete-handler', function(hooks) {
     assert.equal(currentSelection.anchorNode.parentElement.innerText, "beerbar");
     assert.equal(editor.innerHTML, "beerbar");
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false, "did the caret move");
   });
 
   test('it removes and visibly empty element, when caret is inside', async function(assert) {
