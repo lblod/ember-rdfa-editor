@@ -49,6 +49,7 @@ class HTMLInputParser {
     const parser = new DOMParser();
     const document = parser.parseFromString(html, "text/html");
     const rootNode = document.body;
+    rootNode.normalize();
     const preprocessedNode = this.preprocessNodes(rootNode);
     const cleanedHtml = DomPurify.sanitize(preprocessedNode.innerHTML, {ALLOWED_TAGS: this.safeTags, ALLOWED_ATTR: this.safeAttributes, ADD_URI_SAFE_ATTR: this.uriSafeAttr});
     return cleanedHtml;
@@ -92,14 +93,6 @@ class HTMLInputParser {
           }
         }
       }
-    }
-    else if (node.nodeType === Node.TEXT_NODE) {
-      // remove invisible whitespace (so keeping non breaking space)
-      // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
-      cleanedNode.textContent = node.textContent.replace(invisibleSpace,'')
-        .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,' ');
-      if (cleanedNode.length == 0)
-        return null;
     }
     return cleanedNode;
   }
