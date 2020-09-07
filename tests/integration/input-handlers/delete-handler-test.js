@@ -372,7 +372,7 @@ function didCaretMove(previousClientRects, currentCLientRects){
     const { left: ol, top: ot } = previousClientRects[0];
     const { left: nl, top: nt } = currentCLientRects[0];
 
-    const visibleChange = ol !== nl || ot !== nt;
+    const visibleChange = Math.abs(ol - nl) > 0.05 || Math.abs(ot - nt) > 0.05;
 
     return visibleChange;
   }
