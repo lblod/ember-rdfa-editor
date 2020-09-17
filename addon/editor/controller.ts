@@ -425,9 +425,9 @@ export default class EditorController implements RawEditor {
    * @deprecate
    */
   getRelativeCursorPosition(): number | null {
-    const selection = window.getSelection();
-    if (selection && selection.isCollapsed) {
-      return selection.anchorOffset;
+    const range = this._currentSelection?.range;
+    if (range && range.collapsed) {
+      return range.startOffset;
     }
     else {
       return null;
