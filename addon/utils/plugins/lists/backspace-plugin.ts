@@ -59,7 +59,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     else if (manipulation.type == "removeEmptyTextNode") {
       manipulation as RemoveEmptyTextNodeManipulation;
       const text = manipulation.node;
-      const element = text.parentElement;
+      const element = text.parentElement as Element;
       if (element && tagName(element) == "li" && element?.firstChild == text) {
         return this.guidanceForJumpBeforeLi(element);
       }
