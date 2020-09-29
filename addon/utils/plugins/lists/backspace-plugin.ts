@@ -22,6 +22,7 @@ type ElementRemovalManipulation = RemoveEmptyElementManipulation | RemoveElement
 /**
  * This plugin provides sensible behaviour for backspace in lists.
  * NOTE: assumes a UL or OL has only list items as children elements.
+ * TODO: add MOAAAAR tests.
  * @class ListBackspacePlugin
  * @module plugin/lists
  */
