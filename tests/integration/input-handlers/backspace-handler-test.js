@@ -414,4 +414,138 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
     assert.equal(divNode.innerText.replace(/\s/g, " "), " visual space test f");
   });
 
+  /********************************************************************************
+   * LISTS
+   ********************************************************************************/
+  test('backspace at beginning of non-empty, not first <li>, merges with previous <li>', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent(`<ul><li>beer</li><li>pong</li></ul>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const list = editor.children[0];
+    const textNode = list.children[1].childNodes[0];
+    window.getSelection().collapse(textNode, 0); // before 'pong'
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
+    assert.equal(list.children.length, 1);
+    assert.equal(list.children[0].innerText, 'beerpong');
+  });
+
+  test('backspace and empty-ing the <li> which is not the first <li>, will remove the li and keep the list', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent(`<ul><li>beer</li><li>b</li></ul>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const list = editor.children[0];
+    const textNode = list.children[1].childNodes[0];
+
+    window.getSelection().collapse(textNode, 1); // after 'b'
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
+    assert.equal(list.children.length, 1);
+  });
+
+  test('backspace at beginning of non-empty, first <li>, removes it and merges content back on top', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent(`<ul><li>beer</li><li>pong</li></ul>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const list = editor.children[0];
+    const textNode = list.children[0].childNodes[0];
+    window.getSelection().collapse(textNode, 0); // before 'beer'
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
+    assert.equal(list.children.length, 1);
+    assert.equal(editor.childNodes[0].textContent.includes('beer'), true);
+  });
+
+  test('backspace and empty-ing the <li> which the first <li>, will remove the li and keep the list', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent(`<ul><li>b</li><li>pong</li></ul>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const list = editor.children[0];
+    const textNode = list.children[0].childNodes[0];
+    window.getSelection().collapse(textNode, 1); // before 'b'
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
+    assert.equal(list.children.length, 1);
+    assert.equal(list.children[0].innerText, 'pong');
+  });
+
+  test('backspace at beginning of non-empty, the only <li>, removes it and merges content back on top', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent(`<ul><li>beer</li></ul>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const list = editor.children[0];
+    const textNode = list.children[0].childNodes[0];
+    window.getSelection().collapse(textNode, 0); // before 'beer'
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
+    assert.equal(editor.childElementCount, 0); //hence the list was removed
+    assert.equal(editor.childNodes[0].textContent.includes('beer'), true);
+  });
+
+  test('backspace and empty-ing the only <li>, will remove the li and keep the list', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent(`<ul><li>b</li>/ul>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    var editor = document.querySelector("div[contenteditable]");
+    const list = editor.children[0];
+    const textNode = list.children[0].childNodes[0];
+    window.getSelection().collapse(textNode, 1); // before 'b'
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
+    await setTimeout(() => {}, 500);
+    assert.equal(editor.childElementCount, 0); //hence the list was removed
+  });
+
 });
