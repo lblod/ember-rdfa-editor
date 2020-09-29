@@ -142,22 +142,25 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will remove both list and list item, but keep the contents of the list item. the cursor will be positioned before the first child node of the list item.
    * @method removeListItemAndListButKeepContent
    */
-  removeListItemAndListButKeepContent(manipulation: MoveCursorBeforeElementManipulation, editor: Editor) {
-    const element = manipulation.node;
-    const list = element.parentElement;
-    if (list && ["ul", "ol"].includes(tagName(list))) {
-      if (list.parentElement) {
-        const parentOfList = list.parentElement;
-        editor.setCaret(list.parentElement, Array.from(parentOfList.childNodes).indexOf(list));
-        list.replaceWith(...element.childNodes);
-        editor.updateRichNode();
-      }
-      else {
-        console.warn("list item has no parent element!");
+  removeListItemAndListButKeepContent(manipulation: Manipulation, editor: Editor) {
+    let element;
+
+    if(manipulation.type == 'moveCursorBeforeElement'){
+      element = manipulation.node;
+    }
+    else if(manipulation.type == 'removeEmptyTextNode'){
+      const textNode = manipulation.node;
+
+      if(textNode.parentElement){
+        element = textNode.parentElement;
       }
     }
+
+    if(!element){
+      console.warn('lists.backspace-plugin.removeListItemAndListButKeepContent: Unsupported manipulation or no valid element found.');
+    }
     else {
-      console.warn("parent of list item is not a list!");
+      helpRemoveListItemAndListButKeepContent(element, editor);
     }
   }
 
@@ -167,25 +170,25 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will move the contents of the first list item before the list and remove the list item. the cursor will be positioned before the first child node of the list item.
    * @method removeListItemAndMoveContentBeforeList
    */
-  removeListItemAndMoveContentBeforeList(manipulation: MoveCursorBeforeElementManipulation, editor: Editor) {
-    const element = manipulation.node;
-    const list = element.parentElement;
-    if (list && ["ul", "ol"].includes(tagName(list))) {
-      if (list.parentElement) {
-        const firstChildOfListItem = element.childNodes[0];
-        list.before(...element.childNodes);
-        element.remove();
-        editor.updateRichNode();
-        const parentOfList = list.parentElement;
-        const index = Array.from(parentOfList.childNodes).indexOf(firstChildOfListItem);
-        editor.setCaret(parentOfList, index);
-      }
-      else {
-        console.warn("list item has no parent element!");
+  removeListItemAndMoveContentBeforeList(manipulation: Manipulation, editor: Editor) {
+    let element;
+
+    if(manipulation.type == 'moveCursorBeforeElement'){
+      element = manipulation.node;
+    }
+    else if(manipulation.type == 'removeEmptyTextNode'){
+      const textNode = manipulation.node;
+
+      if(textNode.parentElement){
+        element = textNode.parentElement;
       }
     }
+
+    if(!element){
+      console.warn('lists.backspace-plugin.removeListItemAndMoveContentBeforeList: Unsupported manipulation or no valid element found.');
+    }
     else {
-      console.warn("parent of list item is not a list!");
+      helpRemoveListItemAndMoveContentBeforeList(element, editor);
     }
   }
 
@@ -195,19 +198,26 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will move the content of the list item to its previous sibling and position the cursor before the first child node of the list item (at the end of the original content of the previous sibling). the list item is removed.
    * @method mergeWithPreviousLi
    */
-  mergeWithPreviousLi(manipulation: MoveCursorBeforeElementManipulation, editor: Editor): void {
-    const element = manipulation.node;
-    if (element.previousElementSibling && tagName(element.previousElementSibling) == "li") {
-      const previousLi = element.previousElementSibling;
-      const firstChildOfListItem = element.childNodes[0];
-      previousLi.append(...element.childNodes);
-      element.remove();
-      editor.updateRichNode();
-      const index = Array.from(previousLi.childNodes).indexOf(firstChildOfListItem);
-      editor.setCaret(previousLi, index);
+  mergeWithPreviousLi(manipulation: Manipulation, editor: Editor): void {
+    let element;
+
+    if(manipulation.type == 'moveCursorBeforeElement'){
+      element = manipulation.node;
     }
+    else if(manipulation.type == 'removeEmptyTextNode'){
+      const textNode = manipulation.node;
+
+      if(textNode.parentElement){
+        element = textNode.parentElement;
+      }
+    }
+
+    if(!element){
+      console.warn('lists.backspace-plugin.mergeWithPreviousLi: Unsupported manipulation or no valid element found.');
+    }
+
     else {
-      console.warn("previous sibling is not a list item, can't execute merge");
+      helpMergeWithPreviousLi(element, editor);
     }
   }
 
@@ -295,5 +305,63 @@ export default class ListBackspacePlugin implements BackspacePlugin {
       }
     }
     return false;
+  }
+}
+
+/*************************************************************************************
+ * HELPERS
+ *************************************************************************************/
+
+function  helpMergeWithPreviousLi(element: Element, editor: Editor): void {
+  if (element.previousElementSibling && tagName(element.previousElementSibling) == "li") {
+    const previousLi = element.previousElementSibling;
+    const firstChildOfListItem = element.childNodes[0];
+    previousLi.append(...element.childNodes);
+    element.remove();
+    editor.updateRichNode();
+    const index = Array.from(previousLi.childNodes).indexOf(firstChildOfListItem);
+    editor.setCaret(previousLi, index);
+  }
+  else {
+    console.warn("previous sibling is not a list item, can't execute merge");
+  }
+}
+
+function helpRemoveListItemAndMoveContentBeforeList(element: Element, editor: Editor): void {
+    const list = element.parentElement;
+    if (list && ["ul", "ol"].includes(tagName(list))) {
+      if (list.parentElement) {
+        const firstChildOfListItem = element.childNodes[0];
+        list.before(...element.childNodes);
+        element.remove();
+        editor.updateRichNode();
+        const parentOfList = list.parentElement;
+        const index = Array.from(parentOfList.childNodes).indexOf(firstChildOfListItem);
+        editor.setCaret(parentOfList, index);
+      }
+      else {
+        console.warn("list item has no parent element!");
+      }
+    }
+    else {
+      console.warn("parent of list item is not a list!");
+    }
+}
+
+function helpRemoveListItemAndListButKeepContent(element: Element, editor: Editor) {
+  const list = element.parentElement;
+  if (list && ["ul", "ol"].includes(tagName(list))) {
+    if (list.parentElement) {
+      const parentOfList = list.parentElement;
+      editor.setCaret(list.parentElement, Array.from(parentOfList.childNodes).indexOf(list));
+      list.replaceWith(...element.childNodes);
+      editor.updateRichNode();
+    }
+    else {
+      console.warn("list item has no parent element!");
+    }
+  }
+  else {
+    console.warn("parent of list item is not a list!");
   }
 }
