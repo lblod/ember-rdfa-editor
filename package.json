@@ -55,17 +55,17 @@
   "devDependencies": {
     "@glimmer/component": "^1.0.0",
     "@types/ember": "^3.1.1",
+    "@types/ember-data": "^3.1.9",
     "@types/ember-qunit": "^3.4.7",
     "@types/ember__test-helpers": "^0.7.9",
     "@types/qunit": "^2.9.0",
     "@types/rsvp": "^4.0.3",
-    "@types/ember-data": "^3.1.9",
-    "typescript": "^3.9.1-rc",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-cli": "~3.17.0",
     "ember-cli-app-version": "^3.2.0",
     "ember-cli-autoprefixer": "^1.0.0",
+    "ember-cli-code-coverage": "^1.0.0",
     "ember-cli-dependency-checker": "^3.2.0",
     "ember-cli-eslint": "^5.1.0",
     "ember-cli-inject-live-reload": "^2.0.2",
@@ -99,8 +99,9 @@
     "qunit-dom": "^1.1.0",
     "sass": "^1.26.3",
     "simple-git": "^1.10.0",
-    "yuidoc-ember-theme": "^2.0.1",
-    "svg-symbols": "^1.0.5"
+    "svg-symbols": "^1.0.5",
+    "typescript": "^3.9.1-rc",
+    "yuidoc-ember-theme": "^2.0.1"
   },
   "engines": {
     "node": "10.* || >= 12"
