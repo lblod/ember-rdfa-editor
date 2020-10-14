@@ -4,7 +4,7 @@ import { render, triggerKeyEvent, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import type from '../util/type-helper';
 
-module('Integration | InputHandler | list-insertion', function(hooks) {
+module('Integration | Toolbar | list-insertion', function(hooks) {
   setupRenderingTest(hooks);
 
   test('unordered list button inserts a list', async function(assert) {
