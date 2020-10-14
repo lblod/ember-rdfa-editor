@@ -405,4 +405,50 @@ module('Integration | InputHandler | list-insertion', function(hooks) {
     assert.equal(innerHtml, "test<br>​<ol data-editor-position-level=\"1\"><li data-editor-position-level=\"0\">second test​</li></ol>");
   });
 
+  //This shouldn't happen we would want to convert all the selection to a list
+  test('insert unordered list with selection', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('');
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+
+    var editor = document.querySelector("div[contenteditable]");
+    await type('div[contenteditable]', 'test');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
+    await type('div[contenteditable]', 'second test');
+    await window.getSelection().selectAllChildren(editor);
+    await await click('[data-test-button-id="unordered-list"]');
+    const innerHtml = editor.innerHTML;
+    assert.equal(innerHtml, "test<br>​<ul data-editor-position-level=\"1\"><li data-editor-position-level=\"0\">second test​</li></ul>");
+  });
+
+  //This shouldn't happen we would want to convert all the selection to a list
+  test('insert ordered list with selection', async function(assert) {
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('');
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+
+    var editor = document.querySelector("div[contenteditable]");
+    await type('div[contenteditable]', 'test');
+    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
+    await type('div[contenteditable]', 'second test');
+    await window.getSelection().selectAllChildren(editor);
+    await await click('[data-test-button-id="ordered-list"]');
+    const innerHtml = editor.innerHTML;
+    assert.equal(innerHtml, "test<br>​<ol data-editor-position-level=\"1\"><li data-editor-position-level=\"0\">second test​</li></ol>");
+  });
+
 });
