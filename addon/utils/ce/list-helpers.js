@@ -1122,7 +1122,6 @@ function createNewList(logicalListBlocks, parentNode, newListElementLocation, li
       });
       return;
     }
-    parent.insertBefore(document.createTextNode(invisibleSpace), newListElementLocation);
     parent.insertBefore(listE, newListElementLocation);
   }
 
