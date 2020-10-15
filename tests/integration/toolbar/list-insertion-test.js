@@ -23,8 +23,12 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     await click('[data-test-button-id="unordered-list"]');
     await type('div[contenteditable]', 'test');
 
-    const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, '​<ul data-editor-position-level="1"><li data-editor-position-level="0">test​</li></ul>');
+    assert.equal(editor.firstElementChild.tagName, 'UL');
+    const list = editor.firstElementChild;
+    assert.equal(list.childElementCount, 1);
+    const firstLi = list.firstElementChild;
+    assert.equal(firstLi.tagName, 'LI');
+    assert.equal(firstLi.textContent.includes('test'), true);
   });
 
   test('ordered list button inserts a list', async function(assert) {
@@ -43,8 +47,12 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     await click('[data-test-button-id="ordered-list"]');
     await type('div[contenteditable]', 'test');
 
-    const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, '​<ol data-editor-position-level="1"><li data-editor-position-level="0">test​</li></ol>');
+    assert.equal(editor.firstElementChild.tagName, 'OL');
+    const list = editor.firstElementChild;
+    assert.equal(list.childElementCount, 1);
+    const firstLi = list.firstElementChild;
+    assert.equal(firstLi.tagName, 'LI');
+    assert.equal(firstLi.textContent.includes('test'), true);
   });
 
   test('enter inserts another list item in an unordered list', async function(assert) {
@@ -65,7 +73,17 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await type('div[contenteditable]', 'second test');
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, "​<ul data-editor-position-level=\"1\"><li>test</li><li data-editor-position-level=\"0\">second test​</li></ul>");
+
+
+    assert.equal(editor.firstElementChild.tagName, 'UL');
+    const list = editor.firstElementChild;
+    assert.equal(list.childElementCount, 2);
+    const firstLi = list.firstElementChild;
+    assert.equal(firstLi.tagName, 'LI');
+    assert.equal(firstLi.textContent.includes('test'), true);
+    const lastLi = list.lastElementChild;
+    assert.equal(lastLi.tagName, 'LI');
+    assert.equal(lastLi.textContent.includes('second test'), true);
   });
 
   test('enter inserts another list item in an ordered list', async function(assert) {
