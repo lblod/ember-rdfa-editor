@@ -163,7 +163,7 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await click('[data-test-button-id="insert-indent"]');
     await type('div[contenteditable]', 'second test');
-    
+
     assert.equal(editor.firstElementChild.tagName, 'OL');
     const list = editor.firstElementChild;
     assert.equal(list.childElementCount, 1);
@@ -176,7 +176,7 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(innerList.childElementCount, '1');
     const innerLi = innerList.firstElementChild;
     assert.equal(innerLi.textContent.includes('second test'), true);
-    
+
   });
 
   test('remove indentation removes a level of unordered list', async function(assert) {
@@ -240,7 +240,7 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await click('[data-test-button-id="insert-unindent"]');
     await type('div[contenteditable]', 'third test');
-    
+
     assert.equal(editor.firstElementChild.tagName, 'OL');
     const list = editor.firstElementChild;
     assert.equal(list.childElementCount, 2);
@@ -460,7 +460,7 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await click('[data-test-button-id="insert-unindent"]');
     await type('div[contenteditable]', 'second test');
-    
+
     assert.equal(editor.firstElementChild.tagName, 'OL');
     assert.equal(editor.childElementCount, 2);
     const list = editor.firstElementChild;
@@ -510,7 +510,7 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     var editor = document.querySelector("div[contenteditable]");
     await type('div[contenteditable]', 'test');
     await click('[data-test-button-id="ordered-list"]');
-    
+
     assert.equal(editor.firstElementChild.tagName, 'OL');
     assert.equal(editor.childElementCount, 1);
     const list = editor.firstElementChild;
@@ -566,7 +566,7 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await type('div[contenteditable]', 'second test');
     await await click('[data-test-button-id="ordered-list"]');
-    
+
     assert.equal(editor.childElementCount, 2);
     const breakLine = editor.firstElementChild;
     assert.equal(breakLine.tagName, 'BR');
@@ -597,7 +597,7 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     await type('div[contenteditable]', 'second test');
     await window.getSelection().selectAllChildren(editor);
     await await click('[data-test-button-id="unordered-list"]');
-    
+
     assert.equal(editor.childElementCount, 2);
     const breakLine = editor.firstElementChild;
     assert.equal(breakLine.tagName, 'BR');
@@ -628,7 +628,7 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     await type('div[contenteditable]', 'second test');
     await window.getSelection().selectAllChildren(editor);
     await await click('[data-test-button-id="ordered-list"]');
-    
+
     assert.equal(editor.childElementCount, 2);
     const breakLine = editor.firstElementChild;
     assert.equal(breakLine.tagName, 'BR');
