@@ -871,7 +871,7 @@ function getLogicalBlockContentsForIndentationAction(node) {
 
   let baseNode = returnParentNodeBeforeBlockElement(node);
 
-  return growAdjacentNodesUntil(isDisplayedAsBlock, isDisplayedAsBlock, baseNode);
+  return growAdjacentRegionUntil(isDisplayedAsBlock, isDisplayedAsBlock, baseNode);
 }
 
 /**
