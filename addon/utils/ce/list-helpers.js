@@ -904,31 +904,27 @@ function returnParentNodeBeforeBlockElement(node) {
  * Given a node, we want to grow a region (a list of sibling nodes)
  * until we match a condition
  */
-function growAdjacentNodesUntil(conditionLeft, conditionRight, node) {
-  let nodes = [node];
-  let currNode = node;
+function growAdjacentRegionUntil(conditionLeft, conditionRight, node) {
+  let nodes = [];
+  let currNode = node.previousSibling;
 
   //lefties
   while (currNode) {
     if (conditionLeft(currNode)) {
-      if (isDisplayedAsBlock(currNode)) {
-        nodes.push(currNode);
-      }
       break;
     }
     nodes.push(currNode);
     currNode = currNode.previousSibling;
   }
 
-  nodes.reverse();
+  //left siblings have been added, put the provided node in the center
+  nodes.push(node);
 
   //righties
   currNode = node.nextSibling;
+
   while (currNode) {
     if (conditionRight(currNode)) {
-      // if (isDisplayedAsBlock(currNode)) { // TODO : Remove that part once sure it's not needed. Has been commented out to not have sublists included that would then cause hierarchy errors when indenting.
-      //   nodes.push(currNode);
-      // }
       break;
     }
     nodes.push(currNode);
