@@ -231,7 +231,7 @@ import { warn } from '@ember/debug';
  * handles unordered list
  */
 function unorderedListAction(rawEditor) {
-  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
+  const filteredSuitableNodes = getSuitableNodesForListFromSelection(rawEditor);
 
   if (filteredSuitableNodes) {
     rawEditor.externalDomUpdate(
@@ -246,7 +246,7 @@ function unorderedListAction(rawEditor) {
  * handles ordered list
  */
 function orderedListAction(rawEditor) {
-  const filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
+  const filteredSuitableNodes = getSuitableNodesForListFromSelection(rawEditor);
 
   if (filteredSuitableNodes) {
     rawEditor.externalDomUpdate(
@@ -261,7 +261,7 @@ function orderedListAction(rawEditor) {
  * handles indent Action
  */
 function indentAction(rawEditor) {
-  let filteredSuitableNodes = getFilteredSuitableNodes(rawEditor);
+  let filteredSuitableNodes = getSuitableNodesForListFromSelection(rawEditor);
 
   if (filteredSuitableNodes.length) {
     let handleAction = () => {
@@ -284,7 +284,7 @@ function indentAction(rawEditor) {
  * handles unindent Action
  */
 function unindentAction(rawEditor) {
-  let filteredSuitableNodes = getFilteredSuitableNodes(rawEditor, 'indentation');
+  let filteredSuitableNodes = getSuitableNodesForListFromSelection(rawEditor, 'indentation');
 
   if (filteredSuitableNodes.length) {
     let handleAction = () => {
@@ -305,30 +305,31 @@ function unindentAction(rawEditor) {
 /**
  * Gets the nodes that are suitable for an action from the editor.
  * Will get the current node if there is a cursor in the text
- * Will get the wrapping nodes around a selection if the user selected text, in which
- *    case the nodes are filtered: we only keep the nodes if there are not adjacent and splited
+ * In case of a selection, we return the nodes intersecting the selection.
+ * Note: this is only a first step for the construction of the list.
+ *       Further postprocessing is required
  *
- * @method getFilteredSuitableNodes
+ * @method getSuitableNodesForListFromSelection
  * @param rawEditor
  * @return Array the filtered suitable nodes
  */
-function getFilteredSuitableNodes(rawEditor) {
-  const node = rawEditor.currentNode;
-  let filteredSuitableNodes = null;
-
-  if (node) { // The cursor is placed in the text
-    filteredSuitableNodes = [node];
-  } else if (rawEditor.currentSelection) { // Selection of a portion of the text
-    const range = rawEditor.currentSelection;
-    const selection = rawEditor.selectHighlight(range);
-    const suitableNodes = findWrappingSuitableNodes(selection);
-
-    filteredSuitableNodes = suitableNodes.filter(node => {
-      return !(isAdjacentRange(node.range, range) && node.split);
-    });
+function getSuitableNodesForListFromSelection(rawEditor) {
+  const selection = window.getSelection();
+  if(selection && !selection.isCollapsed){
+    const range = selection.getRangeAt(0);
+    const container = range.commonAncestorContainer;
+    if(container.nodeType == Node.ELEMENT_NODE){
+      const children = Array.from(container.childNodes);
+      const rootNodesFromRange = children.filter(node => range.intersectsNode(node));
+      return rootNodesFromRange;
+    }
+    else {
+      return [ container ];
+    }
   }
-
-  return filteredSuitableNodes;
+  else {
+    return rawEditor.currentNode? [ rawEditor.currentNode ] : [];
+  }
 }
 
 /**
