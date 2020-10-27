@@ -333,36 +333,33 @@ function getSuitableNodesForListFromSelection(rawEditor) {
 }
 
 /**
- * From the suitable nodes given for the task, we order them, get their logical
+ * From the suitable nodes given for the task get their logical
  * blocks, clean them to keep the highest non-all-whitespace nodes and group them
  * by same parent.
  *
+ * TODO: revisit this...
  * @method getGroupedLogicalBlocks
- * @param suitableNodes
+ * @param suitableNodes: [domNodes]
  * @return Array the group logical blocks
  */
 function getGroupedLogicalBlocks(suitableNodes, rootNode) {
-  // If the suitableNodes are an array of rich nodes and ranges, we reorder the nodes and flatten it
-  let orderedNodes = [];
-  if (suitableNodes[0] && suitableNodes[0].range) {
-    orderedNodes = reorderNodeBlocks(suitableNodes).map(node => {
-      const domNode = node.richNode.domNode;
-      if (tagName(domNode) == 'li' || domNode == rootNode) {
-        return [...domNode.childNodes];
-      } else {
-        return domNode;
-      }
-    }).flat();
-  } else {
-    orderedNodes = suitableNodes;
-  }
-
-  let eligibleNodes = [];
-  orderedNodes.forEach(node => {
-    if (!isEligibleForIndentAction(node)) return;
-    eligibleNodes.push(getLogicalBlockContentsForIndentationAction(node));
+  //For further postprocessing we need to unwrap nodes if they are LI or EditorRootNode
+  //TODO: not clear anymore why...
+  let unwrappedNodes = suitableNodes.map(domNode => {
+    if (tagName(domNode) == 'li' || domNode.isSameNode(rootNode)) {
+      return [...domNode.childNodes];
+    }
+    else return domNode;
   });
 
+  //The next processing steps expect a flattened list
+  unwrappedNodes = unwrappedNodes.flat();
+
+  //The next steps,filter out nodes not eligible for identation.
+  let eligibleNodes = unwrappedNodes.filter(node => isEligibleForIndentAction(node));
+
+  //For further post processing, we need the get the logical blocks
+  eligibleNodes = eligibleNodes.map(node => getLogicalBlockContentsForIndentationAction(node));
   const uniqueNodes = Array.from(new Set(eligibleNodes.flat()));
   const highestNodes = keepHighestNodes(uniqueNodes);
   return groupNodesByLogicalBlocks(highestNodes);
