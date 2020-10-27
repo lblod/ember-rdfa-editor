@@ -368,52 +368,20 @@ function getGroupedLogicalBlocks(suitableNodes, rootNode) {
 /**
  * Boilerplate to handle List action
  * Both for UL and OL
+ *
+ * @method handleListAction
+ * @param rawEditor: rawEditor
+ * @param currentNodes: [domNodes] ordered from left to right, top to bottom
+ * @param actionType: function defining the action.
+ * @param listType: tagName as string (ol/ul)
+ * @return function
  */
 function handleListAction(rawEditor, currentNodes, actionType, listType) {
   return () => {
-    if (areInList(currentNodes).length == 0) { // Create a new list when we don't have nodes in an existing list
-      let logicalBlocks = [];
-
-      currentNodes.forEach(node => {
-        const domNode = node.richNode ? node.richNode.domNode : node;
-        // If the range is null, reordering is not possible. But range is null
-        // only when currentNodes.length == 1 (case of cursor placed in the text,
-        // not selection) so no need to reorder a single node
-        const range = node.range ? node.range : null;
-
-        logicalBlocks.push({
-          nodes: getLogicalBlockContentsForNewList(domNode),
-          range: range
-        });
-      });
-
-      /* From the cursor's position / selection, we have retrieved the corresponding
-      logical blocks with getLogicalBlockContentsForNewList(). But because we
-      grow the region of each block until we hit a block or br, we might end
-      up with duplicated blocks, ordered badly.
-
-      Example: (|- -| shows the selected zone)
-          He|-llo <b>you</b>
-          <br>
-          How are you ?
-          <div>I am <i>fin-|e</i></div>
-
-      The logicalBlocks might be the following nodes, probably in an other order:
-          [ Hello, <b>you</b>, <br>, How are you ?, <div>I am <i>fine</i></div>, <i>fine</i>, I am ]
-
-      So we first need to reorder them:
-          [ Hello, <b>you</b>, <br>, How are you ?, <div>I am <i>fine</i></div>, I am, <i>fine</i> ]
-
-      We then remove duplicated nodes (N/A in our example) and only keep the
-      highest nodes to remove duplicated content:
-          [ Hello, <b>you</b>, <br>, How are you ?, <div>I am <i>fine</i></div> ]
-      -> "I am" and "<i>fine</i>" are contained in the div and hence can be removed
-
-      Finally we clean the nodes that are all whitespaces (N/A in our example).
-      However we need to keep the <br> ndoes to then group the nodes by logical block. */
-
-      const orderedNodes = reorderNodeBlocks(logicalBlocks).map(block => block.nodes);
-      const uniqueNodes = Array.from(new Set(orderedNodes.flat()));
+    // Create a new list when we don't have nodes in an existing list
+    if (areInList(currentNodes).length == 0) {
+      const logicalBlocks = currentNodes.map(getLogicalBlockContentsForNewList);
+      const uniqueNodes = Array.from(new Set(logicalBlocks.flat()));
       const highestNodes = keepHighestNodes(uniqueNodes);
       /* We group the nodes by line, which will allow us to then insert each line
       as a bullet of the list:
