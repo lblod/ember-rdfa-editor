@@ -578,10 +578,9 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(firstLi.textContent.includes('test'), true);
   });
 
-  //This shouldn't happen we would want to convert all the selection to a list
   test('insert unordered list with selection', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('');
+      editor.setHtmlContent('beer<br>pong');
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -592,27 +591,23 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     />`);
 
     var editor = document.querySelector("div[contenteditable]");
-    await type('div[contenteditable]', 'test');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
-    await type('div[contenteditable]', 'second test');
     await window.getSelection().selectAllChildren(editor);
-    await await click('[data-test-button-id="unordered-list"]');
-
+    const range = window.getSelection().getRangeAt(0);
+    range.setEnd(editor, 3);
+    await click('[data-test-button-id="unordered-list"]');
     assert.equal(editor.childElementCount, 2);
-    const breakLine = editor.firstElementChild;
-    assert.equal(breakLine.tagName, 'BR');
-    const list = editor.lastElementChild;
+    const list = editor.firstElementChild;
     assert.equal(list.tagName, 'UL');
-    assert.equal(list.childElementCount, 1);
+    assert.equal(list.childElementCount, 2);
     const firstLi = list.firstElementChild;
     assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.equal(list.firstElementChild.textContent.includes('beer'), true);
+    assert.equal(list.lastElementChild.textContent.includes('pong'), true);
   });
 
-  //This shouldn't happen we would want to convert all the selection to a list
   test('insert ordered list with selection', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('');
+      editor.setHtmlContent('beer<br>pong');
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -623,21 +618,18 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     />`);
 
     var editor = document.querySelector("div[contenteditable]");
-    await type('div[contenteditable]', 'test');
-    await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
-    await type('div[contenteditable]', 'second test');
     await window.getSelection().selectAllChildren(editor);
-    await await click('[data-test-button-id="ordered-list"]');
-
+    const range = window.getSelection().getRangeAt(0);
+    range.setEnd(editor, 3);
+    await click('[data-test-button-id="ordered-list"]');
     assert.equal(editor.childElementCount, 2);
-    const breakLine = editor.firstElementChild;
-    assert.equal(breakLine.tagName, 'BR');
-    const list = editor.lastElementChild;
+    const list = editor.firstElementChild;
     assert.equal(list.tagName, 'OL');
-    assert.equal(list.childElementCount, 1);
+    assert.equal(list.childElementCount, 2);
     const firstLi = list.firstElementChild;
     assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.equal(list.firstElementChild.textContent.includes('beer'), true);
+    assert.equal(list.lastElementChild.textContent.includes('pong'), true);
   });
 
 });
