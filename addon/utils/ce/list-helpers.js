@@ -7,11 +7,9 @@ import {
   getListTagName,
   findPreviousLi,
   isBlockOrBr,
-  findWrappingSuitableNodes,
   isAllWhitespace,
   tagName
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { isAdjacentRange } from '@lblod/marawa/range-helpers';
 import { warn } from '@ember/debug';
 
 /**
@@ -400,24 +398,6 @@ function handleListAction(rawEditor, currentNodes, actionType, listType) {
     let logicalBlocks = getGroupedLogicalBlocks(currentNodes); // Last possible case: user wants to revert the existing list
     unindentLogicalBlockContents(rawEditor, logicalBlocks);
   };
-}
-
-/**
- * Put blocks of nodes and ranges in the right order according to their range
- *
- * @method reorderNodeBlocks
- * @param blocks
- * @return Array the ordered blocks of nodes and ranges
- */
-function reorderNodeBlocks(blocks) {
-  if (blocks.length == 1) return blocks;
-
-  return blocks.sort((a, b) => {
-    if (a.range[0] > b.range[0])
-      return true;
-    if (a.range[0] == b.range[0])
-      return a.range[1] > b.range[1];
-  });
 }
 
 /**
