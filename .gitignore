@@ -10,6 +10,7 @@
 /public/say-symbolset.svg
 
 # misc
+/.log
 /.env*
 /.pnp*
 /.sass-cache
