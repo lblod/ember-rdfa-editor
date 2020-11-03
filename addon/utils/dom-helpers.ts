@@ -117,7 +117,7 @@ function isAllWhitespace(node: Text): boolean {
  * @method isDisplayedAsBlock
  */
 
-function isDisplayedAsBlock(domNode: HTMLElement): boolean {
+function isDisplayedAsBlock(domNode: Element): boolean {
   if (domNode.nodeType !== Node.ELEMENT_NODE)
     return false;
   const displayStyle = window.getComputedStyle(domNode)['display'];

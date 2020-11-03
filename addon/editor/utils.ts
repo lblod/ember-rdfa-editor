@@ -24,8 +24,8 @@ export function paintCycleHappened() : Promise<void> {
  * set the carret on the desired position. This function uses the browsers selection api and does not update editor state!
  * when possible places cursor at the end of the textNode before the actual cursor position. This makes it easier to determine coordinates later on.
  * @method moveCaret
- * @param {DOMNode} node, a text node or dom element
- * @param {number} offset, for a text node the relative offset within the text node (i.e. number of characters before the carret).
+ * @param {Node} node, a text node or dom element
+ * @param position
  *                         for a dom element the number of childnodes before the carret.
  * Examples:
  *     to set the carret after 'c' in a textnode with text content 'abcd' use setCaret(textNode,3)
@@ -37,10 +37,10 @@ export function paintCycleHappened() : Promise<void> {
  *           - setCaret updates editor state (notably rawEditor.currentSelection), which also causes movementObservers to run
  */
 export function moveCaret(node: Node, position: number): null | Selection {
-  let currentSelection = window.getSelection();
+  const currentSelection = window.getSelection();
   if (currentSelection) {
     if (node.nodeType == Node.TEXT_NODE) {
-      currentSelection.collapse(node,position)
+      currentSelection.collapse(node,position);
     }
     else if (node.nodeType == Node.ELEMENT_NODE) {
       const element = node as HTMLElement;
@@ -105,8 +105,8 @@ export function moveCaretAfter(child: ChildNode) : null | Selection {
  * // TODO: shoud we allow plugins to hook into this? that's probably required to this in a smart way?
  *
  * @method hasVisibleChildren
- * @param {Element} element
  * @return boolean
+ * @param parent
  */
 export function hasVisibleChildren(parent: Element) : boolean {
     if (parent.childNodes.length === 0) {
@@ -115,7 +115,7 @@ export function hasVisibleChildren(parent: Element) : boolean {
     }
 
     let hasVisibleChildren = false;
-    for (let child of Array.from(parent.childNodes)) {
+    for (const child of Array.from(parent.childNodes)) {
       if (child.nodeType == Node.TEXT_NODE) {
         const textNode = child as Text;
         if (textNode.textContent && stringToVisibleText(textNode.textContent).length > 0  ) {
@@ -252,12 +252,12 @@ export function growAdjacentTextNodeNeighborhood(textNode: Text) : Array<Text> {
  * @public
  */
 export function isWhiteSpaceTextNodesArray(textNodes: Array<Text>) : boolean {
-  return ! textNodes.some(textNode => ! isAllWhitespace(textNode) )
+  return ! textNodes.some(textNode => ! isAllWhitespace(textNode) );
 }
 
 /**
  * utility function for debug messages, allows messages to easily be disabled
  */
-export function editorDebug(callerName: String, message : String, ...args : any) : void {
+export function editorDebug(callerName: string, message : string, ...args : unknown[]) : void {
   runInDebug( () => console.debug(`${callerName}: ${message}`, ...args)); // eslint-disable-line no-console
 }

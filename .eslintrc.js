@@ -2,27 +2,31 @@
 
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
     ecmaFeatures: {
       legacyDecorators: true
     }
+
   },
   plugins: [
-    'ember'
+    'ember',
+    '@typescript-eslint',
   ],
   extends: [
     'eslint:recommended',
-    'plugin:ember/recommended'
+    'plugin:ember/recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
   ],
   env: {
     browser: true
   },
   rules: {
     'ember/no-jquery': 'error',
-    'semi': 'error'
+    'semi': 'error',
+    'no-unused-vars': 0
   },
   overrides: [
     // node files
@@ -47,10 +51,11 @@ module.exports = {
         sourceType: 'script'
       },
       env: {
-        browser: false,
+        browser: true,
         node: true
       },
       plugins: ['node'],
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
         // add your custom rules and overrides for node files here
       })

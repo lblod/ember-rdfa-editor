@@ -1,5 +1,5 @@
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import { tagName, isVoidElement, invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {  isVoidElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ListBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/backspace-plugin';
 import LumpNodeBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/backspace-plugin';
 import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
@@ -273,7 +273,7 @@ export interface BackspacePlugin {
  * @extends EmberObject
  */
 export default class BackspaceHandler implements InputHandler {
-  isLocked: Boolean
+  isLocked: Boolean = false;
   /**
    * The editor instance on which we can execute changes.
    *
@@ -435,7 +435,7 @@ export default class BackspaceHandler implements InputHandler {
    */
   checkVisibleChange( options: {previousVisualCursorCoordinates: Array<DOMRectCoordinatesInEditor> }  ) : boolean {
 
-    const { previousVisualCursorCoordinates } = options
+    const { previousVisualCursorCoordinates } = options;
 
     if( ! previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
       editorDebug(`backspace-handler.checkVisibleChange`,
@@ -488,11 +488,11 @@ export default class BackspaceHandler implements InputHandler {
     const editorDomRect = this.rawEditor.rootNode.getBoundingClientRect();
     //Note: we select '0' because we only assume one selection. No multi-cursor
     if (window.getSelection() != null) {
-      const selection = window.getSelection() as Selection
+      const selection = window.getSelection() as Selection;
       if (selection.rangeCount > 0) {
         const clientRects = selection.getRangeAt(0).getClientRects();
         const selectionCoordinates = new Array<DOMRectCoordinatesInEditor>();
-        for(let clientRect of Array.from(clientRects)){
+        for(const clientRect of Array.from(clientRects)){
           const normalizedRect = { } as DOMRectCoordinatesInEditor;
           normalizedRect.top = clientRect.top - editorDomRect.top;
           normalizedRect.bottom = clientRect.bottom - editorDomRect.bottom;
@@ -519,48 +519,51 @@ export default class BackspaceHandler implements InputHandler {
    */
   handleNativeManipulation( manipulation: Manipulation ) {
     switch( manipulation.type ) {
-      case "removeCharacter":
-        const { node, position } = manipulation;
+      case "removeCharacter": {
+        const {node, position} = manipulation;
         let nodeText = node.textContent || "";
-        if (nodeText.length > position + 2 && nodeText.slice(position + 1 , position + 2 ) == " ") {
+        if (nodeText.length > position + 2 && nodeText.slice(position + 1, position + 2) == " ") {
           // if the character after our current position is a space, it might become invisible, so we need to convert it to a non breaking space
           // cases where this happens:
           // - two spaces becoming neighbours after the delete
           // - spaces moving to the start of a node
           nodeText = `${nodeText.slice(0, position + 1)}\u00A0${nodeText.slice(position + 2)}`;
         }
-        if (nodeText.length - 1 == position && nodeText.length > 1 && nodeText.slice(position - 1 , position) == " ") {
+        if (nodeText.length - 1 == position && nodeText.length > 1 && nodeText.slice(position - 1, position) == " ") {
           // if the character before our new position is a space, it might become invisible, so we need to convert it to a non breaking space
           // cases where this happens:
           // - two spaces becoming neighbours after the delete
           // - spaces moving to the end of a node
           nodeText = `${nodeText.slice(0, position - 1)}\u00A0${nodeText.slice(position)}`;
         }
-        node.textContent = `${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`;
+        node.textContent = `${nodeText.slice(0, position)}${nodeText.slice(position + 1)}`;
         this.rawEditor.updateRichNode();
         moveCaret(node, position);
         break;
-      case "removeEmptyTextNode":
+      }
+      case "removeEmptyTextNode": {
         // TODO: I don't think we ever enter this case
-        const { node: textNode } = manipulation;
+        const {node: textNode} = manipulation;
         moveCaretBefore(textNode);
         textNode.remove();
         break;
-      case "removeEmptyElement":
-        if( !manipulation.node.parentElement ) {
-          throw "Received other node does not have a parent.  Backspace failed te remove this node."
+      }
+      case "removeEmptyElement": {
+        if (!manipulation.node.parentElement) {
+          throw "Received other node does not have a parent.  Backspace failed te remove this node.";
         }
         const emptyElement = manipulation.node;
         moveCaretBefore(emptyElement);
         emptyElement.remove();
         this.rawEditor.updateRichNode();
         break;
-      case "removeOtherNode":
+      }
+      case "removeOtherNode": {
         // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
-        if( !manipulation.node.parentElement ) {
-          throw "Received other node does not have a parent.  Backspace failed to remove this node."
+        if (!manipulation.node.parentElement) {
+          throw "Received other node does not have a parent.  Backspace failed to remove this node.";
         }
-        const otherNode = manipulation.node as Node;
+        const otherNode = manipulation.node as ChildNode;
         if (otherNode.parentElement) {
           // TODO: the following does not work without casting, and I'm
           // not sure we certainly have the childNode interface as per
@@ -570,17 +573,19 @@ export default class BackspaceHandler implements InputHandler {
           this.rawEditor.updateRichNode();
         }
         break;
-      case "removeVoidElement":
+      }
+      case "removeVoidElement": {
         // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
-        if( !manipulation.node.parentElement ) {
-          throw "Received void element without parent.  Backspace failed to remove this node."
+        if (!manipulation.node.parentElement) {
+          throw "Received void element without parent.  Backspace failed to remove this node.";
         }
         const voidElement = manipulation.node;
         moveCaretBefore(voidElement);
         voidElement.remove();
         this.rawEditor.updateRichNode();
         break;
-      case "removeElementWithChildrenThatArentVisible":
+      }
+      case "removeElementWithChildrenThatArentVisible": {
         const elementWithOnlyInvisibleNodes = manipulation.node;
         const parentElement = elementWithOnlyInvisibleNodes.parentElement;
         if (parentElement) {
@@ -589,20 +594,23 @@ export default class BackspaceHandler implements InputHandler {
           this.rawEditor.updateRichNode();
         }
         break;
-      case "moveCursorToEndOfElement":
+      }
+      case "moveCursorToEndOfElement": {
         const element = manipulation.node;
         const length = element.childNodes.length;
         moveCaret(element, length);
         break;
-      case "moveCursorBeforeElement":
-        const elementOfManipulation = manipulation.node
-        moveCaretBefore(elementOfManipulation)
+      }
+      case "moveCursorBeforeElement": {
+        const elementOfManipulation = manipulation.node;
+        moveCaretBefore(elementOfManipulation);
         break;
+      }
       case "keepCursorAtStart":
         // do nothing
         break;
       default:
-        throw `Case ${manipulation.type} was not handled by handleNativeInputManipulation.`
+        throw `Case ${manipulation.type} was not handled by handleNativeInputManipulation.`;
     }
   }
 
@@ -625,7 +633,7 @@ export default class BackspaceHandler implements InputHandler {
     const thingBeforeCursor: ThingBeforeCursor = this.getThingBeforeCursor();
     switch( thingBeforeCursor.type ) {
 
-      case "character":
+      case "character": {
         // character: remove the character
         const characterBeforeCursor = thingBeforeCursor as CharacterPosition;
         return {
@@ -633,12 +641,12 @@ export default class BackspaceHandler implements InputHandler {
           node: characterBeforeCursor.node,
           position: characterBeforeCursor.position
         };
-        break;
+      }
 
-      case "emptyTextNodeStart":
+      case "emptyTextNodeStart": {
         // empty text node: remove the text node
         const textNodeBeforeCursor = thingBeforeCursor as EmptyTextNodeStartPosition;
-        if( stringToVisibleText(textNodeBeforeCursor.node.textContent || "").length === 0 ) {
+        if (stringToVisibleText(textNodeBeforeCursor.node.textContent || "").length === 0) {
           return {
             type: "removeEmptyTextNode",
             node: textNodeBeforeCursor.node
@@ -646,12 +654,12 @@ export default class BackspaceHandler implements InputHandler {
         } else {
           throw "Received text node which is not empty as previous node.  Some assumption broke.";
         }
-        break;
+      }
 
-      case "emptyTextNodeEnd":
+      case "emptyTextNodeEnd": {
         // empty text node: remove the text node
         const textNodePositionBeforeCursor = thingBeforeCursor as EmptyTextNodeEndPosition;
-        if( textNodePositionBeforeCursor.node.length === 0 ) {
+        if (textNodePositionBeforeCursor.node.length === 0) {
           return {
             type: "removeEmptyTextNode",
             node: textNodePositionBeforeCursor.node
@@ -659,25 +667,25 @@ export default class BackspaceHandler implements InputHandler {
         } else {
           throw "Received text node which is not empty as previous node.  Some assumption broke.";
         }
-        break;
+      }
 
-      case "voidElement":
+      case "voidElement": {
         const voidElementBeforeCursor = thingBeforeCursor as VoidElementPosition;
         return {
           type: "removeVoidElement",
           node: voidElementBeforeCursor.node
         };
-        break;
+      }
 
-      case "elementEnd":
+      case "elementEnd": {
         const elementBeforeCursor = thingBeforeCursor as ElementEndPosition;
         return {
           type: "moveCursorToEndOfElement",
           node: elementBeforeCursor.node
         };
-        break;
+      }
 
-      case "elementStart":
+      case "elementStart": {
         const parentBeforeCursor = thingBeforeCursor as ElementStartPosition;
         const element = parentBeforeCursor.node;
         if (element.childNodes.length == 0) {
@@ -685,41 +693,39 @@ export default class BackspaceHandler implements InputHandler {
             type: "removeEmptyElement",
             node: element
           };
-        }
-        else {
+        } else {
           // if  an element has no visible text nodes, we remove it
           if (hasVisibleChildren(element)) {
             return {
               type: "moveCursorBeforeElement",
               node: element as HTMLElement
-            }
-          }
-          else {
+            };
+          } else {
             return {
               type: "removeElementWithChildrenThatArentVisible",
               node: element
-            }
+            };
           }
         }
-        break;
-      case "uncommonNodeEnd":
+      }
+      case "uncommonNodeEnd": {
         const positionBeforeCursor = thingBeforeCursor as UncommonNodeEndPosition;
         const node = positionBeforeCursor.node;
         return {
           type: "removeOtherNode",
           node: node
         };
-        break;
-      case "editorRootStart":
+      }
+      case "editorRootStart": {
         return {
           type: "keepCursorAtStart",
           node: thingBeforeCursor.node
-        }
-        break;
+        };
+      }
     }
 
     // TODO: take care of other cases
-    throw `Could not find manipulation to suggest for backspace ${thingBeforeCursor.type}`;
+    throw `Could not find manipulation to suggest for backspace ${(thingBeforeCursor as any).type}`;
   }
 
   /**
@@ -797,7 +803,7 @@ export default class BackspaceHandler implements InputHandler {
     // current implementation assumes a collapsed selection (e.g. a carret)
     const windowSelection = window.getSelection();
     if (windowSelection && windowSelection.rangeCount > 0) {
-      let range = windowSelection.getRangeAt(0);
+      const range = windowSelection.getRangeAt(0);
       if (range.collapsed) {
         const node = range.startContainer;
         const position = range.startOffset;
@@ -825,7 +831,7 @@ export default class BackspaceHandler implements InputHandler {
             else if( child.nodeType === Node.ELEMENT_NODE ){
               const element = child as HTMLElement;
               if (isVoidElement(element)) {
-                return { type: "voidElement", node: element as VoidElement }
+                return { type: "voidElement", node: element as VoidElement };
               }
               else {
                 return { type: "elementEnd", node: element };
@@ -853,7 +859,7 @@ export default class BackspaceHandler implements InputHandler {
             const previousSibling = text.previousSibling;
             if( previousSibling ) {
               if( previousSibling.nodeType === Node.TEXT_NODE ) {
-                let sibling = previousSibling as Text;
+                const sibling = previousSibling as Text;
                 if( sibling.length > 0 ) {
                   // previous is text node with stuff
                   return { type: "character", position: sibling.length - 1, node: sibling};
@@ -865,7 +871,7 @@ export default class BackspaceHandler implements InputHandler {
               else if( previousSibling.nodeType === Node.ELEMENT_NODE ){
                 const sibling = previousSibling as HTMLElement;
                 if (isVoidElement(sibling)) {
-                  return { type: "voidElement", node: sibling as VoidElement }
+                  return { type: "voidElement", node: sibling as VoidElement };
                 }
                 else {
                   return { type: "elementEnd", node: sibling };
@@ -886,7 +892,7 @@ export default class BackspaceHandler implements InputHandler {
               }
             }
             else {
-              throw "no previous sibling or parentnode found"
+              throw "no previous sibling or parentnode found";
             }
           }
         }
