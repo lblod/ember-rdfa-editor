@@ -17,6 +17,7 @@ import {
   paintCycleHappened,
   stringToVisibleText
 } from '@lblod/ember-rdfa-editor/editor/utils';
+import ListDeletePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/delete-plugin';
 
 /**
  * We introduce an abstract reference point to check for visual changes.
@@ -366,7 +367,9 @@ export default class DeleteHandler implements InputHandler {
   constructor({rawEditor}: { rawEditor: RawEditor }) {
     this.rawEditor = rawEditor;
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
-    this.plugins = [];
+    this.plugins = [
+      new ListDeletePlugin()
+    ];
     this.isLocked = false;
   }
 
