@@ -445,9 +445,14 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
   });
 
-  test("deleting at end of p merges next p", async function (assert) {
-    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
-      editor.setHtmlContent("<p>s</p><div></div>");
+  /********************************************************************************
+   * LISTS
+   ********************************************************************************/
+
+  test("DBG delete at end of non-empty <li> merges the next <li>", async function (assert) {
+
+    this.set('rdfaEditorInit', (editor: RdfaDocument) => {
+      editor.setHtmlContent(`<ul><li>a</li><li>b</li></ul>`);
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{this.rdfaEditorInit}}
@@ -456,17 +461,17 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
-
     const editor = getEditorElement();
-    const wordNode = editor.childNodes[0].childNodes[0];
-    const oldLength = editor.childNodes.length;
+
+    const list = (editor.children[0] as HTMLUListElement);
+    const firstItem = (list.children[0] as HTMLLIElement);
+    const textNode = list.children[0].childNodes[0];
     const selection = getWindowSelection();
-    selection.collapse(wordNode, 1);
-
+    selection.collapse(textNode, 1);
     await pressDelete();
-
-    assert.ok(editor.childNodes.length <= oldLength);
-
+    debugger;
+    assert.equal(list.children.length, 1);
+    assert.equal(firstItem.innerText, 'ab');
   });
 });
 

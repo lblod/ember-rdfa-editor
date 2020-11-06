@@ -438,6 +438,7 @@ export default class DeleteHandler implements InputHandler {
 
     // search for a manipulation to execute
     const manipulation = this.getNextManipulation();
+    editorDebug(`delete-handler.deleteForward`, `chose manipulation: `, manipulation);
 
     // check if we can execute it
     //TODO: no plugins yet + there is still some communication required between plugin and handler so handler can place

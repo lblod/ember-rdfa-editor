@@ -243,7 +243,7 @@ function insertNodeBAfterNodeA(_parent: HTMLElement, nodeA: ChildNode, nodeB: Ch
  * @method tagName
  * @public
  */
-function tagName(node: Element): string {
+function tagName(node?: Element | null): string {
   if (!node) return '';
   return node.nodeType === node.ELEMENT_NODE ? node.tagName.toLowerCase() : '';
 }
