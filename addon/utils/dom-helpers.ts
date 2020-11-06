@@ -413,6 +413,31 @@ function isVisibleElement(element: HTMLElement): boolean {
   return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
 }
 
+/**
+ * Utility to get the editor element in a type-safe way
+ * This avoids having to nullcheck everywhere where a null editor would be an error anyway.
+ */
+function getEditorElement(): Element {
+  const editor = document.querySelector("div[contenteditable]");
+  if (!editor) throw new Error("Editor element not found in dom");
+  return editor;
+}
+
+/**
+ * Utility to get the selection in a type-safe way. A null selection only happens when called on a
+ * hidden iframe in Firefox, so it is ok to throw an error here instead of nullchecking everywhere
+ * see https://developer.mozilla.org/en-US/docs/Web/API/Window/getSelection
+ */
+function getWindowSelection(): Selection {
+  const selection = window.getSelection();
+  if (!selection)
+    throw new Error(
+      "Window selection not found. This is an error and does not mean" +
+        "the selection was empty"
+    );
+  return selection;
+}
+
 export {
   tagName,
   isDisplayedAsBlock,
@@ -440,5 +465,7 @@ export {
   isPhrasingContent,
   isBlockOrBr,
   findWrappingSuitableNodes,
-  findLastLi
+  findLastLi,
+  getEditorElement,
+  getWindowSelection
 };

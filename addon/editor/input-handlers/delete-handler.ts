@@ -34,10 +34,14 @@ interface VisualChangeReferencePoint {
   cleanUp(): void;
 }
 
-class MagicSpan implements VisualChangeReferencePoint {
+export class MagicSpan implements VisualChangeReferencePoint {
   // Note: We explicitly use coordinates in editor-space and not in viewPort-space.
   // because in longer documents, when removing content, document may move up on re-render and
   // as a result, the viewport coordinates might remain the same.
+    /**
+     * This allows us to distinguish a magic span from a normal one
+     */
+  static ID = "__magic_span"
   firstMeasurePoint: Array<DOMRect>;
   secondMeasurePoint: Array<DOMRect>;
   span: Element;
@@ -45,6 +49,7 @@ class MagicSpan implements VisualChangeReferencePoint {
 
   constructor(span: Element, editor: RawEditor) {
     this.span = span;
+    this.span.id = MagicSpan.ID;
     this.editor = editor;
     this.firstMeasurePoint = [];
     this.secondMeasurePoint = [];

@@ -1,33 +1,11 @@
 import { module, test } from "qunit";
 import { setupRenderingTest } from "ember-qunit";
-import { render, triggerKeyEvent, pauseTest } from "@ember/test-helpers";
+import { render, triggerKeyEvent, pauseTest, settled } from "@ember/test-helpers";
 import hbs from "htmlbars-inline-precompile";
 import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
+import { getEditorElement, getWindowSelection } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import { timeout } from "ember-concurrency";
 
-/**
- * Utility to get the editor element in a type-safe way
- * This avoids having to nullcheck everywhere where a null editor would be an error anyway.
- */
-function getEditorElement(): Element {
-  const editor = document.querySelector("div[contenteditable]");
-  if (!editor) throw new Error("Editor element not found in dom");
-  return editor;
-}
-
-/**
- * Utility to get the selection in a type-safe way. A null selection only happens when called on a
- * hidden iframe in Firefox, so it is ok to throw an error here instead of nullchecking everywhere
- * see https://developer.mozilla.org/en-US/docs/Web/API/Window/getSelection
- */
-function getWindowSelection(): Selection {
-  const selection = window.getSelection();
-  if (!selection)
-    throw new Error(
-      "Window selection not found. This is an error and does not mean" +
-        "the selection was empty"
-    );
-  return selection;
-}
 
 module("Integration | InputHandler | delete-handler", function (hooks) {
   setupRenderingTest(hooks);
@@ -449,7 +427,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
    * LISTS
    ********************************************************************************/
 
-  test("DBG delete at end of non-empty <li> merges the next <li>", async function (assert) {
+  test("delete at end of non-empty <li> merges the next <li>", async function (assert) {
 
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ul><li>a</li><li>b</li></ul>`);
@@ -472,6 +450,30 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     debugger;
     assert.equal(list.children.length, 1);
     assert.equal(firstItem.innerText, 'ab');
+  });
+  test("DBG delete at end of empty <li> removes it", async function (assert) {
+
+    this.set('rdfaEditorInit', (editor: RdfaDocument) => {
+      editor.setHtmlContent(`<ul><li></li><li>b</li></ul>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const list = (editor.children[0] as HTMLUListElement);
+    let firstItem = (list.children[0] as HTMLLIElement);
+    const textNode = list.children[0].childNodes[0];
+    const selection = getWindowSelection();
+    selection.collapse(firstItem, 0);
+    await pressDelete();
+    firstItem = (list.children[0] as HTMLLIElement);
+    assert.equal(list.children.length, 1);
+    assert.equal(firstItem.innerText, 'b');
   });
 });
 
