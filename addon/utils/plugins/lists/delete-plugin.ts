@@ -69,6 +69,17 @@ export default class ListDeletePlugin implements DeletePlugin {
         this.mergeNextElement(manipulation.node);
       };
       return { allow: true, executor: dispatcher.bind(this) };
+    } else {
+      const nextElement = this.findNextElement(manipulation.node);
+      if (["ul", "ol"].includes(tagName(nextElement))) {
+        // we are just before a list
+        const dispatcher = (
+          manipulation: MoveCursorAfterElementManipulation
+        ) => {
+          this.mergeNextChildOfList(manipulation.node, nextElement!);
+        };
+        return { allow: true, executor: dispatcher.bind(this) };
+      }
     }
     return null;
   }
@@ -96,6 +107,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     manipulation: RemoveEmptyTextNodeManipulation
   ): ManipulationGuidance | null {
     const parent = manipulation.node.parentElement;
+    if (!parent) throw new Error("Invariant violation: textnode without parent")
     if (tagName(parent) == "li") {
       // we are inside an empty textnode inside of a li
       // so we need to handle this
@@ -103,13 +115,37 @@ export default class ListDeletePlugin implements DeletePlugin {
         this.deleteEmptyTextNodeInLi(manipulation.node);
       };
       return { allow: true, executor: dispatcher.bind(this) };
+    } else if (["ul", "ol"].includes(tagName(parent))){
+      //we somehow ended up inside a list but not inside a li
+        // we need to move to one of its children
+      const dispatcher = (manipulation: RemoveEmptyTextNodeManipulation) => {
+        this.moveCursorToFirstChild(parent);
+      };
+      return { allow: true, executor: dispatcher.bind(this) };
+    }
+    else {
+      const nextElement = this.findNextElement(parent);
+      if (["ul", "ol"].includes(tagName(nextElement))) {
+        const dispatcher = (manipulation: RemoveEmptyTextNodeManipulation) => {
+          parent.textContent = stringToVisibleText(parent.textContent);
+
+          this.mergeNextChildOfList(
+            parent,
+            nextElement!
+          );
+        };
+        return { allow: true, executor: dispatcher.bind(this) };
+      }
     }
 
     return null;
   }
+  private moveCursorToFirstChild(element: Element) {
+    moveCaret(element.firstElementChild, 0);
+
+  }
 
   private deleteEmptyTextNodeInLi(textNode: Text) {
-    debugger;
     // are we at the end of the li?
     const sibling = this.getNextSibling(textNode);
     if (sibling) {
@@ -125,6 +161,25 @@ export default class ListDeletePlugin implements DeletePlugin {
       this.mergeNextElement(parent);
       textNode.remove();
     }
+  }
+  private mergeNextChildOfList(element: Element, list: Element) {
+    let firstChild: Element | null = list.children[0];
+    while (
+      firstChild &&
+      !(tagName(firstChild) == "li" || hasVisibleChildren(firstChild))
+    ) {
+      let old = firstChild;
+      firstChild = this.getNextElementSibling(old);
+      old.remove();
+    }
+    if (!firstChild) {
+      // empty ul
+      list.remove();
+      return;
+    }
+    element.append(...firstChild.childNodes);
+    firstChild.remove();
+    this.hasChanged = true;
   }
   private mergeNextElement(element: Element) {
     // find the next element. This can be a sibling or a sibling of the parent
@@ -178,5 +233,4 @@ export default class ListDeletePlugin implements DeletePlugin {
       (node as Element).id == MagicSpan.ID
     );
   }
-
 }
