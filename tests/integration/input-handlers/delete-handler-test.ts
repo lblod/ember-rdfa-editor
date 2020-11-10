@@ -602,28 +602,6 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.children.length, 2);
     assert.equal(lastItem.innerText, 'bcd');
   });
-  test("delete last empty <li> removes it and the list", async function (assert) {
-
-    this.set('rdfaEditorInit', (editor: RdfaDocument) => {
-      editor.setHtmlContent(`<ul><li></li></ul>`);
-    });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
-    const editor = getEditorElement();
-
-    const list = (editor.children[0] as HTMLUListElement);
-    let firstItem = (list.childNodes[0] as HTMLLIElement);
-    const textNode = list.childNodes[0].childNodes[0];
-    const selection = getWindowSelection();
-    selection.collapse(firstItem, 0);
-    await pressDelete();
-    assert.equal(editor.children.length,0);
-  });
 });
 
 function pressDelete() {

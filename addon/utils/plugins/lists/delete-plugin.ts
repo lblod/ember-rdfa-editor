@@ -19,7 +19,9 @@ import {
 import {
   moveCaret,
   stringToVisibleText,
+  hasVisibleChildren,
 } from "@lblod/ember-rdfa-editor/editor/utils";
+import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
 
 function debug(message: String, object: Object | null = null): void {
   runInDebug(() => {
@@ -34,176 +36,147 @@ function debug(message: String, object: Object | null = null): void {
  */
 export default class ListDeletePlugin implements DeletePlugin {
   label = "delete plugin for handling lists";
-  changeRef?: Node;
-  siblingsBeforeChange: number = -1;
+  hasChanged = false;
 
   guidanceForManipulation(
     manipulation: Manipulation
   ): ManipulationGuidance | null {
-    this.changeRef = manipulation.node.cloneNode(true);
-    this.siblingsBeforeChange =
-      manipulation.node.parentElement?.childElementCount ?? -1;
     if (manipulation.type == "moveCursorAfterElement") {
-      manipulation as MoveCursorAfterElementManipulation;
-      const element = manipulation.node;
-      if (tagName(element) == "li") {
-        return this.guidanceForDeleteAtEndOfLi(element);
-      }
+      return this.guidanceForMoveCursorAfterElement(manipulation);
     } else if (manipulation.type == "removeEmptyElement") {
-      manipulation as RemoveEmptyElementManipulation;
-      const element = manipulation.node;
-      if (tagName(element) == "li") {
-        return this.guidanceForRemoveEmptyElement(element);
-      }
+      return this.guidanceForRemoveEmptyElement(manipulation);
     } else if (manipulation.type == "removeEmptyTextNode") {
-      manipulation as RemoveEmptyTextNodeManipulation;
-      const element = manipulation.node;
-      const previousSibling = element.previousElementSibling;
-      // debugger;
-      if (tagName(element.parentElement) == "li") {
-        manipulation.node = element.parentElement;
-        this.changeRef = manipulation.node.cloneNode(true);
-        this.siblingsBeforeChange =
-          manipulation.node.parentElement?.childElementCount ?? -1;
-        return this.guidanceForDeleteAtEndOfLi(element.parentElement);
-      }
-      if (["ul", "ol"].includes(tagName(previousSibling))) {
-        return this.guidanceForRemoveEmptyTextNode(element);
-      }
+      return this.guidanceForRemoveEmptyTextNode(manipulation);
     }
     return null;
   }
 
   detectChange(manipulation: Manipulation): boolean {
-    if (
-      [
-        "moveCursorAfterElement",
-        "removeEmptyElement",
-        "removeEmptyTextNode",
-      ].includes(manipulation.type)
-    ) {
-      const element = manipulation.node as Element;
-      debugger;
-      if (!this.changeRef) return true;
-      if (!element.parentElement) return true;
-      if (
-        this.siblingsBeforeChange !== element.parentElement?.childElementCount
-      ) {
-        return true;
-      }
-      return (
-        stringToVisibleText(element.textContent || "") !==
-        stringToVisibleText(this.changeRef.textContent || "")
-      );
+    if (this.hasChanged) {
+      this.hasChanged = false;
+      return true;
     }
     return false;
   }
-  guidanceForRemoveEmptyTextNode(element: Element): ManipulationGuidance {
-    debug(
-      "providing guidance for removal of empty textnode where previous sibling is a list"
-    );
-    return { allow: true, executor: this.deleteEmptyAndMoveCursor };
+  /**
+   * Cursor is positioned just before the end of an element which has visible children
+   */
+  private guidanceForMoveCursorAfterElement(
+    manipulation: MoveCursorAfterElementManipulation
+  ): ManipulationGuidance | null {
+    if (tagName(manipulation.node) == "li") {
+      const dispatcher = (manipulation: MoveCursorAfterElementManipulation) => {
+        this.mergeNextElement(manipulation.node);
+      };
+      return { allow: true, executor: dispatcher.bind(this) };
+    }
+    return null;
   }
 
-  guidanceForDeleteAtEndOfLi(element: Element): ManipulationGuidance {
-    debug("providing guidance for delete at end of nonempty li");
-    if (tagName(element.nextElementSibling) == "li") {
-      return {
-        allow: true,
-        executor: this.mergeNextLi,
+  /**
+   * Cursor is positioned just before the end of an element which has no visible children
+   */
+  private guidanceForRemoveEmptyElement(
+    manipulation: RemoveEmptyElementManipulation
+  ): ManipulationGuidance | null {
+    if (tagName(manipulation.node) == "li") {
+      // we are inside an empty li
+      const dispatcher = (manipulation: RemoveEmptyElementManipulation) => {
+        this.mergeNextElement(manipulation.node);
       };
-    } else if (element.parentElement?.nextElementSibling) {
-      return { allow: true, executor: this.mergeNextElementOutsideList };
+      return { allow: true, executor: dispatcher.bind(this) };
+    }
+    return null;
+  }
+
+  /**
+   * Cursor is inside a textNode without any visible text
+   */
+  private guidanceForRemoveEmptyTextNode(
+    manipulation: RemoveEmptyTextNodeManipulation
+  ): ManipulationGuidance | null {
+    const parent = manipulation.node.parentElement;
+    if (tagName(parent) == "li") {
+      // we are inside an empty textnode inside of a li
+      // so we need to handle this
+      const dispatcher = (manipulation: RemoveEmptyTextNodeManipulation) => {
+        this.deleteEmptyTextNodeInLi(manipulation.node);
+      };
+      return { allow: true, executor: dispatcher.bind(this) };
+    }
+
+    return null;
+  }
+
+  private deleteEmptyTextNodeInLi(textNode: Text) {
+    debugger;
+    // are we at the end of the li?
+    const sibling = this.getNextSibling(textNode);
+    if (sibling) {
+      // there are more elements in this li
+      // remove our node and move the cursor to the start of the next
+      textNode.remove();
+      moveCaret(sibling, 0);
     } else {
-      return {
-        allow: true,
-        executor: this.moveCursorAfterList,
-      };
+      // we are at the end of the li
+      const parent = textNode.parentElement;
+      if (!parent)
+        throw new Error("Invariant violation: Textnode without parent");
+      this.mergeNextElement(parent);
+      textNode.remove();
     }
   }
-  guidanceForRemoveEmptyElement(element: Element): ManipulationGuidance {
-    debug("providing guidance for delete in empty li");
-    if (tagName(element.nextElementSibling) == "li") {
-      return {
-        allow: true,
-        executor: this.removeLi,
-      };
-    } else if (element.parentElement?.childNodes.length == 1) {
-      return {
-        allow: true,
-        executor: this.removeEntireList,
-      };
-    } else {
-      return {
-        allow: true,
-        executor: this.moveCursorAfterList,
-      };
-    }
-  }
-  deleteEmptyAndMoveCursor(manipulation: Manipulation, editor: Editor) {
-    const textNode = manipulation.node as HTMLElement;
-    const listBefore = textNode.previousElementSibling;
-    const lastLi = listBefore?.lastElementChild as Node;
-    textNode.remove();
-    moveCaret(lastLi, 0);
-  }
-  moveCursorAfterList(manipulation: Manipulation, editor: Editor) {
-    const currentLi = manipulation.node as HTMLLIElement;
-    const parentList = currentLi.parentElement;
-    if (parentList) {
-      const afterList = parentList.nextElementSibling;
-      if (afterList) {
-        moveCaret(afterList, 0);
+  private mergeNextElement(element: Element) {
+    // find the next element. This can be a sibling or a sibling of the parent
+    const nextElement = this.findNextElement(element);
+    if (nextElement) {
+      if (tagName(nextElement) === "li" || hasVisibleChildren(nextElement)) {
+        this.hasChanged = true;
       }
+      element.append(...nextElement.childNodes);
+      nextElement.remove();
     }
   }
-  removeLi(manipulation: Manipulation, editor: Editor) {
-    const currentLi = manipulation.node as HTMLLIElement;
-    let nextSibling = currentLi.nextElementSibling;
-    while (nextSibling && nextSibling.id === MagicSpan.ID) {
-      nextSibling = nextSibling.nextElementSibling;
-    }
-    const selection = getWindowSelection();
-    const parent = currentLi.parentElement;
-    selection.empty();
-    currentLi.remove();
-    if (nextSibling && nextSibling.childNodes.length > 0) {
-      selection.collapse(nextSibling.childNodes[0], 0);
-    }
-    editor.updateRichNode();
-  }
-  removeEntireList(manipulation: Manipulation, editor: Editor) {
-    let currentLi = manipulation.node as HTMLLIElement;
-    let parentList = currentLi.parentElement;
-    if (parentList) {
-      parentList.remove();
-    }
-    editor.updateRichNode();
-  }
-  mergeNextLi(manipulation: Manipulation, editor: Editor) {
-    const currentLi = manipulation.node as HTMLLIElement;
-    const nextLi = currentLi.nextElementSibling;
-    if (!nextLi)
-      throw new Error("Invariant violation: node has no nextElementSibling");
+  /**
+   * Find the next relevant element
+   * This is broader than sibling, it can also be a sibling of the parent
+   */
+  private findNextElement(element: Element): Element | null {
+    let rslt = this.getNextElementSibling(element);
+    if (rslt) return rslt;
 
-    currentLi.append(...nextLi.childNodes);
-    nextLi.remove();
-    editor.updateRichNode();
+    const parent = element.parentElement;
+    if (!parent) return null;
+    rslt = this.getNextElementSibling(parent);
+    return rslt;
   }
-  mergeNextElementOutsideList(manipulation: Manipulation, editor: Editor) {
-    const currentLi = manipulation.node as HTMLLIElement;
-    const parent = currentLi.parentElement;
-    if (!parent) throw new Error("Invariant violation: node has no parent");
-    const nextNode = parent.nextElementSibling;
-    if (!nextNode) return;
 
-    if (nextNode.textContent) {
-      currentLi.append(...nextNode?.childNodes);
+  /**
+   * Magicspan-aware nextSibling
+   */
+  private getNextSibling(node: Node): Node | null {
+    let next = node.nextSibling;
+    while (this.isMagicSpan(next)) {
+      next = next!.nextSibling;
     }
-    nextNode?.remove();
-    editor.updateRichNode();
+    return next;
   }
-  removeListItemAndList(manipulation: Manipulation, editor: Editor) {
-    this.removeLi(manipulation, editor);
+  /**
+   * Magicspan-aware nextElementSibling
+   */
+  private getNextElementSibling(element: Element): Element | null {
+    let next = element.nextElementSibling;
+    while (this.isMagicSpan(next)) {
+      next = next!.nextElementSibling;
+    }
+    return next;
   }
+  private isMagicSpan(node?: Node | null) {
+    return (
+      node &&
+      node.nodeType == node.ELEMENT_NODE &&
+      (node as Element).id == MagicSpan.ID
+    );
+  }
+
 }
