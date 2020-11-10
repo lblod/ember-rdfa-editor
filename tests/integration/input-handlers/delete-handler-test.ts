@@ -5,6 +5,7 @@ import hbs from "htmlbars-inline-precompile";
 import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
 import { getEditorElement, getWindowSelection } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { timeout } from "ember-concurrency";
+import { moveCaret } from "@lblod/ember-rdfa-editor/editor/utils";
 
 
 module("Integration | InputHandler | delete-handler", function (hooks) {
@@ -427,6 +428,54 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
    * LISTS
    ********************************************************************************/
 
+  test("delete in empty li results in ul with one less li", async function(assert) {
+    this.set('rdfaEditorInit', (editor: RdfaDocument) => {
+      editor.setHtmlContent(`<ul><li></li><li></li></ul>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const list = (editor.children[0] as HTMLUListElement);
+    const firstItem = (list.childNodes[0] as HTMLLIElement);
+    const textNode = list.childNodes[0].childNodes[0];
+
+    moveCaret(firstItem, 0)
+
+    await pressDelete();
+    assert.equal(list.childNodes.length, 1);
+  })
+
+  test("delete at end of nonempty li deletes the next empty li", async function(assert) {
+    this.set('rdfaEditorInit', (editor: RdfaDocument) => {
+      editor.setHtmlContent(`<ul><li>ab</li><li></li></ul>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const list = (editor.children[0] as HTMLUListElement);
+    const firstItem = (list.childNodes[0] as HTMLLIElement);
+    const textNode = firstItem.childNodes[0]
+
+    const selection = getWindowSelection();
+    selection.collapse(textNode, 2);
+
+    await pressDelete();
+    assert.equal(list.childNodes.length, 1);
+    assert.equal(list.childNodes[0].textContent, "ab");
+  })
+
   test("delete at end of non-empty <li> merges the next <li>", async function (assert) {
 
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
@@ -451,7 +500,59 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.children.length, 1);
     assert.equal(firstItem.innerText, 'ab');
   });
-  test("DBG delete at end of empty <li> removes it", async function (assert) {
+
+  test("delete at end of empty li merges non-li text", async function(assert) {
+    this.set('rdfaEditorInit', (editor: RdfaDocument) => {
+      editor.setHtmlContent(`<ul><li>a</li><li>b</li></ul><div>c</div>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const list = (editor.children[0] as HTMLUListElement);
+    const lastItem = (list.lastElementChild as HTMLLIElement);
+    const textNode = lastItem.childNodes[0];
+    const selection = getWindowSelection();
+    selection.collapse(textNode, 1);
+
+    await pressDelete();
+    assert.equal(list.children.length, 2);
+    assert.equal(lastItem.innerText, 'bc');
+
+  })
+
+  test("delete at end of empty li deletes empty nodes and merges non-li text", async function(assert) {
+    this.set('rdfaEditorInit', (editor: RdfaDocument) => {
+      editor.setHtmlContent(`<ul><li>a</li><li>b</li></ul><div></div><div>c</div>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const list = (editor.children[0] as HTMLUListElement);
+    const lastItem = (list.lastElementChild as HTMLLIElement);
+    const textNode = lastItem.childNodes[0];
+    const selection = getWindowSelection();
+    selection.collapse(textNode, 1);
+
+    await pressDelete();
+    assert.equal(list.children.length, 2);
+    assert.equal(lastItem.innerText, 'bc');
+
+  })
+
+
+  test("delete at end of empty <li> merges next non-empty li", async function (assert) {
 
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ul><li></li><li>b</li></ul>`);
@@ -475,10 +576,61 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.children.length, 1);
     assert.equal(firstItem.innerText, 'b');
   });
+
+  test("DBG delete at end of empty <li> merges next non-li", async function (assert) {
+
+    this.set('rdfaEditorInit', (editor: RdfaDocument) => {
+      editor.setHtmlContent(`<ul><li>a</li><li></li></ul><div>bcd</div>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const list = (editor.children[0] as HTMLUListElement);
+    let lastItem = (list.lastElementChild as HTMLLIElement);
+
+    const selection = getWindowSelection();
+    selection.collapse(lastItem, 0);
+
+    await pressDelete();
+
+    assert.equal(list.children.length, 2);
+    assert.equal(lastItem.innerText, 'bcd');
+  });
+  test("delete last empty <li> removes it and the list", async function (assert) {
+
+    this.set('rdfaEditorInit', (editor: RdfaDocument) => {
+      editor.setHtmlContent(`<ul><li></li></ul>`);
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const list = (editor.children[0] as HTMLUListElement);
+    let firstItem = (list.childNodes[0] as HTMLLIElement);
+    const textNode = list.childNodes[0].childNodes[0];
+    const selection = getWindowSelection();
+    selection.collapse(firstItem, 0);
+    await pressDelete();
+    assert.equal(editor.children.length,0);
+  });
 });
 
 function pressDelete() {
   return triggerKeyEvent("div[contenteditable]", "keydown", "Delete");
+}
+function wait(ms:number) {
+  return new Promise(r => setTimeout(r, ms))
 }
 
 //A simpele helper to have a more abstract way of defining wether caret moved
