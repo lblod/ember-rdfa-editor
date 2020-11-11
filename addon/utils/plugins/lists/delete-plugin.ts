@@ -51,7 +51,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     return null;
   }
 
-  detectChange(manipulation: Manipulation): boolean {
+  detectChange(): boolean {
     if (this.hasChanged) {
       this.hasChanged = false;
       return true;
@@ -118,7 +118,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     } else if (["ul", "ol"].includes(tagName(parent))){
       //we somehow ended up inside a list but not inside a li
         // we need to move to one of its children
-      const dispatcher = (manipulation: RemoveEmptyTextNodeManipulation) => {
+      const dispatcher = () => {
         this.moveCursorToFirstChild(parent);
       };
       return { allow: true, executor: dispatcher.bind(this) };
@@ -126,8 +126,8 @@ export default class ListDeletePlugin implements DeletePlugin {
     else {
       const nextElement = this.findNextElement(parent);
       if (["ul", "ol"].includes(tagName(nextElement))) {
-        const dispatcher = (manipulation: RemoveEmptyTextNodeManipulation) => {
-          parent.textContent = stringToVisibleText(parent.textContent);
+        const dispatcher = () => {
+          parent.textContent = stringToVisibleText(parent.textContent || "");
 
           this.mergeNextChildOfList(
             parent,
@@ -141,7 +141,9 @@ export default class ListDeletePlugin implements DeletePlugin {
     return null;
   }
   private moveCursorToFirstChild(element: Element) {
-    moveCaret(element.firstElementChild, 0);
+    const firstChild = element.firstElementChild;
+    if(!firstChild) throw new Error("Unexpected: element has no children");
+    moveCaret(firstChild, 0);
 
   }
 
@@ -185,9 +187,14 @@ export default class ListDeletePlugin implements DeletePlugin {
     // find the next element. This can be a sibling or a sibling of the parent
     const nextElement = this.findNextElement(element);
     if (nextElement) {
+      if(["ul", "ol"].includes(tagName(nextElement))) {
+        this.mergeNextChildOfList(element, nextElement);
+        return;
+      }
       if (tagName(nextElement) === "li" || hasVisibleChildren(nextElement)) {
         this.hasChanged = true;
       }
+      // next item is a list, this requires special handling because we need to merge with its first child
       element.append(...nextElement.childNodes);
       nextElement.remove();
     }

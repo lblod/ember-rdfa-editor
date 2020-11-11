@@ -488,6 +488,17 @@ export default {
   <li>ab</li>
   <li></li>
 </ul>
+<div>Case 9</div>
+<div>Result: last li should contain cd</div>
+<div>ef</div>
+<div></div>
+<ul>
+  <li>ab</li>
+  <li></li>
+</ul>
+<ul>
+<li>cd</li>
+</ul>
 `
 };
 

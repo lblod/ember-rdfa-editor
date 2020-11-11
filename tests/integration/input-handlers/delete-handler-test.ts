@@ -657,7 +657,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childElementCount, 1);
     assert.equal(beforeList.textContent, "abcd");
   });
-  test("DBG delete in last li when next element is a list should merge lists", async function (assert) {
+  test("delete in last li when next element is a list should merge lists", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(
         `<ul><li>bcd</li><li></li></ul><ul><li>efg</li></ul>`
