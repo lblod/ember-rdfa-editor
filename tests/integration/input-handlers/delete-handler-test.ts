@@ -8,12 +8,10 @@ import {
 } from "@ember/test-helpers";
 import hbs from "htmlbars-inline-precompile";
 import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
-import {
-  getEditorElement,
-  getWindowSelection,
-} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import { getWindowSelection } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { timeout } from "ember-concurrency";
 import { moveCaret } from "@lblod/ember-rdfa-editor/editor/utils";
+import { getEditorElement } from "dummy/tests/test-utils";
 
 module("Integration | InputHandler | delete-handler", function (hooks) {
   setupRenderingTest(hooks);
@@ -633,9 +631,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
   });
   test("delete before nonempty li merges content and delets li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
-      editor.setHtmlContent(
-        `<div>a</div><ul><li>bcd</li><li></li></ul>`
-      );
+      editor.setHtmlContent(`<div>a</div><ul><li>bcd</li><li></li></ul>`);
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{this.rdfaEditorInit}}
@@ -673,7 +669,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     const editor = getEditorElement();
 
     const list = editor.children[0] as HTMLDivElement;
-    const lastLi = (list.lastElementChild as HTMLLIElement);
+    const lastLi = list.lastElementChild as HTMLLIElement;
 
     moveCaret(lastLi, 0);
     await pressDelete();
@@ -880,9 +876,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
   });
   test("ol delete before nonempty li merges content and delets li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
-      editor.setHtmlContent(
-        `<div>a</div><ol><li>bcd</li><li></li></ol>`
-      );
+      editor.setHtmlContent(`<div>a</div><ol><li>bcd</li><li></li></ol>`);
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{this.rdfaEditorInit}}
@@ -920,7 +914,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     const editor = getEditorElement();
 
     const list = editor.children[0] as HTMLDivElement;
-    const lastLi = (list.lastElementChild as HTMLLIElement);
+    const lastLi = list.lastElementChild as HTMLLIElement;
 
     moveCaret(lastLi, 0);
     await pressDelete();
