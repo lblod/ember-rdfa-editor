@@ -499,6 +499,18 @@ export default {
 <ul>
 <li>cd</li>
 </ul>
+
+<div>Case 10</div>
+<div>nested elements in li</div>
+<div>ef</div>
+<div></div>
+<ul>
+  <li>ab<b>cd</b></li>
+  <li><span>this is a span</span></li>
+</ul>
+<ul>
+<li>cd</li>
+</ul>
 `
 };
 

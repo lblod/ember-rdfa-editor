@@ -677,7 +677,63 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childElementCount, 2);
     assert.equal(lastLi.textContent, "efg");
   });
+  test("DBG delete in nested element should merge next li", async function (assert) {
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(
+        `<ul>
+          <li>bcd<span>ef</span></li>
+          <li>gh</li>
+         </ul>`
+      );
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
 
+    const list = editor.children[0] as HTMLDivElement;
+    const firstLi = list.firstElementChild as HTMLLIElement;
+    const selection = getWindowSelection();
+    selection.collapse(firstLi.lastElementChild!.childNodes[0], 2);
+
+    await pressDelete();
+
+    assert.equal(list.childElementCount, 1);
+    assert.equal(firstLi.textContent, "bcdefgh");
+  });
+
+  test("DBG delete in nested element should still delete normally when not at end of li", async function (assert) {
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(
+        `<ul>
+          <li>bcd<span>ef</span><span>gh</span></li>
+          <li></li>
+         </ul>`
+      );
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const list = editor.children[0] as HTMLDivElement;
+    const firstLi = list.firstElementChild as HTMLLIElement;
+    const selection = getWindowSelection();
+    selection.collapse(firstLi.childNodes[1].childNodes[0], 2);
+
+    await pressDelete();
+
+    assert.equal(list.childElementCount, 2);
+    assert.equal(firstLi.textContent, "bcdefh");
+  });
   test("ol delete in empty li results in ol with one less li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ol><li></li><li></li></ol>`);
@@ -918,6 +974,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
 
     moveCaret(lastLi, 0);
     await pressDelete();
+    await wait(200);
 
     assert.equal(list.childElementCount, 2);
     assert.equal(lastLi.textContent, "efg");

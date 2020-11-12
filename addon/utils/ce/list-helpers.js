@@ -1082,4 +1082,4 @@ function createNewList(logicalListBlocks, parentNode, newListElementLocation, li
   });
 }
 
-export { unorderedListAction, orderedListAction, indentAction, unindentAction };
+export { unorderedListAction, orderedListAction, indentAction, unindentAction, isInList };
