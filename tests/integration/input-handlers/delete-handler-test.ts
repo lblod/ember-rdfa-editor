@@ -222,6 +222,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     selection.collapse(wordNode, 4);
     const previousCaretPostion = selection.getRangeAt(0).getClientRects();
     await triggerKeyEvent("div[contenteditable]", "keydown", "Delete");
+    await wait(200);
     const currentSelection = getWindowSelection();
     assert.equal(
       currentSelection.anchorNode?.parentElement?.innerText,
@@ -433,7 +434,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
    * LISTS
    ********************************************************************************/
 
-  test("delete in empty li results in ul with one less li", async function (assert) {
+  test("Delete | Lists | delete in empty li results in ul with one less li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ul><li></li><li></li></ul>`);
     });
@@ -456,7 +457,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childNodes.length, 1);
   });
 
-  test("delete at end of nonempty li deletes the next empty li", async function (assert) {
+  test("Delete | Lists | delete at end of nonempty li deletes the next empty li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ul><li>ab</li><li></li></ul>`);
     });
@@ -481,7 +482,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childNodes[0].textContent, "ab");
   });
 
-  test("delete at end of non-empty <li> merges the next <li>", async function (assert) {
+  test("Delete | Lists | delete at end of non-empty <li> merges the next <li>", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ul><li>a</li><li>b</li></ul>`);
     });
@@ -505,7 +506,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(firstItem.innerText, "ab");
   });
 
-  test("delete at end of empty li merges non-li text", async function (assert) {
+  test("Delete | Lists | delete at end of empty li merges non-li text", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ul><li>a</li><li>b</li></ul><div>c</div>`);
     });
@@ -529,7 +530,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(lastItem.innerText, "bc");
   });
 
-  test("delete at end of empty li deletes empty nodes and merges non-li text", async function (assert) {
+  test("Delete | Lists | delete at end of empty li deletes empty nodes and merges non-li text", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(
         `<ul><li>a</li><li>b</li></ul><div></div><div>c</div>`
@@ -555,7 +556,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(lastItem.innerText, "bc");
   });
 
-  test("delete at end of empty <li> merges next non-empty li", async function (assert) {
+  test("Delete | Lists | delete at end of empty <li> merges next non-empty li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ul><li></li><li>b</li></ul>`);
     });
@@ -579,7 +580,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(firstItem.innerText, "b");
   });
 
-  test("delete at end of empty <li> merges next non-li", async function (assert) {
+  test("Delete | Lists | delete at end of empty <li> merges next non-li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ul><li>a</li><li></li></ul><div>bcd</div>`);
     });
@@ -604,7 +605,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(lastItem.innerText, "bcd");
   });
 
-  test("delete before empty li deletes that li", async function (assert) {
+  test("Delete | Lists | delete before empty li deletes that li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(
         `<div>t</div><ul><li></li><li></li></ul><div>bcd</div>`
@@ -629,7 +630,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
 
     assert.equal(list.childElementCount, 1);
   });
-  test("delete before nonempty li merges content and delets li", async function (assert) {
+  test("Delete | Lists | delete before nonempty li merges content and delets li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<div>a</div><ul><li>bcd</li><li></li></ul>`);
     });
@@ -653,7 +654,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childElementCount, 1);
     assert.equal(beforeList.textContent, "abcd");
   });
-  test("delete in last li when next element is a list should merge lists", async function (assert) {
+  test("Delete | Lists | delete in last li when next element is a list should merge lists", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(
         `<ul><li>bcd</li><li></li></ul><ul><li>efg</li></ul>`
@@ -677,7 +678,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childElementCount, 2);
     assert.equal(lastLi.textContent, "efg");
   });
-  test("DBG delete in nested element should merge next li", async function (assert) {
+  test("Delete | Lists | DBG delete in nested element should merge next li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(
         `<ul>
@@ -706,7 +707,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(firstLi.textContent, "bcdefgh");
   });
 
-  test("DBG delete in nested element should still delete normally when not at end of li", async function (assert) {
+  test("Delete | Lists | DBG delete in nested element should still delete normally when not at end of li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(
         `<ul>
@@ -734,7 +735,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childElementCount, 2);
     assert.equal(firstLi.textContent, "bcdefh");
   });
-  test("ol delete in empty li results in ol with one less li", async function (assert) {
+  test("Delete | Lists | ol delete in empty li results in ol with one less li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ol><li></li><li></li></ol>`);
     });
@@ -757,7 +758,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childNodes.length, 1);
   });
 
-  test("ol delete at end of nonempty li deletes the next empty li", async function (assert) {
+  test("Delete | Lists | ol delete at end of nonempty li deletes the next empty li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ol><li>ab</li><li></li></ol>`);
     });
@@ -782,7 +783,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childNodes[0].textContent, "ab");
   });
 
-  test("ol delete at end of non-empty <li> merges the next <li>", async function (assert) {
+  test("Delete | Lists | ol delete at end of non-empty <li> merges the next <li>", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ol><li>a</li><li>b</li></ol>`);
     });
@@ -806,7 +807,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(firstItem.innerText, "ab");
   });
 
-  test("ol delete at end of empty li merges non-li text", async function (assert) {
+  test("Delete | Lists | ol delete at end of empty li merges non-li text", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ol><li>a</li><li>b</li></ol><div>c</div>`);
     });
@@ -830,7 +831,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(lastItem.innerText, "bc");
   });
 
-  test("ol delete at end of empty li deletes empty nodes and merges non-li text", async function (assert) {
+  test("Delete | Lists | ol delete at end of empty li deletes empty nodes and merges non-li text", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(
         `<ol><li>a</li><li>b</li></ol><div></div><div>c</div>`
@@ -856,7 +857,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(lastItem.innerText, "bc");
   });
 
-  test("ol delete at end of empty <li> merges next non-empty li", async function (assert) {
+  test("Delete | Lists | ol delete at end of empty <li> merges next non-empty li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ol><li></li><li>b</li></ol>`);
     });
@@ -880,7 +881,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(firstItem.innerText, "b");
   });
 
-  test("ol delete at end of empty <li> merges next non-li", async function (assert) {
+  test("Delete | Lists | ol delete at end of empty <li> merges next non-li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ol><li>a</li><li></li></ol><div>bcd</div>`);
     });
@@ -905,7 +906,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(lastItem.innerText, "bcd");
   });
 
-  test("ol delete before empty li deletes that li", async function (assert) {
+  test("Delete | Lists | ol delete before empty li deletes that li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(
         `<div>t</div><ol><li></li><li></li></ol><div>bcd</div>`
@@ -930,7 +931,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
 
     assert.equal(list.childElementCount, 1);
   });
-  test("ol delete before nonempty li merges content and delets li", async function (assert) {
+  test("Delete | Lists | ol delete before nonempty li merges content and delets li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<div>a</div><ol><li>bcd</li><li></li></ol>`);
     });
@@ -954,7 +955,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childElementCount, 1);
     assert.equal(beforeList.textContent, "abcd");
   });
-  test("ol delete in last li when next element is a list should merge lists", async function (assert) {
+  test("Delete | Lists | ol delete in last li when next element is a list should merge lists", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(
         `<ol><li>bcd</li><li></li></ol><ol><li>efg</li></ol>`

@@ -17,6 +17,7 @@ import {
   getWindowSelection,
   isLI,
   getParentLI,
+  isList,
 } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {
   moveCaret,
@@ -78,10 +79,10 @@ export default class ListDeletePlugin implements DeletePlugin {
       if (parentLi) {
         //we are inside some element within a li
         if (manipulation.node.nextElementSibling) {
-        const dispatcher = () => {
-          moveCaret(manipulation.node.nextElementSibling!.childNodes[0], 0)
-        };
-        return { allow: true, executor: dispatcher.bind(this) };
+          const dispatcher = () => {
+            moveCaret(manipulation.node.nextElementSibling!.childNodes[0], 0);
+          };
+          return { allow: true, executor: dispatcher.bind(this) };
         }
         const dispatcher = () => {
           this.mergeNextElement(parentLi);
@@ -108,7 +109,7 @@ export default class ListDeletePlugin implements DeletePlugin {
   private guidanceForRemoveEmptyElement(
     manipulation: RemoveEmptyElementManipulation
   ): ManipulationGuidance | null {
-    if (tagName(manipulation.node) == "li") {
+    if (isLI(manipulation.node)) {
       // we are inside an empty li
       const dispatcher = (manipulation: RemoveEmptyElementManipulation) => {
         this.mergeNextElement(manipulation.node);
@@ -127,26 +128,18 @@ export default class ListDeletePlugin implements DeletePlugin {
     const parent = manipulation.node.parentElement;
     if (!parent)
       throw new Error("Invariant violation: textnode without parent");
-    if (tagName(parent) == "li") {
+    if (isInList(manipulation.node)) {
       // we are inside an empty textnode inside of a li
       // so we need to handle this
       const dispatcher = (manipulation: RemoveEmptyTextNodeManipulation) => {
         this.deleteEmptyTextNodeInLi(manipulation.node);
       };
       return { allow: true, executor: dispatcher.bind(this) };
-    } else if (["ul", "ol"].includes(tagName(parent))) {
-      //we somehow ended up inside a list but not inside a li
-      // we need to move to one of its children
-      const dispatcher = () => {
-        this.moveCursorToFirstChild(parent);
-      };
-      return { allow: true, executor: dispatcher.bind(this) };
     } else {
-      const nextElement = this.findNextElement(parent);
-      if (["ul", "ol"].includes(tagName(nextElement))) {
+      const nextElement = this.findNextElement(parent) as HTMLElement;
+      if (nextElement && isList(nextElement)) {
         const dispatcher = () => {
           parent.textContent = stringToVisibleText(parent.textContent || "");
-
           this.mergeNextChildOfList(parent, nextElement!);
         };
         return { allow: true, executor: dispatcher.bind(this) };
@@ -182,7 +175,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     let firstChild: Element | null = list.children[0];
     while (
       firstChild &&
-      !(tagName(firstChild) == "li" || hasVisibleChildren(firstChild))
+      !(isLI(firstChild) || hasVisibleChildren(firstChild))
     ) {
       let old = firstChild;
       firstChild = this.getNextElementSibling(old);
@@ -201,7 +194,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     // find the next element. This can be a sibling or a sibling of the parent
     const nextElement = this.findNextElement(element);
     if (nextElement) {
-      if (["ul", "ol"].includes(tagName(nextElement))) {
+      if (nextElement && isList(nextElement)) {
         this.mergeNextChildOfList(element, nextElement);
         return;
       }
