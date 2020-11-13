@@ -166,8 +166,9 @@ function isPhrasingContent(node: HTMLElement): boolean {
  * @method isList
  * @public
  */
-function isList(node: HTMLElement): boolean {
-  return node.nodeType === node.ELEMENT_NODE && ['ul', 'ol'].includes(node.tagName.toLowerCase());
+function isList(node?: Node | null): boolean {
+  if(!node) return false;
+  return node.nodeType === node.ELEMENT_NODE && ['ul', 'ol'].includes((node as Element).tagName.toLowerCase());
 }
 
 /**

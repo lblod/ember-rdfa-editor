@@ -90,7 +90,7 @@ export default class ListDeletePlugin implements DeletePlugin {
         return { allow: true, executor: dispatcher.bind(this) };
       }
       const nextElement = this.findNextElement(manipulation.node);
-      if (["ul", "ol"].includes(tagName(nextElement))) {
+      if (isList(nextElement)) {
         // we are just before a list
         const dispatcher = (
           manipulation: MoveCursorAfterElementManipulation
@@ -137,7 +137,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       return { allow: true, executor: dispatcher.bind(this) };
     } else {
       const nextElement = this.findNextElement(parent) as HTMLElement;
-      if (nextElement && isList(nextElement)) {
+      if (isList(nextElement)) {
         const dispatcher = () => {
           parent.textContent = stringToVisibleText(parent.textContent || "");
           this.mergeNextChildOfList(parent, nextElement!);
@@ -194,11 +194,11 @@ export default class ListDeletePlugin implements DeletePlugin {
     // find the next element. This can be a sibling or a sibling of the parent
     const nextElement = this.findNextElement(element);
     if (nextElement) {
-      if (nextElement && isList(nextElement)) {
+      if (isList(nextElement)) {
         this.mergeNextChildOfList(element, nextElement);
         return;
       }
-      if (tagName(nextElement) === "li" || hasVisibleChildren(nextElement)) {
+      if (isLI(nextElement) || hasVisibleChildren(nextElement)) {
         this.hasChanged = true;
       }
       // next item is a list, this requires special handling because we need to merge with its first child
