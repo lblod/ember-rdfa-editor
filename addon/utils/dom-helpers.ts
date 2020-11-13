@@ -101,6 +101,16 @@ function isVoidElement(node: Node): boolean {
 }
 
 /**
+ * dom helper to check whether a node is an element
+ * @method isElement
+ * @public
+ * @param node
+ */
+function isElement(node: Node): node is Element {
+  return node.nodeType === Node.ELEMENT_NODE;
+}
+
+/**
  * Determine whether a node's text content is entirely whitespace.
  * from https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM
  *
@@ -166,9 +176,12 @@ function isPhrasingContent(node: HTMLElement): boolean {
  * @method isList
  * @public
  */
-function isList(node?: Node | null): boolean {
-  if(!node) return false;
-  return node.nodeType === node.ELEMENT_NODE && ['ul', 'ol'].includes((node as Element).tagName.toLowerCase());
+function isList(node?: Node | null): node is HTMLElement {
+  if (!node) return false;
+  return (
+    node.nodeType === node.ELEMENT_NODE &&
+    ["ul", "ol"].includes((node as Element).tagName.toLowerCase())
+  );
 }
 
 /**
@@ -299,7 +312,7 @@ function getParentLI(node: Node): HTMLLIElement | null {
  * determine whether the provided Node is an LI
  * @method isLi
  */
-function isLI(node: Node): boolean {
+function isLI(node: Node): node is HTMLLIElement {
   return node.nodeType === node.ELEMENT_NODE && tagName(node as Element) === 'li';
 }
 
@@ -308,7 +321,7 @@ function isLI(node: Node): boolean {
  * @method isTextNode
  * @public
  */
-function isTextNode(node: Node): boolean {
+function isTextNode(node: Node): node is Text {
   return node.nodeType === Node.TEXT_NODE;
 }
 
@@ -443,6 +456,7 @@ export {
   unwrapElement,
   removeNode,
   isVoidElement,
+  isElement,
   isVisibleElement,
   isIgnorableElement,
   createElementsFromHTML,

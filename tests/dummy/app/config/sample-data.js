@@ -511,6 +511,18 @@ export default {
 <ul>
 <li>cd</li>
 </ul>
+<div>Case 11</div>
+<div>bare textNode after li</div>
+<ul>
+  <li></li>
+</ul>
+hello
+<div>Case 12</div>
+<div>bare nonempty textNode after li</div>
+<ul>
+  <li>hello</li>
+</ul>
+world
 `
 };
 

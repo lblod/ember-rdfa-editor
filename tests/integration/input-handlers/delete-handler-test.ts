@@ -451,10 +451,12 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     const firstItem = list.childNodes[0] as HTMLLIElement;
     const textNode = list.childNodes[0].childNodes[0];
 
-    moveCaret(firstItem, 0);
+    const selection = getWindowSelection()
+    selection.collapse(firstItem, 0)
 
     await pressDelete();
-    assert.equal(list.childNodes.length, 1);
+    await wait(500)
+    assert.equal(list.childElementCount, 1);
   });
 
   test("Delete | Lists | delete at end of nonempty li deletes the next empty li", async function (assert) {
@@ -478,7 +480,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     selection.collapse(textNode, 2);
 
     await pressDelete();
-    assert.equal(list.childNodes.length, 1);
+    assert.equal(list.childElementCount, 1);
     assert.equal(list.childNodes[0].textContent, "ab");
   });
 
@@ -501,7 +503,6 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     const selection = getWindowSelection();
     selection.collapse(textNode, 1);
     await pressDelete();
-    debugger;
     assert.equal(list.children.length, 1);
     assert.equal(firstItem.innerText, "ab");
   });
@@ -520,12 +521,13 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     const editor = getEditorElement();
 
     const list = editor.children[0] as HTMLUListElement;
-    const lastItem = list.lastElementChild as HTMLLIElement;
+    let lastItem = list.lastElementChild as HTMLLIElement;
     const textNode = lastItem.childNodes[0];
     const selection = getWindowSelection();
     selection.collapse(textNode, 1);
 
     await pressDelete();
+    lastItem = list.lastElementChild as HTMLLIElement;
     assert.equal(list.children.length, 2);
     assert.equal(lastItem.innerText, "bc");
   });
@@ -582,7 +584,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
 
   test("Delete | Lists | delete at end of empty <li> merges next non-li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
-      editor.setHtmlContent(`<ul><li>a</li><li></li></ul><div>bcd</div>`);
+      editor.setHtmlContent(`<ul><li></li></ul><div>bcd</div>`);
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{this.rdfaEditorInit}}
@@ -601,7 +603,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
 
     await pressDelete();
 
-    assert.equal(list.children.length, 2);
+    assert.equal(list.children.length, 1);
     assert.equal(lastItem.innerText, "bcd");
   });
 
@@ -704,8 +706,35 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     await pressDelete();
 
     assert.equal(list.childElementCount, 1);
-    assert.equal(firstLi.textContent, "bcdefgh");
+    assert.equal(firstLi.innerText, "bcdefgh");
   });
+
+  test("DBG Delete | Lists | delete at last element should merge following textNode", async function (assert) {
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(
+        `<ul><li></li></ul>abc`
+      );
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const list = editor.children[0] as HTMLDivElement;
+    const firstLi = list.firstElementChild as HTMLLIElement;
+    const selection = getWindowSelection();
+    selection.collapse(firstLi, 0);
+
+    await pressDelete();
+
+    assert.equal(list.childElementCount, 1);
+    assert.equal(firstLi.textContent, "abc");
+
+  })
 
   test("Delete | Lists | DBG delete in nested element should still delete normally when not at end of li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
@@ -802,7 +831,6 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     const selection = getWindowSelection();
     selection.collapse(textNode, 1);
     await pressDelete();
-    debugger;
     assert.equal(list.children.length, 1);
     assert.equal(firstItem.innerText, "ab");
   });
@@ -902,7 +930,8 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
 
     await pressDelete();
 
-    assert.equal(list.children.length, 2);
+    lastItem = list.lastElementChild as HTMLLIElement;
+    assert.equal(list.childElementCount, 2);
     assert.equal(lastItem.innerText, "bcd");
   });
 

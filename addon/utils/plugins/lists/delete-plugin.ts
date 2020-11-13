@@ -18,6 +18,8 @@ import {
   isLI,
   getParentLI,
   isList,
+  isElement,
+  removeNode,
 } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {
   moveCaret,
@@ -89,7 +91,7 @@ export default class ListDeletePlugin implements DeletePlugin {
         };
         return { allow: true, executor: dispatcher.bind(this) };
       }
-      const nextElement = this.findNextElement(manipulation.node);
+      const nextElement = this.findNextNode(manipulation.node);
       if (isList(nextElement)) {
         // we are just before a list
         const dispatcher = (
@@ -136,7 +138,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       };
       return { allow: true, executor: dispatcher.bind(this) };
     } else {
-      const nextElement = this.findNextElement(parent) as HTMLElement;
+      const nextElement = this.findNextNode(parent) as HTMLElement;
       if (isList(nextElement)) {
         const dispatcher = () => {
           parent.textContent = stringToVisibleText(parent.textContent || "");
@@ -192,31 +194,39 @@ export default class ListDeletePlugin implements DeletePlugin {
   }
   private mergeNextElement(element: Element) {
     // find the next element. This can be a sibling or a sibling of the parent
-    const nextElement = this.findNextElement(element);
-    if (nextElement) {
-      if (isList(nextElement)) {
-        this.mergeNextChildOfList(element, nextElement);
+    const nextNode = this.findNextNode(element);
+    if (!nextNode) return;
+    if (isElement(nextNode)) {
+      if (isList(nextNode)) {
+      // next item is a list, this requires special handling because we need to merge with its first child
+        this.mergeNextChildOfList(element, nextNode);
         return;
       }
-      if (isLI(nextElement) || hasVisibleChildren(nextElement)) {
+      if (isLI(nextNode) || hasVisibleChildren(nextNode)) {
         this.hasChanged = true;
       }
-      // next item is a list, this requires special handling because we need to merge with its first child
-      element.append(...nextElement.childNodes);
-      nextElement.remove();
+      element.append(...nextNode.childNodes);
+      nextNode.remove();
+    } else {
+      if(stringToVisibleText(nextNode.textContent || "").length > 0) {
+        element.append(nextNode);
+        this.hasChanged = true;
+      } else {
+        removeNode(nextNode as ChildNode);
+      }
     }
   }
   /**
    * Find the next relevant element
    * This is broader than sibling, it can also be a sibling of the parent
    */
-  private findNextElement(element: Element): Element | null {
-    let rslt = this.getNextElementSibling(element);
+  private findNextNode(element: Element): Node | null {
+    let rslt = this.getNextSibling(element);
     if (rslt) return rslt;
 
     const parent = element.parentElement;
     if (!parent) return null;
-    rslt = this.getNextElementSibling(parent);
+    rslt = this.getNextSibling(parent);
     return rslt;
   }
 
