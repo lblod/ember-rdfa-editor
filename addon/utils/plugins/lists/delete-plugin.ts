@@ -171,7 +171,6 @@ export default class ListDeletePlugin implements DeletePlugin {
     return null;
   }
 
-
   private deleteEmptyTextNodeInLi(textNode: Text) {
     // are we at the end of the li?
     const sibling = this.getNextSibling(textNode);
@@ -204,7 +203,14 @@ export default class ListDeletePlugin implements DeletePlugin {
       list.remove();
       return;
     }
-    element.append(...firstChild.childNodes);
+    if (element === list.parentElement) {
+      for (const node of firstChild.childNodes) {
+        list.before(node);
+
+      }
+    } else {
+      element.append(...firstChild.childNodes);
+    }
     firstChild.remove();
     if (list.childNodes.length === 0) {
       list.remove();
