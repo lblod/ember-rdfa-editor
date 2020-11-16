@@ -154,6 +154,9 @@ export default class ListDeletePlugin implements DeletePlugin {
 
     return null;
   }
+  /**
+   * Cursor is at the end of a textNode that is a sibling of the element after it
+   */
   private guidanceForMoveCursorToStartOfElement(
     manipulation: MoveCursorToStartOfElementManipulation
   ): ManipulationGuidance | null {
@@ -161,8 +164,10 @@ export default class ListDeletePlugin implements DeletePlugin {
       const dispatch = (manipulation: MoveCursorAfterElementManipulation) => {
         const prevSib = manipulation.node.previousSibling;
         if (prevSib && isElement(prevSib)) {
+          // this probably never happens, but I'm not sure
           this.mergeNextChildOfList(prevSib, manipulation.node);
         } else if (prevSib) {
+          // we can use the same merging logic, but we have to merge with the parent
           this.mergeNextChildOfList(prevSib.parentElement!, manipulation.node);
         }
       };
@@ -188,6 +193,12 @@ export default class ListDeletePlugin implements DeletePlugin {
       textNode.remove();
     }
   }
+  /**
+   * Take the content of the first child of list and add it to element.
+   * Then delete the child and, if the list is now empty, delete it.
+   * @param element the element to merge into
+   * @param list the list
+   */
   private mergeNextChildOfList(element: Element, list: Element) {
     let firstChild: Element | null = list.children[0];
     while (
@@ -203,13 +214,18 @@ export default class ListDeletePlugin implements DeletePlugin {
       list.remove();
       return;
     }
+    // the most common case for this is starting with an empty document
+    // any text will be just textNodes, and inserting a list will
+    // insert it as a sibling to those nodes. This means we cannot simply append
     if (element === list.parentElement) {
       for (const node of firstChild.childNodes) {
         list.before(node);
-
       }
     } else {
       element.append(...firstChild.childNodes);
+    }
+    for (const node of firstChild.childNodes) {
+      list.before(node);
     }
     firstChild.remove();
     if (list.childNodes.length === 0) {
@@ -217,6 +233,10 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     this.hasChanged = true;
   }
+  /**
+   * Generic method for merging the content of the element after the given element
+   * into the given element
+   */
   private mergeNextElement(element: Element) {
     // find the next element. This can be a sibling or a sibling of the parent
     const nextNode = this.findNextNode(element);
