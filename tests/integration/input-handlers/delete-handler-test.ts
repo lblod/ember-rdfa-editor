@@ -829,6 +829,35 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childElementCount, 1);
     assert.equal(firstLi.textContent, "abc");
   });
+  test("DBG Delete | Lists | delete before list should delete list", async function (assert) {
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(
+        `<div>a</div><ul><li></li></ul><div>b</div>`
+      );
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const beforeList = editor.children[0] as HTMLDivElement;
+    const list = editor.children[1] as HTMLUListElement;
+    const firstLi = list.firstElementChild as HTMLLIElement;
+
+
+    const selection = getWindowSelection();
+    selection.collapse(beforeList.childNodes[0], 1);
+
+    await pressDelete();
+
+
+    assert.equal(editor.childElementCount, 2);
+    assert.equal(list.parentElement, null);
+  });
   test("Delete | Lists | ol delete in empty li results in ol with one less li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ol><li></li><li></li></ol>`);
@@ -844,7 +873,6 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
 
     const list = editor.children[0] as HTMLUListElement;
     const firstItem = list.childNodes[0] as HTMLLIElement;
-    const textNode = list.childNodes[0].childNodes[0];
 
     moveCaret(firstItem, 0);
 

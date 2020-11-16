@@ -7,15 +7,12 @@ import {
   ManipulationGuidance,
   RemoveEmptyTextNodeManipulation,
   MoveCursorAfterElementManipulation,
-  Editor,
   RemoveEmptyElementManipulation,
   RemoveElementWithChildrenThatArentVisible,
+  MoveCursorToStartOfElementManipulation,
 } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 import { runInDebug } from "@ember/debug";
 import {
-  findLastLi,
-  tagName,
-  getWindowSelection,
   isLI,
   getParentLI,
   isList,
@@ -27,7 +24,6 @@ import {
   stringToVisibleText,
   hasVisibleChildren,
 } from "@lblod/ember-rdfa-editor/editor/utils";
-import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
 import { isInList } from "../../ce/list-helpers";
 
 function debug(message: String, object: Object | null = null): void {
@@ -48,15 +44,17 @@ export default class ListDeletePlugin implements DeletePlugin {
   guidanceForManipulation(
     manipulation: Manipulation
   ): ManipulationGuidance | null {
-    if (manipulation.type == "moveCursorAfterElement") {
+    if (manipulation.type === "moveCursorAfterElement") {
       return this.guidanceForMoveCursorAfterElement(manipulation);
     } else if (
-      manipulation.type == "removeEmptyElement" ||
-      manipulation.type == "removeElementWithChildrenThatArentVisible"
+      manipulation.type === "removeEmptyElement" ||
+      manipulation.type === "removeElementWithChildrenThatArentVisible"
     ) {
       return this.guidanceForRemoveEmptyElement(manipulation);
-    } else if (manipulation.type == "removeEmptyTextNode") {
+    } else if (manipulation.type === "removeEmptyTextNode") {
       return this.guidanceForRemoveEmptyTextNode(manipulation);
+    } else if (manipulation.type === "moveCursorToStartOfElement") {
+      return this.guidanceForMoveCursorToStartOfElement(manipulation);
     }
     return null;
   }
@@ -156,11 +154,23 @@ export default class ListDeletePlugin implements DeletePlugin {
 
     return null;
   }
-  private moveCursorToFirstChild(element: Element) {
-    const firstChild = element.firstElementChild;
-    if (!firstChild) throw new Error("Unexpected: element has no children");
-    moveCaret(firstChild, 0);
+  private guidanceForMoveCursorToStartOfElement(
+    manipulation: MoveCursorToStartOfElementManipulation
+  ): ManipulationGuidance | null {
+    if (isList(manipulation.node)) {
+      const dispatch = (manipulation: MoveCursorAfterElementManipulation) => {
+        const prevSib = manipulation.node.previousSibling;
+        if (prevSib && isElement(prevSib)) {
+          this.mergeNextChildOfList(prevSib, manipulation.node);
+        } else if (prevSib) {
+          this.mergeNextChildOfList(prevSib.parentElement!, manipulation.node);
+        }
+      };
+      return { allow: true, executor: dispatch.bind(this) };
+    }
+    return null;
   }
+
 
   private deleteEmptyTextNodeInLi(textNode: Text) {
     // are we at the end of the li?
@@ -196,6 +206,9 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     element.append(...firstChild.childNodes);
     firstChild.remove();
+    if (list.childNodes.length === 0) {
+      list.remove();
+    }
     this.hasChanged = true;
   }
   private mergeNextElement(element: Element) {
@@ -259,8 +272,8 @@ export default class ListDeletePlugin implements DeletePlugin {
   private isMagicSpan(node?: Node | null) {
     return (
       node &&
-      node.nodeType == node.ELEMENT_NODE &&
-      (node as Element).id == MagicSpan.ID
+      node.nodeType === node.ELEMENT_NODE &&
+      (node as Element).id === MagicSpan.ID
     );
   }
 }
