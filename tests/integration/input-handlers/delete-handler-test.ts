@@ -764,6 +764,71 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     assert.equal(list.childElementCount, 2);
     assert.equal(firstLi.textContent, "bcdefh");
   });
+  test("DBG Delete | Lists | delete should delete empty textnode and next character", async function (assert) {
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(
+        `<ul>
+          <li></li>
+         </ul>`
+      );
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const list = editor.children[0] as HTMLDivElement;
+    const firstLi = list.firstElementChild as HTMLLIElement;
+    const emptyTextNode = document.createTextNode("");
+    const filledTextNode = document.createTextNode("abc")
+
+    firstLi.appendChild(emptyTextNode);
+    firstLi.appendChild(filledTextNode);
+
+    const selection = getWindowSelection();
+    selection.collapse(emptyTextNode, 0);
+
+    await pressDelete();
+
+    assert.equal(list.childElementCount, 1);
+    assert.equal(firstLi.textContent, "bc");
+  });
+  test("DBG Delete | Lists | delete should delete empty textnode and merge next element's content", async function (assert) {
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(
+        `<ul>
+          <li></li>
+          <li>abc</li>
+         </ul>`
+      );
+    });
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+    const editor = getEditorElement();
+
+    const list = editor.children[0] as HTMLDivElement;
+    const firstLi = list.firstElementChild as HTMLLIElement;
+    const emptyTextNode = document.createTextNode("");
+
+    firstLi.appendChild(emptyTextNode);
+
+    const selection = getWindowSelection();
+    selection.collapse(emptyTextNode, 0);
+
+    await pressDelete();
+
+    assert.equal(list.childElementCount, 1);
+    assert.equal(firstLi.textContent, "abc");
+  });
   test("Delete | Lists | ol delete in empty li results in ol with one less li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
       editor.setHtmlContent(`<ol><li></li><li></li></ol>`);

@@ -9,6 +9,7 @@ import {
   MoveCursorAfterElementManipulation,
   Editor,
   RemoveEmptyElementManipulation,
+  RemoveElementWithChildrenThatArentVisible,
 } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 import { runInDebug } from "@ember/debug";
 import {
@@ -49,7 +50,10 @@ export default class ListDeletePlugin implements DeletePlugin {
   ): ManipulationGuidance | null {
     if (manipulation.type == "moveCursorAfterElement") {
       return this.guidanceForMoveCursorAfterElement(manipulation);
-    } else if (manipulation.type == "removeEmptyElement") {
+    } else if (
+      manipulation.type == "removeEmptyElement" ||
+      manipulation.type == "removeElementWithChildrenThatArentVisible"
+    ) {
       return this.guidanceForRemoveEmptyElement(manipulation);
     } else if (manipulation.type == "removeEmptyTextNode") {
       return this.guidanceForRemoveEmptyTextNode(manipulation);
@@ -109,7 +113,9 @@ export default class ListDeletePlugin implements DeletePlugin {
    * Cursor is positioned just before the end of an element which has no visible children
    */
   private guidanceForRemoveEmptyElement(
-    manipulation: RemoveEmptyElementManipulation
+    manipulation:
+      | RemoveEmptyElementManipulation
+      | RemoveElementWithChildrenThatArentVisible
   ): ManipulationGuidance | null {
     if (isLI(manipulation.node)) {
       // we are inside an empty li
@@ -198,7 +204,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (!nextNode) return;
     if (isElement(nextNode)) {
       if (isList(nextNode)) {
-      // next item is a list, this requires special handling because we need to merge with its first child
+        // next item is a list, this requires special handling because we need to merge with its first child
         this.mergeNextChildOfList(element, nextNode);
         return;
       }
@@ -208,7 +214,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       element.append(...nextNode.childNodes);
       nextNode.remove();
     } else {
-      if(stringToVisibleText(nextNode.textContent || "").length > 0) {
+      if (stringToVisibleText(nextNode.textContent || "").length > 0) {
         element.append(nextNode);
         this.hasChanged = true;
       } else {
