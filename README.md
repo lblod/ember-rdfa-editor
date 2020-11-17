@@ -70,6 +70,7 @@ module.exports = function(environment) {
 };
 ```
 * editor-html-paste: if enabled, support html paste input
+* editor-extended-html-paste: if enabled, support extended html paste input (old behavior)
 * editor-force-paragraph: if enabled, wrap text input in a paragraph if it's not already wrapped.
 
 ## Styling
