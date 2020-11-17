@@ -322,18 +322,17 @@ export default class ContentEditable extends Component {
     const clipboardData = (event.clipboardData || window.clipboardData);
 
     //TODO: if no clipboardData found, do we want an error?
-    if ((this.features.isEnabled('standard-editor-html-paste') ||
-         this.features.isEnabled('extended-editor-html-paste')) &&
-         this.hasClipboardHtmlContent(clipboardData))
-    {
+    if ((this.features.isEnabled('editor-html-paste')||
+         this.features.isEnabled('editor-extended-html-paste'))&&
+         this.hasClipboardHtmlContent(clipboardData) ) {
       try {
-        if (this.features.isEnabled('extended-editor-html-paste')){
-          const inputParser = new HTMLInputParser({extended: true});
-        }
-        else{
-          const inputParser = new HTMLInputParser({})
-        }
+
+        const inputParser = this.features.isEnabled('editor-extended-html-paste') ?
+          new HTMLInputParser({}):
+          new HTMLInputParser({safeTags: ['p', 'br', 'ol', 'ul', 'li', 'strong', 'u', 'em', 's', 'table', 'thead', 'tbody', 'th', 'tr', 'td']});
+
         const htmlPaste = clipboardData.getData('text/html');
+        debugger;
         const cleanHTML = inputParser.cleanupHTML(htmlPaste);
         const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
         this.rawEditor.update(sel, {set: { innerHTML: cleanHTML } });
