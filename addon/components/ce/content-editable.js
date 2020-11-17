@@ -322,9 +322,17 @@ export default class ContentEditable extends Component {
     const clipboardData = (event.clipboardData || window.clipboardData);
 
     //TODO: if no clipboardData found, do we want an error?
-    if (this.features.isEnabled('editor-html-paste') && this.hasClipboardHtmlContent(clipboardData) ) {
+    if ((this.features.isEnabled('standard-editor-html-paste') ||
+         this.features.isEnabled('extended-editor-html-paste')) &&
+         this.hasClipboardHtmlContent(clipboardData))
+    {
       try {
-        const inputParser = new HTMLInputParser({});
+        if (this.features.isEnabled('extended-editor-html-paste')){
+          const inputParser = new HTMLInputParser({extended: true});
+        }
+        else{
+          const inputParser = new HTMLInputParser({})
+        }
         const htmlPaste = clipboardData.getData('text/html');
         const cleanHTML = inputParser.cleanupHTML(htmlPaste);
         const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);

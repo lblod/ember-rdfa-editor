@@ -3,13 +3,15 @@
 module.exports = function(environment , appConfig) {
   var ENV = {
     featureFlags: {
-      'editor-html-paste': true,
+      'standard-editor-html-paste': true,
+      'extended-editor-html-paste': false,
       'editor-force-paragraph': false
     }
   };
 
   if (environment === 'production') {
-    ENV.featureFlags['editor-html-paste'] = false;
+    ENV.featureFlags['standard-editor-html-paste'] = false;
+    ENV.featureFlags['extended-editor-html-paste'] = false;
   }
   return ENV;
 };
