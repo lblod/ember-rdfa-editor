@@ -326,13 +326,11 @@ export default class ContentEditable extends Component {
          this.features.isEnabled('editor-extended-html-paste'))&&
          this.hasClipboardHtmlContent(clipboardData) ) {
       try {
-
         const inputParser = this.features.isEnabled('editor-extended-html-paste') ?
           new HTMLInputParser({}):
           new HTMLInputParser({safeTags: ['p', 'br', 'ol', 'ul', 'li', 'strong', 'u', 'em', 's', 'table', 'thead', 'tbody', 'th', 'tr', 'td']});
 
         const htmlPaste = clipboardData.getData('text/html');
-        debugger;
         const cleanHTML = inputParser.cleanupHTML(htmlPaste);
         const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
         this.rawEditor.update(sel, {set: { innerHTML: cleanHTML } });
