@@ -10,6 +10,8 @@ import {
   RemoveEmptyElementManipulation,
   RemoveElementWithChildrenThatArentVisible,
   MoveCursorToStartOfElementManipulation,
+  RemoveBoundaryBackwards,
+  RemoveBoundaryForwards,
 } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 import { runInDebug } from "@ember/debug";
 import {
@@ -18,13 +20,19 @@ import {
   isList,
   isElement,
   removeNode,
+  getWindowSelection,
+  isTextNode,
+  tagName,
 } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {
   moveCaret,
   stringToVisibleText,
   hasVisibleChildren,
+  moveCaretAfter,
+  moveCaretToEndOfNode,
 } from "@lblod/ember-rdfa-editor/editor/utils";
 import { isInList } from "../../ce/list-helpers";
+import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
 
 function debug(message: String, object: Object | null = null): void {
   runInDebug(() => {
@@ -44,17 +52,25 @@ export default class ListDeletePlugin implements DeletePlugin {
   guidanceForManipulation(
     manipulation: Manipulation
   ): ManipulationGuidance | null {
-    if (manipulation.type === "moveCursorAfterElement") {
-      return this.guidanceForMoveCursorAfterElement(manipulation);
-    } else if (
-      manipulation.type === "removeEmptyElement" ||
-      manipulation.type === "removeElementWithChildrenThatArentVisible"
-    ) {
+    // if (manipulation.type === "moveCursorAfterElement") {
+    //   return this.guidanceForMoveCursorAfterElement(manipulation);
+    // } else if (
+    //   manipulation.type === "removeEmptyElement" ||
+    //   manipulation.type === "removeElementWithChildrenThatArentVisible"
+    // ) {
+    //   return this.guidanceForRemoveEmptyElement(manipulation);
+    // } else if (manipulation.type === "removeEmptyTextNode") {
+    //   return this.guidanceForRemoveEmptyTextNode(manipulation);
+    // } else if (manipulation.type === "moveCursorToStartOfElement") {
+    //   return this.guidanceForMoveCursorToStartOfElement(manipulation);
+    // }
+    this.hasChanged = false;
+    if (manipulation.type === "removeBoundaryBackwards") {
+      return this.guidanceForRemoveBoundaryBackwards(manipulation);
+    } else if (manipulation.type === "removeBoundaryForwards") {
+      return this.guidanceForRemoveBoundaryForwards(manipulation);
+    } else if (manipulation.type === "removeEmptyElement") {
       return this.guidanceForRemoveEmptyElement(manipulation);
-    } else if (manipulation.type === "removeEmptyTextNode") {
-      return this.guidanceForRemoveEmptyTextNode(manipulation);
-    } else if (manipulation.type === "moveCursorToStartOfElement") {
-      return this.guidanceForMoveCursorToStartOfElement(manipulation);
     }
     return null;
   }
@@ -66,45 +82,33 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     return false;
   }
-  /**
-   * Cursor is positioned just before the end of an element which has visible children
-   */
-  private guidanceForMoveCursorAfterElement(
-    manipulation: MoveCursorAfterElementManipulation
+  private guidanceForRemoveBoundaryBackwards(
+    manipulation: RemoveBoundaryBackwards
   ): ManipulationGuidance | null {
-    if (isLI(manipulation.node)) {
-      const dispatcher = (manipulation: MoveCursorAfterElementManipulation) => {
-        this.mergeNextElement(manipulation.node);
+    // if (this.isAnyListNode(manipulation.node)) {
+      const dispatch = (
+        manipulation: RemoveBoundaryBackwards,
+        editor: RawEditor
+      ) => {
+        this.mergeBackwards(manipulation.node, editor);
       };
-      return { allow: true, executor: dispatcher.bind(this) };
-    } else {
-      const parentLi = getParentLI(manipulation.node);
-
-      if (parentLi) {
-        //we are inside some element within a li
-        if (manipulation.node.nextElementSibling) {
-          const dispatcher = () => {
-            moveCaret(manipulation.node.nextElementSibling!.childNodes[0], 0);
-          };
-          return { allow: true, executor: dispatcher.bind(this) };
-        }
-        const dispatcher = () => {
-          this.mergeNextElement(parentLi);
-        };
-        return { allow: true, executor: dispatcher.bind(this) };
-      }
-      const nextElement = this.findNextNode(manipulation.node);
-      if (isList(nextElement)) {
-        // we are just before a list
-        const dispatcher = (
-          manipulation: MoveCursorAfterElementManipulation
-        ) => {
-          this.mergeNextChildOfList(manipulation.node, nextElement!);
-        };
-        return { allow: true, executor: dispatcher.bind(this) };
-      }
-    }
-    return null;
+      return { allow: true, executor: dispatch.bind(this) };
+    // }
+    // return null;
+  }
+  private guidanceForRemoveBoundaryForwards(
+    manipulation: RemoveBoundaryForwards
+  ): ManipulationGuidance | null {
+    // if (this.isAnyListNode(manipulation.node)) {
+      const dispatch = (
+        manipulation: RemoveBoundaryForwards,
+        editor: RawEditor
+      ) => {
+        this.mergeForwards(manipulation.node, editor);
+      };
+      return { allow: true, executor: dispatch.bind(this) };
+    // }
+    // return null;
   }
 
   /**
@@ -115,10 +119,12 @@ export default class ListDeletePlugin implements DeletePlugin {
       | RemoveEmptyElementManipulation
       | RemoveElementWithChildrenThatArentVisible
   ): ManipulationGuidance | null {
-    if (isLI(manipulation.node)) {
-      // we are inside an empty li
-      const dispatcher = (manipulation: RemoveEmptyElementManipulation) => {
-        this.mergeNextElement(manipulation.node);
+    if (this.isAnyListNode(manipulation.node)) {
+      const dispatcher = (
+        manipulation: RemoveEmptyElementManipulation,
+        editor: RawEditor
+      ) => {
+        this.mergeForwards(manipulation.node, editor);
       };
       return { allow: true, executor: dispatcher.bind(this) };
     }
@@ -126,153 +132,169 @@ export default class ListDeletePlugin implements DeletePlugin {
   }
 
   /**
-   * Cursor is inside a textNode without any visible text
+   * Merge the previous node with our node
    */
-  private guidanceForRemoveEmptyTextNode(
-    manipulation: RemoveEmptyTextNodeManipulation
-  ): ManipulationGuidance | null {
-    const parent = manipulation.node.parentElement;
-    if (!parent)
-      throw new Error("Invariant violation: textnode without parent");
-    if (isInList(manipulation.node)) {
-      // we are inside an empty textnode inside of a li
-      // so we need to handle this
-      const dispatcher = (manipulation: RemoveEmptyTextNodeManipulation) => {
-        this.deleteEmptyTextNodeInLi(manipulation.node);
-      };
-      return { allow: true, executor: dispatcher.bind(this) };
-    } else {
-      const nextElement = this.findNextNode(parent) as HTMLElement;
-      if (isList(nextElement)) {
-        const dispatcher = () => {
-          parent.textContent = stringToVisibleText(parent.textContent || "");
-          this.mergeNextChildOfList(parent, nextElement!);
-        };
-        return { allow: true, executor: dispatcher.bind(this) };
-      }
-    }
-
-    return null;
-  }
-  /**
-   * Cursor is at the end of a textNode that is a sibling of the element after it
-   */
-  private guidanceForMoveCursorToStartOfElement(
-    manipulation: MoveCursorToStartOfElementManipulation
-  ): ManipulationGuidance | null {
-    if (isList(manipulation.node)) {
-      const dispatch = (manipulation: MoveCursorAfterElementManipulation) => {
-        const prevSib = manipulation.node.previousSibling;
-        if (prevSib && isElement(prevSib)) {
-          // this probably never happens, but I'm not sure
-          this.mergeNextChildOfList(prevSib, manipulation.node);
-        } else if (prevSib) {
-          // we can use the same merging logic, but we have to merge with the parent
-          this.mergeNextChildOfList(prevSib.parentElement!, manipulation.node);
-        }
-      };
-      return { allow: true, executor: dispatch.bind(this) };
-    }
-    return null;
-  }
-
-  private deleteEmptyTextNodeInLi(textNode: Text) {
-    // are we at the end of the li?
-    const sibling = this.getNextSibling(textNode);
-    if (sibling) {
-      // there are more elements in this li
-      // remove our node and move the cursor to the start of the next
-      textNode.remove();
-      moveCaret(sibling, 0);
-    } else {
-      // we are at the end of the li
-      const parent = textNode.parentElement;
-      if (!parent)
-        throw new Error("Invariant violation: Textnode without parent");
-      this.mergeNextElement(parent);
-      textNode.remove();
-    }
-  }
-  /**
-   * Take the content of the first child of list and add it to element.
-   * Then delete the child and, if the list is now empty, delete it.
-   * @param element the element to merge into
-   * @param list the list
-   */
-  private mergeNextChildOfList(element: Element, list: Element) {
-    let firstChild: Element | null = list.children[0];
-    while (
-      firstChild &&
-      !(isLI(firstChild) || hasVisibleChildren(firstChild))
-    ) {
-      let old = firstChild;
-      firstChild = this.getNextElementSibling(old);
-      old.remove();
-    }
-    if (!firstChild) {
-      // empty ul
-      list.remove();
+  private mergeBackwards(node: Node, editor: RawEditor) {
+    const selection = getWindowSelection();
+    const baseNode = this.findNodeBefore(node, editor.rootNode);
+    if (!baseNode) {
       return;
     }
-    // the most common case for this is starting with an empty document
-    // any text will be just textNodes, and inserting a list will
-    // insert it as a sibling to those nodes. This means we cannot simply append
-    if (element === list.parentElement) {
-      for (const node of firstChild.childNodes) {
-        list.before(node);
-      }
-    } else {
-      element.append(...firstChild.childNodes);
+    const mergeNode = this.getDeepestFirstDescendant(baseNode);
+    let cursorPosition = 0;
+    if(isTextNode(mergeNode) && mergeNode.textContent) {
+      cursorPosition = mergeNode.textContent.length;
     }
-    for (const node of firstChild.childNodes) {
-      list.before(node);
-    }
-    firstChild.remove();
-    if (list.childNodes.length === 0) {
-      list.remove();
-    }
-    this.hasChanged = true;
-  }
-  /**
-   * Generic method for merging the content of the element after the given element
-   * into the given element
-   */
-  private mergeNextElement(element: Element) {
-    // find the next element. This can be a sibling or a sibling of the parent
-    const nextNode = this.findNextNode(element);
-    if (!nextNode) return;
-    if (isElement(nextNode)) {
-      if (isList(nextNode)) {
-        // next item is a list, this requires special handling because we need to merge with its first child
-        this.mergeNextChildOfList(element, nextNode);
-        return;
-      }
-      if (isLI(nextNode) || hasVisibleChildren(nextNode)) {
-        this.hasChanged = true;
-      }
-      element.append(...nextNode.childNodes);
-      nextNode.remove();
-    } else {
-      if (stringToVisibleText(nextNode.textContent || "").length > 0) {
-        element.append(nextNode);
-        this.hasChanged = true;
-      } else {
-        removeNode(nextNode as ChildNode);
-      }
-    }
-  }
-  /**
-   * Find the next relevant element
-   * This is broader than sibling, it can also be a sibling of the parent
-   */
-  private findNextNode(element: Element): Node | null {
-    let rslt = this.getNextSibling(element);
-    if (rslt) return rslt;
+    const nodeToMerge = this.getDeepestFirstDescendant(node);
+    this.mergeNodes(mergeNode, nodeToMerge);
 
-    const parent = element.parentElement;
-    if (!parent) return null;
-    rslt = this.getNextSibling(parent);
-    return rslt;
+    if(isTextNode(mergeNode)) {
+      selection.collapse(mergeNode, cursorPosition)
+    } else {
+      moveCaret(nodeToMerge, cursorPosition)
+    }
+    editor.updateRichNode();
+  }
+
+  /**
+   * Merge the next node with our node
+   */
+  private mergeForwards(node: Node, editor: RawEditor) {
+    debugger;
+    const selection = getWindowSelection();
+
+    const mergeNode = this.getDeepestLastDescendant(node);
+    let cursorPosition = 0;
+    if(isTextNode(mergeNode) && mergeNode.textContent) {
+      cursorPosition = mergeNode.textContent.length;
+    }
+    const targetNode = this.findNodeAfter(node, editor.rootNode);
+    if (!targetNode) {
+      return;
+    }
+    const nodeToMerge = this.getDeepestFirstDescendant(targetNode);
+    this.mergeNodes(mergeNode, nodeToMerge);
+
+    if(isTextNode(mergeNode)) {
+      selection.collapse(mergeNode, cursorPosition)
+    } else if(isTextNode(nodeToMerge)) {
+      selection.collapse(nodeToMerge, cursorPosition)
+    }else {
+      moveCaretToEndOfNode(mergeNode);
+    }
+    editor.updateRichNode();
+  }
+  /**
+   * Merge two nodes. This means the first textNode encountered in a DFS of nodeToMerge will be appended to
+   * the last textNode of mergeNode
+   */
+  private mergeNodes(mergeNode: Node, nodeToMerge: Node) {
+    if (isTextNode(nodeToMerge)) {
+      const parent = nodeToMerge.parentElement;
+      if (isTextNode(mergeNode)) {
+        this.concatenateNodes(mergeNode, nodeToMerge);
+        removeNode(nodeToMerge);
+      } else {
+        mergeNode.appendChild(nodeToMerge);
+      }
+      if (stringToVisibleText(nodeToMerge.textContent || "")) {
+        this.hasChanged = true;
+      }
+      this.removeEmptyAncestors(parent!);
+    } else {
+      // TODO we need better better utilities to check this
+      //these nodes are always visible, even if they are empty
+      if (isLI(nodeToMerge) || tagName(nodeToMerge) === "br") {
+        this.hasChanged = true;
+      }
+      this.removeEmptyAncestors(nodeToMerge as Element);
+    }
+  }
+  private findNodeAfter(node: Node, root: Node): Node | null {
+    if (node === root) {
+      return null;
+    }
+    let sib = this.getNextSibling(node);
+    if (sib) {
+      return sib;
+    }
+    let parent = node.parentNode;
+    while (!sib && parent && parent !== root) {
+      sib = this.getNextSibling(parent);
+      parent = parent.parentNode;
+    }
+    return sib;
+  }
+  private findNodeBefore(node: Node, root: Node): Node | null {
+    if (node === root) {
+      return null;
+    }
+    let sib = node.previousSibling;
+    if (sib) {
+      return sib;
+    }
+    let parent = node.parentNode;
+    while (!sib && parent && parent !== root) {
+      sib = parent.previousSibling;
+      parent = parent.parentNode;
+    }
+    return sib;
+  }
+  private concatenateNodes(left: Text, right: Text) {
+    if (left.textContent) {
+      if (right.textContent) {
+        left.textContent += right.textContent;
+      }
+    } else {
+      left.textContent = right.textContent;
+    }
+  }
+  private getDeepestLastDescendant(node: Node): Node {
+    if (isTextNode(node)) {
+      return node;
+      // assuming we are only dealing with textnodes and element nodes
+    } else {
+      const lastChild = node.lastChild;
+      if (lastChild) {
+        return this.getDeepestFirstDescendant(lastChild);
+      } else {
+        return node;
+      }
+    }
+  }
+  private getDeepestFirstDescendant(node: Node): Node {
+    if (isTextNode(node)) {
+      return node;
+      // assuming we are only dealing with textnodes and element nodes
+    } else {
+      const firstChild = node.firstChild;
+      if (firstChild) {
+        return this.getDeepestFirstDescendant(firstChild);
+      } else {
+        return node;
+      }
+    }
+  }
+  private removeEmptyAncestors(element: Element) {
+    debugger;
+
+    if (hasVisibleChildren(element)) {
+      return;
+    }
+    let cur: Element | null = element;
+    let lastCur: Element | null = null
+    while(cur && !hasVisibleChildren(cur)) {
+      lastCur = cur;
+      cur = cur.parentElement;
+    }
+    if(cur && !hasVisibleChildren(cur)) {
+      cur.remove();
+    } else {
+      if(lastCur) {
+        lastCur.remove()
+      }
+    }
+
   }
 
   /**
@@ -285,21 +307,17 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     return next;
   }
-  /**
-   * Magicspan-aware nextElementSibling
-   */
-  private getNextElementSibling(element: Element): Element | null {
-    let next = element.nextElementSibling;
-    while (this.isMagicSpan(next)) {
-      next = next!.nextElementSibling;
-    }
-    return next;
-  }
   private isMagicSpan(node?: Node | null) {
     return (
       node &&
       node.nodeType === node.ELEMENT_NODE &&
       (node as Element).id === MagicSpan.ID
     );
+  }
+  private isAnyListNode(node: Node | null) {
+    if (!node) {
+      return false;
+    }
+    return isList(node) || isLI(node);
   }
 }

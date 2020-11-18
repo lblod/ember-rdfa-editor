@@ -1,4 +1,4 @@
-import { invisibleSpace, isAllWhitespace, isDisplayedAsBlock, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { invisibleSpace, isAllWhitespace, isDisplayedAsBlock, tagName, getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { runInDebug } from '@ember/debug';
 
 /**
@@ -91,6 +91,15 @@ export function moveCaretAfter(child: ChildNode) : null | Selection {
     console.warn('trying to move cursor before a child that is no longer connected to the dom tree');
     return null;
   }
+}
+export function moveCaretToEndOfNode(node: Node): Selection {
+  const selection = getWindowSelection();
+  const range = document.createRange();
+  range.selectNode(node);
+  range.collapse();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  return selection
 }
 
 /**

@@ -526,10 +526,10 @@ export default class DeleteHandler implements InputHandler {
         visualReferencePoint = new MagicSpan(document.createElement('span'), this.rawEditor);
         node.after(visualReferencePoint.span);
         break;
-      case "moveCursorAfterElement":
+      case "removeBoundaryForwards":
         visualReferencePoint = new Caret(this.rawEditor);
         break;
-      case "moveCursorToStartOfElement":
+      case "removeBoundaryBackwards":
         visualReferencePoint = new Caret(this.rawEditor);
         break;
       case "keepCursorAtEnd":
@@ -636,12 +636,14 @@ export default class DeleteHandler implements InputHandler {
         break;
       }
 
-      case "moveCursorAfterElement": {
+      case "removeBoundaryForwards": {
+        // default implementation is almost always wrong, but harmless and it visually does something
         moveCaretAfter(manipulation.node);
         break;
       }
 
-      case "moveCursorToStartOfElement": {
+      case "removeBoundaryBackwards": {
+        // default implementation is almost always wrong, but harmless and it visually does something
         moveCaretBefore(manipulation.node.childNodes[0]); //Note: it has been checked it has children
         break;
       }
@@ -672,6 +674,7 @@ export default class DeleteHandler implements InputHandler {
     // check where our cursor is and get the deepest "thing" after
     // the cursor (character or node)
     const thingAfterCursor: ThingAfterCursor = this.getThingAfterCursor();
+    console.log(thingAfterCursor)
     switch (thingAfterCursor.type) {
 
       case "character": {
@@ -722,7 +725,7 @@ export default class DeleteHandler implements InputHandler {
         const elementAfterCursor = thingAfterCursor as ElementEndPosition;
         if (hasVisibleChildren(elementAfterCursor.node)) {
           return {
-            type: "moveCursorAfterElement",
+            type: "removeBoundaryForwards",
             node: elementAfterCursor.node
           };
         } else {
@@ -738,7 +741,7 @@ export default class DeleteHandler implements InputHandler {
         const element = parentAfterCursor.node;
         if (hasVisibleChildren(element)) {
           return {
-            type: "moveCursorToStartOfElement",
+            type: "removeBoundaryBackwards",
             node: element as HTMLElement
           };
         } else {
@@ -1061,7 +1064,7 @@ function checkVisibleChange(currentVisualCursorCoordinates: Array<DOMRect>,
     return false;
   } else if (!previousVisualCursorCoordinates.length && currentVisualCursorCoordinates.length) {
     editorDebug(`delete-handler.checkVisibleChange`, `no previous coordinates`);
-    return true;
+    return false;
   } else if (previousVisualCursorCoordinates.length && !currentVisualCursorCoordinates.length) {
     editorDebug(`delete-handler.checkVisibleChange`, 'no new coordinates');
     return true;
