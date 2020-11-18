@@ -112,7 +112,9 @@ export default class ListDeletePlugin implements DeletePlugin {
   }
 
   /**
-   * Merge the previous node with our node
+   * Merge our node into the previous node
+   * @param node the node which will be merged into the previous one
+   * @param editor The editor instance
    */
   private mergeBackwards(node: Node, editor: RawEditor) {
     const selection = getWindowSelection();
@@ -134,6 +136,8 @@ export default class ListDeletePlugin implements DeletePlugin {
 
   /**
    * Merge the next node with our node
+   * @param node The node to merge into
+   * @param editor The editor instance
    */
   private mergeForwards(node: Node, editor: RawEditor) {
     const selection = getWindowSelection();
@@ -154,7 +158,12 @@ export default class ListDeletePlugin implements DeletePlugin {
     editor.updateRichNode();
   }
 
-  /** Reposition cursor after a merge */
+  /**
+   * Reposition cursor after a merge
+   * @param mergeNode The node to merge into
+   * @param nodeToMerge the node which was merged into the mergeNode
+   * @param cursorPosition The position of the cursor before the merge
+   */
   private repositionCursor(
     mergeNode: Node,
     nodeToMerge: Node,
@@ -195,6 +204,15 @@ export default class ListDeletePlugin implements DeletePlugin {
       this.removeEmptyAncestors(nodeToMerge as Element);
     }
   }
+  /**
+   * Find the first node after node.
+   * Searches up the tree until it encouters root or the node
+   * has a sibling.
+   * Skips magicspans.
+   * @param node The node from which to start looking
+   * @param root When we encounter this node, stop looking
+   * @returns The node after this node, or null if there is none
+   * */
   private findNodeAfter(node: Node, root: Node): Node | null {
     if (node === root) {
       return null;
@@ -210,6 +228,14 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     return sib;
   }
+  /**
+   * Find the first node before node.
+   * Searches up the tree until it encouters root or the node
+   * has a sibling.
+   * @param node The node from which to start looking
+   * @param root When we encounter this node, stop looking
+   * @returns The node before this node, or null if there is none
+   * */
   private findNodeBefore(node: Node, root: Node): Node | null {
     if (node === root) {
       return null;
@@ -225,6 +251,15 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     return sib;
   }
+
+  /**
+   * Concatenate two textnodes
+   * After the operation, the left node will contain
+   * the textContent of left and right, concatenated.
+   * The right node will remain unchanged.
+   * @param left the left node
+   * @param right the right node
+   * */
   private concatenateNodes(left: Text, right: Text) {
     if (left.textContent) {
       if (right.textContent) {
@@ -234,28 +269,47 @@ export default class ListDeletePlugin implements DeletePlugin {
       left.textContent = right.textContent;
     }
   }
-  private getDeepestLastDescendant(node: Node): Node {
-    if(isTextNode(node)) {
-      return node;
-    }
-    let cur = node;
-    while(cur.lastChild) {
-      cur = cur.lastChild
-    }
-    return cur;
-  }
-  private getDeepestFirstDescendant(node: Node): Node {
-    if(isTextNode(node)) {
-      return node;
-    }
-    let cur = node;
-    while(cur.firstChild) {
-      cur = cur.firstChild
-    }
-    return cur;
-  }
-  private removeEmptyAncestors(element: Element) {
 
+  /**
+   * Go as deep as possible, looking at the lastChild
+   * of the node at every step. Stop when we found a
+   * textNode.
+   * @param node The node to start from
+   * @returns the deepest lastchild
+   */
+  private getDeepestLastDescendant(node: Node): Node {
+    if (isTextNode(node)) {
+      return node;
+    }
+    let cur = node;
+    while (cur.lastChild) {
+      cur = cur.lastChild;
+    }
+    return cur;
+  }
+  /**
+   * Go as deep as possible, looking at the firstChild
+   * of the node at every step. Stop when we found a
+   * textNode.
+   * @param node The node to start from
+   * @returns the deepest firstChild
+   */
+  private getDeepestFirstDescendant(node: Node): Node {
+    if (isTextNode(node)) {
+      return node;
+    }
+    let cur = node;
+    while (cur.firstChild) {
+      cur = cur.firstChild;
+    }
+    return cur;
+  }
+  /**
+   * If the element is empty, remove it and traverse up the tree,
+   * removing empty parents at every step.
+   * @param element The element to start from
+   */
+  private removeEmptyAncestors(element: Element) {
     if (hasVisibleChildren(element)) {
       return;
     }
@@ -277,6 +331,7 @@ export default class ListDeletePlugin implements DeletePlugin {
 
   /**
    * Magicspan-aware nextSibling
+   * @param node The node to start looking from
    */
   private getNextSibling(node: Node): Node | null {
     let next = node.nextSibling;
@@ -285,6 +340,10 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     return next;
   }
+  /**
+   * Checks whether a node is a magicspan
+   * @param node The node to check
+   */
   private isMagicSpan(node?: Node | null) {
     return (
       node &&
@@ -292,6 +351,12 @@ export default class ListDeletePlugin implements DeletePlugin {
       (node as Element).id === MagicSpan.ID
     );
   }
+
+  /**
+   * Determines wheter the node is considered to be
+   * part of the list context.
+   * @param node The node to check
+   */
   private isAnyListNode(node: Node | null) {
     if (!node) {
       return false;
