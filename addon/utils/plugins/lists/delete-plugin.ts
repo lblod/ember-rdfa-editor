@@ -65,7 +65,7 @@ export default class ListDeletePlugin implements DeletePlugin {
   private guidanceForRemoveBoundaryBackwards(
     manipulation: RemoveBoundaryBackwards
   ): ManipulationGuidance | null {
-    // if (this.isAnyListNode(manipulation.node)) {
+    if (this.isAnyListNode(manipulation.node)) {
     const dispatch = (
       manipulation: RemoveBoundaryBackwards,
       editor: RawEditor
@@ -73,13 +73,13 @@ export default class ListDeletePlugin implements DeletePlugin {
       this.mergeBackwards(manipulation.node, editor);
     };
     return { allow: true, executor: dispatch.bind(this) };
-    // }
-    // return null;
+    }
+    return null;
   }
   private guidanceForRemoveBoundaryForwards(
     manipulation: RemoveBoundaryForwards
   ): ManipulationGuidance | null {
-    // if (this.isAnyListNode(manipulation.node)) {
+    if (this.isAnyListNode(manipulation.node)) {
     const dispatch = (
       manipulation: RemoveBoundaryForwards,
       editor: RawEditor
@@ -87,8 +87,8 @@ export default class ListDeletePlugin implements DeletePlugin {
       this.mergeForwards(manipulation.node, editor);
     };
     return { allow: true, executor: dispatch.bind(this) };
-    // }
-    // return null;
+    }
+    return null;
   }
 
   /**
