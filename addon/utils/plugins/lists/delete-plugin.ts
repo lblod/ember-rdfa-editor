@@ -44,18 +44,6 @@ export default class ListDeletePlugin implements DeletePlugin {
   guidanceForManipulation(
     manipulation: Manipulation
   ): ManipulationGuidance | null {
-    // if (manipulation.type === "moveCursorAfterElement") {
-    //   return this.guidanceForMoveCursorAfterElement(manipulation);
-    // } else if (
-    //   manipulation.type === "removeEmptyElement" ||
-    //   manipulation.type === "removeElementWithChildrenThatArentVisible"
-    // ) {
-    //   return this.guidanceForRemoveEmptyElement(manipulation);
-    // } else if (manipulation.type === "removeEmptyTextNode") {
-    //   return this.guidanceForRemoveEmptyTextNode(manipulation);
-    // } else if (manipulation.type === "moveCursorToStartOfElement") {
-    //   return this.guidanceForMoveCursorToStartOfElement(manipulation);
-    // }
     this.hasChanged = false;
     if (manipulation.type === "removeBoundaryBackwards") {
       return this.guidanceForRemoveBoundaryBackwards(manipulation);
@@ -203,7 +191,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     } else {
       // TODO we need better better utilities to check this
       //these nodes are always visible, even if they are empty
-      if (isLI(nodeToMerge) || tagName(nodeToMerge) === "br") {
+      if (isLI(nodeToMerge) || tagName(nodeToMerge as Element) === "br") {
         this.hasChanged = true;
       }
       this.removeEmptyAncestors(nodeToMerge as Element);
