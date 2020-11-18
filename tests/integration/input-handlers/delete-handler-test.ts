@@ -401,7 +401,6 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     const selection = getWindowSelection();
     selection.collapse(divNode, 0);
     assert.equal(divNode.innerHTML, '   <h1 resource="title">Notulen Van</h1>'); //make sure this is not removed somehow
-    debugger;
     await triggerKeyEvent("div[contenteditable]", "keydown", "Delete");
     const resultString = `<h1 resource="title" data-editor-position-level="0" data-editor-rdfa-position-level="0">otulen Van</h1>`;
     assert.equal(divNode.innerHTML, resultString);

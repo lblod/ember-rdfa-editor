@@ -115,7 +115,6 @@ export default class ListDeletePlugin implements DeletePlugin {
    * Merge the previous node with our node
    */
   private mergeBackwards(node: Node, editor: RawEditor) {
-    debugger;
     const selection = getWindowSelection();
     const baseNode = this.findNodeBefore(node, editor.rootNode);
     if (!baseNode) {
@@ -137,7 +136,6 @@ export default class ListDeletePlugin implements DeletePlugin {
    * Merge the next node with our node
    */
   private mergeForwards(node: Node, editor: RawEditor) {
-    debugger;
     const selection = getWindowSelection();
 
     const mergeNode = this.getDeepestLastDescendant(node);
@@ -263,7 +261,6 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
   }
   private removeEmptyAncestors(element: Element) {
-    debugger;
 
     if (hasVisibleChildren(element)) {
       return;
