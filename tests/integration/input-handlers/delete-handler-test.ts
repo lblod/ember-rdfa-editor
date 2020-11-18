@@ -401,6 +401,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     const selection = getWindowSelection();
     selection.collapse(divNode, 0);
     assert.equal(divNode.innerHTML, '   <h1 resource="title">Notulen Van</h1>'); //make sure this is not removed somehow
+    debugger;
     await triggerKeyEvent("div[contenteditable]", "keydown", "Delete");
     const resultString = `<h1 resource="title" data-editor-position-level="0" data-editor-rdfa-position-level="0">otulen Van</h1>`;
     assert.equal(divNode.innerHTML, resultString);
@@ -875,10 +876,11 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     const list = editor.children[0] as HTMLUListElement;
     const firstItem = list.childNodes[0] as HTMLLIElement;
 
-    moveCaret(firstItem, 0);
+    const selection = getWindowSelection();
+    selection.collapse(firstItem, 0);
 
     await pressDelete();
-    assert.equal(list.childNodes.length, 1);
+    assert.equal(list.childElementCount, 1);
   });
 
   test("Delete | Lists | ol delete at end of nonempty li deletes the next empty li", async function (assert) {

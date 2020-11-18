@@ -5,33 +5,25 @@ import {
 import {
   Manipulation,
   ManipulationGuidance,
-  RemoveEmptyTextNodeManipulation,
-  MoveCursorAfterElementManipulation,
   RemoveEmptyElementManipulation,
   RemoveElementWithChildrenThatArentVisible,
-  MoveCursorToStartOfElementManipulation,
   RemoveBoundaryBackwards,
   RemoveBoundaryForwards,
 } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 import { runInDebug } from "@ember/debug";
 import {
   isLI,
-  getParentLI,
   isList,
-  isElement,
   removeNode,
   getWindowSelection,
   isTextNode,
   tagName,
 } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {
-  moveCaret,
   stringToVisibleText,
   hasVisibleChildren,
-  moveCaretAfter,
   moveCaretToEndOfNode,
 } from "@lblod/ember-rdfa-editor/editor/utils";
-import { isInList } from "../../ce/list-helpers";
 import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
 
 function debug(message: String, object: Object | null = null): void {
@@ -86,13 +78,13 @@ export default class ListDeletePlugin implements DeletePlugin {
     manipulation: RemoveBoundaryBackwards
   ): ManipulationGuidance | null {
     // if (this.isAnyListNode(manipulation.node)) {
-      const dispatch = (
-        manipulation: RemoveBoundaryBackwards,
-        editor: RawEditor
-      ) => {
-        this.mergeBackwards(manipulation.node, editor);
-      };
-      return { allow: true, executor: dispatch.bind(this) };
+    const dispatch = (
+      manipulation: RemoveBoundaryBackwards,
+      editor: RawEditor
+    ) => {
+      this.mergeBackwards(manipulation.node, editor);
+    };
+    return { allow: true, executor: dispatch.bind(this) };
     // }
     // return null;
   }
@@ -100,13 +92,13 @@ export default class ListDeletePlugin implements DeletePlugin {
     manipulation: RemoveBoundaryForwards
   ): ManipulationGuidance | null {
     // if (this.isAnyListNode(manipulation.node)) {
-      const dispatch = (
-        manipulation: RemoveBoundaryForwards,
-        editor: RawEditor
-      ) => {
-        this.mergeForwards(manipulation.node, editor);
-      };
-      return { allow: true, executor: dispatch.bind(this) };
+    const dispatch = (
+      manipulation: RemoveBoundaryForwards,
+      editor: RawEditor
+    ) => {
+      this.mergeForwards(manipulation.node, editor);
+    };
+    return { allow: true, executor: dispatch.bind(this) };
     // }
     // return null;
   }
@@ -135,6 +127,7 @@ export default class ListDeletePlugin implements DeletePlugin {
    * Merge the previous node with our node
    */
   private mergeBackwards(node: Node, editor: RawEditor) {
+    debugger;
     const selection = getWindowSelection();
     const baseNode = this.findNodeBefore(node, editor.rootNode);
     if (!baseNode) {
@@ -142,17 +135,13 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     const mergeNode = this.getDeepestFirstDescendant(baseNode);
     let cursorPosition = 0;
-    if(isTextNode(mergeNode) && mergeNode.textContent) {
+    if (isTextNode(mergeNode) && mergeNode.textContent) {
       cursorPosition = mergeNode.textContent.length;
     }
     const nodeToMerge = this.getDeepestFirstDescendant(node);
     this.mergeNodes(mergeNode, nodeToMerge);
 
-    if(isTextNode(mergeNode)) {
-      selection.collapse(mergeNode, cursorPosition)
-    } else {
-      moveCaret(nodeToMerge, cursorPosition)
-    }
+    this.repositionCursor(mergeNode, nodeToMerge, cursorPosition);
     editor.updateRichNode();
   }
 
@@ -165,7 +154,7 @@ export default class ListDeletePlugin implements DeletePlugin {
 
     const mergeNode = this.getDeepestLastDescendant(node);
     let cursorPosition = 0;
-    if(isTextNode(mergeNode) && mergeNode.textContent) {
+    if (isTextNode(mergeNode) && mergeNode.textContent) {
       cursorPosition = mergeNode.textContent.length;
     }
     const targetNode = this.findNodeAfter(node, editor.rootNode);
@@ -175,14 +164,24 @@ export default class ListDeletePlugin implements DeletePlugin {
     const nodeToMerge = this.getDeepestFirstDescendant(targetNode);
     this.mergeNodes(mergeNode, nodeToMerge);
 
-    if(isTextNode(mergeNode)) {
-      selection.collapse(mergeNode, cursorPosition)
-    } else if(isTextNode(nodeToMerge)) {
-      selection.collapse(nodeToMerge, cursorPosition)
-    }else {
+    this.repositionCursor(mergeNode, nodeToMerge, cursorPosition);
+    editor.updateRichNode();
+  }
+
+  /** Reposition cursor after a merge */
+  private repositionCursor(
+    mergeNode: Node,
+    nodeToMerge: Node,
+    cursorPosition: number
+  ) {
+    const selection = getWindowSelection();
+    if (isTextNode(mergeNode)) {
+      selection.collapse(mergeNode, cursorPosition);
+    } else if (isTextNode(nodeToMerge)) {
+      selection.collapse(nodeToMerge, cursorPosition);
+    } else {
       moveCaretToEndOfNode(mergeNode);
     }
-    editor.updateRichNode();
   }
   /**
    * Merge two nodes. This means the first textNode encountered in a DFS of nodeToMerge will be appended to
@@ -282,19 +281,19 @@ export default class ListDeletePlugin implements DeletePlugin {
       return;
     }
     let cur: Element | null = element;
-    let lastCur: Element | null = null
-    while(cur && !hasVisibleChildren(cur)) {
+    let lastCur: Element | null = null;
+    while (cur && !hasVisibleChildren(cur)) {
       lastCur = cur;
-      cur = cur.parentElement;
+      cur = lastCur.parentElement;
+      lastCur.remove();
     }
-    if(cur && !hasVisibleChildren(cur)) {
+    if (cur && !hasVisibleChildren(cur)) {
       cur.remove();
     } else {
-      if(lastCur) {
-        lastCur.remove()
+      if (lastCur) {
+        lastCur.remove();
       }
     }
-
   }
 
   /**
