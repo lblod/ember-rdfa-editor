@@ -235,30 +235,24 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
   }
   private getDeepestLastDescendant(node: Node): Node {
-    if (isTextNode(node)) {
+    if(isTextNode(node)) {
       return node;
-      // assuming we are only dealing with textnodes and element nodes
-    } else {
-      const lastChild = node.lastChild;
-      if (lastChild) {
-        return this.getDeepestFirstDescendant(lastChild);
-      } else {
-        return node;
-      }
     }
+    let cur = node;
+    while(cur.lastChild) {
+      cur = cur.lastChild
+    }
+    return cur;
   }
   private getDeepestFirstDescendant(node: Node): Node {
-    if (isTextNode(node)) {
+    if(isTextNode(node)) {
       return node;
-      // assuming we are only dealing with textnodes and element nodes
-    } else {
-      const firstChild = node.firstChild;
-      if (firstChild) {
-        return this.getDeepestFirstDescendant(firstChild);
-      } else {
-        return node;
-      }
     }
+    let cur = node;
+    while(cur.firstChild) {
+      cur = cur.firstChild
+    }
+    return cur;
   }
   private removeEmptyAncestors(element: Element) {
 
