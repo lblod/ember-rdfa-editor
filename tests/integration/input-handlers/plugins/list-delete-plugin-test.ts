@@ -2,15 +2,125 @@ import { module, test } from "qunit";
 import { setupRenderingTest } from "ember-qunit";
 import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
 import { getWindowSelection } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import { moveCaret } from "@lblod/ember-rdfa-editor/editor/utils";
 import {
-  getEditorElement,
-  pressDelete,
-  wait,
-  renderEditor,
-} from "dummy/tests/test-utils";
+  moveCaret,
+  hasVisibleChildren,
+} from "@lblod/ember-rdfa-editor/editor/utils";
+import { pressDelete, wait, renderEditor } from "dummy/tests/test-utils";
 module("Integration | InputHandler | list-delete-plugin", function (hooks) {
   setupRenderingTest(hooks);
+  test("Delete | Lists | delete in empty li at end of document does nothing", async function (assert) {
+    const initial = `<ul><li></li></ul>`;
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(initial);
+    });
+    const editor = await renderEditor();
+    const selection = getWindowSelection();
+
+    const list = editor.children[0];
+    const li = list.children[0];
+    selection.collapse(li, 0);
+    await pressDelete();
+
+    assert.equal(editor.childElementCount, 1);
+    assert.equal(list.childElementCount, 1);
+    assert.equal(selection.anchorNode?.parentElement, li);
+  });
+
+  test("Delete | Lists | delete before ul with single empty li deletes ul", async function (assert) {
+    const initial = `<ul><li></li></ul>`;
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(initial);
+    });
+    const editor = await renderEditor();
+    const selection = getWindowSelection();
+
+    const list = editor.children[0];
+    selection.collapse(editor, 0);
+    await pressDelete();
+    await wait(3000);
+
+    assert.equal(editor.childElementCount, 0);
+    assert.dom(".say-content > ul").doesNotExist();
+  });
+
+  test("Delete | Lists | delete in li removes character", async function (assert) {
+    const initial = `<ul><li>a</li></ul>`;
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(initial);
+    });
+    const editor = await renderEditor();
+    const selection = getWindowSelection();
+
+    const list = editor.childNodes[0] as Element;
+    const li = list.childNodes[0] as Element;
+    const liTextNode = li.childNodes[0];
+
+    selection.collapse(liTextNode, 0);
+    await pressDelete();
+
+    assert.equal(editor.childNodes.length, 1);
+    assert.equal(list.childNodes.length, 1);
+    assert.notOk(hasVisibleChildren(li));
+    assert.ok(li.childNodes.length <= 1);
+  });
+
+  test("Delete | Lists | delete at end of last li does nothing", async function (assert) {
+    const initial = `<ul><li>a</li></ul>`;
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(initial);
+    });
+    const editor = await renderEditor();
+    const selection = getWindowSelection();
+
+    const list = editor.childNodes[0] as HTMLElement;
+    const li = list.childNodes[0] as HTMLElement;
+    const liTextNode = li.childNodes[0];
+
+    selection.collapse(liTextNode, 1);
+    await pressDelete();
+
+    assert.equal(editor.childNodes.length, 1);
+    assert.equal(list.childNodes.length, 1);
+    assert.ok(hasVisibleChildren(li));
+    assert.ok(li.childNodes.length >= 1);
+    assert.equal(li.innerText, "a");
+  });
+
+  test("Delete | Lists | delete before nonempty li merges content and deletes li", async function (assert) {
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(`<div>a</div><ul><li>bcd</li><li></li></ul>`);
+    });
+    const editor = await renderEditor();
+
+    const beforeList = editor.children[0] as HTMLDivElement;
+    const list = editor.children[1] as HTMLUListElement;
+
+    const selection = getWindowSelection();
+    selection.collapse(beforeList.childNodes[0], 1);
+
+    await pressDelete();
+
+    assert.equal(list.childElementCount, 1);
+    assert.equal(beforeList.textContent, "abcd");
+  });
+  test("Delete | Lists | delete before nonempty li merges nested content and delets li", async function (assert) {
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(`<div>a</div><ul><li>bc<b>d</b></li><li></li></ul>`);
+    });
+    const editor = await renderEditor();
+
+    const beforeList = editor.children[0] as HTMLDivElement;
+    const list = editor.children[1] as HTMLUListElement;
+
+    const selection = getWindowSelection();
+    selection.collapse(beforeList.childNodes[0], 1);
+
+    await pressDelete();
+
+    assert.equal(list.childElementCount, 1);
+    assert.equal(beforeList.textContent, "abcd");
+  });
 
   test("Delete | Lists | delete in empty li results in ul with one less li", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
@@ -20,7 +130,6 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
 
     const list = editor.children[0] as HTMLUListElement;
     const firstItem = list.childNodes[0] as HTMLLIElement;
-    const textNode = list.childNodes[0].childNodes[0];
 
     const selection = getWindowSelection();
     selection.collapse(firstItem, 0);
@@ -153,23 +262,6 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
     await pressDelete();
 
     assert.equal(list.childElementCount, 1);
-  });
-  test("Delete | Lists | delete before nonempty li merges content and delets li", async function (assert) {
-    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
-      editor.setHtmlContent(`<div>a</div><ul><li>bcd</li><li></li></ul>`);
-    });
-    const editor = await renderEditor();
-
-    const beforeList = editor.children[0] as HTMLDivElement;
-    const list = editor.children[1] as HTMLUListElement;
-
-    const selection = getWindowSelection();
-    selection.collapse(beforeList.childNodes[0], 1);
-
-    await pressDelete();
-
-    assert.equal(list.childElementCount, 1);
-    assert.equal(beforeList.textContent, "abcd");
   });
   test("Delete | Lists | delete in last li when next element is a list should merge lists", async function (assert) {
     this.set("rdfaEditorInit", (editor: RdfaDocument) => {
@@ -347,8 +439,32 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
     selection.collapse(textNode, 2);
 
     await pressDelete();
-    assert.equal(list.childNodes.length, 1);
+    assert.equal(list.childElementCount, 1);
     assert.equal(list.childNodes[0].textContent, "ab");
+  });
+  test("Delete | Lists | ol delete at end of nonempty li before empty textnode deletes the next empty li", async function (assert) {
+    this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+      editor.setHtmlContent(`
+<ol>
+<li>ab</li>
+<li></li>
+</ol>
+`);
+    });
+    debugger;
+    const editor = await renderEditor();
+
+    const list = editor.children[0] as HTMLUListElement;
+    const firstItem = list.children[0] as HTMLLIElement;
+    const textNode = firstItem.childNodes[0];
+
+    const selection = getWindowSelection();
+    selection.collapse(textNode, 2);
+
+    await pressDelete();
+    await wait(3000)
+    assert.equal(list.childElementCount, 1);
+    assert.equal(list.children[0].textContent, "ab");
   });
 
   test("Delete | Lists | ol delete at end of non-empty <li> merges the next <li>", async function (assert) {

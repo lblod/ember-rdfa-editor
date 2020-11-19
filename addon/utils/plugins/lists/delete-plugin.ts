@@ -18,6 +18,7 @@ import {
   getWindowSelection,
   isTextNode,
   tagName,
+  getParentLI,
 } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {
   stringToVisibleText,
@@ -25,6 +26,7 @@ import {
   moveCaretToEndOfNode,
 } from "@lblod/ember-rdfa-editor/editor/utils";
 import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
+import { isInList } from "../../ce/list-helpers";
 
 function debug(message: String, object: Object | null = null): void {
   runInDebug(() => {
@@ -66,13 +68,13 @@ export default class ListDeletePlugin implements DeletePlugin {
     manipulation: RemoveBoundaryBackwards
   ): ManipulationGuidance | null {
     if (this.isAnyListNode(manipulation.node)) {
-    const dispatch = (
-      manipulation: RemoveBoundaryBackwards,
-      editor: RawEditor
-    ) => {
-      this.mergeBackwards(manipulation.node, editor);
-    };
-    return { allow: true, executor: dispatch.bind(this) };
+      const dispatch = (
+        manipulation: RemoveBoundaryBackwards,
+        editor: RawEditor
+      ) => {
+        this.mergeBackwards(manipulation.node, editor);
+      };
+      return { allow: true, executor: dispatch.bind(this) };
     }
     return null;
   }
@@ -80,13 +82,13 @@ export default class ListDeletePlugin implements DeletePlugin {
     manipulation: RemoveBoundaryForwards
   ): ManipulationGuidance | null {
     if (this.isAnyListNode(manipulation.node)) {
-    const dispatch = (
-      manipulation: RemoveBoundaryForwards,
-      editor: RawEditor
-    ) => {
-      this.mergeForwards(manipulation.node, editor);
-    };
-    return { allow: true, executor: dispatch.bind(this) };
+      const dispatch = (
+        manipulation: RemoveBoundaryForwards,
+        editor: RawEditor
+      ) => {
+        this.mergeForwards(manipulation.node, editor);
+      };
+      return { allow: true, executor: dispatch.bind(this) };
     }
     return null;
   }
@@ -119,15 +121,20 @@ export default class ListDeletePlugin implements DeletePlugin {
   private mergeBackwards(node: Node, editor: RawEditor) {
     const selection = getWindowSelection();
     const baseNode = this.findNodeBefore(node, editor.rootNode);
+    const nodeToMerge = this.getDeepestFirstDescendant(node);
+
     if (!baseNode) {
+      if (isLI(nodeToMerge)) {
+        this.removeEmptyAncestors(nodeToMerge);
+        this.hasChanged = true;
+      }
       return;
     }
-    const mergeNode = this.getDeepestFirstDescendant(baseNode);
+    const mergeNode = this.getDeepestLastDescendant(baseNode);
     let cursorPosition = 0;
     if (isTextNode(mergeNode) && mergeNode.textContent) {
       cursorPosition = mergeNode.textContent.length;
     }
-    const nodeToMerge = this.getDeepestFirstDescendant(node);
     this.mergeNodes(mergeNode, nodeToMerge);
 
     this.repositionCursor(mergeNode, nodeToMerge, cursorPosition);
@@ -140,7 +147,7 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @param editor The editor instance
    */
   private mergeForwards(node: Node, editor: RawEditor) {
-    const selection = getWindowSelection();
+    debugger;
 
     const mergeNode = this.getDeepestLastDescendant(node);
     let cursorPosition = 0;
@@ -149,6 +156,8 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     const targetNode = this.findNodeAfter(node, editor.rootNode);
     if (!targetNode) {
+      // no node in front of us, no sense in looping 50 times
+      this.hasChanged = true;
       return;
     }
     const nodeToMerge = this.getDeepestFirstDescendant(targetNode);
@@ -193,12 +202,22 @@ export default class ListDeletePlugin implements DeletePlugin {
       }
       if (stringToVisibleText(nodeToMerge.textContent || "")) {
         this.hasChanged = true;
+      } else {
+        removeNode(nodeToMerge);
       }
       this.removeEmptyAncestors(parent!);
     } else {
       // TODO we need better better utilities to check this
       //these nodes are always visible, even if they are empty
-      if (isLI(nodeToMerge) || tagName(nodeToMerge as Element) === "br") {
+      if (isLI(nodeToMerge)) {
+        if (isTextNode(mergeNode)) {
+          mergeNode.parentElement!.append(...nodeToMerge.childNodes);
+        } else {
+          (mergeNode as Element).append(...nodeToMerge.childNodes);
+        }
+        this.hasChanged = true;
+      }
+      if (tagName(nodeToMerge as Element) === "br") {
         this.hasChanged = true;
       }
       this.removeEmptyAncestors(nodeToMerge as Element);
@@ -256,7 +275,7 @@ export default class ListDeletePlugin implements DeletePlugin {
    * Concatenate two textnodes
    * After the operation, the left node will contain
    * the textContent of left and right, concatenated.
-   * The right node will remain unchanged.
+   * The right node will be removed.
    * @param left the left node
    * @param right the right node
    * */
@@ -278,11 +297,11 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @returns the deepest lastchild
    */
   private getDeepestLastDescendant(node: Node): Node {
-    if (isTextNode(node)) {
+    if (isLI(node) || isTextNode(node)) {
       return node;
     }
     let cur = node;
-    while (cur.lastChild) {
+    while (cur.lastChild && !isLI(cur)) {
       cur = cur.lastChild;
     }
     return cur;
@@ -295,11 +314,11 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @returns the deepest firstChild
    */
   private getDeepestFirstDescendant(node: Node): Node {
-    if (isTextNode(node)) {
+    if (isLI(node) || isTextNode(node)) {
       return node;
     }
     let cur = node;
-    while (cur.firstChild) {
+    while (cur.firstChild && !isLI(cur)) {
       cur = cur.firstChild;
     }
     return cur;
@@ -361,6 +380,15 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (!node) {
       return false;
     }
-    return isList(node) || isLI(node);
+    if (isList(node) || isLI(node)) {
+      return true;
+    }
+    if (isInList(node)) {
+      const selection = getWindowSelection();
+      if (selection.containsNode(getParentLI(node)!.lastElementChild!, true)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

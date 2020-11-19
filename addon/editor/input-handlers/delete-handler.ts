@@ -1,5 +1,5 @@
 import {warn} from '@ember/debug';
-import {isVoidElement} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {isVoidElement, removeNode} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {
   Manipulation,
   ManipulationExecutor,
@@ -596,7 +596,7 @@ export default class DeleteHandler implements InputHandler {
 
       case "removeEmptyTextNode": {
         const {node: textNode} = manipulation;
-        textNode.remove();
+        removeNode(textNode);
         this.rawEditor.updateRichNode();
         break;
       }
