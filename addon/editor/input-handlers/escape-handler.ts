@@ -33,11 +33,6 @@ export default class EscapeHandler implements InputHandler {
     if(activeElement) {
       const htmlActiveElement = activeElement as HTMLElement;
       htmlActiveElement.blur();
-      const parentNode = this.rawEditor.rootNode.parentNode;
-      if(parentNode) {
-        const htmlParentNode = parentNode as HTMLElement;
-        htmlParentNode.focus();
-      }
     }
     return { allowPropagation: false };
   }
