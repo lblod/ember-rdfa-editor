@@ -160,8 +160,8 @@ export default class ContentEditable extends Component {
                                    new IgnoreModifiersHandler({rawEditor}),
                                    new UndoHandler({rawEditor}),
                                    new BoldItalicUnderlineHandler({rawEditor}),
+                                   new EscapeHandler({rawEditor}),
                                    new FallbackInputHandler({rawEditor}),
-                                   new EscapeHandler({rawEditor})
                                  ];
 
     this.set('currentTextContent', '');
