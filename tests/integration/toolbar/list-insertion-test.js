@@ -809,7 +809,6 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     range.setEnd(innerLi, 1);
     const editor = document.querySelector("div[contenteditable]");
     await click('[data-test-button-id="insert-unindent"]');
-    console.log(editor.textContent);
     assert.equal(editor.textContent.includes('a some text'), true);
   });
 
