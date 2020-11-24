@@ -19,6 +19,8 @@ import {
   isTextNode,
   tagName,
   getParentLI,
+  isElement,
+  unwrapElement,
 } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {
   stringToVisibleText,
@@ -119,7 +121,7 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @param editor The editor instance
    */
   private mergeBackwards(node: Node, editor: RawEditor) {
-    const selection = getWindowSelection();
+    debugger;
     const baseNode = this.findNodeBefore(node, editor.rootNode);
     const nodeToMerge = this.getDeepestFirstDescendant(node);
 
@@ -192,36 +194,65 @@ export default class ListDeletePlugin implements DeletePlugin {
    * the last textNode of mergeNode
    */
   private mergeNodes(mergeNode: Node, nodeToMerge: Node) {
-    if (isTextNode(nodeToMerge)) {
-      const parent = nodeToMerge.parentElement;
-      if (isTextNode(mergeNode)) {
-        this.concatenateNodes(mergeNode, nodeToMerge);
-        removeNode(nodeToMerge);
-      } else {
-        mergeNode.appendChild(nodeToMerge);
+    if (isTextNode(mergeNode)) {
+      if (isTextNode(nodeToMerge)) {
+        this.mergeTextNodes(mergeNode, nodeToMerge);
+      } else if (isElement(nodeToMerge)) {
+        this.mergeNodeElement(mergeNode, nodeToMerge);
       }
-      if (stringToVisibleText(nodeToMerge.textContent || "")) {
-        this.hasChanged = true;
-      } else {
-        removeNode(nodeToMerge);
+    } else if (isElement(mergeNode)) {
+      if (isTextNode(nodeToMerge)) {
+        this.mergeElementNode(mergeNode, nodeToMerge);
+      } else if (isElement(nodeToMerge)) {
+        this.mergeElements(mergeNode, nodeToMerge);
       }
-      this.removeEmptyAncestors(parent!);
-    } else {
-      // TODO we need better better utilities to check this
-      //these nodes are always visible, even if they are empty
-      if (isLI(nodeToMerge)) {
-        if (isTextNode(mergeNode)) {
-          mergeNode.parentElement!.append(...nodeToMerge.childNodes);
-        } else {
-          (mergeNode as Element).append(...nodeToMerge.childNodes);
-        }
-        this.hasChanged = true;
-      }
-      if (tagName(nodeToMerge as Element) === "br") {
-        this.hasChanged = true;
-      }
-      this.removeEmptyAncestors(nodeToMerge as Element);
     }
+  }
+  private mergeTextNodes(mergeNode: Text, nodeToMerge: Text) {
+    const parent = nodeToMerge.parentElement!;
+    this.concatenateNodes(mergeNode, nodeToMerge);
+
+    if (stringToVisibleText(nodeToMerge.textContent || "")) {
+      this.hasChanged = true;
+    }
+    removeNode(nodeToMerge);
+    this.removeEmptyAncestors(parent);
+  }
+
+  private mergeElements(mergeEl: Element, elToMerge: Element) {
+    if (mergeEl.contains(elToMerge)) {
+      unwrapElement(elToMerge as HTMLElement);
+    } else {
+      mergeEl.append(...elToMerge.childNodes);
+    }
+    if (isLI(elToMerge) || tagName(elToMerge) === "br") {
+      this.hasChanged = true;
+    }
+    this.removeEmptyAncestors(elToMerge);
+  }
+  private mergeNodeElement(mergeNode: Text, elToMerge: Element) {
+    const [firstNode, ...rest] = elToMerge.childNodes;
+    if (firstNode && isTextNode(firstNode)) {
+      this.concatenateNodes(mergeNode, firstNode);
+      mergeNode.after(...rest);
+    } else {
+      mergeNode.after(...elToMerge.childNodes);
+    }
+    elToMerge.innerHTML = "";
+    if (isLI(elToMerge) || tagName(elToMerge) === "br") {
+      this.hasChanged = true;
+    }
+    this.removeEmptyAncestors(elToMerge);
+  }
+  private mergeElementNode(mergeEl: Element, nodeToMerge: Text) {
+    const parent = nodeToMerge.parentElement!;
+    mergeEl.appendChild(nodeToMerge);
+    if (stringToVisibleText(nodeToMerge.textContent || "")) {
+      this.hasChanged = true;
+    } else {
+      removeNode(nodeToMerge);
+    }
+    this.removeEmptyAncestors(parent);
   }
   /**
    * Find the first node after node.
