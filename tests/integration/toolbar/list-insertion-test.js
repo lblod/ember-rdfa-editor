@@ -632,8 +632,6 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(list.lastElementChild.textContent.includes('pong'), true);
   });
 
-  // Tests described on ember-rdfa-editor/addon/utils/ce/list-helpers.js
-
   test('Case 1', async function(assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('a some text');
@@ -741,7 +739,7 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
   //   const range = window.getSelection().getRangeAt(0);
   //   range.setStart(editor, 0);
   //   range.setEnd(editor, 0);
-    
+
   //   await click('[data-test-button-id="unordered-list"]');
   //   assert.equal(editor.childElementCount, 1);
   //   const list = editor.firstElementChild;
@@ -962,6 +960,116 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
     await click('[data-test-button-id="ordered-list"]');
     const list = editor.firstChild;
     assert.equal(list.tagName, 'OL');
+  });
+
+  test('Inserting a list, press undo, insert again, press undo does not remove list content [OL]', async function (assert) {
+    //This is a first shot at avoiding a totally unacctable undo behavoir. This test will break once we optimize this
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('beer pong');
+    });
+
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+
+    const editor = document.querySelector("div[contenteditable]");
+    await click('[data-test-button-id="ordered-list"]');
+
+    const list = editor.firstElementChild;
+    let li = list.firstElementChild;
+    assert.equal(li.textContent, 'beer pong'); //we have a list
+
+    await click('[data-test-button-id="undo-button"]');
+
+    assert.equal(editor.childElementCount, 0);
+    assert.equal(editor.textContent, 'beer pong'); //content remains, list is gone
+
+    await click('[data-test-button-id="ordered-list"]');
+
+    li = list.firstElementChild;
+    assert.equal(li.textContent, 'beer pong'); //we have a list
+
+    await click('[data-test-button-id="undo-button"]');
+
+    assert.equal(editor.childElementCount, 0);
+    assert.equal(editor.textContent.includes('beer pong'), true); //content remains, list is gone (but ugly whitspaces remain)
+
+  });
+
+  test('Inserting a list, press undo, insert again, press undo does not remove list content [UL]', async function (assert) {
+    //This is a first shot at avoiding a totally unacceptable undo behavoir. This test will break once we optimize this
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('beer pong');
+    });
+
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+
+    const editor = document.querySelector("div[contenteditable]");
+    await click('[data-test-button-id="ordered-list"]');
+
+    const list = editor.firstElementChild;
+    let li = list.firstElementChild;
+    assert.equal(li.textContent, 'beer pong'); //we have a list
+
+    await click('[data-test-button-id="undo-button"]');
+
+    assert.equal(editor.childElementCount, 0);
+    assert.equal(editor.textContent, 'beer pong'); //content remains, list is gone
+
+    await click('[data-test-button-id="unordered-list"]');
+
+    li = list.firstElementChild;
+    assert.equal(li.textContent, 'beer pong'); //we have a list
+
+    await click('[data-test-button-id="undo-button"]');
+
+    assert.equal(editor.childElementCount, 0);
+    assert.equal(editor.textContent.includes('beer pong'), true); //content remains, list is gone (but ugly whitspaces remain)
+
+  });
+
+  test('Undo a list item, with previous operation nesting it', async function (assert) {
+    //This is a first shot at avoiding a totally unacceptable undo behavoir. This test will break once we optimize this
+    this.set('rdfaEditorInit', (editor) => {
+      editor.setHtmlContent('<ul><li>beer</li><li>pong</li><li>in a bar</li></ul>');
+    });
+
+    await render(hbs`<Rdfa::RdfaEditor
+      @rdfaEditorInit={{action rdfaEditorInit}}
+      @profile="default"
+      class="rdfa-playground"
+      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
+      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+    />`);
+
+    const editor = document.querySelector("div[contenteditable]");
+    const li = editor.children[0].children[1];
+    const range = window.getSelection().getRangeAt(0);
+    range.setStart(li.childNodes[0], 0);
+    range.setEnd(li.childNodes[0], 0);
+
+    await type('div[contenteditable]', 'test');
+    await click('[data-test-button-id="insert-indent"]');
+
+    const mergedLi = editor.children[0].children[0];
+    assert.equal(mergedLi.childElementCount, 1); //sublist ok
+
+    await click('[data-test-button-id="undo-button"]');
+    await click('[data-test-button-id="undo-button"]'); //some implentation issue, forces us to trigger twice
+
+    const restoredList = editor.children[0];
+    assert.equal(restoredList.childElementCount, 3);
+    assert.equal(restoredList.children[1].textContent, 'testpong');
   });
 
 });

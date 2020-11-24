@@ -35,7 +35,10 @@ function unorderedListAction(rawEditor) {
   if (filteredSuitableNodes) {
     rawEditor.externalDomUpdate(
       'handle unorderedListAction',
-      handleListAction(rawEditor, filteredSuitableNodes, unorderedListAction, 'ul'),
+      () => {
+        rawEditor.createSnapshot();
+        handleListAction(rawEditor, filteredSuitableNodes, unorderedListAction, 'ul')();
+      },
       true
     );
   }
@@ -50,7 +53,10 @@ function orderedListAction(rawEditor) {
   if (filteredSuitableNodes) {
     rawEditor.externalDomUpdate(
       'handle orderedListAction',
-      handleListAction(rawEditor, filteredSuitableNodes, orderedListAction, 'ol'),
+      () => {
+        rawEditor.createSnapshot();
+        handleListAction(rawEditor, filteredSuitableNodes, orderedListAction, 'ol')();
+      },
       true
     );
   }
@@ -64,6 +70,7 @@ function indentAction(rawEditor) {
 
   if (filteredSuitableNodes.length) {
     let handleAction = () => {
+      rawEditor.createSnapshot();
       const groupedLogicalBlocks = getGroupedLogicalBlocks(filteredSuitableNodes);
 
       const firstNodes = groupedLogicalBlocks.map(block => block[0]);
@@ -87,6 +94,7 @@ function unindentAction(rawEditor) {
 
   if (filteredSuitableNodes.length) {
     let handleAction = () => {
+      rawEditor.createSnapshot();
       const groupedLogicalBlocks = getGroupedLogicalBlocks(filteredSuitableNodes);
 
       unindentLogicalBlockContents(rawEditor, groupedLogicalBlocks);
