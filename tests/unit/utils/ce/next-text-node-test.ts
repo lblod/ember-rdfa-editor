@@ -3,17 +3,17 @@ import { module, test } from "qunit";
 
 const invisibleSpace = "\u200B";
 
-module("Unit | Utility | ce/next-text-node", function (hooks) {
+module("Unit | Utility | ce/next-text-node", function () {
   test("returns null when textNode is rootNode", function (assert) {
     const root = document.createElement("div");
-    let result = ceNextTextNode(root, root);
+    const result = ceNextTextNode(root, root);
     assert.strictEqual(result, null);
   });
   test("returns null when nextNode is rootNode", function (assert) {
     const root = document.createElement("div");
     const child = document.createElement("div");
     root.appendChild(child);
-    let result = ceNextTextNode(child, root);
+    const result = ceNextTextNode(child, root);
     assert.strictEqual(result, null);
   });
   test("inserts a new node after the current node if next node is not a text node", async function (assert) {
@@ -22,7 +22,7 @@ module("Unit | Utility | ce/next-text-node", function (hooks) {
     const child2 = document.createElement("div");
     root.appendChild(child1);
     root.appendChild(child2);
-    let result = ceNextTextNode(child1, root);
+    const result = ceNextTextNode(child1, root);
     assert.notEqual(root, result);
     assert.notEqual(child1, result);
     assert.notEqual(child2, result);
@@ -37,7 +37,7 @@ module("Unit | Utility | ce/next-text-node", function (hooks) {
     root.appendChild(child1);
     root.appendChild(child2);
 
-    let result = ceNextTextNode(child1, root);
+    const result = ceNextTextNode(child1, root);
     assert.strictEqual(result, child2);
   });
   test("returns next node if it is a text node nested", async function (assert) {
@@ -81,7 +81,7 @@ module("Unit | Utility | ce/next-text-node", function (hooks) {
     root.insertAdjacentHTML("beforeend", complex_html);
     const startNode = root.getElementsByClassName("test")[0].childNodes[0];
 
-    let result = ceNextTextNode(startNode, root);
+    const result = ceNextTextNode(startNode, root);
     assert.strictEqual(result.textContent, "li1");
   });
 });

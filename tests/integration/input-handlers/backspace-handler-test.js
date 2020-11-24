@@ -429,6 +429,7 @@ module('Integration | InputHandler | backspace-handler', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
     var editor = document.querySelector("div[contenteditable]");
+
     const list = editor.children[0];
     const textNode = list.children[1].childNodes[0];
     window.getSelection().collapse(textNode, 0); // before 'pong'

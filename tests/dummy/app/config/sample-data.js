@@ -420,6 +420,106 @@ export default {
 <h1>Breaks before blocks</h1>
 <div>this is a block and it has a break after it</div><br> <div>this block is followed by two breaks</div><br> <br> <div>this block is followed by a block</div><div>and a final block</div>
 <h1>More content</h1>
-<div><span class="u-hidden">besluittype:a8486fa3-6375-494d-aa48-e34289b87d5b</span>  <p>Openbare titel besluit:</p>  <h5 datatype="xsd:string" property="eli:title" class="h4"><span class="mark-highlight-manual">Aanpassing huishoudelijk reglement ih kader van covid-19</span></h5>  <span typeof="skos:Concept" resource="http://publications.europa.eu/resource/authority/language/NLD" property="eli:language">&nbsp;</span>  <br>  <p>Korte openbare beschrijving:</p>  <p datatype="xsd:string" property="eli:description"><span class="mark-highlight-manual">De wereldwijde pandemie vraagt enkele aanpassingen aan het huishoudelijk reglement. </span></p>  <br>  <p>Citeeropschrift:</p>  <br>      <div property="besluit:motivering">    <p>      <span class="mark-highlight-manual">De/Het</span>      <span><span resource="http://data.lblod.info/id/bestuursorganen/f5c51e5e2f09f7f2c53f36127f4087da687e120264b4927286c9bbcf46dc12d6" typeof="http://data.vlaanderen.be/ns/besluit#Bestuursorgaan" property="http://data.vlaanderen.be/ns/besluit#isGehoudenDoor">Gemeenteraad Laarne</span></span>,    </p>    <br>    <div>      <ul class="bullet-list">        <li>Gelet op <span class="mark-highlight-manual">het decreet <a property="eli:cites" href="https://codex.vlaanderen.be/doc/document/1029017" class="annotation">over het lokaal bestuur</a>&nbsp; </span>&#8203;</li><li>&#8203;</li>      </ul>    </div>    <br>    <div>      <ul class="bullet-list">        <li>Overwegende dat <span class="mark-highlight-manual">er een noodzaak is om met een minimum bezetting te werken.</span></li>      </ul>    </div>  </div>  <br>  <br>&#8203;<p class="u-spacer--small">Beslist,</p>  <div datatype="xsd:string" property="prov:value">    <div typeof="besluit:Artikel" resource="http://data.lblod.info/artikels/34c27c90-4c38-4b5e-95fe-fb8e1ba02de3" property="eli:has_part">      <div datatype="xsd:string" property="eli:number">Artikel 1</div>      <span typeof="skos:Concept" resource="http://publications.europa.eu/resource/authority/language/NLD" property="eli:language">&nbsp;</span>      <div datatype="xsd:string" property="prov:value"><span class="mark-highlight-manual">De gemeenteraad keurt het reglement in bijlage goed.</span></div>    </div>    <br>        <br>  </div></div><br>`
+<div><span class="u-hidden">besluittype:a8486fa3-6375-494d-aa48-e34289b87d5b</span>  <p>Openbare titel besluit:</p>  <h5 datatype="xsd:string" property="eli:title" class="h4"><span class="mark-highlight-manual">Aanpassing huishoudelijk reglement ih kader van covid-19</span></h5>  <span typeof="skos:Concept" resource="http://publications.europa.eu/resource/authority/language/NLD" property="eli:language">&nbsp;</span>  <br>  <p>Korte openbare beschrijving:</p>  <p datatype="xsd:string" property="eli:description"><span class="mark-highlight-manual">De wereldwijde pandemie vraagt enkele aanpassingen aan het huishoudelijk reglement. </span></p>  <br>  <p>Citeeropschrift:</p>  <br>      <div property="besluit:motivering">    <p>      <span class="mark-highlight-manual">De/Het</span>      <span><span resource="http://data.lblod.info/id/bestuursorganen/f5c51e5e2f09f7f2c53f36127f4087da687e120264b4927286c9bbcf46dc12d6" typeof="http://data.vlaanderen.be/ns/besluit#Bestuursorgaan" property="http://data.vlaanderen.be/ns/besluit#isGehoudenDoor">Gemeenteraad Laarne</span></span>,    </p>    <br>    <div>      <ul class="bullet-list">        <li>Gelet op <span class="mark-highlight-manual">het decreet <a property="eli:cites" href="https://codex.vlaanderen.be/doc/document/1029017" class="annotation">over het lokaal bestuur</a>&nbsp; </span>&#8203;</li><li>&#8203;</li>      </ul>    </div>    <br>    <div>      <ul class="bullet-list">        <li>Overwegende dat <span class="mark-highlight-manual">er een noodzaak is om met een minimum bezetting te werken.</span></li>      </ul>    </div>  </div>  <br>  <br>&#8203;<p class="u-spacer--small">Beslist,</p>  <div datatype="xsd:string" property="prov:value">    <div typeof="besluit:Artikel" resource="http://data.lblod.info/artikels/34c27c90-4c38-4b5e-95fe-fb8e1ba02de3" property="eli:has_part">      <div datatype="xsd:string" property="eli:number">Artikel 1</div>      <span typeof="skos:Concept" resource="http://publications.europa.eu/resource/authority/language/NLD" property="eli:language">&nbsp;</span>      <div datatype="xsd:string" property="prov:value"><span class="mark-highlight-manual">De gemeenteraad keurt het reglement in bijlage goed.</span></div>    </div>    <br>        <br>  </div></div><br>`,
+"delete": `
+<div>Case 1</div>
+<div>Result: Whole ul should dissapear</div>a<ul><li></li></ul>
+
+<div>Case 2</div>
+<div>Result: ul with one empty li element</div>
+
+<ul>
+  <li></li>
+  <li></li>
+</ul>
+
+<div>Case 3</div>
+<div>Result: ul with one li element containing ab</div>
+
+<ul>
+  <li>ab</li>
+  <li></li>
+</ul>
+
+<div>Case 4</div>
+<div>Result: ul with one li element containing abcd</div>
+
+<ul>
+  <li>ab</li>
+  <li>cd</li>
+</ul>
+
+<div>Case 5</div>
+<div>Result: last li should contain cdef</div>
+
+<ul>
+  <li>ab</li>
+  <li>cd</li>
+</ul>
+<div>ef</div>
+
+<div>Case 6</div>
+<div>Result: last li should contain cdef</div>
+
+<ul>
+  <li>ab</li>
+  <li>cd</li>
+</ul>
+<div></div>
+<div>ef</div>
+
+<div>Case 7</div>
+<div>Result: last li should contain cd</div>
+<ul>
+  <li>ab</li>
+  <li></li>
+</ul>
+<div></div>
+<div>ef</div>
+
+<div>Case 8</div>
+<div>Result: last li should contain cd</div>
+<div>ef</div>
+<div></div>
+<ul>
+  <li>ab</li>
+  <li></li>
+</ul>
+<div>Case 9</div>
+<div>Result: last li should contain cd</div>
+<div>ef</div>
+<div></div>
+<ul>
+  <li>ab</li>
+  <li></li>
+</ul>
+<ul>
+<li>cd</li>
+</ul>
+
+<div>Case 10</div>
+<div>nested elements in li</div>
+<div>ef</div>
+<div></div>
+<ul>
+  <li>ab<b>cd</b></li>
+  <li><span>this is a span</span></li>
+</ul>
+<ul>
+<li>cd</li>
+</ul>
+<div>Case 11</div>
+<div>bare textNode after li</div>
+<ul>
+  <li></li>
+</ul>
+hello
+<div>Case 12</div>
+<div>bare nonempty textNode after li</div>
+<ul>
+  <li>hello</li>
+</ul>
+world
+`
 };
 
