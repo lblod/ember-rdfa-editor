@@ -121,7 +121,6 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @param editor The editor instance
    */
   private mergeBackwards(node: Node, editor: RawEditor) {
-    debugger;
     const baseNode = this.findNodeBefore(node, editor.rootNode);
     const nodeToMerge = this.getDeepestFirstDescendant(node);
 
@@ -149,7 +148,6 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @param editor The editor instance
    */
   private mergeForwards(node: Node, editor: RawEditor) {
-    debugger;
 
     const mergeNode = this.getDeepestLastDescendant(node);
     let cursorPosition = 0;

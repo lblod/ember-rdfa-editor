@@ -472,7 +472,6 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
 </ol>
 `);
     });
-    debugger;
     const editor = await renderEditor();
 
     const list = editor.children[0] as HTMLUListElement;
