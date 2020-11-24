@@ -19,6 +19,7 @@ import LegacyMovementObserver from '../../utils/ce/movement-observers/legacy-mov
 import BoldItalicUnderlineHandler from '../../utils/ce/handlers/bold-italic-underline-handler';
 import UndoHandler from '../../utils/ce/handlers/undo-hander';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
+import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
 //import TabHandler from '../../utils/ce/handlers/tab-handler';
 import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
@@ -159,7 +160,8 @@ export default class ContentEditable extends Component {
                                    new IgnoreModifiersHandler({rawEditor}),
                                    new UndoHandler({rawEditor}),
                                    new BoldItalicUnderlineHandler({rawEditor}),
-                                   new FallbackInputHandler({rawEditor})
+                                   new EscapeHandler({rawEditor}),
+                                   new FallbackInputHandler({rawEditor}),
                                  ];
 
     this.set('currentTextContent', '');

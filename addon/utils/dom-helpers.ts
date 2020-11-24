@@ -101,6 +101,16 @@ function isVoidElement(node: Node): boolean {
 }
 
 /**
+ * dom helper to check whether a node is an element
+ * @method isElement
+ * @public
+ * @param node
+ */
+function isElement(node: Node): node is Element {
+  return node.nodeType === Node.ELEMENT_NODE;
+}
+
+/**
  * Determine whether a node's text content is entirely whitespace.
  * from https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM
  *
@@ -117,7 +127,7 @@ function isAllWhitespace(node: Text): boolean {
  * @method isDisplayedAsBlock
  */
 
-function isDisplayedAsBlock(domNode: HTMLElement): boolean {
+function isDisplayedAsBlock(domNode: Element): boolean {
   if (domNode.nodeType !== Node.ELEMENT_NODE)
     return false;
   const displayStyle = window.getComputedStyle(domNode)['display'];
@@ -166,8 +176,12 @@ function isPhrasingContent(node: HTMLElement): boolean {
  * @method isList
  * @public
  */
-function isList(node: HTMLElement): boolean {
-  return node.nodeType === node.ELEMENT_NODE && ['ul', 'ol'].includes(node.tagName.toLowerCase());
+function isList(node?: Node | null): node is HTMLElement {
+  if (!node) return false;
+  return (
+    node.nodeType === node.ELEMENT_NODE &&
+    ["ul", "ol"].includes((node as Element).tagName.toLowerCase())
+  );
 }
 
 /**
@@ -243,7 +257,7 @@ function insertNodeBAfterNodeA(_parent: HTMLElement, nodeA: ChildNode, nodeB: Ch
  * @method tagName
  * @public
  */
-function tagName(node: Element): string {
+function tagName(node?: Element | null): string {
   if (!node) return '';
   return node.nodeType === node.ELEMENT_NODE ? node.tagName.toLowerCase() : '';
 }
@@ -298,7 +312,7 @@ function getParentLI(node: Node): HTMLLIElement | null {
  * determine whether the provided Node is an LI
  * @method isLi
  */
-function isLI(node: Node): boolean {
+function isLI(node: Node): node is HTMLLIElement {
   return node.nodeType === node.ELEMENT_NODE && tagName(node as Element) === 'li';
 }
 
@@ -307,7 +321,7 @@ function isLI(node: Node): boolean {
  * @method isTextNode
  * @public
  */
-function isTextNode(node: Node): boolean {
+function isTextNode(node: Node): node is Text {
   return node.nodeType === Node.TEXT_NODE;
 }
 
@@ -413,6 +427,22 @@ function isVisibleElement(element: HTMLElement): boolean {
   return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
 }
 
+
+/**
+ * Utility to get the selection in a type-safe way. A null selection only happens when called on a
+ * hidden iframe in Firefox, so it is ok to throw an error here instead of nullchecking everywhere
+ * see https://developer.mozilla.org/en-US/docs/Web/API/Window/getSelection
+ */
+function getWindowSelection(): Selection {
+  const selection = window.getSelection();
+  if (!selection)
+    throw new Error(
+      "Window selection not found. This is an error and does not mean" +
+        "the selection was empty"
+    );
+  return selection;
+}
+
 export {
   tagName,
   isDisplayedAsBlock,
@@ -426,6 +456,7 @@ export {
   unwrapElement,
   removeNode,
   isVoidElement,
+  isElement,
   isVisibleElement,
   isIgnorableElement,
   createElementsFromHTML,
@@ -440,5 +471,6 @@ export {
   isPhrasingContent,
   isBlockOrBr,
   findWrappingSuitableNodes,
-  findLastLi
+  findLastLi,
+  getWindowSelection
 };

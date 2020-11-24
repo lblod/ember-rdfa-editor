@@ -37,6 +37,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       const listItem = manipulation.node as HTMLElement;
 
       //If cursor at beginning of LI, then do the indent
+      if(!manipulation.selection) throw new Error("Manipulation has no selection");
       if(manipulation.selection.anchorOffset === 0
          && manipulation.selection.anchorNode
          && manipulation.selection.anchorNode.isSameNode(manipulation.node.firstChild) ){
@@ -215,7 +216,7 @@ function setCursorAtStartOfLi(listItem : HTMLElement, editor: Editor) : void{
   }
   textNode = ensureValidTextNodeForCaret(textNode as Text);
   editor.updateRichNode();
-  editor.setCaret(textNode, 0)
+  editor.setCaret(textNode, 0);
 }
 
 function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor) : void {

@@ -55,6 +55,8 @@ export type Manipulation =
   | InsertTextIntoTextNodeManipulation
   | InsertTextIntoElementManipulation
   | ReplaceSelectionWithTextManipulation
+  | RemoveBoundaryForwards
+  | RemoveBoundaryBackwards
 ;
 
 /**
@@ -222,6 +224,14 @@ export interface ReplaceSelectionWithTextManipulation extends BaseManipulation {
   node: Node; // the anchorNode
   selection: Selection
   text: string;
+}
+export interface RemoveBoundaryForwards extends BaseManipulation {
+  type: "removeBoundaryForwards";
+  node: ChildNode;
+}
+export interface RemoveBoundaryBackwards extends BaseManipulation {
+  type: "removeBoundaryBackwards";
+  node: Node;
 }
 
 export interface ManipulationGuidance {
