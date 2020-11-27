@@ -111,7 +111,6 @@ export default class ListDeletePlugin implements DeletePlugin {
         manipulation: RemoveEmptyElementManipulation,
         editor: RawEditor
       ) => {
-        debugger;
         this.mergeForwards(manipulation.node, editor);
       };
       return { allow: true, executor: dispatcher.bind(this) };
@@ -127,7 +126,6 @@ export default class ListDeletePlugin implements DeletePlugin {
   private mergeBackwards(node: Node, editor: RawEditor) {
     const baseNode = this.findNodeBefore(node, editor.rootNode);
     const nodeToMerge = this.getDeepestFirstDescendant(node);
-    debugger;
 
 
     if (!baseNode) {
