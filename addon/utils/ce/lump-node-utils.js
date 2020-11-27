@@ -43,10 +43,11 @@ function getParentLumpNode(node, rootNode){
 }
 
 function getPreviousNonLumpTextNode(node, rootNode){
-  if(isInLumpNode(node)){
+  if(isInLumpNode(node, rootNode)){
     const parentLumpNode = getParentLumpNode(node, rootNode);
     const previousNode = previousTextNode(parentLumpNode, rootNode);
-    if (isInLumpNode(previousNode))
+    if(!previousNode) return null;
+    if (isInLumpNode(previousNode, rootNode))
       return getPreviousNonLumpTextNode(previousNode, rootNode);
     else
       return previousNode;
@@ -56,10 +57,10 @@ function getPreviousNonLumpTextNode(node, rootNode){
 }
 
 function getNextNonLumpTextNode(node, rootNode){
-  if(isInLumpNode(node)){
+  if(isInLumpNode(node, rootNode)){
     const parentLumpNode = getParentLumpNode(node, rootNode);
     const nextNode = nextTextNode(parentLumpNode, rootNode);
-    if (isInLumpNode(nextNode))
+    if (isInLumpNode(nextNode, rootNode))
       return getNextNonLumpTextNode(nextNode, rootNode);
     else
       return nextNode;
