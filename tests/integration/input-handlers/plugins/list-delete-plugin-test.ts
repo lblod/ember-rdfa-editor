@@ -245,7 +245,7 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
     await pressDelete();
     firstItem = list.children[0] as HTMLLIElement;
     assert.equal(list.children.length, 1);
-    assert.equal(firstItem.innerText, "b");
+    assert.equal(firstItem.textContent, "b");
   });
 
   test("Delete | Lists | delete at end of empty <li> merges next non-li", async function (assert) {

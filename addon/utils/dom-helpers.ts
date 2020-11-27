@@ -1,6 +1,7 @@
 import { A } from '@ember/array';
 import { PernetSelection, PernetSelectionBlock } from '@lblod/ember-rdfa-editor/editor/pernet'
 import { RichNode } from '@lblod/ember-rdfa-editor/editor/raw-editor'
+import { isEmptyRdfaAttributes } from './rdfa/rdfa-rich-node-helpers';
 /**
  * Fake class to list helper functions
  * these functions can be included using
@@ -442,6 +443,119 @@ function getWindowSelection(): Selection {
     );
   return selection;
 }
+/**
+ * Gets a CaretPosition from a set of view coordinates.
+ * It will find the deepest node at that point, and give you
+ * the node and the offset which you need to put the caret as close to that point as possible,
+ * while still maintaining a valid caret position. Chrome and Firefox disagree on its
+ * interface, but the polyfill is trivial.
+ * */
+function getCaretPositionFromPoint(x: number, y: number): CaretPosition | null {
+  if (!document.caretPositionFromPoint) {
+    var range = document.caretRangeFromPoint(x, y);
+    if (range === null) return null;
+    return {
+      offset: range.startOffset,
+      offsetNode: range.startContainer,
+      getClientRect: range.getBoundingClientRect,
+    };
+  }
+  return document.caretPositionFromPoint(x, y);
+}
+/**
+ * Place the caret at point x, y. Caret will be positioned inside the deepest node at that point
+ * at an offset which puts it closest to the x,y point
+ * */
+function setCaretOnPoint(x: number, y: number) {
+  const caretPos = getCaretPositionFromPoint(x, y);
+  if (!caretPos) {
+    console.warn(`Could not place caret on ${x}, ${y}`);
+    return;
+  }
+  const { offset, offsetNode } = caretPos;
+  const selection = getWindowSelection();
+  selection.collapse(offsetNode, offset);
+}
+/**
+ * Get the bounding clientRect for the caret.
+ * This also handles the cases where the caret is in a weird place
+ * and therefore has no clientRect by default.
+ * The returned rect should always be interpreted as being in front of the caret.
+ * So when using this to store a location and later resetting it
+ * use the "right" property as the x value.
+ * */
+function getCaretRect(): ClientRect {
+  const range = getWindowSelection().getRangeAt(0);
+  if (range.getClientRects().length > 0) {
+    // no need to do anything special when the caret is
+    // in a normal place
+    return range.getBoundingClientRect();
+  } else if (
+    isElement(range.startContainer) &&
+    range.startContainer.childNodes.length === 0
+  ) {
+    // caret is inside a completely empty element, selections don't like that
+    const emptyText = new Text(invisibleSpace);
+    range.startContainer.appendChild(emptyText);
+    range.setStart(emptyText, 0);
+    range.collapse(true);
+    const rslt = range.getBoundingClientRect();
+    emptyText.remove();
+    return rslt;
+  } else if (
+    isTextNode(range.startContainer) &&
+    range.startContainer.length === 0
+  ) {
+    // caret is inside an empty textnode
+    range.startContainer.textContent = invisibleSpace;
+    range.collapse(true);
+    return range.getBoundingClientRect();
+  } else if (isElement(range.startContainer)) {
+    //caret is inside a non-empty element, but inbetween nodes.
+    // we can get the rect of the node right before the element
+
+    if (range.startOffset === 0) {
+      const emptyText = new Text(invisibleSpace);
+      range.startContainer.childNodes[0].before(emptyText);
+      range.setStart(emptyText, 0);
+      range.collapse(true);
+      const result = range.getBoundingClientRect();
+      emptyText.remove();
+      return result;
+    } else {
+      const dummyRange = document.createRange();
+      const previousNode =
+        range.startContainer.childNodes[range.startOffset - 1];
+      let result;
+
+      if (isTextNode(previousNode)) {
+        if (previousNode.length === 0) {
+          previousNode.textContent = invisibleSpace;
+        }
+        dummyRange.setStart(previousNode, previousNode.length);
+        dummyRange.collapse();
+        result = dummyRange.getBoundingClientRect();
+      } else {
+        const emptyText = new Text(invisibleSpace);
+        previousNode.appendChild(emptyText);
+        dummyRange.setStart(emptyText, 0);
+        dummyRange.collapse();
+        result = dummyRange.getBoundingClientRect();
+        emptyText.remove();
+      }
+
+      return result;
+    }
+  } else {
+    // TODO its a fallback, but not a very good one
+    // possibly even throw an error here as we should handle all possible situations before this
+    const dummyRange = document.createRange();
+    dummyRange.setStart(range.startContainer, 0);
+    dummyRange.setEnd(range.startContainer, range.endOffset);
+    return dummyRange.getBoundingClientRect();
+  }
+}
+
 
 export {
   tagName,
@@ -472,5 +586,9 @@ export {
   isBlockOrBr,
   findWrappingSuitableNodes,
   findLastLi,
-  getWindowSelection
+  getWindowSelection,
+  getCaretPositionFromPoint,
+  setCaretOnPoint,
+  getCaretRect
+
 };

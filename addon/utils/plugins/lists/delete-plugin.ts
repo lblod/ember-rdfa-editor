@@ -21,6 +21,9 @@ import {
   getParentLI,
   isElement,
   unwrapElement,
+  getCaretPositionFromPoint,
+  setCaretOnPoint,
+  getCaretRect,
 } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {
   stringToVisibleText,
@@ -103,11 +106,12 @@ export default class ListDeletePlugin implements DeletePlugin {
       | RemoveEmptyElementManipulation
       | RemoveElementWithChildrenThatArentVisible
   ): ManipulationGuidance | null {
-    if (this.isAnyListNode(manipulation.node)) {
+    if (isList(manipulation.node) || isLI(manipulation.node)) {
       const dispatcher = (
         manipulation: RemoveEmptyElementManipulation,
         editor: RawEditor
       ) => {
+        debugger;
         this.mergeForwards(manipulation.node, editor);
       };
       return { allow: true, executor: dispatcher.bind(this) };
@@ -123,6 +127,8 @@ export default class ListDeletePlugin implements DeletePlugin {
   private mergeBackwards(node: Node, editor: RawEditor) {
     const baseNode = this.findNodeBefore(node, editor.rootNode);
     const nodeToMerge = this.getDeepestFirstDescendant(node);
+    debugger;
+
 
     if (!baseNode) {
       if (isLI(nodeToMerge)) {
@@ -132,13 +138,13 @@ export default class ListDeletePlugin implements DeletePlugin {
       return;
     }
     const mergeNode = this.getDeepestLastDescendant(baseNode);
-    let cursorPosition = 0;
-    if (isTextNode(mergeNode) && mergeNode.textContent) {
-      cursorPosition = mergeNode.textContent.length;
-    }
+
+    const cursorPos = getCaretRect();
+    const selection = getWindowSelection();
+    selection.removeAllRanges();
     this.mergeNodes(mergeNode, nodeToMerge);
 
-    this.repositionCursor(mergeNode, nodeToMerge, cursorPosition);
+    setCaretOnPoint(cursorPos.right, cursorPos.bottom - cursorPos.height /2);
     editor.updateRichNode();
   }
 
@@ -149,21 +155,23 @@ export default class ListDeletePlugin implements DeletePlugin {
    */
   private mergeForwards(node: Node, editor: RawEditor) {
 
-    const mergeNode = this.getDeepestLastDescendant(node);
-    let cursorPosition = 0;
-    if (isTextNode(mergeNode) && mergeNode.textContent) {
-      cursorPosition = mergeNode.textContent.length;
-    }
+
     const targetNode = this.findNodeAfter(node, editor.rootNode);
     if (!targetNode) {
       // no node in front of us, no sense in looping 50 times
       this.hasChanged = true;
       return;
     }
+    const mergeNode = this.getDeepestLastDescendant(node);
+
+    const cursorPos = getCaretRect();
+    const selection = getWindowSelection();
+    selection.removeAllRanges();
     const nodeToMerge = this.getDeepestFirstDescendant(targetNode);
     this.mergeNodes(mergeNode, nodeToMerge);
 
-    this.repositionCursor(mergeNode, nodeToMerge, cursorPosition);
+    setCaretOnPoint(cursorPos.right, cursorPos.bottom - cursorPos.height/2 )
+
     editor.updateRichNode();
   }
 
