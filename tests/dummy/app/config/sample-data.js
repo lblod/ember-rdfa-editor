@@ -1,4 +1,5 @@
 /* eslint-disable */
+import {LUMP_NODE_URI } from "@lblod/ember-rdfa-editor/utils/ce/lump-node-utils";
 export default {
   notulen: `<div id="ember102" class="container-flex--contain ember-view" vocab="http://data.vlaanderen.be/ns/besluit#" prefix="eli: http://data.europa.eu/eli/ontology# prov: http://www.w3.org/ns/prov# mandaat: http://data.vlaanderen.be/ns/mandaat# besluit: http://data.vlaanderen.be/ns/besluit# ext: http://mu.semte.ch/vocabularies/ext/ person: http://www.w3.org/ns/person# persoon: http://data.vlaanderen.be/ns/persoon# dateplugin: http://say.data.gift/manipulators/insertion/ besluittype: https://data.vlaanderen.be/id/concept/BesluitType/ dct: http://purl.org/dc/terms/ mobiliteit: https://data.vlaanderen.be/ns/mobiliteit# lblodmow: http://data.lblod.info/vocabularies/mobiliteit/ " typeof="foaf:Document" resource="#"><div resource="http://data.lblod.info/id/zittingen/66dc1a95-1896-401b-a8a6-cf8d7750f851" typeof="besluit:Zitting">
         <div property="besluit:heeftNotulen" resource="http://data.lblod.info/id/lblod/notulen/c1815b872ad82781129e1630c601936952c3d59f8dbcd1c3ddd3228870a37f29">
@@ -520,6 +521,12 @@ hello
   <li>hello</li>
 </ul>
 world
+`,
+"lumpNodes": `
+<div>Case 1</div>
+
+baz<div property="${LUMP_NODE_URI}">bar</div>foo
 `
+
 };
 

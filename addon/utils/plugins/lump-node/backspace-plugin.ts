@@ -1,6 +1,6 @@
 import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
+import { isInLumpNode, getParentLumpNode, flagLumpNodeForRemoval, isLumpNodeFlaggedForRemoval } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
 
 //We favour to be defensive in the stuff we accept.
 const SUPPORTED_MANIPULATIONS = [
@@ -39,7 +39,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
     else if(isElementInLumpNode){
       const parentLumpNode = getParentLumpNode(node, rootNode) as Element; //we can safely assume this
 
-      if(this.isElementFlaggedForRemoval(parentLumpNode)){
+      if(isLumpNodeFlaggedForRemoval(parentLumpNode)){
         return {
           allow: true,
           executor: this.removeLumpNode
@@ -105,23 +105,13 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
     return SUPPORTED_MANIPULATIONS.some( m => m === manipulation.type );
   }
 
-  /**
-   * checks whether element is flagged for removal
-   * @method isElementFlaggedForRemoval
-   */
-  isElementFlaggedForRemoval( element: Element ) : boolean {
-    return element.getAttribute('data-flagged-remove') === "complete";
-  }
 
   /**
    * Flags the LumpNode for removal.
    * @method flagForRemoval
    */
   flagForRemoval( manipulation: Manipulation, _editor: Editor) : void {
-    const node = manipulation.node;
-    const rootNode = node.getRootNode();
-    const lumpNode = getParentLumpNode(node, rootNode) as Element;
-    lumpNode.setAttribute('data-flagged-remove', 'complete');
+    flagLumpNodeForRemoval(manipulation.node);
   }
 
 }
