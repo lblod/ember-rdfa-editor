@@ -49,6 +49,7 @@ module(
       moveCaretToEndOfNode(editor.firstChild!);
 
       await pressDelete();
+      await pressDelete();
 
       assert.equal(editor.childElementCount, 0);
     });

@@ -30,7 +30,7 @@ function isInLumpNode(node:Node, rootNode: Node){
   return false;
 }
 
-function getParentLumpNode(node: Node, rootNode: Node): Node | null{
+function getParentLumpNode(node: Node, rootNode: Node): HTMLElement | null{
   if(hasLumpNodeProperty(node)){
     return node;
   }
