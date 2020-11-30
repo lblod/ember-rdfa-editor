@@ -493,7 +493,6 @@ export default class DeleteHandler implements InputHandler {
       // TODO: do we need to make sure cursor state in the editor corresponds with browser state here?
       return;
     } else {
-      // debugger;
       await this.deleteForward(max_tries - 1);
     }
   }
