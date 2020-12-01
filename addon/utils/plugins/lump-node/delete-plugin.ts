@@ -11,8 +11,23 @@ import {
   flagLumpNodeForRemoval,
   getParentLumpNode,
   isLumpNodeFlaggedForRemoval,
+  isInLumpNode,
 } from "../../ce/lump-node-utils";
 import { getCaretRect, setCaretOnPoint } from "../../dom-helpers";
+
+const SUPPORTED_MANIPULATIONS = [
+  "removeEmptyTextNode",
+  "removeCharacter",
+  "removeEmptyElement",
+  "removeVoidElement",
+  "moveCursorToEndOfElement",
+  "moveCursorBeforeElement",
+  "removeOtherNode",
+  "removeElementWithOnlyInvisibleTextNodeChildren",
+  "removeElementWithChildrenThatArentVisible",
+  "removeBoundaryBackwards",
+  "removeBoundaryForwards",
+];
 
 export default class LumpNodeDeletePlugin implements DeletePlugin {
   label = "Delete plugin for handling lump nodes";
@@ -20,48 +35,44 @@ export default class LumpNodeDeletePlugin implements DeletePlugin {
   guidanceForManipulation(
     manipulation: Manipulation
   ): ManipulationGuidance | null {
-    if (manipulation.type === "removeBoundaryBackwards") {
-      return this.guidanceForRemoveBoundaryBackwards(manipulation);
-    } else if (manipulation.type === "removeBoundaryForwards") {
-      return this.guidanceForRemoveBoundaryForwards(manipulation);
+    //TODO: fix case.manipulation.node == lumpnode
+    const node = manipulation.node;
+    const rootNode = node.getRootNode(); //Assuming here that node is attached.
+    const isElementInLumpNode = isInLumpNode(node, rootNode);
+    const isManipulationSupported = this.isSupportedManipulation(manipulation);
+
+    if (isElementInLumpNode) {
+      if (!isManipulationSupported) {
+        console.warn(
+          `plugins/lump-node/delete-plugin: manipulation ${manipulation.type} not supported for lumpNode`
+        );
+        return null;
+      }
+      return { allow: true, executor: this.deleteLumpExecutor.bind(this) };
     }
 
     return null;
   }
-  detectChange(): boolean {
-    return true;
-  }
-  private guidanceForRemoveBoundaryBackwards(
-    manipulation: RemoveBoundaryBackwards
-  ): ManipulationGuidance | null {
-    if (hasLumpNodeProperty(manipulation.node)) {
-      const executor = ((manipulation: RemoveBoundaryBackwards) => {
-        this.handleDeleteBeforeLump(manipulation.node as HTMLElement);
-      }).bind(this);
-
-      return { allow: true, executor };
+  detectChange(manipulation: Manipulation): boolean {
+    const node = manipulation.node;
+    if (!node.isConnected) {
+      return true;
     }
-    return null;
-  }
-  private guidanceForRemoveBoundaryForwards(
-    manipulation: RemoveBoundaryForwards
-  ): ManipulationGuidance | null {
-    if (hasLumpNodeProperty(manipulation.node)) {
-      const executor = ((
-        manipulation: RemoveBoundaryBackwards,
-        editor: Editor
-      ) => {
-        this.handleDeleteBeforeLump(manipulation.node as HTMLElement, editor);
-      }).bind(this);
-      return { allow: true, executor };
+    const rootNode = node.getRootNode();
+    const isElementInLumpNode = isInLumpNode(node, rootNode);
+    const isManipulationSupported = this.isSupportedManipulation(manipulation);
+    if (isElementInLumpNode && isManipulationSupported) {
+      return true;
     }
-    return null;
+    return false;
   }
-  private handleDeleteBeforeLump(node: HTMLElement, editor: Editor) {
-    if (isLumpNodeFlaggedForRemoval(node)) {
-      this.deleteLump(node, editor);
+  private deleteLumpExecutor(manipulation: Manipulation, editor: Editor) {
+    const rootNode = manipulation.node.getRootNode(); //Assuming here that node is attached.
+    const parentLumpNode = getParentLumpNode(manipulation.node, rootNode)!;
+    if (isLumpNodeFlaggedForRemoval(parentLumpNode)) {
+      this.deleteLump(parentLumpNode, editor);
     } else {
-      flagLumpNodeForRemoval(node);
+      flagLumpNodeForRemoval(parentLumpNode);
     }
   }
   private deleteLump(node: Node, editor: Editor) {
@@ -74,5 +85,12 @@ export default class LumpNodeDeletePlugin implements DeletePlugin {
       cursorRect.right,
       cursorRect.bottom - cursorRect.height / 2
     );
+  }
+  /**
+   * checks whether manipulation is supported
+   * @method isSupportedManipulation
+   */
+  private isSupportedManipulation(manipulation: Manipulation): boolean {
+    return SUPPORTED_MANIPULATIONS.some((m) => m === manipulation.type);
   }
 }

@@ -15,6 +15,8 @@ import {
   LUMP_NODE_URI,
   hasLumpNodeProperty,
 } from "@lblod/ember-rdfa-editor/utils/ce/lump-node-utils";
+import { click } from "@ember/test-helpers";
+
 function lump(innerHTML: string) {
   return `<div property="${LUMP_NODE_URI}" style="background-color:green">${innerHTML}</div>`;
 }
@@ -36,7 +38,7 @@ module(
 
       assert.equal(editor.childElementCount, 1);
       assert.equal(tagName(editor.firstElementChild), "div");
-      assert.ok(hasLumpNodeProperty(editor.firstElementChild));
+      assert.ok(hasLumpNodeProperty(editor.firstElementChild!));
     });
 
     test("Delete | Lumpnodes | double delete in front of lumpnode does delete it", async function (assert) {
@@ -46,12 +48,38 @@ module(
       });
       const editor = await renderEditor();
 
-      moveCaretToEndOfNode(editor.firstChild!);
+      const textNode = editor.childNodes[0];
+      const selection = getWindowSelection();
+      selection.collapse(textNode, 3);
+      await click('div[contenteditable]');
 
+      await wait(500);
       await pressDelete();
+      await wait(500);
       await pressDelete();
+      await wait(500);
 
       assert.equal(editor.childElementCount, 0);
+    });
+
+    test("Delete | Lumpnodes | single delete inside of lumpnode does not delete it", async function (assert) {
+      const initial = `baz${lump(`bar`)}foo`;
+      this.set("rdfaEditorInit", (editor: RdfaDocument) => {
+        editor.setHtmlContent(initial);
+      });
+      const editor = await renderEditor();
+      const lumpNode = editor.firstElementChild!;
+      const textNode = lumpNode.firstChild;
+      const selection = getWindowSelection();
+      selection.collapse(textNode, 1);
+
+      await pressDelete();
+
+
+      assert.equal(editor.childElementCount, 1);
+      assert.equal(tagName(editor.firstElementChild), "div");
+      assert.ok(lumpNode.isConnected);
+      assert.ok(hasLumpNodeProperty(editor.firstElementChild!));
     });
   }
 );

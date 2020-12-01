@@ -43,7 +43,7 @@ function getParentLumpNode(node: Node, rootNode: Node): HTMLElement | null{
   return null;
 }
 
-function getPreviousNonLumpTextNode(node: Node, rootNode: Node): Node | null{
+function getPreviousNonLumpTextNode(node: Node, rootNode: Node): Text | null{
   if(isInLumpNode(node, rootNode)){
     const parentLumpNode = getParentLumpNode(node, rootNode);
     const previousNode = previousTextNode(parentLumpNode, rootNode);
