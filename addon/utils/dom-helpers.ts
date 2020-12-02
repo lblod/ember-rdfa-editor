@@ -1,7 +1,6 @@
 import { A } from '@ember/array';
 import { PernetSelection, PernetSelectionBlock } from '@lblod/ember-rdfa-editor/editor/pernet'
 import { RichNode } from '@lblod/ember-rdfa-editor/editor/raw-editor'
-import { isEmptyRdfaAttributes } from './rdfa/rdfa-rich-node-helpers';
 /**
  * Fake class to list helper functions
  * these functions can be included using
