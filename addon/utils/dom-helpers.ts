@@ -466,6 +466,7 @@ function getCaretPositionFromPoint(x: number, y: number): CaretPosition | null {
  * at an offset which puts it closest to the x,y point
  * */
 function setCaretOnPoint(x: number, y: number) {
+  console.log(`Placing caret on ${x}, ${y}`);
   const caretPos = getCaretPositionFromPoint(x, y);
   if (!caretPos) {
     console.warn(`Could not place caret on ${x}, ${y}`);
@@ -535,6 +536,9 @@ function getCaretRect(): ClientRect {
         dummyRange.collapse();
         result = dummyRange.getBoundingClientRect();
       } else {
+        if(isElement(previousNode) && tagName(previousNode) === "br") {
+          return previousNode.getBoundingClientRect();
+        }
         const emptyText = new Text(invisibleSpace);
         previousNode.appendChild(emptyText);
         dummyRange.setStart(emptyText, 0);
@@ -546,12 +550,14 @@ function getCaretRect(): ClientRect {
       return result;
     }
   } else {
+    debugger;
     // TODO its a fallback, but not a very good one
     // possibly even throw an error here as we should handle all possible situations before this
-    const dummyRange = document.createRange();
-    dummyRange.setStart(range.startContainer, 0);
-    dummyRange.setEnd(range.startContainer, range.endOffset);
-    return dummyRange.getBoundingClientRect();
+    throw new Error("Unhandled caret case");
+    // const dummyRange = document.createRange();
+    // dummyRange.setStart(range.startContainer, 0);
+    // dummyRange.setEnd(range.startContainer, range.endOffset);
+    // return dummyRange.getBoundingClientRect();
   }
 }
 
