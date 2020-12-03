@@ -6,7 +6,8 @@ export interface HandlerResponse {
    * @default true
    * @public
    */
-  allowPropagation: boolean
+  allowPropagation: boolean,
+  allowBrowserDefault?: boolean
 }
 
 

@@ -18,6 +18,9 @@ export default class FallbackInputHandler {
     if (event.type == "keyup" && ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(event.key)) {
       return true;
     }
+    else if(event.type === "input") {
+      this.rawEditor.updateRichNode();
+    }
     else if (event.type == "input" && event.inputType == "deleteContentBackward") {
       return false;
     }

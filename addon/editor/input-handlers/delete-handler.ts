@@ -401,19 +401,19 @@ export default class DeleteHandler implements InputHandler {
    * @public
    */
   handleEvent(event: Event): HandlerResponse {
-    // TODO: reason more about async behaviour of delete.
-    event.preventDefault(); // make sure event propagation is stopped, async behaviour of delete could cause the browser to execute eventDefault before it is finished
+    // // TODO: reason more about async behaviour of delete.
+    // event.preventDefault(); // make sure event propagation is stopped, async behaviour of delete could cause the browser to execute eventDefault before it is finished
 
-    //TODO: think harder about managability of the lock state, now a bit all over the place
-    if (this.isLocked) {
-      editorDebug(`delete-handler.handleEvent`, `Handler is busy deleting, skipping`);
-      return {allowPropagation: false};
-    }
+    // //TODO: think harder about managability of the lock state, now a bit all over the place
+    // if (this.isLocked) {
+    //   editorDebug(`delete-handler.handleEvent`, `Handler is busy deleting, skipping`);
+    //   return {allowPropagation: false};
+    // }
 
-    this.deleteForward().then(() => {
-      this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
-    });
-    return {allowPropagation: false};
+    // this.deleteForward().then(() => {
+    //   this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
+    // });
+    return {allowPropagation: true, allowBrowserDefault: true};
   }
 
   /////////////////
