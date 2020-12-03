@@ -24,7 +24,6 @@ function isSelectionEqual(
   oldSelection: EditorNodeSelection,
   newSelection: EditorNodeSelection
 ) {
-  debugger;
   return (
     isSelectionNodeEqual(oldSelection.startNode, newSelection.startNode) &&
     isSelectionNodeEqual(oldSelection.endNode, newSelection.endNode)

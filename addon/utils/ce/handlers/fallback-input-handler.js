@@ -18,11 +18,11 @@ export default class FallbackInputHandler {
     if (event.type == "keyup" && ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(event.key)) {
       return true;
     }
-    else if(event.type === "input") {
-      this.rawEditor.updateRichNode();
-    }
     else if (event.type == "input" && event.inputType == "deleteContentBackward") {
       return false;
+    }
+    else if(event.type === "input") {
+      return true;
     }
     else if (! ["keydown", "keyup", "mousedown","beforeinput"].includes(event.type)){
       // keydown is before anything happens and thus not interesting for fallback
@@ -36,6 +36,8 @@ export default class FallbackInputHandler {
 
   handleEvent(event) {
     this.rawEditor.externalDomUpdate(`uncaptured input event of type ${event.type}, restoring editor state`, () => {});
+    console.log("GOT INPUT EVENT" ,event);
+    this.rawEditor.updateRichNode();
     return HandlerResponse.create({ allowBrowserDefault: true });
   }
 }

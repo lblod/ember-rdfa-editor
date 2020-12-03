@@ -550,7 +550,6 @@ function getCaretRect(): ClientRect {
       return result;
     }
   } else {
-    debugger;
     // TODO its a fallback, but not a very good one
     // possibly even throw an error here as we should handle all possible situations before this
     throw new Error("Unhandled caret case");
