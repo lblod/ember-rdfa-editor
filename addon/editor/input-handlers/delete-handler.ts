@@ -373,7 +373,7 @@ export default class DeleteHandler implements InputHandler {
   constructor({rawEditor}: { rawEditor: RawEditor }) {
     this.rawEditor = rawEditor;
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
-    this.plugins = [new ListDeletePlugin(), new LumpNodeDeletePlugin()];
+    this.plugins = [new LumpNodeDeletePlugin()];
     this.isLocked = false;
   }
 
@@ -412,8 +412,26 @@ export default class DeleteHandler implements InputHandler {
     // this.deleteForward().then(() => {
     //   this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
     // });
+    const manipulation = this.getNextManipulation();
+    editorDebug(`delete-handler.deleteForward`, `chose manipulation: `, manipulation);
+    const {mayExecute, dispatchedExecutor} = this.checkManipulationByPlugins(manipulation);
+
+      if (!mayExecute) {
+        warn("Not allowed to execute manipulation for delete", {id: "delete-handler-manipulation-not-allowed"});
+    return {allowPropagation: false, allowBrowserDefault: false};
+      }
+
+      // run the manipulation
+      if (dispatchedExecutor) {
+        // NOTE: we should pass some sort of editor interface here in the future.
+        dispatchedExecutor(manipulation, this.rawEditor);
+        return {allowPropagation: false, allowBrowserDefault: false};
+      }
+
     return {allowPropagation: true, allowBrowserDefault: true};
   }
+
+
 
   /////////////////
   // IMPLEMENTATION
