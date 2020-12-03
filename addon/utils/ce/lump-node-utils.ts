@@ -1,5 +1,6 @@
 import previousTextNode from './previous-text-node';
 import nextTextNode from './next-text-node';
+import { isElement } from '../dom-helpers';
 
 /**
  * So, what is a lumpNode?
@@ -22,14 +23,14 @@ import nextTextNode from './next-text-node';
 
 const LUMP_NODE_URI = 'http://lblod.data.gift/vocabularies/editor/isLumpNode';
 
-function isInLumpNode(node, rootNode){
+function isInLumpNode(node:Node, rootNode: Node){
   if(getParentLumpNode(node, rootNode)){
     return true;
   }
   return false;
 }
 
-function getParentLumpNode(node, rootNode){
+function getParentLumpNode(node: Node, rootNode: Node): HTMLElement | null{
   if(hasLumpNodeProperty(node)){
     return node;
   }
@@ -42,7 +43,7 @@ function getParentLumpNode(node, rootNode){
   return null;
 }
 
-function getPreviousNonLumpTextNode(node, rootNode){
+function getPreviousNonLumpTextNode(node: Node, rootNode: Node): Text | null{
   if(isInLumpNode(node, rootNode)){
     const parentLumpNode = getParentLumpNode(node, rootNode);
     const previousNode = previousTextNode(parentLumpNode, rootNode);
@@ -56,7 +57,7 @@ function getPreviousNonLumpTextNode(node, rootNode){
     return previousTextNode(node, rootNode);
 }
 
-function getNextNonLumpTextNode(node, rootNode){
+function getNextNonLumpTextNode(node: Node, rootNode: Node): Node | null{
   if(isInLumpNode(node, rootNode)){
     const parentLumpNode = getParentLumpNode(node, rootNode);
     const nextNode = nextTextNode(parentLumpNode, rootNode);
@@ -69,18 +70,38 @@ function getNextNonLumpTextNode(node, rootNode){
     return nextTextNode(node, rootNode);
 }
 
-function hasLumpNodeProperty(node){
+function hasLumpNodeProperty(node: Node): node is HTMLElement{
+  if(!isElement(node)) return false;
   if(!node.attributes) return false;
-  if(!node.attributes["property"]) return false;
-  if(!node.attributes["property"].value) return false;
-  if(node.attributes["property"].value.indexOf(LUMP_NODE_URI) > -1) return true;
+  if(!node.hasAttribute("property")) return false;
+
+  const propertyVal = node.attributes.getNamedItem("property")?.value;
+  if(!propertyVal) return false;
+  if(propertyVal.indexOf(LUMP_NODE_URI) > -1) return true;
   return false;
 }
 
-function animateLumpNode(node){
+function animateLumpNode(node: Element){
   let animationClass = 'lump-node-highlight';
   node.classList.add(animationClass);
   window.setTimeout(() => node.classList.remove(animationClass), 500);
 }
 
-export { isInLumpNode, getParentLumpNode, hasLumpNodeProperty, getNextNonLumpTextNode, getPreviousNonLumpTextNode, animateLumpNode };
+/**
+  * Flags the LumpNode for removal.
+  * @method flagForRemoval
+  */
+function flagLumpNodeForRemoval(node: Node) {
+  const rootNode = node.getRootNode();
+  const lumpNode = getParentLumpNode(node, rootNode) as Element;
+  lumpNode.setAttribute("data-flagged-remove", "complete");
+}
+
+/**
+  * checks whether element is flagged for removal
+  * @method isElementFlaggedForRemoval
+  */
+function isLumpNodeFlaggedForRemoval( element: Element ) : boolean {
+  return element.getAttribute('data-flagged-remove') === "complete";
+}
+export { isInLumpNode, getParentLumpNode, hasLumpNodeProperty, getNextNonLumpTextNode, getPreviousNonLumpTextNode, animateLumpNode, flagLumpNodeForRemoval, isLumpNodeFlaggedForRemoval, LUMP_NODE_URI };
