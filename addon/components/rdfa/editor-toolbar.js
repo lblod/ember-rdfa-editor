@@ -61,7 +61,7 @@ export default class EditorToolbar extends Component {
     if (selection.isCollapsed) {
       // colllapsed selections that are not in a list are not properly handled, this is a temporary workaround until we have a better toolbar.
       if (isInList(selection.anchorNode)) {
-        this.contentEditable.insertIndent();
+        this.contentEditable.insertUnindent();
       }
       else {
         //refocus editor
