@@ -11,146 +11,12 @@ import {RawEditor} from '../raw-editor';
 import {
   editorDebug,
   hasVisibleChildren,
-  moveCaret,
-  moveCaretAfter,
-  moveCaretBefore,
-  paintCycleHappened,
-  stringToVisibleText
+  stringToVisibleText,
+  moveCaretToEndOfNode
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import ListDeletePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/delete-plugin';
 import LumpNodeDeletePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/delete-plugin';
 
-/**
- * We introduce an abstract reference point to check for visual changes.
- * In this handler, in some cases, we want the caret to stay, but content to be removed.
- * And sometimes we want the caret to move.  Hence, checking for change might imply different logic.
- * Note: this is a first shot at abstraction, might change over time.
- */
-interface VisualChangeReferencePoint {
-  storeMeasurePoint(): void;
-
-  hasChangedVisually: boolean;
-  editor: RawEditor;
-
-  cleanUp(): void;
-}
-
-export class MagicSpan implements VisualChangeReferencePoint {
-  // Note: We explicitly use coordinates in editor-space and not in viewPort-space.
-  // because in longer documents, when removing content, document may move up on re-render and
-  // as a result, the viewport coordinates might remain the same.
-    /**
-     * This allows us to distinguish a magic span from a normal one
-     */
-  static ID = "__magic_span"
-  firstMeasurePoint: Array<DOMRect>;
-  secondMeasurePoint: Array<DOMRect>;
-  span: Element;
-  editor: RawEditor;
-
-  constructor(span: Element, editor: RawEditor) {
-    this.span = span;
-    this.span.id = MagicSpan.ID;
-    this.editor = editor;
-    this.firstMeasurePoint = [];
-    this.secondMeasurePoint = [];
-  }
-
-  storeMeasurePoint(): void {
-    const referenceFrame = this.editor.rootNode.getBoundingClientRect();
-    const targets = Array.from(this.span.getClientRects());
-    if (!this.firstMeasurePoint.length) {
-      this.firstMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
-    } else {
-      this.secondMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
-    }
-  }
-
-  get hasChangedVisually(): boolean {
-    return checkVisibleChange(this.firstMeasurePoint, this.secondMeasurePoint);
-  }
-
-  cleanUp(): void {
-    this.span.remove();
-    this.editor.updateRichNode();
-  }
-
-}
-
-class Caret implements VisualChangeReferencePoint {
-  firstMeasurePoint: Array<DOMRect>;
-  secondMeasurePoint: Array<DOMRect>;
-  editor: RawEditor;
-
-  constructor(editor: RawEditor) {
-    this.editor = editor;
-    this.firstMeasurePoint = [];
-    this.secondMeasurePoint = [];
-  }
-
-  private calculateSelectionRects(): Array<DOMRect> {
-    if (window.getSelection() != null) {
-      const selection = window.getSelection() as Selection;
-      if (selection.rangeCount > 0) {
-        const referenceFrame = this.editor.rootNode.getBoundingClientRect();
-        const targets = Array.from(selection.getRangeAt(0).getClientRects());
-        return targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
-      }
-    }
-    return [];
-  }
-
-  storeMeasurePoint(): void {
-    if (!this.firstMeasurePoint.length) {
-      this.firstMeasurePoint = this.calculateSelectionRects();
-    } else {
-      this.secondMeasurePoint = this.calculateSelectionRects();
-    }
-  }
-
-  get hasChangedVisually(): boolean {
-    return checkVisibleChange(this.firstMeasurePoint, this.secondMeasurePoint);
-  }
-
-  cleanUp(): void {
-  } //nothing to do
-}
-
-class VisibleTextLength implements VisualChangeReferencePoint {
-  firstMeasurePoint: String;
-  secondMeasurePoint: String;
-  textNode: Text;
-  editor: RawEditor;
-
-  constructor(textNode: Text, editor: RawEditor) {
-    this.editor = editor;
-    this.firstMeasurePoint = '';
-    this.secondMeasurePoint = '';
-    this.textNode = textNode;
-  }
-
-  private getVisibleText(): String {
-    if (this.textNode.parentElement) {
-      return (this.textNode.parentElement as HTMLElement).innerText;
-    }
-    return '';
-  }
-
-  storeMeasurePoint(): void {
-    if (!this.firstMeasurePoint.length) {
-      this.firstMeasurePoint = this.getVisibleText();
-    } else {
-      this.secondMeasurePoint = this.getVisibleText();
-    }
-  }
-
-  get hasChangedVisually(): boolean {
-    return stringToVisibleText(this.firstMeasurePoint as string) !== stringToVisibleText(this.secondMeasurePoint as string);
-  }
-
-  cleanUp(): void {
-  } //nothing to do
-}
 
 /**
  * A specific location in the document.
@@ -343,7 +209,6 @@ export interface DeletePlugin {
  * @extends EmberObject
  */
 export default class DeleteHandler implements InputHandler {
-  isLocked: Boolean
   /**
    * The editor instance on which we can execute changes.
    *
@@ -374,7 +239,6 @@ export default class DeleteHandler implements InputHandler {
     this.rawEditor = rawEditor;
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [new LumpNodeDeletePlugin()];
-    this.isLocked = false;
   }
 
   /**
@@ -387,10 +251,11 @@ export default class DeleteHandler implements InputHandler {
   isHandlerFor(event: Event) {
     const selection = window.getSelection();
     return (
-        (event.type === "keydown" && (event as KeyboardEvent).key === 'Delete')
-        // || (event.type == "beforeinput" && (event as InputEvent).inputType == "deleteContentsBackwards") //TODO:figure out
-      )
-      && selection != null && selection.isCollapsed;
+      event.type === "keydown" &&
+      (event as KeyboardEvent).key === "Delete" &&
+      selection != null &&
+      selection.isCollapsed
+    );
   }
 
   /**
@@ -399,177 +264,35 @@ export default class DeleteHandler implements InputHandler {
    * @return {HandlerResponse}
    * @public
    */
-  handleEvent(event: Event): HandlerResponse {
-    // // TODO: reason more about async behaviour of delete.
-    // event.preventDefault(); // make sure event propagation is stopped, async behaviour of delete could cause the browser to execute eventDefault before it is finished
-
-    // //TODO: think harder about managability of the lock state, now a bit all over the place
-    // if (this.isLocked) {
-    //   editorDebug(`delete-handler.handleEvent`, `Handler is busy deleting, skipping`);
-    //   return {allowPropagation: false};
-    // }
-
-    // this.deleteForward().then(() => {
-    //   this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
-    // });
+  handleEvent(_event: Event): HandlerResponse {
     const manipulation = this.getNextManipulation();
-    editorDebug(`delete-handler.deleteForward`, `chose manipulation: `, manipulation);
-    const {mayExecute, dispatchedExecutor} = this.checkManipulationByPlugins(manipulation);
+    editorDebug(
+      `delete-handler.deleteForward`,
+      `chose manipulation: `,
+      manipulation
+    );
+    const { mayExecute, dispatchedExecutor } = this.checkManipulationByPlugins(
+      manipulation
+    );
 
-      if (!mayExecute) {
-        warn("Not allowed to execute manipulation for delete", {id: "delete-handler-manipulation-not-allowed"});
-    return {allowPropagation: false, allowBrowserDefault: false};
-      }
-
-      // run the manipulation
-      if (dispatchedExecutor) {
-        // NOTE: we should pass some sort of editor interface here in the future.
-        dispatchedExecutor(manipulation, this.rawEditor);
-        return {allowPropagation: false, allowBrowserDefault: false};
-      }
-
-    return {allowPropagation: true, allowBrowserDefault: true};
-  }
-
-
-
-  /////////////////
-  // IMPLEMENTATION
-  /////////////////
-
-  /**
-   * General control-flow for the delete-handling.
-   *
-   * @method deleteForward //TODO rename
-   * @private
-   */
-  async deleteForward(max_tries = 50) {
-
-    if (this.isLocked) {
-      editorDebug(`delete-handler.deleteForward`, `Handler is busy deleting, skipping`);
-      return;
+    if (!mayExecute) {
+      warn("Not allowed to execute manipulation for delete", {
+        id: "delete-handler-manipulation-not-allowed",
+      });
+      return { allowPropagation: false, allowBrowserDefault: false };
     }
 
-    if (max_tries == 0) {
-      warn("Too many delete tries, giving up removing content", {id: "delete-handler-too-many-tries"});
-      return;
-    }
-
-    //Lock here
-    this.isLocked = true;
-
-    // search for a manipulation to execute
-    const manipulation = this.getNextManipulation();
-    editorDebug(`delete-handler.deleteForward`, `chose manipulation: `, manipulation);
-
-    // check if we can execute it
-    //TODO: no plugins yet + there is still some communication required between plugin and handler so handler can place
-    // the visual reference point. This will be taken care of when starting implementing plugins.
-    // (probably will contain a location and eventually som textContent)
-    const {mayExecute, dispatchedExecutor} = this.checkManipulationByPlugins(manipulation);
-
-    //Add reference point, we can mesure if something changed visually.
-    const visualReference = this.ensureVisualChangeReferencePoint(manipulation);
-    visualReference.storeMeasurePoint();
-
-    //Declare for later use
-    let pluginSeesChange;
-
-    try {
-      // error if we're not allowed to
-      if (!mayExecute) {
-        warn("Not allowed to execute manipulation for delete", {id: "delete-handler-manipulation-not-allowed"});
-        return;
-      }
-
-      // run the manipulation
-      if (dispatchedExecutor) {
-        // NOTE: we should pass some sort of editor interface here in the future.
-        dispatchedExecutor(manipulation, this.rawEditor);
-      } else {
-        this.handleNativeManipulation(manipulation);
-      }
-
-      editorDebug(`delete-handler.deleteForward`, `------------------Manipulation ${manipulation.type}`);
-
-      // ask plugins if something has changed
-      await paintCycleHappened();
-      pluginSeesChange = this.runChangeDetectionByPlugins(manipulation);
-
-      visualReference.storeMeasurePoint();
-    } finally {
-
-      //make sure the DOM-tree remains clean
-      visualReference.cleanUp();
-
-      //make sure always unlocked
-      this.isLocked = false;
-    }
-
-    // maybe iterate again
-    if (pluginSeesChange || visualReference.hasChangedVisually) {
-      // TODO: do we need to make sure cursor state in the editor corresponds with browser state here?
-      return;
+    // run the manipulation
+    if (dispatchedExecutor) {
+      // NOTE: we should pass some sort of editor interface here in the future.
+      dispatchedExecutor(manipulation, this.rawEditor);
+      return { allowPropagation: false, allowBrowserDefault: false };
     } else {
-      await this.deleteForward(max_tries - 1);
+      debugger;
+      this.handleNativeManipulation(manipulation);
+      return { allowPropagation: true, allowBrowserDefault: true };
     }
   }
-
-  ensureVisualChangeReferencePoint(manipulation: Manipulation): VisualChangeReferencePoint {
-    let visualReferencePoint;
-    const node = manipulation.node as ChildNode;
-    switch (manipulation.type) {
-      case "removeCharacter":
-        visualReferencePoint = new VisibleTextLength(node as Text, this.rawEditor);
-        break;
-      case "removeEmptyTextNode":
-        visualReferencePoint = new MagicSpan(document.createElement('span'), this.rawEditor);
-        node.after(visualReferencePoint.span);
-        break;
-      case "removeEmptyElement":
-        visualReferencePoint = new MagicSpan(document.createElement('span'), this.rawEditor);
-        node.after(visualReferencePoint.span);
-        break;
-      case "removeOtherNode":
-        visualReferencePoint = new MagicSpan(document.createElement('span'), this.rawEditor);
-        node.after(visualReferencePoint.span);
-        break;
-      case "removeVoidElement":
-        visualReferencePoint = new MagicSpan(document.createElement('span'), this.rawEditor);
-        node.after(visualReferencePoint.span);
-        break;
-      case "removeElementWithChildrenThatArentVisible":
-        visualReferencePoint = new MagicSpan(document.createElement('span'), this.rawEditor);
-        node.after(visualReferencePoint.span);
-        break;
-      case "removeBoundaryForwards":
-        visualReferencePoint = new Caret(this.rawEditor);
-        break;
-      case "removeBoundaryBackwards":
-        visualReferencePoint = new Caret(this.rawEditor);
-        break;
-      case "keepCursorAtEnd":
-        visualReferencePoint = new Caret(this.rawEditor);
-        break;
-      default:
-        throw 'Unkown manipulation for insertVisualChangeReferencePoint';
-    }
-
-    return visualReferencePoint as VisualChangeReferencePoint;
-  }
-
-  /**
-   * Returns truethy if a visual change could be detected.
-   *
-   * TODO: current implementation assumes selection is a carret.
-   *
-   * @method checkVisibleChange
-   * @private
-   *
-   * @param options.previousVisualCursorCoordinates {Array<DOMRectCoordinatesInEditor>}
-   * Coordinates of the rectangles defining the selection.
-   */
-
 
   /**
    * Executes a single manipulation on the DOM tree, ensuring the
@@ -584,93 +307,13 @@ export default class DeleteHandler implements InputHandler {
    */
   handleNativeManipulation(manipulation: Manipulation) {
     switch (manipulation.type) {
-      case "removeCharacter": {
-        const {node, position} = manipulation;
-        let nodeText = node.textContent || "";
-
-        if (nodeText.length > position + 2 && nodeText.slice(position + 1, position + 2) == " ") {
-          // if the character after our current position is a space, it might become invisible, so we need to convert it to a non breaking space
-          // cases where this happens:
-          // - two spaces becoming neighbours after the delete
-          // - spaces moving to the start of a node
-          nodeText = `${nodeText.slice(0, position + 1)}\u00A0${nodeText.slice(position + 2)}`;
-        }
-
-        if (nodeText.length - 1 == position && nodeText.length > 1 && nodeText.slice(position - 1, position) == " ") {
-          // if the character before our new position is a space, it might become invisible, so we need to convert it to a non breaking space
-          // cases where this happens:
-          // - two spaces becoming neighbours after the delete
-          // - spaces moving to the end of a node
-          nodeText = `${nodeText.slice(0, position - 1)}\u00A0${nodeText.slice(position)}`;
-        }
-
-        node.textContent = `${nodeText.slice(0, position)}${nodeText.slice(position + 1)}`;
-        this.rawEditor.updateRichNode();
-        moveCaret(node, position); //we manipulated the node where the selection was, so needs an update
-        break;
-      }
-
       case "removeEmptyTextNode": {
-        const {node: textNode} = manipulation;
-        removeNode(textNode);
-        this.rawEditor.updateRichNode();
+        const { node: textNode } = manipulation;
+        moveCaretToEndOfNode(textNode);
         break;
       }
-
-      case "removeEmptyElement": {
-        const emptyElement = manipulation.node;
-        emptyElement.remove();
-        this.rawEditor.updateRichNode();
-        break;
-      }
-
-      case "removeOtherNode": {
-        const otherNode = manipulation.node as Node;
-        //TODO: it is not very clear to me, why we use removeChild here instead of .remove().
-        // taken from backspace-handler
-        if (otherNode.parentElement) {
-          // TODO: the following does not work without casting, and I'm
-          // not sure we certainly have the childNode interface as per
-          // https://developer.mozilla.org/en-US/docs/Web/API/ChildNode
-          otherNode.parentElement.removeChild(otherNode);
-          this.rawEditor.updateRichNode();
-        }
-        break;
-      }
-
-      case "removeVoidElement": {
-        const voidElement = manipulation.node;
-        voidElement.remove();
-        this.rawEditor.updateRichNode();
-        break;
-      }
-
-      case "removeElementWithChildrenThatArentVisible": {
-        const elementWithOnlyInvisibleNodes = manipulation.node;
-        elementWithOnlyInvisibleNodes.remove();
-        this.rawEditor.updateRichNode();
-        break;
-      }
-
-      case "removeBoundaryForwards": {
-        // default implementation is almost always wrong, but harmless and it visually does something
-        moveCaretAfter(manipulation.node);
-        break;
-      }
-
-      case "removeBoundaryBackwards": {
-        // default implementation is almost always wrong, but harmless and it visually does something
-        moveCaretBefore(manipulation.node.childNodes[0]); //Note: it has been checked it has children
-        break;
-      }
-
-      case "keepCursorAtEnd": {
-        // do nothing
-        break;
-      }
-
       default:
-        throw `Case ${manipulation.type} was not handled by handleNativeInputManipulation.`;
+        break;
     }
   }
 
@@ -690,67 +333,68 @@ export default class DeleteHandler implements InputHandler {
     // check where our cursor is and get the deepest "thing" after
     // the cursor (character or node)
     const thingAfterCursor: ThingAfterCursor = this.getThingAfterCursor();
-    console.log(thingAfterCursor)
+    console.log(thingAfterCursor);
     switch (thingAfterCursor.type) {
-
       case "character": {
         // character: remove the character
         const characterAfterCursor = thingAfterCursor as CharacterPosition;
         return {
           type: "removeCharacter",
           node: characterAfterCursor.node,
-          position: characterAfterCursor.position
+          position: characterAfterCursor.position,
         };
-
       }
       case "emptyTextNodeStart": {
         // empty text node: remove the text node
         const textNodeAfterCursor = thingAfterCursor as EmptyTextNodeStartPosition;
-        if (stringToVisibleText(textNodeAfterCursor.node.textContent || "").length === 0) {
+        if (
+          stringToVisibleText(textNodeAfterCursor.node.textContent || "")
+            .length === 0
+        ) {
           return {
             type: "removeEmptyTextNode",
-            node: textNodeAfterCursor.node
+            node: textNodeAfterCursor.node,
           };
         } else {
           throw "Received text node which is not empty as previous node.  Some assumption broke.";
         }
-
       }
       case "emptyTextNodeEnd": {
         // empty text node: remove the text node
         const textNodePositionAfterCursor = thingAfterCursor as EmptyTextNodeEndPosition;
-        if (stringToVisibleText(textNodePositionAfterCursor.node.textContent || "").length === 0) {
+        if (
+          stringToVisibleText(
+            textNodePositionAfterCursor.node.textContent || ""
+          ).length === 0
+        ) {
           return {
             type: "removeEmptyTextNode",
-            node: textNodePositionAfterCursor.node
+            node: textNodePositionAfterCursor.node,
           };
         } else {
           throw "Received text node which is not empty as previous node.  Some assumption broke.";
         }
-
       }
       case "voidElement": {
         const voidElementAfterCursor = thingAfterCursor as VoidElementPosition;
         return {
           type: "removeVoidElement",
-          node: voidElementAfterCursor.node
+          node: voidElementAfterCursor.node,
         };
-
       }
       case "elementEnd": {
         const elementAfterCursor = thingAfterCursor as ElementEndPosition;
         if (hasVisibleChildren(elementAfterCursor.node)) {
           return {
             type: "removeBoundaryForwards",
-            node: elementAfterCursor.node
+            node: elementAfterCursor.node,
           };
         } else {
           return {
             type: "removeEmptyElement",
-            node: elementAfterCursor.node
+            node: elementAfterCursor.node,
           };
         }
-
       }
       case "elementStart": {
         const parentAfterCursor = thingAfterCursor as ElementStartPosition;
@@ -758,33 +402,33 @@ export default class DeleteHandler implements InputHandler {
         if (hasVisibleChildren(element)) {
           return {
             type: "removeBoundaryBackwards",
-            node: element as HTMLElement
+            node: element as HTMLElement,
           };
         } else {
           return {
             type: "removeEmptyElement",
-            node: element
+            node: element,
           };
         }
-
       }
       case "uncommonNodeStart": {
         const positionAfterCursor = thingAfterCursor as UncommonNodeStartPosition;
         const node = positionAfterCursor.node;
         return {
           type: "removeOtherNode",
-          node: node
+          node: node,
         };
-
       }
       case "editorRootEnd":
         return {
           type: "keepCursorAtEnd",
-          node: thingAfterCursor.node
+          node: thingAfterCursor.node,
         };
 
       default:
-        throw `Could not find manipulation for ${(thingAfterCursor as any).type}`;
+        throw `Could not find manipulation for ${
+          (thingAfterCursor as any).type
+        }`;
     }
   }
 
@@ -885,7 +529,7 @@ export default class DeleteHandler implements InputHandler {
               const textNode = child as Text;
               if (stringToVisibleText(textNode.textContent || "").length == 0) {
                 return {type: "emptyTextNodeStart", node: textNode};
-              } else {
+
                 return {type: "character", position: 0, node: textNode};
               }
             } else if (child && child.nodeType === Node.ELEMENT_NODE) {
@@ -1015,33 +659,6 @@ export default class DeleteHandler implements InputHandler {
     };
   }
 
-  /**
-   * Checks with each plugin if they have detected a change.
-   *
-   * @param {Manipulation} manipulation The change which was executed.
-   * @return {boolean} True iff a plugin has detected a change.
-   * @private
-   * @method runChangeDetectionByPlugins
-   */
-  runChangeDetectionByPlugins(manipulation: Manipulation): boolean {
-    const reports =
-      this
-        .plugins
-        .map((plugin) => {
-          return {plugin, detectedChange: plugin.detectChange(manipulation)};
-        })
-        .filter(({detectedChange}) => detectedChange);
-
-    // debug reporting
-    for (const {plugin} of reports) {
-      editorDebug(`delete-handler.runChangeDetectionByPlugins`, `Change detected by plugin ${plugin.label}`, {
-        manipulation,
-        plugin
-      });
-    }
-
-    return reports.length > 0;
-  }
 }
 
 /******************************************************************************
@@ -1064,43 +681,3 @@ function getRelativeDomRectCoordinates(reference: DOMRect, target: DOMRect): DOM
   );
 }
 
-/**
- * Helper to compare 2 Arrays of DOMRect and to see wether any changes between them could be considered as a visual chancge.
- * TODO: this needs some refurbishing, now unclean absctraction.
- * @method checkVisibleChange
- * @private
- */
-function checkVisibleChange(currentVisualCursorCoordinates: Array<DOMRect>,
-                            previousVisualCursorCoordinates: Array<DOMRect>): boolean {
-
-  if (!previousVisualCursorCoordinates.length && !currentVisualCursorCoordinates.length) {
-    editorDebug(`delete-handler.checkVisibleChange`,
-      `Did not see a visual change when removing character, no visualCoordinates whatsoever`,
-      {new: currentVisualCursorCoordinates, old: previousVisualCursorCoordinates});
-    return false;
-  } else if (!previousVisualCursorCoordinates.length && currentVisualCursorCoordinates.length) {
-    editorDebug(`delete-handler.checkVisibleChange`, `no previous coordinates`);
-    return false;
-  } else if (previousVisualCursorCoordinates.length && !currentVisualCursorCoordinates.length) {
-    editorDebug(`delete-handler.checkVisibleChange`, 'no new coordinates');
-    return true;
-  }
-  //Previous and current have visual coordinates, we need to compare the contents
-  else {
-    const {left: ol, top: ot} = previousVisualCursorCoordinates[0];
-
-
-    const {left: nl, top: nt} = currentVisualCursorCoordinates[0];
-
-    //TODO: on some screens we might see changes where there are none. Hence the treshold
-    //TODO: think harder
-    const visibleChange = Math.abs(ol - nl) > 0.1 || Math.abs(ot - nt) > 0.1;
-
-    if (!visibleChange) {
-      editorDebug(`delete-handler.checkVisibleChange`,
-        `Did not see a visual change when removing character`,
-        {new: currentVisualCursorCoordinates, old: previousVisualCursorCoordinates});
-    }
-    return visibleChange;
-  }
-}

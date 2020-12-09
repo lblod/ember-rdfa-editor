@@ -236,5 +236,6 @@ export interface RemoveBoundaryBackwards extends BaseManipulation {
 
 export interface ManipulationGuidance {
   allow: boolean | undefined
-  executor: ManipulationExecutor | undefined
+  executor: ManipulationExecutor | undefined,
+  preventDefault?: boolean
 }
