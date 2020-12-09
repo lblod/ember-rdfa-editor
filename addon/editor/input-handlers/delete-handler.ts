@@ -188,13 +188,6 @@ export interface DeletePlugin {
    */
   guidanceForManipulation: (manipulation: Manipulation) => ManipulationGuidance | null;
 
-  /**
-   * Callback to let the plugin indicate whether or not it discovered
-   * a change.
-   *
-   * Hint: return false if you don't detect location updates.
-   */
-  detectChange: (manipulation: Manipulation) => boolean;
 }
 
 /**
@@ -288,7 +281,6 @@ export default class DeleteHandler implements InputHandler {
       dispatchedExecutor(manipulation, this.rawEditor);
       return { allowPropagation: false, allowBrowserDefault: false };
     } else {
-      debugger;
       this.handleNativeManipulation(manipulation);
       return { allowPropagation: true, allowBrowserDefault: true };
     }

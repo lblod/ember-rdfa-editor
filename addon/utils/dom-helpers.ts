@@ -560,6 +560,36 @@ function getCaretRect(): ClientRect {
   }
 }
 
+function findFirstAncestorWhichSatisfies(
+  startNode: Node,
+  rootNode: Node,
+  predicate: (visitedNode: Node, previousNode?: Node) => boolean
+): Node | null {
+  let previousNode;
+  let currentNode = startNode;
+  while (!predicate(currentNode, previousNode) && currentNode !== rootNode) {
+    const parent = currentNode.parentNode;
+    if (!parent) {
+      throw new Error("Node has no parent and is not the rootNode");
+    }
+
+    previousNode = currentNode;
+    currentNode = parent;
+  }
+  if (predicate(currentNode)) {
+    return currentNode;
+  } else {
+    return null;
+  }
+}
+
+function findDeepestFirstDescendant(node: Node): Node {
+  let currentNode = node;
+  while (currentNode.firstChild) {
+    currentNode = currentNode.firstChild;
+  }
+  return currentNode;
+}
 
 export {
   tagName,
@@ -593,6 +623,8 @@ export {
   getWindowSelection,
   getCaretPositionFromPoint,
   setCaretOnPoint,
-  getCaretRect
+  getCaretRect,
+  findFirstAncestorWhichSatisfies,
+  findDeepestFirstDescendant
 
 };

@@ -13,7 +13,13 @@ import {
   isLumpNodeFlaggedForRemoval,
   isInLumpNode,
 } from "../../ce/lump-node-utils";
-import { getCaretRect, setCaretOnPoint } from "../../dom-helpers";
+import {
+  getCaretRect,
+  setCaretOnPoint,
+  findFirstAncestorWhichSatisfies,
+  findDeepestFirstDescendant,
+} from "../../dom-helpers";
+import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
 
 const SUPPORTED_MANIPULATIONS = [
   "removeEmptyTextNode",
@@ -35,11 +41,29 @@ export default class LumpNodeDeletePlugin implements DeletePlugin {
   guidanceForManipulation(
     manipulation: Manipulation
   ): ManipulationGuidance | null {
-    //TODO: fix case.manipulation.node == lumpnode
-    const node = manipulation.node;
+    let node = manipulation.node;
     const rootNode = node.getRootNode(); //Assuming here that node is attached.
+    if (
+      manipulation.type === "removeBoundaryForwards" ||
+      (manipulation.type === "removeCharacter" &&
+        manipulation.node.textContent?.length === 1)
+    ) {
+      const nextNode = this.findNextRelevantNode(node, rootNode);
+      if (!nextNode) {
+        return null;
+      } else {
+        node = nextNode;
+        // TODO: this hack is a consequence of the way we eject the cursor from lumpNodes
+        if (manipulation.type === "removeCharacter") {
+          manipulation.node.remove();
+        }
+      }
+    }
     const isElementInLumpNode = isInLumpNode(node, rootNode);
     const isManipulationSupported = this.isSupportedManipulation(manipulation);
+    if (manipulation.type === "removeCharacter") {
+      debugger;
+    }
 
     if (isElementInLumpNode) {
       if (!isManipulationSupported) {
@@ -48,39 +72,27 @@ export default class LumpNodeDeletePlugin implements DeletePlugin {
         );
         return null;
       }
-      return { allow: true, executor: this.deleteLumpExecutor.bind(this) };
+      const executor = (_manipulation: Manipulation, editor: RawEditor) => {
+        this.deleteLumpExecutor(node, rootNode);
+        editor.updateRichNode();
+      };
+      return { allow: true, executor };
     }
 
     return null;
   }
-  detectChange(manipulation: Manipulation): boolean {
-    const node = manipulation.node;
-    if (!node.isConnected) {
-      return true;
-    }
-    const rootNode = node.getRootNode();
-    const isElementInLumpNode = isInLumpNode(node, rootNode);
-    const isManipulationSupported = this.isSupportedManipulation(manipulation);
-    if (isElementInLumpNode && isManipulationSupported) {
-      return true;
-    }
-    return false;
-  }
-  private deleteLumpExecutor(manipulation: Manipulation, editor: Editor) {
-    const rootNode = manipulation.node.getRootNode(); //Assuming here that node is attached.
-    const parentLumpNode = getParentLumpNode(manipulation.node, rootNode)!;
+  private deleteLumpExecutor(node: Node, rootNode: Node) {
+    const parentLumpNode = getParentLumpNode(node, rootNode)!;
     if (isLumpNodeFlaggedForRemoval(parentLumpNode)) {
-      this.deleteLump(parentLumpNode, editor);
+      this.deleteLump(parentLumpNode, rootNode);
     } else {
       flagLumpNodeForRemoval(parentLumpNode);
     }
   }
-  private deleteLump(node: Node, editor: Editor) {
-    const rootNode = node.getRootNode();
+  private deleteLump(node: Node, rootNode: Node) {
     const lumpNode = getParentLumpNode(node, rootNode);
     const cursorRect = getCaretRect();
     lumpNode?.remove();
-    editor.updateRichNode();
     setCaretOnPoint(
       cursorRect.right,
       cursorRect.bottom - cursorRect.height / 2
@@ -92,5 +104,21 @@ export default class LumpNodeDeletePlugin implements DeletePlugin {
    */
   private isSupportedManipulation(manipulation: Manipulation): boolean {
     return SUPPORTED_MANIPULATIONS.some((m) => m === manipulation.type);
+  }
+  private findNextRelevantNode(node: Node, root: Node): Node | null {
+    if (node.nextSibling) {
+      return node.nextSibling;
+    }
+    const commonParent = findFirstAncestorWhichSatisfies(
+      node,
+      root,
+      (visitedNode, previousNode) => {
+        return !!previousNode && visitedNode.lastChild !== previousNode;
+      }
+    );
+    if (!commonParent) {
+      return null;
+    }
+    return findDeepestFirstDescendant(commonParent);
   }
 }
