@@ -51,7 +51,6 @@ export default class LumpNodeDeletePlugin implements DeletePlugin {
       if (nextNode && isInLumpNode(nextNode, rootNode) && this.isInFrontOfLastChar()) {
         const executor = (_: Manipulation, editor: RawEditor) => {
           this.handleRemoveCharBeforeLump(node as Text, nextNode as ChildNode);
-          editor.updateRichNode();
         };
         return { allow: true, executor };
       }
@@ -76,7 +75,6 @@ export default class LumpNodeDeletePlugin implements DeletePlugin {
       }
       const executor = (_manipulation: Manipulation, editor: RawEditor) => {
         this.deleteLumpExecutor(node, rootNode);
-        editor.updateRichNode();
       };
       return { allow: true, executor };
     }

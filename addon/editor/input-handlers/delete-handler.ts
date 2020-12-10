@@ -277,12 +277,14 @@ export default class DeleteHandler implements InputHandler {
     if (dispatchedExecutor) {
       // NOTE: we should pass some sort of editor interface here in the future.
       dispatchedExecutor(manipulation, this.rawEditor);
+      this.rawEditor.updateRichNode();
       return { allowPropagation: false, allowBrowserDefault: false };
     } else {
       const {
         allowPropagation,
         allowBrowserDefault,
       } = this.handleNativeManipulation(manipulation);
+      this.rawEditor.updateRichNode();
       return { allowPropagation, allowBrowserDefault };
     }
   }
