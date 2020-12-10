@@ -14,7 +14,6 @@ import {
   stringToVisibleText,
   moveCaretToEndOfNode
 } from '@lblod/ember-rdfa-editor/editor/utils';
-import ListDeletePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/delete-plugin';
 import LumpNodeDeletePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/delete-plugin';
 
 
@@ -187,7 +186,6 @@ export interface DeletePlugin {
    * itself.
    */
   guidanceForManipulation: (manipulation: Manipulation) => ManipulationGuidance | null;
-
 }
 
 /**
@@ -281,8 +279,11 @@ export default class DeleteHandler implements InputHandler {
       dispatchedExecutor(manipulation, this.rawEditor);
       return { allowPropagation: false, allowBrowserDefault: false };
     } else {
-      this.handleNativeManipulation(manipulation);
-      return { allowPropagation: true, allowBrowserDefault: true };
+      const {
+        allowPropagation,
+        allowBrowserDefault,
+      } = this.handleNativeManipulation(manipulation);
+      return { allowPropagation, allowBrowserDefault };
     }
   }
 
@@ -297,15 +298,15 @@ export default class DeleteHandler implements InputHandler {
    * @param {Manipulation} manipulation The manipulation which will be
    * executed on the DOM tree.
    */
-  handleNativeManipulation(manipulation: Manipulation) {
+  handleNativeManipulation(manipulation: Manipulation): {allowPropagation:boolean, allowBrowserDefault: boolean} {
     switch (manipulation.type) {
       case "removeEmptyTextNode": {
         const { node: textNode } = manipulation;
         moveCaretToEndOfNode(textNode);
-        break;
+        return { allowPropagation: true, allowBrowserDefault: true };
       }
       default:
-        break;
+        return { allowPropagation: true, allowBrowserDefault: true };
     }
   }
 

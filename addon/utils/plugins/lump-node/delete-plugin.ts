@@ -18,8 +18,11 @@ import {
   setCaretOnPoint,
   findFirstAncestorWhichSatisfies,
   findDeepestFirstDescendant,
+  getWindowSelection,
+  isTextNode,
 } from "../../dom-helpers";
 import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
+import { moveCaretBefore } from "@lblod/ember-rdfa-editor/editor/utils";
 
 const SUPPORTED_MANIPULATIONS = [
   "removeEmptyTextNode",
@@ -43,27 +46,26 @@ export default class LumpNodeDeletePlugin implements DeletePlugin {
   ): ManipulationGuidance | null {
     let node = manipulation.node;
     const rootNode = node.getRootNode(); //Assuming here that node is attached.
-    if (
-      manipulation.type === "removeBoundaryForwards" ||
-      (manipulation.type === "removeCharacter" &&
-        manipulation.node.textContent?.length === 1)
-    ) {
+    if (manipulation.type === "removeCharacter") {
+      const nextNode = this.findNextRelevantNode(node, rootNode);
+      if (nextNode && isInLumpNode(nextNode, rootNode) && this.isInFrontOfLastChar()) {
+        const executor = (_: Manipulation, editor: RawEditor) => {
+          this.handleRemoveCharBeforeLump(node as Text, nextNode as ChildNode);
+          editor.updateRichNode();
+        };
+        return { allow: true, executor };
+      }
+    }
+    if (manipulation.type === "removeBoundaryForwards") {
       const nextNode = this.findNextRelevantNode(node, rootNode);
       if (!nextNode) {
         return null;
       } else {
         node = nextNode;
-        // TODO: this hack is a consequence of the way we eject the cursor from lumpNodes
-        if (manipulation.type === "removeCharacter") {
-          manipulation.node.remove();
-        }
       }
     }
     const isElementInLumpNode = isInLumpNode(node, rootNode);
     const isManipulationSupported = this.isSupportedManipulation(manipulation);
-    if (manipulation.type === "removeCharacter") {
-      debugger;
-    }
 
     if (isElementInLumpNode) {
       if (!isManipulationSupported) {
@@ -120,5 +122,31 @@ export default class LumpNodeDeletePlugin implements DeletePlugin {
       return null;
     }
     return findDeepestFirstDescendant(commonParent);
+  }
+
+  private handleRemoveCharBeforeLump(charNode: Text, lumpNode: ChildNode) {
+    if (
+      !charNode.textContent ||
+      (charNode.textContent && charNode.textContent.length <= 1)
+    ) {
+      charNode.remove();
+    } else {
+      charNode.textContent = charNode.textContent!.substr(
+        0,
+        charNode.textContent.length - 2
+      );
+    }
+    moveCaretBefore(lumpNode);
+  }
+  private isInFrontOfLastChar(): boolean {
+    const selection = getWindowSelection();
+    const caretNode = selection.anchorNode;
+    if (caretNode && isTextNode(caretNode)) {
+      return !!(
+        caretNode.textContent &&
+        selection.anchorOffset === caretNode.textContent.length - 1
+      );
+    }
+    return false;
   }
 }
