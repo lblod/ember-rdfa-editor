@@ -326,7 +326,6 @@ export default class DeleteHandler implements InputHandler {
     // check where our cursor is and get the deepest "thing" after
     // the cursor (character or node)
     const thingAfterCursor: ThingAfterCursor = this.getThingAfterCursor();
-    console.log(thingAfterCursor);
     switch (thingAfterCursor.type) {
       case "character": {
         // character: remove the character
@@ -523,8 +522,10 @@ export default class DeleteHandler implements InputHandler {
               if (stringToVisibleText(textNode.textContent || "").length == 0) {
                 return {type: "emptyTextNodeStart", node: textNode};
 
+              } else {
                 return {type: "character", position: 0, node: textNode};
               }
+
             } else if (child && child.nodeType === Node.ELEMENT_NODE) {
               const element = child as HTMLElement;
               if (isVoidElement(element)) {

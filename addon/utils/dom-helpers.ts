@@ -550,16 +550,23 @@ function getCaretRect(): ClientRect {
       return result;
     }
   } else {
-    // TODO its a fallback, but not a very good one
-    // possibly even throw an error here as we should handle all possible situations before this
+    // There is no sensible fallback, so throwing is the only option here.
+    // when this is hit, a new case should be added
     throw new Error("Unhandled caret case");
-    // const dummyRange = document.createRange();
-    // dummyRange.setStart(range.startContainer, 0);
-    // dummyRange.setEnd(range.startContainer, range.endOffset);
-    // return dummyRange.getBoundingClientRect();
   }
 }
 
+/** Walk up the tree and find the first ancestor node which satisfies predicate,
+ * starting from startNode and walking until rootNode is encountered.
+ * If startNode satisfies the predicate, it will be returned, same with rootNode.
+ * The predicate will recieve the currently visited node, and the previous one.
+ * The second argument to the predicate will be undefined when visiting the first node.
+ *
+ * @param startNode the node to start from
+ * @param rootNode the last node which will be tested
+ * @param predicate the predicate to test
+ * @returns the first ancestor which satisfies predicate, or null if none found
+ */
 function findFirstAncestorWhichSatisfies(
   startNode: Node,
   rootNode: Node,
@@ -583,6 +590,14 @@ function findFirstAncestorWhichSatisfies(
   }
 }
 
+/**
+ * Go as deep down the tree as possible, selecting the first
+ * childNode at every step until the node is a leafNode
+ *
+ * @param node: the node to start from
+ * @returns the leafNode found by walking down the firstChild branch
+ *
+ */
 function findDeepestFirstDescendant(node: Node): Node {
   let currentNode = node;
   while (currentNode.firstChild) {

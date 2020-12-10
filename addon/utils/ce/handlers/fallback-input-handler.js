@@ -1,4 +1,6 @@
 import HandlerResponse from './handler-response';
+const IGNORED_EVENT_TYPES = ["keydown", "mousedown", "beforeinput", "keyup"];
+const INTERESTING_KEYS = ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"];
 
 /**
  * Fallback Input Handler, a event handler to restore editor state for certain events
@@ -15,28 +17,26 @@ export default class FallbackInputHandler {
   }
 
   isHandlerFor(event) {
-    if (event.type == "keyup" && ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(event.key)) {
-      return true;
-    }
-    else if (event.type == "input" && event.inputType == "deleteContentBackward") {
+    // exceptions
+
+    if (event.type == "input" && event.inputType == "deleteContentBackward") {
       return false;
     }
-    else if(event.type === "input") {
+    if (event.type == "keyup" && INTERESTING_KEYS.includes(event.key)) {
       return true;
     }
-    else if (! ["keydown", "keyup", "mousedown","beforeinput"].includes(event.type)){
-      // keydown is before anything happens and thus not interesting for fallback
-      // motion events were captured above this if we don't want catch other keyup events, they also generate an input event which we do handle
-      // mousedown is not interesting at the moment, only mouse up
-      return true;
+
+    // General behavior
+
+    if(IGNORED_EVENT_TYPES.includes(event.type)) {
+      return false;
     }
-    return false;
+    return true;
   }
 
 
   handleEvent(event) {
     this.rawEditor.externalDomUpdate(`uncaptured input event of type ${event.type}, restoring editor state`, () => {});
-    console.log("GOT INPUT EVENT" ,event);
     this.rawEditor.updateRichNode();
     return HandlerResponse.create({ allowBrowserDefault: true });
   }
