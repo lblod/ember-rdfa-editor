@@ -59,7 +59,7 @@ function jumpOverLumpNode(node, rootNode, editor) {
   }
   nextNode = ensureValidTextNodeForCaret(nextNode);
   editor.updateRichNode();
-  moveCaret(nextNode, 0);
+  editor.setCaret(nextNode, 0);
 }
 
 function jumpOverLumpNodeBackwards(node, rootNode, editor) {
@@ -74,5 +74,5 @@ function jumpOverLumpNodeBackwards(node, rootNode, editor) {
   }
   textNode = ensureValidTextNodeForCaret(textNode);
   editor.updateRichNode();
-  moveCaret(textNode, textNode.length);
+  editor.setCaret(textNode, textNode.length);
 }
