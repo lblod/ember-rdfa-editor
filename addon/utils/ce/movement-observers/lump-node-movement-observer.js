@@ -57,7 +57,7 @@ function jumpOverLumpNode(node, rootNode, editor) {
     nextNode = document.createTextNode('');
     element.after(nextNode);
   }
-  nextNode = ensureValidTextNodeForCaret(nextNode);
+  nextNode = ensureValidTextNodeForCaret(nextNode); //TODO: move this in set.caret or other uniform API somehow
   editor.updateRichNode();
   editor.setCaret(nextNode, 0);
 }
@@ -72,7 +72,7 @@ function jumpOverLumpNodeBackwards(node, rootNode, editor) {
     textNode = document.createTextNode('');
     element.before(textNode);
   }
-  textNode = ensureValidTextNodeForCaret(textNode);
+  textNode = ensureValidTextNodeForCaret(textNode); //TODO: move this in set.caret or other uniform API somehow
   editor.updateRichNode();
   editor.setCaret(textNode, textNode.length);
 }
