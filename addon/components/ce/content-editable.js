@@ -12,6 +12,7 @@ import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bac
 import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import DeleteHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler';
+import DisableDeleteHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/delete-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
 import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
@@ -156,7 +157,7 @@ export default class ContentEditable extends Component {
                                    new BackspaceHandler({rawEditor}),
                                    new TabHandler({rawEditor}),
                                    new TextInputHandler({rawEditor, forceParagraph }),
-                                   new DeleteHandler({rawEditor}),
+                                   new DisableDeleteHandler({rawEditor}),
                                    new IgnoreModifiersHandler({rawEditor}),
                                    new UndoHandler({rawEditor}),
                                    new BoldItalicUnderlineHandler({rawEditor}),
