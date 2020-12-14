@@ -6,6 +6,7 @@ import { Editor,
          InsertTextIntoElementManipulation
        } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 
+const NON_BREAKING_SPACE = '\u00A0';
 /**
  * @class PlaceholderTextInputPlugin
  * @module plugins/placeholder-text
@@ -33,7 +34,8 @@ export default class PlaceholderTextInputPlugin implements TextInputPlugin {
     const node = manipulation.node;
     if (node.parentElement) {
       const parent = node.parentElement;
-      const textNode = document.createTextNode(manipulation.text);
+      const text = manipulation.text == " " ? NON_BREAKING_SPACE : manipulation.text;
+      const textNode = document.createTextNode(text);
       parent.replaceWith(textNode);
       editor.updateRichNode();
       editor.setCaret(textNode, textNode.length);
