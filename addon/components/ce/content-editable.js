@@ -26,6 +26,7 @@ import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
+import RichSelectionTracker from '../../utils/ce/RichSelectionTracker';
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -61,6 +62,16 @@ export default class ContentEditable extends Component {
    */
   @alias('rawEditor.currentSelection')
   currentSelection;
+
+  /**
+   * WIP: Rich selection
+   *
+   * @property richSelection
+   * @type Object
+   *
+   * @private
+   */
+    richSelection;
 
   /**
    * latest text content in the contenteditable, it is aliased to the rawEditor.currentTextContent
@@ -168,6 +179,11 @@ export default class ContentEditable extends Component {
     this.set('currentTextContent', '');
     this.set('defaultHandlers', defaultInputHandlers);
     this.set('capturedEvents', A());
+    const richSelectionTracker = new RichSelectionTracker();
+    this.set('richSelectionTracker', richSelectionTracker);
+    this.richSelectionTracker.startTracking();
+    this.set('richSelection', richSelectionTracker.richSelection);
+
     if( ! this.externalHandlers ) {
       this.set('externalHandlers', []);
     }
@@ -239,6 +255,7 @@ export default class ContentEditable extends Component {
   willDestroyElement() {
     this.set('richNode', null);
     this.set('rawEditor.rootNode', null);
+    this.richSelectionTracker.stopTracking();
     forgivingAction('elementUpdate', this)();
   }
 
