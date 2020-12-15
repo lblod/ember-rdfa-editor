@@ -1,4 +1,5 @@
 import { TaskGenerator } from 'ember-concurrency';
+import Command from '../commands/command';
 export interface RawEditor {
   getRichNodeFor( node: Node ): RichNode | null
   externalDomUpdate: ( description: string, action: () => void ) => void
@@ -11,6 +12,8 @@ export interface RawEditor {
   richNode: RichNode
   currentNode: Node | null
   updateSelectionAfterComplexInput: () => void
+  registerCommand: (command: Command) => void
+  executeCommand: (commandName: string) => void
 }
 
 

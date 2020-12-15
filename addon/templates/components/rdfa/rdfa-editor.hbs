@@ -1,7 +1,7 @@
 <div class="say-container {{if @editorOptions.showRdfaHover "say-container--sidebar-left" }}">
   {{#if this.editor}}
     <Rdfa::EditorToolbar
-      @contentEditable={{this.editor}}
+      @editor={{this.editor}}
       @showTextStyleButtons="{{if @toolbarOptions.showTextStyleButtons "true"}}" @showListButtons="{{if @toolbarOptions.showListButtons "true"}}"
       @showIndentButtons="{{if @toolbarOptions.showIndentButtons "true"}}">
       {{#if @editorOptions.showToggleRdfaAnnotations}}

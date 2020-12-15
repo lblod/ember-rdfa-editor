@@ -48,6 +48,8 @@ import {
   findUniqueRichNodes
 } from '../rdfa/rdfa-rich-node-helpers';
 import classic from 'ember-classic-decorator';
+import MakeBoldCommand from '@lblod/ember-rdfa-editor/commands/make-bold-command';
+import RemoveBoldCommand from '@lblod/ember-rdfa-editor/commands/remove-bold-command';
 
 /**
  * raw contenteditable editor, a utility class that shields editor internals from consuming applications.
@@ -119,6 +121,8 @@ class RawEditor extends EmberObject {
    * @protected
    */
   richNode = null
+
+  registeredCommands = new Map()
 
   /**
    * the current selection in the editor
@@ -315,6 +319,8 @@ class RawEditor extends EmberObject {
     this.set('history', new CappedHistory({ maxItems: 100}));
     this.set('components', A());
     this.movementObservers = A();
+    this.registerCommand(new MakeBoldCommand(this));
+    this.registerCommand(new RemoveBoldCommand(this));
   }
 
   /**
@@ -1136,6 +1142,21 @@ class RawEditor extends EmberObject {
   }
   findUniqueRichNodes() {
     return findUniqueRichNodes.bind(this)(...arguments);
+  }
+
+
+  /**
+   * Commands
+   */
+
+  registerCommand(command) {
+    this.registeredCommands.set(command.name, command);
+  }
+  executeCommand(commandName) {
+    if(!this.registeredCommands.has(commandName)) {
+      throw new Error(`Unrecognized command ${commandName}`);
+    }
+    this.registeredCommands[commandName].execute();
   }
 }
 
