@@ -1,5 +1,7 @@
 import { TaskGenerator } from 'ember-concurrency';
 import Command from '../commands/command';
+import { PernetSelection } from './pernet';
+import EditorProperty from '../utils/ce/editor-property';
 export interface RawEditor {
   getRichNodeFor( node: Node ): RichNode | null
   externalDomUpdate: ( description: string, action: () => void ) => void
@@ -7,13 +9,21 @@ export interface RawEditor {
   generateDiffEvents: (extraInfo?: Object[]) => TaskGenerator<void>,
   setCaret: ( node: Node, position: number ) => void
   updateRichNode: () => void
-  rootNode: Element
+  rootNode: HTMLElement
   currentSelection: RawEditorSelection
   richNode: RichNode
   currentNode: Node | null
   updateSelectionAfterComplexInput: () => void
   registerCommand: (command: Command) => void
   executeCommand: (commandName: string) => void
+  insertIndent : () => void
+  insertUnindent: () => void
+  undo: () => void
+  insertUL: () => void
+  insertOL:() => void
+  setCurrentPosition: (pos: number) => void
+  selectCurrentSelection: () => PernetSelection
+  toggleProperty: (selection: PernetSelection, property: EditorProperty) => void
 }
 
 
