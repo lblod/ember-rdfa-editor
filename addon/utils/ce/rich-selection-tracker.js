@@ -27,7 +27,6 @@ export default class RichSelectionTracker {
       }
     };
     const richSelectionUpdatedEvent = new Event('richSelectionUpdated');
-    console.log(this.richSelection);
     document.dispatchEvent(richSelectionUpdatedEvent);
   }
 
