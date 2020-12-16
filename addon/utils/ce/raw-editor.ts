@@ -1,12 +1,13 @@
+import Ember from "ember";
 import EmberObject, { get, computed } from '@ember/object';
 import { runInDebug, debug, warn } from '@ember/debug';
 import { A } from '@ember/array';
-import { timeout } from 'ember-concurrency';
+import { timeout, TaskGenerator } from 'ember-concurrency';
 import { task } from 'ember-concurrency-decorators';
 import DiffMatchPatch from 'diff-match-patch';
 import { walk as walkDomNode } from '@lblod/marawa/node-walker';
+import { taskFor } from "ember-concurrency-ts";
 import {
-  isList,
   isDisplayedAsBlock,
   invisibleSpace,
   insertTextNodeWithSpace,
@@ -51,6 +52,9 @@ import classic from 'ember-classic-decorator';
 import MakeBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-bold-command';
 import RemoveBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-bold-command';
 import RichSelectionTracker from './rich-selection-tracker';
+import MovementObserver from "@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer";
+import {RichNode} from "@lblod/ember-rdfa-editor/editor/raw-editor";
+import Command from "@lblod/ember-rdfa-editor/commands/command";
 
 /**
  * raw contenteditable editor, a utility class that shields editor internals from consuming applications.
@@ -62,6 +66,65 @@ import RichSelectionTracker from './rich-selection-tracker';
  */
 @classic
 class RawEditor extends EmberObject {
+
+  /**
+   * root node of the editor
+   * @property rootNode
+   * @type DOMNode
+   * @protected
+   */
+  rootNode: Node | null=  null
+
+  /**
+   * a rich representation of the dom tree created with {{#crossLink "NodeWalker"}}NodeWalker{{/crossLink}}
+   * @property richNode
+   * @type RichNode
+   * @protected
+   */
+  richNode: RichNode | null = null
+
+  registeredCommands: Map<string, Command> = new Map()
+
+  /**
+   * current textContent from editor
+   *
+   * @property currentTextContent
+   * @type String
+   * @public
+   */
+  currentTextContent: string | null = null
+
+  /**
+   * components present in the editor
+   *
+   * __NOTE__: this is an experimental feature that might be removed
+   * @property components
+   * @type {Object}
+   * @public
+   */
+  components: unknown | null = null
+  history!: CappedHistory;
+
+  /**
+   * the domNode containing our caret
+   *
+   * __NOTE__: is set to null on a selection that spans nodes
+   * @property currentNode
+   * @type DOMNode
+   * @protected
+   */
+  protected _currentNode: Node | null = null;
+
+  constructor(...args: any[]){
+    super(...args);
+    this.set('history', new CappedHistory({ maxItems: 100}));
+    this.set('components', A());
+    this.movementObservers = A();
+    this.registerCommand(new MakeBoldCommand(this));
+    this.registerCommand(new RemoveBoldCommand(this));
+    this.richSelectionTracker = new RichSelectionTracker();
+    this.richSelectionTracker.startTracking();
+  }
   /**
    * Called after relevant input. Checks content and calls closureActions when changes detected
    * handleTextInsert, handleTextRemove, handleFullContentUpdate
@@ -71,13 +134,13 @@ class RawEditor extends EmberObject {
    * @public
    */
   @task({ restartable: true })
-  *generateDiffEvents(extraInfo = []) {
+  *generateDiffEvents(extraInfo = []): TaskGenerator<void> {
     yield timeout(320);
 
-    let newText = getTextContent(this.get('rootNode'));
+    const newText = getTextContent(this.get('rootNode'));
     let oldText = this.get('currentTextContent');
     const dmp = new DiffMatchPatch();
-    let differences = dmp.diff_main(oldText, newText);
+    const differences = dmp.diff_main(oldText, newText);
     let pos = 0;
     let textHasChanges = false;
 
@@ -107,86 +170,13 @@ class RawEditor extends EmberObject {
     }
   }
 
-  /**
-   * root node of the editor
-   * @property rootNode
-   * @type DOMNode
-   * @protected
-   */
-  rootNode =  null
 
-  /**
-   * a rich representation of the dom tree created with {{#crossLink "NodeWalker"}}NodeWalker{{/crossLink}}
-   * @property richNode
-   * @type RichNode
-   * @protected
-   */
-  richNode = null
 
-  registeredCommands = new Map()
-
-  /**
-   * the current selection in the editor
-   *
-   * @property currentSelection
-   * @type Array
-   * @protected
-   */
-  get currentSelection() {
-    if (this._currentSelection)
-      return [this._currentSelection.startNode.absolutePosition, this._currentSelection.endNode.absolutePosition];
-    else
-      return [0,0];
-  }
-
-  set currentSelection({startNode, endNode}) {
-    const oldSelection = this._currentSelection;
-    this._currentSelection = {startNode, endNode};
-    if (startNode.absolutePosition === endNode.absolutePosition) {
-      this.moveCaretInTextNode(startNode.domNode, startNode.relativePosition);
-      this.currentNode = startNode.domNode;
-    }
-    else {
-      this.currentNode = null;
-    }
-
-    if (!oldSelection || (
-      oldSelection.startNode.domNode != startNode.domNode ||
-        oldSelection.startNode.absolutePosition != startNode.absolutePosition ||
-        oldSelection.endNode.domNode != endNode.domNode ||
-        oldSelection.endNode.absolutePosition != endNode.absolutePosition
-    )) {
-      for (const obs of this.movementObservers) {
-        obs.handleMovement(this, oldSelection, {startNode, endNode});
-      }
-      this.generateDiffEvents.perform();
-    }
-  }
-
-  registerMovementObserver(observer) {
+  registerMovementObserver(observer: MovementObserver) {
     this.movementObservers.push(observer);
   }
 
-  /**
-   * the start of the current range
-   *
-   * @property currentPosition
-   * @type number
-   * @protected
-   */
-  get currentPosition() {
-    return this.currentSelection[0];
-  }
 
-  /**
-   * the domNode containing our caret
-   *
-   * __NOTE__: is set to null on a selection that spans nodes
-   * @property currentNode
-   * @type DOMNode
-   * @protected
-   */
-  _currentNode = null
 
   get currentNode() {
     return this._currentNode;
@@ -194,11 +184,11 @@ class RawEditor extends EmberObject {
 
   set currentNode( node ) {
     // clean old marks
-    for( let oldNode of document.querySelectorAll("[data-editor-position-level]") ) {
+    for( const oldNode of document.querySelectorAll("[data-editor-position-level]") ) {
       oldNode.removeAttribute("data-editor-position-level");
     }
     // clean old RDFa marks
-    for( let oldNode of document.querySelectorAll("[data-editor-rdfa-position-level]") ) {
+    for( const oldNode of document.querySelectorAll("[data-editor-rdfa-position-level]") ) {
       oldNode.removeAttribute("data-editor-rdfa-position-level");
     }
 
@@ -228,24 +218,6 @@ class RawEditor extends EmberObject {
     }
   }
 
-  /**
-   * current textContent from editor
-   *
-   * @property currentTextContent
-   * @type String
-   * @public
-   */
-  currentTextContent = null
-
-  /**
-   * components present in the editor
-   *
-   * __NOTE__: this is an experimental feature that might be removed
-   * @property components
-   * @type {Object}
-   * @public
-   */
-  components = null
 
   /**
    * is current selection a cursor
@@ -314,18 +286,9 @@ class RawEditor extends EmberObject {
       }
     }
   }
-  richSelectionTracker;
+  richSelectionTracker: RichSelectionTracker;
+  protected movementObservers: Ember.NativeArray<MovementObserver> ;
 
-  constructor(){
-    super(...arguments);
-    this.set('history', new CappedHistory({ maxItems: 100}));
-    this.set('components', A());
-    this.movementObservers = A();
-    this.registerCommand(new MakeBoldCommand(this));
-    this.registerCommand(new RemoveBoldCommand(this));
-    this.richSelectionTracker = new RichSelectionTracker();
-    this.richSelectionTracker.startTracking();
-  }
 
   /**
    *
@@ -388,7 +351,7 @@ class RawEditor extends EmberObject {
     //update editor state
     const textNodeAfterInsert = !keepCurrentPosition ? nextTextNode(lastInsertedRichElement.domNode) : null;
     this.updateRichNode();
-    this.generateDiffEvents.perform(extraInfo);
+    taskFor(this.generateDiffEvents).perform(extraInfo);
     if(keepCurrentPosition) {
       this.setCaret(currentNode, getCurrentCarretPosition);
     }
@@ -430,7 +393,7 @@ class RawEditor extends EmberObject {
     removeNode(richNode.domNode);
 
     this.updateRichNode();
-    this.generateDiffEvents.perform(extraInfo);
+    taskFor(this.generateDiffEvents).perform(extraInfo);
 
     this.setCaret(nodeToEndIn, carretPositionToEndIn);
 
@@ -471,7 +434,7 @@ class RawEditor extends EmberObject {
     //update editor stat style={{if this.isBold "background-color: greene
     const textNodeAfterInsert = !keepCurrentPosition ? nextTextNode(lastInsertedRichElement.domNode) : null;
     this.updateRichNode();
-    this.generateDiffEvents.perform(extraInfo);
+    taskFor(this.generateDiffEvents).perform(extraInfo);
     if(keepCurrentPosition) {
       this.setCaret(currentNode, getCurrentCarretPosition);
     }
@@ -721,7 +684,7 @@ class RawEditor extends EmberObject {
     let parentDomNode = get(parent, 'domNode');
     let textNode = insertTextNodeWithSpace(parentDomNode, relativeToSibling, after);
     this.updateRichNode();
-    this.generateDiffEvents.perform([{noSnapshot: true}]);
+    taskFor(this.generateDiffEvents).perform([{noSnapshot: true}]);
     return this.getRichNodeFor(textNode);
   }
 
@@ -837,7 +800,7 @@ class RawEditor extends EmberObject {
       this.updateRichNode();
       this.set('currentNode', null);
       this.setCurrentPosition(previousSnapshot.currentSelection[0]);
-      this.generateDiffEvents.perform([{noSnapshot: true}]);
+      taskFor(this.generateDiffEvents).perform([{noSnapshot: true}]);
     }
     else {
       warn('no more history to undo', {id: 'contenteditable-editor:history-empty'});
@@ -902,14 +865,14 @@ class RawEditor extends EmberObject {
         this.updateSelectionAfterComplexInput();
       }
       forgivingAction('elementUpdate', this)();
-      this.generateDiffEvents.perform();
+      taskFor(this.generateDiffEvents).perform();
     }
     else {
       domUpdate();
       this.updateRichNode();
       this.updateSelectionAfterComplexInput();
       forgivingAction('elementUpdate', this)();
-      this.generateDiffEvents.perform();
+      taskFor(this.generateDiffEvents).perform();
     }
   }
 
