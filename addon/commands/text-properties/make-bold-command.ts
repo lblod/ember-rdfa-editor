@@ -1,10 +1,10 @@
 import SetPropertyCommand from "./set-property-command";
-import { RawEditor } from "../../editor/raw-editor";
 import boldProperty from "../../utils/rdfa/bold-property";
+import Model from "@lblod/ember-rdfa-editor/model/model";
 
 export default class MakeBoldCommand extends SetPropertyCommand {
   name = "make-bold"
-  constructor(editor: RawEditor) {
-    super(editor, boldProperty);
+  constructor(model: Model) {
+    super(model, boldProperty);
   }
 }

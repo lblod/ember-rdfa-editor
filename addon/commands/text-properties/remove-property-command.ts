@@ -1,12 +1,12 @@
 import EditorProperty from "../../utils/ce/editor-property";
-import { RawEditor } from "../../editor/raw-editor";
 import { cancelProperty } from "../../utils/ce/property-helpers";
 import Command from "../command";
+import Model from "@lblod/ember-rdfa-editor/model/model";
 
 export default abstract class RemovePropertyCommand extends Command {
   protected property: EditorProperty;
-  constructor(editor: RawEditor, property: EditorProperty) {
-    super(editor);
+  constructor(model: Model, property: EditorProperty) {
+    super(model);
     this.property = property;
   }
   execute() {

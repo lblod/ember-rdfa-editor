@@ -40,8 +40,8 @@ function sliceTextIntoTextNode(textNode: Text, text: string, start: number): voi
  * @method insertTextNodeWithSpace
  * @public
  */
-function insertTextNodeWithSpace(parentDomNode: HTMLElement, relativeToSibling: ChildNode | null = null, after: boolean = false): Text {
-  let textNode = document.createTextNode(invisibleSpace);
+function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNode | null = null, after: boolean = false): Text {
+  const textNode = document.createTextNode(invisibleSpace);
   if (relativeToSibling) {
     if (after) {
       relativeToSibling.after(textNode);
@@ -127,8 +127,8 @@ function isAllWhitespace(node: Text): boolean {
  * @method isDisplayedAsBlock
  */
 
-function isDisplayedAsBlock(domNode: Element): boolean {
-  if (domNode.nodeType !== Node.ELEMENT_NODE)
+function isDisplayedAsBlock(domNode: Node): boolean {
+  if (!isElement(domNode))
     return false;
   const displayStyle = window.getComputedStyle(domNode)['display'];
   return displayStyle == 'block' || displayStyle == 'list-item';
@@ -257,9 +257,9 @@ function insertNodeBAfterNodeA(_parent: HTMLElement, nodeA: ChildNode, nodeB: Ch
  * @method tagName
  * @public
  */
-function tagName(node?: Element | null): string {
+function tagName(node?: Node | null): string {
   if (!node) return '';
-  return node.nodeType === node.ELEMENT_NODE ? node.tagName.toLowerCase() : '';
+  return isElement(node) ? node.tagName.toLowerCase() : '';
 }
 
 /**

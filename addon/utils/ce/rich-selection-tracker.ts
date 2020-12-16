@@ -1,9 +1,12 @@
-enum PropertyState {
+import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+
+export enum PropertyState {
   enabled = 'enabled',
   disabled = 'disabled',
   unknown = 'unknown'
 }
-interface RichSelection {
+export interface RichSelection {
+  domSelection: Selection;
   selection: String,
   attributes: {
     rdfaContexts: String,
@@ -17,6 +20,7 @@ export default class RichSelectionTracker {
   richSelection : RichSelection;
   constructor() {
     this.richSelection = {
+      domSelection: getWindowSelection(),
       selection: 'unknown',
       attributes: {
         rdfaContexts: 'unknown',
@@ -29,35 +33,34 @@ export default class RichSelectionTracker {
   }
   startTracking() {
     document.addEventListener('selectionchange', this.updateSelection);
-  } 
+  }
   stopTracking() {
     document.removeEventListener('selectionchange', this.updateSelection);
   }
   updateSelection() {
-    const currentSelection : Selection | null = document.getSelection();
-    if(currentSelection) {
-      const isBold : PropertyState = this.calculateIsBold(currentSelection);
-      const isItalic : PropertyState = this.calculateIsItalic(currentSelection);
-      const isInList : PropertyState = this.calculateIsInList(currentSelection);
-      const rdfaSelection = this.caculateRdfaSelection(currentSelection);
-      const rdfaContexts = this.calculateRdfaContexts(currentSelection);
-      this.richSelection = {
-        selection: rdfaSelection,
-        attributes: {
-          rdfaContexts,
-          inList: isInList,
-          bold: isBold,
-          italic: isItalic
-        }
-      };
-      const richSelectionUpdatedEvent = new Event('richSelectionUpdated');
-      document.dispatchEvent(richSelectionUpdatedEvent);
+    const currentSelection  = getWindowSelection();
+    const isBold : PropertyState = this.calculateIsBold(currentSelection);
+    const isItalic : PropertyState = this.calculateIsItalic(currentSelection);
+    const isInList : PropertyState = this.calculateIsInList(currentSelection);
+    const rdfaSelection = this.caculateRdfaSelection(currentSelection);
+    const rdfaContexts = this.calculateRdfaContexts(currentSelection);
+    this.richSelection = {
+      domSelection: currentSelection,
+      selection: rdfaSelection,
+      attributes: {
+        rdfaContexts,
+        inList: isInList,
+        bold: isBold,
+        italic: isItalic
+      }
+    };
+    const richSelectionUpdatedEvent = new Event('richSelectionUpdated');
+    document.dispatchEvent(richSelectionUpdatedEvent);
     }
-  }
 
   calculateIsBold(selection: Selection) : PropertyState {
     if(selection.type === 'Caret') {
-      if(selection.anchorNode && selection.anchorNode.parentElement) { 
+      if(selection.anchorNode && selection.anchorNode.parentElement) {
         const parentElement = selection.anchorNode.parentElement;
         const fontWeight : Number = Number(window.getComputedStyle(parentElement).fontWeight);
         return fontWeight > 400 ? PropertyState.enabled : PropertyState.disabled;
@@ -78,7 +81,7 @@ export default class RichSelectionTracker {
   }
   calculateIsItalic(selection: Selection) : PropertyState {
     if(selection.type === 'Caret') {
-      if(selection.anchorNode && selection.anchorNode.parentElement) { 
+      if(selection.anchorNode && selection.anchorNode.parentElement) {
         const parentElement = selection.anchorNode.parentElement;
         const fontWeight : Number = Number(window.getComputedStyle(parentElement).fontWeight);
         return fontWeight > 400 ? PropertyState.enabled : PropertyState.disabled;
@@ -96,7 +99,7 @@ export default class RichSelectionTracker {
       }
       return isItalic ? PropertyState.enabled : PropertyState.disabled;
     }
-  } 
+  }
   calculateIsInList(selection: Selection) {
     return PropertyState.unknown;
   }

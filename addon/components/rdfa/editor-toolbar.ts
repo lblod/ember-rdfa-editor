@@ -9,6 +9,7 @@ import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
 import EditorProperty from "dummy/utils/ce/editor-property";
 import { tracked } from "@glimmer/tracking";
+import {PropertyState} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
 
 interface Args {
   editor: RawEditor;
@@ -33,7 +34,7 @@ export default class EditorToolbar extends Component<Args> {
   }
   updateProperties() {
     console.log("richSelectionUpdated");
-    this.isBold = this.args.editor.richSelectionTracker.richSelection.attributes.bold;
+    this.isBold = this.args.editor.model.selection.attributes.bold === PropertyState.enabled;
 
   }
   @action

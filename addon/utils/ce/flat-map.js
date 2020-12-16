@@ -9,7 +9,7 @@
  *
  * @return [Array] list of nodes matching the predicate function
  */
-export default function flatMap(startNode, predicate, stopOnFirstMatch) {
+export default function flatMap(startNode, predicate, stopOnFirstMatch = false) {
   let matches = [];
 
   let currentScan;

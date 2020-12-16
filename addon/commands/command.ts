@@ -1,10 +1,10 @@
-import { RawEditor } from "../editor/raw-editor";
+import Model from "@lblod/ember-rdfa-editor/model/model";
 
 export default abstract class Command {
   abstract name: string;
-  protected editor: RawEditor;
-  constructor(editor: RawEditor) {
-    this.editor = editor;
+  protected model: Model;
+  constructor(model: Model) {
+    this.model = model;
   }
   abstract execute(...args: any[]): void;
 }
