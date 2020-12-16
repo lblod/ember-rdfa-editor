@@ -11,7 +11,7 @@ export default abstract class RemovePropertyCommand extends Command {
   }
   execute() {
     cancelProperty(
-      this.editor.currentSelection,
+      this.editor.selectCurrentSelection(),
       this.editor,
       this.property
     );

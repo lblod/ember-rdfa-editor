@@ -8,6 +8,7 @@ import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
 import EditorProperty from "dummy/utils/ce/editor-property";
+import { tracked } from "@glimmer/tracking";
 
 interface Args {
   editor: RawEditor;
@@ -23,7 +24,18 @@ interface Args {
  * @extends Component
  */
 export default class EditorToolbar extends Component<Args> {
+  @tracked
+  isBold: boolean = false;
 
+  constructor(parent: unknown, args: Args) {
+    super(parent, args);
+    document.addEventListener("richSelectionUpdated", this.updateProperties.bind(this))
+  }
+  updateProperties() {
+    console.log("richSelectionUpdated");
+    this.isBold = this.args.editor.richSelectionTracker.richSelection.attributes.bold;
+
+  }
   @action
   toggleProperty(property: EditorProperty) {
     const range = this.args.editor.currentSelection;
@@ -86,7 +98,12 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   toggleBold() {
-    this.toggleProperty(boldProperty);
+    if(this.args.editor.richSelectionTracker.richSelection.attributes.bold) {
+      this.args.editor.executeCommand("remove-bold");
+
+    } else {
+      this.args.editor.executeCommand("make-bold");
+    }
   }
 
   @action

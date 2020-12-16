@@ -50,6 +50,7 @@ import {
 import classic from 'ember-classic-decorator';
 import MakeBoldCommand from '@lblod/ember-rdfa-editor/commands/make-bold-command';
 import RemoveBoldCommand from '@lblod/ember-rdfa-editor/commands/remove-bold-command';
+import RichSelectionTracker from './rich-selection-tracker';
 
 /**
  * raw contenteditable editor, a utility class that shields editor internals from consuming applications.
@@ -313,6 +314,7 @@ class RawEditor extends EmberObject {
       }
     }
   }
+  richSelectionTracker;
 
   constructor(){
     super(...arguments);
@@ -321,6 +323,8 @@ class RawEditor extends EmberObject {
     this.movementObservers = A();
     this.registerCommand(new MakeBoldCommand(this));
     this.registerCommand(new RemoveBoldCommand(this));
+    this.richSelectionTracker = new RichSelectionTracker();
+    this.richSelectionTracker.startTracking();
   }
 
   /**
@@ -464,7 +468,7 @@ class RawEditor extends EmberObject {
     let lastInsertedRichElement = this.prependElementsRichNode(richParent, domNodesToInsert);
     lastInsertedRichElement = this.insertValidCursorNodeAfterRichNode(richParent, lastInsertedRichElement);
 
-    //update editor state
+    //update editor stat style={{if this.isBold "background-color: greene
     const textNodeAfterInsert = !keepCurrentPosition ? nextTextNode(lastInsertedRichElement.domNode) : null;
     this.updateRichNode();
     this.generateDiffEvents.perform(extraInfo);
@@ -1156,7 +1160,7 @@ class RawEditor extends EmberObject {
     if(!this.registeredCommands.has(commandName)) {
       throw new Error(`Unrecognized command ${commandName}`);
     }
-    this.registeredCommands[commandName].execute();
+    this.registeredCommands.get(commandName).execute();
   }
 }
 

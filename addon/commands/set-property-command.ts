@@ -11,7 +11,7 @@ export default abstract class SetPropertyCommand extends Command {
   }
   execute() {
     applyProperty(
-      this.editor.currentSelection,
+      this.editor.selectCurrentSelection(),
       this.editor,
       this.property,
       false
