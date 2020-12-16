@@ -1,7 +1,7 @@
-import EditorProperty from "../utils/ce/editor-property";
-import { RawEditor } from "../editor/raw-editor";
-import { cancelProperty } from "../utils/ce/property-helpers";
-import Command from "./command";
+import EditorProperty from "../../utils/ce/editor-property";
+import { RawEditor } from "../../editor/raw-editor";
+import { cancelProperty } from "../../utils/ce/property-helpers";
+import Command from "../command";
 
 export default abstract class RemovePropertyCommand extends Command {
   protected property: EditorProperty;

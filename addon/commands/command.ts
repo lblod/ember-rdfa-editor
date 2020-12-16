@@ -6,5 +6,5 @@ export default abstract class Command {
   constructor(editor: RawEditor) {
     this.editor = editor;
   }
-  abstract execute(): void;
+  abstract execute(...args: any[]): void;
 }
