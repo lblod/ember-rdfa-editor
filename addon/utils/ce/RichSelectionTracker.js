@@ -26,22 +26,79 @@ export default class RichSelectionTracker {
         italic: isItalic
       }
     };
-    
+    console.log(this.richSelection);
   }
 
-  calculateIsBold() {
-    return 'unknown';
+  calculateIsBold(selection) {
+    if(selection.type === 'Caret') {
+      const parentElement = selection.baseNode.parentElement;
+      const fontWeight = window.getComputedStyle(parentElement).fontWeight;
+      return fontWeight > 400;
+    } else {
+      return 'unknown';
+      const range = selection.getRangeAt(0);
+      const nodes = this.getNodesInRange(range);
+      let isBold = window.getComputedStyle(nodes[0]).fontWeight > 400;
+      for(let i = 1; i < nodes.length) {
+        if(window.getComputedStyle(nodes[0]).fontWeight > 400 != isBold) {
+          return 'unknown'
+        }
+      }
+      return isBold;
+    }
   }
-  calculateIsItalic() {
-    return 'unknown';
+  calculateIsItalic(selection) {
+    if(selection.type === 'Caret') {
+      const parentElement = selection.baseNode.parentElement;
+      const fontStyle = window.getComputedStyle(parentElement).fontStyle;
+      return fontStyle === 'italic';
+    } else {
+      return 'unknown';
+    }
   } 
-  calculateIsInList() {
+  calculateIsInList(selection) {
     return 'unknown';
   }
-  caculateRdfaSelection() {
+  caculateRdfaSelection(selection) {
     return 'unknown';
   }
-  calculateRdfaContexts() {
+  calculateRdfaContexts(selection) {
     return 'unknown';
+  }
+  getNextNode(node) {
+    if (node.firstChild)
+        return node.firstChild;
+    while (node)
+    {
+        if (node.nextSibling)
+            return node.nextSibling;
+        node = node.parentNode;
+    }
+  }
+
+  getNodesInRange(range){
+    var start = range.startContainer;
+    var end = range.endContainer;
+    var commonAncestor = range.commonAncestorContainer;
+    var nodes = [];
+    var node;
+
+    // walk parent nodes from start to common ancestor
+    for (node = start.parentNode; node; node = node.parentNode){
+      if(node === commonAncestor) {
+        break;
+      }
+      nodes.push(node);
+    }
+    nodes.reverse();
+
+    // walk children and siblings from start until end is found
+    for (node = start; node; node = this.getNextNode(node)){
+        nodes.push(node);
+        if (node == end)
+            break;
+    }
+
+    return nodes;
   }
 }
