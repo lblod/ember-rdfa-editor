@@ -26,7 +26,7 @@ import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
-import RichSelectionTracker from '../../utils/ce/RichSelectionTracker';
+import RichSelectionTracker from '../../utils/ce/rich-selection-tracker';
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.

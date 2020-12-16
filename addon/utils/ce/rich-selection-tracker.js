@@ -27,22 +27,22 @@ export default class RichSelectionTracker {
       }
     };
     const richSelectionUpdatedEvent = new Event('richSelectionUpdated');
-    document.dispatchEvent(richSelectionUpdatedEvent)
+    console.log(this.richSelection);
+    document.dispatchEvent(richSelectionUpdatedEvent);
   }
 
   calculateIsBold(selection) {
     if(selection.type === 'Caret') {
-      const parentElement = selection.baseNode.parentElement;
+      const parentElement = selection.anchorNode.parentElement;
       const fontWeight = window.getComputedStyle(parentElement).fontWeight;
       return fontWeight > 400;
     } else {
-      return 'unknown';
       const range = selection.getRangeAt(0);
       const nodes = this.getNodesInRange(range);
-      let isBold = window.getComputedStyle(nodes[0]).fontWeight > 400;
-      for(let i = 1; i < nodes.length) {
-        if(window.getComputedStyle(nodes[0]).fontWeight > 400 != isBold) {
-          return 'unknown'
+      let isBold = this.getComputedStyle(nodes[0]).fontWeight > 400;
+      for(let i = 1; i < nodes.length; i++) {
+        if(this.getComputedStyle(nodes[i]).fontWeight > 400 != isBold) {
+          return 'unknown';
         }
       }
       return isBold;
@@ -51,10 +51,18 @@ export default class RichSelectionTracker {
   calculateIsItalic(selection) {
     if(selection.type === 'Caret') {
       const parentElement = selection.baseNode.parentElement;
-      const fontStyle = window.getComputedStyle(parentElement).fontStyle;
+      const fontStyle = this.getComputedStyle(parentElement).fontStyle;
       return fontStyle === 'italic';
     } else {
-      return 'unknown';
+      const range = selection.getRangeAt(0);
+      const nodes = this.getNodesInRange(range);
+      let isItalic = this.getComputedStyle(nodes[0]).fontStyle === 'italic';
+      for(let i = 1; i < nodes.length; i++) {
+        if((this.getComputedStyle(nodes[i]).fontStyle === 'italic') != isItalic) {
+          return 'unknown';
+        }
+      }
+      return isItalic;
     }
   } 
   calculateIsInList(selection) {
@@ -85,7 +93,7 @@ export default class RichSelectionTracker {
     var node;
 
     // walk parent nodes from start to common ancestor
-    for (node = start.parentNode; node; node = node.parentNode){
+    for (node = start; node; node = node.parentNode){
       if(node === commonAncestor) {
         break;
       }
@@ -101,5 +109,12 @@ export default class RichSelectionTracker {
     }
 
     return nodes;
+  }
+  getComputedStyle(node) {
+    if(node.nodeType === Node.TEXT_NODE) {
+      return window.getComputedStyle(node.parentElement);
+    } else {
+      return window.getComputedStyle(node);
+    }
   }
 }
