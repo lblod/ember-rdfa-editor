@@ -26,7 +26,8 @@ export default class RichSelectionTracker {
         italic: isItalic
       }
     };
-    console.log(this.richSelection);
+    const richSelectionUpdatedEvent = new Event('richSelectionUpdated');
+    document.dispatchEvent(richSelectionUpdatedEvent)
   }
 
   calculateIsBold(selection) {
