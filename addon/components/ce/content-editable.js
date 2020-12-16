@@ -12,6 +12,7 @@ import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bac
 import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import DeleteHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler';
+import DisableDeleteHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/delete-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
 import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
@@ -25,6 +26,7 @@ import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
+import RichSelectionTracker from '../../utils/ce/rich-selection-tracker';
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -60,6 +62,16 @@ export default class ContentEditable extends Component {
    */
   @alias('rawEditor.currentSelection')
   currentSelection;
+
+  /**
+   * WIP: Rich selection
+   *
+   * @property richSelection
+   * @type Object
+   *
+   * @private
+   */
+    richSelection;
 
   /**
    * latest text content in the contenteditable, it is aliased to the rawEditor.currentTextContent
@@ -156,7 +168,7 @@ export default class ContentEditable extends Component {
                                    new BackspaceHandler({rawEditor}),
                                    new TabHandler({rawEditor}),
                                    new TextInputHandler({rawEditor, forceParagraph }),
-                                   new DeleteHandler({rawEditor}),
+                                   new DisableDeleteHandler({rawEditor}),
                                    new IgnoreModifiersHandler({rawEditor}),
                                    new UndoHandler({rawEditor}),
                                    new BoldItalicUnderlineHandler({rawEditor}),
@@ -167,6 +179,11 @@ export default class ContentEditable extends Component {
     this.set('currentTextContent', '');
     this.set('defaultHandlers', defaultInputHandlers);
     this.set('capturedEvents', A());
+    const richSelectionTracker = new RichSelectionTracker();
+    this.set('richSelectionTracker', richSelectionTracker);
+    this.richSelectionTracker.startTracking();
+    this.set('richSelection', richSelectionTracker.richSelection);
+
     if( ! this.externalHandlers ) {
       this.set('externalHandlers', []);
     }
@@ -238,6 +255,7 @@ export default class ContentEditable extends Component {
   willDestroyElement() {
     this.set('richNode', null);
     this.set('rawEditor.rootNode', null);
+    this.richSelectionTracker.stopTracking();
     forgivingAction('elementUpdate', this)();
   }
 
