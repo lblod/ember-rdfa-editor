@@ -1,3 +1,5 @@
+import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
+
 enum PropertyState {
   enabled = 'enabled',
   disabled = 'disabled',
@@ -148,7 +150,24 @@ export default class RichSelectionTracker {
     }
   }
   calculateIsInList(selection: Selection) {
-    return PropertyState.unknown;
+    if(selection.type === 'Caret') {
+      if(selection.anchorNode) { 
+        const inList : Boolean = isInList(selection.anchorNode);
+        return inList ? PropertyState.enabled : PropertyState.disabled;
+      } else {
+        return PropertyState.unknown;
+      }
+    } else {
+      const range = selection.getRangeAt(0);
+      const nodes = this.getNodesInRange(range);
+      const inList = isInList(nodes[0]);
+      for(let i = 1; i < nodes.length; i++) {
+        if((isInList(nodes[i])) != inList) {
+          return PropertyState.unknown;
+        }
+      }
+      return inList ? PropertyState.enabled : PropertyState.disabled;
+    }
   }
   caculateRdfaSelection(selection: Selection) {
     return 'unknown';
