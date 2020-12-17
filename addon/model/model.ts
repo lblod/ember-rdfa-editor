@@ -8,16 +8,16 @@ export default class Model {
    * so we trick typescript into assuming it is never null
    * @private
    */
-  private _rootNode!: Node;
+  private _rootNode!: HTMLElement;
 
   constructor() {
     this.richSelectionTracker = new RichSelectionTracker();
   }
-  get rootNode() : Node {
+  get rootNode() : HTMLElement {
     return this._rootNode;
   }
 
-  set rootNode(rootNode: Node) {
+  set rootNode(rootNode: HTMLElement) {
     this._rootNode = rootNode;
   }
 

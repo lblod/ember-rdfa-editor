@@ -1,6 +1,6 @@
 import {TaskGenerator, timeout} from 'ember-concurrency';
 import {task} from 'ember-concurrency-decorators';
-import DiffMatchPatch from 'diff-match-patch';
+import {diff_match_patch as DiffMatchPatch} from 'diff-match-patch';
 import {walk as walkDomNode} from '@lblod/marawa/node-walker';
 import {taskFor} from "ember-concurrency-ts";
 import {
@@ -10,7 +10,7 @@ import {
   invisibleSpace,
   isDisplayedAsBlock,
   isElement,
-  isList,
+  isList, isTextNode,
   tagName
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {applyProperty, cancelProperty} from './property-helpers';
@@ -55,6 +55,14 @@ export default class PernetRawEditor extends RawEditor {
   private _currentSelection?: InternalSelection;
 
   /**
+   * the domNode containing our caret
+   *
+   * __NOTE__: is set to null on a selection that spans nodes
+   * @property currentNode
+   * @protected
+   */
+  protected _currentNode: Node | null = null;
+  /**
    * the current selection in the editor
    *
    * @property currentSelection
@@ -87,6 +95,9 @@ export default class PernetRawEditor extends RawEditor {
       oldSelection.endNode.absolutePosition != endNode.absolutePosition
     )) {
       for (const obs of this.movementObservers) {
+        // typescript is confused here, I think because of EmberObjects being weird,
+        // but feel free to investigate
+        // @ts-ignore
         obs.handleMovement(this, oldSelection, {startNode, endNode});
       }
       taskFor(this.generateDiffEvents).perform();
@@ -114,8 +125,10 @@ export default class PernetRawEditor extends RawEditor {
     let counter=0;
     let walkedNode = node;
     while( walkedNode && walkedNode != this.rootNode  ) {
-      if( isElement( walkedNode ) )
-        walkedNode.setAttribute("data-editor-position-level", counter++);
+      if( isElement( walkedNode ) ) {
+        counter++;
+        walkedNode.setAttribute("data-editor-position-level", counter.toString());
+      }
       walkedNode = walkedNode.parentNode;
     }
     // add new rdfa marks
@@ -126,9 +139,10 @@ export default class PernetRawEditor extends RawEditor {
         const isSemanticNode =
           ["about","content","datatype","property","rel","resource","rev","typeof"]
             .find( (name) => (walkedNode as Element).hasAttribute(name) );
-        if( isSemanticNode )
+        if( isSemanticNode ) {
           rdfaCounter++;
-        walkedNode.setAttribute("data-editor-rdfa-position-level", rdfaCounter.toString());
+          walkedNode.setAttribute("data-editor-rdfa-position-level", rdfaCounter.toString());
+        }
       }
       walkedNode = walkedNode.parentNode;
     }
@@ -192,32 +206,34 @@ export default class PernetRawEditor extends RawEditor {
     yield timeout(320);
 
     const newText = getTextContent(this.get('rootNode'));
-    let oldText = this.get('currentTextContent');
+    let oldText: string | null = this.get('currentTextContent');
+    if (!oldText) return;
+
     const dmp = new DiffMatchPatch();
     const differences = dmp.diff_main(oldText, newText);
     let pos = 0;
     let textHasChanges = false;
 
-    differences.forEach( ([mode, text]) => {
-      if (mode === 1) {
-        textHasChanges = true;
-        this.set('currentTextContent', oldText.slice(0, pos) + text + oldText.slice(pos, oldText.length));
-        this.textInsert(pos, text, extraInfo);
-        pos = pos + text.length;
+    differences.forEach(([mode, text]) => {
+      if(oldText) {
+        if (mode === 1) {
+          textHasChanges = true;
+          this.set('currentTextContent', oldText.slice(0, pos) + text + oldText.slice(pos, oldText.length));
+          this.textInsert(pos, text, extraInfo);
+          pos = pos + text.length;
+        } else if (mode === -1) {
+          textHasChanges = true;
+          this.set('currentTextContent', oldText.slice(0, pos) + oldText.slice(pos + text.length, oldText.length));
+          forgivingAction('textRemove', this)(pos, pos + text.length, extraInfo);
+        } else {
+          pos = pos + text.length;
+        }
+        oldText = this.get('currentTextContent');
       }
-      else if (mode === -1) {
-        textHasChanges = true;
-        this.set('currentTextContent', oldText.slice(0,pos) + oldText.slice(pos + text.length, oldText.length));
-        forgivingAction('textRemove', this)(pos, pos + text.length, extraInfo);
-      }
-      else {
-        pos = pos + text.length;
-      }
-      oldText = this.get('currentTextContent');
     }, this);
 
-    if(textHasChanges){
-      if ( ! extraInfo.some( (x) => x.noSnapshot)) {
+    if (textHasChanges) {
+      if (!extraInfo.some((x) => x.noSnapshot)) {
         this.createSnapshot();
       }
       forgivingAction('handleFullContentUpdate', this)(extraInfo);
@@ -243,10 +259,11 @@ export default class PernetRawEditor extends RawEditor {
    * Others can set it on this component, but we are the only ones to
    * call it.
    *
-   * @param {number} position Index of the inserted text.
-   * @param {String} text Text content that has been inserted.
+   * @param _position Index of the inserted text.
+   * @param _text Text content that has been inserted.
+   * @param _extraInfo Text content that has been inserted.
    */
-  textInsert( /*position, text*/ ) {
+  textInsert(_position: number, _text: String, _extraInfo: any ) {
     warn("textInsert was called on raw-editor without listeners being set.", { id: 'content-editable.invalid-state'});
   }
 
@@ -266,7 +283,7 @@ export default class PernetRawEditor extends RawEditor {
    * @param position
    * @private
    */
-  moveCaretInTextNode(textNode: Text, position: number){
+  moveCaretInTextNode(textNode: Node, position: number){
     try {
       const currentSelection = getWindowSelection();
       currentSelection.collapse(textNode,position);
@@ -319,6 +336,9 @@ export default class PernetRawEditor extends RawEditor {
         warn(`provided offset (${offset}) is invalid for richNode of type tag with ${children.length} children`, {id: 'contenteditable-editor.invalid-range'});
         return children[children.length -1 ].end;
       }
+      else {
+        throw new Error(`can't calculate position for richNode of type ${type}`);
+      }
     }
     else {
       throw new Error(`can't calculate position for richNode of type ${type}`);
@@ -329,11 +349,11 @@ export default class PernetRawEditor extends RawEditor {
    * set the carret position in the editor
    *
    * @method setCurrentPosition
-   * @param {number} position of the range
-   * @param {boolean} notify observers, default true
+   * @param position of the range
+   * @param _notify observers, default true
    * @public
    */
-  setCurrentPosition(position: number, notify = true) {
+  setCurrentPosition(position: number, _notify = true) {
     const richNode = this.richNode;
     if (richNode.end < position || richNode.start > position) {
       warn(`received invalid position, resetting to ${richNode.end} end of document`, {id: 'contenteditable-editor.invalid-position'});
@@ -341,7 +361,7 @@ export default class PernetRawEditor extends RawEditor {
     }
     const node = this.findSuitableNodeForPosition(position);
     if (node) {
-      this.setCaret(node.domNode, position - node.start, notify);
+      this.setCaret(node.domNode, position - node.start);
     }
     else {
       console.warn('did not receive a suitable node to set cursor, can\'t set cursor!'); // eslint-disable-line no-console
@@ -353,9 +373,12 @@ export default class PernetRawEditor extends RawEditor {
   /**
    * toggle a property on the provided selection
    * @method toggleProperty
-   * @param {Object} selection a selection created using selectHighlight or selectContext
-   * @param {EditorProperty} property
+   * @param selection a selection created using selectHighlight or selectContext
+   * @param property
    */
+  // WARNING
+  // We are actually overriding an EmberObject method here!
+  // @ts-ignore
   toggleProperty(selection: PernetSelection, property: EditorProperty) {
     const richNodes = selection.selections.map((s) => s.richNode);
     let start: number;
@@ -404,7 +427,7 @@ export default class PernetRawEditor extends RawEditor {
       const newNode = document.createTextNode(invisibleSpace);
       return this.insertElementsAfterRichNode(richParent, richNode, [newNode]);
     }
-    return walkDomNodeAsText(richNode.domNode.nextSibling, richParent.domNode, richNode.end);
+    return walkDomNodeAsText(richNode.domNode.nextSibling);
   }
 
   /**
@@ -425,7 +448,7 @@ export default class PernetRawEditor extends RawEditor {
     else
       richParent.domNode.appendChild(newFirstChild);
 
-    const newFirstRichChild = walkDomNodeAsText(newFirstChild, richParent.domNode, richParent.start);
+    const newFirstRichChild = walkDomNodeAsText(newFirstChild);
     return this.insertElementsAfterRichNode(richParent, newFirstRichChild, elements.slice(1));
   }
 
@@ -441,7 +464,7 @@ export default class PernetRawEditor extends RawEditor {
    * @return {RichNode} returns last inserted element as RichNode
    * @private
    */
-  insertElementsAfterRichNode(richParent: RichNode, richNode: RichNode, remainingElements: Element[]){
+  insertElementsAfterRichNode(richParent: RichNode, richNode: RichNode, remainingElements: ChildNode[]): RichNode{
     if( remainingElements.length == 0 )
       return richNode;
 
@@ -449,7 +472,7 @@ export default class PernetRawEditor extends RawEditor {
 
     insertNodeBAfterNodeA(richParent.domNode as HTMLElement, richNode.domNode as ChildNode, nodeToInsert);
 
-    const richNodeToInsert = walkDomNodeAsText(nodeToInsert, richParent.domNode, richNode.end);
+    const richNodeToInsert = walkDomNodeAsText(nodeToInsert);
 
     return this.insertElementsAfterRichNode(richParent, richNodeToInsert, remainingElements.slice(1));
   }
@@ -499,7 +522,7 @@ export default class PernetRawEditor extends RawEditor {
       // domNode containing cursor no longer exists, we have to reset the cursor in a different node
       // first let's try to find a parent that still exists
       let newNode = oldRichNodecontainingCursor;
-      while (newNode && ! newNode.domNode == this.rootNode && !this.rootNode.contains(newNode.domNode)) {
+      while (newNode && newNode.domNode !== this.rootNode && !this.rootNode.contains(newNode.domNode)) {
         newNode = newNode.parent;
       }
       // set the currentnode to that parent for better positioning
@@ -578,7 +601,7 @@ export default class PernetRawEditor extends RawEditor {
       console.warn('no node provided to findSuitableNodeinRichNode'); // eslint-disable-line no-console
       return null;
     }
-    const appropriateTextNodeFilter = node =>
+    const appropriateTextNodeFilter = (node: RichNode) =>
       node.start <= position && node.end >= position
       && node.type === 'text'
       && ! isList(node.parent.domNode);
@@ -592,7 +615,7 @@ export default class PernetRawEditor extends RawEditor {
       if (elementContainingPosition.length > 0) {
         // we have to guess which element matches, taking the last matching one is a strategy that sort of works
         // this gives us the deepest/last node matching. it's horrid in the case of consecutive br's for example
-        const newTextNode = nextTextNode(elementContainingPosition[elementContainingPosition.length - 1]);
+        const newTextNode = nextTextNode(elementContainingPosition[elementContainingPosition.length - 1], this.rootNode);
         this.updateRichNode();
         return this.getRichNodeFor(newTextNode);
       }
@@ -662,7 +685,7 @@ export default class PernetRawEditor extends RawEditor {
    * @public
    */
   externalDomUpdate(description: string, domUpdate:() => void, maintainCursor = false) {
-    debug(`executing an external dom update: ${description}`, {id: 'contenteditable.external-dom-update'} );
+    debug(`executing an external dom update: ${description}`);
     const currentNode = this.currentNode;
     const richNode = this.getRichNodeFor(currentNode);
     if (richNode) {
@@ -672,6 +695,9 @@ export default class PernetRawEditor extends RawEditor {
       if (maintainCursor &&
         this.currentNode === currentNode &&
         this.rootNode.contains(currentNode) &&
+        currentNode &&
+        relativePosition &&
+        isTextNode(currentNode) &&
         currentNode.length >= relativePosition) {
         this.setCaret(currentNode,relativePosition);
       }
@@ -703,7 +729,7 @@ export default class PernetRawEditor extends RawEditor {
       const range = windowSelection.getRangeAt(0);
       let commonAncestor = range.commonAncestorContainer;
       // IE does not support contains for text nodes
-      commonAncestor = commonAncestor.nodeType === Node.TEXT_NODE ? commonAncestor.parentNode : commonAncestor;
+      commonAncestor = commonAncestor.nodeType === Node.TEXT_NODE ? commonAncestor.parentNode! : commonAncestor;
       if (this.get('rootNode').contains(commonAncestor)) {
         if (range.collapsed) {
           this.setCaret(range.startContainer, range.startOffset);
@@ -715,6 +741,7 @@ export default class PernetRawEditor extends RawEditor {
           const endPosition = this.calculatePosition(endNode, range.endOffset);
           const start = {relativePosition: startPosition - startNode.start, absolutePosition: startPosition, domNode: startNode.domNode};
           const end = { relativePosition: endPosition - endNode.start, absolutePosition: endPosition, domNode: endNode.domNode};
+          // @ts-ignore
           this.currentSelection = { startNode: start , endNode: end };
         }
       }
@@ -755,6 +782,7 @@ export default class PernetRawEditor extends RawEditor {
         // the node after the carret is a text node, so we can set the cursor at the start of that node
         const absolutePosition = richNodeAfterCarret.start;
         const position = {domNode: richNodeAfterCarret.domNode, absolutePosition, relativePosition: 0};
+        // @ts-ignore
         this.currentSelection = { startNode: position, endNode: position};
       }
       else if (offset > 0 && richNode.children[offset-1].type === 'text') {
@@ -762,34 +790,37 @@ export default class PernetRawEditor extends RawEditor {
         const richNodeBeforeCarret = richNode.children[offset-1];
         const absolutePosition = richNodeBeforeCarret.end;
         const position = {domNode: richNodeBeforeCarret.domNode, absolutePosition, relativePosition: richNodeBeforeCarret.end - richNodeBeforeCarret.start};
+        // @ts-ignore
         this.currentSelection = { startNode: position, endNode: position};
       }
       else {
         // no suitable text node is present, so we create a textnode
         let textNode;
         if (richNodeAfterCarret){ // insert text node before the offset
-          textNode = insertTextNodeWithSpace(node, richNodeAfterCarret.domNode);
+          textNode = insertTextNodeWithSpace(node, richNodeAfterCarret.domNode as ChildNode);
         }
         else if  (richNode.children.length === 0 && offset === 0) { // the node is empty (no child at position 0), offset should be zero
           // TODO: what if void element?
           textNode = insertTextNodeWithSpace(node);
         }
         else { // no node at offset, insert after the previous node
-          textNode = insertTextNodeWithSpace(node, richNode.children[offset-1].domNode, true);
+          textNode = insertTextNodeWithSpace(node, richNode.children[offset-1].domNode as ChildNode, true);
         }
         this.updateRichNode();
         const absolutePosition = this.getRichNodeFor(textNode).start;
         const position = {domNode: textNode, relativePosition: 0, absolutePosition};
+        // @ts-ignore
         this.currentSelection = { startNode: position, endNode: position};
       }
     }
     else if (richNode.type === 'text') {
       const absolutePosition = richNode.start + offset;
       const position = {domNode: node, absolutePosition, relativePosition: offset};
+      // @ts-ignore
       this.currentSelection = { startNode: position, endNode: position };
     }
     else {
-      warn(`invalid node ${tagName(node.domNode)} provided to setCaret`, {id: 'contenteditable.invalid-start'});
+      warn(`invalid node ${tagName(node)} provided to setCaret`, {id: 'contenteditable.invalid-start'});
     }
   }
 

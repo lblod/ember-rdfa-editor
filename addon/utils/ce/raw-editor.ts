@@ -1,12 +1,11 @@
 import Ember from "ember";
-import EmberObject, { get, computed } from '@ember/object';
-import { runInDebug, debug, warn } from '@ember/debug';
-import { A } from '@ember/array';
+import EmberObject from '@ember/object';
+import {runInDebug} from '@ember/debug';
+import {A} from '@ember/array';
 import CappedHistory from './capped-history';
 import classic from 'ember-classic-decorator';
 import MakeBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-bold-command';
 import RemoveBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-bold-command';
-import RichSelectionTracker from './rich-selection-tracker';
 import MovementObserver from "@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer";
 import {RichNode} from "@lblod/ember-rdfa-editor/editor/raw-editor";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
@@ -44,15 +43,6 @@ class RawEditor extends EmberObject {
 
   history!: CappedHistory;
 
-  /**
-   * the domNode containing our caret
-   *
-   * __NOTE__: is set to null on a selection that spans nodes
-   * @property currentNode
-   * @type DOMNode
-   * @protected
-   */
-  protected _currentNode: Node | null = null;
 
   protected movementObservers: Ember.NativeArray<MovementObserver> ;
   protected model: Model;
@@ -67,10 +57,10 @@ class RawEditor extends EmberObject {
     this.registerCommand(new RemoveBoldCommand(this.model));
   }
 
-  get rootNode() : Node {
+  get rootNode() : HTMLElement {
     return this.model.rootNode;
   }
-  set rootNode(rootNode: Node) {
+  set rootNode(rootNode: HTMLElement) {
     this.model.rootNode = rootNode;
   }
 
@@ -92,10 +82,5 @@ class RawEditor extends EmberObject {
 
 function deprecate(message: string) {
   runInDebug( () => console.trace(`DEPRECATION: ${message}`)); // eslint-disable-line no-console
-}
-function uuidv4() {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => {
-    return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
-  });
 }
 export default RawEditor;
