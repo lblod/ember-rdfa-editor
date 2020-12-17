@@ -11,7 +11,8 @@ export default class Model {
   private _rootNode!: HTMLElement;
 
   constructor() {
-    this.richSelectionTracker = new RichSelectionTracker();
+    this.richSelectionTracker = new RichSelectionTracker(this);
+    this.richSelectionTracker.startTracking();
   }
   get rootNode() : HTMLElement {
     return this._rootNode;

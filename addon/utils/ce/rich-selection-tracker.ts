@@ -1,5 +1,7 @@
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
+import { walk as walkDomNode } from '@lblod/marawa/node-walker';
+import getRichNodeMatchingDomNode from './get-rich-node-matching-dom-node';
 
 export enum PropertyState {
   enabled = 'enabled',
@@ -21,7 +23,8 @@ export interface RichSelection {
 }
 export default class RichSelectionTracker {
   richSelection : RichSelection;
-  constructor() {
+  editor;
+  constructor(editor) {
     this.richSelection = {
       domSelection: getWindowSelection(),
       selection: 'unknown',
@@ -34,6 +37,7 @@ export default class RichSelectionTracker {
         strikethrough: PropertyState.unknown
       }
     };
+    this.editor = editor;
     this.updateSelection = this.updateSelection.bind(this);
   }
   startTracking() {
@@ -172,7 +176,9 @@ export default class RichSelectionTracker {
     }
   }
   caculateRdfaSelection(selection: Selection) {
-    return 'unknown';
+    const richNodeTree = walkDomNode( this.editor.rootNode );
+    const richNode = getRichNodeMatchingDomNode(selection.anchorNode, richNodeTree);
+    return richNode;
   }
   calculateRdfaContexts(selection: Selection) {
     return 'unknown';
