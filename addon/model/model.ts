@@ -1,5 +1,10 @@
 import RichSelectionTracker, {RichSelection} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
 
+/**
+ * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
+ * Code that needs to modify the DOM has to use a {@link Command}.
+ * The model is still exposed for querying but that might become even more restricted later.
+ */
 export default class Model {
 
   private richSelectionTracker: RichSelectionTracker;

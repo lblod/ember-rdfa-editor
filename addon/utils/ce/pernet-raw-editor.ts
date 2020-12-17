@@ -1,3 +1,5 @@
+import Ember from "ember";
+import {A} from '@ember/array';
 import {TaskGenerator, timeout} from 'ember-concurrency';
 import {task} from 'ember-concurrency-decorators';
 import {diff_match_patch as DiffMatchPatch} from 'diff-match-patch';
@@ -45,6 +47,7 @@ import {
 import MovementObserver from "@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer";
 import getRichNodeMatchingDomNode from "@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node";
 import classic from 'ember-classic-decorator';
+import CappedHistory from "@lblod/ember-rdfa-editor/utils/ce/capped-history";
 
 
 /**
@@ -52,8 +55,17 @@ import classic from 'ember-classic-decorator';
  */
 @classic
 export default class PernetRawEditor extends RawEditor {
+  /**
+   * current textContent from editor
+   *
+   * @property currentTextContent
+   * @type String
+   * @public
+   */
+  currentTextContent: string | null = null
   private _currentSelection?: InternalSelection;
 
+  history!: CappedHistory;
   /**
    * the domNode containing our caret
    *
@@ -62,6 +74,22 @@ export default class PernetRawEditor extends RawEditor {
    * @protected
    */
   protected _currentNode: Node | null = null;
+
+  protected movementObservers: Ember.NativeArray<MovementObserver> ;
+
+  /**
+   * a rich representation of the dom tree created with {{#crossLink "NodeWalker"}}NodeWalker{{/crossLink}}
+   * @property richNode
+   * @type RichNode
+   * @protected
+   */
+  richNode!: RichNode;
+
+  constructor(...args: any[]) {
+    super(...args);
+    this.set('history', new CappedHistory({ maxItems: 100}));
+    this.movementObservers = A();
+  }
   /**
    * the current selection in the editor
    *
