@@ -441,7 +441,7 @@ export default class PernetRawEditor extends RawEditor {
    * @return {RichNode} returns last inserted element as RichNode
    * @private
    */
-  prependElementsRichNode(richParent: RichNode, elements: Element[]){
+  prependElementsRichNode(richParent: RichNode, elements: ChildNode[]){
     const newFirstChild = elements[0];
     if(richParent.domNode.firstChild)
       richParent.domNode.insertBefore(newFirstChild, richParent.domNode.firstChild);

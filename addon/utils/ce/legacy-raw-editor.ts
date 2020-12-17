@@ -1,5 +1,6 @@
+import EmberObject from '@ember/object';
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import { runInDebug, debug, warn } from '@ember/debug';
+import { runInDebug, warn } from '@ember/debug';
 import {createElementsFromHTML, removeNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { A } from '@ember/array';
 import Ember from "ember";
@@ -81,11 +82,13 @@ export default class LegacyRawEditor extends PernetRawEditor {
     removeNode(richNode.domNode);
 
     //update editor state
-    const textNodeAfterInsert = !keepCurrentPosition ? nextTextNode(lastInsertedRichElement.domNode) : null;
+    const textNodeAfterInsert = !keepCurrentPosition ? nextTextNode(lastInsertedRichElement.domNode, this.rootNode) : null;
     this.updateRichNode();
     taskFor(this.generateDiffEvents).perform(extraInfo);
     if(keepCurrentPosition) {
-      this.setCaret(currentNode, getCurrentCarretPosition);
+      if(currentNode && getCurrentCarretPosition) {
+        this.setCaret(currentNode, getCurrentCarretPosition);
+      }
     }
     else {
       this.setCaret(textNodeAfterInsert,0);
@@ -109,12 +112,14 @@ export default class LegacyRawEditor extends PernetRawEditor {
   removeNode(node: Node, extraInfo = []){
     //keeps track of current node.
     let carretPositionToEndIn = this.getRelativeCursorPosition();
-    let nodeToEndIn = this.currentNode;
+    let nodeToEndIn = this.currentNode as Text;
     const keepCurrentPosition = !node.isSameNode(nodeToEndIn) && !node.contains(nodeToEndIn);
 
     if(!keepCurrentPosition){
       nodeToEndIn = previousTextNode(node, this.rootNode);
-      carretPositionToEndIn = nodeToEndIn.length;
+      if(nodeToEndIn) {
+        carretPositionToEndIn = nodeToEndIn.length;
+      }
     }
 
     //find rich node matching dom node
@@ -127,7 +132,9 @@ export default class LegacyRawEditor extends PernetRawEditor {
     this.updateRichNode();
     taskFor(this.generateDiffEvents).perform(extraInfo);
 
-    this.setCaret(nodeToEndIn, carretPositionToEndIn);
+    if(carretPositionToEndIn) {
+      this.setCaret(nodeToEndIn, carretPositionToEndIn);
+    }
 
     return nodeToEndIn;
   }
@@ -164,10 +171,10 @@ export default class LegacyRawEditor extends PernetRawEditor {
     lastInsertedRichElement = this.insertValidCursorNodeAfterRichNode(richParent, lastInsertedRichElement);
 
     //update editor stat style={{if this.isBold "background-color: greene
-    const textNodeAfterInsert = !keepCurrentPosition ? nextTextNode(lastInsertedRichElement.domNode) : null;
+    const textNodeAfterInsert = !keepCurrentPosition ? nextTextNode(lastInsertedRichElement.domNode, this.rootNode) : null;
     this.updateRichNode();
     taskFor(this.generateDiffEvents).perform(extraInfo);
-    if(keepCurrentPosition) {
+    if(getCurrentCarretPosition && currentNode && keepCurrentPosition) {
       this.setCaret(currentNode, getCurrentCarretPosition);
     }
     else {
@@ -191,7 +198,7 @@ export default class LegacyRawEditor extends PernetRawEditor {
    */
   clearHighlightForRange(start: number,end: number) {
     deprecate('deprecated call to clearHightlightForRange, use clearHighlightForLocations');
-    this.clearHighlightForLocations([start, end]);
+    this.clearHighlightForLocations([[start, end]]);
   }
 
   /**
@@ -206,10 +213,17 @@ export default class LegacyRawEditor extends PernetRawEditor {
    */
   insertComponent(position: number | Element, name: string, content: Object, id = uuidv4()) {
     let el;
-    if (position instanceof Element)
+    if (position instanceof Element) {
       el = position;
-    else
-      [el] = this.replaceTextWithHTML(position, position, `<div contenteditable="false" id="editor-${id}"><!-- component ${id} --></div>`);
+    }
+    else {
+      throw new Error("LegacyRawEditor.insertComponent: This codepath is broken and needs to be re-evaluated");
+      // This was the original code which can not work since replaceTextWithHTML does not return anything.
+      // It's unclear what this was supposed to do and the method is deprecated anyway
+      // [el] = this.replaceTextWithHTML(position, position, `<div contenteditable="false" id="editor-${id}"><!-- component ${id} --></div>`);
+
+    }
+
     const config = { id, element: el, name, content: EmberObject.create(content) };
     this.components.pushObject(config);
     this.updateRichNode();
@@ -234,4 +248,12 @@ export default class LegacyRawEditor extends PernetRawEditor {
 }
 function deprecate(message: string) {
   runInDebug( () => console.trace(`DEPRECATION: ${message}`)); // eslint-disable-line no-console
+}
+function uuidv4() {
+  // this actually does work because of JS conversion magic.
+  // copied from a library, so it's ugly but probably very optimized
+  // @ts-ignore
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => {
+    return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
+  });
 }

@@ -83,8 +83,8 @@ function unwrapElement(node: HTMLElement): void {
  * @deprecate all supported browser have ChildNode.remove
  * @public
  */
-function removeNode(node: ChildNode) {
-  let parent = node.parentNode;
+function removeNode(node: Node) {
+  const parent = node.parentNode;
   if (parent)
     parent.removeChild(node);
 }
@@ -277,8 +277,8 @@ function isBlockOrBr(node: HTMLElement): boolean {
  * @method createElementsFromHtml
  * @public
  */
-function createElementsFromHTML(htmlString: string): Array<Node> {
-  let div = document.createElement('div');
+function createElementsFromHTML(htmlString: string): Array<ChildNode> {
+  const div = document.createElement('div');
   div.innerHTML = htmlString.trim();
   return Array.from(div.childNodes);
 }
