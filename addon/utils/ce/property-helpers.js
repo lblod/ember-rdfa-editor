@@ -98,7 +98,7 @@ function createWrapperForProperty(property) {
  * @param property an editor property
  * @for PropertyHelpers
  */
-function applyProperty(selection, doc, property, calledFromCancel) {
+function applyProperty(selection, doc, property, calledFromCancel = false) {
   if (selection.selections.length === 0) {
     warn(`can't apply property to empty selection`, {id: 'content-editable.editor-property'});
     return;

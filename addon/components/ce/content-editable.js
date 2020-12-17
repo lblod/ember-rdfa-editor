@@ -27,6 +27,7 @@ import { normalizeEvent } from 'ember-jquery-legacy';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
 import RichSelectionTracker from '../../utils/ce/rich-selection-tracker';
+import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -152,7 +153,7 @@ export default class ContentEditable extends Component {
    */
   init() {
     super.init(...arguments);
-    const rawEditor = RawEditor.create({
+    const rawEditor = LegacyRawEditor.create({
       handleFullContentUpdate: this.get('handleFullContentUpdate'),
       textInsert: this.get('textInsert'),
       textRemove: this.get('textRemove'),

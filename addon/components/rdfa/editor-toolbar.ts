@@ -1,13 +1,22 @@
-import { action } from "@ember/object";
-import { layout as templateLayout } from "@ember-decorators/component";
-import Component from '@ember/component';
-import layout from '../../templates/components/rdfa/editor-toolbar';
+import Component from "@glimmer/component";
+import {action} from "@ember/object"
 import boldProperty from '../../utils/rdfa/bold-property';
 import italicProperty from '../../utils/rdfa/italic-property';
 import underlineProperty from '../../utils/rdfa/underline-property';
 import strikethroughProperty from '../../utils/rdfa/strikethrough-property';
 import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
+import EditorProperty from "dummy/utils/ce/editor-property";
+import { tracked } from "@glimmer/tracking";
+import {PropertyState} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
+
+interface Args {
+  editor: RawEditor;
+  showTextStyleButtons: boolean;
+  showListButtons: boolean;
+  showIndentButtons: boolean;
+}
 
 /**
  * RDFa editor toolbar component
@@ -15,26 +24,36 @@ import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
  * @class RdfaEditorToolbarComponent
  * @extends Component
  */
-@templateLayout(layout)
-export default class EditorToolbar extends Component {
-  tagName = "";
+export default class EditorToolbar extends Component<Args> {
+  @tracked
+  isBold: boolean = false;
 
-  toggleProperty(property) {
-    const range = this.contentEditable.currentSelection;
-    const selection = this.contentEditable.selectCurrentSelection();
-    this.contentEditable.toggleProperty(selection, property);
+  constructor(parent: unknown, args: Args) {
+    super(parent, args);
+    document.addEventListener("richSelectionUpdated", this.updateProperties.bind(this))
+  }
+  updateProperties() {
+    console.log("richSelectionUpdated");
+    this.isBold = this.args.editor.model.selection.attributes.bold === PropertyState.enabled;
+
+  }
+  @action
+  toggleProperty(property: EditorProperty) {
+    const range = this.args.editor.currentSelection;
+    const selection = this.args.editor.selectCurrentSelection();
+    this.args.editor.toggleProperty(selection, property);
     // set cursor at end of selection, TODO: check what other editors do but this feels natural
-    this.contentEditable.setCurrentPosition(range[1]);
+    this.args.editor.setCurrentPosition(range[1]);
   }
 
   @action
   insertUL() {
-    this.contentEditable.insertUL();
+    this.args.editor.insertUL();
   }
 
   @action
   insertOL() {
-    this.contentEditable.insertOL();
+    this.args.editor.insertOL();
   }
 
   @action
@@ -43,15 +62,15 @@ export default class EditorToolbar extends Component {
     if (selection.isCollapsed) {
       // colllapsed selections that are not in a list are not properly handled, this is a temporary workaround until we have a better toolbar.
       if (isInList(selection.anchorNode)) {
-        this.contentEditable.insertIndent();
+        this.args.editor.insertIndent();
       }
       else {
         //refocus editor
-        this.contentEditable.rootNode.focus();
+        this.args.editor.rootNode.focus();
       }
     }
     else {
-      this.contentEditable.insertIndent();
+      this.args.editor.insertIndent();
     }
   }
 
@@ -61,15 +80,15 @@ export default class EditorToolbar extends Component {
     if (selection.isCollapsed) {
       // colllapsed selections that are not in a list are not properly handled, this is a temporary workaround until we have a better toolbar.
       if (isInList(selection.anchorNode)) {
-        this.contentEditable.insertUnindent();
+        this.args.editor.insertUnindent();
       }
       else {
         //refocus editor
-        this.contentEditable.rootNode.focus();
+        this.args.editor.rootNode.focus();
       }
     }
     else {
-      this.contentEditable.insertUnindent();
+      this.args.editor.insertUnindent();
     }
   }
 
@@ -80,7 +99,12 @@ export default class EditorToolbar extends Component {
 
   @action
   toggleBold() {
-    this.toggleProperty(boldProperty);
+    if(this.args.editor.richSelectionTracker.richSelection.attributes.bold) {
+      this.args.editor.executeCommand("remove-bold");
+
+    } else {
+      this.args.editor.executeCommand("make-bold");
+    }
   }
 
   @action
@@ -95,6 +119,6 @@ export default class EditorToolbar extends Component {
 
   @action
   undo() {
-    this.contentEditable.undo();
+    this.args.editor.undo();
   }
 }
