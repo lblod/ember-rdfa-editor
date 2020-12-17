@@ -1,4 +1,5 @@
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 
 export enum PropertyState {
   enabled = 'enabled',
@@ -13,6 +14,8 @@ export interface RichSelection {
     inList: PropertyState,
     bold: PropertyState,
     italic: PropertyState,
+    underline: PropertyState,
+    strikethrough: PropertyState
   },
 
 }
@@ -26,7 +29,9 @@ export default class RichSelectionTracker {
         rdfaContexts: 'unknown',
         inList: PropertyState.unknown,
         bold: PropertyState.unknown,
-        italic: PropertyState.unknown
+        italic: PropertyState.unknown,
+        underline: PropertyState.unknown,
+        strikethrough: PropertyState.unknown
       }
     };
     this.updateSelection = this.updateSelection.bind(this);
@@ -41,7 +46,9 @@ export default class RichSelectionTracker {
     const currentSelection  = getWindowSelection();
     const isBold : PropertyState = this.calculateIsBold(currentSelection);
     const isItalic : PropertyState = this.calculateIsItalic(currentSelection);
-    const isInList : PropertyState = this.calculateIsInList(currentSelection);
+    const isUnderline : PropertyState = this.calculateIsUnderline(currentSelection);
+      const isStriketrough : PropertyState = this.calculateIsStriketrough(currentSelection);
+      const isInList : PropertyState = this.calculateIsInList(currentSelection);
     const rdfaSelection = this.caculateRdfaSelection(currentSelection);
     const rdfaContexts = this.calculateRdfaContexts(currentSelection);
     this.richSelection = {
@@ -51,7 +58,9 @@ export default class RichSelectionTracker {
         rdfaContexts,
         inList: isInList,
         bold: isBold,
-        italic: isItalic
+        italic: isItalic,
+          underline: isUnderline,
+          strikethrough: isStriketrough
       }
     };
     const richSelectionUpdatedEvent = new Event('richSelectionUpdated');
@@ -62,7 +71,7 @@ export default class RichSelectionTracker {
     if(selection.type === 'Caret') {
       if(selection.anchorNode && selection.anchorNode.parentElement) {
         const parentElement = selection.anchorNode.parentElement;
-        const fontWeight : Number = Number(window.getComputedStyle(parentElement).fontWeight);
+        const fontWeight : Number = Number(this.getComputedStyle(parentElement).fontWeight);
         return fontWeight > 400 ? PropertyState.enabled : PropertyState.disabled;
       } else {
         return PropertyState.unknown;
@@ -83,8 +92,8 @@ export default class RichSelectionTracker {
     if(selection.type === 'Caret') {
       if(selection.anchorNode && selection.anchorNode.parentElement) {
         const parentElement = selection.anchorNode.parentElement;
-        const fontWeight : Number = Number(window.getComputedStyle(parentElement).fontWeight);
-        return fontWeight > 400 ? PropertyState.enabled : PropertyState.disabled;
+        const isItalic : Boolean = this.getComputedStyle(parentElement).fontStyle === 'italic';
+        return isItalic ? PropertyState.enabled : PropertyState.disabled;
       } else {
         return PropertyState.unknown;
       }
@@ -100,8 +109,67 @@ export default class RichSelectionTracker {
       return isItalic ? PropertyState.enabled : PropertyState.disabled;
     }
   }
+  calculateIsUnderline(selection: Selection) : PropertyState {
+    if(selection.type === 'Caret') {
+      if(selection.anchorNode && selection.anchorNode.parentElement) {
+        const parentElement = selection.anchorNode.parentElement;
+        const isUnderline : Boolean = this.getComputedStyle(parentElement).textDecoration === 'underline';
+        return isUnderline ? PropertyState.enabled : PropertyState.disabled;
+      } else {
+        return PropertyState.unknown;
+      }
+    } else {
+      const range = selection.getRangeAt(0);
+      const nodes = this.getNodesInRange(range);
+      const isUnderline = this.getComputedStyle(nodes[0]).textDecoration === 'underline';
+      for(let i = 1; i < nodes.length; i++) {
+        if((this.getComputedStyle(nodes[i]).textDecoration === 'underline') != isUnderline) {
+          return PropertyState.unknown;
+        }
+      }
+      return isUnderline ? PropertyState.enabled : PropertyState.disabled;
+    }
+  }
+  calculateIsStriketrough(selection: Selection) : PropertyState {
+    if(selection.type === 'Caret') {
+      if(selection.anchorNode && selection.anchorNode.parentElement) {
+        const parentElement = selection.anchorNode.parentElement;
+        const isStriketrough : Boolean = this.getComputedStyle(parentElement).textDecoration === 'line-through';
+        return isStriketrough ? PropertyState.enabled : PropertyState.disabled;
+      } else {
+        return PropertyState.unknown;
+      }
+    } else {
+      const range = selection.getRangeAt(0);
+      const nodes = this.getNodesInRange(range);
+      const isStriketrough = this.getComputedStyle(nodes[0]).textDecoration === 'line-through';
+      for(let i = 1; i < nodes.length; i++) {
+        if((this.getComputedStyle(nodes[i]).textDecoration === 'line-through') != isStriketrough) {
+          return PropertyState.unknown;
+        }
+      }
+      return isStriketrough ? PropertyState.enabled : PropertyState.disabled;
+    }
+  }
   calculateIsInList(selection: Selection) {
-    return PropertyState.unknown;
+    if(selection.type === 'Caret') {
+      if(selection.anchorNode) {
+        const inList : Boolean = isInList(selection.anchorNode);
+        return inList ? PropertyState.enabled : PropertyState.disabled;
+      } else {
+        return PropertyState.unknown;
+      }
+    } else {
+      const range = selection.getRangeAt(0);
+      const nodes = this.getNodesInRange(range);
+      const inList = isInList(nodes[0]);
+      for(let i = 1; i < nodes.length; i++) {
+        if((isInList(nodes[i])) != inList) {
+          return PropertyState.unknown;
+        }
+      }
+      return inList ? PropertyState.enabled : PropertyState.disabled;
+    }
   }
   caculateRdfaSelection(selection: Selection) {
     return 'unknown';
@@ -157,3 +225,4 @@ export default class RichSelectionTracker {
     }
   }
 }
+
