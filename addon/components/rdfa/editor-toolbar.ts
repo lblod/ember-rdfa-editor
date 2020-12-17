@@ -1,15 +1,14 @@
 import Component from "@glimmer/component";
 import {action} from "@ember/object"
-import boldProperty from '../../utils/rdfa/bold-property';
 import italicProperty from '../../utils/rdfa/italic-property';
 import underlineProperty from '../../utils/rdfa/underline-property';
 import strikethroughProperty from '../../utils/rdfa/strikethrough-property';
-import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
-import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
+import {isInList} from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
+import {getWindowSelection} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import EditorProperty from "dummy/utils/ce/editor-property";
-import { tracked } from "@glimmer/tracking";
-import {PropertyState} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
+import {tracked} from "@glimmer/tracking";
+import {PropertyState, RichSelection} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
+import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 
 interface Args {
   editor: RawEditor;
@@ -30,12 +29,11 @@ export default class EditorToolbar extends Component<Args> {
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
-    document.addEventListener("richSelectionUpdated", this.updateProperties.bind(this))
+    document.addEventListener("richSelectionUpdated", this.updateProperties.bind(this));
   }
-  updateProperties() {
+  updateProperties(event: CustomEvent<RichSelection>) {
     console.log("richSelectionUpdated");
-    this.isBold = this.args.editor.model.selection.attributes.bold === PropertyState.enabled;
-
+    this.isBold = event.detail.attributes.bold === PropertyState.enabled;
   }
   @action
   toggleProperty(property: EditorProperty) {

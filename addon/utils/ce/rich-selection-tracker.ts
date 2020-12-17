@@ -63,7 +63,7 @@ export default class RichSelectionTracker {
           strikethrough: isStriketrough
       }
     };
-    const richSelectionUpdatedEvent = new Event('richSelectionUpdated');
+    const richSelectionUpdatedEvent = new CustomEvent<RichSelection>('richSelectionUpdated', {detail:  this.richSelection});
     document.dispatchEvent(richSelectionUpdatedEvent);
     }
 

@@ -97,6 +97,7 @@ function createWrapperForProperty(property) {
  * @param document, should provide a pernet api
  * @param property an editor property
  * @for PropertyHelpers
+ * @deprecated use the command instead
  */
 function applyProperty(selection, doc, property, calledFromCancel = false) {
   if (selection.selections.length === 0) {

@@ -29,4 +29,11 @@ export default class Model {
   get selection() : RichSelection {
     return this.richSelectionTracker.richSelection;
   }
+
+  createElement<K extends keyof HTMLElementTagNameMap>(tagName: K, options?: ElementCreationOptions) {
+    return document.createElement<K>(tagName, options);
+  }
+  surroundSelectionContents(node: Node) {
+    this.selection.domSelection.getRangeAt(0).surroundContents(node);
+  }
 }
