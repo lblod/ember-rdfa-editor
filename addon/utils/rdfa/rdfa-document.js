@@ -16,9 +16,6 @@ export default class RdfaDocument {
     this.setHtmlContent = function(html) {
       const selection = editor.selectHighlight(editor.richNode.region);
       editor.update(selection, { set: { innerHTML: html}});
-      editor.model.read();
-      editor.model.write();
-      editor.updateRichNode();
     };
   }
 

@@ -896,7 +896,13 @@ export default class PernetRawEditor extends RawEditor {
   }
   update(selection: unknown, options: Object = {}) {
     this.createSnapshot();
-    return update.bind(this)(selection, options);
+    const rslt = update.bind(this)(selection, options);
+    if(this.tryOutVdom) {
+      this.model.read();
+      this.model.write();
+      this.updateRichNode();
+    }
+    return rslt;
   }
   replaceDomNode(domNode: Node, options: {callback: Function, failedCallBack: Function, motivation: string}) {
     this.createSnapshot();
