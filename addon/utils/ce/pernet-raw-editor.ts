@@ -77,13 +77,6 @@ export default class PernetRawEditor extends RawEditor {
 
   protected movementObservers: Ember.NativeArray<MovementObserver> ;
 
-  /**
-   * a rich representation of the dom tree created with {{#crossLink "NodeWalker"}}NodeWalker{{/crossLink}}
-   * @property richNode
-   * @type RichNode
-   * @protected
-   */
-  richNode!: RichNode;
 
   constructor(...args: any[]) {
     super(...args);
@@ -295,14 +288,6 @@ export default class PernetRawEditor extends RawEditor {
     warn("textInsert was called on raw-editor without listeners being set.", { id: 'content-editable.invalid-state'});
   }
 
-  /**
-   * @method updateRichNode
-   * @private
-   */
-  updateRichNode() {
-    const richNode = walkDomNode( this.rootNode );
-    this.set('richNode', richNode);
-  }
 
 
   /**

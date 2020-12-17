@@ -9,6 +9,7 @@ import EditorProperty from "dummy/utils/ce/editor-property";
 import {tracked} from "@glimmer/tracking";
 import {PropertyState, RichSelection} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
+import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 interface Args {
   editor: RawEditor;
@@ -97,7 +98,7 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   toggleBold() {
-    if(this.args.editor.richSelectionTracker.richSelection.attributes.bold) {
+    if(this.isBold) {
       this.args.editor.executeCommand("remove-bold");
 
     } else {

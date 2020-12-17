@@ -27,7 +27,7 @@ import { analyse as scanContexts } from '@lblod/marawa/rdfa-context-scanner';
  * @param {[Selection]} selections A matched selection containing
  *   both the tag to which the change should be applied, as well as
  *   the RichNode of the change.
- * @param {[Number]} selections.range Range which should be
+ * @param {[Number]} selections.range AttributeRange which should be
  *   highlighted.  Described by start and end.
  * @param {RichNode} selections.richNode Rich Node to which the
  *   selection applies.

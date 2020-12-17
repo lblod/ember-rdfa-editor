@@ -4,6 +4,8 @@ import MakeBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/m
 import RemoveBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-bold-command';
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
+import {walk as walkDomNode} from "@lblod/marawa/node-walker";
+import {RichNode} from "@lblod/ember-rdfa-editor/editor/raw-editor";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -21,6 +23,14 @@ class RawEditor extends EmberObject {
   registeredCommands: Map<string, Command> = new Map()
   protected model: Model;
 
+  /**
+   * a rich representation of the dom tree created with {{#crossLink "NodeWalker"}}NodeWalker{{/crossLink}}
+   * @property richNode
+   * @type RichNode
+   * @protected
+   */
+  richNode!: RichNode;
+
   constructor(...args: any[]){
     super(...args);
     this.model = new Model();
@@ -28,6 +38,14 @@ class RawEditor extends EmberObject {
     this.registerCommand(new RemoveBoldCommand(this.model));
   }
 
+  /**
+   * @method updateRichNode
+   * @private
+   */
+  updateRichNode() {
+    const richNode = walkDomNode( this.rootNode );
+    this.set('richNode', richNode);
+  }
   /**
    * The root node of the editor. This is the node with the contentEditable attribute.
    * No operations should ever affect any node outside of its tree.
@@ -37,6 +55,7 @@ class RawEditor extends EmberObject {
   }
   set rootNode(rootNode: HTMLElement) {
     this.model.rootNode = rootNode;
+    this.updateRichNode();
   }
 
 
@@ -59,6 +78,7 @@ class RawEditor extends EmberObject {
       throw new Error(`Unrecognized command ${commandName}`);
     }
     command.execute(...args);
+    this.model.write();
   }
 }
 export default RawEditor;

@@ -14,8 +14,15 @@ export default class MakeBoldCommand extends SetPropertyCommand {
     if (selection.isCollapsed) {
       throw new NotImplementedError();
     }
-
-    const strong = this.model.createElement("strong");
-    this.model.surroundSelectionContents(strong);
+    const range = selection.getRangeAt(0);
+    const fragment = range.extractContents();
+    const nodeIterator = this.model.createNodeIterator<Text>(fragment, NodeFilter.SHOW_TEXT);
+    // we want to modify the nodes, so we have to exhaust the iterator first
+    for(const node of [...nodeIterator]) {
+      const strong = this.model.createElement("strong");
+      strong.appendChild(node.cloneNode());
+      node.replaceWith(strong);
+    }
+    range.insertNode(fragment);
   }
 }
