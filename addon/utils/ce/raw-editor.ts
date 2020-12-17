@@ -22,7 +22,7 @@ import {RichNode} from "@lblod/ember-rdfa-editor/editor/raw-editor";
 class RawEditor extends EmberObject {
   registeredCommands: Map<string, Command> = new Map()
   protected model: Model;
-  protected tryOutVdom = true;
+  protected tryOutVdom = false;
 
   /**
    * a rich representation of the dom tree created with {{#crossLink "NodeWalker"}}NodeWalker{{/crossLink}}
