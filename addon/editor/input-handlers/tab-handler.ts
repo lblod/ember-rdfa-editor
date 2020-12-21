@@ -1,11 +1,11 @@
 import { InputHandler } from './input-handler';
 import { Manipulation, ManipulationExecutor, Editor, ManipulationGuidance } from './manipulation';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import { RawEditor } from '../raw-editor';
 import { isVoidElement, isVisibleElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
 import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
+import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 
 /**
  * Interface for specific plugins.
@@ -32,10 +32,10 @@ export interface TabInputPlugin {
  * @constructor
  */
 export default class TabInputHandler implements InputHandler {
-  rawEditor: RawEditor;
+  rawEditor: LegacyRawEditor;
   plugins: Array<TabInputPlugin>;
 
-  constructor( {rawEditor} : { rawEditor: RawEditor} ) {
+  constructor( {rawEditor} : { rawEditor: LegacyRawEditor} ) {
     this.rawEditor = rawEditor;
     this.plugins = [
       new LumpNodeTabInputPlugin(),

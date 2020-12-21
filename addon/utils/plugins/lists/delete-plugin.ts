@@ -27,8 +27,8 @@ import {
   hasVisibleChildren,
   moveCaretToEndOfNode,
 } from "@lblod/ember-rdfa-editor/editor/utils";
-import { RawEditor } from "@lblod/ember-rdfa-editor/editor/raw-editor";
 import { isInList } from "../../ce/list-helpers";
+import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 
 function debug(message: String, object: Object | null = null): void {
   runInDebug(() => {
@@ -72,7 +72,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (this.isAnyListNode(manipulation.node)) {
       const dispatch = (
         manipulation: RemoveBoundaryBackwards,
-        editor: RawEditor
+        editor: LegacyRawEditor
       ) => {
         this.mergeBackwards(manipulation.node, editor);
       };
@@ -86,7 +86,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (this.isAnyListNode(manipulation.node)) {
       const dispatch = (
         manipulation: RemoveBoundaryForwards,
-        editor: RawEditor
+        editor: LegacyRawEditor
       ) => {
         this.mergeForwards(manipulation.node, editor);
       };
@@ -106,7 +106,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (this.isAnyListNode(manipulation.node)) {
       const dispatcher = (
         manipulation: RemoveEmptyElementManipulation,
-        editor: RawEditor
+        editor: LegacyRawEditor
       ) => {
         this.mergeForwards(manipulation.node, editor);
       };
@@ -120,7 +120,7 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @param node the node which will be merged into the previous one
    * @param editor The editor instance
    */
-  private mergeBackwards(node: Node, editor: RawEditor) {
+  private mergeBackwards(node: Node, editor: LegacyRawEditor) {
     const baseNode = this.findNodeBefore(node, editor.rootNode);
     const nodeToMerge = this.getDeepestFirstDescendant(node);
 
@@ -147,7 +147,7 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @param node The node to merge into
    * @param editor The editor instance
    */
-  private mergeForwards(node: Node, editor: RawEditor) {
+  private mergeForwards(node: Node, editor: LegacyRawEditor) {
 
     const mergeNode = this.getDeepestLastDescendant(node);
     let cursorPosition = 0;

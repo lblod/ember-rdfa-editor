@@ -1,4 +1,4 @@
-import {RichNode} from "@lblod/marawa/node-walker/rich-node";
+import RichNode from "@lblod/marawa/rich-node";
 
 export interface RawEditorSelection extends Array<number> {
 

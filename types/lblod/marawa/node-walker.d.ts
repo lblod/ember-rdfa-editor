@@ -3,7 +3,7 @@ declare module '@lblod/marawa/node-walker' {
 
   export function walk(node: Node) :RichNode;
   export default class NodeWalker {
-    processDomNode(domNode: Node, parentNode:Node, start?: number): RichNode;
+    processDomNode(domNode: Node, parentNode? :Node, start?: number): RichNode;
     stepInDomNode(richNode: RichNode, childDomNode: Node): RichNode;
     stepNextDomNode(richNode: RichNode, nextDomChildren: Node[]):RichNode[];
     finishChildSteps(richNode: RichNode): void;

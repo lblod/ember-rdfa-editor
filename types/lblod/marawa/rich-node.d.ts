@@ -13,8 +13,11 @@ declare module '@lblod/marawa/rich-node' {
     rdfaBlocks: Array<RdfaBlock>;
     rdfaContext: Array<RdfaAttributes>;
     rdfaPrefixes: Object;
-    text: String;
-    type: String;
+    text: string;
+    type: string;
+    children: RichNode[];
+    absolutePosition: number;
+    relativePosition: number;
 
   }
   export default class RichNode implements RichNodeContent {
@@ -26,8 +29,11 @@ declare module '@lblod/marawa/rich-node' {
     rdfaContext: Array<RdfaAttributes>;
     rdfaPrefixes: Object;
     start: number;
-    text: String;
-    type: String;
+    text: string;
+    type: string;
+    children: RichNode[];
+    absolutePosition: number;
+    relativePosition: number;
 
     constructor(content: RichNodeContent);
     get region(): Region;

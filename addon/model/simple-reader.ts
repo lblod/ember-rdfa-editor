@@ -9,7 +9,7 @@ export default class SimpleReader implements Reader {
       return new RichElement(node.tagName.toLowerCase() as RichElementType);
     } else if(isTextNode(node)) {
       const richEl = new RichElement("span");
-      richEl.text = node.textContent;
+      richEl.text = node.textContent || "";
       return richEl;
     } else if(node.nodeType === Node.COMMENT_NODE) {
       return null;

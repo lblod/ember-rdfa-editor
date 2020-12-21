@@ -5,7 +5,7 @@ import RemoveBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import {walk as walkDomNode} from "@lblod/marawa/node-walker";
-import {RichNode} from "@lblod/ember-rdfa-editor/editor/raw-editor";
+import RichNode from "@lblod/marawa/rich-node";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.

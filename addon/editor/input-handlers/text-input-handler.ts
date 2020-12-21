@@ -4,7 +4,7 @@ import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import RdfaTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/text-input-plugin';
 import AnchorTagTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/anchor-tags/text-input-plugin';
 import PlaceHolderTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/text-input-plugin';
-import { RawEditor } from '../raw-editor';
+import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 const NON_BREAKING_SPACE = '\u00A0';
 
 
@@ -50,10 +50,10 @@ export function insertTextIntoTextNode(textNode: Node, position: number, inputTe
  * @constructor
  */
 export default class TextInputHandler implements InputHandler {
-  rawEditor: RawEditor;
+  rawEditor: LegacyRawEditor;
   plugins: Array<TextInputPlugin>;
 
-  constructor( {rawEditor} : { rawEditor: RawEditor} ) {
+  constructor( {rawEditor} : { rawEditor: LegacyRawEditor} ) {
     this.rawEditor = rawEditor;
     this.plugins = [
       new RdfaTextInputPlugin(),

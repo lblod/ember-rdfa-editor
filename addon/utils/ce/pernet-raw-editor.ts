@@ -29,7 +29,7 @@ import {
 } from './editor';
 import {findRichNode, findUniqueRichNodes} from '../rdfa/rdfa-rich-node-helpers';
 import {debug, runInDebug, warn} from '@ember/debug';
-import {InternalSelection, RawEditorSelection, RichNode} from "@lblod/ember-rdfa-editor/editor/raw-editor";
+import {InternalSelection, RawEditorSelection} from "@lblod/ember-rdfa-editor/editor/raw-editor";
 import {computed, get} from '@ember/object';
 import {PernetSelection} from "@lblod/ember-rdfa-editor/editor/pernet";
 import EditorProperty from "@lblod/ember-rdfa-editor/utils/ce/editor-property";
@@ -48,6 +48,7 @@ import MovementObserver from "@lblod/ember-rdfa-editor/utils/ce/movement-observe
 import getRichNodeMatchingDomNode from "@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node";
 import classic from 'ember-classic-decorator';
 import CappedHistory from "@lblod/ember-rdfa-editor/utils/ce/capped-history";
+import RichNode from "@lblod/marawa/rich-node";
 
 
 /**
@@ -226,7 +227,7 @@ export default class PernetRawEditor extends RawEditor {
   *generateDiffEvents(extraInfo: any[] = []): TaskGenerator<void> {
     yield timeout(320);
 
-    const newText = getTextContent(this.get('rootNode'));
+    const newText: string = getTextContent(this.get('rootNode'));
     let oldText: string | null = this.get('currentTextContent');
     if (!oldText) return;
 
@@ -926,7 +927,7 @@ export default class PernetRawEditor extends RawEditor {
   }
 
   /* Potential methods for the new API */
-  getContexts(options: {region: unknown}) {
+  getContexts(options: {region: [number, number]}) {
     const {region} = options || {};
     if( region )
       return scanContexts( this.rootNode, region );

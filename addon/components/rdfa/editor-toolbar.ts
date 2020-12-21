@@ -8,11 +8,10 @@ import {getWindowSelection} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import EditorProperty from "dummy/utils/ce/editor-property";
 import {tracked} from "@glimmer/tracking";
 import {PropertyState, RichSelection} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
-import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 
 interface Args {
-  editor: RawEditor;
+  editor: LegacyRawEditor;
   showTextStyleButtons: boolean;
   showListButtons: boolean;
   showIndentButtons: boolean;
