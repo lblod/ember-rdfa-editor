@@ -7,7 +7,6 @@ import {
   VoidElement
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {HandlerResponse, InputHandler} from './input-handler';
-import {RawEditor} from '../raw-editor';
 import {
   editorDebug,
   hasVisibleChildren,
@@ -18,6 +17,7 @@ import {
   stringToVisibleText
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import ListDeletePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/delete-plugin';
+import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 
 /**
  * We introduce an abstract reference point to check for visual changes.
@@ -29,7 +29,7 @@ interface VisualChangeReferencePoint {
   storeMeasurePoint(): void;
 
   hasChangedVisually: boolean;
-  editor: RawEditor;
+  editor: LegacyRawEditor;
 
   cleanUp(): void;
 }
@@ -45,9 +45,9 @@ export class MagicSpan implements VisualChangeReferencePoint {
   firstMeasurePoint: Array<DOMRect>;
   secondMeasurePoint: Array<DOMRect>;
   span: Element;
-  editor: RawEditor;
+  editor: LegacyRawEditor;
 
-  constructor(span: Element, editor: RawEditor) {
+  constructor(span: Element, editor: LegacyRawEditor) {
     this.span = span;
     this.span.id = MagicSpan.ID;
     this.editor = editor;
@@ -79,9 +79,9 @@ export class MagicSpan implements VisualChangeReferencePoint {
 class Caret implements VisualChangeReferencePoint {
   firstMeasurePoint: Array<DOMRect>;
   secondMeasurePoint: Array<DOMRect>;
-  editor: RawEditor;
+  editor: LegacyRawEditor;
 
-  constructor(editor: RawEditor) {
+  constructor(editor: LegacyRawEditor) {
     this.editor = editor;
     this.firstMeasurePoint = [];
     this.secondMeasurePoint = [];
@@ -119,9 +119,9 @@ class VisibleTextLength implements VisualChangeReferencePoint {
   firstMeasurePoint: String;
   secondMeasurePoint: String;
   textNode: Text;
-  editor: RawEditor;
+  editor: LegacyRawEditor;
 
-  constructor(textNode: Text, editor: RawEditor) {
+  constructor(textNode: Text, editor: LegacyRawEditor) {
     this.editor = editor;
     this.firstMeasurePoint = '';
     this.secondMeasurePoint = '';
@@ -350,7 +350,8 @@ export default class DeleteHandler implements InputHandler {
    * @type RawEditor
    * @default null
    */
-  rawEditor: RawEditor
+  rawEditor: LegacyRawEditor
+
 
   /**
    * Array containing all plugins for the delete handler.
@@ -369,7 +370,7 @@ export default class DeleteHandler implements InputHandler {
    * @public
    * @constructor
    */
-  constructor({rawEditor}: { rawEditor: RawEditor }) {
+  constructor({rawEditor}: { rawEditor: LegacyRawEditor }) {
     this.rawEditor = rawEditor;
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [

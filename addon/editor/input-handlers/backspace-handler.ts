@@ -10,8 +10,9 @@ import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br
 import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/backspace-plugin';
 import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { InputHandler, HandlerResponse } from './input-handler';
-import { RawEditor } from '../raw-editor';
 import { paintCycleHappened, editorDebug, stringToVisibleText, hasVisibleChildren, moveCaret, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
+import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
+import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
@@ -281,7 +282,7 @@ export default class BackspaceHandler implements InputHandler {
    * @type RawEditor
    * @default null
    */
-  rawEditor: RawEditor
+  rawEditor: LegacyRawEditor
 
   /**
    * Array containing all plugins for the backspace handler.
@@ -300,7 +301,7 @@ export default class BackspaceHandler implements InputHandler {
    * @public
    * @constructor
    */
-  constructor({ rawEditor }: { rawEditor: RawEditor }){
+  constructor({ rawEditor }: { rawEditor: LegacyRawEditor }){
     this.rawEditor = rawEditor;
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [

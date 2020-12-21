@@ -1,4 +1,4 @@
-import { RichNode } from '@lblod/ember-rdfa-editor/editor/raw-editor'
+import RichNode from "@lblod/marawa/rich-node";
 
 export interface PernetSelectionBlock {
   richNode: RichNode

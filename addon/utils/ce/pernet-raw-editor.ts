@@ -1,3 +1,5 @@
+import Ember from "ember";
+import {A} from '@ember/array';
 import {TaskGenerator, timeout} from 'ember-concurrency';
 import {task} from 'ember-concurrency-decorators';
 import {diff_match_patch as DiffMatchPatch} from 'diff-match-patch';
@@ -27,7 +29,7 @@ import {
 } from './editor';
 import {findRichNode, findUniqueRichNodes} from '../rdfa/rdfa-rich-node-helpers';
 import {debug, runInDebug, warn} from '@ember/debug';
-import {InternalSelection, RawEditorSelection, RichNode} from "@lblod/ember-rdfa-editor/editor/raw-editor";
+import {InternalSelection, RawEditorSelection} from "@lblod/ember-rdfa-editor/editor/raw-editor";
 import {computed, get} from '@ember/object';
 import {PernetSelection} from "@lblod/ember-rdfa-editor/editor/pernet";
 import EditorProperty from "@lblod/ember-rdfa-editor/utils/ce/editor-property";
@@ -45,6 +47,8 @@ import {
 import MovementObserver from "@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer";
 import getRichNodeMatchingDomNode from "@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node";
 import classic from 'ember-classic-decorator';
+import CappedHistory from "@lblod/ember-rdfa-editor/utils/ce/capped-history";
+import RichNode from "@lblod/marawa/rich-node";
 
 
 /**
@@ -52,8 +56,17 @@ import classic from 'ember-classic-decorator';
  */
 @classic
 export default class PernetRawEditor extends RawEditor {
+  /**
+   * current textContent from editor
+   *
+   * @property currentTextContent
+   * @type String
+   * @public
+   */
+  currentTextContent: string | null = null
   private _currentSelection?: InternalSelection;
 
+  history!: CappedHistory;
   /**
    * the domNode containing our caret
    *
@@ -62,6 +75,15 @@ export default class PernetRawEditor extends RawEditor {
    * @protected
    */
   protected _currentNode: Node | null = null;
+
+  protected movementObservers: Ember.NativeArray<MovementObserver> ;
+
+
+  constructor(...args: any[]) {
+    super(...args);
+    this.set('history', new CappedHistory({ maxItems: 100}));
+    this.movementObservers = A();
+  }
   /**
    * the current selection in the editor
    *
@@ -205,7 +227,7 @@ export default class PernetRawEditor extends RawEditor {
   *generateDiffEvents(extraInfo: any[] = []): TaskGenerator<void> {
     yield timeout(320);
 
-    const newText = getTextContent(this.get('rootNode'));
+    const newText: string = getTextContent(this.get('rootNode'));
     let oldText: string | null = this.get('currentTextContent');
     if (!oldText) return;
 
@@ -267,14 +289,6 @@ export default class PernetRawEditor extends RawEditor {
     warn("textInsert was called on raw-editor without listeners being set.", { id: 'content-editable.invalid-state'});
   }
 
-  /**
-   * @method updateRichNode
-   * @private
-   */
-  updateRichNode() {
-    const richNode = walkDomNode( this.rootNode );
-    this.set('richNode', richNode);
-  }
 
 
   /**
@@ -883,7 +897,13 @@ export default class PernetRawEditor extends RawEditor {
   }
   update(selection: unknown, options: Object = {}) {
     this.createSnapshot();
-    return update.bind(this)(selection, options);
+    const rslt = update.bind(this)(selection, options);
+    if(this.tryOutVdom) {
+      this.model.read();
+      this.model.write();
+      this.updateRichNode();
+    }
+    return rslt;
   }
   replaceDomNode(domNode: Node, options: {callback: Function, failedCallBack: Function, motivation: string}) {
     this.createSnapshot();
@@ -907,7 +927,7 @@ export default class PernetRawEditor extends RawEditor {
   }
 
   /* Potential methods for the new API */
-  getContexts(options: {region: unknown}) {
+  getContexts(options: {region: [number, number]}) {
     const {region} = options || {};
     if( region )
       return scanContexts( this.rootNode, region );

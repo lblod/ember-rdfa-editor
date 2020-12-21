@@ -9,6 +9,10 @@ import previousTextNode from "@lblod/ember-rdfa-editor/utils/ce/previous-text-no
 import { taskFor } from "ember-concurrency-ts";
 import classic from "ember-classic-decorator";
 
+/**
+ * Compatibility layer for components using the deprecated
+ * pre-pernet API
+ */
 @classic
 export default class LegacyRawEditor extends PernetRawEditor {
   /**

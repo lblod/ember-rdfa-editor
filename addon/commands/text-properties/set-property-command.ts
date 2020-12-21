@@ -1,7 +1,7 @@
 import EditorProperty from "../../utils/ce/editor-property";
 import Command from "../command";
-import { applyProperty } from "../../utils/ce/property-helpers";
 import Model from "@lblod/ember-rdfa-editor/model/model";
+import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export default abstract class SetPropertyCommand extends Command {
   protected property: EditorProperty;
@@ -10,11 +10,6 @@ export default abstract class SetPropertyCommand extends Command {
     this.property = property;
   }
   execute() {
-    applyProperty(
-      this.editor.selectCurrentSelection(),
-      this.editor,
-      this.property,
-      false
-    );
+    throw new NotImplementedError();
   }
 }
