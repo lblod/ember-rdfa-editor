@@ -1,8 +1,8 @@
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import { analyse } from '@lblod/marawa/rdfa-context-scanner';
-import getRichNodeMatchingDomNode from './get-rich-node-matching-dom-node';
 import RawEditor from "./raw-editor";
+import { RdfaBlock } from 'marawa';
 
 export enum PropertyState {
   enabled = 'enabled',
@@ -11,7 +11,7 @@ export enum PropertyState {
 }
 export interface RichSelection {
   domSelection: Selection;
-  selection: Array<any>,
+  selection: Array<RdfaBlock>,
   attributes: {
     inList: PropertyState,
     bold: PropertyState,
@@ -64,7 +64,6 @@ export default class RichSelectionTracker {
         strikethrough: isStriketrough
       }
     };
-    console.log(this.richSelection);
     const richSelectionUpdatedEvent = new Event('richSelectionUpdated');
     document.dispatchEvent(richSelectionUpdatedEvent);
     }
@@ -153,7 +152,7 @@ export default class RichSelectionTracker {
       return isStriketrough ? PropertyState.enabled : PropertyState.disabled;
     }
   }
-  calculateIsInList(selection: Selection) {
+  calculateIsInList(selection: Selection) : PropertyState {
     if(selection.type === 'Caret') {
       if(selection.anchorNode) {
         const inList : Boolean = isInList(selection.anchorNode);
