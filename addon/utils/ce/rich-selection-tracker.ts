@@ -1,5 +1,8 @@
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
+import { analyse } from '@lblod/marawa/rdfa-context-scanner';
+import RawEditor from "./raw-editor";
+import { RdfaBlock } from 'marawa';
 
 export enum PropertyState {
   enabled = 'enabled',
@@ -8,9 +11,8 @@ export enum PropertyState {
 }
 export interface RichSelection {
   domSelection: Selection;
-  selection: String,
+  selection: Array<RdfaBlock>,
   attributes: {
-    rdfaContexts: String,
     inList: PropertyState,
     bold: PropertyState,
     italic: PropertyState,
@@ -21,12 +23,12 @@ export interface RichSelection {
 }
 export default class RichSelectionTracker {
   richSelection : RichSelection;
-  constructor() {
+  editor: RawEditor;
+  constructor(editor: RawEditor) {
     this.richSelection = {
       domSelection: getWindowSelection(),
-      selection: 'unknown',
+      selection: [],
       attributes: {
-        rdfaContexts: 'unknown',
         inList: PropertyState.unknown,
         bold: PropertyState.unknown,
         italic: PropertyState.unknown,
@@ -34,6 +36,7 @@ export default class RichSelectionTracker {
         strikethrough: PropertyState.unknown
       }
     };
+    this.editor = editor;
     this.updateSelection = this.updateSelection.bind(this);
   }
   startTracking() {
@@ -47,20 +50,18 @@ export default class RichSelectionTracker {
     const isBold : PropertyState = this.calculateIsBold(currentSelection);
     const isItalic : PropertyState = this.calculateIsItalic(currentSelection);
     const isUnderline : PropertyState = this.calculateIsUnderline(currentSelection);
-      const isStriketrough : PropertyState = this.calculateIsStriketrough(currentSelection);
-      const isInList : PropertyState = this.calculateIsInList(currentSelection);
+    const isStriketrough : PropertyState = this.calculateIsStriketrough(currentSelection);
+    const isInList : PropertyState = this.calculateIsInList(currentSelection);
     const rdfaSelection = this.caculateRdfaSelection(currentSelection);
-    const rdfaContexts = this.calculateRdfaContexts(currentSelection);
     this.richSelection = {
       domSelection: currentSelection,
       selection: rdfaSelection,
       attributes: {
-        rdfaContexts,
         inList: isInList,
         bold: isBold,
         italic: isItalic,
-          underline: isUnderline,
-          strikethrough: isStriketrough
+        underline: isUnderline,
+        strikethrough: isStriketrough
       }
     };
     const richSelectionUpdatedEvent = new CustomEvent<RichSelection>('richSelectionUpdated', {detail:  this.richSelection});
@@ -151,7 +152,7 @@ export default class RichSelectionTracker {
       return isStriketrough ? PropertyState.enabled : PropertyState.disabled;
     }
   }
-  calculateIsInList(selection: Selection) {
+  calculateIsInList(selection: Selection) : PropertyState {
     if(selection.type === 'Caret') {
       if(selection.anchorNode) {
         const inList : Boolean = isInList(selection.anchorNode);
@@ -172,10 +173,16 @@ export default class RichSelectionTracker {
     }
   }
   caculateRdfaSelection(selection: Selection) {
-    return 'unknown';
-  }
-  calculateRdfaContexts(selection: Selection) {
-    return 'unknown';
+    if(selection.type === 'Caret') {
+      const rdfaSelection = analyse(selection.anchorNode);
+      return rdfaSelection;
+    } else {
+      const range = selection.getRangeAt(0);
+      const commonAncestor = range.commonAncestorContainer;
+      const rdfaSelection = analyse(commonAncestor);
+      return rdfaSelection;
+    }
+    
   }
   getNextNode(node: Node) {
     let actualNode : Node | null = node;

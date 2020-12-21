@@ -180,10 +180,6 @@ export default class ContentEditable extends Component {
     this.set('currentTextContent', '');
     this.set('defaultHandlers', defaultInputHandlers);
     this.set('capturedEvents', A());
-    const richSelectionTracker = new RichSelectionTracker();
-    this.set('richSelectionTracker', richSelectionTracker);
-    this.richSelectionTracker.startTracking();
-    this.set('richSelection', richSelectionTracker.richSelection);
 
     if( ! this.externalHandlers ) {
       this.set('externalHandlers', []);

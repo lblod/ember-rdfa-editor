@@ -25,7 +25,8 @@ export default class Model {
   private writer: Writer;
 
   constructor() {
-    this.richSelectionTracker = new RichSelectionTracker();
+    this.richSelectionTracker = new RichSelectionTracker(this);
+    this.richSelectionTracker.startTracking();
     this.reader = new SimpleReader();
     this.writer = new SimpleWriter();
   }
