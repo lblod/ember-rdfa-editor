@@ -1,8 +1,7 @@
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
-import { analyse } from '@lblod/marawa/rdfa-context-scanner';
+import { analyse, RdfaBlock } from '@lblod/marawa/rdfa-context-scanner';
 import RawEditor from "./raw-editor";
-import { RdfaBlock } from 'marawa';
 
 export enum PropertyState {
   enabled = 'enabled',
@@ -174,8 +173,12 @@ export default class RichSelectionTracker {
   }
   caculateRdfaSelection(selection: Selection) {
     if(selection.type === 'Caret') {
-      const rdfaSelection = analyse(selection.anchorNode);
-      return rdfaSelection;
+      if(selection.anchorNode) {
+        const rdfaSelection = analyse(selection.anchorNode);
+        return rdfaSelection;
+      } else {
+        return [];
+      }
     } else {
       const range = selection.getRangeAt(0);
       const commonAncestor = range.commonAncestorContainer;
