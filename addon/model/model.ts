@@ -78,8 +78,9 @@ export default class Model {
     }
     return richEl;
   }
-  write() {
-    const newRoot = this.writeRec(this.rootRichElement);
+  write(tree: RichElement = this.rootRichElement) {
+    const domTree = tree.domNode;
+    const newRoot = this.writeRec(tree);
     for(const attribute of this.rootNode.attributes) {
       newRoot.setAttribute(attribute.name, attribute.value);
     }

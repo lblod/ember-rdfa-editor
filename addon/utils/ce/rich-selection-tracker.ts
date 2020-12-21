@@ -2,7 +2,7 @@ import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 import RawEditor from "./raw-editor";
-import { RdfaBlock } from 'marawa';
+import RdfaBlock from "@lblod/marawa/rdfa-block";
 
 export enum PropertyState {
   enabled = 'enabled',
@@ -182,7 +182,7 @@ export default class RichSelectionTracker {
       const rdfaSelection = analyse(commonAncestor);
       return rdfaSelection;
     }
-    
+
   }
   getNextNode(node: Node) {
     let actualNode : Node | null = node;
