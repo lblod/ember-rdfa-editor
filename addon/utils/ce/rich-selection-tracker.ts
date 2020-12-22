@@ -1,8 +1,10 @@
-import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {getWindowSelection, isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import { analyse } from '@lblod/marawa/rdfa-context-scanner';
-import RawEditor from "./raw-editor";
 import RdfaBlock from "@lblod/marawa/rdfa-block";
+import Model from "@lblod/ember-rdfa-editor/model/model";
+import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 
 export enum PropertyState {
   enabled = 'enabled',
@@ -12,6 +14,8 @@ export enum PropertyState {
 export interface RichSelection {
   domSelection: Selection;
   selection: Array<RdfaBlock>,
+  subtree: HTMLElement,
+  modelSelection: ModelSelection,
   attributes: {
     inList: PropertyState,
     bold: PropertyState,
@@ -23,11 +27,13 @@ export interface RichSelection {
 }
 export default class RichSelectionTracker {
   richSelection : RichSelection;
-  editor: RawEditor;
-  constructor(editor: RawEditor) {
+  model: Model;
+  constructor(model: Model) {
     this.richSelection = {
       domSelection: getWindowSelection(),
       selection: [],
+      subtree: model.rootNode,
+      modelSelection: new ModelSelection(model, getWindowSelection()),
       attributes: {
         inList: PropertyState.unknown,
         bold: PropertyState.unknown,
@@ -36,7 +42,7 @@ export default class RichSelectionTracker {
         strikethrough: PropertyState.unknown
       }
     };
-    this.editor = editor;
+    this.model = model;
     this.updateSelection = this.updateSelection.bind(this);
   }
   startTracking() {
@@ -53,9 +59,18 @@ export default class RichSelectionTracker {
     const isStriketrough : PropertyState = this.calculateIsStriketrough(currentSelection);
     const isInList : PropertyState = this.calculateIsInList(currentSelection);
     const rdfaSelection = this.caculateRdfaSelection(currentSelection);
+    let subtree = currentSelection.getRangeAt(0).commonAncestorContainer;
+
+    this.richSelection.modelSelection.setFromDomSelection(currentSelection);
+
+    if(!isElement(subtree)) {
+      subtree = subtree.parentElement!;
+    }
     this.richSelection = {
       domSelection: currentSelection,
       selection: rdfaSelection,
+      subtree: subtree as HTMLElement,
+      modelSelection: this.richSelection.modelSelection,
       attributes: {
         inList: isInList,
         bold: isBold,
@@ -174,6 +189,9 @@ export default class RichSelectionTracker {
   }
   caculateRdfaSelection(selection: Selection) {
     if(selection.type === 'Caret') {
+      if(!selection.anchorNode) {
+        throw new SelectionError("Selection has no anchorNode");
+      }
       const rdfaSelection = analyse(selection.anchorNode);
       return rdfaSelection;
     } else {

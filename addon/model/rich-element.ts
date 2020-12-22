@@ -1,23 +1,23 @@
-import TextAttribute from "@lblod/ember-rdfa-editor/model/text-attribute";
-import {RichNode} from "@lblod/ember-rdfa-editor/utils/ce/node-walker";
-import {RichNodeContent} from "@lblod/marawa/rich-node";
+import RichElementContainer from "@lblod/ember-rdfa-editor/model/rich-element-container";
+import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
+import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
 
 // TODO we dont want to support every element type in the model
 export type RichElementType = keyof HTMLElementTagNameMap;
 
-
-export default class RichElement extends RichNode {
+export default abstract class RichElement<T extends RichElementContainer | RichTextContainer | RichText> {
   type: RichElementType;
-  text: string = "";
-  bold: TextAttribute;
-  children: RichElement[];
+  children: T[]
+  parent: RichElementContainer | null = null;
+  boundNode: HTMLElement | null = null;
 
-  constructor(type: RichElementType) {
-    super();
+  constructor(type: RichElementType = "span") {
     this.type = type;
-    this.bold = new TextAttribute("bold");
     this.children = [];
   }
 
+  addChild(child: T, index = this.children.length) {
+    this.children.splice(index,0, child);
+  }
 
 }

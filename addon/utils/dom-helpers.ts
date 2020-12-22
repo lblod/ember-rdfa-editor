@@ -106,7 +106,7 @@ function isVoidElement(node: Node): boolean {
  * @public
  * @param node
  */
-function isElement(node: Node): node is Element {
+function isElement(node: Node): node is HTMLElement {
   return node.nodeType === Node.ELEMENT_NODE;
 }
 

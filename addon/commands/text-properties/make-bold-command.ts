@@ -9,20 +9,14 @@ export default class MakeBoldCommand extends SetPropertyCommand {
     super(model, boldProperty);
   }
   execute() {
-    const selection = this.model.selection.domSelection;
+    const selection = this.model.selection.modelSelection;
 
-    if (selection.isCollapsed) {
+    if (!selection.isCollapsed) {
       throw new NotImplementedError();
     }
-    const range = selection.getRangeAt(0);
-    const fragment = range.extractContents();
-    const nodeIterator = this.model.createNodeIterator<Text>(fragment, NodeFilter.SHOW_TEXT);
-    // we want to modify the nodes, so we have to exhaust the iterator first
-    for(const node of [...nodeIterator]) {
-      const strong = this.model.createElement("strong");
-      strong.appendChild(node.cloneNode());
-      node.replaceWith(strong);
-    }
-    range.insertNode(fragment);
+    const anchorElement = selection.anchorElement;
+    anchorElement.bold.enableIn([selection.anchorOffset, selection.anchorOffset]);
+    this.model.write(anchorElement);
+
   }
 }

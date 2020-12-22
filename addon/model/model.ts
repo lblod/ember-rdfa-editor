@@ -1,10 +1,13 @@
 import RichSelectionTracker, {RichSelection} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
 import IterableNodeIterator from "@lblod/ember-rdfa-editor/model/iterable-node-iterator";
-import RichElement from "@lblod/ember-rdfa-editor/model/rich-element";
-import SimpleReader from "@lblod/ember-rdfa-editor/model/simple-reader";
-import Reader from "@lblod/ember-rdfa-editor/model/reader";
-import SimpleWriter from "@lblod/ember-rdfa-editor/model/simple-writer";
-import Writer from "@lblod/ember-rdfa-editor/model/writer";
+import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {DomElementError} from "@lblod/ember-rdfa-editor/utils/errors";
+import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
+import RichElementContainer from "@lblod/ember-rdfa-editor/model/rich-element-container";
+import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
+import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
+
+export type RichContainer = RichElementContainer | RichTextContainer;
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -20,17 +23,21 @@ export default class Model {
    * @private
    */
   private _rootNode!: HTMLElement;
-  private rootRichElement!: RichElement;
-  private reader: Reader;
-  private writer: Writer;
+  private _rootRichElement!: RichContainer;
+  private reader: HtmlReader;
+  private writer: HtmlWriter;
+  private elementMap: Map<string, RichContainer>;
+  private idCounter: number = 0;
 
   constructor() {
     this.richSelectionTracker = new RichSelectionTracker(this);
     this.richSelectionTracker.startTracking();
-    this.reader = new SimpleReader();
-    this.writer = new SimpleWriter();
+    this.reader = new HtmlReader(this);
+    this.writer = new HtmlWriter(this);
+    this.elementMap = new Map<string, RichElementContainer | RichTextContainer>();
   }
-  get rootNode() : HTMLElement {
+
+  get rootNode(): HTMLElement {
     return this._rootNode;
   }
 
@@ -38,8 +45,12 @@ export default class Model {
     this._rootNode = rootNode;
   }
 
-  get selection() : RichSelection {
+  get selection(): RichSelection {
     return this.richSelectionTracker.richSelection;
+  }
+
+  get rootRichElement(): RichContainer {
+    return this._rootRichElement;
   }
 
   createElement<K extends keyof HTMLElementTagNameMap>(tagName: K, options?: ElementCreationOptions) {
@@ -57,45 +68,56 @@ export default class Model {
     const ni = document.createNodeIterator(root, whatToShow, filter);
     return new IterableNodeIterator(ni);
   }
+
   surroundSelectionContents(node: Node) {
     this.selection.domSelection.getRangeAt(0).surroundContents(node);
   }
+
   read() {
-    const newRoot = this.readRec(this.rootNode);
-    if(!newRoot) {
+    const newRoot = this.reader.read(this.rootNode);
+    if (!newRoot) {
       throw new Error("Could not create a rich root");
     }
-    this.rootRichElement = newRoot;
+    this._rootRichElement = newRoot;
   }
 
-  private readRec(node: Node): RichElement | null {
-    const richEl = this.reader.read(node);
-    for(const child of node.childNodes) {
-      const richChild = this.readRec(child);
-      if(richChild && richEl) {
-        richEl.children.push(richChild);
-      }
-    }
-    return richEl;
+  write(tree: RichContainer = this.rootRichElement) {
+    const newRoot = this.writer.write(tree);
+    tree.boundNode?.replaceWith(newRoot);
   }
-  write(tree: RichElement = this.rootRichElement) {
-    const domTree = tree.domNode;
-    const newRoot = this.writeRec(tree);
-    for(const attribute of this.rootNode.attributes) {
-      newRoot.setAttribute(attribute.name, attribute.value);
-    }
-    while(this.rootNode.firstChild) {
-      this.rootNode.firstChild.remove();
-    }
-    this.rootNode.append(...newRoot.childNodes);
-  }
-  writeRec(element: RichElement): HTMLElement {
-    const domEl = this.writer.write(element);
-    for(const child of element.children) {
-      const domChild = this.writeRec(child);
-      domEl.appendChild(domChild);
-    }
-    return domEl;
 
+  bindRichElement(richElement: RichContainer, domElement: HTMLElement): void {
+    richElement.boundNode = domElement;
+    const id = this.getNewEditorId();
+    domElement.dataset.editorId = id;
+    this.elementMap.set(id, richElement);
+
+  }
+
+  getNewEditorId(): string {
+    this.idCounter++;
+    return this.idCounter.toString();
+  }
+
+  getRichElementFor(element: HTMLElement): RichContainer {
+    let current = element;
+    while (!current.dataset.editorId && current.parentElement) {
+      current = current.parentElement;
+    }
+    const id = current.dataset.editorId;
+    if (id) {
+      return this.elementMap.get(id)!;
+    }
+    return this.rootRichElement;
+  }
+
+  ensureHTMLElement(node: Node): HTMLElement {
+    if (isElement(node)) {
+      return node as HTMLElement;
+    } else if (node.parentElement) {
+      return node.parentElement as HTMLElement;
+    } else {
+      throw new DomElementError("non-element node without parent");
+    }
   }
 }
