@@ -84,7 +84,7 @@ class RawEditor extends EmberObject {
       throw new Error(`Unrecognized command ${commandName}`);
     }
     command.execute(...args);
-    this.model.write();
+    this.updateRichNode();
   }
 }
 export default RawEditor;

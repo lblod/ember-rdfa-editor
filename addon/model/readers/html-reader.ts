@@ -19,12 +19,13 @@ export default class HtmlReader implements Reader<Node, RichElementContainer | R
 
   read(node: Node): RichElementContainer | RichTextContainer | null {
     node.normalize();
+    let result;
     if(isTextNode(node)) {
-      return this.textReader.read(node);
+      result = this.textReader.read(node);
     } else if(isElement(node) && WrappedAttributeReader.isWrappedAttributeElement(node)) {
       const parsed = this.wrappedAttributeReader.read(node);
       this.model.bindRichElement(parsed, node);
-      return parsed;
+      result = parsed;
     } else if (node.nodeType === Node.COMMENT_NODE) {
       return null;
     } else if(isElement(node)) {
@@ -36,9 +37,14 @@ export default class HtmlReader implements Reader<Node, RichElementContainer | R
         }
       }
       this.model.bindRichElement(container, node);
-      return container;
+      result = container;
     } else {
       throw new NotImplementedError("Node type not implemented by HtmlReader");
     }
+    if(isElement(node)) {
+      result.htmlAttributes = node.attributes;
+    }
+
+    return result;
   }
 }

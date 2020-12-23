@@ -10,21 +10,36 @@ export default class HtmlWriter implements Writer<RichContainer, HTMLElement> {
   }
 
   write(richElement: RichContainer): HTMLElement {
+    let result;
     if (richElement instanceof RichTextContainer) {
       const span = document.createElement("span");
       for (const child of richElement.children) {
         span.appendChild(this.htmlTextWriter.write(child));
       }
+      this.cloneAttributes(richElement, span);
       this.model.bindRichElement(richElement, span);
-      return span;
+      result = span;
     } else {
       const el = document.createElement(richElement.type);
       for (const child of richElement.children) {
         el.appendChild(this.write(child));
       }
+      this.cloneAttributes(richElement, el);
       this.model.bindRichElement(richElement, el);
-      return el;
+      result = el;
     }
+
+    return result;
+  }
+
+  cloneAttributes(richElement: RichContainer, htmlElement: HTMLElement) {
+    if(richElement.htmlAttributes) {
+      for(const entry of richElement.htmlAttributes) {
+        // It might be better to clone in the reader instead, but this works
+        htmlElement.attributes.setNamedItem(entry.cloneNode() as Attr);
+      }
+    }
+
   }
 
 }

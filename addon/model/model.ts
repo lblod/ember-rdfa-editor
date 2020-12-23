@@ -1,11 +1,12 @@
 import RichSelectionTracker, {RichSelection} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
 import IterableNodeIterator from "@lblod/ember-rdfa-editor/model/iterable-node-iterator";
-import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {isElement, removeNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {DomElementError} from "@lblod/ember-rdfa-editor/utils/errors";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import RichElementContainer from "@lblod/ember-rdfa-editor/model/rich-element-container";
 import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
 import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
+import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
 
 export type RichContainer = RichElementContainer | RichTextContainer;
 
@@ -82,16 +83,26 @@ export default class Model {
   }
 
   write(tree: RichContainer = this.rootRichElement) {
+    const oldRoot = tree.boundNode!;
     const newRoot = this.writer.write(tree);
-    tree.boundNode?.replaceWith(newRoot);
+    while(oldRoot.firstChild) {
+      oldRoot.removeChild(oldRoot.firstChild);
+    }
+    this.bindRichElement(tree, oldRoot);
+    oldRoot.append(...newRoot.childNodes);
+    this.selection.modelSelection.writeToDom();
   }
 
   bindRichElement(richElement: RichContainer, domElement: HTMLElement): void {
+    let id;
+    if(domElement.dataset.editorId) {
+      id = domElement.dataset.editorId;
+    } else {
+      id = this.getNewEditorId();
+    }
     richElement.boundNode = domElement;
-    const id = this.getNewEditorId();
     domElement.dataset.editorId = id;
     this.elementMap.set(id, richElement);
-
   }
 
   getNewEditorId(): string {
