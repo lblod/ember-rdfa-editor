@@ -1,12 +1,8 @@
 import RichSelectionTracker, {RichSelection} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
-import IterableNodeIterator from "@lblod/ember-rdfa-editor/model/iterable-node-iterator";
-import {isElement, removeNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {DomElementError} from "@lblod/ember-rdfa-editor/utils/errors";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import RichElementContainer from "@lblod/ember-rdfa-editor/model/rich-element-container";
 import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
 import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
-import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
 
 export type RichContainer = RichElementContainer | RichTextContainer;
 
@@ -54,26 +50,10 @@ export default class Model {
     return this._rootRichElement;
   }
 
-  createElement<K extends keyof HTMLElementTagNameMap>(tagName: K, options?: ElementCreationOptions) {
-    return document.createElement<K>(tagName, options);
-  }
-
   /**
-   * Creates an iterator that will visit every node in the
-   * tree of root in document order.
-   * @param root the root of the tree
-   * @param whatToShow A combination of constants from the NodeFilter class, defaults to SHOW_ALL
-   * @param filter a custom filter
+   * Read in the document and build up the model
+   * @param node
    */
-  createNodeIterator<T extends Node = Node>(root: Node, whatToShow?: number, filter?: NodeFilter | null): IterableNodeIterator<T> {
-    const ni = document.createNodeIterator(root, whatToShow, filter);
-    return new IterableNodeIterator(ni);
-  }
-
-  surroundSelectionContents(node: Node) {
-    this.selection.domSelection.getRangeAt(0).surroundContents(node);
-  }
-
   read() {
     const newRoot = this.reader.read(this.rootNode);
     if (!newRoot) {
@@ -82,10 +62,14 @@ export default class Model {
     this._rootRichElement = newRoot;
   }
 
+  /**
+   * Write a part of the model back to the dom
+   * @param tree
+   */
   write(tree: RichContainer = this.rootRichElement) {
     const oldRoot = tree.boundNode!;
     const newRoot = this.writer.write(tree);
-    while(oldRoot.firstChild) {
+    while (oldRoot.firstChild) {
       oldRoot.removeChild(oldRoot.firstChild);
     }
     this.bindRichElement(tree, oldRoot);
@@ -93,9 +77,15 @@ export default class Model {
     this.selection.modelSelection.writeToDom();
   }
 
+  /**
+   * Bind a RichElement to a domNode, setting an id on the domNode,
+   * adding it to the elementMap, and setting the boundNode property on the RichElement
+   * @param richElement
+   * @param domElement
+   */
   bindRichElement(richElement: RichContainer, domElement: HTMLElement): void {
     let id;
-    if(domElement.dataset.editorId) {
+    if (domElement.dataset.editorId) {
       id = domElement.dataset.editorId;
     } else {
       id = this.getNewEditorId();
@@ -105,11 +95,18 @@ export default class Model {
     this.elementMap.set(id, richElement);
   }
 
+  /**
+   * Return a new unused id
+   */
   getNewEditorId(): string {
     this.idCounter++;
     return this.idCounter.toString();
   }
 
+  /**
+   * Find the RichElement belonging to a domnode
+   * @param element
+   */
   getRichElementFor(element: HTMLElement): RichContainer {
     let current = element;
     while (!current.dataset.editorId && current.parentElement) {
@@ -120,15 +117,5 @@ export default class Model {
       return this.elementMap.get(id)!;
     }
     return this.rootRichElement;
-  }
-
-  ensureHTMLElement(node: Node): HTMLElement {
-    if (isElement(node)) {
-      return node as HTMLElement;
-    } else if (node.parentElement) {
-      return node.parentElement as HTMLElement;
-    } else {
-      throw new DomElementError("non-element node without parent");
-    }
   }
 }

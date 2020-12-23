@@ -3,8 +3,12 @@ import Model, {RichContainer} from "@lblod/ember-rdfa-editor/model/model";
 import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
 import HtmlTextWriter from "@lblod/ember-rdfa-editor/model/writers/html-text-writer";
 
+/**
+ * Top-level {@link Writer} for HTML documents.
+ */
 export default class HtmlWriter implements Writer<RichContainer, HTMLElement> {
   private htmlTextWriter: HtmlTextWriter;
+
   constructor(private model: Model) {
     this.htmlTextWriter = new HtmlTextWriter();
   }
@@ -32,9 +36,9 @@ export default class HtmlWriter implements Writer<RichContainer, HTMLElement> {
     return result;
   }
 
-  cloneAttributes(richElement: RichContainer, htmlElement: HTMLElement) {
-    if(richElement.htmlAttributes) {
-      for(const entry of richElement.htmlAttributes) {
+  private cloneAttributes(richElement: RichContainer, htmlElement: HTMLElement) {
+    if (richElement.htmlAttributes) {
+      for (const entry of richElement.htmlAttributes) {
         // It might be better to clone in the reader instead, but this works
         htmlElement.attributes.setNamedItem(entry.cloneNode() as Attr);
       }

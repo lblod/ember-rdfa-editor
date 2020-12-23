@@ -7,6 +7,9 @@ export type WrappedAttributeTag = "strong" | "b" | "i";
 export type WrappedAttributeElement = HTMLElementTagNameMap[WrappedAttributeTag];
 
 
+/**
+ * Reader responsible for reading HTML elements which we want to translate into text styles.
+ */
 export default class WrappedAttributeReader implements Reader<HTMLElement, RichTextContainer> {
   static tagMap: Map<WrappedAttributeTag, TextAttribute> = new Map<WrappedAttributeTag, TextAttribute>(
     [
@@ -33,6 +36,9 @@ export default class WrappedAttributeReader implements Reader<HTMLElement, RichT
           container.addChild(richText);
         }
       } else {
+        // WARNING: any attributes of descendants of the style element are lost.
+        // The idea is that we can hopefully enforce that a style element does not contain
+        // anything mode than text or other style elements.
         const richText = new RichText(child.textContent || "");
         richText.setAttribute(attribute, true);
         container.addChild(richText);

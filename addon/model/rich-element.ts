@@ -5,6 +5,10 @@ import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
 // TODO we dont want to support every element type in the model
 export type RichElementType = keyof HTMLElementTagNameMap;
 
+/**
+ * Superclass for a model element
+ * TODO: is a bit of a typing disaster and needs rethinking
+ */
 export default abstract class RichElement<T extends RichElementContainer | RichTextContainer | RichText> {
   type: RichElementType;
   children: T[]

@@ -8,6 +8,9 @@ import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 
 
+/**
+ * Top-level reader for HTML documents
+ */
 export default class HtmlReader implements Reader<Node, RichElementContainer | RichTextContainer | null> {
   textReader: HtmlTextReader;
   wrappedAttributeReader: WrappedAttributeReader;

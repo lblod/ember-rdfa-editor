@@ -1,16 +1,25 @@
 import RichElement from "@lblod/ember-rdfa-editor/model/rich-element";
 import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
 
+/**
+ * An element container which can store other containers, but not {@link RichText} nodes
+ */
 export default class RichElementContainer extends RichElement<RichElementContainer | RichTextContainer> {
+  /**
+   * Add a child at index. Does a whole lot of bookkeeping to allow for linear traversal of
+   * {@link RichText} nodes.
+   * TODO: needs some work, mostly cleaning, possibly a rethink
+   * @param child
+   * @param index
+   */
   addChild(child: RichElementContainer | RichTextContainer, index: number = this.children.length) {
     super.addChild(child, index);
     child.parent = this;
     if (child instanceof RichTextContainer) {
-      //TODO: potentially very costly, monitor this
+      //This might be costly, but probably isn't that bad
       //The idea is that in most cases we deal with
       //this will find a container quite quickly
       //we prefer walking backwards first since appending should happen more often than inserting at the start
-      debugger;
       const previousTextContainer = this.findRichTextContainerBackwards(index - 1);
       if (previousTextContainer) {
         child.previous = previousTextContainer;
@@ -73,6 +82,11 @@ export default class RichElementContainer extends RichElement<RichElementContain
     return current;
   }
 
+  /**
+   * Walk forwards looking for a RichTextContainer so we can maintain the links
+   * first visits all children, then if none are found goes up to parent and continues there
+   * @param from
+   */
   findRichTextContainerForwards(from: number):
     RichTextContainer | null {
     let i = from;

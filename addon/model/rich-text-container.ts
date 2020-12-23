@@ -1,6 +1,9 @@
 import RichElement from "@lblod/ember-rdfa-editor/model/rich-element";
 import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
 
+/**
+ * A container which can only store {@link RichText} nodes
+ */
 export class RichTextContainer extends RichElement<RichText> {
 
   private _next: RichTextContainer | null = null;
@@ -22,6 +25,12 @@ export class RichTextContainer extends RichElement<RichText> {
   }
 
 
+  /**
+   * Add the child at index and do some bookkeeping
+   * for the links between the children.
+   * @param child
+   * @param index
+   */
   addChild(child: RichText, index: number = this.children.length) {
     const isFirst = index === 0;
     const isLast = index === this.children.length;

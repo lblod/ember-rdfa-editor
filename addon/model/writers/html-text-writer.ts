@@ -1,6 +1,10 @@
 import Writer from "@lblod/ember-rdfa-editor/model/writers/writer";
 import RichText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/rich-text";
 
+/**
+ * Writer responsible for converting {@link RichText} nodes into HTML subtrees
+ * This takes care of converting the textattributes into HTML elements
+ */
 export default class HtmlTextWriter implements Writer<RichText, HTMLElement | Node> {
 
   static attributeMap: Map<TextAttribute, keyof HTMLElementTagNameMap> = new Map<TextAttribute, keyof HTMLElementTagNameMap>(
