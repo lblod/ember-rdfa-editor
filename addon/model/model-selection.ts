@@ -140,7 +140,7 @@ export default class ModelSelection {
   private translateNodeAndOffset(node: Node, offset: number): { richNode: RichText, offset: number } {
     if (isTextNode(node)) {
       const parent = node.parentElement!;
-      const index = Array.prototype.indexOf.call(parent.childNodes, node);
+      const index = Array.from(parent.childNodes).indexOf(node);
       const richNode = this.model.getRichElementFor(node.parentElement!).children[index] as RichText;
       return {richNode, offset};
     } else {
