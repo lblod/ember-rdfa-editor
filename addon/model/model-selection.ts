@@ -3,6 +3,7 @@ import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
 import {getWindowSelection, isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
 import RichElementContainer from "@lblod/ember-rdfa-editor/model/rich-element-container";
+import RichNode from "@lblod/marawa/rich-node";
 
 /**
  * Just like the {@link Model} is a representation of the document, the ModelSelection is a representation
@@ -77,6 +78,7 @@ export default class ModelSelection {
       offset: focusOffset
     } = this.translateNodeAndOffset(selection.focusNode, selection.focusOffset);
 
+
     this.anchorOffset = anchorOffset;
     this.focusOffset = focusOffset;
     this.anchorElement = anchorElement;
@@ -140,8 +142,8 @@ export default class ModelSelection {
   private translateNodeAndOffset(node: Node, offset: number): { richNode: RichText, offset: number } {
     if (isTextNode(node)) {
       const parent = node.parentElement!;
-      const index = Array.from(parent.childNodes).indexOf(node);
-      const richNode = this.model.getRichElementFor(node.parentElement!).children[index] as RichText;
+      const parentRichNode = this.model.getRichElementFor(node.parentElement!);
+      const richNode = parentRichNode.children.find((child: RichText) => child.content === node.textContent) as RichText;
       return {richNode, offset};
     } else {
       let richNode = this.model.getRichElementFor(node as HTMLElement).children[offset];

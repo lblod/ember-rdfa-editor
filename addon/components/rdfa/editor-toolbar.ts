@@ -33,7 +33,7 @@ export default class EditorToolbar extends Component<Args> {
   }
   updateProperties(event: CustomEvent<RichSelection>) {
     console.log("richSelectionUpdated");
-    this.isBold = event.detail.attributes.bold === PropertyState.enabled;
+    this.isBold = event.detail.attributes.bold !== PropertyState.disabled;
   }
   @action
   toggleProperty(property: EditorProperty) {
