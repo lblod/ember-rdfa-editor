@@ -2,6 +2,8 @@ import EmberObject from '@ember/object';
 import classic from 'ember-classic-decorator';
 import MakeBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-bold-command';
 import RemoveBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-bold-command';
+import MakeItalicCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-italic-command';
+import RemoveItalicCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-italic-command';
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import {walk as walkDomNode} from "@lblod/marawa/node-walker";
@@ -37,6 +39,8 @@ class RawEditor extends EmberObject {
     this.model = new Model();
     this.registerCommand(new MakeBoldCommand(this.model));
     this.registerCommand(new RemoveBoldCommand(this.model));
+    this.registerCommand(new MakeItalicCommand(this.model));
+    this.registerCommand(new RemoveItalicCommand(this.model));
   }
 
   /**

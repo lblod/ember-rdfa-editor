@@ -24,8 +24,8 @@ interface Args {
  * @extends Component
  */
 export default class EditorToolbar extends Component<Args> {
-  @tracked
-  isBold: boolean = false;
+  @tracked isBold: boolean = false;
+  @tracked isItalic: boolean = false;
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
@@ -34,6 +34,7 @@ export default class EditorToolbar extends Component<Args> {
   updateProperties(event: CustomEvent<RichSelection>) {
     console.log("richSelectionUpdated");
     this.isBold = event.detail.attributes.bold !== PropertyState.disabled;
+    this.isItalic = event.detail.attributes.italic !== PropertyState.disabled;
   }
   @action
   toggleProperty(property: EditorProperty) {
@@ -92,7 +93,11 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   toggleItalic() {
-    this.toggleProperty(italicProperty);
+    if(this.isItalic) {
+      this.args.editor.executeCommand("remove-italic");
+    } else {
+      this.args.editor.executeCommand("make-italic");
+    }
   }
 
   @action
