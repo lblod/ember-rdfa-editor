@@ -449,6 +449,7 @@ export default class ContentEditable extends Component {
         }
       }
       this.rawEditor.generateDiffEvents.perform();
+      this.rawEditor.model.read();
       return preventDefault;
     }
     else {

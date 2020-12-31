@@ -122,7 +122,6 @@ export default class ModelSelection {
     try {
       const selection = getWindowSelection();
       const newRange = document.createRange();
-      console.log(this.anchorElement);
       newRange.setStart(this.anchorElement.getCorrespondingDomNode()!, this.anchorOffset);
       newRange.setEnd(this.focusElement.getCorrespondingDomNode()!, this.focusOffset);
       selection.removeAllRanges();
@@ -139,11 +138,13 @@ export default class ModelSelection {
    * @param offset
    * @private
    */
-  private translateNodeAndOffset(node: Node, offset: number): { richNode: RichText, offset: number } {
+  private translateNodeAndOffset(node: Node, offset: number): { richNode: RichText | null, offset: number } {
     if (isTextNode(node)) {
-      const parent = node.parentElement!;
       const parentRichNode = this.model.getRichElementFor(node.parentElement!);
-      const richNode = parentRichNode.children.find((child: RichText) => child.content === node.textContent) as RichText;
+      let richNode = null;
+      if(node.textContent) {
+        richNode = this.searchForRichTextWithContent(node.textContent, parentRichNode);
+      }
       return {richNode, offset};
     } else {
       let richNode = this.model.getRichElementFor(node as HTMLElement).children[offset];
@@ -153,6 +154,24 @@ export default class ModelSelection {
 
       return {richNode: richNode, offset: 0};
     }
+  }
+
+  private searchForRichTextWithContent(content: String, parent: RichText | RichElementContainer | RichTextContainer) : RichText | null {
+    if(parent instanceof RichText) return null;
+    for(const child of parent.children) {
+      if(child instanceof RichText) {
+        if(child.content === content) {
+          return child;
+        }
+      } else {
+        const foundInGranchild = this.searchForRichTextWithContent(content, child);
+        if(foundInGranchild) {
+          return foundInGranchild;
+        }
+        return null;
+      }
+    }
+    return null;
   }
 
   /**
