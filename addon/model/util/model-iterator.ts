@@ -11,7 +11,7 @@ export default class ModelIterator<T extends ModelNode = ModelNode> implements I
   constructor(private from: ModelNode, private to: ModelNode, filter?: (node: ModelNode) => boolean) {
     this.current = null;
     this.stack = [from];
-    if(filter) {
+    if (filter) {
       this.filter = filter;
     }
     this.advance();
@@ -48,18 +48,22 @@ export default class ModelIterator<T extends ModelNode = ModelNode> implements I
     }
     if (this.stack.length) {
       this.current = this.stack.pop()!;
-      if (this.current instanceof ModelElement) {
-        this.stack.push(...this.current.children.reverse());
+      if (ModelNode.isModelElement(this.current)) {
+        const childrenCopy = Array.from(this.current.children);
+        childrenCopy.reverse();
+        this.stack.push(...childrenCopy);
       }
     } else {
       const prev = this.current!;
       this.current = this.current!.parent;
       if (this.current && ModelNode.isModelElement(this.current)) {
-        this.stack.push(...this.current.children.slice(this.current.children.indexOf(prev) + 1 ).reverse());
+        const childrenCopy = this.current.children.slice(this.current.children.indexOf(prev) + 1)
+        childrenCopy.reverse();
+        this.stack.push(...childrenCopy);
       }
     }
 
-    if(this.current && !this.filter(this.current)) {
+    if (this.current && !this.filter(this.current)) {
       this.advance();
     }
   }
