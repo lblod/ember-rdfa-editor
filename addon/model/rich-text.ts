@@ -14,6 +14,7 @@ export default class RichText {
   private _parent: RichTextContainer | null = null;
   nextSibling: RichText | null = null;
   previousSibling: RichText | null = null;
+  boundNode: Text | null = null;
 
   constructor(content: string = "") {
     this._content = content;

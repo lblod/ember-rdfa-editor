@@ -1,9 +1,11 @@
-import Model, {RichContainer} from "@lblod/ember-rdfa-editor/model/model";
-import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
+import Model from "@lblod/ember-rdfa-editor/model/model";
 import {getWindowSelection, isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
-import RichElementContainer from "@lblod/ember-rdfa-editor/model/rich-element-container";
-import RichNode from "@lblod/marawa/rich-node";
+import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelIterator from "@lblod/ember-rdfa-editor/model/util/model-iterator";
+import {PropertyState} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
 
 /**
  * Just like the {@link Model} is a representation of the document, the ModelSelection is a representation
@@ -11,12 +13,13 @@ import RichNode from "@lblod/marawa/rich-node";
  */
 export default class ModelSelection {
 
-  anchorElement: RichText | null = null;
-  focusElement: RichText | null = null;
-  commonAncestorContainer!: RichContainer;
-  anchorOffset!: number;
-  focusOffset!: number;
-  model: Model;
+  anchor: ModelText | null = null;
+  focus: ModelText | null = null;
+  anchorOffset: number = 0;
+  focusOffset: number = 0;
+  commonAncestor: ModelNode | null = null;
+  private model: Model;
+
 
   constructor(model: Model, selection: Selection) {
     this.model = model;
@@ -27,7 +30,33 @@ export default class ModelSelection {
    * @return whether the selection is collapsed
    */
   get isCollapsed() {
-    return this.anchorElement === this.focusElement && this.anchorOffset === this.focusOffset;
+    return this.anchor === this.focus && this.anchorOffset === this.focusOffset;
+  }
+
+
+  get isBold(): PropertyState {
+    return this.getTextPropertyStatus("bold");
+  }
+
+  get isItalic(): PropertyState {
+    return this.getTextPropertyStatus("italic");
+  }
+
+  getTextPropertyStatus(property: TextAttribute): PropertyState {
+    if (this.isCollapsed) {
+      console.log(this.anchor);
+      return this.anchor?.getTextAttribute(property) ? PropertyState.enabled : PropertyState.disabled;
+    } else {
+      const modelIterator = new ModelIterator<ModelText>(this.anchor!, this.focus!, node => node instanceof ModelText);
+      const first = modelIterator[Symbol.iterator]().next().value.getTextAttribute(property);
+      for (const node of modelIterator) {
+        if (node.getTextAttribute(property) !== first) {
+          return PropertyState.unknown;
+        }
+      }
+      return first ? PropertyState.enabled : PropertyState.disabled;
+    }
+
   }
 
   /**
@@ -36,23 +65,33 @@ export default class ModelSelection {
    */
   collapse(toLeft: boolean = false) {
     if (toLeft) {
-      this.anchorElement = this.focusElement;
+      this.anchor = this.focus;
       this.anchorOffset = this.focusOffset;
     } else {
-      this.focusElement = this.anchorElement;
+      this.focus = this.anchor;
       this.focusOffset = this.anchorOffset;
     }
   }
 
+  setAnchor(node: ModelText, offset: number = 0) {
+    this.anchor = node;
+    this.anchorOffset = offset;
+  }
+
+  setFocus(node: ModelText, offset: number = 0) {
+    this.focus = node;
+    this.focusOffset = offset;
+  }
+
   /**
-   * Select a full RichText node
+   * Select a full ModelText node
    * @param node
    */
-  selectNode(node: RichText) {
-    this.anchorElement = node;
+  selectNode(node: ModelText) {
+    this.anchor = node;
     this.anchorOffset = 0;
-    this.focusElement = node;
-    this.focusOffset = node.content.length;
+    this.focus = node;
+    this.focusOffset = node.length;
   }
 
   /**
@@ -62,45 +101,45 @@ export default class ModelSelection {
    */
   setFromDomSelection(selection: Selection) {
     if (!selection.anchorNode || !selection.focusNode) {
-      this.focusElement = null;
-      this.anchorElement = null;
-      this.focusOffset = 0;
-      this.anchorOffset = 0;
+      return;
+    }
+    if (!isTextNode(selection.anchorNode) || !isTextNode(selection.focusNode)) {
+      throw new SelectionError("Selected nodes are not text nodes");
+    }
+
+    // this cast is safe given a normalized (anchor and offset always in textnodes) selection
+    const domAnchor = selection.anchorNode as Text;
+    const domFocus = selection.focusNode as Text;
+
+    const modelAnchor = this.model.getModelNodeFor(domAnchor) as ModelText | undefined;
+    const modelFocus = this.model.getModelNodeFor(domFocus) as ModelText | undefined;
+
+    if (!modelAnchor || !modelFocus) {
       return;
     }
 
-    const {
-      richNode: anchorElement,
-      offset: anchorOffset
-    } = this.translateNodeAndOffset(selection.anchorNode, selection.anchorOffset);
-    const {
-      richNode: focusElement,
-      offset: focusOffset
-    } = this.translateNodeAndOffset(selection.focusNode, selection.focusOffset);
+    this.anchor = modelAnchor;
+    this.focus = modelFocus;
+    this.anchorOffset = selection.anchorOffset;
+    this.focusOffset = selection.focusOffset;
 
-
-    this.anchorOffset = anchorOffset;
-    this.focusOffset = focusOffset;
-    this.anchorElement = anchorElement;
-    this.focusElement = focusElement;
     const commonAncestor = selection.getRangeAt(0)?.commonAncestorContainer;
     if (!selection.isCollapsed && commonAncestor) {
       if (isElement(commonAncestor)) {
-        this.commonAncestorContainer = this.model.getRichElementFor(commonAncestor);
+        this.commonAncestor = this.model.getModelNodeFor(commonAncestor) as ModelElement;
 
       } else {
-
-        this.commonAncestorContainer = this.model.getRichElementFor(commonAncestor.parentElement!);
+        this.commonAncestor = this.model.getModelNodeFor(commonAncestor as Text)!.parent!;
       }
     } else {
-      this.commonAncestorContainer = this.focusElement.parent!;
+      this.commonAncestor = this.focus.parent || this.focus;
     }
     if (this.isSelectionBackwards(selection)) {
-      const tempEl = this.anchorElement;
+      const tempEl = this.anchor;
       const tempOff = this.anchorOffset;
 
-      this.anchorElement = this.focusElement;
-      this.focusElement = tempEl;
+      this.anchor = this.focus;
+      this.focus = tempEl;
       this.anchorOffset = this.focusOffset;
       this.focusOffset = tempOff;
     }
@@ -111,68 +150,25 @@ export default class ModelSelection {
    * TODO: needs cleanup. Crucial method, has to be perfect and preferably well-tested
    */
   writeToDom() {
-    if (!this.anchorElement || !this.focusElement) {
-      let cur: RichElementContainer | RichTextContainer | null | RichText = this.model.rootRichElement;
-      while (cur && !(cur instanceof RichText)) {
+    if (!this.anchor || !this.focus) {
+      let cur: ModelNode = this.model.rootModelNode;
+      while (cur && !ModelNode.isModelText(cur)) {
+        if (!ModelNode.isModelElement(cur)) {
+          throw new SelectionError("Unsupported node type");
+        }
         cur = cur.firstChild;
       }
-      this.anchorElement = cur;
-      this.focusElement = cur;
+      this.anchor = cur;
+      this.focus = cur;
     }
     try {
       const selection = getWindowSelection();
-      const newRange = document.createRange();
-      newRange.setStart(this.anchorElement.getCorrespondingDomNode()!, this.anchorOffset);
-      newRange.setEnd(this.focusElement.getCorrespondingDomNode()!, this.focusOffset);
-      selection.removeAllRanges();
-      selection.addRange(newRange);
+      selection.setBaseAndExtent(this.anchor.boundNode!, this.anchorOffset, this.focus.boundNode!, this.focusOffset);
     } catch (e) {
       console.log(e);
     }
   }
 
-  /**
-   * Takes a selection node and offset and finds the right RichText node
-   * TODO: needs cleanup. Crucial method, has to be perfect and preferably well-tested
-   * @param node
-   * @param offset
-   * @private
-   */
-  private translateNodeAndOffset(node: Node, offset: number): { richNode: RichText | null, offset: number } {
-    if (isTextNode(node)) {
-      const parentRichNode = this.model.getRichElementFor(node.parentElement!);
-      let richNode = null;
-      if(node.textContent) {
-        richNode = this.searchForRichTextWithContent(node.textContent, parentRichNode);
-      }
-      return {richNode, offset};
-    } else {
-      let richNode = this.model.getRichElementFor(node as HTMLElement).children[offset];
-      while (richNode && !(richNode instanceof RichText)) {
-        richNode = (richNode as RichContainer).firstChild!;
-      }
-
-      return {richNode: richNode, offset: 0};
-    }
-  }
-
-  private searchForRichTextWithContent(content: String, parent: RichText | RichElementContainer | RichTextContainer) : RichText | null {
-    if(parent instanceof RichText) return null;
-    for(const child of parent.children) {
-      if(child instanceof RichText) {
-        if(child.content === content) {
-          return child;
-        }
-      } else {
-        const foundInGranchild = this.searchForRichTextWithContent(content, child);
-        if(foundInGranchild) {
-          return foundInGranchild;
-        }
-        return null;
-      }
-    }
-    return null;
-  }
 
   /**
    * Helper trick to find out if the domSelection was selected right-to-left or not

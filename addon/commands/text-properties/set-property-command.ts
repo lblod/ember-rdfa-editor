@@ -1,15 +1,38 @@
-import EditorProperty from "../../utils/ce/editor-property";
 import Command from "../command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelIterator from "@lblod/ember-rdfa-editor/model/util/model-iterator";
 
 export default abstract class SetPropertyCommand extends Command {
-  protected property: EditorProperty;
-  constructor(model: Model, property: EditorProperty) {
+  constructor(model: Model) {
     super(model);
-    this.property = property;
   }
-  execute() {
-    throw new NotImplementedError();
+  execute(property: TextAttribute, value: boolean) {
+    const selection = this.model.selection.modelSelection;
+
+    const nodeIterator = new ModelIterator<ModelText>(selection.anchor!, selection.focus!, (node => node instanceof ModelText));
+    const nodes = Array.from(nodeIterator);
+
+    nodes[nodes.length - 1] = nodes[nodes.length - 1].split(selection.focusOffset).left;
+    nodes[0] = nodes[0].split(selection.anchorOffset).right;
+
+    for (const node of nodes) {
+      node.setTextAttribute(property, value);
+    }
+
+    if(selection.isCollapsed) {
+      selection.selectNode(nodes[0]);
+    } else {
+      selection.setAnchor(nodes[0], 0);
+      const last = nodes[nodes.length - 1];
+      selection.setFocus(last, last.length);
+    }
+
+    if (selection.commonAncestor) {
+      this.model.write(selection.commonAncestor);
+    } else {
+      throw new SelectionError("Selection without common ancestor");
+    }
   }
 }

@@ -1,60 +1,8 @@
-import RemovePropertyCommand from "./remove-property-command";
-import italicProperty from "../../utils/rdfa/italic-property";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import SetPropertyCommand from "@lblod/ember-rdfa-editor/commands/text-properties/set-property-command";
 
-export default class RemoveItalicCommand extends RemovePropertyCommand {
+export default class RemoveItalicCommand extends SetPropertyCommand {
   name = "remove-italic"
-  constructor(model: Model) {
-    super(model, italicProperty);
-  }
-
   execute() {
-    const selection = this.model.selection.modelSelection;
-    if (!selection.isCollapsed) {
-      
-      if (!selection.anchorElement || !selection.focusElement) {
-        throw new SelectionError("uncollapsed selection without focus or anchor");
-      }
-      let cur = selection.anchorElement!;
-      let to = selection.focusElement;
-      if(cur === to) {
-        cur = cur.split(selection.focusOffset).left;
-        cur = cur.split(selection.anchorOffset).right;
-        cur.setAttribute("italic", false);
-
-      } else {
-
-        cur = cur.split(selection.anchorOffset).right;
-        to = to.split(selection.focusOffset).left;
-
-        while (cur && cur !== to) {
-          cur.setAttribute("italic", false);
-          cur = cur.next;
-        }
-        to.setAttribute("italic", false);
-      }
-
-      this.model.selection.modelSelection.selectNode(to);
-      this.model.selection.modelSelection.collapse(true);
-      this.model.write(selection.commonAncestorContainer);
-
-    } else {
-      let result = selection.anchorElement;
-      if(!result) {
-        throw new SelectionError("collapsed selection without focus");
-
-      }
-      result = result.split(selection.anchorOffset).right;
-      result = result.split(0).left;
-      result?.setAttribute("italic", false);
-      this.model.selection.modelSelection.selectNode(result);
-      this.model.selection.modelSelection.collapse();
-
-      this.model.write(result.parent!);
-
-    }
-
-
+    super.execute("italic", false);
   }
 }

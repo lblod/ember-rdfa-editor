@@ -3,6 +3,10 @@ import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import RichElementContainer from "@lblod/ember-rdfa-editor/model/rich-element-container";
 import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
 import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
+import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export type RichContainer = RichElementContainer | RichTextContainer;
 
@@ -20,18 +24,18 @@ export default class Model {
    * @private
    */
   private _rootNode!: HTMLElement;
-  private _rootRichElement!: RichContainer;
+  private _rootModelNode!: ModelNode;
   private reader: HtmlReader;
   private writer: HtmlWriter;
-  private elementMap: Map<string, RichContainer>;
   private idCounter: number = 0;
+  private nodeMap: Map<Node, ModelNode>;
 
   constructor() {
     this.richSelectionTracker = new RichSelectionTracker(this);
     this.richSelectionTracker.startTracking();
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
-    this.elementMap = new Map<string, RichElementContainer | RichTextContainer>();
+    this.nodeMap = new Map<Node, ModelNode>();
   }
 
   get rootNode(): HTMLElement {
@@ -46,8 +50,8 @@ export default class Model {
     return this.richSelectionTracker.richSelection;
   }
 
-  get rootRichElement(): RichContainer {
-    return this._rootRichElement;
+  get rootModelNode(): ModelNode {
+    return this._rootModelNode;
   }
 
   /**
@@ -59,63 +63,36 @@ export default class Model {
     if (!newRoot) {
       throw new Error("Could not create a rich root");
     }
-    this._rootRichElement = newRoot;
+    this._rootModelNode = newRoot;
   }
 
   /**
    * Write a part of the model back to the dom
    * @param tree
    */
-  write(tree: RichContainer = this.rootRichElement) {
-    const oldRoot = tree.boundNode!;
+  write(tree: ModelNode = this.rootModelNode) {
+    const oldRoot = tree.boundNode;
+    if(!oldRoot) {
+      throw new Error("Conatiner without boundNOde");
+    }
+    if(!isElement(oldRoot)) {
+      throw new NotImplementedError("root is not an element, not sure what to do");
+    }
     const newRoot = this.writer.write(tree);
     while (oldRoot.firstChild) {
       oldRoot.removeChild(oldRoot.firstChild);
     }
-    this.bindRichElement(tree, oldRoot);
     oldRoot.append(...newRoot.childNodes);
+    this.bindNode(tree, oldRoot);
     this.selection.modelSelection.writeToDom();
   }
 
-  /**
-   * Bind a RichElement to a domNode, setting an id on the domNode,
-   * adding it to the elementMap, and setting the boundNode property on the RichElement
-   * @param richElement
-   * @param domElement
-   */
-  bindRichElement(richElement: RichContainer, domElement: HTMLElement): void {
-    let id;
-    if (domElement.dataset.editorId) {
-      id = domElement.dataset.editorId;
-    } else {
-      id = this.getNewEditorId();
-    }
-    richElement.boundNode = domElement;
-    domElement.dataset.editorId = id;
-    this.elementMap.set(id, richElement);
+  bindNode(modelNode: ModelNode, domNode: Node) {
+    modelNode.boundNode = domNode;
+    this.nodeMap.set(domNode, modelNode);
   }
 
-  /**
-   * Return a new unused id
-   */
-  getNewEditorId(): string {
-    this.idCounter++;
-    return this.idCounter.toString();
-  }
-
-  /**
-   * Find the RichElement belonging to a domnode
-   * @param element
-   */
-  getRichElementFor(element: HTMLElement): RichContainer {
-    let current = element;
-    while (!current.dataset.editorId && current.parentElement) {
-      current = current.parentElement;
-    }
-    const id = current.dataset.editorId;
-    if (id) {
-      return this.elementMap.get(id)!;
-    }
-    return this.rootRichElement;
+  getModelNodeFor(domNode: Node) {
+    return this.nodeMap.get(domNode);
   }
 }

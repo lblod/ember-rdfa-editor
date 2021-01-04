@@ -1,15 +1,23 @@
-import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
 import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import Model from "@lblod/ember-rdfa-editor/model/model";
+import {stringToVisibleText} from "@lblod/ember-rdfa-editor/editor/utils";
 
 /**
  * Reader responsible for reading HTML Text nodes
  */
-export default class HtmlTextReader implements Reader<Text, RichTextContainer> {
-  read(from: Text): RichTextContainer {
-    const text = new RichText(from.textContent || "");
-    const container = new RichTextContainer();
-    container.addChild(text);
-    return container;
+export default class HtmlTextReader implements Reader<Text, ModelText | null> {
+  lastTextNode: ModelText | null = null;
+  constructor(private model: Model) {
+  }
+
+  read(from: Text): ModelText | null {
+    if(!from.textContent || stringToVisibleText(from.textContent) === "") {
+     return null;
+    }
+    const text = new ModelText(from.textContent || "");
+    this.model.bindNode(text, from);
+    this.lastTextNode = text;
+    return text;
   }
 }

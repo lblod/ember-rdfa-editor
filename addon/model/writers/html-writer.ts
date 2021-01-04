@@ -1,49 +1,46 @@
 import Writer from "@lblod/ember-rdfa-editor/model/writers/writer";
-import Model, {RichContainer} from "@lblod/ember-rdfa-editor/model/model";
-import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
+import Model from "@lblod/ember-rdfa-editor/model/model";
 import HtmlTextWriter from "@lblod/ember-rdfa-editor/model/writers/html-text-writer";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import {WriterError} from "@lblod/ember-rdfa-editor/utils/errors";
+import HtmlElementWriter from "@lblod/ember-rdfa-editor/model/writers/html-element-writer";
+import {tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 /**
  * Top-level {@link Writer} for HTML documents.
  */
-export default class HtmlWriter implements Writer<RichContainer, HTMLElement> {
+export default class HtmlWriter implements Writer<ModelNode, Node> {
   private htmlTextWriter: HtmlTextWriter;
+  private htmlElementWriter: HtmlElementWriter;
 
   constructor(private model: Model) {
-    this.htmlTextWriter = new HtmlTextWriter();
+    this.htmlTextWriter = new HtmlTextWriter(model);
+    this.htmlElementWriter = new HtmlElementWriter(model);
   }
 
-  write(richElement: RichContainer): HTMLElement {
-    let result;
-    if (richElement instanceof RichTextContainer) {
-      const span = document.createElement("span");
-      for (const child of richElement.children) {
-        span.appendChild(this.htmlTextWriter.write(child));
+  write(modelNode: ModelNode): Node {
+    let result = null;
+
+    if(ModelNode.isModelElement(modelNode)) {
+      result = this.htmlElementWriter.write(modelNode);
+      for(const child of modelNode.children) {
+        result.appendChild(this.write(child));
       }
-      this.cloneAttributes(richElement, span);
-      this.model.bindRichElement(richElement, span);
-      result = span;
+    } else if (ModelNode.isModelText(modelNode)) {
+      result = this.htmlTextWriter.write(modelNode);
     } else {
-      const el = document.createElement(richElement.type);
-      for (const child of richElement.children) {
-        el.appendChild(this.write(child));
-      }
-      this.cloneAttributes(richElement, el);
-      this.model.bindRichElement(richElement, el);
-      result = el;
+      throw new WriterError("Unsupported node type");
+    }
+
+    if (!result) {
+      result = new Text();
+      this.model.bindNode(modelNode, result);
     }
 
     return result;
   }
 
-  private cloneAttributes(richElement: RichContainer, htmlElement: HTMLElement) {
-    if (richElement.htmlAttributes) {
-      for (const entry of richElement.htmlAttributes) {
-        // It might be better to clone in the reader instead, but this works
-        htmlElement.attributes.setNamedItem(entry.cloneNode() as Attr);
-      }
-    }
-
-  }
 
 }
