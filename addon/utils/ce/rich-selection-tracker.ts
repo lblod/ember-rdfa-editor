@@ -96,7 +96,7 @@ export default class RichSelectionTracker {
       attributes: {
         inList: isInList,
         bold: this.richSelection.modelSelection.isBold,
-        italic: isItalic,
+        italic: this.richSelection.modelSelection.isItalic,
         underline: isUnderline,
         strikethrough: isStriketrough
       }
