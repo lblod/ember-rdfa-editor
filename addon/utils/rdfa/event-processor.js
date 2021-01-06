@@ -174,6 +174,9 @@ export default EmberObject.extend({
     }
   },
 
+  handleFullContentUpdate(extraInfo = []) {
+    this.analyseAndDispatch(extraInfo);
+  },
   /**
    * Remove text in the specified range and trigger updating of the hints
    *
