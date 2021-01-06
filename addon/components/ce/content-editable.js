@@ -16,7 +16,6 @@ import DisableDeleteHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/del
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
 import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
-import LegacyMovementObserver from '../../utils/ce/movement-observers/legacy-movement-observer';
 import BoldItalicUnderlineHandler from '../../utils/ce/handlers/bold-italic-underline-handler';
 import UndoHandler from '../../utils/ce/handlers/undo-hander';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
@@ -111,13 +110,7 @@ export default class ContentEditable extends Component {
    */
   init() {
     super.init(...arguments);
-    const rawEditor = LegacyRawEditor.create({
-      handleFullContentUpdate: this.get('handleFullContentUpdate'),
-      textInsert: this.get('textInsert'),
-      textRemove: this.get('textRemove'),
-      elementUpdate: this.get('elementUpdate')
-    });
-    rawEditor.registerMovementObserver(new LegacyMovementObserver({notify: this.selectionUpdate}));
+    const rawEditor = LegacyRawEditor.create({ });
     rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
     this.set('rawEditor', rawEditor);
     const forceParagraph = this.features.isEnabled('editor-force-paragraph');
