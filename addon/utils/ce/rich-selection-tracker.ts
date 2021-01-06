@@ -77,9 +77,6 @@ export default class RichSelectionTracker {
 
     this.richSelection.modelSelection.setFromDomSelection(currentSelection);
 
-    const isItalic : PropertyState = this.calculateIsItalic(currentSelection);
-    const isUnderline : PropertyState = this.calculateIsUnderline(currentSelection);
-    const isStriketrough : PropertyState = this.calculateIsStriketrough(currentSelection);
     const isInList : PropertyState = this.calculateIsInList(currentSelection);
     const rdfaSelection = this.caculateRdfaSelection(currentSelection);
     let subtree = currentSelection.getRangeAt(0).commonAncestorContainer;
@@ -95,10 +92,10 @@ export default class RichSelectionTracker {
       modelSelection: this.richSelection.modelSelection,
       attributes: {
         inList: isInList,
-        bold: this.richSelection.modelSelection.isBold,
-        italic: this.richSelection.modelSelection.isItalic,
-        underline: isUnderline,
-        strikethrough: isStriketrough
+        bold: this.richSelection.modelSelection.bold,
+        italic: this.richSelection.modelSelection.italic,
+        underline: this.richSelection.modelSelection.underline,
+        strikethrough: this.richSelection.modelSelection.strikethrough
       }
     };
     const richSelectionUpdatedEvent = new CustomEvent<RichSelection>('richSelectionUpdated', {detail:  this.richSelection});
@@ -121,90 +118,6 @@ export default class RichSelectionTracker {
   }
 
 
-  calculateIsBold(selection: Selection) : PropertyState {
-    if(selection.type === 'Caret') {
-      if(selection.anchorNode && selection.anchorNode.parentElement) {
-        const parentElement = selection.anchorNode.parentElement;
-        const fontWeight : Number = Number(this.getComputedStyle(parentElement).fontWeight);
-        return fontWeight > 400 ? PropertyState.enabled : PropertyState.disabled;
-      } else {
-        return PropertyState.unknown;
-      }
-    } else {
-      const range = selection.getRangeAt(0);
-      const nodes = this.getNodesInRange(range);
-      const isBold = Number(this.getComputedStyle(nodes[0]).fontWeight) > 400;
-      for(let i = 1; i < nodes.length; i++) {
-        if(Number(this.getComputedStyle(nodes[i]).fontWeight) > 400 != isBold) {
-          return PropertyState.unknown;
-        }
-      }
-      return isBold ? PropertyState.enabled : PropertyState.disabled;
-    }
-  }
-  calculateIsItalic(selection: Selection) : PropertyState {
-    if(selection.type === 'Caret') {
-      if(selection.anchorNode && selection.anchorNode.parentElement) {
-        const parentElement = selection.anchorNode.parentElement;
-        const isItalic : Boolean = this.getComputedStyle(parentElement).fontStyle === 'italic';
-        return isItalic ? PropertyState.enabled : PropertyState.disabled;
-      } else {
-        return PropertyState.unknown;
-      }
-    } else {
-      const range = selection.getRangeAt(0);
-      const nodes = this.getNodesInRange(range);
-      const isItalic = this.getComputedStyle(nodes[0]).fontStyle === 'italic';
-      for(let i = 1; i < nodes.length; i++) {
-        if((this.getComputedStyle(nodes[i]).fontStyle === 'italic') != isItalic) {
-          return PropertyState.unknown;
-        }
-      }
-      return isItalic ? PropertyState.enabled : PropertyState.disabled;
-    }
-  }
-  calculateIsUnderline(selection: Selection) : PropertyState {
-    if(selection.type === 'Caret') {
-      if(selection.anchorNode && selection.anchorNode.parentElement) {
-        const parentElement = selection.anchorNode.parentElement;
-        const isUnderline : Boolean = this.getComputedStyle(parentElement).textDecoration === 'underline';
-        return isUnderline ? PropertyState.enabled : PropertyState.disabled;
-      } else {
-        return PropertyState.unknown;
-      }
-    } else {
-      const range = selection.getRangeAt(0);
-      const nodes = this.getNodesInRange(range);
-      const isUnderline = this.getComputedStyle(nodes[0]).textDecoration === 'underline';
-      for(let i = 1; i < nodes.length; i++) {
-        if((this.getComputedStyle(nodes[i]).textDecoration === 'underline') != isUnderline) {
-          return PropertyState.unknown;
-        }
-      }
-      return isUnderline ? PropertyState.enabled : PropertyState.disabled;
-    }
-  }
-  calculateIsStriketrough(selection: Selection) : PropertyState {
-    if(selection.type === 'Caret') {
-      if(selection.anchorNode && selection.anchorNode.parentElement) {
-        const parentElement = selection.anchorNode.parentElement;
-        const isStriketrough : Boolean = this.getComputedStyle(parentElement).textDecoration === 'line-through';
-        return isStriketrough ? PropertyState.enabled : PropertyState.disabled;
-      } else {
-        return PropertyState.unknown;
-      }
-    } else {
-      const range = selection.getRangeAt(0);
-      const nodes = this.getNodesInRange(range);
-      const isStriketrough = this.getComputedStyle(nodes[0]).textDecoration === 'line-through';
-      for(let i = 1; i < nodes.length; i++) {
-        if((this.getComputedStyle(nodes[i]).textDecoration === 'line-through') != isStriketrough) {
-          return PropertyState.unknown;
-        }
-      }
-      return isStriketrough ? PropertyState.enabled : PropertyState.disabled;
-    }
-  }
   calculateIsInList(selection: Selection) : PropertyState {
     if(selection.type === 'Caret') {
       if(selection.anchorNode) {

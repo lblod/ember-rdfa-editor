@@ -34,12 +34,20 @@ export default class ModelSelection {
   }
 
 
-  get isBold(): PropertyState {
+  get bold(): PropertyState {
     return this.getTextPropertyStatus("bold");
   }
 
-  get isItalic(): PropertyState {
+  get italic(): PropertyState {
     return this.getTextPropertyStatus("italic");
+  }
+
+  get underline(): PropertyState {
+    return this.getTextPropertyStatus("underline");
+  }
+
+  get strikethrough(): PropertyState {
+    return this.getTextPropertyStatus("strikethrough");
   }
 
   getTextPropertyStatus(property: TextAttribute): PropertyState {
