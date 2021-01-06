@@ -8,6 +8,10 @@ import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import {walk as walkDomNode} from "@lblod/marawa/node-walker";
 import RichNode from "@lblod/marawa/rich-node";
+import MakeStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-properties/make-strikethrough-command";
+import RemoveStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-strikethrough-command";
+import MakeUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/make-underline-command";
+import RemoveUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-underline-command";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -41,6 +45,10 @@ class RawEditor extends EmberObject {
     this.registerCommand(new RemoveBoldCommand(this.model));
     this.registerCommand(new MakeItalicCommand(this.model));
     this.registerCommand(new RemoveItalicCommand(this.model));
+    this.registerCommand(new MakeStrikethroughCommand(this.model));
+    this.registerCommand(new RemoveStrikethroughCommand(this.model));
+    this.registerCommand(new MakeUnderlineCommand(this.model));
+    this.registerCommand(new RemoveUnderlineCommand(this.model));
   }
 
   /**

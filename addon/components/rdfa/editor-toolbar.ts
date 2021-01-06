@@ -26,6 +26,8 @@ interface Args {
 export default class EditorToolbar extends Component<Args> {
   @tracked isBold: boolean = false;
   @tracked isItalic: boolean = false;
+  @tracked isStrikethrough: boolean = false;
+  @tracked isUnderline: boolean = false;
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
@@ -35,14 +37,8 @@ export default class EditorToolbar extends Component<Args> {
     console.log("richSelectionUpdated");
     this.isBold = event.detail.attributes.bold !== PropertyState.disabled;
     this.isItalic = event.detail.attributes.italic !== PropertyState.disabled;
-  }
-  @action
-  toggleProperty(property: EditorProperty) {
-    const range = this.args.editor.currentSelection;
-    const selection = this.args.editor.selectCurrentSelection();
-    this.args.editor.toggleProperty(selection, property);
-    // set cursor at end of selection, TODO: check what other editors do but this feels natural
-    this.args.editor.setCurrentPosition(range[1]);
+    this.isStrikethrough = event.detail.attributes.strikethrough !== PropertyState.disabled;
+    this.isUnderline = event.detail.attributes.underline !== PropertyState.disabled;
   }
 
   @action
@@ -93,31 +89,32 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   toggleItalic() {
-    if(this.isItalic) {
-      this.args.editor.executeCommand("remove-italic");
-    } else {
-      this.args.editor.executeCommand("make-italic");
-    }
+    this.toggleProperty(this.isItalic, "make-italic", "remove-italic");
   }
 
   @action
   toggleBold() {
-    if(this.isBold) {
-      this.args.editor.executeCommand("remove-bold");
-
-    } else {
-      this.args.editor.executeCommand("make-bold");
-    }
+    this.toggleProperty(this.isBold, "make-bold", "remove-bold");
   }
 
   @action
   toggleUnderline() {
-    this.toggleProperty(underlineProperty);
+    this.toggleProperty(this.isUnderline, "make-underline", "remove-underline");
   }
 
   @action
-  toggleStrikethrough() {
-    this.toggleProperty(strikethroughProperty);
+  toggleStrikethrough(){
+    this.toggleProperty(this.isStrikethrough, "make-strikethrough", "remove-strikethrough");
+  }
+
+  @action
+  toggleProperty(value: boolean, makeCommand: string, removeCommand: string) {
+    if(value) {
+      this.args.editor.executeCommand(removeCommand);
+    } else {
+      this.args.editor.executeCommand(makeCommand);
+    }
+
   }
 
   @action

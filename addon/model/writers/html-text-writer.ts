@@ -11,7 +11,9 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
   static attributeMap: Map<TextAttribute, keyof HTMLElementTagNameMap> = new Map<TextAttribute, keyof HTMLElementTagNameMap>(
     [
       ["bold", "strong"],
-      ["italic", "em"]
+      ["italic", "em"],
+      ["underline", "u"],
+      ["strikethrough", "del"]
     ]
   )
   constructor(private model: Model) {

@@ -15,6 +15,8 @@ export default class WrappedAttributeReader implements Reader<HTMLElement, Fragm
       ["b", "bold"],
       ["i", "italic"],
       ["em", "italic"],
+      ["u", "underline"],
+      ["del", "strikethrough"],
     ]
   )
 
