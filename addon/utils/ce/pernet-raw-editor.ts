@@ -51,6 +51,12 @@ import CappedHistory from "@lblod/ember-rdfa-editor/utils/ce/capped-history";
 import RichNode from "@lblod/marawa/rich-node";
 
 
+export interface ContentObserver {
+  handleTextInsert: (position: number, text: String, extraInfo: Array<Object>) => void
+  handleTextRemoval: (start: number, end: number, extraInfo: Array<Object>) => void
+  handleFullContentUpdate: (extraInfo: Array<Object>) => void
+}
+
 /**
  * Compatibility layer for components still using the Pernet API
  */
@@ -236,17 +242,22 @@ export default class PernetRawEditor extends RawEditor {
     let pos = 0;
     let textHasChanges = false;
 
+    const contentObservers = this.contentObservers;
     differences.forEach(([mode, text]) => {
       if(oldText) {
         if (mode === 1) {
           textHasChanges = true;
           this.set('currentTextContent', oldText.slice(0, pos) + text + oldText.slice(pos, oldText.length));
-          this.textInsert(pos, text, extraInfo);
+          for (let observer of contentObservers) {
+            observer.handleTextInsert(pos, text, extraInfo);
+          }
           pos = pos + text.length;
         } else if (mode === -1) {
           textHasChanges = true;
           this.set('currentTextContent', oldText.slice(0, pos) + oldText.slice(pos + text.length, oldText.length));
-          forgivingAction('textRemove', this)(pos, pos + text.length, extraInfo);
+          for (let observer of contentObservers) {
+            observer.handleTextRemoval(pos, pos + text.length, extraInfo);
+          }
         } else {
           pos = pos + text.length;
         }
@@ -258,21 +269,44 @@ export default class PernetRawEditor extends RawEditor {
       if (!extraInfo.some((x) => x.noSnapshot)) {
         this.createSnapshot();
       }
-      forgivingAction('handleFullContentUpdate', this)(extraInfo);
+      for (let observer of contentObservers) {
+        observer.handleFullContentUpdate(extraInfo);
+      }
     }
   }
 
-
+  /**
+   * content observers
+   * @property contentObservers
+   * @private
+   */
+  contentObservers: Array<ContentObserver> = []
 
   registerMovementObserver(observer: MovementObserver) {
     this.movementObservers.push(observer);
   }
 
+  /**
+   * register a content observer
+   * @method registerContentObserver
+   * @public
+   */
+  registerContentObserver(observer: ContentObserver) {
+    this.contentObservers.push(observer);
+  }
 
 
-
-
-
+  /**
+   * unregister a content observer
+   * @method unregisterContentObserver
+   * @public
+   */
+  unregisterContentObserver(observer: ContentObserver) {
+    const index = this.contentObservers.indexOf(observer);
+    if (index >= 0) {
+      this.contentObservers.splice(index, 1);
+    }
+  }
 
   /**
    * Informs the consumer that the text was inserted at the given
@@ -653,6 +687,7 @@ export default class PernetRawEditor extends RawEditor {
     }
   }
 
+  
   /**
    * select a node based on the provided caret position, taking into account the current active node
    * if no suitable node exists, create one (within reason)

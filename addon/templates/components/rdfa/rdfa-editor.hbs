@@ -26,10 +26,6 @@
       <div class="say-editor__paper">
         <Ce::ContentEditable
           @class="say-editor__inner say-content"
-          @textInsert={{or this.eventProcessor.insertText this.warnNotSetup}}
-          @textRemove={{or this.eventProcessor.removeText this.warnNotSetup}}
-          @handleFullContentUpdate={{or this.eventProcessor.analyseAndDispatch this.warnNotSetup}}
-          @selectionUpdate={{fn (or this.eventProcessor.selectionChanged this.warnNotSetup) this.editor.currentSelection}}
           @rawEditorInit={{this.handleRawEditorInit}}
           @elementUpdate={{fn (or this.domUpdate this.noop) this.editor.rootNode}}
           @externalHandlers={{this.handlers}}

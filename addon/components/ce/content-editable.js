@@ -144,15 +144,6 @@ export default class ContentEditable extends Component {
     }
   }
 
-  didUpdateAttrs() {
-    this.rawEditor.set('textInsert',this.textInsert);
-    this.rawEditor.set('textRemove',this.textRemove);
-    this.rawEditor.set('handleFullContentUpdate',this.handleFullContentUpdate);
-    this.rawEditor.set('selectionUpdate',this.selectionUpdate);
-    this.rawEditor.set('elementUpdate',this.elementUpdate);
-    this.rawEditor.set('handleFullContentUpdate',this.handleFullContentUpdate);
-  }
-
   /**
    * specify whether the editor should autofocus the contenteditable field
    *
