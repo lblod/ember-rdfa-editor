@@ -215,6 +215,7 @@ export default EmberObject.extend({
    * @public
    */
   handleMovement(_controller, _oldSelection, newSelection) {
-    this.registry.activeRegion = newSelection.absoluteRegion;
+    const {startNode, endNode } = newSelection;
+    this.registry.activeRegion = [startNode.absolutePosition, endNode.absolutePosition];
   }
 });
