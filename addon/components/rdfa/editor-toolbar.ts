@@ -1,11 +1,7 @@
 import Component from "@glimmer/component";
-import {action} from "@ember/object"
-import italicProperty from '../../utils/rdfa/italic-property';
-import underlineProperty from '../../utils/rdfa/underline-property';
-import strikethroughProperty from '../../utils/rdfa/strikethrough-property';
+import {action} from "@ember/object";
 import {isInList} from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import {getWindowSelection} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import EditorProperty from "dummy/utils/ce/editor-property";
 import {tracked} from "@glimmer/tracking";
 import {PropertyState, RichSelection} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
