@@ -47,22 +47,10 @@ import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor
  * @class ContentEditableComponent
  * @extends Component
  */
-@classic
 @templateLayout(layout)
 export default class ContentEditable extends Component {
   tagName = ''
   @service() features;
-
-  /**
-   * latest cursor position in the contenteditable, it is aliased to the rawEditor.currentSelection
-   *
-   * @property currentSelection
-   * @type Array
-   *
-   * @private
-   */
-  @alias('rawEditor.currentSelection')
-  currentSelection;
 
   /**
    * WIP: Rich selection
@@ -75,18 +63,6 @@ export default class ContentEditable extends Component {
     richSelection;
 
   /**
-   * latest text content in the contenteditable, it is aliased to the rawEditor.currentTextContent
-   *
-   *
-   * @property currentTextContent
-   * @type String
-   *
-   * @private
-   */
-  @alias('rawEditor.currentTextContent')
-  currentTextContent;
-
-  /**
    * element of the component, it is aliased to the rawEditor.rootNode
    *
    * @property element
@@ -94,34 +70,14 @@ export default class ContentEditable extends Component {
    *
    * @private
    */
-  rootNode = null;
-
-  /**
-   * richNode is the rich representation of the component element,
-   * it is aliased to the rawEditor.richNode
-   *
-   * @property richNode
-   * @type RichNode
-   * @private
-   */
-  @alias('rawEditor.richNode')
-  richNode;
+  @tracked rootNode = null;
 
   /**
    *
    * @property rawEditor
    * @type RawEditor
    */
-  rawEditor = null;
-
-  /**
-   * components present in the editor
-   * @property components
-   * @type {Object}
-   * @public
-   */
-  @alias('rawEditor.components')
-  components;
+  @tracked rawEditor = null;
 
   /**
    * ordered set of input handlers
