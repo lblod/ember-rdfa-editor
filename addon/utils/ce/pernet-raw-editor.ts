@@ -132,6 +132,21 @@ export default class PernetRawEditor extends RawEditor {
     }
   }
 
+  /**
+   * Execute a command with name commandName. Any extra arguments are passed through to the command.
+   * @param commandName
+   * @param args
+   */
+  executeCommand(commandName: string, ...args: any[]) {
+    const command = this.registeredCommands.get(commandName);
+    if(!command) {
+      throw new Error(`Unrecognized command ${commandName}`);
+    }
+    command.execute(...args);
+    this.updateRichNode();
+    taskFor(this.generateDiffEvents).perform();
+  }
+
   get currentNode() {
     return this._currentNode;
   }
