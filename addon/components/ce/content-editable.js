@@ -1,7 +1,7 @@
 import classic from "ember-classic-decorator";
 import { layout as templateLayout } from "@ember-decorators/component";
+import { tracked } from '@glimmer/tracking';
 import { action } from "@ember/object";
-import { union, alias } from "@ember/object/computed";
 import Component from '@ember/component';
 import layout from '../../templates/components/ce/content-editable';
 import forgivingAction from '../../utils/ce/forgiving-action';
@@ -85,8 +85,10 @@ export default class ContentEditable extends Component {
    * @type Array
    * @public
    */
-  @union('externalHandlers', 'defaultHandlers')
-  inputHandlers;
+  get inputHandlers() {
+    return this.externalHandlers.concat(this.defaultHandlers);
+  }
+
 
   /**
    * default input handlers
@@ -94,7 +96,7 @@ export default class ContentEditable extends Component {
    * @type Array
    * @private
    */
-  defaultHandlers = null;
+  @tracked defaultHandlers = null;
 
   /**
    * external input handlersg
