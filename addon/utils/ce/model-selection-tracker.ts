@@ -64,7 +64,7 @@ export default class ModelSelectionTracker {
       {startNode: from,
         direction: Direction.FORWARDS,
       rootNode: this.model.rootNode,
-      nodeFilter: n => isTextNode(n)
+      nodeFilter: isTextNode
       }
     ).next();
 
@@ -73,7 +73,7 @@ export default class ModelSelectionTracker {
        {startNode: from,
          direction: Direction.BACKWARDS,
          rootNode: this.model.rootNode,
-         nodeFilter: n => isTextNode(n)
+         nodeFilter: isTextNode
        }
      ).next();
     }
