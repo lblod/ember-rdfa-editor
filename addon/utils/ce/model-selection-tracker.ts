@@ -1,10 +1,9 @@
-import {getWindowSelection, isElement, isTextNode, isVoidElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import { isInList } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
-import { analyse } from '@lblod/marawa/rdfa-context-scanner';
-import RdfaBlock from "@lblod/marawa/rdfa-block";
+import {getWindowSelection, isTextNode, isVoidElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import DomNodeFinder from "@lblod/ember-rdfa-editor/model/util/dom-node-finder";
+import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 
 export enum PropertyState {
   enabled = 'enabled',
@@ -56,19 +55,32 @@ export default class ModelSelectionTracker {
   }
 
   private ensureTextNode(node: Node, offset: number): Text {
-    let cur: ChildNode | null = node.childNodes[offset];
-    while(cur && !isTextNode(cur)) {
-      if (isVoidElement(cur)) {
-        cur = cur.nextSibling || cur.previousSibling;
-      } else {
-        cur = cur.firstChild;
-      }
-    }
+    let from: Node | null = node.childNodes[offset];
 
-    if (!cur) {
+    if(!from){
+      from = node.parentNode!;
+    }
+    let textNode = new DomNodeFinder(
+      {startNode: from,
+        direction: Direction.FORWARDS,
+      rootNode: this.model.rootNode,
+      nodeFilter: n => isTextNode(n)
+      }
+    ).next();
+
+    if(!textNode) {
+     textNode = new DomNodeFinder(
+       {startNode: from,
+         direction: Direction.BACKWARDS,
+         rootNode: this.model.rootNode,
+         nodeFilter: n => isTextNode(n)
+       }
+     ).next();
+    }
+    if (!textNode) {
       throw new SelectionError("Could not ensure textNode");
     }
-    return cur;
+    return textNode as Text;
   }
 
 }
