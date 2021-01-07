@@ -14,7 +14,7 @@ export default class ModelSelectionTracker {
   modelSelection: ModelSelection;
   model: Model;
   constructor(model: Model) {
-    this.modelSelection = new ModelSelection(model, getWindowSelection()),
+    this.modelSelection = new ModelSelection(model, getWindowSelection());
     this.model = model;
     this.updateSelection = this.updateSelection.bind(this);
   }
