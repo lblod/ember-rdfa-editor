@@ -94,6 +94,7 @@ export default class Model {
   }
 
   getModelNodeFor(domNode: Node) {
+    if(!this.nodeMap) return;
     return this.nodeMap.get(domNode);
   }
 }
