@@ -10,6 +10,8 @@ export default abstract class ModelNode {
   private _attributeMap: Map<string, string>;
   private _parent: ModelElement | null = null;
   private _boundNode: Node | null = null;
+  private _nextSibling: ModelNode | null = null;
+  private _previousSibling: ModelNode | null = null;
 
 
   protected constructor() {
@@ -32,6 +34,20 @@ export default abstract class ModelNode {
     return this._attributeMap;
   }
 
+  get previousSibling(): ModelNode | null {
+    return this._previousSibling;
+  }
+
+  set previousSibling(value: ModelNode | null) {
+    this._previousSibling = value;
+  }
+  get nextSibling(): ModelNode | null {
+    return this._nextSibling;
+  }
+
+  set nextSibling(value: ModelNode | null) {
+    this._nextSibling = value;
+  }
   set attributeMap(value: Map<string, string>) {
     this._attributeMap = value;
   }
@@ -51,6 +67,7 @@ export default abstract class ModelNode {
   set boundNode(value: Node | null) {
     this._boundNode = value;
   }
+
 
   abstract clone(): any;
 
