@@ -25,6 +25,7 @@ export default class ModelSelectionTracker {
     document.removeEventListener('selectionchange', this.updateSelection);
   }
   updateSelection() {
+    debugger;
     const currentSelection  = getWindowSelection();
     if(!currentSelection.anchorNode || !currentSelection.focusNode) {
       currentSelection.collapse(this.model.rootNode,0);

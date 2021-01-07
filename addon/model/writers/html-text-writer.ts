@@ -2,6 +2,7 @@ import Writer from "@lblod/ember-rdfa-editor/model/writers/writer";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/model/rich-text";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import {tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 /**
  * Writer responsible for converting {@link RichText} nodes into HTML subtrees
@@ -22,7 +23,14 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
     if(modelNode.length === 0 && this.model.selection.anchor !== modelNode) {
       return null;
     }
-    const result = new Text(modelNode.content);
+    let result;
+    // if(modelNode.content === "\n") {
+    //   result = document.createElement("br");
+    //
+    // } else {
+      result = new Text(modelNode.content);
+
+    // }
     this.model.bindNode(modelNode, result);
     const top = document.createElement("span");
     let wrapper = top;

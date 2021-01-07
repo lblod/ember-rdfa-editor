@@ -7,7 +7,8 @@ import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection'
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 export type RichContainer = RichElementContainer | RichTextContainer;
 
@@ -73,10 +74,10 @@ export default class Model {
    */
   write(tree: ModelNode = this.rootModelNode) {
     const oldRoot = tree.boundNode;
-    if(!oldRoot) {
+    if (!oldRoot) {
       throw new Error("Conatiner without boundNOde");
     }
-    if(!isElement(oldRoot)) {
+    if (!isElement(oldRoot)) {
       throw new NotImplementedError("root is not an element, not sure what to do");
     }
     const newRoot = this.writer.write(tree);
@@ -95,5 +96,25 @@ export default class Model {
 
   getModelNodeFor(domNode: Node) {
     return this.nodeMap.get(domNode);
+  }
+
+  removeModelNode(modelNode: ModelNode) {
+    if (modelNode.boundNode) {
+      this.nodeMap.delete(modelNode.boundNode);
+    }
+    if (modelNode.parent) {
+      this.removeChildFromParent(modelNode, modelNode.parent);
+    }
+  }
+
+  private removeChildFromParent(child: ModelNode, parent: ModelElement) {
+    const index = parent.children.indexOf(child);
+    parent.children.splice(index, 1);
+    if (child.previousSibling) {
+      child.previousSibling.nextSibling = child.nextSibling;
+    }
+    if (child.nextSibling) {
+      child.nextSibling = child.previousSibling;
+    }
   }
 }

@@ -4,6 +4,9 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import NodeFinder from "@lblod/ember-rdfa-editor/model/util/node-finder";
 
 
+/**
+ * {@link ModelNode} implementation of a {@link NodeFinder}
+ */
 export default class ModelNodeFinder extends NodeFinder<ModelNode> {
 
   protected nextSibling(node: ModelNode): ModelNode | null {

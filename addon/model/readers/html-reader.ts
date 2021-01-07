@@ -8,8 +8,8 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import HtmlVoidReader from "@lblod/ember-rdfa-editor/model/readers/html-void-reader";
 import HtmlElementReader from "@lblod/ember-rdfa-editor/model/readers/html-element-reader";
 import HtmlListReader from "@lblod/ember-rdfa-editor/model/readers/html-list-reader";
-import Fragment from "@lblod/ember-rdfa-editor/model/fragment";
 import {HtmlTag} from "@lblod/ember-rdfa-editor/model/util/types";
+import HtmlBreakReader from "@lblod/ember-rdfa-editor/model/readers/html-break-reader";
 
 
 /**
@@ -22,12 +22,14 @@ export default class HtmlReader implements Reader<Node, ModelNode> {
   private elementReader: HtmlElementReader;
   private listReader: HtmlListReader;
   elementConfig: Map<keyof HTMLElementTagNameMap, Reader<HTMLElement, ModelElement | null>>;
+  private breakReader: HtmlBreakReader;
 
   constructor(private model: Model) {
     this.elementReader = new HtmlElementReader(model);
     this.textReader = new HtmlTextReader(model);
     this.wrappedAttributeReader = new WrappedAttributeReader();
     this.voidReader = new HtmlVoidReader();
+    this.breakReader = new HtmlBreakReader();
     this.listReader = new HtmlListReader(model, this.elementReader);
     this.elementConfig = new Map<keyof HTMLElementTagNameMap, Reader<HTMLElement, ModelElement>>(
       [
@@ -36,7 +38,7 @@ export default class HtmlReader implements Reader<Node, ModelNode> {
         ["em", this.wrappedAttributeReader],
         ["b", this.wrappedAttributeReader],
         ["i", this.wrappedAttributeReader],
-
+        // ["br", this.breakReader],
       ]
     );
   }
@@ -62,10 +64,6 @@ export default class HtmlReader implements Reader<Node, ModelNode> {
         result = this.elementReader.read(node);
       }
 
-      // this check is a bit iffy, this implies that any reader returning something other than a ModelElement
-      // has to take care of the potential subtree of the domNode on its own.
-      // this is not that weird, since returning a ModelText does imply no children can be added
-      // but its not immediately obvious
       for (const child of node.childNodes) {
         const parsed = this.readRec(child);
         if (ModelNode.isFragment(parsed)) {

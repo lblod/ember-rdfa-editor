@@ -82,5 +82,4 @@ export default abstract class ModelNode {
   setTextAttribute(_key: TextAttribute, _value: boolean) {
   }
 
-
 }
