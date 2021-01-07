@@ -9,7 +9,7 @@ export default abstract class SetPropertyCommand extends Command {
     super(model);
   }
   execute(property: TextAttribute, value: boolean) {
-    const selection = this.model.selection.modelSelection;
+    const selection = this.model.selection;
 
     const nodeIterator = new ModelIterator<ModelText>(selection.anchor!, selection.focus!, (node => node instanceof ModelText));
     const nodes = Array.from(nodeIterator);

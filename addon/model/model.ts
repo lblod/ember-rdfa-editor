@@ -1,4 +1,4 @@
-import RichSelectionTracker, {RichSelection} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
+import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import RichElementContainer from "@lblod/ember-rdfa-editor/model/rich-element-container";
 import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
@@ -7,6 +7,7 @@ import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection'
 
 export type RichContainer = RichElementContainer | RichTextContainer;
 
@@ -17,7 +18,7 @@ export type RichContainer = RichElementContainer | RichTextContainer;
  */
 export default class Model {
 
-  private richSelectionTracker: RichSelectionTracker;
+  private modelSelectionTracker: ModelSelectionTracker;
   /**
    * The root of the editor. This will get set by ember,
    * so we trick typescript into assuming it is never null
@@ -31,8 +32,8 @@ export default class Model {
   private nodeMap: Map<Node, ModelNode>;
 
   constructor() {
-    this.richSelectionTracker = new RichSelectionTracker(this);
-    this.richSelectionTracker.startTracking();
+    this.modelSelectionTracker = new ModelSelectionTracker(this);
+    this.modelSelectionTracker.startTracking();
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
     this.nodeMap = new Map<Node, ModelNode>();
@@ -46,8 +47,8 @@ export default class Model {
     this._rootNode = rootNode;
   }
 
-  get selection(): RichSelection {
-    return this.richSelectionTracker.richSelection;
+  get selection(): ModelSelection {
+    return this.modelSelectionTracker.modelSelection;
   }
 
   get rootModelNode(): ModelNode {
@@ -84,7 +85,7 @@ export default class Model {
     }
     oldRoot.append(...newRoot.childNodes);
     this.bindNode(tree, oldRoot);
-    this.selection.modelSelection.writeToDom();
+    this.selection.writeToDom();
   }
 
   bindNode(modelNode: ModelNode, domNode: Node) {

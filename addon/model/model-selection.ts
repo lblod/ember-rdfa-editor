@@ -5,7 +5,8 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelIterator from "@lblod/ember-rdfa-editor/model/util/model-iterator";
-import {PropertyState} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
+import {PropertyState} from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
+import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 
 /**
  * Just like the {@link Model} is a representation of the document, the ModelSelection is a representation
@@ -18,6 +19,7 @@ export default class ModelSelection {
   anchorOffset: number = 0;
   focusOffset: number = 0;
   commonAncestor: ModelNode | null = null;
+  domSelection: Selection | null = null;
   private model: Model;
 
 
@@ -48,6 +50,20 @@ export default class ModelSelection {
 
   get strikethrough(): PropertyState {
     return this.getTextPropertyStatus("strikethrough");
+  }
+
+  get rdfaSelection() {
+    if(!this.domSelection) return;
+    return this.caculateRdfaSelection(this.domSelection);
+  }
+
+  get subtree() {
+    if(!this.domSelection) return;
+    let subtree = this.domSelection.getRangeAt(0).commonAncestorContainer;
+    if(!isElement(subtree)) {
+      subtree = subtree.parentElement!;
+    }
+    return subtree;
   }
 
   getTextPropertyStatus(property: TextAttribute): PropertyState {
@@ -111,6 +127,7 @@ export default class ModelSelection {
     if (!selection.anchorNode || !selection.focusNode) {
       return;
     }
+    this.domSelection = selection;
     if (!isTextNode(selection.anchorNode) || !isTextNode(selection.focusNode)) {
       throw new SelectionError("Selected nodes are not text nodes");
     }
@@ -192,5 +209,21 @@ export default class ModelSelection {
     return range.collapsed;
   }
 
+
+  caculateRdfaSelection(selection: Selection) {
+    if(selection.type === 'Caret') {
+      if(!selection.anchorNode) {
+        throw new SelectionError("Selection has no anchorNode");
+      }
+      const rdfaSelection = analyse(selection.anchorNode);
+      return rdfaSelection;
+    } else {
+      const range = selection.getRangeAt(0);
+      const commonAncestor = range.commonAncestorContainer;
+      const rdfaSelection = analyse(commonAncestor);
+      return rdfaSelection;
+    }
+
+  }
 
 }

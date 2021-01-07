@@ -3,8 +3,9 @@ import {action} from "@ember/object";
 import {isInList} from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import {getWindowSelection} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {tracked} from "@glimmer/tracking";
-import {PropertyState, RichSelection} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
+import {PropertyState} from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
+import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 
 interface Args {
   editor: LegacyRawEditor;
@@ -29,12 +30,12 @@ export default class EditorToolbar extends Component<Args> {
     super(parent, args);
     document.addEventListener("richSelectionUpdated", this.updateProperties.bind(this));
   }
-  updateProperties(event: CustomEvent<RichSelection>) {
+  updateProperties(event: CustomEvent<ModelSelection>) {
     console.log("richSelectionUpdated");
-    this.isBold = event.detail.attributes.bold !== PropertyState.disabled;
-    this.isItalic = event.detail.attributes.italic !== PropertyState.disabled;
-    this.isStrikethrough = event.detail.attributes.strikethrough !== PropertyState.disabled;
-    this.isUnderline = event.detail.attributes.underline !== PropertyState.disabled;
+    this.isBold = event.detail.bold !== PropertyState.disabled;
+    this.isItalic = event.detail.italic !== PropertyState.disabled;
+    this.isStrikethrough = event.detail.strikethrough !== PropertyState.disabled;
+    this.isUnderline = event.detail.underline !== PropertyState.disabled;
   }
 
   @action

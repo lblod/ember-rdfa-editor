@@ -19,7 +19,7 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
   constructor(private model: Model) {
   }
   write(modelNode: ModelText): Node | null {
-    if(modelNode.length === 0 && this.model.selection.modelSelection.anchor !== modelNode) {
+    if(modelNode.length === 0 && this.model.selection.anchor !== modelNode) {
       return null;
     }
     const result = new Text(modelNode.content);
