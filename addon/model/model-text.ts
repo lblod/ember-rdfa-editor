@@ -1,4 +1,4 @@
-import ModelNode, {ModelNodeType} from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/model/model-node";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export type TextAttribute = "bold" | "italic" | "underline" | "strikethrough";
@@ -8,8 +8,8 @@ export default class ModelText extends ModelNode {
   private _content: string;
   private _textAttributeMap: Map<TextAttribute, boolean>;
 
-  constructor(content: string = "") {
-    super();
+  constructor(content: string = "", config?: NodeConfig) {
+    super(config);
     this._content = content;
     this._textAttributeMap = new Map<TextAttribute, boolean>();
   }

@@ -5,10 +5,10 @@ import NodeFinder from "@lblod/ember-rdfa-editor/model/util/node-finder";
 /**
  * {@link Node domNode} implementation of a {@link NodeFinder}
  */
-export default class DomNodeFinder extends NodeFinder<Node>{
+export default class DomNodeFinder<R extends Node> extends NodeFinder<Node, R> {
 
-  protected nextSibling(node: Node): Node | null {
-    if (this.direction === Direction.FORWARDS) {
+  protected nextSibling(node: Node, direction: Direction): Node | null {
+    if (direction === Direction.FORWARDS) {
       return node.nextSibling;
     } else {
       return node.previousSibling;
@@ -16,7 +16,7 @@ export default class DomNodeFinder extends NodeFinder<Node>{
   }
 
   protected getChildren(node: Node): Node[] | null {
-    return node.hasChildNodes() ? Array.from(node.childNodes) : null;
+    return node.hasChildNodes() ? Array.from(node.childNodes): null;
   }
 
   protected getParent(node: Node): Node | null {

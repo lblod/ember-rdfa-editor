@@ -3,6 +3,9 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import Fragment from "@lblod/ember-rdfa-editor/model/fragment";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
+export interface NodeConfig {
+  debugInfo: any;
+}
 
 export default abstract class ModelNode {
   abstract nodeType: ModelNodeType;
@@ -12,10 +15,14 @@ export default abstract class ModelNode {
   private _boundNode: Node | null = null;
   private _nextSibling: ModelNode | null = null;
   private _previousSibling: ModelNode | null = null;
+  private _debugInfo: any;
 
 
-  protected constructor() {
+  protected constructor(config?: NodeConfig) {
     this._attributeMap = new Map<string, string>();
+    if(config) {
+      this._debugInfo = config.debugInfo;
+    }
   }
 
   static isModelElement(node?: ModelNode | null): node is ModelElement {
@@ -68,6 +75,16 @@ export default abstract class ModelNode {
     this._boundNode = value;
   }
 
+  /**
+   * Debugging utility
+   */
+  get debugInfo(): any {
+    return this._debugInfo;
+  }
+
+  set debugInfo(value: any) {
+    this._debugInfo = value;
+  }
 
   abstract clone(): any;
 

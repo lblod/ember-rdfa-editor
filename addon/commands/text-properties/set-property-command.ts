@@ -2,7 +2,9 @@ import Command from "../command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelIterator from "@lblod/ember-rdfa-editor/model/util/model-iterator";
+import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 
 export default abstract class SetPropertyCommand extends Command {
   constructor(model: Model) {
@@ -11,11 +13,19 @@ export default abstract class SetPropertyCommand extends Command {
   execute(property: TextAttribute, value: boolean) {
     const selection = this.model.selection;
 
-    const nodeIterator = new ModelIterator<ModelText>(selection.anchor!, selection.focus!, (node => node instanceof ModelText));
-    const nodes = Array.from(nodeIterator);
+    const nodeFinder = new ModelNodeFinder({
+     startNode: selection.anchor!,
+      endNode: selection.focus!,
+      rootNode: selection.commonAncestor!,
+      nodeFilter: ModelNode.isModelText,
+      direction: Direction.FORWARDS
+    });
+    const nodes = Array.from(nodeFinder) as ModelText[];
 
     nodes[nodes.length - 1] = nodes[nodes.length - 1].split(selection.focusOffset).left;
     nodes[0] = nodes[0].split(selection.anchorOffset).right;
+
+
 
     for (const node of nodes) {
       node.setTextAttribute(property, value);

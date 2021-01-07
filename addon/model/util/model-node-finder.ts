@@ -1,16 +1,17 @@
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import NodeFinder from "@lblod/ember-rdfa-editor/model/util/node-finder";
+import NodeFinder, {NodeFinderConfig} from "@lblod/ember-rdfa-editor/model/util/node-finder";
+
 
 
 /**
  * {@link ModelNode} implementation of a {@link NodeFinder}
  */
-export default class ModelNodeFinder extends NodeFinder<ModelNode> {
+export default class ModelNodeFinder<R extends ModelNode = ModelNode> extends NodeFinder<ModelNode, R> {
 
-  protected nextSibling(node: ModelNode): ModelNode | null {
-    if (this.direction === Direction.FORWARDS) {
+  protected nextSibling(node: ModelNode, direction: Direction): ModelNode | null {
+    if (direction === Direction.FORWARDS) {
       return node.nextSibling;
     } else {
       return node.previousSibling;

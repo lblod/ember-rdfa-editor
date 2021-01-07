@@ -1,4 +1,4 @@
-import ModelNode, {ModelNodeType} from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
 
@@ -10,8 +10,8 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   private _children: ModelNode[] = [];
   private _type: ElementType;
 
-  constructor(type: ElementType = "span") {
-    super();
+  constructor(type: ElementType = "span", config?: NodeConfig) {
+    super(config);
     this._type = type;
   }
 

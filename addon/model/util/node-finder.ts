@@ -1,14 +1,15 @@
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 
-export interface NodeFinderConfig<T> {
+export interface NodeFinderConfig<T, R extends T> {
   startNode: T;
   endNode?: T;
   rootNode: T;
-  nodeFilter?: (node: T) => boolean;
-  predicate?: (node: T) => boolean;
+  nodeFilter?: (node: T) => node is R;
+  predicate?: (node: R) => boolean;
   direction?: Direction;
 }
+
 function dummy() {
   return true;
 }
@@ -19,7 +20,7 @@ function dummy() {
  * The algorithm is DFS but modified so it can also walk upwards.
  * Can be implemented for different types of nodes.
  */
-export default abstract class NodeFinder<T extends Node | ModelNode> implements Iterable<T>{
+export default abstract class NodeFinder<T extends Node | ModelNode, R extends T> implements Iterable<T> {
 
   startNode: T;
   private _current: T | null;
@@ -32,7 +33,7 @@ export default abstract class NodeFinder<T extends Node | ModelNode> implements 
   visited: Map<T, boolean>;
 
 
-  constructor(config: NodeFinderConfig<T>) {
+  constructor(config: NodeFinderConfig<T, R>) {
     this.startNode = config.startNode;
     this._current = this.startNode;
     this.endNode = config.endNode;
@@ -55,34 +56,38 @@ export default abstract class NodeFinder<T extends Node | ModelNode> implements 
    * Find the next node satisfying the conditions. This looks at the children first, then siblings
    * (and their children) and then goes up one level and does it again.
    */
-  next(): T | null {
+  next(): R | null {
     let cur: T | null = this.findNextNode();
     let found = false;
-    if(cur) {
+    if (cur) {
       found = this.nodeFilter(cur) && this.predicate(cur);
     }
-
-    while (cur && !found) {
-      cur = this.findNextNode();
-      if(cur) {
-        found = this.nodeFilter(cur) && this.predicate(cur);
+    if (cur !== this.endNode) {
+      while (cur && !found) {
+        cur = this.findNextNode();
+        if (cur) {
+          found = this.nodeFilter(cur) && this.predicate(cur);
+        }
       }
+    } else {
+      // we've visited the endNode, so we clear out any pending nodes
+      this.stack = [];
     }
     this._current = cur;
 
-    return found ? cur : null;
+    return found ? cur as R : null;
   }
 
   /**
    * Get the next node in the direction that satisfies the filter
    * @private
    */
-  private findNextNode(): T | null {
+  private findNextNode(): R | null {
     let candidate = this.findNextNodeToConsider();
     while (candidate && !this.nodeFilter(candidate)) {
       candidate = this.findNextNodeToConsider();
     }
-    return candidate;
+    return candidate as R;
   }
 
   /**
@@ -91,19 +96,31 @@ export default abstract class NodeFinder<T extends Node | ModelNode> implements 
    */
   private findNextNodeToConsider(): T | null {
     let node = this.stack.pop();
-    while(node && this.visited.get(node) && node !== this.endNode) {
+    // skip nodes that are already visited
+    while (node && this.visited.get(node)) {
       node = this.stack.pop();
     }
-    if(!node) {
+    if (!node) {
       return null;
     }
     this.visited.set(node, true);
+    let prev = this.nextSibling(node, this.inverseDirection(this.direction));
+    // We dont want to visit siblings in the other direction
+    // this is an alternative to being more careful when adding children to the stack
+    // potential optimization target
+    while (prev) {
+      this.visited.set(prev, true);
+      prev = this.nextSibling(prev, this.inverseDirection(this.direction));
+    }
 
+    // this is a stack, so we add things we want to visit in reverse order
     const parent = this.getParent(node)!;
-    this.stack.push(parent);
+    if (parent !== this.getParent(this.rootNode)) {
+      this.stack.push(parent);
+    }
 
-    const sibling = this.nextSibling(node);
-    if (sibling) {
+    const sibling = this.nextSibling(node, this.direction);
+    if (sibling && node !== this.rootNode) {
       this.stack.push(sibling);
     }
 
@@ -115,8 +132,35 @@ export default abstract class NodeFinder<T extends Node | ModelNode> implements 
     return node;
   }
 
-  protected abstract nextSibling(node: T): T | null;
+  /**
+   * Utility to flip a direction
+   * @param direction
+   * @private
+   */
+  private inverseDirection(direction: Direction) {
+    return direction === Direction.FORWARDS ? Direction.BACKWARDS : Direction.FORWARDS;
+  }
+
+  /**
+   * Get the next sibling according to the direction
+   * @param node
+   * @param direction
+   * @protected
+   */
+  protected abstract nextSibling(node: T, direction: Direction): T | null;
+
+  /**
+   * Get the children of node if it has them, otherwise return null
+   * @param node
+   * @protected
+   */
   protected abstract getChildren(node: T): T[] | null;
+
+  /**
+   * Get the parent of node if it has one, otherwise return null
+   * @param node
+   * @protected
+   */
   protected abstract getParent(node: T): T | null;
 
   /**
@@ -125,24 +169,31 @@ export default abstract class NodeFinder<T extends Node | ModelNode> implements 
    * @private
    */
   private pushChildren(children: T[]) {
-    if(this.direction === Direction.FORWARDS) {
-      this.stack.push(...children);
-    } else {
+    if (this.direction === Direction.FORWARDS) {
       const childrenCopy = [...children];
       childrenCopy.reverse();
       this.stack.push(...childrenCopy);
+    } else {
+      this.stack.push(...children);
     }
   }
 
 
   [Symbol.iterator](): Iterator<T> {
     return {
-      next(): IteratorResult<T> {
+      next: (): IteratorResult<T, null> => {
         const value = this.next();
-        return {
-          value,
-          done: !!value
-        };
+        if (value) {
+          return {
+            value,
+            done: false
+          };
+        } else {
+          return {
+            value: null,
+            done: true,
+          };
+        }
       }
     };
   }
