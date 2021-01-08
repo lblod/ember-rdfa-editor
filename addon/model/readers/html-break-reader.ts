@@ -4,6 +4,7 @@ import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
 /**
  * Reader for the <br> element
+ * TODO: currently not used
  */
 export default class HtmlBreakReader implements Reader<HTMLElement, Fragment> {
   read(_: HTMLElement): Fragment {

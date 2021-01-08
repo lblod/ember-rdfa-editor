@@ -1,4 +1,4 @@
-import {getWindowSelection, isTextNode, isVoidElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {getWindowSelection, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
@@ -9,6 +9,9 @@ export enum PropertyState {
   enabled = 'enabled',
   disabled = 'disabled',
   unknown = 'unknown'
+}
+function isTextNode(node: Node): node is Text | HTMLBRElement {
+  return node.nodeType === Node.TEXT_NODE || (node.nodeType === Node.ELEMENT_NODE && tagName(node) === "br");
 }
 export default class ModelSelectionTracker {
   modelSelection: ModelSelection;
@@ -42,12 +45,14 @@ export default class ModelSelectionTracker {
       let focusOffset = currentSelection.focusOffset;
 
       if(!isTextNode(anchor)) {
-        anchor = this.ensureTextNode(anchor, currentSelection.anchorOffset);
-        anchorOffset = 0;
+        const {textNode, offset} = this.ensureTextNode(anchor, currentSelection.anchorOffset);
+        anchor = textNode;
+        anchorOffset = offset;
       }
       if(!isTextNode(focus)) {
-        focus = this.ensureTextNode(focus, currentSelection.focusOffset);
-        focusOffset = 0;
+        const {textNode, offset} = this.ensureTextNode(focus, currentSelection.focusOffset);
+        focus = textNode;
+        focusOffset = offset;
       }
       currentSelection.setBaseAndExtent(anchor, anchorOffset, focus, focusOffset);
       return;
@@ -59,7 +64,7 @@ export default class ModelSelectionTracker {
     document.dispatchEvent(modelSelectionUpdatedEvent);
   }
 
-  private ensureTextNode(node: Node, offset: number): Text {
+  private ensureTextNode(node: Node, offset: number): { textNode: Text | HTMLBRElement; offset: number }{
     let from: Node | null = node.childNodes[offset];
 
     if(!from){
@@ -85,7 +90,10 @@ export default class ModelSelectionTracker {
     if (!textNode) {
       throw new SelectionError("Could not ensure textNode");
     }
-    return textNode as Text;
+    return {
+      textNode,
+     offset: tagName(textNode) === "br" ? 1 : 0
+    };
   }
 
 }
