@@ -38,6 +38,8 @@ export default class HtmlReader implements Reader<Node, ModelNode> {
         ["em", this.wrappedAttributeReader],
         ["b", this.wrappedAttributeReader],
         ["i", this.wrappedAttributeReader],
+        ["u", this.wrappedAttributeReader],
+        ["del", this.wrappedAttributeReader],
         // ["br", this.breakReader],
       ]
     );

@@ -4,9 +4,9 @@ import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-tex
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelIterator from "@lblod/ember-rdfa-editor/model/util/model-iterator";
 import {PropertyState} from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
-import { analyse } from '@lblod/marawa/rdfa-context-scanner';
+import {analyse} from '@lblod/marawa/rdfa-context-scanner';
+import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 
 /**
  * Just like the {@link Model} is a representation of the document, the ModelSelection is a representation
@@ -53,14 +53,14 @@ export default class ModelSelection {
   }
 
   get rdfaSelection() {
-    if(!this.domSelection) return;
+    if (!this.domSelection) return;
     return this.caculateRdfaSelection(this.domSelection);
   }
 
   get subtree() {
-    if(!this.domSelection) return;
+    if (!this.domSelection) return;
     let subtree = this.domSelection.getRangeAt(0).commonAncestorContainer;
-    if(!isElement(subtree)) {
+    if (!isElement(subtree)) {
       subtree = subtree.parentElement!;
     }
     return subtree;
@@ -68,12 +68,17 @@ export default class ModelSelection {
 
   getTextPropertyStatus(property: TextAttribute): PropertyState {
     if (this.isCollapsed) {
-      console.log(this.anchor);
       return this.anchor?.getTextAttribute(property) ? PropertyState.enabled : PropertyState.disabled;
     } else {
-      const modelIterator = new ModelIterator<ModelText>(this.anchor!, this.focus!, node => node instanceof ModelText);
-      const first = modelIterator[Symbol.iterator]().next().value.getTextAttribute(property);
-      for (const node of modelIterator) {
+      const nodeFinder = new ModelNodeFinder<ModelText>({
+          startNode: this.anchor!,
+          endNode: this.focus!,
+          rootNode: this.model.rootModelNode,
+          nodeFilter: ModelNode.isModelText,
+        }
+      );
+      const first = nodeFinder.next()?.getTextAttribute(property);
+      for (const node of nodeFinder) {
         if (node.getTextAttribute(property) !== first) {
           return PropertyState.unknown;
         }
@@ -211,8 +216,8 @@ export default class ModelSelection {
 
 
   caculateRdfaSelection(selection: Selection) {
-    if(selection.type === 'Caret') {
-      if(!selection.anchorNode) {
+    if (selection.type === 'Caret') {
+      if (!selection.anchorNode) {
         throw new SelectionError("Selection has no anchorNode");
       }
       const rdfaSelection = analyse(selection.anchorNode);

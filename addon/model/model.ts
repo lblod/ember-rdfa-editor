@@ -34,7 +34,6 @@ export default class Model {
 
   constructor() {
     this.modelSelectionTracker = new ModelSelectionTracker(this);
-    this.modelSelectionTracker.startTracking();
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
     this.nodeMap = new Map<Node, ModelNode>();
@@ -45,7 +44,11 @@ export default class Model {
   }
 
   set rootNode(rootNode: HTMLElement) {
+    if(this._rootNode) {
+      this.modelSelectionTracker.stopTracking();
+    }
     this._rootNode = rootNode;
+    this.modelSelectionTracker.startTracking();
   }
 
   get selection(): ModelSelection {
@@ -95,7 +98,7 @@ export default class Model {
   }
 
   getModelNodeFor(domNode: Node) {
-    if(!this.nodeMap) return;
+    // if(!this.nodeMap) return;
     return this.nodeMap.get(domNode);
   }
 

@@ -26,10 +26,15 @@ export default class ModelSelectionTracker {
   }
   updateSelection() {
     const currentSelection  = getWindowSelection();
+    if(!this.model.rootNode.contains(currentSelection.anchorNode)) {
+      return;
+    }
     if(!currentSelection.anchorNode || !currentSelection.focusNode) {
       currentSelection.collapse(this.model.rootNode,0);
       return;
     }
+
+
     if(!isTextNode(currentSelection.anchorNode) || !isTextNode(currentSelection.focusNode)) {
       let anchor = currentSelection.anchorNode;
       let focus = currentSelection.focusNode;

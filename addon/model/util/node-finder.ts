@@ -20,7 +20,7 @@ function dummy() {
  * The algorithm is DFS but modified so it can also walk upwards.
  * Can be implemented for different types of nodes.
  */
-export default abstract class NodeFinder<T extends Node | ModelNode, R extends T> implements Iterable<T> {
+export default abstract class NodeFinder<T extends Node | ModelNode, R extends T> implements Iterable<R> {
 
   startNode: T;
   private _current: T | null;
@@ -179,9 +179,9 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
   }
 
 
-  [Symbol.iterator](): Iterator<T> {
+  [Symbol.iterator](): Iterator<R> {
     return {
-      next: (): IteratorResult<T, null> => {
+      next: (): IteratorResult<R, null> => {
         const value = this.next();
         if (value) {
           return {

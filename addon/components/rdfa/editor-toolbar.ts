@@ -32,10 +32,10 @@ export default class EditorToolbar extends Component<Args> {
   }
   updateProperties(event: CustomEvent<ModelSelection>) {
     console.log("richSelectionUpdated");
-    this.isBold = event.detail.bold !== PropertyState.disabled;
-    this.isItalic = event.detail.italic !== PropertyState.disabled;
-    this.isStrikethrough = event.detail.strikethrough !== PropertyState.disabled;
-    this.isUnderline = event.detail.underline !== PropertyState.disabled;
+    this.isBold = event.detail.bold === PropertyState.enabled;
+    this.isItalic = event.detail.italic === PropertyState.enabled;
+    this.isUnderline = event.detail.underline === PropertyState.enabled;
+    this.isStrikethrough = event.detail.strikethrough === PropertyState.enabled;
   }
 
   @action
