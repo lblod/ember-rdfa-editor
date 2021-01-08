@@ -54,6 +54,7 @@ export default class ModelSelectionTracker {
         focus = textNode;
         focusOffset = offset;
       }
+
       currentSelection.setBaseAndExtent(anchor, anchorOffset, focus, focusOffset);
       return;
     }
@@ -90,10 +91,17 @@ export default class ModelSelectionTracker {
     if (!textNode) {
       throw new SelectionError("Could not ensure textNode");
     }
-    return {
+    if (tagName(textNode === "br")) {
+      const parent = textNode.parentNode;
+      const index = parent?.childNodes.indexOf(textNode);
+      return this.ensureTextNode(textNode.parentNode, index );
+    }
+    else {
+      return {
       textNode,
-     offset: tagName(textNode) === "br" ? 1 : 0
-    };
+        offset: 0
+      };
+    }
   }
 
 }
