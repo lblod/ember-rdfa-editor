@@ -1,17 +1,17 @@
-import ModelNode, {ModelNodeType} from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
-export default class ModelElement extends ModelNode implements Cloneable<ModelElement>{
+export default class ModelElement extends ModelNode implements Cloneable<ModelElement> {
   nodeType: ModelNodeType = "ELEMENT";
 
   private _children: ModelNode[] = [];
   private _type: ElementType;
 
-  constructor(type: ElementType = "span") {
-    super();
+  constructor(type: ElementType = "span", config?: NodeConfig) {
+    super(config);
     this._type = type;
   }
 
@@ -34,6 +34,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   get childCount() {
     return this._children.length;
   }
+
   get firstChild() {
     return this._children[0];
   }
@@ -52,22 +53,40 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   addChild(child: ModelNode, position?: number) {
+    let prev;
+    let next = null;
     if (position === undefined) {
+      prev = this.children[this.childCount - 1];
       this._children.push(child);
     } else {
+
+      next = this.children[position];
+      prev = this.children[position - 1];
+
       this._children.splice(position, 0, child);
     }
+
+    if(prev) {
+      prev.nextSibling = child;
+    }
+    if(next) {
+      next.previousSibling = child;
+    }
+    child.previousSibling = prev;
+    child.nextSibling = next;
+
     child.parent = this;
   }
+
   appendChildren(...children: ModelNode[]) {
-    for(const child of children) {
+    for (const child of children) {
       this.addChild(child);
     }
   }
 
 
   setTextAttribute(key: TextAttribute, value: boolean) {
-    for(const child of this.children) {
+    for (const child of this.children) {
       if (child instanceof ModelText || child instanceof ModelElement) {
         child.setTextAttribute(key, value);
       }

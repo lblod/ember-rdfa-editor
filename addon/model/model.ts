@@ -1,4 +1,4 @@
-import RichSelectionTracker, {RichSelection} from "@lblod/ember-rdfa-editor/utils/ce/rich-selection-tracker";
+import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import RichElementContainer from "@lblod/ember-rdfa-editor/model/rich-element-container";
 import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
@@ -7,6 +7,8 @@ import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 export type RichContainer = RichElementContainer | RichTextContainer;
 
@@ -17,7 +19,7 @@ export type RichContainer = RichElementContainer | RichTextContainer;
  */
 export default class Model {
 
-  private richSelectionTracker: RichSelectionTracker;
+  private modelSelectionTracker: ModelSelectionTracker;
   /**
    * The root of the editor. This will get set by ember,
    * so we trick typescript into assuming it is never null
@@ -31,8 +33,7 @@ export default class Model {
   private nodeMap: Map<Node, ModelNode>;
 
   constructor() {
-    this.richSelectionTracker = new RichSelectionTracker(this);
-    this.richSelectionTracker.startTracking();
+    this.modelSelectionTracker = new ModelSelectionTracker(this);
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
     this.nodeMap = new Map<Node, ModelNode>();
@@ -43,11 +44,15 @@ export default class Model {
   }
 
   set rootNode(rootNode: HTMLElement) {
+    if(this._rootNode) {
+      this.modelSelectionTracker.stopTracking();
+    }
     this._rootNode = rootNode;
+    this.modelSelectionTracker.startTracking();
   }
 
-  get selection(): RichSelection {
-    return this.richSelectionTracker.richSelection;
+  get selection(): ModelSelection {
+    return this.modelSelectionTracker.modelSelection;
   }
 
   get rootModelNode(): ModelNode {
@@ -72,10 +77,10 @@ export default class Model {
    */
   write(tree: ModelNode = this.rootModelNode) {
     const oldRoot = tree.boundNode;
-    if(!oldRoot) {
+    if (!oldRoot) {
       throw new Error("Conatiner without boundNOde");
     }
-    if(!isElement(oldRoot)) {
+    if (!isElement(oldRoot)) {
       throw new NotImplementedError("root is not an element, not sure what to do");
     }
     const newRoot = this.writer.write(tree);
@@ -84,7 +89,7 @@ export default class Model {
     }
     oldRoot.append(...newRoot.childNodes);
     this.bindNode(tree, oldRoot);
-    this.selection.modelSelection.writeToDom();
+    this.selection.writeToDom();
   }
 
   bindNode(modelNode: ModelNode, domNode: Node) {
@@ -93,6 +98,27 @@ export default class Model {
   }
 
   getModelNodeFor(domNode: Node) {
+    // if(!this.nodeMap) return;
     return this.nodeMap.get(domNode);
+  }
+
+  removeModelNode(modelNode: ModelNode) {
+    if (modelNode.boundNode) {
+      this.nodeMap.delete(modelNode.boundNode);
+    }
+    if (modelNode.parent) {
+      this.removeChildFromParent(modelNode, modelNode.parent);
+    }
+  }
+
+  private removeChildFromParent(child: ModelNode, parent: ModelElement) {
+    const index = parent.children.indexOf(child);
+    parent.children.splice(index, 1);
+    if (child.previousSibling) {
+      child.previousSibling.nextSibling = child.nextSibling;
+    }
+    if (child.nextSibling) {
+      child.nextSibling = child.previousSibling;
+    }
   }
 }
