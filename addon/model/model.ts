@@ -1,16 +1,12 @@
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
-import RichElementContainer from "@lblod/ember-rdfa-editor/model/rich-element-container";
-import {RichTextContainer} from "@lblod/ember-rdfa-editor/model/rich-text-container";
 import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
-import RichText from "@lblod/ember-rdfa-editor/model/rich-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
-export type RichContainer = RichElementContainer | RichTextContainer;
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -29,7 +25,6 @@ export default class Model {
   private _rootModelNode!: ModelNode;
   private reader: HtmlReader;
   private writer: HtmlWriter;
-  private idCounter: number = 0;
   private nodeMap: Map<Node, ModelNode>;
 
   constructor() {
@@ -69,6 +64,7 @@ export default class Model {
       throw new Error("Could not create a rich root");
     }
     this._rootModelNode = newRoot;
+    this.bindNode(this.rootModelNode, this.rootNode);
   }
 
   /**

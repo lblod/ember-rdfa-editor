@@ -7,7 +7,6 @@ export default class HtmlElementReader implements Reader<HTMLElement, ModelEleme
   }
   read(from: HTMLElement): ModelElement {
     const result = new ModelElement(from.tagName as ElementType);
-    this.model.bindNode(result, from);
     for (const attr of from.attributes) {
       result.setAttribute(attr.name, attr.value);
     }
