@@ -44,11 +44,11 @@ export default class Model {
   }
 
   set rootNode(rootNode: HTMLElement) {
-    if(this._rootNode) {
-      this.modelSelectionTracker.stopTracking();
-    }
+    this.modelSelectionTracker.stopTracking();
     this._rootNode = rootNode;
-    this.modelSelectionTracker.startTracking();
+    if(this._rootNode) {
+      this.modelSelectionTracker.startTracking();
+    }
   }
 
   get selection(): ModelSelection {
