@@ -10,8 +10,10 @@ export default abstract class SetPropertyCommand extends Command {
   constructor(model: Model) {
     super(model);
   }
-  execute(property: TextAttribute, value: boolean) {
-    const selection = this.model.selection;
+  execute(property: TextAttribute, value: boolean, selection?: RichSelection) {
+    if (! selection ) {
+      selection = this.model.selection;
+    }
 
     const nodeFinder = new ModelNodeFinder({
      startNode: selection.anchor!,
