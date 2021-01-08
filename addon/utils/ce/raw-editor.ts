@@ -68,8 +68,7 @@ class RawEditor extends EmberObject {
   }
   set rootNode(rootNode: HTMLElement) {
     this.model.rootNode = rootNode;
-    this.updateRichNode();
-    if(this.tryOutVdom) {
+    if(rootNode) {
       this.model.read();
       this.model.write();
       this.updateRichNode();
