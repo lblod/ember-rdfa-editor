@@ -91,9 +91,9 @@ export default class ModelSelectionTracker {
     if (!textNode) {
       throw new SelectionError("Could not ensure textNode");
     }
-    if (tagName(textNode === "br")) {
+    if (tagName(textNode) === "br") {
       const parent = textNode.parentNode;
-      const index = parent?.childNodes.indexOf(textNode);
+      const index = Array.from(parent?.childNodes).indexOf(textNode) + 1;
       return this.ensureTextNode(textNode.parentNode, index );
     }
     else {
