@@ -219,13 +219,11 @@ export default class ModelSelection {
       if (!selection.anchorNode) {
         throw new SelectionError("Selection has no anchorNode");
       }
-      const rdfaSelection = analyse(selection.anchorNode);
-      return rdfaSelection;
+      return analyse(selection.anchorNode);
     } else {
       const range = selection.getRangeAt(0);
       const commonAncestor = range.commonAncestorContainer;
-      const rdfaSelection = analyse(commonAncestor);
-      return rdfaSelection;
+      return analyse(commonAncestor);
     }
 
   }

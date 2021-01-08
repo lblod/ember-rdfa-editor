@@ -1,8 +1,8 @@
 import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import {TextAttribute} from "@lblod/ember-rdfa-editor/model/rich-text";
 import {tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import Fragment from "@lblod/ember-rdfa-editor/model/fragment";
 import {HtmlTag} from "@lblod/ember-rdfa-editor/model/util/types";
+import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 
 
 /**

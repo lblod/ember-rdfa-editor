@@ -2,11 +2,8 @@ import Writer from "@lblod/ember-rdfa-editor/model/writers/writer";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import HtmlTextWriter from "@lblod/ember-rdfa-editor/model/writers/html-text-writer";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import {WriterError} from "@lblod/ember-rdfa-editor/utils/errors";
 import HtmlElementWriter from "@lblod/ember-rdfa-editor/model/writers/html-element-writer";
-import {tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 /**
  * Top-level {@link Writer} for HTML documents.

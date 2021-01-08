@@ -5,12 +5,13 @@ import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-tex
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
+import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 
 export default abstract class SetPropertyCommand extends Command {
   constructor(model: Model) {
     super(model);
   }
-  execute(property: TextAttribute, value: boolean, selection?: RichSelection) {
+  execute(property: TextAttribute, value: boolean, selection?: ModelSelection) {
     if (! selection ) {
       selection = this.model.selection;
     }

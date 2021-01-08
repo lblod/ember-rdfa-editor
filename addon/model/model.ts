@@ -56,7 +56,6 @@ export default class Model {
 
   /**
    * Read in the document and build up the model
-   * @param node
    */
   read() {
     const newRoot = this.reader.read(this.rootNode);
@@ -74,7 +73,7 @@ export default class Model {
   write(tree: ModelNode = this.rootModelNode) {
     const oldRoot = tree.boundNode;
     if (!oldRoot) {
-      throw new Error("Conatiner without boundNOde");
+      throw new Error("Container without boundNOde");
     }
     if (!isElement(oldRoot)) {
       throw new NotImplementedError("root is not an element, not sure what to do");
@@ -88,16 +87,31 @@ export default class Model {
     this.selection.writeToDom();
   }
 
+  /**
+   * Bind a modelNode to a domNode. This ensures that we can reach the corresponding node from
+   * either side
+   * @param modelNode
+   * @param domNode
+   */
   bindNode(modelNode: ModelNode, domNode: Node) {
     modelNode.boundNode = domNode;
     this.nodeMap.set(domNode, modelNode);
   }
 
+  /**
+   * Get the corresponding modelNode for domNode
+   * @param domNode
+   */
   getModelNodeFor(domNode: Node) {
-    // if(!this.nodeMap) return;
+    if(!this.nodeMap) return;
     return this.nodeMap.get(domNode);
   }
 
+  /**
+   * Remove a node from the model
+   * TODO: untested
+   * @param modelNode
+   */
   removeModelNode(modelNode: ModelNode) {
     if (modelNode.boundNode) {
       this.nodeMap.delete(modelNode.boundNode);

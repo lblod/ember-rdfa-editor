@@ -1,8 +1,7 @@
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import NodeFinder, {NodeFinderConfig} from "@lblod/ember-rdfa-editor/model/util/node-finder";
-
+import NodeFinder from "@lblod/ember-rdfa-editor/model/util/node-finder";
 
 
 /**

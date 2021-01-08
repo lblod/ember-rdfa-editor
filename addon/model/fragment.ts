@@ -4,7 +4,7 @@ import {ModelNodeType} from "@lblod/ember-rdfa-editor/model/model-node";
 
 /**
  * Internal utility element that doesnt get rendered. It's used as a temporary container for textnodes
- * to group complex styling structures without introducing unecessary dom elements
+ * to group complex styling structures without introducing unnecessary dom elements
  */
 export default class Fragment extends ModelElement {
   nodeType: ModelNodeType = "FRAGMENT";

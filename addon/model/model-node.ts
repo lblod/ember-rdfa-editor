@@ -7,6 +7,9 @@ export interface NodeConfig {
   debugInfo: any;
 }
 
+/**
+ * Basic building block of the model. Cannot be instantiated, any node will always have a more specific type
+ */
 export default abstract class ModelNode {
   abstract nodeType: ModelNodeType;
 
@@ -25,14 +28,26 @@ export default abstract class ModelNode {
     }
   }
 
+  /**
+   * Typechecking utility to verify whether the node is {@link ModelElement}
+   * @param node
+   */
   static isModelElement(node?: ModelNode | null): node is ModelElement {
     return !!node && node.nodeType === "ELEMENT";
   }
 
+  /**
+   * Typechecking utility to verify whether the node is {@link ModelText}
+   * @param node
+   */
   static isModelText(node?: ModelNode | null): node is ModelText {
     return !!node && node.nodeType === "TEXT";
   }
 
+  /**
+   * Typechecking utility to verify whether the node is {@link Fragment}
+   * @param node
+   */
   static isFragment(node?: ModelNode | null): node is Fragment {
     return !!node && node.nodeType === "FRAGMENT";
   }
@@ -96,7 +111,12 @@ export default abstract class ModelNode {
     this._attributeMap.set(key, value);
   }
 
-  setTextAttribute(_key: TextAttribute, _value: boolean) {
-  }
+  /**
+   * Generic no-op default for setting a text attribute. Should be overridden by subclasses
+   * that care about textAttributes. Intentionally a no-op and not an abstract method.
+   * @param _key
+   * @param _value
+   */
+  setTextAttribute(_key: TextAttribute, _value: boolean) {}
 
 }
