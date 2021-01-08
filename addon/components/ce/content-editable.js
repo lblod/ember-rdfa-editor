@@ -25,7 +25,6 @@ import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
-import RichSelectionTracker from '../../utils/ce/rich-selection-tracker';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 
 /**
@@ -194,7 +193,6 @@ export default class ContentEditable extends Component {
   willDestroyElement() {
     this.set('richNode', null);
     this.set('rawEditor.rootNode', null);
-    this.richSelectionTracker.stopTracking();
     forgivingAction('elementUpdate', this)();
   }
 
