@@ -23,9 +23,8 @@ export default class ModelSelection {
   private model: Model;
 
 
-  constructor(model: Model, selection: Selection) {
+  constructor(model: Model) {
     this.model = model;
-    this.setFromDomSelection(selection);
   }
 
   /**
