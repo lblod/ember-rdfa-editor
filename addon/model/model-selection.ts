@@ -53,7 +53,7 @@ export default class ModelSelection {
 
   get rdfaSelection() {
     if (!this.domSelection) return;
-    return this.caculateRdfaSelection(this.domSelection);
+    return this.calculateRdfaSelection(this.domSelection);
   }
 
   get subtree() {
@@ -214,7 +214,7 @@ export default class ModelSelection {
   }
 
 
-  caculateRdfaSelection(selection: Selection) {
+  calculateRdfaSelection(selection: Selection) {
     if (selection.type === 'Caret') {
       if (!selection.anchorNode) {
         throw new SelectionError("Selection has no anchorNode");
