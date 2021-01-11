@@ -35,7 +35,7 @@ export default class ModelSelectionTracker {
 
   updateSelection() {
     const currentSelection = getWindowSelection();
-    if (!this.model.rootNode.contains(currentSelection.anchorNode) || this.model.rootNode === currentSelection.anchorNode) {
+    if(!this.model.rootNode.contains(currentSelection.anchorNode) || (this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
       return;
     }
     if (!currentSelection.anchorNode || !currentSelection.focusNode) {
@@ -49,14 +49,13 @@ export default class ModelSelectionTracker {
       let focus = currentSelection.focusNode;
       let anchorOffset = currentSelection.anchorOffset;
       let focusOffset = currentSelection.focusOffset;
-
-      if (!isTextNode(anchor)) {
-        const {textNode, offset} = this.ensureTextNode(anchor, currentSelection.anchorOffset);
+      if(!isTextNode(anchor)) {
+        const {textNode, offset} = this.ensureTextNode(anchor, currentSelection.anchorOffset, 'anchor');
         anchor = textNode;
         anchorOffset = offset;
       }
       if (!isTextNode(focus)) {
-        const {textNode, offset} = this.ensureTextNode(focus, currentSelection.focusOffset);
+        const {textNode, offset} = this.ensureTextNode(focus, currentSelection.focusOffset, 'focus');
         focus = textNode;
         focusOffset = offset;
       }
@@ -71,8 +70,19 @@ export default class ModelSelectionTracker {
     document.dispatchEvent(modelSelectionUpdatedEvent);
   }
 
-  private ensureTextNode(node: Node, offset: number): { textNode: Text | HTMLBRElement; offset: number } {
-    let from: Node | null = node.childNodes[offset];
+  private ensureTextNode(node: Node, offset: number, type: String): { textNode: Text | HTMLBRElement; offset: number } {
+    let from: Node | null;
+    let direction: Direction;
+    if(offset === 0) {
+      from = node.childNodes[0];
+      direction = Direction.FORWARDS;
+    } else if(offset !== node.childNodes.length){
+      from = node.childNodes[offset];
+      direction = Direction.BACKWARDS;
+    }else {
+      from = node.childNodes[offset - 1];
+      direction = Direction.BACKWARDS;
+    }
 
     if (!from) {
       from = node.parentNode!;
@@ -80,7 +90,7 @@ export default class ModelSelectionTracker {
     let textNode = new DomNodeFinder(
       {
         startNode: from,
-        direction: Direction.FORWARDS,
+        direction: direction,
         rootNode: this.model.rootNode,
         nodeFilter: isTextNode
       }
@@ -90,7 +100,7 @@ export default class ModelSelectionTracker {
       textNode = new DomNodeFinder(
         {
           startNode: from,
-          direction: Direction.BACKWARDS,
+          direction: direction === Direction.FORWARDS ? Direction.BACKWARDS : Direction.FORWARDS,
           rootNode: this.model.rootNode,
           nodeFilter: isTextNode
         }
@@ -101,7 +111,7 @@ export default class ModelSelectionTracker {
     } else {
       return {
         textNode,
-        offset: 0
+        offset: type === 'anchor' ? 0 : textNode.length
       };
     }
   }
