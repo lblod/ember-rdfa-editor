@@ -15,12 +15,11 @@ import DeleteHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/delete
 import DisableDeleteHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/delete-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
-import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
-import BoldItalicUnderlineHandler from '../../utils/ce/handlers/bold-italic-underline-handler';
+import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
 import UndoHandler from '../../utils/ce/handlers/undo-hander';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
-//import TabHandler from '../../utils/ce/handlers/tab-handler';
+import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
 import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
 import { inject as service } from '@ember/service';
