@@ -49,7 +49,7 @@ import getRichNodeMatchingDomNode from "@lblod/ember-rdfa-editor/utils/ce/get-ri
 import classic from 'ember-classic-decorator';
 import CappedHistory from "@lblod/ember-rdfa-editor/utils/ce/capped-history";
 import RichNode from "@lblod/marawa/rich-node";
-
+import { tracked } from '@glimmer/tracking';
 
 export interface ContentObserver {
   handleTextInsert: (position: number, text: String, extraInfo: Array<Object>) => void
@@ -69,7 +69,7 @@ export default class PernetRawEditor extends RawEditor {
    * @type String
    * @public
    */
-  currentTextContent: string | null = null
+  @tracked currentTextContent: string | null = null
   private _currentSelection?: InternalSelection;
 
   history!: CappedHistory;
@@ -248,7 +248,7 @@ export default class PernetRawEditor extends RawEditor {
   *generateDiffEvents(extraInfo: any[] = []): TaskGenerator<void> {
     yield timeout(320);
     const newText: string = getTextContent(this.rootNode);
-    let oldText: string | null = this.currentTextContent || "" ;
+    let oldText: string = this.currentTextContent || "" ;
     const dmp = new DiffMatchPatch();
     const differences = dmp.diff_main(oldText, newText);
     let pos = 0;
@@ -258,21 +258,21 @@ export default class PernetRawEditor extends RawEditor {
     for (let [mode,text] of differences) {
       if (mode === 1) {
         textHasChanges = true;
-        this.set('currentTextContent', oldText.slice(0, pos) + text + oldText.slice(pos, oldText.length));
+        this.currentTextContent = oldText.slice(0, pos) + text + oldText.slice(pos, oldText.length);
         for (let observer of contentObservers) {
           observer.handleTextInsert(pos, text, extraInfo);
         }
         pos = pos + text.length;
       } else if (mode === -1) {
         textHasChanges = true;
-        this.set('currentTextContent', oldText.slice(0, pos) + oldText.slice(pos + text.length, oldText.length));
+        this.currentTextContent = oldText.slice(0, pos) + oldText.slice(pos + text.length, oldText.length);
         for (let observer of contentObservers) {
           observer.handleTextRemoval(pos, pos + text.length, extraInfo);
         }
       } else {
         pos = pos + text.length;
       }
-      oldText = this.get('currentTextContent');
+      oldText = this.currentTextContent || "";
     }
 
     if (textHasChanges) {
