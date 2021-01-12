@@ -35,7 +35,21 @@ export default class ModelSelectionTracker {
 
   updateSelection() {
     const currentSelection = getWindowSelection();
-    if(!this.model.rootNode.contains(currentSelection.anchorNode) || (this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
+    if(currentSelection.focusOffset === 0 && currentSelection.anchorNode) {
+      const previousFocus = currentSelection.focusNode?.previousSibling;
+      if(previousFocus) {
+        let offset;
+        if(isTextNode(previousFocus)) {
+          offset = previousFocus.length;
+        } else {
+          offset = previousFocus.childNodes.length;
+        }
+        currentSelection.setBaseAndExtent(currentSelection.anchorNode, currentSelection.anchorOffset, previousFocus, offset);
+      }
+      
+    }
+    if(!this.model.rootNode.contains(currentSelection.anchorNode) || !this.model.rootNode.contains(currentSelection.focusNode) ||
+      (this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
       return;
     }
     if (!currentSelection.anchorNode || !currentSelection.focusNode) {
@@ -49,6 +63,7 @@ export default class ModelSelectionTracker {
       let focus = currentSelection.focusNode;
       let anchorOffset = currentSelection.anchorOffset;
       let focusOffset = currentSelection.focusOffset;
+
       if(!isTextNode(anchor)) {
         const {textNode, offset} = this.ensureTextNode(anchor, currentSelection.anchorOffset, 'anchor');
         anchor = textNode;
@@ -62,7 +77,10 @@ export default class ModelSelectionTracker {
 
       currentSelection.setBaseAndExtent(anchor, anchorOffset, focus, focusOffset);
       return;
+      
     }
+
+    
 
     this.modelSelection.setFromDomSelection(currentSelection);
 
@@ -75,18 +93,20 @@ export default class ModelSelectionTracker {
     let direction: Direction;
     if(offset === 0) {
       from = node.childNodes[0];
-      direction = Direction.FORWARDS;
-    } else if(offset !== node.childNodes.length){
-      from = node.childNodes[offset];
-      direction = Direction.BACKWARDS;
     }else {
       from = node.childNodes[offset - 1];
+    }
+
+    if(type === 'anchor') {
+      direction = Direction.FORWARDS;
+    } else {
       direction = Direction.BACKWARDS;
     }
 
     if (!from) {
-      from = node.parentNode!;
+      from = node;
     }
+
     let textNode = new DomNodeFinder(
       {
         startNode: from,
