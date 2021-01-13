@@ -1,6 +1,6 @@
 import { A } from '@ember/array';
 import { PernetSelection, PernetSelectionBlock } from '@lblod/ember-rdfa-editor/editor/pernet'
-import { RichNode } from '@lblod/ember-rdfa-editor/editor/raw-editor'
+import RichNode from "@lblod/marawa/rich-node";
 /**
  * Fake class to list helper functions
  * these functions can be included using
@@ -40,8 +40,8 @@ function sliceTextIntoTextNode(textNode: Text, text: string, start: number): voi
  * @method insertTextNodeWithSpace
  * @public
  */
-function insertTextNodeWithSpace(parentDomNode: HTMLElement, relativeToSibling: ChildNode | null = null, after: boolean = false): Text {
-  let textNode = document.createTextNode(invisibleSpace);
+function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNode | null = null, after: boolean = false): Text {
+  const textNode = document.createTextNode(invisibleSpace);
   if (relativeToSibling) {
     if (after) {
       relativeToSibling.after(textNode);
@@ -83,8 +83,8 @@ function unwrapElement(node: HTMLElement): void {
  * @deprecate all supported browser have ChildNode.remove
  * @public
  */
-function removeNode(node: ChildNode) {
-  let parent = node.parentNode;
+function removeNode(node: Node) {
+  const parent = node.parentNode;
   if (parent)
     parent.removeChild(node);
 }
@@ -106,7 +106,7 @@ function isVoidElement(node: Node): boolean {
  * @public
  * @param node
  */
-function isElement(node: Node): node is Element {
+function isElement(node: Node): node is HTMLElement {
   return node.nodeType === Node.ELEMENT_NODE;
 }
 
@@ -127,8 +127,8 @@ function isAllWhitespace(node: Text): boolean {
  * @method isDisplayedAsBlock
  */
 
-function isDisplayedAsBlock(domNode: Element): boolean {
-  if (domNode.nodeType !== Node.ELEMENT_NODE)
+function isDisplayedAsBlock(domNode: Node): boolean {
+  if (!isElement(domNode))
     return false;
   const displayStyle = window.getComputedStyle(domNode)['display'];
   return displayStyle == 'block' || displayStyle == 'list-item';
@@ -257,9 +257,9 @@ function insertNodeBAfterNodeA(_parent: HTMLElement, nodeA: ChildNode, nodeB: Ch
  * @method tagName
  * @public
  */
-function tagName(node?: Element | null): string {
+function tagName(node?: Node | null): string {
   if (!node) return '';
-  return node.nodeType === node.ELEMENT_NODE ? node.tagName.toLowerCase() : '';
+  return isElement(node) ? node.tagName.toLowerCase() : '';
 }
 
 /**
@@ -277,8 +277,8 @@ function isBlockOrBr(node: HTMLElement): boolean {
  * @method createElementsFromHtml
  * @public
  */
-function createElementsFromHTML(htmlString: string): Array<Node> {
-  let div = document.createElement('div');
+function createElementsFromHTML(htmlString: string): Array<ChildNode> {
+  const div = document.createElement('div');
   div.innerHTML = htmlString.trim();
   return Array.from(div.childNodes);
 }

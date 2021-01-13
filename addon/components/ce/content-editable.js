@@ -1,7 +1,7 @@
 import classic from "ember-classic-decorator";
 import { layout as templateLayout } from "@ember-decorators/component";
+import { tracked } from '@glimmer/tracking';
 import { action } from "@ember/object";
-import { union, alias } from "@ember/object/computed";
 import Component from '@ember/component';
 import layout from '../../templates/components/ce/content-editable';
 import forgivingAction from '../../utils/ce/forgiving-action';
@@ -12,19 +12,19 @@ import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bac
 import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import DeleteHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler';
+import DisableDeleteHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/delete-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
-import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
-import LegacyMovementObserver from '../../utils/ce/movement-observers/legacy-movement-observer';
-import BoldItalicUnderlineHandler from '../../utils/ce/handlers/bold-italic-underline-handler';
+import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
 import UndoHandler from '../../utils/ce/handlers/undo-hander';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
-//import TabHandler from '../../utils/ce/handlers/tab-handler';
+import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
 import HTMLInputParser from '../../utils/html-input-parser';
 import { normalizeEvent } from 'ember-jquery-legacy';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
+import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -44,34 +44,20 @@ import { A } from '@ember/array';
  * @class ContentEditableComponent
  * @extends Component
  */
-@classic
 @templateLayout(layout)
 export default class ContentEditable extends Component {
   tagName = ''
   @service() features;
 
   /**
-   * latest cursor position in the contenteditable, it is aliased to the rawEditor.currentSelection
+   * WIP: Rich selection
    *
-   * @property currentSelection
-   * @type Array
-   *
-   * @private
-   */
-  @alias('rawEditor.currentSelection')
-  currentSelection;
-
-  /**
-   * latest text content in the contenteditable, it is aliased to the rawEditor.currentTextContent
-   *
-   *
-   * @property currentTextContent
-   * @type String
+   * @property richSelection
+   * @type Object
    *
    * @private
    */
-  @alias('rawEditor.currentTextContent')
-  currentTextContent;
+    richSelection;
 
   /**
    * element of the component, it is aliased to the rawEditor.rootNode
@@ -81,34 +67,14 @@ export default class ContentEditable extends Component {
    *
    * @private
    */
-  rootNode = null;
-
-  /**
-   * richNode is the rich representation of the component element,
-   * it is aliased to the rawEditor.richNode
-   *
-   * @property richNode
-   * @type RichNode
-   * @private
-   */
-  @alias('rawEditor.richNode')
-  richNode;
+  @tracked rootNode = null;
 
   /**
    *
    * @property rawEditor
    * @type RawEditor
    */
-  rawEditor = null;
-
-  /**
-   * components present in the editor
-   * @property components
-   * @type {Object}
-   * @public
-   */
-  @alias('rawEditor.components')
-  components;
+  @tracked rawEditor = null;
 
   /**
    * ordered set of input handlers
@@ -116,8 +82,10 @@ export default class ContentEditable extends Component {
    * @type Array
    * @public
    */
-  @union('externalHandlers', 'defaultHandlers')
-  inputHandlers;
+  get inputHandlers() {
+    return this.externalHandlers.concat(this.defaultHandlers);
+  }
+
 
   /**
    * default input handlers
@@ -125,7 +93,7 @@ export default class ContentEditable extends Component {
    * @type Array
    * @private
    */
-  defaultHandlers = null;
+  @tracked defaultHandlers = null;
 
   /**
    * external input handlersg
@@ -140,13 +108,7 @@ export default class ContentEditable extends Component {
    */
   init() {
     super.init(...arguments);
-    const rawEditor = RawEditor.create({
-      handleFullContentUpdate: this.get('handleFullContentUpdate'),
-      textInsert: this.get('textInsert'),
-      textRemove: this.get('textRemove'),
-      elementUpdate: this.get('elementUpdate')
-    });
-    rawEditor.registerMovementObserver(new LegacyMovementObserver({notify: this.selectionUpdate}));
+    const rawEditor = LegacyRawEditor.create({ });
     rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
     this.set('rawEditor', rawEditor);
     const forceParagraph = this.features.isEnabled('editor-force-paragraph');
@@ -156,7 +118,7 @@ export default class ContentEditable extends Component {
                                    new BackspaceHandler({rawEditor}),
                                    new TabHandler({rawEditor}),
                                    new TextInputHandler({rawEditor, forceParagraph }),
-                                   new DeleteHandler({rawEditor}),
+                                   new DisableDeleteHandler({rawEditor}),
                                    new IgnoreModifiersHandler({rawEditor}),
                                    new UndoHandler({rawEditor}),
                                    new BoldItalicUnderlineHandler({rawEditor}),
@@ -167,18 +129,10 @@ export default class ContentEditable extends Component {
     this.set('currentTextContent', '');
     this.set('defaultHandlers', defaultInputHandlers);
     this.set('capturedEvents', A());
+
     if( ! this.externalHandlers ) {
       this.set('externalHandlers', []);
     }
-  }
-
-  didUpdateAttrs() {
-    this.rawEditor.set('textInsert',this.textInsert);
-    this.rawEditor.set('textRemove',this.textRemove);
-    this.rawEditor.set('handleFullContentUpdate',this.handleFullContentUpdate);
-    this.rawEditor.set('selectionUpdate',this.selectionUpdate);
-    this.rawEditor.set('elementUpdate',this.elementUpdate);
-    this.rawEditor.set('handleFullContentUpdate',this.handleFullContentUpdate);
   }
 
   /**
@@ -434,6 +388,7 @@ export default class ContentEditable extends Component {
         }
       }
       this.rawEditor.generateDiffEvents.perform();
+      this.rawEditor.model.read();
       return preventDefault;
     }
     else {

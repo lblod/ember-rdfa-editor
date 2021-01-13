@@ -6,6 +6,7 @@ import { next } from '@ember/runloop';
 import { timeout } from 'ember-concurrency';
 import { task } from 'ember-concurrency-decorators';
 import { reorderBlocks, getExtendedRegions } from './rdfa-block-helpers';
+import { tracked } from '@glimmer/tracking';
 
 /**
 * Bookkeeping of the editor hints
@@ -33,7 +34,7 @@ export default class HinstRegistry extends EmberObject {
   * @property activeRegion
   * @type Array
   */
-  activeRegion = null;
+  @tracked activeRegion = null;
 
   /**
   * @property activeHints

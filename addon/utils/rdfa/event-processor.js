@@ -4,7 +4,6 @@ import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 import HintsRegistry from './hints-registry';
 import { A } from '@ember/array';
 import { isEmpty } from '@ember/utils';
-import scoped from './scoped-method';
 
 /**
 * Event processor orchastrating the hinting based on incoming editor events
@@ -158,8 +157,8 @@ export default EmberObject.extend({
    *
    * @public
    */
-  analyseAndDispatch: scoped( function(extraInfo = []) {
-    const node = this.get('editor').get('rootNode');
+  analyseAndDispatch(extraInfo = []) {
+    const node = this.editor.rootNode;
     if (! isEmpty(this.modifiedRange)) {
       const contexts = analyse(node, this.modifiedRange);
 
@@ -173,8 +172,11 @@ export default EmberObject.extend({
       );
       this.set('modifiedRange', A());
     }
-  }),
+  },
 
+  handleFullContentUpdate(extraInfo = []) {
+    this.analyseAndDispatch(extraInfo);
+  },
   /**
    * Remove text in the specified range and trigger updating of the hints
    *
@@ -185,10 +187,10 @@ export default EmberObject.extend({
    *
    * @public
    */
-  removeText: scoped( function(start,stop) {
+  handleTextRemoval(start,stop) {
     this.updateModifiedRange(start, stop, true);
     return this.get('registry').removeText(start, stop);
-  }),
+  },
 
   /**
    * Insert text starting at the specified location and trigger updating of the hints
@@ -200,19 +202,20 @@ export default EmberObject.extend({
    *
    * @public
    */
-  insertText: scoped( function(index, text) {
+  handleTextInsert(index, text) {
     this.updateModifiedRange(index, index + text.length);
     return this.get('registry').insertText(index, text);
-  }),
+  },
 
   /**
    * Handling the change of the current selected text/location in the editor
    *
-   * @method selectionChanged
+   * @method handleMovement
    *
    * @public
    */
-  selectionChanged: scoped( function() {
-    this.get('registry').set('activeRegion', this.get('editor.currentSelection'));
-  })
+  handleMovement(_controller, _oldSelection, newSelection) {
+    const {startNode, endNode } = newSelection;
+    this.registry.activeRegion = [startNode.absolutePosition, endNode.absolutePosition];
+  }
 });

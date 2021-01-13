@@ -45,7 +45,7 @@ export default class RdfaEditor extends Component {
    *
    * @public
    */
-  profile = 'default';
+  @tracked profile = 'default';
 
   /**
    * Function accepting a debug object containing the components used for debugging
@@ -72,7 +72,7 @@ export default class RdfaEditor extends Component {
    *
    * @private
    */
-  eventProcessor = null;
+  @tracked eventProcessor = null;
 
   /**
    * @property hinstRegistry
@@ -80,7 +80,7 @@ export default class RdfaEditor extends Component {
    *
    * @private
    */
-  hintsRegistry = null;
+  @tracked hintsRegistry = null;
 
   /**
    * @property hasHints
@@ -115,6 +115,12 @@ export default class RdfaEditor extends Component {
    * @private
    */
   handlers = null;
+
+  /**
+   * editor controller
+   *
+   */
+  @tracked editor;
 
   init() {
     super.init(...arguments);
@@ -158,35 +164,33 @@ export default class RdfaEditor extends Component {
    */
   @action
   handleRawEditorInit(editor) {
-    this.set('editor', editor);
-    const hintsRegistry = HintsRegistry.create();
-    hintsRegistry.set('rawEditor', editor);
-    this.set('hintsRegistry', hintsRegistry);
-    const eventProcessor = EventProcessor.create({
-      registry: hintsRegistry,
+    this.editor = editor;
+    this.hintsRegistry = HintsRegistry.create( { rawEditor: editor});
+    this.eventProcessor = EventProcessor.create({
+      registry: this.hintsRegistry,
       profile: this.profile,
       dispatcher: this.rdfaEditorDispatcher,
-      editor: editor
+      editor: this.editor
     });
-    this.set('eventProcessor', eventProcessor);
-    hintsRegistry.addRegistryObserver( function(registry) {
-      eventProcessor.handleRegistryChange(registry);
-    });
-
-    hintsRegistry.addNewCardObserver( function(card) {
-      eventProcessor.handleNewCardInRegistry(card);
+    editor.registerContentObserver(this.eventProcessor);
+    editor.registerMovementObserver(this.eventProcessor);
+    this.hintsRegistry.addRegistryObserver( (registry) => {
+      this.eventProcessor.handleRegistryChange(registry);
     });
 
-    hintsRegistry.addRemovedCardObserver( function(card) {
-      eventProcessor.handleRemovedCardInRegistry(card);
+    this.hintsRegistry.addNewCardObserver( (card) => {
+      this.eventProcessor.handleNewCardInRegistry(card);
     });
 
+    this.hintsRegistry.addRemovedCardObserver( (card) => {
+      this.eventProcessor.handleRemovedCardInRegistry(card);
+    });
 
     if (this.initDebug) {
       const debugInfo = {
-        hintsRegistry: hintsRegistry,
-        editor: eventProcessor.editor,
-        contextScanner: eventProcessor.scanner
+        hintsRegistry: this.hintsRegistry,
+        editor: this.eventProcessor.editor,
+        contextScanner: this.eventProcessor.scanner
       };
       this.initDebug(debugInfo);
     }
