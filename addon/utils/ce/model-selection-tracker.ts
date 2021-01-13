@@ -64,13 +64,14 @@ export default class ModelSelectionTracker {
       let anchorOffset = currentSelection.anchorOffset;
       let focusOffset = currentSelection.focusOffset;
 
+      const reverse = this.isReverseSelection(currentSelection);
       if(!isTextNode(anchor)) {
-        const {textNode, offset} = this.ensureTextNode(anchor, currentSelection.anchorOffset, 'anchor');
+        const {textNode, offset} = this.ensureTextNode(anchor, currentSelection.anchorOffset, reverse ? 'focus' : 'anchor');
         anchor = textNode;
         anchorOffset = offset;
       }
       if (!isTextNode(focus)) {
-        const {textNode, offset} = this.ensureTextNode(focus, currentSelection.focusOffset, 'focus');
+        const {textNode, offset} = this.ensureTextNode(focus, currentSelection.focusOffset, reverse ? 'anchor' : 'focus');
         focus = textNode;
         focusOffset = offset;
       }
@@ -88,6 +89,16 @@ export default class ModelSelectionTracker {
     document.dispatchEvent(modelSelectionUpdatedEvent);
   }
 
+  private isReverseSelection(selection: Selection) : Boolean {
+    if(!selection.anchorNode || !selection.focusNode) return false;
+    const position = selection.anchorNode.compareDocumentPosition(selection.focusNode);
+    let backward = false;
+    // position == 0 if nodes are the same
+    if (!position && selection.anchorOffset > selection.focusOffset || position === Node.DOCUMENT_POSITION_PRECEDING) {
+      backward = true;
+    }
+    return backward;
+  }
   private ensureTextNode(node: Node, offset: number, type: String): { textNode: Text | HTMLBRElement; offset: number } {
     let from: Node | null;
     let direction: Direction;
