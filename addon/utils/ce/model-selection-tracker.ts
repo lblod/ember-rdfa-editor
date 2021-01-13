@@ -35,7 +35,7 @@ export default class ModelSelectionTracker {
 
   updateSelection() {
     const currentSelection = getWindowSelection();
-    if(currentSelection.focusOffset === 0 && currentSelection.anchorNode) {
+    if(currentSelection.focusNode !== this.model.rootNode && currentSelection.focusOffset === 0 && currentSelection.anchorNode) {
       const previousFocus = currentSelection.focusNode?.previousSibling;
       if(previousFocus) {
         let offset;
