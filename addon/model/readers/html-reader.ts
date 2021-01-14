@@ -86,6 +86,9 @@ export default class HtmlReader implements Reader<Node, ModelNode> {
     } else {
       result = this.voidReader.read(node);
     }
+    if(result) {
+      this.model.bindNode(result, node);
+    }
     return result;
   }
 }

@@ -35,7 +35,7 @@ export default class ModelSelectionTracker {
 
   updateSelection() {
     const currentSelection = getWindowSelection();
-    if(currentSelection.focusNode !== this.model.rootNode && currentSelection.focusOffset === 0 && currentSelection.anchorNode) {
+    if(currentSelection.type != 'Caret' && currentSelection.focusNode !== this.model.rootNode && currentSelection.focusOffset === 0 && currentSelection.anchorNode) {
       const previousFocus = currentSelection.focusNode?.previousSibling;
       if(previousFocus) {
         let offset;
@@ -49,7 +49,7 @@ export default class ModelSelectionTracker {
       
     }
     if(!this.model.rootNode.contains(currentSelection.anchorNode) || !this.model.rootNode.contains(currentSelection.focusNode) ||
-      (this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
+      (currentSelection.type != 'Caret' && this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
       return;
     }
     if (!currentSelection.anchorNode || !currentSelection.focusNode) {
