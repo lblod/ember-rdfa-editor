@@ -84,6 +84,11 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
   }
 
+  removeChild(child: ModelNode) {
+    const index = this.children.indexOf(child);
+    this.children.splice(index,1);
+  }
+
 
   setTextAttribute(key: TextAttribute, value: boolean) {
     for (const child of this.children) {
