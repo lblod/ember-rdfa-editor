@@ -392,6 +392,7 @@ export default class ContentEditable extends Component {
       return preventDefault;
     }
     else {
+      this.rawEditor.model.read();
       return false;
     }
   }

@@ -25,13 +25,13 @@ export default class Model {
   private _rootModelNode!: ModelNode;
   private reader: HtmlReader;
   private writer: HtmlWriter;
-  private nodeMap: Map<Node, ModelNode>;
+  private nodeMap: Map<String, ModelNode>;
 
   constructor() {
     this.modelSelectionTracker = new ModelSelectionTracker(this);
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
-    this.nodeMap = new Map<Node, ModelNode>();
+    this.nodeMap = new Map<String, ModelNode>();
   }
 
   get rootNode(): HTMLElement {
@@ -87,6 +87,13 @@ export default class Model {
     this.selection.writeToDom();
   }
 
+  generateUuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
   /**
    * Bind a modelNode to a domNode. This ensures that we can reach the corresponding node from
    * either side
@@ -94,8 +101,15 @@ export default class Model {
    * @param domNode
    */
   bindNode(modelNode: ModelNode, domNode: Node) {
+    let id;
+    if(domNode.editorId) {
+      id = domNode.editorId;
+    } else {
+      id = this.generateUuid();
+      domNode.editorId = id;
+    }
     modelNode.boundNode = domNode;
-    this.nodeMap.set(domNode, modelNode);
+    this.nodeMap.set(id, modelNode);
   }
 
   /**
@@ -103,8 +117,8 @@ export default class Model {
    * @param domNode
    */
   getModelNodeFor(domNode: Node) {
-    if(!this.nodeMap) return;
-    return this.nodeMap.get(domNode);
+    if(!this.nodeMap ) return;
+    return this.nodeMap.get(domNode.editorId);
   }
 
   /**
