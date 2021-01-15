@@ -12,8 +12,8 @@ export default class HtmlTextReader implements Reader<Text, ModelText | null> {
   }
 
   read(from: Text): ModelText | null {
-    if(!from.textContent || stringToVisibleText(from.textContent) === "") {
-     return null;
+    if(!from.textContent || from.textContent === "") {
+      return null;
     }
     const text = new ModelText(from.textContent || "");
     this.lastTextNode = text;
