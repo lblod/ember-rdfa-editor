@@ -4,6 +4,7 @@ module.exports = {
   name: require('./package').name,
 
   included() {
+    let app = this._findHost();
     let hasSass = !!app.registry.availablePlugins['ember-cli-sass'];
 
     // Don't include the precompiled css file if the user uses a supported CSS preprocessor
