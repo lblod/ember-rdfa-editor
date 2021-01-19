@@ -697,7 +697,7 @@ export default class PernetRawEditor extends RawEditor {
     }
   }
 
-  
+
   /**
    * select a node based on the provided caret position, taking into account the current active node
    * if no suitable node exists, create one (within reason)

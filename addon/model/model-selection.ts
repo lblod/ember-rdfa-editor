@@ -7,6 +7,8 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {PropertyState} from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 /**
  * Just like the {@link Model} is a representation of the document, the ModelSelection is a representation
@@ -14,24 +16,66 @@ import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-find
  */
 export default class ModelSelection {
 
-  anchor: ModelText | null = null;
-  focus: ModelText | null = null;
+  private _anchor: ModelPosition | null = null;
+  private _focus: ModelPosition | null = null;
   anchorOffset: number = 0;
   focusOffset: number = 0;
   commonAncestor: ModelNode | null = null;
   domSelection: Selection | null = null;
+  ranges: ModelRange[];
   private model: Model;
 
 
   constructor(model: Model) {
     this.model = model;
+    this.ranges = [];
+  }
+
+  get focus(): ModelPosition | null {
+    return this.lastRange?.start || null;
+  }
+
+  set focus(value: ModelPosition | null) {
+    if (!this.lastRange || !value) {
+      return;
+    }
+    this.lastRange.end = value;
+  }
+
+  get anchor(): ModelPosition | null {
+    return this.lastRange?.start || null;
+  }
+
+  set anchor(value: ModelPosition | null) {
+    if (!this.lastRange || !value) {
+      return;
+    }
+    this.lastRange.start = value;
+  }
+
+  get lastRange() {
+    if (this.ranges.length) {
+      return this.ranges[this.ranges.length - 1];
+    } else {
+      return null;
+    }
+  }
+  addRange(range: ModelRange) {
+    this.ranges.push(range);
+  }
+
+  clearRanges() {
+    this.ranges = [];
+  }
+  getRangeAt(index: number) {
+    return this.ranges[index];
   }
 
   /**
    * @return whether the selection is collapsed
    */
   get isCollapsed() {
-    return this.anchor === this.focus && this.anchorOffset === this.focusOffset;
+    return this._anchor === this._focus && this.anchorOffset === this.focusOffset;
   }
 
 
@@ -67,11 +111,11 @@ export default class ModelSelection {
 
   getTextPropertyStatus(property: TextAttribute): PropertyState {
     if (this.isCollapsed) {
-      return this.anchor?.getTextAttribute(property) ? PropertyState.enabled : PropertyState.disabled;
+      return this._anchor?.getTextAttribute(property) ? PropertyState.enabled : PropertyState.disabled;
     } else {
       const nodeFinder = new ModelNodeFinder<ModelText>({
-          startNode: this.anchor!,
-          endNode: this.focus!,
+          startNode: this._anchor!,
+          endNode: this._focus!,
           rootNode: this.model.rootModelNode,
           nodeFilter: ModelNode.isModelText,
         }
@@ -93,21 +137,21 @@ export default class ModelSelection {
    */
   collapse(toLeft: boolean = false) {
     if (toLeft) {
-      this.anchor = this.focus;
+      this._anchor = this._focus;
       this.anchorOffset = this.focusOffset;
     } else {
-      this.focus = this.anchor;
+      this._focus = this._anchor;
       this.focusOffset = this.anchorOffset;
     }
   }
 
   setAnchor(node: ModelText, offset: number = 0) {
-    this.anchor = node;
+    this._anchor = node;
     this.anchorOffset = offset;
   }
 
   setFocus(node: ModelText, offset: number = 0) {
-    this.focus = node;
+    this._focus = node;
     this.focusOffset = offset;
   }
 
@@ -116,9 +160,9 @@ export default class ModelSelection {
    * @param node
    */
   selectNode(node: ModelText) {
-    this.anchor = node;
+    this._anchor = node;
     this.anchorOffset = 0;
-    this.focus = node;
+    this._focus = node;
     this.focusOffset = node.length;
   }
 
@@ -136,7 +180,7 @@ export default class ModelSelection {
       throw new SelectionError("Selected nodes are not text nodes");
     }
 
-    // this cast is safe given a normalized (anchor and offset always in textnodes) selection
+    // this cast is safe given a normalized (start and offset always in textnodes) selection
     const domAnchor = selection.anchorNode as Text;
     const domFocus = selection.focusNode as Text;
 
@@ -147,8 +191,8 @@ export default class ModelSelection {
       return;
     }
 
-    this.anchor = modelAnchor;
-    this.focus = modelFocus;
+    this._anchor = modelAnchor;
+    this._focus = modelFocus;
     this.anchorOffset = selection.anchorOffset;
     this.focusOffset = selection.focusOffset;
 
@@ -161,14 +205,14 @@ export default class ModelSelection {
         this.commonAncestor = this.model.getModelNodeFor(commonAncestor as Text)!.parent!;
       }
     } else {
-      this.commonAncestor = this.focus.parent || this.focus;
+      this.commonAncestor = this._focus.parent || this._focus;
     }
     if (this.isSelectionBackwards(selection)) {
-      const tempEl = this.anchor;
+      const tempEl = this._anchor;
       const tempOff = this.anchorOffset;
 
-      this.anchor = this.focus;
-      this.focus = tempEl;
+      this._anchor = this._focus;
+      this._focus = tempEl;
       this.anchorOffset = this.focusOffset;
       this.focusOffset = tempOff;
     }
@@ -179,7 +223,7 @@ export default class ModelSelection {
    * TODO: needs cleanup. Crucial method, has to be perfect and preferably well-tested
    */
   writeToDom() {
-    if (!this.anchor || !this.focus) {
+    if (!this._anchor || !this._focus) {
       let cur: ModelNode = this.model.rootModelNode;
       while (cur && !ModelNode.isModelText(cur)) {
         if (!ModelNode.isModelElement(cur)) {
@@ -187,12 +231,12 @@ export default class ModelSelection {
         }
         cur = cur.firstChild;
       }
-      this.anchor = cur;
-      this.focus = cur;
+      this._anchor = cur;
+      this._focus = cur;
     }
     try {
       const selection = getWindowSelection();
-      selection.setBaseAndExtent(this.anchor.boundNode!, this.anchorOffset, this.focus.boundNode!, this.focusOffset);
+      selection.setBaseAndExtent(this._anchor.boundNode!, this.anchorOffset, this._focus.boundNode!, this.focusOffset);
     } catch (e) {
       console.log(e);
     }

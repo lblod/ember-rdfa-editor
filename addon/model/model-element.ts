@@ -66,10 +66,10 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       this._children.splice(position, 0, child);
     }
 
-    if(prev) {
+    if (prev) {
       prev.nextSibling = child;
     }
-    if(next) {
+    if (next) {
       next.previousSibling = child;
     }
     child.previousSibling = prev;
@@ -86,7 +86,11 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   removeChild(child: ModelNode) {
     const index = this.children.indexOf(child);
-    this.children.splice(index,1);
+    this.children.splice(index, 1);
+  }
+
+  getChildIndex(child: ModelNode): number | null {
+    return this.children.indexOf(child);
   }
 
 

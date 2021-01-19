@@ -1,9 +1,11 @@
 import {getWindowSelection, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import DomNodeFinder from "@lblod/ember-rdfa-editor/model/util/dom-node-finder";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 export enum PropertyState {
   enabled = 'enabled',
@@ -33,8 +35,40 @@ export default class ModelSelectionTracker {
     document.removeEventListener('selectionchange', this.updateSelection);
   }
 
+  readDomRange(range: Range) {
+    const start = this.readDomPosition(range.startContainer, range.startOffset);
+    if(range.collapsed) {
+      return new ModelRange(start);
+    }
+    const end = this.readDomPosition(range.endContainer, range.endOffset);
+    return new ModelRange(end);
+  }
+
+  readDomPosition(node: Node, offset: number): ModelPosition {
+    //TODO: would be good if we could ask the node for it's root, that would allow
+    // having multiple trees
+    const root = this.model.rootModelNode;
+    if(isTextNode(node)) {
+
+    }
+    throw new NotImplementedError("todo");
+  }
+
   updateSelection() {
     const currentSelection = getWindowSelection();
+
+    for (let i = 0; i < currentSelection.rangeCount; i++) {
+
+      const range = currentSelection.getRangeAt(i);
+
+
+
+    }
+
+
+
+
+
     if(currentSelection.type != 'Caret' && currentSelection.focusNode !== this.model.rootNode && currentSelection.focusOffset === 0 && currentSelection.anchorNode) {
       const previousFocus = currentSelection.focusNode?.previousSibling;
       if(previousFocus) {
@@ -46,7 +80,7 @@ export default class ModelSelectionTracker {
         }
         currentSelection.setBaseAndExtent(currentSelection.anchorNode, currentSelection.anchorOffset, previousFocus, offset);
       }
-      
+
     }
     if(!this.model.rootNode.contains(currentSelection.anchorNode) || !this.model.rootNode.contains(currentSelection.focusNode) ||
       (currentSelection.type != 'Caret' && this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
@@ -78,10 +112,10 @@ export default class ModelSelectionTracker {
 
       currentSelection.setBaseAndExtent(anchor, anchorOffset, focus, focusOffset);
       return;
-      
+
     }
 
-    
+
 
     this.modelSelection.setFromDomSelection(currentSelection);
 

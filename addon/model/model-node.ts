@@ -3,6 +3,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import Fragment from "@lblod/ember-rdfa-editor/model/fragment";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
+
 export interface NodeConfig {
   debugInfo: any;
 }
@@ -23,7 +24,7 @@ export default abstract class ModelNode {
 
   protected constructor(config?: NodeConfig) {
     this._attributeMap = new Map<string, string>();
-    if(config) {
+    if (config) {
       this._debugInfo = config.debugInfo;
     }
   }
@@ -63,6 +64,7 @@ export default abstract class ModelNode {
   set previousSibling(value: ModelNode | null) {
     this._previousSibling = value;
   }
+
   get nextSibling(): ModelNode | null {
     return this._nextSibling;
   }
@@ -70,6 +72,7 @@ export default abstract class ModelNode {
   set nextSibling(value: ModelNode | null) {
     this._nextSibling = value;
   }
+
   set attributeMap(value: Map<string, string>) {
     this._attributeMap = value;
   }
@@ -88,6 +91,32 @@ export default abstract class ModelNode {
 
   set boundNode(value: Node | null) {
     this._boundNode = value;
+  }
+
+  get index(): number | null {
+    if (this.parent) {
+      return this.parent.getChildIndex(this);
+    }
+    return null;
+  }
+
+  getIndexPath(): number[] {
+    const result = [];
+
+    let child: ModelNode = this;
+    let parent = this.parent;
+    while (parent) {
+      const index = parent.getChildIndex(child);
+      if (index === null) {
+        break;
+      }
+      result.unshift(index);
+      child = parent;
+      parent = parent.parent;
+    }
+
+    return result;
+
   }
 
   /**
@@ -117,6 +146,7 @@ export default abstract class ModelNode {
    * @param _key
    * @param _value
    */
-  setTextAttribute(_key: TextAttribute, _value: boolean) {}
+  setTextAttribute(_key: TextAttribute, _value: boolean) {
+  }
 
 }

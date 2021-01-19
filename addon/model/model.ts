@@ -6,6 +6,7 @@ import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 
 /**
@@ -22,7 +23,7 @@ export default class Model {
    * @private
    */
   private _rootNode!: HTMLElement;
-  private _rootModelNode!: ModelNode;
+  private _rootModelNode!: ModelElement;
   private reader: HtmlReader;
   private writer: HtmlWriter;
   private nodeMap: Map<String, ModelNode>;
@@ -50,9 +51,10 @@ export default class Model {
     return this.modelSelectionTracker.modelSelection;
   }
 
-  get rootModelNode(): ModelNode {
+  get rootModelNode(): ModelElement {
     return this._rootModelNode;
   }
+
 
   /**
    * Read in the document and build up the model
@@ -61,6 +63,9 @@ export default class Model {
     const newRoot = this.reader.read(this.rootNode);
     if (!newRoot) {
       throw new Error("Could not create a rich root");
+    }
+    if(!ModelNode.isModelElement(newRoot)) {
+      throw new Error("root model node has to be an element");
     }
     this._rootModelNode = newRoot;
     this.bindNode(this.rootModelNode, this.rootNode);
@@ -133,6 +138,23 @@ export default class Model {
     if (modelNode.parent) {
       this.removeChildFromParent(modelNode, modelNode.parent);
     }
+  }
+
+
+  static getChildIndex(child: Node): number | null {
+    const parent = child.parentNode;
+    if (!parent) {
+      return null;
+    }
+    let index = 0;
+    // more verbose but probably more efficient than converting to an array and using indexOf
+    for (const candidate of parent.childNodes) {
+      if (child === candidate) {
+        return index;
+      }
+      index ++;
+    }
+    return null;
   }
 
   private removeChildFromParent(child: ModelNode, parent: ModelElement) {
