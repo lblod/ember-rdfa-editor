@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  name: require('./package').name;
+  name: require('./package').name,
 
   included() {
     let hasSass = !!app.registry.availablePlugins['ember-cli-sass'];
