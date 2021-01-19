@@ -31,3 +31,5 @@ export class WriterError extends CustomError{}
 
 
 export class ModelError extends CustomError{}
+
+export class PositionError extends CustomError{}

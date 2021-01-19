@@ -7,3 +7,7 @@ export interface Cloneable<T> {
 export enum Direction {
   FORWARDS, BACKWARDS
 }
+
+export enum RelativePosition {
+  BEFORE, EQUAL, AFTER
+}

@@ -37,7 +37,7 @@ export default class ModelSelectionTracker {
 
   readDomRange(range: Range) {
     const start = this.readDomPosition(range.startContainer, range.startOffset);
-    if(range.collapsed) {
+    if (range.collapsed) {
       return new ModelRange(start);
     }
     const end = this.readDomPosition(range.endContainer, range.endOffset);
@@ -48,83 +48,87 @@ export default class ModelSelectionTracker {
     //TODO: would be good if we could ask the node for it's root, that would allow
     // having multiple trees
     const root = this.model.rootModelNode;
-    if(isTextNode(node)) {
-
+    const modelNode = this.model.getModelNodeFor(node);
+    if(!modelNode) {
+      throw new SelectionError("Selected node without modelNode equivalent");
     }
-    throw new NotImplementedError("todo");
+    return ModelPosition.fromParent(root, modelNode, offset);
   }
 
   updateSelection() {
     const currentSelection = getWindowSelection();
+    const ranges = [];
 
     for (let i = 0; i < currentSelection.rangeCount; i++) {
 
       const range = currentSelection.getRangeAt(i);
-
-
-
-    }
-
-
-
-
-
-    if(currentSelection.type != 'Caret' && currentSelection.focusNode !== this.model.rootNode && currentSelection.focusOffset === 0 && currentSelection.anchorNode) {
-      const previousFocus = currentSelection.focusNode?.previousSibling;
-      if(previousFocus) {
-        let offset;
-        if(isTextNode(previousFocus)) {
-          offset = previousFocus.length;
-        } else {
-          offset = previousFocus.childNodes.length;
-        }
-        currentSelection.setBaseAndExtent(currentSelection.anchorNode, currentSelection.anchorOffset, previousFocus, offset);
-      }
+      ranges.push(this.readDomRange(range));
 
     }
-    if(!this.model.rootNode.contains(currentSelection.anchorNode) || !this.model.rootNode.contains(currentSelection.focusNode) ||
-      (currentSelection.type != 'Caret' && this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
-      return;
-    }
-    if (!currentSelection.anchorNode || !currentSelection.focusNode) {
-      currentSelection.collapse(this.model.rootNode, 0);
-      return;
-    }
+    this.modelSelection.ranges = ranges;
 
 
-    if (!isTextNode(currentSelection.anchorNode) || !isTextNode(currentSelection.focusNode)) {
-      let anchor = currentSelection.anchorNode;
-      let focus = currentSelection.focusNode;
-      let anchorOffset = currentSelection.anchorOffset;
-      let focusOffset = currentSelection.focusOffset;
+    // if (currentSelection.type != 'Caret' && currentSelection.focusNode !== this.model.rootNode && currentSelection.focusOffset === 0 && currentSelection.anchorNode) {
+    //   const previousFocus = currentSelection.focusNode?.previousSibling;
+    //   if (previousFocus) {
+    //     let offset;
+    //     if (isTextNode(previousFocus)) {
+    //       offset = previousFocus.length;
+    //     } else {
+    //       offset = previousFocus.childNodes.length;
+    //     }
+    //     currentSelection.setBaseAndExtent(currentSelection.anchorNode, currentSelection.anchorOffset, previousFocus, offset);
+    //   }
+    //
+    // }
+    // if (!this.model.rootNode.contains(currentSelection.anchorNode) || !this.model.rootNode.contains(currentSelection.focusNode) ||
+    //   (currentSelection.type != 'Caret' && this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
+    //   return;
+    // }
+    // if (!currentSelection.anchorNode || !currentSelection.focusNode) {
+    //   currentSelection.collapse(this.model.rootNode, 0);
+    //   return;
+    // }
+    //
+    //
+    // if (!isTextNode(currentSelection.anchorNode) || !isTextNode(currentSelection.focusNode)) {
+    //   let anchor = currentSelection.anchorNode;
+    //   let focus = currentSelection.focusNode;
+    //   let anchorOffset = currentSelection.anchorOffset;
+    //   let focusOffset = currentSelection.focusOffset;
+    //
+    //   const reverse = this.isReverseSelection(currentSelection);
+    //   if (!isTextNode(anchor)) {
+    //     const {
+    //       textNode,
+    //       offset
+    //     } = this.ensureTextNode(anchor, currentSelection.anchorOffset, reverse ? 'focus' : 'anchor');
+    //     anchor = textNode;
+    //     anchorOffset = offset;
+    //   }
+    //   if (!isTextNode(focus)) {
+    //     const {
+    //       textNode,
+    //       offset
+    //     } = this.ensureTextNode(focus, currentSelection.focusOffset, reverse ? 'anchor' : 'focus');
+    //     focus = textNode;
+    //     focusOffset = offset;
+    //   }
+    //
+    //   currentSelection.setBaseAndExtent(anchor, anchorOffset, focus, focusOffset);
+    //   return;
 
-      const reverse = this.isReverseSelection(currentSelection);
-      if(!isTextNode(anchor)) {
-        const {textNode, offset} = this.ensureTextNode(anchor, currentSelection.anchorOffset, reverse ? 'focus' : 'anchor');
-        anchor = textNode;
-        anchorOffset = offset;
-      }
-      if (!isTextNode(focus)) {
-        const {textNode, offset} = this.ensureTextNode(focus, currentSelection.focusOffset, reverse ? 'anchor' : 'focus');
-        focus = textNode;
-        focusOffset = offset;
-      }
-
-      currentSelection.setBaseAndExtent(anchor, anchorOffset, focus, focusOffset);
-      return;
-
-    }
+    // }
 
 
-
-    this.modelSelection.setFromDomSelection(currentSelection);
+    // this.modelSelection.setFromDomSelection(currentSelection);
 
     const modelSelectionUpdatedEvent = new CustomEvent<ModelSelection>('richSelectionUpdated', {detail: this.modelSelection});
     document.dispatchEvent(modelSelectionUpdatedEvent);
   }
 
-  private isReverseSelection(selection: Selection) : Boolean {
-    if(!selection.anchorNode || !selection.focusNode) return false;
+  private isReverseSelection(selection: Selection): Boolean {
+    if (!selection.anchorNode || !selection.focusNode) return false;
     const position = selection.anchorNode.compareDocumentPosition(selection.focusNode);
     let backward = false;
     // position == 0 if nodes are the same
@@ -133,16 +137,17 @@ export default class ModelSelectionTracker {
     }
     return backward;
   }
+
   private ensureTextNode(node: Node, offset: number, type: String): { textNode: Text | HTMLBRElement; offset: number } {
     let from: Node | null;
     let direction: Direction;
-    if(offset === 0) {
+    if (offset === 0) {
       from = node.childNodes[0];
-    }else {
+    } else {
       from = node.childNodes[offset - 1];
     }
 
-    if(type === 'anchor') {
+    if (type === 'anchor') {
       direction = Direction.FORWARDS;
     } else {
       direction = Direction.BACKWARDS;

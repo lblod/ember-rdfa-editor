@@ -9,6 +9,7 @@ import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 
 /**
  * Just like the {@link Model} is a representation of the document, the ModelSelection is a representation
@@ -22,60 +23,115 @@ export default class ModelSelection {
   focusOffset: number = 0;
   commonAncestor: ModelNode | null = null;
   domSelection: Selection | null = null;
-  ranges: ModelRange[];
+  private _ranges: ModelRange[];
   private model: Model;
+  private _isRightToLeft: boolean;
 
 
   constructor(model: Model) {
     this.model = model;
-    this.ranges = [];
+    this._ranges = [];
+    this._isRightToLeft = false;
   }
 
   get focus(): ModelPosition | null {
-    return this.lastRange?.start || null;
+    if(!this.lastRange) {
+      return null;
+    }
+    if(this.isRightToLeft) {
+      return this.lastRange.start;
+    }
+    return this.lastRange.end;
   }
 
   set focus(value: ModelPosition | null) {
-    if (!this.lastRange || !value) {
+    if (!value) {
       return;
     }
-    this.lastRange.end = value;
+    this._isRightToLeft = false;
+    if(!this.lastRange) {
+      this.addRange(new ModelRange(value));
+    } else if (!this.anchor) {
+      this.lastRange.start = value;
+      this.lastRange.end = value;
+    } else if (this.anchor.compare(value) === RelativePosition.AFTER) {
+      this._isRightToLeft = true;
+      this.lastRange.start = value;
+    } else {
+      this.lastRange.end = value;
+    }
   }
 
   get anchor(): ModelPosition | null {
-    return this.lastRange?.start || null;
+    if(!this.lastRange) {
+      return null;
+    }
+    if(this.isRightToLeft) {
+      return this.lastRange.end;
+    }
+    return this.lastRange.start;
   }
 
   set anchor(value: ModelPosition | null) {
-    if (!this.lastRange || !value) {
+    if (!value) {
       return;
     }
-    this.lastRange.start = value;
+    this._isRightToLeft = false;
+    if(!this.lastRange) {
+      this.addRange(new ModelRange(value));
+    } else if (!this.focus) {
+      this.lastRange.start = value;
+      this.lastRange.end = value;
+    } else if (this.focus.compare(value) === RelativePosition.BEFORE) {
+      this._isRightToLeft = true;
+      this.lastRange.end = value;
+    } else {
+      this.lastRange.start = value;
+    }
   }
 
   get lastRange() {
-    if (this.ranges.length) {
-      return this.ranges[this.ranges.length - 1];
+    if (this._ranges.length) {
+      return this._ranges[this._ranges.length - 1];
     } else {
       return null;
     }
   }
+
+  get ranges(): ModelRange[] {
+    return this._ranges;
+  }
+
+  set ranges(value: ModelRange[]) {
+    this._isRightToLeft = false;
+    this._ranges = value;
+  }
+
+  get isRightToLeft() {
+    return this._isRightToLeft;
+  }
+
   addRange(range: ModelRange) {
-    this.ranges.push(range);
+    this._ranges.push(range);
   }
 
   clearRanges() {
-    this.ranges = [];
+    this._isRightToLeft = false;
+    this._ranges = [];
   }
+
   getRangeAt(index: number) {
-    return this.ranges[index];
+    return this._ranges[index];
   }
 
   /**
    * @return whether the selection is collapsed
    */
   get isCollapsed() {
-    return this._anchor === this._focus && this.anchorOffset === this.focusOffset;
+    if(!(this.anchor && this.focus)) {
+      return true;
+    }
+    return this.anchor.sameAs(this.focus);
   }
 
 

@@ -1,7 +1,7 @@
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
-import arrayEquals from "../utils/array-equals";
+import {NotImplementedError, PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 
 export default class ModelPosition {
   private _path: number[];
@@ -18,9 +18,14 @@ export default class ModelPosition {
     return result;
   }
 
-  static fromParent(root: ModelElement, parent: ModelNode, offset: number) {
-
-
+  static fromParent(root: ModelElement, parent: ModelNode, offset: number): ModelPosition {
+    if (offset < 0 || offset > parent.length) {
+      throw new SelectionError("offset out of range");
+    }
+    const result = new ModelPosition(root);
+    result.path = parent.getIndexPath();
+    result.path.push(offset);
+    return result;
   }
 
   get path(): number[] {
@@ -40,7 +45,42 @@ export default class ModelPosition {
   }
 
   sameAs(other: ModelPosition): boolean {
-    return this.root === other.root && arrayEquals(this.path, other.path);
+    return this.compare(other) === RelativePosition.EQUAL;
+  }
+
+  compare(other: ModelPosition): RelativePosition {
+    if (this.root !== other.root) {
+      throw new PositionError("cannot compare nodes with different roots");
+    }
+    return ModelPosition.comparePath(this.path, other.path);
+  }
+
+  /**
+   * Compare two paths and determine their order. A parent is considered to be in front of its children
+   * @param path1
+   * @param path2
+   */
+  static comparePath(path1: number[], path2: number[]): RelativePosition {
+    if (!(path1.length && path2.length)) {
+      throw new PositionError("cannot compare paths where one is empty");
+    }
+
+    for (const [i, offset] of path1.entries()) {
+      if (i < path2.length) {
+        if (offset < path2[i]) {
+          return RelativePosition.BEFORE;
+        } else if (offset > path2[i]) {
+          return RelativePosition.AFTER;
+        }
+      }
+    }
+    if (path1.length < path2.length) {
+      return RelativePosition.BEFORE;
+    } else if (path1.length > path2.length) {
+      return RelativePosition.AFTER;
+    }
+    return RelativePosition.EQUAL;
+
   }
 
 }

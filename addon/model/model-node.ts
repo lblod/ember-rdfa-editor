@@ -93,6 +93,8 @@ export default abstract class ModelNode {
     this._boundNode = value;
   }
 
+  abstract get length(): number;
+
   get index(): number | null {
     if (this.parent) {
       return this.parent.getChildIndex(this);

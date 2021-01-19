@@ -34,6 +34,9 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   get childCount() {
     return this._children.length;
   }
+  get length() {
+    return this._children.length;
+  }
 
   get firstChild() {
     return this._children[0];
