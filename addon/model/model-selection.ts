@@ -1,15 +1,13 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import {getWindowSelection, isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {getWindowSelection, isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {PropertyState} from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
+import {NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
+import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 
 /**
  * Just like the {@link Model} is a representation of the document, the ModelSelection is a representation
@@ -17,10 +15,6 @@ import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
  */
 export default class ModelSelection {
 
-  private _anchor: ModelPosition | null = null;
-  private _focus: ModelPosition | null = null;
-  anchorOffset: number = 0;
-  focusOffset: number = 0;
   commonAncestor: ModelNode | null = null;
   domSelection: Selection | null = null;
   private _ranges: ModelRange[];
@@ -35,10 +29,10 @@ export default class ModelSelection {
   }
 
   get focus(): ModelPosition | null {
-    if(!this.lastRange) {
+    if (!this.lastRange) {
       return null;
     }
-    if(this.isRightToLeft) {
+    if (this.isRightToLeft) {
       return this.lastRange.start;
     }
     return this.lastRange.end;
@@ -49,7 +43,7 @@ export default class ModelSelection {
       return;
     }
     this._isRightToLeft = false;
-    if(!this.lastRange) {
+    if (!this.lastRange) {
       this.addRange(new ModelRange(value));
     } else if (!this.anchor) {
       this.lastRange.start = value;
@@ -63,10 +57,10 @@ export default class ModelSelection {
   }
 
   get anchor(): ModelPosition | null {
-    if(!this.lastRange) {
+    if (!this.lastRange) {
       return null;
     }
-    if(this.isRightToLeft) {
+    if (this.isRightToLeft) {
       return this.lastRange.end;
     }
     return this.lastRange.start;
@@ -77,7 +71,7 @@ export default class ModelSelection {
       return;
     }
     this._isRightToLeft = false;
-    if(!this.lastRange) {
+    if (!this.lastRange) {
       this.addRange(new ModelRange(value));
     } else if (!this.focus) {
       this.lastRange.start = value;
@@ -111,6 +105,10 @@ export default class ModelSelection {
     return this._isRightToLeft;
   }
 
+  set isRightToLeft(value: boolean) {
+    this._isRightToLeft = value;
+  }
+
   addRange(range: ModelRange) {
     this._ranges.push(range);
   }
@@ -128,7 +126,7 @@ export default class ModelSelection {
    * @return whether the selection is collapsed
    */
   get isCollapsed() {
-    if(!(this.anchor && this.focus)) {
+    if (!(this.anchor && this.focus)) {
       return true;
     }
     return this.anchor.sameAs(this.focus);
@@ -166,12 +164,22 @@ export default class ModelSelection {
   }
 
   getTextPropertyStatus(property: TextAttribute): PropertyState {
+    const anchorNode = this.anchor?.parent;
+    const focusNode = this.focus?.parent;
+
+    if (!anchorNode) {
+      throw new NotImplementedError("Cannot get textproperty of selection without anchorNode");
+    }
+
     if (this.isCollapsed) {
-      return this._anchor?.getTextAttribute(property) ? PropertyState.enabled : PropertyState.disabled;
+      if (!ModelNode.isModelText(anchorNode)) {
+        return PropertyState.unknown;
+      }
+      return anchorNode.getTextAttribute(property) ? PropertyState.enabled : PropertyState.disabled;
     } else {
       const nodeFinder = new ModelNodeFinder<ModelText>({
-          startNode: this._anchor!,
-          endNode: this._focus!,
+          startNode: anchorNode,
+          endNode: focusNode,
           rootNode: this.model.rootModelNode,
           nodeFilter: ModelNode.isModelText,
         }
@@ -193,126 +201,22 @@ export default class ModelSelection {
    */
   collapse(toLeft: boolean = false) {
     if (toLeft) {
-      this._anchor = this._focus;
-      this.anchorOffset = this.focusOffset;
+      this.anchor = this.focus;
     } else {
-      this._focus = this._anchor;
-      this.focusOffset = this.anchorOffset;
+      this.focus = this.anchor;
     }
-  }
-
-  setAnchor(node: ModelText, offset: number = 0) {
-    this._anchor = node;
-    this.anchorOffset = offset;
-  }
-
-  setFocus(node: ModelText, offset: number = 0) {
-    this._focus = node;
-    this.focusOffset = offset;
   }
 
   /**
    * Select a full ModelText node
    * @param node
    */
-  selectNode(node: ModelText) {
-    this._anchor = node;
-    this.anchorOffset = 0;
-    this._focus = node;
-    this.focusOffset = node.length;
+  selectNode(node: ModelNode) {
+    this.clearRanges();
+    const start = ModelPosition.fromParent(this.model.rootModelNode, node, 0);
+    const end = ModelPosition.fromParent(this.model.rootModelNode, node, node.length);
+    this.addRange(new ModelRange(start, end));
   }
-
-  /**
-   * Build the modelSelection from the domSelection
-   * TODO: needs cleanup. Crucial method, has to be perfect and preferably well-tested
-   * @param selection
-   */
-  setFromDomSelection(selection: Selection) {
-    if (!selection.anchorNode || !selection.focusNode) {
-      return;
-    }
-    this.domSelection = selection;
-    if (!isTextNode(selection.anchorNode) || !isTextNode(selection.focusNode)) {
-      throw new SelectionError("Selected nodes are not text nodes");
-    }
-
-    // this cast is safe given a normalized (start and offset always in textnodes) selection
-    const domAnchor = selection.anchorNode as Text;
-    const domFocus = selection.focusNode as Text;
-
-    const modelAnchor = this.model.getModelNodeFor(domAnchor) as ModelText | undefined;
-    const modelFocus = this.model.getModelNodeFor(domFocus) as ModelText | undefined;
-
-    if (!modelAnchor || !modelFocus) {
-      return;
-    }
-
-    this._anchor = modelAnchor;
-    this._focus = modelFocus;
-    this.anchorOffset = selection.anchorOffset;
-    this.focusOffset = selection.focusOffset;
-
-    const commonAncestor = selection.getRangeAt(0)?.commonAncestorContainer;
-    if (!selection.isCollapsed && commonAncestor) {
-      if (isElement(commonAncestor)) {
-        this.commonAncestor = this.model.getModelNodeFor(commonAncestor) as ModelElement;
-
-      } else {
-        this.commonAncestor = this.model.getModelNodeFor(commonAncestor as Text)!.parent!;
-      }
-    } else {
-      this.commonAncestor = this._focus.parent || this._focus;
-    }
-    if (this.isSelectionBackwards(selection)) {
-      const tempEl = this._anchor;
-      const tempOff = this.anchorOffset;
-
-      this._anchor = this._focus;
-      this._focus = tempEl;
-      this.anchorOffset = this.focusOffset;
-      this.focusOffset = tempOff;
-    }
-  }
-
-  /**
-   * Set the domSelection to match the modelSelection
-   * TODO: needs cleanup. Crucial method, has to be perfect and preferably well-tested
-   */
-  writeToDom() {
-    if (!this._anchor || !this._focus) {
-      let cur: ModelNode = this.model.rootModelNode;
-      while (cur && !ModelNode.isModelText(cur)) {
-        if (!ModelNode.isModelElement(cur)) {
-          throw new SelectionError("Unsupported node type");
-        }
-        cur = cur.firstChild;
-      }
-      this._anchor = cur;
-      this._focus = cur;
-    }
-    try {
-      const selection = getWindowSelection();
-      selection.setBaseAndExtent(this._anchor.boundNode!, this.anchorOffset, this._focus.boundNode!, this.focusOffset);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-
-  /**
-   * Helper trick to find out if the domSelection was selected right-to-left or not
-   * Taken from the internet
-   * @param selection
-   * @private
-   */
-  private isSelectionBackwards(selection: Selection) {
-    const range = document.createRange();
-    range.setStart(selection.anchorNode!, selection.anchorOffset);
-    range.setEnd(selection.focusNode!, selection.focusOffset);
-
-    return range.collapsed;
-  }
-
 
   calculateRdfaSelection(selection: Selection) {
     if (selection.type === 'Caret') {

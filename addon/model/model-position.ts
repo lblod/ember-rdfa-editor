@@ -7,10 +7,6 @@ export default class ModelPosition {
   private _path: number[];
   private _root: ModelElement;
 
-  constructor(root: ModelElement) {
-    this._root = root;
-    this._path = [];
-  }
 
   static from(root: ModelElement, path: number[]) {
     const result = new ModelPosition(root);
@@ -28,6 +24,11 @@ export default class ModelPosition {
     return result;
   }
 
+  constructor(root: ModelElement) {
+    this._root = root;
+    this._path = [];
+  }
+
   get path(): number[] {
     return this._path;
   }
@@ -37,11 +38,23 @@ export default class ModelPosition {
   }
 
   get parent(): ModelNode {
-    throw new NotImplementedError();
+    let cur: ModelNode = this.root;
+    for (const offset of this.path) {
+      if (ModelNode.isModelElement(cur)) {
+        cur = cur.children[offset];
+      } else {
+        return cur;
+      }
+    }
+    return cur;
   }
 
   get root(): ModelElement {
     return this._root;
+  }
+
+  get parentOffset(): number {
+    return this.path[this.path.length - 1];
   }
 
   sameAs(other: ModelPosition): boolean {

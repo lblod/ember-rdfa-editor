@@ -2,11 +2,13 @@ import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selec
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {getWindowSelection, isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
+import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
 
 
 /**
@@ -27,12 +29,18 @@ export default class Model {
   private reader: HtmlReader;
   private writer: HtmlWriter;
   private nodeMap: Map<String, ModelNode>;
+  private selectionReader: SelectionReader;
+  private selectionWriter: SelectionWriter;
+  private _selection: ModelSelection;
 
   constructor() {
     this.modelSelectionTracker = new ModelSelectionTracker(this);
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
     this.nodeMap = new Map<String, ModelNode>();
+    this.selectionReader = new SelectionReader(this);
+    this.selectionWriter = new SelectionWriter();
+    this._selection = new ModelSelection(this);
   }
 
   get rootNode(): HTMLElement {
@@ -48,7 +56,7 @@ export default class Model {
   }
 
   get selection(): ModelSelection {
-    return this.modelSelectionTracker.modelSelection;
+    return this._selection;
   }
 
   get rootModelNode(): ModelElement {
@@ -71,6 +79,10 @@ export default class Model {
     this.bindNode(this.rootModelNode, this.rootNode);
   }
 
+  readSelection() {
+    this._selection = this.selectionReader.read(getWindowSelection());
+  }
+
   /**
    * Write a part of the model back to the dom
    * @param tree
@@ -89,7 +101,11 @@ export default class Model {
     }
     oldRoot.append(...newRoot.childNodes);
     this.bindNode(tree, oldRoot);
-    this.selection.writeToDom();
+    this.writeSelection();
+  }
+
+  writeSelection() {
+    this.selectionWriter.write(this.selection);
   }
 
   generateUuid() {

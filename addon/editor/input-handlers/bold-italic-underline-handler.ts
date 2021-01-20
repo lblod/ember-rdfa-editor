@@ -1,7 +1,7 @@
-import { PropertyState } from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import { InputHandler } from './input-handler';
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
 
 
 /**

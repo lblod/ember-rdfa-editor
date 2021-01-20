@@ -4,9 +4,9 @@ export default class ModelRange {
   private _start: ModelPosition;
   private _end: ModelPosition;
 
-  constructor(start: ModelPosition, end?: ModelPosition) {
+  constructor(start: ModelPosition, end: ModelPosition = start) {
     this._start = start;
-    this._end = start || end;
+    this._end = end;
   }
 
   get end(): ModelPosition {
