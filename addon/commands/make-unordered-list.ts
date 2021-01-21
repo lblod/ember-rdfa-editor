@@ -31,7 +31,6 @@ export default class MakeUnorderedListCommand extends Command {
     });
 
     const nodes = Array.from(nodeFinder) as ModelNode[];
-    console.log(nodes);
     const items = [];
     let index = 0;
     const lastNode = nodes[nodes.length-1];
