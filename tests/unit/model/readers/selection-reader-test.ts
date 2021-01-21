@@ -54,8 +54,8 @@ module("Unit | model | readers | selection-reader", hooks => {
     testRange.setStart(text, 0);
 
     const result = reader.readDomRange(testRange);
-    assert.true(result.collapsed);
-    assert.true(result.start.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
+    assert.true(result?.collapsed);
+    assert.true(result?.start.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
 
   });
   module("Unit | model | reader | selection-reader | readDomPosition", () => {
@@ -66,7 +66,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       sync();
 
       const result = reader.readDomPosition(text, 0);
-      assert.true(result.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
+      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
 
     });
     test("converts a dom position correctly before text node", assert => {
@@ -75,7 +75,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       sync();
 
       const result = reader.readDomPosition(rootNode, 0);
-      assert.true(result.sameAs(ModelPosition.from(model.rootModelNode, [0])));
+      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [0])));
 
     });
     test("converts a dom position correctly after text node", assert => {
@@ -84,7 +84,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       sync();
 
       const result = reader.readDomPosition(rootNode, 1);
-      assert.true(result.sameAs(ModelPosition.from(model.rootModelNode, [1])));
+      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1])));
 
     });
 
@@ -116,20 +116,20 @@ module("Unit | model | readers | selection-reader", hooks => {
       sync();
 
       let result = reader.readDomPosition(child1, 0);
-      assert.true(result.sameAs(ModelPosition.from(model.rootModelNode, [1, 0])));
+      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1, 0])));
 
       result = reader.readDomPosition(child1, 0);
-      assert.true(result.sameAs(ModelPosition.from(model.rootModelNode, [1, 0])));
+      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1, 0])));
 
       result = reader.readDomPosition(child1, 1);
-      assert.true(result.sameAs(ModelPosition.from(model.rootModelNode, [1, 1])));
+      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1, 1])));
 
       result = reader.readDomPosition(child11, 0);
-      assert.true(result.sameAs(ModelPosition.from(model.rootModelNode, [1, 1, 0])));
+      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1, 1, 0])));
 
 
       result = reader.readDomPosition(child12, 3);
-      assert.true(result.sameAs(ModelPosition.from(model.rootModelNode, [1, 2, 3])));
+      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1, 2, 3])));
     });
   });
 });

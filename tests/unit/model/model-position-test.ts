@@ -1,21 +1,30 @@
 import {module, test} from "qunit";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {PositionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 module("Unit | model | model-position", () => {
+  module("Unit | model | model-position | getCommonAncestor", () => {
+    test("returns null when start and end have different root" , assert => {
+      const root = new ModelElement("div");
+      const root2 = new ModelElement("div");
+      const p1 = ModelPosition.from(root, [0]);
+      const p2 = ModelPosition.from(root2, [0]);
+
+
+      assert.strictEqual(p1.getCommonAncestor(p2), null);
+    });
+    test("returns root when start and end are root" , assert => {
+      const root = new ModelElement("div");
+      const p1 = ModelPosition.from(root, []);
+      const p2 = ModelPosition.from(root, []);
+      assert.true(p1.getCommonAncestor(p2)?.sameAs(ModelPosition.from(root, [])));
+    });
+
+  });
 
   module("Unit | model | model-position | comparePath", () => {
 
-
-    test("throws when one of paths is empty", assert => {
-      const path1: number[] = [];
-      const path2 = [0, 3];
-
-      assert.throws(() => {
-        ModelPosition.comparePath(path1, path2);
-      }, PositionError);
-    });
 
     test("recognizes identical paths", assert => {
       const path1 = [0, 1, 2, 3];

@@ -1,7 +1,8 @@
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError, PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
+import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 
 /**
  * Represents a single position in the model. In contrast to the dom,
@@ -42,6 +43,15 @@ export default class ModelPosition {
     return result;
   }
 
+  static getCommonAncestor(pos1: ModelPosition, pos2: ModelPosition): ModelPosition | null {
+    if(pos1.root !== pos2.root) {
+      return null;
+    }
+    const commonPath = ArrayUtils.findCommonSlice(pos1.path, pos2.path);
+
+    return ModelPosition.from(pos1.root, commonPath);
+  }
+
   constructor(root: ModelElement) {
     this._root = root;
     this._path = [];
@@ -73,6 +83,22 @@ export default class ModelPosition {
     }
     this.parentCache = cur;
     return cur;
+  }
+
+  /**
+   * Get the first ancestor which is a ModelElement
+   */
+  get parentElement(): ModelElement {
+    const parent = this.parent;
+    if(ModelNode.isModelElement(parent)) {
+      return parent;
+    } else {
+      const result = parent.parent;
+      if (!result) {
+        throw new ModelError("Unexpected textnode without parent");
+      }
+      return result;
+    }
   }
 
   /**
@@ -109,15 +135,16 @@ export default class ModelPosition {
     return ModelPosition.comparePath(this.path, other.path);
   }
 
+  getCommonAncestor(other: ModelPosition): ModelPosition | null {
+    return ModelPosition.getCommonAncestor(this, other);
+  }
+
   /**
    * Compare two paths and determine their order. A parent is considered to be in front of its children
    * @param path1
    * @param path2
    */
   static comparePath(path1: number[], path2: number[]): RelativePosition {
-    if (!(path1.length && path2.length)) {
-      throw new PositionError("cannot compare paths where one is empty");
-    }
 
     for (const [i, offset] of path1.entries()) {
       if (i < path2.length) {

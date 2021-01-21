@@ -210,6 +210,13 @@ export default class ModelSelection {
     return subtree;
   }
 
+  getCommonAncestor(): ModelPosition | null {
+    if (!this.lastRange) {
+      return null;
+    }
+    return this.lastRange.getCommonAncestor();
+  }
+
   /**
    * Generic method for determining the status of a textattribute in the selection.
    * The status is as follows:

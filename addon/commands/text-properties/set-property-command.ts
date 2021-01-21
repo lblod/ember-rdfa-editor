@@ -17,6 +17,11 @@ export default abstract class SetPropertyCommand extends Command {
       console.info("Not executing SetPropertyCommand because selection is missing");
       return;
     }
+    const commonAncestor = selection.getCommonAncestor();
+    if(!commonAncestor) {
+      console.info("Not executing SetPropertyCommand because no common ancestor");
+      return;
+    }
 
     // get start and end regardless of selection direction
     const start = selection.lastRange.start;
@@ -49,6 +54,6 @@ export default abstract class SetPropertyCommand extends Command {
       selection.focus = ModelPosition.fromParent(this.model.rootModelNode, last, last.length);
     }
 
-    this.model.write();
+    this.model.write(commonAncestor.parentElement);
   }
 }

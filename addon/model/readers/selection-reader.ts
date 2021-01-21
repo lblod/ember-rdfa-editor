@@ -42,7 +42,7 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
       return new ModelRange(start);
     }
     const end = this.readDomPosition(range.endContainer, range.endOffset);
-    return new ModelRange(start, end);
+    return new ModelRange(start, end ?? start);
   }
 
   /**

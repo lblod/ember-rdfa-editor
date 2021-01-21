@@ -89,7 +89,7 @@ export default class Model {
    * Write a part of the model back to the dom
    * @param tree
    */
-  write(tree: ModelNode = this.rootModelNode) {
+  write(tree: ModelElement = this.rootModelNode) {
     const oldRoot = tree.boundNode;
     if (!oldRoot) {
       throw new Error("Container without boundNOde");

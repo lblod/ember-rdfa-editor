@@ -41,4 +41,16 @@ export default class ModelRange {
   get collapsed(): boolean {
     return this.start.sameAs(this.end);
   }
+
+  /**
+   * Find the common ancestor of start and end positions.
+   */
+  getCommonAncestor(): ModelPosition | null {
+    if(this.start.root !== this.end.root) {
+      return null;
+    }
+    return ModelPosition.getCommonAncestor(this.start, this.end);
+
+  }
+
 }
