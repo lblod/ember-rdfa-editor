@@ -6,6 +6,7 @@ import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 export default class ModelPosition {
   private _path: number[];
   private _root: ModelElement;
+  private parentCache: ModelNode | null = null;
 
 
   static from(root: ModelElement, path: number[]) {
@@ -35,9 +36,13 @@ export default class ModelPosition {
 
   set path(value: number[]) {
     this._path = value;
+    this.parentCache = null;
   }
 
   get parent(): ModelNode {
+    if(this.parentCache) {
+      return this.parentCache;
+    }
     let cur: ModelNode = this.root;
     for (const offset of this.path) {
       if (ModelNode.isModelElement(cur)) {
@@ -46,6 +51,7 @@ export default class ModelPosition {
         return cur;
       }
     }
+    this.parentCache = cur;
     return cur;
   }
 

@@ -39,7 +39,6 @@ module("Unit | model | writers | selection-writer", hooks => {
 
 
     model.write();
-    model.writeSelection();
 
     domSelection = getWindowSelection();
     assert.strictEqual(getWindowSelection().anchorNode, text.boundNode);

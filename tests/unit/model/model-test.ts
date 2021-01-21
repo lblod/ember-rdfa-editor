@@ -8,7 +8,9 @@ module("Unit | model | model", hooks => {
   let rootNode: HTMLElement;
 
   hooks.beforeEach(() => {
+    let testContainer = document.getElementById("ember-testing");
     rootNode = document.createElement("div");
+    testContainer!.appendChild(rootNode);
     model = new Model();
     model.rootNode = rootNode;
     model.read();

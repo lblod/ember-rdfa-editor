@@ -28,7 +28,7 @@ export default class Model {
   private _rootModelNode!: ModelElement;
   private reader: HtmlReader;
   private writer: HtmlWriter;
-  private nodeMap: Map<String, ModelNode>;
+  private nodeMap: WeakMap<Node, ModelNode>;
   private selectionReader: SelectionReader;
   private selectionWriter: SelectionWriter;
   private _selection: ModelSelection;
@@ -37,7 +37,7 @@ export default class Model {
     this.modelSelectionTracker = new ModelSelectionTracker(this);
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
-    this.nodeMap = new Map<String, ModelNode>();
+    this.nodeMap = new WeakMap<Node, ModelNode>();
     this.selectionReader = new SelectionReader(this);
     this.selectionWriter = new SelectionWriter();
     this._selection = new ModelSelection(this);
@@ -77,6 +77,8 @@ export default class Model {
     }
     this._rootModelNode = newRoot;
     this.bindNode(this.rootModelNode, this.rootNode);
+    // This is essential, we change the root so we need to make sure the selection uses the new root
+    this.readSelection();
   }
 
   readSelection() {
@@ -122,15 +124,9 @@ export default class Model {
    * @param domNode
    */
   bindNode(modelNode: ModelNode, domNode: Node) {
-    let id;
-    if(domNode.editorId) {
-      id = domNode.editorId;
-    } else {
-      id = this.generateUuid();
-      domNode.editorId = id;
-    }
+    this.nodeMap.delete(domNode);
     modelNode.boundNode = domNode;
-    this.nodeMap.set(id, modelNode);
+    this.nodeMap.set(domNode, modelNode);
   }
 
   /**
@@ -139,7 +135,7 @@ export default class Model {
    */
   getModelNodeFor(domNode: Node) {
     if(!this.nodeMap ) return;
-    return this.nodeMap.get(domNode.editorId);
+    return this.nodeMap.get(domNode);
   }
 
   /**

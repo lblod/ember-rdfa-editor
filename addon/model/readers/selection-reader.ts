@@ -16,27 +16,33 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
 
     for (let i = 0; i < from.rangeCount; i++) {
       const range = from.getRangeAt(i);
-      ranges.push(this.readDomRange(range));
+      const modelRange = this.readDomRange(range);
+      if(modelRange) {
+        ranges.push(modelRange);
+      }
     }
     rslt.ranges = ranges;
     rslt.isRightToLeft = this.isReverseSelection(from);
     return rslt;
   }
 
-  readDomRange(range: Range): ModelRange {
+  readDomRange(range: Range): ModelRange | null {
     const start = this.readDomPosition(range.startContainer, range.startOffset);
+    if(!start) {
+      return null;
+    }
     if (range.collapsed) {
       return new ModelRange(start);
     }
     const end = this.readDomPosition(range.endContainer, range.endOffset);
-    return new ModelRange(end);
+    return new ModelRange(start, end);
   }
 
-  readDomPosition(container: Node, offset: number): ModelPosition {
+  readDomPosition(container: Node, offset: number): ModelPosition | null {
     const modelNode = this.model.getModelNodeFor(container);
     const root = this.model.rootModelNode;
     if (!modelNode) {
-      throw new SelectionError("Selected node without modelNode equivalent");
+      return null;
     }
     return ModelPosition.fromParent(root, modelNode, offset);
   }

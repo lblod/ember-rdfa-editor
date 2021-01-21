@@ -1,32 +1,33 @@
 import Command from "../command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 export default abstract class SetPropertyCommand extends Command {
   constructor(model: Model) {
     super(model);
   }
-  execute(property: TextAttribute, value: boolean, selection?: ModelSelection) {
-    if (! selection ) {
-      selection = this.model.selection;
-    }
+  execute(property: TextAttribute, value: boolean, selection: ModelSelection = this.model.selection) {
 
+    if(!ModelSelection.isWellBehaved(selection)) {
+      console.info("Not executing SetPropertyCommand because selection is missing");
+      return;
+    }
     const nodeFinder = new ModelNodeFinder({
-     startNode: selection.anchor!,
-      endNode: selection.focus!,
-      rootNode: selection.commonAncestor!,
+     startNode: selection.anchor.parent,
+      endNode: selection.focus.parent,
+      rootNode: this.model.rootModelNode,
       nodeFilter: ModelNode.isModelText,
-      direction: Direction.FORWARDS
+      direction: selection.isRightToLeft? Direction.BACKWARDS: Direction.FORWARDS
     });
     const nodes = Array.from(nodeFinder) as ModelText[];
 
-    nodes[nodes.length - 1] = nodes[nodes.length - 1].split(selection.focusOffset).left;
-    nodes[0] = nodes[0].split(selection.anchorOffset).right;
+    nodes[nodes.length - 1] = nodes[nodes.length - 1].split(selection.focus.parentOffset).left;
+    nodes[0] = nodes[0].split(selection.anchor.parentOffset).right;
 
 
 
@@ -37,15 +38,11 @@ export default abstract class SetPropertyCommand extends Command {
     if(selection.isCollapsed) {
       selection.selectNode(nodes[0]);
     } else {
-      selection.setAnchor(nodes[0], 0);
+      selection.anchor = ModelPosition.fromParent(this.model.rootModelNode, nodes[0], 0);
       const last = nodes[nodes.length - 1];
-      selection.setFocus(last, last.length);
+      selection.focus = ModelPosition.fromParent(this.model.rootModelNode, last, last.length);
     }
 
-    if (selection.commonAncestor) {
-      this.model.write(selection.commonAncestor);
-    } else {
-      throw new SelectionError("Selection without common ancestor");
-    }
+    this.model.write();
   }
 }

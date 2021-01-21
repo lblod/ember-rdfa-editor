@@ -1,13 +1,18 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import {getWindowSelection, isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {MisbehavedSelectionError, NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
+
+interface WellbehavedSelection extends ModelSelection {
+  anchor: ModelPosition;
+  focus: ModelPosition;
+}
 
 /**
  * Just like the {@link Model} is a representation of the document, the ModelSelection is a representation
@@ -107,6 +112,10 @@ export default class ModelSelection {
 
   set isRightToLeft(value: boolean) {
     this._isRightToLeft = value;
+  }
+
+  static isWellBehaved(selection: ModelSelection): selection is WellbehavedSelection {
+    return !!(selection.anchor && selection.focus);
   }
 
   addRange(range: ModelRange) {

@@ -14,6 +14,11 @@ module("Unit | model | readers | selection-reader", hooks => {
   let reader: SelectionReader;
   let testRoot;
 
+  const sync = () => {
+    model.read();
+    model.write();
+  };
+
   hooks.beforeEach(() => {
     testRoot = document.getElementById("ember-testing");
     rootNode = document.createElement("div");
@@ -23,16 +28,11 @@ module("Unit | model | readers | selection-reader", hooks => {
     testRoot.appendChild(rootNode);
     model = new Model();
     model.rootNode = rootNode;
-    model.read();
-    model.write();
+    sync();
     modelSelection = new ModelSelection(model);
     domSelection = getWindowSelection();
     reader = new SelectionReader(model);
   });
-  const sync = () => {
-    model.read();
-    model.write();
-  };
   test("converts a selection correctly", assert => {
     const textNode = new Text("asdf");
     rootNode.appendChild(textNode);
