@@ -22,15 +22,31 @@ export default class MakeUnorderedListCommand extends Command {
       throw new MisbehavedSelectionError();
     }
     const commonAncestor = selection.getCommonAncestor();
+    const parentElement = commonAncestor?.parentElement;
     if(!commonAncestor) return;
-    const nodeFinder = new ModelNodeFinder({
-      startNode: selection.lastRange.start.parent,
-      endNode: selection.lastRange.end.parent,
-      rootNode: commonAncestor.parent,
-      direction: Direction.FORWARDS
-    });
+    let nodes = [];
+    if(selection.isCollapsed) {
+      nodes = [commonAncestor.parent];
+      let nextElement = commonAncestor.parent.nextSibling;
+      while(nextElement && nextElement.boundNode?.nodeName !== 'BR') {
+        nodes.push(nextElement);
+        nextElement = nextElement.nextSibling;
+      }
+      let previousElement = commonAncestor.parent.previousSibling;
+      while(previousElement && previousElement.boundNode?.nodeName !== 'BR') {
+        nodes.push(previousElement);
+        previousElement = previousElement.previousSibling;
+      }
+    } else {
+      const nodeFinder = new ModelNodeFinder({
+        startNode: selection.lastRange.start.parent,
+        endNode: selection.lastRange.end.parent,
+        rootNode: commonAncestor.parent,
+        direction: Direction.FORWARDS
+      });
 
-    const nodes = Array.from(nodeFinder) as ModelNode[];
+      nodes = Array.from(nodeFinder) as ModelNode[];
+    }
     const items = [];
     let index = 0;
     const lastNode = nodes[nodes.length-1];
@@ -51,13 +67,10 @@ export default class MakeUnorderedListCommand extends Command {
       }
       this.model.removeModelNode(node);
     }
-    
-    
-    
     const listNode = this.buildList('ul', items);
-    if(commonAncestor.parentElement) {
-      commonAncestor.parentElement.addChild(listNode, selection.lastRange.start.parentOffset);
-      this.model.write(commonAncestor.parentElement);
+    if(parentElement) {
+      parentElement.addChild(listNode, selection.lastRange.start.parentOffset);
+      this.model.write(parentElement);
     }
     
   }
