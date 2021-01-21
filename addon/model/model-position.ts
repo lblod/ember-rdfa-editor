@@ -74,10 +74,11 @@ export default class ModelPosition {
       return this.parentCache;
     }
     let cur: ModelNode = this.root;
-    for (const offset of this.path) {
+    for (let i = 0; i < this.path.length - 1; i++) {
       if (ModelNode.isModelElement(cur)) {
-        cur = cur.children[offset];
+        cur = cur.children[this.path[i]];
       } else {
+        this.parentCache = cur;
         return cur;
       }
     }

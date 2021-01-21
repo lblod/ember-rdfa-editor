@@ -5,6 +5,8 @@ import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import { pauseTest } from "@ember/test-helpers";
+import { setupTest } from "ember-qunit";
 
 module("Unit | model | readers | selection-reader", hooks => {
   let model: Model;
@@ -13,6 +15,7 @@ module("Unit | model | readers | selection-reader", hooks => {
   let domSelection: Selection;
   let reader: SelectionReader;
   let testRoot;
+  setupTest(hooks);
 
   const sync = () => {
     model.read();
@@ -32,6 +35,9 @@ module("Unit | model | readers | selection-reader", hooks => {
     modelSelection = new ModelSelection(model);
     domSelection = getWindowSelection();
     reader = new SelectionReader(model);
+  });
+  hooks.afterEach(() => {
+    rootNode.remove();
   });
   test("converts a selection correctly", assert => {
     const textNode = new Text("asdf");
@@ -56,6 +62,29 @@ module("Unit | model | readers | selection-reader", hooks => {
     const result = reader.readDomRange(testRange);
     assert.true(result?.collapsed);
     assert.true(result?.start.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
+
+  });
+  test("correctly handles a tripleclick selection", async assert => {
+    const paragraph = document.createElement("p");
+    const t1 = new Text("abc");
+    const br1 = document.createElement("br");
+    const t2 = new Text("def");
+    const br2 = document.createElement("br");
+    paragraph.append(t1, br1, t2, br2);
+
+    const psibling = document.createElement("div");
+    const t3 = new Text("i should not be selected");
+    psibling.appendChild(t3);
+
+    rootNode.append(paragraph, psibling);
+
+    sync();
+    domSelection.setBaseAndExtent(rootNode.childNodes[0].childNodes[0], 0,  rootNode.childNodes[0], 2);
+    const result = reader.read(domSelection);
+
+    assert.true(result.anchor?.sameAs(ModelPosition.from(model.rootModelNode, [0,0,0])));
+    assert.true(result.focus?.sameAs(ModelPosition.from(model.rootModelNode, [0,2])));
+
 
   });
   module("Unit | model | reader | selection-reader | readDomPosition", () => {

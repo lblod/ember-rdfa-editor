@@ -23,7 +23,7 @@ export default class ModelSelectionTracker {
     const currentSelection = getWindowSelection();
     if (!this.model.rootNode.contains(currentSelection.anchorNode) || !this.model.rootNode.contains(currentSelection.focusNode) ||
       (currentSelection.type != 'Caret' && this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
-      this.model.selection.clearRanges();
+      // this.model.selection.clearRanges();
       return;
     }
     this.model.readSelection();

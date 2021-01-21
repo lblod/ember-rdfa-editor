@@ -25,6 +25,7 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     }
     rslt.ranges = ranges;
     rslt.isRightToLeft = this.isReverseSelection(from);
+    console.log("GENERATING", rslt);
     return rslt;
   }
 
