@@ -37,6 +37,7 @@ export default class EditorToolbar extends Component<Args> {
     this.isItalic = event.detail.italic === PropertyState.enabled;
     this.isUnderline = event.detail.underline === PropertyState.enabled;
     this.isStrikethrough = event.detail.strikethrough === PropertyState.enabled;
+    this.isInList = event.detail.isInList === PropertyState.enabled;
   }
 
   @action

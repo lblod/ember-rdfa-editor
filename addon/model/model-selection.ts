@@ -8,6 +8,7 @@ import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-find
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
+import ModelElement from "./model-element";
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
@@ -194,6 +195,31 @@ export default class ModelSelection {
 
   get strikethrough(): PropertyState {
     return this.getTextPropertyStatus("strikethrough");
+  }
+
+  get isInList(): PropertyState {
+    const ancestor = this.getCommonAncestor()?.parent;
+    console.log(ancestor);
+    if (!ancestor) return PropertyState.unknown;
+    if(ancestor.boundNode?.nodeName === 'UL' || ancestor.boundNode?.nodeName === 'OL') {
+      return PropertyState.enabled;
+    } else {
+      let actualNode = ancestor.boundNode;
+      if(!actualNode) {
+        return PropertyState.unknown;
+      }
+      while(actualNode.parentNode) {
+        const parent = actualNode.parentNode;
+        if(parent.nodeName === 'UL' || parent.nodeName === 'OL') {
+          return PropertyState.enabled;
+        } else {
+          actualNode = parent;
+        }
+      }
+      return PropertyState.disabled;
+    }
+
+
   }
 
   get rdfaSelection() {
