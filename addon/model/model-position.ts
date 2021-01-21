@@ -1,20 +1,37 @@
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {NotImplementedError, PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 
+/**
+ * Represents a single position in the model. In contrast to the dom,
+ * where a position is defined as a {@link Node} and an offset, we represent a position
+ * here as a path of offsets from the root. The definition of these offsets is subject to change.
+ */
 export default class ModelPosition {
   private _path: number[];
   private _root: ModelElement;
   private parentCache: ModelNode | null = null;
 
 
+  /**
+   * Build a position from a rootNode and a path
+   * @param root
+   * @param path
+   */
   static from(root: ModelElement, path: number[]) {
     const result = new ModelPosition(root);
     result.path = path;
     return result;
   }
 
+  /**
+   * Build a position from a root, a parent and an offset. Especially useful for converting
+   * from a DOM position
+   * @param root
+   * @param parent
+   * @param offset
+   */
   static fromParent(root: ModelElement, parent: ModelNode, offset: number): ModelPosition {
     if (offset < 0 || offset > parent.length) {
       throw new SelectionError("offset out of range");
@@ -30,6 +47,9 @@ export default class ModelPosition {
     this._path = [];
   }
 
+  /**
+   * The path of offsets from this position's root node
+   */
   get path(): number[] {
     return this._path;
   }
@@ -55,18 +75,33 @@ export default class ModelPosition {
     return cur;
   }
 
+  /**
+   * Root node of the position. In practice, this is almost always the same as the model root,
+   * but it does not have to be (e.g. to support multiple model trees).
+   */
   get root(): ModelElement {
     return this._root;
   }
 
+  /**
+   * Get the offset from the parent, equivalent to a DOM position offset
+   */
   get parentOffset(): number {
     return this.path[this.path.length - 1];
   }
 
+  /**
+   * Check if two modelpositions describe the same position
+   * @param other
+   */
   sameAs(other: ModelPosition): boolean {
     return this.compare(other) === RelativePosition.EQUAL;
   }
 
+  /**
+   * Compare this position to another and see if it comes before, after, or is the same position
+   * @param other
+   */
   compare(other: ModelPosition): RelativePosition {
     if (this.root !== other.root) {
       throw new PositionError("cannot compare nodes with different roots");

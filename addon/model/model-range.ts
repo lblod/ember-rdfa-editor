@@ -1,5 +1,9 @@
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
+/**
+ * Model-space equivalent of a {@link Range}
+ * Not much more than a container for two {@link ModelPosition ModelPositions}
+ */
 export default class ModelRange {
   private _start: ModelPosition;
   private _end: ModelPosition;
@@ -9,14 +13,9 @@ export default class ModelRange {
     this._end = end;
   }
 
-  get end(): ModelPosition {
-    return this._end;
-  }
-
-  set end(value: ModelPosition) {
-    this._end = value;
-  }
-
+  /**
+   * start, aka leftmost position of the range
+   */
   get start(): ModelPosition {
     return this._start;
   }
@@ -25,6 +24,20 @@ export default class ModelRange {
     this._start = value;
   }
 
+  /**
+   * end, aka rightmost position of the range
+   */
+  get end(): ModelPosition {
+    return this._end;
+  }
+
+  set end(value: ModelPosition) {
+    this._end = value;
+  }
+
+  /**
+   * whether start and end positions are the same
+   */
   get collapsed(): boolean {
     return this.start.sameAs(this.end);
   }

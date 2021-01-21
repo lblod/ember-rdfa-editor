@@ -9,6 +9,9 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 
+/**
+ * Utility interface describing a selection with an non-null anchor and focus
+ */
 interface WellbehavedSelection extends ModelSelection {
   anchor: ModelPosition;
   focus: ModelPosition;
@@ -26,6 +29,14 @@ export default class ModelSelection {
   private model: Model;
   private _isRightToLeft: boolean;
 
+  /**
+   * Utility typeguard to check if a selection has and anchor and a focus, as without them
+   * most operations that work on selections probably have no meaning.
+   * @param selection
+   */
+  static isWellBehaved(selection: ModelSelection): selection is WellbehavedSelection {
+    return !!(selection.anchor && selection.focus);
+  }
 
   constructor(model: Model) {
     this.model = model;
@@ -33,6 +44,10 @@ export default class ModelSelection {
     this._isRightToLeft = false;
   }
 
+  /**
+   * The focus is the leftmost position of the selection if the selection
+   * is left-to-right, and the rightmost position otherwise
+   */
   get focus(): ModelPosition | null {
     if (!this.lastRange) {
       return null;
@@ -61,6 +76,10 @@ export default class ModelSelection {
     }
   }
 
+  /**
+   * The anchor is the rightmost position of the selection if the selection
+   * is left-to-right, and the leftmost position otherwise
+   */
   get anchor(): ModelPosition | null {
     if (!this.lastRange) {
       return null;
@@ -89,6 +108,10 @@ export default class ModelSelection {
     }
   }
 
+  /**
+   * Get the last range. This range has a somewhat special function as it
+   * determines the anchor and focus positions of the selection
+   */
   get lastRange() {
     if (this._ranges.length) {
       return this._ranges[this._ranges.length - 1];
@@ -97,6 +120,9 @@ export default class ModelSelection {
     }
   }
 
+  /**
+   * The selected {@link Range Ranges}
+   */
   get ranges(): ModelRange[] {
     return this._ranges;
   }
@@ -106,6 +132,9 @@ export default class ModelSelection {
     this._ranges = value;
   }
 
+  /**
+   * Whether the selection is right-to-left (aka backwards)
+   */
   get isRightToLeft() {
     return this._isRightToLeft;
   }
@@ -114,19 +143,27 @@ export default class ModelSelection {
     this._isRightToLeft = value;
   }
 
-  static isWellBehaved(selection: ModelSelection): selection is WellbehavedSelection {
-    return !!(selection.anchor && selection.focus);
-  }
 
+  /**
+   * Append a range to this selection's ranges
+   * @param range
+   */
   addRange(range: ModelRange) {
     this._ranges.push(range);
   }
 
+  /**
+   * Remove all ranges of this selection
+   */
   clearRanges() {
     this._isRightToLeft = false;
     this._ranges = [];
   }
 
+  /**
+   * Gets the range at index
+   * @param index
+   */
   getRangeAt(index: number) {
     return this._ranges[index];
   }
@@ -172,6 +209,25 @@ export default class ModelSelection {
     return subtree;
   }
 
+  /**
+   * Generic method for determining the status of a textattribute in the selection.
+   * The status is as follows:
+   * TODO: test this instead of writing it in comments, as this will inevitably get out of date
+   *
+   * collapsed selection
+   * ----
+   * in textnode with attribute -> ENABLED
+   * in textnode without attribute -> DISABLED
+   * not in textnode -> UNKNOWN
+   *
+   * uncollapsed selection
+   * ----
+   * all selected textnodes have attribute -> ENABLED
+   * some selected textnodes have attribute, some don't -> UNKNOWN
+   * none of the selected textnodes have attribute -> DISABLED
+   *
+   * @param property
+   */
   getTextPropertyStatus(property: TextAttribute): PropertyState {
     const anchorNode = this.anchor?.parent;
     const focusNode = this.focus?.parent;
