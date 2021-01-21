@@ -53,7 +53,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     }
     textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
-    editor.setCaret(textNode, 0)
+    editor.setCaret(textNode, 0);
   }
 
   jumpOverLumpNodeBackwards( manipulation: Manipulation, editor: Editor ) : void {
@@ -68,6 +68,6 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     }
     textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
-    editor.setCaret(textNode, textNode.length)
+    editor.setCaret(textNode, textNode.length);
   }
 }

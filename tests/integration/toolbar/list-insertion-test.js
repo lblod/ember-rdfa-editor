@@ -915,12 +915,10 @@ module('Integration | Toolbar | list-insertion', function(hooks) {
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
-
     const innerLi = document.querySelector("#innerLi");
     await window.getSelection().selectAllChildren(innerLi);
-    const range = window.getSelection().getRangeAt(0);
-    range.setStart(innerLi, 0);
-    range.setEnd(innerLi, 0);
+    const selection = window.getSelection();
+    selection.setBaseAndExtent(innerLi.childNodes[0], 0, innerLi.childNodes[0], 0);
     const editor = document.querySelector("div[contenteditable]");
     await click('[data-test-button-id="insert-unindent"]');
     assert.equal(editor.textContent.includes('a some '), true);

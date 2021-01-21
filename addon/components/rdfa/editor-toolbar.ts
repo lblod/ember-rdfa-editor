@@ -3,9 +3,9 @@ import {action} from "@ember/object";
 import {isInList} from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import {getWindowSelection} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {tracked} from "@glimmer/tracking";
-import {PropertyState} from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
 
 interface Args {
   editor: LegacyRawEditor;
@@ -25,6 +25,7 @@ export default class EditorToolbar extends Component<Args> {
   @tracked isItalic: boolean = false;
   @tracked isStrikethrough: boolean = false;
   @tracked isUnderline: boolean = false;
+  @tracked isInList: boolean = false;
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
@@ -87,6 +88,11 @@ export default class EditorToolbar extends Component<Args> {
   @action
   toggleItalic() {
     this.toggleProperty(this.isItalic, "make-italic", "remove-italic");
+  }
+
+  @action
+  toggleUnorderedList() {
+    this.toggleProperty(this.isInList, "make-unordered-list", "remove-unordered-list");
   }
 
   @action

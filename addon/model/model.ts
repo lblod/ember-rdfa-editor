@@ -2,10 +2,13 @@ import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selec
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {getWindowSelection, isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
+import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
 
 
 /**
@@ -22,16 +25,22 @@ export default class Model {
    * @private
    */
   private _rootNode!: HTMLElement;
-  private _rootModelNode!: ModelNode;
+  private _rootModelNode!: ModelElement;
   private reader: HtmlReader;
   private writer: HtmlWriter;
-  private nodeMap: Map<String, ModelNode>;
+  private nodeMap: WeakMap<Node, ModelNode>;
+  private selectionReader: SelectionReader;
+  private selectionWriter: SelectionWriter;
+  private _selection: ModelSelection;
 
   constructor() {
     this.modelSelectionTracker = new ModelSelectionTracker(this);
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
-    this.nodeMap = new Map<String, ModelNode>();
+    this.nodeMap = new WeakMap<Node, ModelNode>();
+    this.selectionReader = new SelectionReader(this);
+    this.selectionWriter = new SelectionWriter();
+    this._selection = new ModelSelection(this);
   }
 
   get rootNode(): HTMLElement {
@@ -47,12 +56,13 @@ export default class Model {
   }
 
   get selection(): ModelSelection {
-    return this.modelSelectionTracker.modelSelection;
+    return this._selection;
   }
 
-  get rootModelNode(): ModelNode {
+  get rootModelNode(): ModelElement {
     return this._rootModelNode;
   }
+
 
   /**
    * Read in the document and build up the model
@@ -62,15 +72,24 @@ export default class Model {
     if (!newRoot) {
       throw new Error("Could not create a rich root");
     }
+    if(!ModelNode.isModelElement(newRoot)) {
+      throw new Error("root model node has to be an element");
+    }
     this._rootModelNode = newRoot;
     this.bindNode(this.rootModelNode, this.rootNode);
+    // This is essential, we change the root so we need to make sure the selection uses the new root
+    this.readSelection();
+  }
+
+  readSelection() {
+    this._selection = this.selectionReader.read(getWindowSelection());
   }
 
   /**
    * Write a part of the model back to the dom
    * @param tree
    */
-  write(tree: ModelNode = this.rootModelNode) {
+  write(tree: ModelElement = this.rootModelNode) {
     const oldRoot = tree.boundNode;
     if (!oldRoot) {
       throw new Error("Container without boundNOde");
@@ -84,7 +103,11 @@ export default class Model {
     }
     oldRoot.append(...newRoot.childNodes);
     this.bindNode(tree, oldRoot);
-    this.selection.writeToDom();
+    this.writeSelection();
+  }
+
+  writeSelection() {
+    this.selectionWriter.write(this.selection);
   }
 
   generateUuid() {
@@ -101,15 +124,9 @@ export default class Model {
    * @param domNode
    */
   bindNode(modelNode: ModelNode, domNode: Node) {
-    let id;
-    if(domNode.editorId) {
-      id = domNode.editorId;
-    } else {
-      id = this.generateUuid();
-      domNode.editorId = id;
-    }
+    this.nodeMap.delete(domNode);
     modelNode.boundNode = domNode;
-    this.nodeMap.set(id, modelNode);
+    this.nodeMap.set(domNode, modelNode);
   }
 
   /**
@@ -118,7 +135,7 @@ export default class Model {
    */
   getModelNodeFor(domNode: Node) {
     if(!this.nodeMap ) return;
-    return this.nodeMap.get(domNode.editorId);
+    return this.nodeMap.get(domNode);
   }
 
   /**
@@ -133,6 +150,23 @@ export default class Model {
     if (modelNode.parent) {
       this.removeChildFromParent(modelNode, modelNode.parent);
     }
+  }
+
+
+  static getChildIndex(child: Node): number | null {
+    const parent = child.parentNode;
+    if (!parent) {
+      return null;
+    }
+    let index = 0;
+    // more verbose but probably more efficient than converting to an array and using indexOf
+    for (const candidate of parent.childNodes) {
+      if (child === candidate) {
+        return index;
+      }
+      index ++;
+    }
+    return null;
   }
 
   private removeChildFromParent(child: ModelNode, parent: ModelElement) {
