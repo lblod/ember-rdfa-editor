@@ -17,17 +17,23 @@ export default abstract class SetPropertyCommand extends Command {
       console.info("Not executing SetPropertyCommand because selection is missing");
       return;
     }
+
+    // get start and end regardless of selection direction
+    const start = selection.lastRange.start;
+    const end = selection.lastRange.end;
+
+
     const nodeFinder = new ModelNodeFinder({
-     startNode: selection.anchor.parent,
-      endNode: selection.focus.parent,
+     startNode: start.parent,
+      endNode: end.parent,
       rootNode: this.model.rootModelNode,
       nodeFilter: ModelNode.isModelText,
-      direction: selection.isRightToLeft? Direction.BACKWARDS: Direction.FORWARDS
+      direction: Direction.FORWARDS
     });
     const nodes = Array.from(nodeFinder) as ModelText[];
 
-    nodes[nodes.length - 1] = nodes[nodes.length - 1].split(selection.focus.parentOffset).left;
-    nodes[0] = nodes[0].split(selection.anchor.parentOffset).right;
+    nodes[nodes.length - 1] = nodes[nodes.length - 1].split(end.parentOffset).left;
+    nodes[0] = nodes[0].split(start.parentOffset).right;
 
 
 

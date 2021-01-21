@@ -15,6 +15,7 @@ import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/ut
 interface WellbehavedSelection extends ModelSelection {
   anchor: ModelPosition;
   focus: ModelPosition;
+  lastRange: ModelRange;
 }
 
 /**
