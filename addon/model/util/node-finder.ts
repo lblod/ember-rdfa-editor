@@ -84,7 +84,7 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
    */
   private findNextNode(): R | null {
     let candidate = this.findNextNodeToConsider();
-    while (candidate && !this.nodeFilter(candidate)) {
+    while (candidate && !this.nodeFilter(candidate) && candidate !== this.endNode) {
       candidate = this.findNextNodeToConsider();
     }
     return candidate as R;

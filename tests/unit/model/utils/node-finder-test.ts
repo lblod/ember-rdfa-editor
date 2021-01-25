@@ -3,6 +3,8 @@ import ModelElement, {ElementType} from "@lblod/ember-rdfa-editor/model/model-el
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelNode, {ModelNodeType} from "@lblod/ember-rdfa-editor/model/model-node";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import Model from "@lblod/ember-rdfa-editor/model/model";
 
 function testElement(type: ElementType, name: string = "testNode"): ModelElement {
   return new ModelElement(type, {debugInfo: name});
@@ -231,5 +233,38 @@ module("Unit | model | util | node-finder", function () {
     const result = [...nodeFinder];
     assert.equal(result.length, 1);
     assert.equal(result[0], start);
+  });
+  test("finds nodes correctly when start is child of end", function (assert) {
+    const root = testElement("div");
+
+    const testTree = testElement("div");
+    const start = new ModelText("start");
+    const startsibling = new ModelText("other");
+    testTree.appendChildren(start, startsibling);
+
+    const sistertext = new ModelText("should not visit");
+
+    const sistertree = testElement("div");
+    const sisterchild1 = new ModelText("should not visit");
+    const sisterchild2 = new ModelText("should not visit");
+    const sisterchild3 = new ModelText("should not visit");
+    sistertree.appendChildren(sisterchild1, sisterchild2, sisterchild3);
+
+    root.appendChildren(testTree, sistertext, sistertree);
+
+
+    debugger;
+    const nodeFinder = new ModelNodeFinder<ModelText>( {
+      startNode: start,
+      rootNode: root,
+      endNode: testTree,
+      nodeFilter: ModelNode.isModelText
+    });
+    const result = [...nodeFinder];
+
+    assert.equal(result.length, 2);
+    assert.strictEqual(result[0], start);
+    assert.strictEqual(result[1], startsibling);
+
   });
 });
