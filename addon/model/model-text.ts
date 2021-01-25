@@ -2,7 +2,7 @@ import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/mod
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 const NON_BREAKING_SPACE = '\u00A0';
-export type TextAttribute = "bold" | "italic" | "underline" | "strikethrough";
+export type TextAttribute = "bold" | "italic" | "underline" | "strikethrough" | "highlighted";
 
 export default class ModelText extends ModelNode {
   nodeType: ModelNodeType = "TEXT";
@@ -65,12 +65,12 @@ export default class ModelText extends ModelNode {
   split(index: number): { left: ModelText, right: ModelText } {
     let leftContent = this.content.substring(0, index);
     if (leftContent.endsWith(" ")) {
-      console.log("replacing space with NBSP;")
+      console.log("replacing space with NBSP;");
       leftContent = leftContent.substring(0, leftContent.length - 1) + NON_BREAKING_SPACE;
     }
     let rightContent = this.content.substring(index);
     if (rightContent.startsWith(" ")) {
-      console.log("replacing space with NBSP;")
+      console.log("replacing space with NBSP;");
       rightContent = NON_BREAKING_SPACE + rightContent.substring(1);
     }
     this.content = leftContent;

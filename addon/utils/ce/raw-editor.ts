@@ -99,5 +99,11 @@ class RawEditor extends EmberObject {
     command.execute(...args);
     this.updateRichNode();
   }
+
+  synchronizeModel() {
+    console.log("synchronizing")
+    this.model.read();
+    this.model.write();
+  }
 }
 export default RawEditor;

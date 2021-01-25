@@ -14,6 +14,12 @@ export class NotImplementedError extends CustomError {}
  */
 export class SelectionError extends CustomError {}
 
+export class MisbehavedSelectionError extends SelectionError {
+  constructor() {
+    super("Unexpected selection without anchor or focus");
+  }
+}
+
 /**
  * A domelement is not in a state we expect
  */
@@ -31,3 +37,5 @@ export class WriterError extends CustomError{}
 
 
 export class ModelError extends CustomError{}
+
+export class PositionError extends CustomError{}
