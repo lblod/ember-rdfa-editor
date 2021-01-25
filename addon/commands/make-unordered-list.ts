@@ -26,9 +26,6 @@ export default class MakeUnorderedListCommand extends Command {
       for(const child of element.children) {
         if(child.boundNode?.nodeName === 'BR') {
           return node;
-        } else {
-          if(!node.parent) return null;
-          return this.getTopBlockNode(node.parent);
         }
       }
       if(!node.parent) return null;
@@ -49,7 +46,7 @@ export default class MakeUnorderedListCommand extends Command {
     if(!commonAncestor) return;
 
 
-    let nodes: ModelNode[];
+    let nodes: ModelNode[] = [];
     if(selection.isCollapsed) {
       const topElement = this.getTopBlockNode(commonAncestor.parent);
       if(topElement) {
@@ -67,8 +64,14 @@ export default class MakeUnorderedListCommand extends Command {
         rootNode: commonAncestor.parent,
         direction: Direction.FORWARDS
       });
-
-      nodes = Array.from(nodeFinder);
+      const allNodesInSelection = Array.from(nodeFinder);
+      for(const node of allNodesInSelection) {
+          const topBlock = this.getTopBlockNode(node);
+          if(topBlock && nodes[nodes.length-1] !== topBlock) {
+            nodes.push(topBlock);
+          }
+      }
+      offset = parentElement.children.indexOf(nodes[0]);
     }
     const items = [];
     let index = 0;
