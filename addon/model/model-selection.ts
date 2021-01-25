@@ -201,6 +201,7 @@ export default class ModelSelection {
     const ancestor = this.getCommonAncestor()?.parent;
     console.log(ancestor);
     if (!ancestor) return PropertyState.unknown;
+
     if(ancestor.boundNode?.nodeName === 'UL' || ancestor.boundNode?.nodeName === 'OL') {
       return PropertyState.enabled;
     } else {
@@ -208,7 +209,8 @@ export default class ModelSelection {
       if(!actualNode) {
         return PropertyState.unknown;
       }
-      while(actualNode.parentNode) {
+      //walk up to see if we encounter a list
+      while(actualNode?.parentNode) {
         const parent = actualNode.parentNode;
         if(parent.nodeName === 'UL' || parent.nodeName === 'OL') {
           return PropertyState.enabled;
