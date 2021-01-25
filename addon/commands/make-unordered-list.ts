@@ -7,6 +7,7 @@ import Command from "@lblod/ember-rdfa-editor/commands/command";
 import ModelElement, {ElementType} from "../model/model-element";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import { off } from "rsvp";
 
 
 /**
@@ -45,6 +46,7 @@ export default class MakeUnorderedListCommand extends Command {
     }
     const commonAncestor = selection.getCommonAncestor();
     let parentElement = commonAncestor?.parentElement;
+    let offset = selection.lastRange.start.parentOffset;
     if(!commonAncestor) return;
 
 
@@ -53,6 +55,8 @@ export default class MakeUnorderedListCommand extends Command {
       const topElement = this.getTopBlockNode(commonAncestor.parent);
       if(topElement) {
         parentElement = topElement?.parent;
+        offset = topElement?.parent?.children.indexOf(topElement);
+
         nodes = [topElement];
       } 
     } else {
@@ -99,7 +103,7 @@ export default class MakeUnorderedListCommand extends Command {
     const listNode = this.buildList('ul', items);
 
     if(parentElement) {
-      parentElement.addChild(listNode, selection.lastRange.start.parentOffset);
+      parentElement.addChild(listNode, offset);
       this.model.write(parentElement);
     }
 
