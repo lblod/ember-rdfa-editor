@@ -1,4 +1,8 @@
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
+import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -46,11 +50,42 @@ export default class ModelRange {
    * Find the common ancestor of start and end positions.
    */
   getCommonAncestor(): ModelPosition | null {
-    if(this.start.root !== this.end.root) {
+    if (this.start.root !== this.end.root) {
       return null;
     }
     return ModelPosition.getCommonAncestor(this.start, this.end);
 
   }
 
+  /**
+   * Get a {@link ModelNodeFinder} which searches for nodes between start and end, or the other way round
+   * @param direction
+   * @param filter
+   */
+  getNodeFinder<T extends ModelNode = ModelNode>(direction: Direction = Direction.FORWARDS, filter?: (node: ModelNode) => node is T): ModelNodeFinder<T> {
+    return new ModelNodeFinder({
+      startNode: this.start.parent,
+      endNode: this.end.parent,
+      rootNode: this.start.root,
+      nodeFilter: filter,
+      direction
+    });
+
+  }
+
+  /**
+   * Eagerly get all nodes between start and end, filtered by filter
+   * @param filter
+   */
+  getNodes<T extends ModelNode = ModelNode>(filter?: (node: ModelNode) => node is T): T[] {
+    const finder = this.getNodeFinder<T>(Direction.FORWARDS, filter);
+    return [...finder];
+  }
+
+  /**
+   * Get all {@link ModelText} nodes between start and end
+   */
+  getTextNodes(): ModelText[] {
+    return this.getNodes(ModelNode.isModelText);
+  }
 }

@@ -4,7 +4,9 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
-import ModelElement from "../model/model-element";
+import ModelElement, {ElementType} from "../model/model-element";
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 
 /**
@@ -44,7 +46,9 @@ export default class MakeUnorderedListCommand extends Command {
     const commonAncestor = selection.getCommonAncestor();
     let parentElement = commonAncestor?.parentElement;
     if(!commonAncestor) return;
-    let nodes = [];
+
+
+    let nodes: ModelNode[];
     if(selection.isCollapsed) {
       const topElement = this.getTopBlockNode(commonAncestor.parent);
       if(topElement) {
@@ -52,6 +56,8 @@ export default class MakeUnorderedListCommand extends Command {
         nodes = [topElement];
       } 
     } else {
+
+      // collect all selected nodes
       const nodeFinder = new ModelNodeFinder({
         startNode: selection.lastRange.start.parent,
         endNode: selection.lastRange.end.parent,
@@ -59,16 +65,25 @@ export default class MakeUnorderedListCommand extends Command {
         direction: Direction.FORWARDS
       });
 
-      nodes = Array.from(nodeFinder) as ModelNode[];
+      nodes = Array.from(nodeFinder);
     }
     const items = [];
     let index = 0;
-    const lastNode = nodes[nodes.length-1];
+    const lastNode = nodes[nodes.length - 1];
+
+    // if there's a br to the right of the last collected node, remove it
+    // not sure this is the way to go
+    // can probably be replaced by if(tagName(lastNode.nextSibling?.boundNode) === "br")
     if(lastNode.nextSibling && ModelNode.isModelElement(lastNode.nextSibling) && lastNode.nextSibling.boundNode?.nodeName === 'BR') {
       this.model.removeModelNode(lastNode.nextSibling);
     }
+
     for(const node of nodes) {
-      if(ModelNode.isModelElement(node) && node.boundNode?.nodeName === 'BR') {
+      // if we find a br in our collected nodes, remove it from the model
+      // and increase the rowIndex in the items matrix
+      // else, add node to current row of items
+      // the isModelElement check is probably redundant
+      if(ModelNode.isModelElement(node) && tagName(node.boundNode) === 'br') {
         index++;
         this.model.removeModelNode(node);
         continue;
@@ -82,19 +97,25 @@ export default class MakeUnorderedListCommand extends Command {
       this.model.removeModelNode(node);
     }
     const listNode = this.buildList('ul', items);
+
     if(parentElement) {
       parentElement.addChild(listNode, selection.lastRange.start.parentOffset);
       this.model.write(parentElement);
     }
-    
+
   }
-  buildList(type: String, items: ModelNode[][]) {
+
+  /**
+   * Construct a model list tree from a matrix of content
+   * every row will become a <li> with the row items as its children
+   * @param type
+   * @param items
+   */
+  private buildList(type: ElementType, items: ModelNode[][]) {
     const rootNode = new ModelElement(type);
     for(const item of items) {
       const listItem = new ModelElement('li');
-      for(const child of item) {
-        listItem.addChild(child);
-      }
+      listItem.appendChildren(...item);
       rootNode.addChild(listItem);
     }
     return rootNode;
