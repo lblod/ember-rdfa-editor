@@ -1,6 +1,7 @@
 import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
+import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -44,6 +45,10 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   get lastChild() {
     return this._children[this._children.length - 1];
+  }
+
+  get isBlock() {
+    return !nonBlockNodes.has(this.type);
   }
 
   clone(): ModelElement {

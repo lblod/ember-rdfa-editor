@@ -7,7 +7,6 @@ import Command from "@lblod/ember-rdfa-editor/commands/command";
 import ModelElement, {ElementType} from "../model/model-element";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import { off } from "rsvp";
 
 
 /**
@@ -58,7 +57,7 @@ export default class MakeUnorderedListCommand extends Command {
         offset = topElement?.parent?.children.indexOf(topElement);
 
         nodes = [topElement];
-      } 
+      }
     } else {
 
       // collect all selected nodes

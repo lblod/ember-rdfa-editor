@@ -2,13 +2,12 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {MisbehavedSelectionError, NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
-import ModelElement from "./model-element";
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus

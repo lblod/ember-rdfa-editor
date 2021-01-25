@@ -35,6 +35,10 @@ export default class ModelText extends ModelNode {
     this._textAttributeMap = value;
   }
 
+  get isBlock() {
+    return false;
+  }
+
   getTextAttribute(key: TextAttribute): boolean {
     return this._textAttributeMap.get(key) || false;
   }

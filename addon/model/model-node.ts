@@ -4,8 +4,6 @@ import Fragment from "@lblod/ember-rdfa-editor/model/fragment";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
-const nonBlockNodes = ['B', 'STRONG', 'I', 'EM', 'SPAN', 'A', '#text'];
-
 export interface NodeConfig {
   debugInfo: any;
 }
@@ -104,13 +102,7 @@ export default abstract class ModelNode {
     return null;
   }
 
-  get isBlock() {
-    if(this.boundNode) {
-      return !nonBlockNodes.includes(this.boundNode.nodeName);
-    } else {
-      return false;
-    }
-  }
+  abstract get isBlock(): boolean;
 
   getIndexPath(): number[] {
     const result = [];
