@@ -84,13 +84,17 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
       while (leftNode && tagName(leftNode) === "br") {
         leftNode = leftNode.previousSibling;
       }
-      if (leftNode && isTextNode(leftNode)) {
-        return {container: leftNode, offset: leftNode.length};
-      }
-      if (leftNode && leftNode.childNodes.length > 0) {
-        return this.normalizeDomPosition(leftNode, leftNode.childNodes.length);
-      } else {
-        return {container, offset};
+
+      if (leftNode) {
+        if (isTextNode(leftNode)) {
+          return {container: leftNode, offset: leftNode.length};
+        }
+        else if (leftNode.childNodes.length > 0) {
+          return this.normalizeDomPosition(leftNode, leftNode.childNodes.length);
+        }
+        else {
+          return {container, offset};
+        }
       }
     }
 
