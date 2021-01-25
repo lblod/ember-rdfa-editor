@@ -21,18 +21,18 @@ export default class MakeUnorderedListCommand extends Command {
 
   getTopBlockNode(node: ModelNode): ModelNode | null {
     if(node.isBlock) return node;
-    if(ModelElement.isModelElement(node)) {
-      const element = node as ModelElement;
+    const parent = node.parent;
+    if(!parent) return node;
+    if(ModelElement.isModelElement(parent)) {
+      const element = parent as ModelElement;
       for(const child of element.children) {
         if(child.boundNode?.nodeName === 'BR') {
           return node;
         }
       }
-      if(!node.parent) return null;
-      return this.getTopBlockNode(node.parent);
+      return this.getTopBlockNode(parent);
     } else {
-      if(!node.parent) return null;
-      return this.getTopBlockNode(node.parent);
+      return this.getTopBlockNode(parent);
     }
   }
 
@@ -71,7 +71,10 @@ export default class MakeUnorderedListCommand extends Command {
             nodes.push(topBlock);
           }
       }
-      offset = parentElement.children.indexOf(nodes[0]);
+      if(nodes[0].parent) {
+        parentElement = nodes[0].parent;
+        offset = parentElement.children.indexOf(nodes[0]);
+      }
     }
     const items = [];
     let index = 0;
