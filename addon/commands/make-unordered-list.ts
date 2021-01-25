@@ -17,26 +17,40 @@ export default class MakeUnorderedListCommand extends Command {
     super(model);
   }
 
+  getTopBlockNode(node: ModelNode): ModelNode | null {
+    if(node.isBlock) return node;
+    if(ModelElement.isModelElement(node)) {
+      const element = node as ModelElement;
+      for(const child of element.children) {
+        if(child.boundNode?.nodeName === 'BR') {
+          return node;
+        } else {
+          if(!node.parent) return null;
+          return this.getTopBlockNode(node.parent);
+        }
+      }
+      if(!node.parent) return null;
+      return this.getTopBlockNode(node.parent);
+    } else {
+      if(!node.parent) return null;
+      return this.getTopBlockNode(node.parent);
+    }
+  }
+
   execute(selection: ModelSelection = this.model.selection) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
     const commonAncestor = selection.getCommonAncestor();
-    const parentElement = commonAncestor?.parentElement;
+    let parentElement = commonAncestor?.parentElement;
     if(!commonAncestor) return;
     let nodes = [];
     if(selection.isCollapsed) {
-      nodes = [commonAncestor.parent];
-      let nextElement = commonAncestor.parent.nextSibling;
-      while(nextElement && nextElement.boundNode?.nodeName !== 'BR') {
-        nodes.push(nextElement);
-        nextElement = nextElement.nextSibling;
-      }
-      let previousElement = commonAncestor.parent.previousSibling;
-      while(previousElement && previousElement.boundNode?.nodeName !== 'BR') {
-        nodes.push(previousElement);
-        previousElement = previousElement.previousSibling;
-      }
+      const topElement = this.getTopBlockNode(commonAncestor.parent);
+      if(topElement) {
+        parentElement = topElement?.parent;
+        nodes = [topElement];
+      } 
     } else {
       const nodeFinder = new ModelNodeFinder({
         startNode: selection.lastRange.start.parent,
