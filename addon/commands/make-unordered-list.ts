@@ -102,6 +102,9 @@ export default class MakeUnorderedListCommand extends Command {
         } else {
           items[index] = [node];
         }
+        if(node.isBlock) {
+          index++;
+        }
       }
       this.model.removeModelNode(node);
     }
