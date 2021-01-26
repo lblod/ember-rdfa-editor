@@ -52,7 +52,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   clone(): ModelElement {
-    const result = new ModelElement();
+    const result = new ModelElement(this.type);
     result.attributeMap = new Map<string, string>(this.attributeMap);
     result.nodeType = this.nodeType;
     const clonedChildren = this.children.map(c => c.clone());

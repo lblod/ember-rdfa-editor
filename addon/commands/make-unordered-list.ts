@@ -1,12 +1,10 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import ModelElement, {ElementType} from "../model/model-element";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 
 
 /**
@@ -40,81 +38,69 @@ export default class MakeUnorderedListCommand extends Command {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
-    const commonAncestor = selection.getCommonAncestor();
-    let parentElement = commonAncestor?.parentElement;
-    let offset = selection.lastRange.start.parentOffset;
-    if(!commonAncestor) return;
 
+    const interestingPositions = selection.lastRange.getSelectedTopPositions();
 
-    let nodes: ModelNode[] = [];
-    if(selection.isCollapsed) {
-      const topElement = this.getTopBlockNode(commonAncestor.parent);
-      if(topElement) {
-        parentElement = topElement?.parent;
-        offset = topElement?.parent?.children.indexOf(topElement);
-
-        nodes = [topElement];
-      }
-    } else {
-
-      // collect all selected nodes
-      const nodeFinder = new ModelNodeFinder({
-        startNode: selection.lastRange.start.parent,
-        endNode: selection.lastRange.end.parent,
-        rootNode: commonAncestor.parent,
-        direction: Direction.FORWARDS
-      });
-      const allNodesInSelection = Array.from(nodeFinder);
-      for(const node of allNodesInSelection) {
-          const topBlock = this.getTopBlockNode(node);
-          if(topBlock && nodes[nodes.length-1] !== topBlock) {
-            nodes.push(topBlock);
-          }
-      }
-      if(nodes[0].parent) {
-        parentElement = nodes[0].parent;
-        offset = parentElement.children.indexOf(nodes[0]);
-      }
+    if(!interestingPositions) {
+      throw new MisbehavedSelectionError();
     }
-    const items = [];
+    const interestingNodes = interestingPositions.map(pos => pos.parent);
+
+    const whereToInsert = interestingPositions[0].parent.parent;
+    if(!whereToInsert) {
+      throw new MisbehavedSelectionError();
+    }
+    const positionToInsert = interestingPositions[0].parent.index;
+
+    const items: ModelNode[][] = [];
     let index = 0;
-    const lastNode = nodes[nodes.length - 1];
-
-    // if there's a br to the right of the last collected node, remove it
-    // not sure this is the way to go
-    // can probably be replaced by if(tagName(lastNode.nextSibling?.boundNode) === "br")
-    if(lastNode.nextSibling && ModelNode.isModelElement(lastNode.nextSibling) && lastNode.nextSibling.boundNode?.nodeName === 'BR') {
-      this.model.removeModelNode(lastNode.nextSibling);
-    }
-
-    for(const node of nodes) {
-      // if we find a br in our collected nodes, remove it from the model
-      // and increase the rowIndex in the items matrix
-      // else, add node to current row of items
-      // the isModelElement check is probably redundant
-      if(ModelNode.isModelElement(node) && tagName(node.boundNode) === 'br') {
-        index++;
-        this.model.removeModelNode(node);
-        continue;
-      } else {
-        if(items[index]) {
-          items[index].push(node);
-        } else {
-          items[index] = [node];
-        }
-        if(node.isBlock) {
+    let hasBlocks = false;
+    for (const node of interestingNodes){
+      if (ModelNode.isModelElement(node)) {
+        if(node.type === "br") {
           index++;
+          hasBlocks = true;
+        } else if (node.isBlock) {
+          index++;
+          items.push([node]);
+          index++;
+          hasBlocks = true;
+        } else {
+          ArrayUtils.pushOrCreate(items, index, node);
         }
+      } else if (ModelNode.isModelText(node)) {
+        ArrayUtils.pushOrCreate(items, index, node);
       }
-      this.model.removeModelNode(node);
     }
-    const listNode = this.buildList('ul', items);
+    if (items.length && hasBlocks) {
+      for(const node of interestingNodes) {
+        this.model.removeModelNode(node);
+      }
+      const list = this.buildList("ul", items);
 
-    if(parentElement) {
-      parentElement.addChild(listNode, offset);
-      this.model.write(parentElement);
+      whereToInsert.addChild(list, positionToInsert!);
+      selection.selectNode(whereToInsert);
+      this.model.write(whereToInsert!);
+    }  else {
+      const block = this.getTopBlockNode(selection.getCommonAncestor()?.parent!) as ModelElement;
+      const parent = block.parent;
+      if(!parent) {
+        throw new MisbehavedSelectionError();
+      }
+      const positionToInsert = block.index;
+      const li = new ModelElement("li");
+      li.addChild(block.clone());
+      const list = new ModelElement("ul");
+      list.addChild(li);
+      parent!.addChild(list, positionToInsert!);
+      this.model.removeModelNode(block);
+      selection.selectNode(parent);
+      selection.collapse();
+
+      this.model.write(parent);
+
     }
-
+    return;
   }
 
   /**

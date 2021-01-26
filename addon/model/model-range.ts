@@ -58,6 +58,12 @@ export default class ModelRange {
   }
 
   /**
+   * Get all child positions of the commonAncestor that are touched by the selection
+   */
+  getSelectedTopPositions(): ModelPosition[] | null {
+    return ModelPosition.getTopPositionsBetween(this.start, this.end);
+  }
+  /**
    * Get a {@link ModelNodeFinder} which searches for nodes between start and end, or the other way round
    * @param direction
    * @param filter

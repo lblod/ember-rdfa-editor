@@ -44,12 +44,39 @@ export default class ModelPosition {
   }
 
   static getCommonAncestor(pos1: ModelPosition, pos2: ModelPosition): ModelPosition | null {
-    if(pos1.root !== pos2.root) {
+    if (pos1.root !== pos2.root) {
       return null;
     }
     const commonPath = ArrayUtils.findCommonSlice(pos1.path, pos2.path);
 
     return ModelPosition.from(pos1.root, commonPath);
+  }
+
+  /**
+   * Get a slice of child positions of the commonAncestor between pos1 and pos2
+   * @param pos1
+   * @param pos2
+   */
+  static getTopPositionsBetween(pos1: ModelPosition, pos2: ModelPosition): ModelPosition[] | null {
+    const commonAncestor = ModelPosition.getCommonAncestor(pos1, pos2);
+    if (!commonAncestor) {
+      return null;
+    }
+    debugger;
+    const cutoff = commonAncestor.path.length;
+    const root = commonAncestor.root;
+
+    const commonPath = commonAncestor.path;
+    const path1 = pos1.path.slice(0, cutoff + 1);
+    const path2 = pos2.path.slice(0, cutoff + 1);
+
+    const results = [];
+
+    for (let i = path1[path1.length - 1]; i <= path2[path2.length - 1]; i++) {
+      results.push(ModelPosition.from(root, commonPath.concat([i])));
+    }
+    return results;
+
   }
 
   constructor(root: ModelElement) {
@@ -70,11 +97,11 @@ export default class ModelPosition {
   }
 
   get parent(): ModelNode {
-    if(this.parentCache) {
+    if (this.parentCache) {
       return this.parentCache;
     }
     let cur: ModelNode = this.root;
-    for (let i = 0; i < this.path.length - 1; i++) {
+    for (let i = 0; i < this.path.length; i++) {
       if (ModelNode.isModelElement(cur)) {
         cur = cur.children[this.path[i]];
       } else {
@@ -91,7 +118,7 @@ export default class ModelPosition {
    */
   get parentElement(): ModelElement {
     const parent = this.parent;
-    if(ModelNode.isModelElement(parent)) {
+    if (ModelNode.isModelElement(parent)) {
       return parent;
     } else {
       const result = parent.parent;

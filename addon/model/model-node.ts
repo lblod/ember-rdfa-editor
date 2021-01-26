@@ -143,14 +143,6 @@ export default abstract class ModelNode {
   setAttribute(key: string, value: string) {
     this._attributeMap.set(key, value);
   }
-  remove() {
-    const parent = this.parent;
-    if(!parent?.children) return;
-    const indexOf = this.parent?.children.indexOf(this);
-    if(indexOf) {
-      parent.children = parent.children.splice(indexOf,1);
-    }
-  }
 
   /**
    * Generic no-op default for setting a text attribute. Should be overridden by subclasses
