@@ -93,7 +93,7 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   toggleUnorderedList() {
-    this.toggleProperty(this.isInList, "make-unordered-list", "remove-unordered-list");
+    this.toggleProperty(this.isInList, "make-unordered-list", "remove-list");
   }
 
   @action

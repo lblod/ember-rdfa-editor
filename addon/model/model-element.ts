@@ -109,4 +109,22 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       }
     }
   }
+
+  split(index : number): {left: ModelElement, right: ModelElement}{
+    const leftChildren = this.children.slice(0, index);
+    if(leftChildren.length){
+      leftChildren[leftChildren.length - 1].nextSibling = null;
+    }
+    const rightChildren = this.children.slice(index);
+    if(rightChildren.length) {
+      rightChildren[0].previousSibling = null;
+    }
+
+    this.children = leftChildren;
+    const right = this.clone();
+    right.children = [];
+    right.appendChildren(...rightChildren);
+
+    return {left: this, right};
+}
 }
