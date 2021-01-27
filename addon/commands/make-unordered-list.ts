@@ -1,6 +1,6 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import ModelSelection, {WellbehavedSelection} from "@lblod/ember-rdfa-editor/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import ModelElement, {ElementType} from "../model/model-element";
 import {MisbehavedSelectionError, NoParentError, NoTopSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
@@ -17,41 +17,99 @@ export default class MakeUnorderedListCommand extends Command {
     super(model);
   }
 
-  getTopBlockNode(node: ModelNode): ModelNode | null {
-    if (node.isBlock) return node;
-    const parent = node.parent;
-    if (!parent) return node;
-    if (ModelElement.isModelElement(parent)) {
-      const element = parent as ModelElement;
-      for (const child of element.children) {
-        if (child.boundNode?.nodeName === 'BR') {
-          return node;
-        }
-      }
-      return this.getTopBlockNode(parent);
-    } else {
-      return this.getTopBlockNode(parent);
-    }
-  }
 
   execute(selection: ModelSelection = this.model.selection) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
+    const {interestingNodes, whereToInsert, positionToInsert} = this.collectInterestingNodes(selection);
 
+    const items = this.nodesToItems(interestingNodes);
+
+    let listNode: ModelElement;
+    if (items) {
+      for (const node of interestingNodes) {
+        this.model.removeModelNode(node);
+      }
+      listNode = this.wrapItems(items, whereToInsert, positionToInsert);
+
+      selection.selectNode(listNode);
+    } else {
+      const item = selection.getCommonAncestor().parent;
+      const block = this.getTopBlockNode(item) as ModelElement;
+      listNode = this.wrapSingleItem(block);
+
+      selection.selectNode(listNode);
+      selection.collapse();
+      this.model.removeModelNode(block);
+    }
+    this.model.write(listNode);
+    return;
+  }
+
+  /**
+   * Given a well-behaved selection, find the nodes we care about, and calculate the insertion point for
+   * the eventual list
+   * @param selection
+   * @private
+   */
+  private collectInterestingNodes(selection: WellbehavedSelection) {
     const interestingPositions = selection.lastRange.getSelectedTopPositions();
-
     if (!interestingPositions) {
       throw new NoTopSelectionError();
     }
     const interestingNodes = interestingPositions.map(pos => pos.parent);
     const whereToInsert = interestingPositions[0].parent.parent;
-
     if (!whereToInsert) {
       throw new NoParentError();
     }
-    const positionToInsert = interestingPositions[0].parent.index;
+    const positionToInsert = interestingPositions[0].parent.index!;
+    return {interestingNodes, whereToInsert, positionToInsert};
+  }
 
+  /**
+   * Given a 2d matrix of nodes, build a list with each row of the matrix inside a list item, then
+   * insert it into the whereToInsert node at positionToInsert.
+   * @param items
+   * @param whereToInsert
+   * @param positionToInsert
+   * @private
+   */
+  private wrapItems(items: ModelNode[][], whereToInsert: ModelElement, positionToInsert: number): ModelElement {
+    const list = this.buildList("ul", items);
+
+    whereToInsert.addChild(list, positionToInsert);
+    return whereToInsert;
+  }
+
+  /**
+   * Given a block element, wrap in it a new list.
+   * Return the new list node.
+   * @param block
+   * @private
+   */
+  private wrapSingleItem(block: ModelElement): ModelElement {
+    const parent = block.parent;
+    if (!parent) {
+      throw new NoParentError();
+    }
+    const positionToInsert = block.index;
+    const li = new ModelElement("li");
+    li.addChild(block.clone());
+    const list = new ModelElement("ul");
+    list.addChild(li);
+    parent.addChild(list, positionToInsert!);
+
+    return parent;
+  }
+
+  /**
+   * Given a set of nodes we care about, build a 2d matrix with each row representing the contents of a listItem
+   * If no full row can be built from the nodes (because there is no block element or linebreak), return null
+   * @param interestingNodes
+   * @private
+   */
+  private nodesToItems(interestingNodes: ModelNode[]): ModelNode[][] | null {
     const items: ModelNode[][] = [];
     let index = 0;
     let hasBlocks = false;
@@ -72,35 +130,32 @@ export default class MakeUnorderedListCommand extends Command {
         ArrayUtils.pushOrCreate(items, index, node);
       }
     }
-    if (items.length && hasBlocks) {
-      for (const node of interestingNodes) {
-        this.model.removeModelNode(node);
-      }
-      const list = this.buildList("ul", items);
-
-      whereToInsert.addChild(list, positionToInsert!);
-      selection.selectNode(whereToInsert);
-      this.model.write(whereToInsert!);
-    } else {
-      const block = this.getTopBlockNode(selection.getCommonAncestor()?.parent!) as ModelElement;
-      const parent = block.parent;
-      if (!parent) {
-        throw new NoParentError();
-      }
-      const positionToInsert = block.index;
-      const li = new ModelElement("li");
-      li.addChild(block.clone());
-      const list = new ModelElement("ul");
-      list.addChild(li);
-      parent!.addChild(list, positionToInsert!);
-      this.model.removeModelNode(block);
-      selection.selectNode(parent);
-      selection.collapse();
-
-      this.model.write(parent);
-
+    if (!hasBlocks) {
+      return null;
     }
-    return;
+    return items;
+  }
+
+  /**
+   * Given a node, find the first ancestor which is a blockNode
+   * @param node
+   * @private
+   */
+  private getTopBlockNode(node: ModelNode): ModelNode | null {
+    if (node.isBlock) return node;
+    const parent = node.parent;
+    if (!parent) return node;
+    if (ModelElement.isModelElement(parent)) {
+      const element = parent as ModelElement;
+      for (const child of element.children) {
+        if (child.boundNode?.nodeName === 'BR') {
+          return node;
+        }
+      }
+      return this.getTopBlockNode(parent);
+    } else {
+      return this.getTopBlockNode(parent);
+    }
   }
 
   /**

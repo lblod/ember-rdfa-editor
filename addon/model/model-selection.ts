@@ -12,10 +12,11 @@ import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/ut
 /**
  * Utility interface describing a selection with an non-null anchor and focus
  */
-interface WellbehavedSelection extends ModelSelection {
+export interface WellbehavedSelection extends ModelSelection {
   anchor: ModelPosition;
   focus: ModelPosition;
   lastRange: ModelRange;
+  getCommonAncestor(): ModelPosition;
 }
 
 /**
