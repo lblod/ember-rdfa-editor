@@ -3,6 +3,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelNode from "../model/model-node";
 import ModelElement from "../model/model-element";
+import {MisbehavedSelectionError, NoParentError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export default class RemoveListCommand extends Command {
   name = "remove-list";
@@ -41,30 +42,38 @@ export default class RemoveListCommand extends Command {
 
   execute(selection: ModelSelection = this.model.selection) {
     const commonAncestor = selection.getCommonAncestor()?.parent;
-    if(!commonAncestor) return;
+    if(!commonAncestor) throw new MisbehavedSelectionError();
+
     const listNode = this.getListNode(commonAncestor);
-    if(!listNode) return;
+    if(!listNode) throw new SelectionError('The selection is not in a list');
+
     const anchorNode = selection.anchor?.parent;
     const focusNode = selection.focus?.parent;
-    if(!anchorNode || !focusNode) return;
+    if(!anchorNode || !focusNode) throw new MisbehavedSelectionError();
+
     const anchorLi = this.getListItem(anchorNode);
     const focusLi = this.getListItem(focusNode);
-    if(!anchorLi || !focusLi || anchorLi.index === null || focusLi.index === null) return;
+    if(!anchorLi || !focusLi || anchorLi.index === null || focusLi.index === null) throw new SelectionError('The selection is not in a list');
+
     const {left: preSelectionNodes, right: rest} = listNode.split(anchorLi.index);
     const {left: selectionNodes, right: postSelectionNodes} = rest.split(focusLi.index + 1);
     const parentDiv = listNode.parent;
     const index = listNode.index;
-    if(index === null || !parentDiv) return;
+    if(index === null || !parentDiv) throw new NoParentError();
+
     parentDiv.removeChild(listNode);
+
     if(postSelectionNodes && postSelectionNodes.children.length) {
       parentDiv.addChild(postSelectionNodes, index);
     }
+
     for(const child of selectionNodes.children){
       const newElement = new ModelElement('div');
       const childElement = child as ModelElement;
       newElement.appendChildren(...childElement.children);
       parentDiv?.addChild(newElement, index);
     }
+
     if(preSelectionNodes && preSelectionNodes.children.length) {
       parentDiv.addChild(preSelectionNodes, index);
     }
