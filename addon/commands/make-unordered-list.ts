@@ -5,6 +5,7 @@ import Command from "@lblod/ember-rdfa-editor/commands/command";
 import ModelElement, {ElementType} from "../model/model-element";
 import {MisbehavedSelectionError, NoParentError, NoTopSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 
 /**
@@ -23,27 +24,31 @@ export default class MakeUnorderedListCommand extends Command {
       throw new MisbehavedSelectionError();
     }
     const {interestingNodes, whereToInsert, positionToInsert} = this.collectInterestingNodes(selection);
+    if (!whereToInsert) {
+      throw new NoParentError();
+    }
 
     const items = this.nodesToItems(interestingNodes);
 
-    let listNode: ModelElement;
+    let container: ModelElement;
     if (items) {
       for (const node of interestingNodes) {
         this.model.removeModelNode(node);
       }
-      listNode = this.wrapItems(items, whereToInsert, positionToInsert);
+      const {parent, listNode} = this.wrapItems(items, whereToInsert, positionToInsert);
+      container = parent;
 
       selection.selectNode(listNode);
     } else {
       const item = selection.getCommonAncestor().parent;
       const block = this.getTopBlockNode(item) as ModelElement;
-      listNode = this.wrapSingleItem(block);
-
+      const {parent, listNode} = this.wrapSingleItem(block);
+      container = parent;
       selection.selectNode(listNode);
       selection.collapse();
       this.model.removeModelNode(block);
     }
-    this.model.write(listNode);
+    this.model.write(container);
     return;
   }
 
@@ -60,9 +65,6 @@ export default class MakeUnorderedListCommand extends Command {
     }
     const interestingNodes = interestingPositions.map(pos => pos.parent);
     const whereToInsert = interestingPositions[0].parent.parent;
-    if (!whereToInsert) {
-      throw new NoParentError();
-    }
     const positionToInsert = interestingPositions[0].parent.index!;
     return {interestingNodes, whereToInsert, positionToInsert};
   }
@@ -75,11 +77,11 @@ export default class MakeUnorderedListCommand extends Command {
    * @param positionToInsert
    * @private
    */
-  private wrapItems(items: ModelNode[][], whereToInsert: ModelElement, positionToInsert: number): ModelElement {
+  private wrapItems(items: ModelNode[][], whereToInsert: ModelElement, positionToInsert: number): { parent: ModelElement, listNode: ModelElement } {
     const list = this.buildList("ul", items);
 
     whereToInsert.addChild(list, positionToInsert);
-    return whereToInsert;
+    return {parent: whereToInsert, listNode: list};
   }
 
   /**
@@ -88,7 +90,7 @@ export default class MakeUnorderedListCommand extends Command {
    * @param block
    * @private
    */
-  private wrapSingleItem(block: ModelElement): ModelElement {
+  private wrapSingleItem(block: ModelElement): {parent: ModelElement, listNode: ModelElement} {
     const parent = block.parent;
     if (!parent) {
       throw new NoParentError();
@@ -100,7 +102,7 @@ export default class MakeUnorderedListCommand extends Command {
     list.addChild(li);
     parent.addChild(list, positionToInsert!);
 
-    return parent;
+    return {parent, listNode: list};
   }
 
   /**
@@ -144,7 +146,7 @@ export default class MakeUnorderedListCommand extends Command {
   private getTopBlockNode(node: ModelNode): ModelNode | null {
     if (node.isBlock) return node;
     const parent = node.parent;
-    if (!parent) return node;
+    if (!(parent && parent.parent)) return node;
     if (ModelElement.isModelElement(parent)) {
       const element = parent as ModelElement;
       for (const child of element.children) {

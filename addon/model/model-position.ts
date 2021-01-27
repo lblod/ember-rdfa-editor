@@ -62,7 +62,6 @@ export default class ModelPosition {
     if (!commonAncestor) {
       return null;
     }
-    debugger;
     const cutoff = commonAncestor.path.length;
     const root = commonAncestor.root;
 
@@ -73,7 +72,7 @@ export default class ModelPosition {
     const results = [];
 
     for (let i = path1[path1.length - 1]; i <= path2[path2.length - 1]; i++) {
-      results.push(ModelPosition.from(root, commonPath.concat([i])));
+      results.push(ModelPosition.from(root, commonPath.concat([i, 0])));
     }
     return results;
 
@@ -101,7 +100,7 @@ export default class ModelPosition {
       return this.parentCache;
     }
     let cur: ModelNode = this.root;
-    for (let i = 0; i < this.path.length; i++) {
+    for (let i = 0; i < this.path.length - 1; i++) {
       if (ModelNode.isModelElement(cur)) {
         cur = cur.children[this.path[i]];
       } else {
