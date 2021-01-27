@@ -4,7 +4,7 @@ import ModelNodeFinder, {
   ModelNodeFinderFilter,
   ModelNodeFinderPredicate
 } from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
-import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
+import {Direction, FilterAndPredicate} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
 /**
@@ -102,9 +102,3 @@ export default class ModelRange {
   }
 }
 
-interface FilterAndPredicate<T extends ModelNode> {
-  filter?: ModelNodeFinderFilter<T>,
-  predicate?: ModelNodeFinderPredicate<T>
-
-
-}

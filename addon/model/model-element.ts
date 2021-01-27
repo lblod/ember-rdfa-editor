@@ -2,6 +2,7 @@ import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/mod
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
 import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -35,6 +36,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   get childCount() {
     return this._children.length;
   }
+
   get length() {
     return this._children.length;
   }
@@ -110,13 +112,16 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
   }
 
-  split(index : number): {left: ModelElement, right: ModelElement}{
+  split(index: number): { left: ModelElement, right: ModelElement } {
+    if(index < 0) {
+      index = 0;
+    }
     const leftChildren = this.children.slice(0, index);
-    if(leftChildren.length){
+    if (leftChildren.length) {
       leftChildren[leftChildren.length - 1].nextSibling = null;
     }
     const rightChildren = this.children.slice(index);
-    if(rightChildren.length) {
+    if (rightChildren.length) {
       rightChildren[0].previousSibling = null;
     }
 
@@ -124,7 +129,33 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     const right = this.clone();
     right.children = [];
     right.appendChildren(...rightChildren);
+    this.parent?.addChild(right, this.index! + 1);
 
     return {left: this, right};
-}
+  }
+
+  /**
+   * replace an element by its children
+   * If withBreaks is true, insert a break after every child
+   * @param withBreaks
+   */
+  unwrap(withBreaks: boolean = false) {
+    const parent = this.parent;
+    if(!parent) {
+      throw new ModelError("Can't unwrap root node");
+    }
+    let insertIndex = this.index! + 1;
+
+
+    for (const child of this.children) {
+      this.parent?.addChild(child, insertIndex);
+      insertIndex++;
+      if(withBreaks){
+        this.parent?.addChild(new ModelElement("br"), insertIndex);
+        insertIndex++;
+      }
+    }
+    this.parent?.removeChild(this);
+
+  }
 }

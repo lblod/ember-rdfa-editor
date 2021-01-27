@@ -3,7 +3,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelNode from "../model/model-node";
 import ModelElement from "../model/model-element";
-import {MisbehavedSelectionError, NoParentError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export default class RemoveListCommand extends Command {
   name = "remove-list";
@@ -12,83 +12,46 @@ export default class RemoveListCommand extends Command {
     super(model);
   }
 
-  getListNode(node: ModelNode): ModelElement | null {
-    if(ModelElement.isModelElement(node)) {
-      const element = node as ModelElement;
-      if(element.type === 'ul' || element.type === 'ol') {
-        return element;
-      }
-    }
-    if(node.parent) {
-      return this.getListNode(node.parent);
-    } else {
-      return null;
-    }
-  }
-
-  getListItem(node: ModelNode): ModelElement | null {
-    if(ModelElement.isModelElement(node)) {
-      const element = node as ModelElement;
-      if(element.type === 'li') {
-        return element;
-      }
-    }
-    if(node.parent) {
-      return this.getListItem(node.parent);
-    } else {
-      return null;
-    }
-  }
-
   execute(selection: ModelSelection = this.model.selection) {
-    const commonAncestor = selection.getCommonAncestor()?.parent;
-    if(!commonAncestor) {
+    if(!ModelSelection.isWellBehaved(selection)) {
+
       throw new MisbehavedSelectionError();
     }
+    const anchorNode = selection.lastRange.start.parent;
+    const focusNode = selection.lastRange.end.parent;
 
-    const listNode = this.getListNode(commonAncestor);
-    if(!listNode) {
+    const listContainers = new Set(["li"]);
+
+    const listNodesIterator = selection.findAllInSelection({
+      filter: ModelNode.isModelElement,
+      predicate: (node: ModelElement) => listContainers.has(node.type)
+    });
+    if (!listNodesIterator) {
       throw new SelectionError('The selection is not in a list');
     }
+    const listNodes = Array.from(listNodesIterator);
 
-    const anchorNode = selection.anchor?.parent;
-    const focusNode = selection.focus?.parent;
-    if(!anchorNode || !focusNode) {
-      throw new MisbehavedSelectionError();
+      const anchorLi = anchorNode?.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li");
+      const focusLi = focusNode?.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li");
+
+      if (anchorLi && anchorLi.index! > 0) {
+        anchorLi.parent!.split(anchorLi.index!);
+      }
+
+      if (focusLi && focusLi.index! < focusLi.parent!.children.length - 1) {
+        focusLi.parent?.split(focusLi.index! + 1);
+      }
+
+    for (const [index, listItem] of listNodes.entries()) {
+      //unwrap lists
+      listItem.unwrap(index !== listNodes.length - 1);
+      if(listItem.parent?.type === "ul" || listItem.parent?.type === "ol") {
+        listItem.parent?.unwrap();
+      }
     }
-
-    const anchorLi = this.getListItem(anchorNode);
-    const focusLi = this.getListItem(focusNode);
-    if(!anchorLi || !focusLi || anchorLi.index === null || focusLi.index === null) {
-      throw new SelectionError('The selection is not in a list');
-    }
-
-    const {left: preSelectionNodes, right: rest} = listNode.split(anchorLi.index);
-    const {left: selectionNodes, right: postSelectionNodes} = rest.split(focusLi.index + 1);
-    const parentDiv = listNode.parent;
-    const index = listNode.index;
-    if(index === null || !parentDiv) {
-      throw new NoParentError();
-    }
-
-    parentDiv.removeChild(listNode);
-
-    if(postSelectionNodes && postSelectionNodes.children.length) {
-      parentDiv.addChild(postSelectionNodes, index);
-    }
-
-    for(const child of selectionNodes.children){
-      const newElement = new ModelElement('div');
-      const childElement = child as ModelElement;
-      newElement.appendChildren(...childElement.children);
-      parentDiv?.addChild(newElement, index);
-    }
-
-    if(preSelectionNodes && preSelectionNodes.children.length) {
-      parentDiv.addChild(preSelectionNodes, index);
-    }
-
-    this.model.write(parentDiv);
+    this.model.write();
+    return;
 
   }
+
 }

@@ -7,8 +7,14 @@ import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {Direction, PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
+import {
+  Direction,
+  FilterAndPredicate,
+  PropertyState,
+  RelativePosition
+} from "@lblod/ember-rdfa-editor/model/util/types";
 import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
@@ -199,35 +205,76 @@ export default class ModelSelection {
     return this.getTextPropertyStatus("strikethrough");
   }
 
-  get isInList(): PropertyState {
+  findAllInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): Iterable<T> | null {
+
+    const {filter, predicate} = config;
+
     if (!ModelSelection.isWellBehaved(this)) {
-      return PropertyState.unknown;
+      return null;
     }
 
-    if (this.isCollapsed) {
-      if (this.anchor?.parent.findAncestor(
-        node => ModelNode.isModelElement(node) && listTypes.has(node.type))) {
-        return PropertyState.enabled;
-      } else {
-        return PropertyState.disabled;
-      }
+    // ignore selection direction
+    const anchorNode = this.lastRange?.start.parent;
+    const focusNode = this.lastRange?.end.parent;
+    if (anchorNode === focusNode) {
+
+      const noop = () => true;
+      const filterFunc = filter || noop;
+      const predicateFunc = predicate || noop;
+
+      return {
+        [Symbol.iterator]: (): Iterator<T> => {
+          let done = false;
+          return {
+            next: (): IteratorResult<T, null> => {
+              if (!done) {
+                done = true;
+                return {
+                  value: anchorNode.findAncestor(node => filterFunc(node) && predicateFunc(node)) as T,
+                  done: false
+                };
+
+              } else {
+                return {
+                  value: null,
+                  done: true
+                };
+
+              }
+            }
+          };
+        }
+      };
     } else {
-      const nodeFinder = new ModelNodeFinder(
+      return new ModelNodeFinder<T>(
         {
           direction: Direction.FORWARDS,
-          startNode: this.anchor?.parent,
-          endNode: this.focus?.parent,
+          startNode: anchorNode,
+          endNode: focusNode,
           rootNode: this.model.rootModelNode,
-          nodeFilter: ModelNode.isModelElement,
-          predicate: node => listTypes.has(node.type)
+          nodeFilter: filter,
+          predicate
         }
       );
-      if (nodeFinder.next()) {
-        return PropertyState.enabled;
-      } else {
-        return PropertyState.disabled;
-      }
     }
+  }
+
+  findFirstInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): T | null {
+    const iterator = this.findAllInSelection<T>(config);
+    if (!iterator) {
+      return null;
+    }
+    return iterator[Symbol.iterator]().next().value;
+
+  }
+
+  get isInList(): PropertyState {
+    const config = {
+      filter: ModelNode.isModelElement,
+      predicate: (node: ModelElement) => listTypes.has(node.type)
+    };
+
+    return this.findFirstInSelection(config) ? PropertyState.enabled : PropertyState.disabled;
 
   }
 
