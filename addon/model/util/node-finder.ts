@@ -1,12 +1,14 @@
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 
+export type NodeFinderFilter<T, R extends T> = (node:T) => node is R;
+export type NodeFinderPredicate<T, R extends T> = (node:R) => boolean;
 export interface NodeFinderConfig<T, R extends T> {
   startNode: T;
   endNode?: T;
   rootNode: T;
-  nodeFilter?: (node: T) => node is R;
-  predicate?: (node: R) => boolean;
+  nodeFilter?: NodeFinderFilter<T, R>
+  predicate?: NodeFinderPredicate<T, R>
   direction?: Direction;
 }
 

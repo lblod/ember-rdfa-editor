@@ -7,7 +7,8 @@ import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
+import {Direction, PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
+import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
@@ -16,6 +17,7 @@ export interface WellbehavedSelection extends ModelSelection {
   anchor: ModelPosition;
   focus: ModelPosition;
   lastRange: ModelRange;
+
   getCommonAncestor(): ModelPosition;
 }
 
@@ -198,29 +200,34 @@ export default class ModelSelection {
   }
 
   get isInList(): PropertyState {
-    const ancestor = this.getCommonAncestor()?.parent;
-    console.log(ancestor);
-    if (!ancestor) return PropertyState.unknown;
-
-    if(ancestor.boundNode?.nodeName === 'UL' || ancestor.boundNode?.nodeName === 'OL') {
-      return PropertyState.enabled;
-    } else {
-      let actualNode = ancestor.boundNode;
-      if(!actualNode) {
-        return PropertyState.unknown;
-      }
-      //walk up to see if we encounter a list
-      while(actualNode?.parentNode) {
-        const parent = actualNode.parentNode;
-        if(parent.nodeName === 'UL' || parent.nodeName === 'OL') {
-          return PropertyState.enabled;
-        } else {
-          actualNode = parent;
-        }
-      }
-      return PropertyState.disabled;
+    if (!ModelSelection.isWellBehaved(this)) {
+      return PropertyState.unknown;
     }
 
+    if (this.isCollapsed) {
+      if (this.anchor?.parent.findAncestor(
+        node => ModelNode.isModelElement(node) && listTypes.has(node.type))) {
+        return PropertyState.enabled;
+      } else {
+        return PropertyState.disabled;
+      }
+    } else {
+      const nodeFinder = new ModelNodeFinder(
+        {
+          direction: Direction.FORWARDS,
+          startNode: this.anchor?.parent,
+          endNode: this.focus?.parent,
+          rootNode: this.model.rootModelNode,
+          nodeFilter: ModelNode.isModelElement,
+          predicate: node => listTypes.has(node.type)
+        }
+      );
+      if (nodeFinder.next()) {
+        return PropertyState.enabled;
+      } else {
+        return PropertyState.disabled;
+      }
+    }
 
   }
 

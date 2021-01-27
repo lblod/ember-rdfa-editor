@@ -153,4 +153,21 @@ export default abstract class ModelNode {
   setTextAttribute(_key: TextAttribute, _value: boolean) {
   }
 
+  findAncestor(predicate: (node: ModelNode) => boolean, includeSelf: boolean = true): ModelNode | null {
+    if(includeSelf) {
+      if(predicate(this)) {
+        return this;
+      }
+    }
+    let cur = this.parent;
+    while(cur && !predicate(cur)) {
+      cur = cur.parent;
+    }
+
+    if(cur && !predicate(cur)) {
+      return null;
+    }
+    return cur;
+  }
+
 }
