@@ -3,7 +3,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import ModelElement, {ElementType} from "../model/model-element";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {MisbehavedSelectionError, NoParentError, NoTopSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 
 
@@ -18,13 +18,13 @@ export default class MakeUnorderedListCommand extends Command {
   }
 
   getTopBlockNode(node: ModelNode): ModelNode | null {
-    if(node.isBlock) return node;
+    if (node.isBlock) return node;
     const parent = node.parent;
-    if(!parent) return node;
-    if(ModelElement.isModelElement(parent)) {
+    if (!parent) return node;
+    if (ModelElement.isModelElement(parent)) {
       const element = parent as ModelElement;
-      for(const child of element.children) {
-        if(child.boundNode?.nodeName === 'BR') {
+      for (const child of element.children) {
+        if (child.boundNode?.nodeName === 'BR') {
           return node;
         }
       }
@@ -41,23 +41,23 @@ export default class MakeUnorderedListCommand extends Command {
 
     const interestingPositions = selection.lastRange.getSelectedTopPositions();
 
-    if(!interestingPositions) {
-      throw new MisbehavedSelectionError();
+    if (!interestingPositions) {
+      throw new NoTopSelectionError();
     }
     const interestingNodes = interestingPositions.map(pos => pos.parent);
-
     const whereToInsert = interestingPositions[0].parent.parent;
-    if(!whereToInsert) {
-      throw new MisbehavedSelectionError();
+
+    if (!whereToInsert) {
+      throw new NoParentError();
     }
     const positionToInsert = interestingPositions[0].parent.index;
 
     const items: ModelNode[][] = [];
     let index = 0;
     let hasBlocks = false;
-    for (const node of interestingNodes){
+    for (const node of interestingNodes) {
       if (ModelNode.isModelElement(node)) {
-        if(node.type === "br") {
+        if (node.type === "br") {
           index++;
           hasBlocks = true;
         } else if (node.isBlock) {
@@ -73,7 +73,7 @@ export default class MakeUnorderedListCommand extends Command {
       }
     }
     if (items.length && hasBlocks) {
-      for(const node of interestingNodes) {
+      for (const node of interestingNodes) {
         this.model.removeModelNode(node);
       }
       const list = this.buildList("ul", items);
@@ -81,11 +81,11 @@ export default class MakeUnorderedListCommand extends Command {
       whereToInsert.addChild(list, positionToInsert!);
       selection.selectNode(whereToInsert);
       this.model.write(whereToInsert!);
-    }  else {
+    } else {
       const block = this.getTopBlockNode(selection.getCommonAncestor()?.parent!) as ModelElement;
       const parent = block.parent;
-      if(!parent) {
-        throw new MisbehavedSelectionError();
+      if (!parent) {
+        throw new NoParentError();
       }
       const positionToInsert = block.index;
       const li = new ModelElement("li");
@@ -111,7 +111,7 @@ export default class MakeUnorderedListCommand extends Command {
    */
   private buildList(type: ElementType, items: ModelNode[][]) {
     const rootNode = new ModelElement(type);
-    for(const item of items) {
+    for (const item of items) {
       const listItem = new ModelElement('li');
       listItem.appendChildren(...item);
       rootNode.addChild(listItem);
