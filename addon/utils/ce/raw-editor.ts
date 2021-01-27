@@ -12,8 +12,9 @@ import MakeStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-pro
 import RemoveStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-strikethrough-command";
 import MakeUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/make-underline-command";
 import RemoveUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-underline-command";
-import MakeUnorderedListCommand from '@lblod/ember-rdfa-editor/commands/make-unordered-list';
-import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list';
+import MakeUnorderedListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
+import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list-command';
+import MakeListCommand from "@lblod/ember-rdfa-editor/commands/make-list-command";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -51,7 +52,7 @@ class RawEditor extends EmberObject {
     this.registerCommand(new RemoveStrikethroughCommand(this.model));
     this.registerCommand(new MakeUnderlineCommand(this.model));
     this.registerCommand(new RemoveUnderlineCommand(this.model));
-    this.registerCommand(new MakeUnorderedListCommand(this.model));
+    this.registerCommand(new MakeListCommand(this.model));
     this.registerCommand(new RemoveListCommand(this.model));
   }
 

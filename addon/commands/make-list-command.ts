@@ -6,20 +6,21 @@ import ModelElement, {ElementType} from "../model/model-element";
 import {MisbehavedSelectionError, NoParentError, NoTopSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 
 /**
  * command will convert all nodes in the selection to a list if they are not already in a list
  */
-export default class MakeUnorderedListCommand extends Command {
-  name = "make-unordered-list";
+export default class MakeListCommand extends Command {
+  name = "make-list";
 
   constructor(model: Model) {
     super(model);
   }
 
 
-  execute(selection: ModelSelection = this.model.selection) {
+  execute(listType: "ul" | "ol", selection: ModelSelection = this.model.selection) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -35,14 +36,14 @@ export default class MakeUnorderedListCommand extends Command {
       for (const node of interestingNodes) {
         this.model.removeModelNode(node);
       }
-      const {parent, listNode} = this.wrapItems(items, whereToInsert, positionToInsert);
+      const {parent, listNode} = this.wrapItems(items, whereToInsert, positionToInsert, listType);
       container = parent;
 
       selection.selectNode(listNode);
     } else {
       const item = selection.getCommonAncestor().parent;
       const block = this.getTopBlockNode(item) as ModelElement;
-      const {parent, listNode} = this.wrapSingleItem(block);
+      const {parent, listNode} = this.wrapSingleItem(block, listType);
       container = parent;
       selection.selectNode(listNode);
       selection.collapse();
@@ -75,10 +76,11 @@ export default class MakeUnorderedListCommand extends Command {
    * @param items
    * @param whereToInsert
    * @param positionToInsert
+   * @param listType
    * @private
    */
-  private wrapItems(items: ModelNode[][], whereToInsert: ModelElement, positionToInsert: number): { parent: ModelElement, listNode: ModelElement } {
-    const list = this.buildList("ul", items);
+  private wrapItems(items: ModelNode[][], whereToInsert: ModelElement, positionToInsert: number, listType: "ul" | "ol"): { parent: ModelElement, listNode: ModelElement } {
+    const list = this.buildList(listType, items);
 
     whereToInsert.addChild(list, positionToInsert);
     return {parent: whereToInsert, listNode: list};
@@ -88,9 +90,10 @@ export default class MakeUnorderedListCommand extends Command {
    * Given a block element, wrap in it a new list.
    * Return the new list node.
    * @param block
+   * @param listType
    * @private
    */
-  private wrapSingleItem(block: ModelElement): {parent: ModelElement, listNode: ModelElement} {
+  private wrapSingleItem(block: ModelElement, listType: "ul" | "ol"): { parent: ModelElement, listNode: ModelElement } {
     const parent = block.parent;
     if (!parent) {
       throw new NoParentError();
@@ -98,7 +101,7 @@ export default class MakeUnorderedListCommand extends Command {
     const positionToInsert = block.index;
     const li = new ModelElement("li");
     li.addChild(block.clone());
-    const list = new ModelElement("ul");
+    const list = new ModelElement(listType);
     list.addChild(li);
     parent.addChild(list, positionToInsert!);
 
@@ -129,7 +132,7 @@ export default class MakeUnorderedListCommand extends Command {
           ArrayUtils.pushOrCreate(items, index, node);
         }
       } else if (ModelNode.isModelText(node)) {
-        if(node.hasVisibleText()) {
+        if (node.hasVisibleText()) {
           ArrayUtils.pushOrCreate(items, index, node);
         }
       }
