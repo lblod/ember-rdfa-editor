@@ -129,7 +129,9 @@ export default class MakeUnorderedListCommand extends Command {
           ArrayUtils.pushOrCreate(items, index, node);
         }
       } else if (ModelNode.isModelText(node)) {
-        ArrayUtils.pushOrCreate(items, index, node);
+        if(node.hasVisibleText()) {
+          ArrayUtils.pushOrCreate(items, index, node);
+        }
       }
     }
     if (!hasBlocks) {

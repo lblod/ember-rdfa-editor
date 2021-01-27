@@ -42,24 +42,34 @@ export default class RemoveListCommand extends Command {
 
   execute(selection: ModelSelection = this.model.selection) {
     const commonAncestor = selection.getCommonAncestor()?.parent;
-    if(!commonAncestor) throw new MisbehavedSelectionError();
+    if(!commonAncestor) {
+      throw new MisbehavedSelectionError();
+    }
 
     const listNode = this.getListNode(commonAncestor);
-    if(!listNode) throw new SelectionError('The selection is not in a list');
+    if(!listNode) {
+      throw new SelectionError('The selection is not in a list');
+    }
 
     const anchorNode = selection.anchor?.parent;
     const focusNode = selection.focus?.parent;
-    if(!anchorNode || !focusNode) throw new MisbehavedSelectionError();
+    if(!anchorNode || !focusNode) {
+      throw new MisbehavedSelectionError();
+    }
 
     const anchorLi = this.getListItem(anchorNode);
     const focusLi = this.getListItem(focusNode);
-    if(!anchorLi || !focusLi || anchorLi.index === null || focusLi.index === null) throw new SelectionError('The selection is not in a list');
+    if(!anchorLi || !focusLi || anchorLi.index === null || focusLi.index === null) {
+      throw new SelectionError('The selection is not in a list');
+    }
 
     const {left: preSelectionNodes, right: rest} = listNode.split(anchorLi.index);
     const {left: selectionNodes, right: postSelectionNodes} = rest.split(focusLi.index + 1);
     const parentDiv = listNode.parent;
     const index = listNode.index;
-    if(index === null || !parentDiv) throw new NoParentError();
+    if(index === null || !parentDiv) {
+      throw new NoParentError();
+    }
 
     parentDiv.removeChild(listNode);
 
@@ -77,7 +87,7 @@ export default class RemoveListCommand extends Command {
     if(preSelectionNodes && preSelectionNodes.children.length) {
       parentDiv.addChild(preSelectionNodes, index);
     }
-    
+
     this.model.write(parentDiv);
 
   }
