@@ -42,7 +42,7 @@ export default class RemoveListCommand extends Command {
 
     for (const [index, listItem] of listNodes.entries()) {
       //unwrap lists
-      listItem.unwrap(index !== listNodes.length - 1);
+      listItem.unwrap(!listItem.firstChild.isBlock && index !== listNodes.length - 1);
       if(listItem.parent?.type === "ul" || listItem.parent?.type === "ol") {
         listItem.parent?.unwrap();
       }
