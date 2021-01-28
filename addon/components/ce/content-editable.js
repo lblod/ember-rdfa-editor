@@ -21,7 +21,6 @@ import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
 import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
 import HTMLInputParser from '../../utils/html-input-parser';
-import { normalizeEvent } from 'ember-jquery-legacy';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
@@ -372,7 +371,6 @@ export default class ContentEditable extends Component {
    * @private
    */
   passEventToHandlers(event) {
-    event = normalizeEvent(event);
     const handlers = this.inputHandlers.filter( h => h.isHandlerFor(event));
     if (handlers.length > 0) {
       let preventDefault = false;
