@@ -51,7 +51,6 @@
     "ember-feature-flags": "^6.0.0",
     "ember-jquery-legacy": "^1.0.0",
     "ember-truth-helpers": "^2.0.0",
-    "ember-wormhole": "^0.5.4",
     "mdn-polyfills": "^5.16.0"
   },
   "devDependencies": {
