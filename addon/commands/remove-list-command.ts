@@ -20,11 +20,9 @@ export default class RemoveListCommand extends Command {
     const anchorNode = selection.lastRange.start.parent;
     const focusNode = selection.lastRange.end.parent;
 
-    const listContainers = new Set(["li"]);
-
     const listNodesIterator = selection.findAllInSelection({
       filter: ModelNode.isModelElement,
-      predicate: (node: ModelElement) => listContainers.has(node.type)
+      predicate: (node: ModelElement) => node.type === "li"
     });
     if (!listNodesIterator) {
       throw new SelectionError('The selection is not in a list');
@@ -50,6 +48,7 @@ export default class RemoveListCommand extends Command {
       }
     }
     this.model.write();
+    this.model.readSelection();
     return;
 
   }

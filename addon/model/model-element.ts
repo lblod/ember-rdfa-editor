@@ -96,6 +96,15 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   removeChild(child: ModelNode) {
     const index = this.children.indexOf(child);
+    if(child.previousSibling) {
+
+      child.previousSibling.nextSibling = child.nextSibling;
+    }
+    if(child.nextSibling) {
+      child.nextSibling.previousSibling = child.previousSibling;
+    }
+
+    this.children[index + 1].previousSibling = this.children[index - 1] || null;
     this.children.splice(index, 1);
   }
 
