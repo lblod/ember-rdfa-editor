@@ -91,7 +91,7 @@ export default class LoadMonitor extends Component {
   */
   get pluginsCount() {
     return this.tasks.length;
-  };
+  }
 
  /**
   * Number of plugins that are currently running or scheduled to run
