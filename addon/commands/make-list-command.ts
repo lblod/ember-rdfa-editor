@@ -45,7 +45,11 @@ export default class MakeListCommand extends Command {
       const block = this.getTopBlockNode(item) as ModelElement;
       const {parent, listNode} = this.wrapSingleItem(block, listType);
       container = parent;
-      selection.selectNode(listNode);
+      if(ModelNode.isModelElement(listNode.firstChild)) {
+        selection.selectNode(listNode.firstChild.firstChild);
+      } else {
+        selection.selectNode(listNode.firstChild);
+      }
       selection.collapse();
       this.model.removeModelNode(block);
     }
