@@ -1016,12 +1016,18 @@
   transition: color 0.125s cubic-bezier(0.19, 1, 0.22, 1);
   padding: 0.6rem;
   margin: 0; }
+  .say-toolbar__button + .say-toolbar__button {
+    border-left: 0.1rem solid #E6E8EB; }
   .say-toolbar__button:hover, .say-toolbar__button:focus {
     color: #545961;
     background-color: transparent; }
   .say-toolbar__button:focus {
     outline: 0.2rem dashed #E1B8FF;
     outline-offset: -.4rem; }
+  .say-toolbar__button.is-active {
+    color: #212326;
+    background-color: #CCD1D9;
+    box-shadow: inset 0 -0.3rem 0 0 #A1ABBA; }
 
 .say-toolbar__hidden {
   border: 0;
