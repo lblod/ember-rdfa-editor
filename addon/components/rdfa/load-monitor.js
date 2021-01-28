@@ -5,7 +5,6 @@ import { computed } from "@ember/object";
 import { inject as service } from "@ember/service";
 import Component from '@ember/component';
 import layout from '../../templates/components/rdfa/load-monitor';
-import { length } from 'ember-awesome-macros/array';
 import { mapBy, and } from '@ember/object/computed';
 
 /**
@@ -90,8 +89,9 @@ export default class LoadMonitor extends Component {
   * @type number
   * @readOny
   */
- @length('tasks')
- pluginsCount;
+  get pluginsCount() {
+    return this.tasks.length;
+  };
 
  /**
   * Number of plugins that are currently running or scheduled to run
