@@ -89,7 +89,7 @@ export default class ModelRange {
    * Eagerly get all nodes between start and end, filtered by filter
    * @param config
    */
-  getNodes<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): T[] {
+  getNodes<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T> = {}): T[] {
     const finder = this.getNodeFinder<T>(Direction.FORWARDS, config);
     return [...finder];
   }
