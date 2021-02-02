@@ -362,6 +362,11 @@ export default class ModelSelection {
     }
   }
 
+  collapseOn(node: ModelNode, offset: number = 0) {
+    this.anchor = ModelPosition.fromParent(this.model.rootModelNode, node, offset);
+    this.collapse(true);
+  }
+
   /**
    * Select a full ModelText node
    * @param node

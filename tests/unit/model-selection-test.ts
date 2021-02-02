@@ -1,50 +1,52 @@
 import {module, test} from "qunit";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import ModelTestContext from "dummy/tests/utilities/model-test-context";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
 module("Unit | model | model-selection", hooks => {
-  let model: Model;
-  let rootNode: HTMLElement;
-  let modelSelection: ModelSelection;
-  let domSelection: Selection;
+  const ctx = new ModelTestContext();
 
   hooks.beforeEach(() => {
-    rootNode = document.createElement("div");
-    model = new Model();
-    model.rootNode = rootNode;
-    model.read();
-    model.write();
-    modelSelection = new ModelSelection(model);
-    domSelection = getWindowSelection();
+    ctx.reset();
   });
   test("sets anchor and focus correctly, anchor before focus", assert => {
-    const anchor = ModelPosition.from(model.rootModelNode, [0]);
-    const focus = ModelPosition.from(model.rootModelNode, [1]);
+    const anchor = ModelPosition.from(ctx.model.rootModelNode, [0]);
+    const focus = ModelPosition.from(ctx.model.rootModelNode, [1]);
 
-    modelSelection.anchor = anchor;
-    modelSelection.focus = focus;
+    ctx.modelSelection.anchor = anchor;
+    ctx.modelSelection.focus = focus;
 
-    assert.false(modelSelection.isRightToLeft);
-    assert.false(modelSelection.isCollapsed);
-    assert.strictEqual(modelSelection.getRangeAt(0).start, anchor);
-    assert.strictEqual(modelSelection.getRangeAt(0).end, focus);
+    assert.false(ctx.modelSelection.isRightToLeft);
+    assert.false(ctx.modelSelection.isCollapsed);
+    assert.strictEqual(ctx.modelSelection.getRangeAt(0).start, anchor);
+    assert.strictEqual(ctx.modelSelection.getRangeAt(0).end, focus);
 
 
   });
   test("sets anchor and focus correctly, anchor before focus", assert => {
-    const anchor = ModelPosition.from(model.rootModelNode, [1]);
-    const focus = ModelPosition.from(model.rootModelNode, [0]);
+    const anchor = ModelPosition.from(ctx.model.rootModelNode, [1]);
+    const focus = ModelPosition.from(ctx.model.rootModelNode, [0]);
 
-    modelSelection.anchor = anchor;
-    modelSelection.focus = focus;
+    ctx.modelSelection.anchor = anchor;
+    ctx.modelSelection.focus = focus;
 
-    assert.true(modelSelection.isRightToLeft);
-    assert.false(modelSelection.isCollapsed);
-    assert.strictEqual(modelSelection.getRangeAt(0).start, focus);
-    assert.strictEqual(modelSelection.getRangeAt(0).end, anchor);
+    assert.true(ctx.modelSelection.isRightToLeft);
+    assert.false(ctx.modelSelection.isCollapsed);
+    assert.strictEqual(ctx.modelSelection.getRangeAt(0).start, focus);
+    assert.strictEqual(ctx.modelSelection.getRangeAt(0).end, anchor);
 
+
+  });
+  test("collapseOn sets position correctly", assert => {
+    const {modelSelection, model} = ctx;
+    const p = new ModelElement("p");
+    const content = new ModelText("test");
+    model.rootModelNode.addChild(p);
+    p.addChild(content);
+    modelSelection.collapseOn(content);
+    assert.true(modelSelection.isCollapsed);
+    assert.true(modelSelection.focus?.sameAs(ModelPosition.fromParent(model.rootModelNode, content, 0)))
 
   });
 });

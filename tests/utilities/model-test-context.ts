@@ -15,7 +15,7 @@ export default class ModelTestContext {
     this.model.rootNode = this.rootNode;
     this.model.read();
     this.model.write();
-    this.modelSelection = new ModelSelection(this.model);
+    this.modelSelection = this.model.selection;
     this.domSelection = getWindowSelection();
 
   }
