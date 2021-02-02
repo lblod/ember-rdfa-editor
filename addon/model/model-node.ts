@@ -195,5 +195,6 @@ export default abstract class ModelNode {
 
     return oldParent;
   }
+  abstract hasVisibleText(): boolean;
 
 }

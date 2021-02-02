@@ -4,6 +4,7 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelNode from "../model/model-node";
 import ModelElement from "../model/model-element";
 import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export default class RemoveListCommand extends Command {
   name = "remove-list";
@@ -24,29 +25,24 @@ export default class RemoveListCommand extends Command {
       filter: ModelNode.isModelElement,
       predicate: (node: ModelElement) => node.type === "li"
     });
+
     if (!listNodesIterator) {
       throw new SelectionError('The selection is not in a list');
     }
-    const listNodes = Array.from(listNodesIterator);
 
-      const anchorLi = anchorNode?.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li");
-      const focusLi = focusNode?.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li");
-
-      if (anchorLi && anchorLi.index! > 0) {
-        anchorLi.parent!.split(anchorLi.index!);
+    for (const li of listNodesIterator) {
+      while (li.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type), false)) {
+        li.parent?.split(li.index! + 1);
+        li.parent?.split(1);
+        const oldParent = li.promote(true);
+        if(listTypes.has(oldParent.type) && !oldParent.hasVisibleText()) {
+          this.model.removeModelNode(oldParent);
+        }
       }
+      li.unwrap();
 
-      if (focusLi && focusLi.index! < focusLi.parent!.children.length - 1) {
-        focusLi.parent?.split(focusLi.index! + 1);
-      }
-
-    for (const [index, listItem] of listNodes.entries()) {
-      //unwrap lists
-      listItem.unwrap(!listItem.firstChild.isBlock && index !== listNodes.length - 1);
-      if(listItem.parent?.type === "ul" || listItem.parent?.type === "ol") {
-        listItem.parent?.unwrap();
-      }
     }
+
     this.model.write();
     this.model.readSelection();
     return;

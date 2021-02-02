@@ -169,4 +169,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     this.parent?.removeChild(this);
 
   }
+  hasVisibleText(): boolean {
+    return !this.children.every(child => !child.hasVisibleText());
+  }
 }

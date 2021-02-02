@@ -2,7 +2,7 @@ import {module, test} from "qunit";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {ModelError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 
 module("Unit | model | model-node", hooks => {
