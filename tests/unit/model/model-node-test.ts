@@ -47,8 +47,8 @@ module("Unit | model | model-node", hooks => {
     assert.deepEqual(rslt, [1, 2]);
 
   });
-  module("Unit | model | model-node | promote", hooks => {
-    test.skip("promote of child of root throws error", assert => {
+  module("Unit | model | model-node | promote", _hooks => {
+    test("promote of child of root throws error", assert => {
       const root = ctx.model.rootModelNode;
       const childOfRoot = new ModelText("test");
       root.addChild(childOfRoot);
@@ -56,5 +56,83 @@ module("Unit | model | model-node", hooks => {
       assert.throws(() => childOfRoot.promote(), new OutsideRootError());
     });
 
+    test("promote(false) turns node into previoussibling of parent", assert => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement("div");
+      const content = new ModelText("test");
+      root.addChild(div);
+      div.addChild(content);
+
+      content.promote();
+      assert.strictEqual(div.previousSibling, content);
+
+    });
+
+    test("promote returns old parent", assert => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement("div");
+      const content = new ModelText("test");
+      root.addChild(div);
+      div.addChild(content);
+
+      const result = content.promote();
+      assert.strictEqual(result, div);
+
+    });
+
+    test("promote moves node into new parent", assert => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement("div");
+      const content = new ModelText("test");
+      root.addChild(div);
+      div.addChild(content);
+
+      content.promote();
+      assert.strictEqual(root.firstChild, content);
+      assert.strictEqual(root.lastChild, div);
+      assert.strictEqual(div.length, 0);
+      assert.strictEqual(root.length, 2);
+
+    });
+
+
+    test("promote(true) turns node into nextsibling of parent", assert => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement("div");
+      const content = new ModelText("test");
+      root.addChild(div);
+      div.addChild(content);
+
+      content.promote(true);
+      assert.strictEqual(div.nextSibling, content);
+
+    });
+
+    test("promote(true) returns old parent", assert => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement("div");
+      const content = new ModelText("test");
+      root.addChild(div);
+      div.addChild(content);
+
+      const result = content.promote(true);
+      assert.strictEqual(result, div);
+
+    });
+
+    test("promote(true) moves node into new parent", assert => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement("div");
+      const content = new ModelText("test");
+      root.addChild(div);
+      div.addChild(content);
+
+      content.promote(true);
+      assert.strictEqual(root.lastChild, content);
+      assert.strictEqual(root.firstChild, div);
+      assert.strictEqual(div.length, 0);
+      assert.strictEqual(root.length, 2);
+
+    });
   });
 });

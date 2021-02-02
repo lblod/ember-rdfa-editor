@@ -1,6 +1,7 @@
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import Fragment from "@lblod/ember-rdfa-editor/model/fragment";
+import {NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
@@ -12,7 +13,7 @@ export interface NodeConfig {
  * Basic building block of the model. Cannot be instantiated, any node will always have a more specific type
  */
 export default abstract class ModelNode {
-  abstract nodeType: ModelNodeType;
+  abstract modelNodeType: ModelNodeType;
 
   private _attributeMap: Map<string, string>;
   private _parent: ModelElement | null = null;
@@ -34,7 +35,7 @@ export default abstract class ModelNode {
    * @param node
    */
   static isModelElement(node?: ModelNode | null): node is ModelElement {
-    return !!node && node.nodeType === "ELEMENT";
+    return !!node && node.modelNodeType === "ELEMENT";
   }
 
   /**
@@ -42,7 +43,7 @@ export default abstract class ModelNode {
    * @param node
    */
   static isModelText(node?: ModelNode | null): node is ModelText {
-    return !!node && node.nodeType === "TEXT";
+    return !!node && node.modelNodeType === "TEXT";
   }
 
   /**
@@ -50,7 +51,7 @@ export default abstract class ModelNode {
    * @param node
    */
   static isFragment(node?: ModelNode | null): node is Fragment {
-    return !!node && node.nodeType === "FRAGMENT";
+    return !!node && node.modelNodeType === "FRAGMENT";
   }
 
   get attributeMap(): Map<string, string> {
@@ -154,20 +155,45 @@ export default abstract class ModelNode {
   }
 
   findAncestor(predicate: (node: ModelNode) => boolean, includeSelf: boolean = true): ModelNode | null {
-    if(includeSelf) {
-      if(predicate(this)) {
+    if (includeSelf) {
+      if (predicate(this)) {
         return this;
       }
     }
     let cur = this.parent;
-    while(cur && !predicate(cur)) {
+    while (cur && !predicate(cur)) {
       cur = cur.parent;
     }
 
-    if(cur && !predicate(cur)) {
+    if (cur && !predicate(cur)) {
       return null;
     }
     return cur;
+  }
+
+  /**
+   * Move the node up so that it becomes a sibling of its parent.
+   *
+   * @param after Whether the node will end up after its parent or before
+   * @return the old parent
+   */
+  promote(after: boolean = false): ModelElement {
+
+    const oldParent = this.parent;
+    if (!oldParent) {
+      throw new NoParentError();
+    }
+    if (!oldParent.parent) {
+      // if parent is root, this operation is not allowed
+      throw new OutsideRootError();
+    }
+    const grandparent = oldParent.parent;
+    const parentIndex = oldParent.index!;
+
+    oldParent.removeChild(this);
+    grandparent.addChild(this, after ? parentIndex + 1 : parentIndex);
+
+    return oldParent;
   }
 
 }

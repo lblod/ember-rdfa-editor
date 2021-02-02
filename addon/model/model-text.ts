@@ -6,7 +6,7 @@ const NON_BREAKING_SPACE = '\u00A0';
 export type TextAttribute = "bold" | "italic" | "underline" | "strikethrough" | "highlighted";
 
 export default class ModelText extends ModelNode {
-  nodeType: ModelNodeType = "TEXT";
+  modelNodeType: ModelNodeType = "TEXT";
   private _content: string;
   private _textAttributeMap: Map<TextAttribute, boolean>;
 
@@ -60,7 +60,7 @@ export default class ModelText extends ModelNode {
   clone(): ModelText {
     const result = new ModelText();
     result.attributeMap = new Map<string, string>(this.attributeMap);
-    result.nodeType = this.nodeType;
+    result.modelNodeType = this.modelNodeType;
     result.content = this.content;
     result.textAttributeMap = new Map<TextAttribute, boolean>(this.textAttributeMap);
     return result;

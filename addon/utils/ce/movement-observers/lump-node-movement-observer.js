@@ -50,7 +50,7 @@ function jumpOverLumpNode(node, rootNode, editor) {
     nextNode = document.createTextNode('');
     element.after(nextNode);
   }
-  if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
+  if(element.nextSibling && element.nextSibling.modelNodeType == Node.TEXT_NODE){
     nextNode = element.nextSibling;
   }
   else {
@@ -65,7 +65,7 @@ function jumpOverLumpNode(node, rootNode, editor) {
 function jumpOverLumpNodeBackwards(node, rootNode, editor) {
   const element = getParentLumpNode(node, rootNode);
   let textNode;
-  if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
+  if(element.previousSibling && element.previousSibling.modelNodeType == Node.TEXT_NODE){
     textNode = element.previousSibling;
   }
   else {

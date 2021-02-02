@@ -41,7 +41,7 @@ function firstTextChild(node) {
   if (node.nodeType !== Node.ELEMENT_NODE || isVoidElement(node))
     throw "invalid argument, expected a (non void) element";
   if (node.firstChild) {
-    if (node.firstChild.nodeType === Node.TEXT_NODE) {
+    if (node.firstChild.modelNodeType === Node.TEXT_NODE) {
       return node.firstChild;
     }
     else {
@@ -109,7 +109,7 @@ function findNextApplicableNode(node, rootNode) {
       // descend into sibling if possible
       return sibling.firstChild;
     }
-    if (sibling.nodeType !== Node.TEXT_NODE && sibling.nodeType !== Node.ELEMENT_NODE)
+    if (sibling.modelNodeType !== Node.TEXT_NODE && sibling.modelNodeType !== Node.ELEMENT_NODE)
       return findNextApplicableNode(sibling, rootNode);
     return sibling;
   }
@@ -135,7 +135,7 @@ export default function nextTextNode(textNode, rootNode) {
     // next node is rootNode, so I'm at the end of the tree
     return null;
   }
-  if (nextNode.nodeType === Node.ELEMENT_NODE) {
+  if (nextNode.modelNodeType === Node.ELEMENT_NODE) {
     return insertTextNodeWithSpace(nextNode.parentNode, nextNode);
   }
   else {

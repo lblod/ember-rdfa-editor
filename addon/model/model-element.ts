@@ -7,7 +7,7 @@ import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 export type ElementType = keyof HTMLElementTagNameMap;
 
 export default class ModelElement extends ModelNode implements Cloneable<ModelElement> {
-  nodeType: ModelNodeType = "ELEMENT";
+  modelNodeType: ModelNodeType = "ELEMENT";
 
   private _children: ModelNode[] = [];
   private _type: ElementType;
@@ -56,7 +56,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   clone(): ModelElement {
     const result = new ModelElement(this.type);
     result.attributeMap = new Map<string, string>(this.attributeMap);
-    result.nodeType = this.nodeType;
+    result.modelNodeType = this.modelNodeType;
     const clonedChildren = this.children.map(c => c.clone());
     result.appendChildren(...clonedChildren);
     return result;
@@ -104,7 +104,9 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       child.nextSibling.previousSibling = child.previousSibling;
     }
 
-    this.children[index + 1].previousSibling = this.children[index - 1] || null;
+    if(this.length > index + 1) {
+      this.children[index + 1].previousSibling = this.children[index - 1] || null;
+    }
     this.children.splice(index, 1);
   }
 
