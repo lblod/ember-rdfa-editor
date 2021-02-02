@@ -1,12 +1,15 @@
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 
+export type NodeFinderFilter<T, R extends T> = (node: T) => node is R;
+export type NodeFinderPredicate<T, R extends T> = (node: R) => boolean;
+
 export interface NodeFinderConfig<T, R extends T> {
   startNode: T;
   endNode?: T;
   rootNode: T;
-  nodeFilter?: (node: T) => node is R;
-  predicate?: (node: R) => boolean;
+  nodeFilter?: NodeFinderFilter<T, R>
+  predicate?: NodeFinderPredicate<T, R>
   direction?: Direction;
 }
 
@@ -57,23 +60,24 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
    * (and their children) and then goes up one level and does it again.
    */
   next(): R | null {
+    // debugger;
     let cur: T | null = this.findNextNode();
     let found = false;
     if (cur) {
       found = this.nodeFilter(cur) && this.predicate(cur);
     }
-    if (cur !== this.endNode) {
-      while (cur && !found) {
-        cur = this.findNextNode();
-        if (cur) {
-          found = this.nodeFilter(cur) && this.predicate(cur);
-        }
+    while (cur && !found && cur !== this.endNode) {
+      cur = this.findNextNode();
+      if (cur) {
+        found = this.nodeFilter(cur) && this.predicate(cur);
       }
-    } else {
+    }
+    if(cur === this.endNode) {
+
       // we've visited the endNode, so we clear out any pending nodes
       this.stack = [];
+      this._current = cur;
     }
-    this._current = cur;
 
     return found ? cur as R : null;
   }

@@ -1,5 +1,6 @@
 import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/model/model-node";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {stringToVisibleText} from "@lblod/ember-rdfa-editor/editor/utils";
 
 const NON_BREAKING_SPACE = '\u00A0';
 export type TextAttribute = "bold" | "italic" | "underline" | "strikethrough" | "highlighted";
@@ -33,6 +34,10 @@ export default class ModelText extends ModelNode {
 
   set textAttributeMap(value: Map<TextAttribute, boolean>) {
     this._textAttributeMap = value;
+  }
+
+  get isBlock() {
+    return false;
   }
 
   getTextAttribute(key: TextAttribute): boolean {
@@ -89,6 +94,10 @@ export default class ModelText extends ModelNode {
 
     return {left: this, right};
 
+  }
+
+  hasVisibleText(): boolean {
+    return stringToVisibleText(this.content).length > 0;
   }
 
 }

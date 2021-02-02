@@ -5,8 +5,8 @@ import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import { pauseTest } from "@ember/test-helpers";
-import { setupTest } from "ember-qunit";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 module("Unit | model | readers | selection-reader", hooks => {
   let model: Model;
@@ -15,7 +15,6 @@ module("Unit | model | readers | selection-reader", hooks => {
   let domSelection: Selection;
   let reader: SelectionReader;
   let testRoot;
-  setupTest(hooks);
 
   const sync = () => {
     model.read();
@@ -25,7 +24,7 @@ module("Unit | model | readers | selection-reader", hooks => {
   hooks.beforeEach(() => {
     testRoot = document.getElementById("ember-testing");
     rootNode = document.createElement("div");
-    if(!testRoot) {
+    if (!testRoot) {
       throw new Error("testRoot not found");
     }
     testRoot.appendChild(rootNode);
@@ -44,7 +43,7 @@ module("Unit | model | readers | selection-reader", hooks => {
     rootNode.appendChild(textNode);
     sync();
 
-    domSelection.collapse(rootNode.childNodes[0],0);
+    domSelection.collapse(rootNode.childNodes[0], 0);
     const rslt = reader.read(domSelection);
 
     assert.true(rslt.anchor?.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
@@ -79,12 +78,14 @@ module("Unit | model | readers | selection-reader", hooks => {
     rootNode.append(paragraph, psibling);
 
     sync();
-    domSelection.setBaseAndExtent(rootNode.childNodes[0].childNodes[0], 0,  rootNode.childNodes[0], 2);
+    domSelection.setBaseAndExtent(rootNode.childNodes[0].childNodes[0], 0, rootNode.childNodes[0], 4);
     const result = reader.read(domSelection);
 
-    assert.true(result.anchor?.sameAs(ModelPosition.from(model.rootModelNode, [0,0,0])));
-    assert.true(result.focus?.sameAs(ModelPosition.from(model.rootModelNode, [0,2])));
-
+    const nodes = result.lastRange?.getNodes()!;
+    assert.deepEqual(nodes?.length, 3);
+    assert.strictEqual((nodes[0] as ModelText).content, "abc");
+    assert.strictEqual((nodes[1] as ModelElement).type, "br");
+    assert.strictEqual((nodes[2] as ModelText).content, "def");
 
   });
   module("Unit | model | reader | selection-reader | readDomPosition", () => {
@@ -104,7 +105,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       sync();
 
       const result = reader.readDomPosition(rootNode, 0);
-      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [0])));
+      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
 
     });
     test("converts a dom position correctly after text node", assert => {
@@ -113,23 +114,10 @@ module("Unit | model | readers | selection-reader", hooks => {
       sync();
 
       const result = reader.readDomPosition(rootNode, 1);
-      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1])));
+      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [0, 3])));
 
     });
 
-    test("throws exception when offset > length of node", assert => {
-      const text = new Text("abc");
-      rootNode.appendChild(text);
-      sync();
-      assert.throws(() => reader.readDomPosition(rootNode, 2), SelectionError);
-    });
-
-    test("throws exception when offset < 0", assert => {
-      const text = new Text("abc");
-      rootNode.appendChild(text);
-      sync();
-      assert.throws(() => reader.readDomPosition(rootNode, 2), SelectionError);
-    });
 
     test("converts a dom position correctly when before element", assert => {
       const child0 = document.createElement("div");
@@ -152,9 +140,6 @@ module("Unit | model | readers | selection-reader", hooks => {
 
       result = reader.readDomPosition(child1, 1);
       assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1, 1])));
-
-      result = reader.readDomPosition(child11, 0);
-      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1, 1, 0])));
 
 
       result = reader.readDomPosition(child12, 3);

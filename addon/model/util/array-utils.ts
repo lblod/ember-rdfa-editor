@@ -8,4 +8,13 @@ export default class ArrayUtils {
     return array1.slice(0, i);
   }
 
+  static pushOrCreate<T>(array: T[][], position: number, item: T) {
+    if(array[position]) {
+      array[position].push(item);
+    } else {
+      array.push([item]);
+    }
+
+  }
+
 }

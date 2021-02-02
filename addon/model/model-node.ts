@@ -102,6 +102,8 @@ export default abstract class ModelNode {
     return null;
   }
 
+  abstract get isBlock(): boolean;
+
   getIndexPath(): number[] {
     const result = [];
 
@@ -149,6 +151,23 @@ export default abstract class ModelNode {
    * @param _value
    */
   setTextAttribute(_key: TextAttribute, _value: boolean) {
+  }
+
+  findAncestor(predicate: (node: ModelNode) => boolean, includeSelf: boolean = true): ModelNode | null {
+    if(includeSelf) {
+      if(predicate(this)) {
+        return this;
+      }
+    }
+    let cur = this.parent;
+    while(cur && !predicate(cur)) {
+      cur = cur.parent;
+    }
+
+    if(cur && !predicate(cur)) {
+      return null;
+    }
+    return cur;
   }
 
 }

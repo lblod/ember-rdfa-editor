@@ -1,6 +1,8 @@
 import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
+import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -34,6 +36,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   get childCount() {
     return this._children.length;
   }
+
   get length() {
     return this._children.length;
   }
@@ -46,8 +49,12 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     return this._children[this._children.length - 1];
   }
 
+  get isBlock() {
+    return !nonBlockNodes.has(this.type);
+  }
+
   clone(): ModelElement {
-    const result = new ModelElement();
+    const result = new ModelElement(this.type);
     result.attributeMap = new Map<string, string>(this.attributeMap);
     result.nodeType = this.nodeType;
     const clonedChildren = this.children.map(c => c.clone());
@@ -89,6 +96,15 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   removeChild(child: ModelNode) {
     const index = this.children.indexOf(child);
+    if(child.previousSibling) {
+
+      child.previousSibling.nextSibling = child.nextSibling;
+    }
+    if(child.nextSibling) {
+      child.nextSibling.previousSibling = child.previousSibling;
+    }
+
+    this.children[index + 1].previousSibling = this.children[index - 1] || null;
     this.children.splice(index, 1);
   }
 
@@ -103,5 +119,52 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
         child.setTextAttribute(key, value);
       }
     }
+  }
+
+  split(index: number): { left: ModelElement, right: ModelElement } {
+    if(index < 0) {
+      index = 0;
+    }
+    const leftChildren = this.children.slice(0, index);
+    if (leftChildren.length) {
+      leftChildren[leftChildren.length - 1].nextSibling = null;
+    }
+    const rightChildren = this.children.slice(index);
+    if (rightChildren.length) {
+      rightChildren[0].previousSibling = null;
+    }
+
+    this.children = leftChildren;
+    const right = this.clone();
+    right.children = [];
+    right.appendChildren(...rightChildren);
+    this.parent?.addChild(right, this.index! + 1);
+
+    return {left: this, right};
+  }
+
+  /**
+   * replace an element by its children
+   * If withBreaks is true, insert a break after every child
+   * @param withBreaks
+   */
+  unwrap(withBreaks: boolean = false) {
+    const parent = this.parent;
+    if(!parent) {
+      throw new ModelError("Can't unwrap root node");
+    }
+    let insertIndex = this.index! + 1;
+
+
+    for (const child of this.children) {
+      this.parent?.addChild(child, insertIndex);
+      insertIndex++;
+      if(withBreaks){
+        this.parent?.addChild(new ModelElement("br"), insertIndex);
+        insertIndex++;
+      }
+    }
+    this.parent?.removeChild(this);
+
   }
 }

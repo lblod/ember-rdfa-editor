@@ -253,7 +253,6 @@ module("Unit | model | util | node-finder", function () {
     root.appendChildren(testTree, sistertext, sistertree);
 
 
-    debugger;
     const nodeFinder = new ModelNodeFinder<ModelText>( {
       startNode: start,
       rootNode: root,
