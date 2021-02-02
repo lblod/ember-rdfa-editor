@@ -4,12 +4,12 @@ import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 export default class ModelTestContext {
 
-  rootNode: HTMLElement;
-  model: Model;
-  modelSelection: ModelSelection;
-  domSelection: Selection;
+  rootNode!: HTMLElement;
+  model!: Model;
+  modelSelection!: ModelSelection;
+  domSelection!: Selection;
 
-  constructor() {
+  reset() {
     this.rootNode = document.createElement("div");
     this.model = new Model();
     this.model.rootNode = this.rootNode;
@@ -17,5 +17,6 @@ export default class ModelTestContext {
     this.model.write();
     this.modelSelection = new ModelSelection(this.model);
     this.domSelection = getWindowSelection();
+
   }
 }

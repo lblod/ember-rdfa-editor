@@ -6,7 +6,7 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 module("Unit | model | readers | html-element-reader", hooks => {
 
   const ctx = new ModelTestContext();
-
+  hooks.beforeEach(() => ctx.reset());
 
   test("reading an html element gives a model element", assert => {
     const paragraph = document.createElement("p");
