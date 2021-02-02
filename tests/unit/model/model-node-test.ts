@@ -1,20 +1,15 @@
 import {module, test} from "qunit";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelTestContext from "dummy/tests/utilities/model-test-context";
+import {ModelError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 
 module("Unit | model | model-node", hooks => {
-  let model: Model;
-  let rootNode: HTMLElement;
+  const ctx = new ModelTestContext();
 
   hooks.beforeEach(() => {
-    rootNode = document.createElement("div");
-    model = new Model();
-    model.rootNode = rootNode;
-    model.read();
+    ctx.reset();
   });
 
 
@@ -49,7 +44,17 @@ module("Unit | model | model-node", hooks => {
     r1.appendChildren(r10, r11, node);
 
     const rslt = node.getIndexPath();
-    assert.deepEqual(rslt, [1,2]);
+    assert.deepEqual(rslt, [1, 2]);
+
+  });
+  module("Unit | model | model-node | promote", hooks => {
+    test.skip("promote of child of root throws error", assert => {
+      const root = ctx.model.rootModelNode;
+      const childOfRoot = new ModelText("test");
+      root.addChild(childOfRoot);
+
+      assert.throws(() => childOfRoot.promote(), new OutsideRootError());
+    });
 
   });
 });

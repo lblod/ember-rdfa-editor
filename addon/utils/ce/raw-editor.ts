@@ -15,6 +15,7 @@ import RemoveUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-prope
 import MakeUnorderedListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
 import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list-command';
 import MakeListCommand from "@lblod/ember-rdfa-editor/commands/make-list-command";
+import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list-command";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -54,6 +55,7 @@ class RawEditor extends EmberObject {
     this.registerCommand(new RemoveUnderlineCommand(this.model));
     this.registerCommand(new MakeListCommand(this.model));
     this.registerCommand(new RemoveListCommand(this.model));
+    this.registerCommand(new UnindentListCommand(this.model));
   }
 
   /**
