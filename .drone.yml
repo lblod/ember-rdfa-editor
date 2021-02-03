@@ -1,0 +1,16 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  dockerize:
+    image: docker
+    commands:
+      - docker build . -t ember-rdfa-editor:${DRONE_BUILD_NUMBER} -t ember-rdfa-editor:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  lint:
+    image: "ember-rdfa-editor:${DRONE_BUILD_NUMBER}"
+    commands:
+      - npm run lint
