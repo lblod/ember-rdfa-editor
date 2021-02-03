@@ -6,9 +6,9 @@ steps:
 - name: dockerize
   image: docker
   commands:
-    - docker build . -t ember-rdfa-editor:${DRONE_BUILD_NUMBER} -t ember-rdfa-editor:latest
+  - docker build . -t ember-rdfa-editor:${DRONE_BUILD_NUMBER} -t ember-rdfa-editor:latest
   volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
+  - /var/run/docker.sock:/var/run/docker.sock
 - name: lint
   image: "ember-rdfa-editor:${DRONE_BUILD_NUMBER}"
   commands:
