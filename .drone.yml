@@ -1,0 +1,37 @@
+---
+kind: pipeline
+type: docker
+name: verify-pr
+steps:
+- name: build-dry-run
+  image: plugins/docker
+  settings:
+    repo: lblod/ember_rdfa_editor
+    dry_run: true
+    purge: true
+- name: test
+  image: madnificent/ember:3.20.0
+  commands:
+  - npm install
+  - npm test
+trigger:
+  event:
+    - pull_request
+
+---
+kind: pipeline
+type: docker
+name: push-latest-build
+steps:
+- name: push-latest-build
+  image: plugins/docker
+  settings:
+    repo: lblod/ember_rdfa_editor
+    user:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    purge: true
+trigger:
+  branch:
+    - development
