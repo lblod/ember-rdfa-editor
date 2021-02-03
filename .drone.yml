@@ -30,4 +30,7 @@ steps:
   commands:
   - npm install
   - npm test
+  trigger:
+    event:
+      - pull_request
 
