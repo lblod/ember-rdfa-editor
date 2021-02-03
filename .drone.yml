@@ -14,6 +14,10 @@ steps:
   image: "ember-rdfa-editor:${DRONE_BUILD_NUMBER}"
   commands:
     - npm run lint
+  when:
+    ref:
+      - refs/pull/*/
+      - refs/heads/development
 volumes:
 - name: dockersock
   host:
