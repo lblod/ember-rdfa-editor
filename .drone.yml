@@ -8,10 +8,6 @@ steps:
   commands:
   - npm install
   - npm test
-  when:
-    ref:
-      - refs/pull/*/
-      - refs/heads/development
 - name: build
   image: plugins/docker
   settings:
