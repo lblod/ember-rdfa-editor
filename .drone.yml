@@ -11,6 +11,7 @@ steps:
 - name: build
   image: plugins/docker
   settings:
+    repo: lblod/ember_rdfa_editor
     user:
       from_secret: docker_username
     password:
