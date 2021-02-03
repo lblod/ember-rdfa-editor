@@ -1,9 +1,6 @@
 import Command from "../command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
+import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
@@ -28,14 +25,7 @@ export default abstract class SetPropertyCommand extends Command {
     const end = selection.lastRange.end;
 
 
-    const nodeFinder = new ModelNodeFinder({
-     startNode: start.parent,
-      endNode: end.parent,
-      rootNode: this.model.rootModelNode,
-      nodeFilter: ModelNode.isModelText,
-      direction: Direction.FORWARDS
-    });
-    const nodes = Array.from(nodeFinder) as ModelText[];
+    const nodes = selection.lastRange.getTextNodes();
 
     nodes[nodes.length - 1] = nodes[nodes.length - 1].split(end.parentOffset).left;
     nodes[0] = nodes[0].split(start.parentOffset).right;

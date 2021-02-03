@@ -2,20 +2,29 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {MisbehavedSelectionError, NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
+import {
+  Direction,
+  FilterAndPredicate,
+  PropertyState,
+  RelativePosition
+} from "@lblod/ember-rdfa-editor/model/util/types";
+import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
  */
-interface WellbehavedSelection extends ModelSelection {
+export interface WellbehavedSelection extends ModelSelection {
   anchor: ModelPosition;
   focus: ModelPosition;
   lastRange: ModelRange;
+
+  getCommonAncestor(): ModelPosition;
 }
 
 /**
@@ -196,6 +205,79 @@ export default class ModelSelection {
     return this.getTextPropertyStatus("strikethrough");
   }
 
+  findAllInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): Iterable<T> | null {
+
+    const {filter, predicate} = config;
+
+    if (!ModelSelection.isWellBehaved(this)) {
+      return null;
+    }
+
+    // ignore selection direction
+    const anchorNode = this.lastRange?.start.parent;
+    const focusNode = this.lastRange?.end.parent;
+    if (anchorNode === focusNode) {
+
+      const noop = () => true;
+      const filterFunc = filter || noop;
+      const predicateFunc = predicate || noop;
+
+      return {
+        [Symbol.iterator]: (): Iterator<T> => {
+          let done = false;
+          return {
+            next: (): IteratorResult<T, null> => {
+              if (!done) {
+                done = true;
+                return {
+                  value: anchorNode.findAncestor(node => filterFunc(node) && predicateFunc(node)) as T,
+                  done: false
+                };
+
+              } else {
+                return {
+                  value: null,
+                  done: true
+                };
+
+              }
+            }
+          };
+        }
+      };
+    } else {
+      return new ModelNodeFinder<T>(
+        {
+          direction: Direction.FORWARDS,
+          startNode: anchorNode,
+          endNode: focusNode,
+          rootNode: this.model.rootModelNode,
+          nodeFilter: filter,
+          predicate
+        }
+      );
+    }
+  }
+
+  findFirstInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): T | null {
+    const iterator = this.findAllInSelection<T>(config);
+    if (!iterator) {
+      return null;
+    }
+    return iterator[Symbol.iterator]().next().value;
+
+  }
+
+  get isInList(): PropertyState {
+    const config = {
+      filter: ModelNode.isModelElement,
+      predicate: (node: ModelElement) => listTypes.has(node.type)
+    };
+
+    return this.findFirstInSelection(config) ? PropertyState.enabled : PropertyState.disabled;
+
+  }
+
   get rdfaSelection() {
     if (!this.domSelection) return;
     return this.calculateRdfaSelection(this.domSelection);
@@ -278,6 +360,11 @@ export default class ModelSelection {
     } else {
       this.focus = this.anchor;
     }
+  }
+
+  collapseOn(node: ModelNode, offset: number = 0) {
+    this.anchor = ModelPosition.fromParent(this.model.rootModelNode, node, offset);
+    this.collapse(true);
   }
 
   /**

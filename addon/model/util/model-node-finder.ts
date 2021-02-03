@@ -1,9 +1,11 @@
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import NodeFinder from "@lblod/ember-rdfa-editor/model/util/node-finder";
+import NodeFinder, {NodeFinderFilter, NodeFinderPredicate} from "@lblod/ember-rdfa-editor/model/util/node-finder";
 
 
+export type ModelNodeFinderFilter<R extends ModelNode> = NodeFinderFilter<ModelNode, R>;
+export type ModelNodeFinderPredicate<R extends ModelNode> = NodeFinderPredicate<ModelNode, R>
 /**
  * {@link ModelNode} implementation of a {@link NodeFinder}
  */

@@ -25,6 +25,7 @@ export default class EditorToolbar extends Component<Args> {
   @tracked isItalic: boolean = false;
   @tracked isStrikethrough: boolean = false;
   @tracked isUnderline: boolean = false;
+  @tracked isInList: boolean = false;
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
@@ -36,6 +37,7 @@ export default class EditorToolbar extends Component<Args> {
     this.isItalic = event.detail.italic === PropertyState.enabled;
     this.isUnderline = event.detail.underline === PropertyState.enabled;
     this.isStrikethrough = event.detail.strikethrough === PropertyState.enabled;
+    this.isInList = event.detail.isInList === PropertyState.enabled;
   }
 
   @action
@@ -87,6 +89,23 @@ export default class EditorToolbar extends Component<Args> {
   @action
   toggleItalic() {
     this.toggleProperty(this.isItalic, "make-italic", "remove-italic");
+  }
+
+  @action
+  toggleUnorderedList() {
+    if(this.isInList) {
+      this.args.editor.executeCommand("remove-list");
+    } else {
+      this.args.editor.executeCommand("make-list", "ul");
+    }
+  }
+  @action
+  toggleOrderedList() {
+    if(this.isInList) {
+      this.args.editor.executeCommand("remove-list");
+    } else {
+      this.args.editor.executeCommand("make-list", "ol");
+    }
   }
 
   @action

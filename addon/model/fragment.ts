@@ -16,6 +16,10 @@ export default class Fragment extends ModelElement {
     this.textAttributeMap = new Map<TextAttribute, boolean>();
   }
 
+  get isBlock(): boolean {
+    return false;
+  }
+
   setTextAttribute(key: TextAttribute, value: boolean) {
     this.textAttributeMap.set(key, value);
   }
