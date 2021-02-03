@@ -8,8 +8,13 @@ steps:
   commands:
   - docker build . -t ember-rdfa-editor:${DRONE_BUILD_NUMBER} -t ember-rdfa-editor:latest
   volumes:
-  - /var/run/docker.sock:/var/run/docker.sock
+  - name:dockersock
+    path:/var/run/docker.sock
 - name: lint
   image: "ember-rdfa-editor:${DRONE_BUILD_NUMBER}"
   commands:
     - npm run lint
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
