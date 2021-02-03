@@ -3,7 +3,7 @@ kind: pipeline
 type: docker
 name: default
 steps:
-- name: npm install
+- name: test
   image: madnificent/ember:3.20.0
   commands:
   - npm install
@@ -12,3 +12,12 @@ steps:
     ref:
       - refs/pull/*/
       - refs/heads/development
+- name: build
+  image: plugins/docker
+  settings:
+    user:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    dry_run: true
+    purge: true
