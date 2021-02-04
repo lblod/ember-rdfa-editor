@@ -64,3 +64,5 @@ export class PositionError extends CustomError{}
  * This is a workaround for qunit assertions not informing typescript about their result
  */
 export class AssertionError extends CustomError{}
+
+export class IndexOutOfRangeError extends CustomError {}

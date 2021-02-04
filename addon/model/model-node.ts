@@ -105,6 +105,8 @@ export default abstract class ModelNode {
 
   abstract get isBlock(): boolean;
 
+  abstract hasVisibleText(): boolean;
+
   getIndexPath(): number[] {
     const result = [];
 
@@ -195,6 +197,22 @@ export default abstract class ModelNode {
 
     return oldParent;
   }
-  abstract hasVisibleText(): boolean;
+
+  /**
+   * Splits the parent such that this node ends up as an only child. If the node is already
+   * an only child, this does nothing.
+   * Throws if node has no parent, or if parent is root
+   */
+  isolate() {
+    const parent = this.parent;
+    if (!parent) {
+      throw new NoParentError();
+    }
+    if(!parent.parent) {
+      throw new OutsideRootError();
+    }
+    const index = this.index!;
+    parent.isolateChildAt(index);
+  }
 
 }

@@ -23,7 +23,9 @@ export default class RemoveListCommand extends Command {
 
     const listNodesIterator = selection.findAllInSelection({
       filter: ModelNode.isModelElement,
-      predicate: (node: ModelElement) => node.type === "li"
+      predicate: (node: ModelElement) => {
+        return node.type === "li";
+      }
     });
 
     if (!listNodesIterator) {
@@ -31,14 +33,27 @@ export default class RemoveListCommand extends Command {
     }
 
     for (const li of listNodesIterator) {
-      while (li.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type), false)) {
-        li.parent?.split(li.index! + 1);
-        li.parent?.split(1);
-        const oldParent = li.promote(true);
-        if(listTypes.has(oldParent.type) && !oldParent.hasVisibleText()) {
-          this.model.removeModelNode(oldParent);
+      if(li.parent) {
+        while (li.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type), false)) {
+          li.isolate();
+          this.model.write();
+          li.promote(true);
+          const nextSibling = li.nextSibling;
+          const previousSibling = li.previousSibling;
+          if(nextSibling && ModelNode.isModelElement(nextSibling)) {
+            if (!nextSibling.hasVisibleText()) {
+              this.model.removeModelNode(nextSibling);
+            }
+          }
+          if(previousSibling && ModelNode.isModelElement(previousSibling)){
+            if (!previousSibling.hasVisibleText()) {
+              this.model.removeModelNode(previousSibling);
+            }
+          }
+
         }
       }
+      li.parent!.addChild( new ModelElement("br"), li.index! + 1);
       li.unwrap();
 
     }
