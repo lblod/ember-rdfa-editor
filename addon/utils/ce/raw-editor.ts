@@ -99,12 +99,31 @@ class RawEditor extends EmberObject {
    * @param args
    */
   executeCommand(commandName: string, ...args: any[]) {
+    const command = this.getCommand(commandName);
+    if(command.canExecute(...args)) {
+      this.getCommand(commandName).execute(...args);
+      this.updateRichNode();
+    }
+  }
+
+  /**
+   * Check if a command can be executed in the given context
+   * It is not required to check this before executing, as a command will
+   * not run when this condition is not met. But it can be useful know if a command
+   * is valid without running it.
+   * @param commandName
+   * @param args
+   */
+  canExecuteCommand(commandName: string, ...args: any[]) {
+    return this.getCommand(commandName).canExecute(...args);
+  }
+
+  private getCommand(commandName: string): Command {
     const command = this.registeredCommands.get(commandName);
     if(!command) {
       throw new Error(`Unrecognized command ${commandName}`);
     }
-    command.execute(...args);
-    this.updateRichNode();
+    return command;
   }
 
   synchronizeModel() {
