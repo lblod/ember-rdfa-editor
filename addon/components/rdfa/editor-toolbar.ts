@@ -52,19 +52,8 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   insertIndent() {
-    const selection = getWindowSelection();
-    if (selection.isCollapsed) {
-      // colllapsed selections that are not in a list are not properly handled, this is a temporary workaround until we have a better toolbar.
-      if (isInList(selection.anchorNode)) {
-        this.args.editor.insertIndent();
-      }
-      else {
-        //refocus editor
-        this.args.editor.rootNode.focus();
-      }
-    }
-    else {
-      this.args.editor.insertIndent();
+    if(this.isInList) {
+      this.args.editor.executeCommand("indent-list");
     }
   }
 
