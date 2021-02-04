@@ -221,7 +221,7 @@ function isMatchingRdfaAttribute(rdfaAttributes, filter, keys) {
       if ( key == 'resource') {
         return rdfaAttributes['resource'] == value || rdfaAttributes['about'] == value;
       } else {
-        if(!rdfaAttributes.hasOwnProperty(rdfaAttributesKey)) {
+        if(!Object.prototype.hasOwnProperty.call( rdfaAttributes, rdfaAttributesKey)) {
           return false;
         }
         if(value instanceof RegExp) {
