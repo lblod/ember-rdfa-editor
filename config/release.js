@@ -1,7 +1,11 @@
 /* jshint node:true */
-// var RSVP = require('rsvp');
+/* eslint-disable node/no-unpublished-require */
+const simpleGit = require('simple-git')();
+const sass = require('sass');
+const fs = require('fs');
+const path = require('path');
 
-var simpleGit = require('simple-git')();
+
 
 // For details on each option run `ember help release`
 module.exports = {
@@ -16,7 +20,17 @@ module.exports = {
   // timezone: 'America/Los_Angeles',
   //
   beforeCommit: function (/* project, versions */) {
-    require('../compile-css.js'); // Requiring the file compiles
+    var inputFile = path.join(__dirname, '..' , 'app', 'styles', 'ember-rdfa-editor.scss');
+    var outputFile = path.join(__dirname, '..', 'vendor', 'ember-rdfa-editor.css');
+    var buf = fs.readFileSync(inputFile, "utf8");
+
+    // Compile main file
+    var result = sass.renderSync({
+      data: buf,
+      includePaths: ['app/styles']
+    });
+
+    fs.writeFileSync(outputFile, result.css);
     return new Promise(function(resolve) {
       simpleGit.add(['vendor/ember-rdfa-editor.css'], function() {
         resolve();
