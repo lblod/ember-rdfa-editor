@@ -8,7 +8,7 @@ module.exports = {
 
   normalizeEntityName() { },
 
-  async afterInstall(options) {
+  async afterInstall() {
     // Import styles if using SCSS
     let dependencies = this.project.dependencies();
     let type;

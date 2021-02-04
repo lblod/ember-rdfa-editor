@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(environment , appConfig) {
+module.exports = function(environment) {
   var ENV = {
     featureFlags: {
       'editor-html-paste': true,

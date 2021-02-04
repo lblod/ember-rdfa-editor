@@ -1,5 +1,5 @@
 import { isInLumpNode, getParentLumpNode } from '../lump-node-utils';
-import { moveCaret, ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
+import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 
 export default class LumpNodeMovementObserver {
   handleMovement(editor, oldSelection, newSelection) {

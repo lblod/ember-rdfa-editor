@@ -1,17 +1,14 @@
-import classic from "ember-classic-decorator";
 import { layout as templateLayout } from "@ember-decorators/component";
 import { tracked } from '@glimmer/tracking';
 import { action } from "@ember/object";
 import Component from '@ember/component';
 import layout from '../../templates/components/ce/content-editable';
 import forgivingAction from '../../utils/ce/forgiving-action';
-import RawEditor from '../../utils/ce/raw-editor';
 import EnterHandler from '../../utils/ce/handlers/enter-handler';
 import IgnoreModifiersHandler from '../../utils/ce/handlers/ignore-modifiers-handler';
 import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import DeleteHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler';
 import DisableDeleteHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/delete-handler';
 import HeaderMarkdownHandler from '../../utils/ce/handlers/header-markdown-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
