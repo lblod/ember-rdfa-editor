@@ -65,7 +65,6 @@ export default class UnindentListCommand extends Command {
               grandParent.addChild(node, parent.index);
               this.model.write();
               this.model.readSelection();
-              this.joinTopLevelLists(node);
               return;
             }
             grandParent.removeChild(parent);

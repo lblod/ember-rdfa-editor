@@ -64,6 +64,7 @@
       </button>
       {{/if}}
       {{#if @showIndentButtons}}
+      {{#if this.isInList}}
       <button type="button" class="say-toolbar__button" {{on "click" this.insertUnindent}} data-test-button-id="insert-unindent">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" class="say-icon say-icon--large" aria-hidden="true">
           <path d="M19.7888889,33.0555556 L41.9,33.0555556 L41.9,28.6333333 L19.7888889,28.6333333 L19.7888889,33.0555556 Z M2.1,22 L10.9444444,30.8444444 L10.9444444,13.1555556 L2.1,22 Z M2.1,41.9 L41.9,41.9 L41.9,37.4777778 L2.1,37.4777778 L2.1,41.9 Z M2.1,2.1 L2.1,6.52222222 L41.9,6.52222222 L41.9,2.1 L2.1,2.1 Z M19.7888889,15.3666667 L41.9,15.3666667 L41.9,10.9444444 L19.7888889,10.9444444 L19.7888889,15.3666667 Z M19.7888889,24.2111111 L41.9,24.2111111 L41.9,19.7888889 L19.7888889,19.7888889 L19.7888889,24.2111111 Z"/>
@@ -80,6 +81,7 @@
           Indent
         </span>
       </button>
+      {{/if}}
       {{/if}}
     </div>
   </div>
