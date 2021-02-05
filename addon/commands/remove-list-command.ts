@@ -18,9 +18,6 @@ export default class RemoveListCommand extends Command {
 
       throw new MisbehavedSelectionError();
     }
-    const anchorNode = selection.lastRange.start.parent;
-    const focusNode = selection.lastRange.end.parent;
-
     const listNodesIterator = selection.findAllInSelection({
       filter: ModelNode.isModelElement,
       predicate: (node: ModelElement) => {
@@ -31,26 +28,13 @@ export default class RemoveListCommand extends Command {
     if (!listNodesIterator) {
       throw new SelectionError('The selection is not in a list');
     }
+    const listNodes = Array.from(listNodesIterator);
 
-    for (const li of listNodesIterator) {
+    for (const li of listNodes) {
       if(li.parent) {
+        this.bubbleUpLi(li);
         while (li.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type), false)) {
-          li.isolate();
-          this.model.write();
-          li.promote(true);
-          const nextSibling = li.nextSibling;
-          const previousSibling = li.previousSibling;
-          if(nextSibling && ModelNode.isModelElement(nextSibling)) {
-            if (!nextSibling.hasVisibleText()) {
-              this.model.removeModelNode(nextSibling);
-            }
-          }
-          if(previousSibling && ModelNode.isModelElement(previousSibling)){
-            if (!previousSibling.hasVisibleText()) {
-              this.model.removeModelNode(previousSibling);
-            }
-          }
-
+          this.bubbleUpLi(li);
         }
       }
       li.parent!.addChild( new ModelElement("br"), li.index! + 1);
@@ -62,6 +46,28 @@ export default class RemoveListCommand extends Command {
     this.model.readSelection();
     return;
 
+  }
+
+  private bubbleUpLi(li: ModelElement) {
+
+    li.isolate();
+    this.model.write();
+    li.promote(true);
+
+    const nextSibling = li.nextSibling;
+    const previousSibling = li.previousSibling;
+
+    // TODO: eventually we should rely on list elements only having [li]'s as children and enforce that somewhere else
+    if(nextSibling && ModelNode.isModelElement(nextSibling)) {
+      if (!nextSibling.hasVisibleText()) {
+        this.model.removeModelNode(nextSibling);
+      }
+    }
+    if(previousSibling && ModelNode.isModelElement(previousSibling)){
+      if (!previousSibling.hasVisibleText()) {
+        this.model.removeModelNode(previousSibling);
+      }
+    }
   }
 
 }

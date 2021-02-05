@@ -367,6 +367,11 @@ export default class ModelSelection {
     this.collapse(true);
   }
 
+  setStartAndEnd(start: ModelNode, startOffset: number, end: ModelNode, endOffset: number) {
+    const range = ModelRange.fromParents(this.model.rootModelNode, start, startOffset, end, endOffset);
+    this.clearRanges();
+    this.addRange(range);
+  }
   /**
    * Select a full ModelText node
    * @param node
