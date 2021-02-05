@@ -253,6 +253,7 @@ export default class ModelSelection {
           endNode: focusNode,
           rootNode: this.model.rootModelNode,
           nodeFilter: filter,
+          useSiblingLinks: false,
           predicate
         }
       );
