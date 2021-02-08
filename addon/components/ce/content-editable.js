@@ -154,17 +154,6 @@ export default class ContentEditable extends Component {
   editable = true;
 
   /**
-   * specify whether yielded value should escape html syntax
-   *
-   * @property yieldHTML
-   * @type boolean
-   * @default true
-   *
-   * @public
-   */
-  yieldHTML = true;
-
-  /**
    * didRender hook, makes sure the element is focused
    * and calls the rootNodeUpdated action
    *
