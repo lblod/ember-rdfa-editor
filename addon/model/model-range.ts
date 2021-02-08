@@ -6,6 +6,7 @@ import ModelNodeFinder, {
 } from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import {Direction, FilterAndPredicate} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -14,6 +15,10 @@ import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 export default class ModelRange {
   private _start: ModelPosition;
   private _end: ModelPosition;
+
+  static fromParents(root: ModelElement, start: ModelNode, startOffset: number, end: ModelNode, endOffset: number): ModelRange {
+    return new ModelRange(ModelPosition.fromParent(root, start, startOffset), ModelPosition.fromParent(root, end, endOffset));
+  }
 
   constructor(start: ModelPosition, end: ModelPosition = start) {
     this._start = start;

@@ -754,11 +754,11 @@ function isNodeCursorSafe(node, before = true) {
 
     if (isList(node) && isInList(node) && !prevSibling) return true; //if <li><ul><li>pure nested list is ok </li></ul></li>
 
-    if (!prevSibling || prevSibling.nodeType != Node.TEXT_NODE) return false;
+    if (!prevSibling || prevSibling.modelNodeType != Node.TEXT_NODE) return false;
   } else {
     let nextSibling = node.nextSibling;
     if (isList(node) && isInList(node) && !nextSibling) return true; //if <li><ul><li>pure nested list is ok </li></ul></li>
-    if (!nextSibling || nextSibling.nodeType != Node.TEXT_NODE) return false;
+    if (!nextSibling || nextSibling.modelNodeType != Node.TEXT_NODE) return false;
   }
 
   return true;

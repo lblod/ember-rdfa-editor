@@ -17,11 +17,6 @@ export default class UnindentListCommand extends Command {
 
       throw new MisbehavedSelectionError();
     }
-    //start of selection
-    const anchorNode = selection.lastRange.start.parent;
-    //end of selection
-    const focusNode = selection.lastRange.end.parent;
-
     //get all nodes in selection that are li
     const listNodesIterator = selection.findAllInSelection({
       filter: ModelNode.isModelElement,
@@ -63,9 +58,7 @@ export default class UnindentListCommand extends Command {
           if(parent.length==0){
             if(parent.index){
               grandParent.addChild(node, parent.index);
-              this.model.write();
-              this.model.readSelection();
-              return;
+              break;
             }
             grandParent.removeChild(parent);
           }
@@ -82,6 +75,5 @@ export default class UnindentListCommand extends Command {
 
     this.model.write();
     this.model.readSelection();
-    return;
   }
 }

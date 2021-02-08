@@ -7,7 +7,7 @@ import {ModelNodeType} from "@lblod/ember-rdfa-editor/model/model-node";
  * to group complex styling structures without introducing unnecessary dom elements
  */
 export default class Fragment extends ModelElement {
-  nodeType: ModelNodeType = "FRAGMENT";
+  modelNodeType: ModelNodeType = "FRAGMENT";
 
   private textAttributeMap: Map<TextAttribute, boolean>;
 

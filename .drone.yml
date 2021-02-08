@@ -6,7 +6,7 @@ steps:
 - name: build-dry-run
   image: plugins/docker
   settings:
-    repo: lblod/ember_rdfa_editor
+    repo: lblod/ember-rdfa-editor
     dry_run: true
     purge: true
 - name: test
@@ -26,7 +26,7 @@ steps:
 - name: push-latest-build
   image: plugins/docker
   settings:
-    repo: lblod/ember_rdfa_editor
+    repo: lblod/ember-rdfa-editor
     username:
       from_secret: docker_username
     password:
@@ -43,13 +43,13 @@ steps:
 - name: build-dry-run
   image: plugins/docker
   settings:
-    repo: lblod/ember_rdfa_editor
+    repo: lblod/ember-rdfa-editor
     dry_run: true
     purge: true
 - name: push-tagged-build
   image: plugins/docker
   settings:
-    repo: lblod/ember_rdfa_editor
+    repo: lblod/ember-rdfa-editor
     tags: ${DRONE_TAG##v}
     username:
       from_secret: docker_username

@@ -26,6 +26,7 @@ export default class EditorToolbar extends Component<Args> {
   @tracked isStrikethrough: boolean = false;
   @tracked isUnderline: boolean = false;
   @tracked isInList: boolean = false;
+  @tracked canIndent: boolean = false;
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
@@ -38,7 +39,9 @@ export default class EditorToolbar extends Component<Args> {
     this.isUnderline = event.detail.underline === PropertyState.enabled;
     this.isStrikethrough = event.detail.strikethrough === PropertyState.enabled;
     this.isInList = event.detail.isInList === PropertyState.enabled;
+    this.canIndent = this.args.editor.canExecuteCommand("indent-list");
   }
+
 
   @action
   insertUL() {
@@ -52,26 +55,15 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   insertIndent() {
-    const selection = getWindowSelection();
-    if (selection.isCollapsed) {
-      // colllapsed selections that are not in a list are not properly handled, this is a temporary workaround until we have a better toolbar.
-      if (isInList(selection.anchorNode)) {
-        this.args.editor.insertIndent();
-      }
-      else {
-        //refocus editor
-        this.args.editor.rootNode.focus();
-      }
-    }
-    else {
-      this.args.editor.insertIndent();
+    if(this.isInList) {
+      this.args.editor.executeCommand("indent-list");
     }
   }
 
   @action
   insertUnindent() {
     if(this.isInList) {
-        this.args.editor.executeCommand("unindent-list");
+      this.args.editor.executeCommand("unindent-list");
     }
   }
   @action

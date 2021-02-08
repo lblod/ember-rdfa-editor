@@ -4,6 +4,7 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelNode from "../model/model-node";
 import ModelElement from "../model/model-element";
 import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export default class RemoveListCommand extends Command {
   name = "remove-list";
@@ -17,40 +18,61 @@ export default class RemoveListCommand extends Command {
 
       throw new MisbehavedSelectionError();
     }
-    const anchorNode = selection.lastRange.start.parent;
-    const focusNode = selection.lastRange.end.parent;
-
     const listNodesIterator = selection.findAllInSelection({
       filter: ModelNode.isModelElement,
-      predicate: (node: ModelElement) => node.type === "li"
+      predicate: (node: ModelElement) => {
+        return node.type === "li";
+      }
     });
+
     if (!listNodesIterator) {
       throw new SelectionError('The selection is not in a list');
     }
     const listNodes = Array.from(listNodesIterator);
 
-      const anchorLi = anchorNode?.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li");
-      const focusLi = focusNode?.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li");
-
-      if (anchorLi && anchorLi.index! > 0) {
-        anchorLi.parent!.split(anchorLi.index!);
+    for (const li of listNodes) {
+      this.bubbleUpLi(li);
+      if(!li.previousSibling?.isBlock && li.previousSibling?.hasVisibleText()) {
+        li.addChild( new ModelElement("br"), 0);
       }
-
-      if (focusLi && focusLi.index! < focusLi.parent!.children.length - 1) {
-        focusLi.parent?.split(focusLi.index! + 1);
+      if(!li.nextSibling?.isBlock && li.nextSibling?.hasVisibleText()) {
+        li.addChild( new ModelElement("br"));
       }
-
-    for (const [index, listItem] of listNodes.entries()) {
-      //unwrap lists
-      listItem.unwrap(!listItem.firstChild.isBlock && index !== listNodes.length - 1);
-      if(listItem.parent?.type === "ul" || listItem.parent?.type === "ol") {
-        listItem.parent?.unwrap();
-      }
+      li.unwrap();
     }
+
     this.model.write();
     this.model.readSelection();
     return;
 
   }
+
+  private bubbleUpLi(li: ModelElement) {
+
+    if(li.parent) {
+      while (li.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type), false)) {
+        li.isolate();
+        if(li.parent.previousSibling && !li.parent.previousSibling.hasVisibleText()) {
+          this.model.removeModelNode(li.parent.previousSibling);
+        }
+        li.promote(true);
+
+        const nextSibling = li.nextSibling;
+        const previousSibling = li.previousSibling;
+
+        // TODO: eventually we should rely on list elements only having [li]'s as children and enforce that somewhere else
+        if(nextSibling && ModelNode.isModelElement(nextSibling)) {
+          if (!nextSibling.hasVisibleText()) {
+            this.model.removeModelNode(nextSibling);
+          }
+        }
+        if(previousSibling && ModelNode.isModelElement(previousSibling)){
+          if (!previousSibling.hasVisibleText()) {
+            this.model.removeModelNode(previousSibling);
+          }
+        }
+      }
+      }
+    }
 
 }
