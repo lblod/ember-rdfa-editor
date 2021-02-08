@@ -44,6 +44,12 @@ export class WriterError extends CustomError{}
 
 export class ModelError extends CustomError{}
 
+export class OutsideRootError extends ModelError {
+  constructor() {
+    super("Operating on elements outside of the root tree are not allowed");
+  }
+}
+
 export class NoParentError extends ModelError {
   constructor() {
     super("Trying to access the parent of a node without parent");
@@ -58,3 +64,5 @@ export class PositionError extends CustomError{}
  * This is a workaround for qunit assertions not informing typescript about their result
  */
 export class AssertionError extends CustomError{}
+
+export class IndexOutOfRangeError extends CustomError {}

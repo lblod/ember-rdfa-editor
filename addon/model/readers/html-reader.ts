@@ -66,17 +66,20 @@ export default class HtmlReader implements Reader<Node, ModelNode> {
       }
 
       for (const child of node.childNodes) {
-        const parsed = this.readRec(child);
-        if (ModelNode.isFragment(parsed)) {
-          for (const child of parsed.children) {
-            result?.addChild(child);
-          }
+        if (!["ul", "ol"].includes(result?.type || "") || tagName(child) === "li") {
+          const parsed = this.readRec(child);
 
-        } else {
-          if (parsed) {
-            result?.addChild(parsed);
-          }
+          if (ModelNode.isFragment(parsed)) {
+            for (const child of parsed.children) {
+              result?.addChild(child);
+            }
 
+          } else {
+            if (parsed) {
+              result?.addChild(parsed);
+            }
+
+          }
         }
       }
 
@@ -85,7 +88,7 @@ export default class HtmlReader implements Reader<Node, ModelNode> {
     } else {
       result = this.voidReader.read(node);
     }
-    if(result) {
+    if (result) {
       this.model.bindNode(result, node);
     }
     return result;

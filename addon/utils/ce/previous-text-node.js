@@ -19,7 +19,7 @@ function lastTextChild(node) {
   if (node.nodeType !== Node.ELEMENT_NODE || isVoidElement(node))
     throw "invalid argument, expected a (non void) element";
   if (node.lastChild) {
-    if (node.lastChild.nodeType === Node.TEXT_NODE) {
+    if (node.lastChild.modelNodeType === Node.TEXT_NODE) {
       return node.lastChild;
     }
     else {
@@ -105,7 +105,7 @@ function findPreviousApplicableNode(node, rootNode) {
       // descend into sibling if possible
       return sibling.lastChild;
     }
-    if (sibling.nodeType !== Node.TEXT_NODE && sibling.nodeType !== Node.ELEMENT_NODE)
+    if (sibling.modelNodeType !== Node.TEXT_NODE && sibling.modelNodeType !== Node.ELEMENT_NODE)
       return findPreviousApplicableNode(sibling, rootNode);
     return sibling;
   }
@@ -132,7 +132,7 @@ export default function previousTextNode(baseNode, rootNode) {
     // next node is rootNode, so I'm at the start of the tree
     return null;
   }
-  if (nextNode.nodeType === Node.ELEMENT_NODE) {
+  if (nextNode.modelNodeType === Node.ELEMENT_NODE) {
     // insert a textnode in the returned node
     return insertTextNodeWithSpace(nextNode);
   }

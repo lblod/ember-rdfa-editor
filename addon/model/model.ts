@@ -176,7 +176,7 @@ export default class Model {
       child.previousSibling.nextSibling = child.nextSibling;
     }
     if (child.nextSibling) {
-      child.nextSibling = child.previousSibling;
+      child.nextSibling.previousSibling = child.previousSibling;
     }
   }
 }

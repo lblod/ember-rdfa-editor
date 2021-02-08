@@ -11,6 +11,7 @@ export interface NodeFinderConfig<T, R extends T> {
   nodeFilter?: NodeFinderFilter<T, R>
   predicate?: NodeFinderPredicate<T, R>
   direction?: Direction;
+  useSiblingLinks?: boolean;
 }
 
 function dummy() {
@@ -34,6 +35,7 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
   direction: Direction;
   stack: T[];
   visited: Map<T, boolean>;
+  visitSiblings = false;
 
 
   constructor(config: NodeFinderConfig<T, R>) {
@@ -46,6 +48,7 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
     this.direction = config.direction ?? Direction.FORWARDS;
     this.stack = [this.startNode];
     this.visited = new Map<T, boolean>();
+    this.visitSiblings = config.useSiblingLinks ?? true;
   }
 
   /**
@@ -122,11 +125,15 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
     if (parent !== this.getParent(this.rootNode)) {
       this.stack.push(parent);
     }
-
-    const sibling = this.nextSibling(node, this.direction);
-    if (sibling && node !== this.rootNode) {
-      this.stack.push(sibling);
+    // TODO: I think this should not be configurable but instead should never
+    // use the sibling links, it leads to too much confusion
+    if(this.visitSiblings) {
+      const sibling = this.nextSibling(node, this.direction);
+      if (sibling && node !== this.rootNode) {
+        this.stack.push(sibling);
+      }
     }
+
 
     const children = this.getChildren(node);
     if (children) {

@@ -2,12 +2,12 @@ import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/mod
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
 import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {IndexOutOfRangeError, ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
 export default class ModelElement extends ModelNode implements Cloneable<ModelElement> {
-  nodeType: ModelNodeType = "ELEMENT";
+  modelNodeType: ModelNodeType = "ELEMENT";
 
   private _children: ModelNode[] = [];
   private _type: ElementType;
@@ -56,7 +56,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   clone(): ModelElement {
     const result = new ModelElement(this.type);
     result.attributeMap = new Map<string, string>(this.attributeMap);
-    result.nodeType = this.nodeType;
+    result.modelNodeType = this.modelNodeType;
     const clonedChildren = this.children.map(c => c.clone());
     result.appendChildren(...clonedChildren);
     return result;
@@ -104,7 +104,9 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       child.nextSibling.previousSibling = child.previousSibling;
     }
 
-    this.children[index + 1].previousSibling = this.children[index - 1] || null;
+    if(this.length > index + 1) {
+      this.children[index + 1].previousSibling = this.children[index - 1] || null;
+    }
     this.children.splice(index, 1);
   }
 
@@ -167,4 +169,47 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     this.parent?.removeChild(this);
 
   }
+  hasVisibleText(): boolean {
+    if(this.type === "br") {
+      return true;
+    }
+    for (const child of this.children) {
+      if(child.hasVisibleText()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Split this node such that child at index is an only child. Return all sides of the split. The specified
+   * child will always be the only child of the middle part.
+   * If child at index is already an only child, this does nothing and returns this element as the middle part.
+   * Throws an exception if index is out of range.
+   * @param index
+   */
+  isolateChildAt(index: number): { left: ModelElement | null, middle: ModelElement, right: ModelElement | null } {
+    if (index < 0 || index >= this.length) {
+      throw new IndexOutOfRangeError();
+    }
+    if (this.length === 1) {
+      return {left: null, middle: this, right: null};
+    }
+
+    if (index === 0) {
+      const {left, right} = this.split(index + 1);
+      return {left: null, middle: left, right};
+    }
+
+    if (index === this.length - 1) {
+      const {left, right} = this.split(index);
+      return {left, middle: right, right: null};
+    }
+
+    const firstSplit = this.split(index + 1);
+    const secondSplit = firstSplit.left.split(index);
+
+    return {left: secondSplit.left, middle: secondSplit.right, right: firstSplit.right};
+  }
+
 }
