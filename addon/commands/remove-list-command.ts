@@ -32,10 +32,10 @@ export default class RemoveListCommand extends Command {
 
     for (const li of listNodes) {
       this.bubbleUpLi(li);
-      if(!li.previousSibling?.isBlock) {
+      if(!li.previousSibling?.isBlock && li.previousSibling?.hasVisibleText()) {
         li.addChild( new ModelElement("br"), 0);
       }
-      if(!li.nextSibling?.isBlock) {
+      if(!li.nextSibling?.isBlock && li.nextSibling?.hasVisibleText()) {
         li.addChild( new ModelElement("br"));
       }
       li.unwrap();
