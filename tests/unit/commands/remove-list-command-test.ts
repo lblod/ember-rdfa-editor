@@ -34,8 +34,7 @@ module("Unit | commands | remove-list-command", hooks => {
     command.execute();
 
     assert.strictEqual(model.rootModelNode.firstChild, content);
-    // a br should get inserted
-    assert.strictEqual(model.rootModelNode.children.length, 2);
+    assert.strictEqual(model.rootModelNode.children.length, 1);
 
   });
 
@@ -59,7 +58,7 @@ module("Unit | commands | remove-list-command", hooks => {
     command.execute();
 
     assert.strictEqual(model.rootModelNode.firstChild, content);
-    assert.strictEqual(model.rootModelNode.children.length, 2);
+    assert.strictEqual(model.rootModelNode.children.length, 1);
 
   });
   test("removing a nested listitem with more elements", assert => {
@@ -97,7 +96,7 @@ module("Unit | commands | remove-list-command", hooks => {
     modelSelection.collapseOn(content10);
     command.execute();
 
-    assert.strictEqual(model.rootModelNode.length, 4);
+    assert.strictEqual(model.rootModelNode.length, 3);
     assert.strictEqual(model.rootModelNode.children[0], ul);
     assert.strictEqual(ul.length, 1);
 
