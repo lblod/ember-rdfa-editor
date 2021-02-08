@@ -21,7 +21,7 @@ export default class IndentListCommand extends Command {
       return false;
     }
     for (const li of selectedLIs) {
-      if (li.index! === 0) {
+      if ( li == null || li.index! === 0) {
         return false;
       }
     }
