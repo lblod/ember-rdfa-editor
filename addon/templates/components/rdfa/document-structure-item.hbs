@@ -1,8 +1,0 @@
-{{#each this.items as |item|}}
-  <li class="side-navigation__item">
-    <a href="#" onclick={{action 'itemClicked' item.node}}>{{item.title}}</a>
-    {{#if item.children}}
-      <Rdfa::DocumentStructureItem @items={{item.children}} @itemClicked={{action "itemClicked"}} />
-    {{/if}}
-  </li>
-{{/each}}

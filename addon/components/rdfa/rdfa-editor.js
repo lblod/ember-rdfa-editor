@@ -199,22 +199,6 @@ export default class RdfaEditor extends Component {
   }
 
   /**
-   * Highlights a node for a short time span and scrolls to it
-   * @method highlightStructuredItem
-   *
-   * @param {DOMNode} node Node to highlight and scroll to
-   */
-  @action
-  highlightStructureItem(node) {
-    const editorOffset = this.editor.rootNode.offsetTop;
-    node.classList.add('u-marker');
-    later(this, function() {
-      node.classList.remove('u-marker');
-    }, 1500);
-    this.element.scrollTo(0, node.offsetTop + editorOffset);
-  }
-
-  /**
    * requests hints from plugins
    *
    * @method triggerHints
