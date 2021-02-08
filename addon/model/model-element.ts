@@ -170,6 +170,9 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   }
   hasVisibleText(): boolean {
+    if(this.type === "br") {
+      return true;
+    }
     for (const child of this.children) {
       if(child.hasVisibleText()) {
         return true;
