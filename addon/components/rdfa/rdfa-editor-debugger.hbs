@@ -1,9 +1,9 @@
-<button {{on "click" this.toggleDebug}}>debug</button>
+<button {{on "click" this.toggleDebug}} type="button">debug</button>
 {{#if this.debugEnabled}}
   <div class="rdfa-debugger-panel-wrapper">
     <div class="rdfa-debugger-content">
       <h1>Debugger</h1>
-      <button {{on "click" this.toggleDebug}} >close</button>
+      <button {{on "click" this.toggleDebug}} type="button">close</button>
       <div>
         <label>Debug mode: </label>
         <select {{on "change" this.updateDebugMode}}>
