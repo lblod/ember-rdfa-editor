@@ -1,8 +1,9 @@
 import { A } from '@ember/array';
-import Component from '@ember/component';
-import layout from '../../templates/components/rdfa/rdfa-context-debugger';
+import Component from '@glimmer/component';
 import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 import { debug } from '@ember/debug';
+import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 
 /**
  * Debugger component for the RDFa context of DOM nodes
@@ -11,8 +12,7 @@ import { debug } from '@ember/debug';
  * @class RdfaContextDebugger
  * @extends Component
  */
-export default Component.extend({
-  layout,
+export default class RdfaContextDebugger extends Component {
   /**
    * RDFa editor to debug in
    *
@@ -21,75 +21,103 @@ export default Component.extend({
    *
    * @public
    */
-  editor: null,
+  get editor() {
+    return this.args.editor;
+  }
 
-  blocks: null,
-  selections: null,
-  selectOptions: null,
+  @tracked blocks = null;
+  @tracked selections = null
+  @tracked selectOptions = null
+  @tracked scanStart = 0;
+  @tracked scanEnd = 1000;
+  @tracked selectStart = 0;
+  @tracked selectEnd = 1000;
+  selectScopes = Object.freeze(['auto', 'inner', 'outer']);
 
-  scanStart: 0,
-  scanEnd: 1000,
-  selectStart: 0,
-  selectEnd: 1000,
-  selectScopes: Object.freeze(['auto', 'inner', 'outer']),
-
-  init() {
-    this._super(...arguments);
+  constructor() {
+    super(...arguments);
     this.resetResults();
-    this.set('selectOptions', { scope: 'inner' });
-  },
+    this.selectionOptions = { scope: 'inner' };
+  }
 
   resetResults() {
-    this.set('blocks', A());
-    this.set('selections', A());
-  },
-
-  actions: {
-    /**
-     * Analyse the RDFa context of a specified region
-     *
-     * @method analyse
-     *
-     * @param {number} start Start of the region
-     * @param {number} end End of the region
-     *
-     * @private
-     */
-    analyse(start, end) {
-      this.resetResults();
-      const node = this.get('editor.rootNode');
-
-      const blocks = analyse(node, [start, end]);
-      debug('Finished calculating blocks');
-      this.set('blocks', blocks);
-    },
-
-    /**
-     * Highlight the given region in the editor
-     *
-     * @method highlight
-     *
-     * @param {[number, number]} region Region to highlight
-     *
-     * @private
-     */
-    highlight(region){
-      this.get('editor').highlightRange(region[0], region[1]);
-    },
-
-    selectContext(start, end, options) {
-      this.resetResults();
-
-      const splitValues = function(stringValue) {
-        return (stringValue || "").split('\n').map(s => s.trim()).filter(s => s.length);
-      };
-
-      options.typeof = splitValues(options.typeofString);
-      options.property = splitValues(options.propertyString);
-
-      const selections = this.editor.selectContext([start, end], options);
-      debug('Finished selecting contexts');
-      this.set('selections', selections);
-    }
+    this.blocks = A();
+    this.selections= A();
   }
-});
+
+  /**
+   * Analyse the RDFa context of a specified region
+   *
+   * @method analyse
+   *
+   * @param {number} start Start of the region
+   * @param {number} end End of the region
+   *
+   * @private
+   */
+  @action
+  analyse() {
+    this.resetResults();
+    const node = this.editor.rootNode;
+
+    const blocks = analyse(node, [this.scanStart, this.scanEnd]);
+    debug('Finished calculating blocks');
+    this.blocks = blocks;
+  }
+
+  /**
+   * Highlight the given region in the editor
+   *
+   * @method highlight
+   *
+   * @param {[number, number]} region Region to highlight
+   *
+   * @private
+   */
+  @action
+  highlight([start, end]){
+    this.editor.highlightRange(start, end);
+  }
+
+  @action
+  setScope(event) {
+    this.selectOptions.scope = event.target.value;
+  }
+
+  @action
+  updateScanStart(event) {
+    this.scanStart = event.target.value;
+  }
+
+  @action
+  updateScanEnd(event) {
+    this.scanEnd = event.target.value;
+  }
+
+  @action
+  updateSelectStart(event) {
+    this.selectStart = event.target.value;
+  }
+
+  @action
+  updateSelectEnd(event) {
+    this.selectEnd = event.target.value;
+  }
+
+  @action
+  selectContext() {
+    this.resetResults();
+
+    const splitValues = function(stringValue) {
+      return (stringValue || "").split('\n').map(s => s.trim()).filter(s => s.length);
+    };
+    const options = this.selectOptions;
+    options.typeof = splitValues(options.typeofString);
+    options.property = splitValues(options.propertyString);
+
+    const selections = this.editor.selectContext([this.scanStart, this.scanEnd], options);
+    debug('Finished selecting contexts');
+    this.selections = selections;
+  }
+}
+

@@ -6,7 +6,7 @@
       <button {{on "click" this.toggleDebug}} >close</button>
       <div>
         <label>Debug mode: </label>
-        <select onchange={{action (mut this.debugMode) value="target.value"}}>
+        <select {{on "change" this.updateDebugMode}}>
           {{#each this.debugModes as |mode|}}
             <option value={{mode}} selected={{eq this.debugMode mode}}>{{mode}}</option>
           {{/each}}
