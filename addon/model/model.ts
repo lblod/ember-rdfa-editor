@@ -90,6 +90,10 @@ export default class Model {
    * @param tree
    */
   write(tree: ModelElement = this.rootModelNode) {
+    const modelWriteEvent = new CustomEvent(
+      'modelWrite',
+    );
+    document.dispatchEvent(modelWriteEvent);
     const oldRoot = tree.boundNode;
     if (!oldRoot) {
       throw new Error("Container without boundNOde");
