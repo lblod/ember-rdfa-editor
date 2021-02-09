@@ -28,52 +28,108 @@ export default class UnindentListCommand extends Command {
     if (!listNodesIterator) {
       throw new SelectionError('The selection is not in a list');
     }
-
-    //iterate over all found li elements
+    const elements=[];
     for (const li of listNodesIterator){
-      //check that the li is nested
-      if(li.findAncestor(node => ModelNode.isModelElement(node) && node.type=='li')){
-        //before:
-        //ul    great-grandparent
-        // li   grandparent
-        //  ul  parent
-        //   li node
+      elements.push(li);
+    }
 
-        //after:
-        //ul    great-grandparent
-        // li   grandparent
-        // li   node
+    //get the shallowest common ancestors
+    const lisToShift=this.relatedChunks(elements);
+
+    if(lisToShift){
+
+      //iterate over all found li elements
+      for (const li of lisToShift){
 
         const node=li;
-        const parent=li.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type), false) as ModelElement;
-        const grandParent=parent?.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type), false) as ModelElement;
-        const greatGrandParent=grandParent?.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type), false) as ModelElement;
+        const parent=li.parent;
+        const grandParent=parent?.parent;
+        const greatGrandParent=grandParent?.parent;
 
         if(node && parent && grandParent && greatGrandParent){
           //remove node
           const nodeIndex=node.index!;
           parent.removeChild(node);
 
-          //remove parent if node is only child
+          //remove parent ul/ol if node is only child
           if(parent.length==0){
-            if(parent.index){
-              grandParent.addChild(node, parent.index);
-              break;
-            }
+            greatGrandParent.addChild(node, grandParent.index!);
             grandParent.removeChild(parent);
           }
+          else{
+            const split=parent.split(nodeIndex);
+            //remove empty uls
+            split.left.length==0?split.left.parent?.removeChild(split.left):null;
+            split.right.length==0?split.right.parent?.removeChild(split.right):null;
 
-          //split parent at node index
-          const parentSplitIndex=parent.split(nodeIndex).left.index;
-          //insert node at parent.left index
-          if(parentSplitIndex){
-            grandParent.addChild(node, parentSplitIndex+1)
+            if(split.right.length>0){
+              split.right.parent?.removeChild(split.right);
+              node.addChild(split.right);
+            }
+
+            greatGrandParent.addChild(node, grandParent.index!+1);
+
           }
         }
       }
     }
-
     this.model.write();
     this.model.readSelection();
+  }
+
+  relatedChunks(elementArray:Array<ModelElement>, result:Array<ModelElement>=[]): Array<ModelElement>{
+
+    //check that the li is nested
+    elementArray=elementArray.filter(e=>
+      e.parent?.parent?.type=='li'
+    );
+
+    //sort array, by depth, shallowest first.
+    elementArray=elementArray.sort((a, b) => {
+      return b.getIndexPath().length - a.getIndexPath().length;
+    });
+
+    //use shallowest as base
+    const base=elementArray[0];
+    result.push(base);
+
+    //compare all paths to see if base is parent
+    //remove those that are related
+    for(let i =0; i<elementArray.length; i++){
+      let e=elementArray[i];
+      if(this.areRelated(base, e)){
+        elementArray.splice(i, 1);
+      }
+    }
+
+    //if empty return result with the elements that need to be shifted
+    if(elementArray.length==0){
+      return result;
+    }
+    //otherwise some hot recursive action
+    else{
+      this.relatedChunks(elementArray, result);
+    }
+    return result;
+  }
+
+  findDeepest(node:ModelElement, deepest:ModelElement): ModelElement{
+    if(node.type=='li' && node.getIndexPath().length>deepest.getIndexPath().length){
+      deepest=node;
+    }
+    while(node.children){
+      node.children.forEach(e=>this.findDeepest(e as ModelElement, deepest))
+    }
+    return deepest;
+  }
+  areRelated(base:ModelElement, compare:ModelElement): Boolean{
+    const basePath=base.getIndexPath();
+    const comparePath=compare.getIndexPath();
+    for(var i=0; i<basePath.length; i++){
+      if(basePath[i]!=comparePath[i]){
+        return false;
+      }
+    }
+    return true;
   }
 }
