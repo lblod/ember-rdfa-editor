@@ -172,11 +172,12 @@ module("Unit | commands | remove-list-command", hooks => {
                 li7
     */
 
-    modelSelection.collapseOn(content);
+    modelSelection.collapseOn(content1);
     command.execute();
 
-    assert.strictEqual(model.rootModelNode.firstChild, content);
-    assert.strictEqual(model.rootModelNode.children.length, 1);
+    assert.strictEqual(model.rootModelNode.children[0], ul);
+    assert.strictEqual(model.rootModelNode.children[1], content1);
+    assert.strictEqual(model.rootModelNode.children.length, 3);
 
   });
 
