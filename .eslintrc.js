@@ -26,7 +26,6 @@ module.exports = {
   rules: {
     'ember/no-jquery': 'error',
     'semi': 'error',
-    'no-unused-vars': 0
   },
   overrides: [
     // node files

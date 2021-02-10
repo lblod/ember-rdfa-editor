@@ -6,7 +6,6 @@ import { notEmpty } from "@ember/object/computed";
 import { A } from '@ember/array';
 import Component from '@ember/component';
 import { tracked } from "@glimmer/tracking";
-import { later } from '@ember/runloop';
 import { debug, warn } from '@ember/debug';
 import layout from '../../templates/components/rdfa/rdfa-editor';
 import HintsRegistry from '../../utils/rdfa/hints-registry';
@@ -196,22 +195,6 @@ export default class RdfaEditor extends Component {
     }
     const rdfaDocument = new RdfaDocument(editor);
     forgivingAction('rdfaEditorInit', this)(rdfaDocument);
-  }
-
-  /**
-   * Highlights a node for a short time span and scrolls to it
-   * @method highlightStructuredItem
-   *
-   * @param {DOMNode} node Node to highlight and scroll to
-   */
-  @action
-  highlightStructureItem(node) {
-    const editorOffset = this.editor.rootNode.offsetTop;
-    node.classList.add('u-marker');
-    later(this, function() {
-      node.classList.remove('u-marker');
-    }, 1500);
-    this.element.scrollTo(0, node.offsetTop + editorOffset);
   }
 
   /**

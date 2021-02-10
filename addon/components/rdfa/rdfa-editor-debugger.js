@@ -1,9 +1,7 @@
-import classic from "ember-classic-decorator";
-import { layout as templateLayout } from "@ember-decorators/component";
 import { A } from '@ember/array';
-import Component from '@ember/component';
-import layout from '../../templates/components/rdfa/rdfa-editor-debugger';
+import Component from '@glimmer/component';
 import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 
 /**
 * Debugger component for the RDFa Editor
@@ -12,8 +10,7 @@ import { action } from '@ember/object';
 * @class RdfaEditorDebugger
 * @extends Component
 */
-@classic
-@templateLayout(layout)
+
 export default class RdfaEditorDebugger extends Component {
   /**
   * Objects used for debugging containing the hints registry, context scanner and editor
@@ -23,7 +20,9 @@ export default class RdfaEditorDebugger extends Component {
   *
   * @public
   */
-  debug = null;
+  get debug() {
+    return this.args.debug;
+  }
 
   /**
   * Whether the debug panel is enabled
@@ -33,7 +32,7 @@ export default class RdfaEditorDebugger extends Component {
   *
   * @public
   */
-  debugEnabled = false;
+  @tracked debugEnabled = false;
 
   /**
   * Currently active debug mode
@@ -44,7 +43,7 @@ export default class RdfaEditorDebugger extends Component {
   *
   * @public
   */
-  debugMode = 'context-scanner';
+  @tracked debugMode = 'context-scanner';
 
   /**
   * Available debug modes
@@ -54,16 +53,15 @@ export default class RdfaEditorDebugger extends Component {
   *
   * @private
   */
-  debugModes = null;
+  debugModes = A(['hints-registry', 'context-scanner']);
 
-  tagName = '';
   @action
   toggleDebug() {
-    this.toggleProperty('debugEnabled');
+    this.debugEnabled = ! this.debugEnabled;
   }
 
-  init() {
-    super.init(...arguments);
-    this.set('debugModes', A(['hints-registry', 'context-scanner']));
+  @action
+  updateDebugMode(event) {
+    this.debugMode = event.target.value;
   }
 }

@@ -1,11 +1,14 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
 module.exports = {
   description: '',
 
   normalizeEntityName() { },
 
-  async afterInstall(options) {
+  async afterInstall() {
     // Import styles if using SCSS
     let dependencies = this.project.dependencies();
     let type;

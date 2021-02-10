@@ -3,8 +3,9 @@
 
   <div>
     <h4 class="h4">Context scanner</h4>
-    <div>Scan region van <Input @type="number" @value={{this.scanStart}} /> tot <Input @type="number" @value={{this.scanEnd}} /></div>
-    <div><button onclick={{action "analyse" this.scanStart this.scanEnd}}>Bereken context</button></div>
+    <div>Scan region van <Input @type="number" @value={{this.scanStart}} {{on "input" this.updateScanStart}} />
+         tot <Input @type="number" @value={{this.scanEnd}}  {{on "input" this.updateScanEnd}}/></div>
+    <div><button {{on "click" this.analyse}} type="button">Bereken context</button></div>
   </div>
 
   <div>
@@ -12,7 +13,7 @@
     <div>Selecteer context van <Input @type="number" @value={{this.selectStart}} /> tot <Input @type="number" @value={{this.selectEnd}} /></div>
     <div>
       met scope
-      <select name="scopes" onchange={{action (mut this.selectOptions.scope) value="target.value"}}>
+      <select name="scopes" {{on "change" this.setScope}}>
         {{#each this.selectScopes as |scope|}}
           <option value="{{scope}}" selected={{if (eq scope this.selectOptions.scope) 'true'}}>{{scope}}</option>
         {{/each}}
@@ -36,14 +37,14 @@
       </div>
     </div>
     <div>
-      <button onclick={{action "selectContext" this.selectStart this.selectEnd this.selectOptions}}>Selecteer context"</button>
+      <button {{on "click" this.selectContext}} type="button">Selecteer context</button>
     </div>
   </div>
 
   {{#if this.blocks}}
     <h4 class="h4">RDFa context</h4>
     {{#each this.blocks as |block|}}
-      <h5 class="h5">[{{block.region}}] "{{block.text}}" <button onclick={{action "highlight" block.region}}>Highlight</button></h5>
+      <h5 class="h5">[{{block.region}}] "{{block.text}}" <button {{on "click" (fn this.highlight block.region)}} type="button">Highlight</button></h5>
       <pre>
         {{#each block.context as |statement|}}
       &lt;{{statement.subject}}&gt; {{#if (eq statement.predicate 'a')}}{{statement.predicate}}{{else}}&lt;{{statement.predicate}}&gt;{{/if}} {{#if (rdfa/is-uri statement.object)}}&lt;{{statement.object}}&gt;{{else}}"{{statement.object}}"{{/if}}{{#if statement.datatype}}^^&lt;{{statement.datatype}}&gt;{{/if}}
@@ -55,7 +56,7 @@
   {{else if this.selections}}
     <h4 class="h4">RDFa selections</h4>
     {{#each this.selections as |selection|}}
-      <h5 class="h5">[{{selection.region}}] "{{selection.richNode.domNode.textContent}}" <button onclick={{action "highlight" selection.region}}>Highlight</button></h5>
+      <h5 class="h5">[{{selection.region}}] "{{selection.richNode.domNode.textContent}}" <button {{on "click" (fn this.highlight selection.region)}} type="button">Highlight</button></h5>
       <pre>
         {{#each selection.context as |statement|}}
       &lt;{{statement.subject}}&gt; {{#if (eq statement.predicate 'a')}}{{statement.predicate}}{{else}}&lt;{{statement.predicate}}&gt;{{/if}} {{#if (rdfa/is-uri statement.object)}}&lt;{{statement.object}}&gt;{{else}}"{{statement.object}}"{{/if}}{{#if statement.datatype}}^^&lt;{{statement.datatype}}&gt;{{/if}}

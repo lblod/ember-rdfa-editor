@@ -1,3 +1,4 @@
+{{!-- template-lint-disable no-invalid-interactive --}}
 <div
   {{on "paste" this.paste}}
   {{on "cut" this.cut}}
@@ -11,10 +12,4 @@
   {{on "input" this.handleInput}}
   {{did-insert this.insertedEditorElement}}
   contenteditable={{@editable}} class={{@class}} ...attributes>
-{{#if this.yieldHTML}}
-  {{{yield}}}
-{{else}}
-  {{yield}}
-{{/if}}
-&nbsp;
 </div>
