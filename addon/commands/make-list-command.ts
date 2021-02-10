@@ -7,6 +7,7 @@ import {MisbehavedSelectionError, NoParentError, NoTopSelectionError} from "@lbl
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
+import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 
 
 /**
@@ -53,6 +54,8 @@ export default class MakeListCommand extends Command {
       selection.collapse();
       this.model.removeModelNode(block);
     }
+    const cleaner = new ListCleaner();
+    cleaner.clean(this.model.rootModelNode);
     this.model.write(container);
     return;
   }
