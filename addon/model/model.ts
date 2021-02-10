@@ -91,7 +91,7 @@ export default class Model {
    */
   write(tree: ModelElement = this.rootModelNode) {
     const modelWriteEvent = new CustomEvent(
-      'modelWrite',
+      'editorModelWrite',
     );
     document.dispatchEvent(modelWriteEvent);
     const oldRoot = tree.boundNode;
