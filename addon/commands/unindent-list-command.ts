@@ -53,7 +53,7 @@ export default class UnindentListCommand extends Command {
 
           //remove parent ul/ol if node is only child
           if(parent.length==0){
-            greatGrandParent.addChild(node, grandParent.index!);
+            greatGrandParent.addChild(node, grandParent.index!+1);
             grandParent.removeChild(parent);
           }
           else{
@@ -113,15 +113,6 @@ export default class UnindentListCommand extends Command {
     return result;
   }
 
-  findDeepest(node:ModelElement, deepest:ModelElement): ModelElement{
-    if(node.type=='li' && node.getIndexPath().length>deepest.getIndexPath().length){
-      deepest=node;
-    }
-    while(node.children){
-      node.children.forEach(e=>this.findDeepest(e as ModelElement, deepest))
-    }
-    return deepest;
-  }
   areRelated(base:ModelElement, compare:ModelElement): Boolean{
     const basePath=base.getIndexPath();
     const comparePath=compare.getIndexPath();
