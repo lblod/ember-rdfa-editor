@@ -54,17 +54,15 @@ export default class IndentListCommand extends Command {
     }
 
     for (const [parent, lis] of setsToIndent.entries()) {
-      const insertionIndex = lis[0].index!;
+      const newParent = lis[0].previousSibling! as ModelElement;
       for (const li of lis) {
         parent.removeChild(li);
       }
 
-      const newParent = new ModelElement("li");
       const newList = new ModelElement(parent.type);
-      newParent.addChild(newList);
       newList.appendChildren(...lis);
+      newParent.addChild(newList);
 
-      parent.addChild(newParent, insertionIndex);
       this.model.write(parent);
     }
   }
