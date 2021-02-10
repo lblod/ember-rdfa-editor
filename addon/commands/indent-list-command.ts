@@ -4,6 +4,7 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {NoParentError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 
 export default class IndentListCommand extends Command {
   name: string = "indent-list";
@@ -63,8 +64,10 @@ export default class IndentListCommand extends Command {
       newList.appendChildren(...lis);
       newParent.addChild(newList);
 
-      this.model.write(parent);
     }
+    const cleaner = new ListCleaner();
+    cleaner.clean(this.model.rootModelNode);
+    this.model.write();
   }
 
 }
