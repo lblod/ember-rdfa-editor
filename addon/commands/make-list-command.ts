@@ -5,8 +5,6 @@ import Command from "@lblod/ember-rdfa-editor/commands/command";
 import ModelElement, {ElementType} from "../model/model-element";
 import {MisbehavedSelectionError, NoParentError, NoTopSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 
 
@@ -43,7 +41,7 @@ export default class MakeListCommand extends Command {
       selection.selectNode(listNode);
     } else {
       const item = selection.getCommonAncestor().parent;
-      const block = this.getTopBlockNode(item) as ModelElement;
+      const block = this.collectBlock(item);
       const {parent, listNode} = this.wrapSingleItem(block, listType);
       container = parent;
       if(ModelNode.isModelElement(listNode.firstChild)) {
@@ -52,7 +50,10 @@ export default class MakeListCommand extends Command {
         selection.selectNode(listNode.firstChild);
       }
       selection.collapse();
-      this.model.removeModelNode(block);
+      for (const node of block) {
+        this.model.removeModelNode(node);
+
+      }
     }
     const cleaner = new ListCleaner();
     cleaner.clean(this.model.rootModelNode);
@@ -100,14 +101,14 @@ export default class MakeListCommand extends Command {
    * @param listType
    * @private
    */
-  private wrapSingleItem(block: ModelElement, listType: "ul" | "ol"): { parent: ModelElement, listNode: ModelElement } {
-    const parent = block.parent;
+  private wrapSingleItem(block: ModelNode[], listType: "ul" | "ol"): { parent: ModelElement, listNode: ModelElement } {
+    const parent = block[0].parent;
     if (!parent) {
       throw new NoParentError();
     }
-    const positionToInsert = block.index;
+    const positionToInsert = block[0].index;
     const li = new ModelElement("li");
-    li.addChild(block.clone());
+    li.appendChildren(...block.map(node => node.clone()));
     const list = new ModelElement(listType);
     list.addChild(li);
     parent.addChild(list, positionToInsert!);
@@ -150,12 +151,41 @@ export default class MakeListCommand extends Command {
     return items;
   }
 
+  private collectBlock(node: ModelNode): ModelNode[] {
+    if(node.isBlock){
+      return [node];
+    }
+
+    const result = [];
+
+    let prev: ModelNode | null = node.previousSibling;
+
+    while(prev && !prev.isBlock) {
+      result.push(prev);
+      prev = prev.previousSibling;
+    }
+    result.reverse();
+    result.push(node);
+
+    let next: ModelNode | null = node.nextSibling;
+
+    while (next && !next.isBlock) {
+      result.push(next);
+      next = next.nextSibling;
+    }
+
+    if (!prev && !next) {
+      const topBlock = this.getTopBlockNode(node);
+      return [topBlock];
+    }
+    return result;
+  }
   /**
    * Given a node, find the first ancestor which is a blockNode
    * @param node
    * @private
    */
-  private getTopBlockNode(node: ModelNode): ModelNode | null {
+  private getTopBlockNode(node: ModelNode): ModelNode {
     if (node.isBlock) return node;
     const parent = node.parent;
     if (!(parent && parent.parent)) return node;
