@@ -66,7 +66,6 @@ export default class EditorToolbar extends Component<Args> {
       this.args.editor.executeCommand("unindent-list");
     }
   }
-
   @action
   toggleItalic() {
     this.toggleProperty(this.isItalic, "make-italic", "remove-italic");

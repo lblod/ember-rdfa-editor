@@ -4,7 +4,8 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-
+import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
+import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 export default class UnindentListCommand extends Command {
   name: string = "unindent-list";
   constructor(model: Model) {
@@ -16,38 +17,119 @@ export default class UnindentListCommand extends Command {
 
       throw new MisbehavedSelectionError();
     }
-    const anchorNode = selection.lastRange.start.parent;
-    const focusNode = selection.lastRange.end.parent;
-
+    //get all nodes in selection that are li
     const listNodesIterator = selection.findAllInSelection({
       filter: ModelNode.isModelElement,
       predicate: (node: ModelElement) => node.type === "li"
     });
+
+
+    //if there are no li in selection return error
     if (!listNodesIterator) {
       throw new SelectionError('The selection is not in a list');
     }
-    const listNodes = Array.from(listNodesIterator);
-
-    const anchorLi = anchorNode?.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li");
-    const focusLi = focusNode?.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li");
-
-    if (anchorLi && anchorLi.index! > 0) {
-      anchorLi.parent!.split(anchorLi.index!);
+    const elements=[];
+    for (const li of listNodesIterator){
+      elements.push(li);
     }
 
-    if (focusLi && focusLi.index! < focusLi.parent!.children.length - 1) {
-      focusLi.parent?.split(focusLi.index! + 1);
-    }
+    //get the shallowest common ancestors
+    const lisToShift=this.relatedChunks(elements);
 
-    for (const [index, listItem] of listNodes.entries()) {
-      //unwrap lists
-      listItem.unwrap(!listItem.firstChild.isBlock && index !== listNodes.length - 1);
-      if(listItem.parent?.type === "ul" || listItem.parent?.type === "ol") {
-        listItem.parent?.unwrap();
+    if(lisToShift){
+
+      //iterate over all found li elements
+      for (const li of lisToShift){
+
+        const node=li;
+        const parent=li.parent;
+        const grandParent=parent?.parent;
+        const greatGrandParent=grandParent?.parent;
+
+        if(node && parent && grandParent && greatGrandParent){
+          //remove node
+          const nodeIndex=node.index!;
+          parent.removeChild(node);
+
+          //remove parent ul/ol if node is only child
+          if(parent.length==0){
+            greatGrandParent.addChild(node, grandParent.index!);
+            grandParent.removeChild(parent);
+          }
+          else{
+            const split=parent.split(nodeIndex);
+            //remove empty uls
+            split.left.length==0?split.left.parent?.removeChild(split.left):null;
+            split.right.length==0?split.right.parent?.removeChild(split.right):null;
+
+            if(split.right.length>0){
+              split.right.parent?.removeChild(split.right);
+              node.addChild(split.right);
+            }
+
+            greatGrandParent.addChild(node, grandParent.index!+1);
+
+          }
+        }
       }
     }
     this.model.write();
     this.model.readSelection();
   }
 
+  relatedChunks(elementArray:Array<ModelElement>, result:Array<ModelElement>=[]): Array<ModelElement>{
+
+    //check that the li is nested
+    elementArray=elementArray.filter(e=>
+      e.parent?.parent?.type=='li'
+    );
+
+    //sort array, by depth, shallowest first.
+    elementArray=elementArray.sort((a, b) => {
+      return b.getIndexPath().length - a.getIndexPath().length;
+    });
+
+    //use shallowest as base
+    const base=elementArray[0];
+    result.push(base);
+
+    //compare all paths to see if base is parent
+    //remove those that are related
+    for(let i =0; i<elementArray.length; i++){
+      let e=elementArray[i];
+      if(this.areRelated(base, e)){
+        elementArray.splice(i, 1);
+      }
+    }
+
+    //if empty return result with the elements that need to be shifted
+    if(elementArray.length==0){
+      return result;
+    }
+    //otherwise some hot recursive action
+    else{
+      this.relatedChunks(elementArray, result);
+    }
+    return result;
+  }
+
+  findDeepest(node:ModelElement, deepest:ModelElement): ModelElement{
+    if(node.type=='li' && node.getIndexPath().length>deepest.getIndexPath().length){
+      deepest=node;
+    }
+    while(node.children){
+      node.children.forEach(e=>this.findDeepest(e as ModelElement, deepest))
+    }
+    return deepest;
+  }
+  areRelated(base:ModelElement, compare:ModelElement): Boolean{
+    const basePath=base.getIndexPath();
+    const comparePath=compare.getIndexPath();
+    for(var i=0; i<basePath.length; i++){
+      if(basePath[i]!=comparePath[i]){
+        return false;
+      }
+    }
+    return true;
+  }
 }
