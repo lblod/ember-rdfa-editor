@@ -164,7 +164,6 @@ export default class EnterHandler {
       }
       this.rawEditor.updateRichNode();
       this.rawEditor.setCaret(textNode, 0);
-
   }
 
   /**
