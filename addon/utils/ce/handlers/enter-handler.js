@@ -9,9 +9,6 @@ import {
 import HandlerResponse from './handler-response';
 import { debug } from '@ember/debug';
 import { isBlank } from '@ember/utils';
-import {
-  paintCycleHappened
-} from '@lblod/ember-rdfa-editor/editor/utils';
 
 /**
  * Enter Handler, a event handler to handle the generic enter case
@@ -137,7 +134,6 @@ export default class EnterHandler {
    */
   insertEnterInLi(node, nodeForEnter, currentPosition/*, currentNode*/) {
     // it's an li
-    // paintCycleHappened().then(res=>{
       let ulOrOl = nodeForEnter.parent;
       let domNode = ulOrOl.domNode;
       let liDomNode = nodeForEnter.domNode;
@@ -168,7 +164,6 @@ export default class EnterHandler {
       }
       this.rawEditor.updateRichNode();
       this.rawEditor.setCaret(textNode, 0);
-    // });
 
   }
 
