@@ -138,7 +138,7 @@ export default class EnterHandler {
    */
   insertEnterInLi(node, nodeForEnter, currentPosition/*, currentNode*/) {
     // it's an li
-    paintCycleHappened().then(res=>{
+    // paintCycleHappened().then(res=>{
       let ulOrOl = nodeForEnter.parent;
       let domNode = ulOrOl.domNode;
       let liDomNode = nodeForEnter.domNode;
@@ -169,7 +169,7 @@ export default class EnterHandler {
       }
       this.rawEditor.updateRichNode();
       this.rawEditor.setCaret(textNode, 0);
-    });
+    // });
 
   }
 
