@@ -101,15 +101,18 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     // try to find a textnode to the right
     // Note we don't skip breaks here, this is only because that currently doesn't seem necessary
     const rightNode = container.childNodes[offset];
-    if (isTextNode(rightNode)) {
-      return {container: rightNode, offset: 0};
-    }
-    if (rightNode.childNodes.length > 0) {
-      return this.normalizeDomPosition(rightNode, 0);
-    } else {
-      return {container, offset};
-    }
 
+    if(rightNode){
+      if (isTextNode(rightNode)) {
+        return {container: rightNode, offset: 0};
+      }
+      else if (rightNode.childNodes.length > 0) {
+        return this.normalizeDomPosition(rightNode, 0);
+      } else {
+        return {container, offset};
+      }
+    }
+    return {container, offset};
   }
 
   /**
