@@ -9,6 +9,9 @@ import {
 import HandlerResponse from './handler-response';
 import { debug } from '@ember/debug';
 import { isBlank } from '@ember/utils';
+import {
+  paintCycleHappened
+} from '@lblod/ember-rdfa-editor/editor/utils';
 
 /**
  * Enter Handler, a event handler to handle the generic enter case
@@ -132,8 +135,9 @@ export default class EnterHandler {
    * @param {DOMNode} currentNode
    * @private
    */
-  insertEnterInLi(node, nodeForEnter, currentPosition/*, currentNode*/) {
+  async insertEnterInLi(node, nodeForEnter, currentPosition/*, currentNode*/) {
     // it's an li
+    await paintCycleHappened();
     let ulOrOl = nodeForEnter.parent;
     let domNode = ulOrOl.domNode;
     let liDomNode = nodeForEnter.domNode;
