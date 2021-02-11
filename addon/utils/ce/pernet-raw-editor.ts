@@ -89,6 +89,7 @@ export default class PernetRawEditor extends RawEditor {
     super(...args);
     this.set('history', new CappedHistory({ maxItems: 100}));
     this.movementObservers = A();
+    document.addEventListener("editorModelWrite", this.createSnapshot.bind(this));
   }
   /**
    * the current selection in the editor
