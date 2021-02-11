@@ -86,8 +86,6 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
       }
 
       if (leftNode) {
-        console.log('left-node is');
-        console.log(leftNode);
         if (isTextNode(leftNode)) {
           return {container: leftNode, offset: leftNode.length};
         }

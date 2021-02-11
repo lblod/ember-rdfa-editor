@@ -22,7 +22,6 @@ import {
 export default class EnterHandler {
   constructor({rawEditor}) {
     this.rawEditor = rawEditor;
-    console.log('enter handler')
   }
 
   /**
