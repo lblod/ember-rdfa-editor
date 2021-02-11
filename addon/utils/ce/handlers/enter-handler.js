@@ -9,6 +9,9 @@ import {
 import HandlerResponse from './handler-response';
 import { debug } from '@ember/debug';
 import { isBlank } from '@ember/utils';
+import {
+  paintCycleHappened
+} from '@lblod/ember-rdfa-editor/editor/utils';
 
 /**
  * Enter Handler, a event handler to handle the generic enter case
@@ -19,6 +22,7 @@ import { isBlank } from '@ember/utils';
 export default class EnterHandler {
   constructor({rawEditor}) {
     this.rawEditor = rawEditor;
+    console.log('enter handler')
   }
 
   /**
@@ -134,36 +138,39 @@ export default class EnterHandler {
    */
   insertEnterInLi(node, nodeForEnter, currentPosition/*, currentNode*/) {
     // it's an li
-    let ulOrOl = nodeForEnter.parent;
-    let domNode = ulOrOl.domNode;
-    let liDomNode = nodeForEnter.domNode;
-    let textNode;
-    const newElement = document.createElement('li');
-    textNode = insertTextNodeWithSpace(newElement);
-    if (! this.liIsEmpty(nodeForEnter) && (currentPosition === nodeForEnter.start)) {
-      // insert li before li
-      domNode.insertBefore(newElement,liDomNode);
-    }
-    else {
-      // insert li after li
-      insertNodeBAfterNodeA(domNode, liDomNode, newElement);
-    }
-    if (node.type ==='text' && nodeForEnter.children.includes(node)) {
-      // the text node is a direct child of the li, we can split this
-      const index = currentPosition - node.start;
-      const text = node.domNode.textContent;
-      if (currentPosition >= node.start && currentPosition <= node.end && currentPosition !== nodeForEnter.start) {
-        // cursor not at start of the li, so just move everything after the cursor to the next node
-        // if it is at the start an li was already inserted before it and we don't have to do anything
-        node.domNode.textContent = text.slice(0,index);
-        textNode.textContent = text.slice(index);
-        while (node.domNode.nextSibling) {
-          textNode.parentNode.append(node.domNode.nextSibling);
+    paintCycleHappened().then(res=>{
+      let ulOrOl = nodeForEnter.parent;
+      let domNode = ulOrOl.domNode;
+      let liDomNode = nodeForEnter.domNode;
+      let textNode;
+      const newElement = document.createElement('li');
+      textNode = insertTextNodeWithSpace(newElement);
+      if (! this.liIsEmpty(nodeForEnter) && (currentPosition === nodeForEnter.start)) {
+        // insert li before li
+        domNode.insertBefore(newElement,liDomNode);
+      }
+      else {
+        // insert li after li
+        insertNodeBAfterNodeA(domNode, liDomNode, newElement);
+      }
+      if (node.type ==='text' && nodeForEnter.children.includes(node)) {
+        // the text node is a direct child of the li, we can split this
+        const index = currentPosition - node.start;
+        const text = node.domNode.textContent;
+        if (currentPosition >= node.start && currentPosition <= node.end && currentPosition !== nodeForEnter.start) {
+          // cursor not at start of the li, so just move everything after the cursor to the next node
+          // if it is at the start an li was already inserted before it and we don't have to do anything
+          node.domNode.textContent = text.slice(0,index);
+          textNode.textContent = text.slice(index);
+          while (node.domNode.nextSibling) {
+            textNode.parentNode.append(node.domNode.nextSibling);
+          }
         }
       }
-    }
-    this.rawEditor.updateRichNode();
-    this.rawEditor.setCaret(textNode, 0);
+      this.rawEditor.updateRichNode();
+      this.rawEditor.setCaret(textNode, 0);
+    });
+
   }
 
   /**
