@@ -135,9 +135,7 @@ export default class EnterHandler {
    * @param {DOMNode} currentNode
    * @private
    */
-  async insertEnterInLi(node, nodeForEnter, currentPosition/*, currentNode*/) {
-    // it's an li
-    await paintCycleHappened();
+  insertEnterInLi(node, nodeForEnter, currentPosition/*, currentNode*/) {
     let ulOrOl = nodeForEnter.parent;
     let domNode = ulOrOl.domNode;
     let liDomNode = nodeForEnter.domNode;
