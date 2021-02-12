@@ -42,9 +42,9 @@ export default class UnindentListCommand extends Command {
       for (const li of lisToShift){
 
         const node=li;
-        const parent=li.parent;
-        const grandParent=parent?.parent;
-        const greatGrandParent=grandParent?.parent;
+        const parent=li.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), false) as ModelElement;
+        const grandParent=parent?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false) as ModelElement;
+        const greatGrandParent=grandParent?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), false) as ModelElement;
 
         if(node && parent && grandParent && greatGrandParent){
           //remove node
@@ -81,7 +81,7 @@ export default class UnindentListCommand extends Command {
 
     //check that the li is nested
     elementArray=elementArray.filter(e=>
-      e.parent?.parent?.type=='li'
+      e.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false) as ModelElement
     );
 
     //sort array, by depth, shallowest first.
