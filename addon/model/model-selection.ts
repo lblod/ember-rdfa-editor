@@ -227,10 +227,11 @@ export default class ModelSelection {
           let done = false;
           return {
             next: (): IteratorResult<T, null> => {
-              if (!done) {
+              const value = anchorNode.findAncestor(node => filterFunc(node) && predicateFunc(node)) as T;
+              if (value && !done) {
                 done = true;
                 return {
-                  value: anchorNode.findAncestor(node => filterFunc(node) && predicateFunc(node)) as T,
+                  value,
                   done: false
                 };
 

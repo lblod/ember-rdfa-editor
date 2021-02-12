@@ -27,6 +27,7 @@ export default class EditorToolbar extends Component<Args> {
   @tracked isUnderline: boolean = false;
   @tracked isInList: boolean = false;
   @tracked canIndent: boolean = false;
+  @tracked canUnindent: boolean = false;
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
@@ -40,6 +41,7 @@ export default class EditorToolbar extends Component<Args> {
     this.isStrikethrough = event.detail.strikethrough === PropertyState.enabled;
     this.isInList = event.detail.isInList === PropertyState.enabled;
     this.canIndent = this.args.editor.canExecuteCommand("indent-list");
+    this.canUnindent = this.args.editor.canExecuteCommand("unindent-list");
   }
 
 
