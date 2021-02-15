@@ -33,7 +33,6 @@ export interface WellbehavedSelection extends ModelSelection {
  */
 export default class ModelSelection {
 
-  commonAncestor: ModelNode | null = null;
   domSelection: Selection | null = null;
   private _ranges: ModelRange[];
   private model: Model;
@@ -227,10 +226,11 @@ export default class ModelSelection {
           let done = false;
           return {
             next: (): IteratorResult<T, null> => {
-              if (!done) {
+              const value = anchorNode.findAncestor(node => filterFunc(node) && predicateFunc(node)) as T;
+              if (value && !done) {
                 done = true;
                 return {
-                  value: anchorNode.findAncestor(node => filterFunc(node) && predicateFunc(node)) as T,
+                  value,
                   done: false
                 };
 
@@ -260,6 +260,22 @@ export default class ModelSelection {
     }
   }
 
+  findAllInSelectionOrAncestors<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>) {
+    const noop = () => true;
+    const filter = config.filter || noop;
+    const predicate = config.predicate || noop;
+
+    const iter = this.findAllInSelection(config);
+    let result = iter && [...iter];
+    if(!result || result.length === 0) {
+      const secondTry = this.getCommonAncestor()?.parent.findAncestor(node => filter(node) && predicate(node));
+      if(secondTry) {
+        result = [secondTry as T];
+      }
+    }
+    return result;
+  }
+
   findFirstInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): T | null {
     const iterator = this.findAllInSelection<T>(config);
     if (!iterator) {
@@ -272,10 +288,14 @@ export default class ModelSelection {
   get isInList(): PropertyState {
     const config = {
       filter: ModelNode.isModelElement,
-      predicate: (node: ModelElement) => listTypes.has(node.type)
+      predicate: (node: ModelElement) => listTypes.has(node.type),
     };
+    let result = !!this.findFirstInSelection(config);
+    if(!result) {
+      result = !!this.getCommonAncestor()?.parent.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type));
+    }
 
-    return this.findFirstInSelection(config) ? PropertyState.enabled : PropertyState.disabled;
+    return result ? PropertyState.enabled : PropertyState.disabled;
 
   }
 

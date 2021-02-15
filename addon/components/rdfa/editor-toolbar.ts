@@ -39,8 +39,14 @@ export default class EditorToolbar extends Component<Args> {
     this.isUnderline = event.detail.underline === PropertyState.enabled;
     this.isStrikethrough = event.detail.strikethrough === PropertyState.enabled;
     this.isInList = event.detail.isInList === PropertyState.enabled;
-    this.canIndent = this.args.editor.canExecuteCommand("indent-list");
-    this.canUnindent = this.isInList && this.args.editor.canExecuteCommand("unindent-list"); // TODO: remove in list check once canExecute works as expected
+    this.canIndent = this.isInList && this.args.editor.canExecuteCommand("indent-list");
+    this.canUnindent = this.isInList && this.args.editor.canExecuteCommand("unindent-list");
+  }
+
+
+  @action
+  insertUL() {
+    this.args.editor.insertUL();
   }
 
 

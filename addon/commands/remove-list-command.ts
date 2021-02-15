@@ -18,7 +18,7 @@ export default class RemoveListCommand extends Command {
 
       throw new MisbehavedSelectionError();
     }
-    const listNodesIterator = selection.findAllInSelection({
+    const listNodesIterator = selection.findAllInSelectionOrAncestors({
       filter: ModelNode.isModelElement,
       predicate: (node: ModelElement) => {
         return node.type === "li";
