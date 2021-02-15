@@ -34,7 +34,6 @@ export default class EditorToolbar extends Component<Args> {
     document.addEventListener("richSelectionUpdated", this.updateProperties.bind(this));
   }
   updateProperties(event: CustomEvent<ModelSelection>) {
-    console.log("richSelectionUpdated");
     this.isBold = event.detail.bold === PropertyState.enabled;
     this.isItalic = event.detail.italic === PropertyState.enabled;
     this.isUnderline = event.detail.underline === PropertyState.enabled;
@@ -50,10 +49,6 @@ export default class EditorToolbar extends Component<Args> {
     this.args.editor.insertUL();
   }
 
-  @action
-  insertOL() {
-    this.args.editor.insertOL();
-  }
 
   @action
   insertIndent() {

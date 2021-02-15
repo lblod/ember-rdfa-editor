@@ -9,9 +9,6 @@ import {
 import HandlerResponse from './handler-response';
 import { debug } from '@ember/debug';
 import { isBlank } from '@ember/utils';
-import {
-  paintCycleHappened
-} from '@lblod/ember-rdfa-editor/editor/utils';
 
 /**
  * Enter Handler, a event handler to handle the generic enter case
