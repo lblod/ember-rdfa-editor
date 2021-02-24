@@ -4,12 +4,25 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
-import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 export default class UnindentListCommand extends Command {
   name: string = "unindent-list";
   constructor(model: Model) {
     super(model);
+  }
+
+  canExecute(selection: ModelSelection = this.model.selection): boolean {
+    const interestingLis = selection.findAllInSelection(
+      {
+        predicate: node => {
+          const firstAncestorLi = node.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li", false);
+          const secondAncestorLi = firstAncestorLi?.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li", false);
+          return firstAncestorLi !== null && secondAncestorLi !== null;
+        }
+      }
+    );
+    const result = interestingLis && [...interestingLis];
+
+    return !!result?.length;
   }
 
   execute(selection: ModelSelection = this.model.selection): void {
@@ -42,9 +55,9 @@ export default class UnindentListCommand extends Command {
       for (const li of lisToShift){
 
         const node=li;
-        const parent=li.parent;
-        const grandParent=parent?.parent;
-        const greatGrandParent=grandParent?.parent;
+        const parent=li.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), false) as ModelElement;
+        const grandParent=parent?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false) as ModelElement;
+        const greatGrandParent=grandParent?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), false) as ModelElement;
 
         if(node && parent && grandParent && greatGrandParent){
           //remove node
@@ -81,7 +94,7 @@ export default class UnindentListCommand extends Command {
 
     //check that the li is nested
     elementArray=elementArray.filter(e=>
-      e.parent?.parent?.type=='li'
+      e.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false) as ModelElement
     );
 
     //sort array, by depth, shallowest first.
