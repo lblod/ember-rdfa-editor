@@ -402,10 +402,14 @@ function inserHtml(html) {
     }
     else if (anchorNode?.nodeType == Node.TEXT_NODE) {
       // split node
-      const [prefix, postfix] = anchorNode.textContent.split(anchorOffset);
+      console.log(anchorOffset);
+      const prefix = anchorNode.textContent.slice(0,anchorOffset);
+      const postfix = anchorNode.textContent.slice(anchorOffset);
+      console.log(prefix,postfix);
       anchorNode.textContent = prefix;
       const postfixTextNode = document.createTextNode(postfix);
       anchorNode.after(...nodes);
+      nodes[nodes.length-1].after(postfixTextNode);
     }
     else if (anchorNode?.nodeType == Node.ELEMENT_NODE) {
       anchorNode.childNodes[anchorOffset].after(...nodes);
