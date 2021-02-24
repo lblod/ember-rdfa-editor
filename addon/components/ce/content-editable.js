@@ -287,8 +287,9 @@ export default class ContentEditable extends Component {
       const text = this.getClipboardContentAsText(clipboardData);
       inserHtml(text);
     }
-    this.editor.updateRichNode();
-    this.editor.updateSelectionAfterComplexInput();
+    this.rawEditor.updateRichNode();
+    this.rawEditor.updateSelectionAfterComplexInput();
+    this.rawEditor.generateDiffEvents.perform();
     return false;
   }
 
