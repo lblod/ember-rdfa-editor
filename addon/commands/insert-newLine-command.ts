@@ -112,10 +112,12 @@ export default class InsertNewLineCommand extends Command {
         }
       }
     }
+    //TODO (sergey):this is a very quick and hacky solution should be rethought
     const cursorPos=br.getIndexPath();
     cursorPos[cursorPos.length-1]+=1;
     selection.anchor.path=cursorPos;
     selection.focus.path=cursorPos;
+
     this.model.write();
     this.model.readSelection();
     return;
