@@ -65,6 +65,18 @@
       </button>
 --}}
       {{/if}}
+
+      <button type="button" {{on "click" this.insertNewLine}} data-test-button-id="insert-newLine">
+        <span class="say-toolbar__hidden">
+          New line
+        </span>
+      </button>
+      <button type="button" {{on "click" this.insertNewLi}} data-test-button-id="insert-newLine">
+        <span class="say-toolbar__hidden">
+          New li
+        </span>
+      </button>
+
       {{#if @showIndentButtons}}
         {{#if this.canUnindent}}
           <button type="button" class="say-toolbar__button" {{on "click" this.insertUnindent}} data-test-button-id="insert-unindent">
