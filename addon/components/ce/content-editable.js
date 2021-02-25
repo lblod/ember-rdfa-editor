@@ -21,7 +21,7 @@ import HTMLInputParser from '../../utils/html-input-parser';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
-
+import { createElementsFromHTML } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
  * It provides handlers for input events, a component to display a contenteditable element and an api for interaction with the document and its internal document representation.
@@ -261,7 +261,7 @@ export default class ContentEditable extends Component {
   paste(event) {
     // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
     const clipboardData = (event.clipboardData || window.clipboardData);
-
+    event.preventDefault();
     //TODO: if no clipboardData found, do we want an error?
     if ((this.features.isEnabled('editor-html-paste')||
          this.features.isEnabled('editor-extended-html-paste'))&&
@@ -273,25 +273,23 @@ export default class ContentEditable extends Component {
 
         const htmlPaste = clipboardData.getData('text/html');
         const cleanHTML = inputParser.cleanupHTML(htmlPaste);
-        const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
-        this.rawEditor.update(sel, {set: { innerHTML: cleanHTML } });
+        inserHtml(cleanHTML);
       }
       catch(e) {
         // fall back to text pasting
         console.warn(e); //eslint-disable-line no-console
         const text = this.getClipboardContentAsText(clipboardData);
-        const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
-        this.rawEditor.update(sel, {set: { innerHTML: text } });
+        inserHtml(text);
       }
     }
 
     else {
       const text = this.getClipboardContentAsText(clipboardData);
-      const sel = this.rawEditor.selectHighlight(this.rawEditor.currentSelection);
-      this.rawEditor.update(sel, {set: { innerHTML: text } });
+      inserHtml(text);
     }
-
-    event.preventDefault();
+    this.rawEditor.updateRichNode();
+    this.rawEditor.updateSelectionAfterComplexInput();
+    this.rawEditor.generateDiffEvents.perform();
     return false;
   }
 
@@ -389,4 +387,42 @@ export default class ContentEditable extends Component {
   keydownMapsToOtherEvent(event) {
     return (event.ctrlKey || event.metaKey ) && ["v","c","x"].includes(event.key);
   }
+}
+
+
+// TODO: this was a "quick fix" for some of the issues with paste and should not be considered a clean solution
+function inserHtml(html) {
+  const selection = window.getSelection();
+  selection.deleteFromDocument();
+  const nodes = createElementsFromHTML(html);
+  if (selection?.isCollapsed) {
+    const { anchorNode, anchorOffset } = selection;
+    const parentNode = anchorNode.parentNode;
+    if(parentNode && parentNode.classList.contains('mark-highlight-manual')) {
+      parentNode.replaceWith(...nodes);
+    }
+    else if (anchorNode?.nodeType == Node.TEXT_NODE) {
+      // split node
+      console.log(anchorOffset);
+      const prefix = anchorNode.textContent.slice(0,anchorOffset);
+      const postfix = anchorNode.textContent.slice(anchorOffset);
+      console.log(prefix,postfix);
+      anchorNode.textContent = prefix;
+      const postfixTextNode = document.createTextNode(postfix);
+      anchorNode.after(...nodes);
+      nodes[nodes.length-1].after(postfixTextNode);
+    }
+    else if (anchorNode?.nodeType == Node.ELEMENT_NODE) {
+      anchorNode.childNodes[anchorOffset].after(...nodes);
+    }
+    else {
+      throw "unsupported selection";
+    }
+  }
+  else {
+    throw "Deleting selection from document should have collapsed the selection";
+  }
+  const lastNode = nodes[nodes.length-1];
+  const offset = lastNode.nodeType == Node.ELEMENT_NODE ? lastNode.childNodes.length : lastNode.textContent.length;
+  selection.collapse(lastNode, offset);
 }
