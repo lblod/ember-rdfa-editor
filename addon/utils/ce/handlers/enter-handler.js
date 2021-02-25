@@ -41,13 +41,12 @@ export default class EnterHandler {
   handleEvent(event) {
     if(this.rawEditor.canExecuteCommand('insert-newLi')){
 
-      this.rawEditor.canExecuteCommand('insert-newLi');
+      this.rawEditor.ExecuteCommand('insert-newLi');
 
-      this.rawEditor.externalDomUpdate('inserting enter in li');
       return HandlerResponse.create({allowPropagation: false});
     }
     else if(this.rawEditor.canExecuteCommand('insert-newLine')){
-      this.rawEditor.canExecuteCommand('insert-newLine');
+      this.rawEditor.ExecuteCommand('insert-newLine');
       return HandlerResponse.create({allowPropagation: false});
     }
     else{
