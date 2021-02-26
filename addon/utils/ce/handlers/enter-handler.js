@@ -29,7 +29,7 @@ export default class EnterHandler {
    * @public
    */
   isHandlerFor(event){
-    return this.rawEditor.currentNode && event.type === "keydown" && event.key === "Enter" && this.rawEditor.currentSelectionIsACursor;
+    return event.type === "keydown" && event.key === "Enter";
   }
 
   /**
@@ -39,15 +39,14 @@ export default class EnterHandler {
    * @public
    */
   handleEvent(event) {
+    //TODO (sergey):this is hacky and very quick should be redone
     if(this.rawEditor.canExecuteCommand('insert-newLi')){
-
-      this.rawEditor.ExecuteCommand('insert-newLi');
-
-      return HandlerResponse.create({allowPropagation: false});
+      this.rawEditor.executeCommand('insert-newLi');
+      return HandlerResponse.create({allowPropagation: false, allowBrowserDefault: false});
     }
     else if(this.rawEditor.canExecuteCommand('insert-newLine')){
-      this.rawEditor.ExecuteCommand('insert-newLine');
-      return HandlerResponse.create({allowPropagation: false});
+      this.rawEditor.executeCommand('insert-newLine');
+      return HandlerResponse.create({allowPropagation: false, allowBrowserDefault: false});
     }
     else{
       return HandlerResponse.create({allowPropagation: true, allowBrowserDefault: true});

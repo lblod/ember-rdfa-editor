@@ -18,19 +18,16 @@ export default class InsertNewLiCommand extends Command {
   }
 
   canExecute(selection: ModelSelection = this.model.selection): boolean{
-    const selectedIterator = selection.findAllInSelection({});
-    if(!selectedIterator){
-      return false;
+    const commonAncestor=this.getNodeByIndexPath(selection.getCommonAncestor().path);
+
+    if(commonAncestor?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), true)){
+      return true;
     }
-    const selected = Array.from(selectedIterator);
-    for(let i=0; i<selected.length; i++){
-      if(!selected[i].findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), true)){
-        return false;
-      }
-    }
-    return true;
+
+    return false;
   }
   execute(selection: ModelSelection = this.model.selection): void {
+    debugger;
     const anchor=selection.lastRange.start.path;
     const focus=selection.lastRange.end.path;
 
@@ -57,7 +54,7 @@ export default class InsertNewLiCommand extends Command {
     }
     //handle long selection of single li item
     else if(firstParentLi==lastParentLi){
-      //if multiple items are inside
+      //if one item is inside
       if(selection.length==1){
         const split=firstText?.split(anchorPos);
         const rightSplit=split.right.split(focusPos-split.left.length);
@@ -70,7 +67,7 @@ export default class InsertNewLiCommand extends Command {
         textTobeMoved.parent.removeChild(textTobeMoved);
         this.insertNewLi(split.left, position+1);
       }
-      //if one item is inside
+      //if multiple items are inside
       else{
         const firstSplit=firstText?.split(anchorPos);
         const lastSplit=lastText?.split(focusPos);
@@ -101,7 +98,7 @@ export default class InsertNewLiCommand extends Command {
         }
       }
     }
-    //cleanup
+    //TODO (sergey):this is a very quick and hacky solution should be rethought
     const cursorPath=firstParentLi?.getIndexPath();
     cursorPath[cursorPath.length-1]++;
     selection.anchor.path=cursorPath;
@@ -226,6 +223,10 @@ export default class InsertNewLiCommand extends Command {
     const root=this.model.rootModelNode;
     var result=root;
     for(let i=0; i<path.length; i++){
+      //incase a selection gets passed
+      if(i==path.length-1 && result.modelNodeType=="TEXT"){
+        return result;
+      }
       result=result.children[path[i]];
     }
     return result;
