@@ -27,7 +27,6 @@ export default class InsertNewLiCommand extends Command {
     return false;
   }
   execute(selection: ModelSelection = this.model.selection): void {
-    debugger;
     const anchor=selection.lastRange.start.path;
     const focus=selection.lastRange.end.path;
 

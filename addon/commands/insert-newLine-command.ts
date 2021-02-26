@@ -52,8 +52,7 @@ export default class InsertNewLineCommand extends Command {
     }
     //handle multiple selected elems
     else{
-      debugger;
-
+      //this should really be moved to a different function
       const firstSplit=firstText.split(anchorPos);
       firstSplit.right.parent.removeChild(firstSplit.right);
       const lastSplit=lastText.split(focusPos);
@@ -73,48 +72,9 @@ export default class InsertNewLineCommand extends Command {
           selected[i].parent?.removeChild(selected[i]);
         }
       }
+
       const cursorPos=[...lastSplit.right.getIndexPath()];
       cursorPos.push(0);
-      // //find first element that has text
-      // //split first element and remove right split
-      // if(first.modelNodeType=='TEXT'){
-      //   if(first.length==anchorPos){
-      //     first.parent.addChild(br, first.index+1);
-      //     first.parent.removeChild(first);
-      //   }
-      //   else{
-      //     const split=first.split(anchorPos);
-      //     split.left.parent.addChild(br, split.left.index+1);
-      //     split.right.parent.removeChild(split.right);
-      //   }
-      // }
-      // else if(first.modelNodeType=='ELEMENT' && first.type=='br'){
-      //   first.parent.removeChild(first);
-      //   first.parent.addChild(br, first.index+1);
-      // }
-
-      // //split last element and remove left split
-      // const last=selected[selected.length-1];
-      // if(last.modelNodeType=='TEXT'){
-      //   if(last.length==focusPos){
-      //     last.parent.removeChild(last);
-      //   }
-      //   else{
-      //     const split=last.split(focusPos);
-      //     split.right.parent.removeChild(split.left);
-      //   }
-      // }
-      // else if(last.modelNodeType=='ELEMENT' && last.type=='br'){
-      //   first.parent.removeChild(first);
-      // }
-      // //remove inbetweeen elements
-      // for(let i=1; i<selected.length-1; i++){
-      //   if(selected[i].parent){
-      //     if(selected[i].modelNodeType=='TEXT'){
-      //       selected[i].parent.removeChild(selected[i]);
-      //     }
-      //   }
-      // }
     }
 
 
@@ -126,59 +86,4 @@ export default class InsertNewLineCommand extends Command {
     this.model.readSelection();
     return;
   }
-  // deleteLeft(node: ModelNode): void{
-  //   //make sure the first node is deleted
-  //   let deleteNode=true;
-  //   while(node){
-  //     //stop if we reached the parent li
-  //     if(node.type){
-  //       if(node.type=='li'){
-  //         break;
-  //       }
-  //     }
-  //     if(deleteNode){
-  //       node.parent?.removeChild(node);
-  //     }
-  //     //remove all siblings to the left but keep direct parents
-  //     if(node.previousSibling){
-  //       node=node.previousSibling;
-  //       deleteNode=true;
-  //     }
-  //     else if(node.parent){
-  //       node=node.parent;
-  //       deleteNode=false;
-  //     }
-  //     else{
-  //       break;
-  //     }
-  //   }
-  // }
-
-  // deleteRight(node: ModelNode): void{
-  //   //make sure the first node is deleted
-  //   let deleteNode=true;
-  //   while(node){
-  //     //stop if we reached the parent li
-  //     if(node.type){
-  //       if(node.type=='li'){
-  //         break;
-  //       }
-  //     }
-  //     if(deleteNode){
-  //       node.parent?.removeChild(node);
-  //     }
-  //     //remove all siblings to the left but keep direct parents
-  //     if(node.nextSibling){
-  //       node=node.nextSibling;
-  //       deleteNode=true;
-  //     }
-  //     else if(node.parent){
-  //       node=node.parent;
-  //       deleteNode=false;
-  //     }
-  //     else{
-  //       break;
-  //     }
-  //   }
-  // }
 }
