@@ -112,8 +112,6 @@ export default class InsertNewLiCommand extends Command {
       const newText = new ModelText(INVISIBLE_SPACE);
       newLi.addChild(newText);
 
-      firstParentLi.parent!.addChild(newLi, firstParentLi.index! + 1);
-
       // loop over selected elements and remove the ones that are not ancestors of the
       // textnodes to the left and right of the selection
       for (const selectedItem of selected) {
@@ -125,7 +123,9 @@ export default class InsertNewLiCommand extends Command {
           }
         }
       }
+      firstParentLi.parent!.addChild(newLi, firstParentLi.index! + 1);
       this.model.selection.collapseOn(newText, 0);
+
     }
     this.model.write();
   }
