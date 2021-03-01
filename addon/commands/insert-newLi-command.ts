@@ -143,7 +143,7 @@ export default class InsertNewLiCommand extends Command {
 //     return;
 //   }
 
-//   //this took we waaaaaay to long to figure out
+    //split text node and walk up and delete all siblings
     insertNewLi(text:ModelText, splitPosition: number):void{
       //split the text and get path to the left element to find the copy later
       const split=text.split(splitPosition);
