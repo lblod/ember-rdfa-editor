@@ -16,8 +16,10 @@ export default class InsertNewLiCommand extends Command {
   }
 
   canExecute(selection: ModelSelection = this.model.selection): boolean{
+    if (!ModelSelection.isWellBehaved(selection)) {
+      throw new MisbehavedSelectionError();
+    }
     const commonAncestor=selection.getCommonAncestor().parent;
-
     if(commonAncestor?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), true)){
       return true;
     }
@@ -42,7 +44,6 @@ export default class InsertNewLiCommand extends Command {
     }
 
     const selected = Array.from(selectedIterator);
-    debugger;
     // get the first and last textnodes of the selection
     const firstText = selected.find(ModelNode.isModelText);
     const lastText = selected.reverse().find(ModelNode.isModelText);
@@ -50,6 +51,11 @@ export default class InsertNewLiCommand extends Command {
     if (!firstText || !lastText) {
       throw new SelectionError("No text nodes in selection");
     }
+
+    //get the first and last direct parent
+    const firstParentLi=firstText?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false);
+    const lastParentLi=lastText?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false);
+
 
     // split the node at the start of the selection
     const {left: leftOfStart, right: rightOfStart} = firstText.split(startPos);
@@ -60,9 +66,60 @@ export default class InsertNewLiCommand extends Command {
     if (!leftParent) {
       throw new NoParentError();
     }
+
     //handle zero length selection
-    if(selectionStart==selectionEnd){
+    if(selectionStart===selectionEnd){
       this.insertNewLi(firstText, startPos);
+    }
+    //handle long selection of a single text item
+    else if(selected.length===1){
+      //get the selected text
+      const rightSplit=rightOfStart.split(endPos-leftOfStart.length);
+      const selectedText=rightSplit.left;
+      //get the text thats going to be moved to the new li
+      const textTobeMoved=rightSplit.right;
+
+      //remove selected text
+      this.model.removeModelNode(selectedText);
+      //get the split position
+      const position=leftOfStart.length-1;
+      //stich texts together
+      leftOfStart.content+=textTobeMoved.content;
+      //remove unused split
+      this.model.removeModelNode(textTobeMoved);
+      //call function
+      this.insertNewLi(leftOfStart, position+1);
+    }
+    //selected single li case but might have multiple elements
+    else if(firstParentLi==lastParentLi){
+      this.deleteSelection(leftOfStart, leftOfEnd);
+      const position=leftOfStart.length-1;
+      this.insertNewLi(leftOfStart, position+1);
+    }
+    //handle multiple selected elems
+    else{
+
+      this.deleteRight(rightOfStart);
+      this.deleteLeft(leftOfEnd);
+
+      const newLi=new ModelElement('li');
+      const newText=new ModelText(INVISIBLE_SPACE);
+      newLi.addChild(newText);
+
+      firstParentLi.parent.addChild(newLi, firstParentLi?.index+1);
+
+      // loop over selected elements and remove the ones that are not ancestors of the
+      // textnodes to the left and right of the selection
+      for (const selectedItem of selected) {
+        if (selectedItem !== firstText && selectedItem !== lastText) {
+          //TODO: this query or its inverse should become a method on a modelnode
+          if (!leftOfStart.findAncestor(node => node === selectedItem, true) &&
+            !rightOfEnd.findAncestor(node => node === selectedItem, true)) {
+            this.model.removeModelNode(selectedItem);
+          }
+        }
+      }
+      this.model.selection.collapseOn(newText, 0);
     }
     this.model.write();
   }
@@ -143,63 +200,41 @@ export default class InsertNewLiCommand extends Command {
 //     return;
 //   }
 
-    //split text node and walk up and delete all siblings
-    insertNewLi(text:ModelText, splitPosition: number):void{
-      //split the text and get path to the left element to find the copy later
-      const split=text.split(splitPosition);
-      const leftTextPath=split.left.getIndexPath();
-      //find closest ancestor li and ul to first text element also get path to li
-      const firstParentLi=split.left.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false);
-      const firstLiPath=firstParentLi?.getIndexPath();
-      const firstParentUl=firstParentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), false);
-      // duplicate the li
-      const newLi=firstParentLi?.clone();
-      firstParentUl.addChild(newLi, firstParentLi.index+1);
-      //find where the new text is located
-      const newTextPath=[...leftTextPath];
-      newTextPath[firstLiPath.length-1]++;
-      //find both text nodes
-      const rightSideFirstLi=split.right;
-      const leftSideSecondLi=this.getNodeByIndexPath(newTextPath);
-      const rightSideSecondLi=leftSideSecondLi.nextSibling;
-      //hacky fix for lis not being able to type
-      if(rightSideSecondLi.length===0){
-        rightSideSecondLi.content=INVISIBLE_SPACE;
-      }
-      //remove right nodes
-      var sibling=rightSideFirstLi;
-      this.deleteRight(sibling);
-      //remove left siblings
-      sibling=leftSideSecondLi;
-      this.deleteLeft(sibling);
-      this.model.selection.collapseOn(rightSideSecondLi, 0);
+  //split text node and walk up and delete all siblings
+  insertNewLi(text:ModelText, splitPosition: number):void{
+    //split the text and get path to the left element to find the copy later
+    const split=text.split(splitPosition);
+    const leftTextPath=split.left.getIndexPath();
+    //find closest ancestor li and ul to first text element also get path to li
+    const firstParentLi=split.left.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false)!;
+    if(!firstParentLi){
+      throw new Error('undable to find parent li')
     }
-//   deleteSelection(first: ModelNode, last: ModelNode){
-//     //make sure the first node is deleted
-//     let node=last;
-//     let deleteNode=true;
-//     while(node){
-//       //stop if we reached the first node
-//       if(node==first){
-//           break;
-//       }
-//       if(deleteNode){
-//         node.parent?.removeChild(node);
-//       }
-//       //remove all siblings to the left but keep direct parents
-//       if(node.previousSibling){
-//         node=node.previousSibling;
-//         deleteNode=true;
-//       }
-//       else if(node.parent){
-//         node=node.parent;
-//         deleteNode=false;
-//       }
-//       else{
-//         break;
-//       }
-//     }
-//   }
+    const firstLiPath=firstParentLi.getIndexPath();
+    const firstParentUl=firstParentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), false)!;
+    // duplicate the li
+    const newLi=firstParentLi?.clone();
+    firstParentUl.addChild(newLi, firstParentLi.index+1);
+    //find where the new text is located
+    const newTextPath=[...leftTextPath];
+    newTextPath[firstLiPath.length-1]++;
+    //find both text nodes
+    const rightSideFirstLi=split.right;
+    const leftSideSecondLi=this.getNodeByIndexPath(newTextPath);
+    const rightSideSecondLi=leftSideSecondLi.nextSibling;
+    //hacky fix for lis not being able to type
+    if(rightSideSecondLi.length===0){
+      rightSideSecondLi.content=INVISIBLE_SPACE;
+    }
+    //remove right nodes
+    var sibling=rightSideFirstLi;
+    this.deleteRight(sibling);
+    //remove left siblings
+    sibling=leftSideSecondLi;
+    this.deleteLeft(sibling);
+    this.model.selection.collapseOn(rightSideSecondLi, 0);
+  }
+
   deleteLeft(node: ModelNode): void{
     //make sure the first node is deleted
     let deleteNode=true;
@@ -255,6 +290,34 @@ export default class InsertNewLiCommand extends Command {
       }
     }
   }
+
+  deleteSelection(first: ModelNode, last: ModelNode){
+    //make sure the first node is deleted
+    let node=last;
+    let deleteNode=true;
+    while(node){
+      //stop if we reached the first node
+      if(node==first){
+          break;
+      }
+      if(deleteNode){
+        node.parent?.removeChild(node);
+      }
+      //remove all siblings to the left but keep direct parents
+      if(node.previousSibling){
+        node=node.previousSibling;
+        deleteNode=true;
+      }
+      else if(node.parent){
+        node=node.parent;
+        deleteNode=false;
+      }
+      else{
+        break;
+      }
+    }
+  }
+
 
   //i think this is usefull overall and should be moved somewhere
   getNodeByIndexPath(path: number[]):ModelNode{
