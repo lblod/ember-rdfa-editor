@@ -3,7 +3,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelElement from "../model/model-element";
 import ModelNode from "../model/model-node";
-import {MisbehavedSelectionError, NoParentError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {MisbehavedSelectionError, NoParentError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export default class InsertNewLineCommand extends Command {
   name = "insert-newLine";
@@ -30,7 +30,8 @@ export default class InsertNewLineCommand extends Command {
     const selectedIterator = selection.findAllInSelection({});
 
     if (!selectedIterator) {
-      throw new Error("couldn't get iterator");
+      // should be impossible
+      throw new SelectionError("couldn't get iterator");
     }
 
     const selected = Array.from(selectedIterator);
@@ -40,7 +41,7 @@ export default class InsertNewLineCommand extends Command {
     const lastText = selected.reverse().find(ModelNode.isModelText);
 
     if (!firstText || !lastText) {
-      throw new Error("couldn't get the first/last texts in selection");
+      throw new SelectionError("No text nodes in selection");
     }
 
     // split the node at the start of the selection
@@ -48,14 +49,14 @@ export default class InsertNewLineCommand extends Command {
     // split the node at the end of the selection
     const {left: leftOfEnd, right: rightOfEnd} = lastText.split(endPos);
 
-    const br = new ModelElement('br');
-    let cursorPos = [0];
-
     const leftParent = leftOfStart.parent;
-
     if (!leftParent) {
       throw new NoParentError();
     }
+
+    const br = new ModelElement('br');
+    let cursorPos = [0];
+
 
     //handle zero length selection
     if (selection.isCollapsed) {
@@ -81,7 +82,7 @@ export default class InsertNewLineCommand extends Command {
       cursorPos = [...right.getIndexPath()];
       cursorPos.push(0);
     }
-    //handle multiple selected elems
+    //handle multiple selected elements
     else {
 
       //remove inner ends of selection
@@ -90,13 +91,13 @@ export default class InsertNewLineCommand extends Command {
 
       // loop over selected elements and remove the ones that are not ancestors of the
       // textnodes to the left and right of the selection
-
       for (const selectedItem of selected) {
-        if (!(leftOfStart.findAncestor(node => node === selectedItem, true) ||
-          rightOfEnd.findAncestor(node => node === selectedItem, true) ||
-          firstText === selectedItem ||
-          lastText === selectedItem)) {
-          selectedItem.parent?.removeChild(selectedItem);
+        if (selectedItem !== firstText && selectedItem !== lastText) {
+          //TODO: this query or its inverse should become a method on a modelnode
+          if (!leftOfStart.findAncestor(node => node === selectedItem, true) &&
+            !rightOfEnd.findAncestor(node => node === selectedItem, true)) {
+            this.model.removeModelNode(selectedItem);
+          }
         }
       }
 
