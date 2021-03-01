@@ -123,82 +123,6 @@ export default class InsertNewLiCommand extends Command {
     }
     this.model.write();
   }
-//     const anchor=selection.lastRange.start.path;
-//     const focus=selection.lastRange.end.path;
-
-//     const selectedIterator = selection.findAllInSelection({});
-//     if(!selectedIterator){
-//       return;
-//     }
-//     const selected = Array.from(selectedIterator);
-
-//     //utility vars
-//     const first=selected[0];
-//     const firstText=selected.find(e=>e.modelNodeType=='TEXT');
-//     const last=selected[selected.length-1];
-//     const lastText=selected.reverse().find(e=>e.modelNodeType=='TEXT');
-//     const firstParentLi=firstText?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false);
-//     const lastParentLi=lastText?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false);
-//     const newLi=new ModelElement('li');
-//     const anchorPos=anchor[anchor.length-1];
-//     const focusPos=focus[focus.length-1];
-
-//     //handle zero length selection
-//     if(anchor==focus){
-//       this.insertNewLi(firstText, anchorPos);
-//     }
-//     //handle long selection of single li item
-//     else if(firstParentLi==lastParentLi){
-//       //if one item is inside
-//       if(selection.length==1){
-//         const split=firstText?.split(anchorPos);
-//         const rightSplit=split.right.split(focusPos-split.left.length);
-//         const selectedText=rightSplit.left;
-//         const textTobeMoved=rightSplit.right;
-
-//         selectedText.parent.removeChild(selectedText);
-//         const position=split.left.length-1;
-//         split.left.content+=textTobeMoved.content;
-//         textTobeMoved.parent.removeChild(textTobeMoved);
-//         this.insertNewLi(split.left, position+1);
-//       }
-//       //if multiple items are inside
-//       else{
-//         const firstSplit=firstText?.split(anchorPos);
-//         const lastSplit=lastText?.split(focusPos);
-//         this.deleteSelection(firstSplit.left, lastSplit.left);
-//         const position=firstSplit.left.length-1;
-//         this.insertNewLi(firstSplit.left, position+1);
-//       }
-//     }
-//     //handle multiple selected elems
-//     else{
-
-//       const firstSplit=firstText?.split(anchorPos);
-//       const lastSplit=lastText?.split(focusPos);
-//       this.deleteLeft(lastSplit.left);
-//       this.deleteRight(firstSplit.right);
-
-//       firstParentLi.parent.addChild(newLi, firstParentLi?.index+1);
-
-//       //delete inbetween elements
-//       //do not delete parent lis
-//       for(let i=0; i<selected.length; i++){
-//         if(selected[i].type){
-//           if(selected[i].type=='li' &&
-//              selected[i]!=firstParentLi &&
-//              selected[i]!=lastParentLi){
-//               selected[i].parent?.removeChild(selected[i]);
-//           }
-//         }
-//       }
-//     }
-
-
-//     this.model.write();
-//     this.model.readSelection();
-//     return;
-//   }
 
   //split text node and walk up and delete all siblings
   insertNewLi(text:ModelText, splitPosition: number):void{
@@ -332,5 +256,5 @@ export default class InsertNewLiCommand extends Command {
     }
     return result;
   }
-// }
+
 }
