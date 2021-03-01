@@ -1,12 +1,8 @@
 import Command from "./command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import ModelNode from "../model/model-node";
 import ModelElement from "../model/model-element";
-import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
-import { defaultPrefixes } from "../config/rdfa";
-import { removeNode } from "../utils/dom-helpers";
+import ModelNode from "../model/model-node";
 
 export default class InsertNewLineCommand extends Command {
   name = "insert-newLine";
@@ -14,16 +10,22 @@ export default class InsertNewLineCommand extends Command {
   constructor(model: Model) {
     super(model);
   }
-  canExecute(selection: ModelSelection = this.model.selection): bool{
+  canExecute(selection: ModelSelection = this.model.selection): boolean{
     return true;
   }
   execute(selection: ModelSelection = this.model.selection): void {
+
+    if(!selection.lastRange){
+      throw new Error("no last range");
+    }
+
     const anchor=selection.lastRange.start.path;
     const focus=selection.lastRange.end.path;
 
     const selectedIterator = selection.findAllInSelection({});
+
     if(!selectedIterator){
-      return;
+      throw new Error("couldn't get itterator");
     }
 
     const selected = Array.from(selectedIterator);
@@ -32,12 +34,31 @@ export default class InsertNewLineCommand extends Command {
     const lastText=selected.reverse().find(e=>e.modelNodeType=='TEXT');
     const anchorPos=anchor[anchor.length-1];
     const focusPos=focus[focus.length-1];
+
+    if(!firstText ||
+       !lastText ||
+       !ModelNode.isModelText(firstText) ||
+       !ModelNode.isModelText(lastText))
+    {
+      throw new Error("couldn't get the first/last texts in selection");
+    }
+
+    const firstSplit=firstText.split(anchorPos);
+    const lastSplit=lastText.split(focusPos);
+
+    if(!firstSplit || !lastSplit){
+      throw new Error("couldn't split first/last text");
+    }
+
     const br=new ModelElement('br');
     let cursorPos=[0];
+
     //handle zero length selection
     if(anchor==focus){
-        const split=firstText.split(anchorPos);
-        split.left.parent.addChild(br, split.left.index+1);
+        if(!firstSplit.left.parent){
+          throw new Error("no parent, root element?");
+        }
+        firstSplit.left.parent.addChild(br, firstSplit.left.index!+1);
         cursorPos=[...split.right.getIndexPath()];
         cursorPos.push(0);
     }
