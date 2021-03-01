@@ -32,8 +32,8 @@ export default class InsertNewLineCommand extends Command {
 
     const selected = Array.from(selectedIterator);
 
-    const firstText = selected.find(e => e.modelNodeType == 'TEXT');
-    const lastText = selected.reverse().find(e => e.modelNodeType == 'TEXT');
+    const firstText = selected.find(e => e.modelNodeType === 'TEXT');
+    const lastText = selected.reverse().find(e => e.modelNodeType === 'TEXT');
     const anchorPos = anchor[anchor.length - 1];
     const focusPos = focus[focus.length - 1];
 
@@ -55,7 +55,7 @@ export default class InsertNewLineCommand extends Command {
     let cursorPos = [0];
 
     //handle zero length selection
-    if (anchor == focus) {
+    if (anchor === focus) {
       if (!firstSplit.left.parent) {
         throw new Error("no parent, root element?");
       }
@@ -64,7 +64,7 @@ export default class InsertNewLineCommand extends Command {
       cursorPos.push(0);
     }
     //handle long selection of single item
-    else if (selected.length == 1) {
+    else if (selected.length === 1) {
       const split = firstText.split(anchorPos);
       split.left.parent.addChild(br, split.left.index + 1);
       const rightSplit = split.right.split(focusPos - split.left.length);
@@ -81,12 +81,12 @@ export default class InsertNewLineCommand extends Command {
       lastSplit.left.parent.removeChild(lastSplit.left);
 
       for (let i = 0; i < selected.length; i++) {
-        if (firstSplit.left.findAncestor(node => node == selected[i], false) ||
-          lastSplit.right.findAncestor(node => node == selected[i], false) ||
-          firstText == selected[i] ||
-          lastText == selected[i] ||
-          firstSplit.left == selected[i] ||
-          firstSplit.right == selected[i]) {
+        if (firstSplit.left.findAncestor(node => node === selected[i], false) ||
+          lastSplit.right.findAncestor(node => node === selected[i], false) ||
+          firstText === selected[i] ||
+          lastText === selected[i] ||
+          firstSplit.left === selected[i] ||
+          firstSplit.right === selected[i]) {
           //do nothing
         } else {
           selected[i].parent?.removeChild(selected[i]);
