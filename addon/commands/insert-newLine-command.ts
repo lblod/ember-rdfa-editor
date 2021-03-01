@@ -103,6 +103,7 @@ export default class InsertNewLineCommand extends Command {
 
       // leave the cursor at the start of the right part of the split
       const cursorPos = [...rightOfEnd.getIndexPath()];
+      debugger;
       cursorPos.push(0);
     }
 
