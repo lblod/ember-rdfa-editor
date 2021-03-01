@@ -174,13 +174,6 @@ export default class Model {
   }
 
   private removeChildFromParent(child: ModelNode, parent: ModelElement) {
-    const index = parent.children.indexOf(child);
-    parent.children.splice(index, 1);
-    if (child.previousSibling) {
-      child.previousSibling.nextSibling = child.nextSibling;
-    }
-    if (child.nextSibling) {
-      child.nextSibling.previousSibling = child.previousSibling;
-    }
+    parent.removeChild(child);
   }
 }

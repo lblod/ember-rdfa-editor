@@ -4,6 +4,8 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelElement from "../model/model-element";
 import ModelNode from "../model/model-node";
 import {MisbehavedSelectionError, NoParentError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 export default class InsertNewLineCommand extends Command {
   name = "insert-newLine";
@@ -16,8 +18,9 @@ export default class InsertNewLineCommand extends Command {
     return true;
   }
 
-  execute(selection: ModelSelection = this.model.selection): void {
+  execute(): void {
 
+    const selection= this.model.selection;
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -55,17 +58,14 @@ export default class InsertNewLineCommand extends Command {
     }
 
     const br = new ModelElement('br');
-    let cursorPos = [0];
 
 
     //handle zero length selection
     if (selection.isCollapsed) {
       // add the break to the right of the node before the cursor
       leftParent.addChild(br, leftOfStart.index! + 1);
+      selection.collapseOn(rightOfStart);
 
-      // set the cursor to be at the start of the node to the right of the split
-      cursorPos = [...rightOfStart.getIndexPath()];
-      cursorPos.push(0);
     }
     //handle long selection of single item
     else if (selected.length === 1) {
@@ -74,17 +74,14 @@ export default class InsertNewLineCommand extends Command {
 
       // split the node at the end of the selection
       const {left, right} = rightOfStart.split(endPos - leftOfStart.length);
-
       // remove the middle part
       this.model.removeModelNode(left);
-
-      // leave the cursor at the start of the right part of the split
-      cursorPos = [...right.getIndexPath()];
-      cursorPos.push(0);
+      selection.collapseOn(right);
     }
     //handle multiple selected elements
     else {
 
+      leftParent.addChild(br, leftOfStart.index! + 1);
       //remove inner ends of selection
       this.model.removeModelNode(rightOfStart);
       this.model.removeModelNode(leftOfEnd);
@@ -100,18 +97,10 @@ export default class InsertNewLineCommand extends Command {
           }
         }
       }
-
-      // leave the cursor at the start of the right part of the split
-      const cursorPos = [...rightOfEnd.getIndexPath()];
-      cursorPos.push(0);
+      selection.collapseOn(rightOfEnd);
     }
 
 
-    selection.anchor.path = cursorPos;
-    selection.focus.path = cursorPos;
-
     this.model.write();
-    this.model.readSelection();
-    return;
   }
 }

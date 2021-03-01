@@ -384,8 +384,9 @@ export default class ModelSelection {
   }
 
   collapseOn(node: ModelNode, offset: number = 0) {
-    this.anchor = ModelPosition.fromParent(this.model.rootModelNode, node, offset);
-    this.collapse(true);
+    this.clearRanges();
+    const position = ModelPosition.fromParent(this.model.rootModelNode, node, offset);
+    this.addRange(new ModelRange(position, position));
   }
 
   setStartAndEnd(start: ModelNode, startOffset: number, end: ModelNode, endOffset: number) {
