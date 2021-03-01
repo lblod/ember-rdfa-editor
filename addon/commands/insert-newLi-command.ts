@@ -4,6 +4,9 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelNode from "../model/model-node";
 import ModelElement from "../model/model-element";
 import ModelText from "../model/model-text";
+import {MisbehavedSelectionError, NoParentError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import { INVISIBLE_SPACE} from "../model/util/constants";
+
 
 export default class InsertNewLiCommand extends Command {
   name = "insert-newLi";
@@ -13,15 +16,15 @@ export default class InsertNewLiCommand extends Command {
   }
 
   canExecute(selection: ModelSelection = this.model.selection): boolean{
-    const commonAncestor=this.getNodeByIndexPath(selection.getCommonAncestor().path);
+    const commonAncestor=selection.getCommonAncestor().parent;
 
     if(commonAncestor?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), true)){
       return true;
     }
-
     return false;
   }
-  execute(selection: ModelSelection = this.model.selection): void {
+  execute(): void {
+    const selection=this.model.selection;
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -39,7 +42,7 @@ export default class InsertNewLiCommand extends Command {
     }
 
     const selected = Array.from(selectedIterator);
-
+    debugger;
     // get the first and last textnodes of the selection
     const firstText = selected.find(ModelNode.isModelText);
     const lastText = selected.reverse().find(ModelNode.isModelText);
@@ -61,6 +64,7 @@ export default class InsertNewLiCommand extends Command {
     if(selectionStart==selectionEnd){
       this.insertNewLi(firstText, startPos);
     }
+    this.model.write();
   }
 //     const anchor=selection.lastRange.start.path;
 //     const focus=selection.lastRange.end.path;
@@ -144,7 +148,6 @@ export default class InsertNewLiCommand extends Command {
       //split the text and get path to the left element to find the copy later
       const split=text.split(splitPosition);
       const leftTextPath=split.left.getIndexPath();
-      const rightTextPath=split.right.getIndexPath();
       //find closest ancestor li and ul to first text element also get path to li
       const firstParentLi=split.left.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false);
       const firstLiPath=firstParentLi?.getIndexPath();
@@ -159,12 +162,17 @@ export default class InsertNewLiCommand extends Command {
       const rightSideFirstLi=split.right;
       const leftSideSecondLi=this.getNodeByIndexPath(newTextPath);
       const rightSideSecondLi=leftSideSecondLi.nextSibling;
+      //hacky fix for lis not being able to type
+      if(rightSideSecondLi.length===0){
+        rightSideSecondLi.content=INVISIBLE_SPACE;
+      }
       //remove right nodes
       var sibling=rightSideFirstLi;
       this.deleteRight(sibling);
       //remove left siblings
       sibling=leftSideSecondLi;
       this.deleteLeft(sibling);
+      this.model.selection.collapseOn(rightSideSecondLi, 0);
     }
 //   deleteSelection(first: ModelNode, last: ModelNode){
 //     //make sure the first node is deleted
@@ -192,74 +200,74 @@ export default class InsertNewLiCommand extends Command {
 //       }
 //     }
 //   }
-//   deleteLeft(node: ModelNode): void{
-//     //make sure the first node is deleted
-//     let deleteNode=true;
-//     while(node){
-//       //stop if we reached the parent li
-//       if(node.type){
-//         if(node.type=='li'){
-//           break;
-//         }
-//       }
-//       if(deleteNode){
-//         node.parent?.removeChild(node);
-//       }
-//       //remove all siblings to the left but keep direct parents
-//       if(node.previousSibling){
-//         node=node.previousSibling;
-//         deleteNode=true;
-//       }
-//       else if(node.parent){
-//         node=node.parent;
-//         deleteNode=false;
-//       }
-//       else{
-//         break;
-//       }
-//     }
-//   }
+  deleteLeft(node: ModelNode): void{
+    //make sure the first node is deleted
+    let deleteNode=true;
+    while(node){
+      //stop if we reached the parent li
+      if(node.type){
+        if(node.type=='li'){
+          break;
+        }
+      }
+      if(deleteNode){
+        node.parent?.removeChild(node);
+      }
+      //remove all siblings to the left but keep direct parents
+      if(node.previousSibling){
+        node=node.previousSibling;
+        deleteNode=true;
+      }
+      else if(node.parent){
+        node=node.parent;
+        deleteNode=false;
+      }
+      else{
+        break;
+      }
+    }
+  }
 
-//   deleteRight(node: ModelNode): void{
-//     //make sure the first node is deleted
-//     let deleteNode=true;
-//     while(node){
-//       //stop if we reached the parent li
-//       if(node.type){
-//         if(node.type=='li'){
-//           break;
-//         }
-//       }
-//       if(deleteNode){
-//         node.parent?.removeChild(node);
-//       }
-//       //remove all siblings to the left but keep direct parents
-//       if(node.nextSibling){
-//         node=node.nextSibling;
-//         deleteNode=true;
-//       }
-//       else if(node.parent){
-//         node=node.parent;
-//         deleteNode=false;
-//       }
-//       else{
-//         break;
-//       }
-//     }
-//   }
+  deleteRight(node: ModelNode): void{
+    //make sure the first node is deleted
+    let deleteNode=true;
+    while(node){
+      //stop if we reached the parent li
+      if(node.type){
+        if(node.type=='li'){
+          break;
+        }
+      }
+      if(deleteNode){
+        node.parent?.removeChild(node);
+      }
+      //remove all siblings to the left but keep direct parents
+      if(node.nextSibling){
+        node=node.nextSibling;
+        deleteNode=true;
+      }
+      else if(node.parent){
+        node=node.parent;
+        deleteNode=false;
+      }
+      else{
+        break;
+      }
+    }
+  }
 
-//   //i think this is usefull overall and should be moved somewhere
-//   getNodeByIndexPath(path: number[]):ModelNode{
-//     const root=this.model.rootModelNode;
-//     var result=root;
-//     for(let i=0; i<path.length; i++){
-//       //incase a selection gets passed
-//       if(i==path.length-1 && result.modelNodeType=="TEXT"){
-//         return result;
-//       }
-//       result=result.children[path[i]];
-//     }
-//     return result;
-//   }
+  //i think this is usefull overall and should be moved somewhere
+  getNodeByIndexPath(path: number[]):ModelNode{
+    const root=this.model.rootModelNode;
+    var result=root;
+    for(let i=0; i<path.length; i++){
+      //incase a selection gets passed
+      if(i==path.length-1 && result.modelNodeType=="TEXT"){
+        return result;
+      }
+      result=result.children[path[i]];
+    }
+    return result;
+  }
 // }
 }
