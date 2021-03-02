@@ -64,6 +64,15 @@ export default class EditorToolbar extends Component<Args> {
     }
   }
   @action
+  insertNewLine(){
+    this.args.editor.executeCommand("insert-newLine");
+  }
+
+  @action
+  insertNewLi(){
+    this.args.editor.executeCommand("insert-newLi");
+  }
+  @action
   toggleItalic() {
     this.toggleProperty(this.isItalic, "make-italic", "remove-italic");
   }
