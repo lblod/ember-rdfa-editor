@@ -65,12 +65,11 @@ export default class InsertNewLineCommand extends Command {
       // add the break to the right of the node before the cursor
       leftParent.addChild(br, leftOfStart.index! + 1);
 
-      if(rightOfStart.length==0){
+      if (rightOfStart.length === 0) {
         rightOfStart.content=INVISIBLE_SPACE;
       }
 
       selection.collapseOn(rightOfStart);
-
     }
     //handle long selection of single item
     else if (selected.length === 1) {
