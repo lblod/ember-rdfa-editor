@@ -64,9 +64,11 @@ export default class InsertNewLineCommand extends Command {
     if (selection.isCollapsed) {
       // add the break to the right of the node before the cursor
       leftParent.addChild(br, leftOfStart.index! + 1);
+
       if(rightOfStart.length==0){
         rightOfStart.content=INVISIBLE_SPACE;
       }
+
       selection.collapseOn(rightOfStart);
 
     }
