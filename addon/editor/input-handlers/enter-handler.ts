@@ -12,10 +12,6 @@ import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 export default class EnterHandler implements InputHandler {
 
   rawEditor: RawEditor;
-  isBold = false;
-  isItalic = false;
-  isUnderline = false;
-  isStrikethrough = false;
 
   constructor({ rawEditor }: { rawEditor: RawEditor }) {
     this.rawEditor = rawEditor;
