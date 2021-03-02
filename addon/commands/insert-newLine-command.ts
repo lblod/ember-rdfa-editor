@@ -14,7 +14,7 @@ export default class InsertNewLineCommand extends Command {
     super(model);
   }
 
-  canExecute(selection: ModelSelection = this.model.selection): boolean {
+  canExecute(_selection: ModelSelection = this.model.selection): boolean {
     return true;
   }
 
