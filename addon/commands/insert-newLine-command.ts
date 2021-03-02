@@ -4,6 +4,7 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelElement from "../model/model-element";
 import ModelNode from "../model/model-node";
 import {MisbehavedSelectionError, NoParentError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {INVISIBLE_SPACE} from "../model/util/constants";
 
 
 export default class InsertNewLineCommand extends Command {
@@ -63,6 +64,9 @@ export default class InsertNewLineCommand extends Command {
     if (selection.isCollapsed) {
       // add the break to the right of the node before the cursor
       leftParent.addChild(br, leftOfStart.index! + 1);
+      if(rightOfStart.length==0){
+        rightOfStart.content=INVISIBLE_SPACE;
+      }
       selection.collapseOn(rightOfStart);
 
     }
