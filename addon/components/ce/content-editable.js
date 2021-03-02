@@ -401,10 +401,8 @@ function inserHtml(html) {
     }
     else if (anchorNode?.nodeType == Node.TEXT_NODE) {
       // split node
-      console.log(anchorOffset);
       const prefix = anchorNode.textContent.slice(0,anchorOffset);
       const postfix = anchorNode.textContent.slice(anchorOffset);
-      console.log(prefix,postfix);
       anchorNode.textContent = prefix;
       const postfixTextNode = document.createTextNode(postfix);
       anchorNode.after(...nodes);
