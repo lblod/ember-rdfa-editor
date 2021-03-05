@@ -1,6 +1,7 @@
 import Command from "./command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
 import ModelElement from "../model/model-element";
 import ModelNode from "../model/model-node";
 import {MisbehavedSelectionError, NoParentError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
@@ -57,7 +58,8 @@ export default class InsertTableCommand extends Command {
       throw new NoParentError();
     }
 
-    const table = this.buildTable(2,2);
+    const table = new ModelTable(2,2);
+    
 
 
     //handle zero length selection
