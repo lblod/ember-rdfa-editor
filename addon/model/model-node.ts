@@ -105,6 +105,33 @@ export default abstract class ModelNode {
 
   abstract get isBlock(): boolean;
 
+
+  get offsetSize(): number {
+    return 1;
+  }
+
+  getOffset(): number {
+    let counter = 0;
+    let sibling = this.previousSibling;
+    while(sibling) {
+      counter += sibling.offsetSize;
+      sibling = sibling.previousSibling;
+    }
+    return counter;
+  }
+
+  getOffsetPath(): number[] {
+    const result = [];
+
+    let cur: ModelNode | null = this;
+    while (cur) {
+      result.push(cur.getOffset());
+      cur = cur.parent;
+    }
+    result.reverse();
+    return result;
+  }
+
   abstract hasVisibleText(): boolean;
 
   getIndexPath(): number[] {

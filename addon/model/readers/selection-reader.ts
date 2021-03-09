@@ -4,6 +4,8 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {isTextNode, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelNode from "../model-node";
 
 /**
  * Reader to convert a {@link Selection} to a {@link ModelSelection}
@@ -26,7 +28,6 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     }
     rslt.ranges = ranges;
     rslt.isRightToLeft = this.isReverseSelection(from);
-    console.log("GENERATING", rslt);
     return rslt;
   }
 
@@ -56,11 +57,21 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
   readDomPosition(container: Node, offset: number): ModelPosition | null {
     const {container: normalizedContainer, offset: normalizedOffset} = this.normalizeDomPosition(container, offset);
     const modelNode = this.model.getModelNodeFor(normalizedContainer);
+
     const root = this.model.rootModelNode;
     if (!modelNode) {
-      return null;
+      throw new SelectionError("Can't convert from a domnode without an equivalent modelnode")
     }
-    return ModelPosition.fromParent(root, modelNode, normalizedOffset);
+    const result = new ModelPosition(root);
+    result.path = modelNode.getOffsetPath();
+    if(ModelNode.isModelText(modelNode)) {
+      result.path.push(offset);
+    } else if(ModelNode.isModelElement(modelNode)){
+      const child = modelNode.children[offset];
+      result.path.push(child.getOffset());
+    }
+
+    return result;
   }
 
   /**

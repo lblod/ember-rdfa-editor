@@ -55,12 +55,12 @@ class RawEditor extends EmberObject {
     this.registerCommand(new RemoveStrikethroughCommand(this.model));
     this.registerCommand(new MakeUnderlineCommand(this.model));
     this.registerCommand(new RemoveUnderlineCommand(this.model));
-    this.registerCommand(new MakeListCommand(this.model));
-    this.registerCommand(new RemoveListCommand(this.model));
-    this.registerCommand(new UnindentListCommand(this.model));
-    this.registerCommand(new IndentListCommand(this.model));
-    this.registerCommand(new InsertNewLineCommand(this.model));
-    this.registerCommand(new InsertNewLiCommand(this.model));
+    // this.registerCommand(new MakeListCommand(this.model));
+    // this.registerCommand(new RemoveListCommand(this.model));
+    // this.registerCommand(new UnindentListCommand(this.model));
+    // this.registerCommand(new IndentListCommand(this.model));
+    // this.registerCommand(new InsertNewLineCommand(this.model));
+    // this.registerCommand(new InsertNewLiCommand(this.model));
   }
 
   /**

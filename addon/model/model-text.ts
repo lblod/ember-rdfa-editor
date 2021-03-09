@@ -40,6 +40,10 @@ export default class ModelText extends ModelNode {
     return false;
   }
 
+  get offsetSize() {
+    return this.length;
+  }
+
   getTextAttribute(key: TextAttribute): boolean {
     return this._textAttributeMap.get(key) || false;
   }

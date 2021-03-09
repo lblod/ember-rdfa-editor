@@ -11,7 +11,6 @@ import {
   Direction,
   FilterAndPredicate,
   PropertyState,
-  RelativePosition
 } from "@lblod/ember-rdfa-editor/model/util/types";
 import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
@@ -67,24 +66,6 @@ export default class ModelSelection {
     return this.lastRange.end;
   }
 
-  set focus(value: ModelPosition | null) {
-    if (!value) {
-      return;
-    }
-    this._isRightToLeft = false;
-    if (!this.lastRange) {
-      this.addRange(new ModelRange(value));
-    } else if (!this.anchor) {
-      this.lastRange.start = value;
-      this.lastRange.end = value;
-    } else if (this.anchor.compare(value) === RelativePosition.AFTER) {
-      this._isRightToLeft = true;
-      this.lastRange.start = value;
-    } else {
-      this.lastRange.end = value;
-    }
-  }
-
   /**
    * The anchor is the rightmost position of the selection if the selection
    * is left-to-right, and the leftmost position otherwise
@@ -97,24 +78,6 @@ export default class ModelSelection {
       return this.lastRange.end;
     }
     return this.lastRange.start;
-  }
-
-  set anchor(value: ModelPosition | null) {
-    if (!value) {
-      return;
-    }
-    this._isRightToLeft = false;
-    if (!this.lastRange) {
-      this.addRange(new ModelRange(value));
-    } else if (!this.focus) {
-      this.lastRange.start = value;
-      this.lastRange.end = value;
-    } else if (this.focus.compare(value) === RelativePosition.BEFORE) {
-      this._isRightToLeft = true;
-      this.lastRange.end = value;
-    } else {
-      this.lastRange.start = value;
-    }
   }
 
   /**
@@ -371,17 +334,6 @@ export default class ModelSelection {
 
   }
 
-  /**
-   * Collapse the selection into a caret
-   * @param toLeft whether the caret should end up at the beginning of the selection, defaults to false
-   */
-  collapse(toLeft: boolean = false) {
-    if (toLeft) {
-      this.anchor = this.focus;
-    } else {
-      this.focus = this.anchor;
-    }
-  }
 
   collapseOn(node: ModelNode, offset: number = 0) {
     this.clearRanges();

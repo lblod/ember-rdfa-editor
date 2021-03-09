@@ -212,4 +212,22 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     return {left: secondSplit.left, middle: secondSplit.right, right: firstSplit.right};
   }
 
+  offsetToIndex(offset: number) :number {
+    let offsetCounter = 0;
+    let indexCounter = 0;
+    for (const child of this.children) {
+      const childOffsetSize = child.offsetSize;
+      offsetCounter += childOffsetSize;
+      if(offsetCounter >= offset) {
+        return indexCounter;
+      }
+      indexCounter++;
+    }
+    return indexCounter;
+  }
+
+  childAtOffset(offset: number): ModelNode {
+    return this.children[this.offsetToIndex(offset)];
+  }
+
 }

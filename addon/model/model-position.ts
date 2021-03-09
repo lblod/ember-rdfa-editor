@@ -12,7 +12,7 @@ import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 export default class ModelPosition {
   private _path: number[];
   private _root: ModelElement;
-  private parentCache: ModelNode | null = null;
+  private parentCache: ModelElement | null = null;
 
 
   /**
@@ -95,37 +95,27 @@ export default class ModelPosition {
     this.parentCache = null;
   }
 
-  get parent(): ModelNode {
+  get parent(): ModelElement {
     if (this.parentCache) {
       return this.parentCache;
     }
     let cur: ModelNode = this.root;
     for (let i = 0; i < this.path.length - 1; i++) {
       if (ModelNode.isModelElement(cur)) {
-        cur = cur.children[this.path[i]];
+        cur = cur.childAtOffset(this.path[i]);
       } else {
-        this.parentCache = cur;
-        return cur;
+        throw new PositionError("invalid path");
       }
     }
-    this.parentCache = cur;
-    return cur;
+    this.parentCache = cur as ModelElement;
+    return cur as ModelElement;
   }
 
   /**
    * Get the first ancestor which is a ModelElement
    */
   get parentElement(): ModelElement {
-    const parent = this.parent;
-    if (ModelNode.isModelElement(parent)) {
-      return parent;
-    } else {
-      const result = parent.parent;
-      if (!result) {
-        throw new ModelError("Unexpected textnode without parent");
-      }
-      return result;
-    }
+    return this.parent;
   }
 
   /**
