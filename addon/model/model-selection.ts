@@ -299,6 +299,22 @@ export default class ModelSelection {
 
   }
 
+  get isInTable(): PropertyState {
+    const config = {
+      filter: ModelNode.isModelElement,
+      predicate: (node: ModelElement) => node.type === 'table',
+    };
+    let result = !!this.findFirstInSelection(config);
+    if(!result) {
+      result = !!this.getCommonAncestor()?.parent.findAncestor(node => ModelNode.isModelElement(node) && node.type === 'table');
+    }
+
+    return result ? PropertyState.enabled : PropertyState.disabled;
+
+  }
+
+
+
   get rdfaSelection() {
     if (!this.domSelection) return;
     return this.calculateRdfaSelection(this.domSelection);

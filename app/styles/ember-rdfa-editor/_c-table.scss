@@ -2,7 +2,7 @@ table.say-table {
   width: 100%;
   tr {
     display: flex;
-    height: 30px;
+    min-height: 30px;
   }
 
   th, td {
