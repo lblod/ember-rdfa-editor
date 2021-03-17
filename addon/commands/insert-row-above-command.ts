@@ -12,7 +12,7 @@ export default class InsertRowAboveCommand extends Command {
     super(model);
   }
 
-  canExecute(_selection: ModelSelection = this.model.selection): boolean {
+  canExecute(): boolean {
     return true;
   }
 
@@ -25,7 +25,7 @@ export default class InsertRowAboveCommand extends Command {
 
     const cell = ModelTable.getCellFromSelection(selection);
     if(!cell) {
-      throw Error('The selection is not inside a cell')
+      throw Error('The selection is not inside a cell');
     }
 
     const table = ModelTable.getTableFromSelection(selection);

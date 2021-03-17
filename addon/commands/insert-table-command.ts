@@ -2,7 +2,6 @@ import Command from "./command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
-import ModelElement from "../model/model-element";
 import ModelNode from "../model/model-node";
 import {MisbehavedSelectionError, NoParentError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {INVISIBLE_SPACE} from "../model/util/constants";
@@ -15,7 +14,7 @@ export default class InsertTableCommand extends Command {
     super(model);
   }
 
-  canExecute(_selection: ModelSelection = this.model.selection): boolean {
+  canExecute(): boolean {
     return true;
   }
 
@@ -106,29 +105,5 @@ export default class InsertTableCommand extends Command {
 
 
     this.model.write();
-  }
-  buildTable(rows: Number, columns: Number) {
-    const firstRow = new ModelElement('tr');
-    for(let i = 0; i< columns; i++) {
-      const th = new ModelElement('th');
-      firstRow.addChild(th);
-    }
-    const thead = new ModelElement('thead');
-    thead.addChild(firstRow);
-    const table = new ModelElement('table');
-    table.addChild(thead);
-    if(rows > 1) {
-      const tbody = new ModelElement('tbody');
-      for(let i = 1; i < rows; i++) {
-        const row = new ModelElement('tr');
-        for(let j = 0; j < columns; j++) {
-          const td = new ModelElement('td');
-          row.addChild(td);
-        }
-        tbody.addChild(row);
-      }
-      table.addChild(tbody);
-    }
-    return table;
   }
 }

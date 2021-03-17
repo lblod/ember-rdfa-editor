@@ -12,7 +12,7 @@ export default class InsertColumnBeforeCommand extends Command {
     super(model);
   }
 
-  canExecute(_selection: ModelSelection = this.model.selection): boolean {
+  canExecute(): boolean {
     return true;
   }
 
@@ -25,7 +25,7 @@ export default class InsertColumnBeforeCommand extends Command {
 
     const cell = ModelTable.getCellFromSelection(selection);
     if(!cell) {
-      throw Error('The selection is not inside a cell')
+      throw Error('The selection is not inside a cell');
     }
 
     const table = ModelTable.getTableFromSelection(selection);
@@ -35,6 +35,12 @@ export default class InsertColumnBeforeCommand extends Command {
     }
 
     const position = ModelTable.getCellIndex(cell);
+
+    if(!position || !position.x) {
+      //Shouldn't happen
+      throw new Error('Position is null');
+    }
+
     table.addColumn(position.x);
 
     this.model.write();

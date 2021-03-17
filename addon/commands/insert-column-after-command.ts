@@ -12,7 +12,7 @@ export default class InsertColumnAfterCommand extends Command {
     super(model);
   }
 
-  canExecute(_selection: ModelSelection = this.model.selection): boolean {
+  canExecute(): boolean {
     return true;
   }
 
@@ -24,16 +24,20 @@ export default class InsertColumnAfterCommand extends Command {
     }
     const cell = ModelTable.getCellFromSelection(selection);
     if(!cell) {
-      throw Error('The selection is not inside a cell')
+      throw new Error('The selection is not inside a cell');
     }
 
     const table = ModelTable.getTableFromSelection(selection);
 
     if(!table) {
-      throw Error('The selection is not inside a table');
+      throw new Error('The selection is not inside a table');
     }
 
     const position = ModelTable.getCellIndex(cell);
+    if(!position || !position.x) {
+      //Shouldn't happen
+      throw new Error('Position is null');
+    }
     table.addColumn(position.x + 1);
 
     this.model.write();
