@@ -26,6 +26,7 @@ export default class EditorToolbar extends Component<Args> {
   @tracked isStrikethrough: boolean = false;
   @tracked isUnderline: boolean = false;
   @tracked isInList: boolean = false;
+  @tracked isInTable: boolean = false;
   @tracked canIndent: boolean = false;
   @tracked canUnindent: boolean = false;
 
@@ -39,6 +40,7 @@ export default class EditorToolbar extends Component<Args> {
     this.isUnderline = event.detail.underline === PropertyState.enabled;
     this.isStrikethrough = event.detail.strikethrough === PropertyState.enabled;
     this.isInList = event.detail.isInList === PropertyState.enabled;
+    this.isInTable = event.detail.isInTable === PropertyState.enabled;
     this.canIndent = this.isInList && this.args.editor.canExecuteCommand("indent-list");
     this.canUnindent = this.isInList && this.args.editor.canExecuteCommand("unindent-list");
   }
@@ -71,11 +73,6 @@ export default class EditorToolbar extends Component<Args> {
   @action
   insertNewLi(){
     this.args.editor.executeCommand("insert-newLi");
-  }
-
-  @action
-  insertTable(){
-    this.args.editor.executeCommand("insert-table");
   }
 
   @action
@@ -129,4 +126,31 @@ export default class EditorToolbar extends Component<Args> {
   undo() {
     this.args.editor.undo();
   }
+
+  //Table commands
+  @action
+  insertTable(){
+    this.args.editor.executeCommand("insert-table");
+  }
+
+  @action
+  insertRowBelow(){
+    this.args.editor.executeCommand("insert-row-below");
+  }
+
+  @action
+  insertRowAbove(){
+    this.args.editor.executeCommand("insert-row-above");
+  }
+
+  @action
+  insertColumnAfter(){
+    this.args.editor.executeCommand("insert-column-after");
+  }
+
+  @action
+  insertColumnBefore(){
+    this.args.editor.executeCommand("insert-column-before");
+  }
+
 }

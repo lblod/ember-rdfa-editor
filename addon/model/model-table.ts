@@ -1,4 +1,5 @@
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelSelection from "./model-selection";
 
 export default class ModelTable extends ModelElement {
 
@@ -45,24 +46,7 @@ export default class ModelTable extends ModelElement {
     }
   }
 
-  static getCellIndex(cell: ModelElement) {
-    if(cell.type !== 'td' && cell.type !== 'th') throw Error('Cell is not a TD or a TH');
-    const row = cell.parent;
-    if(!row) throw Error('Table doesn\'t have the expected structure');
-    const xIndex = row.getChildIndex(cell);
-    const rowParent = row.parent;
-    if(!rowParent) throw Error('Table doesn\'t have the expected structure');
-    let yIndex;
-    if(rowParent.type === 'thead') {
-      yIndex = 0;
-    } else {
-      yIndex = rowParent.getChildIndex(row);
-    }
-    return {x: xIndex, y: yIndex};
-  }
-
   addRow(index?: number) {
-    console.log('calling add row')
     const tBody = this.children[1] as ModelElement;
     const tHead = this.children[0] as ModelElement;
     const columns = (tHead.children[0] as ModelElement).children.length;
@@ -86,6 +70,48 @@ export default class ModelTable extends ModelElement {
       const cell = new ModelElement('th');
       row.addChild(cell, index);
     }
+  }
+
+  static getCellIndex(cell: ModelElement) {
+    if(cell.type !== 'td' && cell.type !== 'th') throw Error('Cell is not a TD or a TH');
+    const row = cell.parent;
+    if(!row) throw Error('Table doesn\'t have the expected structure');
+    const xIndex = row.getChildIndex(cell);
+    const rowParent = row.parent;
+    if(!rowParent) throw Error('Table doesn\'t have the expected structure');
+    let yIndex;
+    if(rowParent.type === 'thead') {
+      yIndex = 0;
+    } else {
+      yIndex = rowParent.getChildIndex(row) + 1;
+    }
+    return {x: xIndex, y: yIndex};
+  }
+
+  static getCellFromSelection(selection: ModelSelection) {
+    const commonAncestor = selection.getCommonAncestor();
+    if(!commonAncestor) return null;
+    const cell = commonAncestor.parentElement.findAncestor((node) => {
+      if(node.modelNodeType === 'ELEMENT') {
+        const element = node as ModelElement;
+        if(element.type === 'th' || element.type === 'td') return true;
+      }
+      return false;
+    }) as ModelElement;
+    return cell;
+  }
+
+  static getTableFromSelection(selection: ModelSelection) {
+    const commonAncestor = selection.getCommonAncestor();
+    if(!commonAncestor) return null;
+    const table = commonAncestor.parentElement.findAncestor((node) => {
+      if(node.modelNodeType === 'ELEMENT') {
+        const element = node as ModelElement;
+        if(element.type === 'table') return true;
+      }
+      return false;
+    }) as ModelTable;
+    return table;
   }
   
 }

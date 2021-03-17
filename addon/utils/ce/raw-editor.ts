@@ -20,6 +20,10 @@ import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi
 import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
 import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
 import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
+import InsertRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-row-below-command";
+import InsertRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-row-above-command";
+import InsertColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-column-after-command";
+import InsertColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-column-before-command";
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
  * Any editing operations should be implemented as {@link Command commands}. External plugins can register their own commands.
@@ -63,6 +67,10 @@ class RawEditor extends EmberObject {
     this.registerCommand(new InsertNewLineCommand(this.model));
     this.registerCommand(new InsertNewLiCommand(this.model));
     this.registerCommand(new InsertTableCommand(this.model));
+    this.registerCommand(new InsertRowBelowCommand(this.model));
+    this.registerCommand(new InsertRowAboveCommand(this.model));
+    this.registerCommand(new InsertColumnAfterCommand(this.model));
+    this.registerCommand(new InsertColumnBeforeCommand(this.model));
   }
 
   /**

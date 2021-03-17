@@ -59,17 +59,6 @@ export default class InsertTableCommand extends Command {
     }
 
     const table = new ModelTable(2,2);
-    
-    setTimeout(() => {
-      table.addRow();
-      this.model.write();
-    }, 1000);
-
-    setTimeout(() => {
-      table.addColumn();
-      this.model.write();
-    }, 3000);
-
 
     //handle zero length selection
     if (selection.isCollapsed) {
