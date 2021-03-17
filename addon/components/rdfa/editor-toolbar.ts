@@ -135,22 +135,22 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   insertRowBelow(){
-    this.args.editor.executeCommand("insert-row-below");
+    this.args.editor.executeCommand("insert-table-row-below");
   }
 
   @action
   insertRowAbove(){
-    this.args.editor.executeCommand("insert-row-above");
+    this.args.editor.executeCommand("insert-table-row-above");
   }
 
   @action
   insertColumnAfter(){
-    this.args.editor.executeCommand("insert-column-after");
+    this.args.editor.executeCommand("insert-table-column-after");
   }
 
   @action
   insertColumnBefore(){
-    this.args.editor.executeCommand("insert-column-before");
+    this.args.editor.executeCommand("insert-table-column-before");
   }
 
 }

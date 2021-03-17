@@ -5,8 +5,8 @@ import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 
-export default class InsertRowBelowCommand extends Command {
-  name = "insert-row-below";
+export default class InsertTableColumnBeforeCommand extends Command {
+  name = "insert-table-column-before";
 
   constructor(model: Model) {
     super(model);
@@ -35,7 +35,13 @@ export default class InsertRowBelowCommand extends Command {
     }
 
     const position = ModelTable.getCellIndex(cell);
-    table.addRow(position.y);
+
+    if(!position || position.x === null) {
+      //Shouldn't happen
+      throw new Error('Position is null');
+    }
+
+    table.addColumn(position.x);
 
     this.model.write();
   }

@@ -5,8 +5,8 @@ import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 
-export default class InsertRowAboveCommand extends Command {
-  name = "insert-row-above";
+export default class InsertTableColumnAfterCommand extends Command {
+  name = "insert-table-column-after";
 
   constructor(model: Model) {
     super(model);
@@ -22,23 +22,23 @@ export default class InsertRowAboveCommand extends Command {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
-
     const cell = ModelTable.getCellFromSelection(selection);
     if(!cell) {
-      throw Error('The selection is not inside a cell');
+      throw new Error('The selection is not inside a cell');
     }
 
     const table = ModelTable.getTableFromSelection(selection);
 
     if(!table) {
-      throw Error('The selection is not inside a table');
+      throw new Error('The selection is not inside a table');
     }
 
     const position = ModelTable.getCellIndex(cell);
-    if(position.y === 0) {
-      throw Error('Cannot add row at the start of the table');
+    if(!position || position.x === null) {
+      //Shouldn't happen
+      throw new Error('Position is null');
     }
-    table.addRow(position.y - 1);
+    table.addColumn(position.x + 1);
 
     this.model.write();
   }

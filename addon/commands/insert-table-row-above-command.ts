@@ -5,8 +5,8 @@ import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 
-export default class InsertColumnBeforeCommand extends Command {
-  name = "insert-column-before";
+export default class InsertTableRowAboveCommand extends Command {
+  name = "insert-table-row-above";
 
   constructor(model: Model) {
     super(model);
@@ -35,13 +35,10 @@ export default class InsertColumnBeforeCommand extends Command {
     }
 
     const position = ModelTable.getCellIndex(cell);
-
-    if(!position || position.x === null) {
-      //Shouldn't happen
-      throw new Error('Position is null');
+    if(position.y === 0) {
+      throw Error('Cannot add row at the start of the table');
     }
-
-    table.addColumn(position.x);
+    table.addRow(position.y - 1);
 
     this.model.write();
   }

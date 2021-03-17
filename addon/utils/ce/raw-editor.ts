@@ -20,10 +20,10 @@ import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi
 import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
 import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
 import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
-import InsertRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-row-below-command";
-import InsertRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-row-above-command";
-import InsertColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-column-after-command";
-import InsertColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-column-before-command";
+import InsertRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
+import InsertRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
+import InsertColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
+import InsertColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
  * Any editing operations should be implemented as {@link Command commands}. External plugins can register their own commands.
