@@ -1,7 +1,7 @@
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import Fragment from "@lblod/ember-rdfa-editor/model/fragment";
-import {NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
@@ -82,6 +82,21 @@ export default abstract class ModelNode {
     return this._parent;
   }
 
+  get root(): ModelElement {
+    let root = this.parent;
+    if(!root) {
+      if(ModelNode.isModelElement(this)) {
+        return this;
+      } else {
+        throw new ModelError("Non-element node cannot be root");
+      }
+    }
+    while (root.parent) {
+      root = root.parent;
+    }
+    return root;
+  }
+
   set parent(value: ModelElement | null) {
     this._parent = value;
   }
@@ -124,7 +139,7 @@ export default abstract class ModelNode {
     const result = [];
 
     let cur: ModelNode | null = this;
-    while (cur) {
+    while (cur.parent) {
       result.push(cur.getOffset());
       cur = cur.parent;
     }

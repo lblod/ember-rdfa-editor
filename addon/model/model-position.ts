@@ -1,6 +1,6 @@
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {ModelError, PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 
@@ -100,12 +100,14 @@ export default class ModelPosition {
       return this.parentCache;
     }
     let cur: ModelNode = this.root;
-    for (let i = 0; i < this.path.length - 1; i++) {
-      if (ModelNode.isModelElement(cur)) {
-        cur = cur.childAtOffset(this.path[i]);
-      } else {
-        throw new PositionError("invalid path");
-      }
+    let i = 0;
+
+    while(ModelNode.isModelElement(cur) && i < this.path.length - 1) {
+      cur = cur.childAtOffset(this.path[i]);
+      i++;
+    }
+    if(i > 0 && i !== this.path.length - 1) {
+      throw new PositionError("invalid path");
     }
     this.parentCache = cur as ModelElement;
     return cur as ModelElement;
@@ -179,6 +181,19 @@ export default class ModelPosition {
     }
     return RelativePosition.EQUAL;
 
+  }
+
+  split() {
+    this.parent.split(this.parentOffset);
+    this.parentCache = null;
+  }
+
+  nodeAfter(): ModelNode | null {
+    return this.parent.childAtOffset(this.parentOffset) || null;
+
+  }
+  nodeBefore(): ModelNode | null {
+    return this.parent.childAtOffset(this.parentOffset - 1) || null;
   }
 
 }

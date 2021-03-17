@@ -6,7 +6,7 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 /**
  * Writer to convert a {@link ModelSelection} to a {@link Selection}
- * Note, unlike most readers, this is not a functional reader, since we cannot (or should not)
+ * Note, unlike most writers, this is not a functional writer, since we cannot (or should not)
  * create a {@link Selection}
  */
 export default class SelectionWriter implements Writer<ModelSelection, void> {

@@ -4,16 +4,15 @@ import {stringToVisibleText} from "@lblod/ember-rdfa-editor/editor/utils";
 
 const NON_BREAKING_SPACE = '\u00A0';
 export type TextAttribute = "bold" | "italic" | "underline" | "strikethrough" | "highlighted";
+const TEXT_ATTRIBUTES: TextAttribute[] = ["bold", "italic", "underline", "strikethrough", "highlighted"];
 
 export default class ModelText extends ModelNode {
   modelNodeType: ModelNodeType = "TEXT";
   private _content: string;
-  private _textAttributeMap: Map<TextAttribute, boolean>;
 
   constructor(content: string = "", config?: NodeConfig) {
     super(config);
     this._content = content;
-    this._textAttributeMap = new Map<TextAttribute, boolean>();
   }
 
   get content(): string {
@@ -28,14 +27,6 @@ export default class ModelText extends ModelNode {
     return this._content.length;
   }
 
-  get textAttributeMap(): Map<TextAttribute, boolean> {
-    return this._textAttributeMap;
-  }
-
-  set textAttributeMap(value: Map<TextAttribute, boolean>) {
-    this._textAttributeMap = value;
-  }
-
   get isBlock() {
     return false;
   }
@@ -45,11 +36,19 @@ export default class ModelText extends ModelNode {
   }
 
   getTextAttribute(key: TextAttribute): boolean {
-    return this._textAttributeMap.get(key) || false;
+    return Boolean(this.attributeMap.get(key)) || false;
+  }
+
+  getTextAttributes(): Array<[TextAttribute, boolean]> {
+    const rslt: Array<[TextAttribute, boolean]> = [];
+    for (const textAttribute of TEXT_ATTRIBUTES) {
+      rslt.push([textAttribute, Boolean(this.attributeMap.get(textAttribute))]);
+    }
+    return rslt;
   }
 
   setTextAttribute(key: TextAttribute, value: boolean) {
-    this._textAttributeMap.set(key, value);
+    this.attributeMap.set(key, String(value));
   }
 
   toggleTextAttribute(key: TextAttribute) {
@@ -66,7 +65,6 @@ export default class ModelText extends ModelNode {
     result.attributeMap = new Map<string, string>(this.attributeMap);
     result.modelNodeType = this.modelNodeType;
     result.content = this.content;
-    result.textAttributeMap = new Map<TextAttribute, boolean>(this.textAttributeMap);
     return result;
 
   }

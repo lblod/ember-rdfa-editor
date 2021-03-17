@@ -132,6 +132,12 @@ export default class ModelSelection {
     this._ranges = [];
   }
 
+  selectRange(range: ModelRange, rightToLeft: boolean = false) {
+    this.clearRanges();
+    this.addRange(range);
+    this._isRightToLeft = rightToLeft;
+  }
+
   /**
    * Gets the range at index
    * @param index

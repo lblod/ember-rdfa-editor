@@ -3,12 +3,12 @@ import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {getWindowSelection, isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError, NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
 import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
+import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/ModelMutator";
 
 
 /**
@@ -50,7 +50,7 @@ export default class Model {
   set rootNode(rootNode: HTMLElement) {
     this.modelSelectionTracker.stopTracking();
     this._rootNode = rootNode;
-    if(this._rootNode) {
+    if (this._rootNode) {
       this.modelSelectionTracker.startTracking();
     }
   }
@@ -72,7 +72,7 @@ export default class Model {
     if (!newRoot) {
       throw new Error("Could not create a rich root");
     }
-    if(!ModelNode.isModelElement(newRoot)) {
+    if (!ModelNode.isModelElement(newRoot)) {
       throw new Error("root model node has to be an element");
     }
     this._rootModelNode = newRoot;
@@ -114,12 +114,6 @@ export default class Model {
     this.selectionWriter.write(this.selection);
   }
 
-  generateUuid() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  }
 
   /**
    * Bind a modelNode to a domNode. This ensures that we can reach the corresponding node from
@@ -137,9 +131,13 @@ export default class Model {
    * Get the corresponding modelNode for domNode
    * @param domNode
    */
-  getModelNodeFor(domNode: Node) {
-    if(!this.nodeMap ) return;
-    return this.nodeMap.get(domNode);
+  public getModelNodeFor(domNode: Node): ModelNode {
+    if (!this.nodeMap) throw new ModelError("uninitialized nodeMap");
+    const rslt = this.nodeMap.get(domNode);
+    if(!rslt) {
+      throw new ModelError("No boundnode for domNode");
+    }
+    return rslt;
   }
 
   /**
@@ -157,6 +155,13 @@ export default class Model {
   }
 
 
+  change(callback: (mutator: ModelMutator) => void) {
+    const mutator = new ModelMutator();
+    callback(mutator);
+    mutator.flush();
+    this.write();
+  }
+
   static getChildIndex(child: Node): number | null {
     const parent = child.parentNode;
     if (!parent) {
@@ -168,7 +173,7 @@ export default class Model {
       if (child === candidate) {
         return index;
       }
-      index ++;
+      index++;
     }
     return null;
   }

@@ -66,3 +66,13 @@ export class PositionError extends CustomError{}
 export class AssertionError extends CustomError{}
 
 export class IndexOutOfRangeError extends CustomError {}
+
+export class ModelRangeError extends SelectionError {}
+export class UnconfinedRangeError extends ModelRangeError {
+  constructor() {
+    super("Range is not confined to a single parent");
+  }
+}
+
+
+export class OperationError extends CustomError {}

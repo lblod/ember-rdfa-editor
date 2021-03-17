@@ -1,8 +1,9 @@
 import Command from "../command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 export default abstract class SetPropertyCommand extends Command {
   constructor(model: Model) {
@@ -39,9 +40,11 @@ export default abstract class SetPropertyCommand extends Command {
     if(selection.isCollapsed) {
       selection.selectNode(nodes[0]);
     } else {
-      selection.anchor = ModelPosition.fromParent(this.model.rootModelNode, nodes[0], 0);
+      const start = ModelPosition.fromParent(this.model.rootModelNode, nodes[0], 0);
       const last = nodes[nodes.length - 1];
-      selection.focus = ModelPosition.fromParent(this.model.rootModelNode, last, last.length);
+      const end = ModelPosition.fromParent(this.model.rootModelNode, last, last.length);
+      const newRange = new ModelRange(start, end);
+      selection.selectRange(newRange);
     }
 
     this.model.write(commonAncestor.parentElement);

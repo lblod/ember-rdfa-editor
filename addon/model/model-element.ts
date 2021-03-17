@@ -96,15 +96,15 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   removeChild(child: ModelNode) {
     const index = this.children.indexOf(child);
-    if(child.previousSibling) {
+    if (child.previousSibling) {
 
       child.previousSibling.nextSibling = child.nextSibling;
     }
-    if(child.nextSibling) {
+    if (child.nextSibling) {
       child.nextSibling.previousSibling = child.previousSibling;
     }
 
-    if(this.length > index + 1) {
+    if (this.length > index + 1) {
       this.children[index + 1].previousSibling = this.children[index - 1] || null;
     }
     this.children.splice(index, 1);
@@ -124,7 +124,9 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   split(index: number): { left: ModelElement, right: ModelElement } {
-    if(index < 0) {
+
+
+    if (index < 0) {
       index = 0;
     }
     const leftChildren = this.children.slice(0, index);
@@ -152,7 +154,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    */
   unwrap(withBreaks: boolean = false) {
     const parent = this.parent;
-    if(!parent) {
+    if (!parent) {
       throw new ModelError("Can't unwrap root node");
     }
     let insertIndex = this.index! + 1;
@@ -161,7 +163,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     for (const child of this.children) {
       this.parent?.addChild(child, insertIndex);
       insertIndex++;
-      if(withBreaks){
+      if (withBreaks) {
         this.parent?.addChild(new ModelElement("br"), insertIndex);
         insertIndex++;
       }
@@ -169,12 +171,13 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     this.parent?.removeChild(this);
 
   }
+
   hasVisibleText(): boolean {
-    if(this.type === "br") {
+    if (this.type === "br") {
       return true;
     }
     for (const child of this.children) {
-      if(child.hasVisibleText()) {
+      if (child.hasVisibleText()) {
         return true;
       }
     }
@@ -212,18 +215,21 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     return {left: secondSplit.left, middle: secondSplit.right, right: firstSplit.right};
   }
 
-  offsetToIndex(offset: number) :number {
+  offsetToIndex(offset: number): number {
     let offsetCounter = 0;
     let indexCounter = 0;
     for (const child of this.children) {
-      const childOffsetSize = child.offsetSize;
-      offsetCounter += childOffsetSize;
-      if(offsetCounter >= offset) {
+      offsetCounter += child.offsetSize;
+      if (offsetCounter > offset) {
         return indexCounter;
       }
       indexCounter++;
     }
     return indexCounter;
+  }
+
+  indexToOffset(index: number): number {
+    return this.children[index].getOffset();
   }
 
   childAtOffset(offset: number): ModelNode {

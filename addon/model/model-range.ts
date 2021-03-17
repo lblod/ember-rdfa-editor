@@ -1,10 +1,7 @@
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelNodeFinder, {
-  ModelNodeFinderFilter,
-  ModelNodeFinderPredicate
-} from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
-import {Direction, FilterAndPredicate} from "@lblod/ember-rdfa-editor/model/util/types";
+import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
+import {Direction, FilterAndPredicate, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
@@ -18,6 +15,16 @@ export default class ModelRange {
 
   static fromParents(root: ModelElement, start: ModelNode, startOffset: number, end: ModelNode, endOffset: number): ModelRange {
     return new ModelRange(ModelPosition.fromParent(root, start, startOffset), ModelPosition.fromParent(root, end, endOffset));
+  }
+  static fromPaths(root: ModelElement, path1: number[], path2: number[]) {
+    const pos1 = ModelPosition.from(root, path1);
+    const pos2 = ModelPosition.from(root, path2);
+    const cmpResult = pos1.compare(pos2);
+    if(cmpResult === RelativePosition.AFTER) {
+      return new ModelRange(pos2, pos1);
+    } else {
+      return new ModelRange(pos1, pos2);
+    }
   }
 
   constructor(start: ModelPosition, end: ModelPosition = start) {
@@ -34,6 +41,10 @@ export default class ModelRange {
 
   set start(value: ModelPosition) {
     this._start = value;
+  }
+
+  get root(): ModelElement {
+    return this._start.root;
   }
 
   /**
@@ -104,6 +115,11 @@ export default class ModelRange {
    */
   getTextNodes(): ModelText[] {
     return this.getNodes({filter: ModelNode.isModelText});
+  }
+
+
+  isConfined() {
+    return this.start.parent === this.end.parent;
   }
 }
 
