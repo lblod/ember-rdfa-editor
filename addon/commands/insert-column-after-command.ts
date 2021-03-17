@@ -5,7 +5,7 @@ import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 
-export default class InsertRowBelowCommand extends Command {
+export default class InsertColumnAfterCommand extends Command {
   name = "insert-column-after";
 
   constructor(model: Model) {
