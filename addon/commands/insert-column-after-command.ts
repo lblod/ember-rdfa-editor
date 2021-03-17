@@ -34,7 +34,7 @@ export default class InsertColumnAfterCommand extends Command {
     }
 
     const position = ModelTable.getCellIndex(cell);
-    if(!position || !position.x) {
+    if(!position || position.x === null) {
       //Shouldn't happen
       throw new Error('Position is null');
     }
