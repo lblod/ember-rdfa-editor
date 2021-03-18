@@ -1,8 +1,8 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
+import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
@@ -147,10 +147,7 @@ export default class ModelSelection {
    * @return whether the selection is collapsed
    */
   get isCollapsed() {
-    if (!(this.anchor && this.focus)) {
-      return true;
-    }
-    return this.anchor.sameAs(this.focus);
+    return this.lastRange?.collapsed;
   }
 
 
@@ -170,6 +167,11 @@ export default class ModelSelection {
     return this.getTextPropertyStatus("strikethrough");
   }
 
+  /**
+   *
+   * @param config
+   * @deprecated use {@link ModelTreeWalker} instead
+   */
   findAllInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): Iterable<T> | null {
 
     const {filter, predicate} = config;
@@ -226,6 +228,10 @@ export default class ModelSelection {
     }
   }
 
+  /**
+   * @param config
+   * @deprecated use {@link ModelTreeWalker} instead
+   */
   findAllInSelectionOrAncestors<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>) {
     const noop = () => true;
     const filter = config.filter || noop;
@@ -242,6 +248,10 @@ export default class ModelSelection {
     return result;
   }
 
+  /**
+   * @param config
+   * @deprecated use {@link ModelTreeWalker} instead
+   */
   findFirstInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): T | null {
     const iterator = this.findAllInSelection<T>(config);
     if (!iterator) {
@@ -288,21 +298,6 @@ export default class ModelSelection {
 
   /**
    * Generic method for determining the status of a textattribute in the selection.
-   * The status is as follows:
-   * TODO: test this instead of writing it in comments, as this will inevitably get out of date
-   *
-   * collapsed selection
-   * ----
-   * in textnode with attribute -> ENABLED
-   * in textnode without attribute -> DISABLED
-   * not in textnode -> UNKNOWN
-   *
-   * uncollapsed selection
-   * ----
-   * all selected textnodes have attribute -> ENABLED
-   * some selected textnodes have attribute, some don't -> UNKNOWN
-   * none of the selected textnodes have attribute -> DISABLED
-   *
    * @param property
    */
   getTextPropertyStatus(property: TextAttribute): PropertyState {

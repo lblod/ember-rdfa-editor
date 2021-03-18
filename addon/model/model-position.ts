@@ -57,6 +57,7 @@ export default class ModelPosition {
    * Get a slice of child positions of the commonAncestor between pos1 and pos2
    * @param pos1
    * @param pos2
+   * @deprecated use {@link ModelTreeWalker} instead
    */
   static getTopPositionsBetween(pos1: ModelPosition, pos2: ModelPosition): ModelPosition[] | null {
     const commonAncestor = ModelPosition.getCommonAncestor(pos1, pos2);
@@ -120,6 +121,7 @@ export default class ModelPosition {
 
   /**
    * Get the first ancestor which is a ModelElement
+   * @deprecated use {@link parent} as this is now identical
    */
   get parentElement(): ModelElement {
     return this.parent;
@@ -191,7 +193,7 @@ export default class ModelPosition {
   /**
    * Split the textnode at the position. If position is not inside a
    * textNode, do nothing. If splitting of elements is needed, use
-   * {@link splitTree}.
+   * {@link splitParent}.
    * @param saveEdges If true, don't split when the position is before
    * the first or after the last character
    */
@@ -212,15 +214,27 @@ export default class ModelPosition {
     this.parentCache = null;
   }
 
-  splitTree() {
+  /**
+   * Split the parent element at this position
+   * TODO implement this
+   */
+  splitParent() {
     throw new NotImplementedError();
   }
 
+  /**
+   * If position is "inside" a textnode, this will return that node.
+   * Otherwise, return the node immediately after the cursor
+   */
   nodeAfter(): ModelNode | null {
     return this.parent.childAtOffset(this.parentOffset) || null;
 
   }
 
+  /**
+   * If position is "inside" a textnode, this will return that node.
+   * Otherwise, return the node immediately before the cursor
+   */
   nodeBefore(): ModelNode | null {
     return this.parent.childAtOffset(this.parentOffset - 1) || null;
   }

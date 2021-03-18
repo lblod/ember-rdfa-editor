@@ -1,12 +1,14 @@
 /**
- * TreeWalker implementation as specified in the DOM spec, but for ModelNodes
- * and working with modelpositions
+ * TreeWalker implementation based on specification of the TreeWalker in the DOM spec, but for ModelNodes
+ * and working with a {@link ModelRange}
  * https://dom.spec.whatwg.org/#interface-treewalker
+ *
+ * Extensions include support for stopping at an end node, the implementation of the Iterable interface
  */
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {ModelError, NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 export enum FilterResult {

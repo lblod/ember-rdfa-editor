@@ -53,6 +53,15 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     return !nonBlockNodes.has(this.type);
   }
 
+  /**
+   * Get the largest valid offset inside this element.
+   * You can think of it as the cursor position right before the
+   * "<" of the closing tag in html
+   */
+  getMaxOffset() {
+    return this.lastChild.getOffset() + this.lastChild.offsetSize;
+  }
+
   clone(): ModelElement {
     const result = new ModelElement(this.type);
     result.attributeMap = new Map<string, string>(this.attributeMap);
@@ -123,6 +132,12 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
   }
 
+  /**
+   * Split this element, returning both sides of the split.
+   * Mostly for internal use, prefer using {@link ModelPosition.splitParent}
+   * where possible
+   * @param index
+   */
   split(index: number): { left: ModelElement, right: ModelElement } {
 
 
@@ -215,6 +230,12 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     return {left: secondSplit.left, middle: secondSplit.right, right: firstSplit.right};
   }
 
+  /**
+   * Convert an offset to the index of the child that either contains
+   * that offset (when the offset points to a position inside a textnode)
+   * or right after that offset
+   * @param offset
+   */
   offsetToIndex(offset: number): number {
     let offsetCounter = 0;
     let indexCounter = 0;
@@ -228,13 +249,27 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     return indexCounter;
   }
 
+  /**
+   * Convert an index to the startoffset of the child at that index
+   * If index is one more than the index of the last child, return the
+   * {@link getMaxOffset maxOffset}
+   *
+   * This behavior is to facilitate converting domOffsets (which are a bit like
+   * weird indices)
+   *
+   * @param index
+   */
   indexToOffset(index: number): number {
     if(index === this.length) {
-      return this.lastChild.getOffset() + this.lastChild.offsetSize;
+      return this.getMaxOffset();
     }
     return this.children[index].getOffset();
   }
 
+  /**
+   * Return the child containing, or immediately after, the offset
+   * @param offset
+   */
   childAtOffset(offset: number): ModelNode {
     return this.children[this.offsetToIndex(offset)];
   }

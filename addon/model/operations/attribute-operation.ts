@@ -1,8 +1,6 @@
 import ModelRange from "../model-range";
 import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
 import {UnconfinedRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
-import NodeFinder from "@lblod/ember-rdfa-editor/model/util/node-finder";
-import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 
 export default class AttributeOperation implements Operation {
 

@@ -69,6 +69,12 @@ export default class ModelText extends ModelNode {
 
   }
 
+  /**
+   * Split this textNode at the index, returning both sides of the split.
+   * Mostly for internal use, prefer using {@link ModelPosition.split} where
+   * possible.
+   * @param index
+   */
   split(index: number): { left: ModelText, right: ModelText } {
     let leftContent = this.content.substring(0, index);
     if (leftContent.endsWith(" ")) {

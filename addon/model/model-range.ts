@@ -78,6 +78,7 @@ export default class ModelRange {
 
   /**
    * Get all child positions of the commonAncestor that are touched by the selection
+   * @deprecated
    */
   getSelectedTopPositions(): ModelPosition[] | null {
     return ModelPosition.getTopPositionsBetween(this.start, this.end);
@@ -87,6 +88,7 @@ export default class ModelRange {
    * Get a {@link ModelNodeFinder} which searches for nodes between start and end, or the other way round
    * @param direction
    * @param config
+   * @deprecated use {@link ModelTreeWalker} instead
    */
   getNodeFinder<T extends ModelNode = ModelNode>(direction: Direction = Direction.FORWARDS, config: FilterAndPredicate<T>): ModelNodeFinder<T> {
     const {filter, predicate} = config;
@@ -104,6 +106,7 @@ export default class ModelRange {
   /**
    * Eagerly get all nodes between start and end, filtered by filter
    * @param config
+   * @deprecated use {@link ModelTreeWalker} instead
    */
   getNodes<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T> = {}): T[] {
     const finder = this.getNodeFinder<T>(Direction.FORWARDS, config);
@@ -112,13 +115,17 @@ export default class ModelRange {
 
   /**
    * Get all {@link ModelText} nodes between start and end
+   * @deprecated use {@link ModelTreeWalker} instead
    */
   getTextNodes(): ModelText[] {
     return this.getNodes({filter: ModelNode.isModelText});
   }
 
 
-  isConfined() {
+  /**
+   * Whether this range is confined, aka it is fully contained within one parentElement
+   */
+  isConfined(): boolean {
     return this.start.parent === this.end.parent;
   }
 }

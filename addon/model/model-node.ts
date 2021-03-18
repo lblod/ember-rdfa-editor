@@ -120,11 +120,19 @@ export default abstract class ModelNode {
 
   abstract get isBlock(): boolean;
 
-
+  /**
+   * Represents how much "space" this node takes up in it's parent
+   * Elements take up 1 offset, textnodes take up as many offsets as they
+   * have characters
+   */
   get offsetSize(): number {
     return 1;
   }
 
+  /**
+   * Get the offset of the cursorposition right before this node
+   * In other words, get the offset at which this node starts in the parent
+   */
   getOffset(): number {
     let counter = 0;
     let sibling = this.previousSibling;
@@ -135,6 +143,9 @@ export default abstract class ModelNode {
     return counter;
   }
 
+  /**
+   * Get the path from root to the start of this node
+   */
   getOffsetPath(): number[] {
     const result = [];
 
@@ -149,6 +160,10 @@ export default abstract class ModelNode {
 
   abstract hasVisibleText(): boolean;
 
+  /**
+   * Get the path of indices from root
+   * @deprecated prefer using offsets instead of indices
+   */
   getIndexPath(): number[] {
     const result = [];
 
@@ -198,6 +213,9 @@ export default abstract class ModelNode {
   setTextAttribute(_key: TextAttribute, _value: boolean) {
   }
 
+  /**
+   * @deprecated use {@link ModelTreeWalker} instead
+   */
   findAncestor(predicate: (node: ModelNode) => boolean, includeSelf: boolean = true): ModelNode | null {
     if (includeSelf) {
       if (predicate(this)) {

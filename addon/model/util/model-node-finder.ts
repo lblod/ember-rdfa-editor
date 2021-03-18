@@ -8,6 +8,7 @@ export type ModelNodeFinderFilter<R extends ModelNode> = NodeFinderFilter<ModelN
 export type ModelNodeFinderPredicate<R extends ModelNode> = NodeFinderPredicate<ModelNode, R>
 /**
  * {@link ModelNode} implementation of a {@link NodeFinder}
+ * @deprecated use {@link ModelTreeWalker} instead
  */
 export default class ModelNodeFinder<R extends ModelNode = ModelNode> extends NodeFinder<ModelNode, R> {
 
