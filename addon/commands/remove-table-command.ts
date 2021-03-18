@@ -28,6 +28,12 @@ export default class RemoveTableCommand extends Command {
     if(!table) {
       throw new Error('The selection is not inside a table');
     }
+    
+    if(table.parent) {
+      selection.collapseOn(table.parent);
+      this.model.write();
+    }
+
     table.removeTable();
 
     this.model.write();
