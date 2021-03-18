@@ -30,10 +30,10 @@ export default abstract class SetPropertyCommand extends Command {
       const node = new ModelText(INVISIBLE_SPACE);
       node.setTextAttribute(property, value);
       const insertionIndex = range.start.parent.offsetToIndex(range.start.parentOffset);
-      range.start.parent.addChild(node, insertionIndex + 1);
+      range.start.parent.addChild(node, insertionIndex );
 
       //put the cursor inside that node
-      const cursorPath = range.start.path;
+      const cursorPath = node.getOffsetPath();
       const newRange = ModelRange.fromPaths(range.root, cursorPath, cursorPath);
       selection.selectRange(newRange);
 
