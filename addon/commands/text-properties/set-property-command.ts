@@ -1,52 +1,59 @@
 import Command from "../command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import {FilterResult, ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export default abstract class SetPropertyCommand extends Command {
   constructor(model: Model) {
     super(model);
   }
+
   execute(property: TextAttribute, value: boolean, selection: ModelSelection = this.model.selection) {
 
-    if(!ModelSelection.isWellBehaved(selection)) {
+
+    if (!ModelSelection.isWellBehaved(selection)) {
       console.info("Not executing SetPropertyCommand because selection is missing");
       return;
     }
-    const commonAncestor = selection.getCommonAncestor();
-    if(!commonAncestor) {
-      console.info("Not executing SetPropertyCommand because no common ancestor");
-      return;
-    }
 
-    // get start and end regardless of selection direction
-    const start = selection.lastRange.start;
-    const end = selection.lastRange.end;
+    const range = selection.lastRange;
 
+    if (range.collapsed) {
 
-    const nodes = selection.lastRange.getTextNodes();
+      range.start.split(false);
 
-    nodes[nodes.length - 1] = nodes[nodes.length - 1].split(end.parentOffset).left;
-    nodes[0] = nodes[0].split(start.parentOffset).right;
-
-
-
-    for (const node of nodes) {
+      //insert new textNode with property set
+      const node = new ModelText(INVISIBLE_SPACE);
       node.setTextAttribute(property, value);
-    }
+      const insertionIndex = range.start.parent.offsetToIndex(range.start.parentOffset);
+      range.start.parent.addChild(node, insertionIndex + 1);
 
-    if(selection.isCollapsed) {
-      selection.selectNode(nodes[0]);
-    } else {
-      const start = ModelPosition.fromParent(this.model.rootModelNode, nodes[0], 0);
-      const last = nodes[nodes.length - 1];
-      const end = ModelPosition.fromParent(this.model.rootModelNode, last, last.length);
-      const newRange = new ModelRange(start, end);
+      //put the cursor inside that node
+      const cursorPath = range.start.path;
+      const newRange = ModelRange.fromPaths(range.root, cursorPath, cursorPath);
       selection.selectRange(newRange);
-    }
 
-    this.model.write(commonAncestor.parentElement);
+    } else {
+
+      range.start.split(true);
+      range.end.split(true);
+
+      const walker = new ModelTreeWalker({
+        range,
+        filter: (node: ModelNode) => {
+          return ModelNode.isModelText(node) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP;
+        }
+      });
+      const textNodes = Array.from(walker);
+
+      for (const node of textNodes) {
+        node.setTextAttribute(property, value);
+      }
+    }
+    this.model.write();
   }
 }

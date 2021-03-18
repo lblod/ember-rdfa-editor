@@ -1,8 +1,9 @@
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError, NotImplementedError, PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
 /**
  * Represents a single position in the model. In contrast to the dom,
@@ -38,7 +39,7 @@ export default class ModelPosition {
       throw new SelectionError("offset out of range");
     }
     const result = new ModelPosition(root);
-    result.path = parent.getIndexPath();
+    result.path = parent.getOffsetPath();
     result.path.push(offset);
     return result;
   }
@@ -102,11 +103,15 @@ export default class ModelPosition {
     let cur: ModelNode = this.root;
     let i = 0;
 
-    while(ModelNode.isModelElement(cur) && i < this.path.length - 1) {
+    while (ModelNode.isModelElement(cur) && i < this.path.length - 1) {
       cur = cur.childAtOffset(this.path[i]);
       i++;
     }
-    if(i > 0 && i !== this.path.length - 1) {
+    if (ModelNode.isModelText(cur)) {
+      this.parentCache = cur.parent;
+      return cur.parent!;
+    }
+    if (i > 0 && i !== this.path.length - 1) {
       throw new PositionError("invalid path");
     }
     this.parentCache = cur as ModelElement;
@@ -183,15 +188,39 @@ export default class ModelPosition {
 
   }
 
-  split() {
-    this.parent.split(this.parentOffset);
+  /**
+   * Split the textnode at the position. If position is not inside a
+   * textNode, do nothing. If splitting of elements is needed, use
+   * {@link splitTree}.
+   * @param saveEdges If true, don't split when the position is before
+   * the first or after the last character
+   */
+  split(saveEdges: boolean = false) {
+    const before = this.nodeBefore();
+    const after = this.nodeAfter();
+
+    if (before === after) {
+      if (!ModelNode.isModelText(before)) {
+        throw new ModelError("Invalid state, cursor inside a node with offsetSize <= 1");
+      } else {
+        if (saveEdges && (this.parentOffset === 0 || this.parentOffset === before.length)) {
+          return;
+        }
+        before.split(this.parentOffset - before.getOffset());
+      }
+    }
     this.parentCache = null;
+  }
+
+  splitTree() {
+    throw new NotImplementedError();
   }
 
   nodeAfter(): ModelNode | null {
     return this.parent.childAtOffset(this.parentOffset) || null;
 
   }
+
   nodeBefore(): ModelNode | null {
     return this.parent.childAtOffset(this.parentOffset - 1) || null;
   }

@@ -22,7 +22,6 @@ enum TraverseType {
 export type ModelNodeFilter = (node: ModelNode) => FilterResult;
 
 export interface ModelTreeWalkerConfig {
-  root: ModelElement;
   filter?: ModelNodeFilter;
   range: ModelRange;
 }
@@ -32,27 +31,20 @@ export class ModelTreeWalker implements Iterable<ModelNode> {
   private readonly _filter?: ModelNodeFilter;
   private _currentNode: ModelNode;
   private hasReturnedStartNode: boolean = false;
-  private nodeAfterEnd: ModelNode | null = null;
+  private readonly nodeAfterEnd: ModelNode | null = null;
+  private hasSeenEnd: boolean = false;
 
   constructor(config: ModelTreeWalkerConfig) {
-    const {root, filter, range: {start: from, end: to}} = config;
-    this._root = root;
+    const {filter, range} = config;
+    const {start: from, end: to} = range;
+    this._root = range.root;
     this._filter = filter;
-    if (from.path.length > 0) {
-      const startNode = from.nodeAfter();
-      if (!startNode) {
-        throw new ModelError();
-      }
-      this._currentNode = startNode;
-      this.nodeAfterEnd = to.nodeAfter();
-      if (this.nodeAfterEnd === startNode) {
-        let node = this.nodeAfterEnd.nextSibling;
-        if (!node) {
-          node = this.nodeAfterEnd.parent;
-        }
-        this.nodeAfterEnd = node;
 
-      }
+    if (from.path.length > 0) {
+
+      const startNode = this.getStartNodeFromPosition(from);
+      this.nodeAfterEnd = this.getNodeAfterEndFromPosition(to, startNode);
+      this._currentNode = startNode;
     } else {
       this._currentNode = this.root;
     }
@@ -149,6 +141,9 @@ export class ModelTreeWalker implements Iterable<ModelNode> {
   }
 
   nextNode(): ModelNode | null {
+    if (this.hasSeenEnd) {
+      return null;
+    }
     let node = this._currentNode;
     let result = FilterResult.FILTER_ACCEPT;
     // eslint-disable-next-line no-constant-condition
@@ -184,6 +179,41 @@ export class ModelTreeWalker implements Iterable<ModelNode> {
 
   }
 
+  private getStartNodeFromPosition(startPosition: ModelPosition): ModelNode {
+    let startNode = startPosition.nodeAfter();
+    if (startNode) {
+      return startNode;
+    }
+    startNode = startPosition.parent;
+    if (!startNode) {
+      return this.root;
+    }
+    while (!startNode.nextSibling && startNode !== this.root) {
+      startNode = startNode.parent!;
+    }
+    if (startNode === this.root) {
+      return startNode;
+    }
+    return startNode!.nextSibling!;
+  }
+
+  private getNodeAfterEndFromPosition(position: ModelPosition, startNode: ModelNode): ModelNode | null {
+    let nodeAfterEnd = position.nodeAfter();
+    if (nodeAfterEnd) {
+      return nodeAfterEnd;
+    }
+    nodeAfterEnd = position.parent;
+    if (!nodeAfterEnd) {
+      return null;
+    }
+    while (!nodeAfterEnd.nextSibling && nodeAfterEnd !== this.root) {
+      nodeAfterEnd = nodeAfterEnd!.parent!;
+    }
+    if(nodeAfterEnd === this.root) {
+      return null;
+    }
+    return nodeAfterEnd!.nextSibling!;
+  }
 
   private traverseChildren(traverseType: TraverseType): ModelNode | null {
     let node = this.getChild(this._currentNode, traverseType);
@@ -273,7 +303,8 @@ export class ModelTreeWalker implements Iterable<ModelNode> {
   }
 
   private filterNode(node: ModelNode): FilterResult {
-    if (node === this.nodeAfterEnd) {
+    if (this.hasSeenEnd || node === this.nodeAfterEnd) {
+      this.hasSeenEnd = true;
       return FilterResult.FILTER_REJECT;
     }
     if (!this._filter) {

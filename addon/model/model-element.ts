@@ -229,6 +229,9 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   indexToOffset(index: number): number {
+    if(index === this.length) {
+      return this.lastChild.getOffset() + this.lastChild.offsetSize;
+    }
     return this.children[index].getOffset();
   }
 

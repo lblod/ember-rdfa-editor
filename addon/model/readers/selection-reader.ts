@@ -60,7 +60,7 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
   readDomPosition(container: Node, domOffset: number): ModelPosition | null {
     let rslt = null;
     if(TEXT_PROPERTY_NODES.has(tagName(container))) {
-      throw new NotImplementedError("TODO: handle text property nodes");
+      return this.findPositionForTextPopertyNode(container, domOffset);
     }
 
     else if(isElement(container)) {
@@ -84,54 +84,41 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     }
     return rslt;
   }
-
-  /**
-   * Things are easier to work with if we use textnodes as parents as much as possible. This tries
-   * to convert a dom position anchored to an element into an equivalent position anchored to a textnode, but in
-   * a conservative way.
-   * @param container
-   * @param offset
-   * @private
-   */
-  private normalizeDomPosition(container: Node, offset: number): { container: Node, offset: number } {
-    if (isTextNode(container)) {
-      return {container, offset};
+  private findPositionForTextPopertyNode(container: Node, domOffset: number): ModelPosition {
+    if(container.childNodes.length === 0) {
+      // this is fallback behavior in case the dom does something really weird
+      // in theory this should never happen
+      throw new NotImplementedError();
     }
-    // try to find a textnode to the left
-    if (offset > 0) {
-      let leftNode: ChildNode | null = container.childNodes[offset - 1];
-      // ignore breaks to the left
-      // TODO: what about other block elements? Do we actually want to do this here, or should we expect
-      // commands to handle breaks themselves?
-      while (leftNode && tagName(leftNode) === "br") {
-        leftNode = leftNode.previousSibling;
+    let child: ChildNode | null = null;
+    if(domOffset < container.childNodes.length) {
+      //try to find the first child textnode to the right
+      child = container.childNodes[domOffset];
+      while (child && TEXT_PROPERTY_NODES.has(tagName(child))) {
+        child = child.firstChild;
+      }
+      if(!child) {
+        throw new NotImplementedError("Unforeseen dom state");
       }
 
-      if (leftNode) {
-        if (isTextNode(leftNode)) {
-          return {container: leftNode, offset: leftNode.length};
-        } else if (leftNode.childNodes.length > 0) {
-          return this.normalizeDomPosition(leftNode, leftNode.childNodes.length);
-        } else {
-          return {container, offset};
-        }
+    } else {
+      //try to find the first child textnode to the left
+      child = container.childNodes[domOffset - 1];
+      while (child && TEXT_PROPERTY_NODES.has(tagName(child))) {
+        child = child.lastChild;
       }
+      if(!child) {
+        throw new NotImplementedError("Unforeseen dom state");
+      }
+
     }
 
-    // try to find a textnode to the right
-    // Note we don't skip breaks here, this is only because that currently doesn't seem necessary
-    const rightNode = container.childNodes[offset];
+    const modelNode = this.model.getModelNodeFor(child);
+    const basePath = modelNode.getOffsetPath();
+    basePath.push(0);
+    return ModelPosition.from(this.model.rootModelNode, basePath);
 
-    if (rightNode) {
-      if (isTextNode(rightNode)) {
-        return {container: rightNode, offset: 0};
-      } else if (rightNode.childNodes.length > 0) {
-        return this.normalizeDomPosition(rightNode, 0);
-      } else {
-        return {container, offset};
-      }
-    }
-    return {container, offset};
+
   }
 
   /**

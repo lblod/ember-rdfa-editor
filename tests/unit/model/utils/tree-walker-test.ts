@@ -3,6 +3,7 @@ import {ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
 module("Unit | model | utils | tree-walker-test", hooks => {
   test("finds root when its the only node and position starts there", assert => {
@@ -10,7 +11,7 @@ module("Unit | model | utils | tree-walker-test", hooks => {
 
     const range = ModelRange.fromPaths(root, [], []);
 
-    const walker = new ModelTreeWalker({root, range});
+    const walker = new ModelTreeWalker({range});
     const result = [...walker];
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0], root);
@@ -22,7 +23,7 @@ module("Unit | model | utils | tree-walker-test", hooks => {
 
     const range = ModelRange.fromPaths(root, [0], [0]);
 
-    const walker = new ModelTreeWalker({root, range});
+    const walker = new ModelTreeWalker({range});
     const result = [...walker];
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0], childNode);
@@ -35,7 +36,7 @@ module("Unit | model | utils | tree-walker-test", hooks => {
 
     const range = ModelRange.fromPaths(root, [], []);
 
-    const walker = new ModelTreeWalker({root, range});
+    const walker = new ModelTreeWalker({range});
     const result = [...walker];
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0], root);
@@ -54,7 +55,7 @@ module("Unit | model | utils | tree-walker-test", hooks => {
 
     const range = ModelRange.fromPaths(root, [], []);
 
-    const walker = new ModelTreeWalker({root, range});
+    const walker = new ModelTreeWalker({range});
     const result = [...walker];
     assert.strictEqual(result.length, 5);
     assert.strictEqual(result[0], root);
@@ -76,7 +77,7 @@ module("Unit | model | utils | tree-walker-test", hooks => {
 
 
     const range = ModelRange.fromPaths(root, [0], [1]);
-    const walker = new ModelTreeWalker({root, range});
+    const walker = new ModelTreeWalker({range});
     const result = [...walker];
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0], c0);
@@ -95,7 +96,7 @@ module("Unit | model | utils | tree-walker-test", hooks => {
 
     const range = ModelRange.fromPaths(root, [0, 0], [1]);
 
-    const walker = new ModelTreeWalker({root, range});
+    const walker = new ModelTreeWalker({range});
     const result = [...walker];
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0], c01);
@@ -114,7 +115,7 @@ module("Unit | model | utils | tree-walker-test", hooks => {
 
     const range = ModelRange.fromPaths(root, [0, 0], [1, 0]);
 
-    const walker = new ModelTreeWalker({root, range});
+    const walker = new ModelTreeWalker({range});
     const result = [...walker];
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0], c01);
@@ -136,9 +137,7 @@ module("Unit | model | utils | tree-walker-test", hooks => {
     const to = ModelPosition.from(root, [1, 1]);
     const range = new ModelRange(from, to);
 
-    const walker = new ModelTreeWalker({
-      root, range
-    });
+    const walker = new ModelTreeWalker({range});
     const result = [...walker];
     assert.strictEqual(result.length, 3);
     assert.strictEqual(result[0], c01);
@@ -146,4 +145,25 @@ module("Unit | model | utils | tree-walker-test", hooks => {
     assert.strictEqual(result[2], c11);
   });
 
+  test("stops at end node 5", assert => {
+    const root = new ModelElement("p", {debugInfo: "root"});
+
+    const t1 = new ModelText(`a paragraph with Lorem ipsum Itaque consequatur
+    maxime repudiandae eos est. Et et officia est dolore eum ipsam laborum recusandae.
+    Ab excepturi cum mollitia ut.…`);
+    const br1 = new ModelElement("br");
+    const t2 = new ModelText(` and a break (or two ?)`);
+    const br2 = new ModelElement("br");
+
+
+    root.appendChildren(t1, br1, t2, br2);
+
+    const range = ModelRange.fromPaths(root, [0, 5], [0, 10]);
+
+    const walker = new ModelTreeWalker({range});
+    const result = [...walker];
+
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0], t1);
+  });
 });
