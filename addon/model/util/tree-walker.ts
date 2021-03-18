@@ -200,7 +200,7 @@ export class ModelTreeWalker implements Iterable<ModelNode> {
   private getNodeAfterEndFromPosition(position: ModelPosition, startNode: ModelNode): ModelNode | null {
     let nodeAfterEnd = position.nodeAfter();
     if (nodeAfterEnd) {
-      if(position.parentOffset - nodeAfterEnd.getOffset() > 0)  {
+      if(position.parentOffset - nodeAfterEnd.getOffset() > 0 || nodeAfterEnd === startNode)  {
         nodeAfterEnd = nodeAfterEnd.nextSibling;
       }
       if(nodeAfterEnd) {

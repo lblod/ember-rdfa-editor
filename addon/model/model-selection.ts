@@ -306,9 +306,6 @@ export default class ModelSelection {
    * @param property
    */
   getTextPropertyStatus(property: TextAttribute): PropertyState {
-    const anchorNode = this.anchor?.parent;
-    const focusNode = this.focus?.parent;
-
 
     if (ModelSelection.isWellBehaved(this)) {
       const range = this.lastRange!;

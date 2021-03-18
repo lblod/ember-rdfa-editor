@@ -24,7 +24,7 @@ export default abstract class SetPropertyCommand extends Command {
 
     if (range.collapsed) {
 
-      range.start.split(false);
+      range.start.split(true);
 
       //insert new textNode with property set
       const node = new ModelText(INVISIBLE_SPACE);
