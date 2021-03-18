@@ -153,4 +153,19 @@ export default class EditorToolbar extends Component<Args> {
     this.args.editor.executeCommand("insert-table-column-before");
   }
 
+  @action
+  removeTableRow(){
+    this.args.editor.executeCommand("remove-table-row");
+  }
+
+  @action
+  removeTableColumn(){
+    this.args.editor.executeCommand("remove-table-column");
+  }
+
+  @action
+  removeTable(){
+    this.args.editor.executeCommand("remove-table");
+  }
+
 }

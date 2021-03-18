@@ -30,6 +30,15 @@ export default class ModelTable extends ModelElement {
     this.className = 'say-table';
   }
 
+  getDimensions() {
+    const tHead = this.children[0] as ModelElement;
+    const tBody = this.children[1] as ModelElement;
+    const y = tBody.children.length + 1;
+    const firstRow = tHead.children[0] as ModelElement;
+    const x = firstRow.children.length;
+    return {x, y}
+  }
+
   getCell(x: number, y: number) {
     if(y > 0) {
       const tBody = this.children[1] as ModelElement;
@@ -70,6 +79,32 @@ export default class ModelTable extends ModelElement {
       const cell = new ModelElement('th');
       row.addChild(cell, index);
     }
+  }
+
+  removeRow(index: number) {
+    if(index === 0) {
+      throw Error('Cannot remove table header row')
+    }
+    const tBody = this.children[1] as ModelElement;
+    const rowToRemove = tBody.children[index - 1];
+    tBody.removeChild(rowToRemove);
+  }
+
+  removeColumn(index: number) {
+    const tHead = this.children[0] as ModelElement;
+    const firstRow = tHead.children[0] as ModelElement;
+    const cellToDeleteFirstRow = firstRow.children[index];
+    firstRow.removeChild(cellToDeleteFirstRow);
+    const tBody = this.children[1] as ModelElement;
+    for(let i = 0; i < tBody.children.length; i++) {
+      const row = tBody.children[i] as ModelElement;
+      const cellToDelete = row.children[index];
+      row.removeChild(cellToDelete);
+    }
+  }
+
+  removeTable() {
+    this.parent?.removeChild(this);
   }
 
   static getCellIndex(cell: ModelElement) {

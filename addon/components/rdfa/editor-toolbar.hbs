@@ -120,6 +120,24 @@
             Add column before
           </span>
         </button>
+        <button type="button" class="say-toolbar__button" {{on "click" this.removeTableRow}}>
+          Remove row
+          <span class="say-toolbar__hidden">
+            Remove row
+          </span>
+        </button>
+        <button type="button" class="say-toolbar__button" {{on "click" this.removeTableColumn}}>
+          Remove column
+          <span class="say-toolbar__hidden">
+            Remove column
+          </span>
+        </button>
+        <button type="button" class="say-toolbar__button" {{on "click" this.removeTable}}>
+          Remove table
+          <span class="say-toolbar__hidden">
+            Remove table
+          </span>
+        </button>
       {{/if}}
     </div>
   </div>
