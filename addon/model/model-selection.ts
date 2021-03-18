@@ -7,13 +7,10 @@ import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {
-  Direction,
-  FilterAndPredicate,
-  PropertyState,
-} from "@lblod/ember-rdfa-editor/model/util/types";
+import {Direction, FilterAndPredicate, PropertyState,} from "@lblod/ember-rdfa-editor/model/util/types";
 import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import {FilterResult, ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
@@ -236,9 +233,9 @@ export default class ModelSelection {
 
     const iter = this.findAllInSelection(config);
     let result = iter && [...iter];
-    if(!result || result.length === 0) {
+    if (!result || result.length === 0) {
       const secondTry = this.getCommonAncestor()?.parent.findAncestor(node => filter(node) && predicate(node));
-      if(secondTry) {
+      if (secondTry) {
         result = [secondTry as T];
       }
     }
@@ -260,7 +257,7 @@ export default class ModelSelection {
       predicate: (node: ModelElement) => listTypes.has(node.type),
     };
     let result = !!this.findFirstInSelection(config);
-    if(!result) {
+    if (!result) {
       result = !!this.getCommonAncestor()?.parent.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type));
     }
 
@@ -312,32 +309,19 @@ export default class ModelSelection {
     const anchorNode = this.anchor?.parent;
     const focusNode = this.focus?.parent;
 
-    if (!anchorNode) {
-      throw new NotImplementedError("Cannot get textproperty of selection without anchorNode");
-    }
 
-    if (this.isCollapsed) {
-      if (!ModelNode.isModelText(anchorNode)) {
-        return PropertyState.unknown;
-      }
-      return anchorNode.getTextAttribute(property) ? PropertyState.enabled : PropertyState.disabled;
+    if (ModelSelection.isWellBehaved(this)) {
+      const range = this.lastRange!;
+
+      const treeWalker = new ModelTreeWalker({
+        range,
+        filter: (node) => ModelNode.isModelText(node) && node.getTextAttribute(property) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP
+      });
+      const result = Array.from(treeWalker);
+      return result.length ? PropertyState.enabled : PropertyState.disabled;
     } else {
-      const nodeFinder = new ModelNodeFinder<ModelText>({
-          startNode: anchorNode,
-          endNode: focusNode,
-          rootNode: this.model.rootModelNode,
-          nodeFilter: ModelNode.isModelText,
-        }
-      );
-      const first = nodeFinder.next()?.getTextAttribute(property);
-      for (const node of nodeFinder) {
-        if (node.getTextAttribute(property) !== first) {
-          return PropertyState.unknown;
-        }
-      }
-      return first ? PropertyState.enabled : PropertyState.disabled;
+      return PropertyState.unknown;
     }
-
   }
 
 
@@ -352,6 +336,7 @@ export default class ModelSelection {
     this.clearRanges();
     this.addRange(range);
   }
+
   /**
    * Select a full ModelText node
    * @param node

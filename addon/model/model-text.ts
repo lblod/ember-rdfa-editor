@@ -36,13 +36,13 @@ export default class ModelText extends ModelNode {
   }
 
   getTextAttribute(key: TextAttribute): boolean {
-    return Boolean(this.attributeMap.get(key)) || false;
+    return this.attributeMap.get(key) === "true";
   }
 
   getTextAttributes(): Array<[TextAttribute, boolean]> {
     const rslt: Array<[TextAttribute, boolean]> = [];
     for (const textAttribute of TEXT_ATTRIBUTES) {
-      rslt.push([textAttribute, Boolean(this.attributeMap.get(textAttribute))]);
+      rslt.push([textAttribute, this.getTextAttribute(textAttribute)]);
     }
     return rslt;
   }

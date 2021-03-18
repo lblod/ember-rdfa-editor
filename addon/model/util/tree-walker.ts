@@ -200,7 +200,13 @@ export class ModelTreeWalker implements Iterable<ModelNode> {
   private getNodeAfterEndFromPosition(position: ModelPosition, startNode: ModelNode): ModelNode | null {
     let nodeAfterEnd = position.nodeAfter();
     if (nodeAfterEnd) {
-      return nodeAfterEnd;
+      if(position.parentOffset - nodeAfterEnd.getOffset() > 0)  {
+        nodeAfterEnd = nodeAfterEnd.nextSibling;
+      }
+      if(nodeAfterEnd) {
+        return nodeAfterEnd;
+
+      }
     }
     nodeAfterEnd = position.parent;
     if (!nodeAfterEnd) {
@@ -212,7 +218,11 @@ export class ModelTreeWalker implements Iterable<ModelNode> {
     if(nodeAfterEnd === this.root) {
       return null;
     }
-    return nodeAfterEnd!.nextSibling!;
+    nodeAfterEnd = nodeAfterEnd!.nextSibling;
+    if(nodeAfterEnd === startNode) {
+      return nodeAfterEnd.nextSibling;
+    }
+    return nodeAfterEnd;
   }
 
   private traverseChildren(traverseType: TraverseType): ModelNode | null {
