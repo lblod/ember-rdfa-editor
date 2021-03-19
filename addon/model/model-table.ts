@@ -67,7 +67,7 @@ export default class ModelTable extends ModelElement {
     firstRow.addChild(cell, index);
     for(let i = 0; i < tBody.children.length; i++) {
       const row = tBody.children[i] as ModelElement;
-      const cell = new ModelElement('th');
+      const cell = new ModelElement('td');
       row.addChild(cell, index);
     }
   }
