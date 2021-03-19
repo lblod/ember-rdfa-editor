@@ -101,6 +101,15 @@
             <button role="menuitem" type="button" {{on "click" this.insertColumnBefore}}>
               Add column before
             </button>
+            <button role="menuitem" type="button" {{on "click" this.removeTableRow}}>
+              Delete row
+            </button>
+            <button role="menuitem" type="button" {{on "click" this.removeTableColumn}}>
+              Delete column
+            </button>
+            <button role="menuitem" type="button" {{on "click" this.removeTable}}>
+              Delete table
+            </button>
           {{else}}
             <button role="menuitem" type="button" {{on "click" this.insertTable}}>
               Insert Table
