@@ -14,7 +14,7 @@
     <span class="say-u-hidden-visually">{{@dropdownButtonLabel}}</span>
   </button>
   {{/if}}
-  <div id="{{this.dropdownId}}" class="say-dropdown__menu {{if this.dropdownOpen "is-visible" ""}}" role="menu" tabindex="-1" {{focus-trap isActive=this.dropdownOpen shouldSelfFocus=true focusTrapOptions=(hash onDeactivate=this.closeDropdown clickOutsideDeactivates=true)}}>
+  <div id="{{this.dropdownId}}" class="say-dropdown__menu {{if this.dropdownOpen "is-visible" ""}}" role="menu" tabindex="-1" {{focus-trap isActive=this.dropdownOpen shouldSelfFocus=true focusTrapOptions=(hash onDeactivate=this.closeDropdown clickOutsideDeactivates=true)}} {{on-click-inside this.closeDropdown}}>
     {{yield}}
   </div>
 </div>
