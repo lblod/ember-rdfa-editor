@@ -1,12 +1,41 @@
-table.say-table {
+.say-table {
+  @include say-font-size($say-h6);
+  display: table;
+  position: relative;
   width: 100%;
-  tr {
-    display: flex;
-    min-height: 30px;
+  border-collapse: collapse;
+  border: .1rem solid $say-gray-300;
+  white-space: normal;
+
+  thead {
+    border-bottom: .2rem solid $say-gray-300;
   }
 
-  th, td {
-    flex: 1;
-    border: 1px solid black;
+  th,
+  td {
+    @include say-font-size($say-base,1.2);
+    text-align: left;
+    padding: $say-unit-small $say-unit-small;
+    min-height: $say-unit-large;
+  }
+
+  th {
+    font-weight: $say-medium;
+  }
+
+  tr + tr {
+    border-top: .1rem solid $say-gray-300;
+  }
+
+  th + th,
+  th + td, // Temp hack for incorrect HTML
+  td + th, // Temp hack for incorrect HTML
+  td + td {
+    border-left: .1rem solid $say-gray-300;
+  }
+
+  th,
+  td {
+    max-width: 55ch;
   }
 }
