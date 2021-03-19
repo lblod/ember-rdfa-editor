@@ -25,6 +25,19 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     this._type = value;
   }
 
+  set className(value: string) {
+    this.setAttribute('class', value);
+  }
+
+  get className() {
+    const className = this.getAttribute('class');
+    if(className) {
+      return className;
+    } else {
+      return '';
+    }
+  }
+
   get children(): ModelNode[] {
     return this._children;
   }

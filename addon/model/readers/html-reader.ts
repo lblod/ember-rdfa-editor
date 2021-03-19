@@ -8,6 +8,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import HtmlVoidReader from "@lblod/ember-rdfa-editor/model/readers/html-void-reader";
 import HtmlElementReader from "@lblod/ember-rdfa-editor/model/readers/html-element-reader";
 import HtmlListReader from "@lblod/ember-rdfa-editor/model/readers/html-list-reader";
+import HtmlTableReader from "@lblod/ember-rdfa-editor/model/readers/html-table-reader";
 import {HtmlTag} from "@lblod/ember-rdfa-editor/model/util/types";
 import HtmlBreakReader from "@lblod/ember-rdfa-editor/model/readers/html-break-reader";
 
@@ -21,6 +22,7 @@ export default class HtmlReader implements Reader<Node, ModelNode> {
   private voidReader: HtmlVoidReader;
   private elementReader: HtmlElementReader;
   private listReader: HtmlListReader;
+  private tableReader: HtmlTableReader;
   elementConfig: Map<keyof HTMLElementTagNameMap, Reader<HTMLElement, ModelElement | null>>;
   private breakReader: HtmlBreakReader;
 
@@ -31,9 +33,11 @@ export default class HtmlReader implements Reader<Node, ModelNode> {
     this.voidReader = new HtmlVoidReader();
     this.breakReader = new HtmlBreakReader();
     this.listReader = new HtmlListReader(model, this.elementReader);
+    this.tableReader = new HtmlTableReader();
     this.elementConfig = new Map<keyof HTMLElementTagNameMap, Reader<HTMLElement, ModelElement>>(
       [
         ["li", this.listReader],
+        ["table", this.tableReader],
         ["strong", this.wrappedAttributeReader],
         ["em", this.wrappedAttributeReader],
         ["b", this.wrappedAttributeReader],
