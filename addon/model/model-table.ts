@@ -83,7 +83,7 @@ export default class ModelTable extends ModelElement {
     if(rowParent.type === 'thead') {
       yIndex = 0;
     } else {
-      yIndex = rowParent.getChildIndex(row) + 1;
+      yIndex = rowParent.getChildIndex(row)! + 1;
     }
     return {x: xIndex, y: yIndex};
   }
@@ -107,7 +107,9 @@ export default class ModelTable extends ModelElement {
     const table = commonAncestor.parentElement.findAncestor((node) => {
       if(node.modelNodeType === 'ELEMENT') {
         const element = node as ModelElement;
-        if(element.type === 'table') return true;
+        if(element.type === 'table') {
+          return true;
+        }
       }
       return false;
     }) as ModelTable;
