@@ -88,22 +88,23 @@
         {{/if}}
       {{/if}}
         <Rdfa::ToolbarDropdown @dropdownButtonLabel="Table">
-          <button role="menuitem" type="button" {{on "click" this.insertTable}}>
-            Insert Table
-          </button>
           {{#if this.isInTable}}
-          <button role="menuitem" type="button" {{on "click" this.insertRowBelow}}>
-            Add row below
-          </button>
-          <button role="menuitem" type="button" {{on "click" this.insertRowAbove}}>
-            Add row above
-          </button>
-          <button role="menuitem" type="button" {{on "click" this.insertColumnAfter}}>
-            Add column after
-          </button>
-          <button role="menuitem" type="button" {{on "click" this.insertColumnBefore}}>
-            Add column before
-          </button>
+            <button role="menuitem" type="button" {{on "click" this.insertRowBelow}}>
+              Add row below
+            </button>
+            <button role="menuitem" type="button" {{on "click" this.insertRowAbove}}>
+              Add row above
+            </button>
+            <button role="menuitem" type="button" {{on "click" this.insertColumnAfter}}>
+              Add column after
+            </button>
+            <button role="menuitem" type="button" {{on "click" this.insertColumnBefore}}>
+              Add column before
+            </button>
+          {{else}}
+            <button role="menuitem" type="button" {{on "click" this.insertTable}}>
+              Insert Table
+            </button>
           {{/if}}
         </Rdfa::ToolbarDropdown>
     </div>
