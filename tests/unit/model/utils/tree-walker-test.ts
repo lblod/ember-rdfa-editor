@@ -166,4 +166,41 @@ module("Unit | model | utils | tree-walker-test", hooks => {
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0], t1);
   });
+  test("Does not visit children when descend false", assert => {
+
+
+    const root = new ModelElement("div", {debugInfo: "root"});
+
+    const s0 = new ModelElement("span");
+    const s00 = new ModelElement("span");
+    const s01 = new ModelElement("span");
+    const s02 = new ModelElement("span");
+
+    const s1 = new ModelElement("span");
+
+    const s2 = new ModelElement("span");
+    const s20 = new ModelElement("span");
+    const s21 = new ModelElement("span");
+
+    const s3 = new ModelElement("span");
+
+
+
+
+    root.appendChildren(s0, s1,s2, s3);
+    s0.appendChildren(s00, s01, s02);
+    s2.appendChildren(s20, s21);
+
+    const range = ModelRange.fromPaths(root, [0], [4]);
+
+    const walker = new ModelTreeWalker({range, descend: false});
+    const result = [...walker];
+
+    assert.strictEqual(result.length, 4);
+    assert.strictEqual(result[0], s0);
+    assert.strictEqual(result[1], s1);
+    assert.strictEqual(result[2], s2);
+    assert.strictEqual(result[3], s3);
+  });
+
 });

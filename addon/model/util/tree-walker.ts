@@ -12,8 +12,11 @@ import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 export enum FilterResult {
+  // we like the node
   FILTER_ACCEPT,
+  // we dont want the node, but we want to visit it's childtree
   FILTER_SKIP,
+  // we don't want the entire subtree so skip the node and don't visit it's children
   FILTER_REJECT
 }
 
@@ -26,6 +29,7 @@ export type ModelNodeFilter = (node: ModelNode) => FilterResult;
 export interface ModelTreeWalkerConfig {
   filter?: ModelNodeFilter;
   range: ModelRange;
+  descend?: boolean;
 }
 
 export class ModelTreeWalker implements Iterable<ModelNode> {
@@ -35,12 +39,13 @@ export class ModelTreeWalker implements Iterable<ModelNode> {
   private hasReturnedStartNode: boolean = false;
   private readonly nodeAfterEnd: ModelNode | null = null;
   private hasSeenEnd: boolean = false;
+  private descend: boolean;
 
-  constructor(config: ModelTreeWalkerConfig) {
-    const {filter, range} = config;
+  constructor({filter, range, descend = true}: ModelTreeWalkerConfig) {
     const {start: from, end: to} = range;
     this._root = range.root;
     this._filter = filter;
+    this.descend = descend;
 
     if (from.path.length > 0) {
 
@@ -142,41 +147,62 @@ export class ModelTreeWalker implements Iterable<ModelNode> {
     return null;
   }
 
+  /**
+   * Main iterator driver. This visits the nodes in document order.
+   * Algorithm is heavily based on the dom spec, with a few modifications
+   * On the surface some of the control flow choices may seem odd, but I trust
+   * that the DOM people know what they're doing.
+   */
   nextNode(): ModelNode | null {
     if (this.hasSeenEnd) {
+      // stop when we've seen the last node
       return null;
     }
+
+    // start at the currentNode, which is the node we ended on the last time
+    // this method was run
     let node = this._currentNode;
+
     let result = FilterResult.FILTER_ACCEPT;
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      while (result !== FilterResult.FILTER_REJECT && this.hasChild(node)) {
+      // as long as we dont get a reject, go depth first into the child tree
+      // if descend is false, don't do this (used to iterate over the toplevel nodes of a range)
+      while (this.descend && result !== FilterResult.FILTER_REJECT && this.hasChild(node)) {
         node = node.firstChild;
         result = this.filterNode(node);
         if (result === FilterResult.FILTER_ACCEPT) {
+          // we've found an acceptable node, save it and return it
           this._currentNode = node;
           return node;
         }
       }
+      // at this point we've gone as deep as we can but haven't found a node yet
+      // so we start going sideways or back up
       let sibling = null;
       let temporary: ModelNode | null = node;
       while (temporary) {
         if (temporary === this.root) {
           return null;
         }
+        // try going sideways first
         sibling = temporary.nextSibling;
         if (sibling) {
+          // there was a sibling, break here
           node = sibling;
           break;
         }
+        // walk back up and try to find a sibling there
+        // we don't care about these nodes since we've already visited them
         temporary = temporary.parent;
       }
+      // test the node we found (this was a sibling or a sibling of the parent)
       result = this.filterNode(node);
       if (result === FilterResult.FILTER_ACCEPT) {
         this._currentNode = node;
         return node;
       }
-
+      // the node did not qualify, we will visit its children on the next loop
     }
 
   }
