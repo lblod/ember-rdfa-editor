@@ -4,6 +4,9 @@ import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 import { debug } from '@ember/debug';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
+import textOffsetToPosition from '@lblod/ember-rdfa-editor/utils/text-offset-to-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 
 /**
  * Debugger component for the RDFa context of DOM nodes
@@ -76,7 +79,11 @@ export default class RdfaContextDebugger extends Component {
    */
   @action
   highlight([start, end]){
-    this.editor.highlightRange(start, end);
+    const startPos = textOffsetToPosition(this.editor.model, start);
+    const endPos = textOffsetToPosition(this.editor.model, end);
+    const selection = new ModelSelection();
+    selection.selectRange(ModelRange.fromPaths(this.editor.model.rootModelNode, startPos, endPos));
+    this.editor.executeCommand("make-highlight", selection);
   }
 
   @action
