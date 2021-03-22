@@ -18,7 +18,11 @@ export default class TableBackspacePlugin implements BackspacePlugin {
     const selection = editor.model.selection;
     if(selection.isInTable) {
       if(manipulation.type === 'removeEmptyTextNode') {
-        return voidExecutor;
+        if(manipulation.node.parentElement?.childElementCount === 0) {
+          return voidExecutor;
+        } else {
+          return null;
+        }
       } else {
         return null;
       }
