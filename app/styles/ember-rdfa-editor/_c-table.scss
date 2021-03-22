@@ -1,6 +1,7 @@
 .say-table {
   @include say-font-size($say-h6);
   display: table;
+  table-layout: fixed;
   position: relative;
   width: 100%;
   border-collapse: collapse;
