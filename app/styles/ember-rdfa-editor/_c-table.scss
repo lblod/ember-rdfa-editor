@@ -1,6 +1,7 @@
 .say-table {
   @include say-font-size($say-h6);
   display: table;
+  table-layout: fixed;
   position: relative;
   width: 100%;
   border-collapse: collapse;
@@ -28,8 +29,6 @@
   }
 
   th + th,
-  th + td, // Temp hack for incorrect HTML
-  td + th, // Temp hack for incorrect HTML
   td + td {
     border-left: .1rem solid $say-gray-300;
   }
