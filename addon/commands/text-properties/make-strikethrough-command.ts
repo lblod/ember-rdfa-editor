@@ -3,6 +3,6 @@ import SetPropertyCommand from "@lblod/ember-rdfa-editor/commands/text-propertie
 export default class MakeStrikethroughCommand extends SetPropertyCommand {
   name = "make-strikethrough";
   execute() {
-    super.execute("strikethrough", true);
+    super.setProperty("strikethrough", true);
   }
 }

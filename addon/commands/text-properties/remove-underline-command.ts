@@ -3,6 +3,6 @@ import SetPropertyCommand from "@lblod/ember-rdfa-editor/commands/text-propertie
 export default class RemoveUnderlineCommand extends SetPropertyCommand {
   name = "remove-underline";
   execute() {
-    super.execute("underline", false);
+    super.setProperty("underline", false);
   }
 }

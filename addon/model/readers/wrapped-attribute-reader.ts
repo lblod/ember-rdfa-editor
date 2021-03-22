@@ -17,6 +17,7 @@ export default class WrappedAttributeReader implements Reader<HTMLElement, Fragm
       ["em", "italic"],
       ["u", "underline"],
       ["del", "strikethrough"],
+      ["span", "highlighted"]
     ]
   )
 
@@ -26,6 +27,9 @@ export default class WrappedAttributeReader implements Reader<HTMLElement, Fragm
     const result = new Fragment();
     const attribute = WrappedAttributeReader.tagMap.get(tagName(from) as HtmlTag)!;
     result.setTextAttribute(attribute, true);
+    if (attribute === "highlighted" && ! from.getAttribute("data-editor-highlight")) {
+      result.setTextAttribute("highlighted", false);
+    }
     return result;
   }
 

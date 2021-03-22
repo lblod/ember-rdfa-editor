@@ -18,6 +18,8 @@ import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list
 import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
 import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
 import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
+import MakeHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-highlight-command';
+import RemoveHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-highlight-command';
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -61,6 +63,8 @@ class RawEditor extends EmberObject {
     this.registerCommand(new IndentListCommand(this.model));
     this.registerCommand(new InsertNewLineCommand(this.model));
     this.registerCommand(new InsertNewLiCommand(this.model));
+    this.registerCommand(new MakeHighlightCommand(this.model));
+    this.registerCommand(new RemoveHighlightCommand(this.model));
   }
 
   /**
