@@ -17,7 +17,9 @@ export default class TableBackspacePlugin implements BackspacePlugin {
     };
     const selection = editor.model.selection;
     if(selection.isInTable) {
-      if(manipulation.type === 'removeEmptyTextNode') {
+      if(manipulation.type === 'moveCursorBeforeElement') {
+        return voidExecutor;
+      } else if(manipulation.type === 'removeEmptyTextNode') {
         if(manipulation.node.parentElement?.childElementCount === 0) {
           return voidExecutor;
         } else {
@@ -26,8 +28,6 @@ export default class TableBackspacePlugin implements BackspacePlugin {
       } else {
         return null;
       }
-    } else {
-      return voidExecutor;
     }
   }
 
