@@ -29,8 +29,6 @@
   }
 
   th + th,
-  th + td, // Temp hack for incorrect HTML
-  td + th, // Temp hack for incorrect HTML
   td + td {
     border-left: .1rem solid $say-gray-300;
   }
