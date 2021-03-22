@@ -41,7 +41,7 @@ import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-c
 @classic
 class RawEditor extends EmberObject {
   registeredCommands: Map<string, Command> = new Map()
-  protected model: Model;
+  model: Model;
   protected tryOutVdom = true;
 
   /**
