@@ -165,7 +165,7 @@ export default class RdfaEditor extends Component {
   handleRawEditorInit(editor) {
     this.editor = editor;
     this.hintsRegistry = HintsRegistry.create( { rawEditor: editor});
-    this.eventProcessor = EventProcessor.create({
+    this.eventProcessor = new EventProcessor({
       registry: this.hintsRegistry,
       profile: this.profile,
       dispatcher: this.rdfaEditorDispatcher,

@@ -4,6 +4,10 @@ import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 import HintsRegistry from './hints-registry';
 import { A } from '@ember/array';
 import { isEmpty } from '@ember/utils';
+import textOffsetToPosition from '@lblod/ember-rdfa-editor/utils/text-offset-to-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+
 
 /**
 * Event processor orchastrating the hinting based on incoming editor events
@@ -13,59 +17,50 @@ import { isEmpty } from '@ember/utils';
 * @constructor
 * @extends EmberObject
 */
-export default EmberObject.extend({
+export default class EventProcessor {
   /**
    * @property registry
    * @type HintsRegistry
    */
-  registry: null,
-
-  cardsLocationFlaggedRemoved: null,
-
-  cardsLocationFlaggedNew: null,
-
+  registry;
+  cardsLocationFlaggedRemoved;
+  cardsLocationFlaggedNew;
+  rdfaEditorDispatcher;
   /**
    * this is the range spanning all text inserts as recorded between two dispatchAndAnalyse calls
    *
    * @property modifiedRange
    * @type Array
    */
-  modifiedRange: null,
+  modifiedRange;
 
   /**
    * @property editor
    * @type RdfaEditor
    */
-  editor: null,
+  editor;
 
   /**
    * @property profile
    * @type string
    */
-  profile: null,
+  profile;
 
   /**
    * @property dispatcher
    * @type EditorDispatcher
    */
-  dispatcher: null,
+  dispatcher;
 
-  init() {
-    this._super(...arguments);
-    this.set('cardsLocationFlaggedRemoved', A());
-    this.set('cardsLocationFlaggedNew', A());
-    this.set('modifiedRange', A());
-
-    if (! this.get('registry')) {
-      this.set('registry', HintsRegistry.create());
-    }
-    if (! this.get('profile')) {
-      this.set('profile', 'default');
-    }
-
-    assert("dispatcher should be set", this.get('dispatcher'));
-    assert("editor should be set", this.get('editor'));
-  },
+  constructor({ registry, profile, dispatcher, editor}) {
+    this.cardsLocationFlaggedNew = [];
+    this.cardsLocationFlaggedRemoved = [];
+    this.modifiedRange = [];
+    this.registry = registry;
+    this.profile = profile;
+    this.dispatcher = dispatcher;
+    this.editor = editor;
+  }
 
   /**
    * @method updateModifiedRange
@@ -84,24 +79,24 @@ export default EmberObject.extend({
         // |removed text|[inserted text]
         newStart = currentStart - delta;
         newEnd = currentEnd - delta;
-        this.set('modifiedRange', [ newStart, newEnd ]);
+        this.modifiedRange = [ newStart, newEnd ];
       }
       else if (currentStart == start && currentEnd == end) {
         // [|removed text inserted text|]
-        this.set('modifiedRange', A());
+        this.modifiedRange = [];
       }
       else if (currentStart > start && currentEnd > end) {
         // | removed text [ inserted| text]
         newStart = currentStart - (currentStart - start);
         newEnd = currentEnd - delta;
-        this.set('modifiedRange', [ newStart, newEnd ]);
+        this.modifiedRange = [ newStart, newEnd ];
       }
       else if ( currentStart <= start && currentEnd <= end ) {
         // [ inserted |removed  text| text]
         // full equality is handled above
         newStart = currentStart;
         newEnd = currentEnd - delta;
-        this.set('modifiedRange', [ newStart, newEnd ]);
+        this.modifiedRange = [ newStart, newEnd ];
       }
       else if (currentStart < start && currentEnd < start ) {
         // no need to update range for [ inserted text][removed text]
@@ -110,14 +105,14 @@ export default EmberObject.extend({
     else {
       // insertText, increase range as necessary
       if (isEmpty(this.modifiedRange)) {
-        this.set('modifiedRange', [ start, end ]);
+        this.modifiedRange = [ start, end ];
       }
       else {
         const [currentStart, currentEnd] = this.modifiedRange;
-        this.set('modifiedRange', [Math.min (currentStart, start), Math.max(currentEnd, end)]);
+        this.modifiedRange = [Math.min (currentStart, start), Math.max(currentEnd, end)];
       }
     }
-  },
+  }
 
   /**
    * Observer of the registry updating the highlighted hints in the editor
@@ -128,24 +123,22 @@ export default EmberObject.extend({
    * @public
    */
   handleRegistryChange(/*registry*/) {
-    const editor = this.get('editor');
-    editor.clearHighlightForLocations(this.get('cardsLocationFlaggedRemoved'));
+    this.editor.clearHighlightForLocations(this.cardsLocationFlaggedRemoved);
+    for (let [start, end] of this.cardsLocationFlaggedNew) {
+      this.editor.highlightRange(start, end);
+    }
 
-    this.get('cardsLocationFlaggedNew').forEach(location => {
-      editor.highlightRange(location[0], location[1]);
-    });
-
-    this.set('cardsLocationFlaggedRemoved', A());
-    this.set('cardsLocationFlaggedNew', A());
-  },
+    this.cardsLocationFlaggedNew = [];
+    this.cardsLocationFlaggedRemoved = [];
+  }
+  
   handleNewCardInRegistry(hightLightLocation){
-    this.get('cardsLocationFlaggedNew').push(hightLightLocation);
-  },
+    this.cardsLocationFlaggedNew.push(hightLightLocation);
+  }
 
   handleRemovedCardInRegistry(hightLightLocation){
-    this.get('cardsLocationFlaggedRemoved').push(hightLightLocation);
-  },
-
+    this.cardsLocationFlaggedRemoved.push(hightLightLocation);
+  }
 
   /**
    * Analyses the RDFa context and trigger hint updates through the editor dispatcher
@@ -160,23 +153,24 @@ export default EmberObject.extend({
   analyseAndDispatch(extraInfo = []) {
     const node = this.editor.rootNode;
     if (! isEmpty(this.modifiedRange)) {
-      const contexts = analyse(node, this.modifiedRange);
+      const rdfaBlocks = analyse(node, this.modifiedRange);
 
-      this.get('dispatcher').dispatch(
-        this.get('profile'),
-        this.get('registry').currentIndex(),
-        contexts,
-        this.get('registry'),
-        this.get('editor'),
+      this.dispatcher.dispatch(
+        this.profile,
+        this.registry.currentIndex(),
+        rdfaBlocks,
+        this.registry,
+        this.editor,
         extraInfo
       );
-      this.set('modifiedRange', A());
+      this.modifiedRange = [];
     }
-  },
+  }
 
   handleFullContentUpdate(extraInfo = []) {
     this.analyseAndDispatch(extraInfo);
-  },
+  }
+
   /**
    * Remove text in the specified range and trigger updating of the hints
    *
@@ -189,8 +183,8 @@ export default EmberObject.extend({
    */
   handleTextRemoval(start,stop) {
     this.updateModifiedRange(start, stop, true);
-    return this.get('registry').removeText(start, stop);
-  },
+    return this.registry.removeText(start, stop);
+  }
 
   /**
    * Insert text starting at the specified location and trigger updating of the hints
@@ -204,8 +198,8 @@ export default EmberObject.extend({
    */
   handleTextInsert(index, text) {
     this.updateModifiedRange(index, index + text.length);
-    return this.get('registry').insertText(index, text);
-  },
+    return this.registry.insertText(index, text);
+  }
 
   /**
    * Handling the change of the current selected text/location in the editor
@@ -218,4 +212,4 @@ export default EmberObject.extend({
     const {startNode, endNode } = newSelection;
     this.registry.activeRegion = [startNode.absolutePosition, endNode.absolutePosition];
   }
-});
+}
