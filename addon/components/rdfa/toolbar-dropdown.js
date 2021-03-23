@@ -12,16 +12,7 @@ export default class AuDropdown extends Component {
 
   // Open dropdown
   @action
-  openDropdown() {
-    // Toggle dropdown view state
-    if (!this.dropdownOpen)
-      this.dropdownOpen = true;
-  }
-
-  @action
-  closeDropdown() {
-    // Toggle dropdown view state
-    if (this.dropdownOpen)
-      this.dropdownOpen = false;
+  toggleDropdown() {
+    this.dropdownOpen = ! this.dropdownOpen;
   }
 }
