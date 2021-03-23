@@ -76,10 +76,9 @@ export default class InsertTableCommand extends Command {
       leftParent.addChild(table, leftOfStart.index! + 1);
 
       // split the node at the end of the selection
-      const {left, right} = rightOfStart.split(endPos - leftOfStart.length);
+      const {left} = rightOfStart.split(endPos - leftOfStart.length);
       // remove the middle part
       this.model.removeModelNode(left);
-      selection.collapseOn(right);
     }
     //handle multiple selected elements
     else {
@@ -100,7 +99,10 @@ export default class InsertTableCommand extends Command {
           }
         }
       }
-      selection.collapseOn(rightOfEnd);
+    }
+    const firstCell = table.getCell(0,0);
+    if(firstCell) {
+      selection.collapseOn(firstCell);
     }
 
 
