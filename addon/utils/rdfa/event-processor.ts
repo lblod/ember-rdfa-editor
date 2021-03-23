@@ -7,6 +7,11 @@ import { isEmpty } from '@ember/utils';
 import textOffsetToPosition from '@lblod/ember-rdfa-editor/utils/text-offset-to-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
+import RawEditor from '../ce/raw-editor';
+import { ContentObserver } from '../ce/pernet-raw-editor';
+import MovementObserver from '../ce/movement-observers/movement-observer';
+import { InternalSelection } from '@lblod/ember-rdfa-editor/editor/raw-editor';
 
 
 /**
@@ -17,42 +22,28 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 * @constructor
 * @extends EmberObject
 */
-export default class EventProcessor {
+export default class EventProcessor implements ContentObserver, MovementObserver {
   /**
    * @property registry
    * @type HintsRegistry
    */
-  registry;
-  cardsLocationFlaggedRemoved;
-  cardsLocationFlaggedNew;
-  rdfaEditorDispatcher;
+  registry: HintsRegistry;
+  cardsLocationFlaggedRemoved: Array<[number, number]>;
+  cardsLocationFlaggedNew: Array<[number, number]>;
+  dispatcher: RdfaEditorDispatcher;
   /**
    * this is the range spanning all text inserts as recorded between two dispatchAndAnalyse calls
-   *
-   * @property modifiedRange
-   * @type Array
    */
-  modifiedRange;
-
-  /**
-   * @property editor
-   * @type RdfaEditor
-   */
-  editor;
+  modifiedRange: number[];
+  editor: RawEditor;
 
   /**
    * @property profile
    * @type string
    */
-  profile;
+  profile: string;
 
-  /**
-   * @property dispatcher
-   * @type EditorDispatcher
-   */
-  dispatcher;
-
-  constructor({ registry, profile, dispatcher, editor}) {
+  constructor({ registry, profile, dispatcher, editor} : { registry: HintsRegistry, profile: string, dispatcher: RdfaEditorDispatcher, editor: RawEditor}) {
     this.cardsLocationFlaggedNew = [];
     this.cardsLocationFlaggedRemoved = [];
     this.modifiedRange = [];
@@ -70,7 +61,7 @@ export default class EventProcessor {
    * @param {boolean} isRemove whether this is a remove or insert operation
    * @private
    */
-  updateModifiedRange(start, end, isRemove = false) {
+  updateModifiedRange(start: number, end: number, isRemove: boolean = false) {
     if (isRemove && ! isEmpty(this.modifiedRange)) {
       const [currentStart, currentEnd] = this.modifiedRange;
       var newStart, newEnd;
@@ -127,7 +118,7 @@ export default class EventProcessor {
       const startPos = textOffsetToPosition(this.editor, start);
       const endPos = textOffsetToPosition(this.editor, end);
       const selection = this.editor.createSelection();
-      selection.selectRange(this.editor.createRangefromPaths(startPos, endPos));
+      selection.selectRange(this.editor.createRangeFromPaths(startPos, endPos));
       this.editor.executeCommand("remove-highlight", selection);
     }
 
@@ -135,7 +126,7 @@ export default class EventProcessor {
       const startPos = textOffsetToPosition(this.editor, start);
       const endPos = textOffsetToPosition(this.editor, end);
       const selection = this.editor.createSelection();
-      selection.selectRange(this.editor.createRangefromPaths(startPos, endPos));
+      selection.selectRange(this.editor.createRangeFromPaths(startPos, endPos));
       this.editor.executeCommand("make-highlight", selection);
     }
 
@@ -143,11 +134,11 @@ export default class EventProcessor {
     this.cardsLocationFlaggedRemoved = [];
   }
 
-  handleNewCardInRegistry(hightLightLocation){
+  handleNewCardInRegistry(hightLightLocation: [number, number]){
     this.cardsLocationFlaggedNew.push(hightLightLocation);
   }
 
-  handleRemovedCardInRegistry(hightLightLocation){
+  handleRemovedCardInRegistry(hightLightLocation: [number, number]){
     this.cardsLocationFlaggedRemoved.push(hightLightLocation);
   }
 
@@ -161,7 +152,7 @@ export default class EventProcessor {
    *
    * @public
    */
-  analyseAndDispatch(extraInfo = []) {
+  analyseAndDispatch(extraInfo: Array<Object> = []) {
     const node = this.editor.rootNode;
     if (! isEmpty(this.modifiedRange)) {
       const rdfaBlocks = analyse(node, this.modifiedRange);
@@ -178,7 +169,7 @@ export default class EventProcessor {
     }
   }
 
-  handleFullContentUpdate(extraInfo = []) {
+  handleFullContentUpdate(extraInfo: Array<Object> = []) {
     this.analyseAndDispatch(extraInfo);
   }
 
@@ -192,7 +183,7 @@ export default class EventProcessor {
    *
    * @public
    */
-  handleTextRemoval(start,stop) {
+  handleTextRemoval(start: number, stop: number) {
     this.updateModifiedRange(start, stop, true);
     return this.registry.removeText(start, stop);
   }
@@ -207,7 +198,7 @@ export default class EventProcessor {
    *
    * @public
    */
-  handleTextInsert(index, text) {
+  handleTextInsert(index: number, text: string) {
     this.updateModifiedRange(index, index + text.length);
     return this.registry.insertText(index, text);
   }
@@ -219,7 +210,7 @@ export default class EventProcessor {
    *
    * @public
    */
-  handleMovement(_controller, _oldSelection, newSelection) {
+  handleMovement(_controller: RawEditor, _oldSelection: InternalSelection , newSelection: InternalSelection) {
     const {startNode, endNode } = newSelection;
     this.registry.activeRegion = [startNode.absolutePosition, endNode.absolutePosition];
   }
