@@ -20,6 +20,8 @@ import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-com
 import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
 import MakeHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-highlight-command';
 import RemoveHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-highlight-command';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -131,6 +133,23 @@ class RawEditor extends EmberObject {
       throw new Error(`Unrecognized command ${commandName}`);
     }
     return command;
+  }
+
+  /**
+   * create a Range within the virtual dom
+   * @param path1
+   * @param path2
+   */
+  createRangeFromPaths(path1: number[], path2: number[]) : ModelRange {
+    return ModelRange.fromPaths(this.model.rootModelNode, path1, path2);
+  }
+
+  /**
+   * create a selection on the virtual dom
+   * starts out without any selected ranges
+   */
+  createSelection() : ModelSelection {
+    return new ModelSelection(this.model);
   }
 
   synchronizeModel() {
