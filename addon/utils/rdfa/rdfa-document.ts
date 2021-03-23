@@ -1,5 +1,5 @@
-import RawEditor from '../ce/raw-editor';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import PernetRawEditor from '../ce/pernet-raw-editor';
 
 /**
  * RdfaDocument is a virtual representation of the document
@@ -9,10 +9,14 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
  * This is both to protect the internal dom of the editor and to remove internals
  */
 export default class RdfaDocument {
-  private _editor: RawEditor;
+  private _editor: PernetRawEditor;
 
-  constructor(editor: RawEditor) {
+  constructor(editor: PernetRawEditor) {
     this._editor = editor;
+    this.setHtmlContent = function(html: string) {
+      const selection = editor.selectHighlight(editor.richNode.region);
+      editor.update(selection, { set: { innerHTML: html}});
+    };
   }
 
   get htmlContent() {
@@ -26,7 +30,7 @@ export default class RdfaDocument {
     this._editor.executeCommand("insert-html", html, selection);
   }
 
-  setHtmlContent(html: string) {
-    this.htmlContent = html;
-  }
+  // setHtmlContent(html: string) {
+  //   this.htmlContent = html;
+  // }
 }
