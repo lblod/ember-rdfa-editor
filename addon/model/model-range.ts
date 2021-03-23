@@ -30,6 +30,26 @@ export default class ModelRange {
     }
   }
 
+  static fromChildren(element: ModelElement) {
+    const basePath = element.getOffsetPath();
+    return ModelRange.fromPaths(element.root, [...basePath, 0], [...basePath, element.getMaxOffset()]);
+  }
+
+  static fromInnerContent(node: ModelNode) {
+    if (ModelNode.isModelElement(node)) {
+      return ModelRange.fromChildren(node);
+    } else if (ModelNode.isModelText(node)) {
+      const basePath = node.getOffsetPath();
+      const endPath = [...basePath];
+      endPath[endPath.length - 1] += node.length;
+      return ModelRange.fromPaths(node.root, basePath, endPath);
+    } else {
+      throw new NotImplementedError("Node type not supported");
+    }
+
+
+  }
+
   constructor(start: ModelPosition, end: ModelPosition = start) {
     this._start = start;
     this._end = end;
@@ -187,7 +207,7 @@ export default class ModelRange {
 
     const left = new ModelRange(this.start, ModelPosition.from(this.root, leftEndPath));
     const right = new ModelRange(ModelPosition.from(this.root, rightStartPath), this.end);
-    if (middle) {
+    if (middle && !middle.collapsed) {
       return [left, middle, right];
     } else {
       return [left, right];

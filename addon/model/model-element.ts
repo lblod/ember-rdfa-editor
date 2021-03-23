@@ -2,7 +2,7 @@ import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/mod
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
 import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
-import {IndexOutOfRangeError, ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -59,6 +59,9 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * "<" of the closing tag in html
    */
   getMaxOffset() {
+    if(!this.lastChild) {
+      return 0;
+    }
     return this.lastChild.getOffset() + this.lastChild.offsetSize;
   }
 
@@ -95,6 +98,14 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     child.nextSibling = next;
 
     child.parent = this;
+  }
+
+  insertChildAtOffset(child: ModelNode, offset: number) {
+    if(offset < 0 || offset > this.getMaxOffset()) {
+      throw new OffsetOutOfRangeError(offset, this.getMaxOffset());
+    }
+    this.addChild(child, this.offsetToIndex(offset));
+
   }
 
   appendChildren(...children: ModelNode[]) {
@@ -237,6 +248,9 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * @param offset
    */
   offsetToIndex(offset: number): number {
+    if(offset < 0 || offset > this.getMaxOffset()) {
+      throw new OffsetOutOfRangeError(offset, this.getMaxOffset());
+    }
     let offsetCounter = 0;
     let indexCounter = 0;
     for (const child of this.children) {
@@ -270,8 +284,16 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * Return the child containing, or immediately after, the offset
    * @param offset
    */
-  childAtOffset(offset: number): ModelNode {
-    return this.children[this.offsetToIndex(offset)];
+  childAtOffset(offset: number): ModelNode | null {
+    try {
+      return this.children[this.offsetToIndex(offset)];
+    } catch (e) {
+      if(e instanceof OffsetOutOfRangeError) {
+        return null;
+      } else {
+        throw e;
+      }
+    }
   }
 
 }

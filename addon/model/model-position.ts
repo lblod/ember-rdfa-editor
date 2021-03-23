@@ -162,6 +162,13 @@ export default class ModelPosition {
     return this.path[this.path.length - 1];
   }
 
+  set parentOffset(offset: number) {
+    if (offset < 0 || offset > this.parent.getMaxOffset()) {
+      throw new PositionError(`Offset ${offset} is out of range of parent with maxOffset ${this.parent.getMaxOffset()}`);
+    }
+    this.path[this.path.length - 1] = offset;
+  }
+
   /**
    * Check if two modelpositions describe the same position
    * @param other
@@ -184,6 +191,7 @@ export default class ModelPosition {
   getCommonPosition(other: ModelPosition): ModelPosition | null {
     return ModelPosition.getCommonPosition(this, other);
   }
+
   getCommonAncestor(other: ModelPosition): ModelNode | null {
     return ModelPosition.getCommonPosition(this, other)?.nodeAfter() || null;
   }
@@ -250,7 +258,7 @@ export default class ModelPosition {
    * Otherwise, return the node immediately after the cursor
    */
   nodeAfter(): ModelNode | null {
-    if(this.path.length === 0) {
+    if (this.path.length === 0) {
       return this.root;
     }
     return this.parent.childAtOffset(this.parentOffset) || null;
