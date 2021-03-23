@@ -272,5 +272,8 @@ export default class ModelPosition {
   nodeBefore(): ModelNode | null {
     return this.parent.childAtOffset(this.parentOffset - 1) || null;
   }
+  clone(): ModelPosition {
+    return ModelPosition.from(this.root, [...this.path]);
+  }
 
 }
