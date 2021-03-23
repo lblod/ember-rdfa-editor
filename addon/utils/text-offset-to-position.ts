@@ -3,6 +3,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {ModelTreeWalker, FilterResult} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
 import ModelText from "../model/model-text";
+import RawEditor from './ce/raw-editor';
 
 const VOID_NODES = ["area","base","br","col","command","embed","hr","img","input","keygen","link","meta","param","source","track","wbr"];
 
@@ -24,8 +25,8 @@ function selectTextNodes(node: ModelNode) {
  * a space for all other void nodes
  *
  */
-export default function textOffsetToPosition(model: Model, offset: number): number[] {
-  const range = ModelRange.fromPaths(model.rootModelNode, [], []);
+export default function textOffsetToPosition(editor: RawEditor, offset: number): number[] {
+  const range = editor.createRangeFromPaths([], []);
   const treeWalker = new ModelTreeWalker({ filter: selectTextNodes, range });
   let startOffset = 0;
   for (const node of treeWalker) {
@@ -43,7 +44,6 @@ export default function textOffsetToPosition(model: Model, offset: number): numb
       // void nodes
       startOffset = startOffset + 1;
     }
-
   }
   throw new Error("no valid node found for offset " + offset);
 }

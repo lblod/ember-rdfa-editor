@@ -79,11 +79,10 @@ export default class RdfaContextDebugger extends Component {
    */
   @action
   highlight([start, end]){
-    const startPos = textOffsetToPosition(this.editor.model, start);
-    const endPos = textOffsetToPosition(this.editor.model, end);
-    const selection = new ModelSelection();
-    selection.selectRange(ModelRange.fromPaths(this.editor.model.rootModelNode, startPos, endPos));
-    this.editor.executeCommand("make-highlight", selection);
+    const startPos = textOffsetToPosition(this.editor, start);
+    const endPos = textOffsetToPosition(this.editor, end);
+    const selection = this.editor.createSelection();
+    selection.selectRange(this.editor.createRangeFromPaths(startPos, endPos));    this.editor.executeCommand("make-highlight", selection);
   }
 
   @action

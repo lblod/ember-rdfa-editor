@@ -124,18 +124,18 @@ export default class EventProcessor {
    */
   handleRegistryChange(/*registry*/) {
     for (let [start,end] of this.cardsLocationFlaggedRemoved) {
-      const startPos = textOffsetToPosition(this.editor.model, start);
-      const endPos = textOffsetToPosition(this.editor.model, end);
-      const selection = new ModelSelection();
-      selection.selectRange(ModelRange.fromPaths(this.editor.model.rootModelNode, startPos, endPos));
+      const startPos = textOffsetToPosition(this.editor, start);
+      const endPos = textOffsetToPosition(this.editor, end);
+      const selection = this.editor.createSelection();
+      selection.selectRange(this.editor.createRangefromPaths(startPos, endPos));
       this.editor.executeCommand("remove-highlight", selection);
     }
 
     for (let [start, end] of this.cardsLocationFlaggedNew) {
-      const startPos = textOffsetToPosition(this.editor.model, start);
-      const endPos = textOffsetToPosition(this.editor.model, end);
-      const selection = new ModelSelection();
-      selection.selectRange(ModelRange.fromPaths(this.editor.model.rootModelNode, startPos, endPos));
+      const startPos = textOffsetToPosition(this.editor, start);
+      const endPos = textOffsetToPosition(this.editor, end);
+      const selection = this.editor.createSelection();
+      selection.selectRange(this.editor.createRangefromPaths(startPos, endPos));
       this.editor.executeCommand("make-highlight", selection);
     }
 
