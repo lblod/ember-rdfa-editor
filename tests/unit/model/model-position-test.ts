@@ -15,13 +15,27 @@ module("Unit | model | model-position", () => {
       const p2 = ModelPosition.from(root2, [0]);
 
 
-      assert.strictEqual(p1.getCommonAncestor(p2), null);
+      assert.strictEqual(p1.getCommonPosition(p2), null);
     });
     test("returns root when start and end are root", assert => {
       const root = new ModelElement("div");
       const p1 = ModelPosition.from(root, []);
       const p2 = ModelPosition.from(root, []);
-      assert.true(p1.getCommonAncestor(p2)?.sameAs(ModelPosition.from(root, [])));
+      assert.true(p1.getCommonPosition(p2)?.sameAs(ModelPosition.from(root, [])));
+    });
+
+    test("returns correct common ancestor", assert => {
+      const root = new ModelElement("div");
+      const common = new ModelElement("span");
+
+      const t1 = new ModelText("abc");
+      const t2 = new ModelText("def");
+      root.addChild(common);
+      common.appendChildren(t1, t2);
+
+      const p1 = ModelPosition.inTextNode(t1, 1);
+      const p2 = ModelPosition.inTextNode(t2, 1);
+      assert.strictEqual(p1.getCommonAncestor(p2), common);
     });
 
   });

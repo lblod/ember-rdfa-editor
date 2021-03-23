@@ -134,7 +134,7 @@ export default class Model {
   public getModelNodeFor(domNode: Node): ModelNode {
     if (!this.nodeMap) throw new ModelError("uninitialized nodeMap");
     const rslt = this.nodeMap.get(domNode);
-    if(!rslt) {
+    if (!rslt) {
       throw new ModelError("No boundnode for domNode");
     }
     return rslt;
@@ -142,23 +142,20 @@ export default class Model {
 
   /**
    * Remove a node from the model
-   * TODO: untested
    * @param modelNode
    */
   removeModelNode(modelNode: ModelNode) {
-    if (modelNode.boundNode) {
-      this.nodeMap.delete(modelNode.boundNode);
-    }
-    if (modelNode.parent) {
-      this.removeChildFromParent(modelNode, modelNode.parent);
-    }
+    modelNode.remove();
   }
 
 
-  change(callback: (mutator: ModelMutator) => void) {
+  change(callback: (mutator: ModelMutator) => void, autoSelect: boolean = true) {
     const mutator = new ModelMutator();
     callback(mutator);
-    mutator.flush();
+    const resultingRange = mutator.flush();
+    if (autoSelect && resultingRange) {
+      this.selection.selectRange(resultingRange);
+    }
     this.write();
   }
 
@@ -178,7 +175,4 @@ export default class Model {
     return null;
   }
 
-  private removeChildFromParent(child: ModelNode, parent: ModelElement) {
-    parent.removeChild(child);
-  }
 }

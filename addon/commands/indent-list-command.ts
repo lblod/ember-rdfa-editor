@@ -3,8 +3,9 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {NoParentError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {MisbehavedSelectionError, NoParentError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
+import {FilterResult} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
 
 export default class IndentListCommand extends Command {
   name: string = "indent-list";

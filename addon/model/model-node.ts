@@ -275,4 +275,11 @@ export default abstract class ModelNode {
     parent.isolateChildAt(index);
   }
 
+  remove() {
+    if(!this.parent) {
+      throw new ModelError("Cannot remove root");
+    }
+    this.parent.removeChild(this);
+  }
+
 }

@@ -4,6 +4,7 @@ import {ModelError, NotImplementedError, PositionError, SelectionError} from "@l
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import Model from "@lblod/ember-rdfa-editor/model/model";
 
 /**
  * Represents a single position in the model. In contrast to the dom,
@@ -33,6 +34,7 @@ export default class ModelPosition {
    * @param root
    * @param parent
    * @param offset
+   * @deprecated use {@link inTextNode} or {@link inElement}
    */
   static fromParent(root: ModelElement, parent: ModelNode, offset: number): ModelPosition {
     if (offset < 0 || offset > parent.length) {
@@ -44,7 +46,25 @@ export default class ModelPosition {
     return result;
   }
 
-  static getCommonAncestor(pos1: ModelPosition, pos2: ModelPosition): ModelPosition | null {
+  static inTextNode(node: ModelText, offset: number) {
+    if (offset < 0 || offset > node.length) {
+      throw new PositionError(`Offset ${offset} out of range of textnode with length ${node.length}`);
+    }
+    const path = node.getOffsetPath();
+    path[path.length - 1] += offset;
+    return ModelPosition.from(node.root, path);
+  }
+
+  static inElement(element: ModelElement, offset: number) {
+    if (offset < 0 || offset > element.getMaxOffset()) {
+      throw new PositionError(`Offset ${offset} out of range of element with maxOffset ${element.getMaxOffset()}`);
+    }
+    const path = element.getOffsetPath();
+    path.push(offset);
+    return ModelPosition.from(element.root, path);
+  }
+
+  static getCommonPosition(pos1: ModelPosition, pos2: ModelPosition): ModelPosition | null {
     if (pos1.root !== pos2.root) {
       return null;
     }
@@ -60,7 +80,7 @@ export default class ModelPosition {
    * @deprecated use {@link ModelTreeWalker} instead
    */
   static getTopPositionsBetween(pos1: ModelPosition, pos2: ModelPosition): ModelPosition[] | null {
-    const commonAncestor = ModelPosition.getCommonAncestor(pos1, pos2);
+    const commonAncestor = ModelPosition.getCommonPosition(pos1, pos2);
     if (!commonAncestor) {
       return null;
     }
@@ -142,6 +162,13 @@ export default class ModelPosition {
     return this.path[this.path.length - 1];
   }
 
+  set parentOffset(offset: number) {
+    if (offset < 0 || offset > this.parent.getMaxOffset()) {
+      throw new PositionError(`Offset ${offset} is out of range of parent with maxOffset ${this.parent.getMaxOffset()}`);
+    }
+    this.path[this.path.length - 1] = offset;
+  }
+
   /**
    * Check if two modelpositions describe the same position
    * @param other
@@ -161,8 +188,12 @@ export default class ModelPosition {
     return ModelPosition.comparePath(this.path, other.path);
   }
 
-  getCommonAncestor(other: ModelPosition): ModelPosition | null {
-    return ModelPosition.getCommonAncestor(this, other);
+  getCommonPosition(other: ModelPosition): ModelPosition | null {
+    return ModelPosition.getCommonPosition(this, other);
+  }
+
+  getCommonAncestor(other: ModelPosition): ModelNode | null {
+    return ModelPosition.getCommonPosition(this, other)?.nodeAfter() || null;
   }
 
   /**
@@ -227,6 +258,9 @@ export default class ModelPosition {
    * Otherwise, return the node immediately after the cursor
    */
   nodeAfter(): ModelNode | null {
+    if (this.path.length === 0) {
+      return this.root;
+    }
     return this.parent.childAtOffset(this.parentOffset) || null;
 
   }

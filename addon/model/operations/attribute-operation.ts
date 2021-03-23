@@ -2,16 +2,31 @@ import ModelRange from "../model-range";
 import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
 import {UnconfinedRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
 
-export default class AttributeOperation implements Operation {
+export default class AttributeOperation extends Operation {
 
-  private range: ModelRange;
-  private key: string;
-  private value: string;
+  private _key: string;
+  private _value: string;
 
   constructor(range: ModelRange, key: string, value: string) {
-    this.range = range;
-    this.key = key;
-    this.value = value;
+    super(range);
+    this._key = key;
+    this._value = value;
+  }
+
+  get value(): string {
+    return this._value;
+  }
+
+  set value(value: string) {
+    this._value = value;
+  }
+
+  get key(): string {
+    return this._key;
+  }
+
+  set key(value: string) {
+    this._key = value;
   }
 
   canExecute() {
@@ -26,7 +41,7 @@ export default class AttributeOperation implements Operation {
 
     // TODO: replace with treewalker
     for (const node of this.range.start.parent.children) {
-      node.setAttribute(this.key, this.value);
+      node.setAttribute(this._key, this._value);
     }
 
   }

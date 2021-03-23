@@ -309,7 +309,7 @@ export default class ModelSelection {
     if (!this.lastRange) {
       return null;
     }
-    return this.lastRange.getCommonAncestor();
+    return this.lastRange.getCommonPosition();
   }
 
   /**
