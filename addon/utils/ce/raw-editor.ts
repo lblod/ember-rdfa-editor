@@ -20,6 +20,14 @@ import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-com
 import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
 import MakeHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-highlight-command';
 import RemoveHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-highlight-command';
+import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
+import InsertRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
+import InsertRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
+import InsertColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
+import InsertColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
+import RemoveTableColumnCommand from "@lblod/ember-rdfa-editor/commands/remove-table-column-command";
+import RemoveTableRowCommand from "@lblod/ember-rdfa-editor/commands/remove-table-row-command";
+import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-command";
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 
@@ -67,6 +75,14 @@ class RawEditor extends EmberObject {
     this.registerCommand(new InsertNewLiCommand(this.model));
     this.registerCommand(new MakeHighlightCommand(this.model));
     this.registerCommand(new RemoveHighlightCommand(this.model));
+    this.registerCommand(new InsertTableCommand(this.model));
+    this.registerCommand(new InsertRowBelowCommand(this.model));
+    this.registerCommand(new InsertRowAboveCommand(this.model));
+    this.registerCommand(new InsertColumnAfterCommand(this.model));
+    this.registerCommand(new InsertColumnBeforeCommand(this.model));
+    this.registerCommand(new RemoveTableRowCommand(this.model));
+    this.registerCommand(new RemoveTableColumnCommand(this.model));
+    this.registerCommand(new RemoveTableCommand(this.model));
   }
 
   /**

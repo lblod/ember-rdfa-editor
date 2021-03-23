@@ -10,7 +10,7 @@ steps:
     dry_run: true
     purge: true
 - name: test
-  image: mdanlynn/ember-cli:3.20.0
+  image: danlynn/ember-cli:3.20.0
   commands:
   - npm install
   - npm test

@@ -1,0 +1,156 @@
+/* ==================================
+  #DROPDOWN
+  ================================== */
+
+/* Variables
+  ========================================================================== */
+
+$say-dropdown-color             : $say-blue-700 !default;
+$say-dropdown-hover-color       : $say-blue-600 !default;
+$say-dropdown-active-color      : $say-blue-600 !default;
+$say-dropdown-visited-color     : $say-blue-900 !default;
+$say-dropdown-active-color      : $say-blue-900 !default;
+$say-dropdown-underline         : $say-blue-600 !default;
+$say-dropdown-underline-hover   : $say-blue-300 !default;
+$say-dropdown-caret-size        : .4rem !default;
+
+/* Component
+  ========================================================================== */
+
+.say-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.say-toolbar__button {
+
+}
+
+.say-dropdown__button {
+  @include say-font-size($say-base,1);
+  appearance: none;
+  outline: none;
+  border: 0;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: $say-neutral-600;
+  height: $say-toolbar-height;
+  width: $say-toolbar-height;
+  background-color: transparent;
+  transition: color $say-transition;
+  padding: $say-unit-tiny;
+  margin: 0;
+
+  & + & {
+    border-left: .1rem solid $say-neutral-200;
+  }
+
+  &:hover,
+  &:focus {
+    color: $say-neutral-700;
+    background-color: transparent;
+  }
+
+  &:focus {
+    outline: $say-outline;
+    outline-offset: -.4rem;
+  }
+
+  &.is-active {
+    color: $say-neutral-900;
+    background-color: $say-neutral-300;
+    box-shadow: inset 0 -.3rem 0 0 $say-neutral-400;
+  }
+}
+
+.say-dropdown__menu {
+  @include say-font-size($say-base,1.5);
+  font-family: $say-font;
+  font-weight: $say-regular;
+  position: absolute;
+  z-index: $say-z-index-beta;
+  background-color: $say-white;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 100%;
+  width: auto;
+  top: calc(100% + #{$say-unit-tiny});
+  box-shadow: 0 0 12px rgba($say-gray-900,.15), 0 0 2px rgba($say-gray-900,.1);
+  border-radius: .3rem;
+  display: none;
+
+  &:before,
+  &:after {
+    bottom: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-width: $say-dropdown-caret-size;
+    margin-left: -$say-dropdown-caret-size/2;
+  }
+
+  &:before {
+    border-color: rgba($say-white, 0);
+    border-bottom-color: $say-gray-200;
+  }
+
+  &:after {
+    border-color: rgba($say-white, 0);
+    border-bottom-color: $say-white;
+  }
+
+  &:focus {
+    outline: 0;
+  }
+
+  &.is-visible {
+    display: flex;
+  }
+}
+
+.say-dropdown__menu [role="menuitem"] {
+  @include say-font-size($say-small,1.5);
+  font-family: $say-font;
+  font-weight: $say-regular;
+  color: $say-gray-700;
+  appearance: none;
+  border: 0;
+  padding: $say-unit-small;
+  height: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: left;
+
+  &:first-child {
+    border-top-right-radius: .3rem;
+    border-top-left-radius: .3rem;
+  }
+
+  &:last-child {
+    border-bottom-right-radius: .3rem;
+    border-bottom-left-radius: .3rem;
+  }
+
+  &:hover {
+    color: $say-gray-800;
+    background-color: $say-gray-100;
+  }
+
+  &:focus {
+    outline: $say-outline;
+    outline-offset: -.2rem;
+  }
+}
+
+.say-dropdown__menu [role="menuitem"] + [role="menuitem"] {
+  border-top: 1px dotted $say-gray-300;
+}
