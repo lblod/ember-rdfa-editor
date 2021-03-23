@@ -922,6 +922,7 @@ export default class PernetRawEditor extends RawEditor {
       this.set('currentNode', null);
       this.setCurrentPosition(previousSnapshot.currentSelection[0]);
       taskFor(this.generateDiffEvents).perform([{noSnapshot: true}]);
+      this.model.read();
     }
     else {
       warn('no more history to undo', {id: 'contenteditable-editor:history-empty'});
