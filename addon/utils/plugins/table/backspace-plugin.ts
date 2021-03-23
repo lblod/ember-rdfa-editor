@@ -12,8 +12,8 @@ export default class TableBackspacePlugin implements BackspacePlugin {
 
   guidanceForManipulation(manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
     const voidExecutor = {
-      allow: true,
-      executor: this.removeInTable
+      allow: false,
+      executor: undefined
     };
     const selection = editor.model.selection;
     if(selection.isInTable) {
@@ -29,14 +29,7 @@ export default class TableBackspacePlugin implements BackspacePlugin {
         return null;
       }
     }
-  }
-
-  /**
-   * This executor does nothing when we are trying to remove an empty text node.
-   * @method removeInTable
-   */
-  removeInTable() : void {
-    return;
+    return null;
   }
 
   /**
