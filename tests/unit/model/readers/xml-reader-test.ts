@@ -17,7 +17,7 @@ module("Unit | model | readers | xml-reader-test", hooks => {
           <text>content2</text>
         </span>
         <p testAttr="value" __id="paragraph" />
-        <span></span>
+        <span>this text is also ignored<text>but this isn't</text></span>
         <img><document><invalidNodeName>warning: there are no checks for invalid html/model state</invalidNodeName></document></img>
       </div>`;
 
