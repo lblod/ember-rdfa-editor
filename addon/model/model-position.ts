@@ -1,8 +1,10 @@
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {ModelError, PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError, NotImplementedError, PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import Model from "@lblod/ember-rdfa-editor/model/model";
 
 /**
  * Represents a single position in the model. In contrast to the dom,
@@ -12,7 +14,7 @@ import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 export default class ModelPosition {
   private _path: number[];
   private _root: ModelElement;
-  private parentCache: ModelNode | null = null;
+  private parentCache: ModelElement | null = null;
 
 
   /**
@@ -32,18 +34,37 @@ export default class ModelPosition {
    * @param root
    * @param parent
    * @param offset
+   * @deprecated use {@link inTextNode} or {@link inElement}
    */
   static fromParent(root: ModelElement, parent: ModelNode, offset: number): ModelPosition {
     if (offset < 0 || offset > parent.length) {
       throw new SelectionError("offset out of range");
     }
     const result = new ModelPosition(root);
-    result.path = parent.getIndexPath();
+    result.path = parent.getOffsetPath();
     result.path.push(offset);
     return result;
   }
 
-  static getCommonAncestor(pos1: ModelPosition, pos2: ModelPosition): ModelPosition | null {
+  static inTextNode(node: ModelText, offset: number) {
+    if (offset < 0 || offset > node.length) {
+      throw new PositionError(`Offset ${offset} out of range of textnode with length ${node.length}`);
+    }
+    const path = node.getOffsetPath();
+    path[path.length - 1] += offset;
+    return ModelPosition.from(node.root, path);
+  }
+
+  static inElement(element: ModelElement, offset: number) {
+    if (offset < 0 || offset > element.getMaxOffset()) {
+      throw new PositionError(`Offset ${offset} out of range of element with maxOffset ${element.getMaxOffset()}`);
+    }
+    const path = element.getOffsetPath();
+    path.push(offset);
+    return ModelPosition.from(element.root, path);
+  }
+
+  static getCommonPosition(pos1: ModelPosition, pos2: ModelPosition): ModelPosition | null {
     if (pos1.root !== pos2.root) {
       return null;
     }
@@ -56,9 +77,10 @@ export default class ModelPosition {
    * Get a slice of child positions of the commonAncestor between pos1 and pos2
    * @param pos1
    * @param pos2
+   * @deprecated use {@link ModelTreeWalker} instead
    */
   static getTopPositionsBetween(pos1: ModelPosition, pos2: ModelPosition): ModelPosition[] | null {
-    const commonAncestor = ModelPosition.getCommonAncestor(pos1, pos2);
+    const commonAncestor = ModelPosition.getCommonPosition(pos1, pos2);
     if (!commonAncestor) {
       return null;
     }
@@ -95,37 +117,34 @@ export default class ModelPosition {
     this.parentCache = null;
   }
 
-  get parent(): ModelNode {
+  get parent(): ModelElement {
     if (this.parentCache) {
       return this.parentCache;
     }
     let cur: ModelNode = this.root;
-    for (let i = 0; i < this.path.length - 1; i++) {
-      if (ModelNode.isModelElement(cur)) {
-        cur = cur.children[this.path[i]];
-      } else {
-        this.parentCache = cur;
-        return cur;
-      }
+    let i = 0;
+
+    while (ModelNode.isModelElement(cur) && i < this.path.length - 1) {
+      cur = cur.childAtOffset(this.path[i]);
+      i++;
     }
-    this.parentCache = cur;
-    return cur;
+    if (ModelNode.isModelText(cur)) {
+      this.parentCache = cur.parent;
+      return cur.parent!;
+    }
+    if (i > 0 && i !== this.path.length - 1) {
+      throw new PositionError("invalid path");
+    }
+    this.parentCache = cur as ModelElement;
+    return cur as ModelElement;
   }
 
   /**
    * Get the first ancestor which is a ModelElement
+   * @deprecated use {@link parent} as this is now identical
    */
   get parentElement(): ModelElement {
-    const parent = this.parent;
-    if (ModelNode.isModelElement(parent)) {
-      return parent;
-    } else {
-      const result = parent.parent;
-      if (!result) {
-        throw new ModelError("Unexpected textnode without parent");
-      }
-      return result;
-    }
+    return this.parent;
   }
 
   /**
@@ -141,6 +160,13 @@ export default class ModelPosition {
    */
   get parentOffset(): number {
     return this.path[this.path.length - 1];
+  }
+
+  set parentOffset(offset: number) {
+    if (offset < 0 || offset > this.parent.getMaxOffset()) {
+      throw new PositionError(`Offset ${offset} is out of range of parent with maxOffset ${this.parent.getMaxOffset()}`);
+    }
+    this.path[this.path.length - 1] = offset;
   }
 
   /**
@@ -162,8 +188,12 @@ export default class ModelPosition {
     return ModelPosition.comparePath(this.path, other.path);
   }
 
-  getCommonAncestor(other: ModelPosition): ModelPosition | null {
-    return ModelPosition.getCommonAncestor(this, other);
+  getCommonPosition(other: ModelPosition): ModelPosition | null {
+    return ModelPosition.getCommonPosition(this, other);
+  }
+
+  getCommonAncestor(other: ModelPosition): ModelNode | null {
+    return ModelPosition.getCommonPosition(this, other)?.nodeAfter() || null;
   }
 
   /**
@@ -189,6 +219,61 @@ export default class ModelPosition {
     }
     return RelativePosition.EQUAL;
 
+  }
+
+  /**
+   * Split the textnode at the position. If position is not inside a
+   * textNode, do nothing. If splitting of elements is needed, use
+   * {@link splitParent}.
+   * @param saveEdges If true, don't split when the position is before
+   * the first or after the last character
+   */
+  split(saveEdges: boolean = false) {
+    const before = this.nodeBefore();
+    const after = this.nodeAfter();
+
+    if (before === after) {
+      if (!ModelNode.isModelText(before)) {
+        throw new ModelError("Invalid state, cursor inside a node with offsetSize <= 1");
+      } else {
+        if (saveEdges && (this.parentOffset === 0 || this.parentOffset === before.length)) {
+          return;
+        }
+        before.split(this.parentOffset - before.getOffset());
+      }
+    }
+    this.parentCache = null;
+  }
+
+  /**
+   * Split the parent element at this position
+   * TODO implement this
+   */
+  splitParent() {
+    throw new NotImplementedError();
+  }
+
+  /**
+   * If position is "inside" a textnode, this will return that node.
+   * Otherwise, return the node immediately after the cursor
+   */
+  nodeAfter(): ModelNode | null {
+    if (this.path.length === 0) {
+      return this.root;
+    }
+    return this.parent.childAtOffset(this.parentOffset) || null;
+
+  }
+
+  /**
+   * If position is "inside" a textnode, this will return that node.
+   * Otherwise, return the node immediately before the cursor
+   */
+  nodeBefore(): ModelNode | null {
+    return this.parent.childAtOffset(this.parentOffset - 1) || null;
+  }
+  clone(): ModelPosition {
+    return ModelPosition.from(this.root, [...this.path]);
   }
 
 }

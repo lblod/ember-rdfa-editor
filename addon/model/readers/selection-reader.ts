@@ -3,7 +3,11 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {isTextNode, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {TEXT_PROPERTY_NODES} from "@lblod/ember-rdfa-editor/model/util/constants";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
 /**
  * Reader to convert a {@link Selection} to a {@link ModelSelection}
@@ -26,7 +30,6 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     }
     rslt.ranges = ranges;
     rslt.isRightToLeft = this.isReverseSelection(from);
-    console.log("GENERATING", rslt);
     return rslt;
   }
 
@@ -51,68 +54,70 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
    * Convert a DOM position to a {@link ModelPosition}
    * Can be null when the {@link Selection} is empty.
    * @param container
-   * @param offset
+   * @param domOffset
    */
-  readDomPosition(container: Node, offset: number): ModelPosition | null {
-    const {container: normalizedContainer, offset: normalizedOffset} = this.normalizeDomPosition(container, offset);
-    const modelNode = this.model.getModelNodeFor(normalizedContainer);
-    const root = this.model.rootModelNode;
-    if (!modelNode) {
-      return null;
+  readDomPosition(container: Node, domOffset: number): ModelPosition | null {
+    let rslt = null;
+    if(TEXT_PROPERTY_NODES.has(tagName(container))) {
+      return this.findPositionForTextPopertyNode(container, domOffset);
     }
-    return ModelPosition.fromParent(root, modelNode, normalizedOffset);
+
+    else if(isElement(container)) {
+      const modelContainer = this.model.getModelNodeFor(container) as ModelElement;
+      const basePath = modelContainer.getOffsetPath();
+
+      const finalOffset = modelContainer.indexToOffset(domOffset);
+      basePath.push(finalOffset);
+      rslt = ModelPosition.from(modelContainer.root, basePath);
+
+
+    } else if (isTextNode(container)) {
+      const modelTextNode = this.model.getModelNodeFor(container) as ModelText;
+      const modelContainer = modelTextNode.parent!;
+      const basePath = modelContainer.getOffsetPath();
+
+      const finalOffset = modelTextNode.getOffset() + domOffset;
+      basePath.push(finalOffset);
+      rslt = ModelPosition.from(modelContainer.root, basePath);
+
+    }
+    return rslt;
   }
-
-  /**
-   * Things are easier to work with if we use textnodes as parents as much as possible. This tries
-   * to convert a dom position anchored to an element into an equivalent position anchored to a textnode, but in
-   * a conservative way.
-   * @param container
-   * @param offset
-   * @private
-   */
-  private normalizeDomPosition(container: Node, offset: number): { container: Node, offset: number } {
-    if (isTextNode(container)) {
-      return {container, offset};
+  private findPositionForTextPopertyNode(container: Node, domOffset: number): ModelPosition {
+    if(container.childNodes.length === 0) {
+      // this is fallback behavior in case the dom does something really weird
+      // in theory this should never happen
+      throw new NotImplementedError();
     }
-    // try to find a textnode to the left
-    if (offset > 0) {
-      let leftNode: ChildNode | null = container.childNodes[offset - 1];
-      // ignore breaks to the left
-      // TODO: what about other block elements? Do we actually want to do this here, or should we expect
-      // commands to handle breaks themselves?
-      while (leftNode && tagName(leftNode) === "br") {
-        leftNode = leftNode.previousSibling;
+    let child: ChildNode | null = null;
+    if(domOffset < container.childNodes.length) {
+      //try to find the first child textnode to the right
+      child = container.childNodes[domOffset];
+      while (child && TEXT_PROPERTY_NODES.has(tagName(child))) {
+        child = child.firstChild;
+      }
+      if(!child) {
+        throw new NotImplementedError("Unforeseen dom state");
       }
 
-      if (leftNode) {
-        if (isTextNode(leftNode)) {
-          return {container: leftNode, offset: leftNode.length};
-        }
-        else if (leftNode.childNodes.length > 0) {
-          return this.normalizeDomPosition(leftNode, leftNode.childNodes.length);
-        }
-        else {
-          return {container, offset};
-        }
+    } else {
+      //try to find the first child textnode to the left
+      child = container.childNodes[domOffset - 1];
+      while (child && TEXT_PROPERTY_NODES.has(tagName(child))) {
+        child = child.lastChild;
       }
+      if(!child) {
+        throw new NotImplementedError("Unforeseen dom state");
+      }
+
     }
 
-    // try to find a textnode to the right
-    // Note we don't skip breaks here, this is only because that currently doesn't seem necessary
-    const rightNode = container.childNodes[offset];
+    const modelNode = this.model.getModelNodeFor(child);
+    const basePath = modelNode.getOffsetPath();
+    basePath.push(0);
+    return ModelPosition.from(this.model.rootModelNode, basePath);
 
-    if(rightNode){
-      if (isTextNode(rightNode)) {
-        return {container: rightNode, offset: 0};
-      }
-      else if (rightNode.childNodes.length > 0) {
-        return this.normalizeDomPosition(rightNode, 0);
-      } else {
-        return {container, offset};
-      }
-    }
-    return {container, offset};
+
   }
 
   /**

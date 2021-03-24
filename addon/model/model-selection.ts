@@ -1,20 +1,16 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
+import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {
-  Direction,
-  FilterAndPredicate,
-  PropertyState,
-  RelativePosition
-} from "@lblod/ember-rdfa-editor/model/util/types";
+import {Direction, FilterAndPredicate, PropertyState,} from "@lblod/ember-rdfa-editor/model/util/types";
 import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import {FilterResult, ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
@@ -67,24 +63,6 @@ export default class ModelSelection {
     return this.lastRange.end;
   }
 
-  set focus(value: ModelPosition | null) {
-    if (!value) {
-      return;
-    }
-    this._isRightToLeft = false;
-    if (!this.lastRange) {
-      this.addRange(new ModelRange(value));
-    } else if (!this.anchor) {
-      this.lastRange.start = value;
-      this.lastRange.end = value;
-    } else if (this.anchor.compare(value) === RelativePosition.AFTER) {
-      this._isRightToLeft = true;
-      this.lastRange.start = value;
-    } else {
-      this.lastRange.end = value;
-    }
-  }
-
   /**
    * The anchor is the rightmost position of the selection if the selection
    * is left-to-right, and the leftmost position otherwise
@@ -97,24 +75,6 @@ export default class ModelSelection {
       return this.lastRange.end;
     }
     return this.lastRange.start;
-  }
-
-  set anchor(value: ModelPosition | null) {
-    if (!value) {
-      return;
-    }
-    this._isRightToLeft = false;
-    if (!this.lastRange) {
-      this.addRange(new ModelRange(value));
-    } else if (!this.focus) {
-      this.lastRange.start = value;
-      this.lastRange.end = value;
-    } else if (this.focus.compare(value) === RelativePosition.BEFORE) {
-      this._isRightToLeft = true;
-      this.lastRange.end = value;
-    } else {
-      this.lastRange.start = value;
-    }
   }
 
   /**
@@ -169,6 +129,12 @@ export default class ModelSelection {
     this._ranges = [];
   }
 
+  selectRange(range: ModelRange, rightToLeft: boolean = false) {
+    this.clearRanges();
+    this.addRange(range);
+    this._isRightToLeft = rightToLeft;
+  }
+
   /**
    * Gets the range at index
    * @param index
@@ -181,10 +147,7 @@ export default class ModelSelection {
    * @return whether the selection is collapsed
    */
   get isCollapsed() {
-    if (!(this.anchor && this.focus)) {
-      return true;
-    }
-    return this.anchor.sameAs(this.focus);
+    return this.lastRange?.collapsed;
   }
 
 
@@ -204,6 +167,11 @@ export default class ModelSelection {
     return this.getTextPropertyStatus("strikethrough");
   }
 
+  /**
+   *
+   * @param config
+   * @deprecated use {@link ModelTreeWalker} instead
+   */
   findAllInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): Iterable<T> | null {
 
     const {filter, predicate} = config;
@@ -260,6 +228,10 @@ export default class ModelSelection {
     }
   }
 
+  /**
+   * @param config
+   * @deprecated use {@link ModelTreeWalker} instead
+   */
   findAllInSelectionOrAncestors<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>) {
     const noop = () => true;
     const filter = config.filter || noop;
@@ -267,15 +239,19 @@ export default class ModelSelection {
 
     const iter = this.findAllInSelection(config);
     let result = iter && [...iter];
-    if(!result || result.length === 0) {
+    if (!result || result.length === 0) {
       const secondTry = this.getCommonAncestor()?.parent.findAncestor(node => filter(node) && predicate(node));
-      if(secondTry) {
+      if (secondTry) {
         result = [secondTry as T];
       }
     }
     return result;
   }
 
+  /**
+   * @param config
+   * @deprecated use {@link ModelTreeWalker} instead
+   */
   findFirstInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): T | null {
     const iterator = this.findAllInSelection<T>(config);
     if (!iterator) {
@@ -291,7 +267,7 @@ export default class ModelSelection {
       predicate: (node: ModelElement) => listTypes.has(node.type),
     };
     let result = !!this.findFirstInSelection(config);
-    if(!result) {
+    if (!result) {
       result = !!this.getCommonAncestor()?.parent.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type));
     }
 
@@ -333,71 +309,29 @@ export default class ModelSelection {
     if (!this.lastRange) {
       return null;
     }
-    return this.lastRange.getCommonAncestor();
+    return this.lastRange.getCommonPosition();
   }
 
   /**
    * Generic method for determining the status of a textattribute in the selection.
-   * The status is as follows:
-   * TODO: test this instead of writing it in comments, as this will inevitably get out of date
-   *
-   * collapsed selection
-   * ----
-   * in textnode with attribute -> ENABLED
-   * in textnode without attribute -> DISABLED
-   * not in textnode -> UNKNOWN
-   *
-   * uncollapsed selection
-   * ----
-   * all selected textnodes have attribute -> ENABLED
-   * some selected textnodes have attribute, some don't -> UNKNOWN
-   * none of the selected textnodes have attribute -> DISABLED
-   *
    * @param property
    */
   getTextPropertyStatus(property: TextAttribute): PropertyState {
-    const anchorNode = this.anchor?.parent;
-    const focusNode = this.focus?.parent;
 
-    if (!anchorNode) {
-      throw new NotImplementedError("Cannot get textproperty of selection without anchorNode");
-    }
+    if (ModelSelection.isWellBehaved(this)) {
+      const range = this.lastRange!;
 
-    if (this.isCollapsed) {
-      if (!ModelNode.isModelText(anchorNode)) {
-        return PropertyState.unknown;
-      }
-      return anchorNode.getTextAttribute(property) ? PropertyState.enabled : PropertyState.disabled;
+      const treeWalker = new ModelTreeWalker({
+        range,
+        filter: (node) => ModelNode.isModelText(node) && node.getTextAttribute(property) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP
+      });
+      const result = Array.from(treeWalker);
+      return result.length ? PropertyState.enabled : PropertyState.disabled;
     } else {
-      const nodeFinder = new ModelNodeFinder<ModelText>({
-          startNode: anchorNode,
-          endNode: focusNode,
-          rootNode: this.model.rootModelNode,
-          nodeFilter: ModelNode.isModelText,
-        }
-      );
-      const first = nodeFinder.next()?.getTextAttribute(property);
-      for (const node of nodeFinder) {
-        if (node.getTextAttribute(property) !== first) {
-          return PropertyState.unknown;
-        }
-      }
-      return first ? PropertyState.enabled : PropertyState.disabled;
+      return PropertyState.unknown;
     }
-
   }
 
-  /**
-   * Collapse the selection into a caret
-   * @param toLeft whether the caret should end up at the beginning of the selection, defaults to false
-   */
-  collapse(toLeft: boolean = false) {
-    if (toLeft) {
-      this.anchor = this.focus;
-    } else {
-      this.focus = this.anchor;
-    }
-  }
 
   collapseOn(node: ModelNode, offset: number = 0) {
     this.clearRanges();
@@ -410,6 +344,7 @@ export default class ModelSelection {
     this.clearRanges();
     this.addRange(range);
   }
+
   /**
    * Select a full ModelText node
    * @param node

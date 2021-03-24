@@ -3,11 +3,10 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 /**
  * Writer to convert a {@link ModelSelection} to a {@link Selection}
- * Note, unlike most readers, this is not a functional reader, since we cannot (or should not)
+ * Note, unlike most writers, this is not a functional writer, since we cannot (or should not)
  * create a {@link Selection}
  */
 export default class SelectionWriter implements Writer<ModelSelection, void> {
@@ -40,11 +39,17 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
    * @param position
    */
   writeDomPosition(position: ModelPosition): { anchor: Node, offset: number } {
-    const anchor = position.parent.boundNode;
-    if (!anchor) {
-      throw new SelectionError("trying to write a selection with an unbound position");
+
+    let modelAnchor = position.parent.childAtOffset(position.parentOffset);
+    if(!modelAnchor) {
+      // position is after last child
+      modelAnchor = position.parent;
+      const resultOffset = modelAnchor.length;
+      return {anchor: modelAnchor.boundNode!, offset: resultOffset};
+
     }
-    return {anchor, offset: position.parentOffset};
+    const resultOffset = position.parentOffset - modelAnchor.getOffset();
+    return {anchor: modelAnchor.boundNode!, offset: resultOffset};
 
   }
 
