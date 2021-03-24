@@ -3,6 +3,7 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import {parseXml} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 
 module("Unit | model | model-range", () => {
 
@@ -13,16 +14,15 @@ module("Unit | model | model-range", () => {
       const text = new ModelText("abc");
       root.addChild(text);
 
-      const p1 = ModelPosition.inTextNode(text, 0);
-      const p2 = ModelPosition.inTextNode(text, 2);
+      const p1 = ModelPosition.fromInTextNode(text, 0);
+      const p2 = ModelPosition.fromInTextNode(text, 2);
       const range = new ModelRange(p1, p2);
       const rslt = range.getMinimumConfinedRanges();
 
       assert.strictEqual(rslt.length, 1);
-      assert.strictEqual(rslt[0], range);
+      assert.true(rslt[0].sameAs(range));
 
     });
-
     test("returns range if range is confined2", assert => {
       const root = new ModelElement("div");
       const t1 = new ModelText("abc");
@@ -31,13 +31,13 @@ module("Unit | model | model-range", () => {
       const t3 = new ModelText("ghi");
       root.appendChildren(t1, div, t2, t3);
 
-      const p1 = ModelPosition.inTextNode(t1, 0);
-      const p2 = ModelPosition.inTextNode(t3, 2);
+      const p1 = ModelPosition.fromInTextNode(t1, 0);
+      const p2 = ModelPosition.fromInTextNode(t3, 2);
       const range = new ModelRange(p1, p2);
       const rslt = range.getMinimumConfinedRanges();
 
       assert.strictEqual(rslt.length, 1);
-      assert.strictEqual(rslt[0], range);
+      assert.true(rslt[0].sameAs(range));
 
     });
 
@@ -64,43 +64,94 @@ module("Unit | model | model-range", () => {
       s2.appendChildren(t20, t21, t22);
 
 
-      const p1 = ModelPosition.inTextNode(t00, 0);
-      const p2 = ModelPosition.inTextNode(t22, 3);
+      const p1 = ModelPosition.fromInTextNode(t00, 0);
+      const p2 = ModelPosition.fromInTextNode(t22, 3);
       const range = new ModelRange(p1, p2);
       let rslt = range.getMinimumConfinedRanges();
 
       assert.strictEqual(rslt.length, 3);
-      assert.ok(rslt[0].sameAs(ModelRange.fromPaths(range.root, [0, 0], [0, 9])));
-      assert.ok(rslt[0].isConfined());
-      assert.ok(rslt[1].sameAs(ModelRange.fromPaths(range.root, [1], [2])));
-      assert.ok(rslt[1].isConfined());
-      assert.ok(rslt[2].sameAs(ModelRange.fromPaths(range.root, [2, 0], [2, 9])));
-      assert.ok(rslt[2].isConfined());
-      const startInCA = ModelPosition.inElement(root, 0);
-      const end = ModelPosition.inTextNode(t22, 3);
+      assert.true(rslt[0].sameAs(ModelRange.fromPaths(range.root, [0, 0], [0, 9])));
+      assert.true(rslt[0].isConfined());
+      assert.true(rslt[1].sameAs(ModelRange.fromPaths(range.root, [1], [2])));
+      assert.true(rslt[1].isConfined());
+      assert.true(rslt[2].sameAs(ModelRange.fromPaths(range.root, [2, 0], [2, 9])));
+      assert.true(rslt[2].isConfined());
+      const startInCA = ModelPosition.fromInElement(root, 0);
+      const end = ModelPosition.fromInTextNode(t22, 3);
       const rangeWithStartInCA = new ModelRange(startInCA, end);
       rslt = rangeWithStartInCA.getMinimumConfinedRanges();
       assert.strictEqual(rslt.length, 2);
-      assert.ok(rslt[0].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [0], [2])));
-      assert.ok(rslt[1].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [2,0], [2,9])));
+      assert.true(rslt[0].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [0], [2])));
+      assert.true(rslt[1].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [2, 0], [2, 9])));
 
-      const start = ModelPosition.inTextNode(t00, 0);
-      const endInCA = ModelPosition.inElement(root, 3);
+      const start = ModelPosition.fromInTextNode(t00, 0);
+      const endInCA = ModelPosition.fromInElement(root, 3);
       const rangeWithEndInCA = new ModelRange(start, endInCA);
       rslt = rangeWithEndInCA.getMinimumConfinedRanges();
       assert.strictEqual(rslt.length, 2);
-      assert.ok(rslt[0].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [0,0], [0,9])));
-      assert.ok(rslt[1].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [1], [3])));
+      assert.true(rslt[0].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [0, 0], [0, 9])));
+      assert.true(rslt[1].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [1], [3])));
 
     });
 
+    test("returns confined ranges with uncles", assert => {
+      // language=XML
+      const xml = `
+        <div>
+          <span>
+            <span>
+              <!--                conf range 1-->
+              <text __id="rangeStart">t000</text>
+              <text>t001</text>
+              <text>t002</text>
+              <!--                /conf range 1-->
+            </span>
+            <!--                conf range 2-->
+            <span>
+              <text>t010</text>
+            </span>
+            <!--                /conf range 2-->
+          </span>
+
+          <!--                conf range 3-->
+          <span/>
+          <!--                /conf range 3-->
+
+          <span>
+            <!--                conf range 4-->
+            <span>
+              <text>t200</text>
+            </span>
+            <!--                /conf range 4-->
+            <span>
+              <!--                conf range 5-->
+              <text>t210</text>
+              <text>t211</text>
+              <text __id="rangeEnd">t212</text>
+              <!--                /conf range 5-->
+            </span>
+          </span>
+
+          <span/>
+        </div>
+      `;
+      const {textNodes: {rangeStart, rangeEnd}} = parseXml(xml);
+      const p1 = ModelPosition.fromInTextNode(rangeStart, 0);
+      const p2 = ModelPosition.fromInTextNode(rangeEnd, 2);
+      const range = new ModelRange(p1, p2);
+      const confinedRanges = range.getMinimumConfinedRanges();
+
+      assert.strictEqual(confinedRanges.length, 5);
+
+
+    });
   });
   module("Unit | model | model-range | getCommonAncestor", () => {
     test("returns null when start and end have different root", assert => {
       const root = new ModelElement("div");
       const root2 = new ModelElement("div");
-      const p1 = ModelPosition.from(root, [0]);
-      const p2 = ModelPosition.from(root2, [0]);
+      const p1 = ModelPosition.fromPath(root, [0]);
+      const p2 = ModelPosition.fromPath(root2, [0]);
 
       const range = new ModelRange(p1, p2);
 
@@ -108,12 +159,12 @@ module("Unit | model | model-range", () => {
     });
     test("returns root when start and end are root", assert => {
       const root = new ModelElement("div");
-      const p1 = ModelPosition.from(root, []);
-      const p2 = ModelPosition.from(root, []);
+      const p1 = ModelPosition.fromPath(root, []);
+      const p2 = ModelPosition.fromPath(root, []);
 
       const range = new ModelRange(p1, p2);
 
-      assert.true(range.getCommonPosition()?.sameAs(ModelPosition.from(root, [])));
+      assert.true(range.getCommonPosition()?.sameAs(ModelPosition.fromPath(root, [])));
 
 
     });

@@ -13,8 +13,8 @@ module("Unit | model | model-selection", hooks => {
     ctx.reset();
   });
   test("sets anchor and focus correctly, anchor before focus", assert => {
-    const anchor = ModelPosition.from(ctx.model.rootModelNode, [0]);
-    const focus = ModelPosition.from(ctx.model.rootModelNode, [1]);
+    const anchor = ModelPosition.fromPath(ctx.model.rootModelNode, [0]);
+    const focus = ModelPosition.fromPath(ctx.model.rootModelNode, [1]);
 
     ctx.modelSelection.anchor = anchor;
     ctx.modelSelection.focus = focus;
@@ -27,8 +27,8 @@ module("Unit | model | model-selection", hooks => {
 
   });
   test("sets anchor and focus correctly, anchor before focus", assert => {
-    const anchor = ModelPosition.from(ctx.model.rootModelNode, [1]);
-    const focus = ModelPosition.from(ctx.model.rootModelNode, [0]);
+    const anchor = ModelPosition.fromPath(ctx.model.rootModelNode, [1]);
+    const focus = ModelPosition.fromPath(ctx.model.rootModelNode, [0]);
 
     ctx.modelSelection.anchor = anchor;
     ctx.modelSelection.focus = focus;

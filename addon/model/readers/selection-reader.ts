@@ -68,7 +68,7 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
 
       const finalOffset = modelContainer.indexToOffset(domOffset);
       basePath.push(finalOffset);
-      rslt = ModelPosition.from(modelContainer.root, basePath);
+      rslt = ModelPosition.fromPath(modelContainer.root, basePath);
 
 
     } else if (isTextNode(container)) {
@@ -78,7 +78,7 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
 
       const finalOffset = modelTextNode.getOffset() + domOffset;
       basePath.push(finalOffset);
-      rslt = ModelPosition.from(modelContainer.root, basePath);
+      rslt = ModelPosition.fromPath(modelContainer.root, basePath);
 
     }
     return rslt;
@@ -115,7 +115,7 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     const modelNode = this.model.getModelNodeFor(child);
     const basePath = modelNode.getOffsetPath();
     basePath.push(0);
-    return ModelPosition.from(this.model.rootModelNode, basePath);
+    return ModelPosition.fromPath(this.model.rootModelNode, basePath);
 
 
   }

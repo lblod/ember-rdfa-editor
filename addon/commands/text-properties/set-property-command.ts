@@ -6,6 +6,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {FilterResult, ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export default abstract class SetPropertyCommand extends Command {
   constructor(model: Model) {
@@ -26,8 +27,14 @@ export default abstract class SetPropertyCommand extends Command {
 
       range.start.split(true);
 
-      //insert new textNode with property set
+      const referenceNode = range.start.nodeBefore() || range.start.nodeAfter()!;
       const node = new ModelText(INVISIBLE_SPACE);
+      if(ModelNode.isModelText(referenceNode)) {
+        for(const [prop, val] of referenceNode.getTextAttributes()) {
+          node.setTextAttribute(prop, val);
+        }
+      }
+      //insert new textNode with property set
       node.setTextAttribute(property, value);
       const insertionIndex = range.start.parent.offsetToIndex(range.start.parentOffset);
       range.start.parent.addChild(node, insertionIndex );

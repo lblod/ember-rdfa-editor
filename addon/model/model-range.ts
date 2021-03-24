@@ -20,6 +20,7 @@ export default class ModelRange {
   }
 
   static fromPaths(root: ModelElement, path1: number[], path2: number[]) {
+    //TODO: should we copy here? or leave it to the caller?
     const pos1 = ModelPosition.from(root, path1);
     const pos2 = ModelPosition.from(root, path2);
     const cmpResult = pos1.compare(pos2);
@@ -50,7 +51,7 @@ export default class ModelRange {
 
   }
 
-  constructor(start: ModelPosition, end: ModelPosition = start) {
+  constructor(start: ModelPosition, end: ModelPosition = start.clone()) {
     this._start = start;
     this._end = end;
   }
