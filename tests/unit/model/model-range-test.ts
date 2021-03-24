@@ -3,6 +3,7 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import {parseXml} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 
 module("Unit | model | model-range", () => {
 
@@ -22,7 +23,6 @@ module("Unit | model | model-range", () => {
       assert.strictEqual(rslt[0], range);
 
     });
-
     test("returns range if range is confined2", assert => {
       const root = new ModelElement("div");
       const t1 = new ModelText("abc");
@@ -82,18 +82,48 @@ module("Unit | model | model-range", () => {
       rslt = rangeWithStartInCA.getMinimumConfinedRanges();
       assert.strictEqual(rslt.length, 2);
       assert.ok(rslt[0].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [0], [2])));
-      assert.ok(rslt[1].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [2,0], [2,9])));
+      assert.ok(rslt[1].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [2, 0], [2, 9])));
 
       const start = ModelPosition.inTextNode(t00, 0);
       const endInCA = ModelPosition.inElement(root, 3);
       const rangeWithEndInCA = new ModelRange(start, endInCA);
       rslt = rangeWithEndInCA.getMinimumConfinedRanges();
       assert.strictEqual(rslt.length, 2);
-      assert.ok(rslt[0].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [0,0], [0,9])));
+      assert.ok(rslt[0].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [0, 0], [0, 9])));
       assert.ok(rslt[1].sameAs(ModelRange.fromPaths(rangeWithStartInCA.root, [1], [3])));
 
     });
 
+    test("returns confined ranges with uncles", assert => {
+      // language=XML
+      const xml = `
+        <div>
+          <span>
+            <span>
+              <text __id="rangeStart">t000</text>
+              <text>t001</text>
+              <text>t002</text>
+            </span>
+            <span>
+              <text>t010</text>
+            </span>
+          </span>
+
+          <span/>
+
+          <span>
+            <text>t20</text>
+            <text>t21</text>
+            <text __id="rangeEnd">t22</text>
+          </span>
+
+          <span/>
+        </div>
+      `;
+      const {textNodes: {rangeStart, rangeEnd}} = parseXml(xml);
+
+
+    });
   });
   module("Unit | model | model-range | getCommonAncestor", () => {
     test("returns null when start and end have different root", assert => {
