@@ -121,11 +121,14 @@ export default class ModelPosition {
     if (this.parentCache) {
       return this.parentCache;
     }
-    let cur: ModelNode = this.root;
+    let cur: ModelNode | null = this.root;
     let i = 0;
 
     while (ModelNode.isModelElement(cur) && i < this.path.length - 1) {
-      cur = cur.childAtOffset(this.path[i]);
+      if(!cur.childAtOffset(this.path[i], true)) {
+        cur.childAtOffset(this.path[i], true);
+      }
+      cur = cur.childAtOffset(this.path[i], true);
       i++;
     }
     if (ModelNode.isModelText(cur)) {
@@ -167,6 +170,7 @@ export default class ModelPosition {
       throw new PositionError(`Offset ${offset} is out of range of parent with maxOffset ${this.parent.getMaxOffset()}`);
     }
     this.path[this.path.length - 1] = offset;
+    this.parentCache = null;
   }
 
   /**

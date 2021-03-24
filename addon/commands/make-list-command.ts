@@ -1,13 +1,14 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelSelection, {WellbehavedSelection} from "@lblod/ember-rdfa-editor/model/model-selection";
+import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
-import ModelElement, {ElementType} from "../model/model-element";
-import {MisbehavedSelectionError, NoParentError, NoTopSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelElement from "../model/model-element";
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 
 /**
@@ -55,11 +56,17 @@ export default class MakeListCommand extends Command {
       cur = cur.previousSibling;
       range.start.parentOffset = cur.getOffset();
     }
+    if (range.start.parentOffset === 0) {
+      range.start = ModelPosition.inElement(range.start.parent.parent!, range.start.parent.getOffset());
+    }
     cur = range.end.nodeBefore()!;
     range.end.parentOffset = cur.getOffset() + cur.offsetSize;
     while (cur?.nextSibling && !cur.nextSibling.isBlock) {
       cur = cur.nextSibling;
       range.end.parentOffset = cur.getOffset() + cur.offsetSize;
+    }
+    if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
+      range.end = ModelPosition.inElement(range.end.parent.parent!, range.end.parent.getOffset() + range.end.parent.offsetSize);
     }
 
 
@@ -72,10 +79,12 @@ export default class MakeListCommand extends Command {
         if (ModelNode.isModelElement(node) && node.type === "br") {
           pos++;
         } else if (node.isBlock) {
-          pos++;
+          if(rslt[0].length) {
+            pos++;
+          }
           ArrayUtils.pushOrCreate(rslt, pos, node);
           pos++;
-        } else {
+        } else if(node.hasVisibleText()){
           ArrayUtils.pushOrCreate(rslt, pos, node);
         }
 

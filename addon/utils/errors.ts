@@ -96,3 +96,5 @@ export class UnconfinedRangeError extends ModelRangeError {
 
 export class OperationError extends CustomError {
 }
+
+export class ParseError extends CustomError {}

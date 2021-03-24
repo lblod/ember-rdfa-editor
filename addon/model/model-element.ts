@@ -283,12 +283,16 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   /**
    * Return the child containing, or immediately after, the offset
    * @param offset
+   * @param includeLast whether we should return the last node when given an offset after the last node
    */
-  childAtOffset(offset: number): ModelNode | null {
+  childAtOffset(offset: number, includeLast: boolean = false): ModelNode | null {
+    if (includeLast && offset === this.getMaxOffset()) {
+      return this.lastChild;
+    }
     try {
-      return this.children[this.offsetToIndex(offset)];
+      return this.children[this.offsetToIndex(offset)] || null;
     } catch (e) {
-      if(e instanceof OffsetOutOfRangeError) {
+      if (e instanceof OffsetOutOfRangeError) {
         return null;
       } else {
         throw e;
