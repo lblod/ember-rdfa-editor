@@ -57,7 +57,7 @@ export default class MakeListCommand extends Command {
       range.start.parentOffset = cur.getOffset();
     }
     if (range.start.parentOffset === 0) {
-      range.start = ModelPosition.inElement(range.start.parent.parent!, range.start.parent.getOffset());
+      range.start = ModelPosition.fromInElement(range.start.parent.parent!, range.start.parent.getOffset());
     }
     cur = range.end.nodeBefore()!;
     range.end.parentOffset = cur.getOffset() + cur.offsetSize;
@@ -66,7 +66,7 @@ export default class MakeListCommand extends Command {
       range.end.parentOffset = cur.getOffset() + cur.offsetSize;
     }
     if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
-      range.end = ModelPosition.inElement(range.end.parent.parent!, range.end.parent.getOffset() + range.end.parent.offsetSize);
+      range.end = ModelPosition.fromInElement(range.end.parent.parent!, range.end.parent.getOffset() + range.end.parent.offsetSize);
     }
 
 

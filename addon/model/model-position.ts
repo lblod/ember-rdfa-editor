@@ -22,11 +22,12 @@ export default class ModelPosition {
    * @param root
    * @param path
    */
-  static from(root: ModelElement, path: number[]) {
+  static fromPath(root: ModelElement, path: number[]) {
     const result = new ModelPosition(root);
     result.path = path;
     return result;
   }
+
 
   /**
    * Build a position from a root, a parent and an offset. Especially useful for converting
@@ -34,7 +35,7 @@ export default class ModelPosition {
    * @param root
    * @param parent
    * @param offset
-   * @deprecated use {@link inTextNode} or {@link inElement}
+   * @deprecated use {@link fromInTextNode} or {@link fromInElement}
    */
   static fromParent(root: ModelElement, parent: ModelNode, offset: number): ModelPosition {
     if (offset < 0 || offset > parent.length) {
@@ -45,23 +46,31 @@ export default class ModelPosition {
     result.path.push(offset);
     return result;
   }
+  static fromAfterNode(node: ModelNode): ModelPosition {
+    const basePath = node.getOffsetPath();
+    basePath[basePath.length - 1] += node.offsetSize;
+    return ModelPosition.fromPath(node.root, basePath);
+  }
+  static fromBeforeNode(node: ModelNode): ModelPosition {
+    return ModelPosition.fromPath(node.root, node.getOffsetPath());
+  }
 
-  static inTextNode(node: ModelText, offset: number) {
+  static fromInTextNode(node: ModelText, offset: number) {
     if (offset < 0 || offset > node.length) {
       throw new PositionError(`Offset ${offset} out of range of textnode with length ${node.length}`);
     }
     const path = node.getOffsetPath();
     path[path.length - 1] += offset;
-    return ModelPosition.from(node.root, path);
+    return ModelPosition.fromPath(node.root, path);
   }
 
-  static inElement(element: ModelElement, offset: number) {
+  static fromInElement(element: ModelElement, offset: number) {
     if (offset < 0 || offset > element.getMaxOffset()) {
       throw new PositionError(`Offset ${offset} out of range of element with maxOffset ${element.getMaxOffset()}`);
     }
     const path = element.getOffsetPath();
     path.push(offset);
-    return ModelPosition.from(element.root, path);
+    return ModelPosition.fromPath(element.root, path);
   }
 
   static getCommonPosition(pos1: ModelPosition, pos2: ModelPosition): ModelPosition | null {
@@ -70,7 +79,7 @@ export default class ModelPosition {
     }
     const commonPath = ArrayUtils.findCommonSlice(pos1.path, pos2.path);
 
-    return ModelPosition.from(pos1.root, commonPath);
+    return ModelPosition.fromPath(pos1.root, commonPath);
   }
 
   /**
@@ -94,7 +103,7 @@ export default class ModelPosition {
     const results = [];
 
     for (let i = path1[path1.length - 1]; i <= path2[path2.length - 1]; i++) {
-      results.push(ModelPosition.from(root, commonPath.concat([i, 0])));
+      results.push(ModelPosition.fromPath(root, commonPath.concat([i, 0])));
     }
     return results;
 
@@ -277,7 +286,7 @@ export default class ModelPosition {
     return this.parent.childAtOffset(this.parentOffset - 1) || null;
   }
   clone(): ModelPosition {
-    return ModelPosition.from(this.root, [...this.path]);
+    return ModelPosition.fromPath(this.root, [...this.path]);
   }
 
 }

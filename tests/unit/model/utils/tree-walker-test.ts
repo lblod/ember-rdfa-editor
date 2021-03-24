@@ -133,8 +133,8 @@ module("Unit | model | utils | tree-walker-test", hooks => {
     c0.addChild(c01);
     c1.addChild(c11);
 
-    const from = ModelPosition.from(root, [0, 0]);
-    const to = ModelPosition.from(root, [1, 1]);
+    const from = ModelPosition.fromPath(root, [0, 0]);
+    const to = ModelPosition.fromPath(root, [1, 1]);
     const range = new ModelRange(from, to);
 
     const walker = new ModelTreeWalker({range});

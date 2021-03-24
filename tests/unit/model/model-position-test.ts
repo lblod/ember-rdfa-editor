@@ -11,17 +11,17 @@ module("Unit | model | model-position", () => {
     test("returns null when start and end have different root", assert => {
       const root = new ModelElement("div");
       const root2 = new ModelElement("div");
-      const p1 = ModelPosition.from(root, [0]);
-      const p2 = ModelPosition.from(root2, [0]);
+      const p1 = ModelPosition.fromPath(root, [0]);
+      const p2 = ModelPosition.fromPath(root2, [0]);
 
 
       assert.strictEqual(p1.getCommonPosition(p2), null);
     });
     test("returns root when start and end are root", assert => {
       const root = new ModelElement("div");
-      const p1 = ModelPosition.from(root, []);
-      const p2 = ModelPosition.from(root, []);
-      assert.true(p1.getCommonPosition(p2)?.sameAs(ModelPosition.from(root, [])));
+      const p1 = ModelPosition.fromPath(root, []);
+      const p2 = ModelPosition.fromPath(root, []);
+      assert.true(p1.getCommonPosition(p2)?.sameAs(ModelPosition.fromPath(root, [])));
     });
 
     test("returns correct common ancestor", assert => {
@@ -33,8 +33,8 @@ module("Unit | model | model-position", () => {
       root.addChild(common);
       common.appendChildren(t1, t2);
 
-      const p1 = ModelPosition.inTextNode(t1, 1);
-      const p2 = ModelPosition.inTextNode(t2, 1);
+      const p1 = ModelPosition.fromInTextNode(t1, 1);
+      const p2 = ModelPosition.fromInTextNode(t2, 1);
       assert.strictEqual(p1.getCommonAncestor(p2), common);
     });
 
