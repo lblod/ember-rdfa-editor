@@ -15,7 +15,7 @@ export default class TableBackspacePlugin implements BackspacePlugin {
       allow: false,
       executor: undefined
     };
-    const selection = editor.model.selection;
+    const selection = editor.selection;
     if(selection.isInTable) {
       if(manipulation.type === 'moveCursorBeforeElement') {
         return voidExecutor;
