@@ -23,14 +23,13 @@ export default class InsertHtmlCommand extends Command {
     super(model);
   }
   execute(htmlString: string, selection: ModelSelection = this.model.selection) {
-    debugger;
     const range = selection.lastRange;
     if(!range){
       return;
     }
     const parser = new DOMParser();
     const html = parser.parseFromString(htmlString, "text/html");
-    const bodyContent=html.children[0].children[1].children[0];
+    const bodyContent=html.body.children[0];
     const reader = new HtmlReader(this.model);
     const modelNode = reader.read(bodyContent);
     this.model.change(mutator => {
