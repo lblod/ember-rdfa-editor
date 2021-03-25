@@ -21,8 +21,8 @@ export default class ModelRange {
 
   static fromPaths(root: ModelElement, path1: number[], path2: number[]) {
     //TODO: should we copy here? or leave it to the caller?
-    const pos1 = ModelPosition.from(root, path1);
-    const pos2 = ModelPosition.from(root, path2);
+    const pos1 = ModelPosition.fromPath(root, path1);
+    const pos2 = ModelPosition.fromPath(root, path2);
     const cmpResult = pos1.compare(pos2);
     if (cmpResult === RelativePosition.AFTER) {
       return new ModelRange(pos2, pos1);
@@ -164,61 +164,66 @@ export default class ModelRange {
 
   /**
    * Return the minimal set of confined ranges that, when combined, form an equivalent range to this one
-   * This will always be either one, two, or three ranges.
    */
   getMinimumConfinedRanges(): ModelRange[] {
-    if (this.isConfined()) {
-      return [this];
-    }
 
-    // commonAncestor can only be a non-element if start and end are inside the same textnode, and that is covered
-    // by the isConfined() check above
-    // TODO: this can be encoded in type information, similar to WellBehavedSelection
-    const commonAncestor = this.getCommonAncestor()!;
-
-    // for the left and right ranges, get the common part between resulting start and end positions
-    const leftEndPath = this.start.path.slice(0, this.start.path.length - 1);
-    const rightStartPath = this.end.path.slice(0, this.end.path.length - 1);
-
-    let middle = null;
-
-    if (this.start.parent === commonAncestor) {
-      // the end of the left range is the offset of the end path at the level of the startPosition
-      leftEndPath.push(this.end.path[this.start.path.length - 1]);
-      // the start of the right range is the start of its parent node
-      rightStartPath.push(0);
-    } else if (this.end.parent === commonAncestor) {
-      leftEndPath.push(this.start.parent.getMaxOffset());
-      // the start of the right range is the offset of the start path at the level of the endPosition
-      rightStartPath.push(this.start.path[this.end.path.length - 1] + 1);
-    } else {
-      // get the common path
-      const commonPath = commonAncestor.getOffsetPath();
-      // make two paths in the commonAncestor which contain all nodes between the start and end path
-      const fromPath = [...commonPath, this.start.path[commonPath.length] + 1];
-      const toPath = [...commonPath, this.end.path[commonPath.length]];
-      middle = new ModelRange(ModelPosition.from(this.root, fromPath), ModelPosition.from(this.root, toPath));
-
-      // for the left and right ranges, select the rest of their parent nodes in the appropriate
-      // direction
-      leftEndPath.push(this.start.parent.getMaxOffset());
-      rightStartPath.push(0);
-
-    }
-
-    const left = new ModelRange(this.start, ModelPosition.from(this.root, leftEndPath));
-    const right = new ModelRange(ModelPosition.from(this.root, rightStartPath), this.end);
-    if (middle && !middle.collapsed) {
-      return [left, middle, right];
-    } else {
-      return [left, right];
-    }
-
+    const commonAncestor = this.getCommonAncestor() as ModelElement;
+    return this.getMininumConfinedRangesRec(this.clone(), commonAncestor);
 
   }
 
+  private getMininumConfinedRangesRec(range: ModelRange, commonAncestor: ModelElement): ModelRange[] {
+    if (range.isConfined()) {
+      return [range];
+    }
+    let left: ModelRange | null = null;
+    let right: ModelRange | null = null;
+    let middleStart: ModelPosition;
+    let middleEnd: ModelPosition;
+
+    if (range.start.parent !== commonAncestor) {
+      const leftStart = range.start.clone();
+      const leftEnd = ModelPosition.fromInElement(range.start.parent, range.start.parent.getMaxOffset());
+      left = new ModelRange(leftStart, leftEnd);
+      middleStart = ModelPosition.fromAfterNode(range.start.parent);
+    } else {
+      middleStart = range.start;
+    }
+
+    if (range.end.parent !== commonAncestor) {
+      const rightStart = ModelPosition.fromInElement(range.end.parent, 0);
+      const rightEnd = range.end.clone();
+      right = new ModelRange(rightStart, rightEnd);
+      middleEnd = ModelPosition.fromBeforeNode(range.end.parent);
+    } else {
+      middleEnd = range.end;
+    }
+
+    const middle = new ModelRange(middleStart, middleEnd);
+    const middleConfinedNodes = this.getMininumConfinedRangesRec(middle, commonAncestor);
+    if (left) {
+      if (right) {
+        return [left, ...middleConfinedNodes, right];
+      } else {
+        return [left, ...middleConfinedNodes];
+      }
+    } else {
+      if (right) {
+        return [...middleConfinedNodes, right];
+      } else {
+        return middleConfinedNodes;
+      }
+
+    }
+  }
+
+
   sameAs(other: ModelRange): boolean {
     return this.start.sameAs(other.start) && this.end.sameAs(other.end);
+  }
+
+  clone(): ModelRange {
+    return new ModelRange(this.start.clone(), this.end.clone());
   }
 }
 

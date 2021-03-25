@@ -4,7 +4,6 @@ import {ModelError, NotImplementedError, PositionError, SelectionError} from "@l
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import Model from "@lblod/ember-rdfa-editor/model/model";
 
 /**
  * Represents a single position in the model. In contrast to the dom,
