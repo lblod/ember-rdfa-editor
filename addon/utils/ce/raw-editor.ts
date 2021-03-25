@@ -27,6 +27,7 @@ import InsertColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-
 import RemoveTableColumnCommand from "@lblod/ember-rdfa-editor/commands/remove-table-column-command";
 import RemoveTableRowCommand from "@lblod/ember-rdfa-editor/commands/remove-table-row-command";
 import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-command";
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
  * Any editing operations should be implemented as {@link Command commands}. External plugins can register their own commands.
@@ -41,7 +42,7 @@ import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-c
 @classic
 class RawEditor extends EmberObject {
   registeredCommands: Map<string, Command> = new Map()
-  protected model: Model;
+  model: Model;
   protected tryOutVdom = true;
 
   /**
@@ -93,6 +94,9 @@ class RawEditor extends EmberObject {
    */
   get rootNode() : HTMLElement {
     return this.model.rootNode;
+  }
+  get selection(): ModelSelection {
+    return this.model.selection;
   }
   set rootNode(rootNode: HTMLElement) {
     this.model.rootNode = rootNode;
