@@ -18,7 +18,6 @@ import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list
 import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
 import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
 import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
-<<<<<<< HEAD
 import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
 import InsertRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
 import InsertRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
@@ -27,9 +26,8 @@ import InsertColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-
 import RemoveTableColumnCommand from "@lblod/ember-rdfa-editor/commands/remove-table-column-command";
 import RemoveTableRowCommand from "@lblod/ember-rdfa-editor/commands/remove-table-row-command";
 import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-command";
-=======
+import InsertHtmlCommand from "@lblod/ember-rdfa-editor/commands/insert-html-command";
 
->>>>>>> c988a2de6ad7eff871235f0dee5fda57a0b02aad
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
  * Any editing operations should be implemented as {@link Command commands}. External plugins can register their own commands.
@@ -80,6 +78,7 @@ class RawEditor extends EmberObject {
     this.registerCommand(new RemoveTableRowCommand(this.model));
     this.registerCommand(new RemoveTableColumnCommand(this.model));
     this.registerCommand(new RemoveTableCommand(this.model));
+    this.registerCommand(new InsertHtmlCommand(this.model));
   }
 
   /**
