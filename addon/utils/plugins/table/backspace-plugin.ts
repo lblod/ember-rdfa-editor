@@ -17,7 +17,7 @@ export default class TableBackspacePlugin implements BackspacePlugin {
     };
     const selection = editor.selection;
     if(selection.isInTable) {
-      if(manipulation.type === 'moveCursorBeforeElement') {
+      if(manipulation.type === 'moveCursorBeforeElement' || manipulation.type === 'removeEmptyElement') {
         return voidExecutor;
       } else if(manipulation.type === 'removeEmptyTextNode') {
         if(manipulation.node.parentElement?.childElementCount === 0) {
@@ -33,11 +33,25 @@ export default class TableBackspacePlugin implements BackspacePlugin {
   }
 
   /**
-   * If the handler has been executed we had done nothing so we should always return true.
+   * If the handler has been executed we had done nothing so we should return true if not we return false.
    * @method detectChange
    */
-  detectChange() : boolean {
-    return true;
+  detectChange(manipulation: Manipulation, editor: RawEditor) : boolean {
+    const selection = editor.selection;
+    if(selection.isInTable) {
+      if(manipulation.type === 'moveCursorBeforeElement' || manipulation.type === 'removeEmptyElement') {
+        return true;
+      } else if(manipulation.type === 'removeEmptyTextNode') {
+        if(manipulation.node.parentElement?.childElementCount === 0) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+    return false;
   }
 
 }

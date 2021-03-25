@@ -198,7 +198,7 @@ export interface BackspacePlugin {
    *
    * Hint: return false if you don't detect location updates.
    */
-  detectChange: (manipulation: Manipulation) => boolean;
+  detectChange: (manipulation: Manipulation, editor: RawEditor) => boolean;
 }
 
 /**
@@ -981,7 +981,7 @@ export default class BackspaceHandler implements InputHandler {
     const reports =
       this
         .plugins
-        .map( (plugin) => { return { plugin, detectedChange: plugin.detectChange( manipulation ) }; } )
+        .map( (plugin) => { return { plugin, detectedChange: plugin.detectChange( manipulation, this.rawEditor ) }; } )
         .filter( ({detectedChange}) => detectedChange );
 
     // debug reporting
