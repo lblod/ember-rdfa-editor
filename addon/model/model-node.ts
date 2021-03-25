@@ -84,8 +84,8 @@ export default abstract class ModelNode {
 
   get root(): ModelElement {
     let root = this.parent;
-    if(!root) {
-      if(ModelNode.isModelElement(this)) {
+    if (!root) {
+      if (ModelNode.isModelElement(this)) {
         return this;
       } else {
         throw new ModelError("Non-element node cannot be root");
@@ -136,7 +136,7 @@ export default abstract class ModelNode {
   getOffset(): number {
     let counter = 0;
     let sibling = this.previousSibling;
-    while(sibling) {
+    while (sibling) {
       counter += sibling.offsetSize;
       sibling = sibling.previousSibling;
     }
@@ -268,7 +268,7 @@ export default abstract class ModelNode {
     if (!parent) {
       throw new NoParentError();
     }
-    if(!parent.parent) {
+    if (!parent.parent) {
       throw new OutsideRootError();
     }
     const index = this.index!;
@@ -276,7 +276,7 @@ export default abstract class ModelNode {
   }
 
   remove() {
-    if(!this.parent) {
+    if (!this.parent) {
       throw new ModelError("Cannot remove root");
     }
     this.parent.removeChild(this);

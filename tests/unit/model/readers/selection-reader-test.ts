@@ -46,8 +46,8 @@ module("Unit | model | readers | selection-reader", hooks => {
     domSelection.collapse(rootNode.childNodes[0], 0);
     const rslt = reader.read(domSelection);
 
-    assert.true(rslt.anchor?.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
-    assert.true(rslt.focus?.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
+    assert.true(rslt.anchor?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0, 0])));
+    assert.true(rslt.focus?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0, 0])));
 
   });
 
@@ -60,7 +60,7 @@ module("Unit | model | readers | selection-reader", hooks => {
 
     const result = reader.readDomRange(testRange);
     assert.true(result?.collapsed);
-    assert.true(result?.start.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
+    assert.true(result?.start.sameAs(ModelPosition.fromPath(model.rootModelNode, [0, 0])));
 
   });
   test("correctly handles a tripleclick selection", async assert => {
@@ -96,7 +96,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       sync();
 
       const result = reader.readDomPosition(text, 0);
-      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
+      assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0, 0])));
 
     });
     test("converts a dom position correctly before text node", assert => {
@@ -105,7 +105,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       sync();
 
       const result = reader.readDomPosition(rootNode, 0);
-      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [0, 0])));
+      assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0, 0])));
 
     });
     test("converts a dom position correctly after text node", assert => {
@@ -114,7 +114,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       sync();
 
       const result = reader.readDomPosition(rootNode, 1);
-      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [0, 3])));
+      assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0, 3])));
 
     });
 
@@ -133,17 +133,17 @@ module("Unit | model | readers | selection-reader", hooks => {
       sync();
 
       let result = reader.readDomPosition(child1, 0);
-      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1, 0])));
+      assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 0])));
 
       result = reader.readDomPosition(child1, 0);
-      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1, 0])));
+      assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 0])));
 
       result = reader.readDomPosition(child1, 1);
-      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1, 1])));
+      assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 1])));
 
 
       result = reader.readDomPosition(child12, 3);
-      assert.true(result?.sameAs(ModelPosition.from(model.rootModelNode, [1, 2, 3])));
+      assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 2, 3])));
     });
   });
 });

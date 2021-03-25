@@ -43,8 +43,8 @@ module("Unit | model | model-selection-tracker", hooks => {
     selection.collapse(rootNode.childNodes[0]);
     tracker.updateSelection();
 
-    assert.true(model.selection.getRangeAt(0).start.sameAs(ModelPosition.from(model.rootModelNode, [0,0])));
-    assert.true(model.selection.getRangeAt(0).end.sameAs(ModelPosition.from(model.rootModelNode, [0,0])));
+    assert.true(model.selection.getRangeAt(0).start.sameAs(ModelPosition.fromPath(model.rootModelNode, [0,0])));
+    assert.true(model.selection.getRangeAt(0).end.sameAs(ModelPosition.fromPath(model.rootModelNode, [0,0])));
     assert.strictEqual(model.selection.getRangeAt(0).end.parent, model.rootModelNode.firstChild);
 
 

@@ -60,8 +60,8 @@ module("Unit | model | operations | insert-operation-test", () => {
 
     const nodeToInsert = new ModelText("abc");
 
-    const p1 = ModelPosition.inTextNode(t00, 0);
-    const p2 = ModelPosition.inTextNode(t22, 3);
+    const p1 = ModelPosition.fromInTextNode(t00, 0);
+    const p2 = ModelPosition.fromInTextNode(t22, 3);
     const op = new InsertOperation(new ModelRange(p1, p2), nodeToInsert);
     op.execute();
     assert.strictEqual(root.length, 3);
