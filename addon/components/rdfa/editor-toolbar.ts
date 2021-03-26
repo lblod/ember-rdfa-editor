@@ -167,14 +167,4 @@ export default class EditorToolbar extends Component<Args> {
   removeTable(){
     this.args.editor.executeCommand("remove-table");
   }
-
-  @action
-  insertHtml(){
-    this.args.editor.executeCommand("insert-html", `
-
-<div>Hello World</div>
-
-    `);
-  }
-
 }
