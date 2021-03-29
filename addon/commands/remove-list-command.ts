@@ -44,6 +44,10 @@ export default class RemoveListCommand extends Command {
 
     }
     const listNodes = Array.from(listNodesIterator) as ModelElement[];
+    const commonAncestor = range.getCommonAncestor();
+    if (ModelNode.isModelElement(commonAncestor) && commonAncestor.type === "li") {
+      listNodes.push(commonAncestor);
+    }
 
 
     for (const li of listNodes) {

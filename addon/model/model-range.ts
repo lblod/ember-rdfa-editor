@@ -180,16 +180,16 @@ export default class ModelRange {
     const commonAncestorPath = this.getCommonPosition()!.path;
     let start = this.start;
     let end = this.end;
-    if (this.start.path.length >= commonAncestorPath.length + 1) {
-      const basePath = this.start.path.slice(0, commonAncestorPath.length );
+    if (this.start.path.length > commonAncestorPath.length + 1) {
+      const basePath = this.start.path.slice(0, commonAncestorPath.length + 1);
       if (basePath[basePath.length - 1] > 0) {
-        basePath[basePath.length-1]--;
+        basePath[basePath.length - 1]--;
       }
       start = ModelPosition.fromPath(this.root, basePath);
     }
-    if (this.end.path.length >= commonAncestorPath.length + 1) {
-      const basePath = this.end.path.slice(0, commonAncestorPath.length);
-        basePath[basePath.length - 1]++;
+    if (this.end.path.length > commonAncestorPath.length + 1) {
+      const basePath = this.end.path.slice(0, commonAncestorPath.length + 1);
+      basePath[basePath.length - 1]++;
       end = ModelPosition.fromPath(this.root, basePath);
     }
 
