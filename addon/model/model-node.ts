@@ -2,6 +2,7 @@ import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-tex
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import Fragment from "@lblod/ember-rdfa-editor/model/fragment";
 import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
+import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
@@ -280,6 +281,14 @@ export default abstract class ModelNode {
       throw new ModelError("Cannot remove root");
     }
     this.parent.removeChild(this);
+  }
+
+  /**
+   * Convert this node and its subtree to their xml representation
+   */
+  toXml(): Node {
+    const writer = new XmlWriter();
+    return writer.write(this);
   }
 
 }
