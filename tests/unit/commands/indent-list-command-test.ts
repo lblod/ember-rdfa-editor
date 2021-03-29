@@ -5,8 +5,6 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
 import {setupTest} from "ember-qunit";
-import {rangeAStartsOrEndsinB} from "@lblod/marawa/range-helpers";
-import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
 
 module("Unit | commands | indent-list-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -16,7 +14,6 @@ module("Unit | commands | indent-list-command-test", hooks => {
   });
 
   test("indents a simple list", assert => {
-
     // language=XML
     const {root: test, textNodes: {content}} = vdom`
       <div>
@@ -36,7 +33,6 @@ module("Unit | commands | indent-list-command-test", hooks => {
     ctx.modelSelection.selectRange(range);
     const command = new IndentListCommand(ctx.model);
     command.execute();
-
     // language=XML
     const {root: rslt} = vdom`
       <div>
@@ -52,8 +48,5 @@ module("Unit | commands | indent-list-command-test", hooks => {
         </ul>
       </div>`;
     assert.true(rslt.sameAs(ctx.model.rootModelNode.firstChild));
-
-
   });
-
 });

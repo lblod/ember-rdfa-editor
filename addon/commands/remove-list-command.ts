@@ -47,7 +47,6 @@ export default class RemoveListCommand extends Command {
 
 
     for (const li of listNodes) {
-      const clone = li.clone();
       this.bubbleUpLi(li);
       if (!li.previousSibling?.isBlock && li.previousSibling?.hasVisibleText()) {
         li.addChild(new ModelElement("br"), 0);
