@@ -59,7 +59,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * "<" of the closing tag in html
    */
   getMaxOffset() {
-    if(!this.lastChild) {
+    if (!this.lastChild) {
       return 0;
     }
     return this.lastChild.getOffset() + this.lastChild.offsetSize;
@@ -101,7 +101,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   insertChildAtOffset(child: ModelNode, offset: number) {
-    if(offset < 0 || offset > this.getMaxOffset()) {
+    if (offset < 0 || offset > this.getMaxOffset()) {
       throw new OffsetOutOfRangeError(offset, this.getMaxOffset());
     }
     this.addChild(child, this.offsetToIndex(offset));
@@ -248,7 +248,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * @param offset
    */
   offsetToIndex(offset: number): number {
-    if(offset < 0 || offset > this.getMaxOffset()) {
+    if (offset < 0 || offset > this.getMaxOffset()) {
       throw new OffsetOutOfRangeError(offset, this.getMaxOffset());
     }
     let offsetCounter = 0;
@@ -274,7 +274,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * @param index
    */
   indexToOffset(index: number): number {
-    if(index === this.length) {
+    if (index === this.length) {
       return this.getMaxOffset();
     }
     return this.children[index].getOffset();
@@ -300,4 +300,28 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
   }
 
+  sameAs(other: ModelNode): boolean {
+    if (!ModelNode.isModelElement(other)) {
+      return false;
+    }
+    if (this.type !== other.type) {
+      return false;
+    }
+    if (this.length !== other.length) {
+      return false;
+    }
+
+    for (const [key, value] of this.attributeMap.entries()) {
+      if (other.getAttribute(key) !== value) {
+        return false;
+      }
+    }
+    for (let i = 0; i < this.length; i++) {
+      if (!other.children[i].sameAs(this.children[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 }

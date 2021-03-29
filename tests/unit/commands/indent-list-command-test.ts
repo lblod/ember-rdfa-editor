@@ -51,7 +51,7 @@ module("Unit | commands | indent-list-command-test", hooks => {
           </li>
         </ul>
       </div>`;
-    assert.true(rslt.toXml().isEqualNode(ctx.model.rootModelNode.firstChild.toXml()));
+    assert.true(rslt.sameAs(ctx.model.rootModelNode.firstChild));
 
 
   });

@@ -291,4 +291,12 @@ export default abstract class ModelNode {
     return writer.write(this);
   }
 
+  /**
+   * Deep, but not reference equality
+   * All properties will be compared, and children will be compared recursively
+   * @param other
+   */
+  abstract sameAs(other: ModelNode): boolean;
 }
+
+
