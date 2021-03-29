@@ -214,7 +214,7 @@ export default abstract class ModelNode {
   }
 
   /**
-   * @deprecated use {@link ModelTreeWalker} instead
+   * @deprecated TODO evaluate whether we need this or not
    */
   findAncestor(predicate: (node: ModelNode) => boolean, includeSelf: boolean = true): ModelNode | null {
     if (includeSelf) {

@@ -5,7 +5,9 @@ import ModelNode from "../model/model-node";
 import ModelElement from "../model/model-element";
 import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
-import {FilterResult, ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
+import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 export default class RemoveListCommand extends Command {
   name = "remove-list";
@@ -33,9 +35,10 @@ export default class RemoveListCommand extends Command {
         throw new SelectionError('The selection is not in a list');
       }
     } else {
+      const maximizedRange = range.getMaximizedRange();
 
       listNodesIterator = new ModelTreeWalker({
-        range,
+        range: maximizedRange,
         filter: (node) => ModelNode.isModelElement(node) && node.type === "li" ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP
       });
 
@@ -44,6 +47,7 @@ export default class RemoveListCommand extends Command {
 
 
     for (const li of listNodes) {
+      const clone = li.clone();
       this.bubbleUpLi(li);
       if (!li.previousSibling?.isBlock && li.previousSibling?.hasVisibleText()) {
         li.addChild(new ModelElement("br"), 0);
@@ -53,10 +57,13 @@ export default class RemoveListCommand extends Command {
       }
       li.unwrap();
     }
+    const start = ModelPosition.fromBeforeNode(listNodes[0]);
+    const endLi = listNodes[listNodes.length - 1];
+    const end = ModelPosition.fromAfterNode(endLi);
+    const resultingRange = new ModelRange(start, end);
+    selection.selectRange(resultingRange);
 
     this.model.write();
-    this.model.readSelection();
-    return;
 
   }
 

@@ -4,7 +4,6 @@ import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
 
 module("Unit | model | model-position", () => {
   module("Unit | model | model-position | getCommonAncestor", () => {

@@ -1,7 +1,7 @@
 import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
 export default class InsertOperation extends Operation {
   private _node: ModelNode;

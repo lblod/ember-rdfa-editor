@@ -170,4 +170,59 @@ module("Unit | model | model-range", () => {
     });
   });
 
+  module("Unit | model | model-range | getMaximizedRange", () => {
+    test("gets the same range when start and end in commonAncestor", assert => {
+      // language=XML
+      const xml = `
+        <div>
+          <span><text __id="testNode">test</text></span>
+        </div>
+      `;
+      const {textNodes: {testNode}} = parseXml(xml);
+
+
+      const start = ModelPosition.fromInTextNode(testNode, 0);
+      const end = ModelPosition.fromInTextNode(testNode, 3);
+      const range = new ModelRange(start, end);
+
+      const maximized = range.getMaximizedRange();
+      assert.true(range.sameAs(maximized));
+
+    });
+    test("gets the maximized range", assert => {
+      // language=XML
+      const xml = `
+        <div>
+          <span __id="commonAncestor">
+            <span>
+              <text __id="rangeStart">start</text>
+            </span>
+
+            <span>
+              <text>middle</text>
+            </span>
+
+            <span>
+              <text __id="rangeEnd">end</text>
+            </span>
+          </span>
+        </div>
+      `;
+
+      const {textNodes: {rangeStart, rangeEnd}} = parseXml(xml);
+
+      const start = ModelPosition.fromInTextNode(rangeStart, 0);
+      const end = ModelPosition.fromInTextNode(rangeEnd, 3);
+
+      const range = new ModelRange(start, end);
+      assert.deepEqual(range.start.path, [0, 0, 0]);
+      assert.deepEqual(range.end.path, [0, 2, 3]);
+
+      const maximized = range.getMaximizedRange();
+      assert.deepEqual(maximized.start.path, [0, 0]);
+      assert.deepEqual(maximized.end.path, [0, 3]);
+
+    });
+
+  });
 });

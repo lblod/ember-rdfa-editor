@@ -32,7 +32,7 @@ export interface ModelTreeWalkerConfig {
   descend?: boolean;
 }
 
-export class ModelTreeWalker implements Iterable<ModelNode> {
+export default class ModelTreeWalker implements Iterable<ModelNode> {
   private readonly _root: ModelElement;
   private readonly _filter?: ModelNodeFilter;
   private _currentNode: ModelNode;
