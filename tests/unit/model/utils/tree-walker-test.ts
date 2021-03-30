@@ -4,6 +4,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 
 module("Unit | model | utils | tree-walker-test", hooks => {
   test("finds root when its the only node and position starts there", assert => {
@@ -182,60 +183,69 @@ module("Unit | model | utils | tree-walker-test", hooks => {
   //           #te[]xt
   //span
   test("stops at end node with br elements", assert => {
-    const root = new ModelElement("div", {debugInfo: "root"});
-
-    const p0 = new ModelElement("p");
-    const s00 = new ModelElement("s");
-    const s000 = new ModelElement("s");
-    const s0000 = new ModelElement("s");
-    const t00000 = new ModelText("t00000");
-
-    const br1 = new ModelElement("br");
-
-    const p2 = new ModelElement("p");
-    const t20 = new ModelText("t20");
-    const br21 = new ModelElement("br");
-    const s22 = new ModelElement("s");
-    const s220 = new ModelElement("s");
-    const s2200 = new ModelElement("s");
-    const t22000 = new ModelText("t22000");
-
-    const s3 = new ModelElement("span");
 
 
-    root.appendChildren(p0, br1, p2, s3);
-    p0.addChild(s00);
-    s00.addChild(s000);
-    s000.addChild(s0000);
-    s0000.addChild(t00000);
+    // language=XML
+    const {root, textNodes: {startRange, endRange}, elements: {insideConfinedRange1}} = vdom`
+      <div>
+        <p>
+          <span>
+            <span>
+              <span>
+                <!--                 r0 -->
+                <text __id="startRange">test</text>
+                <!--                end r0 -->
+              </span>
+            </span>
+          </span>
 
-    p2.appendChildren(t20, br21, s22);
-    s22.addChild(s220);
-    s220.addChild(s2200);
-    s2200.addChild(t22000);
+        </p>
+        <!--                 r1 -->
+        <br __id="insideConfinedRange1"/>
+        <!--                end r1 -->
+        <p>
+          <!--        r2-->
+          <text>test</text>
+          <br/>
+          <!--        end r2-->
+          <span>
+            <span>
+              <span>
+                <!--        r3-->
+                <text __id="endRange">test</text>
+                <!--        end r3-->
+              </span>
+            </span>
+          </span>
+
+        </p>
+        <span/>
+      </div>
+    `;
 
 
-    const range = ModelRange.fromPaths(root, [0, 0, 0, 0, 1], [2, 5, 0, 0, 2]);
+    const range = new ModelRange(ModelPosition.fromInTextNode(startRange, 1), ModelPosition.fromInTextNode(endRange, 3));
     const ranges = range.getMinimumConfinedRanges();
+    console.log(ranges);
 
     const walker0 = new ModelTreeWalker({range: ranges[0], descend: false});
     const result0 = [...walker0];
 
     assert.strictEqual(result0.length, 1);
-    assert.strictEqual(result0[0], t00000);
+    assert.strictEqual(result0[0], startRange);
 
 
     const walker1 = new ModelTreeWalker({range: ranges[1], descend: false});
     const result1 = [...walker1];
 
     assert.strictEqual(result1.length, 1);
-    assert.strictEqual(result1[0], br1);
+    assert.strictEqual(result1[0], insideConfinedRange1);
 
-    const walker2 = new ModelTreeWalker({range: ranges[2], descend: false});
+    const walker2 = new ModelTreeWalker({range: ranges[8], descend: false});
     const result2 = [...walker2];
 
     assert.strictEqual(result2.length, 1);
-    assert.strictEqual(result2[result2.length - 1], t22000);
+    assert.strictEqual(result2[result2.length - 1], endRange);
   });
   test("Does not visit children when descend false", assert => {
 
