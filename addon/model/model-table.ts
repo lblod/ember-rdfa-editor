@@ -1,6 +1,11 @@
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelSelection from "./model-selection";
 
+type TableIndex = {
+  x: number,
+  y: number
+}
+
 export default class ModelTable extends ModelElement {
 
   constructor(rows?: number, columns?: number) {
@@ -36,7 +41,7 @@ export default class ModelTable extends ModelElement {
     const y = tBody.children.length + 1;
     const firstRow = tHead.children[0] as ModelElement;
     const x = firstRow.children.length;
-    return {x, y}
+    return {x, y};
   }
 
   getCell(x: number, y: number) {
@@ -64,7 +69,6 @@ export default class ModelTable extends ModelElement {
       const cell = new ModelElement('td');
       row.addChild(cell);
     }
-    console.log(row);
     tBody.addChild(row, index);
   }
 
@@ -107,11 +111,11 @@ export default class ModelTable extends ModelElement {
     this.parent?.removeChild(this);
   }
 
-  static getCellIndex(cell: ModelElement) {
+  static getCellIndex(cell: ModelElement) : TableIndex {
     if(cell.type !== 'td' && cell.type !== 'th') throw Error('Cell is not a TD or a TH');
     const row = cell.parent;
     if(!row) throw Error('Table doesn\'t have the expected structure');
-    const xIndex = row.getChildIndex(cell);
+    const xIndex = row.getChildIndex(cell) as Number;
     const rowParent = row.parent;
     if(!rowParent) throw Error('Table doesn\'t have the expected structure');
     let yIndex;

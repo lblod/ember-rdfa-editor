@@ -27,7 +27,9 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     let table;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);
-    if(!selectedCell) return;
+    if(!selectedCell) {
+      throw new Error('Selection is not inside a cell');
+    }
     const selectedIndex = ModelTable.getCellIndex(selectedCell);
 
     while(selectedCell?.parent) {
@@ -41,20 +43,21 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
     
     const tableDimensions = table?.getDimensions();
-    if(!tableDimensions) return;
-    let newPosition = {};
-    console.log(manipulation.type)
+    if(!tableDimensions) {
+      throw new Error('Selection is not inside a table');
+    }
+    let newPosition;
     if(manipulation.type === 'moveCursorToStartOfElement' || manipulation.type === 'moveCursorAfterElement') {
       if(selectedIndex.x === tableDimensions.x - 1 && selectedIndex.y < tableDimensions.y - 1) {
         newPosition = {
           x: 0,
           y: selectedIndex.y + 1
-        }
+        };
       } else if(selectedIndex.x < tableDimensions.x - 1){
         newPosition = {
           x: selectedIndex.x + 1,
           y: selectedIndex.y
-        }
+        };
       } else {
         return;
       }
@@ -63,17 +66,20 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         newPosition = {
           x: tableDimensions.x - 1,
           y: selectedIndex.y - 1
-        }
+        };
       } else if(selectedIndex.x > 0){
         newPosition = {
           x: selectedIndex.x - 1,
           y: selectedIndex.y
-        }
+        };
       } else {
         return;
       }
+    } else {
+      return;
     }
     const newSelectedCell = table?.getCell(newPosition.x, newPosition.y);
+    if(!newSelectedCell) return;
     selection.collapseOn(newSelectedCell);
     editor.model.write();
   }
