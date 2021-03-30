@@ -20,8 +20,6 @@ export default class MakeListCommand extends Command {
   }
 
   canExecute(selection: ModelSelection = this.model.selection) {
-    console.log(selection.isInTable)
-    console.log(selection.isInTable === PropertyState.disabled)
     return !selection.isInTable || (selection.isInTable === PropertyState.disabled);
   }
 
