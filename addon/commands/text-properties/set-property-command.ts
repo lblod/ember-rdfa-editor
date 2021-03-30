@@ -24,7 +24,7 @@ export default abstract class SetPropertyCommand extends Command {
 
     if (range.collapsed) {
 
-      range.start.split(true);
+      range.start.split();
 
       const referenceNode = range.start.nodeBefore() || range.start.nodeAfter()!;
       const node = new ModelText(INVISIBLE_SPACE);
@@ -45,8 +45,8 @@ export default abstract class SetPropertyCommand extends Command {
 
     } else {
 
-      range.start.split(true);
-      range.end.split(true);
+      range.start.split();
+      range.end.split();
 
       const walker = new ModelTreeWalker({
         range,
