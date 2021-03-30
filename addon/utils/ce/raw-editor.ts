@@ -44,8 +44,8 @@ import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selec
 @classic
 class RawEditor extends EmberObject {
   registeredCommands: Map<string, Command> = new Map()
-  modelSelectionTracker: ModelSelectionTracker;
-  model: Model;
+  modelSelectionTracker!: ModelSelectionTracker;
+  model!: Model;
   protected tryOutVdom = true;
 
   /**
@@ -117,9 +117,6 @@ class RawEditor extends EmberObject {
 
   set rootNode(rootNode: HTMLElement) {
     if (rootNode) {
-      if (this.model) {
-        this.model.modelSelectionTracker.stopTracking();
-      }
       this.initialize(rootNode);
       this.model.read();
       this.model.write();
