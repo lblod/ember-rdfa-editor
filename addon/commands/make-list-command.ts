@@ -6,6 +6,7 @@ import ModelElement, {ElementType} from "../model/model-element";
 import {MisbehavedSelectionError, NoParentError, NoTopSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
+import { PropertyState } from "../model/util/types";
 
 
 /**
@@ -16,6 +17,12 @@ export default class MakeListCommand extends Command {
 
   constructor(model: Model) {
     super(model);
+  }
+
+  canExecute(selection: ModelSelection = this.model.selection) {
+    console.log(selection.isInTable)
+    console.log(selection.isInTable === PropertyState.disabled)
+    return !selection.isInTable || (selection.isInTable === PropertyState.disabled);
   }
 
 
