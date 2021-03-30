@@ -4,7 +4,7 @@ import ModelSelection from "./model-selection";
 type TableIndex = {
   x: number,
   y: number
-}
+};
 
 export default class ModelTable extends ModelElement {
 
@@ -87,7 +87,7 @@ export default class ModelTable extends ModelElement {
 
   removeRow(index: number) {
     if(index === 0) {
-      throw Error('Cannot remove table header row')
+      throw Error('Cannot remove table header row');
     }
     const tBody = this.children[1] as ModelElement;
     const rowToRemove = tBody.children[index - 1];
@@ -115,7 +115,7 @@ export default class ModelTable extends ModelElement {
     if(cell.type !== 'td' && cell.type !== 'th') throw Error('Cell is not a TD or a TH');
     const row = cell.parent;
     if(!row) throw Error('Table doesn\'t have the expected structure');
-    const xIndex = row.getChildIndex(cell) as Number;
+    const xIndex = row.getChildIndex(cell) as number;
     const rowParent = row.parent;
     if(!rowParent) throw Error('Table doesn\'t have the expected structure');
     let yIndex;
