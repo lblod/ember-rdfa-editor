@@ -28,6 +28,7 @@ import RemoveTableColumnCommand from "@lblod/ember-rdfa-editor/commands/remove-t
 import RemoveTableRowCommand from "@lblod/ember-rdfa-editor/commands/remove-table-row-command";
 import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-command";
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -43,6 +44,7 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 @classic
 class RawEditor extends EmberObject {
   registeredCommands: Map<string, Command> = new Map()
+  modelSelectionTracker: ModelSelectionTracker;
   model: Model;
   protected tryOutVdom = true;
 
@@ -56,7 +58,25 @@ class RawEditor extends EmberObject {
 
   constructor(...args: any[]) {
     super(...args);
-    this.model = new Model();
+  }
+
+  /**
+   * @method updateRichNode
+   * @private
+   */
+  updateRichNode() {
+    const richNode = walkDomNode(this.rootNode);
+    this.set('richNode', richNode);
+  }
+
+  initialize(rootNode: HTMLElement) {
+    if(this.modelSelectionTracker) {
+      this.modelSelectionTracker.stopTracking();
+    }
+    this.registeredCommands = new Map<string, Command>();
+    this.model = new Model(rootNode);
+    this.modelSelectionTracker = new ModelSelectionTracker(this.model);
+    this.modelSelectionTracker.startTracking();
     // @ts-ignore
     window.__VDOM = this.model;
     this.registerCommand(new MakeBoldCommand(this.model));
@@ -84,15 +104,6 @@ class RawEditor extends EmberObject {
   }
 
   /**
-   * @method updateRichNode
-   * @private
-   */
-  updateRichNode() {
-    const richNode = walkDomNode(this.rootNode);
-    this.set('richNode', richNode);
-  }
-
-  /**
    * The root node of the editor. This is the node with the contentEditable attribute.
    * No operations should ever affect any node outside of its tree.
    */
@@ -105,8 +116,11 @@ class RawEditor extends EmberObject {
   }
 
   set rootNode(rootNode: HTMLElement) {
-    this.model.rootNode = rootNode;
     if (rootNode) {
+      if (this.model) {
+        this.model.modelSelectionTracker.stopTracking();
+      }
+      this.initialize(rootNode);
       this.model.read();
       this.model.write();
       this.updateRichNode();
@@ -161,7 +175,7 @@ class RawEditor extends EmberObject {
   }
 
   synchronizeModel() {
-    console.log("synchronizing")
+    console.log("synchronizing");
     this.model.read();
     this.model.write();
   }

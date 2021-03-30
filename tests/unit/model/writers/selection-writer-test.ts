@@ -1,51 +1,37 @@
 import {module, test} from "qunit";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelTestContext from "dummy/tests/utilities/model-test-context";
+import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 module("Unit | model | writers | selection-writer", hooks => {
-  let model: Model;
-  let rootNode: HTMLElement;
-  let modelSelection: ModelSelection;
-  let domSelection: Selection;
-  let reader: SelectionReader;
-  let testRoot;
+  const ctx = new ModelTestContext();
 
   hooks.beforeEach(() => {
-    testRoot = document.getElementById("ember-testing");
-    rootNode = document.createElement("div");
-    if (!testRoot) {
-      throw new Error("testRoot not found");
-    }
-    testRoot.appendChild(rootNode);
-    model = new Model();
-    model.rootNode = rootNode;
-    model.read();
-    model.write();
-    domSelection = getWindowSelection();
-    reader = new SelectionReader(model);
+    ctx.reset();
   });
-  const sync = () => {
-    model.read();
-    model.write();
-  };
   test("converts a modelSelection correctly", assert => {
+    const {model} = ctx;
     const text = new ModelText("asdf");
     model.rootModelNode.addChild(text);
     assert.strictEqual(text.length, 4);
-    model.selection.selectNode(text);
+
+
+    const start = ModelPosition.fromInTextNode(text, 0);
+    const end = ModelPosition.fromInTextNode(text, 4);
+    model.selection.selectRange(new ModelRange(start, end));
 
 
     model.write();
+    const writer = new SelectionWriter();
+    const domRange = writer.writeDomRange(model.selection.lastRange!);
 
-    domSelection = getWindowSelection();
-    assert.strictEqual(getWindowSelection().anchorNode, text.boundNode);
-    assert.strictEqual(getWindowSelection().anchorOffset, 0);
-    assert.strictEqual(getWindowSelection().focusNode, text.boundNode);
-    assert.strictEqual(getWindowSelection().focusOffset, (text.boundNode as Text).length);
-
+    assert.strictEqual(domRange.startContainer, text.boundNode);
+    assert.strictEqual(domRange.startOffset, 0);
+    assert.strictEqual(domRange.endContainer, model.rootNode);
+    assert.strictEqual(domRange.endOffset, 1);
 
   });
 });

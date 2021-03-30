@@ -3,9 +3,6 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import RemoveListCommand from "@lblod/ember-rdfa-editor/commands/remove-list-command";
-import {setupTest} from "ember-qunit";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {AssertionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
@@ -13,7 +10,6 @@ import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 module("Unit | commands | remove-list-command", hooks => {
   const ctx = new ModelTestContext();
   let command: RemoveListCommand;
-  setupTest(hooks);
   hooks.beforeEach(() => {
     ctx.reset();
     command = new RemoveListCommand(ctx.model);
