@@ -4,7 +4,7 @@ import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 import HintsRegistry from './hints-registry';
 import { A } from '@ember/array';
 import { isEmpty } from '@ember/utils';
-import textOffsetToPosition from '@lblod/ember-rdfa-editor/utils/text-offset-to-position';
+import globalTextOffsetToPath from '@lblod/ember-rdfa-editor/utils/global-text-offset-to-path';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
@@ -115,16 +115,16 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    */
   handleRegistryChange(/*registry*/) {
     for (let [start,end] of this.cardsLocationFlaggedRemoved) {
-      const startPos = textOffsetToPosition(this.editor, start);
-      const endPos = textOffsetToPosition(this.editor, end);
+      const startPos = globalTextOffsetToPath(this.editor, start);
+      const endPos = globalTextOffsetToPath(this.editor, end);
       const selection = this.editor.createSelection();
       selection.selectRange(this.editor.createRangeFromPaths(startPos, endPos));
       this.editor.executeCommand("remove-highlight", selection);
     }
 
     for (let [start, end] of this.cardsLocationFlaggedNew) {
-      const startPos = textOffsetToPosition(this.editor, start);
-      const endPos = textOffsetToPosition(this.editor, end);
+      const startPos = globalTextOffsetToPath(this.editor, start);
+      const endPos = globalTextOffsetToPath(this.editor, end);
       const selection = this.editor.createSelection();
       selection.selectRange(this.editor.createRangeFromPaths(startPos, endPos));
       this.editor.executeCommand("make-highlight", selection);

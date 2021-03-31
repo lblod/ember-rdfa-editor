@@ -4,7 +4,7 @@ import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 import { debug } from '@ember/debug';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import textOffsetToPosition from '@lblod/ember-rdfa-editor/utils/text-offset-to-position';
+import globalTextOffsetToPath from '@lblod/ember-rdfa-editor/utils/global-text-offset-to-path';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 

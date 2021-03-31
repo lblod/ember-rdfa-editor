@@ -7,7 +7,7 @@ import RawEditor from './ce/raw-editor';
 
 const VOID_NODES = ["area","base","br","col","command","embed","hr","img","input","keygen","link","meta","param","source","track","wbr"];
 
-function selectTextNodes(node: ModelNode) {
+function selectTextAndVoidNodes(node: ModelNode) {
   if (ModelNode.isModelText(node)) {
     return FilterResult.FILTER_ACCEPT;
   }
@@ -25,9 +25,9 @@ function selectTextNodes(node: ModelNode) {
  * a space for all other void nodes
  *
  */
-export default function textOffsetToPosition(editor: RawEditor, offset: number): number[] {
+export default function globalTextOffsetToPath(editor: RawEditor, offset: number): number[] {
   const range = editor.createRangeFromPaths([], []);
-  const treeWalker = new ModelTreeWalker({ filter: selectTextNodes, range });
+  const treeWalker = new ModelTreeWalker({ filter: selectTextAndVoidNodes, range });
   let startOffset = 0;
   for (const node of treeWalker) {
     if (ModelNode.isModelText(node)) {
