@@ -2,6 +2,7 @@ import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-tex
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import Fragment from "@lblod/ember-rdfa-editor/model/fragment";
 import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
+import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
@@ -214,7 +215,7 @@ export default abstract class ModelNode {
   }
 
   /**
-   * @deprecated use {@link ModelTreeWalker} instead
+   * @deprecated TODO evaluate whether we need this or not
    */
   findAncestor(predicate: (node: ModelNode) => boolean, includeSelf: boolean = true): ModelNode | null {
     if (includeSelf) {
@@ -282,4 +283,20 @@ export default abstract class ModelNode {
     this.parent.removeChild(this);
   }
 
+  /**
+   * Convert this node and its subtree to their xml representation
+   */
+  toXml(): Node {
+    const writer = new XmlWriter();
+    return writer.write(this);
+  }
+
+  /**
+   * Deep, but not reference equality
+   * All properties except boundNode, parent and siblings will be compared, and children will be compared recursively
+   * @param other
+   */
+  abstract sameAs(other: ModelNode): boolean;
 }
+
+

@@ -8,6 +8,7 @@ import ContentEditableFalsePlugin from '@lblod/ember-rdfa-editor/utils/plugins/c
 import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-element/backspace-plugin';
 import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
 import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/backspace-plugin';
+import TableBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/backspace-plugin';
 import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { InputHandler, HandlerResponse } from './input-handler';
 import { paintCycleHappened, editorDebug, stringToVisibleText, hasVisibleChildren, moveCaret, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
@@ -189,7 +190,7 @@ export interface BackspacePlugin {
    * manipulation and/or if it intends to handle the manipulation
    * itself.
    */
-  guidanceForManipulation: (manipulation: Manipulation) => ManipulationGuidance | null;
+  guidanceForManipulation: (manipulation: Manipulation, editor: RawEditor) => ManipulationGuidance | null;
 
   /**
    * Callback to let the plugin indicate whether or not it discovered
@@ -197,7 +198,7 @@ export interface BackspacePlugin {
    *
    * Hint: return false if you don't detect location updates.
    */
-  detectChange: (manipulation: Manipulation) => boolean;
+  detectChange: (manipulation: Manipulation, editor: RawEditor) => boolean;
 }
 
 /**
@@ -312,7 +313,8 @@ export default class BackspaceHandler implements InputHandler {
       new EmptyTextNodePlugin(),
       new EmptyElementBackspacePlugin(),
       new BrSkippingBackspacePlugin(),
-      new PlaceholderTextBackspacePlugin()
+      new PlaceholderTextBackspacePlugin(),
+      new TableBackspacePlugin()
     ];
   }
 
@@ -931,7 +933,7 @@ export default class BackspaceHandler implements InputHandler {
     // calculate reports submitted by each plugin
     const reports : Array<{ plugin: BackspacePlugin, allow: boolean, executor: ManipulationExecutor | undefined }> = [];
     for ( const plugin of this.plugins ) {
-      const guidance = plugin.guidanceForManipulation( manipulation );
+      const guidance = plugin.guidanceForManipulation( manipulation, this.rawEditor );
       if( guidance ) {
         const allow = guidance.allow === undefined ? true : guidance.allow;
         const executor = guidance.executor;
@@ -979,7 +981,7 @@ export default class BackspaceHandler implements InputHandler {
     const reports =
       this
         .plugins
-        .map( (plugin) => { return { plugin, detectedChange: plugin.detectChange( manipulation ) }; } )
+        .map( (plugin) => { return { plugin, detectedChange: plugin.detectChange( manipulation, this.rawEditor ) }; } )
         .filter( ({detectedChange}) => detectedChange );
 
     // debug reporting

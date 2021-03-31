@@ -3,10 +3,9 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {FilterResult, ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
+import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export default abstract class SetPropertyCommand extends Command {
   constructor(model: Model) {
@@ -25,7 +24,7 @@ export default abstract class SetPropertyCommand extends Command {
 
     if (range.collapsed) {
 
-      range.start.split(true);
+      range.start.split();
 
       const referenceNode = range.start.nodeBefore() || range.start.nodeAfter()!;
       const node = new ModelText(INVISIBLE_SPACE);
@@ -46,8 +45,8 @@ export default abstract class SetPropertyCommand extends Command {
 
     } else {
 
-      range.start.split(true);
-      range.end.split(true);
+      range.start.split();
+      range.end.split();
 
       const walker = new ModelTreeWalker({
         range,

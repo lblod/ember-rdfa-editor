@@ -7,7 +7,7 @@ import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 
@@ -49,24 +49,31 @@ export default class MakeListCommand extends Command {
   private getBlocksFromRange(range: ModelRange): ModelNode[][] {
     // expand range until it is bound by blocks
 
-    let cur = range.start.nodeAfter()!;
-    range.start.parentOffset = cur?.getOffset();
+    let cur: ModelNode | null = range.start.nodeAfter();
+    if (cur) {
 
-    while (cur?.previousSibling && !cur.previousSibling.isBlock) {
-      cur = cur.previousSibling;
-      range.start.parentOffset = cur.getOffset();
+      range.start.parentOffset = cur?.getOffset();
+
+      while (cur?.previousSibling && !cur.previousSibling.isBlock) {
+        cur = cur.previousSibling;
+        range.start.parentOffset = cur.getOffset();
+      }
+      if (range.start.parentOffset === 0) {
+        range.start = ModelPosition.fromInElement(range.start.parent.parent!, range.start.parent.getOffset());
+      }
     }
-    if (range.start.parentOffset === 0) {
-      range.start = ModelPosition.fromInElement(range.start.parent.parent!, range.start.parent.getOffset());
-    }
-    cur = range.end.nodeBefore()!;
-    range.end.parentOffset = cur.getOffset() + cur.offsetSize;
-    while (cur?.nextSibling && !cur.nextSibling.isBlock) {
-      cur = cur.nextSibling;
+    cur = range.end.nodeBefore();
+
+    if (cur) {
+
       range.end.parentOffset = cur.getOffset() + cur.offsetSize;
-    }
-    if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
-      range.end = ModelPosition.fromInElement(range.end.parent.parent!, range.end.parent.getOffset() + range.end.parent.offsetSize);
+      while (cur?.nextSibling && !cur.nextSibling.isBlock) {
+        cur = cur.nextSibling;
+        range.end.parentOffset = cur.getOffset() + cur.offsetSize;
+      }
+      if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
+        range.end = ModelPosition.fromInElement(range.end.parent.parent!, range.end.parent.getOffset() + range.end.parent.offsetSize);
+      }
     }
 
 
@@ -79,12 +86,12 @@ export default class MakeListCommand extends Command {
         if (ModelNode.isModelElement(node) && node.type === "br") {
           pos++;
         } else if (node.isBlock) {
-          if(rslt[0].length) {
+          if (rslt[0].length) {
             pos++;
           }
           ArrayUtils.pushOrCreate(rslt, pos, node);
           pos++;
-        } else if(node.hasVisibleText()){
+        } else if (node.hasVisibleText()) {
           ArrayUtils.pushOrCreate(rslt, pos, node);
         }
 
