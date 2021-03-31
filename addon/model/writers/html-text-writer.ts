@@ -26,7 +26,7 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
     const top = document.createElement("span");
     let wrapper = top;
 
-    for (const entry of modelNode.textAttributeMap.entries()) {
+    for (const entry of modelNode.getTextAttributes()) {
       if(entry[1] && HtmlTextWriter.attributeMap.has(entry[0])) {
         const wrappingElement = document.createElement(HtmlTextWriter.attributeMap.get(entry[0])!);
         wrapper.appendChild(wrappingElement);

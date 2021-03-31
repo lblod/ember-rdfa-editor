@@ -23,6 +23,7 @@ function dummy() {
  * The predicate can assume it will only receive nodes that also satisfy the filter function.
  * The algorithm is DFS but modified so it can also walk upwards.
  * Can be implemented for different types of nodes.
+ * @deprecated use {@link ModelTreeWalker} instead
  */
 export default abstract class NodeFinder<T extends Node | ModelNode, R extends T> implements Iterable<R> {
 

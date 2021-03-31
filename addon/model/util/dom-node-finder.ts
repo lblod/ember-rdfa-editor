@@ -4,6 +4,7 @@ import NodeFinder from "@lblod/ember-rdfa-editor/model/util/node-finder";
 
 /**
  * {@link Node domNode} implementation of a {@link NodeFinder}
+ * @deprecated
  */
 export default class DomNodeFinder<R extends Node> extends NodeFinder<Node, R> {
 
