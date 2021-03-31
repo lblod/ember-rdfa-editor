@@ -2,7 +2,6 @@ import classic from "ember-classic-decorator";
 import { action } from "@ember/object";
 import { layout as templateLayout } from "@ember-decorators/component";
 import { inject } from "@ember/service";
-import { notEmpty } from "@ember/object/computed";
 import { A } from '@ember/array';
 import Component from '@ember/component';
 import { tracked } from "@glimmer/tracking";
@@ -130,8 +129,8 @@ export default class RdfaEditor extends Component {
   }
 
   didUpdateAttrs() {
-    if (this.profile != this.get('eventProcessor.profile')) {
-      this.set('eventProcessor.profile', this.profile);
+    if (this.profile != this.eventProcessor.profile) {
+      this.eventProcessor.profile = this.profile;
     }
   }
 
