@@ -39,7 +39,7 @@ export default class MakeListCommand extends Command {
 
 
     this.model.change(mutator => {
-      mutator.insertNode(range, list);
+      mutator.insertNodes(range, list);
       const cleaner = new ListCleaner();
       cleaner.clean(this.model.rootModelNode);
 
