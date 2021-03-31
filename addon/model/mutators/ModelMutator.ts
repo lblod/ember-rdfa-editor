@@ -14,6 +14,10 @@ export default class ModelMutator {
     this.batch.push(op);
   }
 
+  insertNodes(range: ModelRange, ...nodes: ModelNode[]) {
+    const op = new InsertOperation(range, ...nodes);
+    this.batch.push(op);
+  }
   insertNode(range: ModelRange, node: ModelNode) {
     const op = new InsertOperation(range, node);
     this.batch.push(op);
