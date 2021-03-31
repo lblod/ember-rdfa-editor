@@ -21,7 +21,7 @@ export default class InsertHtmlCommand extends Command {
     const bodyContent = html.body.childNodes;
     const reader = new HtmlReader(this.model);
     this.model.change(mutator => {
-      //this is inverted because range gets set before the selection
+      // dom NodeList doesnt have a map method
       const modelNodes: ModelNode[] = [];
       bodyContent.forEach(node => modelNodes.push(reader.read(node)));
       mutator.insertNodes(range, ...modelNodes);
