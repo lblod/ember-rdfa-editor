@@ -575,7 +575,7 @@ export default class HinstRegistry {
    * @private
    */
   appendToIndex(indexEntry) {
-    this.index.pushObject(indexEntry);
+    this.index.push(indexEntry);
   }
 
   /**
