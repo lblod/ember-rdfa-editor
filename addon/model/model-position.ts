@@ -243,15 +243,13 @@ export default class ModelPosition {
   split() {
     const before = this.nodeBefore();
     const after = this.nodeAfter();
-
-    if (before === after) {
-      if (!ModelNode.isModelText(before)) {
-        throw new ModelError("Invalid state, cursor inside a node with offsetSize <= 1");
-      } else {
+    if(ModelNode.isModelText(before)) {
+      if(before === after) {
         before.split(this.parentOffset - before.getOffset());
       }
+      this.parentCache = null;
     }
-    this.parentCache = null;
+
   }
 
   /**
