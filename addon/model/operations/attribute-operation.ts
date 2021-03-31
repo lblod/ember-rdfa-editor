@@ -35,7 +35,7 @@ export default class AttributeOperation extends Operation {
     }
   }
 
-  execute() {
+  execute(): ModelRange {
 
     this.canExecute();
 
@@ -43,6 +43,7 @@ export default class AttributeOperation extends Operation {
     for (const node of this.range.start.parent.children) {
       node.setAttribute(this._key, this._value);
     }
+    return this.range;
 
   }
 }
