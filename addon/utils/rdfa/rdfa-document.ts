@@ -13,10 +13,6 @@ export default class RdfaDocument {
 
   constructor(editor: PernetRawEditor) {
     this._editor = editor;
-    this.setHtmlContent = function(html: string) {
-      const selection = editor.selectHighlight(editor.richNode.region);
-      editor.update(selection, { set: { innerHTML: html}});
-    };
   }
 
   get htmlContent() {
@@ -25,12 +21,14 @@ export default class RdfaDocument {
   }
 
   set htmlContent(html: string) {
-    const selection = this._editor.createSelection();
-    selection.selectRange(this._editor.createRangeFromPaths([], []));
-    this._editor.executeCommand("insert-html", html, selection);
+    // const selection = this._editor.createSelection();
+    // selection.selectRange(this._editor.createRangeFromPaths([], []));
+    // this._editor.executeCommand("insert-html", html, selection);
+    const selection = this._editor.selectHighlight(this._editor.richNode.region);
+    this._editor.update(selection, { set: { innerHTML: html}});
   }
 
-  // setHtmlContent(html: string) {
-  //   this.htmlContent = html;
-  // }
+  setHtmlContent(html: string) {
+    this.htmlContent = html;
+  }
 }
