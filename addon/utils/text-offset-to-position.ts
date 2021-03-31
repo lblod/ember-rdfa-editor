@@ -1,7 +1,7 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {ModelTreeWalker, FilterResult} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
+import ModelTreeWalker, { FilterResult } from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelText from "../model/model-text";
 import RawEditor from './ce/raw-editor';
 
