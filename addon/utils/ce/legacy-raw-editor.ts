@@ -191,21 +191,6 @@ export default class LegacyRawEditor extends PernetRawEditor {
   }
 
   /**
-   * Clear the highlights contained in a specified range
-   *
-   * @method clearHightlightForRange
-   *
-   * @param {number} start Start of the range
-   * @param {number} end End of the range
-   *
-   * @public
-   */
-  clearHighlightForRange(start: number,end: number) {
-    deprecate('deprecated call to clearHightlightForRange, use clearHighlightForLocations');
-    this.clearHighlightForLocations([[start, end]]);
-  }
-
-  /**
    * insert a component at the provided position
    * @method insertComponent
    * @param {Number} position
