@@ -12,10 +12,6 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader"
 import ModelText from "../model/model-text";
 
-
-/**
- * command will convert all nodes in the selection to a list if they are not already in a list
- */
 export default class InsertHtmlCommand extends Command {
   name = "insert-html";
 
@@ -29,11 +25,14 @@ export default class InsertHtmlCommand extends Command {
     }
     const parser = new DOMParser();
     const html = parser.parseFromString(htmlString, "text/html");
-    const bodyContent=html.body.children[0];
+    const bodyContent=html.body.childNodes;
     const reader = new HtmlReader(this.model);
-    const modelNode = reader.read(bodyContent);
     this.model.change(mutator => {
-      mutator.insertNode(range, modelNode);
+      //this is inverted because range gets set before the selection
+      for(let i=bodyContent.length; i>0; i--){
+        const modelElement = reader.read(bodyContent[i-1]);
+        mutator.insertNode(range, modelElement);
+      }
     });
   }
 }

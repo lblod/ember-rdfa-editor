@@ -4,7 +4,6 @@ import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
 
 module("Unit | model | model-position", () => {
   module("Unit | model | model-position | getCommonAncestor", () => {
@@ -52,10 +51,9 @@ module("Unit | model | model-position", () => {
       range.start.split();
       range.end.split();
 
-      assert.strictEqual(root.length, 3);
-      assert.strictEqual((root.children[0] as ModelText).content, "");
-      assert.strictEqual((root.children[1] as ModelText).content, "a");
-      assert.strictEqual((root.children[2] as ModelText).content, "bc");
+      assert.strictEqual(root.length, 2);
+      assert.strictEqual((root.children[0] as ModelText).content, "a");
+      assert.strictEqual((root.children[1] as ModelText).content, "bc");
 
     });
 
@@ -68,8 +66,8 @@ module("Unit | model | model-position", () => {
 
       const range = ModelRange.fromPaths(root, [0, 0], [0, 1]);
 
-      range.start.split(true);
-      range.end.split(true);
+      range.start.split();
+      range.end.split();
 
       assert.strictEqual(root.length, 2);
       assert.strictEqual((root.children[0] as ModelText).content, "a");
@@ -89,8 +87,8 @@ module("Unit | model | model-position", () => {
       root.appendChildren(t1, br1, t2, br2);
 
       const range = ModelRange.fromPaths(root, [0, 5], [0, 10]);
-      range.start.split(true);
-      range.end.split(true);
+      range.start.split();
+      range.end.split();
 
 
       assert.strictEqual(root.length, 6);

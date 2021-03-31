@@ -175,4 +175,8 @@ export default class Model {
     return null;
   }
 
+  toXml(): Node {
+    return this.rootModelNode.toXml();
+  }
+
 }

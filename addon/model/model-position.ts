@@ -235,12 +235,12 @@ export default class ModelPosition {
 
   /**
    * Split the textnode at the position. If position is not inside a
-   * textNode, do nothing. If splitting of elements is needed, use
+   * textNode, do nothing.
+   * If position is at the end or start of a textnode, do nothing;
+   * If splitting of elements is needed, use
    * {@link splitParent}.
-   * @param saveEdges If true, don't split when the position is before
-   * the first or after the last character
    */
-  split(saveEdges: boolean = false) {
+  split() {
     const before = this.nodeBefore();
     const after = this.nodeAfter();
 
@@ -248,9 +248,6 @@ export default class ModelPosition {
       if (!ModelNode.isModelText(before)) {
         throw new ModelError("Invalid state, cursor inside a node with offsetSize <= 1");
       } else {
-        if (saveEdges && (this.parentOffset === 0 || this.parentOffset === before.length)) {
-          return;
-        }
         before.split(this.parentOffset - before.getOffset());
       }
     }

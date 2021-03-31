@@ -7,7 +7,7 @@ import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 

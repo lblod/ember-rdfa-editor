@@ -108,4 +108,19 @@ export default class ModelText extends ModelNode {
     return stringToVisibleText(this.content).length > 0;
   }
 
+  sameAs(other: ModelNode): boolean {
+    if(!ModelNode.isModelText(other)) {
+      return false;
+    }
+    if(this.content !== other.content) {
+      return false;
+    }
+
+    for (const [key, value] of this.attributeMap.entries()) {
+      if (other.getAttribute(key) !== value) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
