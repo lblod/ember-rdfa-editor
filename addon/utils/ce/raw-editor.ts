@@ -59,6 +59,8 @@ class RawEditor extends EmberObject {
     this.model = new Model();
     // @ts-ignore
     window.__VDOM = this.model;
+    // @ts-ignore
+    window.__executeCommand = this.executeCommand.bind(this);
     this.registerCommand(new MakeBoldCommand(this.model));
     this.registerCommand(new RemoveBoldCommand(this.model));
     this.registerCommand(new MakeItalicCommand(this.model));
