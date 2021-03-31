@@ -3,6 +3,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import RawEditor from 'dummy/utils/ce/raw-editor';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
+import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 
 /**
  *
@@ -14,7 +15,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
 
   guidanceForManipulation(manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
     const selection = editor.selection;
-    if(selection.isInTable) {
+    if(selection.isInTable === PropertyState.enabled) {
       return {
         allow: true,
         executor: this.tabHandler
@@ -43,7 +44,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
     
     const tableDimensions = table?.getDimensions();
-    if(!tableDimensions) {
+    if(!table || !tableDimensions) {
       throw new Error('Selection is not inside a table');
     }
     let newPosition;
@@ -59,6 +60,10 @@ export default class TableTabInputPlugin implements TabInputPlugin {
           y: selectedIndex.y
         };
       } else {
+        if(table.nextSibling) {
+          selection.collapseOn(table.nextSibling);
+          editor.model.write();
+        }
         return;
       }
     } else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
@@ -73,6 +78,10 @@ export default class TableTabInputPlugin implements TabInputPlugin {
           y: selectedIndex.y
         };
       } else {
+        if(table.previousSibling) {
+          selection.collapseOn(table.previousSibling);
+          editor.model.write();
+        }
         return;
       }
     } else {
@@ -83,23 +92,4 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     selection.collapseOn(newSelectedCell);
     editor.model.write();
   }
-
-  /**
-   * If the handler has been executed we had done nothing so we should return true if not we return false.
-   * @method detectChange
-   */
-  detectChange(manipulation: Manipulation, editor: RawEditor) : boolean {
-    const selection = editor.selection;
-    const supportedManipulations = [
-      'moveCursorToStartOfElement',
-      'moveCursorAfterElement',
-      'moveCursorToEndOfElement',
-      'moveCursorBeforeElement'
-    ];
-    if(selection.isInTable && supportedManipulations.includes(manipulation.type) ) {
-      return true;
-    }
-    return false;
-  }
-
 }
