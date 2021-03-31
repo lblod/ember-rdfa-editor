@@ -18,7 +18,6 @@ import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list
 import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
 import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
 import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
-
 import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
 import InsertRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
 import InsertRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
@@ -27,6 +26,7 @@ import InsertColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-
 import RemoveTableColumnCommand from "@lblod/ember-rdfa-editor/commands/remove-table-column-command";
 import RemoveTableRowCommand from "@lblod/ember-rdfa-editor/commands/remove-table-row-command";
 import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-command";
+import InsertHtmlCommand from "@lblod/ember-rdfa-editor/commands/insert-html-command";
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 
 /**
@@ -59,6 +59,8 @@ class RawEditor extends EmberObject {
     this.model = new Model();
     // @ts-ignore
     window.__VDOM = this.model;
+    // @ts-ignore
+    window.__executeCommand = this.executeCommand.bind(this);
     this.registerCommand(new MakeBoldCommand(this.model));
     this.registerCommand(new RemoveBoldCommand(this.model));
     this.registerCommand(new MakeItalicCommand(this.model));
@@ -81,6 +83,7 @@ class RawEditor extends EmberObject {
     this.registerCommand(new RemoveTableRowCommand(this.model));
     this.registerCommand(new RemoveTableColumnCommand(this.model));
     this.registerCommand(new RemoveTableCommand(this.model));
+    this.registerCommand(new InsertHtmlCommand(this.model));
   }
 
   /**

@@ -2,31 +2,32 @@ import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 export default class InsertOperation extends Operation {
-  private _node: ModelNode;
+  private _nodes: ModelNode[];
 
-  constructor(range: ModelRange, node: ModelNode) {
+  constructor(range: ModelRange, ...nodes: ModelNode[]) {
     super(range);
-    this._node = node;
+    this._nodes = nodes;
   }
 
-  get node(): ModelNode {
-    return this._node;
+  get nodes(): ModelNode[] {
+    return this._nodes;
   }
 
-  set node(value: ModelNode) {
-    this._node = value;
+  set nodes(value: ModelNode[]) {
+    this._nodes = value;
   }
 
   execute(): ModelRange {
     if(this.range.collapsed) {
       if(this.range.start.path.length === 0) {
-        this.range.root.addChild(this.node);
+        this.range.root.appendChildren(...this.nodes);
         return this.range;
       }
       this.range.start.split();
-      this.range.start.parent.insertChildAtOffset(this.node, this.range.start.parentOffset);
+      this.range.start.parent.insertChildrenAtOffset(this.range.start.parentOffset, ...this.nodes);
       return this.range;
     } else {
       this.range.start.split();
@@ -41,14 +42,12 @@ export default class InsertOperation extends Operation {
         node.remove();
       }
 
-      this.range.start.parent.insertChildAtOffset(this.node, this.range.start.parentOffset);
-      if(this.node.length) {
-        return ModelRange.fromInnerContent(this.node);
-      } else {
-        const basePath = this.node.getOffsetPath();
-        basePath[basePath.length - 1 ]++;
-        return ModelRange.fromPaths(this.node.root, basePath, basePath);
-      }
+      this.range.start.parent.insertChildrenAtOffset(this.range.start.parentOffset, ...this.nodes);
+      const first = this.nodes[0];
+      const last = this.nodes[this.nodes.length - 1];
+      const start = ModelPosition.fromBeforeNode(first);
+      const end = ModelPosition.fromAfterNode(last);
+      return new ModelRange(start, end);
     }
   }
 

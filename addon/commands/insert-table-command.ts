@@ -30,7 +30,7 @@ export default class InsertTableCommand extends Command {
     const firstCell = table.getCell(0, 0) as ModelElement;
     const range = selection.lastRange;
     this.model.change(mutator => {
-      mutator.insertNode(range, table);
+      mutator.insertNodes(range, table);
       mutator.flush();
       const cursorPos = ModelPosition.fromInElement(firstCell, 0);
       const resultRange = new ModelRange(cursorPos, cursorPos);

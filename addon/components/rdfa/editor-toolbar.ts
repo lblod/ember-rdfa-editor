@@ -169,5 +169,4 @@ export default class EditorToolbar extends Component<Args> {
   removeTable(){
     this.args.editor.executeCommand("remove-table");
   }
-
 }
