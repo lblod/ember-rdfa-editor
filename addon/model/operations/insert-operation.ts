@@ -1,7 +1,7 @@
 import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
 export default class InsertOperation extends Operation {
   private _node: ModelNode;
@@ -25,12 +25,12 @@ export default class InsertOperation extends Operation {
         this.range.root.addChild(this.node);
         return this.range;
       }
-      this.range.start.split(true);
+      this.range.start.split();
       this.range.start.parent.insertChildAtOffset(this.node, this.range.start.parentOffset);
       return this.range;
     } else {
-      this.range.start.split(true);
-      this.range.end.split(true);
+      this.range.start.split();
+      this.range.end.split();
       const confinedRanges = this.range.getMinimumConfinedRanges();
       const nodesToRemove = [];
       for (const range of confinedRanges) {

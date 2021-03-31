@@ -4,7 +4,7 @@ import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-find
 import {Direction, FilterAndPredicate, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {ModelNodeFilter, ModelTreeWalker} from "@lblod/ember-rdfa-editor/model/util/tree-walker";
+import ModelTreeWalker, {ModelNodeFilter} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 /**
@@ -169,6 +169,32 @@ export default class ModelRange {
 
     const commonAncestor = this.getCommonAncestor() as ModelElement;
     return this.getMininumConfinedRangesRec(this.clone(), commonAncestor);
+
+  }
+
+  /**
+   * Return a new range that is expanded to include all children
+   * of the commonAncestor that are "touched" by this range
+   */
+  getMaximizedRange(): ModelRange {
+    const commonAncestorPath = this.getCommonPosition()!.path;
+    let start = this.start;
+    let end = this.end;
+    if (this.start.path.length > commonAncestorPath.length + 1) {
+      const basePath = this.start.path.slice(0, commonAncestorPath.length + 1);
+      if (basePath[basePath.length - 1] > 0) {
+        basePath[basePath.length - 1]--;
+      }
+      start = ModelPosition.fromPath(this.root, basePath);
+    }
+    if (this.end.path.length > commonAncestorPath.length + 1) {
+      const basePath = this.end.path.slice(0, commonAncestorPath.length + 1);
+      basePath[basePath.length - 1]++;
+      end = ModelPosition.fromPath(this.root, basePath);
+    }
+
+    return new ModelRange(start, end);
+
 
   }
 

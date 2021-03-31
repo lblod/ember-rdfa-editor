@@ -45,7 +45,7 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 @classic
 class RawEditor extends EmberObject {
   registeredCommands: Map<string, Command> = new Map()
-  protected model: Model;
+  model: Model;
   protected tryOutVdom = true;
 
   /**
@@ -56,9 +56,11 @@ class RawEditor extends EmberObject {
    */
   richNode!: RichNode;
 
-  constructor(...args: any[]){
+  constructor(...args: any[]) {
     super(...args);
     this.model = new Model();
+    // @ts-ignore
+    window.__VDOM = this.model;
     this.registerCommand(new MakeBoldCommand(this.model));
     this.registerCommand(new RemoveBoldCommand(this.model));
     this.registerCommand(new MakeItalicCommand(this.model));
@@ -90,19 +92,25 @@ class RawEditor extends EmberObject {
    * @private
    */
   updateRichNode() {
-    const richNode = walkDomNode( this.rootNode );
+    const richNode = walkDomNode(this.rootNode);
     this.set('richNode', richNode);
   }
+
   /**
    * The root node of the editor. This is the node with the contentEditable attribute.
    * No operations should ever affect any node outside of its tree.
    */
-  get rootNode() : HTMLElement {
+  get rootNode(): HTMLElement {
     return this.model.rootNode;
   }
+
+  get selection(): ModelSelection {
+    return this.model.selection;
+  }
+
   set rootNode(rootNode: HTMLElement) {
     this.model.rootNode = rootNode;
-    if(rootNode) {
+    if (rootNode) {
       this.model.read();
       this.model.write();
       this.updateRichNode();
@@ -124,10 +132,15 @@ class RawEditor extends EmberObject {
    * @param args
    */
   executeCommand(commandName: string, ...args: any[]) {
-    const command = this.getCommand(commandName);
-    if(command.canExecute(...args)) {
-      this.getCommand(commandName).execute(...args);
-      this.updateRichNode();
+    try {
+      const command = this.getCommand(commandName);
+      if (command.canExecute(...args)) {
+        this.getCommand(commandName).execute(...args);
+        this.updateRichNode();
+      }
+
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -145,7 +158,7 @@ class RawEditor extends EmberObject {
 
   private getCommand(commandName: string): Command {
     const command = this.registeredCommands.get(commandName);
-    if(!command) {
+    if (!command) {
       throw new Error(`Unrecognized command ${commandName}`);
     }
     return command;
@@ -174,4 +187,5 @@ class RawEditor extends EmberObject {
     this.model.write();
   }
 }
+
 export default RawEditor;
