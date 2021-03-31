@@ -87,8 +87,9 @@ export default class RdfaEditor extends Component {
    *
    * @private
    */
-  @notEmpty('hintsRegistry.registry')
-  hasHints;
+  get hasHints() {
+   return this.hintsRegistry?.registry.length > 0;
+  }
 
   /**
    * @property hasActiveHints
@@ -96,14 +97,16 @@ export default class RdfaEditor extends Component {
    *
    * @private
    */
-  @notEmpty('hintsRegistry.activeHints')
-  hasActiveHints;
+  get hasActiveHints() {
+    return this.hintsRegistry?.activeHints?.length > 0;
+  }
 
   /**
    * @property hasSuggestedHints
    */
-  @notEmpty('suggestedHints')
-  hasSuggestedHints;
+  get hasSuggestedHints() {
+    return this.suggestedHints.length > 0;
+  }
 
   /**
    * Contains extra handlers for input events on the editor.
@@ -164,7 +167,7 @@ export default class RdfaEditor extends Component {
   @action
   handleRawEditorInit(editor) {
     this.editor = editor;
-    this.hintsRegistry = HintsRegistry.create( { rawEditor: editor});
+    this.hintsRegistry = new HintsRegistry(editor);
     this.eventProcessor = new EventProcessor({
       registry: this.hintsRegistry,
       profile: this.profile,

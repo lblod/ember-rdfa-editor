@@ -1,7 +1,5 @@
 import { set } from '@ember/object';
 import { A } from '@ember/array';
-import EmberObject, { computed } from '@ember/object';
-import classic from 'ember-classic-decorator';
 import { next } from '@ember/runloop';
 import { timeout } from 'ember-concurrency';
 import { task } from 'ember-concurrency-decorators';
@@ -16,34 +14,32 @@ import { tracked } from '@glimmer/tracking';
 * @constructor
 * @extends EmberObject
 */
-@classic
-export default class HinstRegistry extends EmberObject {
+export default class HinstRegistry {
   /**
   * @property index
   * @type Array
   */
-  index = null;
+  index;
 
   /**
   * @property registry
   * @type Array
   */
-  registry = null;
+  @tracked registry;
 
   /**
   * @property activeRegion
   * @type Array
   */
-  @tracked activeRegion = null;
+  @tracked activeRegion;
 
   /**
   * @property activeHints
   * @type Array
   */
-  @computed('activeRegion', 'registry', 'registry.[]')
   get activeHints() {
-    const region = this.get('activeRegion');
-    return this.get('registry').filter((hint) => {
+    const region = this.activeRegion;
+    return this.registry.filter((hint) => {
       return region[0] >= hint.location[0] && region[1] <= hint.location[1];
     });
   }
@@ -53,19 +49,23 @@ export default class HinstRegistry extends EmberObject {
    * @type Array
    * @private
    */
-  registryObservers = null;
+  private registryObservers;
+  private removeCardObservers;
+  private newCardObservers;
+  private registryObservers;
+  private highlightsForFutureRemoval;
+  private highlightsForFutureInsert;
 
-  constructor(){
-    super(...arguments);
-
-    this.set('index', A());
-    this.set('registry', A());
-    this.set('activeRegion', A());
-    this.set('registryObservers', A());
-    this.set('newCardObservers', A());
-    this.set('removedCardObservers', A());
-    this.set('highlightsForFutureRemoval', A());
-    this.set('highlightsForFutureInsert', A());
+  constructor(rawEditor){
+    this.index = [];
+    this.registry = [];
+    this.activeRegion = [];
+    this.registryObservers = [];
+    this.newCardObservers = [];
+    this.removeCardObservers = [];
+    this.highlightsForFutureRemoval = [];
+    this.highlightsForFutureInsert = [];
+    this.rawEditor = rawEditor;
   }
 
   /**
@@ -79,15 +79,15 @@ export default class HinstRegistry extends EmberObject {
    * @public
    */
   addRegistryObserver(observer) {
-    this.get('registryObservers').push(observer);
+    this.registryObservers.push(observer);
   }
 
   addNewCardObserver(observer) {
-    this.get('newCardObservers').push(observer);
+    this.newCardObservers.push(observer);
   }
 
   addRemovedCardObserver(observer) {
-    this.get('removedCardObservers').push(observer);
+    this.removeCardObservers.push(observer);
   }
 
   /**
@@ -169,7 +169,7 @@ export default class HinstRegistry extends EmberObject {
       condition = (entry) => { return atLocation(entry.location, updatedLocation); };
     }
 
-    return this.get('registry').filter(condition);
+    return this.registry.filter(condition);
   }
 
   /**
@@ -199,7 +199,7 @@ export default class HinstRegistry extends EmberObject {
       condition = (entry) => { return inRegion(entry.location, updatedRegion); };
     }
 
-    return this.get('registry').filter(condition);
+    return this.registry.filter(condition);
   }
 
   /**
@@ -212,7 +212,7 @@ export default class HinstRegistry extends EmberObject {
    * @public
    */
   getHintsFromPlugin(who) {
-    return this.get('registry').filter( entry => entry.who == who );
+    return this.registry.filter( entry => entry.who == who );
   }
 
   /**
@@ -240,18 +240,17 @@ export default class HinstRegistry extends EmberObject {
       condition = (entry) => { return notAtLocation(entry.location, updatedLocation); };
     }
 
-    let updatedRegistry = A();
-    A(this.get('registry').forEach(entry => {
-      if(condition(entry)){
+    let updatedRegistry = [];
+    for (let entry of this.registry) {
+      if (condition(entry)) {
         updatedRegistry.push(entry);
       }
-      else{
+      else {
+        // TODO: why only location?
         this.sendRemovedCardToObservers(entry.location);
       }
-    }));
-
-
-    if(updatedRegistry.get('length') !== this.get('registry').get('length')){
+    }
+    if (updatedRegistry.length !== this.registry.length) {
       this.replaceRegistryAndNotify(updatedRegistry);
     }
   }
@@ -271,14 +270,14 @@ export default class HinstRegistry extends EmberObject {
     // Clone region in case it gets manipulated elsewhere
     region = [...region];
 
-    let updatedRegion = (hrIdx ? this.updateLocationToCurrentIndex(hrIdx, region) : region);
+    let updatedRegion = hrIdx ? this.updateLocationToCurrentIndex(hrIdx, region) : region;
 
     const inRegion = (location, region) => {
       // return true iff location is fully in region
       return location[0] >= region[0] && location[1] <= region[1];
     };
 
-    let updatedRegistry = A();
+    let updatedRegistry = [];
 
     for( const hint of this.registry ) {
       const ourScope = hint.who == who;
@@ -291,7 +290,7 @@ export default class HinstRegistry extends EmberObject {
         updatedRegistry.push(hint);
     }
 
-    this.set('registry', updatedRegistry);
+    this.registry = updatedRegistry;
 
     next(() => { this.batchProcessHighlightsUpdates.perform(); });
   }
@@ -392,13 +391,13 @@ export default class HinstRegistry extends EmberObject {
       return this.updateLocationToCurrentIndex(entry.hrIdx, entry.location);
     });
 
-    this.set('highlightsForFutureRemoval', A());
+    this.highlightsForFutureRemoval = [];
 
     let updatedHlToInsert = this.highlightsForFutureInsert.map( entry => {
       return this.updateLocationToCurrentIndex(entry.hrIdx, entry.location);
     });
 
-    this.set('highlightsForFutureInsert', A());
+    this.highlightsForFutureInsert = [];
 
     let hasSameLocation = (loc1, loc2) =>  loc1[0] == loc2[0] && loc1[1] == loc2[1];
 
@@ -535,7 +534,7 @@ export default class HinstRegistry extends EmberObject {
    * @private
    */
   nextIndexId() {
-    if(this.get('index').length == 0) {
+    if(this.index.length == 0) {
       return 0;
     }
     return this.currentIndex().idx + 1;
@@ -551,7 +550,7 @@ export default class HinstRegistry extends EmberObject {
    * @private
    */
   currentIndex() {
-    return this.get('index').slice(-1)[0];
+    return this.index.slice(-1)[0];
   }
 
   /**
@@ -576,7 +575,7 @@ export default class HinstRegistry extends EmberObject {
    * @private
    */
   appendToIndex(indexEntry) {
-    this.get('index').pushObject(indexEntry);
+    this.index.pushObject(indexEntry);
   }
 
   /**
@@ -645,7 +644,7 @@ export default class HinstRegistry extends EmberObject {
    * @private
    */
   updateRegistry(indexEntry) {
-    let updatedRegistry = this.applyIndexesToCards([indexEntry], this.get('registry'));
+    let updatedRegistry = this.applyIndexesToCards([indexEntry], this.registry);
     if(updatedRegistry.hasChanged) {
       this.replaceRegistryAndNotify(A(updatedRegistry.cards));
     }
@@ -779,8 +778,8 @@ export default class HinstRegistry extends EmberObject {
       }
       card = cardData.card;
     }
-
-    this.get('registry').pushObject(card);
+    // TODO: doesn't this introduce duplicate cards, why would we want this?!
+    this.registry.push(card);
   }
 
   /**
@@ -793,7 +792,7 @@ export default class HinstRegistry extends EmberObject {
    * @private
    */
   getRemainingIndexes(indexEntry) {
-    return this.get('index').slice(indexEntry.idx + 1);
+    return this.index.slice(indexEntry.idx + 1);
   }
 
 
@@ -807,7 +806,7 @@ export default class HinstRegistry extends EmberObject {
    * @private
    */
   replaceRegistryAndNotify(registry) {
-    this.set('registry', registry);
+    this.registry = registry;
     this.sendRegistryToObservers(registry);
   }
 
@@ -819,20 +818,20 @@ export default class HinstRegistry extends EmberObject {
    * @private
    */
   sendRegistryToObservers(registry) {
-    this.get('registryObservers').forEach(obs => {
+    for (let obs of this.registryObservers) {
       obs(registry);
-    });
+    }
   }
 
   sendNewCardToObservers(card){
-    this.get('newCardObservers').forEach(obs => {
+    for (let obs of this.newCardObservers) {
       obs(card);
-    });
+    }
   }
 
   sendRemovedCardToObservers(card){
-    this.get('removedCardObservers').forEach(obs => {
+    for (let obs of this.removeCardObservers) {
       obs(card);
-    });
+    }
   }
 }
