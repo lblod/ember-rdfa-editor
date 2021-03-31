@@ -8,6 +8,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {AssertionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 
 module("Unit | commands | remove-list-command", hooks => {
   const ctx = new ModelTestContext();
@@ -183,42 +184,67 @@ module("Unit | commands | remove-list-command", hooks => {
   });
 
   test("removing list and a sublist using a selection", assert => {
+
+    // language=XML
+    const {root: initialState, textNodes: {rangeStart, rangeEnd}}
+      = vdom`
+      <ul>
+        <li>
+          <text __id="rangeStart">top item 1</text>
+          <ul>
+            <li>
+              <text>subitem 1</text>
+            </li>
+            <li>
+              <text>subitem 2</text>
+            </li>
+            <li>
+              <text __id="rangeEnd">subitem 3</text>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <text>top item 2</text>
+        </li>
+      </ul>
+    `;
+
     const {modelSelection, model} = ctx;
-    const ul = new ModelElement("ul");
-    const li0 = new ModelElement("li");
-    const content0 = new ModelText("top item 1");
-    const ul1 = new ModelElement("ul");
-    const li10 = new ModelElement("li");
-    const content10 = new ModelText("subitem 1");
-    const li11 = new ModelElement("li");
-    const content11 = new ModelText("subitem 2");
-    const li12 = new ModelElement("li");
-    const content12 = new ModelText("subitem 3");
 
-    const li2 = new ModelElement("li");
-    const content2 = new ModelText("top item 2");
 
-    model.rootModelNode.addChild(ul);
-    ul.appendChildren(li0, li2);
-    li0.addChild(content0);
-    li0.addChild(ul1);
-    ul1.appendChildren(li10, li11, li12);
-    li10.addChild(content10);
-    li11.addChild(content11);
-    li12.addChild(content12);
-    li2.addChild(content2);
-    const startPosition = ModelPosition.fromParent(model.rootModelNode, content0,3);
-    const endPosition = ModelPosition.fromParent(model.rootModelNode, content12, content12.length);
+    // language=XML
+    const {root: expectedRoot} = vdom`
+      <dummy>
+        <text>top item 1</text>
+        <br />
+        <text>subitem 1</text>
+        <br />
+        <text>subitem 2</text>
+        <br />
+        <text>subitem 3</text>
+        <ul>
+          <li>
+            <text>top item 2</text>
+          </li>
+        </ul>
+      </dummy>
+    `;
+
+    model.rootModelNode.addChild(initialState);
+    const startPosition = ModelPosition.fromInTextNode(rangeStart, 3);
+    const endPosition = ModelPosition.fromInTextNode(rangeEnd, rangeEnd.length);
     const range = new ModelRange(startPosition, endPosition);
     modelSelection.clearRanges();
     modelSelection.addRange(range);
     command.execute();
-    assert.ok(model.rootModelNode.children.includes(content0), "content0 should be a child of rootNode");
-    assert.ok(model.rootModelNode.children.includes(content10), "content10 should be a child of rootNode");
-    assert.ok(model.rootModelNode.children.includes(content11), "content11 should be a child of rootNode");
-    assert.ok(model.rootModelNode.children.includes(content12), "content12 should be a child of rootNode");
-    assert.false(model.rootModelNode.children.includes(content2), "content2 should not be a direct child of rootNode");
-    assert.false(model.rootModelNode.children.includes(li2), "li2 should not be a direct child of rootNode");
-    assert.false(model.rootModelNode.children.includes(ul1), "ul1 should not be a direct child of rootNode");
+    const resultRoot = model.rootModelNode as ModelElement;
+
+    for (let i = 0; i < resultRoot.children.length; i++) {
+      const actual = resultRoot.children[i];
+      const expected = (expectedRoot as ModelElement).children[i];
+      console.log(actual.toXml());
+      console.log(expected.toXml());
+      assert.true(actual.sameAs(expected));
+    }
   });
 });

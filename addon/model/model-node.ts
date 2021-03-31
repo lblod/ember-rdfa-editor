@@ -1,7 +1,8 @@
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import Fragment from "@lblod/ember-rdfa-editor/model/fragment";
-import {NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
+import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
@@ -82,6 +83,21 @@ export default abstract class ModelNode {
     return this._parent;
   }
 
+  get root(): ModelElement {
+    let root = this.parent;
+    if (!root) {
+      if (ModelNode.isModelElement(this)) {
+        return this;
+      } else {
+        throw new ModelError("Non-element node cannot be root");
+      }
+    }
+    while (root.parent) {
+      root = root.parent;
+    }
+    return root;
+  }
+
   set parent(value: ModelElement | null) {
     this._parent = value;
   }
@@ -105,8 +121,50 @@ export default abstract class ModelNode {
 
   abstract get isBlock(): boolean;
 
+  /**
+   * Represents how much "space" this node takes up in it's parent
+   * Elements take up 1 offset, textnodes take up as many offsets as they
+   * have characters
+   */
+  get offsetSize(): number {
+    return 1;
+  }
+
+  /**
+   * Get the offset of the cursorposition right before this node
+   * In other words, get the offset at which this node starts in the parent
+   */
+  getOffset(): number {
+    let counter = 0;
+    let sibling = this.previousSibling;
+    while (sibling) {
+      counter += sibling.offsetSize;
+      sibling = sibling.previousSibling;
+    }
+    return counter;
+  }
+
+  /**
+   * Get the path from root to the start of this node
+   */
+  getOffsetPath(): number[] {
+    const result = [];
+
+    let cur: ModelNode | null = this;
+    while (cur.parent) {
+      result.push(cur.getOffset());
+      cur = cur.parent;
+    }
+    result.reverse();
+    return result;
+  }
+
   abstract hasVisibleText(): boolean;
 
+  /**
+   * Get the path of indices from root
+   * @deprecated prefer using offsets instead of indices
+   */
   getIndexPath(): number[] {
     const result = [];
 
@@ -156,6 +214,9 @@ export default abstract class ModelNode {
   setTextAttribute(_key: TextAttribute, _value: boolean) {
   }
 
+  /**
+   * @deprecated TODO evaluate whether we need this or not
+   */
   findAncestor(predicate: (node: ModelNode) => boolean, includeSelf: boolean = true): ModelNode | null {
     if (includeSelf) {
       if (predicate(this)) {
@@ -208,11 +269,34 @@ export default abstract class ModelNode {
     if (!parent) {
       throw new NoParentError();
     }
-    if(!parent.parent) {
+    if (!parent.parent) {
       throw new OutsideRootError();
     }
     const index = this.index!;
     parent.isolateChildAt(index);
   }
 
+  remove() {
+    if (!this.parent) {
+      throw new ModelError("Cannot remove root");
+    }
+    this.parent.removeChild(this);
+  }
+
+  /**
+   * Convert this node and its subtree to their xml representation
+   */
+  toXml(): Node {
+    const writer = new XmlWriter();
+    return writer.write(this);
+  }
+
+  /**
+   * Deep, but not reference equality
+   * All properties except boundNode, parent and siblings will be compared, and children will be compared recursively
+   * @param other
+   */
+  abstract sameAs(other: ModelNode): boolean;
 }
+
+

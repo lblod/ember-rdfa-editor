@@ -47,6 +47,32 @@ module("Unit | model | model-node", hooks => {
     assert.deepEqual(rslt, [1, 2]);
 
   });
+  module("Unit | model | model-node | getOffsetPath", () => {
+    test("path of root is empty list", assert => {
+
+      const elem = new ModelElement("div");
+      assert.strictEqual(elem.getOffsetPath().length, 0);
+    });
+    test("path of children of root", assert => {
+
+      const root = new ModelElement("div");
+
+      const div = new ModelElement("div");
+      const text = new ModelText("abc");
+      const div2 = new ModelElement("div");
+
+      root.appendChildren(div, text, div2);
+
+      assert.strictEqual(div.getOffsetPath().length, 1);
+      assert.strictEqual(div.getOffsetPath()[0], 0);
+      assert.strictEqual(text.getOffsetPath().length, 1);
+      assert.strictEqual(text.getOffsetPath()[0], 1);
+      assert.strictEqual(div2.getOffsetPath().length, 1);
+      assert.strictEqual(div2.getOffsetPath()[0], 4);
+    });
+
+
+  });
   module("Unit | model | model-node | promote", _hooks => {
     test("promote of child of root throws error", assert => {
       const root = ctx.model.rootModelNode;
