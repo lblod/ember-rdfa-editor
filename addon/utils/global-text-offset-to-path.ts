@@ -1,11 +1,8 @@
-import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelTreeWalker, { FilterResult } from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelText from "../model/model-text";
 import RawEditor from './ce/raw-editor';
 
-const VOID_NODES = ["area","base","br","col","command","embed","hr","img","input","keygen","link","meta","param","source","track","wbr"];
+const VOID_NODES = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
 
 function selectTextAndVoidNodes(node: ModelNode) {
   if (ModelNode.isModelText(node)) {
@@ -31,12 +28,12 @@ export default function globalTextOffsetToPath(editor: RawEditor, offset: number
   let startOffset = 0;
   for (const node of treeWalker) {
     if (ModelNode.isModelText(node)) {
-      let endOffset = startOffset + node.length;
+      const endOffset = startOffset + node.length;
       if (offset >= startOffset && offset <= endOffset) {
         const path = node.getOffsetPath();
         const delta = offset - startOffset;
-        path[path.length -1] = path[path.length-1]+delta;
-        return path
+        path[path.length - 1] = path[path.length - 1] + delta;
+        return path;
       }
       startOffset = endOffset;
     }
