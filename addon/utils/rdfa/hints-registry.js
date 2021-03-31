@@ -50,7 +50,7 @@ export default class HinstRegistry {
    * @private
    */
   private registryObservers;
-  private removeCardObservers;
+  private removedCardObservers;
   private newCardObservers;
   private registryObservers;
   private highlightsForFutureRemoval;
@@ -62,7 +62,7 @@ export default class HinstRegistry {
     this.activeRegion = [];
     this.registryObservers = [];
     this.newCardObservers = [];
-    this.removeCardObservers = [];
+    this.removedCardObservers = [];
     this.highlightsForFutureRemoval = [];
     this.highlightsForFutureInsert = [];
     this.rawEditor = rawEditor;
@@ -87,7 +87,7 @@ export default class HinstRegistry {
   }
 
   addRemovedCardObserver(observer) {
-    this.removeCardObservers.push(observer);
+    this.removedCardObservers.push(observer);
   }
 
   /**
@@ -830,7 +830,7 @@ export default class HinstRegistry {
   }
 
   sendRemovedCardToObservers(card){
-    for (let obs of this.removeCardObservers) {
+    for (let obs of this.removedCardObservers) {
       obs(card);
     }
   }
