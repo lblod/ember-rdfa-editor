@@ -184,12 +184,6 @@ class RawEditor extends EmberObject {
   createSelection() : ModelSelection {
     return new ModelSelection(this.model);
   }
-
-  synchronizeModel() {
-    console.log("synchronizing")
-    this.model.read();
-    this.model.write();
-  }
 }
 
 export default RawEditor;
