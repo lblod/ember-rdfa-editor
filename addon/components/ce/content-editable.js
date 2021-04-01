@@ -21,6 +21,7 @@ import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import { createElementsFromHTML } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
  * It provides handlers for input events, a component to display a contenteditable element and an api for interaction with the document and its internal document representation.
@@ -260,8 +261,9 @@ export default class ContentEditable extends Component {
     // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
     const clipboardData = (event.clipboardData || window.clipboardData);
     event.preventDefault();
+    const isInTable = this.rawEditor.selection.isInTable === PropertyState.enabled;
     //TODO: if no clipboardData found, do we want an error?
-    if ((this.features.isEnabled('editor-html-paste')||
+    if (!isInTable && (this.features.isEnabled('editor-html-paste')||
          this.features.isEnabled('editor-extended-html-paste'))&&
          this.hasClipboardHtmlContent(clipboardData) ) {
       try {

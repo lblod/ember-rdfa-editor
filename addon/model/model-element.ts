@@ -2,7 +2,7 @@ import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/mod
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
 import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
-import {IndexOutOfRangeError, ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -31,7 +31,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   get className() {
     const className = this.getAttribute('class');
-    if(className) {
+    if (className) {
       return className;
     } else {
       return '';
@@ -64,6 +64,18 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   get isBlock() {
     return !nonBlockNodes.has(this.type);
+  }
+
+  /**
+   * Get the largest valid offset inside this element.
+   * You can think of it as the cursor position right before the
+   * "<" of the closing tag in html
+   */
+  getMaxOffset() {
+    if (!this.lastChild) {
+      return 0;
+    }
+    return this.lastChild.getOffset() + this.lastChild.offsetSize;
   }
 
   clone(): ModelElement {
@@ -101,6 +113,22 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     child.parent = this;
   }
 
+  insertChildAtOffset(child: ModelNode, offset: number) {
+    if (offset < 0 || offset > this.getMaxOffset()) {
+      throw new OffsetOutOfRangeError(offset, this.getMaxOffset());
+    }
+    this.addChild(child, this.offsetToIndex(offset));
+
+  }
+  insertChildrenAtOffset(offset: number, ...children: ModelNode[]) {
+    let myOffset = offset;
+
+    for (const child of children) {
+      this.insertChildAtOffset(child, myOffset);
+      myOffset += child.offsetSize;
+    }
+  }
+
   appendChildren(...children: ModelNode[]) {
     for (const child of children) {
       this.addChild(child);
@@ -109,15 +137,15 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   removeChild(child: ModelNode) {
     const index = this.children.indexOf(child);
-    if(child.previousSibling) {
+    if (child.previousSibling) {
 
       child.previousSibling.nextSibling = child.nextSibling;
     }
-    if(child.nextSibling) {
+    if (child.nextSibling) {
       child.nextSibling.previousSibling = child.previousSibling;
     }
 
-    if(this.length > index + 1) {
+    if (this.length > index + 1) {
       this.children[index + 1].previousSibling = this.children[index - 1] || null;
     }
     this.children.splice(index, 1);
@@ -136,8 +164,16 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
   }
 
+  /**
+   * Split this element, returning both sides of the split.
+   * Mostly for internal use, prefer using {@link ModelPosition.splitParent}
+   * where possible
+   * @param index
+   */
   split(index: number): { left: ModelElement, right: ModelElement } {
-    if(index < 0) {
+
+
+    if (index < 0) {
       index = 0;
     }
     const leftChildren = this.children.slice(0, index);
@@ -165,7 +201,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    */
   unwrap(withBreaks: boolean = false) {
     const parent = this.parent;
-    if(!parent) {
+    if (!parent) {
       throw new ModelError("Can't unwrap root node");
     }
     let insertIndex = this.index! + 1;
@@ -174,7 +210,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     for (const child of this.children) {
       this.parent?.addChild(child, insertIndex);
       insertIndex++;
-      if(withBreaks){
+      if (withBreaks) {
         this.parent?.addChild(new ModelElement("br"), insertIndex);
         insertIndex++;
       }
@@ -182,12 +218,13 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     this.parent?.removeChild(this);
 
   }
+
   hasVisibleText(): boolean {
-    if(this.type === "br") {
+    if (this.type === "br") {
       return true;
     }
     for (const child of this.children) {
-      if(child.hasVisibleText()) {
+      if (child.hasVisibleText()) {
         return true;
       }
     }
@@ -225,4 +262,87 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     return {left: secondSplit.left, middle: secondSplit.right, right: firstSplit.right};
   }
 
+  /**
+   * Convert an offset to the index of the child that either contains
+   * that offset (when the offset points to a position inside a textnode)
+   * or right after that offset
+   * @param offset
+   */
+  offsetToIndex(offset: number): number {
+    if (offset < 0 || offset > this.getMaxOffset()) {
+      throw new OffsetOutOfRangeError(offset, this.getMaxOffset());
+    }
+    let offsetCounter = 0;
+    let indexCounter = 0;
+    for (const child of this.children) {
+      offsetCounter += child.offsetSize;
+      if (offsetCounter > offset) {
+        return indexCounter;
+      }
+      indexCounter++;
+    }
+    return indexCounter;
+  }
+
+  /**
+   * Convert an index to the startoffset of the child at that index
+   * If index is one more than the index of the last child, return the
+   * {@link getMaxOffset maxOffset}
+   *
+   * This behavior is to facilitate converting domOffsets (which are a bit like
+   * weird indices)
+   *
+   * @param index
+   */
+  indexToOffset(index: number): number {
+    if (index === this.length) {
+      return this.getMaxOffset();
+    }
+    return this.children[index].getOffset();
+  }
+
+  /**
+   * Return the child containing, or immediately after, the offset
+   * @param offset
+   * @param includeLast whether we should return the last node when given an offset after the last node
+   */
+  childAtOffset(offset: number, includeLast: boolean = false): ModelNode | null {
+    if (includeLast && offset === this.getMaxOffset()) {
+      return this.lastChild;
+    }
+    try {
+      return this.children[this.offsetToIndex(offset)] || null;
+    } catch (e) {
+      if (e instanceof OffsetOutOfRangeError) {
+        return null;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  sameAs(other: ModelNode): boolean {
+    if (!ModelNode.isModelElement(other)) {
+      return false;
+    }
+    if (this.type !== other.type) {
+      return false;
+    }
+    if (this.length !== other.length) {
+      return false;
+    }
+
+    for (const [key, value] of this.attributeMap.entries()) {
+      if (other.getAttribute(key) !== value) {
+        return false;
+      }
+    }
+    for (let i = 0; i < this.length; i++) {
+      if (!other.children[i].sameAs(this.children[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 }

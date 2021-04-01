@@ -9,6 +9,76 @@ module("Unit | model | model-element-test", hooks => {
   hooks.beforeEach(() => {
     ctx.reset();
   });
+  module("Unit | model | model-element-test | offsetToIndex", () => {
+
+    test("offset 0 should give index 0", assert => {
+      const div = new ModelElement("div");
+      assert.strictEqual(div.offsetToIndex(0), 0);
+    });
+
+    test("offset 0 should give index 0 with children", assert => {
+      const div = new ModelElement("div");
+      const span = new ModelElement("span");
+      const txt = new ModelText("test");
+      const span2 = new ModelElement("span");
+
+      div.appendChildren(span, txt, span2);
+      assert.strictEqual(div.offsetToIndex(0), 0);
+    });
+    test("index should be equal to offset, when only element children", assert => {
+      const div = new ModelElement("div");
+      const span = new ModelElement("span");
+      const span2 = new ModelElement("span");
+      const span3 = new ModelElement("span");
+      const img = new ModelElement("img");
+
+      div.appendChildren(span, span2, span3, img);
+      assert.strictEqual(div.offsetToIndex(0), 0);
+      assert.strictEqual(div.offsetToIndex(1), 1);
+      assert.strictEqual(div.offsetToIndex(2), 2);
+      assert.strictEqual(div.offsetToIndex(3), 3);
+    });
+    test("offset after last child gives index == length", assert => {
+      const div = new ModelElement("div");
+      const span = new ModelElement("span");
+      const span2 = new ModelElement("span");
+      const span3 = new ModelElement("span");
+      const img = new ModelElement("img");
+
+      div.appendChildren(span, span2, span3, img);
+      assert.strictEqual(div.offsetToIndex(4), 4);
+    });
+    test("single text child", assert => {
+
+      const div = new ModelElement("div");
+      const txt = new ModelText("abc");
+      div.addChild(txt);
+
+      assert.strictEqual(div.offsetToIndex(0), 0);
+      assert.strictEqual(div.offsetToIndex(1), 0);
+      assert.strictEqual(div.offsetToIndex(2), 0);
+      assert.strictEqual(div.offsetToIndex(3), 1);
+
+    });
+    test("elements and text children", assert => {
+
+      const div = new ModelElement("div");
+      const span = new ModelElement("span");
+      const txt = new ModelText("abc");
+      const span2 = new ModelElement("span");
+      div.appendChildren(span,txt, span2);
+
+      assert.strictEqual(div.offsetToIndex(0), 0);
+      assert.strictEqual(div.offsetToIndex(1), 1);
+      assert.strictEqual(div.offsetToIndex(2), 1);
+      assert.strictEqual(div.offsetToIndex(3), 1);
+      assert.strictEqual(div.offsetToIndex(4), 2);
+      assert.strictEqual(div.offsetToIndex(5), 3);
+
+    });
+
+
+  });
 
   module("Unit | model | model-element-test | isolateChildAt", _hooks => {
     test("throws when index out of range", assert => {

@@ -1,51 +1,39 @@
 import {module, test} from "qunit";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
-import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelTestContext from "dummy/tests/utilities/model-test-context";
+import {setupTest} from "ember-qunit";
 
 module("Unit | model | model-selection-tracker", hooks => {
-  let model: Model;
-  let rootNode: HTMLElement;
-  let selection: Selection;
-  let tracker: ModelSelectionTracker;
-  let testRoot;
-
+  const ctx = new ModelTestContext();
   hooks.beforeEach(() => {
-    testRoot = document.getElementById("ember-testing-container");
-    if(!testRoot) {
-      throw new Error("testRoot not found");
-    }
-    rootNode = document.createElement("div");
-    testRoot.appendChild(rootNode);
-    model = new Model();
-    model.rootNode = rootNode;
-    model.read();
-    model.write();
-    selection = getWindowSelection();
-    tracker = new ModelSelectionTracker(model);
-    // tracker.startTracking();
+    ctx.reset();
   });
-  hooks.afterEach(() => {
-    // tracker.stopTracking();
-  });
+  setupTest(hooks);
   const sync = () => {
-    model.read();
-    model.write();
+    ctx.model.read();
+    ctx.model.write();
   };
   test("sets a correct model-selection - trivial dom", function (assert) {
 
+    const {model} = ctx;
+    const testRoot = document.getElementById("ember-testing-container")!;
+    const rootNode = document.createElement("div");
+    testRoot.appendChild(rootNode);
+    const selection = getWindowSelection();
     const text = new Text("abc");
+    const tracker = new ModelSelectionTracker(ctx.model);
     rootNode.appendChild(text);
-
+    ctx.model.rootNode = rootNode;
     sync();
 
     selection.collapse(rootNode.childNodes[0]);
     tracker.updateSelection();
 
-    assert.true(model.selection.getRangeAt(0).start.sameAs(ModelPosition.from(model.rootModelNode, [0,0])));
-    assert.true(model.selection.getRangeAt(0).end.sameAs(ModelPosition.from(model.rootModelNode, [0,0])));
-    assert.strictEqual(model.selection.getRangeAt(0).end.parent, model.rootModelNode.firstChild);
+    assert.true(model.selection.getRangeAt(0).start.sameAs(ModelPosition.fromPath(model.rootModelNode, [0])));
+    assert.true(model.selection.getRangeAt(0).end.sameAs(ModelPosition.fromPath(model.rootModelNode, [0])));
+    assert.strictEqual(model.selection.getRangeAt(0).end.parent, model.rootModelNode);
 
 
   });

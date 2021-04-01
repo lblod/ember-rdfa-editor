@@ -1,11 +1,15 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelSelection, {WellbehavedSelection} from "@lblod/ember-rdfa-editor/model/model-selection";
+import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
-import ModelElement, {ElementType} from "../model/model-element";
-import {MisbehavedSelectionError, NoParentError, NoTopSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelElement from "../model/model-element";
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import { PropertyState } from "../model/util/types";
 
 
 /**
@@ -18,203 +22,91 @@ export default class MakeListCommand extends Command {
     super(model);
   }
 
+  canExecute(selection: ModelSelection = this.model.selection) {
+    return !selection.isInTable || (selection.isInTable === PropertyState.disabled);
+  }
+
 
   execute(listType: "ul" | "ol", selection: ModelSelection = this.model.selection) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
-    const {interestingNodes, whereToInsert, positionToInsert} = this.collectInterestingNodes(selection);
-    if (!whereToInsert) {
-      throw new NoParentError();
-    }
 
-    const items = this.nodesToItems(interestingNodes);
-
-    let container: ModelElement;
-    if (items) {
-      for (const node of interestingNodes) {
-        this.model.removeModelNode(node);
-      }
-      const {parent, listNode} = this.wrapItems(items, whereToInsert, positionToInsert, listType);
-      container = parent;
-
-      selection.selectNode(listNode);
-    } else {
-      const item = selection.getCommonAncestor().parent;
-      const block = this.collectBlock(item);
-      const {parent, listNode} = this.wrapSingleItem(block, listType);
-      container = parent;
-      if(ModelNode.isModelElement(listNode.firstChild)) {
-        selection.selectNode(listNode.firstChild.firstChild);
-      } else {
-        selection.selectNode(listNode.firstChild);
-      }
-      selection.collapse();
-      for (const node of block) {
-        this.model.removeModelNode(node);
-
-      }
-    }
-    const cleaner = new ListCleaner();
-    cleaner.clean(this.model.rootModelNode);
-    this.model.write(container);
-    return;
-  }
-
-  /**
-   * Given a well-behaved selection, find the nodes we care about, and calculate the insertion point for
-   * the eventual list
-   * @param selection
-   * @private
-   */
-  private collectInterestingNodes(selection: WellbehavedSelection) {
-    const interestingPositions = selection.lastRange.getSelectedTopPositions();
-    if (!interestingPositions) {
-      throw new NoTopSelectionError();
-    }
-    const interestingNodes = interestingPositions.map(pos => pos.parent);
-    const whereToInsert = interestingPositions[0].parent.parent;
-    const positionToInsert = interestingPositions[0].parent.index!;
-    return {interestingNodes, whereToInsert, positionToInsert};
-  }
-
-  /**
-   * Given a 2d matrix of nodes, build a list with each row of the matrix inside a list item, then
-   * insert it into the whereToInsert node at positionToInsert.
-   * @param items
-   * @param whereToInsert
-   * @param positionToInsert
-   * @param listType
-   * @private
-   */
-  private wrapItems(items: ModelNode[][], whereToInsert: ModelElement, positionToInsert: number, listType: "ul" | "ol"): { parent: ModelElement, listNode: ModelElement } {
-    const list = this.buildList(listType, items);
-
-    whereToInsert.addChild(list, positionToInsert);
-    return {parent: whereToInsert, listNode: list};
-  }
-
-  /**
-   * Given a block element, wrap in it a new list.
-   * Return the new list node.
-   * @param block
-   * @param listType
-   * @private
-   */
-  private wrapSingleItem(block: ModelNode[], listType: "ul" | "ol"): { parent: ModelElement, listNode: ModelElement } {
-    const parent = block[0].parent;
-    if (!parent) {
-      throw new NoParentError();
-    }
-    const positionToInsert = block[0].index;
-    const li = new ModelElement("li");
-    li.appendChildren(...block.map(node => node.clone()));
+    const range = selection.lastRange;
+    const blocks = this.getBlocksFromRange(range);
     const list = new ModelElement(listType);
-    list.addChild(li);
-    parent.addChild(list, positionToInsert!);
+    for (const block of blocks) {
+      const li = new ModelElement("li");
+      //TODO investigate why we have to clone here and document it
+      li.appendChildren(...block.map(node => node.clone()));
+      list.addChild(li);
+    }
 
-    return {parent, listNode: list};
+
+    this.model.change(mutator => {
+      mutator.insertNodes(range, list);
+      const cleaner = new ListCleaner();
+      cleaner.clean(this.model.rootModelNode);
+
+    });
   }
 
-  /**
-   * Given a set of nodes we care about, build a 2d matrix with each row representing the contents of a listItem
-   * If no full row can be built from the nodes (because there is no block element or linebreak), return null
-   * @param interestingNodes
-   * @private
-   */
-  private nodesToItems(interestingNodes: ModelNode[]): ModelNode[][] | null {
-    const items: ModelNode[][] = [];
-    let index = 0;
-    let hasBlocks = false;
-    for (const node of interestingNodes) {
-      if (ModelNode.isModelElement(node)) {
-        if (node.type === "br") {
-          index++;
-          hasBlocks = true;
+  private getBlocksFromRange(range: ModelRange): ModelNode[][] {
+    // expand range until it is bound by blocks
+
+    let cur: ModelNode | null = range.start.nodeAfter();
+    if (cur) {
+
+      range.start.parentOffset = cur?.getOffset();
+
+      while (cur?.previousSibling && !cur.previousSibling.isBlock) {
+        cur = cur.previousSibling;
+        range.start.parentOffset = cur.getOffset();
+      }
+      if (range.start.parentOffset === 0) {
+        range.start = ModelPosition.fromInElement(range.start.parent.parent!, range.start.parent.getOffset());
+      }
+    }
+    cur = range.end.nodeBefore();
+
+    if (cur) {
+
+      range.end.parentOffset = cur.getOffset() + cur.offsetSize;
+      while (cur?.nextSibling && !cur.nextSibling.isBlock) {
+        cur = cur.nextSibling;
+        range.end.parentOffset = cur.getOffset() + cur.offsetSize;
+      }
+      if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
+        range.end = ModelPosition.fromInElement(range.end.parent.parent!, range.end.parent.getOffset() + range.end.parent.offsetSize);
+      }
+    }
+
+
+    const confinedRanges = range.getMinimumConfinedRanges();
+    const rslt = [[]];
+    let pos = 0;
+    for (const range of confinedRanges) {
+      const walker = new ModelTreeWalker({range, descend: false});
+      for (const node of walker) {
+        if (ModelNode.isModelElement(node) && node.type === "br") {
+          pos++;
         } else if (node.isBlock) {
-          index++;
-          items.push([node]);
-          index++;
-          hasBlocks = true;
-        } else {
-          ArrayUtils.pushOrCreate(items, index, node);
+          if (rslt[0].length) {
+            pos++;
+          }
+          ArrayUtils.pushOrCreate(rslt, pos, node);
+          pos++;
+        } else if (node.hasVisibleText()) {
+          ArrayUtils.pushOrCreate(rslt, pos, node);
         }
-      } else if (ModelNode.isModelText(node)) {
-        if (node.hasVisibleText()) {
-          ArrayUtils.pushOrCreate(items, index, node);
-        }
+
       }
-    }
-    if (!hasBlocks) {
-      return null;
-    }
-    return items;
-  }
 
-  private collectBlock(node: ModelNode): ModelNode[] {
-    if(node.isBlock){
-      return [node];
+
     }
 
-    const result = [];
+    return rslt;
 
-    let prev: ModelNode | null = node.previousSibling;
-
-    while(prev && !prev.isBlock) {
-      result.push(prev);
-      prev = prev.previousSibling;
-    }
-    result.reverse();
-    result.push(node);
-
-    let next: ModelNode | null = node.nextSibling;
-
-    while (next && !next.isBlock) {
-      result.push(next);
-      next = next.nextSibling;
-    }
-
-    if (!prev && !next) {
-      const topBlock = this.getTopBlockNode(node);
-      return [topBlock];
-    }
-    return result;
-  }
-  /**
-   * Given a node, find the first ancestor which is a blockNode
-   * @param node
-   * @private
-   */
-  private getTopBlockNode(node: ModelNode): ModelNode {
-    if (node.isBlock) return node;
-    const parent = node.parent;
-    if (!(parent && parent.parent)) return node;
-    if (ModelElement.isModelElement(parent)) {
-      const element = parent as ModelElement;
-      for (const child of element.children) {
-        if (child.boundNode?.nodeName === 'BR') {
-          return node;
-        }
-      }
-      return this.getTopBlockNode(parent);
-    } else {
-      return this.getTopBlockNode(parent);
-    }
-  }
-
-  /**
-   * Construct a model list tree from a matrix of content
-   * every row will become a <li> with the row items as its children
-   * @param type
-   * @param items
-   */
-  private buildList(type: ElementType, items: ModelNode[][]) {
-    const rootNode = new ModelElement(type);
-    for (const item of items) {
-      const listItem = new ModelElement('li');
-      listItem.appendChildren(...item);
-      rootNode.addChild(listItem);
-    }
-    return rootNode;
   }
 }
+
