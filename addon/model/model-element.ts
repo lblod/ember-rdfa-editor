@@ -31,7 +31,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   get className() {
     const className = this.getAttribute('class');
-    if(className) {
+    if (className) {
       return className;
     } else {
       return '';
@@ -119,6 +119,14 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
     this.addChild(child, this.offsetToIndex(offset));
 
+  }
+  insertChildrenAtOffset(offset: number, ...children: ModelNode[]) {
+    let myOffset = offset;
+
+    for (const child of children) {
+      this.insertChildAtOffset(child, myOffset);
+      myOffset += child.offsetSize;
+    }
   }
 
   appendChildren(...children: ModelNode[]) {

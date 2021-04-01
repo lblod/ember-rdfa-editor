@@ -9,6 +9,7 @@ import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import { PropertyState } from "../model/util/types";
 
 
 /**
@@ -19,6 +20,10 @@ export default class MakeListCommand extends Command {
 
   constructor(model: Model) {
     super(model);
+  }
+
+  canExecute(selection: ModelSelection = this.model.selection) {
+    return !selection.isInTable || (selection.isInTable === PropertyState.disabled);
   }
 
 
@@ -39,7 +44,7 @@ export default class MakeListCommand extends Command {
 
 
     this.model.change(mutator => {
-      mutator.insertNode(range, list);
+      mutator.insertNodes(range, list);
       const cleaner = new ListCleaner();
       cleaner.clean(this.model.rootModelNode);
 
