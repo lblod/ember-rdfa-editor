@@ -1,4 +1,3 @@
-import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
@@ -18,13 +17,11 @@ import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/ModelMutator";
  */
 export default class Model {
 
-  private modelSelectionTracker: ModelSelectionTracker;
   /**
    * The root of the editor. This will get set by ember,
    * so we trick typescript into assuming it is never null
    * @private
    */
-  private _rootNode!: HTMLElement;
   private _rootModelNode!: ModelElement;
   private reader: HtmlReader;
   private writer: HtmlWriter;
@@ -32,9 +29,10 @@ export default class Model {
   private selectionReader: SelectionReader;
   private selectionWriter: SelectionWriter;
   private _selection: ModelSelection;
+  private _rootNode: HTMLElement;
 
-  constructor() {
-    this.modelSelectionTracker = new ModelSelectionTracker(this);
+  constructor(rootNode: HTMLElement) {
+    this._rootNode = rootNode;
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
     this.nodeMap = new WeakMap<Node, ModelNode>();
@@ -47,13 +45,6 @@ export default class Model {
     return this._rootNode;
   }
 
-  set rootNode(rootNode: HTMLElement) {
-    this.modelSelectionTracker.stopTracking();
-    this._rootNode = rootNode;
-    if (this._rootNode) {
-      this.modelSelectionTracker.startTracking();
-    }
-  }
 
   get selection(): ModelSelection {
     return this._selection;
@@ -67,7 +58,7 @@ export default class Model {
   /**
    * Read in the document and build up the model
    */
-  read() {
+  read(readSelection: boolean = true) {
     const newRoot = this.reader.read(this.rootNode);
     if (!newRoot) {
       throw new Error("Could not create a rich root");
@@ -78,11 +69,13 @@ export default class Model {
     this._rootModelNode = newRoot;
     this.bindNode(this.rootModelNode, this.rootNode);
     // This is essential, we change the root so we need to make sure the selection uses the new root
-    this.readSelection();
+    if (readSelection) {
+      this.readSelection();
+    }
   }
 
-  readSelection() {
-    this._selection = this.selectionReader.read(getWindowSelection());
+  readSelection(domSelection: Selection = getWindowSelection()) {
+    this._selection = this.selectionReader.read(domSelection);
   }
 
   /**

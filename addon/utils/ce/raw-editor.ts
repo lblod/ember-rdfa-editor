@@ -28,6 +28,7 @@ import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import { walk as walkDomNode } from "@lblod/marawa/node-walker";
 import RichNode from "@lblod/marawa/rich-node";
 import classic from 'ember-classic-decorator';
@@ -46,7 +47,8 @@ import classic from 'ember-classic-decorator';
 @classic
 class RawEditor extends EmberObject {
   registeredCommands: Map<string, Command> = new Map()
-  model: Model;
+  modelSelectionTracker!: ModelSelectionTracker;
+  model!: Model;
   protected tryOutVdom = true;
 
   /**
@@ -59,7 +61,25 @@ class RawEditor extends EmberObject {
 
   constructor(...args: any[]) {
     super(...args);
-    this.model = new Model();
+  }
+
+  /**
+   * @method updateRichNode
+   * @private
+   */
+  updateRichNode() {
+    const richNode = walkDomNode(this.rootNode);
+    this.set('richNode', richNode);
+  }
+
+  initialize(rootNode: HTMLElement) {
+    if(this.modelSelectionTracker) {
+      this.modelSelectionTracker.stopTracking();
+    }
+    this.registeredCommands = new Map<string, Command>();
+    this.model = new Model(rootNode);
+    this.modelSelectionTracker = new ModelSelectionTracker(this.model);
+    this.modelSelectionTracker.startTracking();
     // @ts-ignore
     window.__VDOM = this.model;
     // @ts-ignore
@@ -92,15 +112,6 @@ class RawEditor extends EmberObject {
   }
 
   /**
-   * @method updateRichNode
-   * @private
-   */
-  updateRichNode() {
-    const richNode = walkDomNode(this.rootNode);
-    this.set('richNode', richNode);
-  }
-
-  /**
    * The root node of the editor. This is the node with the contentEditable attribute.
    * No operations should ever affect any node outside of its tree.
    */
@@ -113,8 +124,8 @@ class RawEditor extends EmberObject {
   }
 
   set rootNode(rootNode: HTMLElement) {
-    this.model.rootNode = rootNode;
     if (rootNode) {
+      this.initialize(rootNode);
       this.model.read();
       this.model.write();
       this.updateRichNode();

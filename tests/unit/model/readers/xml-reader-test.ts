@@ -1,7 +1,7 @@
 import {module, test} from "qunit";
 import {parseXml} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 
-module("Unit | model | readers | xml-reader-test", hooks => {
+module("Unit | model | readers | xml-reader-test", () => {
   test("test xml", assert => {
     // language=XML
     const xml = `

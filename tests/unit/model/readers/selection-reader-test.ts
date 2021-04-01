@@ -2,7 +2,6 @@ import {module, test} from "qunit";
 import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 module("Unit | model | readers | selection-reader", hooks => {
   let reader: SelectionReader;
@@ -12,37 +11,13 @@ module("Unit | model | readers | selection-reader", hooks => {
     ctx.reset();
     reader = new SelectionReader(ctx.model);
   });
-  hooks.afterEach(() => {
-    ctx.destroy();
-  });
-
-  function sync() {
-    ctx.model.read();
-    ctx.model.write();
-  }
 
   // @ts-ignore
-  test.skip("converts a selection correctly", assert => {
-    const {model, rootNode} = ctx;
-    const domSelection = getWindowSelection();
-    const textNode = new Text("asdf");
-    rootNode.appendChild(textNode);
-
-    sync();
-    domSelection.collapse(rootNode.childNodes[0], 0);
-    const rslt = reader.read(getWindowSelection());
-
-    assert.true(rslt.anchor?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0])));
-    assert.true(rslt.focus?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0])));
-
-  });
-
-  // @ts-ignore
-  test.skip("converts a dom range correctly", assert => {
+  test("converts a dom range correctly", assert => {
     const {model, rootNode} = ctx;
     const text = new Text("abc");
     rootNode.appendChild(text);
-    sync();
+    ctx.model.read(false);
     const testRange = document.createRange();
     testRange.setStart(text, 0);
     testRange.setEnd(text, 0);
@@ -53,8 +28,8 @@ module("Unit | model | readers | selection-reader", hooks => {
 
   });
   // @ts-ignore
-  test.skip("correctly handles a tripleclick selection", assert => {
-    const {rootNode, domSelection} = ctx;
+  test("correctly handles a tripleclick selection", assert => {
+    const {rootNode} = ctx;
     const paragraph = document.createElement("p");
     const t1 = new Text("abc");
     const br1 = document.createElement("br");
@@ -67,14 +42,14 @@ module("Unit | model | readers | selection-reader", hooks => {
     psibling.appendChild(t3);
 
     rootNode.append(paragraph, psibling);
+    ctx.model.read(false);
 
-    sync();
-    domSelection.setBaseAndExtent(rootNode.childNodes[0].childNodes[0], 0, rootNode.childNodes[0], 4);
-    const result = reader.read(domSelection);
-
-    const range = result.lastRange!;
-    assert.deepEqual(range.start.path, [0, 0]);
-    assert.deepEqual(range.end.path, [0, 8]);
+    const range = document.createRange();
+    range.setStart(rootNode.childNodes[0].childNodes[0], 0);
+    range.setEnd(rootNode.childNodes[0], 4);
+    const modelRange = reader.readDomRange(range);
+    assert.deepEqual(modelRange?.start.path, [0, 0]);
+    assert.deepEqual(modelRange?.end.path, [0, 8]);
 
   });
   module("Unit | model | reader | selection-reader | readDomPosition", () => {
@@ -83,7 +58,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       const {model, rootNode} = ctx;
       const text = new Text("abc");
       rootNode.appendChild(text);
-      sync();
+      ctx.model.read(false);
 
       const result = reader.readDomPosition(text, 0);
       assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0])));
@@ -93,7 +68,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       const {model, rootNode} = ctx;
       const text = new Text("abc");
       rootNode.appendChild(text);
-      sync();
+      ctx.model.read(false);
 
       const result = reader.readDomPosition(rootNode, 0);
       assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0])));
@@ -103,7 +78,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       const {model, rootNode} = ctx;
       const text = new Text("abc");
       rootNode.appendChild(text);
-      sync();
+      ctx.model.read(false);
 
       const result = reader.readDomPosition(rootNode, 1);
       assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [3])));
@@ -123,7 +98,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       const child12 = new Text("abc");
       const child13 = document.createElement("div");
       child1.append(child10, child11, child12, child13);
-      sync();
+      ctx.model.read(false);
 
       let result = reader.readDomPosition(child1, 0);
       assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 0])));
