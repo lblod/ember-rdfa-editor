@@ -19,13 +19,12 @@ module("Unit | model | model-selection-tracker", hooks => {
 
     const {model} = ctx;
     const testRoot = document.getElementById("ember-testing-container")!;
-    const rootNode = document.createElement("div");
+    const rootNode = model.rootNode;
     testRoot.appendChild(rootNode);
     const selection = getWindowSelection();
     const text = new Text("abc");
     const tracker = new ModelSelectionTracker(ctx.model);
     rootNode.appendChild(text);
-    ctx.model.rootNode = rootNode;
     sync();
 
     selection.collapse(rootNode.childNodes[0]);

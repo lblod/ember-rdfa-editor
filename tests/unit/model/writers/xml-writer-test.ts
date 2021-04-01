@@ -1,7 +1,7 @@
 import {module, test} from "qunit";
 import {printModel, vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 
-module("Unit | model | writers | xml-writer-test", hooks => {
+module("Unit | model | writers | xml-writer-test", () => {
   test("writes out a sensible document", assert => {
 
     // language=XML
