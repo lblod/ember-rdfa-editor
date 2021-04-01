@@ -20,9 +20,7 @@ export default class InsertTableCommand extends Command {
   }
 
   execute(): void {
-
-    const selection = this.model.selection;
-
+    const selection= this.model.selection;
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
