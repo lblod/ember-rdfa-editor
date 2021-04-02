@@ -114,15 +114,17 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    * @public
    */
   handleRegistryChange(/*registry*/) {
-    for (let [start,end] of this.cardsLocationFlaggedRemoved) {
-      const startPos = globalTextOffsetToPath(this.editor, start);
-      const endPos = globalTextOffsetToPath(this.editor, end);
-      const selection = this.editor.createSelection();
-      selection.selectRange(this.editor.createRangeFromPaths(startPos, endPos));
-      this.editor.executeCommand("remove-highlight", selection);
+    let region;
+    while (region = this.cardsLocationFlaggedRemoved.shift()) {
+        const [start, end] = region;
+        const startPos = globalTextOffsetToPath(this.editor, start);
+        const endPos = globalTextOffsetToPath(this.editor, end);
+        const selection = this.editor.createSelection();
+        selection.selectRange(this.editor.createRangeFromPaths(startPos, endPos));
+        this.editor.executeCommand("remove-highlight", selection);
     }
-
-    for (let [start, end] of this.cardsLocationFlaggedNew) {
+    while (region = this.cardsLocationFlaggedNew.shift()) {
+      const [start, end] = region;
       const startPos = globalTextOffsetToPath(this.editor, start);
       const endPos = globalTextOffsetToPath(this.editor, end);
       const selection = this.editor.createSelection();
