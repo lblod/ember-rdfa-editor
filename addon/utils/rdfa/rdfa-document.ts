@@ -21,11 +21,9 @@ export default class RdfaDocument {
   }
 
   set htmlContent(html: string) {
-    // const selection = this._editor.createSelection();
-    // selection.selectRange(this._editor.createRangeFromPaths([], []));
-    // this._editor.executeCommand("insert-html", html, selection);
-    const selection = this._editor.selectHighlight(this._editor.richNode.region);
-    this._editor.update(selection, { set: { innerHTML: html}});
+    const selection = this._editor.createSelection();
+    selection.selectRange(this._editor.createRangeFromPaths([], []));
+    this._editor.executeCommand("insert-html", html, selection);
   }
 
   setHtmlContent(html: string) {
