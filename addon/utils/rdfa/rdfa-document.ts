@@ -17,7 +17,6 @@ export default class RdfaDocument {
   }
 
   get htmlContent() {
-    // TODO: this no longer removes the highlights and should be fixed
     const htmlWriter = new HTMLExportWriter(this._editor.model);
     const output = (htmlWriter.write(this._editor.model.rootModelNode) as HTMLElement);
     return output.innerHTML;
