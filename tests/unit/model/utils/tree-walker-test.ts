@@ -241,7 +241,7 @@ module("Unit | model | utils | tree-walker-test", () => {
     assert.strictEqual(result1.length, 1);
     assert.strictEqual(result1[0], insideConfinedRange1);
 
-    const walker2 = new ModelTreeWalker({range: ranges[8], descend: false});
+    const walker2 = new ModelTreeWalker({range: ranges[3], descend: false});
     const result2 = [...walker2];
 
     assert.strictEqual(result2.length, 1);
