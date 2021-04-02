@@ -45,11 +45,13 @@ export default class ModelPosition {
     result.path.push(offset);
     return result;
   }
+
   static fromAfterNode(node: ModelNode): ModelPosition {
     const basePath = node.getOffsetPath();
     basePath[basePath.length - 1] += node.offsetSize;
     return ModelPosition.fromPath(node.root, basePath);
   }
+
   static fromBeforeNode(node: ModelNode): ModelPosition {
     return ModelPosition.fromPath(node.root, node.getOffsetPath());
   }
@@ -133,7 +135,7 @@ export default class ModelPosition {
     let i = 0;
 
     while (ModelNode.isModelElement(cur) && i < this.path.length - 1) {
-      if(!cur.childAtOffset(this.path[i], true)) {
+      if (!cur.childAtOffset(this.path[i], true)) {
         cur.childAtOffset(this.path[i], true);
       }
       cur = cur.childAtOffset(this.path[i], true);
@@ -279,8 +281,30 @@ export default class ModelPosition {
   nodeBefore(): ModelNode | null {
     return this.parent.childAtOffset(this.parentOffset - 1) || null;
   }
+
   clone(): ModelPosition {
     return ModelPosition.fromPath(this.root, [...this.path]);
+  }
+
+  findAncestors(predicate:
+                  (elem: ModelElement) => boolean =
+                  (elem: ModelElement) => true): ModelElement[] {
+    let cur = this.parent;
+    const rslt = [];
+
+    while (cur !== this.root) {
+      if (predicate(cur)) {
+        rslt.push(cur);
+      }
+      cur = cur.parent!;
+
+    }
+    if (predicate(cur)) {
+      rslt.push(cur);
+    }
+    return rslt;
+
+
   }
 
 }

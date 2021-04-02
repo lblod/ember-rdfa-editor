@@ -4,6 +4,7 @@ import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 
 module("Unit | model | model-position", () => {
   module("Unit | model | model-position | getCommonAncestor", () => {
@@ -152,6 +153,47 @@ module("Unit | model | model-position", () => {
       path2 = [0, 1, 2, 3, 4];
       assert.strictEqual(ModelPosition.comparePath(path1, path2), RelativePosition.AFTER);
     });
+  });
+
+  module("Unit | model | model-position | findAncestors", () => {
+    test("finds root when only valid node", assert => {
+      // language=XML
+      const {root, textNodes: {testNode}} = vdom`
+        <div>
+          <text __id="testNode">abc</text>
+        </div>`;
+      const pos = ModelPosition.fromInTextNode(testNode, 1);
+      const rslt = pos.findAncestors();
+      assert.deepEqual(rslt, [root]);
+    });
+    test("finds nothing when no valid node", assert => {
+      // language=XML
+      const {textNodes: {testNode}} = vdom`
+        <div>
+          <text __id="testNode">abc</text>
+        </div>`;
+      const pos = ModelPosition.fromInTextNode(testNode, 1);
+      const rslt = pos.findAncestors(elem => elem.type === "a");
+      assert.deepEqual(rslt, []);
+    });
+    test("finds all valid nodes", assert => {
+      // language=XML
+      const {textNodes: {testNode}, elements: {span0, span1}} = vdom`
+        <div>
+          <span __id="span1">
+            <div>
+              <span __id="span0">
+                <text __id="testNode">abc</text>
+              </span>
+            </div>
+          </span>
+        </div>`;
+      const pos = ModelPosition.fromInTextNode(testNode, 1);
+      const rslt = pos.findAncestors(elem => elem.type === "span");
+      assert.deepEqual(rslt, [span0, span1]);
+    });
+
+
   });
 });
 

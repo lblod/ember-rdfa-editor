@@ -50,6 +50,17 @@ export default class ModelRange {
 
 
   }
+  static fromInElement(element: ModelElement, startOffset: number, endOffset: number) {
+    const start = ModelPosition.fromInElement(element, startOffset);
+    const end = ModelPosition.fromInElement(element, endOffset);
+    return new ModelRange(start, end);
+  }
+
+  static fromInTextNode(node: ModelText, startOffset: number, endOffset: number) {
+    const start = ModelPosition.fromInTextNode(node, startOffset);
+    const end = ModelPosition.fromInTextNode(node, endOffset);
+    return new ModelRange(start, end);
+  }
 
   constructor(start: ModelPosition, end: ModelPosition = start.clone()) {
     this._start = start;

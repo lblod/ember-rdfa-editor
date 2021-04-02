@@ -30,6 +30,7 @@ export interface ModelTreeWalkerConfig {
   filter?: ModelNodeFilter;
   range: ModelRange;
   descend?: boolean;
+  visitParentUpwards?: boolean;
 }
 
 export default class ModelTreeWalker implements Iterable<ModelNode> {
@@ -40,12 +41,14 @@ export default class ModelTreeWalker implements Iterable<ModelNode> {
   private readonly nodeAfterEnd: ModelNode | null = null;
   private hasSeenEnd: boolean = false;
   private descend: boolean;
+  private visitParentUpwards: boolean;
 
-  constructor({filter, range, descend = true}: ModelTreeWalkerConfig) {
+  constructor({filter, range, descend = true, visitParentUpwards = false}: ModelTreeWalkerConfig) {
     const {start: from, end: to} = range;
     this._root = range.root;
     this._filter = filter;
     this.descend = descend;
+    this.visitParentUpwards = visitParentUpwards;
 
     if (from.path.length > 0) {
 
@@ -195,6 +198,13 @@ export default class ModelTreeWalker implements Iterable<ModelNode> {
         // walk back up and try to find a sibling there
         // we don't care about these nodes since we've already visited them
         temporary = temporary.parent;
+        if(this.visitParentUpwards && temporary) {
+          result = this.filterNode(temporary);
+          if (result === FilterResult.FILTER_ACCEPT) {
+            this._currentNode = temporary;
+            return temporary;
+          }
+        }
       }
       // test the node we found (this was a sibling or a sibling of the parent)
       result = this.filterNode(node);
