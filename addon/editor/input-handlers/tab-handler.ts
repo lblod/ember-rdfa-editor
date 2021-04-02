@@ -4,8 +4,11 @@ import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import { isVoidElement, isVisibleElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
 import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
+import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import RawEditor from 'dummy/utils/ce/raw-editor';
 
 /**
  * Interface for specific plugins.
@@ -21,7 +24,7 @@ export interface TabInputPlugin {
    * manipulation and/or if it intends to handle the manipulation
    * itself.
    */
-  guidanceForManipulation: (manipulation: Manipulation) => ManipulationGuidance | null;
+  guidanceForManipulation: (manipulation: Manipulation, editor: RawEditor) => ManipulationGuidance | null;
 }
 
 /**
@@ -39,7 +42,8 @@ export default class TabInputHandler implements InputHandler {
     this.rawEditor = rawEditor;
     this.plugins = [
       new LumpNodeTabInputPlugin(),
-      new ListTabInputPlugin()
+      new ListTabInputPlugin(),
+      new TableTabInputPlugin()
     ];
   }
 
@@ -277,7 +281,7 @@ export default class TabInputHandler implements InputHandler {
     // calculate reports submitted by each plugin
     const reports : Array<{ plugin: TabInputPlugin, allow: boolean, executor: ManipulationExecutor | undefined }> = [];
     for ( const plugin of this.plugins ) {
-      const guidance = plugin.guidanceForManipulation( manipulation );
+      const guidance = plugin.guidanceForManipulation( manipulation, this.rawEditor );
       if( guidance ) {
         const allow = guidance.allow === undefined ? true : guidance.allow;
         const executor = guidance.executor;
