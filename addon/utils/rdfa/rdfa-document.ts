@@ -1,5 +1,6 @@
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import PernetRawEditor from '../ce/pernet-raw-editor';
+import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 
 /**
  * RdfaDocument is a virtual representation of the document
@@ -17,7 +18,9 @@ export default class RdfaDocument {
 
   get htmlContent() {
     // TODO: this no longer removes the highlights and should be fixed
-    return this._editor.rootNode.innerHTML;
+    const htmlWriter = new HTMLExportWriter(this._editor.model);
+    const output = (htmlWriter.write(this._editor.model.rootModelNode) as HTMLElement);
+    return output.innerHTML;
   }
 
   set htmlContent(html: string) {

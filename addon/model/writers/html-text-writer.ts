@@ -16,8 +16,13 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
       ["highlighted", "span"]
     ]
   )
-  constructor(private model: Model) {
+  constructor(protected model: Model) {
   }
+
+  get attributeMap() {
+    return HtmlTextWriter.attributeMap;
+  }
+
   write(modelNode: ModelText): Node | null {
     if(modelNode.length === 0) {
       return null;
@@ -28,7 +33,7 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
     let wrapper = top;
 
     for (const entry of modelNode.getTextAttributes()) {
-      if(entry[1] && HtmlTextWriter.attributeMap.has(entry[0])) {
+      if(entry[1] && this.attributeMap.has(entry[0])) {
         const wrappingElement = document.createElement(HtmlTextWriter.attributeMap.get(entry[0])!);
         if (entry[0] === "highlighted") {
           wrappingElement.setAttribute('data-editor-highlight', "true");
