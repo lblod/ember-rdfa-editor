@@ -6,6 +6,7 @@ import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTreeWalker, {ModelNodeFilter} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -100,9 +101,6 @@ export default class ModelRange {
     return this.start.sameAs(this.end);
   }
 
-  /**
-   * Find the common ancestor of start and end positions.
-   */
   getCommonPosition(): ModelPosition | null {
     if (this.start.root !== this.end.root) {
       return null;
@@ -110,8 +108,11 @@ export default class ModelRange {
     return ModelPosition.getCommonPosition(this.start, this.end);
   }
 
-  getCommonAncestor(): ModelNode | null {
-    return this.getCommonPosition()?.nodeAfter() || null;
+  /**
+   * Find the common ancestor of start and end positions.
+   */
+  getCommonAncestor(): ModelElement {
+    return this.start.getCommonAncestor(this.end);
   }
 
 
@@ -173,15 +174,6 @@ export default class ModelRange {
   }
 
 
-  /**
-   * Return the minimal set of confined ranges that, when combined, form an equivalent range to this one
-   */
-  getMinimumConfinedRanges(): ModelRange[] {
-
-    const commonAncestor = this.getCommonAncestor() as ModelElement;
-    return this.getMininumConfinedRangesRec(this.clone(), commonAncestor);
-
-  }
 
   /**
    * Return a new range that is expanded to include all children
@@ -209,49 +201,44 @@ export default class ModelRange {
 
   }
 
-  private getMininumConfinedRangesRec(range: ModelRange, commonAncestor: ModelElement): ModelRange[] {
-    if (range.isConfined()) {
-      return [range];
-    }
-    let left: ModelRange | null = null;
-    let right: ModelRange | null = null;
-    let middleStart: ModelPosition;
-    let middleEnd: ModelPosition;
+  /**
+   * Return the minimal set of confined ranges that, when combined, form an equivalent range to this one
+   */
+  getMinimumConfinedRanges(): ModelRange[] {
 
-    if (range.start.parent !== commonAncestor) {
-      const leftStart = range.start.clone();
-      const leftEnd = ModelPosition.fromInElement(range.start.parent, range.start.parent.getMaxOffset());
-      left = new ModelRange(leftStart, leftEnd);
-      middleStart = ModelPosition.fromAfterNode(range.start.parent);
-    } else {
-      middleStart = range.start;
-    }
+    const commonPath = ArrayUtils.findCommonSlice(this.start.path, this.end.path);
+    const commonLength = commonPath.length;
+    const result = [];
 
-    if (range.end.parent !== commonAncestor) {
-      const rightStart = ModelPosition.fromInElement(range.end.parent, 0);
-      const rightEnd = range.end.clone();
-      right = new ModelRange(rightStart, rightEnd);
-      middleEnd = ModelPosition.fromBeforeNode(range.end.parent);
-    } else {
-      middleEnd = range.end;
-    }
-
-    const middle = new ModelRange(middleStart, middleEnd);
-    const middleConfinedNodes = this.getMininumConfinedRangesRec(middle, commonAncestor);
-    if (left) {
-      if (right) {
-        return [left, ...middleConfinedNodes, right];
-      } else {
-        return [left, ...middleConfinedNodes];
+    let startCur = this.start;
+    while (startCur.path.length > commonLength + 1) {
+      const parent = startCur.parent;
+      const range = new ModelRange(startCur, ModelPosition.fromInElement(parent, parent.getMaxOffset()));
+      if(!range.collapsed) {
+        result.push(range);
       }
-    } else {
-      if (right) {
-        return [...middleConfinedNodes, right];
-      } else {
-        return middleConfinedNodes;
+      startCur = ModelPosition.fromAfterNode(parent);
+    }
+
+    const temp = [];
+    let endCur = this.end;
+    while (endCur.path.length > commonLength + 1) {
+      const parent = endCur.parent;
+      const range = new ModelRange(ModelPosition.fromInElement(parent, 0), endCur);
+      if(!range.collapsed) {
+        temp.push(range);
       }
+      endCur = ModelPosition.fromBeforeNode(parent);
+    }
+    const middle = new ModelRange(startCur, endCur);
+    if (!middle.collapsed) {
+      result.push(middle);
 
     }
+    temp.reverse();
+    result.push(...temp);
+    return result;
+
   }
 
 
