@@ -1,8 +1,6 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {AssertionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import {dom, domStripped, vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
@@ -25,7 +23,7 @@ module("Unit | model | readers | html-reader", hooks => {
         <text>abc</text>
       </p>`;
 
-    const actual = reader.read(doc.body.firstChild!);
+    const actual = reader.read(doc.body.firstChild!)!;
     assert.true(actual.sameAs(expected));
   });
   test("read tree with textStyle elements", assert => {
@@ -39,7 +37,8 @@ module("Unit | model | readers | html-reader", hooks => {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!);
+    const actual = reader.read(doc.body.firstChild!)!;
+    console.log(actual.toXml());
     assert.true(actual.sameAs(expected));
   });
 
@@ -55,7 +54,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!);
+    const actual = reader.read(doc.body.firstChild!)!;
     assert.true(actual.sameAs(expected));
   });
 
@@ -72,7 +71,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!);
+    const actual = reader.read(doc.body.firstChild!)!;
     assert.true(actual.sameAs(expected));
   });
 
@@ -108,7 +107,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!);
+    const actual = reader.read(doc.body.firstChild!)!;
     assert.true(actual.sameAs(expected));
   });
   test("read tree with highlights", assert => {
@@ -130,7 +129,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!);
+    const actual = reader.read(doc.body.firstChild!)!;
     assert.true(actual.sameAs(expected));
   });
   test("reads table", assert => {
@@ -190,7 +189,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </table>
     `;
 
-    const actual = reader.read(doc.body.firstChild!);
+    const actual = reader.read(doc.body.firstChild!)!;
 
     assert.true(actual.sameAs(expected));
     assert.strictEqual((((actual.root as ModelTable)

@@ -89,6 +89,9 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   addChild(child: ModelNode, position?: number) {
+    if(ModelNode.isFragment(child)) {
+      throw new ModelError("Fragments cannot be added as children");
+    }
     let prev;
     let next = null;
     if (position === undefined) {
