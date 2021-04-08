@@ -29,10 +29,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
-import { walk as walkDomNode } from "@lblod/marawa/node-walker";
-import RichNode from "@lblod/marawa/rich-node";
-import classic from 'ember-classic-decorator';
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -110,6 +107,7 @@ class RawEditor extends EmberObject {
     this.registerCommand(new RemoveTableColumnCommand(this.model));
     this.registerCommand(new RemoveTableCommand(this.model));
     this.registerCommand(new InsertHtmlCommand(this.model));
+    this.registerCommand(new InsertXmlCommand(this.model));
   }
 
   /**
@@ -159,7 +157,7 @@ class RawEditor extends EmberObject {
       }
 
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 

@@ -4,6 +4,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import AttributeOperation from "@lblod/ember-rdfa-editor/model/operations/attribute-operation";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-operation";
+import MoveOperation from "@lblod/ember-rdfa-editor/model/operations/move-operation";
 
 export default class ModelMutator {
 
@@ -17,6 +18,12 @@ export default class ModelMutator {
   insertNodes(range: ModelRange, ...nodes: ModelNode[]) {
     const op = new InsertOperation(range, ...nodes);
     this.batch.push(op);
+  }
+
+  move(rangeToMove: ModelRange, targetRange: ModelRange) {
+    const op = new MoveOperation(rangeToMove, targetRange);
+    this.batch.push(op);
+
   }
   flush(): ModelRange | null {
     let resultingRange = null;
