@@ -44,6 +44,7 @@ export default class HtmlReader implements Reader<Node, ModelNode> {
         ["i", this.wrappedAttributeReader],
         ["u", this.wrappedAttributeReader],
         ["del", this.wrappedAttributeReader],
+        ["span", this.wrappedAttributeReader]
       ]
     );
   }

@@ -15,7 +15,6 @@ import {
   isList, isTextNode,
   tagName
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import {applyProperty, cancelProperty} from './property-helpers';
 import {analyse as scanContexts} from '@lblod/marawa/rdfa-context-scanner';
 import RawEditor from "./raw-editor";
 import {
@@ -32,10 +31,8 @@ import {debug, runInDebug, warn} from '@ember/debug';
 import {InternalSelection, RawEditorSelection} from "@lblod/ember-rdfa-editor/editor/raw-editor";
 import {computed, get} from '@ember/object';
 import {PernetSelection} from "@lblod/ember-rdfa-editor/editor/pernet";
-import EditorProperty from "@lblod/ember-rdfa-editor/utils/ce/editor-property";
 import flatMap from "@lblod/ember-rdfa-editor/utils/ce/flat-map";
 import {getTextContent, processDomNode as walkDomNodeAsText} from "@lblod/ember-rdfa-editor/utils/ce/text-node-walker";
-import highlightProperty from "@lblod/ember-rdfa-editor/utils/ce/highlight-property";
 import nextTextNode from "@lblod/ember-rdfa-editor/utils/ce/next-text-node";
 import forgivingAction from "@lblod/ember-rdfa-editor/utils/ce/forgiving-action";
 import {
@@ -208,29 +205,6 @@ export default class PernetRawEditor extends RawEditor {
     const sel = this.currentSelection;
     return sel[0] === sel[1];
   }
-
-  /**
-   * apply a property on the provided selection
-   * @method applyProperty
-   * @param {Object} selection a selection created using selectHighlight or selectContext
-   * @param {EditorProperty} property
-   * @deprecated use commands instead
-   */
-  applyProperty(selection: PernetSelection, property: EditorProperty) {
-    applyProperty(selection, this, property, false);
-  }
-
-  /**
-   * cancel a property on the provided selection
-   * @method cancelProperty
-   * @param {Object} selection a selection created using selectHighlight or selectContext
-   * @param {EditorProperty} property
-   * @deprecated use commands instead
-   */
-  cancelProperty(selection: PernetSelection, property: EditorProperty) {
-    cancelProperty(selection, this, property);
-  }
-
 
   /**
    * Called after relevant input. Checks content and calls closureActions when changes detected
@@ -423,48 +397,6 @@ export default class PernetRawEditor extends RawEditor {
   }
 
 
-
-  /**
-   * toggle a property on the provided selection
-   * @method toggleProperty
-   * @param selection a selection created using selectHighlight or selectContext
-   * @param property
-   */
-  // WARNING
-  // We are actually overriding an EmberObject method here!
-  // @ts-ignore
-  toggleProperty(selection: PernetSelection, property: EditorProperty) {
-    const richNodes = selection.selections.map((s) => s.richNode);
-    let start: number;
-    let end: number;
-    if (selection.selectedHighlightRange) {
-      [start, end] = selection.selectedHighlightRange;
-    }
-    else {
-      start = richNodes.map((n) => n.start).sort()[0];
-      end = richNodes.map((n) => n.end).sort().reverse()[0];
-    }
-
-    // check if property is enabled on any non empty text node, these are the only visible nodes
-    const filteredNodes = richNodes.filter((node) => !(node.start === start && node.end === start)).filter((node) => !(node.start === end && node.end === end));
-    const enabled = filteredNodes.some( (node) => node.type === 'text' && property.enabledAt(node));
-    if (enabled) {
-      this.cancelProperty(selection, property);
-    }
-    else {
-      this.applyProperty(selection, property);
-    }
-    if (selection.collapsed) {
-      // property was toggled on a current cursor position, move cursor to the correct node
-      const textNodeAtCurrentPosition = (node: RichNode) => node.type === 'text' && node.start <= this.currentPosition && node.end >= this.currentPosition;
-      const correctNode = flatMap(this.richNode, (node: RichNode) => textNodeAtCurrentPosition(node) && property.enabledAt(node) !== enabled, true)[0];
-      if (correctNode) {
-        this.setCaret(correctNode.domNode, this.currentPosition - correctNode.start);
-      }
-    }
-  }
-
-
   /**
    * inserts an emtpy textnode after richnode, if non existant.
    *
@@ -532,29 +464,6 @@ export default class PernetRawEditor extends RawEditor {
   }
 
   /**
-   * Higlight a section of the editor text
-   *
-   * @method highlightRange
-   *
-   * @param {number} start Start of the region
-   * @param {number} end End of the region
-   * @param {Object} data map of data to be included on the highlight, can be used to add rdfa or data- attributes
-   * @public
-   */
-  highlightRange(start: number, end: number, data = {}) {
-    if( data && Object.entries(data).length != 0 ) {
-      warn( "Data attributes were supplied to highlightRange but this is not supported at the moment", {id: "content-editable.highlight"} );
-    }
-    // NOTE: we assume applying a highlight does not update any text ranges, e.g. start and end of all nodes remains the same
-    // TODO: this entire function seems to assume a position and not a selection
-    const richNodeContainingCursor = this.getRichNodeFor(this.currentNode) || this.findSuitableNodeForPosition(this.currentPosition);
-    const selection = this.selectHighlight([start,end]);
-    applyProperty(selection, this, highlightProperty); // TODO: replace 'this' with proper interface
-    // reset the cursor so the browser shows cursor in the correct position
-    this.resetCursor(richNodeContainingCursor);
-  }
-
-  /**
    * reposition cursor based on available information,
    * useful if you modified the tree (splitting up text nodes for example),
    * but did not change the text content.
@@ -588,23 +497,6 @@ export default class PernetRawEditor extends RawEditor {
       this.currentNode = null;
       this.setCurrentPosition(currentPosition);
     }
-  }
-
-  /**
-   * Given a list of locations, clear the linked highlight
-   *
-   * @method clearHighlightForLocations
-   *
-   * @param {Array} locations [[start, end], ...,[start, end]]
-   *
-   * @public
-   */
-  clearHighlightForLocations(locations: Array<[number, number]>){
-    const currentNode = this.getRichNodeFor(this.currentNode);
-    for (const location of locations) {
-      cancelProperty(this.selectHighlight(location), this, highlightProperty); // todo: replace 'this' with proper interface
-    }
-    this.resetCursor(currentNode);
   }
 
   /**

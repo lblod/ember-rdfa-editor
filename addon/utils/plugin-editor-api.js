@@ -1,3 +1,5 @@
+import globalTextOffsetToPath from '@lblod/ember-rdfa-editor/utils/global-text-offset-to-path';
+
 /**
  * Editor api for plugins.
  *
@@ -18,6 +20,17 @@ export default class PluginEditorApi {
     this._hrId = hrId;
   }
 
+  executeCommand(name, ...args) {
+    this._editor.executeCommand(name, ...args);
+  }
+
+  createSelectionFromRegion([start, end]) {
+    const startPos = globalTextOffsetToPath(this._editor.rootModelNode, start);
+    const endPos = globalTextOffsetToPath(this._editor.rootModelNode, end);
+    const selection = this._editor.createSelection();
+    selection.selectRange(this._editor.createRangeFromPaths(startPos, endPos));
+    return selection;
+  }
   /**
    * The currently selected range in the editor.
    *

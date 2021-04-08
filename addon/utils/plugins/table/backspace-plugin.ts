@@ -1,6 +1,7 @@
-import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import {Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {BackspacePlugin} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import {Manipulation, ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import RawEditor from 'dummy/utils/ce/raw-editor';
+import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
 
 /**
  *
@@ -16,7 +17,7 @@ export default class TableBackspacePlugin implements BackspacePlugin {
       executor: undefined
     };
     const selection = editor.selection;
-    if(selection.isInTable) {
+    if(selection.inTableState === PropertyState.enabled) {
       if(manipulation.type === 'moveCursorBeforeElement' || manipulation.type === 'removeEmptyElement') {
         return voidExecutor;
       } else if(manipulation.type === 'removeEmptyTextNode') {
@@ -38,7 +39,7 @@ export default class TableBackspacePlugin implements BackspacePlugin {
    */
   detectChange(manipulation: Manipulation, editor: RawEditor) : boolean {
     const selection = editor.selection;
-    if(selection.isInTable) {
+    if(selection.inTableState === PropertyState.enabled) {
       if(manipulation.type === 'moveCursorBeforeElement' || manipulation.type === 'removeEmptyElement') {
         return true;
       } else if(manipulation.type === 'removeEmptyTextNode') {
