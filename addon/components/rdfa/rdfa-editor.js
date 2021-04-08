@@ -108,6 +108,12 @@ export default class RdfaEditor extends Component {
   }
 
   /**
+   * @property rootModelNode
+   */
+  get rootModelNode() {
+    return this.editor.rootModelNode;
+  }
+  /**
    * Contains extra handlers for input events on the editor.
    *
    * @property handlers

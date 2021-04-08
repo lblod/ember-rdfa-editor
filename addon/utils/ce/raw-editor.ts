@@ -32,6 +32,7 @@ import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selec
 import { walk as walkDomNode } from "@lblod/marawa/node-walker";
 import RichNode from "@lblod/marawa/rich-node";
 import classic from 'ember-classic-decorator';
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -132,6 +133,9 @@ class RawEditor extends EmberObject {
     }
   }
 
+  get rootModelNode(): ModelElement {
+    return this.model.rootModelNode;
+  }
 
   /**
    * Register a command for use with {@link executeCommand}

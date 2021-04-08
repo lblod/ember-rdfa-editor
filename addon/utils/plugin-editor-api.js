@@ -25,8 +25,8 @@ export default class PluginEditorApi {
   }
 
   createSelectionFromRegion([start, end]) {
-    const startPos = globalTextOffsetToPath(this._editor, start);
-    const endPos = globalTextOffsetToPath(this._editor, end);
+    const startPos = globalTextOffsetToPath(this._editor.rootModelNode, start);
+    const endPos = globalTextOffsetToPath(this._editor.rootModelNode, end);
     const selection = this._editor.createSelection();
     selection.selectRange(this._editor.createRangeFromPaths(startPos, endPos));
     return selection;

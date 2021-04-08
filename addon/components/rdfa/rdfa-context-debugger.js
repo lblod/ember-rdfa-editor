@@ -5,8 +5,6 @@ import { debug } from '@ember/debug';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import globalTextOffsetToPath from '@lblod/ember-rdfa-editor/utils/global-text-offset-to-path';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 
 /**
  * Debugger component for the RDFa context of DOM nodes
@@ -79,8 +77,8 @@ export default class RdfaContextDebugger extends Component {
    */
   @action
   highlight([start, end]){
-    const startPos = globalTextOffsetToPath(this.editor, start);
-    const endPos = globalTextOffsetToPath(this.editor, end);
+    const startPos = globalTextOffsetToPath(this.editor.rootModelNode, start);
+    const endPos = globalTextOffsetToPath(this.editor.rootModelNode, end);
     const selection = this.editor.createSelection();
     selection.selectRange(this.editor.createRangeFromPaths(startPos, endPos));    this.editor.executeCommand("make-highlight", selection);
   }

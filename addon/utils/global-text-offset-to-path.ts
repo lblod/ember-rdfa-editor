@@ -1,6 +1,8 @@
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelTreeWalker, { FilterResult } from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import RawEditor from './ce/raw-editor';
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 const VOID_NODES = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
 
@@ -22,8 +24,8 @@ function selectTextAndVoidNodes(node: ModelNode) {
  * a space for all other void nodes
  *
  */
-export default function globalTextOffsetToPath(editor: RawEditor, offset: number): number[] {
-  const range = editor.createRangeFromPaths([], []);
+export default function globalTextOffsetToPath(root: ModelElement, offset: number): number[] {
+  const range = ModelRange.fromPaths(root, [], []);
   const treeWalker = new ModelTreeWalker({ filter: selectTextAndVoidNodes, range });
   let startOffset = 0;
   for (const node of treeWalker) {

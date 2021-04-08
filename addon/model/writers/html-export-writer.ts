@@ -31,7 +31,6 @@ export default class HTMLExportWriter implements Writer<ModelNode, Node> {
 
     if (!result) {
       result = new Text();
-      this.model.bindNode(modelNode, result);
     }
 
     return result;
