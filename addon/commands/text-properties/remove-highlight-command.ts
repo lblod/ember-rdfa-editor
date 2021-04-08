@@ -1,9 +1,10 @@
 import SetPropertyCommand from "@lblod/ember-rdfa-editor/commands/text-properties/set-property-command";
+import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 
-export default class RemoveBoldCommand extends SetPropertyCommand {
+export default class RemoveHighlightCommand extends SetPropertyCommand {
   name = "remove-highlight"
 
-  execute() {
-    super.execute("highlighted", false);
+  execute(selection?: ModelSelection) {
+    this.setProperty("highlighted", false, selection);
   }
 }

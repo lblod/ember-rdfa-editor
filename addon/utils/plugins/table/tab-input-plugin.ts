@@ -15,7 +15,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
 
   guidanceForManipulation(manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
     const selection = editor.selection;
-    if(selection.isInTable === PropertyState.enabled) {
+    if(selection.inTableState === PropertyState.enabled) {
       return {
         allow: true,
         executor: this.tabHandler
@@ -42,7 +42,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         selectedCell = parent;
       }
     }
-    
+
     const tableDimensions = table?.getDimensions();
     if(!table || !tableDimensions) {
       throw new Error('Selection is not inside a table');

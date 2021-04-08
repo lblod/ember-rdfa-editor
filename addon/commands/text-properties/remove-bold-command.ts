@@ -4,6 +4,6 @@ export default class RemoveBoldCommand extends SetPropertyCommand {
   name = "remove-bold"
 
   execute() {
-    super.execute("bold", false);
+    super.setProperty("bold", false);
   }
 }
