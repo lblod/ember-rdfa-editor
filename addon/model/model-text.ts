@@ -1,6 +1,7 @@
 import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/model/model-node";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {stringToVisibleText} from "@lblod/ember-rdfa-editor/editor/utils";
+import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
 
 const NON_BREAKING_SPACE = '\u00A0';
 export type TextAttribute = "bold" | "italic" | "underline" | "strikethrough" | "highlighted";
@@ -109,18 +110,13 @@ export default class ModelText extends ModelNode {
   }
 
   sameAs(other: ModelNode): boolean {
-    if(!ModelNode.isModelText(other)) {
+    if (!ModelNode.isModelText(other)) {
       return false;
     }
-    if(this.content !== other.content) {
+    if (this.content !== other.content) {
       return false;
     }
+    return MapUtils.areMapsSame(this.attributeMap, other.attributeMap);
 
-    for (const [key, value] of this.attributeMap.entries()) {
-      if (other.getAttribute(key) !== value) {
-        return false;
-      }
-    }
-    return true;
   }
 }

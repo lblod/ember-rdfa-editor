@@ -3,6 +3,7 @@ import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-tex
 import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
 import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
+import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -332,11 +333,10 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       return false;
     }
 
-    for (const [key, value] of this.attributeMap.entries()) {
-      if (other.getAttribute(key) !== value) {
-        return false;
-      }
+    if(!MapUtils.areMapsSame(this.attributeMap, other.attributeMap)) {
+      return false;
     }
+
     for (let i = 0; i < this.length; i++) {
       if (!other.children[i].sameAs(this.children[i])) {
         return false;
