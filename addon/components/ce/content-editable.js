@@ -261,7 +261,7 @@ export default class ContentEditable extends Component {
     // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
     const clipboardData = (event.clipboardData || window.clipboardData);
     event.preventDefault();
-    const isInTable = this.rawEditor.selection.isInTable === PropertyState.enabled;
+    const isInTable = this.rawEditor.selection.inTableState === PropertyState.enabled;
     //TODO: if no clipboardData found, do we want an error?
     if (!isInTable && (this.features.isEnabled('editor-html-paste')||
          this.features.isEnabled('editor-extended-html-paste'))&&

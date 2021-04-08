@@ -132,7 +132,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
       const selection = this.editor.createSelection();
       selection.selectRange(this.editor.createRangeFromPaths(startPos, endPos));
       this.editor.executeCommand("make-highlight", selection);
-      region = this.cardsLocationFlaggedNew.shift();
+      region = this.cardsLocationFlaggedNew.shift() ;
     }
 
     this.cardsLocationFlaggedNew = [];

@@ -261,7 +261,7 @@ export default class ModelSelection {
 
   }
 
-  get isInList(): PropertyState {
+  get inListState(): PropertyState {
     const config = {
       filter: ModelNode.isModelElement,
       predicate: (node: ModelElement) => listTypes.has(node.type),
@@ -275,7 +275,7 @@ export default class ModelSelection {
 
   }
 
-  get isInTable(): PropertyState {
+  get inTableState(): PropertyState {
     const config = {
       filter: ModelNode.isModelElement,
       predicate: (node: ModelElement) => node.type === 'table',
