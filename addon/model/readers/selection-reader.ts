@@ -4,7 +4,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError, NotImplementedError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {HIGHLIGHT_ATTRIBUTE, TEXT_PROPERTY_NODES} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
@@ -57,6 +57,18 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
    * @param domOffset
    */
   readDomPosition(container: Node, domOffset: number): ModelPosition | null {
+    try {
+      return this.readDomPositionUnsafe(container, domOffset);
+    } catch (e) {
+      if (e instanceof ModelError) {
+        console.warn(e.message);
+        return null;
+      }
+    }
+  }
+
+  private readDomPositionUnsafe(container: Node, domOffset: number): ModelPosition | null {
+
     let rslt = null;
     if (SelectionReader.isTextPropertyNode(container)) {
       return this.findPositionForTextPopertyNode(container, domOffset);
