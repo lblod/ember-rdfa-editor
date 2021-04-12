@@ -63,6 +63,8 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
       if (e instanceof ModelError) {
         console.warn(e.message);
         return null;
+      } else {
+        throw e;
       }
     }
   }
