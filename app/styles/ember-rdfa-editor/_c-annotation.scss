@@ -81,7 +81,7 @@
   [property="prov:value"] > div > span,
   [property="ext:behandelt"] > div > span {
     position: relative;
-    display: block; // remove when span is gone from the template "nieuw generiek besluit"
+    // display: block; // remove when span is gone from the template "nieuw generiek besluit"
   }
 
   // Show underlines on annotation
