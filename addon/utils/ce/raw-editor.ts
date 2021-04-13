@@ -1,7 +1,3 @@
-import classic from 'ember-classic-decorator';
-import RichNode from "@lblod/marawa/rich-node";
-import {walk as walkDomNode} from '@lblod/marawa/node-walker';
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import EmberObject from '@ember/object';
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
