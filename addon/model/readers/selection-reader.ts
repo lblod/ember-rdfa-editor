@@ -70,7 +70,6 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
   }
 
   private readDomPositionUnsafe(container: Node, domOffset: number): ModelPosition | null {
-
     let rslt = null;
     if (SelectionReader.isTextPropertyNode(container)) {
       return this.findPositionForTextPopertyNode(container, domOffset);

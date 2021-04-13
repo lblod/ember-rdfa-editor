@@ -33,6 +33,10 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
+import { walk as walkDomNode } from "@lblod/marawa/node-walker";
+import RichNode from "@lblod/marawa/rich-node";
+import classic from 'ember-classic-decorator';
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
 
 /**
