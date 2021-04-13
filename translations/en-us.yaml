@@ -1,0 +1,10 @@
+ember-rdfa-editor:
+  insert-table: Insert table
+  add-row-below: Add row below
+  add-row-above: Add row above
+  add-column-after: Add column after
+  add-column-before: Add column before
+  delete-row: Delete row
+  delete-column: Delete column
+  delete-table: Delete table
+

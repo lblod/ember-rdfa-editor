@@ -90,29 +90,29 @@
         <Rdfa::ToolbarDropdown @dropdownButtonLabel="Table">
           {{#if this.isInTable}}
             <button role="menuitem" type="button" {{on "click" this.insertRowBelow}}>
-              Add row below
+              {{t "ember-rdfa-editor.add-row-below"}}
             </button>
             <button role="menuitem" type="button" {{on "click" this.insertRowAbove}}>
-              Add row above
+              {{t "ember-rdfa-editor.add-row-above"}}
             </button>
             <button role="menuitem" type="button" {{on "click" this.insertColumnAfter}}>
-              Add column after
+              {{t "ember-rdfa-editor.add-column-after"}}
             </button>
             <button role="menuitem" type="button" {{on "click" this.insertColumnBefore}}>
-              Add column before
+              {{t "ember-rdfa-editor.add-column-before"}}
             </button>
             <button role="menuitem" type="button" {{on "click" this.removeTableRow}}>
-              Delete row
+              {{t "ember-rdfa-editor.delete-row"}}
             </button>
             <button role="menuitem" type="button" {{on "click" this.removeTableColumn}}>
-              Delete column
+              {{t "ember-rdfa-editor.delete-column"}}
             </button>
             <button role="menuitem" type="button" {{on "click" this.removeTable}}>
-              Delete table
+              {{t "ember-rdfa-editor.delete-table"}}
             </button>
           {{else}}
             <button role="menuitem" type="button" {{on "click" this.insertTable}}>
-              Insert Table
+              {{t "ember-rdfa-editor.insert-table"}}
             </button>
           {{/if}}
         </Rdfa::ToolbarDropdown>
