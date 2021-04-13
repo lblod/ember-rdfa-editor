@@ -24,8 +24,7 @@ export default class RdfaDocument {
 
   set htmlContent(html: string) {
     const selection = this._editor.createSelection();
-    selection.selectRange(this._editor.createRangeFromPaths([], []));
-    this._editor.executeCommand("insert-html", html, selection);
+    this._editor.executeCommand("insert-html", html, this._editor.createRangeFromPaths([], []));
   }
 
   setHtmlContent(html: string) {

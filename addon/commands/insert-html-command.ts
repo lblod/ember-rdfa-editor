@@ -3,6 +3,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
+import ModelRange from "../model/model-range";
 
 export default class InsertHtmlCommand extends Command {
   name = "insert-html";
@@ -11,8 +12,7 @@ export default class InsertHtmlCommand extends Command {
     super(model);
   }
 
-  execute(htmlString: string, selection: ModelSelection = this.model.selection) {
-    const range = selection.lastRange;
+  execute(htmlString: string, range: ModelRange | null = this.model.selection.lastRange) {
     if (!range) {
       return;
     }
