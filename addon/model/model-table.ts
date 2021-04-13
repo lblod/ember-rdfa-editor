@@ -154,5 +154,5 @@ export default class ModelTable extends ModelElement {
     }) as ModelTable;
     return table;
   }
-  
+
 }

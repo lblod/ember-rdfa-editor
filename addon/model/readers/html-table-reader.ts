@@ -2,13 +2,22 @@ import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
 import Model from "@lblod/ember-rdfa-editor/model/model";
+import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/model/readers/html-reader";
+import HtmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/html-node-reader";
+import {addChildOrFragment, copyAttributes} from "@lblod/ember-rdfa-editor/model/readers/reader-utils";
 
-export default class HtmlTableReader implements Reader<HTMLElement, ModelElement> {
-  read(from: HTMLTableElement): ModelTable {
+export default class HtmlTableReader implements Reader<HTMLElement, ModelTable, HtmlReaderContext> {
+  read(from: HTMLTableElement, context: HtmlReaderContext): ModelTable {
     const table = new ModelTable();
-    for (const attr of from.attributes) {
-      table.setAttribute(attr.name, attr.value);
+    copyAttributes(from, table);
+    const nodeReader = new HtmlNodeReader();
+    for (const child of from.childNodes) {
+      const modelChild = nodeReader.read(child, context);
+      if(modelChild) {
+        addChildOrFragment(table, modelChild);
+      }
     }
+    context.bindNode(table, from);
     return table;
   }
 
