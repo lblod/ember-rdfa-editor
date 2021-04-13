@@ -5,7 +5,7 @@ import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
 
 const NON_BREAKING_SPACE = '\u00A0';
 export type TextAttribute = "bold" | "italic" | "underline" | "strikethrough" | "highlighted";
-const TEXT_ATTRIBUTES: TextAttribute[] = ["bold", "italic", "underline", "strikethrough", "highlighted"];
+export const TEXT_ATTRIBUTES: TextAttribute[] = ["bold", "italic", "underline", "strikethrough", "highlighted"];
 
 export default class ModelText extends ModelNode {
   modelNodeType: ModelNodeType = "TEXT";
