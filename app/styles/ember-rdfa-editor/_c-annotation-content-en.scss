@@ -2,20 +2,256 @@
   #SAY ANNOTATIONS CONTENT - EN locale
   ================================== */
 
-[data--language="en"] .rdfa-annotations [data-editor-highlight="true"],
-[data--language="en"] .rdfa-annotations [property],
-[data--language="en"] .rdfa-annotations [typeof]:not([typeof="foaf:Document"]),
-[data--language="en"] .rdfa-annotations [data-type],
-[data--language="en"] .rdfa-annotations .mark-highlight-manual,
-[data--language="en"] .rdfa-annotations.show-rdfa-blocks,
 [data--language="en"] .rdfa-annotations:not(.show-rdfa-blocks),
-[lang="en"] .rdfa-annotations [data-editor-highlight="true"],
-[lang="en"] .rdfa-annotations [property],
-[lang="en"] .rdfa-annotations [typeof]:not([typeof="foaf:Document"]),
-[lang="en"] .rdfa-annotations [data-type],
-[lang="en"] .rdfa-annotations .mark-highlight-manual,
-[lang="en"] .rdfa-annotations.show-rdfa-blocks,
-[lang="en"] .rdfa-annotations:not(.show-rdfa-blocks) {
+[lang="en"] .rdfa-annotations:not(.show-rdfa-blocks),
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks [data-editor-highlight="true"],
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks [property],
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks [typeof]:not([typeof="foaf:Document"]),
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks [data-type],
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks .mark-highlight-manual,
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks.show-rdfa-blocks,
+[lang="en"] .rdfa-annotations.show-rdfa-blocks [data-editor-highlight="true"],
+[lang="en"] .rdfa-annotations.show-rdfa-blocks [property],
+[lang="en"] .rdfa-annotations.show-rdfa-blocks [typeof]:not([typeof="foaf:Document"]),
+[lang="en"] .rdfa-annotations.show-rdfa-blocks [data-type],
+[lang="en"] .rdfa-annotations.show-rdfa-blocks .mark-highlight-manual,
+[lang="en"] .rdfa-annotations.show-rdfa-blocks {
+  [property="dc:subject"]:before {
+    content: "Subject";
+  }
+
+  [property="besluit:geplandOpenbaar"]:before {
+    content: "Planned public";
+  }
+
+  [property="besluit:geplandOpenbaar"][content="false"]:before {
+    content: "Planned closed";
+  }
+
+  [property="besluit:openbaar"]:before {
+    content: "Public hearing"
+  }
+
+  [property="besluit:openbaar"][content="false"]:before {
+    content: "Closed hearing"
+  }
+
+  [typeof="besluit:BehandelingVanAgendapunt"] [property="besluit:openbaar"] + [property="dc:subject"] + [typeof="besluit:Besluit"]:before {
+    content: "\f06e \00A0 \00A0 Public agenda item";
+    font-family: fontawesome, flanders-sans, sans-serif;
+  }
+
+  [typeof="besluit:BehandelingVanAgendapunt"] [property="besluit:besloten"] + [property="dc:subject"] + [typeof="besluit:Besluit"]:before {
+    content: "\f07e \00A0 \00A0 Closed agenda item";
+  }
+
+  [typeof="besluit:BehandelingVanAgendapunt"] [property="besluit:openbaar"] + [property="dc:subject"] + [typeof="besluit:Besluit mandaat:Aanstellingsbesluit"]:before {
+    content: "\f06e \00A0 \00A0 Public agenda item: appointment";
+    font-family: fontawesome, flanders-sans, sans-serif;
+  }
+
+  [typeof="besluit:BehandelingVanAgendapunt"] [property="besluit:besloten"] + [property="dc:subject"] + [typeof="besluit:Besluit mandaat:Aanstellingsbesluit"]:before {
+    content: "\f070 \00A0 \00A0 Closed agenda item: appointment";
+    font-family: fontawesome, flanders-sans, sans-serif;
+  }
+
+  [typeof="mandaat:Mandataris"]:before,
+  [property="ext:bekrachtigtAanstellingVan"]:before {
+    content: "Appointment representative";
+  }
+
+  [property="ext:bekrachtigdOnverenigbaarheid"]:before {
+    content: "Incompatibilities";
+  }
+
+  [property="ext:bekrachtigdAfstandVanMandaatDoor"]:before {
+    content: "Withdrawal representative";
+  }
+
+  [property="ext:bekrachtigdAfwezigheidMetKennisGeving"]:before {
+    content: "Absent with notice";
+  }
+
+  [property="ext:bekrachtigdAfwezigheid"]:before {
+    content: "Absent without notice";
+  }
+
+  [typeof="http://www.w3.org/ns/person#Person"]:before {
+    content: "Person";
+  }
+
+  [property="besluit:heeftAanwezigeBijStart"][typeof="http://www.w3.org/ns/person#Person"]:before {
+    content: "Attendee at start of meeting";
+  }
+
+  [property="mandaat:isBestuurlijkeAliasVan"]:before {
+    content: "Representative";
+  }
+
+  [property="persoon:gebruikteVoornaam"]:before {
+    content: "First name";
+  }
+
+  [property="foaf:familyName"]:before {
+    content: "Last name";
+  }
+
+  [property="org:holds"]:before {
+    content: "Respresentative";
+  }
+
+  [property="org:role"]:before {
+    content: "Role";
+  }
+
+  [property="mandaat:start"]:before {
+    content: "Start mandate";
+  }
+
+  [property="skos:prefLabel"]:before {
+    content: "Name role";
+  }
+
+  [property="ext:stemmingTable"]:before {
+    content: "Voting";
+  }
+
+  [property="besluit:heeftStemming"]:before {
+    content: "Voting at treatment of agenda item";
+  }
+
+  [property="besluit:heeftAanwezige"]:before {
+    content: "Attendee";
+  }
+
+  [property="ext:heeftAfwezigeBijAgendapunt"]:before,
+  [property="besluit:heeftAfwezige"]:before {
+    content: "Absent";
+  }
+
+  [typeof="besluit:Agendapunt"]:before {
+    content: "Agenda item";
+  }
+
+  [property="dc:title"]:before,
+  [property="eli:title"]:before {
+    content: "Title";
+  }
+
+  [property="eli:title_short"]:before {
+    content: "Quote caption (optional)";
+  }
+
+  [property="eli:description"]:before {
+    content: "Description decision";
+  }
+
+  [property="ext:behandelt"] > [property="dc:subject"]:before {
+    content: "Subject of agenda item";
+  }
+
+  [property="besluit:motivering"]:before {
+    content: "Motivation";
+  }
+
+  [property="eli:cites"]:before {
+    content: "Quote";
+  }
+
+  [property="prov:value"]:before {
+    content: "Decision";
+  }
+
+  [typeof~="besluit:Artikel"]:before {
+    content: "Article";
+  }
+
+  [property="eli:has_part"][typeof="besluit:Artikel"]:before {
+    content: "Article";
+  }
+
+  [typeof="besluit:Artikel"] [property="prov:value"]:before {
+    content: "Content article"
+  }
+
+  [property="eli:has_part"]:before {
+    content: "Part";
+  }
+
+  [property="eli:number"]:before {
+    content: "Number";
+  }
+
+  /* Mobiliteit */
+  [typeof="mobiliteit:Opstelling"]:before {
+    content: "Setup";
+  }
+
+  [property="locn:geometry"]:before,
+  [typeof="locn:Geometry"]:before {
+    content: "Zone"; // : " attr(resource)
+  }
+
+  [property="geosparql:asWKT"]:before {
+    content: attr(content);
+  }
+
+  [property="mobiliteit:omvatVerkeersbord"]:before {
+    content: "Traffic sign";
+  }
+
+  [property="mobiliteit:grafischeWeergave"]:before {
+    content: "Graphic representation"; //: " attr(resource);
+  }
+
+  [property="mobiliteit:Verkeersbord.operationeleStatus"]:before,
+  [property="mobiliteit:Opstelling.operationeleStatus"]:before {
+    content: "Operational status";
+  }
+
+  [property="mobiliteit:isBeginZone"]:before {
+    content: "Indicates start of zone";
+  }
+
+  [property="mobiliteit:isEindeZone"]:before {
+    content: "Indicates end of zone";
+  }
+
+  [property="mobiliteit:heeftVerkeersbordconcept"]:before {
+    content: "Traffic sign concept";
+  }
+
+  [property="mobiliteit:heeftVerkeersbordconcept"]:before {
+    content: "Traffic sign concept";
+  }
+
+  [property="mobiliteit:realiseert"]:before {
+    content: "Realises";
+  }
+
+  // Imported HTML block
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"]::before,
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"]:hover::before {
+    content: "Imported data – not editable";
+  }
+
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"]:before {
+    content: "Do you want to delete this block? Press backspace to confirm.";
+  }
+}
+
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks [data-editor-highlight="true"],
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks [property],
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks [typeof]:not([typeof="foaf:Document"]),
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks [data-type],
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks .mark-highlight-manual,
+[data--language="en"] .rdfa-annotations.show-rdfa-blocks.show-rdfa-blocks,
+[lang="en"] .rdfa-annotations.show-rdfa-blocks [data-editor-highlight="true"],
+[lang="en"] .rdfa-annotations.show-rdfa-blocks [property],
+[lang="en"] .rdfa-annotations.show-rdfa-blocks [typeof]:not([typeof="foaf:Document"]),
+[lang="en"] .rdfa-annotations.show-rdfa-blocks [data-type],
+[lang="en"] .rdfa-annotations.show-rdfa-blocks .mark-highlight-manual,
+[lang="en"] .rdfa-annotations.show-rdfa-blocks {
   /* -------------------- Guiding tags ------------------------- */
 
   [property^="ext:insert"]:before,
@@ -278,102 +514,6 @@
     content: "Agenda item";
   }
 
-  [property="dc:title"]:before,
-  [property="eli:title"]:before {
-    content: "Title";
-  }
-
-  [property="eli:title_short"]:before {
-    content: "Quote caption (optional)";
-  }
-
-  [property="eli:description"]:before {
-    content: "Description decision";
-  }
-
-  [property="ext:behandelt"] > [property="dc:subject"]:before {
-    content: "Subject of agenda item";
-  }
-
-  [property="besluit:motivering"]:before {
-    content: "Motivation";
-  }
-
-  [property="eli:cites"]:before {
-    content: "Quote";
-  }
-
-  [property="prov:value"]:before {
-    content: "Decision";
-  }
-
-  [typeof~="besluit:Artikel"]:before {
-    content: "Article";
-  }
-
-  [property="eli:has_part"][typeof="besluit:Artikel"]:before {
-    content: "Article";
-  }
-
-  [typeof="besluit:Artikel"] [property="prov:value"]:before {
-    content: "Content article"
-  }
-
-  [property="eli:has_part"]:before {
-    content: "Part";
-  }
-
-  [property="eli:number"]:before {
-    content: "Number";
-  }
-
-  /* Mobiliteit */
-  [typeof="mobiliteit:Opstelling"]:before {
-    content: "Setup";
-  }
-
-  [property="locn:geometry"]:before,
-  [typeof="locn:Geometry"]:before {
-    content: "Zone"; // : " attr(resource)
-  }
-
-  [property="geosparql:asWKT"]:before {
-    content: attr(content);
-  }
-
-  [property="mobiliteit:omvatVerkeersbord"]:before {
-    content: "Traffic sign";
-  }
-
-  [property="mobiliteit:grafischeWeergave"]:before {
-    content: "Graphic representation"; //: " attr(resource);
-  }
-
-  [property="mobiliteit:Verkeersbord.operationeleStatus"]:before,
-  [property="mobiliteit:Opstelling.operationeleStatus"]:before {
-    content: "Operational status";
-  }
-
-  [property="mobiliteit:isBeginZone"]:before {
-    content: "Indicates start of zone";
-  }
-
-  [property="mobiliteit:isEindeZone"]:before {
-    content: "Indicates end of zone";
-  }
-
-  [property="mobiliteit:heeftVerkeersbordconcept"]:before {
-    content: "Traffic sign concept";
-  }
-
-  [property="mobiliteit:heeftVerkeersbordconcept"]:before {
-    content: "Traffic sign concept";
-  }
-
-  [property="mobiliteit:realiseert"]:before {
-    content: "Realises";
-  }
-
   /* -------------------- Stemming ------------------------- */
   [typeof="besluit:stemming"]:before {
     content: "Voting";
@@ -425,16 +565,6 @@
 
   [property="ext:signatories"]:before {
     content: "Signatories";
-  }
-
-  // Imported HTML block
-  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"]::before,
-  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"]:hover::before {
-    content: "Imported data – not editable";
-  }
-
-  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"]:before {
-    content: "Do you want to delete this block? Press backspace to confirm.";
   }
 }
 

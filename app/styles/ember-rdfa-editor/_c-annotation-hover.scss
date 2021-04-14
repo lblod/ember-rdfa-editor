@@ -1,6 +1,6 @@
-/* ==================================
-   #SAY ANNOTATIONS HOVER
-   ================================== */
+// /* ==================================
+//    #SAY ANNOTATIONS HOVER
+//    ================================== */
 
 .rdfa-annotations-hover:not(.show-rdfa-blocks) {
   overflow: hidden;
@@ -46,7 +46,6 @@
   }
 
   // Style before and after elements
-  .mark-highlight-manual,
   [typeof]:not([typeof="foaf:Document"]),
   [property],
   [data-type],
@@ -64,7 +63,7 @@
 
     &:before {
       @include say-font-size($say-tiny,1.2);
-      content:  attr(property) " " attr(typeof) " " attr(data-type);
+      // content:  attr(property) " " attr(typeof) " " attr(data-type);
       display: block;
       margin-top: .2rem;
       padding-right: $say-annotation-gutter + $say-unit-small;
@@ -93,7 +92,7 @@
       );
     }
 
-    &[data-editor-position-level]:before,
+    &[data-editor-position-level="1"]:before,
     &:hover:before {
       right: calc(100% + #{$say-annotation-offset});
       opacity: 1;
@@ -120,31 +119,23 @@
     }
   }
 
-  // No right border on inline elements
-  [property="eli:cites"]:hover:before,
-  [property="eli:cites"][data-editor-position-level]:before,
-  [style="display: inline;"]:hover:before,
-  [style="display: inline;"][data-editor-position-level]:before {
-    border-right: 0 !important;
-  }
-
   // Add highlight help text
-  span.mark-highlight-manual:before,
-  span.mark-highlight-manual:hover:before {
-    content: "Fill in";
-    display: inline;
-    width: auto;
-    line-height: 1;
-    padding-top: $say-unit-tiny/2;
-    padding-bottom: $say-unit-tiny/1.6;
-    padding-left: $say-unit-tiny/2;
-    padding-right: $say-unit-tiny;
-    color: $say-warning-600;
-    background: $say-warning-200;
-    z-index: 5;
-    border: 1px solid $say-warning-300 !important;
-    margin-right: -$say-unit;
-  }
+  // span.mark-highlight-manual:before,
+  // span.mark-highlight-manual:hover:before {
+  //   content: "Fill in";
+  //   display: inline;
+  //   width: auto;
+  //   line-height: 1;
+  //   padding-top: $say-unit-tiny/2;
+  //   padding-bottom: $say-unit-tiny/1.6;
+  //   padding-left: $say-unit-tiny/2;
+  //   padding-right: $say-unit-tiny;
+  //   color: $say-warning-600;
+  //   background: $say-warning-200;
+  //   z-index: 5;
+  //   border: 1px solid $say-warning-300 !important;
+  //   margin-right: -$say-unit;
+  // }
 
   // Hide nested lump node annotations
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
@@ -157,7 +148,6 @@
   // Hide empty properties or flagged as noHighlight
   [property=""],
   [typeof=""],
-  // [property="eli:realizes"],
   [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
   [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
     border-bottom: 0 !important;
@@ -175,7 +165,6 @@
 
   @include mq($until: large) {
     // Hide all hover annotations on small screens
-    .mark-highlight-manual,
     [typeof]:not([typeof="foaf:Document"]),
     [property],
     [data-type],

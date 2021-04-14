@@ -18,6 +18,8 @@ $say-toolbar-bottom              : false !default; // True = position the toolba
 // Editor spacing and background
 $say-editor-padding              : $say-unit !default;
 $say-editor-background           : $say-neutral-100 !default;
+$say-editor-sidebar-medium       : 30% !default;
+$say-editor-sidebar-large        : 30% !default;
 
 // Paper spacing and background
 $say-paper-min-height            : calc(100vh + #{$say-unit}) !default;
@@ -104,7 +106,7 @@ $say-button-tertiary-bg-hover-color        : transparent !default;
 // ANNOTATIONS
 // ---
 // Annotation options
-$say-annotation-width            : $say-unit-huge*3 !default;
+$say-annotation-width            : $say-unit-huge*1.5 !default;
 $say-annotation-offset           : $say-unit-large !default;
 $say-annotation-gutter           : $say-unit !default;
 $say-annotation-width-content    : $say-annotation-width !default;
