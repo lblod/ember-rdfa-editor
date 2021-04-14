@@ -2,7 +2,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 
 export default class PropertyCleaner {
   clean(range: ModelRange) {
@@ -14,7 +14,7 @@ export default class PropertyCleaner {
     for (const node of textNodes) {
       const next = node.nextSibling;
       if (ModelNode.isModelText(next)) {
-        if (MapUtils.areMapsSame(node.attributeMap, next.attributeMap)) {
+        if (ModelNodeUtils.areAttributeMapsSame(node.attributeMap, next.attributeMap)) {
           this.mergeTextNodes(node, next);
           node.remove();
         }

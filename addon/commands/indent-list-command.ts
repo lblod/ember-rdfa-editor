@@ -66,7 +66,7 @@ export default class IndentListCommand extends Command {
 
     }
     const cleaner = new ListCleaner();
-    cleaner.clean(this.model.rootModelNode);
+    cleaner.clean(selection.lastRange!);
     this.model.write();
   }
 

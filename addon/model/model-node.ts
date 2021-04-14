@@ -296,7 +296,7 @@ export default abstract class ModelNode {
    * All properties except boundNode, parent and siblings will be compared, and children will be compared recursively
    * @param other
    */
-  abstract sameAs(other: ModelNode): boolean;
+  abstract sameAs(other: ModelNode, strict: boolean = false): boolean;
 }
 
 

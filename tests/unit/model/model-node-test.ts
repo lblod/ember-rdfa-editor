@@ -3,6 +3,7 @@ import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 
 
 module("Unit | model | model-node", hooks => {
@@ -159,6 +160,204 @@ module("Unit | model | model-node", hooks => {
       assert.strictEqual(div.length, 0);
       assert.strictEqual(root.length, 2);
 
+    });
+  });
+
+  module("Unit | model | model-node | sameAs", _hooks => {
+    test("returns true for identical models", assert => {
+      // language=XML
+      const {root: model1} = vdom`
+        <div>
+          <span>
+            <text>abc</text>
+          </span>
+          <ul>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+          </ul>
+        </div>
+      `;
+      const model2 = model1.clone();
+      assert.true(model1.sameAs(model2));
+    });
+    test("returns false for different models", assert => {
+
+      // language=XML
+      const {root: model1} = vdom`
+        <div>
+          <span>
+            <text>abc</text>
+          </span>
+          <ul>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+          </ul>
+        </div>
+      `;
+      // language=XML
+      const {root: model2} = vdom`
+        <div>
+          <!--          difference-->
+          <div>
+            <text>abc</text>
+          </div>
+          <!--          difference-->
+          <ul>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+          </ul>
+        </div>
+      `;
+      assert.false(model1.sameAs(model2));
+    });
+
+
+    test("returns false models only differing in attributes", assert => {
+
+      // language=XML
+      const {root: model1} = vdom`
+        <div>
+          <span>
+            <text>abc</text>
+          </span>
+          <ul>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+          </ul>
+        </div>
+      `;
+      // language=XML
+      const {root: model2} = vdom`
+        <div>
+          <span>
+            <text bold="true">abc</text>
+          </span>
+          <ul>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+          </ul>
+        </div>
+      `;
+      assert.false(model1.sameAs(model2));
+    });
+    test("returns true for models only differing in ignored attributes", assert => {
+
+      // language=XML
+      const {root: model1} = vdom`
+        <div>
+          <span>
+            <text>abc</text>
+          </span>
+          <ul>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+          </ul>
+        </div>
+      `;
+      // language=XML
+      const {root: model2} = vdom`
+        <div>
+          <span>
+            <text __dummy_test_attr="test">abc</text>
+          </span>
+          <ul>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+          </ul>
+        </div>
+      `;
+      assert.true(model1.sameAs(model2));
+    });
+    test("returns false for models only differing in ignored attributes when strict", assert => {
+
+      // language=XML
+      const {root: model1} = vdom`
+        <div>
+          <span>
+            <text>abc</text>
+          </span>
+          <ul>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+          </ul>
+        </div>
+      `;
+      // language=XML
+      const {root: model2} = vdom`
+        <div>
+          <span>
+            <text __dummy_test_attr="test">abc</text>
+          </span>
+          <ul>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+            <li>
+              <text>def</text>
+            </li>
+          </ul>
+        </div>
+      `;
+      assert.false(model1.sameAs(model2, true));
     });
   });
 });

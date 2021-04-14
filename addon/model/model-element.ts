@@ -4,6 +4,7 @@ import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
 import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
 import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -89,7 +90,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   addChild(child: ModelNode, position?: number) {
-    if(ModelNode.isFragment(child)) {
+    if (ModelNode.isFragment(child)) {
       throw new ModelError("Fragments cannot be added as children");
     }
     let prev;
@@ -124,6 +125,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     this.addChild(child, this.offsetToIndex(offset));
 
   }
+
   insertChildrenAtOffset(offset: number, ...children: ModelNode[]) {
     let myOffset = offset;
 
@@ -325,7 +327,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
   }
 
-  sameAs(other: ModelNode): boolean {
+  sameAs(other: ModelNode, strict: boolean = false): boolean {
     if (!ModelNode.isModelElement(other)) {
       return false;
     }
@@ -336,12 +338,18 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       return false;
     }
 
-    if(!MapUtils.areMapsSame(this.attributeMap, other.attributeMap)) {
-      return false;
+    if (strict) {
+      if (!ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap, new Set<string>())) {
+        return false;
+      }
+    } else {
+      if (!ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap)) {
+        return false;
+      }
     }
 
     for (let i = 0; i < this.length; i++) {
-      if (!other.children[i].sameAs(this.children[i])) {
+      if (!other.children[i].sameAs(this.children[i], strict)) {
         return false;
       }
     }
