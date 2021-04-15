@@ -169,9 +169,4 @@ export default class EditorToolbar extends Component<Args> {
   removeTable(){
     this.args.editor.executeCommand("remove-table");
   }
-
-  @action
-  limitTableSelection(){
-    this.args.editor.executeCommand("limit-table-selection")
-  }
 }

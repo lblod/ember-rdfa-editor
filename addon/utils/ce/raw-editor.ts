@@ -34,7 +34,6 @@ import RichNode from "@lblod/marawa/rich-node";
 import classic from 'ember-classic-decorator';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
-import LimitTableSelectionCommand from "@@lblod/ember-rdfa-editor/commands/LimitTableSelectionCommand";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -113,7 +112,6 @@ class RawEditor extends EmberObject {
     this.registerCommand(new RemoveTableCommand(this.model));
     this.registerCommand(new InsertHtmlCommand(this.model));
     this.registerCommand(new InsertXmlCommand(this.model));
-    this.registerCommand(new LimitTableSelectionCommand(this.model));
   }
 
   /**
