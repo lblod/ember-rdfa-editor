@@ -3,6 +3,6 @@ import SetPropertyCommand from "@lblod/ember-rdfa-editor/commands/text-propertie
 export default class RemoveItalicCommand extends SetPropertyCommand {
   name = "remove-italic"
   execute() {
-    super.execute("italic", false);
+    super.setProperty("italic", false);
   }
 }

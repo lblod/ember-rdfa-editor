@@ -4,6 +4,6 @@ export default class MakeUnderlineCommand extends SetPropertyCommand{
   name = 'make-underline';
 
   execute() {
-    super.execute("underline", true);
+    super.setProperty("underline", true);
   }
 }

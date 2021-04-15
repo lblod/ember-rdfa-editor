@@ -1,20 +1,34 @@
 import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import HtmlElementReader from "@lblod/ember-rdfa-editor/model/readers/html-element-reader";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import {invisibleSpace} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import ModelElement, {ElementType} from "@lblod/ember-rdfa-editor/model/model-element";
+import {isElement, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/model/readers/html-reader";
+import HtmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/html-node-reader";
+import {addChildOrFragment, copyAttributes} from "@lblod/ember-rdfa-editor/model/readers/reader-utils";
 
-export default class HtmlListReader implements Reader<HTMLUListElement | HTMLOListElement, ModelElement> {
-  constructor(private model: Model, private elementReader: HtmlElementReader) {
-  }
-  read(from: HTMLUListElement | HTMLOListElement): ModelElement {
-
-    const wrapper = this.elementReader.read(from);
-    if(!from.childNodes.length) {
-      const emptyText = new ModelText(invisibleSpace);
-      wrapper.addChild(emptyText);
+/**
+ * Reader for an <ul> or <ol> element.
+ * NOTE: currently enforces the permitted content constraints very aggressively by ignoring any
+ * children which are not <li> elements.
+ */
+export default class HtmlListReader implements Reader<HTMLUListElement | HTMLOListElement, ModelElement | null, HtmlReaderContext> {
+  read(from: HTMLUListElement | HTMLOListElement, context: HtmlReaderContext) {
+    const wrapper = new ModelElement(tagName(from) as ElementType);
+    const nodeReader = new HtmlNodeReader();
+    for (const child of from.childNodes) {
+      // non-li childnodes are not allowed
+      if(isElement(child) && tagName(child) === "li") {
+        const modelChild = nodeReader.read(child, context);
+        if(modelChild) {
+          addChildOrFragment(wrapper, modelChild);
+        }
+      }
     }
+    // empty lists are useless
+    if(!wrapper.length) {
+      return null;
+    }
+    copyAttributes(from, wrapper);
+    context.bindNode(wrapper, from);
     return wrapper;
   }
 

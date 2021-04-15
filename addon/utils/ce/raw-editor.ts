@@ -1,34 +1,40 @@
 import EmberObject from '@ember/object';
-import classic from 'ember-classic-decorator';
-import MakeBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-bold-command';
-import RemoveBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-bold-command';
-import MakeItalicCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-italic-command';
-import RemoveItalicCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-italic-command';
 import Command from "@lblod/ember-rdfa-editor/commands/command";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import {walk as walkDomNode} from "@lblod/marawa/node-walker";
-import RichNode from "@lblod/marawa/rich-node";
-import MakeStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-properties/make-strikethrough-command";
-import RemoveStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-strikethrough-command";
-import MakeUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/make-underline-command";
-import RemoveUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-underline-command";
-import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
-import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list-command';
-import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list-command";
-import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
 import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
+import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
 import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
-import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
-import InsertRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
-import InsertRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
+import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
 import InsertColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
 import InsertColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
+import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
+import InsertRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
+import InsertRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
+import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
+import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list-command';
 import RemoveTableColumnCommand from "@lblod/ember-rdfa-editor/commands/remove-table-column-command";
-import RemoveTableRowCommand from "@lblod/ember-rdfa-editor/commands/remove-table-row-command";
 import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-command";
-import InsertHtmlCommand from "@lblod/ember-rdfa-editor/commands/insert-html-command";
+import RemoveTableRowCommand from "@lblod/ember-rdfa-editor/commands/remove-table-row-command";
+import MakeBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-bold-command';
+import MakeHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-highlight-command';
+import MakeItalicCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-italic-command';
+import MakeStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-properties/make-strikethrough-command";
+import MakeUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/make-underline-command";
+import RemoveBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-bold-command';
+import RemoveHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-highlight-command';
+import RemoveItalicCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-italic-command';
+import RemoveStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-strikethrough-command";
+import RemoveUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-underline-command";
+import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list-command";
+import Model from "@lblod/ember-rdfa-editor/model/model";
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
+import { walk as walkDomNode } from "@lblod/marawa/node-walker";
+import RichNode from "@lblod/marawa/rich-node";
+import classic from 'ember-classic-decorator';
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
+import LimitTableSelectionCommand from "@@lblod/ember-rdfa-editor/commands/LimitTableSelectionCommand";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -95,6 +101,8 @@ class RawEditor extends EmberObject {
     this.registerCommand(new IndentListCommand(this.model));
     this.registerCommand(new InsertNewLineCommand(this.model));
     this.registerCommand(new InsertNewLiCommand(this.model));
+    this.registerCommand(new MakeHighlightCommand(this.model));
+    this.registerCommand(new RemoveHighlightCommand(this.model));
     this.registerCommand(new InsertTableCommand(this.model));
     this.registerCommand(new InsertRowBelowCommand(this.model));
     this.registerCommand(new InsertRowAboveCommand(this.model));
@@ -104,6 +112,8 @@ class RawEditor extends EmberObject {
     this.registerCommand(new RemoveTableColumnCommand(this.model));
     this.registerCommand(new RemoveTableCommand(this.model));
     this.registerCommand(new InsertHtmlCommand(this.model));
+    this.registerCommand(new InsertXmlCommand(this.model));
+    this.registerCommand(new LimitTableSelectionCommand(this.model));
   }
 
   /**
@@ -127,6 +137,9 @@ class RawEditor extends EmberObject {
     }
   }
 
+  get rootModelNode(): ModelElement {
+    return this.model.rootModelNode;
+  }
 
   /**
    * Register a command for use with {@link executeCommand}
@@ -150,7 +163,7 @@ class RawEditor extends EmberObject {
       }
 
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 
@@ -174,10 +187,21 @@ class RawEditor extends EmberObject {
     return command;
   }
 
-  synchronizeModel() {
-    console.log("synchronizing");
-    this.model.read();
-    this.model.write();
+  /**
+   * create a Range within the virtual dom
+   * @param path1
+   * @param path2
+   */
+  createRangeFromPaths(path1: number[], path2: number[]) : ModelRange {
+    return ModelRange.fromPaths(this.model.rootModelNode, path1, path2);
+  }
+
+  /**
+   * create a selection on the virtual dom
+   * starts out without any selected ranges
+   */
+  createSelection() : ModelSelection {
+    return new ModelSelection(this.model);
   }
 }
 

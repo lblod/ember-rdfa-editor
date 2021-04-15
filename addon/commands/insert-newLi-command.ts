@@ -6,6 +6,9 @@ import ModelElement from "../model/model-element";
 import ModelText from "../model/model-text";
 import {MisbehavedSelectionError, NoParentError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {INVISIBLE_SPACE} from "../model/util/constants";
+import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 
 export default class InsertNewLiCommand extends Command {
@@ -27,28 +30,44 @@ export default class InsertNewLiCommand extends Command {
   }
 
   execute(): void {
+
     const selection = this.model.selection;
 
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
+    const range = selection.lastRange;
 
     const selectionStart = selection.lastRange.start;
     const selectionEnd = selection.lastRange.end;
     const startPos = selectionStart.parentOffset;
     const endPos = selectionEnd.parentOffset;
+    const maximizedRange = range.getMaximizedRange();
 
-    const selectedIterator = selection.findAllInSelection({});
+    let selectedIterator;
+    if (range.collapsed) {
+      selectedIterator = [];
+      const nodeAfter = range.start.nodeAfter();
+      if (ModelNode.isModelText(nodeAfter)) {
+        selectedIterator.push(nodeAfter);
+      } else if (ModelNode.isModelText(range.start.nodeBefore())){
+        selectedIterator.push(range.start.nodeBefore());
+      }
 
-    if (!selectedIterator) {
-      // should be impossible
-      throw new SelectionError("couldn't get iterator");
+
+    } else {
+      selectedIterator = new ModelTreeWalker({
+        range: maximizedRange,
+        filter: node => ModelNode.isModelText(node) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP
+      });
+
     }
+
 
     const selected = Array.from(selectedIterator);
     // get the first and last textnodes of the selection
-    const firstText = selected.find(ModelNode.isModelText);
-    const lastText = selected.reverse().find(ModelNode.isModelText);
+    const firstText = selected[0];
+    const lastText = selected[selected.length - 1];
 
     if (!firstText || !lastText) {
       throw new SelectionError("No text nodes in selection");
@@ -58,7 +77,7 @@ export default class InsertNewLiCommand extends Command {
     const firstParentLi = firstText?.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
     const lastParentLi = lastText?.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
 
-    if(!firstParentLi || !lastParentLi) {
+    if (!firstParentLi || !lastParentLi) {
       throw new Error("Couldn't find direct parent LIs");
     }
 
@@ -249,7 +268,7 @@ export default class InsertNewLiCommand extends Command {
       if (i === path.length - 1 && ModelNode.isModelText(result)) {
         return result;
       }
-      if(!ModelNode.isModelElement(result)) {
+      if (!ModelNode.isModelElement(result)) {
         throw new Error("Invalid paths not supported");
       }
       result = result.children[path[i]];

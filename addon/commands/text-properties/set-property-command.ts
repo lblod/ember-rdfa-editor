@@ -12,7 +12,7 @@ export default abstract class SetPropertyCommand extends Command {
     super(model);
   }
 
-  execute(property: TextAttribute, value: boolean, selection: ModelSelection = this.model.selection) {
+  protected setProperty(property: TextAttribute, value: boolean, selection: ModelSelection = this.model.selection) {
 
 
     if (!ModelSelection.isWellBehaved(selection)) {
