@@ -63,7 +63,6 @@
 
     &:before {
       @include say-font-size($say-tiny,1.2);
-      // content:  attr(property) " " attr(typeof) " " attr(data-type);
       display: block;
       margin-top: .2rem;
       padding-right: $say-annotation-gutter + $say-unit-small;
