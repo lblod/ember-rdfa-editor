@@ -105,36 +105,13 @@
     &[data-editor-position-level]:before {
       border-top-style: solid;
       border-right-style: solid;
+      opacity: 1;
     }
 
     &[data-editor-position-level="0"]:before {
       z-index: $say-z-index-gamma;
     }
-
-    // Hide right border when not selected
-    &:not([data-editor-position-level]):hover:before,
-    &:not([data-editor-position-level]):before {
-      border-right: 0;
-    }
   }
-
-  // Add highlight help text
-  // span.mark-highlight-manual:before,
-  // span.mark-highlight-manual:hover:before {
-  //   content: "Fill in";
-  //   display: inline;
-  //   width: auto;
-  //   line-height: 1;
-  //   padding-top: $say-unit-tiny/2;
-  //   padding-bottom: $say-unit-tiny/1.6;
-  //   padding-left: $say-unit-tiny/2;
-  //   padding-right: $say-unit-tiny;
-  //   color: $say-warning-600;
-  //   background: $say-warning-200;
-  //   z-index: 5;
-  //   border: 1px solid $say-warning-300 !important;
-  //   margin-right: -$say-unit;
-  // }
 
   // Hide nested lump node annotations
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {

@@ -32,8 +32,13 @@
       background-color: $say-neutral-100 !important; // Conflict with .annotation style @TODO: remove when annotation classes are removed
     }
 
+    &:hover:after,
+    &:focus:after {
+      color: rgba($say-neutral-700,.7);
+    }
+
     &:after {
-      content: "Fill in";
+      pointer-events: none;
     }
   }
 

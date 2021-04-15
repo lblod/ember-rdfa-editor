@@ -232,6 +232,22 @@
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"]:before {
     content: "Wil je deze blok verwijderen? Druk op backspace om te bevestigen.";
   }
+
+  [data-flagged-remove="complete"][data-editor-position-level="0"],
+  [data-flagged-remove="complete"] {
+    &[property="dc:title"]:after,
+    &[property="eli:title"]:after {
+      content: "Titel";
+    }
+
+    &[property="eli:description"]:after {
+      content: "Beschrijving besluit";
+    }
+
+    &[property="prov:value"]:after {
+      content: "Besluit";
+    }
+  }
 }
 
 .rdfa-annotations.show-rdfa-blocks [data-editor-highlight="true"],
