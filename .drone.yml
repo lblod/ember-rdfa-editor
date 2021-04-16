@@ -10,7 +10,7 @@ steps:
 - name: lint
   image: danlynn/ember-cli:3.20.0
   commands:
-  - npm lint
+  - npm run lint
 - name: test
   image: danlynn/ember-cli:3.20.0
   failure: ignore
