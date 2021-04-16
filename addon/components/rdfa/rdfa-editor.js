@@ -11,6 +11,7 @@ import HintsRegistry from '../../utils/rdfa/hints-registry';
 import EventProcessor from '../../utils/rdfa/event-processor';
 import forgivingAction from '../../utils/rdfa/forgiving-action';
 import { analyse as analyseRdfa } from '@lblod/marawa/rdfa-context-scanner';
+import { inject as service } from '@ember/service';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
 /**
  * RDFa editor
@@ -34,6 +35,8 @@ import RdfaDocument from '../../utils/rdfa/rdfa-document';
 @classic
 @templateLayout(layout)
 export default class RdfaEditor extends Component {
+
+  @service intl;
   /**
    * Plugin profile of the RDFa editor
    *
@@ -131,6 +134,8 @@ export default class RdfaEditor extends Component {
 
   init() {
     super.init(...arguments);
+    const userLocale = ( navigator.language || navigator.languages[0] );
+    this.intl.setLocale([userLocale, 'nl-BE']);
     this.set('handlers', A());
   }
 
@@ -171,6 +176,7 @@ export default class RdfaEditor extends Component {
    */
   @action
   handleRawEditorInit(editor) {
+
     this.editor = editor;
     this.hintsRegistry = new HintsRegistry(editor);
     this.eventProcessor = new EventProcessor({

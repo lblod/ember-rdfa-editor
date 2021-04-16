@@ -1,6 +1,7 @@
 import XmlReader, {XmlReaderResult} from "@lblod/ember-rdfa-editor/model/readers/xml-reader";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
+import { oneLineTrim } from "common-tags";
 
 export function parseXml(xml: string): XmlReaderResult {
 
@@ -11,14 +12,46 @@ export function parseXml(xml: string): XmlReaderResult {
   return reader.read(doc.firstElementChild!);
 }
 
-export function vdom(strings: TemplateStringsArray, ...expressions: any[]): XmlReaderResult {
-  let xmlStr = '';
+export function parseHtml(html: string): HTMLDocument {
+  const parser = new DOMParser();
+  return parser.parseFromString(html, "text/html");
+}
+
+function buildString(strings: TemplateStringsArray, ...expressions: any[]) {
+
+  let result = '';
 
   for(let i = 0; i<expressions.length; i++){
-    xmlStr += strings[i] + expressions[i];
+    result += strings[i] + expressions[i];
   }
-  xmlStr += strings[expressions.length];
+  result += strings[expressions.length];
+  return result;
+}
+
+export function vdom(strings: TemplateStringsArray, ...expressions: any[]): XmlReaderResult {
+  const xmlStr = buildString(strings, ...expressions);
   return parseXml(xmlStr);
+}
+
+/**
+ * Parse string into a {@link Document}
+ * @param strings
+ * @param expressions
+ */
+export function dom(strings: TemplateStringsArray, ...expressions: any[]) {
+  const htmlStr = buildString(strings, ...expressions);
+  return parseHtml(htmlStr);
+}
+
+/**
+ * First convert incoming string into a single-line string with all extra whitespace before and after nodes
+ * stripped, then parse it into a {@link Document}
+ * @param strings
+ * @param expressions
+ */
+export function domStripped(strings: TemplateStringsArray, ...expressions: any[]) {
+  const htmlStr = oneLineTrim(strings, ...expressions);
+  return parseHtml(htmlStr);
 }
 
 export function printModel(modelNode: ModelNode) {

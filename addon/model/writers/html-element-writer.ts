@@ -7,6 +7,14 @@ export default class HtmlElementWriter implements Writer<ModelElement, HTMLEleme
   }
   write(modelNode: ModelElement): HTMLElement {
     const result = document.createElement(modelNode.type);
+    //this will disable the selection of multiple cells on table
+    //idea reverse-engineered from readctor
+    if(modelNode.type === "table") {
+      result.contentEditable = "false";
+    }
+    if(modelNode.type === "td" || modelNode.type === "th") {
+      result.contentEditable = "true";
+    }
     this.model.bindNode(modelNode, result);
 
     for (const item of modelNode.attributeMap.entries()){
