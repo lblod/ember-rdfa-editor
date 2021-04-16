@@ -34,7 +34,7 @@ export default class LoadMonitor extends Component {
  @computed('rdfaEditorDispatcher.pluginServices.[]')
  get taskServices(){
    const tasks = [];
-   for ( const thing of get( this, "rdfaEditorDispatcher.pluginServices") || [] ) {
+   for ( const thing of this.rdfaEditorDispatcher.pluginServices || [] ) {
      if( get( thing, "execute.perform") )
        tasks.push( thing );
    }
@@ -60,7 +60,7 @@ export default class LoadMonitor extends Component {
  @computed('editor.generateDiffEvents.isRunning')
  get editorBusy() {
    if(!this.editor) return true;
-   return this.get('editor.generateDiffEvents.isRunning') == true;
+   return this.editor.generateDiffEvents.isRunning === true;
  }
 
  /**
@@ -110,8 +110,8 @@ export default class LoadMonitor extends Component {
   * @type Array
   * @protected
   */
- @computed('tasks.@each.isRunning')
+ @computed('tasks.@each.isRunning', 'rdfaEditorDispatcher.pluginServices')
  get runningPlugins() {
-   return this.get('rdfaEditorDispatcher.pluginServices').filter(p => p.get('execute.isRunning') == true);
+   return this.rdfaEditorDispatcher.pluginServices.filter(p => p.get('execute.isRunning') === true);
  }
 }

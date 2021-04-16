@@ -28,7 +28,6 @@ export default class PluginEditorApi {
     const [start, end] = this._hintsRegistry.updateLocationToCurrentIndex(this._hrId, region);
     const startPos = globalTextOffsetToPath(this._editor.rootModelNode, start);
     const endPos = globalTextOffsetToPath(this._editor.rootModelNode, end);
-    const selection = this._editor.createSelection();
     return this._editor.createRangeFromPaths(startPos, endPos);
   }
 
