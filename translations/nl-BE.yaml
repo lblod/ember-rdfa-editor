@@ -1,0 +1,10 @@
+ember-rdfa-editor:
+  insert-table: Tabel invoegen
+  add-row-below: Rij onder invoegen
+  add-row-above: Rij boven invoegen
+  add-column-after: Kolom rechts invoegen
+  add-column-before: Kolom links invoegen
+  delete-row: Rij verwijderen
+  delete-column: Kolom verwijderen
+  delete-table: Tabel verwijderen
+

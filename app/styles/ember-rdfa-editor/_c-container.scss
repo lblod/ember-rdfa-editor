@@ -45,7 +45,7 @@
     }
 
     @include mq(medium) {
-      width: 30%;
+      width: $say-editor-sidebar-medium;
 
       @if $say-paper == true and $say-paper-sidebar == true {
         padding: $say-unit;
@@ -54,6 +54,6 @@
     }
 
     @include mq(large) {
-      width: calc(25% - #{$say-unit-small + $say-unit-tiny});
+      width: calc(#{$say-editor-sidebar-large} - #{$say-unit-small + $say-unit-tiny});
     }
   }

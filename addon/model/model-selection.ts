@@ -8,7 +8,7 @@ import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-find
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {Direction, FilterAndPredicate, PropertyState,} from "@lblod/ember-rdfa-editor/model/util/types";
-import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {listTypes, tableTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
@@ -289,8 +289,51 @@ export default class ModelSelection {
 
   }
 
+  isInside(types: string[]): PropertyState{
+    //1. get all selected nodes
+    if (ModelSelection.isWellBehaved(this)) {
+      const range = this.lastRange!;
+      const treeWalker = new ModelTreeWalker({
+        range: range,
+      });
+      const resultArr = Array.from(treeWalker);
+      if(resultArr.length){
+        let prevType;
+        //2. check if every node has the same parent type
+        for(let i=0; i<resultArr.length; i++){
+          let node=resultArr[i];
+          let type=node.findAncestor(node => ModelNode.isModelElement(node) && types.includes(node.type));
+          //3. else return false
+          if(!type){
+            return PropertyState.disabled
+          }
+          else if(i>0 && type!=prevType){
+            return PropertyState.disabled
+          }
+          else{
+            prevType=type;
+          }
+        }
+        return PropertyState.enabled;
+      }
+    }
+    return PropertyState.disabled;
+  }
+  contains(types:string[]): PropertyState{
+    if (ModelSelection.isWellBehaved(this)) {
+      const range = this.lastRange!;
+      const treeWalker = new ModelTreeWalker({
+        range: range,
+        filter: node => ModelNode.isModelElement(node) && types.includes(node.type)  ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP
+      });
+      const result = Array.from(treeWalker);
+      if(result.length){
+        return PropertyState.enabled;
+      }
+    }
 
-
+    return PropertyState.disabled;
+  }
   get rdfaSelection() {
     if (!this.domSelection) return;
     return this.calculateRdfaSelection(this.domSelection);

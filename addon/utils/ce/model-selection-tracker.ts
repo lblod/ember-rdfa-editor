@@ -1,7 +1,9 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-
+import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import nodeWalker from "./node-walker";
 
 export default class ModelSelectionTracker {
   model: Model;

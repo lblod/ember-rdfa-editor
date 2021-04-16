@@ -315,7 +315,8 @@ export default class PernetRawEditor extends RawEditor {
     try {
       const currentSelection = getWindowSelection();
       currentSelection.collapse(textNode,position);
-      this.rootNode.focus();
+      //not sure if removing this will cause bugs, further testing required
+      //this.rootNode.focus();
     }
     catch(e) {
       console.trace(e); // eslint-disable-line no-console
