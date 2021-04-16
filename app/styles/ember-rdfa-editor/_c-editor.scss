@@ -19,7 +19,7 @@
   @include mq(medium) {
     @if $say-paper == true {
       @if $say-paper-sidebar == true {
-        padding-right: 30%;
+        padding-right: $say-editor-sidebar-medium;
       }
     }
   }
@@ -31,7 +31,7 @@
 
     @if $say-paper == true {
       @if $say-paper-sidebar == true {
-        padding-right: 25%;
+        padding-right: $say-editor-sidebar-large;
       }
     }
   }
