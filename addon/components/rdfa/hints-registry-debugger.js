@@ -34,6 +34,6 @@ export default class HintsRegistryDebugger extends Component {
   */
   @computed('hintsRegistry.registry', 'hintsRegisty.registry.[]')
   get hints() {
-    return this.get('hintsRegistry.registry');
+    return this.hintsRegistry.registry;
   }
 }
