@@ -238,8 +238,6 @@ module("Unit | commands | remove-list-command", hooks => {
     for (let i = 0; i < resultRoot.children.length; i++) {
       const actual = resultRoot.children[i];
       const expected = (expectedRoot as ModelElement).children[i];
-      console.log(actual.toXml());
-      console.log(expected.toXml());
       assert.true(actual.sameAs(expected));
     }
   });
