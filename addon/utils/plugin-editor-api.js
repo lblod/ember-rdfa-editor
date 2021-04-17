@@ -24,13 +24,13 @@ export default class PluginEditorApi {
     this._editor.executeCommand(name, ...args);
   }
 
-  createSelectionFromRegion([start, end]) {
+  createModelRangeFromTextRegion(region) {
+    const [start, end] = this._hintsRegistry.updateLocationToCurrentIndex(this._hrId, region);
     const startPos = globalTextOffsetToPath(this._editor.rootModelNode, start);
     const endPos = globalTextOffsetToPath(this._editor.rootModelNode, end);
-    const selection = this._editor.createSelection();
-    selection.selectRange(this._editor.createRangeFromPaths(startPos, endPos));
-    return selection;
+    return this._editor.createRangeFromPaths(startPos, endPos);
   }
+
   /**
    * The currently selected range in the editor.
    *

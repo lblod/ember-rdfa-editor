@@ -44,45 +44,45 @@
     }
   }
 
-  // Block elements
-  div,
-  h1,
-  .h1,
-  h2,
-  .h2,
-  h3,
-  .h3,
-  h4,
-  .h4,
-  h5,
-  .h5,
-  h6,
-  .h6,
-  ul:not(ul ul),
-  ol:not(ol ol),
-  [property="dc:title"],
-  [property="dc:title foaf:name"],
-  p[property="dc:subject"],
-  [typeof~="besluit:Besluit"],
-  [property="ext:stemmingTable"],
-  [property="ext:insertStemmingText"],
-  [property="ext:aanwezigenTable"],
-  [property="ext:insertAanwezigenText"],
-  [property="prov:generated"] > [property="besluit:motivering"],
-  [property="prov:generated"] > [property="prov:value"],
-  [property^="ext"]:not([property="ext:heeftAfwezigeBijAgendapunt"]):not(span),
-  [data-editor-highlight="true"]:not(ul):not(ol):not(li):not(span),
-  [typeof="http://data.vlaanderen.be/ns/besluit#Besluit http://data.vlaanderen.be/ns/besluit#AanvullendReglement"],
-  [typeof="besluit:Artikel"],
-  [typeof="mobiliteit:Opstelling"] {
-    display: block;
-  }
+  // // Block elements
+  // div,
+  // h1,
+  // .h1,
+  // h2,
+  // .h2,
+  // h3,
+  // .h3,
+  // h4,
+  // .h4,
+  // h5,
+  // .h5,
+  // h6,
+  // .h6,
+  // ul:not(ul ul),
+  // ol:not(ol ol),
+  // [property="dc:title"],
+  // [property="dc:title foaf:name"],
+  // p[property="dc:subject"],
+  // [typeof~="besluit:Besluit"],
+  // [property="ext:stemmingTable"],
+  // [property="ext:insertStemmingText"],
+  // [property="ext:aanwezigenTable"],
+  // [property="ext:insertAanwezigenText"],
+  // [property="prov:generated"] > [property="besluit:motivering"],
+  // [property="prov:generated"] > [property="prov:value"],
+  // [property^="ext"]:not([property="ext:heeftAfwezigeBijAgendapunt"]):not(span),
+  // [data-editor-highlight="true"]:not(ul):not(ol):not(li):not(span),
+  // [typeof="http://data.vlaanderen.be/ns/besluit#Besluit http://data.vlaanderen.be/ns/besluit#AanvullendReglement"],
+  // [typeof="besluit:Artikel"],
+  // [typeof="mobiliteit:Opstelling"] {
+  //   display: block;
+  // }
 
-  [property="prov:value"] > div > span,
-  [property="ext:behandelt"] > div > span {
-    position: relative;
-    display: block; // remove when span is gone from the template "nieuw generiek besluit"
-  }
+  // [property="prov:value"] > div > span,
+  // [property="ext:behandelt"] > div > span {
+  //   position: relative;
+  //   // display: block; // remove when span is gone from the template "nieuw generiek besluit"
+  // }
 
   // Show underlines on annotation
   [data-editor-highlight="true"]:not([contenteditable=""]),
@@ -94,31 +94,7 @@
     padding-bottom: .2rem;
     transition: border $say-transition;
 
-    .mark-highlight-manual,
-    [typeof],
-    [property],
-    [data-type] {
-      padding-bottom: .2rem;
-    }
-
-    [typeof] .mark-highlight-manual,
-    [property] .mark-highlight-manual,
-    [typeof] [data-type],
-    [property] [data-type],
-    [typeof] [typeof],
-    [property] [property] {
-      padding-bottom: .2rem;
-    }
-
-    [typeof] [typeof] .mark-highlight-manual,
-    [property] [property] .mark-highlight-manual,
-    [typeof] [typeof] [data-type],
-    [property] [property] [data-type],
-    [typeof] [typeof] [typeof],
-    [property] [property] [property] {
-      padding-bottom: .2rem;
-    }
-
+    // Hide certain underlines
     [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] .mark-highlight-manual,
     [property] [property] [property] [property] [property] [property] .mark-highlight-manual,
     [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [data-type],
@@ -146,10 +122,26 @@
     }
   }
 
+  [property="besluit:motivering"]:after {
+    position: absolute;
+    z-index: -1;
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba($say-gray-100,.5);
+  }
+
   span.mark-highlight-manual {
     color: $say-neutral-700;
     background-color: $say-neutral-100;
     font-style: italic;
+
+    &[data-editor-position-level="1"],
+    &:hover {
+      color: rgba($say-neutral-700,.7);
+    }
   }
 }
 

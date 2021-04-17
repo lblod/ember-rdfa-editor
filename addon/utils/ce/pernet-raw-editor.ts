@@ -3,7 +3,6 @@ import {A} from '@ember/array';
 import {TaskGenerator, timeout} from 'ember-concurrency';
 import {task} from 'ember-concurrency-decorators';
 import {diff_match_patch as DiffMatchPatch} from 'diff-match-patch';
-import {walk as walkDomNode} from '@lblod/marawa/node-walker';
 import {taskFor} from "ember-concurrency-ts";
 import {
   getWindowSelection,
@@ -315,7 +314,8 @@ export default class PernetRawEditor extends RawEditor {
     try {
       const currentSelection = getWindowSelection();
       currentSelection.collapse(textNode,position);
-      this.rootNode.focus();
+      //not sure if removing this will cause bugs, further testing required
+      //this.rootNode.focus();
     }
     catch(e) {
       console.trace(e); // eslint-disable-line no-console
@@ -334,7 +334,7 @@ export default class PernetRawEditor extends RawEditor {
    *
    * @private
    */
-  getRichNodeFor(domNode: Node | null, tree = this.get('richNode')): RichNode {
+  getRichNodeFor(domNode: Node | null, tree = this.richNode): RichNode {
     return getRichNodeMatchingDomNode(domNode, tree);
   }
 
@@ -596,13 +596,13 @@ export default class PernetRawEditor extends RawEditor {
    */
   findSuitableNodeForPosition(position: number): RichNode | null {
     const currentRichNode = this.getRichNodeFor(this.currentNode);
-    const richNode = this.get('richNode');
+    const richNode = this.richNode;
     if (currentRichNode && get(currentRichNode, 'start') <= position && get(currentRichNode, 'end') >= position) {
       const node = this.findSuitableNodeInRichNode(currentRichNode, position);
       return node;
     }
     else if (get(richNode, 'start') <= position && get(richNode, 'end') >= position){
-      const node = this.findSuitableNodeInRichNode(this.get('richNode'),position);
+      const node = this.findSuitableNodeInRichNode(this.richNode,position);
       return node;
     }
     else {
@@ -807,9 +807,9 @@ export default class PernetRawEditor extends RawEditor {
    * @public
    */
   undo() {
-    const previousSnapshot = this.get('history').pop();
+    const previousSnapshot = this.history.pop();
     if (previousSnapshot) {
-      this.get('rootNode').innerHTML = previousSnapshot.content;
+      this.rootNode.innerHTML = previousSnapshot.content;
       this.updateRichNode();
       this.set('currentNode', null);
       this.setCurrentPosition(previousSnapshot.currentSelection[0]);
@@ -868,7 +868,4 @@ export default class PernetRawEditor extends RawEditor {
     else
       return scanContexts( this.rootNode );
   }
-}
-function deprecate(message: string) {
-  runInDebug( () => console.trace(`DEPRECATION: ${message}`)); // eslint-disable-line no-console
 }

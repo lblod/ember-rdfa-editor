@@ -304,9 +304,7 @@ export default class ModelPosition {
     return ModelPosition.fromPath(this.root, [...this.path]);
   }
 
-  findAncestors(predicate:
-                  (elem: ModelElement) => boolean =
-                  (elem: ModelElement) => true): ModelElement[] {
+  findAncestors(predicate: (elem: ModelElement) => boolean = () => true): ModelElement[] {
     let cur = this.parent;
     const rslt = [];
 
@@ -321,8 +319,6 @@ export default class ModelPosition {
       rslt.push(cur);
     }
     return rslt;
-
-
   }
 
 }

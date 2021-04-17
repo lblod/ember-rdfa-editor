@@ -3,17 +3,19 @@ kind: pipeline
 type: docker
 name: verify-pr
 steps:
-- name: build-dry-run
-  image: plugins/docker
-  settings:
-    repo: lblod/ember-rdfa-editor
-    dry_run: true
-    purge: true
-- name: test
+- name: install
   image: danlynn/ember-cli:3.20.0
   commands:
   - npm install
-  - npm test
+- name: lint
+  image: danlynn/ember-cli:3.20.0
+  commands:
+  - npm run lint
+- name: test
+  image: danlynn/ember-cli:3.20.0
+  failure: ignore
+  commands:
+  - npm run test:ember
 trigger:
   event:
     - pull_request
@@ -35,6 +37,9 @@ steps:
 trigger:
   branch:
     - development
+  event:
+    exclude:
+    - pull_request
 ---
 kind: pipeline
 type: docker
@@ -45,6 +50,11 @@ steps:
   settings:
     repo: lblod/ember-rdfa-editor
     dry_run: true
+- name: npm-release
+  image: plugins/npm
+  settings:
+    token:
+      from_secret: npm_access_token
 - name: push-tagged-build
   image: plugins/docker
   settings:
@@ -55,11 +65,6 @@ steps:
     password:
       from_secret: docker_password
     purge: true
-- name: npm-release
-  image: plugins/npm
-  settings:
-    token:
-      from_secret: npm_access_token
 trigger:
   event:
     - tag
