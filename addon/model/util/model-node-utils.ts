@@ -4,7 +4,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {LIST_CONTAINERS} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export default class ModelNodeUtils {
-  static DEFAULT_IGNORED_ATTRS: Set<string> = new Set(["__dummy_test_attr", "__id"]);
+  static DEFAULT_IGNORED_ATTRS: Set<string> = new Set(["__dummy_test_attr", "__id", "data-editor-position-level", "data-editor-rdfa-position-level"]);
 
   static areAttributeMapsSame(map1: Map<string, string>, map2: Map<string, string>, ignore: Set<string> = ModelNodeUtils.DEFAULT_IGNORED_ATTRS): boolean {
 

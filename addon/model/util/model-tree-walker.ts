@@ -26,12 +26,26 @@ enum TraverseType {
 
 export type ModelNodeFilter = (node: ModelNode) => FilterResult;
 
+/**
+ * Utility function to turn a boolean filter into a filter that is compatible with the
+ * TreeWalker.
+ * If the provided filter function returns false, the node will be skipped (but it's children
+ * will be visited)
+ * @param func
+ */
 export function toFilterSkipFalse(func: (node: ModelNode) => boolean): ModelNodeFilter {
   return function (node: ModelNode) {
     return func(node) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP;
   };
 }
 
+/**
+ * Utility function to turn a boolean filter into a filter that is compatible with the
+ * TreeWalker.
+ * If the provided filter function returns false, the node will be rejected (aka
+ * it's children will not be visited at all)
+ * @param func
+ */
 export function toFilterRejectFalse(func: (node: ModelNode) => boolean): ModelNodeFilter {
   return function (node: ModelNode) {
     return func(node) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_REJECT;
