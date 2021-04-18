@@ -26,6 +26,32 @@ enum TraverseType {
 
 export type ModelNodeFilter = (node: ModelNode) => FilterResult;
 
+/**
+ * Utility function to turn a boolean filter into a filter that is compatible with the
+ * TreeWalker.
+ * If the provided filter function returns false, the node will be skipped (but it's children
+ * will be visited)
+ * @param func
+ */
+export function toFilterSkipFalse(func: (node: ModelNode) => boolean): ModelNodeFilter {
+  return function (node: ModelNode) {
+    return func(node) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP;
+  };
+}
+
+/**
+ * Utility function to turn a boolean filter into a filter that is compatible with the
+ * TreeWalker.
+ * If the provided filter function returns false, the node will be rejected (aka
+ * it's children will not be visited at all)
+ * @param func
+ */
+export function toFilterRejectFalse(func: (node: ModelNode) => boolean): ModelNodeFilter {
+  return function (node: ModelNode) {
+    return func(node) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_REJECT;
+  };
+}
+
 export interface ModelTreeWalkerConfig {
   filter?: ModelNodeFilter;
   range: ModelRange;
@@ -33,7 +59,7 @@ export interface ModelTreeWalkerConfig {
   visitParentUpwards?: boolean;
 }
 
-export default class ModelTreeWalker implements Iterable<ModelNode> {
+export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements Iterable<T> {
   private readonly _root: ModelElement;
   private readonly _filter?: ModelNodeFilter;
   private _currentNode: ModelNode;
@@ -60,16 +86,16 @@ export default class ModelTreeWalker implements Iterable<ModelNode> {
     }
   }
 
-  [Symbol.iterator](): Iterator<ModelNode> {
+  [Symbol.iterator](): Iterator<T> {
     return {
-      next: (): IteratorResult<ModelNode> => {
+      next: (): IteratorResult<T> => {
         if (!this.hasReturnedStartNode) {
           this.hasReturnedStartNode = true;
           if (this.filterNode(this._currentNode) === FilterResult.FILTER_ACCEPT) {
-            return {value: this._currentNode, done: false};
+            return {value: this._currentNode as T, done: false};
           }
         }
-        const value = this.nextNode();
+        const value = this.nextNode() as T;
         if (value) {
           return {
             value, done: false
@@ -198,7 +224,7 @@ export default class ModelTreeWalker implements Iterable<ModelNode> {
         // walk back up and try to find a sibling there
         // we don't care about these nodes since we've already visited them
         temporary = temporary.parent;
-        if(this.visitParentUpwards && temporary) {
+        if (this.visitParentUpwards && temporary) {
           result = this.filterNode(temporary);
           if (result === FilterResult.FILTER_ACCEPT) {
             this._currentNode = temporary;
@@ -238,10 +264,10 @@ export default class ModelTreeWalker implements Iterable<ModelNode> {
   private getNodeAfterEndFromPosition(position: ModelPosition, startNode: ModelNode): ModelNode | null {
     let nodeAfterEnd = position.nodeAfter();
     if (nodeAfterEnd) {
-      if(position.parentOffset - nodeAfterEnd.getOffset() > 0 || nodeAfterEnd === startNode)  {
+      if (position.parentOffset - nodeAfterEnd.getOffset() > 0 || nodeAfterEnd === startNode) {
         nodeAfterEnd = nodeAfterEnd.nextSibling;
       }
-      if(nodeAfterEnd) {
+      if (nodeAfterEnd) {
         return nodeAfterEnd;
 
       }
@@ -253,11 +279,11 @@ export default class ModelTreeWalker implements Iterable<ModelNode> {
     while (!nodeAfterEnd.nextSibling && nodeAfterEnd !== this.root) {
       nodeAfterEnd = nodeAfterEnd!.parent!;
     }
-    if(nodeAfterEnd === this.root) {
+    if (nodeAfterEnd === this.root) {
       return null;
     }
     nodeAfterEnd = nodeAfterEnd!.nextSibling;
-    if(nodeAfterEnd === startNode) {
+    if (nodeAfterEnd === startNode) {
       return nodeAfterEnd.nextSibling;
     }
     return nodeAfterEnd;

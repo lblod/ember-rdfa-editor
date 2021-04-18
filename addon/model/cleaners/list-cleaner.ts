@@ -1,35 +1,29 @@
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 
 export default class ListCleaner {
-  clean(root: ModelNode) {
-    if (!ModelNode.isModelElement(root)) {
-      return;
-    }
+  clean(range: ModelRange) {
 
+    const listNodes = new ModelTreeWalker<ModelElement>({
+      filter: toFilterSkipFalse(ModelNodeUtils.isListContainer),
+      range
+    });
 
-    let cur: ModelNode | null = root.firstChild;
-
-    while (cur) {
-      this.clean(cur);
-      let next: ModelNode | null = cur.nextSibling;
-      if (ListCleaner.isList(cur)) {
-        while (next && ListCleaner.isList(next)) {
-          ListCleaner.mergeListNodes(cur, next);
-          next = next.nextSibling;
-        }
+    for (const listNode of listNodes) {
+      const next = listNode.nextSibling;
+      if (next
+        && ModelNodeUtils.isListContainer(next)
+        && ModelNodeUtils.areAttributeMapsSame(listNode.attributeMap, next.attributeMap)) {
+        ListCleaner.mergeListNodes(listNode, next);
       }
-      cur = next;
     }
 
   }
 
   private static mergeListNodes(node1: ModelElement, node2: ModelElement) {
-    node1.appendChildren(...node2.children);
-    node2.parent?.removeChild(node2);
-  }
-
-  private static isList(node?: ModelNode | null): node is ModelElement {
-    return !!node && ModelNode.isModelElement(node) && (node.type === "ul" || node.type === "ol");
+    node2.insertChildrenAtOffset(0, ...node1.children);
+    node1.remove();
   }
 }

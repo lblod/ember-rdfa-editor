@@ -45,10 +45,12 @@ export default class MakeListCommand extends Command {
 
     this.model.change(mutator => {
       mutator.insertNodes(range, list);
+      const resultRange = mutator.flush();
+      const fullRange = ModelRange.fromInElement(this.model.rootModelNode, 0, this.model.rootModelNode.getMaxOffset());
       const cleaner = new ListCleaner();
-      cleaner.clean(this.model.rootModelNode);
-
-    });
+      cleaner.clean(fullRange);
+      this.model.selection.selectRange(resultRange!);
+    }, false);
   }
 
   private getBlocksFromRange(range: ModelRange): ModelNode[][] {

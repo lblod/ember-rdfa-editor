@@ -6,6 +6,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import PropertyCleaner from "@lblod/ember-rdfa-editor/model/cleaners/property-cleaner";
 
 export default abstract class SetPropertyCommand extends Command {
   constructor(model: Model) {
@@ -60,6 +61,8 @@ export default abstract class SetPropertyCommand extends Command {
         node.setTextAttribute(property, value);
       }
     }
+    const cleaner = new PropertyCleaner();
+    cleaner.clean(range);
     this.model.write();
   }
 }
