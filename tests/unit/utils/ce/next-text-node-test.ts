@@ -1,5 +1,5 @@
 import ceNextTextNode from "dummy/utils/ce/next-text-node";
-import { module, test } from "qunit";
+import { module, test, skip } from "qunit";
 
 const invisibleSpace = "\u200B";
 
@@ -16,7 +16,7 @@ module("Unit | Utility | ce/next-text-node", function () {
     const result = ceNextTextNode(child, root);
     assert.strictEqual(result, null);
   });
-  test.skip("inserts a new node after the current node if next node is not a text node", async function (assert) {
+  skip("inserts a new node after the current node if next node is not a text node", async function (assert) {
     const root = document.createElement("div");
     const child1 = document.createElement("div");
     const child2 = document.createElement("div");
@@ -29,7 +29,7 @@ module("Unit | Utility | ce/next-text-node", function () {
     assert.strictEqual(result.nodeType, Node.TEXT_NODE);
     assert.strictEqual(result.textContent, invisibleSpace);
   });
-  test.skip("returns next node if it is a text node", async function (assert) {
+  skip("returns next node if it is a text node", async function (assert) {
     const root = document.createElement("div");
     const child1 = new Text("child1");
     const child2 = new Text("child2");

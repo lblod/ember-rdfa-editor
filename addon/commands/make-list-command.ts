@@ -66,7 +66,13 @@ export default class MakeListCommand extends Command {
         range.start.parentOffset = cur.getOffset();
       }
       if (range.start.parentOffset === 0) {
-        range.start = ModelPosition.fromInElement(range.start.parent.parent!, range.start.parent.getOffset());
+        if (range.start.parent === this.model.rootModelNode) {
+          //expanded to the start of the root node
+          range.start = ModelPosition.fromInElement(this.model.rootModelNode, 0);
+        }
+        else {
+          range.start = ModelPosition.fromInElement(range.start.parent.parent!, range.start.parent.getOffset());
+        }
       }
     }
     cur = range.end.nodeBefore();
@@ -79,7 +85,13 @@ export default class MakeListCommand extends Command {
         range.end.parentOffset = cur.getOffset() + cur.offsetSize;
       }
       if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
-        range.end = ModelPosition.fromInElement(range.end.parent.parent!, range.end.parent.getOffset() + range.end.parent.offsetSize);
+        if (range.end.parent === this.model.rootModelNode) {
+          // expanded to the end of root
+          range.end = ModelPosition.fromInElement(this.model.rootModelNode, this.model.rootModelNode.getMaxOffset());
+        }
+        else {
+          range.end = ModelPosition.fromInElement(range.end.parent.parent!, range.end.parent.getOffset() + range.end.parent.offsetSize);
+        }
       }
     }
 
