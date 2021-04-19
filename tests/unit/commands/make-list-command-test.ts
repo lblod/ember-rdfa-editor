@@ -1,4 +1,4 @@
-import {module, test} from "qunit";
+import {module, todo} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import MakeListCommand from "@lblod/ember-rdfa-editor/commands/make-list-command";
@@ -13,7 +13,7 @@ module("Unit | commands | make-list-command", hooks => {
     command = new MakeListCommand(ctx.model);
   });
 
-  test("adding a list in a document with only a new line", assert => {
+  todo("adding a list in a document with only a new line", assert => {
     const {modelSelection, model} = ctx;
 
     // language=XML
@@ -24,9 +24,9 @@ module("Unit | commands | make-list-command", hooks => {
     // language=XML
     const {root: expected} = vdom`
       <dummy>
-        <text>${"\n"}</text>
         <ul>
           <li>
+           <text></text>
           </li>
         </ul>
       </dummy>
