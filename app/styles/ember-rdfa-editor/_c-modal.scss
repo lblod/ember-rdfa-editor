@@ -57,10 +57,10 @@
 }
 
 .say-modal--fullscreen {
-  max-width: calc(100% - #{$say-unit});
-  max-height: calc(100% - #{$say-unit});
-  width: calc(100% - #{$say-unit});
-  height: calc(100% - #{$say-unit});
+  max-width: calc(100% - #{$say-unit-huge});
+  max-height: calc(100% - #{$say-unit-huge});
+  width: calc(100% - #{$say-unit-huge});
+  height: calc(100% - #{$say-unit-huge});
   left: $say-unit-small;
 }
 
@@ -163,13 +163,13 @@
 
 .say-modal__sidebar {
   flex-basis: 100%;
-  padding: $say-unit;
-  padding-bottom: 0;
+  padding: $say-unit-small;
   overflow: auto;
   background-color: $say-gray-100;
   border-bottom: .1rem solid $say-gray-200;
 
   @include mq(medium) {
+    padding: $say-unit;
     border-bottom: 0;
     border-right: .1rem solid $say-gray-200;
     height: 100%;
