@@ -4,7 +4,6 @@
 
 .say-form {
   @include say-font-size($say-h6);
-  margin-bottom: $say-unit;
 }
 
 .say-form__fieldset {

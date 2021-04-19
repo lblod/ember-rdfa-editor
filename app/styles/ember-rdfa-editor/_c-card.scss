@@ -17,6 +17,12 @@
 }
 
 .say-card__title {
+  @include say-font-size($say-h5);
+  font-weight: $say-medium;
+  color: $say-neutral-800;
+}
+
+.say-card__subtitle {
   @include say-font-size($say-h6);
   font-weight: $say-medium;
   color: $say-neutral-800;
@@ -24,6 +30,22 @@
 
 .say-card__content {
   position: relative;
+
+  & + & {
+    border-top: .1rem dotted $say-neutral-300;
+  }
+
+  & + &.say-card__content--padding {
+    border-top: .1rem solid $say-neutral-200;
+  }
+}
+
+.say-card__content--tint {
+  background-color: $say-neutral-100;
+}
+
+.say-card__content--padding {
+  padding: $say-unit-small;
 }
 
 .say-card__content--fixed {
