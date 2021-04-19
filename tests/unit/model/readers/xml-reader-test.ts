@@ -1,9 +1,21 @@
 import {module, test} from "qunit";
-import {parseXml} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import {parseXml, vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import ModelTestContext from "dummy/tests/utilities/model-test-context";
 
 module("Unit | model | readers | xml-reader-test", () => {
-  test("test xml", assert => {
+
+  test("rootNode gets read as a modelrootnode", assert => {
+    const context = new ModelTestContext();
+    context.reset();
+
     // language=XML
+    const {root} = vdom`<modelRoot />`;
+    console.log(root.toXml());
+    console.log(context.model.rootModelNode.toXml());
+    assert.true(root.sameAs(context.model.rootModelNode));
+
+  });
+  test("test xml", assert => {
     const xml = `
       <div>
         this text will be ignored because it's not inside a text node

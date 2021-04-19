@@ -3,6 +3,7 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 
 /**
  * Writer to convert a {@link ModelSelection} to a {@link Selection}
@@ -41,6 +42,10 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
   writeDomPosition(position: ModelPosition): { anchor: Node, offset: number } {
 
     let modelAnchor = position.parent.childAtOffset(position.parentOffset);
+    if(ModelNode.isModelElement(modelAnchor) && modelAnchor.type === "br") {
+      console.log(position);
+
+    }
     if(!modelAnchor) {
       // position is after last child
       modelAnchor = position.parent;
