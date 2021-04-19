@@ -42,10 +42,6 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
   writeDomPosition(position: ModelPosition): { anchor: Node, offset: number } {
 
     let modelAnchor = position.parent.childAtOffset(position.parentOffset);
-    if(ModelNode.isModelElement(modelAnchor) && modelAnchor.type === "br") {
-      console.log(position);
-
-    }
     if(!modelAnchor) {
       // position is after last child
       modelAnchor = position.parent;
