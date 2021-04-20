@@ -145,7 +145,7 @@ export default class Model {
   }
 
   change(callback: (mutator: ImmediateModelMutator) => ModelElement | void) {
-    const mutator = new ImmediateModelMutator();
+    const mutator = new ImmediateModelMutator(this);
     const subTree = callback(mutator);
     if (subTree) {
       this.write(subTree, false);
@@ -155,7 +155,7 @@ export default class Model {
   }
 
   batchChange(callback: (mutator: BatchedModelMutator) => ModelElement | void, autoSelect: boolean = true) {
-    const mutator = new BatchedModelMutator();
+    const mutator = new BatchedModelMutator(this);
     const subTree = callback(mutator);
     const resultingRange = mutator.flush();
     if (autoSelect && resultingRange) {

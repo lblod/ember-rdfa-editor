@@ -4,8 +4,10 @@ import AttributeOperation from "@lblod/ember-rdfa-editor/model/operations/attrib
 import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-operation";
 import MoveOperation from "@lblod/ember-rdfa-editor/model/operations/move-operation";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 
-export default class ImmediateModelMutator implements ModelMutator<ModelRange> {
+export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
+
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const op = new InsertOperation(range, ...nodes);
     return op.execute();

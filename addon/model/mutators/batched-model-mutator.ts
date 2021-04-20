@@ -8,7 +8,7 @@ import MoveOperation from "@lblod/ember-rdfa-editor/model/operations/move-operat
 import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/mutator";
 
 
-export default class BatchedModelMutator implements ModelMutator<void> {
+export default class BatchedModelMutator extends ModelMutator<void> {
 
   private batch: Operation[] = [];
 

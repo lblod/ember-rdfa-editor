@@ -1,10 +1,25 @@
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import Model from "@lblod/ember-rdfa-editor/model/model";
 
-export default interface ModelMutator<T>{
+export default abstract class ModelMutator<T> {
+  protected model: Model;
 
-  setTextProperty(range: ModelRange, key: TextAttribute, value: boolean): T;
-  insertNodes(range: ModelRange, ...nodes: ModelNode[]): T;
-  move(rangeToMove: ModelRange, targetRange: ModelRange): T;
+  constructor(model: Model) {
+    this.model = model;
+  }
+
+  abstract setTextProperty(range: ModelRange, key: TextAttribute, value: boolean): T;
+
+  abstract insertNodes(range: ModelRange, ...nodes: ModelNode[]): T;
+
+  abstract move(rangeToMove: ModelRange, targetRange: ModelRange): T;
+
+  selectRange(range: ModelRange, write: boolean = true) {
+    this.model.selection.selectRange(range);
+    if (write) {
+      this.model.writeSelection();
+    }
+  }
 }

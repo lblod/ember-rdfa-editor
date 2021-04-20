@@ -20,11 +20,17 @@ export default class InsertHtmlCommand extends Command {
     const html = parser.parseFromString(htmlString, "text/html");
     const bodyContent = html.body.childNodes;
     const reader = new HtmlReader(this.model);
-    this.model.batchChange(mutator => {
+    this.model.change(mutator => {
       // dom NodeList doesnt have a map method
       const modelNodes: ModelNode[] = [];
-      bodyContent.forEach(node => modelNodes.push(reader.read(node)));
-      mutator.insertNodes(range, ...modelNodes);
+      bodyContent.forEach(node => {
+        const parsed = reader.read(node);
+        if(parsed) {
+          modelNodes.push(parsed);
+        }
+      });
+      const newRange = mutator.insertNodes(range, ...modelNodes);
+      mutator.selectRange(newRange);
     });
   }
 }
