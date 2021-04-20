@@ -66,9 +66,10 @@ module.exports = {
       "files": ["**/*.ts", "**/*.tsx"],
       rules: {
         'ember/no-jquery': 'error',
-        'semi': 'error',
+        'semi': 'off',
         'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': 'error'
+        '@typescript-eslint/no-unused-vars': 'error',
+        '@typescript-eslint/semi': ['error', 'always']
       },
     }
   ]
