@@ -22,7 +22,7 @@ const SUPPORTED_MANIPULATIONS = [
  * @module plugin/lump-node
  */
 export default class LumpNodeBackspacePlugin implements BackspacePlugin {
-  label = 'backspace plugin for handling LumpNodes'
+  label = 'backspace plugin for handling LumpNodes';
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
     //TODO: fix case.manipulation.node == lumpnode

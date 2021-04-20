@@ -1,5 +1,4 @@
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
+import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import HtmlTextWriter from "@lblod/ember-rdfa-editor/model/writers/html-text-writer";
 
 /**
@@ -14,7 +13,7 @@ export default class UnpollutedHtmlTextWriter extends HtmlTextWriter {
       ["underline", "u"],
       ["strikethrough", "del"]
     ]
-  )
+  );
 
   get attributeMap() {
     return UnpollutedHtmlTextWriter.attributeMap;

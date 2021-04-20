@@ -7,7 +7,6 @@ import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab
 import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import RawEditor from 'dummy/utils/ce/raw-editor';
 
 /**

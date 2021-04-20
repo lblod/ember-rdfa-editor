@@ -22,7 +22,7 @@ export default class WrappedAttributeReader implements Reader<HTMLElement, Fragm
       ["u", "underline"],
       ["del", "strikethrough"],
     ]
-  )
+  );
 
   read(from: HTMLElement, context: HtmlReaderContext): Fragment | ModelElement  {
     const attribute = WrappedAttributeReader.tagMap.get(tagName(from) as HtmlTag)!;

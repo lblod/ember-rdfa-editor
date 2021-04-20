@@ -48,7 +48,7 @@ import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-comma
  */
 @classic
 class RawEditor extends EmberObject {
-  registeredCommands: Map<string, Command> = new Map()
+  registeredCommands: Map<string, Command> = new Map();
   modelSelectionTracker!: ModelSelectionTracker;
   model!: Model;
   protected tryOutVdom = true;

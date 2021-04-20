@@ -22,7 +22,7 @@ import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/uti
  * @module plugin/lists
  */
 export default class ListTabInputPlugin implements TabInputPlugin {
-  label = 'Tap input plugin for handling List interaction'
+  label = 'Tap input plugin for handling List interaction';
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
     if( manipulation.type == 'moveCursorToStartOfElement' ){

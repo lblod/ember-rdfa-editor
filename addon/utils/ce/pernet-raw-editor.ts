@@ -26,10 +26,9 @@ import {
   update
 } from './editor';
 import {findRichNode, findUniqueRichNodes} from '../rdfa/rdfa-rich-node-helpers';
-import {debug, runInDebug, warn} from '@ember/debug';
+import {debug, warn} from '@ember/debug';
 import {InternalSelection, RawEditorSelection} from "@lblod/ember-rdfa-editor/editor/raw-editor";
 import {computed, get} from '@ember/object';
-import {PernetSelection} from "@lblod/ember-rdfa-editor/editor/pernet";
 import flatMap from "@lblod/ember-rdfa-editor/utils/ce/flat-map";
 import {getTextContent, processDomNode as walkDomNodeAsText} from "@lblod/ember-rdfa-editor/utils/ce/text-node-walker";
 import nextTextNode from "@lblod/ember-rdfa-editor/utils/ce/next-text-node";
@@ -65,7 +64,7 @@ export default class PernetRawEditor extends RawEditor {
    * @type String
    * @public
    */
-  @tracked currentTextContent: string | null = null
+  @tracked currentTextContent: string | null = null;
   private _currentSelection?: InternalSelection;
 
   history!: CappedHistory;
@@ -229,6 +228,7 @@ export default class PernetRawEditor extends RawEditor {
         textHasChanges = true;
         this.currentTextContent = oldText.slice(0, pos) + text + oldText.slice(pos, oldText.length);
         for (const observer of contentObservers) {
+          // eslint-disable-next-line ember/no-observers
           observer.handleTextInsert(pos, text, extraInfo);
         }
         pos = pos + text.length;
@@ -236,6 +236,7 @@ export default class PernetRawEditor extends RawEditor {
         textHasChanges = true;
         this.currentTextContent = oldText.slice(0, pos) + oldText.slice(pos + text.length, oldText.length);
         for (const observer of contentObservers) {
+          // eslint-disable-next-line ember/no-observers
           observer.handleTextRemoval(pos, pos + text.length, extraInfo);
         }
       } else {
@@ -249,6 +250,7 @@ export default class PernetRawEditor extends RawEditor {
         this.createSnapshot();
       }
       for (const observer of contentObservers) {
+        // eslint-disable-next-line ember/no-observers
         observer.handleFullContentUpdate(extraInfo);
       }
     }
@@ -259,7 +261,7 @@ export default class PernetRawEditor extends RawEditor {
    * @property contentObservers
    * @private
    */
-  contentObservers: Array<ContentObserver> = []
+  contentObservers: Array<ContentObserver> = [];
 
   registerMovementObserver(observer: MovementObserver) {
     this.movementObservers.push(observer);
@@ -298,7 +300,7 @@ export default class PernetRawEditor extends RawEditor {
    * @param _text Text content that has been inserted.
    * @param _extraInfo Text content that has been inserted.
    */
-  textInsert(_position: number, _text: String, _extraInfo: any ) {
+  textInsert() {
     warn("textInsert was called on raw-editor without listeners being set.", { id: 'content-editable.invalid-state'});
   }
 
@@ -381,7 +383,7 @@ export default class PernetRawEditor extends RawEditor {
    * @param _notify observers, default true
    * @public
    */
-  setCurrentPosition(position: number, _notify = true) {
+  setCurrentPosition(position: number) {
     const richNode = this.richNode;
     if (richNode.end < position || richNode.start > position) {
       warn(`received invalid position, resetting to ${richNode.end} end of document`, {id: 'contenteditable-editor.invalid-position'});

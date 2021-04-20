@@ -41,7 +41,7 @@ export class MagicSpan implements VisualChangeReferencePoint {
     /**
      * This allows us to distinguish a magic span from a normal one
      */
-  static ID = "__magic_span"
+  static ID = "__magic_span";
   firstMeasurePoint: Array<DOMRect>;
   secondMeasurePoint: Array<DOMRect>;
   span: Element;
@@ -166,7 +166,7 @@ type ThingAfterCursor =
   | VoidElementPosition
   | ElementEndPosition
   | UncommonNodeStartPosition
-  | EditorRootEndPosition
+  | EditorRootEndPosition;
 
 interface BaseThingAfterCursor {
   type: string;
@@ -342,7 +342,7 @@ export interface DeletePlugin {
  * @extends EmberObject
  */
 export default class DeleteHandler implements InputHandler {
-  isLocked: Boolean
+  isLocked: Boolean;
   /**
    * The editor instance on which we can execute changes.
    *
@@ -350,7 +350,7 @@ export default class DeleteHandler implements InputHandler {
    * @type RawEditor
    * @default null
    */
-  rawEditor: LegacyRawEditor
+  rawEditor: LegacyRawEditor;
 
 
   /**

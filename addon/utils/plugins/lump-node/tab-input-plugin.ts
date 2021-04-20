@@ -9,7 +9,7 @@ import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/uti
  * @module plugin/lump-node
  */
 export default class LumpNodeTabInputPlugin implements TabInputPlugin {
-  label = 'Tap input plugin for handling LumpNodes'
+  label = 'Tap input plugin for handling LumpNodes';
 
   isSupportedManipulation(manipulation : Manipulation) : boolean {
     return manipulation.type  === 'moveCursorToStartOfElement'
