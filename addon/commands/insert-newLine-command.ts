@@ -23,11 +23,11 @@ export default class InsertNewLineCommand extends Command {
       throw new MisbehavedSelectionError();
     }
     const br = new ModelElement("br");
-    this.model.batchChange(mutator => {
+    this.model.change(mutator => {
       mutator.insertNodes(range, br);
-    }, false);
-    const cursorPos = ModelPosition.fromAfterNode(br);
-    this.model.selection.selectRange(new ModelRange(cursorPos, cursorPos));
-    this.model.writeSelection();
+      const cursorPos = ModelPosition.fromAfterNode(br);
+      const newRange = new ModelRange(cursorPos, cursorPos);
+      mutator.selectRange(newRange);
+    });
   }
 }
