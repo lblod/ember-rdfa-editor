@@ -2,6 +2,8 @@ import {module, test} from "qunit";
 import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
+import {domStripped} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import Model from "@lblod/ember-rdfa-editor/model/model";
 
 module("Unit | model | readers | selection-reader", hooks => {
   let reader: SelectionReader;
@@ -112,6 +114,31 @@ module("Unit | model | readers | selection-reader", hooks => {
 
       result = reader.readDomPosition(child12, 3);
       assert.true(result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 5])));
+    });
+    test("converts a position inside a br correctly", assert => {
+      // A cursor position inside a br element is perfectly valid in the dom spec
+      // Visually it looks identical to the position before the br
+      // We currently don't allow (or at least dont handle)
+      // positions inside brs so this test is to make sure the
+      // conversion is correct
+      const testDoc = domStripped`
+      <div contenteditable>
+        abc
+        <br>
+        def
+      </div>
+      `;
+      const docRoot = testDoc.body.firstElementChild as HTMLElement;
+      const br = testDoc.getElementsByTagName("br")[0];
+      document.body.appendChild(docRoot);
+
+      const model = new Model(docRoot);
+      model.read(false);
+      const reader = new SelectionReader(model);
+
+      const result = reader.readDomPosition(br, 0);
+      assert.deepEqual(result!.path, [3]);
+
     });
   });
 });
