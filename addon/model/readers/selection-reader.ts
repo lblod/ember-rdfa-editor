@@ -17,6 +17,7 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
   }
 
   read(from: Selection): ModelSelection {
+    console.log("READING SELECTION");
     const ranges = [];
 
     const rslt = new ModelSelection(this.model);

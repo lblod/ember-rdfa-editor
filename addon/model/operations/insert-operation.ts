@@ -22,9 +22,14 @@ export default class InsertOperation extends Operation {
   }
 
   execute(): ModelRange {
+    if(!this.nodes.length) {
+      return this.range;
+    }
     OperationAlgorithms.insert(this.range, ...this.nodes);
     if(this.range.collapsed) {
-      return this.range;
+      const last = this.nodes[this.nodes.length - 1];
+      const pos = ModelPosition.fromAfterNode(last);
+      return new ModelRange(pos, pos);
     }
     const first = this.nodes[0];
     const last = this.nodes[this.nodes.length - 1];
