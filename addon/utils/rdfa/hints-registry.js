@@ -546,8 +546,6 @@ export default class HinstRegistry {
    * @method currentIndex
    *
    * @return {Object} The current index
-   *
-   * @private
    */
   currentIndex() {
     return this.index.slice(-1)[0];
