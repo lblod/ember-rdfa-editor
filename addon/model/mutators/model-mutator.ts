@@ -16,10 +16,7 @@ export default abstract class ModelMutator<T> {
 
   abstract move(rangeToMove: ModelRange, targetRange: ModelRange): T;
 
-  selectRange(range: ModelRange, write: boolean = true) {
+  selectRange(range: ModelRange) {
     this.model.selection.selectRange(range);
-    if (write) {
-      this.model.writeSelection();
-    }
   }
 }

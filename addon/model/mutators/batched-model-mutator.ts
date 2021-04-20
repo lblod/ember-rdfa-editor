@@ -5,7 +5,7 @@ import AttributeOperation from "@lblod/ember-rdfa-editor/model/operations/attrib
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-operation";
 import MoveOperation from "@lblod/ember-rdfa-editor/model/operations/move-operation";
-import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/mutator";
+import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/model-mutator";
 
 
 export default class BatchedModelMutator extends ModelMutator<void> {

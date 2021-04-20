@@ -1,4 +1,4 @@
-import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/mutator";
+import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/model-mutator";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import AttributeOperation from "@lblod/ember-rdfa-editor/model/operations/attribute-operation";
 import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-operation";

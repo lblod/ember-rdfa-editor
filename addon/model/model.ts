@@ -148,9 +148,9 @@ export default class Model {
     const mutator = new ImmediateModelMutator(this);
     const subTree = callback(mutator);
     if (subTree) {
-      this.write(subTree, false);
+      this.write(subTree);
     } else {
-      this.write(this.rootModelNode, false);
+      this.write(this.rootModelNode);
     }
   }
 
@@ -161,7 +161,7 @@ export default class Model {
     if (autoSelect && resultingRange) {
       this.selection.selectRange(resultingRange);
     }
-    if(subTree) {
+    if (subTree) {
       this.write(subTree);
     } else {
       this.write();
