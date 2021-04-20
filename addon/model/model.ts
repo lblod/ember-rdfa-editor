@@ -8,6 +8,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
 import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
 import BatchedModelMutator from "@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator";
+import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
 
 
 /**
@@ -82,7 +83,7 @@ export default class Model {
    * Write a part of the model back to the dom
    * @param tree
    */
-  write(tree: ModelElement = this.rootModelNode) {
+  write(tree: ModelElement = this.rootModelNode, writeSelection: boolean = true) {
     const modelWriteEvent = new CustomEvent(
       'editorModelWrite',
     );
@@ -100,7 +101,9 @@ export default class Model {
     }
     oldRoot.append(...newRoot.childNodes);
     this.bindNode(tree, oldRoot);
-    this.writeSelection();
+    if (writeSelection) {
+      this.writeSelection();
+    }
   }
 
   writeSelection() {
@@ -141,15 +144,28 @@ export default class Model {
     modelNode.remove();
   }
 
+  change(callback: (mutator: ImmediateModelMutator) => ModelElement | void) {
+    const mutator = new ImmediateModelMutator();
+    const subTree = callback(mutator);
+    if (subTree) {
+      this.write(subTree, false);
+    } else {
+      this.write(this.rootModelNode, false);
+    }
+  }
 
-  batchChange(callback: (mutator: BatchedModelMutator) => void, autoSelect: boolean = true) {
+  batchChange(callback: (mutator: BatchedModelMutator) => ModelElement | void, autoSelect: boolean = true) {
     const mutator = new BatchedModelMutator();
-    callback(mutator);
+    const subTree = callback(mutator);
     const resultingRange = mutator.flush();
     if (autoSelect && resultingRange) {
       this.selection.selectRange(resultingRange);
     }
-    this.write();
+    if(subTree) {
+      this.write(subTree);
+    } else {
+      this.write();
+    }
   }
 
   static getChildIndex(child: Node): number | null {
