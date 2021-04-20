@@ -35,7 +35,6 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
     const editor = await renderEditor();
     const selection = getWindowSelection();
 
-    const list = editor.children[0];
     selection.collapse(editor, 0);
     await pressDelete();
     await wait(3000);
@@ -110,7 +109,6 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
     });
     const editor = await renderEditor();
 
-    const beforeList = editor.children[0] as HTMLDivElement;
     const list = editor.children[0] as HTMLUListElement;
     const topLi = list.children[0];
 
@@ -239,7 +237,6 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
 
     const list = editor.children[0] as HTMLUListElement;
     let firstItem = list.children[0] as HTMLLIElement;
-    const textNode = list.children[0].childNodes[0];
     const selection = getWindowSelection();
     selection.collapse(firstItem, 0);
     await pressDelete();
@@ -420,7 +417,6 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
 
     const beforeList = editor.children[0] as HTMLDivElement;
     const list = editor.children[1] as HTMLUListElement;
-    const firstLi = list.firstElementChild as HTMLLIElement;
 
     const selection = getWindowSelection();
     selection.collapse(beforeList.childNodes[0], 1);
@@ -547,7 +543,6 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
 
     const list = editor.children[0] as HTMLUListElement;
     let firstItem = list.children[0] as HTMLLIElement;
-    const textNode = list.children[0].childNodes[0];
     const selection = getWindowSelection();
     selection.collapse(firstItem, 0);
     await pressDelete();

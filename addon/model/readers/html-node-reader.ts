@@ -4,8 +4,6 @@ import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/model/readers/html-rea
 import ModelElement, {ElementType} from "@lblod/ember-rdfa-editor/model/model-element";
 import HtmlListReader from "@lblod/ember-rdfa-editor/model/readers/html-list-reader";
 import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
-import {HtmlTag} from "@lblod/ember-rdfa-editor/model/util/types";
 import HtmlElementReader from "@lblod/ember-rdfa-editor/model/readers/html-element-reader";
 import HtmlTextReader from "@lblod/ember-rdfa-editor/model/readers/html-text-reader";
 import HtmlTableReader from "@lblod/ember-rdfa-editor/model/readers/html-table-reader";
@@ -13,7 +11,7 @@ import HtmlSpanReader from "@lblod/ember-rdfa-editor/model/readers/html-span-rea
 import WrappedAttributeReader from "@lblod/ember-rdfa-editor/model/readers/wrapped-attribute-reader";
 
 type Constructor<T extends {} = {}> = new (...args: any[]) => T;
-type ElementReader = Reader<Element, ModelElement | null, HtmlReaderContext>
+type ElementReader = Reader<Element, ModelElement | null, HtmlReaderContext>;
 
 export default class HtmlNodeReader implements Reader<Node, ModelNode | null, HtmlReaderContext> {
   static elementConfig = new Map<ElementType, Constructor<ElementReader>>(

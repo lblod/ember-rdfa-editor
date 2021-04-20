@@ -66,7 +66,7 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
    * currently never detects a change but rather lets the backspace handler do detection
    * @method detectChange
    */
-  detectChange(_manipulation: Manipulation) : boolean {
+  detectChange() : boolean {
     return false;
   }
 }

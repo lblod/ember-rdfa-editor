@@ -12,7 +12,7 @@ export default abstract class Command<T extends any[] = any[]> {
   protected constructor(model: Model) {
     this.model = model;
   }
-  canExecute(..._args: T): boolean {
+  canExecute(): boolean {
     return true;
   }
   abstract execute(...args: T): void;

@@ -1,7 +1,5 @@
 import Component from "@glimmer/component";
 import {action} from "@ember/object";
-import {isInList} from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
-import {getWindowSelection} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {tracked} from "@glimmer/tracking";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";

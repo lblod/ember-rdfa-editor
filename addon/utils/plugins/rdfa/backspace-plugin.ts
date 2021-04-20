@@ -56,7 +56,7 @@ const SUPPORTED_ELEMENT_MANIPULATIONS = [ 'removeEmptyElement',
 const TEXT_LENGTH_ALMOST_COMPLETE_TRESHOLD = 5;
 
 export default class RdfaBackspacePlugin implements BackspacePlugin {
-  label = 'backspace plugin for handling RDFA specific logic'
+  label = 'backspace plugin for handling RDFA specific logic';
 
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
@@ -186,7 +186,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    * Note: this is only done on TextNode operations for now.
    * (again) It feels like such flow for emptyElements would feel cumbersome. (And add complexity)
    */
-  executeAlmostCompleteStep(manipulation: Manipulation, _editor: Editor ) : void {
+  executeAlmostCompleteStep(manipulation: Manipulation) : void {
     const node = manipulation.node;
     const parent = node.parentElement;
 

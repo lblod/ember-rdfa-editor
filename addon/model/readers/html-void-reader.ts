@@ -5,7 +5,7 @@ import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
  * html it receives
  */
 export default class HtmlVoidReader implements Reader<Node, null, void> {
-  read(_from: Node): null {
+  read(): null {
     return null;
   }
 

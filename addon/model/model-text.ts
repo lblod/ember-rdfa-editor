@@ -2,7 +2,6 @@ import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/mod
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {stringToVisibleText} from "@lblod/ember-rdfa-editor/editor/utils";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
 
 const NON_BREAKING_SPACE = '\u00A0';
 export type TextAttribute = "bold" | "italic" | "underline" | "strikethrough" | "highlighted";

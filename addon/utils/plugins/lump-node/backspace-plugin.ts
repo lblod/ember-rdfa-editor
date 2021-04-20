@@ -117,7 +117,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * Flags the LumpNode for removal.
    * @method flagForRemoval
    */
-  flagForRemoval( manipulation: Manipulation, _editor: Editor) : void {
+  flagForRemoval( manipulation: Manipulation) : void {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
     const lumpNode = getParentLumpNode(node, rootNode) as Element;

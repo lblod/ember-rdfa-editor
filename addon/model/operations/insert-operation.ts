@@ -1,7 +1,6 @@
 import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/operation-algorithms";
 

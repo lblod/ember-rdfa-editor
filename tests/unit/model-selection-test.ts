@@ -91,7 +91,6 @@ module("Unit | model | model-selection", hooks => {
     ctx.model.rootModelNode.addChild(initial);
     ctx.modelSelection.clearRanges();
     ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 0, 0));
-    const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(ctx.modelSelection.isInside(["li"])==="enabled");
   });
@@ -110,7 +109,6 @@ module("Unit | model | model-selection", hooks => {
     ctx.model.rootModelNode.addChild(initial);
     ctx.modelSelection.clearRanges();
     ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 0, 0));
-    const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(ctx.modelSelection.contains(["li"])==="disabled");
   });
@@ -134,7 +132,6 @@ module("Unit | model | model-selection", hooks => {
     const range = new ModelRange(startPosition, endPosition);
     ctx.modelSelection.clearRanges();
     ctx.modelSelection.addRange(range);
-    const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(ctx.modelSelection.isInside(["li"])==="disabled");
   });
@@ -158,7 +155,6 @@ module("Unit | model | model-selection", hooks => {
     const range = new ModelRange(startPosition, endPosition);
     ctx.modelSelection.clearRanges();
     ctx.modelSelection.addRange(range);
-    const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(ctx.modelSelection.contains(["li"])==="enabled");
   });

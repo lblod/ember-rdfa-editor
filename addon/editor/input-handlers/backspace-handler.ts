@@ -47,7 +47,7 @@ type ThingBeforeCursor =
   | VoidElementPosition
   | ElementEndPosition
   | UncommonNodeEndPosition
-  | EditorRootPosition
+  | EditorRootPosition;
 
 interface BaseThingBeforeCursor {
   type: string;
@@ -283,7 +283,7 @@ export default class BackspaceHandler implements InputHandler {
    * @type RawEditor
    * @default null
    */
-  rawEditor: LegacyRawEditor
+  rawEditor: LegacyRawEditor;
 
   /**
    * Array containing all plugins for the backspace handler.

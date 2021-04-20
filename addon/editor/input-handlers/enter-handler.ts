@@ -22,7 +22,7 @@ export default class EnterHandler implements InputHandler {
   }
 
 
-  handleEvent(_event: Event) {
+  handleEvent() {
     //TODO (sergey):this is hacky and very quick should be redone
     if(this.rawEditor.canExecuteCommand('insert-newLi')){
       this.rawEditor.executeCommand('insert-newLi');

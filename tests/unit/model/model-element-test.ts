@@ -80,7 +80,7 @@ module("Unit | model | model-element-test", hooks => {
 
   });
 
-  module("Unit | model | model-element-test | isolateChildAt", _hooks => {
+  module("Unit | model | model-element-test | isolateChildAt", () => {
     test("throws when index out of range", assert => {
       const div = new ModelElement("div");
 

@@ -18,7 +18,7 @@ function debug(message: String, object: Object | null = null): void {
   });
 }
 
-type ElementRemovalManipulation = RemoveEmptyElementManipulation | RemoveElementWithChildrenThatArentVisible
+type ElementRemovalManipulation = RemoveEmptyElementManipulation | RemoveElementWithChildrenThatArentVisible;
 /**
  * This plugin provides sensible behaviour for backspace in lists.
  * NOTE: assumes a UL or OL has only list items as children elements.
@@ -27,7 +27,7 @@ type ElementRemovalManipulation = RemoveEmptyElementManipulation | RemoveElement
  * @module plugin/lists
  */
 export default class ListBackspacePlugin implements BackspacePlugin {
-  label = 'backspace plugin for handling lists'
+  label = 'backspace plugin for handling lists';
 
   guidanceForManipulation(manipulation: Manipulation): ManipulationGuidance | null {
     if (manipulation.type == "removeEmptyElement" || manipulation.type == "removeElementWithChildrenThatArentVisible") {
