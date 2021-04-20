@@ -63,11 +63,6 @@ module.exports = {
     // typescript
     {
       "files": ["**/*.ts", "**/*.tsx"],
-      extends: [
-        'eslint:recommended',
-        'plugin:ember/recommended',
-        'plugin:@typescript-eslint/recommended'
-      ],
       rules: {
         'ember/no-jquery': 'error',
         'semi': 'error',
