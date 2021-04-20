@@ -1,6 +1,10 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {
+  Manipulation,
+  ManipulationExecutor,
+  ManipulationGuidance
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import RawEditor from 'dummy/utils/ce/raw-editor';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
@@ -18,7 +22,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     if(selection.inTableState === PropertyState.enabled) {
       return {
         allow: true,
-        executor: this.tabHandler
+        executor: this.tabHandler as unknown as ManipulationExecutor
       };
     }
     return null;
