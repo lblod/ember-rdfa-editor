@@ -43,7 +43,7 @@ export default class MakeListCommand extends Command {
     }
 
 
-    this.model.change(mutator => {
+    this.model.batchChange(mutator => {
       mutator.insertNodes(range, list);
       const resultRange = mutator.flush();
       const fullRange = ModelRange.fromInElement(this.model.rootModelNode, 0, this.model.rootModelNode.getMaxOffset());

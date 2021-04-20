@@ -7,7 +7,7 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
 import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
-import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/model-mutator";
+import BatchedModelMutator from "@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator";
 
 
 /**
@@ -142,8 +142,8 @@ export default class Model {
   }
 
 
-  change(callback: (mutator: ModelMutator) => void, autoSelect: boolean = true) {
-    const mutator = new ModelMutator();
+  batchChange(callback: (mutator: BatchedModelMutator) => void, autoSelect: boolean = true) {
+    const mutator = new BatchedModelMutator();
     callback(mutator);
     const resultingRange = mutator.flush();
     if (autoSelect && resultingRange) {

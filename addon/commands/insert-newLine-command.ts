@@ -23,7 +23,7 @@ export default class InsertNewLineCommand extends Command {
       throw new MisbehavedSelectionError();
     }
     const br = new ModelElement("br");
-    this.model.change(mutator => {
+    this.model.batchChange(mutator => {
       mutator.insertNodes(range, br);
     }, false);
     const cursorPos = ModelPosition.fromAfterNode(br);
