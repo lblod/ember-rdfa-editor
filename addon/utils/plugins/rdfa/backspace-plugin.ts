@@ -64,19 +64,19 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       return {
         allow: true,
         executor: this.executeRemoveStep.bind(this)  //TODO: extract these functions out of the class.
-      }
+      };
     }
     else if(this.needsCompleteStep(manipulation)){
       return {
         allow: true,
         executor: this.executeCompleteStep.bind(this)
-      }
+      };
     }
     else if(this.needsAlmostCompleteStep(manipulation)){
       return {
         allow: true,
         executor: this.executeAlmostCompleteStep.bind(this)
-      }
+      };
     }
     return null;
   }
@@ -117,7 +117,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    * It feels like such flow for emptyElements would feel cumbersome. (And add complexity)
    */
   needsAlmostCompleteStep(manipulation: Manipulation) : boolean {
-    const node = manipulation.node
+    const node = manipulation.node;
     const parent = node.parentElement;
 
     if( parent
@@ -200,7 +200,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    * For empty element manipulation, just adds `data-flagged-remove=complete`
    */
   executeCompleteStep(manipulation: Manipulation, editor: Editor ) : void {
-    let node = manipulation.node;
+    const node = manipulation.node;
     const parent = node.parentElement;
 
     if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation) && parent){
@@ -225,7 +225,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
 
     if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)){
       const node = manipulation.node;
-      let rdfaElement = node.parentElement;
+      const rdfaElement = node.parentElement;
 
       if(!rdfaElement) throw `rdfa/backspace-plugin: Expected ${node} node to have a parent.`;
 
@@ -258,7 +258,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     // Since we are in a different state compared to the other methods of this plugins, i.e. the node has been update in the DOM,
     // the checks are slightly different.
 
-    let anchorNode = updatedSelection.anchorNode;
+    const anchorNode = updatedSelection.anchorNode;
 
     if( !anchorNode ){
       return;
@@ -279,7 +279,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     }
     else if( anchorNode && anchorNode.nodeType == Node.ELEMENT_NODE && this.isRdfaNode(anchorNode) ){
 
-      let updatedElement = anchorNode as HTMLElement;
+      const updatedElement = anchorNode as HTMLElement;
 
       if(stringToVisibleText(updatedElement.innerText).length === 0){
         updatedElement.setAttribute('data-flagged-remove', 'complete');
@@ -299,8 +299,8 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
   }
 
   isRdfaNode(node: Node) : boolean {
-    let nodeWalker = new NodeWalker();
-    return isRdfaNode(nodeWalker.processDomNode(node))
+    const nodeWalker = new NodeWalker();
+    return isRdfaNode(nodeWalker.processDomNode(node));
   }
 
   hasFlagForRemoval(element: Element) : boolean {

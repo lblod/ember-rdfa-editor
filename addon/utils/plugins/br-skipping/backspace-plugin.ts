@@ -22,7 +22,7 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
     if (manipulation.type == "moveCursorToEndOfElement") {
       const element = manipulation.node as HTMLElement;
       if (window.getComputedStyle(element).display == "block") {
-        const length = element.childNodes.length
+        const length = element.childNodes.length;
         if (length > 0 && isBr(element.childNodes[length-1])) {
           // last br in a block element is normally not visible, so jump before the br
           return {
@@ -45,8 +45,8 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
           if (isBr(previousSibling)) {
             return {
               allow: true,
-              executor: (_manipulation: MoveCursorBeforeElementManipulation, _editor: Editor) => { this.moveCaretBeforeBr(previousSibling as HTMLElement)}
-            }
+              executor: (_manipulation: MoveCursorBeforeElementManipulation, _editor: Editor) => { this.moveCaretBeforeBr(previousSibling as HTMLElement);}
+            };
           }
         }
       }

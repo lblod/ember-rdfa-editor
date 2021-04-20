@@ -64,7 +64,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
   updateModifiedRange(start: number, end: number, isRemove: boolean = false) {
     if (isRemove && ! isEmpty(this.modifiedRange)) {
       const [currentStart, currentEnd] = this.modifiedRange;
-      var newStart, newEnd;
+      let newStart, newEnd;
       const delta = end - start;
       if (currentStart > start  && currentStart > end) {
         // |removed text|[inserted text]

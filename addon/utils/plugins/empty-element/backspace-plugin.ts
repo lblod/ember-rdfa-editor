@@ -31,7 +31,7 @@ export default class EmptyElementBackspacePlugin implements BackspacePlugin {
    */
   jumpBeforeAndRemoveEmptyElement( manipulation: MoveCursorToEndOfElementManipulation, editor: Editor) {
     const element = manipulation.node;
-    moveCaretBefore(element)
+    moveCaretBefore(element);
     element.remove();
     editor.updateRichNode();
   }

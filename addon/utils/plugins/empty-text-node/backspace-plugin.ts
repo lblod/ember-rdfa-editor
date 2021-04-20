@@ -20,13 +20,13 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
         return {
           allow: true,
           executor: this.replaceLastCharacterWithInvisibleSpace
-        }
+        };
       }
       else if (this.manipulationWillResultInTextNodeWithoutText(manipulation)) {
         return {
           allow: true,
           executor: this.replaceLastCharacterWithInvisibleSpace
-        }
+        };
       }
     }
     return null;

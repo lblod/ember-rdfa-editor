@@ -675,7 +675,7 @@ export default class DeleteHandler implements InputHandler {
     // check where our cursor is and get the deepest "thing" after
     // the cursor (character or node)
     const thingAfterCursor: ThingAfterCursor = this.getThingAfterCursor();
-    console.log(thingAfterCursor)
+    console.log(thingAfterCursor);
     switch (thingAfterCursor.type) {
 
       case "character": {

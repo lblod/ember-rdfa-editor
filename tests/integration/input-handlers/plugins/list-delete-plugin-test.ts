@@ -255,7 +255,7 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
     const editor = await renderEditor();
 
     const list = editor.children[0] as HTMLUListElement;
-    let lastItem = list.lastElementChild as HTMLLIElement;
+    const lastItem = list.lastElementChild as HTMLLIElement;
 
     const selection = getWindowSelection();
     selection.collapse(lastItem, 0);
@@ -482,7 +482,7 @@ module("Integration | InputHandler | list-delete-plugin", function (hooks) {
     selection.collapse(textNode, 2);
 
     await pressDelete();
-    await wait(3000)
+    await wait(3000);
     assert.equal(list.childElementCount, 1);
     assert.equal(list.children[0].textContent, "ab");
   });

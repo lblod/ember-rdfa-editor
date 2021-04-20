@@ -43,13 +43,13 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
         return {
           allow: true,
           executor: this.removeLumpNode
-        }
+        };
       }
       else {
         return {
           allow: true,
           executor: this.flagForRemoval
-        }
+        };
       }
     }
 
@@ -65,8 +65,8 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
     const lumpNode = getParentLumpNode(node, rootNode);
-    let parentOfLumpNode = lumpNode.parentNode;
-    let offset = Array.from(parentOfLumpNode.childNodes).indexOf(lumpNode);
+    const parentOfLumpNode = lumpNode.parentNode;
+    const offset = Array.from(parentOfLumpNode.childNodes).indexOf(lumpNode);
     lumpNode.remove();
     editor.updateRichNode();
     editor.setCaret(parentOfLumpNode, offset);

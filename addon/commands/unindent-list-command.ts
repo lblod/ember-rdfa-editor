@@ -109,7 +109,7 @@ export default class UnindentListCommand extends Command {
     //compare all paths to see if base is parent
     //remove those that are related
     for(let i =0; i<elementArray.length; i++){
-      let e=elementArray[i];
+      const e=elementArray[i];
       if(this.areRelated(base, e)){
         elementArray.splice(i, 1);
       }
@@ -129,7 +129,7 @@ export default class UnindentListCommand extends Command {
   areRelated(base:ModelElement, compare:ModelElement): Boolean{
     const basePath=base.getIndexPath();
     const comparePath=compare.getIndexPath();
-    for(var i=0; i<basePath.length; i++){
+    for(let i=0; i<basePath.length; i++){
       if(basePath[i]!=comparePath[i]){
         return false;
       }

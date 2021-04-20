@@ -301,14 +301,14 @@ export default class ModelSelection {
         let prevType;
         //2. check if every node has the same parent type
         for(let i=0; i<resultArr.length; i++){
-          let node=resultArr[i];
-          let type=node.findAncestor(node => ModelNode.isModelElement(node) && types.includes(node.type));
+          const node=resultArr[i];
+          const type=node.findAncestor(node => ModelNode.isModelElement(node) && types.includes(node.type));
           //3. else return false
           if(!type){
-            return PropertyState.disabled
+            return PropertyState.disabled;
           }
           else if(i>0 && type!=prevType){
-            return PropertyState.disabled
+            return PropertyState.disabled;
           }
           else{
             prevType=type;

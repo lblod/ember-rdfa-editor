@@ -54,7 +54,7 @@ export default class TabInputHandler implements InputHandler {
 
     const keyboardEvent = event as KeyboardEvent;
     //TODO: include shift key here?
-    return event.type === 'keydown' && keyboardEvent.key === 'Tab' && this.rawEditor.rootNode.contains(selection.anchorNode)
+    return event.type === 'keydown' && keyboardEvent.key === 'Tab' && this.rawEditor.rootNode.contains(selection.anchorNode);
 
   }
 
@@ -117,7 +117,7 @@ export default class TabInputHandler implements InputHandler {
 
     //TODO: this could be moved to a plugin eventually.
     else if(manipulation.type == 'moveCursorBeforeEditor'){
-      console.warn('editor/tab-handler: handle moveCursorBeforeEditor currently disabled until we are sure what we want here')
+      console.warn('editor/tab-handler: handle moveCursorBeforeEditor currently disabled until we are sure what we want here');
     }
 
     /************************ TAB ************************/
@@ -155,7 +155,7 @@ export default class TabInputHandler implements InputHandler {
 
     //TODO: this could be moved to a plugin eventually.
     else if(manipulation.type == 'moveCursorAfterEditor'){
-      console.warn('editor/tab-handler: handle moveCursorAfterEditor currently disabled until we are sure what we want here')
+      console.warn('editor/tab-handler: handle moveCursorAfterEditor currently disabled until we are sure what we want here');
       // const element = manipulation.node as HTMLElement;
       // element.blur();
     }
@@ -170,7 +170,7 @@ export default class TabInputHandler implements InputHandler {
     const selection = window.getSelection();
 
     if(!(selection && selection.isCollapsed))
-      throw 'selection is required for tab input'
+      throw 'selection is required for tab input';
 
     if(event.shiftKey){
       return this.helpGetShiftTabNextManipulation(selection);

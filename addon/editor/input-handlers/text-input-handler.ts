@@ -72,7 +72,7 @@ export default class TextInputHandler implements InputHandler {
       }
       else if (keyboardEvent.altKey || keyboardEvent.ctrlKey || keyboardEvent.metaKey) {
         // it's a key combo, we don't want to do anything with this atm
-        return false
+        return false;
       }
       else if (keyboardEvent.key.length > 1) {
         // only interested in actual input, no control keys

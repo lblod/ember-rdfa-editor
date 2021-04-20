@@ -224,18 +224,18 @@ export default class PernetRawEditor extends RawEditor {
     let textHasChanges = false;
 
     const contentObservers = this.contentObservers;
-    for (let [mode,text] of differences) {
+    for (const [mode,text] of differences) {
       if (mode === 1) {
         textHasChanges = true;
         this.currentTextContent = oldText.slice(0, pos) + text + oldText.slice(pos, oldText.length);
-        for (let observer of contentObservers) {
+        for (const observer of contentObservers) {
           observer.handleTextInsert(pos, text, extraInfo);
         }
         pos = pos + text.length;
       } else if (mode === -1) {
         textHasChanges = true;
         this.currentTextContent = oldText.slice(0, pos) + oldText.slice(pos + text.length, oldText.length);
-        for (let observer of contentObservers) {
+        for (const observer of contentObservers) {
           observer.handleTextRemoval(pos, pos + text.length, extraInfo);
         }
       } else {
@@ -248,7 +248,7 @@ export default class PernetRawEditor extends RawEditor {
       if (!extraInfo.some((x) => x.noSnapshot)) {
         this.createSnapshot();
       }
-      for (let observer of contentObservers) {
+      for (const observer of contentObservers) {
         observer.handleFullContentUpdate(extraInfo);
       }
     }
@@ -617,10 +617,10 @@ export default class PernetRawEditor extends RawEditor {
    */
   createSnapshot() {
     const document = {
-      content: this.get('rootNode').innerHTML,
+      content: this.rootNode.innerHTML,
       currentSelection: this.currentSelection
     };
-    this.get('history').push(document);
+    this.history.push(document);
   }
 
   /**
@@ -677,7 +677,7 @@ export default class PernetRawEditor extends RawEditor {
       let commonAncestor = range.commonAncestorContainer;
       // IE does not support contains for text nodes
       commonAncestor = commonAncestor.nodeType === Node.TEXT_NODE ? commonAncestor.parentNode! : commonAncestor;
-      if (this.get('rootNode').contains(commonAncestor)) {
+      if (this.rootNode.contains(commonAncestor)) {
         if (range.collapsed) {
           this.setCaret(range.startContainer, range.startOffset);
         }

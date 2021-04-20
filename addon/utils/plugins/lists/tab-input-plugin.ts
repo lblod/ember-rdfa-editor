@@ -44,7 +44,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
         return { allow: true, executor: this.indentLiContent };
       }
       else {
-        const list = manipulation.node.parentElement as HTMLUListElement | HTMLOListElement;;
+        const list = manipulation.node.parentElement as HTMLUListElement | HTMLOListElement;
         const lastLi = findLastLi(list);
 
         if( lastLi && lastLi.isSameNode(listItem) ){

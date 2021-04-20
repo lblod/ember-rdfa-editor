@@ -34,7 +34,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
       /*
        * removing an (empty-ish) list item
        */
-      manipulation as ElementRemovalManipulation
+      manipulation as ElementRemovalManipulation;
       const element = manipulation.node;
       if (element && tagName(element) == "li") {
         return this.guidanceForRemoveListItem(element);
@@ -80,14 +80,14 @@ export default class ListBackspacePlugin implements BackspacePlugin {
       return {
         allow: true,
         executor: this.removeListItemAndMoveContentBeforeList
-      }
+      };
     }
     else {
       // this case: if (! element.previousElementSibling && ! element.nextElementSibling )
       return {
         allow: true,
         executor: this.removeListItemAndListButKeepContent
-      }
+      };
     }
   }
 
@@ -97,21 +97,21 @@ export default class ListBackspacePlugin implements BackspacePlugin {
       return {
         allow: true,
         executor: this.removeListItemAndMoveToPreviousListItem
-      }
+      };
     }
     else if (element.nextElementSibling && tagName(element.nextElementSibling) == "li") {
       // no li before, but there is an li after. list is not empty after removing the first li, so jump before list
       return {
         allow: true,
         executor: this.removeListItemAndJumpBeforeList
-      }
+      };
     }
     else {
       // no li before and no li after, remove the list
       return {
         allow: true,
         executor: this.removeListItemAndList
-      }
+      };
     }
   }
 
