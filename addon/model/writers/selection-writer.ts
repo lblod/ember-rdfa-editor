@@ -34,7 +34,6 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
     rslt.setStart(startPos.anchor, startPos.offset);
     rslt.setEnd(endPos.anchor, endPos.offset);
 
-    console.log("WRITING RANGE", rslt);
     return rslt;
   }
 

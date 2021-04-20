@@ -17,7 +17,6 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
   }
 
   read(from: Selection): ModelSelection {
-    console.log("READING SELECTION");
     const ranges = [];
 
     const rslt = new ModelSelection(this.model);
@@ -126,7 +125,6 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     if (!resultingNode) {
       throw new NotImplementedError();
     }
-    console.log("RESULT", resultingNode);
     const modelNode = this.model.getModelNodeFor(resultingNode) as ModelText;
     return ModelPosition.fromInTextNode(modelNode, modelNode.length);
 
