@@ -7,7 +7,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 export type XmlNodeRegistry<T extends ModelNode> = Record<string, T>;
 export type XmlReaderResult = { root: ModelNode, elements: XmlNodeRegistry<ModelElement>, textNodes: XmlNodeRegistry<ModelText> }
-export default class XmlReader implements Reader<Node, XmlReaderResult> {
+export default class XmlReader implements Reader<Node, XmlReaderResult, void> {
   read(from: Node): XmlReaderResult {
     const elementRegistry = {};
     const textRegistry = {};

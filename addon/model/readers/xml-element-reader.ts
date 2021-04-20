@@ -4,7 +4,7 @@ import XmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/xml-node-reade
 import {XmlNodeRegistry} from "@lblod/ember-rdfa-editor/model/readers/xml-reader";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
-export default class XmlElementReader implements Reader<Element, ModelElement> {
+export default class XmlElementReader implements Reader<Element, ModelElement, void> {
   constructor(private elementRegistry: XmlNodeRegistry<ModelElement>, private textRegistry: XmlNodeRegistry<ModelText>) {
   }
 

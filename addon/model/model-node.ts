@@ -221,7 +221,7 @@ export default abstract class ModelNode {
   /**
    * @deprecated TODO evaluate whether we need this or not
    */
-  findAncestor(predicate: (node: ModelNode) => boolean, includeSelf: boolean = true): ModelNode | null {
+  findAncestor(predicate: (node: ModelNode) => boolean, includeSelf = true): ModelNode | null {
     if (includeSelf) {
       if (predicate(this)) {
         return this;
@@ -244,7 +244,7 @@ export default abstract class ModelNode {
    * @param after Whether the node will end up after its parent or before
    * @return the old parent
    */
-  promote(after: boolean = false): ModelElement {
+  promote(after = false): ModelElement {
 
     const oldParent = this.parent;
     if (!oldParent) {
@@ -299,8 +299,9 @@ export default abstract class ModelNode {
    * Deep, but not reference equality
    * All properties except boundNode, parent and siblings will be compared, and children will be compared recursively
    * @param other
+   * @param strict
    */
-  abstract sameAs(other: ModelNode, strict: boolean = false): boolean;
+  abstract sameAs(other: ModelNode, strict?: boolean): boolean;
 }
 
 
