@@ -152,6 +152,7 @@ module("Unit | model | model-range", () => {
       // language=XML
       const {root} = stackOverFlowOnGetMinimumConfinedRanges;
       assert.true(true);
+      assert.true(root !== null);
 
     });
   });
