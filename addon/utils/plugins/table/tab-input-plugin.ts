@@ -13,7 +13,7 @@ import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 export default class TableTabInputPlugin implements TabInputPlugin {
   label = 'backspace plugin for handling table nodes'
 
-  guidanceForManipulation(manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
+  guidanceForManipulation(_manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
     const selection = editor.selection;
     if(selection.inTableState === PropertyState.enabled) {
       return {

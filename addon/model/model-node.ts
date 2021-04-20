@@ -59,6 +59,10 @@ export default abstract class ModelNode {
     return this._attributeMap;
   }
 
+  set attributeMap(value: Map<string, string>) {
+    this._attributeMap = value;
+  }
+
   get previousSibling(): ModelNode | null {
     return this._previousSibling;
   }
@@ -75,12 +79,13 @@ export default abstract class ModelNode {
     this._nextSibling = value;
   }
 
-  set attributeMap(value: Map<string, string>) {
-    this._attributeMap = value;
-  }
 
   get parent(): ModelElement | null {
     return this._parent;
+  }
+
+  set parent(value: ModelElement | null) {
+    this._parent = value;
   }
 
   get root(): ModelElement {
@@ -98,9 +103,6 @@ export default abstract class ModelNode {
     return root;
   }
 
-  set parent(value: ModelElement | null) {
-    this._parent = value;
-  }
 
   get boundNode(): Node | null {
     return this._boundNode;
@@ -211,7 +213,9 @@ export default abstract class ModelNode {
    * @param _key
    * @param _value
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setTextAttribute(_key: TextAttribute, _value: boolean) {
+    //no-op function
   }
 
   /**

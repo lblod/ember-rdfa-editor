@@ -1,6 +1,5 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 export default class ModelTestContext {
 
