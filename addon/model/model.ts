@@ -144,6 +144,11 @@ export default class Model {
     modelNode.remove();
   }
 
+  /**
+   * Change the model by providing a callback with will receive an {@link ImmediateModelMutator immediate mutator}
+   * The model gets written out automatically after the callback finishes.
+   * @param callback
+   */
   change(callback: (mutator: ImmediateModelMutator) => ModelElement | void) {
     const mutator = new ImmediateModelMutator(this);
     const subTree = callback(mutator);
@@ -154,6 +159,11 @@ export default class Model {
     }
   }
 
+  /**
+   * Change the model by providing a callback with will receive a {@link BatchedModelMutator batched mutator}
+   * The mutator gets flushed and the model gets written out automatically after the callback finishes.
+   * @param callback
+   */
   batchChange(callback: (mutator: BatchedModelMutator) => ModelElement | void, autoSelect: boolean = true) {
     const mutator = new BatchedModelMutator(this);
     const subTree = callback(mutator);
