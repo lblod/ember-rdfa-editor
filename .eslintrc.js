@@ -18,6 +18,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:ember/recommended',
+    'plugin:@typescript-eslint/eslint-recommended'
   ],
   env: {
     browser: true
