@@ -18,7 +18,6 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:ember/recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
   ],
   env: {
     browser: true
@@ -60,6 +59,21 @@ module.exports = {
       rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
         // add your custom rules and overrides for node files here
       })
+    },
+    // typescript
+    {
+      "files": ["**/*.ts", "**/*.tsx"],
+      extends: [
+        'eslint:recommended',
+        'plugin:ember/recommended',
+        'plugin:@typescript-eslint/recommended'
+      ],
+      rules: {
+        'ember/no-jquery': 'error',
+        'semi': 'error',
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': 'error'
+      },
     }
   ]
 };
