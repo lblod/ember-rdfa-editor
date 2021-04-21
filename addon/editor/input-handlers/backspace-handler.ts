@@ -62,7 +62,7 @@ interface BaseThingBeforeCursor {
 interface CharacterPosition extends BaseThingBeforeCursor {
   type: "character";
   node: Text;
-  position: unknown;
+  position: number;
 }
 
 

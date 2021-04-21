@@ -67,7 +67,7 @@ module.exports = {
       rules: {
         'ember/no-jquery': 'error',
         'semi': 'off',
-        '@typescript-eslint/no-unused-vars': 'error',
+        '@typescript-eslint/no-unused-vars': ['error', {'argsIgnorePattern': '^_'}],
         '@typescript-eslint/semi': ['error', 'always'],
 
         '@typescript-eslint/adjacent-overload-signatures': 'error',
