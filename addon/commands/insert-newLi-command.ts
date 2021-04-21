@@ -77,29 +77,36 @@ export default class InsertNewLiCommand extends Command {
       parentLiPos = parentLi.index;
     }
     else {
-      parentLi=node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
+      parentLi = node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
       parentUl = parentLi.parent;
       parentLiPos = parentLi.index;
-
-      while (node) {
-        const parent = node.parent;
-        toBeCut.push(node);
-        if (node.parent.type === "li") {
+      //cut siblings and siblings of parents
+      //copy direct parents only
+      //and put siblings you cut into them
+      while (node){
+        if(node.type==="li"){
           break;
         }
-        else if (node.nextSibling) {
-          node = node.nextSibling;
+        else if(node.nextSibling){
+          node=node.nextSibling;
+          toBeCut.push(node);
           this.model.removeModelNode(node);
         }
-        else if (node.parent) {
-          node = node.parent;
-          node.appendChildren(toBeCut);
-          toBeCut=[];
-          this.model.removeModelNode(node);
+        else if(node.parent){
+          if(node.parent.type==="li"){
+            node=node.parent
+          }
+          else{
+            node=node.parent;
+            const parentCopy=node.clone();
+            parentCopy.appendChildren(toBeCut);
+            toBeCut=[];
+            toBeCut.push(parentCopy);
+          }
         }
       }
-      toBeCut.forEach(node => newLi.addChild(node));
     }
+    newLi.appendChildren(toBeCut);
     parentUl.addChild(newLi, parentLiPos+1);
   }
 }
