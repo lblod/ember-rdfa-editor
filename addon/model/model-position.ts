@@ -303,6 +303,19 @@ export default class ModelPosition {
     return this.parent.childAtOffset(this.parentOffset - 1) || null;
   }
 
+  //this returns true if the position is inside a text node (not right before not right after)
+  isInsideText(): Boolean{
+    if(
+      (this.nodeAfter() == this.nodeBefore()) &&
+      (ModelNode.isModelText(this.nodeAfter()) && ModelNode.isModelText(this.nodeBefore()))
+    ){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   clone(): ModelPosition {
     return ModelPosition.fromPath(this.root, [...this.path]);
   }
