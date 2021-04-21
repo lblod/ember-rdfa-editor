@@ -18,13 +18,10 @@ export default class InsertNewLineCommand extends Command {
     return true;
   }
 
-  execute(): void {
-
-    const selection = this.model.selection;
-    if (!ModelSelection.isWellBehaved(selection)) {
+  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+    if(!range) {
       throw new MisbehavedSelectionError();
     }
-    const range = selection.lastRange;
     const br = new ModelElement("br");
     this.model.change(mutator => {
       mutator.insertNodes(range, br);

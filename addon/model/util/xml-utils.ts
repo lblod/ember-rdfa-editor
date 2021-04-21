@@ -49,7 +49,7 @@ export function dom(strings: TemplateStringsArray, ...expressions: any[]) {
  * @param strings
  * @param expressions
  */
-export function domStripped(strings: TemplateStringsArray, ...expressions: any[]) {
+export function domStripped(strings: TemplateStringsArray, ...expressions: any[]): HTMLDocument {
   const htmlStr = oneLineTrim(strings, ...expressions);
   return parseHtml(htmlStr);
 }

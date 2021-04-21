@@ -75,12 +75,8 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
       return this.findPositionForTextPopertyNode(container, domOffset);
     } else if (isElement(container)) {
       const modelContainer = this.model.getModelNodeFor(container) as ModelElement;
-      const basePath = modelContainer.getOffsetPath();
-
       const finalOffset = modelContainer.indexToOffset(domOffset);
-      basePath.push(finalOffset);
-      rslt = ModelPosition.fromPath(modelContainer.root, basePath);
-
+      rslt = ModelPosition.fromInElement(modelContainer, finalOffset);
 
     } else if (isTextNode(container)) {
       const modelTextNode = this.model.getModelNodeFor(container) as ModelText;
@@ -129,7 +125,6 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     if (!resultingNode) {
       throw new NotImplementedError();
     }
-    console.log("RESULT", resultingNode);
     const modelNode = this.model.getModelNodeFor(resultingNode) as ModelText;
     return ModelPosition.fromInTextNode(modelNode, modelNode.length);
 
