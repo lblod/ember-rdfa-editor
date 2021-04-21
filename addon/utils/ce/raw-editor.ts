@@ -83,7 +83,7 @@ class RawEditor extends EmberObject {
     this.modelSelectionTracker = new ModelSelectionTracker(this.model);
     this.modelSelectionTracker.startTracking();
     window.__VDOM = this.model;
-    window.__executeCommand = this.executeCommand;
+    window.__executeCommand = (commandName: string, ...args: unknown[]) => { this.executeCommand(commandName, ...args); };
     this.registerCommand(new MakeBoldCommand(this.model));
     this.registerCommand(new RemoveBoldCommand(this.model));
     this.registerCommand(new MakeItalicCommand(this.model));
@@ -151,7 +151,7 @@ class RawEditor extends EmberObject {
    * @param commandName
    * @param args
    */
-  executeCommand = (commandName: string, ...args: unknown[]) => {
+  executeCommand(commandName: string, ...args: unknown[]) {
     try {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
@@ -162,7 +162,7 @@ class RawEditor extends EmberObject {
     } catch (e) {
       console.error(e);
     }
-  };
+  }
 
   /**
    * Check if a command can be executed in the given context
