@@ -5,7 +5,7 @@
     </svg>
     <span class="say-u-hidden-visually">{{@dropdownButtonLabel}}</span>
   </button>
-  <div id="{{this.dropdownId}}" class="say-dropdown__menu {{if this.dropdownOpen "is-visible" ""}}" role="menu" tabindex="-1" {{focus-trap isActive=this.dropdownOpen shouldSelfFocus=true focusTrapOptions=(hash onDeactivate=this.toggleDropdown clickOutsideDeactivates=true)}} {{on "click" this.toggleDropdown}}>
+  <div id="{{this.dropdownId}}" class="say-dropdown__menu {{if this.dropdownOpen "is-visible" ""}}" role="menu" tabindex="-1" {{focus-trap isActive=this.dropdownOpen shouldSelfFocus=true focusTrapOptions=(hash onDeactivate=this.deactivateDropdown clickOutsideDeactivates=true)}} {{on "click" this.deactivateDropdown}}>
     {{yield}}
   </div>
 </div>

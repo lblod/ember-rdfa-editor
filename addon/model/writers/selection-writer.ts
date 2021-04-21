@@ -3,6 +3,10 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 
 /**
  * Writer to convert a {@link ModelSelection} to a {@link Selection}
@@ -40,16 +44,25 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
    */
   writeDomPosition(position: ModelPosition): { anchor: Node, offset: number } {
 
-    let modelAnchor = position.parent.childAtOffset(position.parentOffset);
-    if(!modelAnchor) {
-      // position is after last child
-      modelAnchor = position.parent;
-      const resultOffset = modelAnchor.length;
-      return {anchor: modelAnchor.boundNode!, offset: resultOffset};
-
+    const nodeAfter = position.nodeAfter();
+    const nodeBefore = position.nodeBefore();
+    if (!nodeAfter) {
+      return {anchor: position.parent.boundNode!, offset: position.parent.boundNode!.childNodes.length};
     }
-    const resultOffset = position.parentOffset - modelAnchor.getOffset();
-    return {anchor: modelAnchor.boundNode!, offset: resultOffset};
+    if (ModelElement.isModelText(nodeAfter)) {
+      return {anchor: nodeAfter.boundNode!, offset: position.parentOffset - nodeAfter.getOffset()};
+
+    } else if (ModelElement.isModelText(nodeBefore)) {
+      // we prefer textnode anchors, so we look both ways
+      return {anchor: nodeBefore.boundNode!, offset: position.parentOffset - nodeBefore.getOffset()}
+
+    } else if (ModelElement.isModelElement(nodeAfter)) {
+      const domAnchor = position.parent.boundNode!;
+      const domIndex = ArrayUtils.indexOf(nodeAfter.boundNode!, (domAnchor as HTMLElement).childNodes)!;
+      return {anchor: position.parent.boundNode!, offset: domIndex};
+    } else {
+      throw new ModelError("Unsupported nodetype");
+    }
 
   }
 

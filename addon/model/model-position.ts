@@ -66,6 +66,9 @@ export default class ModelPosition {
   }
 
   static fromInElement(element: ModelElement, offset: number) {
+    if(element.type === "br") {
+      return ModelPosition.fromBeforeNode(element);
+    }
     if (offset < 0 || offset > element.getMaxOffset()) {
       throw new PositionError(`Offset ${offset} out of range of element with maxOffset ${element.getMaxOffset()}`);
     }
