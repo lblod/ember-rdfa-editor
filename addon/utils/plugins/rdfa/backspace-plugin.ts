@@ -231,7 +231,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
 
       updatedSelection = moveCaretBefore(rdfaElement);
       rdfaElement.remove();
-      removedElement = rdfaElement as HTMLElement; //TODO: is this wrong to assume so?
+      removedElement = rdfaElement ; //TODO: is this wrong to assume so?
       editor.updateRichNode();
     }
     else if(this.isManipulationSupportedFor(SUPPORTED_ELEMENT_MANIPULATIONS, manipulation)){

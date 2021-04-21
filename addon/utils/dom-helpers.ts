@@ -304,7 +304,7 @@ function findPreviousLi(currLI: HTMLLIElement): HTMLLIElement | null {
  */
 function getParentLI(node: Node): HTMLLIElement | null {
   if (!node.parentNode) return null;
-  if (isLI(node.parentNode)) return (node.parentNode as HTMLLIElement);
+  if (isLI(node.parentNode)) return (node.parentNode );
   return getParentLI(node.parentNode);
 }
 

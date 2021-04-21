@@ -201,7 +201,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     }
     textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
-    editor.setCaret(textNode, (textNode as Text).length);
+    editor.setCaret(textNode, (textNode ).length);
   }
 }
 
@@ -230,5 +230,5 @@ function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor) : void {
   }
   textNode = ensureValidTextNodeForCaret(textNode as Text);
   editor.updateRichNode();
-  editor.setCaret(textNode, (textNode as Text).length);
+  editor.setCaret(textNode, (textNode ).length);
 }

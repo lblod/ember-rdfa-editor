@@ -8,7 +8,7 @@ module.exports = {
     sourceType: 'module',
     ecmaFeatures: {
       legacyDecorators: true
-    }
+    },
 
   },
   plugins: [
@@ -64,6 +64,9 @@ module.exports = {
     // typescript
     {
       "files": ["**/*.ts", "**/*.tsx"],
+      parserOptions: {
+        project: ['tsconfig.json']
+      },
       rules: {
         'ember/no-jquery': 'error',
         'semi': 'off',
@@ -93,7 +96,26 @@ module.exports = {
         '@typescript-eslint/no-var-requires': 'error',
         '@typescript-eslint/prefer-as-const': 'error',
         '@typescript-eslint/prefer-namespace-keyword': 'error',
-        '@typescript-eslint/triple-slash-reference': 'error'
+        '@typescript-eslint/triple-slash-reference': 'error',
+        // rules requiring typechecking (aka slower)
+
+        '@typescript-eslint/await-thenable': 'error',
+        '@typescript-eslint/no-floating-promises': 'error',
+        '@typescript-eslint/no-for-in-array': 'error',
+        'no-implied-eval': 'off',
+        '@typescript-eslint/no-implied-eval': 'error',
+        '@typescript-eslint/no-misused-promises': 'error',
+        '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+        '@typescript-eslint/no-unsafe-assignment': 'error',
+        '@typescript-eslint/no-unsafe-call': 'error',
+        '@typescript-eslint/no-unsafe-member-access': 'error',
+        '@typescript-eslint/no-unsafe-return': 'error',
+        '@typescript-eslint/prefer-regexp-exec': 'error',
+        'require-await': 'off',
+        '@typescript-eslint/require-await': 'error',
+        '@typescript-eslint/restrict-plus-operands': 'error',
+        '@typescript-eslint/restrict-template-expressions': 'error',
+        '@typescript-eslint/unbound-method': ['error', {'ignoreStatic': true}],
       },
     }
   ]

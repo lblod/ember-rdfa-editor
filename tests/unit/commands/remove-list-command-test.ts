@@ -233,7 +233,7 @@ module("Unit | commands | remove-list-command", hooks => {
     modelSelection.clearRanges();
     modelSelection.addRange(range);
     command.execute();
-    const resultRoot = model.rootModelNode as ModelElement;
+    const resultRoot = model.rootModelNode ;
 
     for (let i = 0; i < resultRoot.children.length; i++) {
       const actual = resultRoot.children[i];

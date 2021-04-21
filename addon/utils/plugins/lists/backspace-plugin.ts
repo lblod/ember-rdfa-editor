@@ -34,21 +34,21 @@ export default class ListBackspacePlugin implements BackspacePlugin {
       /*
        * removing an (empty-ish) list item
        */
-      manipulation as ElementRemovalManipulation;
+      manipulation ;
       const element = manipulation.node;
       if (element && tagName(element) == "li") {
         return this.guidanceForRemoveListItem(element);
       }
     }
     else if (manipulation.type == "moveCursorBeforeElement") {
-      manipulation as MoveCursorBeforeElementManipulation;
+      manipulation ;
       const element = manipulation.node;
       if (tagName(element) == "li") {
         return this.guidanceForJumpBeforeLi(element);
       }
     }
     else if (manipulation.type == "moveCursorToEndOfElement") {
-      manipulation as MoveCursorToEndOfElementManipulation;
+      manipulation ;
       const element = manipulation.node;
       if (["ul", "ol"].includes(tagName(element))) {
         return {
@@ -58,7 +58,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
       }
     }
     else if (manipulation.type == "removeEmptyTextNode") {
-      manipulation as RemoveEmptyTextNodeManipulation;
+      manipulation ;
       const text = manipulation.node;
       const element = text.parentElement as Element;
       if (element && tagName(element) == "li" && element?.firstChild == text) {

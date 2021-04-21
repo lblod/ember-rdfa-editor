@@ -59,9 +59,9 @@ export class MagicSpan implements VisualChangeReferencePoint {
     const referenceFrame = this.editor.rootNode.getBoundingClientRect();
     const targets = Array.from(this.span.getClientRects());
     if (!this.firstMeasurePoint.length) {
-      this.firstMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
+      this.firstMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame , target ));
     } else {
-      this.secondMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
+      this.secondMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame , target ));
     }
   }
 
@@ -93,7 +93,7 @@ class Caret implements VisualChangeReferencePoint {
       if (selection.rangeCount > 0) {
         const referenceFrame = this.editor.rootNode.getBoundingClientRect();
         const targets = Array.from(selection.getRangeAt(0).getClientRects());
-        return targets.map(target => getRelativeDomRectCoordinates(referenceFrame as DOMRect, target as DOMRect));
+        return targets.map(target => getRelativeDomRectCoordinates(referenceFrame , target ));
       }
     }
     return [];
@@ -131,7 +131,7 @@ class VisibleTextLength implements VisualChangeReferencePoint {
 
   private getVisibleText(): string {
     if (this.textNode.parentElement) {
-      return (this.textNode.parentElement as HTMLElement).innerText;
+      return (this.textNode.parentElement ).innerText;
     }
     return '';
   }
@@ -145,7 +145,7 @@ class VisibleTextLength implements VisualChangeReferencePoint {
   }
 
   get hasChangedVisually(): boolean {
-    return stringToVisibleText(this.firstMeasurePoint as string) !== stringToVisibleText(this.secondMeasurePoint as string);
+    return stringToVisibleText(this.firstMeasurePoint ) !== stringToVisibleText(this.secondMeasurePoint );
   }
 
   cleanUp(): void {
@@ -612,7 +612,7 @@ export default class DeleteHandler implements InputHandler {
       }
 
       case "removeOtherNode": {
-        const otherNode = manipulation.node as Node;
+        const otherNode = manipulation.node ;
         //TODO: it is not very clear to me, why we use removeChild here instead of .remove().
         // taken from backspace-handler
         if (otherNode.parentElement) {
@@ -682,7 +682,7 @@ export default class DeleteHandler implements InputHandler {
 
       case "character": {
         // character: remove the character
-        const characterAfterCursor = thingAfterCursor as CharacterPosition;
+        const characterAfterCursor = thingAfterCursor ;
         return {
           type: "removeCharacter",
           node: characterAfterCursor.node,
@@ -692,7 +692,7 @@ export default class DeleteHandler implements InputHandler {
       }
       case "emptyTextNodeStart": {
         // empty text node: remove the text node
-        const textNodeAfterCursor = thingAfterCursor as EmptyTextNodeStartPosition;
+        const textNodeAfterCursor = thingAfterCursor ;
         if (stringToVisibleText(textNodeAfterCursor.node.textContent || "").length === 0) {
           return {
             type: "removeEmptyTextNode",
@@ -705,7 +705,7 @@ export default class DeleteHandler implements InputHandler {
       }
       case "emptyTextNodeEnd": {
         // empty text node: remove the text node
-        const textNodePositionAfterCursor = thingAfterCursor as EmptyTextNodeEndPosition;
+        const textNodePositionAfterCursor = thingAfterCursor ;
         if (stringToVisibleText(textNodePositionAfterCursor.node.textContent || "").length === 0) {
           return {
             type: "removeEmptyTextNode",
@@ -717,7 +717,7 @@ export default class DeleteHandler implements InputHandler {
 
       }
       case "voidElement": {
-        const voidElementAfterCursor = thingAfterCursor as VoidElementPosition;
+        const voidElementAfterCursor = thingAfterCursor ;
         return {
           type: "removeVoidElement",
           node: voidElementAfterCursor.node
@@ -725,7 +725,7 @@ export default class DeleteHandler implements InputHandler {
 
       }
       case "elementEnd": {
-        const elementAfterCursor = thingAfterCursor as ElementEndPosition;
+        const elementAfterCursor = thingAfterCursor ;
         if (hasVisibleChildren(elementAfterCursor.node)) {
           return {
             type: "removeBoundaryForwards",
@@ -740,7 +740,7 @@ export default class DeleteHandler implements InputHandler {
 
       }
       case "elementStart": {
-        const parentAfterCursor = thingAfterCursor as ElementStartPosition;
+        const parentAfterCursor = thingAfterCursor ;
         const element = parentAfterCursor.node;
         if (hasVisibleChildren(element)) {
           return {
@@ -756,7 +756,7 @@ export default class DeleteHandler implements InputHandler {
 
       }
       case "uncommonNodeStart": {
-        const positionAfterCursor = thingAfterCursor as UncommonNodeStartPosition;
+        const positionAfterCursor = thingAfterCursor ;
         const node = positionAfterCursor.node;
         return {
           type: "removeOtherNode",
@@ -867,7 +867,7 @@ export default class DeleteHandler implements InputHandler {
           } else {
             // position is not the last so there is a child node after our cursor
             // position is the number of child nodes between the start of the startNode and our cursor.
-            const child = element.childNodes[position] as ChildNode;
+            const child = element.childNodes[position] ;
             if (child && child.nodeType == Node.TEXT_NODE) {
               const textNode = child as Text;
               if (stringToVisibleText(textNode.textContent || "").length == 0) {
@@ -880,7 +880,7 @@ export default class DeleteHandler implements InputHandler {
               if (isVoidElement(element)) {
                 return {type: "voidElement", node: element as VoidElement};
               } else {
-                return {type: "elementStart", node: element as HTMLElement};
+                return {type: "elementStart", node: element };
               }
             } else {
               const uncommonNode = ensureUncommonNode(child, "Assumed all node cases exhausted and uncommon node found in delete handler.  But node is not an uncommon node.");

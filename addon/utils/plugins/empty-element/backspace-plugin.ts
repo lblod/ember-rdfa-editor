@@ -13,7 +13,7 @@ export default class EmptyElementBackspacePlugin implements BackspacePlugin {
 
   guidanceForManipulation(manipulation: Manipulation) : ManipulationGuidance | null {
     if (manipulation.type == "moveCursorToEndOfElement") {
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       if (element.innerText.length == 0) {
         // no visible text or height (br shows up as newline in innerText), so jump before and remove
         return {

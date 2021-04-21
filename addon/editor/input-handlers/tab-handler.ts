@@ -83,7 +83,7 @@ export default class TabInputHandler implements InputHandler {
 
     /************************ SHIFT TAB ************************/
     if (manipulation.type == 'moveCursorToEndOfElement') {
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       let textNode;
       if(element.lastChild && element.lastChild.nodeType == Node.TEXT_NODE){
         textNode = element.lastChild as Text;
@@ -93,13 +93,13 @@ export default class TabInputHandler implements InputHandler {
         element.append(textNode);
       }
 
-      textNode = ensureValidTextNodeForCaret(textNode as Text);
+      textNode = ensureValidTextNodeForCaret(textNode );
       this.rawEditor.updateRichNode();
       this.rawEditor.setCaret(textNode, textNode.length);
     }
 
     else if(manipulation.type == 'moveCursorBeforeElement'){
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       let textNode;
       if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
         textNode = element.previousSibling;
@@ -121,7 +121,7 @@ export default class TabInputHandler implements InputHandler {
 
     /************************ TAB ************************/
     else if (manipulation.type == 'moveCursorToStartOfElement') {
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       let textNode;
       if(element.firstChild && element.firstChild.nodeType == Node.TEXT_NODE){
         textNode = element.firstChild;
@@ -137,7 +137,7 @@ export default class TabInputHandler implements InputHandler {
     }
 
     else if(manipulation.type == 'moveCursorAfterElement'){
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       let textNode;
       if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
         textNode = element.nextSibling;

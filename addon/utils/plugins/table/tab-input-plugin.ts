@@ -38,7 +38,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     const selectedIndex = ModelTable.getCellIndex(selectedCell);
 
     while(selectedCell?.parent) {
-      const parent = selectedCell.parent as ModelElement;
+      const parent = selectedCell.parent ;
       if(parent.type === 'table') {
         table = parent as ModelTable;
         break;
