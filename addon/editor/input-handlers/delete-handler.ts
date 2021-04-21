@@ -112,12 +112,13 @@ class Caret implements VisualChangeReferencePoint {
   }
 
   cleanUp(): void {
-  } //nothing to do
+    //nothing to do
+  }
 }
 
 class VisibleTextLength implements VisualChangeReferencePoint {
-  firstMeasurePoint: String;
-  secondMeasurePoint: String;
+  firstMeasurePoint: string;
+  secondMeasurePoint: string;
   textNode: Text;
   editor: LegacyRawEditor;
 
@@ -128,7 +129,7 @@ class VisibleTextLength implements VisualChangeReferencePoint {
     this.textNode = textNode;
   }
 
-  private getVisibleText(): String {
+  private getVisibleText(): string {
     if (this.textNode.parentElement) {
       return (this.textNode.parentElement as HTMLElement).innerText;
     }
@@ -148,7 +149,8 @@ class VisibleTextLength implements VisualChangeReferencePoint {
   }
 
   cleanUp(): void {
-  } //nothing to do
+    //nothing to do
+  }
 }
 
 /**
@@ -184,7 +186,7 @@ interface BaseThingAfterCursor {
 interface CharacterPosition extends BaseThingAfterCursor {
   type: "character";
   node: Text;
-  position: any;
+  position: number;
 }
 
 /**
@@ -342,7 +344,7 @@ export interface DeletePlugin {
  * @extends EmberObject
  */
 export default class DeleteHandler implements InputHandler {
-  isLocked: Boolean;
+  isLocked: boolean;
   /**
    * The editor instance on which we can execute changes.
    *

@@ -62,7 +62,7 @@ interface BaseThingBeforeCursor {
 interface CharacterPosition extends BaseThingBeforeCursor {
   type: "character";
   node: Text;
-  position: any;
+  position: unknown;
 }
 
 
@@ -275,7 +275,7 @@ export interface BackspacePlugin {
  * @extends EmberObject
  */
 export default class BackspaceHandler implements InputHandler {
-  isLocked: Boolean = false;
+  isLocked = false;
   /**
    * The editor instance on which we can execute changes.
    *

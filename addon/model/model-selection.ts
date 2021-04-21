@@ -129,7 +129,7 @@ export default class ModelSelection {
     this._ranges = [];
   }
 
-  selectRange(range: ModelRange, rightToLeft: boolean = false) {
+  selectRange(range: ModelRange, rightToLeft = false) {
     this.clearRanges();
     this.addRange(range);
     this._isRightToLeft = rightToLeft;
@@ -376,7 +376,7 @@ export default class ModelSelection {
   }
 
 
-  collapseOn(node: ModelNode, offset: number = 0) {
+  collapseOn(node: ModelNode, offset = 0) {
     this.clearRanges();
     const position = ModelPosition.fromParent(this.model.rootModelNode, node, offset);
     this.addRange(new ModelRange(position, position));

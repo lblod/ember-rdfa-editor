@@ -338,7 +338,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     }
   }
 
-  isManipulationSupportedFor(manipulationTypes: Array<String>, manipulation : Manipulation) : boolean {
+  isManipulationSupportedFor(manipulationTypes: Array<string>, manipulation : Manipulation) : boolean {
     return manipulationTypes.some(manipulationType => manipulationType === manipulation.type );
   }
 

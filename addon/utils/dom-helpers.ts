@@ -40,7 +40,7 @@ function sliceTextIntoTextNode(textNode: Text, text: string, start: number): voi
  * @method insertTextNodeWithSpace
  * @public
  */
-function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNode | null = null, after: boolean = false): Text {
+function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNode | null = null, after = false): Text {
   const textNode = document.createTextNode(invisibleSpace);
   if (relativeToSibling) {
     if (after) {

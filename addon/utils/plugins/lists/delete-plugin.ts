@@ -31,7 +31,7 @@ import { isInList } from "../../ce/list-helpers";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function debug(message: String, object: Object | null = null): void {
+function debug(message: string, object: unknown = null): void {
   runInDebug(() => {
     console.debug(`list delete plugin: ${message}`, object);
   });

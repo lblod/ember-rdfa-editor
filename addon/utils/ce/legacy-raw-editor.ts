@@ -24,7 +24,7 @@ export default class LegacyRawEditor extends PernetRawEditor {
    * @public
    */
   components!: Ember.NativeArray<{id: string}>;
-  constructor(...args: any[]) {
+  constructor(...args: unknown[]) {
     super(...args);
     this.set('components', A());
   }
@@ -200,7 +200,7 @@ export default class LegacyRawEditor extends PernetRawEditor {
    * @return {String} id componentID
    * @public
    */
-  insertComponent(position: number | Element, name: string, content: Object, id = uuidv4()) {
+  insertComponent(position: number | Element, name: string, content: unknown, id = uuidv4()) {
     let el;
     if (position instanceof Element) {
       el = position;
@@ -241,6 +241,7 @@ function deprecate(message: string) {
 function uuidv4() {
   // this actually does work because of JS conversion magic.
   // copied from a library, so it's ugly but probably very optimized
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => {
     return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);

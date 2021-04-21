@@ -63,9 +63,9 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
   private readonly _root: ModelElement;
   private readonly _filter?: ModelNodeFilter;
   private _currentNode: ModelNode;
-  private hasReturnedStartNode: boolean = false;
+  private hasReturnedStartNode = false;
   private readonly nodeAfterEnd: ModelNode | null = null;
-  private hasSeenEnd: boolean = false;
+  private hasSeenEnd = false;
   private descend: boolean;
   private visitParentUpwards: boolean;
 

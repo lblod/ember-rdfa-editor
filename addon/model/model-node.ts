@@ -7,7 +7,7 @@ import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
 export interface NodeConfig {
-  debugInfo: any;
+  debugInfo: unknown;
 }
 
 /**
@@ -21,7 +21,7 @@ export default abstract class ModelNode {
   private _boundNode: Node | null = null;
   private _nextSibling: ModelNode | null = null;
   private _previousSibling: ModelNode | null = null;
-  private _debugInfo: any;
+  private _debugInfo: unknown;
 
 
   protected constructor(config?: NodeConfig) {
@@ -189,11 +189,11 @@ export default abstract class ModelNode {
   /**
    * Debugging utility
    */
-  get debugInfo(): any {
+  get debugInfo(): unknown {
     return this._debugInfo;
   }
 
-  set debugInfo(value: any) {
+  set debugInfo(value: unknown) {
     this._debugInfo = value;
   }
 

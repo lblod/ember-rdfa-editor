@@ -82,9 +82,7 @@ class RawEditor extends EmberObject {
     this.model = new Model(rootNode);
     this.modelSelectionTracker = new ModelSelectionTracker(this.model);
     this.modelSelectionTracker.startTracking();
-    // @ts-ignore
     window.__VDOM = this.model;
-    // @ts-ignore
     window.__executeCommand = this.executeCommand.bind(this);
     this.registerCommand(new MakeBoldCommand(this.model));
     this.registerCommand(new RemoveBoldCommand(this.model));
@@ -122,10 +120,6 @@ class RawEditor extends EmberObject {
     return this.model.rootNode;
   }
 
-  get selection(): ModelSelection {
-    return this.model.selection;
-  }
-
   set rootNode(rootNode: HTMLElement) {
     if (rootNode) {
       this.initialize(rootNode);
@@ -134,6 +128,11 @@ class RawEditor extends EmberObject {
       this.updateRichNode();
     }
   }
+
+  get selection(): ModelSelection {
+    return this.model.selection;
+  }
+
 
   get rootModelNode(): ModelElement {
     return this.model.rootModelNode;
@@ -152,7 +151,7 @@ class RawEditor extends EmberObject {
    * @param commandName
    * @param args
    */
-  executeCommand(commandName: string, ...args: any[]) {
+  executeCommand(commandName: string, ...args: unknown[]) {
     try {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {

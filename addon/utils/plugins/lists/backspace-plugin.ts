@@ -12,7 +12,7 @@ import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/
 import { runInDebug } from '@ember/debug';
 import { findLastLi, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
-function debug(message: String, object: Object | null = null): void {
+function debug(message: string, object: unknown = null): void {
   runInDebug(() => {
     console.debug(`list backspace plugin: ${message}`, object);
   });

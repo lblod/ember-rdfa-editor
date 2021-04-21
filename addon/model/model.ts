@@ -58,7 +58,7 @@ export default class Model {
   /**
    * Read in the document and build up the model
    */
-  read(readSelection: boolean = true) {
+  read(readSelection = true) {
     const newRoot = this.reader.read(this.rootNode);
     if (!newRoot) {
       throw new Error("Could not create a rich root");
@@ -142,7 +142,7 @@ export default class Model {
   }
 
 
-  change(callback: (mutator: ModelMutator) => void, autoSelect: boolean = true) {
+  change(callback: (mutator: ModelMutator) => void, autoSelect = true) {
     const mutator = new ModelMutator();
     callback(mutator);
     const resultingRange = mutator.flush();

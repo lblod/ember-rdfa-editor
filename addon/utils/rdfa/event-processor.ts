@@ -168,7 +168,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
     }
   }
 
-  handleFullContentUpdate(extraInfo: Array<Object> = []) {
+  handleFullContentUpdate(extraInfo: Array<unknown> = []) {
     this.analyseAndDispatch(extraInfo);
   }
 

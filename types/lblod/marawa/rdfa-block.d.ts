@@ -2,7 +2,7 @@ declare module '@lblod/marawa/rdfa-block' {
   import RichNode from "@lblod/marawa/rich-node";
   type Region = [number, number];
   export default class RdfaBlock {
-    constructor(content: Object);
+    constructor(content: unknown);
 
     get region(): Region;
     set region(region: Region);
