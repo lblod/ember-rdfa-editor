@@ -66,10 +66,10 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
   /**
    * executor that will move the cursor before the last br of the element
    */
-  moveCaretBeforeLastBrOfElement(manipulation: MoveCursorToEndOfElementManipulation) {
+  moveCaretBeforeLastBrOfElement = (manipulation: MoveCursorToEndOfElementManipulation) => {
     const element = manipulation.node;
     moveCaretBefore(element.childNodes[element.childNodes.length - 1]);
-  }
+  };
 
   /**
    * allows the plugin to notify the backspace handler a change has occured.

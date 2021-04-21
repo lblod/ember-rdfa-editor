@@ -30,7 +30,7 @@ export default class PlaceholderTextInputPlugin implements TextInputPlugin {
    * This executor replaces the placeholder node with a text node containing the provided input
    * @method removePlaceholder
    */
-  replacePlaceHolder(manipulation: (InsertTextIntoTextNodeManipulation | InsertTextIntoElementManipulation), editor: Editor) : void {
+  replacePlaceHolder = (manipulation: (InsertTextIntoTextNodeManipulation | InsertTextIntoElementManipulation), editor: Editor): void => {
     const node = manipulation.node;
     if (node.parentElement) {
       const parent = node.parentElement;
@@ -40,5 +40,5 @@ export default class PlaceholderTextInputPlugin implements TextInputPlugin {
       editor.updateRichNode();
       editor.setCaret(textNode, textNode.length);
     }
-  }
+  };
 }

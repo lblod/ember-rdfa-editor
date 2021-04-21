@@ -43,5 +43,5 @@ export default function globalTextOffsetToPath(root: ModelElement, offset: numbe
       startOffset = startOffset + 1;
     }
   }
-  throw new Error("no valid node found for offset " + offset);
+  throw new Error(`no valid node found for offset ${offset}`);
 }

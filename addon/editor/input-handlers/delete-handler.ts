@@ -292,7 +292,7 @@ function ensureUncommonNode(node: Node, errorMessage?: string): UncommonNode {
     Node.DOCUMENT_FRAGMENT_NODE].includes(node.nodeType)) {
     return node as UncommonNode;
   } else {
-    throw errorMessage || `Received node ${node} is not an UncommonNode.`;
+    throw errorMessage || `Received node ${node.toString()} is not an UncommonNode.`;
   }
 }
 
@@ -413,7 +413,7 @@ export default class DeleteHandler implements InputHandler {
       return {allowPropagation: false};
     }
 
-    this.deleteForward().then(() => {
+    void this.deleteForward().then(() => {
       this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
     });
     return {allowPropagation: false};

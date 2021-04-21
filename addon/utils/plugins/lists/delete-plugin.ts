@@ -77,7 +77,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       ) => {
         this.mergeBackwards(manipulation.node, editor);
       };
-      return { allow: true, executor: dispatch.bind(this) };
+      return { allow: true, executor: dispatch };
     }
     return null;
   }
@@ -91,7 +91,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       ) => {
         this.mergeForwards(manipulation.node, editor);
       };
-      return { allow: true, executor: dispatch.bind(this) };
+      return { allow: true, executor: dispatch };
     }
     return null;
   }
@@ -111,7 +111,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       ) => {
         this.mergeForwards(manipulation.node, editor);
       };
-      return { allow: true, executor: dispatcher.bind(this) };
+      return { allow: true, executor: dispatcher };
     }
     return null;
   }

@@ -32,10 +32,10 @@ export default class ContentEditableFalseBackspacePlugin implements BackspacePlu
    * executor that will move the cursor before the element we're supposed to jump into
    * and remove the element
    */
-  jumpBeforeElement( manipulation: MoveCursorToEndOfElementManipulation) {
+  jumpBeforeElement = ( manipulation: MoveCursorToEndOfElementManipulation) => {
     const element = manipulation.node;
     moveCaretBefore(element);
-  }
+  };
 
   /**
    * allows the plugin to notify the backspace handler a change has occured.

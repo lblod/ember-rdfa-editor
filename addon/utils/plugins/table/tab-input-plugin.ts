@@ -1,5 +1,4 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {
   Manipulation,
   ManipulationExecutor,
@@ -8,6 +7,7 @@ import {
 import RawEditor from 'dummy/utils/ce/raw-editor';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 /**
  *
@@ -28,7 +28,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     return null;
   }
 
-  tabHandler(manipulation : Manipulation, editor: RawEditor) {
+  tabHandler = (manipulation : Manipulation, editor: RawEditor) => {
     let table;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);
@@ -38,7 +38,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     const selectedIndex = ModelTable.getCellIndex(selectedCell);
 
     while(selectedCell?.parent) {
-      const parent = selectedCell.parent ;
+      const parent: ModelElement = selectedCell.parent ;
       if(parent.type === 'table') {
         table = parent as ModelTable;
         break;
@@ -95,5 +95,5 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     if(!newSelectedCell) return;
     selection.collapseOn(newSelectedCell);
     editor.model.write();
-  }
+  };
 }

@@ -63,19 +63,19 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     if(this.needsRemoveStep(manipulation)){
       return {
         allow: true,
-        executor: this.executeRemoveStep.bind(this)  //TODO: extract these functions out of the class.
+        executor: this.executeRemoveStep  //TODO: extract these functions out of the class.
       };
     }
     else if(this.needsCompleteStep(manipulation)){
       return {
         allow: true,
-        executor: this.executeCompleteStep.bind(this)
+        executor: this.executeCompleteStep
       };
     }
     else if(this.needsAlmostCompleteStep(manipulation)){
       return {
         allow: true,
-        executor: this.executeAlmostCompleteStep.bind(this)
+        executor: this.executeAlmostCompleteStep
       };
     }
     return null;
@@ -186,20 +186,20 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    * Note: this is only done on TextNode operations for now.
    * (again) It feels like such flow for emptyElements would feel cumbersome. (And add complexity)
    */
-  executeAlmostCompleteStep(manipulation: Manipulation) : void {
+  executeAlmostCompleteStep = (manipulation: Manipulation): void => {
     const node = manipulation.node;
     const parent = node.parentElement;
 
     if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation) && parent){
       parent.setAttribute('data-flagged-remove', 'almost-complete');
     }
-  }
+  };
 
   /**
    * For textNode manipulations, removes the last visible text node and adds `data-flagged-remove=complete` to the parent.
    * For empty element manipulation, just adds `data-flagged-remove=complete`
    */
-  executeCompleteStep(manipulation: Manipulation, editor: Editor ) : void {
+  executeCompleteStep = (manipulation: Manipulation, editor: Editor ): void => {
     const node = manipulation.node;
     const parent = node.parentElement;
 
@@ -214,12 +214,12 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       editor.updateRichNode();
       editor.setCaret(node, 0);
     }
-  }
+  };
 
   /*
    * Last step. The rdfa element is removed.
    */
-  executeRemoveStep(manipulation: Manipulation, editor: Editor ) : void {
+  executeRemoveStep = (manipulation: Manipulation, editor: Editor ): void => {
     let removedElement;
     let updatedSelection;
 
@@ -227,7 +227,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       const node = manipulation.node;
       const rdfaElement = node.parentElement;
 
-      if(!rdfaElement) throw `rdfa/backspace-plugin: Expected ${node} node to have a parent.`;
+      if(!rdfaElement) throw `rdfa/backspace-plugin: Expected ${node.toString()} node to have a parent.`;
 
       updatedSelection = moveCaretBefore(rdfaElement);
       rdfaElement.remove();
@@ -290,7 +290,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       }
 
     }
-  }
+  };
 
   doesElementLengthRequireAlmostComplete(element: HTMLElement) : boolean {
     const visibleLength = stringToVisibleText(element.innerText).length;

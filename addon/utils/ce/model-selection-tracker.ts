@@ -7,7 +7,6 @@ export default class ModelSelectionTracker {
 
   constructor(model: Model) {
     this.model = model;
-    this.updateSelection = this.updateSelection.bind(this);
   }
 
   startTracking() {
@@ -18,7 +17,7 @@ export default class ModelSelectionTracker {
     document.removeEventListener('selectionchange', this.updateSelection);
   }
 
-  updateSelection() {
+  updateSelection = () => {
     const currentSelection = getWindowSelection();
     if (!this.model.rootNode.contains(currentSelection.anchorNode) || !this.model.rootNode.contains(currentSelection.focusNode) ||
       (currentSelection.type != 'Caret' && this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
@@ -31,5 +30,5 @@ export default class ModelSelectionTracker {
       {detail: this.model.selection}
     );
     document.dispatchEvent(modelSelectionUpdatedEvent);
-  }
+  };
 }

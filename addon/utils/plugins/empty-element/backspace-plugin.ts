@@ -29,12 +29,12 @@ export default class EmptyElementBackspacePlugin implements BackspacePlugin {
    * executor that will move the cursor before the element we're supposed to jump into
    * and remove the element
    */
-  jumpBeforeAndRemoveEmptyElement( manipulation: MoveCursorToEndOfElementManipulation, editor: Editor) {
+  jumpBeforeAndRemoveEmptyElement = ( manipulation: MoveCursorToEndOfElementManipulation, editor: Editor) => {
     const element = manipulation.node;
     moveCaretBefore(element);
     element.remove();
     editor.updateRichNode();
-  }
+  };
 
   /**
    * allows the plugin to notify the backspace handler a change has occured.

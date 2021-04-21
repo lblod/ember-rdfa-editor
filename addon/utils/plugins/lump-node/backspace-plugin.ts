@@ -61,16 +61,16 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * It assumes manipulation.node is located in a LumpNode
    * @method removeLumpNode
    */
-  removeLumpNode( manipulation: Manipulation, editor: Editor ) : void {
+  removeLumpNode = ( manipulation: Manipulation, editor: Editor ): void => {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
-    const lumpNode = getParentLumpNode(node, rootNode);
-    const parentOfLumpNode = lumpNode.parentNode;
+    const lumpNode = getParentLumpNode(node, rootNode) as ChildNode;
+    const parentOfLumpNode = lumpNode.parentNode!;
     const offset = Array.from(parentOfLumpNode.childNodes).indexOf(lumpNode);
     lumpNode.remove();
     editor.updateRichNode();
     editor.setCaret(parentOfLumpNode, offset);
-  }
+  };
 
   /**
    * Allows the plugin to notify the backspace handler a change has occured.
@@ -117,11 +117,11 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * Flags the LumpNode for removal.
    * @method flagForRemoval
    */
-  flagForRemoval( manipulation: Manipulation) : void {
+  flagForRemoval = ( manipulation: Manipulation): void => {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
     const lumpNode = getParentLumpNode(node, rootNode) as Element;
     lumpNode.setAttribute('data-flagged-remove', 'complete');
-  }
+  };
 
 }

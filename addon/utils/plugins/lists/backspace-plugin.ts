@@ -1,12 +1,10 @@
 import {
-  MoveCursorBeforeElementManipulation,
   MoveCursorToEndOfElementManipulation,
   ManipulationGuidance,
   Manipulation,
   Editor,
   RemoveEmptyElementManipulation,
   RemoveElementWithChildrenThatArentVisible,
-  RemoveEmptyTextNodeManipulation,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { runInDebug } from '@ember/debug';
@@ -121,7 +119,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will move the cursor to the end of the last list item in the list
    * @method jumpToLastLiOfList
    */
-  jumpToLastLiOfList(manipulation: MoveCursorToEndOfElementManipulation, editor: Editor) {
+  jumpToLastLiOfList = (manipulation: MoveCursorToEndOfElementManipulation, editor: Editor) => {
     const list = manipulation.node;
     if (["ul", "ol"].includes(tagName(list))) {
       const li = findLastLi(list as HTMLUListElement | HTMLOListElement);
@@ -135,7 +133,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     else {
       console.warn("element is not a list!");
     }
-  }
+  };
 
   /**
    * This is an executor provided to the backspace handler.
@@ -143,7 +141,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will remove both list and list item, but keep the contents of the list item. the cursor will be positioned before the first child node of the list item.
    * @method removeListItemAndListButKeepContent
    */
-  removeListItemAndListButKeepContent(manipulation: Manipulation, editor: Editor) {
+  removeListItemAndListButKeepContent = (manipulation: Manipulation, editor: Editor) => {
     let element;
 
     if(manipulation.type == 'moveCursorBeforeElement'){
@@ -163,7 +161,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     else {
       helpRemoveListItemAndListButKeepContent(element, editor);
     }
-  }
+  };
 
   /**
    * This is an executor provided to the backspace handler.
@@ -171,7 +169,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will move the contents of the first list item before the list and remove the list item. the cursor will be positioned before the first child node of the list item.
    * @method removeListItemAndMoveContentBeforeList
    */
-  removeListItemAndMoveContentBeforeList(manipulation: Manipulation, editor: Editor) {
+  removeListItemAndMoveContentBeforeList = (manipulation: Manipulation, editor: Editor) => {
     let element;
 
     if(manipulation.type == 'moveCursorBeforeElement'){
@@ -191,7 +189,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     else {
       helpRemoveListItemAndMoveContentBeforeList(element, editor);
     }
-  }
+  };
 
   /**
    * This is an executor provided to the backspace handler.
@@ -199,7 +197,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will move the content of the list item to its previous sibling and position the cursor before the first child node of the list item (at the end of the original content of the previous sibling). the list item is removed.
    * @method mergeWithPreviousLi
    */
-  mergeWithPreviousLi(manipulation: Manipulation, editor: Editor): void {
+  mergeWithPreviousLi = (manipulation: Manipulation, editor: Editor): void => {
     let element;
 
     if(manipulation.type == 'moveCursorBeforeElement'){
@@ -220,7 +218,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     else {
       helpMergeWithPreviousLi(element, editor);
     }
-  }
+  };
 
   /**
    * This is an executor provided to the backspace handler.
@@ -228,7 +226,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will remove the list item and position the cursor at the end of the previous list item.
    * @method removeListItemAndMoveToPreviousListItem
    */
-  removeListItemAndMoveToPreviousListItem(manipulation: ElementRemovalManipulation, editor: Editor): void {
+  removeListItemAndMoveToPreviousListItem = (manipulation: ElementRemovalManipulation, editor: Editor): void => {
     const element = manipulation.node;
     const li = element.previousElementSibling;
     if (li == null) {
@@ -239,7 +237,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
       element.remove();
       editor.updateRichNode();
     }
-  }
+  };
 
   /**
    * This is an executor provided to the backspace handler.
@@ -247,7 +245,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will remove the item and position the cursor before the list
    * @method removeListItemAndJumpBeforeList
    */
-  removeListItemAndJumpBeforeList(manipulation: ElementRemovalManipulation, editor: Editor): void {
+  removeListItemAndJumpBeforeList = (manipulation: ElementRemovalManipulation, editor: Editor): void => {
     const element = manipulation.node;
     const list = element.parentElement;
     if (list && ["ul", "ol"].includes(tagName(list))) {
@@ -263,7 +261,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     else {
       console.warn("parent of list item is not a list!");
     }
-  }
+  };
 
   /**
    * This is an executor provided to the backspace handler.
@@ -271,7 +269,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will position the cursor before the list and remove the list
    * @method removeListItemAndList
    */
-  removeListItemAndList(manipulation: ElementRemovalManipulation, editor: Editor): void {
+  removeListItemAndList = (manipulation: ElementRemovalManipulation, editor: Editor): void => {
     const element = manipulation.node;
     const list = element.parentElement;
     if (list && ["ul", "ol"].includes(tagName(list))) {
@@ -288,7 +286,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     else {
       console.warn("parent of list item is not a list!");
     }
-  }
+  };
 
   /**
    * allows the plugin to notify the backspace handler a change has occured.

@@ -257,7 +257,7 @@ export default class ModelSelection {
     if (!iterator) {
       return null;
     }
-    return iterator[Symbol.iterator]().next().value;
+    return iterator[Symbol.iterator]().next().value as T | null;
 
   }
 
@@ -292,7 +292,7 @@ export default class ModelSelection {
   isInside(types: string[]): PropertyState{
     //1. get all selected nodes
     if (ModelSelection.isWellBehaved(this)) {
-      const range = this.lastRange!;
+      const range = this.lastRange;
       const treeWalker = new ModelTreeWalker({
         range: range,
       });
@@ -321,7 +321,7 @@ export default class ModelSelection {
   }
   contains(types:string[]): PropertyState{
     if (ModelSelection.isWellBehaved(this)) {
-      const range = this.lastRange!;
+      const range = this.lastRange;
       const treeWalker = new ModelTreeWalker({
         range: range,
         filter: node => ModelNode.isModelElement(node) && types.includes(node.type)  ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP
@@ -362,7 +362,7 @@ export default class ModelSelection {
   getTextPropertyStatus(property: TextAttribute): PropertyState {
 
     if (ModelSelection.isWellBehaved(this)) {
-      const range = this.lastRange!;
+      const range = this.lastRange;
 
       const treeWalker = new ModelTreeWalker({
         range,

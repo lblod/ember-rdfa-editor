@@ -41,7 +41,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     return null;
   }
 
-  jumpOverLumpNode(manipulation: Manipulation, editor: Editor) : void {
+  jumpOverLumpNode = (manipulation: Manipulation, editor: Editor): void => {
     const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
     let textNode;
     if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
@@ -54,9 +54,9 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
     editor.setCaret(textNode, 0);
-  }
+  };
 
-  jumpOverLumpNodeBackwards( manipulation: Manipulation, editor: Editor ) : void {
+  jumpOverLumpNodeBackwards = (manipulation: Manipulation, editor: Editor ): void => {
     const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
     let textNode;
     if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
@@ -69,5 +69,5 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
     editor.setCaret(textNode, textNode.length);
-  }
+  };
 }

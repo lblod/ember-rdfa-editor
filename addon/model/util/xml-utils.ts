@@ -22,7 +22,7 @@ function buildString(strings: TemplateStringsArray, ...expressions: unknown[]) {
   let result = '';
 
   for(let i = 0; i<expressions.length; i++){
-    result += strings[i] + expressions[i];
+    result += `${strings[i]}${(expressions[i] as Record<string, unknown>).toString()}`;
   }
   result += strings[expressions.length];
   return result;
