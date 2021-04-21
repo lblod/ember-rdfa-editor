@@ -49,7 +49,8 @@ export function dom(strings: TemplateStringsArray, ...expressions: unknown[]) {
  * @param strings
  * @param expressions
  */
-export function domStripped(strings: TemplateStringsArray, ...expressions: unknown[]) {
+
+export function domStripped(strings: TemplateStringsArray, ...expressions: unknown[]): HTMLDocument {
   const htmlStr = oneLineTrim(strings, ...expressions);
   return parseHtml(htmlStr);
 }

@@ -9,7 +9,14 @@ export default class XmlElementReader implements Reader<Element, ModelElement, v
   }
 
   read(from: Element): ModelElement {
-    const rslt = new ModelElement(from.tagName as keyof HTMLElementTagNameMap);
+    let rslt;
+    if(from.tagName === "modelRoot") {
+      rslt = new ModelElement("div");
+      rslt.setAttribute("contenteditable", "");
+      rslt.setAttribute("class", "say-editor_inner say_content");
+    } else {
+      rslt = new ModelElement(from.tagName as keyof HTMLElementTagNameMap);
+    }
     const nodeReader = new XmlNodeReader(this.elementRegistry, this.textRegistry);
     for (const attribute of from.attributes) {
       if (attribute.name === "__id") {

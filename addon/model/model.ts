@@ -22,7 +22,7 @@ export default class Model {
    * so we trick typescript into assuming it is never null
    * @private
    */
-  private _rootModelNode!: ModelElement;
+  protected _rootModelNode!: ModelElement;
   private reader: HtmlReader;
   private writer: HtmlWriter;
   private nodeMap: WeakMap<Node, ModelNode>;

@@ -17,4 +17,22 @@ export default class ArrayUtils {
 
   }
 
+  /**
+   * indexOf for iterable things that don't have it for some reason
+   * (looking at you element.childNodes...)
+   * @param item
+   * @param iter
+   */
+  static indexOf<I, T extends Iterable<I>>(item: I, iter: T): number | null {
+    let counter = 0;
+    for(const it of iter) {
+      if(item === it) {
+        return counter;
+      }
+      counter++;
+    }
+    return null;
+
+  }
+
 }
