@@ -1,6 +1,5 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import ModelRange from "../model/model-range";

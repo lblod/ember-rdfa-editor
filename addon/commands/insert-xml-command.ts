@@ -9,7 +9,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
  * Particularly useful for testing and debugging
  */
 export default class InsertXmlCommand extends Command {
-  name: string = "insert-xml";
+  name = "insert-xml";
   constructor(model: Model) {
     super(model);
   }

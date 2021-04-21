@@ -59,7 +59,7 @@ export default class Model {
   /**
    * Read in the document and build up the model
    */
-  read(readSelection: boolean = true) {
+  read(readSelection = true) {
     const newRoot = this.reader.read(this.rootNode);
     if (!newRoot) {
       throw new Error("Could not create a rich root");
@@ -159,12 +159,13 @@ export default class Model {
     }
   }
 
+
   /**
    * Change the model by providing a callback with will receive a {@link BatchedModelMutator batched mutator}
    * The mutator gets flushed and the model gets written out automatically after the callback finishes.
    * @param callback
    */
-  batchChange(callback: (mutator: BatchedModelMutator) => ModelElement | void, autoSelect: boolean = true) {
+  batchChange(callback: (mutator: BatchedModelMutator) => ModelElement | void, autoSelect = true) {
     const mutator = new BatchedModelMutator(this);
     const subTree = callback(mutator);
     const resultingRange = mutator.flush();

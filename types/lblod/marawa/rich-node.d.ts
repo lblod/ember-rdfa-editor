@@ -7,12 +7,12 @@ declare module '@lblod/marawa/rich-node' {
   export interface RichNodeContent {
     start: number;
     end: number;
-    isLogicalBlock: Boolean;
+    isLogicalBlock: boolean;
     domNode: Node;
     parent: RichNode;
     rdfaBlocks: Array<RdfaBlock>;
     rdfaContext: Array<RdfaAttributes>;
-    rdfaPrefixes: Object;
+    rdfaPrefixes: unknown;
     text: string;
     type: string;
     children: RichNode[];
@@ -23,11 +23,11 @@ declare module '@lblod/marawa/rich-node' {
   export default class RichNode implements RichNodeContent {
     domNode: Node;
     end: number;
-    isLogicalBlock: Boolean;
+    isLogicalBlock: boolean;
     parent: RichNode;
     rdfaBlocks: Array<RdfaBlock>;
     rdfaContext: Array<RdfaAttributes>;
-    rdfaPrefixes: Object;
+    rdfaPrefixes: unknown;
     start: number;
     text: string;
     type: string;

@@ -22,7 +22,7 @@ const SUPPORTED_MANIPULATIONS = [
  * @module plugin/lump-node
  */
 export default class LumpNodeBackspacePlugin implements BackspacePlugin {
-  label = 'backspace plugin for handling LumpNodes'
+  label = 'backspace plugin for handling LumpNodes';
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
     //TODO: fix case.manipulation.node == lumpnode
@@ -43,13 +43,13 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
         return {
           allow: true,
           executor: this.removeLumpNode
-        }
+        };
       }
       else {
         return {
           allow: true,
           executor: this.flagForRemoval
-        }
+        };
       }
     }
 
@@ -61,16 +61,16 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * It assumes manipulation.node is located in a LumpNode
    * @method removeLumpNode
    */
-  removeLumpNode( manipulation: Manipulation, editor: Editor ) : void {
+  removeLumpNode = ( manipulation: Manipulation, editor: Editor ): void => {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
-    const lumpNode = getParentLumpNode(node, rootNode);
-    let parentOfLumpNode = lumpNode.parentNode;
-    let offset = Array.from(parentOfLumpNode.childNodes).indexOf(lumpNode);
+    const lumpNode = getParentLumpNode(node, rootNode) as ChildNode;
+    const parentOfLumpNode = lumpNode.parentNode!;
+    const offset = Array.from(parentOfLumpNode.childNodes).indexOf(lumpNode);
     lumpNode.remove();
     editor.updateRichNode();
     editor.setCaret(parentOfLumpNode, offset);
-  }
+  };
 
   /**
    * Allows the plugin to notify the backspace handler a change has occured.
@@ -117,11 +117,11 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * Flags the LumpNode for removal.
    * @method flagForRemoval
    */
-  flagForRemoval( manipulation: Manipulation, _editor: Editor) : void {
+  flagForRemoval = ( manipulation: Manipulation): void => {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
     const lumpNode = getParentLumpNode(node, rootNode) as Element;
     lumpNode.setAttribute('data-flagged-remove', 'complete');
-  }
+  };
 
 }

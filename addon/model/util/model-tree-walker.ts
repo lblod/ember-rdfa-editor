@@ -63,9 +63,9 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
   private readonly _root: ModelElement;
   private readonly _filter?: ModelNodeFilter;
   private _currentNode: ModelNode;
-  private hasReturnedStartNode: boolean = false;
+  private hasReturnedStartNode = false;
   private readonly nodeAfterEnd: ModelNode | null = null;
-  private hasSeenEnd: boolean = false;
+  private hasSeenEnd = false;
   private descend: boolean;
   private visitParentUpwards: boolean;
 
@@ -258,7 +258,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
     if (startNode === this.root) {
       return startNode;
     }
-    return startNode!.nextSibling!;
+    return startNode.nextSibling!;
   }
 
   private getNodeAfterEndFromPosition(position: ModelPosition, startNode: ModelNode): ModelNode | null {
@@ -277,12 +277,12 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
       return null;
     }
     while (!nodeAfterEnd.nextSibling && nodeAfterEnd !== this.root) {
-      nodeAfterEnd = nodeAfterEnd!.parent!;
+      nodeAfterEnd = nodeAfterEnd.parent!;
     }
     if (nodeAfterEnd === this.root) {
       return null;
     }
-    nodeAfterEnd = nodeAfterEnd!.nextSibling;
+    nodeAfterEnd = nodeAfterEnd.nextSibling;
     if (nodeAfterEnd === startNode) {
       return nodeAfterEnd.nextSibling;
     }

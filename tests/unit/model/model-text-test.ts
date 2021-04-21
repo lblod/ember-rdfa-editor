@@ -1,9 +1,9 @@
 import {test, module} from "qunit";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
-module("Unit | model | model-text-test", hooks => {
+module("Unit | model | model-text-test", () => {
 
-  module("Unit | model | model-text-test | sameAs", hooks => {
+  module("Unit | model | model-text-test | sameAs", () => {
     test("textnodes with same propertiesare the same", assert => {
       const t0 = new ModelText("abc");
       const t1 = new ModelText("abc");

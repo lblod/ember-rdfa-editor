@@ -3,7 +3,6 @@ import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-tex
 import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
 import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
-import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 
 export type ElementType = keyof HTMLElementTagNameMap;
@@ -205,7 +204,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * If withBreaks is true, insert a break after every child
    * @param withBreaks
    */
-  unwrap(withBreaks: boolean = false) {
+  unwrap(withBreaks = false) {
     const parent = this.parent;
     if (!parent) {
       throw new ModelError("Can't unwrap root node");
@@ -312,7 +311,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * @param offset
    * @param includeLast whether we should return the last node when given an offset after the last node
    */
-  childAtOffset(offset: number, includeLast: boolean = false): ModelNode | null {
+  childAtOffset(offset: number, includeLast = false): ModelNode | null {
     if (includeLast && offset === this.getMaxOffset()) {
       return this.lastChild;
     }
@@ -327,7 +326,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
   }
 
-  sameAs(other: ModelNode, strict: boolean = false): boolean {
+  sameAs(other: ModelNode, strict = false): boolean {
     if (!ModelNode.isModelElement(other)) {
       return false;
     }

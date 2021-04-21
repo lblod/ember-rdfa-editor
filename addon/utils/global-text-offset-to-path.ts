@@ -1,6 +1,5 @@
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelTreeWalker, { FilterResult } from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import RawEditor from './ce/raw-editor';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
@@ -44,5 +43,5 @@ export default function globalTextOffsetToPath(root: ModelElement, offset: numbe
       startOffset = startOffset + 1;
     }
   }
-  throw new Error("no valid node found for offset " + offset);
+  throw new Error(`no valid node found for offset ${offset}`);
 }

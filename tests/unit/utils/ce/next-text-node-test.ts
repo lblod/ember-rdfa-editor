@@ -16,7 +16,7 @@ module("Unit | Utility | ce/next-text-node", function () {
     const result = ceNextTextNode(child, root);
     assert.strictEqual(result, null);
   });
-  skip("inserts a new node after the current node if next node is not a text node", async function (assert) {
+  skip("inserts a new node after the current node if next node is not a text node", function (assert) {
     const root = document.createElement("div");
     const child1 = document.createElement("div");
     const child2 = document.createElement("div");
@@ -26,10 +26,10 @@ module("Unit | Utility | ce/next-text-node", function () {
     assert.notEqual(root, result);
     assert.notEqual(child1, result);
     assert.notEqual(child2, result);
-    assert.strictEqual(result.nodeType, Node.TEXT_NODE);
-    assert.strictEqual(result.textContent, invisibleSpace);
+    assert.strictEqual(result!.nodeType, Node.TEXT_NODE);
+    assert.strictEqual(result!.textContent, invisibleSpace);
   });
-  skip("returns next node if it is a text node", async function (assert) {
+  skip("returns next node if it is a text node", function (assert) {
     const root = document.createElement("div");
     const child1 = new Text("child1");
     const child2 = new Text("child2");
@@ -40,7 +40,7 @@ module("Unit | Utility | ce/next-text-node", function () {
     const result = ceNextTextNode(child1, root);
     assert.strictEqual(result, child2);
   });
-  test("returns next node if it is a text node nested", async function (assert) {
+  test("returns next node if it is a text node nested", function (assert) {
     const root = document.createElement("div");
     const complex_html = `
 <div>
@@ -82,6 +82,6 @@ module("Unit | Utility | ce/next-text-node", function () {
     const startNode = root.getElementsByClassName("test")[0].childNodes[0];
 
     const result = ceNextTextNode(startNode, root);
-    assert.strictEqual(result.textContent, "li1");
+    assert.strictEqual(result!.textContent, "li1");
   });
 });

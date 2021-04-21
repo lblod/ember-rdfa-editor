@@ -1,6 +1,5 @@
 import Command from "./command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelElement from "../model/model-element";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
@@ -14,7 +13,7 @@ export default class InsertNewLineCommand extends Command {
     super(model);
   }
 
-  canExecute(_selection: ModelSelection = this.model.selection): boolean {
+  canExecute(): boolean {
     return true;
   }
 

@@ -7,7 +7,7 @@ import {NoParentError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 
 export default class IndentListCommand extends Command {
-  name: string = "indent-list";
+  name = "indent-list";
 
   constructor(model: Model) {
     super(model);

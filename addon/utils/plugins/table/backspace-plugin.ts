@@ -9,7 +9,7 @@ import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
  * @module plugins/table
  */
 export default class TableBackspacePlugin implements BackspacePlugin {
-  label = 'backspace plugin for handling table nodes'
+  label = 'backspace plugin for handling table nodes';
 
   guidanceForManipulation(manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
     const voidExecutor = {

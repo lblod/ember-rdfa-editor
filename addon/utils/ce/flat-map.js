@@ -7,7 +7,7 @@
  * @param {Function} predicate
  * @param {Boolean} stopOnFirstMatch
  *
- * @return [Array] list of nodes matching the predicate function
+ * @return [RichNode[]] list of nodes matching the predicate function
  */
 export default function flatMap(startNode, predicate, stopOnFirstMatch = false) {
   let matches = [];

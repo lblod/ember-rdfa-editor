@@ -5,7 +5,7 @@ import NodeFinder, {NodeFinderFilter, NodeFinderPredicate} from "@lblod/ember-rd
 
 
 export type ModelNodeFinderFilter<R extends ModelNode> = NodeFinderFilter<ModelNode, R>;
-export type ModelNodeFinderPredicate<R extends ModelNode> = NodeFinderPredicate<ModelNode, R>
+export type ModelNodeFinderPredicate<R extends ModelNode> = NodeFinderPredicate<ModelNode, R>;
 /**
  * {@link ModelNode} implementation of a {@link NodeFinder}
  * @deprecated use {@link ModelTreeWalker} instead

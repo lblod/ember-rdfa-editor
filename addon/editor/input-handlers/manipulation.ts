@@ -22,7 +22,7 @@ export type VoidElement = HTMLAreaElement
   | HTMLParamElement
   | HTMLSourceElement
   | HTMLTrackElement
-  | HTMLWbrElement
+  | HTMLWbrElement;
 
 /**
  * There is seemingly no type for this specified by the WHATWG.

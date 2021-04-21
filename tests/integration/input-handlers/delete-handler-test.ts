@@ -367,7 +367,7 @@ module("Integration | InputHandler | delete-handler", function (hooks) {
     selection.collapse(spanNode, 0);
     assert.equal(editor.innerHTML, "beer<span></span>bar"); //make sure this is not removed somehow
     await triggerKeyEvent("div[contenteditable]", "keydown", "Delete");
-    await wait(100)
+    await wait(100);
     const currentSelection = getWindowSelection();
     assert.equal(
       currentSelection.anchorNode?.parentElement?.innerText,
