@@ -5,7 +5,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
-function testElement(type: ElementType, name: string = "testNode"): ModelElement {
+function testElement(type: ElementType, name = "testNode"): ModelElement {
   return new ModelElement(type, {debugInfo: name});
 }
 

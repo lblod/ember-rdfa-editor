@@ -12,7 +12,6 @@ module("Unit | model | readers | selection-reader", hooks => {
     reader = new SelectionReader(ctx.model);
   });
 
-  // @ts-ignore
   test("converts a dom range correctly", assert => {
     const {model, rootNode} = ctx;
     const text = new Text("abc");
@@ -27,7 +26,6 @@ module("Unit | model | readers | selection-reader", hooks => {
     assert.true(result?.start.sameAs(ModelPosition.fromPath(model.rootModelNode, [0])));
 
   });
-  // @ts-ignore
   test("correctly handles a tripleclick selection", assert => {
     const {rootNode} = ctx;
     const paragraph = document.createElement("p");

@@ -152,12 +152,15 @@ export default abstract class ModelNode {
   getOffsetPath(): number[] {
     const result = [];
 
-    let cur: ModelNode | null = this;
-    while (cur.parent) {
-      result.push(cur.getOffset());
-      cur = cur.parent;
+    if (this.parent) {
+      result.push(this.getOffset());
+      let cur = this.parent;
+      while (cur.parent) {
+        result.push(cur.getOffset());
+        cur = cur.parent;
+      }
+      result.reverse();
     }
-    result.reverse();
     return result;
   }
 
@@ -170,6 +173,8 @@ export default abstract class ModelNode {
   getIndexPath(): number[] {
     const result = [];
 
+    // this is deprecated so I won't fix this
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let child: ModelNode = this;
     let parent = this.parent;
     while (parent) {

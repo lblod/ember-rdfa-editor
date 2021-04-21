@@ -23,7 +23,7 @@ export function getEditorElement(): Element {
  * TODO add better heuristics to wait for delete handler to finish
  * @returns a promise which simulates a delete keypress
  */
-export async function pressDelete(timeout: number = 2000): Promise<void> {
+export async function pressDelete(timeout = 2000): Promise<void> {
   await triggerKeyEvent("div[contenteditable]", "keydown", "Delete");
   await waitUntil(() => findAll(`#${MagicSpan.ID}`).length === 0, {
     timeout,
