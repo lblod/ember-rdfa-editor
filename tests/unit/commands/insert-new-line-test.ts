@@ -3,7 +3,6 @@ import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 module("Unit | commands | insert-new-line-test", hooks => {
