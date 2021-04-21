@@ -136,7 +136,7 @@ export default class PernetRawEditor extends RawEditor {
    * @param commandName
    * @param args
    */
-  executeCommand(commandName: string, ...args: any[]) {
+  executeCommand(commandName: string, ...args: unknown[]) {
     super.executeCommand(commandName, ...args);
     taskFor(this.generateDiffEvents).perform();
   }
@@ -216,7 +216,7 @@ export default class PernetRawEditor extends RawEditor {
    * @public
    */
   @task({ restartable: true })
-  *generateDiffEvents(extraInfo: any[] = []): TaskGenerator<void> {
+  *generateDiffEvents(extraInfo: Record<string, unknown>[] = []): TaskGenerator<void> {
     yield timeout(320);
     const newText: string = getTextContent(this.rootNode);
     let oldText: string = this.currentTextContent || "" ;

@@ -771,7 +771,7 @@ export default class DeleteHandler implements InputHandler {
         };
 
       default:
-        throw `Could not find manipulation for ${(thingAfterCursor as any).type}`;
+        throw `Could not find manipulation for ${(thingAfterCursor as ThingAfterCursor).type}`;
     }
   }
 

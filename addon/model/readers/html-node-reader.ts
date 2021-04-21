@@ -10,7 +10,7 @@ import HtmlTableReader from "@lblod/ember-rdfa-editor/model/readers/html-table-r
 import HtmlSpanReader from "@lblod/ember-rdfa-editor/model/readers/html-span-reader";
 import WrappedAttributeReader from "@lblod/ember-rdfa-editor/model/readers/wrapped-attribute-reader";
 
-type Constructor<T> = new (...args: any[]) => T;
+type Constructor<T> = new (...args: unknown[]) => T;
 type ElementReader = Reader<Element, ModelElement | null, HtmlReaderContext>;
 
 export default class HtmlNodeReader implements Reader<Node, ModelNode | null, HtmlReaderContext> {

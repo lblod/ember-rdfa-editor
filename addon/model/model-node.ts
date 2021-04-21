@@ -202,7 +202,7 @@ export default abstract class ModelNode {
     this._debugInfo = value;
   }
 
-  abstract clone(): any;
+  abstract clone(): ModelNode;
 
   getAttribute(key: string) {
     return this._attributeMap.get(key);

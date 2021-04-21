@@ -728,7 +728,7 @@ export default class BackspaceHandler implements InputHandler {
     }
 
     // TODO: take care of other cases
-    throw `Could not find manipulation to suggest for backspace ${(thingBeforeCursor as any).type}`;
+    throw `Could not find manipulation to suggest for backspace ${(thingBeforeCursor as ThingBeforeCursor).type}`;
   }
 
   /**

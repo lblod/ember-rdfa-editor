@@ -61,8 +61,8 @@ class RawEditor extends EmberObject {
    */
   richNode!: RichNode;
 
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(properties?: Record<string, unknown>) {
+    super(properties);
   }
 
   /**
@@ -172,7 +172,7 @@ class RawEditor extends EmberObject {
    * @param commandName
    * @param args
    */
-  canExecuteCommand(commandName: string, ...args: any[]) {
+  canExecuteCommand(commandName: string, ...args: unknown[]) {
     return this.getCommand(commandName).canExecute(...args);
   }
 
