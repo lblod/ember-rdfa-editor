@@ -7,7 +7,7 @@ import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
 export interface NodeConfig {
-  debugInfo: any;
+  debugInfo: unknown;
 }
 
 /**
@@ -21,7 +21,7 @@ export default abstract class ModelNode {
   private _boundNode: Node | null = null;
   private _nextSibling: ModelNode | null = null;
   private _previousSibling: ModelNode | null = null;
-  private _debugInfo: any;
+  private _debugInfo: unknown;
 
 
   protected constructor(config?: NodeConfig) {
@@ -59,6 +59,10 @@ export default abstract class ModelNode {
     return this._attributeMap;
   }
 
+  set attributeMap(value: Map<string, string>) {
+    this._attributeMap = value;
+  }
+
   get previousSibling(): ModelNode | null {
     return this._previousSibling;
   }
@@ -75,12 +79,13 @@ export default abstract class ModelNode {
     this._nextSibling = value;
   }
 
-  set attributeMap(value: Map<string, string>) {
-    this._attributeMap = value;
-  }
 
   get parent(): ModelElement | null {
     return this._parent;
+  }
+
+  set parent(value: ModelElement | null) {
+    this._parent = value;
   }
 
   get root(): ModelElement {
@@ -98,9 +103,6 @@ export default abstract class ModelNode {
     return root;
   }
 
-  set parent(value: ModelElement | null) {
-    this._parent = value;
-  }
 
   get boundNode(): Node | null {
     return this._boundNode;
@@ -150,12 +152,15 @@ export default abstract class ModelNode {
   getOffsetPath(): number[] {
     const result = [];
 
-    let cur: ModelNode | null = this;
-    while (cur.parent) {
-      result.push(cur.getOffset());
-      cur = cur.parent;
+    if (this.parent) {
+      result.push(this.getOffset());
+      let cur = this.parent;
+      while (cur.parent) {
+        result.push(cur.getOffset());
+        cur = cur.parent;
+      }
+      result.reverse();
     }
-    result.reverse();
     return result;
   }
 
@@ -168,6 +173,8 @@ export default abstract class ModelNode {
   getIndexPath(): number[] {
     const result = [];
 
+    // this is deprecated so I won't fix this
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let child: ModelNode = this;
     let parent = this.parent;
     while (parent) {
@@ -187,15 +194,15 @@ export default abstract class ModelNode {
   /**
    * Debugging utility
    */
-  get debugInfo(): any {
+  get debugInfo(): unknown {
     return this._debugInfo;
   }
 
-  set debugInfo(value: any) {
+  set debugInfo(value: unknown) {
     this._debugInfo = value;
   }
 
-  abstract clone(): any;
+  abstract clone(): ModelNode;
 
   getAttribute(key: string) {
     return this._attributeMap.get(key);
@@ -211,13 +218,15 @@ export default abstract class ModelNode {
    * @param _key
    * @param _value
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setTextAttribute(_key: TextAttribute, _value: boolean) {
+    //no-op function
   }
 
   /**
    * @deprecated TODO evaluate whether we need this or not
    */
-  findAncestor(predicate: (node: ModelNode) => boolean, includeSelf: boolean = true): ModelNode | null {
+  findAncestor(predicate: (node: ModelNode) => boolean, includeSelf = true): ModelNode | null {
     if (includeSelf) {
       if (predicate(this)) {
         return this;
@@ -240,7 +249,7 @@ export default abstract class ModelNode {
    * @param after Whether the node will end up after its parent or before
    * @return the old parent
    */
-  promote(after: boolean = false): ModelElement {
+  promote(after = false): ModelElement {
 
     const oldParent = this.parent;
     if (!oldParent) {
@@ -295,8 +304,9 @@ export default abstract class ModelNode {
    * Deep, but not reference equality
    * All properties except boundNode, parent and siblings will be compared, and children will be compared recursively
    * @param other
+   * @param strict
    */
-  abstract sameAs(other: ModelNode, strict: boolean = false): boolean;
+  abstract sameAs(other: ModelNode, strict?: boolean): boolean;
 }
 
 

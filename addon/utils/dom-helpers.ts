@@ -40,7 +40,7 @@ function sliceTextIntoTextNode(textNode: Text, text: string, start: number): voi
  * @method insertTextNodeWithSpace
  * @public
  */
-function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNode | null = null, after: boolean = false): Text {
+function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNode | null = null, after = false): Text {
   const textNode = document.createTextNode(invisibleSpace);
   if (relativeToSibling) {
     if (after) {
@@ -304,7 +304,7 @@ function findPreviousLi(currLI: HTMLLIElement): HTMLLIElement | null {
  */
 function getParentLI(node: Node): HTMLLIElement | null {
   if (!node.parentNode) return null;
-  if (isLI(node.parentNode)) return (node.parentNode as HTMLLIElement);
+  if (isLI(node.parentNode)) return (node.parentNode );
   return getParentLI(node.parentNode);
 }
 

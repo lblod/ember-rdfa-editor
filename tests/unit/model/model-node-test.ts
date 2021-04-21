@@ -74,7 +74,7 @@ module("Unit | model | model-node", hooks => {
 
 
   });
-  module("Unit | model | model-node | promote", _hooks => {
+  module("Unit | model | model-node | promote", () => {
     test("promote of child of root throws error", assert => {
       const root = ctx.model.rootModelNode;
       const childOfRoot = new ModelText("test");
@@ -163,7 +163,7 @@ module("Unit | model | model-node", hooks => {
     });
   });
 
-  module("Unit | model | model-node | sameAs", _hooks => {
+  module("Unit | model | model-node | sameAs", () => {
     test("returns true for identical models", assert => {
       // language=XML
       const {root: model1} = vdom`

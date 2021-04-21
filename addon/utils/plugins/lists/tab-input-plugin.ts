@@ -22,7 +22,7 @@ import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/uti
  * @module plugin/lists
  */
 export default class ListTabInputPlugin implements TabInputPlugin {
-  label = 'Tap input plugin for handling List interaction'
+  label = 'Tap input plugin for handling List interaction';
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
     if( manipulation.type == 'moveCursorToStartOfElement' ){
@@ -90,7 +90,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /**
    * Sets the cursor in the first <li></li>. If list is empty, creates an <li></li>
    */
-  jumpIntoFirstLi(manipulation: Manipulation, editor: Editor) : void {
+  jumpIntoFirstLi = (manipulation: Manipulation, editor: Editor): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let firstLi;
 
@@ -103,12 +103,12 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       firstLi = getAllLisFromList(list)[0];
     }
     setCursorAtStartOfLi(firstLi, editor);
-  }
+  };
 
   /**
    * Sets the cursor in the last <li></li>. If list is empty, creates an <li></li>
    */
-  jumpIntoLastLi(manipulation: Manipulation, editor: Editor) : void {
+  jumpIntoLastLi = (manipulation: Manipulation, editor: Editor): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let lastLi;
 
@@ -121,52 +121,52 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       lastLi = [ ...getAllLisFromList(list) ].reverse()[0];
     }
     setCursorAtEndOfLi(lastLi, editor);
-  }
+  };
 
   /*
    * Creates nested list
    * Note: depends on list helpers from a long time ago.
    * TODO: Indent means the same as nested list, perhaps rename the action
    */
-  indentLiContent(_: Manipulation, editor: Editor) : void {
+  indentLiContent = (_: Manipulation, editor: Editor): void => {
     indentAction(editor); //TODO: this is legacy, this should be revisited.
-  }
+  };
 
   /*
    * Merges nested list to parent list
    * Note: depends on list helpers from a long time ago.
    * TODO: Indent means the same as merge nested list, perhaps rename the action
    */
-  unindentLiContent(_: Manipulation, editor: Editor) : void {
+  unindentLiContent = (_: Manipulation, editor: Editor): void => {
     unindentAction(editor); //TODO: this is legacy, this should be revisited.
-  }
+  };
 
   /*
    * Jumps to next List item. Assumes there is one and current LI is not the last
    */
-  jumpToNextLi(manipulation: Manipulation, editor: Editor) : void {
+  jumpToNextLi = (manipulation: Manipulation, editor: Editor): void => {
     //Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLLIElement;
     const listItems = siblingLis(listItem);
     const indexOfLi = listItems.indexOf(listItem);
     setCursorAtStartOfLi(listItems[indexOfLi + 1], editor);
-  }
+  };
 
   /*
    * Jumps to next List item. Assumes there is one and current LI is not the first
    */
-  jumpToPreviousLi(manipulation: Manipulation, editor: Editor) : void {
+  jumpToPreviousLi = (manipulation: Manipulation, editor: Editor): void => {
     //Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLLIElement;
     const listItems = siblingLis(listItem);
     const indexOfLi = listItems.indexOf(listItem);
     setCursorAtEndOfLi(listItems[indexOfLi - 1], editor);
-  }
+  };
 
   /*
    * Jumps outside of list.
    */
-  jumpOutOfList(manipulation: Manipulation, editor: Editor) : void {
+  jumpOutOfList = (manipulation: Manipulation, editor: Editor): void => {
     const element = manipulation.node.parentElement; //this is the list
     if(!element) throw 'Tab-input-handler expected list to be attached to DOM';
 
@@ -182,12 +182,12 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
     editor.setCaret(textNode, 0);
-  }
+  };
 
   /*
    * Jumps outside of at the start
    */
-  jumpOutOfListToStart(manipulation: Manipulation, editor: Editor) : void {
+  jumpOutOfListToStart = (manipulation: Manipulation, editor: Editor): void => {
     const element = manipulation.node.parentElement; //this is the list
     if(!element) throw 'Tab-input-handler expected list to be attached to DOM';
 
@@ -201,8 +201,8 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     }
     textNode = ensureValidTextNodeForCaret(textNode as Text);
     editor.updateRichNode();
-    editor.setCaret(textNode, (textNode as Text).length);
-  }
+    editor.setCaret(textNode, (textNode ).length);
+  };
 }
 
 function setCursorAtStartOfLi(listItem : HTMLElement, editor: Editor) : void{
@@ -230,5 +230,5 @@ function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor) : void {
   }
   textNode = ensureValidTextNodeForCaret(textNode as Text);
   editor.updateRichNode();
-  editor.setCaret(textNode, (textNode as Text).length);
+  editor.setCaret(textNode, (textNode ).length);
 }

@@ -13,6 +13,7 @@
 # misc
 /coverage/
 !.*
+/tests/dummy/app/config/sample-data.js
 
 # ember-try
 /.node_modules.ember-try/

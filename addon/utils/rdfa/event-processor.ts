@@ -1,17 +1,12 @@
-import { assert } from '@ember/debug';
-import EmberObject from '@ember/object';
-import { analyse } from '@lblod/marawa/rdfa-context-scanner';
+import {analyse, Region} from '@lblod/marawa/rdfa-context-scanner';
 import HintsRegistry from './hints-registry';
-import { A } from '@ember/array';
-import { isEmpty } from '@ember/utils';
+import {isEmpty} from '@ember/utils';
 import globalTextOffsetToPath from '@lblod/ember-rdfa-editor/utils/global-text-offset-to-path';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
 import RawEditor from '../ce/raw-editor';
-import { ContentObserver } from '../ce/pernet-raw-editor';
+import {ContentObserver} from '../ce/pernet-raw-editor';
 import MovementObserver from '../ce/movement-observers/movement-observer';
-import { InternalSelection } from '@lblod/ember-rdfa-editor/editor/raw-editor';
+import {InternalSelection} from '@lblod/ember-rdfa-editor/editor/raw-editor';
 
 
 /**
@@ -20,7 +15,6 @@ import { InternalSelection } from '@lblod/ember-rdfa-editor/editor/raw-editor';
 * @module rdfa-editor
 * @class EventProcessor
 * @constructor
-* @extends EmberObject
 */
 export default class EventProcessor implements ContentObserver, MovementObserver {
   /**
@@ -61,7 +55,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    * @param {boolean} isRemove whether this is a remove or insert operation
    * @private
    */
-  updateModifiedRange(start: number, end: number, isRemove: boolean = false) {
+  updateModifiedRange(start: number, end: number, isRemove = false) {
     if (isRemove && ! isEmpty(this.modifiedRange)) {
       const [currentStart, currentEnd] = this.modifiedRange;
       let newStart, newEnd;
@@ -157,12 +151,12 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    *
    * @public
    */
-  analyseAndDispatch(extraInfo: Array<Object> = []) {
+  analyseAndDispatch(extraInfo: Array<unknown> = []) {
     const node = this.editor.rootNode;
     if (! isEmpty(this.modifiedRange)) {
-      const rdfaBlocks = analyse(node, this.modifiedRange);
+      const rdfaBlocks = analyse(node, this.modifiedRange as Region);
 
-      this.dispatcher.dispatch(
+      void this.dispatcher.dispatch(
         this.profile,
         this.registry.currentIndex(),
         rdfaBlocks,
@@ -174,7 +168,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
     }
   }
 
-  handleFullContentUpdate(extraInfo: Array<Object> = []) {
+  handleFullContentUpdate(extraInfo: Array<unknown> = []) {
     this.analyseAndDispatch(extraInfo);
   }
 

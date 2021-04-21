@@ -1,16 +1,12 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import nodeWalker from "./node-walker";
 
 export default class ModelSelectionTracker {
   model: Model;
 
   constructor(model: Model) {
     this.model = model;
-    this.updateSelection = this.updateSelection.bind(this);
   }
 
   startTracking() {
@@ -21,7 +17,7 @@ export default class ModelSelectionTracker {
     document.removeEventListener('selectionchange', this.updateSelection);
   }
 
-  updateSelection() {
+  updateSelection = () => {
     const currentSelection = getWindowSelection();
     if (!this.model.rootNode.contains(currentSelection.anchorNode) || !this.model.rootNode.contains(currentSelection.focusNode) ||
       (currentSelection.type != 'Caret' && this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
@@ -34,5 +30,5 @@ export default class ModelSelectionTracker {
       {detail: this.model.selection}
     );
     document.dispatchEvent(modelSelectionUpdatedEvent);
-  }
+  };
 }

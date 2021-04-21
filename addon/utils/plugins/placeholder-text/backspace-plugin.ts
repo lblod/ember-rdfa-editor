@@ -8,7 +8,7 @@ import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
  * @module plugins/placeholder-text
  */
 export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
-  label = 'backspace plugin for handling placeholder nodes'
+  label = 'backspace plugin for handling placeholder nodes';
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
     const node = manipulation.node;
@@ -26,7 +26,7 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
    * This executor removes the placeholder node containing manipulation.node competly.
    * @method removePlaceholder
    */
-  removePlaceholder(manipulation: Manipulation, editor: Editor) : void {
+  removePlaceholder = (manipulation: Manipulation, editor: Editor): void => {
     const node = manipulation.node;
     const parentNode = node.parentElement;
     if(parentNode) {
@@ -35,7 +35,7 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
       editor.updateRichNode();
       editor.setCaret(textNode, 0);
     }
-  }
+  };
 
   /**
    * Allows the plugin to notify the backspace handler a change has occured.

@@ -1,7 +1,5 @@
 import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
-import Model from "@lblod/ember-rdfa-editor/model/model";
 import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import HtmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/html-node-reader";
 import {addChildOrFragment, copyAttributes} from "@lblod/ember-rdfa-editor/model/readers/reader-utils";

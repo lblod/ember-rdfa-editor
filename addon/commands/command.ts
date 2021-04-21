@@ -6,13 +6,13 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
  * They need to be registered with {@link RawEditor.registerCommand()} before they
  * can be executed with {@link RawEditor.executeCommand()}.
  */
-export default abstract class Command<T extends any[] = any[]> {
+export default abstract class Command<T extends unknown[] = unknown[]> {
   abstract name: string;
   protected model: Model;
   protected constructor(model: Model) {
     this.model = model;
   }
-  canExecute(..._args: T): boolean {
+  canExecute(..._args: unknown[]): boolean {
     return true;
   }
   abstract execute(...args: T): void;

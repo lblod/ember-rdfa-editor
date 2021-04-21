@@ -7,7 +7,6 @@ import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab
 import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import RawEditor from 'dummy/utils/ce/raw-editor';
 
 /**
@@ -65,7 +64,7 @@ export default class TabInputHandler implements InputHandler {
 
     // error if we're not allowed to
     if ( ! mayExecute ) {
-      warn( `Not allowed to execute manipulation for ${this.constructor}`, { id: 'tab-input-handler-manipulation-not-allowed' } );
+      warn( `Not allowed to execute manipulation for ${this.constructor.toString()}`, { id: 'tab-input-handler-manipulation-not-allowed' } );
       return { allowPropagation: false };
     }
 
@@ -84,7 +83,7 @@ export default class TabInputHandler implements InputHandler {
 
     /************************ SHIFT TAB ************************/
     if (manipulation.type == 'moveCursorToEndOfElement') {
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       let textNode;
       if(element.lastChild && element.lastChild.nodeType == Node.TEXT_NODE){
         textNode = element.lastChild as Text;
@@ -94,13 +93,13 @@ export default class TabInputHandler implements InputHandler {
         element.append(textNode);
       }
 
-      textNode = ensureValidTextNodeForCaret(textNode as Text);
+      textNode = ensureValidTextNodeForCaret(textNode );
       this.rawEditor.updateRichNode();
       this.rawEditor.setCaret(textNode, textNode.length);
     }
 
     else if(manipulation.type == 'moveCursorBeforeElement'){
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       let textNode;
       if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
         textNode = element.previousSibling;
@@ -122,7 +121,7 @@ export default class TabInputHandler implements InputHandler {
 
     /************************ TAB ************************/
     else if (manipulation.type == 'moveCursorToStartOfElement') {
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       let textNode;
       if(element.firstChild && element.firstChild.nodeType == Node.TEXT_NODE){
         textNode = element.firstChild;
@@ -138,7 +137,7 @@ export default class TabInputHandler implements InputHandler {
     }
 
     else if(manipulation.type == 'moveCursorAfterElement'){
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       let textNode;
       if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
         textNode = element.nextSibling;

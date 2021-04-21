@@ -7,8 +7,6 @@ import ModelText from "../model/model-text";
 import {MisbehavedSelectionError, NoParentError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {INVISIBLE_SPACE} from "../model/util/constants";
 import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 
 export default class InsertNewLiCommand extends Command {
@@ -64,7 +62,7 @@ export default class InsertNewLiCommand extends Command {
     }
 
 
-    const selected = Array.from(selectedIterator);
+    const selected = Array.from(selectedIterator) as ModelText[];
     // get the first and last textnodes of the selection
     const firstText = selected[0];
     const lastText = selected[selected.length - 1];

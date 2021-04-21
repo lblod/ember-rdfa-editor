@@ -41,12 +41,12 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
   /**
    * replace textnode content with an invisible space and position cursor at the beginning of the node
    */
-  replaceLastCharacterWithInvisibleSpace(manipulation: RemoveCharacterManipulation, editor: Editor) {
+  replaceLastCharacterWithInvisibleSpace = (manipulation: RemoveCharacterManipulation, editor: Editor) => {
     const { node } = manipulation;
     node.textContent = invisibleSpace;
     moveCaret(node, 0);
     editor.updateRichNode();
-  }
+  };
 
   /**
    * This remove the text node completely
@@ -66,7 +66,7 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
    * currently never detects a change but rather lets the backspace handler do detection
    * @method detectChange
    */
-  detectChange(_manipulation: Manipulation) : boolean {
+  detectChange() : boolean {
     return false;
   }
 }

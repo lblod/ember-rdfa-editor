@@ -15,7 +15,7 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
       ["strikethrough", "del"],
       ["highlighted", "span"]
     ]
-  )
+  );
   constructor(protected model: Model) {
   }
 
