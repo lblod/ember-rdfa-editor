@@ -24,8 +24,8 @@ export default class LegacyRawEditor extends PernetRawEditor {
    * @public
    */
   components!: Ember.NativeArray<{id: string}>;
-  constructor(...args: unknown[]) {
-    super(...args);
+  constructor(properties?: Record<string, unknown>) {
+    super(properties);
     this.set('components', A());
   }
   /**
@@ -88,14 +88,15 @@ export default class LegacyRawEditor extends PernetRawEditor {
     //update editor state
     const textNodeAfterInsert = !keepCurrentPosition ? nextTextNode(lastInsertedRichElement.domNode, this.rootNode) : null;
     this.updateRichNode();
-    taskFor(this.generateDiffEvents).perform(extraInfo);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    void taskFor(this.generateDiffEvents).perform(extraInfo);
     if(keepCurrentPosition) {
       if(currentNode && getCurrentCarretPosition) {
         this.setCaret(currentNode, getCurrentCarretPosition);
       }
     }
     else {
-      this.setCaret(textNodeAfterInsert,0);
+      this.setCaret(textNodeAfterInsert!,0);
     }
     if(lastInsertedRichElement.domNode.isSameNode(domNodesToInsert.slice(-1)[0]))
       return domNodesToInsert;
@@ -120,7 +121,7 @@ export default class LegacyRawEditor extends PernetRawEditor {
     const keepCurrentPosition = !node.isSameNode(nodeToEndIn) && !node.contains(nodeToEndIn);
 
     if(!keepCurrentPosition){
-      nodeToEndIn = previousTextNode(node, this.rootNode);
+      nodeToEndIn = previousTextNode(node, this.rootNode) as Text;
       if(nodeToEndIn) {
         carretPositionToEndIn = nodeToEndIn.length;
       }
@@ -134,7 +135,8 @@ export default class LegacyRawEditor extends PernetRawEditor {
     removeNode(richNode.domNode);
 
     this.updateRichNode();
-    taskFor(this.generateDiffEvents).perform(extraInfo);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    void taskFor(this.generateDiffEvents).perform(extraInfo);
 
     if(carretPositionToEndIn) {
       this.setCaret(nodeToEndIn, carretPositionToEndIn);
@@ -177,12 +179,13 @@ export default class LegacyRawEditor extends PernetRawEditor {
     //update editor stat style={{if this.isBold "background-color: greene
     const textNodeAfterInsert = !keepCurrentPosition ? nextTextNode(lastInsertedRichElement.domNode, this.rootNode) : null;
     this.updateRichNode();
-    taskFor(this.generateDiffEvents).perform(extraInfo);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    void taskFor(this.generateDiffEvents).perform(extraInfo);
     if(getCurrentCarretPosition && currentNode && keepCurrentPosition) {
       this.setCaret(currentNode, getCurrentCarretPosition);
     }
     else {
-      this.setCaret(textNodeAfterInsert,0);
+      this.setCaret(textNodeAfterInsert!,0);
     }
 
     if(lastInsertedRichElement.domNode.isSameNode(domNodesToInsert.slice(-1)[0]))
@@ -238,11 +241,12 @@ export default class LegacyRawEditor extends PernetRawEditor {
 function deprecate(message: string) {
   runInDebug( () => console.trace(`DEPRECATION: ${message}`)); // eslint-disable-line no-console
 }
-function uuidv4() {
+function uuidv4(): string {
   // this actually does work because of JS conversion magic.
   // copied from a library, so it's ugly but probably very optimized
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
+  // eslint-disable-next-line
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => {
     return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
   });

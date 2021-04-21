@@ -6,14 +6,14 @@ const invisibleSpace = "\u200B";
 module("Unit | Utility | ce/next-text-node", function () {
   test("returns null when textNode is rootNode", function (assert) {
     const root = document.createElement("div");
-    const result = ceNextTextNode(root, root) as Text | null;
+    const result = ceNextTextNode(root, root);
     assert.strictEqual(result, null);
   });
   test("returns null when nextNode is rootNode", function (assert) {
     const root = document.createElement("div");
     const child = document.createElement("div");
     root.appendChild(child);
-    const result = ceNextTextNode(child, root) as Text | null;
+    const result = ceNextTextNode(child, root);
     assert.strictEqual(result, null);
   });
   skip("inserts a new node after the current node if next node is not a text node", function (assert) {
@@ -22,7 +22,7 @@ module("Unit | Utility | ce/next-text-node", function () {
     const child2 = document.createElement("div");
     root.appendChild(child1);
     root.appendChild(child2);
-    const result = ceNextTextNode(child1, root) as Text | null;
+    const result = ceNextTextNode(child1, root);
     assert.notEqual(root, result);
     assert.notEqual(child1, result);
     assert.notEqual(child2, result);
@@ -37,7 +37,7 @@ module("Unit | Utility | ce/next-text-node", function () {
     root.appendChild(child1);
     root.appendChild(child2);
 
-    const result = ceNextTextNode(child1, root) as Text | null;
+    const result = ceNextTextNode(child1, root);
     assert.strictEqual(result, child2);
   });
   test("returns next node if it is a text node nested", function (assert) {
@@ -81,7 +81,7 @@ module("Unit | Utility | ce/next-text-node", function () {
     root.insertAdjacentHTML("beforeend", complex_html);
     const startNode = root.getElementsByClassName("test")[0].childNodes[0];
 
-    const result = ceNextTextNode(startNode, root) as Text | null;
+    const result = ceNextTextNode(startNode, root);
     assert.strictEqual(result!.textContent, "li1");
   });
 });

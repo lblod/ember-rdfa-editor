@@ -156,7 +156,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
     if (! isEmpty(this.modifiedRange)) {
       const rdfaBlocks = analyse(node, this.modifiedRange as Region);
 
-      this.dispatcher.dispatch(
+      void this.dispatcher.dispatch(
         this.profile,
         this.registry.currentIndex(),
         rdfaBlocks,
