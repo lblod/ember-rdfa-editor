@@ -200,7 +200,7 @@ export default class LegacyRawEditor extends PernetRawEditor {
    * @return {String} id componentID
    * @public
    */
-  insertComponent(position: number | Element, name: string, content: unknown, id = uuidv4()) {
+  insertComponent(position: number | Element, name: string, content: Record<string, unknown>, id = uuidv4()) {
     let el;
     if (position instanceof Element) {
       el = position;
