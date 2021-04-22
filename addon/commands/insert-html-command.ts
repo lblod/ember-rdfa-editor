@@ -23,12 +23,13 @@ export default class InsertHtmlCommand extends Command {
       // dom NodeList doesnt have a map method
       const modelNodes: ModelNode[] = [];
       bodyContent.forEach(node => {
-        const modelNode = reader.read(node);
-        if(modelNode) {
-          modelNodes.push(modelNode);
+        const parsed = reader.read(node);
+        if(parsed) {
+          modelNodes.push(parsed);
         }
       });
-      mutator.insertNodes(range, ...modelNodes);
+      const newRange = mutator.insertNodes(range, ...modelNodes);
+      mutator.selectRange(newRange);
     });
   }
 }

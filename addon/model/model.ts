@@ -7,7 +7,8 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
 import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
-import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/ModelMutator";
+import BatchedModelMutator from "@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator";
+import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
 
 
 /**
@@ -82,7 +83,7 @@ export default class Model {
    * Write a part of the model back to the dom
    * @param tree
    */
-  write(tree: ModelElement = this.rootModelNode) {
+  write(tree: ModelElement = this.rootModelNode, writeSelection = true) {
     const modelWriteEvent = new CustomEvent(
       'editorModelWrite',
     );
@@ -100,7 +101,9 @@ export default class Model {
     }
     oldRoot.append(...newRoot.childNodes);
     this.bindNode(tree, oldRoot);
-    this.writeSelection();
+    if (writeSelection) {
+      this.writeSelection();
+    }
   }
 
   writeSelection() {
@@ -141,15 +144,39 @@ export default class Model {
     modelNode.remove();
   }
 
+  /**
+   * Change the model by providing a callback with will receive an {@link ImmediateModelMutator immediate mutator}
+   * The model gets written out automatically after the callback finishes.
+   * @param callback
+   */
+  change(callback: (mutator: ImmediateModelMutator) => ModelElement | void) {
+    const mutator = new ImmediateModelMutator(this);
+    const subTree = callback(mutator);
+    if (subTree) {
+      this.write(subTree);
+    } else {
+      this.write(this.rootModelNode);
+    }
+  }
 
-  change(callback: (mutator: ModelMutator) => void, autoSelect = true) {
-    const mutator = new ModelMutator();
-    callback(mutator);
+
+  /**
+   * Change the model by providing a callback with will receive a {@link BatchedModelMutator batched mutator}
+   * The mutator gets flushed and the model gets written out automatically after the callback finishes.
+   * @param callback
+   */
+  batchChange(callback: (mutator: BatchedModelMutator) => ModelElement | void, autoSelect = true) {
+    const mutator = new BatchedModelMutator(this);
+    const subTree = callback(mutator);
     const resultingRange = mutator.flush();
     if (autoSelect && resultingRange) {
       this.selection.selectRange(resultingRange);
     }
-    this.write();
+    if (subTree) {
+      this.write(subTree);
+    } else {
+      this.write();
+    }
   }
 
   static getChildIndex(child: Node): number | null {

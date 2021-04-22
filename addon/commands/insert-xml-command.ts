@@ -22,7 +22,8 @@ export default class InsertXmlCommand extends Command {
     const range = selection.lastRange;
     const parsed = parseXml(xml);
     this.model.change(mutator => {
-      mutator.insertNodes(range, parsed.root);
+      const newRange = mutator.insertNodes(range, parsed.root);
+      mutator.selectRange(newRange);
     });
 
 
