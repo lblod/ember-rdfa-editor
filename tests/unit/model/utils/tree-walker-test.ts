@@ -282,4 +282,22 @@ module("Unit | model | utils | tree-walker-test", () => {
     assert.strictEqual(result[3], s3);
   });
 
+  test("only finds one textNode", assert => {
+    // language=XML
+    const {root, textNodes: {node0}} = vdom`
+      <modelRoot>
+        <text __id="node0">ab</text>
+        <text>c</text>
+      </modelRoot>
+    `;
+    const range = ModelRange.fromPaths(root as ModelElement, [0], [2]);
+    const walker = new ModelTreeWalker({range});
+    const result = [...walker];
+
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0], node0);
+
+  });
+
+
 });

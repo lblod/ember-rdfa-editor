@@ -10,8 +10,11 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 export default class OperationAlgorithms {
   static remove(range: ModelRange): ModelNode[] {
 
+    OperationAlgorithms.splitText(range.start);
+    OperationAlgorithms.splitText(range.end);
     const confinedRanges = range.getMinimumConfinedRanges();
     const nodesToRemove = [];
+    console.log(confinedRanges);
     for (const range of confinedRanges) {
       if (!range.collapsed) {
         const walker = new ModelTreeWalker({range, descend: false});
@@ -43,8 +46,6 @@ export default class OperationAlgorithms {
   }
 
   static move(rangeToMove: ModelRange, targetRange: ModelRange): ModelNode[] {
-    rangeToMove.start.split();
-    rangeToMove.end.split();
     const nodes = OperationAlgorithms.remove(rangeToMove);
     if (nodes.length) {
       OperationAlgorithms.insert(targetRange, ...nodes);
