@@ -5,6 +5,9 @@ import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-op
 import MoveOperation from "@lblod/ember-rdfa-editor/model/operations/move-operation";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import SplitOperation from "@lblod/ember-rdfa-editor/model/operations/split-operation";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 /**
  * {@link ModelMutator} implementation where all operations immediately
@@ -46,6 +49,29 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   setTextProperty(range: ModelRange, key: TextAttribute, value: boolean): ModelRange {
     const op = new AttributeOperation(range, key, String(value));
     return op.execute();
+  }
+
+  splitTextAt(position: ModelPosition): ModelPosition {
+    const range = new ModelRange(position, position);
+    const op = new SplitOperation(range, false);
+    const resultRange = op.execute();
+    return resultRange.start;
+  }
+
+  splitElementAt(position: ModelPosition): ModelPosition {
+    const range = new ModelRange(position, position);
+    const op = new SplitOperation(range);
+    const resultRange = op.execute();
+    return resultRange.start;
+  }
+
+  splitUntil(position: ModelPosition, untilPredicate: (element: ModelElement) => boolean): ModelPosition {
+    let range = new ModelRange(position, position);
+    while(!untilPredicate(range.start.parent)) {
+      const op = new SplitOperation(range);
+      range = op.execute();
+    }
+    return range.start;
   }
 
 }

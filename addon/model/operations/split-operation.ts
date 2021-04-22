@@ -2,7 +2,7 @@ import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/operation-algorithms";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {ModelError, OperationError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export default class SplitOperation extends Operation {
   private _splitParent: boolean;
