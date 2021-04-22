@@ -4,7 +4,7 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelNode from "../model/model-node";
 import ModelElement from "../model/model-element";
 import ModelText from "../model/model-text";
-import { MisbehavedSelectionError, NoParentError, SelectionError } from "@lblod/ember-rdfa-editor/utils/errors";
+import { MisbehavedSelectionError, NoParentError, NotImplementedError, SelectionError } from "@lblod/ember-rdfa-editor/utils/errors";
 import { INVISIBLE_SPACE } from "../model/util/constants";
 import ModelTreeWalker, { FilterResult } from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
@@ -51,63 +51,130 @@ export default class InsertNewLiCommand extends Command {
     if (isCollapsed) {
       this.insertNewLi(startPosition)
     }
-    else{
+    else {
       startPosition.split();
       endPosition.split();
 
-      const first=startPosition.nodeAfter();
-      const last=endPosition.nodeBefore();
+      const first = startPosition.nodeAfter();
+      const last = endPosition.nodeBefore();
 
 
     }
     this.model.write();
   }
-  insertNewLi(position:ModelPosition):void{
-    const startPosition=position
-    startPosition.split();
+
+  //core algorithm
+  insertNewLi(position: ModelPosition): void {
+    //split the nodes at position
+    position.split();
+
+    //variable initialization
     let parentLi;
     let parentUl;
     let parentLiPos;
-    let toBeCut = [];
-    let newLi = new ModelElement("li");
-    let node = startPosition.nodeAfter();
+    let newLiNodes=[];
+    let toBeInserted:ModelNode[]=[];
+    let newLi = new ModelElement('li');
+    let node = position.nodeAfter();
+
+    //try to find the first node we can copy if there is no nodeAfter
     if (!node) {
-      parentLi = startPosition.parent.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), true);
-      parentUl = parentLi.parent;
-      parentLiPos = parentLi.index;
-    }
-    else {
-      parentLi = node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
-      parentUl = parentLi.parent;
-      parentLiPos = parentLi.index;
-      //cut siblings and siblings of parents
-      //copy direct parents only
-      //and put siblings you cut into them
-      while (node){
-        if(node.type==="li"){
+      let searchVar = position.nodeBefore();
+      if (searchVar && searchVar.parent) {
+        searchVar = searchVar.parent;
+      }
+      while (searchVar) {
+        if (ModelNode.isModelElement(searchVar) && searchVar.type === "li") {
           break;
         }
-        else if(node.nextSibling){
-          node=node.nextSibling;
-          toBeCut.push(node);
-          this.model.removeModelNode(node);
+        else if (searchVar.nextSibling) {
+          searchVar = searchVar.nextSibling;
+          node = searchVar;
+          break;
         }
-        else if(node.parent){
-          if(node.parent.type==="li"){
-            node=node.parent
-          }
-          else{
-            node=node.parent;
-            const parentCopy=node.clone();
-            parentCopy.appendChildren(toBeCut);
-            toBeCut=[];
-            toBeCut.push(parentCopy);
-          }
+        else if (searchVar.parent) {
+          searchVar = searchVar.parent;
         }
       }
+
+      //assume that the cursor is at the end
+      if (!node) {
+        node = position.nodeBefore();
+        if (!node) {
+          throw new Error("couldn't find a node to work with")
+        }
+
+        //find parent li and ul/ol as well as parent li position
+        parentLi = node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
+        if (!parentLi) {
+          throw new Error("couldn't find the parent li");
+        }
+        parentUl = parentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'ul' || node.type === 'ol'), false);
+        if (!parentUl) {
+          throw new Error("couldn't find the parent ul/ol");
+        }
+        parentLiPos = parentLi.index;
+        if (!parentLiPos) {
+          throw new Error("couldn't find the parent li position")
+        }
+
+        //add empty li to the parent ul
+        parentUl.addChild(newLi, parentLiPos + 1);
+        return;
+      }
     }
-    newLi.appendChildren(toBeCut);
-    parentUl.addChild(newLi, parentLiPos+1);
+
+    //find parent li and ul/ol as well as parent li position
+    parentLi = node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
+    if (!parentLi) {
+      throw new Error("couldn't find the parent li");
+    }
+    parentUl = parentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'ul' || node.type === 'ol'), false);
+    if (!parentUl) {
+      throw new Error("couldn't find the parent ul/ol");
+    }
+    parentLiPos = parentLi.index;
+    if (parentLiPos===null) {
+      throw new Error("couldn't find the parent li position")
+    }
+    newLiNodes.push({ node: node, operation: 'cut' });
+    //walk up the nodes and find things to cut/copy to a new li
+    while (node) {
+      //cut siblings and siblings of parents
+      if (node.nextSibling) {
+        node = node.nextSibling;
+        newLiNodes.push({ node: node, operation: 'cut' });
+      }
+      //only copy direct parents only
+      //and put siblings you cut into them
+      else if (node.parent) {
+        if (ModelNode.isModelElement(node.parent) && node.parent.type === "li") {
+          break;
+        }
+        node = node.parent;
+        newLiNodes.push({ node: node, operation: 'copy' });
+      }
+      else{
+        throw new Error('something went horribly wrong when walking up a tree');
+      }
+    }
+
+    //update the existing list
+    newLiNodes.forEach(e => {
+      if (e.operation === 'cut') {
+        this.model.removeModelNode(e.node);
+        toBeInserted.push(e.node);
+      }
+      if (e.operation === 'copy') {
+        const copy = e.node.clone();
+        copy.appendCildren(...toBeInserted);
+        toBeInserted = [];
+        toBeInserted.push(copy);
+      }
+    });
+
+    newLi.appendChildren(...toBeInserted);
+    parentUl.addChild(newLi, parentLiPos + 1);
   }
 }
 
