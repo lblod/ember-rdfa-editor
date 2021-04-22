@@ -10,7 +10,6 @@ import ModelTreeWalker, { FilterResult } from "@lblod/ember-rdfa-editor/model/ut
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import nodeWalker from "dummy/utils/ce/node-walker";
-import { getParentLI } from "../utils/dom-helpers";
 
 
 export default class InsertNewLiCommand extends Command {
@@ -30,24 +29,26 @@ export default class InsertNewLiCommand extends Command {
     }
     return false;
   }
-  getParentLi(node: ModelNode): ModelElement | null {
-    const parentLi = node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
-  }
   execute(): void {
     const selection = this.model.selection;
     const range = selection.lastRange;
+    if(!range){
+      throw new Error("couldn't get range")
+    }
     const startPosition = range.start;
     const endPosition = range.end;
     const isCollapsed = selection.isCollapsed;
 
-    const maximizedRange = range.getMaximizedRange();
+    //not sure if I need this
+    // const maximizedRange = range.getMaximizedRange();
 
-    const selectedIterator = new ModelTreeWalker({
-      range: maximizedRange
-    });
+    // const selectedIterator = new ModelTreeWalker({
+    //   range: maximizedRange
+    // });
 
-    const selected = Array.from(selectedIterator);
+    // const selected = Array.from(selectedIterator);
     //deal with collapsed selection
+
     if (isCollapsed) {
       this.insertNewLi(startPosition)
     }
@@ -55,16 +56,45 @@ export default class InsertNewLiCommand extends Command {
       startPosition.split();
       endPosition.split();
 
-      const first = startPosition.nodeAfter();
-      const last = endPosition.nodeBefore();
-
+      const firstToDelete = startPosition.nodeAfter();
+      const lastToDelete = endPosition.nodeBefore();
 
     }
     this.model.write();
   }
 
-  //core algorithm
+
+  // core algorithm
+  // this basically splits a li
+  // like so:
+  //
+  // <li>
+  //  <div class="some stuff">
+  //   some text
+  //       ^cursor
+  //  </div>
+  // </li>
+  //
+  // turns into:
+  //
+  // <li>
+  //  <div class="some stuff">
+  //   some
+  //  </div>
+  // </li>
+  // <li>
+  //  <div class="some stuff">
+  //   text
+  //  ^cursor
+  //  </div>
+  // </li>
+  //
+  // when a non-collapsed selection is preset
+  // it basically deletes all the highlighted stuff
+  // and turns it into a collapsed case
+  // if stuff is unclear please ask sergey.andreev@redpencil.io
   insertNewLi(position: ModelPosition): void {
+
     //split the nodes at position
     position.split();
 
@@ -72,12 +102,13 @@ export default class InsertNewLiCommand extends Command {
     let parentLi;
     let parentUl;
     let parentLiPos;
-    let newLiNodes=[];
-    let toBeInserted:ModelNode[]=[];
+    let newLiNodes = [];
+    let toBeInserted: ModelNode[] = [];
     let newLi = new ModelElement('li');
     let node = position.nodeAfter();
 
     //try to find the first node we can copy if there is no nodeAfter
+    //looks for a right sibling of a direct ancestor untill we reach the parent li
     if (!node) {
       let searchVar = position.nodeBefore();
       if (searchVar && searchVar.parent) {
@@ -109,7 +140,7 @@ export default class InsertNewLiCommand extends Command {
         if (!parentLi) {
           throw new Error("couldn't find the parent li");
         }
-        parentUl = parentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'ul' || node.type === 'ol'), false);
+        parentUl = parentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'ul' || node.type === 'ol'), false) as ModelElement;
         if (!parentUl) {
           throw new Error("couldn't find the parent ul/ol");
         }
@@ -120,61 +151,72 @@ export default class InsertNewLiCommand extends Command {
 
         //add empty li to the parent ul
         parentUl.addChild(newLi, parentLiPos + 1);
-        return;
       }
     }
+    else{
+      //find parent li and ul/ol as well as parent li position
+      parentLi = node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
+      if (!parentLi) {
+        throw new Error("couldn't find the parent li");
+      }
+      parentUl = parentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'ul' || node.type === 'ol'), false) as ModelElement;
+      if (!parentUl) {
+        throw new Error("couldn't find the parent ul/ol");
+      }
+      parentLiPos = parentLi.index;
+      if (parentLiPos === null) {
+        throw new Error("couldn't find the parent li position")
+      }
+      newLiNodes.push({ node: node, operation: 'cut' });
 
-    //find parent li and ul/ol as well as parent li position
-    parentLi = node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
-    if (!parentLi) {
-      throw new Error("couldn't find the parent li");
-    }
-    parentUl = parentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'ul' || node.type === 'ol'), false);
-    if (!parentUl) {
-      throw new Error("couldn't find the parent ul/ol");
-    }
-    parentLiPos = parentLi.index;
-    if (parentLiPos===null) {
-      throw new Error("couldn't find the parent li position")
-    }
-    newLiNodes.push({ node: node, operation: 'cut' });
-    //walk up the nodes and find things to cut/copy to a new li
-    while (node) {
-      //cut siblings and siblings of parents
-      if (node.nextSibling) {
-        node = node.nextSibling;
-        newLiNodes.push({ node: node, operation: 'cut' });
-      }
-      //only copy direct parents only
-      //and put siblings you cut into them
-      else if (node.parent) {
-        if (ModelNode.isModelElement(node.parent) && node.parent.type === "li") {
-          break;
+      //walk up the nodes and find things to cut/copy to a new li
+      while (node) {
+
+        //cut siblings and siblings of parents
+        if (node.nextSibling) {
+          node = node.nextSibling;
+          newLiNodes.push({ node: node, operation: 'cut' });
         }
-        node = node.parent;
-        newLiNodes.push({ node: node, operation: 'copy' });
+
+        //only copy direct parents only
+        //and put siblings you cut into them
+        //break if we reached the parent li
+        else if (node.parent) {
+          if (ModelNode.isModelElement(node.parent) && node.parent.type === "li") {
+            break;
+          }
+          node = node.parent;
+          newLiNodes.push({ node: node, operation: 'copy' });
+        }
+        else {
+          throw new Error('something went horribly wrong when walking up a tree');
+        }
       }
-      else{
-        throw new Error('something went horribly wrong when walking up a tree');
-      }
+
+      //update the existing list
+      newLiNodes.forEach(e => {
+        if (e.operation === 'cut') {
+          e.node.remove();
+          toBeInserted.push(e.node);
+        }
+        else if (e.operation === 'copy') {
+          //TODO (sergey): replace with shallow clone when thats available
+          const copy = e.node.clone() as ModelElement;
+          copy.children = [];
+          copy.appendChildren(...toBeInserted);
+          toBeInserted = [];
+          toBeInserted.push(copy);
+        }
+      });
+
+      newLi.appendChildren(...toBeInserted);
+      parentUl.addChild(newLi, parentLiPos + 1);
     }
 
-    //update the existing list
-    newLiNodes.forEach(e => {
-      if (e.operation === 'cut') {
-        this.model.removeModelNode(e.node);
-        toBeInserted.push(e.node);
-      }
-      if (e.operation === 'copy') {
-        const copy = e.node.clone();
-        copy.appendCildren(...toBeInserted);
-        toBeInserted = [];
-        toBeInserted.push(copy);
-      }
-    });
-
-    newLi.appendChildren(...toBeInserted);
-    parentUl.addChild(newLi, parentLiPos + 1);
+    //set cursor position
+    const newRange = ModelRange.fromInElement(newLi, 0, 0);
+    this.model.selection.ranges = [newRange];
+    return;
   }
 }
 
