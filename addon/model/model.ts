@@ -83,7 +83,7 @@ export default class Model {
    * Write a part of the model back to the dom
    * @param tree
    */
-  write(tree: ModelElement = this.rootModelNode, writeSelection: boolean = true) {
+  write(tree: ModelElement = this.rootModelNode, writeSelection = true) {
     const modelWriteEvent = new CustomEvent(
       'editorModelWrite',
     );
