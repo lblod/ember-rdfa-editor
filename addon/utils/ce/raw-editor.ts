@@ -48,7 +48,7 @@ import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-comma
  */
 @classic
 class RawEditor extends EmberObject {
-  registeredCommands: Map<string, Command> = new Map()
+  registeredCommands: Map<string, Command> = new Map<string, Command>();
   modelSelectionTracker!: ModelSelectionTracker;
   model!: Model;
   protected tryOutVdom = true;
@@ -61,8 +61,8 @@ class RawEditor extends EmberObject {
    */
   richNode!: RichNode;
 
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(properties?: Record<string, unknown>) {
+    super(properties);
   }
 
   /**
@@ -82,10 +82,8 @@ class RawEditor extends EmberObject {
     this.model = new Model(rootNode);
     this.modelSelectionTracker = new ModelSelectionTracker(this.model);
     this.modelSelectionTracker.startTracking();
-    // @ts-ignore
     window.__VDOM = this.model;
-    // @ts-ignore
-    window.__executeCommand = this.executeCommand.bind(this);
+    window.__executeCommand = (commandName: string, ...args: unknown[]) => { this.executeCommand(commandName, ...args); };
     this.registerCommand(new MakeBoldCommand(this.model));
     this.registerCommand(new RemoveBoldCommand(this.model));
     this.registerCommand(new MakeItalicCommand(this.model));
@@ -122,10 +120,6 @@ class RawEditor extends EmberObject {
     return this.model.rootNode;
   }
 
-  get selection(): ModelSelection {
-    return this.model.selection;
-  }
-
   set rootNode(rootNode: HTMLElement) {
     if (rootNode) {
       this.initialize(rootNode);
@@ -134,6 +128,11 @@ class RawEditor extends EmberObject {
       this.updateRichNode();
     }
   }
+
+  get selection(): ModelSelection {
+    return this.model.selection;
+  }
+
 
   get rootModelNode(): ModelElement {
     return this.model.rootModelNode;
@@ -152,7 +151,7 @@ class RawEditor extends EmberObject {
    * @param commandName
    * @param args
    */
-  executeCommand(commandName: string, ...args: any[]) {
+  executeCommand(commandName: string, ...args: unknown[]) {
     try {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
@@ -173,7 +172,7 @@ class RawEditor extends EmberObject {
    * @param commandName
    * @param args
    */
-  canExecuteCommand(commandName: string, ...args: any[]) {
+  canExecuteCommand(commandName: string, ...args: unknown[]) {
     return this.getCommand(commandName).canExecute(...args);
   }
 

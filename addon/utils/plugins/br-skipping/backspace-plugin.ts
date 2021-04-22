@@ -1,13 +1,13 @@
-import { BackspacePlugin }  from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import { Editor,
-         Manipulation,
-         ManipulationGuidance,
-         MoveCursorToEndOfElementManipulation,
-         MoveCursorBeforeElementManipulation} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { stringToVisibleText, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
+import {BackspacePlugin} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import {
+  Manipulation,
+  ManipulationGuidance,
+  MoveCursorToEndOfElementManipulation
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {moveCaretBefore, stringToVisibleText} from '@lblod/ember-rdfa-editor/editor/utils';
 
 
-function isBr(node: Node) : boolean {
+function isBr(node: Node): boolean {
   return node.nodeType == Node.ELEMENT_NODE && (node as HTMLElement).tagName.toLowerCase() == "br";
 }
 
@@ -18,12 +18,12 @@ function isBr(node: Node) : boolean {
 export default class BrSkippingBackspacePlugin implements BackspacePlugin {
   label = "This plugin jumps over brs where necessary";
 
-  guidanceForManipulation(manipulation: Manipulation) : ManipulationGuidance | null {
+  guidanceForManipulation(manipulation: Manipulation): ManipulationGuidance | null {
     if (manipulation.type == "moveCursorToEndOfElement") {
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       if (window.getComputedStyle(element).display == "block") {
-        const length = element.childNodes.length
-        if (length > 0 && isBr(element.childNodes[length-1])) {
+        const length = element.childNodes.length;
+        if (length > 0 && isBr(element.childNodes[length - 1])) {
           // last br in a block element is normally not visible, so jump before the br
           return {
             allow: true,
@@ -33,20 +33,22 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
       }
     }
     if (manipulation.type == "moveCursorBeforeElement") {
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       if (window.getComputedStyle(element).display == "block") {
         // moving before a block
         let previousSibling = element.previousSibling;
         // jump over non visible text nodes (TODO: this probably breaks things)
-        while ( previousSibling && previousSibling.nodeType == Node.TEXT_NODE && stringToVisibleText(previousSibling.textContent || "").length == 0) {
+        while (previousSibling && previousSibling.nodeType == Node.TEXT_NODE && stringToVisibleText(previousSibling.textContent || "").length == 0) {
           previousSibling = previousSibling.previousSibling;
         }
         if (previousSibling) {
           if (isBr(previousSibling)) {
             return {
               allow: true,
-              executor: (_manipulation: MoveCursorBeforeElementManipulation, _editor: Editor) => { this.moveCaretBeforeBr(previousSibling as HTMLElement)}
-            }
+              executor: () => {
+                this.moveCaretBeforeBr(previousSibling as HTMLElement);
+              }
+            };
           }
         }
       }
@@ -64,17 +66,17 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
   /**
    * executor that will move the cursor before the last br of the element
    */
-  moveCaretBeforeLastBrOfElement( manipulation: MoveCursorToEndOfElementManipulation, _editor: Editor) {
+  moveCaretBeforeLastBrOfElement = (manipulation: MoveCursorToEndOfElementManipulation) => {
     const element = manipulation.node;
-    moveCaretBefore(element.childNodes[element.childNodes.length-1]);
-  }
+    moveCaretBefore(element.childNodes[element.childNodes.length - 1]);
+  };
 
   /**
    * allows the plugin to notify the backspace handler a change has occured.
    * currently never detects a change but rather lets the backspace handler do detection
    * @method detectChange
    */
-  detectChange(_manipulation: Manipulation) : boolean {
+  detectChange(): boolean {
     return false;
   }
 }

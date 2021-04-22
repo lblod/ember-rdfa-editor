@@ -1,4 +1,3 @@
-import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import TestModel from "dummy/tests/utilities/test-model";
 

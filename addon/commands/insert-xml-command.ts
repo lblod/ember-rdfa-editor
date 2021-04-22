@@ -9,7 +9,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
  * Particularly useful for testing and debugging
  */
 export default class InsertXmlCommand extends Command {
-  name: string = "insert-xml";
+  name = "insert-xml";
   constructor(model: Model) {
     super(model);
   }
@@ -22,7 +22,8 @@ export default class InsertXmlCommand extends Command {
     const range = selection.lastRange;
     const parsed = parseXml(xml);
     this.model.change(mutator => {
-      mutator.insertNodes(range, parsed.root);
+      const newRange = mutator.insertNodes(range, parsed.root);
+      mutator.selectRange(newRange);
     });
 
 

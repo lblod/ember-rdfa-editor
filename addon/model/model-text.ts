@@ -2,7 +2,6 @@ import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/mod
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {stringToVisibleText} from "@lblod/ember-rdfa-editor/editor/utils";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
 
 const NON_BREAKING_SPACE = '\u00A0';
 export type TextAttribute = "bold" | "italic" | "underline" | "strikethrough" | "highlighted";
@@ -12,7 +11,7 @@ export default class ModelText extends ModelNode {
   modelNodeType: ModelNodeType = "TEXT";
   private _content: string;
 
-  constructor(content: string = "", config?: NodeConfig) {
+  constructor(content = "", config?: NodeConfig) {
     super(config);
     this._content = content;
   }
@@ -110,7 +109,7 @@ export default class ModelText extends ModelNode {
     return stringToVisibleText(this.content).length > 0;
   }
 
-  sameAs(other: ModelNode, strict: boolean = false): boolean {
+  sameAs(other: ModelNode, strict = false): boolean {
     if (!ModelNode.isModelText(other)) {
       return false;
     }

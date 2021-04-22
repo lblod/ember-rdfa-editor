@@ -1,5 +1,4 @@
 import {module, test} from "qunit";
-import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";

@@ -1,5 +1,5 @@
 import { A } from '@ember/array';
-import { PernetSelection, PernetSelectionBlock } from '@lblod/ember-rdfa-editor/editor/pernet'
+import { PernetSelection, PernetSelectionBlock } from '@lblod/ember-rdfa-editor/editor/pernet';
 import RichNode from "@lblod/marawa/rich-node";
 /**
  * Fake class to list helper functions
@@ -26,8 +26,8 @@ const invisibleSpace = '\u200B';
  * @public
  */
 function sliceTextIntoTextNode(textNode: Text, text: string, start: number): void {
-  let textContent = textNode.textContent || "";
-  let content = [];
+  const textContent = textNode.textContent || "";
+  const content = [];
   content.push(textContent.slice(0, start));
   content.push(text);
   content.push(textContent.slice(start));
@@ -40,7 +40,7 @@ function sliceTextIntoTextNode(textNode: Text, text: string, start: number): voi
  * @method insertTextNodeWithSpace
  * @public
  */
-function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNode | null = null, after: boolean = false): Text {
+function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNode | null = null, after = false): Text {
   const textNode = document.createTextNode(invisibleSpace);
   if (relativeToSibling) {
     if (after) {
@@ -64,11 +64,11 @@ function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNo
  * @public
  */
 function unwrapElement(node: HTMLElement): void {
-  let parent = node.parentElement;
+  const parent = node.parentElement;
   let baseNode: ChildNode = node;
   if (parent) {
     while (node.childNodes && node.childNodes.length > 0) {
-      let nodeToInsert = node.childNodes[node.childNodes.length - 1];
+      const nodeToInsert = node.childNodes[node.childNodes.length - 1];
       parent.insertBefore(nodeToInsert, baseNode);
       baseNode = nodeToInsert;
     }
@@ -143,14 +143,14 @@ function isDisplayedAsBlock(domNode: Node): boolean {
  * @public
  */
 function smartSplitTextNode(textNode: Text, splitAt: number): Array<HTMLElement> {
-  let parent = textNode.parentElement;
+  const parent = textNode.parentElement;
   if (parent) {
     const textContent = textNode.textContent || "";
-    let firstTextNode = document.createTextNode(textContent.slice(0, splitAt));
-    let lastTextNode = document.createTextNode(textContent.slice(splitAt));
-    let extraParent = parent.cloneNode(false) as HTMLElement;
+    const firstTextNode = document.createTextNode(textContent.slice(0, splitAt));
+    const lastTextNode = document.createTextNode(textContent.slice(splitAt));
+    const extraParent = parent.cloneNode(false) as HTMLElement;
     parent.replaceChild(firstTextNode, textNode);
-    parent.after(extraParent)
+    parent.after(extraParent);
     extraParent.appendChild(lastTextNode);
     return [parent, extraParent];
   }
@@ -192,7 +192,7 @@ function isList(node?: Node | null): node is HTMLElement {
 function siblingLis(node: HTMLLIElement): Array<HTMLLIElement> {
   const lis: Array<HTMLLIElement> = [];
   if (node.parentElement) {
-    for (let el of node.parentElement.children) {
+    for (const el of node.parentElement.children) {
       if (tagName(el) === 'li')
         lis.push(el as HTMLLIElement);
     }
@@ -208,7 +208,7 @@ function siblingLis(node: HTMLLIElement): Array<HTMLLIElement> {
  */
 function getAllLisFromList(list: HTMLUListElement | HTMLOListElement): Array<HTMLLIElement> {
   const listItems: Array<HTMLLIElement> = [];
-  for (let element of [...list.children]) {
+  for (const element of [...list.children]) {
     if (tagName(element) === 'li') {
       listItems.push(element as HTMLLIElement);
     }
@@ -226,7 +226,7 @@ function isEmptyList(node: HTMLUListElement | HTMLOListElement): boolean {
     return false;
   }
   //sometimes lists may contain other stuff then li, if so we ignore this because illegal
-  for (var x = 0; x < node.children.length; x++) {
+  for (let x = 0; x < node.children.length; x++) {
     if (tagName(node.children[x]) === 'li') {
       return false;
     }
@@ -240,7 +240,7 @@ function isEmptyList(node: HTMLUListElement | HTMLOListElement): boolean {
  */
 function isIgnorableElement(node: Text): boolean {
   return node.nodeType === Node.TEXT_NODE && node.parentElement !== null && tagName(node.parentElement) === "ul";
-};
+}
 
 /**
  * insert node b after node a
@@ -250,7 +250,7 @@ function isIgnorableElement(node: Text): boolean {
  */
 function insertNodeBAfterNodeA(_parent: HTMLElement, nodeA: ChildNode, nodeB: ChildNode) {
   nodeA.after(nodeB);
-};
+}
 
 /**
  * return lowercased tagname of a provided node or an empty string for non element nodes
@@ -304,7 +304,7 @@ function findPreviousLi(currLI: HTMLLIElement): HTMLLIElement | null {
  */
 function getParentLI(node: Node): HTMLLIElement | null {
   if (!node.parentNode) return null;
-  if (isLI(node.parentNode)) return (node.parentNode as HTMLLIElement);
+  if (isLI(node.parentNode)) return (node.parentNode );
   return getParentLI(node.parentNode);
 }
 
@@ -361,7 +361,7 @@ function findWrappingSuitableNodes(selection: PernetSelection ): Array<PernetSel
   const nodes = [];
   const domNodes: Array<Node> = [];
   const [start, end] = selection.selectedHighlightRange;
-  for (let { richNode, range } of selection.selections) {
+  for (const { richNode, range } of selection.selections) {
     if (richNode.start < start || richNode.end > end) {
       // this node only partially matches the selected range
       // so it needs to be split up later and we can't walk up the tree.
@@ -373,7 +373,7 @@ function findWrappingSuitableNodes(selection: PernetSelection ): Array<PernetSel
     else {
       // walk up the tree as longs as we fit within the range
       let current = richNode;
-      let isNotRootNode = function(richNode : RichNode) : boolean { return !!richNode.parent; };
+      const isNotRootNode = function(richNode : RichNode) : boolean { return !!richNode.parent; };
       while (current.parent && isNotRootNode(current.parent) && current.parent.start >= start && current.parent.end <= end) {
         current = current.parent;
       }
@@ -384,8 +384,8 @@ function findWrappingSuitableNodes(selection: PernetSelection ): Array<PernetSel
     }
   }
   // remove nodes that are contained within other nodes
-  let actualNodes: Array<PernetSelectionBlock> = A();
-  for (let possibleNode of nodes) {
+  const actualNodes: Array<PernetSelectionBlock> = A();
+  for (const possibleNode of nodes) {
     const containedInAnotherPossibleNode = nodes.some((otherNode) => otherNode !== possibleNode && otherNode.richNode.domNode.contains(possibleNode.richNode.domNode));
     if (!containedInAnotherPossibleNode) {
       actualNodes.push(possibleNode);

@@ -1,7 +1,5 @@
 import Component from "@glimmer/component";
 import {action} from "@ember/object";
-import {isInList} from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
-import {getWindowSelection} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {tracked} from "@glimmer/tracking";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
@@ -21,15 +19,15 @@ interface Args {
  * @extends Component
  */
 export default class EditorToolbar extends Component<Args> {
-  @tracked isBold: boolean = false;
-  @tracked isItalic: boolean = false;
-  @tracked isStrikethrough: boolean = false;
-  @tracked isUnderline: boolean = false;
-  @tracked isInList: boolean = false;
-  @tracked canInsertList: boolean = true;
-  @tracked isInTable: boolean = false;
-  @tracked canIndent: boolean = false;
-  @tracked canUnindent: boolean = false;
+  @tracked isBold = false;
+  @tracked isItalic = false;
+  @tracked isStrikethrough = false;
+  @tracked isUnderline = false;
+  @tracked isInList = false;
+  @tracked canInsertList = true;
+  @tracked isInTable = false;
+  @tracked canIndent = false;
+  @tracked canUnindent = false;
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);

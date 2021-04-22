@@ -49,12 +49,12 @@ export default class HinstRegistry {
    * @type Array
    * @private
    */
-  private registryObservers;
-  private removedCardObservers;
-  private newCardObservers;
-  private registryObservers;
-  private highlightsForFutureRemoval;
-  private highlightsForFutureInsert;
+  registryObservers;
+  removedCardObservers;
+  newCardObservers;
+  registryObservers;
+  highlightsForFutureRemoval;
+  highlightsForFutureInsert;
 
   constructor(rawEditor){
     this.index = [];
@@ -546,8 +546,6 @@ export default class HinstRegistry {
    * @method currentIndex
    *
    * @return {Object} The current index
-   *
-   * @private
    */
   currentIndex() {
     return this.index.slice(-1)[0];

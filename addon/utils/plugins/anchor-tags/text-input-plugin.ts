@@ -38,13 +38,13 @@ export default class AnchorTagTextInputPlugin implements TextInputPlugin {
           return {
             allow: true,
             executor: enterTextAfterAnchor
-          }
+          };
         }
       else if (parentElement.firstChild == textNode && position == 0) {
         return {
           allow: true,
           executor: enterTextBeforeAnchor
-        }
+        };
       }
     }
     return null;

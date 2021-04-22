@@ -13,7 +13,7 @@ export default class EmptyElementBackspacePlugin implements BackspacePlugin {
 
   guidanceForManipulation(manipulation: Manipulation) : ManipulationGuidance | null {
     if (manipulation.type == "moveCursorToEndOfElement") {
-      const element = manipulation.node as HTMLElement;
+      const element = manipulation.node ;
       if (element.innerText.length == 0) {
         // no visible text or height (br shows up as newline in innerText), so jump before and remove
         return {
@@ -29,19 +29,19 @@ export default class EmptyElementBackspacePlugin implements BackspacePlugin {
    * executor that will move the cursor before the element we're supposed to jump into
    * and remove the element
    */
-  jumpBeforeAndRemoveEmptyElement( manipulation: MoveCursorToEndOfElementManipulation, editor: Editor) {
+  jumpBeforeAndRemoveEmptyElement = ( manipulation: MoveCursorToEndOfElementManipulation, editor: Editor) => {
     const element = manipulation.node;
-    moveCaretBefore(element)
+    moveCaretBefore(element);
     element.remove();
     editor.updateRichNode();
-  }
+  };
 
   /**
    * allows the plugin to notify the backspace handler a change has occured.
    * currently never detects a change but rather lets the backspace handler do detection
    * @method detectChange
    */
-  detectChange(_manipulation: Manipulation) : boolean {
+  detectChange() : boolean {
     return false;
   }
 }

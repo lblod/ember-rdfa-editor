@@ -99,7 +99,7 @@ export function moveCaretToEndOfNode(node: Node): Selection {
   range.collapse();
   selection.removeAllRanges();
   selection.addRange(range);
-  return selection
+  return selection;
 }
 
 /**

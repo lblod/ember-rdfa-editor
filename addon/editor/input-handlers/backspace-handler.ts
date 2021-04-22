@@ -47,7 +47,7 @@ type ThingBeforeCursor =
   | VoidElementPosition
   | ElementEndPosition
   | UncommonNodeEndPosition
-  | EditorRootPosition
+  | EditorRootPosition;
 
 interface BaseThingBeforeCursor {
   type: string;
@@ -62,7 +62,7 @@ interface BaseThingBeforeCursor {
 interface CharacterPosition extends BaseThingBeforeCursor {
   type: "character";
   node: Text;
-  position: any;
+  position: number;
 }
 
 
@@ -161,7 +161,7 @@ function ensureUncommonNode( node: Node, errorMessage?: string ) : UncommonNode 
         Node.DOCUMENT_FRAGMENT_NODE ].includes( node.nodeType ) ) {
     return node as UncommonNode;
   } else {
-    throw errorMessage || `Received node ${node} is not an UncommonNode.`;
+    throw errorMessage || `Received node ${node.toString()} is not an UncommonNode.`;
   }
 }
 
@@ -275,7 +275,7 @@ export interface BackspacePlugin {
  * @extends EmberObject
  */
 export default class BackspaceHandler implements InputHandler {
-  isLocked: Boolean = false;
+  isLocked = false;
   /**
    * The editor instance on which we can execute changes.
    *
@@ -283,7 +283,7 @@ export default class BackspaceHandler implements InputHandler {
    * @type RawEditor
    * @default null
    */
-  rawEditor: LegacyRawEditor
+  rawEditor: LegacyRawEditor;
 
   /**
    * Array containing all plugins for the backspace handler.
@@ -348,7 +348,7 @@ export default class BackspaceHandler implements InputHandler {
       return { allowPropagation: false };
     }
 
-    this.backspace().then( () => {
+    void this.backspace().then( () => {
       this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
     });
     return { allowPropagation: false };
@@ -638,7 +638,7 @@ export default class BackspaceHandler implements InputHandler {
 
       case "character": {
         // character: remove the character
-        const characterBeforeCursor = thingBeforeCursor as CharacterPosition;
+        const characterBeforeCursor = thingBeforeCursor;
         return {
           type: "removeCharacter",
           node: characterBeforeCursor.node,
@@ -648,7 +648,7 @@ export default class BackspaceHandler implements InputHandler {
 
       case "emptyTextNodeStart": {
         // empty text node: remove the text node
-        const textNodeBeforeCursor = thingBeforeCursor as EmptyTextNodeStartPosition;
+        const textNodeBeforeCursor = thingBeforeCursor ;
         if (stringToVisibleText(textNodeBeforeCursor.node.textContent || "").length === 0) {
           return {
             type: "removeEmptyTextNode",
@@ -661,7 +661,7 @@ export default class BackspaceHandler implements InputHandler {
 
       case "emptyTextNodeEnd": {
         // empty text node: remove the text node
-        const textNodePositionBeforeCursor = thingBeforeCursor as EmptyTextNodeEndPosition;
+        const textNodePositionBeforeCursor = thingBeforeCursor ;
         if (textNodePositionBeforeCursor.node.length === 0) {
           return {
             type: "removeEmptyTextNode",
@@ -673,7 +673,7 @@ export default class BackspaceHandler implements InputHandler {
       }
 
       case "voidElement": {
-        const voidElementBeforeCursor = thingBeforeCursor as VoidElementPosition;
+        const voidElementBeforeCursor = thingBeforeCursor ;
         return {
           type: "removeVoidElement",
           node: voidElementBeforeCursor.node
@@ -681,7 +681,7 @@ export default class BackspaceHandler implements InputHandler {
       }
 
       case "elementEnd": {
-        const elementBeforeCursor = thingBeforeCursor as ElementEndPosition;
+        const elementBeforeCursor = thingBeforeCursor ;
         return {
           type: "moveCursorToEndOfElement",
           node: elementBeforeCursor.node
@@ -689,7 +689,7 @@ export default class BackspaceHandler implements InputHandler {
       }
 
       case "elementStart": {
-        const parentBeforeCursor = thingBeforeCursor as ElementStartPosition;
+        const parentBeforeCursor = thingBeforeCursor ;
         const element = parentBeforeCursor.node;
         if (element.childNodes.length == 0) {
           return {
@@ -712,7 +712,7 @@ export default class BackspaceHandler implements InputHandler {
         }
       }
       case "uncommonNodeEnd": {
-        const positionBeforeCursor = thingBeforeCursor as UncommonNodeEndPosition;
+        const positionBeforeCursor = thingBeforeCursor ;
         const node = positionBeforeCursor.node;
         return {
           type: "removeOtherNode",
@@ -728,7 +728,7 @@ export default class BackspaceHandler implements InputHandler {
     }
 
     // TODO: take care of other cases
-    throw `Could not find manipulation to suggest for backspace ${(thingBeforeCursor as any).type}`;
+    throw `Could not find manipulation to suggest for backspace ${(thingBeforeCursor as ThingBeforeCursor).type}`;
   }
 
   /**
@@ -826,7 +826,7 @@ export default class BackspaceHandler implements InputHandler {
           else {
             // position > 1 so there is a child node before our cursor
             // position is the number of child nodes between the start of the startNode and our cursor.
-            const child = element.childNodes[position-1] as ChildNode;
+            const child = element.childNodes[position-1] ;
             if (child.nodeType == Node.TEXT_NODE) {
               const text = child as Text;
               return { type: "character", position: text.length, node: text};

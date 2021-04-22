@@ -4,8 +4,8 @@ declare module '@lblod/marawa/rdfa-context-scanner' {
 
   type Region = [number, number];
   export default class RdfaContextScanner{
-    analyse(domNode: Node, region?: Region, options?: Object ): RdfaBlock[];
+    analyse(domNode: Node, region?: Region, options?: unknown ): RdfaBlock[];
   }
-  export function analyse(node: Node, region?: Region, options?: Object): RdfaBlock[]
+  export function analyse(node: Node, region?: Region, options?: unknown): RdfaBlock[];
 
 }

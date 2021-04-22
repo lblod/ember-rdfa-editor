@@ -17,18 +17,18 @@ export function parseHtml(html: string): HTMLDocument {
   return parser.parseFromString(html, "text/html");
 }
 
-function buildString(strings: TemplateStringsArray, ...expressions: any[]) {
+function buildString(strings: TemplateStringsArray, ...expressions: unknown[]) {
 
   let result = '';
 
   for(let i = 0; i<expressions.length; i++){
-    result += strings[i] + expressions[i];
+    result += `${strings[i]}${(expressions[i] as Record<string, unknown>).toString()}`;
   }
   result += strings[expressions.length];
   return result;
 }
 
-export function vdom(strings: TemplateStringsArray, ...expressions: any[]): XmlReaderResult {
+export function vdom(strings: TemplateStringsArray, ...expressions: unknown[]): XmlReaderResult {
   const xmlStr = buildString(strings, ...expressions);
   return parseXml(xmlStr);
 }
@@ -38,7 +38,7 @@ export function vdom(strings: TemplateStringsArray, ...expressions: any[]): XmlR
  * @param strings
  * @param expressions
  */
-export function dom(strings: TemplateStringsArray, ...expressions: any[]) {
+export function dom(strings: TemplateStringsArray, ...expressions: unknown[]) {
   const htmlStr = buildString(strings, ...expressions);
   return parseHtml(htmlStr);
 }
@@ -49,7 +49,8 @@ export function dom(strings: TemplateStringsArray, ...expressions: any[]) {
  * @param strings
  * @param expressions
  */
-export function domStripped(strings: TemplateStringsArray, ...expressions: any[]): HTMLDocument {
+
+export function domStripped(strings: TemplateStringsArray, ...expressions: unknown[]): HTMLDocument {
   const htmlStr = oneLineTrim(strings, ...expressions);
   return parseHtml(htmlStr);
 }

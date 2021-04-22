@@ -3,7 +3,7 @@ import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
-module("Unit | model | cleaners | list-cleaner-test", hooks => {
+module("Unit | model | cleaners | list-cleaner-test", () => {
 
   test("should merge two adjacent lists", assert => {
     // language=XML

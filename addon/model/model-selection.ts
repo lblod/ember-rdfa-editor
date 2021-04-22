@@ -8,7 +8,7 @@ import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-find
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {Direction, FilterAndPredicate, PropertyState,} from "@lblod/ember-rdfa-editor/model/util/types";
-import {listTypes, tableTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
@@ -129,7 +129,7 @@ export default class ModelSelection {
     this._ranges = [];
   }
 
-  selectRange(range: ModelRange, rightToLeft: boolean = false) {
+  selectRange(range: ModelRange, rightToLeft = false) {
     this.clearRanges();
     this.addRange(range);
     this._isRightToLeft = rightToLeft;
@@ -257,7 +257,7 @@ export default class ModelSelection {
     if (!iterator) {
       return null;
     }
-    return iterator[Symbol.iterator]().next().value;
+    return iterator[Symbol.iterator]().next().value as T | null;
 
   }
 
@@ -292,7 +292,7 @@ export default class ModelSelection {
   isInside(types: string[]): PropertyState{
     //1. get all selected nodes
     if (ModelSelection.isWellBehaved(this)) {
-      const range = this.lastRange!;
+      const range = this.lastRange;
       const treeWalker = new ModelTreeWalker({
         range: range,
       });
@@ -301,14 +301,14 @@ export default class ModelSelection {
         let prevType;
         //2. check if every node has the same parent type
         for(let i=0; i<resultArr.length; i++){
-          let node=resultArr[i];
-          let type=node.findAncestor(node => ModelNode.isModelElement(node) && types.includes(node.type));
+          const node=resultArr[i];
+          const type=node.findAncestor(node => ModelNode.isModelElement(node) && types.includes(node.type));
           //3. else return false
           if(!type){
-            return PropertyState.disabled
+            return PropertyState.disabled;
           }
           else if(i>0 && type!=prevType){
-            return PropertyState.disabled
+            return PropertyState.disabled;
           }
           else{
             prevType=type;
@@ -321,7 +321,7 @@ export default class ModelSelection {
   }
   contains(types:string[]): PropertyState{
     if (ModelSelection.isWellBehaved(this)) {
-      const range = this.lastRange!;
+      const range = this.lastRange;
       const treeWalker = new ModelTreeWalker({
         range: range,
         filter: node => ModelNode.isModelElement(node) && types.includes(node.type)  ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP
@@ -362,7 +362,7 @@ export default class ModelSelection {
   getTextPropertyStatus(property: TextAttribute): PropertyState {
 
     if (ModelSelection.isWellBehaved(this)) {
-      const range = this.lastRange!;
+      const range = this.lastRange;
 
       const treeWalker = new ModelTreeWalker({
         range,
@@ -376,7 +376,7 @@ export default class ModelSelection {
   }
 
 
-  collapseOn(node: ModelNode, offset: number = 0) {
+  collapseOn(node: ModelNode, offset = 0) {
     this.clearRanges();
     const position = ModelPosition.fromParent(this.model.rootModelNode, node, offset);
     this.addRange(new ModelRange(position, position));

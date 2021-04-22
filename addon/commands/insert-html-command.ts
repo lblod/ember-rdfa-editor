@@ -1,6 +1,5 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import ModelRange from "../model/model-range";
@@ -23,8 +22,14 @@ export default class InsertHtmlCommand extends Command {
     this.model.change(mutator => {
       // dom NodeList doesnt have a map method
       const modelNodes: ModelNode[] = [];
-      bodyContent.forEach(node => modelNodes.push(reader.read(node)));
-      mutator.insertNodes(range, ...modelNodes);
+      bodyContent.forEach(node => {
+        const parsed = reader.read(node);
+        if(parsed) {
+          modelNodes.push(parsed);
+        }
+      });
+      const newRange = mutator.insertNodes(range, ...modelNodes);
+      mutator.selectRange(newRange);
     });
   }
 }

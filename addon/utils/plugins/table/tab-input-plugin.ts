@@ -1,9 +1,13 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {
+  Manipulation,
+  ManipulationExecutor,
+  ManipulationGuidance
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import RawEditor from 'dummy/utils/ce/raw-editor';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 /**
  *
@@ -11,20 +15,20 @@ import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
  * @module plugins/table
  */
 export default class TableTabInputPlugin implements TabInputPlugin {
-  label = 'backspace plugin for handling table nodes'
+  label = 'backspace plugin for handling table nodes';
 
-  guidanceForManipulation(manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
+  guidanceForManipulation(_manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
     const selection = editor.selection;
     if(selection.inTableState === PropertyState.enabled) {
       return {
         allow: true,
-        executor: this.tabHandler
+        executor: this.tabHandler as unknown as ManipulationExecutor
       };
     }
     return null;
   }
 
-  tabHandler(manipulation : Manipulation, editor: RawEditor) {
+  tabHandler = (manipulation : Manipulation, editor: RawEditor) => {
     let table;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);
@@ -34,7 +38,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     const selectedIndex = ModelTable.getCellIndex(selectedCell);
 
     while(selectedCell?.parent) {
-      const parent = selectedCell.parent as ModelElement;
+      const parent: ModelElement = selectedCell.parent ;
       if(parent.type === 'table') {
         table = parent as ModelTable;
         break;
@@ -91,5 +95,5 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     if(!newSelectedCell) return;
     selection.collapseOn(newSelectedCell);
     editor.model.write();
-  }
+  };
 }

@@ -5,7 +5,7 @@ import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 export default class UnindentListCommand extends Command {
-  name: string = "unindent-list";
+  name = "unindent-list";
   constructor(model: Model) {
     super(model);
   }
@@ -109,7 +109,7 @@ export default class UnindentListCommand extends Command {
     //compare all paths to see if base is parent
     //remove those that are related
     for(let i =0; i<elementArray.length; i++){
-      let e=elementArray[i];
+      const e=elementArray[i];
       if(this.areRelated(base, e)){
         elementArray.splice(i, 1);
       }
@@ -126,10 +126,10 @@ export default class UnindentListCommand extends Command {
     return result;
   }
 
-  areRelated(base:ModelElement, compare:ModelElement): Boolean{
+  areRelated(base:ModelElement, compare:ModelElement): boolean{
     const basePath=base.getIndexPath();
     const comparePath=compare.getIndexPath();
-    for(var i=0; i<basePath.length; i++){
+    for(let i=0; i<basePath.length; i++){
       if(basePath[i]!=comparePath[i]){
         return false;
       }

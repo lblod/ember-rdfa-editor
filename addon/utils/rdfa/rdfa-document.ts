@@ -1,4 +1,3 @@
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import PernetRawEditor from '../ce/pernet-raw-editor';
 import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 
@@ -23,7 +22,6 @@ export default class RdfaDocument {
   }
 
   set htmlContent(html: string) {
-    const selection = this._editor.createSelection();
     this._editor.executeCommand("insert-html", html, this._editor.createRangeFromPaths([], []));
   }
 

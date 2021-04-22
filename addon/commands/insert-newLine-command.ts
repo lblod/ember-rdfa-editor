@@ -1,6 +1,5 @@
 import Command from "./command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelElement from "../model/model-element";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
@@ -14,7 +13,7 @@ export default class InsertNewLineCommand extends Command {
     super(model);
   }
 
-  canExecute(_selection: ModelSelection = this.model.selection): boolean {
+  canExecute(): boolean {
     return true;
   }
 
@@ -25,9 +24,9 @@ export default class InsertNewLineCommand extends Command {
     const br = new ModelElement("br");
     this.model.change(mutator => {
       mutator.insertNodes(range, br);
-    }, false);
-    const cursorPos = ModelPosition.fromAfterNode(br);
-    this.model.selection.selectRange(new ModelRange(cursorPos, cursorPos));
-    this.model.writeSelection();
+      const cursorPos = ModelPosition.fromAfterNode(br);
+      const newRange = new ModelRange(cursorPos, cursorPos);
+      mutator.selectRange(newRange);
+    });
   }
 }

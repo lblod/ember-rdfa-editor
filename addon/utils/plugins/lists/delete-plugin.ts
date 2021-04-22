@@ -30,7 +30,8 @@ import {
 import { isInList } from "../../ce/list-helpers";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 
-function debug(message: String, object: Object | null = null): void {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function debug(message: string, object: unknown = null): void {
   runInDebug(() => {
     console.debug(`list delete plugin: ${message}`, object);
   });
@@ -76,7 +77,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       ) => {
         this.mergeBackwards(manipulation.node, editor);
       };
-      return { allow: true, executor: dispatch.bind(this) };
+      return { allow: true, executor: dispatch };
     }
     return null;
   }
@@ -90,7 +91,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       ) => {
         this.mergeForwards(manipulation.node, editor);
       };
-      return { allow: true, executor: dispatch.bind(this) };
+      return { allow: true, executor: dispatch };
     }
     return null;
   }
@@ -110,7 +111,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       ) => {
         this.mergeForwards(manipulation.node, editor);
       };
-      return { allow: true, executor: dispatcher.bind(this) };
+      return { allow: true, executor: dispatcher };
     }
     return null;
   }
