@@ -3,13 +3,9 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelNode from "../model/model-node";
 import ModelElement from "../model/model-element";
-import ModelText from "../model/model-text";
-import { MisbehavedSelectionError, NoParentError, NotImplementedError, SelectionError } from "@lblod/ember-rdfa-editor/utils/errors";
-import { INVISIBLE_SPACE } from "../model/util/constants";
-import ModelTreeWalker, { FilterResult } from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import { MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import nodeWalker from "dummy/utils/ce/node-walker";
 
 
 export default class InsertNewLiCommand extends Command {
@@ -32,33 +28,14 @@ export default class InsertNewLiCommand extends Command {
   execute(): void {
     const selection = this.model.selection;
     const range = selection.lastRange;
-    if(!range){
-      throw new Error("couldn't get range")
+    if (!range) {
+      throw new Error("couldn't get range");
     }
     const startPosition = range.start;
-    const endPosition = range.end;
     const isCollapsed = selection.isCollapsed;
 
-    //not sure if I need this
-    // const maximizedRange = range.getMaximizedRange();
-
-    // const selectedIterator = new ModelTreeWalker({
-    //   range: maximizedRange
-    // });
-
-    // const selected = Array.from(selectedIterator);
-    //deal with collapsed selection
-
     if (isCollapsed) {
-      this.insertNewLi(startPosition)
-    }
-    else {
-      startPosition.split();
-      endPosition.split();
-
-      const firstToDelete = startPosition.nodeAfter();
-      const lastToDelete = endPosition.nodeBefore();
-
+      this.insertNewLi(startPosition);
     }
     this.model.write();
   }
@@ -102,10 +79,11 @@ export default class InsertNewLiCommand extends Command {
     let parentLi;
     let parentUl;
     let parentLiPos;
-    let newLiNodes = [];
     let toBeInserted: ModelNode[] = [];
-    let newLi = new ModelElement('li');
     let node = position.nodeAfter();
+
+    const newLiNodes = [];
+    const newLi = new ModelElement('li');
 
     //try to find the first node we can copy if there is no nodeAfter
     //looks for a right sibling of a direct ancestor untill we reach the parent li
@@ -132,7 +110,7 @@ export default class InsertNewLiCommand extends Command {
       if (!node) {
         node = position.nodeBefore();
         if (!node) {
-          throw new Error("couldn't find a node to work with")
+          throw new Error("couldn't find a node to work with");
         }
 
         //find parent li and ul/ol as well as parent li position
@@ -146,14 +124,14 @@ export default class InsertNewLiCommand extends Command {
         }
         parentLiPos = parentLi.index;
         if (!parentLiPos) {
-          throw new Error("couldn't find the parent li position")
+          throw new Error("couldn't find the parent li position");
         }
 
         //add empty li to the parent ul
         parentUl.addChild(newLi, parentLiPos + 1);
       }
     }
-    else{
+    else {
       //find parent li and ul/ol as well as parent li position
       parentLi = node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
       if (!parentLi) {
@@ -165,7 +143,7 @@ export default class InsertNewLiCommand extends Command {
       }
       parentLiPos = parentLi.index;
       if (parentLiPos === null) {
-        throw new Error("couldn't find the parent li position")
+        throw new Error("couldn't find the parent li position");
       }
       newLiNodes.push({ node: node, operation: 'cut' });
 
