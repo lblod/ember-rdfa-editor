@@ -1,6 +1,6 @@
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {NotImplementedError, PositionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
@@ -26,7 +26,6 @@ export default class ModelPosition {
     result.path = path;
     return result;
   }
-
 
   static fromAfterNode(node: ModelNode): ModelPosition {
     const basePath = node.getOffsetPath();
@@ -76,33 +75,6 @@ export default class ModelPosition {
     const commonPath = ArrayUtils.findCommonSlice(pos1.path, pos2.path);
 
     return ModelPosition.fromPath(pos1.root, commonPath);
-  }
-
-  /**
-   * Get a slice of child positions of the commonAncestor between pos1 and pos2
-   * @param pos1
-   * @param pos2
-   * @deprecated use {@link ModelTreeWalker} instead
-   */
-  static getTopPositionsBetween(pos1: ModelPosition, pos2: ModelPosition): ModelPosition[] | null {
-    const commonAncestor = ModelPosition.getCommonPosition(pos1, pos2);
-    if (!commonAncestor) {
-      return null;
-    }
-    const cutoff = commonAncestor.path.length;
-    const root = commonAncestor.root;
-
-    const commonPath = commonAncestor.path;
-    const path1 = pos1.path.slice(0, cutoff + 1);
-    const path2 = pos2.path.slice(0, cutoff + 1);
-
-    const results = [];
-
-    for (let i = path1[path1.length - 1]; i <= path2[path2.length - 1]; i++) {
-      results.push(ModelPosition.fromPath(root, commonPath.concat([i, 0])));
-    }
-    return results;
-
   }
 
   constructor(root: ModelElement) {
@@ -251,8 +223,6 @@ export default class ModelPosition {
    * Split the textnode at the position. If position is not inside a
    * textNode, do nothing.
    * If position is at the end or start of a textnode, do nothing;
-   * If splitting of elements is needed, use
-   * {@link splitParent}.
    */
   split() {
     const before = this.nodeBefore();
@@ -264,14 +234,6 @@ export default class ModelPosition {
       this.parentCache = null;
     }
 
-  }
-
-  /**
-   * Split the parent element at this position
-   * TODO implement this
-   */
-  splitParent() {
-    throw new NotImplementedError();
   }
 
   /**

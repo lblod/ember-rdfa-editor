@@ -1,10 +1,8 @@
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
-import {Direction, FilterAndPredicate, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
+import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelTreeWalker, {ModelNodeFilter} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 
 /**
@@ -96,57 +94,6 @@ export default class ModelRange {
   getCommonAncestor(): ModelElement {
     return this.start.getCommonAncestor(this.end);
   }
-
-
-  /**
-   * Get all child positions of the commonAncestor that are touched by the selection
-   * @deprecated
-   */
-  getSelectedTopPositions(): ModelPosition[] | null {
-    return ModelPosition.getTopPositionsBetween(this.start, this.end);
-  }
-
-  /**
-   * Get a {@link ModelNodeFinder} which searches for nodes between start and end, or the other way round
-   * @param direction
-   * @param config
-   * @deprecated use {@link ModelTreeWalker} instead
-   */
-  getNodeFinder<T extends ModelNode = ModelNode>(direction: Direction = Direction.FORWARDS, config: FilterAndPredicate<T>): ModelNodeFinder<T> {
-    const {filter, predicate} = config;
-    return new ModelNodeFinder({
-      startNode: this.start.parent,
-      endNode: this.end.parent,
-      rootNode: this.start.root,
-      nodeFilter: filter,
-      predicate,
-      direction
-    });
-
-  }
-
-  /**
-   * Eagerly get all nodes between start and end, filtered by filter
-   * @param config
-   * @deprecated use {@link ModelTreeWalker} instead
-   */
-  getNodes<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T> = {}): T[] {
-    const finder = this.getNodeFinder<T>(Direction.FORWARDS, config);
-    return [...finder];
-  }
-
-  getWalker(filter?: ModelNodeFilter) {
-    return new ModelTreeWalker({range: this, filter});
-  }
-
-  /**
-   * Get all {@link ModelText} nodes between start and end
-   * @deprecated use {@link ModelTreeWalker} instead
-   */
-  getTextNodes(): ModelText[] {
-    return this.getNodes({filter: ModelNode.isModelText});
-  }
-
 
   /**
    * Whether this range is confined, aka it is fully contained within one parentElement
