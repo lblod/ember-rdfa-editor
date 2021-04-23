@@ -45,8 +45,9 @@ export default class OperationAlgorithms {
     }
   }
 
-  static move(rangeToMove: ModelRange, targetRange: ModelRange): ModelNode[] {
+  static move(rangeToMove: ModelRange, targetPosition: ModelPosition): ModelNode[] {
     const nodes = OperationAlgorithms.remove(rangeToMove);
+    const targetRange = new ModelRange(targetPosition, targetPosition);
     if (nodes.length) {
       OperationAlgorithms.insert(targetRange, ...nodes);
     }

@@ -4,26 +4,26 @@ import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/opera
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 export default class MoveOperation extends Operation {
-  private _targetRange: ModelRange;
-  constructor(rangeToMove: ModelRange, targetRange: ModelRange ) {
+  private _targetPosition: ModelPosition;
+  constructor(rangeToMove: ModelRange, targetPosition: ModelPosition ) {
     super(rangeToMove);
-    this._targetRange = targetRange;
+    this._targetPosition = targetPosition;
   }
-  get targetRange(): ModelRange {
-    return this._targetRange;
+  get targetPosition(): ModelPosition {
+    return this._targetPosition;
   }
 
-  set targetRange(value: ModelRange) {
-    this._targetRange = value;
+  set targetPosition(value: ModelPosition) {
+    this._targetPosition = value;
   }
   execute(): ModelRange {
-    const movedNodes = OperationAlgorithms.move(this.range, this.targetRange);
+    const movedNodes = OperationAlgorithms.move(this.range, this.targetPosition);
     if(movedNodes.length) {
       const start = ModelPosition.fromBeforeNode(movedNodes[0]);
       const end = ModelPosition.fromAfterNode(movedNodes[movedNodes.length - 1]);
       return new ModelRange(start, end);
     } else {
-      return this.targetRange;
+      return new ModelRange(this.targetPosition, this.targetPosition);
     }
   }
 
