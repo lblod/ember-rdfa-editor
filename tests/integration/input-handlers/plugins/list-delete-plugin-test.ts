@@ -7,7 +7,7 @@ import {
   hasVisibleChildren,
 } from "@lblod/ember-rdfa-editor/editor/utils";
 import { pressDelete, wait, renderEditor } from "dummy/tests/test-utils";
-module("Integration | InputHandler | list-delete-plugin", function (hooks) {
+module.skip("Integration | InputHandler | list-delete-plugin", function (hooks) {
   setupRenderingTest(hooks);
   test("Delete | Lists | delete in empty li at end of document does nothing", async function (assert) {
     const initial = `<ul><li></li></ul>`;
