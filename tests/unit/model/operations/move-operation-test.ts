@@ -97,7 +97,7 @@ module("Unit | model | operations | move-operation-test", () => {
 
   test("overwrite uneven range", assert => {
     // language=XML
-  const {root: initial, elements: {target}, textNodes: {source, targetRangeEnd}} = vdom`
+    const {root: initial, elements: {target}, textNodes: {source, targetRangeEnd}} = vdom`
       <modelRoot>
         <div __id="target">
           <span>
@@ -116,7 +116,11 @@ module("Unit | model | operations | move-operation-test", () => {
       <modelRoot>
         <div>
           <text>bc</text>
-          <text>fg</text>
+          <span>
+            <span>
+              <text>fg</text>
+            </span>
+          </span>
         </div>
         <text>a</text>
         <text>d</text>

@@ -160,7 +160,7 @@ module("Unit | model | model-range", () => {
     test("all ranges are confined", assert => {
 
       // language=XML
-      const {root: initial, elements: {rangeStart}, textNodes: {rangeEnd}} = vdom`
+      const {elements: {rangeStart}, textNodes: {rangeEnd}} = vdom`
         <modelRoot>
           <div __id="rangeStart">
             <span>
