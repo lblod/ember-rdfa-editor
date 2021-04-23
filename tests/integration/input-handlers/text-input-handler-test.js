@@ -4,7 +4,7 @@ import { render, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import type from '../util/type-helper';
 
-module('Integration | InputHandler | text-input-handler', function(hooks) {
+module.skip('Integration | InputHandler | text-input-handler', function(hooks) {
   setupRenderingTest(hooks);
 
   test('type text in an empty editor', async function(assert) {

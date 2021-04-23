@@ -9,7 +9,7 @@ import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
 import { getWindowSelection } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { getEditorElement, wait } from "dummy/tests/test-utils";
 
-module("Integration | InputHandler | delete-handler", function (hooks) {
+module.skip("Integration | InputHandler | delete-handler", function (hooks) {
   setupRenderingTest(hooks);
 
   test("it deletes a character, beginning of textNode keeps position", async function (assert) {
