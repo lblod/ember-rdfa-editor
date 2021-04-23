@@ -30,14 +30,14 @@ export default class AttributeOperation extends Operation {
   }
 
   canExecute() {
-    if (!this.range.isConfined()) {
-      throw new UnconfinedRangeError();
-    }
+    return !this.range.isConfined();
   }
 
   execute(): ModelRange {
 
-    this.canExecute();
+    if(!this.canExecute()) {
+      throw new UnconfinedRangeError();
+    }
 
     // TODO: replace with treewalker
     for (const node of this.range.start.parent.children) {

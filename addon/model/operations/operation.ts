@@ -12,5 +12,8 @@ export default abstract class Operation {
   set range(value: ModelRange) {
     this._range = value;
   }
+  canExecute(): boolean {
+    return true;
+  }
   abstract execute(): ModelRange;
 }

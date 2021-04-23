@@ -2,6 +2,7 @@ import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/operation-algorithms";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import {OperationError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export default class MoveOperation extends Operation {
   private _targetPosition: ModelPosition;
@@ -16,7 +17,14 @@ export default class MoveOperation extends Operation {
   set targetPosition(value: ModelPosition) {
     this._targetPosition = value;
   }
+  canExecute(): boolean {
+    return !this.targetPosition.isBetween(this.range.start, this.range.end);
+  }
+
   execute(): ModelRange {
+    if(!this.canExecute()) {
+      throw new OperationError("Cannot move to target inside source range");
+    }
     const movedNodes = OperationAlgorithms.move(this.range, this.targetPosition);
     if(movedNodes.length) {
       const start = ModelPosition.fromBeforeNode(movedNodes[0]);

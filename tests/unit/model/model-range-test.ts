@@ -5,7 +5,6 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import {parseXml, vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import {stackOverFlowOnGetMinimumConfinedRanges} from "dummy/tests/unit/model/testing-vdoms";
-import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/operation-algorithms";
 
 module("Unit | model | model-range", () => {
 

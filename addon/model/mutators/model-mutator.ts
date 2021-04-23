@@ -2,6 +2,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import Model from "@lblod/ember-rdfa-editor/model/model";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 /**
  * A mutator is the only publicly accessible way to change the model.
@@ -40,9 +41,9 @@ export default abstract class ModelMutator<T> {
    * Moves the contents of a range into another range, overwriting the
    * content of the targetRange.
    * @param rangeToMove
-   * @param targetRange
+   * @param targetPos
    */
-  abstract move(rangeToMove: ModelRange, targetRange: ModelRange): T;
+  abstract moveToPos(rangeToMove: ModelRange, targetPos: ModelPosition): T;
 
   /**
    * Set the modelSelection to the specified {@link ModelRange}

@@ -173,6 +173,21 @@ export default class ModelPosition {
     return ModelPosition.comparePath(this.path, other.path);
   }
 
+  isBetween(start: ModelPosition, end: ModelPosition, inclusive = false): boolean {
+    let startRslt = this.compare(start);
+    let endRslt = this.compare(end);
+
+    if (inclusive) {
+      if (startRslt === RelativePosition.EQUAL) {
+        startRslt = RelativePosition.AFTER;
+      }
+      if (endRslt === RelativePosition.EQUAL) {
+        endRslt = RelativePosition.BEFORE;
+      }
+    }
+    return startRslt === RelativePosition.AFTER && endRslt === RelativePosition.BEFORE;
+  }
+
   getCommonPosition(other: ModelPosition): ModelPosition | null {
     return ModelPosition.getCommonPosition(this, other);
   }
