@@ -273,7 +273,7 @@ export default class InsertNewLiCommand extends Command {
           throw new Error("couldn't find the parent ul/ol");
         }
         parentLiPos = parentLi.index;
-        if (!parentLiPos) {
+        if (parentLiPos === null) {
           throw new Error("couldn't find the parent li position");
         }
 
