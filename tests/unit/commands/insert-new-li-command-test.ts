@@ -33,11 +33,9 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
       <div>
         <ul>
           <li>
-            <text/>
           </li>
           <li>
             <text>${INVISIBLE_SPACE}</text>
-            <text/>
           </li>
         </ul>
       </div>
@@ -69,11 +67,9 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
       <div>
         <ul>
           <li>
-            <text/>
           </li>
           <li>
             <text>abc</text>
-            <text/>
           </li>
         </ul>
       </div>
@@ -108,9 +104,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
             <text>abc</text>
           </li>
           <li>
-            <text>${INVISIBLE_SPACE}</text>
-            <text/>
-            <text/>
           </li>
         </ul>
       </div>

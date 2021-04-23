@@ -2,10 +2,11 @@ import Command from "./command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelNode from "../model/model-node";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "../model/model-element";
-import { MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
 
 export default class InsertNewLiCommand extends Command {
@@ -16,9 +17,9 @@ export default class InsertNewLiCommand extends Command {
   }
 
   canExecute(selection: ModelSelection = this.model.selection): boolean {
-    if(selection.isInside(["ul", "ol"])==="enabled"){
+    if (selection.isInside(["ul", "ol"]) === "enabled") {
       return true;
-    }else{
+    } else {
       return false;
     }
   }
@@ -29,105 +30,145 @@ export default class InsertNewLiCommand extends Command {
       throw new Error("couldn't get range");
     }
     const startPosition = range.start;
+    const endPosition = range.end;
+
     const isCollapsed = selection.isCollapsed;
 
+    const startParentLi = startPosition.findAncestors(node => ModelNode.isModelElement(node) && node.type === "li")[0];
+    const endParentLi = endPosition.findAncestors(node => ModelNode.isModelElement(node) && node.type === "li")[0];
+
+    //collapsed selection case
     if (isCollapsed) {
       this.insertNewLi(startPosition);
     }
-    else{
-      const collapsedPosition=this.deleteRange(range);
-      //this.insertNewLi(collapsedPosition);
+    //single li expanded selection case
+    else if (startParentLi == endParentLi) {
+      let newRange;
+      const text = new ModelText("");
+      this.model.change(mutator => {
+        mutator.insertNodes(range, text);
+        const cursorPos = ModelPosition.fromAfterNode(text);
+        newRange = new ModelRange(cursorPos, cursorPos);
+        mutator.selectRange(newRange);
+      });
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      this.insertNewLi(newRange.start);
+    }
+    //multiple lis selected case
+    else {
+      this.deleteRange(range);
     }
     this.model.write();
   }
-  deleteRange(range:ModelRange):ModelPosition{
+
+  deleteRange(range: ModelRange) {
     const startPosition = range.start;
     const endPosition = range.end;
 
     startPosition.split();
     endPosition.split();
 
-    let startNode=startPosition.nodeAfter();
-    let endNode=endPosition.nodeBefore();
+    const startParentLi = startPosition.findAncestors(node => ModelNode.isModelElement(node) && node.type === "li")[0];
+    const startParentUl = startParentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === "ul" || node.type === "ol"));
 
-    let deleteRight=true;
-    let deleteLeft=true;
+    const endParentLi = endPosition.findAncestors(node => ModelNode.isModelElement(node) && node.type === "li")[0];
+    const endParentUl = endParentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === "ul" || node.type === "ol"));
 
-    let startParentLi;
-    let startParentUl;
+    const maximizedRange = range.getMaximizedRange();
+    const walker = new ModelTreeWalker({ range: maximizedRange, descend: false });
+    const selected = Array.from(walker);
 
-    let endParentLi;
-    let endParentUl;
+    let startNode = startPosition.nodeAfter();
+    let endNode = endPosition.nodeBefore();
 
-    if(!startNode){
-      startNode=this.findClosestNode(startPosition, "right");
-      if(!startNode){
-        deleteRight=false;
-        startParentLi=startPosition.findAncestors(node=>ModelNode.isModelElement(node) && node.type === "li")[0];
-        startParentUl=startParentLi.findAncestor(node=>ModelNode.isModelElement(node) && (node.type === "ul" || node.type === "ol"));
-      }
-      else{
-        startParentLi=startNode.findAncestor(node=>ModelNode.isModelElement(node) && node.type === "li")[0];
-        startParentUl=startParentLi.findAncestor(node=>ModelNode.isModelElement(node) && (node.type === "ul" || node.type === "ol"));
-      }
-    }
-    else{
-      startParentLi=
-      startParentUl=
-    }
-    if(!endNode){
-      endNode=this.findClosestNode(endPosition, "left");
-      if(!endNode){
-        deleteLeft=false;
-      }
-      else{
+    let deleteRight = true;
+    let deleteLeft = true;
 
+    //get closest nodes that can be deleted if nodeBefore/After returns nothing
+    // <li>
+    //   <div1>     <div2>
+    //     <text1>    <text2>
+    //            ^cursor
+    //here nodeAfter will return nothing but we still need to delete the next div
+    if (!startNode) {
+      startNode = this.findClosestNode(startPosition, "right");
+      if (!startNode) {
+        deleteRight = false;
       }
     }
-    else{
 
+    if (!endNode) {
+      endNode = this.findClosestNode(endPosition, "left");
+      if (!endNode) {
+        deleteLeft = false;
+      }
     }
-
-    if(deleteRight){
+    if (!startNode || !endNode) {
+      throw new Error("couldn't get start or end node");
+    }
+    if (deleteRight) {
       this.deleteInsideLi(startNode, "right");
     }
-    if(deleteLeft){
+    if (deleteLeft) {
       this.deleteInsideLi(endNode, "left");
     }
-    return startPosition;
 
+    //deletes stuff inbetween
+    selected.forEach(node => {
+      if (
+        node != startParentUl &&
+        node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === "li"), true) != startParentLi &&
+        node != endParentUl &&
+        node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === "li"), true) != endParentLi
+      ) {
+        node.remove();
+      }
+    });
+
+    //set cursor position
+    const newRange = ModelRange.fromInElement(endParentLi, 0, 0);
+    this.model.selection.ranges = [newRange];
+    return;
   }
-  deleteInsideLi(startNode, direction){
-    let node=startNode;
-    const toBeRemoved=[];
+
+  //deletes things inside the li before deleting stuff inbetween
+  deleteInsideLi(startNode: ModelNode, direction: string) {
+    let node = startNode;
+    const toBeRemoved = [];
     toBeRemoved.push(node);
-    while(node){
-      if(direction=="left" && node.previousSibling){
+    while (node) {
+      if (direction == "left" && node.previousSibling) {
         node = node.previousSibling;
         toBeRemoved.push(node);
       }
-      else if(direction=="right" && node.nextSibling){
+      else if (direction == "right" && node.nextSibling) {
         node = node.nextSibling;
         toBeRemoved.push(node);
       }
-      else if(node.parent){
+      else if (node.parent) {
         if (ModelNode.isModelElement(node.parent) && node.parent.type === "li") {
           break;
         }
-        node=node.parent;
+        node = node.parent;
       }
     }
-    toBeRemoved.forEach(node=>{node.remove()});
+    toBeRemoved.forEach(node => { node.remove(); });
   }
-  findClosestNode(position:ModelPosition, direction:sting){
+
+  //this function finds the first node to delete if position.nodeAfter/position.nodeBefore don't return anything usefull (ie: at the end of a child element)
+  //this will look for the firt sibling of a parent
+  findClosestNode(position: ModelPosition, direction: string) {
     let searchVar;
-    if(direction=="right"){
+    if (direction == "right") {
       searchVar = position.nodeBefore();
     }
-    else if(direction=="left"){
+    else if (direction == "left") {
       searchVar = position.nodeAfter();
     }
-    else if (searchVar.parent) {
+
+    if (searchVar && searchVar.parent) {
       searchVar = searchVar.parent;
     }
 
@@ -135,11 +176,11 @@ export default class InsertNewLiCommand extends Command {
       if (ModelNode.isModelElement(searchVar) && searchVar.type === "li") {
         break;
       }
-      else if (direction=="right" && searchVar.nextSibling) {
+      else if (direction == "right" && searchVar.nextSibling) {
         searchVar = searchVar.nextSibling;
         return searchVar;
       }
-      else if (direction=="left" && searchVar.previousSibling) {
+      else if (direction == "left" && searchVar.previousSibling) {
         searchVar = searchVar.previousSibling;
         return searchVar;
       }
@@ -149,6 +190,7 @@ export default class InsertNewLiCommand extends Command {
     }
     return null;
   }
+
   // core algorithm
   // this basically splits a li
   // like so:
