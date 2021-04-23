@@ -6,7 +6,7 @@ import {
 } from "@ember/test-helpers";
 import hbs from "htmlbars-inline-precompile";
 
-module("Integration | MovementObserver | lump-node-observer", function (hooks) {
+module.skip("Integration | MovementObserver | lump-node-observer", function (hooks) {
   setupRenderingTest(hooks);
 
   test('click in a lump-node will place caret outside lump-node', async function(assert) {

@@ -4,7 +4,7 @@ import { render, triggerKeyEvent, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import type from '../util/type-helper';
 
-module('Integration | InputHandler | escape-handler', function(hooks) {
+module.skip('Integration | InputHandler | escape-handler', function(hooks) {
   setupRenderingTest(hooks);
 
   test('escape handler works', async function(assert) {
@@ -25,5 +25,5 @@ module('Integration | InputHandler | escape-handler', function(hooks) {
     await triggerKeyEvent(document.activeElement, 'keydown', 'Escape');
     assert.strictEqual(document.activeElement.tagName, 'BODY');
   });
-  
+
 });
