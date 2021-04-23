@@ -158,10 +158,31 @@ export default class ModelRange {
       }
       endCur = ModelPosition.fromBeforeNode(parent);
     }
-    const middle = new ModelRange(startCur, endCur);
-    if (!middle.collapsed) {
-      result.push(middle);
-
+    if(startCur.path.length === endCur.path.length) {
+      const middle = new ModelRange(startCur, endCur);
+      if (!middle.collapsed) {
+        result.push(middle);
+      }
+    } else if (startCur.path.length < endCur.path.length) {
+      // |<div>
+      //     blabla|blabla
+      // </div>
+      // endCur is one level lower than startCur, so we can safely take
+      // the range from the beginning of its parent and ignore startCur (the remaining range would be collapsed)
+      const middle = ModelRange.fromInElement(endCur.parent, 0, endCur.parentOffset);
+      if (!middle.collapsed) {
+        result.push(middle);
+      }
+    } else {
+      // <div>
+      //     blabla|blabla
+      // </div>|
+      // starCur is one level lower than endCur, so we can safely take
+      // the range from startcur to the end of its parent and ignore endCur (the remaining range would be collapsed)
+      const middle = ModelRange.fromInElement(startCur.parent, startCur.parentOffset, startCur.parent.getMaxOffset());
+      if (!middle.collapsed) {
+        result.push(middle);
+      }
     }
     temp.reverse();
     result.push(...temp);

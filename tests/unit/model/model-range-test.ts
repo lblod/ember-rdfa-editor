@@ -3,8 +3,9 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import {parseXml} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import {parseXml, vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import {stackOverFlowOnGetMinimumConfinedRanges} from "dummy/tests/unit/model/testing-vdoms";
+import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/operation-algorithms";
 
 module("Unit | model | model-range", () => {
 
@@ -155,6 +156,34 @@ module("Unit | model | model-range", () => {
       assert.true(root !== null);
 
     });
+
+    test("all ranges are confined", assert => {
+
+      // language=XML
+      const {root: initial, elements: {rangeStart}, textNodes: {rangeEnd}} = vdom`
+        <modelRoot>
+          <div __id="rangeStart">
+            <span>
+              <text>I will be gone</text>
+              <span>
+                <text __id="rangeEnd">efg</text>
+              </span>
+            </span>
+          </div>
+          <text>abcd</text>
+        </modelRoot>
+      `;
+      const start = ModelPosition.fromInElement(rangeStart, 0);
+      const end = ModelPosition.fromInTextNode(rangeEnd, 1);
+      const range = new ModelRange(start, end);
+
+      const result = range.getMinimumConfinedRanges();
+
+      for (const rsltRange of result) {
+        assert.true(rsltRange.isConfined());
+      }
+    });
+
   });
   module("Unit | model | model-range | getCommonAncestor", () => {
     test("returns null when start and end have different root", assert => {
