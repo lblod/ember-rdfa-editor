@@ -55,11 +55,71 @@ module("Unit | model | operations | move-operation-test", () => {
     `;
 
     const srcRange = ModelRange.fromInTextNode(source, 1, 3);
-    const targetPos = ModelPosition.fromInElement(target,  0);
+    const targetPos = ModelPosition.fromInElement(target, 0);
     const op = new MoveOperation(srcRange, targetPos);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [0, 0], [0, 2])));
+  });
+  test("move uneven range inside textnode", assert => {
+    // language=XML
+    const {root: initial, textNodes: {rangeStart, rangeEnd, target, source}} = vdom`
+      <modelRoot>
+        <div>
+          <text __id="target">abcd</text>
+        </div>
+        <div>
+          <span>
+            <text __id="rangeStart">efgh</text>
+            <span>
+              <span>
+                <text>ijkl</text>
+              </span>
+              <text>mnop</text>
+              <text __id="rangeEnd">qrst</text>
+            </span>
+          </span>
+        </div>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <div>
+          <text>ab</text>
+          <text>gh</text>
+          <span>
+            <text>ijkl</text>
+          </span>
+
+          <text>mnop</text>
+          <text>qr</text>
+
+          <text>cd</text>
+        </div>
+
+        <div>
+          <span>
+            <text>ef</text>
+            <span>
+              <text __id="rangeEnd">st</text>
+            </span>
+          </span>
+        </div>
+      </modelRoot>
+    `;
+
+    const start = ModelPosition.fromInTextNode(rangeStart, 2);
+    const end = ModelPosition.fromInTextNode(rangeEnd, 2);
+    const srcRange = new ModelRange(start, end);
+    const targetPos = ModelPosition.fromInTextNode(target, 2);
+    const op = new MoveOperation(srcRange, targetPos);
+    const resultRange = op.execute();
+
+    console.log(resultRange);
+    assert.true(initial.sameAs(expected));
+    assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [0, 2], [0, 11])));
   });
 });
