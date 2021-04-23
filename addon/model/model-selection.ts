@@ -378,27 +378,17 @@ export default class ModelSelection {
 
   collapseIn(node: ModelNode, offset = 0) {
     this.clearRanges();
-    this.addRange(Mode)
-    const position = ModelPosition.fromParent(this.model.rootModelNode, node, offset);
-    this.addRange(new ModelRange(position, position));
+    this.addRange(ModelRange.fromInNode(node, offset, offset));
   }
 
   setStartAndEnd(start: ModelNode, startOffset: number, end: ModelNode, endOffset: number) {
-    const range = ModelRange.fromParents(this.model.rootModelNode, start, startOffset, end, endOffset);
+    const startPos = ModelPosition.fromInNode(start, startOffset);
+    const endPos = ModelPosition.fromInNode(end, endOffset);
+    const range = new ModelRange(startPos, endPos);
     this.clearRanges();
     this.addRange(range);
   }
 
-  /**
-   * Select a full ModelText node
-   * @param node
-   */
-  selectNode(node: ModelNode) {
-    this.clearRanges();
-    const start = ModelPosition.fromParent(this.model.rootModelNode, node, 0);
-    const end = ModelPosition.fromParent(this.model.rootModelNode, node, node.length);
-    this.addRange(new ModelRange(start, end));
-  }
 
   calculateRdfaSelection(selection: Selection) {
     if (selection.type === 'Caret') {

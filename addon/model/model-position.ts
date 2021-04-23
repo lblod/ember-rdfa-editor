@@ -28,24 +28,6 @@ export default class ModelPosition {
   }
 
 
-  /**
-   * Build a position from a root, a parent and an offset. Especially useful for converting
-   * from a DOM position
-   * @param root
-   * @param parent
-   * @param offset
-   * @deprecated use {@link fromInTextNode} or {@link fromInElement}
-   */
-  static fromParent(root: ModelElement, parent: ModelNode, offset: number): ModelPosition {
-    if (offset < 0 || offset > parent.length) {
-      throw new SelectionError("offset out of range");
-    }
-    const result = new ModelPosition(root);
-    result.path = parent.getOffsetPath();
-    result.path.push(offset);
-    return result;
-  }
-
   static fromAfterNode(node: ModelNode): ModelPosition {
     const basePath = node.getOffsetPath();
     basePath[basePath.length - 1] += node.offsetSize;

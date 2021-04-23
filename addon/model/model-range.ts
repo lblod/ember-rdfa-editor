@@ -5,7 +5,6 @@ import {Direction, FilterAndPredicate, RelativePosition} from "@lblod/ember-rdfa
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTreeWalker, {ModelNodeFilter} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 
 /**
@@ -15,10 +14,6 @@ import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 export default class ModelRange {
   private _start: ModelPosition;
   private _end: ModelPosition;
-
-  static fromParents(root: ModelElement, start: ModelNode, startOffset: number, end: ModelNode, endOffset: number): ModelRange {
-    return new ModelRange(ModelPosition.fromParent(root, start, startOffset), ModelPosition.fromParent(root, end, endOffset));
-  }
 
   static fromPaths(root: ModelElement, path1: number[], path2: number[]) {
     //TODO: should we copy here? or leave it to the caller?
@@ -30,26 +25,6 @@ export default class ModelRange {
     } else {
       return new ModelRange(pos1, pos2);
     }
-  }
-
-  static fromChildren(element: ModelElement) {
-    const basePath = element.getOffsetPath();
-    return ModelRange.fromPaths(element.root, [...basePath, 0], [...basePath, element.getMaxOffset()]);
-  }
-
-  static fromInnerContent(node: ModelNode) {
-    if (ModelNode.isModelElement(node)) {
-      return ModelRange.fromChildren(node);
-    } else if (ModelNode.isModelText(node)) {
-      const basePath = node.getOffsetPath();
-      const endPath = [...basePath];
-      endPath[endPath.length - 1] += node.length;
-      return ModelRange.fromPaths(node.root, basePath, endPath);
-    } else {
-      throw new NotImplementedError("Node type not supported");
-    }
-
-
   }
 
   static fromInElement(element: ModelElement, startOffset: number, endOffset: number) {

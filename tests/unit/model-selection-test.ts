@@ -23,7 +23,7 @@ module("Unit | model | model-selection", hooks => {
     p.addChild(content);
     modelSelection.collapseIn(content);
     assert.true(modelSelection.isCollapsed);
-    assert.true(modelSelection.focus?.sameAs(ModelPosition.fromParent(model.rootModelNode, content, 0)));
+    assert.true(modelSelection.focus?.sameAs(ModelPosition.fromInNode(content, 0)));
 
   });
 
