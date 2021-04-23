@@ -27,7 +27,7 @@ module("Unit | commands | remove-list-command", hooks => {
     ul.addChild(li);
     li.addChild(content);
 
-    modelSelection.collapseOn(content);
+    modelSelection.collapseIn(content);
     command.execute();
 
     assert.strictEqual(model.rootModelNode.firstChild, content);
@@ -51,7 +51,7 @@ module("Unit | commands | remove-list-command", hooks => {
     ul2.addChild(li2);
     li2.addChild(content);
 
-    modelSelection.collapseOn(content);
+    modelSelection.collapseIn(content);
     command.execute();
 
     assert.strictEqual(model.rootModelNode.firstChild, content);
@@ -90,7 +90,7 @@ module("Unit | commands | remove-list-command", hooks => {
 
     li2.addChild(content2);
 
-    modelSelection.collapseOn(content10);
+    modelSelection.collapseIn(content10);
     command.execute();
 
     assert.strictEqual(model.rootModelNode.length, 3);
@@ -170,7 +170,7 @@ module("Unit | commands | remove-list-command", hooks => {
                 li7
     */
 
-    modelSelection.collapseOn(content1);
+    modelSelection.collapseIn(content1);
     command.execute();
 
     assert.strictEqual(model.rootModelNode.children[0], ul);

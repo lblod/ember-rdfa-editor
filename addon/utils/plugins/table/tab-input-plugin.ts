@@ -65,7 +65,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         };
       } else {
         if(table.nextSibling) {
-          selection.collapseOn(table.nextSibling);
+          selection.collapseIn(table.nextSibling);
           editor.model.write();
         }
         return;
@@ -83,7 +83,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         };
       } else {
         if(table.previousSibling) {
-          selection.collapseOn(table.previousSibling);
+          selection.collapseIn(table.previousSibling);
           editor.model.write();
         }
         return;
@@ -93,7 +93,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
     const newSelectedCell = table?.getCell(newPosition.x, newPosition.y);
     if(!newSelectedCell) return;
-    selection.collapseOn(newSelectedCell);
+    selection.collapseIn(newSelectedCell);
     editor.model.write();
   };
 }

@@ -376,8 +376,9 @@ export default class ModelSelection {
   }
 
 
-  collapseOn(node: ModelNode, offset = 0) {
+  collapseIn(node: ModelNode, offset = 0) {
     this.clearRanges();
+    this.addRange(Mode)
     const position = ModelPosition.fromParent(this.model.rootModelNode, node, offset);
     this.addRange(new ModelRange(position, position));
   }
