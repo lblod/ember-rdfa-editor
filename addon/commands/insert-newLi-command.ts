@@ -16,14 +16,11 @@ export default class InsertNewLiCommand extends Command {
   }
 
   canExecute(selection: ModelSelection = this.model.selection): boolean {
-    if (!ModelSelection.isWellBehaved(selection)) {
-      throw new MisbehavedSelectionError();
-    }
-    const commonAncestor = selection.getCommonAncestor().parent;
-    if (commonAncestor?.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'ul' || node.type === 'ol'), true)) {
+    if(selection.isInside(["ul", "ol"])==="enabled"){
       return true;
+    }else{
+      return false;
     }
-    return false;
   }
   execute(): void {
     const selection = this.model.selection;
@@ -37,10 +34,121 @@ export default class InsertNewLiCommand extends Command {
     if (isCollapsed) {
       this.insertNewLi(startPosition);
     }
+    else{
+      const collapsedPosition=this.deleteRange(range);
+      //this.insertNewLi(collapsedPosition);
+    }
     this.model.write();
   }
+  deleteRange(range:ModelRange):ModelPosition{
+    const startPosition = range.start;
+    const endPosition = range.end;
 
+    startPosition.split();
+    endPosition.split();
 
+    let startNode=startPosition.nodeAfter();
+    let endNode=endPosition.nodeBefore();
+
+    let deleteRight=true;
+    let deleteLeft=true;
+
+    let startParentLi;
+    let startParentUl;
+
+    let endParentLi;
+    let endParentUl;
+
+    if(!startNode){
+      startNode=this.findClosestNode(startPosition, "right");
+      if(!startNode){
+        deleteRight=false;
+        startParentLi=startPosition.findAncestors(node=>ModelNode.isModelElement(node) && node.type === "li")[0];
+        startParentUl=startParentLi.findAncestor(node=>ModelNode.isModelElement(node) && (node.type === "ul" || node.type === "ol"));
+      }
+      else{
+        startParentLi=startNode.findAncestor(node=>ModelNode.isModelElement(node) && node.type === "li")[0];
+        startParentUl=startParentLi.findAncestor(node=>ModelNode.isModelElement(node) && (node.type === "ul" || node.type === "ol"));
+      }
+    }
+    else{
+      startParentLi=
+      startParentUl=
+    }
+    if(!endNode){
+      endNode=this.findClosestNode(endPosition, "left");
+      if(!endNode){
+        deleteLeft=false;
+      }
+      else{
+
+      }
+    }
+    else{
+
+    }
+
+    if(deleteRight){
+      this.deleteInsideLi(startNode, "right");
+    }
+    if(deleteLeft){
+      this.deleteInsideLi(endNode, "left");
+    }
+    return startPosition;
+
+  }
+  deleteInsideLi(startNode, direction){
+    let node=startNode;
+    const toBeRemoved=[];
+    toBeRemoved.push(node);
+    while(node){
+      if(direction=="left" && node.previousSibling){
+        node = node.previousSibling;
+        toBeRemoved.push(node);
+      }
+      else if(direction=="right" && node.nextSibling){
+        node = node.nextSibling;
+        toBeRemoved.push(node);
+      }
+      else if(node.parent){
+        if (ModelNode.isModelElement(node.parent) && node.parent.type === "li") {
+          break;
+        }
+        node=node.parent;
+      }
+    }
+    toBeRemoved.forEach(node=>{node.remove()});
+  }
+  findClosestNode(position:ModelPosition, direction:sting){
+    let searchVar;
+    if(direction=="right"){
+      searchVar = position.nodeBefore();
+    }
+    else if(direction=="left"){
+      searchVar = position.nodeAfter();
+    }
+    else if (searchVar.parent) {
+      searchVar = searchVar.parent;
+    }
+
+    while (searchVar) {
+      if (ModelNode.isModelElement(searchVar) && searchVar.type === "li") {
+        break;
+      }
+      else if (direction=="right" && searchVar.nextSibling) {
+        searchVar = searchVar.nextSibling;
+        return searchVar;
+      }
+      else if (direction=="left" && searchVar.previousSibling) {
+        searchVar = searchVar.previousSibling;
+        return searchVar;
+      }
+      else if (searchVar.parent) {
+        searchVar = searchVar.parent;
+      }
+    }
+    return null;
+  }
   // core algorithm
   // this basically splits a li
   // like so:
