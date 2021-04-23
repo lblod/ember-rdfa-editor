@@ -8,6 +8,8 @@ import RawEditor from 'dummy/utils/ce/raw-editor';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
 /**
  *
@@ -25,14 +27,14 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         executor: this.tabHandler as unknown as ManipulationExecutor
       };
     } else {
-      if(manipulation.type === 'moveCursorToStartOfElement' || manipulation.type === 'moveCursorAfterElement') {
+      if(_manipulation.type === 'moveCursorToStartOfElement' || _manipulation.type === 'moveCursorAfterElement') {
         if(this.isNextElementATable(selection)){
           return {
             allow: true,
             executor: this.selectFirstCell,
           }
         }
-      } else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
+      } else if(_manipulation.type === 'moveCursorToEndOfElement' || _manipulation.type === 'moveCursorBeforeElement') {
         if(this.isPreviousElementATable(selection)){
           return {
             allow: true,
@@ -112,7 +114,9 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         };
       } else {
         if(table.nextSibling) {
-          selection.collapseOn(table.nextSibling);
+          const pos = ModelPosition.fromAfterNode(table);
+          const range = new ModelRange(pos, pos);
+          selection.selectRange(range);
           editor.model.write();
         }
         return;
@@ -130,7 +134,9 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         };
       } else {
         if(table.previousSibling) {
-          selection.collapseOn(table.previousSibling);
+          const pos = ModelPosition.fromBeforeNode(table);
+          const range = new ModelRange(pos, pos);
+          selection.selectRange(range);
           editor.model.write();
         }
         return;
