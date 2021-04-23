@@ -66,7 +66,7 @@ export default class ModelPosition {
   }
 
   static fromInElement(element: ModelElement, offset: number) {
-    if(element.type === "br") {
+    if (element.type === "br") {
       return ModelPosition.fromBeforeNode(element);
     }
     if (offset < 0 || offset > element.getMaxOffset()) {
@@ -75,6 +75,16 @@ export default class ModelPosition {
     const path = element.getOffsetPath();
     path.push(offset);
     return ModelPosition.fromPath(element.root, path);
+  }
+
+  static fromInNode(node: ModelNode, offset: number) {
+    if (ModelNode.isModelText(node)) {
+      return ModelPosition.fromInTextNode(node, offset);
+    } else if (ModelNode.isModelElement(node)) {
+      return ModelPosition.fromInElement(node, offset);
+    } else {
+      throw new NotImplementedError("Unsupported node type");
+    }
   }
 
   static getCommonPosition(pos1: ModelPosition, pos2: ModelPosition): ModelPosition | null {
@@ -134,7 +144,7 @@ export default class ModelPosition {
     if (this.parentCache) {
       return this.parentCache;
     }
-    if(this.path.length === 0) {
+    if (this.path.length === 0) {
       this.parentCache = this.root;
       return this.root;
     }
@@ -218,12 +228,12 @@ export default class ModelPosition {
       throw new PositionError("cannot compare nodes with different roots");
     }
     const commonPath = ArrayUtils.findCommonSlice(this.path, other.path);
-    if(commonPath.length === 0) {
+    if (commonPath.length === 0) {
       return this.root;
     }
     const temp = ModelPosition.fromPath(this.root, commonPath);
     const rslt = temp.nodeAfter() || temp.nodeBefore();
-    if(!rslt) {
+    if (!rslt) {
       throw new PositionError("Could not find a commonAncestor");
     }
     return rslt as ModelElement;
@@ -265,8 +275,8 @@ export default class ModelPosition {
   split() {
     const before = this.nodeBefore();
     const after = this.nodeAfter();
-    if(ModelNode.isModelText(before)) {
-      if(before === after) {
+    if (ModelNode.isModelText(before)) {
+      if (before === after) {
         before.split(this.parentOffset - before.getOffset());
       }
       this.parentCache = null;

@@ -51,6 +51,7 @@ export default class ModelRange {
 
 
   }
+
   static fromInElement(element: ModelElement, startOffset: number, endOffset: number) {
     const start = ModelPosition.fromInElement(element, startOffset);
     const end = ModelPosition.fromInElement(element, endOffset);
@@ -60,6 +61,12 @@ export default class ModelRange {
   static fromInTextNode(node: ModelText, startOffset: number, endOffset: number) {
     const start = ModelPosition.fromInTextNode(node, startOffset);
     const end = ModelPosition.fromInTextNode(node, endOffset);
+    return new ModelRange(start, end);
+  }
+
+  static fromInNode(node: ModelNode, startOffset: number, endOffset: number) {
+    const start = ModelPosition.fromInNode(node, startOffset);
+    const end = ModelPosition.fromInNode(node, endOffset);
     return new ModelRange(start, end);
   }
 
@@ -174,7 +181,6 @@ export default class ModelRange {
   }
 
 
-
   /**
    * Return a new range that is expanded to include all children
    * of the commonAncestor that are "touched" by this range
@@ -214,7 +220,7 @@ export default class ModelRange {
     while (startCur.path.length > commonLength + 1) {
       const parent = startCur.parent;
       const range = new ModelRange(startCur, ModelPosition.fromInElement(parent, parent.getMaxOffset()));
-      if(!range.collapsed) {
+      if (!range.collapsed) {
         result.push(range);
       }
       startCur = ModelPosition.fromAfterNode(parent);
@@ -225,7 +231,7 @@ export default class ModelRange {
     while (endCur.path.length > commonLength + 1) {
       const parent = endCur.parent;
       const range = new ModelRange(ModelPosition.fromInElement(parent, 0), endCur);
-      if(!range.collapsed) {
+      if (!range.collapsed) {
         temp.push(range);
       }
       endCur = ModelPosition.fromBeforeNode(parent);
