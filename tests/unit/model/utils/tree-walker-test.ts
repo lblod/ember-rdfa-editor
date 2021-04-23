@@ -298,6 +298,44 @@ module("Unit | model | utils | tree-walker-test", () => {
     assert.strictEqual(result[0], node0);
 
   });
+  test("walks tree in document order", assert => {
+    // language=XML
+    const {textNodes: {n0, n1, n5, n6}, elements: {e2, e3, e4}} = vdom`
+      <div>
+        <div>
+          <span>
+            <text __id="n0">start</text>
+          </span>
+          <text __id="n1">test</text>
+          <span __id="e2">
+            <ul __id="e3">
+              <li __id="e4">
+                <text __id="n5">test</text>
+              </li>
+            </ul>
+          </span>
+        </div>
+        <text __id="n6">end</text>
+        <text>won't visit here</text>
+      </div>
+    `;
+
+    const start = ModelPosition.fromInTextNode(n0, 2);
+    const end = ModelPosition.fromInTextNode(n6, 1);
+    const range = new ModelRange(start, end);
+    const walker = new ModelTreeWalker({range});
+    const result = [...walker];
+
+    assert.strictEqual(result.length, 7);
+    assert.strictEqual(result[0], n0);
+    assert.strictEqual(result[1], n1);
+    assert.strictEqual(result[2], e2);
+    assert.strictEqual(result[3], e3);
+    assert.strictEqual(result[4], e4);
+    assert.strictEqual(result[5], n5);
+    assert.strictEqual(result[6], n6);
+
+  });
 
 
 });
