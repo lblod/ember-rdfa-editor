@@ -40,14 +40,14 @@ export default class RemoveTableRowCommand extends Command {
     }
 
     const tableDimensions = table.getDimensions();
-    
+
     let cellYToSelect = position.y + 1;
     if(cellYToSelect >= tableDimensions.y) {
       cellYToSelect = position.y -1;
     }
     const cellToSelect = table.getCell(position.x, cellYToSelect);
     if(cellToSelect) {
-      selection.collapseOn(cellToSelect);
+      selection.collapseIn(cellToSelect);
     }
     this.model.write();
 

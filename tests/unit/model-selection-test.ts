@@ -21,9 +21,9 @@ module("Unit | model | model-selection", hooks => {
     const content = new ModelText("test");
     model.rootModelNode.addChild(p);
     p.addChild(content);
-    modelSelection.collapseOn(content);
+    modelSelection.collapseIn(content);
     assert.true(modelSelection.isCollapsed);
-    assert.true(modelSelection.focus?.sameAs(ModelPosition.fromParent(model.rootModelNode, content, 0)));
+    assert.true(modelSelection.focus?.sameAs(ModelPosition.fromInNode(content, 0)));
 
   });
 
