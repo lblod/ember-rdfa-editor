@@ -7,7 +7,8 @@ import ModelElement from "../model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-
+import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
+import { INVISIBLE_SPACE } from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export default class InsertNewLiCommand extends Command {
   name = "insert-newLi";
@@ -17,7 +18,7 @@ export default class InsertNewLiCommand extends Command {
   }
 
   canExecute(selection: ModelSelection = this.model.selection): boolean {
-    if (selection.isInside(["ul", "ol"]) === "enabled") {
+    if (selection.isInside(["ul", "ol"]) === PropertyState.enabled) {
       return true;
     } else {
       return false;
@@ -37,14 +38,19 @@ export default class InsertNewLiCommand extends Command {
     const startParentLi = startPosition.findAncestors(node => ModelNode.isModelElement(node) && node.type === "li")[0];
     const endParentLi = endPosition.findAncestors(node => ModelNode.isModelElement(node) && node.type === "li")[0];
 
+    if (!startParentLi || !endParentLi) {
+      throw new Error("couldn't locate parent lis");
+    }
+
     //collapsed selection case
     if (isCollapsed) {
       this.insertNewLi(startPosition);
     }
     //single li expanded selection case
-    else if (startParentLi == endParentLi) {
+    else if (startParentLi === endParentLi) {
       let newRange;
-      const text = new ModelText("");
+      const text = new ModelText(INVISIBLE_SPACE);
+
       this.model.change(mutator => {
         mutator.insertNodes(range, text);
         const cursorPos = ModelPosition.fromAfterNode(text);
@@ -71,10 +77,10 @@ export default class InsertNewLiCommand extends Command {
     endPosition.split();
 
     const startParentLi = startPosition.findAncestors(node => ModelNode.isModelElement(node) && node.type === "li")[0];
-    const startParentUl = startParentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === "ul" || node.type === "ol"));
+    const startParentUl = startParentLi.parent;
 
     const endParentLi = endPosition.findAncestors(node => ModelNode.isModelElement(node) && node.type === "li")[0];
-    const endParentUl = endParentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === "ul" || node.type === "ol"));
+    const endParentUl = endParentLi.parent;
 
     const maximizedRange = range.getMaximizedRange();
     const walker = new ModelTreeWalker({ range: maximizedRange, descend: false });
@@ -129,7 +135,7 @@ export default class InsertNewLiCommand extends Command {
 
     //set cursor position
     const newRange = ModelRange.fromInElement(endParentLi, 0, 0);
-    this.model.selection.ranges = [newRange];
+    this.model.selection.selectRange(newRange);
     return;
   }
 
@@ -139,11 +145,11 @@ export default class InsertNewLiCommand extends Command {
     const toBeRemoved = [];
     toBeRemoved.push(node);
     while (node) {
-      if (direction == "left" && node.previousSibling) {
+      if (direction === "left" && node.previousSibling) {
         node = node.previousSibling;
         toBeRemoved.push(node);
       }
-      else if (direction == "right" && node.nextSibling) {
+      else if (direction === "right" && node.nextSibling) {
         node = node.nextSibling;
         toBeRemoved.push(node);
       }
@@ -161,26 +167,16 @@ export default class InsertNewLiCommand extends Command {
   //this will look for the firt sibling of a parent
   findClosestNode(position: ModelPosition, direction: string) {
     let searchVar;
-    if (direction == "right") {
-      searchVar = position.nodeBefore();
-    }
-    else if (direction == "left") {
-      searchVar = position.nodeAfter();
-    }
-
-    if (searchVar && searchVar.parent) {
-      searchVar = searchVar.parent;
-    }
-
+    searchVar = position.parent;
     while (searchVar) {
       if (ModelNode.isModelElement(searchVar) && searchVar.type === "li") {
         break;
       }
-      else if (direction == "right" && searchVar.nextSibling) {
+      else if (direction === "right" && searchVar.nextSibling) {
         searchVar = searchVar.nextSibling;
         return searchVar;
       }
-      else if (direction == "left" && searchVar.previousSibling) {
+      else if (direction === "left" && searchVar.previousSibling) {
         searchVar = searchVar.previousSibling;
         return searchVar;
       }
@@ -211,8 +207,8 @@ export default class InsertNewLiCommand extends Command {
   // </li>
   // <li>
   //  <div class="some stuff">
-  //   text
-  //  ^cursor
+  // ^cursor
+  //    text
   //  </div>
   // </li>
   //
@@ -226,75 +222,42 @@ export default class InsertNewLiCommand extends Command {
     position.split();
 
     //variable initialization
-    let parentLi;
-    let parentUl;
-    let parentLiPos;
-    let toBeInserted: ModelNode[] = [];
     let node = position.nodeAfter();
 
-    const newLiNodes = [];
     const newLi = new ModelElement('li');
+
+    //find parent li
+    const parentLi = position.findAncestors(node => ModelNode.isModelElement(node) && (node.type === 'li'))[0];
+    if (!parentLi) {
+      throw new Error("couldn't find the parent li");
+    }
+
+    //find parent ul/ol and li position
+    const parentUl = parentLi.parent;
+    if (!parentUl) {
+      throw new Error("couldn't find the parent ul/ol");
+    }
+
+    const parentLiPos = parentLi.index;
+    if (parentLiPos === null) {
+      throw new Error("couldn't find the parent li position");
+    }
 
     //try to find the first node we can copy if there is no nodeAfter
     //looks for a right sibling of a direct ancestor untill we reach the parent li
     if (!node) {
-      let searchVar = position.nodeBefore();
-      if (searchVar && searchVar.parent) {
-        searchVar = searchVar.parent;
-      }
-      while (searchVar) {
-        if (ModelNode.isModelElement(searchVar) && searchVar.type === "li") {
-          break;
-        }
-        else if (searchVar.nextSibling) {
-          searchVar = searchVar.nextSibling;
-          node = searchVar;
-          break;
-        }
-        else if (searchVar.parent) {
-          searchVar = searchVar.parent;
-        }
-      }
-
-      //assume that the cursor is at the end
+      node = this.findClosestNode(position, "right");
+      //assume that the cursor is at the end or in an empty li
       if (!node) {
-        node = position.nodeBefore();
-        if (!node) {
-          throw new Error("couldn't find a node to work with");
-        }
-
-        //find parent li and ul/ol as well as parent li position
-        parentLi = node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
-        if (!parentLi) {
-          throw new Error("couldn't find the parent li");
-        }
-        parentUl = parentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'ul' || node.type === 'ol'), false) as ModelElement;
-        if (!parentUl) {
-          throw new Error("couldn't find the parent ul/ol");
-        }
-        parentLiPos = parentLi.index;
-        if (parentLiPos === null) {
-          throw new Error("couldn't find the parent li position");
-        }
-
         //add empty li to the parent ul
         parentUl.addChild(newLi, parentLiPos + 1);
+        newLi.addChild(new ModelText(INVISIBLE_SPACE));
       }
     }
     else {
-      //find parent li and ul/ol as well as parent li position
-      parentLi = node.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'li'), false);
-      if (!parentLi) {
-        throw new Error("couldn't find the parent li");
-      }
-      parentUl = parentLi.findAncestor(node => ModelNode.isModelElement(node) && (node.type === 'ul' || node.type === 'ol'), false) as ModelElement;
-      if (!parentUl) {
-        throw new Error("couldn't find the parent ul/ol");
-      }
-      parentLiPos = parentLi.index;
-      if (parentLiPos === null) {
-        throw new Error("couldn't find the parent li position");
-      }
+      let toBeInserted: ModelNode[] = [];
+      const newLiNodes = [];
+
       newLiNodes.push({ node: node, operation: 'cut' });
 
       //walk up the nodes and find things to cut/copy to a new li

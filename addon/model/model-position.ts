@@ -303,7 +303,7 @@ export default class ModelPosition {
   }
 
   //this returns true if the position is inside a text node (not right before not right after)
-  isInsideText(): Boolean{
+  isInsideText(): boolean{
     if(
       (this.nodeAfter() == this.nodeBefore()) &&
       (ModelNode.isModelText(this.nodeAfter()) && ModelNode.isModelText(this.nodeBefore()))
