@@ -28,6 +28,10 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return op.execute();
   }
 
+  insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange {
+    return this.insertNodes(new ModelRange(position, position), ...nodes);
+  }
+
   /**
    * @inheritDoc
    * @param rangeToMove
@@ -67,7 +71,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
 
   splitUntil(position: ModelPosition, untilPredicate: (element: ModelElement) => boolean): ModelPosition {
     let range = new ModelRange(position, position);
-    while(!untilPredicate(range.start.parent)) {
+    while (!untilPredicate(range.start.parent)) {
       const op = new SplitOperation(range);
       range = op.execute();
     }
@@ -87,6 +91,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     const op = new InsertOperation(range);
     return op.execute();
   }
+
   deleteNode(node: ModelNode): ModelRange {
     const range = ModelRange.fromAroundNode(node);
     return this.delete(range);

@@ -113,14 +113,14 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
             </span>
             <div/>
           </div>
-        </div>
+        </modelRoot>
       `;
 
       const mut = new ImmediateModelMutator();
       const resultRange = mut.unwrap(wrapper);
-      console.log(initial.toXml());
       assert.true(expected.sameAs(initial));
-      assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1, 0], [1, 2])));
+      console.log(resultRange);
+      assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1, 0], [1, 5])));
 
     });
   });
