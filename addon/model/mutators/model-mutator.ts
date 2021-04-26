@@ -15,11 +15,6 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
  * operation processing
  */
 export default abstract class ModelMutator<T> {
-  protected model: Model;
-
-  constructor(model: Model) {
-    this.model = model;
-  }
 
   /**
    * Set a {@link TextAttribute} on all text in a range.
@@ -45,11 +40,4 @@ export default abstract class ModelMutator<T> {
    */
   abstract moveToPos(rangeToMove: ModelRange, targetPos: ModelPosition): T;
 
-  /**
-   * Set the modelSelection to the specified {@link ModelRange}
-   * @param range
-   */
-  selectRange(range: ModelRange) {
-    this.model.selection.selectRange(range);
-  }
 }

@@ -22,7 +22,18 @@ export default class InsertOperation extends Operation {
 
   execute(): ModelRange {
     if(!this.nodes.length) {
-      return this.range;
+      const nodeAtEnd = this.range.end.nodeAfter();
+      if(nodeAtEnd) {
+        OperationAlgorithms.remove(this.range);
+        return ModelRange.fromInNode(nodeAtEnd, 0, 0);
+      } else {
+        // this depends on the behavior that the remove algorithm will never remove
+        // the parent of the edges of its range
+        const parent = this.range.end.parent;
+        OperationAlgorithms.remove(this.range);
+        const pos = ModelPosition.fromAfterNode(parent);
+        return new ModelRange(pos, pos);
+      }
     }
     OperationAlgorithms.insert(this.range, ...this.nodes);
     if(this.range.collapsed) {

@@ -26,7 +26,7 @@ export default class InsertNewLineCommand extends Command {
       mutator.insertNodes(range, br);
       const cursorPos = ModelPosition.fromAfterNode(br);
       const newRange = new ModelRange(cursorPos, cursorPos);
-      mutator.selectRange(newRange);
+      this.model.selectRange(newRange);
     });
   }
 }

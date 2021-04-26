@@ -74,4 +74,22 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return range.start;
   }
 
+  unwrap(element: ModelElement): ModelRange {
+    const srcRange = ModelRange.fromInElement(element, 0, element.getMaxOffset());
+    const target = ModelPosition.fromBeforeNode(element);
+    const op = new MoveOperation(srcRange, target);
+    const resultRange = op.execute();
+    this.deleteNode(element);
+    return resultRange;
+  }
+
+  delete(range: ModelRange): ModelRange {
+    const op = new InsertOperation(range);
+    return op.execute();
+  }
+  deleteNode(node: ModelNode): ModelRange {
+    const range = ModelRange.fromAroundNode(node);
+    return this.delete(range);
+  }
+
 }

@@ -4,6 +4,7 @@ import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-op
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 
 module("Unit | model | operations | insert-operation-test", () => {
   test("inserts into empty root", assert => {
@@ -56,7 +57,7 @@ module("Unit | model | operations | insert-operation-test", () => {
 
   });
   test("replaces complex range", assert => {
-    const {root, s0,s2,s3, t00, t22} = buildStructure1();
+    const {root, s0, s2, s3, t00, t22} = buildStructure1();
 
     const nodeToInsert = new ModelText("abc");
 
@@ -70,10 +71,44 @@ module("Unit | model | operations | insert-operation-test", () => {
     assert.strictEqual(root.children[2], s3);
     assert.strictEqual(s0.length, 1);
     assert.strictEqual(s0.children[0], nodeToInsert);
-    assert.strictEqual(s2.length,0);
-    assert.strictEqual(s3.length,0);
+    assert.strictEqual(s2.length, 0);
+    assert.strictEqual(s3.length, 0);
 
   });
+  test("removes items when no nodes to insert are provided", assert => {
+
+    // language=XML
+    const {root: initial, textNodes: {rangeStart, rangeEnd}} = vdom`
+      <modelRoot>
+        <div>
+          <text __id="rangeStart">test</text>
+        </div>
+        <text __id="rangeEnd">test</text>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <div>
+          <text>te</text>
+        </div>
+        <text>st</text>
+      </modelRoot>
+    `;
+    const start = ModelPosition.fromInTextNode(rangeStart, 2);
+    const end = ModelPosition.fromInTextNode(rangeEnd, 2);
+    const range = new ModelRange(start, end);
+    const op = new InsertOperation(range);
+
+    const resultRange = op.execute();
+
+    console.log(initial.toXml());
+    assert.true(expected.sameAs(initial));
+    console.log(resultRange);
+    assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [1])));
+  });
+
 });
 
 function buildStructure1() {

@@ -30,6 +30,11 @@ export default class ModelRange {
     const end = ModelPosition.fromInElement(element, endOffset);
     return new ModelRange(start, end);
   }
+  static fromAroundNode(node: ModelNode) {
+    const start = ModelPosition.fromBeforeNode(node);
+    const end = ModelPosition.fromAfterNode(node);
+    return new ModelRange(start, end);
+  }
 
   static fromInTextNode(node: ModelText, startOffset: number, endOffset: number) {
     const start = ModelPosition.fromInTextNode(node, startOffset);
