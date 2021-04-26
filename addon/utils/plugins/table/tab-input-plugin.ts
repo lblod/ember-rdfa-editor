@@ -54,8 +54,11 @@ export default class TableTabInputPlugin implements TabInputPlugin {
 
   isPreviousElementATable(selection: ModelSelection) {
     const previousSibling = selection.anchor?.nodeBefore() as ModelElement;
-    if(!previousSibling) return false;
-    return previousSibling.type === 'table';
+    if(previousSibling) {
+      return previousSibling.type === 'table';
+    } else {
+      return false;
+    }
   }
 
   selectFirstCell(manipulation : Manipulation, editor: RawEditor) {
