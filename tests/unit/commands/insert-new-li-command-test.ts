@@ -104,6 +104,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
             <text>abc</text>
           </li>
           <li>
+            <text>${INVISIBLE_SPACE}</text>
           </li>
         </ul>
       </div>
@@ -213,7 +214,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
         <ul>
           <li>
             <text>a</text>
-            <text/>
+            <text>${INVISIBLE_SPACE}</text>
           </li>
           <li>
             <text>d</text>
@@ -253,7 +254,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
         <ul>
           <li>
             <text>a</text>
-            <text/>
+            <text>${INVISIBLE_SPACE}</text>
           </li>
           <li>
             <text>d</text>
