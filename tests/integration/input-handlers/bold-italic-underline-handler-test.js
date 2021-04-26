@@ -3,7 +3,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, triggerKeyEvent, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-module('Integration | InputHandler | bold-italic-underline-handler', function(hooks) {
+module.skip('Integration | InputHandler | bold-italic-underline-handler', function(hooks) {
   setupRenderingTest(hooks);
 
   test('converting to bold works', async function(assert) {

@@ -3,7 +3,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, triggerKeyEvent, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-module('Integration | InputHandler | arrow-handler', function(hooks) {
+module.skip('Integration | InputHandler | arrow-handler', function(hooks) {
   setupRenderingTest(hooks);
 
   test('arrow right works', async function(assert) {
