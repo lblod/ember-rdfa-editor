@@ -6,8 +6,6 @@ import {
 import RawEditor from 'dummy/utils/ce/raw-editor';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
