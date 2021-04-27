@@ -36,7 +36,6 @@ export default class TableTabInputPlugin implements TabInputPlugin {
           };
         }
       } else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
-        editor.model.getModelNodeFor
         if(this.isElementATable(manipulation.node)){
           return {
             allow: true,
