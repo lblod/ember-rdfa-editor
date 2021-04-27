@@ -10,6 +10,8 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  *
@@ -106,11 +108,15 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         };
       } else {
         if(table.nextSibling) {
-          const pos = ModelPosition.fromAfterNode(table);
-          const range = new ModelRange(pos, pos);
-          selection.selectRange(range);
-          selection.collapseIn(table.nextSibling);
-          editor.model.write();
+          if (table.nextSibling) {
+            selection.collapseIn(table.nextSibling);
+          }
+          else {
+            const text = new ModelText(INVISIBLE_SPACE);
+            table.parent?.appendChildren(text);
+            selection.collapseIn(text);
+          }
+            editor.model.write();
         }
         return;
       }
