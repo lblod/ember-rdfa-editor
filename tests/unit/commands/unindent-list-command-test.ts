@@ -60,7 +60,7 @@ module("Unit | commands | unindent-list-command-test", hooks => {
 
     li12.addChild(ul21, 1);
 
-    modelSelection.collapseOn(content21, 2);
+    modelSelection.collapseIn(content21, 2);
 
     command.execute();
 

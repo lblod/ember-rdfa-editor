@@ -252,57 +252,57 @@ export default class InsertNewLiCommand extends Command {
         //add empty li to the parent ul
         parentUl.addChild(newLi, parentLiPos + 1);
         newLi.addChild(new ModelText(INVISIBLE_SPACE));
+        return;
       }
     }
-    else {
-      let toBeInserted: ModelNode[] = [];
-      const newLiNodes = [];
 
-      newLiNodes.push({ node: node, operation: 'cut' });
+    let toBeInserted: ModelNode[] = [];
+    const newLiNodes = [];
 
-      //walk up the nodes and find things to cut/copy to a new li
-      while (node) {
+    newLiNodes.push({ node: node, operation: 'cut' });
 
-        //cut siblings and siblings of parents
-        if (node.nextSibling) {
-          node = node.nextSibling;
-          newLiNodes.push({ node: node, operation: 'cut' });
-        }
+    //walk up the nodes and find things to cut/copy to a new li
+    while (node) {
 
-        //only copy direct parents only
-        //and put siblings you cut into them
-        //break if we reached the parent li
-        else if (node.parent) {
-          if (ModelNode.isModelElement(node.parent) && node.parent.type === "li") {
-            break;
-          }
-          node = node.parent;
-          newLiNodes.push({ node: node, operation: 'copy' });
-        }
-        else {
-          throw new Error('something went horribly wrong when walking up a tree');
-        }
+      //cut siblings and siblings of parents
+      if (node.nextSibling) {
+        node = node.nextSibling;
+        newLiNodes.push({ node: node, operation: 'cut' });
       }
 
-      //update the existing list
-      newLiNodes.forEach(e => {
-        if (e.operation === 'cut') {
-          e.node.remove();
-          toBeInserted.push(e.node);
+      //only copy direct parents only
+      //and put siblings you cut into them
+      //break if we reached the parent li
+      else if (node.parent) {
+        if (ModelNode.isModelElement(node.parent) && node.parent.type === "li") {
+          break;
         }
-        else if (e.operation === 'copy') {
-          //TODO (sergey): replace with shallow clone when thats available
-          const copy = e.node.clone() as ModelElement;
-          copy.children = [];
-          copy.appendChildren(...toBeInserted);
-          toBeInserted = [];
-          toBeInserted.push(copy);
-        }
-      });
-
-      newLi.appendChildren(...toBeInserted);
-      parentUl.addChild(newLi, parentLiPos + 1);
+        node = node.parent;
+        newLiNodes.push({ node: node, operation: 'copy' });
+      }
+      else {
+        throw new Error('something went horribly wrong when walking up a tree');
+      }
     }
+
+    //update the existing list
+    newLiNodes.forEach(e => {
+      if (e.operation === 'cut') {
+        e.node.remove();
+        toBeInserted.push(e.node);
+      }
+      else if (e.operation === 'copy') {
+        //TODO (sergey): replace with shallow clone when thats available
+        const copy = e.node.clone() as ModelElement;
+        copy.children = [];
+        copy.appendChildren(...toBeInserted);
+        toBeInserted = [];
+        toBeInserted.push(copy);
+      }
+    });
+
+    newLi.appendChildren(...toBeInserted);
+    parentUl.addChild(newLi, parentLiPos + 1);
 
     //set cursor position
     const newRange = ModelRange.fromInElement(newLi, 0, 0);

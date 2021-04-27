@@ -46,7 +46,7 @@ export default class RemoveTableColumnCommand extends Command {
     }
     const cellToSelect = table.getCell(cellXToSelect, position.y);
     if(cellToSelect) {
-      selection.collapseOn(cellToSelect);
+      selection.collapseIn(cellToSelect);
     }
     this.model.write();
 

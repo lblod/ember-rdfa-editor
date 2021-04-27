@@ -32,9 +32,9 @@ export default class RemoveTableCommand extends Command {
     if(table.parent) {
       const offset = table.parent.getChildIndex(table);
       if(offset) {
-        selection.collapseOn(table.parent, offset);
+        selection.collapseIn(table.parent, offset);
       } else {
-        selection.collapseOn(table.parent);
+        selection.collapseIn(table.parent);
       }
       this.model.write();
     }

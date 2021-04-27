@@ -1,13 +1,15 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import {
   Manipulation,
-  ManipulationExecutor,
   ManipulationGuidance
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import RawEditor from 'dummy/utils/ce/raw-editor';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  *
@@ -17,18 +19,57 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 export default class TableTabInputPlugin implements TabInputPlugin {
   label = 'backspace plugin for handling table nodes';
 
-  guidanceForManipulation(_manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
+  guidanceForManipulation(manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
     const selection = editor.selection;
     if(selection.inTableState === PropertyState.enabled) {
       return {
         allow: true,
-        executor: this.tabHandler as unknown as ManipulationExecutor
+        executor: TableTabInputPlugin.tabHandler
       };
+    } else {
+      if(manipulation.type === 'moveCursorToStartOfElement' || manipulation.type === 'moveCursorAfterElement') {
+        if(TableTabInputPlugin.isElementATable(manipulation.node)){
+          return {
+            allow: true,
+            executor: TableTabInputPlugin.selectFirstCell,
+          };
+        }
+      } else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
+        if(TableTabInputPlugin.isElementATable(manipulation.node)){
+          return {
+            allow: true,
+            executor: TableTabInputPlugin.selectLastCell,
+          };
+        }
+      }
     }
     return null;
   }
 
-  tabHandler = (manipulation : Manipulation, editor: RawEditor) => {
+  static isElementATable(element: HTMLElement) {
+    return tagName(element) === 'table';
+  }
+
+  static selectFirstCell(manipulation : Manipulation, editor: RawEditor) {
+    const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
+    const firstCell = table.getCell(0,0);
+    if(firstCell) {
+      editor.selection.collapseIn(firstCell);
+      editor.model.write();
+    }
+  }
+
+  static selectLastCell(manipulation : Manipulation, editor: RawEditor) {
+    const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
+    const {x, y} = table.getDimensions();
+    const lastCell = table.getCell(x-1,y-1);
+    if(lastCell) {
+      editor.model.selection.collapseIn(lastCell);
+      editor.model.write();
+    }
+  }
+
+  static tabHandler(manipulation : Manipulation, editor: RawEditor) {
     let table;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);
@@ -65,8 +106,15 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         };
       } else {
         if(table.nextSibling) {
-          selection.collapseOn(table.nextSibling);
-          editor.model.write();
+          if (table.nextSibling) {
+            selection.collapseIn(table.nextSibling);
+          }
+          else {
+            const text = new ModelText(INVISIBLE_SPACE);
+            table.parent?.appendChildren(text);
+            selection.collapseIn(text);
+          }
+            editor.model.write();
         }
         return;
       }
@@ -83,7 +131,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         };
       } else {
         if(table.previousSibling) {
-          selection.collapseOn(table.previousSibling);
+          selection.collapseIn(table.previousSibling);
           editor.model.write();
         }
         return;
@@ -93,7 +141,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
     const newSelectedCell = table?.getCell(newPosition.x, newPosition.y);
     if(!newSelectedCell) return;
-    selection.collapseOn(newSelectedCell);
+    selection.collapseIn(newSelectedCell);
     editor.model.write();
-  };
+  }
 }
