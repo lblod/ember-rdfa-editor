@@ -141,7 +141,7 @@ export default class InsertNewLiCommand extends Command {
         }
       }
       firstParentLi.parent!.addChild(newLi, firstParentLi.index! + 1);
-      this.model.selection.collapseOn(newText, 0);
+      this.model.selection.collapseIn(newText, 0);
 
     }
     this.model.write();
@@ -177,7 +177,7 @@ export default class InsertNewLiCommand extends Command {
     //remove left siblings
     sibling = leftSideSecondLi;
     this.deleteLeft(sibling);
-    this.model.selection.collapseOn(rightSideSecondLi, 0);
+    this.model.selection.collapseIn(rightSideSecondLi, 0);
   }
 
   private deleteLeft(node: ModelNode): void {

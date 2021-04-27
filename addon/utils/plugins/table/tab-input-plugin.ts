@@ -56,7 +56,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
     const firstCell = table.getCell(0,0);
     if(firstCell) {
-      editor.selection.collapseOn(firstCell);
+      editor.selection.collapseIn(firstCell);
       editor.model.write();
     }
   }
@@ -66,7 +66,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     const {x, y} = table.getDimensions();
     const lastCell = table.getCell(x-1,y-1);
     if(lastCell) {
-      editor.model.selection.collapseOn(lastCell);
+      editor.model.selection.collapseIn(lastCell);
       editor.model.write();
     }
   };
@@ -113,6 +113,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
           const pos = ModelPosition.fromAfterNode(table);
           const range = new ModelRange(pos, pos);
           selection.selectRange(range);
+          selection.collapseIn(table.nextSibling);
           editor.model.write();
         }
         return;
@@ -130,9 +131,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         };
       } else {
         if(table.previousSibling) {
-          const pos = ModelPosition.fromBeforeNode(table);
-          const range = new ModelRange(pos, pos);
-          selection.selectRange(range);
+          selection.collapseIn(table.previousSibling);
           editor.model.write();
         }
         return;
@@ -142,7 +141,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
     const newSelectedCell = table?.getCell(newPosition.x, newPosition.y);
     if(!newSelectedCell) return;
-    selection.collapseOn(newSelectedCell);
+    selection.collapseIn(newSelectedCell);
     editor.model.write();
   };
 }
