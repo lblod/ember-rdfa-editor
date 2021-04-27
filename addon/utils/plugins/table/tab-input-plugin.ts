@@ -1,7 +1,6 @@
 import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import {
   Manipulation,
-  ManipulationExecutor,
   ManipulationGuidance
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import RawEditor from 'dummy/utils/ce/raw-editor';
@@ -25,21 +24,21 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     if(selection.inTableState === PropertyState.enabled) {
       return {
         allow: true,
-        executor: this.tabHandler as ManipulationExecutor
+        executor: TableTabInputPlugin.tabHandler
       };
     } else {
       if(manipulation.type === 'moveCursorToStartOfElement' || manipulation.type === 'moveCursorAfterElement') {
-        if(this.isElementATable(manipulation.node)){
+        if(TableTabInputPlugin.isElementATable(manipulation.node)){
           return {
             allow: true,
-            executor: this.selectFirstCell,
+            executor: TableTabInputPlugin.selectFirstCell,
           };
         }
       } else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
-        if(this.isElementATable(manipulation.node)){
+        if(TableTabInputPlugin.isElementATable(manipulation.node)){
           return {
             allow: true,
-            executor: this.selectLastCell,
+            executor: TableTabInputPlugin.selectLastCell,
           };
         }
       }
@@ -47,11 +46,11 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     return null;
   }
 
-  isElementATable(element: HTMLElement) {
+  static isElementATable(element: HTMLElement) {
     return tagName(element) === 'table';
   }
 
-  selectFirstCell(manipulation : Manipulation, editor: RawEditor) {
+  static selectFirstCell(manipulation : Manipulation, editor: RawEditor) {
     const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
     const firstCell = table.getCell(0,0);
     if(firstCell) {
@@ -60,7 +59,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
   }
 
-  selectLastCell(manipulation : Manipulation, editor: RawEditor) {
+  static selectLastCell(manipulation : Manipulation, editor: RawEditor) {
     const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
     const {x, y} = table.getDimensions();
     const lastCell = table.getCell(x-1,y-1);
@@ -68,11 +67,9 @@ export default class TableTabInputPlugin implements TabInputPlugin {
       editor.model.selection.collapseIn(lastCell);
       editor.model.write();
     }
-  };
+  }
 
-
-
-  tabHandler(manipulation : Manipulation, editor: RawEditor) {
+  static tabHandler(manipulation : Manipulation, editor: RawEditor) {
     let table;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);
@@ -142,5 +139,5 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     if(!newSelectedCell) return;
     selection.collapseIn(newSelectedCell);
     editor.model.write();
-  };
+  }
 }
