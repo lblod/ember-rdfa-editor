@@ -252,6 +252,10 @@ export default class InsertNewLiCommand extends Command {
         //add empty li to the parent ul
         parentUl.addChild(newLi, parentLiPos + 1);
         newLi.addChild(new ModelText(INVISIBLE_SPACE));
+
+        //set cursor position
+        const newRange = ModelRange.fromInElement(newLi, 0, 0);
+        this.model.selection.selectRange(newRange);
         return;
       }
     }
@@ -306,7 +310,7 @@ export default class InsertNewLiCommand extends Command {
 
     //set cursor position
     const newRange = ModelRange.fromInElement(newLi, 0, 0);
-    this.model.selection.ranges = [newRange];
+    this.model.selection.selectRange(newRange);
     return;
   }
 }
