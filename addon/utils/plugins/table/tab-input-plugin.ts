@@ -7,10 +7,10 @@ import {
 import RawEditor from 'dummy/utils/ce/raw-editor';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 /**
  *
@@ -20,23 +20,24 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 export default class TableTabInputPlugin implements TabInputPlugin {
   label = 'backspace plugin for handling table nodes';
 
-  guidanceForManipulation(_manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
+  guidanceForManipulation(manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
     const selection = editor.selection;
     if(selection.inTableState === PropertyState.enabled) {
       return {
         allow: true,
-        executor: this.tabHandler as unknown as ManipulationExecutor
+        executor: this.tabHandler as ManipulationExecutor
       };
     } else {
-      if(_manipulation.type === 'moveCursorToStartOfElement' || _manipulation.type === 'moveCursorAfterElement') {
-        if(this.isNextElementATable(selection)){
+      if(manipulation.type === 'moveCursorToStartOfElement' || manipulation.type === 'moveCursorAfterElement') {
+        if(this.isElementATable(manipulation.node)){
           return {
             allow: true,
             executor: this.selectFirstCell,
           };
         }
-      } else if(_manipulation.type === 'moveCursorToEndOfElement' || _manipulation.type === 'moveCursorBeforeElement') {
-        if(this.isPreviousElementATable(selection)){
+      } else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
+        editor.model.getModelNodeFor
+        if(this.isElementATable(manipulation.node)){
           return {
             allow: true,
             executor: this.selectLastCell,
@@ -47,48 +48,32 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     return null;
   }
 
-  isNextElementATable = (selection: ModelSelection) => {
-    const nextSibling = selection.anchor?.nodeAfter() as ModelElement;
-    if(nextSibling) {
-      return nextSibling.type === 'table';
-    } else {
-      return false;
-    }
-  };
+  isElementATable(element: HTMLElement) {
+    return tagName(element) === 'table';
+  }
 
-  isPreviousElementATable = (selection: ModelSelection) =>  {
-    const previousSibling = selection.anchor?.nodeBefore() as ModelElement;
-    if(previousSibling) {
-      return previousSibling.type === 'table';
-    } else {
-      return false;
-    }
-  };
-
-  selectFirstCell = (_manipulation : Manipulation, editor: RawEditor) => {
-    const selection = editor.selection;
-    const table = selection.anchor?.nodeAfter() as ModelTable;
+  selectFirstCell(manipulation : Manipulation, editor: RawEditor) {
+    const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
     const firstCell = table.getCell(0,0);
     if(firstCell) {
-      selection.collapseOn(firstCell);
+      editor.selection.collapseOn(firstCell);
       editor.model.write();
     }
-  };
+  }
 
-  selectLastCell = (_manipulation : Manipulation, editor: RawEditor) => {
-    const selection = editor.selection;
-    const table = selection.anchor?.nodeBefore() as ModelTable;
+  selectLastCell(manipulation : Manipulation, editor: RawEditor) {
+    const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
     const {x, y} = table.getDimensions();
     const lastCell = table.getCell(x-1,y-1);
     if(lastCell) {
-      selection.collapseOn(lastCell);
+      editor.model.selection.collapseOn(lastCell);
       editor.model.write();
     }
   };
 
 
 
-  tabHandler = (manipulation : Manipulation, editor: RawEditor) => {
+  tabHandler(manipulation : Manipulation, editor: RawEditor) {
     let table;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);
