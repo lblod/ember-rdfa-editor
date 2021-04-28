@@ -1,5 +1,6 @@
 import PernetRawEditor from '../ce/pernet-raw-editor';
 import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
 /**
  * RdfaDocument is a virtual representation of the document
@@ -22,7 +23,9 @@ export default class RdfaDocument {
   }
 
   set htmlContent(html: string) {
-    this._editor.executeCommand("insert-html", html, this._editor.createRangeFromPaths([], []));
+    const root = this._editor.model.rootModelNode;
+    const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
+    this._editor.executeCommand("insert-html", html, range);
   }
 
   setHtmlContent(html: string) {
