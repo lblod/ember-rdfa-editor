@@ -36,7 +36,6 @@ module("Unit | model | operations | operation-algorithms-test", () => {
     const end = ModelPosition.fromInTextNode(rangeEnd, 1);
     OperationAlgorithms.remove(new ModelRange(start, end));
 
-    console.log(initial.toXml());
     assert.true(initial.sameAs(expected));
   });
 });

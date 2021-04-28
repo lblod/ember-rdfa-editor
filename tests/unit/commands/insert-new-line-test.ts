@@ -83,7 +83,6 @@ module("Unit | commands | insert-new-line-test", hooks => {
     `;
     ctx.model.fillRoot(initial);
     ctx.model.disableSelectionWriting();
-    console.log(ctx.model.toXml());
     const range = ModelRange.fromInTextNode(rangeMarker, rangeMarker.length, rangeMarker.length);
     command.execute(range);
 

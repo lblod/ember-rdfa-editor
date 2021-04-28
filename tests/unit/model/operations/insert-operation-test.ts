@@ -103,9 +103,7 @@ module("Unit | model | operations | insert-operation-test", () => {
 
     const resultRange = op.execute();
 
-    console.log(initial.toXml());
     assert.true(expected.sameAs(initial));
-    console.log(resultRange);
     assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [1])));
   });
 

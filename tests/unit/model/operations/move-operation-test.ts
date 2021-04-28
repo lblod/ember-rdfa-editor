@@ -119,7 +119,6 @@ module("Unit | model | operations | move-operation-test", () => {
     const op = new MoveOperation(srcRange, targetPos);
     const resultRange = op.execute();
 
-    console.log(resultRange);
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [0, 2], [0, 11])));
   });

@@ -203,5 +203,9 @@ export default class ModelRange {
   clone(): ModelRange {
     return new ModelRange(this.start.clone(), this.end.clone());
   }
+  toString(): string {
+    return `{[${this.start.path.toString()}] - [${this.end.path.toString()}]}`;
+
+  }
 }
 

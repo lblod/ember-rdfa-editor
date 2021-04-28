@@ -14,7 +14,6 @@ export default class OperationAlgorithms {
     OperationAlgorithms.splitText(range.end);
     const confinedRanges = range.getMinimumConfinedRanges();
     const nodesToRemove = [];
-    console.log(confinedRanges);
     for (const range of confinedRanges) {
       if (!range.collapsed) {
         const walker = new ModelTreeWalker({range, descend: false});
@@ -74,6 +73,7 @@ export default class OperationAlgorithms {
     const after = position.nodeAfter();
     if (after) {
       const rightSideChildren = parent.children.splice(after.index!);
+      parent.lastChild.nextSibling = null;
       rightSideChildren[0].previousSibling = null;
       newNode.appendChildren(...rightSideChildren);
     }

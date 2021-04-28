@@ -273,7 +273,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 1, testLi.getMaxOffset() - 1));
     command.execute();
     const actual = ctx.model.rootModelNode.firstChild;
-    console.log(actual.toXml());
 
     assert.true(actual.sameAs(expected));
 

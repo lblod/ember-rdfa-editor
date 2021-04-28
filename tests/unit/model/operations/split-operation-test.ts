@@ -22,7 +22,6 @@ module("Unit | model | operations | split-operation-test", () => {
     const range = ModelRange.fromPaths(initial as ModelElement, [0], [0]);
     const op = new SplitOperation(range);
     const resultRange = op.execute();
-    console.log(initial.toXml());
 
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(range));
@@ -48,7 +47,6 @@ module("Unit | model | operations | split-operation-test", () => {
     const range = ModelRange.fromInTextNode(rangeStart, 2, 2);
     const op = new SplitOperation(range);
     const resultRange = op.execute();
-    console.log(initial.toXml());
 
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(range));
@@ -79,7 +77,6 @@ module("Unit | model | operations | split-operation-test", () => {
     const range = ModelRange.fromInTextNode(selectionStart, 2, 2);
     const op = new SplitOperation(range);
     const resultRange = op.execute();
-    console.log(initial.toXml());
 
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [1])));
@@ -108,7 +105,6 @@ module("Unit | model | operations | split-operation-test", () => {
     const range = ModelRange.fromInTextNode(selectionStart, 2, 2);
     const op = new SplitOperation(range, false);
     const resultRange = op.execute();
-    console.log(initial.toXml());
 
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(range));
@@ -141,8 +137,6 @@ module("Unit | model | operations | split-operation-test", () => {
     const op = new SplitOperation(range);
     const resultRange = op.execute();
 
-    console.log(initial.toXml());
-    console.log(resultRange);
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [2])));
 
@@ -183,8 +177,6 @@ module("Unit | model | operations | split-operation-test", () => {
     const op = new SplitOperation(range);
     const resultRange = op.execute();
 
-    console.log(initial.toXml());
-    console.log(resultRange);
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [2])));
 
@@ -228,8 +220,6 @@ module("Unit | model | operations | split-operation-test", () => {
     const op = new SplitOperation(range);
     const resultRange = op.execute();
 
-    console.log(initial.toXml());
-    console.log(resultRange);
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [1,2])));
 

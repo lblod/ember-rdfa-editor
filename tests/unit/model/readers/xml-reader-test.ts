@@ -10,8 +10,6 @@ module("Unit | model | readers | xml-reader-test", () => {
 
     // language=XML
     const {root} = vdom`<modelRoot />`;
-    console.log(root.toXml());
-    console.log(context.model.rootModelNode.toXml());
     assert.true(root.sameAs(context.model.rootModelNode));
 
   });

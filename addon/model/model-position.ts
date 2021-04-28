@@ -1,4 +1,4 @@
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelElement, {ElementType} from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
