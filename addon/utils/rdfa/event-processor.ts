@@ -1,7 +1,7 @@
 import {analyse, Region} from '@lblod/marawa/rdfa-context-scanner';
 import HintsRegistry from './hints-registry';
 import {isEmpty} from '@ember/utils';
-import globalTextOffsetToPath from '@lblod/ember-rdfa-editor/utils/global-text-offset-to-path';
+import globalTextRegionToModelRange from '@lblod/ember-rdfa-editor/utils/global-text-region-to-model-range';
 import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
 import RawEditor from '../ce/raw-editor';
 import {ContentObserver} from '../ce/pernet-raw-editor';
@@ -110,21 +110,19 @@ export default class EventProcessor implements ContentObserver, MovementObserver
   handleRegistryChange(/*registry*/) {
     let region = this.cardsLocationFlaggedRemoved.shift();
     while (region) {
-        const [start, end] = region;
-        const startPos = globalTextOffsetToPath(this.editor.rootModelNode, start);
-        const endPos = globalTextOffsetToPath(this.editor.rootModelNode, end);
-        const selection = this.editor.createSelection();
-        selection.selectRange(this.editor.createRangeFromPaths(startPos, endPos));
-        this.editor.executeCommand("remove-highlight", selection);
-        region = this.cardsLocationFlaggedRemoved.shift();
+      const [start, end] = region;
+      const range = globalTextRegionToModelRange(this.editor.rootModelNode, start, end);
+      const selection = this.editor.createSelection();
+      selection.selectRange(range);
+      this.editor.executeCommand("remove-highlight", selection);
+      region = this.cardsLocationFlaggedRemoved.shift();
     }
     region = this.cardsLocationFlaggedNew.shift();
     while (region) {
       const [start, end] = region;
-      const startPos = globalTextOffsetToPath(this.editor.rootModelNode, start);
-      const endPos = globalTextOffsetToPath(this.editor.rootModelNode, end);
+      const range = globalTextRegionToModelRange(this.editor.rootModelNode, start, end);
       const selection = this.editor.createSelection();
-      selection.selectRange(this.editor.createRangeFromPaths(startPos, endPos));
+      selection.selectRange(range);
       this.editor.executeCommand("make-highlight", selection);
       region = this.cardsLocationFlaggedNew.shift() ;
     }
