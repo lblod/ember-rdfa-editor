@@ -45,7 +45,6 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
       </modelRoot>
     `;
     const position = ModelPosition.fromInTextNode(rangeStart, 2);
-    ctx.model.fillRoot(initial);
     const mut = new ImmediateModelMutator();
     const resultPos = mut.splitUntil(position, element => element.type === "div");
     assert.true(initial.sameAs(expected));

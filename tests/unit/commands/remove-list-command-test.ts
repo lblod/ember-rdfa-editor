@@ -40,7 +40,7 @@ module("Unit | commands | remove-list-command", hooks => {
 
     ctx.modelSelection.collapseIn(content);
     command.execute();
-    assert.true(initial.sameAs(expected));
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
 
 
   });

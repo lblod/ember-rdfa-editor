@@ -35,7 +35,7 @@ export default class RemoveListCommand extends Command {
       // node to stop splitting
       // if position is inside a list, this is the grandparent of the highest li (so that the parent
       // ul will still get split)
-      // if position is not in a list, we shouldnt split at all, so take the parent of the position
+      // if position is not in a list, we shouldn't split at all, so take the parent of the position
       const endLimit = highestEndLi?.parent?.parent ?? range.end.parent;
       const startLimit = highestStartLi?.parent?.parent ?? range.start.parent;
 
@@ -61,18 +61,23 @@ export default class RemoveListCommand extends Command {
       // consuming here so we can modify without interfering with the walking
       const nodesInRange = [...nodeWalker];
       const unwrappedNodes = [];
+      let resultRange;
       for (const node of nodesInRange) {
         if (ModelNode.isModelElement(node) && listTypes.has(node.type)) {
-          mutator.unwrap(node, true);
+          resultRange = mutator.unwrap(node, true);
         } else if (ModelNode.isModelText(node)) {
           unwrappedNodes.push(node);
         }
       }
       // we can be confident that we need the first and last textnode here
       // because the treewalker always walks in document order
-      const start = ModelPosition.fromBeforeNode(unwrappedNodes[0]);
-      const end = ModelPosition.fromAfterNode(unwrappedNodes[unwrappedNodes.length - 1]);
-      this.model.selectRange(new ModelRange(start, end));
+      if(unwrappedNodes.length) {
+        const start = ModelPosition.fromBeforeNode(unwrappedNodes[0]);
+        const end = ModelPosition.fromAfterNode(unwrappedNodes[unwrappedNodes.length - 1]);
+        this.model.selectRange(new ModelRange(start, end));
+      }else {
+        this.model.selectRange(resultRange);
+      }
 
 
     });
