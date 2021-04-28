@@ -136,20 +136,20 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     const target = ModelPosition.fromBeforeNode(element);
     const op = new MoveOperation(srcRange, target);
     const resultRange = op.execute();
+    this.deleteNode(element);
     if (ensureBlock) {
       const nodeBeforeStart = resultRange.start.nodeBefore();
       const nodeAfterStart = resultRange.start.nodeAfter();
       const nodeBeforeEnd = resultRange.end.nodeBefore();
       const nodeAfterEnd = resultRange.end.nodeAfter();
 
+      if (nodeBeforeEnd && nodeAfterEnd && nodeBeforeEnd !== nodeAfterEnd && !nodeBeforeEnd.isBlock && !nodeAfterEnd.isBlock) {
+        this.insertAtPosition(resultRange.end, new ModelElement("br"));
+      }
       if (nodeBeforeStart && nodeAfterStart && nodeBeforeStart !== nodeAfterStart && !nodeBeforeStart.isBlock && !nodeAfterStart.isBlock) {
         this.insertAtPosition(resultRange.start, new ModelElement("br"));
       }
-      if (nodeBeforeEnd && nodeAfterEnd && nodeBeforeEnd !== nodeAfterEnd && !nodeBeforeEnd.isBlock && !nodeAfterEnd.isBlock) {
-        this.insertAtPosition(resultRange.start, new ModelElement("br"));
-      }
     }
-    this.deleteNode(element);
     return resultRange;
   }
 

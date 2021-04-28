@@ -1,7 +1,7 @@
 import Command from "./command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
@@ -71,12 +71,14 @@ export default class RemoveListCommand extends Command {
       }
       // we can be confident that we need the first and last textnode here
       // because the treewalker always walks in document order
-      if(unwrappedNodes.length) {
+      if (unwrappedNodes.length) {
         const start = ModelPosition.fromBeforeNode(unwrappedNodes[0]);
         const end = ModelPosition.fromAfterNode(unwrappedNodes[unwrappedNodes.length - 1]);
         this.model.selectRange(new ModelRange(start, end));
-      }else {
+      } else if (resultRange) {
         this.model.selectRange(resultRange);
+      } else {
+        throw new SelectionError("No sensible selection possible");
       }
 
 

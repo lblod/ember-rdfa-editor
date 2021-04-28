@@ -189,6 +189,95 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
       mut.unwrap(n3);
       assert.true(initial.sameAs(expected));
     });
+    test("unwrap with ensureBlocks inserts brs correctly", assert => {
+      // language=XML
+      const {root: initial, elements: {wrapper}} = vdom`
+        <modelRoot>
+          <div>
+            <text>abcd</text>
+            <div __id="wrapper">
+              <text>content</text>
+            </div>
+            <text>efgh</text>
+          </div>
+        </modelRoot>
+      `;
+
+      // language=XML
+      const {root: expected} = vdom`
+        <modelRoot>
+          <div>
+            <text>abcd</text>
+            <br/>
+            <text>content</text>
+            <br/>
+            <text>efgh</text>
+          </div>
+        </modelRoot>
+      `;
+      const mut = new ImmediateModelMutator();
+      mut.unwrap(wrapper, true);
+      console.log(initial.toXml());
+      assert.true(initial.sameAs(expected));
+    });
+
+
+  });
+  module("Unit | model | mutators | immediate-model-mutator-test | inserting", () => {
+    test("inserts into position correctly", assert => {
+      // language=XML
+      const {root: initial, textNodes: {rangeStart}} = vdom`
+        <modelRoot>
+          <text __id="rangeStart">abcd</text>
+        </modelRoot>
+      `;
+
+      // language=XML
+      const {root: expected} = vdom`
+        <modelRoot>
+          <text>abcd</text>
+          <br/>
+        </modelRoot>
+      `;
+      const mut = new ImmediateModelMutator();
+      const pos = ModelPosition.fromAfterNode(rangeStart);
+      mut.insertAtPosition(pos, new ModelElement("br"));
+
+      assert.true(initial.sameAs(expected));
+
+    });
+
+    test("inserts into position correctly nested", assert => {
+      // language=XML
+      const {root: initial, textNodes: {rangeStart}} = vdom`
+        <modelRoot>
+          <div>
+            <text __id="rangeStart">abcd</text>
+            <text __id="rangeStart">content</text>
+            <text __id="rangeStart">efgh</text>
+          </div>
+        </modelRoot>
+      `;
+
+      // language=XML
+      const {root: expected} = vdom`
+        <modelRoot>
+          <div>
+            <text __id="rangeStart">abcd</text>
+            <text __id="rangeStart">content</text>
+            <br/>
+            <text __id="rangeStart">efgh</text>
+          </div>
+        </modelRoot>
+      `;
+      const range = ModelRange.fromPaths(initial as ModelElement, [0, 4], [0, 11]);
+      const mut = new ImmediateModelMutator();
+      mut.insertAtPosition(range.end, new ModelElement("br"));
+      console.log(initial.toXml());
+
+      assert.true(initial.sameAs(expected));
+
+    });
 
   });
   module("Unit | model | mutators | immediate-model-mutator-test | splitting", () => {
