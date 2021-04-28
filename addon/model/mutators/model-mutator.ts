@@ -1,7 +1,6 @@
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 /**

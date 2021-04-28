@@ -72,7 +72,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
       const mut = new ImmediateModelMutator();
       const resultRange = mut.unwrap(wrapper);
       assert.true(expected.sameAs(initial));
-      assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [0], [3])))
+      assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [0], [3])));
 
     });
 
@@ -217,7 +217,6 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
       `;
       const mut = new ImmediateModelMutator();
       mut.unwrap(wrapper, true);
-      console.log(initial.toXml());
       assert.true(initial.sameAs(expected));
     });
 
@@ -249,12 +248,12 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
 
     test("inserts into position correctly nested", assert => {
       // language=XML
-      const {root: initial, textNodes: {rangeStart}} = vdom`
+      const {root: initial} = vdom`
         <modelRoot>
           <div>
-            <text __id="rangeStart">abcd</text>
-            <text __id="rangeStart">content</text>
-            <text __id="rangeStart">efgh</text>
+            <text>abcd</text>
+            <text>content</text>
+            <text>efgh</text>
           </div>
         </modelRoot>
       `;
@@ -263,17 +262,16 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
       const {root: expected} = vdom`
         <modelRoot>
           <div>
-            <text __id="rangeStart">abcd</text>
-            <text __id="rangeStart">content</text>
+            <text>abcd</text>
+            <text>content</text>
             <br/>
-            <text __id="rangeStart">efgh</text>
+            <text>efgh</text>
           </div>
         </modelRoot>
       `;
       const range = ModelRange.fromPaths(initial as ModelElement, [0, 4], [0, 11]);
       const mut = new ImmediateModelMutator();
       mut.insertAtPosition(range.end, new ModelElement("br"));
-      console.log(initial.toXml());
 
       assert.true(initial.sameAs(expected));
 

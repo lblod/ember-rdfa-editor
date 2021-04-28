@@ -8,7 +8,6 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import SplitOperation from "@lblod/ember-rdfa-editor/model/operations/split-operation";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 /**
  * {@link ModelMutator} implementation where all operations immediately
