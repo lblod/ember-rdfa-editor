@@ -33,11 +33,9 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
       <div>
         <ul>
           <li>
-            <text/>
           </li>
           <li>
             <text>${INVISIBLE_SPACE}</text>
-            <text/>
           </li>
         </ul>
       </div>
@@ -69,11 +67,9 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
       <div>
         <ul>
           <li>
-            <text/>
           </li>
           <li>
             <text>abc</text>
-            <text/>
           </li>
         </ul>
       </div>
@@ -109,7 +105,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
           </li>
           <li>
             <text>${INVISIBLE_SPACE}</text>
-            <text/>
           </li>
         </ul>
       </div>
@@ -144,7 +139,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
           </li>
           <li>
             <text>bc</text>
-            <text/>
           </li>
         </ul>
       </div>
@@ -188,7 +182,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
           <li>
             <span>
               <text>hild</text>
-              <text/>
             </span>
             <text>d</text>
           </li>
@@ -221,10 +214,10 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
         <ul>
           <li>
             <text>a</text>
+            <text>${INVISIBLE_SPACE}</text>
           </li>
           <li>
             <text>d</text>
-            <text/>
           </li>
         </ul>
       </div>
@@ -261,6 +254,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
         <ul>
           <li>
             <text>a</text>
+            <text>${INVISIBLE_SPACE}</text>
           </li>
           <li>
             <text>d</text>
