@@ -73,8 +73,12 @@ export default class OperationAlgorithms {
     const after = position.nodeAfter();
     if (after) {
       const rightSideChildren = parent.children.splice(after.index!);
-      parent.lastChild.nextSibling = null;
-      rightSideChildren[0].previousSibling = null;
+      if(parent.lastChild) {
+        parent.lastChild.nextSibling = null;
+      }
+      if(rightSideChildren[0]) {
+        rightSideChildren[0].previousSibling = null;
+      }
       newNode.appendChildren(...rightSideChildren);
     }
     grandParent.addChild(newNode, parent.index! + 1);

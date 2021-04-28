@@ -20,7 +20,6 @@ export default class RemoveListCommand extends Command {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
-    // const range = selection.lastRange.getMaximizedRange();
     const range = selection.lastRange;
 
     this.model.change(mutator => {
