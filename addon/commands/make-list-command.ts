@@ -3,13 +3,13 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import ModelElement from "../model/model-element";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {MisbehavedSelectionError, ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import { PropertyState } from "../model/util/types";
+import {PropertyState} from "../model/util/types";
 
 
 /**
@@ -33,6 +33,7 @@ export default class MakeListCommand extends Command {
     }
 
     const range = selection.lastRange;
+    const wasCollapsed = range.collapsed;
     const blocks = this.getBlocksFromRange(range);
     const list = new ModelElement(listType);
     for (const block of blocks) {
@@ -43,14 +44,27 @@ export default class MakeListCommand extends Command {
     }
 
 
-    this.model.batchChange(mutator => {
+    this.model.change(mutator => {
       mutator.insertNodes(range, list);
-      const resultRange = mutator.flush();
+      if (!list.firstChild || !list.lastChild) {
+        throw new ModelError("list without listitem");
+      }
       const fullRange = ModelRange.fromInElement(this.model.rootModelNode, 0, this.model.rootModelNode.getMaxOffset());
       const cleaner = new ListCleaner();
       cleaner.clean(fullRange);
-      this.model.selection.selectRange(resultRange!);
-    }, false);
+      let resultRange;
+      if (wasCollapsed) {
+        const firstChild = list.firstChild as ModelElement;
+        resultRange = ModelRange.fromInElement(firstChild, 0, firstChild.getMaxOffset());
+      } else {
+        const firstChild = list.firstChild as ModelElement;
+        const lastChild = list.lastChild as ModelElement;
+        const start = ModelPosition.fromInElement(firstChild , 0);
+        const end = ModelPosition.fromInElement(lastChild, lastChild.getMaxOffset());
+        resultRange = new ModelRange(start, end);
+      }
+      this.model.selection.selectRange(resultRange);
+    });
   }
 
   private getBlocksFromRange(range: ModelRange): ModelNode[][] {
@@ -69,8 +83,7 @@ export default class MakeListCommand extends Command {
         if (range.start.parent === this.model.rootModelNode) {
           //expanded to the start of the root node
           range.start = ModelPosition.fromInElement(this.model.rootModelNode, 0);
-        }
-        else {
+        } else {
           range.start = ModelPosition.fromInElement(range.start.parent.parent!, range.start.parent.getOffset());
         }
       }
@@ -88,8 +101,7 @@ export default class MakeListCommand extends Command {
         if (range.end.parent === this.model.rootModelNode) {
           // expanded to the end of root
           range.end = ModelPosition.fromInElement(this.model.rootModelNode, this.model.rootModelNode.getMaxOffset());
-        }
-        else {
+        } else {
           range.end = ModelPosition.fromInElement(range.end.parent.parent!, range.end.parent.getOffset() + range.end.parent.offsetSize);
         }
       }
