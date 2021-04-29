@@ -10,6 +10,7 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import PernetRawEditor from '../../ce/pernet-raw-editor';
 
 /**
  *
@@ -50,7 +51,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     return tagName(element) === 'table';
   }
 
-  static selectFirstCell(manipulation : Manipulation, editor: RawEditor) {
+  static selectFirstCell(manipulation : Manipulation, editor: PernetRawEditor) {
     const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
     const firstCell = table.getCell(0,0);
     if(firstCell) {
@@ -59,7 +60,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
   }
 
-  static selectLastCell(manipulation : Manipulation, editor: RawEditor) {
+  static selectLastCell(manipulation : Manipulation, editor: PernetRawEditor) {
     const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
     const {x, y} = table.getDimensions();
     const lastCell = table.getCell(x-1,y-1);
@@ -69,7 +70,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
   }
 
-  static tabHandler(manipulation : Manipulation, editor: RawEditor) {
+  static tabHandler(manipulation : Manipulation, editor: PernetRawEditor) {
     let table;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);
@@ -105,20 +106,20 @@ export default class TableTabInputPlugin implements TabInputPlugin {
           y: selectedIndex.y
         };
       } else {
-        if(table.nextSibling) {
-          if (table.nextSibling) {
-            selection.collapseIn(table.nextSibling);
-          }
-          else {
-            const text = new ModelText(INVISIBLE_SPACE);
-            table.parent?.appendChildren(text);
-            selection.collapseIn(text);
-          }
-            editor.model.write();
+        // at the end of the table
+        if (table.nextSibling) {
+          selection.collapseIn(table.nextSibling);
         }
+        else {
+          const text = new ModelText(INVISIBLE_SPACE);
+          table.parent?.appendChildren(text);
+          selection.collapseIn(text);
+        }
+        editor.model.write();
         return;
       }
-    } else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
+    }
+    else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
       if(selectedIndex.x === 0 && selectedIndex.y > 0) {
         newPosition = {
           x: tableDimensions.x - 1,

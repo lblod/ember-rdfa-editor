@@ -1,5 +1,5 @@
 import { InputHandler } from './input-handler';
-import { Manipulation, ManipulationExecutor, Editor, ManipulationGuidance } from './manipulation';
+import { Manipulation, ManipulationExecutor, ManipulationGuidance } from './manipulation';
 import { warn /*, debug, deprecate*/ } from '@ember/debug';
 import { isVoidElement, isVisibleElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
@@ -71,7 +71,7 @@ export default class TabInputHandler implements InputHandler {
     // run the manipulation
     if( dispatchedExecutor ) {
       // NOTE: we should pass some sort of editor interface here in the future.
-      dispatchedExecutor( manipulation, this.rawEditor as Editor);
+      dispatchedExecutor( manipulation, this.rawEditor);
     }
     else {
       this.handleNativeManipulation( manipulation );

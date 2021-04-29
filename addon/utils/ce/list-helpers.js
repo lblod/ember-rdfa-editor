@@ -13,56 +13,6 @@ import {
 import { warn } from '@ember/debug';
 
 /**
- * Handlers for list action.
- *
- * - It works only when current node is a textNode
- * - The general flow is dependent on two situation types:
- *     a. Either the current node is already in al list when this action is fired.
- *         (see further notes for wat it basically means 'being in a list')
- *     b. Not in a list, create a new list
- *
- * TODO
- * ----
- *  - some times empty textnodes are not included in logicalBlock. Probably an issue with the conditoin isDisplayedAsBlock
- */
-
-/**
- * handles unordered list
- */
-function unorderedListAction(rawEditor) {
-  const filteredSuitableNodes = getSuitableNodesForListFromSelection(rawEditor);
-
-  if (filteredSuitableNodes) {
-    rawEditor.externalDomUpdate(
-      'handle unorderedListAction',
-      () => {
-        rawEditor.createSnapshot();
-        handleListAction(rawEditor, filteredSuitableNodes, unorderedListAction, 'ul')();
-      },
-      true
-    );
-  }
-}
-
-/**
- * handles ordered list
- */
-function orderedListAction(rawEditor) {
-  const filteredSuitableNodes = getSuitableNodesForListFromSelection(rawEditor);
-
-  if (filteredSuitableNodes) {
-    rawEditor.externalDomUpdate(
-      'handle orderedListAction',
-      () => {
-        rawEditor.createSnapshot();
-        handleListAction(rawEditor, filteredSuitableNodes, orderedListAction, 'ol')();
-      },
-      true
-    );
-  }
-}
-
-/**
  * handles indent Action
  */
 function indentAction(rawEditor) {
@@ -170,43 +120,6 @@ function getGroupedLogicalBlocks(suitableNodes, rootNode) {
   const uniqueNodes = Array.from(new Set(eligibleNodes.flat()));
   const highestNodes = keepHighestNodes(uniqueNodes);
   return groupNodesByLogicalBlocks(highestNodes);
-}
-
-/**
- * Boilerplate to handle List action
- * Both for UL and OL
- *
- * @method handleListAction
- * @param rawEditor: rawEditor
- * @param currentNodes: [domNodes] ordered from left to right, top to bottom
- * @param actionType: function defining the action.
- * @param listType: tagName as string (ol/ul)
- * @return function
- */
-function handleListAction(rawEditor, currentNodes, actionType, listType) {
-  return () => {
-    // Create a new list when we don't have nodes in an existing list
-    if (areInList(currentNodes).length == 0) {
-      const logicalBlocks = currentNodes.map(getLogicalBlockContentsForNewList);
-      const uniqueNodes = Array.from(new Set(logicalBlocks.flat()));
-      const highestNodes = keepHighestNodes(uniqueNodes);
-      /* We group the nodes by line, which will allow us to then insert each line
-      as a bullet of the list:
-          [ [Hello, <b>you</b>], [How are you ?], [<div>I am <i>fine</i></div>] ] */
-      const groupedNodes = groupNodesByLogicalBlocks(highestNodes);
-      insertNewList(rawEditor, groupedNodes, listType);
-      return;
-    }
-
-    if (doesActionSwitchListType(currentNodes, actionType)) { // Create a list of a different type in a context that's a list => switching the type of the existing list
-      let logicalBlocks = getLogicalBlockContentsSwitchListType(currentNodes);
-      shuffleListType(rawEditor, logicalBlocks);
-      return;
-    }
-
-    let logicalBlocks = getGroupedLogicalBlocks(currentNodes); // Last possible case: user wants to revert the existing list
-    unindentLogicalBlockContents(rawEditor, logicalBlocks);
-  };
 }
 
 /**
@@ -335,19 +248,6 @@ function isInList(node) {
   return false;
 }
 
-/**
- * Checks for each node of an array if it is in a list
- *
- * @method areInList
- * @param [Array] nodes The nodes to check
- * @return [Array] the nodes that are in a list
- */
-function areInList(nodes) {
-  return nodes.filter(node => {
-    const domNode = node.richNode ? node.richNode.domNode : node;
-    return isInList(domNode);
-  });
-}
 
 /**
  * Inserts a new list.
@@ -474,100 +374,6 @@ function unindentLogicalBlockContents(rawEditor, logicalBlockContents, moveOneLi
   }
 }
 
-/**
- * Switches list type where currentNode is situated in.
- */
-function shuffleListType(rawEditor, logicalBlockContents) {
-  const currlistE = logicalBlockContents[0];
-  const currlistType = getListTagName(currlistE);
-  const targetListType = currlistType == 'ul' ? 'ol' : 'ul';
-  const parentE = currlistE.parentNode;
-  const allLIs = [...currlistE.children];
-
-  const listE = document.createElement(targetListType);
-  allLIs.forEach(li => listE.append(li));
-
-  parentE.insertBefore(listE, currlistE);
-  parentE.removeChild(currlistE);
-}
-
-function doesActionSwitchListType(nodes, listAction) {
-  // We assume all the nodes belong to the same <ul>/<ol>
-  const domNodes = nodes.map(node => node.richNode ? node.richNode.domNode : node);
-  const firstDomNode = domNodes[0];
-  const li = getParentLI(firstDomNode);
-  const listE = li.parentElement;
-
-  const listType = getListTagName(listE);
-  if (listType == 'ul' && listAction == unorderedListAction) {
-    return false;
-  }
-  if (listType == 'ol' && listAction == orderedListAction) {
-    return false;
-  }
-  return true;
-}
-
-/**
- * Given a node, we want to grow a region (a list of nodes)
- * we consider sensible for inserting a new list
- *
- * CURRENT IMPLEMENTATION
- * ----------------------
- *
- * Best to use an example. "|" is cursor.
- * ```
- * <p>
- *  blabla<br>bloublou <span><a href="#"> foo | <br></a></span> test <div> a block </div>
- * </p>
- * ```
- *
- *  The region we return.
- *
- *  ```
- *  bloublou <span><a href="#"> foo | <br></a></span> test
- *  ```
- * @method getLogicalBlockContentsForNewList
- *
- * @param {Object} domNode where cursor is
- *
- * @return [Array] [domNode1, ..., domNodeN]
- *
- * @public
- */
-function getLogicalBlockContentsForNewList(node) {
-  let baseNode = returnParentNodeBeforeBlockElement(node);
-
-  //if the provided node is a block we consider this as sufficient region for building a list
-  //TODO: <br> is taken here too, but probably too liberal
-  if(isBlockOrBr(node)){
-    return [ node ];
-  }
-  else {
-    //left and right adjacent siblings should be added until we hit a br (before) and a block node (after).
-    return growAdjacentRegionUntil(isBlockOrBr, isBlockOrBr, baseNode);
-  }
-}
-
-/**
- * Given a node in a list, we want to grow a region (a list of nodes)
- * we consider sensible to for switching the type of list.
- * In this case, we return the parent list dom element where current
- * domNode is in.
- *
- * @method getLogicalBlockContentsSwitchListType
- *
- * @param {Object} domNode where cursor is
- *
- * @return [Array] [domNode1, ..., domNodeN]
- *
- * @public
- */
-function getLogicalBlockContentsSwitchListType(nodes) {
-  const domNodes = nodes.map(node => node.richNode ? node.richNode.domNode : node);
-  const currLI = getParentLI(domNodes[0]); // No need to process all the list of nodes. From the first node we will be able to get the list element that we want to switch
-  return [currLI.parentNode];
-}
 
 /**
  * Given a node in a nested list context, build the logicalBlock contents to perform
@@ -891,4 +697,4 @@ function createNewList(logicalListBlocks, parentNode, newListElementLocation, li
   });
 }
 
-export { unorderedListAction, orderedListAction, indentAction, unindentAction, isInList };
+export { indentAction, unindentAction, isInList };

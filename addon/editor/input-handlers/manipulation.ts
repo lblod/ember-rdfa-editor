@@ -1,5 +1,3 @@
-import RawEditor from "dummy/utils/ce/raw-editor";
-
 /**
  * List of all Void elements.
  *
@@ -68,7 +66,7 @@ export type Manipulation =
  * to handle the manipulation.  Returning such manipulation is
  * optional.  A plugin need not handle a manipulation.
  */
-export type ManipulationExecutor = (manipulation: Manipulation, editor: RawEditor) => void;
+export type ManipulationExecutor = (manipulation: Manipulation, editor: Editor) => void;
 
 export interface Editor {
   setCaret: ( node: Node, position: number ) => void

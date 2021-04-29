@@ -1,1 +1,1 @@
-export { default } from '@lblod/ember-rdfa-editor/utils/html-input-cleaner';
+export { default } from '@lblod/ember-rdfa-editor/utils/html-input-parser';
