@@ -98,3 +98,8 @@ export class OperationError extends CustomError {
 }
 
 export class ParseError extends CustomError {}
+
+/*
+ * Thrown when a method is invoked with an argument which it can not reasonably deal with
+ */
+export class IllegalArgumentError extends CustomError {}

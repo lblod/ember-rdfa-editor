@@ -1,4 +1,4 @@
-import globalTextOffsetToPath from '@lblod/ember-rdfa-editor/utils/global-text-offset-to-path';
+import globalTextRegionToModelRange from '@lblod/ember-rdfa-editor/utils/global-text-region-to-model-range';
 
 /**
  * Editor api for plugins.
@@ -26,9 +26,7 @@ export default class PluginEditorApi {
 
   createModelRangeFromTextRegion(region) {
     const [start, end] = this._hintsRegistry.updateLocationToCurrentIndex(this._hrId, region);
-    const startPos = globalTextOffsetToPath(this._editor.rootModelNode, start);
-    const endPos = globalTextOffsetToPath(this._editor.rootModelNode, end);
-    return this._editor.createRangeFromPaths(startPos, endPos);
+    return globalTextRegionToModelRange(this._editor.rootModelNode, start, end);
   }
 
   /**
