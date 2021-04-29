@@ -45,13 +45,6 @@ export default class EditorToolbar extends Component<Args> {
     this.canUnindent = this.isInList && this.args.editor.canExecuteCommand("unindent-list");
   }
 
-
-  @action
-  insertUL() {
-    this.args.editor.insertUL();
-  }
-
-
   @action
   insertIndent() {
     if(this.isInList) {

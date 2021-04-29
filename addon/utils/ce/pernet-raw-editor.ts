@@ -33,12 +33,6 @@ import flatMap from "@lblod/ember-rdfa-editor/utils/ce/flat-map";
 import {getTextContent, processDomNode as walkDomNodeAsText} from "@lblod/ember-rdfa-editor/utils/ce/text-node-walker";
 import nextTextNode from "@lblod/ember-rdfa-editor/utils/ce/next-text-node";
 import forgivingAction from "@lblod/ember-rdfa-editor/utils/ce/forgiving-action";
-import {
-  indentAction,
-  orderedListAction,
-  unindentAction,
-  unorderedListAction
-} from "@lblod/ember-rdfa-editor/utils/ce/list-helpers";
 import MovementObserver from "@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer";
 import getRichNodeMatchingDomNode from "@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node";
 import classic from 'ember-classic-decorator';
@@ -800,22 +794,6 @@ export default class PernetRawEditor extends RawEditor {
   }
 
 
-
-  insertUL() {
-    unorderedListAction(this);
-  }
-
-  insertOL() {
-    orderedListAction(this);
-  }
-
-  insertIndent() {
-    indentAction(this);
-  }
-
-  insertUnindent() {
-    unindentAction(this);
-  }
   /**
    * restore a snapshot from undo history
    * @method undo
