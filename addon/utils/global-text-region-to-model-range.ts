@@ -4,6 +4,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "../model/model-text";
 import ModelPosition from "../model/model-position";
+import { IllegalArgumentError } from "./errors";
 
 const VOID_NODES = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
 
@@ -55,12 +56,12 @@ function findBestMatchingTextWithOffset(textNodes: ModelTextWithOffsets[], offse
     // by definition this should include edges, prefer end
     const eligibleNode = eligibleNodes.find((textWithOffsets) => textWithOffsets[preferredEdge] === offset);
     if (! eligibleNode) {
-      throw `no eligble node found`;
+      throw new IllegalArgumentError(`no eligble node found for offset ${offset}`);
     }
     return eligibleNode;
   }
   else {
-    throw `no eligible node found`;
+    throw new IllegalArgumentError(`no eligble node found for offset ${offset}`);
   }
 }
 
