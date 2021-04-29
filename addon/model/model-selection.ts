@@ -227,39 +227,6 @@ export default class ModelSelection {
     }
   }
 
-  /**
-   * @param config
-   * @deprecated use {@link ModelTreeWalker} instead
-   */
-  findAllInSelectionOrAncestors<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>) {
-    const noop = () => true;
-    const filter = config.filter || noop;
-    const predicate = config.predicate || noop;
-
-    const iter = this.findAllInSelection(config);
-    let result = iter && [...iter];
-    if (!result || result.length === 0) {
-      const secondTry = this.getCommonAncestor()?.parent.findAncestor(node => filter(node) && predicate(node));
-      if (secondTry) {
-        result = [secondTry as T];
-      }
-    }
-    return result;
-  }
-
-  /**
-   * @param config
-   * @deprecated use {@link ModelTreeWalker} instead
-   */
-  findFirstInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): T | null {
-    const iterator = this.findAllInSelection<T>(config);
-    if (!iterator) {
-      return null;
-    }
-    return iterator[Symbol.iterator]().next().value as T | null;
-
-  }
-
   get inListState(): PropertyState {
     if (ModelSelection.isWellBehaved(this)) {
       const range = this.lastRange;
