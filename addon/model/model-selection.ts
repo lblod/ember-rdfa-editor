@@ -289,51 +289,6 @@ export default class ModelSelection {
 
   }
 
-  isInside(types: string[]): PropertyState{
-    //1. get all selected nodes
-    if (ModelSelection.isWellBehaved(this)) {
-      const range = this.lastRange;
-      const treeWalker = new ModelTreeWalker({
-        range: range,
-      });
-      const resultArr = Array.from(treeWalker);
-      if(resultArr.length){
-        let prevType;
-        //2. check if every node has the same parent type
-        for(let i=0; i<resultArr.length; i++){
-          const node=resultArr[i];
-          const type=node.findAncestor(node => ModelNode.isModelElement(node) && types.includes(node.type));
-          //3. else return false
-          if(!type){
-            return PropertyState.disabled;
-          }
-          else if(i>0 && type!=prevType){
-            return PropertyState.disabled;
-          }
-          else{
-            prevType=type;
-          }
-        }
-        return PropertyState.enabled;
-      }
-    }
-    return PropertyState.disabled;
-  }
-  contains(types:string[]): PropertyState{
-    if (ModelSelection.isWellBehaved(this)) {
-      const range = this.lastRange;
-      const treeWalker = new ModelTreeWalker({
-        range: range,
-        filter: node => ModelNode.isModelElement(node) && types.includes(node.type)  ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP
-      });
-      const result = Array.from(treeWalker);
-      if(result.length){
-        return PropertyState.enabled;
-      }
-    }
-
-    return PropertyState.disabled;
-  }
   get rdfaSelection() {
     if (!this.domSelection) return;
     return this.calculateRdfaSelection(this.domSelection);

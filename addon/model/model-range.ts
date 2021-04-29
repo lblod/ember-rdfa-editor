@@ -4,6 +4,8 @@ import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
+import {Predicate} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
+import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -101,6 +103,41 @@ export default class ModelRange {
     return this.start.getCommonAncestor(this.end);
   }
 
+  hasCommonAncestorWhere(predicate: Predicate<ModelElement>): boolean {
+    const result = this.findCommonAncestorsWhere(predicate).next();
+    return !!result.value;
+  }
+
+  * findCommonAncestorsWhere(predicate: Predicate<ModelElement>): Generator<ModelElement, void, void> {
+    let commonAncestor: ModelElement | null = this.getCommonAncestor();
+    while (commonAncestor) {
+      console.log(commonAncestor.toXml());
+      if (predicate(commonAncestor)) {
+        yield commonAncestor;
+      }
+      commonAncestor = commonAncestor.parent;
+    }
+  }
+
+  containsNodeWhere(predicate: Predicate<ModelNode>): boolean {
+    const result = this.findContainedNodesWhere(predicate).next();
+    return !!result.value;
+  }
+
+  * findContainedNodesWhere<T extends ModelNode = ModelNode>(predicate: Predicate<T>): Generator<T, void, void> {
+    if (this.collapsed) {
+      return;
+    }
+    const walker = new ModelTreeWalker<T>({
+      range: this,
+      visitParentUpwards: true,
+      filter: toFilterSkipFalse(predicate)
+    });
+    for (const node of walker) {
+      yield node;
+    }
+  }
+
   /**
    * Whether this range is confined, aka it is fully contained within one parentElement
    */
@@ -164,7 +201,7 @@ export default class ModelRange {
       }
       endCur = ModelPosition.fromBeforeNode(parent);
     }
-    if(startCur.path.length === endCur.path.length) {
+    if (startCur.path.length === endCur.path.length) {
       const middle = new ModelRange(startCur, endCur);
       if (!middle.collapsed) {
         result.push(middle);
@@ -204,6 +241,7 @@ export default class ModelRange {
   clone(): ModelRange {
     return new ModelRange(this.start.clone(), this.end.clone());
   }
+
   toString(): string {
     return `{[${this.start.path.toString()}] - [${this.end.path.toString()}]}`;
 
