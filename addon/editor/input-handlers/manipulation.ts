@@ -1,5 +1,3 @@
-import RawEditor from "dummy/utils/ce/raw-editor";
-
 /**
  * List of all Void elements.
  *
