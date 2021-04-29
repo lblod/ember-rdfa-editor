@@ -106,20 +106,20 @@ export default class TableTabInputPlugin implements TabInputPlugin {
           y: selectedIndex.y
         };
       } else {
-        if(table.nextSibling) {
-          if (table.nextSibling) {
-            selection.collapseIn(table.nextSibling);
-          }
-          else {
-            const text = new ModelText(INVISIBLE_SPACE);
-            table.parent?.appendChildren(text);
-            selection.collapseIn(text);
-          }
-            editor.model.write();
+        // at the end of the table
+        if (table.nextSibling) {
+          selection.collapseIn(table.nextSibling);
         }
+        else {
+          const text = new ModelText(INVISIBLE_SPACE);
+          table.parent?.appendChildren(text);
+          selection.collapseIn(text);
+        }
+        editor.model.write();
         return;
       }
-    } else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
+    }
+    else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
       if(selectedIndex.x === 0 && selectedIndex.y > 0) {
         newPosition = {
           x: tableDimensions.x - 1,
