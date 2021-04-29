@@ -8,13 +8,49 @@ import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 
 module("Unit | model | operations | insert-operation-test", () => {
   test("inserts into empty root", assert => {
-    const root = new ModelElement("div");
-    const nodeToInsert = new ModelText("abc");
+    // language=XML
+    const {root: initial} = vdom`
+      <modelRoot/>
+    `;
 
-    const op = new InsertOperation(ModelRange.fromPaths(root, [], []), nodeToInsert);
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <text>abc</text>
+      </modelRoot>
+    `;
+
+    const {root: nodeToInsert} = vdom`<text>abc</text>`;
+
+    const op = new InsertOperation(ModelRange.fromInElement(initial as ModelElement, 0, 0), nodeToInsert);
     op.execute();
-    assert.strictEqual(root.length, 1);
-    assert.strictEqual(root.firstChild, nodeToInsert);
+    assert.true(initial.sameAs(expected));
+
+  });
+  test("inserts element into empty root", assert => {
+    // language=XML
+    const {root: initial} = vdom`
+      <modelRoot/>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <div>
+          <text>abc</text>
+        </div>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: nodeToInsert} = vdom`
+      <div>
+        <text>abc</text>
+      </div>`;
+
+    const op = new InsertOperation(ModelRange.fromInElement(initial as ModelElement, 0, 0), nodeToInsert);
+    op.execute();
+    assert.true(initial.sameAs(expected));
 
   });
   test("inserts into root when collapsed", assert => {
