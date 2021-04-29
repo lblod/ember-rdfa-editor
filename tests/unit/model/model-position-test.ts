@@ -58,7 +58,7 @@ module("Unit | model | model-position", () => {
 
     test("returns correct common ancestor for collapsed range at end", assert => {
       // language=XML
-      const {elements:{common},  textNodes:{rangeStart, rangeEnd}} = vdom`
+      const {elements:{common}} = vdom`
         <modelRoot>
           <div __id="common">
             <text>abcd</text>

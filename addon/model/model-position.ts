@@ -1,6 +1,6 @@
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {ModelError, NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
@@ -197,7 +197,6 @@ export default class ModelPosition {
       throw new PositionError("cannot compare nodes with different roots");
     }
 
-    debugger;
     const leftLength = this.path.length;
     const rightLength = other.path.length;
     const lengthDiff = leftLength - rightLength;
