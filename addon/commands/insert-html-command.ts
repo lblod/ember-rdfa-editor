@@ -29,7 +29,7 @@ export default class InsertHtmlCommand extends Command {
         }
       });
       const newRange = mutator.insertNodes(range, ...modelNodes);
-      mutator.selectRange(newRange);
+      this.model.selectRange(newRange);
     });
   }
 }

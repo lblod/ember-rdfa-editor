@@ -9,6 +9,7 @@ import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-re
 import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
 import BatchedModelMutator from "@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 
 /**
@@ -150,7 +151,7 @@ export default class Model {
    * @param callback
    */
   change(callback: (mutator: ImmediateModelMutator) => ModelElement | void) {
-    const mutator = new ImmediateModelMutator(this);
+    const mutator = new ImmediateModelMutator();
     const subTree = callback(mutator);
     if (subTree) {
       this.write(subTree);
@@ -166,7 +167,7 @@ export default class Model {
    * @param callback
    */
   batchChange(callback: (mutator: BatchedModelMutator) => ModelElement | void, autoSelect = true) {
-    const mutator = new BatchedModelMutator(this);
+    const mutator = new BatchedModelMutator();
     const subTree = callback(mutator);
     const resultingRange = mutator.flush();
     if (autoSelect && resultingRange) {
@@ -193,6 +194,9 @@ export default class Model {
       index++;
     }
     return null;
+  }
+  selectRange(range: ModelRange) {
+    this.selection.selectRange(range);
   }
 
   toXml(): Node {

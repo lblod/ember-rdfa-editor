@@ -38,7 +38,6 @@ module("Unit | model | readers | html-reader", hooks => {
     `;
 
     const actual = reader.read(doc.body.firstChild!)!;
-    console.log(actual.toXml());
     assert.true(actual.sameAs(expected));
   });
 

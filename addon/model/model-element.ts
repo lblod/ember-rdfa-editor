@@ -87,6 +87,12 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     result.appendChildren(...clonedChildren);
     return result;
   }
+  shallowClone(): ModelElement {
+    const result = new ModelElement(this.type);
+    result.attributeMap = new Map<string, string>(this.attributeMap);
+    result.modelNodeType = this.modelNodeType;
+    return result;
+  }
 
   addChild(child: ModelNode, position?: number) {
     if (ModelNode.isFragment(child)) {

@@ -6,6 +6,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-operation";
 import MoveOperation from "@lblod/ember-rdfa-editor/model/operations/move-operation";
 import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/model-mutator";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 /**
  * {@link ModelMutator} implementation where any operations are batched
@@ -25,10 +26,9 @@ export default class BatchedModelMutator extends ModelMutator<void> {
     this.batch.push(op);
   }
 
-  move(rangeToMove: ModelRange, targetRange: ModelRange) {
-    const op = new MoveOperation(rangeToMove, targetRange);
+  moveToPosition(rangeToMove: ModelRange, targetPosition: ModelPosition) {
+    const op = new MoveOperation(rangeToMove, targetPosition);
     this.batch.push(op);
-
   }
 
   /**

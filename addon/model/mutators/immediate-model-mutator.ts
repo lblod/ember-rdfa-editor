@@ -5,6 +5,9 @@ import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-op
 import MoveOperation from "@lblod/ember-rdfa-editor/model/operations/move-operation";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import SplitOperation from "@lblod/ember-rdfa-editor/model/operations/split-operation";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 /**
  * {@link ModelMutator} implementation where all operations immediately
@@ -25,14 +28,18 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return op.execute();
   }
 
+  insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange {
+    return this.insertNodes(new ModelRange(position, position), ...nodes);
+  }
+
   /**
    * @inheritDoc
    * @param rangeToMove
-   * @param targetRange
+   * @param targetPosition
    * @return resultRange the resulting range of the execution
    */
-  move(rangeToMove: ModelRange, targetRange: ModelRange): ModelRange {
-    const op = new MoveOperation(rangeToMove, targetRange);
+  moveToPosition(rangeToMove: ModelRange, targetPosition: ModelPosition): ModelRange {
+    const op = new MoveOperation(rangeToMove, targetPosition);
     return op.execute();
   }
 
@@ -46,6 +53,113 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   setTextProperty(range: ModelRange, key: TextAttribute, value: boolean): ModelRange {
     const op = new AttributeOperation(range, key, String(value));
     return op.execute();
+  }
+
+  splitTextAt(position: ModelPosition): ModelPosition {
+    const range = new ModelRange(position, position);
+    const op = new SplitOperation(range, false);
+    const resultRange = op.execute();
+    return resultRange.start;
+  }
+
+  splitElementAt(position: ModelPosition, splitAtEnds = false): ModelPosition {
+    if (!splitAtEnds) {
+      if (position.parentOffset === position.parent.getMaxOffset()) {
+        return ModelPosition.fromAfterNode(position.parent);
+      }
+      if (position.parentOffset === 0) {
+        return ModelPosition.fromBeforeNode(position.parent);
+      }
+    }
+
+    const range = new ModelRange(position, position);
+    const op = new SplitOperation(range);
+    const resultRange = op.execute();
+    return resultRange.start;
+  }
+
+  splitUntil(position: ModelPosition, untilPredicate: (element: ModelElement) => boolean, splitAtEnds = false): ModelPosition {
+    let pos = position;
+    while (pos.parent !== pos.root && !untilPredicate(pos.parent)) {
+      if (splitAtEnds) {
+        const range = new ModelRange(pos, pos);
+        const op = new SplitOperation(range);
+        pos = op.execute().start;
+      } else {
+        if (pos.parentOffset === 0) {
+          pos = ModelPosition.fromBeforeNode(pos.parent);
+        } else if (pos.parentOffset === pos.parent.getMaxOffset()) {
+          pos = ModelPosition.fromAfterNode(pos.parent);
+        } else {
+          const range = new ModelRange(pos, pos);
+          const op = new SplitOperation(range);
+          pos = op.execute().start;
+        }
+      }
+    }
+    return pos;
+  }
+
+  /**
+   * Split the given range until start.parent === startLimit
+   * and end.parent === endLimit
+   * The resulting range fully contains the split-off elements
+   * @param range
+   * @param startLimit
+   * @param endLimit
+   * @param splitAtEnds
+   */
+  splitRangeUntilElements(range: ModelRange, startLimit: ModelElement, endLimit: ModelElement, splitAtEnds = false) {
+    const endpos = this.splitUntilElement(range.end, endLimit, splitAtEnds);
+    const afterEnd = endpos.nodeAfter();
+    const startpos = this.splitUntilElement(range.start, startLimit, splitAtEnds);
+    if (afterEnd) {
+
+      return new ModelRange(startpos, ModelPosition.fromBeforeNode(afterEnd));
+    } else {
+      return new ModelRange(startpos, ModelPosition.fromInElement(range.root, range.root.getMaxOffset()));
+    }
+  }
+
+  splitUntilElement(position: ModelPosition, limitElement: ModelElement, splitAtEnds = false): ModelPosition {
+    return this.splitUntil(position, (element => element === limitElement), splitAtEnds);
+  }
+
+  /**
+   * Replaces the element by its children. Returns a range containing the unwrapped children
+   * @param element
+   * @param ensureBlock ensure the unwrapped children are rendered as a block by surrounding them with br elements when necessary
+   */
+  unwrap(element: ModelElement, ensureBlock = false): ModelRange {
+    const srcRange = ModelRange.fromInElement(element, 0, element.getMaxOffset());
+    const target = ModelPosition.fromBeforeNode(element);
+    const op = new MoveOperation(srcRange, target);
+    const resultRange = op.execute();
+    this.deleteNode(element);
+    if (ensureBlock) {
+      const nodeBeforeStart = resultRange.start.nodeBefore();
+      const nodeAfterStart = resultRange.start.nodeAfter();
+      const nodeBeforeEnd = resultRange.end.nodeBefore();
+      const nodeAfterEnd = resultRange.end.nodeAfter();
+
+      if (nodeBeforeEnd && nodeAfterEnd && nodeBeforeEnd !== nodeAfterEnd && !nodeBeforeEnd.isBlock && !nodeAfterEnd.isBlock) {
+        this.insertAtPosition(resultRange.end, new ModelElement("br"));
+      }
+      if (nodeBeforeStart && nodeAfterStart && nodeBeforeStart !== nodeAfterStart && !nodeBeforeStart.isBlock && !nodeAfterStart.isBlock) {
+        this.insertAtPosition(resultRange.start, new ModelElement("br"));
+      }
+    }
+    return resultRange;
+  }
+
+  delete(range: ModelRange): ModelRange {
+    const op = new InsertOperation(range);
+    return op.execute();
+  }
+
+  deleteNode(node: ModelNode): ModelRange {
+    const range = ModelRange.fromAroundNode(node);
+    return this.delete(range);
   }
 
 }

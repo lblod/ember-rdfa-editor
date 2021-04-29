@@ -55,7 +55,7 @@ export default class InsertNewLiCommand extends Command {
         mutator.insertNodes(range, text);
         const cursorPos = ModelPosition.fromAfterNode(text);
         newRange = new ModelRange(cursorPos, cursorPos);
-        mutator.selectRange(newRange);
+        this.model.selectRange(newRange);
       });
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
