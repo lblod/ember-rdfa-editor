@@ -71,7 +71,7 @@ export default class TabInputHandler implements InputHandler {
     // run the manipulation
     if( dispatchedExecutor ) {
       // NOTE: we should pass some sort of editor interface here in the future.
-      dispatchedExecutor( manipulation, this.rawEditor as Editor);
+      dispatchedExecutor( manipulation, this.rawEditor);
     }
     else {
       this.handleNativeManipulation( manipulation );

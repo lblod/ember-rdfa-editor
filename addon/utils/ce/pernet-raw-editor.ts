@@ -33,18 +33,13 @@ import flatMap from "@lblod/ember-rdfa-editor/utils/ce/flat-map";
 import {getTextContent, processDomNode as walkDomNodeAsText} from "@lblod/ember-rdfa-editor/utils/ce/text-node-walker";
 import nextTextNode from "@lblod/ember-rdfa-editor/utils/ce/next-text-node";
 import forgivingAction from "@lblod/ember-rdfa-editor/utils/ce/forgiving-action";
-import {
-  indentAction,
-  orderedListAction,
-  unindentAction,
-  unorderedListAction
-} from "@lblod/ember-rdfa-editor/utils/ce/list-helpers";
 import MovementObserver from "@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer";
 import getRichNodeMatchingDomNode from "@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node";
 import classic from 'ember-classic-decorator';
 import CappedHistory from "@lblod/ember-rdfa-editor/utils/ce/capped-history";
 import RichNode from "@lblod/marawa/rich-node";
 import { tracked } from '@glimmer/tracking';
+import { Editor } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 
 export interface ContentObserver {
   handleTextInsert: (position: number, text: string, extraInfo: Array<unknown>) => void
@@ -56,7 +51,7 @@ export interface ContentObserver {
  * Compatibility layer for components still using the Pernet API
  */
 @classic
-export default class PernetRawEditor extends RawEditor {
+export default class PernetRawEditor extends RawEditor implements Editor {
   /**
    * current textContent from editor
    *
@@ -800,22 +795,6 @@ export default class PernetRawEditor extends RawEditor {
   }
 
 
-
-  insertUL() {
-    unorderedListAction(this);
-  }
-
-  insertOL() {
-    orderedListAction(this);
-  }
-
-  insertIndent() {
-    indentAction(this);
-  }
-
-  insertUnindent() {
-    unindentAction(this);
-  }
   /**
    * restore a snapshot from undo history
    * @method undo
