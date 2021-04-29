@@ -26,8 +26,8 @@ export default class BatchedModelMutator extends ModelMutator<void> {
     this.batch.push(op);
   }
 
-  moveToPos(rangeToMove: ModelRange, targetPos: ModelPosition) {
-    const op = new MoveOperation(rangeToMove, targetPos);
+  moveToPosition(rangeToMove: ModelRange, targetPosition: ModelPosition) {
+    const op = new MoveOperation(rangeToMove, targetPosition);
     this.batch.push(op);
   }
 

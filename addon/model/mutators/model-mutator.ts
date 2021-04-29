@@ -35,8 +35,8 @@ export default abstract class ModelMutator<T> {
    * Moves the contents of a range into another range, overwriting the
    * content of the targetRange.
    * @param rangeToMove
-   * @param targetPos
+   * @param targetPosition
    */
-  abstract moveToPos(rangeToMove: ModelRange, targetPos: ModelPosition): T;
+  abstract moveToPosition(rangeToMove: ModelRange, targetPosition: ModelPosition): T;
 
 }

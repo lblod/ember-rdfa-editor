@@ -35,11 +35,11 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   /**
    * @inheritDoc
    * @param rangeToMove
-   * @param targetRange
+   * @param targetPosition
    * @return resultRange the resulting range of the execution
    */
-  moveToPos(rangeToMove: ModelRange, targetPos: ModelPosition): ModelRange {
-    const op = new MoveOperation(rangeToMove, targetPos);
+  moveToPosition(rangeToMove: ModelRange, targetPosition: ModelPosition): ModelRange {
+    const op = new MoveOperation(rangeToMove, targetPosition);
     return op.execute();
   }
 
