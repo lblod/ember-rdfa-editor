@@ -8,9 +8,9 @@ import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-find
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {Direction, FilterAndPredicate, PropertyState,} from "@lblod/ember-rdfa-editor/model/util/types";
-import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import {nodeIsElementOfType} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
@@ -262,30 +262,25 @@ export default class ModelSelection {
   }
 
   get inListState(): PropertyState {
-    const config = {
-      filter: ModelNode.isModelElement,
-      predicate: (node: ModelElement) => listTypes.has(node.type),
-    };
-    let result = !!this.findFirstInSelection(config);
-    if (!result) {
-      result = !!this.getCommonAncestor()?.parent.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type));
+    if (ModelSelection.isWellBehaved(this)) {
+      const range = this.lastRange;
+      const predicate = nodeIsElementOfType("li", "ul", "ol");
+      const result = range.containsNodeWhere(predicate) || range.hasCommonAncestorWhere(predicate);
+      return result ? PropertyState.enabled : PropertyState.disabled;
+    } else {
+      return PropertyState.unknown;
     }
-
-    return result ? PropertyState.enabled : PropertyState.disabled;
-
   }
 
   get inTableState(): PropertyState {
-    const config = {
-      filter: ModelNode.isModelElement,
-      predicate: (node: ModelElement) => node.type === 'table',
-    };
-    let result = !!this.findFirstInSelection(config);
-    if(!result) {
-      result = !!this.getCommonAncestor()?.parent.findAncestor(node => ModelNode.isModelElement(node) && node.type === 'table');
+    if (ModelSelection.isWellBehaved(this)) {
+      const range = this.lastRange;
+      const predicate = nodeIsElementOfType("table");
+      const result = range.containsNodeWhere(predicate) || range.hasCommonAncestorWhere(predicate);
+      return result ? PropertyState.enabled : PropertyState.disabled;
+    } else {
+      return PropertyState.unknown;
     }
-
-    return result ? PropertyState.enabled : PropertyState.disabled;
 
   }
 

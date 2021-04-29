@@ -1,6 +1,6 @@
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError, NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
@@ -196,17 +196,42 @@ export default class ModelPosition {
     if (this.root !== other.root) {
       throw new PositionError("cannot compare nodes with different roots");
     }
-    const commonPath = ArrayUtils.findCommonSlice(this.path, other.path);
-    if (commonPath.length === 0) {
+
+    debugger;
+    const leftLength = this.path.length;
+    const rightLength = other.path.length;
+    const lengthDiff = leftLength - rightLength;
+
+    let left: ModelElement | null = this.parent;
+    let right: ModelElement | null = other.parent;
+
+    if(lengthDiff > 0) {
+      // left position is lower than right position
+      for(let i = 0; i < lengthDiff; i++) {
+        if(!left.parent) {
+          throw new PositionError("impossible position");
+        }
+        left = left.parent;
+      }
+    } else if (lengthDiff < 0) {
+      // right position is lower than left position
+      for(let i = 0; i < Math.abs(lengthDiff); i++) {
+        if(!right.parent) {
+          throw new PositionError("impossible position");
+        }
+        right = right.parent;
+      }
+    }
+
+    while(left && right && left !== right) {
+      left = left.parent;
+      right = right.parent;
+    }
+    if(left) {
+      return left;
+    } else {
       return this.root;
     }
-    const temp = ModelPosition.fromPath(this.root, commonPath);
-    const rslt = temp.nodeAfter() || temp.nodeBefore();
-    if (!rslt) {
-      throw new PositionError("Could not find a commonAncestor");
-    }
-    return rslt as ModelElement;
-
   }
 
   /**

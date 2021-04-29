@@ -38,6 +38,41 @@ module("Unit | model | model-position", () => {
       assert.strictEqual(p1.getCommonAncestor(p2), common);
     });
 
+    test("returns correct common ancestor 2", assert => {
+      // language=XML
+      const {elements:{common},  textNodes:{rangeStart, rangeEnd}} = vdom`
+        <modelRoot>
+          <div __id="common">
+            <text __id="rangeStart">abcd</text>
+            <div>
+              <text __id="rangeEnd">efgh</text>
+            </div>
+          </div>
+        </modelRoot>
+      `;
+
+      const p1 = ModelPosition.fromInTextNode(rangeStart, 2);
+      const p2 = ModelPosition.fromInTextNode(rangeEnd, 2);
+      assert.strictEqual(p1.getCommonAncestor(p2), common);
+    });
+
+    test("returns correct common ancestor for collapsed range at end", assert => {
+      // language=XML
+      const {elements:{common},  textNodes:{rangeStart, rangeEnd}} = vdom`
+        <modelRoot>
+          <div __id="common">
+            <text>abcd</text>
+            <div>
+              <text>efgh</text>
+            </div>
+          </div>
+        </modelRoot>
+      `;
+
+      const p1 = ModelPosition.fromInElement(common, common.getMaxOffset());
+      const p2 = ModelPosition.fromInElement(common, common.getMaxOffset());
+      assert.strictEqual(p1.getCommonAncestor(p2), common);
+    });
   });
   module("Unit | model | model-position | split", () => {
     test("splits text nodes correctly", assert => {
