@@ -39,6 +39,7 @@ import classic from 'ember-classic-decorator';
 import CappedHistory from "@lblod/ember-rdfa-editor/utils/ce/capped-history";
 import RichNode from "@lblod/marawa/rich-node";
 import { tracked } from '@glimmer/tracking';
+import { Editor } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 
 export interface ContentObserver {
   handleTextInsert: (position: number, text: string, extraInfo: Array<unknown>) => void
@@ -50,7 +51,7 @@ export interface ContentObserver {
  * Compatibility layer for components still using the Pernet API
  */
 @classic
-export default class PernetRawEditor extends RawEditor {
+export default class PernetRawEditor extends RawEditor implements Editor {
   /**
    * current textContent from editor
    *

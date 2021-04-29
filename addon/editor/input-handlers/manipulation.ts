@@ -68,7 +68,7 @@ export type Manipulation =
  * to handle the manipulation.  Returning such manipulation is
  * optional.  A plugin need not handle a manipulation.
  */
-export type ManipulationExecutor = (manipulation: Manipulation, editor: RawEditor) => void;
+export type ManipulationExecutor = (manipulation: Manipulation, editor: Editor) => void;
 
 export interface Editor {
   setCaret: ( node: Node, position: number ) => void
