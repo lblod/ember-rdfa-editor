@@ -7,8 +7,8 @@ import ModelElement from "../model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 import { INVISIBLE_SPACE } from "@lblod/ember-rdfa-editor/model/util/constants";
+import {elementHasType} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
 
 export default class InsertNewLiCommand extends Command {
   name = "insert-newLi";
@@ -18,11 +18,10 @@ export default class InsertNewLiCommand extends Command {
   }
 
   canExecute(selection: ModelSelection = this.model.selection): boolean {
-    if (selection.isInside(["ul", "ol"]) === PropertyState.enabled) {
-      return true;
-    } else {
+    if(!selection.lastRange) {
       return false;
     }
+    return selection.lastRange.hasCommonAncestorWhere(elementHasType("ul", "ol"));
   }
   execute(): void {
     const selection = this.model.selection;

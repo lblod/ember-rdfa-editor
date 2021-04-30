@@ -8,9 +8,8 @@ import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-find
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {Direction, FilterAndPredicate, PropertyState,} from "@lblod/ember-rdfa-editor/model/util/types";
-import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import {nodeIsElementOfType} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
@@ -228,112 +227,29 @@ export default class ModelSelection {
     }
   }
 
-  /**
-   * @param config
-   * @deprecated use {@link ModelTreeWalker} instead
-   */
-  findAllInSelectionOrAncestors<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>) {
-    const noop = () => true;
-    const filter = config.filter || noop;
-    const predicate = config.predicate || noop;
-
-    const iter = this.findAllInSelection(config);
-    let result = iter && [...iter];
-    if (!result || result.length === 0) {
-      const secondTry = this.getCommonAncestor()?.parent.findAncestor(node => filter(node) && predicate(node));
-      if (secondTry) {
-        result = [secondTry as T];
-      }
-    }
-    return result;
-  }
-
-  /**
-   * @param config
-   * @deprecated use {@link ModelTreeWalker} instead
-   */
-  findFirstInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): T | null {
-    const iterator = this.findAllInSelection<T>(config);
-    if (!iterator) {
-      return null;
-    }
-    return iterator[Symbol.iterator]().next().value as T | null;
-
-  }
-
   get inListState(): PropertyState {
-    const config = {
-      filter: ModelNode.isModelElement,
-      predicate: (node: ModelElement) => listTypes.has(node.type),
-    };
-    let result = !!this.findFirstInSelection(config);
-    if (!result) {
-      result = !!this.getCommonAncestor()?.parent.findAncestor(node => ModelNode.isModelElement(node) && listTypes.has(node.type));
+    if (ModelSelection.isWellBehaved(this)) {
+      const range = this.lastRange;
+      const predicate = nodeIsElementOfType("li", "ul", "ol");
+      const result = range.containsNodeWhere(predicate) || range.hasCommonAncestorWhere(predicate);
+      return result ? PropertyState.enabled : PropertyState.disabled;
+    } else {
+      return PropertyState.unknown;
     }
-
-    return result ? PropertyState.enabled : PropertyState.disabled;
-
   }
 
   get inTableState(): PropertyState {
-    const config = {
-      filter: ModelNode.isModelElement,
-      predicate: (node: ModelElement) => node.type === 'table',
-    };
-    let result = !!this.findFirstInSelection(config);
-    if(!result) {
-      result = !!this.getCommonAncestor()?.parent.findAncestor(node => ModelNode.isModelElement(node) && node.type === 'table');
-    }
-
-    return result ? PropertyState.enabled : PropertyState.disabled;
-
-  }
-
-  isInside(types: string[]): PropertyState{
-    //1. get all selected nodes
     if (ModelSelection.isWellBehaved(this)) {
       const range = this.lastRange;
-      const treeWalker = new ModelTreeWalker({
-        range: range,
-      });
-      const resultArr = Array.from(treeWalker);
-      if(resultArr.length){
-        let prevType;
-        //2. check if every node has the same parent type
-        for(let i=0; i<resultArr.length; i++){
-          const node=resultArr[i];
-          const type=node.findAncestor(node => ModelNode.isModelElement(node) && types.includes(node.type));
-          //3. else return false
-          if(!type){
-            return PropertyState.disabled;
-          }
-          else if(i>0 && type!=prevType){
-            return PropertyState.disabled;
-          }
-          else{
-            prevType=type;
-          }
-        }
-        return PropertyState.enabled;
-      }
-    }
-    return PropertyState.disabled;
-  }
-  contains(types:string[]): PropertyState{
-    if (ModelSelection.isWellBehaved(this)) {
-      const range = this.lastRange;
-      const treeWalker = new ModelTreeWalker({
-        range: range,
-        filter: node => ModelNode.isModelElement(node) && types.includes(node.type)  ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP
-      });
-      const result = Array.from(treeWalker);
-      if(result.length){
-        return PropertyState.enabled;
-      }
+      const predicate = nodeIsElementOfType("table");
+      const result = range.containsNodeWhere(predicate) || range.hasCommonAncestorWhere(predicate);
+      return result ? PropertyState.enabled : PropertyState.disabled;
+    } else {
+      return PropertyState.unknown;
     }
 
-    return PropertyState.disabled;
   }
+
   get rdfaSelection() {
     if (!this.domSelection) return;
     return this.calculateRdfaSelection(this.domSelection);

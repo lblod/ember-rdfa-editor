@@ -5,6 +5,8 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import {parseXml, vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import {stackOverFlowOnGetMinimumConfinedRanges} from "dummy/tests/unit/model/testing-vdoms";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {elementHasType, nodeIsElementOfType} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
 
 module("Unit | model | model-range", () => {
 
@@ -262,6 +264,86 @@ module("Unit | model | model-range", () => {
       assert.deepEqual(maximized.start.path, [0, 0]);
       assert.deepEqual(maximized.end.path, [0, 3]);
 
+    });
+
+    module("Unit | model | model-range | findCommonAncestorsWhere", () => {
+
+      test("collapsed selection inside an element", assert => {
+        // language=XML
+        const {elements: {testLi}} = vdom`
+          <div>
+            <ul>
+              <li __id="testLi">
+                <text>${INVISIBLE_SPACE}</text>
+              </li>
+            </ul>
+          </div>
+        `;
+
+        const range = ModelRange.fromInElement(testLi, 0, 0);
+
+        assert.true(range.hasCommonAncestorWhere(elementHasType("li")));
+      });
+
+      test("uncollapsed selection does not have common ancestors of type", assert => {
+        // language=XML
+        const {textNodes: {testText}, elements: {testLi}} = vdom`
+          <div>
+            <text __id="testText">before li</text>
+            <ul>
+              <li __id="testLi">
+                <text>${INVISIBLE_SPACE}</text>
+              </li>
+            </ul>
+          </div>
+        `;
+
+        // debugger;
+        const startPosition = ModelPosition.fromInTextNode(testText, 0);
+        const endPosition = ModelPosition.fromInElement(testLi, 0);
+        const range = new ModelRange(startPosition, endPosition);
+
+        assert.false(range.hasCommonAncestorWhere(elementHasType("li")));
+      });
+    });
+    module("Unit | model | model-range | findContainedNodesWhere", () => {
+      test("collapsed range does not contain an element", assert => {
+        // language=XML
+        const {elements: {testLi}} = vdom`
+          <div>
+            <ul>
+              <li __id="testLi">
+                <text>${INVISIBLE_SPACE}</text>
+              </li>
+            </ul>
+          </div>
+        `;
+
+        const range = ModelRange.fromInElement(testLi, 0, 0);
+
+        assert.false(range.containsNodeWhere(nodeIsElementOfType("li")));
+      });
+
+      test("uncollapsed selection contains an element", assert => {
+        // language=XML
+        const {textNodes: {testText}, elements: {testLi}} = vdom`
+          <div>
+            <text __id="testText">before li</text>
+            <ul>
+              <li __id="testLi">
+                <text>${INVISIBLE_SPACE}</text>
+              </li>
+            </ul>
+          </div>
+        `;
+
+        // debugger;
+        const startPosition = ModelPosition.fromInTextNode(testText, 0);
+        const endPosition = ModelPosition.fromInElement(testLi, 0);
+        const range = new ModelRange(startPosition, endPosition);
+
+        assert.true(range.containsNodeWhere(nodeIsElementOfType("li")));
+      });
     });
 
   });
