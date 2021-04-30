@@ -4,9 +4,9 @@ import {HtmlTag} from "@lblod/ember-rdfa-editor/model/util/types";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import HtmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/html-node-reader";
-import {pushOrExpand} from "@lblod/ember-rdfa-editor/model/readers/reader-utils";
 import {KeyError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {pushOrExpand} from "@lblod/ember-rdfa-editor/model/util/array-utils";
 
 
 /**

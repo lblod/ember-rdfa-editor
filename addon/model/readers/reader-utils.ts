@@ -6,10 +6,3 @@ export function copyAttributes(from: Element, to: ModelNode) {
     }
 }
 
-export function pushOrExpand(parent: ModelNode[], child: ModelNode | ModelNode[]) {
-  if(child instanceof Array) {
-    parent.push(...child);
-  } else {
-    parent.push(child);
-  }
-}

@@ -36,3 +36,11 @@ export default class ArrayUtils {
   }
 
 }
+
+export function pushOrExpand<T>(parent: T[], child: T | T[]): void {
+    if (child instanceof Array) {
+        parent.push(...child);
+    } else {
+        parent.push(child);
+    }
+}
