@@ -163,4 +163,16 @@ module("Unit | commands | insert-html-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
   });
+
+  test("can insert bold text as a direct child of the root node", assert => {
+    // language=XML
+    const {root: initial} = vdom`<modelRoot />`
+    const {root: expected} = vdom`<modelRoot><text bold="true">my text</text></modelRoot>`
+    const htmlToInsert = oneLineTrim`<strong>my text</strong>`;
+    ctx.model.fillRoot(initial);
+    const root = ctx.model.rootModelNode;
+    const range = ModelRange.fromInElement(root, 0, root.getMaxOffset());
+    command.execute(htmlToInsert, range);
+    assert.true(root.sameAs(expected));
+  });
 });
