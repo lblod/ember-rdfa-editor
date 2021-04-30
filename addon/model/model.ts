@@ -61,10 +61,11 @@ export default class Model {
    * Read in the document and build up the model
    */
   read(readSelection = true) {
-    const newRoot = this.reader.read(this.rootNode);
-    if (!newRoot) {
+    const parsedNodes = this.reader.read(this.rootNode);
+    if (parsedNodes.length !== 1) {
       throw new Error("Could not create a rich root");
     }
+    const newRoot = parsedNodes[0];
     if (!ModelNode.isModelElement(newRoot)) {
       throw new Error("root model node has to be an element");
     }
@@ -80,9 +81,12 @@ export default class Model {
     this._selection = this.selectionReader.read(domSelection);
   }
 
-  /**
+  /**]
    * Write a part of the model back to the dom
    * @param tree
+   * @param writeSelection if we should also write out the selection. Should be
+   * almost always true, but can be useful for testing to turn it off when you dont
+   * have a real dom available
    */
   write(tree: ModelElement = this.rootModelNode, writeSelection = true) {
     const modelWriteEvent = new CustomEvent(
@@ -195,6 +199,7 @@ export default class Model {
     }
     return null;
   }
+
   selectRange(range: ModelRange) {
     this.selection.selectRange(range);
   }

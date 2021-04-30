@@ -1,5 +1,4 @@
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 export function copyAttributes(from: Element, to: ModelNode) {
     for (const attr of from.attributes) {
@@ -7,10 +6,10 @@ export function copyAttributes(from: Element, to: ModelNode) {
     }
 }
 
-export function addChildOrFragment(parent: ModelElement, child: ModelNode) {
-  if(ModelNode.isFragment(child)) {
-    parent.appendChildren(...child.children);
+export function pushOrExpand(parent: ModelNode[], child: ModelNode | ModelNode[]) {
+  if(child instanceof Array) {
+    parent.push(...child);
   } else {
-    parent.addChild(child);
+    parent.push(child);
   }
 }
