@@ -142,14 +142,6 @@ export default class Model {
   }
 
   /**
-   * Remove a node from the model
-   * @param modelNode
-   */
-  removeModelNode(modelNode: ModelNode) {
-    modelNode.remove();
-  }
-
-  /**
    * Change the model by providing a callback with will receive an {@link ImmediateModelMutator immediate mutator}
    * The model gets written out automatically after the callback finishes.
    * @param callback
