@@ -111,7 +111,6 @@ export default class ModelRange {
   * findCommonAncestorsWhere(predicate: Predicate<ModelElement>): Generator<ModelElement, void, void> {
     let commonAncestor: ModelElement | null = this.getCommonAncestor();
     while (commonAncestor) {
-      console.log(commonAncestor.toXml());
       if (predicate(commonAncestor)) {
         yield commonAncestor;
       }
