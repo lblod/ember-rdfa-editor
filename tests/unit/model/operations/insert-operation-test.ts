@@ -1,4 +1,4 @@
-import {test, module} from "qunit";
+import {module, test} from "qunit";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-operation";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
@@ -142,6 +142,52 @@ module("Unit | model | operations | insert-operation-test", () => {
     assert.true(expected.sameAs(initial));
     assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [1])));
   });
+  test("inserts at start position", assert => {
+
+    // language=XML
+    const {root: initial, textNodes: {rangeStart, rangeEnd}} = vdom`
+      <modelRoot>
+        <div>
+          <text __id="rangeStart">abcd</text>
+        </div>
+        <span>
+          <text>efgh</text>
+        </span>
+        <div>
+          <span>
+            <text>ijkl</text>
+          </span>
+          <span>
+            <text __id="rangeEnd">mnop</text>
+          </span>
+        </div>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <div>
+          <text>ab</text>
+          <text>ins0</text>
+          <text>ins1</text>
+        </div>
+        <div>
+          <span>
+            <text>op</text>
+          </span>
+        </div>
+      </modelRoot>
+    `;
+    const start = ModelPosition.fromInTextNode(rangeStart, 2);
+    const end = ModelPosition.fromInTextNode(rangeEnd, 2);
+    const range = new ModelRange(start, end);
+    const op = new InsertOperation(range, new ModelText("ins0"), new ModelText("ins1"));
+    const resultRange = op.execute();
+    assert.true(initial.sameAs(expected));
+    assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [0, 2], [0, 10])));
+  });
+
 
 });
 
