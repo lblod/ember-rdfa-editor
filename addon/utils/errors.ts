@@ -103,3 +103,13 @@ export class ParseError extends CustomError {}
  * Thrown when a method is invoked with an argument which it can not reasonably deal with
  */
 export class IllegalArgumentError extends CustomError {}
+
+
+/**
+ * Thrown when an object or map does not have the expected key
+ */
+export class KeyError extends CustomError {
+  constructor(key?: unknown) {
+    super(`Missing key ${String(key) || ""}`);
+  }
+}

@@ -28,12 +28,12 @@ export class HtmlReaderContext {
 /**
  * Top-level reader for HTML documents
  */
-export default class HtmlReader implements Reader<Node, ModelNode | null, void> {
+export default class HtmlReader implements Reader<Node, ModelNode[], void> {
 
   constructor(private model: Model) {
   }
 
-  read(from: Node): ModelNode | null {
+  read(from: Node): ModelNode[] {
     from.normalize();
     const context = new HtmlReaderContext(this.model);
     const nodeReader = new HtmlNodeReader();

@@ -21,7 +21,7 @@ module("Unit | model | twoway-conversion", hooks => {
     if (!read) {
       throw new AssertionError();
     }
-    const written = writer.write(read) as HTMLElement;
+    const written = writer.write(read[0]) as HTMLElement;
 
     assert.strictEqual(written.outerHTML, p.outerHTML);
 
@@ -33,7 +33,7 @@ module("Unit | model | twoway-conversion", hooks => {
     if (!read) {
       throw new AssertionError();
     }
-    const written = writer.write(read) as HTMLElement;
+    const written = writer.write(read[0]) as HTMLElement;
     // the inner p will get broken up by the dom as per the html standard
     // this happens before the model reads it
     // https://developer.mozilla.org/en-us/docs/Web/HTML/Element/p

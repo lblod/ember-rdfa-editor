@@ -25,7 +25,7 @@ export default class InsertHtmlCommand extends Command {
       bodyContent.forEach(node => {
         const parsed = reader.read(node);
         if(parsed) {
-          modelNodes.push(parsed);
+          modelNodes.push(...parsed);
         }
       });
       const newRange = mutator.insertNodes(range, ...modelNodes);

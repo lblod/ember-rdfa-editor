@@ -24,7 +24,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </p>`;
 
     const actual = reader.read(doc.body.firstChild!)!;
-    assert.true(actual.sameAs(expected));
+    assert.true(actual[0].sameAs(expected));
   });
   test("read tree with textStyle elements", assert => {
 
@@ -38,7 +38,7 @@ module("Unit | model | readers | html-reader", hooks => {
     `;
 
     const actual = reader.read(doc.body.firstChild!)!;
-    assert.true(actual.sameAs(expected));
+    assert.true(actual[0].sameAs(expected));
   });
 
   test("read tree with nested textStyle elements", assert => {
@@ -54,7 +54,7 @@ module("Unit | model | readers | html-reader", hooks => {
     `;
 
     const actual = reader.read(doc.body.firstChild!)!;
-    assert.true(actual.sameAs(expected));
+    assert.true(actual[0].sameAs(expected));
   });
 
   test("read tree with nested textStyle elements 2", assert => {
@@ -71,7 +71,7 @@ module("Unit | model | readers | html-reader", hooks => {
     `;
 
     const actual = reader.read(doc.body.firstChild!)!;
-    assert.true(actual.sameAs(expected));
+    assert.true(actual[0].sameAs(expected));
   });
 
   // Note that the DOM specification limits the types of element which can be children of textStyle elements:
@@ -107,7 +107,7 @@ module("Unit | model | readers | html-reader", hooks => {
     `;
 
     const actual = reader.read(doc.body.firstChild!)!;
-    assert.true(actual.sameAs(expected));
+    assert.true(actual[0].sameAs(expected));
   });
   test("read tree with highlights", assert => {
 
@@ -129,7 +129,7 @@ module("Unit | model | readers | html-reader", hooks => {
     `;
 
     const actual = reader.read(doc.body.firstChild!)!;
-    assert.true(actual.sameAs(expected));
+    assert.true(actual[0].sameAs(expected));
   });
   test("reads table", assert => {
 
@@ -190,8 +190,8 @@ module("Unit | model | readers | html-reader", hooks => {
 
     const actual = reader.read(doc.body.firstChild!)!;
 
-    assert.true(actual.sameAs(expected));
-    assert.strictEqual((((actual.root as ModelTable)
+    assert.true(actual[0].sameAs(expected));
+    assert.strictEqual((((actual[0].root as ModelTable)
       // the header row is also counted
       .getCell(0, 1) as ModelElement)
       .firstChild as ModelText)

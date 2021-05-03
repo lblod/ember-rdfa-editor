@@ -95,9 +95,6 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   addChild(child: ModelNode, position?: number) {
-    if (ModelNode.isFragment(child)) {
-      throw new ModelError("Fragments cannot be added as children");
-    }
     let prev;
     let next = null;
     if (position === undefined) {
@@ -137,6 +134,13 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     for (const child of children) {
       this.insertChildAtOffset(child, myOffset);
       myOffset += child.offsetSize;
+    }
+  }
+  insertChildrenAtIndex(index: number, ...children: ModelNode[]) {
+    let myIndex = index;
+    for (const child of children) {
+      this.addChild(child, myIndex);
+      myIndex ++;
     }
   }
 
