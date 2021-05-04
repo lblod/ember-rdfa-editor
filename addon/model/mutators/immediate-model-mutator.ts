@@ -76,32 +76,6 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   }
 
   /**
-   * Merge two text nodes. Both nodes will be replaced by a new node with content
-   * equal to left.content + right.content
-   * If nodes are not siblings, do nothing
-   * @param left
-   * @param right
-   * @return resultPosition a position at the end of the left node, which will be at the boundary of the original
-   * if the merge was successful
-   */
-  mergeSiblingTextNodes(left: ModelText, right: ModelText): ModelPosition {
-    const resultPosition = ModelPosition.fromAfterNode(left);
-    if (left.nextSibling !== right) {
-      return resultPosition;
-    }
-    const newNode = left.clone();
-    newNode.content += right.content;
-    const start = ModelPosition.fromBeforeNode(left);
-    const end = ModelPosition.fromAfterNode(right);
-    const replaceRange = new ModelRange(start, end);
-    const op = new InsertOperation(replaceRange, newNode);
-    op.execute();
-    resultPosition.invalidateParentCache();
-    return resultPosition;
-
-  }
-
-  /**
    * @inheritDoc
    * @param rangeToMove
    * @param targetPosition
