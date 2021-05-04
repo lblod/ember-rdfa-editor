@@ -155,6 +155,17 @@ export default class ModelPosition {
   }
 
   /**
+   * Resets the parent cache
+   * Call this when the parent tree of the position has possibly changed
+   * TODO: this is a hack, redesign this
+   * can be resolved relatively elegantly by a robust event system by having every position listen to
+   * operation events and invalidating their caches greedily
+   */
+  invalidateParentCache(): void {
+    this.parentCache = null;
+  }
+
+  /**
    * Check if two modelpositions describe the same position
    * @param other
    */

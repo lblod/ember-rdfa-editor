@@ -1,11 +1,11 @@
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
+import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import {Predicate} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
-import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import ModelTreeWalker, {FilterResult, toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -137,6 +137,36 @@ export default class ModelRange {
     }
   }
 
+  getTextAttributes(): Map<TextAttribute, PropertyState> {
+    const treeWalker = new ModelTreeWalker<ModelText>({
+      range: this,
+      filter: toFilterSkipFalse(ModelNode.isModelText)
+    });
+    const result = new Map();
+    for (const node of treeWalker) {
+      for (const [attr, val] of node.getTextAttributes()) {
+        const currentVal = result.get(attr);
+        if (!currentVal) {
+          if (val) {
+            result.set(attr, PropertyState.enabled);
+          } else {
+            result.set(attr, PropertyState.disabled);
+          }
+        } else if (currentVal === PropertyState.enabled) {
+          if (!val) {
+            result.set(attr, PropertyState.unknown);
+          }
+        } else if (currentVal === PropertyState.disabled) {
+          if (val) {
+            result.set(attr, PropertyState.unknown);
+          }
+
+        }
+      }
+    }
+    return result;
+  }
+
   /**
    * Whether this range is confined, aka it is fully contained within one parentElement
    */
@@ -144,6 +174,13 @@ export default class ModelRange {
     return this.start.parent === this.end.parent;
   }
 
+  collapse(toLeft = false): void {
+    if(toLeft) {
+      this.end = this.start;
+    } else {
+      this.start = this.end;
+    }
+  }
 
   /**
    * Return a new range that is expanded to include all children

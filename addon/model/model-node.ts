@@ -298,6 +298,14 @@ export default abstract class ModelNode {
    * @param strict
    */
   abstract sameAs(other: ModelNode, strict?: boolean): boolean;
+
+  /**
+   * True if node can be merged with other
+   * This means we are ok with this node being replaced by a shallowclone of either this or other,
+   * with the children of this and other appended to the clone.
+   * @param other
+   */
+  abstract isMergeable(other: ModelNode): boolean;
 }
 
 

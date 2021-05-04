@@ -89,6 +89,8 @@ export default class TextInputHandler implements InputHandler {
 
   handleEvent(event: Event) {
     const keyboardEvent = event as KeyboardEvent;
+    this.rawEditor.executeCommand("insert-text", keyboardEvent.key);
+    return {allowPropagation: false};
     const manipulation = this.getNextManipulation(keyboardEvent);
     // check if we can execute it
     const { mayExecute, dispatchedExecutor } = this.checkManipulationByPlugins( manipulation );

@@ -8,7 +8,6 @@ import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-find
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {Direction, FilterAndPredicate, PropertyState,} from "@lblod/ember-rdfa-editor/model/util/types";
-import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import {nodeIsElementOfType} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
 
 /**
@@ -279,16 +278,9 @@ export default class ModelSelection {
 
     if (ModelSelection.isWellBehaved(this)) {
       const range = this.lastRange;
-
-      const treeWalker = new ModelTreeWalker({
-        range,
-        filter: (node) => ModelNode.isModelText(node) && node.getTextAttribute(property) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP
-      });
-      const result = Array.from(treeWalker);
-      return result.length ? PropertyState.enabled : PropertyState.disabled;
-    } else {
-      return PropertyState.unknown;
+      return range.getTextAttributes().get(property) || PropertyState.unknown;
     }
+    return PropertyState.unknown;
   }
 
 
