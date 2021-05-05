@@ -1,5 +1,13 @@
 import {InputHandler, InputPlugin} from './input-handler';
-import {Manipulation, ManipulationGuidance} from './manipulation';
+import {
+  ManipulationGuidance,
+  MoveCursorAfterEditorManipulation,
+  MoveCursorAfterElementManipulation,
+  MoveCursorBeforeEditorManipulation,
+  MoveCursorBeforeElementManipulation,
+  MoveCursorToEndOfElementManipulation,
+  MoveCursorToStartOfElementManipulation
+} from './manipulation';
 import {warn} from '@ember/debug';
 import {isVisibleElement, isVoidElement} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
@@ -9,10 +17,20 @@ import {ensureValidTextNodeForCaret} from '@lblod/ember-rdfa-editor/editor/utils
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import RawEditor from 'dummy/utils/ce/raw-editor';
 
+export type TabHandlerManipulation =
+  MoveCursorBeforeElementManipulation
+  | MoveCursorToEndOfElementManipulation
+  | MoveCursorBeforeEditorManipulation
+  | MoveCursorBeforeElementManipulation
+  | MoveCursorToStartOfElementManipulation
+  | MoveCursorAfterElementManipulation
+  | MoveCursorAfterEditorManipulation
+  | MoveCursorToStartOfElementManipulation;
+
 /**
  * Interface for specific plugins.
  */
-export interface TabInputPlugin extends InputPlugin{
+export interface TabInputPlugin extends InputPlugin {
   /**
    * One-liner explaining what the plugin solves.
    */
@@ -23,7 +41,7 @@ export interface TabInputPlugin extends InputPlugin{
    * manipulation and/or if it intends to handle the manipulation
    * itself.
    */
-  guidanceForManipulation: (manipulation: Manipulation, editor: RawEditor) => ManipulationGuidance | null;
+  guidanceForManipulation: (manipulation: TabHandlerManipulation, editor: RawEditor) => ManipulationGuidance | null;
 }
 
 /**
@@ -36,7 +54,7 @@ export interface TabInputPlugin extends InputPlugin{
 export default class TabInputHandler extends InputHandler {
   plugins: Array<TabInputPlugin>;
 
-  constructor( {rawEditor} : { rawEditor: LegacyRawEditor} ) {
+  constructor({rawEditor}: { rawEditor: LegacyRawEditor }) {
     super(rawEditor);
     this.plugins = [
       new LumpNodeTabInputPlugin(),
@@ -48,7 +66,7 @@ export default class TabInputHandler extends InputHandler {
   isHandlerFor(event: Event) {
     const selection = window.getSelection();
 
-    if(!selection || !selection.isCollapsed) return false;
+    if (!selection || !selection.isCollapsed) return false;
 
     const keyboardEvent = event as KeyboardEvent;
     //TODO: include shift key here?
@@ -56,54 +74,49 @@ export default class TabInputHandler extends InputHandler {
 
   }
 
-  handleEvent(event : KeyboardEvent) {
+  handleEvent(event: KeyboardEvent) {
     const manipulation = this.getNextManipulation(event);
     // check if we can execute it
-    const { mayExecute, dispatchedExecutor } = this.checkManipulationByPlugins( manipulation );
+    const {mayExecute, dispatchedExecutor} = this.checkManipulationByPlugins(manipulation);
 
     // error if we're not allowed to
-    if ( ! mayExecute ) {
-      warn( `Not allowed to execute manipulation for ${this.constructor.toString()}`, { id: 'tab-input-handler-manipulation-not-allowed' } );
-      return { allowPropagation: false };
+    if (!mayExecute) {
+      warn(`Not allowed to execute manipulation for ${this.constructor.toString()}`, {id: 'tab-input-handler-manipulation-not-allowed'});
+      return {allowPropagation: false};
     }
 
     // run the manipulation
-    if( dispatchedExecutor ) {
+    if (dispatchedExecutor) {
       // NOTE: we should pass some sort of editor interface here in the future.
-      dispatchedExecutor( manipulation, this.rawEditor);
+      dispatchedExecutor(manipulation, this.rawEditor);
+    } else {
+      this.handleNativeManipulation(manipulation);
     }
-    else {
-      this.handleNativeManipulation( manipulation );
-    }
-    return { allowPropagation: false };
+    return {allowPropagation: false};
   }
 
-  handleNativeManipulation(manipulation: Manipulation) {
+  handleNativeManipulation(manipulation: TabHandlerManipulation) {
 
     /************************ SHIFT TAB ************************/
     if (manipulation.type == 'moveCursorToEndOfElement') {
-      const element = manipulation.node ;
+      const element = manipulation.node;
       let textNode;
-      if(element.lastChild && element.lastChild.nodeType == Node.TEXT_NODE){
+      if (element.lastChild && element.lastChild.nodeType == Node.TEXT_NODE) {
         textNode = element.lastChild as Text;
-      }
-      else {
+      } else {
         textNode = document.createTextNode('');
         element.append(textNode);
       }
 
-      textNode = ensureValidTextNodeForCaret(textNode );
+      textNode = ensureValidTextNodeForCaret(textNode);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCaret(textNode, textNode.length);
-    }
-
-    else if(manipulation.type == 'moveCursorBeforeElement'){
-      const element = manipulation.node ;
+    } else if (manipulation.type == 'moveCursorBeforeElement') {
+      const element = manipulation.node;
       let textNode;
-      if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
+      if (element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE) {
         textNode = element.previousSibling;
-      }
-      else {
+      } else {
         textNode = document.createTextNode('');
         element.before(textNode);
       }
@@ -114,18 +127,17 @@ export default class TabInputHandler extends InputHandler {
     }
 
     //TODO: this could be moved to a plugin eventually.
-    else if(manipulation.type == 'moveCursorBeforeEditor'){
+    else if (manipulation.type == 'moveCursorBeforeEditor') {
       console.warn('editor/tab-handler: handle moveCursorBeforeEditor currently disabled until we are sure what we want here');
     }
 
     /************************ TAB ************************/
     else if (manipulation.type == 'moveCursorToStartOfElement') {
-      const element = manipulation.node ;
+      const element = manipulation.node;
       let textNode;
-      if(element.firstChild && element.firstChild.nodeType == Node.TEXT_NODE){
+      if (element.firstChild && element.firstChild.nodeType == Node.TEXT_NODE) {
         textNode = element.firstChild;
-      }
-      else {
+      } else {
         textNode = document.createTextNode('');
         element.prepend(textNode);
       }
@@ -133,15 +145,12 @@ export default class TabInputHandler extends InputHandler {
       textNode = ensureValidTextNodeForCaret(textNode as Text);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCaret(textNode, 0);
-    }
-
-    else if(manipulation.type == 'moveCursorAfterElement'){
-      const element = manipulation.node ;
+    } else if (manipulation.type == 'moveCursorAfterElement') {
+      const element = manipulation.node;
       let textNode;
-      if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
+      if (element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE) {
         textNode = element.nextSibling;
-      }
-      else {
+      } else {
         textNode = document.createTextNode('');
         element.after(textNode);
       }
@@ -152,85 +161,79 @@ export default class TabInputHandler extends InputHandler {
     }
 
     //TODO: this could be moved to a plugin eventually.
-    else if(manipulation.type == 'moveCursorAfterEditor'){
+    else if (manipulation.type == 'moveCursorAfterEditor') {
       console.warn('editor/tab-handler: handle moveCursorAfterEditor currently disabled until we are sure what we want here');
       // const element = manipulation.node as HTMLElement;
       // element.blur();
-    }
-
-    else {
+    } else {
       throw 'unsupport manipulation';
     }
   }
 
   //TODO: fix end or beginning of editor.
-  getNextManipulation(event : KeyboardEvent) : Manipulation {
+  getNextManipulation(event: KeyboardEvent): TabHandlerManipulation {
     const selection = window.getSelection();
 
-    if(!(selection && selection.isCollapsed))
+    if (!(selection && selection.isCollapsed))
       throw 'selection is required for tab input';
 
-    if(event.shiftKey){
+    if (event.shiftKey) {
       return this.helpGetShiftTabNextManipulation(selection);
-    }
-    else {
+    } else {
       return this.helpGetTabNextManipulation(selection);
     }
   }
 
-  helpGetShiftTabNextManipulation(selection : Selection) : Manipulation {
-    const { anchorNode } = selection;
+  helpGetShiftTabNextManipulation(selection: Selection): TabHandlerManipulation {
+    const {anchorNode} = selection;
 
-    if(! (anchorNode && anchorNode.parentElement) )
+    if (!(anchorNode && anchorNode.parentElement))
       throw 'Tab input expected anchorNode and parentElement';
 
     const parentElement = anchorNode.parentElement;
 
-    let nextManipulation;
+    let nextManipulation: TabHandlerManipulation;
 
     //TODO: assumes anchorNode is not an element.
-    if(parentElement.firstChild && parentElement.firstChild.isSameNode(anchorNode)){
-      nextManipulation = { type: 'moveCursorBeforeElement', node: parentElement, selection };
-    }
-    else {
+    if (parentElement.firstChild && parentElement.firstChild.isSameNode(anchorNode)) {
+      nextManipulation = {type: 'moveCursorBeforeElement', node: parentElement, selection};
+    } else {
       const childNodes = Array.from(parentElement.childNodes);
       const offsetAnchorNode = childNodes.indexOf(anchorNode as ChildNode);
-      const remainingSiblings = [ ...childNodes.slice(0, offsetAnchorNode + 1) ].reverse();
+      const remainingSiblings = [...childNodes.slice(0, offsetAnchorNode + 1)].reverse();
 
       const previousElementForCursor = remainingSiblings.find(node => {
         return !isVoidElement(node) && node.nodeType == Node.ELEMENT_NODE && isVisibleElement(node as HTMLElement);
       });
 
-      if(previousElementForCursor){
-        nextManipulation = { type: 'moveCursorToEndOfElement', node: previousElementForCursor as HTMLElement, selection};
-      }
-      else {
-        nextManipulation = { type: 'moveCursorBeforeElement', node: parentElement, selection };
+      if (previousElementForCursor) {
+        nextManipulation = {type: 'moveCursorToEndOfElement', node: previousElementForCursor as HTMLElement, selection};
+      } else {
+        nextManipulation = {type: 'moveCursorBeforeElement', node: parentElement, selection};
       }
     }
 
-    if(nextManipulation.type === 'moveCursorBeforeElement'  && nextManipulation.node.isSameNode(this.rawEditor.rootNode) ){
-      nextManipulation = { type: 'moveCursorBeforeEditor', node: nextManipulation.node };
+    if (nextManipulation.type === 'moveCursorBeforeElement' && nextManipulation.node.isSameNode(this.rawEditor.rootNode)) {
+      nextManipulation = {type: 'moveCursorBeforeEditor', node: nextManipulation.node};
     }
 
-    return nextManipulation as Manipulation;
+    return nextManipulation;
   }
 
-  helpGetTabNextManipulation(selection : Selection) : Manipulation {
-    const { anchorNode } = selection;
+  helpGetTabNextManipulation(selection: Selection): TabHandlerManipulation {
+    const {anchorNode} = selection;
 
-    if(! (anchorNode && anchorNode.parentElement) )
+    if (!(anchorNode && anchorNode.parentElement))
       throw 'Tab input expected anchorNode and parentElement';
 
     const parentElement = anchorNode.parentElement;
 
-    let nextManipulation;
+    let nextManipulation: TabHandlerManipulation;
 
     //TODO: assumes anchorNode is not an element.
-    if(parentElement.lastChild && parentElement.lastChild.isSameNode(anchorNode)){
-      nextManipulation = { type: 'moveCursorAfterElement', node: parentElement, selection };
-    }
-    else {
+    if (parentElement.lastChild && parentElement.lastChild.isSameNode(anchorNode)) {
+      nextManipulation = {type: 'moveCursorAfterElement', node: parentElement, selection};
+    } else {
 
       const childNodes = Array.from(parentElement.childNodes);
       const offsetAnchorNode = childNodes.indexOf(anchorNode as ChildNode);
@@ -240,19 +243,18 @@ export default class TabInputHandler extends InputHandler {
         return !isVoidElement(node) && node.nodeType == Node.ELEMENT_NODE && isVisibleElement(node as HTMLElement);
       });
 
-      if(nextElementForCursor){
-        nextManipulation = { type: 'moveCursorToStartOfElement', node: nextElementForCursor as HTMLElement, selection};
-      }
-      else {
-        nextManipulation = { type: 'moveCursorAfterElement', node: parentElement, selection };
+      if (nextElementForCursor) {
+        nextManipulation = {type: 'moveCursorToStartOfElement', node: nextElementForCursor as HTMLElement, selection};
+      } else {
+        nextManipulation = {type: 'moveCursorAfterElement', node: parentElement, selection};
       }
     }
 
-    if(nextManipulation.type === 'moveCursorAfterElement'  && nextManipulation.node.isSameNode(this.rawEditor.rootNode) ){
-      nextManipulation = { type: 'moveCursorAfterEditor', node: nextManipulation.node };
+    if (nextManipulation.type === 'moveCursorAfterElement' && nextManipulation.node.isSameNode(this.rawEditor.rootNode)) {
+      nextManipulation = {type: 'moveCursorAfterEditor', node: nextManipulation.node};
     }
 
-    return nextManipulation as Manipulation;
+    return nextManipulation;
 
   }
 }

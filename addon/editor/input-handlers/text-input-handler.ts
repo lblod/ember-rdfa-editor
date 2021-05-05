@@ -1,5 +1,5 @@
-import {InputHandler} from './input-handler';
-import {Editor, Manipulation, ManipulationGuidance} from './manipulation';
+import {InputHandler, InputPlugin} from './input-handler';
+import {Editor, InsertTextIntoRange, ManipulationGuidance} from './manipulation';
 import {warn} from '@ember/debug';
 import RdfaTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/text-input-plugin';
 import AnchorTagTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/anchor-tags/text-input-plugin';
@@ -8,21 +8,17 @@ import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor
 import {MisbehavedSelectionError, UnsupportedManipulationError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 
+export type TextHandlerManipulation = InsertTextIntoRange;
 /**
  * Interface for specific plugins.
  */
-export interface TextInputPlugin {
-  /**
-   * One-liner explaining what the plugin solves.
-   */
-  label: string;
-
+export interface TextInputPlugin extends InputPlugin{
   /**
    * Callback executed to see if the plugin allows a certain
    * manipulation and/or if it intends to handle the manipulation
    * itself.
    */
-  guidanceForManipulation: (manipulation: Manipulation) => ManipulationGuidance | null;
+  guidanceForManipulation: (manipulation: TextHandlerManipulation) => ManipulationGuidance | null;
 }
 
 /**
@@ -87,7 +83,7 @@ export default class TextInputHandler extends InputHandler {
     return {allowPropagation: false};
   }
 
-  handleNativeManipulation(manipulation: Manipulation) {
+  handleNativeManipulation(manipulation: TextHandlerManipulation) {
     if (manipulation.type === "insertTextIntoRange") {
       this.rawEditor.executeCommand("insert-text", manipulation.text, manipulation.range);
     } else {
@@ -95,7 +91,7 @@ export default class TextInputHandler extends InputHandler {
     }
   }
 
-  getNextManipulation(event: KeyboardEvent): Manipulation {
+  getNextManipulation(event: KeyboardEvent): TextHandlerManipulation {
     const range = this.rawEditor.model.selection.lastRange;
     if (!range) {
       throw new MisbehavedSelectionError();

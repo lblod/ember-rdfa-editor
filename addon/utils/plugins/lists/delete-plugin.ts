@@ -1,9 +1,9 @@
 import {
+  DeleteHandlerManipulation,
   DeletePlugin,
   MagicSpan,
 } from "@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler";
 import {
-  Manipulation,
   ManipulationGuidance,
   RemoveEmptyElementManipulation,
   RemoveElementWithChildrenThatArentVisible,
@@ -47,7 +47,7 @@ export default class ListDeletePlugin implements DeletePlugin {
   hasChanged = false;
 
   guidanceForManipulation(
-    manipulation: Manipulation
+    manipulation: DeleteHandlerManipulation
   ): ManipulationGuidance | null {
     this.hasChanged = false;
     if (manipulation.type === "removeBoundaryBackwards") {
