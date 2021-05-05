@@ -1,4 +1,7 @@
-import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import {
+  BackspaceHandlerManipulation,
+  BackspacePlugin
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
 
@@ -24,7 +27,7 @@ const SUPPORTED_MANIPULATIONS = [
 export default class LumpNodeBackspacePlugin implements BackspacePlugin {
   label = 'backspace plugin for handling LumpNodes';
 
-  guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
+  guidanceForManipulation(manipulation : BackspaceHandlerManipulation) : ManipulationGuidance | null {
     //TODO: fix case.manipulation.node == lumpnode
     const node = manipulation.node;
     const rootNode = node.getRootNode(); //Assuming here that node is attached.
@@ -61,7 +64,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * It assumes manipulation.node is located in a LumpNode
    * @method removeLumpNode
    */
-  removeLumpNode = ( manipulation: Manipulation, editor: Editor ): void => {
+  removeLumpNode = ( manipulation: BackspaceHandlerManipulation, editor: Editor ): void => {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
     const lumpNode = getParentLumpNode(node, rootNode) as ChildNode;
@@ -79,7 +82,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * Other cases, we rely on the detectVisualChange from backspace handler
    * @method detectChange
    */
-  detectChange( manipulation: Manipulation ) : boolean {
+  detectChange( manipulation: BackspaceHandlerManipulation ) : boolean {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
 
@@ -117,7 +120,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * Flags the LumpNode for removal.
    * @method flagForRemoval
    */
-  flagForRemoval = ( manipulation: Manipulation): void => {
+  flagForRemoval = ( manipulation: BackspaceHandlerManipulation): void => {
     const node = manipulation.node;
     const rootNode = node.getRootNode();
     const lumpNode = getParentLumpNode(node, rootNode) as Element;

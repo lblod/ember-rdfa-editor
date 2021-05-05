@@ -1,5 +1,8 @@
-import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {
+  BackspaceHandlerManipulation,
+  BackspacePlugin
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import { Editor, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 /**
@@ -10,7 +13,7 @@ import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
   label = 'backspace plugin for handling placeholder nodes';
 
-  guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
+  guidanceForManipulation(manipulation : BackspaceHandlerManipulation) : ManipulationGuidance | null {
     const node = manipulation.node;
     const parentNode = node.parentElement;
     if(parentNode && parentNode.classList.contains('mark-highlight-manual')) {
@@ -26,7 +29,7 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
    * This executor removes the placeholder node containing manipulation.node competly.
    * @method removePlaceholder
    */
-  removePlaceholder = (manipulation: Manipulation, editor: Editor): void => {
+  removePlaceholder = (manipulation: BackspaceHandlerManipulation, editor: Editor): void => {
     const node = manipulation.node;
     const parentNode = node.parentElement;
     if(parentNode) {
@@ -42,7 +45,7 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
    * Returns true explicitly when it detects the manipulation.node is inside a placeholder node.
    * @method detectChange
    */
-  detectChange( manipulation: Manipulation ) : boolean {
+  detectChange( manipulation: BackspaceHandlerManipulation ) : boolean {
     const node = manipulation.node;
     const parentNode = node.parentElement;
     if(parentNode && parentNode.classList.contains('mark-highlight-manual')) {

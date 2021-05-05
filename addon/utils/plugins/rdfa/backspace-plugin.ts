@@ -1,6 +1,8 @@
-import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import {
+  BackspaceHandlerManipulation,
+  BackspacePlugin
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { Editor,
-         Manipulation,
          ManipulationGuidance
        } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import NodeWalker from '@lblod/marawa/node-walker';
@@ -59,7 +61,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
   label = 'backspace plugin for handling RDFA specific logic';
 
 
-  guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
+  guidanceForManipulation(manipulation : BackspaceHandlerManipulation) : ManipulationGuidance | null {
     if(this.needsRemoveStep(manipulation)){
       return {
         allow: true,
@@ -88,7 +90,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    * This will require from the user to press backspace once more to remove the element.
    * @method detectChange
    */
-  detectChange( manipulation: Manipulation ) : boolean {
+  detectChange( manipulation: BackspaceHandlerManipulation ) : boolean {
     if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)){
 
       const node = manipulation.node;
@@ -116,7 +118,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    * Note: this is only done on TextNode operations for now.
    * It feels like such flow for emptyElements would feel cumbersome. (And add complexity)
    */
-  needsAlmostCompleteStep(manipulation: Manipulation) : boolean {
+  needsAlmostCompleteStep(manipulation: BackspaceHandlerManipulation) : boolean {
     const node = manipulation.node;
     const parent = node.parentElement;
 
@@ -134,7 +136,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
   /**
    * Tests whether the 'last call' flag may be added
    */
-  needsCompleteStep(manipulation: Manipulation) : boolean {
+  needsCompleteStep(manipulation: BackspaceHandlerManipulation) : boolean {
     if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)){
       const node = manipulation.node;
       const parent = node.parentElement;
@@ -159,7 +161,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
   /**
    * Tests whether the element should be removed, after having given all the warnings.
    */
-  needsRemoveStep(manipulation: Manipulation) : boolean {
+  needsRemoveStep(manipulation: BackspaceHandlerManipulation) : boolean {
     if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)){
       const node = manipulation.node;
       const parent = node.parentElement;
@@ -186,7 +188,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    * Note: this is only done on TextNode operations for now.
    * (again) It feels like such flow for emptyElements would feel cumbersome. (And add complexity)
    */
-  executeAlmostCompleteStep = (manipulation: Manipulation): void => {
+  executeAlmostCompleteStep = (manipulation: BackspaceHandlerManipulation): void => {
     const node = manipulation.node;
     const parent = node.parentElement;
 
@@ -199,7 +201,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    * For textNode manipulations, removes the last visible text node and adds `data-flagged-remove=complete` to the parent.
    * For empty element manipulation, just adds `data-flagged-remove=complete`
    */
-  executeCompleteStep = (manipulation: Manipulation, editor: Editor ): void => {
+  executeCompleteStep = (manipulation: BackspaceHandlerManipulation, editor: Editor ): void => {
     const node = manipulation.node;
     const parent = node.parentElement;
 
@@ -219,7 +221,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
   /*
    * Last step. The rdfa element is removed.
    */
-  executeRemoveStep = (manipulation: Manipulation, editor: Editor ): void => {
+  executeRemoveStep = (manipulation: BackspaceHandlerManipulation, editor: Editor ): void => {
     let removedElement;
     let updatedSelection;
 
@@ -338,7 +340,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     }
   }
 
-  isManipulationSupportedFor(manipulationTypes: Array<string>, manipulation : Manipulation) : boolean {
+  isManipulationSupportedFor(manipulationTypes: Array<string>, manipulation : BackspaceHandlerManipulation) : boolean {
     return manipulationTypes.some(manipulationType => manipulationType === manipulation.type );
   }
 

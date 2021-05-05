@@ -1,6 +1,8 @@
-import {BackspacePlugin} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import {
-  Manipulation,
+  BackspaceHandlerManipulation,
+  BackspacePlugin
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import {
   ManipulationGuidance,
   MoveCursorToEndOfElementManipulation
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
@@ -18,7 +20,7 @@ function isBr(node: Node): boolean {
 export default class BrSkippingBackspacePlugin implements BackspacePlugin {
   label = "This plugin jumps over brs where necessary";
 
-  guidanceForManipulation(manipulation: Manipulation): ManipulationGuidance | null {
+  guidanceForManipulation(manipulation: BackspaceHandlerManipulation): ManipulationGuidance | null {
     if (manipulation.type == "moveCursorToEndOfElement") {
       const element = manipulation.node ;
       if (window.getComputedStyle(element).display == "block") {
