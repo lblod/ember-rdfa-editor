@@ -29,7 +29,8 @@
     "prepublishOnly": "ember ts:precompile",
     "postpublish": "ember ts:clean",
     "icons": "svg-symbols ./public/icons > ./public/say-symbolset.svg",
-    "prepare": "svg-symbols ./public/icons > ./public/say-symbolset.svg"
+    "prepare": "svg-symbols ./public/icons > ./public/say-symbolset.svg",
+    "release": "release-it"
   },
   "dependencies": {
     "@ember/optional-features": "^1.3.0",
@@ -74,7 +75,6 @@
     "ember-cli-dependency-checker": "^3.2.0",
     "ember-cli-eslint": "^5.1.0",
     "ember-cli-inject-live-reload": "^2.0.2",
-    "ember-cli-release": "^1.0.0-beta.2",
     "ember-cli-sass": "^10.0.1",
     "ember-cli-sri": "^2.1.1",
     "ember-cli-typescript-blueprints": "^3.0.0",
@@ -98,6 +98,7 @@
     "node-sass": "^4.13.1",
     "npm-run-all": "^4.1.5",
     "qunit-dom": "^1.2.0",
+    "release-it": "^14.6.1",
     "sass": "^1.26.3",
     "simple-git": "^1.10.0",
     "svg-symbols": "^1.0.5",
@@ -118,11 +119,18 @@
   },
   "browserslist": [
     "last 1 Chrome version",
-    "last 1 Android version",
     "last 1 Firefox version",
-    "last 1 FirefoxAndroid version",
-    "last 1 Safari version",
-    "last 1 iOS version",
     "last 1 Edge version"
-  ]
+  ],
+  "release-it": {
+    "github": {
+      "release": false
+    },
+    "npm": {
+      "publish": false
+    },
+    "git": {
+      "requireCleanWorkingDir": true
+    }
+  }
 }
