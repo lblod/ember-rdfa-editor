@@ -9,6 +9,8 @@
  * The HTMLWbrElement type is a custom type which we have added
  * ourselves.  We did not find a type.
  */
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+
 export type VoidElement = HTMLAreaElement
   | HTMLBaseElement
   | HTMLBRElement
@@ -57,6 +59,7 @@ export type Manipulation =
   | ReplaceSelectionWithTextManipulation
   | RemoveBoundaryForwards
   | RemoveBoundaryBackwards
+  | InsertTextIntoRange
 ;
 
 /**
@@ -232,6 +235,12 @@ export interface RemoveBoundaryForwards extends BaseManipulation {
 export interface RemoveBoundaryBackwards extends BaseManipulation {
   type: "removeBoundaryBackwards";
   node: Node;
+}
+
+export interface InsertTextIntoRange extends BaseManipulation {
+  type: "insertTextIntoRange";
+  range: ModelRange;
+  text: string;
 }
 
 export interface ManipulationGuidance {

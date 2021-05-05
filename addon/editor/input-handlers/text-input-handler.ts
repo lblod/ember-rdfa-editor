@@ -1,12 +1,19 @@
-import { InputHandler } from './input-handler';
-import { Manipulation, ManipulationExecutor, Editor, ManipulationGuidance } from './manipulation';
-import { warn /*, debug, deprecate*/ } from '@ember/debug';
+import {InputHandler} from './input-handler';
+import {Manipulation, ManipulationExecutor, Editor, ManipulationGuidance} from './manipulation';
+import {warn /*, debug, deprecate*/} from '@ember/debug';
 import RdfaTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/text-input-plugin';
 import AnchorTagTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/anchor-tags/text-input-plugin';
 import PlaceHolderTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/text-input-plugin';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import {MisbehavedSelectionError, UnsupportedManipulationError} from "@lblod/ember-rdfa-editor/utils/errors";
+
 const NON_BREAKING_SPACE = '\u00A0';
 
+interface ManipulationGuidance {
+  allow: boolean | undefined
+  executor: ManipulationExecutor | undefined
+}
 
 /**
  * Interface for specific plugins.
@@ -25,23 +32,6 @@ export interface TextInputPlugin {
   guidanceForManipulation: (manipulation: Manipulation) => ManipulationGuidance | null;
 }
 
-
-/**
- *
- */
-export function insertTextIntoTextNode(textNode: Node, position: number, inputText: string) {
-  if (inputText === " ") {
-    inputText = NON_BREAKING_SPACE;
-  }
-  const textContent = textNode.textContent || "";
-  textNode.textContent = `${textContent.slice(0, position)}${inputText}${textContent.slice(position)}`;
-  if (position > 0 && inputText !== NON_BREAKING_SPACE && textContent[position - 1] === NON_BREAKING_SPACE) {
-    // replace non breaking space preceeding input with a regular space
-    const content = textNode.textContent;
-    textNode.textContent = content.slice(0, position - 1) + " " + content.slice(position);
-  }
-}
-
 /**
  * Text Input Handler, a event handler to handle text input
  *
@@ -53,7 +43,7 @@ export default class TextInputHandler implements InputHandler {
   rawEditor: LegacyRawEditor;
   plugins: Array<TextInputPlugin>;
 
-  constructor( {rawEditor} : { rawEditor: LegacyRawEditor} ) {
+  constructor({rawEditor}: { rawEditor: LegacyRawEditor }) {
     this.rawEditor = rawEditor;
     this.plugins = [
       new RdfaTextInputPlugin(),
@@ -69,140 +59,59 @@ export default class TextInputHandler implements InputHandler {
       if (keyboardEvent.isComposing) {
         // still composing, don't handle this
         return false;
-      }
-      else if (keyboardEvent.altKey || keyboardEvent.ctrlKey || keyboardEvent.metaKey) {
+      } else if (keyboardEvent.altKey || keyboardEvent.ctrlKey || keyboardEvent.metaKey) {
         // it's a key combo, we don't want to do anything with this atm
         return false;
-      }
-      else if (keyboardEvent.key.length > 1) {
+      } else if (keyboardEvent.key.length > 1) {
         // only interested in actual input, no control keys
         return false;
-      }
-      else {
+      } else {
         return true;
       }
-    }
-    else {
+    } else {
       return false;
     }
   }
 
   handleEvent(event: Event) {
     const keyboardEvent = event as KeyboardEvent;
-    this.rawEditor.executeCommand("insert-text", keyboardEvent.key);
-    return {allowPropagation: false};
     const manipulation = this.getNextManipulation(keyboardEvent);
     // check if we can execute it
-    const { mayExecute, dispatchedExecutor } = this.checkManipulationByPlugins( manipulation );
+    const {mayExecute, dispatchedExecutor} = this.checkManipulationByPlugins(manipulation);
 
     // error if we're not allowed to
-    if ( ! mayExecute ) {
-      warn( `Not allowed to execute manipulation for ${this.constructor.toString()}`, { id: "text-input-handler-manipulation-not-allowed" } );
-      return { allowPropagation: false };
+    if (!mayExecute) {
+      warn(`Not allowed to execute manipulation for ${this.constructor.toString()}`, {id: "text-input-handler-manipulation-not-allowed"});
+      return {allowPropagation: false};
     }
 
     // run the manipulation
-    if( dispatchedExecutor ) {
+    if (dispatchedExecutor) {
       // NOTE: we should pass some sort of editor interface here in the future.
-      dispatchedExecutor( manipulation, this.rawEditor as Editor);
+      dispatchedExecutor(manipulation, this.rawEditor as Editor);
+    } else {
+      this.handleNativeManipulation(manipulation);
     }
-    else {
-      this.handleNativeManipulation( manipulation );
-    }
-    return { allowPropagation: false };
+    return {allowPropagation: false};
   }
 
   handleNativeManipulation(manipulation: Manipulation) {
-    if (manipulation.type == "insertTextIntoTextNode") {
-      const { node: textNode, position, text } = manipulation;
-      insertTextIntoTextNode(textNode, position, text);
-      this.rawEditor.updateRichNode();
-      this.rawEditor.setCaret(textNode, position + 1);
-    }
-    else if (manipulation.type == "insertTextIntoElement") {
-      const {node: element, position, text } = manipulation;
-      if (position > 0 && element.childNodes[position-1].nodeType == Node.TEXT_NODE) {
-        // node before the intented position is a text node, let's append to that one
-        const textNode = element.childNodes[position-1] as Text;
-        insertTextIntoTextNode(textNode, textNode.length, text);
-        this.rawEditor.updateRichNode();
-        this.rawEditor.setCaret(textNode, textNode.length);
-      }
-      else if (element.childNodes.length > position && element.childNodes[position].nodeType == Node.TEXT_NODE) {
-        // node after the intented position is a text node, let's append to that one
-        const textNode = element.childNodes[position] as Text;
-        insertTextIntoTextNode(textNode, textNode.length, text);
-        this.rawEditor.updateRichNode();
-        this.rawEditor.setCaret(textNode, text.length);
-      }
-      else {
-        const textNode = document.createTextNode(text);
-        if(position > 0){
-          element.childNodes[position - 1].after(textNode);
-        }
-        else {
-          element.prepend(textNode);
-        }
-        this.rawEditor.updateRichNode();
-        this.rawEditor.setCaret(textNode, textNode.length);
-      }
-    }
-    else if (manipulation.type == "replaceSelectionWithText") {
-      const { selection, text } = manipulation;
-      const range = selection.getRangeAt(0);
-      if (range) {
-        const {startContainer, endContainer, startOffset, endOffset } = range;
-        if (startContainer.nodeType == Node.TEXT_NODE) {
-          selection.deleteFromDocument();
-          insertTextIntoTextNode(startContainer as Text, startOffset, text);
-          this.rawEditor.updateRichNode();
-          this.rawEditor.setCaret(startContainer, startOffset + text.length);
-        }
-        else if (endContainer.nodeType == Node.TEXT_NODE) {
-          selection.deleteFromDocument();
-          insertTextIntoTextNode(endContainer as Text, endOffset, text);
-          this.rawEditor.updateRichNode();
-          this.rawEditor.setCaret(endContainer, endOffset + text.length);
-        }
-        else {
-          const textNode = document.createTextNode(text);
-          selection.deleteFromDocument();
-          startContainer.childNodes[startOffset - 1].after(textNode);
-          this.rawEditor.updateRichNode();
-          this.rawEditor.setCaret(textNode, textNode.length);
-        }
-      }
-      else {
-        console.warn("no selected range, not doing anything!");
-      }
-    }
-
-    else {
-      throw "unsupport manipulation";
+    if(manipulation.type === "insertTextIntoRange") {
+      this.rawEditor.executeCommand("insert-text", manipulation.text, manipulation.range);
+    } else {
+      throw new UnsupportedManipulationError(manipulation);
     }
   }
 
-  getNextManipulation(event: KeyboardEvent) : Manipulation {
-    const selection = window.getSelection();
-    if (selection?.isCollapsed) {
-      const { anchorNode, anchorOffset } = selection;
-      if (anchorNode?.nodeType == Node.TEXT_NODE) {
-        return { type: "insertTextIntoTextNode", node: anchorNode as Text, position: anchorOffset, text: event.key };
-      }
-      else if (anchorNode?.nodeType == Node.ELEMENT_NODE) {
-        return { type: "insertTextIntoElement", node: anchorNode as HTMLElement, position: anchorOffset, text: event.key};
-      }
-      else {
-        throw "unsupported selection";
-      }
+  getNextManipulation(event: KeyboardEvent): Manipulation {
+    const range = this.rawEditor.model.selection.lastRange;
+    if (!range) {
+      throw new MisbehavedSelectionError();
     }
-    else if (selection && this.rawEditor.rootNode.contains(selection.anchorNode)) {
-      return { type: "replaceSelectionWithText", selection: selection, node: (selection.anchorNode as Node), text: event.key };
-    }
-    throw "selection is required for text input";
+    return {type: "insertTextIntoRange", range, text: event.key};
   }
 
-    /**
+  /**
    * Checks whether all plugins agree the manipulation is allowed.
    *
    * This method asks each plugin individually if the manipulation is
@@ -221,35 +130,38 @@ export default class TextInputHandler implements InputHandler {
    * @param {Manipulation} manipulation DOM manipulation which will be
    * checked by plugins.
    **/
-  checkManipulationByPlugins(manipulation: Manipulation) : { mayExecute: boolean, dispatchedExecutor: ManipulationExecutor | null } {
+  checkManipulationByPlugins(manipulation: Manipulation): { mayExecute: boolean, dispatchedExecutor: ManipulationExecutor | null } {
     // calculate reports submitted by each plugin
-    const reports : Array<{ plugin: TextInputPlugin, allow: boolean, executor: ManipulationExecutor | undefined }> = [];
-    for ( const plugin of this.plugins ) {
-      const guidance = plugin.guidanceForManipulation( manipulation );
-      if( guidance ) {
+    const reports: Array<{ plugin: TextInputPlugin, allow: boolean, executor: ManipulationExecutor | undefined }> = [];
+    for (const plugin of this.plugins) {
+      const guidance = plugin.guidanceForManipulation(manipulation);
+      if (guidance) {
         const allow = guidance.allow === undefined ? true : guidance.allow;
         const executor = guidance.executor;
-        reports.push( { plugin, allow, executor } );
+        reports.push({plugin, allow, executor});
       }
     }
 
     // filter reports based on our interests
-    const reportsNoExecute = reports.filter( ({ allow }) => !allow );
-    const reportsWithExecutor = reports.filter( ({ executor }) => executor );
+    const reportsNoExecute = reports.filter(({allow}) => !allow);
+    const reportsWithExecutor = reports.filter(({executor}) => executor);
 
     // debug reporting
     if (reports.length > 1) {
       console.warn(`Multiple plugins want to alter this manipulation`, reports);
     }
     if (reportsNoExecute.length > 1 && reportsWithExecutor.length > 1) {
-      console.error(`Some plugins don't want execution, others want custom execution`, { reportsNoExecute, reportsWithExecutor });
+      console.error(`Some plugins don't want execution, others want custom execution`, {
+        reportsNoExecute,
+        reportsWithExecutor
+      });
     }
     if (reportsWithExecutor.length > 1) {
       console.warn(`Multiple plugins want to execute this plugin. First entry in the list wins: ${reportsWithExecutor[0].plugin.label}`);
     }
 
-    for( const { plugin } of reportsNoExecute ) {
-      console.debug(`Was not allowed to execute text manipulation by plugin ${plugin.label}`, { manipulation, plugin });
+    for (const {plugin} of reportsNoExecute) {
+      console.debug(`Was not allowed to execute text manipulation by plugin ${plugin.label}`, {manipulation, plugin});
     }
 
     // yield result
