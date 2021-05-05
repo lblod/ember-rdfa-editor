@@ -1,19 +1,12 @@
 import {InputHandler} from './input-handler';
-import {Manipulation, ManipulationExecutor, Editor, ManipulationGuidance} from './manipulation';
-import {warn /*, debug, deprecate*/} from '@ember/debug';
+import {Editor, Manipulation, ManipulationGuidance} from './manipulation';
+import {warn} from '@ember/debug';
 import RdfaTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/text-input-plugin';
 import AnchorTagTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/anchor-tags/text-input-plugin';
 import PlaceHolderTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/text-input-plugin';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {MisbehavedSelectionError, UnsupportedManipulationError} from "@lblod/ember-rdfa-editor/utils/errors";
 
-const NON_BREAKING_SPACE = '\u00A0';
-
-interface ManipulationGuidance {
-  allow: boolean | undefined
-  executor: ManipulationExecutor | undefined
-}
 
 /**
  * Interface for specific plugins.
@@ -39,12 +32,11 @@ export interface TextInputPlugin {
  * @class TextInputHandler
  * @constructor
  */
-export default class TextInputHandler implements InputHandler {
-  rawEditor: LegacyRawEditor;
+export default class TextInputHandler extends InputHandler {
   plugins: Array<TextInputPlugin>;
 
   constructor({rawEditor}: { rawEditor: LegacyRawEditor }) {
-    this.rawEditor = rawEditor;
+    super(rawEditor);
     this.plugins = [
       new RdfaTextInputPlugin(),
       new AnchorTagTextInputPlugin(),
@@ -96,7 +88,7 @@ export default class TextInputHandler implements InputHandler {
   }
 
   handleNativeManipulation(manipulation: Manipulation) {
-    if(manipulation.type === "insertTextIntoRange") {
+    if (manipulation.type === "insertTextIntoRange") {
       this.rawEditor.executeCommand("insert-text", manipulation.text, manipulation.range);
     } else {
       throw new UnsupportedManipulationError(manipulation);
@@ -111,65 +103,6 @@ export default class TextInputHandler implements InputHandler {
     return {type: "insertTextIntoRange", range, text: event.key};
   }
 
-  /**
-   * Checks whether all plugins agree the manipulation is allowed.
-   *
-   * This method asks each plugin individually if the manipulation is
-   * allowed.  If it is not allowed by *any* plugin, it yields a
-   * negative response, otherwise it yields a positive response.
-   *
-   * We expect this method to be extended in the future with more rich
-   * responses from plugins.  Something like "skip" or "merge" to
-   * indicate this manipulation should be lumped together with a
-   * previous manipulation.  Plugins may also want to execute the
-   * changes themselves to ensure correct behaviour.
-   *
-   * @method checkManipulationByPlugins
-   * @private
-   *
-   * @param {Manipulation} manipulation DOM manipulation which will be
-   * checked by plugins.
-   **/
-  checkManipulationByPlugins(manipulation: Manipulation): { mayExecute: boolean, dispatchedExecutor: ManipulationExecutor | null } {
-    // calculate reports submitted by each plugin
-    const reports: Array<{ plugin: TextInputPlugin, allow: boolean, executor: ManipulationExecutor | undefined }> = [];
-    for (const plugin of this.plugins) {
-      const guidance = plugin.guidanceForManipulation(manipulation);
-      if (guidance) {
-        const allow = guidance.allow === undefined ? true : guidance.allow;
-        const executor = guidance.executor;
-        reports.push({plugin, allow, executor});
-      }
-    }
-
-    // filter reports based on our interests
-    const reportsNoExecute = reports.filter(({allow}) => !allow);
-    const reportsWithExecutor = reports.filter(({executor}) => executor);
-
-    // debug reporting
-    if (reports.length > 1) {
-      console.warn(`Multiple plugins want to alter this manipulation`, reports);
-    }
-    if (reportsNoExecute.length > 1 && reportsWithExecutor.length > 1) {
-      console.error(`Some plugins don't want execution, others want custom execution`, {
-        reportsNoExecute,
-        reportsWithExecutor
-      });
-    }
-    if (reportsWithExecutor.length > 1) {
-      console.warn(`Multiple plugins want to execute this plugin. First entry in the list wins: ${reportsWithExecutor[0].plugin.label}`);
-    }
-
-    for (const {plugin} of reportsNoExecute) {
-      console.debug(`Was not allowed to execute text manipulation by plugin ${plugin.label}`, {manipulation, plugin});
-    }
-
-    // yield result
-    return {
-      mayExecute: reportsNoExecute.length === 0,
-      dispatchedExecutor: reportsWithExecutor.length ? reportsWithExecutor[0].executor as ManipulationExecutor : null
-    };
-  }
 
 }
 

@@ -1,18 +1,18 @@
-import { InputHandler } from './input-handler';
-import { Manipulation, ManipulationExecutor, ManipulationGuidance } from './manipulation';
-import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import { isVoidElement, isVisibleElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {InputHandler, InputPlugin} from './input-handler';
+import {Manipulation, ManipulationGuidance} from './manipulation';
+import {warn} from '@ember/debug';
+import {isVisibleElement, isVoidElement} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
 import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
 import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
-import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
+import {ensureValidTextNodeForCaret} from '@lblod/ember-rdfa-editor/editor/utils';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import RawEditor from 'dummy/utils/ce/raw-editor';
 
 /**
  * Interface for specific plugins.
  */
-export interface TabInputPlugin {
+export interface TabInputPlugin extends InputPlugin{
   /**
    * One-liner explaining what the plugin solves.
    */
@@ -33,12 +33,11 @@ export interface TabInputPlugin {
  * @class TabInputHandler
  * @constructor
  */
-export default class TabInputHandler implements InputHandler {
-  rawEditor: LegacyRawEditor;
+export default class TabInputHandler extends InputHandler {
   plugins: Array<TabInputPlugin>;
 
   constructor( {rawEditor} : { rawEditor: LegacyRawEditor} ) {
-    this.rawEditor = rawEditor;
+    super(rawEditor);
     this.plugins = [
       new LumpNodeTabInputPlugin(),
       new ListTabInputPlugin(),
@@ -256,62 +255,4 @@ export default class TabInputHandler implements InputHandler {
     return nextManipulation as Manipulation;
 
   }
-
-  /**
-   * Checks whether all plugins agree the manipulation is allowed.
-   *
-   * This method asks each plugin individually if the manipulation is
-   * allowed.  If it is not allowed by *any* plugin, it yields a
-   * negative response, otherwise it yields a positive response.
-   *
-   * We expect this method to be extended in the future with more rich
-   * responses from plugins.  Something like 'skip' or 'merge' to
-   * indicate this manipulation should be lumped together with a
-   * previous manipulation.  Plugins may also want to execute the
-   * changes themselves to ensure correct behaviour.
-   *
-   * @method checkManipulationByPlugins
-   * @private
-   *
-   * @param {Manipulation} manipulation DOM manipulation which will be
-   * checked by plugins.
-   **/
-  checkManipulationByPlugins(manipulation: Manipulation) : { mayExecute: boolean, dispatchedExecutor: ManipulationExecutor | null } {
-    // calculate reports submitted by each plugin
-    const reports : Array<{ plugin: TabInputPlugin, allow: boolean, executor: ManipulationExecutor | undefined }> = [];
-    for ( const plugin of this.plugins ) {
-      const guidance = plugin.guidanceForManipulation( manipulation, this.rawEditor );
-      if( guidance ) {
-        const allow = guidance.allow === undefined ? true : guidance.allow;
-        const executor = guidance.executor;
-        reports.push( { plugin, allow, executor } );
-      }
-    }
-
-    // filter reports based on our interests
-    const reportsNoExecute = reports.filter( ({ allow }) => !allow );
-    const reportsWithExecutor = reports.filter( ({ executor }) => executor );
-
-    // debug reporting
-    if (reports.length > 1) {
-      console.warn(`Multiple plugins want to alter this manipulation`, reports);
-    }
-    if (reportsNoExecute.length > 1 && reportsWithExecutor.length > 1) {
-      console.error(`Some plugins don't want execution, others want custom execution`, { reportsNoExecute, reportsWithExecutor });
-    }
-    if (reportsWithExecutor.length > 1) {
-      console.warn(`Multiple plugins want to execute this plugin. First entry in the list wins: ${reportsWithExecutor[0].plugin.label}`);
-    }
-
-    for( const { plugin } of reportsNoExecute ) {
-      console.debug(`Was not allowed to execute tab manipulation by plugin ${plugin.label}`, { manipulation, plugin });
-    }
-
-    // yield result
-    return {
-      mayExecute: reportsNoExecute.length === 0,
-      dispatchedExecutor: reportsWithExecutor.length ? reportsWithExecutor[0].executor as ManipulationExecutor : null
-    };
-  }
-
 }

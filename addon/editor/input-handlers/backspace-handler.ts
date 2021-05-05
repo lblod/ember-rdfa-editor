@@ -1,5 +1,5 @@
-import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import {  isVoidElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {warn} from '@ember/debug';
+import {isVoidElement} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ListBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/backspace-plugin';
 import LumpNodeBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/backspace-plugin';
 import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
@@ -9,9 +9,16 @@ import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/
 import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
 import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/backspace-plugin';
 import TableBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/backspace-plugin';
-import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { InputHandler, HandlerResponse } from './input-handler';
-import { paintCycleHappened, editorDebug, stringToVisibleText, hasVisibleChildren, moveCaret, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
+import {Manipulation, VoidElement} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {HandlerResponse, InputHandler, InputPlugin} from './input-handler';
+import {
+  editorDebug,
+  hasVisibleChildren,
+  moveCaret,
+  moveCaretBefore,
+  paintCycleHappened,
+  stringToVisibleText
+} from '@lblod/ember-rdfa-editor/editor/utils';
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 
@@ -179,19 +186,7 @@ interface EditorRootPosition extends BaseThingBeforeCursor {
 /**
  * Interface for specific plugins.
  */
-export interface BackspacePlugin {
-  /**
-   * One-liner explaining what the plugin solves.
-   */
-  label: string;
-
-  /**
-   * Callback executed to see if the plugin allows a certain
-   * manipulation and/or if it intends to handle the manipulation
-   * itself.
-   */
-  guidanceForManipulation: (manipulation: Manipulation, editor: RawEditor) => ManipulationGuidance | null;
-
+export interface BackspacePlugin extends InputPlugin{
   /**
    * Callback to let the plugin indicate whether or not it discovered
    * a change.
@@ -274,16 +269,8 @@ export interface BackspacePlugin {
  * @constructor
  * @extends EmberObject
  */
-export default class BackspaceHandler implements InputHandler {
+export default class BackspaceHandler extends InputHandler {
   isLocked = false;
-  /**
-   * The editor instance on which we can execute changes.
-   *
-   * @property rawEditor
-   * @type RawEditor
-   * @default null
-   */
-  rawEditor: LegacyRawEditor;
 
   /**
    * Array containing all plugins for the backspace handler.
@@ -303,7 +290,7 @@ export default class BackspaceHandler implements InputHandler {
    * @constructor
    */
   constructor({ rawEditor }: { rawEditor: LegacyRawEditor }){
-    this.rawEditor = rawEditor;
+    super(rawEditor);
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [
       new ContentEditableFalsePlugin(),
@@ -907,66 +894,6 @@ export default class BackspaceHandler implements InputHandler {
       throw "backspace handler only understands collapsed ranges";
     }
     throw "no selection found";
-  }
-
-  /**
-   * Checks whether all plugins agree the manipulation is allowed.
-   *
-   * This method asks each plugin individually if the manipulation is
-   * allowed.  If it is not allowed by *any* plugin, it yields a
-   * negative response, otherwise it yields a positive response.
-   *
-   * We expect this method to be extended in the future with more rich
-   * responses from plugins.  Something like "skip" or "merge" to
-   * indicate this manipulation should be lumped together with a
-   * previous manipulation.  Plugins may also want to execute the
-   * changes themselves to ensure correct behaviour.
-   *
-   * @method checkManipulationByPlugins
-   * @private
-   *
-   * @param {Manipulation} manipulation DOM manipulation which will be
-   * checked by plugins.
-   **/
-  checkManipulationByPlugins(manipulation: Manipulation) : { mayExecute: boolean, dispatchedExecutor: ManipulationExecutor | null } {
-
-    // calculate reports submitted by each plugin
-    const reports : Array<{ plugin: BackspacePlugin, allow: boolean, executor: ManipulationExecutor | undefined }> = [];
-    for ( const plugin of this.plugins ) {
-      const guidance = plugin.guidanceForManipulation( manipulation, this.rawEditor );
-      if( guidance ) {
-        const allow = guidance.allow === undefined ? true : guidance.allow;
-        const executor = guidance.executor;
-        reports.push( { plugin, allow, executor } );
-      }
-    }
-
-    // filter reports based on our interests
-    const reportsNoExecute = reports.filter( ({ allow }) => !allow );
-    const reportsWithExecutor = reports.filter( ({ executor }) => executor );
-
-    // debug reporting
-    if (reports.length > 1) {
-      console.warn(`Multiple plugins want to alter this manipulation`, reports);
-    }
-    if (reportsNoExecute.length > 1 && reportsWithExecutor.length > 1) {
-      console.error(`Some plugins don't want execution, others want custom execution`, { reportsNoExecute, reportsWithExecutor });
-    }
-    if (reportsWithExecutor.length > 1) {
-      console.warn(`Multiple plugins want to execute this plugin. First entry in the list wins: ${reportsWithExecutor[0].plugin.label}`);
-    }
-
-    for( const { plugin } of reportsNoExecute ) {
-      editorDebug(`backspace-handler.checkManipulationByPlugins`,
-                  `Was not allowed to execute backspace manipulation by plugin ${plugin.label}`,
-                  { manipulation, plugin });
-    }
-
-    // yield result
-    return {
-      mayExecute: reportsNoExecute.length === 0,
-      dispatchedExecutor: reportsWithExecutor.length ? reportsWithExecutor[0].executor as ManipulationExecutor : null
-    };
   }
 
   /**

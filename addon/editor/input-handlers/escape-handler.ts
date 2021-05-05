@@ -8,11 +8,10 @@ import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor
  * @class EscapeHandler
  * @constructor
  */
-export default class EscapeHandler implements InputHandler {
-  rawEditor: LegacyRawEditor;
+export default class EscapeHandler extends InputHandler {
 
   constructor( {rawEditor} : { rawEditor: LegacyRawEditor} ) {
-    this.rawEditor = rawEditor;
+    super(rawEditor);
   }
 
   isHandlerFor(event: Event) {
