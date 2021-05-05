@@ -98,7 +98,6 @@
     "qunit-dom": "^1.2.0",
     "release-it": "^14.6.1",
     "sass": "^1.26.3",
-    "simple-git": "^1.10.0",
     "svg-symbols": "^1.0.5",
     "typescript": "^3.9.1-rc",
     "yuidoc-ember-theme": "^2.0.1"
