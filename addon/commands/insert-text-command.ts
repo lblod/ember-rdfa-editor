@@ -16,8 +16,10 @@ export default class InsertTextCommand extends Command {
     }
     this.model.change(mutator => {
       const resultRange = mutator.insertText(range, text);
+      const commonAncestor = resultRange.getCommonAncestor();
       resultRange.collapse();
       this.model.selectRange(resultRange);
+      return commonAncestor;
     });
   }
 
