@@ -2,17 +2,15 @@ import {
   TextHandlerManipulation,
   TextInputPlugin
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
-import {
-  ManipulationGuidance,
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {ManipulationGuidance,} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {stringToVisibleText} from '@lblod/ember-rdfa-editor/editor/utils';
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
-function updateDataFlaggedRemove(manipulation: TextHandlerManipulation, editor: LegacyRawEditor) {
+function updateDataFlaggedRemove(manipulation: TextHandlerManipulation, editor: PernetRawEditor) {
   const {range} = manipulation;
   const parent = range.start.parent;
   const textNodeWalker = new ModelTreeWalker<ModelText>({

@@ -1,12 +1,12 @@
 import Component from "@glimmer/component";
 import {action} from "@ember/object";
 import {tracked} from "@glimmer/tracking";
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 interface Args {
-  editor: LegacyRawEditor;
+  editor: PernetRawEditor;
   showTextStyleButtons: boolean;
   showListButtons: boolean;
   showIndentButtons: boolean;

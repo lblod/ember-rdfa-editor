@@ -21,7 +21,7 @@ import {
   stringToVisibleText
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import ListDeletePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/delete-plugin';
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 /**
  * We introduce an abstract reference point to check for visual changes.
@@ -33,7 +33,7 @@ interface VisualChangeReferencePoint {
   storeMeasurePoint(): void;
 
   hasChangedVisually: boolean;
-  editor: LegacyRawEditor;
+  editor: PernetRawEditor;
 
   cleanUp(): void;
 }
@@ -49,9 +49,9 @@ export class MagicSpan implements VisualChangeReferencePoint {
   firstMeasurePoint: Array<DOMRect>;
   secondMeasurePoint: Array<DOMRect>;
   span: Element;
-  editor: LegacyRawEditor;
+  editor: PernetRawEditor;
 
-  constructor(span: Element, editor: LegacyRawEditor) {
+  constructor(span: Element, editor: PernetRawEditor) {
     this.span = span;
     this.span.id = MagicSpan.ID;
     this.editor = editor;
@@ -83,9 +83,9 @@ export class MagicSpan implements VisualChangeReferencePoint {
 class Caret implements VisualChangeReferencePoint {
   firstMeasurePoint: Array<DOMRect>;
   secondMeasurePoint: Array<DOMRect>;
-  editor: LegacyRawEditor;
+  editor: PernetRawEditor;
 
-  constructor(editor: LegacyRawEditor) {
+  constructor(editor: PernetRawEditor) {
     this.editor = editor;
     this.firstMeasurePoint = [];
     this.secondMeasurePoint = [];
@@ -124,9 +124,9 @@ class VisibleTextLength implements VisualChangeReferencePoint {
   firstMeasurePoint: string;
   secondMeasurePoint: string;
   textNode: Text;
-  editor: LegacyRawEditor;
+  editor: PernetRawEditor;
 
-  constructor(textNode: Text, editor: LegacyRawEditor) {
+  constructor(textNode: Text, editor: PernetRawEditor) {
     this.editor = editor;
     this.firstMeasurePoint = '';
     this.secondMeasurePoint = '';
@@ -326,7 +326,7 @@ export type DeleteHandlerManipulation =
  * Interface for specific plugins.
  */
 export interface DeletePlugin extends InputPlugin {
-  guidanceForManipulation: (manipulation: DeleteHandlerManipulation, editor: LegacyRawEditor) => ManipulationGuidance | null;
+  guidanceForManipulation: (manipulation: DeleteHandlerManipulation, editor: PernetRawEditor) => ManipulationGuidance | null;
   /**
    * Callback to let the plugin indicate whether or not it discovered
    * a change.
@@ -368,7 +368,7 @@ export default class DeleteHandler extends InputHandler {
    * @public
    * @constructor
    */
-  constructor({rawEditor}: { rawEditor: LegacyRawEditor }) {
+  constructor({rawEditor}: { rawEditor: PernetRawEditor }) {
     super(rawEditor);
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [

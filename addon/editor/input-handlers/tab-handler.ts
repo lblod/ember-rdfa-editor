@@ -14,8 +14,8 @@ import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-
 import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
 import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
 import {ensureValidTextNodeForCaret} from '@lblod/ember-rdfa-editor/editor/utils';
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import RawEditor from 'dummy/utils/ce/raw-editor';
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 export type TabHandlerManipulation =
   MoveCursorBeforeElementManipulation
@@ -54,7 +54,7 @@ export interface TabInputPlugin extends InputPlugin {
 export default class TabInputHandler extends InputHandler {
   plugins: Array<TabInputPlugin>;
 
-  constructor({rawEditor}: { rawEditor: LegacyRawEditor }) {
+  constructor({rawEditor}: { rawEditor: PernetRawEditor}) {
     super(rawEditor);
     this.plugins = [
       new LumpNodeTabInputPlugin(),

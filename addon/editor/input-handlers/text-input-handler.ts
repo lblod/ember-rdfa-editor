@@ -4,16 +4,17 @@ import {warn} from '@ember/debug';
 import RdfaTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/text-input-plugin';
 import AnchorTagTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/anchor-tags/text-input-plugin';
 import PlaceHolderTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/text-input-plugin';
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import {MisbehavedSelectionError, UnsupportedManipulationError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 
 export type TextHandlerManipulation = InsertTextIntoRange;
+
 /**
  * Interface for specific plugins.
  */
-export interface TextInputPlugin extends InputPlugin{
+export interface TextInputPlugin extends InputPlugin {
   /**
    * Callback executed to see if the plugin allows a certain
    * manipulation and/or if it intends to handle the manipulation
@@ -32,7 +33,7 @@ export interface TextInputPlugin extends InputPlugin{
 export default class TextInputHandler extends InputHandler {
   plugins: Array<TextInputPlugin>;
 
-  constructor({rawEditor}: { rawEditor: LegacyRawEditor }) {
+  constructor({rawEditor}: { rawEditor: PernetRawEditor }) {
     super(rawEditor);
     this.plugins = [
       new RdfaTextInputPlugin(),
@@ -99,7 +100,7 @@ export default class TextInputHandler extends InputHandler {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-    const text = event.key === " "? NON_BREAKING_SPACE : event.key;
+    const text = event.key === " " ? NON_BREAKING_SPACE : event.key;
     return {type: "insertTextIntoRange", range, text};
   }
 

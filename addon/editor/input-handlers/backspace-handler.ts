@@ -29,7 +29,7 @@ import {
   stringToVisibleText
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
@@ -309,7 +309,7 @@ export default class BackspaceHandler extends InputHandler {
    * @public
    * @constructor
    */
-  constructor({rawEditor}: { rawEditor: LegacyRawEditor }) {
+  constructor({rawEditor}: { rawEditor: PernetRawEditor }) {
     super(rawEditor);
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [

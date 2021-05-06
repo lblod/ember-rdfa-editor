@@ -3,8 +3,8 @@ import {
   ManipulationExecutor,
   ManipulationGuidance
 } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import {editorDebug} from "@lblod/ember-rdfa-editor/editor/utils";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 export interface HandlerResponse {
   /**
@@ -28,14 +28,14 @@ export interface InputPlugin {
    * manipulation and/or if it intends to handle the manipulation
    * itself.
    */
-  guidanceForManipulation: (manipulation: Manipulation, editor: LegacyRawEditor) => ManipulationGuidance | null;
+  guidanceForManipulation: (manipulation: Manipulation, editor: PernetRawEditor) => ManipulationGuidance | null;
 }
 
 export abstract class InputHandler {
   plugins: InputPlugin[];
-  protected rawEditor: LegacyRawEditor;
+  protected rawEditor: PernetRawEditor;
 
-  constructor(rawEditor: LegacyRawEditor) {
+  constructor(rawEditor: PernetRawEditor) {
     this.rawEditor = rawEditor;
     this.plugins = [];
   }
@@ -96,7 +96,7 @@ export abstract class InputHandler {
     for (const {plugin} of reportsNoExecute) {
       editorDebug(`${this.constructor.name}.checkManipulationByPlugins`,
         `Was not allowed to execute text manipulation by plugin ${plugin.label}`,
-        { manipulation, plugin });
+        {manipulation, plugin});
     }
 
     // yield result
