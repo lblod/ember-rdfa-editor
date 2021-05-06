@@ -5,7 +5,7 @@ import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-tex
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import {Predicate} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
-import ModelTreeWalker, {FilterResult, toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -142,7 +142,7 @@ export default class ModelRange {
       range: this,
       filter: toFilterSkipFalse(ModelNode.isModelText)
     });
-    const result = new Map();
+    const result: Map<TextAttribute, PropertyState> = new Map<TextAttribute, PropertyState>();
     for (const node of treeWalker) {
       for (const [attr, val] of node.getTextAttributes()) {
         const currentVal = result.get(attr);

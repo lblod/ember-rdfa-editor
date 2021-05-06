@@ -1,5 +1,4 @@
 import { Editor,
-         Manipulation,
          ManipulationGuidance,
          RemoveCharacterManipulation } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {

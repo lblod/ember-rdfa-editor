@@ -1,5 +1,5 @@
 import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { Editor, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { isList,
          isLI,
          getAllLisFromList,
