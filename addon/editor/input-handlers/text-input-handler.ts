@@ -6,6 +6,7 @@ import AnchorTagTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/anc
 import PlaceHolderTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/text-input-plugin';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import {MisbehavedSelectionError, UnsupportedManipulationError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 
 export type TextHandlerManipulation = InsertTextIntoRange;
@@ -84,7 +85,9 @@ export default class TextInputHandler extends InputHandler {
   }
 
   handleNativeManipulation(manipulation: TextHandlerManipulation) {
+    console.log("handling native manip");
     if (manipulation.type === "insertTextIntoRange") {
+      console.log(manipulation);
       this.rawEditor.executeCommand("insert-text", manipulation.text, manipulation.range);
     } else {
       throw new UnsupportedManipulationError(manipulation);
@@ -96,7 +99,8 @@ export default class TextInputHandler extends InputHandler {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-    return {type: "insertTextIntoRange", range, text: event.key};
+    const text = event.key === " "? NON_BREAKING_SPACE : event.key;
+    return {type: "insertTextIntoRange", range, text};
   }
 
 

@@ -1,52 +1,40 @@
-import { TextInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
-import { Editor,
-         Manipulation,
-  ManipulationGuidance,
-  InsertTextIntoTextNodeManipulation
-       } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {
+  TextHandlerManipulation,
+  TextInputPlugin
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
+import {ManipulationGuidance,} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
-function enterTextAfterAnchor(manipulation: InsertTextIntoTextNodeManipulation, editor: Editor) {
-  const anchorTag = manipulation.node.parentElement;
-  const text = manipulation.text;
-  if (anchorTag) {
-    const newNode = document.createTextNode(text);
-    anchorTag.after(newNode);
-    editor.updateRichNode();
-    editor.setCaret(newNode, newNode.length);
-  }
-}
-
-function enterTextBeforeAnchor(manipulation: InsertTextIntoTextNodeManipulation, editor: Editor) {
-  const anchorTag = manipulation.node.parentElement;
-  const text = manipulation.text;
-  if (anchorTag) {
-    const newNode = document.createTextNode(text);
-    anchorTag.before(newNode);
-    editor.updateRichNode();
-    editor.setCaret(newNode, newNode.length);
-  }
-}
 export default class AnchorTagTextInputPlugin implements TextInputPlugin {
   label = 'text input plugin for handling text input in anchors';
 
-  guidanceForManipulation(manipulation: Manipulation) : ManipulationGuidance | null {
-    if (manipulation.type == "insertTextIntoTextNode") {
-      const { node: textNode, position } = manipulation;
-      const parentElement = textNode.parentElement;
-      if (parentElement && parentElement.tagName.toLowerCase() == 'a')
-        if (parentElement.lastChild == textNode && position == textNode.length) {
-          return {
-            allow: true,
-            executor: enterTextAfterAnchor
-          };
+  guidanceForManipulation(manipulation: TextHandlerManipulation): ManipulationGuidance | null {
+    const {range, text} = manipulation;
+    if (manipulation.type === "insertTextIntoRange") {
+      const clonedRange = range.clone();
+      const collapsed = clonedRange.collapsed;
+      const {start, end, start: {parent: startParent}, end: {parent: endParent}} = clonedRange;
+
+      if (startParent.type === "a" && start.parentOffset === 0) {
+        clonedRange.start = ModelPosition.fromBeforeNode(startParent);
+        if (collapsed) {
+          clonedRange.collapse(true);
         }
-      else if (parentElement.firstChild == textNode && position == 0) {
-        return {
-          allow: true,
-          executor: enterTextBeforeAnchor
-        };
       }
+      if (endParent.type === "a" && end.parentOffset === endParent.getMaxOffset()) {
+        clonedRange.end = ModelPosition.fromAfterNode(endParent);
+        if (collapsed) {
+          clonedRange.collapse();
+        }
+      }
+      return {
+        allow: true, executor: (_, rawEditor: PernetRawEditor) => {
+          rawEditor.executeCommand("insert-text", text, clonedRange);
+        }
+      };
     }
     return null;
   }
 }
+

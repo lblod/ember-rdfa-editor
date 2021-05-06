@@ -204,6 +204,16 @@ export default abstract class ModelNode {
   }
 
   /**
+   * Removes an attribute on this node.
+   * Returns true if a removal took place,
+   * false if the key wasn't in the map to start with.
+   * @param key
+   */
+  removeAttribute(key: string): boolean {
+    return this._attributeMap.delete(key);
+  }
+
+  /**
    * Generic no-op default for setting a text attribute. Should be overridden by subclasses
    * that care about textAttributes. Intentionally a no-op and not an abstract method.
    * @param _key

@@ -3,34 +3,44 @@ import {
   TextInputPlugin
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import {
-  Editor,
-  Manipulation,
   ManipulationGuidance,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {stringToVisibleText} from '@lblod/ember-rdfa-editor/editor/utils';
+import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
+import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
-function updateDataFlaggedRemove(manipulation: TextHandlerManipulation, editor: Editor) {
-  const textNode = manipulation.node;
-  const parent = textNode.parentElement;
-  if (parent) {
-    const length = stringToVisibleText(parent.innerText || "").length;
-    if (length <= 2) {
-      parent.setAttribute('data-flagged-remove', 'almost-complete');
-    } else if (length > 2) {
-      parent.removeAttribute('data-flagged-remove');
-    }
+function updateDataFlaggedRemove(manipulation: TextHandlerManipulation, editor: LegacyRawEditor) {
+  const {range} = manipulation;
+  const parent = range.start.parent;
+  const textNodeWalker = new ModelTreeWalker<ModelText>({
+    range: ModelRange.fromInElement(parent, 0, parent.getMaxOffset()),
+    descend: false,
+    filter: toFilterSkipFalse(ModelNode.isModelText)
+  });
+  let innerText = "";
+  for (const node of textNodeWalker) {
+    innerText += node.content;
   }
-  insertTextIntoTextNode(textNode, manipulation.position, manipulation.text);
-  editor.updateRichNode();
-  editor.setCaret(textNode, manipulation.position + 1);
+  const length = stringToVisibleText(innerText || "").length;
+  if (length <= 2) {
+    //TODO this should be done with a command
+    parent.setAttribute('data-flagged-remove', 'almost-complete');
+  } else if (length > 2) {
+    //TODO this should be done with a command
+    parent.removeAttribute('data-flagged-remove');
+  }
+  editor.executeCommand("insert-text", manipulation.text, manipulation.range);
 }
 
 export default class RdfaTextInputPlugin implements TextInputPlugin {
   label = 'text input plugin for handling RDFA specific logic';
 
-  guidanceForManipulation(manipulation: Manipulation): ManipulationGuidance | null {
-    const {type, node} = manipulation;
-    if (type == "insertTextIntoTextNode" && node.parentElement?.getAttribute('data-flagged-remove')) {
+  guidanceForManipulation(manipulation: TextHandlerManipulation): ManipulationGuidance | null {
+    const {type, range} = manipulation;
+    if (type === "insertTextIntoRange" && range.start.parent.getAttribute('data-flagged-remove')) {
       return {
         allow: true,
         executor: updateDataFlaggedRemove

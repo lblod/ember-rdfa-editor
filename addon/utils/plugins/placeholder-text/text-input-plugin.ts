@@ -15,6 +15,7 @@ export default class PlaceholderTextInputPlugin implements TextInputPlugin {
   label = 'text input plugin for handling RDFA specific logic';
 
   guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
+    return null;
     const node = manipulation.node;
     const parentNode = node.parentElement;
     if(parentNode && parentNode.classList.contains('mark-highlight-manual')) {
