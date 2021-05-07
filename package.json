@@ -120,14 +120,8 @@
     "last 1 Edge version"
   ],
   "release-it": {
-    "github": {
-      "release": false
-    },
     "npm": {
       "publish": false
-    },
-    "git": {
-      "requireCleanWorkingDir": true
     }
   }
 }
