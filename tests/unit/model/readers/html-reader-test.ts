@@ -219,7 +219,6 @@ module("Unit | model | readers | html-reader", hooks => {
       parent.setAttribute("vocab", "http://data.europa.eu/eli/ontology#");
       parent.appendChild(child);
       const actual = reader.read(child)[0] as ModelElement;
-      debugger;
       assert.equal(actual.getRdfaAttributes().properties.length, 1);
       assert.equal(actual.getRdfaAttributes().properties[0], "http://data.europa.eu/eli/ontology#title" );
     });
