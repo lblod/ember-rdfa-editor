@@ -189,8 +189,41 @@ module("Unit | model | model-element-test", hooks => {
       assert.strictEqual(right?.firstChild, rightSiblingContent);
     });
   });
+  module("Unit | model | model-element-test | rdfa attributes", () => {
 
+    test("getRdfaPrefixes should include vocab", assert => {
+      // this is matching marawa expectations, not sure if it's actually a good idea
+      const parent = new ModelElement("div");
+      parent.setAttribute("vocab", "http://mu.semte.ch/vocabularies/core/");
+      assert.true(parent.getRdfaPrefixes().has(""));
+      assert.equal(parent.getRdfaPrefixes().get(""), "http://mu.semte.ch/vocabularies/core/" );
+    });
 
+    test("addChild propagates the correct prefixes", assert => {
+      const parent = new ModelElement("div");
+      parent.setAttribute("prefix", "mu: http://mu.semte.ch/vocabularies/core/");
+      const child = new ModelElement("div");
+      parent.addChild(child);
+      assert.equal(child.getRdfaPrefixes().get("mu"), "http://mu.semte.ch/vocabularies/core/");
+    });
+
+    test("addChild respects the childs prefixes", assert => {
+      const parent = new ModelElement("div");
+      parent.setAttribute("prefix", "mu: http://mu.semte.ch/vocabularies/core/");
+      const child = new ModelElement("div");
+      child.setAttribute("prefix", "mu: http://mu.semte.ch/vocabularies/foo/");
+      parent.addChild(child);
+      assert.equal(child.getRdfaPrefixes().get("mu"), "http://mu.semte.ch/vocabularies/foo/");
+    });
+
+    test("childs should inherit vocab from their parent", assert => {
+      const parent = new ModelElement("div");
+      parent.setAttribute("vocab", "http://mu.semte.ch/vocabularies/core/");
+      const child = new ModelElement("div");
+      parent.addChild(child);
+      assert.equal(child.getVocab(), "http://mu.semte.ch/vocabularies/core/");
+    });
+  });
 });
 
 

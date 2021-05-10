@@ -2,14 +2,19 @@ import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import HtmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/html-node-reader";
 import Model from "@lblod/ember-rdfa-editor/model/model";
+import { calculateRdfaPrefixes } from "../util/rdfa-utils";
 
 export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;
   private readonly _model: Model;
+  private _rdfaPrefixes: Map<string, string>;
+  private _vocab?: string;
 
-  constructor(model: Model) {
+  constructor(model: Model, rdfaPrefixes: Map<string,string> = new Map<string,string>(), vocab?: string) {
     this._textAttributes = new Map<string, string>();
     this._model = model;
+    this._rdfaPrefixes = rdfaPrefixes;
+    this._vocab = vocab;
   }
 
   get model() {
@@ -23,6 +28,14 @@ export class HtmlReaderContext {
   get textAttributes() {
     return this._textAttributes;
   }
+
+  get rdfaPrefixes() {
+    return this._rdfaPrefixes;
+  }
+
+  get vocab() {
+    return this._vocab;
+  }
 }
 
 /**
@@ -35,7 +48,8 @@ export default class HtmlReader implements Reader<Node, ModelNode[], void> {
 
   read(from: Node): ModelNode[] {
     from.normalize();
-    const context = new HtmlReaderContext(this.model);
+    const prefixes = calculateRdfaPrefixes(from);
+    const context = new HtmlReaderContext(this.model, prefixes);
     const nodeReader = new HtmlNodeReader();
     return nodeReader.read(from, context);
   }

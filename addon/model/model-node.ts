@@ -7,6 +7,7 @@ export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
 export interface NodeConfig {
   debugInfo: unknown;
+  rdfaPrefixes?: Map<string,string>;
 }
 
 /**
@@ -21,7 +22,6 @@ export default abstract class ModelNode {
   private _nextSibling: ModelNode | null = null;
   private _previousSibling: ModelNode | null = null;
   private _debugInfo: unknown;
-
 
   protected constructor(config?: NodeConfig) {
     this._attributeMap = new Map<string, string>();
@@ -195,7 +195,7 @@ export default abstract class ModelNode {
 
   abstract clone(): ModelNode;
 
-  getAttribute(key: string) {
+  getAttribute(key: string): string | undefined  {
     return this._attributeMap.get(key);
   }
 
