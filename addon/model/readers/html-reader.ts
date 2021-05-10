@@ -8,13 +8,11 @@ export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;
   private readonly _model: Model;
   private _rdfaPrefixes: Map<string, string>;
-  private _vocab?: string;
 
-  constructor(model: Model, rdfaPrefixes: Map<string,string> = new Map<string,string>(), vocab?: string) {
+  constructor(model: Model, rdfaPrefixes: Map<string,string> = new Map<string,string>()) {
     this._textAttributes = new Map<string, string>();
     this._model = model;
     this._rdfaPrefixes = rdfaPrefixes;
-    this._vocab = vocab;
   }
 
   get model() {
@@ -31,10 +29,6 @@ export class HtmlReaderContext {
 
   get rdfaPrefixes() {
     return this._rdfaPrefixes;
-  }
-
-  get vocab() {
-    return this._vocab;
   }
 }
 

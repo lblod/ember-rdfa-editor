@@ -1,8 +1,8 @@
 /**
  * this is used when reading the full editor document to fetch any prefixes defined above the editor
- * NOTE: it adds the active vocab as a prefix with an empty string as key, so the RdfaAttributes class of marawa
- * can use it when calculating rdfa attributes. this is highly reliant on the internals of that class and may
- * stop working at some point.
+ * NOTE: it adds the active vocab as a prefix with an empty string as key, which makes it a bit easier to pass down
+ * convienently it is also  how the RdfaAttributes class of marawa uses it when calculating rdfa attributes.
+ * This is highly reliant on the internals of that class and may stop working at some point.
  */
 export function calculateRdfaPrefixes(start: Node): Map<string,string> {
   const parents : HTMLElement[] = [];
