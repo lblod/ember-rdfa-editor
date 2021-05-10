@@ -40,6 +40,7 @@ import CappedHistory from "@lblod/ember-rdfa-editor/utils/ce/capped-history";
 import RichNode from "@lblod/marawa/rich-node";
 import { tracked } from '@glimmer/tracking';
 import { Editor } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
+import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export interface ContentObserver {
   handleTextInsert: (position: number, text: string, extraInfo: Array<unknown>) => void
@@ -619,11 +620,19 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @public
    */
   createSnapshot() {
-    const document = {
-      content: this.rootNode.innerHTML,
-      currentSelection: this.currentSelection
-    };
-    this.history.push(document);
+    try {
+      const document = {
+        content: this.rootNode.innerHTML,
+        currentSelection: this.currentSelection
+      };
+      this.history.push(document);
+    } catch (e) {
+      if (e instanceof ModelError) {
+        console.info("Failed to create snapshot because of uninitialized model. This is probably fine.");
+      } else {
+        throw e;
+      }
+    }
   }
 
   /**
