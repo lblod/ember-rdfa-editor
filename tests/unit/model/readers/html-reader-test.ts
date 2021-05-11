@@ -176,7 +176,6 @@ module("Unit | model | readers | html-reader", hooks => {
 
     assert.true(actual[0].sameAs(expected));
     assert.strictEqual((((actual[0].root as ModelTable)
-      // the header row is also counted
       .getCell(0, 0) as ModelElement)
       .firstChild as ModelText)
       .content, "cell00");
