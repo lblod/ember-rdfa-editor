@@ -5,7 +5,6 @@ import RdfaTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/tex
 import AnchorTagTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/anchor-tags/text-input-plugin';
 import PlaceHolderTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/text-input-plugin';
 import {MisbehavedSelectionError, UnsupportedManipulationError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 
