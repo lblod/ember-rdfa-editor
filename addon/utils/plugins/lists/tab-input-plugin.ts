@@ -1,5 +1,5 @@
-import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
+import { Editor, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { isList,
          isLI,
          getAllLisFromList,
@@ -24,7 +24,7 @@ import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/uti
 export default class ListTabInputPlugin implements TabInputPlugin {
   label = 'Tap input plugin for handling List interaction';
 
-  guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
+  guidanceForManipulation(manipulation : TabHandlerManipulation) : ManipulationGuidance | null {
     if( manipulation.type == 'moveCursorToStartOfElement' ){
       if(isList(manipulation.node)){
         return { allow: true, executor: this.jumpIntoFirstLi };
@@ -90,7 +90,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /**
    * Sets the cursor in the first <li></li>. If list is empty, creates an <li></li>
    */
-  jumpIntoFirstLi = (manipulation: Manipulation, editor: Editor): void => {
+  jumpIntoFirstLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let firstLi;
 
@@ -108,7 +108,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /**
    * Sets the cursor in the last <li></li>. If list is empty, creates an <li></li>
    */
-  jumpIntoLastLi = (manipulation: Manipulation, editor: Editor): void => {
+  jumpIntoLastLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let lastLi;
 
@@ -128,7 +128,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Note: depends on list helpers from a long time ago.
    * TODO: Indent means the same as nested list, perhaps rename the action
    */
-  indentLiContent = (_: Manipulation, editor: Editor): void => {
+  indentLiContent = (_: TabHandlerManipulation, editor: Editor): void => {
     indentAction(editor); //TODO: this is legacy, this should be revisited.
   };
 
@@ -137,14 +137,14 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Note: depends on list helpers from a long time ago.
    * TODO: Indent means the same as merge nested list, perhaps rename the action
    */
-  unindentLiContent = (_: Manipulation, editor: Editor): void => {
+  unindentLiContent = (_: TabHandlerManipulation, editor: Editor): void => {
     unindentAction(editor); //TODO: this is legacy, this should be revisited.
   };
 
   /*
    * Jumps to next List item. Assumes there is one and current LI is not the last
    */
-  jumpToNextLi = (manipulation: Manipulation, editor: Editor): void => {
+  jumpToNextLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     //Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLLIElement;
     const listItems = siblingLis(listItem);
@@ -155,7 +155,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /*
    * Jumps to next List item. Assumes there is one and current LI is not the first
    */
-  jumpToPreviousLi = (manipulation: Manipulation, editor: Editor): void => {
+  jumpToPreviousLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     //Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLLIElement;
     const listItems = siblingLis(listItem);
@@ -166,7 +166,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /*
    * Jumps outside of list.
    */
-  jumpOutOfList = (manipulation: Manipulation, editor: Editor): void => {
+  jumpOutOfList = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     const element = manipulation.node.parentElement; //this is the list
     if(!element) throw 'Tab-input-handler expected list to be attached to DOM';
 
@@ -187,7 +187,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /*
    * Jumps outside of at the start
    */
-  jumpOutOfListToStart = (manipulation: Manipulation, editor: Editor): void => {
+  jumpOutOfListToStart = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     const element = manipulation.node.parentElement; //this is the list
     if(!element) throw 'Tab-input-handler expected list to be attached to DOM';
 

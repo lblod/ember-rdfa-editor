@@ -1,3 +1,5 @@
+import {Manipulation} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
+
 abstract class CustomError extends Error {
   constructor(message?: string) {
     super(message);
@@ -104,6 +106,11 @@ export class ParseError extends CustomError {}
  */
 export class IllegalArgumentError extends CustomError {}
 
+export class UnsupportedManipulationError extends CustomError {
+  constructor(manipulation: Manipulation) {
+    super(`Manipulation with type ${manipulation.type} not supported here.`);
+  }
+}
 
 /**
  * Thrown when an object or map does not have the expected key

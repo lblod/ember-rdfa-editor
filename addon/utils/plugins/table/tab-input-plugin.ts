@@ -1,6 +1,5 @@
-import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
+import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import {
-  Manipulation,
   ManipulationGuidance
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import RawEditor from 'dummy/utils/ce/raw-editor';
@@ -20,7 +19,7 @@ import PernetRawEditor from '../../ce/pernet-raw-editor';
 export default class TableTabInputPlugin implements TabInputPlugin {
   label = 'backspace plugin for handling table nodes';
 
-  guidanceForManipulation(manipulation: Manipulation, editor: RawEditor) : ManipulationGuidance | null {
+  guidanceForManipulation(manipulation: TabHandlerManipulation, editor: RawEditor) : ManipulationGuidance | null {
     const selection = editor.selection;
     if(selection.inTableState === PropertyState.enabled) {
       return {
@@ -51,7 +50,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     return tagName(element) === 'table';
   }
 
-  static selectFirstCell(manipulation : Manipulation, editor: PernetRawEditor) {
+  static selectFirstCell(manipulation : TabHandlerManipulation, editor: PernetRawEditor) {
     const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
     const firstCell = table.getCell(0,0);
     if(firstCell) {
@@ -60,7 +59,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
   }
 
-  static selectLastCell(manipulation : Manipulation, editor: PernetRawEditor) {
+  static selectLastCell(manipulation : TabHandlerManipulation, editor: PernetRawEditor) {
     const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
     const {x, y} = table.getDimensions();
     const lastCell = table.getCell(x-1,y-1);
@@ -70,7 +69,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
   }
 
-  static tabHandler(manipulation : Manipulation, editor: PernetRawEditor) {
+  static tabHandler(manipulation : TabHandlerManipulation, editor: PernetRawEditor) {
     let table;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);

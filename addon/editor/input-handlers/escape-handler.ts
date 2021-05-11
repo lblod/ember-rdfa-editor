@@ -1,5 +1,5 @@
 import { InputHandler } from './input-handler';
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 /**
  * Escape Handler, an event handler to handle escape
@@ -8,11 +8,10 @@ import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor
  * @class EscapeHandler
  * @constructor
  */
-export default class EscapeHandler implements InputHandler {
-  rawEditor: LegacyRawEditor;
+export default class EscapeHandler extends InputHandler {
 
-  constructor( {rawEditor} : { rawEditor: LegacyRawEditor} ) {
-    this.rawEditor = rawEditor;
+  constructor( {rawEditor} : { rawEditor: PernetRawEditor} ) {
+    super(rawEditor);
   }
 
   isHandlerFor(event: Event) {

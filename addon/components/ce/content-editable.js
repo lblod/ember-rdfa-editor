@@ -19,9 +19,9 @@ import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-nod
 import HTMLInputParser from '../../utils/html-input-parser';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import { createElementsFromHTML } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
+import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
  * It provides handlers for input events, a component to display a contenteditable element and an api for interaction with the document and its internal document representation.

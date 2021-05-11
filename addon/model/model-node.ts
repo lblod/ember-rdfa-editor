@@ -204,6 +204,16 @@ export default abstract class ModelNode {
   }
 
   /**
+   * Removes an attribute on this node.
+   * Returns true if a removal took place,
+   * false if the key wasn't in the map to start with.
+   * @param key
+   */
+  removeAttribute(key: string): boolean {
+    return this._attributeMap.delete(key);
+  }
+
+  /**
    * Generic no-op default for setting a text attribute. Should be overridden by subclasses
    * that care about textAttributes. Intentionally a no-op and not an abstract method.
    * @param _key
@@ -298,6 +308,14 @@ export default abstract class ModelNode {
    * @param strict
    */
   abstract sameAs(other: ModelNode, strict?: boolean): boolean;
+
+  /**
+   * True if node can be merged with other
+   * This means we are ok with this node being replaced by a shallowclone of either this or other,
+   * with the children of this and other appended to the clone.
+   * @param other
+   */
+  abstract isMergeable(other: ModelNode): boolean;
 }
 
 

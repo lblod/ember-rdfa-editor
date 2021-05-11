@@ -40,7 +40,7 @@ module("Unit | model | model-position", () => {
 
     test("returns correct common ancestor 2", assert => {
       // language=XML
-      const {elements:{common},  textNodes:{rangeStart, rangeEnd}} = vdom`
+      const {elements: {common}, textNodes: {rangeStart, rangeEnd}} = vdom`
         <modelRoot>
           <div __id="common">
             <text __id="rangeStart">abcd</text>
@@ -58,7 +58,7 @@ module("Unit | model | model-position", () => {
 
     test("returns correct common ancestor for collapsed range at end", assert => {
       // language=XML
-      const {elements:{common}} = vdom`
+      const {elements: {common}} = vdom`
         <modelRoot>
           <div __id="common">
             <text>abcd</text>
@@ -228,6 +228,108 @@ module("Unit | model | model-position", () => {
       assert.deepEqual(rslt, [span0, span1]);
     });
 
+
+  });
+  module("Unit | model | model-position | charactersBefore", () => {
+    test("gives empty string when no characters before", assert => {
+      // language=XML
+      const {textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 0);
+      const result = position.charactersBefore(3);
+      assert.strictEqual(result, '');
+    });
+    test("gives empty string when amount 0", assert => {
+      // language=XML
+      const {textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 3);
+      const result = position.charactersBefore(0);
+      assert.strictEqual(result, '');
+    });
+    test("gives empty string when in front of element", assert => {
+      // language=XML
+      const {textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text>abc</text>
+          <span/>
+          <text __id="textNode">def</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 0);
+      const result = position.charactersBefore(0);
+      assert.strictEqual(result, '');
+    });
+    test("gives desired characters", assert => {
+      // language=XML
+      const {textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 3);
+      const result = position.charactersBefore(2);
+      assert.strictEqual(result, 'bc');
+    });
+    test("gives desired characters when amount too big", assert => {
+      // language=XML
+      const {textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 3);
+      const result = position.charactersBefore(20);
+      assert.strictEqual(result, 'abc');
+    });
+
+
+  });
+  module("Unit | model | model-position | shiftedBy", () => {
+    test("gives equivalent pos when already at start and moving left", assert => {
+      // language=XML
+      const {textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const pos = ModelPosition.fromInTextNode(textNode, 0);
+      const result = pos.shiftedBy(-10);
+      assert.true(result.sameAs(pos));
+    });
+    test("gives equivalent pos when already at end and moving right", assert => {
+      // language=XML
+      const {textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const pos = ModelPosition.fromInTextNode(textNode, 3);
+      const result = pos.shiftedBy(10);
+      assert.true(result.sameAs(pos));
+    });
+    test("shifts by amount, counting elements as 1", assert => {
+      // language=XML
+      const {elements: {parent}} = vdom`
+        <modelRoot __id="parent">
+          <text>abc</text>
+          <span>
+            <text>will be skipped over</text>
+          </span>
+          <text>def</text>
+        </modelRoot>
+      `;
+      const pos = ModelPosition.fromInElement(parent, 4);
+      const expected = ModelPosition.fromInElement(parent, 3);
+      const result = pos.shiftedBy(-1);
+      assert.true(result.sameAs(expected));
+    });
 
   });
 });

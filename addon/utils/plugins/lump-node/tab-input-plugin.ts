@@ -1,4 +1,4 @@
-import { TabInputPlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
+import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
@@ -16,12 +16,12 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
       || manipulation.type  === 'moveCursorToEndOfElement';
   }
 
-  guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
+  guidanceForManipulation(manipulation : TabHandlerManipulation) : ManipulationGuidance | null {
     if( !this.isSupportedManipulation(manipulation) ){
       return null;
     }
 
-    const element = manipulation.node as HTMLElement;
+    const element = manipulation.node;
     const rootNode = element.getRootNode(); //Assuming here that node is attached.
     const isElementInLumpNode = isInLumpNode(element, rootNode);
 
@@ -41,7 +41,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     return null;
   }
 
-  jumpOverLumpNode = (manipulation: Manipulation, editor: Editor): void => {
+  jumpOverLumpNode = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
     let textNode;
     if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
@@ -56,7 +56,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     editor.setCaret(textNode, 0);
   };
 
-  jumpOverLumpNodeBackwards = (manipulation: Manipulation, editor: Editor ): void => {
+  jumpOverLumpNodeBackwards = (manipulation: TabHandlerManipulation, editor: Editor ): void => {
     const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
     let textNode;
     if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){

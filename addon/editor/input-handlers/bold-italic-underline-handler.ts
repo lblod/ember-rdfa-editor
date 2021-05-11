@@ -1,7 +1,7 @@
-import { InputHandler } from './input-handler';
-import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
+import {InputHandler} from './input-handler';
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 
 /**
@@ -11,16 +11,15 @@ import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
  * @class BoldItalicUnderlineHandler
  * @constructor
  */
-export default class BoldItalicUnderlineHandler implements InputHandler {
+export default class BoldItalicUnderlineHandler extends InputHandler {
 
-  rawEditor: RawEditor;
   isBold = false;
   isItalic = false;
   isUnderline = false;
   isStrikethrough = false;
 
-  constructor({ rawEditor }: { rawEditor: RawEditor }) {
-    this.rawEditor = rawEditor;
+  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
+    super(rawEditor);
     document.addEventListener("richSelectionUpdated", this.updateProperties.bind(this));
   }
 

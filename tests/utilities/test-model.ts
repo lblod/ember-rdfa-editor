@@ -13,6 +13,7 @@ export default class TestModel extends Model{
     } else {
       throw new ModelError("Non-element, non-text nodes not supported here");
     }
+    this.write();
   }
   disableSelectionWriting() {
     this.shouldWriteSelection = false;
