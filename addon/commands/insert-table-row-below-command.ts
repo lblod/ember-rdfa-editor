@@ -35,7 +35,7 @@ export default class InsertTableRowBelowCommand extends Command {
     }
 
     const position = ModelTable.getCellIndex(cell);
-    table.addRow(position.y);
+    table.addRow(position.y + 1);
 
     this.model.write();
   }
