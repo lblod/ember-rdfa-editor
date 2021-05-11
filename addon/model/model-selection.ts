@@ -247,7 +247,17 @@ export default class ModelSelection {
     } else {
       return PropertyState.unknown;
     }
+  }
 
+  get inTableHeaderState(): PropertyState {
+    if (ModelSelection.isWellBehaved(this)) {
+      const range = this.lastRange;
+      const predicate = nodeIsElementOfType("th");
+      const result = range.containsNodeWhere(predicate) || range.hasCommonAncestorWhere(predicate);
+      return result ? PropertyState.enabled : PropertyState.disabled;
+    } else {
+      return PropertyState.unknown;
+    }
   }
 
   get rdfaSelection() {
