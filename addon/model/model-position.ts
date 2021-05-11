@@ -215,29 +215,29 @@ export default class ModelPosition {
     let left: ModelElement | null = this.parent;
     let right: ModelElement | null = other.parent;
 
-    if(lengthDiff > 0) {
+    if (lengthDiff > 0) {
       // left position is lower than right position
-      for(let i = 0; i < lengthDiff; i++) {
-        if(!left.parent) {
+      for (let i = 0; i < lengthDiff; i++) {
+        if (!left.parent) {
           throw new PositionError("impossible position");
         }
         left = left.parent;
       }
     } else if (lengthDiff < 0) {
       // right position is lower than left position
-      for(let i = 0; i < Math.abs(lengthDiff); i++) {
-        if(!right.parent) {
+      for (let i = 0; i < Math.abs(lengthDiff); i++) {
+        if (!right.parent) {
           throw new PositionError("impossible position");
         }
         right = right.parent;
       }
     }
 
-    while(left && right && left !== right) {
+    while (left && right && left !== right) {
       left = left.parent;
       right = right.parent;
     }
-    if(left) {
+    if (left) {
       return left;
     } else {
       return this.root;
@@ -304,6 +304,61 @@ export default class ModelPosition {
    */
   nodeBefore(): ModelNode | null {
     return this.parent.childAtOffset(this.parentOffset - 1) || null;
+  }
+
+  /**
+   * Collects the characters before the position until either one of the following happens:
+   * - an element is encountered
+   * - we have reached the start of the parent element of the position
+   * - we have collected the desired amount of characters
+   *
+   * as such, the length of the returned string can vary between 0 (no characters found)
+   * and amount
+   * @param amount
+   * @return string the collected characters, in display order
+   */
+  charactersBefore(amount: number): string {
+    let cur = this.nodeBefore();
+    let counter = 0;
+    const result = [];
+
+    while (ModelNode.isModelText(cur) && counter < amount) {
+      const amountToCollect = amount - counter;
+      const length = cur.content.length;
+      for (let i = 0; i < amountToCollect; i++) {
+        result.push(cur.content.charAt(length - 1 - i));
+        counter++;
+      }
+      cur = cur.previousSibling;
+    }
+    result.reverse();
+    return result.join("");
+  }
+
+  /**
+   * Return a new position which is this position shifted by a certain offset amount
+   * The path of the new position will be identical except for the last element
+   *
+   * In other words, the parent of the new position will be the same parent, with
+   * the parentOffset the sum of this position's parentOffset and amount (this
+   * means negative amounts will shift towards the left), but bounded
+   * by 0 and the parent's maxOffset.
+   *
+   * You can think of it as moving the cursor by amount characters,
+   * while never going outside of this positions parent, and counting elements
+   * as 1 character.
+   * @param amount
+   */
+  shiftedBy(amount: number): ModelPosition {
+    let newOffset = this.parentOffset + amount;
+    const maxOffset = this.parent.getMaxOffset();
+    if (newOffset < 0) {
+      newOffset = 0;
+    }
+    if(newOffset > maxOffset) {
+      newOffset = maxOffset;
+    }
+    return ModelPosition.fromInElement(this.parent, newOffset);
   }
 
   //this returns true if the position is inside a text node (not right before not right after)

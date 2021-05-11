@@ -86,7 +86,6 @@ export default class TextInputHandler extends InputHandler {
   }
 
   handleNativeManipulation(manipulation: TextHandlerManipulation) {
-    console.log("handling native manip");
     if (manipulation.type === "insertTextIntoRange") {
       console.log(manipulation);
       this.rawEditor.executeCommand("insert-text", manipulation.text, manipulation.range);
@@ -100,8 +99,7 @@ export default class TextInputHandler extends InputHandler {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-    const text = event.key === " " ? NON_BREAKING_SPACE : event.key;
-    return {type: "insertTextIntoRange", range, text};
+    return {type: "insertTextIntoRange", range, text: event.key};
   }
 
 
