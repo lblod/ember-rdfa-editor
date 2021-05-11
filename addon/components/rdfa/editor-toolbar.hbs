@@ -92,11 +92,9 @@
             <button role="menuitem" type="button" {{on "click" this.insertRowBelow}}>
               {{t "ember-rdfa-editor.add-row-below"}}
             </button>
-            {{#unless this.isInTableHeader}}
-              <button role="menuitem" type="button" {{on "click" this.insertRowAbove}}>
-                {{t "ember-rdfa-editor.add-row-above"}}
-              </button>
-            {{/unless}}
+            <button role="menuitem" type="button" {{on "click" this.insertRowAbove}}>
+              {{t "ember-rdfa-editor.add-row-above"}}
+            </button>
             <button role="menuitem" type="button" {{on "click" this.insertColumnAfter}}>
               {{t "ember-rdfa-editor.add-column-after"}}
             </button>
