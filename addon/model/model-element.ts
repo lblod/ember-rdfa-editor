@@ -344,13 +344,8 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
   }
 
-  getVocab(): string | undefined {
-    if (this.getRdfaPrefixes().has("")) {
-      return this.getRdfaPrefixes().get("");
-    }
-    else {
-      return;
-    }
+  getVocab(): string | null {
+    return this.getRdfaPrefixes().get("") ?? null;
   }
 
   getRdfaPrefixes(): Map<string,string> {
