@@ -7,3 +7,4 @@ export const NON_BREAKING_SPACE = '\u00A0';
 export const SPACE = " ";
 export const INVISIBLE_SPACE='\u200B';
 export const HIGHLIGHT_ATTRIBUTE='data-editor-highlight';
+export const PLACEHOLDER_CLASS = "mark-highlight-manual";
