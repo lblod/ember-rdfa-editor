@@ -87,7 +87,7 @@
           </button>
         {{/if}}
       {{/if}}
-        <Rdfa::ToolbarDropdown @dropdownButtonLabel="Table">
+        <Rdfa::ToolbarDropdown @dropdownButtonLabel="Table" @editor={{@editor}}>
           {{#if this.isInTable}}
             <button role="menuitem" type="button" {{on "click" this.insertRowBelow}}>
               {{t "ember-rdfa-editor.add-row-below"}}
