@@ -3,11 +3,13 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import AttributeOperation from "@lblod/ember-rdfa-editor/model/operations/attribute-operation";
 import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-operation";
 import MoveOperation from "@lblod/ember-rdfa-editor/model/operations/move-operation";
-import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import SplitOperation from "@lblod/ember-rdfa-editor/model/operations/split-operation";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
 /**
  * {@link ModelMutator} implementation where all operations immediately
@@ -30,6 +32,47 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
 
   insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange {
     return this.insertNodes(new ModelRange(position, position), ...nodes);
+  }
+
+  insertText(range: ModelRange, text: string): ModelRange {
+    const textNode = new ModelText(text);
+    for (const [attr, val] of range.getTextAttributes().entries()) {
+      if(val === PropertyState.enabled) {
+        textNode.setTextAttribute(attr, true);
+      }
+    }
+    const op = new InsertOperation(range, textNode);
+
+    const resultRange = op.execute();
+    const start = ModelPosition.fromBeforeNode(textNode.previousSibling || textNode);
+    const end = ModelPosition.fromAfterNode(textNode.nextSibling || textNode);
+    const mergeRange = new ModelRange(start, end);
+    this.mergeTextNodesInRange(mergeRange);
+
+    return resultRange;
+  }
+
+  private mergeTextNodesInRange(range: ModelRange) {
+    if (!range.isConfined()) {
+      return;
+    }
+    if(range.collapsed) {
+      return;
+    }
+    const walker = new ModelTreeWalker({range, descend: false});
+
+    const nodes: ModelNode[] = [];
+    for (const node of walker) {
+      const last = nodes[nodes.length - 1];
+      if(ModelNode.isModelText(last) && ModelNode.isModelText(node) && last.isMergeable(node)) {
+        last.content += node.content;
+      } else {
+        nodes.push(node.clone());
+      }
+    }
+
+    const op = new InsertOperation(range, ...nodes);
+    op.execute();
   }
 
   /**

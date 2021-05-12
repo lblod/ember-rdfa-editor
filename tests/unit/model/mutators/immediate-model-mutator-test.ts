@@ -449,4 +449,71 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
       assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [2])));
     });
   });
+  module("Unit | model | mutators | immediate-model-mutator-test | insertText", () => {
+    test("insert text into root", assert => {
+      // language=XML
+      const {root: initial} = vdom`
+        <modelRoot/>
+      `;
+
+      // language=XML
+      const {root: expected} = vdom`
+        <modelRoot>
+          <text>abc</text>
+        </modelRoot>
+      `;
+
+      const mut = new ImmediateModelMutator();
+      const range = ModelRange.fromInElement(initial as ModelElement, 0, 0);
+      const resultRange = mut.insertText(range, "abc");
+      assert.true(initial.sameAs(expected));
+      assert.true(resultRange.sameAs(ModelRange.fromInElement(initial as ModelElement, 3, 3)));
+
+    });
+
+    test("insert empty text into root", assert => {
+      // language=XML
+      const {root: initial} = vdom`
+        <modelRoot/>
+      `;
+
+      // language=XML
+      const {root: expected} = vdom`
+        <modelRoot>
+          <text/>
+        </modelRoot>
+      `;
+
+      const mut = new ImmediateModelMutator();
+      const range = ModelRange.fromInElement(initial as ModelElement, 0, 0);
+      const resultRange = mut.insertText(range, "");
+      assert.true(initial.sameAs(expected));
+      assert.true(resultRange.sameAs(ModelRange.fromInElement(initial as ModelElement, 0, 0)));
+
+    });
+
+    test("insert text into text node merges", assert => {
+      // language=XML
+      const {root: initial} = vdom`
+        <modelRoot>
+          <text>abef</text>
+        </modelRoot>
+      `;
+
+      // language=XML
+      const {root: expected} = vdom`
+        <modelRoot>
+          <text>abcdef</text>
+        </modelRoot>
+      `;
+
+      const mut = new ImmediateModelMutator();
+      const range = ModelRange.fromInElement(initial as ModelElement, 2, 2);
+      const resultRange = mut.insertText(range, "cd");
+      console.log(initial.toXml());
+      assert.true(initial.sameAs(expected));
+      assert.true(resultRange.sameAs(ModelRange.fromInElement(initial as ModelElement, 4, 4)));
+    });
+
+  });
 });

@@ -1,12 +1,14 @@
 import {
   MoveCursorToEndOfElementManipulation,
   ManipulationGuidance,
-  Manipulation,
   Editor,
   RemoveEmptyElementManipulation,
   RemoveElementWithChildrenThatArentVisible,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { BackspacePlugin } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import {
+  BackspaceHandlerManipulation,
+  BackspacePlugin
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { runInDebug } from '@ember/debug';
 import { findLastLi, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
@@ -27,7 +29,7 @@ type ElementRemovalManipulation = RemoveEmptyElementManipulation | RemoveElement
 export default class ListBackspacePlugin implements BackspacePlugin {
   label = 'backspace plugin for handling lists';
 
-  guidanceForManipulation(manipulation: Manipulation): ManipulationGuidance | null {
+  guidanceForManipulation(manipulation: BackspaceHandlerManipulation): ManipulationGuidance | null {
     if (manipulation.type == "removeEmptyElement" || manipulation.type == "removeElementWithChildrenThatArentVisible") {
       /*
        * removing an (empty-ish) list item
@@ -141,7 +143,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will remove both list and list item, but keep the contents of the list item. the cursor will be positioned before the first child node of the list item.
    * @method removeListItemAndListButKeepContent
    */
-  removeListItemAndListButKeepContent = (manipulation: Manipulation, editor: Editor) => {
+  removeListItemAndListButKeepContent = (manipulation: BackspaceHandlerManipulation, editor: Editor) => {
     let element;
 
     if(manipulation.type == 'moveCursorBeforeElement'){
@@ -169,7 +171,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will move the contents of the first list item before the list and remove the list item. the cursor will be positioned before the first child node of the list item.
    * @method removeListItemAndMoveContentBeforeList
    */
-  removeListItemAndMoveContentBeforeList = (manipulation: Manipulation, editor: Editor) => {
+  removeListItemAndMoveContentBeforeList = (manipulation: BackspaceHandlerManipulation, editor: Editor) => {
     let element;
 
     if(manipulation.type == 'moveCursorBeforeElement'){
@@ -197,7 +199,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * The executor will move the content of the list item to its previous sibling and position the cursor before the first child node of the list item (at the end of the original content of the previous sibling). the list item is removed.
    * @method mergeWithPreviousLi
    */
-  mergeWithPreviousLi = (manipulation: Manipulation, editor: Editor): void => {
+  mergeWithPreviousLi = (manipulation: BackspaceHandlerManipulation, editor: Editor): void => {
     let element;
 
     if(manipulation.type == 'moveCursorBeforeElement'){
@@ -293,7 +295,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    * currently signals a change when an li has been removed during a "moveCursorBeforeElement" , "removeEmptyElement" or "removeElementWithChildrenThatArentVisible" manipulation.
    * @method detectChange
    */
-  detectChange(manipulation: Manipulation): boolean {
+  detectChange(manipulation: BackspaceHandlerManipulation): boolean {
     if (["removeEmptyElement", "moveCursorBeforeElement", "removeElementWithChildrenThatArentVisible"].includes(manipulation.type)) {
       const element = manipulation.node as Element;
       if (tagName(element) == "li") {

@@ -1,9 +1,9 @@
 import {
+  DeleteHandlerManipulation,
   DeletePlugin,
   MagicSpan,
 } from "@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler";
 import {
-  Manipulation,
   ManipulationGuidance,
   RemoveEmptyElementManipulation,
   RemoveElementWithChildrenThatArentVisible,
@@ -28,7 +28,7 @@ import {
   moveCaretToEndOfNode,
 } from "@lblod/ember-rdfa-editor/editor/utils";
 import { isInList } from "../../ce/list-helpers";
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function debug(message: string, object: unknown = null): void {
@@ -47,7 +47,7 @@ export default class ListDeletePlugin implements DeletePlugin {
   hasChanged = false;
 
   guidanceForManipulation(
-    manipulation: Manipulation
+    manipulation: DeleteHandlerManipulation
   ): ManipulationGuidance | null {
     this.hasChanged = false;
     if (manipulation.type === "removeBoundaryBackwards") {
@@ -73,7 +73,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (this.isAnyListNode(manipulation.node)) {
       const dispatch = (
         manipulation: RemoveBoundaryBackwards,
-        editor: LegacyRawEditor
+        editor: PernetRawEditor
       ) => {
         this.mergeBackwards(manipulation.node, editor);
       };
@@ -87,7 +87,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (this.isAnyListNode(manipulation.node)) {
       const dispatch = (
         manipulation: RemoveBoundaryForwards,
-        editor: LegacyRawEditor
+        editor: PernetRawEditor
       ) => {
         this.mergeForwards(manipulation.node, editor);
       };
@@ -107,7 +107,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (this.isAnyListNode(manipulation.node)) {
       const dispatcher = (
         manipulation: RemoveEmptyElementManipulation,
-        editor: LegacyRawEditor
+        editor: PernetRawEditor
       ) => {
         this.mergeForwards(manipulation.node, editor);
       };
@@ -121,7 +121,7 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @param node the node which will be merged into the previous one
    * @param editor The editor instance
    */
-  private mergeBackwards(node: Node, editor: LegacyRawEditor) {
+  private mergeBackwards(node: Node, editor: PernetRawEditor) {
     const baseNode = this.findNodeBefore(node, editor.rootNode);
     const nodeToMerge = this.getDeepestFirstDescendant(node);
 
@@ -148,7 +148,7 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @param node The node to merge into
    * @param editor The editor instance
    */
-  private mergeForwards(node: Node, editor: LegacyRawEditor) {
+  private mergeForwards(node: Node, editor: PernetRawEditor) {
 
     const mergeNode = this.getDeepestLastDescendant(node);
     let cursorPosition = 0;

@@ -1,5 +1,5 @@
-import { InputHandler } from './input-handler';
-import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
+import {InputHandler} from './input-handler';
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 
 /**
@@ -9,12 +9,11 @@ import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
  * @class EnterHandler
  * @constructor
  */
-export default class EnterHandler implements InputHandler {
+export default class EnterHandler extends InputHandler {
 
-  rawEditor: RawEditor;
 
-  constructor({ rawEditor }: { rawEditor: RawEditor }) {
-    this.rawEditor = rawEditor;
+  constructor({ rawEditor }: { rawEditor: PernetRawEditor}) {
+    super(rawEditor);
   }
 
   isHandlerFor(event: Event) {

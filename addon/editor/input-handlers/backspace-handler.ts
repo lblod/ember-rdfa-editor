@@ -1,5 +1,5 @@
-import { warn /*, debug, deprecate*/ } from '@ember/debug';
-import {  isVoidElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {warn} from '@ember/debug';
+import {isVoidElement} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ListBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/backspace-plugin';
 import LumpNodeBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/backspace-plugin';
 import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
@@ -9,11 +9,27 @@ import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/
 import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
 import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/backspace-plugin';
 import TableBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/backspace-plugin';
-import { Manipulation, ManipulationExecutor, ManipulationGuidance, VoidElement } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { InputHandler, HandlerResponse } from './input-handler';
-import { paintCycleHappened, editorDebug, stringToVisibleText, hasVisibleChildren, moveCaret, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
+import {
+  KeepCursorAtStartManipulation,
+  Manipulation, MoveCursorBeforeElementManipulation,
+  MoveCursorToEndOfElementManipulation,
+  RemoveCharacterManipulation, RemoveElementWithChildrenThatArentVisible,
+  RemoveEmptyElementManipulation,
+  RemoveEmptyTextNodeManipulation, RemoveOtherNodeManipulation,
+  RemoveVoidElementManipulation,
+  VoidElement
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {HandlerResponse, InputHandler, InputPlugin} from './input-handler';
+import {
+  editorDebug,
+  hasVisibleChildren,
+  moveCaret,
+  moveCaretBefore,
+  paintCycleHappened,
+  stringToVisibleText
+} from '@lblod/ember-rdfa-editor/editor/utils';
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
@@ -152,13 +168,13 @@ type UncommonNode = CDATASection | ProcessingInstruction | Comment | Document | 
  * @param errorMessage [string] The error message to be printed in
  * case this is not an UncommonNode.
  */
-function ensureUncommonNode( node: Node, errorMessage?: string ) : UncommonNode {
-  if( [ Node.CDATA_SECTION_NODE,
-        Node.PROCESSING_INSTRUCTION_NODE,
-        Node.COMMENT_NODE,
-        Node.DOCUMENT_NODE,
-        Node.DOCUMENT_TYPE_NODE,
-        Node.DOCUMENT_FRAGMENT_NODE ].includes( node.nodeType ) ) {
+function ensureUncommonNode(node: Node, errorMessage?: string): UncommonNode {
+  if ([Node.CDATA_SECTION_NODE,
+    Node.PROCESSING_INSTRUCTION_NODE,
+    Node.COMMENT_NODE,
+    Node.DOCUMENT_NODE,
+    Node.DOCUMENT_TYPE_NODE,
+    Node.DOCUMENT_FRAGMENT_NODE].includes(node.nodeType)) {
     return node as UncommonNode;
   } else {
     throw errorMessage || `Received node ${node.toString()} is not an UncommonNode.`;
@@ -176,29 +192,28 @@ interface EditorRootPosition extends BaseThingBeforeCursor {
   node: Element;
 }
 
+export type BackspaceHandlerManipulation =
+  RemoveCharacterManipulation
+  | RemoveEmptyTextNodeManipulation
+  | RemoveVoidElementManipulation
+  | MoveCursorToEndOfElementManipulation
+  | RemoveEmptyElementManipulation
+  | MoveCursorBeforeElementManipulation
+  | RemoveElementWithChildrenThatArentVisible
+  | RemoveOtherNodeManipulation
+  | KeepCursorAtStartManipulation;
+
 /**
  * Interface for specific plugins.
  */
-export interface BackspacePlugin {
-  /**
-   * One-liner explaining what the plugin solves.
-   */
-  label: string;
-
-  /**
-   * Callback executed to see if the plugin allows a certain
-   * manipulation and/or if it intends to handle the manipulation
-   * itself.
-   */
-  guidanceForManipulation: (manipulation: Manipulation, editor: RawEditor) => ManipulationGuidance | null;
-
+export interface BackspacePlugin extends InputPlugin {
   /**
    * Callback to let the plugin indicate whether or not it discovered
    * a change.
    *
    * Hint: return false if you don't detect location updates.
    */
-  detectChange: (manipulation: Manipulation, editor: RawEditor) => boolean;
+  detectChange: (manipulation: BackspaceHandlerManipulation, editor: RawEditor) => boolean;
 }
 
 /**
@@ -274,16 +289,8 @@ export interface BackspacePlugin {
  * @constructor
  * @extends EmberObject
  */
-export default class BackspaceHandler implements InputHandler {
+export default class BackspaceHandler extends InputHandler {
   isLocked = false;
-  /**
-   * The editor instance on which we can execute changes.
-   *
-   * @property rawEditor
-   * @type RawEditor
-   * @default null
-   */
-  rawEditor: LegacyRawEditor;
 
   /**
    * Array containing all plugins for the backspace handler.
@@ -302,8 +309,8 @@ export default class BackspaceHandler implements InputHandler {
    * @public
    * @constructor
    */
-  constructor({ rawEditor }: { rawEditor: LegacyRawEditor }){
-    this.rawEditor = rawEditor;
+  constructor({rawEditor}: { rawEditor: PernetRawEditor }) {
+    super(rawEditor);
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [
       new ContentEditableFalsePlugin(),
@@ -325,7 +332,7 @@ export default class BackspaceHandler implements InputHandler {
    * @return boolean
    * @public
    */
-  isHandlerFor(event: Event ) {
+  isHandlerFor(event: Event) {
     const selection = window.getSelection();
     return ((event.type === "keydown" && (event as KeyboardEvent).key === 'Backspace')
       || (event.type == "beforeinput" && (event as InputEvent).inputType == "deleteContentsBackwards"))
@@ -338,20 +345,20 @@ export default class BackspaceHandler implements InputHandler {
    * @return {HandlerResponse}
    * @public
    */
-  handleEvent(event : Event) : HandlerResponse {
+  handleEvent(event: Event): HandlerResponse {
     // TODO: reason more about async behaviour of backspace.
     event.preventDefault(); // make sure event propagation is stopped, async behaviour of backspace could cause the browser to execute eventDefault before it is finished
 
-   //TODO: think harder about managability of the lock state, now a bit all over the place
-   if(this.isLocked){
+    //TODO: think harder about managability of the lock state, now a bit all over the place
+    if (this.isLocked) {
       editorDebug(`backspace-handler.handleEvent`, `Handler is busy removing, skipping`);
-      return { allowPropagation: false };
+      return {allowPropagation: false};
     }
 
-    void this.backspace().then( () => {
+    void this.backspace().then(() => {
       this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
     });
-    return { allowPropagation: false };
+    return {allowPropagation: false};
   }
 
   /////////////////
@@ -364,15 +371,15 @@ export default class BackspaceHandler implements InputHandler {
    * @method backspace
    * @private
    */
-  async backspace( max_tries = 50 ) {
+  async backspace(max_tries = 50) {
 
-    if(this.isLocked){
+    if (this.isLocked) {
       editorDebug(`backspace-handler.backspace`, `Handler is busy removing, skipping`);
       return;
     }
 
-    if( max_tries == 0 ) {
-      warn("Too many backspace tries, giving up removing content", { id: "backspace-handler-too-many-tries"});
+    if (max_tries == 0) {
+      warn("Too many backspace tries, giving up removing content", {id: "backspace-handler-too-many-tries"});
       return;
     }
 
@@ -390,38 +397,37 @@ export default class BackspaceHandler implements InputHandler {
       const manipulation = this.getNextManipulation();
 
       // check if we can execute it
-      const { mayExecute, dispatchedExecutor } = this.checkManipulationByPlugins( manipulation );
+      const {mayExecute, dispatchedExecutor} = this.checkManipulationByPlugins(manipulation);
 
       // error if we're not allowed to
-      if ( ! mayExecute ) {
-        warn( "Not allowed to execute manipulation for backspace", { id: "backspace-handler-manipulation-not-allowed" } );
+      if (!mayExecute) {
+        warn("Not allowed to execute manipulation for backspace", {id: "backspace-handler-manipulation-not-allowed"});
         return;
       }
 
       // run the manipulation
-      if( dispatchedExecutor ) {
+      if (dispatchedExecutor) {
         // NOTE: we should pass some sort of editor interface here in the future.
-        dispatchedExecutor( manipulation, this.rawEditor );
+        dispatchedExecutor(manipulation, this.rawEditor);
       } else {
-        this.handleNativeManipulation( manipulation );
+        this.handleNativeManipulation(manipulation);
       }
 
       // ask plugins if something has changed
       await paintCycleHappened();
-      pluginSeesChange = this.runChangeDetectionByPlugins( manipulation );
-    }
-    finally {
+      pluginSeesChange = this.runChangeDetectionByPlugins(manipulation);
+    } finally {
       //make sure always unlocked
       this.isLocked = false;
     }
 
     // maybe iterate again
-    if( pluginSeesChange || this.checkVisibleChange( { previousVisualCursorCoordinates: visualCursorCoordinates } ) ) {
+    if (pluginSeesChange || this.checkVisibleChange({previousVisualCursorCoordinates: visualCursorCoordinates})) {
       // TODO: do we need to make sure cursor state in the editor corresponds with browser state here?
       return;
     } else {
       // debugger;
-      await this.backspace( max_tries -1 );
+      await this.backspace(max_tries - 1);
     }
   }
 
@@ -436,37 +442,35 @@ export default class BackspaceHandler implements InputHandler {
    * @param options.previousVisualCursorCoordinates {Array<DOMRectCoordinatesInEditor>}
    * Coordinates of the rectangles defining the selection.
    */
-  checkVisibleChange( options: {previousVisualCursorCoordinates: Array<DOMRectCoordinatesInEditor> }  ) : boolean {
+  checkVisibleChange(options: { previousVisualCursorCoordinates: Array<DOMRectCoordinatesInEditor> }): boolean {
 
-    const { previousVisualCursorCoordinates } = options;
+    const {previousVisualCursorCoordinates} = options;
 
-    if( ! previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
+    if (!previousVisualCursorCoordinates.length && !this.selectionCoordinatesInEditor.length) {
       editorDebug(`backspace-handler.checkVisibleChange`,
-                  `Did not see a visual change when removing character, no visualCoordinates whatsoever`,
-                  { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
+        `Did not see a visual change when removing character, no visualCoordinates whatsoever`,
+        {new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates});
       return false;
-    }
-    else if( ! previousVisualCursorCoordinates.length && this.selectionCoordinatesInEditor.length ){
+    } else if (!previousVisualCursorCoordinates.length && this.selectionCoordinatesInEditor.length) {
       editorDebug(`backspace-handler.checkVisibleChange`, `no previous coordinates`);
       return true;
-    }
-    else if( previousVisualCursorCoordinates.length && ! this.selectionCoordinatesInEditor.length ){
-      editorDebug(`backspace-handler.checkVisibleChange`,'no new coordinates');
+    } else if (previousVisualCursorCoordinates.length && !this.selectionCoordinatesInEditor.length) {
+      editorDebug(`backspace-handler.checkVisibleChange`, 'no new coordinates');
       return true;
     }
     //Previous and current have visual coordinates, we need to compare the contents
     else {
-      const { left: ol, top: ot } = previousVisualCursorCoordinates[0];
+      const {left: ol, top: ot} = previousVisualCursorCoordinates[0];
 
 
-      const { left: nl, top: nt } = this.selectionCoordinatesInEditor[0];
+      const {left: nl, top: nt} = this.selectionCoordinatesInEditor[0];
 
       const visibleChange = ol !== nl || ot !== nt;
 
-      if( !visibleChange ){
+      if (!visibleChange) {
         editorDebug(`backspace-handler.checkVisibleChange`,
-                    `Did not see a visual change when removing character`,
-                    { new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates });
+          `Did not see a visual change when removing character`,
+          {new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates});
       }
 
       return visibleChange;
@@ -487,7 +491,7 @@ export default class BackspaceHandler implements InputHandler {
    * @private
    *
    */
-  get selectionCoordinatesInEditor() : Array<DOMRectCoordinatesInEditor> {
+  get selectionCoordinatesInEditor(): Array<DOMRectCoordinatesInEditor> {
     const editorDomRect = this.rawEditor.rootNode.getBoundingClientRect();
     //Note: we select '0' because we only assume one selection. No multi-cursor
     if (window.getSelection() != null) {
@@ -495,8 +499,8 @@ export default class BackspaceHandler implements InputHandler {
       if (selection.rangeCount > 0) {
         const clientRects = selection.getRangeAt(0).getClientRects();
         const selectionCoordinates = new Array<DOMRectCoordinatesInEditor>();
-        for(const clientRect of Array.from(clientRects)){
-          const normalizedRect = { } as DOMRectCoordinatesInEditor;
+        for (const clientRect of Array.from(clientRects)) {
+          const normalizedRect = {} as DOMRectCoordinatesInEditor;
           normalizedRect.top = clientRect.top - editorDomRect.top;
           normalizedRect.bottom = clientRect.bottom - editorDomRect.bottom;
           normalizedRect.left = clientRect.left - editorDomRect.left;
@@ -520,8 +524,8 @@ export default class BackspaceHandler implements InputHandler {
    * @param {Manipulation} manipulation The manipulation which will be
    * executed on the DOM tree.
    */
-  handleNativeManipulation( manipulation: Manipulation ) {
-    switch( manipulation.type ) {
+  handleNativeManipulation(manipulation: BackspaceHandlerManipulation) {
+    switch (manipulation.type) {
       case "removeCharacter": {
         const {node, position} = manipulation;
         let nodeText = node.textContent || "";
@@ -613,7 +617,7 @@ export default class BackspaceHandler implements InputHandler {
         // do nothing
         break;
       default:
-        throw `Case ${manipulation.type} was not handled by handleNativeInputManipulation.`;
+        throw `Case ${(manipulation as Manipulation).type} was not handled by handleNativeInputManipulation.`;
     }
   }
 
@@ -629,12 +633,11 @@ export default class BackspaceHandler implements InputHandler {
    * @method getNextManipulation
    * @private
    */
-  getNextManipulation() : Manipulation
-  {
+  getNextManipulation(): BackspaceHandlerManipulation {
     // check where our cursor is and get the deepest "thing" before
     // the cursor (character or node)
     const thingBeforeCursor: ThingBeforeCursor = this.getThingBeforeCursor();
-    switch( thingBeforeCursor.type ) {
+    switch (thingBeforeCursor.type) {
 
       case "character": {
         // character: remove the character
@@ -648,7 +651,7 @@ export default class BackspaceHandler implements InputHandler {
 
       case "emptyTextNodeStart": {
         // empty text node: remove the text node
-        const textNodeBeforeCursor = thingBeforeCursor ;
+        const textNodeBeforeCursor = thingBeforeCursor;
         if (stringToVisibleText(textNodeBeforeCursor.node.textContent || "").length === 0) {
           return {
             type: "removeEmptyTextNode",
@@ -661,7 +664,7 @@ export default class BackspaceHandler implements InputHandler {
 
       case "emptyTextNodeEnd": {
         // empty text node: remove the text node
-        const textNodePositionBeforeCursor = thingBeforeCursor ;
+        const textNodePositionBeforeCursor = thingBeforeCursor;
         if (textNodePositionBeforeCursor.node.length === 0) {
           return {
             type: "removeEmptyTextNode",
@@ -673,7 +676,7 @@ export default class BackspaceHandler implements InputHandler {
       }
 
       case "voidElement": {
-        const voidElementBeforeCursor = thingBeforeCursor ;
+        const voidElementBeforeCursor = thingBeforeCursor;
         return {
           type: "removeVoidElement",
           node: voidElementBeforeCursor.node
@@ -681,7 +684,7 @@ export default class BackspaceHandler implements InputHandler {
       }
 
       case "elementEnd": {
-        const elementBeforeCursor = thingBeforeCursor ;
+        const elementBeforeCursor = thingBeforeCursor;
         return {
           type: "moveCursorToEndOfElement",
           node: elementBeforeCursor.node
@@ -689,7 +692,7 @@ export default class BackspaceHandler implements InputHandler {
       }
 
       case "elementStart": {
-        const parentBeforeCursor = thingBeforeCursor ;
+        const parentBeforeCursor = thingBeforeCursor;
         const element = parentBeforeCursor.node;
         if (element.childNodes.length == 0) {
           return {
@@ -712,7 +715,7 @@ export default class BackspaceHandler implements InputHandler {
         }
       }
       case "uncommonNodeEnd": {
-        const positionBeforeCursor = thingBeforeCursor ;
+        const positionBeforeCursor = thingBeforeCursor;
         const node = positionBeforeCursor.node;
         return {
           type: "removeOtherNode",
@@ -800,8 +803,7 @@ export default class BackspaceHandler implements InputHandler {
    * @method getThingBeforeCursor
    * @public
    */
-  getThingBeforeCursor() : ThingBeforeCursor
-  {
+  getThingBeforeCursor(): ThingBeforeCursor {
     // TODO: should we support actual selections here as well or will that be a different handler?
     // current implementation assumes a collapsed selection (e.g. a carret)
     const windowSelection = window.getSelection();
@@ -816,90 +818,75 @@ export default class BackspaceHandler implements InputHandler {
           if (position == 0) {
             if (element == this.rawEditor.rootNode) {
               // special case, we're at the start of the editor
-              return { type: "editorRootStart", node: element };
-            }
-            else {
+              return {type: "editorRootStart", node: element};
+            } else {
               // at the start of the element
-              return { type: "elementStart", node: element };
+              return {type: "elementStart", node: element};
             }
-          }
-          else {
+          } else {
             // position > 1 so there is a child node before our cursor
             // position is the number of child nodes between the start of the startNode and our cursor.
-            const child = element.childNodes[position-1] ;
+            const child = element.childNodes[position - 1];
             if (child.nodeType == Node.TEXT_NODE) {
               const text = child as Text;
-              return { type: "character", position: text.length, node: text};
-            }
-            else if( child.nodeType === Node.ELEMENT_NODE ){
+              return {type: "character", position: text.length, node: text};
+            } else if (child.nodeType === Node.ELEMENT_NODE) {
               const element = child as HTMLElement;
               if (isVoidElement(element)) {
-                return { type: "voidElement", node: element as VoidElement };
+                return {type: "voidElement", node: element as VoidElement};
+              } else {
+                return {type: "elementEnd", node: element};
               }
-              else {
-                return { type: "elementEnd", node: element };
-              }
-            }
-            else {
-              const uncommonNode = ensureUncommonNode( child, "Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node." );
-              return { type: "uncommonNodeEnd", node: uncommonNode };
+            } else {
+              const uncommonNode = ensureUncommonNode(child, "Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node.");
+              return {type: "uncommonNodeEnd", node: uncommonNode};
             }
           }
-        }
-        else if (node.nodeType == Node.TEXT_NODE) {
+        } else if (node.nodeType == Node.TEXT_NODE) {
           const text = node as Text;
           // cursor is in a text node
           if (position > 0) {
             // can delete a character
-            return { type: "character", position: position - 1, node: text};
-          }
-          else if (stringToVisibleText(text.textContent || "").length == 0){
+            return {type: "character", position: position - 1, node: text};
+          } else if (stringToVisibleText(text.textContent || "").length == 0) {
             // at the start an empty text node
-            return { type: "emptyTextNodeStart", node: text};
-          }
-          else {
+            return {type: "emptyTextNodeStart", node: text};
+          } else {
             // at the start of a non empty text node
             const previousSibling = text.previousSibling;
-            if( previousSibling ) {
-              if( previousSibling.nodeType === Node.TEXT_NODE ) {
+            if (previousSibling) {
+              if (previousSibling.nodeType === Node.TEXT_NODE) {
                 const sibling = previousSibling as Text;
-                if( sibling.length > 0 ) {
+                if (sibling.length > 0) {
                   // previous is text node with stuff
-                  return { type: "character", position: sibling.length - 1, node: sibling};
+                  return {type: "character", position: sibling.length - 1, node: sibling};
                 } else {
                   // previous is empty text node (only possible in non chrome based browsers)
-                  return { type: "emptyTextNodeEnd", node: sibling};
+                  return {type: "emptyTextNodeEnd", node: sibling};
                 }
-              }
-              else if( previousSibling.nodeType === Node.ELEMENT_NODE ){
+              } else if (previousSibling.nodeType === Node.ELEMENT_NODE) {
                 const sibling = previousSibling as HTMLElement;
                 if (isVoidElement(sibling)) {
-                  return { type: "voidElement", node: sibling as VoidElement };
+                  return {type: "voidElement", node: sibling as VoidElement};
+                } else {
+                  return {type: "elementEnd", node: sibling};
                 }
-                else {
-                  return { type: "elementEnd", node: sibling };
-                }
+              } else {
+                const uncommonNode = ensureUncommonNode(previousSibling, "Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node.");
+                return {type: "uncommonNodeEnd", node: uncommonNode};
               }
-              else {
-                const uncommonNode = ensureUncommonNode( previousSibling, "Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node." );
-                return { type: "uncommonNodeEnd", node: uncommonNode };
-              }
-            }
-            else if (text.parentElement) {
+            } else if (text.parentElement) {
               const parent = text.parentElement;
               if (parent != this.rawEditor.rootNode) {
-                return { type: "elementStart", node: parent };
+                return {type: "elementStart", node: parent};
+              } else {
+                return {type: "editorRootStart", node: parent};
               }
-              else {
-                return { type: "editorRootStart", node: parent };
-              }
-            }
-            else {
+            } else {
               throw "no previous sibling or parentnode found";
             }
           }
-        }
-        else {
+        } else {
           console.warn(`did not expect a startcontainer of type ${node.nodeType} from range`); // eslint-disable-line-console
           // there should not be an else per spec
         }
@@ -910,66 +897,6 @@ export default class BackspaceHandler implements InputHandler {
   }
 
   /**
-   * Checks whether all plugins agree the manipulation is allowed.
-   *
-   * This method asks each plugin individually if the manipulation is
-   * allowed.  If it is not allowed by *any* plugin, it yields a
-   * negative response, otherwise it yields a positive response.
-   *
-   * We expect this method to be extended in the future with more rich
-   * responses from plugins.  Something like "skip" or "merge" to
-   * indicate this manipulation should be lumped together with a
-   * previous manipulation.  Plugins may also want to execute the
-   * changes themselves to ensure correct behaviour.
-   *
-   * @method checkManipulationByPlugins
-   * @private
-   *
-   * @param {Manipulation} manipulation DOM manipulation which will be
-   * checked by plugins.
-   **/
-  checkManipulationByPlugins(manipulation: Manipulation) : { mayExecute: boolean, dispatchedExecutor: ManipulationExecutor | null } {
-
-    // calculate reports submitted by each plugin
-    const reports : Array<{ plugin: BackspacePlugin, allow: boolean, executor: ManipulationExecutor | undefined }> = [];
-    for ( const plugin of this.plugins ) {
-      const guidance = plugin.guidanceForManipulation( manipulation, this.rawEditor );
-      if( guidance ) {
-        const allow = guidance.allow === undefined ? true : guidance.allow;
-        const executor = guidance.executor;
-        reports.push( { plugin, allow, executor } );
-      }
-    }
-
-    // filter reports based on our interests
-    const reportsNoExecute = reports.filter( ({ allow }) => !allow );
-    const reportsWithExecutor = reports.filter( ({ executor }) => executor );
-
-    // debug reporting
-    if (reports.length > 1) {
-      console.warn(`Multiple plugins want to alter this manipulation`, reports);
-    }
-    if (reportsNoExecute.length > 1 && reportsWithExecutor.length > 1) {
-      console.error(`Some plugins don't want execution, others want custom execution`, { reportsNoExecute, reportsWithExecutor });
-    }
-    if (reportsWithExecutor.length > 1) {
-      console.warn(`Multiple plugins want to execute this plugin. First entry in the list wins: ${reportsWithExecutor[0].plugin.label}`);
-    }
-
-    for( const { plugin } of reportsNoExecute ) {
-      editorDebug(`backspace-handler.checkManipulationByPlugins`,
-                  `Was not allowed to execute backspace manipulation by plugin ${plugin.label}`,
-                  { manipulation, plugin });
-    }
-
-    // yield result
-    return {
-      mayExecute: reportsNoExecute.length === 0,
-      dispatchedExecutor: reportsWithExecutor.length ? reportsWithExecutor[0].executor as ManipulationExecutor : null
-    };
-  }
-
-  /**
    * Checks with each plugin if they have detected a change.
    *
    * @param {Manipulation} manipulation The change which was executed.
@@ -977,16 +904,21 @@ export default class BackspaceHandler implements InputHandler {
    * @private
    * @method runChangeDetectionByPlugins
    */
-  runChangeDetectionByPlugins( manipulation: Manipulation ): boolean {
+  runChangeDetectionByPlugins(manipulation: BackspaceHandlerManipulation): boolean {
     const reports =
       this
         .plugins
-        .map( (plugin) => { return { plugin, detectedChange: plugin.detectChange( manipulation, this.rawEditor ) }; } )
-        .filter( ({detectedChange}) => detectedChange );
+        .map((plugin) => {
+          return {plugin, detectedChange: plugin.detectChange(manipulation, this.rawEditor)};
+        })
+        .filter(({detectedChange}) => detectedChange);
 
     // debug reporting
-    for( const { plugin } of reports ) {
-      editorDebug(`backspace-handler.runChangeDetectionByPlugins`, `Change detected by plugin ${plugin.label}`, { manipulation, plugin });
+    for (const {plugin} of reports) {
+      editorDebug(`backspace-handler.runChangeDetectionByPlugins`, `Change detected by plugin ${plugin.label}`, {
+        manipulation,
+        plugin
+      });
     }
 
     return reports.length > 0;

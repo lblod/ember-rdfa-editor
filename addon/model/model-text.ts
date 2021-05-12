@@ -122,4 +122,10 @@ export default class ModelText extends ModelNode {
       return ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap);
     }
   }
+  isMergeable(other: ModelNode): boolean {
+    if(!ModelNode.isModelText(other)) {
+      return false;
+    }
+    return ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap);
+  }
 }

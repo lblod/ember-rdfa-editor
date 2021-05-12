@@ -20,6 +20,7 @@
     "baseUrl": ".",
     "module": "es6",
     "experimentalDecorators": true,
+    "lib": ["ES2017", "ES2019.Object", "DOM", "DOM.Iterable"],
     "paths": {
       "dummy/tests/*": [
         "tests/*"

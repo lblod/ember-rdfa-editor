@@ -1,8 +1,10 @@
 import { Editor,
-         Manipulation,
          ManipulationGuidance,
          RemoveCharacterManipulation } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { BackspacePlugin }  from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import {
+  BackspaceHandlerManipulation,
+  BackspacePlugin
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { moveCaretBefore, moveCaret, stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
 /**
@@ -14,7 +16,7 @@ import { moveCaretBefore, moveCaret, stringToVisibleText } from '@lblod/ember-rd
 export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
   label = "backspace plugin for properly handling empty text nodes";
 
-  guidanceForManipulation(manipulation : Manipulation) : ManipulationGuidance | null {
+  guidanceForManipulation(manipulation : BackspaceHandlerManipulation) : ManipulationGuidance | null {
     if (manipulation.type == "removeCharacter") {
       if (manipulation.position == 0 && manipulation.node.textContent?.length == 1) {
         return {

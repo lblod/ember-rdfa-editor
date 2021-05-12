@@ -1,12 +1,16 @@
 import {warn} from '@ember/debug';
 import {isVoidElement, removeNode} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {
-  Manipulation,
-  ManipulationExecutor,
-  ManipulationGuidance,
+  KeepCursorAtEndManipulation,
+  Manipulation, ManipulationGuidance, RemoveBoundaryBackwards,
+  RemoveBoundaryForwards,
+  RemoveCharacterManipulation, RemoveElementWithChildrenThatArentVisible,
+  RemoveEmptyElementManipulation,
+  RemoveEmptyTextNodeManipulation, RemoveOtherNodeManipulation,
+  RemoveVoidElementManipulation,
   VoidElement
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {HandlerResponse, InputHandler} from './input-handler';
+import {HandlerResponse, InputHandler, InputPlugin} from './input-handler';
 import {
   editorDebug,
   hasVisibleChildren,
@@ -17,7 +21,7 @@ import {
   stringToVisibleText
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import ListDeletePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/delete-plugin';
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 /**
  * We introduce an abstract reference point to check for visual changes.
@@ -29,7 +33,7 @@ interface VisualChangeReferencePoint {
   storeMeasurePoint(): void;
 
   hasChangedVisually: boolean;
-  editor: LegacyRawEditor;
+  editor: PernetRawEditor;
 
   cleanUp(): void;
 }
@@ -38,16 +42,16 @@ export class MagicSpan implements VisualChangeReferencePoint {
   // Note: We explicitly use coordinates in editor-space and not in viewPort-space.
   // because in longer documents, when removing content, document may move up on re-render and
   // as a result, the viewport coordinates might remain the same.
-    /**
-     * This allows us to distinguish a magic span from a normal one
-     */
+  /**
+   * This allows us to distinguish a magic span from a normal one
+   */
   static ID = "__magic_span";
   firstMeasurePoint: Array<DOMRect>;
   secondMeasurePoint: Array<DOMRect>;
   span: Element;
-  editor: LegacyRawEditor;
+  editor: PernetRawEditor;
 
-  constructor(span: Element, editor: LegacyRawEditor) {
+  constructor(span: Element, editor: PernetRawEditor) {
     this.span = span;
     this.span.id = MagicSpan.ID;
     this.editor = editor;
@@ -59,9 +63,9 @@ export class MagicSpan implements VisualChangeReferencePoint {
     const referenceFrame = this.editor.rootNode.getBoundingClientRect();
     const targets = Array.from(this.span.getClientRects());
     if (!this.firstMeasurePoint.length) {
-      this.firstMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame , target ));
+      this.firstMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame, target));
     } else {
-      this.secondMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame , target ));
+      this.secondMeasurePoint = targets.map(target => getRelativeDomRectCoordinates(referenceFrame, target));
     }
   }
 
@@ -79,9 +83,9 @@ export class MagicSpan implements VisualChangeReferencePoint {
 class Caret implements VisualChangeReferencePoint {
   firstMeasurePoint: Array<DOMRect>;
   secondMeasurePoint: Array<DOMRect>;
-  editor: LegacyRawEditor;
+  editor: PernetRawEditor;
 
-  constructor(editor: LegacyRawEditor) {
+  constructor(editor: PernetRawEditor) {
     this.editor = editor;
     this.firstMeasurePoint = [];
     this.secondMeasurePoint = [];
@@ -93,7 +97,7 @@ class Caret implements VisualChangeReferencePoint {
       if (selection.rangeCount > 0) {
         const referenceFrame = this.editor.rootNode.getBoundingClientRect();
         const targets = Array.from(selection.getRangeAt(0).getClientRects());
-        return targets.map(target => getRelativeDomRectCoordinates(referenceFrame , target ));
+        return targets.map(target => getRelativeDomRectCoordinates(referenceFrame, target));
       }
     }
     return [];
@@ -120,9 +124,9 @@ class VisibleTextLength implements VisualChangeReferencePoint {
   firstMeasurePoint: string;
   secondMeasurePoint: string;
   textNode: Text;
-  editor: LegacyRawEditor;
+  editor: PernetRawEditor;
 
-  constructor(textNode: Text, editor: LegacyRawEditor) {
+  constructor(textNode: Text, editor: PernetRawEditor) {
     this.editor = editor;
     this.firstMeasurePoint = '';
     this.secondMeasurePoint = '';
@@ -131,7 +135,7 @@ class VisibleTextLength implements VisualChangeReferencePoint {
 
   private getVisibleText(): string {
     if (this.textNode.parentElement) {
-      return (this.textNode.parentElement ).innerText;
+      return (this.textNode.parentElement).innerText;
     }
     return '';
   }
@@ -145,7 +149,7 @@ class VisibleTextLength implements VisualChangeReferencePoint {
   }
 
   get hasChangedVisually(): boolean {
-    return stringToVisibleText(this.firstMeasurePoint ) !== stringToVisibleText(this.secondMeasurePoint );
+    return stringToVisibleText(this.firstMeasurePoint) !== stringToVisibleText(this.secondMeasurePoint);
   }
 
   cleanUp(): void {
@@ -307,30 +311,31 @@ interface EditorRootEndPosition extends BaseThingAfterCursor {
   node: Element;
 }
 
+export type DeleteHandlerManipulation =
+  RemoveCharacterManipulation
+  | RemoveEmptyTextNodeManipulation
+  | RemoveVoidElementManipulation
+  | RemoveBoundaryForwards
+  | RemoveEmptyElementManipulation
+  | RemoveBoundaryBackwards
+  | RemoveOtherNodeManipulation
+  | RemoveElementWithChildrenThatArentVisible
+  | KeepCursorAtEndManipulation;
+
 /**
  * Interface for specific plugins.
  */
-export interface DeletePlugin {
-  /**
-   * One-liner explaining what the plugin solves.
-   */
-  label: string;
-
-  /**
-   * Callback executed to see if the plugin allows a certain
-   * manipulation and/or if it intends to handle the manipulation
-   * itself.
-   */
-  guidanceForManipulation: (manipulation: Manipulation) => ManipulationGuidance | null;
-
+export interface DeletePlugin extends InputPlugin {
+  guidanceForManipulation: (manipulation: DeleteHandlerManipulation, editor: PernetRawEditor) => ManipulationGuidance | null;
   /**
    * Callback to let the plugin indicate whether or not it discovered
    * a change.
    *
    * Hint: return false if you don't detect location updates.
    */
-  detectChange: (manipulation: Manipulation) => boolean;
+  detectChange: (manipulation: DeleteHandlerManipulation) => boolean;
 }
+
 
 /**
  * Delete Handler, an event handler to handle removing content
@@ -343,17 +348,8 @@ export interface DeletePlugin {
  * @constructor
  * @extends EmberObject
  */
-export default class DeleteHandler implements InputHandler {
+export default class DeleteHandler extends InputHandler {
   isLocked: boolean;
-  /**
-   * The editor instance on which we can execute changes.
-   *
-   * @property rawEditor
-   * @type RawEditor
-   * @default null
-   */
-  rawEditor: LegacyRawEditor;
-
 
   /**
    * Array containing all plugins for the delete handler.
@@ -372,8 +368,8 @@ export default class DeleteHandler implements InputHandler {
    * @public
    * @constructor
    */
-  constructor({rawEditor}: { rawEditor: LegacyRawEditor }) {
-    this.rawEditor = rawEditor;
+  constructor({rawEditor}: { rawEditor: PernetRawEditor }) {
+    super(rawEditor);
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [
       new ListDeletePlugin()
@@ -502,7 +498,7 @@ export default class DeleteHandler implements InputHandler {
     }
   }
 
-  ensureVisualChangeReferencePoint(manipulation: Manipulation): VisualChangeReferencePoint {
+  ensureVisualChangeReferencePoint(manipulation: DeleteHandlerManipulation): VisualChangeReferencePoint {
     let visualReferencePoint;
     const node = manipulation.node as ChildNode;
     switch (manipulation.type) {
@@ -569,7 +565,7 @@ export default class DeleteHandler implements InputHandler {
    * @param {Manipulation} manipulation The manipulation which will be
    * executed on the DOM tree.
    */
-  handleNativeManipulation(manipulation: Manipulation) {
+  handleNativeManipulation(manipulation: DeleteHandlerManipulation) {
     switch (manipulation.type) {
       case "removeCharacter": {
         const {node, position} = manipulation;
@@ -612,7 +608,7 @@ export default class DeleteHandler implements InputHandler {
       }
 
       case "removeOtherNode": {
-        const otherNode = manipulation.node ;
+        const otherNode = manipulation.node;
         //TODO: it is not very clear to me, why we use removeChild here instead of .remove().
         // taken from backspace-handler
         if (otherNode.parentElement) {
@@ -657,7 +653,7 @@ export default class DeleteHandler implements InputHandler {
       }
 
       default:
-        throw `Case ${manipulation.type} was not handled by handleNativeInputManipulation.`;
+        throw `Case ${(manipulation as Manipulation).type} was not handled by handleNativeInputManipulation.`;
     }
   }
 
@@ -673,7 +669,7 @@ export default class DeleteHandler implements InputHandler {
    * @method getNextManipulation
    * @private
    */
-  getNextManipulation(): Manipulation {
+  getNextManipulation(): DeleteHandlerManipulation {
     // check where our cursor is and get the deepest "thing" after
     // the cursor (character or node)
     const thingAfterCursor: ThingAfterCursor = this.getThingAfterCursor();
@@ -682,7 +678,7 @@ export default class DeleteHandler implements InputHandler {
 
       case "character": {
         // character: remove the character
-        const characterAfterCursor = thingAfterCursor ;
+        const characterAfterCursor = thingAfterCursor;
         return {
           type: "removeCharacter",
           node: characterAfterCursor.node,
@@ -692,7 +688,7 @@ export default class DeleteHandler implements InputHandler {
       }
       case "emptyTextNodeStart": {
         // empty text node: remove the text node
-        const textNodeAfterCursor = thingAfterCursor ;
+        const textNodeAfterCursor = thingAfterCursor;
         if (stringToVisibleText(textNodeAfterCursor.node.textContent || "").length === 0) {
           return {
             type: "removeEmptyTextNode",
@@ -705,7 +701,7 @@ export default class DeleteHandler implements InputHandler {
       }
       case "emptyTextNodeEnd": {
         // empty text node: remove the text node
-        const textNodePositionAfterCursor = thingAfterCursor ;
+        const textNodePositionAfterCursor = thingAfterCursor;
         if (stringToVisibleText(textNodePositionAfterCursor.node.textContent || "").length === 0) {
           return {
             type: "removeEmptyTextNode",
@@ -717,7 +713,7 @@ export default class DeleteHandler implements InputHandler {
 
       }
       case "voidElement": {
-        const voidElementAfterCursor = thingAfterCursor ;
+        const voidElementAfterCursor = thingAfterCursor;
         return {
           type: "removeVoidElement",
           node: voidElementAfterCursor.node
@@ -725,7 +721,7 @@ export default class DeleteHandler implements InputHandler {
 
       }
       case "elementEnd": {
-        const elementAfterCursor = thingAfterCursor ;
+        const elementAfterCursor = thingAfterCursor;
         if (hasVisibleChildren(elementAfterCursor.node)) {
           return {
             type: "removeBoundaryForwards",
@@ -740,7 +736,7 @@ export default class DeleteHandler implements InputHandler {
 
       }
       case "elementStart": {
-        const parentAfterCursor = thingAfterCursor ;
+        const parentAfterCursor = thingAfterCursor;
         const element = parentAfterCursor.node;
         if (hasVisibleChildren(element)) {
           return {
@@ -756,7 +752,7 @@ export default class DeleteHandler implements InputHandler {
 
       }
       case "uncommonNodeStart": {
-        const positionAfterCursor = thingAfterCursor ;
+        const positionAfterCursor = thingAfterCursor;
         const node = positionAfterCursor.node;
         return {
           type: "removeOtherNode",
@@ -867,7 +863,7 @@ export default class DeleteHandler implements InputHandler {
           } else {
             // position is not the last so there is a child node after our cursor
             // position is the number of child nodes between the start of the startNode and our cursor.
-            const child = element.childNodes[position] ;
+            const child = element.childNodes[position];
             if (child && child.nodeType == Node.TEXT_NODE) {
               const textNode = child as Text;
               if (stringToVisibleText(textNode.textContent || "").length == 0) {
@@ -880,7 +876,7 @@ export default class DeleteHandler implements InputHandler {
               if (isVoidElement(element)) {
                 return {type: "voidElement", node: element as VoidElement};
               } else {
-                return {type: "elementStart", node: element };
+                return {type: "elementStart", node: element};
               }
             } else {
               const uncommonNode = ensureUncommonNode(child, "Assumed all node cases exhausted and uncommon node found in delete handler.  But node is not an uncommon node.");
@@ -940,69 +936,6 @@ export default class DeleteHandler implements InputHandler {
   }
 
   /**
-   * Checks whether all plugins agree the manipulation is allowed.
-   *
-   * This method asks each plugin individually if the manipulation is
-   * allowed.  If it is not allowed by *any* plugin, it yields a
-   * negative response, otherwise it yields a positive response.
-   *
-   * We expect this method to be extended in the future with more rich
-   * responses from plugins.  Something like "skip" or "merge" to
-   * indicate this manipulation should be lumped together with a
-   * previous manipulation.  Plugins may also want to execute the
-   * changes themselves to ensure correct behaviour.
-   *
-   * @method checkManipulationByPlugins
-   * @private
-   *
-   * @param {Manipulation} manipulation DOM manipulation which will be
-   * checked by plugins.
-   **/
-  checkManipulationByPlugins(manipulation: Manipulation): { mayExecute: boolean, dispatchedExecutor: ManipulationExecutor | null } {
-
-    // calculate reports submitted by each plugin
-    const reports: Array<{ plugin: DeletePlugin, allow: boolean, executor: ManipulationExecutor | undefined }> = [];
-    for (const plugin of this.plugins) {
-      const guidance = plugin.guidanceForManipulation(manipulation);
-      if (guidance) {
-        const allow = guidance.allow === undefined ? true : guidance.allow;
-        const executor = guidance.executor;
-        reports.push({plugin, allow, executor});
-      }
-    }
-
-    // filter reports based on our interests
-    const reportsNoExecute = reports.filter(({allow}) => !allow);
-    const reportsWithExecutor = reports.filter(({executor}) => executor);
-
-    // debug reporting
-    if (reports.length > 1) {
-      console.warn(`Multiple plugins want to alter this manipulation`, reports);
-    }
-    if (reportsNoExecute.length > 1 && reportsWithExecutor.length > 1) {
-      console.error(`Some plugins don't want execution, others want custom execution`, {
-        reportsNoExecute,
-        reportsWithExecutor
-      });
-    }
-    if (reportsWithExecutor.length > 1) {
-      console.warn(`Multiple plugins want to execute this plugin. First entry in the list wins: ${reportsWithExecutor[0].plugin.label}`);
-    }
-
-    for (const {plugin} of reportsNoExecute) {
-      editorDebug(`delete-handler.checkManipulationByPlugins`,
-        `Was not allowed to execute delete manipulation by plugin ${plugin.label}`,
-        {manipulation, plugin});
-    }
-
-    // yield result
-    return {
-      mayExecute: reportsNoExecute.length === 0,
-      dispatchedExecutor: reportsWithExecutor.length ? reportsWithExecutor[0].executor as ManipulationExecutor : null
-    };
-  }
-
-  /**
    * Checks with each plugin if they have detected a change.
    *
    * @param {Manipulation} manipulation The change which was executed.
@@ -1010,7 +943,7 @@ export default class DeleteHandler implements InputHandler {
    * @private
    * @method runChangeDetectionByPlugins
    */
-  runChangeDetectionByPlugins(manipulation: Manipulation): boolean {
+  runChangeDetectionByPlugins(manipulation: DeleteHandlerManipulation): boolean {
     const reports =
       this
         .plugins

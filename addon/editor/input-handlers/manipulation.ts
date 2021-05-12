@@ -9,6 +9,8 @@
  * The HTMLWbrElement type is a custom type which we have added
  * ourselves.  We did not find a type.
  */
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+
 export type VoidElement = HTMLAreaElement
   | HTMLBaseElement
   | HTMLBRElement
@@ -34,32 +36,6 @@ interface HTMLWbrElement extends HTMLElement {
 }
 
 /**
- * Contains a set of all currently supported manipulations.
- */
-export type Manipulation =
-  RemoveEmptyTextNodeManipulation
-  | RemoveCharacterManipulation
-  | RemoveEmptyElementManipulation
-  | RemoveVoidElementManipulation
-  | RemoveOtherNodeManipulation
-  | RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation
-  | RemoveElementWithChildrenThatArentVisible
-  | MoveCursorToEndOfElementManipulation
-  | MoveCursorAfterElementManipulation
-  | MoveCursorBeforeElementManipulation
-  | MoveCursorAfterEditorManipulation
-  | MoveCursorBeforeEditorManipulation
-  | MoveCursorToStartOfElementManipulation
-  | KeepCursorAtStartManipulation
-  | KeepCursorAtEndManipulation
-  | InsertTextIntoTextNodeManipulation
-  | InsertTextIntoElementManipulation
-  | ReplaceSelectionWithTextManipulation
-  | RemoveBoundaryForwards
-  | RemoveBoundaryBackwards
-;
-
-/**
  * Executor of a single Manipulation, as offered by plugins.
  *
  * The plugin receives a Manipulation and an Editor, and can use both
@@ -76,15 +52,14 @@ export interface Editor {
 /**
  * Base type for any manipulation, ensuring the type interface exists.
  */
-export interface BaseManipulation {
+export interface Manipulation {
   type: string;
-  node?: Node;
 }
 
 /**
  * Represents the removal of an empty text node.
  */
-export interface RemoveEmptyTextNodeManipulation extends BaseManipulation {
+export interface RemoveEmptyTextNodeManipulation extends Manipulation {
   type: "removeEmptyTextNode";
   node: Text;
 }
@@ -92,7 +67,7 @@ export interface RemoveEmptyTextNodeManipulation extends BaseManipulation {
 /**
  * Represents the removal of a single character from a text node.
  */
-export interface RemoveCharacterManipulation extends BaseManipulation {
+export interface RemoveCharacterManipulation extends Manipulation {
   type: "removeCharacter";
   node: Text;
   position: number;
@@ -101,7 +76,7 @@ export interface RemoveCharacterManipulation extends BaseManipulation {
 /**
  * Represents keeping the cursor at the start of the editor
  */
-export interface KeepCursorAtStartManipulation extends BaseManipulation {
+export interface KeepCursorAtStartManipulation extends Manipulation {
   type: "keepCursorAtStart";
   node: Element;
 }
@@ -109,7 +84,7 @@ export interface KeepCursorAtStartManipulation extends BaseManipulation {
 /**
  * Represents keeping the cursor at the End of the editor
  */
-export interface KeepCursorAtEndManipulation extends BaseManipulation {
+export interface KeepCursorAtEndManipulation extends Manipulation {
   type: "keepCursorAtEnd";
   node: Element;
 }
@@ -117,7 +92,7 @@ export interface KeepCursorAtEndManipulation extends BaseManipulation {
 /**
  * Represents the removal of an empty Element (so an Element without childNodes)
  */
-export interface RemoveEmptyElementManipulation extends BaseManipulation {
+export interface RemoveEmptyElementManipulation extends Manipulation {
   type: "removeEmptyElement";
   node: Element;
 }
@@ -125,7 +100,7 @@ export interface RemoveEmptyElementManipulation extends BaseManipulation {
 /**
  * Represents the removal of a void element
  */
-export interface RemoveVoidElementManipulation extends BaseManipulation {
+export interface RemoveVoidElementManipulation extends Manipulation {
   type: "removeVoidElement";
   node: VoidElement;
 }
@@ -133,13 +108,13 @@ export interface RemoveVoidElementManipulation extends BaseManipulation {
 /**
  * Represents moving the cursor after the last child of node
  */
-export interface MoveCursorToEndOfElementManipulation extends BaseManipulation {
+export interface MoveCursorToEndOfElementManipulation extends Manipulation {
   type: "moveCursorToEndOfElement";
   node: HTMLElement;
   selection?: Selection;
 }
 
-export interface MoveCursorToStartOfElementManipulation extends BaseManipulation {
+export interface MoveCursorToStartOfElementManipulation extends Manipulation {
   type: "moveCursorToStartOfElement";
   node: HTMLElement;
   selection?: Selection;
@@ -148,24 +123,24 @@ export interface MoveCursorToStartOfElementManipulation extends BaseManipulation
 /**
  * Represents moving the cursor before the element
  */
-export interface MoveCursorBeforeElementManipulation extends BaseManipulation {
+export interface MoveCursorBeforeElementManipulation extends Manipulation {
   type: "moveCursorBeforeElement";
   node: HTMLElement;
   selection?: Selection;
 }
 
-export interface MoveCursorAfterElementManipulation extends BaseManipulation {
+export interface MoveCursorAfterElementManipulation extends Manipulation {
   type: "moveCursorAfterElement";
   node: HTMLElement;
   selection?: Selection;
 }
 
-export interface MoveCursorAfterEditorManipulation extends BaseManipulation {
+export interface MoveCursorAfterEditorManipulation extends Manipulation {
   type: "moveCursorAfterEditor";
   node: HTMLElement; //will be rootNode of editor
 }
 
-export interface MoveCursorBeforeEditorManipulation extends BaseManipulation {
+export interface MoveCursorBeforeEditorManipulation extends Manipulation {
   type: "moveCursorBeforeEditor";
   node: HTMLElement; //will be rootNode of editor
 }
@@ -173,7 +148,7 @@ export interface MoveCursorBeforeEditorManipulation extends BaseManipulation {
 /**
  * Represents the removal of a node that is not of type Text of Element
  */
-export interface RemoveOtherNodeManipulation extends BaseManipulation {
+export interface RemoveOtherNodeManipulation extends Manipulation {
   type: "removeOtherNode";
   node: Node;
 }
@@ -182,7 +157,7 @@ export interface RemoveOtherNodeManipulation extends BaseManipulation {
  * Represents the removal of an element that has only invisible text nodes as children
  * TODO: currently replaced by removeElementWithChildrenThatArentVisible
  */
-export interface RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation extends BaseManipulation {
+export interface RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation extends Manipulation {
   type: "removeElementWithOnlyInvisibleTextNodeChildren";
   node: Element;
 }
@@ -190,7 +165,7 @@ export interface RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation exte
 /**
  * Represents the removal of an element that only has invisible children
  */
-export interface RemoveElementWithChildrenThatArentVisible extends BaseManipulation {
+export interface RemoveElementWithChildrenThatArentVisible extends Manipulation {
   type: "removeElementWithChildrenThatArentVisible";
   node: Element;
 }
@@ -198,7 +173,7 @@ export interface RemoveElementWithChildrenThatArentVisible extends BaseManipulat
 /**
  * Represents adding text into a text node
  */
-export interface InsertTextIntoTextNodeManipulation extends BaseManipulation {
+export interface InsertTextIntoTextNodeManipulation extends Manipulation {
   type: "insertTextIntoTextNode";
   node: Text;
   position: number;
@@ -209,7 +184,7 @@ export interface InsertTextIntoTextNodeManipulation extends BaseManipulation {
  * Represents adding text into an element
  * position is the number of childNodes between the start of the element and the position where the text should be inserted
  */
-export interface InsertTextIntoElementManipulation extends BaseManipulation {
+export interface InsertTextIntoElementManipulation extends Manipulation {
   type: "insertTextIntoElement";
   node: HTMLElement;
   position: number;
@@ -219,19 +194,25 @@ export interface InsertTextIntoElementManipulation extends BaseManipulation {
 /**
  * Represents replacing a selection with text
  */
-export interface ReplaceSelectionWithTextManipulation extends BaseManipulation {
+export interface ReplaceSelectionWithTextManipulation extends Manipulation {
   type: "replaceSelectionWithText";
   node: Node; // the anchorNode
   selection: Selection
   text: string;
 }
-export interface RemoveBoundaryForwards extends BaseManipulation {
+export interface RemoveBoundaryForwards extends Manipulation {
   type: "removeBoundaryForwards";
   node: ChildNode;
 }
-export interface RemoveBoundaryBackwards extends BaseManipulation {
+export interface RemoveBoundaryBackwards extends Manipulation {
   type: "removeBoundaryBackwards";
   node: Node;
+}
+
+export interface InsertTextIntoRange extends Manipulation {
+  type: "insertTextIntoRange";
+  range: ModelRange;
+  text: string;
 }
 
 export interface ManipulationGuidance {
