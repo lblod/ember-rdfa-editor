@@ -19,7 +19,6 @@ import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-nod
 import HTMLInputParser from '../../utils/html-input-parser';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
-import { createElementsFromHTML } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
