@@ -35,10 +35,7 @@ export default class InsertTableRowAboveCommand extends Command {
     }
 
     const position = ModelTable.getCellIndex(cell);
-    if(position.y === 0) {
-      throw Error('Cannot add row at the start of the table');
-    }
-    table.addRow(position.y - 1);
+    table.addRow(position.y);
 
     this.model.write();
   }

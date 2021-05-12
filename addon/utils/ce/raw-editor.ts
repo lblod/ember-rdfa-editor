@@ -76,15 +76,20 @@ class RawEditor extends EmberObject {
   }
 
   initialize(rootNode: HTMLElement) {
-    if(this.modelSelectionTracker) {
+    if (this.modelSelectionTracker) {
       this.modelSelectionTracker.stopTracking();
     }
     this.registeredCommands = new Map<string, Command>();
     this.model = new Model(rootNode);
     this.modelSelectionTracker = new ModelSelectionTracker(this.model);
     this.modelSelectionTracker.startTracking();
+    this.rootNode.addEventListener("focus", () => {
+      this.model.writeSelection();
+    });
     window.__VDOM = this.model;
-    window.__executeCommand = (commandName: string, ...args: unknown[]) => { this.executeCommand(commandName, ...args); };
+    window.__executeCommand = (commandName: string, ...args: unknown[]) => {
+      this.executeCommand(commandName, ...args);
+    };
     this.registerCommand(new MakeBoldCommand(this.model));
     this.registerCommand(new RemoveBoldCommand(this.model));
     this.registerCommand(new MakeItalicCommand(this.model));
@@ -191,7 +196,7 @@ class RawEditor extends EmberObject {
    * @param path1
    * @param path2
    */
-  createRangeFromPaths(path1: number[], path2: number[]) : ModelRange {
+  createRangeFromPaths(path1: number[], path2: number[]): ModelRange {
     return ModelRange.fromPaths(this.model.rootModelNode, path1, path2);
   }
 
@@ -199,7 +204,7 @@ class RawEditor extends EmberObject {
    * create a selection on the virtual dom
    * starts out without any selected ranges
    */
-  createSelection() : ModelSelection {
+  createSelection(): ModelSelection {
     return new ModelSelection(this.model);
   }
 }
