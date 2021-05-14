@@ -2,7 +2,7 @@ import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/e
 import {
   ManipulationGuidance
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import RawEditor from 'dummy/utils/ce/raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
