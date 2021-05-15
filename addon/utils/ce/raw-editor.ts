@@ -34,6 +34,7 @@ import RichNode from "@lblod/marawa/rich-node";
 import classic from 'ember-classic-decorator';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
+import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
 
 /**
@@ -51,7 +52,7 @@ import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-com
 class RawEditor extends EmberObject {
   registeredCommands: Map<string, Command> = new Map<string, Command>();
   modelSelectionTracker!: ModelSelectionTracker;
-  model!: Model;
+  private _model?: Model;
   protected tryOutVdom = true;
 
   /**
@@ -80,9 +81,9 @@ class RawEditor extends EmberObject {
       this.modelSelectionTracker.stopTracking();
     }
     this.registeredCommands = new Map<string, Command>();
-    this.model = new Model(rootNode);
-    this.modelSelectionTracker = new ModelSelectionTracker(this.model);
-    this.modelSelectionTracker.startTracking();
+    this._model = new Model(rootNode);
+    this.modelSelectionTracker = new ModelSelectionTracker(this._model);
+    this.modelSelectionTracker.startTracking();   
     this.rootNode.addEventListener("focus", () => {
       this.model.writeSelection();
     });
@@ -145,6 +146,16 @@ class RawEditor extends EmberObject {
     return this.model.rootModelNode;
   }
 
+  get model(): Model {
+    if(!this._model) {
+      throw new ModelError("Model accessed before initialization is complete");
+    }
+    return this._model;
+  }
+
+  set model(value: Model) {
+    this._model = value;
+  }
   /**
    * Register a command for use with {@link executeCommand}
    * @param command
