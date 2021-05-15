@@ -77,41 +77,46 @@ class RawEditor extends EmberObject {
   }
 
   initialize(rootNode: HTMLElement) {
-    if(this.modelSelectionTracker) {
+    if (this.modelSelectionTracker) {
       this.modelSelectionTracker.stopTracking();
     }
     this.registeredCommands = new Map<string, Command>();
     this._model = new Model(rootNode);
     this.modelSelectionTracker = new ModelSelectionTracker(this._model);
-    this.modelSelectionTracker.startTracking();
-    window.__VDOM = this._model;
-    window.__executeCommand = (commandName: string, ...args: unknown[]) => { this.executeCommand(commandName, ...args); };
-    this.registerCommand(new MakeBoldCommand(this._model));
-    this.registerCommand(new RemoveBoldCommand(this._model));
-    this.registerCommand(new MakeItalicCommand(this._model));
-    this.registerCommand(new RemoveItalicCommand(this._model));
-    this.registerCommand(new MakeStrikethroughCommand(this._model));
-    this.registerCommand(new RemoveStrikethroughCommand(this._model));
-    this.registerCommand(new MakeUnderlineCommand(this._model));
-    this.registerCommand(new RemoveUnderlineCommand(this._model));
-    this.registerCommand(new MakeListCommand(this._model));
-    this.registerCommand(new RemoveListCommand(this._model));
-    this.registerCommand(new UnindentListCommand(this._model));
-    this.registerCommand(new IndentListCommand(this._model));
-    this.registerCommand(new InsertNewLineCommand(this._model));
-    this.registerCommand(new InsertNewLiCommand(this._model));
-    this.registerCommand(new MakeHighlightCommand(this._model));
-    this.registerCommand(new RemoveHighlightCommand(this._model));
-    this.registerCommand(new InsertTableCommand(this._model));
-    this.registerCommand(new InsertRowBelowCommand(this._model));
-    this.registerCommand(new InsertRowAboveCommand(this._model));
-    this.registerCommand(new InsertColumnAfterCommand(this._model));
-    this.registerCommand(new InsertColumnBeforeCommand(this._model));
-    this.registerCommand(new RemoveTableRowCommand(this._model));
-    this.registerCommand(new RemoveTableColumnCommand(this._model));
-    this.registerCommand(new RemoveTableCommand(this._model));
-    this.registerCommand(new InsertHtmlCommand(this._model));
-    this.registerCommand(new InsertXmlCommand(this._model));
+    this.modelSelectionTracker.startTracking();   
+    this.rootNode.addEventListener("focus", () => {
+      this.model.writeSelection();
+    });
+    window.__VDOM = this.model;
+    window.__executeCommand = (commandName: string, ...args: unknown[]) => {
+      this.executeCommand(commandName, ...args);
+    };
+    this.registerCommand(new MakeBoldCommand(this.model));
+    this.registerCommand(new RemoveBoldCommand(this.model));
+    this.registerCommand(new MakeItalicCommand(this.model));
+    this.registerCommand(new RemoveItalicCommand(this.model));
+    this.registerCommand(new MakeStrikethroughCommand(this.model));
+    this.registerCommand(new RemoveStrikethroughCommand(this.model));
+    this.registerCommand(new MakeUnderlineCommand(this.model));
+    this.registerCommand(new RemoveUnderlineCommand(this.model));
+    this.registerCommand(new MakeListCommand(this.model));
+    this.registerCommand(new RemoveListCommand(this.model));
+    this.registerCommand(new UnindentListCommand(this.model));
+    this.registerCommand(new IndentListCommand(this.model));
+    this.registerCommand(new InsertNewLineCommand(this.model));
+    this.registerCommand(new InsertNewLiCommand(this.model));
+    this.registerCommand(new MakeHighlightCommand(this.model));
+    this.registerCommand(new RemoveHighlightCommand(this.model));
+    this.registerCommand(new InsertTableCommand(this.model));
+    this.registerCommand(new InsertRowBelowCommand(this.model));
+    this.registerCommand(new InsertRowAboveCommand(this.model));
+    this.registerCommand(new InsertColumnAfterCommand(this.model));
+    this.registerCommand(new InsertColumnBeforeCommand(this.model));
+    this.registerCommand(new RemoveTableRowCommand(this.model));
+    this.registerCommand(new RemoveTableColumnCommand(this.model));
+    this.registerCommand(new RemoveTableCommand(this.model));
+    this.registerCommand(new InsertHtmlCommand(this.model));
+    this.registerCommand(new InsertXmlCommand(this.model));
     this.registerCommand(new InsertTextCommand(this.model));
   }
 
@@ -202,7 +207,7 @@ class RawEditor extends EmberObject {
    * @param path1
    * @param path2
    */
-  createRangeFromPaths(path1: number[], path2: number[]) : ModelRange {
+  createRangeFromPaths(path1: number[], path2: number[]): ModelRange {
     return ModelRange.fromPaths(this.model.rootModelNode, path1, path2);
   }
 
@@ -210,7 +215,7 @@ class RawEditor extends EmberObject {
    * create a selection on the virtual dom
    * starts out without any selected ranges
    */
-  createSelection() : ModelSelection {
+  createSelection(): ModelSelection {
     return new ModelSelection(this.model);
   }
 }
