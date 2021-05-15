@@ -4,6 +4,8 @@ import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
 import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import { parsePrefixString } from "@lblod/ember-rdfa-editor/model/util/rdfa-utils";
+import RdfaAttributes from "@lblod/marawa/rdfa-attributes";
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -12,10 +14,12 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   private _children: ModelNode[] = [];
   private _type: ElementType;
+  private _currentRdfaPrefixes: Map<string,string>;
 
   constructor(type: ElementType = "span", config?: NodeConfig) {
     super(config);
     this._type = type;
+    this._currentRdfaPrefixes = config?.rdfaPrefixes || new Map<string,string>();
   }
 
   get type(): ElementType {
@@ -38,7 +42,6 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       return '';
     }
   }
-
   get children(): ModelNode[] {
     return this._children;
   }
@@ -87,6 +90,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     result.appendChildren(...clonedChildren);
     return result;
   }
+
   shallowClone(): ModelElement {
     const result = new ModelElement(this.type);
     result.attributeMap = new Map<string, string>(this.attributeMap);
@@ -116,6 +120,10 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
     child.previousSibling = prev;
     child.nextSibling = next;
+
+    if (ModelNode.isModelElement(child)) {
+      child.updateRdfaPrefixes(this.getRdfaPrefixes());
+    }
 
     child.parent = this;
   }
@@ -334,6 +342,48 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
         throw e;
       }
     }
+  }
+
+  getVocab(): string | null {
+    return this.getRdfaPrefixes().get("") ?? null;
+  }
+
+  getRdfaPrefixes(): Map<string,string> {
+    // NOTE: we map vocab to an empty string prefix, because this is convenient for passing to children
+    //       it's also conviently how marawa uses it in the RdfaAttributes class
+    const vocab = this.getAttribute("vocab");
+    if (vocab) {
+      return new Map([...this._currentRdfaPrefixes, ["", vocab]]);
+    }
+    else {
+      return new Map([...this._currentRdfaPrefixes]);
+    }
+  }
+
+  updateRdfaPrefixes(prefixes: Map<string,string> = this._currentRdfaPrefixes) {
+    const myPrefixString = this.getAttribute('prefix');
+    if (myPrefixString) {
+      const myPrefixes = parsePrefixString(myPrefixString);
+      this._currentRdfaPrefixes = new Map([...prefixes, ...myPrefixes]);
+    }
+    else {
+      this._currentRdfaPrefixes = prefixes;
+    }
+  }
+
+  setAttribute(key: string, value: string) {
+    super.setAttribute(key, value);
+    if (key === 'prefix') {
+      this.updateRdfaPrefixes();
+    }
+  }
+
+  /*
+   * returns a parsed representation of the rdfa attributes
+   * prefixes are expanded and multivalue attributes are split on space and returned as an array
+   */
+  getRdfaAttributes(): RdfaAttributes {
+    return new RdfaAttributes(this, Object.fromEntries(this.getRdfaPrefixes()));
   }
 
   sameAs(other: ModelNode, strict = false): boolean {

@@ -180,4 +180,42 @@ module("Unit | model | readers | html-reader", hooks => {
       .firstChild as ModelText)
       .content, "cell00");
   });
+  module("Unit | model | readers | html-reader | rdfa attributes", () => {
+    test("it should take prefixes from parent elements into account", (assert) => {
+      const child = document.createElement("div");
+      child.setAttribute("property", "mu:uuid");
+      const parent = document.createElement("div");
+      parent.setAttribute("prefix", "mu: http://mu.semte.ch/vocabularies/core/ eli: http://data.europa.eu/eli/ontology#");     parent.appendChild(child);
+      const actual = reader.read(child)[0] as ModelElement;
+      assert.true(actual.getRdfaPrefixes().has("mu"));
+      assert.true(actual.getRdfaPrefixes().has("eli"));
+      assert.equal(actual.getRdfaPrefixes().get("mu"), "http://mu.semte.ch/vocabularies/core/");
+      assert.equal(actual.getRdfaPrefixes().get("eli"), "http://data.europa.eu/eli/ontology#");
+      assert.equal(actual.getRdfaAttributes().properties.length, 1);
+      assert.equal(actual.getRdfaAttributes().properties[0], "http://mu.semte.ch/vocabularies/core/uuid" );
+    });
+
+    test("it should properly expand a property without a prefix when a vocab was provided in the context", (assert) => {
+      const child = document.createElement("span");
+      child.setAttribute("property", "title");
+      const parent = document.createElement("div");
+      parent.setAttribute("vocab", "http://data.europa.eu/eli/ontology#");
+      parent.appendChild(child);
+      const actual = reader.read(child)[0] as ModelElement;
+      assert.equal(actual.getRdfaAttributes().properties.length, 1);
+      assert.equal(actual.getRdfaAttributes().properties[0], "http://data.europa.eu/eli/ontology#title" );
+    });
+
+    test("it should properly expand a property without a prefix in a nested child when a vocab was provided in the context", (assert) => {
+      const doc = dom`<div><span property="title">my title</span></div>`;
+      const child = doc.body.firstChild as HTMLElement;
+      const parent = document.createElement("div");
+      parent.setAttribute("vocab", "http://data.europa.eu/eli/ontology#");
+      parent.appendChild(child);
+      const root = reader.read(child)[0] as ModelElement;
+      const actual = root.firstChild as ModelElement;
+      assert.equal(actual.getRdfaAttributes().properties.length, 1);
+      assert.equal(actual.getRdfaAttributes().properties[0], "http://data.europa.eu/eli/ontology#title" );
+    });
+  });
 });

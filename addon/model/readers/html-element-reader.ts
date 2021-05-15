@@ -10,6 +10,7 @@ export default class HtmlElementReader implements Reader<HTMLElement, ModelEleme
   read(from: HTMLElement, context: HtmlReaderContext): ModelElement[] {
     const result = new ModelElement(tagName(from) as ElementType);
     copyAttributes(from, result);
+    result.updateRdfaPrefixes(context.rdfaPrefixes);
 
     const nodeReader = new HtmlNodeReader();
     for (const child of from.childNodes) {
