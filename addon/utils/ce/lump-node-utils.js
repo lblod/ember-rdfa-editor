@@ -35,7 +35,7 @@ function isInLumpNode(node, rootNode){
  *
  * @param {Node} node
  * @param {Node} rootNode
- * @return {null | Node}
+ * @return {null | Element}
  */
 function getParentLumpNode(node, rootNode){
   if(hasLumpNodeProperty(node)){
