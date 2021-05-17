@@ -29,6 +29,14 @@ function isInLumpNode(node, rootNode){
   return false;
 }
 
+/**
+ * Return node if it is a lumpnode, walk up the tree to find one
+ * otherwise, until you hit rootNode. Return null if no node found.
+ *
+ * @param {Node} node
+ * @param {Node} rootNode
+ * @return {null | Node}
+ */
 function getParentLumpNode(node, rootNode){
   if(hasLumpNodeProperty(node)){
     return node;

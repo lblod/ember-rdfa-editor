@@ -1,5 +1,5 @@
 import {warn} from '@ember/debug';
-import {getWindowSelection, isElement, isVoidElement, tagName} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {isVoidElement} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ListBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/backspace-plugin';
 import LumpNodeBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/backspace-plugin';
 import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
@@ -11,11 +11,14 @@ import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugi
 import TableBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/backspace-plugin';
 import {
   KeepCursorAtStartManipulation,
-  Manipulation, MoveCursorBeforeElementManipulation,
+  Manipulation,
+  MoveCursorBeforeElementManipulation,
   MoveCursorToEndOfElementManipulation,
-  RemoveCharacterManipulation, RemoveElementWithChildrenThatArentVisible,
+  RemoveCharacterManipulation,
+  RemoveElementWithChildrenThatArentVisible,
   RemoveEmptyElementManipulation,
-  RemoveEmptyTextNodeManipulation, RemoveOtherNodeManipulation,
+  RemoveEmptyTextNodeManipulation,
+  RemoveOtherNodeManipulation,
   RemoveVoidElementManipulation,
   VoidElement
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
@@ -30,7 +33,6 @@ import {
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import {isInLumpNode} from "@lblod/ember-rdfa-editor/utils/ce/lump-node-utils";
 
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
