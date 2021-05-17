@@ -1,4 +1,4 @@
-import ceNextTextNode from "dummy/utils/ce/next-text-node";
+import ceNextTextNode from "@lblod/ember-rdfa-editor/utils/ce/next-text-node";
 import { module, test, skip } from "qunit";
 
 const invisibleSpace = "\u200B";
