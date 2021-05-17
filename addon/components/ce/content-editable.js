@@ -291,7 +291,6 @@ export default class ContentEditable extends Component {
     }
     this.rawEditor.selection.lastRange.collapse();
     this.rawEditor.model.writeSelection();
-    this.rawEditor.updateRichNode();
     this.rawEditor.updateSelectionAfterComplexInput();
     this.rawEditor.generateDiffEvents.perform();
     return false;
