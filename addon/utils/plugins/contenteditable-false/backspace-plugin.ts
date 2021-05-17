@@ -7,6 +7,7 @@ import {
   MoveCursorToEndOfElementManipulation
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {editorDebug, moveCaretBefore} from '@lblod/ember-rdfa-editor/editor/utils';
+import {isInLumpNode} from "@lblod/ember-rdfa-editor/utils/ce/lump-node-utils";
 
 /**
  * This plugin jumps before uneditable elements
@@ -18,7 +19,7 @@ export default class ContentEditableFalseBackspacePlugin implements BackspacePlu
     if (manipulation.type == "moveCursorToEndOfElement") {
       editorDebug(`plugins.contenteditable-false.guidanceForManipulation`, 'possible jump before element', manipulation.node);
       const element = manipulation.node ;
-      if (! element.isContentEditable) {
+      if (! element.isContentEditable && ! isInLumpNode(element)) {
         // element is not editable
         editorDebug(`plugins.contenteditable-false.guidanceForManipulation`,'will jump');
         return {
