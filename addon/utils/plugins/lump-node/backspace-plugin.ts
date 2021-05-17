@@ -32,12 +32,12 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
     const node = manipulation.node;
     const rootNode = node.getRootNode(); //Assuming here that node is attached.
 
-    let parentLump = getParentLumpNode(node, rootNode);
+    let parentLump: Element | null = getParentLumpNode(node, rootNode);
 
     if (manipulation.type === "removeEmptyTextNode" && !parentLump) {
       const prevSibling = manipulation.node.previousSibling;
       if (prevSibling) {
-        parentLump = getParentLumpNode(prevSibling, rootNode) as Element;
+        parentLump = getParentLumpNode(prevSibling, rootNode);
       }
     }
     const isManipulationSupported = this.isSupportedManipulation(manipulation);
@@ -49,14 +49,14 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
         return {
           allow: true,
           executor: (_, editor: Editor) => {
-            this.removeLumpNode(parentLump, editor);
+            this.removeLumpNode(parentLump!, editor);
           }
         };
       } else {
         return {
           allow: true,
           executor: () => {
-            this.flagForRemoval(parentLump);
+            this.flagForRemoval(parentLump!);
           }
         };
       }
