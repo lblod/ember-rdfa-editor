@@ -70,7 +70,11 @@ class HTMLInputParser {
       if (this.tagMap[tag]) {
         cleanedNode = document.createElement(this.tagMap[tag]);
         this.copyAllAttrs(node, cleanedNode);
+      } else if(tag === 'a' && !cleanedNode.href) {
+        cleanedNode = document.createElement('span');
+        this.copyAllAttrs(node, cleanedNode);
       }
+      
       // Clean all node childs
       cleanedNode.textContent = '';
       if (this.lumpTags.includes(tag)) {
