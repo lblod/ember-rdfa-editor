@@ -11,11 +11,14 @@ import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugi
 import TableBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/backspace-plugin';
 import {
   KeepCursorAtStartManipulation,
-  Manipulation, MoveCursorBeforeElementManipulation,
+  Manipulation,
+  MoveCursorBeforeElementManipulation,
   MoveCursorToEndOfElementManipulation,
-  RemoveCharacterManipulation, RemoveElementWithChildrenThatArentVisible,
+  RemoveCharacterManipulation,
+  RemoveElementWithChildrenThatArentVisible,
   RemoveEmptyElementManipulation,
-  RemoveEmptyTextNodeManipulation, RemoveOtherNodeManipulation,
+  RemoveEmptyTextNodeManipulation,
+  RemoveOtherNodeManipulation,
   RemoveVoidElementManipulation,
   VoidElement
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';

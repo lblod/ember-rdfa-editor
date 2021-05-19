@@ -3,11 +3,10 @@ import {
   TextInputPlugin
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import {ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 
-const PLACEHOLDER_CLASS = "mark-highlight-manual";
 /**
  * @class PlaceholderTextInputPlugin
  * @module plugins/placeholder-text
@@ -18,18 +17,10 @@ export default class PlaceholderTextInputPlugin implements TextInputPlugin {
 
   guidanceForManipulation(manipulation: TextHandlerManipulation): ManipulationGuidance | null {
     const {range: originalRange, text} = manipulation;
-    const range = originalRange.clone();
+    let range = originalRange;
 
-    let anyPlaceholder = false;
-    if (isPlaceHolder(range.start.parent)) {
-      range.start = ModelPosition.fromBeforeNode(range.start.parent);
-      anyPlaceholder = true;
-    }
-    if (isPlaceHolder(range.end.parent)) {
-      range.end = ModelPosition.fromAfterNode(range.end.parent);
-      anyPlaceholder = true;
-    }
-    if (anyPlaceholder) {
+    if (ModelNodeUtils.isPlaceHolder(originalRange.start.parent) || ModelNodeUtils.isPlaceHolder(originalRange.end.parent)) {
+      range = ModelRangeUtils.getExtendedToPlaceholder(originalRange);
       return {
         allow: true, executor: (_, rawEditor: PernetRawEditor) => {
           rawEditor.executeCommand("insert-text", text, range);
@@ -39,8 +30,4 @@ export default class PlaceholderTextInputPlugin implements TextInputPlugin {
       return null;
     }
   }
-}
-
-function isPlaceHolder(element: ModelElement): boolean {
-  return !!element.getAttribute("class")?.includes(PLACEHOLDER_CLASS);
 }
