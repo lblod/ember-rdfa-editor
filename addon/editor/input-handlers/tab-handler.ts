@@ -14,7 +14,7 @@ import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-
 import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
 import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
 import {ensureValidTextNodeForCaret} from '@lblod/ember-rdfa-editor/editor/utils';
-import RawEditor from 'dummy/utils/ce/raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 export type TabHandlerManipulation =
