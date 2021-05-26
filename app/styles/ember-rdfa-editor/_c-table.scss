@@ -8,6 +8,10 @@
   border: .1rem solid $say-gray-300;
   white-space: normal;
 
+  & + & {
+    margin-top: $say-unit;
+  }
+
   thead {
     border-bottom: .2rem solid $say-gray-300;
   }
@@ -36,5 +40,10 @@
   th,
   td {
     max-width: 55ch;
+  }
+
+  th:focus,
+  td:focus {
+    outline: none;
   }
 }
