@@ -131,7 +131,8 @@ class RawEditor extends EmberObject {
   set rootNode(rootNode: HTMLElement) {
     if (rootNode) {
       this.initialize(rootNode);
-      this.model.read();
+      this.model.read(false);
+      this.model.selection.collapseIn(this.model.rootModelNode);
       this.model.write();
       this.updateRichNode();
     }
