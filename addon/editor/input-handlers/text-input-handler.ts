@@ -86,7 +86,6 @@ export default class TextInputHandler extends InputHandler {
 
   handleNativeManipulation(manipulation: TextHandlerManipulation) {
     if (manipulation.type === "insertTextIntoRange") {
-      console.log(manipulation);
       this.rawEditor.executeCommand("insert-text", manipulation.text, manipulation.range);
     } else {
       throw new UnsupportedManipulationError(manipulation);
