@@ -1,7 +1,7 @@
 import Command from "./command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelElement from "../model/model-element";
-import {ImpossibleModelStateError, MisbehavedSelectionError, ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ImpossibleModelStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
