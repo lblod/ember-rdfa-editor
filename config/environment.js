@@ -8,6 +8,9 @@ module.exports = function(environment) {
     }
   };
 
+  if (environment === 'development') {
+    ENV.featureFlags['editor-extended-html-paste'] = true;
+  }
   if (environment === 'production') {
     ENV.featureFlags['editor-html-paste'] = false;
   }
