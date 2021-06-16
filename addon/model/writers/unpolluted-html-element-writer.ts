@@ -10,7 +10,6 @@ export default class UnpollutedHtmlElementWriter implements Writer<ModelElement,
 
   write(modelNode: ModelElement): HTMLElement {
     const result = document.createElement(modelNode.type);
-    this.model.bindNode(modelNode, result);
 
     for (const [key, value] of modelNode.attributeMap.entries()) {
       if (!INTERNAL_ATTRIBUTES.includes(key)) {
