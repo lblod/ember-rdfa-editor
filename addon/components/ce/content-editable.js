@@ -281,13 +281,13 @@ export default class ContentEditable extends Component {
         // fall back to text pasting
         console.warn(e); //eslint-disable-line no-console
         const text = this.getClipboardContentAsText(clipboardData);
-        this.rawEditor.executeCommand("insert-html", text, pasteRange);
+        this.rawEditor.executeCommand("insert-text", text, pasteRange);
       }
     }
 
     else {
       const text = this.getClipboardContentAsText(clipboardData);
-      this.rawEditor.executeCommand("insert-html", text, pasteRange);
+      this.rawEditor.executeCommand("insert-text", text, pasteRange);
     }
     this.rawEditor.selection.lastRange.collapse();
     this.rawEditor.model.writeSelection();
