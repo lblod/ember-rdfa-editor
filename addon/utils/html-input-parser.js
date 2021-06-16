@@ -1,9 +1,12 @@
 import {tagName, invisibleSpace} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import DomPurify from 'dompurify';
 
-const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
-const DEFAULT_LUMP_TAGS = ["table"];
-const DEFAULT_SAFE_TAGS = ['a', 'br', 'body', 'code', 'data', 'datalist', 'div', 'dl', 'dt', 'dd', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'li', 'link', 'meta', 'nav', 'ol', 'p', 'pre', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'template', 'th', 'thead',  'time', 'tr', 'ul', 'var', 'wbr', 'u' ];
+export const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
+export const DEFAULT_LUMP_TAGS = ["table"];
+export const DEFAULT_SAFE_TAGS = ['a', 'br', 'body', 'code', 'data', 'datalist', 'div', 'dl', 'dt', 'dd', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'li', 'link', 'meta', 'nav', 'ol', 'p', 'pre', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'template', 'th', 'thead',  'time', 'tr', 'ul', 'var', 'wbr', 'u' ];
+
+// limited set of tags we allow for pasting
+export const LIMITED_SAFE_TAGS = ['a', 'p', 'br', 'ol', 'ul', 'li', 'strong', 'u', 'em', 's', 'b', 'table', 'thead', 'tbody', 'th', 'tr', 'td', 'div', 'span'];
 const DEFAULT_TAG_MAP = {
   b: 'strong',
   i: 'em',
@@ -74,7 +77,6 @@ class HTMLInputParser {
         cleanedNode = document.createElement('span');
         this.copyAllAttrs(node, cleanedNode);
       }
-      
       // Clean all node childs
       cleanedNode.textContent = '';
       if (this.lumpTags.includes(tag)) {

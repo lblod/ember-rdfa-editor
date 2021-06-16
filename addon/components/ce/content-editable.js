@@ -16,12 +16,13 @@ import UndoHandler from '../../utils/ce/handlers/undo-hander';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
 import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
-import HTMLInputParser from '../../utils/html-input-parser';
+import HTMLInputParser, {LIMITED_SAFE_TAGS} from '../../utils/html-input-parser';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
 import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
  * It provides handlers for input events, a component to display a contenteditable element and an api for interaction with the document and its internal document representation.
@@ -265,13 +266,13 @@ export default class ContentEditable extends Component {
     const pasteRange = ModelRangeUtils.getExtendedToPlaceholder(this.rawEditor.model.selection.lastRange);
 
     //TODO: if no clipboardData found, do we want an error?
-    if (!isInTable && (this.features.isEnabled('editor-html-paste')||
-         this.features.isEnabled('editor-extended-html-paste'))&&
-         this.hasClipboardHtmlContent(clipboardData) ) {
+    const canPasteHTML = ! isInTable && ( this.features.isEnabled('editor-html-paste') || this.features.isEnabled('editor-extended-html-paste')) && this.hasClipboardHtmlContent(clipboardData);
+
+    if (canPasteHTML) {
       try {
         const inputParser = this.features.isEnabled('editor-extended-html-paste') ?
           new HTMLInputParser({}):
-          new HTMLInputParser({safeTags: ['p', 'br', 'ol', 'ul', 'li', 'strong', 'u', 'em', 's', 'table', 'thead', 'tbody', 'th', 'tr', 'td']});
+              new HTMLInputParser({safeTags: LIMITED_SAFE_TAGS });
 
         const htmlPaste = clipboardData.getData('text/html');
         const cleanHTML = inputParser.cleanupHTML(htmlPaste);
