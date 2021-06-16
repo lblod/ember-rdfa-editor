@@ -83,10 +83,7 @@ class RawEditor extends EmberObject {
     this.registeredCommands = new Map<string, Command>();
     this._model = new Model(rootNode);
     this.modelSelectionTracker = new ModelSelectionTracker(this._model);
-    this.modelSelectionTracker.startTracking();   
-    this.rootNode.addEventListener("focus", () => {
-      this.model.writeSelection();
-    });
+    this.modelSelectionTracker.startTracking();
     window.__VDOM = this.model;
     window.__executeCommand = (commandName: string, ...args: unknown[]) => {
       this.executeCommand(commandName, ...args);

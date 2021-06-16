@@ -11,11 +11,6 @@ export default class AuDropdown extends Component {
   @tracked dropdownOpen = false;
   @tracked focusTrapActive = false;
 
-
-  get rootNode() {
-    return this.args.editor.rootNode;
-  }
-
   activateFocusTrap() {
     this.focusTrapActive = true;
   }
@@ -28,6 +23,7 @@ export default class AuDropdown extends Component {
   @action
   deactivateDropdown() {
     this.dropdownOpen = false;
+    this.args.editor.model.writeSelection();
   }
 
   // toggle dropdown
