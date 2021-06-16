@@ -8,6 +8,14 @@
         <Rdfa::RdfaEditorDebugger @debug={{this.debug}} />
       {{/if}}
     </p>
+    <div>
+      paste behaviour:
+      <select {{on "input" setPasteBehaviour}}>
+        <option value="textonly">text only</option>
+        <option value="limited">limited html</option>
+        <option value="full" selected>full html</option>
+      </select>
+    </div>
     {{#if this.rdfaEditor}}
       <p>Sample data:
         {{#each-in model as |name data| }}
