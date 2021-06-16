@@ -89,6 +89,12 @@ export class OffsetOutOfRangeError extends CustomError {
 export class ModelRangeError extends SelectionError {
 }
 
+export class ImpossibleModelStateError extends ModelError {
+  constructor() {
+    super("Something went horribly wrong and a strong assumption was broken");
+  }
+}
+
 export class UnconfinedRangeError extends ModelRangeError {
   constructor() {
     super("Range is not confined to a single parent");
