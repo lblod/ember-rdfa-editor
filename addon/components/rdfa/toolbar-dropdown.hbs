@@ -15,7 +15,7 @@
             shouldSelfFocus=true
             focusTrapOptions=(hash
                     onDeactivate=this.deactivateDropdown
-                    setReturnFocus=this.rootNode
+                    returnFocusOnDeactivate=false
                     clickOutsideDeactivates=true)
     }}
           {{on "click" this.deactivateFocusTrap}}
