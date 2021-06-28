@@ -1,0 +1,51 @@
+<div class="c-dummy">
+  <div class="c-dummy__header">
+    <h1>Dummy app </h1>
+    <p>
+      App version: {{app-version versionOnly=true showExtended=true}}
+      {{#if this.debug}}
+        <Rdfa::RdfaEditorDebugger @debug={{this.debug}} />
+      {{/if}}
+    </p>
+    <div>
+      <label for="pasteSelect">
+        paste behaviour:
+      </label>
+      <select id="pasteSelect" {{on "input" this.setPasteBehaviour}}>
+        <option value="textonly">text only</option>
+        <option value="limited">limited html</option>
+        <option value="full" selected>full html</option>
+      </select>
+    </div>
+    {{#if this.rdfaEditor}}
+      <p>Sample data:
+        <button type="button" {{on "click" (fn this.loadData "")}}>Empty</button>
+        |
+        {{#each-in @model as |name data| }}
+          <button type="button" {{on "click" (fn this.loadData data)}}>{{name}}</button>
+          |
+        {{/each-in}}
+      </p>
+    {{else}}
+      Waiting for editor init
+    {{/if}}
+  </div>
+  <div class="c-dummy__content">
+    <div vocab="http://data.vlaanderen.be/ns/foo#" resource="#Foo" typeof="Foo">
+      <div vocab="http://data.vlaanderen.be/ns/besluit#"
+           prefix="eli: http://data.europa.eu/eli/ontology# prov: http://www.w3.org/ns/prov# mandaat: http://data.vlaanderen.be/ns/mandaat# besluit: http://data.vlaanderen.be/ns/besluit#"
+           class="app-view">
+
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @initDebug={{this.initDebug}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />
+      </div>
+    </div>
+  </div>
+</div>
