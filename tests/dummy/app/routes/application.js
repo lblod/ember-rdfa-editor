@@ -1,8 +1,8 @@
-import Route from '@ember/routing/route';
 import sampleData from '../config/sample-data';
+import Route from '@ember/routing/route';
 
-export default Route.extend({
+export default class ApplicationRoute extends Route {
   model() {
     return sampleData;
   }
-});
+}
