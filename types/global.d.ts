@@ -4,3 +4,7 @@ declare module '@lblod/ember-rdfa-editor/templates/*' {
   const tmpl: TemplateFactory;
   export default tmpl;
 }
+
+declare module 'ember-get-config' {
+  const environment: string;
+}
