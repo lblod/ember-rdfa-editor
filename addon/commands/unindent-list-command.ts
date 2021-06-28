@@ -4,6 +4,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 export default class UnindentListCommand extends Command {
   name = "unindent-list";
   constructor(model: Model) {
@@ -25,6 +26,7 @@ export default class UnindentListCommand extends Command {
     return !!result?.length;
   }
 
+  @logExecute
   execute(selection: ModelSelection = this.model.selection): void {
     if(!ModelSelection.isWellBehaved(selection)) {
 

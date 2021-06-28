@@ -8,6 +8,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {elementHasType} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
 import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 export default class RemoveListCommand extends Command {
   name = "remove-list";
@@ -16,6 +17,7 @@ export default class RemoveListCommand extends Command {
     super(model);
   }
 
+  @logExecute
   execute(selection: ModelSelection = this.model.selection): void {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();

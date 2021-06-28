@@ -5,6 +5,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {NoParentError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
+import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 export default class IndentListCommand extends Command {
   name = "indent-list";
@@ -29,6 +30,7 @@ export default class IndentListCommand extends Command {
     return true;
   }
 
+  @logExecute
   execute(selection: ModelSelection = this.model.selection): void {
     const selectedLIsIterator = selection.findAllInSelection({
       filter: ModelNode.isModelElement,

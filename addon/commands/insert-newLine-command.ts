@@ -7,6 +7,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 
 /**
@@ -25,6 +26,7 @@ export default class InsertNewLineCommand extends Command {
     return true;
   }
 
+  @logExecute
   execute(range: ModelRange | null = this.model.selection.lastRange): void {
     if(!range) {
       throw new MisbehavedSelectionError();

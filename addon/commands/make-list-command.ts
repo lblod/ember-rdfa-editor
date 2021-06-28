@@ -10,6 +10,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {PropertyState} from "../model/util/types";
+import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 
 /**
@@ -27,6 +28,7 @@ export default class MakeListCommand extends Command {
   }
 
 
+  @logExecute
   execute(listType: "ul" | "ol", selection: ModelSelection = this.model.selection) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
