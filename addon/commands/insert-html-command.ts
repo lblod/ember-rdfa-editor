@@ -3,6 +3,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
 import ModelRange from "../model/model-range";
+import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 export default class InsertHtmlCommand extends Command {
   name = "insert-html";
@@ -11,6 +12,7 @@ export default class InsertHtmlCommand extends Command {
     super(model);
   }
 
+  @logExecute
   execute(htmlString: string, range: ModelRange | null = this.model.selection.lastRange) {
     if (!range) {
       return;

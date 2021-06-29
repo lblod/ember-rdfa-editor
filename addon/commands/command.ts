@@ -1,4 +1,5 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
+import {createLogger, Logger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 /**
  * Commands are the only things that are allowed to modify the model.
@@ -9,11 +10,16 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 export default abstract class Command<T extends unknown[] = unknown[]> {
   abstract name: string;
   protected model: Model;
+  protected logger: Logger;
+
   protected constructor(model: Model) {
     this.model = model;
+    this.logger = createLogger(`command:${this.constructor.name}`);
   }
+
   canExecute(..._args: unknown[]): boolean {
     return true;
   }
+
   abstract execute(...args: T): void;
 }

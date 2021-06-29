@@ -3,6 +3,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 
 export default class InsertTableRowBelowCommand extends Command {
@@ -16,6 +17,7 @@ export default class InsertTableRowBelowCommand extends Command {
     return true;
   }
 
+  @logExecute
   execute(): void {
 
     const selection= this.model.selection;

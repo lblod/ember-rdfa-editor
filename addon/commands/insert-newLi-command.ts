@@ -9,6 +9,7 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import { INVISIBLE_SPACE } from "@lblod/ember-rdfa-editor/model/util/constants";
 import {elementHasType} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
+import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 export default class InsertNewLiCommand extends Command {
   name = "insert-newLi";
@@ -23,6 +24,7 @@ export default class InsertNewLiCommand extends Command {
     }
     return selection.lastRange.hasCommonAncestorWhere(elementHasType("ul", "ol"));
   }
+  @logExecute
   execute(): void {
     const selection = this.model.selection;
     const range = selection.lastRange;
