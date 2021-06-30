@@ -1,6 +1,7 @@
 import config from 'ember-get-config';
 import {defaultReporter, Diary, diary, LogEvent, LogLevels, Reporter} from 'diary';
 import {compare} from 'diary/utils';
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 // this array is sorted from lowest to highest "level"
 // aka setting loglevel to "info" will include info and everything to the right of it
@@ -138,4 +139,20 @@ export function logMethod(message: string | MethodMessageFunc = defaultLogMethod
   };
 }
 
-export const logExecute = logMethod(undefined, {scopePrefix: "command"});
+export const logExecute = logMethod(
+  (_methodName: string, ...args) => {
+    const mappedArgs = args.map(arg => {
+        if (arg instanceof ModelRange) {
+          return arg.toString();
+        }
+        if (typeof arg === "string") {
+          return `string<"${arg}", ${arg.length}>`;
+        } else {
+          return arg;
+        }
+      }
+    );
+    return ["Executing with args:", ...mappedArgs];
+
+  }, {scopePrefix: "command"});
+
