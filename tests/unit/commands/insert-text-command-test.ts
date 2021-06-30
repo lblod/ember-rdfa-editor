@@ -101,4 +101,86 @@ module("Unit | commands | insert-text-command-test", hooks => {
     command.execute(SPACE, range);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
+  test("minimal case: space does not eat the character before it", assert => {
+    // language=XML
+    const {root: initial, textNodes: {selectionFocus}} = vdom`
+      <modelRoot>
+        <h1>
+          <text>Notulen van de/het</text>
+          <span>
+            <text __id="selectionFocus">Gemeenteraad Laarne</text>
+          </span>
+        </h1>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <h1>
+          <text>Notulen van de/het</text>
+          <span>
+            <text __id="selectionFocus">G emeenteraad Laarne</text>
+          </span>
+        </h1>
+      </modelRoot>
+    `;
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(selectionFocus, 1, 1);
+    command.execute(SPACE, range);
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+
+  });
+  test("detected case: space does not eat the character before it", assert => {
+    // language=XML
+    const {root: initial, textNodes: {selectionFocus}} = vdom`
+      <modelRoot>
+        <h1 property="dc:title">
+          <text __id="selectionFocus">Notulen van de/het</text>
+          <span id="e0431768-cb7c-452a-a85d-7163a1ee3ee0">
+            <span property="http://data.vlaanderen.be/ns/besluit#isGehoudenDoor"
+                  typeof="http://data.vlaanderen.be/ns/besluit#Bestuursorgaan"
+                  resource="http://data.lblod.info/id/bestuursorganen/f5c51e5e2f09f7f2c53f36127f4087da687e120264b4927286c9bbcf46dc12d6">
+              <text>Gemeenteraad Laarne</text>
+            </span>
+          </span>
+          <text>, van</text>
+          <span id="fb4af6eb-ea5e-4413-9a39-54a9414cb762">
+            <span property="besluit:geplandeStart" datatype="xsd:dateTime" content="2020-04-06T14:56:07.290Z">
+              <text>6 april 2020, 16:56</text>
+            </span>
+          </span>
+          <text></text>
+        </h1>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <h1 property="dc:title">
+          <text>Notul en van de/het</text>
+          <span id="e0431768-cb7c-452a-a85d-7163a1ee3ee0">
+            <span property="http://data.vlaanderen.be/ns/besluit#isGehoudenDoor"
+                  typeof="http://data.vlaanderen.be/ns/besluit#Bestuursorgaan"
+                  resource="http://data.lblod.info/id/bestuursorganen/f5c51e5e2f09f7f2c53f36127f4087da687e120264b4927286c9bbcf46dc12d6">
+              <text>Gemeenteraad Laarne</text>
+            </span>
+          </span>
+          <text>, van</text>
+          <span id="fb4af6eb-ea5e-4413-9a39-54a9414cb762">
+            <span property="besluit:geplandeStart" datatype="xsd:dateTime" content="2020-04-06T14:56:07.290Z">
+              <text>6 april 2020, 16:56</text>
+            </span>
+          </span>
+          <text></text>
+        </h1>
+      </modelRoot>
+    `;
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(selectionFocus, 5, 5);
+    command.execute(SPACE, range);
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+
+  });
 });
