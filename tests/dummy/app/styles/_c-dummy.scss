@@ -87,18 +87,22 @@
   color: black;
   padding: 0.5em;
 }
+
 .navbar {
   height: 3vh;
 }
+
 .navigation-link.active {
   color: #ff7f00;
 }
+
 .vendor-iframe-container {
   position: relative;
   width: 100%;
   height: 95vh;
   display: flex;
 }
+
 .vendor-iframe {
   border: black solid 5px;
   width: 95%;
@@ -127,3 +131,7 @@
   background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
+.rdfa-debugger-textarea-wrapper {
+  width: 100%;
+  height: 100%;
+}
