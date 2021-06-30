@@ -21,6 +21,8 @@
       <p>Sample data:
         <button type="button" {{on "click" (fn this.loadData "")}}>Empty</button>
         |
+        <button type="button" {{on "click" this.loadCustomData}}>Custom</button>
+        |
         {{#each-in @model as |name data| }}
           <button type="button" {{on "click" (fn this.loadData data)}}>{{name}}</button>
           |

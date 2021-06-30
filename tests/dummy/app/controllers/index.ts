@@ -34,6 +34,15 @@ export default class IndexController extends Controller {
   }
 
   @action
+  loadCustomData() {
+    const customData = window.prompt('Enter XML here');
+    if (customData) {
+      this.loadData(customData);
+    }
+  }
+
+
+  @action
   setPasteBehaviour(event: InputEvent) {
     const val = (event.target as HTMLSelectElement).value;
     if (val === "textonly") {
