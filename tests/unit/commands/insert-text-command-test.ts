@@ -5,10 +5,12 @@ import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-com
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {NON_BREAKING_SPACE, SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 module("Unit | commands | insert-text-command-test", hooks => {
   const ctx = new ModelTestContext();
   let command: InsertTextCommand;
+  const logger = createLogger("test:insert-text-command-test");
   hooks.beforeEach(() => {
     ctx.reset();
     command = new InsertTextCommand(ctx.model);
@@ -100,5 +102,38 @@ module("Unit | commands | insert-text-command-test", hooks => {
     const range = ModelRange.fromInElement(parent, 5, 5);
     command.execute(SPACE, range);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
+  test("space does not eat the character before it", assert => {
+    // language=XML
+    const {root: initial, textNodes: {selectionFocus}} = vdom`
+      <modelRoot>
+        <h1>
+          <text>Notulen van de/het</text>
+          <span>
+            <text __id="selectionFocus">Gemeenteraad Laarne</text>
+          </span>
+        </h1>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <h1>
+          <text>Notulen van de/het</text>
+          <span>
+            <text __id="selectionFocus">G emeenteraad Laarne</text>
+          </span>
+        </h1>
+      </modelRoot>
+    `;
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(selectionFocus, 1, 1);
+    command.execute(SPACE, range);
+    const rslt = ctx.model.rootModelNode.sameAs(expected);
+    if (!rslt) {
+      logger.log("space does not eat the character before it: ACTUAL:", ctx.model.toXml());
+    }
+    assert.true(rslt);
   });
 });

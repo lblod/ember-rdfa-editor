@@ -289,7 +289,45 @@ module("Unit | model | model-position", () => {
       assert.strictEqual(result, 'abc');
     });
 
+    test("gives desired characters when inside a string", assert => {
 
+      // language=XML
+      const {textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 1);
+      const result = position.charactersBefore(1);
+      assert.strictEqual(result, 'a');
+    });
+
+    test("gives desired characters when inside a string over boundaries", assert => {
+
+      // language=XML
+      const {textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text>abc</text>
+          <text __id="textNode">def</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 0);
+      const result = position.charactersBefore(1);
+      assert.strictEqual(result, 'c');
+    });
+    test("gives desired multiple characters when inside a string over boundaries", assert => {
+
+      // language=XML
+      const {textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text>abc</text>
+          <text __id="textNode">def</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 2);
+      const result = position.charactersBefore(4);
+      assert.strictEqual(result, 'bcde');
+    });
   });
   module("Unit | model | model-position | shiftedBy", () => {
     test("gives equivalent pos when already at start and moving left", assert => {
