@@ -175,7 +175,7 @@ export default class ModelRange {
   }
 
   collapse(toLeft = false): void {
-    if(toLeft) {
+    if (toLeft) {
       this.end = this.start;
     } else {
       this.start = this.end;
@@ -279,7 +279,7 @@ export default class ModelRange {
   }
 
   toString(): string {
-    return `{[${this.start.path.toString()}] - [${this.end.path.toString()}]}`;
+    return `ModelRange<[${this.start.path.toString()}] - [${this.end.path.toString()}]>`;
 
   }
 }
