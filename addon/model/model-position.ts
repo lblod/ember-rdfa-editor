@@ -318,16 +318,27 @@ export default class ModelPosition {
    * @return string the collected characters, in display order
    */
   charactersBefore(amount: number): string {
+
     let cur = this.nodeBefore();
     let counter = 0;
     const result = [];
 
     while (ModelNode.isModelText(cur) && counter < amount) {
       const amountToCollect = amount - counter;
-      const length = cur.content.length;
-      for (let i = 0; i < amountToCollect; i++) {
-        result.push(cur.content.charAt(length - 1 - i));
+      let startSearch;
+      if (cur === this.nodeAfter()) {
+        startSearch = this.parentOffset - cur.getOffset();
+      } else {
+        startSearch = cur.length;
+      }
+
+      let i = 0;
+      let charIndex = startSearch - 1 - i;
+      while (i < amountToCollect && charIndex >= 0) {
+        result.push(cur.content.charAt(startSearch - 1 - i));
         counter++;
+        i++;
+        charIndex = startSearch - 1 - i;
       }
       cur = cur.previousSibling;
     }
@@ -355,21 +366,20 @@ export default class ModelPosition {
     if (newOffset < 0) {
       newOffset = 0;
     }
-    if(newOffset > maxOffset) {
+    if (newOffset > maxOffset) {
       newOffset = maxOffset;
     }
     return ModelPosition.fromInElement(this.parent, newOffset);
   }
 
   //this returns true if the position is inside a text node (not right before not right after)
-  isInsideText(): boolean{
-    if(
+  isInsideText(): boolean {
+    if (
       (this.nodeAfter() == this.nodeBefore()) &&
       (ModelNode.isModelText(this.nodeAfter()) && ModelNode.isModelText(this.nodeBefore()))
-    ){
+    ) {
       return true;
-    }
-    else{
+    } else {
       return false;
     }
   }
