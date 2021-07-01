@@ -5,10 +5,12 @@ import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-com
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {NON_BREAKING_SPACE, SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 module("Unit | commands | insert-text-command-test", hooks => {
   const ctx = new ModelTestContext();
   let command: InsertTextCommand;
+  const logger = createLogger("test:insert-text-command-test");
   hooks.beforeEach(() => {
     ctx.reset();
     command = new InsertTextCommand(ctx.model);
@@ -101,7 +103,7 @@ module("Unit | commands | insert-text-command-test", hooks => {
     command.execute(SPACE, range);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
-  test("minimal case: space does not eat the character before it", assert => {
+  test("space does not eat the character before it", assert => {
     // language=XML
     const {root: initial, textNodes: {selectionFocus}} = vdom`
       <modelRoot>
@@ -128,59 +130,10 @@ module("Unit | commands | insert-text-command-test", hooks => {
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(selectionFocus, 1, 1);
     command.execute(SPACE, range);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-
-  });
-  test("detected case: space does not eat the character before it", assert => {
-    // language=XML
-    const {root: initial, textNodes: {selectionFocus}} = vdom`
-      <modelRoot>
-        <h1 property="dc:title">
-          <text __id="selectionFocus">Notulen van de/het</text>
-          <span id="e0431768-cb7c-452a-a85d-7163a1ee3ee0">
-            <span property="http://data.vlaanderen.be/ns/besluit#isGehoudenDoor"
-                  typeof="http://data.vlaanderen.be/ns/besluit#Bestuursorgaan"
-                  resource="http://data.lblod.info/id/bestuursorganen/f5c51e5e2f09f7f2c53f36127f4087da687e120264b4927286c9bbcf46dc12d6">
-              <text>Gemeenteraad Laarne</text>
-            </span>
-          </span>
-          <text>, van</text>
-          <span id="fb4af6eb-ea5e-4413-9a39-54a9414cb762">
-            <span property="besluit:geplandeStart" datatype="xsd:dateTime" content="2020-04-06T14:56:07.290Z">
-              <text>6 april 2020, 16:56</text>
-            </span>
-          </span>
-          <text></text>
-        </h1>
-      </modelRoot>
-    `;
-
-    // language=XML
-    const {root: expected} = vdom`
-      <modelRoot>
-        <h1 property="dc:title">
-          <text>Notul en van de/het</text>
-          <span id="e0431768-cb7c-452a-a85d-7163a1ee3ee0">
-            <span property="http://data.vlaanderen.be/ns/besluit#isGehoudenDoor"
-                  typeof="http://data.vlaanderen.be/ns/besluit#Bestuursorgaan"
-                  resource="http://data.lblod.info/id/bestuursorganen/f5c51e5e2f09f7f2c53f36127f4087da687e120264b4927286c9bbcf46dc12d6">
-              <text>Gemeenteraad Laarne</text>
-            </span>
-          </span>
-          <text>, van</text>
-          <span id="fb4af6eb-ea5e-4413-9a39-54a9414cb762">
-            <span property="besluit:geplandeStart" datatype="xsd:dateTime" content="2020-04-06T14:56:07.290Z">
-              <text>6 april 2020, 16:56</text>
-            </span>
-          </span>
-          <text></text>
-        </h1>
-      </modelRoot>
-    `;
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInTextNode(selectionFocus, 5, 5);
-    command.execute(SPACE, range);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-
+    const rslt = ctx.model.rootModelNode.sameAs(expected);
+    if (!rslt) {
+      logger.log("space does not eat the character before it: ACTUAL:", ctx.model.toXml());
+    }
+    assert.true(rslt);
   });
 });
