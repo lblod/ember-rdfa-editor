@@ -13,5 +13,8 @@
       "infile": "CHANGELOG.md",
       "launchEditor": true
     }
+  },
+  "npm": {
+    "publish": false
   }
 }
