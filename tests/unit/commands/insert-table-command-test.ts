@@ -190,7 +190,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("correctly replace part of text node", assert => {
+  test("correctly replaces part of text node", assert => {
     // language=XML
     const {root: initial} = vdom`
       <modelRoot>
