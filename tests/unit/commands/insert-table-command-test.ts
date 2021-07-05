@@ -23,7 +23,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     // language=XML
     const {root: expected} = vdom`
       <modelRoot>
-        <table>
+        <table class="say-table">
           <tbody>
             <tr>
               <td></td>
@@ -58,7 +58,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     const {root: expected} = vdom`
       <modelRoot>
         <text/>
-        <table>
+        <table class="say-table">
           <tbody>
             <tr>
               <td></td>
@@ -111,7 +111,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     // language=XML
     const {root: expected} = vdom`
       <modelRoot>
-        <table>
+        <table class="say-table">
           <tbody>
             <tr>
               <td></td>
@@ -166,7 +166,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     const {root: expected} = vdom`
       <modelRoot>
         <text>ele</text>
-        <table>
+        <table class="say-table">
           <tbody>
             <tr>
               <td></td>
@@ -202,7 +202,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     const {root: expected} = vdom`
       <modelRoot>
         <text>el</text>
-        <table>
+        <table class="say-table">
           <tbody>
             <tr>
               <td></td>
@@ -248,7 +248,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
       <modelRoot>
         <div>
           <text>ele</text>
-          <table>
+          <table class="say-table">
             <tbody>
               <tr>
                 <td></td>
