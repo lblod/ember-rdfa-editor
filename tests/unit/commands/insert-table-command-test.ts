@@ -43,6 +43,39 @@ module("Unit | commands | insert-table-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
+  test("inserts correctly in document with empty text node", assert => {
+    const {root: initial} = vdom`
+      <modelRoot>
+        <text/>
+      </modelRoot>
+    `;
+
+    const {root: expected} = vdom`
+      <modelRoot>
+        <text/>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
+    ctx.model.selectRange(range);
+
+    command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
+
   test("inserts correctly before table", assert => {
     const {root: initial} = vdom`
       <modelRoot>
@@ -108,6 +141,74 @@ module("Unit | commands | insert-table-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
+    ctx.model.selectRange(range);
+
+    command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
+
+  test("inserts correctly inside text node", assert => {
+    const {root: initial} = vdom`
+      <modelRoot>
+        <text>elephant</text>
+      </modelRoot>
+    `;
+
+    const {root: expected} = vdom`
+      <modelRoot>
+        <text>ele</text>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        <text>phant</text>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInNode(ctx.model.rootModelNode, 3, 3);
+    ctx.model.selectRange(range);
+
+    command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
+
+  test("correctly replace part of text node", assert => {
+    const {root: initial} = vdom`
+      <modelRoot>
+        <text>elephant</text>
+      </modelRoot>
+    `;
+
+    const {root: expected} = vdom`
+      <modelRoot>
+        <text>el</text>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        <text>ant</text>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInNode(ctx.model.rootModelNode, 2, 5);
     ctx.model.selectRange(range);
 
     command.execute();
