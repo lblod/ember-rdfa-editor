@@ -29,7 +29,35 @@ module("Unit | commands | insert-xml-command-test", hooks => {
       </modelRoot>
     `;
 
-    const xmlToInsert = oneLineTrim`<div><text>hello world</text><div/>`;
+    const xmlToInsert = oneLineTrim`<div><text>hello world</text></div>`;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
+    ctx.model.selectRange(range);
+
+    command.execute(xmlToInsert);
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
+
+  test("inserts correctly in document with empty text node", assert => {
+    // language=XML
+    const {root: initial} = vdom`
+      <modelRoot>
+        <text/>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <text/>
+        <div>
+          <text>hello world</text>
+        </div>
+      </modelRoot>
+    `;
+
+    const xmlToInsert = oneLineTrim`<div><text>hello world</text></div>`;
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
