@@ -2,6 +2,7 @@ import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-tex
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
 import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
+import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
@@ -44,6 +45,14 @@ export default abstract class ModelNode {
    */
   static isModelText(node?: ModelNode | null): node is ModelText {
     return !!node && node.modelNodeType === "TEXT";
+  }
+
+  /**
+   * Typechecking utility to verify whether the node is {@link ModelTable}
+   * @param node
+   */
+  static isModelTable(node?: ModelNode | null): node is ModelTable {
+    return this.isModelElement(node) && node instanceof ModelTable;
   }
 
   get attributeMap(): Map<string, string> {
