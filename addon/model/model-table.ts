@@ -106,6 +106,6 @@ export default class ModelTable extends ModelElement {
       return node instanceof ModelTable;
     });
 
-    return generator?.next().value;
+    return generator?.next().value as ModelTable;
   }
 }
