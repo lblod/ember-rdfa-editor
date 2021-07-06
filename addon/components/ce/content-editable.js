@@ -22,6 +22,8 @@ import { A } from '@ember/array';
 import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -318,12 +320,34 @@ export default class ContentEditable extends Component {
     }
   }
 
-  /**
-   * cut isn't allowed at the moment
-   */
   @action
   cut(event) {
     event.preventDefault();
+    const htmlWriter = new HtmlWriter(this.rawEditor.model);
+    const commonAncestor = this.rawEditor.selection.getCommonAncestor().parent;
+
+    this.rawEditor.model.change(mutator => {
+      const contentRange = mutator.splitRangeUntilElements(this.rawEditor.selection.lastRange, commonAncestor, commonAncestor);
+      const treeWalker = new ModelTreeWalker({
+        range: contentRange,
+        descend: false
+      });
+
+      let htmlString = "";
+      for (const modelNode of treeWalker) {
+        const node = htmlWriter.write(modelNode);
+        if (node instanceof HTMLElement) {
+          htmlString += node.outerHTML;
+        } else {
+          htmlString += node.textContent;
+        }
+      }
+
+      const clipboardData = event.clipboardData || window.clipboardData;
+      clipboardData.setData("text/html", htmlString);
+
+      mutator.insertNodes(contentRange);
+    });
   }
 
   /**
