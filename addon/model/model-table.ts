@@ -94,31 +94,18 @@ export default class ModelTable extends ModelElement {
   }
 
   static getCellFromSelection(selection: ModelSelection) {
-    const commonAncestor = selection.getCommonAncestor();
-    if(!commonAncestor) return null;
-    const cell = commonAncestor.parentElement.findAncestor((node) => {
-      if(node.modelNodeType === 'ELEMENT') {
-        const element = node as ModelElement;
-        if(element.type === 'td') return true;
-      }
-      return false;
-    }) as ModelElement;
-    return cell;
+    const generator = selection.lastRange?.findCommonAncestorsWhere((node) => {
+      return this.isModelElement(node) && node.type === "td";
+    });
+
+    return generator?.next().value;
   }
 
   static getTableFromSelection(selection: ModelSelection) {
-    const commonAncestor = selection.getCommonAncestor();
-    if(!commonAncestor) return null;
-    const table = commonAncestor.parentElement.findAncestor((node) => {
-      if(node.modelNodeType === 'ELEMENT') {
-        const element = node as ModelElement;
-        if(element.type === 'table') {
-          return true;
-        }
-      }
-      return false;
-    }) as ModelTable;
-    return table;
-  }
+    const generator = selection.lastRange?.findCommonAncestorsWhere((node) => {
+      return node instanceof ModelTable;
+    });
 
+    return generator?.next().value;
+  }
 }
