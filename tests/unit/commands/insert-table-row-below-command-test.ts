@@ -14,12 +14,10 @@ module("Unit | commands | insert-table-row-below-command-test", hooks => {
   });
 
   test("inserts below last row (empty td)", assert => {
-    // TODO: find out why table in getTableFromSelection is not of type ModelNodeElement
-
     // language=XML
     const {root: initial, elements: {bottomRight}} = vdom`
       <modelRoot>
-        <table class="say-table">
+        <table>
           <tbody>
             <tr>
               <td></td>
@@ -68,7 +66,7 @@ module("Unit | commands | insert-table-row-below-command-test", hooks => {
     // language=XML
     const {root: initial, textNodes: {bottomRight}} = vdom`
       <modelRoot>
-        <table class="say-table">
+        <table>
           <tbody>
             <tr>
               <td></td>
@@ -110,7 +108,125 @@ module("Unit | commands | insert-table-row-below-command-test", hooks => {
     `;
 
     ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInTextNode(bottomRight, 0, 0);
+    const range = ModelRange.fromInTextNode(bottomRight, 1, 1);
+    ctx.model.selectRange(range);
+
+    command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
+
+  test("inserts row in the middle (empty td)", assert => {
+    // language=XML
+    const {root: initial, elements: {middleRight}} = vdom`
+      <modelRoot>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td __id="middleRight"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInNode(middleRight, 0, 0);
+    ctx.model.selectRange(range);
+
+    command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
+
+  test("inserts row in the middle (td with text node)", assert => {
+    // language=XML
+    const {root: initial, textNodes: {middleRight}} = vdom`
+      <modelRoot>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <text __id="middleRight">abcde</text>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <text __id="middleRight">abcde</text>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(middleRight, 1, 1);
     ctx.model.selectRange(range);
 
     command.execute();
