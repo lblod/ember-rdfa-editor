@@ -7,7 +7,6 @@ type TableIndex = {
 };
 
 export default class ModelTable extends ModelElement {
-
   constructor(rows?: number, columns?: number) {
     super('table');
     // We need a constructor without rows or columns for the reader
@@ -22,7 +21,9 @@ export default class ModelTable extends ModelElement {
       }
       tbody.addChild(row);
     }
+
     this.className = 'say-table';
+    this.setAttribute('data-editor-table', '');
   }
 
   getDimensions() {
