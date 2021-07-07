@@ -36,6 +36,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
+import CutCommand from "@lblod/ember-rdfa-editor/commands/cut-command";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -115,6 +116,7 @@ class RawEditor extends EmberObject {
     this.registerCommand(new InsertHtmlCommand(this.model));
     this.registerCommand(new InsertXmlCommand(this.model));
     this.registerCommand(new InsertTextCommand(this.model));
+    this.registerCommand(new CutCommand(this.model));
   }
 
   /**

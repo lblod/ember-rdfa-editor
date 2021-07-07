@@ -22,11 +22,6 @@ import { A } from '@ember/array';
 import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
-import HTMLExportWriter from "@lblod/ember-rdfa-editor/model/writers/html-export-writer";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -325,43 +320,8 @@ export default class ContentEditable extends Component {
 
   @action
   cut(event) {
-    const htmlExportWriter = new HTMLExportWriter(this.rawEditor.model);
-    const commonAncestor = this.rawEditor.selection.getCommonAncestor().parent;
-
-    this.rawEditor.model.change(mutator => {
-      let contentRange = mutator.splitRangeUntilElements(this.rawEditor.selection.lastRange, commonAncestor, commonAncestor);
-      const treeWalker = new ModelTreeWalker({
-        range: contentRange,
-        descend: false
-      });
-
-      // Check if selection is inside table cell. If this is the case, cut children of said cell.
-      // Assumption: if table cell is selected, no other nodes at the same level can be selected.
-      let modelNodes;
-      const firstModelNode = treeWalker.currentNode;
-      if (ModelNode.isModelElement(firstModelNode) && firstModelNode.type === "td") {
-        contentRange = ModelRange.fromInNode(firstModelNode, 0, firstModelNode.getMaxOffset());
-        modelNodes = firstModelNode.children;
-      } else {
-        modelNodes = treeWalker;
-      }
-
-      let htmlString = "";
-      for (const modelNode of modelNodes) {
-        const node = htmlExportWriter.write(modelNode);
-        if (node instanceof HTMLElement) {
-          htmlString += node.outerHTML;
-        } else {
-          htmlString += node.textContent;
-        }
-      }
-
-      const clipboardData = event.clipboardData || window.clipboardData;
-      event.preventDefault();
-      clipboardData.setData("text/html", htmlString);
-
-      mutator.insertNodes(contentRange);
-    });
+    event.preventDefault();
+    this.rawEditor.executeCommand("cut-command", event);
   }
 
   /**
