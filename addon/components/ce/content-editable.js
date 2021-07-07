@@ -24,6 +24,8 @@ import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
+import HTMLExportWriter from "@lblod/ember-rdfa-editor/model/writers/html-export-writer";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -322,8 +324,7 @@ export default class ContentEditable extends Component {
 
   @action
   cut(event) {
-    event.preventDefault();
-    const htmlWriter = new HtmlWriter(this.rawEditor.model);
+    const htmlExportWriter = new HTMLExportWriter(this.rawEditor.model);
     const commonAncestor = this.rawEditor.selection.getCommonAncestor().parent;
 
     this.rawEditor.model.change(mutator => {
@@ -335,7 +336,7 @@ export default class ContentEditable extends Component {
 
       let htmlString = "";
       for (const modelNode of treeWalker) {
-        const node = htmlWriter.write(modelNode);
+        const node = htmlExportWriter.write(modelNode);
         if (node instanceof HTMLElement) {
           htmlString += node.outerHTML;
         } else {
@@ -343,7 +344,9 @@ export default class ContentEditable extends Component {
         }
       }
 
+      console.log(htmlString);
       const clipboardData = event.clipboardData || window.clipboardData;
+      event.preventDefault();
       clipboardData.setData("text/html", htmlString);
 
       mutator.insertNodes(contentRange);
