@@ -22,6 +22,7 @@ import { A } from '@ember/array';
 import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+import HTMLExportWriter from "@lblod/ember-rdfa-editor/model/writers/html-export-writer";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -321,7 +322,22 @@ export default class ContentEditable extends Component {
   @action
   cut(event) {
     event.preventDefault();
-    this.rawEditor.executeCommand("cut-command", event);
+
+    const modelNodes = this.rawEditor.executeCommand("delete-selection-command");
+    const htmlExportWriter = new HTMLExportWriter(this.rawEditor.model);
+
+    let htmlString = "";
+    for (const modelNode of modelNodes) {
+      const node = htmlExportWriter.write(modelNode);
+      if (node instanceof HTMLElement) {
+        htmlString += node.outerHTML;
+      } else {
+        htmlString += node.textContent;
+      }
+    }
+
+    const clipboardData = event.clipboardData || window.clipboardData;
+    clipboardData.setData("text/html", htmlString);
   }
 
   /**

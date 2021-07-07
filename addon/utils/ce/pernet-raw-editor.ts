@@ -134,9 +134,11 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @param args
    */
   executeCommand(commandName: string, ...args: unknown[]) {
-    super.executeCommand(commandName, ...args);
+    const result = super.executeCommand(commandName, ...args);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     void taskFor(this.generateDiffEvents).perform();
+
+    return result;
   }
 
   get currentNode() {
