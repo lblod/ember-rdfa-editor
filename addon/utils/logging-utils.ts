@@ -26,11 +26,43 @@ export function createLogger(scope: string, onEmit?: Reporter) {
 export const debug = createLogger("debug");
 
 /**
+ * Sometimes localstorage is not accessible. This method allows you to optionally
+ * fallback to a value or error out instead of erroring
+ * @param key
+ * @param fallback
+ */
+function safeGetLocalStorage(key: string, fallback?: string | null): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch (e) {
+    console.log("Could not access localstorage due to error:", e);
+    console.log("Falling back to:", fallback ?? null);
+    return fallback ?? null;
+  }
+}
+
+/**
+ * Sometimes localstorage is not accessible. This method allows you to safely set it. If setting the localstorage
+ * fails, falls back to a no-op.
+ * @param key
+ * @param value
+ */
+function safeSetLocalStorage(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value);
+  } catch (e) {
+    console.log("Could not access localstorage due to error:", e);
+    console.log("Value will not be set");
+  }
+
+}
+
+/**
  * Convenience method to easily set the log filter string
  * @param filter
  */
 function setLogFilter(filter: string) {
-  localStorage.setItem("DEBUG", filter);
+  safeSetLocalStorage("DEBUG", filter);
 }
 
 /**
@@ -38,14 +70,15 @@ function setLogFilter(filter: string) {
  * @param level
  */
 function setLogLevel(level: LogLevels) {
-  localStorage.setItem("LOGLEVEL", level);
+  safeSetLocalStorage("LOGLEVEL", level);
 }
 
 window.setLogLevel = setLogLevel;
 window.setLogFilter = setLogFilter;
 
+
 // Setup default loglevel based on environment.
-if (!localStorage.getItem("LOGLEVEL")) {
+if (!safeGetLocalStorage("LOGLEVEL")) {
   if (config.environment === "development") {
     setLogLevel("log");
   } else {
@@ -65,7 +98,7 @@ function isLogLevel(level: string | null): level is LogLevels {
  * @param event
  */
 function logLevelReporter(event: LogEvent) {
-  const configuredLogLevel = localStorage.getItem("LOGLEVEL");
+  const configuredLogLevel = safeGetLocalStorage("LOGLEVEL", "info");
   const loglevel: LogLevels = isLogLevel(configuredLogLevel) ? configuredLogLevel : "info";
 
   if (compare(event.level, loglevel) >= 0) {
