@@ -19,10 +19,11 @@ export default class DeleteSelectionCommand extends Command<ModelNode[]> {
     }
 
     let modelNodes: ModelNode[] = [];
-    const commonAncestor = selection.getCommonAncestor().parent;
+    const range = selection.lastRange;
+    const commonAncestor = range.getCommonAncestor();
 
     this.model.change(mutator => {
-      let contentRange = mutator.splitRangeUntilElements(selection.lastRange, commonAncestor, commonAncestor);
+      let contentRange = mutator.splitRangeUntilElements(range, commonAncestor, commonAncestor);
       const treeWalker = new ModelTreeWalker({
         range: contentRange,
         descend: false
@@ -33,14 +34,16 @@ export default class DeleteSelectionCommand extends Command<ModelNode[]> {
       const firstModelNode = treeWalker.currentNode;
       if (ModelNode.isModelElement(firstModelNode) && firstModelNode.type === "td") {
         contentRange = ModelRange.fromInNode(firstModelNode, 0, firstModelNode.getMaxOffset());
-        modelNodes = firstModelNode.children;
+        modelNodes = [...firstModelNode.children];
       } else {
         modelNodes = [...treeWalker];
       }
 
+      console.log(contentRange);
       selection.selectRange(mutator.insertNodes(contentRange));
     });
 
     return modelNodes;
   }
+
 }
