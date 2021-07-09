@@ -6,6 +6,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import {NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 module("Unit | commands | delete-selection-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -72,6 +73,69 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const expectedDeletedNodes = [
       new ModelText("only te")
     ];
+
+    assert.true(deletedNodes.length === expectedDeletedNodes.length);
+    for (let i = 0; i < deletedNodes.length; i++) {
+      assert.true(deletedNodes[i].sameAs(expectedDeletedNodes[i]));
+    }
+  });
+
+  test("delete list element", assert => {
+    // language = XML
+    const {root: initial, textNodes: {selectedText}} = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+            <text>
+              first
+            </text>
+          </li>
+          <li>
+            <text __id="selectedText">
+              second
+            </text>
+          </li>
+          <li>
+            <text>
+              first
+            </text>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    // language = XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+            <text>
+              first
+            </text>
+          </li>
+          <li>
+            <text>
+              first
+            </text>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(selectedText, 0, selectedText.length);
+    ctx.modelSelection.selectRange(range);
+
+    const deletedNodes: ModelNode[] = command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+
+    const liElement = new ModelElement("li");
+    liElement.addChild(new ModelText("second"));
+
+    console.log(liElement.toXml());
+    console.log(deletedNodes[0].toXml());
+
+    const expectedDeletedNodes = [liElement];
 
     assert.true(deletedNodes.length === expectedDeletedNodes.length);
     for (let i = 0; i < deletedNodes.length; i++) {

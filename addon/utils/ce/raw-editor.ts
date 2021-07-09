@@ -36,9 +36,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
-import CutCommand from "@lblod/ember-rdfa-editor/commands/cut-command";
 import DeleteSelectionCommand from "@lblod/ember-rdfa-editor/commands/delete-selection-command";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.

@@ -39,7 +39,6 @@ export default class DeleteSelectionCommand extends Command<ModelNode[]> {
         modelNodes = [...treeWalker];
       }
 
-      console.log(contentRange);
       selection.selectRange(mutator.insertNodes(contentRange));
     });
 

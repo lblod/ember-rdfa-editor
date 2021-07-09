@@ -323,8 +323,8 @@ export default class ContentEditable extends Component {
   cut(event) {
     event.preventDefault();
 
-    const modelNodes = this.rawEditor.executeCommand("delete-selection-command");
     const htmlExportWriter = new HTMLExportWriter(this.rawEditor.model);
+    const modelNodes = this.rawEditor.executeCommand("delete-selection-command");
 
     let htmlString = "";
     for (const modelNode of modelNodes) {
