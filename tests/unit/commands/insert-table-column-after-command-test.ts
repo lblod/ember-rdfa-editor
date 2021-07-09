@@ -13,7 +13,7 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     command = new InsertTableColumnAfterCommand(ctx.model);
   });
 
-  test("inserts column after last column (empty td)", assert => {
+  test("inserts column after last column (empty table)", assert => {
     // language=XML
     const {root: initial, elements: {bottomRight}} = vdom`
       <modelRoot>
@@ -56,19 +56,25 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts column after last column (td with text node)", assert => {
+  test("inserts column after last column (table filled with text)", assert => {
     // language=XML
     const {root: initial, textNodes: {bottomRight}} = vdom`
       <modelRoot>
         <table>
           <tr>
-            <td></td>
-            <td></td>
+            <td>
+              <text>abcd</text>
+            </td>
+            <td>
+              <text>efgh</text>
+            </td>
           </tr>
           <tr>
-            <td></td>
             <td>
-              <text __id="bottomRight">abcde</text>
+              <text>ijkl</text>
+            </td>
+            <td>
+              <text __id="bottomRight">mnop</text>
             </td>
           </tr>
         </table>
@@ -80,14 +86,20 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
       <modelRoot>
         <table>
           <tr>
-            <td></td>
-            <td></td>
+            <td>
+              <text>abcd</text>
+            </td>
+            <td>
+              <text>efgh</text>
+            </td>
             <td></td>
           </tr>
           <tr>
-            <td></td>
             <td>
-              <text>abcde</text>
+              <text>ijkl</text>
+            </td>
+            <td>
+              <text>mnop</text>
             </td>
             <td></td>
           </tr>
@@ -103,7 +115,7 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts column in the middle (empty td)", assert => {
+  test("inserts column in the middle (empty table)", assert => {
     // language=XML
     const {root: initial, elements: {bottomLeft}} = vdom`
       <modelRoot>
@@ -146,20 +158,26 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts column in the middle (td with text node)", assert => {
+  test("inserts column in the middle (table filled with text)", assert => {
     // language=XML
     const {root: initial, textNodes: {bottomLeft}} = vdom`
       <modelRoot>
         <table>
           <tr>
-            <td></td>
-            <td></td>
+            <td>
+              <text>abcd</text>
+            </td>
+            <td>
+              <text>efgh</text>
+            </td>
           </tr>
           <tr>
             <td>
-              <text __id="bottomLeft">abcde</text>
+              <text __id="bottomLeft">ijkl</text>
             </td>
-            <td></td>
+            <td>
+              <text>mnop</text>
+            </td>
           </tr>
         </table>
       </modelRoot>
@@ -170,16 +188,22 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
       <modelRoot>
         <table>
           <tr>
+            <td>
+              <text>abcd</text>
+            </td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td>
+              <text>efgh</text>
+            </td>
           </tr>
           <tr>
             <td>
-              <text>abcde</text>
+              <text>ijkl</text>
             </td>
             <td></td>
-            <td></td>
+            <td>
+              <text>mnop</text>
+            </td>
           </tr>
         </table>
       </modelRoot>
