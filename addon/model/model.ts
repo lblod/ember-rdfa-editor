@@ -110,7 +110,7 @@ export default class Model {
     if (writeSelection) {
       this.writeSelection();
     }
-    EventBus.emit("modelWriteEnd", undefined);
+    EventBus.emit("contentChanged", undefined);
   }
 
   writeSelection() {

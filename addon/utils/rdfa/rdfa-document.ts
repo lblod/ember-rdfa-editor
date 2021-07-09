@@ -61,11 +61,12 @@ export default class RdfaDocument {
     this.htmlContent = html;
   }
 
-  on<E extends "modelWriteEnd">(eventName: E, callback: EditorEventListener<E>) {
+  // this shows how we can limit the public events with types
+  on<E extends "contentChanged">(eventName: E, callback: EditorEventListener<E>) {
     EventBus.on(eventName, callback);
   }
 
-  off<E extends "modelWriteEnd">(eventName: E, callback: EditorEventListener<E>) {
+  off<E extends "contentChanged">(eventName: E, callback: EditorEventListener<E>) {
     EventBus.off(eventName, callback);
   }
 }

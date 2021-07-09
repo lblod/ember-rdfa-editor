@@ -1,10 +1,12 @@
+import {createLogger, Logger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+
 export interface EditorEvent<E extends EditorEventName> {
   name: E,
   payload: EDITOR_EVENT_MAP[E]
 }
 
 export type EDITOR_EVENT_MAP = {
-  "modelWriteEnd": void
+  "contentChanged": void
 };
 export type EditorEventName = keyof EDITOR_EVENT_MAP;
 
@@ -34,6 +36,7 @@ export default class EventBus {
   }
 
   private listeners: Map<EditorEventName, Array<EditorEventListener<EditorEventName>>> = new Map<EditorEventName, Array<EditorEventListener<EditorEventName>>>();
+  private logger: Logger = createLogger("EventBus");
 
   private on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
     const eventListeners = this.listeners.get(eventName);
@@ -57,6 +60,7 @@ export default class EventBus {
 
   private emit<E extends EditorEventName>(eventName: E, payload: EDITOR_EVENT_MAP[E]): void {
     const eventListeners = this.listeners.get(eventName);
+    this.logger.log(`Emitting event: ${eventName} with payload:`, payload);
     if (eventListeners) {
       eventListeners.forEach(listener => listener({name: eventName, payload}));
     }
