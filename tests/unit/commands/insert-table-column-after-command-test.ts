@@ -86,7 +86,9 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
           </tr>
           <tr>
             <td></td>
-            <td></td>
+            <td>
+              <text>abcde</text>
+            </td>
             <td></td>
           </tr>
         </table>
@@ -173,7 +175,9 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
             <td></td>
           </tr>
           <tr>
-            <td></td>
+            <td>
+              <text>abcde</text>
+            </td>
             <td></td>
             <td></td>
           </tr>
