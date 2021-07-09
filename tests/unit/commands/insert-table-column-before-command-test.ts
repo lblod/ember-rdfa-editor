@@ -50,7 +50,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(bottomLeft, 0, 0);
-    ctx.modelSelection.selectRange(range);
+    ctx.model.selectRange(range);
 
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
@@ -97,7 +97,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(bottomLeft, 1, 3);
-    ctx.modelSelection.selectRange(range);
+    ctx.model.selectRange(range);
 
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
@@ -140,7 +140,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(bottomRight, 0, 0);
-    ctx.modelSelection.selectRange(range);
+    ctx.model.selectRange(range);
 
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
@@ -186,7 +186,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(bottomRight, 1, 3);
-    ctx.modelSelection.selectRange(range);
+    ctx.model.selectRange(range);
 
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
