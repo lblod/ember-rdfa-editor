@@ -44,5 +44,4 @@ export default class DeleteSelectionCommand extends Command<ModelNode[]> {
 
     return modelNodes;
   }
-
 }
