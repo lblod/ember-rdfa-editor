@@ -15,12 +15,12 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
 
   test("removes only row", assert => {
     // language=XML
-    const {root: initial, textNodes: {topLeft}} = vdom`
+    const {root: initial, textNodes: {left}} = vdom`
       <modelRoot>
         <table>
           <tr>
             <td>
-              <text __id="topLeft">abcd</text>
+              <text __id="left">abcd</text>
             </td>
             <td>
               <text>efgh</text>
@@ -36,7 +36,7 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     `;
 
     ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInTextNode(topLeft, 1, 3);
+    const range = ModelRange.fromInTextNode(left, 1, 3);
     ctx.model.selectRange(range);
 
     command.execute();
