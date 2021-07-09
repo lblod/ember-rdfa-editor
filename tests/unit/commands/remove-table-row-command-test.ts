@@ -13,6 +13,38 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     command = new RemoveTableRowCommand(ctx.model);
   });
 
+  test("removes only row", assert => {
+    // language=XML
+    const {root: initial, textNodes: {left}} = vdom`
+      <modelRoot>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <text __id="left">abcd</text>
+              </td>
+              <td>
+                <text>efgh</text>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot></modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(left, 1, 3);
+    ctx.model.selectRange(range);
+
+    command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
+
   test("removes first row", assert => {
     // language=XML
     const {root: initial, textNodes: {topLeft}} = vdom`
