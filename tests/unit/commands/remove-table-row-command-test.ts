@@ -13,57 +13,29 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     command = new RemoveTableRowCommand(ctx.model);
   });
 
-  test("removes only row", assert => {
-    // language=XML
-    const {root: initial, textNodes: {left}} = vdom`
-      <modelRoot>
-        <table>
-          <tr>
-            <td>
-              <text __id="left">abcd</text>
-            </td>
-            <td>
-              <text>efgh</text>
-            </td>
-          </tr>
-        </table>
-      </modelRoot>
-    `;
-
-    // language=XML
-    const {root: expected} = vdom`
-      <modelRoot></modelRoot>
-    `;
-
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInTextNode(left, 1, 3);
-    ctx.model.selectRange(range);
-
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-  });
-
   test("removes first row", assert => {
     // language=XML
     const {root: initial, textNodes: {topLeft}} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td>
-              <text __id="topLeft">abcd</text>
-            </td>
-            <td>
-              <text>efgh</text>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <text>ijkl</text>
-            </td>
-            <td>
-              <text>mnop</text>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <text __id="topLeft">abcd</text>
+              </td>
+              <td>
+                <text>efgh</text>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <text>ijkl</text>
+              </td>
+              <td>
+                <text>mnop</text>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -72,14 +44,16 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     const {root: expected} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td>
-              <text>ijkl</text>
-            </td>
-            <td>
-              <text>mnop</text>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <text>ijkl</text>
+              </td>
+              <td>
+                <text>mnop</text>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -97,22 +71,24 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     const {root: initial, textNodes: {bottomLeft}} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td>
-              <text>abcd</text>
-            </td>
-            <td>
-              <text>efgh</text>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <text __id="bottomLeft">ijkl</text>
-            </td>
-            <td>
-              <text>mnop</text>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <text>abcd</text>
+              </td>
+              <td>
+                <text>efgh</text>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <text __id="bottomLeft">ijkl</text>
+              </td>
+              <td>
+                <text>mnop</text>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -121,14 +97,16 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     const {root: expected} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td>
-              <text>abcd</text>
-            </td>
-            <td>
-              <text>efgh</text>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <text>abcd</text>
+              </td>
+              <td>
+                <text>efgh</text>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -146,30 +124,32 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     const {root: initial, textNodes: {middleLeft}} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td>
-              <text>abcd</text>
-            </td>
-            <td>
-              <text>efgh</text>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <text __id="middleLeft">ijkl</text>
-            </td>
-            <td>
-              <text>mnop</text>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <text>qrst</text>
-            </td>
-            <td>
-              <text>uvwx</text>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <text>abcd</text>
+              </td>
+              <td>
+                <text>efgh</text>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <text __id="middleLeft">ijkl</text>
+              </td>
+              <td>
+                <text>mnop</text>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <text>qrst</text>
+              </td>
+              <td>
+                <text>uvwx</text>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -178,22 +158,24 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     const {root: expected} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td>
-              <text>abcd</text>
-            </td>
-            <td>
-              <text>efgh</text>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <text>qrst</text>
-            </td>
-            <td>
-              <text>uvwx</text>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <text>abcd</text>
+              </td>
+              <td>
+                <text>efgh</text>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <text>qrst</text>
+              </td>
+              <td>
+                <text>uvwx</text>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;

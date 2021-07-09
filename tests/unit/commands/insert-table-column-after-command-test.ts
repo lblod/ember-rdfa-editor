@@ -18,14 +18,16 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const {root: initial, elements: {bottomRight}} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td __id="bottomRight"></td>
-          </tr>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td __id="bottomRight"></td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -34,16 +36,18 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const {root: expected} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -61,22 +65,24 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const {root: initial, textNodes: {bottomRight}} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td>
-              <text>abcd</text>
-            </td>
-            <td>
-              <text>efgh</text>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <text>ijkl</text>
-            </td>
-            <td>
-              <text __id="bottomRight">mnop</text>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <text>abcd</text>
+              </td>
+              <td>
+                <text>efgh</text>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <text>ijkl</text>
+              </td>
+              <td>
+                <text __id="bottomRight">mnop</text>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -85,24 +91,26 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const {root: expected} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td>
-              <text>abcd</text>
-            </td>
-            <td>
-              <text>efgh</text>
-            </td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>
-              <text>ijkl</text>
-            </td>
-            <td>
-              <text>mnop</text>
-            </td>
-            <td></td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <text>abcd</text>
+              </td>
+              <td>
+                <text>efgh</text>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <text>ijkl</text>
+              </td>
+              <td>
+                <text>mnop</text>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -122,14 +130,16 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const {root: initial, elements: {bottomLeft}} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td __id="bottomLeft"></td>
-            <td></td>
-          </tr>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td __id="bottomLeft"></td>
+              <td></td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -138,16 +148,18 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const {root: expected} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -165,22 +177,24 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const {root: initial, textNodes: {bottomLeft}} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td>
-              <text>abcd</text>
-            </td>
-            <td>
-              <text>efgh</text>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <text __id="bottomLeft">ijkl</text>
-            </td>
-            <td>
-              <text>mnop</text>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <text>abcd</text>
+              </td>
+              <td>
+                <text>efgh</text>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <text __id="bottomLeft">ijkl</text>
+              </td>
+              <td>
+                <text>mnop</text>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
@@ -189,24 +203,26 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const {root: expected} = vdom`
       <modelRoot>
         <table>
-          <tr>
-            <td>
-              <text>abcd</text>
-            </td>
-            <td></td>
-            <td>
-              <text>efgh</text>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <text>ijkl</text>
-            </td>
-            <td></td>
-            <td>
-              <text>mnop</text>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <text>abcd</text>
+              </td>
+              <td></td>
+              <td>
+                <text>efgh</text>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <text>ijkl</text>
+              </td>
+              <td></td>
+              <td>
+                <text>mnop</text>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </modelRoot>
     `;
