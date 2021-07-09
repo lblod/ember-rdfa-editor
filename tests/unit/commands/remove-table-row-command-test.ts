@@ -140,4 +140,69 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
+
+  test("removes middle row", assert => {
+    // language=XML
+    const {root: initial, textNodes: {middleLeft}} = vdom`
+      <modelRoot>
+        <table>
+          <tr>
+            <td>
+              <text>abcd</text>
+            </td>
+            <td>
+              <text>efgh</text>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <text __id="middleLeft">ijkl</text>
+            </td>
+            <td>
+              <text>mnop</text>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <text>qrst</text>
+            </td>
+            <td>
+              <text>uvwx</text>
+            </td>
+          </tr>
+        </table>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <table>
+          <tr>
+            <td>
+              <text>abcd</text>
+            </td>
+            <td>
+              <text>efgh</text>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <text>qrst</text>
+            </td>
+            <td>
+              <text>uvwx</text>
+            </td>
+          </tr>
+        </table>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(middleLeft, 1, 3);
+    ctx.model.selectRange(range);
+
+    command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
 });
