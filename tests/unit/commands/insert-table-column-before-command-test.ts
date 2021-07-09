@@ -14,7 +14,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
   });
 
   test("inserts column before first column (empty td)", assert => {
-    // language = XML
+    // language=XML
     const {root: initial, elements: {bottomLeft}} = vdom`
       <modelRoot>
         <table>
@@ -30,6 +30,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
       </modelRoot>
     `;
 
+    // language=XML
     const {root: expected} = vdom`
       <modelRoot>
         <table>
@@ -56,7 +57,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
   });
 
   test("inserts column before first column (td with text node)", assert => {
-    // language = XML
+    // language=XML
     const {root: initial, textNodes: {bottomLeft}} = vdom`
       <modelRoot>
         <table>
@@ -74,6 +75,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
       </modelRoot>
     `;
 
+    // language=XML
     const {root: expected} = vdom`
       <modelRoot>
         <table>
@@ -100,7 +102,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
   });
 
   test("inserts column in the middle (empty td)", assert => {
-    // language = XML
+    // language=XML
     const {root: initial, elements: {bottomRight}} = vdom`
       <modelRoot>
         <table>
@@ -116,6 +118,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
       </modelRoot>
     `;
 
+    // language=XML
     const {root: expected} = vdom`
       <modelRoot>
         <table>
@@ -142,7 +145,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
   });
 
   test("inserts column in the middle (td with text node)", assert => {
-    // language = XML
+    // language=XML
     const {root: initial, textNodes: {bottomRight}} = vdom`
       <modelRoot>
         <table>
@@ -160,6 +163,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
       </modelRoot>
     `;
 
+    // language=XML
     const {root: expected} = vdom`
       <modelRoot>
         <table>
