@@ -172,7 +172,7 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts row in the middle (empty td)", assert => {
+  test("inserts row in the middle (td with text node)", assert => {
     // language=XML
     const {root: initial, textNodes: {middleRight}} = vdom`
       <modelRoot>
