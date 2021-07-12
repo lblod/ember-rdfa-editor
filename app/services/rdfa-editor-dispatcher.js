@@ -37,7 +37,7 @@ export default class RdfaEditorDispatcher extends Service {
         this.pluginServices.push(service);
       }
       else {
-        console.warn('could not find plugin ' + name);
+        console.warn('could not find plugin ' + name); // eslint-disable-line no-console
       }
     }
   }
