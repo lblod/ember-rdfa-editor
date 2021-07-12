@@ -570,10 +570,9 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
       const mut = new ImmediateModelMutator();
       const range = ModelRange.fromInElement(initial as ModelElement, 2, 2);
       const resultRange = mut.insertText(range, "cd");
-      console.log(initial.toXml());
+
       assert.true(initial.sameAs(expected));
       assert.true(resultRange.sameAs(ModelRange.fromInElement(initial as ModelElement, 4, 4)));
     });
-
   });
 });

@@ -28,6 +28,7 @@ export default class DeleteSelectionCommand extends Command<ModelNode[]> {
         range: contentRange,
         descend: false
       });
+      console.log(contentRange.toString());
 
       // Check if selection is inside table cell. If this is the case, cut children of said cell.
       // Assumption: if table cell is selected, no other nodes at the same level can be selected.
