@@ -10,7 +10,6 @@ import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-wr
 import BatchedModelMutator from "@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import EventBus from "@lblod/ember-rdfa-editor/utils/event-bus";
 
 
 /**
@@ -110,7 +109,6 @@ export default class Model {
     if (writeSelection) {
       this.writeSelection();
     }
-    EventBus.emit("contentChanged", undefined);
   }
 
   writeSelection() {
