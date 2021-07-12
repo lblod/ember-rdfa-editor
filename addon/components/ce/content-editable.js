@@ -58,7 +58,7 @@ export default class ContentEditable extends Component {
    *
    * @private
    */
-    richSelection;
+  richSelection;
 
   /**
    * element of the component, it is aliased to the rawEditor.rootNode
@@ -338,7 +338,8 @@ export default class ContentEditable extends Component {
     let htmlTextString = "";
     for (const modelNode of modelNodes) {
       if (ModelNode.isModelElement(modelNode)) {
-        const range = ModelRange.fromPaths(modelNode, [0], [modelNode.getMaxOffset()]);
+        modelNode.parent = null;
+        const range = ModelRange.fromAroundNode(modelNode);
         const treeWalker = new ModelTreeWalker({filter, range});
 
         for (const node of treeWalker) {
@@ -346,6 +347,8 @@ export default class ContentEditable extends Component {
             ? node.content
             : "\n";
         }
+      } else {
+        htmlTextString += modelNode.content;
       }
 
       const node = htmlExportWriter.write(modelNode);

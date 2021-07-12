@@ -10,8 +10,6 @@ import SplitOperation from "@lblod/ember-rdfa-editor/model/operations/split-oper
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/operation-algorithms";
-import Model from "@lblod/ember-rdfa-editor/model/model";
 
 /**
  * {@link ModelMutator} implementation where all operations immediately
@@ -150,8 +148,10 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
    */
   splitRangeUntilElements(range: ModelRange, startLimit: ModelElement, endLimit: ModelElement, splitAtEnds = false) {
     const endpos = this.splitUntilElement(range.end, endLimit, splitAtEnds);
+    console.log(endpos.parent);
     const afterEnd = endpos.nodeAfter();
     const startpos = this.splitUntilElement(range.start, startLimit, splitAtEnds);
+    console.log(startpos.parent);
 
     if (afterEnd) {
       return new ModelRange(startpos, ModelPosition.fromBeforeNode(afterEnd));

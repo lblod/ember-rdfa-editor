@@ -70,7 +70,6 @@ export default abstract class ModelNode {
     this._nextSibling = value;
   }
 
-
   get parent(): ModelElement | null {
     return this._parent;
   }
@@ -93,7 +92,6 @@ export default abstract class ModelNode {
     }
     return root;
   }
-
 
   get boundNode(): Node | null {
     return this._boundNode;
