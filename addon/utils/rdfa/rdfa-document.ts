@@ -2,6 +2,7 @@ import PernetRawEditor from '../ce/pernet-raw-editor';
 import xmlFormat from 'xml-formatter';
 import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import EventBus, {EditorEventListener} from "@lblod/ember-rdfa-editor/utils/event-bus";
 
 /**
  * RdfaDocument is a virtual representation of the document
@@ -56,8 +57,16 @@ export default class RdfaDocument {
     return result;
   }
 
-
   setHtmlContent(html: string) {
     this.htmlContent = html;
+  }
+
+  // this shows how we can limit the public events with types
+  on<E extends "contentChanged">(eventName: E, callback: EditorEventListener<E>) {
+    EventBus.on(eventName, callback);
+  }
+
+  off<E extends "contentChanged">(eventName: E, callback: EditorEventListener<E>) {
+    EventBus.off(eventName, callback);
   }
 }
