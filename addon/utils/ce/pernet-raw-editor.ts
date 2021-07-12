@@ -41,6 +41,7 @@ import RichNode from "@lblod/marawa/rich-node";
 import { tracked } from '@glimmer/tracking';
 import { Editor } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import EventBus from "@lblod/ember-rdfa-editor/utils/event-bus";
 
 export interface ContentObserver {
   handleTextInsert: (position: number, text: string, extraInfo: Array<unknown>) => void
@@ -257,6 +258,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         observer.handleFullContentUpdate(extraInfo);
       }
     }
+    EventBus.emit("contentChanged", undefined);
   }
 
   /**

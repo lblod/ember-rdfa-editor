@@ -59,7 +59,7 @@ module("Unit | model | cleaners | list-cleaner-test", () => {
             </li>
           </ul>
         </div>
-      </divid>
+      </div>
     `;
 
     const expected = initial.clone();
