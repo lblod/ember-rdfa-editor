@@ -7,7 +7,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 export default class DeleteSelectionCommand extends Command<ModelNode[]> {
-  name = "delete-selection-command";
+  name = "delete-selection";
 
   constructor(model: Model) {
     super(model);
