@@ -5,7 +5,6 @@ import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | delete-selection-command-test", hooks => {
