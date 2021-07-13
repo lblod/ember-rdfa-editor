@@ -372,4 +372,67 @@ module("Unit | commands | delete-selection-command-test", hooks => {
 
     compareModelNodeList(deletedNodes, [firstLine], assert);
   });
+
+  test("deletes elements of nested list", assert => {
+    // language=XML
+    const {root: initial, textNodes: {middleText, lastText}, elements: {middleLi, lastLi}} = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+            <text>first</text>
+          </li>
+          <li __id="middleLi">
+            <text __id="middleText">second</text>
+            <ul>
+              <li>
+                <text>firstsub1</text>
+              </li>
+              <li>
+                <text>firstsub2</text>
+              </li>
+            </ul>
+          </li>
+          <li __id="lastLi">
+            <ul>
+              <li>
+                <text>secondsub1</text>
+              </li>
+              <li>
+                <text>secondsub3</text>
+              </li>
+              <li>
+                <text>secondsub3</text>
+              </li>
+              <text __id="lastText">third</text>
+            </ul>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+            <text>first</text>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const startPos = ModelPosition.fromInTextNode(middleText, 0);
+    const endPos = ModelPosition.fromInTextNode(lastText, lastText.length);
+    const range = new ModelRange(startPos, endPos);
+    ctx.model.selectRange(range);
+
+    const deletedNodes = command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+
+    const ulElement = new ModelElement("ul");
+    ulElement.appendChildren(middleLi, lastLi);
+
+    compareModelNodeList(deletedNodes, [ulElement], assert);
+  });
 });
