@@ -13,6 +13,40 @@ module("Unit | commands | remove-table-column-command-test", hooks => {
     command = new RemoveTableColumnCommand(ctx.model);
   });
 
+  test("removes only column", assert => {
+    // language=XML
+    const {root: initial, textNodes: {top}} = vdom`
+      <modelRoot>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <text __id="top">abcd</text>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <text>efgh</text>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot></modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(top, 1, 3);
+    ctx.model.selectRange(range);
+
+    command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
+
   test("removes first column", assert => {
     // language=XML
     const {root: initial, textNodes: {topLeft}} = vdom`
