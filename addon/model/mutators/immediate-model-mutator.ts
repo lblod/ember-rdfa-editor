@@ -123,6 +123,11 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   splitUntil(position: ModelPosition, untilPredicate: (element: ModelElement) => boolean, splitAtEnds = false): ModelPosition {
     let pos = position;
 
+    // Execute split at least once
+    if (pos.parent === pos.root || untilPredicate(pos.parent)) {
+      return this.executeSplit(pos, splitAtEnds, false);
+    }
+
     while (pos.parent !== pos.root && !untilPredicate(pos.parent)) {
       pos = this.executeSplit(pos, splitAtEnds, true);
     }
@@ -130,7 +135,19 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return pos;
   }
 
-  executeSplitOperation(position: ModelPosition, splitParent = true) {
+  private executeSplit(position: ModelPosition, splitAtEnds = false, splitParent = true) {
+    if (!splitAtEnds) {
+      if (position.parentOffset === 0) {
+        return position.parent === position.root ? position : ModelPosition.fromBeforeNode(position.parent);
+      } else if (position.parentOffset === position.parent.getMaxOffset()) {
+        return position.parent === position.root ? position : ModelPosition.fromAfterNode(position.parent);
+      }
+    }
+
+    return this.executeSplitOperation(position, splitParent);
+  }
+
+  private executeSplitOperation(position: ModelPosition, splitParent = true) {
     const range = new ModelRange(position, position);
     const op = new SplitOperation(range, splitParent);
     return op.execute().start;
@@ -155,29 +172,13 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
       return new ModelRange(startpos, ModelPosition.fromBeforeNode(afterEnd));
     } else if (beforeEnd) {
       return new ModelRange(startpos, ModelPosition.fromAfterNode(beforeEnd));
-    } else {
-      throw new Error('Invalid position.'); // Should not happen
     }
+
+    throw new Error('Invalid position.'); // Should not happen
   }
 
   splitUntilElement(position: ModelPosition, limitElement: ModelElement, splitAtEnds = false): ModelPosition {
-    if (position.parent === position.root || position.parent === limitElement) {
-      return this.executeSplit(position, splitAtEnds, false);
-    }
-
     return this.splitUntil(position, (element => element === limitElement), splitAtEnds);
-  }
-
-  executeSplit(position: ModelPosition, splitAtEnds = false, splitParent = true) {
-    if (!splitAtEnds) {
-      if (position.parentOffset === 0) {
-        return position.parent === position.root ? position : ModelPosition.fromBeforeNode(position.parent);
-      } else if (position.parentOffset === position.parent.getMaxOffset()) {
-        return position.parent === position.root ? position : ModelPosition.fromAfterNode(position.parent);
-      }
-    }
-
-    return this.executeSplitOperation(position, splitParent);
   }
 
   /**

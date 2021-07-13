@@ -292,6 +292,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     // language=XML
     const {root: expected} = vdom`
       <modelRoot>
+        <ul></ul>
         <br/>
         <text>this is some sample text</text>
       </modelRoot>
