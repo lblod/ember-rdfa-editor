@@ -18,7 +18,6 @@ import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walk
  * on the modified state after the previous.
  */
 export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
-
   /**
    * @inheritDoc
    * @param range
@@ -147,14 +146,17 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
    * @param splitAtEnds
    */
   splitRangeUntilElements(range: ModelRange, startLimit: ModelElement, endLimit: ModelElement, splitAtEnds = false) {
-    const endpos = this.splitUntilElement(range.end, endLimit, splitAtEnds);
-    const afterEnd = endpos.nodeAfter();
+    const endPos = this.splitUntilElement(range.end, endLimit, splitAtEnds);
+    const afterEnd = endPos.nodeAfter();
+    const beforeEnd = endPos.nodeBefore();
     const startpos = this.splitUntilElement(range.start, startLimit, splitAtEnds);
 
     if (afterEnd) {
       return new ModelRange(startpos, ModelPosition.fromBeforeNode(afterEnd));
+    } else if (beforeEnd) {
+      return new ModelRange(startpos, ModelPosition.fromAfterNode(beforeEnd));
     } else {
-      return new ModelRange(startpos, ModelPosition.fromInElement(range.root, range.root.getMaxOffset()));
+      throw new Error('Invalid position.'); // Should not happen
     }
   }
 
@@ -189,6 +191,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     const op = new MoveOperation(srcRange, target);
     const resultRange = op.execute();
     this.deleteNode(element);
+
     if (ensureBlock) {
       const nodeBeforeStart = resultRange.start.nodeBefore();
       const nodeAfterStart = resultRange.start.nodeAfter();
@@ -214,5 +217,4 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     const range = ModelRange.fromAroundNode(node);
     return this.delete(range);
   }
-
 }
