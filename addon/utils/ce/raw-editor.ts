@@ -4,11 +4,7 @@ import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-com
 import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
 import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
 import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
-import InsertColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
-import InsertColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
 import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
-import InsertRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
-import InsertRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
 import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
 import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list-command';
 import RemoveTableColumnCommand from "@lblod/ember-rdfa-editor/commands/remove-table-column-command";
@@ -29,7 +25,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
-import { walk as walkDomNode } from "@lblod/marawa/node-walker";
+import {walk as walkDomNode} from "@lblod/marawa/node-walker";
 import RichNode from "@lblod/marawa/rich-node";
 import classic from 'ember-classic-decorator';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
@@ -38,6 +34,7 @@ import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
 import InsertTableColumnCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-command";
 import InsertTableRowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-command";
+import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/utils/event-bus";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -145,7 +142,7 @@ class RawEditor extends EmberObject {
   }
 
   get model(): Model {
-    if(!this._model) {
+    if (!this._model) {
       throw new ModelError("Model accessed before initialization is complete");
     }
     return this._model;
@@ -154,6 +151,7 @@ class RawEditor extends EmberObject {
   set model(value: Model) {
     this._model = value;
   }
+
   /**
    * Register a command for use with {@link executeCommand}
    * @param command
@@ -215,6 +213,14 @@ class RawEditor extends EmberObject {
    */
   createSelection(): ModelSelection {
     return new ModelSelection(this.model);
+  }
+
+  on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>) {
+    EventBus.on(eventName, callback);
+  }
+
+  off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>) {
+    EventBus.off(eventName, callback);
   }
 }
 
