@@ -26,8 +26,7 @@ export default class DeleteSelectionCommand extends Command<ModelNode[]> {
     let commonAncestor = range.getCommonAncestor();
 
     if (ModelNode.isModelElement(commonAncestor)) {
-      if ((commonAncestor.type === "li" && this.isElementFullySelected(commonAncestor, range)) ||
-          (commonAncestor.type === "ul" && !this.isElementFullySelected(commonAncestor, range))) {
+      if (commonAncestor.type === "ul" || (commonAncestor.type === "li" && this.isElementFullySelected(commonAncestor, range))) {
         const newAncestor = ModelNodeUtils.findAncestor(commonAncestor, node => ModelNode.isModelElement(node) && node.type !== "ul");
 
         if (!newAncestor) {

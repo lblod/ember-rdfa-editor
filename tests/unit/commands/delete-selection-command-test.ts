@@ -7,6 +7,7 @@ import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 module("Unit | commands | delete-selection-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -98,6 +99,8 @@ module("Unit | commands | delete-selection-command-test", hooks => {
           <li>
             <text>first</text>
           </li>
+        </ul>
+        <ul>
           <li>
             <text>third</text>
           </li>
@@ -112,7 +115,10 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const deletedNodes: ModelNode[] = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
-    compareModelNodeList(deletedNodes, [selectedLi], assert);
+    const ulElement = new ModelElement("ul");
+    ulElement.addChild(selectedLi);
+
+    compareModelNodeList(deletedNodes, [ulElement], assert);
   });
 
   test("deletes correctly list before other list (ul selection)", assert => {
@@ -173,13 +179,13 @@ module("Unit | commands | delete-selection-command-test", hooks => {
 
   test("deletes correctly list before other list (li selection)", assert => {
     // language=XML
-    const {root: initial, elements: {firstLi, middleLi, lastLi}} = vdom`
+    const {root: initial, elements: {firstList, firstLi, lastLi}} = vdom`
       <modelRoot>
-        <ul>
+        <ul __id="firstList">
           <li __id="firstLi">
             <text >first1</text>
           </li>
-          <li __id="middleLi">
+          <li>
             <text>first2</text>
           </li>
           <li __id="lastLi">
@@ -203,7 +209,6 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     // language=XML
     const {root: expected} = vdom`
       <modelRoot>
-        <ul></ul>
         <ul>
           <li>
             <text>second1</text>
@@ -228,7 +233,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const deletedNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
-    compareModelNodeList(deletedNodes, [firstLi, middleLi, lastLi], assert);
+    compareModelNodeList(deletedNodes, [firstList], assert);
   });
 
   test("deletes correctly list before text (ul selection)", assert => {
@@ -271,13 +276,13 @@ module("Unit | commands | delete-selection-command-test", hooks => {
 
   test("deletes correctly list before text (li selection)", assert => {
     // language=XML
-    const {root: initial, elements: {firstLi, middleLi, lastLi}} = vdom`
+    const {root: initial, elements: {list, firstLi, lastLi}} = vdom`
       <modelRoot>
-        <ul>
+        <ul __id="list">
           <li __id="firstLi">
             <text>first1</text>
           </li>
-          <li __id="middleLi">
+          <li>
             <text>first2</text>
           </li>
           <li __id="lastLi">
@@ -292,7 +297,6 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     // language=XML
     const {root: expected} = vdom`
       <modelRoot>
-        <ul></ul>
         <br/>
         <text>this is some sample text</text>
       </modelRoot>
@@ -308,7 +312,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const deletedNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
-    compareModelNodeList(deletedNodes, [firstLi, middleLi, lastLi], assert);
+    compareModelNodeList(deletedNodes, [list], assert);
   });
 
   test("deletes correctly content of table cell", assert => {
