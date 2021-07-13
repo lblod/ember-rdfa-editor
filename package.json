@@ -136,10 +136,7 @@
     "edition": "octane"
   },
   "ember-addon": {
-    "configPath": "tests/dummy/config",
-    "paths": [
-      "lib/plugin-system-dispatcher"
-    ]
+    "configPath": "tests/dummy/config"
   },
   "browserslist": [
     "last 1 Chrome version",
