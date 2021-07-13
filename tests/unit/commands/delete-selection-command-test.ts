@@ -310,4 +310,63 @@ module("Unit | commands | delete-selection-command-test", hooks => {
 
     compareModelNodeList(deletedNodes, [firstLi, middleLi, lastLi], assert);
   });
+
+  test("deletes correctly content of table cell", assert => {
+    // language=XML
+    const {root: initial, textNodes: {firstLine}} = vdom`
+      <modelRoot>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <text __id="firstLine">this is the first line</text>
+                <br/>
+                <text>here is a second line</text>
+                <br/>
+                <text>and of course a third one</text>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <br/>
+                <text>here is a second line</text>
+                <br/>
+                <text>and of course a third one</text>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(firstLine, 0, firstLine.length)
+    ctx.model.selectRange(range);
+
+    const deletedNodes = command.execute();
+    console.log(ctx.model.toXml());
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+
+    compareModelNodeList(deletedNodes, [firstLine], assert);
+  });
 });
