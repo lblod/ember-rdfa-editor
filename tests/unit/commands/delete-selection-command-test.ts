@@ -6,6 +6,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 module("Unit | commands | delete-selection-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -114,7 +115,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     compareModelNodeList(deletedNodes, [selectedLi], assert);
   });
 
-  test("deletes correctly list before other list", assert => {
+  test("deletes correctly list before other list (ul selection)", assert => {
     // language=XML
     const {root: initial, elements: {firstList}} = vdom`
       <modelRoot>
@@ -170,7 +171,67 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     compareModelNodeList(deletedNodes, [firstList], assert);
   });
 
-  test("deletes correctly list before text", assert => {
+  test("deletes correctly list before other list (li selection)", assert => {
+    // language=XML
+    const {root: initial, elements: {firstLi, middleLi, lastLi}} = vdom`
+      <modelRoot>
+        <ul>
+          <li __id="firstLi">
+            <text >first1</text>
+          </li>
+          <li __id="middleLi">
+            <text>first2</text>
+          </li>
+          <li __id="lastLi">
+            <text>first3</text>
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <text>second1</text>
+          </li>
+          <li>
+            <text>second2</text>
+          </li>
+          <li>
+            <text>second3</text>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <ul></ul>
+        <ul>
+          <li>
+            <text>second1</text>
+          </li>
+          <li>
+            <text>second2</text>
+          </li>
+          <li>
+            <text>second3</text>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const startPos = ModelPosition.fromInElement(firstLi, 0);
+    const endPos = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
+
+    const range = new ModelRange(startPos, endPos);
+    ctx.model.selectRange(range);
+
+    const deletedNodes = command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+
+    compareModelNodeList(deletedNodes, [firstLi, middleLi, lastLi], assert);
+  });
+
+  test("deletes correctly list before text (ul selection)", assert => {
     // language=XML
     const {root: initial, elements: {firstList}} = vdom`
       <modelRoot>
@@ -206,5 +267,46 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [firstList], assert);
+  });
+
+  test("deletes correctly list before text (li selection)", assert => {
+    // language=XML
+    const {root: initial, elements: {firstLi, middleLi, lastLi}} = vdom`
+      <modelRoot>
+        <ul>
+          <li __id="firstLi">
+            <text>first1</text>
+          </li>
+          <li __id="middleLi">
+            <text>first2</text>
+          </li>
+          <li __id="lastLi">
+            <text>first3</text>
+          </li>
+        </ul>
+        <br/>
+        <text>this is some sample text</text>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <br/>
+        <text>this is some sample text</text>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const startPos = ModelPosition.fromInElement(firstLi, 0);
+    const endPos = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
+
+    const range = new ModelRange(startPos, endPos);
+    ctx.model.selectRange(range);
+
+    const deletedNodes = command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+
+    compareModelNodeList(deletedNodes, [firstLi, middleLi, lastLi], assert);
   });
 });

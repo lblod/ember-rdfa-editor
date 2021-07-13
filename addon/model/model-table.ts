@@ -23,7 +23,7 @@ export default class ModelTable extends ModelElement {
     }
 
     this.className = 'say-table';
-    this.setAttribute('data-editor-table', '');
+    // this.setAttribute('data-editor-table', '');
   }
 
   getDimensions() {
