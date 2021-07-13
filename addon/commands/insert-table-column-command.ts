@@ -17,17 +17,17 @@ export default class InsertTableColumnCommand extends Command {
     }
 
     const cell = ModelTable.getCellFromSelection(selection);
-    if(!cell) {
+    if (!cell) {
       throw new Error('The selection is not inside a cell');
     }
 
     const table = ModelTable.getTableFromSelection(selection);
-    if(!table) {
+    if (!table) {
       throw new Error('The selection is not inside a table');
     }
 
     const position = ModelTable.getCellIndex(cell);
-    if(!position || position.x === null) {
+    if (!position || position.x === null) {
       //Shouldn't happen
       throw new Error('Position is null');
     }
