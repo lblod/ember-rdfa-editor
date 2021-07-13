@@ -150,6 +150,7 @@ export default abstract class ModelNode {
       }
       result.reverse();
     }
+
     return result;
   }
 

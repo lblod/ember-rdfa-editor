@@ -174,7 +174,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
       return new ModelRange(startpos, ModelPosition.fromAfterNode(beforeEnd));
     }
 
-    throw new Error('Invalid position.'); // Should not happen
+    throw new Error('Invalid position'); // Should not happen
   }
 
   splitUntilElement(position: ModelPosition, limitElement: ModelElement, splitAtEnds = false): ModelPosition {

@@ -364,7 +364,6 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     ctx.model.selectRange(range);
 
     const deletedNodes = command.execute();
-    console.log(ctx.model.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [firstLine], assert);
