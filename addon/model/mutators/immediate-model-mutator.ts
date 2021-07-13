@@ -165,16 +165,13 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   splitRangeUntilElements(range: ModelRange, startLimit: ModelElement, endLimit: ModelElement, splitAtEnds = false) {
     const endPos = this.splitUntilElement(range.end, endLimit, splitAtEnds);
     const afterEnd = endPos.nodeAfter();
-    const beforeEnd = endPos.nodeBefore();
     const startpos = this.splitUntilElement(range.start, startLimit, splitAtEnds);
 
     if (afterEnd) {
       return new ModelRange(startpos, ModelPosition.fromBeforeNode(afterEnd));
-    } else if (beforeEnd) {
-      return new ModelRange(startpos, ModelPosition.fromAfterNode(beforeEnd));
+    } else {
+      return new ModelRange(startpos, ModelPosition.fromInElement(endPos.parent, endPos.parent.getMaxOffset()));
     }
-
-    throw new Error('Invalid position'); // Should not happen
   }
 
   splitUntilElement(position: ModelPosition, limitElement: ModelElement, splitAtEnds = false): ModelPosition {
