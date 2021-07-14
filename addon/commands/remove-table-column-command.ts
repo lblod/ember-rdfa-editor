@@ -40,19 +40,22 @@ export default class RemoveTableColumnCommand extends Command {
     }
 
     const tableDimensions = table.getDimensions();
-    let cellXToSelect = position.x + 1;
-    if (cellXToSelect >= tableDimensions.x) {
-      cellXToSelect = position.x - 1;
+    if (position.x === 0 && tableDimensions.x === 1) {
+      table.removeTable();
+      this.model.write();
+    } else {
+      const cellXToSelect = position.x === tableDimensions.x - 1
+        ? position.x - 1
+        : position.x + 1;
+
+      const cellToSelect = table.getCell(cellXToSelect, position.y);
+      if (cellToSelect) {
+        selection.collapseIn(cellToSelect);
+      }
+      this.model.write();
+
+      table.removeColumn(position.x);
+      this.model.write();
     }
-
-    const cellToSelect = table.getCell(cellXToSelect, position.y);
-    if (cellToSelect) {
-      selection.collapseIn(cellToSelect);
-    }
-    this.model.write();
-
-    table.removeColumn(position.x);
-
-    this.model.write();
   }
 }

@@ -7,7 +7,6 @@ type TableIndex = {
 };
 
 export default class ModelTable extends ModelElement {
-
   constructor(rows?: number, columns?: number) {
     super('table');
     // We need a constructor without rows or columns for the reader
@@ -36,7 +35,7 @@ export default class ModelTable extends ModelElement {
   getCell(x: number, y: number) {
     const tBody = this.children[0] as ModelElement;
     const row = tBody.children[y] as ModelElement;
-    if(row) {
+    if (row) {
       return row.children[x];
     } else {
       return undefined;
