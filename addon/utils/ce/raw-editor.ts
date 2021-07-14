@@ -4,11 +4,7 @@ import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-com
 import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
 import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
 import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
-import InsertColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
-import InsertColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
 import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
-import InsertRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
-import InsertRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
 import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
 import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list-command';
 import RemoveTableColumnCommand from "@lblod/ember-rdfa-editor/commands/remove-table-column-command";
@@ -36,6 +32,8 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
+import InsertTableColumnCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-command";
+import InsertTableRowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-command";
 import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/utils/event-bus";
 
 /**
@@ -106,10 +104,8 @@ class RawEditor extends EmberObject {
     this.registerCommand(new MakeHighlightCommand(this.model));
     this.registerCommand(new RemoveHighlightCommand(this.model));
     this.registerCommand(new InsertTableCommand(this.model));
-    this.registerCommand(new InsertRowBelowCommand(this.model));
-    this.registerCommand(new InsertRowAboveCommand(this.model));
-    this.registerCommand(new InsertColumnAfterCommand(this.model));
-    this.registerCommand(new InsertColumnBeforeCommand(this.model));
+    this.registerCommand(new InsertTableRowCommand(this.model));
+    this.registerCommand(new InsertTableColumnCommand(this.model));
     this.registerCommand(new RemoveTableRowCommand(this.model));
     this.registerCommand(new RemoveTableColumnCommand(this.model));
     this.registerCommand(new RemoveTableCommand(this.model));
