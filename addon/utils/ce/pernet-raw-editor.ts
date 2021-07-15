@@ -256,6 +256,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         observer.handleFullContentUpdate(extraInfo);
       }
     }
+
     EventBus.emit("contentChanged", undefined);
   }
 

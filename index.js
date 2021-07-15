@@ -7,6 +7,7 @@ module.exports = {
       sourceMaps: "inline"
     },
   },
+
   isDevelopingAddon() {
     return true;
   },

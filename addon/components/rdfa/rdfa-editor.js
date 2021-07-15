@@ -195,7 +195,7 @@ export default class RdfaEditor extends Component {
       editor: this.editor
     });
 
-    this.pluginRegistrationService.registerServicesInProfile(this.profile);
+    this.pluginRegistrationService.registerServicesInProfile(this.profile, this.editor);
 
     editor.registerContentObserver(this.eventProcessor);
     editor.registerMovementObserver(this.eventProcessor);

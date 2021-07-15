@@ -1,12 +1,16 @@
 import {getOwner} from "@ember/application";
 import Service from "@ember/service";
-import editorProfiles from '../config/active-plugins';
+import activePlugins from "../config/active-plugins";
 
 export default class PluginRegistrationService extends Service {
   editor = null
 
+  init() {
+    super.init();
+  }
+
   registerServicesInProfile(profile, editor) {
-    const plugins = editorProfiles[profile];
+    const plugins = activePlugins[profile];
     if (!plugins) {
       throw new Error(`Profile ${profile} not found`);
     }
@@ -18,6 +22,10 @@ export default class PluginRegistrationService extends Service {
 
   registerService(name, editor) {
     const service = getOwner(this).lookup(`service:${name}`);
+    if (!service) {
+      throw new Error(`Plugin ${name} not found`);
+    }
+
     service.register(editor);
   }
 }
