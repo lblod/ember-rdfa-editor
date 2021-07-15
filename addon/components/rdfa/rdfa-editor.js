@@ -1,7 +1,6 @@
 import classic from "ember-classic-decorator";
 import { action } from "@ember/object";
 import { layout as templateLayout } from "@ember-decorators/component";
-import { inject } from "@ember/service";
 import { A } from '@ember/array';
 import Component from '@ember/component';
 import { tracked } from "@glimmer/tracking";
@@ -35,8 +34,24 @@ import RdfaDocument from '../../utils/rdfa/rdfa-document';
 @classic
 @templateLayout(layout)
 export default class RdfaEditor extends Component {
-
   @service intl;
+
+  /**
+   * @property rdfaEditorDispatcher
+   * @type RdfaEditorDispatcher
+   *
+   * @private
+   */
+  @service rdfaEditorDispatcher;
+
+  /**
+   * @property pluginRegistrationService
+   * @type PluginRegistrationService
+   *
+   * @private
+   */
+  @service pluginRegistrationService;
+
   /**
    * Plugin profile of the RDFa editor
    *
@@ -49,23 +64,10 @@ export default class RdfaEditor extends Component {
   @tracked profile = 'default';
 
   /**
-   * Function accepting a debug object containing the components used for debugging
-   *   (e.g. hints registry, context scanner, editor)
-   * @property initDebug
-   * @type function
+   * editor controller
    *
-   * @public
    */
-  initDebug = null;
-
-  /**
-   * @property rdfaEditorDispatcher
-   * @type RdfaEditorDispatcher
-   *
-   * @private
-   */
-  @inject()
-  rdfaEditorDispatcher;
+  @tracked editor;
 
   /**
    * @property eventProcessor
@@ -76,12 +78,35 @@ export default class RdfaEditor extends Component {
   @tracked eventProcessor = null;
 
   /**
-   * @property hinstRegistry
+   * @property hintsRegistry
    * @type HintsRegistry
    *
    * @private
    */
   @tracked hintsRegistry = null;
+
+  // Toggle RDFA blocks
+  @tracked showRdfaBlocks = false;
+
+  /**
+   * Function accepting a debug object containing the components used for debugging
+   *   (e.g. hints registry, context scanner, editor)
+   * @property initDebug
+   * @type function
+   *
+   * @public
+   */
+  initDebug = null;
+
+  /**
+   * Contains extra handlers for input events on the editor.
+   *
+   * @property handlers
+   * @type Ember.A
+   *
+   * @private
+   */
+  handlers = null;
 
   /**
    * @property hasHints
@@ -116,21 +141,6 @@ export default class RdfaEditor extends Component {
   get rootModelNode() {
     return this.editor.rootModelNode;
   }
-  /**
-   * Contains extra handlers for input events on the editor.
-   *
-   * @property handlers
-   * @type Ember.A
-   *
-   * @private
-   */
-  handlers = null;
-
-  /**
-   * editor controller
-   *
-   */
-  @tracked editor;
 
   init() {
     super.init(...arguments);
@@ -176,7 +186,6 @@ export default class RdfaEditor extends Component {
    */
   @action
   handleRawEditorInit(editor) {
-
     this.editor = editor;
     this.hintsRegistry = new HintsRegistry(editor);
     this.eventProcessor = new EventProcessor({
@@ -185,8 +194,12 @@ export default class RdfaEditor extends Component {
       dispatcher: this.rdfaEditorDispatcher,
       editor: this.editor
     });
+
+    this.pluginRegistrationService.registerServicesInProfile(this.profile);
+
     editor.registerContentObserver(this.eventProcessor);
     editor.registerMovementObserver(this.eventProcessor);
+
     this.hintsRegistry.addRegistryObserver( (registry) => {
       this.eventProcessor.handleRegistryChange(registry);
     });
@@ -207,6 +220,7 @@ export default class RdfaEditor extends Component {
       };
       this.initDebug(debugInfo);
     }
+
     const rdfaDocument = new RdfaDocument(editor);
     forgivingAction('rdfaEditorInit', this)(rdfaDocument);
   }
@@ -220,13 +234,15 @@ export default class RdfaEditor extends Component {
   async triggerHints() {
     const rootNode = this.editor.rootNode;
     const currentNode = this.editor.currentNode;
-    let region = [];
+    let region;
+
     if (currentNode) {
       const currentRichNode = this.editor.getRichNodeFor(currentNode);
       region = currentRichNode.region;
     } else {
       region = this.editor.currentSelection;
     }
+
     const contexts = analyseRdfa(rootNode, region);
     if (contexts && contexts.length) {
       const context = contexts[0];
@@ -235,11 +251,7 @@ export default class RdfaEditor extends Component {
     } else {
       debug('No RDFa blocks found in currentNode. Cannot hint suggestions.');
     }
-
   }
-
-  // Toggle RDFA blocks
-  @tracked showRdfaBlocks = false;
 
   @action
   toggleRdfaBlocks() {

@@ -55,7 +55,6 @@ export default class EventBus {
         eventListeners.splice(index, 1);
       }
     }
-
   }
 
   private emit<E extends EditorEventName>(eventName: E, payload: EDITOR_EVENT_MAP[E]): void {
