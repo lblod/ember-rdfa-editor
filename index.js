@@ -7,6 +7,9 @@ module.exports = {
       sourceMaps: "inline"
     },
   },
+  isDevelopingAddon() {
+    return true;
+  },
 
   included() {
      this._super.included.apply(this, arguments);
