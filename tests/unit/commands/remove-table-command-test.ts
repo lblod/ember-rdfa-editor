@@ -42,7 +42,10 @@ module("Unit | commands | remove-table-command-test", hooks => {
     ctx.model.selectRange(range);
 
     command.execute();
+    const resultRange = ctx.modelSelection.lastRange;
+    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
+    assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
   test("removes table filled with text (only element in document)", assert => {
@@ -83,6 +86,9 @@ module("Unit | commands | remove-table-command-test", hooks => {
 
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const resultRange = ctx.modelSelection.lastRange;
+    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
+    assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
   test("removes correctly before table", assert => {
@@ -164,6 +170,9 @@ module("Unit | commands | remove-table-command-test", hooks => {
 
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const resultRange = ctx.modelSelection.lastRange;
+    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
+    assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
   test("removes correctly after table", assert => {
@@ -245,6 +254,9 @@ module("Unit | commands | remove-table-command-test", hooks => {
 
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const resultRange = ctx.modelSelection.lastRange;
+    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [1], [1]);
+    assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
   test("removes correctly before list", assert => {
@@ -308,6 +320,9 @@ module("Unit | commands | remove-table-command-test", hooks => {
 
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const resultRange = ctx.modelSelection.lastRange;
+    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
+    assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
   test("removes after before list", assert => {
@@ -371,6 +386,9 @@ module("Unit | commands | remove-table-command-test", hooks => {
 
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const resultRange = ctx.modelSelection.lastRange;
+    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [1], [1]);
+    assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
   test("removes correctly in div", assert => {
@@ -415,5 +433,55 @@ module("Unit | commands | remove-table-command-test", hooks => {
 
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const resultRange = ctx.modelSelection.lastRange;
+    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0,0], [0,0]);
+    assert.true(resultRange && expectedRange.sameAs(resultRange));
+  });
+  test("removes correctly in div after text", assert => {
+    // language=XML
+    const {root: initial, textNodes: {topLeft}} = vdom`
+      <modelRoot>
+        <div>
+          <text>01234567</text>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <text __id="topLeft">abcd</text>
+                </td>
+                <td>
+                  <text>efgh</text>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <text>ijkl</text>
+                </td>
+                <td>
+                  <text>mnop</text>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <div><text>01234567</text></div>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(topLeft, 1, 3);
+    ctx.model.selectRange(range);
+
+    command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const resultRange = ctx.modelSelection.lastRange;
+    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0,8], [0,8]);
+    assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 });
