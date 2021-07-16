@@ -1,3 +1,12 @@
+## 0.46.2 (2021-07-16)
+
+#### :bug: Bug Fix
+* [#133](https://github.com/lblod/ember-rdfa-editor/pull/133) Make cursor move to correct position after deleting table ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.46.1 (2021-07-13)
 
 #### :bug: Bug Fix
