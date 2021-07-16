@@ -22,6 +22,10 @@ import { A } from '@ember/array';
 import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+import HTMLExportWriter from "@lblod/ember-rdfa-editor/model/writers/html-export-writer";
+import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -54,7 +58,7 @@ export default class ContentEditable extends Component {
    *
    * @private
    */
-    richSelection;
+  richSelection;
 
   /**
    * element of the component, it is aliased to the rawEditor.rootNode
@@ -318,19 +322,51 @@ export default class ContentEditable extends Component {
     }
   }
 
-  /**
-   * cut isn't allowed at the moment
-   */
   @action
   cut(event) {
     event.preventDefault();
+
+    const htmlExportWriter = new HTMLExportWriter(this.rawEditor.model);
+    const modelNodes = this.rawEditor.executeCommand("delete-selection");
+
+    // Filter out model nodes that are text related
+    const filter = toFilterSkipFalse(node => {
+      return ModelNode.isModelText(node) || (ModelNode.isModelElement(node) && node.type === "br");
+    });
+
+    let htmlString = "";
+    let htmlTextString = "";
+    for (const modelNode of modelNodes) {
+      if (ModelNode.isModelElement(modelNode)) {
+        modelNode.parent = null;
+        const range = ModelRange.fromAroundNode(modelNode);
+        const treeWalker = new ModelTreeWalker({filter, range});
+
+        for (const node of treeWalker) {
+          htmlTextString += ModelNode.isModelText(node)
+            ? node.content
+            : "\n";
+        }
+      } else {
+        htmlTextString += modelNode.content;
+      }
+
+      const node = htmlExportWriter.write(modelNode);
+      htmlString += node instanceof HTMLElement
+        ? node.outerHTML
+        : node.textContent;
+    }
+
+    const clipboardData = event.clipboardData || window.clipboardData;
+    clipboardData.setData("text/plain", htmlTextString);
+    clipboardData.setData("text/html", htmlString);
   }
 
   /**
    * copy is relegated to the browser for now
    */
   @action
-  copy( /* event */) {
+  copy(/* event */) {
     //not handling just yet
   }
 

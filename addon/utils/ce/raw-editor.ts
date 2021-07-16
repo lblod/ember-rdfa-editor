@@ -37,6 +37,7 @@ import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-comma
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
 import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/utils/event-bus";
+import DeleteSelectionCommand from "@lblod/ember-rdfa-editor/commands/delete-selection-command";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -116,6 +117,7 @@ class RawEditor extends EmberObject {
     this.registerCommand(new InsertHtmlCommand(this.model));
     this.registerCommand(new InsertXmlCommand(this.model));
     this.registerCommand(new InsertTextCommand(this.model));
+    this.registerCommand(new DeleteSelectionCommand(this.model));
   }
 
   /**
@@ -173,10 +175,11 @@ class RawEditor extends EmberObject {
     try {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
-        this.getCommand(commandName).execute(...args);
+        const result = command.execute(...args);
         this.updateRichNode();
-      }
 
+        return result;
+      }
     } catch (e) {
       console.error(e);
     }
