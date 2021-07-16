@@ -37,7 +37,7 @@ export default class ModelTable extends ModelElement {
   getCell(x: number, y: number) {
     const tBody = this.children[0] as ModelElement;
     const row = tBody.children[y] as ModelElement;
-    if(row) {
+    if (row) {
       return row.children[x];
     } else {
       return undefined;

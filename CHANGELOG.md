@@ -1,3 +1,17 @@
+## 0.46.1 (2021-07-13)
+
+#### :bug: Bug Fix
+* [#129](https://github.com/lblod/ember-rdfa-editor/pull/129) Remove table when last row or column gets removed ([@RobbeDP](https://github.com/RobbeDP))
+
+#### :house: Internal
+* [#128](https://github.com/lblod/ember-rdfa-editor/pull/128) Table column and row commands testing ([@RobbeDP](https://github.com/RobbeDP))
+* [#124](https://github.com/lblod/ember-rdfa-editor/pull/124) move the dispatcher service inside the editor addon ([@nvdk](https://github.com/nvdk))
+
+#### Committers: 2
+- Niels V ([@nvdk](https://github.com/nvdk))
+- Robbe De Proft ([@RobbeDP](https://github.com/RobbeDP))
+
+
 ## 0.46.0 (2021-07-12)
 
 #### :rocket: Enhancement

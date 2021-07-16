@@ -28,7 +28,18 @@ export default class RdfaEditorDispatcher extends Service {
     for( var key in editorProfiles ) {
       profileArrays = [...profileArrays, ...editorProfiles[key]];
     }
-    this.pluginServices = A(profileArrays).uniq().map( (pluginName) =>  getOwner(this).lookup(`service:${pluginName}`));
+    const owner = getOwner(this);
+    const serviceNames = new Set(profileArrays);
+    this.pluginServices = [];
+    for (const name of serviceNames) {
+      const service = owner.lookup(`service:${name}`);
+      if (service) {
+        this.pluginServices.push(service);
+      }
+      else {
+        console.warn('could not find plugin ' + name); // eslint-disable-line no-console
+      }
+    }
   }
 
   /**
