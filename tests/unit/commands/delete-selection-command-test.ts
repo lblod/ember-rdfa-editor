@@ -364,7 +364,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     `;
 
     ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInTextNode(firstLine, 0, firstLine.length)
+    const range = ModelRange.fromInTextNode(firstLine, 0, firstLine.length);
     ctx.model.selectRange(range);
 
     const deletedNodes = command.execute();
