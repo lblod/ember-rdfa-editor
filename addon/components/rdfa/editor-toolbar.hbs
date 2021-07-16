@@ -87,33 +87,33 @@
           </button>
         {{/if}}
       {{/if}}
-        <Rdfa::ToolbarDropdown @dropdownButtonLabel="Table" @editor={{@editor}}>
+        <Rdfa::ToolbarDropdown @dropdownButtonLabel="Table" @editor={{@editor}} as |Menu|>
           {{#if this.isInTable}}
-            <button role="menuitem" type="button" {{on "click" this.insertRowBelow}}>
+            <Menu.Item @menuAction={{this.insertRowBelow}}>
               {{t "ember-rdfa-editor.add-row-below"}}
-            </button>
-            <button role="menuitem" type="button" {{on "click" this.insertRowAbove}}>
+            </Menu.Item>
+            <Menu.Item @menuAction={{this.insertRowAbove}}>
               {{t "ember-rdfa-editor.add-row-above"}}
-            </button>
-            <button role="menuitem" type="button" {{on "click" this.insertColumnAfter}}>
+            </Menu.Item>
+            <Menu.Item @menuAction={{this.insertColumnAfter}}>
               {{t "ember-rdfa-editor.add-column-after"}}
-            </button>
-            <button role="menuitem" type="button" {{on "click" this.insertColumnBefore}}>
+            </Menu.Item>
+            <Menu.Item @menuAction={{this.insertColumnBefore}}>
               {{t "ember-rdfa-editor.add-column-before"}}
-            </button>
-            <button role="menuitem" type="button" {{on "click" this.removeTableRow}}>
+            </Menu.Item>
+            <Menu.Item @menuAction={{this.removeTableRow}}>
               {{t "ember-rdfa-editor.delete-row"}}
-            </button>
-            <button role="menuitem" type="button" {{on "click" this.removeTableColumn}}>
+            </Menu.Item>
+            <Menu.Item @menuAction={{this.removeTableColumn}}>
               {{t "ember-rdfa-editor.delete-column"}}
-            </button>
-            <button role="menuitem" type="button" {{on "click" this.removeTable}}>
+            </Menu.Item>
+            <Menu.Item @menuAction={{this.removeTable}}>
               {{t "ember-rdfa-editor.delete-table"}}
-            </button>
+            </Menu.Item>
           {{else}}
-            <button role="menuitem" type="button" {{on "click" this.insertTable}}>
+            <Menu.Item @menuAction={{this.insertTable}}>
               {{t "ember-rdfa-editor.insert-table"}}
-            </button>
+            </Menu.Item>
           {{/if}}
         </Rdfa::ToolbarDropdown>
     </div>

@@ -2,6 +2,7 @@ import Component from "@glimmer/component";
 import {action} from "@ember/object";
 import {guidFor} from '@ember/object/internals';
 import {tracked} from "@glimmer/tracking";
+import {paintCycleHappened} from "@lblod/ember-rdfa-editor/editor/utils";
 
 export default class AuDropdown extends Component {
   // Create a dropdown ID
@@ -9,29 +10,25 @@ export default class AuDropdown extends Component {
 
   // Track dropdown state
   @tracked dropdownOpen = false;
-  @tracked focusTrapActive = false;
 
-  activateFocusTrap() {
-    this.focusTrapActive = true;
+  @action
+  openDropdown() {
+    this.dropdownOpen = true;
   }
 
   @action
-  deactivateFocusTrap() {
-    this.focusTrapActive = false;
-  }
+  async closeDropdown(event) {
 
-  @action
-  deactivateDropdown() {
-    this.dropdownOpen = false;
-    this.args.editor.model.writeSelection();
-  }
-
-  // toggle dropdown
-  @action
-  toggleDropdown() {
-    this.dropdownOpen = !this.dropdownOpen;
-    if (this.dropdownOpen) {
-      this.activateFocusTrap();
+    if(event) {
+      event.preventDefault();
     }
+    this.dropdownOpen = false;
+    // It seems impossible to manage the focus correctly synchronously
+    // some kind of focus event always seems to happen at the wrong time
+    // so this is a bit of hack, but it works well.
+    await paintCycleHappened();
+    this.args.editor.model.selection.lastRange.start.parent.boundNode?.focus();
+    this.args.editor.model.writeSelection();
+    return true;
   }
 }
