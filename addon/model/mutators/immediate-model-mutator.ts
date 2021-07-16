@@ -18,7 +18,6 @@ import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walk
  * on the modified state after the previous.
  */
 export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
-
   /**
    * @inheritDoc
    * @param range

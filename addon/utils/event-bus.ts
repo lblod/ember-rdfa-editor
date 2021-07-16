@@ -1,4 +1,5 @@
 import {createLogger, Logger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 
 export interface EditorEvent<E extends EditorEventName> {
   name: E,
@@ -7,6 +8,7 @@ export interface EditorEvent<E extends EditorEventName> {
 
 export type EDITOR_EVENT_MAP = {
   "contentChanged": void
+  "selectionChanged": ModelSelection
 };
 export type EditorEventName = keyof EDITOR_EVENT_MAP;
 

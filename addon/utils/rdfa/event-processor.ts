@@ -8,9 +8,8 @@ import {ContentObserver} from '../ce/pernet-raw-editor';
 import MovementObserver from '../ce/movement-observers/movement-observer';
 import {InternalSelection} from '@lblod/ember-rdfa-editor/editor/raw-editor';
 
-
 /**
-* Event processor orchastrating the hinting based on incoming editor events
+* Event processor orchestrating the hinting based on incoming editor events
 *
 * @module rdfa-editor
 * @class EventProcessor
@@ -25,6 +24,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
   cardsLocationFlaggedRemoved: Array<[number, number]>;
   cardsLocationFlaggedNew: Array<[number, number]>;
   dispatcher: RdfaEditorDispatcher;
+
   /**
    * this is the range spanning all text inserts as recorded between two dispatchAndAnalyse calls
    */
@@ -37,7 +37,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    */
   profile: string;
 
-  constructor({ registry, profile, dispatcher, editor} : { registry: HintsRegistry, profile: string, dispatcher: RdfaEditorDispatcher, editor: RawEditor}) {
+  constructor({registry, profile, dispatcher, editor} : {registry: HintsRegistry, profile: string, dispatcher: RdfaEditorDispatcher, editor: RawEditor}) {
     this.cardsLocationFlaggedNew = [];
     this.cardsLocationFlaggedRemoved = [];
     this.modifiedRange = [];
@@ -56,15 +56,16 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    * @private
    */
   updateModifiedRange(start: number, end: number, isRemove = false) {
-    if (isRemove && ! isEmpty(this.modifiedRange)) {
-      const [currentStart, currentEnd] = this.modifiedRange;
-      let newStart, newEnd;
+    if (isRemove && !isEmpty(this.modifiedRange)) {
       const delta = end - start;
+      const [currentStart, currentEnd] = this.modifiedRange;
+
+      let newStart, newEnd;
       if (currentStart > start  && currentStart > end) {
         // |removed text|[inserted text]
         newStart = currentStart - delta;
         newEnd = currentEnd - delta;
-        this.modifiedRange = [ newStart, newEnd ];
+        this.modifiedRange = [newStart, newEnd];
       }
       else if (currentStart == start && currentEnd == end) {
         // [|removed text inserted text|]
@@ -74,14 +75,14 @@ export default class EventProcessor implements ContentObserver, MovementObserver
         // | removed text [ inserted| text]
         newStart = currentStart - (currentStart - start);
         newEnd = currentEnd - delta;
-        this.modifiedRange = [ newStart, newEnd ];
+        this.modifiedRange = [newStart, newEnd];
       }
       else if ( currentStart <= start && currentEnd <= end ) {
         // [ inserted |removed  text| text]
         // full equality is handled above
         newStart = currentStart;
         newEnd = currentEnd - delta;
-        this.modifiedRange = [ newStart, newEnd ];
+        this.modifiedRange = [newStart, newEnd];
       }
       else if (currentStart < start && currentEnd < start ) {
         // no need to update range for [ inserted text][removed text]
@@ -90,7 +91,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
     else {
       // insertText, increase range as necessary
       if (isEmpty(this.modifiedRange)) {
-        this.modifiedRange = [ start, end ];
+        this.modifiedRange = [start, end];
       }
       else {
         const [currentStart, currentEnd] = this.modifiedRange;
@@ -104,7 +105,8 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    *
    * @method handleRegistryChange
    *
-   * @param {Ember.Array} registry
+   * @param {Array} registry changed registry
+   *
    * @public
    */
   handleRegistryChange(/*registry*/) {
@@ -117,6 +119,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
       this.editor.executeCommand("remove-highlight", selection);
       region = this.cardsLocationFlaggedRemoved.shift();
     }
+
     region = this.cardsLocationFlaggedNew.shift();
     while (region) {
       const [start, end] = region;
@@ -131,12 +134,12 @@ export default class EventProcessor implements ContentObserver, MovementObserver
     this.cardsLocationFlaggedRemoved = [];
   }
 
-  handleNewCardInRegistry(hightLightLocation: [number, number]){
-    this.cardsLocationFlaggedNew.push(hightLightLocation);
+  handleNewCardInRegistry(highlightLocation: [number, number]){
+    this.cardsLocationFlaggedNew.push(highlightLocation);
   }
 
-  handleRemovedCardInRegistry(hightLightLocation: [number, number]){
-    this.cardsLocationFlaggedRemoved.push(hightLightLocation);
+  handleRemovedCardInRegistry(highlightLocation: [number, number]){
+    this.cardsLocationFlaggedRemoved.push(highlightLocation);
   }
 
   /**
@@ -145,13 +148,13 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    *
    * @method analyseAndDispatch
    *
-   * @param @param {Array} Optional argument to contain extra info.
+   * @param {Array} extraInfo Optional argument to contain extra info.
    *
    * @public
    */
   analyseAndDispatch(extraInfo: Array<unknown> = []) {
     const node = this.editor.rootNode;
-    if (! isEmpty(this.modifiedRange)) {
+    if (!isEmpty(this.modifiedRange)) {
       const rdfaBlocks = analyse(node, this.modifiedRange as Region);
 
       void this.dispatcher.dispatch(
@@ -176,7 +179,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    * @method removeText
    *
    * @param {number} start Start of the text range
-   * @param {number} end End of the text range
+   * @param {number} stop End of the text range
    *
    * @public
    */
@@ -190,7 +193,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    *
    * @method insertText
    *
-   * @param {number} start Start of the text range
+   * @param {number} index Start of the text range
    * @param {string} text Text to insert
    *
    * @public
@@ -207,8 +210,8 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    *
    * @public
    */
-  handleMovement(_controller: RawEditor, _oldSelection: InternalSelection , newSelection: InternalSelection) {
-    const {startNode, endNode } = newSelection;
+  handleMovement(_controller: RawEditor, _oldSelection: InternalSelection, newSelection: InternalSelection) {
+    const {startNode, endNode} = newSelection;
     this.registry.activeRegion = [startNode.absolutePosition, endNode.absolutePosition];
   }
 }

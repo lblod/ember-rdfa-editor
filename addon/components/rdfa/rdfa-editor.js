@@ -12,6 +12,7 @@ import forgivingAction from '../../utils/rdfa/forgiving-action';
 import { analyse as analyseRdfa } from '@lblod/marawa/rdfa-context-scanner';
 import { inject as service } from '@ember/service';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
+
 /**
  * RDFa editor
  *
@@ -144,7 +145,7 @@ export default class RdfaEditor extends Component {
 
   init() {
     super.init(...arguments);
-    const userLocale = ( navigator.language || navigator.languages[0] );
+    const userLocale = (navigator.language || navigator.languages[0]);
     this.intl.setLocale([userLocale, 'nl-BE']);
     this.set('handlers', A());
   }
@@ -169,7 +170,7 @@ export default class RdfaEditor extends Component {
 
   /**
    * This is called in cases where an optional action is triggered
-   * from the frontend.  This noop can be called as a fallback in case no operation
+   * from the frontend. This noop can be called as a fallback in case no operation
    * needs to occur if the action is not defined.
    * @method noop
    */
@@ -216,7 +217,7 @@ export default class RdfaEditor extends Component {
       const debugInfo = {
         hintsRegistry: this.hintsRegistry,
         editor: this.eventProcessor.editor,
-        contextScanner: this.eventProcessor.scanner
+        contextScanner: this.eventProcessor.scanner // TODO: does not exist (yet?)
       };
       this.initDebug(debugInfo);
     }
@@ -226,7 +227,7 @@ export default class RdfaEditor extends Component {
   }
 
   /**
-   * requests hints from plugins
+   * Requests hints from plugins
    *
    * @method triggerHints
    */

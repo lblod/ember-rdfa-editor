@@ -107,15 +107,17 @@ export default class RdfaEditorDispatcher extends Service {
   async requestHints(profile, context, editor) {
     const plugins = editorProfiles[profile];
     const hints = A();
+
     if (plugins) {
       for (let plugin of plugins) {
         let pluginService = getOwner(this).lookup(`service:${plugin}`);
         if (pluginService.suggestHints) {
-          let receivedHints=await pluginService.suggestHints(context, editor);
+          let receivedHints = await pluginService.suggestHints(context, editor);
           hints.pushObjects(receivedHints);
         }
       }
     }
+
     return hints;
   }
 }

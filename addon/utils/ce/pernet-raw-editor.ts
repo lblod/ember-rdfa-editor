@@ -76,10 +76,16 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
   protected movementObservers: Ember.NativeArray<MovementObserver> ;
 
+  /**
+   * content observers
+   * @property contentObservers
+   * @private
+   */
+  contentObservers: Array<ContentObserver> = [];
 
   constructor(properties?: Record<string, unknown>) {
     super(properties);
-    this.set('history', new CappedHistory({ maxItems: 100}));
+    this.set('history', new CappedHistory({maxItems: 100}));
     this.movementObservers = A();
     document.addEventListener("editorModelWrite", this.createSnapshot.bind(this));
   }
@@ -103,7 +109,9 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   // @ts-ignore
   set currentSelection({startNode, endNode}: InternalSelection) {
     const oldSelection = this._currentSelection;
-    this._currentSelection = {startNode, endNode};
+    const newSelection = {startNode, endNode};
+
+    this._currentSelection = newSelection;
     if (startNode.absolutePosition === endNode.absolutePosition) {
       this.moveCaretInTextNode(startNode.domNode, startNode.relativePosition);
       this.currentNode = startNode.domNode;
@@ -122,8 +130,10 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         // but feel free to investigate
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        obs.handleMovement(this, oldSelection, {startNode, endNode});
+        obs.handleMovement(this, oldSelection, newSelection);
       }
+
+      EventBus.emit("selectionChanged", this.model.selection);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       void taskFor(this.generateDiffEvents).perform();
     }
@@ -251,21 +261,15 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       if (!extraInfo.some((x) => x.noSnapshot)) {
         this.createSnapshot();
       }
+
       for (const observer of contentObservers) {
         // eslint-disable-next-line ember/no-observers
         observer.handleFullContentUpdate(extraInfo);
       }
+
+      EventBus.emit("contentChanged", undefined);
     }
-
-    EventBus.emit("contentChanged", undefined);
   }
-
-  /**
-   * content observers
-   * @property contentObservers
-   * @private
-   */
-  contentObservers: Array<ContentObserver> = [];
 
   registerMovementObserver(observer: MovementObserver) {
     this.movementObservers.push(observer);
@@ -279,7 +283,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   registerContentObserver(observer: ContentObserver) {
     this.contentObservers.push(observer);
   }
-
 
   /**
    * unregister a content observer
@@ -307,8 +310,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   textInsert() {
     warn("textInsert was called on raw-editor without listeners being set.", { id: 'content-editable.invalid-state'});
   }
-
-
 
   /**
    * @method moveCaretInTextNode
@@ -343,7 +344,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   getRichNodeFor(domNode: Node | null, tree = this.richNode): RichNode | null {
     return getRichNodeMatchingDomNode(domNode, tree) as RichNode | null;
   }
-
 
   /**
    * calculate the cursor position based on a richNode and an offset from a domRANGE
@@ -402,7 +402,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     }
   }
 
-
   /**
    * inserts an emtpy textnode after richnode, if non existant.
    *
@@ -435,7 +434,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    */
   prependElementsRichNode(richParent: RichNode, elements: ChildNode[]){
     const newFirstChild = elements[0];
-    if(richParent.domNode.firstChild)
+    if (richParent.domNode.firstChild)
       richParent.domNode.insertBefore(newFirstChild, richParent.domNode.firstChild);
     else
       richParent.domNode.appendChild(newFirstChild);
@@ -749,7 +748,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         const position = {domNode: richNodeAfterCarret.domNode, absolutePosition, relativePosition: 0};
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        this.currentSelection = { startNode: position, endNode: position};
+        this.currentSelection = {startNode: position, endNode: position};
       }
       else if (offset > 0 && richNode.children[offset-1].type === 'text') {
         // the node before the carret is a text node, so we can set the cursor at the end of that node
@@ -758,7 +757,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         const position = {domNode: richNodeBeforeCarret.domNode, absolutePosition, relativePosition: richNodeBeforeCarret.end - richNodeBeforeCarret.start};
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        this.currentSelection = { startNode: position, endNode: position};
+        this.currentSelection = {startNode: position, endNode: position};
       }
       else {
         // no suitable text node is present, so we create a textnode
@@ -778,7 +777,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         const position = {domNode: textNode, relativePosition: 0, absolutePosition};
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        this.currentSelection = { startNode: position, endNode: position};
+        this.currentSelection = {startNode: position, endNode: position};
       }
     }
     else if (richNode.type === 'text') {
@@ -786,7 +785,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       const position = {domNode: node, absolutePosition, relativePosition: offset};
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      this.currentSelection = { startNode: position, endNode: position };
+      this.currentSelection = {startNode: position, endNode: position};
     }
     else {
       warn(`invalid node ${tagName(node)} provided to setCaret`, {id: 'contenteditable.invalid-start'});
@@ -805,7 +804,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   getRelativeCursorPostion() {
     return this.getRelativeCursorPosition();
   }
-
 
   /**
    * restore a snapshot from undo history
