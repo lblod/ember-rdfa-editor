@@ -2,15 +2,15 @@ import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import InsertTableColumnCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-command";
+import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
 
 module("Unit | commands | insert-table-column-before-command-test", hooks => {
   const ctx = new ModelTestContext();
-  let command: InsertTableColumnCommand;
+  let command: InsertTableColumnBeforeCommand;
 
   hooks.beforeEach(() => {
     ctx.reset();
-    command = new InsertTableColumnCommand(ctx.model);
+    command = new InsertTableColumnBeforeCommand(ctx.model);
   });
 
   test("inserts column before first column (empty table)", assert => {
@@ -56,7 +56,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     const range = ModelRange.fromInElement(bottomLeft, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute(true);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -119,7 +119,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     const range = ModelRange.fromInTextNode(bottomLeft, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute(true);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -166,7 +166,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     const range = ModelRange.fromInElement(bottomRight, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute(true);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -229,7 +229,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     const range = ModelRange.fromInTextNode(bottomRight, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute(true);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 });

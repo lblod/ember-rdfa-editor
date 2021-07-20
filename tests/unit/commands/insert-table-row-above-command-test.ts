@@ -2,15 +2,15 @@ import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import InsertTableRowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-command";
+import InsertTableRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
 
 module("Unit | commands | insert-table-row-above-command-test", hooks => {
   const ctx = new ModelTestContext();
-  let command: InsertTableRowCommand;
+  let command: InsertTableRowAboveCommand;
 
   hooks.beforeEach(() => {
     ctx.reset();
-    command = new InsertTableRowCommand(ctx.model);
+    command = new InsertTableRowAboveCommand(ctx.model);
   });
 
   test("inserts above first row (empty td)", assert => {
@@ -58,7 +58,7 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     const range = ModelRange.fromInNode(topRight, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute(true);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -111,7 +111,7 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     const range = ModelRange.fromInTextNode(topRight, 1, 1);
     ctx.model.selectRange(range);
 
-    command.execute(true);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -168,7 +168,7 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     const range = ModelRange.fromInNode(middleRight, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute(true);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -229,7 +229,7 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     const range = ModelRange.fromInTextNode(middleRight, 1, 1);
     ctx.model.selectRange(range);
 
-    command.execute(true);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 });

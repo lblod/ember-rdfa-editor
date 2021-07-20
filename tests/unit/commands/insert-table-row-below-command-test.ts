@@ -2,15 +2,15 @@ import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import InsertTableRowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-command";
+import InsertTableRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
 
 module("Unit | commands | insert-table-row-below-command-test", hooks => {
   const ctx = new ModelTestContext();
-  let command: InsertTableRowCommand;
+  let command: InsertTableRowBelowCommand;
 
   hooks.beforeEach(() => {
     ctx.reset();
-    command = new InsertTableRowCommand(ctx.model);
+    command = new InsertTableRowBelowCommand(ctx.model);
   });
 
   test("inserts below last row (empty td)", assert => {
@@ -58,7 +58,7 @@ module("Unit | commands | insert-table-row-below-command-test", hooks => {
     const range = ModelRange.fromInNode(bottomRight, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute(false);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -111,7 +111,7 @@ module("Unit | commands | insert-table-row-below-command-test", hooks => {
     const range = ModelRange.fromInTextNode(bottomRight, 1, 1);
     ctx.model.selectRange(range);
 
-    command.execute(false);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -168,7 +168,7 @@ module("Unit | commands | insert-table-row-below-command-test", hooks => {
     const range = ModelRange.fromInNode(middleRight, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute(false);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -229,7 +229,7 @@ module("Unit | commands | insert-table-row-below-command-test", hooks => {
     const range = ModelRange.fromInTextNode(middleRight, 1, 1);
     ctx.model.selectRange(range);
 
-    command.execute(false);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 });

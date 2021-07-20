@@ -2,15 +2,15 @@ import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import InsertTableColumnCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-command";
+import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
 
 module("Unit | commands | insert-table-column-after-command-test", hooks => {
   const ctx = new ModelTestContext();
-  let command: InsertTableColumnCommand;
+  let command: InsertTableColumnAfterCommand;
 
   hooks.beforeEach(() => {
     ctx.reset();
-    command = new InsertTableColumnCommand(ctx.model);
+    command = new InsertTableColumnAfterCommand(ctx.model);
   });
 
   test("inserts column after last column (empty table)", assert => {
@@ -56,7 +56,7 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const range = ModelRange.fromInElement(bottomRight, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute(false);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -120,7 +120,7 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     console.log(range);
     ctx.modelSelection.selectRange(range);
 
-    command.execute(false);
+    command.execute();
     console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
@@ -168,7 +168,7 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const range = ModelRange.fromInElement(bottomLeft, 0, 0);
     ctx.modelSelection.selectRange(range);
 
-    command.execute(false);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -231,7 +231,7 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const range = ModelRange.fromInTextNode(bottomLeft, 1, 3);
     ctx.modelSelection.selectRange(range);
 
-    command.execute(false);
+    command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 });

@@ -32,9 +32,11 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
-import InsertTableColumnCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-command";
-import InsertTableRowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-command";
 import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/utils/event-bus";
+import InsertTableRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
+import InsertTableRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
+import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
+import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -104,8 +106,10 @@ class RawEditor extends EmberObject {
     this.registerCommand(new MakeHighlightCommand(this.model));
     this.registerCommand(new RemoveHighlightCommand(this.model));
     this.registerCommand(new InsertTableCommand(this.model));
-    this.registerCommand(new InsertTableRowCommand(this.model));
-    this.registerCommand(new InsertTableColumnCommand(this.model));
+    this.registerCommand(new InsertTableRowAboveCommand(this.model));
+    this.registerCommand(new InsertTableRowBelowCommand(this.model));
+    this.registerCommand(new InsertTableColumnBeforeCommand(this.model));
+    this.registerCommand(new InsertTableColumnAfterCommand(this.model));
     this.registerCommand(new RemoveTableRowCommand(this.model));
     this.registerCommand(new RemoveTableColumnCommand(this.model));
     this.registerCommand(new RemoveTableCommand(this.model));

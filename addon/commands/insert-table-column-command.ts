@@ -3,15 +3,17 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
+import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
-export default class InsertTableColumnCommand extends Command {
-  name = "insert-table-column";
+export default abstract class InsertTableColumnCommand extends Command {
+  abstract insertBefore: boolean;
 
   constructor(model: Model) {
     super(model);
   }
 
-  execute(before: boolean, selection: ModelSelection = this.model.selection) {
+  @logExecute
+  execute(selection: ModelSelection = this.model.selection) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -32,7 +34,7 @@ export default class InsertTableColumnCommand extends Command {
       throw new Error('Position is null');
     }
 
-    const insertPosition = before ? position.x : position.x + 1;
+    const insertPosition = this.insertBefore ? position.x : position.x + 1;
     table.addColumn(insertPosition);
 
     this.model.write();

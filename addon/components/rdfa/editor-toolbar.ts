@@ -33,6 +33,7 @@ export default class EditorToolbar extends Component<Args> {
     super(parent, args);
     document.addEventListener("richSelectionUpdated", this.updateProperties.bind(this));
   }
+
   updateProperties(event: CustomEvent<ModelSelection>) {
     this.isBold = event.detail.bold === PropertyState.enabled;
     this.isItalic = event.detail.italic === PropertyState.enabled;
@@ -128,22 +129,22 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   insertRowBelow(){
-    this.args.editor.executeCommand("insert-table-row", false);
+    this.args.editor.executeCommand("insert-table-row-below");
   }
 
   @action
   insertRowAbove(){
-    this.args.editor.executeCommand("insert-table-row", true);
+    this.args.editor.executeCommand("insert-table-row-above");
   }
 
   @action
   insertColumnAfter(){
-    this.args.editor.executeCommand("insert-table-column", false);
+    this.args.editor.executeCommand("insert-table-column-after");
   }
 
   @action
   insertColumnBefore(){
-    this.args.editor.executeCommand("insert-table-column", true);
+    this.args.editor.executeCommand("insert-table-column-before");
   }
 
   @action
