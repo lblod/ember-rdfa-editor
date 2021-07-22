@@ -46,7 +46,7 @@ export default class DeleteSelectionCommand extends Command<ModelNode[]> {
       // Check if selection is inside table cell. If this is the case, cut children of said cell.
       // Assumption: if table cell is selected, no other nodes at the same level can be selected.
       const firstModelNode = treeWalker.currentNode;
-      if (ModelNode.isModelElement(firstModelNode) && firstModelNode.type === "td") {
+      if (ModelNode.isModelElement(firstModelNode) && (firstModelNode.type === "th" || firstModelNode.type === "td")) {
         contentRange = range;
         treeWalker = new ModelTreeWalker({
           range: contentRange,
@@ -55,7 +55,6 @@ export default class DeleteSelectionCommand extends Command<ModelNode[]> {
       }
 
       modelNodes = [...treeWalker];
-      console.log(contentRange.toString());
       selection.selectRange(mutator.insertNodes(contentRange));
     });
 

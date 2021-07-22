@@ -76,7 +76,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
   protected movementObservers: Ember.NativeArray<MovementObserver> ;
 
-
   constructor(properties?: Record<string, unknown>) {
     super(properties);
     this.set('history', new CappedHistory({ maxItems: 100}));
@@ -134,7 +133,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @param commandName
    * @param args
    */
-  executeCommand(commandName: string, ...args: unknown[]) {
+  executeCommand(commandName: string, ...args: unknown[]): unknown {
     const result = super.executeCommand(commandName, ...args);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     void taskFor(this.generateDiffEvents).perform();

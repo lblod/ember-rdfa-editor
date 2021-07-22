@@ -7,5 +7,6 @@ declare global {
     __executeCommand: (commandName: string, ...args: unknown[]) => void;
     setLogLevel: (level: LogLevels) => void;
     setLogFilter: (filter: string) => void;
+    clipboardData: DataTransfer;
   }
 }

@@ -22,10 +22,7 @@ import { A } from '@ember/array';
 import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
-import HTMLExportWriter from "@lblod/ember-rdfa-editor/model/writers/html-export-writer";
-import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import CutHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-handler";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -87,7 +84,6 @@ export default class ContentEditable extends Component {
     return this.externalHandlers.concat(this.defaultHandlers);
   }
 
-
   /**
    * default input handlers
    * @property defaultHandlers
@@ -103,6 +99,8 @@ export default class ContentEditable extends Component {
    * @private
    */
   externalHandlers = null;
+
+  cutHandler = null;
 
   /**
    * @constructor
@@ -130,7 +128,9 @@ export default class ContentEditable extends Component {
     this.set('defaultHandlers', defaultInputHandlers);
     this.set('capturedEvents', A());
 
-    if( ! this.externalHandlers ) {
+    this.set('cutHandler', new CutHandler({rawEditor}));
+
+    if(!this.externalHandlers) {
       this.set('externalHandlers', []);
     }
   }
@@ -184,7 +184,6 @@ export default class ContentEditable extends Component {
     forgivingAction('elementUpdate', this)();
   }
 
-
   /**
    * the following block handles input, as it's taken some research I'll dump some knowledge and assumptions here
    * take this with a grain of salt, because the spec is somewhat unclear and not all browser implement the same order:
@@ -196,7 +195,7 @@ export default class ContentEditable extends Component {
    * keyup (we should ignore this, because it fires even if keydown does a preventDefault. however it is one of the few places we can capture page up, page down, arrow up and down so we capture those here using the fallback input handler)
    * input (captured, input has happened and all you can do is clean up)
    *
-   * Chain 2 ( in FF input fires after compositionend): compositions (mostly on mac)
+   * Chain 2 (in FF input fires after compositionend): compositions (mostly on mac)
    * compositionupdate (we ignore this)
    * input (we capture this)
    * compositionend (we capture this, if input has preventdefault this doesn't fire. not well tested)
@@ -213,11 +212,10 @@ export default class ContentEditable extends Component {
    * keyDown events are handled for simple input we take over from
    * browser input.
    */
-
   @action
   handleKeyDown(event) {
-    if (! this.keydownMapsToOtherEvent(event)) {
-      const preventDefault = this.passEventToHandlers( event );
+    if (!this.keydownMapsToOtherEvent(event)) {
+      const preventDefault = this.passEventToHandlers(event);
       if (preventDefault) {
         event.preventDefault();
       }
@@ -225,24 +223,24 @@ export default class ContentEditable extends Component {
   }
 
   /**
-   * keyDown events are handled for simple input we take over from
+   * keyUp events are handled for simple input we take over from
    * browser input.
    */
-
   @action
   handleKeyUp(event) {
-    const preventDefault = this.passEventToHandlers( event );
+    const preventDefault = this.passEventToHandlers(event);
     if (preventDefault) {
       event.preventDefault();
     }
   }
+
   /**
    * reading of blogs and part of the spec seems to indicate capture input is the safest way to capture input
    * this method is only called for input that hasn't been handled in earlier events (like keydown)
    */
   @action
   handleInput(event) {
-    const preventDefault = this.passEventToHandlers( event );
+    const preventDefault = this.passEventToHandlers(event);
     if (preventDefault)
       event.preventDefault();
   }
@@ -325,41 +323,7 @@ export default class ContentEditable extends Component {
   @action
   cut(event) {
     event.preventDefault();
-
-    const htmlExportWriter = new HTMLExportWriter(this.rawEditor.model);
-    const modelNodes = this.rawEditor.executeCommand("delete-selection");
-
-    // Filter out model nodes that are text related
-    const filter = toFilterSkipFalse(node => {
-      return ModelNode.isModelText(node) || (ModelNode.isModelElement(node) && node.type === "br");
-    });
-
-    let htmlString = "";
-    let htmlTextString = "";
-    for (const modelNode of modelNodes) {
-      if (ModelNode.isModelElement(modelNode)) {
-        modelNode.parent = null;
-        const range = ModelRange.fromAroundNode(modelNode);
-        const treeWalker = new ModelTreeWalker({filter, range});
-
-        for (const node of treeWalker) {
-          htmlTextString += ModelNode.isModelText(node)
-            ? node.content
-            : "\n";
-        }
-      } else {
-        htmlTextString += modelNode.content;
-      }
-
-      const node = htmlExportWriter.write(modelNode);
-      htmlString += node instanceof HTMLElement
-        ? node.outerHTML
-        : node.textContent;
-    }
-
-    const clipboardData = event.clipboardData || window.clipboardData;
-    clipboardData.setData("text/plain", htmlTextString);
-    clipboardData.setData("text/html", htmlString);
+    this.cutHandler.handleEvent(event);
   }
 
   /**
@@ -372,7 +336,7 @@ export default class ContentEditable extends Component {
 
   @action
   handleMouseUp(event) {
-    const preventDefault = this.passEventToHandlers( event );
+    const preventDefault = this.passEventToHandlers(event);
     if (preventDefault)
       event.preventDefault();
   }
@@ -395,16 +359,16 @@ export default class ContentEditable extends Component {
    * @private
    */
   passEventToHandlers(event) {
-    const handlers = this.inputHandlers.filter( h => h.isHandlerFor(event));
+    const handlers = this.inputHandlers.filter(h => h.isHandlerFor(event));
     if (handlers.length > 0) {
       let preventDefault = false;
       for (let handler of handlers) {
         const handlerResponse = handler.handleEvent(event);
-        if (! handlerResponse.allowBrowserDefault) {
+        if (!handlerResponse.allowBrowserDefault) {
           // if one handler decided the event default (e.g. browser bubbling) should be prevented we do so.
           preventDefault = true;
         }
-        if (! handlerResponse.allowPropagation) {
+        if (!handlerResponse.allowPropagation) {
           // handler does not allow this event to be passed to other handlers return immediately
           break;
         }
@@ -425,6 +389,6 @@ export default class ContentEditable extends Component {
    * @method keydownMapsToOtherEvent
    */
   keydownMapsToOtherEvent(event) {
-    return (event.ctrlKey || event.metaKey ) && ["v","c","x"].includes(event.key);
+    return (event.ctrlKey || event.metaKey) && ["v","c","x"].includes(event.key);
   }
 }
