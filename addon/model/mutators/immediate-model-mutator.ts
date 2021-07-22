@@ -125,7 +125,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
 
     // Execute split at least once
     if (pos.parent === pos.root || untilPredicate(pos.parent)) {
-      return this.executeSplit(pos, splitAtEnds, false);
+      return this.executeSplit(pos, splitAtEnds, false, false);
     }
 
     while (pos.parent !== pos.root && !untilPredicate(pos.parent)) {
@@ -135,12 +135,12 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return pos;
   }
 
-  private executeSplit(position: ModelPosition, splitAtEnds = false, splitParent = true) {
+  private executeSplit(position: ModelPosition, splitAtEnds = false, splitParent = true, wrapAround = true) {
     if (!splitAtEnds) {
       if (position.parentOffset === 0) {
-        return position.parent === position.root ? position : ModelPosition.fromBeforeNode(position.parent);
+        return (!wrapAround || position.parent === position.root) ? position : ModelPosition.fromBeforeNode(position.parent);
       } else if (position.parentOffset === position.parent.getMaxOffset()) {
-        return position.parent === position.root ? position : ModelPosition.fromAfterNode(position.parent);
+        return (!wrapAround || position.parent === position.root) ? position : ModelPosition.fromAfterNode(position.parent);
       }
     }
 

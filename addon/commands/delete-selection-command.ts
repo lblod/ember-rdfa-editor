@@ -63,7 +63,6 @@ export default class DeleteSelectionCommand extends Command<ModelNode[]> {
 
   isElementFullySelected(element: ModelElement, range: ModelRange): boolean {
     let startPosition = range.start;
-
     while (startPosition.parent !== element && startPosition.parentOffset === 0) {
       startPosition = ModelPosition.fromBeforeNode(startPosition.parent);
     }

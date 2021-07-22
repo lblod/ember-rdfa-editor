@@ -435,4 +435,49 @@ module("Unit | commands | delete-selection-command-test", hooks => {
 
     compareModelNodeList(deletedNodes, [ulElement], assert);
   });
+
+  test("deletes first part of list element", assert => {
+    // language=XML
+    const {root: initial, textNodes: {firstText}} = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+            <text __id="firstText">first</text>
+          </li>
+          <li>
+            <text>second</text>
+          </li>
+          <li>
+            <text>third</text>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const {root: expected} = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+            <text>st</text>
+          </li>
+          <li>
+            <text>second</text>
+          </li>
+          <li>
+            <text>third</text>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(firstText, 0, 3);
+    ctx.model.selectRange(range);
+
+    const deletedNodes = command.execute();
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+
+    compareModelNodeList(deletedNodes, [new ModelText("fir")], assert);
+  });
 });

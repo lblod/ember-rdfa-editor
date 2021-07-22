@@ -4,7 +4,6 @@ import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
 import { oneLineTrim } from "common-tags";
 
 export function parseXml(xml: string): XmlReaderResult {
-
   const parser = new DOMParser();
   const doc = parser.parseFromString(xml, "application/xml");
 
@@ -18,7 +17,6 @@ export function parseHtml(html: string): HTMLDocument {
 }
 
 function buildString(strings: TemplateStringsArray, ...expressions: unknown[]) {
-
   let result = '';
 
   for(let i = 0; i<expressions.length; i++){
