@@ -5,7 +5,6 @@ import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
-
 export default class RemoveTableCommand extends Command {
   name = "remove-table";
 
@@ -29,7 +28,7 @@ export default class RemoveTableCommand extends Command {
     }
 
     if (table.parent) {
-      const offset = table.parent.getChildIndex(table);
+      const offset = table.getOffset();
       if (offset) {
         selection.collapseIn(table.parent, offset);
       } else {
