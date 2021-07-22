@@ -117,11 +117,9 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(bottomRight, 1, 3);
-    console.log(range);
     ctx.modelSelection.selectRange(range);
 
     command.execute();
-    console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 

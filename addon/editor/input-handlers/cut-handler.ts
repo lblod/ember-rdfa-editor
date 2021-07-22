@@ -19,13 +19,13 @@ export default class CutHandler {
   handleEvent(event: ClipboardEvent): void {
     const htmlExportWriter = new HTMLExportWriter(this.rawEditor.model);
     const modelNodes = this.rawEditor.executeCommand("delete-selection") as ModelNode[];
-    console.log(modelNodes);
 
     // Filter out model nodes that are text related
     const filter = toFilterSkipFalse(node => {
       return ModelNode.isModelText(node) || (ModelNode.isModelElement(node) && node.type === "br");
     });
 
+    let xmlString = "";
     let htmlString = "";
     let textString = "";
     for (const modelNode of modelNodes) {
@@ -44,13 +44,20 @@ export default class CutHandler {
       }
 
       const node = htmlExportWriter.write(modelNode);
-      htmlString += node instanceof HTMLElement
-        ? node.outerHTML
-        : node.textContent;
+      if (node instanceof HTMLElement) {
+        xmlString += node.outerHTML;
+        htmlString += node.outerHTML;
+      } else {
+        if (node.textContent) {
+          xmlString += `<text>${node.textContent}</text>`; // TODO: is this enough to provide XML?
+          htmlString += node.textContent;
+        }
+      }
     }
 
     const clipboardData = event.clipboardData || window.clipboardData;
     clipboardData.setData("text/html", htmlString);
     clipboardData.setData("text/plain", textString);
+    clipboardData.setData("application/xml", xmlString);
   }
 }
