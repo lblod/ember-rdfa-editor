@@ -174,7 +174,7 @@
       left: 0;
       display: block;
       width: 100%;
-      padding: $say-unit-tiny/2;
+      padding: $say-unit-tiny*0.5;
       transition: none;
       border-bottom: 1px solid $say-neutral-200;
       background-color: $say-neutral-100;
@@ -198,7 +198,7 @@
     left: 0;
     display: block;
     width: 100%;
-    padding: $say-unit-tiny/2;
+    padding: $say-unit-tiny*0.5;
     transition: none;
     border-top: 1px solid $say-neutral-200;
     background-color: $say-white;

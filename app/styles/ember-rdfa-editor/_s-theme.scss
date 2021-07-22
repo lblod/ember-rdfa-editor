@@ -123,7 +123,7 @@ $say-input-background-color          : $say-white;
 $say-input-border-color              : $say-gray-400 !default;
 $say-input-focus-border-color        : $say-outline-color !default;
 $say-input-error-border              : $say-red-600 !default;
-$say-input-radius                    : $say-radius/5;
+$say-input-radius                    : $say-radius*0.2;
 
 $say-input-disabled-background-color : $say-gray-100 !default;
 $say-input-disabled-border-color     : $say-gray-600 !default;

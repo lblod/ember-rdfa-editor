@@ -135,7 +135,7 @@
 
     &:focus {
       outline: $say-outline;
-      outline-offset: $say-unit-tiny/2;
+      outline-offset: $say-unit-tiny*0.5;
     }
   }
 
