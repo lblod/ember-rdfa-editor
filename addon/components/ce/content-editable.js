@@ -16,12 +16,10 @@ import UndoHandler from '../../utils/ce/handlers/undo-hander';
 import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
 import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
-import HTMLInputParser, {LIMITED_SAFE_TAGS} from '../../utils/html-input-parser';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
-import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
-import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+import PasteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/paste-handler";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -44,7 +42,9 @@ import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-uti
 @templateLayout(layout)
 export default class ContentEditable extends Component {
   tagName = ''
-  @service() features;
+  @service features;
+
+  pasteHandler;
 
   /**
    * WIP: Rich selection
@@ -54,7 +54,7 @@ export default class ContentEditable extends Component {
    *
    * @private
    */
-    richSelection;
+  richSelection;
 
   /**
    * element of the component, it is aliased to the rawEditor.rootNode
@@ -82,7 +82,6 @@ export default class ContentEditable extends Component {
   get inputHandlers() {
     return this.externalHandlers.concat(this.defaultHandlers);
   }
-
 
   /**
    * default input handlers
@@ -125,6 +124,8 @@ export default class ContentEditable extends Component {
     this.set('currentTextContent', '');
     this.set('defaultHandlers', defaultInputHandlers);
     this.set('capturedEvents', A());
+
+    this.set('pasteHandler', new PasteHandler({rawEditor}));
 
     if( ! this.externalHandlers ) {
       this.set('externalHandlers', []);
@@ -259,55 +260,12 @@ export default class ContentEditable extends Component {
    */
   @action
   paste(event) {
-    // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
-    const clipboardData = (event.clipboardData || window.clipboardData);
     event.preventDefault();
-    const isInTable = this.rawEditor.selection.inTableState === PropertyState.enabled;
-    const pasteRange = ModelRangeUtils.getExtendedToPlaceholder(this.rawEditor.model.selection.lastRange);
-
-    //TODO: if no clipboardData found, do we want an error?
-    const canPasteHTML = ! isInTable && ( this.features.isEnabled('editor-html-paste') || this.features.isEnabled('editor-extended-html-paste')) && this.hasClipboardHtmlContent(clipboardData);
-
-    if (canPasteHTML) {
-      try {
-        const inputParser = this.features.isEnabled('editor-extended-html-paste') ?
-          new HTMLInputParser({}):
-              new HTMLInputParser({safeTags: LIMITED_SAFE_TAGS });
-
-        const htmlPaste = clipboardData.getData('text/html');
-        const cleanHTML = inputParser.cleanupHTML(htmlPaste);
-        this.rawEditor.executeCommand("insert-html", cleanHTML, pasteRange);
-      }
-      catch(e) {
-        // fall back to text pasting
-        console.warn(e); //eslint-disable-line no-console
-        const text = this.getClipboardContentAsText(clipboardData);
-        this.rawEditor.executeCommand("insert-text", text, pasteRange);
-      }
-    }
-
-    else {
-      const text = this.getClipboardContentAsText(clipboardData);
-      this.rawEditor.executeCommand("insert-text", text, pasteRange);
-    }
-    this.rawEditor.selection.lastRange.collapse();
-    this.rawEditor.model.writeSelection();
-    this.rawEditor.updateSelectionAfterComplexInput();
-    this.rawEditor.generateDiffEvents.perform();
-    return false;
-  }
-
-  hasClipboardHtmlContent(clipboardData){
-    const potentialContent = clipboardData.getData('text/html') || "";
-    return potentialContent.length > 0;
-  }
-
-  getClipboardContentAsText(clipboardData){
-    const text = clipboardData.getData('text/plain') || "";
-    if( text.length === 0 ){
-      return clipboardData.getData('text') || "";
-    }
-    else return text;
+    this.pasteHandler.handleEvent(
+      event,
+      this.features.isEnabled("editor-html-paste"),
+      this.features.isEnabled("editor-extended-html-paste")
+    );
   }
 
   @action
