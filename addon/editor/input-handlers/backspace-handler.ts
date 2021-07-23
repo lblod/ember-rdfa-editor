@@ -22,7 +22,7 @@ import {
   RemoveVoidElementManipulation,
   VoidElement
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {HandlerResponse, InputHandler, InputPlugin} from './input-handler';
+import {InputHandler, InputPlugin} from './input-handler';
 import {
   editorDebug,
   hasVisibleChildren,
@@ -33,6 +33,7 @@ import {
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
+import { HandlerResponse } from './handler-response';
 
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
@@ -348,7 +349,7 @@ export default class BackspaceHandler extends InputHandler {
    * @return {HandlerResponse}
    * @public
    */
-  handleEvent(event: Event): HandlerResponse {
+  handleEvent(event: KeyboardEvent): HandlerResponse {
     // TODO: reason more about async behaviour of backspace.
     event.preventDefault(); // make sure event propagation is stopped, async behaviour of backspace could cause the browser to execute eventDefault before it is finished
 

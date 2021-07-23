@@ -10,7 +10,7 @@ import {
   RemoveVoidElementManipulation,
   VoidElement
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {HandlerResponse, InputHandler, InputPlugin} from './input-handler';
+import {InputHandler, InputPlugin} from './input-handler';
 import {
   editorDebug,
   hasVisibleChildren,
@@ -22,6 +22,7 @@ import {
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import ListDeletePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/delete-plugin';
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
+import { HandlerResponse } from './handler-response';
 
 /**
  * We introduce an abstract reference point to check for visual changes.
@@ -396,7 +397,6 @@ export default class DeleteHandler extends InputHandler {
   /**
    * handle delete event
    * @method handleEvent
-   * @return {HandlerResponse}
    * @public
    */
   handleEvent(event: Event): HandlerResponse {
