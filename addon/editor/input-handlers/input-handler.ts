@@ -35,14 +35,14 @@ export abstract class InputHandler {
   plugins: InputPlugin[];
   protected rawEditor: PernetRawEditor;
 
-  constructor(rawEditor: PernetRawEditor) {
+  protected constructor(rawEditor: PernetRawEditor) {
     this.rawEditor = rawEditor;
     this.plugins = [];
   }
 
   abstract isHandlerFor(event: Event): boolean;
 
-  abstract handleEvent(event: Event): HandlerResponse;
+  abstract handleEvent(event: Event, ...arg: unknown[]): HandlerResponse;
 
   /**
    * Checks whether all plugins agree the manipulation is allowed.

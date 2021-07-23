@@ -4,20 +4,24 @@ import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-uti
 import HTMLInputParser, {LIMITED_SAFE_TAGS} from "@lblod/ember-rdfa-editor/utils/html-input-parser";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {taskFor} from "ember-concurrency-ts";
+import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input-handler";
+import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
 
-export default class PasteHandler {
-  rawEditor: PernetRawEditor;
-
+export default class PasteHandler extends InputHandler {
   constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
-    this.rawEditor = rawEditor;
+    super(rawEditor);
   }
 
   // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
-  handleEvent(event: ClipboardEvent, pasteHTML: boolean, pasteExtendedHTML: boolean): void {
-    const clipboardData = (event.clipboardData || window.clipboardData);
-    const isInTable = this.rawEditor.selection.inTableState === PropertyState.enabled;
+  handleEvent(event: ClipboardEvent, pasteHTML: boolean, pasteExtendedHTML: boolean): HandlerResponse {
+    const clipboardData = event.clipboardData;
 
-    //TODO: if no clipboardData found, do we want an error?
+    if (!clipboardData) {
+      //TODO: if no clipboardData found, do we want an error?
+      return {allowPropagation: false, allowBrowserDefault: false};
+    }
+
+    const isInTable = this.rawEditor.selection.inTableState === PropertyState.enabled;
     const canPasteHTML = !isInTable && (pasteHTML || pasteExtendedHTML) && this.hasClipboardHtmlContent(clipboardData);
 
     const range = this.rawEditor.model.selection.lastRange;
@@ -54,7 +58,11 @@ export default class PasteHandler {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     void taskFor(this.rawEditor.generateDiffEvents).perform();
 
-    // return false; TODO: why return false?
+    return {allowPropagation: false, allowBrowserDefault: false};
+  }
+
+  isHandlerFor(event: ClipboardEvent): boolean {
+    return !!event.clipboardData;
   }
 
   hasClipboardHtmlContent(clipboardData: DataTransfer): boolean {
