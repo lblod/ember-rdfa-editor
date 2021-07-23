@@ -239,7 +239,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
           new HTMLInputParser({ safeTags: LIMITED_SAFE_TAGS });
 
         const htmlPaste = clipboardData.getData('text/html');
-        const cleanHTML = inputParser.cleanupHTML(htmlPaste);
+        const cleanHTML = inputParser.cleanupHTML(htmlPaste) as string;
         this.rawEditor.executeCommand("insert-html", cleanHTML, pasteRange);
       }
       catch (e) {
