@@ -34,7 +34,7 @@ class HTMLInputParser {
   /**
    * @constructor
    */
-  constructor({ safeAttributes, lumpTags, tagMap, safeTags, uriSafeAttr}) {
+  constructor({ safeAttributes = null, lumpTags = null, tagMap = null, safeTags = null, uriSafeAttr = null}) {
     this.safeAttributes = safeAttributes ? safeAttributes : DEFAULT_SAFE_ATTRIBUTES;
     this.lumpTags = lumpTags ? lumpTags : DEFAULT_LUMP_TAGS;
     this.safeTags = safeTags ? safeTags : DEFAULT_SAFE_TAGS;
