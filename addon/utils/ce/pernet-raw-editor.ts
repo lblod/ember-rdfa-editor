@@ -1,7 +1,6 @@
 import Ember from "ember";
 import {A} from '@ember/array';
-import {TaskGenerator, timeout} from 'ember-concurrency';
-import {task} from 'ember-concurrency-decorators';
+import {TaskGenerator, task, timeout} from 'ember-concurrency';
 import {diff_match_patch as DiffMatchPatch} from 'diff-match-patch';
 import {taskFor} from "ember-concurrency-ts";
 import {
