@@ -1,18 +1,52 @@
-import classic from "ember-classic-decorator";
-import { action } from "@ember/object";
-import { layout as templateLayout } from "@ember-decorators/component";
-import { inject } from "@ember/service";
-import { A } from '@ember/array';
-import Component from '@ember/component';
-import { tracked } from "@glimmer/tracking";
 import { debug, warn } from '@ember/debug';
-import layout from '../../templates/components/rdfa/rdfa-editor';
-import HintsRegistry from '../../utils/rdfa/hints-registry';
-import EventProcessor from '../../utils/rdfa/event-processor';
-import forgivingAction from '../../utils/rdfa/forgiving-action';
+import { action } from "@ember/object";
+import { inject as service } from "@ember/service";
+import Component from '@glimmer/component';
+import { tracked } from "@glimmer/tracking";
 import { analyse as analyseRdfa } from '@lblod/marawa/rdfa-context-scanner';
-import { inject as service } from '@ember/service';
+import EventProcessor from '../../utils/rdfa/event-processor';
+import HintsRegistry from '../../utils/rdfa/hints-registry';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
+import type IntlService from 'ember-intl/services/intl';
+import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
+import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+
+interface DebugInfo {
+  hintsRegistry: HintsRegistry
+  editor: RawEditor
+}
+
+interface RdfaEditorArgs {
+  /**
+   * Function accepting a debug object containing the components used for debugging
+   *   (e.g. hints registry, context scanner, editor)
+   * @property initDebug
+   * @type function
+   *
+   * @public
+   */
+  initDebug(debugInfo: DebugInfo): void
+  /**
+   * Plugin profile of the RDFa editor
+   * @default 'default'
+   * @public
+   */
+  profile?: string
+  /**
+   * callback that is called with an interface to the editor after editor init completed
+   * @default 'default'
+   * @public
+   */
+  rdfaEditorInit(editor: RdfaDocument): void
+}
+
+interface SuggestedHint {
+  component: string
+  info: Record<string, unknown>
+}
+
 /**
  * RDFa editor
  *
@@ -32,31 +66,11 @@ import RdfaDocument from '../../utils/rdfa/rdfa-document';
 * @class RdfaEditorComponent
 * @extends Component
 */
-@classic
-@templateLayout(layout)
-export default class RdfaEditor extends Component {
+export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
-  @service intl;
-  /**
-   * Plugin profile of the RDFa editor
-   *
-   * @property profile
-   * @type string
-   * @default 'default'
-   *
-   * @public
-   */
+  @service declare intl: IntlService;
   @tracked profile = 'default';
 
-  /**
-   * Function accepting a debug object containing the components used for debugging
-   *   (e.g. hints registry, context scanner, editor)
-   * @property initDebug
-   * @type function
-   *
-   * @public
-   */
-  initDebug = null;
 
   /**
    * @property rdfaEditorDispatcher
@@ -64,8 +78,7 @@ export default class RdfaEditor extends Component {
    *
    * @private
    */
-  @inject()
-  rdfaEditorDispatcher;
+  @service declare rdfaEditorDispatcher: RdfaEditorDispatcher;
 
   /**
    * @property eventProcessor
@@ -73,7 +86,7 @@ export default class RdfaEditor extends Component {
    *
    * @private
    */
-  @tracked eventProcessor = null;
+  @tracked eventProcessor?: EventProcessor;
 
   /**
    * @property hinstRegistry
@@ -81,7 +94,9 @@ export default class RdfaEditor extends Component {
    *
    * @private
    */
-  @tracked hintsRegistry = null;
+  @tracked hintsRegistry?: HintsRegistry;
+
+  @tracked suggestedHints : SuggestedHint[] = [];
 
   /**
    * @property hasHints
@@ -89,7 +104,7 @@ export default class RdfaEditor extends Component {
    *
    * @private
    */
-  get hasHints() {
+  get hasHints(): boolean {
    return this.hintsRegistry?.registry.length > 0;
   }
 
@@ -99,48 +114,42 @@ export default class RdfaEditor extends Component {
    *
    * @private
    */
-  get hasActiveHints() {
+  get hasActiveHints(): boolean {
     return this.hintsRegistry?.activeHints?.length > 0;
   }
 
   /**
    * @property hasSuggestedHints
    */
-  get hasSuggestedHints() {
+  get hasSuggestedHints(): boolean {
     return this.suggestedHints.length > 0;
   }
 
   /**
    * @property rootModelNode
    */
-  get rootModelNode() {
+  get rootModelNode(): ModelNode {
     return this.editor.rootModelNode;
   }
-  /**
-   * Contains extra handlers for input events on the editor.
-   *
-   * @property handlers
-   * @type Ember.A
-   *
-   * @private
-   */
-  handlers = null;
 
   /**
    * editor controller
    *
    */
-  @tracked editor;
+  @tracked editor?: PernetRawEditor;
 
-  init() {
-    super.init(...arguments);
+  constructor(owner: unknown, args: RdfaEditorArgs) {
+    super(owner, args);
     const userLocale = ( navigator.language || navigator.languages[0] );
     this.intl.setLocale([userLocale, 'nl-BE']);
-    this.set('handlers', A());
+    if (this.args.profile) {
+      this.profile = this.args.profile;
+    }
   }
 
-  didUpdateAttrs() {
-    if (this.profile != this.eventProcessor.profile) {
+  @action
+  updateProfile() {
+    if (this.eventProcessor && this.profile != this.eventProcessor.profile) {
       this.eventProcessor.profile = this.profile;
     }
   }
@@ -175,8 +184,7 @@ export default class RdfaEditor extends Component {
    * @private
    */
   @action
-  handleRawEditorInit(editor) {
-
+  handleRawEditorInit(editor: PernetRawEditor) {
     this.editor = editor;
     this.hintsRegistry = new HintsRegistry(editor);
     this.eventProcessor = new EventProcessor({
@@ -187,28 +195,29 @@ export default class RdfaEditor extends Component {
     });
     editor.registerContentObserver(this.eventProcessor);
     editor.registerMovementObserver(this.eventProcessor);
-    this.hintsRegistry.addRegistryObserver( (registry) => {
-      this.eventProcessor.handleRegistryChange(registry);
+    this.hintsRegistry.addRegistryObserver( (_registry: HintsRegistry) => {
+      this.eventProcessor?.handleRegistryChange();
     });
 
-    this.hintsRegistry.addNewCardObserver( (card) => {
-      this.eventProcessor.handleNewCardInRegistry(card);
+    this.hintsRegistry.addNewCardObserver( (location: [number,number]) => {
+      this.eventProcessor?.handleNewCardInRegistry(location);
     });
 
-    this.hintsRegistry.addRemovedCardObserver( (card) => {
-      this.eventProcessor.handleRemovedCardInRegistry(card);
+    this.hintsRegistry.addRemovedCardObserver( (location: [number, number]) => {
+      this.eventProcessor?.handleRemovedCardInRegistry(location);
     });
 
-    if (this.initDebug) {
+    if (this.args.initDebug) {
       const debugInfo = {
         hintsRegistry: this.hintsRegistry,
         editor: this.eventProcessor.editor,
-        contextScanner: this.eventProcessor.scanner
       };
-      this.initDebug(debugInfo);
+      this.args.initDebug(debugInfo);
     }
     const rdfaDocument = new RdfaDocument(editor);
-    forgivingAction('rdfaEditorInit', this)(rdfaDocument);
+    if (this.args.rdfaEditorInit) {
+      this.args.rdfaEditorInit(rdfaDocument);
+    }
   }
 
   /**
@@ -231,7 +240,7 @@ export default class RdfaEditor extends Component {
     if (contexts && contexts.length) {
       const context = contexts[0];
       const hints = await this.rdfaEditorDispatcher.requestHints(this.profile, context, this.editor);
-      this.set('suggestedHints', hints);
+      this.suggestedHints = hints;
     } else {
       debug('No RDFa blocks found in currentNode. Cannot hint suggestions.');
     }
@@ -244,8 +253,8 @@ export default class RdfaEditor extends Component {
   @action
   toggleRdfaBlocks() {
     this.showRdfaBlocks = !this.showRdfaBlocks;
-
-    // Focus editor
-    document.getElementsByClassName("say-editor__inner")[0].focus();
+    if (this.editor?.model) {
+      this.editor.model.writeSelection();
+    }
   }
 }

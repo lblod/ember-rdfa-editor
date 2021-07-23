@@ -1,4 +1,4 @@
-<div class="say-container {{if @editorOptions.showRdfaHover "say-container--sidebar-left" }}">
+<div class="say-container {{if @editorOptions.showRdfaHover "say-container--sidebar-left" }}" {{did-update this.updateProfile @profile}}>
   {{#if this.editor}}
     <Rdfa::EditorToolbar
       @editor={{this.editor}}
@@ -27,11 +27,8 @@
         <Ce::ContentEditable
           @class="say-editor__inner say-content"
           @rawEditorInit={{this.handleRawEditorInit}}
-          @elementUpdate={{fn (or this.domUpdate this.noop) this.editor.rootNode}}
-          @externalHandlers={{this.handlers}}
           @editable={{true}}
-          @focused={{true}}
-         />
+        />
       </div>
     </div>
 
