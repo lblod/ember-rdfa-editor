@@ -67,10 +67,8 @@ interface SuggestedHint {
 * @extends Component
 */
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
-
   @service declare intl: IntlService;
   @tracked profile = 'default';
-
 
   /**
    * @property rdfaEditorDispatcher
@@ -89,7 +87,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked eventProcessor?: EventProcessor;
 
   /**
-   * @property hinstRegistry
+   * @property hintsRegistry
    * @type HintsRegistry
    *
    * @private
@@ -105,7 +103,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   get hasHints(): boolean {
-   return this.hintsRegistry?.registry.length > 0;
+    return this.hintsRegistry?.registry
+      ? this.hintsRegistry.registry.length > 0
+      : false;
   }
 
   /**
@@ -115,7 +115,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   get hasActiveHints(): boolean {
-    return this.hintsRegistry?.activeHints?.length > 0;
+    return this.hintsRegistry?.activeHints
+      ? this.hintsRegistry?.activeHints?.length > 0
+      : false;
   }
 
   /**
@@ -134,13 +136,12 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   /**
    * editor controller
-   *
    */
   @tracked editor?: PernetRawEditor;
 
   constructor(owner: unknown, args: RdfaEditorArgs) {
     super(owner, args);
-    const userLocale = ( navigator.language || navigator.languages[0] );
+    const userLocale = (navigator.language || navigator.languages[0]);
     this.intl.setLocale([userLocale, 'nl-BE']);
     if (this.args.profile) {
       this.profile = this.args.profile;
@@ -229,13 +230,15 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   async triggerHints() {
     const rootNode = this.editor.rootNode;
     const currentNode = this.editor.currentNode;
-    let region = [];
+
+    let region;
     if (currentNode) {
       const currentRichNode = this.editor.getRichNodeFor(currentNode);
       region = currentRichNode.region;
     } else {
       region = this.editor.currentSelection;
     }
+
     const contexts = analyseRdfa(rootNode, region);
     if (contexts && contexts.length) {
       const context = contexts[0];
@@ -244,7 +247,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     } else {
       debug('No RDFa blocks found in currentNode. Cannot hint suggestions.');
     }
-
   }
 
   // Toggle RDFA blocks
