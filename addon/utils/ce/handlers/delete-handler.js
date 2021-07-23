@@ -37,5 +37,4 @@ export default class DeleteHandler {
   handleEvent() {
     return HandlerResponse.create({ allowPropagation: false });
   }
-
 }

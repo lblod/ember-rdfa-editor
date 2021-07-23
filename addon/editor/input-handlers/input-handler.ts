@@ -35,7 +35,7 @@ export abstract class InputHandler {
   plugins: InputPlugin[];
   protected rawEditor: PernetRawEditor;
 
-  constructor(rawEditor: PernetRawEditor) {
+  protected constructor(rawEditor: PernetRawEditor) {
     this.rawEditor = rawEditor;
     this.plugins = [];
   }

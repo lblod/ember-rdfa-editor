@@ -343,7 +343,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     return getRichNodeMatchingDomNode(domNode, tree) as RichNode | null;
   }
 
-
   /**
    * calculate the cursor position based on a richNode and an offset from a domRANGE
    * see https://developer.mozilla.org/en-US/docs/Web/API/Range/endOffset and

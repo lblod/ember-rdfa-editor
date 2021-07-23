@@ -17,7 +17,6 @@ export default class IgnoreModifiersHandler {
     return ["Alt","Control","Meta","Shift"].find( (keyName) => keyName == event.key );
   }
 
-
   handleEvent() {
     return HandlerResponse.create(
       {
