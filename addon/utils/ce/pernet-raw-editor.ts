@@ -65,6 +65,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   private _currentSelection?: InternalSelection;
 
   history!: CappedHistory;
+
   /**
    * the domNode containing our caret
    *
@@ -806,14 +807,13 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     return this.getRelativeCursorPosition();
   }
 
-
   /**
    * restore a snapshot from undo history
    * @method undo
    * @public
    */
   undo() {
-    const previousSnapshot = this.history.pop() as {content: string, currentSelection: number[]};
+    const previousSnapshot = this.history.pop();
     if (previousSnapshot) {
       this.rootNode.innerHTML = previousSnapshot.content;
       this.updateRichNode();
@@ -822,23 +822,26 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       void taskFor(this.generateDiffEvents).perform([{noSnapshot: true}]);
       this.model.read();
-    }
-    else {
+    } else {
       warn('no more history to undo', {id: 'contenteditable-editor:history-empty'});
     }
   }
+
   selectCurrentSelection() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
     return selectCurrentSelection.bind(this)();
   }
+
   selectHighlight(region: RawEditorSelection, options: Record<string, unknown> = {}): {selectedHighlightRange:[number, number], selections: unknown[]} {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
     return selectHighlight.bind(this)(region, options);
   }
+
   selectContext(region: RawEditorSelection, options: Record<string, unknown> = {}) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
     return selectContext.bind(this)(region, options);
   }
+
   update(selection: unknown, options: Record<string, unknown>) {
     this.createSnapshot();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
