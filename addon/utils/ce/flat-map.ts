@@ -1,15 +1,17 @@
+import RichNode from "@lblod/marawa/rich-node";
+
 /**
- * takes a tree and returns a list of nodes that match the given predicate
+ * Takes a tree and returns a list of nodes that match the given predicate.
  *
  * @method flatMap
  *
- * @param {RichNode} startNode
+ * @param {Node | RichNode} startNode
  * @param {Function} predicate
  * @param {Boolean} stopOnFirstMatch
  *
- * @return [RichNode[]] list of nodes matching the predicate function
+ * @return {RichNode[]} list of nodes matching the predicate function
  */
-export default function flatMap(startNode, predicate, stopOnFirstMatch = false) {
+export default function flatMap<T extends Node | RichNode>(startNode: T, predicate: (node: T) => boolean, stopOnFirstMatch = false): T[] {
   const matches = [];
 
   let currentScan;
@@ -28,11 +30,22 @@ export default function flatMap(startNode, predicate, stopOnFirstMatch = false) 
         }
       }
 
-      if (node.children) {
-        nextScan.push(...node.children);
+      const children = getChildren(node);
+      if (children) {
+        nextScan.push(...children);
       }
     }
   }
 
   return matches;
+}
+
+// function getChildren(node: Node): Iterable<Node>;
+// function getChildren(node: RichNode): RichNode[];
+function getChildren(node: Node | RichNode): Iterable<Node> | RichNode[] {
+  if (node instanceof Node) {
+    return node.childNodes;
+  }
+
+  return node.children;
 }

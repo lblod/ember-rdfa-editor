@@ -79,7 +79,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
   constructor(properties?: Record<string, unknown>) {
     super(properties);
-    this.set('history', new CappedHistory({ maxItems: 100}));
+    this.set('history', new CappedHistory({maxItems: 100}));
     this.movementObservers = A();
     document.addEventListener("editorModelWrite", this.createSnapshot.bind(this));
   }
@@ -307,8 +307,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     warn("textInsert was called on raw-editor without listeners being set.", { id: 'content-editable.invalid-state'});
   }
 
-
-
   /**
    * @method moveCaretInTextNode
    * @param textNode
@@ -340,7 +338,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @private
    */
   getRichNodeFor(domNode: Node | null, tree = this.richNode): RichNode | null {
-    return getRichNodeMatchingDomNode(domNode, tree) as RichNode | null;
+    return getRichNodeMatchingDomNode(domNode, tree);
   }
 
   /**
@@ -547,49 +545,53 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @return {RichNode}
    * @private
    */
-  findSuitableNodeInRichNode(node: RichNode, position: number) : RichNode | null{
+  findSuitableNodeInRichNode(node: RichNode, position: number): RichNode | null{
     if (!node) {
-      console.warn('no node provided to findSuitableNodeinRichNode'); // eslint-disable-line no-console
+      console.warn("No node provided to findSuitableNodeInRichNode."); // eslint-disable-line no-console
       return null;
     }
+
     const appropriateTextNodeFilter = (node: RichNode) =>
       node.start <= position && node.end >= position
-      && node.type === 'text'
-      && ! isList(node.parent.domNode);
-    const textNodeContainingPosition = flatMap(node, appropriateTextNodeFilter, true) as RichNode[];
+      && node.type === "text"
+      && !isList(node.parent.domNode);
+
+    const textNodeContainingPosition = flatMap(node, appropriateTextNodeFilter, true);
     if (textNodeContainingPosition.length == 1) {
-      // we've found a text node! huzah!
+      // We've found a text node! Huzah!
       return textNodeContainingPosition[0];
-    }
-    else {
+    } else {
       const elementContainingPosition = flatMap(node, appropriateTextNodeFilter);
       if (elementContainingPosition.length > 0) {
-        // we have to guess which element matches, taking the last matching one is a strategy that sort of works
-        // this gives us the deepest/last node matching. it's horrid in the case of consecutive br's for example
-        const newTextNode = nextTextNode(elementContainingPosition[elementContainingPosition.length - 1], this.rootNode);
+        // We have to guess which element matches, taking the last matching one is a strategy that sort of works.
+        // This gives us the deepest/last node matching. It's horrid in the case of consecutive br's for example.
+        const newTextNode = nextTextNode(
+          elementContainingPosition[elementContainingPosition.length - 1].domNode,
+          this.rootNode
+        );
         this.updateRichNode();
+
         return this.getRichNodeFor(newTextNode);
-      }
-      else {
+      } else {
         if (node.parent) {
           console.debug(`no valid node found for provided position ${position} and richNode, going up one node`, node); // eslint-disable-line no-console
           return this.findSuitableNodeInRichNode(node.parent, position);
-        }
-        else {
+        } else {
           console.warn(`no valid node found for provided position ${position} and richNode`, node); // eslint-disable-line no-console
           if (node.domNode === this.rootNode && node.start === node.end) {
             console.debug(`empty editor, creating a textNode`); // eslint-disable-line no-console
             const newNode = document.createTextNode(invisibleSpace);
             this.rootNode.appendChild(newNode);
+
             this.updateRichNode();
             return this.getRichNodeFor(newNode);
           }
+
           return null;
         }
       }
     }
   }
-
 
   /**
    * select a node based on the provided caret position, taking into account the current active node

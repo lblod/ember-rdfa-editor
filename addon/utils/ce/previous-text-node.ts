@@ -7,8 +7,27 @@ import {
   findLastLi,
   siblingLis
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-
 import flatMap from './flat-map';
+
+/**
+ * @method findLastThOrTd
+ * @param {Node} table the table node to search in
+ * @return {Node | null} last th or td of the given table
+ * @private
+ */
+function findLastThOrTd(table: Node): Node | null {
+  const matches = flatMap(
+    table,
+    (node) => {return tagName(node) === "th" || tagName(node) === "td";},
+    false
+  );
+
+  if (matches.length > 0) {
+    return matches[matches.length - 1];
+  }
+
+  return null;
+}
 
 /**
  * @method lastTextChild
@@ -16,14 +35,14 @@ import flatMap from './flat-map';
  * @returns {Text} last text child
  * @private
  */
-function lastTextChild(node) {
+function lastTextChild(node: Node): Text {
   if (node.nodeType !== Node.ELEMENT_NODE || isVoidElement(node)) {
     throw new Error("Invalid argument, expected a (non void) element.");
   }
 
   if (node.lastChild) {
     if (node.lastChild.nodeType === Node.TEXT_NODE) {
-      return node.lastChild;
+      return node.lastChild as Text;
     } else {
       return insertTextNodeWithSpace(node, node.lastChild, true);
     }
@@ -37,24 +56,6 @@ function lastTextChild(node) {
 }
 
 /**
- * @method findLastThOrTd
- * @param {Node} table
- * @private
- */
-function findLastThOrTd(table) {
-  let matches = flatMap(
-    table,
-    (node) => {return tagName(node) === "th" || tagName(node) === "td";}
-  );
-
-  if (matches.length > 0) {
-    return matches[matches.length - 1];
-  }
-
-  return null;
-}
-
-/**
  * Returns the node we want to place the marker before (or in if it's a text node).
  *
  * NOTE: A large portion of this code is shared with
@@ -64,54 +65,59 @@ function findLastThOrTd(table) {
  * @method findPreviousApplicableNode
  * @param {Node} node
  * @param {HTMLElement} rootNode
+ * @return {Node} previous applicable node
  * @private
  */
-function findPreviousApplicableNode(node, rootNode) {
-  if (node === rootNode) {
+function findPreviousApplicableNode(node: Node | null, rootNode: HTMLElement): Node {
+  if (!node || node === rootNode) {
     return rootNode;
   }
 
   if (tagName(node) === "li") {
-    const siblings = siblingLis(node);
-    const index = siblings.indexOf(node);
+    const siblings = siblingLis(node as HTMLLIElement);
+    const index = siblings.indexOf(node as HTMLLIElement);
+
     if (index > 0) {
-      return lastTextChild(siblings[index-1]);
+      return lastTextChild(siblings[index - 1]);
     } else {
-      return findPreviousApplicableNode(node.parentNode);
+      return findPreviousApplicableNode(node.parentNode, rootNode);
     }
   }
 
   if (node.previousSibling) {
     const sibling = node.previousSibling;
-    if (isVoidElement(sibling) && sibling.previousSibling) {
-      return sibling.previousSibling;
-    } else if (isVoidElement(sibling)) {
+
+    if (isVoidElement(sibling)) {
+      if (sibling.previousSibling) {
+        return sibling.previousSibling;
+      }
+
       return findPreviousApplicableNode(node.parentNode, rootNode);
     } else if (tagName(sibling) === "table") {
       const validNodeForTable = findLastThOrTd(sibling);
+
       if (validNodeForTable) {
         return lastTextChild(validNodeForTable);
       } else {
         // Table has no cells, skip the table all together.
-        return findPreviousApplicableNode(sibling);
+        return findPreviousApplicableNode(sibling, rootNode);
       }
     } else if (isList(sibling)) {
-      const lastLi = findLastLi(sibling);
+      const lastLi = findLastLi(sibling as HTMLUListElement | HTMLOListElement);
+
       if (lastLi) {
         return lastTextChild(lastLi);
-      }
-      else {
+      } else {
         return findPreviousApplicableNode(sibling, rootNode);
       }
     }
 
-    const startingAtTextNode = node.nodeType === Node.TEXT_NODE;
-    if (startingAtTextNode && sibling.lastChild) {
+    if (node.nodeType === Node.TEXT_NODE && sibling.lastChild) {
       // Descend into sibling if possible.
       return sibling.lastChild;
     }
 
-    if (sibling.modelNodeType !== Node.TEXT_NODE && sibling.modelNodeType !== Node.ELEMENT_NODE) {
+    if (sibling.nodeType !== Node.TEXT_NODE && sibling.nodeType !== Node.ELEMENT_NODE) {
       return findPreviousApplicableNode(sibling, rootNode);
     }
 
@@ -124,7 +130,7 @@ function findPreviousApplicableNode(node, rootNode) {
 }
 
 /**
- * find or create the next logical text node for the editor in the dom tree
+ * Find or create the next logical text node for the editor in the dom tree.
  *
  * @method nextTextNode
  *
@@ -133,22 +139,19 @@ function findPreviousApplicableNode(node, rootNode) {
  * @return {Text | null} nextNode or null if textNode is at the end of the tree
  * @public
  */
-export default function previousTextNode(baseNode, rootNode) {
-  const nextNode = findPreviousApplicableNode(baseNode, rootNode);
-  if (nextNode === rootNode) {
-    // Next node is rootNode, so I'm at the start of the tree.
+export default function previousTextNode(baseNode: Node, rootNode: HTMLElement): Text | null {
+  const previousNode = findPreviousApplicableNode(baseNode, rootNode);
+  // Next node is rootNode, so I'm at the start of the tree.
+  if (previousNode === rootNode) {
     return null;
   }
 
-  if (nextNode.modelNodeType === Node.ELEMENT_NODE) {
+  if (previousNode.nodeType === Node.ELEMENT_NODE) {
     // Insert a text node in the returned node.
-    return insertTextNodeWithSpace(nextNode);
+    return insertTextNodeWithSpace(previousNode); // TODO: check if if this is correct
   } else {
-    // It's a text node.
-    if (nextNode === null) {
-      throw new Error("Previous text node failed.");
-    }
-
-    return nextNode;
+    return previousNode as Text;
   }
 }
+
+
