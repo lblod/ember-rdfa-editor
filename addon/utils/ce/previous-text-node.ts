@@ -148,7 +148,7 @@ export default function previousTextNode(baseNode: Node, rootNode: HTMLElement):
 
   if (previousNode.nodeType === Node.ELEMENT_NODE) {
     // Insert a text node in the returned node.
-    return insertTextNodeWithSpace(previousNode); // TODO: check if if this is correct
+    return insertTextNodeWithSpace(previousNode); // TODO: check if this is correct
   } else {
     return previousNode as Text;
   }

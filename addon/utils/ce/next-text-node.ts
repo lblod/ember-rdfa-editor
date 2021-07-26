@@ -144,7 +144,7 @@ export default function nextTextNode(baseNode: Node, rootNode: HTMLElement): Tex
 
   if (nextNode.nodeType === Node.ELEMENT_NODE) {
     // Insert a text node in the returned node.
-    return insertTextNodeWithSpace(nextNode.parentNode, nextNode); // TODO: check if if this is correct
+    return insertTextNodeWithSpace(nextNode); // TODO: check if this is correct
   } else {
     // It's a text node.
     return nextNode as Text;
