@@ -3,20 +3,24 @@ import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
+import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input-handler";
+import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
 
 /**
  * @module contenteditable-editor
  * @class CutHandler
  * @constructor
  */
-export default class CutHandler {
-  rawEditor: PernetRawEditor;
-
+export default class CutHandler extends InputHandler {
   constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
-    this.rawEditor = rawEditor;
+    super(rawEditor);
   }
 
-  handleEvent(event: ClipboardEvent): void {
+  isHandlerFor(event: ClipboardEvent): boolean {
+    return !!event.clipboardData;
+  }
+
+  handleEvent(event: ClipboardEvent): HandlerResponse {
     const htmlExportWriter = new HTMLExportWriter(this.rawEditor.model);
     const modelNodes = this.rawEditor.executeCommand("delete-selection") as ModelNode[];
 
@@ -59,5 +63,7 @@ export default class CutHandler {
     clipboardData.setData("text/html", htmlString);
     clipboardData.setData("text/plain", textString);
     clipboardData.setData("application/xml", xmlString);
+
+    return {allowPropagation: false, allowBrowserDefault: false};
   }
 }
