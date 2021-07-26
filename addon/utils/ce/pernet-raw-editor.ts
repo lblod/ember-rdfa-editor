@@ -647,7 +647,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @param {boolean} maintainCursor, keep cursor in place if possible
    * @public
    */
-  externalDomUpdate(description: string, domUpdate:() => void, maintainCursor = false) {
+  externalDomUpdate(description: string, domUpdate: () => void, maintainCursor = false) {
     debug(`executing an external dom update: ${description}`);
     const currentNode = this.currentNode;
     const richNode = this.getRichNodeFor(currentNode);

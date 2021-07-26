@@ -3,6 +3,7 @@ import nextTextNode from "@lblod/ember-rdfa-editor/utils/ce/next-text-node";
 import {warn} from "@ember/debug";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input-handler";
+import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
 
 /**
  * Arrow Handler, an event handler to handle arrow keys.
@@ -36,16 +37,16 @@ export default class ArrowHandler extends InputHandler {
    * @return {HandlerResponse}
    * @public
    */
-  handleEvent(event: KeyboardEvent) {
+  handleEvent(event: KeyboardEvent): HandlerResponse {
     const position = this.rawEditor.currentSelection[0];
     const textNode = this.rawEditor.currentNode as Text | null;
     if (!textNode) {
-      return {allowPropagation: false};
+      return {allowPropagation: false, allowBrowserDefault: false};
     }
 
     const richNode = this.rawEditor.getRichNodeFor(textNode);
     if (!richNode) {
-      return {allowPropagation: false};
+      return {allowPropagation: false, allowBrowserDefault: false};
     }
 
     const isLeft = event.key === "ArrowLeft";
@@ -97,6 +98,6 @@ export default class ArrowHandler extends InputHandler {
       warn(`Position ${position} is not inside current node.`, {id: 'contenteditable.invalid-start'});
     }
 
-    return {allowPropagation: false};
+    return {allowPropagation: false, allowBrowserDefault: false};
   }
 }
