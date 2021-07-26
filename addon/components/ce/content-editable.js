@@ -12,8 +12,6 @@ import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handl
 import DisableDeleteHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/delete-handler';
 import FallbackInputHandler from '../../utils/ce/handlers/fallback-input-handler';
 import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
-import UndoHandler from '../../utils/ce/handlers/undo-hander';
-import ArrowHandler from '../../utils/ce/handlers/arrow-handler';
 import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
 import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
 import HTMLInputParser, {LIMITED_SAFE_TAGS} from '../../utils/html-input-parser';
@@ -22,6 +20,8 @@ import { A } from '@ember/array';
 import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+import ArrowHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/arrow-handler";
+import UndoHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
