@@ -3,32 +3,34 @@
  *
  * @method flatMap
  *
- * @param {RichNode} RichNode
+ * @param {RichNode} startNode
  * @param {Function} predicate
  * @param {Boolean} stopOnFirstMatch
  *
  * @return [RichNode[]] list of nodes matching the predicate function
  */
 export default function flatMap(startNode, predicate, stopOnFirstMatch = false) {
-  let matches = [];
+  const matches = [];
 
   let currentScan;
   let nextScan = [startNode];
 
-  while( nextScan.length ){
+  while (nextScan.length) {
     currentScan = nextScan;
     nextScan = [];
 
-    for( let node of currentScan ) {
-      if (predicate(node)){
-        if( stopOnFirstMatch )
+    for (const node of currentScan) {
+      if (predicate(node)) {
+        if (stopOnFirstMatch) {
           return [node];
-        else
+        } else {
           matches.push(node);
+        }
       }
 
-      if (node.children)
-        nextScan.push( ...node.children );
+      if (node.children) {
+        nextScan.push(...node.children);
+      }
     }
   }
 

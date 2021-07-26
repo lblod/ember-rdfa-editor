@@ -5,7 +5,7 @@ import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor
 import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input-handler";
 
 /**
- * Arrow Handler, a event handler to handle arrow keys.
+ * Arrow Handler, an event handler to handle arrow keys.
  * __Note__: Currently only left and right arrow keys are supported
  *
  * @module contenteditable-editor
@@ -20,13 +20,13 @@ export default class ArrowHandler extends InputHandler {
   /**
    * Tests this handler can handle the specified event.
    * @method isHandlerFor
-   * @param {Event} event
+   * @param {KeyboardEvent} event
    * @return boolean
    * @public
    */
   isHandlerFor(event: KeyboardEvent): boolean {
     return event.type === "keydown"
-      && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+      && (event.key === "ArrowLeft" || event.key === "ArrowRight")
       && this.rawEditor.currentSelectionIsACursor;
   }
 
@@ -38,8 +38,7 @@ export default class ArrowHandler extends InputHandler {
    */
   handleEvent(event: KeyboardEvent) {
     const position = this.rawEditor.currentSelection[0];
-
-    const textNode = this.rawEditor.currentNode;
+    const textNode = this.rawEditor.currentNode as Text | null;
     if (!textNode) {
       return {allowPropagation: false};
     }
@@ -66,14 +65,15 @@ export default class ArrowHandler extends InputHandler {
         const newNode = previousTextNode(textNode, this.rawEditor.rootNode);
         this.rawEditor.updateRichNode();
 
-        if (newNode && newNode.textContent) this.rawEditor.setCaret(newNode, newNode.textContent.length);
+        if (newNode) this.rawEditor.setCaret(newNode, newNode.length);
       } else {
         if (textNode.length > 1) {
           this.rawEditor.setCaret(textNode, 1);
         } else {
           const newNode = nextTextNode(textNode, this.rawEditor.rootNode);
           this.rawEditor.updateRichNode();
-          this.rawEditor.setCaret(newNode, 0);
+
+          if (newNode) this.rawEditor.setCaret(newNode, 0);
         }
       }
     } else if (richNode.end === position) {
@@ -81,15 +81,16 @@ export default class ArrowHandler extends InputHandler {
       if (isRight) {
         const newNode = nextTextNode(textNode, this.rawEditor.rootNode);
         this.rawEditor.updateRichNode();
-        this.rawEditor.setCaret(newNode, 0);
+
+        if (newNode) this.rawEditor.setCaret(newNode, 0);
       } else {
         if (textNode.length > 1) {
-          this.rawEditor.setCaret(textNode, textNode.textContent.length - 1);
+          this.rawEditor.setCaret(textNode, textNode.length - 1);
         } else {
           const newNode = previousTextNode(textNode, this.rawEditor.rootNode);
           this.rawEditor.updateRichNode();
 
-          if (newNode && newNode.textContent) this.rawEditor.setCaret(newNode, newNode.length);
+          if (newNode) this.rawEditor.setCaret(newNode, newNode.length);
         }
       }
     } else {

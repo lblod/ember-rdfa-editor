@@ -7,60 +7,75 @@ import {
   siblingLis
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import flatMap from './flat-map';
+
 /**
  * @method findFirstLi
- * @param {DomNode} node the ul node to search in
+ * @param {Node} ulNode the ul node to search in
  * @private
  */
-function findFirstLi(ul) {
-  if (tagName(ul) !== 'ul')
-    throw `invalid argument, expected an ul`;
-  if (ul.children && ul.children.length > 0)
-    return Array.from(ul.children).find((node) => tagName(node) === 'li');
+function findFirstLi(ulNode) {
+  if (tagName(ulNode) !== "ul") {
+    throw new Error("Invalid argument, expected a ul.");
+  }
+
+  if (ulNode.childNodes && ulNode.childNodes.length > 0) {
+    return Array.from(ulNode.childNodes).find((node) => tagName(node) === "li");
+  }
+
   return null;
 }
 
 /**
  * @method findFirstThOrTd
- * @param {DomNode} table
+ * @param {Node} table
  * @private
  */
 function findFirstThOrTd(table) {
-  let matches = flatMap(table, (node) => { return tagName(node) === 'td';}, true);
-  if (matches.length == 1) {
+  let matches = flatMap(
+    table,
+    (node) => {return tagName(node) === "th" || tagName(node) === "td";},
+    true
+  );
+
+  if (matches.length === 1) {
     return matches[0];
   }
+
   return null;
 }
+
 /**
  * @method firstTextChild
- * @param {DOMNode} node
+ * @param {Node} node
+ * @returns {Text} first text child
  * @private
  */
 function firstTextChild(node) {
-  if (node.nodeType !== Node.ELEMENT_NODE || isVoidElement(node))
-    throw "invalid argument, expected a (non void) element";
+  if (node.nodeType !== Node.ELEMENT_NODE || isVoidElement(node)) {
+    throw new Error("Invalid argument, expected a (non void) element.");
+  }
+
   if (node.firstChild) {
-    if (node.firstChild.modelNodeType === Node.TEXT_NODE) {
+    if (node.firstChild.nodeType === Node.TEXT_NODE) {
       return node.firstChild;
-    }
-    else {
+    } else {
       return insertTextNodeWithSpace(node, node.firstChild);
     }
-  }
-  else {
-    // create text node and append
-    let textNode = document.createTextNode(invisibleSpace);
+  } else {
+    // Create text node and append.
+    const textNode = document.createTextNode(invisibleSpace);
     node.appendChild(textNode);
+
     return textNode;
   }
 }
 
 /**
- * returns the node we want to place the marker before (or in if it's a text node)
+ * Returns the node we want to place the marker before (or in if it's a text node).
  * @method findNextApplicableNode
- * @param {DOMNode} node
- * @param {DOMElement} rootNode
+ * @param {Node} node
+ * @param {HTMLElement} rootNode
+ * @return {Node}
  * @private
  */
 function findNextApplicableNode(node, rootNode) {
@@ -81,21 +96,17 @@ function findNextApplicableNode(node, rootNode) {
     const sibling = node.nextSibling;
     if (isVoidElement(sibling) && sibling.nextSibling) {
       return sibling.nextSibling;
-    }
-    else if (isVoidElement(sibling)) {
+    } else if (isVoidElement(sibling)) {
       return findNextApplicableNode(node.parentNode, rootNode);
-    }
-    else if (tagName(sibling) == 'table') {
+    } else if (tagName(sibling) === "table") {
       const validNodeForTable = findFirstThOrTd(sibling);
       if (validNodeForTable) {
         return firstTextChild(validNodeForTable);
-      }
-      else {
+      } else {
         // table has no cells, skip the table alltogether
         return findNextApplicableNode(sibling);
       }
-    }
-    else if (isList(sibling)) {
+    } else if (isList(sibling)) {
       const firstLi = findFirstLi(sibling);
       if (firstLi) {
         return firstTextChild(firstLi);
@@ -104,42 +115,45 @@ function findNextApplicableNode(node, rootNode) {
         return findNextApplicableNode(sibling, rootNode);
       }
     }
+
     const startingAtTextNode = node.nodeType === Node.TEXT_NODE;
     if (startingAtTextNode && sibling.firstChild) {
       // descend into sibling if possible
       return sibling.firstChild;
     }
-    if (sibling.modelNodeType !== Node.TEXT_NODE && sibling.modelNodeType !== Node.ELEMENT_NODE)
+
+    if (sibling.modelNodeType !== Node.TEXT_NODE && sibling.modelNodeType !== Node.ELEMENT_NODE) {
       return findNextApplicableNode(sibling, rootNode);
+    }
+
     return sibling;
-  }
-  else if (node.parentNode) {
+  } else if (node.parentNode) {
     return findNextApplicableNode(node.parentNode, rootNode);
   }
-  else
-    throw `received a node without a parentNode`;
+
+  throw new Error ("Received a node without a parent node.");
 }
 
 /**
- * find or create the next logical text node for the editor in the dom tree
+ * Find or create the next logical text node for the editor in the dom tree.
  *
  * @method nextTextNode
  *
- * @param {Node} node (warning: please note; non textNodes as input are lightly tested)
- * @param {DOMElement} root of the dom tree, don't move outside of this root
+ * @param {Node} baseNode (warning: please note; non textNodes as input are lightly tested)
+ * @param {HTMLElement} rootNode of the dom tree, don't move outside of this root
  * @return {Text | null} nextNode or null if textNode is at the end of the tree
  */
-export default function nextTextNode(textNode, rootNode) {
-  const nextNode = findNextApplicableNode(textNode, rootNode);
+export default function nextTextNode(baseNode, rootNode) {
+  const nextNode = findNextApplicableNode(baseNode, rootNode);
   if (nextNode === rootNode) {
-    // next node is rootNode, so I'm at the end of the tree
+    // Next node is rootNode, so I'm at the end of the tree.
     return null;
   }
-  if (nextNode.modelNodeType === Node.ELEMENT_NODE) {
+
+  if (nextNode.nodeType === Node.ELEMENT_NODE) {
     return insertTextNodeWithSpace(nextNode.parentNode, nextNode);
-  }
-  else {
-    // it's a text node
+  } else {
+    // It's a text node.
     return nextNode;
   }
 }

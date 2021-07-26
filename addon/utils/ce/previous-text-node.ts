@@ -11,52 +11,59 @@ import {
 import flatMap from './flat-map';
 
 /**
- * @method firstTextChild
- * @param {DOMNode} node
+ * @method lastTextChild
+ * @param {Node} node
+ * @returns {Text} last text child
  * @private
  */
 function lastTextChild(node) {
-  if (node.nodeType !== Node.ELEMENT_NODE || isVoidElement(node))
-    throw "invalid argument, expected a (non void) element";
+  if (node.nodeType !== Node.ELEMENT_NODE || isVoidElement(node)) {
+    throw new Error("Invalid argument, expected a (non void) element.");
+  }
+
   if (node.lastChild) {
-    if (node.lastChild.modelNodeType === Node.TEXT_NODE) {
+    if (node.lastChild.nodeType === Node.TEXT_NODE) {
       return node.lastChild;
-    }
-    else {
+    } else {
       return insertTextNodeWithSpace(node, node.lastChild, true);
     }
-  }
-  else {
-    // create text node and append
-    let textNode = document.createTextNode(invisibleSpace);
+  } else {
+    // Create text node and append.
+    const textNode = document.createTextNode(invisibleSpace);
     node.appendChild(textNode);
+
     return textNode;
   }
 }
 
 /**
  * @method findLastThOrTd
- * @param {DomNode} table
+ * @param {Node} table
  * @private
  */
 function findLastThOrTd(table) {
-  let matches = flatMap(table, (node) => { return tagName(node) === 'td';});
+  let matches = flatMap(
+    table,
+    (node) => {return tagName(node) === "th" || tagName(node) === "td";}
+  );
+
   if (matches.length > 0) {
     return matches[matches.length - 1];
   }
+
   return null;
 }
 
 /**
- * returns the node we want to place the marker before (or in if it's a text node)
+ * Returns the node we want to place the marker before (or in if it's a text node).
  *
  * NOTE: A large portion of this code is shared with
- * findPreviousVisibleApplicableNode.  Could not merge because I'm not
+ * findPreviousVisibleApplicableNode. Could not merge because I'm not
  * sure what the effects will be elsewhere.
  *
  * @method findPreviousApplicableNode
- * @param {DOMNode} node
- * @param {DOMElement} rootNode
+ * @param {Node} node
+ * @param {HTMLElement} rootNode
  * @private
  */
 function findPreviousApplicableNode(node, rootNode) {
@@ -64,34 +71,31 @@ function findPreviousApplicableNode(node, rootNode) {
     return rootNode;
   }
 
-  if (tagName(node) === 'li') {
+  if (tagName(node) === "li") {
     const siblings = siblingLis(node);
     const index = siblings.indexOf(node);
-    if (index > 0)
+    if (index > 0) {
       return lastTextChild(siblings[index-1]);
-    else
+    } else {
       return findPreviousApplicableNode(node.parentNode);
+    }
   }
 
   if (node.previousSibling) {
     const sibling = node.previousSibling;
     if (isVoidElement(sibling) && sibling.previousSibling) {
       return sibling.previousSibling;
-    }
-    else if (isVoidElement(sibling)) {
+    } else if (isVoidElement(sibling)) {
       return findPreviousApplicableNode(node.parentNode, rootNode);
-    }
-    else if (tagName(sibling) == 'table') {
+    } else if (tagName(sibling) === "table") {
       const validNodeForTable = findLastThOrTd(sibling);
       if (validNodeForTable) {
         return lastTextChild(validNodeForTable);
-      }
-      else {
-        // table has no cells, skip the table alltogether
+      } else {
+        // Table has no cells, skip the table all together.
         return findPreviousApplicableNode(sibling);
       }
-    }
-    else if (isList(sibling)) {
+    } else if (isList(sibling)) {
       const lastLi = findLastLi(sibling);
       if (lastLi) {
         return lastTextChild(lastLi);
@@ -100,20 +104,23 @@ function findPreviousApplicableNode(node, rootNode) {
         return findPreviousApplicableNode(sibling, rootNode);
       }
     }
+
     const startingAtTextNode = node.nodeType === Node.TEXT_NODE;
     if (startingAtTextNode && sibling.lastChild) {
-      // descend into sibling if possible
+      // Descend into sibling if possible.
       return sibling.lastChild;
     }
-    if (sibling.modelNodeType !== Node.TEXT_NODE && sibling.modelNodeType !== Node.ELEMENT_NODE)
+
+    if (sibling.modelNodeType !== Node.TEXT_NODE && sibling.modelNodeType !== Node.ELEMENT_NODE) {
       return findPreviousApplicableNode(sibling, rootNode);
+    }
+
     return sibling;
-  }
-  else if (node.parentNode) {
+  } else if (node.parentNode) {
     return findPreviousApplicableNode(node.parentNode, rootNode);
   }
-  else
-    throw `received a node without a parentNode`;
+
+  throw new Error ("Received a node without a parent node.");
 }
 
 /**
@@ -121,25 +128,27 @@ function findPreviousApplicableNode(node, rootNode) {
  *
  * @method nextTextNode
  *
- * @param {Node} node (warning: please note; non textNodes as input are lightly tested)
- * @param {DOMElement} root of the dom tree, don't move outside of this root
+ * @param {Node} baseNode (warning: please note; non textNodes as input are lightly tested)
+ * @param {HTMLElement} rootNode of the dom tree, don't move outside of this root
  * @return {Text | null} nextNode or null if textNode is at the end of the tree
  * @public
  */
 export default function previousTextNode(baseNode, rootNode) {
   const nextNode = findPreviousApplicableNode(baseNode, rootNode);
   if (nextNode === rootNode) {
-    // next node is rootNode, so I'm at the start of the tree
+    // Next node is rootNode, so I'm at the start of the tree.
     return null;
   }
+
   if (nextNode.modelNodeType === Node.ELEMENT_NODE) {
-    // insert a textnode in the returned node
+    // Insert a text node in the returned node.
     return insertTextNodeWithSpace(nextNode);
-  }
-  else {
-    // it's a text node
-    if (nextNode === null)
-      throw "previous text node failed";
+  } else {
+    // It's a text node.
+    if (nextNode === null) {
+      throw new Error("Previous text node failed.");
+    }
+
     return nextNode;
   }
 }
