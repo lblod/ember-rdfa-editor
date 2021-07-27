@@ -42,7 +42,7 @@ export abstract class InputHandler {
 
   abstract isHandlerFor(event: Event): boolean;
 
-  abstract handleEvent(event: Event): HandlerResponse;
+  abstract handleEvent(event: Event, ...arg: unknown[]): HandlerResponse;
 
   /**
    * Checks whether all plugins agree the manipulation is allowed.

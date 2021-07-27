@@ -18,7 +18,6 @@ import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walk
  * on the modified state after the previous.
  */
 export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
-
   /**
    * @inheritDoc
    * @param range
@@ -123,24 +122,35 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
 
   splitUntil(position: ModelPosition, untilPredicate: (element: ModelElement) => boolean, splitAtEnds = false): ModelPosition {
     let pos = position;
+
+    // Execute split at least once
+    if (pos.parent === pos.root || untilPredicate(pos.parent)) {
+      return this.executeSplit(pos, splitAtEnds, false, false);
+    }
+
     while (pos.parent !== pos.root && !untilPredicate(pos.parent)) {
-      if (splitAtEnds) {
-        const range = new ModelRange(pos, pos);
-        const op = new SplitOperation(range);
-        pos = op.execute().start;
-      } else {
-        if (pos.parentOffset === 0) {
-          pos = ModelPosition.fromBeforeNode(pos.parent);
-        } else if (pos.parentOffset === pos.parent.getMaxOffset()) {
-          pos = ModelPosition.fromAfterNode(pos.parent);
-        } else {
-          const range = new ModelRange(pos, pos);
-          const op = new SplitOperation(range);
-          pos = op.execute().start;
-        }
+      pos = this.executeSplit(pos, splitAtEnds, true);
+    }
+
+    return pos;
+  }
+
+  private executeSplit(position: ModelPosition, splitAtEnds = false, splitParent = true, wrapAround = true) {
+    if (!splitAtEnds) {
+      if (position.parentOffset === 0) {
+        return (!wrapAround || position.parent === position.root) ? position : ModelPosition.fromBeforeNode(position.parent);
+      } else if (position.parentOffset === position.parent.getMaxOffset()) {
+        return (!wrapAround || position.parent === position.root) ? position : ModelPosition.fromAfterNode(position.parent);
       }
     }
-    return pos;
+
+    return this.executeSplitOperation(position, splitParent);
+  }
+
+  private executeSplitOperation(position: ModelPosition, splitParent = true) {
+    const range = new ModelRange(position, position);
+    const op = new SplitOperation(range, splitParent);
+    return op.execute().start;
   }
 
   /**
@@ -153,14 +163,14 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
    * @param splitAtEnds
    */
   splitRangeUntilElements(range: ModelRange, startLimit: ModelElement, endLimit: ModelElement, splitAtEnds = false) {
-    const endpos = this.splitUntilElement(range.end, endLimit, splitAtEnds);
-    const afterEnd = endpos.nodeAfter();
+    const endPos = this.splitUntilElement(range.end, endLimit, splitAtEnds);
+    const afterEnd = endPos.nodeAfter();
     const startpos = this.splitUntilElement(range.start, startLimit, splitAtEnds);
-    if (afterEnd) {
 
+    if (afterEnd) {
       return new ModelRange(startpos, ModelPosition.fromBeforeNode(afterEnd));
     } else {
-      return new ModelRange(startpos, ModelPosition.fromInElement(range.root, range.root.getMaxOffset()));
+      return new ModelRange(startpos, ModelPosition.fromInElement(endPos.parent, endPos.parent.getMaxOffset()));
     }
   }
 
@@ -179,6 +189,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     const op = new MoveOperation(srcRange, target);
     const resultRange = op.execute();
     this.deleteNode(element);
+
     if (ensureBlock) {
       const nodeBeforeStart = resultRange.start.nodeBefore();
       const nodeAfterStart = resultRange.start.nodeAfter();
@@ -204,5 +215,4 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     const range = ModelRange.fromAroundNode(node);
     return this.delete(range);
   }
-
 }

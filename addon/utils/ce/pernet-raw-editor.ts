@@ -77,7 +77,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
   protected movementObservers: Ember.NativeArray<MovementObserver> ;
 
-
   constructor(properties?: Record<string, unknown>) {
     super(properties);
     this.set('history', new CappedHistory({maxItems: 100}));
@@ -135,10 +134,12 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @param commandName
    * @param args
    */
-  executeCommand(commandName: string, ...args: unknown[]) {
-    super.executeCommand(commandName, ...args);
+  executeCommand(commandName: string, ...args: unknown[]): unknown {
+    const result = super.executeCommand(commandName, ...args);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     void taskFor(this.generateDiffEvents).perform();
+
+    return result;
   }
 
   get currentNode() {
@@ -216,7 +217,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @public
    */
   @task({ restartable: true })
-  *generateDiffEvents(extraInfo: Record<string, unknown>[] = []): TaskGenerator<void> {
+  * generateDiffEvents(extraInfo: Record<string, unknown>[] = []): TaskGenerator<void> {
     yield timeout(320);
     const newText: string = getTextContent(this.rootNode);
     let oldText: string = this.currentTextContent || "" ;

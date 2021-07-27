@@ -294,8 +294,8 @@ export default class ModelPosition {
     if (this.path.length === 0) {
       return this.root;
     }
-    return this.parent.childAtOffset(this.parentOffset) || null;
 
+    return this.parent.childAtOffset(this.parentOffset) || null;
   }
 
   /**
