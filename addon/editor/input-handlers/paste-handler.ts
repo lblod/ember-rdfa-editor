@@ -6,10 +6,15 @@ import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {taskFor} from "ember-concurrency-ts";
 import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input-handler";
 import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
+import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import {Diary} from "diary";
 
 export default class PasteHandler extends InputHandler {
+  private logger: Diary;
+
   constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
     super(rawEditor);
+    this.logger = createLogger("PasteHandler");
   }
 
   // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
@@ -17,7 +22,7 @@ export default class PasteHandler extends InputHandler {
     const clipboardData = event.clipboardData;
 
     if (!clipboardData) {
-      //TODO: if no clipboardData found, do we want an error?
+      this.logger.warn("No clipboardData object found, ignoring paste.");
       return {allowPropagation: false, allowBrowserDefault: false};
     }
 
