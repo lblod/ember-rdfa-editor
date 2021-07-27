@@ -216,7 +216,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @public
    */
   @task({ restartable: true })
-  *generateDiffEvents(extraInfo: Record<string, unknown>[] = []): TaskGenerator<void> {
+  * generateDiffEvents(extraInfo: Record<string, unknown>[] = []): TaskGenerator<void> {
     yield timeout(320);
     const newText: string = getTextContent(this.rootNode);
     let oldText: string = this.currentTextContent || "" ;
