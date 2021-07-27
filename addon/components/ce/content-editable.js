@@ -322,8 +322,10 @@ export default class ContentEditable extends Component {
 
   @action
   cut(event) {
-    event.preventDefault();
-    this.cutHandler.handleEvent(event);
+    if (this.features.isEnabled("editor-cut")) {
+      event.preventDefault();
+      this.cutHandler.handleEvent(event);
+    }
   }
 
   /**

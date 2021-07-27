@@ -67,7 +67,9 @@ export default class DeleteSelectionCommand extends Command<unknown[], ModelNode
       startPosition = ModelPosition.fromBeforeNode(startPosition.parent);
     }
 
-    if (startPosition.parentOffset !== 0) return false;
+    if (startPosition.parentOffset !== 0) {
+      return false;
+    }
 
     let endPosition = range.end;
     while (endPosition.parent !== element && endPosition.parentOffset === endPosition.parent.getMaxOffset()) {
