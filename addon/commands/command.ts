@@ -7,7 +7,7 @@ import {createLogger, Logger} from "@lblod/ember-rdfa-editor/utils/logging-utils
  * They need to be registered with {@link RawEditor.registerCommand()} before they
  * can be executed with {@link RawEditor.executeCommand()}.
  */
-export default abstract class Command<V = void, T extends unknown[] = unknown[]> {
+export default abstract class Command<A extends unknown[] = unknown[], R = void> {
   abstract name: string;
   protected model: Model;
   protected logger: Logger;
@@ -21,5 +21,5 @@ export default abstract class Command<V = void, T extends unknown[] = unknown[]>
     return true;
   }
 
-  abstract execute(...args: T): V;
+  abstract execute(...args: A): R;
 }
