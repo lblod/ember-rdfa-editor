@@ -21,7 +21,9 @@ export default class ModelTable extends ModelElement {
       }
       tbody.addChild(row);
     }
+
     this.className = 'say-table';
+    // this.setAttribute('data-editor-table', '');
   }
 
   getDimensions() {
