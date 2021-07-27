@@ -87,31 +87,40 @@ export default class HTMLInputParser {
   }
 
   /**
+   * Takes a tag and an HTML element and creates a new HTML element
+   * with the given tag and the attributes of the given base HTML element.
+   *
+   * @method cleanupHTML
+   */
+  createNewElement(tag: string, baseElement: HTMLElement) {
+    const newElement = document.createElement(tag);
+    this.copyAllAttributes(baseElement, newElement);
+
+    return newElement;
+  }
+
+  /**
    * Preprocess all nodes replacing the tag if it appears on the tagMap variable
    * and adds the lumpNode property if needed.
    *
    * @method preprocessNode
    */
   preprocessNode(node: Node): Node | null {
-    let cleanedNode: Node | null = null;
-    if (isElement(node)) {
-      const tag = tagName(node);
+    let cleanedNode = node.cloneNode();
+    if (isElement(cleanedNode)) {
+      let newElement = cleanedNode;
+      const tag = tagName(cleanedNode);
       const tagMapping = this.tagMap.get(tag);
 
       // If we have to replace the tag name we create another node with the new
       // tag name and copy all the attribute of the original node.
-      let newElement: HTMLElement;
       if (tagMapping) {
-        newElement = document.createElement(tagMapping);
-      } else if (tag === "a" && !(node as HTMLLinkElement).href) {
-        newElement = document.createElement("span");
-      } else {
-        newElement = document.createElement(tag);
+        newElement = this.createNewElement(tagMapping, cleanedNode);
+      } else if (tag === "a" && !(cleanedNode as HTMLLinkElement).href) {
+        newElement = this.createNewElement("span", cleanedNode);
       }
 
       newElement.textContent = "";
-      this.copyAllAttributes(node, newElement);
-
       if (this.lumpTags.includes(tag)) {
         newElement.setAttribute(
           "property",
@@ -141,20 +150,18 @@ export default class HTMLInputParser {
       }
 
       cleanedNode = newElement;
-    } else if (isTextNode(node)) {
+    } else if (isTextNode(cleanedNode)) {
       // Remove invisible whitespace (so keeping non breaking space).
       // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
-      const textContent = node.textContent
-        ? node.textContent
+      if (node.textContent) {
+        cleanedNode.textContent = node.textContent
           .replace(invisibleSpace,"")
-          .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g, " ")
-        : "";
-
-      if (textContent.length === 0) {
-         return null;
+          .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g, " ");
       }
 
-      cleanedNode = document.createTextNode(textContent);
+      if (cleanedNode.length === 0) {
+         return null;
+      }
     }
 
     return cleanedNode;
