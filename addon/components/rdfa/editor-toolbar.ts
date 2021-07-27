@@ -33,6 +33,7 @@ export default class EditorToolbar extends Component<Args> {
     super(parent, args);
     document.addEventListener("richSelectionUpdated", this.updateProperties.bind(this));
   }
+
   updateProperties(event: CustomEvent<ModelSelection>) {
     this.isBold = event.detail.bold === PropertyState.enabled;
     this.isItalic = event.detail.italic === PropertyState.enabled;
