@@ -332,11 +332,71 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
           </div>
         </modelRoot>
       `;
+
       const mut = new ImmediateModelMutator();
       const range = ModelRange.fromInTextNode(rangeStart, 1, 3);
       const resultRange = mut.splitRangeUntilElements(range, initial as ModelElement, initial as ModelElement, false);
+
       assert.true(expected.sameAs(initial));
       assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [2])));
+    });
+
+    test("split simple uncollapsed range in text (child of root)", assert => {
+      // language=XML
+      const {root: initial, textNodes: {rangeStart}} = vdom`
+        <modelRoot>
+          <text __id="rangeStart">abcd</text>
+        </modelRoot>
+      `;
+
+      // language=XML
+      const {root: expected} = vdom`
+        <modelRoot>
+          <text>a</text>
+          <text>bc</text>
+          <text>d</text>
+        </modelRoot>
+      `;
+
+      const mut = new ImmediateModelMutator();
+      const range = ModelRange.fromInTextNode(rangeStart, 1, 3);
+      const resultRange = mut.splitRangeUntilElements(range, initial as ModelElement, initial as ModelElement, false);
+
+      assert.true(expected.sameAs(initial));
+      assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [3])));
+    });
+
+    test("split simple uncollapsed range selecting div", assert => {
+      // language=XML
+      const {root: initial} = vdom`
+        <modelRoot>
+          <div>
+            <text>abcd</text>
+          </div>
+          <div>
+            <text>efgh</text>
+          </div>
+        </modelRoot>
+      `;
+
+      // language=XML
+      const {root: expected} = vdom`
+        <modelRoot>
+          <div>
+            <text>abcd</text>
+          </div>
+          <div>
+            <text>efgh</text>
+          </div>
+        </modelRoot>
+      `;
+
+      const mut = new ImmediateModelMutator();
+      const range = ModelRange.fromInNode(initial, 0, 1);
+      const resultRange = mut.splitRangeUntilElements(range, initial as ModelElement, initial as ModelElement, false);
+
+      assert.true(expected.sameAs(initial));
+      assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [0], [1])));
     });
 
     test("split uneven uncollapsed range", assert => {
@@ -514,6 +574,5 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
       assert.true(initial.sameAs(expected));
       assert.true(resultRange.sameAs(ModelRange.fromInElement(initial as ModelElement, 4, 4)));
     });
-
   });
 });

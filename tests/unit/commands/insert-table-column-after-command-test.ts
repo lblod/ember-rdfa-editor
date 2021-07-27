@@ -1,8 +1,8 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
 
 module("Unit | commands | insert-table-column-after-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -117,11 +117,9 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(bottomRight, 1, 3);
-    console.log(range);
     ctx.modelSelection.selectRange(range);
 
     command.execute();
-    console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 

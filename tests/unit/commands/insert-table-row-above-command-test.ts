@@ -1,8 +1,8 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import InsertTableRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import InsertTableRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
 
 module("Unit | commands | insert-table-row-above-command-test", hooks => {
   const ctx = new ModelTestContext();

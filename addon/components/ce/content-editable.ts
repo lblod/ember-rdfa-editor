@@ -4,10 +4,12 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
+import CutHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-handler";
 import EnterHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/enter-handler';
 import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
 import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
+import PasteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/paste-handler";
 import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
@@ -23,6 +25,7 @@ import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import HTMLInputParser, { LIMITED_SAFE_TAGS } from '@lblod/ember-rdfa-editor/utils/html-input-parser';
 import { taskFor } from "ember-concurrency-ts";
 
+
 interface FeatureService {
   isEnabled(key: string): boolean
 
@@ -31,6 +34,8 @@ interface ContentEditableArgs {
   externalHandlers: InputHandler[]
   rawEditorInit(editor: RawEditor): void
 }
+
+
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -50,9 +55,10 @@ interface ContentEditableArgs {
  * @class ContentEditableComponent
  * @extends Component
  */
-
 export default class ContentEditable extends Component<ContentEditableArgs> {
   @service() declare features : FeatureService;
+  pasteHandler: InputHandler;
+  cutHandler: InputHandler;
 
   /**
    * element of the component, it is aliased to the rawEditor.rootNode
@@ -81,7 +87,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     return this.externalHandlers.concat(this.defaultHandlers);
   }
 
-
   /**
    * default input handlers
    * @property defaultHandlers
@@ -91,7 +96,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @tracked defaultHandlers: InputHandler[];
 
   /**
-   * external input handlersg
+   * external input handlers
    * @property externalHandlers
    * @type Array
    * @private
@@ -120,6 +125,8 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
         new FallbackInputHandler({ rawEditor }),
       ];
     this.externalHandlers = this.args.externalHandlers ? this.args.externalHandlers : [];
+    this.pasteHandler = new PasteHandler({rawEditor});
+    this.cutHandler = new CutHandler({rawEditor});
   }
 
   /**
@@ -153,7 +160,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * keyup (we should ignore this, because it fires even if keydown does a preventDefault. however it is one of the few places we can capture page up, page down, arrow up and down so we capture those here using the fallback input handler)
    * input (captured, input has happened and all you can do is clean up)
    *
-   * Chain 2 ( in FF input fires after compositionend): compositions (mostly on mac)
+   * Chain 2 (in FF input fires after compositionend): compositions (mostly on mac)
    * compositionupdate (we ignore this)
    * input (we capture this)
    * compositionend (we capture this, if input has preventdefault this doesn't fire. not well tested)
@@ -170,7 +177,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * keyDown events are handled for simple input we take over from
    * browser input.
    */
-
   @action
   handleKeyDown(event: KeyboardEvent) {
     if (!this.keydownMapsToOtherEvent(event)) {
@@ -182,10 +188,9 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   }
 
   /**
-   * keyDown events are handled for simple input we take over from
+   * keyUp events are handled for simple input we take over from
    * browser input.
    */
-
   @action
   handleKeyUp(event: KeyboardEvent) {
     const preventDefault = this.passEventToHandlers(event);
@@ -193,6 +198,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       event.preventDefault();
     }
   }
+
   /**
    * reading of blogs and part of the spec seems to indicate capture input is the safest way to capture input
    * this method is only called for input that hasn't been handled in earlier events (like keydown)
@@ -220,59 +226,12 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   @action
   paste(event: ClipboardEvent) {
-    // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
-    const clipboardData = event.clipboardData;
     event.preventDefault();
-    const isInTable = this.rawEditor.selection.inTableState === PropertyState.enabled;
-    const pasteRange = ModelRangeUtils.getExtendedToPlaceholder(this.rawEditor.model.selection.lastRange);
-
-    if (!clipboardData) {
-      //TODO: if no clipboardData found, do we want an error?
-      return ;
-    }
-    const canPasteHTML = !isInTable && (this.features.isEnabled('editor-html-paste') || this.features.isEnabled('editor-extended-html-paste')) && this.hasClipboardHtmlContent(clipboardData);
-
-    if (canPasteHTML) {
-      try {
-        const inputParser = this.features.isEnabled('editor-extended-html-paste') ?
-          new HTMLInputParser({}) :
-          new HTMLInputParser({ safeTags: LIMITED_SAFE_TAGS });
-
-        const htmlPaste = clipboardData.getData('text/html');
-        const cleanHTML = inputParser.cleanupHTML(htmlPaste) as string;
-        this.rawEditor.executeCommand("insert-html", cleanHTML, pasteRange);
-      }
-      catch (e) {
-        // fall back to text pasting
-        console.warn(e); //eslint-disable-line no-console
-        const text = this.getClipboardContentAsText(clipboardData);
-        this.rawEditor.executeCommand("insert-text", text, pasteRange);
-      }
-    }
-
-    else {
-      const text = this.getClipboardContentAsText(clipboardData);
-      this.rawEditor.executeCommand("insert-text", text, pasteRange);
-    }
-    this.rawEditor.selection.lastRange.collapse();
-    this.rawEditor.model.writeSelection();
-    this.rawEditor.updateSelectionAfterComplexInput();
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    void taskFor(this.rawEditor.generateDiffEvents).perform();
-    return false;
-  }
-
-  hasClipboardHtmlContent(clipboardData: DataTransfer) {
-    const potentialContent = clipboardData.getData('text/html') || "";
-    return potentialContent.length > 0;
-  }
-
-  getClipboardContentAsText(clipboardData: DataTransfer) {
-    const text = clipboardData.getData('text/plain') || "";
-    if (text.length === 0) {
-      return clipboardData.getData('text') || "";
-    }
-    else return text;
+    this.pasteHandler.handleEvent(
+      event,
+      this.features.isEnabled("editor-html-paste"),
+      this.features.isEnabled("editor-extended-html-paste")
+    );
   }
 
   @action
@@ -283,12 +242,12 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     }
   }
 
-  /**
-   * cut isn't allowed at the moment
-   */
   @action
   cut(event: ClipboardEvent) {
-    event.preventDefault();
+    if (this.features.isEnabled("editor-cut")) {
+      event.preventDefault();
+      this.cutHandler.handleEvent(event);
+    }
   }
 
   /**

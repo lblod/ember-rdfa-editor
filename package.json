@@ -64,6 +64,7 @@
     "@codemirror/lang-xml": "^0.18.0",
     "@glimmer/component": "^1.0.1",
     "@types/common-tags": "^1.8.0",
+    "@types/dompurify": "^2.2.3",
     "@types/ember": "^3.1.1",
     "@types/ember-qunit": "^3.4.13",
     "@types/ember-resolver": "^5.0.10",

@@ -42,6 +42,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       return '';
     }
   }
+
   get children(): ModelNode[] {
     return this._children;
   }

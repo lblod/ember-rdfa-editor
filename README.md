@@ -1,4 +1,6 @@
 # @lblod/ember-rdfa-editor
+[![Build Status](https://rpio-drone.redpencil.io/api/badges/lblod/ember-rdfa-editor/status.svg)](https://rpio-drone.redpencil.io/lblod/ember-rdfa-editor)
+
 Emberjs addon that provides an RDFa aware rich text editor. This component forms the core of say editor.
 The editor can be enriched with plugins to give hints for specific content entered in the editor (e.g. dates, templates, citations, etc.). The hints will typically insert RDFa annotations in the content.
 
