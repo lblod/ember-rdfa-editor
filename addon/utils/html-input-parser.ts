@@ -89,7 +89,6 @@ export default class HTMLInputParser {
   /**
    * Preprocess all nodes replacing the tag if it appears on the tagMap variable
    * and adds the lumpNode property if needed.
-   * TODO: check if we can get rid of casts
    *
    * @method preprocessNode
    */
