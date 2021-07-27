@@ -14,6 +14,7 @@ export default class HTMLExportWriter implements Writer<ModelNode, Node> {
     this.htmlTextWriter = new UnpollutedHtmlTextWriter(model);
     this.htmlElementWriter = new UnpollutedHtmlElementWriter(model);
   }
+
   write(modelNode: ModelNode): Node {
     let result = null;
 
