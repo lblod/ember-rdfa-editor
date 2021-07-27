@@ -21,10 +21,7 @@ export default class FallbackInputHandler extends InputHandler {
   }
 
   handleEvent(event: Event): HandlerResponse {
-    this.rawEditor.externalDomUpdate(
-      `Uncaptured event of type ${event.type}, restoring editor state.`,
-      () => {}
-    );
+    this.rawEditor.externalDomUpdate(`Uncaptured event of type ${event.type}, restoring editor state.`);
 
     return {allowPropagation: false, allowBrowserDefault: true};
   }

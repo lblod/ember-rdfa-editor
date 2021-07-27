@@ -16,5 +16,5 @@ export default function forgivingAction(name, context) {
 
   if (closureAction) return closureAction;
 
-  return () => { return; };
+  return () => {};
 }

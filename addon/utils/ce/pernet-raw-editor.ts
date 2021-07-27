@@ -647,32 +647,38 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @param {boolean} maintainCursor, keep cursor in place if possible
    * @public
    */
-  externalDomUpdate(description: string, domUpdate: () => void, maintainCursor = false) {
+  externalDomUpdate(description: string, domUpdate?: () => void, maintainCursor = false) {
     debug(`executing an external dom update: ${description}`);
     const currentNode = this.currentNode;
     const richNode = this.getRichNodeFor(currentNode);
     if (richNode) {
       const relativePosition = this.getRelativeCursorPosition();
-      domUpdate();
-      this.updateRichNode();
-      if (maintainCursor &&
-        this.currentNode === currentNode &&
-        this.rootNode.contains(currentNode) &&
-        currentNode &&
-        relativePosition &&
-        isTextNode(currentNode) &&
-        currentNode.length >= relativePosition) {
-        this.setCaret(currentNode,relativePosition);
+      if (domUpdate) {
+        domUpdate();
       }
-      else {
+
+      this.updateRichNode();
+      if (maintainCursor
+        && currentNode
+        && isTextNode(currentNode)
+        && this.currentNode === currentNode
+        && this.rootNode.contains(currentNode)
+        && relativePosition
+        && currentNode.length >= relativePosition) {
+        this.setCaret(currentNode,relativePosition);
+      } else {
         this.updateSelectionAfterComplexInput();
       }
+
       forgivingAction('elementUpdate', this)();
       // eslint-disable-next-line @typescript-eslint/unbound-method
       void taskFor(this.generateDiffEvents).perform();
     }
     else {
-      domUpdate();
+      if (domUpdate) {
+        domUpdate();
+      }
+
       this.updateRichNode();
       this.updateSelectionAfterComplexInput();
       forgivingAction('elementUpdate', this)();
