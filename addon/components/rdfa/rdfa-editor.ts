@@ -150,7 +150,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   @action
   updateProfile() {
-    if (this.eventProcessor && this.profile != this.eventProcessor.profile) {
+    if (this.eventProcessor && this.profile !== this.eventProcessor.profile) {
       this.eventProcessor.profile = this.profile;
     }
   }
