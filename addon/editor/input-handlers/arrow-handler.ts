@@ -4,6 +4,7 @@ import {warn} from "@ember/debug";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input-handler";
 import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
+import {ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 /**
  * Arrow Handler, an event handler to handle arrow keys.
@@ -41,12 +42,12 @@ export default class ArrowHandler extends InputHandler {
     const position = this.rawEditor.currentSelection[0];
     const textNode = this.rawEditor.currentNode as Text | null;
     if (!textNode) {
-      return {allowPropagation: false, allowBrowserDefault: false};
+      throw new Error("No current node found.");
     }
 
     const richNode = this.rawEditor.getRichNodeFor(textNode);
     if (!richNode) {
-      return {allowPropagation: false, allowBrowserDefault: false};
+      throw new Error("No rich node for current node found.");
     }
 
     const isLeft = event.key === "ArrowLeft";
@@ -66,7 +67,9 @@ export default class ArrowHandler extends InputHandler {
         const newNode = previousTextNode(textNode, this.rawEditor.rootNode);
         this.rawEditor.updateRichNode();
 
-        if (newNode) this.rawEditor.setCaret(newNode, newNode.length);
+        if (newNode) {
+          this.rawEditor.setCaret(newNode, newNode.length);
+        }
       } else {
         if (textNode.length > 1) {
           this.rawEditor.setCaret(textNode, 1);
@@ -74,7 +77,9 @@ export default class ArrowHandler extends InputHandler {
           const newNode = nextTextNode(textNode, this.rawEditor.rootNode);
           this.rawEditor.updateRichNode();
 
-          if (newNode) this.rawEditor.setCaret(newNode, 0);
+          if (newNode) {
+            this.rawEditor.setCaret(newNode, 0);
+          }
         }
       }
     } else if (richNode.end === position) {
@@ -83,7 +88,9 @@ export default class ArrowHandler extends InputHandler {
         const newNode = nextTextNode(textNode, this.rawEditor.rootNode);
         this.rawEditor.updateRichNode();
 
-        if (newNode) this.rawEditor.setCaret(newNode, 0);
+        if (newNode) {
+          this.rawEditor.setCaret(newNode, 0);
+        }
       } else {
         if (textNode.length > 1) {
           this.rawEditor.setCaret(textNode, textNode.length - 1);
@@ -91,7 +98,9 @@ export default class ArrowHandler extends InputHandler {
           const newNode = previousTextNode(textNode, this.rawEditor.rootNode);
           this.rawEditor.updateRichNode();
 
-          if (newNode) this.rawEditor.setCaret(newNode, newNode.length);
+          if (newNode) {
+            this.rawEditor.setCaret(newNode, newNode.length);
+          }
         }
       }
     } else {

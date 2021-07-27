@@ -4,7 +4,7 @@ import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/ha
 
 export default class FallbackInputHandler extends InputHandler {
   private readonly FALLBACK_KEY_UP_KEYS = ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"];
-  private readonly FALLBACK_EVENT_TYPES = ["keydown", "keyup", "mousedown", "beforeinput"];
+  private readonly HANDLED_EVENT_TYPES = ["keydown", "keyup", "mousedown", "beforeinput"];
 
   constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
     super(rawEditor);
@@ -17,12 +17,12 @@ export default class FallbackInputHandler extends InputHandler {
       // Motion events were captured above this if we don't want catch other keyup events,
       // they also generate an input event which we do handle.
       // Mouse down is not interesting at the moment, only mouse up.
-      || !this.FALLBACK_EVENT_TYPES.includes(event.type);
+      || !this.HANDLED_EVENT_TYPES.includes(event.type);
   }
 
   handleEvent(event: Event): HandlerResponse {
     this.rawEditor.externalDomUpdate(
-      `Uncaptured input event of type ${event.type}, restoring editor state.`,
+      `Uncaptured event of type ${event.type}, restoring editor state.`,
       () => {}
     );
 

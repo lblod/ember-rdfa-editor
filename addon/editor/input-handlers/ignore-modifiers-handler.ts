@@ -2,17 +2,16 @@ import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
 
-export default class UndoHandler extends InputHandler {
+export default class IgnoreModifiersHandler extends InputHandler {
   constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
     super(rawEditor);
   }
 
   isHandlerFor(event: KeyboardEvent): boolean {
-    return event.type === "keydown" && (event.ctrlKey || event.metaKey) && event.key === "z";
+    return ["Alt", "Control", "Meta", "Shift"].includes(event.key);
   }
 
-  handleEvent(/* event: KeyboardEvent */): HandlerResponse {
-    this.rawEditor.undo();
-    return {allowPropagation: false, allowBrowserDefault: true};
+  handleEvent(/* event: Event */): HandlerResponse {
+    return {allowPropagation: false, allowBrowserDefault: false};
   }
 }
