@@ -19,18 +19,17 @@ export default class InsertTableCommand extends Command {
   }
 
   @logExecute
-  execute(): void {
-    const selection = this.model.selection;
+  execute(selection: ModelSelection = this.model.selection, rows = 2, columns = 2): void {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
-    const table = new ModelTable(2, 2);
-    const firstCell = table.getCell(0, 0) as ModelElement;
-    const range = selection.lastRange;
-    this.model.change(mutator => {
-      mutator.insertNodes(range, table);
-      selection.collapseIn(firstCell);
 
+    const table = new ModelTable(rows, columns);
+    const firstCell = table.getCell(0, 0) as ModelElement;
+
+    this.model.change(mutator => {
+      mutator.insertNodes(selection.lastRange, table);
+      selection.collapseIn(firstCell);
     });
   }
 }
