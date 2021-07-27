@@ -12,8 +12,6 @@ import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/inp
 import PasteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/paste-handler";
 import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
-import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
-import { PropertyState } from "@lblod/ember-rdfa-editor/model/util/types";
 import ArrowHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/arrow-handler';
 import DisableDeleteHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/delete-handler';
 import FallbackInputHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/fallback-input-handler';
@@ -22,7 +20,6 @@ import UndoHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/undo-hander'
 import LumpNodeMovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/lump-node-movement-observer';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import HTMLInputParser, { LIMITED_SAFE_TAGS } from '@lblod/ember-rdfa-editor/utils/html-input-parser';
 import { taskFor } from "ember-concurrency-ts";
 
 
