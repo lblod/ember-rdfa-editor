@@ -240,8 +240,8 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   }
   @action
   cut(event: ClipboardEvent) {
+    event.preventDefault();
     if (this.features.isEnabled("editor-cut")) {
-      event.preventDefault();
       this.cutHandler.handleEvent(event);
     }
   }
