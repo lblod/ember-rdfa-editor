@@ -26,7 +26,6 @@ import {
 } from './editor';
 import {findRichNode, findUniqueRichNodes} from '../rdfa/rdfa-rich-node-helpers';
 import {debug, warn} from '@ember/debug';
-import {InternalSelection, RawEditorSelection} from "@lblod/ember-rdfa-editor/editor/raw-editor";
 import {computed, get} from '@ember/object';
 import flatMap from "@lblod/ember-rdfa-editor/utils/ce/flat-map";
 import {getTextContent, processDomNode as walkDomNodeAsText} from "@lblod/ember-rdfa-editor/utils/ce/text-node-walker";
@@ -41,11 +40,19 @@ import { tracked } from '@glimmer/tracking';
 import { Editor } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import EventBus from "@lblod/ember-rdfa-editor/utils/event-bus";
+import { Region } from "@lblod/marawa/rdfa-block";
 
 export interface ContentObserver {
   handleTextInsert: (position: number, text: string, extraInfo: Array<unknown>) => void
   handleTextRemoval: (start: number, end: number, extraInfo: Array<unknown>) => void
   handleFullContentUpdate: (extraInfo: Array<unknown>) => void
+}
+
+export type RawEditorSelection = Region;
+
+export interface InternalSelection {
+  startNode: RichNode;
+  endNode: RichNode;
 }
 
 /**
