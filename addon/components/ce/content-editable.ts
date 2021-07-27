@@ -20,6 +20,7 @@ import UndoHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/undo-hander'
 import LumpNodeMovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/lump-node-movement-observer';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
+import { IllegalAccessToRawEditor } from "@lblod/ember-rdfa-editor/utils/errors";
 import { taskFor } from "ember-concurrency-ts";
 
 
@@ -56,6 +57,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @service() declare features : FeatureService;
   pasteHandler: InputHandler;
   cutHandler: InputHandler;
+  _rawEditor: PernetRawEditor;
 
   /**
    * element of the component, it is aliased to the rawEditor.rootNode
@@ -72,7 +74,12 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * @property rawEditor
    * @type RawEditor
    */
-  @tracked rawEditor: PernetRawEditor;
+  get rawEditor(): PernetRawEditor {
+    if (!this._rawEditor) {
+      throw new IllegalAccessToRawEditor;
+    }
+    return this._rawEditor;
+  }
 
   /**
    * ordered set of input handlers
@@ -107,7 +114,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     super(owner, args);
     const rawEditor = PernetRawEditor.create({});
     rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
-    this.rawEditor = rawEditor;
+    this._rawEditor = rawEditor;
       this.defaultHandlers = [
         new ArrowHandler({ rawEditor }),
         new EnterHandler({ rawEditor }),
