@@ -201,10 +201,18 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * this method is only called for input that hasn't been handled in earlier events (like keydown)
    */
   @action
-  handleInput(event: KeyboardEvent) {
+  handleInput(event: InputEvent) {
     const preventDefault = this.passEventToHandlers(event);
     if (preventDefault)
       event.preventDefault();
+  }
+
+  @action
+  beforeInput(event: InputEvent) {
+    const preventDefault = this.passEventToHandlers(event);
+    if (preventDefault) {
+      event.preventDefault();
+    }
   }
 
   /**
@@ -212,7 +220,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * the internal state to be inline with reality
    */
   @action
-  compositionEnd(event: KeyboardEvent) {
+  compositionEnd(event: CompositionEvent) {
     const preventDefault = this.passEventToHandlers(event);
     if (preventDefault)
       event.preventDefault();
@@ -230,15 +238,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       this.features.isEnabled("editor-extended-html-paste")
     );
   }
-
-  @action
-  beforeInput(event: InputEvent) {
-    const preventDefault = this.passEventToHandlers(event);
-    if (preventDefault) {
-      event.preventDefault();
-    }
-  }
-
   @action
   cut(event: ClipboardEvent) {
     if (this.features.isEnabled("editor-cut")) {
