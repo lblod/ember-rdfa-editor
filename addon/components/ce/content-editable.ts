@@ -76,7 +76,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   get rawEditor(): PernetRawEditor {
     if (!this._rawEditor) {
-      throw new IllegalAccessToRawEditor;
+      throw new IllegalAccessToRawEditor();
     }
     return this._rawEditor;
   }
@@ -115,19 +115,19 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     const rawEditor = PernetRawEditor.create({});
     rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
     this._rawEditor = rawEditor;
-      this.defaultHandlers = [
-        new ArrowHandler({ rawEditor }),
-        new EnterHandler({ rawEditor }),
-        new BackspaceHandler({ rawEditor }),
-        new TabHandler({ rawEditor }),
-        new TextInputHandler({ rawEditor }),
-        new DisableDeleteHandler({ rawEditor }),
-        new IgnoreModifiersHandler({ rawEditor }),
-        new UndoHandler({ rawEditor }),
-        new BoldItalicUnderlineHandler({ rawEditor }),
-        new EscapeHandler({ rawEditor }),
-        new FallbackInputHandler({ rawEditor }),
-      ];
+    this.defaultHandlers = [
+      new ArrowHandler({ rawEditor }),
+      new EnterHandler({ rawEditor }),
+      new BackspaceHandler({ rawEditor }),
+      new TabHandler({ rawEditor }),
+      new TextInputHandler({ rawEditor }),
+      new DisableDeleteHandler({ rawEditor }),
+      new IgnoreModifiersHandler({ rawEditor }),
+      new UndoHandler({ rawEditor }),
+      new BoldItalicUnderlineHandler({ rawEditor }),
+      new EscapeHandler({ rawEditor }),
+      new FallbackInputHandler({ rawEditor }),
+    ];
     this.externalHandlers = this.args.externalHandlers ? this.args.externalHandlers : [];
     this.pasteHandler = new PasteHandler({rawEditor});
     this.cutHandler = new CutHandler({rawEditor});
