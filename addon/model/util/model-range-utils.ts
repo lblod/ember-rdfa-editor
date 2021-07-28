@@ -1,7 +1,6 @@
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import {ElementType} from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 
