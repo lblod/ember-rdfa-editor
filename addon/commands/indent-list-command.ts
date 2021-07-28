@@ -5,48 +5,15 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {MisbehavedSelectionError, NoParentError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
-import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 
 export default class IndentListCommand extends Command {
   name = "indent-list";
+  predicate = (node: ModelNode) => ModelNode.isModelElement(node) && node.type === "li";
 
   constructor(model: Model) {
     super(model);
-  }
-
-  createTreeWalker(range: ModelRange): ModelTreeWalker {
-    // The start of the selected range is inside an li node.
-    // In this case, make sure to place the start position of the range before this li node,
-    // otherwise the tree walker won't return it.
-    //
-    // BEFORE:
-    // <ul>
-    //  <li>list |element one</li>
-    //  <li>list element |two</li>
-    // </ul>
-    //
-    // AFTER:
-    // <ul>
-    //  |<li>list element one</li>
-    //  <li>list element |two</li>
-    // </ul>
-    const startLi = range.start.findAncestors(node => {
-      return ModelNode.isModelElement(node) && node.type === "li";
-    });
-
-    // Select first li ancestor.
-    if (startLi.length > 0) {
-      range = new ModelRange(ModelPosition.fromBeforeNode(startLi[0]), range.end);
-    }
-
-    return new ModelTreeWalker({
-      filter: toFilterSkipFalse(node => {
-        return ModelNode.isModelElement(node) && node.type === "li";
-      }),
-      range: range
-    });
   }
 
   canExecute(range: ModelRange | null = this.model.selection.lastRange) {
@@ -54,7 +21,7 @@ export default class IndentListCommand extends Command {
       return false;
     }
 
-    const treeWalker = this.createTreeWalker(range);
+    const treeWalker = ModelRangeUtils.findModelNodes(range, this.predicate);
     for (const li of treeWalker) {
       if (!li || li.index === 0) {
         return false;
@@ -70,7 +37,7 @@ export default class IndentListCommand extends Command {
       throw new MisbehavedSelectionError();
     }
 
-    const treeWalker = this.createTreeWalker(range);
+    const treeWalker = ModelRangeUtils.findModelNodes(range, this.predicate);
     const setsToIndent = new Map<ModelElement, ModelElement[]>();
 
     for (const li of treeWalker) {

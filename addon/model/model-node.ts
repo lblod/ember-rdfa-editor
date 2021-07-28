@@ -107,6 +107,7 @@ export default abstract class ModelNode {
     if (this.parent) {
       return this.parent.getChildIndex(this);
     }
+
     return null;
   }
 
@@ -162,23 +163,23 @@ export default abstract class ModelNode {
    */
   getIndexPath(): number[] {
     const result = [];
-
     // this is deprecated so I won't fix this
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let child: ModelNode = this;
     let parent = this.parent;
     while (parent) {
       const index = parent.getChildIndex(child);
+
       if (index === null) {
         break;
       }
+
       result.unshift(index);
       child = parent;
       parent = parent.parent;
     }
 
     return result;
-
   }
 
   /**
