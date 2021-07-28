@@ -9,7 +9,6 @@ import HintsRegistry from '../../utils/rdfa/hints-registry';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
 import type IntlService from 'ember-intl/services/intl';
 import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 
@@ -125,13 +124,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    */
   get hasSuggestedHints(): boolean {
     return this.suggestedHints.length > 0;
-  }
-
-  /**
-   * @property rootModelNode
-   */
-  get rootModelNode(): ModelNode {
-    return this.editor.rootModelNode;
   }
 
   /**
