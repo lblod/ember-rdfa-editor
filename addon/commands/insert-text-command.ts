@@ -17,6 +17,7 @@ export default class InsertTextCommand extends Command {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
+
     this.model.change(mutator => {
       if (text.charAt(0) === SPACE) {
         const charBefore = range.start.charactersBefore(1);
@@ -25,12 +26,13 @@ export default class InsertTextCommand extends Command {
           range.start = range.start.shiftedBy(-1);
         }
       }
+
       const resultRange = mutator.insertText(range, text);
       const commonAncestor = resultRange.getCommonAncestor();
       resultRange.collapse();
       this.model.selectRange(resultRange);
+
       return commonAncestor;
     });
   }
-
 }

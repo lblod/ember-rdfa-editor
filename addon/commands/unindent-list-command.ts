@@ -5,13 +5,19 @@ import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+
 export default class UnindentListCommand extends Command {
   name = "unindent-list";
+
   constructor(model: Model) {
     super(model);
   }
 
   canExecute(selection: ModelSelection = this.model.selection): boolean {
+    if (!ModelSelection.isWellBehaved(selection)) {
+      return false;
+    }
+
     const interestingLis = selection.findAllInSelection(
       {
         predicate: node => {
@@ -28,16 +34,15 @@ export default class UnindentListCommand extends Command {
 
   @logExecute
   execute(selection: ModelSelection = this.model.selection): void {
-    if(!ModelSelection.isWellBehaved(selection)) {
-
+    if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
-    //get all nodes in selection that are li
+
+    // Get all nodes in selection that are li.
     const listNodesIterator = selection.findAllInSelection({
       filter: ModelNode.isModelElement,
       predicate: (node: ModelElement) => node.type === "li"
     });
-
 
     //if there are no li in selection return error
     if (!listNodesIterator) {
@@ -88,6 +93,7 @@ export default class UnindentListCommand extends Command {
         }
       }
     }
+
     this.model.write();
     this.model.readSelection();
   }
@@ -121,21 +127,24 @@ export default class UnindentListCommand extends Command {
     if(elementArray.length==0){
       return result;
     }
-    //otherwise some hot recursive action
+    // Otherwise some hot recursive action
     else{
       this.relatedChunks(elementArray, result);
     }
+
     return result;
   }
 
-  areRelated(base:ModelElement, compare:ModelElement): boolean{
-    const basePath=base.getIndexPath();
-    const comparePath=compare.getIndexPath();
-    for(let i=0; i<basePath.length; i++){
-      if(basePath[i]!=comparePath[i]){
+  areRelated(base: ModelElement, compare: ModelElement): boolean{
+    const basePath = base.getIndexPath();
+    const comparePath = compare.getIndexPath();
+
+    for (let i = 0; i < basePath.length; i++) {
+      if (basePath[i] !== comparePath[i]) {
         return false;
       }
     }
+
     return true;
   }
 }

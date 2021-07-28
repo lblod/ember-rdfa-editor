@@ -29,12 +29,9 @@ export default class InsertNewLiCommand extends Command {
       throw new MisbehavedSelectionError();
     }
 
-    const startPosition = range.start;
-    const endPosition = range.end;
-
     const isLi = (node: ModelNode) => ModelNode.isModelElement(node) && node.type === "li";
-    const startParentLi = startPosition.findAncestors(isLi)[0];
-    const endParentLi = endPosition.findAncestors(isLi)[0];
+    const startParentLi = range.start.findAncestors(isLi)[0];
+    const endParentLi = range.end.findAncestors(isLi)[0];
 
     if (!startParentLi || !endParentLi) {
       throw new Error("Couldn't locate parent lis.");
@@ -43,12 +40,11 @@ export default class InsertNewLiCommand extends Command {
     this.model.change(mutator => {
       // Collapsed selection case
       if (range.collapsed) {
-        this.insertLi(mutator, startPosition);
+        this.insertLi(mutator, range.start);
       }
       // Single li expanded selection case
       else if (startParentLi === endParentLi) {
         mutator.insertNodes(range);
-        // this.insertNewLi(range.start);
         this.insertLi(mutator, range.start);
       }
       // Multiple lis selected case

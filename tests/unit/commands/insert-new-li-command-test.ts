@@ -7,8 +7,9 @@ import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 //TODO: These tests serve at the moment as a documentation for
 // what the command currently does, and as a way of catching possible
-// regressions for things that might depend on its behavior
-// In particular, all the extra empty textnodes should not be there
+// regressions for things that might depend on its behavior.
+// In particular, all the extra empty textnodes should not be there.
+
 module("Unit | commands | insert-new-li-command-test", hooks => {
   const ctx = new ModelTestContext();
   let command: InsertNewLiCommand;
@@ -16,6 +17,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     ctx.reset();
     command = new InsertNewLiCommand(ctx.model);
   });
+
   test("insert li - single empty li - collapsed selection", assert => {
     // language=XML
     const {root: initial, elements: {testLi}} = vdom`
@@ -47,7 +49,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
-
   });
 
   test("insert li - single nonempty li - collapsed selection in front", assert => {
@@ -81,7 +82,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
-
   });
 
   test("insert li - single nonempty li - collapsed selection at end", assert => {
@@ -104,7 +104,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
             <text>abc</text>
           </li>
           <li>
-            <text>${INVISIBLE_SPACE}</text>
           </li>
         </ul>
       </div>
@@ -116,8 +115,8 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
-
   });
+
   test("insert li - single nonempty li - collapsed selection in middle", assert => {
     // language=XML
     const {root: initial, elements: {testLi}} = vdom`
@@ -150,7 +149,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
-
   });
 
   test("insert li - single nonempty li with elements - collapsed selection inside child elem", assert => {
@@ -196,6 +194,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
 
     assert.true(actual.sameAs(expected));
   });
+
   test("insert li - single nonempty li - uncollapsed within li", assert => {
     // language=XML
     const {root: initial, elements: {testLi}} = vdom`
@@ -214,7 +213,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
         <ul>
           <li>
             <text>a</text>
-            <text>${INVISIBLE_SPACE}</text>
           </li>
           <li>
             <text>d</text>
@@ -229,7 +227,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
-
   });
 
   test("insert li - single nonempty li with elements - uncollapsed within li", assert => {
@@ -254,7 +251,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
         <ul>
           <li>
             <text>a</text>
-            <text>${INVISIBLE_SPACE}</text>
           </li>
           <li>
             <text>d</text>
@@ -269,7 +265,6 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
-
   });
 });
 

@@ -5,7 +5,6 @@ import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils
 
 export default class ListCleaner {
   clean(range: ModelRange) {
-
     const listNodes = new ModelTreeWalker<ModelElement>({
       filter: toFilterSkipFalse(ModelNodeUtils.isListContainer),
       range
@@ -19,7 +18,6 @@ export default class ListCleaner {
         ListCleaner.mergeListNodes(listNode, next);
       }
     }
-
   }
 
   private static mergeListNodes(node1: ModelElement, node2: ModelElement) {
