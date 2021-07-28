@@ -228,24 +228,29 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    */
   @action
   async triggerHints() {
+    if (!this.editor) {
+      return;
+    }
+
     const rootNode = this.editor.rootNode;
     const currentNode = this.editor.currentNode;
 
     let region;
     if (currentNode) {
       const currentRichNode = this.editor.getRichNodeFor(currentNode);
-      region = currentRichNode.region;
+      region = currentRichNode?.region;
     } else {
       region = this.editor.currentSelection;
     }
-
-    const contexts = analyseRdfa(rootNode, region);
-    if (contexts && contexts.length) {
-      const context = contexts[0];
-      const hints = await this.rdfaEditorDispatcher.requestHints(this.profile, context, this.editor);
-      this.suggestedHints = hints;
-    } else {
-      debug('No RDFa blocks found in currentNode. Cannot hint suggestions.');
+    if (region) {
+      const contexts = analyseRdfa(rootNode, region);
+      if (contexts && contexts.length) {
+        const context = contexts[0];
+        const hints = await this.rdfaEditorDispatcher.requestHints(this.profile, context, this.editor);
+        this.suggestedHints = hints;
+      } else {
+        debug('No RDFa blocks found in currentNode. Cannot hint suggestions.');
+      }
     }
   }
 
