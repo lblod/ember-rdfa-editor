@@ -21,6 +21,7 @@ import { A } from '@ember/array';
 import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
 import PasteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/paste-handler";
 import CutHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-handler";
+import CopyHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/copy-handler";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -47,6 +48,7 @@ export default class ContentEditable extends Component {
 
   pasteHandler = null;
   cutHandler = null;
+  copyHandler;
 
   /**
    * WIP: Rich selection
@@ -129,6 +131,7 @@ export default class ContentEditable extends Component {
 
     this.set('pasteHandler', new PasteHandler({rawEditor}));
     this.set('cutHandler', new CutHandler({rawEditor}));
+    this.copyHandler = new CopyHandler({rawEditor});
 
     if(!this.externalHandlers) {
       this.set('externalHandlers', []);
@@ -279,18 +282,18 @@ export default class ContentEditable extends Component {
 
   @action
   cut(event) {
+    event.preventDefault();
     if (this.features.isEnabled("editor-cut")) {
-      event.preventDefault();
       this.cutHandler.handleEvent(event);
     }
   }
 
-  /**
-   * copy is relegated to the browser for now
-   */
   @action
-  copy(/* event */) {
-    //not handling just yet
+  copy(event) {
+    event.preventDefault();
+    if (this.features.isEnabled("editor-copy")) {
+      this.copyHandler.handleEvent(event);
+    }
   }
 
   @action

@@ -62,7 +62,8 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
     }, this.deleteSelection);
 
     if (!this.deleteSelection) {
-      // TODO: restore VDOM
+      // TODO: restore VDOM in a proper way
+      this.model.read();
     }
 
     return modelNodes;

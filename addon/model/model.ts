@@ -149,7 +149,7 @@ export default class Model {
    * @param callback
    * @param writeBack
    */
-  change(callback: (mutator: ImmediateModelMutator) => ModelElement | void, writeBack = false) {
+  change(callback: (mutator: ImmediateModelMutator) => ModelElement | void, writeBack = true) {
     const mutator = new ImmediateModelMutator();
     const subTree = callback(mutator);
 

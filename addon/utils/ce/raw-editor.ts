@@ -38,6 +38,7 @@ import InsertTableRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert
 import InsertTableRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
 import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
 import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
+import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -118,6 +119,7 @@ class RawEditor extends EmberObject {
     this.registerCommand(new InsertXmlCommand(this.model));
     this.registerCommand(new InsertTextCommand(this.model));
     this.registerCommand(new DeleteSelectionCommand(this.model));
+    this.registerCommand(new ReadSelectionCommand(this.model));
   }
 
   /**

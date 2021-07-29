@@ -2,9 +2,9 @@ import CutCopyHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-c
 
 /**
  * @module contenteditable-editor
- * @class CutHandler
+ * @class CopyHandler
  * @constructor
  */
-export default class CutHandler extends CutCopyHandler {
-  deleteSelection = true;
+export default class CopyHandler extends CutCopyHandler {
+  deleteSelection = false;
 }
