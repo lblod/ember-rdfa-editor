@@ -15,7 +15,6 @@ export default class ModelPosition {
   private _root: ModelElement;
   private parentCache: ModelElement | null = null;
 
-
   /**
    * Build a position from a rootNode and a path
    * @param root
@@ -24,12 +23,14 @@ export default class ModelPosition {
   static fromPath(root: ModelElement, path: number[]) {
     const result = new ModelPosition(root);
     result.path = path;
+
     return result;
   }
 
   static fromAfterNode(node: ModelNode): ModelPosition {
     const basePath = node.getOffsetPath();
     basePath[basePath.length - 1] += node.offsetSize;
+
     return ModelPosition.fromPath(node.root, basePath);
   }
 
@@ -39,10 +40,12 @@ export default class ModelPosition {
 
   static fromInTextNode(node: ModelText, offset: number) {
     if (offset < 0 || offset > node.length) {
-      throw new PositionError(`Offset ${offset} out of range of textnode with length ${node.length}`);
+      throw new PositionError(`Offset ${offset} out of range of text node with length ${node.length}`);
     }
+
     const path = node.getOffsetPath();
     path[path.length - 1] += offset;
+
     return ModelPosition.fromPath(node.root, path);
   }
 
@@ -50,11 +53,14 @@ export default class ModelPosition {
     if (element.type === "br") {
       return ModelPosition.fromBeforeNode(element);
     }
+
     if (offset < 0 || offset > element.getMaxOffset()) {
       throw new PositionError(`Offset ${offset} out of range of element with maxOffset ${element.getMaxOffset()}`);
     }
+
     const path = element.getOffsetPath();
     path.push(offset);
+
     return ModelPosition.fromPath(element.root, path);
   }
 
@@ -83,7 +89,7 @@ export default class ModelPosition {
   }
 
   /**
-   * The path of offsets from this position's root node
+   * The path of offsets from this position's root node.
    */
   get path(): number[] {
     return this._path;
@@ -98,34 +104,38 @@ export default class ModelPosition {
     if (this.parentCache) {
       return this.parentCache;
     }
+
     if (this.path.length === 0) {
       this.parentCache = this.root;
       return this.root;
     }
-    let cur: ModelNode | null = this.root;
-    let i = 0;
 
-    while (ModelNode.isModelElement(cur) && i < this.path.length - 1) {
-      if (!cur.childAtOffset(this.path[i], true)) {
-        cur.childAtOffset(this.path[i], true);
+    let i = 0;
+    let current: ModelNode | null = this.root;
+    while (ModelNode.isModelElement(current) && i < this.path.length - 1) {
+      if (!current.childAtOffset(this.path[i], true)) {
+        current.childAtOffset(this.path[i], true);
       }
-      cur = cur.childAtOffset(this.path[i], true);
+      current = current.childAtOffset(this.path[i], true);
       i++;
     }
-    if (ModelNode.isModelText(cur)) {
-      this.parentCache = cur.parent;
-      return cur.parent!;
+
+    if (ModelNode.isModelText(current)) {
+      this.parentCache = current.parent;
+      return current.parent!;
     }
+
     if (i > 0 && i !== this.path.length - 1) {
       throw new PositionError("invalid path");
     }
-    this.parentCache = cur as ModelElement;
-    return cur as ModelElement;
+    this.parentCache = current as ModelElement;
+
+    return current as ModelElement;
   }
 
   /**
-   * Get the first ancestor which is a ModelElement
-   * @deprecated use {@link parent} as this is now identical
+   * Get the first ancestor which is a ModelElement.
+   * @deprecated Use {@link parent} as this is now identical.
    */
   get parentElement(): ModelElement {
     return this.parent;
@@ -140,7 +150,7 @@ export default class ModelPosition {
   }
 
   /**
-   * Get the offset from the parent, equivalent to a DOM position offset
+   * Get the offset from the parent, equivalent to a DOM position offset.
    */
   get parentOffset(): number {
     return this.path[this.path.length - 1];
@@ -155,18 +165,18 @@ export default class ModelPosition {
   }
 
   /**
-   * Resets the parent cache
-   * Call this when the parent tree of the position has possibly changed
+   * Resets the parent cache.
+   * Call this when the parent tree of the position has possibly changed.
    * TODO: this is a hack, redesign this
-   * can be resolved relatively elegantly by a robust event system by having every position listen to
-   * operation events and invalidating their caches greedily
+   * Can be resolved relatively elegantly by a robust event system by having every position listen to
+   * operation events and invalidating their caches greedily.
    */
   invalidateParentCache(): void {
     this.parentCache = null;
   }
 
   /**
-   * Check if two modelpositions describe the same position
+   * Check if two model positions describe the same position.
    * @param other
    */
   sameAs(other: ModelPosition): boolean {
@@ -174,7 +184,7 @@ export default class ModelPosition {
   }
 
   /**
-   * Compare this position to another and see if it comes before, after, or is the same position
+   * Compare this position to another and see if it comes before, after, or is the same position.
    * @param other
    */
   compare(other: ModelPosition): RelativePosition {
@@ -205,7 +215,7 @@ export default class ModelPosition {
 
   getCommonAncestor(other: ModelPosition): ModelElement {
     if (this.root !== other.root) {
-      throw new PositionError("cannot compare nodes with different roots");
+      throw new PositionError("Cannot compare nodes with different roots");
     }
 
     const leftLength = this.path.length;
@@ -237,6 +247,7 @@ export default class ModelPosition {
       left = left.parent;
       right = right.parent;
     }
+
     if (left) {
       return left;
     } else {
@@ -245,12 +256,11 @@ export default class ModelPosition {
   }
 
   /**
-   * Compare two paths and determine their order. A parent is considered to be in front of its children
+   * Compare two paths and determine their order. A parent is considered to be in front of its children.
    * @param path1
    * @param path2
    */
   static comparePath(path1: number[], path2: number[]): RelativePosition {
-
     for (const [i, offset] of path1.entries()) {
       if (i < path2.length) {
         if (offset < path2[i]) {
@@ -260,19 +270,18 @@ export default class ModelPosition {
         }
       }
     }
+
     if (path1.length < path2.length) {
       return RelativePosition.BEFORE;
     } else if (path1.length > path2.length) {
       return RelativePosition.AFTER;
     }
     return RelativePosition.EQUAL;
-
   }
 
   /**
-   * Split the textnode at the position. If position is not inside a
-   * textNode, do nothing.
-   * If position is at the end or start of a textnode, do nothing;
+   * Split the text node at the position. If position is not inside a textNode, do nothing.
+   * If position is at the end or start of a text node, do nothing.
    */
   split() {
     const before = this.nodeBefore();
@@ -283,12 +292,11 @@ export default class ModelPosition {
       }
       this.parentCache = null;
     }
-
   }
 
   /**
-   * If position is "inside" a textnode, this will return that node.
-   * Otherwise, return the node immediately after the cursor
+   * If position is "inside" a text node, this will return that node.
+   * Otherwise, return the node immediately after the cursor.
    */
   nodeAfter(): ModelNode | null {
     if (this.path.length === 0) {
@@ -299,8 +307,8 @@ export default class ModelPosition {
   }
 
   /**
-   * If position is "inside" a textnode, this will return that node.
-   * Otherwise, return the node immediately before the cursor
+   * If position is "inside" a text node, this will return that node.
+   * Otherwise, return the node immediately before the cursor.
    */
   nodeBefore(): ModelNode | null {
     return this.parent.childAtOffset(this.parentOffset - 1) || null;
@@ -318,7 +326,6 @@ export default class ModelPosition {
    * @return string the collected characters, in display order
    */
   charactersBefore(amount: number): string {
-
     let cur = this.nodeBefore();
     let counter = 0;
     const result = [];
@@ -342,13 +349,14 @@ export default class ModelPosition {
       }
       cur = cur.previousSibling;
     }
+
     result.reverse();
     return result.join("");
   }
 
   /**
-   * Return a new position which is this position shifted by a certain offset amount
-   * The path of the new position will be identical except for the last element
+   * Return a new position which is this position shifted by a certain offset amount.
+   * The path of the new position will be identical except for the last element.
    *
    * In other words, the parent of the new position will be the same parent, with
    * the parentOffset the sum of this position's parentOffset and amount (this
@@ -372,37 +380,35 @@ export default class ModelPosition {
     return ModelPosition.fromInElement(this.parent, newOffset);
   }
 
-  //this returns true if the position is inside a text node (not right before not right after)
+  /**
+   * This returns true if the position is inside a text node (not right before not right after).
+   */
   isInsideText(): boolean {
-    if (
-      (this.nodeAfter() == this.nodeBefore()) &&
-      (ModelNode.isModelText(this.nodeAfter()) && ModelNode.isModelText(this.nodeBefore()))
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    return this.nodeAfter() === this.nodeBefore()
+      && ModelNode.isModelText(this.nodeAfter())
+      && ModelNode.isModelText(this.nodeBefore());
   }
 
-  clone(): ModelPosition {
-    return ModelPosition.fromPath(this.root, [...this.path]);
+  clone(modelRoot?: ModelElement): ModelPosition {
+    const root = modelRoot ? modelRoot : this.root;
+    return ModelPosition.fromPath(root, [...this.path]);
   }
 
   findAncestors(predicate: (elem: ModelElement) => boolean = () => true): ModelElement[] {
-    let cur = this.parent;
-    const rslt = [];
+    let current = this.parent;
+    const result = [];
 
-    while (cur !== this.root) {
-      if (predicate(cur)) {
-        rslt.push(cur);
+    while (current !== this.root) {
+      if (predicate(current)) {
+        result.push(current);
       }
-      cur = cur.parent!;
+      current = current.parent!;
+    }
 
+    if (predicate(current)) {
+      result.push(current);
     }
-    if (predicate(cur)) {
-      rslt.push(cur);
-    }
-    return rslt;
+
+    return result;
   }
-
 }

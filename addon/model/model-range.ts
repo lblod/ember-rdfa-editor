@@ -204,15 +204,12 @@ export default class ModelRange {
     }
 
     return new ModelRange(start, end);
-
-
   }
 
   /**
    * Return the minimal set of confined ranges that, when combined, form an equivalent range to this one
    */
   getMinimumConfinedRanges(): ModelRange[] {
-
     const commonPath = ArrayUtils.findCommonSlice(this.start.path, this.end.path);
     const commonLength = commonPath.length;
     const result = [];
@@ -269,18 +266,16 @@ export default class ModelRange {
 
   }
 
-
   sameAs(other: ModelRange): boolean {
     return this.start.sameAs(other.start) && this.end.sameAs(other.end);
   }
 
-  clone(): ModelRange {
-    return new ModelRange(this.start.clone(), this.end.clone());
+  clone(modelRoot?: ModelElement): ModelRange {
+    return new ModelRange(this.start.clone(modelRoot), this.end.clone(modelRoot));
   }
 
   toString(): string {
     return `ModelRange<[${this.start.path.toString()}] - [${this.end.path.toString()}]>`;
-
   }
 }
 

@@ -244,8 +244,9 @@ export default class ContentEditable extends Component {
   @action
   handleInput(event) {
     const preventDefault = this.passEventToHandlers(event);
-    if (preventDefault)
+    if (preventDefault) {
       event.preventDefault();
+    }
   }
 
   /**
@@ -255,8 +256,9 @@ export default class ContentEditable extends Component {
   @action
   compositionEnd(event) {
     const preventDefault = this.passEventToHandlers( event );
-    if (preventDefault)
+    if (preventDefault) {
       event.preventDefault();
+    }
   }
 
   /**
@@ -299,8 +301,9 @@ export default class ContentEditable extends Component {
   @action
   handleMouseUp(event) {
     const preventDefault = this.passEventToHandlers(event);
-    if (preventDefault)
+    if (preventDefault) {
       event.preventDefault();
+    }
   }
 
   @action

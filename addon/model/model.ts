@@ -10,6 +10,9 @@ import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-wr
 import BatchedModelMutator from "@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelHistory from "@lblod/ember-rdfa-editor/model/model-history";
+import {Diary} from "diary";
+import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -30,6 +33,9 @@ export default class Model {
   private selectionWriter: SelectionWriter;
   private _selection: ModelSelection;
   private _rootNode: HTMLElement;
+  private history: ModelHistory = new ModelHistory();
+
+  private logger: Diary;
 
   constructor(rootNode: HTMLElement) {
     this._rootNode = rootNode;
@@ -38,7 +44,8 @@ export default class Model {
     this.nodeMap = new WeakMap<Node, ModelNode>();
     this.selectionReader = new SelectionReader(this);
     this.selectionWriter = new SelectionWriter();
-    this._selection = new ModelSelection(this);
+    this._selection = new ModelSelection();
+    this.logger = createLogger("RawEditor");
   }
 
   get rootNode(): HTMLElement {
@@ -61,10 +68,12 @@ export default class Model {
     if (parsedNodes.length !== 1) {
       throw new Error("Could not create a rich root");
     }
+
     const newRoot = parsedNodes[0];
     if (!ModelNode.isModelElement(newRoot)) {
       throw new Error("Root model node has to be an element");
     }
+
     this._rootModelNode = newRoot;
     this.bindNode(this.rootModelNode, this.rootNode);
 
@@ -95,7 +104,7 @@ export default class Model {
     }
 
     if (!isElement(oldRoot)) {
-      throw new NotImplementedError("root is not an element, not sure what to do");
+      throw new NotImplementedError("Root is not an element, not sure what to do");
     }
 
     const newRoot = this.writer.write(tree);
@@ -132,7 +141,7 @@ export default class Model {
    * @param domNode
    */
   public getModelNodeFor(domNode: Node): ModelNode {
-    if (!this.nodeMap) throw new ModelError("uninitialized nodeMap");
+    if (!this.nodeMap) throw new ModelError("Uninitialized nodeMap");
 
     const result = this.nodeMap.get(domNode);
     if (!result) {
@@ -209,5 +218,26 @@ export default class Model {
 
   toXml(): Node {
     return this.rootModelNode.toXml();
+  }
+
+  storeModel(): void {
+    const rootModelNode = this.rootModelNode.clone();
+    const modelSelection = this.selection.clone(rootModelNode);
+
+    this.history.push({rootModelNode, modelSelection});
+  }
+
+  restoreModel(writeBack = true) {
+    const model = this.history.pop();
+    if (model) {
+      this._rootModelNode = model.rootModelNode;
+      this._selection = model.modelSelection;
+
+      if (writeBack) {
+        this.write();
+      }
+    } else {
+      this.logger.warn("No more model history to undo!");
+    }
   }
 }

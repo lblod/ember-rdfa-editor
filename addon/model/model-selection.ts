@@ -1,4 +1,3 @@
-import Model from "@lblod/ember-rdfa-editor/model/model";
 import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
@@ -9,6 +8,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {Direction, FilterAndPredicate, PropertyState,} from "@lblod/ember-rdfa-editor/model/util/types";
 import {nodeIsElementOfType} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
@@ -26,14 +26,13 @@ export interface WellbehavedSelection extends ModelSelection {
  * of the document selection.
  */
 export default class ModelSelection {
-
   domSelection: Selection | null = null;
+
   private _ranges: ModelRange[];
-  private model: Model;
   private _isRightToLeft: boolean;
 
   /**
-   * Utility typeguard to check if a selection has and anchor and a focus, as without them
+   * Utility type guard to check if a selection has and anchor and a focus, as without them
    * most operations that work on selections probably have no meaning.
    * @param selection
    */
@@ -41,15 +40,14 @@ export default class ModelSelection {
     return !!(selection.anchor && selection.focus);
   }
 
-  constructor(model: Model) {
-    this.model = model;
+  constructor() {
     this._ranges = [];
     this._isRightToLeft = false;
   }
 
   /**
    * The focus is the leftmost position of the selection if the selection
-   * is left-to-right, and the rightmost position otherwise
+   * is left-to-right, and the rightmost position otherwise.
    */
   get focus(): ModelPosition | null {
     if (!this.lastRange) {
@@ -63,7 +61,7 @@ export default class ModelSelection {
 
   /**
    * The anchor is the rightmost position of the selection if the selection
-   * is left-to-right, and the leftmost position otherwise
+   * is left-to-right, and the leftmost position otherwise.
    */
   get anchor(): ModelPosition | null {
     if (!this.lastRange) {
@@ -77,7 +75,7 @@ export default class ModelSelection {
 
   /**
    * Get the last range. This range has a somewhat special function as it
-   * determines the anchor and focus positions of the selection
+   * determines the anchor and focus positions of the selection.
    */
   get lastRange() {
     if (this._ranges.length) {
@@ -88,7 +86,7 @@ export default class ModelSelection {
   }
 
   /**
-   * The selected {@link Range Ranges}
+   * The selected {@link Range ranges}.
    */
   get ranges(): ModelRange[] {
     return this._ranges;
@@ -100,7 +98,7 @@ export default class ModelSelection {
   }
 
   /**
-   * Whether the selection is right-to-left (aka backwards)
+   * Whether the selection is right-to-left (aka backwards).
    */
   get isRightToLeft() {
     return this._isRightToLeft;
@@ -110,9 +108,8 @@ export default class ModelSelection {
     this._isRightToLeft = value;
   }
 
-
   /**
-   * Append a range to this selection's ranges
+   * Append a range to this selection's ranges.
    * @param range
    */
   addRange(range: ModelRange) {
@@ -120,7 +117,7 @@ export default class ModelSelection {
   }
 
   /**
-   * Remove all ranges of this selection
+   * Remove all ranges of this selection.
    */
   clearRanges() {
     this._isRightToLeft = false;
@@ -134,7 +131,7 @@ export default class ModelSelection {
   }
 
   /**
-   * Gets the range at index
+   * Gets the range at index.
    * @param index
    */
   getRangeAt(index: number) {
@@ -142,12 +139,11 @@ export default class ModelSelection {
   }
 
   /**
-   * @return whether the selection is collapsed
+   * @return boolean Whether the selection is collapsed.
    */
   get isCollapsed() {
     return this.lastRange?.collapsed;
   }
-
 
   get bold(): PropertyState {
     return this.getTextPropertyStatus("bold");
@@ -166,23 +162,22 @@ export default class ModelSelection {
   }
 
   /**
-   *
-   * @param config
-   * @deprecated use {@link ModelTreeWalker} instead
+   * @param {FilterAndPredicate<T>} config
+   * @deprecated Use {@link ModelTreeWalker} instead.
    */
   findAllInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): Iterable<T> | null {
-
     const {filter, predicate} = config;
 
-    if (!ModelSelection.isWellBehaved(this)) {
+    const range = this.lastRange;
+    if (!range) {
       return null;
     }
 
-    // ignore selection direction
-    const anchorNode = this.lastRange?.start.parent;
-    const focusNode = this.lastRange?.end.parent;
-    if (anchorNode === focusNode) {
+    // Ignore selection direction.
+    const anchorNode = range.start.parent;
+    const focusNode = range.end.parent;
 
+    if (anchorNode === focusNode) {
       const noop = () => true;
       const filterFunc = filter || noop;
       const predicateFunc = predicate || noop;
@@ -199,13 +194,11 @@ export default class ModelSelection {
                   value,
                   done: false
                 };
-
               } else {
                 return {
                   value: null,
                   done: true
                 };
-
               }
             }
           };
@@ -217,7 +210,7 @@ export default class ModelSelection {
           direction: Direction.FORWARDS,
           startNode: anchorNode,
           endNode: focusNode,
-          rootNode: this.model.rootModelNode,
+          rootNode: range.root,
           nodeFilter: filter,
           useSiblingLinks: false,
           predicate
@@ -246,7 +239,6 @@ export default class ModelSelection {
     } else {
       return PropertyState.unknown;
     }
-
   }
 
   get rdfaSelection() {
@@ -255,11 +247,15 @@ export default class ModelSelection {
   }
 
   get subtree() {
-    if (!this.domSelection) return;
+    if (!this.domSelection) {
+      return;
+    }
+
     let subtree = this.domSelection.getRangeAt(0).commonAncestorContainer;
     if (!isElement(subtree)) {
       subtree = subtree.parentElement!;
     }
+
     return subtree;
   }
 
@@ -271,18 +267,16 @@ export default class ModelSelection {
   }
 
   /**
-   * Generic method for determining the status of a textattribute in the selection.
+   * Generic method for determining the status of a text attribute in the selection.
    * @param property
    */
   getTextPropertyStatus(property: TextAttribute): PropertyState {
-
     if (ModelSelection.isWellBehaved(this)) {
       const range = this.lastRange;
       return range.getTextAttributes().get(property) || PropertyState.unknown;
     }
     return PropertyState.unknown;
   }
-
 
   collapseIn(node: ModelNode, offset = 0) {
     this.clearRanges();
@@ -297,7 +291,6 @@ export default class ModelSelection {
     this.addRange(range);
   }
 
-
   calculateRdfaSelection(selection: Selection) {
     if (selection.type === 'Caret') {
       if (!selection.anchorNode) {
@@ -309,7 +302,13 @@ export default class ModelSelection {
       const commonAncestor = range.commonAncestorContainer;
       return analyse(commonAncestor);
     }
-
   }
 
+  clone(modelRoot?: ModelElement) {
+    const modelSelection = new ModelSelection();
+    modelSelection.isRightToLeft = this._isRightToLeft;
+    modelSelection.ranges = this.ranges.map(range => range.clone(modelRoot));
+
+    return modelSelection;
+  }
 }

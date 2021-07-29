@@ -18,8 +18,7 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
 
   read(from: Selection): ModelSelection {
     const ranges = [];
-
-    const rslt = new ModelSelection(this.model);
+    const rslt = new ModelSelection();
 
     for (let i = 0; i < from.rangeCount; i++) {
       const range = from.getRangeAt(i);
@@ -105,9 +104,9 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
   }
 
   private findPositionForTextPopertyNode(container: Node, domOffset: number): ModelPosition {
-
     const walker = document.createTreeWalker(this.model.rootNode, NodeFilter.SHOW_TEXT);
     walker.currentNode = container;
+
     let resultingNode;
     if (container.childNodes.length === 0) {
       resultingNode = walker.previousNode();
@@ -122,12 +121,13 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
         resultingNode = walker.previousNode();
       }
     }
+
     if (!resultingNode) {
       throw new NotImplementedError();
     }
+
     const modelNode = this.model.getModelNodeFor(resultingNode) as ModelText;
     return ModelPosition.fromInTextNode(modelNode, modelNode.length);
-
   }
 
   /**

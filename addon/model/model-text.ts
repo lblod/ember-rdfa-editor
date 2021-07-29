@@ -66,8 +66,8 @@ export default class ModelText extends ModelNode {
     result.attributeMap = new Map<string, string>(this.attributeMap);
     result.modelNodeType = this.modelNodeType;
     result.content = this.content;
-    return result;
 
+    return result;
   }
 
   /**

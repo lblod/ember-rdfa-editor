@@ -84,11 +84,16 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   clone(): ModelElement {
-    const result = new ModelElement(this.type);
+    const config = {debugInfo: "", rdfaPrefixes: new Map<string, string>(this._currentRdfaPrefixes)};
+    const result = new ModelElement(this.type, config);
+
     result.attributeMap = new Map<string, string>(this.attributeMap);
+    result.boundNode = this.boundNode?.cloneNode() || null;
     result.modelNodeType = this.modelNodeType;
+
     const clonedChildren = this.children.map(c => c.clone());
     result.appendChildren(...clonedChildren);
+
     return result;
   }
 
@@ -106,7 +111,6 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       prev = this.children[this.childCount - 1];
       this._children.push(child);
     } else {
-
       next = this.children[position];
       prev = this.children[position - 1];
 
@@ -134,17 +138,16 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       throw new OffsetOutOfRangeError(offset, this.getMaxOffset());
     }
     this.addChild(child, this.offsetToIndex(offset));
-
   }
 
   insertChildrenAtOffset(offset: number, ...children: ModelNode[]) {
     let myOffset = offset;
-
     for (const child of children) {
       this.insertChildAtOffset(child, myOffset);
       myOffset += child.offsetSize;
     }
   }
+
   insertChildrenAtIndex(index: number, ...children: ModelNode[]) {
     let myIndex = index;
     for (const child of children) {
@@ -162,7 +165,6 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   removeChild(child: ModelNode) {
     const index = this.children.indexOf(child);
     if (child.previousSibling) {
-
       child.previousSibling.nextSibling = child.nextSibling;
     }
     if (child.nextSibling) {
@@ -179,7 +181,6 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     return this.children.indexOf(child);
   }
 
-
   setTextAttribute(key: TextAttribute, value: boolean) {
     for (const child of this.children) {
       if (child instanceof ModelText || child instanceof ModelElement) {
@@ -195,8 +196,6 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * @param index
    */
   split(index: number): { left: ModelElement, right: ModelElement } {
-
-
     if (index < 0) {
       index = 0;
     }
@@ -228,9 +227,8 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     if (!parent) {
       throw new ModelError("Can't unwrap root node");
     }
+
     let insertIndex = this.index! + 1;
-
-
     for (const child of this.children) {
       this.parent?.addChild(child, insertIndex);
       insertIndex++;
@@ -240,7 +238,6 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       }
     }
     this.parent?.removeChild(this);
-
   }
 
   hasVisibleText(): boolean {
@@ -266,6 +263,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     if (index < 0 || index >= this.length) {
       throw new IndexOutOfRangeError();
     }
+
     if (this.length === 1) {
       return {left: null, middle: this, right: null};
     }
@@ -296,6 +294,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     if (offset < 0 || offset > this.getMaxOffset()) {
       throw new OffsetOutOfRangeError(offset, this.getMaxOffset());
     }
+
     let offsetCounter = 0;
     let indexCounter = 0;
     for (const child of this.children) {
@@ -334,6 +333,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     if (includeLast && offset === this.getMaxOffset()) {
       return this.lastChild;
     }
+
     try {
       return this.children[this.offsetToIndex(offset)] || null;
     } catch (e) {
@@ -350,8 +350,8 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   getRdfaPrefixes(): Map<string,string> {
-    // NOTE: we map vocab to an empty string prefix, because this is convenient for passing to children
-    //       it's also conviently how marawa uses it in the RdfaAttributes class
+    // NOTE: We map vocab to an empty string prefix, because this is convenient for passing to children.
+    //       It's also conveniently how marawa uses it in the RdfaAttributes class.
     const vocab = this.getAttribute("vocab");
     if (vocab) {
       return new Map([...this._currentRdfaPrefixes, ["", vocab]]);
@@ -379,9 +379,9 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
   }
 
-  /*
-   * returns a parsed representation of the rdfa attributes
-   * prefixes are expanded and multivalue attributes are split on space and returned as an array
+  /**
+   * Returns a parsed representation of the rdfa attributes.
+   * Prefixes are expanded and multi value attributes are split on space and returned as an array.
    */
   getRdfaAttributes(): RdfaAttributes {
     return new RdfaAttributes(this, Object.fromEntries(this.getRdfaPrefixes()));
@@ -416,6 +416,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
     return true;
   }
+
   isMergeable(other: ModelNode): boolean {
     if(!ModelNode.isModelElement(other)) {
       return false;

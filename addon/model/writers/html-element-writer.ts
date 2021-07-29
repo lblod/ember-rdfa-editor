@@ -5,8 +5,10 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 export default class HtmlElementWriter implements Writer<ModelElement, HTMLElement> {
   constructor(private model: Model) {
   }
+
   write(modelNode: ModelElement): HTMLElement {
     const result = document.createElement(modelNode.type);
+
     //this will disable the selection of multiple cells on table
     //idea reverse-engineered from readctor
     if(modelNode.type === "table") {
