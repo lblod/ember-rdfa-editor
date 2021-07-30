@@ -1,8 +1,7 @@
 import { set } from '@ember/object';
 import { A } from '@ember/array';
 import { next } from '@ember/runloop';
-import { timeout } from 'ember-concurrency';
-import { task } from 'ember-concurrency-decorators';
+import { task, timeout } from 'ember-concurrency';
 import { reorderBlocks, getExtendedRegions } from './rdfa-block-helpers';
 import { tracked } from '@glimmer/tracking';
 
