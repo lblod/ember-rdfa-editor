@@ -118,7 +118,8 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   undo() {
-    this.args.editor.undo();
+    this.args.editor.modelUndo();
+    // this.args.editor.undo();
   }
 
   //Table commands

@@ -311,11 +311,6 @@ export default class ContentEditable extends Component {
     // not handling just yet
   }
 
-  @action
-  undo( /* event */) {
-    this.rawEditor.undo();
-  }
-
   /**
    * passes an event to handlers and returns whether the event default should be prevented or not
    * @method passEventToHandlers

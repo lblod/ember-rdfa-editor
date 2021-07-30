@@ -26,13 +26,14 @@ export default class Model {
    * @protected
    */
   protected _rootModelNode!: ModelElement;
+  private _selection: ModelSelection;
+  private _rootNode: HTMLElement;
+
   private reader: HtmlReader;
   private writer: HtmlWriter;
   private nodeMap: WeakMap<Node, ModelNode>;
   private selectionReader: SelectionReader;
   private selectionWriter: SelectionWriter;
-  private _selection: ModelSelection;
-  private _rootNode: HTMLElement;
   private history: ModelHistory = new ModelHistory();
 
   private logger: Diary;

@@ -22,7 +22,7 @@ export default class HtmlWriter implements Writer<ModelNode, Node> {
 
     if (ModelNode.isModelElement(modelNode)) {
       result = this.htmlElementWriter.write(modelNode);
-      for(const child of modelNode.children) {
+      for (const child of modelNode.children) {
         result.appendChild(this.write(child));
       }
     } else if (ModelNode.isModelText(modelNode)) {
