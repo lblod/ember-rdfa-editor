@@ -7,5 +7,5 @@ export interface HandlerResponse {
   /**
    * specify if the event can be handled by the browser
    */
-  allowBrowserDefault: boolean | undefined
+  allowBrowserDefault?: boolean
 }
