@@ -233,6 +233,7 @@ export default abstract class ModelNode {
         return this;
       }
     }
+
     let cur = this.parent;
     while (cur && !predicate(cur)) {
       cur = cur.parent;
@@ -241,6 +242,7 @@ export default abstract class ModelNode {
     if (cur && !predicate(cur)) {
       return null;
     }
+
     return cur;
   }
 
@@ -311,7 +313,7 @@ export default abstract class ModelNode {
 
   /**
    * True if node can be merged with other
-   * This means we are ok with this node being replaced by a shallowclone of either this or other,
+   * This means we are ok with this node being replaced by a shallow clone of either this or other,
    * with the children of this and other appended to the clone.
    * @param other
    */

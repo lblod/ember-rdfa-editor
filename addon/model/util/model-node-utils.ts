@@ -28,17 +28,25 @@ export default class ModelNodeUtils {
     return ModelNode.isModelElement(node) && LIST_CONTAINERS.has(node.type);
   }
 
+  static isListElement(node: ModelNode): node is ModelElement {
+    return ModelNode.isModelElement(node) && node.type === "li";
+  }
+
   static isPlaceHolder(node: ModelNode): node is ModelElement {
     return ModelNode.isModelElement(node) && !!node.getAttribute("class")?.includes(PLACEHOLDER_CLASS);
   }
 
-  static findAncestor(node: ModelNode, predicate: (node: ModelNode) => boolean): ModelElement | null {
-    let cur = node.parent;
-
-    while (cur && !predicate(cur)) {
-      cur = cur.parent;
+  static findAncestor(node: ModelNode | null, predicate: (node: ModelNode) => boolean): ModelElement | null {
+    if (!node) {
+      return null;
     }
 
-    return cur;
+    let current = node.parent;
+
+    while (current && !predicate(current)) {
+      current = current.parent;
+    }
+
+    return current;
   }
 }

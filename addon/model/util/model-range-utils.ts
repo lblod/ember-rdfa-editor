@@ -17,7 +17,7 @@ export default class ModelRangeUtils {
     return copyRange;
   }
 
-  static findModelNodes(range: ModelRange, predicate: (node: ModelNode) => boolean, wrapStart = true): ModelTreeWalker {
+  static findModelNodes(range: ModelRange, predicate: (node: ModelNode) => boolean, wrapStart = true): ModelTreeWalker<ModelNode> {
     if (wrapStart) {
       // The start of the selected range is inside an element satisfying the predicate.
       // In this case, place the start position of the range before this element,

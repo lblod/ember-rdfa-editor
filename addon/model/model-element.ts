@@ -195,15 +195,15 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * @param index
    */
   split(index: number): { left: ModelElement, right: ModelElement } {
-
-
     if (index < 0) {
       index = 0;
     }
+
     const leftChildren = this.children.slice(0, index);
     if (leftChildren.length) {
       leftChildren[leftChildren.length - 1].nextSibling = null;
     }
+
     const rightChildren = this.children.slice(index);
     if (rightChildren.length) {
       rightChildren[0].previousSibling = null;
