@@ -62,7 +62,10 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
     }, this.deleteSelection);
 
     if (!this.deleteSelection) {
-      this.model.restoreModel(false);
+      //TODO: This causes tests to fail, because of attributes that get added after read.
+      // We should try to replace this by storing the old model when executing a command and by restoring the stored
+      // model here. Can also be used to keep a history of models.
+      this.model.read();
     }
 
     return modelNodes;

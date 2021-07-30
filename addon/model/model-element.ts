@@ -391,9 +391,11 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     if (!ModelNode.isModelElement(other)) {
       return false;
     }
+
     if (this.type !== other.type) {
       return false;
     }
+
     if (this.length !== other.length) {
       return false;
     }
@@ -403,6 +405,8 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
         return false;
       }
     } else {
+      console.log(this.attributeMap);
+      console.log(other.attributeMap);
       if (!ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap)) {
         return false;
       }
