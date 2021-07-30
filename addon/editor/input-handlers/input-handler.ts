@@ -5,18 +5,7 @@ import {
 } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 import {editorDebug} from "@lblod/ember-rdfa-editor/editor/utils";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-
-export interface HandlerResponse {
-  /**
-   * specify if the event can also handled by another handler
-   * @property allowPropagation
-   * @type boolean
-   * @default true
-   * @public
-   */
-  allowPropagation: boolean
-}
-
+import { HandlerResponse } from "./handler-response";
 export interface InputPlugin {
   /**
    * One-liner explaining what the plugin solves.

@@ -7,11 +7,11 @@ export default class IgnoreModifiersHandler extends InputHandler {
     super(rawEditor);
   }
 
-  isHandlerFor(event: KeyboardEvent): boolean {
-    return ["Alt", "Control", "Meta", "Shift"].includes(event.key);
+  isHandlerFor(event: Event): boolean {
+    return event instanceof KeyboardEvent && ["Alt", "Control", "Meta", "Shift"].includes(event.key);
   }
 
-  handleEvent(/* event: Event */): HandlerResponse {
+  handleEvent(/* event: KeyboardEvent */): HandlerResponse {
     return {allowPropagation: false, allowBrowserDefault: false};
   }
 }

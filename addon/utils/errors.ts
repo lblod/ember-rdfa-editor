@@ -126,3 +126,9 @@ export class KeyError extends CustomError {
     super(`Missing key ${String(key) || ""}`);
   }
 }
+
+export class IllegalAccessToRawEditor extends CustomError {
+  constructor() {
+    super("raw editor was used before it was initialized");
+  }
+}

@@ -22,7 +22,7 @@ import {
   RemoveVoidElementManipulation,
   VoidElement
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {HandlerResponse, InputHandler, InputPlugin} from './input-handler';
+import {InputHandler, InputPlugin} from './input-handler';
 import {
   editorDebug,
   hasVisibleChildren,
@@ -33,6 +33,8 @@ import {
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
+import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
+import {isBeforeInputEvent, isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
 
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
@@ -83,7 +85,6 @@ interface CharacterPosition extends BaseThingBeforeCursor {
   node: Text;
   position: number;
 }
-
 
 /**
  * A Text node before the cursor, the text node is empty.
@@ -305,14 +306,14 @@ export default class BackspaceHandler extends InputHandler {
   /////////////////////
 
   /**
-   * Constructs a backspaceHandler instance
+   * Constructs a backspaceHandler instance.
    *
-   * @param {RawEditor} options.rawEditor Instance which will be used
+   * @param {RawEditor} rawEditor Instance which will be used
    * to inspect and update the DOM tree.
    * @public
    * @constructor
    */
-  constructor({rawEditor}: { rawEditor: PernetRawEditor }) {
+  constructor({rawEditor}: {rawEditor: PernetRawEditor }) {
     super(rawEditor);
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [
@@ -329,30 +330,31 @@ export default class BackspaceHandler extends InputHandler {
   }
 
   /**
-   * tests this handler can handle the specified event
+   * Tests this handler can handle the specified event.
    * @method isHandlerFor
-   * @param {KeyboardEvent} event
+   * @param {Event} event
    * @return boolean
    * @public
    */
-  isHandlerFor(event: Event) {
+  isHandlerFor(event: Event): boolean {
     const selection = window.getSelection();
-    return ((event.type === "keydown" && (event as KeyboardEvent).key === 'Backspace')
-      || (event.type == "beforeinput" && (event as InputEvent).inputType == "deleteContentsBackwards"))
-      && selection != null && selection.isCollapsed;
+    return ((isKeyDownEvent(event) && event.key === "Backspace")
+      || (isBeforeInputEvent(event) && event.inputType === "deleteContentsBackwards"))
+      && selection !== null
+      && selection.isCollapsed;
   }
 
   /**
-   * handle backspace event
+   * Handle backspace event.
    * @method handleEvent
    * @return {HandlerResponse}
    * @public
    */
-  handleEvent(event: Event): HandlerResponse {
-    // TODO: reason more about async behaviour of backspace.
+  handleEvent(event: KeyboardEvent): HandlerResponse {
+    // TODO: Reason more about async behaviour of backspace.
     event.preventDefault(); // make sure event propagation is stopped, async behaviour of backspace could cause the browser to execute eventDefault before it is finished
 
-    //TODO: think harder about managability of the lock state, now a bit all over the place
+    //TODO: Think harder about manageability of the lock state, now a bit all over the place.
     if (this.isLocked) {
       editorDebug(`backspace-handler.handleEvent`, `Handler is busy removing, skipping`);
       return {allowPropagation: false};
@@ -361,12 +363,13 @@ export default class BackspaceHandler extends InputHandler {
     void this.backspace().then(() => {
       this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
     });
+
     return {allowPropagation: false};
   }
 
-  /////////////////
-  // IMPLEMENTATION
-  /////////////////
+  ////////////////////
+  // IMPLEMENTATION //
+  ////////////////////
 
   /**
    * General control-flow for the backspace-handling.
@@ -375,7 +378,6 @@ export default class BackspaceHandler extends InputHandler {
    * @private
    */
   async backspace(max_tries = 50) {
-
     if (this.isLocked) {
       editorDebug(`backspace-handler.backspace`, `Handler is busy removing, skipping`);
       return;
@@ -386,56 +388,52 @@ export default class BackspaceHandler extends InputHandler {
       return;
     }
 
-    //Lock here
+    // Lock here
     this.isLocked = true;
-
-    //declare for later use
     let pluginSeesChange;
     let visualCursorCoordinates;
-
     try {
       visualCursorCoordinates = this.selectionCoordinatesInEditor;
 
-      // search for a manipulation to execute
+      // Search for a manipulation to execute.
       const manipulation = this.getNextManipulation();
 
-      // check if we can execute it
+      // Check if we can execute it.
       const {mayExecute, dispatchedExecutor} = this.checkManipulationByPlugins(manipulation);
 
-      // error if we're not allowed to
+      // Error if we're not allowed to execute.
       if (!mayExecute) {
         warn("Not allowed to execute manipulation for backspace", {id: "backspace-handler-manipulation-not-allowed"});
         return;
       }
 
-      // run the manipulation
+      // Run the manipulation.
       if (dispatchedExecutor) {
-        // NOTE: we should pass some sort of editor interface here in the future.
+        // NOTE: We should pass some sort of editor interface here in the future.
         dispatchedExecutor(manipulation, this.rawEditor);
       } else {
         this.handleNativeManipulation(manipulation);
       }
 
-      // ask plugins if something has changed
+      // Ask plugins if something has changed.
       await paintCycleHappened();
       pluginSeesChange = this.runChangeDetectionByPlugins(manipulation);
     } finally {
-      //make sure always unlocked
+      // Make sure always unlocked.
       this.isLocked = false;
     }
 
-    // maybe iterate again
+    // Maybe iterate again.
     if (pluginSeesChange || this.checkVisibleChange({previousVisualCursorCoordinates: visualCursorCoordinates})) {
-      // TODO: do we need to make sure cursor state in the editor corresponds with browser state here?
+      // TODO: Do we need to make sure cursor state in the editor corresponds with browser state here?
       return;
     } else {
-      // debugger;
       await this.backspace(max_tries - 1);
     }
   }
 
   /**
-   * Returns truethy if a visual change could be detected.
+   * Returns truthy if a visual change could be detected.
    *
    * TODO: current implementation assumes selection is a carret.
    *
@@ -445,8 +443,7 @@ export default class BackspaceHandler extends InputHandler {
    * @param options.previousVisualCursorCoordinates {Array<DOMRectCoordinatesInEditor>}
    * Coordinates of the rectangles defining the selection.
    */
-  checkVisibleChange(options: { previousVisualCursorCoordinates: Array<DOMRectCoordinatesInEditor> }): boolean {
-
+  checkVisibleChange(options: {previousVisualCursorCoordinates: Array<DOMRectCoordinatesInEditor>}): boolean {
     const {previousVisualCursorCoordinates} = options;
 
     if (!previousVisualCursorCoordinates.length && !this.selectionCoordinatesInEditor.length) {
@@ -464,10 +461,7 @@ export default class BackspaceHandler extends InputHandler {
     //Previous and current have visual coordinates, we need to compare the contents
     else {
       const {left: ol, top: ot} = previousVisualCursorCoordinates[0];
-
-
       const {left: nl, top: nt} = this.selectionCoordinatesInEditor[0];
-
       const visibleChange = ol !== nl || ot !== nt;
 
       if (!visibleChange) {
@@ -479,7 +473,6 @@ export default class BackspaceHandler extends InputHandler {
       return visibleChange;
     }
   }
-
 
   /**
    * Returns the coordinates of a selection, relative to the RootNode of the editor.
@@ -641,7 +634,6 @@ export default class BackspaceHandler extends InputHandler {
     // the cursor (character or node)
     const thingBeforeCursor: ThingBeforeCursor = this.getThingBeforeCursor();
     switch (thingBeforeCursor.type) {
-
       case "character": {
         // character: remove the character
         const characterBeforeCursor = thingBeforeCursor;
@@ -651,7 +643,6 @@ export default class BackspaceHandler extends InputHandler {
           position: characterBeforeCursor.position
         };
       }
-
       case "emptyTextNodeStart": {
         // empty text node: remove the text node
         const textNodeBeforeCursor = thingBeforeCursor;
@@ -664,7 +655,6 @@ export default class BackspaceHandler extends InputHandler {
           throw "Received text node which is not empty as previous node.  Some assumption broke.";
         }
       }
-
       case "emptyTextNodeEnd": {
         // empty text node: remove the text node
         const textNodePositionBeforeCursor = thingBeforeCursor;
@@ -677,7 +667,6 @@ export default class BackspaceHandler extends InputHandler {
           throw "Received text node which is not empty as previous node.  Some assumption broke.";
         }
       }
-
       case "voidElement": {
         const voidElementBeforeCursor = thingBeforeCursor;
         return {
@@ -685,7 +674,6 @@ export default class BackspaceHandler extends InputHandler {
           node: voidElementBeforeCursor.node
         };
       }
-
       case "elementEnd": {
         const elementBeforeCursor = thingBeforeCursor;
         return {
@@ -693,7 +681,6 @@ export default class BackspaceHandler extends InputHandler {
           node: elementBeforeCursor.node
         };
       }
-
       case "elementStart": {
         const parentBeforeCursor = thingBeforeCursor;
         const element = parentBeforeCursor.node;
@@ -733,8 +720,8 @@ export default class BackspaceHandler extends InputHandler {
       }
     }
 
-    // TODO: take care of other cases
-    throw `Could not find manipulation to suggest for backspace ${(thingBeforeCursor as ThingBeforeCursor).type}`;
+    // TODO: Take care of other cases.
+    throw new Error(`Could not find manipulation to suggest for backspace ${(thingBeforeCursor as ThingBeforeCursor).type}`);
   }
 
   /**

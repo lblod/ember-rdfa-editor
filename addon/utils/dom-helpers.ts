@@ -122,7 +122,6 @@ function isAllWhitespace(node: Text): boolean {
   return !(/[^\t\n\r ]/.test(node.textContent || ""));
 }
 
-
 /**
  * Determine whether a node is displayed as a block or is a list item
  * @method isDisplayedAsBlock

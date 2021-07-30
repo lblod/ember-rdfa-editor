@@ -1,26 +1,36 @@
-import { layout as templateLayout } from "@ember-decorators/component";
-import { tracked } from '@glimmer/tracking';
 import { action } from "@ember/object";
-import Component from '@ember/component';
-import layout from '../../templates/components/ce/content-editable';
-import forgivingAction from '../../utils/ce/forgiving-action';
-import EnterHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/enter-handler';
-import IgnoreModifiersHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/ignore-modifiers-handler";
-import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
-import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import DisableDeleteHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/delete-handler';
-import FallbackInputHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/fallback-input-handler";
-import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
-import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
-import LumpNodeMovementObserver from '../../utils/ce/movement-observers/lump-node-movement-observer';
 import { inject as service } from '@ember/service';
-import { A } from '@ember/array';
-import LegacyRawEditor from "@lblod/ember-rdfa-editor/utils/ce/legacy-raw-editor";
-import ArrowHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/arrow-handler";
-import UndoHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler";
-import PasteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/paste-handler";
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
 import CutHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-handler";
+import EnterHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/enter-handler';
+import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
+import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
+import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
+import PasteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/paste-handler";
+import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
+import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
+import LumpNodeMovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/lump-node-movement-observer';
+import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
+import { IllegalAccessToRawEditor } from "@lblod/ember-rdfa-editor/utils/errors";
+import { taskFor } from "ember-concurrency-ts";
+import ArrowHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/arrow-handler";
+import IgnoreModifiersHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/ignore-modifiers-handler";
+import UndoHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler";
+import FallbackInputHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/fallback-input-handler";
+import DisableDeleteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/disable-delete-handler";
+
+interface FeatureService {
+  isEnabled(key: string): boolean
+}
+
+interface ContentEditableArgs {
+  externalHandlers: InputHandler[]
+  rawEditorInit(editor: RawEditor): void
+}
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -40,23 +50,11 @@ import CutHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-handl
  * @class ContentEditableComponent
  * @extends Component
  */
-@templateLayout(layout)
-export default class ContentEditable extends Component {
-  tagName = ''
-  @service features;
-
-  pasteHandler = null;
-  cutHandler = null;
-
-  /**
-   * WIP: Rich selection
-   *
-   * @property richSelection
-   * @type Object
-   *
-   * @private
-   */
-  richSelection;
+export default class ContentEditable extends Component<ContentEditableArgs> {
+  @service() declare features : FeatureService;
+  pasteHandler: InputHandler;
+  cutHandler: InputHandler;
+  _rawEditor: PernetRawEditor;
 
   /**
    * element of the component, it is aliased to the rawEditor.rootNode
@@ -66,14 +64,19 @@ export default class ContentEditable extends Component {
    *
    * @private
    */
-  @tracked rootNode = null;
+  @tracked rootNode: HTMLElement | null = null;
 
   /**
    *
    * @property rawEditor
    * @type RawEditor
    */
-  @tracked rawEditor = null;
+  get rawEditor(): PernetRawEditor {
+    if (!this._rawEditor) {
+      throw new IllegalAccessToRawEditor();
+    }
+    return this._rawEditor;
+  }
 
   /**
    * ordered set of input handlers
@@ -81,7 +84,7 @@ export default class ContentEditable extends Component {
    * @type Array
    * @public
    */
-  get inputHandlers() {
+  get inputHandlers(): InputHandler[] {
     return this.externalHandlers.concat(this.defaultHandlers);
   }
 
@@ -91,7 +94,7 @@ export default class ContentEditable extends Component {
    * @type Array
    * @private
    */
-  @tracked defaultHandlers = null;
+  @tracked defaultHandlers: InputHandler[];
 
   /**
    * external input handlers
@@ -99,63 +102,33 @@ export default class ContentEditable extends Component {
    * @type Array
    * @private
    */
-  externalHandlers = null;
+  externalHandlers: InputHandler[];
 
   /**
    * @constructor
    */
-  init() {
-    super.init(...arguments);
-    const rawEditor = LegacyRawEditor.create({ });
+  constructor(owner: unknown, args: ContentEditableArgs) {
+    super(owner, args);
+    const rawEditor = PernetRawEditor.create({});
     rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
-    this.set('rawEditor', rawEditor);
-    const forceParagraph = this.features.isEnabled('editor-force-paragraph');
-    const defaultInputHandlers = [ new ArrowHandler({rawEditor}),
-                                   new EnterHandler({rawEditor}),
-                                   new BackspaceHandler({rawEditor}),
-                                   new TabHandler({rawEditor}),
-                                   new TextInputHandler({rawEditor, forceParagraph }),
-                                   new DisableDeleteHandler({rawEditor}),
-                                   new IgnoreModifiersHandler({rawEditor}),
-                                   new UndoHandler({rawEditor}),
-                                   new BoldItalicUnderlineHandler({rawEditor}),
-                                   new EscapeHandler({rawEditor}),
-                                   new FallbackInputHandler({rawEditor}),
-                                 ];
-
-    this.set('currentTextContent', '');
-    this.set('defaultHandlers', defaultInputHandlers);
-    this.set('capturedEvents', A());
-
-    this.set('pasteHandler', new PasteHandler({rawEditor}));
-    this.set('cutHandler', new CutHandler({rawEditor}));
-
-    if(!this.externalHandlers) {
-      this.set('externalHandlers', []);
-    }
+    this._rawEditor = rawEditor;
+    this.defaultHandlers = [
+      new ArrowHandler({ rawEditor }),
+      new EnterHandler({ rawEditor }),
+      new BackspaceHandler({ rawEditor }),
+      new TabHandler({ rawEditor }),
+      new TextInputHandler({ rawEditor }),
+      new DisableDeleteHandler({ rawEditor }),
+      new IgnoreModifiersHandler({ rawEditor }),
+      new UndoHandler({ rawEditor }),
+      new BoldItalicUnderlineHandler({ rawEditor }),
+      new EscapeHandler({ rawEditor }),
+      new FallbackInputHandler({ rawEditor }),
+    ];
+    this.externalHandlers = this.args.externalHandlers ? this.args.externalHandlers : [];
+    this.pasteHandler = new PasteHandler({rawEditor});
+    this.cutHandler = new CutHandler({rawEditor});
   }
-
-  /**
-   * specify whether the editor should autofocus the contenteditable field
-   *
-   * @property focused
-   * @type boolean
-   * @default false
-   *
-   * @public
-   */
-  focused = false;
-
-  /**
-   * specify whether the editor should be contenteditable
-   *
-   * @property editable
-   * @type boolean
-   * @default true
-   *
-   * @public
-   */
-  editable = true;
 
   /**
    * didRender hook, makes sure the element is focused
@@ -164,24 +137,17 @@ export default class ContentEditable extends Component {
    * @method insertedEditorElement
    */
   @action
-  insertedEditorElement(element) {
-    this.rawEditor.rootNode =  element;
+  insertedEditorElement(element: HTMLElement) {
+    this.rawEditor.rootNode = element;
     this.rawEditor.updateRichNode();
     this.rawEditor.setCurrentPosition(0);
-    this.rawEditor.generateDiffEvents.perform();
-    forgivingAction('rawEditorInit', this)(this.rawEditor);
-  }
-
-  /**
-   * willDestroyElement, calls the rootNodeUpdated action
-   *
-   * @method willDestroyElement
-   *
-   */
-  willDestroyElement() {
-    this.set('richNode', null);
-    this.set('rawEditor.rootNode', null);
-    forgivingAction('elementUpdate', this)();
+    // TODO: this is pretty unclear
+    // e.g. because of the debounce in generateDiffEvents rawEditorInit will be called before any diffs are calculated
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    void taskFor(this.rawEditor.generateDiffEvents).perform();
+    if (this.args.rawEditorInit) {
+      this.args.rawEditorInit(this.rawEditor);
+    }
   }
 
   /**
@@ -213,7 +179,7 @@ export default class ContentEditable extends Component {
    * browser input.
    */
   @action
-  handleKeyDown(event) {
+  handleKeyDown(event: KeyboardEvent) {
     if (!this.keydownMapsToOtherEvent(event)) {
       const preventDefault = this.passEventToHandlers(event);
       if (preventDefault) {
@@ -227,7 +193,7 @@ export default class ContentEditable extends Component {
    * browser input.
    */
   @action
-  handleKeyUp(event) {
+  handleKeyUp(event: KeyboardEvent) {
     const preventDefault = this.passEventToHandlers(event);
     if (preventDefault) {
       event.preventDefault();
@@ -239,10 +205,18 @@ export default class ContentEditable extends Component {
    * this method is only called for input that hasn't been handled in earlier events (like keydown)
    */
   @action
-  handleInput(event) {
+  handleInput(event: InputEvent) {
     const preventDefault = this.passEventToHandlers(event);
     if (preventDefault)
       event.preventDefault();
+  }
+
+  @action
+  beforeInput(event: InputEvent) {
+    const preventDefault = this.passEventToHandlers(event);
+    if (preventDefault) {
+      event.preventDefault();
+    }
   }
 
   /**
@@ -250,8 +224,8 @@ export default class ContentEditable extends Component {
    * the internal state to be inline with reality
    */
   @action
-  compositionEnd(event) {
-    const preventDefault = this.passEventToHandlers( event );
+  compositionEnd(event: CompositionEvent) {
+    const preventDefault = this.passEventToHandlers(event);
     if (preventDefault)
       event.preventDefault();
   }
@@ -260,7 +234,7 @@ export default class ContentEditable extends Component {
    * paste events are parsed and handled as good as possible
    */
   @action
-  paste(event) {
+  paste(event: ClipboardEvent) {
     event.preventDefault();
     this.pasteHandler.handleEvent(
       event,
@@ -268,19 +242,10 @@ export default class ContentEditable extends Component {
       this.features.isEnabled("editor-extended-html-paste")
     );
   }
-
   @action
-  beforeInput(event) {
-    const preventDefault = this.passEventToHandlers( event );
-    if (preventDefault) {
-      event.preventDefault();
-    }
-  }
-
-  @action
-  cut(event) {
+  cut(event: ClipboardEvent) {
+    event.preventDefault();
     if (this.features.isEnabled("editor-cut")) {
-      event.preventDefault();
       this.cutHandler.handleEvent(event);
     }
   }
@@ -289,40 +254,40 @@ export default class ContentEditable extends Component {
    * copy is relegated to the browser for now
    */
   @action
-  copy(/* event */) {
+  copy( /* event: ClipboardEvent */) {
     //not handling just yet
   }
 
   @action
-  handleMouseUp(event) {
+  handleMouseUp(event: MouseEvent) {
     const preventDefault = this.passEventToHandlers(event);
     if (preventDefault)
       event.preventDefault();
   }
 
   @action
-  handleMouseDown(/* event */){
+  handleMouseDown(/* event: MouseEvent */) {
     // not handling just yet
   }
 
   @action
-  undo( /* event */) {
+  undo( /* event: InputEvent */) {
+    // TODO: shouldn't we cancel this event ?
     this.rawEditor.undo();
   }
 
   /**
    * passes an event to handlers and returns whether the event default should be prevented or not
    * @method passEventToHandlers
-   * @param {DOMEvent} event
    * @return {Boolean}
    * @private
    */
-  passEventToHandlers(event) {
+  passEventToHandlers(event: Event): boolean {
     const handlers = this.inputHandlers.filter(h => h.isHandlerFor(event));
     if (handlers.length > 0) {
       let preventDefault = false;
-      for (let handler of handlers) {
-        const handlerResponse = handler.handleEvent(event);
+      for (const handler of handlers) {
+        const handlerResponse: HandlerResponse = handler.handleEvent(event);
         if (!handlerResponse.allowBrowserDefault) {
           // if one handler decided the event default (e.g. browser bubbling) should be prevented we do so.
           preventDefault = true;
@@ -332,7 +297,8 @@ export default class ContentEditable extends Component {
           break;
         }
       }
-      this.rawEditor.generateDiffEvents.perform();
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      void taskFor(this.rawEditor.generateDiffEvents).perform();
       this.rawEditor.model.read();
       return preventDefault;
     }
@@ -347,7 +313,7 @@ export default class ContentEditable extends Component {
    * currently tries to catch copy, paste, cut and undo. definitly needs testing on mac
    * @method keydownMapsToOtherEvent
    */
-  keydownMapsToOtherEvent(event) {
-    return (event.ctrlKey || event.metaKey) && ["v","c","x"].includes(event.key);
+  keydownMapsToOtherEvent(event: KeyboardEvent) : boolean {
+    return (event.ctrlKey || event.metaKey) && ["v", "c", "x"].includes(event.key);
   }
 }

@@ -17,6 +17,10 @@ export default class PasteHandler extends InputHandler {
     this.logger = createLogger("PasteHandler");
   }
 
+  isHandlerFor(event: ClipboardEvent): boolean {
+    return !!event.clipboardData;
+  }
+
   // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
   handleEvent(event: ClipboardEvent, pasteHTML: boolean, pasteExtendedHTML: boolean): HandlerResponse {
     const clipboardData = event.clipboardData;
@@ -64,10 +68,6 @@ export default class PasteHandler extends InputHandler {
     void taskFor(this.rawEditor.generateDiffEvents).perform();
 
     return {allowPropagation: false, allowBrowserDefault: false};
-  }
-
-  isHandlerFor(event: ClipboardEvent): boolean {
-    return !!event.clipboardData;
   }
 
   hasClipboardHtmlContent(clipboardData: DataTransfer): boolean {

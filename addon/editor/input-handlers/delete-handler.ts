@@ -10,7 +10,7 @@ import {
   RemoveVoidElementManipulation,
   VoidElement
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {HandlerResponse, InputHandler, InputPlugin} from './input-handler';
+import {InputHandler, InputPlugin} from './input-handler';
 import {
   editorDebug,
   hasVisibleChildren,
@@ -22,6 +22,8 @@ import {
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import ListDeletePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/delete-plugin';
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
+import { HandlerResponse } from './handler-response';
+import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
 
 /**
  * We introduce an abstract reference point to check for visual changes.
@@ -77,7 +79,6 @@ export class MagicSpan implements VisualChangeReferencePoint {
     this.span.remove();
     this.editor.updateRichNode();
   }
-
 }
 
 class Caret implements VisualChangeReferencePoint {
@@ -116,7 +117,7 @@ class Caret implements VisualChangeReferencePoint {
   }
 
   cleanUp(): void {
-    //nothing to do
+    // Nothing to do.
   }
 }
 
@@ -194,7 +195,7 @@ interface CharacterPosition extends BaseThingAfterCursor {
 }
 
 /**
- * The end of a text node is fter the cursor, the text node is empty.
+ * The end of a text node is after the cursor, the text node is empty.
  *
  * ```<EmptyTextNode> |</EmptyTextNode>```
  *
@@ -220,7 +221,7 @@ interface EmptyTextNodeStartPosition extends BaseThingAfterCursor {
 /**
  * An element after the cursor and the cursor is currently outside the element.
  *
- *  ```|<Element>foo</Element>```
+ * ```|<Element>foo</Element>```
  *
  */
 interface ElementStartPosition extends BaseThingAfterCursor {
@@ -257,10 +258,10 @@ interface VoidElementPosition extends BaseThingAfterCursor {
  * see https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
  * for all possible types.
  *
- * TODO: do we want to split this up further? In theory the only other
- * expected types are Comment and (possibly) CDATASection
+ *TODO: do we want to split this up further? In theory the only other
+ * expected types are Comment and (possibly) CDATASection.
  *
- *  ```|<UncommonNode/>```
+ * ```|<UncommonNode/>```
  *
  */
 interface UncommonNodeStartPosition extends BaseThingAfterCursor {
@@ -279,7 +280,6 @@ type UncommonNode = CDATASection | ProcessingInstruction | Comment | Document | 
 
 /**
  * Ensures the received node is an UncommonNode.
- *
  * Throws an error if this is not the case.
  *
  * @param node [Node] The node to be returned.
@@ -327,6 +327,7 @@ export type DeleteHandlerManipulation =
  */
 export interface DeletePlugin extends InputPlugin {
   guidanceForManipulation: (manipulation: DeleteHandlerManipulation, editor: PernetRawEditor) => ManipulationGuidance | null;
+
   /**
    * Callback to let the plugin indicate whether or not it discovered
    * a change.
@@ -335,7 +336,6 @@ export interface DeletePlugin extends InputPlugin {
    */
   detectChange: (manipulation: DeleteHandlerManipulation) => boolean;
 }
-
 
 /**
  * Delete Handler, an event handler to handle removing content
@@ -346,7 +346,7 @@ export interface DeletePlugin extends InputPlugin {
  * @module contenteditable-editor
  * @class DeleteHandler
  * @constructor
- * @extends EmberObject
+ * @extends InputHandler
  */
 export default class DeleteHandler extends InputHandler {
   isLocked: boolean;
@@ -356,9 +356,9 @@ export default class DeleteHandler extends InputHandler {
    */
   plugins: Array<DeletePlugin> = [];
 
-  /////////////////////
-  // CALLBACK INTERFACE
-  /////////////////////
+  ////////////////////////
+  // CALLBACK INTERFACE //
+  ////////////////////////
 
   /**
    * Constructs a deleteHandler instance
@@ -368,7 +368,7 @@ export default class DeleteHandler extends InputHandler {
    * @public
    * @constructor
    */
-  constructor({rawEditor}: { rawEditor: PernetRawEditor }) {
+  constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
     super(rawEditor);
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [
@@ -378,25 +378,26 @@ export default class DeleteHandler extends InputHandler {
   }
 
   /**
-   * tests this handler can handle the specified event
+   * Tests this handler can handle the specified event.
    * @method isHandlerFor
-   * @param {KeyboardEvent} event
+   * @param {Event} event
    * @return boolean
    * @public
    */
-  isHandlerFor(event: Event) {
+  isHandlerFor(event: Event): boolean {
     const selection = window.getSelection();
-    return (
-        (event.type === "keydown" && (event as KeyboardEvent).key === 'Delete')
-        // || (event.type == "beforeinput" && (event as InputEvent).inputType == "deleteContentsBackwards") //TODO:figure out
-      )
-      && selection != null && selection.isCollapsed;
+
+    //TODO: Figure out if this should handle the following:
+    // event.type == "beforeinput" && (event as InputEvent).inputType == "deleteContentsBackwards"
+    return isKeyDownEvent(event)
+      && event.key === "Delete"
+      && selection !== null
+      && selection.isCollapsed;
   }
 
   /**
    * handle delete event
    * @method handleEvent
-   * @return {HandlerResponse}
    * @public
    */
   handleEvent(event: Event): HandlerResponse {
@@ -415,9 +416,9 @@ export default class DeleteHandler extends InputHandler {
     return {allowPropagation: false};
   }
 
-  /////////////////
-  // IMPLEMENTATION
-  /////////////////
+  ////////////////////
+  // IMPLEMENTATION //
+  ////////////////////
 
   /**
    * General control-flow for the delete-handling.
@@ -542,7 +543,7 @@ export default class DeleteHandler extends InputHandler {
   }
 
   /**
-   * Returns truethy if a visual change could be detected.
+   * Returns truthy if a visual change could be detected.
    *
    * TODO: current implementation assumes selection is a carret.
    *
@@ -552,7 +553,6 @@ export default class DeleteHandler extends InputHandler {
    * @param options.previousVisualCursorCoordinates {Array<DOMRectCoordinatesInEditor>}
    * Coordinates of the rectangles defining the selection.
    */
-
 
   /**
    * Executes a single manipulation on the DOM tree, ensuring the

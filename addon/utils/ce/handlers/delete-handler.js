@@ -24,7 +24,7 @@ export default class DeleteHandler {
       && event.key === 'Delete';
   }
 
-  doesCurrentNodeBelongsToContentEditable(){
+  doesCurrentNodeBelongsToContentEditable() {
     return this.rawEditor.currentNode && this.rawEditor.currentNode.parentNode && this.rawEditor.currentNode.parentNode.isContentEditable;
   }
 

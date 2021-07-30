@@ -4,10 +4,12 @@ import {warn} from "@ember/debug";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input-handler";
 import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
+import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
+import {isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 /**
  * Arrow Handler, an event handler to handle arrow keys.
- * __Note__: Currently only left and right arrow keys are supported
+ * __Note__: Currently only left and right arrow keys are supported.
  *
  * @module contenteditable-editor
  * @class ArrowHandler
@@ -18,30 +20,17 @@ export default class ArrowHandler extends InputHandler {
     super(rawEditor);
   }
 
-  /**
-   * Tests this handler can handle the specified event.
-   * @method isHandlerFor
-   * @param {KeyboardEvent} event
-   * @return boolean
-   * @public
-   */
-  isHandlerFor(event: KeyboardEvent): boolean {
-    return event.type === "keydown"
+  isHandlerFor(event: Event): boolean {
+    return isKeyDownEvent(event)
       && (event.key === "ArrowLeft" || event.key === "ArrowRight")
       && this.rawEditor.currentSelectionIsACursor;
   }
 
-  /**
-   * Handle arrow event.
-   * @method handleEvent
-   * @return {HandlerResponse}
-   * @public
-   */
   handleEvent(event: KeyboardEvent): HandlerResponse {
     const position = this.rawEditor.currentSelection[0];
-    const textNode = this.rawEditor.currentNode as Text | null;
-    if (!textNode) {
-      throw new Error("No current node found.");
+    const textNode = this.rawEditor.currentNode;
+    if (!textNode || !isTextNode(textNode)) {
+      throw new Error("Current node is not a text node.");
     }
 
     const richNode = this.rawEditor.getRichNodeFor(textNode);
