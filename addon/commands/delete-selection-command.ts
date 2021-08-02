@@ -8,7 +8,6 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 export default class DeleteSelectionCommand extends Command<unknown[], ModelNode[]> {
   name = "delete-selection";

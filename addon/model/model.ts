@@ -10,9 +10,6 @@ import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-wr
 import BatchedModelMutator from "@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {Direction, FilterAndPredicate} from "@lblod/ember-rdfa-editor/model/util/types";
-import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
-
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
