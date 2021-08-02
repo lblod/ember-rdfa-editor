@@ -3,6 +3,7 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {start} from "ember-qunit";
 
 export default class ModelRangeUtils {
   static getExtendedToPlaceholder(range: ModelRange): ModelRange {

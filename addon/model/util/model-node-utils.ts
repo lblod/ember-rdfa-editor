@@ -36,13 +36,12 @@ export default class ModelNodeUtils {
     return ModelNode.isModelElement(node) && !!node.getAttribute("class")?.includes(PLACEHOLDER_CLASS);
   }
 
-  static findAncestor(node: ModelNode | null, predicate: (node: ModelNode) => boolean): ModelElement | null {
+  static findAncestor(node: ModelNode | null, predicate: (node: ModelNode) => boolean, includeSelf = false): ModelNode | null {
     if (!node) {
       return null;
     }
 
-    let current = node.parent;
-
+    let current = includeSelf ? node : node.parent;
     while (current && !predicate(current)) {
       current = current.parent;
     }

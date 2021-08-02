@@ -4,8 +4,9 @@ import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 
 export default class UnindentListCommand extends Command {
   name = "unindent-list";
@@ -14,45 +15,28 @@ export default class UnindentListCommand extends Command {
     super(model);
   }
 
-  canExecute(selection: ModelSelection = this.model.selection): boolean {
-    if (!ModelSelection.isWellBehaved(selection)) {
+  canExecute(range: ModelRange | null = this.model.selection.lastRange): boolean {
+    if (!range) {
       return false;
     }
 
-    // TODO: why is this not the same as below?
-    // const treeWalker = ModelRangeUtils.findModelNodes(
-    //   selection.lastRange,
-    //   node => {
-    //     const firstAncestorLi = ModelNodeUtils.findAncestor(node, ModelNodeUtils.isListElement);
-    //     const secondAncestorLi = ModelNodeUtils.findAncestor(firstAncestorLi, ModelNodeUtils.isListElement);
-    //
-    //     return firstAncestorLi !== null && secondAncestorLi !== null;
-    //   }
-    // );
-    // const test = [...treeWalker];
+    const predicate = (node: ModelNode) => {
+      const firstAncestorLi = ModelNodeUtils.findAncestor(node, ModelNodeUtils.isListElement, true);
+      const secondAncestorLi = ModelNodeUtils.findAncestor(firstAncestorLi, ModelNodeUtils.isListElement);
 
-    const interestingLis = selection.findAllInSelection(
-      {
-        predicate: node => {
-          const firstAncestorLi = ModelNodeUtils.findAncestor(node, ModelNodeUtils.isListElement);
-          const secondAncestorLi = ModelNodeUtils.findAncestor(firstAncestorLi, ModelNodeUtils.isListElement);
+      return !!firstAncestorLi && !!secondAncestorLi;
+    };
 
-          return firstAncestorLi !== null && secondAncestorLi !== null;
-        }
-      }
-    );
-    const result = interestingLis && [...interestingLis];
-
-    return !!result?.length;
+    const treeWalker = ModelRangeUtils.findModelNodes(range, predicate);
+    return !![...treeWalker].length;
   }
 
   @logExecute
-  execute(selection: ModelSelection = this.model.selection): void {
-    if (!ModelSelection.isWellBehaved(selection)) {
+  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+    if (!range) {
       throw new MisbehavedSelectionError();
     }
 
-    const range = selection.lastRange;
     const treeWalker = ModelRangeUtils.findModelNodes(
       range,
       ModelNodeUtils.isListElement
@@ -79,7 +63,11 @@ export default class UnindentListCommand extends Command {
         const grandParent = ModelNodeUtils.findAncestor(parent, ModelNodeUtils.isListElement);
         const greatGrandParent = ModelNodeUtils.findAncestor(grandParent, ModelNodeUtils.isListContainer);
 
-        if (li && parent && grandParent && greatGrandParent) {
+        if (li && ModelElement.isModelElement(li)
+          && parent && ModelElement.isModelElement(parent)
+          && grandParent && ModelElement.isModelElement(grandParent)
+          && greatGrandParent && ModelElement.isModelElement(greatGrandParent)
+        ) {
           // Remove node.
           const liIndex = li.index;
           parent.removeChild(li);

@@ -1,16 +1,15 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {MisbehavedSelectionError, NoParentError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 
 export default class IndentListCommand extends Command {
   name = "indent-list";
-  predicate = (node: ModelNode) => ModelNode.isModelElement(node) && node.type === "li";
 
   constructor(model: Model) {
     super(model);
@@ -21,7 +20,7 @@ export default class IndentListCommand extends Command {
       return false;
     }
 
-    const treeWalker = ModelRangeUtils.findModelNodes(range, this.predicate);
+    const treeWalker = ModelRangeUtils.findModelNodes(range, ModelNodeUtils.isListElement);
     for (const li of treeWalker) {
       if (!li || li.index === 0) {
         return false;
@@ -37,11 +36,11 @@ export default class IndentListCommand extends Command {
       throw new MisbehavedSelectionError();
     }
 
-    const treeWalker = ModelRangeUtils.findModelNodes(range, this.predicate);
+    const treeWalker = ModelRangeUtils.findModelNodes(range, ModelNodeUtils.isListElement);
     const setsToIndent = new Map<ModelElement, ModelElement[]>();
 
     for (const li of treeWalker) {
-      if (!ModelNode.isModelElement(li) || li.type !== "li") {
+      if (!ModelNodeUtils.isListElement(li)) {
         throw new Error("Current node is not a list element.");
       }
 

@@ -8,6 +8,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 export default class DeleteSelectionCommand extends Command<unknown[], ModelNode[]> {
   name = "delete-selection";
@@ -29,8 +30,8 @@ export default class DeleteSelectionCommand extends Command<unknown[], ModelNode
       if (commonAncestor.type === "ul" || (commonAncestor.type === "li" && this.isElementFullySelected(commonAncestor, range))) {
         const newAncestor = ModelNodeUtils.findAncestor(commonAncestor, node => ModelNode.isModelElement(node) && node.type !== "ul");
 
-        if (!newAncestor) {
-          throw new Error('No ancestor found');
+        if (!newAncestor || !ModelElement.isModelElement(newAncestor)) {
+          throw new Error("No ancestor found");
         }
         commonAncestor = newAncestor;
       }

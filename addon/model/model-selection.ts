@@ -243,7 +243,6 @@ export default class ModelSelection {
     } else {
       return PropertyState.unknown;
     }
-
   }
 
   get rdfaSelection() {
@@ -293,7 +292,6 @@ export default class ModelSelection {
     this.addRange(range);
   }
 
-
   calculateRdfaSelection(selection: Selection) {
     if (selection.type === 'Caret') {
       if (!selection.anchorNode) {
@@ -305,7 +303,5 @@ export default class ModelSelection {
       const commonAncestor = range.commonAncestorContainer;
       return analyse(commonAncestor);
     }
-
   }
-
 }
