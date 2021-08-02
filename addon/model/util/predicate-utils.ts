@@ -19,6 +19,7 @@ export const elementHasType = (...types: ElementType[]): Predicate<ModelElement>
   }
   return predicate;
 };
+
 export const nodeIsElementOfType = (...types: ElementType[]): Predicate<ModelNode> => {
   let predicate;
   if (types.length) {

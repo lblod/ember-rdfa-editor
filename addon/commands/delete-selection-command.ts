@@ -32,6 +32,7 @@ export default class DeleteSelectionCommand extends Command<unknown[], ModelNode
         if (!newAncestor || !ModelElement.isModelElement(newAncestor)) {
           throw new Error("No ancestor found");
         }
+
         commonAncestor = newAncestor;
       }
     }
@@ -46,7 +47,7 @@ export default class DeleteSelectionCommand extends Command<unknown[], ModelNode
       // Check if selection is inside table cell. If this is the case, cut children of said cell.
       // Assumption: if table cell is selected, no other nodes at the same level can be selected.
       const firstModelNode = treeWalker.currentNode;
-      if (ModelNode.isModelElement(firstModelNode) && (firstModelNode.type === "th" || firstModelNode.type === "td")) {
+      if (ModelNodeUtils.isTableCell(firstModelNode)) {
         contentRange = range;
         treeWalker = new ModelTreeWalker({
           range: contentRange,

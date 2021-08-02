@@ -39,7 +39,7 @@ export default class MakeListCommand extends Command {
     const list = new ModelElement(listType);
     for (const block of blocks) {
       const li = new ModelElement("li");
-      //TODO: investigate why we have to clone here and document it
+      // TODO: Investigate why we have to clone here and document it.
       li.appendChildren(...block.map(node => node.clone()));
       list.addChild(li);
     }
@@ -50,7 +50,11 @@ export default class MakeListCommand extends Command {
         throw new ModelError("List without list item.");
       }
 
-      const fullRange = ModelRange.fromInElement(this.model.rootModelNode, 0, this.model.rootModelNode.getMaxOffset());
+      const fullRange = ModelRange.fromInElement(
+        this.model.rootModelNode,
+        0,
+        this.model.rootModelNode.getMaxOffset()
+      );
       const cleaner = new ListCleaner();
       cleaner.clean(fullRange);
 

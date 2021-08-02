@@ -4,10 +4,9 @@ import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {elementHasType} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
-import {listTypes} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 
 export default class RemoveListCommand extends Command {
   name = "remove-list";
@@ -23,11 +22,11 @@ export default class RemoveListCommand extends Command {
     }
 
     this.model.change(mutator => {
-      const endLis = range.end.findAncestors(elementHasType("li"));
+      const endLis = range.end.findAncestors(ModelNodeUtils.isListElement);
       const highestEndLi = endLis[endLis.length - 1];
       const lowestEndLi = endLis[0];
 
-      const startLis = range.start.findAncestors(elementHasType("li"));
+      const startLis = range.start.findAncestors(ModelNodeUtils.isListElement);
       const highestStartLi = startLis[startLis.length - 1];
       const lowestStartLi = startLis[0];
 
@@ -62,7 +61,7 @@ export default class RemoveListCommand extends Command {
       const unwrappedNodes = [];
       let resultRange;
       for (const node of nodesInRange) {
-        if (ModelNode.isModelElement(node) && listTypes.has(node.type)) {
+        if (ModelNodeUtils.isListRelated(node)) {
           resultRange = mutator.unwrap(node, true);
         } else if (ModelNode.isModelText(node)) {
           unwrappedNodes.push(node);

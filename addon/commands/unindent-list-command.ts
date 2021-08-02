@@ -21,6 +21,8 @@ export default class UnindentListCommand extends Command {
     }
 
     const predicate = (node: ModelNode) => {
+      // Set `includeSelf` to true, because this predicate will be used in `findModelNodes`, where we start
+      // searching from the parent of the current node. If we set it to false, the first parent will always be skipped.
       const firstAncestorLi = ModelNodeUtils.findAncestor(node, ModelNodeUtils.isListElement, true);
       const secondAncestorLi = ModelNodeUtils.findAncestor(firstAncestorLi, ModelNodeUtils.isListElement);
 
@@ -37,21 +39,18 @@ export default class UnindentListCommand extends Command {
       throw new MisbehavedSelectionError();
     }
 
-    const treeWalker = ModelRangeUtils.findModelNodes(
-      range,
-      ModelNodeUtils.isListElement
-    );
-
+    const treeWalker = ModelRangeUtils.findModelNodes(range, ModelNodeUtils.isListElement);
     const elements: ModelElement[] = [];
+
     for (const node of treeWalker) {
       if (!ModelNodeUtils.isListElement(node)) {
-        throw new Error("Current node is not a list element.");
+        throw new Error("Current node is not a list element");
       }
       elements.push(node);
     }
 
     if (elements.length === 0) {
-      throw new SelectionError("The selection is not in a list.");
+      throw new SelectionError("The selection is not inside a list");
     }
 
     // Get the shallowest common ancestors.
@@ -111,10 +110,8 @@ export default class UnindentListCommand extends Command {
   }
 
   private relatedChunks(elementArray: ModelElement[], result: ModelElement[] = []): ModelElement[] {
-    // Check that the li is nested.
-    elementArray = elementArray.filter(element =>
-      ModelNodeUtils.findAncestor(element, ModelNodeUtils.isListElement)
-    );
+    // Check if the li is nested.
+    elementArray = elementArray.filter(element => ModelNodeUtils.findAncestor(element, ModelNodeUtils.isListElement));
 
     // Sort array, by depth, shallowest first.
     elementArray = elementArray.sort((a, b) => {
@@ -125,16 +122,16 @@ export default class UnindentListCommand extends Command {
     const base = elementArray[0];
     result.push(base);
 
-    // Compare all paths to see if base is parent.
-    // Remove those that are related.
-    for (let i = 0; i < elementArray.length; i++) {
+    // Compare all paths to see if base is parent. Remove those that are related.
+    // Loop backwards since we are deleting from list during loop.
+    for (let i = elementArray.length - 1; i >= 0; i--) {
       if (UnindentListCommand.areRelated(base, elementArray[i])) {
         elementArray.splice(i, 1);
       }
     }
 
     if (elementArray.length === 0) {
-      // If empty return result with the elements that need to be shifted.
+      // If empty, return result with the elements that need to be shifted.
       return result;
     } else {
       // Otherwise some hot recursive action.

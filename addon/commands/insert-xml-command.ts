@@ -17,7 +17,7 @@ export default class InsertXmlCommand extends Command {
 
   @logExecute
   execute(xml: string, range: ModelRange | null = this.model.selection.lastRange): void {
-    if(!range) {
+    if (!range) {
       throw new MisbehavedSelectionError();
     }
 

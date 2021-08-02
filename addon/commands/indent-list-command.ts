@@ -7,6 +7,7 @@ import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 
 export default class IndentListCommand extends Command {
   name = "indent-list";
@@ -44,23 +45,22 @@ export default class IndentListCommand extends Command {
         throw new Error("Current node is not a list element.");
       }
 
-      const parent = li.parent;
-      if (!parent) {
+      if (!li.parent) {
         throw new NoParentError();
       }
 
-      const parentInSet = setsToIndent.get(parent);
+      const parentInSet = setsToIndent.get(li.parent);
       if (parentInSet) {
         parentInSet.push(li);
       } else {
-        setsToIndent.set(parent, [li]);
+        setsToIndent.set(li.parent, [li]);
       }
     }
 
     for (const [parent, lis] of setsToIndent.entries()) {
       // First li of (nested) list can never be selected here, so previousSibling is always another li.
-      const newParent = lis[0].previousSibling as ModelElement;
-      if (!newParent) {
+      const newParent = lis[0].previousSibling;
+      if (!newParent || !ModelNode.isModelElement(newParent)) {
         throw new Error("First selected li doesn't have previous sibling");
       }
 
