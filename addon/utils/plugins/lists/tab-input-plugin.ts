@@ -181,7 +181,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       element.after(textNode);
     }
 
-    textNode = ensureValidTextNodeForCaret(textNode as Text);
+    textNode = ensureValidTextNodeForCaret(textNode);
     editor.updateRichNode();
     editor.setCaret(textNode, 0);
   };
@@ -203,7 +203,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       textNode = document.createTextNode('');
       element.before(textNode);
     }
-    textNode = ensureValidTextNodeForCaret(textNode as Text);
+    textNode = ensureValidTextNodeForCaret(textNode);
     editor.updateRichNode();
     editor.setCaret(textNode, (textNode ).length);
   };
