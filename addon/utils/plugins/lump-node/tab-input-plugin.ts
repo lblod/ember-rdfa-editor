@@ -2,6 +2,7 @@ import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/e
 import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
+import {isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 /**
  *
@@ -11,27 +12,26 @@ import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/uti
 export default class LumpNodeTabInputPlugin implements TabInputPlugin {
   label = 'Tap input plugin for handling LumpNodes';
 
-  isSupportedManipulation(manipulation : Manipulation) : boolean {
-    return manipulation.type  === 'moveCursorToStartOfElement'
-      || manipulation.type  === 'moveCursorToEndOfElement';
+  isSupportedManipulation(manipulation : Manipulation): boolean {
+    return manipulation.type === 'moveCursorToStartOfElement'
+      || manipulation.type === 'moveCursorToEndOfElement';
   }
 
-  guidanceForManipulation(manipulation : TabHandlerManipulation) : ManipulationGuidance | null {
-    if( !this.isSupportedManipulation(manipulation) ){
+  guidanceForManipulation(manipulation : TabHandlerManipulation): ManipulationGuidance | null {
+    if (!this.isSupportedManipulation(manipulation)) {
       return null;
     }
 
     const element = manipulation.node;
     const rootNode = element.getRootNode(); //Assuming here that node is attached.
-    const isElementInLumpNode = isInLumpNode(element, rootNode);
+    const isElementInLumpNode = isInLumpNode(element, rootNode as HTMLElement);
 
-    if(manipulation.type  === 'moveCursorToStartOfElement' && isElementInLumpNode){
+    if (manipulation.type === 'moveCursorToStartOfElement' && isElementInLumpNode) {
       return {
         allow: true,
         executor: this.jumpOverLumpNode
       };
-    }
-    else if(manipulation.type  === 'moveCursorToEndOfElement' && isElementInLumpNode){
+    } else if (manipulation.type === 'moveCursorToEndOfElement' && isElementInLumpNode) {
       return {
         allow: true,
         executor: this.jumpOverLumpNodeBackwards
@@ -42,31 +42,43 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
   }
 
   jumpOverLumpNode = (manipulation: TabHandlerManipulation, editor: Editor): void => {
-    const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
-    let textNode;
-    if(element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE){
-      textNode = element.nextSibling;
+    const node = manipulation.node;
+    const rootNode = node.getRootNode() as HTMLElement;
+    const element = getParentLumpNode(node, rootNode); // We can safely assume this.
+    if (!element) {
+      throw new Error("No parent lump node found");
     }
-    else {
+
+    let textNode;
+    if (element.nextSibling && isTextNode(element.nextSibling)) {
+      textNode = element.nextSibling;
+    } else {
       textNode = document.createTextNode('');
       element.after(textNode);
     }
-    textNode = ensureValidTextNodeForCaret(textNode as Text);
+
+    textNode = ensureValidTextNodeForCaret(textNode);
     editor.updateRichNode();
     editor.setCaret(textNode, 0);
   };
 
-  jumpOverLumpNodeBackwards = (manipulation: TabHandlerManipulation, editor: Editor ): void => {
-    const element = getParentLumpNode(manipulation.node, manipulation.node.getRootNode()) as HTMLElement; //we can safely assume this
-    let textNode;
-    if(element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE){
-      textNode = element.previousSibling;
+  jumpOverLumpNodeBackwards = (manipulation: TabHandlerManipulation, editor: Editor): void => {
+    const node = manipulation.node;
+    const rootNode = node.getRootNode() as HTMLElement;
+    const element = getParentLumpNode(node, rootNode);
+    if (!element) {
+      throw new Error("No parent lump node found");
     }
-    else {
+
+    let textNode;
+    if (element.previousSibling && isTextNode(element.previousSibling)) {
+      textNode = element.previousSibling;
+    } else {
       textNode = document.createTextNode('');
       element.before(textNode);
     }
-    textNode = ensureValidTextNodeForCaret(textNode as Text);
+
+    textNode = ensureValidTextNodeForCaret(textNode);
     editor.updateRichNode();
     editor.setCaret(textNode, textNode.length);
   };
