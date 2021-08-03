@@ -17,11 +17,11 @@ import PernetRawEditor from '../../ce/pernet-raw-editor';
  * @module plugins/table
  */
 export default class TableTabInputPlugin implements TabInputPlugin {
-  label = 'backspace plugin for handling table nodes';
+  label = 'Backspace plugin for handling table nodes';
 
   guidanceForManipulation(manipulation: TabHandlerManipulation, editor: RawEditor) : ManipulationGuidance | null {
     const selection = editor.selection;
-    if(selection.inTableState === PropertyState.enabled) {
+    if (selection.inTableState === PropertyState.enabled) {
       return {
         allow: true,
         executor: TableTabInputPlugin.tabHandler

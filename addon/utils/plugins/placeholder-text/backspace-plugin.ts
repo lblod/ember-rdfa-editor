@@ -11,12 +11,12 @@ import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
  * @module plugins/placeholder-text
  */
 export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
-  label = 'backspace plugin for handling placeholder nodes';
+  label = "Backspace plugin for handling placeholder nodes";
 
   guidanceForManipulation(manipulation : BackspaceHandlerManipulation) : ManipulationGuidance | null {
     const node = manipulation.node;
     const parentNode = node.parentElement;
-    if (parentNode && parentNode.classList.contains('mark-highlight-manual')) {
+    if (parentNode && parentNode.classList.contains("mark-highlight-manual")) {
       return {
         allow: true,
         executor: this.removePlaceholder
@@ -27,7 +27,7 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
   }
 
   /**
-   * This executor removes the placeholder node containing manipulation.node competly.
+   * This executor removes the placeholder node containing manipulation.node completely.
    * @method removePlaceholder
    */
   removePlaceholder = (manipulation: BackspaceHandlerManipulation, editor: Editor): void => {
@@ -51,6 +51,6 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
     const node = manipulation.node;
     const parentNode = node.parentElement;
 
-    return !!(parentNode && parentNode.classList.contains('mark-highlight-manual'));
+    return !!(parentNode && parentNode.classList.contains("mark-highlight-manual"));
   }
 }

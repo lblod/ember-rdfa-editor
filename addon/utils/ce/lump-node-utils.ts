@@ -15,19 +15,19 @@ import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
  *
  * TODO
  * ----
- * - 'property='http://lblod.data.gift/vocabularies/editor/isLumpNode': no prefixed URI will work.
+ * - property='http://lblod.data.gift/vocabularies/editor/isLumpNode': no prefixed URI will work.
  *   This due to performance reasons of MARAWA, which would slow everything, as long as no incremental changes are supported.
- * - wiring: there is currently a dichotomy between CE and RDFA editor, and even though this is contained in CE, whilst using RDFA here
- *           this means it probably should not belong here. So location will change.
+ * - wiring: There is currently a dichotomy between CE and RDFA editor and even though this is contained in CE,
+ *           whilst using RDFA here this means it probably should not belong here. So location will change.
  */
-const LUMP_NODE_URI = 'http://lblod.data.gift/vocabularies/editor/isLumpNode';
+const LUMP_NODE_URI = "http://lblod.data.gift/vocabularies/editor/isLumpNode";
 
 export function isInLumpNode(node: Node, rootNode: HTMLElement): boolean {
   return !!getParentLumpNode(node, rootNode);
 }
 
 /**
- * Return node if it is a lump node, walk up the tree to find one
+ * Return node if it is a lump node. Walk up the tree to find one
  * otherwise, until you hit rootNode. Return null if no node found.
  *
  * @param {Node} node
@@ -106,7 +106,7 @@ export function hasLumpNodeProperty(element: HTMLElement): boolean {
 }
 
 export function animateLumpNode(element: HTMLElement): void {
-  const animationClass = 'lump-node-highlight';
+  const animationClass = "lump-node-highlight";
 
   element.classList.add(animationClass);
   window.setTimeout(() => element.classList.remove(animationClass), 500);

@@ -38,7 +38,7 @@ function updateDataFlaggedRemove(manipulation: TextHandlerManipulation, editor: 
 }
 
 export default class RdfaTextInputPlugin implements TextInputPlugin {
-  label = 'text input plugin for handling RDFA specific logic';
+  label = 'Text input plugin for handling RDFA specific logic';
 
   guidanceForManipulation(manipulation: TextHandlerManipulation): ManipulationGuidance | null {
     const {type, range} = manipulation;

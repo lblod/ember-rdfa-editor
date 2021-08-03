@@ -1,13 +1,13 @@
 import {
   TextHandlerManipulation,
   TextInputPlugin
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
-import {ManipulationGuidance,} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+} from "@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler";
+import {ManipulationGuidance} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 export default class AnchorTagTextInputPlugin implements TextInputPlugin {
-  label = 'text input plugin for handling text input in anchors';
+  label = "Text input plugin for handling text input in anchors";
 
   guidanceForManipulation(manipulation: TextHandlerManipulation): ManipulationGuidance | null {
     const {range, text} = manipulation;
@@ -39,8 +39,6 @@ export default class AnchorTagTextInputPlugin implements TextInputPlugin {
             rawEditor.executeCommand("insert-text", text, clonedRange);
           }
         };
-      } else {
-        return null;
       }
     }
 

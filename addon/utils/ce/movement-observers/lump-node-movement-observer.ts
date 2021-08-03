@@ -6,20 +6,19 @@ import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers"
 export default class LumpNodeMovementObserver {
   handleMovement(editor: PernetRawEditor, oldSelection: InternalSelection, newSelection: InternalSelection): void {
     if (oldSelection) {
-      // Backspace may have highlighted the lump node and user is no longer trying to delete it, so remove the highlight.
       // TODO: This doesn't work as expected and needs revision.
+      // Backspace may have highlighted the lump node and user is no longer trying to delete it, so remove the highlight.
       const previousNode = oldSelection.startNode.domNode;
-
+      const nodeBeforeOldSelection = previousNode.previousSibling;
       if (previousNode.parentNode
-        && oldSelection.startNode.absolutePosition !== newSelection.startNode.absolutePosition) {
+        && nodeBeforeOldSelection
+        && isInLumpNode(nodeBeforeOldSelection, editor.rootNode)
+        && oldSelection.startNode.absolutePosition !== newSelection.startNode.absolutePosition
+      ) {
         // Node is still part of the dom tree.
-        const nodeBeforeOldSelection = oldSelection.startNode.domNode.previousSibling;
-        if (nodeBeforeOldSelection && isInLumpNode(nodeBeforeOldSelection, editor.rootNode)) {
-          const lumpNode = getParentLumpNode(nodeBeforeOldSelection, editor.rootNode);
-
-          if (lumpNode && isElement(lumpNode) && lumpNode.hasAttribute('data-flagged-remove')) {
-            lumpNode.removeAttribute('data-flagged-remove');
-          }
+        const lumpNode = getParentLumpNode(nodeBeforeOldSelection, editor.rootNode);
+        if (lumpNode && isElement(lumpNode) && lumpNode.hasAttribute("data-flagged-remove")) {
+          lumpNode.removeAttribute("data-flagged-remove");
         }
       }
     }
@@ -41,10 +40,10 @@ export default class LumpNodeMovementObserver {
 }
 
 /**********************************************************************************************************
- DISCLAIMER: this code is copy-pasta from a utils/plugins/lump-node/backspace-plugin.ts and will be revised.
+ DISCLAIMER: This code is copy-pasta from utils/plugins/lump-node/backspace-plugin.ts and will be revised.
  It is meant to fix a bug where you could still click into a lump node in some cases.
- Groundwork and collective thinking are need to deal with clicks and selection changes (and arrows etc.).
- It will inject textNode if your previous or next sibling is an element. Not super elegant. Better than before.
+ Groundwork and collective thinking are needed to deal with clicks and selection changes (and arrows etc.).
+ It will inject a textNode if your previous or next sibling is an element. Not super elegant. Better than before.
 ***********************************************************************************************************/
 function jumpOverLumpNode(node: Node, rootNode: HTMLElement, editor: PernetRawEditor): void {
   const element = getParentLumpNode(node, rootNode);
@@ -65,7 +64,7 @@ function jumpOverLumpNode(node: Node, rootNode: HTMLElement, editor: PernetRawEd
     element.after(nextNode);
   }
 
-  nextNode = ensureValidTextNodeForCaret(nextNode); //TODO: move this in set.caret or other uniform API somehow
+  nextNode = ensureValidTextNodeForCaret(nextNode); // TODO: Move this in setCaret or other uniform API somehow.
   editor.updateRichNode();
   editor.setCaret(nextNode, 0);
 }
@@ -84,7 +83,7 @@ function jumpOverLumpNodeBackwards(node: Node, rootNode: HTMLElement, editor: Pe
     element.before(textNode);
   }
 
-  textNode = ensureValidTextNodeForCaret(textNode); //TODO: move this in set.caret or other uniform API somehow
+  textNode = ensureValidTextNodeForCaret(textNode); // TODO: Move this in setCaret or other uniform API somehow.
   editor.updateRichNode();
   editor.setCaret(textNode, textNode.length);
 }

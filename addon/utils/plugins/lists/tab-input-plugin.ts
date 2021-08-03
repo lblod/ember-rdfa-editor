@@ -11,76 +11,68 @@ import {
 import { indentAction, unindentAction } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 
-
 /**
  * Current behaviour
  * - case not first or last LI:
  *  - if cursor at at beginning of LI + (shift or shift + tab) indents or unindents
  *  - if cursor not at the end of LI jumps to next or previous LI
- *
  * - else: jumps out of list
  * @class ListTabInputPlugin
  * @module plugin/lists
  */
 export default class ListTabInputPlugin implements TabInputPlugin {
-  label = 'Tab input plugin for handling List interaction';
+  label = "Tab input plugin for handling List interaction";
 
   guidanceForManipulation(manipulation : TabHandlerManipulation) : ManipulationGuidance | null {
-    if (manipulation.type === 'moveCursorToStartOfElement') {
+    if (manipulation.type === "moveCursorToStartOfElement") {
       if (isList(manipulation.node)){
         return { allow: true, executor: this.jumpIntoFirstLi };
       }
-    }
-
-    else if( manipulation.type === 'moveCursorAfterElement' && isLI(manipulation.node)) {
-      //Some choices have been made. Let's try to follow more or less the most popular html editor
-
+    } else if (manipulation.type === 'moveCursorAfterElement' && isLI(manipulation.node)) {
+      // Some choices have been made. Let's try to follow more or less the most popular html editor.
       const listItem = manipulation.node as HTMLElement;
 
-      //If cursor at beginning of LI, then do the indent
-      if (!manipulation.selection) throw new Error("Manipulation has no selection");
+      // If cursor at beginning of LI, then do the indent.
+      if (!manipulation.selection) {
+        throw new Error("Manipulation has no selection");
+      }
+
       if (manipulation.selection.anchorOffset === 0
          && manipulation.selection.anchorNode
          && manipulation.selection.anchorNode.isSameNode(manipulation.node.firstChild)
       ) {
         return { allow: true, executor: this.indentLiContent };
-      }
-      else {
+      } else {
         const list = manipulation.node.parentElement as HTMLUListElement | HTMLOListElement;
         const lastLi = findLastLi(list);
 
-        if( lastLi && lastLi.isSameNode(listItem) ){
+        if (lastLi && lastLi.isSameNode(listItem)){
           return { allow: true, executor: this.jumpOutOfList };
-        }
-        else {
+        } else {
           return { allow: true, executor: this.jumpToNextLi };
         }
       }
-    }
-    else if (manipulation.type === 'moveCursorToEndOfElement') {
-      if(isList(manipulation.node)){
+    } else if (manipulation.type === "moveCursorToEndOfElement") {
+      if (isList(manipulation.node)){
         return { allow: true, executor: this.jumpIntoLastLi };
       }
-    }
-
-    else if ( manipulation.type === 'moveCursorBeforeElement' && isLI(manipulation.node) ){
+    } else if (manipulation.type === "moveCursorBeforeElement" && isLI(manipulation.node)) {
       const listItem = manipulation.node as HTMLElement;
-      //If cursor at beginning of LI, then do the unindent
-      //Note: this might be suprising and we also might want the cursor to be at the end of the LI
+      // If cursor at beginning of LI, then do the unindent.
+      // Note: this might be surprising and we also might want the cursor to be at the end of the LI.
       if (manipulation.selection
          && manipulation.selection.anchorOffset === 0
          && manipulation.selection.anchorNode
-         && manipulation.selection.anchorNode.isSameNode(listItem.firstChild) ){
+         && manipulation.selection.anchorNode.isSameNode(listItem.firstChild)
+      ){
         return { allow: true, executor: this.unindentLiContent };
-      }
-      else {
+      } else {
         const list = listItem.parentElement as HTMLUListElement | HTMLOListElement;
         const firstLi = getAllLisFromList(list)[0];
 
-        if( firstLi.isSameNode(listItem) ){
+        if (firstLi.isSameNode(listItem)) {
           return { allow: true, executor: this.jumpOutOfListToStart };
-        }
-        else {
+        } else {
           return { allow: true, executor: this.jumpToPreviousLi };
         }
       }
@@ -90,24 +82,25 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   }
 
   /**
-   * Sets the cursor in the first <li></li>. If list is empty, creates an <li></li>
+   * Sets the cursor in the first <li></li>. If list is empty, creates an <li></li>.
    */
   jumpIntoFirstLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let firstLi;
 
-    //This branch creates a new LI, but not really sure if we want that.
-    if (isEmptyList(list)){
-      firstLi = document.createElement('li');
+    // This branch creates a new LI, but not really sure if we want that.
+    if (isEmptyList(list)) {
+      firstLi = document.createElement("li");
       list.append(firstLi);
     } else {
       firstLi = getAllLisFromList(list)[0];
     }
+
     setCursorAtStartOfLi(firstLi, editor);
   };
 
   /**
-   * Sets the cursor in the last <li></li>. If list is empty, creates an <li></li>
+   * Sets the cursor in the last <li></li>. If list is empty, creates an <li></li>.
    */
   jumpIntoLastLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
@@ -115,35 +108,36 @@ export default class ListTabInputPlugin implements TabInputPlugin {
 
     // This branch creates a new LI, but not really sure if we want that.
     if (isEmptyList(list)){
-      lastLi = document.createElement('li');
+      lastLi = document.createElement("li");
       list.append(lastLi);
     } else {
       const liList = getAllLisFromList(list);
       lastLi = liList[liList.length - 1];
     }
+
     setCursorAtEndOfLi(lastLi, editor);
   };
 
-  /*
-   * Creates nested list
-   * Note: depends on list helpers from a long time ago.
+  /**
+   * Creates nested list.
+   * Note: Depends on list helpers from a long time ago.
    * TODO: Indent means the same as nested list, perhaps rename the action
    */
   indentLiContent = (_: TabHandlerManipulation, editor: Editor): void => {
     indentAction(editor); //TODO: this is legacy, this should be revisited.
   };
 
-  /*
-   * Merges nested list to parent list
-   * Note: depends on list helpers from a long time ago.
+  /**
+   * Merges nested list to parent list.
+   * Note: Depends on list helpers from a long time ago.
    * TODO: Indent means the same as merge nested list, perhaps rename the action
    */
   unindentLiContent = (_: TabHandlerManipulation, editor: Editor): void => {
     unindentAction(editor); //TODO: this is legacy, this should be revisited.
   };
 
-  /*
-   * Jumps to next List item. Assumes there is one and current LI is not the last
+  /**
+   * Jumps to next List item. Assumes there is one and current LI is not the last.
    */
   jumpToNextLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     //Assumes the LI is not the last one
@@ -153,24 +147,24 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     setCursorAtStartOfLi(listItems[indexOfLi + 1], editor);
   };
 
-  /*
-   * Jumps to next List item. Assumes there is one and current LI is not the first
+  /**
+   * Jumps to next List item. Assumes there is one and current LI is not the first.
    */
   jumpToPreviousLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
-    //Assumes the LI is not the last one
+    // Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLLIElement;
     const listItems = siblingLis(listItem);
     const indexOfLi = listItems.indexOf(listItem);
     setCursorAtEndOfLi(listItems[indexOfLi - 1], editor);
   };
 
-  /*
+  /**
    * Jumps outside of list.
    */
   jumpOutOfList = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     const element = manipulation.node.parentElement; // This is the list.
     if (!element) {
-      throw new Error('Tab-input-handler expected list to be attached to DOM');
+      throw new Error("Tab-input-handler expected list to be attached to DOM");
     }
 
     let textNode;
@@ -186,13 +180,13 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     editor.setCaret(textNode, 0);
   };
 
-  /*
-   * Jumps outside of at the start
+  /**
+   * Jumps outside of at the start.
    */
   jumpOutOfListToStart = (manipulation: TabHandlerManipulation, editor: Editor): void => {
     const element = manipulation.node.parentElement; // This is the list.
     if (!element) {
-      throw new Error('Tab-input-handler expected list to be attached to DOM');
+      throw new Error("Tab-input-handler expected list to be attached to DOM");
     }
 
     let textNode;
@@ -203,13 +197,14 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       textNode = document.createTextNode('');
       element.before(textNode);
     }
+
     textNode = ensureValidTextNodeForCaret(textNode);
     editor.updateRichNode();
     editor.setCaret(textNode, (textNode ).length);
   };
 }
 
-function setCursorAtStartOfLi(listItem : HTMLElement, editor: Editor) : void{
+function setCursorAtStartOfLi(listItem : HTMLElement, editor: Editor): void{
   let textNode;
   if (listItem.firstChild && isTextNode(listItem.firstChild)) {
     textNode = listItem.firstChild;
@@ -223,7 +218,7 @@ function setCursorAtStartOfLi(listItem : HTMLElement, editor: Editor) : void{
   editor.setCaret(textNode, 0);
 }
 
-function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor) : void {
+function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor): void {
   let textNode;
   if (listItem.lastChild && isTextNode(listItem.lastChild)) {
     textNode = listItem.lastChild;

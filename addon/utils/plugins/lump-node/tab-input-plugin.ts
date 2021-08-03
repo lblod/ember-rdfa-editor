@@ -10,11 +10,11 @@ import {isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
  * @module plugin/lump-node
  */
 export default class LumpNodeTabInputPlugin implements TabInputPlugin {
-  label = 'Tap input plugin for handling LumpNodes';
+  label = "Tab input plugin for handling lumpNodes";
 
   isSupportedManipulation(manipulation : Manipulation): boolean {
-    return manipulation.type === 'moveCursorToStartOfElement'
-      || manipulation.type === 'moveCursorToEndOfElement';
+    return manipulation.type === "moveCursorToStartOfElement"
+      || manipulation.type === "moveCursorToEndOfElement";
   }
 
   guidanceForManipulation(manipulation : TabHandlerManipulation): ManipulationGuidance | null {
@@ -26,12 +26,12 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     const rootNode = element.getRootNode(); //Assuming here that node is attached.
     const isElementInLumpNode = isInLumpNode(element, rootNode as HTMLElement);
 
-    if (manipulation.type === 'moveCursorToStartOfElement' && isElementInLumpNode) {
+    if (manipulation.type === "moveCursorToStartOfElement" && isElementInLumpNode) {
       return {
         allow: true,
         executor: this.jumpOverLumpNode
       };
-    } else if (manipulation.type === 'moveCursorToEndOfElement' && isElementInLumpNode) {
+    } else if (manipulation.type === "moveCursorToEndOfElement" && isElementInLumpNode) {
       return {
         allow: true,
         executor: this.jumpOverLumpNodeBackwards

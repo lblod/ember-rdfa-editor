@@ -14,19 +14,19 @@ function isBr(node: Node): boolean {
 }
 
 /**
- * not all brs are visible to the user and this plugin tries to prevent setting the cursor after a non visible br
- * setting the cursor at that location would create an extra line, which is odd
+ * Not all brs are visible to the user and this plugin tries to prevent setting the cursor after a non visible br.
+ * Setting the cursor at that location would create an extra line, which is odd.
  */
 export default class BrSkippingBackspacePlugin implements BackspacePlugin {
   label = "This plugin jumps over brs where necessary";
 
   guidanceForManipulation(manipulation: BackspaceHandlerManipulation): ManipulationGuidance | null {
     if (manipulation.type === "moveCursorToEndOfElement") {
-      const element = manipulation.node ;
+      const element = manipulation.node;
       if (window.getComputedStyle(element).display === "block") {
         const length = element.childNodes.length;
         if (length > 0 && isBr(element.childNodes[length - 1])) {
-          // last br in a block element is normally not visible, so jump before the br
+          // Last br in a block element is normally not visible, so jump before the br.
           return {
             allow: true,
             executor: this.moveCaretBeforeLastBrOfElement
@@ -37,41 +37,41 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
 
     if (manipulation.type === "moveCursorBeforeElement") {
       const element = manipulation.node;
-      if (window.getComputedStyle(element).display == "block") {
-        // moving before a block
+      if (window.getComputedStyle(element).display === "block") {
+        // Moving before a block.
         let previousSibling = element.previousSibling;
-        // jump over non visible text nodes (TODO: this probably breaks things)
+        // TODO: This probably breaks things.
+        // Jump over non visible text nodes.
         while (previousSibling
           && isTextNode(previousSibling)
-          && stringToVisibleText(previousSibling.textContent || "").length == 0
+          && stringToVisibleText(previousSibling.textContent || "").length === 0
         ) {
           previousSibling = previousSibling.previousSibling;
         }
 
-        if (previousSibling) {
-          if (isBr(previousSibling)) {
-            return {
-              allow: true,
-              executor: () => {
-                this.moveCaretBeforeBr(previousSibling as HTMLElement);
-              }
-            };
-          }
+        if (previousSibling && isBr(previousSibling)) {
+          return {
+            allow: true,
+            executor: () => {
+              this.moveCaretBeforeBr(previousSibling as HTMLElement);
+            }
+          };
         }
       }
     }
+
     return null;
   }
 
   /**
-   * executor that will move the cursor the br that is before the element
+   * Executor that will move the cursor the br that is before the element.
    */
   moveCaretBeforeBr(br: HTMLElement) {
     moveCaretBefore(br);
   }
 
   /**
-   * executor that will move the cursor before the last br of the element
+   * Executor that will move the cursor before the last br of the element.
    */
   moveCaretBeforeLastBrOfElement = (manipulation: MoveCursorToEndOfElementManipulation) => {
     const element = manipulation.node;
@@ -79,8 +79,8 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
   };
 
   /**
-   * allows the plugin to notify the backspace handler a change has occured.
-   * currently never detects a change but rather lets the backspace handler do detection
+   * Allows the plugin to notify the backspace handler a change has occurred.
+   * Currently never detects a change, but rather lets the backspace handler do detection.
    * @method detectChange
    */
   detectChange(): boolean {

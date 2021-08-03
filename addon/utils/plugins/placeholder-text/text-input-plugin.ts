@@ -12,7 +12,7 @@ import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-uti
  * @module plugins/placeholder-text
  */
 export default class PlaceholderTextInputPlugin implements TextInputPlugin {
-  label = 'text input plugin for handling RDFA specific logic';
+  label = "Text input plugin for handling RDFA specific logic";
 
   guidanceForManipulation(manipulation: TextHandlerManipulation): ManipulationGuidance | null {
     const {range: originalRange, text} = manipulation;
@@ -27,8 +27,8 @@ export default class PlaceholderTextInputPlugin implements TextInputPlugin {
           rawEditor.executeCommand("insert-text", text, range);
         }
       };
-    } else {
-      return null;
     }
+
+    return null;
   }
 }

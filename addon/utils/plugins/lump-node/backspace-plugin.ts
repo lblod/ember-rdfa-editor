@@ -103,7 +103,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
   }
 
   /**
-   * checks whether manipulation is supported
+   * Checks whether manipulation is supported.
    * @method isSupportedManipulation
    */
   isSupportedManipulation(manipulation: Manipulation): boolean {
@@ -111,11 +111,11 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
   }
 
   /**
-   * checks whether element is flagged for removal
+   * Checks whether element is flagged for removal.
    * @method isElementFlaggedForRemoval
    */
   isElementFlaggedForRemoval(element: Element): boolean {
-    return element.getAttribute('data-flagged-remove') === 'complete';
+    return element.getAttribute("data-flagged-remove") === "complete";
   }
 
   /**
@@ -123,6 +123,6 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * @method flagForRemoval
    */
   flagForRemoval = (lumpNode: Element): void => {
-    lumpNode.setAttribute('data-flagged-remove', 'complete');
+    lumpNode.setAttribute("data-flagged-remove", "complete");
   };
 }
