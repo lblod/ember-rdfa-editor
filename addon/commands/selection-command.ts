@@ -8,6 +8,7 @@ import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walk
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import {SimplifiedModel} from "@lblod/ember-rdfa-editor/model/model-history";
 
 export default abstract class SelectionCommand extends Command<unknown[], ModelNode[]> {
   abstract deleteSelection: boolean;
@@ -19,6 +20,11 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
   execute(selection: ModelSelection = this.model.selection): ModelNode[] {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
+    }
+
+    let buffer: SimplifiedModel | null = null;
+    if (!this.deleteSelection) {
+      buffer = this.model.createSnapshot();
     }
 
     let modelNodes: ModelNode[] = [];
@@ -61,11 +67,11 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
       }
     }, this.deleteSelection);
 
-    if (!this.deleteSelection) {
-      // Right before the execution of this command, the raw editor will have stored a snapshot of the VDOM right before
-      // the command gets executed. If `deleteSelection` is false, we don't want the split that has happened before to
-      // be written back to the actual DOM. Therefore, we restore this stored model.
-      this.model.restoreModel();
+    if (buffer) {
+      // If `deleteSelection` is false, we will have stored a snapshot of the model right before the execution of this
+      // command. This means we will enter this if-case. Since, we don't want the changes on the VDOM to get written
+      // back in this case, we restore the stored model.
+      this.model.restoreSnapshot(buffer, false);
     }
 
     return modelNodes;

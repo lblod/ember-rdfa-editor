@@ -182,7 +182,7 @@ class RawEditor extends EmberObject {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
         if (command.createSnapshot) {
-          this.model.storeModel();
+          this.model.saveSnapshot();
         }
         const result = command.execute(...args);
         this.updateRichNode();

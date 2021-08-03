@@ -25,7 +25,7 @@ module("Unit | commands | undo-command-test", hooks => {
     `;
 
     ctx.model.fillRoot(initial);
-    ctx.model.storeModel();
+    ctx.model.saveSnapshot();
     ctx.model.fillRoot(next);
 
     command.execute();
@@ -45,7 +45,7 @@ module("Unit | commands | undo-command-test", hooks => {
     `;
 
     ctx.model.fillRoot(initial);
-    ctx.model.storeModel();
+    ctx.model.saveSnapshot();
     ctx.model.fillRoot(next);
 
     command.execute();

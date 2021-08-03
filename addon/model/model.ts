@@ -10,7 +10,7 @@ import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-wr
 import BatchedModelMutator from "@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelHistory from "@lblod/ember-rdfa-editor/model/model-history";
+import ModelHistory, {SimplifiedModel} from "@lblod/ember-rdfa-editor/model/model-history";
 import {Diary} from "diary";
 import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
@@ -221,24 +221,28 @@ export default class Model {
     return this.rootModelNode.toXml();
   }
 
-  storeModel(): void {
+  createSnapshot(): SimplifiedModel {
     const rootModelNode = this.rootModelNode.clone();
     const modelSelection = this.selection.clone(rootModelNode);
 
-    this.history.push({rootModelNode, modelSelection});
+    return {rootModelNode, modelSelection};
   }
 
-  restoreModel(writeBack = true) {
-    const model = this.history.pop();
-    if (model) {
-      this._rootModelNode = model.rootModelNode;
-      this._selection = model.modelSelection;
+  saveSnapshot(): void {
+    const snapshot = this.createSnapshot();
+    this.history.push(snapshot);
+  }
+
+  restoreSnapshot(snapshot: SimplifiedModel | undefined = this.history.pop(), writeBack = true) {
+    if (snapshot) {
+      this._rootModelNode = snapshot.rootModelNode;
+      this._selection = snapshot.modelSelection;
 
       if (writeBack) {
         this.write();
       }
     } else {
-      this.logger.warn("No more model history to undo!");
+      this.logger.warn("No snapshot to restore");
     }
   }
 }

@@ -43,7 +43,6 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(text, 0, text.length);
     ctx.modelSelection.selectRange(range);
 
-    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -69,7 +68,6 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(text, 9, 16);
     ctx.modelSelection.selectRange(range);
 
-    ctx.model.storeModel();
     const readNodes: ModelNode[] = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -115,7 +113,6 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(selectedText, 0, selectedText.length);
     ctx.modelSelection.selectRange(range);
 
-    ctx.model.storeModel();
     const readNodes: ModelNode[] = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -186,7 +183,6 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInElement(firstList, 0, firstList.getMaxOffset());
     ctx.model.selectRange(range);
 
-    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -256,7 +252,6 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
-    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -306,7 +301,6 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInElement(firstList, 0, firstList.getMaxOffset());
     ctx.model.selectRange(range);
 
-    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -358,7 +352,6 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
-    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -418,7 +411,6 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(firstLine, 0, firstLine.length);
     ctx.model.selectRange(range);
 
-    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -504,7 +496,6 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
-    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -553,7 +544,6 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(firstText, 0, 3);
     ctx.model.selectRange(range);
 
-    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 

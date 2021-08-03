@@ -9,6 +9,6 @@ export default class UndoCommand extends Command {
   }
 
   execute(): void {
-    this.model.restoreModel();
+    this.model.restoreSnapshot();
   }
 }
