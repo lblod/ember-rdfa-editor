@@ -88,8 +88,8 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     const result = new ModelElement(this.type, config);
 
     result.attributeMap = new Map<string, string>(this.attributeMap);
-    result.boundNode = this.boundNode?.cloneNode() || null;
     result.modelNodeType = this.modelNodeType;
+    result.boundNode = this.boundNode;
 
     const clonedChildren = this.children.map(c => c.clone());
     result.appendChildren(...clonedChildren);
@@ -405,8 +405,6 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
         return false;
       }
     } else {
-      console.log(this.attributeMap);
-      console.log(other.attributeMap);
       if (!ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap)) {
         return false;
       }

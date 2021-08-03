@@ -66,7 +66,6 @@ module("Unit | commands | read-selection-command-test", hooks => {
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(text, 9, 16);
     ctx.modelSelection.selectRange(range);
-    console.log(expected.toXml());
 
     const readNodes: ModelNode[] = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));

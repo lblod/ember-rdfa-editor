@@ -39,6 +39,7 @@ import InsertTableRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert
 import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
 import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
 import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
+import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -123,6 +124,7 @@ class RawEditor extends EmberObject {
     this.registerCommand(new InsertTextCommand(this.model));
     this.registerCommand(new DeleteSelectionCommand(this.model));
     this.registerCommand(new ReadSelectionCommand(this.model));
+    this.registerCommand(new UndoCommand(this.model));
   }
 
   /**
@@ -179,7 +181,9 @@ class RawEditor extends EmberObject {
     try {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
-        this.modelSnapshot();
+        if (command.createSnapshot) {
+          this.modelSnapshot();
+        }
         const result = command.execute(...args);
         this.updateRichNode();
 

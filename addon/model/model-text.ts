@@ -79,12 +79,10 @@ export default class ModelText extends ModelNode {
   split(index: number): { left: ModelText, right: ModelText } {
     let leftContent = this.content.substring(0, index);
     if (leftContent.endsWith(" ")) {
-      console.log("replacing space with NBSP;");
       leftContent = leftContent.substring(0, leftContent.length - 1) + NON_BREAKING_SPACE;
     }
     let rightContent = this.content.substring(index);
     if (rightContent.startsWith(" ")) {
-      console.log("replacing space with NBSP;");
       rightContent = NON_BREAKING_SPACE + rightContent.substring(1);
     }
     this.content = leftContent;

@@ -17,12 +17,12 @@ import ArrowHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/arrow-handl
 import DisableDeleteHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/delete-handler';
 import FallbackInputHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/fallback-input-handler';
 import IgnoreModifiersHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/ignore-modifiers-handler';
-import UndoHandler from '@lblod/ember-rdfa-editor/utils/ce/handlers/undo-hander';
 import LumpNodeMovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/lump-node-movement-observer';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { IllegalAccessToRawEditor } from "@lblod/ember-rdfa-editor/utils/errors";
 import { taskFor } from "ember-concurrency-ts";
+import UndoHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler";
 
 interface FeatureService {
   isEnabled(key: string): boolean

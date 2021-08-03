@@ -62,10 +62,10 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
     }, this.deleteSelection);
 
     if (!this.deleteSelection) {
-      //TODO: This causes tests to fail, because of attributes that get added after read.
-      // We should try to replace this by storing the old model when executing a command and by restoring the stored
-      // model here. Can also be used to keep a history of models.
-      this.model.read();
+      // Right before the execution of this command, the raw editor will have stored a snapshot of the VDOM right before
+      // the command gets executed. If `deleteSelection` is false, we don't want the split that has happened before to
+      // be written back to the actual DOM. Therefore, we restore this stored model.
+      this.model.restoreModel();
     }
 
     return modelNodes;
