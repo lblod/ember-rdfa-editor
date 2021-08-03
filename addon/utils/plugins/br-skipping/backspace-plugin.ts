@@ -7,10 +7,10 @@ import {
   MoveCursorToEndOfElementManipulation
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {moveCaretBefore, stringToVisibleText} from '@lblod/ember-rdfa-editor/editor/utils';
-
+import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 function isBr(node: Node): boolean {
-  return node.nodeType == Node.ELEMENT_NODE && (node as HTMLElement).tagName.toLowerCase() == "br";
+  return isElement(node) && node.tagName.toLowerCase() === "br";
 }
 
 /**
@@ -21,9 +21,9 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
   label = "This plugin jumps over brs where necessary";
 
   guidanceForManipulation(manipulation: BackspaceHandlerManipulation): ManipulationGuidance | null {
-    if (manipulation.type == "moveCursorToEndOfElement") {
+    if (manipulation.type === "moveCursorToEndOfElement") {
       const element = manipulation.node ;
-      if (window.getComputedStyle(element).display == "block") {
+      if (window.getComputedStyle(element).display === "block") {
         const length = element.childNodes.length;
         if (length > 0 && isBr(element.childNodes[length - 1])) {
           // last br in a block element is normally not visible, so jump before the br
@@ -34,15 +34,20 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
         }
       }
     }
-    if (manipulation.type == "moveCursorBeforeElement") {
-      const element = manipulation.node ;
+
+    if (manipulation.type === "moveCursorBeforeElement") {
+      const element = manipulation.node;
       if (window.getComputedStyle(element).display == "block") {
         // moving before a block
         let previousSibling = element.previousSibling;
         // jump over non visible text nodes (TODO: this probably breaks things)
-        while (previousSibling && previousSibling.nodeType == Node.TEXT_NODE && stringToVisibleText(previousSibling.textContent || "").length == 0) {
+        while (previousSibling
+          && isTextNode(previousSibling)
+          && stringToVisibleText(previousSibling.textContent || "").length == 0
+        ) {
           previousSibling = previousSibling.previousSibling;
         }
+
         if (previousSibling) {
           if (isBr(previousSibling)) {
             return {

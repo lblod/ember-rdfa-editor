@@ -57,6 +57,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     } else if (manipulation.type === "removeEmptyElement") {
       return this.guidanceForRemoveEmptyElement(manipulation);
     }
+
     return null;
   }
 
@@ -65,8 +66,10 @@ export default class ListDeletePlugin implements DeletePlugin {
       this.hasChanged = false;
       return true;
     }
+
     return false;
   }
+
   private guidanceForRemoveBoundaryBackwards(
     manipulation: RemoveBoundaryBackwards
   ): ManipulationGuidance | null {
@@ -79,8 +82,10 @@ export default class ListDeletePlugin implements DeletePlugin {
       };
       return { allow: true, executor: dispatch };
     }
+
     return null;
   }
+
   private guidanceForRemoveBoundaryForwards(
     manipulation: RemoveBoundaryForwards
   ): ManipulationGuidance | null {
@@ -93,6 +98,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       };
       return { allow: true, executor: dispatch };
     }
+
     return null;
   }
 
@@ -113,6 +119,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       };
       return { allow: true, executor: dispatcher };
     }
+
     return null;
   }
 
@@ -132,8 +139,9 @@ export default class ListDeletePlugin implements DeletePlugin {
       }
       return;
     }
-    const mergeNode = this.getDeepestLastDescendant(baseNode);
+
     let cursorPosition = 0;
+    const mergeNode = this.getDeepestLastDescendant(baseNode);
     if (isTextNode(mergeNode) && mergeNode.textContent) {
       cursorPosition = mergeNode.textContent.length;
     }
@@ -149,12 +157,12 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @param editor The editor instance
    */
   private mergeForwards(node: Node, editor: PernetRawEditor) {
-
-    const mergeNode = this.getDeepestLastDescendant(node);
     let cursorPosition = 0;
+    const mergeNode = this.getDeepestLastDescendant(node);
     if (isTextNode(mergeNode) && mergeNode.textContent) {
       cursorPosition = mergeNode.textContent.length;
     }
+
     const targetNode = this.findNodeAfter(node, editor.rootNode);
     if (!targetNode) {
       // no node in front of us, no sense in looping 50 times
@@ -188,6 +196,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       moveCaretToEndOfNode(mergeNode);
     }
   }
+
   /**
    * Merge two nodes. This means the first textNode encountered in a DFS of nodeToMerge will be appended to
    * the last textNode of mergeNode
@@ -207,6 +216,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       }
     }
   }
+
   private mergeTextNodes(mergeNode: Text, nodeToMerge: Text) {
     const parent = nodeToMerge.parentElement!;
     this.concatenateNodes(mergeNode, nodeToMerge);
@@ -229,6 +239,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     this.removeEmptyAncestors(elToMerge);
   }
+
   private mergeNodeElement(mergeNode: Text, elToMerge: Element) {
     const [firstNode, ...rest] = elToMerge.childNodes;
     if (firstNode && isTextNode(firstNode)) {
@@ -243,6 +254,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     this.removeEmptyAncestors(elToMerge);
   }
+
   private mergeElementNode(mergeEl: Element, nodeToMerge: Text) {
     const parent = nodeToMerge.parentElement!;
     mergeEl.appendChild(nodeToMerge);
@@ -253,6 +265,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     this.removeEmptyAncestors(parent);
   }
+
   /**
    * Find the first node after node.
    * Searches up the tree until it encouters root or the node
@@ -277,6 +290,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     return sib;
   }
+
   /**
    * Find the first node before node.
    * Searches up the tree until it encouters root or the node
@@ -389,6 +403,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     }
     return next;
   }
+
   /**
    * Checks whether a node is a magicspan
    * @param node The node to check

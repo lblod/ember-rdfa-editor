@@ -2,12 +2,11 @@ import {
   BackspaceHandlerManipulation,
   BackspacePlugin
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import { Editor,
-         ManipulationGuidance
-       } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {Editor, ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import NodeWalker from '@lblod/marawa/node-walker';
-import { isRdfaNode } from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-rich-node-helpers';
-import { stringToVisibleText, moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
+import {isRdfaNode} from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-rich-node-helpers';
+import {moveCaretBefore, stringToVisibleText} from '@lblod/ember-rdfa-editor/editor/utils';
+import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 /**
  * Class responsible for the handling of RDFA.
@@ -62,24 +61,25 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
 
 
   guidanceForManipulation(manipulation : BackspaceHandlerManipulation) : ManipulationGuidance | null {
-    if(this.needsRemoveStep(manipulation)){
+    if (this.needsRemoveStep(manipulation)) {
       return {
         allow: true,
-        executor: this.executeRemoveStep  //TODO: extract these functions out of the class.
+        executor: this.executeRemoveStep //TODO: extract these functions out of the class.
       };
     }
-    else if(this.needsCompleteStep(manipulation)){
+    else if (this.needsCompleteStep(manipulation)) {
       return {
         allow: true,
         executor: this.executeCompleteStep
       };
     }
-    else if(this.needsAlmostCompleteStep(manipulation)){
+    else if (this.needsAlmostCompleteStep(manipulation)) {
       return {
         allow: true,
         executor: this.executeAlmostCompleteStep
       };
     }
+
     return null;
   }
 
@@ -90,27 +90,20 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    * This will require from the user to press backspace once more to remove the element.
    * @method detectChange
    */
-  detectChange( manipulation: BackspaceHandlerManipulation ) : boolean {
-    if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)){
-
+  detectChange( manipulation: BackspaceHandlerManipulation) : boolean {
+    if (this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)) {
       const node = manipulation.node;
       const parent = node.parentElement;
 
-      if(parent && this.hasFlagComplete(parent)) return true;
-
-      else return false;
+      return !!(parent && this.hasFlagComplete(parent));
     }
-
-    else if(this.isManipulationSupportedFor(SUPPORTED_ELEMENT_MANIPULATIONS, manipulation)){
-
+    else if(this.isManipulationSupportedFor(SUPPORTED_ELEMENT_MANIPULATIONS, manipulation)) {
       const node = manipulation.node;
 
-      if(this.hasFlagComplete(node as Element)) return true;
-
-      else return false;
+      return this.hasFlagComplete(node as Element);
     }
 
-    else return false;
+    return false;
   }
 
   /**
@@ -122,65 +115,49 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     const node = manipulation.node;
     const parent = node.parentElement;
 
-    if( parent
-        && this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)
-        && ! this.hasFlagForRemoval(parent)
-        && this.doesElementLengthRequireAlmostComplete(parent)
-        && this.isRdfaNode(parent)
-      ){
-      return true;
-    }
-    else return false;
+    return !!(parent
+      && this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)
+      && !this.hasFlagForRemoval(parent)
+      && this.doesElementLengthRequireAlmostComplete(parent)
+      && this.isRdfaNode(parent));
   }
 
   /**
    * Tests whether the 'last call' flag may be added
    */
   needsCompleteStep(manipulation: BackspaceHandlerManipulation) : boolean {
-    if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)){
+    if (this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)) {
       const node = manipulation.node;
       const parent = node.parentElement;
 
-      if(parent && this.hasFlagAlmostComplete(parent) && stringToVisibleText(parent.innerText).length == 1)
-        return true;
-
-      else return false;
+      return !!(parent && this.hasFlagAlmostComplete(parent)
+        && stringToVisibleText(parent.innerText).length === 1
+      );
     }
-
     else if(this.isManipulationSupportedFor(SUPPORTED_ELEMENT_MANIPULATIONS, manipulation)){
       const node = manipulation.node;
-      if(this.isRdfaNode(node)) //Note: this check is not performed in previous if, since is implictly assumed.
-        return true;
-
-      else return false;
+      return this.isRdfaNode(node);
     }
 
-    else return false;
+    return false;
   }
 
   /**
    * Tests whether the element should be removed, after having given all the warnings.
    */
   needsRemoveStep(manipulation: BackspaceHandlerManipulation) : boolean {
-    if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)){
+    if (this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)) {
       const node = manipulation.node;
       const parent = node.parentElement;
 
-      if(parent && this.hasFlagComplete(parent) && stringToVisibleText(parent.innerText).length == 0)
-        return true;
-
-      return false;
+      return !!(parent && this.hasFlagComplete(parent) && stringToVisibleText(parent.innerText).length === 0);
     }
-
     else if(this.isManipulationSupportedFor(SUPPORTED_ELEMENT_MANIPULATIONS, manipulation)){
       const node = manipulation.node;
-
-      if(this.hasFlagComplete(node as Element))
-        return true;
-
-      return false;
+      return this.hasFlagComplete(node as Element);
     }
-    else return false;
+
+    return false;
   }
 
   /**
@@ -192,7 +169,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     const node = manipulation.node;
     const parent = node.parentElement;
 
-    if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation) && parent){
+    if (this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation) && parent) {
       parent.setAttribute('data-flagged-remove', 'almost-complete');
     }
   };
@@ -205,7 +182,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     const node = manipulation.node;
     const parent = node.parentElement;
 
-    if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation) && parent){
+    if (this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation) && parent){
       parent.removeChild(node);
       parent.setAttribute('data-flagged-remove', 'complete');
       editor.updateRichNode();
@@ -225,18 +202,20 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     let removedElement;
     let updatedSelection;
 
-    if(this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)){
+    if (this.isManipulationSupportedFor(SUPPORTED_TEXT_NODE_MANIPULATIONS, manipulation)) {
       const node = manipulation.node;
       const rdfaElement = node.parentElement;
 
-      if(!rdfaElement) throw `rdfa/backspace-plugin: Expected ${node.toString()} node to have a parent.`;
+      if (!rdfaElement) {
+        throw new Error(`rdfa/backspace-plugin: Expected ${node.toString()} node to have a parent.`);
+      }
 
       updatedSelection = moveCaretBefore(rdfaElement);
       rdfaElement.remove();
       removedElement = rdfaElement ; //TODO: is this wrong to assume so?
       editor.updateRichNode();
     }
-    else if(this.isManipulationSupportedFor(SUPPORTED_ELEMENT_MANIPULATIONS, manipulation)){
+    else if (this.isManipulationSupportedFor(SUPPORTED_ELEMENT_MANIPULATIONS, manipulation)) {
       const rdfaElement = manipulation.node as Element;
       updatedSelection = moveCaretBefore(rdfaElement);
       rdfaElement.remove();
@@ -244,8 +223,13 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       editor.updateRichNode();
     }
 
-    if(!updatedSelection) throw `rdfa/backspace-plugin: Update selection (before removal) failed.`;
-    if(!removedElement) throw `rdfa/backspace-plugin: Removal of element failed.`;
+    if (!updatedSelection) {
+      throw new Error('rdfa/backspace-plugin: Update selection (before removal) failed.');
+    }
+
+    if (!removedElement) {
+      throw new Error('rdfa/backspace-plugin: Removal of element failed.');
+    }
 
     // Here a 'gotcha' piece of logic is executed.
     // Suppose we have: ```<rdfa><rdfa>|</rdfa></rdfa>```
@@ -259,45 +243,45 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     // -----------
     // Since we are in a different state compared to the other methods of this plugins, i.e. the node has been update in the DOM,
     // the checks are slightly different.
-
     const anchorNode = updatedSelection.anchorNode;
 
-    if( !anchorNode ){
+    if (!anchorNode) {
       return;
     }
-
-    else if( anchorNode.nodeType == Node.TEXT_NODE ){
+    else if (isTextNode(anchorNode)) {
       const parentElement = anchorNode.parentElement;
-      if(parentElement && stringToVisibleText(parentElement.innerText).length === 0
-         && this.isRdfaNode(parentElement)){
+      if (parentElement
+        && stringToVisibleText(parentElement.innerText).length === 0
+        && this.isRdfaNode(parentElement)
+      ) {
         parentElement.setAttribute('data-flagged-remove', 'complete');
         this.setNextBackgroundColorCycleOnComplete(removedElement, parentElement);
       }
-
-      else if(parentElement && this.doesElementLengthRequireAlmostComplete(parentElement) &&
-              this.isRdfaNode(parentElement)){
+      else if (parentElement
+        && this.doesElementLengthRequireAlmostComplete(parentElement)
+        && this.isRdfaNode(parentElement)
+      ) {
         parentElement.setAttribute('data-flagged-remove', 'almost-complete');
       }
     }
-    else if( anchorNode && anchorNode.nodeType == Node.ELEMENT_NODE && this.isRdfaNode(anchorNode) ){
-
-      const updatedElement = anchorNode as HTMLElement;
-
-      if(stringToVisibleText(updatedElement.innerText).length === 0){
+    else if (anchorNode
+      && isElement(anchorNode)
+      && this.isRdfaNode(anchorNode)
+    ) {
+      const updatedElement = anchorNode;
+      if (stringToVisibleText(updatedElement.innerText).length === 0) {
         updatedElement.setAttribute('data-flagged-remove', 'complete');
         this.setNextBackgroundColorCycleOnComplete(removedElement, updatedElement);
       }
-      else if(this.doesElementLengthRequireAlmostComplete(updatedElement)){
+      else if (this.doesElementLengthRequireAlmostComplete(updatedElement)) {
         updatedElement.setAttribute('data-flagged-remove', 'almost-complete');
       }
-
     }
   };
 
   doesElementLengthRequireAlmostComplete(element: HTMLElement) : boolean {
     const visibleLength = stringToVisibleText(element.innerText).length;
-    const tresholdTextLength = TEXT_LENGTH_ALMOST_COMPLETE_TRESHOLD;
-    return visibleLength < tresholdTextLength;
+    return visibleLength < TEXT_LENGTH_ALMOST_COMPLETE_TRESHOLD;
   }
 
   isRdfaNode(node: Node) : boolean {
@@ -332,10 +316,10 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    */
   setNextBackgroundColorCycleOnComplete(previousElement: HTMLElement, element: HTMLElement) : void{
     const currentColor = previousElement.style.backgroundColor;
-    if( currentColor && currentColor === 'lightblue' ){
+    if (currentColor && currentColor === 'lightblue') {
       element.style.backgroundColor = 'lightgreen';
     }
-    else{
+    else {
       element.style.backgroundColor = 'lightblue';
     }
   }
@@ -343,5 +327,4 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
   isManipulationSupportedFor(manipulationTypes: Array<string>, manipulation : BackspaceHandlerManipulation) : boolean {
     return manipulationTypes.some(manipulationType => manipulationType === manipulation.type );
   }
-
 }

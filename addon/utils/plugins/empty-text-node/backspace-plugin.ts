@@ -5,8 +5,8 @@ import {
   BackspaceHandlerManipulation,
   BackspacePlugin
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { moveCaretBefore, moveCaret, stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 /**
  * In some cases the browser acts a bit weird when we empty a text node. this plugin tries to handle these edge cases.
  * Specific reasons we do this:
@@ -17,35 +17,35 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
   label = "backspace plugin for properly handling empty text nodes";
 
   guidanceForManipulation(manipulation : BackspaceHandlerManipulation) : ManipulationGuidance | null {
-    if (manipulation.type == "removeCharacter") {
-      if (manipulation.position == 0 && manipulation.node.textContent?.length == 1) {
+    if (manipulation.type === "removeCharacter") {
+      if (manipulation.position === 0 && manipulation.node.textContent?.length === 1) {
         return {
           allow: true,
           executor: this.replaceLastCharacterWithInvisibleSpace
         };
-      }
-      else if (this.manipulationWillResultInTextNodeWithoutText(manipulation)) {
+      } else if (this.manipulationWillResultInTextNodeWithoutText(manipulation)) {
         return {
           allow: true,
           executor: this.replaceLastCharacterWithInvisibleSpace
         };
       }
     }
+
     return null;
   }
 
   manipulationWillResultInTextNodeWithoutText(manipulation: RemoveCharacterManipulation) : boolean {
     const nodeText = manipulation.node.textContent || "";
     const position = manipulation.position;
-    return stringToVisibleText(`${nodeText.slice(0, position)}${nodeText.slice( position + 1)}`).length == 0;
+    return stringToVisibleText(`${nodeText.slice(0, position)}${nodeText.slice(position + 1)}`).length === 0;
   }
 
   /**
-   * replace textnode content with an invisible space and position cursor at the beginning of the node
+   * replace text node content with an invisible space and position cursor at the beginning of the node
    */
   replaceLastCharacterWithInvisibleSpace = (manipulation: RemoveCharacterManipulation, editor: Editor) => {
-    const { node } = manipulation;
-    node.textContent = invisibleSpace;
+    const {node} = manipulation;
+    node.textContent = INVISIBLE_SPACE;
     moveCaret(node, 0);
     editor.updateRichNode();
   };
@@ -54,7 +54,7 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
    * This remove the text node completely
    */
   removeTextNode(manipulation: RemoveCharacterManipulation , editor: Editor) {
-    const { node } = manipulation;
+    const {node} = manipulation;
     const parentElement = node.parentElement;
     if (parentElement) {
       moveCaretBefore(node);

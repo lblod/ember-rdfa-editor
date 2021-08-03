@@ -13,10 +13,10 @@ import { moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
 export default class EmptyElementBackspacePlugin implements BackspacePlugin {
   label = "backspace plugin to remove empty elements instead of jumping in";
 
-  guidanceForManipulation(manipulation: BackspaceHandlerManipulation) : ManipulationGuidance | null {
-    if (manipulation.type == "moveCursorToEndOfElement") {
-      const element = manipulation.node ;
-      if (element.innerText.length == 0) {
+  guidanceForManipulation(manipulation: BackspaceHandlerManipulation): ManipulationGuidance | null {
+    if (manipulation.type === "moveCursorToEndOfElement") {
+      const element = manipulation.node;
+      if (element.innerText.length === 0) {
         // no visible text or height (br shows up as newline in innerText), so jump before and remove
         return {
           allow: true,
@@ -24,6 +24,7 @@ export default class EmptyElementBackspacePlugin implements BackspacePlugin {
         };
       }
     }
+
     return null;
   }
 
@@ -31,7 +32,7 @@ export default class EmptyElementBackspacePlugin implements BackspacePlugin {
    * executor that will move the cursor before the element we're supposed to jump into
    * and remove the element
    */
-  jumpBeforeAndRemoveEmptyElement = ( manipulation: MoveCursorToEndOfElementManipulation, editor: Editor) => {
+  jumpBeforeAndRemoveEmptyElement = (manipulation: MoveCursorToEndOfElementManipulation, editor: Editor) => {
     const element = manipulation.node;
     moveCaretBefore(element);
     element.remove();

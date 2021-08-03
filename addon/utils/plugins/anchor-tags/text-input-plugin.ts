@@ -15,8 +15,8 @@ export default class AnchorTagTextInputPlugin implements TextInputPlugin {
       const clonedRange = range.clone();
       const collapsed = clonedRange.collapsed;
       const {start, end, start: {parent: startParent}, end: {parent: endParent}} = clonedRange;
-      let anyAnchors = false;
 
+      let anyAnchors = false;
       if (startParent.type === "a" && start.parentOffset === 0) {
         anyAnchors = true;
         clonedRange.start = ModelPosition.fromBeforeNode(startParent);
@@ -24,6 +24,7 @@ export default class AnchorTagTextInputPlugin implements TextInputPlugin {
           clonedRange.collapse(true);
         }
       }
+
       if (endParent.type === "a" && end.parentOffset === endParent.getMaxOffset()) {
         anyAnchors = true;
         clonedRange.end = ModelPosition.fromAfterNode(endParent);
@@ -31,17 +32,18 @@ export default class AnchorTagTextInputPlugin implements TextInputPlugin {
           clonedRange.collapse();
         }
       }
-      if(anyAnchors) {
+
+      if (anyAnchors) {
         return {
           allow: true, executor: (_, rawEditor: PernetRawEditor) => {
             rawEditor.executeCommand("insert-text", text, clonedRange);
           }
         };
-
       } else {
         return null;
       }
     }
+
     return null;
   }
 }

@@ -16,7 +16,7 @@ export default class ContentEditableFalseBackspacePlugin implements BackspacePlu
   label = 'Backspace plugin to remove empty elements instead of jumping in';
 
   guidanceForManipulation(manipulation: BackspaceHandlerManipulation): ManipulationGuidance | null {
-    if (manipulation.type == "moveCursorToEndOfElement") {
+    if (manipulation.type === "moveCursorToEndOfElement") {
       editorDebug(
         'plugins.contenteditable-false.guidanceForManipulation',
         'possible jump before element',

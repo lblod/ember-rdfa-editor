@@ -16,12 +16,13 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
   guidanceForManipulation(manipulation : BackspaceHandlerManipulation) : ManipulationGuidance | null {
     const node = manipulation.node;
     const parentNode = node.parentElement;
-    if(parentNode && parentNode.classList.contains('mark-highlight-manual')) {
+    if (parentNode && parentNode.classList.contains('mark-highlight-manual')) {
       return {
         allow: true,
         executor: this.removePlaceholder
       };
     }
+
     return null;
   }
 
@@ -32,7 +33,8 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
   removePlaceholder = (manipulation: BackspaceHandlerManipulation, editor: Editor): void => {
     const node = manipulation.node;
     const parentNode = node.parentElement;
-    if(parentNode) {
+
+    if (parentNode) {
       const textNode = document.createTextNode(invisibleSpace);
       parentNode.replaceWith(textNode);
       editor.updateRichNode();
@@ -41,17 +43,14 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
   };
 
   /**
-   * Allows the plugin to notify the backspace handler a change has occured.
+   * Allows the plugin to notify the backspace handler a change has occurred.
    * Returns true explicitly when it detects the manipulation.node is inside a placeholder node.
    * @method detectChange
    */
   detectChange( manipulation: BackspaceHandlerManipulation ) : boolean {
     const node = manipulation.node;
     const parentNode = node.parentElement;
-    if(parentNode && parentNode.classList.contains('mark-highlight-manual')) {
-      return true;
-    }
-    return false;
-  }
 
+    return !!(parentNode && parentNode.classList.contains('mark-highlight-manual'));
+  }
 }

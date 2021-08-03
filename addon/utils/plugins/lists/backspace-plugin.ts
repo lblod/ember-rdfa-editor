@@ -30,25 +30,25 @@ export default class ListBackspacePlugin implements BackspacePlugin {
   label = 'backspace plugin for handling lists';
 
   guidanceForManipulation(manipulation: BackspaceHandlerManipulation): ManipulationGuidance | null {
-    if (manipulation.type == "removeEmptyElement" || manipulation.type == "removeElementWithChildrenThatArentVisible") {
+    if (manipulation.type === "removeEmptyElement" || manipulation.type === "removeElementWithChildrenThatArentVisible") {
       /*
        * removing an (empty-ish) list item
        */
-      manipulation ;
+      manipulation;
       const element = manipulation.node;
-      if (element && tagName(element) == "li") {
+      if (element && tagName(element) === "li") {
         return this.guidanceForRemoveListItem(element);
       }
     }
-    else if (manipulation.type == "moveCursorBeforeElement") {
-      manipulation ;
+    else if (manipulation.type === "moveCursorBeforeElement") {
+      manipulation;
       const element = manipulation.node;
-      if (tagName(element) == "li") {
+      if (tagName(element) === "li") {
         return this.guidanceForJumpBeforeLi(element);
       }
     }
-    else if (manipulation.type == "moveCursorToEndOfElement") {
-      manipulation ;
+    else if (manipulation.type === "moveCursorToEndOfElement") {
+      manipulation;
       const element = manipulation.node;
       if (["ul", "ol"].includes(tagName(element))) {
         return {
@@ -57,20 +57,21 @@ export default class ListBackspacePlugin implements BackspacePlugin {
         };
       }
     }
-    else if (manipulation.type == "removeEmptyTextNode") {
+    else if (manipulation.type === "removeEmptyTextNode") {
       manipulation ;
       const text = manipulation.node;
       const element = text.parentElement as Element;
-      if (element && tagName(element) == "li" && element?.firstChild == text) {
+      if (element && tagName(element) === "li" && element?.firstChild === text) {
         return this.guidanceForJumpBeforeLi(element);
       }
     }
+
     return null;
   }
 
   guidanceForJumpBeforeLi(element: Element): ManipulationGuidance {
     debug('providing guidance for jump before li');
-    if (element.previousElementSibling && tagName(element.previousElementSibling) == "li") {
+    if (element.previousElementSibling && tagName(element.previousElementSibling) === "li") {
       return {
         allow: true,
         executor: this.mergeWithPreviousLi
@@ -92,14 +93,14 @@ export default class ListBackspacePlugin implements BackspacePlugin {
   }
 
   guidanceForRemoveListItem(element: Element): ManipulationGuidance {
-    if (element.previousElementSibling && tagName(element.previousElementSibling) == "li") {
+    if (element.previousElementSibling && tagName(element.previousElementSibling) === "li") {
       // there is an li before this item, so jump to the previous list item
       return {
         allow: true,
         executor: this.removeListItemAndMoveToPreviousListItem
       };
     }
-    else if (element.nextElementSibling && tagName(element.nextElementSibling) == "li") {
+    else if (element.nextElementSibling && tagName(element.nextElementSibling) === "li") {
       // no li before, but there is an li after. list is not empty after removing the first li, so jump before list
       return {
         allow: true,
@@ -146,18 +147,18 @@ export default class ListBackspacePlugin implements BackspacePlugin {
   removeListItemAndListButKeepContent = (manipulation: BackspaceHandlerManipulation, editor: Editor) => {
     let element;
 
-    if(manipulation.type == 'moveCursorBeforeElement'){
+    if (manipulation.type === 'moveCursorBeforeElement') {
       element = manipulation.node;
     }
-    else if(manipulation.type == 'removeEmptyTextNode'){
+    else if (manipulation.type === 'removeEmptyTextNode') {
       const textNode = manipulation.node;
 
-      if(textNode.parentElement){
+      if (textNode.parentElement) {
         element = textNode.parentElement;
       }
     }
 
-    if(!element){
+    if (!element){
       console.warn('lists.backspace-plugin.removeListItemAndListButKeepContent: Unsupported manipulation or no valid element found.');
     }
     else {
@@ -174,13 +175,13 @@ export default class ListBackspacePlugin implements BackspacePlugin {
   removeListItemAndMoveContentBeforeList = (manipulation: BackspaceHandlerManipulation, editor: Editor) => {
     let element;
 
-    if(manipulation.type == 'moveCursorBeforeElement'){
+    if (manipulation.type === 'moveCursorBeforeElement'){
       element = manipulation.node;
     }
-    else if(manipulation.type == 'removeEmptyTextNode'){
+    else if (manipulation.type === 'removeEmptyTextNode'){
       const textNode = manipulation.node;
 
-      if(textNode.parentElement){
+      if (textNode.parentElement){
         element = textNode.parentElement;
       }
     }
@@ -202,21 +203,20 @@ export default class ListBackspacePlugin implements BackspacePlugin {
   mergeWithPreviousLi = (manipulation: BackspaceHandlerManipulation, editor: Editor): void => {
     let element;
 
-    if(manipulation.type == 'moveCursorBeforeElement'){
+    if (manipulation.type === 'moveCursorBeforeElement'){
       element = manipulation.node;
     }
-    else if(manipulation.type == 'removeEmptyTextNode'){
+    else if (manipulation.type === 'removeEmptyTextNode'){
       const textNode = manipulation.node;
 
-      if(textNode.parentElement){
+      if (textNode.parentElement){
         element = textNode.parentElement;
       }
     }
 
-    if(!element){
+    if (!element){
       console.warn('lists.backspace-plugin.mergeWithPreviousLi: Unsupported manipulation or no valid element found.');
     }
-
     else {
       helpMergeWithPreviousLi(element, editor);
     }
@@ -231,7 +231,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
   removeListItemAndMoveToPreviousListItem = (manipulation: ElementRemovalManipulation, editor: Editor): void => {
     const element = manipulation.node;
     const li = element.previousElementSibling;
-    if (li == null) {
+    if (li === null) {
       console.warn('want to move to previous li, but that no longer exists');
     }
     else {
@@ -298,13 +298,14 @@ export default class ListBackspacePlugin implements BackspacePlugin {
   detectChange(manipulation: BackspaceHandlerManipulation): boolean {
     if (["removeEmptyElement", "moveCursorBeforeElement", "removeElementWithChildrenThatArentVisible"].includes(manipulation.type)) {
       const element = manipulation.node as Element;
-      if (tagName(element) == "li") {
-        if (element.parentNode == null) {
+      if (tagName(element) === "li") {
+        if (element.parentNode === null) {
           // list item was removed
           return true;
         }
       }
     }
+
     return false;
   }
 }
@@ -313,8 +314,8 @@ export default class ListBackspacePlugin implements BackspacePlugin {
  * HELPERS
  *************************************************************************************/
 
-function  helpMergeWithPreviousLi(element: Element, editor: Editor): void {
-  if (element.previousElementSibling && tagName(element.previousElementSibling) == "li") {
+function helpMergeWithPreviousLi(element: Element, editor: Editor): void {
+  if (element.previousElementSibling && tagName(element.previousElementSibling) === "li") {
     const previousLi = element.previousElementSibling;
     const firstChildOfListItem = element.childNodes[0];
     previousLi.append(...element.childNodes);
