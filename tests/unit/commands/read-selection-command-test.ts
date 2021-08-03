@@ -11,6 +11,7 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 module("Unit | commands | read-selection-command-test", hooks => {
   const ctx = new ModelTestContext();
   let command: ReadSelectionCommand;
+
   hooks.beforeEach(() => {
     ctx.reset();
     command = new ReadSelectionCommand(ctx.model);
@@ -42,6 +43,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(text, 0, text.length);
     ctx.modelSelection.selectRange(range);
 
+    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -67,6 +69,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(text, 9, 16);
     ctx.modelSelection.selectRange(range);
 
+    ctx.model.storeModel();
     const readNodes: ModelNode[] = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -112,6 +115,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(selectedText, 0, selectedText.length);
     ctx.modelSelection.selectRange(range);
 
+    ctx.model.storeModel();
     const readNodes: ModelNode[] = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -182,6 +186,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInElement(firstList, 0, firstList.getMaxOffset());
     ctx.model.selectRange(range);
 
+    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -248,10 +253,10 @@ module("Unit | commands | read-selection-command-test", hooks => {
     ctx.model.fillRoot(initial);
     const startPos = ModelPosition.fromInElement(firstLi, 0);
     const endPos = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
-
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
+    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -301,6 +306,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInElement(firstList, 0, firstList.getMaxOffset());
     ctx.model.selectRange(range);
 
+    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -349,10 +355,10 @@ module("Unit | commands | read-selection-command-test", hooks => {
     ctx.model.fillRoot(initial);
     const startPos = ModelPosition.fromInElement(firstLi, 0);
     const endPos = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
-
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
+    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -412,6 +418,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(firstLine, 0, firstLine.length);
     ctx.model.selectRange(range);
 
+    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -497,6 +504,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
+    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -545,6 +553,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(firstText, 0, 3);
     ctx.model.selectRange(range);
 
+    ctx.model.storeModel();
     const readNodes = command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 

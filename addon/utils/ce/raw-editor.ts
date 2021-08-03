@@ -182,7 +182,7 @@ class RawEditor extends EmberObject {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
         if (command.createSnapshot) {
-          this.modelSnapshot();
+          this.model.storeModel();
         }
         const result = command.execute(...args);
         this.updateRichNode();
@@ -237,14 +237,6 @@ class RawEditor extends EmberObject {
 
   off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>) {
     EventBus.off(eventName, callback);
-  }
-
-  modelSnapshot(): void {
-    this.model.storeModel();
-  }
-
-  modelUndo(writeBack = true): void {
-    this.model.restoreModel(writeBack);
   }
 }
 
