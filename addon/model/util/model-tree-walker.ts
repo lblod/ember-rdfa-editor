@@ -77,7 +77,6 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
     this.visitParentUpwards = visitParentUpwards;
 
     if (from.path.length > 0) {
-
       const startNode = this.getStartNodeFromPosition(from);
       this.nodeAfterEnd = this.getNodeAfterEndFromPosition(to, startNode);
       this._currentNode = startNode;

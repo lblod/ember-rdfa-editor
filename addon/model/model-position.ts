@@ -299,7 +299,7 @@ export default class ModelPosition {
   }
 
   /**
-   * If position is "inside" a textnode, this will return that node.
+   * If position is "inside" a text node, this will return that node.
    * Otherwise, return the node immediately before the cursor
    */
   nodeBefore(): ModelNode | null {
@@ -372,16 +372,11 @@ export default class ModelPosition {
     return ModelPosition.fromInElement(this.parent, newOffset);
   }
 
-  //this returns true if the position is inside a text node (not right before not right after)
+  // This returns true if the position is inside a text node (not right before not right after).
   isInsideText(): boolean {
-    if (
-      (this.nodeAfter() == this.nodeBefore()) &&
-      (ModelNode.isModelText(this.nodeAfter()) && ModelNode.isModelText(this.nodeBefore()))
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    return this.nodeAfter() === this.nodeBefore()
+      && ModelNode.isModelText(this.nodeAfter())
+      && ModelNode.isModelText(this.nodeBefore());
   }
 
   clone(): ModelPosition {
@@ -389,20 +384,21 @@ export default class ModelPosition {
   }
 
   findAncestors(predicate: (elem: ModelElement) => boolean = () => true): ModelElement[] {
-    let cur = this.parent;
-    const rslt = [];
+    let current = this.parent;
+    const result = [];
 
-    while (cur !== this.root) {
-      if (predicate(cur)) {
-        rslt.push(cur);
+    while (current !== this.root) {
+      if (predicate(current)) {
+        result.push(current);
       }
-      cur = cur.parent!;
 
+      current = current.parent!;
     }
-    if (predicate(cur)) {
-      rslt.push(cur);
+
+    if (predicate(current)) {
+      result.push(current);
     }
-    return rslt;
+
+    return result;
   }
-
 }

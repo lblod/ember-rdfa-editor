@@ -18,6 +18,7 @@ export default class DeleteSelectionCommand extends Command<unknown[], ModelNode
 
   execute(selection: ModelSelection = this.model.selection): ModelNode[] {
     if (!ModelSelection.isWellBehaved(selection)) {
+      console.log("here");
       throw new MisbehavedSelectionError();
     }
 
