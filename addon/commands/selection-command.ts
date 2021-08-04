@@ -11,10 +11,11 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {SimplifiedModel} from "@lblod/ember-rdfa-editor/model/model-history";
 
 export default abstract class SelectionCommand extends Command<unknown[], ModelNode[]> {
-  abstract deleteSelection: boolean;
+  protected deleteSelection: boolean;
 
-  constructor(model: Model) {
-    super(model);
+  protected constructor(model: Model, createSnapshot: boolean) {
+    super(model, createSnapshot);
+    this.deleteSelection = createSnapshot;
   }
 
   execute(selection: ModelSelection = this.model.selection): ModelNode[] {
