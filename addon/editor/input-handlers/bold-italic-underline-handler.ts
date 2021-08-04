@@ -51,9 +51,9 @@ export default class BoldItalicUnderlineHandler extends InputHandler {
 
     if (property) {
       this.rawEditor.executeCommand(property);
-      return { allowBrowserDefault: false, allowPropagation: false };
+      return {allowBrowserDefault: false, allowPropagation: false};
     } else {
-      return { allowBrowserDefault: true, allowPropagation: true};
+      return {allowBrowserDefault: true, allowPropagation: true};
     }
   }
 }

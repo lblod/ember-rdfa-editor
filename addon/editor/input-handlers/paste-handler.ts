@@ -60,7 +60,7 @@ export default class PasteHandler extends InputHandler {
       this.rawEditor.executeCommand("insert-text", text, pasteRange);
     }
 
-    this.rawEditor.selection.lastRange?.collapse();
+    this.rawEditor.model.selection.lastRange?.collapse();
     this.rawEditor.model.writeSelection();
 
     this.rawEditor.updateSelectionAfterComplexInput();

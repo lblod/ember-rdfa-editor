@@ -18,17 +18,15 @@ export default class EnterHandler extends InputHandler {
     return isKeyDownEvent(event) && event.key === "Enter";
   }
 
-  handleEvent(/* event: KeyboardEvent */) {
+  handleEvent(_: KeyboardEvent) {
     //TODO (sergey): this is hacky and very quick should be redone
     if (this.rawEditor.canExecuteCommand("insert-newLi")){
       this.rawEditor.executeCommand("insert-newLi");
       return {allowPropagation: false, allowBrowserDefault: false};
-    }
-    else if (this.rawEditor.canExecuteCommand("insert-newLine")) {
+    } else if (this.rawEditor.canExecuteCommand("insert-newLine")) {
       this.rawEditor.executeCommand("insert-newLine");
       return {allowPropagation: false, allowBrowserDefault: false};
-    }
-    else {
+    } else {
       return {allowPropagation: true, allowBrowserDefault: true};
     }
   }

@@ -12,7 +12,7 @@ export default class DisableDeleteHandler extends InputHandler {
     return isKeyDownEvent(event) && event.key === "Delete";
   }
 
-  handleEvent(/* event: KeyboardEvent */): HandlerResponse {
+  handleEvent(_: KeyboardEvent): HandlerResponse {
     return {allowPropagation: false, allowBrowserDefault: false};
   }
 }

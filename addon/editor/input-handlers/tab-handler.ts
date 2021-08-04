@@ -9,7 +9,7 @@ import {
   MoveCursorToStartOfElementManipulation
 } from './manipulation';
 import {warn} from '@ember/debug';
-import {isVisibleElement, isVoidElement} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {isElement, isTextNode, isVisibleElement, isVoidElement} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
 import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
 import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
@@ -65,7 +65,7 @@ export default class TabInputHandler extends InputHandler {
   isHandlerFor(event: Event): boolean {
     const selection = window.getSelection();
 
-    //TODO: include shift key here?
+    //TODO: Include shift key here?
     return isKeyDownEvent(event)
       && event.key === "Tab"
       && selection !== null
@@ -99,9 +99,10 @@ export default class TabInputHandler extends InputHandler {
     /************************ SHIFT TAB ************************/
     if (manipulation.type === "moveCursorToEndOfElement") {
       const element = manipulation.node;
+
       let textNode;
-      if (element.lastChild && element.lastChild.nodeType == Node.TEXT_NODE) {
-        textNode = element.lastChild as Text;
+      if (element.lastChild && isTextNode(element.lastChild)) {
+        textNode = element.lastChild;
       } else {
         textNode = document.createTextNode('');
         element.append(textNode);
@@ -114,54 +115,51 @@ export default class TabInputHandler extends InputHandler {
       const element = manipulation.node;
 
       let textNode;
-      if (element.previousSibling && element.previousSibling.nodeType == Node.TEXT_NODE) {
+      if (element.previousSibling && isTextNode(element.previousSibling)) {
         textNode = element.previousSibling;
       } else {
         textNode = document.createTextNode('');
         element.before(textNode);
       }
 
-      textNode = ensureValidTextNodeForCaret(textNode as Text);
+      textNode = ensureValidTextNodeForCaret(textNode);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCaret(textNode, textNode.length);
-    }
-    //TODO: this could be moved to a plugin eventually.
-    else if (manipulation.type === "moveCursorBeforeEditor") {
+    } else if (manipulation.type === "moveCursorBeforeEditor") {
+      //TODO: this could be moved to a plugin eventually.
       console.warn("editor/tab-handler: handle moveCursorBeforeEditor currently disabled until we are sure what we want here");
-    }
     /************************ TAB ************************/
-    else if (manipulation.type === "moveCursorToStartOfElement") {
+    } else if (manipulation.type === "moveCursorToStartOfElement") {
       const element = manipulation.node;
 
       let textNode;
-      if (element.firstChild && element.firstChild.nodeType === Node.TEXT_NODE) {
+      if (element.firstChild && isTextNode(element.firstChild)) {
         textNode = element.firstChild;
       } else {
         textNode = document.createTextNode("");
         element.prepend(textNode);
       }
 
-      textNode = ensureValidTextNodeForCaret(textNode as Text);
+      textNode = ensureValidTextNodeForCaret(textNode);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCaret(textNode, 0);
     } else if (manipulation.type === "moveCursorAfterElement") {
       const element = manipulation.node;
 
       let textNode;
-      if (element.nextSibling && element.nextSibling.nodeType == Node.TEXT_NODE) {
+      if (element.nextSibling && isTextNode(element.nextSibling)) {
         textNode = element.nextSibling;
       } else {
         textNode = document.createTextNode('');
         element.after(textNode);
       }
 
-      textNode = ensureValidTextNodeForCaret(textNode as Text);
+      textNode = ensureValidTextNodeForCaret(textNode);
       this.rawEditor.updateRichNode();
       this.rawEditor.setCaret(textNode, 0);
-    }
-    //TODO: this could be moved to a plugin eventually.
-    else if (manipulation.type === "moveCursorAfterEditor") {
-      console.warn('editor/tab-handler: handle moveCursorAfterEditor currently disabled until we are sure what we want here');
+    } else if (manipulation.type === "moveCursorAfterEditor") {
+      //TODO: this could be moved to a plugin eventually.
+      console.warn("editor/tab-handler: handle moveCursorAfterEditor currently disabled until we are sure what we want here");
       // const element = manipulation.node as HTMLElement;
       // element.blur();
     } else {
@@ -189,29 +187,29 @@ export default class TabInputHandler extends InputHandler {
       throw new Error("Tab input expected anchorNode and parentElement");
     }
 
-    const parentElement = anchorNode.parentElement;
     let nextManipulation: TabHandlerManipulation;
-    //TODO: assumes anchorNode is not an element.
+    const parentElement = anchorNode.parentElement;
+    //TODO: Assumes anchorNode is not an element.
     if (parentElement.firstChild && parentElement.firstChild.isSameNode(anchorNode)) {
-      nextManipulation = {type: 'moveCursorBeforeElement', node: parentElement, selection};
+      nextManipulation = {type: "moveCursorBeforeElement", node: parentElement, selection};
     } else {
       const childNodes = Array.from(parentElement.childNodes);
       const offsetAnchorNode = childNodes.indexOf(anchorNode as ChildNode);
       const remainingSiblings = [...childNodes.slice(0, offsetAnchorNode + 1)].reverse();
 
       const previousElementForCursor = remainingSiblings.find(node => {
-        return !isVoidElement(node) && node.nodeType == Node.ELEMENT_NODE && isVisibleElement(node as HTMLElement);
+        return !isVoidElement(node) && isElement(node) && isVisibleElement(node);
       });
 
       if (previousElementForCursor) {
-        nextManipulation = {type: 'moveCursorToEndOfElement', node: previousElementForCursor as HTMLElement, selection};
+        nextManipulation = {type: "moveCursorToEndOfElement", node: previousElementForCursor as HTMLElement, selection};
       } else {
-        nextManipulation = {type: 'moveCursorBeforeElement', node: parentElement, selection};
+        nextManipulation = {type: "moveCursorBeforeElement", node: parentElement, selection};
       }
     }
 
-    if (nextManipulation.type === 'moveCursorBeforeElement' && nextManipulation.node.isSameNode(this.rawEditor.rootNode)) {
-      nextManipulation = {type: 'moveCursorBeforeEditor', node: nextManipulation.node};
+    if (nextManipulation.type === "moveCursorBeforeElement" && nextManipulation.node.isSameNode(this.rawEditor.rootNode)) {
+      nextManipulation = {type: "moveCursorBeforeEditor", node: nextManipulation.node};
     }
 
     return nextManipulation;
@@ -223,29 +221,29 @@ export default class TabInputHandler extends InputHandler {
       throw new Error("Tab input expected anchorNode and parentElement");
     }
 
-    const parentElement = anchorNode.parentElement;
     let nextManipulation: TabHandlerManipulation;
-    //TODO: assumes anchorNode is not an element.
+    const parentElement = anchorNode.parentElement;
+    //TODO: Assumes anchorNode is not an element.
     if (parentElement.lastChild && parentElement.lastChild.isSameNode(anchorNode)) {
-      nextManipulation = {type: 'moveCursorAfterElement', node: parentElement, selection};
+      nextManipulation = {type: "moveCursorAfterElement", node: parentElement, selection};
     } else {
       const childNodes = Array.from(parentElement.childNodes);
       const offsetAnchorNode = childNodes.indexOf(anchorNode as ChildNode);
       const remainingSiblings = childNodes.slice(offsetAnchorNode + 1);
 
       const nextElementForCursor = remainingSiblings.find(node => {
-        return !isVoidElement(node) && node.nodeType == Node.ELEMENT_NODE && isVisibleElement(node as HTMLElement);
+        return !isVoidElement(node) && isElement(node) && isVisibleElement(node);
       });
 
       if (nextElementForCursor) {
-        nextManipulation = {type: 'moveCursorToStartOfElement', node: nextElementForCursor as HTMLElement, selection};
+        nextManipulation = {type: "moveCursorToStartOfElement", node: nextElementForCursor as HTMLElement, selection};
       } else {
-        nextManipulation = {type: 'moveCursorAfterElement', node: parentElement, selection};
+        nextManipulation = {type: "moveCursorAfterElement", node: parentElement, selection};
       }
     }
 
-    if (nextManipulation.type === 'moveCursorAfterElement' && nextManipulation.node.isSameNode(this.rawEditor.rootNode)) {
-      nextManipulation = {type: 'moveCursorAfterEditor', node: nextManipulation.node};
+    if (nextManipulation.type === "moveCursorAfterElement" && nextManipulation.node.isSameNode(this.rawEditor.rootNode)) {
+      nextManipulation = {type: "moveCursorAfterEditor", node: nextManipulation.node};
     }
 
     return nextManipulation;

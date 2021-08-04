@@ -12,7 +12,7 @@ export default class UndoHandler extends InputHandler {
     return isKeyDownEvent(event) && (event.ctrlKey || event.metaKey) && event.key === "z";
   }
 
-  handleEvent(/* event: KeyboardEvent */): HandlerResponse {
+  handleEvent(_: KeyboardEvent): HandlerResponse {
     this.rawEditor.undo();
     return {allowPropagation: false, allowBrowserDefault: true};
   }

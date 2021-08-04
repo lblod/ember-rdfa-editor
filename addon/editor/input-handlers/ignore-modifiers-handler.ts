@@ -11,7 +11,7 @@ export default class IgnoreModifiersHandler extends InputHandler {
     return event instanceof KeyboardEvent && ["Alt", "Control", "Meta", "Shift"].includes(event.key);
   }
 
-  handleEvent(/* event: KeyboardEvent */): HandlerResponse {
+  handleEvent(_: KeyboardEvent): HandlerResponse {
     return {allowPropagation: false, allowBrowserDefault: false};
   }
 }

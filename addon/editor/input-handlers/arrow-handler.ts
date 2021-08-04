@@ -39,7 +39,7 @@ export default class ArrowHandler extends InputHandler {
     }
 
     const isLeft = event.key === "ArrowLeft";
-    const isRight = !isLeft;
+    const isRight = event.key === "ArrowRight";
 
     if (richNode.start < position && richNode.end > position) {
       // Not at the start or end of a node.

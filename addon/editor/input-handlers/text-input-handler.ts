@@ -57,22 +57,26 @@ export default class TextInputHandler extends InputHandler {
 
   handleEvent(event: KeyboardEvent) {
     const manipulation = this.getNextManipulation(event);
-    // check if we can execute it
+    // Check if we can execute it.
     const {mayExecute, dispatchedExecutor} = this.checkManipulationByPlugins(manipulation);
 
-    // error if we're not allowed to
+    // Error if we're not allowed to.
     if (!mayExecute) {
-      warn(`Not allowed to execute manipulation for ${this.constructor.toString()}`, {id: "text-input-handler-manipulation-not-allowed"});
+      warn(
+        `Not allowed to execute manipulation for ${this.constructor.toString()}`,
+        {id: "text-input-handler-manipulation-not-allowed"}
+      );
       return {allowPropagation: false};
     }
 
-    // run the manipulation
+    // Run the manipulation.
     if (dispatchedExecutor) {
-      // NOTE: we should pass some sort of editor interface here in the future.
-      dispatchedExecutor(manipulation, this.rawEditor as Editor);
+      // NOTE: We should pass some sort of editor interface here in the future.
+      dispatchedExecutor(manipulation, this.rawEditor);
     } else {
       this.handleNativeManipulation(manipulation);
     }
+
     return {allowPropagation: false};
   }
 
