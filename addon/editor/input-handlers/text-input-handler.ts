@@ -1,5 +1,5 @@
 import {InputHandler, InputPlugin} from './input-handler';
-import {Editor, InsertTextIntoRange, ManipulationGuidance} from './manipulation';
+import {InsertTextIntoRange, ManipulationGuidance} from './manipulation';
 import {warn} from '@ember/debug';
 import RdfaTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/text-input-plugin';
 import AnchorTagTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/anchor-tags/text-input-plugin';
