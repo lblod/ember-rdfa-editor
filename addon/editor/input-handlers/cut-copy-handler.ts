@@ -51,7 +51,7 @@ export default abstract class CutCopyHandler extends InputHandler {
         htmlString += node.outerHTML;
       } else {
         if (node.textContent) {
-          xmlString += `<text>${node.textContent}</text>`; // TODO: is this enough to provide XML?
+          xmlString += `<text>${node.textContent}</text>`;
           htmlString += node.textContent;
         }
       }
