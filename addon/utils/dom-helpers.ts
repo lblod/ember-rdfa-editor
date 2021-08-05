@@ -1,6 +1,7 @@
 import { A } from '@ember/array';
 import { PernetSelection, PernetSelectionBlock } from '@lblod/ember-rdfa-editor/editor/pernet';
 import RichNode from "@lblod/marawa/rich-node";
+
 /**
  * Fake class to list helper functions
  * these functions can be included using
@@ -42,17 +43,17 @@ function sliceTextIntoTextNode(textNode: Text, text: string, start: number): voi
  */
 function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNode | null = null, after = false): Text {
   const textNode = document.createTextNode(invisibleSpace);
+
   if (relativeToSibling) {
     if (after) {
       relativeToSibling.after(textNode);
-    }
-    else {
+    } else {
       relativeToSibling.before(textNode);
     }
-  }
-  else {
+  } else {
     parentDomNode.appendChild(textNode);
   }
+
   return textNode;
 }
 
@@ -120,7 +121,6 @@ function isAllWhitespace(node: Text): boolean {
   // Use ECMA-262 Edition 3 String and RegExp features
   return !(/[^\t\n\r ]/.test(node.textContent || ""));
 }
-
 
 /**
  * Determine whether a node is displayed as a block or is a list item
@@ -395,22 +395,31 @@ function findWrappingSuitableNodes(selection: PernetSelection ): Array<PernetSel
 }
 
 /**
- * @method findLastLi
+ * @method findFirstLi
+ * @param {Node} list the list node to search in
+ * @return {Node | undefined} first li of the given list
  * @public
  */
-function findLastLi(list: HTMLUListElement | HTMLOListElement): HTMLLIElement | null {
-  if (['ul', 'ol'].includes(tagName(list))) {
-    const foundNode = Array.from(list.children).reverse().find((node) => tagName(node) === 'li');
-    if (foundNode) {
-      return foundNode as HTMLLIElement;
-    }
-    else {
-      return null;
-    }
+function findFirstLi(list: HTMLUListElement | HTMLOListElement): HTMLLIElement | undefined {
+  if (!isList(list)) {
+    throw new Error("Invalid argument: node is not a list.");
   }
-  else {
-    throw `invalid argument, expected a list`;
+
+  return Array.from(list.childNodes).find((node) => tagName(node) === "li") as HTMLLIElement;
+}
+
+/**
+ * @method findLastLi
+ * @param {Node} list the list node to search in
+ * @return {Node | undefined} last li of the given list
+ * @public
+ */
+function findLastLi(list: HTMLUListElement | HTMLOListElement): HTMLLIElement | undefined {
+  if (!isList(list)) {
+    throw new Error("Invalid argument: node is not a list.");
   }
+
+  return Array.from(list.children).reverse().find((node) => tagName(node) === "li") as HTMLLIElement;
 }
 
 /**
@@ -426,7 +435,6 @@ function isVisibleElement(element: HTMLElement): boolean {
   //Note: there is still some edge case (see comments): "This will return true for an element with visibility:hidden"
   return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
 }
-
 
 /**
  * Utility to get the selection in a type-safe way. A null selection only happens when called on a
@@ -471,6 +479,7 @@ export {
   isPhrasingContent,
   isBlockOrBr,
   findWrappingSuitableNodes,
+  findFirstLi,
   findLastLi,
   getWindowSelection
 };

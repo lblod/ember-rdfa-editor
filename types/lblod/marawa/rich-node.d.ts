@@ -1,9 +1,8 @@
 declare module '@lblod/marawa/rich-node' {
-
-
   import RdfaBlock from "@lblod/marawa/rdfa-block";
   import RdfaAttributes from "@lblod/marawa/rdfa-attributes";
   type Region = [number, number];
+
   export interface RichNodeContent {
     start: number;
     end: number;
@@ -18,8 +17,8 @@ declare module '@lblod/marawa/rich-node' {
     children: RichNode[];
     absolutePosition: number;
     relativePosition: number;
-
   }
+
   export default class RichNode implements RichNodeContent {
     domNode: Node;
     end: number;
@@ -46,7 +45,5 @@ declare module '@lblod/marawa/rich-node' {
     containsRegion(region: Region): boolean;
     isAncestorOf(richNode: RichNode): boolean;
     isDescendentOf(richNode: RichNode): boolean;
-
   }
-
 }

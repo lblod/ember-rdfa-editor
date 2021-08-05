@@ -18,9 +18,9 @@ let MARKDOWNS = [
 /**
  * handles emphasis markdown
  *
- * It checks for `*some text here*` `_some text here_` and `**some text here**` 
+ * It checks for `*some text here*` `_some text here_` and `**some text here**`
  * and then triggers if you put a space behind those snippets
- * 
+ *
  * @module contenteditable-editor
  * @class EmphasisMarkdownHandler
  * @constructor
@@ -39,7 +39,6 @@ export default class EmphasisMarkdownHandler {
   findMarkdown(text){
     return MARKDOWNS.find(m => { return text.match(m.pattern); });
   }
-
 
   /**
    * tests this handler can handle the specified event
