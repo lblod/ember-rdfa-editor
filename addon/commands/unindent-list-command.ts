@@ -1,141 +1,162 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {
+  IllegalExecutionStateError,
+  MisbehavedSelectionError,
+  SelectionError,
+  TypeAssertionError
+} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+
 export default class UnindentListCommand extends Command {
   name = "unindent-list";
+
   constructor(model: Model) {
     super(model);
   }
 
-  canExecute(selection: ModelSelection = this.model.selection): boolean {
-    const interestingLis = selection.findAllInSelection(
-      {
-        predicate: node => {
-          const firstAncestorLi = node.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li", false);
-          const secondAncestorLi = firstAncestorLi?.findAncestor(node => ModelNode.isModelElement(node) && node.type === "li", false);
-          return firstAncestorLi !== null && secondAncestorLi !== null;
-        }
-      }
-    );
-    const result = interestingLis && [...interestingLis];
+  canExecute(range: ModelRange | null = this.model.selection.lastRange): boolean {
+    if (!range) {
+      return false;
+    }
 
-    return !!result?.length;
+    const predicate = (node: ModelNode) => {
+      // Set `includeSelf` to true, because this predicate will be used in `findModelNodes`, where we start
+      // searching from the parent of the current node. If we set it to false, the first parent will always be skipped.
+      const firstAncestorLi = ModelNodeUtils.findAncestor(node, ModelNodeUtils.isListElement, true);
+      const secondAncestorLi = ModelNodeUtils.findAncestor(firstAncestorLi, ModelNodeUtils.isListElement);
+
+      return !!firstAncestorLi && !!secondAncestorLi;
+    };
+
+    const treeWalker = ModelRangeUtils.findModelNodes(range, predicate);
+    return !![...treeWalker].length;
   }
 
   @logExecute
-  execute(selection: ModelSelection = this.model.selection): void {
-    if(!ModelSelection.isWellBehaved(selection)) {
-
+  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+    if (!range) {
       throw new MisbehavedSelectionError();
     }
-    //get all nodes in selection that are li
-    const listNodesIterator = selection.findAllInSelection({
-      filter: ModelNode.isModelElement,
-      predicate: (node: ModelElement) => node.type === "li"
-    });
 
+    const treeWalker = ModelRangeUtils.findModelNodes(range, ModelNodeUtils.isListElement);
+    const elements: ModelElement[] = [];
 
-    //if there are no li in selection return error
-    if (!listNodesIterator) {
-      throw new SelectionError('The selection is not in a list');
-    }
-    const elements=[];
-    for (const li of listNodesIterator){
-      elements.push(li);
+    for (const node of treeWalker) {
+      if (!ModelNode.isModelElement(node)) {
+        throw new TypeAssertionError("Current node is not an element");
+      }
+
+      elements.push(node);
     }
 
-    //get the shallowest common ancestors
-    const lisToShift=this.relatedChunks(elements);
+    if (elements.length === 0) {
+      throw new SelectionError("The selection is not inside a list");
+    }
 
-    if(lisToShift){
+    // Get the shallowest common ancestors.
+    const lisToShift = this.relatedChunks(elements);
+    if (lisToShift) {
+      // Iterate over all found li elements.
+      for (const li of lisToShift) {
+        const parent = ModelNodeUtils.findAncestor(li, ModelNodeUtils.isListContainer);
+        const grandParent = ModelNodeUtils.findAncestor(parent, ModelNodeUtils.isListElement);
+        const greatGrandParent = ModelNodeUtils.findAncestor(grandParent, ModelNodeUtils.isListContainer);
 
-      //iterate over all found li elements
-      for (const li of lisToShift){
+        if (li && ModelElement.isModelElement(li)
+          && parent && ModelElement.isModelElement(parent)
+          && grandParent && ModelElement.isModelElement(grandParent)
+          && greatGrandParent && ModelElement.isModelElement(greatGrandParent)
+        ) {
+          // Remove node.
+          const liIndex = li.index;
+          parent.removeChild(li);
 
-        const node=li;
-        const parent=li.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), false) as ModelElement;
-        const grandParent=parent?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false) as ModelElement;
-        const greatGrandParent=grandParent?.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='ul' || node.type=='ol'), false) as ModelElement;
-
-        if(node && parent && grandParent && greatGrandParent){
-          //remove node
-          const nodeIndex=node.index!;
-          parent.removeChild(node);
-
-          //remove parent ul/ol if node is only child
-          if(parent.length==0){
-            greatGrandParent.addChild(node, grandParent.index!+1);
-            grandParent.removeChild(parent);
+          if (grandParent.index === null) {
+            throw new IllegalExecutionStateError("Couldn't find index of grandparent li");
           }
-          else{
-            const split=parent.split(nodeIndex);
-            //remove empty uls
-            split.left.length==0?split.left.parent?.removeChild(split.left):null;
-            split.right.length==0?split.right.parent?.removeChild(split.right):null;
 
-            if(split.right.length>0){
-              split.right.parent?.removeChild(split.right);
-              node.addChild(split.right);
+          if (parent.length === 0) {
+            // Remove parent ul/ol if node is only child.
+            greatGrandParent.addChild(li, grandParent.index + 1);
+            grandParent.removeChild(parent);
+          } else {
+            if (liIndex === null) {
+              throw new IllegalExecutionStateError("Couldn't find index of current li");
+            }
+            const split = parent.split(liIndex);
+
+            // Remove empty uls.
+            if (split.left.length === 0) {
+              split.left.parent?.removeChild(split.left);
             }
 
-            greatGrandParent.addChild(node, grandParent.index!+1);
+            if (split.right.length === 0) {
+              split.right.parent?.removeChild(split.right);
+            }
 
+            if (split.right.length > 0) {
+              split.right.parent?.removeChild(split.right);
+              li.addChild(split.right);
+            }
+
+            greatGrandParent.addChild(li, grandParent.index + 1);
           }
         }
       }
     }
+
     this.model.write();
     this.model.readSelection();
   }
 
-  relatedChunks(elementArray:Array<ModelElement>, result:Array<ModelElement>=[]): Array<ModelElement>{
+  private relatedChunks(elementArray: ModelElement[], result: ModelElement[] = []): ModelElement[] {
+    // Check if the li is nested.
+    elementArray = elementArray.filter(element => ModelNodeUtils.findAncestor(element, ModelNodeUtils.isListElement));
 
-    //check that the li is nested
-    elementArray=elementArray.filter(e=>
-      e.findAncestor(node => ModelNode.isModelElement(node) && (node.type=='li'), false) as ModelElement
-    );
-
-    //sort array, by depth, shallowest first.
-    elementArray=elementArray.sort((a, b) => {
-      return b.getIndexPath().length - a.getIndexPath().length;
+    // Sort array, by depth, shallowest first.
+    elementArray = elementArray.sort((a, b) => {
+      return b.getOffsetPath().length - a.getOffsetPath().length;
     });
 
-    //use shallowest as base
-    const base=elementArray[0];
+    // Use shallowest as base.
+    const base = elementArray[0];
     result.push(base);
 
-    //compare all paths to see if base is parent
-    //remove those that are related
-    for(let i =0; i<elementArray.length; i++){
-      const e=elementArray[i];
-      if(this.areRelated(base, e)){
+    // Compare all paths to see if base is parent. Remove those that are related.
+    // Loop backwards since we are deleting from list during loop.
+    for (let i = elementArray.length - 1; i >= 0; i--) {
+      if (UnindentListCommand.areRelated(base, elementArray[i])) {
         elementArray.splice(i, 1);
       }
     }
 
-    //if empty return result with the elements that need to be shifted
-    if(elementArray.length==0){
+    if (elementArray.length === 0) {
+      // If empty, return result with the elements that need to be shifted.
       return result;
-    }
-    //otherwise some hot recursive action
-    else{
+    } else {
+      // Otherwise some hot recursive action.
       this.relatedChunks(elementArray, result);
     }
+
     return result;
   }
 
-  areRelated(base:ModelElement, compare:ModelElement): boolean{
-    const basePath=base.getIndexPath();
-    const comparePath=compare.getIndexPath();
-    for(let i=0; i<basePath.length; i++){
-      if(basePath[i]!=comparePath[i]){
+  private static areRelated(base: ModelElement, compare: ModelElement): boolean{
+    const basePath = base.getOffsetPath();
+    const comparePath = compare.getOffsetPath();
+
+    for (let i = 0; i < basePath.length; i++) {
+      if (basePath[i] !== comparePath[i]) {
         return false;
       }
     }
+
     return true;
   }
 }

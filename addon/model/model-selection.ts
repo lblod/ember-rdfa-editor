@@ -171,7 +171,6 @@ export default class ModelSelection {
    * @deprecated use {@link ModelTreeWalker} instead
    */
   findAllInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): Iterable<T> | null {
-
     const {filter, predicate} = config;
 
     if (!ModelSelection.isWellBehaved(this)) {
@@ -181,8 +180,8 @@ export default class ModelSelection {
     // ignore selection direction
     const anchorNode = this.lastRange?.start.parent;
     const focusNode = this.lastRange?.end.parent;
-    if (anchorNode === focusNode) {
 
+    if (anchorNode === focusNode) {
       const noop = () => true;
       const filterFunc = filter || noop;
       const predicateFunc = predicate || noop;
@@ -199,13 +198,11 @@ export default class ModelSelection {
                   value,
                   done: false
                 };
-
               } else {
                 return {
                   value: null,
                   done: true
                 };
-
               }
             }
           };
@@ -246,7 +243,6 @@ export default class ModelSelection {
     } else {
       return PropertyState.unknown;
     }
-
   }
 
   get rdfaSelection() {
@@ -283,7 +279,6 @@ export default class ModelSelection {
     return PropertyState.unknown;
   }
 
-
   collapseIn(node: ModelNode, offset = 0) {
     this.clearRanges();
     this.addRange(ModelRange.fromInNode(node, offset, offset));
@@ -297,7 +292,6 @@ export default class ModelSelection {
     this.addRange(range);
   }
 
-
   calculateRdfaSelection(selection: Selection) {
     if (selection.type === 'Caret') {
       if (!selection.anchorNode) {
@@ -309,7 +303,5 @@ export default class ModelSelection {
       const commonAncestor = range.commonAncestorContainer;
       return analyse(commonAncestor);
     }
-
   }
-
 }

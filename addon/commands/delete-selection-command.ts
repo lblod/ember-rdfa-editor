@@ -1,7 +1,10 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {
+  ImpossibleModelStateError,
+  MisbehavedSelectionError
+} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
@@ -25,15 +28,15 @@ export default class DeleteSelectionCommand extends Command<unknown[], ModelNode
     const range = selection.lastRange;
     let commonAncestor = range.getCommonAncestor();
 
-    if (ModelNode.isModelElement(commonAncestor)) {
-      if (commonAncestor.type === "ul" || (commonAncestor.type === "li" && this.isElementFullySelected(commonAncestor, range))) {
-        const newAncestor = ModelNodeUtils.findAncestor(commonAncestor, node => ModelNode.isModelElement(node) && node.type !== "ul");
-
-        if (!newAncestor) {
-          throw new Error('No ancestor found');
-        }
-        commonAncestor = newAncestor;
+    if (ModelNodeUtils.isListContainer(commonAncestor)
+      || (ModelNodeUtils.isListElement(commonAncestor) && this.isElementFullySelected(commonAncestor, range))
+    ) {
+      const newAncestor = ModelNodeUtils.findAncestor(commonAncestor, node => !ModelNodeUtils.isListContainer(node));
+      if (!newAncestor || !ModelElement.isModelElement(newAncestor)) {
+        throw new ImpossibleModelStateError("No ancestor found that is not list container.");
       }
+
+      commonAncestor = newAncestor;
     }
 
     this.model.change(mutator => {
@@ -46,7 +49,7 @@ export default class DeleteSelectionCommand extends Command<unknown[], ModelNode
       // Check if selection is inside table cell. If this is the case, cut children of said cell.
       // Assumption: if table cell is selected, no other nodes at the same level can be selected.
       const firstModelNode = treeWalker.currentNode;
-      if (ModelNode.isModelElement(firstModelNode) && (firstModelNode.type === "th" || firstModelNode.type === "td")) {
+      if (ModelNodeUtils.isTableCell(firstModelNode)) {
         contentRange = range;
         treeWalker = new ModelTreeWalker({
           range: contentRange,

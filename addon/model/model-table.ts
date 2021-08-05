@@ -10,7 +10,7 @@ export default class ModelTable extends ModelElement {
   constructor(rows?: number, columns?: number) {
     super('table');
     // We need a constructor without rows or columns for the reader
-    if(!rows || !columns) return;
+    if (!rows || !columns) return;
     const tbody = new ModelElement('tbody');
     this.addChild(tbody);
     for(let i = 0; i < rows; i++) {
