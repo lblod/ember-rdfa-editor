@@ -280,12 +280,7 @@ export default class ModelPosition {
   }
 
   /**
-<<<<<<< HEAD
    * Split the text node at the position. If position is not inside a textNode, do nothing.
-=======
-   * Split the text node at the position.
-   * If position is not inside a textNode, do nothing.
->>>>>>> development
    * If position is at the end or start of a text node, do nothing.
    */
   split() {
