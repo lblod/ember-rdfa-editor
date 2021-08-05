@@ -12,9 +12,8 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {PropertyState} from "../model/util/types";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
-
 /**
- * command will convert all nodes in the selection to a list if they are not already in a list
+ * Command will convert all nodes in the selection to a list, if they are not already in a list.
  */
 export default class MakeListCommand extends Command {
   name = "make-list";
@@ -23,10 +22,9 @@ export default class MakeListCommand extends Command {
     super(model);
   }
 
-  canExecute(selection: ModelSelection = this.model.selection) {
+  canExecute(_listType: "ul" | "ol", selection: ModelSelection = this.model.selection) {
     return !selection.inTableState || (selection.inTableState === PropertyState.disabled);
   }
-
 
   @logExecute
   execute(listType: "ul" | "ol", selection: ModelSelection = this.model.selection) {
@@ -37,23 +35,29 @@ export default class MakeListCommand extends Command {
     const range = selection.lastRange;
     const wasCollapsed = range.collapsed;
     const blocks = this.getBlocksFromRange(range);
+
     const list = new ModelElement(listType);
     for (const block of blocks) {
       const li = new ModelElement("li");
-      //TODO investigate why we have to clone here and document it
+      // TODO: Investigate why we have to clone here and document it.
       li.appendChildren(...block.map(node => node.clone()));
       list.addChild(li);
     }
 
-
     this.model.change(mutator => {
       mutator.insertNodes(range, list);
       if (!list.firstChild || !list.lastChild) {
-        throw new ModelError("list without listitem");
+        throw new ModelError("List without list item.");
       }
-      const fullRange = ModelRange.fromInElement(this.model.rootModelNode, 0, this.model.rootModelNode.getMaxOffset());
+
+      const fullRange = ModelRange.fromInElement(
+        this.model.rootModelNode,
+        0,
+        this.model.rootModelNode.getMaxOffset()
+      );
       const cleaner = new ListCleaner();
       cleaner.clean(fullRange);
+
       let resultRange;
       if (wasCollapsed) {
         const firstChild = list.firstChild as ModelElement;
@@ -65,43 +69,44 @@ export default class MakeListCommand extends Command {
         const end = ModelPosition.fromInElement(lastChild, lastChild.getMaxOffset());
         resultRange = new ModelRange(start, end);
       }
+
       this.model.selection.selectRange(resultRange);
     });
   }
 
   private getBlocksFromRange(range: ModelRange): ModelNode[][] {
-    // expand range until it is bound by blocks
+    // Expand range until it is bound by blocks.
+    let current: ModelNode | null = range.start.nodeAfter();
+    if (current) {
+      range.start.parentOffset = current.getOffset();
 
-    let cur: ModelNode | null = range.start.nodeAfter();
-    if (cur) {
-
-      range.start.parentOffset = cur?.getOffset();
-
-      while (cur?.previousSibling && !cur.previousSibling.isBlock) {
-        cur = cur.previousSibling;
-        range.start.parentOffset = cur.getOffset();
+      while (current?.previousSibling && !current.previousSibling.isBlock) {
+        current = current.previousSibling;
+        range.start.parentOffset = current.getOffset();
       }
+
       if (range.start.parentOffset === 0) {
         if (range.start.parent === this.model.rootModelNode) {
-          //expanded to the start of the root node
+          // Expanded to the start of the root node.
           range.start = ModelPosition.fromInElement(this.model.rootModelNode, 0);
         } else {
           range.start = ModelPosition.fromInElement(range.start.parent.parent!, range.start.parent.getOffset());
         }
       }
     }
-    cur = range.end.nodeBefore();
 
-    if (cur) {
+    current = range.end.nodeBefore();
 
-      range.end.parentOffset = cur.getOffset() + cur.offsetSize;
-      while (cur?.nextSibling && !cur.nextSibling.isBlock) {
-        cur = cur.nextSibling;
-        range.end.parentOffset = cur.getOffset() + cur.offsetSize;
+    if (current) {
+      range.end.parentOffset = current.getOffset() + current.offsetSize;
+      while (current?.nextSibling && !current.nextSibling.isBlock) {
+        current = current.nextSibling;
+        range.end.parentOffset = current.getOffset() + current.offsetSize;
       }
+
       if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
         if (range.end.parent === this.model.rootModelNode) {
-          // expanded to the end of root
+          // Expanded to the end of root node.
           range.end = ModelPosition.fromInElement(this.model.rootModelNode, this.model.rootModelNode.getMaxOffset());
         } else {
           range.end = ModelPosition.fromInElement(range.end.parent.parent!, range.end.parent.getOffset() + range.end.parent.offsetSize);
@@ -109,32 +114,27 @@ export default class MakeListCommand extends Command {
       }
     }
 
-
     const confinedRanges = range.getMinimumConfinedRanges();
-    const rslt = [[]];
+    const result = [[]];
     let pos = 0;
+
     for (const range of confinedRanges) {
       const walker = new ModelTreeWalker({range, descend: false});
       for (const node of walker) {
         if (ModelNode.isModelElement(node) && node.type === "br") {
           pos++;
         } else if (node.isBlock) {
-          if (rslt[0].length) {
+          if (result[0].length) {
             pos++;
           }
-          ArrayUtils.pushOrCreate(rslt, pos, node);
+          ArrayUtils.pushOrCreate(result, pos, node);
           pos++;
         } else if (node.hasVisibleText()) {
-          ArrayUtils.pushOrCreate(rslt, pos, node);
+          ArrayUtils.pushOrCreate(result, pos, node);
         }
-
       }
-
-
     }
 
-    return rslt;
-
+    return result;
   }
 }
-

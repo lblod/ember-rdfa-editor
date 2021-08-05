@@ -19,7 +19,7 @@ export default abstract class Command<A extends unknown[] = unknown[], R = void>
     this.logger = createLogger(`command:${this.constructor.name}`);
   }
 
-  canExecute(..._args: unknown[]): boolean {
+  canExecute(..._args: A[]): boolean {
     return true;
   }
 

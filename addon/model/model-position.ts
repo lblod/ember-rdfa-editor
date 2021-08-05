@@ -280,12 +280,18 @@ export default class ModelPosition {
   }
 
   /**
+<<<<<<< HEAD
    * Split the text node at the position. If position is not inside a textNode, do nothing.
+=======
+   * Split the text node at the position.
+   * If position is not inside a textNode, do nothing.
+>>>>>>> development
    * If position is at the end or start of a text node, do nothing.
    */
   split() {
     const before = this.nodeBefore();
     const after = this.nodeAfter();
+
     if (ModelNode.isModelText(before)) {
       if (before === after) {
         before.split(this.parentOffset - before.getOffset());
@@ -402,6 +408,7 @@ export default class ModelPosition {
       if (predicate(current)) {
         result.push(current);
       }
+
       current = current.parent!;
     }
 

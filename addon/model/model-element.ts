@@ -1,7 +1,7 @@
 import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
 import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
-import {nonBlockNodes} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {NON_BLOCK_NODES} from "@lblod/ember-rdfa-editor/model/util/constants";
 import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 import { parsePrefixString } from "@lblod/ember-rdfa-editor/model/util/rdfa-utils";
@@ -68,7 +68,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   get isBlock() {
-    return !nonBlockNodes.has(this.type);
+    return !NON_BLOCK_NODES.has(this.type);
   }
 
   /**
@@ -199,10 +199,12 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     if (index < 0) {
       index = 0;
     }
+
     const leftChildren = this.children.slice(0, index);
     if (leftChildren.length) {
       leftChildren[leftChildren.length - 1].nextSibling = null;
     }
+
     const rightChildren = this.children.slice(index);
     if (rightChildren.length) {
       rightChildren[0].previousSibling = null;

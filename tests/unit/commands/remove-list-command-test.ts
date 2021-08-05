@@ -15,7 +15,6 @@ module("Unit | commands | remove-list-command", hooks => {
     command = new RemoveListCommand(ctx.model);
   });
 
-
   test("removing a simple list", assert => {
     // language=XML
     const {root: initial, textNodes: {content}} = vdom`
@@ -41,12 +40,9 @@ module("Unit | commands | remove-list-command", hooks => {
     ctx.modelSelection.collapseIn(content);
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
-
-
   });
 
   test("removing a nested list", assert => {
-
     const {modelSelection, model} = ctx;
     const ul = new ModelElement("ul");
     const li = new ModelElement("li");
@@ -66,9 +62,9 @@ module("Unit | commands | remove-list-command", hooks => {
 
     assert.strictEqual(model.rootModelNode.firstChild, content);
     assert.strictEqual(model.rootModelNode.children.length, 1);
-
   });
-  test("removing a nested listitem with more elements", assert => {
+
+  test("removing a nested list item with more elements", assert => {
     // language=XML
     const {root: initial, textNodes: {rangeStart}} = vdom`
       <modelRoot>
@@ -122,15 +118,14 @@ module("Unit | commands | remove-list-command", hooks => {
         </ul>
       </modelRoot>
     `;
+
     ctx.model.fillRoot(initial);
     ctx.model.selection.collapseIn(rangeStart, 0);
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
-
   });
 
   test("removing a complex nested list", assert => {
-
     // language=XML
     const {root: initial, textNodes: {rangeStart}} = vdom`
       <modelRoot>
@@ -203,13 +198,10 @@ module("Unit | commands | remove-list-command", hooks => {
       </modelRoot>
     `;
 
-
     ctx.model.fillRoot(initial);
     ctx.modelSelection.collapseIn(rangeStart);
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
-
-
   });
 
   test("removing list and a sublist using a selection", assert => {
@@ -238,9 +230,6 @@ module("Unit | commands | remove-list-command", hooks => {
       </ul>
     `;
 
-    const {modelSelection, model} = ctx;
-
-
     // language=XML
     const {root: expectedRoot} = vdom`
       <dummy>
@@ -259,6 +248,7 @@ module("Unit | commands | remove-list-command", hooks => {
       </dummy>
     `;
 
+    const {modelSelection, model} = ctx;
     model.rootModelNode.addChild(initialState);
     const startPosition = ModelPosition.fromInTextNode(rangeStart, 3);
     const endPosition = ModelPosition.fromInTextNode(rangeEnd, rangeEnd.length);
