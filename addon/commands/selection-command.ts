@@ -8,7 +8,7 @@ import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walk
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {SimplifiedModel} from "@lblod/ember-rdfa-editor/model/model-history";
+import SimplifiedModel from "@lblod/ember-rdfa-editor/model/simplified-model";
 
 export default abstract class SelectionCommand extends Command<unknown[], ModelNode[]> {
   protected deleteSelection: boolean;
