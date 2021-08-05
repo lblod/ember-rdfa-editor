@@ -10,9 +10,10 @@ import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-wr
 import BatchedModelMutator from "@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelHistory, {SimplifiedModel} from "@lblod/ember-rdfa-editor/model/model-history";
+import ModelHistory from "@lblod/ember-rdfa-editor/model/model-history";
 import {Diary} from "diary";
 import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import SimplifiedModel from "@lblod/ember-rdfa-editor/model/simplified-model";
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -225,7 +226,7 @@ export default class Model {
     const rootModelNode = this.rootModelNode.clone();
     const modelSelection = this.selection.clone(rootModelNode);
 
-    return {rootModelNode, modelSelection};
+    return new SimplifiedModel(rootModelNode, modelSelection);
   }
 
   saveSnapshot(): void {

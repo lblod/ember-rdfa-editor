@@ -1,10 +1,4 @@
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-
-export interface SimplifiedModel {
-  rootModelNode: ModelElement,
-  modelSelection: ModelSelection
-}
+import SimplifiedModel from "@lblod/ember-rdfa-editor/model/simplified-model";
 
 export default class ModelHistory {
   maxSize: number;
@@ -15,6 +9,11 @@ export default class ModelHistory {
   }
 
   push(model: SimplifiedModel): void {
+    // Last snapshot in history equals new snapshot we want to add, so don't store new snapshot.
+    if (this.history.length > 0 && model.sameAs(this.history[this.history.length - 1])) {
+      return;
+    }
+
     if (this.history.length === this.maxSize) {
       // Remove first model in the history.
       this.history.shift();
