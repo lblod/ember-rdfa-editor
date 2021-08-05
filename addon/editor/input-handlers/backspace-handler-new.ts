@@ -29,6 +29,36 @@ export default class BackspaceHandler extends InputHandler {
     }
 
     if (range.collapsed) {
+      const nodeBefore = range.start.nodeBefore();
+      console.log(nodeBefore);
+
+      if (nodeBefore) {
+        // The cursor is located right behind a text related node, a text node or a "br". In case of a text
+        // node, we can safely remove the last character of this text node. In case of a "br", we just
+        // remove this "br".
+        if (ModelNodeUtils.isTextRelated(nodeBefore)) {
+          this.rawEditor.executeCommand("delete-character-backwards");
+
+        // The cursor is located right behind an element, which means right behind its closing tag.
+        // There are 3 cases here:
+        //   - The element is a list container ("ul" or "ol"). In this case, we search for the last list element
+        //     of this list. Then, we place the cursor right behind this text node and move the text node that was
+        //     after the original cursor position after this text node.
+        //   - The element is a "table". In this case, do nothing (see Google Documents).
+        //   - In all other cases, we remove the last character of the first text node we find before
+        //     the cursor.
+        } else if (ModelNode.isModelElement(nodeBefore)) {
+          if (ModelNodeUtils.isListContainer(nodeBefore)) {
+            this.rawEditor.executeCommand("delete-list-backwards");
+          } else if (ModelNodeUtils.isTableContainer(nodeBefore)) {
+            // DO NOTHING IN CASE OF TABLE
+          } else {
+            this.backspaceLastTextRelatedNode(range.start);
+          }
+        } else {
+          throw new Error("Unsupported node type");
+        }
+
       // The cursor is located at the start of an element, which means right behind the opening tag.
       // There are 3 cases here:
       //   - The element is an "li". We replace the element by its children, we split the list into two lists
@@ -36,44 +66,13 @@ export default class BackspaceHandler extends InputHandler {
       //   - The element is a table cell ("th" or "td"). In this case, do nothing (see Google Documents).
       //   - In all other cases, we remove the last character of the first text node we find before
       //     the cursor.
-      if (range.start.parentOffset === 0) {
+      } else {
         if (ModelNodeUtils.isListElement(range.start.parent)) {
           // TODO: In list element.
-        } else if (!ModelNodeUtils.isTableCell(range.start.parent)) {
-          this.backspaceLastTextRelatedNode(range.start);
-        } else {
+        } else if (ModelNodeUtils.isTableCell(range.start.parent)) {
           // DO NOTHING IN CASE OF TABLE
-        }
-      } else {
-        const nodeBefore = range.start.nodeBefore();
-        // The cursor is located right behind a text node. In this case, we can safely select the last
-        // character of this text node and remove it.
-        if (ModelNodeUtils.isTextRelated(nodeBefore)) {
-          this.backspaceTextRelatedNode(nodeBefore);
-        // The cursor is located right behind an element, which means right behind its closing tag.
-        // There are 3 cases here:
-        //   - The element is a list container ("ul" or "ol"). In this case, we place the cursor right behind
-        //     the first text node in this list.
-        //   - The element is a "table". In this case, do nothing (see Google Documents).
-        //   - In all other cases, we remove the last character of the first text node we find before
-        //     the cursor.
-        } else if (ModelNode.isModelElement(nodeBefore)) {
-          if (ModelNodeUtils.isListContainer(range.start.parent)) {
-            console.log("list container");
-            const lastLi = BackspaceHandler.findLastListElement(nodeBefore);
-            if (!lastLi) {
-              throw new Error("List without any list elements");
-            }
-
-            const newPosition = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
-            this.rawEditor.model.selectRange(new ModelRange(newPosition));
-          } else if (!ModelNodeUtils.isTableCell(range.start.parent)) {
-            this.backspaceLastTextRelatedNode(range.start);
-          } else {
-            // DO NOTHING IN CASE OF TABLE
-          }
         } else {
-          throw new Error("Unsupported node type");
+          this.backspaceLastTextRelatedNode(range.start);
         }
       }
     } else {
@@ -129,20 +128,5 @@ export default class BackspaceHandler extends InputHandler {
 
   private static findLastTextRelatedNode(range: ModelRange): ModelNode | null {
     return this.findLastNode(range, ModelNodeUtils.isTextRelated);
-  }
-
-  private static findLastListElement(list: ModelElement): ModelElement | null {
-    const range = ModelRange.fromAroundNode(list);
-    const lastLi = this.findLastNode(range, ModelNodeUtils.isListElement);
-
-    if (!lastLi) {
-      return null;
-    }
-
-    if (!ModelNodeUtils.isListElement(lastLi)) {
-      throw new Error("Found node is not a list element");
-    }
-
-    return lastLi;
   }
 }

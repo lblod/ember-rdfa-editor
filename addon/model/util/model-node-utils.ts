@@ -2,6 +2,7 @@ import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {LIST_CONTAINERS, PLACEHOLDER_CLASS, TABLE_CELLS} from "@lblod/ember-rdfa-editor/model/util/constants";
+import Model from "@lblod/ember-rdfa-editor/model/model";
 
 export default class ModelNodeUtils {
   static DEFAULT_IGNORED_ATTRS: Set<string> = new Set(["__dummy_test_attr", "__id", "data-editor-position-level", "data-editor-rdfa-position-level"]);
@@ -24,7 +25,7 @@ export default class ModelNodeUtils {
     return MapUtils.areMapsSame(filtered1, filtered2);
   }
 
-  static isListContainer(node: ModelNode): node is ModelElement {
+  static isListContainer(node: ModelNode | null): node is ModelElement {
     return ModelNode.isModelElement(node) && LIST_CONTAINERS.has(node.type);
   }
 
@@ -42,6 +43,10 @@ export default class ModelNodeUtils {
 
   static isTextRelated(node: ModelNode | null): boolean {
     return ModelNode.isModelText(node) || ModelNodeUtils.isBr(node);
+  }
+
+  static isTableContainer(node: ModelNode | null): node is ModelElement {
+    return ModelNode.isModelElement(node) && node.type === "table";
   }
 
   static isPlaceHolder(node: ModelNode): node is ModelElement {
