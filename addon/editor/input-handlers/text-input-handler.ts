@@ -1,12 +1,12 @@
 import {InputHandler, InputPlugin} from './input-handler';
-import {Editor, InsertTextIntoRange, ManipulationGuidance} from './manipulation';
+import {InsertTextIntoRange, ManipulationGuidance} from './manipulation';
 import {warn} from '@ember/debug';
 import RdfaTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/text-input-plugin';
 import AnchorTagTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/anchor-tags/text-input-plugin';
 import PlaceHolderTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/text-input-plugin';
 import {MisbehavedSelectionError, UnsupportedManipulationError} from "@lblod/ember-rdfa-editor/utils/errors";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-
+import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
 
 export type TextHandlerManipulation = InsertTextIntoRange;
 
@@ -23,7 +23,7 @@ export interface TextInputPlugin extends InputPlugin {
 }
 
 /**
- * Text Input Handler, a event handler to handle text input
+ * Text Input Handler, an event handler to handle text input.
  *
  * @module contenteditable-editor
  * @class TextInputHandler
@@ -32,7 +32,7 @@ export interface TextInputPlugin extends InputPlugin {
 export default class TextInputHandler extends InputHandler {
   plugins: Array<TextInputPlugin>;
 
-  constructor({rawEditor}: { rawEditor: PernetRawEditor }) {
+  constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
     super(rawEditor);
     this.plugins = [
       new RdfaTextInputPlugin(),
@@ -41,46 +41,42 @@ export default class TextInputHandler extends InputHandler {
     ];
   }
 
-  isHandlerFor(event: Event) {
+  isHandlerFor(event: Event): boolean {
     const selection = window.getSelection();
-    if (event.type == "keydown" && selection && this.rawEditor.rootNode.contains(selection.anchorNode)) {
-      const keyboardEvent = event as KeyboardEvent;
-      if (keyboardEvent.isComposing) {
-        // still composing, don't handle this
-        return false;
-      } else if (keyboardEvent.altKey || keyboardEvent.ctrlKey || keyboardEvent.metaKey) {
-        // it's a key combo, we don't want to do anything with this atm
-        return false;
-      } else if (keyboardEvent.key.length > 1) {
-        // only interested in actual input, no control keys
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      return false;
-    }
+
+    return isKeyDownEvent(event)
+      && selection !== null
+      && this.rawEditor.rootNode.contains(selection.anchorNode)
+      // Still composing, don't handle this.
+      && !event.isComposing
+      // It's a key combo, we don't want to do anything with this at the moment.
+      && !(event.altKey || event.ctrlKey || event.metaKey)
+      // Only interested in actual input, no control keys.
+      && event.key.length <= 1;
   }
 
-  handleEvent(event: Event) {
-    const keyboardEvent = event as KeyboardEvent;
-    const manipulation = this.getNextManipulation(keyboardEvent);
-    // check if we can execute it
+  handleEvent(event: KeyboardEvent) {
+    const manipulation = this.getNextManipulation(event);
+    // Check if we can execute it.
     const {mayExecute, dispatchedExecutor} = this.checkManipulationByPlugins(manipulation);
 
-    // error if we're not allowed to
+    // Error if we're not allowed to.
     if (!mayExecute) {
-      warn(`Not allowed to execute manipulation for ${this.constructor.toString()}`, {id: "text-input-handler-manipulation-not-allowed"});
+      warn(
+        `Not allowed to execute manipulation for ${this.constructor.toString()}`,
+        {id: "text-input-handler-manipulation-not-allowed"}
+      );
       return {allowPropagation: false};
     }
 
-    // run the manipulation
+    // Run the manipulation.
     if (dispatchedExecutor) {
-      // NOTE: we should pass some sort of editor interface here in the future.
-      dispatchedExecutor(manipulation, this.rawEditor as Editor);
+      // NOTE: We should pass some sort of editor interface here in the future.
+      dispatchedExecutor(manipulation, this.rawEditor);
     } else {
       this.handleNativeManipulation(manipulation);
     }
+
     return {allowPropagation: false};
   }
 
@@ -97,9 +93,8 @@ export default class TextInputHandler extends InputHandler {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
+
     return {type: "insertTextIntoRange", range, text: event.key};
   }
-
-
 }
 

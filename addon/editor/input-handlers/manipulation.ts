@@ -192,7 +192,7 @@ export interface InsertTextIntoElementManipulation extends Manipulation {
 }
 
 /**
- * Represents replacing a selection with text
+ * Represents replacing a selection with text.
  */
 export interface ReplaceSelectionWithTextManipulation extends Manipulation {
   type: "replaceSelectionWithText";
@@ -200,10 +200,12 @@ export interface ReplaceSelectionWithTextManipulation extends Manipulation {
   selection: Selection
   text: string;
 }
+
 export interface RemoveBoundaryForwards extends Manipulation {
   type: "removeBoundaryForwards";
   node: ChildNode;
 }
+
 export interface RemoveBoundaryBackwards extends Manipulation {
   type: "removeBoundaryBackwards";
   node: Node;

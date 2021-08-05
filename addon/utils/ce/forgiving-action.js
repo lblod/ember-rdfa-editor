@@ -14,7 +14,7 @@
 export default function forgivingAction(name, context) {
   let closureAction = context.get(name);
 
-  if(closureAction) return closureAction;
+  if (closureAction) return closureAction;
 
-  return () => { return; };
+  return () => {};
 }
