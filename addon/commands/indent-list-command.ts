@@ -1,7 +1,12 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {MisbehavedSelectionError, NoParentError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {
+  IllegalExecutionStateError,
+  MisbehavedSelectionError,
+  NoParentError,
+  TypeAssertionError
+} from "@lblod/ember-rdfa-editor/utils/errors";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
@@ -16,7 +21,7 @@ export default class IndentListCommand extends Command {
     super(model);
   }
 
-  canExecute(range: ModelRange | null = this.model.selection.lastRange) {
+  canExecute(range: ModelRange | null = this.model.selection.lastRange): boolean {
     if (!range) {
       return false;
     }
@@ -41,8 +46,8 @@ export default class IndentListCommand extends Command {
     const setsToIndent = new Map<ModelElement, ModelElement[]>();
 
     for (const li of treeWalker) {
-      if (!ModelNodeUtils.isListElement(li)) {
-        throw new Error("Current node is not a list element.");
+      if (!ModelNode.isModelElement(li)) {
+        throw new TypeAssertionError("Current node is not an element.");
       }
 
       if (!li.parent) {
@@ -61,7 +66,7 @@ export default class IndentListCommand extends Command {
       // First li of (nested) list can never be selected here, so previousSibling is always another li.
       const newParent = lis[0].previousSibling;
       if (!newParent || !ModelNode.isModelElement(newParent)) {
-        throw new Error("First selected li doesn't have previous sibling");
+        throw new IllegalExecutionStateError("First selected li doesn't have previous sibling");
       }
 
       for (const li of lis) {

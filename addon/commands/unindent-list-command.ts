@@ -1,6 +1,12 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {
+  IllegalExecutionStateError,
+  ImpossibleModelStateError,
+  MisbehavedSelectionError,
+  SelectionError,
+  TypeAssertionError
+} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
@@ -43,9 +49,10 @@ export default class UnindentListCommand extends Command {
     const elements: ModelElement[] = [];
 
     for (const node of treeWalker) {
-      if (!ModelNodeUtils.isListElement(node)) {
-        throw new Error("Current node is not a list element");
+      if (!ModelNode.isModelElement(node)) {
+        throw new TypeAssertionError("Current node is not an element");
       }
+
       elements.push(node);
     }
 
@@ -72,7 +79,7 @@ export default class UnindentListCommand extends Command {
           parent.removeChild(li);
 
           if (grandParent.index === null) {
-            throw new Error("Couldn't find index of grandparent li");
+            throw new IllegalExecutionStateError("Couldn't find index of grandparent li");
           }
 
           if (parent.length === 0) {
@@ -81,7 +88,7 @@ export default class UnindentListCommand extends Command {
             grandParent.removeChild(parent);
           } else {
             if (liIndex === null) {
-              throw new Error("Couldn't find index of current li");
+              throw new IllegalExecutionStateError("Couldn't find index of current li");
             }
             const split = parent.split(liIndex);
 

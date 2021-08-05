@@ -1,7 +1,10 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {
+  ImpossibleModelStateError,
+  MisbehavedSelectionError
+} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
@@ -30,7 +33,7 @@ export default class DeleteSelectionCommand extends Command<unknown[], ModelNode
     ) {
       const newAncestor = ModelNodeUtils.findAncestor(commonAncestor, node => !ModelNodeUtils.isListContainer(node));
       if (!newAncestor || !ModelElement.isModelElement(newAncestor)) {
-        throw new Error("No ancestor found");
+        throw new ImpossibleModelStateError("No ancestor found that is not list container.");
       }
 
       commonAncestor = newAncestor;

@@ -3,7 +3,12 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {
+  IllegalExecutionStateError,
+  MisbehavedSelectionError,
+  ModelError,
+  TypeAssertionError
+} from "@lblod/ember-rdfa-editor/utils/errors";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 
@@ -32,7 +37,7 @@ export default class InsertNewLiCommand extends Command {
     const endParentLi = range.end.findAncestors(ModelNodeUtils.isListElement)[0];
 
     if (!startParentLi || !endParentLi) {
-      throw new Error("Couldn't locate parent lis");
+      throw new IllegalExecutionStateError("Couldn't locate parent lis");
     }
 
     this.model.change(mutator => {
@@ -53,12 +58,12 @@ export default class InsertNewLiCommand extends Command {
     });
   }
 
-  insertLi(mutator: ImmediateModelMutator, position: ModelPosition) {
+  private insertLi(mutator: ImmediateModelMutator, position: ModelPosition) {
     const newPosition = mutator.splitUntil(position, ModelNodeUtils.isListContainer, true);
     const liNode = newPosition.nodeAfter();
 
     if (!liNode || !ModelNodeUtils.isListElement(liNode)) {
-      throw new Error("Node right after the cursor is not an li");
+      throw new TypeAssertionError("Node right after the cursor is not an li");
     }
 
     this.model.selectRange(ModelRange.fromInElement(liNode, 0, 0));
