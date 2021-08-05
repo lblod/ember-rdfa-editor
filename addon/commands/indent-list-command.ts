@@ -1,11 +1,18 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {NoParentError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {
+  IllegalExecutionStateError,
+  MisbehavedSelectionError,
+  NoParentError,
+  TypeAssertionError
+} from "@lblod/ember-rdfa-editor/utils/errors";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 
 export default class IndentListCommand extends Command {
   name = "indent-list";
@@ -14,50 +21,54 @@ export default class IndentListCommand extends Command {
     super(model);
   }
 
-  canExecute(selection: ModelSelection = this.model.selection) {
-    const selectedLIs = selection.findAllInSelection({
-      filter: ModelNode.isModelElement,
-      predicate: node => node.type === "li"
-    });
-    if (!selectedLIs) {
+  canExecute(range: ModelRange | null = this.model.selection.lastRange): boolean {
+    if (!range) {
       return false;
     }
-    for (const li of selectedLIs) {
-      if ( li == null || li.index! === 0) {
+
+    const treeWalker = ModelRangeUtils.findModelNodes(range, ModelNodeUtils.isListElement);
+    for (const li of treeWalker) {
+      if (!li || li.index === 0) {
         return false;
       }
     }
+
     return true;
   }
 
   @logExecute
-  execute(selection: ModelSelection = this.model.selection): void {
-    const selectedLIsIterator = selection.findAllInSelection({
-      filter: ModelNode.isModelElement,
-      predicate: node => node.type === "li"
-    });
-    if (!selectedLIsIterator) {
-      return;
+  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+    if (!range) {
+      throw new MisbehavedSelectionError();
     }
-    const selectedLIs = Array.from(selectedLIsIterator);
 
+    const treeWalker = ModelRangeUtils.findModelNodes(range, ModelNodeUtils.isListElement);
     const setsToIndent = new Map<ModelElement, ModelElement[]>();
 
-    for (const li of selectedLIs) {
-      const parent = li.parent;
-      if (!parent) {
+    for (const li of treeWalker) {
+      if (!ModelNode.isModelElement(li)) {
+        throw new TypeAssertionError("Current node is not an element.");
+      }
+
+      if (!li.parent) {
         throw new NoParentError();
       }
 
-      if (setsToIndent.has(parent)) {
-        setsToIndent.get(parent)!.push(li);
+      const parentInSet = setsToIndent.get(li.parent);
+      if (parentInSet) {
+        parentInSet.push(li);
       } else {
-        setsToIndent.set(parent, [li]);
+        setsToIndent.set(li.parent, [li]);
       }
     }
 
     for (const [parent, lis] of setsToIndent.entries()) {
-      const newParent = lis[0].previousSibling! as ModelElement;
+      // First li of (nested) list can never be selected here, so previousSibling is always another li.
+      const newParent = lis[0].previousSibling;
+      if (!newParent || !ModelNode.isModelElement(newParent)) {
+        throw new IllegalExecutionStateError("First selected li doesn't have previous sibling");
+      }
+
       for (const li of lis) {
         parent.removeChild(li);
       }
@@ -65,11 +76,10 @@ export default class IndentListCommand extends Command {
       const newList = new ModelElement(parent.type);
       newList.appendChildren(...lis);
       newParent.addChild(newList);
-
     }
+
     const cleaner = new ListCleaner();
-    cleaner.clean(selection.lastRange!);
+    cleaner.clean(range);
     this.model.write();
   }
-
 }

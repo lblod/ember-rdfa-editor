@@ -14,7 +14,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 export enum FilterResult {
   // we like the node
   FILTER_ACCEPT,
-  // we dont want the node, but we want to visit it's childtree
+  // we dont want the node, but we want to visit it's child tree
   FILTER_SKIP,
   // we don't want the entire subtree so skip the node and don't visit it's children
   FILTER_REJECT
@@ -172,6 +172,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
         return node;
       }
     }
+
     return null;
   }
 
@@ -205,6 +206,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
           return node;
         }
       }
+
       // at this point we've gone as deep as we can but haven't found a node yet
       // so we start going sideways or back up
       let sibling = null;
@@ -239,7 +241,6 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
       }
       // the node did not qualify, we will visit its children on the next loop
     }
-
   }
 
   private getStartNodeFromPosition(startPosition: ModelPosition): ModelNode {
@@ -325,6 +326,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
     if (node === this.root) {
       return null;
     }
+
     // eslint-disable-next-line no-constant-condition
     while (true) {
       let sibling = this.getSibling(node, traverseType);
@@ -347,9 +349,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
       if (this.filterNode(node) === FilterResult.FILTER_ACCEPT) {
         return null;
       }
-
     }
-
   }
 
   private getSibling(node: ModelNode, traverseType: TraverseType): ModelNode | null {
@@ -364,6 +364,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
     if (!ModelNode.isModelElement(node)) {
       return null;
     }
+
     if (traverseType === TraverseType.FIRST) {
       return node.firstChild;
     } else {
@@ -380,11 +381,11 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
       this.hasSeenEnd = true;
       return FilterResult.FILTER_REJECT;
     }
+
     if (!this._filter) {
       return FilterResult.FILTER_ACCEPT;
     }
+
     return this._filter(node);
   }
-
-
 }

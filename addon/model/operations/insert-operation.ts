@@ -21,9 +21,9 @@ export default class InsertOperation extends Operation {
   }
 
   execute(): ModelRange {
-    if(!this.nodes.length) {
+    if (!this.nodes.length) {
       const nodeAtEnd = this.range.end.nodeAfter();
-      if(nodeAtEnd) {
+      if (nodeAtEnd) {
         OperationAlgorithms.remove(this.range);
         return ModelRange.fromInNode(nodeAtEnd, 0, 0);
       } else {
@@ -35,17 +35,18 @@ export default class InsertOperation extends Operation {
         return new ModelRange(pos, pos);
       }
     }
+
     OperationAlgorithms.insert(this.range, ...this.nodes);
     if(this.range.collapsed) {
       const last = this.nodes[this.nodes.length - 1];
       const pos = ModelPosition.fromAfterNode(last);
       return new ModelRange(pos, pos);
     }
+
     const first = this.nodes[0];
     const last = this.nodes[this.nodes.length - 1];
     const start = ModelPosition.fromBeforeNode(first);
     const end = ModelPosition.fromAfterNode(last);
     return new ModelRange(start, end);
   }
-
 }

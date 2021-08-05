@@ -107,6 +107,7 @@ export default abstract class ModelNode {
     if (this.parent) {
       return this.parent.getChildIndex(this);
     }
+
     return null;
   }
 
@@ -162,23 +163,23 @@ export default abstract class ModelNode {
    */
   getIndexPath(): number[] {
     const result = [];
-
     // this is deprecated so I won't fix this
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let child: ModelNode = this;
     let parent = this.parent;
     while (parent) {
       const index = parent.getChildIndex(child);
+
       if (index === null) {
         break;
       }
+
       result.unshift(index);
       child = parent;
       parent = parent.parent;
     }
 
     return result;
-
   }
 
   /**
@@ -232,6 +233,7 @@ export default abstract class ModelNode {
         return this;
       }
     }
+
     let cur = this.parent;
     while (cur && !predicate(cur)) {
       cur = cur.parent;
@@ -240,6 +242,7 @@ export default abstract class ModelNode {
     if (cur && !predicate(cur)) {
       return null;
     }
+
     return cur;
   }
 
@@ -310,7 +313,7 @@ export default abstract class ModelNode {
 
   /**
    * True if node can be merged with other
-   * This means we are ok with this node being replaced by a shallowclone of either this or other,
+   * This means we are ok with this node being replaced by a shallow clone of either this or other,
    * with the children of this and other appended to the clone.
    * @param other
    */

@@ -90,8 +90,12 @@ export class ModelRangeError extends SelectionError {
 }
 
 export class ImpossibleModelStateError extends ModelError {
-  constructor() {
-    super("Something went horribly wrong and a strong assumption was broken");
+  constructor(message?: string) {
+    if (message) {
+      super(message);
+    } else {
+      super("Something went horribly wrong and a strong assumption was broken");
+    }
   }
 }
 
@@ -132,3 +136,10 @@ export class IllegalAccessToRawEditor extends CustomError {
     super("raw editor was used before it was initialized");
   }
 }
+
+export class TypeAssertionError extends CustomError {}
+
+/**
+ * When a command gets executed in a state it shouldn't.
+ */
+export class IllegalExecutionStateError extends CustomError {}

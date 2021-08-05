@@ -2,7 +2,6 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import TestModel from "dummy/tests/utilities/test-model";
 
 export default class ModelTestContext {
-
   rootNode!: HTMLElement;
   model!: TestModel;
   modelSelection!: ModelSelection;
@@ -15,6 +14,5 @@ export default class ModelTestContext {
     this.model = new TestModel(this.rootNode);
     this.model.read(false);
     this.modelSelection = this.model.selection;
-
   }
 }

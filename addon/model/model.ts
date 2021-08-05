@@ -11,7 +11,6 @@ import BatchedModelMutator from "@lblod/ember-rdfa-editor/model/mutators/batched
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
-
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
  * Code that needs to modify the DOM has to use a {@link Command}.
@@ -199,5 +198,4 @@ export default class Model {
   toXml(): Node {
     return this.rootModelNode.toXml();
   }
-
 }
