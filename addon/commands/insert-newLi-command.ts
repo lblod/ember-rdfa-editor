@@ -6,7 +6,6 @@ import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import {
   IllegalExecutionStateError,
   MisbehavedSelectionError,
-  ModelError,
   TypeAssertionError
 } from "@lblod/ember-rdfa-editor/utils/errors";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";

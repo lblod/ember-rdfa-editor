@@ -94,7 +94,7 @@ export class ImpossibleModelStateError extends ModelError {
     if (message) {
       super(message);
     } else {
-      super("Something went horribly wrong and a strong assumption was broken")
+      super("Something went horribly wrong and a strong assumption was broken");
     }
   }
 }
