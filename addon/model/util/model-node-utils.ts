@@ -2,7 +2,6 @@ import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {LIST_CONTAINERS, PLACEHOLDER_CLASS, TABLE_CELLS} from "@lblod/ember-rdfa-editor/model/util/constants";
-import Model from "@lblod/ember-rdfa-editor/model/model";
 
 export default class ModelNodeUtils {
   static DEFAULT_IGNORED_ATTRS: Set<string> = new Set(["__dummy_test_attr", "__id", "data-editor-position-level", "data-editor-rdfa-position-level"]);

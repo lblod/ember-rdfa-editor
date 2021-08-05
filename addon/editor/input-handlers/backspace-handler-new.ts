@@ -8,7 +8,6 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 
 export default class BackspaceHandler extends InputHandler {
