@@ -120,7 +120,7 @@ export default class EditorToolbar extends Component<Args> {
     this.args.editor.executeCommand("undo");
   }
 
-  //Table commands
+  // Table commands
   @action
   insertTable(){
     this.args.editor.executeCommand("insert-table");

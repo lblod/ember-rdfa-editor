@@ -311,18 +311,4 @@ export default class ModelSelection {
 
     return modelSelection;
   }
-
-  sameAs(other: ModelSelection) {
-    if (this.isRightToLeft !== other.isRightToLeft || this.ranges.length !== other.ranges.length) {
-      return false;
-    }
-
-    for (let i = 0; i < this.ranges.length; i++) {
-      if (!this.ranges[i].sameAs(other.ranges[i])) {
-        return false;
-      }
-    }
-
-    return true;
-  }
 }

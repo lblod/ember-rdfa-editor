@@ -11,7 +11,6 @@ export default class SimplifiedModel {
   }
 
   sameAs(other: SimplifiedModel) {
-    return this.rootModelNode.sameAs(other.rootModelNode)
-      && this.modelSelection.sameAs(other.modelSelection);
+    return this.rootModelNode.sameAs(other.rootModelNode);
   }
 }
