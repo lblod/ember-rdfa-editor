@@ -36,7 +36,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   insertText(range: ModelRange, text: string): ModelRange {
     const textNode = new ModelText(text);
     for (const [attr, val] of range.getTextAttributes().entries()) {
-      if(val === PropertyState.enabled) {
+      if (val === PropertyState.enabled) {
         textNode.setTextAttribute(attr, true);
       }
     }
@@ -51,13 +51,15 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return resultRange;
   }
 
-  private mergeTextNodesInRange(range: ModelRange) {
+  mergeTextNodesInRange(range: ModelRange) {
     if (!range.isConfined()) {
       return;
     }
-    if(range.collapsed) {
+
+    if (range.collapsed) {
       return;
     }
+
     const walker = new ModelTreeWalker({range, descend: false});
 
     const nodes: ModelNode[] = [];

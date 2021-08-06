@@ -3,11 +3,10 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {IllegalExecutionStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
-export default class DeleteCharacterBackwardsCommand extends Command<unknown[], string> {
+export default class DeleteCharacterBackwardsCommand extends Command {
   name = "delete-character-backwards";
 
   constructor(model: Model) {
@@ -25,7 +24,7 @@ export default class DeleteCharacterBackwardsCommand extends Command<unknown[], 
       && ModelNodeUtils.isTextRelated(range.start.nodeBefore());
   }
 
-  execute(range: ModelRange | null = this.model.selection.lastRange): string {
+  execute(range: ModelRange | null = this.model.selection.lastRange): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
@@ -50,28 +49,22 @@ export default class DeleteCharacterBackwardsCommand extends Command<unknown[], 
       );
     }
 
-    let result = "";
     this.model.change(mutator => {
-      const treeWalker = new ModelTreeWalker({
-        range: characterRange,
-        descend: false
-      });
-
-      const resultNode = treeWalker.currentNode;
-      if (!resultNode) {
-        throw new IllegalExecutionStateError("No node found in range");
-      }
-
-      if (ModelNode.isModelText(resultNode)) {
-        result = resultNode.content;
-      } else {
-        result = "\n";
-      }
-
       mutator.insertNodes(characterRange);
+      // Merge all text nodes that can be currently split.
+      const nodeBeforeCursor = newStart.nodeBefore();
+      const nodeAfterCursor = newStart.nodeAfter();
+
+      if (ModelNode.isModelText(nodeBeforeCursor) && ModelNode.isModelText(nodeAfterCursor)
+      ) {
+        const mergeRange = new ModelRange(
+          ModelPosition.fromBeforeNode(nodeBeforeCursor),
+          ModelPosition.fromAfterNode(nodeAfterCursor)
+        );
+        mutator.mergeTextNodesInRange(mergeRange);
+      }
+
       this.model.selectRange(new ModelRange(newStart, newStart));
     });
-
-    return result;
   }
 }

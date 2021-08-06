@@ -6,7 +6,6 @@ import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils
 
 export default class PropertyCleaner {
   clean(range: ModelRange) {
-
     const textNodes = new ModelTreeWalker<ModelText>({range, filter: toFilterSkipFalse(ModelNode.isModelText)});
     // careful, we are modifying the nodes in the iterator inside the loop
     // this only works because we are going left to right and merging the left
@@ -26,5 +25,4 @@ export default class PropertyCleaner {
   private mergeTextNodes(toMerge: ModelText, target: ModelText) {
     target.content = toMerge.content + target.content;
   }
-
 }
