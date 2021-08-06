@@ -2,9 +2,10 @@ import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {IllegalExecutionStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 export default class DeleteCharacterBackwardsCommand extends Command<unknown[], string> {
   name = "delete-character-backwards";
@@ -19,7 +20,9 @@ export default class DeleteCharacterBackwardsCommand extends Command<unknown[], 
     }
 
     // Make sure the cursor is right behind a character or "br".
-    return range.collapsed && ModelNodeUtils.isTextRelated(range.start.nodeBefore());
+    return range.collapsed
+      && !!range.start.nodeBefore()
+      && ModelNodeUtils.isTextRelated(range.start.nodeBefore());
   }
 
   execute(range: ModelRange | null = this.model.selection.lastRange): string {
@@ -29,17 +32,22 @@ export default class DeleteCharacterBackwardsCommand extends Command<unknown[], 
 
     const nodeBefore = range.start.nodeBefore();
     if (!nodeBefore) {
-      throw new Error("No node in front of the cursor");
+      throw new IllegalExecutionStateError("No node in front of the cursor");
     }
 
+    let newStart: ModelPosition;
     let characterRange: ModelRange;
     if (ModelNode.isModelText(nodeBefore)) {
-      const newStart = range.start.clone();
+      newStart = range.start.clone();
       newStart.parentOffset--;
 
       characterRange = new ModelRange(newStart, range.end);
     } else {
-      characterRange = ModelRange.fromAroundNode(nodeBefore);
+      newStart = ModelPosition.fromBeforeNode(nodeBefore);
+      characterRange = new ModelRange(
+        newStart,
+        ModelPosition.fromAfterNode(nodeBefore)
+      );
     }
 
     let result = "";
@@ -51,7 +59,7 @@ export default class DeleteCharacterBackwardsCommand extends Command<unknown[], 
 
       const resultNode = treeWalker.currentNode;
       if (!resultNode) {
-        throw new Error("No node found in range");
+        throw new IllegalExecutionStateError("No node found in range");
       }
 
       if (ModelNode.isModelText(resultNode)) {
@@ -60,7 +68,8 @@ export default class DeleteCharacterBackwardsCommand extends Command<unknown[], 
         result = "\n";
       }
 
-      this.model.selectRange(mutator.insertNodes(characterRange));
+      mutator.insertNodes(characterRange);
+      this.model.selectRange(new ModelRange(newStart, newStart));
     });
 
     return result;

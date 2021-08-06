@@ -4,6 +4,7 @@ import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {TypeAssertionError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 export default class ModelRangeUtils {
   static getExtendedToPlaceholder(range: ModelRange): ModelRange {
@@ -19,6 +20,10 @@ export default class ModelRangeUtils {
   }
 
   static findLastNode(range: ModelRange, predicate: (node: ModelNode) => boolean): ModelNode | null {
+    if (range.start.parentOffset === range.end.parentOffset) {
+      return null;
+    }
+
     const treeWalker = new ModelTreeWalker({
       filter: toFilterSkipFalse(predicate),
       range: range
@@ -32,8 +37,7 @@ export default class ModelRangeUtils {
     return this.findLastNode(range, ModelNodeUtils.isTextRelated);
   }
 
-  static findLastListElement(list: ModelElement): ModelElement | null {
-    const range = ModelRange.fromAroundNode(list);
+  static findLastListElement(range: ModelRange): ModelElement | null {
     const lastLi = this.findLastNode(range, ModelNodeUtils.isListElement);
 
     if (!lastLi) {
@@ -41,7 +45,7 @@ export default class ModelRangeUtils {
     }
 
     if (!ModelNodeUtils.isListElement(lastLi)) {
-      throw new Error("Found node is not a list element");
+      throw new TypeAssertionError("Found node is not a list element");
     }
 
     return lastLi;
