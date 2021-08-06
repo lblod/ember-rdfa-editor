@@ -5,7 +5,7 @@ import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
-module("Unit | commands | delete-character-backwards", hooks => {
+module("Unit | commands | delete-character-backwards-command-test", hooks => {
   const ctx = new ModelTestContext();
   let command: DeleteCharacterBackwardsCommand;
 
