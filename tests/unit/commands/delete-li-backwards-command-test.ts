@@ -13,7 +13,7 @@ module("Unit | commands | delete-li-backwards-command-test", hooks => {
     command = new DeleteLiBackwardsCommand(ctx.model);
   });
 
-  // Can't seem to figure out why th root of lastRange and root of resultRange don't match.
+  // Can't seem to figure out why the root of lastRange and root of resultRange don't match.
   test("deletes first li (not nested)", assert => {
     // language=XML
     const {root: initial, textNodes: {firstLi}} = vdom`
