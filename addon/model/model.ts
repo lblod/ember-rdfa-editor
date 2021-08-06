@@ -83,11 +83,6 @@ export default class Model {
     if (readSelection) {
       this.readSelection();
     }
-
-    // Saves a new snapshot when the DOM is read into the model. This way, changes that are made directly
-    // on the DOM can also be restored using the `restoreModel` method of this class. This should however
-    // be temporarily and should be removed when all model manipulations are done using commands.
-    this.saveSnapshot();
   }
 
   readSelection(domSelection: Selection = getWindowSelection()) {
@@ -148,11 +143,13 @@ export default class Model {
    * @param domNode
    */
   public getModelNodeFor(domNode: Node): ModelNode {
-    if (!this.nodeMap) throw new ModelError("Uninitialized nodeMap");
+    if (!this.nodeMap) {
+      throw new ModelError("Uninitialized nodeMap");
+    }
 
     const result = this.nodeMap.get(domNode);
     if (!result) {
-      throw new ModelError("No boundnode for domNode");
+      throw new ModelError("No bound node for domNode");
     }
 
     return result;
