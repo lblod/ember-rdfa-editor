@@ -38,17 +38,31 @@ export default class ModelRangeUtils {
   }
 
   static findLastListElement(range: ModelRange): ModelElement | null {
-    const lastLi = this.findLastNode(range, ModelNodeUtils.isListElement);
+    const lastListElement = this.findLastNode(range, ModelNodeUtils.isListElement);
 
-    if (!lastLi) {
+    if (!lastListElement) {
       return null;
     }
 
-    if (!ModelNodeUtils.isListElement(lastLi)) {
+    if (!ModelNodeUtils.isListElement(lastListElement)) {
       throw new TypeAssertionError("Found node is not a list element");
     }
 
-    return lastLi;
+    return lastListElement;
+  }
+
+  static findLastTableCell(range: ModelRange): ModelElement | null {
+    const lastTableCell = this.findLastNode(range, ModelNodeUtils.isTableCell);
+
+    if (!lastTableCell) {
+      return null;
+    }
+
+    if (!ModelNodeUtils.isTableCell(lastTableCell)) {
+      throw new TypeAssertionError("Found node is not a list element");
+    }
+
+    return lastTableCell;
   }
 
   static findModelNodes(range: ModelRange, predicate: (node: ModelNode) => boolean, wrapStart = true): ModelTreeWalker<ModelNode> {

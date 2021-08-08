@@ -17,7 +17,7 @@ import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { IllegalAccessToRawEditor } from "@lblod/ember-rdfa-editor/utils/errors";
 import { taskFor } from "ember-concurrency-ts";
-import ArrowHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/arrow-handler";
+import ArrowHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/arrow-handler-new";
 import IgnoreModifiersHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/ignore-modifiers-handler";
 import UndoHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler";
 import FallbackInputHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/fallback-input-handler";
