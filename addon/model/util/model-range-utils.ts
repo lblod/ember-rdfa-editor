@@ -20,10 +20,6 @@ export default class ModelRangeUtils {
   }
 
   static findLastNode(range: ModelRange, predicate: (node: ModelNode) => boolean): ModelNode | null {
-    if (range.start.parentOffset === range.end.parentOffset) {
-      return null;
-    }
-
     const treeWalker = new ModelTreeWalker({
       filter: toFilterSkipFalse(predicate),
       range: range
