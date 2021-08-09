@@ -130,7 +130,6 @@ export default class MoveLeftCommand extends Command {
       ModelPosition.fromInElement(this.model.rootModelNode, 0),
       cursorPosition
     );
-    console.log(searchRange.toString());
 
     if (searchRange.start.sameAs(searchRange.end)) {
       return null;
