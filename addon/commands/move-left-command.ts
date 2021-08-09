@@ -6,6 +6,8 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import ModelPositionUtils from "@lblod/ember-rdfa-editor/model/util/model-position-utils";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export default class MoveLeftCommand extends Command {
   name = "move-left";
@@ -27,41 +29,29 @@ export default class MoveLeftCommand extends Command {
       throw new MisbehavedSelectionError();
     }
 
-    let newStart: ModelPosition;
-    const nodeBefore = range.start.nodeBefore();
+    const rangeStart = MoveLeftCommand.skipInvisibleSpaces(range.start);
+    const nodeBefore = rangeStart.nodeBefore();
 
+    let newStart: ModelPosition;
     if (nodeBefore) {
       // Move the cursor one place to the left, since there is a character right before it.
       if (ModelNode.isModelText(nodeBefore)) {
-        newStart = range.start.clone();
-        newStart.parentOffset--;
+        newStart = MoveLeftCommand.getShiftedPosition(rangeStart);
       // Move the cursor before the "br" that is before it.
       } else if (ModelNodeUtils.isBr(nodeBefore)) {
         newStart = ModelPosition.fromBeforeNode(nodeBefore);
       // If cursor is right behind a list, place the cursor at the end of the last list element.
       } else if (ModelNodeUtils.isListContainer(nodeBefore)) {
-        const searchRange = ModelRange.fromAroundNode(nodeBefore);
-        const lastListElement = ModelRangeUtils.findLastListElement(searchRange);
-
-        if (!lastListElement) {
-          throw new ModelError("List without any list elements");
-        }
-
-        newStart = ModelPosition.fromInNode(lastListElement, lastListElement.getMaxOffset());
+        newStart = MoveLeftCommand.getPositionInLastListElement(nodeBefore);
       // If cursor is right behind a table, place the cursor at the end of the last table cell.
       } else if (ModelNodeUtils.isTableContainer(nodeBefore)) {
-        const searchRange = ModelRange.fromAroundNode(nodeBefore);
-        const lastTableCell = ModelRangeUtils.findLastTableCell(searchRange);
-
-        if (!lastTableCell) {
-          throw new ModelError("Table without any table cells");
-        }
-
-        newStart = ModelPosition.fromInNode(lastTableCell, lastTableCell.getMaxOffset());
-      // In all other cases, we search for the last text related node in front of the cursor and place the
-      // cursor right behind it.
+        newStart = MoveLeftCommand.getPositionInLastTableCell(nodeBefore);
+      // In all other cases, we search for the last text related node after the previous list or table.
+      // If no text related node can be found, we place the cursor at the end of the last list element
+      // or table cell of the previous list or table. If also no previous list or table are found, we just keep
+      // the cursor as is.
       } else {
-        const newPosition = this.getPositionAfterLastTextRelatedNode(range.start);
+        const newPosition = MoveLeftCommand.findPreviousSuitablePosition(rangeStart);
         if (!newPosition) {
           return;
         }
@@ -69,13 +59,16 @@ export default class MoveLeftCommand extends Command {
         newStart = newPosition;
       }
     } else {
-      const currentElement = range.start.parent;
+      const currentElement = rangeStart.parent;
 
       // If the cursor is at the start of a list element, we search for the previous list element and place
       // the cursor right before the first nested list in this list element. If there is no previous list
-      // element, we place the cursor before the list.
+      // element, we search for the last text related node after the previous list or table.
+      // If no text related node can be found, we place the cursor at the end of the last list element
+      // or table cell of the previous list or table. If also no previous list or table are found, we just keep
+      // the cursor as is.
       if (ModelNodeUtils.isListElement(currentElement)) {
-        const listRelatedAncestors = range.start.findAncestors(ModelNodeUtils.isListRelated);
+        const listRelatedAncestors = rangeStart.findAncestors(ModelNodeUtils.isListRelated);
         const topListContainer = listRelatedAncestors[listRelatedAncestors.length - 1];
 
         const positionBeforeList = ModelPosition.fromBeforeNode(topListContainer);
@@ -91,12 +84,20 @@ export default class MoveLeftCommand extends Command {
             ? ModelPosition.fromBeforeNode(firstListContainer)
             : ModelPosition.fromInNode(lastListElement, lastListElement.getMaxOffset());
         } else {
-          newStart = positionBeforeList;
+          const newPosition = MoveLeftCommand.findPreviousSuitablePosition(positionBeforeList);
+          if (!newPosition) {
+            return;
+          }
+
+          newStart = newPosition;
         }
       // If the cursor is at the start of a table cell, we search for the previous table cell and place
-      // the cursor at end of it. If there is no previous table cell, we place the cursor right before the table.
+      // the cursor at end of it. If there is no previous table cell, we search for the last text related node after the
+      // previous list or table. If no text related node can be found, we place the cursor at the end of the last
+      // list element or table cell of the previous list or table. If also no previous list or table are found, we
+      // just keep the cursor as is.
       } else if (ModelNodeUtils.isTableCell(currentElement)) {
-        const tableContainerAncestors = range.start.findAncestors(ModelNodeUtils.isTableContainer);
+        const tableContainerAncestors = rangeStart.findAncestors(ModelNodeUtils.isTableContainer);
         const tableContainer = tableContainerAncestors[0];
 
         const positionBeforeTable = ModelPosition.fromBeforeNode(tableContainer);
@@ -106,13 +107,22 @@ export default class MoveLeftCommand extends Command {
         );
 
         const lastTableCell = ModelRangeUtils.findLastTableCell(searchRange);
-        newStart = lastTableCell
-          ? ModelPosition.fromInNode(lastTableCell, lastTableCell.getMaxOffset())
-          : positionBeforeTable;
-      // In all other cases, we search for the last text related node in front of the cursor and place the
-      // cursor right behind it.
+        if (lastTableCell) {
+          newStart = ModelPosition.fromInNode(lastTableCell, lastTableCell.getMaxOffset());
+        } else {
+          const newPosition = MoveLeftCommand.findPreviousSuitablePosition(positionBeforeTable);
+          if (!newPosition) {
+            return;
+          }
+
+          newStart = newPosition;
+        }
+      // In all other cases, we search for the last text related node after the previous list or table.
+      // If no text related node can be found, we place the cursor at the end of the last list element
+      // or table cell of the previous list or table. If also no previous list or table are found, we just keep
+      // the cursor as is.
       } else {
-        const newPosition = this.getPositionAfterLastTextRelatedNode(range.start);
+        const newPosition = MoveLeftCommand.findPreviousSuitablePosition(rangeStart);
         if (!newPosition) {
           return;
         }
@@ -125,21 +135,68 @@ export default class MoveLeftCommand extends Command {
     this.model.change(_ => this.model.selectRange(newRange));
   }
 
-  private getPositionAfterLastTextRelatedNode(cursorPosition: ModelPosition): ModelPosition | null {
-    const searchRange = new ModelRange(
-      ModelPosition.fromInElement(this.model.rootModelNode, 0),
-      cursorPosition
+  private static skipInvisibleSpaces(start: ModelPosition): ModelPosition {
+    let position = start;
+    while (position.charactersBefore(1) === INVISIBLE_SPACE) {
+      position = MoveLeftCommand.getShiftedPosition(position);
+    }
+
+    return position;
+  }
+
+  private static getPositionInLastListElement(node: ModelNode): ModelPosition {
+    const searchRange = ModelRange.fromAroundNode(node);
+    const lastListElement = ModelRangeUtils.findLastListElement(searchRange);
+
+    if (!lastListElement) {
+      throw new ModelError("List without any list elements");
+    }
+
+    return ModelPosition.fromInNode(lastListElement, lastListElement.getMaxOffset());
+  }
+
+  private static getPositionInLastTableCell(node: ModelNode): ModelPosition {
+    const searchRange = ModelRange.fromAroundNode(node);
+    const lastTableCell = ModelRangeUtils.findLastTableCell(searchRange);
+
+    if (!lastTableCell) {
+      throw new ModelError("Table without any table cells");
+    }
+
+    return ModelPosition.fromInNode(lastTableCell, lastTableCell.getMaxOffset());
+  }
+
+  private static findPreviousSuitablePosition(startPosition: ModelPosition): ModelPosition | null {
+    const previousListOrTable = ModelPositionUtils.findNodeBeforePosition(
+      startPosition,
+      node => ModelNodeUtils.isListContainer(node) || ModelNodeUtils.isTableContainer(node)
     );
+    const endPosition = previousListOrTable
+      ? ModelPosition.fromAfterNode(previousListOrTable)
+      : ModelPosition.fromInElement(startPosition.parent, 0);
 
-    if (searchRange.start.sameAs(searchRange.end)) {
-      return null;
+    const searchRange = new ModelRange(endPosition, startPosition);
+
+    let lastTextRelatedNode = null;
+    if (!searchRange.start.sameAs(searchRange.end)) {
+      lastTextRelatedNode = ModelRangeUtils.findLastTextRelatedNode(searchRange);
     }
 
-    const lastTextRelatedNode = ModelRangeUtils.findLastTextRelatedNode(searchRange);
-    if (!lastTextRelatedNode) {
-      return null;
+    if (lastTextRelatedNode) {
+      return ModelPosition.fromAfterNode(lastTextRelatedNode);
+    } else if (previousListOrTable) {
+      return ModelNodeUtils.isListContainer(previousListOrTable)
+        ? MoveLeftCommand.getPositionInLastListElement(previousListOrTable)
+        : MoveLeftCommand.getPositionInLastTableCell(previousListOrTable);
     }
 
-    return ModelPosition.fromAfterNode(lastTextRelatedNode);
+    return null;
+  }
+
+  private static getShiftedPosition(position: ModelPosition): ModelPosition {
+    const shiftedPosition = position.clone();
+    shiftedPosition.parentOffset--;
+
+    return shiftedPosition;
   }
 }

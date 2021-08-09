@@ -318,7 +318,6 @@ export default class ModelPosition {
    * @return string the collected characters, in display order
    */
   charactersBefore(amount: number): string {
-
     let cur = this.nodeBefore();
     let counter = 0;
     const result = [];
@@ -340,9 +339,39 @@ export default class ModelPosition {
         i++;
         charIndex = startSearch - 1 - i;
       }
+
       cur = cur.previousSibling;
     }
+
     result.reverse();
+    return result.join("");
+  }
+
+  charactersAfter(amount: number): string {
+    let current = this.nodeAfter();
+    let counter = 0;
+    const result = [];
+
+    while (ModelNode.isModelText(current) && counter < amount) {
+      const amountToCollect = amount - counter;
+      const startSearch = current === this.nodeBefore()
+        ? this.parentOffset - current.getOffset()
+        : 0;
+      const max = current.length;
+
+      let i = 0;
+      let charIndex = startSearch;
+      while (i < amountToCollect && charIndex < max) {
+        result.push(current.content.charAt(startSearch + i));
+        counter++;
+        i++;
+
+        charIndex = startSearch + i;
+      }
+
+      current = current.nextSibling;
+    }
+
     return result.join("");
   }
 

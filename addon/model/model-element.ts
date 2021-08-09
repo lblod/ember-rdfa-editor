@@ -428,7 +428,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   findFirstChild(predicate: (node: ModelNode) => boolean): ModelNode | null {
-    for (const child of this.children) {
+    for(const child of this.children) {
       if (predicate(child)) {
         return child;
       }
