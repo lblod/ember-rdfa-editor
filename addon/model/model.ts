@@ -87,7 +87,8 @@ export default class Model {
     // Saves a new snapshot when the DOM is read into the model. This way, changes that are made directly
     // on the DOM can also be restored using the `restoreModel` method of this class. This should however
     // be temporarily and should be removed when all model manipulations are done using commands.
-    this.saveSnapshot();
+    // Commented for now, since `read` gets called after every event, which creates interference.
+    // this.saveSnapshot();
   }
 
   readSelection(domSelection: Selection = getWindowSelection()) {
