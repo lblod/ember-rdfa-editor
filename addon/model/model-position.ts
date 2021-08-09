@@ -178,8 +178,9 @@ export default class ModelPosition {
    */
   compare(other: ModelPosition): RelativePosition {
     if (this.root !== other.root) {
-      throw new PositionError("cannot compare nodes with different roots");
+      throw new PositionError("Cannot compare nodes with different roots");
     }
+
     return ModelPosition.comparePath(this.path, other.path);
   }
 
@@ -249,7 +250,6 @@ export default class ModelPosition {
    * @param path2
    */
   static comparePath(path1: number[], path2: number[]): RelativePosition {
-
     for (const [i, offset] of path1.entries()) {
       if (i < path2.length) {
         if (offset < path2[i]) {
@@ -259,13 +259,14 @@ export default class ModelPosition {
         }
       }
     }
+
     if (path1.length < path2.length) {
       return RelativePosition.BEFORE;
     } else if (path1.length > path2.length) {
       return RelativePosition.AFTER;
     }
-    return RelativePosition.EQUAL;
 
+    return RelativePosition.EQUAL;
   }
 
   /**

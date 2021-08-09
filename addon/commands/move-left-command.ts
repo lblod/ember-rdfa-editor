@@ -6,7 +6,6 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
 export default class MoveLeftCommand extends Command {
   name = "move-left";
@@ -32,15 +31,13 @@ export default class MoveLeftCommand extends Command {
     const nodeBefore = range.start.nodeBefore();
 
     if (nodeBefore) {
-      if (ModelNodeUtils.isTextRelated(nodeBefore)) {
-        // Move the cursor one place to the left, since there is a character right before it.
-        if (ModelNode.isModelText(nodeBefore)) {
-          newStart = range.start.clone();
-          newStart.parentOffset--;
-        // Move the cursor before the "br" that is before it.
-        } else {
-          newStart = ModelPosition.fromBeforeNode(nodeBefore);
-        }
+      // Move the cursor one place to the left, since there is a character right before it.
+      if (ModelNode.isModelText(nodeBefore)) {
+        newStart = range.start.clone();
+        newStart.parentOffset--;
+      // Move the cursor before the "br" that is before it.
+      } else if (ModelNodeUtils.isBr(nodeBefore)) {
+        newStart = ModelPosition.fromBeforeNode(nodeBefore);
       // If cursor is right behind a list, place the cursor at the end of the last list element.
       } else if (ModelNodeUtils.isListContainer(nodeBefore)) {
         const searchRange = ModelRange.fromAroundNode(nodeBefore);
@@ -75,7 +72,8 @@ export default class MoveLeftCommand extends Command {
       const currentElement = range.start.parent;
 
       // If the cursor is at the start of a list element, we search for the previous list element and place
-      // the cursor at end of it. If there is no previous list element, we place the cursor before the list.
+      // the cursor right before the first nested list in this list element. If there is no previous list
+      // element, we place the cursor before the list.
       if (ModelNodeUtils.isListElement(currentElement)) {
         const listRelatedAncestors = range.start.findAncestors(ModelNodeUtils.isListRelated);
         const topListContainer = listRelatedAncestors[listRelatedAncestors.length - 1];
@@ -87,11 +85,16 @@ export default class MoveLeftCommand extends Command {
         );
 
         const lastListElement = ModelRangeUtils.findLastListElement(searchRange);
-        newStart = lastListElement
-          ? ModelPosition.fromInNode(lastListElement, lastListElement.getMaxOffset())
-          : positionBeforeList;
-      // If the cursor is at the start of a table, we search for the previous table cell and place
-      // the cursor at end of it. If there is no previous table cell, we place the cursor before the table.
+        if (lastListElement) {
+          const firstListContainer = lastListElement.findFirstChild(ModelNodeUtils.isListContainer);
+          newStart = firstListContainer
+            ? ModelPosition.fromBeforeNode(firstListContainer)
+            : ModelPosition.fromInNode(lastListElement, lastListElement.getMaxOffset());
+        } else {
+          newStart = positionBeforeList;
+        }
+      // If the cursor is at the start of a table cell, we search for the previous table cell and place
+      // the cursor at end of it. If there is no previous table cell, we place the cursor right before the table.
       } else if (ModelNodeUtils.isTableCell(currentElement)) {
         const tableContainerAncestors = range.start.findAncestors(ModelNodeUtils.isTableContainer);
         const tableContainer = tableContainerAncestors[0];
@@ -101,12 +104,6 @@ export default class MoveLeftCommand extends Command {
           positionBeforeTable,
           ModelPosition.fromBeforeNode(currentElement)
         );
-
-        const treeWalker = new ModelTreeWalker({
-          range: searchRange
-        });
-
-        console.log([...treeWalker]);
 
         const lastTableCell = ModelRangeUtils.findLastTableCell(searchRange);
         newStart = lastTableCell
@@ -133,6 +130,11 @@ export default class MoveLeftCommand extends Command {
       ModelPosition.fromInElement(this.model.rootModelNode, 0),
       cursorPosition
     );
+    console.log(searchRange.toString());
+
+    if (searchRange.start.sameAs(searchRange.end)) {
+      return null;
+    }
 
     const lastTextRelatedNode = ModelRangeUtils.findLastTextRelatedNode(searchRange);
     if (!lastTextRelatedNode) {

@@ -245,19 +245,24 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
 
   private getStartNodeFromPosition(startPosition: ModelPosition): ModelNode {
     let startNode = startPosition.nodeAfter();
+
     if (startNode) {
       return startNode;
     }
+
     startNode = startPosition.parent;
     if (!startNode) {
       return this.root;
     }
+
     while (!startNode.nextSibling && startNode !== this.root) {
       startNode = startNode.parent!;
     }
+
     if (startNode === this.root) {
       return startNode;
     }
+
     return startNode.nextSibling!;
   }
 
