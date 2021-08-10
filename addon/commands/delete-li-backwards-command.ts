@@ -46,9 +46,9 @@ export default class DeleteLiBackwardsCommand extends Command {
       nodesToMove = [...treeWalker];
     }
 
-    const listAncestors = range.start.findAncestors(ModelNodeUtils.isListRelated);
+    const listAncestors = range.start.findAncestors(ModelNodeUtils.isListContainer);
     const topListContainer = listAncestors[listAncestors.length - 1];
-    const bottomListContainer = listAncestors[1]; // Index 0 will be the li itself.
+    const bottomListContainer = listAncestors[0];
 
     const lastLi = ModelRangeUtils.findLastListElement(new ModelRange(
       ModelPosition.fromBeforeNode(topListContainer),
@@ -73,7 +73,7 @@ export default class DeleteLiBackwardsCommand extends Command {
         newCursorPosition = ModelPosition.fromBeforeNode(topListContainer);
       }
 
-      const newRange = new ModelRange(newCursorPosition, newCursorPosition);
+      const newRange = new ModelRange(newCursorPosition);
       this.model.selectRange(newRange);
 
       mutator.insertNodes(newRange, ...nodesToMove);

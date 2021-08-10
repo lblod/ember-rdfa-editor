@@ -9,6 +9,7 @@ import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import ModelPositionUtils from "@lblod/ember-rdfa-editor/model/util/model-position-utils";
 
 export default class BackspaceHandler extends InputHandler {
   constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
@@ -28,7 +29,8 @@ export default class BackspaceHandler extends InputHandler {
     }
 
     if (range.collapsed) {
-      const rangeStart = this.handleInvisibleSpaces(range.start);
+      // const rangeStart = this.handleInvisibleSpaces(range.start);
+      const rangeStart = range.start;
       const nodeBefore = rangeStart.nodeBefore();
 
       // The cursor is located somewhere in the current node, but not right after the opening tag.
@@ -68,7 +70,7 @@ export default class BackspaceHandler extends InputHandler {
     const start = ModelPosition.fromInElement(this.rawEditor.model.rootModelNode, 0);
     const range = new ModelRange(start, cursorPosition);
 
-    if (range.start.parentOffset === range.end.parentOffset) {
+    if (range.start.sameAs(range.end)) {
       return;
     }
 

@@ -63,7 +63,7 @@ export default class DeleteCharacterBackwardsCommand extends Command {
         mutator.mergeTextNodesInRange(mergeRange);
       }
 
-      this.model.selectRange(new ModelRange(newStart, newStart));
+      this.model.selectRange(new ModelRange(newStart));
     });
   }
 }
