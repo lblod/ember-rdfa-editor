@@ -1,16 +1,12 @@
 import {module, test} from "qunit";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 
-
 module("Unit | model | model", () => {
-
-
   test("getChildIndex returns index of child - only child", function (assert) {
     const parent = document.createElement("div");
     const searchTarget = document.createElement("span");
 
     parent.appendChild(searchTarget);
-
     assert.equal(Model.getChildIndex(searchTarget), 0);
   });
 
@@ -23,7 +19,6 @@ module("Unit | model | model", () => {
     }
 
     parent.appendChild(searchTarget);
-
     assert.equal(Model.getChildIndex(searchTarget), 4);
   });
 
@@ -31,6 +26,4 @@ module("Unit | model | model", () => {
     const searchTarget = document.createElement("span");
     assert.equal(Model.getChildIndex(searchTarget), null);
   });
-
-
 });

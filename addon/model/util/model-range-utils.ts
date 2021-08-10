@@ -29,22 +29,82 @@ export default class ModelRangeUtils {
     return nodes.length > 0 ? nodes[nodes.length - 1] : null;
   }
 
+  static findFirstNode(range: ModelRange, predicate: (node: ModelNode) => boolean): ModelNode | null {
+    const treeWalker = new ModelTreeWalker<ModelNode>({
+      filter: toFilterSkipFalse(predicate),
+      range: range
+    });
+
+    const firstNode = treeWalker[Symbol.iterator]().next();
+    if (firstNode) {
+      return firstNode.value as ModelNode; // TODO: How to get rid of this cast?
+    }
+
+    return null;
+  }
+
   static findLastTextRelatedNode(range: ModelRange): ModelNode | null {
     return this.findLastNode(range, ModelNodeUtils.isTextRelated);
   }
 
-  static findLastListElement(range: ModelRange): ModelElement | null {
-    const lastLi = this.findLastNode(range, ModelNodeUtils.isListElement);
+  static findFirstTextRelatedNode(range: ModelRange): ModelNode | null {
+    return this.findFirstNode(range, ModelNodeUtils.isTextRelated);
+  }
 
-    if (!lastLi) {
+  static findLastListElement(range: ModelRange): ModelElement | null {
+    const lastListElement = this.findLastNode(range, ModelNodeUtils.isListElement);
+
+    if (!lastListElement) {
       return null;
     }
 
-    if (!ModelNodeUtils.isListElement(lastLi)) {
+    if (!ModelNodeUtils.isListElement(lastListElement)) {
       throw new TypeAssertionError("Found node is not a list element");
     }
 
-    return lastLi;
+    return lastListElement;
+  }
+
+  static findFirstListElement(range: ModelRange): ModelElement | null {
+    const firstListElement = this.findFirstNode(range, ModelNodeUtils.isListElement);
+
+    if (!firstListElement) {
+      return null;
+    }
+
+    if (!ModelNodeUtils.isListElement(firstListElement)) {
+      throw new TypeAssertionError("Found node is not a list element");
+    }
+
+    return firstListElement;
+  }
+
+  static findLastTableCell(range: ModelRange): ModelElement | null {
+    const lastTableCell = this.findLastNode(range, ModelNodeUtils.isTableCell);
+
+    if (!lastTableCell) {
+      return null;
+    }
+
+    if (!ModelNodeUtils.isTableCell(lastTableCell)) {
+      throw new TypeAssertionError("Found node is not a table cell");
+    }
+
+    return lastTableCell;
+  }
+
+  static findFirstTableCell(range: ModelRange): ModelElement | null {
+    const firstTableCell = this.findFirstNode(range, ModelNodeUtils.isTableCell);
+
+    if (!firstTableCell) {
+      return null;
+    }
+
+    if (!ModelNodeUtils.isTableCell(firstTableCell)) {
+      throw new TypeAssertionError("Found node is not a table cell");
+    }
+
+    return firstTableCell;
   }
 
   static findModelNodes(range: ModelRange, predicate: (node: ModelNode) => boolean, wrapStart = true): ModelTreeWalker<ModelNode> {

@@ -3,14 +3,17 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {IndexOutOfRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 
 module("Unit | model | model-element-test", hooks => {
   const ctx = new ModelTestContext();
   hooks.beforeEach(() => {
     ctx.reset();
   });
-  module("Unit | model | model-element-test | offsetToIndex", () => {
 
+  module("Unit | model | model-element-test | offsetToIndex", () => {
     test("offset 0 should give index 0", assert => {
       const div = new ModelElement("div");
       assert.strictEqual(div.offsetToIndex(0), 0);
@@ -25,6 +28,7 @@ module("Unit | model | model-element-test", hooks => {
       div.appendChildren(span, txt, span2);
       assert.strictEqual(div.offsetToIndex(0), 0);
     });
+
     test("index should be equal to offset, when only element children", assert => {
       const div = new ModelElement("div");
       const span = new ModelElement("span");
@@ -38,6 +42,7 @@ module("Unit | model | model-element-test", hooks => {
       assert.strictEqual(div.offsetToIndex(2), 2);
       assert.strictEqual(div.offsetToIndex(3), 3);
     });
+
     test("offset after last child gives index == length", assert => {
       const div = new ModelElement("div");
       const span = new ModelElement("span");
@@ -48,8 +53,8 @@ module("Unit | model | model-element-test", hooks => {
       div.appendChildren(span, span2, span3, img);
       assert.strictEqual(div.offsetToIndex(4), 4);
     });
-    test("single text child", assert => {
 
+    test("single text child", assert => {
       const div = new ModelElement("div");
       const txt = new ModelText("abc");
       div.addChild(txt);
@@ -58,10 +63,9 @@ module("Unit | model | model-element-test", hooks => {
       assert.strictEqual(div.offsetToIndex(1), 0);
       assert.strictEqual(div.offsetToIndex(2), 0);
       assert.strictEqual(div.offsetToIndex(3), 1);
-
     });
-    test("elements and text children", assert => {
 
+    test("elements and text children", assert => {
       const div = new ModelElement("div");
       const span = new ModelElement("span");
       const txt = new ModelText("abc");
@@ -74,10 +78,7 @@ module("Unit | model | model-element-test", hooks => {
       assert.strictEqual(div.offsetToIndex(3), 1);
       assert.strictEqual(div.offsetToIndex(4), 2);
       assert.strictEqual(div.offsetToIndex(5), 3);
-
     });
-
-
   });
 
   module("Unit | model | model-element-test | isolateChildAt", () => {
@@ -87,7 +88,6 @@ module("Unit | model | model-element-test", hooks => {
       assert.throws(() => div.isolateChildAt(-1), new IndexOutOfRangeError());
       assert.throws(() => div.isolateChildAt(0), new IndexOutOfRangeError());
       assert.throws(() => div.isolateChildAt(1), new IndexOutOfRangeError());
-
     });
 
     test("throws when index out of range", assert => {
@@ -96,7 +96,6 @@ module("Unit | model | model-element-test", hooks => {
 
       assert.throws(() => div.isolateChildAt(-1), new IndexOutOfRangeError());
       assert.throws(() => div.isolateChildAt(2), new IndexOutOfRangeError());
-
     });
 
     test("does nothing when only one child", assert => {
@@ -107,7 +106,6 @@ module("Unit | model | model-element-test", hooks => {
       div.addChild(content);
 
       const {left, middle, right} = div.isolateChildAt(0);
-
       assert.strictEqual(parent.length, 1);
       assert.strictEqual(parent.firstChild, div);
 
@@ -117,10 +115,9 @@ module("Unit | model | model-element-test", hooks => {
       assert.strictEqual(middle, div);
       assert.strictEqual(left, null);
       assert.strictEqual(right, null);
-
     });
-    test("isolates first child", assert => {
 
+    test("isolates first child", assert => {
       const parent = new ModelElement("div");
       const div = new ModelElement("div");
       const content = new ModelText("test");
@@ -130,7 +127,6 @@ module("Unit | model | model-element-test", hooks => {
       div.addChild(siblingContent);
 
       const {left, middle, right} = div.isolateChildAt(0);
-
       assert.strictEqual(left, null);
 
       assert.strictEqual(middle, div);
@@ -142,7 +138,6 @@ module("Unit | model | model-element-test", hooks => {
     });
 
     test("isolates last child", assert => {
-
       const parent = new ModelElement("div");
       const div = new ModelElement("div");
       const content = new ModelText("test");
@@ -152,7 +147,6 @@ module("Unit | model | model-element-test", hooks => {
       div.addChild(content);
 
       const {left, middle, right} = div.isolateChildAt(1);
-
       assert.strictEqual(left, div);
       assert.strictEqual(left?.length, 1);
       assert.strictEqual(left?.firstChild, siblingContent);
@@ -164,7 +158,6 @@ module("Unit | model | model-element-test", hooks => {
     });
 
     test("isolates middle child", assert => {
-
       const parent = new ModelElement("div");
       const div = new ModelElement("div");
 
@@ -178,7 +171,6 @@ module("Unit | model | model-element-test", hooks => {
       div.addChild(rightSiblingContent);
 
       const {left, middle, right} = div.isolateChildAt(1);
-
       assert.strictEqual(left?.length, 1);
       assert.strictEqual(left?.firstChild, leftSiblingContent);
 
@@ -189,8 +181,8 @@ module("Unit | model | model-element-test", hooks => {
       assert.strictEqual(right?.firstChild, rightSiblingContent);
     });
   });
-  module("Unit | model | model-element-test | rdfa attributes", () => {
 
+  module("Unit | model | model-element-test | rdfa attributes", () => {
     test("getRdfaPrefixes should include vocab", assert => {
       // this is matching marawa expectations, not sure if it's actually a good idea
       const parent = new ModelElement("div");
@@ -222,6 +214,46 @@ module("Unit | model | model-element-test", hooks => {
       const child = new ModelElement("div");
       parent.addChild(child);
       assert.equal(child.getVocab(), "http://mu.semte.ch/vocabularies/core/");
+    });
+  });
+
+  module("Unit | model | model-element-test | findFirstChild", () => {
+    test("finds only text child", assert => {
+      // language=XML
+      const {root: rootNode, textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text __id="textNode">only text</text>
+        </modelRoot>
+      `;
+
+      const result = (rootNode as ModelElement).findFirstChild(ModelNode.isModelText);
+      assert.true(result?.sameAs(textNode));
+    });
+
+    test("finds first text child of multiple text children", assert => {
+      // language=XML
+      const {root: rootNode, textNodes: {textNode}} = vdom`
+        <modelRoot>
+          <text bold="true" __id="textNode">bold text</text>
+          <text>normal text</text>
+          <text italic="true">italic text</text>
+        </modelRoot>
+      `;
+
+      const result = (rootNode as ModelElement).findFirstChild(ModelNode.isModelText);
+      assert.true(result?.sameAs(textNode));
+    });
+
+    test("returns null when no table found", assert => {
+      // language=XML
+      const {root: rootNode} = vdom`
+        <modelRoot>
+          <text>only text here</text>
+        </modelRoot>
+      `;
+
+      const result = (rootNode as ModelElement).findFirstChild(ModelNodeUtils.isTableContainer);
+      assert.true(result === null);
     });
   });
 });

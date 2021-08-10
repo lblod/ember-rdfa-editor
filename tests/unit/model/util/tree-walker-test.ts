@@ -6,7 +6,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 
-module("Unit | model | utils | tree-walker-test", () => {
+module("Unit | model | util | tree-walker-test", () => {
   test("finds root when its the only node and position starts there", assert => {
     const root = new ModelElement("div", {debugInfo: "root"});
 

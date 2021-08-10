@@ -9,12 +9,11 @@ export default class ArrayUtils {
   }
 
   static pushOrCreate<T>(array: T[][], position: number, item: T) {
-    if(array[position]) {
+    if (array[position]) {
       array[position].push(item);
     } else {
       array.push([item]);
     }
-
   }
 
   /**
@@ -25,22 +24,21 @@ export default class ArrayUtils {
    */
   static indexOf<I, T extends Iterable<I>>(item: I, iter: T): number | null {
     let counter = 0;
-    for(const it of iter) {
-      if(item === it) {
+    for (const it of iter) {
+      if (item === it) {
         return counter;
       }
       counter++;
     }
+
     return null;
-
   }
-
 }
 
 export function pushOrExpand<T>(parent: T[], child: T | T[]): void {
-    if (child instanceof Array) {
-        parent.push(...child);
-    } else {
-        parent.push(child);
-    }
+  if (child instanceof Array) {
+    parent.push(...child);
+  } else {
+    parent.push(child);
+  }
 }

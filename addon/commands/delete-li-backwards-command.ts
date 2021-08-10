@@ -68,13 +68,10 @@ export default class DeleteLiBackwardsCommand extends Command {
         const firstListContainer = lastLi.findFirstChild(ModelNodeUtils.isListContainer);
         newCursorPosition = firstListContainer
           ? ModelPosition.fromBeforeNode(firstListContainer)
-          : ModelPosition.fromInNode(lastListElement, lastListElement.getMaxOffset());
+          : ModelPosition.fromInNode(lastLi, lastLi.getMaxOffset());
       } else {
         newCursorPosition = ModelPosition.fromBeforeNode(topListContainer);
       }
-      const newCursorPosition = lastLi
-        ? ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset())
-        : ModelPosition.fromBeforeNode(topListContainer);
 
       const newRange = new ModelRange(newCursorPosition, newCursorPosition);
       this.model.selectRange(newRange);

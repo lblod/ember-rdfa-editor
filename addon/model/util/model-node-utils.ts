@@ -5,7 +5,7 @@ import {
   LIST_CONTAINERS,
   LIST_TYPES, LUMP_NODE_URI,
   PLACEHOLDER_CLASS,
-  TABLE_CELLS
+  TABLE_CELLS, TABLE_TYPES
 } from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export default class ModelNodeUtils {
@@ -41,7 +41,15 @@ export default class ModelNodeUtils {
     return ModelNode.isModelElement(node) && node.type === "li";
   }
 
-  static isTableCell(node: ModelNode): node is ModelElement {
+  static isTableRelated(node: ModelNode): node is ModelElement {
+    return ModelNode.isModelElement(node) && TABLE_TYPES.has(node.type);
+  }
+
+  static isTableContainer(node: ModelNode | null): node is ModelElement {
+    return ModelNode.isModelElement(node) && node.type === "table";
+  }
+
+  static isTableCell(node: ModelNode | null): node is ModelElement {
     return ModelNode.isModelElement(node) && TABLE_CELLS.has(node.type);
   }
 
@@ -60,10 +68,6 @@ export default class ModelNodeUtils {
 
   static isTextRelated(node: ModelNode | null): boolean {
     return ModelNode.isModelText(node) || ModelNodeUtils.isBr(node);
-  }
-
-  static isTableContainer(node: ModelNode | null): node is ModelElement {
-    return ModelNode.isModelElement(node) && node.type === "table";
   }
 
   static isPlaceHolder(node: ModelNode): node is ModelElement {
