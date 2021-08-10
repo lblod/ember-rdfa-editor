@@ -55,8 +55,7 @@ export default class DeleteCharacterBackwardsCommand extends Command {
       const nodeBeforeCursor = newStart.nodeBefore();
       const nodeAfterCursor = newStart.nodeAfter();
 
-      if (ModelNode.isModelText(nodeBeforeCursor) && ModelNode.isModelText(nodeAfterCursor)
-      ) {
+      if (ModelNode.isModelText(nodeBeforeCursor) && ModelNode.isModelText(nodeAfterCursor)) {
         const mergeRange = new ModelRange(
           ModelPosition.fromBeforeNode(nodeBeforeCursor),
           ModelPosition.fromAfterNode(nodeAfterCursor)

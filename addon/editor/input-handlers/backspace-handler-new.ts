@@ -8,6 +8,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export default class BackspaceHandler extends InputHandler {
   constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
@@ -27,7 +28,9 @@ export default class BackspaceHandler extends InputHandler {
     }
 
     if (range.collapsed) {
-      const nodeBefore = range.start.nodeBefore();
+      const rangeStart = this.handleInvisibleSpaces(range.start);
+      const nodeBefore = rangeStart.nodeBefore();
+
       // The cursor is located somewhere in the current node, but not right after the opening tag.
       if (nodeBefore) {
         if (ModelNodeUtils.isTextRelated(nodeBefore)) {
@@ -38,19 +41,19 @@ export default class BackspaceHandler extends InputHandler {
           } else if (ModelNodeUtils.isTableContainer(nodeBefore)) {
             // DO NOTHING IN CASE OF TABLE
           } else {
-            this.backspaceLastTextRelatedNode(range.start);
+            this.backspaceLastTextRelatedNode(rangeStart);
           }
         } else {
           throw new ParseError("Unsupported node type");
         }
       } else {
         // The cursor is located at the start of an element, which means right behind the opening tag.
-        if (ModelNodeUtils.isListElement(range.start.parent)) {
+        if (ModelNodeUtils.isListElement(rangeStart.parent)) {
           this.rawEditor.executeCommand("delete-li-backwards");
-        } else if (ModelNodeUtils.isTableCell(range.start.parent)) {
+        } else if (ModelNodeUtils.isTableCell(rangeStart.parent)) {
           // DO NOTHING IN CASE OF TABLE
         } else {
-          this.backspaceLastTextRelatedNode(range.start);
+          this.backspaceLastTextRelatedNode(rangeStart);
         }
       }
     } else {
@@ -77,7 +80,21 @@ export default class BackspaceHandler extends InputHandler {
     const newCursorPosition = ModelPosition.fromAfterNode(textRelatedNode);
     this.rawEditor.executeCommand(
       "delete-character-backwards",
-      new ModelRange(newCursorPosition, newCursorPosition)
+      new ModelRange(newCursorPosition)
     );
+  }
+
+  // TODO: How to handle invisible spaces? This looks weird when backspacing multiple newlines.
+  private handleInvisibleSpaces(startPosition: ModelPosition) {
+    while (startPosition.charactersBefore(1) === INVISIBLE_SPACE) {
+      this.rawEditor.executeCommand("delete-character-backwards");
+    }
+
+    const resultRange = this.rawEditor.model.selection.lastRange;
+    if (!resultRange) {
+      throw new MisbehavedSelectionError();
+    }
+
+    return resultRange.start;
   }
 }
