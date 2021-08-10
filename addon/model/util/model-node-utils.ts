@@ -49,7 +49,7 @@ export default class ModelNodeUtils {
     return ModelNode.isModelElement(node) && node.type === "table";
   }
 
-  static isTableCell(node: ModelNode): node is ModelElement {
+  static isTableCell(node: ModelNode | null): node is ModelElement {
     return ModelNode.isModelElement(node) && TABLE_CELLS.has(node.type);
   }
 
