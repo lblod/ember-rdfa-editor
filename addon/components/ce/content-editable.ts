@@ -2,7 +2,7 @@ import { action } from "@ember/object";
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler-new';
+import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
 import CutHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-handler";
 import EnterHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/enter-handler';
