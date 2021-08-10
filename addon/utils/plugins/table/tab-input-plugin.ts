@@ -17,11 +17,11 @@ import PernetRawEditor from '../../ce/pernet-raw-editor';
  * @module plugins/table
  */
 export default class TableTabInputPlugin implements TabInputPlugin {
-  label = 'backspace plugin for handling table nodes';
+  label = 'Backspace plugin for handling table nodes';
 
   guidanceForManipulation(manipulation: TabHandlerManipulation, editor: RawEditor) : ManipulationGuidance | null {
     const selection = editor.selection;
-    if(selection.inTableState === PropertyState.enabled) {
+    if (selection.inTableState === PropertyState.enabled) {
       return {
         allow: true,
         executor: TableTabInputPlugin.tabHandler
@@ -34,8 +34,8 @@ export default class TableTabInputPlugin implements TabInputPlugin {
             executor: TableTabInputPlugin.selectFirstCell,
           };
         }
-      } else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
-        if(TableTabInputPlugin.isElementATable(manipulation.node)){
+      } else if (manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
+        if (TableTabInputPlugin.isElementATable(manipulation.node)) {
           return {
             allow: true,
             executor: TableTabInputPlugin.selectLastCell,
@@ -43,6 +43,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         }
       }
     }
+
     return null;
   }
 
@@ -53,7 +54,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
   static selectFirstCell(manipulation : TabHandlerManipulation, editor: PernetRawEditor) {
     const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
     const firstCell = table.getCell(0,0);
-    if(firstCell) {
+    if (firstCell) {
       editor.selection.collapseIn(firstCell);
       editor.model.write();
     }
@@ -73,14 +74,14 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     let table;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);
-    if(!selectedCell) {
+    if (!selectedCell) {
       throw new Error('Selection is not inside a cell');
     }
     const selectedIndex = ModelTable.getCellIndex(selectedCell);
 
-    while(selectedCell?.parent) {
+    while (selectedCell?.parent) {
       const parent: ModelElement = selectedCell.parent ;
-      if(parent.type === 'table') {
+      if (parent.type === 'table') {
         table = parent as ModelTable;
         break;
       } else {
@@ -89,12 +90,13 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
 
     const tableDimensions = table?.getDimensions();
-    if(!table || !tableDimensions) {
+    if (!table || !tableDimensions) {
       throw new Error('Selection is not inside a table');
     }
+
     let newPosition;
-    if(manipulation.type === 'moveCursorToStartOfElement' || manipulation.type === 'moveCursorAfterElement') {
-      if(selectedIndex.x === tableDimensions.x - 1 && selectedIndex.y < tableDimensions.y - 1) {
+    if (manipulation.type === 'moveCursorToStartOfElement' || manipulation.type === 'moveCursorAfterElement') {
+      if (selectedIndex.x === tableDimensions.x - 1 && selectedIndex.y < tableDimensions.y - 1) {
         newPosition = {
           x: 0,
           y: selectedIndex.y + 1
@@ -108,29 +110,29 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         // at the end of the table
         if (table.nextSibling) {
           selection.collapseIn(table.nextSibling);
-        }
-        else {
+        } else {
           const text = new ModelText(INVISIBLE_SPACE);
           table.parent?.appendChildren(text);
           selection.collapseIn(text);
         }
+
         editor.model.write();
         return;
       }
     }
-    else if(manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
-      if(selectedIndex.x === 0 && selectedIndex.y > 0) {
+    else if (manipulation.type === 'moveCursorToEndOfElement' || manipulation.type === 'moveCursorBeforeElement') {
+      if (selectedIndex.x === 0 && selectedIndex.y > 0) {
         newPosition = {
           x: tableDimensions.x - 1,
           y: selectedIndex.y - 1
         };
-      } else if(selectedIndex.x > 0){
+      } else if (selectedIndex.x > 0){
         newPosition = {
           x: selectedIndex.x - 1,
           y: selectedIndex.y
         };
       } else {
-        if(table.previousSibling) {
+        if (table.previousSibling) {
           selection.collapseIn(table.previousSibling);
           editor.model.write();
         }
@@ -140,7 +142,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
       return;
     }
     const newSelectedCell = table?.getCell(newPosition.x, newPosition.y);
-    if(!newSelectedCell) return;
+    if (!newSelectedCell) return;
     selection.collapseIn(newSelectedCell);
     editor.model.write();
   }
