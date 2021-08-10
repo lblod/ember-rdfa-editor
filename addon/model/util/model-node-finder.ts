@@ -11,7 +11,6 @@ export type ModelNodeFinderPredicate<R extends ModelNode> = NodeFinderPredicate<
  * @deprecated use {@link ModelTreeWalker} instead
  */
 export default class ModelNodeFinder<R extends ModelNode = ModelNode> extends NodeFinder<ModelNode, R> {
-
   protected nextSibling(node: ModelNode, direction: Direction): ModelNode | null {
     if (direction === Direction.FORWARDS) {
       return node.nextSibling;

@@ -17,6 +17,7 @@ export const elementHasType = (...types: ElementType[]): Predicate<ModelElement>
   } else {
     predicate = () => true;
   }
+
   return predicate;
 };
 
@@ -28,5 +29,6 @@ export const nodeIsElementOfType = (...types: ElementType[]): Predicate<ModelNod
   } else {
     predicate = () => true;
   }
+
   return predicate;
 };

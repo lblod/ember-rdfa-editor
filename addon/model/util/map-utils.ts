@@ -4,8 +4,9 @@ export default class MapUtils {
       to.set(key, value);
     }
   }
+
   static areMapsSame<K, V>(map1: Map<K, V>, map2: Map<K, V>): boolean {
-    if(map1.size !== map2.size) {
+    if (map1.size !== map2.size) {
       return false;
     }
 
@@ -15,6 +16,7 @@ export default class MapUtils {
         return false;
       }
     }
+
     return true;
   }
 }
