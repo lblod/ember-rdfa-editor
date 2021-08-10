@@ -269,7 +269,7 @@ function tagName(node?: Node | null): string {
  * @public
  */
 function isBlockOrBr(node: HTMLElement): boolean {
-  return tagName(node) == 'br' || isDisplayedAsBlock(node);
+  return tagName(node) === 'br' || isDisplayedAsBlock(node);
 }
 
 /**
@@ -291,20 +291,28 @@ function createElementsFromHTML(htmlString: string): Array<ChildNode> {
  */
 function findPreviousLi(currLI: HTMLLIElement): HTMLLIElement | null {
   let previousElement: Element | null = currLI;
+
   do {
     previousElement = previousElement.previousElementSibling;
   } while (previousElement && tagName(previousElement) !== 'li');
+
   return previousElement ? previousElement as HTMLLIElement : null;
 }
 
 /**
- * for a given node find the LI containing it, or null if it isn't contained in an LI
+ * For a given node find the LI containing it or null if it isn't contained in an LI.
  * @method getParentLI
  * @public
  */
 function getParentLI(node: Node): HTMLLIElement | null {
-  if (!node.parentNode) return null;
-  if (isLI(node.parentNode)) return (node.parentNode );
+  if (!node.parentNode) {
+    return null;
+  }
+
+  if (isLI(node.parentNode)) {
+    return node.parentNode;
+  }
+
   return getParentLI(node.parentNode);
 }
 
@@ -331,8 +339,8 @@ function isTextNode(node: Node): node is Text {
  * @deprecate
  * @public
  */
-function getListTagName(listElement: HTMLUListElement | HTMLOListElement): string {
-  return tagName(listElement) === 'ul' ? 'ul' : 'ol';
+function getListTagName(listElement: HTMLUListElement | HTMLOListElement): "ul" | "ol" {
+  return tagName(listElement) === "ul" ? "ul" : "ol";
 }
 
 /**
