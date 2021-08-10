@@ -5,7 +5,7 @@ import {
 import {Editor, Manipulation, ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {getParentLumpNode} from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
 
-//We favour to be defensive in the stuff we accept.
+// We favour to be defensive in the stuff we accept.
 const SUPPORTED_MANIPULATIONS = [
   "removeEmptyTextNode",
   "removeCharacter",
@@ -18,21 +18,19 @@ const SUPPORTED_MANIPULATIONS = [
   "removeElementWithChildrenThatArentVisible",
 ];
 
-
 /**
  *
  * @class LumpNodeBackspacePlugin
  * @module plugin/lump-node
  */
 export default class LumpNodeBackspacePlugin implements BackspacePlugin {
-  label = 'backspace plugin for handling LumpNodes';
+  label = 'Backspace plugin for handling LumpNodes';
 
   guidanceForManipulation(manipulation: BackspaceHandlerManipulation): ManipulationGuidance | null {
-    //TODO: fix case.manipulation.node == lumpnode
+    //TODO: Fix case.manipulation.node === lump node
     const node = manipulation.node;
-    const rootNode = node.getRootNode(); //Assuming here that node is attached.
-
-    let parentLump: Element | null = getParentLumpNode(node, rootNode);
+    const rootNode = node.getRootNode() as HTMLElement; // Assuming here that node is attached.
+    let parentLump = getParentLumpNode(node, rootNode);
 
     if (manipulation.type === "removeEmptyTextNode" && !parentLump) {
       const prevSibling = manipulation.node.previousSibling;
@@ -40,11 +38,18 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
         parentLump = getParentLumpNode(prevSibling, rootNode);
       }
     }
-    const isManipulationSupported = this.isSupportedManipulation(manipulation);
-    if (parentLump && !isManipulationSupported) {
-      console.warn(`plugins/lump-node/backspace-plugin: manipulation ${manipulation.type} not supported for lumpNode`);
+
+    if (!parentLump) {
       return null;
-    } else if (parentLump) {
+    }
+
+    if (!this.isSupportedManipulation(manipulation)) {
+      console.warn(
+        `plugins/lump-node/backspace-plugin: manipulation ${manipulation.type} not supported for lumpNode`
+      );
+
+      return null;
+    } else {
       if (this.isElementFlaggedForRemoval(parentLump)) {
         return {
           allow: true,
@@ -60,19 +65,20 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
           }
         };
       }
-
-    } else {
-      return null;
     }
   }
 
   /**
-   * This executor removes the LumpNode containing manipulation.node competly.
-   * It assumes manipulation.node is located in a LumpNode
+   * This executor removes the LumpNode containing manipulation.node completely.
+   * It assumes manipulation.node is located in a LumpNode.
    * @method removeLumpNode
    */
   removeLumpNode = (lumpNode: Element, editor: Editor): void => {
-    const parentOfLumpNode = lumpNode.parentNode!;
+    const parentOfLumpNode = lumpNode.parentNode;
+    if (!parentOfLumpNode) {
+      throw new Error("Lump node doesn't have parent node");
+    }
+
     const offset = Array.from(parentOfLumpNode.childNodes).indexOf(lumpNode);
     lumpNode.remove();
     editor.updateRichNode();
@@ -80,24 +86,24 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
   };
 
   /**
-   * Allows the plugin to notify the backspace handler a change has occured.
+   * Allows the plugin to notify the backspace handler a change has occurred.
    * Returns true explicitly when it detects the manipulation.node is in LumpNode.
    *  This is the case when flag for removal has been set.
    * Other cases, we rely on the detectVisualChange from backspace handler
    * @method detectChange
    */
   detectChange(manipulation: BackspaceHandlerManipulation): boolean {
-    const node = manipulation.node;
-    if (!node.isConnected) {
+    if (!manipulation.node.isConnected) {
       return false;
     }
-    // we always do a visual change in this plugin, so we need the exact same logic
-    // this could be solved more efficiently with state but that is not recommended for handler plugins
+
+    // We always do a visual change in this plugin, so we need the exact same logic.
+    // This could be solved more efficiently with state, but that is not recommended for handler plugins.
     return !!this.guidanceForManipulation(manipulation);
   }
 
   /**
-   * checks whether manipulation is supported
+   * Checks whether manipulation is supported.
    * @method isSupportedManipulation
    */
   isSupportedManipulation(manipulation: Manipulation): boolean {
@@ -105,11 +111,11 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
   }
 
   /**
-   * checks whether element is flagged for removal
+   * Checks whether element is flagged for removal.
    * @method isElementFlaggedForRemoval
    */
   isElementFlaggedForRemoval(element: Element): boolean {
-    return element.getAttribute('data-flagged-remove') === "complete";
+    return element.getAttribute("data-flagged-remove") === "complete";
   }
 
   /**
@@ -117,7 +123,6 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * @method flagForRemoval
    */
   flagForRemoval = (lumpNode: Element): void => {
-    lumpNode.setAttribute('data-flagged-remove', 'complete');
+    lumpNode.setAttribute("data-flagged-remove", "complete");
   };
-
 }
