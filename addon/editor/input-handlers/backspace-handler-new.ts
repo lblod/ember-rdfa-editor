@@ -2,14 +2,12 @@ import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input
 import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
-import {MisbehavedSelectionError, ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
-import ModelPositionUtils from "@lblod/ember-rdfa-editor/model/util/model-position-utils";
 
 export default class BackspaceHandler extends InputHandler {
   constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
@@ -28,32 +26,35 @@ export default class BackspaceHandler extends InputHandler {
       throw new MisbehavedSelectionError();
     }
 
+    // If range is in lump node, don't do anything.
+    if (BackspaceHandler.isRangeInLumpNode(range)) {
+      return {allowPropagation: false, allowBrowserDefault: false};
+    }
+
     if (range.collapsed) {
       // const rangeStart = this.handleInvisibleSpaces(range.start);
       const rangeStart = range.start;
       const nodeBefore = rangeStart.nodeBefore();
 
-      // The cursor is located somewhere in the current node, but not right after the opening tag.
       if (nodeBefore) {
-        if (ModelNodeUtils.isTextRelated(nodeBefore)) {
+        // The cursor is located somewhere in the current node, but not right after the opening tag.
+        if (ModelNodeUtils.isLumpNode(nodeBefore)) {
+          this.rawEditor.executeCommand("delete-lump-node-backwards");
+        } else if (ModelNodeUtils.isTextRelated(nodeBefore)) {
           this.rawEditor.executeCommand("delete-character-backwards");
-        } else if (ModelNode.isModelElement(nodeBefore)) {
-          if (ModelNodeUtils.isListContainer(nodeBefore)) {
-            this.rawEditor.executeCommand("delete-list-backwards");
-          } else if (ModelNodeUtils.isTableContainer(nodeBefore)) {
-            // DO NOTHING IN CASE OF TABLE
-          } else {
-            this.backspaceLastTextRelatedNode(rangeStart);
-          }
+        } else if (ModelNodeUtils.isListContainer(nodeBefore)) {
+          this.rawEditor.executeCommand("delete-list-backwards");
+        } else if (ModelNodeUtils.isTableContainer(nodeBefore)) {
+          // Pressing backspace when the cursor is right behind a table does nothing.
         } else {
-          throw new ParseError("Unsupported node type");
+          this.backspaceLastTextRelatedNode(rangeStart);
         }
       } else {
         // The cursor is located at the start of an element, which means right behind the opening tag.
         if (ModelNodeUtils.isListElement(rangeStart.parent)) {
           this.rawEditor.executeCommand("delete-li-backwards");
         } else if (ModelNodeUtils.isTableCell(rangeStart.parent)) {
-          // DO NOTHING IN CASE OF TABLE
+          // Pressing backspace when the cursor is at the start of a table cell does nothing.
         } else {
           this.backspaceLastTextRelatedNode(rangeStart);
         }
@@ -98,5 +99,19 @@ export default class BackspaceHandler extends InputHandler {
     }
 
     return resultRange.start;
+  }
+
+  private static isRangeInLumpNode(range: ModelRange) {
+    const startLumpAncestors = range.start.findAncestors(ModelNodeUtils.isLumpNode);
+    const startInLumpNode = startLumpAncestors.length > 0;
+
+    if (!range.collapsed) {
+      const endLumpAncestors = range.end.findAncestors(ModelNodeUtils.isLumpNode);
+      const endInLumpNode = endLumpAncestors.length > 0;
+
+      return startInLumpNode || endInLumpNode;
+    }
+
+    return startInLumpNode;
   }
 }
