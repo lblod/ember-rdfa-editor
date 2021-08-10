@@ -2,8 +2,7 @@ import getRichNodeMatchingDomNode from '../get-rich-node-matching-dom-node';
 import { get } from '@ember/object';
 import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 let BOLDMARKDOWN = /(\*\*)(.*?)\1/;
 let EMPHASISMARKDOWN = /(\*)([^*].+?)\1/;
@@ -76,7 +75,7 @@ export default class EmphasisMarkdownHandler {
       let elementContent = currentNode.textContent.slice(contentStart, contentEnd);
 
       if (isBlank(elementContent))
-        elementContent = invisibleSpace;
+        elementContent = INVISIBLE_SPACE;
 
       let contentTextNode = document.createTextNode(elementContent);
       let contentNode = document.createElement(this.findMarkdown(currentNode.textContent).tag);
@@ -84,7 +83,7 @@ export default class EmphasisMarkdownHandler {
       let afterContent = currentNode.textContent.slice(contentEnd + matchGroups[1].length);
 
       if(isBlank(afterContent))
-        afterContent = invisibleSpace;
+        afterContent = INVISIBLE_SPACE;
 
       let afterContentNode = document.createTextNode(afterContent);
 

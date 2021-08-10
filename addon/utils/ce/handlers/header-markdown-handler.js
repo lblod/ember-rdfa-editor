@@ -2,7 +2,7 @@ import getRichNodeMatchingDomNode from '../get-rich-node-matching-dom-node';
 import { get } from '@ember/object';
 import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 //'##title' will result in (##title)(##)(title)
 let HEADERMARKDOWN = /(#+)(.*)/;
@@ -59,7 +59,7 @@ export default class HeaderMarkdownHandler {
       let headerContent = currentNode.textContent.slice(headerStart, headerEnd);
 
       if (isBlank(headerContent))
-        headerContent = invisibleSpace;
+        headerContent = INVISIBLE_SPACE;
 
       let headerTextNode = document.createTextNode(headerContent);
       let headerNode = document.createElement(`h${headerLevel}`);
@@ -67,7 +67,7 @@ export default class HeaderMarkdownHandler {
       let afterHeaderContent = currentNode.textContent.slice(headerEnd);
 
       if (isBlank(afterHeaderContent))
-        afterHeaderContent = invisibleSpace;
+        afterHeaderContent = INVISIBLE_SPACE;
 
       let afterHeader = document.createTextNode(afterHeaderContent);
 
