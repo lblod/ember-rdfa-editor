@@ -421,9 +421,11 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     if (!ModelNode.isModelElement(other)) {
       return false;
     }
+
     if (other.type !== this.type) {
       return false;
     }
+
     return ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap);
   }
 

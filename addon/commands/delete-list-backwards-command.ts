@@ -42,10 +42,18 @@ export default class DeleteListBackwardsCommand extends Command {
     }
 
     const newStart = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
-    const newRange = new ModelRange(newStart, newStart);
+    const newRange = new ModelRange(newStart);
 
-    this.model.change(_ => {
+    this.model.change(mutator => {
+      const nodeAfter = range.start.nodeAfter();
+      if (nodeAfter) {
+        mutator.insertNodes(ModelRange.fromAroundNode(nodeAfter));
+      }
       this.model.selectRange(newRange);
+
+      if (nodeAfter) {
+        mutator.insertNodes(newRange, nodeAfter);
+      }
     });
   }
 }
