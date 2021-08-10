@@ -20,6 +20,10 @@ export default class ModelRangeUtils {
   }
 
   static findLastNode(range: ModelRange, predicate: (node: ModelNode) => boolean): ModelNode | null {
+    if (range.collapsed) {
+      return null;
+    }
+
     const treeWalker = new ModelTreeWalker({
       filter: toFilterSkipFalse(predicate),
       range: range
@@ -30,6 +34,10 @@ export default class ModelRangeUtils {
   }
 
   static findFirstNode(range: ModelRange, predicate: (node: ModelNode) => boolean): ModelNode | null {
+    if (range.collapsed) {
+      return null;
+    }
+
     const treeWalker = new ModelTreeWalker<ModelNode>({
       filter: toFilterSkipFalse(predicate),
       range: range
@@ -37,7 +45,7 @@ export default class ModelRangeUtils {
 
     const firstNode = treeWalker[Symbol.iterator]().next();
     if (firstNode) {
-      return firstNode.value as ModelNode; // TODO: How to get rid of this cast?
+      return firstNode.value as ModelNode;
     }
 
     return null;
