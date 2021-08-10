@@ -9,6 +9,7 @@ import {
 } from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 
 export default class DeleteListBackwardsCommand extends Command {
   name = "delete-list-backwards";
@@ -46,12 +47,12 @@ export default class DeleteListBackwardsCommand extends Command {
 
     this.model.change(mutator => {
       const nodeAfter = range.start.nodeAfter();
-      if (nodeAfter) {
+      if (ModelNode.isModelText(nodeAfter)) {
         mutator.insertNodes(ModelRange.fromAroundNode(nodeAfter));
       }
       this.model.selectRange(newRange);
 
-      if (nodeAfter) {
+      if (ModelNode.isModelText(nodeAfter)) {
         mutator.insertNodes(newRange, nodeAfter);
       }
     });
