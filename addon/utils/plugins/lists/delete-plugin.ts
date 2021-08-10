@@ -57,6 +57,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     } else if (manipulation.type === "removeEmptyElement") {
       return this.guidanceForRemoveEmptyElement(manipulation);
     }
+
     return null;
   }
 
@@ -65,8 +66,10 @@ export default class ListDeletePlugin implements DeletePlugin {
       this.hasChanged = false;
       return true;
     }
+
     return false;
   }
+
   private guidanceForRemoveBoundaryBackwards(
     manipulation: RemoveBoundaryBackwards
   ): ManipulationGuidance | null {
@@ -79,8 +82,10 @@ export default class ListDeletePlugin implements DeletePlugin {
       };
       return { allow: true, executor: dispatch };
     }
+
     return null;
   }
+
   private guidanceForRemoveBoundaryForwards(
     manipulation: RemoveBoundaryForwards
   ): ManipulationGuidance | null {
@@ -93,11 +98,12 @@ export default class ListDeletePlugin implements DeletePlugin {
       };
       return { allow: true, executor: dispatch };
     }
+
     return null;
   }
 
   /**
-   * Cursor is positioned just before the end of an element which has no visible children
+   * Cursor is positioned just before the end of an element, which has no visible children.
    */
   private guidanceForRemoveEmptyElement(
     manipulation:
@@ -111,14 +117,16 @@ export default class ListDeletePlugin implements DeletePlugin {
       ) => {
         this.mergeForwards(manipulation.node, editor);
       };
-      return { allow: true, executor: dispatcher };
+
+      return {allow: true, executor: dispatcher};
     }
+
     return null;
   }
 
   /**
-   * Merge our node into the previous node
-   * @param node the node which will be merged into the previous one
+   * Merge our node into the previous node.
+   * @param node The node which will be merged into the previous one
    * @param editor The editor instance
    */
   private mergeBackwards(node: Node, editor: PernetRawEditor) {
@@ -130,10 +138,12 @@ export default class ListDeletePlugin implements DeletePlugin {
         this.removeEmptyAncestors(nodeToMerge);
         this.hasChanged = true;
       }
+
       return;
     }
-    const mergeNode = this.getDeepestLastDescendant(baseNode);
+
     let cursorPosition = 0;
+    const mergeNode = this.getDeepestLastDescendant(baseNode);
     if (isTextNode(mergeNode) && mergeNode.textContent) {
       cursorPosition = mergeNode.textContent.length;
     }
@@ -144,17 +154,17 @@ export default class ListDeletePlugin implements DeletePlugin {
   }
 
   /**
-   * Merge the next node with our node
+   * Merge the next node with our node.
    * @param node The node to merge into
    * @param editor The editor instance
    */
   private mergeForwards(node: Node, editor: PernetRawEditor) {
-
-    const mergeNode = this.getDeepestLastDescendant(node);
     let cursorPosition = 0;
+    const mergeNode = this.getDeepestLastDescendant(node);
     if (isTextNode(mergeNode) && mergeNode.textContent) {
       cursorPosition = mergeNode.textContent.length;
     }
+
     const targetNode = this.findNodeAfter(node, editor.rootNode);
     if (!targetNode) {
       // no node in front of us, no sense in looping 50 times
@@ -188,6 +198,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       moveCaretToEndOfNode(mergeNode);
     }
   }
+
   /**
    * Merge two nodes. This means the first textNode encountered in a DFS of nodeToMerge will be appended to
    * the last textNode of mergeNode
@@ -207,6 +218,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       }
     }
   }
+
   private mergeTextNodes(mergeNode: Text, nodeToMerge: Text) {
     const parent = nodeToMerge.parentElement!;
     this.concatenateNodes(mergeNode, nodeToMerge);
@@ -214,6 +226,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (stringToVisibleText(nodeToMerge.textContent || "")) {
       this.hasChanged = true;
     }
+
     removeNode(nodeToMerge);
     this.removeEmptyAncestors(parent);
   }
@@ -224,11 +237,14 @@ export default class ListDeletePlugin implements DeletePlugin {
     } else {
       mergeEl.append(...elToMerge.childNodes);
     }
+
     if (isLI(elToMerge) || tagName(elToMerge) === "br") {
       this.hasChanged = true;
     }
+
     this.removeEmptyAncestors(elToMerge);
   }
+
   private mergeNodeElement(mergeNode: Text, elToMerge: Element) {
     const [firstNode, ...rest] = elToMerge.childNodes;
     if (firstNode && isTextNode(firstNode)) {
@@ -237,27 +253,32 @@ export default class ListDeletePlugin implements DeletePlugin {
     } else {
       mergeNode.after(...elToMerge.childNodes);
     }
+
     elToMerge.innerHTML = "";
     if (isLI(elToMerge) || tagName(elToMerge) === "br") {
       this.hasChanged = true;
     }
+
     this.removeEmptyAncestors(elToMerge);
   }
+
   private mergeElementNode(mergeEl: Element, nodeToMerge: Text) {
     const parent = nodeToMerge.parentElement!;
     mergeEl.appendChild(nodeToMerge);
+
     if (stringToVisibleText(nodeToMerge.textContent || "")) {
       this.hasChanged = true;
     } else {
       removeNode(nodeToMerge);
     }
+
     this.removeEmptyAncestors(parent);
   }
+
   /**
    * Find the first node after node.
-   * Searches up the tree until it encouters root or the node
-   * has a sibling.
-   * Skips magicspans.
+   * Searches up the tree until it encounters root or the node has a sibling.
+   * Skips magic spans.
    * @param node The node from which to start looking
    * @param root When we encounter this node, stop looking
    * @returns The node after this node, or null if there is none
@@ -266,21 +287,24 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (node === root) {
       return null;
     }
+
     let sib = this.getNextSibling(node);
     if (sib) {
       return sib;
     }
+
     let parent = node.parentNode;
     while (!sib && parent && parent !== root) {
       sib = this.getNextSibling(parent);
       parent = parent.parentNode;
     }
+
     return sib;
   }
+
   /**
    * Find the first node before node.
-   * Searches up the tree until it encouters root or the node
-   * has a sibling.
+   * Searches up the tree until it encounters root or the node has a sibling.
    * @param node The node from which to start looking
    * @param root When we encounter this node, stop looking
    * @returns The node before this node, or null if there is none
@@ -302,7 +326,7 @@ export default class ListDeletePlugin implements DeletePlugin {
   }
 
   /**
-   * Concatenate two textnodes
+   * Concatenate two textnodes.
    * After the operation, the left node will contain
    * the textContent of left and right, concatenated.
    * The right node will be removed.
@@ -330,29 +354,35 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (isLI(node) || isTextNode(node)) {
       return node;
     }
+
     let cur = node;
     while (cur.lastChild && !isLI(cur)) {
       cur = cur.lastChild;
     }
+
     return cur;
   }
+
   /**
    * Go as deep as possible, looking at the firstChild
    * of the node at every step. Stop when we found a
    * textNode.
    * @param node The node to start from
-   * @returns the deepest firstChild
+   * @returns The deepest firstChild
    */
   private getDeepestFirstDescendant(node: Node): Node {
     if (isLI(node) || isTextNode(node)) {
       return node;
     }
+
     let cur = node;
     while (cur.firstChild && !isLI(cur)) {
       cur = cur.firstChild;
     }
+
     return cur;
   }
+
   /**
    * If the element is empty, remove it and traverse up the tree,
    * removing empty parents at every step.
@@ -362,6 +392,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (hasVisibleChildren(element)) {
       return;
     }
+
     let cur: Element | null = element;
     let lastCur: Element | null = null;
     while (cur && !hasVisibleChildren(cur)) {
@@ -369,6 +400,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       cur = lastCur.parentElement;
       lastCur.remove();
     }
+
     if (cur && !hasVisibleChildren(cur)) {
       cur.remove();
     } else {
@@ -379,30 +411,31 @@ export default class ListDeletePlugin implements DeletePlugin {
   }
 
   /**
-   * Magicspan-aware nextSibling
+   * Magic span-aware nextSibling.
    * @param node The node to start looking from
    */
   private getNextSibling(node: Node): Node | null {
     let next = node.nextSibling;
+
     while (this.isMagicSpan(next)) {
       next = next!.nextSibling;
     }
+
     return next;
-  }
-  /**
-   * Checks whether a node is a magicspan
-   * @param node The node to check
-   */
-  private isMagicSpan(node?: Node | null) {
-    return (
-      node &&
-      node.nodeType === node.ELEMENT_NODE &&
-      (node as Element).id === MagicSpan.ID
-    );
   }
 
   /**
-   * Determines wheter the node is considered to be
+   * Checks whether a node is a magic span.
+   * @param node The node to check
+   */
+  private isMagicSpan(node?: Node | null) {
+    return node
+      && isElement(node)
+      && node.id === MagicSpan.ID;
+  }
+
+  /**
+   * Determines whether the node is considered to be
    * part of the list context.
    * @param node The node to check
    */
@@ -410,15 +443,18 @@ export default class ListDeletePlugin implements DeletePlugin {
     if (!node) {
       return false;
     }
+
     if (isList(node) || isLI(node)) {
       return true;
     }
+
     if (isInList(node)) {
       const selection = getWindowSelection();
       if (selection.containsNode(getParentLI(node)!.lastElementChild!, true)) {
         return true;
       }
     }
+
     return false;
   }
 }
