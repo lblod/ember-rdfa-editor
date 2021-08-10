@@ -1,5 +1,6 @@
-import { invisibleSpace, isAllWhitespace, isDisplayedAsBlock, tagName, getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { isAllWhitespace, isDisplayedAsBlock, tagName, getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { runInDebug } from '@ember/debug';
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 /**
  * Awaits until just *after* the next animation frame.
@@ -178,7 +179,7 @@ export function hasVisibleChildren(parent: Element) : boolean {
 export function stringToVisibleText(string : string) : string {
   // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
   return string
-    .replace(new RegExp(`[${invisibleSpace}]+`,'g'),'')
+    .replace(new RegExp(`[${INVISIBLE_SPACE}]+`,'g'),'')
     .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
 }
 
@@ -213,17 +214,17 @@ export function ensureValidTextNodeForCaret(textNode : Text): Text {
     if (previousSibling && isDisplayedAsBlock(previousSibling)){
       //TODO: In theory the region could be merged.
       // But somewhere it feels better to minify the DOM operations. TBD
-       textNode.textContent = invisibleSpace;
+       textNode.textContent = INVISIBLE_SPACE;
     }
 
     //case ```textNode<div>foo</div>``` -> caret will dissapear
      else if(nextSibling && isDisplayedAsBlock(nextSibling)){
-       textNode.textContent = invisibleSpace;
+       textNode.textContent = INVISIBLE_SPACE;
      }
 
     //case ```<div>textNode</div>``` -> caret will dissapear
      else if(parentElement && isDisplayedAsBlock(parentElement)){
-       textNode.textContent = invisibleSpace;
+       textNode.textContent = INVISIBLE_SPACE;
      }
     //Note: There is still a bug. There is no check if sbiling are inline elements...
   }

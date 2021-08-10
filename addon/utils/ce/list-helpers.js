@@ -1,5 +1,4 @@
 import {
-  invisibleSpace,
   isDisplayedAsBlock,
   isList,
   isLI,
@@ -11,6 +10,7 @@ import {
   tagName
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { warn } from '@ember/debug';
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 /**
  * handles indent Action
@@ -533,7 +533,7 @@ function createParentWithLogicalBlockContents(logicalBlockContents, type) {
   logicalBlockContents.forEach(n => {
     // If it's the child of a <ul> but not the first, insert an invisible space to have a line break (avoid having two dots on the same line)
     if ((tagName(n.parentNode) == 'ul') && (n.parentNode.firstChild != n)) {
-      element.appendChild(document.createTextNode(invisibleSpace));
+      element.appendChild(document.createTextNode(INVISIBLE_SPACE));
     }
     element.appendChild(n);
   });
@@ -585,7 +585,7 @@ function makeLogicalBlockCursorSafe(logicalBlockContents) {
   let firstNode = logicalBlockContents[0];
 
   if (!isNodeCursorSafe(firstNode)) {
-    let textNode = document.createTextNode(invisibleSpace);
+    let textNode = document.createTextNode(INVISIBLE_SPACE);
     firstNode.parentNode.insertBefore(textNode, firstNode);
     logicalBlockContents = [textNode, ...logicalBlockContents];
   }
@@ -595,7 +595,7 @@ function makeLogicalBlockCursorSafe(logicalBlockContents) {
   if (isNodeCursorSafe(lastNode, false))
     return logicalBlockContents;
 
-  let textNode = document.createTextNode(invisibleSpace);
+  let textNode = document.createTextNode(INVISIBLE_SPACE);
   let nextSibling = lastNode.nextSibling;
 
   if (!nextSibling) {
@@ -614,7 +614,7 @@ function makeLogicalBlockCursorSafe(logicalBlockContents) {
  * @param listE The list element to which we append the indented blocks
  */
 function mergeWithChildList(logicalListBlocks, listE) {
-  listE.parentNode.insertBefore(document.createTextNode(invisibleSpace), listE);
+  listE.parentNode.insertBefore(document.createTextNode(INVISIBLE_SPACE), listE);
 
   const reversedLogicalListBlocks = logicalListBlocks.reverse();
   for ( let i=0 ; i<reversedLogicalListBlocks.length ; i++) {
@@ -645,13 +645,13 @@ function mergeWithChildList(logicalListBlocks, listE) {
  */
 function indentRegularCase(logicalListBlocks, parentNode, listE, newListElementLocation) {
   if (parentNode) { // Indent -> regular -> parent node
-    parentNode.append(document.createTextNode(invisibleSpace));
+    parentNode.append(document.createTextNode(INVISIBLE_SPACE));
     parentNode.append(listE);
   } else { // Indent -> regular -> no parent node : Case when the selection is the first li of the list
     newListElementLocation = newListElementLocation.parentNode; // <li> node
 
     // Create a ul --> fill the ul
-    newListElementLocation.append(document.createTextNode(invisibleSpace));
+    newListElementLocation.append(document.createTextNode(INVISIBLE_SPACE));
     newListElementLocation.append(listE);
   }
 

@@ -11,3 +11,5 @@ export const INVISIBLE_SPACE = '\u200B';
 
 export const HIGHLIGHT_ATTRIBUTE = 'data-editor-highlight';
 export const PLACEHOLDER_CLASS = 'mark-highlight-manual';
+
+export const LUMP_NODE_URI = 'http://lblod.data.gift/vocabularies/editor/isLumpNode';

@@ -1,6 +1,7 @@
 import { A } from '@ember/array';
 import { PernetSelection, PernetSelectionBlock } from '@lblod/ember-rdfa-editor/editor/pernet';
 import RichNode from "@lblod/marawa/rich-node";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 /**
  * Fake class to list helper functions
@@ -11,14 +12,6 @@ import RichNode from "@lblod/marawa/rich-node";
  * @class DomHelpers
  * @constructor
  */
-
-/**
- * @property invisibleSpace
- * @type string
- * @static
- * @final
- */
-const invisibleSpace = '\u200B';
 
 /**
  * dom helper to insert extra text into a text node at the provided position
@@ -42,7 +35,7 @@ function sliceTextIntoTextNode(textNode: Text, text: string, start: number): voi
  * @public
  */
 function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNode | null = null, after = false): Text {
-  const textNode = document.createTextNode(invisibleSpace);
+  const textNode = document.createTextNode(INVISIBLE_SPACE);
 
   if (relativeToSibling) {
     if (after) {
@@ -455,7 +448,6 @@ export {
   tagName,
   isDisplayedAsBlock,
   smartSplitTextNode,
-  invisibleSpace,
   insertTextNodeWithSpace,
   isList,
   isEmptyList,

@@ -416,6 +416,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
     return true;
   }
+
   isMergeable(other: ModelNode): boolean {
     if(!ModelNode.isModelElement(other)) {
       return false;

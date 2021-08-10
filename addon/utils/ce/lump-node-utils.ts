@@ -1,6 +1,7 @@
 import previousTextNode from './previous-text-node';
 import nextTextNode from './next-text-node';
 import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {LUMP_NODE_URI} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 /**
  * So, what is a lumpNode?
@@ -20,7 +21,6 @@ import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
  * - wiring: There is currently a dichotomy between CE and RDFA editor and even though this is contained in CE,
  *           whilst using RDFA here this means it probably should not belong here. So location will change.
  */
-const LUMP_NODE_URI = "http://lblod.data.gift/vocabularies/editor/isLumpNode";
 
 export function isInLumpNode(node: Node, rootNode: HTMLElement): boolean {
   return !!getParentLumpNode(node, rootNode);

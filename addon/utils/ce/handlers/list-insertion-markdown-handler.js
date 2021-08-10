@@ -1,7 +1,6 @@
 import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 let OLMARKDOWN = /(1\.\s)(.*)/;
 let ULMARKDOWN = /(\*\.\s)(.*)/;
@@ -52,7 +51,7 @@ export default class ListInsertionMarkdownHandler {
       let beforeContentNode = document.createTextNode(beforeContent);
       let elementContent = matchGroups[2];
 
-      let contentTextNode = document.createTextNode(this.isVisiblyEmptyString(elementContent) ? invisibleSpace: elementContent);
+      let contentTextNode = document.createTextNode(this.isVisiblyEmptyString(elementContent) ? INVISIBLE_SPACE: elementContent);
       let listNode = document.createElement(this.findMarkdown(currentNode.textContent).tag);
 
       //insert the node with content
@@ -64,7 +63,7 @@ export default class ListInsertionMarkdownHandler {
       if(!this.isVisiblyEmptyString(elementContent)) {
         //add a second li, because it feels as expected behaviour for user
         liNodeForCursor = document.createElement('li');
-        liNodeForCursor.append(document.createTextNode(invisibleSpace));
+        liNodeForCursor.append(document.createTextNode(INVISIBLE_SPACE));
         listNode.append(liNodeForCursor);
       }
 
@@ -74,7 +73,7 @@ export default class ListInsertionMarkdownHandler {
 
       currentNode.parentNode.insertBefore(listNode, currentNode);
       // provide a text node after the list
-      currentNode.parentNode.insertBefore(document.createTextNode(invisibleSpace), currentNode);
+      currentNode.parentNode.insertBefore(document.createTextNode(INVISIBLE_SPACE), currentNode);
       currentNode.parentNode.removeChild(currentNode);
       newCurrentNode = liNodeForCursor.childNodes[0];
       this.rawEditor.updateRichNode();
@@ -88,6 +87,6 @@ export default class ListInsertionMarkdownHandler {
   }
 
   isVisiblyEmptyString(string_instance){
-    return string_instance.length === 0 || (new RegExp( '^' + invisibleSpace + '+$')).test(string_instance);
+    return string_instance.length === 0 || (new RegExp( '^' + INVISIBLE_SPACE + '+$')).test(string_instance);
   }
 }
