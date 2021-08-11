@@ -149,4 +149,18 @@ export default class ModelRangeUtils {
       range: range
     });
   }
+
+  static isRangeInLumpNode(range: ModelRange) {
+    const startLumpAncestors = range.start.findAncestors(ModelNodeUtils.isLumpNode);
+    const startInLumpNode = startLumpAncestors.length > 0;
+
+    if (!range.collapsed) {
+      const endLumpAncestors = range.end.findAncestors(ModelNodeUtils.isLumpNode);
+      const endInLumpNode = endLumpAncestors.length > 0;
+
+      return startInLumpNode || endInLumpNode;
+    }
+
+    return startInLumpNode;
+  }
 }
