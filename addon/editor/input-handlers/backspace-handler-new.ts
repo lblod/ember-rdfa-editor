@@ -8,6 +8,7 @@ import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
 export default class BackspaceHandler extends InputHandler {
   private readonly response = {allowPropagation: false, allowBrowserDefault: false};
@@ -28,45 +29,54 @@ export default class BackspaceHandler extends InputHandler {
       throw new MisbehavedSelectionError();
     }
 
+    this.doBackspace(range);
+    return {allowPropagation: false, allowBrowserDefault: false};
+  }
+
+  private doBackspace(range: ModelRange): void {
     // If range is in lump node, don't do anything.
     if (ModelRangeUtils.isRangeInLumpNode(range)) {
-      return this.response;
+      return;
     }
 
     if (range.collapsed) {
       // const rangeStart = this.handleInvisibleSpaces(range.start);
       const rangeStart = range.start;
+      if (rangeStart.sameAs(ModelPosition.fromInElement(this.rawEditor.model.rootModelNode, 0))) {
+        return;
+      }
       const nodeBefore = rangeStart.nodeBefore();
 
       if (nodeBefore) {
         // The cursor is located somewhere in the current node, but not right after the opening tag.
         if (ModelNodeUtils.isLumpNode(nodeBefore)) {
-          this.rawEditor.executeCommand("delete-lump-node-backwards");
+          this.rawEditor.executeCommand("delete-lump-node-backwards", range);
         } else if (ModelNodeUtils.isTextRelated(nodeBefore)) {
-          this.rawEditor.executeCommand("delete-character-backwards");
+          this.rawEditor.executeCommand("delete-character-backwards", range);
         } else if (ModelNodeUtils.isListContainer(nodeBefore)) {
-          this.rawEditor.executeCommand("delete-list-backwards");
+          this.rawEditor.executeCommand("delete-list-backwards", range);
         } else if (ModelNodeUtils.isTableContainer(nodeBefore)) {
           // Pressing backspace when the cursor is right behind a table does nothing.
         } else {
-          this.backspaceLastTextRelatedNode(rangeStart);
+          const elementBefore = nodeBefore as ModelElement;
+          const newCursor = ModelPosition.fromInNode(elementBefore, elementBefore.getMaxOffset());
+          this.doBackspace(new ModelRange(newCursor));
         }
       } else {
         // The cursor is located at the start of an element, which means right behind the opening tag.
         if (ModelNodeUtils.isListElement(rangeStart.parent)) {
-          this.rawEditor.executeCommand("delete-li-backwards");
+          this.rawEditor.executeCommand("delete-li-backwards", range);
         } else if (ModelNodeUtils.isTableCell(rangeStart.parent)) {
           // Pressing backspace when the cursor is at the start of a table cell does nothing.
         } else {
-          this.backspaceLastTextRelatedNode(rangeStart);
+          const newCursor = ModelPosition.fromBeforeNode(rangeStart.parent);
+          this.doBackspace(new ModelRange(newCursor));
         }
       }
     } else {
       // If the selection is not collapsed, backspace just has to delete every node in the selection.
       this.rawEditor.executeCommand("delete-selection");
     }
-
-    return this.response;
   }
 
   private backspaceLastTextRelatedNode(cursorPosition: ModelPosition): void {
