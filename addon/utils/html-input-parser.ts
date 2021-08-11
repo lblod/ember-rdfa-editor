@@ -1,6 +1,7 @@
-import {invisibleSpace, isElement, isTextNode, tagName} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {isElement, isTextNode, tagName} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import DOMPurify from "dompurify";
 import {ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
 export const DEFAULT_LUMP_TAGS = ["table"];
@@ -155,7 +156,7 @@ export default class HTMLInputParser {
       // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
       if (node.textContent) {
         cleanedNode.textContent = node.textContent
-          .replace(invisibleSpace,"")
+          .replace(INVISIBLE_SPACE,"")
           .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g, " ");
       }
 
