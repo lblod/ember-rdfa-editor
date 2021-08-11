@@ -44,6 +44,10 @@ import DeleteLiBackwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-l
 import MoveLeftCommand from "@lblod/ember-rdfa-editor/commands/move-left-command";
 import MoveRightCommand from "@lblod/ember-rdfa-editor/commands/move-right-command";
 import DeleteLumpNodeBackwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-lump-node-backwards-command";
+import DeleteCharacterForwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-character-forwards-command";
+import DeleteLumpNodeForwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-lump-node-forwards-command";
+import DeleteListForwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-list-forwards-command";
+import DeleteLiForwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-li-forwards-command";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -124,10 +128,16 @@ class RawEditor extends EmberObject {
     this.registerCommand(new InsertXmlCommand(this.model));
     this.registerCommand(new InsertTextCommand(this.model));
     this.registerCommand(new DeleteSelectionCommand(this.model));
+
     this.registerCommand(new DeleteCharacterBackwardsCommand(this.model));
     this.registerCommand(new DeleteListBackwardsCommand(this.model));
     this.registerCommand(new DeleteLiBackwardsCommand(this.model));
     this.registerCommand(new DeleteLumpNodeBackwardsCommand(this.model));
+
+    this.registerCommand(new DeleteCharacterForwardsCommand(this.model));
+    this.registerCommand(new DeleteListForwardsCommand(this.model));
+    this.registerCommand(new DeleteLiForwardsCommand(this.model));
+    this.registerCommand(new DeleteLumpNodeForwardsCommand(this.model));
 
     this.registerCommand(new MoveLeftCommand(this.model));
     this.registerCommand(new MoveRightCommand(this.model));

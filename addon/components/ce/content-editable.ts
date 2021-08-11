@@ -2,7 +2,6 @@ import { action } from "@ember/object";
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler-new';
 import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
 import CutHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-handler";
 import EnterHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/enter-handler';
@@ -21,7 +20,8 @@ import ArrowHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/arrow-h
 import IgnoreModifiersHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/ignore-modifiers-handler";
 import UndoHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler";
 import FallbackInputHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/fallback-input-handler";
-import DisableDeleteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/disable-delete-handler";
+import DeleteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler-new";
+import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler-new';
 
 interface FeatureService {
   isEnabled(key: string): boolean
@@ -118,7 +118,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       new BackspaceHandler({ rawEditor }),
       new TabHandler({ rawEditor }),
       new TextInputHandler({ rawEditor }),
-      new DisableDeleteHandler({ rawEditor }),
+      new DeleteHandler({ rawEditor }),
       new IgnoreModifiersHandler({ rawEditor }),
       new UndoHandler({ rawEditor }),
       new BoldItalicUnderlineHandler({ rawEditor }),

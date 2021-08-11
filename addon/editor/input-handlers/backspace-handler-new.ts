@@ -10,6 +10,8 @@ import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-uti
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export default class BackspaceHandler extends InputHandler {
+  private readonly response = {allowPropagation: false, allowBrowserDefault: false};
+
   constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
     super(rawEditor);
   }
@@ -27,8 +29,8 @@ export default class BackspaceHandler extends InputHandler {
     }
 
     // If range is in lump node, don't do anything.
-    if (BackspaceHandler.isRangeInLumpNode(range)) {
-      return {allowPropagation: false, allowBrowserDefault: false};
+    if (ModelRangeUtils.isRangeInLumpNode(range)) {
+      return this.response;
     }
 
     if (range.collapsed) {
@@ -64,7 +66,7 @@ export default class BackspaceHandler extends InputHandler {
       this.rawEditor.executeCommand("delete-selection");
     }
 
-    return {allowPropagation: false, allowBrowserDefault: false};
+    return this.response;
   }
 
   private backspaceLastTextRelatedNode(cursorPosition: ModelPosition): void {
@@ -99,19 +101,5 @@ export default class BackspaceHandler extends InputHandler {
     }
 
     return resultRange.start;
-  }
-
-  private static isRangeInLumpNode(range: ModelRange) {
-    const startLumpAncestors = range.start.findAncestors(ModelNodeUtils.isLumpNode);
-    const startInLumpNode = startLumpAncestors.length > 0;
-
-    if (!range.collapsed) {
-      const endLumpAncestors = range.end.findAncestors(ModelNodeUtils.isLumpNode);
-      const endInLumpNode = endLumpAncestors.length > 0;
-
-      return startInLumpNode || endInLumpNode;
-    }
-
-    return startInLumpNode;
   }
 }
