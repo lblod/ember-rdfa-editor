@@ -5,8 +5,6 @@ import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/ha
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 
 export default class DeleteHandler extends InputHandler {
   private readonly response = {allowPropagation: false, allowBrowserDefault: false};
@@ -47,7 +45,7 @@ export default class DeleteHandler extends InputHandler {
         } else if (ModelNodeUtils.isTableContainer(nodeAfter)) {
           // Pressing backspace when the cursor is right in front of a table does nothing.
         } else {
-
+          // TODO
         }
       } else {
         // The cursor is located at the end of an element, which means right in front of the closing tag.
@@ -56,7 +54,7 @@ export default class DeleteHandler extends InputHandler {
         } else if (ModelNodeUtils.isTableCell(rangeStart.parent)) {
           // Pressing backspace when the cursor is at the end of a table cell does nothing.
         } else {
-
+          // TODO
         }
       }
     } else {
