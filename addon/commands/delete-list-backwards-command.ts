@@ -9,7 +9,6 @@ import {
 } from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 
 export default class DeleteListBackwardsCommand extends Command {
   name = "delete-list-backwards";
@@ -32,28 +31,40 @@ export default class DeleteListBackwardsCommand extends Command {
     }
 
     const nodeBefore = range.start.nodeBefore();
-    if (!nodeBefore || !ModelNodeUtils.isListContainer(nodeBefore)) {
+    if (!ModelNodeUtils.isListContainer(nodeBefore)) {
       throw new IllegalExecutionStateError("Node in front of cursor in not a list container");
     }
 
     const listRange = ModelRange.fromAroundNode(nodeBefore);
     const lastLi = ModelRangeUtils.findLastListElement(listRange);
     if (!lastLi) {
-      throw new ImpossibleModelStateError("No li found in list");
+      throw new ImpossibleModelStateError("No list element found in list");
     }
 
     const newStart = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
     const newRange = new ModelRange(newStart);
 
     this.model.change(mutator => {
-      const nodeAfter = range.start.nodeAfter();
-      if (ModelNode.isModelText(nodeAfter)) {
-        mutator.insertNodes(ModelRange.fromAroundNode(nodeAfter));
-      }
-      this.model.selectRange(newRange);
+      const nodeAfterList = range.start.nodeAfter();
+      if (nodeAfterList
+        && !ModelNodeUtils.isListContainer(nodeAfterList)
+        && !ModelNodeUtils.isTableContainer(nodeAfterList)
+      ) {
+        let rangeAround: ModelRange;
+        if (ModelNodeUtils.isBr(nodeAfterList.nextSibling)) {
+          rangeAround = new ModelRange(
+            ModelPosition.fromBeforeNode(nodeAfterList),
+            ModelPosition.fromAfterNode(nodeAfterList.nextSibling)
+          );
+        } else {
+          rangeAround = ModelRange.fromAroundNode(nodeAfterList);
+        }
 
-      if (ModelNode.isModelText(nodeAfter)) {
-        mutator.insertNodes(newRange, nodeAfter);
+        mutator.insertNodes(rangeAround);
+        this.model.selectRange(newRange);
+        mutator.insertNodes(newRange, nodeAfterList);
+      } else {
+        this.model.selectRange(newRange);
       }
     });
   }
