@@ -8,7 +8,7 @@ import {
 import {
   BackspaceHandlerManipulation,
   BackspacePlugin
-} from "@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler";
+} from "@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler-old";
 import { runInDebug } from '@ember/debug';
 import { findLastLi, tagName } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
