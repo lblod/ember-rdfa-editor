@@ -35,6 +35,7 @@ export default class DeleteListBackwardsCommand extends Command {
       throw new IllegalExecutionStateError("Node in front of cursor in not a list container");
     }
 
+    // We search for the last list element in the list in front of the cursor.
     const listRange = ModelRange.fromAroundNode(nodeBefore);
     const lastLi = ModelRangeUtils.findLastListElement(listRange);
     if (!lastLi) {
@@ -46,12 +47,15 @@ export default class DeleteListBackwardsCommand extends Command {
 
     this.model.change(mutator => {
       const nodeAfterList = range.start.nodeAfter();
+      // We check if there is a suitable node right behind the list.
+      // If so, we move this upwards into the list.
       if (nodeAfterList
         && !ModelNodeUtils.isListContainer(nodeAfterList)
         && !ModelNodeUtils.isTableContainer(nodeAfterList)
       ) {
         let rangeAround: ModelRange;
         if (ModelNodeUtils.isBr(nodeAfterList.nextSibling)) {
+          // If there is a "br" right behind the suitable node we found, we also select this "br" for deletion.
           rangeAround = new ModelRange(
             ModelPosition.fromBeforeNode(nodeAfterList),
             ModelPosition.fromAfterNode(nodeAfterList.nextSibling)
