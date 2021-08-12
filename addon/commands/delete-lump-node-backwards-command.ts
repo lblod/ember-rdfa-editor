@@ -37,6 +37,7 @@ export default class DeleteLumpNodeBackwardsCommand extends Command {
       ModelPosition.fromAfterNode(nodeBefore)
     );
 
+    // If the node before the cursor is a lump node, we remove the lump node as a whole.
     this.model.change(mutator => {
       this.model.selectRange(new ModelRange(newStart));
       mutator.insertNodes(insertRange);

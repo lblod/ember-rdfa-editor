@@ -163,4 +163,17 @@ export default class ModelRangeUtils {
 
     return startInLumpNode;
   }
+
+  static getNodesInRange(range: ModelRange) {
+    if (!range.collapsed) {
+      const treeWalker = new ModelTreeWalker({
+        range: range,
+        descend: false
+      });
+
+      return [...treeWalker];
+    }
+
+    return [];
+  }
 }

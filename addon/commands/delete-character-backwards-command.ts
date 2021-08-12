@@ -37,11 +37,14 @@ export default class DeleteCharacterBackwardsCommand extends Command {
     let newStart: ModelPosition;
     let characterRange: ModelRange;
     if (ModelNode.isModelText(nodeBefore)) {
+      // If there is a character before the cursor, we create a new range starting one position to the left and
+      // ending at the current cursor position.
       newStart = range.start.clone();
       newStart.parentOffset--;
 
       characterRange = new ModelRange(newStart, range.end);
     } else {
+      // If there is a "br" before the cursor, we create a range around this "br".
       newStart = ModelPosition.fromBeforeNode(nodeBefore);
       characterRange = new ModelRange(
         newStart,
@@ -51,10 +54,11 @@ export default class DeleteCharacterBackwardsCommand extends Command {
 
     this.model.change(mutator => {
       mutator.insertNodes(characterRange);
-      // Merge all text nodes that can be currently split.
+
       const nodeBeforeCursor = newStart.nodeBefore();
       const nodeAfterCursor = newStart.nodeAfter();
 
+      // If both the node before and after the cursor are text, we try to merge them, since they can be split.
       if (ModelNode.isModelText(nodeBeforeCursor) && ModelNode.isModelText(nodeAfterCursor)) {
         const mergeRange = new ModelRange(
           ModelPosition.fromBeforeNode(nodeBeforeCursor),
