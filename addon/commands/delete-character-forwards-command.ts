@@ -18,7 +18,7 @@ export default class DeleteCharacterForwardsCommand extends Command {
       return false;
     }
 
-    // Make sure the cursor is right behind a character or "br".
+    // Make sure the cursor is right in front of a character or "br".
     return range.collapsed && ModelNodeUtils.isTextRelated(range.start.nodeAfter());
   }
 
@@ -32,23 +32,27 @@ export default class DeleteCharacterForwardsCommand extends Command {
       throw new IllegalExecutionStateError("No node after the cursor");
     }
 
+
     let characterRange: ModelRange;
     if (ModelNode.isModelText(nodeAfter)) {
+      // If there is a character behind the cursor, create a range around the next character
       const newEnd = range.end.clone();
       newEnd.parentOffset++;
 
       characterRange = new ModelRange(range.start, newEnd);
     } else {
+      // If there is a "br" behind the cursor, create a range around this "br".
       characterRange = ModelRange.fromAroundNode(nodeAfter);
     }
 
     this.model.change(mutator => {
+      // Delete all nodes in the selected range.
       mutator.insertNodes(characterRange);
 
-      // Merge all text nodes that can be currently split.
       const nodeBeforeCursor = range.start.nodeBefore();
       const nodeAfterCursor = range.start.nodeAfter();
 
+      // Try to merge the text nodes before and after the current cursor, since they can be split.
       if (ModelNode.isModelText(nodeBeforeCursor) && ModelNode.isModelText(nodeAfterCursor)) {
         const mergeRange = new ModelRange(
           ModelPosition.fromBeforeNode(nodeBeforeCursor),

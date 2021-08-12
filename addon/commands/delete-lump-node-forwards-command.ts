@@ -16,6 +16,7 @@ export default class DeleteLumpNodeForwardsCommand extends Command {
       return false;
     }
 
+    // Make sure the cursor is right in front of a lump node.
     const nodeAfter = range.start.nodeAfter();
     return !!nodeAfter && ModelNodeUtils.isLumpNode(nodeAfter);
   }
@@ -30,6 +31,7 @@ export default class DeleteLumpNodeForwardsCommand extends Command {
       throw new IllegalExecutionStateError("No node after the cursor");
     }
 
+    // We just complete the whole lump node as a whole.
     const insertRange = ModelRange.fromAroundNode(nodeAfter);
     this.model.change(mutator => {
       mutator.insertNodes(insertRange);

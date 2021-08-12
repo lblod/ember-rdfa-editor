@@ -10,8 +10,6 @@ import {
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
 export default class DeleteListForwardsCommand extends Command {
   name = "delete-list-forwards";
@@ -25,6 +23,7 @@ export default class DeleteListForwardsCommand extends Command {
       return false;
     }
 
+    // Make sure the cursor is right in front of a list.
     return range.collapsed && ModelNodeUtils.isListContainer(range.start.nodeAfter());
   }
 
@@ -38,6 +37,7 @@ export default class DeleteListForwardsCommand extends Command {
       throw new IllegalExecutionStateError("No node after the cursor");
     }
 
+    // We search for the first list element in the list after the cursor.
     const listRange = ModelRange.fromAroundNode(nodeAfter);
     const firstListElement = ModelRangeUtils.findFirstListElement(listRange);
     if (!ModelNodeUtils.isListElement(firstListElement)) {
@@ -53,26 +53,21 @@ export default class DeleteListForwardsCommand extends Command {
         throw new TypeAssertionError("Found node is not a list container");
       }
 
+      // If the first list element contains a nested list, we select all content in the list element until just
+      // before this nested list.
       rangeInsideLi = new ModelRange(
         ModelPosition.fromInNode(firstListElement, 0),
         ModelPosition.fromBeforeNode(firstListContainer)
       );
     } else {
+      // If the first list element doesn't contain a nested list, we select all content in the list element.
       rangeInsideLi = new ModelRange(
         ModelPosition.fromInNode(firstListElement, 0),
         ModelPosition.fromInNode(firstListElement, firstListElement.getMaxOffset()),
       );
     }
 
-    let nodesToMove: ModelNode[] = [];
-    if (rangeInsideLi.start.parentOffset !== rangeInsideLi.end.parentOffset) {
-      const treeWalker = new ModelTreeWalker({
-        range: rangeInsideLi,
-        descend: false
-      });
-      nodesToMove = [...treeWalker];
-    }
-
+    const nodesToMove = ModelRangeUtils.getNodesInRange(rangeInsideLi);
     const bottomListContainer = ModelNodeUtils.findAncestor(firstListElement, ModelNodeUtils.isListContainer);
     if (!bottomListContainer) {
       throw new ModelError("List element without list container");
@@ -81,11 +76,16 @@ export default class DeleteListForwardsCommand extends Command {
     this.model.change(mutator => {
       if (!firstListContainer) {
         if (rangeAroundLi.start.nodeBefore() === null && rangeAroundLi.end.nodeAfter() === null) {
+          // If the found list element is the only list element in its list container, we remove the whole
+          // list container.
           mutator.insertNodes(ModelRange.fromAroundNode(bottomListContainer));
         } else {
+          // Else, we only delete the list element itself.
           mutator.insertNodes(rangeAroundLi);
         }
       } else {
+        // If we have a nested list inside the list element, we only remove the content in front of this nested list.
+        // Thereafter, we unwrap this nested list as well as the list element itself.
         mutator.insertNodes(rangeInsideLi);
         mutator.unwrap(firstListContainer);
         mutator.unwrap(firstListElement);
