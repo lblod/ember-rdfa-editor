@@ -1,7 +1,12 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import {IllegalExecutionStateError, MisbehavedSelectionError, ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {
+  IllegalExecutionStateError,
+  MisbehavedSelectionError,
+  ModelError,
+  TypeAssertionError
+} from "@lblod/ember-rdfa-editor/utils/errors";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
@@ -42,16 +47,17 @@ export default class DeleteListForwardsCommand extends Command {
     const firstListContainer = firstListElement.findFirstChild(ModelNodeUtils.isListContainer);
     const rangeAroundLi = ModelRange.fromAroundNode(firstListElement);
 
-    let liFullySelected: boolean;
     let rangeInsideLi: ModelRange;
     if (firstListContainer) {
-      liFullySelected = false;
+      if (!ModelNodeUtils.isListContainer(firstListContainer)) {
+        throw new TypeAssertionError("Found node is not a list container");
+      }
+
       rangeInsideLi = new ModelRange(
         ModelPosition.fromInNode(firstListElement, 0),
         ModelPosition.fromBeforeNode(firstListContainer)
       );
     } else {
-      liFullySelected = true;
       rangeInsideLi = new ModelRange(
         ModelPosition.fromInNode(firstListElement, 0),
         ModelPosition.fromInNode(firstListElement, firstListElement.getMaxOffset()),
@@ -73,15 +79,16 @@ export default class DeleteListForwardsCommand extends Command {
     }
 
     this.model.change(mutator => {
-      if (liFullySelected
-        && rangeAroundLi.start.nodeBefore() === null
-        && rangeAroundLi.end.nodeAfter() === null
-      ) {
-        mutator.insertNodes(ModelRange.fromAroundNode(bottomListContainer));
-      } else if (liFullySelected) {
-        mutator.insertNodes(rangeAroundLi);
+      if (!firstListContainer) {
+        if (rangeAroundLi.start.nodeBefore() === null && rangeAroundLi.end.nodeAfter() === null) {
+          mutator.insertNodes(ModelRange.fromAroundNode(bottomListContainer));
+        } else {
+          mutator.insertNodes(rangeAroundLi);
+        }
       } else {
         mutator.insertNodes(rangeInsideLi);
+        mutator.unwrap(firstListContainer);
+        mutator.unwrap(firstListElement);
       }
 
       mutator.insertNodes(range, ...nodesToMove);

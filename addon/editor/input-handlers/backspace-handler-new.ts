@@ -55,6 +55,7 @@ export default class BackspaceHandler extends InputHandler {
         } else if (ModelNodeUtils.isListContainer(nodeBefore)) {
           this.rawEditor.executeCommand("delete-list-backwards", range);
         } else if (ModelNodeUtils.isTableContainer(nodeBefore)) {
+          console.log("HERE");
           // Pressing backspace when the cursor is right behind a table does nothing.
         } else {
           // Can not be a text node node.
@@ -77,26 +78,6 @@ export default class BackspaceHandler extends InputHandler {
       // If the selection is not collapsed, backspace just has to delete every node in the selection.
       this.rawEditor.executeCommand("delete-selection");
     }
-  }
-
-  private backspaceLastTextRelatedNode(cursorPosition: ModelPosition): void {
-    const start = ModelPosition.fromInElement(this.rawEditor.model.rootModelNode, 0);
-    const range = new ModelRange(start, cursorPosition);
-
-    if (range.start.sameAs(range.end)) {
-      return;
-    }
-
-    const textRelatedNode = ModelRangeUtils.findLastTextRelatedNode(range);
-    if (!textRelatedNode) {
-      return;
-    }
-
-    const newCursorPosition = ModelPosition.fromAfterNode(textRelatedNode);
-    this.rawEditor.executeCommand(
-      "delete-character-backwards",
-      new ModelRange(newCursorPosition)
-    );
   }
 
   // TODO: How to handle invisible spaces? This looks weird when backspacing multiple newlines.

@@ -1,7 +1,7 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {MisbehavedSelectionError, TypeAssertionError} from "@lblod/ember-rdfa-editor/utils/errors";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
@@ -44,10 +44,30 @@ export default class DeleteLiForwardsCommand extends Command {
 
     this.model.change(mutator => {
       if (nextListElement) {
-        const moveRange = ModelRange.fromInElement(nextListElement, 0, nextListElement?.getMaxOffset());
-        const nodesToMove = DeleteLiForwardsCommand.getNodesInRange(moveRange);
+        const firstListContainer = nextListElement.findFirstChild(ModelNodeUtils.isListContainer);
+        let moveRange: ModelRange;
 
-        mutator.insertNodes(ModelRange.fromAroundNode(nextListElement));
+        if (firstListContainer) {
+          if (!ModelNodeUtils.isListContainer(firstListContainer)) {
+            throw new TypeAssertionError("Found node is not a list container");
+          }
+
+          moveRange = new ModelRange(
+            ModelPosition.fromInNode(nextListElement, 0),
+            ModelPosition.fromBeforeNode(firstListContainer)
+          );
+        } else {
+          moveRange = ModelRange.fromInElement(nextListElement, 0, nextListElement?.getMaxOffset());
+        }
+
+        const nodesToMove = DeleteLiForwardsCommand.getNodesInRange(moveRange);
+        if (firstListContainer) {
+          mutator.insertNodes(moveRange);
+          mutator.unwrap(firstListContainer);
+          mutator.unwrap(nextListElement);
+        } else {
+          mutator.insertNodes(ModelRange.fromAroundNode(nextListElement));
+        }
         mutator.insertNodes(range, ...nodesToMove);
       } else {
         const positionAfterList = ModelPosition.fromAfterNode(topListContainer);
