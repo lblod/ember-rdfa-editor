@@ -27,16 +27,15 @@ export default class BackspaceHandler extends InputHandler {
       throw new MisbehavedSelectionError();
     }
 
-    this.doBackspace(range);
+    // If range is in lump node, don't do anything.
+    if (!ModelRangeUtils.isRangeInLumpNode(range)) {
+      this.doBackspace(range);
+    }
+
     return {allowPropagation: false, allowBrowserDefault: false};
   }
 
   private doBackspace(range: ModelRange): void {
-    // If range is in lump node, don't do anything.
-    if (ModelRangeUtils.isRangeInLumpNode(range)) {
-      return;
-    }
-
     if (range.collapsed) {
       // const rangeStart = this.handleInvisibleSpaces(range.start);
       const rangeStart = range.start;
@@ -56,6 +55,7 @@ export default class BackspaceHandler extends InputHandler {
         } else if (ModelNodeUtils.isTableContainer(nodeBefore)) {
           // Pressing backspace when the cursor is right behind a table does nothing.
         } else {
+          // Can not be a text node node.
           const elementBefore = nodeBefore as ModelElement;
           const newCursor = ModelPosition.fromInNode(elementBefore, elementBefore.getMaxOffset());
           this.doBackspace(new ModelRange(newCursor));
