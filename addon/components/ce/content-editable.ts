@@ -277,6 +277,14 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   }
 
   /**
+   * dragstart isn't allowed at the moment
+   */
+  @action
+  dragstart(event) {
+    event.preventDefault();
+  }
+
+  /**
    * passes an event to handlers and returns whether the event default should be prevented or not
    * @method passEventToHandlers
    * @return {Boolean}
