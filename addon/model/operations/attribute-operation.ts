@@ -78,7 +78,6 @@ export default class AttributeOperation extends Operation {
       const textNodes = Array.from(walker);
 
       for (const node of textNodes) {
-        console.log(node)
         node.setTextAttribute(this._key, this._value);
       }
     }
