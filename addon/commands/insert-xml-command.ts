@@ -1,6 +1,6 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {parseXml} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import {parseXmlSiblings} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
@@ -21,9 +21,9 @@ export default class InsertXmlCommand extends Command {
       throw new MisbehavedSelectionError();
     }
 
-    const parsed = parseXml(xml);
+    const parsedModelNodes = parseXmlSiblings(xml);
     this.model.change(mutator => {
-      const newRange = mutator.insertNodes(range, parsed.root);
+      const newRange = mutator.insertNodes(range, ...parsedModelNodes);
       this.model.selectRange(newRange);
     });
   }

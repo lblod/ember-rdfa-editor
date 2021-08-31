@@ -11,6 +11,24 @@ export function parseXml(xml: string): XmlReaderResult {
   return reader.read(doc.firstElementChild!);
 }
 
+export function parseXmlSiblings(xml: string): ModelNode[] {
+  const parser = new DOMParser();
+  const xmlToParse = `<div>${xml}</div>`;
+  const doc = parser.parseFromString(xmlToParse, "application/xml");
+
+  const reader = new XmlReader();
+  if (!doc.firstElementChild) {
+    throw new Error("Resulting document has no nodes in it");
+  }
+
+  const topContainer = reader.read(doc.firstElementChild).root;
+  if (!ModelNode.isModelElement(topContainer)) {
+    throw new Error("Container is not an element");
+  }
+
+  return topContainer.children;
+}
+
 export function parseHtml(html: string): HTMLDocument {
   const parser = new DOMParser();
   return parser.parseFromString(html, "text/html");
