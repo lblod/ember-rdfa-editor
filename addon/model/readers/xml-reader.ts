@@ -18,6 +18,5 @@ export default class XmlReader implements Reader<Node, XmlReaderResult, void> {
     }
     return {root, elements: elementRegistry, textNodes: textRegistry};
   }
-
 }
 

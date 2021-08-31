@@ -10,6 +10,7 @@
   {{on "mousedown" this.handleMouseDown}}
   {{on "beforeinput" this.beforeInput}}
   {{on "input" this.handleInput}}
+  {{on "dragstart" this.dragstart}}
   {{did-insert this.insertedEditorElement}}
   contenteditable="true" class={{@class}} ...attributes>
 </div>

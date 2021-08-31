@@ -3,7 +3,7 @@ import {
   BackspacePlugin
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { Editor, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 /**
  *
@@ -35,7 +35,7 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
     const parentNode = node.parentElement;
 
     if (parentNode) {
-      const textNode = document.createTextNode(invisibleSpace);
+      const textNode = document.createTextNode(INVISIBLE_SPACE);
       parentNode.replaceWith(textNode);
       editor.updateRichNode();
       editor.setCaret(textNode, 0);
