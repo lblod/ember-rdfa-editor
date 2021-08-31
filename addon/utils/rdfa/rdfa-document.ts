@@ -28,6 +28,8 @@ export default class RdfaDocument {
     const root = this._editor.model.rootModelNode;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
     this._editor.executeCommand("insert-html", html, range);
+    this._editor.selection.lastRange?.collapse(true);
+    this._editor.model.writeSelection();
   }
 
   get xmlContent() {
