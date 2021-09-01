@@ -53,7 +53,6 @@ interface ContentEditableArgs {
  */
 export default class ContentEditable extends Component<ContentEditableArgs> {
   @service declare features: Features;
-
   cutHandler: InputHandler;
   copyHandler: InputHandler;
   pasteHandler: InputHandler;
@@ -275,6 +274,14 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @action
   handleMouseDown(/* event: MouseEvent */) {
     // not handling just yet
+  }
+
+  /**
+   * dragstart isn't allowed at the moment
+   */
+  @action
+  dragstart(event: MouseEvent) {
+    event.preventDefault();
   }
 
   /**

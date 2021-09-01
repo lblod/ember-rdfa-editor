@@ -18,11 +18,14 @@ function updateDataFlaggedRemove(manipulation: TextHandlerManipulation, editor: 
     descend: false,
     filter: toFilterSkipFalse(ModelNode.isModelText)
   });
+
   let innerText = "";
   for (const node of textNodeWalker) {
     innerText += node.content;
   }
+
   const length = stringToVisibleText(innerText || "").length;
+
   if (length <= 2) {
     //TODO this should be done with a command
     parent.setAttribute('data-flagged-remove', 'almost-complete');
@@ -30,11 +33,12 @@ function updateDataFlaggedRemove(manipulation: TextHandlerManipulation, editor: 
     //TODO this should be done with a command
     parent.removeAttribute('data-flagged-remove');
   }
+
   editor.executeCommand("insert-text", manipulation.text, manipulation.range);
 }
 
 export default class RdfaTextInputPlugin implements TextInputPlugin {
-  label = 'text input plugin for handling RDFA specific logic';
+  label = 'Text input plugin for handling RDFA specific logic';
 
   guidanceForManipulation(manipulation: TextHandlerManipulation): ManipulationGuidance | null {
     const {type, range} = manipulation;
@@ -44,6 +48,7 @@ export default class RdfaTextInputPlugin implements TextInputPlugin {
         executor: updateDataFlaggedRemove
       };
     }
+
     return null;
   }
 }

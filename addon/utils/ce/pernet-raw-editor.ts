@@ -7,7 +7,6 @@ import {
   getWindowSelection,
   insertNodeBAfterNodeA,
   insertTextNodeWithSpace,
-  invisibleSpace,
   isDisplayedAsBlock,
   isElement,
   isList, isTextNode,
@@ -41,6 +40,7 @@ import { Editor } from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulat
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import EventBus from "@lblod/ember-rdfa-editor/utils/event-bus";
 import { Region } from "@lblod/marawa/rdfa-block";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export interface ContentObserver {
   handleTextInsert: (position: number, text: string, extraInfo: Array<unknown>) => void
@@ -420,7 +420,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    */
   insertValidCursorNodeAfterRichNode(richParent: RichNode, richNode: RichNode): RichNode{
     if (richNode.domNode.nextSibling === null || richNode.domNode.nextSibling.nodeType !== Node.TEXT_NODE) {
-      const newNode = document.createTextNode(invisibleSpace);
+      const newNode = document.createTextNode(INVISIBLE_SPACE);
       return this.insertElementsAfterRichNode(richParent, richNode, [newNode]);
     }
     return walkDomNodeAsText(richNode.domNode.nextSibling);
@@ -588,7 +588,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
           console.warn(`no valid node found for provided position ${position} and richNode`, node); // eslint-disable-line no-console
           if (node.domNode === this.rootNode && node.start === node.end) {
             console.debug(`empty editor, creating a textNode`); // eslint-disable-line no-console
-            const newNode = document.createTextNode(invisibleSpace);
+            const newNode = document.createTextNode(INVISIBLE_SPACE);
             this.rootNode.appendChild(newNode);
 
             this.updateRichNode();

@@ -3,7 +3,7 @@ import {
   BackspacePlugin
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { Editor, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 /**
  *
@@ -11,29 +11,31 @@ import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
  * @module plugins/placeholder-text
  */
 export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
-  label = 'backspace plugin for handling placeholder nodes';
+  label = "Backspace plugin for handling placeholder nodes";
 
   guidanceForManipulation(manipulation : BackspaceHandlerManipulation) : ManipulationGuidance | null {
     const node = manipulation.node;
     const parentNode = node.parentElement;
-    if(parentNode && parentNode.classList.contains('mark-highlight-manual')) {
+    if (parentNode && parentNode.classList.contains("mark-highlight-manual")) {
       return {
         allow: true,
         executor: this.removePlaceholder
       };
     }
+
     return null;
   }
 
   /**
-   * This executor removes the placeholder node containing manipulation.node competly.
+   * This executor removes the placeholder node containing manipulation.node completely.
    * @method removePlaceholder
    */
   removePlaceholder = (manipulation: BackspaceHandlerManipulation, editor: Editor): void => {
     const node = manipulation.node;
     const parentNode = node.parentElement;
-    if(parentNode) {
-      const textNode = document.createTextNode(invisibleSpace);
+
+    if (parentNode) {
+      const textNode = document.createTextNode(INVISIBLE_SPACE);
       parentNode.replaceWith(textNode);
       editor.updateRichNode();
       editor.setCaret(textNode, 0);
@@ -41,17 +43,14 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
   };
 
   /**
-   * Allows the plugin to notify the backspace handler a change has occured.
+   * Allows the plugin to notify the backspace handler a change has occurred.
    * Returns true explicitly when it detects the manipulation.node is inside a placeholder node.
    * @method detectChange
    */
   detectChange( manipulation: BackspaceHandlerManipulation ) : boolean {
     const node = manipulation.node;
     const parentNode = node.parentElement;
-    if(parentNode && parentNode.classList.contains('mark-highlight-manual')) {
-      return true;
-    }
-    return false;
-  }
 
+    return !!(parentNode && parentNode.classList.contains("mark-highlight-manual"));
+  }
 }

@@ -149,11 +149,14 @@ export default class Model {
    * @param domNode
    */
   public getModelNodeFor(domNode: Node): ModelNode {
-    if (!this.nodeMap) throw new ModelError("Uninitialized nodeMap");
+    if (!this.nodeMap) {
+      throw new ModelError("Uninitialized nodeMap");
+
+}
 
     const result = this.nodeMap.get(domNode);
     if (!result) {
-      throw new ModelError("No boundnode for domNode");
+      throw new ModelError("No bound node for domNode");
     }
 
     return result;

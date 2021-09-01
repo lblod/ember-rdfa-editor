@@ -19,20 +19,18 @@ export default class TableBackspacePlugin implements BackspacePlugin {
       allow: false,
       executor: undefined
     };
+
     const selection = editor.selection;
-    if(selection.inTableState === PropertyState.enabled) {
-      if(manipulation.type === 'moveCursorBeforeElement' || manipulation.type === 'removeEmptyElement') {
+    if (selection.inTableState === PropertyState.enabled) {
+      if (manipulation.type === 'moveCursorBeforeElement' || manipulation.type === 'removeEmptyElement') {
         return voidExecutor;
-      } else if(manipulation.type === 'removeEmptyTextNode') {
-        if(manipulation.node.parentElement?.childElementCount === 0) {
+      } else if (manipulation.type === 'removeEmptyTextNode') {
+        if (manipulation.node.parentElement?.childElementCount === 0) {
           return voidExecutor;
-        } else {
-          return null;
         }
-      } else {
-        return null;
       }
     }
+
     return null;
   }
 
@@ -42,20 +40,14 @@ export default class TableBackspacePlugin implements BackspacePlugin {
    */
   detectChange(manipulation: BackspaceHandlerManipulation, editor: RawEditor) : boolean {
     const selection = editor.selection;
-    if(selection.inTableState === PropertyState.enabled) {
-      if(manipulation.type === 'moveCursorBeforeElement' || manipulation.type === 'removeEmptyElement') {
+    if (selection.inTableState === PropertyState.enabled) {
+      if (manipulation.type === 'moveCursorBeforeElement' || manipulation.type === 'removeEmptyElement') {
         return true;
-      } else if(manipulation.type === 'removeEmptyTextNode') {
-        if(manipulation.node.parentElement?.childElementCount === 0) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        return false;
+      } else if (manipulation.type === 'removeEmptyTextNode') {
+        return manipulation.node.parentElement?.childElementCount === 0;
       }
     }
+
     return false;
   }
-
 }
