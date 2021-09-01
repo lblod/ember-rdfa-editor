@@ -23,10 +23,7 @@ import IgnoreModifiersHandler from "@lblod/ember-rdfa-editor/editor/input-handle
 import UndoHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler";
 import FallbackInputHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/fallback-input-handler";
 import DisableDeleteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/disable-delete-handler";
-
-interface FeatureService {
-  isEnabled(key: string): boolean
-}
+import Features from "ember-feature-flags";
 
 interface ContentEditableArgs {
   externalHandlers: InputHandler[]
@@ -55,7 +52,7 @@ interface ContentEditableArgs {
  * @extends Component
  */
 export default class ContentEditable extends Component<ContentEditableArgs> {
-  @service declare features: FeatureService;
+  @service declare features: Features;
 
   cutHandler: InputHandler;
   copyHandler: InputHandler;
