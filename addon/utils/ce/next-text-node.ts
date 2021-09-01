@@ -2,12 +2,12 @@ import {
   tagName,
   isVoidElement,
   insertTextNodeWithSpace,
-  invisibleSpace,
   isList,
   findFirstLi,
   siblingLis
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import flatMap from './flat-map';
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 /**
  * @method findFirstThOrTd
@@ -48,7 +48,7 @@ function firstTextChild(node: Node): Text {
     }
   } else {
     // Create text node and append.
-    const textNode = document.createTextNode(invisibleSpace);
+    const textNode = document.createTextNode(INVISIBLE_SPACE);
     node.appendChild(textNode);
 
     return textNode;
