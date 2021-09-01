@@ -203,6 +203,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
         this.insertAtPosition(resultRange.start, new ModelElement("br"));
       }
     }
+
     return resultRange;
   }
 

@@ -26,7 +26,6 @@ function dummy() {
  * @deprecated use {@link ModelTreeWalker} instead
  */
 export default abstract class NodeFinder<T extends Node | ModelNode, R extends T> implements Iterable<R> {
-
   startNode: T;
   private _current: T | null;
   endNode?: T;
@@ -37,7 +36,6 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
   stack: T[];
   visited: Map<T, boolean>;
   visitSiblings = false;
-
 
   constructor(config: NodeFinderConfig<T, R>) {
     this.startNode = config.startNode;

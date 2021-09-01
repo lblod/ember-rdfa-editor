@@ -4,12 +4,13 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
-import CutHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-handler";
 import EnterHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/enter-handler';
 import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
 import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
 import PasteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/paste-handler";
+import CutHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-handler";
+import CopyHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/copy-handler";
 import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import LumpNodeMovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/lump-node-movement-observer';
@@ -34,33 +35,39 @@ interface ContentEditableArgs {
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
- * It provides handlers for input events, a component to display a contenteditable element and an api for interaction with the document and its internal document representation.
+ * It provides handlers for input events, a component to display a content editable element and an API for interaction
+ * with the document and its internal document representation.
  *
- * rdfa-editor embeds the {{#crossLink "ContentEditableCompoment"}}{{/crossLink}} and interacts with the document through the {{#crossLink "RawEditor"}}{{/crossLink}} interface.
+ * rdfa-editor embeds the {{#crossLink "ContentEditable"}}{{/crossLink}} and interacts with the document
+ * through the {{#crossLink "RawEditor"}}{{/crossLink}} interface.
  *
- * input is handled by input handlers such as the {{#crossLink "TextInputHandler"}}{{/crossLink}}, {{#crossLink "BackspaceHandler"}}{{/crossLink}},
- * {{#crossLink "ArrowHandler"}}{{/crossLink}} and {{#crossLink "EnterHandler"}}{{/crossLink}}.
+ * Input is handled by input handlers such as the {{#crossLink "TextInputHandler"}}{{/crossLink}},
+ * {{#crossLink "BackspaceHandler"}}{{/crossLink}}, {{#crossLink "ArrowHandler"}}{{/crossLink}} and
+ * {{#crossLink "EnterHandler"}}{{/crossLink}}.
  * @module contenteditable-editor
  * @main contenteditable-editor
  */
 
 /**
- * Content editable editor component
+ * Content editable editor component.
  * @module contenteditable-editor
  * @class ContentEditableComponent
  * @extends Component
  */
 export default class ContentEditable extends Component<ContentEditableArgs> {
-  @service() declare features : FeatureService;
-  pasteHandler: InputHandler;
+  @service declare features: FeatureService;
+
   cutHandler: InputHandler;
+  copyHandler: InputHandler;
+  pasteHandler: InputHandler;
+
   _rawEditor: PernetRawEditor;
 
   /**
-   * element of the component, it is aliased to the rawEditor.rootNode
+   * Element of the component. It is aliased to the rawEditor.rootNode.
    *
    * @property element
-   * @type DOMElement
+   * @type HTMLElement
    *
    * @private
    */
@@ -79,7 +86,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   }
 
   /**
-   * ordered set of input handlers
+   * Ordered set of input handlers.
    * @property eventHandlers
    * @type Array
    * @public
@@ -89,7 +96,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   }
 
   /**
-   * default input handlers
+   * Default input handlers.
    * @property defaultHandlers
    * @type Array
    * @private
@@ -97,7 +104,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @tracked defaultHandlers: InputHandler[];
 
   /**
-   * external input handlers
+   * External input handlers.
    * @property externalHandlers
    * @type Array
    * @private
@@ -111,6 +118,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     super(owner, args);
     const rawEditor = PernetRawEditor.create({});
     rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
+
     this._rawEditor = rawEditor;
     this.defaultHandlers = [
       new ArrowHandler({ rawEditor }),
@@ -125,14 +133,15 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       new EscapeHandler({ rawEditor }),
       new FallbackInputHandler({ rawEditor }),
     ];
+
     this.externalHandlers = this.args.externalHandlers ? this.args.externalHandlers : [];
-    this.pasteHandler = new PasteHandler({rawEditor});
     this.cutHandler = new CutHandler({rawEditor});
+    this.copyHandler = new CopyHandler({rawEditor});
+    this.pasteHandler = new PasteHandler({rawEditor});
   }
 
   /**
-   * didRender hook, makes sure the element is focused
-   * and calls the rootNodeUpdated action
+   * "didRender" hook: Makes sure the element is focused and calls the rootNodeUpdated action.
    *
    * @method insertedEditorElement
    */
@@ -207,8 +216,9 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @action
   handleInput(event: InputEvent) {
     const preventDefault = this.passEventToHandlers(event);
-    if (preventDefault)
+    if (preventDefault) {
       event.preventDefault();
+    }
   }
 
   @action
@@ -226,13 +236,11 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @action
   compositionEnd(event: CompositionEvent) {
     const preventDefault = this.passEventToHandlers(event);
-    if (preventDefault)
+    if (preventDefault) {
       event.preventDefault();
+    }
   }
 
-  /**
-   * paste events are parsed and handled as good as possible
-   */
   @action
   paste(event: ClipboardEvent) {
     event.preventDefault();
@@ -242,6 +250,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       this.features.isEnabled("editor-extended-html-paste")
     );
   }
+
   @action
   cut(event: ClipboardEvent) {
     event.preventDefault();
@@ -250,30 +259,25 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     }
   }
 
-  /**
-   * copy is relegated to the browser for now
-   */
   @action
-  copy( /* event: ClipboardEvent */) {
-    //not handling just yet
+  copy(event: ClipboardEvent) {
+    event.preventDefault();
+    if (this.features.isEnabled("editor-copy")) {
+      this.copyHandler.handleEvent(event);
+    }
   }
 
   @action
   handleMouseUp(event: MouseEvent) {
     const preventDefault = this.passEventToHandlers(event);
-    if (preventDefault)
+    if (preventDefault) {
       event.preventDefault();
+    }
   }
 
   @action
   handleMouseDown(/* event: MouseEvent */) {
     // not handling just yet
-  }
-
-  @action
-  undo( /* event: InputEvent */) {
-    // TODO: shouldn't we cancel this event ?
-    this.rawEditor.undo();
   }
 
   /**
@@ -317,8 +321,8 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   }
 
   /**
-   * tries to find and identify common keyboard shortcuts which emit other events we can tap in to
-   * currently tries to catch copy, paste, cut and undo. definitly needs testing on mac
+   * Tries to find and identify common keyboard shortcuts which emit other events we can tap into.
+   * Currently tries to catch copy, paste, cut. Definitely needs testing on mac.
    * @method keydownMapsToOtherEvent
    */
   keydownMapsToOtherEvent(event: KeyboardEvent) : boolean {
