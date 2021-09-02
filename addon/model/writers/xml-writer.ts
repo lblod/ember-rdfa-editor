@@ -6,7 +6,7 @@ export default class XmlWriter implements Writer<ModelNode, Node> {
   write(modelNode: ModelNode): Node {
     const document = new Document();
     const writer = new XmlNodeWriter(document);
+
     return writer.write(modelNode);
   }
-
 }

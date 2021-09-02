@@ -5,7 +5,8 @@ module.exports = function(environment) {
     featureFlags: {
       'editor-html-paste': true,
       'editor-force-paragraph': false,
-      'editor-cut': true
+      'editor-cut': true,
+      'editor-copy': true
     }
   };
 

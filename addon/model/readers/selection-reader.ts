@@ -4,22 +4,24 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {ModelError, NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError, NotImplementedError, ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {HIGHLIGHT_ATTRIBUTE, TEXT_PROPERTY_NODES} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
 /**
- * Reader to convert a {@link Selection} to a {@link ModelSelection}
+ * Reader to convert a {@link Selection} to a {@link ModelSelection}.
  */
 export default class SelectionReader implements Reader<Selection, ModelSelection, void> {
-  constructor(private model: Model) {
+  private model: Model;
+
+  constructor(model: Model) {
+    this.model = model;
   }
 
   read(from: Selection): ModelSelection {
     const ranges = [];
-
-    const rslt = new ModelSelection(this.model);
+    const result = new ModelSelection();
 
     for (let i = 0; i < from.rangeCount; i++) {
       const range = from.getRangeAt(i);
@@ -28,9 +30,10 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
         ranges.push(modelRange);
       }
     }
-    rslt.ranges = ranges;
-    rslt.isRightToLeft = this.isReverseSelection(from);
-    return rslt;
+    result.ranges = ranges;
+    result.isRightToLeft = SelectionReader.isReverseSelection(from);
+
+    return result;
   }
 
   /**
@@ -43,15 +46,17 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     if (!start) {
       return null;
     }
+
     if (range.collapsed) {
       return new ModelRange(start);
     }
+
     const end = this.readDomPosition(range.endContainer, range.endOffset);
     return new ModelRange(start, end ?? start);
   }
 
   /**
-   * Convert a DOM position to a {@link ModelPosition}
+   * Convert a DOM position to a {@link ModelPosition}.
    * Can be null when the {@link Selection} is empty.
    * @param container
    * @param domOffset
@@ -70,25 +75,28 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
   }
 
   private readDomPositionUnsafe(container: Node, domOffset: number): ModelPosition | null {
-    let rslt = null;
+    let result = null;
     if (SelectionReader.isTextPropertyNode(container)) {
-      return this.findPositionForTextPopertyNode(container, domOffset);
+      return this.findPositionForTextPropertyNode(container, domOffset);
     } else if (isElement(container)) {
       const modelContainer = this.model.getModelNodeFor(container) as ModelElement;
       const finalOffset = modelContainer.indexToOffset(domOffset);
-      rslt = ModelPosition.fromInElement(modelContainer, finalOffset);
-
+      result = ModelPosition.fromInElement(modelContainer, finalOffset);
     } else if (isTextNode(container)) {
       const modelTextNode = this.model.getModelNodeFor(container) as ModelText;
-      const modelContainer = modelTextNode.parent!;
+      const modelContainer = modelTextNode.parent;
+      if (!modelContainer) {
+        throw new ParseError("Text node without parent node");
+      }
+
       const basePath = modelContainer.getOffsetPath();
 
       const finalOffset = modelTextNode.getOffset() + domOffset;
       basePath.push(finalOffset);
-      rslt = ModelPosition.fromPath(modelContainer.root, basePath);
-
+      result = ModelPosition.fromPath(modelContainer.root, basePath);
     }
-    return rslt;
+
+    return result;
   }
 
   private static isTextPropertyNode(elem: Node): boolean {
@@ -104,10 +112,10 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     return true;
   }
 
-  private findPositionForTextPopertyNode(container: Node, domOffset: number): ModelPosition {
-
+  private findPositionForTextPropertyNode(container: Node, domOffset: number): ModelPosition {
     const walker = document.createTreeWalker(this.model.rootNode, NodeFilter.SHOW_TEXT);
     walker.currentNode = container;
+
     let resultingNode;
     if (container.childNodes.length === 0) {
       resultingNode = walker.previousNode();
@@ -122,28 +130,27 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
         resultingNode = walker.previousNode();
       }
     }
+
     if (!resultingNode) {
       throw new NotImplementedError();
     }
+
     const modelNode = this.model.getModelNodeFor(resultingNode) as ModelText;
     return ModelPosition.fromInTextNode(modelNode, modelNode.length);
-
   }
 
   /**
-   * Check if selection is backwards (aka right-to-left)
-   * Taken from the internet
+   * Check if selection is backwards (aka right-to-left).
+   * Taken from the internet.
    * @param selection
    * @private
    */
-  private isReverseSelection(selection: Selection): boolean {
+  private static isReverseSelection(selection: Selection): boolean {
     if (!selection.anchorNode || !selection.focusNode) return false;
     const position = selection.anchorNode.compareDocumentPosition(selection.focusNode);
-    let backward = false;
-    // position == 0 if nodes are the same
-    if (!position && selection.anchorOffset > selection.focusOffset || position === Node.DOCUMENT_POSITION_PRECEDING) {
-      backward = true;
-    }
-    return backward;
+
+    // Position == 0 if nodes are the same.
+    return !position && selection.anchorOffset > selection.focusOffset
+      || position === Node.DOCUMENT_POSITION_PRECEDING;
   }
 }

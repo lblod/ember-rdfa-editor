@@ -11,13 +11,15 @@ export default abstract class Command<A extends unknown[] = unknown[], R = void>
   abstract name: string;
   protected model: Model;
   protected logger: Logger;
+  createSnapshot: boolean;
 
-  protected constructor(model: Model) {
+  protected constructor(model: Model, createSnapshot = true) {
     this.model = model;
+    this.createSnapshot = createSnapshot;
     this.logger = createLogger(`command:${this.constructor.name}`);
   }
 
-  canExecute(..._args: A[]): boolean {
+  canExecute(..._args: A): boolean {
     return true;
   }
 
