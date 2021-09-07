@@ -8,6 +8,10 @@ module.exports = {
     },
   },
 
+  isDevelopingAddon() {
+    return this.app.env === 'development';
+  },
+
   included() {
      this._super.included.apply(this, arguments);
   },
