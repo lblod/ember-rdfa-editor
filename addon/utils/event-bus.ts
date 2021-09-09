@@ -35,6 +35,12 @@ export default class EventBus {
     this.getInstance().emit(eventName, payload);
   }
 
+  // TODO: figure out how to allow void events to omit the payload argument
+  static emitDebounced<E extends EditorEventName>(delayMs: number, eventName: E, payload: EDITOR_EVENT_MAP[E]): void {
+    const debouncedEmit = debounced(EventBus.emit, delayMs);
+    debouncedEmit(eventName, payload);
+  }
+
   private listeners: Map<EditorEventName, Array<EditorEventListener<EditorEventName>>> = new Map<EditorEventName, Array<EditorEventListener<EditorEventName>>>();
   private logger: Logger = createLogger("EventBus");
 

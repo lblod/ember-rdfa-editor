@@ -1,13 +1,13 @@
 import Service from '@ember/service';
-import { A } from '@ember/array';
-import { get } from '@ember/object';
-import { runInDebug } from '@ember/debug';
+import {A} from '@ember/array';
+import {get} from '@ember/object';
+import {runInDebug} from '@ember/debug';
 import RSVP from 'rsvp';
 import editorProfiles from '../config/editor-profiles';
-import { next } from '@ember/runloop';
+import {next} from '@ember/runloop';
 import PluginEditorApi from '@lblod/ember-rdfa-editor/utils/plugin-editor-api';
 import PluginHintsRegistryApi from '@lblod/ember-rdfa-editor/utils/plugin-hints-registry-api';
-import { getOwner } from '@ember/application';
+import {getOwner} from '@ember/application';
 
 // debug helper
 function debug(message) {
@@ -38,6 +38,14 @@ export default class RdfaEditorDispatcher extends Service {
       }
       else {
         console.warn('could not find plugin ' + name); // eslint-disable-line no-console
+      }
+    }
+  }
+
+  initializeServices(editor) {
+    for (const pluginService of this.pluginServices) {
+      if (typeof (pluginService.get("initialize")) === "function") {
+        pluginService.initialize(editor);
       }
     }
   }

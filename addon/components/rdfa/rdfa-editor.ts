@@ -177,7 +177,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  handleRawEditorInit(editor: PernetRawEditor) {
+  async handleRawEditorInit(editor: PernetRawEditor) {
     this.editor = editor;
     this.hintsRegistry = new HintsRegistry(editor);
     this.eventProcessor = new EventProcessor({
@@ -186,6 +186,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       dispatcher: this.rdfaEditorDispatcher,
       editor: this.editor
     });
+    this.rdfaEditorDispatcher.initializeServices(editor);
     editor.registerContentObserver(this.eventProcessor);
     editor.registerMovementObserver(this.eventProcessor);
     this.hintsRegistry.addRegistryObserver( (_registry: HintsRegistry) => {

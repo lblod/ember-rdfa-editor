@@ -41,6 +41,14 @@ import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/ins
 import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
 import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
 
+type WidgetLocation = "toolbar" | "sidebar";
+
+interface WidgetSpec {
+  identifier: string;
+  componentName: string;
+  desiredLocation: WidgetLocation;
+}
+
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
  * Any editing operations should be implemented as {@link Command commands}. External plugins can register their own commands.
@@ -59,6 +67,7 @@ class RawEditor extends EmberObject {
 
   private _model?: Model;
   protected tryOutVdom = true;
+  private _toolbarWidgets: Map<string, string> = new Map();
 
   /**
    * a rich representation of the dom tree created with {{#crossLink "NodeWalker"}}NodeWalker{{/crossLink}}
@@ -70,6 +79,10 @@ class RawEditor extends EmberObject {
 
   constructor(properties?: Record<string, unknown>) {
     super(properties);
+  }
+
+  get toolbarWidgets(): IterableIterator<string> {
+    return this._toolbarWidgets.values();
   }
 
   /**
@@ -234,6 +247,16 @@ class RawEditor extends EmberObject {
 
   off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>) {
     EventBus.off(eventName, callback);
+  }
+
+  registerWidget(widgetSpec: WidgetSpec) {
+    const {componentName, desiredLocation, identifier} = widgetSpec;
+    if(desiredLocation === "toolbar") {
+      if(this._toolbarWidgets.has(identifier)) {
+        console.warn(`Overwriting existing widget with identifier ${identifier} and componentName ${componentName}`);
+      }
+      this._toolbarWidgets.set(identifier, componentName);
+    }
   }
 }
 
