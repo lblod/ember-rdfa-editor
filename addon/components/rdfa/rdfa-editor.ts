@@ -177,7 +177,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  async handleRawEditorInit(editor: PernetRawEditor) {
+  handleRawEditorInit(editor: PernetRawEditor) {
     this.editor = editor;
     this.hintsRegistry = new HintsRegistry(editor);
     this.eventProcessor = new EventProcessor({

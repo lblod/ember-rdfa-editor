@@ -1,7 +1,7 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import EventBus from "@lblod/ember-rdfa-editor/utils/event-bus";
+import EventBus, {SelectionChangedEvent} from "@lblod/ember-rdfa-editor/utils/event-bus";
 
 export default class ModelSelectionTracker {
   model: Model;
@@ -31,6 +31,6 @@ export default class ModelSelectionTracker {
       {detail: this.model.selection}
     );
     document.dispatchEvent(modelSelectionUpdatedEvent);
-    EventBus.emit()
+    EventBus.emitDebounced(100, new SelectionChangedEvent());
   };
 }

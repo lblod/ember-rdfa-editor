@@ -1,16 +1,47 @@
 import {createLogger, Logger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import {debouncedAdjustable} from "@lblod/ember-rdfa-editor/utils/debounce";
 
-export interface EditorEvent<E extends EditorEventName> {
-  name: E,
-  payload: EDITOR_EVENT_MAP[E]
+export abstract class EditorEvent<P> {
+  abstract _name: EditorEventName;
+
+  protected constructor(private _payload: P) {
+  }
+
+  get payload(): P {
+    return this._payload;
+  }
+
+  get name(): EditorEventName {
+    return this._name;
+  }
+}
+
+export abstract class VoidEvent extends EditorEvent<void> {
+  constructor() {
+    super(undefined);
+  }
+}
+
+export class DummyEvent extends VoidEvent {
+  _name: EditorEventName = "dummy";
+}
+
+export class ContentChangedEvent extends VoidEvent {
+  _name: EditorEventName = "contentChanged";
+}
+
+export class SelectionChangedEvent extends VoidEvent {
+  _name: EditorEventName = "selectionChanged";
 }
 
 export type EDITOR_EVENT_MAP = {
-  "contentChanged": void
+  "dummy": DummyEvent,
+  "contentChanged": ContentChangedEvent
+  "selectionChanged": SelectionChangedEvent
 };
 export type EditorEventName = keyof EDITOR_EVENT_MAP;
 
-export type EditorEventListener<E extends EditorEventName> = (event: EditorEvent<E>) => void;
+export type EditorEventListener<E extends EditorEventName> = (event: EDITOR_EVENT_MAP[E]) => void;
 
 export default class EventBus {
   static instance: EventBus;
@@ -31,14 +62,13 @@ export default class EventBus {
   }
 
   // TODO: figure out how to allow void events to omit the payload argument
-  static emit<E extends EditorEventName>(eventName: E, payload: EDITOR_EVENT_MAP[E]): void {
-    this.getInstance().emit(eventName, payload);
+  static emit<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void {
+    this.getInstance().emit(event);
   }
 
   // TODO: figure out how to allow void events to omit the payload argument
-  static emitDebounced<E extends EditorEventName>(delayMs: number, eventName: E, payload: EDITOR_EVENT_MAP[E]): void {
-    const debouncedEmit = debounced(EventBus.emit, delayMs);
-    debouncedEmit(eventName, payload);
+  static emitDebounced<E extends EditorEventName>(delayMs: number, event: EDITOR_EVENT_MAP[E]): void {
+    this.getInstance().emitDebounced(delayMs, event);
   }
 
   private listeners: Map<EditorEventName, Array<EditorEventListener<EditorEventName>>> = new Map<EditorEventName, Array<EditorEventListener<EditorEventName>>>();
@@ -64,11 +94,13 @@ export default class EventBus {
 
   }
 
-  private emit<E extends EditorEventName>(eventName: E, payload: EDITOR_EVENT_MAP[E]): void {
-    const eventListeners = this.listeners.get(eventName);
-    this.logger.log(`Emitting event: ${eventName} with payload:`, payload);
+  private emit = <E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void => {
+    const eventListeners = this.listeners.get(event.name);
+    this.logger.log(`Emitting event: ${event.name} with payload:`, event.payload);
     if (eventListeners) {
-      eventListeners.forEach(listener => listener({name: eventName, payload}));
+      eventListeners.forEach(listener => listener(event));
     }
-  }
+  };
+
+  private emitDebounced = debouncedAdjustable(this.emit);
 }
