@@ -40,6 +40,8 @@ import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/in
 import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
 import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
 import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
+import FindNodesCommand from "@lblod/ember-rdfa-editor/commands/find-nodes-command";
+import MatchTextCommand from "@lblod/ember-rdfa-editor/commands/match-text-command";
 
 type WidgetLocation = "toolbar" | "sidebar";
 
@@ -138,6 +140,8 @@ class RawEditor extends EmberObject {
     this.registerCommand(new DeleteSelectionCommand(this.model));
     this.registerCommand(new ReadSelectionCommand(this.model));
     this.registerCommand(new UndoCommand(this.model));
+    this.registerCommand(new FindNodesCommand(this.model));
+    this.registerCommand(new MatchTextCommand(this.model));
   }
 
   /**
@@ -233,6 +237,10 @@ class RawEditor extends EmberObject {
     return ModelRange.fromPaths(this.model.rootModelNode, path1, path2);
   }
 
+  createFullDocumentRange(): ModelRange {
+    return ModelRange.fromInElement(this.model.rootModelNode, 0, this.model.rootModelNode.getMaxOffset());
+  }
+
   /**
    * Create a selection on the virtual dom.
    * Starts out without any selected ranges.
@@ -251,8 +259,8 @@ class RawEditor extends EmberObject {
 
   registerWidget(widgetSpec: WidgetSpec) {
     const {componentName, desiredLocation, identifier} = widgetSpec;
-    if(desiredLocation === "toolbar") {
-      if(this._toolbarWidgets.has(identifier)) {
+    if (desiredLocation === "toolbar") {
+      if (this._toolbarWidgets.has(identifier)) {
         console.warn(`Overwriting existing widget with identifier ${identifier} and componentName ${componentName}`);
       }
       this._toolbarWidgets.set(identifier, componentName);

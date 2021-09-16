@@ -34,14 +34,23 @@ export class SelectionChangedEvent extends VoidEvent {
   _name: EditorEventName = "selectionChanged";
 }
 
+export class ModelWrittenEvent extends VoidEvent {
+  _name: EditorEventName = "modelWritten";
+}
+
 export type EDITOR_EVENT_MAP = {
   "dummy": DummyEvent,
-  "contentChanged": ContentChangedEvent
+  "contentChanged": ContentChangedEvent,
+  "modelWritten": ModelWrittenEvent,
   "selectionChanged": SelectionChangedEvent
 };
 export type EditorEventName = keyof EDITOR_EVENT_MAP;
 
 export type EditorEventListener<E extends EditorEventName> = (event: EDITOR_EVENT_MAP[E]) => void;
+
+export type EventEmitter<E extends EditorEventName> = (event: EDITOR_EVENT_MAP[E]) => void;
+
+export type DebouncedEmitter<E extends EditorEventName> = (delayMs: number, event: EDITOR_EVENT_MAP[E]) => void;
 
 export default class EventBus {
   static instance: EventBus;
@@ -61,18 +70,17 @@ export default class EventBus {
     this.getInstance().off(eventName, callback);
   }
 
-  // TODO: figure out how to allow void events to omit the payload argument
   static emit<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void {
     this.getInstance().emit(event);
   }
 
-  // TODO: figure out how to allow void events to omit the payload argument
   static emitDebounced<E extends EditorEventName>(delayMs: number, event: EDITOR_EVENT_MAP[E]): void {
     this.getInstance().emitDebounced(delayMs, event);
   }
 
   private listeners: Map<EditorEventName, Array<EditorEventListener<EditorEventName>>> = new Map<EditorEventName, Array<EditorEventListener<EditorEventName>>>();
   private logger: Logger = createLogger("EventBus");
+  private debouncedEmitters: Map<EditorEventName, DebouncedEmitter<EditorEventName>> = new Map();
 
   private on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
     const eventListeners = this.listeners.get(eventName);
@@ -96,11 +104,23 @@ export default class EventBus {
 
   private emit = <E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void => {
     const eventListeners = this.listeners.get(event.name);
-    this.logger.log(`Emitting event: ${event.name} with payload:`, event.payload);
+
+    console.log(`Emitting event: ${event.name} with payload:`, event.payload);
     if (eventListeners) {
       eventListeners.forEach(listener => listener(event));
     }
   };
 
-  private emitDebounced = debouncedAdjustable(this.emit);
+  private emitDebounced = <E extends EditorEventName>(delayMs: number, event: EDITOR_EVENT_MAP[E]): void => {
+
+    const emitter = this.debouncedEmitters.get(event.name);
+    if (emitter) {
+      emitter(delayMs, event);
+    } else {
+      const emitter = debouncedAdjustable(this.emit);
+      this.debouncedEmitters.set(event.name, emitter);
+      emitter(delayMs, event);
+    }
+
+  };
 }

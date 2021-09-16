@@ -347,4 +347,194 @@ module("Unit | model | model-range", () => {
     });
 
   });
+
+  module("Unit | model | model-range | getTextContent", () => {
+
+    test("simple range calculates text content correctly", function (assert) {
+      // language=XML
+      const {textNodes: {rangeStart}} = vdom`
+        <modelRoot>
+          <text __id="rangeStart">abcd</text>
+        </modelRoot>
+      `;
+      const range = ModelRange.fromInTextNode(rangeStart, 1, 3);
+
+      assert.strictEqual(range.getTextContent(), "bc");
+
+    });
+    test("complex range calculates text content correctly", function (assert) {
+      // language=XML
+      const {textNodes: {rangeStart, rangeEnd}} = vdom`
+        <modelRoot>
+          <text __id="rangeStart">abcd</text>
+          <span>
+            <div>
+              <text>efgh</text>
+            </div>
+          </span>
+          <text>ijkl</text>
+          <div>
+            <span>
+              <text>mnop</text>
+            </span>
+            <text __id="rangeEnd">qrst</text>
+          </div>
+        </modelRoot>
+      `;
+      const startPos = ModelPosition.fromInTextNode(rangeStart, 2);
+      const endPos = ModelPosition.fromInTextNode(rangeEnd, 2);
+      const range = new ModelRange(startPos, endPos);
+
+      assert.strictEqual(range.getTextContent(), "cdefghijklmnopqr");
+
+    });
+
+    test("complex range calculates text content correctly 2", function (assert) {
+      // language=XML
+      const {textNodes: {rangeStart, rangeEnd}} = vdom`
+        <modelRoot>
+          <text>pretext</text>
+          <text __id="rangeStart">abcd</text>
+          <span>
+            <div>
+              <text>efgh</text>
+            </div>
+          </span>
+          <text>ijkl</text>
+          <div>
+            <span>
+              <text>mnop</text>
+            </span>
+            <text __id="rangeEnd">qrst</text>
+          </div>
+        </modelRoot>
+      `;
+      const startPos = ModelPosition.fromInTextNode(rangeStart, 2);
+      const endPos = ModelPosition.fromInTextNode(rangeEnd, 2);
+      const range = new ModelRange(startPos, endPos);
+
+      assert.strictEqual(range.getTextContent(), "cdefghijklmnopqr");
+
+    });
+    test("complex range calculates text content correctly 3", function (assert) {
+      // language=XML
+      const {textNodes: {rangeStart, rangeEnd}} = vdom`
+        <modelRoot>
+          <text>pretext</text>
+          <text __id="rangeStart">abcd</text>
+          <span>
+            <div>
+              <text>efgh</text>
+            </div>
+          </span>
+          <text>ijkl</text>
+          <div>
+            <span>
+              <text>mnop</text>
+            </span>
+            <text __id="rangeEnd">qrst</text>
+          </div>
+        </modelRoot>
+      `;
+      const startPos = ModelPosition.fromBeforeNode(rangeStart);
+      const endPos = ModelPosition.fromInTextNode(rangeEnd, 2);
+      const range = new ModelRange(startPos, endPos);
+
+      assert.strictEqual(range.getTextContent(), "abcdefghijklmnopqr");
+
+    });
+    test("whole element ranges calculate text content correctly", function (assert) {
+      // language=XML
+      const {textNodes: {rangeStart}, elements: {rangeEnd}} = vdom`
+        <modelRoot>
+          <text __id="rangeStart">abcd</text>
+          <span>
+            <div>
+              <text>efgh</text>
+            </div>
+          </span>
+          <text>ijkl</text>
+          <div __id="rangeEnd">
+            <span>
+              <text>mnop</text>
+            </span>
+            <text>qrst</text>
+          </div>
+        </modelRoot>
+      `;
+
+      const startPos = ModelPosition.fromInTextNode(rangeStart, 2);
+      const endPos = ModelPosition.fromAfterNode(rangeEnd);
+      const range = new ModelRange(startPos, endPos);
+
+      assert.strictEqual(range.getTextContent(), "cdefghijklmnopqrst");
+    });
+
+    test("collapsed range has empty text content", function (assert) {
+
+      // language=XML
+      const {textNodes: {rangeStart}} = vdom`
+        <modelRoot>
+          <text __id="rangeStart">abcd</text>
+          <span>
+            <div>
+              <text>efgh</text>
+            </div>
+          </span>
+          <text>ijkl</text>
+          <div>
+            <span>
+              <text>mnop</text>
+            </span>
+            <text __id="rangeEnd">qrst</text>
+          </div>
+        </modelRoot>
+      `;
+      const range = ModelRange.fromInTextNode(rangeStart, 2, 2);
+      assert.strictEqual(range.getTextContent(), "");
+
+
+    });
+  });
+  module("Unit | model | model-range | getTextContent", () => {
+    test("returns correct mapping", function (assert) {
+
+
+      // language=XML
+      const {textNodes: {rangeStart, rangeEnd, t1, t2}} = vdom`
+        <modelRoot>
+          <text>pretext</text>
+          <text __id="rangeStart">abcd</text>
+          <span>
+            <div>
+              <text __id="t1">efgh</text>
+            </div>
+          </span>
+          <text __id="t2">ijkl</text>
+          <div>
+            <span>
+              <text>mnop</text>
+            </span>
+            <text __id="rangeEnd">qrst</text>
+          </div>
+        </modelRoot>
+      `;
+      const startPos = ModelPosition.fromBeforeNode(rangeStart);
+      const endPos = ModelPosition.fromInTextNode(rangeEnd, 2);
+      const range = new ModelRange(startPos, endPos);
+      const {textContent, indexToPos} = range.getTextContentWithMapping();
+
+      assert.strictEqual(textContent, "abcdefghijklmnopqr");
+      assert.true(indexToPos(0).sameAs(startPos));
+      const t1Pos = ModelPosition.fromInTextNode(t1, 1);
+      console.log("INDEXTOPOS 5", indexToPos(5).path);
+      assert.true(indexToPos(5).sameAs(t1Pos));
+
+      const t2Pos = ModelPosition.fromInTextNode(t2, 2);
+      assert.true(indexToPos(10).sameAs(t2Pos));
+
+
+    });
+
+  });
 });

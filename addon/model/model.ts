@@ -14,6 +14,7 @@ import ModelHistory from "@lblod/ember-rdfa-editor/model/model-history";
 import {Diary} from "diary";
 import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import SimplifiedModel from "@lblod/ember-rdfa-editor/model/simplified-model";
+import EventBus, {ModelWrittenEvent} from "@lblod/ember-rdfa-editor/utils/event-bus";
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -117,6 +118,7 @@ export default class Model {
     oldRoot.append(...newRoot.childNodes);
     this.bindNode(tree, oldRoot);
 
+    EventBus.emitDebounced(100, new ModelWrittenEvent());
     if (writeSelection) {
       this.writeSelection();
     }

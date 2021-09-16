@@ -266,6 +266,78 @@ export default class ModelRange {
 
   }
 
+  getTextContent(): string {
+    return this.textContentHelper(false).textContent;
+  }
+
+  getTextContentWithMapping(): { textContent: string, indexToPos: (textIndex: number) => ModelPosition } {
+    return this.textContentHelper(true);
+  }
+
+  private textContentHelper(calculateMapping: boolean): { textContent: string, indexToPos: (textIndex: number) => ModelPosition } {
+    let textContent = "";
+
+    // a sparse map of character indices of the resultstring to paths
+    // it looks something like this:
+    // [[4, [0, 0]], [18, [1,3,4]]]
+    // the first number is the limitnumber
+    // meaning all indices up to 4 correspond to textnode with path [0,0],
+    // all indices between 4 and 18 correspond to textnode with path [1,3,4], etc
+    // to get the final path of the index, add the difference between the index
+    // and the last encountered limit to the last element of the path
+    const mapping: [number, number[]][] = [];
+
+    // get all textnodes in range
+    const walker = new ModelTreeWalker<ModelText>({
+      range: this,
+      descend: true,
+      filter: toFilterSkipFalse(ModelNode.isModelText)
+    });
+    // calculate difference between start of range and start of the first textnode
+    const startOffset = this.start.isInsideText() ? this.start.parentOffset - this.start.nodeAfter()!.getOffset() : 0;
+
+    let currentIndex = 0;
+    // build the resultstring
+    for (const textNode of walker) {
+      // keep a sparse mapping of character indices in the resulting string to paths
+      if (calculateMapping) {
+        const path = ModelPosition.fromBeforeNode(textNode).path;
+        mapping.push([currentIndex + textNode.length - startOffset, path]);
+        currentIndex += textNode.length;
+      }
+      textContent = textContent.concat(textNode.content);
+    }
+    console.log("MAPPING", mapping);
+
+
+    // calculate endoffset, or the difference between the offset just after the final textnode and the endposition of
+    // the range
+    let endOffset = textContent.length;
+    if (this.end.isInsideText()) {
+      const textNode = this.end.nodeAfter()!;
+      const maxOffset = textNode.getOffset() + textNode.length;
+      endOffset -= maxOffset - this.end.parentOffset;
+    }
+
+    // the mapping function to convert resultstring indices back to positions
+    const indexToPos = (index: number): ModelPosition => {
+
+      let lastLimit = 0;
+      for (const [limit, path] of mapping) {
+        if (index < limit) {
+          const resultPath = [...path];
+          const final = resultPath[resultPath.length - 1];
+          resultPath[resultPath.length - 1] = final + index - lastLimit;
+          return ModelPosition.fromPath(this.root, resultPath);
+        }
+        lastLimit = limit;
+      }
+      return this.end;
+    };
+
+    return {textContent: textContent.substring(startOffset, endOffset), indexToPos};
+  }
+
   sameAs(other: ModelRange): boolean {
     return this.start.sameAs(other.start) && this.end.sameAs(other.end);
   }
