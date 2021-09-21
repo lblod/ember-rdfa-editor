@@ -41,7 +41,7 @@ import {Editor} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulatio
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import EventBus, {ContentChangedEvent} from "@lblod/ember-rdfa-editor/utils/event-bus";
 import {Region} from "@lblod/marawa/rdfa-block";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {CORE_OWNER, INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export interface ContentObserver {
   handleTextInsert: (position: number, text: string, extraInfo: Array<unknown>) => void
@@ -143,7 +143,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @param args
    */
   executeCommand(commandName: string, ...args: unknown[]): unknown {
-    const result = super.executeCommand(commandName, ...args);
+    const result = super.executeCommand(CORE_OWNER, commandName, ...args);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     void taskFor(this.generateDiffEvents).perform();
 

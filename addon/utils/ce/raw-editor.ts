@@ -42,10 +42,11 @@ import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selecti
 import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
 import FindNodesCommand from "@lblod/ember-rdfa-editor/commands/find-nodes-command";
 import MatchTextCommand from "@lblod/ember-rdfa-editor/commands/match-text-command";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
-type WidgetLocation = "toolbar" | "sidebar";
+export type WidgetLocation = "toolbar" | "sidebar";
 
-interface WidgetSpec {
+export interface WidgetSpec {
   identifier: string;
   componentName: string;
   desiredLocation: WidgetLocation;
@@ -157,7 +158,7 @@ class RawEditor extends EmberObject {
       this.initialize(rootNode);
       this.model.read(false);
       this.model.selection.collapseIn(this.model.rootModelNode);
-      this.model.write();
+      this.model.write(CORE_OWNER);
       this.updateRichNode();
     }
   }
