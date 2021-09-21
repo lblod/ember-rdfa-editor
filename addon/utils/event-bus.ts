@@ -114,7 +114,7 @@ export default class EventBus {
   private emit = <E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void => {
     const eventListeners = this.listeners.get(event.name);
 
-    console.log(`Emitting event: ${event.name} with payload:`, event.payload);
+    console.log(`${event.owner} is emitting event: ${event.name} with payload:`, event.payload);
     if (eventListeners) {
       eventListeners.forEach(listener => listener(event));
     }

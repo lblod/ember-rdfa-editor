@@ -307,8 +307,6 @@ export default class ModelRange {
       }
       textContent = textContent.concat(textNode.content);
     }
-    console.log("MAPPING", mapping);
-
 
     // calculate endoffset, or the difference between the offset just after the final textnode and the endposition of
     // the range

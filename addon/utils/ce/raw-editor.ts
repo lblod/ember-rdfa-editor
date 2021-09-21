@@ -195,7 +195,11 @@ class RawEditor extends EmberObject {
    * @param commandName
    * @param args
    */
-  executeCommand(executedBy: string, commandName: string, ...args: unknown[]) {
+  executeCommand(commandName: string, ...args: unknown[]) {
+    return this.executeCommand_(CORE_OWNER, commandName, ...args);
+  }
+
+  executeCommand_(executedBy: string, commandName: string, ...args: unknown[]) {
     try {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
@@ -207,6 +211,7 @@ class RawEditor extends EmberObject {
     } catch (e) {
       console.error(e);
     }
+
   }
 
   /**
