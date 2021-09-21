@@ -8,6 +8,7 @@ import {next} from '@ember/runloop';
 import PluginEditorApi from '@lblod/ember-rdfa-editor/utils/plugin-editor-api';
 import PluginHintsRegistryApi from '@lblod/ember-rdfa-editor/utils/plugin-hints-registry-api';
 import {getOwner} from '@ember/application';
+import EditorController from "@lblod/ember-rdfa-editor/model/controller";
 
 // debug helper
 function debug(message) {
@@ -45,7 +46,7 @@ export default class RdfaEditorDispatcher extends Service {
   initializeServices(editor) {
     for (const pluginService of this.pluginServices) {
       if (typeof (pluginService.get("initialize")) === "function") {
-        pluginService.initialize(editor);
+        pluginService.initialize(new EditorController(pluginService.get("name"), editor));
       }
     }
   }
