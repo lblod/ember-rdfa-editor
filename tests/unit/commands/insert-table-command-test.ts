@@ -4,6 +4,7 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | insert-table-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -42,7 +43,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -77,7 +78,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -150,7 +151,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -186,7 +187,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     const range = ModelRange.fromInNode(ctx.model.rootModelNode, 3, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -222,7 +223,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     const range = ModelRange.fromInNode(ctx.model.rootModelNode, 2, 5);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -277,7 +278,7 @@ module("Unit | commands | insert-table-command-test", hooks => {
     );
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 });

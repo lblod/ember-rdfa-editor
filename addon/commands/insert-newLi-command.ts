@@ -27,7 +27,7 @@ export default class InsertNewLiCommand extends Command {
   }
 
   @logExecute
-  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+  execute(executedBy: string, range: ModelRange | null = this.model.selection.lastRange): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
@@ -39,7 +39,7 @@ export default class InsertNewLiCommand extends Command {
       throw new IllegalExecutionStateError("Couldn't locate parent lis");
     }
 
-    this.model.change(mutator => {
+    this.model.change(executedBy, mutator => {
       // Collapsed selection case
       if (range.collapsed) {
         this.insertLi(mutator, range.start);

@@ -26,13 +26,13 @@ export default class InsertNewLineCommand extends Command {
   }
 
   @logExecute
-  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+  execute(executedBy: string, range: ModelRange | null = this.model.selection.lastRange): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
 
     const br = new ModelElement("br");
-    this.model.change(mutator => {
+    this.model.change(executedBy, mutator => {
       const nodeBefore = range.start.nodeBefore();
       // If we have a text node with a singe invisible space before us, extend the range
       // so it will be overwritten (this is mainly to clean up after ourselves).

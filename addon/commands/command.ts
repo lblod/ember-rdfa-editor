@@ -23,5 +23,5 @@ export default abstract class Command<A extends unknown[] = unknown[], R = void>
     return true;
   }
 
-  abstract execute(...args: A): R;
+  abstract execute(executedBy: string, ...args: A): R;
 }

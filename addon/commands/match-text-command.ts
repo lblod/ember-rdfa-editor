@@ -9,7 +9,7 @@ export default class MatchTextCommand extends Command<[ModelRange, RegExp], Mode
     super(model);
   }
 
-  execute(limitRange: ModelRange, regex: RegExp): ModelRange[] {
+  execute(_executedBy: string, limitRange: ModelRange, regex: RegExp): ModelRange[] {
 
     const {textContent, indexToPos} = limitRange.getTextContentWithMapping();
 

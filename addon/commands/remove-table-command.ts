@@ -17,7 +17,7 @@ export default class RemoveTableCommand extends Command {
   }
 
   @logExecute
-  execute(selection: ModelSelection = this.model.selection): void {
+  execute(executedBy: string, selection: ModelSelection = this.model.selection): void {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -34,11 +34,11 @@ export default class RemoveTableCommand extends Command {
       } else {
         selection.collapseIn(table.parent);
       }
-      this.model.write();
+      this.model.write(executedBy);
     }
 
     table.removeTable();
 
-    this.model.write();
+    this.model.write(executedBy);
   }
 }

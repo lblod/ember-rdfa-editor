@@ -3,7 +3,7 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {CORE_OWNER, INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 //TODO: These tests serve at the moment as a documentation for
 // what the command currently does, and as a way of catching possible
@@ -45,7 +45,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
 
     ctx.model.rootModelNode.addChild(initial);
     ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 0, 0));
-    command.execute();
+    command.execute(CORE_OWNER);
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
@@ -78,7 +78,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
 
     ctx.model.rootModelNode.addChild(initial);
     ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 0, 0));
-    command.execute();
+    command.execute(CORE_OWNER);
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
@@ -111,7 +111,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
 
     ctx.model.rootModelNode.addChild(initial);
     ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 3, 3));
-    command.execute();
+    command.execute(CORE_OWNER);
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
@@ -145,7 +145,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
 
     ctx.model.rootModelNode.addChild(initial);
     ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 1, 1));
-    command.execute();
+    command.execute(CORE_OWNER);
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
@@ -189,7 +189,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
 
     ctx.model.rootModelNode.addChild(initial);
     ctx.modelSelection.selectRange(ModelRange.fromInTextNode(insideChild, 1, 1));
-    command.execute();
+    command.execute(CORE_OWNER);
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
@@ -223,7 +223,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
 
     ctx.model.rootModelNode.addChild(initial);
     ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 1, 3));
-    command.execute();
+    command.execute(CORE_OWNER);
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
@@ -261,7 +261,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
 
     ctx.model.rootModelNode.addChild(initial);
     ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 1, testLi.getMaxOffset() - 1));
-    command.execute();
+    command.execute(CORE_OWNER);
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));

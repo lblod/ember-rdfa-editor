@@ -2,6 +2,7 @@ import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | undo-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -28,7 +29,7 @@ module("Unit | commands | undo-command-test", hooks => {
     ctx.model.saveSnapshot();
     ctx.model.fillRoot(next);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(initial));
   });
 
@@ -48,7 +49,7 @@ module("Unit | commands | undo-command-test", hooks => {
     ctx.model.saveSnapshot();
     ctx.model.fillRoot(next);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(initial));
   });
 });

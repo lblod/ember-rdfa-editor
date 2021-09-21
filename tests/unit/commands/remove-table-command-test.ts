@@ -3,6 +3,7 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-command";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | remove-table-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -41,7 +42,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     const range = ModelRange.fromInElement(topLeft, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     const resultRange = ctx.modelSelection.lastRange;
     const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
@@ -84,7 +85,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
     const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
@@ -168,7 +169,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
     const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
@@ -252,7 +253,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
     const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [1], [1]);
@@ -318,7 +319,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
     const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
@@ -384,7 +385,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
     const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [1], [1]);
@@ -431,7 +432,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
     const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0,0], [0,0]);
@@ -478,7 +479,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
     const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0,8], [0,8]);

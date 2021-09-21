@@ -18,7 +18,7 @@ export default class RemoveTableRowCommand extends Command {
   }
 
   @logExecute
-  execute(selection: ModelSelection = this.model.selection): void {
+  execute(executedBy: string, selection: ModelSelection = this.model.selection): void {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -42,7 +42,7 @@ export default class RemoveTableRowCommand extends Command {
     const tableDimensions = table.getDimensions();
     if (position.y === 0 && tableDimensions.y === 1) {
       table.removeTable();
-      this.model.write();
+      this.model.write(executedBy);
     } else {
       const cellYToSelect = position.y === tableDimensions.y - 1
         ? position.y - 1
@@ -52,10 +52,10 @@ export default class RemoveTableRowCommand extends Command {
       if (cellToSelect) {
         selection.collapseIn(cellToSelect);
       }
-      this.model.write();
+      this.model.write(executedBy);
 
       table.removeRow(position.y);
-      this.model.write();
+      this.model.write(executedBy);
     }
   }
 }

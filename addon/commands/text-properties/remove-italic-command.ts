@@ -4,7 +4,7 @@ import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 export default class RemoveItalicCommand extends SetPropertyCommand {
   name = "remove-italic";
   @logExecute
-  execute() {
-    super.setProperty("italic", false);
+  execute(executedBy: string) {
+    super.setProperty(executedBy, "italic", false);
   }
 }

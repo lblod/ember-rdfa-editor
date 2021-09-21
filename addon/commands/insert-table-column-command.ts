@@ -13,7 +13,7 @@ export default abstract class InsertTableColumnCommand extends Command {
   }
 
   @logExecute
-  execute(selection: ModelSelection = this.model.selection) {
+  execute(executedBy: string, selection: ModelSelection = this.model.selection) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -37,6 +37,6 @@ export default abstract class InsertTableColumnCommand extends Command {
     const insertPosition = this.insertBefore ? position.x : position.x + 1;
     table.addColumn(insertPosition);
 
-    this.model.write();
+    this.model.write(executedBy);
   }
 }

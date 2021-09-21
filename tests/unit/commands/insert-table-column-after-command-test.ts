@@ -3,6 +3,7 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | insert-table-column-after-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -56,7 +57,7 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const range = ModelRange.fromInElement(bottomRight, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -119,7 +120,7 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const range = ModelRange.fromInTextNode(bottomRight, 1, 3);
     ctx.modelSelection.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -166,7 +167,7 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const range = ModelRange.fromInElement(bottomLeft, 0, 0);
     ctx.modelSelection.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -229,7 +230,7 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
     const range = ModelRange.fromInTextNode(bottomLeft, 1, 3);
     ctx.modelSelection.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 });

@@ -27,7 +27,7 @@ export default class MakeListCommand extends Command {
   }
 
   @logExecute
-  execute(listType: "ul" | "ol", selection: ModelSelection = this.model.selection) {
+  execute(executedBy: string, listType: "ul" | "ol", selection: ModelSelection = this.model.selection) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -44,7 +44,7 @@ export default class MakeListCommand extends Command {
       list.addChild(li);
     }
 
-    this.model.change(mutator => {
+    this.model.change(executedBy, mutator => {
       mutator.insertNodes(range, list);
       if (!list.firstChild || !list.lastChild) {
         throw new ModelError("List without list item.");

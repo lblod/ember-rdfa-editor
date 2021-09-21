@@ -5,6 +5,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import InsertHtmlCommand from "@lblod/ember-rdfa-editor/commands/insert-html-command";
 import {oneLineTrim} from "common-tags";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | insert-html-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -33,7 +34,7 @@ module("Unit | commands | insert-html-command-test", hooks => {
     const htmlToInsert = oneLineTrim`<div>hello world</div>`;
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
-    command.execute(htmlToInsert, range);
+    command.execute(CORE_OWNER, htmlToInsert, range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -59,7 +60,7 @@ module("Unit | commands | insert-html-command-test", hooks => {
     const htmlToInsert = oneLineTrim`<div>hello world</div>`;
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
-    command.execute(htmlToInsert, range);
+    command.execute(CORE_OWNER, htmlToInsert, range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -87,7 +88,7 @@ module("Unit | commands | insert-html-command-test", hooks => {
     const htmlToInsert = oneLineTrim`<div>hello world</div>`;
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 2, 2);
-    command.execute(htmlToInsert, range);
+    command.execute(CORE_OWNER, htmlToInsert, range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -114,7 +115,7 @@ module("Unit | commands | insert-html-command-test", hooks => {
     const htmlToInsert = oneLineTrim`<div>hello world</div>`;
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 1, 3);
-    command.execute(htmlToInsert, range);
+    command.execute(CORE_OWNER, htmlToInsert, range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -158,7 +159,7 @@ module("Unit | commands | insert-html-command-test", hooks => {
     const start = ModelPosition.fromInTextNode(rangeStart, 1);
     const end = ModelPosition.fromInTextNode(rangeEnd, 3);
     const range = new ModelRange(start, end);
-    command.execute(htmlToInsert, range);
+    command.execute(CORE_OWNER, htmlToInsert, range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
@@ -177,7 +178,7 @@ module("Unit | commands | insert-html-command-test", hooks => {
     ctx.model.fillRoot(initial);
     const root = ctx.model.rootModelNode;
     const range = ModelRange.fromInElement(root, 0, root.getMaxOffset());
-    command.execute(htmlToInsert, range);
+    command.execute(CORE_OWNER, htmlToInsert, range);
     assert.true(root.sameAs(expected));
   });
 });

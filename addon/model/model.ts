@@ -97,7 +97,7 @@ export default class Model {
    * almost always true, but can be useful for testing to turn it off when you dont
    * have a real dom available.
    */
-  write(tree: ModelElement = this.rootModelNode, writeSelection = true) {
+  write(executedBy: string, tree: ModelElement = this.rootModelNode, writeSelection = true) {
     const modelWriteEvent = new CustomEvent("editorModelWrite");
     document.dispatchEvent(modelWriteEvent);
 
@@ -118,7 +118,7 @@ export default class Model {
     oldRoot.append(...newRoot.childNodes);
     this.bindNode(tree, oldRoot);
 
-    EventBus.emitDebounced(100, new ModelWrittenEvent());
+    EventBus.emitDebounced(100, new ModelWrittenEvent(executedBy));
     if (writeSelection) {
       this.writeSelection();
     }
@@ -164,15 +164,15 @@ export default class Model {
    * @param callback
    * @param writeBack
    */
-  change(callback: (mutator: ImmediateModelMutator) => ModelElement | void, writeBack = true) {
+  change(executedBy: string, callback: (mutator: ImmediateModelMutator) => ModelElement | void, writeBack = true) {
     const mutator = new ImmediateModelMutator();
     const subTree = callback(mutator);
 
     if (writeBack) {
       if (subTree) {
-        this.write(subTree);
+        this.write(executedBy, subTree);
       } else {
-        this.write(this.rootModelNode);
+        this.write(executedBy, this.rootModelNode);
       }
     }
   }
@@ -184,7 +184,7 @@ export default class Model {
    * @param callback
    * @param autoSelect
    */
-  batchChange(callback: (mutator: BatchedModelMutator) => ModelElement | void, autoSelect = true) {
+  batchChange(executedBy: string, callback: (mutator: BatchedModelMutator) => ModelElement | void, autoSelect = true) {
     const mutator = new BatchedModelMutator();
     const subTree = callback(mutator);
 
@@ -194,9 +194,9 @@ export default class Model {
     }
 
     if (subTree) {
-      this.write(subTree);
+      this.write(executedBy, subTree);
     } else {
-      this.write();
+      this.write(executedBy);
     }
   }
 
@@ -238,13 +238,13 @@ export default class Model {
     this.history.push(snapshot);
   }
 
-  restoreSnapshot(snapshot: SimplifiedModel | undefined = this.history.pop(), writeBack = true) {
+  restoreSnapshot(executedBy: string, snapshot: SimplifiedModel | undefined = this.history.pop(), writeBack = true) {
     if (snapshot) {
       this._rootModelNode = snapshot.rootModelNode;
       this._selection = snapshot.modelSelection;
 
       if (writeBack) {
-        this.write();
+        this.write(executedBy);
       }
     } else {
       this.logger.warn("No snapshot to restore");

@@ -24,7 +24,7 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
     this.deleteSelection = createSnapshot;
   }
 
-  execute(selection: ModelSelection = this.model.selection): ModelNode[] {
+  execute(executedBy: string, selection: ModelSelection = this.model.selection): ModelNode[] {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -52,7 +52,7 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
       commonAncestor = newAncestor;
     }
 
-    this.model.change(mutator => {
+    this.model.change(executedBy, mutator => {
       let contentRange = mutator.splitRangeUntilElements(range, commonAncestor, commonAncestor);
       let treeWalker = new ModelTreeWalker({
         range: contentRange,
@@ -80,7 +80,7 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
       // If `deleteSelection` is false, we will have stored a snapshot of the model right before the execution of this
       // command. This means we will enter this if-case. Since, we don't want the changes on the VDOM to get written
       // back in this case, we restore the stored model.
-      this.model.restoreSnapshot(buffer, false);
+      this.model.restoreSnapshot(executedBy, buffer, false);
     }
 
     return modelNodes;

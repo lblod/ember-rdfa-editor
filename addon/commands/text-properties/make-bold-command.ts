@@ -5,7 +5,7 @@ export default class MakeBoldCommand extends SetPropertyCommand {
   name = "make-bold";
 
   @logExecute
-  execute() {
-    this.setProperty("bold", true);
+  execute(executedBy: string) {
+    this.setProperty(executedBy, "bold", true);
   }
 }

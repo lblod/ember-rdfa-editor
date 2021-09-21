@@ -5,6 +5,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
 import {setupTest} from "ember-qunit";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | indent-list-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -32,7 +33,7 @@ module("Unit | commands | indent-list-command-test", hooks => {
     const range = new ModelRange(start, start);
     ctx.modelSelection.selectRange(range);
     const command = new IndentListCommand(ctx.model);
-    command.execute();
+    command.execute(CORE_OWNER);
     // language=XML
     const {root: rslt} = vdom`
       <div>

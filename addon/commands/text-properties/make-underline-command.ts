@@ -5,7 +5,7 @@ export default class MakeUnderlineCommand extends SetPropertyCommand{
   name = 'make-underline';
 
   @logExecute
-  execute() {
-    super.setProperty("underline", true);
+  execute(executedBy: string) {
+    super.setProperty(executedBy, "underline", true);
   }
 }

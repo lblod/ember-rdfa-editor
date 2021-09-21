@@ -5,7 +5,7 @@ import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {CORE_OWNER, NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 
@@ -42,7 +42,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(text, 0, text.length);
     ctx.modelSelection.selectRange(range);
 
-    const deletedNodes = command.execute();
+    const deletedNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [text], assert);
@@ -68,7 +68,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(text, 9, 16);
     ctx.modelSelection.selectRange(range);
 
-    const deletedNodes: ModelNode[] = command.execute();
+    const deletedNodes: ModelNode[] = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [new ModelText("only te")], assert);
@@ -112,7 +112,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(selectedText, 0, selectedText.length);
     ctx.modelSelection.selectRange(range);
 
-    const deletedNodes: ModelNode[] = command.execute();
+    const deletedNodes: ModelNode[] = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     const ulElement = new ModelElement("ul");
@@ -171,7 +171,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const range = ModelRange.fromInElement(firstList, 0, firstList.getMaxOffset());
     ctx.model.selectRange(range);
 
-    const deletedNodes = command.execute();
+    const deletedNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [firstList], assert);
@@ -230,7 +230,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
-    const deletedNodes = command.execute();
+    const deletedNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [firstList], assert);
@@ -268,7 +268,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const range = ModelRange.fromInElement(firstList, 0, firstList.getMaxOffset());
     ctx.model.selectRange(range);
 
-    const deletedNodes = command.execute();
+    const deletedNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [firstList], assert);
@@ -309,7 +309,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
-    const deletedNodes = command.execute();
+    const deletedNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [list], assert);
@@ -367,7 +367,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(firstLine, 0, firstLine.length);
     ctx.model.selectRange(range);
 
-    const deletedNodes = command.execute();
+    const deletedNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [firstLine], assert);
@@ -427,7 +427,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
-    const deletedNodes = command.execute();
+    const deletedNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     const ulElement = new ModelElement("ul");
@@ -475,7 +475,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(firstText, 0, 3);
     ctx.model.selectRange(range);
 
-    const deletedNodes = command.execute();
+    const deletedNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [new ModelText("fir")], assert);

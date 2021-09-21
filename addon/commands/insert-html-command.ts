@@ -13,7 +13,7 @@ export default class InsertHtmlCommand extends Command {
   }
 
   @logExecute
-  execute(htmlString: string, range: ModelRange | null = this.model.selection.lastRange) {
+  execute(executedBy: string, htmlString: string, range: ModelRange | null = this.model.selection.lastRange) {
     if (!range) {
       return;
     }
@@ -23,7 +23,7 @@ export default class InsertHtmlCommand extends Command {
     const bodyContent = html.body.childNodes;
     const reader = new HtmlReader(this.model);
 
-    this.model.change(mutator => {
+    this.model.change(executedBy, mutator => {
       // dom NodeList doesn't have a map method
       const modelNodes: ModelNode[] = [];
       bodyContent.forEach(node => {

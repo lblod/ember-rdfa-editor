@@ -4,7 +4,7 @@ import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 export default class RemoveUnderlineCommand extends SetPropertyCommand {
   name = "remove-underline";
   @logExecute
-  execute() {
-    super.setProperty("underline", false);
+  execute(executedBy:string) {
+    super.setProperty(executedBy, "underline", false);
   }
 }

@@ -6,6 +6,7 @@ import RemoveListCommand from "@lblod/ember-rdfa-editor/commands/remove-list-com
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | remove-list-command", hooks => {
   const ctx = new ModelTestContext();
@@ -38,7 +39,7 @@ module("Unit | commands | remove-list-command", hooks => {
     ctx.model.fillRoot(initial);
 
     ctx.modelSelection.collapseIn(content);
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -58,7 +59,7 @@ module("Unit | commands | remove-list-command", hooks => {
     li2.addChild(content);
 
     modelSelection.collapseIn(content);
-    command.execute();
+    command.execute(CORE_OWNER);
 
     assert.strictEqual(model.rootModelNode.firstChild, content);
     assert.strictEqual(model.rootModelNode.children.length, 1);
@@ -121,7 +122,7 @@ module("Unit | commands | remove-list-command", hooks => {
 
     ctx.model.fillRoot(initial);
     ctx.model.selection.collapseIn(rangeStart, 0);
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -200,7 +201,7 @@ module("Unit | commands | remove-list-command", hooks => {
 
     ctx.model.fillRoot(initial);
     ctx.modelSelection.collapseIn(rangeStart);
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -255,7 +256,7 @@ module("Unit | commands | remove-list-command", hooks => {
     const range = new ModelRange(startPosition, endPosition);
     modelSelection.clearRanges();
     modelSelection.addRange(range);
-    command.execute();
+    command.execute(CORE_OWNER);
     const resultRoot = model.rootModelNode;
 
     for (let i = 0; i < resultRoot.children.length; i++) {

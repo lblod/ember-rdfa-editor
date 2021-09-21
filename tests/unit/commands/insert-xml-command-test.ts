@@ -5,6 +5,7 @@ import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import {oneLineTrim} from "common-tags";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | insert-xml-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -36,7 +37,7 @@ module("Unit | commands | insert-xml-command-test", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute(xmlToInsert);
+    command.execute(CORE_OWNER, xmlToInsert);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -64,7 +65,7 @@ module("Unit | commands | insert-xml-command-test", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute(xmlToInsert);
+    command.execute(CORE_OWNER, xmlToInsert);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -93,7 +94,7 @@ module("Unit | commands | insert-xml-command-test", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 3, 3);
     ctx.model.selectRange(range);
 
-    command.execute(xmlToInsert);
+    command.execute(CORE_OWNER, xmlToInsert);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -122,7 +123,7 @@ module("Unit | commands | insert-xml-command-test", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 2, 5);
     ctx.model.selectRange(range);
 
-    command.execute(xmlToInsert);
+    command.execute(CORE_OWNER, xmlToInsert);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -170,7 +171,7 @@ module("Unit | commands | insert-xml-command-test", hooks => {
     );
     ctx.model.selectRange(range);
 
-    command.execute(xmlToInsert);
+    command.execute(CORE_OWNER, xmlToInsert);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 });

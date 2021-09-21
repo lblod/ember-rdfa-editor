@@ -13,12 +13,12 @@ export default class InsertTextCommand extends Command {
   }
 
   @logExecute
-  execute(text: string, range: ModelRange | null = this.model.selection.lastRange): void {
+  execute(executedBy: string, text: string, range: ModelRange | null = this.model.selection.lastRange): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
 
-    this.model.change(mutator => {
+    this.model.change(executedBy, mutator => {
       if (text.charAt(0) === SPACE) {
         const charBefore = range.start.charactersBefore(1);
         if (charBefore === SPACE) {

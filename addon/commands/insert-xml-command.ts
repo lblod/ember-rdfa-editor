@@ -16,13 +16,13 @@ export default class InsertXmlCommand extends Command {
   }
 
   @logExecute
-  execute(xml: string, range: ModelRange | null = this.model.selection.lastRange): void {
+  execute(executedBy: string, xml: string, range: ModelRange | null = this.model.selection.lastRange): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
 
     const parsedModelNodes = parseXmlSiblings(xml);
-    this.model.change(mutator => {
+    this.model.change(executedBy, mutator => {
       const newRange = mutator.insertNodes(range, ...parsedModelNodes);
       this.model.selectRange(newRange);
     });

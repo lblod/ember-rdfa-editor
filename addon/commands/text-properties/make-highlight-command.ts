@@ -6,7 +6,7 @@ export default class MakeHighlightCommand extends SetPropertyCommand {
   name = "make-highlight";
 
   @logExecute
-  execute(selection?: ModelSelection) {
-    this.setProperty("highlighted", true, selection);
+  execute(executedBy: string) {
+    this.setProperty(executedBy, "highlighted", true);
   }
 }

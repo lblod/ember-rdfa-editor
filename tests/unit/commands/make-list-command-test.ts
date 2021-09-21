@@ -3,6 +3,7 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import MakeListCommand from "@lblod/ember-rdfa-editor/commands/make-list-command";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | make-list-command", hooks => {
   const ctx = new ModelTestContext();
@@ -32,7 +33,7 @@ module("Unit | commands | make-list-command", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute("ul");
+    command.execute(CORE_OWNER, "ul");
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -58,7 +59,7 @@ module("Unit | commands | make-list-command", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 1, 1);
     ctx.model.selectRange(range);
 
-    command.execute("ul");
+    command.execute(CORE_OWNER, "ul");
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -95,7 +96,7 @@ module("Unit | commands | make-list-command", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, ctx.model.rootModelNode.getMaxOffset());
     ctx.model.selectRange(range);
 
-    command.execute("ul");
+    command.execute(CORE_OWNER, "ul");
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -135,7 +136,7 @@ module("Unit | commands | make-list-command", hooks => {
     const range = ModelRange.fromInTextNode(firstLine, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute("ul");
+    command.execute(CORE_OWNER, "ul");
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 });

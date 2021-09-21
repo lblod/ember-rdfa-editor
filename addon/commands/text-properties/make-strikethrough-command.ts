@@ -4,7 +4,7 @@ import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 export default class MakeStrikethroughCommand extends SetPropertyCommand {
   name = "make-strikethrough";
   @logExecute
-  execute() {
-    super.setProperty("strikethrough", true);
+  execute(executedBy: string) {
+    super.setProperty(executedBy, "strikethrough", true);
   }
 }

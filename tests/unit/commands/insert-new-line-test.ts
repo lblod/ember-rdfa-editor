@@ -1,6 +1,6 @@
 import {module, test} from "qunit";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {CORE_OWNER, INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
@@ -84,7 +84,7 @@ module("Unit | commands | insert-new-line-test", hooks => {
     ctx.model.fillRoot(initial);
     ctx.model.disableSelectionWriting();
     const range = ModelRange.fromInTextNode(rangeMarker, rangeMarker.length, rangeMarker.length);
-    command.execute(range);
+    command.execute(CORE_OWNER, range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     assert.deepEqual(ctx.modelSelection.lastRange?.start.path.length, range.start.path.length);

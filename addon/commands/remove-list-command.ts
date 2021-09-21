@@ -16,12 +16,12 @@ export default class RemoveListCommand extends Command {
   }
 
   @logExecute
-  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+  execute(executedBy: string, range: ModelRange | null = this.model.selection.lastRange): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
 
-    this.model.change(mutator => {
+    this.model.change(executedBy, mutator => {
       const endLis = range.end.findAncestors(ModelNodeUtils.isListElement);
       const highestEndLi = endLis[endLis.length - 1];
       const lowestEndLi = endLis[0];

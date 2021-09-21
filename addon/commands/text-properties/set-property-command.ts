@@ -8,7 +8,7 @@ export default abstract class SetPropertyCommand extends Command {
     super(model);
   }
 
-  protected setProperty(property: TextAttribute, value: boolean, selection: ModelSelection = this.model.selection) {
+  protected setProperty(executedBy: string, property: TextAttribute, value: boolean, selection: ModelSelection = this.model.selection) {
 
 
     if (!ModelSelection.isWellBehaved(selection)) {
@@ -18,7 +18,7 @@ export default abstract class SetPropertyCommand extends Command {
 
     const range = selection.lastRange;
 
-    this.model.change(mutator => {
+    this.model.change(executedBy, mutator => {
       const resultRange = mutator.setTextProperty(range, property, value);
       this.model.selectRange(resultRange);
     });

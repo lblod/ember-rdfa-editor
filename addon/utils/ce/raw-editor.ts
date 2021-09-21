@@ -107,7 +107,7 @@ class RawEditor extends EmberObject {
 
     window.__VDOM = this.model;
     window.__executeCommand = (commandName: string, ...args: unknown[]) => {
-      this.executeCommand(commandName, ...args);
+      this.executeCommand("browser-console", commandName, ...args);
     };
 
     this.registerCommand(new MakeBoldCommand(this.model));
@@ -194,11 +194,11 @@ class RawEditor extends EmberObject {
    * @param commandName
    * @param args
    */
-  executeCommand(commandName: string, ...args: unknown[]) {
+  executeCommand(executedBy: string, commandName: string, ...args: unknown[]) {
     try {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
-        const result = command.execute(...args);
+        const result = command.execute(executedBy, ...args);
         this.updateRichNode();
 
         return result;

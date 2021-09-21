@@ -7,6 +7,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | read-selection-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -43,7 +44,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(text, 0, text.length);
     ctx.modelSelection.selectRange(range);
 
-    const readNodes = command.execute();
+    const readNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [text], assert);
@@ -68,7 +69,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(text, 9, 16);
     ctx.modelSelection.selectRange(range);
 
-    const readNodes: ModelNode[] = command.execute();
+    const readNodes: ModelNode[] = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [new ModelText("only te")], assert);
@@ -113,7 +114,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(selectedText, 0, selectedText.length);
     ctx.modelSelection.selectRange(range);
 
-    const readNodes: ModelNode[] = command.execute();
+    const readNodes: ModelNode[] = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     const ulElement = new ModelElement("ul");
@@ -183,7 +184,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInElement(firstList, 0, firstList.getMaxOffset());
     ctx.model.selectRange(range);
 
-    const readNodes = command.execute();
+    const readNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstList], assert);
@@ -252,7 +253,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
-    const readNodes = command.execute();
+    const readNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstList], assert);
@@ -301,7 +302,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInElement(firstList, 0, firstList.getMaxOffset());
     ctx.model.selectRange(range);
 
-    const readNodes = command.execute();
+    const readNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstList], assert);
@@ -352,7 +353,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
-    const readNodes = command.execute();
+    const readNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [list], assert);
@@ -411,7 +412,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(firstLine, 0, firstLine.length);
     ctx.model.selectRange(range);
 
-    const readNodes = command.execute();
+    const readNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstLine], assert);
@@ -496,7 +497,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = new ModelRange(startPos, endPos);
     ctx.model.selectRange(range);
 
-    const readNodes = command.execute();
+    const readNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     const ulElement = new ModelElement("ul");
@@ -544,7 +545,7 @@ module("Unit | commands | read-selection-command-test", hooks => {
     const range = ModelRange.fromInTextNode(firstText, 0, 3);
     ctx.model.selectRange(range);
 
-    const readNodes = command.execute();
+    const readNodes = command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [new ModelText("fir")], assert);

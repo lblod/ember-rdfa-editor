@@ -4,7 +4,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {NON_BREAKING_SPACE, SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {CORE_OWNER, NON_BREAKING_SPACE, SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 module("Unit | commands | insert-text-command-test", hooks => {
@@ -38,7 +38,7 @@ module("Unit | commands | insert-text-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(parent, 2, 2);
-    command.execute("c", range);
+    command.execute(CORE_OWNER, "c", range);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
   test("overwrites complex range", assert => {
@@ -76,7 +76,7 @@ module("Unit | commands | insert-text-command-test", hooks => {
     const end = ModelPosition.fromInTextNode(rangeEnd, 2);
     const range = new ModelRange(start, end);
 
-    command.execute("c", range);
+    command.execute(CORE_OWNER, "c", range);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
   test("replaces spaces with nbsp when needed", assert => {
@@ -100,7 +100,7 @@ module("Unit | commands | insert-text-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(parent, 5, 5);
-    command.execute(SPACE, range);
+    command.execute(CORE_OWNER, SPACE, range);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
   test("space does not eat the character before it", assert => {
@@ -129,7 +129,7 @@ module("Unit | commands | insert-text-command-test", hooks => {
     `;
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(selectionFocus, 1, 1);
-    command.execute(SPACE, range);
+    command.execute(CORE_OWNER, SPACE, range);
     const rslt = ctx.model.rootModelNode.sameAs(expected);
     if (!rslt) {
       logger.log("space does not eat the character before it: ACTUAL:", ctx.model.toXml());

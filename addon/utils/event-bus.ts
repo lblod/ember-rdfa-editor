@@ -1,10 +1,11 @@
 import {createLogger, Logger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import {debouncedAdjustable} from "@lblod/ember-rdfa-editor/utils/debounce";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export abstract class EditorEvent<P> {
   abstract _name: EditorEventName;
 
-  protected constructor(private _payload: P) {
+  protected constructor(private _payload: P, private _owner = CORE_OWNER) {
   }
 
   get payload(): P {
@@ -14,11 +15,19 @@ export abstract class EditorEvent<P> {
   get name(): EditorEventName {
     return this._name;
   }
+
+  get owner(): string {
+    return this._owner;
+  }
+
+  set owner(value: string) {
+    this._owner = value;
+  }
 }
 
 export abstract class VoidEvent extends EditorEvent<void> {
-  constructor() {
-    super(undefined);
+  constructor(owner = CORE_OWNER) {
+    super(undefined, owner);
   }
 }
 

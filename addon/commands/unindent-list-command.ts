@@ -39,7 +39,7 @@ export default class UnindentListCommand extends Command {
   }
 
   @logExecute
-  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+  execute(executedBy: string, range: ModelRange | null = this.model.selection.lastRange): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
@@ -111,7 +111,7 @@ export default class UnindentListCommand extends Command {
       }
     }
 
-    this.model.write();
+    this.model.write(executedBy);
     this.model.readSelection();
   }
 

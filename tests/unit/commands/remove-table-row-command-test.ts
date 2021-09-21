@@ -3,6 +3,7 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import RemoveTableRowCommand from "@lblod/ember-rdfa-editor/commands/remove-table-row-command";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | remove-table-row-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -41,7 +42,7 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     const range = ModelRange.fromInTextNode(left, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -94,7 +95,7 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -147,7 +148,7 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     const range = ModelRange.fromInTextNode(bottomLeft, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
@@ -216,7 +217,7 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
     const range = ModelRange.fromInTextNode(middleLeft, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute();
+    command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 });

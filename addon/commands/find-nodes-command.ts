@@ -10,7 +10,7 @@ export default class FindNodesCommand extends Command<[ModelTreeWalkerConfig], I
     super(model);
   }
 
-  execute(config: ModelTreeWalkerConfig): Iterable<ModelNode> {
+  execute(_executedBy: string, config: ModelTreeWalkerConfig): Iterable<ModelNode> {
     return new ModelTreeWalker(config);
   }
 

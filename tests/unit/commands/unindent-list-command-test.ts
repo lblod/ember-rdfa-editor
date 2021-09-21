@@ -3,6 +3,7 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list-command";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | commands | unindent-list-command-test", hooks => {
   let command: UnindentListCommand;
@@ -62,7 +63,7 @@ module("Unit | commands | unindent-list-command-test", hooks => {
 
     modelSelection.collapseIn(content21, 2);
 
-    command.execute();
+    command.execute(CORE_OWNER);
 
     assert.strictEqual(content21.parent?.parent, ul11);
 
