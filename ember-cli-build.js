@@ -14,6 +14,9 @@ module.exports = function(defaults) {
       enabled: true,
       cascade: true,
       sourcemap: true
+    },
+    'ember-cli-babel': {
+      includePolyfill: true
     }
   });
 
