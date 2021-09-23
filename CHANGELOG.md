@@ -1,4 +1,14 @@
 
+
+## 0.47.1 (2021-09-23)
+
+#### :bug: Bug Fix
+* [#158](https://github.com/lblod/ember-rdfa-editor/pull/158) [HOTFIX] Fix sass syntax error ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.47.0 (2021-08-31)
 
 #### :rocket: Enhancement
