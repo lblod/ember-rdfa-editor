@@ -10,7 +10,7 @@ import {pushOrExpand} from "@lblod/ember-rdfa-editor/model/util/array-utils";
 
 
 /**
- * Reader responsible for reading HTML elements which we want to translate into text styles.
+ * Reader responsible for reading HTML elements which we want to translate into text text-styles.
  */
 export default class WrappedAttributeReader implements Reader<HTMLElement, ModelNode[] , HtmlReaderContext> {
   static tagMap: Map<HtmlTag, TextAttribute> = new Map<HtmlTag, TextAttribute>(

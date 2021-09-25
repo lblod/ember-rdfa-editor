@@ -15,13 +15,14 @@ import {Diary} from "diary";
 import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import SimplifiedModel from "@lblod/ember-rdfa-editor/model/simplified-model";
 import EventBus, {ModelWrittenEvent} from "@lblod/ember-rdfa-editor/utils/event-bus";
+import {Model} from "@lblod/ember-rdfa-editor/core/model/model";
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
  * Code that needs to modify the DOM has to use a {@link Command}.
  * The model is still exposed for querying but that might become even more restricted later.
  */
-export default class Model {
+export default class HtmlModel implements Model {
   /**
    * The root of the editor. This will get set by ember,
    * so we trick typescript into assuming it is never null.

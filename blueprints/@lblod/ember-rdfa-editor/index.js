@@ -9,7 +9,7 @@ module.exports = {
   normalizeEntityName() { },
 
   async afterInstall() {
-    // Import styles if using SCSS
+    // Import text-styles if using SCSS
     let dependencies = this.project.dependencies();
     let type;
     let importStatement = '\n@import "ember-rdfa-editor";\n';

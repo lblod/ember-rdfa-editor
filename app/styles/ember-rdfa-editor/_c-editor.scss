@@ -62,7 +62,7 @@
     position: relative;
     min-height: $say-paper-min-height;
 
-    // Remove start styles
+    // Remove start text-styles
     &:focus {
       outline: 0;
     }

@@ -2,13 +2,24 @@ import RawEditor, {WidgetSpec} from "@lblod/ember-rdfa-editor/utils/ce/raw-edito
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/utils/event-bus";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import Command from "@lblod/ember-rdfa-editor/commands/command";
+import {Model} from "@lblod/ember-rdfa-editor/core/model/model";
 
-export default class EditorController {
+export interface Controller {
+
+  get owner(): string;
+  registerCommand(command: Command): void;
+  executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R;
+
+
+}
+
+export default class EditorController implements Controller{
 
   private readonly _owner: string;
   private readonly _editor: RawEditor;
 
-  constructor(owner: string, editor: RawEditor) {
+  constructor(owner: string, model: Model) {
     this._owner = owner;
     this._editor = editor;
   }

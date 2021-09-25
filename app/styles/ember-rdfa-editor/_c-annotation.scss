@@ -154,7 +154,7 @@
   .mark-highlight-manual {
     position: relative;
     border: 1px solid $say-neutral-200;
-    display: block !important; // Override inline styles
+    display: block !important; // Override inline text-styles
     margin: $say-unit-tiny;
     padding: 0;
 

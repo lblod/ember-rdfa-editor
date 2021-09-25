@@ -252,13 +252,13 @@ export interface BackspacePlugin extends InputPlugin {
  *
  * The downside of these hooks is that it may lead to jumping through
  * the code to random places.  However, we note that although the
- * backspace handler should have high cohesion, so should features
+ * backspace handler should have high cohesion, so should plugins
  * which have impact on the backspace handling.  By merging the
- * backspace handler with features which impact the backspace
- * handling, the code around such features becomes more distributed,
+ * backspace handler with plugins which impact the backspace
+ * handling, the code around such plugins becomes more distributed,
  * leading to a lower cohesion on that front.  We hope the locations
  * of the code will interprets certain alterations will be limited in
- * practice and assume that having code for specific features together
+ * practice and assume that having code for specific plugins together
  * brings more value than embedding them in terms of backspace.
  *
  * ## What can plugins do?

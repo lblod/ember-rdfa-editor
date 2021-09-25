@@ -173,7 +173,7 @@ class RawEditor extends EmberObject {
 
   get model(): Model {
     if (!this._model) {
-      throw new ModelError("Model accessed before initialization is complete");
+      throw new ModelError("HtmlModel accessed before initialization is complete");
     }
     return this._model;
   }

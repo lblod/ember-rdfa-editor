@@ -40,7 +40,7 @@ export default class LumpNodeMovementObserver {
 }
 
 /**********************************************************************************************************
- DISCLAIMER: This code is copy-pasta from utils/plugins/lump-node/backspace-plugin.ts and will be revised.
+ DISCLAIMER: This code is copy-pasta from utils/plugins/lump-node/backspace-editor-plugin.ts and will be revised.
  It is meant to fix a bug where you could still click into a lump node in some cases.
  Groundwork and collective thinking are needed to deal with clicks and selection changes (and arrows etc.).
  It will inject a textNode if your previous or next sibling is an element. Not super elegant. Better than before.

@@ -8,7 +8,7 @@ import {Predicate} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
 import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
 /**
- * Model-space equivalent of a {@link Range}
+ * HtmlModel-space equivalent of a {@link Range}
  * Not much more than a container for two {@link ModelPosition ModelPositions}
  */
 export default class ModelRange {

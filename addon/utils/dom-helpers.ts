@@ -137,7 +137,7 @@ export function isVoidElement(node: Node): boolean {
  * @public
  */
 export function isAllWhitespace(node: Text): boolean {
-  // Use ECMA-262 Edition 3 String and RegExp features.
+  // Use ECMA-262 Edition 3 String and RegExp plugins.
   return !(/[^\t\n\r ]/.test(node.textContent || ""));
 }
 
