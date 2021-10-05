@@ -1,42 +1,69 @@
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
-/**
- * A mutator is the only publicly accessible way to change the model.
- * It is available through the {@link Model.change} or {@link Model.batchChange} methods.
- * It provides an interface on top of {@link Operation operations} for use mainly
- * inside commands.
- *
- * This construction allows for a rich api with all the access it needs
- * while still maintaining full encapsulation and enabling things like batch
- * operation processing
- */
-export default abstract class ModelMutator<T> {
+export interface ModelMutator {
+  /**
+   * @inheritDoc
+   * @param range
+   * @param nodes
+   * @return resultRange the resulting range of the execution
+   */
+  insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange;
+
+  insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange;
+
+  insertText(range: ModelRange, text: string): ModelRange;
+
+  mergeTextNodesInRange(range: ModelRange): void;
 
   /**
-   * Set a {@link TextAttribute} on all text in a range.
+   * @inheritDoc
+   * @param rangeToMove
+   * @param targetPosition
+   * @return resultRange the resulting range of the execution
+   */
+  moveToPosition(rangeToMove: ModelRange, targetPosition: ModelPosition): ModelRange;
+
+  /**
+   * @inheritDoc
    * @param range
    * @param key
    * @param value
+   * @return resultRange the resulting range of the execution
    */
-  abstract setTextProperty(range: ModelRange, key: TextAttribute, value: boolean): T;
+  setTextProperty(range: ModelRange, key: TextAttribute, value: boolean): ModelRange;
+
+  splitTextAt(position: ModelPosition): ModelPosition;
+
+  splitElementAt(position: ModelPosition, splitAtEnds?: boolean): ModelPosition;
+
+  splitUntil(position: ModelPosition, untilPredicate: (element: ModelElement) => boolean, splitAtEnds): ModelPosition;
+
 
   /**
-   * Insert nodes into range, overwriting the previous content and splitting
-   * where necessary
+   * Split the given range until start.parent === startLimit
+   * and end.parent === endLimit
+   * The resulting range fully contains the split-off elements
    * @param range
-   * @param nodes
+   * @param startLimit
+   * @param endLimit
+   * @param splitAtEnds
    */
-  abstract insertNodes(range: ModelRange, ...nodes: ModelNode[]): T;
+  splitRangeUntilElements(range: ModelRange, startLimit: ModelElement, endLimit: ModelElement, splitAtEnds?: boolean): any;
+
+  splitUntilElement(position: ModelPosition, limitElement: ModelElement, splitAtEnds?: boolean): ModelPosition;
 
   /**
-   * Moves the contents of a range into another range, overwriting the
-   * content of the targetRange.
-   * @param rangeToMove
-   * @param targetPosition
+   * Replaces the element by its children. Returns a range containing the unwrapped children
+   * @param element
+   * @param ensureBlock ensure the unwrapped children are rendered as a block by surrounding them with br elements when necessary
    */
-  abstract moveToPosition(rangeToMove: ModelRange, targetPosition: ModelPosition): T;
+  unwrap(element: ModelElement, ensureBlock?: boolean): ModelRange;
 
+  delete(range: ModelRange): ModelRange;
+
+  deleteNode(node: ModelNode): ModelRange;
 }

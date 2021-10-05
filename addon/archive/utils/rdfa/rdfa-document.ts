@@ -7,7 +7,7 @@ import EventBus, {EditorEventListener} from "@lblod/ember-rdfa-editor/utils/even
 /**
  * RdfaDocument is a virtual representation of the document
  * it creates a DOM copy that does not include highlights
- * both richNode and rootNode are calculated on the fly.
+ * both richNode and rootElement are calculated on the fly.
  *
  * This is both to protect the internal dom of the editor and to remove internals
  */

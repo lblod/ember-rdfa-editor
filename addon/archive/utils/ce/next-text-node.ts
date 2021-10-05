@@ -137,7 +137,7 @@ function findNextApplicableNode(node: Node | null, rootNode: HTMLElement): Node 
  */
 export default function nextTextNode(baseNode: Node, rootNode: HTMLElement): Text | null {
   const nextNode = findNextApplicableNode(baseNode, rootNode);
-  // Next node is rootNode, so I'm at the end of the tree.
+  // Next node is rootElement, so I'm at the end of the tree.
   if (nextNode === rootNode) {
     return null;
   }

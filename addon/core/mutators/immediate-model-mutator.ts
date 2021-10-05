@@ -1,15 +1,15 @@
-import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/model-mutator";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import AttributeOperation from "@lblod/ember-rdfa-editor/model/operations/attribute-operation";
-import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-operation";
-import MoveOperation from "@lblod/ember-rdfa-editor/model/operations/move-operation";
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import SplitOperation from "@lblod/ember-rdfa-editor/model/operations/split-operation";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import {ModelMutator} from "@lblod/ember-rdfa-editor/core/mutators/model-mutator";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import InsertOperation from "@lblod/ember-rdfa-editor/core/operations/insert-operation";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
+import {PropertyState} from "@lblod/ember-rdfa-editor/util/types";
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/util/model-tree-walker";
+import MoveOperation from "@lblod/ember-rdfa-editor/core/operations/move-operation";
+import AttributeOperation from "@lblod/ember-rdfa-editor/core/operations/attribute-operation";
+import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-operation";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
 /**
  * {@link ModelMutator} implementation where all operations immediately
@@ -17,7 +17,7 @@ import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walk
  * methods behave in a natural way, where each invocation can depend
  * on the modified state after the previous.
  */
-export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
+export default class ImmediateModelMutator implements ModelMutator {
   /**
    * @inheritDoc
    * @param range
@@ -36,7 +36,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   insertText(range: ModelRange, text: string): ModelRange {
     const textNode = new ModelText(text);
     for (const [attr, val] of range.getTextAttributes().entries()) {
-      if(val === PropertyState.enabled) {
+      if (val === PropertyState.enabled) {
         textNode.setTextAttribute(attr, true);
       }
     }
@@ -51,11 +51,11 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return resultRange;
   }
 
-  private mergeTextNodesInRange(range: ModelRange) {
+  mergeTextNodesInRange(range: ModelRange) {
     if (!range.isConfined()) {
       return;
     }
-    if(range.collapsed) {
+    if (range.collapsed) {
       return;
     }
     const walker = new ModelTreeWalker({range, descend: false});
@@ -63,7 +63,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     const nodes: ModelNode[] = [];
     for (const node of walker) {
       const last = nodes[nodes.length - 1];
-      if(ModelNode.isModelText(last) && ModelNode.isModelText(node) && last.isMergeable(node)) {
+      if (ModelNode.isModelText(last) && ModelNode.isModelText(node) && last.isMergeable(node)) {
         last.content += node.content;
       } else {
         nodes.push(node.clone());

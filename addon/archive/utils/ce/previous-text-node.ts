@@ -141,7 +141,7 @@ function findPreviousApplicableNode(node: Node | null, rootNode: HTMLElement): N
  */
 export default function previousTextNode(baseNode: Node, rootNode: HTMLElement): Text | null {
   const previousNode = findPreviousApplicableNode(baseNode, rootNode);
-  // Next node is rootNode, so I'm at the start of the tree.
+  // Next node is rootElement, so I'm at the start of the tree.
   if (previousNode === rootNode) {
     return null;
   }

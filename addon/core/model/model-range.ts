@@ -1,16 +1,16 @@
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
-import {Predicate} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
-import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-
 /**
  * HtmlModel-space equivalent of a {@link Range}
  * Not much more than a container for two {@link ModelPosition ModelPositions}
  */
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/util/types";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
+import {Predicate} from "@lblod/ember-rdfa-editor/util/predicate-utils";
+import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/util/model-tree-walker";
+import ArrayUtils from "@lblod/ember-rdfa-editor/util/array-utils";
+
 export default class ModelRange {
   private _start: ModelPosition;
   private _end: ModelPosition;

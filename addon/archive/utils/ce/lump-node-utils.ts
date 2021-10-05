@@ -28,7 +28,7 @@ export function isInLumpNode(node: Node, rootNode: HTMLElement): boolean {
 
 /**
  * Return node if it is a lump node. Walk up the tree to find one
- * otherwise, until you hit rootNode. Return null if no node found.
+ * otherwise, until you hit rootElement. Return null if no node found.
  *
  * @param {Node} node
  * @param {HTMLElement} rootNode

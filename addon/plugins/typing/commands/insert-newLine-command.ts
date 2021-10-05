@@ -1,23 +1,22 @@
-import Command from "./command";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelElement from "../model/model-element";
-import {ImpossibleModelStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import Command from "@lblod/ember-rdfa-editor/core/command";
+import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import {ImpossibleModelStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 
 /**
  * Insert a newline at the cursor position. Is responsible for making sure
  * that newline renders correctly. Newlines are currently done using <br> elements, but
  * that is technically an implementation detail.
  */
-export default class InsertNewLineCommand extends Command {
+export default class InsertNewLineCommand extends Command<[ModelRange | null], void> {
   name = "insert-newLine";
 
-  constructor(model: Model) {
+  constructor(model: EditorModel) {
     super(model);
   }
 
@@ -25,7 +24,6 @@ export default class InsertNewLineCommand extends Command {
     return true;
   }
 
-  @logExecute
   execute(executedBy: string, range: ModelRange | null = this.model.selection.lastRange): void {
     if (!range) {
       throw new MisbehavedSelectionError();
@@ -55,7 +53,7 @@ export default class InsertNewLineCommand extends Command {
         newRange = mutator.insertNodes(newRange, dummyText);
       }
 
-      this.model.selectRange(newRange);
+      this.model.selection.selectRange(newRange);
     });
   }
 }

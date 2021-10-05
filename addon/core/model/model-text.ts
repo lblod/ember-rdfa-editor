@@ -1,7 +1,7 @@
-import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/model/model-node";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {stringToVisibleText} from "@lblod/ember-rdfa-editor/editor/utils";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {stringToVisibleText} from "@lblod/ember-rdfa-editor/archive/editor/utils";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils";
 
 const NON_BREAKING_SPACE = '\u00A0';
 export type TextAttribute = "bold" | "italic" | "underline" | "strikethrough" | "highlighted";

@@ -4,7 +4,7 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 
 module("Unit | model | readers | xml-reader-test", () => {
 
-  test("rootNode gets read as a modelrootnode", assert => {
+  test("rootElement gets read as a modelrootnode", assert => {
     const context = new ModelTestContext();
     context.reset();
 

@@ -1,15 +1,18 @@
 import {action} from "@ember/object";
 import {inject as service} from '@ember/service';
 import Component from '@glimmer/component';
-import HtmlModel from "@lblod/ember-rdfa-editor/core/model/html-model";
-import {Model} from "@lblod/ember-rdfa-editor/core/model/model";
+import editorProfiles from '../../config/editor-profiles';
+import Editor, {EditorImpl} from "@lblod/ember-rdfa-editor/core/editor";
+import EditorController, {EditorControllerImpl} from "@lblod/ember-rdfa-editor/core/editor-controller";
+import {EditorPlugin} from "@lblod/ember-rdfa-editor/plugins/editor-plugin";
+import {PluginError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 
 interface FeatureService {
   isEnabled(key: string): boolean
 }
 
 interface ContentEditableArgs {
-  editorInit(model: Model): void
+  editorInit(controller: EditorController): void
 }
 
 /**
@@ -72,10 +75,54 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * @method insertedEditorElement
    */
   @action
-  insertedEditorElement(element: HTMLElement) {
-    const model = new HtmlModel(element);
-    this.args.editorInit(model);
+  async insertedEditorElement(element: HTMLElement) {
+    const editor = new EditorImpl(element);
+    const controller = new EditorControllerImpl("host-app", editor);
+    this.args.editorInit(controller);
+    await this.initializePlugins(editor);
   }
+
+  async initializePlugins(editor: Editor) {
+    for (const name of this.getPluginNames()) {
+      const plugin = this.getPlugin(name);
+      const controller = new EditorControllerImpl(name, editor);
+      await plugin.initialize(controller);
+    }
+
+  }
+
+  getPluginNames(): Set<string> {
+    const profileArrays = new Set<string>();
+    for (const key in editorProfiles) {
+      profileArrays.add(editorProfiles[key]);
+    }
+    return profileArrays;
+
+  }
+
+  getPlugin(name: string): EditorPlugin {
+    let plug = this.getExternalPlugin(name);
+    if (plug) {
+      return plug;
+    }
+
+    plug = this.getCorePlugin(name);
+    if (!plug) {
+      throw new PluginError(`Plugin ${name} not found`);
+    }
+    return plug;
+
+
+  }
+
+  getExternalPlugin(name: string): EditorPlugin | null {
+    return null;
+  }
+
+  getCorePlugin(name: string): EditorPlugin | null {
+    return null;
+  }
+
   // cutHandler: InputHandler;
   // copyHandler: InputHandler;
   // pasteHandler: InputHandler;
@@ -83,14 +130,14 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   // _rawEditor: PernetRawEditor;
   //
   // /**
-  //  * Element of the component. It is aliased to the rawEditor.rootNode.
+  //  * Element of the component. It is aliased to the rawEditor.rootElement.
   //  *
   //  * @property element
   //  * @type HTMLElement
   //  *
   //  * @private
   //  */
-  // @tracked rootNode: HTMLElement | null = null;
+  // @tracked rootElement: HTMLElement | null = null;
   //
   // /**
   //  *

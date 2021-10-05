@@ -246,7 +246,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   //     return;
   //   }
   //
-  //   const rootNode = this.editor.rootNode;
+  //   const rootElement = this.editor.rootElement;
   //   const currentNode = this.editor.currentNode;
   //
   //   let region;
@@ -257,7 +257,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   //     region = this.editor.currentSelection;
   //   }
   //   if (region) {
-  //     const contexts = analyseRdfa(rootNode, region);
+  //     const contexts = analyseRdfa(rootElement, region);
   //     if (contexts && contexts.length) {
   //       const context = contexts[0];
   //       const hints = await this.rdfaEditorDispatcher.requestHints(this.profile, context, this.editor);

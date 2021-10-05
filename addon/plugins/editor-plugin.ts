@@ -1,5 +1,5 @@
-import {Controller} from "@lblod/ember-rdfa-editor/model/controller";
+import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 
 export interface EditorPlugin {
-  initialize(controller: Controller): void;
+  initialize(controller: EditorController): Promise<void>;
 }

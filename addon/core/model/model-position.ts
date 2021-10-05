@@ -1,22 +1,22 @@
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
-import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-
 /**
  * Represents a single position in the model. In contrast to the dom,
  * where a position is defined as a {@link Node} and an offset, we represent a position
  * here as a path of offsets from the root. The definition of these offsets is subject to change.
  */
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
+import {NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ArrayUtils from "@lblod/ember-rdfa-editor/util/array-utils";
+import { RelativePosition } from "@lblod/ember-rdfa-editor/util/types";
+
 export default class ModelPosition {
   private _path: number[];
   private _root: ModelElement;
   private parentCache: ModelElement | null = null;
 
   /**
-   * Build a position from a rootNode and a path
+   * Build a position from a rootElement and a path
    * @param root
    * @param path
    */

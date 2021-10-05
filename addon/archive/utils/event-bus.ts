@@ -46,12 +46,16 @@ export class SelectionChangedEvent extends VoidEvent {
 export class ModelWrittenEvent extends VoidEvent {
   _name: EditorEventName = "modelWritten";
 }
+export class KeydownEvent extends EditorEvent<KeyboardEvent> {
+  _name: EditorEventName = "keyDown";
+}
 
 export type EDITOR_EVENT_MAP = {
   "dummy": DummyEvent,
   "contentChanged": ContentChangedEvent,
   "modelWritten": ModelWrittenEvent,
   "selectionChanged": SelectionChangedEvent
+  "keyDown": KeydownEvent
 };
 export type EditorEventName = keyof EDITOR_EVENT_MAP;
 

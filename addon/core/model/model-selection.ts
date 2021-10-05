@@ -1,14 +1,15 @@
-import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {isElement} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {SelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import {analyse} from '@lblod/marawa/rdfa-context-scanner';
-import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {Direction, FilterAndPredicate, PropertyState,} from "@lblod/ember-rdfa-editor/model/util/types";
-import {nodeIsElementOfType} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelNodeFinder from "@lblod/ember-rdfa-editor/util/model-node-finder";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import {Direction, FilterAndPredicate, PropertyState} from "@lblod/ember-rdfa-editor/util/types";
+import {nodeIsElementOfType} from "@lblod/ember-rdfa-editor/util/predicate-utils";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus

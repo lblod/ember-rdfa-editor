@@ -1,5 +1,4 @@
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import {createLogger, Logger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 
 /**
  * Commands are the only things that are allowed to modify the model.
@@ -7,21 +6,19 @@ import {createLogger, Logger} from "@lblod/ember-rdfa-editor/utils/logging-utils
  * They need to be registered with {@link RawEditor.registerCommand()} before they
  * can be executed with {@link RawEditor.executeCommand()}.
  */
-export default abstract class Command<A extends unknown[] = unknown[], R = void> {
+export default abstract class Command<A extends unknown[], R> {
   abstract name: string;
-  protected model: Model;
-  protected logger: Logger;
+  protected model: EditorModel;
   createSnapshot: boolean;
 
-  protected constructor(model: Model, createSnapshot = true) {
+  protected constructor(model: EditorModel, createSnapshot = true) {
     this.model = model;
     this.createSnapshot = createSnapshot;
-    this.logger = createLogger(`command:${this.constructor.name}`);
   }
 
   canExecute(..._args: A): boolean {
     return true;
   }
 
-  abstract execute(executedBy: string, ...args: A): R;
+  abstract execute(source: string, ...args: A): R;
 }

@@ -137,12 +137,12 @@ export interface MoveCursorAfterElementManipulation extends Manipulation {
 
 export interface MoveCursorAfterEditorManipulation extends Manipulation {
   type: "moveCursorAfterEditor";
-  node: HTMLElement; //will be rootNode of editor
+  node: HTMLElement; //will be rootElement of editor
 }
 
 export interface MoveCursorBeforeEditorManipulation extends Manipulation {
   type: "moveCursorBeforeEditor";
-  node: HTMLElement; //will be rootNode of editor
+  node: HTMLElement; //will be rootElement of editor
 }
 
 /**

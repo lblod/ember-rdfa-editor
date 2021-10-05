@@ -4,12 +4,12 @@ import { module, test, skip } from "qunit";
 const invisibleSpace = "\u200B";
 
 module("Unit | Utility | ce/next-text-node", function () {
-  test("returns null when textNode is rootNode", function (assert) {
+  test("returns null when textNode is rootElement", function (assert) {
     const root = document.createElement("div");
     const result = ceNextTextNode(root, root);
     assert.strictEqual(result, null);
   });
-  test("returns null when nextNode is rootNode", function (assert) {
+  test("returns null when nextNode is rootElement", function (assert) {
     const root = document.createElement("div");
     const child = document.createElement("div");
     root.appendChild(child);

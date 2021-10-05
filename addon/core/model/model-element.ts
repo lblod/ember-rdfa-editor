@@ -1,10 +1,10 @@
-import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
-import {NON_BLOCK_NODES} from "@lblod/ember-rdfa-editor/model/util/constants";
-import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import { parsePrefixString } from "@lblod/ember-rdfa-editor/model/util/rdfa-utils";
+import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/core/model/model-node";
+import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
+import {Cloneable} from "@lblod/ember-rdfa-editor/util/types";
+import {NON_BLOCK_NODES} from "@lblod/ember-rdfa-editor/util/constants";
+import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils";
+import {parsePrefixString} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
 import RdfaAttributes from "@lblod/marawa/rdfa-attributes";
 
 export type ElementType = keyof HTMLElementTagNameMap;
@@ -14,12 +14,12 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
 
   private _children: ModelNode[] = [];
   private _type: ElementType;
-  private _currentRdfaPrefixes: Map<string,string>;
+  private _currentRdfaPrefixes: Map<string, string>;
 
   constructor(type: ElementType = "span", config?: NodeConfig) {
     super(config);
     this._type = type;
-    this._currentRdfaPrefixes = config?.rdfaPrefixes || new Map<string,string>();
+    this._currentRdfaPrefixes = config?.rdfaPrefixes || new Map<string, string>();
   }
 
   get type(): ElementType {
@@ -152,7 +152,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     let myIndex = index;
     for (const child of children) {
       this.addChild(child, myIndex);
-      myIndex ++;
+      myIndex++;
     }
   }
 
@@ -351,25 +351,23 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     return this.getRdfaPrefixes().get("") ?? null;
   }
 
-  getRdfaPrefixes(): Map<string,string> {
+  getRdfaPrefixes(): Map<string, string> {
     // NOTE: We map vocab to an empty string prefix, because this is convenient for passing to children.
     //       It's also conveniently how marawa uses it in the RdfaAttributes class.
     const vocab = this.getAttribute("vocab");
     if (vocab) {
       return new Map([...this._currentRdfaPrefixes, ["", vocab]]);
-    }
-    else {
+    } else {
       return new Map([...this._currentRdfaPrefixes]);
     }
   }
 
-  updateRdfaPrefixes(prefixes: Map<string,string> = this._currentRdfaPrefixes) {
+  updateRdfaPrefixes(prefixes: Map<string, string> = this._currentRdfaPrefixes) {
     const myPrefixString = this.getAttribute('prefix');
     if (myPrefixString) {
       const myPrefixes = parsePrefixString(myPrefixString);
       this._currentRdfaPrefixes = new Map([...prefixes, ...myPrefixes]);
-    }
-    else {
+    } else {
       this._currentRdfaPrefixes = prefixes;
     }
   }
@@ -422,10 +420,10 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   isMergeable(other: ModelNode): boolean {
-    if(!ModelNode.isModelElement(other)) {
+    if (!ModelNode.isModelElement(other)) {
       return false;
     }
-    if(other.type !== this.type) {
+    if (other.type !== this.type) {
       return false;
     }
     return ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap);

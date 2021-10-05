@@ -1,13 +1,13 @@
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
-import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
+import ModelText, {TextAttribute} from "./model-text";
+import ModelElement from "./model-element";
+import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import XmlWriter from "@lblod/ember-rdfa-editor/core/writers/xml-writer";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
 export interface NodeConfig {
   debugInfo: unknown;
-  rdfaPrefixes?: Map<string,string>;
+  rdfaPrefixes?: Map<string, string>;
 }
 
 /**
@@ -195,7 +195,7 @@ export default abstract class ModelNode {
 
   abstract clone(): ModelNode;
 
-  getAttribute(key: string): string | undefined  {
+  getAttribute(key: string): string | undefined {
     return this._attributeMap.get(key);
   }
 

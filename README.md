@@ -31,7 +31,7 @@ To include the editor in a template (ember octane syntax) you can use the follow
 The callback provided to rdfaEditorInit is called when the editor element is inserted and provides an object with the following interface:
  - property `htmlContent`: a cleaned up (with as much as possible internal state remove) version of the htmlContent
  - property `richNode`: a copy of the internal representation of the document.
- - property `rootNode`: a copy of the dom of the editor (includes the editor element)
+ - property `rootElement`: a copy of the dom of the editor (includes the editor element)
  - function `setHtmlContent(html)`: function to set the html content of the editor
  
 You can pass basic options when you load the editor. Add a value of "true" to enable. Remove option or pass null to disable.

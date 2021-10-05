@@ -1,21 +1,22 @@
-import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {ModelError, NotImplementedError, ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {HIGHLIGHT_ATTRIBUTE, TEXT_PROPERTY_NODES} from "@lblod/ember-rdfa-editor/model/util/constants";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
+import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+
+import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import {ModelError, NotImplementedError, ParseError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {HIGHLIGHT_ATTRIBUTE, TEXT_PROPERTY_NODES} from "@lblod/ember-rdfa-editor/util/constants";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 
 /**
  * Reader to convert a {@link Selection} to a {@link ModelSelection}.
  */
 export default class SelectionReader implements Reader<Selection, ModelSelection, void> {
-  private model: Model;
+  private model: EditorModel;
 
-  constructor(model: Model) {
+  constructor(model: EditorModel) {
     this.model = model;
   }
 
@@ -113,7 +114,7 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
   }
 
   private findPositionForTextPropertyNode(container: Node, domOffset: number): ModelPosition {
-    const walker = document.createTreeWalker(this.model.rootNode, NodeFilter.SHOW_TEXT);
+    const walker = document.createTreeWalker(this.model.rootElement, NodeFilter.SHOW_TEXT);
     walker.currentNode = container;
 
     let resultingNode;

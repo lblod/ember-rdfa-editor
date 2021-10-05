@@ -304,7 +304,7 @@ function replaceNodesWithHtml(nodes, rootNode, [start, end], set) {
     if (!insertedElements) {
       if(!node.split) {
         if (rootNode == domNode || isLI(domNode) || hasRDFAKeys(domNode.attributes)) {
-          // for the rootNode or a node with rdfa or list items don't actually replace but nest
+          // for the rootElement or a node with rdfa or list items don't actually replace but nest
           // (because that seems to be expected behaviour  ¯\_(ツ)_/¯ )
           while (domNode.firstChild) {
             domNode.removeChild(domNode.firstChild);
