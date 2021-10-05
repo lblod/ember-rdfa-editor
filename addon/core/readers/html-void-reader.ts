@@ -1,4 +1,4 @@
-import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
+import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
 
 /**
  * Utility reader that ignores its input and does nothing, effectively filtering out whatever

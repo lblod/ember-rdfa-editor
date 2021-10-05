@@ -1,14 +1,14 @@
-import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/model/readers/html-reader";
-import {ElementType} from "@lblod/ember-rdfa-editor/model/model-element";
-import HtmlListReader from "@lblod/ember-rdfa-editor/model/readers/html-list-reader";
-import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import HtmlElementReader from "@lblod/ember-rdfa-editor/model/readers/html-element-reader";
-import HtmlTextReader from "@lblod/ember-rdfa-editor/model/readers/html-text-reader";
-import HtmlTableReader from "@lblod/ember-rdfa-editor/model/readers/html-table-reader";
-import HtmlSpanReader from "@lblod/ember-rdfa-editor/model/readers/html-span-reader";
-import WrappedAttributeReader from "@lblod/ember-rdfa-editor/model/readers/wrapped-attribute-reader";
+import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/core/readers/html-reader";
+import {ElementType} from "@lblod/ember-rdfa-editor/core/model/model-element";
+import HtmlListReader from "@lblod/ember-rdfa-editor/core/readers/html-list-reader";
+import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import HtmlElementReader from "@lblod/ember-rdfa-editor/core/readers/html-element-reader";
+import HtmlTextReader from "@lblod/ember-rdfa-editor/core/readers/html-text-reader";
+import HtmlTableReader from "@lblod/ember-rdfa-editor/core/readers/html-table-reader";
+import HtmlSpanReader from "@lblod/ember-rdfa-editor/core/readers/html-span-reader";
+import WrappedAttributeReader from "@lblod/ember-rdfa-editor/core/readers/wrapped-attribute-reader";
 
 type Constructor<T> = new (...args: unknown[]) => T;
 type ElementReader = Reader<Element, ModelNode[], HtmlReaderContext>;

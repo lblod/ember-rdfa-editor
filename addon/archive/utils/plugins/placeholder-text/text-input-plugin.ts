@@ -4,8 +4,8 @@ import {
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import {ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils"
+import ModelRangeUtils from "@lblod/ember-rdfa-editor/util/model-range-utils"
 
 /**
  * @class PlaceholderTextInputPlugin

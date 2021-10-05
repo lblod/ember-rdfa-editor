@@ -1,14 +1,14 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import ModelElement from "../model/model-element";
-import {MisbehavedSelectionError, ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
+import {MisbehavedSelectionError, ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ArrayUtils from "@lblod/ember-rdfa-editor/util/array-utils"
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/util/model-tree-walker"
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import {PropertyState} from "../model/util/types";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 

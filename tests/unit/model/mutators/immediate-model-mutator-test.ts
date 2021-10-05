@@ -1,11 +1,11 @@
 import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {setupTest} from "ember-qunit";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
   const ctx = new ModelTestContext();

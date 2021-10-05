@@ -1,6 +1,6 @@
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {ModelNodeFinderFilter, ModelNodeFinderPredicate} from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
-import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {ModelNodeFinderFilter, ModelNodeFinderPredicate} from "@lblod/ember-rdfa-editor/util/model-node-finder"
+import RdfaDocument from "@lblod/ember-rdfa-editor/archive/utils/rdfa/rdfa-document";
 
 export type HtmlTag = keyof HTMLElementTagNameMap;
 

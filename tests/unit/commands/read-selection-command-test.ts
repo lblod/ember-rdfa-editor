@@ -1,13 +1,13 @@
 import {module, test} from "qunit";
 import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
 
 module("Unit | commands | read-selection-command-test", hooks => {
   const ctx = new ModelTestContext();

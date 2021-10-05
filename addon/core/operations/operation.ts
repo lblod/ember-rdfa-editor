@@ -1,4 +1,4 @@
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 export default abstract class Operation {
   private _range: ModelRange;

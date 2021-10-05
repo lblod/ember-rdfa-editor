@@ -1,8 +1,8 @@
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils"
+import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/util/model-tree-walker"
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 
 export default class ModelRangeUtils {
   static getExtendedToPlaceholder(range: ModelRange): ModelRange {

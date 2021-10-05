@@ -110,19 +110,19 @@ export default class EventProcessor implements ContentObserver, MovementObserver
     let region = this.cardsLocationFlaggedRemoved.shift();
     while (region) {
       const [start, end] = region;
-      const range = globalTextRegionToModelRange(this.editor.rootModelNode, start, end);
-      const selection = this.editor.createSelection();
+      const range = globalTextRegionToModelRange(this.controller.rootModelNode, start, end);
+      const selection = this.controller.createSelection();
       selection.selectRange(range);
-      this.editor.executeCommand("remove-highlight", selection);
+      this.controller.executeCommand("remove-highlight", selection);
       region = this.cardsLocationFlaggedRemoved.shift();
     }
     region = this.cardsLocationFlaggedNew.shift();
     while (region) {
       const [start, end] = region;
-      const range = globalTextRegionToModelRange(this.editor.rootModelNode, start, end);
-      const selection = this.editor.createSelection();
+      const range = globalTextRegionToModelRange(this.controller.rootModelNode, start, end);
+      const selection = this.controller.createSelection();
       selection.selectRange(range);
-      this.editor.executeCommand("make-highlight", selection);
+      this.controller.executeCommand("make-highlight", selection);
       region = this.cardsLocationFlaggedNew.shift() ;
     }
 
@@ -149,7 +149,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    * @public
    */
   analyseAndDispatch(extraInfo: Array<unknown> = []) {
-    const node = this.editor.rootNode;
+    const node = this.controller.rootNode;
     if (! isEmpty(this.modifiedRange)) {
       const rdfaBlocks = analyse(node, this.modifiedRange as Region);
 
@@ -158,7 +158,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
         this.registry.currentIndex(),
         rdfaBlocks,
         this.registry,
-        this.editor,
+        this.controller,
         extraInfo
       );
       this.modifiedRange = [];

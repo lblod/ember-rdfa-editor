@@ -6,7 +6,7 @@ import {Editor, ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/inpu
 import NodeWalker from '@lblod/marawa/node-walker';
 import {isRdfaNode} from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-rich-node-helpers';
 import {moveCaretBefore, stringToVisibleText} from '@lblod/ember-rdfa-editor/editor/utils';
-import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 
 /**
  * Class responsible for the handling of RDFA.

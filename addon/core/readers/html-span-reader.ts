@@ -1,10 +1,10 @@
-import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/model/readers/html-reader";
-import HtmlElementReader from "@lblod/ember-rdfa-editor/model/readers/html-element-reader";
-import HtmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/html-node-reader";
-import {HIGHLIGHT_ATTRIBUTE} from "@lblod/ember-rdfa-editor/model/util/constants";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {pushOrExpand} from "@lblod/ember-rdfa-editor/model/util/array-utils";
+import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
+import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/core/readers/html-reader";
+import HtmlElementReader from "@lblod/ember-rdfa-editor/core/readers/html-element-reader";
+import HtmlNodeReader from "@lblod/ember-rdfa-editor/core/readers/html-node-reader";
+import {HIGHLIGHT_ATTRIBUTE} from "@lblod/ember-rdfa-editor/util/constants"
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {pushOrExpand} from "@lblod/ember-rdfa-editor/util/array-utils"
 
 export default class HtmlSpanReader implements Reader<HTMLSpanElement, ModelNode[], HtmlReaderContext> {
   read(from: HTMLSpanElement, context: HtmlReaderContext): ModelNode[] {

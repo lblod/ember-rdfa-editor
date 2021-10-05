@@ -1,7 +1,7 @@
 import { isInLumpNode, getParentLumpNode } from '../lump-node-utils';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 import PernetRawEditor, {InternalSelection} from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 
 export default class LumpNodeMovementObserver {
   handleMovement(editor: PernetRawEditor, oldSelection: InternalSelection, newSelection: InternalSelection): void {

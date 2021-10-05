@@ -4,7 +4,7 @@ import {
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import {ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
+import {PropertyState} from "@lblod/ember-rdfa-editor/util/types"
 
 /**
  *

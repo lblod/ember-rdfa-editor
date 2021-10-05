@@ -3,7 +3,7 @@ import {
   BackspacePlugin
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { Editor, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants"
 
 /**
  *

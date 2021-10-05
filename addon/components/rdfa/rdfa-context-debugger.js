@@ -23,7 +23,7 @@ export default class RdfaContextDebugger extends Component {
    * @public
    */
   get editor() {
-    return this.args.editor;
+    return this.args.controller;
   }
 
   @tracked blocks = null;

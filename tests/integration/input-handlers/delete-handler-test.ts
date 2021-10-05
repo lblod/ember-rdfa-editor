@@ -6,7 +6,7 @@ import {
 } from "@ember/test-helpers";
 import hbs from "htmlbars-inline-precompile";
 import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
-import { getWindowSelection } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import { getWindowSelection } from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 import { getEditorElement, wait } from "dummy/tests/test-utils";
 
 module.skip("Integration | InputHandler | delete-handler", function (hooks) {

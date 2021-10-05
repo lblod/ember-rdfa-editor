@@ -1,7 +1,7 @@
 import Command from "../command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
+import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 
 export default abstract class SetPropertyCommand extends Command {
   constructor(model: Model) {

@@ -1,8 +1,8 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {IndexOutOfRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import {IndexOutOfRangeError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 
 module("Unit | model | model-element-test", hooks => {
   const ctx = new ModelTestContext();

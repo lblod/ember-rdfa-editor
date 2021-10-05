@@ -1,9 +1,9 @@
-import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import XmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/xml-node-reader";
-import {ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import XmlNodeReader from "@lblod/ember-rdfa-editor/core/readers/xml-node-reader";
+import {ParseError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
 export type XmlNodeRegistry<T extends ModelNode> = Record<string, T>;
 export type XmlReaderResult = { root: ModelNode, elements: XmlNodeRegistry<ModelElement>, textNodes: XmlNodeRegistry<ModelText> };

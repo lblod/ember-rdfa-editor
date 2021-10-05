@@ -1,10 +1,10 @@
-import ModelRange from "../model-range";
-import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
-import {UnconfinedRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import Operation from "@lblod/ember-rdfa-editor/core/operations/operation";
+import {UnconfinedRangeError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/util/model-tree-walker";
 
 export default class AttributeOperation extends Operation {
 

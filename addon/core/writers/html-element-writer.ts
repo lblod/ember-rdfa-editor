@@ -1,9 +1,9 @@
-import Writer from "@lblod/ember-rdfa-editor/model/writers/writer";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import Model from "@lblod/ember-rdfa-editor/model/model";
+import Writer from "@lblod/ember-rdfa-editor/core/writers/writer";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 
 export default class HtmlElementWriter implements Writer<ModelElement, HTMLElement> {
-  constructor(private model: Model) {}
+  constructor(private model: EditorModel) {}
 
   write(modelNode: ModelElement): HTMLElement {
     const result = document.createElement(modelNode.type);

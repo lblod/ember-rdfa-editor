@@ -1,10 +1,10 @@
 import {module, test} from "qunit";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {AssertionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {AssertionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 
 module("Unit | model | model-selection", hooks => {
   const ctx = new ModelTestContext();

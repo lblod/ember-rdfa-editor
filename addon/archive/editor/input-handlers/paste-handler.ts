@@ -1,8 +1,8 @@
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
-import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
+import {PropertyState} from "@lblod/ember-rdfa-editor/util/types"
+import ModelRangeUtils from "@lblod/ember-rdfa-editor/util/model-range-utils"
 import HTMLInputParser, {LIMITED_SAFE_TAGS} from "@lblod/ember-rdfa-editor/utils/html-input-parser";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import {taskFor} from "ember-concurrency-ts";
 import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input-handler";
 import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";

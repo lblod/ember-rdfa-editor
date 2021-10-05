@@ -11,8 +11,8 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {warn} from '@ember/debug';
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
-import {ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants"
+import {ParseError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 
 export function indentAction(rawEditor: PernetRawEditor): void {
   const filteredSuitableNodes = getSuitableNodesForListFromSelection(rawEditor);

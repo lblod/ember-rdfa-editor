@@ -40,7 +40,7 @@ export interface ModelMutator {
 
   splitElementAt(position: ModelPosition, splitAtEnds?: boolean): ModelPosition;
 
-  splitUntil(position: ModelPosition, untilPredicate: (element: ModelElement) => boolean, splitAtEnds): ModelPosition;
+  splitUntil(position: ModelPosition, untilPredicate: (element: ModelElement) => boolean, splitAtEnds?: boolean): ModelPosition;
 
 
   /**

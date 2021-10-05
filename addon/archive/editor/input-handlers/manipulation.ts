@@ -9,7 +9,7 @@
  * The HTMLWbrElement type is a custom type which we have added
  * ourselves.  We did not find a type.
  */
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 export type VoidElement = HTMLAreaElement
   | HTMLBaseElement

@@ -7,7 +7,7 @@ import {
   MoveCursorToEndOfElementManipulation
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {moveCaretBefore, stringToVisibleText} from '@lblod/ember-rdfa-editor/editor/utils';
-import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 
 function isBr(node: Node): boolean {
   return isElement(node) && node.tagName.toLowerCase() === "br";

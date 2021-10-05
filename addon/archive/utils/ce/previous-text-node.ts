@@ -7,7 +7,7 @@ import {
   siblingLis
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import flatMap from './flat-map';
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants"
 
 /**
  * @method findLastThOrTd

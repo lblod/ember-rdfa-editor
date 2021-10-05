@@ -1,8 +1,8 @@
-import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/operation-algorithms";
+import Operation from "@lblod/ember-rdfa-editor/core/operations/operation";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import OperationAlgorithms from "@lblod/ember-rdfa-editor/core/operations/operation-algorithms";
 
 export default class InsertOperation extends Operation {
   private _nodes: ModelNode[];

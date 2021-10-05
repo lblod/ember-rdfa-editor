@@ -1,6 +1,6 @@
 import ModelText, {TextAttribute} from "./model-text";
 import ModelElement from "./model-element";
-import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import XmlWriter from "@lblod/ember-rdfa-editor/core/writers/xml-writer";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";

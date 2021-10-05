@@ -1,7 +1,7 @@
 import config from 'ember-get-config';
 import {defaultReporter, Diary, diary, LogEvent, LogLevels, Reporter} from 'diary';
 import {compare} from 'diary/utils';
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 // this array is sorted from lowest to highest "level"
 // aka setting loglevel to "info" will include info and everything to the right of it

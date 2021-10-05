@@ -1,8 +1,8 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
+import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ModelTable from "@lblod/ember-rdfa-editor/core/model/model-table";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 export default abstract class InsertTableRowCommand extends Command {

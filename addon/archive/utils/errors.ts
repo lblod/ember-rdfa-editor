@@ -13,6 +13,7 @@ abstract class CustomError extends Error {
 export class NotImplementedError extends CustomError {
 }
 export class PluginError extends CustomError {}
+export class UninitializedError extends CustomError {}
 
 /**
  * The selection is not in a state we expect

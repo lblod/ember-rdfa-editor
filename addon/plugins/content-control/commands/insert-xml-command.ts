@@ -1,9 +1,9 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {parseXmlSiblings} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {parseXmlSiblings} from "@lblod/ember-rdfa-editor/util/xml-utils"
 import Model from "@lblod/ember-rdfa-editor/model/model";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 /**
  * Allows you to insert model nodes from an xml string.

@@ -1,6 +1,6 @@
-import { PernetSelection, PernetSelectionBlock } from '@lblod/ember-rdfa-editor/editor/pernet';
+import {PernetSelection, PernetSelectionBlock} from "@lblod/ember-rdfa-editor/archive/editor/pernet";
 import RichNode from "@lblod/marawa/rich-node";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
 
 /**
  * Fake class to list helper functions.

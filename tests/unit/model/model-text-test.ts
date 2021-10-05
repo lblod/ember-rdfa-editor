@@ -1,5 +1,5 @@
 import {test, module} from "qunit";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 
 module("Unit | model | model-text-test", () => {
 

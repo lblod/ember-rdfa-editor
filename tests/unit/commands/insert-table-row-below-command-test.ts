@@ -1,9 +1,9 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import InsertTableRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
 
 module("Unit | commands | insert-table-row-below-command-test", hooks => {
   const ctx = new ModelTestContext();

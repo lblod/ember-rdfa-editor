@@ -1,12 +1,12 @@
-import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import {tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {HtmlTag} from "@lblod/ember-rdfa-editor/model/util/types";
-import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/model/readers/html-reader";
-import HtmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/html-node-reader";
-import {KeyError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {pushOrExpand} from "@lblod/ember-rdfa-editor/model/util/array-utils";
+import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
+import {tagName} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import {HtmlTag} from "@lblod/ember-rdfa-editor/util/types"
+import {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
+import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/core/readers/html-reader";
+import HtmlNodeReader from "@lblod/ember-rdfa-editor/core/readers/html-node-reader";
+import {KeyError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {pushOrExpand} from "@lblod/ember-rdfa-editor/util/array-utils"
 
 
 /**

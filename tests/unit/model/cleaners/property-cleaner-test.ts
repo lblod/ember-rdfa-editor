@@ -1,8 +1,8 @@
 import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
 import PropertyCleaner from "@lblod/ember-rdfa-editor/model/cleaners/property-cleaner";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 
 module("Unit | model | cleaners | property-cleaner-test", () => {
   test("should not merge incompatible nodes", assert => {

@@ -1,6 +1,5 @@
-import {createLogger, Logger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
-import {debouncedAdjustable} from "@lblod/ember-rdfa-editor/utils/debounce";
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {debouncedAdjustable} from "@lblod/ember-rdfa-editor/archive/utils/debounce";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
 
 export abstract class EditorEvent<P> {
   abstract _name: EditorEventName;
@@ -48,6 +47,9 @@ export class ModelWrittenEvent extends VoidEvent {
 }
 export class KeydownEvent extends EditorEvent<KeyboardEvent> {
   _name: EditorEventName = "keyDown";
+  constructor(payload: KeyboardEvent, owner: string) {
+    super(payload, owner);
+  }
 }
 
 export type EDITOR_EVENT_MAP = {
@@ -92,7 +94,6 @@ export default class EventBus {
   }
 
   private listeners: Map<EditorEventName, Array<EditorEventListener<EditorEventName>>> = new Map<EditorEventName, Array<EditorEventListener<EditorEventName>>>();
-  private logger: Logger = createLogger("EventBus");
   private debouncedEmitters: Map<EditorEventName, DebouncedEmitter<EditorEventName>> = new Map();
 
   private on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {

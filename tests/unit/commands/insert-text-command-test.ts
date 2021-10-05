@@ -1,10 +1,10 @@
 import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {CORE_OWNER, NON_BREAKING_SPACE, SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import {CORE_OWNER, NON_BREAKING_SPACE, SPACE} from "@lblod/ember-rdfa-editor/util/constants"
 import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 
 module("Unit | commands | insert-text-command-test", hooks => {

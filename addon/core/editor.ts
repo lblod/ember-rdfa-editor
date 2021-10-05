@@ -1,4 +1,9 @@
-import {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import EventBus, {
+  EDITOR_EVENT_MAP,
+  EditorEvent,
+  EditorEventListener,
+  EditorEventName
+} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 
@@ -7,7 +12,11 @@ export default interface Editor {
 
   onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void;
 
+  emitEvent<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void;
+
   registerCommand<A extends unknown[], R>(command: { new(model: EditorModel): Command<A, R> }): void;
+
+  canExecuteCommand<A extends unknown[]>(commandName: string, ...args: A): boolean;
 }
 
 export class EditorImpl implements Editor {
@@ -38,11 +47,19 @@ export class EditorImpl implements Editor {
   }
 
   onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
+    EventBus.on(eventName, callback);
   }
 
   registerCommand<A extends unknown[], R>(command: { new(model: EditorModel): Command<A, R> }): void {
     const cmd = new command(this.model);
     this.registeredCommands.set(cmd.name, cmd);
+  }
+
+  canExecuteCommand<A extends unknown[]>(commandName: string, ...args: A): boolean {
+    return this.getCommand(commandName).canExecute(...args);
+  }
+  emitEvent<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]) {
+    EventBus.emit(event);
   }
 
 }

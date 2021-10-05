@@ -22,8 +22,6 @@ export default class LoadMonitor extends Component {
   * @type {Service}
   * @private
   */
- @service
- rdfaEditorDispatcher;
 
  /**
   * All services which have an async task
@@ -59,8 +57,8 @@ export default class LoadMonitor extends Component {
   */
  @computed('editor.generateDiffEvents.isRunning')
  get editorBusy() {
-   if(!this.editor) return true;
-   return this.editor.generateDiffEvents.isRunning === true;
+   if(!this.controller) return true;
+   return this.controller.generateDiffEvents.isRunning === true;
  }
 
  /**

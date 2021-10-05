@@ -1,8 +1,8 @@
 import {module, test} from "qunit";
-import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
-import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
+import HtmlReader from "@lblod/ember-rdfa-editor/core/readers/html-reader";
+import HtmlWriter from "@lblod/ember-rdfa-editor/core/writers/html-writer";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {AssertionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {AssertionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 
 module("Unit | model | twoway-conversion", hooks => {
   let reader: HtmlReader;

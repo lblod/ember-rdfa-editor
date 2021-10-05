@@ -3,9 +3,11 @@
     <h1>Dummy app </h1>
     <p>
       App version: {{app-version versionOnly=true showExtended=true}}
+      {{!--
       {{#if this.debug}}
         <Rdfa::RdfaEditorDebugger @debug={{this.debug}} />
       {{/if}}
+      --}}
     </p>
     <div>
       <label for="pasteSelect">
@@ -42,7 +44,6 @@
 
         <Rdfa::RdfaEditor
                 @rdfaEditorInit={{this.rdfaEditorInit}}
-                @initDebug={{this.initDebug}}
                 @profile="default"
                 class="rdfa-playground"
                 @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"

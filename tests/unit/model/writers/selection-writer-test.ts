@@ -1,9 +1,9 @@
 import {module, test} from "qunit";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import SelectionWriter from "@lblod/ember-rdfa-editor/core/writers/selection-writer";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 module("Unit | model | writers | selection-writer", hooks => {
   const ctx = new ModelTestContext();

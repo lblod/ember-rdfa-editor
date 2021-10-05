@@ -5,7 +5,7 @@ import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor
 import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input-handler";
 import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
 import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
-import {isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {isTextNode} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 
 /**
  * Arrow Handler, an event handler to handle arrow keys.

@@ -10,7 +10,7 @@ import {
   BackspacePlugin
 } from "@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler";
 import { runInDebug } from '@ember/debug';
-import { findLastLi, tagName } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import { findLastLi, tagName } from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 
 function debug(message: string, object: unknown = null): void {
   runInDebug(() => {

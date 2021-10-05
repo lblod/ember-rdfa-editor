@@ -1,4 +1,4 @@
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelSelection from "./model-selection";
 
 type TableIndex = {

@@ -1,6 +1,6 @@
 import previousTextNode from './previous-text-node';
 import nextTextNode from './next-text-node';
-import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {isElement} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 
 /**
  * So, what is a lumpNode?

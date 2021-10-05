@@ -1,12 +1,12 @@
-import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import AttributeOperation from "@lblod/ember-rdfa-editor/model/operations/attribute-operation";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import InsertOperation from "@lblod/ember-rdfa-editor/model/operations/insert-operation";
-import MoveOperation from "@lblod/ember-rdfa-editor/model/operations/move-operation";
+import {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
+import Operation from "@lblod/ember-rdfa-editor/core/operations/operation"
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import AttributeOperation from "@lblod/ember-rdfa-editor/core/operations/attribute-operation"
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import InsertOperation from "@lblod/ember-rdfa-editor/core/operations/insert-operation"
+import MoveOperation from "@lblod/ember-rdfa-editor/core/operations/move-operation"
 import ModelMutator from "@lblod/ember-rdfa-editor/model/mutators/model-mutator";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 
 /**
  * {@link ModelMutator} implementation where any operations are batched

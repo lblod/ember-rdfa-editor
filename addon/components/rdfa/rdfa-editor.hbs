@@ -22,7 +22,7 @@
       <div class="say-editor__paper">
         <Ce::ContentEditable
           @class="say-editor__inner say-content"
-          @rawEditorInit={{this.handleRawEditorInit}}
+          @editorInit={{this.editorInit}}
         />
       </div>
     </div>
@@ -47,7 +47,6 @@
         </ul>
       </div>
       {{yield}}
-      <Rdfa::LoadMonitor @editor={{this.eventProcessor.editor}} />
     </div>
   </div>
 </div>

@@ -1,18 +1,18 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import {
   IllegalExecutionStateError,
   MisbehavedSelectionError,
   NoParentError,
   TypeAssertionError
-} from "@lblod/ember-rdfa-editor/utils/errors";
+} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelRangeUtils from "@lblod/ember-rdfa-editor/util/model-range-utils"
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils"
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 
 export default class IndentListCommand extends Command {
   name = "indent-list";

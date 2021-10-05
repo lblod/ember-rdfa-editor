@@ -1,10 +1,10 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import {dom, domStripped, vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import HtmlReader from "@lblod/ember-rdfa-editor/core/readers/html-reader";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
+import {dom, domStripped, vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import ModelTable from "@lblod/ember-rdfa-editor/core/model/model-table";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
 module("Unit | model | readers | html-reader", hooks => {
 

@@ -1,6 +1,6 @@
-import Writer from "@lblod/ember-rdfa-editor/model/writers/writer";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import XmlNodeWriter from "@lblod/ember-rdfa-editor/model/writers/xml-node-writer";
+import Writer from "@lblod/ember-rdfa-editor/core/writers/writer";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import XmlNodeWriter from "@lblod/ember-rdfa-editor/core/writers/xml-node-writer";
 
 export default class XmlElementWriter implements Writer<ModelElement, Element> {
   constructor(private document: XMLDocument) {}

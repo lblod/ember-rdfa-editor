@@ -1,5 +1,5 @@
-import Writer from "@lblod/ember-rdfa-editor/model/writers/writer";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import Writer from "@lblod/ember-rdfa-editor/core/writers/writer";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 
 const INTERNAL_ATTRIBUTES = ['data-editor-highlight', 'data-editor-position-level', 'data-editor-rdfa-position-level'];

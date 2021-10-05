@@ -1,6 +1,6 @@
 import {InputHandler} from './input-handler';
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
+import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import {PropertyState} from "@lblod/ember-rdfa-editor/util/types"
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
 

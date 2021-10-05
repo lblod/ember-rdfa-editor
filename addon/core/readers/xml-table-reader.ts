@@ -1,9 +1,9 @@
-import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
-import {XmlNodeRegistry} from "@lblod/ember-rdfa-editor/model/readers/xml-reader";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import XmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/xml-node-reader";
+import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
+import ModelTable from "@lblod/ember-rdfa-editor/core/model/model-table";
+import {XmlNodeRegistry} from "@lblod/ember-rdfa-editor/core/readers/xml-reader";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
+import XmlNodeReader from "@lblod/ember-rdfa-editor/core/readers/xml-node-reader";
 
 export default class XmlTableReader implements Reader<Element, ModelTable, void> {
   constructor(private elementRegistry: XmlNodeRegistry<ModelElement>, private textRegistry: XmlNodeRegistry<ModelText>) {

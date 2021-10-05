@@ -1,9 +1,9 @@
 import {module, test} from "qunit";
-import ModelElement, {ElementType} from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelElement, {ElementType} from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelNodeFinder from "@lblod/ember-rdfa-editor/util/model-node-finder"
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {Direction} from "@lblod/ember-rdfa-editor/util/types"
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 
 function testElement(type: ElementType, name = "testNode"): ModelElement {
   return new ModelElement(type, {debugInfo: name});

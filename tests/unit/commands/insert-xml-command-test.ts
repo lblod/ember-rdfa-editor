@@ -1,11 +1,11 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
 import {oneLineTrim} from "common-tags";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
 
 module("Unit | commands | insert-xml-command-test", hooks => {
   const ctx = new ModelTestContext();

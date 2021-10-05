@@ -1,7 +1,7 @@
 import { module, test } from "qunit";
 import { setupRenderingTest } from "ember-qunit";
 import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
-import { getWindowSelection, tagName } from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import { getWindowSelection, tagName } from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 import {
   moveCaret,
   hasVisibleChildren,

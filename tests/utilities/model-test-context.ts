@@ -1,4 +1,4 @@
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import TestModel from "dummy/tests/utilities/test-model";
 
 export default class ModelTestContext {

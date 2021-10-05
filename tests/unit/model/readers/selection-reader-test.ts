@@ -1,8 +1,8 @@
 import {module, test} from "qunit";
-import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import SelectionReader from "@lblod/ember-rdfa-editor/core/readers/selection-reader";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {domStripped} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import {domStripped} from "@lblod/ember-rdfa-editor/util/xml-utils"
 import Model from "@lblod/ember-rdfa-editor/model/model";
 
 module("Unit | model | readers | selection-reader", hooks => {

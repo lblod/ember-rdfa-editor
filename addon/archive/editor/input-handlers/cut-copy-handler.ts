@@ -1,10 +1,10 @@
 import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input-handler";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
-import HTMLExportWriter from "@lblod/ember-rdfa-editor/model/writers/html-export-writer";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import HTMLExportWriter from "@lblod/ember-rdfa-editor/core/writers/html-export-writer";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/util/model-tree-walker"
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 export default abstract class CutCopyHandler extends InputHandler {
   abstract deleteSelection: boolean;

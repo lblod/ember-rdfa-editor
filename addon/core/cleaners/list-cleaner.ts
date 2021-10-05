@@ -1,7 +1,7 @@
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/util/model-tree-walker"
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils"
 
 export default class ListCleaner {
   clean(range: ModelRange) {

@@ -1,5 +1,5 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import Model from "@lblod/ember-rdfa-editor/model/model";
 
 export default class MatchTextCommand extends Command<[ModelRange, RegExp], ModelRange[]> {

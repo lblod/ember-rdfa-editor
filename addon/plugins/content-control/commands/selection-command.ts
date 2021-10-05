@@ -1,13 +1,13 @@
 import Command from "@lblod/ember-rdfa-editor/commands/command";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import {ImpossibleModelStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import {ImpossibleModelStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils"
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/util/model-tree-walker"
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import SimplifiedModel from "@lblod/ember-rdfa-editor/model/simplified-model";
 
 /**

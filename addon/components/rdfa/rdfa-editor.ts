@@ -1,17 +1,20 @@
 import {inject as service} from "@ember/service";
 import Component from '@glimmer/component';
-import HintsRegistry from '../../utils/rdfa/hints-registry';
 import type IntlService from 'ember-intl/services/intl';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import EditorController from "@lblod/ember-rdfa-editor/core/controller";
 import {EditorPlugin} from "@lblod/ember-rdfa-editor/plugins/editor-plugin";
-import HtmlModel from "@lblod/ember-rdfa-editor/core/model/html-model";
-import {Model} from "@lblod/ember-rdfa-editor/core/model/model";
+import Editor from "@lblod/ember-rdfa-editor/core/editor";
+import {action} from "@ember/object";
+import EditorController, {EditorControllerImpl} from "@lblod/ember-rdfa-editor/core/editor-controller";
+import {PluginError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import TypingPlugin from "@lblod/ember-rdfa-editor/plugins/typing/typing-plugin";
 
-interface DebugInfo {
-  hintsRegistry: HintsRegistry
-  editor: RawEditor
-}
+// interface DebugInfo {
+//   hintsRegistry: HintsRegistry
+//   editor: Editor
+// }
+const CORE_PLUGINS = new Map<string, EditorPlugin>(
+  [["typing", new TypingPlugin()]]
+);
 
 interface RdfaEditorArgs {
   /**
@@ -22,7 +25,7 @@ interface RdfaEditorArgs {
    *
    * @public
    */
-  initDebug(debugInfo: DebugInfo): void
+  // initDebug(debugInfo: DebugInfo): void
 
   ownerName: string
   /**
@@ -66,6 +69,7 @@ interface SuggestedHint {
  */
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @service declare intl: IntlService;
+  activePlugins: EditorPlugin[] = [];
 
 
   constructor(owner: unknown, args: RdfaEditorArgs) {
@@ -79,21 +83,66 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     return this.args.profile || "default";
   }
 
-  async initialize(model: HtmlModel) {
+  @action
+  async editorInit(editor: Editor) {
+    const controller = new EditorControllerImpl("host-app", editor);
+    await this.initialize(editor);
+    this.args.rdfaEditorInit(controller);
 
-    const plugins = this.getPluginsFromProfile(this.profile);
+  }
+
+  async initialize(editor: Editor) {
+
+    const plugins = await this.getPluginsFromProfile(this.profile);
     for (const plugin of plugins) {
-      await this.initializePlugin(plugin, model);
+      console.log("INITIALIZING", plugin.name)
+      await this.initializePlugin(plugin, editor);
     }
 
   }
 
   // TODO: implement
-  getPluginsFromProfile(profile: string): EditorPlugin[] {
+  async getPluginsFromProfile(profile: string): Promise<EditorPlugin[]> {
+    const pluginNames = ["typing"];
+    const plugins = [];
+    for (const name of pluginNames) {
+      plugins.push(await this.getPlugin(name));
+    }
+    return plugins;
 
   }
 
-  async initializePlugin(plugin: EditorPlugin, model: Model): Promise<void> {
+  async getPlugin(name: string): Promise<EditorPlugin> {
+    let plug = this.getExternalPlugin(name);
+    if (plug) {
+      return plug;
+    }
+
+    plug = this.getCorePlugin(name);
+    if (!plug) {
+      throw new PluginError(`Plugin ${name} not found`);
+    }
+    return plug;
+
+
+  }
+
+  getExternalPlugin(name: string): EditorPlugin | null {
+    return null;
+  }
+
+  getCorePlugin(name: string): EditorPlugin | null{
+    const plugin = CORE_PLUGINS.get(name);
+    if (!plugin) {
+      return null;
+    }
+    return plugin;
+  }
+
+  async initializePlugin(plugin: EditorPlugin, editor: Editor): Promise<void> {
+    const controller = new EditorControllerImpl(plugin.name, editor);
+    await plugin.initialize(controller);
+    this.activePlugins.push(plugin);
 
   }
 

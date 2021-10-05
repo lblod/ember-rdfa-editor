@@ -1,7 +1,7 @@
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/util/model-tree-walker";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 
 /**
  * A shared library of algorithms to be used by operations only

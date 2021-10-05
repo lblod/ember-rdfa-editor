@@ -1,8 +1,8 @@
-import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/operation-algorithms";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {OperationError} from "@lblod/ember-rdfa-editor/utils/errors";
+import Operation from "@lblod/ember-rdfa-editor/core/operations/operation";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import OperationAlgorithms from "@lblod/ember-rdfa-editor/core/operations/operation-algorithms";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import {OperationError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 
 export default class MoveOperation extends Operation {
   private _targetPosition: ModelPosition;

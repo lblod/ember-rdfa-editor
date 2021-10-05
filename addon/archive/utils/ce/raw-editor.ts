@@ -28,9 +28,9 @@ import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selec
 import {walk as walkDomNode} from "@lblod/marawa/node-walker";
 import RichNode from "@lblod/marawa/rich-node";
 import classic from 'ember-classic-decorator';
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
 import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/utils/event-bus";
 import DeleteSelectionCommand from "@lblod/ember-rdfa-editor/commands/delete-selection-command";
@@ -42,7 +42,7 @@ import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selecti
 import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
 import FindNodesCommand from "@lblod/ember-rdfa-editor/commands/find-nodes-command";
 import MatchTextCommand from "@lblod/ember-rdfa-editor/commands/match-text-command";
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
 
 export type WidgetLocation = "toolbar" | "sidebar";
 

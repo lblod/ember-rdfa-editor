@@ -1,9 +1,9 @@
 import {module, test} from "qunit";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import {OutsideRootError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
 
 module("Unit | model | model-node", hooks => {
   const ctx = new ModelTestContext();

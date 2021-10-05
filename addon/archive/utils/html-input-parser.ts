@@ -1,7 +1,7 @@
 import {isElement, isTextNode, tagName} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import DOMPurify from "dompurify";
-import {ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {ParseError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants"
 
 export const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
 export const DEFAULT_LUMP_TAGS = ["table"];

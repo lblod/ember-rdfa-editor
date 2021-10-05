@@ -1,6 +1,6 @@
-import Writer from "@lblod/ember-rdfa-editor/model/writers/writer";
+import Writer from "@lblod/ember-rdfa-editor/core/writers/writer";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
 
 /**
  * Writer responsible for converting {@link ModelText} nodes into HTML subtrees

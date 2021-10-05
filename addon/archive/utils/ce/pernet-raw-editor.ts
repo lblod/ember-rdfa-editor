@@ -38,10 +38,10 @@ import CappedHistory from "@lblod/ember-rdfa-editor/utils/ce/capped-history";
 import RichNode from "@lblod/marawa/rich-node";
 import {tracked} from '@glimmer/tracking';
 import {Editor} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import EventBus, {ContentChangedEvent} from "@lblod/ember-rdfa-editor/utils/event-bus";
 import {Region} from "@lblod/marawa/rdfa-block";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants"
 
 export interface ContentObserver {
   handleTextInsert: (position: number, text: string, extraInfo: Array<unknown>) => void

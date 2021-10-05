@@ -1,18 +1,16 @@
 import {action} from "@ember/object";
 import {inject as service} from '@ember/service';
 import Component from '@glimmer/component';
-import editorProfiles from '../../config/editor-profiles';
 import Editor, {EditorImpl} from "@lblod/ember-rdfa-editor/core/editor";
-import EditorController, {EditorControllerImpl} from "@lblod/ember-rdfa-editor/core/editor-controller";
-import {EditorPlugin} from "@lblod/ember-rdfa-editor/plugins/editor-plugin";
-import {PluginError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {UninitializedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {KeydownEvent} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
 
 interface FeatureService {
   isEnabled(key: string): boolean
 }
 
 interface ContentEditableArgs {
-  editorInit(controller: EditorController): void
+  editorInit(editor: Editor): Promise<void>
 }
 
 /**
@@ -38,6 +36,7 @@ interface ContentEditableArgs {
  */
 export default class ContentEditable extends Component<ContentEditableArgs> {
   @service declare features: FeatureService;
+  _editor: Editor;
 
 
   /**
@@ -69,6 +68,13 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     // this.pasteHandler = new PasteHandler({rawEditor});
   }
 
+  get editor(): Editor {
+    if (!this._editor) {
+      throw new UninitializedError("Tried to access editor before contenteditable component was inserted");
+    }
+    return this._editor;
+  }
+
   /**
    * "didRender" hook: Makes sure the element is focused and calls the rootNodeUpdated action.
    *
@@ -77,51 +83,16 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @action
   async insertedEditorElement(element: HTMLElement) {
     const editor = new EditorImpl(element);
-    const controller = new EditorControllerImpl("host-app", editor);
-    this.args.editorInit(controller);
-    await this.initializePlugins(editor);
+    this._editor = editor;
+    await this.args.editorInit(editor);
   }
 
-  async initializePlugins(editor: Editor) {
-    for (const name of this.getPluginNames()) {
-      const plugin = this.getPlugin(name);
-      const controller = new EditorControllerImpl(name, editor);
-      await plugin.initialize(controller);
-    }
-
+  @action
+  handleKeyDown(event: KeyboardEvent) {
+    event.preventDefault();
+    this.editor.emitEvent(new KeydownEvent(event, "content-editable"));
   }
 
-  getPluginNames(): Set<string> {
-    const profileArrays = new Set<string>();
-    for (const key in editorProfiles) {
-      profileArrays.add(editorProfiles[key]);
-    }
-    return profileArrays;
-
-  }
-
-  getPlugin(name: string): EditorPlugin {
-    let plug = this.getExternalPlugin(name);
-    if (plug) {
-      return plug;
-    }
-
-    plug = this.getCorePlugin(name);
-    if (!plug) {
-      throw new PluginError(`Plugin ${name} not found`);
-    }
-    return plug;
-
-
-  }
-
-  getExternalPlugin(name: string): EditorPlugin | null {
-    return null;
-  }
-
-  getCorePlugin(name: string): EditorPlugin | null {
-    return null;
-  }
 
   // cutHandler: InputHandler;
   // copyHandler: InputHandler;

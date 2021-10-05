@@ -4,7 +4,7 @@ import {warn} from '@ember/debug';
 import RdfaTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/text-input-plugin';
 import AnchorTagTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/anchor-tags/text-input-plugin';
 import PlaceHolderTextInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/text-input-plugin';
-import {MisbehavedSelectionError, UnsupportedManipulationError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {MisbehavedSelectionError, UnsupportedManipulationError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
 

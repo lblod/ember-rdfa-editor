@@ -1,11 +1,11 @@
-import Writer from "@lblod/ember-rdfa-editor/model/writers/writer";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import {getWindowSelection} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
+import Writer from "@lblod/ember-rdfa-editor/core/writers/writer";
+import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import {getWindowSelection} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ArrayUtils from "@lblod/ember-rdfa-editor/util/array-utils";
 
 /**
  * Writer to convert a {@link ModelSelection} to a {@link Selection}

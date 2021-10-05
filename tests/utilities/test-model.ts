@@ -1,6 +1,6 @@
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 
 export default class TestModel extends Model {
   private shouldWriteSelection = true;

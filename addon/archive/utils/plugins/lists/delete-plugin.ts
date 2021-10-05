@@ -21,7 +21,7 @@ import {
   getParentLI,
   isElement,
   unwrapElement,
-} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 import {
   stringToVisibleText,
   hasVisibleChildren,

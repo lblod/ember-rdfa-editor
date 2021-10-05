@@ -1,6 +1,6 @@
-import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import {XmlNodeRegistry} from "@lblod/ember-rdfa-editor/model/readers/xml-reader";
+import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
+import {XmlNodeRegistry} from "@lblod/ember-rdfa-editor/core/readers/xml-reader";
 
 export default class XmlTextReader implements Reader<Element, ModelText, void> {
   constructor(private registry: XmlNodeRegistry<ModelText>) {

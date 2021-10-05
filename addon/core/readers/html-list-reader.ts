@@ -1,9 +1,9 @@
-import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import ModelElement, {ElementType} from "@lblod/ember-rdfa-editor/model/model-element";
-import {isElement, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/model/readers/html-reader";
-import HtmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/html-node-reader";
-import {copyAttributes} from "@lblod/ember-rdfa-editor/model/readers/reader-utils";
+import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
+import ModelElement, {ElementType} from "@lblod/ember-rdfa-editor/core/model/model-element";
+import {isElement, tagName} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/core/readers/html-reader";
+import HtmlNodeReader from "@lblod/ember-rdfa-editor/core/readers/html-node-reader";
+import {copyAttributes} from "@lblod/ember-rdfa-editor/core/readers/reader-utils";
 
 /**
  * Reader for an <ul> or <ol> element.

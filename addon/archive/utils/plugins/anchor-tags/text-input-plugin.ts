@@ -3,7 +3,7 @@ import {
   TextInputPlugin
 } from "@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler";
 import {ManipulationGuidance} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 export default class AnchorTagTextInputPlugin implements TextInputPlugin {

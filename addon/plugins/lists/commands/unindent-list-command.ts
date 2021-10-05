@@ -5,13 +5,13 @@ import {
   MisbehavedSelectionError,
   SelectionError,
   TypeAssertionError
-} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
-import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelRangeUtils from "@lblod/ember-rdfa-editor/util/model-range-utils"
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils"
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 
 export default class UnindentListCommand extends Command {
   name = "unindent-list";

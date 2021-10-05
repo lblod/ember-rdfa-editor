@@ -1,15 +1,15 @@
 import Command from "./command";
 import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import {
   IllegalExecutionStateError,
   MisbehavedSelectionError,
   TypeAssertionError
-} from "@lblod/ember-rdfa-editor/utils/errors";
+} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils"
 
 export default class InsertNewLiCommand extends Command {
   name = "insert-newLi";

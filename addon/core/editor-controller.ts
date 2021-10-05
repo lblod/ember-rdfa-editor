@@ -4,9 +4,11 @@ import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import Editor from "@lblod/ember-rdfa-editor/core/editor";
 
 export default interface EditorController {
-  registerCommand<T extends Command>(command: new (model: EditorModel) => T): void;
+  registerCommand<A extends unknown[], R>(command: new (model: EditorModel) => Command<A, R>): void;
 
-  executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R;
+  canExecuteCommand<A extends unknown[]>(commandName: string, ...args: A): boolean;
+
+  executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void;
 
   onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void;
 
@@ -21,7 +23,12 @@ export class EditorControllerImpl implements EditorController {
     this.editor = editor;
   }
 
-  executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R {
+  canExecuteCommand<A extends unknown[]>(commandName: string, ...args: A): boolean {
+    return this.editor.canExecuteCommand(commandName, ...args);
+
+  }
+
+  executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void {
     return this.editor.executeCommand(this.name, commandName, ...args);
   }
 
@@ -29,7 +36,7 @@ export class EditorControllerImpl implements EditorController {
     this.editor.onEvent(eventName, callback);
   }
 
-  registerCommand<T extends Command>(command: { new(model: EditorModel): T }): void {
+  registerCommand<A extends unknown[], R>(command: { new(model: EditorModel): Command<A, R> }): void {
     this.editor.registerCommand(command);
   }
 
