@@ -1,11 +1,11 @@
 import EventBus, {
   EDITOR_EVENT_MAP,
-  EditorEvent,
   EditorEventListener,
   EditorEventName
 } from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
+import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
 
 export default interface Editor {
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void;
@@ -17,14 +17,19 @@ export default interface Editor {
   registerCommand<A extends unknown[], R>(command: { new(model: EditorModel): Command<A, R> }): void;
 
   canExecuteCommand<A extends unknown[]>(commandName: string, ...args: A): boolean;
+
+  onDestroy(): void;
+
 }
 
 export class EditorImpl implements Editor {
   private model: EditorModel;
+  private tracker: ModelSelectionTracker;
   private registeredCommands: Map<string, Command<unknown[], unknown>> = new Map<string, Command<unknown[], unknown>>();
 
   constructor(rootElement: HTMLElement) {
     this.model = new HtmlModel(rootElement);
+    this.tracker = new ModelSelectionTracker(this.model);
   }
 
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void {
@@ -58,8 +63,12 @@ export class EditorImpl implements Editor {
   canExecuteCommand<A extends unknown[]>(commandName: string, ...args: A): boolean {
     return this.getCommand(commandName).canExecute(...args);
   }
+
   emitEvent<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]) {
     EventBus.emit(event);
+  }
+  onDestroy() {
+    this.model.onDestroy();
   }
 
 }

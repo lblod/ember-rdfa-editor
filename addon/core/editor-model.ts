@@ -9,6 +9,8 @@ import SelectionWriter from "@lblod/ember-rdfa-editor/core/writers/selection-wri
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import HtmlReader from "@lblod/ember-rdfa-editor/core/readers/html-reader";
 import SelectionReader from "@lblod/ember-rdfa-editor/core/readers/selection-reader";
+import EventBus from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
 
 export default interface EditorModel {
   get rootElement(): HTMLElement;
@@ -26,6 +28,8 @@ export default interface EditorModel {
    * @param domNode
    */
   bindNode(modelNode: ModelNode, domNode: Node): void;
+
+  onDestroy(): void;
 }
 
 export class HtmlModel implements EditorModel {
@@ -37,6 +41,7 @@ export class HtmlModel implements EditorModel {
   private nodeMap: WeakMap<Node, ModelNode>;
   private reader: HtmlReader;
   private selectionReader: SelectionReader;
+  private tracker: ModelSelectionTracker;
 
   constructor(rootElement: HTMLElement) {
     this._selection = new ModelSelection();
@@ -46,6 +51,9 @@ export class HtmlModel implements EditorModel {
     this.reader = new HtmlReader(this);
     this.selectionReader = new SelectionReader(this);
     this._rootElement = rootElement;
+    this.tracker = new ModelSelectionTracker(this);
+    this.tracker.startTracking();
+    EventBus.on("selectionChanged", () => this.readSelection());
     this.read();
   }
 
@@ -165,6 +173,10 @@ export class HtmlModel implements EditorModel {
 
   get selection(): ModelSelection {
     return this._selection;
+  }
+
+  onDestroy() {
+    this.tracker.stopTracking();
   }
 
 }

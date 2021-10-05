@@ -3,7 +3,7 @@ import {inject as service} from '@ember/service';
 import Component from '@glimmer/component';
 import Editor, {EditorImpl} from "@lblod/ember-rdfa-editor/core/editor";
 import {UninitializedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import {KeydownEvent} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import {KeydownEvent, SelectionChangedEvent} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
 
 interface FeatureService {
   isEnabled(key: string): boolean
@@ -12,6 +12,7 @@ interface FeatureService {
 interface ContentEditableArgs {
   editorInit(editor: Editor): Promise<void>
 }
+const CE_OWNER = "content-editable";
 
 /**
  * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
@@ -36,7 +37,7 @@ interface ContentEditableArgs {
  */
 export default class ContentEditable extends Component<ContentEditableArgs> {
   @service declare features: FeatureService;
-  _editor: Editor;
+  _editor?: Editor;
 
 
   /**
@@ -44,6 +45,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   constructor(owner: unknown, args: ContentEditableArgs) {
     super(owner, args);
+    document.addEventListener("selectionchange", this.handleSelectionChange);
     // const rawEditor = PernetRawEditor.create({});
     // rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
     //
@@ -90,7 +92,15 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @action
   handleKeyDown(event: KeyboardEvent) {
     event.preventDefault();
-    this.editor.emitEvent(new KeydownEvent(event, "content-editable"));
+    this.editor.emitEvent(new KeydownEvent(event, CE_OWNER));
+  }
+
+  @action
+  handleSelectionChange() {
+    this.editor.emitEvent(new SelectionChangedEvent(CE_OWNER));
+  }
+  willDestroy() {
+    this.editor.onDestroy();
   }
 
 

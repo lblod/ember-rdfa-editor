@@ -1,12 +1,12 @@
-import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
-import EventBus, {SelectionChangedEvent} from "@lblod/ember-rdfa-editor/utils/event-bus";
+import EventBus, {SelectionChangedEvent} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 
 export default class ModelSelectionTracker {
-  model: Model;
+  model: HtmlModel;
 
-  constructor(model: Model) {
+  constructor(model: HtmlModel) {
     this.model = model;
   }
 
@@ -20,8 +20,8 @@ export default class ModelSelectionTracker {
 
   updateSelection = () => {
     const currentSelection = getWindowSelection();
-    if (!this.model.rootNode.contains(currentSelection.anchorNode) || !this.model.rootNode.contains(currentSelection.focusNode) ||
-      (currentSelection.type != 'Caret' && this.model.rootNode === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
+    if (!this.model.rootElement.contains(currentSelection.anchorNode) || !this.model.rootElement.contains(currentSelection.focusNode) ||
+      (currentSelection.type != 'Caret' && this.model.rootElement === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
       // this.model.selection.clearRanges();
       return;
     }
