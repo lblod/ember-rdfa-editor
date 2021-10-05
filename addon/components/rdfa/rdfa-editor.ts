@@ -7,13 +7,16 @@ import {action} from "@ember/object";
 import EditorController, {EditorControllerImpl} from "@lblod/ember-rdfa-editor/core/editor-controller";
 import {PluginError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import TypingPlugin from "@lblod/ember-rdfa-editor/plugins/typing/typing-plugin";
+import TextStylesPlugin from "@lblod/ember-rdfa-editor/plugins/text-styles/text-styles-plugin";
 
 // interface DebugInfo {
 //   hintsRegistry: HintsRegistry
 //   editor: Editor
 // }
 const CORE_PLUGINS = new Map<string, EditorPlugin>(
-  [["typing", new TypingPlugin()]]
+  [["typing", new TypingPlugin()]
+    , ["text-styles", new TextStylesPlugin()]
+  ]
 );
 
 interface RdfaEditorArgs {
@@ -103,7 +106,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   // TODO: implement
   async getPluginsFromProfile(profile: string): Promise<EditorPlugin[]> {
-    const pluginNames = ["typing"];
+    const pluginNames = ["typing", "text-styles"];
     const plugins = [];
     for (const name of pluginNames) {
       plugins.push(await this.getPlugin(name));
@@ -131,7 +134,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     return null;
   }
 
-  getCorePlugin(name: string): EditorPlugin | null{
+  getCorePlugin(name: string): EditorPlugin | null {
     const plugin = CORE_PLUGINS.get(name);
     if (!plugin) {
       return null;

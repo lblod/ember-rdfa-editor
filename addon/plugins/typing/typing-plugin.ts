@@ -17,7 +17,6 @@ export default class TypingPlugin implements EditorPlugin {
   }
 
   handleKeydown = (event: KeydownEvent) => {
-    console.log("event being handled")
     this.controller.executeCommand("insert-text", event.payload.key);
   };
 

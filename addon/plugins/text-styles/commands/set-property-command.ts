@@ -1,10 +1,10 @@
-import Command from "../command";
-import Model from "@lblod/ember-rdfa-editor/model/model";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import Command from "@lblod/ember-rdfa-editor/core/command";
+import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 
-export default abstract class SetPropertyCommand extends Command {
-  constructor(model: Model) {
+export default abstract class SetPropertyCommand<A extends unknown[]> extends Command<A, void> {
+  constructor(model: EditorModel) {
     super(model);
   }
 
@@ -20,8 +20,8 @@ export default abstract class SetPropertyCommand extends Command {
 
     this.model.change(executedBy, mutator => {
       const resultRange = mutator.setTextProperty(range, property, value);
-      if(affectSelection) {
-        this.model.selectRange(resultRange);
+      if (affectSelection) {
+        this.model.selection.selectRange(resultRange);
       }
     });
   }
