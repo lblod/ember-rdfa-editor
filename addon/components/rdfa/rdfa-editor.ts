@@ -5,9 +5,10 @@ import {EditorPlugin} from "@lblod/ember-rdfa-editor/plugins/editor-plugin";
 import Editor from "@lblod/ember-rdfa-editor/core/editor";
 import {action} from "@ember/object";
 import EditorController, {EditorControllerImpl} from "@lblod/ember-rdfa-editor/core/editor-controller";
-import {PluginError, UninitializedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {PluginError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import ApplicationInstance from "@ember/application/instance";
-import { tracked } from "@glimmer/tracking";
+import {tracked} from "@glimmer/tracking";
+import {WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 
 // interface DebugInfo {
 //   hintsRegistry: HintsRegistry
@@ -92,26 +93,29 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   get editor() {
     return this._editor;
   }
+
   get hostController() {
     return this._hostController;
   }
 
-  get toolbarWidgets(): string[] {
-    return this._editor.widgetMap.get("toolbar").map(spec => spec.componentName);
+  get toolbarWidgets(): WidgetSpec[] {
+    // warning: this is not tracked
+    return this._editor?.widgetMap.get("toolbar") || [];
   }
 
   @action
   async editorInit(editor: Editor) {
+    // order is important here, initialize first before assigning
+    await this.initialize(editor);
     const controller = new EditorControllerImpl("host-app", editor);
     this._hostController = controller;
-    await this.initialize(editor);
     this.args.rdfaEditorInit(controller);
+    this._editor = editor;
 
   }
 
   async initialize(editor: Editor) {
 
-    this._editor = editor;
     const plugins = await this.getPluginsFromProfile(this.profile);
     for (const plugin of plugins) {
       console.log("INITIALIZING", plugin.name);
@@ -151,7 +155,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   }
 
   getCorePlugin(name: string): EditorPlugin | null {
-    const plugin = this.owner.lookup(`plugin:${name}`);
+    const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
     if (!plugin) {
       return null;
     }

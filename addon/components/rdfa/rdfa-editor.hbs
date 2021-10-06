@@ -12,7 +12,7 @@
       {{/if}}
 
       {{#each this.toolbarWidgets as |widget|}}
-        {{component widget editor=this.editor}}
+        {{component widget.componentName controller=widget.controller}}
       {{/each}}
     </Rdfa::EditorToolbar>
   {{/if}}

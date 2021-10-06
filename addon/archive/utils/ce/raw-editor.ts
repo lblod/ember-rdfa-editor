@@ -43,6 +43,7 @@ import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
 import FindNodesCommand from "@lblod/ember-rdfa-editor/commands/find-nodes-command";
 import MatchTextCommand from "@lblod/ember-rdfa-editor/commands/match-text-command";
 import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
+import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 
 export type WidgetLocation = "toolbar" | "sidebar";
 
@@ -51,6 +52,7 @@ export interface WidgetSpec {
   componentName: string;
   desiredLocation: WidgetLocation;
 }
+export type InternalWidgetSpec = WidgetSpec & {controller: EditorController};
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.

@@ -2,7 +2,7 @@ import Command from "@lblod/ember-rdfa-editor/core/command";
 import {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import Editor from "@lblod/ember-rdfa-editor/core/editor";
-import {WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
+import {InternalWidgetSpec, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 
 export default interface EditorController {
   registerCommand<A extends unknown[], R>(command: new (model: EditorModel) => Command<A, R>): void;
@@ -44,7 +44,8 @@ export class EditorControllerImpl implements EditorController {
   }
 
   registerWidget(widget: WidgetSpec): void {
-    this.editor.registerWidget(widget);
+    const internalSpec: InternalWidgetSpec = {...widget, controller: this};
+    this.editor.registerWidget(internalSpec);
 
   }
 

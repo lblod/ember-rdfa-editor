@@ -6,7 +6,7 @@ interface BoldButtonArgs {
   controller: EditorController
 }
 
-export default class BoldButton extends Component<BoldButtonArgs> {
+export default class TextStylesBoldButtonComponent extends Component<BoldButtonArgs> {
   @action
   makeBold() {
     this.args.controller.executeCommand("make-bold");

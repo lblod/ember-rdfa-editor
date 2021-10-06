@@ -16,7 +16,7 @@ export default class TextStylesPlugin implements EditorPlugin {
     // controller.registerCommand(RemoveBoldCommand);
     controller.registerWidget({
       desiredLocation: "toolbar",
-      componentName: "bold-button",
+      componentName: "text-styles-bold-button",
       identifier: "text-styles-bold-button"
     });
 

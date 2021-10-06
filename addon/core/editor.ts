@@ -5,7 +5,7 @@ import EventBus, {
 } from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
-import {WidgetLocation, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
+import {InternalWidgetSpec, WidgetLocation, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 
 export default interface Editor {
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void;
@@ -20,7 +20,7 @@ export default interface Editor {
 
   onDestroy(): void;
 
-  registerWidget(widget: WidgetSpec): void;
+  registerWidget(widget: InternalWidgetSpec): void;
 
   get widgetMap(): Map<WidgetLocation, WidgetSpec[]>;
 }
@@ -28,7 +28,7 @@ export default interface Editor {
 export class EditorImpl implements Editor {
   private model: EditorModel;
   private registeredCommands: Map<string, Command<unknown[], unknown>> = new Map<string, Command<unknown[], unknown>>();
-  private _widgetMap: Map<WidgetLocation, WidgetSpec[]> = new Map<WidgetLocation, WidgetSpec[]>(
+  private _widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<WidgetLocation, InternalWidgetSpec[]>(
     [["toolbar", []], ["sidebar", []]]
   );
 
@@ -80,7 +80,7 @@ export class EditorImpl implements Editor {
     this.model.onDestroy();
   }
 
-  registerWidget(widget: WidgetSpec): void {
+  registerWidget(widget: InternalWidgetSpec): void {
     this._widgetMap.get(widget.desiredLocation)!.push(widget);
   }
 
