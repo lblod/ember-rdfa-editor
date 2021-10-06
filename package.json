@@ -138,7 +138,11 @@
     "edition": "octane"
   },
   "ember-addon": {
-    "configPath": "tests/dummy/config"
+    "configPath": "tests/dummy/config",
+    "paths": [
+      "lib/text-styles-plugin",
+      "lib/typing-plugin"
+    ]
   },
   "browserslist": [
     "last 1 Chrome version",

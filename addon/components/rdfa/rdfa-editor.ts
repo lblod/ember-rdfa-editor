@@ -5,19 +5,14 @@ import {EditorPlugin} from "@lblod/ember-rdfa-editor/plugins/editor-plugin";
 import Editor from "@lblod/ember-rdfa-editor/core/editor";
 import {action} from "@ember/object";
 import EditorController, {EditorControllerImpl} from "@lblod/ember-rdfa-editor/core/editor-controller";
-import {PluginError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import TypingPlugin from "@lblod/ember-rdfa-editor/plugins/typing/typing-plugin";
-import TextStylesPlugin from "@lblod/ember-rdfa-editor/plugins/text-styles/text-styles-plugin";
+import {PluginError, UninitializedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ApplicationInstance from "@ember/application/instance";
+import { tracked } from "@glimmer/tracking";
 
 // interface DebugInfo {
 //   hintsRegistry: HintsRegistry
 //   editor: Editor
 // }
-const CORE_PLUGINS = new Map<string, EditorPlugin>(
-  [["typing", new TypingPlugin()]
-    , ["text-styles", new TextStylesPlugin()]
-  ]
-);
 
 interface RdfaEditorArgs {
   /**
@@ -73,10 +68,18 @@ interface SuggestedHint {
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @service declare intl: IntlService;
   activePlugins: EditorPlugin[] = [];
+  owner: ApplicationInstance;
+  @tracked
+  showRdfaBlocks = false;
+  @tracked
+  _editor?: Editor;
+  @tracked
+  _hostController?: EditorController;
 
 
-  constructor(owner: unknown, args: RdfaEditorArgs) {
+  constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
+    this.owner = owner;
     const userLocale = (navigator.language || navigator.languages[0]);
     this.intl.setLocale([userLocale, 'nl-BE']);
   }
@@ -86,9 +89,21 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     return this.args.profile || "default";
   }
 
+  get editor() {
+    return this._editor;
+  }
+  get hostController() {
+    return this._hostController;
+  }
+
+  get toolbarWidgets(): string[] {
+    return this._editor.widgetMap.get("toolbar").map(spec => spec.componentName);
+  }
+
   @action
   async editorInit(editor: Editor) {
     const controller = new EditorControllerImpl("host-app", editor);
+    this._hostController = controller;
     await this.initialize(editor);
     this.args.rdfaEditorInit(controller);
 
@@ -96,9 +111,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   async initialize(editor: Editor) {
 
+    this._editor = editor;
     const plugins = await this.getPluginsFromProfile(this.profile);
     for (const plugin of plugins) {
-      console.log("INITIALIZING", plugin.name)
+      console.log("INITIALIZING", plugin.name);
       await this.initializePlugin(plugin, editor);
     }
 
@@ -135,7 +151,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   }
 
   getCorePlugin(name: string): EditorPlugin | null {
-    const plugin = CORE_PLUGINS.get(name);
+    const plugin = this.owner.lookup(`plugin:${name}`);
     if (!plugin) {
       return null;
     }
@@ -323,11 +339,11 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   // // Toggle RDFA blocks
   // @tracked showRdfaBlocks = false;
   //
-  // @action
-  // toggleRdfaBlocks() {
-  //   this.showRdfaBlocks = !this.showRdfaBlocks;
-  //   if (this.editor?.model) {
-  //     this.editor.model.writeSelection();
-  //   }
-  // }
+  @action
+  toggleRdfaBlocks() {
+    this.showRdfaBlocks = !this.showRdfaBlocks;
+    // if (this.editor?.model) {
+    //   this.editor.model.writeSelection();
+    // }
+  }
 }

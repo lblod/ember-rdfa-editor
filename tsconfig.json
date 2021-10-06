@@ -20,7 +20,13 @@
     "baseUrl": ".",
     "module": "es6",
     "experimentalDecorators": true,
-    "lib": ["ES2017", "ES2019.Object", "ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2017",
+      "ES2019.Object",
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "paths": {
       "dummy/tests/*": [
         "tests/*"
@@ -28,7 +34,9 @@
       "dummy/*": [
         "tests/dummy/app/*",
         "app/*",
-        "lib/plugin-system-dispatcher/app/*"
+        "lib/plugin-system-dispatcher/app/*",
+        "lib/text-styles-plugin/app/*",
+        "lib/typing-plugin/app/*"
       ],
       "@lblod/ember-rdfa-editor": [
         "addon"
@@ -56,6 +64,30 @@
       ],
       "*": [
         "types/*"
+      ],
+      "text-styles-plugin": [
+        "lib/text-styles-plugin/addon"
+      ],
+      "text-styles-plugin/*": [
+        "lib/text-styles-plugin/addon/*"
+      ],
+      "text-styles-plugin/test-support": [
+        "lib/text-styles-plugin/addon-test-support"
+      ],
+      "text-styles-plugin/test-support/*": [
+        "lib/text-styles-plugin/addon-test-support/*"
+      ],
+      "typing-plugin": [
+        "lib/typing-plugin/addon"
+      ],
+      "typing-plugin/*": [
+        "lib/typing-plugin/addon/*"
+      ],
+      "typing-plugin/test-support": [
+        "lib/typing-plugin/addon-test-support"
+      ],
+      "typing-plugin/test-support/*": [
+        "lib/typing-plugin/addon-test-support/*"
       ]
     }
   },
@@ -66,6 +98,8 @@
     "types/**/*",
     "lib/plugin-system-dispatcher/**/*",
     "test-support/**/*",
-    "addon-test-support/**/*"
+    "addon-test-support/**/*",
+    "lib/text-styles-plugin",
+    "lib/typing-plugin"
   ]
 }

@@ -44,6 +44,7 @@ export class EditorControllerImpl implements EditorController {
   }
 
   registerWidget(widget: WidgetSpec): void {
+    this.editor.registerWidget(widget);
 
   }
 

@@ -1,7 +1,7 @@
 <div class="say-container {{if @editorOptions.showRdfaHover "say-container--sidebar-left" }}" {{did-update this.updateProfile @profile}}>
-  {{#if this.editor}}
+  {{#if this.hostController}}
     <Rdfa::EditorToolbar
-      @editor={{this.editor}}
+      @controller={{this.hostController}}
       @showTextStyleButtons="{{if @toolbarOptions.showTextStyleButtons "true"}}" @showListButtons="{{if @toolbarOptions.showListButtons "true"}}"
       @showIndentButtons="{{if @toolbarOptions.showIndentButtons "true"}}">
       {{#if @editorOptions.showToggleRdfaAnnotations}}
@@ -11,7 +11,7 @@
       </div>
       {{/if}}
 
-      {{#each this.editor.toolbarWidgets as |widget|}}
+      {{#each this.toolbarWidgets as |widget|}}
         {{component widget editor=this.editor}}
       {{/each}}
     </Rdfa::EditorToolbar>

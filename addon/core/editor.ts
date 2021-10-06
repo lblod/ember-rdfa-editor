@@ -5,7 +5,7 @@ import EventBus, {
 } from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
-import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
+import {WidgetLocation, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 
 export default interface Editor {
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void;
@@ -20,16 +20,24 @@ export default interface Editor {
 
   onDestroy(): void;
 
+  registerWidget(widget: WidgetSpec): void;
+
+  get widgetMap(): Map<WidgetLocation, WidgetSpec[]>;
 }
 
 export class EditorImpl implements Editor {
   private model: EditorModel;
-  private tracker: ModelSelectionTracker;
   private registeredCommands: Map<string, Command<unknown[], unknown>> = new Map<string, Command<unknown[], unknown>>();
+  private _widgetMap: Map<WidgetLocation, WidgetSpec[]> = new Map<WidgetLocation, WidgetSpec[]>(
+    [["toolbar", []], ["sidebar", []]]
+  );
 
   constructor(rootElement: HTMLElement) {
     this.model = new HtmlModel(rootElement);
-    this.tracker = new ModelSelectionTracker(this.model);
+  }
+
+  get widgetMap() {
+    return this._widgetMap;
   }
 
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void {
@@ -67,8 +75,13 @@ export class EditorImpl implements Editor {
   emitEvent<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]) {
     EventBus.emit(event);
   }
+
   onDestroy() {
     this.model.onDestroy();
+  }
+
+  registerWidget(widget: WidgetSpec): void {
+    this._widgetMap.get(widget.desiredLocation)!.push(widget);
   }
 
 }

@@ -1,0 +1,11 @@
+{
+  "name": "text-styles-plugin",
+  "keywords": [
+    "ember-addon"
+  ],
+  "dependencies": {
+    "ember-cli-babel": "*",
+    "ember-cli-htmlbars": "^5.2.0",
+    "ember-cli-typescript": "^4.2.1"
+  }
+}
