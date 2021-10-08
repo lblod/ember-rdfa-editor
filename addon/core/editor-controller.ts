@@ -46,7 +46,6 @@ export class EditorControllerImpl implements EditorController {
   registerWidget(widget: WidgetSpec): void {
     const internalSpec: InternalWidgetSpec = {...widget, controller: this};
     this.editor.registerWidget(internalSpec);
-
   }
 
 }

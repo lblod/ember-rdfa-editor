@@ -1,11 +1,9 @@
-import SetPropertyCommand from "@lblod/ember-rdfa-editor/commands/text-properties/set-property-command";
-import { logExecute } from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import SetPropertyCommand from "text-styles-plugin/commands/set-property-command";
 
-export default class RemoveBoldCommand extends SetPropertyCommand {
+export default class RemoveBoldCommand extends SetPropertyCommand<[ModelSelection]> {
   name = "remove-bold";
 
-  @logExecute
   execute(executedBy: string, selection: ModelSelection = this.model.selection) {
     super.setProperty(executedBy, "bold", false, selection);
   }

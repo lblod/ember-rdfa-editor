@@ -1,7 +1,7 @@
 import {inject as service} from "@ember/service";
 import Component from '@glimmer/component';
 import type IntlService from 'ember-intl/services/intl';
-import {EditorPlugin} from "@lblod/ember-rdfa-editor/plugins/editor-plugin";
+import {EditorPlugin} from "@lblod/ember-rdfa-editor/core/editor-plugin";
 import Editor from "@lblod/ember-rdfa-editor/core/editor";
 import {action} from "@ember/object";
 import EditorController, {EditorControllerImpl} from "@lblod/ember-rdfa-editor/core/editor-controller";
@@ -126,7 +126,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   // TODO: implement
   async getPluginsFromProfile(profile: string): Promise<EditorPlugin[]> {
-    const pluginNames = ["typing", "text-styles"];
+    const pluginNames = ["content-control", "deletion", "history", "lists", "searching", "tables", "text-styles", "typing"];
     const plugins = [];
     for (const name of pluginNames) {
       plugins.push(await this.getPlugin(name));

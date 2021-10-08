@@ -36,7 +36,13 @@
         "app/*",
         "lib/plugin-system-dispatcher/app/*",
         "lib/text-styles-plugin/app/*",
-        "lib/typing-plugin/app/*"
+        "lib/typing-plugin/app/*",
+        "lib/content-control-plugin/app/*",
+        "lib/tables-plugin/app/*",
+        "lib/searching-plugin/app/*",
+        "lib/lists-plugin/app/*",
+        "lib/history-plugin/app/*",
+        "lib/deletion-plugin/app/*"
       ],
       "@lblod/ember-rdfa-editor": [
         "addon"
@@ -88,6 +94,78 @@
       ],
       "typing-plugin/test-support/*": [
         "lib/typing-plugin/addon-test-support/*"
+      ],
+      "content-control-plugin": [
+        "lib/content-control-plugin/addon"
+      ],
+      "content-control-plugin/*": [
+        "lib/content-control-plugin/addon/*"
+      ],
+      "content-control-plugin/test-support": [
+        "lib/content-control-plugin/addon-test-support"
+      ],
+      "content-control-plugin/test-support/*": [
+        "lib/content-control-plugin/addon-test-support/*"
+      ],
+      "tables-plugin": [
+        "lib/tables-plugin/addon"
+      ],
+      "tables-plugin/*": [
+        "lib/tables-plugin/addon/*"
+      ],
+      "tables-plugin/test-support": [
+        "lib/tables-plugin/addon-test-support"
+      ],
+      "tables-plugin/test-support/*": [
+        "lib/tables-plugin/addon-test-support/*"
+      ],
+      "searching-plugin": [
+        "lib/searching-plugin/addon"
+      ],
+      "searching-plugin/*": [
+        "lib/searching-plugin/addon/*"
+      ],
+      "searching-plugin/test-support": [
+        "lib/searching-plugin/addon-test-support"
+      ],
+      "searching-plugin/test-support/*": [
+        "lib/searching-plugin/addon-test-support/*"
+      ],
+      "lists-plugin": [
+        "lib/lists-plugin/addon"
+      ],
+      "lists-plugin/*": [
+        "lib/lists-plugin/addon/*"
+      ],
+      "lists-plugin/test-support": [
+        "lib/lists-plugin/addon-test-support"
+      ],
+      "lists-plugin/test-support/*": [
+        "lib/lists-plugin/addon-test-support/*"
+      ],
+      "history-plugin": [
+        "lib/history-plugin/addon"
+      ],
+      "history-plugin/*": [
+        "lib/history-plugin/addon/*"
+      ],
+      "history-plugin/test-support": [
+        "lib/history-plugin/addon-test-support"
+      ],
+      "history-plugin/test-support/*": [
+        "lib/history-plugin/addon-test-support/*"
+      ],
+      "deletion-plugin": [
+        "lib/deletion-plugin/addon"
+      ],
+      "deletion-plugin/*": [
+        "lib/deletion-plugin/addon/*"
+      ],
+      "deletion-plugin/test-support": [
+        "lib/deletion-plugin/addon-test-support"
+      ],
+      "deletion-plugin/test-support/*": [
+        "lib/deletion-plugin/addon-test-support/*"
       ]
     }
   },
@@ -100,6 +178,12 @@
     "test-support/**/*",
     "addon-test-support/**/*",
     "lib/text-styles-plugin",
-    "lib/typing-plugin"
+    "lib/typing-plugin",
+    "lib/content-control-plugin",
+    "lib/tables-plugin",
+    "lib/searching-plugin",
+    "lib/lists-plugin",
+    "lib/history-plugin",
+    "lib/deletion-plugin"
   ]
 }

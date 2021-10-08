@@ -1,4 +1,4 @@
-import {EditorPlugin} from "@lblod/ember-rdfa-editor/plugins/editor-plugin";
+import {EditorPlugin} from "@lblod/ember-rdfa-editor/core/editor-plugin";
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 import InsertTextCommand from "./commands/insert-text-command";
 import {KeydownEvent} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";

@@ -1,11 +1,9 @@
-import SetPropertyCommand from "@lblod/ember-rdfa-editor/commands/text-properties/set-property-command";
-import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import SetPropertyCommand from "text-styles-plugin/commands/set-property-command";
 
-export default class MakeUnderlineCommand extends SetPropertyCommand{
+export default class MakeUnderlineCommand extends SetPropertyCommand<[ModelSelection]> {
   name = 'make-underline';
 
-  @logExecute
   execute(executedBy: string, selection: ModelSelection = this.model.selection) {
     super.setProperty(executedBy, "underline", true, selection);
   }
