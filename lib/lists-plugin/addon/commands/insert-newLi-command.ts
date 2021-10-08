@@ -8,7 +8,7 @@ import {
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
-import {ModelMutator} from "@lblod/ember-rdfa-editor/core/mutators/model-mutator";
+import {Mutator} from "@lblod/ember-rdfa-editor/core/mutator";
 
 export default class InsertNewLiCommand extends Command<[ModelRange], void> {
   name = "insert-newLi";
@@ -55,7 +55,7 @@ export default class InsertNewLiCommand extends Command<[ModelRange], void> {
     });
   }
 
-  private insertLi(mutator: ModelMutator, position: ModelPosition) {
+  private insertLi(mutator: Mutator, position: ModelPosition) {
     const newPosition = mutator.splitUntil(position, ModelNodeUtils.isListContainer, true);
     const liNode = newPosition.nodeAfter();
 

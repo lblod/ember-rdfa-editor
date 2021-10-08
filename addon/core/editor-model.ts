@@ -1,5 +1,5 @@
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
-import {ModelMutator} from "@lblod/ember-rdfa-editor/core/mutators/model-mutator";
+import {Mutator} from "@lblod/ember-rdfa-editor/core/mutator";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/core/mutators/immediate-model-mutator";
 import {getWindowSelection, isElement} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
@@ -11,13 +11,22 @@ import HtmlReader from "@lblod/ember-rdfa-editor/core/readers/html-reader";
 import SelectionReader from "@lblod/ember-rdfa-editor/core/readers/selection-reader";
 import EventBus from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
+import Inspector, {ModelInspector} from "@lblod/ember-rdfa-editor/core/inspector";
 
-export default interface EditorModel {
-  get rootElement(): HTMLElement;
+
+export interface ImmutableModel {
+  query(source: string, callback: (inspector: Inspector) => void): void;
+}
+
+export interface MutableModel extends ImmutableModel {
+  change(source: string, callback: (mutator: Mutator, inspector: Inspector) => (ModelElement | void), writeBack?: boolean): void;
 
   get selection(): ModelSelection;
+}
 
-  change(source: string, callback: (mutator: ModelMutator) => ModelElement | void): void;
+export default interface EditorModel extends MutableModel {
+  get rootElement(): HTMLElement;
+
 
   getModelNodeFor(resultingNode: Node): ModelNode;
 
@@ -48,7 +57,7 @@ export class HtmlModel implements EditorModel {
     this.writer = new HtmlWriter(this);
     this.selectionWriter = new SelectionWriter();
     this.nodeMap = new WeakMap<Node, ModelNode>();
-    this.reader = new HtmlReader(this);
+    this.reader = new HtmlReader();
     this.selectionReader = new SelectionReader(this);
     this._rootElement = rootElement;
     this.tracker = new ModelSelectionTracker(this);
@@ -73,9 +82,10 @@ export class HtmlModel implements EditorModel {
     this.read();
   }
 
-  change(source: string, callback: (mutator: ModelMutator) => (ModelElement | void), writeBack = true): void {
+  change(source: string, callback: (mutator: Mutator, inspector: Inspector) => (ModelElement | void), writeBack = true): void {
     const mutator = new ImmediateModelMutator();
-    const subTree = callback(mutator);
+    const inspector = new ModelInspector();
+    const subTree = callback(mutator, inspector);
 
     if (writeBack) {
       if (subTree) {
@@ -90,7 +100,7 @@ export class HtmlModel implements EditorModel {
    * Read in the document and build up the model.
    */
   private read(readSelection = true) {
-    const parsedNodes = this.reader.read(this.rootElement);
+    const {rootNodes: parsedNodes, nodeMap} = this.reader.read(this.rootElement);
     if (parsedNodes.length !== 1) {
       throw new Error("Could not create a rich root");
     }
@@ -102,10 +112,19 @@ export class HtmlModel implements EditorModel {
 
     this._rootModelNode = newRoot;
     this.bindNode(this.rootModelNode, this.rootElement);
+    this.mergeNodeMap(nodeMap);
 
     // This is essential, we change the root so we need to make sure the selection uses the new root.
     if (readSelection) {
       this.readSelection();
+    }
+  }
+
+  private mergeNodeMap(otherMap: Map<Node, ModelNode>) {
+    for (const [node, modelNode] of otherMap.entries()) {
+      // TODO investigate if delete is necessary
+      this.nodeMap.delete(node);
+      this.nodeMap.set(node, modelNode);
     }
   }
 
@@ -177,6 +196,11 @@ export class HtmlModel implements EditorModel {
 
   onDestroy() {
     this.tracker.stopTracking();
+  }
+
+  query(source: string, callback: (inspector: Inspector) => void): void {
+    const inspector = new ModelInspector();
+    callback(inspector);
   }
 
 }

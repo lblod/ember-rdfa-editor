@@ -1,4 +1,4 @@
-import {ModelMutator} from "@lblod/ember-rdfa-editor/core/mutators/model-mutator";
+import {Mutator} from "@lblod/ember-rdfa-editor/core/mutator";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import InsertOperation from "@lblod/ember-rdfa-editor/core/operations/insert-operation";
@@ -12,12 +12,12 @@ import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-opera
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
 /**
- * {@link ModelMutator} implementation where all operations immediately
+ * {@link Mutator} implementation where all operations immediately
  * execute. This means that sequential invocation of multiple
  * methods behave in a natural way, where each invocation can depend
  * on the modified state after the previous.
  */
-export default class ImmediateModelMutator implements ModelMutator {
+export default class ImmediateModelMutator implements Mutator {
   /**
    * @inheritDoc
    * @param range

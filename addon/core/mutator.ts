@@ -4,7 +4,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
-export interface ModelMutator {
+export interface Mutator {
   /**
    * @inheritDoc
    * @param range

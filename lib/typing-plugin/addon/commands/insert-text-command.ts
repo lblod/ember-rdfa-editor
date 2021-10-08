@@ -3,7 +3,7 @@ import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import {NON_BREAKING_SPACE, SPACE} from "@lblod/ember-rdfa-editor/util/constants";
-import {ModelMutator} from "@lblod/ember-rdfa-editor/core/mutators/model-mutator";
+import {Mutator} from "@lblod/ember-rdfa-editor/core/mutator";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
 export default class InsertTextCommand extends Command<[string, ModelRange | null], void> {
@@ -18,7 +18,7 @@ export default class InsertTextCommand extends Command<[string, ModelRange | nul
       throw new MisbehavedSelectionError();
     }
 
-    this.model.change(source, (mutator: ModelMutator): ModelElement | void => {
+    this.model.change(source, (mutator: Mutator): ModelElement | void => {
       if (text.charAt(0) === SPACE) {
         const charBefore = range.start.charactersBefore(1);
         if (charBefore === SPACE) {

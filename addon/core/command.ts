@@ -1,4 +1,4 @@
-import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
+import {MutableModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 
 /**
  * Commands are the only things that are allowed to modify the model.
@@ -8,12 +8,10 @@ import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
  */
 export default abstract class Command<A extends unknown[], R> {
   abstract name: string;
-  protected model: EditorModel;
-  createSnapshot: boolean;
+  protected model: MutableModel;
 
-  protected constructor(model: EditorModel, createSnapshot = true) {
+  protected constructor(model: MutableModel) {
     this.model = model;
-    this.createSnapshot = createSnapshot;
   }
 
   canExecute(..._args: A): boolean {
