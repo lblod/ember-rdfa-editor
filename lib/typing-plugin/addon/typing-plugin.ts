@@ -23,8 +23,9 @@ export default class TypingPlugin implements EditorPlugin {
 
   handleKeydown = (event: KeydownEvent) => {
     if (this.isHandlerFor(event.payload)) {
-      this.handleAnchors(event.payload.key);
-      this.controller.executeCommand("insert-text", event.payload.key);
+      if(!this.handleAnchors(event.payload.key)) {
+        this.controller.executeCommand("insert-text", event.payload.key);
+      }
     }
   };
 
@@ -39,7 +40,7 @@ export default class TypingPlugin implements EditorPlugin {
 
   // TODO just a quick and dirty conversion, we might wanna come up with a more
   // structured approach
-  handleAnchors(content: string) {
+  handleAnchors(content: string): boolean {
     const clonedRange = this.controller.selection.lastRange?.clone();
     if (clonedRange) {
       const collapsed = clonedRange.collapsed;
@@ -63,9 +64,11 @@ export default class TypingPlugin implements EditorPlugin {
       }
       if (anyAnchors) {
         this.controller.executeCommand("insert-text", content, clonedRange);
+        return true;
       }
 
     }
+    return false;
 
   }
 
