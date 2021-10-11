@@ -8,7 +8,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
-import SimplifiedModel from "@lblod/ember-rdfa-editor/core/model/simplified-model";
+import SimplifiedModel from "@lblod/ember-rdfa-editor/core/simplified-model";
 
 /**
  * The core purpose of this command is to return a valid html structure that best represents
@@ -20,7 +20,7 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
   protected deleteSelection: boolean;
 
   protected constructor(model: EditorModel, createSnapshot: boolean) {
-    super(model, createSnapshot);
+    super(model);
     this.deleteSelection = createSnapshot;
   }
 

@@ -12,18 +12,27 @@ import SelectionReader from "@lblod/ember-rdfa-editor/core/readers/selection-rea
 import EventBus from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
 import Inspector, {ModelInspector} from "@lblod/ember-rdfa-editor/core/inspector";
+import SimplifiedModel from "@lblod/ember-rdfa-editor/core/simplified-model";
+import ModelHistory from "@lblod/ember-rdfa-editor/core/model/model-history";
 
 
 export interface ImmutableModel {
   query(source: string, callback: (inspector: Inspector) => void): void;
 
   toXml(): Node;
+
+  createSnapshot(): SimplifiedModel;
 }
 
 export interface MutableModel extends ImmutableModel {
   change(source: string, callback: (mutator: Mutator, inspector: Inspector) => (ModelElement | void), writeBack?: boolean): void;
 
   get selection(): ModelSelection;
+
+  restoreSnapshot(source: string, snapshot: SimplifiedModel, writeBack?: boolean): void;
+
+  saveSnapshot(): void;
+
 }
 
 export default interface EditorModel extends MutableModel {
@@ -53,6 +62,7 @@ export class HtmlModel implements EditorModel {
   private reader: HtmlReader;
   private selectionReader: SelectionReader;
   private tracker: ModelSelectionTracker;
+  private history: ModelHistory;
 
   constructor(rootElement: HTMLElement) {
     this._selection = new ModelSelection();
@@ -63,6 +73,7 @@ export class HtmlModel implements EditorModel {
     this.selectionReader = new SelectionReader(this);
     this._rootElement = rootElement;
     this.tracker = new ModelSelectionTracker(this);
+    this.history = new ModelHistory();
     this.tracker.startTracking();
     EventBus.on("selectionChanged", () => this.readSelection());
     this.read();
@@ -134,7 +145,7 @@ export class HtmlModel implements EditorModel {
     this._selection = this.selectionReader.read(domSelection);
   }
 
-  protected write(source: string, tree: ModelElement, writeSelection = true) {
+  protected write(source: string, tree: ModelElement = this.rootModelNode, writeSelection = true) {
     const modelWriteEvent = new CustomEvent("editorModelWrite");
     document.dispatchEvent(modelWriteEvent);
 
@@ -209,4 +220,28 @@ export class HtmlModel implements EditorModel {
     return this.rootModelNode.toXml();
   }
 
+  createSnapshot(): SimplifiedModel {
+    const rootModelNode = this.rootModelNode.clone();
+    const modelSelection = this.selection.clone(rootModelNode);
+
+    return new SimplifiedModel(rootModelNode, modelSelection);
+  }
+
+  restoreSnapshot(executedBy: string, snapshot: SimplifiedModel | undefined = this.history.pop(), writeBack = true) {
+    if (snapshot) {
+      this._rootModelNode = snapshot.rootModelNode;
+      this._selection = snapshot.modelSelection;
+
+      if (writeBack) {
+        this.write(executedBy);
+      }
+    } else {
+      console.warn("No snapshot to restore");
+    }
+  }
+
+  saveSnapshot(): void {
+    const snapshot = this.createSnapshot();
+    this.history.push(snapshot);
+  }
 }
