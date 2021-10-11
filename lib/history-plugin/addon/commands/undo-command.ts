@@ -5,7 +5,7 @@ export default class UndoCommand extends Command<[], void> {
   name = "undo";
 
   constructor(model: EditorModel) {
-    super(model, false);
+    super(model);
   }
 
   execute(executedBy: string,): void {

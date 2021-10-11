@@ -6,6 +6,7 @@ import EventBus, {
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import {InternalWidgetSpec, WidgetLocation, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
 export default interface Editor {
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void;
@@ -23,6 +24,10 @@ export default interface Editor {
   registerWidget(widget: InternalWidgetSpec): void;
 
   get widgetMap(): Map<WidgetLocation, WidgetSpec[]>;
+
+  get modelRoot(): ModelElement;
+
+  get viewRoot(): HTMLElement;
 }
 
 export class EditorImpl implements Editor {
@@ -38,6 +43,14 @@ export class EditorImpl implements Editor {
 
   get widgetMap() {
     return this._widgetMap;
+  }
+
+  get modelRoot(): ModelElement {
+    return this.model.modelRoot;
+  }
+
+  get viewRoot(): HTMLElement {
+    return this.model.viewRoot;
   }
 
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void {

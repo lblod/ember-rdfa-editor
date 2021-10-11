@@ -1,4 +1,4 @@
-import SimplifiedModel from "@lblod/ember-rdfa-editor/model/simplified-model";
+import SimplifiedModel from "@lblod/ember-rdfa-editor/core/simplified-model";
 
 export default class ModelHistory {
   maxSize: number;

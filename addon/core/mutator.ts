@@ -52,7 +52,7 @@ export interface Mutator {
    * @param endLimit
    * @param splitAtEnds
    */
-  splitRangeUntilElements(range: ModelRange, startLimit: ModelElement, endLimit: ModelElement, splitAtEnds?: boolean): any;
+  splitRangeUntilElements(range: ModelRange, startLimit: ModelElement, endLimit: ModelElement, splitAtEnds?: boolean): ModelRange;
 
   splitUntilElement(position: ModelPosition, limitElement: ModelElement, splitAtEnds?: boolean): ModelPosition;
 

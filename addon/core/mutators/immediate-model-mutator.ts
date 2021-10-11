@@ -162,7 +162,7 @@ export default class ImmediateModelMutator implements Mutator {
    * @param endLimit
    * @param splitAtEnds
    */
-  splitRangeUntilElements(range: ModelRange, startLimit: ModelElement, endLimit: ModelElement, splitAtEnds = false) {
+  splitRangeUntilElements(range: ModelRange, startLimit: ModelElement, endLimit: ModelElement, splitAtEnds = false): ModelRange {
     const endPos = this.splitUntilElement(range.end, endLimit, splitAtEnds);
     const afterEnd = endPos.nodeAfter();
     const startpos = this.splitUntilElement(range.start, startLimit, splitAtEnds);

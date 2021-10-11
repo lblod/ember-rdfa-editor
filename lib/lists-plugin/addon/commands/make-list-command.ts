@@ -9,6 +9,7 @@ import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ListCleaner from "@lblod/ember-rdfa-editor/core/cleaners/list-cleaner";
+import {PropertyState} from "@lblod/ember-rdfa-editor/util/types";
 
 type ListTag = "ul" | "ol";
 
@@ -64,7 +65,7 @@ export default class MakeListCommand extends Command<[ListTag, ModelSelection], 
       } else {
         const firstChild = list.firstChild as ModelElement;
         const lastChild = list.lastChild as ModelElement;
-        const start = ModelPosition.fromInElement(firstChild , 0);
+        const start = ModelPosition.fromInElement(firstChild, 0);
         const end = ModelPosition.fromInElement(lastChild, lastChild.getMaxOffset());
         resultRange = new ModelRange(start, end);
       }

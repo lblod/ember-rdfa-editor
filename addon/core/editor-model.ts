@@ -17,6 +17,8 @@ import ModelHistory from "@lblod/ember-rdfa-editor/core/model/model-history";
 
 
 export interface ImmutableModel {
+  get modelRoot(): ModelElement
+  get viewRoot(): HTMLElement
   query(source: string, callback: (inspector: Inspector) => void): void;
 
   toXml(): Node;
@@ -29,7 +31,7 @@ export interface MutableModel extends ImmutableModel {
 
   get selection(): ModelSelection;
 
-  restoreSnapshot(source: string, snapshot: SimplifiedModel, writeBack?: boolean): void;
+  restoreSnapshot(source: string, snapshot?: SimplifiedModel, writeBack?: boolean): void;
 
   saveSnapshot(): void;
 
@@ -79,6 +81,9 @@ export class HtmlModel implements EditorModel {
     this.read();
   }
 
+  /**
+   * @deprecated use modelRoot instead
+   */
   get rootModelNode(): ModelElement {
     if (!this._rootModelNode) {
       throw new ModelError('Model without rootnode');
@@ -86,6 +91,13 @@ export class HtmlModel implements EditorModel {
     return this._rootModelNode;
   }
 
+  get modelRoot(): ModelElement {
+    return this.rootModelNode;
+  }
+
+  /**
+   * @deprecated use viewRoot instead
+   */
   get rootElement(): HTMLElement {
     return this._rootElement;
   }
@@ -93,6 +105,10 @@ export class HtmlModel implements EditorModel {
   set rootElement(node: HTMLElement) {
     this._rootElement = node;
     this.read();
+  }
+
+  get viewRoot(): HTMLElement{
+    return this.rootElement;
   }
 
   change(source: string, callback: (mutator: Mutator, inspector: Inspector) => (ModelElement | void), writeBack = true): void {
