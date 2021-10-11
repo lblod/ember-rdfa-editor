@@ -16,7 +16,7 @@ import TableTabInputPlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/
 import {ensureValidTextNodeForCaret} from '@lblod/ember-rdfa-editor/archive/editor/utils';
 import RawEditor from '@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor';
 import PernetRawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/pernet-raw-editor";
-import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/event-helpers";
+import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/util/event-helpers";
 
 export type TabHandlerManipulation =
   MoveCursorBeforeElementManipulation

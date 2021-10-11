@@ -23,7 +23,7 @@ import {
 import ListDeletePlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/lists/delete-plugin';
 import { HandlerResponse } from './handler-response';
 import PernetRawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/pernet-raw-editor";
-import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/event-helpers";
+import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/util/event-helpers";
 
 /**
  * We introduce an abstract reference point to check for visual changes.

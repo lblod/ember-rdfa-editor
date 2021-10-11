@@ -2,6 +2,7 @@ import {EditorPlugin} from "@lblod/ember-rdfa-editor/core/editor-plugin";
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 import InsertTextCommand from "./commands/insert-text-command";
 import {KeydownEvent} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 
 export default class TypingPlugin implements EditorPlugin {
   private controller!: EditorController;
@@ -21,7 +22,51 @@ export default class TypingPlugin implements EditorPlugin {
   }
 
   handleKeydown = (event: KeydownEvent) => {
-    this.controller.executeCommand("insert-text", event.payload.key);
+    if (this.isHandlerFor(event.payload)) {
+      this.handleAnchors(event.payload.key);
+      this.controller.executeCommand("insert-text", event.payload.key);
+    }
   };
+
+  isHandlerFor(event: KeyboardEvent): boolean {
+// Still composing, don't handle this.
+    return !event.isComposing
+      // It's a key combo, we don't want to do anything with this at the moment.
+      && !(event.altKey || event.ctrlKey || event.metaKey)
+      // Only interested in actual input, no control keys.
+      && event.key.length <= 1;
+  }
+
+  // TODO just a quick and dirty conversion, we might wanna come up with a more
+  // structured approach
+  handleAnchors(content: string) {
+    const clonedRange = this.controller.selection.lastRange?.clone();
+    if (clonedRange) {
+      const collapsed = clonedRange.collapsed;
+      const {start, end, start: {parent: startParent}, end: {parent: endParent}} = clonedRange;
+
+      let anyAnchors = false;
+      if (startParent.type === "a" && start.parentOffset === 0) {
+        anyAnchors = true;
+        clonedRange.start = ModelPosition.fromBeforeNode(startParent);
+        if (collapsed) {
+          clonedRange.collapse(true);
+        }
+      }
+
+      if (endParent.type === "a" && end.parentOffset === endParent.getMaxOffset()) {
+        anyAnchors = true;
+        clonedRange.end = ModelPosition.fromAfterNode(endParent);
+        if (collapsed) {
+          clonedRange.collapse();
+        }
+      }
+      if (anyAnchors) {
+        this.controller.executeCommand("insert-text", content, clonedRange);
+      }
+
+    }
+
+  }
 
 }

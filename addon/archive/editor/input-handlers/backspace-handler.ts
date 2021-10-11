@@ -33,7 +33,7 @@ import {
 } from '@lblod/ember-rdfa-editor/archive/editor/utils';
 import RawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 import PernetRawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/pernet-raw-editor";
-import {isBeforeInputEvent, isKeyDownEvent} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/event-helpers";
+import {isBeforeInputEvent, isKeyDownEvent} from "@lblod/ember-rdfa-editor/util/event-helpers";
 import {HandlerResponse} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/handler-response";
 
 /**

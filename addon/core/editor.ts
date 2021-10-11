@@ -7,6 +7,7 @@ import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import {InternalWidgetSpec, WidgetLocation, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 
 export default interface Editor {
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void;
@@ -28,6 +29,8 @@ export default interface Editor {
   get modelRoot(): ModelElement;
 
   get viewRoot(): HTMLElement;
+
+  get selection(): ModelSelection;
 }
 
 export class EditorImpl implements Editor {
@@ -51,6 +54,10 @@ export class EditorImpl implements Editor {
 
   get viewRoot(): HTMLElement {
     return this.model.viewRoot;
+  }
+
+  get selection(): ModelSelection {
+    return this.model.selection;
   }
 
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void {

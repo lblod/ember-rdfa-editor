@@ -4,6 +4,7 @@ import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import Editor from "@lblod/ember-rdfa-editor/core/editor";
 import {InternalWidgetSpec, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 import {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 
 export default interface EditorController {
   registerCommand<A extends unknown[], R>(command: new (model: EditorModel) => Command<A, R>): void;
@@ -17,6 +18,8 @@ export default interface EditorController {
   registerWidget(widget: WidgetSpec): void;
 
   get rangeFactory(): RangeFactory;
+
+  get selection(): ModelSelection;
 
 }
 
@@ -33,6 +36,10 @@ export class EditorControllerImpl implements EditorController {
 
   get rangeFactory() {
     return this._rangeFactory;
+  }
+
+  get selection() {
+    return this.editor.selection;
   }
 
   canExecuteCommand<A extends unknown[]>(commandName: string, ...args: A): boolean {
