@@ -36,12 +36,14 @@ export default interface Editor {
 export class EditorImpl implements Editor {
   private model: EditorModel;
   private registeredCommands: Map<string, Command<unknown[], unknown>> = new Map<string, Command<unknown[], unknown>>();
+  private eventBus: EventBus;
   private _widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<WidgetLocation, InternalWidgetSpec[]>(
     [["toolbar", []], ["sidebar", []]]
   );
 
   constructor(rootElement: HTMLElement) {
-    this.model = new HtmlModel(rootElement);
+    this.eventBus = new EventBus();
+    this.model = new HtmlModel(rootElement, this.eventBus);
   }
 
   get widgetMap() {
@@ -80,7 +82,7 @@ export class EditorImpl implements Editor {
   }
 
   onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
-    EventBus.on(eventName, callback);
+    this.eventBus.on(eventName, callback);
   }
 
   registerCommand<A extends unknown[], R>(command: { new(model: EditorModel): Command<A, R> }): void {
@@ -93,7 +95,7 @@ export class EditorImpl implements Editor {
   }
 
   emitEvent<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]) {
-    EventBus.emit(event);
+    this.eventBus.emit(event);
   }
 
   onDestroy() {

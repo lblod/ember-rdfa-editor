@@ -13,8 +13,9 @@ module("Unit | Utility | event-bus", function (hooks) {
   });
   test("emits debounced events", function (assert) {
     const callback = sinon.fake();
-    EventBus.on("dummy", callback);
-    EventBus.emitDebounced(100, new DummyEvent());
+    const eventBus = new EventBus();
+    eventBus.on("dummy", callback);
+    eventBus.emitDebounced(100, new DummyEvent());
 
     assert.true(callback.notCalled);
     clock.tick(101);

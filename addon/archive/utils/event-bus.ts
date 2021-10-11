@@ -68,35 +68,11 @@ export type EventEmitter<E extends EditorEventName> = (event: EDITOR_EVENT_MAP[E
 export type DebouncedEmitter<E extends EditorEventName> = (delayMs: number, event: EDITOR_EVENT_MAP[E]) => void;
 
 export default class EventBus {
-  static instance: EventBus;
-
-  private static getInstance() {
-    if (!this.instance) {
-      this.instance = new EventBus();
-    }
-    return this.instance;
-  }
-
-  static on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
-    this.getInstance().on(eventName, callback);
-  }
-
-  static off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
-    this.getInstance().off(eventName, callback);
-  }
-
-  static emit<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void {
-    this.getInstance().emit(event);
-  }
-
-  static emitDebounced<E extends EditorEventName>(delayMs: number, event: EDITOR_EVENT_MAP[E]): void {
-    this.getInstance().emitDebounced(delayMs, event);
-  }
 
   private listeners: Map<EditorEventName, Array<EditorEventListener<EditorEventName>>> = new Map<EditorEventName, Array<EditorEventListener<EditorEventName>>>();
   private debouncedEmitters: Map<EditorEventName, DebouncedEmitter<EditorEventName>> = new Map();
 
-  private on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
+  on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
     const eventListeners = this.listeners.get(eventName);
     if (eventListeners) {
       eventListeners.push(callback);
@@ -105,7 +81,7 @@ export default class EventBus {
     }
   }
 
-  private off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
+  off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
     const eventListeners = this.listeners.get(eventName);
     if (eventListeners) {
       const index = eventListeners.indexOf(callback);
@@ -116,7 +92,7 @@ export default class EventBus {
 
   }
 
-  private emit = <E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void => {
+  emit = <E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void => {
     const eventListeners = this.listeners.get(event.name);
 
     console.log(`${event.owner} is emitting event: ${event.name} with payload:`, event.payload);
@@ -125,7 +101,7 @@ export default class EventBus {
     }
   };
 
-  private emitDebounced = <E extends EditorEventName>(delayMs: number, event: EDITOR_EVENT_MAP[E]): void => {
+  emitDebounced = <E extends EditorEventName>(delayMs: number, event: EDITOR_EVENT_MAP[E]): void => {
 
     const emitter = this.debouncedEmitters.get(event.name);
     if (emitter) {

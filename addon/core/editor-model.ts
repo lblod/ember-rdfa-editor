@@ -65,8 +65,9 @@ export class HtmlModel implements EditorModel {
   private selectionReader: SelectionReader;
   private tracker: ModelSelectionTracker;
   private history: ModelHistory;
+  private eventBus: EventBus;
 
-  constructor(rootElement: HTMLElement) {
+  constructor(rootElement: HTMLElement, eventBus: EventBus) {
     this._selection = new ModelSelection();
     this.writer = new HtmlWriter(this);
     this.selectionWriter = new SelectionWriter();
@@ -74,10 +75,11 @@ export class HtmlModel implements EditorModel {
     this.reader = new HtmlReader();
     this.selectionReader = new SelectionReader(this);
     this._rootElement = rootElement;
-    this.tracker = new ModelSelectionTracker(this);
+    this.eventBus = eventBus;
+    this.eventBus.on("selectionChanged", () => this.readSelection());
+    this.tracker = new ModelSelectionTracker(this, this.eventBus);
     this.history = new ModelHistory();
     this.tracker.startTracking();
-    EventBus.on("selectionChanged", () => this.readSelection());
     this.read();
   }
 

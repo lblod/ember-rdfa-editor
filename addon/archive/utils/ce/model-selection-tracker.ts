@@ -5,9 +5,11 @@ import {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 
 export default class ModelSelectionTracker {
   model: HtmlModel;
+  private eventBus: EventBus;
 
-  constructor(model: HtmlModel) {
+  constructor(model: HtmlModel, eventBus: EventBus) {
     this.model = model;
+    this.eventBus = eventBus;
   }
 
   startTracking() {
@@ -31,6 +33,6 @@ export default class ModelSelectionTracker {
       {detail: this.model.selection}
     );
     document.dispatchEvent(modelSelectionUpdatedEvent);
-    EventBus.emitDebounced(100, new SelectionChangedEvent());
+    this.eventBus.emitDebounced(100, new SelectionChangedEvent());
   };
 }
