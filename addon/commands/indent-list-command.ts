@@ -13,6 +13,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelPosition from "../model/model-position";
 
 export default class IndentListCommand extends Command {
   name = "indent-list";
@@ -62,24 +63,26 @@ export default class IndentListCommand extends Command {
       }
     }
 
-    for (const [parent, lis] of setsToIndent.entries()) {
-      // First li of (nested) list can never be selected here, so previousSibling is always another li.
-      const newParent = lis[0].previousSibling;
-      if (!newParent || !ModelNode.isModelElement(newParent)) {
-        throw new IllegalExecutionStateError("First selected li doesn't have previous sibling");
+    this.model.change(mutator => {
+      for (const [parent, lis] of setsToIndent.entries()) {
+        // First li of (nested) list can never be selected here, so previousSibling is always another li.
+        const newParent = lis[0].previousSibling;
+        if (!newParent || !ModelNode.isModelElement(newParent)) {
+          throw new IllegalExecutionStateError("First selected li doesn't have previous sibling");
+        }
+  
+        for (const li of lis) {
+          mutator.deleteNode(li);
+        }
+  
+        const newList = new ModelElement(parent.type);
+        const positionToInsert = ModelPosition.fromInElement(newList, newList.getMaxOffset());
+        mutator.insertAtPosition(positionToInsert, ...lis);
+        const positionToInsertTwo = ModelPosition.fromInElement(newParent, newParent.getMaxOffset());
+        mutator.insertAtPosition(positionToInsertTwo, newList);
       }
-
-      for (const li of lis) {
-        parent.removeChild(li);
-      }
-
-      const newList = new ModelElement(parent.type);
-      newList.appendChildren(...lis);
-      newParent.addChild(newList);
-    }
-
-    const cleaner = new ListCleaner();
-    cleaner.clean(range);
-    this.model.write();
+      const cleaner = new ListCleaner();
+      cleaner.clean(range, mutator);
+    });
   }
 }
