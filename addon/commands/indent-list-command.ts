@@ -76,10 +76,10 @@ export default class IndentListCommand extends Command {
         }
   
         const newList = new ModelElement(parent.type);
-        const positionToInsert = ModelPosition.fromInElement(newList, newList.getMaxOffset());
-        mutator.insertAtPosition(positionToInsert, ...lis);
-        const positionToInsertTwo = ModelPosition.fromInElement(newParent, newParent.getMaxOffset());
-        mutator.insertAtPosition(positionToInsertTwo, newList);
+        const positionToInsertListElements = ModelPosition.fromInElement(newList, newList.getMaxOffset());
+        mutator.insertAtPosition(positionToInsertListElements, ...lis);
+        const positionToInsertList = ModelPosition.fromInElement(newParent, newParent.getMaxOffset());
+        mutator.insertAtPosition(positionToInsertList, newList);
       }
       const cleaner = new ListCleaner();
       cleaner.clean(range, mutator);

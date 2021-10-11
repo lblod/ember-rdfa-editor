@@ -2,6 +2,7 @@ import {module, test} from "qunit";
 import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
 
 module("Unit | model | cleaners | list-cleaner-test", () => {
 
@@ -37,8 +38,9 @@ module("Unit | model | cleaners | list-cleaner-test", () => {
     `;
 
     const cleaner = new ListCleaner();
+    const mutator = new ImmediateModelMutator();
     const range = ModelRange.fromInElement(container, 0, 2);
-    cleaner.clean(range);
+    cleaner.clean(range, mutator);
 
     assert.true(initial.sameAs(expected));
   });
@@ -63,10 +65,10 @@ module("Unit | model | cleaners | list-cleaner-test", () => {
     `;
 
     const expected = initial.clone();
-
+    const mutator = new ImmediateModelMutator();
     const cleaner = new ListCleaner();
     const range = ModelRange.fromInElement(container, 0, 2);
-    cleaner.clean(range);
+    cleaner.clean(range, mutator);
 
     assert.true(initial.sameAs(expected));
   });
@@ -90,9 +92,10 @@ module("Unit | model | cleaners | list-cleaner-test", () => {
 
     const expected = initial.clone();
 
+    const mutator = new ImmediateModelMutator();
     const cleaner = new ListCleaner();
     const range = ModelRange.fromInElement(container, 0, 2);
-    cleaner.clean(range);
+    cleaner.clean(range, mutator);
 
     assert.true(initial.sameAs(expected));
   });
@@ -128,9 +131,10 @@ module("Unit | model | cleaners | list-cleaner-test", () => {
       </div>
     `;
 
+    const mutator = new ImmediateModelMutator();
     const cleaner = new ListCleaner();
     const range = ModelRange.fromInElement(container, 0, 2);
-    cleaner.clean(range);
+    cleaner.clean(range, mutator);
 
     assert.true(initial.sameAs(expected));
   });
@@ -183,9 +187,10 @@ module("Unit | model | cleaners | list-cleaner-test", () => {
       </div>
     `;
 
+    const mutator = new ImmediateModelMutator();
     const cleaner = new ListCleaner();
     const range = ModelRange.fromInElement(container, 0, 2);
-    cleaner.clean(range);
+    cleaner.clean(range, mutator);
 
     assert.true(initial.sameAs(expected));
   });
