@@ -3,7 +3,7 @@
    ================================== */
 
 .say-pagination {
-  @include say-font-size($say-h6);
+  @include au-font-size($say-h6);
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;

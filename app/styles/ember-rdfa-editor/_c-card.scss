@@ -17,13 +17,13 @@
 }
 
 .say-card__title {
-  @include say-font-size($say-h5);
+  @include au-font-size($say-h5);
   font-weight: $say-medium;
   color: $say-neutral-800;
 }
 
 .say-card__subtitle {
-  @include say-font-size($say-h6);
+  @include au-font-size($say-h6);
   font-weight: $say-medium;
   color: $say-neutral-800;
 }
@@ -54,7 +54,7 @@
 }
 
 .say-card__info {
-  @include say-font-size($say-h6);
+  @include au-font-size($say-h6);
   padding: $say-unit-small;
   color: $say-neutral-600;
   font-style: italic;
@@ -65,7 +65,7 @@
 }
 
 .say-card__footer {
-  @include say-font-size($say-h6);
+  @include au-font-size($say-h6);
   background-color: $say-neutral-100;
   padding: $say-unit-tiny $say-unit-small;
   border-top: .1rem solid $say-neutral-200;

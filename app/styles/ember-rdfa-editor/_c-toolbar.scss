@@ -40,7 +40,7 @@
   }
 
   .say-toolbar__button {
-    @include say-font-size($say-base,1);
+    @include au-font-size($say-base,1);
     appearance: none;
     outline: none;
     border: 0;

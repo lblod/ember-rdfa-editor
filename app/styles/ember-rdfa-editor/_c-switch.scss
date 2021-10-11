@@ -25,7 +25,7 @@
 
   /* Switch */
   .say-switch__label {
-    @include say-font-size($say-base);
+    @include au-font-size($say-base);
     color: $say-switch-label-color;
     display: block;
     padding-left: $say-unit + $say-unit-tiny;

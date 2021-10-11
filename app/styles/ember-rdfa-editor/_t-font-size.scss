@@ -5,11 +5,11 @@
 // Generates a rem font-size (with pixel fallback) and a baseline-compatible
 // unitless line-height from a pixel font-size value. Basic usage is simply:
 //
-//   @include say-font-size(1.4rem);
+//   @include au-font-size(1.4rem);
 //
 // You can force a specific line-height by passing it as the second argument:
 //
-//   @include say-font-size(1.4rem, 1);
+//   @include au-font-size(1.4rem, 1);
 //
 // You can also modify the line-height by increments, while staying in the
 // baseline grid, by setting the `$modifier` parameter. It takes a positive
@@ -18,10 +18,10 @@
 // an absolute value. i.e.:
 //
 //   // add 2 lines:
-//   @include say-font-size(1.4rem, $modifier: +2);
+//   @include au-font-size(1.4rem, $modifier: +2);
 //
 //   // subtract 1 line:
-//   @include say-font-size(1.4rem, $modifier: -1);
+//   @include au-font-size(1.4rem, $modifier: -1);
 
 @mixin say-font-size($font-size, $line-height: auto, $modifier: 0, $important: false) {
   // Set unit-tiny fallback size

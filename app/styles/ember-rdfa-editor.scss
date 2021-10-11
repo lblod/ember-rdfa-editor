@@ -11,19 +11,78 @@
  * ---
  * SETTINGS: Project settings and variables
  * TOOLS: Mixins
- * COMPONENTS: Components (namespace: '.say-...')
+ * GENERIC: Reset, global box-sizing and font-styles
+ * ELEMENTS: Plain html tag styling
+ * OBJECTS: OOCSS unstyled objects (namespace: '.au-o-...')
+ * COMPONENTS: Components (namespace: '.au-c-...')
+ * CUSTOM COMPONENTS: Components (namespace: '.say-...')
+ * UTILITIES: Single function helper classes (namespace: '.au-u-...')
+ * SHAME: Quick fixes
  */
 
 
 // VARIABLES
+@import "appuniversum/s-colors.scss";
+@import "appuniversum/s-global";
+@import "appuniversum/s-utilities";
+
+// SAY VARIABLES AND SETTINGS
 @import "ember-rdfa-editor/s-colors";
 @import "ember-rdfa-editor/s-settings";
 @import "ember-rdfa-editor/s-theme";
 
 
-// TOOLS
-@import "ember-rdfa-editor/t-font-size";
-@import "ember-rdfa-editor/t-sass-mq";
+// MIXINS
+@import "appuniversum/t-font-size";
+@import "appuniversum/t-sass-mq";
+
+
+// OBJECTS
+@import "appuniversum/o-box";
+@import "appuniversum/o-flow";
+@import "appuniversum/o-grid";
+@import "appuniversum/o-layout";
+@import "appuniversum/o-region";
+
+
+// COMPONENTS
+@import "ember-appuniversum/c-accordion";
+@import "ember-appuniversum/c-alert";
+@import "ember-appuniversum/c-app";
+@import "ember-appuniversum/c-badge";
+@import "ember-appuniversum/c-body-container";
+@import "ember-appuniversum/c-brand";
+@import "ember-appuniversum/c-button";
+@import "ember-appuniversum/c-button-group";
+@import "ember-appuniversum/c-card";
+@import "ember-appuniversum/c-content";
+@import "ember-appuniversum/c-content-header";
+@import "ember-appuniversum/c-control";
+@import "ember-appuniversum/c-data-table";
+@import "ember-appuniversum/c-dropdown";
+@import "ember-appuniversum/c-form";
+@import "ember-appuniversum/c-heading";
+@import "ember-appuniversum/c-help-text";
+@import "ember-appuniversum/c-hr";
+@import "ember-appuniversum/c-icon";
+@import "ember-appuniversum/c-input";
+@import "ember-appuniversum/c-label";
+@import "ember-appuniversum/c-link";
+@import "ember-appuniversum/c-list-horizontal";
+@import "ember-appuniversum/c-list-navigation";
+@import "ember-appuniversum/c-loader";
+@import "ember-appuniversum/c-pagination";
+@import "ember-appuniversum/c-pill";
+@import "ember-appuniversum/c-main-container";
+@import "ember-appuniversum/c-main-header";
+@import "ember-appuniversum/c-main-footer";
+@import "ember-appuniversum/c-modal";
+@import "ember-appuniversum/c-sidebar";
+@import "ember-appuniversum/c-sidebar-action";
+@import "ember-appuniversum/c-textarea";
+@import "ember-appuniversum/c-timepicker";
+@import "ember-appuniversum/c-toolbar";
+@import "ember-appuniversum/c-toggle-switch";
 
 
 // COMPONENTS
@@ -45,34 +104,25 @@
 @import "ember-rdfa-editor/c-dropdown";
 
 
+// CUSTOM COMPONENTS
+@import "custom-components";
+
+
 // UTILITIES
-@import "ember-rdfa-editor/u-align-text";
-@import "ember-rdfa-editor/u-hide";
-@import "ember-rdfa-editor/u-word-break";
+@import "appuniversum/u-align-text";
+@import "appuniversum/u-background";
+@import "appuniversum/u-break-word";
+@import "appuniversum/u-headings";
+@import "appuniversum/u-hide";
+@import "appuniversum/u-font-family";
+@import "appuniversum/u-font-weights";
+@import "appuniversum/u-paragraphs";
+@import "appuniversum/u-print";
+@import "appuniversum/u-responsive-spacings";
+@import "appuniversum/u-spacings";
+@import "appuniversum/u-visible";
+@import "appuniversum/u-widths";
 
 
-// PLUGIN COMPONENTS
-@import "ember-rdfa-editor/c-card";
-@import "ember-rdfa-editor/c-link-list";
-@import "ember-rdfa-editor/c-loader";
-@import "ember-rdfa-editor/c-link";
-@import "ember-rdfa-editor/c-pagination";
-@import "ember-rdfa-editor/c-form";
-@import "ember-rdfa-editor/c-article";
-@import "ember-rdfa-editor/c-alert";
-
-
-// RDFA AND ANNOTATION COMPONENTS
-@import "ember-rdfa-editor/c-annotation";
-@import "ember-rdfa-editor/c-annotation-hover";
-@import "ember-rdfa-editor/c-annotation-flag";
-@import "ember-rdfa-editor/c-annotation-content-nl";
-@import "ember-rdfa-editor/c-annotation-content-en";
-
-
-// THIRD PARTY PLUGIN STYLE
-@import "ember-rdfa-editor/p-flatpickr";
-
-
-// TEMPORARY STYLES
+// SHAME
 @import "ember-rdfa-editor/shame";

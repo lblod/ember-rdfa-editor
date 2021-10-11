@@ -7,7 +7,7 @@
 }
 
 .say-article__section {
-  @include say-font-size($say-h6);
+  @include au-font-size($say-h6);
   padding: $say-unit;
   display: flex;
   flex-direction: row-reverse;
@@ -41,49 +41,49 @@
 
   h1,
   .h1 {
-    @include say-font-size($say-h2-font-size,1.3);
+    @include au-font-size($say-h2-font-size,1.3);
     font-family: $say-h2-font-family;
     font-weight: $say-h2-font-weight;
   }
 
   h2,
   .h2 {
-    @include say-font-size($say-h3-font-size,1.3);
+    @include au-font-size($say-h3-font-size,1.3);
     font-family: $say-h3-font-family;
     font-weight: $say-h3-font-weight;
   }
 
   h3,
   .h3 {
-    @include say-font-size($say-h4-font-size);
+    @include au-font-size($say-h4-font-size);
     font-family: $say-h4-font-family;
     font-weight: $say-h4-font-weight;
   }
 
   h4,
   .h4 {
-    @include say-font-size($say-h5-font-size);
+    @include au-font-size($say-h5-font-size);
     font-family: $say-h5-font-family;
     font-weight: $say-h5-font-weight;
   }
 
   h5,
   .h5 {
-    @include say-font-size($say-h6-font-size);
+    @include au-font-size($say-h6-font-size);
     font-family: $say-h6-font-family;
     font-weight: $say-h6-font-weight;
   }
 
   h6,
   .h6 {
-    @include say-font-size($say-h6-font-size);
+    @include au-font-size($say-h6-font-size);
     font-family: $say-h6-font-family;
     font-weight: $say-h6-font-weight;
   }
 }
 
 .say-article__insert {
-  @include say-font-size($say-h6);
+  @include au-font-size($say-h6);
   color: $say-primary-700;
   font-family: $say-font;
   appearance: none;

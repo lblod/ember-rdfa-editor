@@ -80,12 +80,12 @@
 }
 
 .say-modal__prefix {
-  @include say-font-size($say-base);
+  @include au-font-size($say-base);
   margin-bottom: $say-unit-tiny;
 }
 
 .say-modal__title {
-  @include say-font-size($say-h2-font-size);
+  @include au-font-size($say-h2-font-size);
   font-family: $say-h2-font-family;
   font-weight: $say-h2-font-weight;
 
@@ -95,7 +95,7 @@
 }
 
 .say-modal__back {
-  @include say-font-size($say-base);
+  @include au-font-size($say-base);
   font-family: $say-font;
   display: flex;
   align-items: center;
@@ -118,7 +118,7 @@
 }
 
 .say-modal__close {
-  @include say-font-size($say-base);
+  @include au-font-size($say-base);
   font-family: $say-font;
   display: flex;
   align-items: center;
@@ -197,7 +197,7 @@
 }
 
 .say-modal__info {
-  @include say-font-size($say-h6);
+  @include au-font-size($say-h6);
   color: $say-gray-700;
   padding: $say-unit;
 }

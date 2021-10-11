@@ -62,7 +62,7 @@
     }
 
     &:before {
-      @include say-font-size($say-tiny,1.2);
+      @include au-font-size($say-tiny,1.2);
       display: block;
       margin-top: .2rem;
       padding-right: $say-annotation-gutter + $say-unit-small;

@@ -6,7 +6,7 @@
   ========================================================================== */
 
 .say-help-text {
-  @include say-font-size($say-help-text-font-size);
+  @include au-font-size($say-help-text-font-size);
   color: $say-help-text-color;
   margin-top: $say-unit-tiny;
   font-weight: $say-regular;

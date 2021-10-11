@@ -3,7 +3,7 @@
    ================================== */
 
 .say-form {
-  @include say-font-size($say-h6);
+  @include au-font-size($say-h6);
 }
 
 .say-form__fieldset {

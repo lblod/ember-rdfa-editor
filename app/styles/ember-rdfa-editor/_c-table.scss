@@ -1,5 +1,5 @@
 .say-table {
-  @include say-font-size($say-h6);
+  @include au-font-size($say-h6);
   display: table;
   table-layout: fixed;
   position: relative;
@@ -18,7 +18,7 @@
 
   th,
   td {
-    @include say-font-size($say-base,1.2);
+    @include au-font-size($say-base,1.2);
     text-align: left;
     padding: $say-unit-small $say-unit-small;
     min-height: $say-unit-large;

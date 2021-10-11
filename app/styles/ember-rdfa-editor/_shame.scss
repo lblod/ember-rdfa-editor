@@ -64,7 +64,7 @@
 }
 
 .say-card .modal-dialog__header {
-  @include say-font-size($say-h6);
+  @include au-font-size($say-h6);
   color: $say-neutral-800;
   padding: $say-unit-small;
   border-bottom: .1rem solid $say-neutral-200;
@@ -127,7 +127,7 @@
   }
 
   .link-list__item__sidenote.uppercase {
-    @include say-font-size($say-tiny,1.3);
+    @include au-font-size($say-tiny,1.3);
     color: $say-neutral-600;
     padding: 0;
   }

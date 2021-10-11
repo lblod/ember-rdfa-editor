@@ -3,7 +3,7 @@
    ================================== */
 
 .say-button {
-  @include say-font-size($say-button-font-size);
+  @include au-font-size($say-button-font-size);
   font-family: $say-button-font-family;
   font-weight: $say-button-font-weight;
   height: $say-button-height;
