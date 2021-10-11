@@ -1,5 +1,5 @@
 import {warn} from '@ember/debug';
-import {isVoidElement, removeNode} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {isVoidElement, removeNode} from '@lblod/ember-rdfa-editor/archive/utils/dom-helpers';
 import {
   KeepCursorAtEndManipulation,
   Manipulation, ManipulationGuidance, RemoveBoundaryBackwards,
@@ -9,7 +9,7 @@ import {
   RemoveEmptyTextNodeManipulation, RemoveOtherNodeManipulation,
   RemoveVoidElementManipulation,
   VoidElement
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/manipulation';
 import {InputHandler, InputPlugin} from './input-handler';
 import {
   editorDebug,
@@ -19,11 +19,11 @@ import {
   moveCaretBefore,
   paintCycleHappened,
   stringToVisibleText
-} from '@lblod/ember-rdfa-editor/editor/utils';
-import ListDeletePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/delete-plugin';
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
+} from '@lblod/ember-rdfa-editor/archive/editor/utils';
+import ListDeletePlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/lists/delete-plugin';
 import { HandlerResponse } from './handler-response';
-import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/pernet-raw-editor";
+import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/event-helpers";
 
 /**
  * We introduce an abstract reference point to check for visual changes.

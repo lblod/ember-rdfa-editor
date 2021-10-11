@@ -1,14 +1,14 @@
 import {warn} from '@ember/debug';
-import {isVoidElement} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import ListBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/backspace-plugin';
-import LumpNodeBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/backspace-plugin';
-import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
-import RdfaBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/backspace-plugin';
-import ContentEditableFalsePlugin from '@lblod/ember-rdfa-editor/utils/plugins/contenteditable-false/backspace-plugin';
-import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-element/backspace-plugin';
-import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/br-skipping/backspace-plugin';
-import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/placeholder-text/backspace-plugin';
-import TableBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/backspace-plugin';
+import {isVoidElement} from '@lblod/ember-rdfa-editor/archive/utils/dom-helpers';
+import ListBackspacePlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/lists/backspace-plugin';
+import LumpNodeBackspacePlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/lump-node/backspace-plugin';
+import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/empty-text-node/backspace-plugin';
+import RdfaBackspacePlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/rdfa/backspace-plugin';
+import ContentEditableFalsePlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/contenteditable-false/backspace-plugin';
+import EmptyElementBackspacePlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/empty-element/backspace-plugin';
+import BrSkippingBackspacePlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/br-skipping/backspace-plugin';
+import PlaceholderTextBackspacePlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/placeholder-text/backspace-plugin';
+import TableBackspacePlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/table/backspace-plugin';
 import {
   KeepCursorAtStartManipulation,
   Manipulation,
@@ -21,7 +21,7 @@ import {
   RemoveOtherNodeManipulation,
   RemoveVoidElementManipulation,
   VoidElement
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/manipulation';
 import {InputHandler, InputPlugin} from './input-handler';
 import {
   editorDebug,
@@ -30,11 +30,11 @@ import {
   moveCaretBefore,
   paintCycleHappened,
   stringToVisibleText
-} from '@lblod/ember-rdfa-editor/editor/utils';
-import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
-import {isBeforeInputEvent, isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
+} from '@lblod/ember-rdfa-editor/archive/editor/utils';
+import RawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/pernet-raw-editor";
+import {isBeforeInputEvent, isKeyDownEvent} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/event-helpers";
+import {HandlerResponse} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/handler-response";
 
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.

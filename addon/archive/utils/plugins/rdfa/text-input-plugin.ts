@@ -1,9 +1,9 @@
 import {
   TextHandlerManipulation,
   TextInputPlugin
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
-import {ManipulationGuidance,} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {stringToVisibleText} from '@lblod/ember-rdfa-editor/editor/utils';
+} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/text-input-handler';
+import {ManipulationGuidance,} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/manipulation';
+import {stringToVisibleText} from '@lblod/ember-rdfa-editor/archive/editor/utils';
 import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/util/model-tree-walker"
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";

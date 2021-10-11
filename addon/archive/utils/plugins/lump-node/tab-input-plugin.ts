@@ -1,7 +1,7 @@
-import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
-import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
+import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/tab-handler';
+import { Editor, Manipulation, ManipulationGuidance } from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/manipulation';
+import { isInLumpNode, getParentLumpNode } from '@lblod/ember-rdfa-editor/archive/utils/ce/lump-node-utils';
+import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/archive/editor/utils';
 import {isTextNode} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 
 /**

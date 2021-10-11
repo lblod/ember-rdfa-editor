@@ -1,5 +1,5 @@
-import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import {ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/tab-handler';
+import {ManipulationGuidance} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/manipulation';
 import {
   isList,
   isLI,
@@ -7,10 +7,10 @@ import {
   isEmptyList,
   siblingLis,
   findLastLi, isTextNode
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { indentAction, unindentAction } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
-import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
+} from '@lblod/ember-rdfa-editor/archive/utils/dom-helpers';
+import { indentAction, unindentAction } from '@lblod/ember-rdfa-editor/archive/utils/ce/list-helpers';
+import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/archive/editor/utils';
+import PernetRawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/pernet-raw-editor";
 
 /**
  * Current behaviour

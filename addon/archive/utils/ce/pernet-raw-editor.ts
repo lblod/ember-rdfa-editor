@@ -12,7 +12,7 @@ import {
   isList,
   isTextNode,
   tagName
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+} from '@lblod/ember-rdfa-editor/archive/utils/dom-helpers';
 import {analyse as scanContexts} from '@lblod/marawa/rdfa-context-scanner';
 import RawEditor from "./raw-editor";
 import {

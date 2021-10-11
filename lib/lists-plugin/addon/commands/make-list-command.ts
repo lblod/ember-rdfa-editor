@@ -1,7 +1,7 @@
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import {MisbehavedSelectionError, ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import ArrayUtils from "@lblod/ember-rdfa-editor/util/array-utils"
+import ArrayUtils from "@lblod/ember-rdfa-editor/util/array-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/util/model-tree-walker"
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
@@ -26,7 +26,6 @@ export default class MakeListCommand extends Command<[ListTag, ModelSelection], 
     return !selection.inTableState || (selection.inTableState === PropertyState.disabled);
   }
 
-  @logExecute
   execute(executedBy: string, listType: ListTag, selection: ModelSelection = this.model.selection) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();

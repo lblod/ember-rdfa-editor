@@ -1,4 +1,4 @@
-import globalTextRegionToModelRange from '@lblod/ember-rdfa-editor/utils/global-text-region-to-model-range';
+import globalTextRegionToModelRange from '@lblod/ember-rdfa-editor/archive/utils/global-text-region-to-model-range';
 
 /**
  * Editor api for plugins.

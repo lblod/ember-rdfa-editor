@@ -1,49 +1,49 @@
 import EmberObject from '@ember/object';
-import Command from "@lblod/ember-rdfa-editor/commands/command";
-import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
-import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
-import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
-import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
-import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
-import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
-import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list-command';
-import RemoveTableColumnCommand from "@lblod/ember-rdfa-editor/commands/remove-table-column-command";
-import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-command";
-import RemoveTableRowCommand from "@lblod/ember-rdfa-editor/commands/remove-table-row-command";
-import MakeBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-bold-command';
-import MakeHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-highlight-command';
-import MakeItalicCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-italic-command';
-import MakeStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-properties/make-strikethrough-command";
-import MakeUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/make-underline-command";
-import RemoveBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-bold-command';
-import RemoveHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-highlight-command';
-import RemoveItalicCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-italic-command';
-import RemoveStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-strikethrough-command";
-import RemoveUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-underline-command";
-import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list-command";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import {walk as walkDomNode} from "@lblod/marawa/node-walker";
 import RichNode from "@lblod/marawa/rich-node";
 import classic from 'ember-classic-decorator';
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
-import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
 import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
-import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/utils/event-bus";
-import DeleteSelectionCommand from "@lblod/ember-rdfa-editor/commands/delete-selection-command";
-import InsertTableRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
-import InsertTableRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
-import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
-import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
-import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
-import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
-import FindNodesCommand from "@lblod/ember-rdfa-editor/commands/find-nodes-command";
-import MatchTextCommand from "@lblod/ember-rdfa-editor/commands/match-text-command";
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
+import Command from "@lblod/ember-rdfa-editor/core/command";
+import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
+import InsertTextCommand from "typing-plugin/commands/insert-text-command";
+import RemoveTableColumnCommand from "tables-plugin/commands/remove-table-column-command";
+import InsertXmlCommand from "content-control-plugin/commands/insert-xml-command";
+import InsertTableColumnBeforeCommand from "tables-plugin/commands/insert-table-column-before-command";
+import FindNodesCommand from "searching-plugin/commands/find-nodes-command";
+import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import RemoveBoldCommand from "text-styles-plugin/commands/remove-bold-command";
+import RemoveHighlightCommand from "text-styles-plugin/commands/remove-highlight-command";
+import MakeHighlightCommand from "text-styles-plugin/commands/make-highlight-command";
+import DeleteSelectionCommand from "deletion-plugin/commands/delete-selection-command";
+import MakeListCommand from "lists-plugin/commands/make-list-command";
+import MakeUnderlineCommand from "text-styles-plugin/commands/make-underline-command";
+import MakeItalicCommand from "text-styles-plugin/commands/make-italic-command";
+import InsertNewLiCommand from "lists-plugin/commands/insert-newLi-command";
+import UndoCommand from "history-plugin/commands/undo-command";
+import InsertTableRowAboveCommand from "tables-plugin/commands/insert-table-row-above-command";
+import RemoveStrikethroughCommand from "text-styles-plugin/commands/remove-strikethrough-command";
+import MatchTextCommand from "searching-plugin/commands/match-text-command";
+import InsertTableCommand from "tables-plugin/commands/insert-table-command";
+import InsertTableColumnAfterCommand from "tables-plugin/commands/insert-table-column-after-command";
+import InsertHtmlCommand from "content-control-plugin/commands/insert-html-command";
+import IndentListCommand from "lists-plugin/commands/indent-list-command";
+import RemoveItalicCommand from "text-styles-plugin/commands/remove-italic-command";
+import MakeStrikethroughCommand from "text-styles-plugin/commands/make-strikethrough-command";
+import RemoveTableRowCommand from "tables-plugin/commands/remove-table-row-command";
+import RemoveTableCommand from "tables-plugin/commands/remove-table-command";
+import UnindentListCommand from "lists-plugin/commands/unindent-list-command";
+import InsertNewLineCommand from "typing-plugin/commands/insert-newLine-command";
+import RemoveListCommand from "lists-plugin/commands/remove-list-command";
+import InsertTableRowBelowCommand from "tables-plugin/commands/insert-table-row-below-command";
+import MakeBoldCommand from "text-styles-plugin/commands/make-bold-command";
+import RemoveUnderlineCommand from "text-styles-plugin/commands/remove-underline-command";
+import ReadSelectionCommand from "content-control-plugin/commands/read-selection-command";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import HtmlModel from "@lblod/ember-rdfa-editor/core/model/html-model";
 
 export type WidgetLocation = "toolbar" | "sidebar";
 
@@ -70,7 +70,7 @@ class RawEditor extends EmberObject {
   registeredCommands: Map<string, Command> = new Map<string, Command>();
   modelSelectionTracker!: ModelSelectionTracker;
 
-  private _model?: Model;
+  private _model?: HtmlModel;
   protected tryOutVdom = true;
   private _toolbarWidgets: Map<string, string> = new Map();
 
@@ -104,7 +104,7 @@ class RawEditor extends EmberObject {
     }
 
     this.registeredCommands = new Map<string, Command>();
-    this._model = new Model(rootNode);
+    this._model = new HtmlModel(rootNode);
     this.modelSelectionTracker = new ModelSelectionTracker(this._model);
     this.modelSelectionTracker.startTracking();
 

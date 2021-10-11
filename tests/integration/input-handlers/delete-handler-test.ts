@@ -5,9 +5,9 @@ import {
   triggerKeyEvent,
 } from "@ember/test-helpers";
 import hbs from "htmlbars-inline-precompile";
-import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
 import { getWindowSelection } from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 import { getEditorElement, wait } from "dummy/tests/test-utils";
+import RdfaDocument from "@lblod/ember-rdfa-editor/archive/utils/rdfa/rdfa-document";
 
 module.skip("Integration | InputHandler | delete-handler", function (hooks) {
   setupRenderingTest(hooks);

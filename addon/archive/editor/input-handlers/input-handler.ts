@@ -1,11 +1,11 @@
+import { HandlerResponse } from "./handler-response";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/pernet-raw-editor";
 import {
   Manipulation,
   ManipulationExecutor,
   ManipulationGuidance
-} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
-import {editorDebug} from "@lblod/ember-rdfa-editor/editor/utils";
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import { HandlerResponse } from "./handler-response";
+} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/manipulation";
+import {editorDebug} from "@lblod/ember-rdfa-editor/archive/editor/utils";
 
 export interface InputPlugin {
   /**

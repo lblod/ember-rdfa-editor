@@ -9,14 +9,14 @@ import {
   MoveCursorToStartOfElementManipulation
 } from './manipulation';
 import {warn} from '@ember/debug';
-import {isElement, isTextNode, isVisibleElement, isVoidElement} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
-import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
-import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
-import {ensureValidTextNodeForCaret} from '@lblod/ember-rdfa-editor/editor/utils';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
+import {isElement, isTextNode, isVisibleElement, isVoidElement} from '@lblod/ember-rdfa-editor/archive/utils/dom-helpers';
+import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/lump-node/tab-input-plugin';
+import ListTabInputPlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/lists/tab-input-plugin';
+import TableTabInputPlugin from '@lblod/ember-rdfa-editor/archive/utils/plugins/table/tab-input-plugin';
+import {ensureValidTextNodeForCaret} from '@lblod/ember-rdfa-editor/archive/editor/utils';
+import RawEditor from '@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor';
+import PernetRawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/pernet-raw-editor";
+import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/event-helpers";
 
 export type TabHandlerManipulation =
   MoveCursorBeforeElementManipulation

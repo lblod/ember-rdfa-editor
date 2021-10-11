@@ -1,4 +1,4 @@
-import {isElement, isTextNode, tagName} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {isElement, isTextNode, tagName} from '@lblod/ember-rdfa-editor/archive/utils/dom-helpers';
 import DOMPurify from "dompurify";
 import {ParseError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants"

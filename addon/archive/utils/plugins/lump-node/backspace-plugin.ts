@@ -1,9 +1,9 @@
 import {
   BackspaceHandlerManipulation,
   BackspacePlugin
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import {Editor, Manipulation, ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {getParentLumpNode} from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
+} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/backspace-handler';
+import {Editor, Manipulation, ManipulationGuidance} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/manipulation';
+import {getParentLumpNode} from '@lblod/ember-rdfa-editor/archive/utils/ce/lump-node-utils';
 
 // We favour to be defensive in the stuff we accept.
 const SUPPORTED_MANIPULATIONS = [

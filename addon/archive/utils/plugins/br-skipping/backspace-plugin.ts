@@ -1,12 +1,12 @@
 import {
   BackspaceHandlerManipulation,
   BackspacePlugin
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/backspace-handler';
 import {
   ManipulationGuidance,
   MoveCursorToEndOfElementManipulation
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {moveCaretBefore, stringToVisibleText} from '@lblod/ember-rdfa-editor/editor/utils';
+} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/manipulation';
+import {moveCaretBefore, stringToVisibleText} from '@lblod/ember-rdfa-editor/archive/editor/utils';
 import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 
 function isBr(node: Node): boolean {

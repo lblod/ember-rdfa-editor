@@ -10,7 +10,7 @@ export default abstract class Command<A extends unknown[], R> {
   abstract name: string;
   protected model: MutableModel;
 
-  protected constructor(model: MutableModel) {
+  public constructor(model: MutableModel) {
     this.model = model;
   }
 

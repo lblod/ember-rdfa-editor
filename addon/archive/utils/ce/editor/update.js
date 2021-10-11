@@ -2,7 +2,7 @@ import { isAdjacentRange, isEmptyRange } from '@lblod/marawa/range-helpers';
 import { replaceRichNodeWith, splitRichTextNode, wrapRichNode } from '../rich-node-tree-modification';
 import { runInDebug } from '@ember/debug';
 import { parsePrefixString } from '@lblod/marawa/rdfa-attributes';
-import { isLI, findWrappingSuitableNodes, createElementsFromHTML, isVoidElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { isLI, findWrappingSuitableNodes, createElementsFromHTML, isVoidElement, tagName } from '@lblod/ember-rdfa-editor/archive/utils/dom-helpers';
 import { A } from '@ember/array';
 import HTMLInputParser from '../../html-input-parser';
 import { positionInRange } from '@lblod/marawa/range-helpers';

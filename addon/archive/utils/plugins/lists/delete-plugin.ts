@@ -1,15 +1,3 @@
-import {
-  DeleteHandlerManipulation,
-  DeletePlugin,
-  MagicSpan,
-} from "@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler";
-import {
-  ManipulationGuidance,
-  RemoveEmptyElementManipulation,
-  RemoveElementWithChildrenThatArentVisible,
-  RemoveBoundaryBackwards,
-  RemoveBoundaryForwards,
-} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 import { runInDebug } from "@ember/debug";
 import {
   isLI,
@@ -22,13 +10,22 @@ import {
   isElement,
   unwrapElement,
 } from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import { isInList } from "../../ce/list-helpers";
+import PernetRawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/pernet-raw-editor";
 import {
-  stringToVisibleText,
   hasVisibleChildren,
   moveCaretToEndOfNode,
-} from "@lblod/ember-rdfa-editor/editor/utils";
-import { isInList } from "../../ce/list-helpers";
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
+  stringToVisibleText
+} from "@lblod/ember-rdfa-editor/archive/editor/utils";
+import {
+  DeleteHandlerManipulation, DeletePlugin,
+  MagicSpan
+} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/delete-handler";
+import {
+  ManipulationGuidance,
+  RemoveBoundaryBackwards,
+  RemoveBoundaryForwards, RemoveElementWithChildrenThatArentVisible, RemoveEmptyElementManipulation
+} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/manipulation";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function debug(message: string, object: unknown = null): void {

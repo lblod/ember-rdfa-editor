@@ -1,8 +1,8 @@
 import PernetRawEditor from '../ce/pernet-raw-editor';
 import xmlFormat from 'xml-formatter';
-import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import EventBus, {EditorEventListener} from "@lblod/ember-rdfa-editor/utils/event-bus";
+import HTMLExportWriter from "@lblod/ember-rdfa-editor/core/writers/html-export-writer";
+import EventBus, {EditorEventListener} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 /**
  * RdfaDocument is a virtual representation of the document

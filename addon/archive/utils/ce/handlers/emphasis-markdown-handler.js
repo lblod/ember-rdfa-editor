@@ -2,7 +2,7 @@ import getRichNodeMatchingDomNode from '../get-rich-node-matching-dom-node';
 import { get } from '@ember/object';
 import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
-import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { invisibleSpace } from '@lblod/ember-rdfa-editor/archive/utils/dom-helpers';
 
 
 let BOLDMARKDOWN = /(\*\*)(.*?)\1/;

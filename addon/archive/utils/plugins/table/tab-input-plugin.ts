@@ -1,12 +1,12 @@
-import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
+import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/tab-handler';
 import {
   ManipulationGuidance
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
+} from '@lblod/ember-rdfa-editor/archive/editor/input-handlers/manipulation';
+import RawEditor from '@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { tagName } from '@lblod/ember-rdfa-editor/archive/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import PernetRawEditor from '../../ce/pernet-raw-editor';

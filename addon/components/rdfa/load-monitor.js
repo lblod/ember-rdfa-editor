@@ -2,7 +2,6 @@ import { get } from '@ember/object';
 import classic from "ember-classic-decorator";
 import { layout as templateLayout } from "@ember-decorators/component";
 import { computed } from "@ember/object";
-import { inject as service } from "@ember/service";
 import Component from '@ember/component';
 import layout from '../../templates/components/rdfa/load-monitor';
 import { mapBy, and } from '@ember/object/computed';
@@ -55,7 +54,7 @@ export default class LoadMonitor extends Component {
   * @type boolean
   * @protected
   */
- @computed('editor.generateDiffEvents.isRunning')
+ @computed('controller.generateDiffEvents.isRunning', 'editor.generateDiffEvents.isRunning')
  get editorBusy() {
    if(!this.controller) return true;
    return this.controller.generateDiffEvents.isRunning === true;

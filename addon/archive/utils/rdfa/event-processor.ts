@@ -1,7 +1,7 @@
 import {analyse, Region} from '@lblod/marawa/rdfa-context-scanner';
 import HintsRegistry from './hints-registry';
 import {isEmpty} from '@ember/utils';
-import globalTextRegionToModelRange from '@lblod/ember-rdfa-editor/utils/global-text-region-to-model-range';
+import globalTextRegionToModelRange from '@lblod/ember-rdfa-editor/archive/utils/global-text-region-to-model-range';
 import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
 import RawEditor from '../ce/raw-editor';
 import { ContentObserver, InternalSelection} from '../ce/pernet-raw-editor';

@@ -5,7 +5,7 @@ import {
   waitUntil,
 } from "@ember/test-helpers";
 import hbs from "htmlbars-inline-precompile";
-import { MagicSpan } from "@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler";
+import {MagicSpan} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/delete-handler";
 
 /**
  * Utility to get the editor element in a type-safe way

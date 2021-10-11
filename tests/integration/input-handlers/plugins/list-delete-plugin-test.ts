@@ -1,12 +1,9 @@
 import { module, test } from "qunit";
 import { setupRenderingTest } from "ember-qunit";
-import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
 import { getWindowSelection, tagName } from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
-import {
-  moveCaret,
-  hasVisibleChildren,
-} from "@lblod/ember-rdfa-editor/editor/utils";
 import { pressDelete, wait, renderEditor } from "dummy/tests/test-utils";
+import RdfaDocument from "@lblod/ember-rdfa-editor/archive/utils/rdfa/rdfa-document";
+import { hasVisibleChildren, moveCaret } from "@lblod/ember-rdfa-editor/archive/editor/utils";
 module.skip("Integration | InputHandler | list-delete-plugin", function (hooks) {
   setupRenderingTest(hooks);
   test("Delete | Lists | delete in empty li at end of document does nothing", async function (assert) {

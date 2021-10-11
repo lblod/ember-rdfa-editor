@@ -8,10 +8,10 @@ import {
   isLI,
   isList, isTextNode,
   tagName
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+} from '@lblod/ember-rdfa-editor/archive/utils/dom-helpers';
 import {warn} from '@ember/debug';
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants"
+import PernetRawEditor from "@lblod/ember-rdfa-editor/archive/utils/ce/pernet-raw-editor";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
 import {ParseError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 
 export function indentAction(rawEditor: PernetRawEditor): void {

@@ -5,7 +5,7 @@ import {
   isList,
   findFirstLi,
   siblingLis
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+} from '@lblod/ember-rdfa-editor/archive/utils/dom-helpers';
 import flatMap from './flat-map';
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants"
 
