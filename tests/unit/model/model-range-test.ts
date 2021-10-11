@@ -3,10 +3,10 @@ import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
-import {parseXml, vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {parseXml, vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import {stackOverFlowOnGetMinimumConfinedRanges} from "dummy/tests/unit/model/testing-vdoms";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants"
-import {elementHasType, nodeIsElementOfType} from "@lblod/ember-rdfa-editor/util/predicate-utils"
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
+import {elementHasType, nodeIsElementOfType} from "@lblod/ember-rdfa-editor/util/predicate-utils";
 
 module("Unit | model | model-range", () => {
 

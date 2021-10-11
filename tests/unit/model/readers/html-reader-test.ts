@@ -2,7 +2,7 @@ import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import HtmlReader from "@lblod/ember-rdfa-editor/core/readers/html-reader";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
-import {dom, domStripped, vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {dom, domStripped, vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelTable from "@lblod/ember-rdfa-editor/core/model/model-table";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
@@ -12,7 +12,7 @@ module("Unit | model | readers | html-reader", hooks => {
   const ctx = new ModelTestContext();
   hooks.beforeEach(() => {
     ctx.reset();
-    reader = new HtmlReader(ctx.model);
+    reader = new HtmlReader();
   });
 
   test("read simple tree", assert => {
@@ -23,7 +23,7 @@ module("Unit | model | readers | html-reader", hooks => {
         <text>abc</text>
       </p>`;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const {rootNodes: actual} = reader.read(doc.body.firstChild!)!;
     assert.true(actual[0].sameAs(expected));
   });
   test("read tree with textStyle elements", assert => {
@@ -37,7 +37,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const {rootNodes: actual} = reader.read(doc.body.firstChild!)!;
     assert.true(actual[0].sameAs(expected));
   });
 
@@ -53,7 +53,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const {rootNodes: actual} = reader.read(doc.body.firstChild!)!;
     assert.true(actual[0].sameAs(expected));
   });
 
@@ -70,7 +70,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const {rootNodes: actual} = reader.read(doc.body.firstChild!)!;
     assert.true(actual[0].sameAs(expected));
   });
 
@@ -106,7 +106,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const {rootNodes: actual} = reader.read(doc.body.firstChild!)!;
     assert.true(actual[0].sameAs(expected));
   });
   test("read tree with highlights", assert => {
@@ -128,7 +128,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const {rootNodes: actual} = reader.read(doc.body.firstChild!)!;
     assert.true(actual[0].sameAs(expected));
   });
   test("reads table", assert => {
@@ -172,7 +172,7 @@ module("Unit | model | readers | html-reader", hooks => {
       </table>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const {rootNodes: actual} = reader.read(doc.body.firstChild!)!;
 
     assert.true(actual[0].sameAs(expected));
     assert.strictEqual((((actual[0].root as ModelTable)
@@ -185,14 +185,16 @@ module("Unit | model | readers | html-reader", hooks => {
       const child = document.createElement("div");
       child.setAttribute("property", "mu:uuid");
       const parent = document.createElement("div");
-      parent.setAttribute("prefix", "mu: http://mu.semte.ch/vocabularies/core/ eli: http://data.europa.eu/eli/ontology#");     parent.appendChild(child);
-      const actual = reader.read(child)[0] as ModelElement;
+      parent.setAttribute("prefix", "mu: http://mu.semte.ch/vocabularies/core/ eli: http://data.europa.eu/eli/ontology#");
+      parent.appendChild(child);
+      const {rootNodes} = reader.read(child);
+      const actual = rootNodes[0] as ModelElement;
       assert.true(actual.getRdfaPrefixes().has("mu"));
       assert.true(actual.getRdfaPrefixes().has("eli"));
       assert.equal(actual.getRdfaPrefixes().get("mu"), "http://mu.semte.ch/vocabularies/core/");
       assert.equal(actual.getRdfaPrefixes().get("eli"), "http://data.europa.eu/eli/ontology#");
       assert.equal(actual.getRdfaAttributes().properties.length, 1);
-      assert.equal(actual.getRdfaAttributes().properties[0], "http://mu.semte.ch/vocabularies/core/uuid" );
+      assert.equal(actual.getRdfaAttributes().properties[0], "http://mu.semte.ch/vocabularies/core/uuid");
     });
 
     test("it should properly expand a property without a prefix when a vocab was provided in the context", (assert) => {
@@ -201,9 +203,10 @@ module("Unit | model | readers | html-reader", hooks => {
       const parent = document.createElement("div");
       parent.setAttribute("vocab", "http://data.europa.eu/eli/ontology#");
       parent.appendChild(child);
-      const actual = reader.read(child)[0] as ModelElement;
+      const {rootNodes} = reader.read(child);
+      const actual = rootNodes[0] as ModelElement;
       assert.equal(actual.getRdfaAttributes().properties.length, 1);
-      assert.equal(actual.getRdfaAttributes().properties[0], "http://data.europa.eu/eli/ontology#title" );
+      assert.equal(actual.getRdfaAttributes().properties[0], "http://data.europa.eu/eli/ontology#title");
     });
 
     test("it should properly expand a property without a prefix in a nested child when a vocab was provided in the context", (assert) => {
@@ -212,10 +215,10 @@ module("Unit | model | readers | html-reader", hooks => {
       const parent = document.createElement("div");
       parent.setAttribute("vocab", "http://data.europa.eu/eli/ontology#");
       parent.appendChild(child);
-      const root = reader.read(child)[0] as ModelElement;
-      const actual = root.firstChild as ModelElement;
+      const {rootNodes} = reader.read(child);
+      const actual = (rootNodes[0] as ModelElement).firstChild as ModelElement;
       assert.equal(actual.getRdfaAttributes().properties.length, 1);
-      assert.equal(actual.getRdfaAttributes().properties[0], "http://data.europa.eu/eli/ontology#title" );
+      assert.equal(actual.getRdfaAttributes().properties[0], "http://data.europa.eu/eli/ontology#title");
     });
   });
 });

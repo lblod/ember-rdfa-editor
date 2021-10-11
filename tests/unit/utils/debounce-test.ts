@@ -1,6 +1,6 @@
+import { debounced, debouncedAdjustable } from "@lblod/ember-rdfa-editor/archive/utils/debounce";
 import {module, test} from "qunit";
 import sinon, {SinonFakeTimers} from "sinon";
-import {debounced, debouncedAdjustable} from "@lblod/ember-rdfa-editor/utils/debounce";
 
 
 module("Unit | Utility | debounce", function (hooks) {

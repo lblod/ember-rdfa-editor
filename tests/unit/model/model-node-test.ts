@@ -3,7 +3,7 @@ import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {OutsideRootError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 
 module("Unit | model | model-node", hooks => {
   const ctx = new ModelTestContext();

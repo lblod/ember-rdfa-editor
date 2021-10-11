@@ -1,9 +1,9 @@
 import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
-import {CORE_OWNER, INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
+import {CORE_OWNER, INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import InsertNewLineCommand from "typing-plugin/commands/insert-newLine-command";
 
 module("Unit | commands | insert-new-line-test", hooks => {
   const ctx = new ModelTestContext();

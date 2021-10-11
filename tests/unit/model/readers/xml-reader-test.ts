@@ -1,5 +1,5 @@
 import {module, test} from "qunit";
-import {parseXml, vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {parseXml, vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 
 module("Unit | model | readers | xml-reader-test", () => {

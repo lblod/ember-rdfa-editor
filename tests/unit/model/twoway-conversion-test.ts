@@ -11,7 +11,7 @@ module("Unit | model | twoway-conversion", hooks => {
 
   hooks.beforeEach(() => {
     ctx.reset();
-    reader = new HtmlReader(ctx.model);
+    reader = new HtmlReader();
     writer = new HtmlWriter(ctx.model);
   });
   test("converting simple tree back and forth gives same tree", assert => {
@@ -21,7 +21,8 @@ module("Unit | model | twoway-conversion", hooks => {
     if (!read) {
       throw new AssertionError();
     }
-    const written = writer.write(read[0]) as HTMLElement;
+    const {rootNodes} = read;
+    const written = writer.write(rootNodes[0]) as HTMLElement;
 
     assert.strictEqual(written.outerHTML, p.outerHTML);
 
@@ -33,7 +34,8 @@ module("Unit | model | twoway-conversion", hooks => {
     if (!read) {
       throw new AssertionError();
     }
-    const written = writer.write(read[0]) as HTMLElement;
+    const {rootNodes} = read;
+    const written = writer.write(rootNodes[0]) as HTMLElement;
     // the inner p will get broken up by the dom as per the html standard
     // this happens before the model reads it
     // https://developer.mozilla.org/en-us/docs/Web/HTML/Element/p

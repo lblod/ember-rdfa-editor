@@ -2,8 +2,8 @@ import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
-import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list-command";
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
+import UnindentListCommand from "lists-plugin/commands/unindent-list-command";
 
 module("Unit | commands | unindent-list-command-test", hooks => {
   let command: UnindentListCommand;

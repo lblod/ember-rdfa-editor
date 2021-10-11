@@ -1,11 +1,11 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
-import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
 import {setupTest} from "ember-qunit";
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
+import IndentListCommand from "lists-plugin/commands/indent-list-command";
 
 module("Unit | commands | indent-list-command-test", hooks => {
   const ctx = new ModelTestContext();

@@ -1,9 +1,9 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
-import {CORE_OWNER, INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants"
+import {CORE_OWNER, INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
+import InsertNewLiCommand from "lists-plugin/commands/insert-newLi-command";
 
 //TODO: These tests serve at the moment as a documentation for
 // what the command currently does, and as a way of catching possible

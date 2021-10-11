@@ -1,9 +1,9 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
-import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
+import InsertTableColumnAfterCommand from "tables-plugin/commands/insert-table-column-after-command";
 
 module("Unit | commands | insert-table-column-after-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -55,7 +55,7 @@ module("Unit | commands | insert-table-column-after-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(bottomRight, 0, 0);
-    ctx.model.selectRange(range);
+    ctx.model.selection.selectRange(range);
 
     command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));

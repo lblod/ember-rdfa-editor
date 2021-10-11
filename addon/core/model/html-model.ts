@@ -43,13 +43,12 @@ export default class HtmlModel implements Model {
 
   constructor(rootNode: HTMLElement) {
     this._rootNode = rootNode;
-    this.reader = new HtmlReader(this);
+    this.reader = new HtmlReader();
     this.writer = new HtmlWriter(this);
     this.nodeMap = new WeakMap<Node, ModelNode>();
     this.selectionReader = new SelectionReader(this);
     this.selectionWriter = new SelectionWriter();
     this._selection = new ModelSelection();
-    this.logger = createLogger("RawEditor");
   }
 
   get rootNode(): HTMLElement {

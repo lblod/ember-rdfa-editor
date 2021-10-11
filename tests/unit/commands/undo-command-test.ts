@@ -1,8 +1,8 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
+import UndoCommand from "history-plugin/commands/undo-command";
 
 module("Unit | commands | undo-command-test", hooks => {
   const ctx = new ModelTestContext();

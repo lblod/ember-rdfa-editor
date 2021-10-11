@@ -1,9 +1,9 @@
 import {module, test} from "qunit";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
-import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {setupTest} from "ember-qunit";
+import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
 
 module("Unit | model | model-selection-tracker", hooks => {
   const ctx = new ModelTestContext();
@@ -19,7 +19,7 @@ module("Unit | model | model-selection-tracker", hooks => {
 
     const {model} = ctx;
     const testRoot = document.getElementById("ember-testing-container")!;
-    const rootNode = model.rootNode;
+    const rootNode = model.rootElement;
     testRoot.appendChild(rootNode);
     const selection = getWindowSelection();
     const text = new Text("abc");

@@ -1,16 +1,14 @@
 import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
-import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
-import {CORE_OWNER, NON_BREAKING_SPACE, SPACE} from "@lblod/ember-rdfa-editor/util/constants"
-import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import {CORE_OWNER, NON_BREAKING_SPACE, SPACE} from "@lblod/ember-rdfa-editor/util/constants";
+import InsertTextCommand from "typing-plugin/commands/insert-text-command";
 
 module("Unit | commands | insert-text-command-test", hooks => {
   const ctx = new ModelTestContext();
   let command: InsertTextCommand;
-  const logger = createLogger("test:insert-text-command-test");
   hooks.beforeEach(() => {
     ctx.reset();
     command = new InsertTextCommand(ctx.model);
@@ -132,7 +130,7 @@ module("Unit | commands | insert-text-command-test", hooks => {
     command.execute(CORE_OWNER, SPACE, range);
     const rslt = ctx.model.rootModelNode.sameAs(expected);
     if (!rslt) {
-      logger.log("space does not eat the character before it: ACTUAL:", ctx.model.toXml());
+      console.log("space does not eat the character before it: ACTUAL:", ctx.model.toXml());
     }
     assert.true(rslt);
   });

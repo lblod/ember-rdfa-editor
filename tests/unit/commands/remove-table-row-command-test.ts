@@ -1,9 +1,9 @@
 import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import RemoveTableRowCommand from "@lblod/ember-rdfa-editor/commands/remove-table-row-command";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
+import RemoveTableRowCommand from "tables-plugin/commands/remove-table-row-command";
 
 module("Unit | commands | remove-table-row-command-test", hooks => {
   const ctx = new ModelTestContext();
@@ -40,7 +40,7 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(left, 1, 3);
-    ctx.model.selectRange(range);
+    ctx.model.selection.selectRange(range);
 
     command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
@@ -93,7 +93,7 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
-    ctx.model.selectRange(range);
+    ctx.model.selection.selectRange(range);
 
     command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
@@ -146,7 +146,7 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(bottomLeft, 1, 3);
-    ctx.model.selectRange(range);
+    ctx.model.selection.selectRange(range);
 
     command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
@@ -215,7 +215,7 @@ module("Unit | commands | remove-table-row-command-test", hooks => {
 
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(middleLeft, 1, 3);
-    ctx.model.selectRange(range);
+    ctx.model.selection.selectRange(range);
 
     command.execute(CORE_OWNER);
     assert.true(ctx.model.rootModelNode.sameAs(expected));

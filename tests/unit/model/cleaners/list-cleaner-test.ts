@@ -1,7 +1,7 @@
 import {module, test} from "qunit";
-import ListCleaner from "@lblod/ember-rdfa-editor/model/cleaners/list-cleaner";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ListCleaner from "@lblod/ember-rdfa-editor/core/cleaners/list-cleaner";
 
 module("Unit | model | cleaners | list-cleaner-test", () => {
 

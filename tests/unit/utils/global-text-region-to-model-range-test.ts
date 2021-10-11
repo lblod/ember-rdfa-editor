@@ -1,9 +1,9 @@
 import { module, test } from "qunit";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
-import globalTextRegionToModelRange from "@lblod/ember-rdfa-editor/utils/global-text-region-to-model-range";
+import globalTextRegionToModelRange from "@lblod/ember-rdfa-editor/archive/utils/global-text-region-to-model-range";
 
 module("Unit | Utility | global-offset-to-path", function () {
   test("returns the correct range for a simple text", function (assert) {

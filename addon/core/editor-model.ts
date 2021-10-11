@@ -16,6 +16,8 @@ import Inspector, {ModelInspector} from "@lblod/ember-rdfa-editor/core/inspector
 
 export interface ImmutableModel {
   query(source: string, callback: (inspector: Inspector) => void): void;
+
+  toXml(): Node;
 }
 
 export interface MutableModel extends ImmutableModel {
@@ -45,7 +47,7 @@ export class HtmlModel implements EditorModel {
   private _selection: ModelSelection;
   private writer: HtmlWriter;
   private selectionWriter: SelectionWriter;
-  private _rootModelNode?: ModelElement;
+  protected _rootModelNode?: ModelElement;
   private _rootElement: HTMLElement;
   private nodeMap: WeakMap<Node, ModelNode>;
   private reader: HtmlReader;
@@ -99,7 +101,7 @@ export class HtmlModel implements EditorModel {
   /**
    * Read in the document and build up the model.
    */
-  private read(readSelection = true) {
+  protected read(readSelection = true) {
     const {rootNodes: parsedNodes, nodeMap} = this.reader.read(this.rootElement);
     if (parsedNodes.length !== 1) {
       throw new Error("Could not create a rich root");
@@ -132,7 +134,7 @@ export class HtmlModel implements EditorModel {
     this._selection = this.selectionReader.read(domSelection);
   }
 
-  private write(source: string, tree: ModelElement, writeSelection = true) {
+  protected write(source: string, tree: ModelElement, writeSelection = true) {
     const modelWriteEvent = new CustomEvent("editorModelWrite");
     document.dispatchEvent(modelWriteEvent);
 
@@ -160,7 +162,7 @@ export class HtmlModel implements EditorModel {
 
   }
 
-  private writeSelection() {
+  protected writeSelection() {
     this.selectionWriter.write(this.selection);
   }
 
@@ -198,9 +200,13 @@ export class HtmlModel implements EditorModel {
     this.tracker.stopTracking();
   }
 
-  query(source: string, callback: (inspector: Inspector) => void): void {
+  query(_source: string, callback: (inspector: Inspector) => void): void {
     const inspector = new ModelInspector();
     callback(inspector);
+  }
+
+  toXml(): Node {
+    return this.rootModelNode.toXml();
   }
 
 }

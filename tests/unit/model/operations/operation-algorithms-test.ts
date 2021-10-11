@@ -1,7 +1,7 @@
 import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
-import OperationAlgorithms from "@lblod/ember-rdfa-editor/core/operations/operation-algorithms"
+import OperationAlgorithms from "@lblod/ember-rdfa-editor/core/operations/operation-algorithms";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 module("Unit | model | operations | operation-algorithms-test", () => {

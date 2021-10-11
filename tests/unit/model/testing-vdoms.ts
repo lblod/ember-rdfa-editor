@@ -1,4 +1,4 @@
-import {parseXml} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {parseXml} from "@lblod/ember-rdfa-editor/util/xml-utils";
 //@formatter:off
 // DO NOT FORMAT THIS FILE
 // language=XML

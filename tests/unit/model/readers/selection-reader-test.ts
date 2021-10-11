@@ -2,8 +2,8 @@ import {module, test} from "qunit";
 import SelectionReader from "@lblod/ember-rdfa-editor/core/readers/selection-reader";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {domStripped} from "@lblod/ember-rdfa-editor/util/xml-utils"
-import Model from "@lblod/ember-rdfa-editor/model/model";
+import {domStripped} from "@lblod/ember-rdfa-editor/util/xml-utils";
+import TestModel from "dummy/tests/utilities/test-model";
 
 module("Unit | model | readers | selection-reader", hooks => {
   let reader: SelectionReader;
@@ -130,7 +130,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       const br = testDoc.getElementsByTagName("br")[0];
       document.body.appendChild(docRoot);
 
-      const model = new Model(docRoot);
+      const model = new TestModel(docRoot);
       model.read(false);
       const reader = new SelectionReader(model);
 

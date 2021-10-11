@@ -2,11 +2,11 @@ import {module, test} from "qunit";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
-import RemoveListCommand from "@lblod/ember-rdfa-editor/commands/remove-list-command";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
+import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
+import RemoveListCommand from "lists-plugin/commands/remove-list-command";
 
 module("Unit | commands | remove-list-command", hooks => {
   const ctx = new ModelTestContext();

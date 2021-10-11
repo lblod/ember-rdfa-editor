@@ -1,10 +1,10 @@
 import {module, test} from "qunit";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
-import InsertOperation from "@lblod/ember-rdfa-editor/core/operations/insert-operation"
+import InsertOperation from "@lblod/ember-rdfa-editor/core/operations/insert-operation";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
-import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 
 module("Unit | model | operations | insert-operation-test", () => {
   test("inserts into empty root", assert => {
