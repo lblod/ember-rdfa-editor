@@ -7,7 +7,7 @@ import RemoveListCommand from "lists-plugin/commands/remove-list-command";
 import UnindentListCommand from "lists-plugin/commands/unindent-list-command";
 
 export default class ListsPlugin implements EditorPlugin {
-  create(): ListsPlugin {
+  static create(): ListsPlugin {
     return new ListsPlugin();
   }
 

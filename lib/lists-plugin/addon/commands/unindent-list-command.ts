@@ -5,8 +5,8 @@ import {
   TypeAssertionError
 } from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
-import ModelRangeUtils from "@lblod/ember-rdfa-editor/util/model-range-utils"
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils"
+import ModelRangeUtils from "@lblod/ember-rdfa-editor/util/model-range-utils";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import Command from "@lblod/ember-rdfa-editor/core/command";

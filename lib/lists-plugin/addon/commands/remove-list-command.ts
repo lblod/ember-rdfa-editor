@@ -1,9 +1,9 @@
 import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/util/model-tree-walker"
+import ModelTreeWalker from "@lblod/ember-rdfa-editor/util/model-tree-walker";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils"
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 

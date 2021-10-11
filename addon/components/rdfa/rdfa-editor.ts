@@ -5,7 +5,6 @@ import {EditorPlugin} from "@lblod/ember-rdfa-editor/core/editor-plugin";
 import Editor from "@lblod/ember-rdfa-editor/core/editor";
 import {action} from "@ember/object";
 import EditorController, {EditorControllerImpl} from "@lblod/ember-rdfa-editor/core/editor-controller";
-import {PluginError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import ApplicationInstance from "@ember/application/instance";
 import {tracked} from "@glimmer/tracking";
 import {WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
@@ -14,6 +13,8 @@ import {WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 //   hintsRegistry: HintsRegistry
 //   editor: Editor
 // }
+const ESSENTIAL_PLUGINS = ["typing", "content-control", "deletion"];
+const DEFAULT_PLUGINS = ["history", "text-styles", "lists", "searching", "tables"];
 
 interface RdfaEditorArgs {
   /**
@@ -29,10 +30,10 @@ interface RdfaEditorArgs {
   ownerName: string
   /**
    * EditorPlugin profile of the RDFa editor
-   * @default 'default'
    * @public
    */
-  profile?: string
+  plugins: string[]
+
 
   /**
    * callback that is called with an interface to the editor after editor init completed
@@ -86,8 +87,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   }
 
 
-  get profile() {
-    return this.args.profile || "default";
+  get plugins() {
+    return this.args.plugins || DEFAULT_PLUGINS;
   }
 
   get editor() {
@@ -115,8 +116,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   }
 
   async initialize(editor: Editor) {
-
-    const plugins = await this.getPluginsFromProfile(this.profile);
+    const plugins = this.getPlugins();
     for (const plugin of plugins) {
       console.log("INITIALIZING", plugin.name);
       await this.initializePlugin(plugin, editor);
@@ -124,42 +124,17 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   }
 
-  // TODO: implement
-  async getPluginsFromProfile(profile: string): Promise<EditorPlugin[]> {
-    const pluginNames = ["content-control", "deletion", "history", "lists", "searching", "tables", "text-styles", "typing"];
+  getPlugins(): EditorPlugin[] {
+    const pluginNames = [...ESSENTIAL_PLUGINS, ...this.plugins];
     const plugins = [];
     for (const name of pluginNames) {
-      plugins.push(await this.getPlugin(name));
+      const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
+      if (plugin) {
+        plugins.push(plugin);
+      }
     }
     return plugins;
 
-  }
-
-  async getPlugin(name: string): Promise<EditorPlugin> {
-    let plug = this.getExternalPlugin(name);
-    if (plug) {
-      return plug;
-    }
-
-    plug = this.getCorePlugin(name);
-    if (!plug) {
-      throw new PluginError(`Plugin ${name} not found`);
-    }
-    return plug;
-
-
-  }
-
-  getExternalPlugin(name: string): EditorPlugin | null {
-    return null;
-  }
-
-  getCorePlugin(name: string): EditorPlugin | null {
-    const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
-    if (!plugin) {
-      return null;
-    }
-    return plugin;
   }
 
   async initializePlugin(plugin: EditorPlugin, editor: Editor): Promise<void> {
