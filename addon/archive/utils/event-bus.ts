@@ -3,6 +3,7 @@ import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
 
 export abstract class EditorEvent<P> {
   abstract _name: EditorEventName;
+  private _stopped = false;
 
   protected constructor(private _payload: P, private _owner = CORE_OWNER) {
   }
@@ -21,6 +22,14 @@ export abstract class EditorEvent<P> {
 
   set owner(value: string) {
     this._owner = value;
+  }
+
+  get stopped(): boolean {
+    return this._stopped;
+  }
+
+  stopPropagation() {
+    this._stopped = true;
   }
 }
 
@@ -45,8 +54,10 @@ export class SelectionChangedEvent extends VoidEvent {
 export class ModelWrittenEvent extends VoidEvent {
   _name: EditorEventName = "modelWritten";
 }
+
 export class KeydownEvent extends EditorEvent<KeyboardEvent> {
   _name: EditorEventName = "keyDown";
+
   constructor(payload: KeyboardEvent, owner: string) {
     super(payload, owner);
   }
@@ -97,7 +108,12 @@ export default class EventBus {
 
     console.log(`${event.owner} is emitting event: ${event.name} with payload:`, event.payload);
     if (eventListeners) {
-      eventListeners.forEach(listener => listener(event));
+      for (const listener of eventListeners) {
+        if (event.stopped) {
+          break;
+        }
+        listener(event);
+      }
     }
   };
 
