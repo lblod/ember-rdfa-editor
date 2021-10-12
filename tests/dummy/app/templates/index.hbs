@@ -19,7 +19,7 @@
         <option value="full" selected>full html</option>
       </select>
     </div>
-    {{#if this.rdfaEditor}}
+    {{#if this._editorController}}
       <p>Sample data:
         <button type="button" {{on "click" (fn this.setEditorContent "html" "")}}>Empty</button>
         |
