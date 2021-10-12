@@ -21,4 +21,17 @@ module("Unit | Utility | event-bus", function (hooks) {
     clock.tick(101);
     assert.true(callback.calledOnce);
   });
+  test("stopPropagation stops propagation", function (assert) {
+    const callback = sinon.spy((event: DummyEvent) => {
+      event.stopPropagation();
+    });
+    const callback2 = sinon.fake();
+    const eventBus = new EventBus();
+    eventBus.on("dummy", callback);
+    eventBus.on("dummy", callback2);
+    eventBus.emit(new DummyEvent());
+    assert.true(callback.calledOnce);
+    assert.true(callback2.notCalled);
+
+  });
 });
