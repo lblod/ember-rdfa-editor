@@ -4,6 +4,7 @@ import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {domStripped} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import TestModel from "dummy/tests/utilities/test-model";
+import EventBus from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
 
 module("Unit | model | readers | selection-reader", hooks => {
   let reader: SelectionReader;
@@ -130,7 +131,7 @@ module("Unit | model | readers | selection-reader", hooks => {
       const br = testDoc.getElementsByTagName("br")[0];
       document.body.appendChild(docRoot);
 
-      const model = new TestModel(docRoot);
+      const model = new TestModel(docRoot, new EventBus());
       model.read(false);
       const reader = new SelectionReader(model);
 

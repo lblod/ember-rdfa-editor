@@ -4,6 +4,7 @@ import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {setupTest} from "ember-qunit";
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
+import EventBus from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
 
 module("Unit | model | model-selection-tracker", hooks => {
   const ctx = new ModelTestContext();
@@ -23,7 +24,7 @@ module("Unit | model | model-selection-tracker", hooks => {
     testRoot.appendChild(rootNode);
     const selection = getWindowSelection();
     const text = new Text("abc");
-    const tracker = new ModelSelectionTracker(ctx.model);
+    const tracker = new ModelSelectionTracker(ctx.model, new EventBus());
     rootNode.appendChild(text);
     sync();
 
