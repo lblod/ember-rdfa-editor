@@ -10,7 +10,7 @@ export default class TestModel extends HtmlModel {
     super.read(readSelection);
   }
 
-  public write(source: string = "test-model", tree: ModelElement = this.rootModelNode, writeSelection = true) {
+  public write(source = "test-model", tree: ModelElement = this.rootModelNode, writeSelection = true) {
     super.write(source, tree, writeSelection);
   }
 
