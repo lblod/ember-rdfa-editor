@@ -3,7 +3,7 @@ import {inject as service} from '@ember/service';
 import Component from '@glimmer/component';
 import Editor, {EditorImpl} from "@lblod/ember-rdfa-editor/core/editor";
 import {UninitializedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import {KeydownEvent, SelectionChangedEvent} from "@lblod/ember-rdfa-editor/core/event-bus";
+import {KeydownEvent, SelectionChangedEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 interface FeatureService {
   isEnabled(key: string): boolean

@@ -1,10 +1,11 @@
 import Command from "@lblod/ember-rdfa-editor/core/command";
-import {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/core/event-bus";
+import {EditorEventListener} from "@lblod/ember-rdfa-editor/core/event-bus";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import Editor from "@lblod/ember-rdfa-editor/core/editor";
 import {InternalWidgetSpec, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 import {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import {EditorEventName} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 export default interface EditorController {
   registerCommand<A extends unknown[], R>(command: new (model: EditorModel) => Command<A, R>): void;

@@ -1,13 +1,12 @@
 import EventBus, {
-  EDITOR_EVENT_MAP,
-  EditorEventListener,
-  EditorEventName
+  EditorEventListener
 } from "@lblod/ember-rdfa-editor/core/event-bus";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import {InternalWidgetSpec, WidgetLocation, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import {EDITOR_EVENT_MAP, EditorEventName} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 export default interface Editor {
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void;

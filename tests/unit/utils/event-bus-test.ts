@@ -1,6 +1,7 @@
-import EventBus, {DummyEvent} from "@lblod/ember-rdfa-editor/core/event-bus";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 import {module, test} from "qunit";
 import sinon, {SinonFakeTimers} from "sinon";
+import {DummyEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 
 module("Unit | Utility | event-bus", function (hooks) {

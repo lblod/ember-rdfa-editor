@@ -1,121 +1,18 @@
 import {debouncedAdjustable} from "@lblod/ember-rdfa-editor/archive/utils/debounce";
-import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
-
-export interface EditorEvent<P> {
-
-  get payload(): P;
-
-  get name(): EditorEventName;
-
-  get owner(): string;
-
-  set owner(value: string);
-
-  get stopped(): boolean;
-
-  get context(): EditorEventContext;
-}
-
-export abstract class AbstractEditorEvent<P> implements EditorEvent<P> {
-  abstract _name: EditorEventName;
-  private _stopped = false;
-
-  protected constructor(private _payload: P, private _owner = CORE_OWNER, private _context: EditorEventContext = new DefaultEventContext()) {
-  }
-
-  get payload(): P {
-    return this._payload;
-  }
-
-  get name(): EditorEventName {
-    return this._name;
-  }
-
-  get owner(): string {
-    return this._owner;
-  }
-
-  set owner(value: string) {
-    this._owner = value;
-  }
-
-  get stopped(): boolean {
-    return this._stopped;
-  }
-
-  get context(): EditorEventContext {
-    return this._context;
-  }
-
-  stopPropagation() {
-    this._stopped = true;
-  }
-}
-
-export abstract class VoidEvent extends AbstractEditorEvent<void> {
-  constructor(owner = CORE_OWNER) {
-    super(undefined, owner);
-  }
-}
-
-export class DummyEvent extends VoidEvent {
-  _name: EditorEventName = "dummy";
-}
-
-export class ContentChangedEvent extends VoidEvent {
-  _name: EditorEventName = "contentChanged";
-}
-
-export class SelectionChangedEvent extends VoidEvent {
-  _name: EditorEventName = "selectionChanged";
-}
-
-export class ModelWrittenEvent extends VoidEvent {
-  _name: EditorEventName = "modelWritten";
-}
-
-export class KeydownEvent extends AbstractEditorEvent<KeyboardEvent> {
-  _name: EditorEventName = "keyDown";
-
-  constructor(payload: KeyboardEvent, owner: string) {
-    super(payload, owner);
-  }
-}
-
-export type EDITOR_EVENT_MAP = {
-  "dummy": DummyEvent,
-  "contentChanged": ContentChangedEvent,
-  "modelWritten": ModelWrittenEvent,
-  "selectionChanged": SelectionChangedEvent
-  "keyDown": KeydownEvent
-};
-export type EditorEventName = keyof EDITOR_EVENT_MAP;
+import {
+  DefaultEventContext,
+  EDITOR_EVENT_MAP,
+  EditorEventContext,
+  EditorEventName
+} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 export type EditorEventListener<E extends EditorEventName> = (event: EDITOR_EVENT_MAP[E]) => void;
 
-export type EventEmitter<E extends EditorEventName> = (event: EDITOR_EVENT_MAP[E]) => void;
-
 export type DebouncedEmitter<E extends EditorEventName> = (delayMs: number, event: EDITOR_EVENT_MAP[E]) => void;
 
+export const eventListenerPriorities: EventListenerPriority[] = ["highest", "high", "default", "low", "lowest", "internal"];
 
-interface EditorEventContext {
-  parent?: EditorEventContext;
-
-  serialize(): string;
-
-}
-
-class DefaultEventContext implements EditorEventContext {
-  serialize(): string {
-    return "root";
-  }
-}
-
-
-export const eventListenerPriorities = ["highest", "high", "default", "low", "lowest", "internal"];
-export type EventListenerPriority = typeof eventListenerPriorities[number];
-
-
+export type EventListenerPriority = "highest" | "high" | "default" | "low" | "lowest" | "internal";
 
 export interface ListenerConfig {
   priority?: EventListenerPriority,
@@ -198,7 +95,7 @@ class PriorityListenerQueue<E extends EditorEventName> {
 
   removeListener(listener: EditorEventListener<E>, priority: EventListenerPriority, context: EditorEventContext) {
     const queue = this.queues.get(priority);
-    if(queue) {
+    if (queue) {
       queue.removeListener(listener, context);
     }
   }
@@ -229,6 +126,7 @@ class ListenerQueue<E extends EditorEventName> {
     }
 
   }
+
   removeListener(listener: EditorEventListener<E>, context: EditorEventContext) {
     const queue = this.listeners.get(context.serialize());
     if (queue) {
