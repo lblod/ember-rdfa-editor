@@ -9,7 +9,7 @@ import SelectionWriter from "@lblod/ember-rdfa-editor/core/writers/selection-wri
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import HtmlReader from "@lblod/ember-rdfa-editor/core/readers/html-reader";
 import SelectionReader from "@lblod/ember-rdfa-editor/core/readers/selection-reader";
-import EventBus from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
 import Inspector, {ModelInspector} from "@lblod/ember-rdfa-editor/core/inspector";
 import SimplifiedModel from "@lblod/ember-rdfa-editor/core/simplified-model";

@@ -1,6 +1,6 @@
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
-import EventBus, {SelectionChangedEvent} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import EventBus, {SelectionChangedEvent} from "@lblod/ember-rdfa-editor/core/event-bus";
 import {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 
 export default class ModelSelectionTracker {

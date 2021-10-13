@@ -1,7 +1,7 @@
 import {EditorPlugin} from "@lblod/ember-rdfa-editor/core/editor-plugin";
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 import InsertTextCommand from "./commands/insert-text-command";
-import {KeydownEvent} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import {KeydownEvent} from "@lblod/ember-rdfa-editor/core/event-bus";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 
 export default class TypingPlugin implements EditorPlugin {

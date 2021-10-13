@@ -1,5 +1,5 @@
 import Command from "@lblod/ember-rdfa-editor/core/command";
-import {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/core/event-bus";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import Editor from "@lblod/ember-rdfa-editor/core/editor";
 import {InternalWidgetSpec, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";

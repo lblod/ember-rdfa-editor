@@ -13,7 +13,7 @@ import RemoveTableColumnCommand from "tables-plugin/commands/remove-table-column
 import InsertXmlCommand from "content-control-plugin/commands/insert-xml-command";
 import InsertTableColumnBeforeCommand from "tables-plugin/commands/insert-table-column-before-command";
 import FindNodesCommand from "searching-plugin/commands/find-nodes-command";
-import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/core/event-bus";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import RemoveBoldCommand from "text-styles-plugin/commands/remove-bold-command";
 import RemoveHighlightCommand from "text-styles-plugin/commands/remove-highlight-command";

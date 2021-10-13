@@ -2,7 +2,7 @@ import EventBus, {
   EDITOR_EVENT_MAP,
   EditorEventListener,
   EditorEventName
-} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+} from "@lblod/ember-rdfa-editor/core/event-bus";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import {InternalWidgetSpec, WidgetLocation, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
