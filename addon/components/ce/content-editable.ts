@@ -15,22 +15,12 @@ interface ContentEditableArgs {
 const CE_OWNER = "content-editable";
 
 /**
- * content-editable is the core of {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
- * It provides handlers for input events, a component to display a content editable element and an API for interaction
- * with the document and its internal document representation.
- *
- * rdfa-editor embeds the {{#crossLink "ContentEditable"}}{{/crossLink}} and interacts with the document
- * through the {{#crossLink "RawEditor"}}{{/crossLink}} interface.
- *
- * Input is handled by input handlers such as the {{#crossLink "TextInputHandler"}}{{/crossLink}},
- * {{#crossLink "BackspaceHandler"}}{{/crossLink}}, {{#crossLink "ArrowHandler"}}{{/crossLink}} and
- * {{#crossLink "EnterHandler"}}{{/crossLink}}.
- * @module contenteditable-editor
- * @main contenteditable-editor
- */
-
-/**
  * Content editable editor component.
+ * Ember component which wraps the actual contenteditable div.
+ * Responsible for setting up event listeners
+ * (which simply refire EditorEvents to allow custom event structures)
+ * and initializing the editor instance
+ *
  * @module contenteditable-editor
  * @class ContentEditableComponent
  * @extends Component
