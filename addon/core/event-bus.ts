@@ -142,16 +142,14 @@ class ListenerQueue<E extends EditorEventName> {
   private bubble(event: EDITOR_EVENT_MAP[E]) {
     const {context} = event;
 
-    let cur = context;
+    let cur: EditorEventContext | null = context;
 
     while (cur && !event.stopped) {
       const listeners = this.listeners.get(cur.serialize());
       if (listeners) {
         this.notifyListeners(event, listeners);
       }
-      if (cur.parent) {
-        cur = cur.parent;
-      }
+      cur = cur.getParent();
     }
   }
 

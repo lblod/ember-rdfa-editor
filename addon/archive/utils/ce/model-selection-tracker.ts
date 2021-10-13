@@ -2,7 +2,7 @@ import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection"
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 import {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
-import {SelectionChangedEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {RdfaEventContext, SelectionChangedEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 export default class ModelSelectionTracker {
   model: HtmlModel;
@@ -34,6 +34,9 @@ export default class ModelSelectionTracker {
       {detail: this.model.selection}
     );
     document.dispatchEvent(modelSelectionUpdatedEvent);
-    this.eventBus.emitDebounced(100, new SelectionChangedEvent());
+    this.eventBus.emitDebounced(100, new SelectionChangedEvent({
+      payload: {selection: this.model.selection},
+      context: new RdfaEventContext(this.model.selection.lastRange!.getCommonAncestor())
+    }));
   };
 }
