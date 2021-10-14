@@ -3,6 +3,7 @@ import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 import InsertTextCommand from "./commands/insert-text-command";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import {KeydownEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
+import { action } from '@ember/object';
 
 export default class TypingPlugin implements EditorPlugin {
   private controller!: EditorController;
@@ -21,16 +22,17 @@ export default class TypingPlugin implements EditorPlugin {
     this.controller = controller;
   }
 
-  handleKeydown = (event: KeydownEvent) => {
+  @action
+  handleKeydown(event: KeydownEvent) {
     if (this.isHandlerFor(event.payload)) {
       if(!this.handleAnchors(event.payload.key)) {
         this.controller.executeCommand("insert-text", event.payload.key);
       }
     }
-  };
+  }
 
   isHandlerFor(event: KeyboardEvent): boolean {
-// Still composing, don't handle this.
+    // Still composing, don't handle this.
     return !event.isComposing
       // It's a key combo, we don't want to do anything with this at the moment.
       && !(event.altKey || event.ctrlKey || event.metaKey)

@@ -54,6 +54,7 @@
     "ember-feature-flags": "^6.0.0",
     "ember-focus-trap": "^0.7.0",
     "ember-intl": "^5.6.2",
+    "ember-maybe-import-regenerator": "^1.0.0",
     "ember-truth-helpers": "^2.0.0",
     "mdn-polyfills": "^5.16.0",
     "xml-formatter": "^2.4.0"

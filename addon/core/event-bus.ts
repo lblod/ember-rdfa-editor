@@ -13,8 +13,12 @@ export interface ListenerConfig {
   priority?: EventListenerPriority,
   context?: string
 }
-export const ROOT_CONTEXT = "root"
+export const ROOT_CONTEXT = "root";
 
+/**
+ * The event bus is a simple event system for internal and external use.
+ * It's purpose is to decouple editor events from the browser for more control and easier testability.
+ */
 export default class EventBus {
 
   private listeners: Map<EditorEventName, PriorityListenerQueue<EditorEventName>> = new Map<EditorEventName, PriorityListenerQueue<EditorEventName>>();

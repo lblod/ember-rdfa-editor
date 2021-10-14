@@ -16,6 +16,9 @@ import SimplifiedModel from "@lblod/ember-rdfa-editor/core/simplified-model";
 import ModelHistory from "@lblod/ember-rdfa-editor/core/model/model-history";
 
 
+/**
+ * Provides the interface necessary to query the VDOM state
+ */
 export interface ImmutableModel {
   get modelRoot(): ModelElement
   get viewRoot(): HTMLElement
@@ -26,7 +29,19 @@ export interface ImmutableModel {
   createSnapshot(): SimplifiedModel;
 }
 
+/**
+ * Provides the interface necessary to perform mutations on the VDOM
+ */
 export interface MutableModel extends ImmutableModel {
+  /**
+   * Single entrypoint for VDOM mutations. Any kind of modifications made to the VDOM tree that do not
+   * pass through this method are completely unsupported (and should eventually be impossible).
+   *
+   * @param source origin of the change, usually the name of an {@link EditorPlugin}
+   * @param callback use this to actually make the changes
+   * @param writeBack whether or not the modified vdom should be written to its final representation.
+   * Should default to true in most cases.
+   */
   change(source: string, callback: (mutator: Mutator, inspector: Inspector) => (ModelElement | void), writeBack?: boolean): void;
 
   get selection(): ModelSelection;
@@ -37,6 +52,12 @@ export interface MutableModel extends ImmutableModel {
 
 }
 
+/**
+ * Contains and manages the actual VDOM state. The words Model and VDOM are often used interchangeably.
+ * One instance of this will exist per {@link Editor} instance.
+ * Currently this interface assumes the use of {@link Node DOMNodes} and {@link ModelNode ModelNodes}, but
+ * the intent is that this will eventually be made more generic.
+ */
 export default interface EditorModel extends MutableModel {
   get rootElement(): HTMLElement;
 
@@ -51,9 +72,19 @@ export default interface EditorModel extends MutableModel {
    */
   bindNode(modelNode: ModelNode, domNode: Node): void;
 
+  /**
+   * Called right before the {@link RdfaEditor} component is destroyed.
+   * Destroy any global state like dom event listeners here (arguably those shouldn't even be
+   * here, but nobody's perfect).
+   */
   onDestroy(): void;
 }
 
+/**
+ * Default (and currently only) implementation of the {@link EditorModel} interface.
+ * The HtmlModel writes out to an html document. This document is assumed to be live-rendered in a browser context,
+ * so the javascript DOM api is expected to be available at all times.
+ */
 export class HtmlModel implements EditorModel {
   private _selection: ModelSelection;
   private writer: HtmlWriter;
@@ -163,7 +194,7 @@ export class HtmlModel implements EditorModel {
     this._selection = this.selectionReader.read(domSelection);
   }
 
-  protected write(source: string, tree: ModelElement = this.rootModelNode, writeSelection = true) {
+  protected write(_source: string, tree: ModelElement = this.rootModelNode, writeSelection = true) {
     const modelWriteEvent = new CustomEvent("editorModelWrite");
     document.dispatchEvent(modelWriteEvent);
 
