@@ -1,7 +1,9 @@
 import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 import {module, test} from "qunit";
 import sinon, {SinonFakeTimers} from "sinon";
-import {DummyEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {DummyEvent, RdfaEventContext} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
+import {RdfaContext, RdfaContextFactory} from "@lblod/ember-rdfa-editor/core/rdfa-context";
 
 
 module("Unit | Utility | event-bus", function (hooks) {
@@ -33,6 +35,70 @@ module("Unit | Utility | event-bus", function (hooks) {
     eventBus.emit(new DummyEvent());
     assert.true(callback.calledOnce);
     assert.true(callback2.notCalled);
+
+  });
+
+  test("Correctly filters on context", function (assert) {
+    const eventBus = new EventBus();
+
+    // language=XML
+    const {elements: {personElement}} = vdom`
+      <modelRoot>
+        <div __id="personElement" vocab="http://schema.org/" typeof="Person">Arne Bertrand</div>
+      </modelRoot>
+    `;
+    const context = new RdfaEventContext(personElement);
+    const contextEvent = new DummyEvent({context});
+    const rdfaContext: RdfaContext = {types: ["http://schema.org/Person"], vocab: "http://schema.org/"};
+    const contextListener = sinon.fake();
+    eventBus.on("dummy", contextListener, {context: RdfaContextFactory.serialize(rdfaContext)});
+
+    const normalListener = sinon.fake();
+    const normalEvent = new DummyEvent();
+    eventBus.on("dummy", normalListener);
+
+    eventBus.emit(contextEvent);
+    assert.true(contextListener.calledOnce);
+    assert.true(normalListener.calledOnce);
+
+    eventBus.emit(normalEvent);
+    assert.true(contextListener.calledOnce);
+    assert.true(normalListener.callCount === 2);
+  });
+
+  test("correctly bubbles through contexts", function (assert) {
+    const eventBus = new EventBus();
+
+    // language=XML
+    const {elements: {givenNameElement}} = vdom`
+      <modelRoot>
+        <div __id="personElement" vocab="http://schema.org/" typeof="Person">
+          <span __id="givenNameElement" property="givenName">Arne</span>
+          <span property="familyName">Bertrand</spanpr>
+        </div>
+      </modelRoot>
+    `;
+    const context = new RdfaEventContext(givenNameElement);
+    const contextEvent = new DummyEvent({context});
+    console.log(context.serialize());
+
+    const givenNameContext: RdfaContext = {properties: ["http://schema.org/givenName"]};
+    console.log(RdfaContextFactory.serialize(givenNameContext));
+    const givenNameListener = sinon.fake();
+    eventBus.on("dummy", givenNameListener, {context: RdfaContextFactory.serialize(givenNameContext)});
+
+    const personContext: RdfaContext = {types: ["http://schema.org/Person"], vocab: "http://schema.org/"};
+    const personListener = sinon.fake();
+    eventBus.on("dummy", personListener, {context: RdfaContextFactory.serialize(personContext)});
+
+    const rootListener = sinon.fake();
+    eventBus.on("dummy", rootListener);
+
+    eventBus.emit(contextEvent);
+
+    assert.true(givenNameListener.calledOnce);
+    assert.true(personListener.calledOnce);
+    assert.true(rootListener.calledOnce);
 
   });
 });

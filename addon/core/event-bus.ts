@@ -1,10 +1,5 @@
 import {debouncedAdjustable} from "@lblod/ember-rdfa-editor/archive/utils/debounce";
-import {
-  DefaultEventContext,
-  EDITOR_EVENT_MAP,
-  EditorEventContext,
-  EditorEventName
-} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {EDITOR_EVENT_MAP, EditorEventContext, EditorEventName} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 export type EditorEventListener<E extends EditorEventName> = (event: EDITOR_EVENT_MAP[E]) => void;
 
@@ -16,8 +11,9 @@ export type EventListenerPriority = "highest" | "high" | "default" | "low" | "lo
 
 export interface ListenerConfig {
   priority?: EventListenerPriority,
-  context?: EditorEventContext
+  context?: string
 }
+export const ROOT_CONTEXT = "root"
 
 export default class EventBus {
 
@@ -29,7 +25,7 @@ export default class EventBus {
     callback: EditorEventListener<E>,
     {
       priority = "default",
-      context = new DefaultEventContext()
+      context =  ROOT_CONTEXT
     }: ListenerConfig = {}): void {
     const eventListeners = this.listeners.get(eventName);
     if (eventListeners) {
@@ -47,7 +43,7 @@ export default class EventBus {
     callback: EditorEventListener<E>,
     {
       priority = "default",
-      context = new DefaultEventContext()
+      context = ROOT_CONTEXT
     }: ListenerConfig = {}): void {
     const listenerQueue = this.listeners.get(eventName);
     if (listenerQueue) {
@@ -82,7 +78,7 @@ class PriorityListenerQueue<E extends EditorEventName> {
   private queues: Map<EventListenerPriority, ListenerQueue<E>> = new Map<EventListenerPriority, ListenerQueue<E>>();
 
 
-  addListener(listener: EditorEventListener<E>, priority: EventListenerPriority, context: EditorEventContext) {
+  addListener(listener: EditorEventListener<E>, priority: EventListenerPriority, context: string) {
     const queue = this.queues.get(priority);
     if (!queue) {
       const newQueue = new ListenerQueue<E>();
@@ -93,7 +89,7 @@ class PriorityListenerQueue<E extends EditorEventName> {
     }
   }
 
-  removeListener(listener: EditorEventListener<E>, priority: EventListenerPriority, context: EditorEventContext) {
+  removeListener(listener: EditorEventListener<E>, priority: EventListenerPriority, context: string) {
     const queue = this.queues.get(priority);
     if (queue) {
       queue.removeListener(listener, context);
@@ -116,8 +112,8 @@ class PriorityListenerQueue<E extends EditorEventName> {
 class ListenerQueue<E extends EditorEventName> {
   private listeners: Map<string, EditorEventListener<E>[]> = new Map<string, EditorEventListener<E>[]>();
 
-  addListener(listener: EditorEventListener<E>, context: EditorEventContext) {
-    const serializedContext = context.serialize();
+  addListener(listener: EditorEventListener<E>, context: string) {
+    const serializedContext = context;
     const queue = this.listeners.get(serializedContext);
     if (!queue) {
       this.listeners.set(serializedContext, [listener]);
@@ -127,8 +123,8 @@ class ListenerQueue<E extends EditorEventName> {
 
   }
 
-  removeListener(listener: EditorEventListener<E>, context: EditorEventContext) {
-    const queue = this.listeners.get(context.serialize());
+  removeListener(listener: EditorEventListener<E>, context: string) {
+    const queue = this.listeners.get(context);
     if (queue) {
       const index = queue.indexOf(listener);
       queue.splice(index, 1);
@@ -140,16 +136,28 @@ class ListenerQueue<E extends EditorEventName> {
   }
 
   private bubble(event: EDITOR_EVENT_MAP[E]) {
+    let hasSeenRoot = false;
     const {context} = event;
 
     let cur: EditorEventContext | null = context;
 
     while (cur && !event.stopped) {
-      const listeners = this.listeners.get(cur.serialize());
+      const serialized = cur.serialize();
+      if(serialized === ROOT_CONTEXT) {
+        hasSeenRoot = true;
+      }
+      const listeners = this.listeners.get(serialized);
       if (listeners) {
         this.notifyListeners(event, listeners);
       }
       cur = cur.getParent();
+      console.log("Bubbled to", cur?.serialize());
+    }
+    if(!event.stopped && !hasSeenRoot) {
+      const listeners = this.listeners.get(ROOT_CONTEXT);
+      if (listeners) {
+        this.notifyListeners(event, listeners);
+      }
     }
   }
 

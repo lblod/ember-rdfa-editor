@@ -50,11 +50,14 @@ export class RdfaEventContext implements EditorEventContext {
 
 }
 
-export interface EventConfig<P> {
+interface ContextOwnerConfig {
   owner?: string;
   context?: EditorEventContext;
-  payload: P;
 }
+
+export type EventConfig<P> = ContextOwnerConfig & {
+  payload: P;
+};
 
 export interface EditorEvent<P> {
 
@@ -119,8 +122,15 @@ export abstract class VoidEvent extends AbstractEditorEvent<void> {
   }
 }
 
-export class DummyEvent extends VoidEvent {
+export class DummyEvent extends AbstractEditorEvent<void> {
   _name: EditorEventName = "dummy";
+
+  constructor({
+                context = new DefaultEventContext(),
+                owner = "test"
+              }: ContextOwnerConfig = {}) {
+    super({payload: undefined, context, owner});
+  }
 }
 
 export class ContentChangedEvent extends VoidEvent {

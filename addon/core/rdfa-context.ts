@@ -1,27 +1,27 @@
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
 export interface RdfaContext {
-  vocab: string;
+  vocab?: string;
 
-  content: string;
+  content?: string;
 
-  properties: string[];
+  properties?: string[];
 
-  rel: string[];
+  rel?: string[];
 
-  types: string[];
+  types?: string[];
 
-  rev: string[];
+  rev?: string[];
 
-  about: string;
+  about?: string;
 
-  datatype: string;
+  datatype?: string;
 
-  src: string;
+  src?: string;
 
-  href: string;
+  href?: string;
 
-  resource: string;
+  resource?: string;
 
 }
 
@@ -50,22 +50,18 @@ export class RdfaContextFactory {
    * @param context
    */
   static serialize(context: RdfaContext): string {
-    const keys: Array<keyof RdfaContext> = Object.keys(context) as Array<keyof RdfaContext>;
-    keys.sort();
+    const entries = (Object.entries(context) as [string, unknown][]).filter(([_, value]) => !!value);
+    entries.sort((a, b) => a[0] >= b[0] ? 1 : -1);
     let result = '{';
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-      if (context[key]) {
-        result += `"${key}":${JSON.stringify(context[key])},`;
+
+    for (let i = 0; i < entries.length; i++) {
+      const [key, value] = entries[i];
+      result += `"${key}":${JSON.stringify(value)}`;
+      if (i !== entries.length - 1) {
+        result += ',';
       }
     }
-    // no trailing commas allowed in json
-    const key = keys[keys.length - 1];
-    if (context[key]) {
-      result += `"${key}":${JSON.stringify(context[key])}`;
-    }
     result = result += '}';
-    console.log(result);
     return result;
   }
 
