@@ -1,5 +1,5 @@
 import EventBus, {
-  EditorEventListener
+  EditorEventListener, EventListenerPriority, ListenerConfig
 } from "@lblod/ember-rdfa-editor/core/event-bus";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
@@ -11,7 +11,7 @@ import {EDITOR_EVENT_MAP, EditorEventName} from "@lblod/ember-rdfa-editor/core/e
 export default interface Editor {
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void;
 
-  onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void;
+  onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>, config: ListenerConfig): void;
 
   emitEvent<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void;
 
