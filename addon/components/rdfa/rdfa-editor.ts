@@ -49,20 +49,11 @@ interface SuggestedHint {
 }
 
 /**
- * RDFa editor
- *
- * This module contains all classes and components provided by the @lblod/ember-rdfa-editor addon.
- * The main entrypoint is the {{#crossLink "RdfaEditorComponent"}}{{/crossLink}}.
- * @module rdfa-editor
- * @main rdfa-editor
- */
-
-/**
  * RDFa editor component
  *
- * This component wraps around a {{#crossLink "ContentEditableComponent"}}{{/crossLink}}
+ * This component wraps around a {@link ContentEditable} component
  * and provides an architecture to interact with the document through plugins.
- * {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
+ *
  * @module rdfa-editor
  * @class RdfaEditorComponent
  * @extends Component
