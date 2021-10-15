@@ -30,8 +30,9 @@ module("Unit | Utility | event-bus", function (hooks) {
     });
     const callback2 = sinon.fake();
     const eventBus = new EventBus();
-    eventBus.on("dummy", callback);
+    // callback is registered after callback2, so is called first
     eventBus.on("dummy", callback2);
+    eventBus.on("dummy", callback);
     eventBus.emit(new DummyEvent());
     assert.true(callback.calledOnce);
     assert.true(callback2.notCalled);
@@ -99,6 +100,28 @@ module("Unit | Utility | event-bus", function (hooks) {
     assert.true(givenNameListener.calledOnce);
     assert.true(personListener.calledOnce);
     assert.true(rootListener.calledOnce);
+
+  });
+
+  test("calls equal-priority listeners in reverse order of registration", function (assert) {
+    const eventBus = new EventBus();
+    const event = new DummyEvent();
+
+    const calledListeners: string[] = [];
+    const listenerA = () => {
+      calledListeners.push("A");
+    };
+    const listenerB = () => {
+      calledListeners.push("B");
+    };
+
+    eventBus.on("dummy", listenerA);
+    eventBus.on("dummy", listenerB);
+    eventBus.emit(event);
+
+    assert.strictEqual(calledListeners[0], "B");
+    assert.strictEqual(calledListeners[1], "A");
+
 
   });
 });

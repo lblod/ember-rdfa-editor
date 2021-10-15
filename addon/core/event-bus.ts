@@ -122,9 +122,8 @@ class ListenerQueue<E extends EditorEventName> {
     if (!queue) {
       this.listeners.set(serializedContext, [listener]);
     } else {
-      queue.push(listener);
+      queue.splice(0, 0, listener);
     }
-
   }
 
   removeListener(listener: EditorEventListener<E>, context: string) {
