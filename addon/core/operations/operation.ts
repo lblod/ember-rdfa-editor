@@ -1,4 +1,5 @@
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 
 /**
  * Composable nuclear modification of {@link EditorModel} state.
@@ -21,8 +22,10 @@ import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
  */
 export default abstract class Operation {
   private _range: ModelRange;
-  protected constructor(range: ModelRange) {
+  private eventBus: EventBus;
+  protected constructor(eventBus: EventBus, range: ModelRange) {
     this._range = range;
+    this.eventBus = eventBus;
   }
   get range(): ModelRange {
     return this._range;

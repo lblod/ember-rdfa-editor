@@ -5,14 +5,15 @@ import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/mode
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import ModelTreeWalker, {FilterResult} from "@lblod/ember-rdfa-editor/util/model-tree-walker";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 
 export default class AttributeOperation extends Operation {
 
   private _key: TextAttribute;
   private _value: boolean;
 
-  constructor(range: ModelRange, key: TextAttribute, value: boolean) {
-    super(range);
+  constructor(eventBus: EventBus, range: ModelRange, key: TextAttribute, value: boolean) {
+    super(eventBus, range);
     this._key = key;
     this._value = value;
   }

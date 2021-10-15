@@ -3,11 +3,12 @@ import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import OperationAlgorithms from "@lblod/ember-rdfa-editor/core/operations/operation-algorithms";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import {OperationError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 
 export default class MoveOperation extends Operation {
   private _targetPosition: ModelPosition;
-  constructor(rangeToMove: ModelRange, targetPosition: ModelPosition ) {
-    super(rangeToMove);
+  constructor(eventBus: EventBus, rangeToMove: ModelRange, targetPosition: ModelPosition ) {
+    super(eventBus, rangeToMove);
     this._targetPosition = targetPosition;
   }
   get targetPosition(): ModelPosition {

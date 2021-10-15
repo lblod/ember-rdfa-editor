@@ -150,6 +150,7 @@
       "lib/searching-plugin",
       "lib/tables-plugin",
       "lib/text-styles-plugin",
+      "lib/triplestore",
       "lib/typing-plugin"
     ]
   },
