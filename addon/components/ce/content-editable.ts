@@ -87,7 +87,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
 
   @action
   handleSelectionChange() {
-    this.editor.emitEvent(new SelectionChangedEvent(CE_OWNER));
+    // this.editor.emitEvent(new SelectionChangedEvent(CE_OWNER));
   }
   willDestroy() {
     this.editor.onDestroy();

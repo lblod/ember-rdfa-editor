@@ -1,7 +1,7 @@
 import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
-import {RdfaContextFactory} from "@lblod/ember-rdfa-editor/core/rdfa-context";
+import {RdfaContext, RdfaContextFactory} from "@lblod/ember-rdfa-editor/core/rdfa-context";
 
 export type EDITOR_EVENT_MAP = {
   "dummy": DummyEvent,
@@ -152,6 +152,7 @@ export class KeydownEvent extends AbstractEditorEvent<KeyboardEvent> {
 
 interface SelectionChangedEventPayload {
   selection: ModelSelection;
+  rdfaContext: RdfaContext;
 }
 
 export class SelectionChangedEvent extends AbstractEditorEvent<SelectionChangedEventPayload> {

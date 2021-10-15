@@ -3,6 +3,7 @@ import {getWindowSelection} from "@lblod/ember-rdfa-editor/archive/utils/dom-hel
 import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 import {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import {RdfaEventContext, SelectionChangedEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {RdfaContextFactory} from "@lblod/ember-rdfa-editor/core/rdfa-context";
 
 export default class ModelSelectionTracker {
   model: HtmlModel;
@@ -35,7 +36,10 @@ export default class ModelSelectionTracker {
     );
     document.dispatchEvent(modelSelectionUpdatedEvent);
     this.eventBus.emitDebounced(100, new SelectionChangedEvent({
-      payload: {selection: this.model.selection},
+      payload: {
+        selection: this.model.selection,
+        rdfaContext: RdfaContextFactory.fromElement(this.model.selection.lastRange!.getCommonAncestor())
+      },
       context: new RdfaEventContext(this.model.selection.lastRange!.getCommonAncestor())
     }));
   };
