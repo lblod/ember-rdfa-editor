@@ -2,13 +2,22 @@ import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import {RdfaContext, RdfaContextFactory} from "@lblod/ember-rdfa-editor/core/rdfa-context";
+import Operation from "@lblod/ember-rdfa-editor/core/operations/operation";
+import InsertOperation from "@lblod/ember-rdfa-editor/core/operations/insert-operation";
+import AttributeOperation from "@lblod/ember-rdfa-editor/core/operations/attribute-operation";
+import MoveOperation from "@lblod/ember-rdfa-editor/core/operations/move-operation";
+import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-operation";
 
 export type EDITOR_EVENT_MAP = {
   "dummy": DummyEvent,
   "contentChanged": ContentChangedEvent,
   "modelWritten": ModelWrittenEvent,
-  "selectionChanged": SelectionChangedEvent
-  "keyDown": KeydownEvent
+  "selectionChanged": SelectionChangedEvent,
+  "keyDown": KeydownEvent,
+  "after-insert-operation": AfterInsertOperationEvent,
+  "after-move-operation": AfterMoveOperationEvent,
+  "after-attribute-operation": AfterAttributeOperationEvent,
+  "after-split-operation": AfterSplitOperationEvent
 };
 export type EditorEventName = keyof EDITOR_EVENT_MAP;
 
@@ -113,6 +122,45 @@ export abstract class AbstractEditorEvent<P> implements EditorEvent<P> {
 
   stopPropagation() {
     this._stopped = true;
+  }
+}
+
+export abstract class OperationEvent<O extends Operation> extends AbstractEditorEvent<O> {
+
+  protected constructor(payload: O) {
+    super({owner: CORE_OWNER, payload});
+  }
+}
+
+export class AfterInsertOperationEvent extends OperationEvent<InsertOperation> {
+  _name: EditorEventName = "after-insert-operation";
+
+  constructor(payload: InsertOperation) {
+    super(payload);
+  }
+}
+
+export class AfterAttributeOperationEvent extends OperationEvent<AttributeOperation> {
+  _name: EditorEventName = "after-attribute-operation";
+
+  constructor(payload: AttributeOperation) {
+    super(payload);
+  }
+}
+
+export class AfterMoveOperationEvent extends OperationEvent<MoveOperation> {
+  _name: EditorEventName = "after-move-operation";
+
+  constructor(payload: MoveOperation) {
+    super(payload);
+  }
+}
+
+export class AfterSplitOperationEvent extends OperationEvent<SplitOperation> {
+  _name: EditorEventName = "after-split-operation";
+
+  constructor(payload: SplitOperation) {
+    super(payload);
   }
 }
 

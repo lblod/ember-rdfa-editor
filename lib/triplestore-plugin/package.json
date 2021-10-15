@@ -1,5 +1,5 @@
 {
-  "name": "triplestore",
+  "name": "triplestore-plugin",
   "keywords": [
     "ember-addon"
   ],

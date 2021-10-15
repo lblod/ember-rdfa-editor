@@ -22,7 +22,7 @@ import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
  */
 export default abstract class Operation {
   private _range: ModelRange;
-  private eventBus: EventBus;
+  protected eventBus: EventBus;
   protected constructor(eventBus: EventBus, range: ModelRange) {
     this._range = range;
     this.eventBus = eventBus;

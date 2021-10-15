@@ -43,7 +43,7 @@
         "lib/lists-plugin/app/*",
         "lib/history-plugin/app/*",
         "lib/deletion-plugin/app/*",
-        "lib/triplestore/app/*"
+        "lib/triplestore-plugin/app/*"
       ],
       "@lblod/ember-rdfa-editor": [
         "addon"
@@ -168,17 +168,17 @@
       "deletion-plugin/test-support/*": [
         "lib/deletion-plugin/addon-test-support/*"
       ],
-      "triplestore": [
-        "lib/triplestore/addon"
+      "triplestore-plugin": [
+        "lib/triplestore-plugin/addon"
       ],
-      "triplestore/*": [
-        "lib/triplestore/addon/*"
+      "triplestore-plugin/*": [
+        "lib/triplestore-plugin/addon/*"
       ],
-      "triplestore/test-support": [
-        "lib/triplestore/addon-test-support"
+      "triplestore-plugin/test-support": [
+        "lib/triplestore-plugin/addon-test-support"
       ],
-      "triplestore/test-support/*": [
-        "lib/triplestore/addon-test-support/*"
+      "triplestore-plugin/test-support/*": [
+        "lib/triplestore-plugin/addon-test-support/*"
       ]
     }
   },
@@ -198,6 +198,6 @@
     "lib/lists-plugin",
     "lib/history-plugin",
     "lib/deletion-plugin",
-    "lib/triplestore"
+    "lib/triplestore-plugin"
   ]
 }

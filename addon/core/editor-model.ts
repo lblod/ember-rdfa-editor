@@ -145,7 +145,7 @@ export class HtmlModel implements EditorModel {
   }
 
   change(source: string, callback: (mutator: Mutator, inspector: Inspector) => (ModelElement | void), writeBack = true): void {
-    const mutator = new ImmediateModelMutator();
+    const mutator = new ImmediateModelMutator(this.eventBus);
     const inspector = new ModelInspector();
     const subTree = callback(mutator, inspector);
 

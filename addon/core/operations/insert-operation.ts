@@ -4,6 +4,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import OperationAlgorithms from "@lblod/ember-rdfa-editor/core/operations/operation-algorithms";
 import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
+import {AfterInsertOperationEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 /**
  * The insert operation deals with inserting a list of nodes into a certain range.
@@ -95,6 +96,12 @@ export default class InsertOperation extends Operation {
   }
 
   execute(): ModelRange {
+    const result = this.doExecute();
+    this.eventBus.emit(new AfterInsertOperationEvent(this));
+    return result;
+  }
+
+  private doExecute(): ModelRange {
     if (!this.nodes.length) {
       const nodeAtEnd = this.range.end.nodeAfter();
       if (nodeAtEnd) {
@@ -121,6 +128,8 @@ export default class InsertOperation extends Operation {
     const last = this.nodes[this.nodes.length - 1];
     const start = ModelPosition.fromBeforeNode(first);
     const end = ModelPosition.fromAfterNode(last);
+    this.eventBus.emit(new AfterInsertOperationEvent(this));
     return new ModelRange(start, end);
+
   }
 }
