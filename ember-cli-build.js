@@ -2,7 +2,8 @@
 
 const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
-module.exports = function(defaults) {
+const webpack = require("webpack");
+module.exports = function (defaults) {
   let app = new EmberAddon(defaults, {
     babel: {
       sourceMaps: 'inline'
@@ -14,6 +15,26 @@ module.exports = function(defaults) {
       enabled: true,
       cascade: true,
       sourcemap: true
+    },
+    autoImport: {
+      webpack: {
+        node: {
+          global: true,
+          __filename: true,
+          __dirname: true,
+        },
+        plugins: [
+          new webpack.ProvidePlugin({
+            process: 'process/browser'
+          })
+        ],
+        resolve: {
+          fallback: {
+            stream: require.resolve("stream-browserify"),
+            buffer: require.resolve('buffer/'),
+          }
+        }
+      }
     },
   });
 

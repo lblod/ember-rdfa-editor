@@ -14,6 +14,7 @@ import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/mod
 import Inspector, {ModelInspector} from "@lblod/ember-rdfa-editor/core/inspector";
 import SimplifiedModel from "@lblod/ember-rdfa-editor/core/simplified-model";
 import ModelHistory from "@lblod/ember-rdfa-editor/core/model/model-history";
+import {ModelReadEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 
 /**
@@ -180,6 +181,7 @@ export class HtmlModel implements EditorModel {
     if (readSelection) {
       this.readSelection();
     }
+    this.eventBus.emit(new ModelReadEvent());
   }
 
   private mergeNodeMap(otherMap: Map<Node, ModelNode>) {

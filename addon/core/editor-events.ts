@@ -12,12 +12,13 @@ export type EDITOR_EVENT_MAP = {
   "dummy": DummyEvent,
   "contentChanged": ContentChangedEvent,
   "modelWritten": ModelWrittenEvent,
+  "modelRead": ModelReadEvent,
   "selectionChanged": SelectionChangedEvent,
   "keyDown": KeydownEvent,
-  "after-insert-operation": AfterInsertOperationEvent,
-  "after-move-operation": AfterMoveOperationEvent,
-  "after-attribute-operation": AfterAttributeOperationEvent,
-  "after-split-operation": AfterSplitOperationEvent
+  "afterInsertOperation": AfterInsertOperationEvent,
+  "afterMoveOperation": AfterMoveOperationEvent,
+  "afterAttributeOperation": AfterAttributeOperationEvent,
+  "afterSplitOperation": AfterSplitOperationEvent,
 };
 export type EditorEventName = keyof EDITOR_EVENT_MAP;
 
@@ -133,7 +134,7 @@ export abstract class OperationEvent<O extends Operation> extends AbstractEditor
 }
 
 export class AfterInsertOperationEvent extends OperationEvent<InsertOperation> {
-  _name: EditorEventName = "after-insert-operation";
+  _name: EditorEventName = "afterInsertOperation";
 
   constructor(payload: InsertOperation) {
     super(payload);
@@ -141,7 +142,7 @@ export class AfterInsertOperationEvent extends OperationEvent<InsertOperation> {
 }
 
 export class AfterAttributeOperationEvent extends OperationEvent<AttributeOperation> {
-  _name: EditorEventName = "after-attribute-operation";
+  _name: EditorEventName = "afterAttributeOperation";
 
   constructor(payload: AttributeOperation) {
     super(payload);
@@ -149,7 +150,7 @@ export class AfterAttributeOperationEvent extends OperationEvent<AttributeOperat
 }
 
 export class AfterMoveOperationEvent extends OperationEvent<MoveOperation> {
-  _name: EditorEventName = "after-move-operation";
+  _name: EditorEventName = "afterMoveOperation";
 
   constructor(payload: MoveOperation) {
     super(payload);
@@ -157,7 +158,7 @@ export class AfterMoveOperationEvent extends OperationEvent<MoveOperation> {
 }
 
 export class AfterSplitOperationEvent extends OperationEvent<SplitOperation> {
-  _name: EditorEventName = "after-split-operation";
+  _name: EditorEventName = "afterSplitOperation";
 
   constructor(payload: SplitOperation) {
     super(payload);
@@ -167,6 +168,14 @@ export class AfterSplitOperationEvent extends OperationEvent<SplitOperation> {
 export abstract class VoidEvent extends AbstractEditorEvent<void> {
   constructor(owner = CORE_OWNER) {
     super({owner, payload: undefined});
+  }
+}
+
+export class ModelReadEvent extends VoidEvent {
+  _name: EditorEventName = "modelRead";
+
+  constructor() {
+    super();
   }
 }
 

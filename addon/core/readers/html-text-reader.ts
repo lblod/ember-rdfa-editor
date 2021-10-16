@@ -15,6 +15,7 @@ export default class HtmlTextReader implements Reader<Text, ModelText[], HtmlRea
     const result = new ModelText(from.textContent);
     MapUtils.copyMapContents(context.textAttributes, result.attributeMap);
     context.bindNode(result, from);
+    context.onText(result);
     return [result];
   }
 }
