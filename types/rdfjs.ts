@@ -65,36 +65,32 @@ export interface DataFactory {
 export interface DatasetCore extends Iterable<Quad> {
   readonly size: number;
 
-  add(quad: Quad): SimpleDataset;
+  add(quad: Quad): Dataset;
 
-  delete(quad: Quad): SimpleDataset;
+  delete(quad: Quad): Dataset;
 
   has(quad: Quad): boolean;
 
-  match(subject?: SubjectTerm, predicate?: PredicateTerm, object?: ObjectTerm, graph?: GraphTerm): SimpleDataset;
+  match(subject?: SubjectTerm, predicate?: PredicateTerm, object?: ObjectTerm, graph?: GraphTerm): Dataset;
 }
 
 export interface DatasetCoreFactory {
   dataset(quads?: Quad[]): DatasetCore;
 }
 
-export interface SimpleDataset extends DatasetCore {
 
-  addAll(quads: SimpleDataset | Quad[]): SimpleDataset;
+export interface Dataset extends DatasetCore {
+  addAll(quads: Dataset | Quad[]): Dataset;
 
-  equals(other: SimpleDataset): boolean;
+  equals(other: Dataset): boolean;
 
-  contains(other: SimpleDataset): boolean;
+  contains(other: Dataset): boolean;
 
-  union(quads: SimpleDataset): SimpleDataset;
+  union(quads: Dataset): Dataset;
 
-  intersection(other: SimpleDataset): SimpleDataset;
+  intersection(other: Dataset): Dataset;
 
-  difference(other: SimpleDataset): SimpleDataset;
-}
-
-
-export interface Dataset extends SimpleDataset {
+  difference(other: Dataset): Dataset;
 
   deleteMatches(subject?: SubjectTerm, predicate?: PredicateTerm, object?: ObjectTerm, graph?: GraphTerm): Dataset;
 

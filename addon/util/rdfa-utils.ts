@@ -8,6 +8,7 @@ import TreeNode from "@lblod/ember-rdfa-editor/core/model/tree-node";
 import dataset from "@graphy/memory.dataset.fast";
 import {RdfaParser} from "rdfa-streaming-parser";
 import {SimpleDataset} from "rdfjs";
+import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
 
 export function calculateRdfaPrefixes(start: Node): Map<string, string> {
   const parents: HTMLElement[] = [];
@@ -57,7 +58,7 @@ export function getParentContext(node: TreeNode): SimpleDataset {
 
   rootPath.reverse();
 
-  const store = dataset();
+  const store = new Datastore();
   const rdfaParser = new RdfaParser();
 
   rdfaParser.on("data", (data) => {

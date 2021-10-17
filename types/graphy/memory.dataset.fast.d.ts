@@ -1,5 +1,5 @@
 declare module '@graphy/memory.dataset.fast' {
-  import {GraphTerm, ObjectTerm, PredicateTerm, Quad as RdfjsQuad, SimpleDataset, SubjectTerm} from 'rdfjs';
+  import {Dataset, GraphTerm, ObjectTerm, PredicateTerm, Quad as RdfjsQuad, SubjectTerm} from 'rdfjs';
   export type TermType = 'NamedNode' | 'BlankNode' | 'Literal' | 'DefaultGraph';
 
   export type AnyQuad = RdfjsQuad;
@@ -34,13 +34,16 @@ declare module '@graphy/memory.dataset.fast' {
 
   export default function dataset(config?: DatasetConfig): FastDataset;
 
-  export interface FastDataset extends SimpleDataset {
+  export interface FastDataset extends Iterable<Quad> {
+    size: number;
+
+    isGraphyFastDataset: true;
 
     canonicalize(): FastDataset;
 
     add(quad: AnyQuad): FastDataset;
 
-    addAll(quads: SimpleDataset | AnyQuad []): FastDataset;
+    addAll(quads: Dataset | AnyQuad []): FastDataset;
 
     addQuads(quads: Array<Quad>): number;
 
@@ -52,15 +55,19 @@ declare module '@graphy/memory.dataset.fast' {
 
     disjoint(other: FastDataset): boolean;
 
-    union(other: SimpleDataset): FastDataset;
+    union(other: Dataset): FastDataset;
 
-    intersection(other: SimpleDataset): FastDataset;
+    intersection(other: Dataset): FastDataset;
 
     minus(other: FastDataset): FastDataset;
 
-    difference(other: SimpleDataset): FastDataset;
+    difference(other: Dataset): FastDataset;
 
     match(subject?: SubjectTerm, predicate?: PredicateTerm, object?: ObjectTerm, graph?: GraphTerm): FastDataset;
 
+    equals(other: Dataset): boolean;
+
+    has(quad: AnyQuad): boolean;
   }
+
 }
