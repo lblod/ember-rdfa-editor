@@ -1,13 +1,16 @@
 import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
-import {RdfaContext, RdfaContextFactory} from "@lblod/ember-rdfa-editor/core/rdfa-context";
+import {RdfaContextFactory} from "@lblod/ember-rdfa-editor/core/rdfa-context";
 import Operation from "@lblod/ember-rdfa-editor/core/operations/operation";
 import InsertOperation from "@lblod/ember-rdfa-editor/core/operations/insert-operation";
 import AttributeOperation from "@lblod/ember-rdfa-editor/core/operations/attribute-operation";
 import MoveOperation from "@lblod/ember-rdfa-editor/core/operations/move-operation";
 import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-operation";
 import {AnyEventName} from "@lblod/ember-rdfa-editor/core/event-bus";
+import {getParentContext} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import SimpleDataset = Rdfjs.SimpleDataset;
 
 export type EDITOR_EVENT_MAP = {
   "dummy": DummyEvent,
@@ -210,20 +213,37 @@ export class KeydownEvent extends AbstractEditorEvent<KeyboardEvent> {
   }
 }
 
-interface SelectionChangedEventPayload {
-  selection: ModelSelection;
-  rdfaContext: RdfaContext;
+class SelectionChangedEventPayload {
+  _selection: ModelSelection;
+  _parentDataset?: SimpleDataset;
+
+  constructor(selection: ModelSelection) {
+    this._selection = selection;
+  }
+
+  get selection(): ModelSelection {
+    return this._selection;
+  }
+
+  get parentDataset(): SimpleDataset {
+    if (!this._parentDataset) {
+      if (!ModelSelection.isWellBehaved(this._selection)) {
+        throw new MisbehavedSelectionError();
+      }
+      const commonAncestor = this._selection.lastRange.getCommonAncestor();
+      this._parentDataset = getParentContext(commonAncestor);
+    }
+    return this._parentDataset;
+  }
 }
 
 export class SelectionChangedEvent extends AbstractEditorEvent<SelectionChangedEventPayload> {
   _name: EditorEventName = "selectionChanged";
 
-  constructor({
-                payload,
-                owner = CORE_OWNER,
-                context
-              }: { payload: SelectionChangedEventPayload, owner?: string, context: EditorEventContext }) {
-    super({payload, owner, context});
+  constructor(selection: ModelSelection, owner: string = CORE_OWNER) {
+    super({
+      payload: new SelectionChangedEventPayload(selection), owner
+    });
   }
 }
 

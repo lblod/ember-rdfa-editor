@@ -1,12 +1,12 @@
 declare module '@graphy/memory.dataset.fast' {
+  import SimpleDataset = Rdfjs.SimpleDataset;
+  import SubjectTerm = Rdfjs.SubjectTerm;
+  import PredicateTerm = Rdfjs.PredicateTerm;
+  import ObjectTerm = Rdfjs.ObjectTerm;
+  import GraphTerm = Rdfjs.GraphTerm;
   export type TermType = 'NamedNode' | 'BlankNode' | 'Literal' | 'DefaultGraph';
 
-  export interface AnyQuad {
-    subject: AnyTerm;
-    predicate: AnyTerm;
-    object: AnyTerm;
-    graph?: AnyTerm
-  }
+  export type AnyQuad = Rdfjs.Quad;
 
   export type TermIsolate = AnyTerm;
   export type QuadIsolate = AnyQuad;
@@ -31,55 +31,40 @@ declare module '@graphy/memory.dataset.fast' {
     datatype?: AnyTerm;
     language?: string;
   }
+
   export interface DatasetConfig {
 
   }
 
   export default function dataset(config?: DatasetConfig): FastDataset;
 
-  export interface FastDataset extends Iterable<Quad> {
-    size: number;
+  export interface FastDataset extends SimpleDataset {
 
     canonicalize(): FastDataset;
 
-    add(quad: AnyQuad): this;
+    add(quad: AnyQuad): FastDataset;
 
-    addAll(quads: FastDataset | Array<AnyQuad>): this;
+    addAll(quads: SimpleDataset | Quad []): FastDataset;
 
     addQuads(quads: Array<Quad>): number;
 
-    delete(quad: AnyQuad): this;
+    delete(quad: AnyQuad): FastDataset;
 
     deleteQuads(quads: Array<Quad>): number;
 
     clear(): void;
 
-    has(quad: AnyQuad): boolean;
-
-    equals(other: FastDataset): boolean;
-
-    contains(other: FastDataset): boolean;
-
     disjoint(other: FastDataset): boolean;
 
-    union(other: FastDataset): FastDataset;
+    union(other: SimpleDataset): FastDataset;
 
-    intersection(other: FastDataset): FastDataset;
+    intersection(other: SimpleDataset): FastDataset;
 
     minus(other: FastDataset): FastDataset;
 
-    difference(other: FastDataset): FastDataset;
+    difference(other: SimpleDataset): FastDataset;
 
-    match(subject: AnyTerm | null): FastDataset;
-
-    match(subject: AnyTerm | null, predicate: AnyTerm | null): FastDataset;
-
-    match(subject: AnyTerm | null, predicate: AnyTerm | null, object: AnyTerm | null): FastDataset;
-
-    match(subject: AnyTerm | null, predicate: AnyTerm | null, object: AnyTerm | null, graph: AnyTerm | null): FastDataset;
-
-    [Symbol.iterator](): Iterator<Quad>;
-
+    match(subject?: SubjectTerm, predicate?: PredicateTerm, object?: ObjectTerm, graph?: GraphTerm): FastDataset;
 
   }
 }

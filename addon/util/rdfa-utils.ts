@@ -4,16 +4,21 @@
  * convienently it is also  how the RdfaAttributes class of marawa uses it when calculating rdfa attributes.
  * This is highly reliant on the internals of that class and may stop working at some point.
  */
-export function calculateRdfaPrefixes(start: Node): Map<string,string> {
-  const parents : HTMLElement[] = [];
+import TreeNode from "@lblod/ember-rdfa-editor/core/model/tree-node";
+import dataset from "@graphy/memory.dataset.fast";
+import {RdfaParser} from "rdfa-streaming-parser";
+import SimpleDataset = Rdfjs.SimpleDataset;
+
+export function calculateRdfaPrefixes(start: Node): Map<string, string> {
+  const parents: HTMLElement[] = [];
   let currentNode = start.parentElement;
-  while(currentNode !== null) {
+  while (currentNode !== null) {
     parents.push(currentNode);
     currentNode = currentNode.parentElement;
   }
 
   // parse parents top down
-  let currentPrefixes: Map<string,string> = new Map<string,string>();
+  let currentPrefixes: Map<string, string> = new Map<string, string>();
   let vocab = "";
   for (const element of parents.reverse()) {
     const prefixString: string = element.getAttribute('prefix') || "";
@@ -34,10 +39,30 @@ export function calculateRdfaPrefixes(start: Node): Map<string,string> {
  */
 export function parsePrefixString(prefixString: string) {
   const parts = prefixString.split(' ');
-  const prefixes: Map<string,string> = new Map<string,string>();
+  const prefixes: Map<string, string> = new Map<string, string>();
   for (let i = 0; i < parts.length; i = i + 2) {
     const key = parts[i].substr(0, parts[i].length - 1);
     prefixes.set(key, parts[i + 1]);
   }
   return prefixes;
+}
+
+export function getParentContext(node: TreeNode): SimpleDataset {
+
+  const store = dataset();
+  const rootPath = [];
+  for (let cur: TreeNode | null = node; cur; cur = cur.parent) {
+    rootPath.push(node);
+  }
+  rootPath.reverse();
+  const rdfaParser = new RdfaParser();
+  rdfaParser.on("data", (data) => store.add(data));
+  for (const node of rootPath) {
+    rdfaParser.onTagOpen(node.type, Object.fromEntries(node.attributeMap));
+  }
+  for (const _ of rootPath) {
+    rdfaParser.onTagClose();
+  }
+
+  return store;
 }
