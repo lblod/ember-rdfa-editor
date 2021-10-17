@@ -10,7 +10,7 @@ import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-opera
 import {AnyEventName} from "@lblod/ember-rdfa-editor/core/event-bus";
 import {getParentContext} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import SimpleDataset = Rdfjs.SimpleDataset;
+import {SimpleDataset} from "rdfjs";
 
 export type EDITOR_EVENT_MAP = {
   "dummy": DummyEvent,
@@ -231,9 +231,12 @@ class SelectionChangedEventPayload {
         throw new MisbehavedSelectionError();
       }
       const commonAncestor = this._selection.lastRange.getCommonAncestor();
+      console.log(commonAncestor.toXml());
       this._parentDataset = getParentContext(commonAncestor);
+      return this._parentDataset;
+    } else {
+      return this._parentDataset;
     }
-    return this._parentDataset;
   }
 }
 

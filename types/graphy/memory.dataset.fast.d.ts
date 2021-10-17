@@ -1,12 +1,8 @@
 declare module '@graphy/memory.dataset.fast' {
-  import SimpleDataset = Rdfjs.SimpleDataset;
-  import SubjectTerm = Rdfjs.SubjectTerm;
-  import PredicateTerm = Rdfjs.PredicateTerm;
-  import ObjectTerm = Rdfjs.ObjectTerm;
-  import GraphTerm = Rdfjs.GraphTerm;
+  import {GraphTerm, ObjectTerm, PredicateTerm, Quad as RdfjsQuad, SimpleDataset, SubjectTerm} from 'rdfjs';
   export type TermType = 'NamedNode' | 'BlankNode' | 'Literal' | 'DefaultGraph';
 
-  export type AnyQuad = Rdfjs.Quad;
+  export type AnyQuad = RdfjsQuad;
 
   export type TermIsolate = AnyTerm;
   export type QuadIsolate = AnyQuad;
@@ -44,7 +40,7 @@ declare module '@graphy/memory.dataset.fast' {
 
     add(quad: AnyQuad): FastDataset;
 
-    addAll(quads: SimpleDataset | Quad []): FastDataset;
+    addAll(quads: SimpleDataset | AnyQuad []): FastDataset;
 
     addQuads(quads: Array<Quad>): number;
 

@@ -23,8 +23,8 @@ export default class ModelSelectionTracker {
 
   updateSelection = () => {
     const currentSelection = getWindowSelection();
-    if (!this.model.rootElement.contains(currentSelection.anchorNode) || !this.model.rootElement.contains(currentSelection.focusNode) ||
-      (currentSelection.type != 'Caret' && this.model.rootElement === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
+    if (!this.model.viewRoot.contains(currentSelection.anchorNode) || !this.model.viewRoot.contains(currentSelection.focusNode) ||
+      (currentSelection.type != 'Caret' && this.model.viewRoot === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
       // this.model.selection.clearRanges();
       return;
     }
@@ -34,6 +34,8 @@ export default class ModelSelectionTracker {
       {detail: this.model.selection}
     );
     document.dispatchEvent(modelSelectionUpdatedEvent);
-    this.eventBus.emitDebounced(100, new SelectionChangedEvent(this.model.selection));
+    const event = new SelectionChangedEvent(this.model.selection);
+    console.log("Setsize:", event.payload.parentDataset.size);
+    this.eventBus.emitDebounced(100, event);
   };
 }
