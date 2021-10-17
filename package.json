@@ -159,11 +159,9 @@
       "lib/deletion-plugin",
       "lib/history-plugin",
       "lib/lists-plugin",
-      "lib/rdfa-context-plugin",
       "lib/searching-plugin",
       "lib/tables-plugin",
       "lib/text-styles-plugin",
-      "lib/triplestore-plugin",
       "lib/typing-plugin"
     ]
   },

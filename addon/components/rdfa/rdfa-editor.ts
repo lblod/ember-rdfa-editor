@@ -9,20 +9,12 @@ import ApplicationInstance from "@ember/application/instance";
 import {tracked} from "@glimmer/tracking";
 import {WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 
-// do not remove these imports
-// they are a workaround for the fact that in-repo-addons only have access
-// to host-app dependencies the host-app explicitly imports and uses
-import N3 from 'n3';
-import dataset from "@graphy/memory.dataset.fast";
-const _dummy = N3;
-const _dummy2 = dataset();
-
 // interface DebugInfo {
 //   hintsRegistry: HintsRegistry
 //   editor: Editor
 // }
 const ESSENTIAL_PLUGINS = ["typing", "content-control", "deletion"];
-const DEFAULT_PLUGINS = ["history", "text-styles", "lists", "searching", "tables", "rdfa-context"];
+const DEFAULT_PLUGINS = ["history", "text-styles", "lists", "searching", "tables"];
 
 interface RdfaEditorArgs {
   /**
