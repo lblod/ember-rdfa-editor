@@ -5,7 +5,7 @@ import Editor from "@lblod/ember-rdfa-editor/core/editor";
 import {InternalWidgetSpec, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 import {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
-import {EditorEventName} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {EditorEvent, EditorEventName} from "@lblod/ember-rdfa-editor/core/editor-events";
 import {RdfaContext, RdfaContextFactory} from "@lblod/ember-rdfa-editor/core/rdfa-context";
 
 /**
@@ -27,6 +27,10 @@ export default interface EditorController {
   onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>, priority?: EventListenerPriority): void;
 
   onEventWithContext<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>, context: RdfaContext, priority?: EventListenerPriority): void;
+
+  emitEvent<P>(event: EditorEvent<P>): void;
+
+  emitEventDebounced<P>(delayMs: number, event: EditorEvent<P>): void;
 
   registerWidget(widget: WidgetSpec): void;
 
@@ -51,6 +55,7 @@ export class EditorControllerImpl implements EditorController {
     this.editor = editor;
     this._rangeFactory = new ModelRangeFactory(this.editor.modelRoot);
   }
+
 
   get rangeFactory() {
     return this._rangeFactory;
@@ -86,5 +91,12 @@ export class EditorControllerImpl implements EditorController {
     this.editor.registerWidget(internalSpec);
   }
 
+  emitEvent<P>(event: EditorEvent<P>): void {
+    this.editor.emitEvent(event);
+  }
+
+  emitEventDebounced<P>(delayMs: number, event: EditorEvent<P>): void {
+    this.editor.emitEventDebounced(delayMs, event);
+  }
 }
 

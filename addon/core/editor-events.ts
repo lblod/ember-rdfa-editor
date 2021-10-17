@@ -7,6 +7,7 @@ import InsertOperation from "@lblod/ember-rdfa-editor/core/operations/insert-ope
 import AttributeOperation from "@lblod/ember-rdfa-editor/core/operations/attribute-operation";
 import MoveOperation from "@lblod/ember-rdfa-editor/core/operations/move-operation";
 import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-operation";
+import {AnyEventName} from "@lblod/ember-rdfa-editor/core/event-bus";
 
 export type EDITOR_EVENT_MAP = {
   "dummy": DummyEvent,
@@ -20,6 +21,8 @@ export type EDITOR_EVENT_MAP = {
   "afterAttributeOperation": AfterAttributeOperationEvent,
   "afterSplitOperation": AfterSplitOperationEvent,
 };
+
+export type EventWithName<N extends EditorEventName | string> = N extends EditorEventName ? EDITOR_EVENT_MAP[N] : CustomEditorEvent<unknown>;
 export type EditorEventName = keyof EDITOR_EVENT_MAP;
 
 export interface EditorEventContext {
@@ -73,7 +76,7 @@ export interface EditorEvent<P> {
 
   get payload(): P;
 
-  get name(): EditorEventName;
+  get name(): AnyEventName;
 
   get owner(): string;
 
@@ -85,7 +88,7 @@ export interface EditorEvent<P> {
 }
 
 export abstract class AbstractEditorEvent<P> implements EditorEvent<P> {
-  abstract _name: EditorEventName;
+  abstract _name: AnyEventName;
   private _stopped = false;
   private _context: EditorEventContext;
   private _payload: P;
@@ -101,7 +104,7 @@ export abstract class AbstractEditorEvent<P> implements EditorEvent<P> {
     return this._payload;
   }
 
-  get name(): EditorEventName {
+  get name(): AnyEventName {
     return this._name;
   }
 
@@ -224,3 +227,6 @@ export class SelectionChangedEvent extends AbstractEditorEvent<SelectionChangedE
   }
 }
 
+export abstract class CustomEditorEvent<P> extends AbstractEditorEvent<P> {
+  abstract _name: string;
+}

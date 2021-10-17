@@ -1,6 +1,4 @@
-import EventBus, {
-  EditorEventListener, EventListenerPriority, ListenerConfig
-} from "@lblod/ember-rdfa-editor/core/event-bus";
+import EventBus, {EditorEventListener, ListenerConfig} from "@lblod/ember-rdfa-editor/core/event-bus";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import {InternalWidgetSpec, WidgetLocation, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
@@ -17,6 +15,8 @@ export default interface Editor {
   onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>, config: ListenerConfig): void;
 
   emitEvent<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void;
+
+  emitEventDebounced<E extends EditorEventName>(delayMs: number, event: EDITOR_EVENT_MAP[E]): void;
 
   registerCommand<A extends unknown[], R>(command: { new(model: EditorModel): Command<A, R> }): void;
 
@@ -103,6 +103,11 @@ export class EditorImpl implements Editor {
   emitEvent<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]) {
     this.eventBus.emit(event);
   }
+
+  emitEventDebounced<E extends EditorEventName>(delayMs: number, event: EDITOR_EVENT_MAP[E]) {
+    this.eventBus.emitDebounced(delayMs, event);
+  }
+
 
   onDestroy() {
     this.model.onDestroy();

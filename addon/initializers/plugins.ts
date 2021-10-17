@@ -8,6 +8,7 @@ import ListsPlugin from "lists-plugin/lists-plugin";
 import SearchingPlugin from "searching-plugin/searching-plugin";
 import TablesPlugin from "tables-plugin/tables-plugin";
 import TriplestorePlugin from "triplestore-plugin/triplestore-plugin";
+import RdfaContextPlugin from "rdfa-context-plugin/rdfa-context-plugin";
 
 export function initialize(application: Application): void {
   application.register("plugin:content-control", ContentControlPlugin, {singleton: false});
@@ -19,6 +20,7 @@ export function initialize(application: Application): void {
   application.register("plugin:text-styles", TextStylesPlugin, {singleton: false});
   application.register("plugin:typing", TypingPlugin, {singleton: false});
   application.register("plugin:triplestore", TriplestorePlugin, {singleton: false});
+  application.register("plugin:rdfa-context", RdfaContextPlugin, {singleton: false});
 }
 
 export default {

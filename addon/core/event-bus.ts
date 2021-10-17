@@ -1,9 +1,15 @@
 import {debouncedAdjustable} from "@lblod/ember-rdfa-editor/archive/utils/debounce";
-import {EDITOR_EVENT_MAP, EditorEventContext, EditorEventName} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {
+  CustomEditorEvent,
+  EditorEventContext,
+  EditorEventName,
+  EventWithName
+} from "@lblod/ember-rdfa-editor/core/editor-events";
 
-export type EditorEventListener<E extends EditorEventName> = (event: EDITOR_EVENT_MAP[E]) => void;
+export type AnyEventName = EditorEventName | string;
+export type EditorEventListener<E extends AnyEventName> = (event: EventWithName<E>) => void;
 
-export type DebouncedEmitter<E extends EditorEventName> = (delayMs: number, event: EDITOR_EVENT_MAP[E]) => void;
+export type DebouncedEmitter<E extends AnyEventName> = (delayMs: number, event: EventWithName<E>) => void;
 
 export const eventListenerPriorities: EventListenerPriority[] = ["highest", "high", "default", "low", "lowest", "internal"];
 
@@ -13,6 +19,7 @@ export interface ListenerConfig {
   priority?: EventListenerPriority,
   context?: string
 }
+
 export const ROOT_CONTEXT = "root";
 
 /**
@@ -21,28 +28,28 @@ export const ROOT_CONTEXT = "root";
  */
 export default class EventBus {
 
-  private listeners: Map<EditorEventName, PriorityListenerQueue<EditorEventName>> = new Map<EditorEventName, PriorityListenerQueue<EditorEventName>>();
-  private debouncedEmitters: Map<EditorEventName, DebouncedEmitter<EditorEventName>> = new Map();
+  private listeners: Map<AnyEventName, PriorityListenerQueue<AnyEventName>> = new Map<EditorEventName, PriorityListenerQueue<EditorEventName>>();
+  private debouncedEmitters: Map<AnyEventName, DebouncedEmitter<AnyEventName>> = new Map();
 
-  on<E extends EditorEventName>(
+  on<E extends AnyEventName>(
     eventName: E,
     callback: EditorEventListener<E>,
     {
       priority = "default",
-      context =  ROOT_CONTEXT
+      context = ROOT_CONTEXT
     }: ListenerConfig = {}): void {
     const eventListeners = this.listeners.get(eventName);
     if (eventListeners) {
       eventListeners.addListener(callback, priority, context);
 
     } else {
-      const newQueue = new PriorityListenerQueue<EditorEventName>();
+      const newQueue = new PriorityListenerQueue<AnyEventName>();
       newQueue.addListener(callback, priority, context);
       this.listeners.set(eventName, newQueue);
     }
   }
 
-  off<E extends EditorEventName>(
+  off<E extends AnyEventName>(
     eventName: E,
     callback: EditorEventListener<E>,
     {
@@ -55,7 +62,7 @@ export default class EventBus {
     }
   }
 
-  emit = <E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void => {
+  emit = <E extends AnyEventName>(event: EventWithName<E>): void => {
     const listenerQueue = this.listeners.get(event.name);
 
     console.log(`${event.owner} is emitting event: ${event.name} with payload:`, event.payload);
@@ -63,8 +70,11 @@ export default class EventBus {
       listenerQueue.propagate(event);
     }
   };
+  emitCustom = <P>(event: CustomEditorEvent<P>) => {
+    this.emit<string>(event);
+  };
 
-  emitDebounced = <E extends EditorEventName>(delayMs: number, event: EDITOR_EVENT_MAP[E]): void => {
+  emitDebounced = <E extends AnyEventName>(delayMs: number, event: EventWithName<E>): void => {
 
     const emitter = this.debouncedEmitters.get(event.name);
     if (emitter) {
@@ -78,7 +88,7 @@ export default class EventBus {
   };
 }
 
-class PriorityListenerQueue<E extends EditorEventName> {
+class PriorityListenerQueue<E extends AnyEventName> {
   private queues: Map<EventListenerPriority, ListenerQueue<E>> = new Map<EventListenerPriority, ListenerQueue<E>>();
 
 
@@ -100,7 +110,7 @@ class PriorityListenerQueue<E extends EditorEventName> {
     }
   }
 
-  propagate(event: EDITOR_EVENT_MAP[E]) {
+  propagate(event: EventWithName<E>) {
     for (const prio of eventListenerPriorities) {
       if (event.stopped) {
         break;
@@ -113,7 +123,7 @@ class PriorityListenerQueue<E extends EditorEventName> {
   }
 }
 
-class ListenerQueue<E extends EditorEventName> {
+class ListenerQueue<E extends AnyEventName> {
   private listeners: Map<string, EditorEventListener<E>[]> = new Map<string, EditorEventListener<E>[]>();
 
   addListener(listener: EditorEventListener<E>, context: string) {
@@ -134,11 +144,11 @@ class ListenerQueue<E extends EditorEventName> {
     }
   }
 
-  propagate(event: EDITOR_EVENT_MAP[E]) {
+  propagate(event: EventWithName<E>) {
     this.bubble(event);
   }
 
-  private bubble(event: EDITOR_EVENT_MAP[E]) {
+  private bubble(event: EventWithName<E>) {
     let hasSeenRoot = false;
     const {context} = event;
 
@@ -146,7 +156,7 @@ class ListenerQueue<E extends EditorEventName> {
 
     while (cur && !event.stopped) {
       const serialized = cur.serialize();
-      if(serialized === ROOT_CONTEXT) {
+      if (serialized === ROOT_CONTEXT) {
         hasSeenRoot = true;
       }
       const listeners = this.listeners.get(serialized);
@@ -156,7 +166,7 @@ class ListenerQueue<E extends EditorEventName> {
       cur = cur.getParent();
       console.log("Bubbled to", cur?.serialize());
     }
-    if(!event.stopped && !hasSeenRoot) {
+    if (!event.stopped && !hasSeenRoot) {
       const listeners = this.listeners.get(ROOT_CONTEXT);
       if (listeners) {
         this.notifyListeners(event, listeners);
@@ -164,7 +174,7 @@ class ListenerQueue<E extends EditorEventName> {
     }
   }
 
-  private notifyListeners(event: EDITOR_EVENT_MAP[E], listeners: EditorEventListener<E>[]) {
+  private notifyListeners(event: EventWithName<E>, listeners: EditorEventListener<E>[]) {
     for (const listener of listeners) {
       if (event.stopped) {
         break;
