@@ -8,8 +8,16 @@ import InsertTableRowBelowCommand from "tables-plugin/commands/insert-table-row-
 import RemoveTableCommand from "tables-plugin/commands/remove-table-command";
 import RemoveTableColumnCommand from "tables-plugin/commands/remove-table-column-command";
 import RemoveTableRowCommand from "tables-plugin/commands/remove-table-row-command";
+import MoveToCellCommand from "tables-plugin/commands/move-to-cell-command";
+import MoveToNextElement from "tables-plugin/commands/move-to-next-element";
+import MoveToPreviousElement from 'tables-plugin/commands/move-to-previous-element';
+import { KeydownEvent } from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import { action } from "@ember/object";
+import handleTabInTable from 'tables-plugin/handlers/handle-tab-in-table';
 
 export default class TablesPlugin implements EditorPlugin {
+  private controller!: EditorController;
+
   static create(): TablesPlugin {
     return new TablesPlugin();
   }
@@ -28,7 +36,27 @@ export default class TablesPlugin implements EditorPlugin {
     controller.registerCommand(RemoveTableColumnCommand);
     controller.registerCommand(RemoveTableCommand);
     controller.registerCommand(RemoveTableRowCommand);
+    controller.registerCommand(MoveToCellCommand);
+    controller.registerCommand(MoveToNextElement);
+    controller.registerCommand(MoveToPreviousElement);
+    controller.onEvent("keyDown", this.handleKeydown);
+    this.controller = controller;
+  }
 
+  @action
+  handleKeydown(event: KeydownEvent) {
+    if (this.isHandlerFor(event.payload)) {
+
+      const reverse = event.payload.shiftKey;
+      handleTabInTable(reverse, this.controller);
+      
+    }
+  }
+
+  isHandlerFor(event: KeyboardEvent): boolean {
+    // Still composing, don't handle this.
+    return !event.isComposing
+      && event.key === "Tab";
   }
 
 }
