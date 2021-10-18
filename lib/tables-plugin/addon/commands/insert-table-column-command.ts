@@ -33,8 +33,10 @@ export default abstract class InsertTableColumnCommand extends Command<[ModelSel
     }
 
     const insertPosition = this.insertBefore ? position.x : position.x + 1;
-    table.addColumn(insertPosition);
+    this.model.change(executedBy, mutator => {
+      table.addColumn(mutator, insertPosition);
+    });
 
-    this.model.write(executedBy);
+
   }
 }

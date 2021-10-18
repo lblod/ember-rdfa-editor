@@ -39,21 +39,22 @@ export default class RemoveTableRowCommand extends Command<[ModelSelection], voi
 
     const tableDimensions = table.getDimensions();
     if (position.y === 0 && tableDimensions.y === 1) {
-      table.removeTable();
-      this.model.write(executedBy);
+      this.model.change(executedBy, mutator => {
+        table.removeTable(mutator);
+      });
     } else {
       const cellYToSelect = position.y === tableDimensions.y - 1
         ? position.y - 1
-        : position.y + 1;
+        : position.y;
 
       const cellToSelect = table.getCell(position.x, cellYToSelect);
-      if (cellToSelect) {
-        selection.collapseIn(cellToSelect);
-      }
-      this.model.write(executedBy);
 
-      table.removeRow(position.y);
-      this.model.write(executedBy);
+      this.model.change(executedBy, mutator => {
+        if (cellToSelect) {
+          selection.collapseIn(cellToSelect);
+        }
+        table.removeRow(mutator, position.y);
+      });
     }
   }
 }

@@ -25,18 +25,16 @@ export default class RemoveTableCommand extends Command<[ModelSelection], void> 
       throw new Error('The selection is not inside a table');
     }
 
-    if (table.parent) {
-      const offset = table.getOffset();
-      if (offset) {
-        selection.collapseIn(table.parent, offset);
-      } else {
-        selection.collapseIn(table.parent);
+    this.model.change(executedBy, mutator => {
+      if (table.parent) {
+        const offset = table.getOffset();
+        if (offset) {
+          selection.collapseIn(table.parent, offset);
+        } else {
+          selection.collapseIn(table.parent);
+        }
       }
-      this.model.write(executedBy);
-    }
-
-    table.removeTable();
-
-    this.model.write(executedBy);
+      table.removeTable(mutator);
+    });
   }
 }

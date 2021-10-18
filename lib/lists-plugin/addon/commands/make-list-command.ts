@@ -56,7 +56,7 @@ export default class MakeListCommand extends Command<[ListTag, ModelSelection], 
         this.model.modelRoot.getMaxOffset()
       );
       const cleaner = new ListCleaner();
-      cleaner.clean(fullRange);
+      cleaner.clean(fullRange, mutator);
 
       let resultRange;
       if (wasCollapsed) {
