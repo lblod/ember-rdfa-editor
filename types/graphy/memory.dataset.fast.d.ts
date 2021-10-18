@@ -57,7 +57,7 @@ declare module '@graphy/memory.dataset.fast' {
 
     union(other: Dataset): FastDataset;
 
-    intersection(other: Dataset): FastDataset;
+    intersection(other: FastDataset): FastDataset;
 
     minus(other: FastDataset): FastDataset;
 

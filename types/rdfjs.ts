@@ -1,31 +1,40 @@
-export interface Term {
-  termType: string;
+export type Term = NamedNode | BlankNode | Literal | Variable | DefaultGraph | Quad;
+
+export interface NamedNode {
+  termType: "NamedNode";
   value: string;
 
   equals(other?: Term): boolean;
 }
 
-export interface NamedNode extends Term {
-  termType: "NamedNode";
-}
-
-export interface BlankNode extends Term {
+export interface BlankNode {
   termType: "BlankNode";
+  value: string;
+
+  equals(other?: Term): boolean;
 }
 
-export interface Literal extends Term {
+export interface Literal {
   termType: "Literal";
   language: string;
   datatype: NamedNode;
+  value: string;
+
+  equals(other?: Term): boolean;
 }
 
-export interface Variable extends Term {
+export interface Variable {
   termType: "Variable";
+  value: string;
+
+  equals(other?: Term): boolean;
 }
 
-export interface DefaultGraph extends Term {
+export interface DefaultGraph {
   termType: "DefaultGraph";
   value: "";
+
+  equals(other?: Term): boolean;
 }
 
 export type SubjectTerm = NamedNode | BlankNode | Variable | Quad;
@@ -33,7 +42,7 @@ export type PredicateTerm = NamedNode | Variable;
 export type ObjectTerm = NamedNode | Literal | BlankNode | Variable;
 export type GraphTerm = DefaultGraph | NamedNode | BlankNode | Variable;
 
-export interface Quad extends Term {
+export interface Quad {
   termType: "Quad";
   value: "";
   subject: SubjectTerm;
@@ -41,7 +50,7 @@ export interface Quad extends Term {
   object: ObjectTerm;
   graph: GraphTerm;
 
-  equals(other?: Quad): boolean;
+  equals(other?: Term): boolean;
 }
 
 export interface DataFactory {
@@ -118,23 +127,23 @@ export interface Dataset extends DatasetCore {
 }
 
 export interface DatasetFactory extends DataFactory {
-  dataset(quads?: Dataset | Quad[]): Dataset
+  dataset(this: void, quads?: Dataset | Quad[]): Dataset
 }
 
 export interface QuadFilterIteratee {
-  test(quad: Quad, dataset: Dataset): boolean;
+  test(this: void, quad: Quad, dataset: Dataset): boolean;
 }
 
 export interface QuadMapIteratee {
-  map(quad: Quad, dataset: Dataset): Quad
+  map(this: void, quad: Quad, dataset: Dataset): Quad
 }
 
 export interface QuadReduceIteratee {
-  run(accumulator: unknown, quad: Quad, dataset: Dataset): unknown;
+  run(this: void, accumulator: unknown, quad: Quad, dataset: Dataset): unknown;
 }
 
 export interface QuadRunIteratee {
-  run(quad: Quad, dataset: Dataset): void;
+  run(this: void, quad: Quad, dataset: Dataset): void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
