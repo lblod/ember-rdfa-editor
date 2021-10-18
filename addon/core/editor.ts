@@ -9,6 +9,9 @@ import {InternalWidgetSpec, WidgetLocation, WidgetSpec} from "@lblod/ember-rdfa-
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 
+/**
+ * Container interface holding a {@link EditorModel} and exposing core editing API.
+ */
 export default interface Editor {
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void;
 
@@ -33,6 +36,10 @@ export default interface Editor {
   get selection(): ModelSelection;
 }
 
+/**
+ * Default implementation of {@link Editor} interface. A single instance of this
+ * class is made per {@link RdfaEditor} component lifetime.
+ */
 export class EditorImpl implements Editor {
   private model: EditorModel;
   private registeredCommands: Map<string, Command<unknown[], unknown>> = new Map<string, Command<unknown[], unknown>>();

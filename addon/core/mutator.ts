@@ -4,13 +4,24 @@ import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
+/**
+ * The methods provided in this interface are the low-level primitives with which the
+ * {@link EditorModel} can be mutated. Any methods implemented here should make use of
+ * {@link Operation operations} exclusively. While hard-enforcing this restriction is planned,
+ * it is not a top-priority since {@link EditorPlugin plugins} cannot provide extensions here.
+ *
+ * While there is no hard requirement for the interface to these methods, most of them
+ * take a {@link ModelRange} as input and return a {@link ModelRange} as output.
+ * This is intentionally "just a convention". Some things are better left unenforced.
+ * The output range should be a "sensible default" resulting range after the modification has happenen.
+ *
+ * e.g.: after inserting multiple nodes, a sensible range to return could be a range that encompasses all the inserted
+ * nodes exactly.
+ *
+ * When deciding what range to return, keep in mind that if you return an uncollapsed range, it is easy to collapse
+ * that to either of its extremes, but the other way round is more difficult.
+ */
 export interface Mutator {
-  /**
-   * @inheritDoc
-   * @param range
-   * @param nodes
-   * @return resultRange the resulting range of the execution
-   */
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange;
 
   insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange;
@@ -19,21 +30,8 @@ export interface Mutator {
 
   mergeTextNodesInRange(range: ModelRange): void;
 
-  /**
-   * @inheritDoc
-   * @param rangeToMove
-   * @param targetPosition
-   * @return resultRange the resulting range of the execution
-   */
   moveToPosition(rangeToMove: ModelRange, targetPosition: ModelPosition): ModelRange;
 
-  /**
-   * @inheritDoc
-   * @param range
-   * @param key
-   * @param value
-   * @return resultRange the resulting range of the execution
-   */
   setTextProperty(range: ModelRange, key: TextAttribute, value: boolean): ModelRange;
 
   splitTextAt(position: ModelPosition): ModelPosition;

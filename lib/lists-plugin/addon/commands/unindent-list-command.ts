@@ -1,9 +1,3 @@
-import {
-  IllegalExecutionStateError,
-  MisbehavedSelectionError,
-  SelectionError,
-  TypeAssertionError
-} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/util/model-range-utils";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils";
@@ -11,6 +5,13 @@ import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
+import {
+  IllegalExecutionStateError,
+  MisbehavedSelectionError,
+  SelectionError,
+  TypeAssertionError
+} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 
 export default class UnindentListCommand extends Command<[ModelRange], void> {
   name = "unindent-list";
@@ -72,45 +73,47 @@ export default class UnindentListCommand extends Command<[ModelRange], void> {
           && greatGrandParent && ModelElement.isModelElement(greatGrandParent)
         ) {
           // Remove node.
-          const liIndex = li.index;
-          parent.removeChild(li);
+          this.model.change(executedBy, mutator => {
+            const liIndex = li.index;
 
-          if (grandParent.index === null) {
-            throw new IllegalExecutionStateError("Couldn't find index of grandparent li");
-          }
-
-          if (parent.length === 0) {
-            // Remove parent ul/ol if node is only child.
-            greatGrandParent.addChild(li, grandParent.index + 1);
-            grandParent.removeChild(parent);
-          } else {
-            if (liIndex === null) {
-              throw new IllegalExecutionStateError("Couldn't find index of current li");
-            }
-            const split = parent.split(liIndex);
-
-            // Remove empty uls.
-            if (split.left.length === 0) {
-              split.left.parent?.removeChild(split.left);
+            if (grandParent.index === null) {
+              throw new IllegalExecutionStateError("Couldn't find index of grandparent li");
             }
 
-            if (split.right.length === 0) {
-              split.right.parent?.removeChild(split.right);
-            }
+            if (parent.length === 1) {
+              // Remove parent ul/ol if node is only child.
+              mutator.deleteNode(li);
+              const positionToInsert = ModelPosition.fromInElement(greatGrandParent, grandParent.index + 1);
+              mutator.insertAtPosition(positionToInsert, li);
+              mutator.deleteNode(parent);
+            } else {
+              if (liIndex === null) {
+                throw new IllegalExecutionStateError("Couldn't find index of current li");
+              }
+              const split = parent.split(liIndex);
 
-            if (split.right.length > 0) {
-              split.right.parent?.removeChild(split.right);
-              li.addChild(split.right);
-            }
+              // Remove empty uls.
+              if (split.left.length === 0) {
+                mutator.deleteNode(split.left);
+              }
 
-            greatGrandParent.addChild(li, grandParent.index + 1);
-          }
+              if (split.right.length === 0) {
+                mutator.deleteNode(split.right);
+              }
+
+              if (split.right.length > 0) {
+                const positionToInsertSplit = ModelPosition.fromInElement(li, li.getMaxOffset());
+                mutator.deleteNode(split.right);
+                mutator.insertAtPosition(positionToInsertSplit, split.right);
+              }
+              mutator.deleteNode(li);
+              const positionToInsertListItem = ModelPosition.fromInElement(greatGrandParent, grandParent.index + 1);
+              mutator.insertAtPosition(positionToInsertListItem, li);
+            }
+          });
         }
       }
     }
-
-    this.model.write(executedBy);
-    this.model.readSelection();
   }
 
   private relatedChunks(elementArray: ModelElement[], result: ModelElement[] = []): ModelElement[] {
@@ -145,7 +148,7 @@ export default class UnindentListCommand extends Command<[ModelRange], void> {
     return result;
   }
 
-  private static areRelated(base: ModelElement, compare: ModelElement): boolean{
+  private static areRelated(base: ModelElement, compare: ModelElement): boolean {
     const basePath = base.getOffsetPath();
     const comparePath = compare.getOffsetPath();
 

@@ -6,6 +6,15 @@ import {InternalWidgetSpec, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/u
 import {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 
+/**
+ * Consumers (aka plugins or the host app) receive a controller instance as their interface to the editor.
+ * Every consumer gets its own unique instance.
+ * It has its own unique name, so any modification and event can be traced back to its originating controller.
+ * This is crucial and the main reason for the existence of controllers.
+ * This way, {@link EditorPlugin plugins} can safely listen to contentChange-type events
+ * and modify the vdom in their handlers, cause they can easily filter out
+ * change events that originate from their own changes, preventing infinite loops.
+ */
 export default interface EditorController {
   registerCommand<A extends unknown[], R>(command: new (model: EditorModel) => Command<A, R>): void;
 
@@ -23,6 +32,11 @@ export default interface EditorController {
 
 }
 
+/**
+ * Default implementation of {@link EditorController}.
+ * Simply delegates most of its methods to an {@link Editor} instance, injecting
+ * its own name where necessary.
+ */
 export class EditorControllerImpl implements EditorController {
   private editor: Editor;
   private name: string;
