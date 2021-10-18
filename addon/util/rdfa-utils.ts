@@ -5,9 +5,7 @@
  * This is highly reliant on the internals of that class and may stop working at some point.
  */
 import TreeNode from "@lblod/ember-rdfa-editor/core/model/tree-node";
-import dataset from "@graphy/memory.dataset.fast";
 import {RdfaParser} from "rdfa-streaming-parser";
-import {SimpleDataset} from "rdfjs";
 import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
 
 export function calculateRdfaPrefixes(start: Node): Map<string, string> {
@@ -48,7 +46,7 @@ export function parsePrefixString(prefixString: string) {
   return prefixes;
 }
 
-export function getParentContext(node: TreeNode): SimpleDataset {
+export function getParentContext(node: TreeNode): Datastore {
 
   const rootPath = [];
 
