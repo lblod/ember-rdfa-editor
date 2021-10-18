@@ -17,7 +17,8 @@ export default class MoveToPreviousElement extends Command<[ModelElement, ModelS
   execute(executedBy: string, element: ModelElement, selection: ModelSelection = this.model.selection) {
     this.model.change(executedBy, mutator => {
       const previousElement = this.findPreviousElement(element, mutator)
-      selection.collapseIn(previousElement);
+      console.log(previousElement)
+      selection.collapseIn(previousElement, previousElement.getMaxOffset());
     });
   }
 
@@ -30,7 +31,7 @@ export default class MoveToPreviousElement extends Command<[ModelElement, ModelS
       const positionBeforeElement = ModelPosition.fromBeforeNode(element);
       const invisibleSpace = new ModelText(INVISIBLE_SPACE);
       mutator.insertAtPosition(positionBeforeElement, invisibleSpace);
-      return;
+      return invisibleSpace;
     }
   }
 }

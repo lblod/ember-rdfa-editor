@@ -6,7 +6,6 @@ import MoveToPreviousElement from "navigation-plugin/commands/move-to-previous-e
 
 export default class MoveCursorToTheLeft extends Command<[ModelElement, ModelSelection], void> {
   name = 'move-cursor-to-the-left';
-  model: EditorModel;
 
   constructor(model: EditorModel) {
     super(model);
@@ -19,7 +18,7 @@ export default class MoveCursorToTheLeft extends Command<[ModelElement, ModelSel
       const selectionStartParentOffset = selectionStartPosition.parentOffset;
       if(selectionStartParentOffset === 0) {
         const moveToPreviousElementCommand = new MoveToPreviousElement(this.model);
-        moveToPreviousElementCommand.execute(executedBy, selectionStartPosition.nodeBefore())
+        moveToPreviousElementCommand.execute(executedBy, selectionStartPosition.parent)
       } else {
         const previousCursorElement = selectionStartParent.childAtOffset(selectionStartParentOffset - 1);
         if(ModelElement.isModelElement(previousCursorElement)) {

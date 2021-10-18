@@ -18,7 +18,7 @@ export default class MoveCursorToTheRight extends Command<[ModelElement, ModelSe
       const selectionEndParentOffset = selectionEndPosition.parentOffset;
       if(selectionEndParentOffset === selectionEndParent.getMaxOffset()) {
         const moveToNextElementCommand = new MoveToNextElement(this.model);
-        moveToNextElementCommand.execute(executedBy, selectionEndPosition.nodeAfter())
+        moveToNextElementCommand.execute(executedBy, selectionEndPosition.parent)
       } else {
         const nextCursorElement = selectionEndParent.childAtOffset(selectionEndParentOffset + 1, true);
         if(ModelElement.isModelElement(nextCursorElement)) {
