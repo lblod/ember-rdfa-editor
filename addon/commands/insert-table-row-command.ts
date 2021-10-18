@@ -35,8 +35,11 @@ export default abstract class InsertTableRowCommand extends Command {
     }
 
     const insertPosition = this.insertAbove ? position.y : position.y + 1;
-    table.addRow(insertPosition);
 
+    this.model.change(mutator => {
+      table.addRow(mutator, insertPosition);
+    });
+    
     this.model.write();
   }
 }
