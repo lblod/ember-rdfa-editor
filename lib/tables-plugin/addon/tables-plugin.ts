@@ -45,15 +45,14 @@ export default class TablesPlugin implements EditorPlugin {
 
   @action
   handleKeydown(event: KeydownEvent) {
-    if (this.isHandlerFor(event.payload)) {
-
+    if (this.isTabEvent(event.payload)) {
       const reverse = event.payload.shiftKey;
       handleTabInTable(reverse, this.controller);
       
     }
   }
 
-  isHandlerFor(event: KeyboardEvent): boolean {
+  isTabEvent(event: KeyboardEvent): boolean {
     // Still composing, don't handle this.
     return !event.isComposing
       && event.key === "Tab";
