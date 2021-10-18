@@ -5,7 +5,7 @@ import { PropertyState } from "@lblod/ember-rdfa-editor/util/types";
 
 export default function HandleTabInTable(reverse: boolean, controller: EditorController) {
   const selection = controller.selection;
-  if(selection.inTableState !== PropertyState.disabled) {
+  if(selection.inTableState === PropertyState.enabled) {
     let cell = ModelTable.getCellFromSelection(selection);
 
     if(!cell){
