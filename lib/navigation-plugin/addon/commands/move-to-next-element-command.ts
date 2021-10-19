@@ -5,7 +5,8 @@ import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
-import ImmediateModelMutator from "@lblod/ember-rdfa-editor/core/mutators/immediate-model-mutator";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
+import { Mutator } from "@lblod/ember-rdfa-editor/core/mutator";
 
 export default class MoveToNextElement extends Command<[ModelElement, ModelSelection], void> {
   name = 'move-to-next-element';
@@ -20,7 +21,7 @@ export default class MoveToNextElement extends Command<[ModelElement, ModelSelec
       selection.collapseIn(nextElement);
     });
   }
-  findNextElement(element: ModelElement, mutator: ImmediateModelMutator) {
+  findNextElement(element: ModelElement, mutator: Mutator): ModelNode {
     if(element.nextSibling){
       return element.nextSibling;
     } else if(element.parent && element.parent !== element.root) {

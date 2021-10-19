@@ -166,6 +166,15 @@
       ],
       "deletion-plugin/test-support/*": [
         "lib/deletion-plugin/addon-test-support/*"
+      ],
+      "navigation-plugin/*": [
+        "lib/navigation-plugin/addon/*"
+      ],
+      "navigation-plugin/test-support": [
+        "lib/navigation-plugin/addon-test-support"
+      ],
+      "navigation-plugin/test-support/*": [
+        "lib/navigation-plugin/addon-test-support/*"
       ]
     }
   },
@@ -184,6 +193,7 @@
     "lib/searching-plugin",
     "lib/lists-plugin",
     "lib/history-plugin",
-    "lib/deletion-plugin"
+    "lib/deletion-plugin",
+    "lib/navigation-plugin"
   ]
 }

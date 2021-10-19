@@ -318,6 +318,8 @@ export default abstract class ModelNode {
    * @param other
    */
   abstract isMergeable(other: ModelNode): boolean;
+
+  abstract getMaxOffset(): number;
 }
 
 

@@ -5,7 +5,8 @@ import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
-import ImmediateModelMutator from "@lblod/ember-rdfa-editor/core/mutators/immediate-model-mutator";
+import { Mutator } from "@lblod/ember-rdfa-editor/core/mutator";
+import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 
 export default class MoveToPreviousElement extends Command<[ModelElement, ModelSelection], void> {
   name = 'move-to-previous-element';
@@ -21,7 +22,7 @@ export default class MoveToPreviousElement extends Command<[ModelElement, ModelS
     });
   }
 
-  findPreviousElement(element: ModelElement, mutator: ImmediateModelMutator) {
+  findPreviousElement(element: ModelElement, mutator: Mutator): ModelNode {
     if(element.previousSibling){
       return element.previousSibling;
     } else if(element.parent && element.parent !== element.root) {
