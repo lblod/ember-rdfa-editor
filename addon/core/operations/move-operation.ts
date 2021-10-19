@@ -2,7 +2,7 @@ import Operation from "@lblod/ember-rdfa-editor/core/operations/operation";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import OperationAlgorithms from "@lblod/ember-rdfa-editor/core/operations/operation-algorithms";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
-import {OperationError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {OperationError} from "@lblod/ember-rdfa-editor/util/errors";
 import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 import {AfterMoveOperationEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 

@@ -16,6 +16,7 @@ export default class TypingPlugin implements EditorPlugin {
     return "typing";
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: EditorController): Promise<void> {
     controller.registerCommand(InsertTextCommand);
     controller.onEvent("keyDown", this.handleKeydown);

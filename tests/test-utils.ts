@@ -1,11 +1,5 @@
-import {
-  triggerKeyEvent,
-  render,
-  findAll,
-  waitUntil,
-} from "@ember/test-helpers";
+import {render,} from "@ember/test-helpers";
 import hbs from "htmlbars-inline-precompile";
-import {MagicSpan} from "@lblod/ember-rdfa-editor/archive/editor/input-handlers/delete-handler";
 
 /**
  * Utility to get the editor element in a type-safe way
@@ -16,18 +10,6 @@ export function getEditorElement(): Element {
   const editor = document.querySelector("div[contenteditable]");
   if (!editor) throw new Error("Editor element not found in dom");
   return editor;
-}
-
-/**
- * Simulate a press of the delete key
- * TODO add better heuristics to wait for delete handler to finish
- * @returns a promise which simulates a delete keypress
- */
-export async function pressDelete(timeout = 2000): Promise<void> {
-  await triggerKeyEvent("div[contenteditable]", "keydown", "Delete");
-  await waitUntil(() => findAll(`#${MagicSpan.ID}`).length === 0, {
-    timeout,
-  });
 }
 
 /**

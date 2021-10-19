@@ -1,6 +1,5 @@
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
-import {ModelNodeFinderFilter, ModelNodeFinderPredicate} from "@lblod/ember-rdfa-editor/util/model-node-finder"
-import RdfaDocument from "@lblod/ember-rdfa-editor/archive/utils/rdfa/rdfa-document";
+import {ModelNodeFinderFilter, ModelNodeFinderPredicate} from "@lblod/ember-rdfa-editor/util/model-node-finder";
 
 export type HtmlTag = keyof HTMLElementTagNameMap;
 
@@ -26,5 +25,3 @@ export interface FilterAndPredicate<T extends ModelNode> {
   filter?: ModelNodeFinderFilter<T>,
   predicate?: ModelNodeFinderPredicate<T>
 }
-
-export type RdfaEditorInitializer = (rdfaEditor: RdfaDocument) => void;

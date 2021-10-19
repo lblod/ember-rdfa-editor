@@ -4,7 +4,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import MoveOperation from "@lblod/ember-rdfa-editor/core/operations/move-operation";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
-import {OperationError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {OperationError} from "@lblod/ember-rdfa-editor/util/errors";
 import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 
 

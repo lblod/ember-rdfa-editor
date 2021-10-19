@@ -1,9 +1,9 @@
 import {module, test} from "qunit";
-import {getWindowSelection} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import {getWindowSelection} from "@lblod/ember-rdfa-editor/util/dom-helpers";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {setupTest} from "ember-qunit";
-import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
+import ModelSelectionTracker from "@lblod/ember-rdfa-editor/core/model-selection-tracker";
 import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 
 module("Unit | model | model-selection-tracker", hooks => {

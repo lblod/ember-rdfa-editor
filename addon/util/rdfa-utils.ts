@@ -66,9 +66,9 @@ export function getParentContext(node: TreeNode): Datastore {
   for (const node of rootPath) {
     rdfaParser.onTagOpen(node.type, Object.fromEntries(node.attributeMap));
   }
-  for (const _ of rootPath) {
+  rootPath.forEach(() => {
     rdfaParser.onTagClose();
-  }
+  });
 
   return store;
 }

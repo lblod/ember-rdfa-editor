@@ -1,5 +1,5 @@
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
-import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {ModelError} from "@lblod/ember-rdfa-editor/util/errors";
 import {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 

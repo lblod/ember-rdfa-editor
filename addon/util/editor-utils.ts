@@ -1,6 +1,11 @@
-import {isAllWhitespace, isDisplayedAsBlock, tagName, getWindowSelection} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
 import {runInDebug} from '@ember/debug';
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
+import {
+  getWindowSelection,
+  isAllWhitespace,
+  isDisplayedAsBlock,
+  tagName
+} from "@lblod/ember-rdfa-editor/util/dom-helpers";
 
 /**
  * Awaits until just *after* the next animation frame.

@@ -7,7 +7,7 @@ import {basicSetup, EditorState, EditorView} from "@codemirror/basic-setup";
 import {xml} from "@codemirror/lang-xml";
 import {html} from "@codemirror/lang-html";
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
-import {UninitializedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {UninitializedError} from "@lblod/ember-rdfa-editor/util/errors";
 
 interface FeaturesService {
   disable: (feature: string) => void;

@@ -1,4 +1,4 @@
-import {debouncedAdjustable} from "@lblod/ember-rdfa-editor/archive/utils/debounce";
+import {debouncedAdjustable} from "@lblod/ember-rdfa-editor/util/debounce";
 import {
   CustomEditorEvent,
   EditorEventContext,

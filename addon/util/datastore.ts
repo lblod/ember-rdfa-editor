@@ -18,7 +18,7 @@ import {
   Term,
   Variable
 } from "rdfjs";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {NotImplementedError} from "@lblod/ember-rdfa-editor/util/errors";
 import dataset, {FastDataset} from "@graphy/memory.dataset.fast";
 
 const STRING_DATAYPE_IRI = "http://www.w3.org/2001/XMLSchema#string";
