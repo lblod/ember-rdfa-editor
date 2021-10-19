@@ -3,7 +3,7 @@ import {inject as service} from '@ember/service';
 import Component from '@glimmer/component';
 import Editor, {EditorImpl} from "@lblod/ember-rdfa-editor/core/editor";
 import {UninitializedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import {KeydownEvent, SelectionChangedEvent} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import {KeydownEvent, SelectionChangedEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 interface FeatureService {
   isEnabled(key: string): boolean
@@ -87,7 +87,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
 
   @action
   handleSelectionChange() {
-    this.editor.emitEvent(new SelectionChangedEvent(CE_OWNER));
+    // this.editor.emitEvent(new SelectionChangedEvent(CE_OWNER));
   }
   willDestroy() {
     this.editor.onDestroy();

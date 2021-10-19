@@ -2,6 +2,8 @@ import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import HtmlNodeReader from "@lblod/ember-rdfa-editor/core/readers/html-node-reader";
 import {calculateRdfaPrefixes} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 
 export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;
@@ -40,6 +42,16 @@ export class HtmlReaderContext {
     this._nodeMap.delete(domNode);
     modelNode.boundNode = domNode;
     this._nodeMap.set(domNode, modelNode);
+  }
+
+  // callbacks for future use
+  onElementOpen(element: ModelElement) {
+  }
+
+  onElementClose() {
+  }
+
+  onText(text: ModelText) {
   }
 
 }

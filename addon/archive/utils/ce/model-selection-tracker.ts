@@ -1,7 +1,8 @@
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import {getWindowSelection} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
-import EventBus, {SelectionChangedEvent} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 import {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
+import {SelectionChangedEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 export default class ModelSelectionTracker {
   model: HtmlModel;
@@ -22,8 +23,8 @@ export default class ModelSelectionTracker {
 
   updateSelection = () => {
     const currentSelection = getWindowSelection();
-    if (!this.model.rootElement.contains(currentSelection.anchorNode) || !this.model.rootElement.contains(currentSelection.focusNode) ||
-      (currentSelection.type != 'Caret' && this.model.rootElement === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
+    if (!this.model.viewRoot.contains(currentSelection.anchorNode) || !this.model.viewRoot.contains(currentSelection.focusNode) ||
+      (currentSelection.type != 'Caret' && this.model.viewRoot === currentSelection.anchorNode && (currentSelection.anchorOffset === currentSelection.focusOffset))) {
       // this.model.selection.clearRanges();
       return;
     }
@@ -33,6 +34,8 @@ export default class ModelSelectionTracker {
       {detail: this.model.selection}
     );
     document.dispatchEvent(modelSelectionUpdatedEvent);
-    this.eventBus.emitDebounced(100, new SelectionChangedEvent());
+    const event = new SelectionChangedEvent(this.model.selection);
+    console.log("Setsize:", event.payload.parentDataset.size);
+    this.eventBus.emitDebounced(100, event);
   };
 }

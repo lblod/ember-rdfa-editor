@@ -6,9 +6,11 @@ import {setupTest} from "ember-qunit";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/core/mutators/immediate-model-mutator";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 
 module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
   const ctx = new ModelTestContext();
+  const eventBus = new EventBus();
   setupTest(hooks);
   hooks.beforeEach(() => {
     ctx.reset();
@@ -45,7 +47,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
       </modelRoot>
     `;
     const position = ModelPosition.fromInTextNode(rangeStart, 2);
-    const mut = new ImmediateModelMutator();
+    const mut = new ImmediateModelMutator(eventBus);
     const resultPos = mut.splitUntil(position, element => element.type === "div");
     assert.true(initial.sameAs(expected));
     assert.true(resultPos.sameAs(ModelPosition.fromPath(initial as ModelElement, [0, 1])));
@@ -69,7 +71,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
         </modelRoot>
       `;
 
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const resultRange = mut.unwrap(wrapper);
       assert.true(expected.sameAs(initial));
       assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [0], [3])));
@@ -114,7 +116,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
         </modelRoot>
       `;
 
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const resultRange = mut.unwrap(wrapper);
       assert.true(expected.sameAs(initial));
       assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1, 0], [1, 5])));
@@ -182,7 +184,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
           </ul>
         </modelRoot>
       `;
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       mut.unwrap(n0);
       mut.unwrap(n1);
       mut.unwrap(n2);
@@ -215,7 +217,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
           </div>
         </modelRoot>
       `;
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       mut.unwrap(wrapper, true);
       assert.true(initial.sameAs(expected));
     });
@@ -238,7 +240,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
           <br/>
         </modelRoot>
       `;
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const pos = ModelPosition.fromAfterNode(rangeStart);
       mut.insertAtPosition(pos, new ModelElement("br"));
 
@@ -270,7 +272,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
         </modelRoot>
       `;
       const range = ModelRange.fromPaths(initial as ModelElement, [0, 4], [0, 11]);
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       mut.insertAtPosition(range.end, new ModelElement("br"));
 
       assert.true(initial.sameAs(expected));
@@ -300,7 +302,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
           </div>
         </modelRoot>
       `;
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const range = ModelRange.fromInTextNode(rangeStart, 2, 2);
       const resultRange = mut.splitRangeUntilElements(range, initial as ModelElement, initial as ModelElement, false);
       assert.true(expected.sameAs(initial));
@@ -333,7 +335,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
         </modelRoot>
       `;
 
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const range = ModelRange.fromInTextNode(rangeStart, 1, 3);
       const resultRange = mut.splitRangeUntilElements(range, initial as ModelElement, initial as ModelElement, false);
 
@@ -358,7 +360,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
         </modelRoot>
       `;
 
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const range = ModelRange.fromInTextNode(rangeStart, 1, 3);
       const resultRange = mut.splitRangeUntilElements(range, initial as ModelElement, initial as ModelElement, false);
 
@@ -391,7 +393,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
         </modelRoot>
       `;
 
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const range = ModelRange.fromInNode(initial, 0, 1);
       const resultRange = mut.splitRangeUntilElements(range, initial as ModelElement, initial as ModelElement, false);
 
@@ -431,7 +433,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
           </div>
         </modelRoot>
       `;
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const start = ModelPosition.fromInTextNode(rangeStart, 1);
       const end = ModelPosition.fromInTextNode(rangeEnd, 2);
       const range = new ModelRange(start, end);
@@ -502,7 +504,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
           </ul>
         </modelRoot>
       `;
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const range = ModelRange.fromInElement(rangeContainer, 0, 1);
       const resultRange = mut.splitRangeUntilElements(range, initial as ModelElement, initial as ModelElement, false);
       assert.true(expected.sameAs(initial));
@@ -523,7 +525,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
         </modelRoot>
       `;
 
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const range = ModelRange.fromInElement(initial as ModelElement, 0, 0);
       const resultRange = mut.insertText(range, "abc");
       assert.true(initial.sameAs(expected));
@@ -544,7 +546,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
         </modelRoot>
       `;
 
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const range = ModelRange.fromInElement(initial as ModelElement, 0, 0);
       const resultRange = mut.insertText(range, "");
       assert.true(initial.sameAs(expected));
@@ -567,7 +569,7 @@ module("Unit | model | mutators | immediate-model-mutator-test", hooks => {
         </modelRoot>
       `;
 
-      const mut = new ImmediateModelMutator();
+      const mut = new ImmediateModelMutator(eventBus);
       const range = ModelRange.fromInElement(initial as ModelElement, 2, 2);
       const resultRange = mut.insertText(range, "cd");
 
