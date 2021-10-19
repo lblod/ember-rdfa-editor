@@ -3,6 +3,8 @@ import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import OperationAlgorithms from "@lblod/ember-rdfa-editor/core/operations/operation-algorithms"
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
+import {AfterSplitOperationEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 /**
  * The split operation deals with splitting nodes into two new nodes at a certain position.
@@ -67,8 +69,8 @@ import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
 export default class SplitOperation extends Operation {
   private _splitParent: boolean;
 
-  constructor(range: ModelRange, splitParent = true) {
-    super(range);
+  constructor(eventBus: EventBus, range: ModelRange, splitParent = true) {
+    super(eventBus, range);
     this._splitParent = splitParent;
   }
 
@@ -81,6 +83,12 @@ export default class SplitOperation extends Operation {
   }
 
   execute(): ModelRange {
+    const result = this.doExecute();
+    this.eventBus.emit(new AfterSplitOperationEvent(this));
+    return result;
+  }
+
+  private doExecute(): ModelRange {
     if (this.range.collapsed) {
       const newPos = this.doSplit(this.range.start);
       return new ModelRange(newPos, newPos);
@@ -95,6 +103,7 @@ export default class SplitOperation extends Operation {
       const start = this.doSplit(this.range.start);
       return new ModelRange(start, ModelPosition.fromBeforeNode(afterEnd));
     }
+
   }
 
   private doSplit(position: ModelPosition) {

@@ -166,6 +166,18 @@
       ],
       "deletion-plugin/test-support/*": [
         "lib/deletion-plugin/addon-test-support/*"
+      ],
+      "triplestore-plugin/test-support": [
+        "lib/triplestore-plugin/addon-test-support"
+      ],
+      "triplestore-plugin/test-support/*": [
+        "lib/triplestore-plugin/addon-test-support/*"
+      ],
+      "rdfa-context-plugin/test-support": [
+        "lib/rdfa-context-plugin/addon-test-support"
+      ],
+      "rdfa-context-plugin/test-support/*": [
+        "lib/rdfa-context-plugin/addon-test-support/*"
       ]
     }
   },

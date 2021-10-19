@@ -11,6 +11,7 @@ export default class HtmlElementReader implements Reader<HTMLElement, ModelEleme
     const result = new ModelElement(tagName(from) as ElementType);
     copyAttributes(from, result);
     result.updateRdfaPrefixes(context.rdfaPrefixes);
+    context.onElementOpen(result);
 
     const nodeReader = new HtmlNodeReader();
     for (const child of from.childNodes) {
@@ -18,6 +19,7 @@ export default class HtmlElementReader implements Reader<HTMLElement, ModelEleme
       result.appendChildren(...parsedChildren);
     }
     context.bindNode(result, from);
+    context.onElementClose();
     return [result];
   }
 

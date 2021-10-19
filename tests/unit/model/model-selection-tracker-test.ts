@@ -4,7 +4,7 @@ import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {setupTest} from "ember-qunit";
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
-import EventBus from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 
 module("Unit | model | model-selection-tracker", hooks => {
   const ctx = new ModelTestContext();

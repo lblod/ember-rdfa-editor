@@ -10,6 +10,7 @@ import MoveOperation from "@lblod/ember-rdfa-editor/core/operations/move-operati
 import AttributeOperation from "@lblod/ember-rdfa-editor/core/operations/attribute-operation";
 import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-operation";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 
 /**
  * {@link Mutator} implementation where all operations immediately
@@ -18,6 +19,12 @@ import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
  * on the modified state after the previous.
  */
 export default class ImmediateModelMutator implements Mutator {
+  private eventBus: EventBus;
+
+  constructor(eventBus: EventBus) {
+    this.eventBus = eventBus;
+  }
+
   /**
    * @inheritDoc
    * @param range
@@ -25,7 +32,7 @@ export default class ImmediateModelMutator implements Mutator {
    * @return resultRange the resulting range of the execution
    */
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
-    const op = new InsertOperation(range, ...nodes);
+    const op = new InsertOperation(this.eventBus, range, ...nodes);
     return op.execute();
   }
 
@@ -40,7 +47,7 @@ export default class ImmediateModelMutator implements Mutator {
         textNode.setTextAttribute(attr, true);
       }
     }
-    const op = new InsertOperation(range, textNode);
+    const op = new InsertOperation(this.eventBus, range, textNode);
 
     const resultRange = op.execute();
     const start = ModelPosition.fromBeforeNode(textNode.previousSibling || textNode);
@@ -70,7 +77,7 @@ export default class ImmediateModelMutator implements Mutator {
       }
     }
 
-    const op = new InsertOperation(range, ...nodes);
+    const op = new InsertOperation(this.eventBus, range, ...nodes);
     op.execute();
   }
 
@@ -81,7 +88,7 @@ export default class ImmediateModelMutator implements Mutator {
    * @return resultRange the resulting range of the execution
    */
   moveToPosition(rangeToMove: ModelRange, targetPosition: ModelPosition): ModelRange {
-    const op = new MoveOperation(rangeToMove, targetPosition);
+    const op = new MoveOperation(this.eventBus, rangeToMove, targetPosition);
     return op.execute();
   }
 
@@ -93,13 +100,13 @@ export default class ImmediateModelMutator implements Mutator {
    * @return resultRange the resulting range of the execution
    */
   setTextProperty(range: ModelRange, key: TextAttribute, value: boolean): ModelRange {
-    const op = new AttributeOperation(range, key, value);
+    const op = new AttributeOperation(this.eventBus, range, key, value);
     return op.execute();
   }
 
   splitTextAt(position: ModelPosition): ModelPosition {
     const range = new ModelRange(position, position);
-    const op = new SplitOperation(range, false);
+    const op = new SplitOperation(this.eventBus, range, false);
     const resultRange = op.execute();
     return resultRange.start;
   }
@@ -115,7 +122,7 @@ export default class ImmediateModelMutator implements Mutator {
     }
 
     const range = new ModelRange(position, position);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(this.eventBus, range);
     const resultRange = op.execute();
     return resultRange.start;
   }
@@ -149,7 +156,7 @@ export default class ImmediateModelMutator implements Mutator {
 
   private executeSplitOperation(position: ModelPosition, splitParent = true) {
     const range = new ModelRange(position, position);
-    const op = new SplitOperation(range, splitParent);
+    const op = new SplitOperation(this.eventBus, range, splitParent);
     return op.execute().start;
   }
 
@@ -186,7 +193,7 @@ export default class ImmediateModelMutator implements Mutator {
   unwrap(element: ModelElement, ensureBlock = false): ModelRange {
     const srcRange = ModelRange.fromInElement(element, 0, element.getMaxOffset());
     const target = ModelPosition.fromBeforeNode(element);
-    const op = new MoveOperation(srcRange, target);
+    const op = new MoveOperation(this.eventBus, srcRange, target);
     const resultRange = op.execute();
     this.deleteNode(element);
 
@@ -208,7 +215,7 @@ export default class ImmediateModelMutator implements Mutator {
   }
 
   delete(range: ModelRange): ModelRange {
-    const op = new InsertOperation(range);
+    const op = new InsertOperation(this.eventBus, range);
     return op.execute();
   }
 

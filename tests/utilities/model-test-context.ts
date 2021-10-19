@@ -1,6 +1,6 @@
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import TestModel from "dummy/tests/utilities/test-model";
-import EventBus from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 
 export default class ModelTestContext {
   rootNode!: HTMLElement;
