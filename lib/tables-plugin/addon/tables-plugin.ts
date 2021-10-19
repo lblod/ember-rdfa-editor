@@ -37,8 +37,6 @@ export default class TablesPlugin implements EditorPlugin {
     controller.registerCommand(RemoveTableCommand);
     controller.registerCommand(RemoveTableRowCommand);
     controller.registerCommand(MoveToCellCommand);
-    controller.registerCommand(MoveToNextElement);
-    controller.registerCommand(MoveToPreviousElement);
     controller.onEvent("keyDown", this.handleKeydown);
     this.controller = controller;
   }
