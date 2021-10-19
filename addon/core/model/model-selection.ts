@@ -1,7 +1,7 @@
 import {isElement} from "@lblod/ember-rdfa-editor/util/dom-helpers";
 import {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
-import {SelectionError} from "@lblod/ember-rdfa-editor/util/errors";
+import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/util/errors";
 import {analyse} from '@lblod/marawa/rdfa-context-scanner';
 import ModelNodeFinder from "@lblod/ember-rdfa-editor/util/model-node-finder";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
@@ -9,6 +9,8 @@ import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import {Direction, FilterAndPredicate, PropertyState} from "@lblod/ember-rdfa-editor/util/types";
 import {nodeIsElementOfType} from "@lblod/ember-rdfa-editor/util/predicate-utils";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
+import {getParentContext} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
 
 
 /**
@@ -31,6 +33,7 @@ export default class ModelSelection {
 
   private _ranges: ModelRange[];
   private _isRightToLeft: boolean;
+  private _rootContext: Datastore;
 
   /**
    * Utility type guard to check if a selection has and anchor and a focus, as without them
@@ -41,9 +44,10 @@ export default class ModelSelection {
     return !!(selection.anchor && selection.focus);
   }
 
-  constructor() {
+  constructor(rootContext: Datastore = new Datastore()) {
     this._ranges = [];
     this._isRightToLeft = false;
+    this._rootContext = rootContext;
   }
 
   /**
@@ -311,5 +315,13 @@ export default class ModelSelection {
     modelSelection.ranges = this.ranges.map(range => range.clone(modelRoot));
 
     return modelSelection;
+  }
+
+  getParentContext(): Datastore {
+    if (!ModelSelection.isWellBehaved(this)) {
+      throw new MisbehavedSelectionError();
+    }
+    const commonAncestor = this.lastRange.getCommonAncestor();
+    return getParentContext(commonAncestor, this._rootContext);
   }
 }

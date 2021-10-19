@@ -231,7 +231,6 @@ class SelectionChangedEventPayload {
         throw new MisbehavedSelectionError();
       }
       const commonAncestor = this._selection.lastRange.getCommonAncestor();
-      console.log(commonAncestor.toXml());
       this._parentDataset = getParentContext(commonAncestor);
       return this._parentDataset;
     } else {

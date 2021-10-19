@@ -15,6 +15,8 @@ import Inspector, {ModelInspector} from "@lblod/ember-rdfa-editor/core/inspector
 import SimplifiedModel from "@lblod/ember-rdfa-editor/core/simplified-model";
 import ModelHistory from "@lblod/ember-rdfa-editor/core/model/model-history";
 import {ModelReadEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {getParentContext} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
+import {HtmlTreeNode} from "@lblod/ember-rdfa-editor/core/model/tree-node";
 
 
 /**
@@ -100,14 +102,15 @@ export class HtmlModel implements EditorModel {
   private eventBus: EventBus;
 
   constructor(rootElement: HTMLElement, eventBus: EventBus) {
-    this._selection = new ModelSelection();
     this.writer = new HtmlWriter(this);
     this.selectionWriter = new SelectionWriter();
     this.nodeMap = new WeakMap<Node, ModelNode>();
     this.reader = new HtmlReader();
     this.selectionReader = new SelectionReader(this);
     this._rootElement = rootElement;
+    const parentContext = getParentContext(new HtmlTreeNode(this._rootElement));
     this.eventBus = eventBus;
+    this._selection = new ModelSelection(parentContext);
     this.eventBus.on("selectionChanged", () => this.readSelection());
     this.tracker = new ModelSelectionTracker(this, this.eventBus);
     this.history = new ModelHistory();

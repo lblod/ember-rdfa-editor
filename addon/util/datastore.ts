@@ -166,11 +166,14 @@ function isFastDataset(thing: unknown): thing is FastDataset {
 export default class Datastore implements Dataset, DatasetFactory {
   private _fastDataset: FastDataset;
 
-  constructor(quads?: Dataset | Quad[] | FastDataset) {
+  constructor(quads?: Dataset | Quad[] | FastDataset | Datastore) {
     if (isFastDataset(quads)) {
       this._fastDataset = quads;
+    } else if (quads instanceof Datastore) {
+      this._fastDataset = quads.fastDataset;
+    } else {
+      this._fastDataset = dataset(quads);
     }
-    this._fastDataset = dataset(quads);
   }
 
   get size() {

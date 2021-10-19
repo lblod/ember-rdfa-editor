@@ -46,7 +46,7 @@ export function parsePrefixString(prefixString: string) {
   return prefixes;
 }
 
-export function getParentContext(node: TreeNode): Datastore {
+export function getParentContext(node: TreeNode, initialContext?: Datastore): Datastore {
 
   const rootPath = [];
 
@@ -56,7 +56,13 @@ export function getParentContext(node: TreeNode): Datastore {
 
   rootPath.reverse();
 
-  const store = new Datastore();
+  let store: Datastore;
+  if (initialContext) {
+    store = new Datastore(initialContext);
+
+  } else {
+    store = new Datastore();
+  }
   const rdfaParser = new RdfaParser();
 
   rdfaParser.on("data", (data) => {
