@@ -13,7 +13,7 @@ import {WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 //   hintsRegistry: HintsRegistry
 //   editor: Editor
 // }
-const ESSENTIAL_PLUGINS = ["typing", "content-control", "deletion"];
+const ESSENTIAL_PLUGINS = ["typing", "content-control", "deletion", "navigation"];
 const DEFAULT_PLUGINS = ["history", "text-styles", "lists", "searching", "tables"];
 
 interface RdfaEditorArgs {

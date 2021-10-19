@@ -150,7 +150,8 @@
       "lib/searching-plugin",
       "lib/tables-plugin",
       "lib/text-styles-plugin",
-      "lib/typing-plugin"
+      "lib/typing-plugin",
+      "lib/navigation-plugin"
     ]
   },
   "browserslist": [
