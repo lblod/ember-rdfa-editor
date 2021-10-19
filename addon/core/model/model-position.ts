@@ -217,6 +217,9 @@ export default class ModelPosition {
     if (this.root !== other.root) {
       throw new PositionError("Cannot compare nodes with different roots");
     }
+    if(this.sameAs(other)) {
+      return this.parent;
+    }
 
     const leftLength = this.path.length;
     const rightLength = other.path.length;

@@ -1,7 +1,7 @@
 import PernetRawEditor from '../ce/pernet-raw-editor';
 import xmlFormat from 'xml-formatter';
 import HTMLExportWriter from "@lblod/ember-rdfa-editor/core/writers/html-export-writer";
-import EventBus, {EditorEventListener} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import EventBus, {EditorEventListener} from "@lblod/ember-rdfa-editor/core/event-bus";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 /**

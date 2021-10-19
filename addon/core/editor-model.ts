@@ -9,11 +9,12 @@ import SelectionWriter from "@lblod/ember-rdfa-editor/core/writers/selection-wri
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import HtmlReader from "@lblod/ember-rdfa-editor/core/readers/html-reader";
 import SelectionReader from "@lblod/ember-rdfa-editor/core/readers/selection-reader";
-import EventBus from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
 import Inspector, {ModelInspector} from "@lblod/ember-rdfa-editor/core/inspector";
 import SimplifiedModel from "@lblod/ember-rdfa-editor/core/simplified-model";
 import ModelHistory from "@lblod/ember-rdfa-editor/core/model/model-history";
+import {ModelReadEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 
 /**
@@ -145,7 +146,7 @@ export class HtmlModel implements EditorModel {
   }
 
   change(source: string, callback: (mutator: Mutator, inspector: Inspector) => (ModelElement | void), writeBack = true): void {
-    const mutator = new ImmediateModelMutator();
+    const mutator = new ImmediateModelMutator(this.eventBus);
     const inspector = new ModelInspector();
     const subTree = callback(mutator, inspector);
 
@@ -180,6 +181,7 @@ export class HtmlModel implements EditorModel {
     if (readSelection) {
       this.readSelection();
     }
+    this.eventBus.emit(new ModelReadEvent());
   }
 
   private mergeNodeMap(otherMap: Map<Node, ModelNode>) {
