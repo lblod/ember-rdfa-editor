@@ -16,13 +16,11 @@ export default class MoveToNextElement extends Command<[ModelElement, ModelSelec
 
   execute(executedBy: string, element: ModelElement, selection: ModelSelection = this.model.selection) {
     this.model.change(executedBy, mutator => {
-      const nextElement = this.findNextElement(element, mutator)
-      console.log(nextElement)
+      const nextElement = this.findNextElement(element, mutator);
       selection.collapseIn(nextElement);
     });
   }
   findNextElement(element: ModelElement, mutator: ImmediateModelMutator) {
-    console.log(element)
     if(element.nextSibling){
       return element.nextSibling;
     } else if(element.parent) {
@@ -31,7 +29,7 @@ export default class MoveToNextElement extends Command<[ModelElement, ModelSelec
       const positionAfterElement = ModelPosition.fromAfterNode(element);
       const invisibleSpace = new ModelText(INVISIBLE_SPACE);
       mutator.insertAtPosition(positionAfterElement, invisibleSpace);
-      return;
+      return invisibleSpace;
     }
   }
 }

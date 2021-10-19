@@ -16,7 +16,7 @@ export default class MoveToPreviousElement extends Command<[ModelElement, ModelS
 
   execute(executedBy: string, element: ModelElement, selection: ModelSelection = this.model.selection) {
     this.model.change(executedBy, mutator => {
-      const previousElement = this.findPreviousElement(element, mutator)
+      const previousElement = this.findPreviousElement(element, mutator);
       selection.collapseIn(previousElement, previousElement.getMaxOffset());
     });
   }

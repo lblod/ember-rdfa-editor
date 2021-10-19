@@ -11,22 +11,24 @@ export default class MoveCursorToTheLeft extends Command<[ModelElement, ModelSel
     super(model);
   }
 
-  execute(executedBy: string, element: ModelElement, selection: ModelSelection = this.model.selection) {
-    this.model.change(executedBy, mutator => {
-      const selectionStartPosition = selection.getRangeAt(0).start;
-      const selectionStartParent = selectionStartPosition.parent;
-      const selectionStartParentOffset = selectionStartPosition.parentOffset;
-      if(selectionStartParentOffset === 0) {
-        const moveToPreviousElementCommand = new MoveToPreviousElement(this.model);
-        moveToPreviousElementCommand.execute(executedBy, selectionStartPosition.parent)
-      } else {
-        const previousCursorElement = selectionStartParent.childAtOffset(selectionStartParentOffset - 1);
-        if(ModelElement.isModelElement(previousCursorElement)) {
+  execute(executedBy: string, selection: ModelSelection = this.model.selection) {
+    const selectionStartPosition = selection.getRangeAt(0).start;
+    const selectionStartParent = selectionStartPosition.parent;
+    const selectionStartParentOffset = selectionStartPosition.parentOffset;
+    if(selectionStartParentOffset === 0) {
+      const moveToPreviousElementCommand = new MoveToPreviousElement(this.model);
+      moveToPreviousElementCommand.execute(executedBy, selectionStartPosition.parent);
+    } else {
+      const previousCursorElement = selectionStartParent.childAtOffset(selectionStartParentOffset - 1);
+      if(ModelElement.isModelElement(previousCursorElement)) {
+        this.model.change(executedBy, mutator => {
           selection.collapseIn(previousCursorElement, previousCursorElement.getMaxOffset());
-        } else {
+        });
+      } else {
+        this.model.change(executedBy, mutator => {
           selection.collapseIn(selectionStartParent, selectionStartParentOffset - 1);
-        }
+        });
       }
-    });
+    }
   }
 }
