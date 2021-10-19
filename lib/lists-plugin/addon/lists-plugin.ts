@@ -5,7 +5,7 @@ import InsertNewLiCommand from "lists-plugin/commands/insert-newLi-command";
 import MakeListCommand from "lists-plugin/commands/make-list-command";
 import RemoveListCommand from "lists-plugin/commands/remove-list-command";
 import UnindentListCommand from "lists-plugin/commands/unindent-list-command";
-import { KeydownEvent } from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import { KeydownEvent } from "@lblod/ember-rdfa-editor/core/editor-events";
 import { action } from "@ember/object";
 import handleTabInList from 'lists-plugin/handlers/handle-tab-in-list';
 import handleEnterInList from 'lists-plugin/handlers/handle-enter-in-list';
@@ -39,9 +39,9 @@ export default class ListsPlugin implements EditorPlugin {
 
     if (eventPayload.key === "Tab") {
       const reverse = eventPayload.shiftKey;
-      handleTabInList(reverse, this.controller);
+      handleTabInList(event, reverse, this.controller);
     } else if(eventPayload.key === 'Enter'){
-      handleEnterInList(this.controller);
+      handleEnterInList(event, this.controller);
     }
   }
 }
