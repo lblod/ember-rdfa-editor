@@ -23,7 +23,7 @@ export default class MoveToNextElement extends Command<[ModelElement, ModelSelec
   findNextElement(element: ModelElement, mutator: ImmediateModelMutator) {
     if(element.nextSibling){
       return element.nextSibling;
-    } else if(element.parent) {
+    } else if(element.parent && element.parent !== element.root) {
       return this.findNextElement(element.parent, mutator);
     } else {
       const positionAfterElement = ModelPosition.fromAfterNode(element);
