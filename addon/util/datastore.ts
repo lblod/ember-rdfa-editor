@@ -157,7 +157,7 @@ export class RdfDefaultGraph extends RdfTerm implements DefaultGraph {
 
 function isFastDataset(thing: unknown): thing is FastDataset {
   // ts fails us here, see https://github.com/Microsoft/TypeScript/issues/21732
-  if ("isGraphyFastDataset" in (thing as Record<string, unknown>)) {
+  if (thing && "isGraphyFastDataset" in (thing as Record<string, unknown>)) {
     return (thing as FastDataset).isGraphyFastDataset;
   }
   return false;
