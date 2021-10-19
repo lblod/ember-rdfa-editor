@@ -24,7 +24,7 @@ export default class MoveToPreviousElement extends Command<[ModelElement, ModelS
   findPreviousElement(element: ModelElement, mutator: ImmediateModelMutator) {
     if(element.previousSibling){
       return element.previousSibling;
-    } else if(element.parent) {
+    } else if(element.parent && element.parent !== element.root) {
       return this.findPreviousElement(element.parent, mutator);
     } else {
       const positionBeforeElement = ModelPosition.fromBeforeNode(element);
