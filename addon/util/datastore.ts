@@ -225,7 +225,7 @@ export default class Datastore implements Dataset, DatasetFactory {
     return this;
   }
 
-  deleteMatches(subject?: SubjectTerm, predicate?: PredicateTerm, object?: ObjectTerm, graph?: GraphTerm): Dataset {
+  deleteMatches(_subject?: SubjectTerm, _predicate?: PredicateTerm, _object?: ObjectTerm, _graph?: GraphTerm): Dataset {
     throw new NotImplementedError();
   }
 
@@ -280,11 +280,11 @@ export default class Datastore implements Dataset, DatasetFactory {
     }
   }
 
-  fromQuad(original: Quad): Quad {
+  fromQuad(_original: Quad): Quad {
     throw new NotImplementedError();
   }
 
-  fromTerm<T extends Term>(original: T): T {
+  fromTerm<T extends Term>(_original: T): T {
     throw new NotImplementedError();
   }
 
@@ -292,7 +292,7 @@ export default class Datastore implements Dataset, DatasetFactory {
     return this._fastDataset.has(quad);
   }
 
-  import(stream: Stream<Quad>): Promise<Dataset> {
+  import(_stream: Stream<Quad>): Promise<Dataset> {
     throw new NotImplementedError();
   }
 
