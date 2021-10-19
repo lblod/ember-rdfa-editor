@@ -4,7 +4,7 @@
 
 .say-editor {
   background-color: $say-paper-background;
-  padding: $say-editor-padding $say-editor-padding/2;
+  padding: $say-editor-padding $say-editor-padding*0.5;
   width: 100%;
   position: relative;
 
