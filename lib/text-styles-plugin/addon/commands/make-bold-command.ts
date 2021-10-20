@@ -1,10 +1,10 @@
 import SetPropertyCommand from "./set-property-command";
-import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
-export default class MakeBoldCommand extends SetPropertyCommand<[ModelSelection]> {
+export default class MakeBoldCommand extends SetPropertyCommand<[ModelRange | null]> {
   name = "make-bold";
 
-  execute(executedBy: string, selection: ModelSelection = this.model.selection) {
-    this.setProperty(executedBy, "bold", true, selection);
+  execute(executedBy: string, range: ModelRange | null = this.model.selection.lastRange) {
+    this.setProperty(executedBy, "bold", true, range);
   }
 }

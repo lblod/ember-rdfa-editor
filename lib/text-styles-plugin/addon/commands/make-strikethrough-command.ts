@@ -1,10 +1,10 @@
-import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import SetPropertyCommand from "text-styles-plugin/commands/set-property-command";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
-export default class MakeStrikethroughCommand extends SetPropertyCommand<[ModelSelection]> {
+export default class MakeStrikethroughCommand extends SetPropertyCommand<[ModelRange | null]> {
   name = "make-strikethrough";
 
-  execute(executedBy: string, selection: ModelSelection = this.model.selection) {
-    super.setProperty(executedBy, "strikethrough", true, selection);
+  execute(executedBy: string, range: ModelRange | null = this.model.selection.lastRange) {
+    super.setProperty(executedBy, "strikethrough", true, range);
   }
 }

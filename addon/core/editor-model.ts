@@ -164,10 +164,10 @@ export class HtmlModel implements EditorModel {
     if (writeBack) {
       if (subTree) {
         this.write(source, subTree);
-        this.eventBus.emit(new ContentChangedEvent(subTree));
+        this.eventBus.emitDebounced(1000, new ContentChangedEvent(subTree, source));
       } else {
         this.write(source, this.modelRoot);
-        this.eventBus.emit(new ContentChangedEvent(this.modelRoot));
+        this.eventBus.emitDebounced(1000, new ContentChangedEvent(this.modelRoot, source));
       }
     }
   }
