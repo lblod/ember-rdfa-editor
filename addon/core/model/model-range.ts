@@ -314,6 +314,17 @@ export default class ModelRange {
 
   }
 
+  cloneWithNewRoot(root: ModelElement) {
+    const commonPath = ArrayUtils.findCommonSlice(this.start.path, this.end.path);
+
+    const startPath = this.start.path.slice(commonPath.length);
+    const endPath = this.end.path.slice(commonPath.length);
+
+    return ModelRange.fromPaths(root, startPath, endPath);
+
+
+  }
+
   getTextContent(): string {
     return this.textContentHelper(false).textContent;
   }

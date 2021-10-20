@@ -94,6 +94,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     // order is important here, initialize first before assigning
     await this.initialize(editor);
     const controller = new EditorControllerImpl("host-app", editor);
+    window.__controller = new EditorControllerImpl("window-console", editor);
     this._hostController = controller;
     this.args.rdfaEditorInit(controller);
     this._editor = editor;

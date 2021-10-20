@@ -26,7 +26,7 @@ import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
 export interface ImmutableModel {
   get modelRoot(): ModelElement
   get viewRoot(): HTMLElement
-  query(source: string, callback: (inspector: Inspector) => void): void;
+  query<R>(source: string, callback: (inspector: Inspector) => R): R
 
   toXml(): Node;
 
@@ -159,7 +159,7 @@ export class HtmlModel implements EditorModel {
 
   change(source: string, callback: (mutator: Mutator, inspector: Inspector) => (ModelElement | void), writeBack = true): void {
     const mutator = new ImmediateModelMutator(this.eventBus);
-    const inspector = new ModelInspector();
+    const inspector = new ModelInspector(this.eventBus);
     const subTree = callback(mutator, inspector);
 
     if (writeBack) {
@@ -274,9 +274,9 @@ export class HtmlModel implements EditorModel {
     this.tracker.stopTracking();
   }
 
-  query(_source: string, callback: (inspector: Inspector) => void): void {
-    const inspector = new ModelInspector();
-    callback(inspector);
+  query<R>(_source: string, callback: (inspector: Inspector) => R): R {
+    const inspector = new ModelInspector(this.eventBus);
+    return callback(inspector);
   }
 
   toXml(): Node {
