@@ -1,5 +1,5 @@
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
-import ModelTreeWalker, { FilterResult } from "@lblod/ember-rdfa-editor/util/model-tree-walker"
+import ModelTreeWalker, { FilterResult } from "@lblod/ember-rdfa-editor/util/model-tree-walker";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import { IllegalArgumentError } from "./errors";

@@ -42,11 +42,6 @@ interface RdfaEditorArgs {
   rdfaEditorInit(controller: EditorController): void
 }
 
-interface SuggestedHint {
-  component: string
-  info: Record<string, unknown>
-}
-
 /**
  * RDFa editor component
  *
