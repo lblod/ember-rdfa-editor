@@ -230,8 +230,7 @@ class SelectionChangedEventPayload {
       if (!ModelSelection.isWellBehaved(this._selection)) {
         throw new MisbehavedSelectionError();
       }
-      const commonAncestor = this._selection.lastRange.getCommonAncestor();
-      this._parentDataset = getParentContext(commonAncestor);
+      this._parentDataset = this._selection.getParentContext();
       return this._parentDataset;
     } else {
       return this._parentDataset;

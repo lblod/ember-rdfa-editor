@@ -7,6 +7,7 @@
 import TreeNode from "@lblod/ember-rdfa-editor/core/model/tree-node";
 import {RdfaParser} from "rdfa-streaming-parser";
 import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
+import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 
 export function calculateRdfaPrefixes(start: Node): Map<string, string> {
   const parents: HTMLElement[] = [];
@@ -63,14 +64,19 @@ export function getParentContext(node: TreeNode, initialContext?: Datastore): Da
   } else {
     store = new Datastore();
   }
-  const rdfaParser = new RdfaParser();
+  const rdfaParser = new RdfaParser({profile: 'html'});
 
   rdfaParser.on("data", (data) => {
     store.add(data);
   });
 
   for (const node of rootPath) {
-    rdfaParser.onTagOpen(node.type, Object.fromEntries(node.attributeMap));
+    if (node instanceof ModelElement) {
+      rdfaParser.onTagOpen(node.type, node.getAttributesRecord());
+    } else {
+      rdfaParser.onTagOpen(node.type, Object.fromEntries(node.attributeMap));
+
+    }
   }
   rootPath.forEach(() => {
     rdfaParser.onTagClose();

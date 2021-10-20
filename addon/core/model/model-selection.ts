@@ -11,6 +11,7 @@ import {nodeIsElementOfType} from "@lblod/ember-rdfa-editor/util/predicate-utils
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
 import {getParentContext} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
+import {HtmlTreeNode} from "@lblod/ember-rdfa-editor/core/model/tree-node";
 
 
 /**
@@ -322,6 +323,7 @@ export default class ModelSelection {
       throw new MisbehavedSelectionError();
     }
     const commonAncestor = this.lastRange.getCommonAncestor();
-    return getParentContext(commonAncestor, this._rootContext);
+    // TODO we have to go via the real dom here because we cant provide initial prefixes to the parser
+    return getParentContext(new HtmlTreeNode(commonAncestor.boundNode!));
   }
 }

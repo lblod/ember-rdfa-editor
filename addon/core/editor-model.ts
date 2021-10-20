@@ -17,6 +17,7 @@ import ModelHistory from "@lblod/ember-rdfa-editor/core/model/model-history";
 import {ModelReadEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 import {getParentContext} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
 import {HtmlTreeNode} from "@lblod/ember-rdfa-editor/core/model/tree-node";
+import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
 
 
 /**
@@ -81,6 +82,8 @@ export default interface EditorModel extends MutableModel {
    * here, but nobody's perfect).
    */
   onDestroy(): void;
+
+  get parentContext(): Datastore;
 }
 
 /**
@@ -100,6 +103,7 @@ export class HtmlModel implements EditorModel {
   private tracker: ModelSelectionTracker;
   private history: ModelHistory;
   private eventBus: EventBus;
+  private _parentContext: Datastore;
 
   constructor(rootElement: HTMLElement, eventBus: EventBus) {
     this.writer = new HtmlWriter(this);
@@ -108,9 +112,10 @@ export class HtmlModel implements EditorModel {
     this.reader = new HtmlReader();
     this.selectionReader = new SelectionReader(this);
     this._rootElement = rootElement;
-    const parentContext = getParentContext(new HtmlTreeNode(this._rootElement));
+    this._parentContext = getParentContext(new HtmlTreeNode(this._rootElement));
+    console.log(this._parentContext);
     this.eventBus = eventBus;
-    this._selection = new ModelSelection(parentContext);
+    this._selection = new ModelSelection(this._parentContext);
     this.eventBus.on("selectionChanged", () => this.readSelection());
     this.tracker = new ModelSelectionTracker(this, this.eventBus);
     this.history = new ModelHistory();
@@ -146,6 +151,10 @@ export class HtmlModel implements EditorModel {
 
   get viewRoot(): HTMLElement{
     return this.rootElement;
+  }
+
+  get parentContext(): Datastore {
+    return this._parentContext;
   }
 
   change(source: string, callback: (mutator: Mutator, inspector: Inspector) => (ModelElement | void), writeBack = true): void {
