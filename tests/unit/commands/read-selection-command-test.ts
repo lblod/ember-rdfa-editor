@@ -7,15 +7,15 @@ import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import {CORE_OWNER} from "@lblod/ember-rdfa-editor/util/constants";
-import ReadSelectionCommand from "content-control-plugin/commands/read-selection-command";
+import SelectionCommand from "content-control-plugin/commands/selection-command";
 
 module("Unit | commands | read-selection-command-test", hooks => {
   const ctx = new ModelTestContext();
-  let command: ReadSelectionCommand;
+  let command: SelectionCommand;
 
   hooks.beforeEach(() => {
     ctx.reset();
-    command = new ReadSelectionCommand(ctx.model);
+    command = new SelectionCommand(ctx.model);
   });
 
   const compareModelNodeList = (received: ModelNode[], expected: ModelNode[], assert: Assert) => {

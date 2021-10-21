@@ -113,7 +113,6 @@ export class HtmlModel implements EditorModel {
     this.selectionReader = new SelectionReader(this);
     this._rootElement = rootElement;
     this._parentContext = getParentContext(new HtmlTreeNode(this._rootElement));
-    console.log(this._parentContext);
     this.eventBus = eventBus;
     this._selection = new ModelSelection(this._parentContext);
     this.eventBus.on("selectionChanged", () => this.readSelection());

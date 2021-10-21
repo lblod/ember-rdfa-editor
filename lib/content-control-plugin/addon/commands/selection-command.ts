@@ -20,17 +20,17 @@ export interface SelectionCommandArgs {
  * model by default.
  * Optionally, it can also delete the selected content before returning it.
  */
-export default class SelectionCommand extends Command<unknown[], ModelNode[]> {
-  name = "selection"
+export default class SelectionCommand extends Command<[SelectionCommandArgs?], ModelNode[]> {
+  name = "selection";
 
-  protected constructor(model: EditorModel) {
+  constructor(model: EditorModel) {
     super(model);
   }
 
   execute(executedBy: string, {
     range = this.model.selection.lastRange!,
     deleteSelection = false
-  }: SelectionCommandArgs): ModelNode[] {
+  }: SelectionCommandArgs = {}): ModelNode[] {
 
     let buffer: SimplifiedModel | null = null;
     if (!deleteSelection) {

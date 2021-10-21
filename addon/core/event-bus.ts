@@ -65,7 +65,7 @@ export default class EventBus {
   emit = <E extends AnyEventName>(event: EventWithName<E>): void => {
     const listenerQueue = this.listeners.get(event.name);
 
-    console.log(`${event.owner} is emitting event: ${event.name} with payload:`, event.payload);
+    console.debug(`${event.owner} is emitting event: ${event.name} with payload:`, event.payload);
     if (listenerQueue) {
       listenerQueue.propagate(event);
     }

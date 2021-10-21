@@ -2,6 +2,14 @@ import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import {ModelError} from "@lblod/ember-rdfa-editor/util/errors";
 import {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
+import {EditorImpl} from "@lblod/ember-rdfa-editor/core/editor";
+
+export class TestEditor extends EditorImpl {
+  constructor(model: TestModel) {
+    super(document.createElement("div"));
+    this.model = model;
+  }
+}
 
 export default class TestModel extends HtmlModel {
   private shouldWriteSelection = true;

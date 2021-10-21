@@ -54,7 +54,7 @@ export default interface Editor {
  * class is made per {@link RdfaEditor} component lifetime.
  */
 export class EditorImpl implements Editor {
-  private model: EditorModel;
+  protected model: EditorModel;
   private registeredCommands: Map<string, Command<unknown[], unknown>> = new Map<string, Command<unknown[], unknown>>();
   private registeredQueries: Map<string, Query<unknown[], unknown>> = new Map<string, Query<unknown[], unknown>>();
   private eventBus: EventBus;
