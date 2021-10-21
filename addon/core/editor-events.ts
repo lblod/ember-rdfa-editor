@@ -8,7 +8,6 @@ import AttributeOperation from "@lblod/ember-rdfa-editor/core/operations/attribu
 import MoveOperation from "@lblod/ember-rdfa-editor/core/operations/move-operation";
 import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-operation";
 import {AnyEventName} from "@lblod/ember-rdfa-editor/core/event-bus";
-import {getParentContext} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/util/errors";
 import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
 

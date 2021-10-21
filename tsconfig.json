@@ -42,7 +42,8 @@
         "lib/searching-plugin/app/*",
         "lib/lists-plugin/app/*",
         "lib/history-plugin/app/*",
-        "lib/deletion-plugin/app/*"
+        "lib/deletion-plugin/app/*",
+        "lib/navigation-plugin/app/*"
       ],
       "@lblod/ember-rdfa-editor": [
         "addon"
@@ -167,17 +168,17 @@
       "deletion-plugin/test-support/*": [
         "lib/deletion-plugin/addon-test-support/*"
       ],
-      "triplestore-plugin/test-support": [
-        "lib/triplestore-plugin/addon-test-support"
+      "navigation-plugin": [
+        "lib/navigation-plugin"
       ],
-      "triplestore-plugin/test-support/*": [
-        "lib/triplestore-plugin/addon-test-support/*"
+      "navigation-plugin/*": [
+        "lib/navigation-plugin/addon/*"
       ],
-      "rdfa-context-plugin/test-support": [
-        "lib/rdfa-context-plugin/addon-test-support"
+      "navigation-plugin/test-support": [
+        "lib/navigation-plugin/addon-test-support"
       ],
-      "rdfa-context-plugin/test-support/*": [
-        "lib/rdfa-context-plugin/addon-test-support/*"
+      "navigation-plugin/test-support/*": [
+        "lib/navigation-plugin/addon-test-support/*"
       ]
     }
   },
@@ -196,6 +197,7 @@
     "lib/searching-plugin",
     "lib/lists-plugin",
     "lib/history-plugin",
-    "lib/deletion-plugin"
+    "lib/deletion-plugin",
+    "lib/navigation-plugin"
   ]
 }

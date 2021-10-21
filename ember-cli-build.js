@@ -32,7 +32,6 @@ module.exports = function (defaults) {
           fallback: {
             stream: require.resolve("stream-browserify"),
             buffer: require.resolve('buffer/'),
-            "readable-stream": require.resolve("readable-stream"),
             events: require.resolve("events/"),
             crypto: require.resolve("crypto-browserify")
           }

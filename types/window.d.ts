@@ -1,5 +1,4 @@
-import { LogLevels } from "diary";
-import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
+import {LogLevels} from "diary";
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 
 declare global {
