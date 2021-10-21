@@ -80,10 +80,24 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     await this.args.editorInit(editor);
   }
 
+  /**
+   * Tries to find and identify common keyboard shortcuts which emit other events we can tap into.
+   * Currently tries to catch copy, paste, cut. Definitely needs testing on mac.
+   * @method keydownMapsToOtherEvent
+   */
+  keydownMapsToOtherEvent(event: KeyboardEvent): boolean {
+    return (event.ctrlKey || event.metaKey) && ["v", "c", "x"].includes(event.key);
+  }
+
+  excludedKeys = new Set(["F12", "ArrowDown", "ArrowUp", "CapsLock", "Home", "PageUp", "PageDown", "End"]);
+
   @action
   handleKeyDown(event: KeyboardEvent) {
-    event.preventDefault();
-    this.editor.emitEvent(new KeydownEvent(event, CE_OWNER));
+    if (!this.keydownMapsToOtherEvent(event) && !this.excludedKeys.has(event.key)) {
+      console.log(event.key);
+      event.preventDefault();
+      this.editor.emitEvent(new KeydownEvent(event, CE_OWNER));
+    }
   }
 
   @action
@@ -312,12 +326,4 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   //   }
   // }
   //
-  // /**
-  //  * Tries to find and identify common keyboard shortcuts which emit other events we can tap into.
-  //  * Currently tries to catch copy, paste, cut. Definitely needs testing on mac.
-  //  * @method keydownMapsToOtherEvent
-  //  */
-  // keydownMapsToOtherEvent(event: KeyboardEvent) : boolean {
-  //   return (event.ctrlKey || event.metaKey) && ["v", "c", "x"].includes(event.key);
-  // }
 }
