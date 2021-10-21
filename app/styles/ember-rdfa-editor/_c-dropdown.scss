@@ -35,7 +35,7 @@ $say-dropdown-caret-size        : .4rem !default;
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: $say-neutral-600;
+  color: $au-gray-600;
   height: $say-toolbar-height;
   width: $say-toolbar-height;
   background-color: transparent;
@@ -44,12 +44,12 @@ $say-dropdown-caret-size        : .4rem !default;
   margin: 0;
 
   & + & {
-    border-left: .1rem solid $say-neutral-200;
+    border-left: .1rem solid $au-gray-200;
   }
 
   &:hover,
   &:focus {
-    color: $say-neutral-700;
+    color: $au-gray-700;
     background-color: transparent;
   }
 
@@ -59,9 +59,9 @@ $say-dropdown-caret-size        : .4rem !default;
   }
 
   &.is-active {
-    color: $say-neutral-900;
-    background-color: $say-neutral-300;
-    box-shadow: inset 0 -.3rem 0 0 $say-neutral-400;
+    color: $au-gray-900;
+    background-color: $au-gray-300;
+    box-shadow: inset 0 -.3rem 0 0 $au-gray-400;
   }
 }
 
@@ -71,7 +71,7 @@ $say-dropdown-caret-size        : .4rem !default;
   font-weight: $au-regular;
   position: absolute;
   z-index: $au-z-index-beta;
-  background-color: $say-white;
+  background-color: $au-white;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -80,7 +80,7 @@ $say-dropdown-caret-size        : .4rem !default;
   min-width: 100%;
   width: auto;
   top: calc(100% + #{$au-unit-tiny});
-  box-shadow: 0 0 12px rgba($say-neutral-900,.15), 0 0 2px rgba($say-neutral-900,.1);
+  box-shadow: 0 0 12px rgba($au-gray-900,.15), 0 0 2px rgba($au-gray-900,.1);
   border-radius: .3rem;
   display: none;
 
@@ -99,13 +99,13 @@ $say-dropdown-caret-size        : .4rem !default;
   }
 
   &:before {
-    border-color: rgba($say-white, 0);
-    border-bottom-color: $say-neutral-200;
+    border-color: rgba($au-white, 0);
+    border-bottom-color: $au-gray-200;
   }
 
   &:after {
-    border-color: rgba($say-white, 0);
-    border-bottom-color: $say-white;
+    border-color: rgba($au-white, 0);
+    border-bottom-color: $au-white;
   }
 
   &:focus {
@@ -121,7 +121,7 @@ $say-dropdown-caret-size        : .4rem !default;
   @include au-font-size($say-smaller-font-size,1.5);
   font-family: $say-font-family;
   font-weight: $au-regular;
-  color: $say-neutral-700;
+  color: $au-gray-700;
   appearance: none;
   border: 0;
   padding: $au-unit-small;
@@ -141,8 +141,8 @@ $say-dropdown-caret-size        : .4rem !default;
   }
 
   &:hover {
-    color: $say-neutral-800;
-    background-color: $say-neutral-100;
+    color: $au-gray-800;
+    background-color: $au-gray-100;
   }
 
   &:focus {
@@ -152,5 +152,5 @@ $say-dropdown-caret-size        : .4rem !default;
 }
 
 .say-dropdown__menu [role="menuitem"] + [role="menuitem"] {
-  border-top: 1px dotted $say-neutral-300;
+  border-top: 1px dotted $au-gray-300;
 }

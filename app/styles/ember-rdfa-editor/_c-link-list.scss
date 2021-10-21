@@ -13,7 +13,7 @@
   position: relative;
 
   & + & {
-    border-top: .1rem solid $say-neutral-200;
+    border-top: .1rem solid $au-gray-200;
   }
 }
 
@@ -31,9 +31,9 @@
   width: 100%;
   padding: $au-unit-small;
   position: relative;
-  color: $say-neutral-700;
+  color: $au-gray-700;
   text-decoration: underline;
-  text-decoration-color: $say-neutral-300;
+  text-decoration-color: $au-gray-300;
   transition: color $au-transition;
   text-align: left;
 
@@ -45,7 +45,7 @@
 
   &:hover,
   &:focus {
-    color: $say-neutral-600;
+    color: $au-gray-600;
     text-decoration: none;
   }
 
@@ -115,7 +115,7 @@
 // Disable fixed scrollbars on html element > @TODO: remove with new version of appuniversum
 .say-link-list--dark {
   .say-link-list__item--capped a.au-c-link.au-c-link--secondary {
-    color: $say-neutral-800;
+    color: $au-gray-800;
     text-decoration: underline;
   }
 

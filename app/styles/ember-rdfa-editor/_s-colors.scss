@@ -2,18 +2,6 @@
 // #COLORS
 // ==================================
 
-// Tint & shade helper functions
-// ---
-// Makes a color lighter
-@function tint($color, $percent) {
-  @return mix(#fff, $color, $percent);
-}
-
-// Makes a color darker
-@function shade($color, $percent) {
-  @return mix(#000, $color, $percent);
-}
-
 
 // Color palette
 // ---
@@ -24,46 +12,3 @@ $say-purple-600               : #A933FF;
 $say-purple-700               : #9000FA;
 $say-purple-800               : #7700ce;
 $say-purple-900               : #550094;
-
-
-// Semantic color variables
-// ---
-$say-white                    : $au-white !default;
-
-$say-neutral-100              : $au-gray-100 !default;
-$say-neutral-200              : $au-gray-200 !default;
-$say-neutral-300              : $au-gray-300 !default;
-$say-neutral-400              : $au-gray-400 !default;
-$say-neutral-500              : $au-gray-500 !default;
-$say-neutral-600              : $au-gray-600 !default;
-$say-neutral-700              : $au-gray-700 !default;
-$say-neutral-800              : $au-gray-800 !default;
-$say-neutral-900              : $au-gray-900 !default;
-$say-neutral-1000             : $au-gray-1000 !default;
-
-$say-primary-200              : $say-purple-200 !default;
-$say-primary-300              : $say-purple-300 !default;
-$say-primary-600              : $say-purple-600 !default;
-$say-primary-700              : $say-purple-700 !default;
-$say-primary-900              : $say-purple-900 !default;
-
-$say-error-100                : $au-red-100 !default;
-$say-error-200                : $au-red-200 !default;
-$say-error-500                : $au-red-500 !default;
-$say-error-600                : $au-red-600 !default;
-$say-error-700                : $au-red-700 !default;
-$say-error-900                : $au-red-900 !default;
-
-$say-success-100              : $au-green-100 !default;
-$say-success-200              : $au-green-200 !default;
-$say-success-400              : $au-green-400 !default;
-$say-success-500              : $au-green-500 !default;
-$say-success-700              : $au-green-700 !default;
-$say-success-900              : $au-green-900 !default;
-
-$say-warning-100              : $au-yellow-100 !default;
-$say-warning-200              : $au-yellow-200 !default;
-$say-warning-300              : $au-yellow-300 !default;
-$say-warning-400              : $au-yellow-400 !default;
-$say-warning-600              : $au-yellow-600 !default;
-$say-warning-900              : $au-yellow-900 !default;
