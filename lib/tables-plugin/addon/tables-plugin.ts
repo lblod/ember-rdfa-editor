@@ -45,7 +45,7 @@ export default class TablesPlugin implements EditorPlugin {
   handleKeydown(event: KeydownEvent) {
     if (this.isTabEvent(event.payload)) {
       const reverse = event.payload.shiftKey;
-      handleTabInTable(reverse, this.controller);
+      handleTabInTable(event, reverse, this.controller);
       
     }
   }
