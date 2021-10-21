@@ -22,6 +22,9 @@ export type EDITOR_EVENT_MAP = {
   "afterMoveOperation": AfterMoveOperationEvent,
   "afterAttributeOperation": AfterAttributeOperationEvent,
   "afterSplitOperation": AfterSplitOperationEvent,
+  "paste": PasteEvent,
+  "cut": CutEvent,
+  "copy": CopyEvent
 };
 
 export type EventWithName<N extends EditorEventName | string> = N extends EditorEventName ? EDITOR_EVENT_MAP[N] : CustomEditorEvent<unknown>;
@@ -244,6 +247,54 @@ export class SelectionChangedEvent extends AbstractEditorEvent<SelectionChangedE
     super({
       payload: new SelectionChangedEventPayload(selection), owner
     });
+  }
+}
+
+export interface PasteEventPayload {
+  data: DataTransfer | null,
+  domEvent: ClipboardEvent,
+  pasteHTML?: boolean,
+  pasteExtendedHTML?: boolean
+}
+
+export class PasteEvent extends AbstractEditorEvent<PasteEventPayload> {
+  _name: EditorEventName = "paste";
+
+  constructor({
+                owner,
+                context,
+                payload: {
+                  data,
+                  domEvent,
+                  pasteExtendedHTML = false,
+                  pasteHTML = false
+                }
+              }: EventConfig<PasteEventPayload>) {
+    super({owner, payload: {data, domEvent, pasteHTML, pasteExtendedHTML}, context});
+  }
+}
+
+export interface CutEventPayload {
+  domEvent: ClipboardEvent
+}
+
+export class CutEvent extends AbstractEditorEvent<CutEventPayload> {
+  _name: EditorEventName = "cut";
+
+  constructor(config: EventConfig<CutEventPayload>) {
+    super(config);
+  }
+}
+
+export interface CopyEventPayload {
+  domEvent: ClipboardEvent
+}
+
+export class CopyEvent extends AbstractEditorEvent<CopyEventPayload> {
+  _name: EditorEventName = "copy";
+
+  constructor(config: EventConfig<CopyEventPayload>) {
+    super(config);
   }
 }
 

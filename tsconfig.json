@@ -43,7 +43,8 @@
         "lib/lists-plugin/app/*",
         "lib/history-plugin/app/*",
         "lib/deletion-plugin/app/*",
-        "lib/navigation-plugin/app/*"
+        "lib/navigation-plugin/app/*",
+        "lib/clipboard-plugin/app/*"
       ],
       "@lblod/ember-rdfa-editor": [
         "addon"
@@ -179,6 +180,18 @@
       ],
       "navigation-plugin/test-support/*": [
         "lib/navigation-plugin/addon-test-support/*"
+      ],
+      "clipboard-plugin": [
+        "lib/clipboard-plugin/addon"
+      ],
+      "clipboard-plugin/*": [
+        "lib/clipboard-plugin/addon/*"
+      ],
+      "clipboard-plugin/test-support": [
+        "lib/clipboard-plugin/addon-test-support"
+      ],
+      "clipboard-plugin/test-support/*": [
+        "lib/clipboard-plugin/addon-test-support/*"
       ]
     }
   },
@@ -198,6 +211,7 @@
     "lib/lists-plugin",
     "lib/history-plugin",
     "lib/deletion-plugin",
-    "lib/navigation-plugin"
+    "lib/navigation-plugin",
+    "lib/clipboard-plugin"
   ]
 }

@@ -18,7 +18,7 @@ import Query from "@lblod/ember-rdfa-editor/core/query";
  * change events that originate from their own changes, preventing infinite loops.
  */
 export default interface EditorController {
-  registerCommand<A extends unknown[], R>(command: new (model: EditorModel) => Command<A, R>): void;
+  registerCommand<A extends unknown[], R>(command: new (model: EditorModel, controller: EditorController) => Command<A, R>): void;
 
   canExecuteCommand<A extends unknown[]>(commandName: string, ...args: A): boolean;
 
@@ -86,8 +86,8 @@ export class EditorControllerImpl implements EditorController {
     this.editor.onEvent(eventName, callback, {priority, context: RdfaContextFactory.serialize(context)});
   }
 
-  registerCommand<A extends unknown[], R>(command: { new(model: EditorModel): Command<A, R> }): void {
-    this.editor.registerCommand(command);
+  registerCommand<A extends unknown[], R>(command: { new(model: EditorModel, controller: EditorController): Command<A, R> }): void {
+    this.editor.registerCommand(command, this);
   }
 
   registerWidget(widget: WidgetSpec): void {

@@ -3,7 +3,7 @@ import {inject as service} from '@ember/service';
 import Component from '@glimmer/component';
 import Editor, {EditorImpl} from "@lblod/ember-rdfa-editor/core/editor";
 import {UninitializedError} from "@lblod/ember-rdfa-editor/util/errors";
-import {KeydownEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {CopyEvent, CutEvent, KeydownEvent, PasteEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 interface FeatureService {
   isEnabled(key: string): boolean
@@ -109,7 +109,46 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     this.editor.onDestroy();
   }
 
+  @action
+  paste(event: ClipboardEvent) {
+    event.preventDefault();
+    this.editor.emitEvent(new PasteEvent({
+      payload: {
+        domEvent: event, data: event.clipboardData,
+        pasteHTML: this.features.isEnabled('editor-html-paste'),
+        pasteExtendedHTML: this.features.isEnabled('editor-extended-html-paste')
+      }
+    }));
+  }
 
+  @action
+  cut(event: ClipboardEvent) {
+    event.preventDefault();
+    if (this.features.isEnabled("editor-cut")) {
+      this.editor.emitEvent(new CutEvent({
+        payload: {
+          domEvent: event
+        }
+      }));
+    }
+  }
+
+  @action
+  copy(event: ClipboardEvent) {
+    event.preventDefault();
+    if (this.features.isEnabled("editor-copy")) {
+      this.editor.emitEvent(new CopyEvent({
+        payload: {
+          domEvent: event
+        }
+      }));
+    }
+  }
+
+  //
+  // @action
+  // handleMouseUp(event: MouseEvent) {
+  //   const preventDefault = this.passEventToHandlers(event);
   // cutHandler: InputHandler;
   // copyHandler: InputHandler;
   // pasteHandler: InputHandler;
@@ -247,35 +286,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   //   }
   // }
   //
-  // @action
-  // paste(event: ClipboardEvent) {
-  //   event.preventDefault();
-  //   this.pasteHandler.handleEvent(
-  //     event,
-  //     this.features.isEnabled("editor-html-paste"),
-  //     this.features.isEnabled("editor-extended-html-paste")
-  //   );
-  // }
-  //
-  // @action
-  // cut(event: ClipboardEvent) {
-  //   event.preventDefault();
-  //   if (this.features.isEnabled("editor-cut")) {
-  //     this.cutHandler.handleEvent(event);
-  //   }
-  // }
-  //
-  // @action
-  // copy(event: ClipboardEvent) {
-  //   event.preventDefault();
-  //   if (this.features.isEnabled("editor-copy")) {
-  //     this.copyHandler.handleEvent(event);
-  //   }
-  // }
-  //
-  // @action
-  // handleMouseUp(event: MouseEvent) {
-  //   const preventDefault = this.passEventToHandlers(event);
   //   if (preventDefault) {
   //     event.preventDefault();
   //   }

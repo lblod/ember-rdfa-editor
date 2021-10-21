@@ -28,7 +28,7 @@ export default interface Editor {
 
   emitEventDebounced<E extends AnyEventName>(delayMs: number, event: EventWithName<E>): void;
 
-  registerCommand<A extends unknown[], R>(command: { new(model: EditorModel): Command<A, R> }): void;
+  registerCommand<A extends unknown[], R>(command: { new(model: EditorModel, controller: EditorController): Command<A, R> }, controller: EditorController): void;
 
   canExecuteCommand<A extends unknown[]>(commandName: string, ...args: A): boolean;
 
@@ -54,7 +54,7 @@ export default interface Editor {
  * class is made per {@link RdfaEditor} component lifetime.
  */
 export class EditorImpl implements Editor {
-  private model: EditorModel;
+  protected model: EditorModel;
   private registeredCommands: Map<string, Command<unknown[], unknown>> = new Map<string, Command<unknown[], unknown>>();
   private registeredQueries: Map<string, Query<unknown[], unknown>> = new Map<string, Query<unknown[], unknown>>();
   private eventBus: EventBus;
@@ -114,8 +114,8 @@ export class EditorImpl implements Editor {
     this.eventBus.on(eventName, callback);
   }
 
-  registerCommand<A extends unknown[], R>(command: { new(model: EditorModel): Command<A, R> }): void {
-    const cmd = new command(this.model);
+  registerCommand<A extends unknown[], R>(command: { new(model: EditorModel, controller: EditorController): Command<A, R> }, controller: EditorController): void {
+    const cmd = new command(this.model, controller);
     this.registeredCommands.set(cmd.name, cmd);
   }
 

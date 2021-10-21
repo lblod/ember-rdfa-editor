@@ -13,7 +13,7 @@ import {tracked} from "@glimmer/tracking";
 //   editor: Editor
 // }
 const ESSENTIAL_PLUGINS = ["typing", "content-control", "deletion", "navigation"];
-const DEFAULT_PLUGINS = ["history", "text-styles", "lists", "searching", "tables"];
+const DEFAULT_PLUGINS = ["history", "text-styles", "lists", "searching", "tables", "clipboard"];
 
 interface RdfaEditorArgs {
   /**
