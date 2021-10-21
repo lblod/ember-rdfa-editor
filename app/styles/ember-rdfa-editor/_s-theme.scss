@@ -29,12 +29,12 @@ $say-paper-box-shadow            : 0 1px 3px rgba($au-gray-900, .1), 0 4px 20px 
 
 
 // Semantic color variables
-$say-primary-200                 : $say-purple-200 !default;
-$say-primary-300                 : $say-purple-300 !default;
-$say-primary-600                 : $say-purple-600 !default;
-$say-primary-700                 : $say-purple-700 !default;
-$say-primary-800                 : $say-purple-800 !default;
-$say-primary-900                 : $say-purple-900 !default;
+$say-primary-200                 : #F2E0FF !default;
+$say-primary-300                 : #E1B8FF !default;
+$say-primary-600                 : #A933FF !default;
+$say-primary-700                 : #9000FA !default;
+$say-primary-800                 : #7700ce !default;
+$say-primary-900                 : #550094 !default;
 
 
 // Typography
@@ -128,7 +128,7 @@ $say-input-height                    : $au-unit-large - $au-unit-small !default;
 $say-input-color                     : $au-gray-1000 !default;
 $say-input-background-color          : $au-white;
 $say-input-border-color              : $au-gray-400 !default;
-$say-input-focus-border-color        : $say-purple-300 !default;
+$say-input-focus-border-color        : $say-primary-300 !default;
 $say-input-error-border              : $au-red-600 !default;
 $say-input-radius                    : $au-radius;
 

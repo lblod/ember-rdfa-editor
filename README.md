@@ -88,9 +88,7 @@ When installing this through `ember install` the addon will add the snippet abov
 ### Customisation
 
 You can override the variables to provide a custom theme for the editor.
-- [_s-colors.scss](https://github.com/lblod/ember-rdfa-editor/blob/master/app/styles/ember-rdfa-editor/_s-colors.scss): Collection of colors used.
-- [_s-settings.scss](https://github.com/lblod/ember-rdfa-editor/blob/master/app/styles/ember-rdfa-editor/_s-settings.scss): General settings (spacing, font family, sizes and weights, media-queries)
-- [_s-theme.scss](https://github.com/lblod/ember-rdfa-editor/blob/master/app/styles/ember-rdfa-editor/_s-theme.scss): Specific theme variables
+- [_s-theme.scss](https://github.com/lblod/ember-rdfa-editor/blob/master/app/styles/ember-rdfa-editor/_s-theme.scss): Theme variables
 
 
 ## Compatibility
