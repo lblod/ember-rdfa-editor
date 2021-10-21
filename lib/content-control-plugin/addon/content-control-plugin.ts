@@ -13,6 +13,7 @@ export default class ContentControlPlugin implements EditorPlugin {
     return "content-control";
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: EditorController) {
     controller.registerCommand(InsertHtmlCommand);
     controller.registerCommand(InsertXmlCommand);

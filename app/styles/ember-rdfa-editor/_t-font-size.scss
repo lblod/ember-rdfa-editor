@@ -1,3 +1,4 @@
+@use "sass:math";
 // ==================================
 // #FONT-SIZE
 // ==================================
@@ -54,10 +55,10 @@
   }
 
   // Strip rem units from font-size
-  $font-size-unitless: ($font-size / ($font-size * 0 + 1)) * 10;
+  $font-size-unitless: math.div($font-size, ($font-size * 0 + 1)) * 10;
 
   // Strip rem units from unit-tiny and set as baseline
-  $baseline: ($say-unit-tiny / ($font-size * 0 + 1)) * 10;
+  $baseline: math.div($say-unit-tiny, ($font-size * 0 + 1)) * 10;
 
   // Provide pixel fallback for old IE
   font-size: $font-size-unitless + px $important;
@@ -69,10 +70,10 @@
     // By default, we set it to the minimum number of lines necessary
     // in order to contain the defined font-size, +1 for some breathing room.
     // This can be modified with the `$modifier` parameter.
-    $lines: ceil($font-size-unitless / $baseline) + $modifier + 1;
+    $lines: ceil(math.div($font-size-unitless, $baseline)) + $modifier + 1;
     $line-height: $lines * $baseline;
 
-    line-height: ($line-height / $font-size-unitless) $important;
+    line-height: math.div($line-height, $font-size-unitless) $important;
   }
 
   @else {

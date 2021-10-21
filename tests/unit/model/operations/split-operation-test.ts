@@ -4,8 +4,10 @@ import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-operation";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 
 module("Unit | model | operations | split-operation-test", () => {
+  const eventBus = new EventBus();
   test("doesn't split root", assert => {
     // language=XML
     const {root: initial} = vdom`
@@ -20,7 +22,7 @@ module("Unit | model | operations | split-operation-test", () => {
     `;
 
     const range = ModelRange.fromPaths(initial as ModelElement, [0], [0]);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(eventBus, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -45,7 +47,7 @@ module("Unit | model | operations | split-operation-test", () => {
     `;
 
     const range = ModelRange.fromInTextNode(rangeStart, 2, 2);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(eventBus, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -75,7 +77,7 @@ module("Unit | model | operations | split-operation-test", () => {
     `;
 
     const range = ModelRange.fromInTextNode(selectionStart, 2, 2);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(eventBus, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -103,7 +105,7 @@ module("Unit | model | operations | split-operation-test", () => {
     `;
 
     const range = ModelRange.fromInTextNode(selectionStart, 2, 2);
-    const op = new SplitOperation(range, false);
+    const op = new SplitOperation(eventBus, range, false);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -134,7 +136,7 @@ module("Unit | model | operations | split-operation-test", () => {
       </modelRoot>
     `;
     const range = ModelRange.fromInTextNode(selectionStart, 1, 3);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(eventBus, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -174,7 +176,7 @@ module("Unit | model | operations | split-operation-test", () => {
     const start = ModelPosition.fromInTextNode(selectionStart, 2);
     const end = ModelPosition.fromInTextNode(selectionEnd, 0);
     const range = new ModelRange(start, end);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(eventBus, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -217,7 +219,7 @@ module("Unit | model | operations | split-operation-test", () => {
     const start = ModelPosition.fromInTextNode(selectionStart, 2);
     const end = ModelPosition.fromInTextNode(selectionEnd, 0);
     const range = new ModelRange(start, end);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(eventBus, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));

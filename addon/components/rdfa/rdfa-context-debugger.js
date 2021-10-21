@@ -4,7 +4,7 @@ import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 import { debug } from '@ember/debug';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import globalTextRegionToModelRange from '@lblod/ember-rdfa-editor/archive/utils/global-text-region-to-model-range';
+import globalTextRegionToModelRange from '@lblod/ember-rdfa-editor/util/global-text-region-to-model-range';
 
 /**
  * Debugger component for the RDFa context of DOM nodes

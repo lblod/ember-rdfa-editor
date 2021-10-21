@@ -1,9 +1,9 @@
 import Writer from "@lblod/ember-rdfa-editor/core/writers/writer";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
-import {getWindowSelection} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import {getWindowSelection} from "@lblod/ember-rdfa-editor/util/dom-helpers";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
-import {ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {ModelError} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ArrayUtils from "@lblod/ember-rdfa-editor/util/array-utils";
 

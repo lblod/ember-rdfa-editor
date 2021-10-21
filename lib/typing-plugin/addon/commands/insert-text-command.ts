@@ -1,7 +1,7 @@
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/util/errors";
 import {NON_BREAKING_SPACE, SPACE} from "@lblod/ember-rdfa-editor/util/constants";
 import {Mutator} from "@lblod/ember-rdfa-editor/core/mutator";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";

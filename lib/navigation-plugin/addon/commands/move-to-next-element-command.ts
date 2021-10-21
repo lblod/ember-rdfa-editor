@@ -1,17 +1,17 @@
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import Command from "@lblod/ember-rdfa-editor/core/command";
-import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
+import {MutableModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
+import {Mutator} from "@lblod/ember-rdfa-editor/core/mutator";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
-import { Mutator } from "@lblod/ember-rdfa-editor/core/mutator";
 
 export default class MoveToNextElement extends Command<[ModelElement, ModelSelection], void> {
   name = 'move-to-next-element';
 
-  constructor(model: EditorModel) {
+  constructor(model: MutableModel) {
     super(model);
   }
 
@@ -21,10 +21,11 @@ export default class MoveToNextElement extends Command<[ModelElement, ModelSelec
       selection.collapseIn(nextElement);
     });
   }
+
   findNextElement(element: ModelElement, mutator: Mutator): ModelNode {
-    if(element.nextSibling){
+    if (element.nextSibling) {
       return element.nextSibling;
-    } else if(element.parent && element.parent !== element.root) {
+    } else if (element.parent && element.parent !== element.root) {
       return this.findNextElement(element.parent, mutator);
     } else {
       const positionAfterElement = ModelPosition.fromAfterNode(element);

@@ -42,7 +42,8 @@
         "lib/searching-plugin/app/*",
         "lib/lists-plugin/app/*",
         "lib/history-plugin/app/*",
-        "lib/deletion-plugin/app/*"
+        "lib/deletion-plugin/app/*",
+        "lib/navigation-plugin/app/*"
       ],
       "@lblod/ember-rdfa-editor": [
         "addon"
@@ -166,6 +167,9 @@
       ],
       "deletion-plugin/test-support/*": [
         "lib/deletion-plugin/addon-test-support/*"
+      ],
+      "navigation-plugin": [
+        "lib/navigation-plugin"
       ],
       "navigation-plugin/*": [
         "lib/navigation-plugin/addon/*"

@@ -8,7 +8,7 @@
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {NotImplementedError} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 export enum FilterResult {

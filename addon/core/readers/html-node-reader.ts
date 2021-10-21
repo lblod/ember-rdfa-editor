@@ -3,7 +3,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/core/readers/html-reader";
 import {ElementType} from "@lblod/ember-rdfa-editor/core/model/model-element";
 import HtmlListReader from "@lblod/ember-rdfa-editor/core/readers/html-list-reader";
-import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/util/dom-helpers";
 import HtmlElementReader from "@lblod/ember-rdfa-editor/core/readers/html-element-reader";
 import HtmlTextReader from "@lblod/ember-rdfa-editor/core/readers/html-text-reader";
 import HtmlTableReader from "@lblod/ember-rdfa-editor/core/readers/html-table-reader";

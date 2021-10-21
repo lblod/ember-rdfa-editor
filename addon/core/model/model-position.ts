@@ -6,7 +6,7 @@
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
-import {NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/util/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/util/array-utils";
 import { RelativePosition } from "@lblod/ember-rdfa-editor/util/types";
 
@@ -216,6 +216,9 @@ export default class ModelPosition {
   getCommonAncestor(other: ModelPosition): ModelElement {
     if (this.root !== other.root) {
       throw new PositionError("Cannot compare nodes with different roots");
+    }
+    if(this.sameAs(other)) {
+      return this.parent;
     }
 
     const leftLength = this.path.length;

@@ -1,23 +1,31 @@
-import EventBus, {
-  EDITOR_EVENT_MAP,
-  EditorEventListener,
-  EditorEventName
-} from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import EventBus, {AnyEventName, EditorEventListener, ListenerConfig} from "@lblod/ember-rdfa-editor/core/event-bus";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
-import {InternalWidgetSpec, WidgetLocation, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
+import {EditorEventName, EventWithName} from "@lblod/ember-rdfa-editor/core/editor-events";
+import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 
+export type WidgetLocation = "toolbar" | "sidebar";
+
+export interface WidgetSpec {
+  identifier: string;
+  componentName: string;
+  desiredLocation: WidgetLocation;
+}
+
+export type InternalWidgetSpec = WidgetSpec & { controller: EditorController };
 /**
  * Container interface holding a {@link EditorModel} and exposing core editing API.
  */
 export default interface Editor {
   executeCommand<A extends unknown[], R>(source: string, commandName: string, ...args: A): R | void;
 
-  onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void;
+  onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>, config: ListenerConfig): void;
 
-  emitEvent<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]): void;
+  emitEvent<E extends AnyEventName>(event: EventWithName<E>): void;
+
+  emitEventDebounced<E extends AnyEventName>(delayMs: number, event: EventWithName<E>): void;
 
   registerCommand<A extends unknown[], R>(command: { new(model: EditorModel): Command<A, R> }): void;
 
@@ -101,9 +109,14 @@ export class EditorImpl implements Editor {
     return this.getCommand(commandName).canExecute(...args);
   }
 
-  emitEvent<E extends EditorEventName>(event: EDITOR_EVENT_MAP[E]) {
+  emitEvent<E extends AnyEventName>(event: EventWithName<E>) {
     this.eventBus.emit(event);
   }
+
+  emitEventDebounced<E extends AnyEventName>(delayMs: number, event: EventWithName<E>) {
+    this.eventBus.emitDebounced(delayMs, event);
+  }
+
 
   onDestroy() {
     this.model.onDestroy();

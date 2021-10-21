@@ -4,10 +4,12 @@ import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import MoveOperation from "@lblod/ember-rdfa-editor/core/operations/move-operation";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
-import {OperationError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {OperationError} from "@lblod/ember-rdfa-editor/util/errors";
+import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
 
 
 module("Unit | model | operations | move-operation-test", () => {
+  const eventBus = new EventBus();
   test("move simple range", assert => {
     // language=XML
     const {root: initial, elements: {target}, textNodes: {source}} = vdom`
@@ -28,7 +30,7 @@ module("Unit | model | operations | move-operation-test", () => {
 
     const srcRange = ModelRange.fromInTextNode(source, 0, 4);
     const targetPos = ModelPosition.fromInElement(target, 0);
-    const op = new MoveOperation(srcRange, targetPos);
+    const op = new MoveOperation(eventBus, srcRange, targetPos);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -57,7 +59,7 @@ module("Unit | model | operations | move-operation-test", () => {
 
     const srcRange = ModelRange.fromInTextNode(source, 1, 3);
     const targetPos = ModelPosition.fromInElement(target, 0);
-    const op = new MoveOperation(srcRange, targetPos);
+    const op = new MoveOperation(eventBus, srcRange, targetPos);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -116,7 +118,7 @@ module("Unit | model | operations | move-operation-test", () => {
     const end = ModelPosition.fromInTextNode(rangeEnd, 2);
     const srcRange = new ModelRange(start, end);
     const targetPos = ModelPosition.fromInTextNode(target, 2);
-    const op = new MoveOperation(srcRange, targetPos);
+    const op = new MoveOperation(eventBus, srcRange, targetPos);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -136,7 +138,7 @@ module("Unit | model | operations | move-operation-test", () => {
     const targetPos = ModelPosition.fromInElement(target, 0);
     const srcRange = new ModelRange(start, end);
 
-    const op = new MoveOperation(srcRange, targetPos);
+    const op = new MoveOperation(eventBus, srcRange, targetPos);
     assert.throws(() => {
       op.execute();
     }, new OperationError("Cannot move to target inside source range"));
