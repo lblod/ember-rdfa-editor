@@ -7,7 +7,7 @@
   align-items: center;
   color: $say-primary-700;
   text-decoration-color: $say-primary-300;
-  transition: color $say-transition;
+  transition: color $au-transition;
 
   &:hover,
   &:focus {
@@ -16,7 +16,7 @@
   }
 
   &:focus {
-    outline: $say-outline;
+    outline: $au-outline;
   }
 }
 

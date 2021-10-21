@@ -1,5 +1,5 @@
 .say-table {
-  @include au-font-size($say-h6);
+  @include au-font-size($au-h6);
   display: table;
   table-layout: fixed;
   position: relative;
@@ -9,7 +9,7 @@
   white-space: normal;
 
   & + & {
-    margin-top: $say-unit;
+    margin-top: $au-unit;
   }
 
   thead {
@@ -18,14 +18,14 @@
 
   th,
   td {
-    @include au-font-size($say-base,1.2);
+    @include au-font-size($say-base-font-size,1.2);
     text-align: left;
-    padding: $say-unit-small $say-unit-small;
-    min-height: $say-unit-large;
+    padding: $au-unit-small $au-unit-small;
+    min-height: $au-unit-large;
   }
 
   th {
-    font-weight: $say-medium;
+    font-weight:$au-medium;
   }
 
   tr + tr {

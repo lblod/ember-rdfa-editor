@@ -27,7 +27,7 @@ $say-dropdown-caret-size        : .4rem !default;
 }
 
 .say-dropdown__button {
-  @include au-font-size($say-base,1);
+  @include au-font-size($say-base-font-size,1);
   appearance: none;
   outline: none;
   border: 0;
@@ -39,8 +39,8 @@ $say-dropdown-caret-size        : .4rem !default;
   height: $say-toolbar-height;
   width: $say-toolbar-height;
   background-color: transparent;
-  transition: color $say-transition;
-  padding: $say-unit-tiny;
+  transition: color $au-transition;
+  padding: $au-unit-tiny;
   margin: 0;
 
   & + & {
@@ -54,7 +54,7 @@ $say-dropdown-caret-size        : .4rem !default;
   }
 
   &:focus {
-    outline: $say-outline;
+    outline: $au-outline;
     outline-offset: -.4rem;
   }
 
@@ -66,11 +66,11 @@ $say-dropdown-caret-size        : .4rem !default;
 }
 
 .say-dropdown__menu {
-  @include au-font-size($say-base,1.5);
-  font-family: $say-font;
-  font-weight: $say-regular;
+  @include au-font-size($say-base-font-size,1.5);
+  font-family: $say-font-family;
+  font-weight: $au-regular;
   position: absolute;
-  z-index: $say-z-index-beta;
+  z-index: $au-z-index-beta;
   background-color: $say-white;
   display: flex;
   flex-direction: column;
@@ -79,7 +79,7 @@ $say-dropdown-caret-size        : .4rem !default;
   transform: translateX(-50%);
   min-width: 100%;
   width: auto;
-  top: calc(100% + #{$say-unit-tiny});
+  top: calc(100% + #{$au-unit-tiny});
   box-shadow: 0 0 12px rgba($say-neutral-900,.15), 0 0 2px rgba($say-neutral-900,.1);
   border-radius: .3rem;
   display: none;
@@ -118,13 +118,13 @@ $say-dropdown-caret-size        : .4rem !default;
 }
 
 .say-dropdown__menu [role="menuitem"] {
-  @include au-font-size($say-small,1.5);
-  font-family: $say-font;
-  font-weight: $say-regular;
+  @include au-font-size($say-smaller-font-size,1.5);
+  font-family: $say-font-family;
+  font-weight: $au-regular;
   color: $say-neutral-700;
   appearance: none;
   border: 0;
-  padding: $say-unit-small;
+  padding: $au-unit-small;
   height: auto;
   white-space: nowrap;
   overflow: hidden;
@@ -146,7 +146,7 @@ $say-dropdown-caret-size        : .4rem !default;
   }
 
   &:focus {
-    outline: $say-outline;
+    outline: $au-outline;
     outline-offset: -.2rem;
   }
 }

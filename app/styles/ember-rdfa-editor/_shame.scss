@@ -64,9 +64,9 @@
 }
 
 .say-card .modal-dialog__header {
-  @include au-font-size($say-h6);
+  @include au-font-size($au-h6);
   color: $say-neutral-800;
-  padding: $say-unit-small;
+  padding: $au-unit-small;
   border-bottom: .1rem solid $say-neutral-200;
 
   * {
@@ -74,7 +74,7 @@
   }
 
   * + * {
-    margin-top: $say-unit-small;
+    margin-top: $au-unit-small;
   }
 
   .grid {
@@ -83,12 +83,12 @@
 
   .col--2-12.u-align-right {
     margin-top: 0;
-    padding-right: $say-unit-tiny;
+    padding-right: $au-unit-tiny;
   }
 }
 
 .say-card .modal-dialog__content {
-  padding: $say-unit-small;
+  padding: $au-unit-small;
 }
 
 .say-card .modal-dialog__content--sectioned {
@@ -104,7 +104,7 @@
 }
 
 .say-card .modal-dialog__footer {
-  padding: $say-unit-small;
+  padding: $au-unit-small;
 
   button {
     margin-bottom: 0;
@@ -119,7 +119,7 @@
 
 .say-card .link-list.link-list--bordered {
   .link-list__item.link-list__item--sidenotes a {
-    padding: $say-unit-small !important;
+    padding: $au-unit-small !important;
   }
 
   .link-list__item.link-list__item--sidenotes a:hover {
@@ -127,14 +127,14 @@
   }
 
   .link-list__item__sidenote.uppercase {
-    @include au-font-size($say-tiny,1.3);
+    @include au-font-size($say-smallest-font-size,1.3);
     color: $say-neutral-600;
     padding: 0;
   }
 }
 
 .say-card .modal-dialog__link-list {
-  padding: $say-unit-small;
+  padding: $au-unit-small;
   width: 100%;
   overflow: hidden;
 }
@@ -175,12 +175,18 @@
   border-bottom: .1rem solid $say-neutral-300;
 }
 
+// Override toolbar switch
+.say-toolbar {
+  .au-c-toggle-switch__toggle {
+    background-color: $say-neutral-300;
+  }
 
-// Temp fix for removed classes
-.say-u-hidden-visually {
-  @extend .au-u-hidden-visually;
+  .au-c-toggle-switch__label {
+    @include au-font-size($say-base-font-size);
+  }
 }
 
+// Old webuniversum classes
 .form__row + .form__row {
   margin-top: $au-unit-tiny;
 }

@@ -441,7 +441,7 @@
   -moz-appearance: menulist;
   width: auto;
   border: .1rem solid $say-neutral-200;
-  margin-right: $say-unit-tiny;
+  margin-right: $au-unit-tiny;
 }
 
 .flatpickr-current-month .flatpickr-monthDropdown-months:focus,
@@ -468,7 +468,7 @@
   align-items: center;
   height: 28px;
   border-bottom: .1rem solid $say-neutral-200;
-  margin-bottom: $say-unit-tiny;
+  margin-bottom: $au-unit-tiny;
 }
 
 .flatpickr-weekdays .flatpickr-weekdaycontainer {

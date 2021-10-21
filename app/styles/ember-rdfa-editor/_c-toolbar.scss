@@ -3,6 +3,7 @@
    ================================== */
 
 .say-toolbar {
+  @include au-font-size($say-base-font-size);
   display: flex;
   justify-content: space-between;
   min-height: $say-toolbar-height; // Fixes height bug on Safari
@@ -24,10 +25,10 @@
   .say-toolbar__actions {
     display: flex;
     align-items: center;
-    padding: 0 $say-unit-small;
+    padding: 0 $au-unit-small;
 
     > * + * {
-      margin-left: $say-unit-small;
+      margin-left: $au-unit-small;
     }
   }
 
@@ -40,7 +41,7 @@
   }
 
   .say-toolbar__button {
-    @include au-font-size($say-base,1);
+    @include au-font-size($say-base-font-size,1);
     appearance: none;
     outline: none;
     border: 0;
@@ -52,8 +53,8 @@
     height: $say-toolbar-height;
     width: $say-toolbar-height;
     background-color: transparent;
-    transition: color $say-transition;
-    padding: $say-unit-tiny;
+    transition: color $au-transition;
+    padding: $au-unit-tiny;
     margin: 0;
 
     & + & {
@@ -67,7 +68,7 @@
     }
 
     &:focus {
-      outline: $say-outline;
+      outline: $au-outline;
       outline-offset: -.4rem;
     }
 

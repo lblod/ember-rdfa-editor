@@ -56,20 +56,20 @@
 
     &:before {
       position: absolute;
-      transition: opacity $say-easing .5s, left $say-easing .2s;
+      transition: opacity $au-easing .5s, left $au-easing .2s;
       right: calc(100% + #{$say-annotation-offset});
       opacity: 0;
     }
 
     &:before {
-      @include au-font-size($say-tiny,1.2);
+      @include au-font-size($say-smallest-font-size,1.2);
       display: block;
       margin-top: .2rem;
-      padding-right: $say-annotation-gutter + $say-unit-small;
-      margin-right: -$say-annotation-gutter + $say-unit-tiny;
+      padding-right: $say-annotation-gutter + $au-unit-small;
+      margin-right: -$say-annotation-gutter + $au-unit-tiny;
       width: $say-annotation-width-content;
-      font-family: $say-font;
-      font-weight: $say-medium;
+      font-family: $say-font-family;
+      font-weight:$au-medium;
       letter-spacing: .01rem;
       text-transform: uppercase;
       text-overflow: ellipsis;
@@ -81,12 +81,12 @@
       min-height: 2rem;
       border-right: 1px dashed $say-neutral-300;
       border-top: 1px dashed $say-neutral-300;
-      z-index: $say-z-index-gamma;
+      z-index: $au-z-index-gamma;
       background: linear-gradient(
         to right,
           $say-neutral-100,
-          $say-neutral-100 calc(100% - #{$say-annotation-gutter + $say-unit-tiny}),
-          transparent calc(100% - #{$say-annotation-gutter + $say-unit-tiny}),
+          $say-neutral-100 calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
+          transparent calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
           transparent 100%
       );
     }
@@ -99,7 +99,7 @@
 
     // Bring highlighted annotation to the front
     &[data-editor-position-level]:before {
-      z-index: $say-z-index-alpha;
+      z-index: $au-z-index-alpha;
     }
 
     &[data-editor-position-level]:before {
@@ -109,7 +109,7 @@
     }
 
     &[data-editor-position-level="0"]:before {
-      z-index: $say-z-index-gamma;
+      z-index: $au-z-index-gamma;
     }
   }
 

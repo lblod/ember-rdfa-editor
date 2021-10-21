@@ -16,43 +16,44 @@ $say-toolbar-bottom              : false !default; // True = position the toolba
 // EDITOR
 // ---
 // Editor spacing and background
-$say-editor-padding              : $say-unit !default;
+$say-editor-padding              : $au-unit !default;
 $say-editor-background           : $say-neutral-100 !default;
 $say-editor-sidebar-medium       : 30% !default;
 $say-editor-sidebar-large        : 30% !default;
 
 // Paper spacing and background
-$say-paper-min-height            : calc(100vh + #{$say-unit}) !default;
-$say-paper-padding               : $say-unit-large !default;
+$say-paper-min-height            : calc(100vh + #{$au-unit}) !default;
+$say-paper-padding               : $au-unit-large !default;
 $say-paper-background            : $say-white !default;
 $say-paper-box-shadow            : 0 1px 3px rgba($say-neutral-900, .1), 0 4px 20px rgba($say-neutral-900, .035), 0 1px 1px rgba($say-neutral-900, .025) !default;
 
 // Typography
-$say-h1-font-family              : $say-font !default;
-$say-h1-font-weight              : $say-medium !default;
-$say-h1-font-size                : $say-h1 !default;
-$say-h2-font-family              : $say-font !default;
-$say-h2-font-weight              : $say-medium !default;
-$say-h2-font-size                : $say-h2 !default;
-$say-h3-font-family              : $say-font !default;
-$say-h3-font-weight              : $say-medium !default;
-$say-h3-font-size                : $say-h3 !default;
-$say-h4-font-family              : $say-font !default;
-$say-h4-font-weight              : $say-medium !default;
-$say-h4-font-size                : $say-h4 !default;
-$say-h5-font-family              : $say-font !default;
-$say-h5-font-weight              : $say-medium !default;
-$say-h5-font-size                : $say-h5 !default;
-$say-h6-font-family              : $say-font !default;
-$say-h6-font-weight              : $say-medium !default;
-$say-h6-font-size                : $say-h6 !default;
-$say-base-font-family            : $say-font !default;
-$say-base-font-weight            : $say-light !default;
-$say-base-font-size              : $say-base !default;
-$say-small-font-size             : $say-base !default;
-$say-smaller-font-size           : $say-small !default;
-$say-smallest-font-size          : $say-tiny !default;
-$say-typography-margin           : $say-unit-small !default;
+$say-font-family                 : BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !default;
+$say-h1-font-family              : $say-font-family !default;
+$say-h1-font-weight              : $au-medium !default;
+$say-h1-font-size                : $au-h1 !default;
+$say-h2-font-family              : $say-font-family !default;
+$say-h2-font-weight              : $au-medium !default;
+$say-h2-font-size                : $au-h2 !default;
+$say-h3-font-family              : $say-font-family !default;
+$say-h3-font-weight              : $au-medium !default;
+$say-h3-font-size                : $au-h3 !default;
+$say-h4-font-family              : $say-font-family !default;
+$say-h4-font-weight              : $au-medium !default;
+$say-h4-font-size                : $au-h4 !default;
+$say-h5-font-family              : $say-font-family !default;
+$say-h5-font-weight              : $au-medium !default;
+$say-h5-font-size                : $au-h5 !default;
+$say-h6-font-family              : $say-font-family !default;
+$say-h6-font-weight              : $au-medium !default;
+$say-h6-font-size                : $au-h6 !default;
+$say-base-font-family            : $say-font-family !default;
+$say-base-font-weight            : $au-light !default;
+$say-base-font-size              : $au-base !default;
+$say-small-font-size             : $au-base !default;
+$say-smaller-font-size           : 1.4rem !default;
+$say-smallest-font-size          : 1.2rem !default;
+$say-typography-margin           : $au-unit-small !default;
 $say-editor-private-color        : $say-neutral-900 !default;
 $say-editor-highlight-color      : $say-warning-200 !default;
 $say-editor-highlight-hover-color: $say-warning-100 !default;
@@ -64,19 +65,15 @@ $say-toolbar-background          : $say-neutral-200 !default;
 $say-toolbar-border              : tint($say-neutral-300,30) !default;
 $say-toolbar-height              : 44px !default;
 
-// Annotation switch styling
-$say-switch-label-color          : $say-neutral-700 !default;
-$say-switch-color                : $say-neutral-300 !default;
-$say-switch-active-color         : $say-primary-700 !default;
 
 // BUTTONS
 // ---
 
 // Button
-$say-button-height               : $say-unit + $say-unit-tiny !default;
-$say-button-font-family          : $say-font !default;
-$say-button-font-size            : $say-base !default;
-$say-button-font-weight          : $say-regular !default;
+$say-button-height               : $au-unit + $au-unit-tiny !default;
+$say-button-font-family          : $say-font-family !default;
+$say-button-font-size            : $au-base !default;
+$say-button-font-weight          : $au-regular !default;
 $say-button-border               : .1rem !default;
 $say-button-border-color         : $say-primary-700 !default;
 $say-button-border-hover-color   : $say-primary-600 !default;
@@ -84,7 +81,7 @@ $say-button-color                : $say-white !default;
 $say-button-hover-color          : $say-white !default;
 $say-button-bg-color             : $say-primary-700 !default;
 $say-button-bg-hover-color       : $say-primary-600 !default;
-$say-button-radius               : $say-radius !default;
+$say-button-radius               : $au-radius !default;
 
 // Secondary button
 $say-button-secondary-color                : $say-neutral-800 !default;
@@ -95,7 +92,7 @@ $say-button-secondary-bg-color             : $say-white !default;
 $say-button-secondary-bg-hover-color       : transparent !default;
 
 // // Tertiary button
-$say-button-tertiary-height                : $say-unit !default;
+$say-button-tertiary-height                : $au-unit !default;
 $say-button-tertiary-color                 : $say-neutral-800 !default;
 $say-button-tertiary-hover-color           : $say-neutral-700 !default;
 $say-button-tertiary-border-color          : transparent !default;
@@ -106,9 +103,9 @@ $say-button-tertiary-bg-hover-color        : transparent !default;
 // ANNOTATIONS
 // ---
 // Annotation options
-$say-annotation-width            : $say-unit-huge*1.5 !default;
-$say-annotation-offset           : $say-unit-large !default;
-$say-annotation-gutter           : $say-unit !default;
+$say-annotation-width            : $au-unit-huge*1.5 !default;
+$say-annotation-offset           : $au-unit-large !default;
+$say-annotation-gutter           : $au-unit !default;
 $say-annotation-width-content    : $say-annotation-width !default;
 $say-annotation-text-color       : $say-neutral-700 !default;
 $say-annotation-background-color : $say-neutral-100 !default;
@@ -117,18 +114,18 @@ $say-annotation-background-color : $say-neutral-100 !default;
 // INPUT
 // ---
 
-$say-input-height                    : $say-unit-large - $say-unit-small !default;
+$say-input-height                    : $au-unit-large - $au-unit-small !default;
 $say-input-color                     : $say-neutral-1000 !default;
 $say-input-background-color          : $say-white;
-$say-input-border-color              : $say-gray-400 !default;
-$say-input-focus-border-color        : $say-outline-color !default;
-$say-input-error-border              : $say-red-600 !default;
-$say-input-radius                    : $say-radius;
+$say-input-border-color              : $say-neutral-400 !default;
+$say-input-focus-border-color        : $say-purple-300 !default;
+$say-input-error-border              : $say-error-600 !default;
+$say-input-radius                    : $au-radius;
 
 $say-input-disabled-background-color : $say-neutral-100 !default;
-$say-input-disabled-border-color     : $say-gray-600 !default;
+$say-input-disabled-border-color     : $say-neutral-600 !default;
 $say-input-disabled-color            : $say-neutral-700 !default;
-$say-input-font-size                 : $say-h6 !default;
+$say-input-font-size                 : $au-h6 !default;
 
 
 // LABEL
@@ -141,5 +138,10 @@ $say-label-color                   : $say-neutral-800 !default;
 // ---
 
 $say-help-text-color             : $say-neutral-800 !default;
-$say-help-text-error-color       : $say-red-600 !default;
+$say-help-text-error-color       : $say-error-600 !default;
 $say-help-text-font-size         : 1.4rem !default;
+
+
+// EMBER APPUNIVERSUM THEME
+$au-toggle-switch-background-color-on            : $say-purple-600 !default;
+$au-outline: $au-outline-border $au-outline-border-style $say-purple-300;

@@ -5,17 +5,17 @@
 .say-alert {
   display: flex;
   color: $say-neutral-800;
-  padding: $say-unit;
-  margin-bottom: $say-unit;
+  padding: $au-unit;
+  margin-bottom: $au-unit;
   background-color: $say-neutral-200;
 }
 
 .say-alert__icon {
   background-color: $say-white;
-  border-radius: $say-unit-large;
-  height: $say-unit-large - .1rem; // compensate for visual distortion of perfect circle
-  width: $say-unit-large;
-  margin-right: $say-unit-large / 2;
+  border-radius: $au-unit-large;
+  height: $au-unit-large - .1rem; // compensate for visual distortion of perfect circle
+  width: $au-unit-large;
+  margin-right: $au-unit-large / 2;
 
   display: flex;
   align-items: center;
@@ -37,5 +37,5 @@
 }
 
 .say-alert__title {
-  font-weight: $say-medium;
+  font-weight:$au-medium;
 }

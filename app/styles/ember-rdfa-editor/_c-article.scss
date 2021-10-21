@@ -7,8 +7,8 @@
 }
 
 .say-article__section {
-  @include au-font-size($say-h6);
-  padding: $say-unit;
+  @include au-font-size($au-h6);
+  padding: $au-unit;
   display: flex;
   flex-direction: row-reverse;
 
@@ -29,14 +29,14 @@
 
 .say-article__content {
   color: $say-neutral-800;
-  margin-right: $say-unit;
+  margin-right: $au-unit;
 
   > * {
     max-width: 90ch;
   }
 
   > * + * {
-    margin-top: $say-unit-small;
+    margin-top: $au-unit-small;
   }
 
   h1,
@@ -83,16 +83,16 @@
 }
 
 .say-article__insert {
-  @include au-font-size($say-h6);
+  @include au-font-size($au-h6);
   color: $say-primary-700;
-  font-family: $say-font;
+  font-family: $say-font-family;
   appearance: none;
   padding: 0;
   border: 0;
   display: inline-flex;
   align-items: center;
   border-radius: .2rem;
-  transition: color $say-transition, background-color $say-transition;
+  transition: color $au-transition, background-color $au-transition;
   white-space: nowrap;
 
   &:hover,

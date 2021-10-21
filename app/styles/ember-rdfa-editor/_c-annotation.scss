@@ -8,7 +8,7 @@
   [property="dc:subject"],
   [property="besluit:geplandOpenbaar"],
   [property="besluit:openbaar"] {
-    font-weight: $say-regular;
+    font-weight: $au-regular;
     color: $say-annotation-text-color !important;
   }
 
@@ -16,8 +16,8 @@
   [property="ext:behandelt"],
   [property="besluit:heeftAgendapunt"],
   [typeof="besluit:Agendapunt"] {
-    @include au-font-size($say-base);
-    font-weight: $say-regular;
+    @include au-font-size($say-base-font-size);
+    font-weight: $au-regular;
     display: block !important;
     position: relative;
     color: $say-annotation-text-color  !important;
@@ -92,7 +92,7 @@
   .mark-highlight-manual {
     border-bottom: .2rem dotted $say-neutral-300;
     padding-bottom: .2rem;
-    transition: border $say-transition;
+    transition: border $au-transition;
 
     // Hide certain underlines
     [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] .mark-highlight-manual,
@@ -110,7 +110,7 @@
   [property^="ext:insert"],
   [data-editor-highlight="true"]:not([contenteditable=""]) {
     background-color: $say-editor-highlight-color;
-    transition: background-color $say-transition;
+    transition: background-color $au-transition;
 
     &::selection {
       color: $say-neutral-900;
@@ -155,14 +155,14 @@
     position: relative;
     border: 1px solid $say-neutral-200;
     display: block !important; // Override inline styles
-    margin: $say-unit-tiny;
+    margin: $au-unit-tiny;
     padding: 0;
 
     // Style annotation blocks
     &:before {
-      @include au-font-size($say-tiny,1.2);
-      font-family: $say-font;
-      font-weight: $say-medium;
+      @include au-font-size($say-smallest-font-size,1.2);
+      font-family: $say-font-family;
+      font-weight:$au-medium;
       letter-spacing: .01rem;
       color: $say-neutral-600;
       text-transform: uppercase;
@@ -174,7 +174,7 @@
       left: 0;
       display: block;
       width: 100%;
-      padding: $say-unit-tiny/2;
+      padding: $au-unit-tiny/2;
       transition: none;
       border-bottom: 1px solid $say-neutral-200;
       background-color: $say-neutral-100;
@@ -185,9 +185,9 @@
   // Add help text on highlights
   .mark-highlight-manual:after,
   [data-editor-highlight="true"]:not([contenteditable=""]):after {
-    @include au-font-size($say-tiny,1.2);
-    font-family: $say-font;
-    font-weight: $say-regular;
+    @include au-font-size($say-smallest-font-size,1.2);
+    font-family: $say-font-family;
+    font-weight: $au-regular;
     letter-spacing: .01rem;
     color: $say-neutral-600;
     text-transform: uppercase;
@@ -198,7 +198,7 @@
     left: 0;
     display: block;
     width: 100%;
-    padding: $say-unit-tiny/2;
+    padding: $au-unit-tiny/2;
     transition: none;
     border-top: 1px solid $say-neutral-200;
     background-color: $say-white;

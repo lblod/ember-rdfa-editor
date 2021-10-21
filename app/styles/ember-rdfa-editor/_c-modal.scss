@@ -26,8 +26,8 @@
   background: $say-white;
   margin: auto;
   height: auto;
-  max-height: calc(100% - #{$say-unit});
-  width: calc(100% - #{$say-unit});
+  max-height: calc(100% - #{$au-unit});
+  width: calc(100% - #{$au-unit});
   max-width: 760px;
   opacity: 1;
   overflow: auto;
@@ -35,8 +35,8 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  right: $say-unit-small;
-  left: $say-unit-small;
+  right: $au-unit-small;
+  left: $au-unit-small;
   bottom: auto;
   top: 50%;
   transform: translateY(-50%);
@@ -44,7 +44,7 @@
   border-radius: .2rem;
   z-index: 9999;
   box-shadow: 0 1px 3px rgba($say-neutral-1000, .1), 0 4px 20px rgba($say-neutral-1000, .035), 0 1px 1px rgba($say-neutral-1000, .025);
-  transition: $say-transition;
+  transition: $au-transition;
   display: none;
 
   &:focus {
@@ -57,11 +57,11 @@
 }
 
 .say-modal--fullscreen {
-  max-width: calc(100% - #{$say-unit-huge});
-  max-height: calc(100% - #{$say-unit-huge});
-  width: calc(100% - #{$say-unit-huge});
-  height: calc(100% - #{$say-unit-huge});
-  left: $say-unit-small;
+  max-width: calc(100% - #{$au-unit-huge});
+  max-height: calc(100% - #{$au-unit-huge});
+  width: calc(100% - #{$au-unit-huge});
+  height: calc(100% - #{$au-unit-huge});
+  left: $au-unit-small;
 }
 
 .say-modal__header {
@@ -71,17 +71,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $say-unit-small;
+  padding: $au-unit-small;
   border-bottom: 1px solid $say-neutral-200;
 
   @include mq(medium) {
-    padding: $say-unit;
+    padding: $au-unit;
   }
 }
 
 .say-modal__prefix {
-  @include au-font-size($say-base);
-  margin-bottom: $say-unit-tiny;
+  @include au-font-size($say-base-font-size);
+  margin-bottom: $au-unit-tiny;
 }
 
 .say-modal__title {
@@ -95,8 +95,8 @@
 }
 
 .say-modal__back {
-  @include au-font-size($say-base);
-  font-family: $say-font;
+  @include au-font-size($say-base-font-size);
+  font-family: $say-font-family;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,7 +106,7 @@
   padding: 0;
   text-align: center;
   color: $say-neutral-700;
-  transition: color $say-transition;
+  transition: color $au-transition;
   text-decoration: underline;
   text-decoration-color: $say-neutral-300;
 
@@ -118,8 +118,8 @@
 }
 
 .say-modal__close {
-  @include au-font-size($say-base);
-  font-family: $say-font;
+  @include au-font-size($say-base-font-size);
+  font-family: $say-font-family;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -129,7 +129,7 @@
   padding: 0;
   text-align: center;
   color: $say-neutral-700;
-  transition: color $say-transition;
+  transition: color $au-transition;
   text-decoration: underline;
   text-decoration-color: $say-neutral-300;
 
@@ -145,7 +145,7 @@
   flex-wrap: wrap;
   flex-grow: 1;
   position: relative;
-  height: calc(100% - #{$say-unit-large + $say-unit-small});
+  height: calc(100% - #{$au-unit-large + $au-unit-small});
   background-color: $say-white;
 
   &:focus {
@@ -163,13 +163,13 @@
 
 .say-modal__sidebar {
   flex-basis: 100%;
-  padding: $say-unit-small;
+  padding: $au-unit-small;
   overflow: auto;
   background-color: $say-neutral-100;
   border-bottom: .1rem solid $say-neutral-200;
 
   @include mq(medium) {
-    padding: $say-unit;
+    padding: $au-unit;
     border-bottom: 0;
     border-right: .1rem solid $say-neutral-200;
     height: 100%;
@@ -197,7 +197,7 @@
 }
 
 .say-modal__info {
-  @include au-font-size($say-h6);
+  @include au-font-size($au-h6);
   color: $say-neutral-700;
-  padding: $say-unit;
+  padding: $au-unit;
 }

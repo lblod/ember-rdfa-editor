@@ -22,11 +22,11 @@
     cursor: text;
     box-shadow: none;
     background-color: $say-neutral-100;
-    min-width: $say-unit-tiny;
+    min-width: $au-unit-tiny;
     color: $say-neutral-700;
     font-style: italic;
     text-decoration: none;
-    font-weight: $say-light !important;
+    font-weight: $au-light !important;
 
     &:hover {
       background-color: $say-neutral-100 !important; // Conflict with .annotation style @TODO: remove when annotation classes are removed
@@ -46,7 +46,7 @@
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"] {
     position: relative;
     font-style: normal;
-    font-weight: $say-regular;
+    font-weight: $au-regular;
   }
 
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"]:after {
@@ -65,7 +65,7 @@
     height: 100%;
     background: rgba($say-white,.9);
     opacity: 1;
-    padding: $say-unit;
+    padding: $au-unit;
     border: 0;
     margin: 0;
   }

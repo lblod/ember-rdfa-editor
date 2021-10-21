@@ -2,32 +2,25 @@
    #SAY CUSTOM COMPONENTS
    ================================== */
 
-// VARIABLES AND SETTINGS
-@import "s-colors";
-@import "s-settings";
-@import "s-theme";
-
-
-// COMPONENTS
-@import "c-button";
-@import "c-checkbox";
+// CUSTOM COMPONENTS
 @import "c-container";
+@import "c-dropdown";
 @import "c-content";
 @import "c-editor";
 @import "c-editor-hints";
-@import "c-help-text";
 @import "c-icon";
-@import "c-input";
-@import "c-label";
-@import "c-modal";
-@import "c-switch";
 @import "c-toast";
 @import "c-toolbar";
 @import "c-table";
-@import "c-dropdown";
 
 
-// PLUGIN COMPONENTS
+// PLUGIN COMPONENTS > DEPRECATED > USE EMBER-APPUNIVERSUM WHERE POSSIBLE
+@import "c-button";
+@import "c-checkbox";
+@import "c-label";
+@import "c-input";
+@import "c-modal";
+@import "c-help-text";
 @import "c-card";
 @import "c-link-list";
 @import "c-loader";
@@ -47,7 +40,13 @@
 
 
 // THIRD PARTY PLUGIN STYLE
-@import "p-flatpickr";
+@import "p-flatpickr"; // DEPRECATED > USE EMBER-APPUNIVERSUM WHERE POSSIBLE
+
+
+// UTILITIES > DEPRECATED > USE EMBER-APPUNIVERSUM WHERE POSSIBLE
+@import "u-align-text";
+@import "u-hide";
+@import "u-word-break";
 
 
 // SHAME

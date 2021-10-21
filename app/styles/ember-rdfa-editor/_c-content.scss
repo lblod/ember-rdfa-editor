@@ -118,8 +118,8 @@
 
   // Style links
   a {
-    transition: color $say-transition, text-decoration $say-transition;
-    font-weight: $say-regular;
+    transition: color $au-transition, text-decoration $au-transition;
+    font-weight: $au-regular;
     text-decoration-color: $say-primary-300;
 
     &,
@@ -134,8 +134,8 @@
     }
 
     &:focus {
-      outline: $say-outline;
-      outline-offset: $say-unit-tiny/2;
+      outline: $au-outline;
+      outline-offset: $au-unit-tiny/2;
     }
   }
 
@@ -145,7 +145,7 @@
     list-style-type: initial;
 
     ul {
-      margin-left: $say-unit-small;
+      margin-left: $au-unit-small;
     }
 
     // Stop indenting
@@ -163,7 +163,7 @@
     list-style-type: decimal;
 
     ol {
-      margin-left: $say-unit-small;
+      margin-left: $au-unit-small;
     }
 
     // Stop indenting
@@ -258,8 +258,8 @@
   // Style horizontal rule
   hr {
     margin: 0;
-    margin-top: $say-unit;
-    margin-bottom: $say-unit;
+    margin-top: $au-unit;
+    margin-bottom: $au-unit;
     border: 0;
     border-bottom: 3px solid $say-neutral-200;
   }
@@ -267,7 +267,7 @@
   // Add custom font styling
   strong,
   b {
-    font-weight: $say-medium;
+    font-weight:$au-medium;
   }
 
   em {
@@ -286,7 +286,7 @@
 
   .data-table th,
   .data-table td {
-    @include au-font-size($say-base,1.5);
+    @include au-font-size($say-base-font-size,1.5);
   }
 
   .data-table--lined.data-table--tight {
@@ -325,7 +325,7 @@
 
     // Reset some table styles
     th {
-      font-weight: $say-medium;
+      font-weight:$au-medium;
       border-bottom: 1px solid $say-neutral-300;
     }
 
@@ -356,7 +356,7 @@
     // Style lists
     ul,
     ol {
-      margin-left: $say-unit-small + $say-unit-tiny;
+      margin-left: $au-unit-small + $au-unit-tiny;
     }
   }
 
