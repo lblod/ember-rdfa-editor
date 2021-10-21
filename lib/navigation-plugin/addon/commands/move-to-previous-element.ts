@@ -5,7 +5,7 @@ import {MutableModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
-import {Mutator} from "@lblod/ember-rdfa-editor/core/mutator";
+import { Mutator } from "@lblod/ember-rdfa-editor/core/mutator";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 
 export default class MoveToPreviousElement extends Command<[ModelElement, ModelSelection], void> {
