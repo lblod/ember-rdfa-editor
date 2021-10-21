@@ -6,8 +6,9 @@ import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection"
 import {EditorEventName, EventWithName} from "@lblod/ember-rdfa-editor/core/editor-events";
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 import Query from "@lblod/ember-rdfa-editor/core/query";
+import {EditorPlugin} from "@lblod/ember-rdfa-editor/core/editor-plugin";
 
-export type WidgetLocation = "toolbar" | "sidebar";
+export type WidgetLocation = "toolbar" | "sidebar" | "replace-text";
 
 export interface WidgetSpec {
   identifier: string;
@@ -15,7 +16,7 @@ export interface WidgetSpec {
   desiredLocation: WidgetLocation;
 }
 
-export type InternalWidgetSpec = WidgetSpec & { controller: EditorController };
+export type InternalWidgetSpec = WidgetSpec & { controller: EditorController, plugin?: EditorPlugin };
 /**
  * Container interface holding a {@link EditorModel} and exposing core editing API.
  */
@@ -59,7 +60,7 @@ export class EditorImpl implements Editor {
   private registeredQueries: Map<string, Query<unknown[], unknown>> = new Map<string, Query<unknown[], unknown>>();
   private eventBus: EventBus;
   private _widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<WidgetLocation, InternalWidgetSpec[]>(
-    [["toolbar", []], ["sidebar", []]]
+    [["toolbar", []], ["sidebar", []], ["replace-text", []]]
   );
 
   constructor(rootElement: HTMLElement) {

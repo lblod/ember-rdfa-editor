@@ -7,7 +7,6 @@ import {action} from "@ember/object";
 import EditorController, {EditorControllerImpl} from "@lblod/ember-rdfa-editor/core/editor-controller";
 import ApplicationInstance from "@ember/application/instance";
 import {tracked} from "@glimmer/tracking";
-import { getOwner, setOwner } from "@ember/application";
 
 // interface DebugInfo {
 //   hintsRegistry: HintsRegistry
@@ -130,7 +129,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   }
 
   async initializePlugin(plugin: EditorPlugin, editor: Editor): Promise<void> {
-    const controller = new EditorControllerImpl(plugin.name, editor);
+    const controller = new EditorControllerImpl(plugin.name, editor, plugin);
     await plugin.initialize(controller);
     this.activePlugins.push(plugin);
 

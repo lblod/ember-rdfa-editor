@@ -7,6 +7,7 @@ import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection"
 import {EditorEventName, EventWithName} from "@lblod/ember-rdfa-editor/core/editor-events";
 import {RdfaContext, RdfaContextFactory} from "@lblod/ember-rdfa-editor/core/rdfa-context";
 import Query from "@lblod/ember-rdfa-editor/core/query";
+import {EditorPlugin} from "@lblod/ember-rdfa-editor/core/editor-plugin";
 
 /**
  * Consumers (aka plugins or the host app) receive a controller instance as their interface to the editor.
@@ -53,10 +54,12 @@ export class EditorControllerImpl implements EditorController {
   private editor: Editor;
   private name: string;
   private _rangeFactory: RangeFactory;
+  private _plugin?: EditorPlugin;
 
-  constructor(name: string, editor: Editor) {
+  constructor(name: string, editor: Editor, plugin?: EditorPlugin) {
     this.name = name;
     this.editor = editor;
+    this._plugin = plugin;
     this._rangeFactory = new ModelRangeFactory(this.editor.modelRoot);
   }
 
@@ -91,7 +94,7 @@ export class EditorControllerImpl implements EditorController {
   }
 
   registerWidget(widget: WidgetSpec): void {
-    const internalSpec: InternalWidgetSpec = {...widget, controller: this};
+    const internalSpec: InternalWidgetSpec = {...widget, controller: this, plugin: this._plugin};
     this.editor.registerWidget(internalSpec);
   }
 
