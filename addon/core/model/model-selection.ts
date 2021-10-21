@@ -83,11 +83,11 @@ export default class ModelSelection {
    * Get the last range. This range has a somewhat special function as it
    * determines the anchor and focus positions of the selection.
    */
-  get lastRange() {
+  get lastRange(): ModelRange {
     if (this._ranges.length) {
       return this._ranges[this._ranges.length - 1];
     } else {
-      return null;
+      throw new MisbehavedSelectionError();
     }
   }
 
