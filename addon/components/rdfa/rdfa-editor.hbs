@@ -36,9 +36,7 @@
           {{#if this.hasActiveHints}}
             {{#each this.hintsRegistry.activeHints as |card|}}
               <li class="say-editor-hints__list-item">
-                <div class="say-card"> {{!-- Todo: remove this div once it is over --}}
-                  {{component card.card info=card.info}}
-                </div>
+                {{component card.card info=card.info}}
               </li>
             {{/each}}
           {{/if}}

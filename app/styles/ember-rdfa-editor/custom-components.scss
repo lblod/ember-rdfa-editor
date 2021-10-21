@@ -2,7 +2,7 @@
    #SAY CUSTOM COMPONENTS
    ================================== */
 
-// CUSTOM COMPONENTS
+// CUSTOM UI COMPONENTS
 @import "c-container";
 @import "c-dropdown";
 @import "c-content";
@@ -14,23 +14,6 @@
 @import "c-table";
 
 
-// PLUGIN COMPONENTS > DEPRECATED > USE EMBER-APPUNIVERSUM WHERE POSSIBLE
-@import "c-button";
-@import "c-checkbox";
-@import "c-label";
-@import "c-input";
-@import "c-modal";
-@import "c-help-text";
-@import "c-card";
-@import "c-link-list";
-@import "c-loader";
-@import "c-link";
-@import "c-pagination";
-@import "c-form";
-@import "c-article";
-@import "c-alert";
-
-
 // RDFA AND ANNOTATION COMPONENTS
 @import "c-annotation";
 @import "c-annotation-hover";
@@ -39,14 +22,30 @@
 @import "c-annotation-content-en";
 
 
+// PLUGIN COMPONENTS > DEPRECATED > Use ember-appuniversum components where possible
+// @TODO: remove when all plugins are using appuniversum
+@import "../deprecated/c-button";
+@import "../deprecated/c-checkbox";
+@import "../deprecated/c-label";
+@import "../deprecated/c-input";
+@import "../deprecated/c-modal";
+@import "../deprecated/c-help-text";
+@import "../deprecated/c-card";
+@import "../deprecated/c-link-list";
+@import "../deprecated/c-loader";
+@import "../deprecated/c-link";
+@import "../deprecated/c-pagination";
+@import "../deprecated/c-form";
+@import "../deprecated/c-article";
+@import "../deprecated/c-alert";
 // THIRD PARTY PLUGIN STYLE
-@import "p-flatpickr"; // DEPRECATED > USE EMBER-APPUNIVERSUM WHERE POSSIBLE
+@import "../deprecated/p-flatpickr"; // DEPRECATED > Use ember-appuniversum date-picker where possible
 
 
-// UTILITIES > DEPRECATED > USE EMBER-APPUNIVERSUM WHERE POSSIBLE
-@import "u-align-text";
-@import "u-hide";
-@import "u-word-break";
+// UTILITIES > DEPRECATED > Use ember-appuniversum utilities where possible
+@import "../deprecated/u-align-text";
+@import "../deprecated/u-hide";
+@import "../deprecated/u-word-break";
 
 
 // SHAME
