@@ -142,6 +142,25 @@ $say-help-text-error-color       : $say-error-600 !default;
 $say-help-text-font-size         : 1.4rem !default;
 
 
-// EMBER APPUNIVERSUM THEME
-$au-toggle-switch-background-color-on            : $say-purple-600 !default;
+// CUSTOM EMBER-APPUNIVERSUM THEME
+// ---
+
 $au-outline: $au-outline-border $au-outline-border-style $say-purple-300;
+
+$au-button-contrast-color                   : $say-purple-600 !default;
+$au-button-contrast-hover-color             : $say-purple-800 !default;
+$au-button-contrast-active-color            : $say-purple-900 !default;
+$au-button-contrast-visited-color           : $say-purple-600 !default;
+$au-button-secondary-color                  : $say-purple-600 !default;
+$au-button-secondary-hover-color            : $say-purple-800 !default;
+$au-button-secondary-contrast-active-color  : $say-purple-200 !default;
+$au-button-link-color                       : $say-purple-600 !default;
+$au-button-link-hover-color                 : $say-purple-800 !default;
+
+$au-link-color                              : $say-purple-600 !default;
+$au-link-hover-color                        : $say-purple-800 !default;
+$au-toggle-switch-background-color-on       : $say-purple-600 !default;
+
+:root {
+  --duet-color-primary: #{$say-purple-600};
+}
