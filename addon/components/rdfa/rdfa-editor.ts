@@ -7,6 +7,7 @@ import {action} from "@ember/object";
 import EditorController, {EditorControllerImpl} from "@lblod/ember-rdfa-editor/core/editor-controller";
 import ApplicationInstance from "@ember/application/instance";
 import {tracked} from "@glimmer/tracking";
+import { getOwner, setOwner } from "@ember/application";
 
 // interface DebugInfo {
 //   hintsRegistry: HintsRegistry
@@ -87,6 +88,11 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   get toolbarWidgets(): WidgetSpec[] {
     // warning: this is not tracked
     return this._editor?.widgetMap.get("toolbar") || [];
+  }
+
+  get sidebarWidgets(): WidgetSpec[] {
+    // warning: this is not tracked
+    return this._editor?.widgetMap.get("sidebar") || [];
   }
 
   @action

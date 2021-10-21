@@ -14,7 +14,7 @@ import ModelSelectionTracker from "@lblod/ember-rdfa-editor/core/model-selection
 import Inspector, {ModelInspector} from "@lblod/ember-rdfa-editor/core/inspector";
 import SimplifiedModel from "@lblod/ember-rdfa-editor/core/simplified-model";
 import ModelHistory from "@lblod/ember-rdfa-editor/core/model/model-history";
-import {ModelReadEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {ContentChangedEvent, ModelReadEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 import {getParentContext} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
 import {HtmlTreeNode} from "@lblod/ember-rdfa-editor/core/model/tree-node";
 import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
@@ -164,8 +164,10 @@ export class HtmlModel implements EditorModel {
     if (writeBack) {
       if (subTree) {
         this.write(source, subTree);
+        this.eventBus.emit(new ContentChangedEvent(subTree));
       } else {
-        this.write(source, this.rootModelNode);
+        this.write(source, this.modelRoot);
+        this.eventBus.emit(new ContentChangedEvent(this.modelRoot));
       }
     }
   }

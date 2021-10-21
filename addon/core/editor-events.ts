@@ -10,6 +10,7 @@ import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-opera
 import {AnyEventName} from "@lblod/ember-rdfa-editor/core/event-bus";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/util/errors";
 import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 export type EDITOR_EVENT_MAP = {
   "dummy": DummyEvent,
@@ -198,8 +199,29 @@ export class DummyEvent extends AbstractEditorEvent<void> {
   }
 }
 
-export class ContentChangedEvent extends VoidEvent {
+export class ContentChangedEventPayload {
+  private _damagedSubTree: ModelElement;
+
+  constructor(damagedSubTree: ModelElement) {
+    this._damagedSubTree = damagedSubTree;
+  }
+
+  get damagedSubTree(): ModelElement {
+    return this._damagedSubTree;
+  }
+
+  get damagedRange(): ModelRange {
+    return ModelRange.fromAroundNode(this.damagedSubTree);
+  }
+
+}
+
+export class ContentChangedEvent extends AbstractEditorEvent<ContentChangedEventPayload> {
   _name: EditorEventName = "contentChanged";
+
+  constructor(damagedSubTree: ModelElement, owner = CORE_OWNER) {
+    super({payload: new ContentChangedEventPayload(damagedSubTree), owner});
+  }
 }
 
 

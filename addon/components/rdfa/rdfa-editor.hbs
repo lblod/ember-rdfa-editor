@@ -1,24 +1,29 @@
-<div class="say-container {{if @editorOptions.showRdfaHover "say-container--sidebar-left" }}" {{did-update this.updateProfile @profile}}>
+<div class="say-container {{if @editorOptions.showRdfaHover "say-container--sidebar-left" }}" {{did-update
+  this.updateProfile @profile}}>
   {{#if this.hostController}}
     <Rdfa::EditorToolbar
       @controller={{this.hostController}}
-      @showTextStyleButtons="{{if @toolbarOptions.showTextStyleButtons "true"}}" @showListButtons="{{if @toolbarOptions.showListButtons "true"}}"
+      @showTextStyleButtons="{{if @toolbarOptions.showTextStyleButtons "true"}}"
+      @showListButtons="{{if @toolbarOptions.showListButtons "true"}}"
       @showIndentButtons="{{if @toolbarOptions.showIndentButtons "true"}}">
       {{#if @editorOptions.showToggleRdfaAnnotations}}
-      <div class="say-switch">
-        <input {{on "click" this.toggleRdfaBlocks}} id="toggle-1" class="say-switch__input" type="checkbox" name="toggle">
-        <label class="say-switch__label" for="toggle-1">Toon annotaties</label>
-      </div>
+        <div class="say-switch">
+          <input {{on "click" this.toggleRdfaBlocks}} id="toggle-1" class="say-switch__input" type="checkbox"
+                                                      name="toggle">
+          <label class="say-switch__label" for="toggle-1">Toon annotaties</label>
+        </div>
       {{/if}}
 
       {{#each this.toolbarWidgets as |widget|}}
         {{component widget.componentName controller=widget.controller}}
       {{/each}}
     </Rdfa::EditorToolbar>
-  {{/if}}
 
+  {{/if}}
   <div class="say-container__main">
-    <div class="say-editor {{if @editorOptions.showRdfa "rdfa-annotations" }} {{if @editorOptions.showRdfaHighlight "rdfa-annotations-highlight" }} {{if @editorOptions.showRdfaHover "rdfa-annotations-hover" }} {{if this.showRdfaBlocks "show-rdfa-blocks"}}">
+    <div class="say-editor {{if @editorOptions.showRdfa "rdfa-annotations" }} {{if @editorOptions.showRdfaHighlight
+                                                                                   "rdfa-annotations-highlight" }} {{if
+      @editorOptions.showRdfaHover "rdfa-annotations-hover" }} {{if this.showRdfaBlocks "show-rdfa-blocks"}}">
       <div class="say-editor__paper">
         <Ce::ContentEditable
           @class="say-editor__inner say-content"
@@ -26,27 +31,27 @@
         />
       </div>
     </div>
+    {{#if this.hostController}}
 
-    <div class="say-container__aside">
-      <div class="say-editor-hints">
-        <ul class="say-editor-hints__list">
-          {{#if this.suggestedHints.length}}
-            <li class="say-editor-hints__list-item">
-              <Rdfa::EditorSuggestedHints @suggestedHints={{this.suggestedHints}} />
-            </li>
-          {{/if}}
-          {{#if this.hasActiveHints}}
-            {{#each this.hintsRegistry.activeHints as |card|}}
+      <div class="say-container__aside">
+        <div class="say-editor-hints">
+          <ul class="say-editor-hints__list">
+            {{#if this.suggestedHints.length}}
+              <li class="say-editor-hints__list-item">
+                <Rdfa::EditorSuggestedHints @suggestedHints={{this.suggestedHints}} />
+              </li>
+            {{/if}}
+            {{#each this.sidebarWidgets as |widget|}}
               <li class="say-editor-hints__list-item">
                 <div class="say-card"> {{!-- Todo: remove this div once it is over --}}
-                  {{component card.card info=card.info}}
+                  {{component widget.componentName controller=widget.controller}}
                 </div>
               </li>
             {{/each}}
-          {{/if}}
-        </ul>
+          </ul>
+        </div>
+        {{yield}}
       </div>
-      {{yield}}
-    </div>
+    {{/if}}
   </div>
 </div>
