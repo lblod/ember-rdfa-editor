@@ -8,6 +8,7 @@ import ListsPlugin from "lists-plugin/lists-plugin";
 import SearchingPlugin from "searching-plugin/searching-plugin";
 import TablesPlugin from "tables-plugin/tables-plugin";
 import NavigationPlugin from "navigation-plugin/navigation-plugin";
+import ClipboardPlugin from "clipboard-plugin/clipboard-plugin";
 
 export function initialize(application: Application): void {
   application.register("plugin:content-control", ContentControlPlugin, {singleton: false});
@@ -19,6 +20,7 @@ export function initialize(application: Application): void {
   application.register("plugin:text-styles", TextStylesPlugin, {singleton: false});
   application.register("plugin:typing", TypingPlugin, {singleton: false});
   application.register("plugin:navigation", NavigationPlugin, {singleton: false});
+  application.register("plugin:clipboard", ClipboardPlugin, {singleton: false});
 }
 
 export default {

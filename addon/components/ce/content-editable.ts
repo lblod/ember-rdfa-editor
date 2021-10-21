@@ -109,7 +109,35 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     this.editor.onDestroy();
   }
 
-
+  // @action
+  // paste(event: ClipboardEvent) {
+  //   event.preventDefault();
+  //   this.pasteHandler.handleEvent(
+  //     event,
+  //     this.features.isEnabled("editor-html-paste"),
+  //     this.features.isEnabled("editor-extended-html-paste")
+  //   );
+  // }
+  //
+  // @action
+  // cut(event: ClipboardEvent) {
+  //   event.preventDefault();
+  //   if (this.features.isEnabled("editor-cut")) {
+  //     this.cutHandler.handleEvent(event);
+  //   }
+  // }
+  //
+  // @action
+  // copy(event: ClipboardEvent) {
+  //   event.preventDefault();
+  //   if (this.features.isEnabled("editor-copy")) {
+  //     this.copyHandler.handleEvent(event);
+  //   }
+  // }
+  //
+  // @action
+  // handleMouseUp(event: MouseEvent) {
+  //   const preventDefault = this.passEventToHandlers(event);
   // cutHandler: InputHandler;
   // copyHandler: InputHandler;
   // pasteHandler: InputHandler;
@@ -247,35 +275,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   //   }
   // }
   //
-  // @action
-  // paste(event: ClipboardEvent) {
-  //   event.preventDefault();
-  //   this.pasteHandler.handleEvent(
-  //     event,
-  //     this.features.isEnabled("editor-html-paste"),
-  //     this.features.isEnabled("editor-extended-html-paste")
-  //   );
-  // }
-  //
-  // @action
-  // cut(event: ClipboardEvent) {
-  //   event.preventDefault();
-  //   if (this.features.isEnabled("editor-cut")) {
-  //     this.cutHandler.handleEvent(event);
-  //   }
-  // }
-  //
-  // @action
-  // copy(event: ClipboardEvent) {
-  //   event.preventDefault();
-  //   if (this.features.isEnabled("editor-copy")) {
-  //     this.copyHandler.handleEvent(event);
-  //   }
-  // }
-  //
-  // @action
-  // handleMouseUp(event: MouseEvent) {
-  //   const preventDefault = this.passEventToHandlers(event);
   //   if (preventDefault) {
   //     event.preventDefault();
   //   }

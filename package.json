@@ -156,15 +156,16 @@
   "ember-addon": {
     "configPath": "tests/dummy/config",
     "paths": [
+      "lib/clipboard-plugin",
       "lib/content-control-plugin",
       "lib/deletion-plugin",
       "lib/history-plugin",
       "lib/lists-plugin",
+      "lib/navigation-plugin",
       "lib/searching-plugin",
       "lib/tables-plugin",
       "lib/text-styles-plugin",
-      "lib/typing-plugin",
-      "lib/navigation-plugin"
+      "lib/typing-plugin"
     ]
   },
   "browserslist": [
