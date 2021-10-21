@@ -22,7 +22,7 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
 
   read(from: Selection): ModelSelection {
     const ranges = [];
-    const result = new ModelSelection();
+    const result = new ModelSelection(this.model.parentContext);
 
     for (let i = 0; i < from.rangeCount; i++) {
       const range = from.getRangeAt(i);

@@ -1,10 +1,11 @@
 import EventBus, {AnyEventName, EditorEventListener, ListenerConfig} from "@lblod/ember-rdfa-editor/core/event-bus";
 import Command from "@lblod/ember-rdfa-editor/core/command";
-import EditorModel, {HtmlModel} from "@lblod/ember-rdfa-editor/core/editor-model";
+import EditorModel, {HtmlModel, ImmutableModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
 import {EditorEventName, EventWithName} from "@lblod/ember-rdfa-editor/core/editor-events";
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
+import Query from "@lblod/ember-rdfa-editor/core/query";
 
 export type WidgetLocation = "toolbar" | "sidebar";
 
@@ -35,6 +36,10 @@ export default interface Editor {
 
   registerWidget(widget: InternalWidgetSpec): void;
 
+  registerQuery<A extends unknown[], R>(query: new (model: ImmutableModel) => Query<A, R>): void;
+
+  executeQuery<A extends unknown[], R>(source: string, queryName: string, ...args: A): R | void;
+
   get widgetMap(): Map<WidgetLocation, WidgetSpec[]>;
 
   get modelRoot(): ModelElement;
@@ -51,6 +56,7 @@ export default interface Editor {
 export class EditorImpl implements Editor {
   private model: EditorModel;
   private registeredCommands: Map<string, Command<unknown[], unknown>> = new Map<string, Command<unknown[], unknown>>();
+  private registeredQueries: Map<string, Query<unknown[], unknown>> = new Map<string, Query<unknown[], unknown>>();
   private eventBus: EventBus;
   private _widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<WidgetLocation, InternalWidgetSpec[]>(
     [["toolbar", []], ["sidebar", []]]
@@ -96,6 +102,14 @@ export class EditorImpl implements Editor {
     return command;
   }
 
+  private getQuery<A extends unknown[], R>(queryName: string): Query<A, R> {
+    const query = this.registeredQueries.get(queryName) as Query<A, R>;
+    if (!query) {
+      throw new Error(`Unrecognized query ${queryName}`);
+    }
+    return query;
+  }
+
   onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
     this.eventBus.on(eventName, callback);
   }
@@ -124,6 +138,20 @@ export class EditorImpl implements Editor {
 
   registerWidget(widget: InternalWidgetSpec): void {
     this._widgetMap.get(widget.desiredLocation)!.push(widget);
+  }
+
+  executeQuery<A extends unknown[], R>(source: string, queryName: string, ...args: A): void | R {
+    try {
+      const query = this.getQuery(queryName);
+      return query.execute(source, ...args) as R;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  registerQuery<A extends unknown[], R>(query: { new(model: ImmutableModel): Query<A, R> }): void {
+    const newQuery = new query(this.model);
+    this.registeredQueries.set(newQuery.name, newQuery);
   }
 
 }

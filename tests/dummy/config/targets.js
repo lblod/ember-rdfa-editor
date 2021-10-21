@@ -7,7 +7,6 @@ const browsers = [
   'last 1 Edge versions'
 ];
 
-
 module.exports = {
   browsers
 };

@@ -387,6 +387,25 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     return new RdfaAttributes(this, Object.fromEntries(this.getRdfaPrefixes()));
   }
 
+  getAttributesRecord(): Record<string, string> {
+    const record: Record<string, string> = {};
+    for (const [key, value] of this.attributeMap.entries()) {
+      const rdfaAttribute = (this.getRdfaAttributes() as unknown as Record<string, string | string[]>)[key];
+      if (rdfaAttribute) {
+        if (rdfaAttribute instanceof Array) {
+          record[key] = rdfaAttribute.join(" ");
+        } else {
+          record[key] = rdfaAttribute;
+        }
+      } else {
+        record[key] = value;
+      }
+
+    }
+    return record;
+
+  }
+
   sameAs(other: ModelNode, strict = false): boolean {
     if (!ModelNode.isModelElement(other)) {
       return false;

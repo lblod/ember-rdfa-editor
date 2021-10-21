@@ -8,7 +8,6 @@ import AttributeOperation from "@lblod/ember-rdfa-editor/core/operations/attribu
 import MoveOperation from "@lblod/ember-rdfa-editor/core/operations/move-operation";
 import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-operation";
 import {AnyEventName} from "@lblod/ember-rdfa-editor/core/event-bus";
-import {getParentContext} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/util/errors";
 import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
 
@@ -230,9 +229,7 @@ class SelectionChangedEventPayload {
       if (!ModelSelection.isWellBehaved(this._selection)) {
         throw new MisbehavedSelectionError();
       }
-      const commonAncestor = this._selection.lastRange.getCommonAncestor();
-      console.log(commonAncestor.toXml());
-      this._parentDataset = getParentContext(commonAncestor);
+      this._parentDataset = this._selection.getParentContext();
       return this._parentDataset;
     } else {
       return this._parentDataset;

@@ -1,8 +1,8 @@
 import Controller from '@ember/controller';
 import {action} from '@ember/object';
 import {tracked} from '@glimmer/tracking';
-import {inject as service} from '@ember/service';
 import xmlFormat from 'xml-formatter';
+import {inject as service} from '@ember/service';
 import {basicSetup, EditorState, EditorView} from "@codemirror/basic-setup";
 import {xml} from "@codemirror/lang-xml";
 import {html} from "@codemirror/lang-html";
@@ -40,11 +40,12 @@ export default class IndexController extends Controller {
   }
 
   get editorController(): EditorController {
-    if(!this._editorController) {
+    if (!this._editorController) {
       throw new UninitializedError("Accessing controller before editor init");
     }
     return this._editorController;
   }
+
   @action
   initDebug(info: unknown) {
     this.debug = info;
@@ -89,6 +90,7 @@ export default class IndexController extends Controller {
   setHtmlContent(content: string): void {
     this.editorController.executeCommand("insert-html", content, this.editorController.rangeFactory.fromAroundAll());
   }
+
   setXmlContent(content: string): void {
     this.editorController.executeCommand("insert-xml", content, this.editorController.rangeFactory.fromAroundAll());
   }
@@ -120,13 +122,23 @@ export default class IndexController extends Controller {
     }
   }
 
+  getXmlContent(): string {
+    const content = this.editorController?.executeQuery("get-content", "xml", this.editorController?.rangeFactory.fromAroundAll()) as Element;
+    return xmlFormat(content.innerHTML);
+  }
+
+  getHtmlContent() {
+    const content = this.editorController?.executeQuery("get-content", "html", this.editorController?.rangeFactory.fromAroundAll()) as Element;
+    return content.innerHTML;
+  }
+
   @action openContentDebugger(type: "xml" | "html") {
     if (this._editorController) {
       if (type === "xml") {
-        // this.debuggerContent = this.rdfaEditor.xmlContentPrettified;
+        this.debuggerContent = this.getXmlContent();
         this.xmlDebuggerOpen = true;
       } else {
-        // this.debuggerContent = this.rdfaEditor.htmlContent;
+        this.debuggerContent = this.getHtmlContent();
         this.htmlDebuggerOpen = true;
       }
     }
@@ -169,7 +181,8 @@ export default class IndexController extends Controller {
 
   saveEditorContentToLocalStorage() {
     if (this._editorController) {
-      // localStorage.setItem("EDITOR_CONTENT", this.rdfaEditor.htmlContent);
+      const content = this.getHtmlContent();
+      localStorage.setItem("EDITOR_CONTENT", content || "");
     }
   }
 }
