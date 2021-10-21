@@ -4,7 +4,7 @@ import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
-import {AssertionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {AssertionError} from "@lblod/ember-rdfa-editor/util/errors";
 
 module("Unit | model | model-selection", hooks => {
   const ctx = new ModelTestContext();

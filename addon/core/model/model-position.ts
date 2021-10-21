@@ -6,7 +6,7 @@
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
-import {NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/util/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/util/array-utils";
 import { RelativePosition } from "@lblod/ember-rdfa-editor/util/types";
 

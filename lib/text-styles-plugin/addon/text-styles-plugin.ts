@@ -11,6 +11,7 @@ export default class TextStylesPlugin implements EditorPlugin {
     return "text-styles";
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: EditorController): Promise<void> {
     controller.registerCommand(MakeBoldCommand);
     // controller.registerCommand(RemoveBoldCommand);

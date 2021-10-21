@@ -4,8 +4,8 @@ import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
-import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
-import {ModelError, NotImplementedError, ParseError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/util/dom-helpers";
+import {ModelError, NotImplementedError, ParseError} from "@lblod/ember-rdfa-editor/util/errors";
 import {HIGHLIGHT_ATTRIBUTE, TEXT_PROPERTY_NODES} from "@lblod/ember-rdfa-editor/util/constants";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";

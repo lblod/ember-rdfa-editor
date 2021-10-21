@@ -1,4 +1,4 @@
-import ModelTreeWalker, {ModelTreeWalkerConfig} from "@lblod/ember-rdfa-editor/util/model-tree-walker"
+import ModelTreeWalker, {ModelTreeWalkerConfig} from "@lblod/ember-rdfa-editor/util/model-tree-walker";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";

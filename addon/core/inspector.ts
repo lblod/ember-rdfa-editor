@@ -2,6 +2,9 @@
  * Immutable counterpart to a {@link Mutator}.
  * TODO
  */
-export default interface Inspector{}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export default interface Inspector {
+}
 
-export class ModelInspector implements Inspector {}
+export class ModelInspector implements Inspector {
+}

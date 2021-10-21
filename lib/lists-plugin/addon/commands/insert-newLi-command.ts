@@ -4,7 +4,7 @@ import {
   IllegalExecutionStateError,
   MisbehavedSelectionError,
   TypeAssertionError
-} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";

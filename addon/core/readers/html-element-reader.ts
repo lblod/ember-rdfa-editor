@@ -1,6 +1,6 @@
 import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
 import ModelElement, {ElementType} from "@lblod/ember-rdfa-editor/core/model/model-element";
-import {tagName} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import {tagName} from "@lblod/ember-rdfa-editor/util/dom-helpers";
 import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/core/readers/html-reader";
 import HtmlNodeReader from "@lblod/ember-rdfa-editor/core/readers/html-node-reader";
 import {copyAttributes} from "@lblod/ember-rdfa-editor/core/readers/reader-utils";

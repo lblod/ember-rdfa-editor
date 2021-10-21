@@ -2,7 +2,7 @@ import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/cor
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
 import {Cloneable} from "@lblod/ember-rdfa-editor/util/types";
 import {NON_BLOCK_NODES} from "@lblod/ember-rdfa-editor/util/constants";
-import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils";
 import {parsePrefixString} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
 import RdfaAttributes from "@lblod/marawa/rdfa-attributes";
