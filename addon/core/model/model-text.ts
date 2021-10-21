@@ -126,4 +126,7 @@ export default class ModelText extends ModelNode {
     }
     return ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap);
   }
+  getMaxOffset() {
+    return this.length;
+  }
 }
