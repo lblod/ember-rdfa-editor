@@ -1,7 +1,7 @@
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
-import {ImpossibleModelStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {ImpossibleModelStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";

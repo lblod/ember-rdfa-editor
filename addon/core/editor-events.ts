@@ -9,8 +9,8 @@ import MoveOperation from "@lblod/ember-rdfa-editor/core/operations/move-operati
 import SplitOperation from "@lblod/ember-rdfa-editor/core/operations/split-operation";
 import {AnyEventName} from "@lblod/ember-rdfa-editor/core/event-bus";
 import {getParentContext} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import {SimpleDataset} from "rdfjs";
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/util/errors";
+import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
 
 export type EDITOR_EVENT_MAP = {
   "dummy": DummyEvent,
@@ -215,7 +215,7 @@ export class KeydownEvent extends AbstractEditorEvent<KeyboardEvent> {
 
 class SelectionChangedEventPayload {
   _selection: ModelSelection;
-  _parentDataset?: SimpleDataset;
+  _parentDataset?: Datastore;
 
   constructor(selection: ModelSelection) {
     this._selection = selection;
@@ -225,7 +225,7 @@ class SelectionChangedEventPayload {
     return this._selection;
   }
 
-  get parentDataset(): SimpleDataset {
+  get parentDataset(): Datastore {
     if (!this._parentDataset) {
       if (!ModelSelection.isWellBehaved(this._selection)) {
         throw new MisbehavedSelectionError();

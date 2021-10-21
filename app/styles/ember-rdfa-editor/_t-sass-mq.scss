@@ -1,3 +1,4 @@
+@use "sass:math";
 // ==================================
 // #SASS-MQ
 // A Sass mixin that helps you compose media queries in an elegant way.
@@ -115,7 +116,7 @@ $mq-media-type: all !default;
     } @else if unit($px) == em {
         @return $px;
     }
-    @return ($px / $base-font-size) * 1em;
+    @return math.div($px, $base-font-size) * 1em;
 }
 
 /// Get a breakpoint's width

@@ -115,7 +115,7 @@ module.exports = {
         '@typescript-eslint/require-await': 'error',
         '@typescript-eslint/restrict-plus-operands': 'error',
         '@typescript-eslint/restrict-template-expressions': 'error',
-        '@typescript-eslint/unbound-method': ['error', {'ignoreStatic': true}],
+        '@typescript-eslint/unbound-method': 'off',
       },
     }
   ]

@@ -1,6 +1,6 @@
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
-import {MisbehavedSelectionError, ModelError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {MisbehavedSelectionError, ModelError} from "@lblod/ember-rdfa-editor/util/errors";
 import ArrayUtils from "@lblod/ember-rdfa-editor/util/array-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/util/model-tree-walker";

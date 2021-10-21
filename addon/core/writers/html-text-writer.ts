@@ -1,6 +1,6 @@
 import Writer from "@lblod/ember-rdfa-editor/core/writers/writer";
-import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
+import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 
 /**
  * Writer responsible for converting {@link ModelText} nodes into HTML subtrees
@@ -17,7 +17,7 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
     ]
   );
 
-  constructor(protected model: Model) {}
+  constructor(protected model: EditorModel) {}
 
   get attributeMap() {
     return HtmlTextWriter.attributeMap;

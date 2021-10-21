@@ -1,4 +1,4 @@
-import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/util/model-tree-walker";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";

@@ -1,5 +1,3 @@
-import {Manipulation} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
-
 abstract class CustomError extends Error {
   constructor(message?: string) {
     super(message);
@@ -12,8 +10,12 @@ abstract class CustomError extends Error {
  */
 export class NotImplementedError extends CustomError {
 }
-export class PluginError extends CustomError {}
-export class UninitializedError extends CustomError {}
+
+export class PluginError extends CustomError {
+}
+
+export class UninitializedError extends CustomError {
+}
 
 /**
  * The selection is not in a state we expect
@@ -111,17 +113,13 @@ export class UnconfinedRangeError extends ModelRangeError {
 export class OperationError extends CustomError {
 }
 
-export class ParseError extends CustomError {}
+export class ParseError extends CustomError {
+}
 
 /*
  * Thrown when a method is invoked with an argument which it can not reasonably deal with
  */
-export class IllegalArgumentError extends CustomError {}
-
-export class UnsupportedManipulationError extends CustomError {
-  constructor(manipulation: Manipulation) {
-    super(`Manipulation with type ${manipulation.type} not supported here.`);
-  }
+export class IllegalArgumentError extends CustomError {
 }
 
 /**
@@ -139,9 +137,11 @@ export class IllegalAccessToRawEditor extends CustomError {
   }
 }
 
-export class TypeAssertionError extends CustomError {}
+export class TypeAssertionError extends CustomError {
+}
 
 /**
  * When a command gets executed in a state it shouldn't.
  */
-export class IllegalExecutionStateError extends CustomError {}
+export class IllegalExecutionStateError extends CustomError {
+}

@@ -45,13 +45,16 @@ export class HtmlReaderContext {
   }
 
   // callbacks for future use
-  onElementOpen(element: ModelElement) {
+  onElementOpen(_element: ModelElement) {
+    // TODO
   }
 
   onElementClose() {
+    // TODO
   }
 
-  onText(text: ModelText) {
+  onText(_text: ModelText) {
+    // TODO
   }
 
 }

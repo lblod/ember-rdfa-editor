@@ -2,7 +2,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
 import XmlElementReader from "@lblod/ember-rdfa-editor/core/readers/xml-element-reader";
 import XmlTextReader from "@lblod/ember-rdfa-editor/core/readers/xml-text-reader";
-import {isElement} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
+import {isElement} from "@lblod/ember-rdfa-editor/util/dom-helpers";
 import {XmlNodeRegistry} from "@lblod/ember-rdfa-editor/core/readers/xml-reader";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
