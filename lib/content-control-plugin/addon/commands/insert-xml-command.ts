@@ -1,5 +1,5 @@
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import {parseXmlSiblings} from "@lblod/ember-rdfa-editor/util/xml-utils"
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/util/errors";
+import {parseXmlSiblings} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import Command from "@lblod/ember-rdfa-editor/core/command";

@@ -2,12 +2,11 @@ import {inject as service} from "@ember/service";
 import Component from '@glimmer/component';
 import type IntlService from 'ember-intl/services/intl';
 import {EditorPlugin} from "@lblod/ember-rdfa-editor/core/editor-plugin";
-import Editor from "@lblod/ember-rdfa-editor/core/editor";
+import Editor, {WidgetSpec} from "@lblod/ember-rdfa-editor/core/editor";
 import {action} from "@ember/object";
 import EditorController, {EditorControllerImpl} from "@lblod/ember-rdfa-editor/core/editor-controller";
 import ApplicationInstance from "@ember/application/instance";
 import {tracked} from "@glimmer/tracking";
-import {WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
 
 // interface DebugInfo {
 //   hintsRegistry: HintsRegistry
@@ -41,11 +40,6 @@ interface RdfaEditorArgs {
    * @public
    */
   rdfaEditorInit(controller: EditorController): void
-}
-
-interface SuggestedHint {
-  component: string
-  info: Record<string, unknown>
 }
 
 /**
@@ -100,6 +94,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     // order is important here, initialize first before assigning
     await this.initialize(editor);
     const controller = new EditorControllerImpl("host-app", editor);
+    window.__controller = new EditorControllerImpl("window-console", editor);
     this._hostController = controller;
     this.args.rdfaEditorInit(controller);
     this._editor = editor;

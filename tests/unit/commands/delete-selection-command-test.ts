@@ -4,7 +4,7 @@ import {vdom} from "@lblod/ember-rdfa-editor/util/xml-utils";
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
-import {CORE_OWNER, NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/util/constants"
+import {CORE_OWNER, NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import DeleteSelectionCommand from "deletion-plugin/commands/delete-selection-command";

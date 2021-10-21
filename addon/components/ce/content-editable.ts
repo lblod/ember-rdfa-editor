@@ -2,8 +2,8 @@ import {action} from "@ember/object";
 import {inject as service} from '@ember/service';
 import Component from '@glimmer/component';
 import Editor, {EditorImpl} from "@lblod/ember-rdfa-editor/core/editor";
-import {UninitializedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
-import {KeydownEvent, SelectionChangedEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {UninitializedError} from "@lblod/ember-rdfa-editor/util/errors";
+import {KeydownEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 
 interface FeatureService {
   isEnabled(key: string): boolean
@@ -12,6 +12,7 @@ interface FeatureService {
 interface ContentEditableArgs {
   editorInit(editor: Editor): Promise<void>
 }
+
 const CE_OWNER = "content-editable";
 
 /**
@@ -79,16 +80,31 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     await this.args.editorInit(editor);
   }
 
+  /**
+   * Tries to find and identify common keyboard shortcuts which emit other events we can tap into.
+   * Currently tries to catch copy, paste, cut. Definitely needs testing on mac.
+   * @method keydownMapsToOtherEvent
+   */
+  keydownMapsToOtherEvent(event: KeyboardEvent): boolean {
+    return (event.ctrlKey || event.metaKey) && ["v", "c", "x"].includes(event.key);
+  }
+
+  excludedKeys = new Set(["F12", "ArrowDown", "ArrowUp", "CapsLock", "Home", "PageUp", "PageDown", "End"]);
+
   @action
   handleKeyDown(event: KeyboardEvent) {
-    event.preventDefault();
-    this.editor.emitEvent(new KeydownEvent(event, CE_OWNER));
+    if (!this.keydownMapsToOtherEvent(event) && !this.excludedKeys.has(event.key)) {
+      console.log(event.key);
+      event.preventDefault();
+      this.editor.emitEvent(new KeydownEvent(event, CE_OWNER));
+    }
   }
 
   @action
   handleSelectionChange() {
     // this.editor.emitEvent(new SelectionChangedEvent(CE_OWNER));
   }
+
   willDestroy() {
     this.editor.onDestroy();
   }
@@ -310,12 +326,4 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   //   }
   // }
   //
-  // /**
-  //  * Tries to find and identify common keyboard shortcuts which emit other events we can tap into.
-  //  * Currently tries to catch copy, paste, cut. Definitely needs testing on mac.
-  //  * @method keydownMapsToOtherEvent
-  //  */
-  // keydownMapsToOtherEvent(event: KeyboardEvent) : boolean {
-  //   return (event.ctrlKey || event.metaKey) && ["v", "c", "x"].includes(event.key);
-  // }
 }

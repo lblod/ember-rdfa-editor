@@ -1,6 +1,6 @@
 import ModelText, {TextAttribute} from "./model-text";
 import ModelElement from "./model-element";
-import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/util/errors";
 import XmlWriter from "@lblod/ember-rdfa-editor/core/writers/xml-writer";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
@@ -318,6 +318,8 @@ export default abstract class ModelNode {
    * @param other
    */
   abstract isMergeable(other: ModelNode): boolean;
+
+  abstract getMaxOffset(): number;
 }
 
 

@@ -1,6 +1,6 @@
 import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 import Operation from "@lblod/ember-rdfa-editor/core/operations/operation";
-import {UnconfinedRangeError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {UnconfinedRangeError} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/util/constants";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";

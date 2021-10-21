@@ -5,6 +5,7 @@ import {ImmutableModel} from "@lblod/ember-rdfa-editor/core/editor-model";
  * Encapsulates a "question" you can ask the {@link EditorModel}. Cannot modify the model.
  */
 export default abstract class Query<A extends unknown[], R> {
+  abstract name: string;
   protected model: ImmutableModel;
 
   constructor(model: ImmutableModel) {

@@ -1,7 +1,7 @@
 import Writer from "@lblod/ember-rdfa-editor/core/writers/writer";
 import HtmlTextWriter from "@lblod/ember-rdfa-editor/core/writers/html-text-writer";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
-import {WriterError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {WriterError} from "@lblod/ember-rdfa-editor/util/errors";
 import HtmlElementWriter from "@lblod/ember-rdfa-editor/core/writers/html-element-writer";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 

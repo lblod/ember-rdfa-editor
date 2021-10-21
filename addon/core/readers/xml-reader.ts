@@ -1,7 +1,7 @@
 import Reader from "@lblod/ember-rdfa-editor/core/readers/reader";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import XmlNodeReader from "@lblod/ember-rdfa-editor/core/readers/xml-node-reader";
-import {ParseError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {ParseError} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelText from "@lblod/ember-rdfa-editor/core/model/model-text";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 

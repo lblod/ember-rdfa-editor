@@ -2,19 +2,22 @@ import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection"
 import {Mutator} from "@lblod/ember-rdfa-editor/core/mutator";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import ImmediateModelMutator from "@lblod/ember-rdfa-editor/core/mutators/immediate-model-mutator";
-import {getWindowSelection, isElement} from "@lblod/ember-rdfa-editor/archive/utils/dom-helpers";
-import {ModelError, NotImplementedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {getWindowSelection, isElement} from "@lblod/ember-rdfa-editor/util/dom-helpers";
+import {ModelError, NotImplementedError} from "@lblod/ember-rdfa-editor/util/errors";
 import HtmlWriter from "@lblod/ember-rdfa-editor/core/writers/html-writer";
 import SelectionWriter from "@lblod/ember-rdfa-editor/core/writers/selection-writer";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
 import HtmlReader from "@lblod/ember-rdfa-editor/core/readers/html-reader";
 import SelectionReader from "@lblod/ember-rdfa-editor/core/readers/selection-reader";
 import EventBus from "@lblod/ember-rdfa-editor/core/event-bus";
-import ModelSelectionTracker from "@lblod/ember-rdfa-editor/archive/utils/ce/model-selection-tracker";
+import ModelSelectionTracker from "@lblod/ember-rdfa-editor/core/model-selection-tracker";
 import Inspector, {ModelInspector} from "@lblod/ember-rdfa-editor/core/inspector";
 import SimplifiedModel from "@lblod/ember-rdfa-editor/core/simplified-model";
 import ModelHistory from "@lblod/ember-rdfa-editor/core/model/model-history";
 import {ModelReadEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {getParentContext} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
+import {HtmlTreeNode} from "@lblod/ember-rdfa-editor/core/model/tree-node";
+import Datastore from "@lblod/ember-rdfa-editor/util/datastore";
 
 
 /**
@@ -23,7 +26,7 @@ import {ModelReadEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 export interface ImmutableModel {
   get modelRoot(): ModelElement
   get viewRoot(): HTMLElement
-  query(source: string, callback: (inspector: Inspector) => void): void;
+  query<R>(source: string, callback: (inspector: Inspector) => R): R
 
   toXml(): Node;
 
@@ -79,6 +82,8 @@ export default interface EditorModel extends MutableModel {
    * here, but nobody's perfect).
    */
   onDestroy(): void;
+
+  get parentContext(): Datastore;
 }
 
 /**
@@ -98,16 +103,19 @@ export class HtmlModel implements EditorModel {
   private tracker: ModelSelectionTracker;
   private history: ModelHistory;
   private eventBus: EventBus;
+  private _parentContext: Datastore;
 
   constructor(rootElement: HTMLElement, eventBus: EventBus) {
-    this._selection = new ModelSelection();
     this.writer = new HtmlWriter(this);
     this.selectionWriter = new SelectionWriter();
     this.nodeMap = new WeakMap<Node, ModelNode>();
     this.reader = new HtmlReader();
     this.selectionReader = new SelectionReader(this);
     this._rootElement = rootElement;
+    this._parentContext = getParentContext(new HtmlTreeNode(this._rootElement));
+    console.log(this._parentContext);
     this.eventBus = eventBus;
+    this._selection = new ModelSelection(this._parentContext);
     this.eventBus.on("selectionChanged", () => this.readSelection());
     this.tracker = new ModelSelectionTracker(this, this.eventBus);
     this.history = new ModelHistory();
@@ -145,9 +153,13 @@ export class HtmlModel implements EditorModel {
     return this.rootElement;
   }
 
+  get parentContext(): Datastore {
+    return this._parentContext;
+  }
+
   change(source: string, callback: (mutator: Mutator, inspector: Inspector) => (ModelElement | void), writeBack = true): void {
     const mutator = new ImmediateModelMutator(this.eventBus);
-    const inspector = new ModelInspector();
+    const inspector = new ModelInspector(this.eventBus);
     const subTree = callback(mutator, inspector);
 
     if (writeBack) {
@@ -262,9 +274,9 @@ export class HtmlModel implements EditorModel {
     this.tracker.stopTracking();
   }
 
-  query(_source: string, callback: (inspector: Inspector) => void): void {
-    const inspector = new ModelInspector();
-    callback(inspector);
+  query<R>(_source: string, callback: (inspector: Inspector) => R): R {
+    const inspector = new ModelInspector(this.eventBus);
+    return callback(inspector);
   }
 
   toXml(): Node {

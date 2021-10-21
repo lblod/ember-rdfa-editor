@@ -1,16 +1,16 @@
 import Writer from "@lblod/ember-rdfa-editor/core/writers/writer";
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
-import Model from "@lblod/ember-rdfa-editor/model/model";
 import HtmlTextWriter from "@lblod/ember-rdfa-editor/core/writers/html-text-writer";
-import {WriterError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {WriterError} from "@lblod/ember-rdfa-editor/util/errors";
 import UnpollutedHtmlElementWriter from "./unpolluted-html-element-writer";
 import UnpollutedHtmlTextWriter from "./unpolluted-html-text-writer";
+import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 
 export default class HTMLExportWriter implements Writer<ModelNode, Node> {
   private htmlTextWriter: HtmlTextWriter;
   private htmlElementWriter: UnpollutedHtmlElementWriter;
 
-  constructor(private model: Model) {
+  constructor(private model: EditorModel) {
     this.htmlTextWriter = new UnpollutedHtmlTextWriter(model);
     this.htmlElementWriter = new UnpollutedHtmlElementWriter(model);
   }

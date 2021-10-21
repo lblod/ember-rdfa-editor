@@ -10,7 +10,7 @@ import {
   MisbehavedSelectionError,
   SelectionError,
   TypeAssertionError
-} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 
 export default class UnindentListCommand extends Command<[ModelRange], void> {

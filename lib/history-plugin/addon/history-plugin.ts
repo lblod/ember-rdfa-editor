@@ -11,6 +11,7 @@ export default class HistoryPlugin implements EditorPlugin {
     return "history";
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: EditorController): Promise<void> {
     controller.registerCommand(UndoCommand);
   }

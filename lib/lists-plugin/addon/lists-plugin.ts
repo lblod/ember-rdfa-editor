@@ -5,8 +5,13 @@ import InsertNewLiCommand from "lists-plugin/commands/insert-newLi-command";
 import MakeListCommand from "lists-plugin/commands/make-list-command";
 import RemoveListCommand from "lists-plugin/commands/remove-list-command";
 import UnindentListCommand from "lists-plugin/commands/unindent-list-command";
+import { KeydownEvent } from "@lblod/ember-rdfa-editor/core/editor-events";
+import { action } from "@ember/object";
+import handleTabInList from 'lists-plugin/handlers/handle-tab-in-list';
+import handleEnterInList from 'lists-plugin/handlers/handle-enter-in-list';
 
 export default class ListsPlugin implements EditorPlugin {
+  private controller!: EditorController;
   static create(): ListsPlugin {
     return new ListsPlugin();
   }
@@ -22,7 +27,21 @@ export default class ListsPlugin implements EditorPlugin {
     controller.registerCommand(MakeListCommand);
     controller.registerCommand(RemoveListCommand);
     controller.registerCommand(UnindentListCommand);
+    controller.onEvent("keyDown", this.handleKeydown);
+    this.controller = controller;
   }
 
+  @action
+  handleKeydown(event: KeydownEvent) {
+    const eventPayload = event.payload;
+    // Still composing, don't handle this.
+    if(eventPayload.isComposing) return;
 
+    if (eventPayload.key === "Tab") {
+      const reverse = eventPayload.shiftKey;
+      handleTabInList(event, reverse, this.controller);
+    } else if(eventPayload.key === 'Enter'){
+      handleEnterInList(event, this.controller);
+    }
+  }
 }

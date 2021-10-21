@@ -1,6 +1,6 @@
 'use strict';
 
-const webpack = require("webpack");
+const webpack = require('webpack');
 module.exports = {
   name: require('./package').name,
   options: {
@@ -23,7 +23,6 @@ module.exports = {
           fallback: {
             stream: require.resolve("stream-browserify"),
             buffer: require.resolve('buffer/'),
-            "readable-stream": require.resolve("readable-stream"),
             events: require.resolve("events/"),
             crypto: require.resolve("crypto-browserify")
           }

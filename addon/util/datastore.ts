@@ -18,7 +18,7 @@ import {
   Term,
   Variable
 } from "rdfjs";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {NotImplementedError} from "@lblod/ember-rdfa-editor/util/errors";
 import dataset, {FastDataset} from "@graphy/memory.dataset.fast";
 
 const STRING_DATAYPE_IRI = "http://www.w3.org/2001/XMLSchema#string";
@@ -157,7 +157,7 @@ export class RdfDefaultGraph extends RdfTerm implements DefaultGraph {
 
 function isFastDataset(thing: unknown): thing is FastDataset {
   // ts fails us here, see https://github.com/Microsoft/TypeScript/issues/21732
-  if ("isGraphyFastDataset" in (thing as Record<string, unknown>)) {
+  if (thing && "isGraphyFastDataset" in (thing as Record<string, unknown>)) {
     return (thing as FastDataset).isGraphyFastDataset;
   }
   return false;
@@ -166,11 +166,14 @@ function isFastDataset(thing: unknown): thing is FastDataset {
 export default class Datastore implements Dataset, DatasetFactory {
   private _fastDataset: FastDataset;
 
-  constructor(quads?: Dataset | Quad[] | FastDataset) {
+  constructor(quads?: Dataset | Quad[] | FastDataset | Datastore) {
     if (isFastDataset(quads)) {
       this._fastDataset = quads;
+    } else if (quads instanceof Datastore) {
+      this._fastDataset = quads.fastDataset;
+    } else {
+      this._fastDataset = dataset(quads);
     }
-    this._fastDataset = dataset(quads);
   }
 
   get size() {
@@ -225,7 +228,7 @@ export default class Datastore implements Dataset, DatasetFactory {
     return this;
   }
 
-  deleteMatches(subject?: SubjectTerm, predicate?: PredicateTerm, object?: ObjectTerm, graph?: GraphTerm): Dataset {
+  deleteMatches(_subject?: SubjectTerm, _predicate?: PredicateTerm, _object?: ObjectTerm, _graph?: GraphTerm): Dataset {
     throw new NotImplementedError();
   }
 
@@ -280,11 +283,11 @@ export default class Datastore implements Dataset, DatasetFactory {
     }
   }
 
-  fromQuad(original: Quad): Quad {
+  fromQuad(_original: Quad): Quad {
     throw new NotImplementedError();
   }
 
-  fromTerm<T extends Term>(original: T): T {
+  fromTerm<T extends Term>(_original: T): T {
     throw new NotImplementedError();
   }
 
@@ -292,7 +295,7 @@ export default class Datastore implements Dataset, DatasetFactory {
     return this._fastDataset.has(quad);
   }
 
-  import(stream: Stream<Quad>): Promise<Dataset> {
+  import(_stream: Stream<Quad>): Promise<Dataset> {
     throw new NotImplementedError();
   }
 

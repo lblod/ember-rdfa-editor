@@ -1,6 +1,5 @@
 import {EditorPlugin} from "@lblod/ember-rdfa-editor/core/editor-plugin";
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
-import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import InsertTextCommand from "./commands/insert-text-command";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 import {KeydownEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
@@ -17,6 +16,7 @@ export default class TypingPlugin implements EditorPlugin {
     return "typing";
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: EditorController): Promise<void> {
     controller.registerCommand(InsertTextCommand);
     controller.onEvent("keyDown", this.handleKeydown);

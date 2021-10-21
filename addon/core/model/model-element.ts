@@ -2,7 +2,7 @@ import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/cor
 import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/core/model/model-text";
 import {Cloneable} from "@lblod/ember-rdfa-editor/util/types";
 import {NON_BLOCK_NODES} from "@lblod/ember-rdfa-editor/util/constants";
-import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils";
 import {parsePrefixString} from "@lblod/ember-rdfa-editor/util/rdfa-utils";
 import RdfaAttributes from "@lblod/marawa/rdfa-attributes";
@@ -385,6 +385,25 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    */
   getRdfaAttributes(): RdfaAttributes {
     return new RdfaAttributes(this, Object.fromEntries(this.getRdfaPrefixes()));
+  }
+
+  getAttributesRecord(): Record<string, string> {
+    const record: Record<string, string> = {};
+    for (const [key, value] of this.attributeMap.entries()) {
+      const rdfaAttribute = (this.getRdfaAttributes() as unknown as Record<string, string | string[]>)[key];
+      if (rdfaAttribute) {
+        if (rdfaAttribute instanceof Array) {
+          record[key] = rdfaAttribute.join(" ");
+        } else {
+          record[key] = rdfaAttribute;
+        }
+      } else {
+        record[key] = value;
+      }
+
+    }
+    return record;
+
   }
 
   sameAs(other: ModelNode, strict = false): boolean {

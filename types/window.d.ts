@@ -1,10 +1,9 @@
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import { LogLevels } from "diary";
+import {LogLevels} from "diary";
+import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 
 declare global {
   interface Window {
-    __VDOM: Model;
-    __executeCommand: (commandName: string, ...args: unknown[]) => void;
+    __controller: EditorController
     setLogLevel: (level: LogLevels) => void;
     setLogFilter: (filter: string) => void;
     clipboardData: DataTransfer;

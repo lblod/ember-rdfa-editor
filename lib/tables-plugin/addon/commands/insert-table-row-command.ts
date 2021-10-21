@@ -1,5 +1,5 @@
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/archive/utils/errors";
+import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelTable from "@lblod/ember-rdfa-editor/core/model/model-table";
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";

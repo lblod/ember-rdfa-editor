@@ -1,12 +1,12 @@
 import Command from "@lblod/ember-rdfa-editor/core/command";
-import {EditorEventListener, EventListenerPriority} from "@lblod/ember-rdfa-editor/core/event-bus";
-import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
-import Editor from "@lblod/ember-rdfa-editor/core/editor";
-import {InternalWidgetSpec, WidgetSpec} from "@lblod/ember-rdfa-editor/archive/utils/ce/raw-editor";
+import {AnyEventName, EditorEventListener, EventListenerPriority} from "@lblod/ember-rdfa-editor/core/event-bus";
+import EditorModel, {ImmutableModel} from "@lblod/ember-rdfa-editor/core/editor-model";
+import Editor, {InternalWidgetSpec, WidgetSpec} from "@lblod/ember-rdfa-editor/core/editor";
 import {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/core/model/model-range";
 import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
-import {EditorEvent, EditorEventName} from "@lblod/ember-rdfa-editor/core/editor-events";
+import {EditorEventName, EventWithName} from "@lblod/ember-rdfa-editor/core/editor-events";
 import {RdfaContext, RdfaContextFactory} from "@lblod/ember-rdfa-editor/core/rdfa-context";
+import Query from "@lblod/ember-rdfa-editor/core/query";
 
 /**
  * Consumers (aka plugins or the host app) receive a controller instance as their interface to the editor.
@@ -24,13 +24,17 @@ export default interface EditorController {
 
   executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void;
 
+  registerQuery<A extends unknown[], R>(query: new (model: ImmutableModel) => Query<A, R>): void;
+
+  executeQuery<A extends unknown[], R>(queryName: string, ...args: A): R | void;
+
   onEvent<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>, priority?: EventListenerPriority): void;
 
   onEventWithContext<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>, context: RdfaContext, priority?: EventListenerPriority): void;
 
-  emitEvent<P>(event: EditorEvent<P>): void;
+  emitEvent<E extends AnyEventName>(event: EventWithName<E>): void;
 
-  emitEventDebounced<P>(delayMs: number, event: EditorEvent<P>): void;
+  emitEventDebounced<E extends AnyEventName>(delayMs: number, event: EventWithName<E>): void;
 
   registerWidget(widget: WidgetSpec): void;
 
@@ -91,12 +95,20 @@ export class EditorControllerImpl implements EditorController {
     this.editor.registerWidget(internalSpec);
   }
 
-  emitEvent<P>(event: EditorEvent<P>): void {
+  emitEvent<E extends AnyEventName>(event: EventWithName<E>): void {
     this.editor.emitEvent(event);
   }
 
-  emitEventDebounced<P>(delayMs: number, event: EditorEvent<P>): void {
+  emitEventDebounced<E extends AnyEventName>(delayMs: number, event: EventWithName<E>): void {
     this.editor.emitEventDebounced(delayMs, event);
+  }
+
+  executeQuery<A extends unknown[], R>(queryName: string, ...args: A): void | R {
+    return this.editor.executeQuery(this.name, queryName, ...args);
+  }
+
+  registerQuery<A extends unknown[], R>(query: { new(model: ImmutableModel): Query<A, R> }): void {
+    this.editor.registerQuery(query);
   }
 }
 
