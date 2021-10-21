@@ -1,8 +1,8 @@
 /* ==================================
-   #CUSTOM COMPONENTS
+   #SAY CUSTOM COMPONENTS
    ================================== */
 
-// SAY VARIABLES AND SETTINGS
+// VARIABLES AND SETTINGS
 @import "ember-rdfa-editor/s-colors";
 @import "ember-rdfa-editor/s-settings";
 @import "ember-rdfa-editor/s-theme";
@@ -48,3 +48,7 @@
 
 // THIRD PARTY PLUGIN STYLE
 @import "ember-rdfa-editor/p-flatpickr";
+
+
+// SHAME
+@import "ember-rdfa-editor/shame";
