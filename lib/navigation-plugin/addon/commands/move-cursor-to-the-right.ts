@@ -23,11 +23,11 @@ export default class MoveCursorToTheRight extends Command<[ModelSelection], void
       if (ModelElement.isModelElement(nextCursorElement)) {
         this.model.change(executedBy, () => {
           selection.collapseIn(nextCursorElement, 0);
-        })
+        });
       } else {
         this.model.change(executedBy, () => {
           selection.collapseIn(selectionEndParent, selectionEndParentOffset + 1);
-        })
+        });
       }
     }
   }
