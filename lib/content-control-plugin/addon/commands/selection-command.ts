@@ -1,6 +1,5 @@
 import ModelNode from "@lblod/ember-rdfa-editor/core/model/model-node";
-import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection";
-import {ImpossibleModelStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/util/errors";
+import {ImpossibleModelStateError} from "@lblod/ember-rdfa-editor/util/errors";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/util/model-node-utils";
 import ModelTreeWalker from "@lblod/ember-rdfa-editor/util/model-tree-walker";
 import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
@@ -10,32 +9,35 @@ import Command from "@lblod/ember-rdfa-editor/core/command";
 import EditorModel from "@lblod/ember-rdfa-editor/core/editor-model";
 import SimplifiedModel from "@lblod/ember-rdfa-editor/core/simplified-model";
 
+export interface SelectionCommandArgs {
+  range?: ModelRange
+  deleteSelection?: boolean
+}
+
 /**
  * The core purpose of this command is to return a valid html structure that best represents
  * the selection. It splits where necessary to achieve this, but restores the
  * model by default.
  * Optionally, it can also delete the selected content before returning it.
  */
-export default abstract class SelectionCommand extends Command<unknown[], ModelNode[]> {
-  protected deleteSelection: boolean;
+export default class SelectionCommand extends Command<unknown[], ModelNode[]> {
+  name = "selection"
 
-  protected constructor(model: EditorModel, createSnapshot: boolean) {
+  protected constructor(model: EditorModel) {
     super(model);
-    this.deleteSelection = createSnapshot;
   }
 
-  execute(executedBy: string, selection: ModelSelection = this.model.selection): ModelNode[] {
-    if (!ModelSelection.isWellBehaved(selection)) {
-      throw new MisbehavedSelectionError();
-    }
+  execute(executedBy: string, {
+    range = this.model.selection.lastRange!,
+    deleteSelection = false
+  }: SelectionCommandArgs): ModelNode[] {
 
     let buffer: SimplifiedModel | null = null;
-    if (!this.deleteSelection) {
+    if (!deleteSelection) {
       buffer = this.model.createSnapshot();
     }
 
     let modelNodes: ModelNode[] = [];
-    const range = selection.lastRange;
     let commonAncestor = range.getCommonAncestor();
 
     // special cases:
@@ -71,10 +73,10 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
       }
       modelNodes = [...treeWalker];
 
-      if (this.deleteSelection) {
-        selection.selectRange(mutator.insertNodes(contentRange));
+      if (deleteSelection) {
+        this.model.selection.selectRange(mutator.insertNodes(contentRange));
       }
-    }, this.deleteSelection);
+    }, deleteSelection);
 
     if (buffer) {
       // If `deleteSelection` is false, we will have stored a snapshot of the model right before the execution of this
