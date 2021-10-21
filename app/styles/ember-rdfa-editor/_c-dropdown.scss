@@ -5,13 +5,13 @@
 /* Variables
   ========================================================================== */
 
-$say-dropdown-color             : $say-blue-700 !default;
-$say-dropdown-hover-color       : $say-blue-600 !default;
-$say-dropdown-active-color      : $say-blue-600 !default;
-$say-dropdown-visited-color     : $say-blue-900 !default;
-$say-dropdown-active-color      : $say-blue-900 !default;
-$say-dropdown-underline         : $say-blue-600 !default;
-$say-dropdown-underline-hover   : $say-blue-300 !default;
+$say-dropdown-color             : $say-primary-700 !default;
+$say-dropdown-hover-color       : $say-primary-600 !default;
+$say-dropdown-active-color      : $say-primary-600 !default;
+$say-dropdown-visited-color     : $say-primary-900 !default;
+$say-dropdown-active-color      : $say-primary-900 !default;
+$say-dropdown-underline         : $say-primary-600 !default;
+$say-dropdown-underline-hover   : $say-primary-300 !default;
 $say-dropdown-caret-size        : .4rem !default;
 
 /* Component
@@ -80,7 +80,7 @@ $say-dropdown-caret-size        : .4rem !default;
   min-width: 100%;
   width: auto;
   top: calc(100% + #{$say-unit-tiny});
-  box-shadow: 0 0 12px rgba($say-gray-900,.15), 0 0 2px rgba($say-gray-900,.1);
+  box-shadow: 0 0 12px rgba($say-neutral-900,.15), 0 0 2px rgba($say-neutral-900,.1);
   border-radius: .3rem;
   display: none;
 
@@ -100,7 +100,7 @@ $say-dropdown-caret-size        : .4rem !default;
 
   &:before {
     border-color: rgba($say-white, 0);
-    border-bottom-color: $say-gray-200;
+    border-bottom-color: $say-neutral-200;
   }
 
   &:after {
@@ -121,7 +121,7 @@ $say-dropdown-caret-size        : .4rem !default;
   @include au-font-size($say-small,1.5);
   font-family: $say-font;
   font-weight: $say-regular;
-  color: $say-gray-700;
+  color: $say-neutral-700;
   appearance: none;
   border: 0;
   padding: $say-unit-small;
@@ -141,8 +141,8 @@ $say-dropdown-caret-size        : .4rem !default;
   }
 
   &:hover {
-    color: $say-gray-800;
-    background-color: $say-gray-100;
+    color: $say-neutral-800;
+    background-color: $say-neutral-100;
   }
 
   &:focus {
@@ -152,5 +152,5 @@ $say-dropdown-caret-size        : .4rem !default;
 }
 
 .say-dropdown__menu [role="menuitem"] + [role="menuitem"] {
-  border-top: 1px dotted $say-gray-300;
+  border-top: 1px dotted $say-neutral-300;
 }

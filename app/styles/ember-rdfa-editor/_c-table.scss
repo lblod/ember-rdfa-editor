@@ -5,7 +5,7 @@
   position: relative;
   width: 100%;
   border-collapse: collapse;
-  border: .1rem solid $say-gray-300;
+  border: .1rem solid $say-neutral-300;
   white-space: normal;
 
   & + & {
@@ -13,7 +13,7 @@
   }
 
   thead {
-    border-bottom: .2rem solid $say-gray-300;
+    border-bottom: .2rem solid $say-neutral-300;
   }
 
   th,
@@ -29,12 +29,12 @@
   }
 
   tr + tr {
-    border-top: .1rem solid $say-gray-300;
+    border-top: .1rem solid $say-neutral-300;
   }
 
   th + th,
   td + td {
-    border-left: .1rem solid $say-gray-300;
+    border-left: .1rem solid $say-neutral-300;
   }
 
   th,

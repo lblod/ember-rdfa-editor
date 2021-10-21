@@ -174,3 +174,13 @@
 .say-border-bottom {
   border-bottom: .1rem solid $say-neutral-300;
 }
+
+
+// Temp fix for removed classes
+.say-u-hidden-visually {
+  @extend .au-u-hidden-visually;
+}
+
+.form__row + .form__row {
+  margin-top: $au-unit-tiny;
+}

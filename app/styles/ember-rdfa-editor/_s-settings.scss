@@ -20,58 +20,56 @@ $say-breakpoints: (
 // ---
 // Global font size and line height
 $say-global-font-size   : 1.8rem !default;
-$say-global-line-height : 1.5 !default;
+$say-global-line-height : $au-global-line-height !default;
 
 // Font families
 $say-font: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !default;
 
 // Font styles
-$say-light   : 400 !default;
-$say-regular : 500 !default;
-$say-medium  : 600 !default;
-$say-bold    : 700 !default;
+$say-light   : $au-light !default;
+$say-regular : $au-regular !default;
+$say-medium  : $au-medium !default;
+$say-bold    : $au-bold !default;
 
 
 // Sizes
 $say-tiny  : 1.2rem !default;
 $say-small : 1.4rem !default;
 $say-base  : 1.5rem !default;
-$say-h6    : 1.6rem !default;
-$say-h5    : 1.8rem !default;
-$say-h4    : 2rem !default;
-$say-h3    : 2.4rem !default;
-$say-h2    : 3.4rem !default;
-$say-h1    : 4.8rem !default;
+$say-h6    : $au-h6 !default;
+$say-h5    : $au-h5 !default;
+$say-h4    : $au-h4 !default;
+$say-h3    : $au-h3 !default;
+$say-h2    : $au-h2 !default;
+$say-h1    : $au-h1 !default;
 
 // Spacing units
 // ---
-$say-unit-base  : .6rem !default;
-$say-unit-ratio : 2 !default;
-$say-unit-tiny  : $say-unit-base !default;
-$say-unit-small : $say-unit-tiny * $say-unit-ratio !default;
-$say-unit       : $say-unit-small * $say-unit-ratio !default;
-$say-unit-large : $say-unit * $say-unit-ratio !default;
-$say-unit-huge  : $say-unit-large * $say-unit-ratio !default;
+$say-unit-tiny  : $au-unit-tiny !default;
+$say-unit-small : $au-unit-small !default;
+$say-unit       : $au-unit !default;
+$say-unit-large : $au-unit-large !default;
+$say-unit-huge  : $au-unit-huge !default;
 
 
 // UI
 // ---
 // Global styling
-$say-radius               : 2rem !default;
-$say-border               : .2rem !default;
+$say-radius               : $au-radius !default;
+$say-border               : $au-border !default;
 $say-outline-border       : $say-border !default;
-$say-outline-border-style : dashed !default;
+$say-outline-border-style : solid !default;
 $say-outline              : $say-outline-border $say-outline-border-style $say-outline-color !default;
 
 // Transitions
-$say-duration   : (1/8) + s !default;
-$say-easing     : cubic-bezier(0.190,  1.000, 0.220, 1.000) !default;
+$say-duration   : $au-duration !default;
+$say-easing     : $au-easing !default;
 $say-transition : $say-duration $say-easing !default;
 
 // Z-indexes
-$say-z-index-alpha : 1 !default;
-$say-z-index-beta  : 2 !default;
-$say-z-index-gamma : 3 !default;
+$say-z-index-alpha : $au-z-index-alpha !default;
+$say-z-index-beta  : $au-z-index-beta !default;
+$say-z-index-gamma : $au-z-index-gamma !default;
 
 // Icon sizes
 $say-icon-size        : 1.3rem !default;
