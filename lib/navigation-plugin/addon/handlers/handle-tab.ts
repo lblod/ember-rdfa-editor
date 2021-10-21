@@ -1,5 +1,5 @@
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
-export default function HandleTab(reverse: boolean, controller: EditorController) {
+export default function handleTab(reverse: boolean, controller: EditorController) {
   const selection = controller.selection;
   if(reverse) {
     const selectionStart = selection.getRangeAt(0).start

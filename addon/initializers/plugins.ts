@@ -7,7 +7,7 @@ import HistoryPlugin from "history-plugin/history-plugin";
 import ListsPlugin from "lists-plugin/lists-plugin";
 import SearchingPlugin from "searching-plugin/searching-plugin";
 import TablesPlugin from "tables-plugin/tables-plugin";
-import NavigationPlugin from 'navigation-plugin/navigation-plugin'
+import NavigationPlugin from "navigation-plugin/navigation-plugin";
 
 export function initialize(application: Application): void {
   application.register("plugin:content-control", ContentControlPlugin, {singleton: false});
