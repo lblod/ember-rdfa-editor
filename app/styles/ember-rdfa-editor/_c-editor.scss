@@ -24,7 +24,7 @@
     }
   }
 
-  @include mq(large) {
+  @include mq(1280px) {
     &.rdfa-annotations-hover {
       padding-left: $say-annotation-width;
     }
