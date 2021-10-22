@@ -32,6 +32,7 @@ export default class MoveToNextElement extends Command<[ModelRange], void> {
         const firstPosition = nextElement.getFirstPositionInside();
         range.start = firstPosition;
         range.end = firstPosition;
+        this.model.selection.selectRange(range);
       });
     } else {
       const invisibleSpace = new ModelText(INVISIBLE_SPACE);
