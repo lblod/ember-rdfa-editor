@@ -124,4 +124,21 @@ export default class ModelTable extends ModelElement {
 
     return generator?.next().value as ModelTable;
   }
+  getFirstPositionInside() {
+    const cell = this.getCell(0, 0);
+    if(cell) {
+      return ModelPosition.fromInElement(cell, 0);
+    } else {
+      throw new Error('No cell found inside the table');
+    }
+  }
+  getLastPositionInside() {
+    const {x,y} = this.getDimensions();
+    const cell = this.getCell(x - 1, y - 1);
+    if(cell) {
+      return ModelPosition.fromInElement(cell, cell.getMaxOffset());
+    } else {
+      throw new Error('No cell found inside the table');
+    }
+  }
 }

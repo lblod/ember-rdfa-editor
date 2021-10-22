@@ -3,6 +3,7 @@ import ModelSelection from "@lblod/ember-rdfa-editor/core/model/model-selection"
 import Command from "@lblod/ember-rdfa-editor/core/command";
 import {MutableModel} from "@lblod/ember-rdfa-editor/core/editor-model";
 import MoveToPreviousElement from "navigation-plugin/commands/move-to-previous-element";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 export default class MoveCursorToTheLeft extends Command<[ModelSelection], void> {
   name = 'move-cursor-to-the-left';
@@ -17,7 +18,8 @@ export default class MoveCursorToTheLeft extends Command<[ModelSelection], void>
     const selectionStartParentOffset = selectionStartPosition.parentOffset;
     if (selectionStartParentOffset === 0) {
       const moveToPreviousElementCommand = new MoveToPreviousElement(this.model);
-      moveToPreviousElementCommand.execute(executedBy, selectionStartPosition.parent);
+      const actualRange = new ModelRange(selectionStartPosition, selectionStartPosition);
+      moveToPreviousElementCommand.execute(executedBy, actualRange);
     } else {
       const previousCursorElement = selectionStartParent.childAtOffset(selectionStartParentOffset - 1);
       if (ModelElement.isModelElement(previousCursorElement)) {

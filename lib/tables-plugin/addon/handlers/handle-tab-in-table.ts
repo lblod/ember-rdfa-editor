@@ -3,6 +3,8 @@ import ModelElement from "@lblod/ember-rdfa-editor/core/model/model-element";
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 import { PropertyState } from "@lblod/ember-rdfa-editor/util/types";
 import { KeydownEvent } from "@lblod/ember-rdfa-editor/core/editor-events";
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
 
 export default function HandleTabInTable(event: KeydownEvent, reverse: boolean, controller: EditorController) {
   const selection = controller.selection;
@@ -47,7 +49,9 @@ export default function HandleTabInTable(event: KeydownEvent, reverse: boolean, 
           y: selectedIndex.y
         };
       } else {
-        controller.executeCommand('move-to-previous-element', table);
+        const position = ModelPosition.fromBeforeNode(table);
+        console.log(position);
+        controller.executeCommand('move-to-previous-element',new ModelRange(position, position));
         return;
       }
     } else {
@@ -62,7 +66,8 @@ export default function HandleTabInTable(event: KeydownEvent, reverse: boolean, 
           y: selectedIndex.y
         };
       } else {
-        controller.executeCommand('move-to-next-element', table);
+        const position = ModelPosition.fromAfterNode(table);
+        controller.executeCommand('move-to-next-element', new ModelRange(position, position));
         return;
       }
     }
@@ -70,7 +75,5 @@ export default function HandleTabInTable(event: KeydownEvent, reverse: boolean, 
     if(!newPosition) return;
 
     controller.executeCommand('move-to-cell', table, newPosition.x, newPosition.y);
-    
-
   }
 }

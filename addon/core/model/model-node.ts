@@ -2,6 +2,7 @@ import ModelText, {TextAttribute} from "./model-text";
 import ModelElement from "./model-element";
 import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/util/errors";
 import XmlWriter from "@lblod/ember-rdfa-editor/core/writers/xml-writer";
+import ModelPosition from "./model-position";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
@@ -320,6 +321,13 @@ export default abstract class ModelNode {
   abstract isMergeable(other: ModelNode): boolean;
 
   abstract getMaxOffset(): number;
+
+  getFirstPositionInside(): ModelPosition {
+    return ModelPosition.fromInNode(this, 0);
+  }
+  getLastPositionInside(): ModelPosition {
+    return ModelPosition.fromInNode(this, this.getMaxOffset());
+  }
 }
 
 
