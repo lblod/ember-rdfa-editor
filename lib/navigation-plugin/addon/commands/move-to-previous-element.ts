@@ -17,7 +17,9 @@ export default class MoveToPreviousElement extends Command<[ModelRange], void> {
   execute(executedBy: string, range: ModelRange | null = this.model.selection.lastRange) {
     if(!range) return;
     let startOfTheElement = range.start;
+    let isPosition0OfElement = true;
     if(range.start.nodeBefore()){
+      isPosition0OfElement = false;
       startOfTheElement = ModelPosition.fromBeforeNode(range.start.nodeBefore());
     }
     const firstPositionAtDocument = this.model.modelRoot.getFirstPositionInside();
@@ -29,7 +31,11 @@ export default class MoveToPreviousElement extends Command<[ModelRange], void> {
         range: searchRange,
       });
       const nodeArray = [...treeWalker];
-      previousElement = nodeArray[nodeArray.length - 1];
+      if(isPosition0OfElement) {
+        previousElement = nodeArray[nodeArray.length - 2];
+      } else {
+        previousElement = nodeArray[nodeArray.length - 1];
+      }
     }
     if(previousElement) {
       this.model.change(executedBy, _ => {
