@@ -17,11 +17,7 @@ export default class MoveToNextElement extends Command<[ModelRange], void> {
   execute(executedBy: string, range: ModelRange | null = this.model.selection.lastRange) {
     if(!range) return; 
     const lastDocumentPosition = this.model.modelRoot.getLastPositionInside();
-    let startOfTheElement = range.start;
-    if(range.start.nodeAfter()){
-      startOfTheElement = ModelPosition.fromBeforeNode(range.start.nodeAfter());
-    }
-    const searchRange = new ModelRange(startOfTheElement, lastDocumentPosition);
+    const searchRange = new ModelRange(range.start, lastDocumentPosition);
     let nextElement: ModelNode | null = null;
     if(!searchRange.collapsed) {
       const treeWalker = new ModelTreeWalker({
@@ -29,7 +25,6 @@ export default class MoveToNextElement extends Command<[ModelRange], void> {
         range: searchRange
       });
       nextElement = treeWalker.nextNode();
-      console.log(nextElement)
     }
     if(nextElement) {
       this.model.change(executedBy, _ => {
