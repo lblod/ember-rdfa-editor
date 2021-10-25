@@ -26,7 +26,11 @@ export default class MoveToPreviousElement extends Command<[ModelRange], void> {
       });
       const nodeArray = [...treeWalker];
       if(range.start.parentOffset === 0) {
-        previousElement = nodeArray[nodeArray.length - 1];
+        if(nodeArray[nodeArray.length - 1] === range.start.parent) {
+          previousElement = nodeArray[nodeArray.length - 2];
+        } else {
+          previousElement = nodeArray[nodeArray.length - 1];
+        }
       } else {
         previousElement = nodeArray[nodeArray.length - 2];
       }
