@@ -18,8 +18,8 @@ export default class MoveToNextElement extends Command<[ModelRange], void> {
     if(!range) return; 
     const lastDocumentPosition = this.model.modelRoot.getLastPositionInside();
     let startOfTheElement = range.start;
-    if(range.start.nodeBefore()){
-      startOfTheElement = ModelPosition.fromBeforeNode(range.start.nodeBefore());
+    if(range.start.nodeAfter()){
+      startOfTheElement = ModelPosition.fromBeforeNode(range.start.nodeAfter());
     }
     const searchRange = new ModelRange(startOfTheElement, lastDocumentPosition);
     let nextElement: ModelNode | null = null;
