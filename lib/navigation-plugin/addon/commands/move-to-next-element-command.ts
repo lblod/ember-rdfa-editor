@@ -24,7 +24,11 @@ export default class MoveToNextElement extends Command<[ModelRange], void> {
         filter: (node) => node.isBlock || ModelNode.isModelText(node) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP,
         range: searchRange
       });
-      nextElement = treeWalker.nextNode();
+      if(range.start.parentOffset === range.start.parent.getMaxOffset()) {
+        nextElement = treeWalker.currentNode;
+      } else {
+        nextElement = treeWalker.nextNode();
+      }
     }
     if(nextElement) {
       this.model.change(executedBy, _ => {
