@@ -9,9 +9,7 @@ import RemoveTableCommand from "tables-plugin/commands/remove-table-command";
 import RemoveTableColumnCommand from "tables-plugin/commands/remove-table-column-command";
 import RemoveTableRowCommand from "tables-plugin/commands/remove-table-row-command";
 import MoveToCellCommand from "tables-plugin/commands/move-to-cell-command";
-import MoveToNextElement from "tables-plugin/commands/move-to-next-element";
-import MoveToPreviousElement from 'tables-plugin/commands/move-to-previous-element';
-import { KeydownEvent } from "@lblod/ember-rdfa-editor/archive/utils/event-bus";
+import {KeydownEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 import { action } from "@ember/object";
 import handleTabInTable from 'tables-plugin/handlers/handle-tab-in-table';
 

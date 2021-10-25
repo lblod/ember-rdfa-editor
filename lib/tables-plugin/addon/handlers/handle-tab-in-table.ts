@@ -20,12 +20,12 @@ export default function HandleTabInTable(event: KeydownEvent, reverse: boolean, 
     let table;
 
     while(cell.parent) {
-      const parent = cell.parent;
+      const parent: ModelElement = cell.parent;
       if(parent.type === 'table') {
         table = cell.parent as ModelTable;
         break;
       } else {
-        cell = parent as ModelElement;
+        cell = parent ;
       }
     }
 
@@ -50,7 +50,6 @@ export default function HandleTabInTable(event: KeydownEvent, reverse: boolean, 
         };
       } else {
         const position = ModelPosition.fromBeforeNode(table);
-        console.log(position);
         controller.executeCommand('move-to-previous-element',new ModelRange(position, position));
         return;
       }

@@ -41,7 +41,7 @@ export default class MoveToPreviousElement extends Command<[ModelRange], void> {
         if(ModelNode.isModelText(previousElement)) {
           position = previousElement.getLastPositionInside();
         } else {
-          position = previousElement.getFirstPositionInside();
+          position = previousElement!.getFirstPositionInside();
         }
         range.start = position;
         range.end = position;

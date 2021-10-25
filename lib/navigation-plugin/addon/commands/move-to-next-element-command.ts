@@ -32,7 +32,7 @@ export default class MoveToNextElement extends Command<[ModelRange], void> {
     }
     if(nextElement) {
       this.model.change(executedBy, _ => {
-        const firstPosition = nextElement.getFirstPositionInside();
+        const firstPosition = nextElement!.getFirstPositionInside();
         range.start = firstPosition;
         range.end = firstPosition;
         this.model.selection.selectRange(range);
