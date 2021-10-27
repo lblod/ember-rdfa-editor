@@ -86,6 +86,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   get toolbarWidgets(): WidgetSpec[] {
     // warning: this is not tracked
+    console.log(this._editor?.widgetMap.get("toolbar"))
     return this._editor?.widgetMap.get("toolbar") || [];
   }
 

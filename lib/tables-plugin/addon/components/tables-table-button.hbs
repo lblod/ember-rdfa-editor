@@ -1,0 +1,29 @@
+<ToolbarDropdown @dropdownButtonLabel="Table" @editor={{@editor}} as |Menu|>
+  {{#if this.isInTable}}
+    <Menu.Item @menuAction={{this.insertRowBelow}}>
+      {{t "ember-rdfa-editor.add-row-below"}}
+    </Menu.Item>
+    <Menu.Item @menuAction={{this.insertRowAbove}}>
+      {{t "ember-rdfa-editor.add-row-above"}}
+    </Menu.Item>
+    <Menu.Item @menuAction={{this.insertColumnAfter}}>
+      {{t "ember-rdfa-editor.add-column-after"}}
+    </Menu.Item>
+    <Menu.Item @menuAction={{this.insertColumnBefore}}>
+      {{t "ember-rdfa-editor.add-column-before"}}
+    </Menu.Item>
+    <Menu.Item @menuAction={{this.removeTableRow}}>
+      {{t "ember-rdfa-editor.delete-row"}}
+    </Menu.Item>
+    <Menu.Item @menuAction={{this.removeTableColumn}}>
+      {{t "ember-rdfa-editor.delete-column"}}
+    </Menu.Item>
+    <Menu.Item @menuAction={{this.removeTable}}>
+      {{t "ember-rdfa-editor.delete-table"}}
+    </Menu.Item>
+  {{else}}
+    <Menu.Item @menuAction={{this.insertTable}}>
+      {{t "ember-rdfa-editor.insert-table"}}
+    </Menu.Item>
+  {{/if}}
+</ToolbarDropdown>

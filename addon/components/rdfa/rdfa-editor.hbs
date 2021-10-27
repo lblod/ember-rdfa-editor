@@ -4,16 +4,15 @@
       @controller={{this.hostController}}
       @showTextStyleButtons="{{if @toolbarOptions.showTextStyleButtons "true"}}" @showListButtons="{{if @toolbarOptions.showListButtons "true"}}"
       @showIndentButtons="{{if @toolbarOptions.showIndentButtons "true"}}">
-      {{#if @editorOptions.showToggleRdfaAnnotations}}
-      <div class="say-switch">
-        <input {{on "click" this.toggleRdfaBlocks}} id="toggle-1" class="say-switch__input" type="checkbox" name="toggle">
-        <label class="say-switch__label" for="toggle-1">Toon annotaties</label>
-      </div>
-      {{/if}}
-
       {{#each this.toolbarWidgets as |widget|}}
         {{component widget.componentName controller=widget.controller}}
       {{/each}}
+      {{#if @editorOptions.showToggleRdfaAnnotations}}
+        <div class="say-switch">
+          <input {{on "click" this.toggleRdfaBlocks}} id="toggle-1" class="say-switch__input" type="checkbox" name="toggle">
+          <label class="say-switch__label" for="toggle-1">Toon annotaties</label>
+        </div>
+      {{/if}}
     </Rdfa::EditorToolbar>
   {{/if}}
 

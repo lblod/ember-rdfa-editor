@@ -1,0 +1,26 @@
+<div class="say-dropdown" ...attributes>
+  <button class="say-dropdown__button {{if this.dropdownOpen "is-active" ""}}" aria-haspopup="true"
+          aria-expanded="{{if this.dropdownOpen "true" "false"}}" type="button" {{on "click" this.openDropdown}}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" class="say-icon say-icon--large" aria-hidden="true">
+      <path d="M3.23694339,3.23694339 L3.23694339,40.7630566 L40.7630566,40.7630566 L40.7630566,3.23694339 L3.23694339,3.23694339 Z M19.9152368,36.5935302 L7.40650735,36.5935302 L7.40650735,24.0847632 L19.9152368,24.0847632 L19.9152368,36.5935302 Z M19.9152368,19.9152368 L7.40650735,19.9152368 L7.40650735,7.40650735 L19.9152368,7.40650735 L19.9152368,19.9152368 Z M36.5935302,36.5935302 L24.0847632,36.5935302 L24.0847632,24.0847632 L36.5935302,24.0847632 L36.5935302,36.5935302 Z M36.5935302,19.9152368 L24.0847632,19.9152368 L24.0847632,7.40650735 L36.5935302,7.40650735 L36.5935302,19.9152368 Z"/>
+    </svg>
+    <span class="say-u-hidden-visually">{{@dropdownButtonLabel}}</span>
+  </button>
+  {{#if this.dropdownOpen}}
+    <div id="{{this.dropdownId}}"
+         class="say-dropdown__menu is-visible"
+         role="menu"
+         tabindex="-1"
+      {{focus-trap
+              isActive=true
+              shouldSelfFocus=true
+              focusTrapOptions=(hash
+                      allowOutsideClick=this.closeDropdown
+                      returnFocusOnDeactivate=false
+              )
+      }}
+    >
+      {{yield (hash Item=(component "dropdown-item" onActivate=this.closeDropdown))}}
+    </div>
+    {{/if}}
+</div>

@@ -29,6 +29,11 @@ export default class TablesPlugin implements EditorPlugin {
     controller.registerCommand(RemoveTableCommand);
     controller.registerCommand(RemoveTableRowCommand);
 
+    controller.registerWidget({
+      desiredLocation: "toolbar",
+      componentName: "tables-table-button",
+      identifier: "tables-table-button"
+    });
   }
 
 }

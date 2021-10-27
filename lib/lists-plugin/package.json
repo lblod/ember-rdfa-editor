@@ -5,6 +5,7 @@
   ],
   "dependencies": {
     "ember-cli-babel": "*",
-    "ember-cli-typescript": "*"
+    "ember-cli-typescript": "*",
+    "ember-cli-htmlbars": "^5.2.0"
   }
 }

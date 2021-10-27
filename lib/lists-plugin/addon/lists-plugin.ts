@@ -28,6 +28,13 @@ export default class ListsPlugin implements EditorPlugin {
     controller.registerCommand(RemoveListCommand);
     controller.registerCommand(UnindentListCommand);
     controller.onEvent("keyDown", this.handleKeydown);
+
+    controller.registerWidget({
+      desiredLocation: "toolbar",
+      componentName: "lists-lists-buttons",
+      identifier: "lists-lists-buttons"
+    });
+
     this.controller = controller;
   }
 
