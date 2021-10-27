@@ -1,23 +1,9 @@
-{{!-- template-lint-disable no-invalid-interactive --}}
-{{!--
 <div
-  {{on "paste" this.paste}}
+  {{on "beforeinput" this.handleInput}}
+  {{on "input" this.recoverFromUnhandledInput}}
   {{on "cut" this.cut}}
+  {{on "paste" this.paste}}
   {{on "copy" this.copy}}
-  {{on "keydown" this.handleKeyDown}}
-  {{on "keyup" this.handleKeyUp}}
-  {{on "compositionend" this.compositionEnd}}
-  {{on "mouseup" this.handleMouseUp}}
-  {{on "mousedown" this.handleMouseDown}}
-  {{on "beforeinput" this.beforeInput}}
-  {{on "input" this.handleInput}}
-  {{on "dragstart" this.dragstart}}
-  {{did-insert this.insertedEditorElement}}
-  contenteditable="true" class={{@class}} ...attributes>
-</div>
---}}
-<div
-  {{on "keydown" this.handleKeyDown}}
   {{did-insert this.insertedEditorElement}}
   contenteditable="true" class={{@class}} ...attributes>
 </div>

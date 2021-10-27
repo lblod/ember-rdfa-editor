@@ -2,7 +2,7 @@ import {EditorPlugin} from "@lblod/ember-rdfa-editor/core/editor-plugin";
 import EditorController from "@lblod/ember-rdfa-editor/core/editor-controller";
 import InsertTextCommand from "./commands/insert-text-command";
 import ModelPosition from "@lblod/ember-rdfa-editor/core/model/model-position";
-import {KeydownEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
+import { InsertTextEvent, KeydownEvent} from "@lblod/ember-rdfa-editor/core/editor-events";
 import { action } from '@ember/object';
 
 export default class TypingPlugin implements EditorPlugin {
@@ -19,26 +19,22 @@ export default class TypingPlugin implements EditorPlugin {
   // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: EditorController): Promise<void> {
     controller.registerCommand(InsertTextCommand);
-    controller.onEvent("keyDown", this.handleKeydown);
+    controller.onEvent("insertText", this.handleInsertText);
     this.controller = controller;
   }
 
   @action
-  handleKeydown(event: KeydownEvent) {
+  handleInsertText(event: InsertTextEvent) {
     if (this.isHandlerFor(event.payload)) {
-      if(!this.handleAnchors(event.payload.key)) {
-        this.controller.executeCommand("insert-text", event.payload.key);
+      if(!this.handleAnchors(event.payload.data!)) {
+        this.controller.executeCommand("insert-text", event.payload.data!);
       }
     }
   }
 
-  isHandlerFor(event: KeyboardEvent): boolean {
+  isHandlerFor(event: InputEvent): boolean {
     // Still composing, don't handle this.
     return !event.isComposing
-      // It's a key combo, we don't want to do anything with this at the moment.
-      && !(event.altKey || event.ctrlKey || event.metaKey)
-      // Only interested in actual input, no control keys.
-      && event.key.length <= 1;
   }
 
   // TODO just a quick and dirty conversion, we might wanna come up with a more

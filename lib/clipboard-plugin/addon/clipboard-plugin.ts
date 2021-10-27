@@ -19,10 +19,10 @@ export default class ClipboardPlugin implements EditorPlugin {
   }
 
   get controller(): EditorController {
-    if (!this.controller) {
+    if (!this._controller) {
       throw new UninitializedError();
     }
-    return this.controller;
+    return this._controller;
 
   }
 

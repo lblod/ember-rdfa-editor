@@ -17,14 +17,18 @@ export type EDITOR_EVENT_MAP = {
   "modelWritten": ModelWrittenEvent,
   "modelRead": ModelReadEvent,
   "selectionChanged": SelectionChangedEvent,
-  "keyDown": KeydownEvent,
   "afterInsertOperation": AfterInsertOperationEvent,
   "afterMoveOperation": AfterMoveOperationEvent,
   "afterAttributeOperation": AfterAttributeOperationEvent,
   "afterSplitOperation": AfterSplitOperationEvent,
   "paste": PasteEvent,
   "cut": CutEvent,
-  "copy": CopyEvent
+  "copy": CopyEvent,
+  "insertText": InsertTextEvent,
+  "insertParagraph": InsertParagraphEvent,
+  "insertLineBreak": InsertLineBreakEvent,
+  "deleteContentBackward": DeleteContentBackwardEvent,
+  "deleteContentForward": DeleteContentForwardEvent
 };
 
 export type EventWithName<N extends EditorEventName | string> = N extends EditorEventName ? EDITOR_EVENT_MAP[N] : CustomEditorEvent<unknown>;
@@ -202,15 +206,49 @@ export class ContentChangedEvent extends VoidEvent {
   _name: EditorEventName = "contentChanged";
 }
 
-
 export class ModelWrittenEvent extends VoidEvent {
   _name: EditorEventName = "modelWritten";
 }
 
-export class KeydownEvent extends AbstractEditorEvent<KeyboardEvent> {
-  _name: EditorEventName = "keyDown";
+export class InsertTextEvent extends AbstractEditorEvent<InputEvent> {
+  _name: EditorEventName = "insertText";
 
-  constructor(payload: KeyboardEvent, owner: string = CORE_OWNER) {
+  constructor(payload: InputEvent, owner: string = CORE_OWNER) {
+    super({payload, owner});
+  }
+}
+
+export class InsertParagraphEvent extends AbstractEditorEvent<InputEvent> {
+  _name: EditorEventName = "insertParagraph";
+
+  constructor(payload: InputEvent, owner: string = CORE_OWNER) {
+    super({payload, owner});
+  }
+
+}
+
+export class DeleteContentBackwardEvent extends AbstractEditorEvent<InputEvent> {
+  _name: EditorEventName = "deleteContentBackward";
+
+  constructor(payload: InputEvent, owner: string = CORE_OWNER) {
+    super({payload, owner});
+  }
+
+}
+
+export class DeleteContentForwardEvent extends AbstractEditorEvent<InputEvent> {
+  _name: EditorEventName = "deleteContentForward";
+
+  constructor(payload: InputEvent, owner: string = CORE_OWNER) {
+    super({payload, owner});
+  }
+
+}
+
+export class InsertLineBreakEvent extends AbstractEditorEvent<InputEvent> {
+  _name: EditorEventName = "insertLineBreak";
+
+  constructor(payload: InputEvent, owner: string = CORE_OWNER) {
     super({payload, owner});
   }
 }
