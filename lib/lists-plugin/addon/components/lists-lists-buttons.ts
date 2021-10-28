@@ -10,27 +10,21 @@ interface BoldButtonArgs {
 
 export default class ListsListButtonComponent extends Component<BoldButtonArgs> {
   @tracked isInList;
+  @tracked canInsertList;
+  @tracked canUnindent;
+  @tracked canIndent;
   constructor(owner: unknown, args: BoldButtonArgs) {
     super(owner, args);
     this.isInList = args.controller.selection.inListState === PropertyState.enabled;
+    this.canInsertList = args.controller.canExecuteCommand("make-list");
+    this.canUnindent = args.controller.canExecuteCommand("unindent-list");
+    this.canIndent = args.controller.canExecuteCommand("indent-list");
     this.args.controller.onEvent('selectionChanged', (event) => {
       this.isInList = event.payload.selection.inListState === PropertyState.enabled;
+      this.canInsertList = args.controller.canExecuteCommand("make-list");
+      this.canUnindent = args.controller.canExecuteCommand("unindent-list");
+      this.canIndent = args.controller.canExecuteCommand("indent-list");
     });
-  }
-
-  @action
-  canInsertList() {
-    this.args.controller.canExecuteCommand("make-list");
-  }
-
-  @action
-  canUnindent() {
-    this.args.controller.canExecuteCommand("unindent-list");
-  }
-
-  @action
-  canIndent() {
-    this.args.controller.canExecuteCommand("indent-list");
   }
 
   @action
