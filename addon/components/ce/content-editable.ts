@@ -60,7 +60,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     // https://rawgit.com/w3c/input-events/v1/index.html#interface-InputEvent-Attributes
     if (event.inputType == "insertText") {
       event.preventDefault();
-      this.editor.emitEvent(new InsertTextEvent(event, CE_OWNER))
+      this.editor.emitEvent(new InsertTextEvent(event, CE_OWNER));
     }
     else if (event.inputType == "deleteContentBackward") {
       event.preventDefault();

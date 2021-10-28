@@ -137,8 +137,6 @@ export class EditorImpl implements Editor {
   }
 
   registerWidget(widget: InternalWidgetSpec): void {
-    console.log('registering widget')
-    console.log(widget)
     this._widgetMap.get(widget.desiredLocation)!.push(widget);
   }
 
