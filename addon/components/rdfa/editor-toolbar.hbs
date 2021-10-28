@@ -10,8 +10,13 @@
         </span>
       </button>
     </div>
-    <div class="say-toolbar__actions">
-      {{yield}}
+    <div class="say-toolbar__group">
+      {{#each @widgets as |widget|}}
+        {{component widget.componentName controller=widget.controller}}
+      {{/each}}
     </div>
-  </div>   
+  </div>
+  <div class="say-toolbar__actions">
+    {{yield}}
+  </div>
 </div>

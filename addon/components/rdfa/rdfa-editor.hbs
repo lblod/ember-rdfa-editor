@@ -3,10 +3,8 @@
     <Rdfa::EditorToolbar
       @controller={{this.hostController}}
       @showTextStyleButtons="{{if @toolbarOptions.showTextStyleButtons "true"}}" @showListButtons="{{if @toolbarOptions.showListButtons "true"}}"
-      @showIndentButtons="{{if @toolbarOptions.showIndentButtons "true"}}">
-      {{#each this.toolbarWidgets as |widget|}}
-        {{component widget.componentName controller=widget.controller}}
-      {{/each}}
+      @showIndentButtons="{{if @toolbarOptions.showIndentButtons "true"}}"
+      @widgets={{this.toolbarWidgets}}>
       {{#if @editorOptions.showToggleRdfaAnnotations}}
         <div class="say-switch">
           <input {{on "click" this.toggleRdfaBlocks}} id="toggle-1" class="say-switch__input" type="checkbox" name="toggle">
