@@ -319,14 +319,16 @@ calculated ad-hoc or kept up-to-date throughout document edits is not specified 
 will be easier to implement, but the latter may be more performant. What is clear is that any implementation
 needs to have some way to link triples with their constituent nodes and vice versa. 
 
+It is likely and desired this interface will be extended with convenient methods for common usecases. 
+Indeed, the "type" of a range or selection is probably the most useful information for plugins, as well as the
+inverse, the range of a "type". The methods defined below should allow for implementation of these convenience methods,
+although a more performant implementation may be needed.
+
 Note: it seems sensible that Nodes as well as Ranges and the Selection would have methods that wrap the methods of the datastore.
-Note: weve made abstraction of subject, predicate and object types here. Assume string to be a valid value, as well as Rdfjs types.
+Note: we've made abstraction of subject, predicate and object types here. Assume string to be a valid value, as well as Rdfjs types.
 Note: search methods should be implemented as generators (or iterators) where possible. Generators are preferred over iterators (easier to use and implement).
 
 ```typescript
-enum RangeContextStrategy {
-  TOUCHING, CONTAINING, INSIDE
-}
 interface TripleQuery {
   subject?: Subject,
   predicate?: Predicate,
@@ -341,6 +343,36 @@ interface Datastore {
   *findPredicateNodes(query: TripleQuery): Generator<Node>
 }
 ```
+#### RangeContextStrategy
+
+At various points in the application, most notably the above section about the Datastore, we need to query about the context a range is in.
+We've already seen that this can be defined in multiple ways. 
+This section then serves to standardize the names and meaning of the different strategies.
+
+##### Containing
+
+A range contains a node if the start of the range lies _before_ the opening tag of the node, _and_ the end of the range lies 
+_after_ the closing tag.
+
+##### Including
+
+A range includes a node if the start of the range lies _before_ the closing tag of the node, _or (exclusive)_ the end lies _after_ the opening tag.
+You can think of this as "containing but edge-inclusive"
+
+##### Touching
+
+A range touches a node if it includes it, and if either the start is directly _after_ the closing tag of the node, _or_ the end is directly _before_ the opening tag.
+
+##### Inside
+
+A range is inside a node if the start lies _after_ the opening tag of the node, _and_ the end lies _before_ the closing tag.
+
+```typescript
+enum RangeContextStrategy {
+  CONTAINING, INCLUDING, TOUCHING, INSIDE
+}
+```
+
 
 #### ModelPosition (immutable)
 
