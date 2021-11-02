@@ -58,14 +58,14 @@ should be taken into consideration at every layer of the architecture.
 This means that at every point, we can assume HTML+RDFa to be the main input and output format.
 Other formats may be specified but can never take precedence.
 
-#### Extensibility
+#### Extendability
 
 Following the open-world principles of linked data, it is impossible to foresee future requirements
 and use-cases. As such it is impossible to design a limited API which would support all usecases.
-This leads us into taking extensibility right down to the core. Authors of extensions should
+This leads us into taking extendability right down to the core. Authors of extensions should
 encounter as little roadblocks as possible. 
 
-Extensibility also means "ease of extensibility". At a high level, it should be easy to express what you mean.
+Extendability also means "ease of extendability". At a high level, it should be easy to express what you mean.
 These two pillars can clash sometimes. Exposing internals makes sure extensions _can_ do everything, but it might be complex,
 while abstractions and simple APIs mean it is _easy_ to do _some_ things, but _other_ things can be impossible.
 
@@ -421,7 +421,7 @@ would then be "before d".
 This does mean that we lose the ability to express "just move one character, regardless of tree structure". 
 
 Another way to represent positions is to embrace the tree structure and represent positions as paths of offsets from
-the root node. This is how the current [ModelPositions][modelpositions] work.
+the root node. This is how the current ModelPositions work.
 The benefit of this representation is that it encodes way more information about the tree structure it operates in. It is
 also easier to calculate.
 
@@ -522,7 +522,7 @@ interface Command<A> {
 
 ### Plugins
 
-With extensibility as one of the core pillars, plugin support should be considered at every level. The above
+With extendability as one of the core pillars, plugin support should be considered at every level. The above
 architecture gives plugins the following capabillities:
 
 - defining new node types
@@ -582,3 +582,6 @@ in-repo-addons, but for external plugins would require a hard dependency on the 
 to be able to extend the base node class. Other options such as mixins
 or delegating custom node methods to a NodeType property on the base class (maybe even with use of Proxies)
 needs to be explored.
+
+[tiptap]: https://tiptap.dev/
+[prosemirror]: https://prosemirror.net/
