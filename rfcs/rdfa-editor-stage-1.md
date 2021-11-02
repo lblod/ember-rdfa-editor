@@ -173,6 +173,8 @@ interface Controller {
   name: string;
   executeCommand<A, R>(commandName: string, args: A): R;
   registerCommand<A, R>(command: new(): Command<A,R>): void;
+  registerWidget(spec: WidgetSpec): void;
+  registerNodeType(spec: NodeSpec): void;
   mutator: Mutator;
   selection: ModelSelection;
   emitEvent(event: EditorEvent);
@@ -239,7 +241,7 @@ a good amount of context so listeners can filter for content changes they care a
 
 This represents a single node in the document tree. It is in essence on its own an entirely
 valid document. 
-The node class and its descendants should provide methods to manipulate nodes in an immutable way.
+The node class should provide methods to manipulate nodes in an immutable way.
 
 *interface*
 
@@ -248,6 +250,7 @@ interface ModelNode {
   type: string;
   children: ModelNode[];
   parent?: ModelNode;
+  
 }
 ```
 
@@ -517,23 +520,65 @@ interface Command<A> {
 }
 ```
 
+### Plugins
+
+With extensibility as one of the core pillars, plugin support should be considered at every level. The above
+architecture gives plugins the following capabillities:
+
+- defining new node types
+- defining new commands
+- executing commands
+- updating the vdom through a mutator (either as part of a command, or directly)
+- listening to events
+- defining and emitting new events
+- defining new UI elements and registering them for rendering
+
+```typescript
+interface EditorPlugin {
+  name: string;
+  async initialize(controller: Controller): void;
+}
+```
+#### Widgets
+
+A widget is simply a ui component which can be registered in the editor. This can be a simple menu, a single button, or even a full-blown ember application.
+At this stage, only ember-based plugins are supported, and widgets have to be ember components. There are limited locations where a widget can be registered, 
+which are specified below.
+A widget is always rendered, and as such has full control over when it is visible. 
+
+```typescript
+type WidgetLocation = "toolbar" | "sidebar" | "cursor" | "block";
+
+interface WidgetSpec {
+  componentName: string,
+  desiredLocation: WidgetLocation
+}
+```
+
+#### Adding a node type
+
+Adding a new node type is very similar to adding a command or a widget. Simply call the appropriate method in the controller, providing it with a Spec object defined below.
+The spec object demands a reader and writer to respectively deserialize and serialize the node from and to the actual DOM.
+
+```typescript
+
+interface NodeSpec {
+  name: type;
+  implementation: new () => ModelNode;
+  htmlReader: Reader<Node, ModelNode>;
+  htmlWriter: Writer<ModelNode, Node>;
+}
+```
 
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
-
 ## Alternatives
-
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+It is as of yet unclear how to best extend node types in plugins. The proposed method works well for "core" plugins which are developed as 
+in-repo-addons, but for external plugins would require a hard dependency on the editor itself 
+to be able to extend the base node class. Other options such as mixins
+or delegating custom node methods to a NodeType property on the base class (maybe even with use of Proxies)
+needs to be explored.
