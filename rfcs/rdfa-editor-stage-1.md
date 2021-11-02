@@ -132,12 +132,13 @@ class InsertListItemCommand extends Command<{range: ModelRange}, void> {
   
   execute(config: CommandConfig, args: {range: ModelRange}): void {
     const {controller} = config;
+    const {range} = args;
     if(this.canExecute()) {
       const listNode: ListNode = range.parentContext.findNodesOfType("listNode").next();
       const listIndex = listNode.indexFromRange(range);
       const newListNode = listNode.insertNewItem(listIndex);
       const {mapping} = controller.mutator.replaceNode(listNode, newListNode);
-      controller.mapSelectionAndSet(mapping);
+      controller.mutator.mapSelectionAndSet(mapping);
     }
   }
 }
@@ -154,8 +155,10 @@ Besides managing the state, it also provides the primary api for modifying that 
    
 ```typescript
 interface Editor {
+  commands: Command[];
   document: ModelNode;
   selection: ModelSelection;
+  eventBus: EventBus;
 }
 ```
 
@@ -167,12 +170,69 @@ plugins to recognize when a change-event is triggered by an action they performe
 
 ```typescript
 interface Controller {
-
+  name: string;
   executeCommand<A, R>(commandName: string, args: A): R;
   registerCommand<A, R>(command: new(): Command<A,R>): void;
   mutator: Mutator;
+  selection: ModelSelection;
+  emitEvent(event: EditorEvent);
+  onEvent(eventName: string, listener: EditorEventListener, config?: ListenerConfig);
+  offEvent(eventName: string, listener: EditorEventListener, config?: ListenerConfig)
 }
 ```
+
+#### EventBus
+
+The eventbus controls the brokering of EditorEvents. Contrary to the builtin DOM event mechanism, the eventbus is not a global singleton. Every instance of the Editor class
+will have a unique instance of an eventbus, meaning interference between multiple instances on the same page is impossible. Another reason for a custom event system is simply
+to allow for a more finegrained control over event propagation and bubbling, as well as fully typechecked events. 
+
+Listeners are notified in priority order, and listeners with the same priority in reverse order of registration.
+
+Events have an owner (aka the consumer responsible for doing the action that causes the event to fire) and a payload, which can be any object.
+They also have a stopPropagation method, which, once called, will make sure no further listeners are notified. 
+
+While a context-bubbling mechanism is currently implemented, it is experimental at best and it is unclear how useful it will be, so it was left out of this RFC.
+
+Note: types are simplified here to their essence.
+
+```typescript
+type EditorEventListener = (event: EditorEvent) => void;
+type EventListenerPriority = "highest" | "high" | "default" | "low" | "lowest" | "internal";
+
+interface ListenerConfig {
+  priority: ListenerPriority;
+}
+
+interface EditorEvent<P> {
+  name: string;
+  owner: string;
+  stopped: boolean;
+  payload: P;
+  stopPropagation(): void;
+}
+
+interface EventBus {
+  emit(event: EditorEvent);
+  emitDebounced(delayMs: number, event: EditorEvent);
+  on(eventName: string, listener: EditorEventListener, config?: ListenerConfig);
+  off(eventName: string, listener: EditorEventListener, config?: ListenerConfig);
+}
+```
+
+
+##### Available Events
+
+The amount of emitted events should be kept to a minimum, whle still providing as much information
+as possible.
+Plugins are however allowed to define custom event types and emit them as they see fit.
+Some events are caused by things which happen very often, and are thus emitted in a debounced fashion.
+
+- SelectionChanged (debounced): Emitted whenever the document selection gets updated. For many plugins,
+this will be one of the most important events to hook into.
+
+- ContentChanged (debounced): Emitted whenever the document itself gets updated. Its payload should provide
+a good amount of context so listeners can filter for content changes they care about.
 
 
 #### ModelNode (immutable)
@@ -188,10 +248,99 @@ interface ModelNode {
   type: string;
   children: ModelNode[];
   parent?: ModelNode;
-  rdfa: NodeRdfa
 }
 ```
 
+#### Datastore
+
+At its core, rdfa is a method of attaching linked data knowledge to a structured markup document. It is designed around the idea
+that a document can contain human-readable and machine-readable information at the same time.
+
+To make that machine-readable information editable by humans, we need to define some new concepts.
+For one, there needs to be a clear indication of _what_ we are currently working on.
+This is not a trivial question. To demonstrate this, an example (taken from [](rdfa.info/play)):
+
+```html
+<div vocab="http://schema.org/" typeof="Person">
+  <a property="image" href="http://manu.sporny.org/images/manu.png">
+    <span property="name">Manu Sporny</span></a>, 
+  <span property="jobTitle">Founder/CEO</span>
+  <div>
+    Phone: <span property="telephone">(540) 961-4469</span>
+  </div>
+  <div>
+    E-mail: <a property="email" href="mailto:msporny@digitalbazaar.com">msporny@digitalbazaar.com</a>
+  </div>
+  <div>
+    Links: <a property="url" href="http://manu.sporny.org/">Manu's homepage</a>
+  </div>
+</div>
+```
+
+Imagine putting your cursor somewhere inside the email address. "What" are you editing at that point?
+In technical terms, you are editing the value for the object of the triple `<blankNode> schema:email "msporny@digitalbazaar.com"`.
+Now imagine an address-book style plugin, which would suggest email addresses from a database. Clearly, it needs
+to be aware that the user is currently intending to edit an email address. 
+So we should be able to express in the plugin: "if the user is editing the object value of a triple where the predicate is `schema:email`, 
+provide some support.
+Ok simple enough, right? Calculate the triple which is currently being edited, and send that information to plugins.
+
+However, what if a plugin is not interested in email-addresses, but in Persons? That same address-book plugin, for example,
+could provide a way to add new entries by detecting information in the document about people it doesn't recognize, and
+rendering an "Add to contacts" button. 
+For that, calculating the abovementioned triple would not be enough. We would need to look further in the document and
+see that that same blankNode, of which we are currently editing the email address, also is the subject of the triple
+`<blankNode> a schema:Person`, or colloquially, that it is an instance of the Person class.
+
+And imagine even further, that this `blankNode` we are looking at, is also the _object_ of a triple. It could
+be for example, that this `Person` is the `besluit:chairman` of a resource which is an instance of a `besluit:Zitting` class.
+
+While editing that same email-adress, should a plugin interested in `Zitting`-type resources also be notified?
+And what about non-collapsed selections? What does "the triple being edited" mean if a selection covers nodes which are part of different triples?
+In the example above, imagine a selection starting in the middle of the phone number, and ending in the middle of the email-address.
+Should the email plugin trigger? Or the phone-number plugin?
+
+I am of the opinion that this question cannot be answered a priori. Therefore, it should be up to the plugin to decide, and up to the editor 
+to provide as much information to the plugin as possible, in a form that can answer the following questions easily:
+
+- is the selection currently in/around/touching an object value of a triple with given subject or predicate?
+- is the selection currently in/around/touching a something which is "related" 
+to a resource which is also the subject of a given triple? (most commonly, we'd be interested in the type of the resource)
+- does a range contain/touch a triple with a certain shape?
+- given a triple, which node defines its subject, which its predicate and which its object? (this also needs to support duplicate triples)
+- give me all nodes which are the subject of a given triple
+- give me all nodes which are the object of a given triple
+
+If this is starting to sound a lot like the questions you would ask a triplestore, that makes a lot of sense.
+In essence, the document _is_ a triplestore, just a very clumsy one, and one with added structure (the html markup).
+
+The idea here is to provide a single interface for all these questions. Whether the knowledge required for the questions is
+calculated ad-hoc or kept up-to-date throughout document edits is not specified here. Likely the former
+will be easier to implement, but the latter may be more performant. What is clear is that any implementation
+needs to have some way to link triples with their constituent nodes and vice versa. 
+
+Note: it seems sensible that Nodes as well as Ranges and the Selection would have methods that wrap the methods of the datastore.
+Note: weve made abstraction of subject, predicate and object types here. Assume string to be a valid value, as well as Rdfjs types.
+Note: search methods should be implemented as generators (or iterators) where possible. Generators are preferred over iterators (easier to use and implement).
+
+```typescript
+enum RangeContextStrategy {
+  TOUCHING, CONTAINING, INSIDE
+}
+interface TripleQuery {
+  subject?: Subject,
+  predicate?: Predicate,
+  object?: Object
+}
+
+interface Datastore {
+  *findRangesForTriple(query: TripleQuery, strategy: RangeContextStrategy): Generator<ModelRange>
+  *findTriplesForRange(range: ModelRange, query: TripleQuery, strategy: RangeContextStrategy): Generator<Triple>
+  *findSubjectNodes(query: TripleQuery): Generator<Node>
+  *findObjectNodes(query: TripleQuery): Generator<Node>
+  *findPredicateNodes(query: TripleQuery): Generator<Node>
+}
+```
 
 #### ModelPosition (immutable)
 
@@ -246,7 +395,6 @@ the main reason for the small detour about character offsets above serves to ill
 both representations have merit, and a conversion between the two could be desirable.
 
 
-
 #### ModelRange
 
 A modelRange simply denotes a contiguous selection between two modelpositions. 
@@ -270,15 +418,10 @@ interface ModelRange {
 
 A selection represents the selected region of the document. While in practice, some browsers only
 support a single contiguous range, we follow the DOM specification which specifies that a selection
-_can_ contain multiple ranges. A range from the dom translates to a fragment of the document 
-as specified above. However, in addition to a start and end, a selection also has a direction.
-
-This is why we define a simple Range interface which is in essence simply a tuple of a Fragment 
-and a direction.
-
+_can_ contain multiple ranges. 
 
 ```typescript 
-interface ESelection {
+interface ModelSelection {
   ranges: ModelRange[]
 }
 ```
@@ -287,9 +430,18 @@ interface ESelection {
 
 An operation represents an atomic change to the Model. Operations should be designed to be composable and combinable.
 
+Fundamentally, an insert operation which overwrites content can cover every possible editing usecase, including deletion (just insert nothing) and
+moving content (as a combination of a deletion and an insertion, aka 2 insertions).
+However, to allow for optimization at the lowest level, we define a generic operation interface rather than a single insert operation.
+
+An operation is always defined over a range. While in essence an operation is just a function, we define it as a stateful object
+which remembers its arguments to allow for easy chaining and modification before execution.
+
+
 ```typescript
 interface Operation {
-
+  range: ModelRange;
+  execute();
 }
 ```
 
@@ -298,9 +450,13 @@ interface Operation {
 Whereas operations are the smallest unit of change to the document, the mutator interface represents
 the "core editing operations" needed to make useful changes to the document. Operations tend to be too
 atomic for this purpose.
+
 ```typescript
 interface Mutator {
-
+  replaceRange(range: ModelRange, ...content: Node[]);
+  replaceNode(oldNode: Node, newNode: Node);
+  updateSelection(selection: ModelSelection);
+  selectRange(range: ModelRange);
 }
 ```
 
@@ -309,8 +465,13 @@ interface Mutator {
 A command represents the highest-level primitive with which to build editing functionality. 
 Commands should be named after their intention. As certain commands only make sense in certain contexts,
 commands also carry with them a method to check whether their execution makes sense at the moment.
-Commands receive 2 argument objects: a config object container the tools the command needs to interact with the document,
+
+Commands receive 2 argument objects: a config object containing the tools the command needs to interact with the document,
 and an args object containing user-defined arguments that the callsite has to provide.
+
+Commands can choose to interact with the document in 2 core ways, or a combination of both:
+- by composing other commands
+- by interacting with ranges and nodes and using the mutator to persist changes to the document
 
 ```typescript
 interface CommandConfig {
