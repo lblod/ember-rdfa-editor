@@ -32,7 +32,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
-import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/utils/event-bus";
+import EventBus, {AnyEventName, EditorEventListener, ListenerConfig} from "@lblod/ember-rdfa-editor/utils/event-bus";
 import DeleteSelectionCommand from "@lblod/ember-rdfa-editor/commands/delete-selection-command";
 import InsertTableRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
 import InsertTableRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
@@ -230,12 +230,12 @@ class RawEditor extends EmberObject {
     return new ModelSelection();
   }
 
-  on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>) {
-    this.eventBus.on(eventName, callback);
+  on<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig) {
+    this.eventBus.on(eventName, callback, config);
   }
 
-  off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>) {
-    this.eventBus.off(eventName, callback);
+  off<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig) {
+    this.eventBus.off(eventName, callback, config);
   }
 }
 
