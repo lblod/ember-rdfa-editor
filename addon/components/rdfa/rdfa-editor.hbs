@@ -5,18 +5,12 @@
       @showTextStyleButtons="{{if @toolbarOptions.showTextStyleButtons "true"}}" @showListButtons="{{if @toolbarOptions.showListButtons "true"}}"
       @showIndentButtons="{{if @toolbarOptions.showIndentButtons "true"}}">
       {{#if @editorOptions.showToggleRdfaAnnotations}}
-      <div class="say-switch">
-        <input {{on "click" this.toggleRdfaBlocks}} id="toggle-1" class="say-switch__input" type="checkbox" name="toggle">
-        <label class="say-switch__label" for="toggle-1">Toon annotaties</label>
-      </div>
+      <AuToggleSwitch {{on "click" this.toggleRdfaBlocks}} @label="Toon annotaties"/>
       {{/if}}
       {{#if @editorOptions.showInsertButton}}
-      <button type="button" class="say-button say-button--secondary" {{on "click" this.triggerHints}}>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" class="say-icon say-icon--left" aria-hidden="true">
-          <polygon points="40.5 24.643 24.643 24.643 24.643 40.5 19.357 40.5 19.357 24.643 3.5 24.643 3.5 19.357 19.357 19.357 19.357 3.5 24.643 3.5 24.643 19.357 40.5 19.357"/>
-        </svg>
+      <AuButton {{on "click" this.triggerHints}} @icon="add" @iconAlignment="left" @skin="link">
         Voeg sjabloon in
-      </button>
+      </AuButton>
       {{/if}}
     </Rdfa::EditorToolbar>
   {{/if}}
@@ -42,9 +36,7 @@
           {{#if this.hasActiveHints}}
             {{#each this.hintsRegistry.activeHints as |card|}}
               <li class="say-editor-hints__list-item">
-                <div class="say-card"> {{!-- Todo: remove this div once it is over --}}
-                  {{component card.card info=card.info}}
-                </div>
+                {{component card.card info=card.info}}
               </li>
             {{/each}}
           {{/if}}

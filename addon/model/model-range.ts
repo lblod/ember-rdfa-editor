@@ -271,8 +271,8 @@ export default class ModelRange {
     return this.start.sameAs(other.start) && this.end.sameAs(other.end);
   }
 
-  clone(): ModelRange {
-    return new ModelRange(this.start.clone(), this.end.clone());
+  clone(modelRoot?: ModelElement): ModelRange {
+    return new ModelRange(this.start.clone(modelRoot), this.end.clone(modelRoot));
   }
 
   toString(): string {

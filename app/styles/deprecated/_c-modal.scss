@@ -12,7 +12,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba($say-gray-1000,.4);
+  background-color: rgba($au-gray-1000,.4);
   z-index: 999;
   display: none;
 
@@ -23,11 +23,11 @@
 
 // Modal Dialog base styling
 .say-modal {
-  background: $say-white;
+  background: $au-white;
   margin: auto;
   height: auto;
-  max-height: calc(100% - #{$say-unit});
-  width: calc(100% - #{$say-unit});
+  max-height: calc(100% - #{$au-unit});
+  width: calc(100% - #{$au-unit});
   max-width: 760px;
   opacity: 1;
   overflow: auto;
@@ -35,16 +35,16 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  right: $say-unit-small;
-  left: $say-unit-small;
+  right: $au-unit-small;
+  left: $au-unit-small;
   bottom: auto;
   top: 50%;
   transform: translateY(-50%);
   visibility: visible;
   border-radius: .2rem;
   z-index: 9999;
-  box-shadow: 0 1px 3px rgba($say-gray-1000, .1), 0 4px 20px rgba($say-gray-1000, .035), 0 1px 1px rgba($say-gray-1000, .025);
-  transition: $say-transition;
+  box-shadow: 0 1px 3px rgba($au-gray-1000, .1), 0 4px 20px rgba($au-gray-1000, .035), 0 1px 1px rgba($au-gray-1000, .025);
+  transition: $au-transition;
   display: none;
 
   &:focus {
@@ -57,11 +57,11 @@
 }
 
 .say-modal--fullscreen {
-  max-width: calc(100% - #{$say-unit-huge});
-  max-height: calc(100% - #{$say-unit-huge});
-  width: calc(100% - #{$say-unit-huge});
-  height: calc(100% - #{$say-unit-huge});
-  left: $say-unit-small;
+  max-width: calc(100% - #{$au-unit-huge});
+  max-height: calc(100% - #{$au-unit-huge});
+  width: calc(100% - #{$au-unit-huge});
+  height: calc(100% - #{$au-unit-huge});
+  left: $au-unit-small;
 }
 
 .say-modal__header {
@@ -71,21 +71,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $say-unit-small;
-  border-bottom: 1px solid $say-gray-200;
+  padding: $au-unit-small;
+  border-bottom: 1px solid $au-gray-200;
 
   @include mq(medium) {
-    padding: $say-unit;
+    padding: $au-unit;
   }
 }
 
 .say-modal__prefix {
-  @include say-font-size($say-base);
-  margin-bottom: $say-unit-tiny;
+  @include au-font-size($say-base-font-size);
+  margin-bottom: $au-unit-tiny;
 }
 
 .say-modal__title {
-  @include say-font-size($say-h2-font-size);
+  @include au-font-size($say-h2-font-size);
   font-family: $say-h2-font-family;
   font-weight: $say-h2-font-weight;
 
@@ -95,8 +95,8 @@
 }
 
 .say-modal__back {
-  @include say-font-size($say-base);
-  font-family: $say-font;
+  @include au-font-size($say-base-font-size);
+  font-family: $say-font-family;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -105,21 +105,21 @@
   border: 0;
   padding: 0;
   text-align: center;
-  color: $say-neutral-700;
-  transition: color $say-transition;
+  color: $au-gray-700;
+  transition: color $au-transition;
   text-decoration: underline;
-  text-decoration-color: $say-neutral-300;
+  text-decoration-color: $au-gray-300;
 
   &:hover,
   &:focus {
-    color: $say-neutral-600;
+    color: $au-gray-600;
     text-decoration: none;
   }
 }
 
 .say-modal__close {
-  @include say-font-size($say-base);
-  font-family: $say-font;
+  @include au-font-size($say-base-font-size);
+  font-family: $say-font-family;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,14 +128,14 @@
   border: 0;
   padding: 0;
   text-align: center;
-  color: $say-neutral-700;
-  transition: color $say-transition;
+  color: $au-gray-700;
+  transition: color $au-transition;
   text-decoration: underline;
-  text-decoration-color: $say-neutral-300;
+  text-decoration-color: $au-gray-300;
 
   &:hover,
   &:focus {
-    color: $say-neutral-600;
+    color: $au-gray-600;
     text-decoration: none;
   }
 }
@@ -145,8 +145,8 @@
   flex-wrap: wrap;
   flex-grow: 1;
   position: relative;
-  height: calc(100% - #{$say-unit-large + $say-unit-small});
-  background-color: $say-white;
+  height: calc(100% - #{$au-unit-large + $au-unit-small});
+  background-color: $au-white;
 
   &:focus {
     outline: 0;
@@ -163,15 +163,15 @@
 
 .say-modal__sidebar {
   flex-basis: 100%;
-  padding: $say-unit-small;
+  padding: $au-unit-small;
   overflow: auto;
-  background-color: $say-gray-100;
-  border-bottom: .1rem solid $say-gray-200;
+  background-color: $au-gray-100;
+  border-bottom: .1rem solid $au-gray-200;
 
   @include mq(medium) {
-    padding: $say-unit;
+    padding: $au-unit;
     border-bottom: 0;
-    border-right: .1rem solid $say-gray-200;
+    border-right: .1rem solid $au-gray-200;
     height: 100%;
     flex-basis: 35rem;
     flex-grow: 1;
@@ -197,7 +197,7 @@
 }
 
 .say-modal__info {
-  @include say-font-size($say-h6);
-  color: $say-gray-700;
-  padding: $say-unit;
+  @include au-font-size($au-h6);
+  color: $au-gray-700;
+  padding: $au-unit;
 }

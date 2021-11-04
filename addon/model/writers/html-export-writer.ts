@@ -18,9 +18,9 @@ export default class HTMLExportWriter implements Writer<ModelNode, Node> {
   write(modelNode: ModelNode): Node {
     let result = null;
 
-    if(ModelNode.isModelElement(modelNode)) {
+    if (ModelNode.isModelElement(modelNode)) {
       result = this.htmlElementWriter.write(modelNode);
-      for(const child of modelNode.children) {
+      for (const child of modelNode.children) {
         result.appendChild(this.write(child));
       }
     } else if (ModelNode.isModelText(modelNode)) {

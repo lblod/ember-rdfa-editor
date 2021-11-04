@@ -3,32 +3,32 @@
    ================================== */
 
 .say-pagination {
-  @include say-font-size($say-h6);
+  @include au-font-size($au-h6);
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  padding: $say-unit-tiny $say-unit-small;
-  border-top: .1rem solid $say-neutral-200;
+  padding: $au-unit-tiny $au-unit-small;
+  border-top: .1rem solid $au-gray-200;
 }
 
 .say-pagination--large {
-  padding: $say-unit $say-unit;
+  padding: $au-unit $au-unit;
 }
 
 .say-pagination__group {
   display: flex;
   align-items: center;
-  margin-right: $say-unit-tiny;
+  margin-right: $au-unit-tiny;
 
   > * + * {
-    margin-left: $say-unit-small;
-    padding-left: $say-unit-small;
-    border-left: .1rem dotted $say-neutral-300;
+    margin-left: $au-unit-small;
+    padding-left: $au-unit-small;
+    border-left: .1rem dotted $au-gray-300;
   }
 }
 
 .say-pagination__info {
-  color: $say-neutral-700;
+  color: $au-gray-700;
 }
 
 .say-pagination__list {
@@ -40,8 +40,8 @@
 
 .say-pagination__item {
   & + & {
-    margin-left: $say-unit-tiny;
-    padding-left: $say-unit-tiny;
-    border-left: .1rem dotted $say-neutral-300;
+    margin-left: $au-unit-tiny;
+    padding-left: $au-unit-tiny;
+    border-left: .1rem dotted $au-gray-300;
   }
 }

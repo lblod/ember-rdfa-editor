@@ -5,8 +5,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 const INTERNAL_ATTRIBUTES = ['data-editor-highlight', 'data-editor-position-level', 'data-editor-rdfa-position-level'];
 
 export default class UnpollutedHtmlElementWriter implements Writer<ModelElement, HTMLElement> {
-  constructor(private model: Model) {
-  }
+  constructor(private model: Model) {}
 
   write(modelNode: ModelElement): HTMLElement {
     const result = document.createElement(modelNode.type);
@@ -18,5 +17,4 @@ export default class UnpollutedHtmlElementWriter implements Writer<ModelElement,
     }
     return result;
   }
-
 }

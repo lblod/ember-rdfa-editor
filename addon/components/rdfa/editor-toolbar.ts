@@ -108,12 +108,11 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   toggleProperty(value: boolean, makeCommand: string, removeCommand: string) {
-    if(value) {
+    if (value) {
       this.args.editor.executeCommand(removeCommand);
     } else {
       this.args.editor.executeCommand(makeCommand);
     }
-
   }
 
   @action
@@ -121,7 +120,7 @@ export default class EditorToolbar extends Component<Args> {
     this.args.editor.undo();
   }
 
-  //Table commands
+  // Table commands
   @action
   insertTable(){
     this.args.editor.executeCommand("insert-table");

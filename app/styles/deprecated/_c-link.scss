@@ -7,7 +7,7 @@
   align-items: center;
   color: $say-primary-700;
   text-decoration-color: $say-primary-300;
-  transition: color $say-transition;
+  transition: color $au-transition;
 
   &:hover,
   &:focus {
@@ -16,21 +16,21 @@
   }
 
   &:focus {
-    outline: $say-outline;
+    outline: $au-outline;
   }
 }
 
 .say-link--secondary {
-  color: $say-neutral-700;
-  text-decoration-color: $say-neutral-300;
+  color: $au-gray-700;
+  text-decoration-color: $au-gray-300;
 
   &:hover,
   &:focus {
-    color: $say-neutral-600;
-    text-decoration-color: $say-neutral-300;
+    color: $au-gray-600;
+    text-decoration-color: $au-gray-300;
   }
 }
 
 .say-link__highlight {
-  background-color: $say-warning-200;
+  background-color: $au-yellow-200;
 }

@@ -8,13 +8,17 @@ module.exports = function(defaults) {
       sourceMaps: 'inline'
     },
     sassOptions: {
-      sourceMapEmbed: true
+      sourceMapEmbed: true,
+      includePaths: [
+        'node_modules/@appuniversum/appuniversum',
+        'node_modules/@appuniversum/ember-appuniversum/app/styles'
+      ]
     },
     autoprefixer: {
       enabled: true,
       cascade: true,
       sourcemap: true
-    }
+    },
   });
 
   /*

@@ -41,21 +41,22 @@ export default class RemoveTableColumnCommand extends Command {
 
     const tableDimensions = table.getDimensions();
     if (position.x === 0 && tableDimensions.x === 1) {
-      table.removeTable();
-      this.model.write();
+      this.model.change(mutator => {
+        table.removeTable(mutator);
+      });
     } else {
       const cellXToSelect = position.x === tableDimensions.x - 1
         ? position.x - 1
-        : position.x + 1;
+        : position.x;
 
       const cellToSelect = table.getCell(cellXToSelect, position.y);
-      if (cellToSelect) {
-        selection.collapseIn(cellToSelect);
-      }
-      this.model.write();
 
-      table.removeColumn(position.x);
-      this.model.write();
+      this.model.change(mutator => {
+        if (cellToSelect) {
+          selection.collapseIn(cellToSelect);
+        }
+        table.removeColumn(mutator, position.x);
+      });
     }
   }
 }

@@ -9,7 +9,7 @@
   ul,
   ol,
   div {
-    @include say-font-size($say-base-font-size);
+    @include au-font-size($say-base-font-size);
     font-family: $say-base-font-family;
     font-weight: $say-base-font-weight;
   }
@@ -21,57 +21,57 @@
 
   h1,
   .h1 {
-    @include say-font-size($say-h1-font-size,1.1);
+    @include au-font-size($say-h1-font-size,1.1);
     font-family: $say-h1-font-family;
     font-weight: $say-h1-font-weight;
   }
 
   h2,
   .h2 {
-    @include say-font-size($say-h2-font-size,1.3);
+    @include au-font-size($say-h2-font-size,1.3);
     font-family: $say-h2-font-family;
     font-weight: $say-h2-font-weight;
   }
 
   h3,
   .h3 {
-    @include say-font-size($say-h3-font-size,1.3);
+    @include au-font-size($say-h3-font-size,1.3);
     font-family: $say-h3-font-family;
     font-weight: $say-h3-font-weight;
   }
 
   h4,
   .h4 {
-    @include say-font-size($say-h4-font-size);
+    @include au-font-size($say-h4-font-size);
     font-family: $say-h4-font-family;
     font-weight: $say-h4-font-weight;
   }
 
   h5,
   .h5 {
-    @include say-font-size($say-h5-font-size);
+    @include au-font-size($say-h5-font-size);
     font-family: $say-h5-font-family;
     font-weight: $say-h5-font-weight;
   }
 
   h6,
   .h6 {
-    @include say-font-size($say-h6-font-size);
+    @include au-font-size($say-h6-font-size);
     font-family: $say-h6-font-family;
     font-weight: $say-h6-font-weight;
   }
 
   p, li {
     &.small {
-      @include say-font-size($say-small-font-size);
+      @include au-font-size($say-small-font-size);
     }
 
     &.smaller {
-      @include say-font-size($say-smaller-font-size,1.5);
+      @include au-font-size($say-smaller-font-size,1.5);
     }
 
     &.smallest {
-      @include say-font-size($say-smallest-font-size,1.5);
+      @include au-font-size($say-smallest-font-size,1.5);
     }
   }
 
@@ -118,8 +118,8 @@
 
   // Style links
   a {
-    transition: color $say-transition, text-decoration $say-transition;
-    font-weight: $say-regular;
+    transition: color $au-transition, text-decoration $au-transition;
+    font-weight: $au-regular;
     text-decoration-color: $say-primary-300;
 
     &,
@@ -134,8 +134,8 @@
     }
 
     &:focus {
-      outline: $say-outline;
-      outline-offset: $say-unit-tiny/2;
+      outline: $au-outline;
+      outline-offset: $au-unit-tiny/2;
     }
   }
 
@@ -145,7 +145,7 @@
     list-style-type: initial;
 
     ul {
-      margin-left: $say-unit-small;
+      margin-left: $au-unit-small;
     }
 
     // Stop indenting
@@ -163,7 +163,7 @@
     list-style-type: decimal;
 
     ol {
-      margin-left: $say-unit-small;
+      margin-left: $au-unit-small;
     }
 
     // Stop indenting
@@ -258,16 +258,16 @@
   // Style horizontal rule
   hr {
     margin: 0;
-    margin-top: $say-unit;
-    margin-bottom: $say-unit;
+    margin-top: $au-unit;
+    margin-bottom: $au-unit;
     border: 0;
-    border-bottom: 3px solid $say-neutral-200;
+    border-bottom: 3px solid $au-gray-200;
   }
 
   // Add custom font styling
   strong,
   b {
-    font-weight: $say-medium;
+    font-weight: $au-bold;
   }
 
   em {
@@ -281,12 +281,12 @@
   // Table styling
   table th {
     white-space: initial;
-    background-color: $say-white;
+    background-color: $au-white;
   }
 
   .data-table th,
   .data-table td {
-    @include say-font-size($say-base,1.5);
+    @include au-font-size($say-base-font-size,1.5);
   }
 
   .data-table--lined.data-table--tight {
@@ -309,9 +309,9 @@
   // Imported HTML - Used for tables
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
     position: relative;
-    background-color: $say-neutral-200;
+    background-color: $au-gray-200;
     border-radius: .2rem;
-    outline: 2px dashed $say-neutral-300;
+    outline: 2px dashed $au-gray-300;
     outline-offset: .2rem;
     margin-top: 1.2rem;
     margin-bottom: 1.2rem;
@@ -325,8 +325,8 @@
 
     // Reset some table styles
     th {
-      font-weight: $say-medium;
-      border-bottom: 1px solid $say-neutral-300;
+      font-weight:$au-medium;
+      border-bottom: 1px solid $au-gray-300;
     }
 
     th,
@@ -335,7 +335,7 @@
       vertical-align: top;
       padding: .6rem;
       background-color: transparent !important;
-      border: 1px solid $say-neutral-300;
+      border: 1px solid $au-gray-300;
     }
 
     // Style links as plain text
@@ -344,7 +344,7 @@
       &:hover,
       &:visited,
       &:focus {
-        color: $say-neutral-800;
+        color: $au-gray-800;
         text-decoration: none;
       }
 
@@ -356,7 +356,7 @@
     // Style lists
     ul,
     ol {
-      margin-left: $say-unit-small + $say-unit-tiny;
+      margin-left: $au-unit-small + $au-unit-tiny;
     }
   }
 

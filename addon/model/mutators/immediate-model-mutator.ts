@@ -95,7 +95,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
    * @return resultRange the resulting range of the execution
    */
   setTextProperty(range: ModelRange, key: TextAttribute, value: boolean): ModelRange {
-    const op = new AttributeOperation(range, key, String(value));
+    const op = new AttributeOperation(range, key, value);
     return op.execute();
   }
 
@@ -205,6 +205,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
         this.insertAtPosition(resultRange.start, new ModelElement("br"));
       }
     }
+
     return resultRange;
   }
 

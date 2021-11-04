@@ -38,6 +38,8 @@ import InsertTableRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert
 import InsertTableRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
 import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
 import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
+import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
+import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
 import DeleteCharacterBackwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-character-backwards-command";
 import DeleteListBackwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-list-backwards-command";
 import DeleteLiBackwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-li-backwards-command";
@@ -59,6 +61,7 @@ import MoveRightCommand from "@lblod/ember-rdfa-editor/commands/move-right-comma
 class RawEditor extends EmberObject {
   registeredCommands: Map<string, Command> = new Map<string, Command>();
   modelSelectionTracker!: ModelSelectionTracker;
+
   private _model?: Model;
   protected tryOutVdom = true;
 
@@ -79,22 +82,24 @@ class RawEditor extends EmberObject {
    * @private
    */
   updateRichNode() {
-    const richNode = walkDomNode(this.rootNode);
-    this.set('richNode', richNode);
+    this.richNode = walkDomNode(this.rootNode);
   }
 
   initialize(rootNode: HTMLElement) {
     if (this.modelSelectionTracker) {
       this.modelSelectionTracker.stopTracking();
     }
+
     this.registeredCommands = new Map<string, Command>();
     this._model = new Model(rootNode);
     this.modelSelectionTracker = new ModelSelectionTracker(this._model);
     this.modelSelectionTracker.startTracking();
+
     window.__VDOM = this.model;
     window.__executeCommand = (commandName: string, ...args: unknown[]) => {
       this.executeCommand(commandName, ...args);
     };
+
     this.registerCommand(new MakeBoldCommand(this.model));
     this.registerCommand(new RemoveBoldCommand(this.model));
     this.registerCommand(new MakeItalicCommand(this.model));
@@ -129,6 +134,8 @@ class RawEditor extends EmberObject {
 
     this.registerCommand(new MoveLeftCommand(this.model));
     this.registerCommand(new MoveRightCommand(this.model));
+    this.registerCommand(new ReadSelectionCommand(this.model));
+    this.registerCommand(new UndoCommand(this.model));
   }
 
   /**
@@ -153,7 +160,6 @@ class RawEditor extends EmberObject {
     return this.model.selection;
   }
 
-
   get rootModelNode(): ModelElement {
     return this.model.rootModelNode;
   }
@@ -170,7 +176,7 @@ class RawEditor extends EmberObject {
   }
 
   /**
-   * Register a command for use with {@link executeCommand}
+   * Register a command for use with {@link executeCommand}.
    * @param command
    */
   registerCommand(command: Command) {
@@ -197,7 +203,7 @@ class RawEditor extends EmberObject {
   }
 
   /**
-   * Check if a command can be executed in the given context
+   * Check if a command can be executed in the given context.
    * It is not required to check this before executing, as a command will
    * not run when this condition is not met. But it can be useful know if a command
    * is valid without running it.
@@ -217,7 +223,7 @@ class RawEditor extends EmberObject {
   }
 
   /**
-   * create a Range within the virtual dom
+   * Create a range within the virtual dom.
    * @param path1
    * @param path2
    */
@@ -226,11 +232,11 @@ class RawEditor extends EmberObject {
   }
 
   /**
-   * create a selection on the virtual dom
-   * starts out without any selected ranges
+   * Create a selection on the virtual dom.
+   * Starts out without any selected ranges.
    */
   createSelection(): ModelSelection {
-    return new ModelSelection(this.model);
+    return new ModelSelection();
   }
 
   on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>) {

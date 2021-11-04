@@ -1,10 +1,4 @@
 {
-  "git": {
-    "requireBranch": [
-      "master",
-      "development"
-    ]
-  },
   "github": {
     "release": true
   },

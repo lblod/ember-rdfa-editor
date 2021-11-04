@@ -13,9 +13,11 @@ export default class ModelRangeUtils {
     if (ModelNodeUtils.isPlaceHolder(copyRange.start.parent)) {
       copyRange.start = ModelPosition.fromBeforeNode(copyRange.start.parent);
     }
+
     if (ModelNodeUtils.isPlaceHolder(copyRange.end.parent)) {
       copyRange.end = ModelPosition.fromAfterNode(copyRange.end.parent);
     }
+
     return copyRange;
   }
 

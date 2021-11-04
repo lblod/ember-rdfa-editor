@@ -60,7 +60,7 @@
 }
 
 .flatpickr-calendar.multiMonth .flatpickr-days .dayContainer:nth-child(n+2) .flatpickr-day.inRange:nth-child(7n+1) {
-  box-shadow: -2px 0 0 $say-gray-200, 5px 0 0 $say-gray-200;
+  box-shadow: -2px 0 0 $au-gray-200, 5px 0 0 $au-gray-200;
 }
 
 .flatpickr-calendar .hasWeeks .dayContainer,
@@ -76,7 +76,7 @@
 
 .flatpickr-calendar.showTimeInput.hasTime .flatpickr-time {
   height: 40px;
-  border-top: 1px solid $say-gray-100;
+  border-top: 1px solid $au-gray-100;
 }
 
 .flatpickr-calendar.showTimeInput.hasTime .flatpickr-innerContainer {
@@ -84,7 +84,7 @@
 }
 
 .flatpickr-calendar.showTimeInput.hasTime .flatpickr-time {
-  border: 1px solid $say-gray-100;
+  border: 1px solid $au-gray-100;
 }
 
 .flatpickr-calendar.noCalendar.hasTime .flatpickr-time {
@@ -124,11 +124,11 @@
 }
 
 .flatpickr-calendar.arrowTop:before {
-  border-bottom-color: $say-gray-100;
+  border-bottom-color: $au-gray-100;
 }
 
 .flatpickr-calendar.arrowTop:after {
-  border-bottom-color: $say-gray-100;
+  border-bottom-color: $au-gray-100;
 }
 
 .flatpickr-calendar.arrowBottom:before,
@@ -137,11 +137,11 @@
 }
 
 .flatpickr-calendar.arrowBottom:before {
-  border-top-color: $say-gray-100;
+  border-top-color: $au-gray-100;
 }
 
 .flatpickr-calendar.arrowBottom:after {
-  border-top-color: $say-gray-100;
+  border-top-color: $au-gray-100;
 }
 
 .flatpickr-calendar:focus {
@@ -159,9 +159,9 @@
 
 .flatpickr-months .flatpickr-month {
   border-radius: 5px 5px 0 0;
-  background: $say-white;
-  color: $say-gray-700;
-  fill: $say-gray-700;
+  background: $au-white;
+  color: $au-gray-700;
+  fill: $au-gray-700;
   height: 4.1rem;
   line-height: 1;
   text-align: center;
@@ -169,7 +169,7 @@
   user-select: none;
   overflow: hidden;
   flex: 1;
-  border-bottom: .1rem solid $say-gray-200;
+  border-bottom: .1rem solid $au-gray-200;
 }
 
 .flatpickr-months .flatpickr-prev-month,
@@ -181,8 +181,8 @@
   height: 34px;
   padding: 10px;
   z-index: 3;
-  color: $say-gray-700;
-  fill: $say-gray-700;
+  color: $au-gray-700;
+  fill: $au-gray-700;
 }
 
 .flatpickr-months .flatpickr-prev-month.flatpickr-disabled,
@@ -229,7 +229,7 @@
       /*rtl:end:ignore*/
 .flatpickr-months .flatpickr-prev-month:hover,
 .flatpickr-months .flatpickr-next-month:hover {
-  color: $say-gray-300;
+  color: $au-gray-300;
 }
 .flatpickr-months .flatpickr-prev-month:hover svg,
 .flatpickr-months .flatpickr-next-month:hover svg {
@@ -376,11 +376,11 @@
 }
 
 .flatpickr-current-month .numInputWrapper span.arrowUp:after {
-  border-bottom-color: $say-gray-700;
+  border-bottom-color: $au-gray-700;
 }
 
 .flatpickr-current-month .numInputWrapper span.arrowDown:after {
-  border-top-color: $say-gray-700;
+  border-top-color: $au-gray-700;
 }
 
 .flatpickr-current-month input.cur-year {
@@ -403,7 +403,7 @@
   -webkit-appearance: textfield;
   -moz-appearance: textfield;
   appearance: textfield;
-  border: .1rem solid $say-gray-200;
+  border: .1rem solid $au-gray-200;
 }
 
 .flatpickr-current-month input.cur-year:focus {
@@ -420,7 +420,7 @@
 
 .flatpickr-current-month .flatpickr-monthDropdown-months {
   appearance: menulist;
-  background: $say-white;
+  background: $au-white;
   border: none;
   border-radius: 0;
   box-sizing: border-box;
@@ -440,8 +440,8 @@
   -webkit-appearance: menulist;
   -moz-appearance: menulist;
   width: auto;
-  border: .1rem solid $say-gray-200;
-  margin-right: $say-unit-tiny;
+  border: .1rem solid $au-gray-200;
+  margin-right: $au-unit-tiny;
 }
 
 .flatpickr-current-month .flatpickr-monthDropdown-months:focus,
@@ -454,21 +454,21 @@
 }
 
 .flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
-  background-color: $say-gray-100;
+  background-color: $au-gray-100;
   outline: none;
   padding: 0;
 }
 
 .flatpickr-weekdays {
-  background: $say-gray-100;
+  background: $au-gray-100;
   text-align: center;
   overflow: hidden;
   width: 100%;
   display: flex;
   align-items: center;
   height: 28px;
-  border-bottom: .1rem solid $say-gray-200;
-  margin-bottom: $say-unit-tiny;
+  border-bottom: .1rem solid $au-gray-200;
+  margin-bottom: $au-unit-tiny;
 }
 
 .flatpickr-weekdays .flatpickr-weekdaycontainer {
@@ -479,8 +479,8 @@
 span.flatpickr-weekday {
   cursor: default;
   font-size: 90%;
-  background: $say-gray-100;
-  color: $say-gray-700;
+  background: $au-gray-100;
+  color: $au-gray-700;
   line-height: 1;
   margin: 0;
   text-align: center;
@@ -500,8 +500,8 @@ span.flatpickr-weekday {
   display: flex;
   align-items: flex-start;
   width: 307.875px;
-  border-left: 1px solid $say-gray-100;
-  border-right: 1px solid $say-gray-100;
+  border-left: 1px solid $au-gray-100;
+  border-right: 1px solid $au-gray-100;
 }
 
 .flatpickr-days:focus {
@@ -525,7 +525,7 @@ span.flatpickr-weekday {
 }
 
 .dayContainer + .dayContainer {
-  box-shadow: -1px 0 0 $say-gray-100;
+  box-shadow: -1px 0 0 $au-gray-100;
 }
 
 .flatpickr-day {
@@ -533,7 +533,7 @@ span.flatpickr-weekday {
   border: .1rem solid transparent;
   border-radius: 150px;
   box-sizing: border-box;
-  color: $say-gray-800;
+  color: $au-gray-800;
   cursor: pointer;
   font-weight: 400;
   width: 14.2857143%;
@@ -562,19 +562,19 @@ span.flatpickr-weekday {
 .flatpickr-day.nextMonthDay:focus {
   cursor: pointer;
   outline: 0;
-  background: $say-gray-200;
+  background: $au-gray-200;
   border-color: transparent;
 }
 
 .flatpickr-day.today {
-  border-color: $say-gray-300;
+  border-color: $au-gray-300;
 }
 
 .flatpickr-day.today:hover,
 .flatpickr-day.today:focus {
-  border-color: $say-gray-300;
-  background: $say-gray-200;
-  color: $say-gray-900;
+  border-color: $au-gray-300;
+  background: $au-gray-200;
+  color: $au-gray-900;
 }
 
 .flatpickr-day.selected,
@@ -597,7 +597,7 @@ span.flatpickr-weekday {
 .flatpickr-day.endRange.nextMonthDay {
   background: $say-primary-700;
   box-shadow: none;
-  color: $say-white;
+  color: $au-white;
   border-color: $say-primary-700;
 }
 
@@ -668,7 +668,7 @@ span.flatpickr-weekday {
 
 .flatpickr-weekwrapper .flatpickr-weeks {
   padding: 0 12px;
-  border-left: 1px solid $say-gray-100;
+  border-left: 1px solid $au-gray-100;
 }
 
 .flatpickr-weekwrapper .flatpickr-weekday {
@@ -693,8 +693,8 @@ span.flatpickr-weekday {
   display: flex;
   box-sizing: border-box;
   overflow: hidden;
-  background: $say-white;
-  border-bottom: 1px solid $say-gray-100;
+  background: $au-white;
+  border-bottom: 1px solid $au-gray-100;
 }
 
 .flatpickr-rContainer {
@@ -713,7 +713,7 @@ span.flatpickr-weekday {
   box-sizing: border-box;
   overflow: hidden;
   display: flex;
-  background: $say-white;
+  background: $au-white;
   border-radius: 0 0 5px 5px;
 }
 
@@ -731,11 +731,11 @@ span.flatpickr-weekday {
 }
 
 .flatpickr-time .numInputWrapper span.arrowUp:after {
-  border-bottom-color: $say-gray-500;
+  border-bottom-color: $au-gray-500;
 }
 
 .flatpickr-time .numInputWrapper span.arrowDown:after {
-  border-top-color: $say-gray-500;
+  border-top-color: $au-gray-500;
 }
 
 .flatpickr-time.hasSeconds .numInputWrapper {
@@ -756,7 +756,7 @@ span.flatpickr-weekday {
   padding: 0;
   height: inherit;
   line-height: inherit;
-  color: $say-gray-700;
+  color: $au-gray-700;
   font-size: 14px;
   position: relative;
   box-sizing: border-box;
@@ -782,7 +782,7 @@ span.flatpickr-weekday {
   height: inherit;
   float: left;
   line-height: inherit;
-  color: $say-gray-500;
+  color: $au-gray-500;
   font-weight: bold;
   width: 2%;
   user-select: none;
@@ -801,7 +801,7 @@ span.flatpickr-weekday {
 .flatpickr-time .flatpickr-am-pm:hover,
 .flatpickr-time input:focus,
 .flatpickr-time .flatpickr-am-pm:focus {
-  background: $say-gray-300;
+  background: $au-gray-300;
 }
 
 .flatpickr-input[readonly] {

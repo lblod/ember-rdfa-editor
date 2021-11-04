@@ -46,16 +46,17 @@ export default class RdfaDocument {
     const root = this._editor.model.toXml() as Element;
     let result = '';
     for (const child of root.childNodes) {
-
       let formatted;
+
       try {
         formatted = xmlFormat((child as Element).outerHTML);
       } catch (e) {
         formatted = (child as Element).outerHTML;
       }
-      result += formatted;
 
+      result += formatted;
     }
+
     return result;
   }
 

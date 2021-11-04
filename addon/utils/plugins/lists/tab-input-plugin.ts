@@ -1,5 +1,5 @@
 import {TabHandlerManipulation, TabInputPlugin} from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import { Editor, ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import {ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {
   isList,
   isLI,
@@ -10,6 +10,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { indentAction, unindentAction } from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
+import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
 
 /**
  * Current behaviour
@@ -23,7 +24,7 @@ import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/uti
 export default class ListTabInputPlugin implements TabInputPlugin {
   label = "Tab input plugin for handling List interaction";
 
-  guidanceForManipulation(manipulation : TabHandlerManipulation) : ManipulationGuidance | null {
+  guidanceForManipulation(manipulation: TabHandlerManipulation): ManipulationGuidance | null {
     if (manipulation.type === "moveCursorToStartOfElement") {
       if (isList(manipulation.node)){
         return { allow: true, executor: this.jumpIntoFirstLi };
@@ -84,7 +85,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /**
    * Sets the cursor in the first <li></li>. If list is empty, creates an <li></li>.
    */
-  jumpIntoFirstLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
+  jumpIntoFirstLi = (manipulation: TabHandlerManipulation, editor: PernetRawEditor): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let firstLi;
 
@@ -102,7 +103,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /**
    * Sets the cursor in the last <li></li>. If list is empty, creates an <li></li>.
    */
-  jumpIntoLastLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
+  jumpIntoLastLi = (manipulation: TabHandlerManipulation, editor: PernetRawEditor): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let lastLi;
 
@@ -123,7 +124,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Note: Depends on list helpers from a long time ago.
    * TODO: Indent means the same as nested list, perhaps rename the action
    */
-  indentLiContent = (_: TabHandlerManipulation, editor: Editor): void => {
+  indentLiContent = (_: TabHandlerManipulation, editor: PernetRawEditor): void => {
     indentAction(editor); //TODO: this is legacy, this should be revisited.
   };
 
@@ -132,14 +133,14 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Note: Depends on list helpers from a long time ago.
    * TODO: Indent means the same as merge nested list, perhaps rename the action
    */
-  unindentLiContent = (_: TabHandlerManipulation, editor: Editor): void => {
+  unindentLiContent = (_: TabHandlerManipulation, editor: PernetRawEditor): void => {
     unindentAction(editor); //TODO: this is legacy, this should be revisited.
   };
 
   /**
    * Jumps to next List item. Assumes there is one and current LI is not the last.
    */
-  jumpToNextLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
+  jumpToNextLi = (manipulation: TabHandlerManipulation, editor: PernetRawEditor): void => {
     //Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLLIElement;
     const listItems = siblingLis(listItem);
@@ -150,7 +151,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /**
    * Jumps to next List item. Assumes there is one and current LI is not the first.
    */
-  jumpToPreviousLi = (manipulation: TabHandlerManipulation, editor: Editor): void => {
+  jumpToPreviousLi = (manipulation: TabHandlerManipulation, editor: PernetRawEditor): void => {
     // Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLLIElement;
     const listItems = siblingLis(listItem);
@@ -161,7 +162,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /**
    * Jumps outside of list.
    */
-  jumpOutOfList = (manipulation: TabHandlerManipulation, editor: Editor): void => {
+  jumpOutOfList = (manipulation: TabHandlerManipulation, editor: PernetRawEditor): void => {
     const element = manipulation.node.parentElement; // This is the list.
     if (!element) {
       throw new Error("Tab-input-handler expected list to be attached to DOM");
@@ -183,7 +184,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /**
    * Jumps outside of at the start.
    */
-  jumpOutOfListToStart = (manipulation: TabHandlerManipulation, editor: Editor): void => {
+  jumpOutOfListToStart = (manipulation: TabHandlerManipulation, editor: PernetRawEditor): void => {
     const element = manipulation.node.parentElement; // This is the list.
     if (!element) {
       throw new Error("Tab-input-handler expected list to be attached to DOM");
@@ -204,7 +205,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   };
 }
 
-function setCursorAtStartOfLi(listItem : HTMLElement, editor: Editor): void{
+function setCursorAtStartOfLi(listItem : HTMLElement, editor: PernetRawEditor): void{
   let textNode;
   if (listItem.firstChild && isTextNode(listItem.firstChild)) {
     textNode = listItem.firstChild;
@@ -218,7 +219,7 @@ function setCursorAtStartOfLi(listItem : HTMLElement, editor: Editor): void{
   editor.setCaret(textNode, 0);
 }
 
-function setCursorAtEndOfLi(listItem : HTMLElement, editor: Editor): void {
+function setCursorAtEndOfLi(listItem : HTMLElement, editor: PernetRawEditor): void {
   let textNode;
   if (listItem.lastChild && isTextNode(listItem.lastChild)) {
     textNode = listItem.lastChild;
