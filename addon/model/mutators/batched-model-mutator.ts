@@ -17,7 +17,7 @@ export default class BatchedModelMutator extends ModelMutator<void> {
   private batch: Operation[] = [];
 
   setTextProperty(range: ModelRange, key: TextAttribute, value: boolean) {
-    const op = new AttributeOperation(range, key, String(value));
+    const op = new AttributeOperation(range, key, value);
     this.batch.push(op);
   }
 
