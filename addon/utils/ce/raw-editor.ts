@@ -59,6 +59,7 @@ class RawEditor extends EmberObject {
 
   private _model?: Model;
   protected tryOutVdom = true;
+  protected eventBus: EventBus;
 
   /**
    * a rich representation of the dom tree created with {{#crossLink "NodeWalker"}}NodeWalker{{/crossLink}}
@@ -70,6 +71,7 @@ class RawEditor extends EmberObject {
 
   constructor(properties?: Record<string, unknown>) {
     super(properties);
+    this.eventBus = new EventBus();
   }
 
   /**
@@ -229,11 +231,11 @@ class RawEditor extends EmberObject {
   }
 
   on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>) {
-    EventBus.on(eventName, callback);
+    this.eventBus.on(eventName, callback);
   }
 
   off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>) {
-    EventBus.off(eventName, callback);
+    this.eventBus.off(eventName, callback);
   }
 }
 

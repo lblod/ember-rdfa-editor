@@ -13,32 +13,11 @@ export type EditorEventName = keyof EDITOR_EVENT_MAP;
 export type EditorEventListener<E extends EditorEventName> = (event: EditorEvent<E>) => void;
 
 export default class EventBus {
-  static instance: EventBus;
-
-  private static getInstance() {
-    if (!this.instance) {
-      this.instance = new EventBus();
-    }
-    return this.instance;
-  }
-
-  static on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
-    this.getInstance().on(eventName, callback);
-  }
-
-  static off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
-    this.getInstance().off(eventName, callback);
-  }
-
-  // TODO: figure out how to allow void events to omit the payload argument
-  static emit<E extends EditorEventName>(eventName: E, payload: EDITOR_EVENT_MAP[E]): void {
-    this.getInstance().emit(eventName, payload);
-  }
 
   private listeners: Map<EditorEventName, Array<EditorEventListener<EditorEventName>>> = new Map<EditorEventName, Array<EditorEventListener<EditorEventName>>>();
   private logger: Logger = createLogger("EventBus");
 
-  private on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
+  on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
     const eventListeners = this.listeners.get(eventName);
     if (eventListeners) {
       eventListeners.push(callback);
@@ -47,7 +26,7 @@ export default class EventBus {
     }
   }
 
-  private off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
+  off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>): void {
     const eventListeners = this.listeners.get(eventName);
     if (eventListeners) {
       const index = eventListeners.indexOf(callback);
@@ -58,7 +37,7 @@ export default class EventBus {
 
   }
 
-  private emit<E extends EditorEventName>(eventName: E, payload: EDITOR_EVENT_MAP[E]): void {
+  emit<E extends EditorEventName>(eventName: E, payload: EDITOR_EVENT_MAP[E]): void {
     const eventListeners = this.listeners.get(eventName);
     this.logger.log(`Emitting event: ${eventName} with payload:`, payload);
     if (eventListeners) {
