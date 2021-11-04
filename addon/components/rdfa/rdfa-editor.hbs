@@ -12,6 +12,9 @@
         Voeg sjabloon in
       </AuButton>
       {{/if}}
+      {{#each this.toolbarWidgets as |widget|}}
+        {{component widget.componentName controller=widget.controller plugin=widget.plugin}}
+      {{/each}}
     </Rdfa::EditorToolbar>
   {{/if}}
 
@@ -40,6 +43,13 @@
               </li>
             {{/each}}
           {{/if}}
+          {{#each this.sidebarWidgets as |widget|}}
+            <li class="say-editor-hints__list-item">
+              <div class="say-card"> {{!-- Todo: remove this div once it is over --}}
+                {{component widget.componentName controller=widget.controller plugin=widget.plugin}}
+              </div>
+            </li>
+          {{/each}}
         </ul>
       </div>
       {{yield}}

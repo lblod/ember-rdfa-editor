@@ -13,7 +13,7 @@ import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import {EditorPlugin} from "@lblod/ember-rdfa-editor/utils/editor-plugin";
 import ApplicationInstance from '@ember/application/instance';
-import {RawEditorController} from "@lblod/ember-rdfa-editor/model/controller";
+import {InternalWidgetSpec, RawEditorController} from "@lblod/ember-rdfa-editor/model/controller";
 
 interface DebugInfo {
   hintsRegistry: HintsRegistry
@@ -101,6 +101,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked hintsRegistry?: HintsRegistry;
 
   @tracked suggestedHints: SuggestedHint[] = [];
+  @tracked toolbarWidgets: InternalWidgetSpec[] = [];
+  @tracked sidebarWidgets: InternalWidgetSpec[] = [];
   private owner: ApplicationInstance;
   activePlugins: EditorPlugin[] = [];
 
@@ -138,6 +140,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   get plugins(): string[] {
     return this.args.plugins || [];
   }
+
 
   /**
    * editor controller
@@ -196,6 +199,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   async handleRawEditorInit(editor: PernetRawEditor) {
     this.editor = editor;
     await this.initializePlugins(editor);
+    this.toolbarWidgets = editor.widgetMap.get("toolbar") || [];
+    this.sidebarWidgets = editor.widgetMap.get("sidebar") || [];
     this.hintsRegistry = new HintsRegistry(editor);
     this.eventProcessor = new EventProcessor({
       registry: this.hintsRegistry,

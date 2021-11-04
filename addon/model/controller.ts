@@ -2,14 +2,19 @@ import Command from "@lblod/ember-rdfa-editor/commands/command";
 import {AnyEventName, EditorEventListener, ListenerConfig} from "@lblod/ember-rdfa-editor/utils/event-bus";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {EditorPlugin} from "@lblod/ember-rdfa-editor/utils/editor-plugin";
 
 export type WidgetLocation = "toolbar" | "sidebar";
 
 export interface WidgetSpec {
   componentName: string;
   desiredLocation: WidgetLocation;
+  plugin: EditorPlugin;
 }
+
+export type InternalWidgetSpec = WidgetSpec & {
+  controller: Controller
+};
 
 export default interface Controller {
   get name(): string;
@@ -62,7 +67,7 @@ export class RawEditorController implements Controller {
   }
 
   registerWidget(_spec: WidgetSpec): void {
-    throw new NotImplementedError();
+    this._rawEditor.registerWidget({..._spec, controller: this});
   }
 
 
