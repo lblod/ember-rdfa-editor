@@ -19,9 +19,7 @@ export default class DeleteCharacterBackwardsCommand extends Command {
     }
 
     // Make sure the cursor is right behind a character or "br".
-    return range.collapsed
-      && !!range.start.nodeBefore()
-      && ModelNodeUtils.isTextRelated(range.start.nodeBefore());
+    return range.collapsed && ModelNodeUtils.isTextRelated(range.start.nodeBefore());
   }
 
   execute(range: ModelRange | null = this.model.selection.lastRange): void {

@@ -22,7 +22,7 @@ import ArrowHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/arrow-h
 import IgnoreModifiersHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/ignore-modifiers-handler";
 import UndoHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler";
 import FallbackInputHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/fallback-input-handler";
-import DisableDeleteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/disable-delete-handler";
+import DeleteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler-new";
 
 interface FeatureService {
   isEnabled(key: string): boolean
@@ -126,7 +126,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       new BackspaceHandler({ rawEditor }),
       new TabHandler({ rawEditor }),
       new TextInputHandler({ rawEditor }),
-      new DisableDeleteHandler({ rawEditor }),
+      new DeleteHandler({ rawEditor }),
       new IgnoreModifiersHandler({ rawEditor }),
       new UndoHandler({ rawEditor }),
       new BoldItalicUnderlineHandler({ rawEditor }),

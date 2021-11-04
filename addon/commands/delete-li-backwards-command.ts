@@ -54,9 +54,20 @@ export default class DeleteLiBackwardsCommand extends Command {
         mutator.insertNodes(rangeAroundLi);
       }
 
-      const newCursorPosition = lastLi
-        ? ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset())
-        : ModelPosition.fromBeforeNode(topListContainer);
+      let newCursorPosition: ModelPosition;
+      if (lastLi) {
+        // If we have found a previous list element in uppermost list container the cursor is in,
+        // we insert nodes right before the first nested list in this list element or at the end if there
+        // is no nested list.
+        const firstListContainer = lastLi.findFirstChild(ModelNodeUtils.isListContainer);
+        newCursorPosition = firstListContainer
+          ? ModelPosition.fromBeforeNode(firstListContainer)
+          : ModelPosition.fromInNode(lastLi, lastLi.getMaxOffset());
+      } else {
+        // If we haven't found a previous list element, we just move the content in `nodesToMove` right before
+        // the upper most list container.
+        newCursorPosition = ModelPosition.fromBeforeNode(topListContainer);
+      }
 
       const newRange = new ModelRange(newCursorPosition);
       this.model.selectRange(newRange);
