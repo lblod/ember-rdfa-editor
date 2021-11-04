@@ -68,14 +68,15 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
     if (cur) {
       found = this.nodeFilter(cur) && this.predicate(cur);
     }
+
     while (cur && !found && cur !== this.endNode) {
       cur = this.findNextNode();
       if (cur) {
         found = this.nodeFilter(cur) && this.predicate(cur);
       }
     }
-    if(cur === this.endNode) {
 
+    if (cur === this.endNode) {
       // we've visited the endNode, so we clear out any pending nodes
       this.stack = [];
       this._current = cur;
@@ -93,6 +94,7 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
     while (candidate && !this.nodeFilter(candidate) && candidate !== this.endNode) {
       candidate = this.findNextNodeToConsider();
     }
+
     return candidate as R;
   }
 
@@ -106,9 +108,11 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
     while (node && this.visited.get(node)) {
       node = this.stack.pop();
     }
+
     if (!node) {
       return null;
     }
+
     this.visited.set(node, true);
     let prev = this.nextSibling(node, this.inverseDirection(this.direction));
     // We dont want to visit siblings in the other direction
@@ -126,13 +130,12 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
     }
     // TODO: I think this should not be configurable but instead should never
     // use the sibling links, it leads to too much confusion
-    if(this.visitSiblings) {
+    if (this.visitSiblings) {
       const sibling = this.nextSibling(node, this.direction);
       if (sibling && node !== this.rootNode) {
         this.stack.push(sibling);
       }
     }
-
 
     const children = this.getChildren(node);
     if (children) {
@@ -188,7 +191,6 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
     }
   }
 
-
   [Symbol.iterator](): Iterator<R> {
     return {
       next: (): IteratorResult<R, null> => {
@@ -207,5 +209,4 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
       }
     };
   }
-
 }

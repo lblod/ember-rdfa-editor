@@ -93,6 +93,7 @@ export default class ModelRange {
     if (this.start.root !== this.end.root) {
       return null;
     }
+
     return ModelPosition.getCommonPosition(this.start, this.end);
   }
 

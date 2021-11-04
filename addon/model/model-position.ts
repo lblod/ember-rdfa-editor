@@ -189,8 +189,9 @@ export default class ModelPosition {
    */
   compare(other: ModelPosition): RelativePosition {
     if (this.root !== other.root) {
-      throw new PositionError("cannot compare nodes with different roots");
+      throw new PositionError("Cannot compare nodes with different roots");
     }
+
     return ModelPosition.comparePath(this.path, other.path);
   }
 
@@ -276,6 +277,7 @@ export default class ModelPosition {
     } else if (path1.length > path2.length) {
       return RelativePosition.AFTER;
     }
+
     return RelativePosition.EQUAL;
   }
 
@@ -348,10 +350,39 @@ export default class ModelPosition {
         i++;
         charIndex = startSearch - 1 - i;
       }
+
       cur = cur.previousSibling;
     }
 
     result.reverse();
+    return result.join("");
+  }
+
+  charactersAfter(amount: number): string {
+    let current = this.nodeAfter();
+    let counter = 0;
+    const result = [];
+
+    while (ModelNode.isModelText(current) && counter < amount) {
+      const amountToCollect = amount - counter;
+      const startSearch = current === this.nodeBefore()
+        ? this.parentOffset - current.getOffset()
+        : 0;
+      const max = current.length;
+
+      let i = 0;
+      let charIndex = startSearch;
+      while (i < amountToCollect && charIndex < max) {
+        result.push(current.content.charAt(startSearch + i));
+        counter++;
+        i++;
+
+        charIndex = startSearch + i;
+      }
+
+      current = current.nextSibling;
+    }
+
     return result.join("");
   }
 

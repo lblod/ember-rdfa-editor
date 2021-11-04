@@ -40,6 +40,11 @@ import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/in
 import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
 import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
 import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
+import DeleteCharacterBackwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-character-backwards-command";
+import DeleteListBackwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-list-backwards-command";
+import DeleteLiBackwardsCommand from "@lblod/ember-rdfa-editor/commands/delete-li-backwards-command";
+import MoveLeftCommand from "@lblod/ember-rdfa-editor/commands/move-left-command";
+import MoveRightCommand from "@lblod/ember-rdfa-editor/commands/move-right-command";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -123,6 +128,12 @@ class RawEditor extends EmberObject {
     this.registerCommand(new InsertXmlCommand(this.model));
     this.registerCommand(new InsertTextCommand(this.model));
     this.registerCommand(new DeleteSelectionCommand(this.model));
+    this.registerCommand(new DeleteCharacterBackwardsCommand(this.model));
+    this.registerCommand(new DeleteListBackwardsCommand(this.model));
+    this.registerCommand(new DeleteLiBackwardsCommand(this.model));
+
+    this.registerCommand(new MoveLeftCommand(this.model));
+    this.registerCommand(new MoveRightCommand(this.model));
     this.registerCommand(new ReadSelectionCommand(this.model));
     this.registerCommand(new UndoCommand(this.model));
   }

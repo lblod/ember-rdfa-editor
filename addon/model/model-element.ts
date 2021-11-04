@@ -422,12 +422,22 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   isMergeable(other: ModelNode): boolean {
-    if(!ModelNode.isModelElement(other)) {
+    if (!ModelNode.isModelElement(other)) {
       return false;
     }
-    if(other.type !== this.type) {
+    if (other.type !== this.type) {
       return false;
     }
     return ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap);
+  }
+
+  findFirstChild(predicate: (node: ModelNode) => boolean): ModelNode | null {
+    for (const child of this.children) {
+      if (predicate(child)) {
+        return child;
+      }
+    }
+
+    return null;
   }
 }
