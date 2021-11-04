@@ -56,7 +56,7 @@ export default class MakeListCommand extends Command {
         this.model.rootModelNode.getMaxOffset()
       );
       const cleaner = new ListCleaner();
-      cleaner.clean(fullRange);
+      cleaner.clean(fullRange, mutator);
 
       let resultRange;
       if (wasCollapsed) {

@@ -3,8 +3,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import XmlNodeWriter from "@lblod/ember-rdfa-editor/model/writers/xml-node-writer";
 
 export default class XmlElementWriter implements Writer<ModelElement, Element> {
-  constructor(private document: XMLDocument) {
-  }
+  constructor(private document: XMLDocument) {}
 
   write(modelElement: ModelElement): Element {
     const el = this.document.createElement(modelElement.type);
@@ -17,8 +16,7 @@ export default class XmlElementWriter implements Writer<ModelElement, Element> {
       const childNode = nodeWriter.write(child);
       el.appendChild(childNode);
     }
+
     return el;
   }
-
-
 }

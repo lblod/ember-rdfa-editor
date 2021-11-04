@@ -7,18 +7,18 @@
 }
 
 .say-article__section {
-  @include say-font-size($say-h6);
-  padding: $say-unit;
+  @include au-font-size($au-h6);
+  padding: $au-unit;
   display: flex;
   flex-direction: row-reverse;
 
   & + & {
-    border-top: .1rem solid $say-neutral-200;
+    border-top: .1rem solid $au-gray-200;
   }
 }
 
 .say-article__section--highlight {
-  background-color: $say-neutral-100;
+  background-color: $au-gray-100;
 }
 
 .say-article__action {
@@ -28,71 +28,71 @@
 }
 
 .say-article__content {
-  color: $say-neutral-800;
-  margin-right: $say-unit;
+  color: $au-gray-800;
+  margin-right: $au-unit;
 
   > * {
     max-width: 90ch;
   }
 
   > * + * {
-    margin-top: $say-unit-small;
+    margin-top: $au-unit-small;
   }
 
   h1,
   .h1 {
-    @include say-font-size($say-h2-font-size,1.3);
+    @include au-font-size($say-h2-font-size,1.3);
     font-family: $say-h2-font-family;
     font-weight: $say-h2-font-weight;
   }
 
   h2,
   .h2 {
-    @include say-font-size($say-h3-font-size,1.3);
+    @include au-font-size($say-h3-font-size,1.3);
     font-family: $say-h3-font-family;
     font-weight: $say-h3-font-weight;
   }
 
   h3,
   .h3 {
-    @include say-font-size($say-h4-font-size);
+    @include au-font-size($say-h4-font-size);
     font-family: $say-h4-font-family;
     font-weight: $say-h4-font-weight;
   }
 
   h4,
   .h4 {
-    @include say-font-size($say-h5-font-size);
+    @include au-font-size($say-h5-font-size);
     font-family: $say-h5-font-family;
     font-weight: $say-h5-font-weight;
   }
 
   h5,
   .h5 {
-    @include say-font-size($say-h6-font-size);
+    @include au-font-size($say-h6-font-size);
     font-family: $say-h6-font-family;
     font-weight: $say-h6-font-weight;
   }
 
   h6,
   .h6 {
-    @include say-font-size($say-h6-font-size);
+    @include au-font-size($say-h6-font-size);
     font-family: $say-h6-font-family;
     font-weight: $say-h6-font-weight;
   }
 }
 
 .say-article__insert {
-  @include say-font-size($say-h6);
+  @include au-font-size($au-h6);
   color: $say-primary-700;
-  font-family: $say-font;
+  font-family: $say-font-family;
   appearance: none;
   padding: 0;
   border: 0;
   display: inline-flex;
   align-items: center;
   border-radius: .2rem;
-  transition: color $say-transition, background-color $say-transition;
+  transition: color $au-transition, background-color $au-transition;
   white-space: nowrap;
 
   &:hover,

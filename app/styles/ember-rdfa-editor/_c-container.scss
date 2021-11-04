@@ -21,11 +21,11 @@
   .say-container__aside {
     position: absolute;
     bottom: 0;
-    right: $say-unit-small + $say-unit-tiny;
+    right: $au-unit-small + $au-unit-tiny;
     width: 380px;
     max-height: calc(100% - 44px);
     overflow: auto;
-    padding: $say-unit-small $say-unit-small + $say-unit-tiny;
+    padding: $au-unit-small $au-unit-small + $au-unit-tiny;
 
     @if $say-toolbar-bottom == true {
       top: 0;
@@ -48,12 +48,12 @@
       width: $say-editor-sidebar-medium;
 
       @if $say-paper == true and $say-paper-sidebar == true {
-        padding: $say-unit;
+        padding: $au-unit;
         bottom: auto;
       }
     }
 
-    @include mq(large) {
-      width: calc(#{$say-editor-sidebar-large} - #{$say-unit-small + $say-unit-tiny});
+    @include mq(1280px) {
+      width: calc(#{$say-editor-sidebar-large} - #{$au-unit-small + $au-unit-tiny});
     }
   }

@@ -3,19 +3,19 @@
    ================================== */
 
 .say-form {
-  @include say-font-size($say-h6);
+  @include au-font-size($au-h6);
 }
 
 .say-form__fieldset {
   & + & {
-    margin-top: $say-unit;
-    padding-top: $say-unit;
-    border-top: .1rem solid $say-neutral-300;
+    margin-top: $au-unit;
+    padding-top: $au-unit;
+    border-top: .1rem solid $au-gray-300;
   }
 }
 
 .say-form__row {
   & + & {
-    margin-top: $say-unit-small;
+    margin-top: $au-unit-small;
   }
 }

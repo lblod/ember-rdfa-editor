@@ -3,6 +3,7 @@
    ================================== */
 
 .say-toolbar {
+  @include au-font-size($say-base-font-size);
   display: flex;
   justify-content: space-between;
   min-height: $say-toolbar-height; // Fixes height bug on Safari
@@ -24,10 +25,10 @@
   .say-toolbar__actions {
     display: flex;
     align-items: center;
-    padding: 0 $say-unit-small;
+    padding: 0 $au-unit-small;
 
     > * + * {
-      margin-left: $say-unit-small;
+      margin-left: $au-unit-small;
     }
   }
 
@@ -36,11 +37,11 @@
   }
 
   .say-toolbar__group + .say-toolbar__group {
-    border-left: 1px solid $say-neutral-300;
+    border-left: 1px solid $au-gray-300;
   }
 
   .say-toolbar__button {
-    @include say-font-size($say-base,1);
+    @include au-font-size($say-base-font-size,1);
     appearance: none;
     outline: none;
     border: 0;
@@ -48,32 +49,32 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    color: $say-neutral-600;
+    color: $au-gray-600;
     height: $say-toolbar-height;
     width: $say-toolbar-height;
     background-color: transparent;
-    transition: color $say-transition;
-    padding: $say-unit-tiny;
+    transition: color $au-transition;
+    padding: $au-unit-tiny;
     margin: 0;
 
     & + & {
-      border-left: .1rem solid $say-neutral-200;
+      border-left: .1rem solid $au-gray-200;
     }
 
     &:hover,
     &:focus {
-      color: $say-neutral-700;
+      color: $au-gray-700;
       background-color: transparent;
     }
 
     &:focus {
-      outline: $say-outline;
+      outline: $au-outline;
       outline-offset: -.4rem;
     }
 
     &.is-active {
-      color: $say-neutral-900;
-      background-color: $say-neutral-300;
-      box-shadow: inset 0 -.3rem 0 0 $say-neutral-400;
+      color: $au-gray-900;
+      background-color: $au-gray-300;
+      box-shadow: inset 0 -.3rem 0 0 $au-gray-400;
     }
   }

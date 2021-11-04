@@ -373,7 +373,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     compareModelNodeList(deletedNodes, [firstLine], assert);
   });
 
-  test("deletes elements of nested list", assert => {
+  test("deletes correctly elements of nested list", assert => {
     // language=XML
     const {root: initial, textNodes: {middleText, lastText}, elements: {middleLi, lastLi}} = vdom`
       <modelRoot>
@@ -403,8 +403,8 @@ module("Unit | commands | delete-selection-command-test", hooks => {
               <li>
                 <text>secondsub3</text>
               </li>
-              <text __id="lastText">third</text>
             </ul>
+            <text __id="lastText">third</text>
           </li>
         </ul>
       </modelRoot>
@@ -436,7 +436,7 @@ module("Unit | commands | delete-selection-command-test", hooks => {
     compareModelNodeList(deletedNodes, [ulElement], assert);
   });
 
-  test("deletes first part of list element", assert => {
+  test("deletes correctly first part of list element", assert => {
     // language=XML
     const {root: initial, textNodes: {firstText}} = vdom`
       <modelRoot>

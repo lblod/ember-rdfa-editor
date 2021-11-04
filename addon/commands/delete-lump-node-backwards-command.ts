@@ -28,7 +28,7 @@ export default class DeleteLumpNodeBackwardsCommand extends Command {
 
     const nodeBefore = range.start.nodeBefore();
     if (!nodeBefore) {
-      throw new IllegalExecutionStateError("No node in front of the cursor");
+      throw new IllegalExecutionStateError("No node before cursor found");
     }
 
     const newStart = ModelPosition.fromBeforeNode(nodeBefore);

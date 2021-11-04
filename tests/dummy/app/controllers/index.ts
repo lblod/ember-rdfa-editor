@@ -109,7 +109,6 @@ export default class IndexController extends Controller {
 
   @action openContentDebugger(type: "xml" | "html") {
     if (this.rdfaEditor) {
-
       if (type === "xml") {
         this.debuggerContent = this.rdfaEditor.xmlContentPrettified;
         this.xmlDebuggerOpen = true;

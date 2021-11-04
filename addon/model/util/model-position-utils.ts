@@ -1,6 +1,6 @@
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 
 export default class ModelPositionUtils {
   static findNodeBeforePosition(position: ModelPosition, predicate: (node: ModelNode) => boolean): ModelNode | null {

@@ -1,4 +1,4 @@
-import { isAllWhitespace, isDisplayedAsBlock, tagName, getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {isAllWhitespace, isDisplayedAsBlock, tagName, getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { runInDebug } from '@ember/debug';
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
