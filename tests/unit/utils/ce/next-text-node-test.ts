@@ -1,7 +1,6 @@
 import ceNextTextNode from "@lblod/ember-rdfa-editor/utils/ce/next-text-node";
 import { module, test, skip } from "qunit";
-
-const invisibleSpace = "\u200B";
+import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | Utility | ce/next-text-node", function () {
   test("returns null when textNode is rootNode", function (assert) {
@@ -27,7 +26,7 @@ module("Unit | Utility | ce/next-text-node", function () {
     assert.notEqual(child1, result);
     assert.notEqual(child2, result);
     assert.strictEqual(result!.nodeType, Node.TEXT_NODE);
-    assert.strictEqual(result!.textContent, invisibleSpace);
+    assert.strictEqual(result!.textContent, INVISIBLE_SPACE);
   });
   skip("returns next node if it is a text node", function (assert) {
     const root = document.createElement("div");

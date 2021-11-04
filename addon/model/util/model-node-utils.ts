@@ -3,7 +3,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {
   LIST_CONTAINERS,
-  LIST_TYPES,
+  LIST_TYPES, LUMP_NODE_URI,
   PLACEHOLDER_CLASS,
   TABLE_CELLS, TABLE_TYPES
 } from "@lblod/ember-rdfa-editor/model/util/constants";
@@ -51,6 +51,15 @@ export default class ModelNodeUtils {
 
   static isTableCell(node: ModelNode | null): node is ModelElement {
     return ModelNode.isModelElement(node) && TABLE_CELLS.has(node.type);
+  }
+
+  static isLumpNode(node: ModelNode): boolean {
+    const attribute = node.getAttribute("property");
+    if (!attribute) {
+      return false;
+    }
+
+    return attribute.indexOf(LUMP_NODE_URI) > -1;
   }
 
   static isBr(node: ModelNode | null): node is ModelElement {

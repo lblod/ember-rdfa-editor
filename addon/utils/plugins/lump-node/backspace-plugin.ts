@@ -1,7 +1,7 @@
 import {
   BackspaceHandlerManipulation,
   BackspacePlugin
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler-old';
 import {Editor, Manipulation, ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {getParentLumpNode} from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
 

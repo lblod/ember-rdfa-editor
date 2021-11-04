@@ -4,7 +4,7 @@ import { Editor,
 import {
   BackspaceHandlerManipulation,
   BackspacePlugin
-} from "@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler";
+} from "@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler-old";
 import { moveCaretBefore, moveCaret, stringToVisibleText } from "@lblod/ember-rdfa-editor/editor/utils";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 

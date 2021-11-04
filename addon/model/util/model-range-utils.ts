@@ -149,4 +149,31 @@ export default class ModelRangeUtils {
       range: range
     });
   }
+
+  static isRangeInLumpNode(range: ModelRange) {
+    const startLumpAncestors = range.start.findAncestors(ModelNodeUtils.isLumpNode);
+    const startInLumpNode = startLumpAncestors.length > 0;
+
+    if (!range.collapsed) {
+      const endLumpAncestors = range.end.findAncestors(ModelNodeUtils.isLumpNode);
+      const endInLumpNode = endLumpAncestors.length > 0;
+
+      return startInLumpNode || endInLumpNode;
+    }
+
+    return startInLumpNode;
+  }
+
+  static getNodesInRange(range: ModelRange) {
+    if (!range.collapsed) {
+      const treeWalker = new ModelTreeWalker({
+        range: range,
+        descend: false
+      });
+
+      return [...treeWalker];
+    }
+
+    return [];
+  }
 }

@@ -3,9 +3,7 @@ import Model from "@lblod/ember-rdfa-editor/model/model";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
 import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 export default class DeleteLiBackwardsCommand extends Command {
@@ -35,21 +33,13 @@ export default class DeleteLiBackwardsCommand extends Command {
     const rangeInsideLi = ModelRange.fromInElement(currentLi, 0, currentLi.getMaxOffset());
     const rangeAroundLi = ModelRange.fromAroundNode(currentLi);
 
-    // Retrieve all the nodes in the current list element. These will be the nodes we will place after the
-    // new cursor position.
-    let nodesToMove: ModelNode[] = [];
-    if (rangeInsideLi.start.parentOffset !== rangeInsideLi.end.parentOffset) {
-      const treeWalker = new ModelTreeWalker({
-        range: rangeInsideLi,
-        descend: false
-      });
-      nodesToMove = [...treeWalker];
-    }
+    const nodesToMove = ModelRangeUtils.getNodesInRange(rangeInsideLi);
 
-    const listAncestors = range.start.findAncestors(ModelNodeUtils.isListRelated);
+    const listAncestors = range.start.findAncestors(ModelNodeUtils.isListContainer);
     const topListContainer = listAncestors[listAncestors.length - 1];
-    const bottomListContainer = listAncestors[1]; // Index 0 will be the li itself.
+    const bottomListContainer = listAncestors[0];
 
+    // We search for the last list element in the upper most list container before the current list container.
     const lastLi = ModelRangeUtils.findLastListElement(new ModelRange(
       ModelPosition.fromBeforeNode(topListContainer),
       ModelPosition.fromBeforeNode(currentLi)
@@ -60,14 +50,29 @@ export default class DeleteLiBackwardsCommand extends Command {
         // Only li in the list, remove the parent "ul" or "ol".
         mutator.insertNodes(ModelRange.fromAroundNode(bottomListContainer));
       } else {
+        // If not the only list element in the list, we remove this list element.
         mutator.insertNodes(rangeAroundLi);
       }
 
+      let newCursorPosition: ModelPosition;
+      if (lastLi) {
+        // If we have found a previous list element in uppermost list container the cursor is in,
+        // we insert nodes right before the first nested list in this list element or at the end if there
+        // is no nested list.
+        const firstListContainer = lastLi.findFirstChild(ModelNodeUtils.isListContainer);
+        newCursorPosition = firstListContainer
+          ? ModelPosition.fromBeforeNode(firstListContainer)
+          : ModelPosition.fromInNode(lastListElement, lastListElement.getMaxOffset());
+      } else {
+        // If we haven't found a previous list element, we just move the content in `nodesToMove` right before
+        // the upper most list container.
+        newCursorPosition = ModelPosition.fromBeforeNode(topListContainer);
+      }
       const newCursorPosition = lastLi
         ? ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset())
         : ModelPosition.fromBeforeNode(topListContainer);
 
-      const newRange = new ModelRange(newCursorPosition, newCursorPosition);
+      const newRange = new ModelRange(newCursorPosition);
       this.model.selectRange(newRange);
 
       mutator.insertNodes(newRange, ...nodesToMove);

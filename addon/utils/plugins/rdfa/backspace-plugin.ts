@@ -1,7 +1,7 @@
 import {
   BackspaceHandlerManipulation,
   BackspacePlugin
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler-old';
 import {Editor, ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import NodeWalker from '@lblod/marawa/node-walker';
 import {isRdfaNode} from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-rich-node-helpers';

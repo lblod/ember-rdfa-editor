@@ -31,21 +31,45 @@ export default class DeleteListBackwardsCommand extends Command {
     }
 
     const nodeBefore = range.start.nodeBefore();
-    if (!nodeBefore || !ModelNodeUtils.isListContainer(nodeBefore)) {
+    if (!ModelNodeUtils.isListContainer(nodeBefore)) {
       throw new IllegalExecutionStateError("Node in front of cursor in not a list container");
     }
 
+    // We search for the last list element in the list in front of the cursor.
     const listRange = ModelRange.fromAroundNode(nodeBefore);
     const lastLi = ModelRangeUtils.findLastListElement(listRange);
     if (!lastLi) {
-      throw new ImpossibleModelStateError("No li found in list");
+      throw new ImpossibleModelStateError("No list element found in list");
     }
 
     const newStart = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
-    const newRange = new ModelRange(newStart, newStart);
+    const newRange = new ModelRange(newStart);
 
-    this.model.change(_ => {
-      this.model.selectRange(newRange);
+    this.model.change(mutator => {
+      const nodeAfterList = range.start.nodeAfter();
+      // We check if there is a suitable node right behind the list.
+      // If so, we move this upwards into the list.
+      if (nodeAfterList
+        && !ModelNodeUtils.isListContainer(nodeAfterList)
+        && !ModelNodeUtils.isTableContainer(nodeAfterList)
+      ) {
+        let rangeAround: ModelRange;
+        if (ModelNodeUtils.isBr(nodeAfterList.nextSibling)) {
+          // If there is a "br" right behind the suitable node we found, we also select this "br" for deletion.
+          rangeAround = new ModelRange(
+            ModelPosition.fromBeforeNode(nodeAfterList),
+            ModelPosition.fromAfterNode(nodeAfterList.nextSibling)
+          );
+        } else {
+          rangeAround = ModelRange.fromAroundNode(nodeAfterList);
+        }
+
+        mutator.insertNodes(rangeAround);
+        this.model.selectRange(newRange);
+        mutator.insertNodes(newRange, nodeAfterList);
+      } else {
+        this.model.selectRange(newRange);
+      }
     });
   }
 }

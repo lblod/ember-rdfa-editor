@@ -1,7 +1,7 @@
 import {
   BackspaceHandlerManipulation,
   BackspacePlugin
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler-old';
 import {ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
