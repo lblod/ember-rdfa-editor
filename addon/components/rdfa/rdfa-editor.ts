@@ -197,6 +197,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    */
   @action
   async handleRawEditorInit(editor: PernetRawEditor) {
+    console.log("yeet")
     this.editor = editor;
     await this.initializePlugins(editor);
     this.toolbarWidgets = editor.widgetMap.get("toolbar") || [];

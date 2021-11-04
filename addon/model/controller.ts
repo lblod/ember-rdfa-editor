@@ -3,6 +3,7 @@ import {AnyEventName, EditorEventListener, ListenerConfig} from "@lblod/ember-rd
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 import {EditorPlugin} from "@lblod/ember-rdfa-editor/utils/editor-plugin";
+import ModelRange, {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/model/model-range";
 
 export type WidgetLocation = "toolbar" | "sidebar";
 
@@ -21,6 +22,8 @@ export default interface Controller {
 
   get selection(): ModelSelection;
 
+  get rangeFactory(): RangeFactory;
+
   executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void;
 
   registerCommand<A extends unknown[], R>(command: Command<A, R>): void;
@@ -36,10 +39,12 @@ export default interface Controller {
 export class RawEditorController implements Controller {
   private readonly _name: string;
   private readonly _rawEditor: RawEditor;
+  private _rangeFactory: RangeFactory;
 
   constructor(name: string, rawEditor: RawEditor) {
     this._name = name;
     this._rawEditor = rawEditor;
+    this._rangeFactory = new ModelRangeFactory(this._rawEditor.rootModelNode);
   }
 
   get name(): string {
@@ -48,6 +53,10 @@ export class RawEditorController implements Controller {
 
   get selection(): ModelSelection {
     return this._rawEditor.selection;
+  }
+
+  get rangeFactory(): RangeFactory {
+    return this._rangeFactory;
   }
 
   executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void {
