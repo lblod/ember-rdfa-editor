@@ -24,7 +24,7 @@
     }
   }
 
-  @include mq(large) {
+  @include mq(1280px) {
     &.rdfa-annotations-hover {
       padding-left: $say-annotation-width;
     }
@@ -55,7 +55,7 @@
 
   .say-editor__paper--disabled {
     background-color: $say-editor-background;
-    color: $say-neutral-700;
+    color: $au-gray-700;
   }
 
   .say-editor__inner {

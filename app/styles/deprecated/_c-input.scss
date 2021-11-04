@@ -9,11 +9,11 @@
   border: .1rem solid $say-input-border-color;
   color: $say-input-color;
   font-size: $say-input-font-size;
-  font-weight: $say-regular;
-  font-family: $say-font;
+  font-weight: $au-regular;
+  font-family: $say-font-family;
   height: $say-input-height;
   max-width: 100%;
-  padding: 0 $say-unit-small .1ex;
+  padding: 0 $au-unit-small .1ex;
   background-color: $say-input-background-color;
   border-radius: $say-input-radius;
 
@@ -49,7 +49,7 @@
   background-repeat: no-repeat;
   background-size: 1.5rem;
   background-position: 95% 50%;
-  padding-right: $say-unit-large - $say-unit-tiny;
+  padding-right: $au-unit-large - $au-unit-tiny;
 }
 
 .say-input--select {
@@ -68,13 +68,13 @@
 .say-input--pre {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
-  width: $say-unit-large;
+  width: $au-unit-large;
   background-color: $say-input-disabled-background-color;
-  padding-left: $say-unit-small;
-  padding-right: $say-unit-small;
+  padding-left: $au-unit-small;
+  padding-right: $au-unit-small;
   overflow: visible;
-  font-size: $say-small;
-  font-weight: $say-medium;
+  font-size: $say-smaller-font-size;
+  font-weight:$au-medium;
   color: $say-input-disabled-color;
   pointer-events: none;
   float: left;

@@ -6,13 +6,13 @@
   position: relative;
   display: block;
   padding-left: $say-input-height;
-  font-weight: $say-regular;
+  font-weight: $au-regular;
 }
 
 .say-checkbox-wrapper input {
   position: absolute;
-  width: $say-unit;
-  height: $say-unit;
+  width: $au-unit;
+  height: $au-unit;
   top: 0;
   left: 0;
   opacity: 0;
@@ -24,8 +24,8 @@
   background-color: $say-input-background-color;
   border: .1rem solid $say-input-border-color;
   border-radius: $say-input-radius;
-  width: $say-unit;
-  height: $say-unit;
+  width: $au-unit;
+  height: $au-unit;
   top: 0;
   left: 0;
 }
@@ -34,8 +34,8 @@
   content: "";
   background-image: url(/@lblod/ember-rdfa-editor/icons/check.svg);
   background-repeat: no-repeat;
-  height: $say-unit;
-  width: $say-unit;
+  height: $au-unit;
+  width: $au-unit;
   position: absolute;
   left: 0;
   top: 0;
