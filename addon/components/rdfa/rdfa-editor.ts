@@ -1,9 +1,9 @@
-import { debug, warn } from '@ember/debug';
-import { action } from "@ember/object";
-import { inject as service } from "@ember/service";
+import {debug, warn} from '@ember/debug';
+import {action} from "@ember/object";
+import {inject as service} from "@ember/service";
 import Component from '@glimmer/component';
-import { tracked } from "@glimmer/tracking";
-import { analyse as analyseRdfa } from '@lblod/marawa/rdfa-context-scanner';
+import {tracked} from "@glimmer/tracking";
+import {analyse as analyseRdfa} from '@lblod/marawa/rdfa-context-scanner';
 import EventProcessor from '../../utils/rdfa/event-processor';
 import HintsRegistry from '../../utils/rdfa/hints-registry';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
@@ -11,6 +11,9 @@ import type IntlService from 'ember-intl/services/intl';
 import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import {EditorPlugin} from "@lblod/ember-rdfa-editor/utils/editor-plugin";
+import ApplicationInstance from '@ember/application/instance';
+import {RawEditorController} from "@lblod/ember-rdfa-editor/model/controller";
 
 interface DebugInfo {
   hintsRegistry: HintsRegistry
@@ -27,18 +30,22 @@ interface RdfaEditorArgs {
    * @public
    */
   initDebug(debugInfo: DebugInfo): void
+
   /**
    * Plugin profile of the RDFa editor
    * @default 'default'
    * @public
    */
   profile?: string
+
   /**
    * callback that is called with an interface to the editor after editor init completed
    * @default 'default'
    * @public
    */
   rdfaEditorInit(editor: RdfaDocument): void
+
+  plugins: string[];
 }
 
 interface SuggestedHint {
@@ -56,15 +63,15 @@ interface SuggestedHint {
  */
 
 /**
-* RDFa editor component
-*
-* This component wraps around a {{#crossLink "ContentEditableComponent"}}{{/crossLink}}
-* and provides an architecture to interact with the document through plugins.
-* {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
-* @module rdfa-editor
-* @class RdfaEditorComponent
-* @extends Component
-*/
+ * RDFa editor component
+ *
+ * This component wraps around a {{#crossLink "ContentEditableComponent"}}{{/crossLink}}
+ * and provides an architecture to interact with the document through plugins.
+ * {{#crossLinkModule "rdfa-editor"}}rdfa-editor{{/crossLinkModule}}.
+ * @module rdfa-editor
+ * @class RdfaEditorComponent
+ * @extends Component
+ */
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @service declare intl: IntlService;
   @tracked profile = 'default';
@@ -93,7 +100,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    */
   @tracked hintsRegistry?: HintsRegistry;
 
-  @tracked suggestedHints : SuggestedHint[] = [];
+  @tracked suggestedHints: SuggestedHint[] = [];
+  private owner: ApplicationInstance;
+  activePlugins: EditorPlugin[] = [];
 
   /**
    * @property hasHints
@@ -126,13 +135,18 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     return this.suggestedHints.length > 0;
   }
 
+  get plugins(): string[] {
+    return this.args.plugins || [];
+  }
+
   /**
    * editor controller
    */
   @tracked editor?: PernetRawEditor;
 
-  constructor(owner: unknown, args: RdfaEditorArgs) {
+  constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
+    this.owner = owner;
     const userLocale = (navigator.language || navigator.languages[0]);
     this.intl.setLocale([userLocale, 'nl-BE']);
     if (this.args.profile) {
@@ -156,7 +170,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   warnNotSetup() {
-    warn("An action was fired before the editor was set up", { id: "rdfa-editor.not-setup" } );
+    warn("An action was fired before the editor was set up", {id: "rdfa-editor.not-setup"});
   }
 
   /**
@@ -165,7 +179,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * needs to occur if the action is not defined.
    * @method noop
    */
-  noop() { return; }
+  noop() {
+    return;
+  }
 
   /**
    * Handle init of rawEditor
@@ -177,8 +193,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  handleRawEditorInit(editor: PernetRawEditor) {
+  async handleRawEditorInit(editor: PernetRawEditor) {
     this.editor = editor;
+    await this.initializePlugins(editor);
     this.hintsRegistry = new HintsRegistry(editor);
     this.eventProcessor = new EventProcessor({
       registry: this.hintsRegistry,
@@ -188,15 +205,15 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     });
     editor.registerContentObserver(this.eventProcessor);
     editor.registerMovementObserver(this.eventProcessor);
-    this.hintsRegistry.addRegistryObserver( (_registry: HintsRegistry) => {
+    this.hintsRegistry.addRegistryObserver((_registry: HintsRegistry) => {
       this.eventProcessor?.handleRegistryChange();
     });
 
-    this.hintsRegistry.addNewCardObserver( (location: [number,number]) => {
+    this.hintsRegistry.addNewCardObserver((location: [number, number]) => {
       this.eventProcessor?.handleNewCardInRegistry(location);
     });
 
-    this.hintsRegistry.addRemovedCardObserver( (location: [number, number]) => {
+    this.hintsRegistry.addRemovedCardObserver((location: [number, number]) => {
       this.eventProcessor?.handleRemovedCardInRegistry(location);
     });
 
@@ -211,6 +228,35 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
+  }
+
+  async initializePlugins(editor: RawEditor) {
+    const plugins = this.getPlugins();
+    for (const plugin of plugins) {
+      console.log("INITIALIZING", plugin.name);
+      await this.initializePlugin(plugin, editor);
+    }
+
+  }
+
+  getPlugins(): EditorPlugin[] {
+    const pluginNames = this.plugins;
+    const plugins = [];
+    for (const name of pluginNames) {
+      const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
+      if (plugin) {
+        plugins.push(plugin);
+      }
+    }
+    return plugins;
+
+  }
+
+  async initializePlugin(plugin: EditorPlugin, editor: RawEditor): Promise<void> {
+    const controller = new RawEditorController(plugin.name, editor);
+    await plugin.initialize(controller);
+    this.activePlugins.push(plugin);
+
   }
 
   /**
