@@ -38,7 +38,7 @@ export default interface Controller {
 
 export class RawEditorController implements Controller {
   private readonly _name: string;
-  private readonly _rawEditor: RawEditor;
+  protected readonly _rawEditor: RawEditor;
   private _rangeFactory: RangeFactory;
 
   constructor(name: string, rawEditor: RawEditor) {

@@ -7,6 +7,7 @@ import {analyse as analyseRdfa} from '@lblod/marawa/rdfa-context-scanner';
 import EventProcessor from '../../utils/rdfa/event-processor';
 import HintsRegistry from '../../utils/rdfa/hints-registry';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
+import RdfaDocumentController from '../../utils/rdfa/rdfa-document';
 import type IntlService from 'ember-intl/services/intl';
 import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
@@ -230,7 +231,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       };
       this.args.initDebug(debugInfo);
     }
-    const rdfaDocument = new RdfaDocument(editor);
+    const rdfaDocument = new RdfaDocumentController("host-controller", editor);
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
