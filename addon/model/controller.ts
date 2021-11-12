@@ -2,19 +2,27 @@ import Command from "@lblod/ember-rdfa-editor/commands/command";
 import {AnyEventName, EditorEventListener, ListenerConfig} from "@lblod/ember-rdfa-editor/utils/event-bus";
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {EditorPlugin} from "@lblod/ember-rdfa-editor/utils/editor-plugin";
+import {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/model/model-range";
 
 export type WidgetLocation = "toolbar" | "sidebar";
 
 export interface WidgetSpec {
   componentName: string;
   desiredLocation: WidgetLocation;
+  plugin: EditorPlugin;
 }
+
+export type InternalWidgetSpec = WidgetSpec & {
+  controller: Controller
+};
 
 export default interface Controller {
   get name(): string;
 
   get selection(): ModelSelection;
+
+  get rangeFactory(): RangeFactory;
 
   executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void;
 
@@ -30,11 +38,13 @@ export default interface Controller {
 
 export class RawEditorController implements Controller {
   private readonly _name: string;
-  private readonly _rawEditor: RawEditor;
+  protected readonly _rawEditor: RawEditor;
+  private _rangeFactory: RangeFactory;
 
   constructor(name: string, rawEditor: RawEditor) {
     this._name = name;
     this._rawEditor = rawEditor;
+    this._rangeFactory = new ModelRangeFactory(this._rawEditor.rootModelNode);
   }
 
   get name(): string {
@@ -43,6 +53,10 @@ export class RawEditorController implements Controller {
 
   get selection(): ModelSelection {
     return this._rawEditor.selection;
+  }
+
+  get rangeFactory(): RangeFactory {
+    return this._rangeFactory;
   }
 
   executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void {
@@ -62,7 +76,7 @@ export class RawEditorController implements Controller {
   }
 
   registerWidget(_spec: WidgetSpec): void {
-    throw new NotImplementedError();
+    this._rawEditor.registerWidget({..._spec, controller: this});
   }
 
 

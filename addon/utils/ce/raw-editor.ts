@@ -40,6 +40,7 @@ import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/in
 import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
 import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
 import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
+import {InternalWidgetSpec, WidgetLocation} from "@lblod/ember-rdfa-editor/model/controller";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -60,6 +61,11 @@ class RawEditor extends EmberObject {
   private _model?: Model;
   protected tryOutVdom = true;
   protected eventBus: EventBus;
+  widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<WidgetLocation, InternalWidgetSpec[]>(
+    [
+      ["toolbar", []],
+      ["sidebar", []]
+    ]);
 
   /**
    * a rich representation of the dom tree created with {{#crossLink "NodeWalker"}}NodeWalker{{/crossLink}}
@@ -172,6 +178,10 @@ class RawEditor extends EmberObject {
    */
   registerCommand(command: Command) {
     this.registeredCommands.set(command.name, command);
+  }
+
+  registerWidget(widget: InternalWidgetSpec): void {
+    this.widgetMap.get(widget.desiredLocation)!.push(widget);
   }
 
   /**
