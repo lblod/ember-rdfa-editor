@@ -32,7 +32,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
 import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
-import EventBus, {EditorEventListener, EditorEventName} from "@lblod/ember-rdfa-editor/utils/event-bus";
+import EventBus, {AnyEventName, EditorEventListener, ListenerConfig} from "@lblod/ember-rdfa-editor/utils/event-bus";
 import DeleteSelectionCommand from "@lblod/ember-rdfa-editor/commands/delete-selection-command";
 import InsertTableRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
 import InsertTableRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
@@ -40,6 +40,7 @@ import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/in
 import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
 import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
 import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
+import {InternalWidgetSpec, WidgetLocation} from "@lblod/ember-rdfa-editor/model/controller";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -59,6 +60,12 @@ class RawEditor extends EmberObject {
 
   private _model?: Model;
   protected tryOutVdom = true;
+  protected eventBus: EventBus;
+  widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<WidgetLocation, InternalWidgetSpec[]>(
+    [
+      ["toolbar", []],
+      ["sidebar", []]
+    ]);
 
   /**
    * a rich representation of the dom tree created with {{#crossLink "NodeWalker"}}NodeWalker{{/crossLink}}
@@ -70,6 +77,7 @@ class RawEditor extends EmberObject {
 
   constructor(properties?: Record<string, unknown>) {
     super(properties);
+    this.eventBus = new EventBus();
   }
 
   /**
@@ -172,6 +180,10 @@ class RawEditor extends EmberObject {
     this.registeredCommands.set(command.name, command);
   }
 
+  registerWidget(widget: InternalWidgetSpec): void {
+    this.widgetMap.get(widget.desiredLocation)!.push(widget);
+  }
+
   /**
    * Execute a command with name commandName. Any extra arguments are passed through to the command.
    * @param commandName
@@ -228,12 +240,12 @@ class RawEditor extends EmberObject {
     return new ModelSelection();
   }
 
-  on<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>) {
-    EventBus.on(eventName, callback);
+  on<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig) {
+    this.eventBus.on(eventName, callback, config);
   }
 
-  off<E extends EditorEventName>(eventName: E, callback: EditorEventListener<E>) {
-    EventBus.off(eventName, callback);
+  off<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig) {
+    this.eventBus.off(eventName, callback, config);
   }
 }
 

@@ -1,8 +1,32 @@
-import PernetRawEditor from '../ce/pernet-raw-editor';
 import xmlFormat from 'xml-formatter';
 import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import EventBus, {EditorEventListener} from "@lblod/ember-rdfa-editor/utils/event-bus";
+import {AnyEventName, EditorEventListener, ListenerConfig} from "@lblod/ember-rdfa-editor/utils/event-bus";
+import {RawEditorController} from "@lblod/ember-rdfa-editor/model/controller";
+
+/**
+ * Legacy interface for external consumers. They expect to receive this interface
+ * upon initialization of the editor. Very similar to a controller, which is why we provide
+ * backwards compat in this way
+ */
+interface RdfaDocument {
+  get htmlContent(): string;
+
+  set htmlContent(html: string);
+
+  get xmlContent(): string;
+
+  set xmlContent(xml: string);
+
+  get xmlContentPrettified(): string;
+
+  setHtmlContent(html: string): void;
+
+  on<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig): void;
+
+  off<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig): void;
+
+}
 
 /**
  * RdfaDocument is a virtual representation of the document
@@ -11,39 +35,35 @@ import EventBus, {EditorEventListener} from "@lblod/ember-rdfa-editor/utils/even
  *
  * This is both to protect the internal dom of the editor and to remove internals
  */
-export default class RdfaDocument {
-  private _editor: PernetRawEditor;
+export default class RdfaDocumentController extends RawEditorController implements RdfaDocument {
 
-  constructor(editor: PernetRawEditor) {
-    this._editor = editor;
-  }
 
   get htmlContent() {
-    const htmlWriter = new HTMLExportWriter(this._editor.model);
-    const output = (htmlWriter.write(this._editor.model.rootModelNode) as HTMLElement);
+    const htmlWriter = new HTMLExportWriter(this._rawEditor.model);
+    const output = (htmlWriter.write(this._rawEditor.model.rootModelNode) as HTMLElement);
     return output.innerHTML;
   }
 
   set htmlContent(html: string) {
-    const root = this._editor.model.rootModelNode;
+    const root = this._rawEditor.model.rootModelNode;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
-    this._editor.executeCommand("insert-html", html, range);
-    this._editor.selection.lastRange?.collapse(true);
-    this._editor.model.writeSelection();
+    this._rawEditor.executeCommand("insert-html", html, range);
+    this._rawEditor.selection.lastRange?.collapse(true);
+    this._rawEditor.model.writeSelection();
   }
 
   get xmlContent() {
-    return (this._editor.model.toXml() as Element).innerHTML;
+    return (this._rawEditor.model.toXml() as Element).innerHTML;
   }
 
   set xmlContent(xml: string) {
-    const root = this._editor.model.rootModelNode;
+    const root = this._rawEditor.model.rootModelNode;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
-    this._editor.executeCommand("insert-xml", xml, range);
+    this._rawEditor.executeCommand("insert-xml", xml, range);
   }
 
   get xmlContentPrettified() {
-    const root = this._editor.model.toXml() as Element;
+    const root = this._rawEditor.model.toXml() as Element;
     let result = '';
     for (const child of root.childNodes) {
       let formatted;
@@ -64,12 +84,11 @@ export default class RdfaDocument {
     this.htmlContent = html;
   }
 
-  // this shows how we can limit the public events with types
-  on<E extends "contentChanged">(eventName: E, callback: EditorEventListener<E>) {
-    EventBus.on(eventName, callback);
+  on<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>) {
+    this._rawEditor.on(eventName, callback);
   }
 
-  off<E extends "contentChanged">(eventName: E, callback: EditorEventListener<E>) {
-    EventBus.off(eventName, callback);
+  off<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>) {
+    this._rawEditor.off(eventName, callback);
   }
 }

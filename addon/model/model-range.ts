@@ -279,3 +279,50 @@ export default class ModelRange {
   }
 }
 
+export interface RangeFactory {
+  fromPaths(path1: number[], path2: number[], root?: ModelElement): ModelRange;
+
+  fromInElement(element: ModelElement, startOffset: number, endOffset: number): ModelRange;
+
+  fromAroundNode(node: ModelNode): ModelRange;
+
+  fromInTextNode(node: ModelText, startOffset: number, endOffset: number): ModelRange;
+
+  fromInNode(node: ModelNode, startOffset: number, endOffset: number): ModelRange;
+
+  fromAroundAll(): ModelRange;
+}
+
+export class ModelRangeFactory implements RangeFactory {
+  private readonly root: ModelElement;
+
+  constructor(root: ModelElement) {
+    this.root = root;
+  }
+
+  fromPaths(path1: number[], path2: number[], root: ModelElement = this.root): ModelRange {
+    return ModelRange.fromPaths(root, path1, path2);
+  }
+
+  fromInElement(element: ModelElement, startOffset = 0, endOffset: number = element.getMaxOffset()): ModelRange {
+    return ModelRange.fromInElement(element, startOffset, endOffset);
+  }
+
+  fromAroundNode(node: ModelNode): ModelRange {
+    return ModelRange.fromAroundNode(node);
+  }
+
+  fromInTextNode(node: ModelText, startOffset = 0, endOffset: number = node.length): ModelRange {
+    return ModelRange.fromInTextNode(node, startOffset, endOffset);
+  }
+
+  fromInNode(node: ModelNode, startOffset: number, endOffset: number): ModelRange {
+    return ModelRange.fromInNode(node, startOffset, endOffset);
+  }
+
+  fromAroundAll(): ModelRange {
+    return this.fromInElement(this.root);
+  }
+
+
+}
