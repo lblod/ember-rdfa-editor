@@ -3,7 +3,7 @@ import {AnyEventName, EditorEventListener, ListenerConfig} from "@lblod/ember-rd
 import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 import {EditorPlugin} from "@lblod/ember-rdfa-editor/utils/editor-plugin";
-import ModelRange, {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/model/model-range";
+import {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/model/model-range";
 
 export type WidgetLocation = "toolbar" | "sidebar";
 
