@@ -2,18 +2,19 @@ import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-tex
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
 import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
+import {Walkable} from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
 export interface NodeConfig {
   debugInfo: unknown;
-  rdfaPrefixes?: Map<string,string>;
+  rdfaPrefixes?: Map<string, string>;
 }
 
 /**
  * Basic building block of the model. Cannot be instantiated, any node will always have a more specific type
  */
-export default abstract class ModelNode {
+export default abstract class ModelNode implements Walkable {
   abstract modelNodeType: ModelNodeType;
 
   private _attributeMap: Map<string, string>;
@@ -195,7 +196,7 @@ export default abstract class ModelNode {
 
   abstract clone(): ModelNode;
 
-  getAttribute(key: string): string | undefined  {
+  getAttribute(key: string): string | undefined {
     return this._attributeMap.get(key);
   }
 
@@ -318,6 +319,15 @@ export default abstract class ModelNode {
    * @param other
    */
   abstract isMergeable(other: ModelNode): boolean;
+
+  abstract get firstChild(): ModelNode | null ;
+
+  abstract get lastChild(): ModelNode | null;
+
+  get parentNode(): ModelElement | null {
+    return this.parent;
+  }
+
 }
 
 

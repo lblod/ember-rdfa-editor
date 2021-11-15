@@ -114,16 +114,25 @@ export default class ModelText extends ModelNode {
     if (this.content !== other.content) {
       return false;
     }
-    if(strict) {
+    if (strict) {
       return ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap, new Set());
     } else {
       return ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap);
     }
   }
+
   isMergeable(other: ModelNode): boolean {
-    if(!ModelNode.isModelText(other)) {
+    if (!ModelNode.isModelText(other)) {
       return false;
     }
     return ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap);
+  }
+
+  get firstChild(): ModelNode | null {
+    return null;
+  }
+
+  get lastChild(): ModelNode | null {
+    return null;
   }
 }
