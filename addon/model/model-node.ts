@@ -3,6 +3,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
 import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
 import {Walkable} from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
+import {Predicate} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
 
 export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
 
@@ -245,6 +246,24 @@ export default abstract class ModelNode implements Walkable {
     }
 
     return cur;
+  }
+
+  * findSelfOrAncestors(predicate: Predicate<ModelNode>): Generator<ModelNode, void, void> {
+    if (predicate(this)) {
+      yield this;
+    }
+    yield* this.findAncestors(predicate);
+  }
+
+  * findAncestors(predicate: Predicate<ModelElement>): Generator<ModelElement, void, void> {
+    let cur = this.parent;
+    while (cur) {
+      if (predicate(cur)) {
+        yield cur;
+      }
+      cur = cur.parent;
+    }
+
   }
 
   /**

@@ -1,7 +1,8 @@
 import {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {AssertionError, NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 
 export interface Walkable {
   parentNode: Walkable | null;
@@ -79,6 +80,88 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     return new GenTreeWalker<U>(config);
   }
 
+  static fromRange(config: ModelRangeTreeWalkerConfig) {
+    const {range, descend, visitParentUpwards, reverse = false, filter} = config;
+    let startNode;
+    let endNode;
+    let startPos: ModelPosition;
+    let endPos: ModelPosition;
+    let invalid = false;
+    if (reverse) {
+      startPos = range.end;
+      endPos = range.start;
+    } else {
+      startPos = range.start;
+      endPos = range.end;
+    }
+
+    if (range.collapsed) {
+      if (startPos.isInsideText()) {
+        const textNode = getNextNodeFromPosition(startPos, reverse)!;
+        startNode = textNode;
+        endNode = textNode;
+      } else {
+        // collapsed range not in a textnode, means no nodes can be valid
+        invalid = true;
+      }
+    } else {
+      startNode = getNextNodeFromPosition(startPos, reverse);
+      endNode = getPrevNodeFromPosition(endPos, reverse);
+      if (!startNode) {
+        const ancestorWithSibling = startPos.parent.findSelfOrAncestors(node => !!getNextSibling(node, reverse)).next().value;
+        if (ancestorWithSibling) {
+          startNode = getNextSibling(ancestorWithSibling, reverse)!;
+        } else {
+          // the start position is at the end of the document
+          // no valid nodes can be found
+          invalid = true;
+        }
+      }
+      if (!invalid && !endNode) {
+        const ancestorWithSibling = endPos.parent.findSelfOrAncestors(node => !!getPreviousSibling(node, reverse)).next().value;
+        if (ancestorWithSibling) {
+          endNode = getPreviousSibling(ancestorWithSibling, reverse)!;
+        } else {
+          // the end position is at the start of the document
+          // no valid nodes can be found
+          invalid = true;
+        }
+      }
+    }
+    const root = range.root;
+    if (invalid) {
+      return GenTreeWalker.fromInvalid({root, descend, visitParentUpwards, reverse, filter});
+    } else {
+      if (!startNode || !endNode) {
+        throw new AssertionError("Start and end nodes should be assigned by now");
+      }
+      const nextDeepestDescendant = getNextDeepestDescendant(endNode, reverse);
+      if (nextDeepestDescendant) {
+        endNode = nextDeepestDescendant;
+      }
+      return new GenTreeWalker({
+        root,
+        start: startNode,
+        end: endNode,
+        descend,
+        visitParentUpwards,
+        reverse,
+        filter
+      });
+    }
+  }
+
+  /**
+   * Helper to create a walker which has no nodes to walk over, aka an empty generator.
+   * @param config
+   * @private
+   */
+  private static fromInvalid<U extends Walkable>(config: GenTreeWalkerConfig<U>) {
+    const result = GenTreeWalker.fromStartEnd(config);
+    result._isAtEnd = true;
+    return result;
+  }
+
   get root(): T {
     return this._root;
   }
@@ -145,7 +228,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     while (true) {
       // as long as we dont get a reject, go depth first into the child tree
       // if descend is false, don't do this (used to iterate over the toplevel nodes of a range)
-      const child = this.getFirstChild(node, reverse);
+      const child = getFirstChild(node, reverse);
       while (this.descend && child) {
         node = child;
         result = this.filterNode(node);
@@ -164,7 +247,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
           return null;
         }
         // try going sideways first
-        sibling = this.getNextSibling(temporary, reverse);
+        sibling = getNextSibling(temporary, reverse);
         if (sibling) {
           // there was a sibling, break here
           node = sibling;
@@ -191,17 +274,6 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     }
   }
 
-  private getFirstChild(node: Walkable, reverse: boolean): Walkable | null {
-    return reverse ? node.lastChild : node.firstChild;
-  }
-
-  private getLastChild(node: Walkable, reverse: boolean): Walkable | null {
-    return reverse ? node.firstChild : node.firstChild;
-  }
-
-  private getNextSibling(node: Walkable, reverse: boolean): Walkable | null {
-    return reverse ? node.previousSibling : node.nextSibling;
-  }
 
   private filterNode(node: Walkable): FilterResult {
     if (!this._filter) {
@@ -212,4 +284,39 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
   }
 
 }
+
+function getFirstChild(node: Walkable, reverse: boolean): Walkable | null {
+  return reverse ? node.lastChild : node.firstChild;
+}
+
+function getLastChild(node: Walkable, reverse: boolean): Walkable | null {
+  return reverse ? node.firstChild : node.firstChild;
+}
+
+function getNextSibling(node: Walkable, reverse: boolean): Walkable | null {
+  return reverse ? node.previousSibling : node.nextSibling;
+}
+
+function getPreviousSibling(node: Walkable, reverse: boolean): Walkable | null {
+  return reverse ? node.nextSibling : node.previousSibling;
+}
+
+function getNextNodeFromPosition(position: ModelPosition, reverse: boolean) {
+  return reverse ? position.nodeBefore() : position.nodeAfter();
+}
+
+function getPrevNodeFromPosition(position: ModelPosition, reverse: boolean) {
+  return reverse ? position.nodeAfter() : position.nodeBefore();
+}
+
+function getNextDeepestDescendant(node: Walkable, reverse: boolean): Walkable | null {
+  let cur = node;
+  let child = getLastChild(cur, reverse);
+  while (child) {
+    cur = child;
+    child = getLastChild(cur, reverse);
+  }
+  return cur;
+}
+
 
