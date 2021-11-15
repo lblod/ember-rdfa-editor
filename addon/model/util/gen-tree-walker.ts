@@ -3,6 +3,7 @@ import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {AssertionError, NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import {NOOP} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export interface Walkable {
   parentNode: Walkable | null;
@@ -13,11 +14,14 @@ export interface Walkable {
 }
 
 export type GenTreeWalkerConfig<T extends Walkable> = StartEndTreeWalkerConfig<T>;
+export type NodeHandler<T extends Walkable> = (node: T) => void;
 
 export interface BaseTreeWalkerConfig<T extends Walkable> {
   reverse?: boolean;
   filter?: WalkFilter<T>;
   descend?: boolean;
+  onEnterNode?: NodeHandler<T>;
+  onLeaveNode?: NodeHandler<T>;
   visitParentUpwards?: boolean;
 }
 
@@ -47,6 +51,8 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
   private _end?: T;
   private _reverse: boolean;
   private _isAtEnd: boolean;
+  private _onEnterNode: NodeHandler<T>;
+  private _onLeaveNode: NodeHandler<T>;
 
   constructor({
                 root,
@@ -55,12 +61,20 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
                 descend = true,
                 visitParentUpwards = false,
                 filter = () => FilterResult.FILTER_ACCEPT,
-                reverse = false
+                reverse = false,
+                onEnterNode = NOOP,
+                onLeaveNode = NOOP
               }: GenTreeWalkerConfig<T>) {
     this._root = root;
     this._start = start;
     this._end = end;
     this.descend = descend;
+    if (visitParentUpwards) {
+      throw new NotImplementedError("WIP, not implemented yet");
+    }
+    if (!descend) {
+      throw new NotImplementedError("WIP, not implemented yet");
+    }
     if (end && !descend) {
       throw new NotImplementedError("It is currently not supported to disable descending while also providing an explicit endNode.");
     }
@@ -69,6 +83,8 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     this._reverse = reverse;
     this._currentNode = null;
     this._isAtEnd = false;
+    this._onEnterNode = onEnterNode;
+    this._onLeaveNode = onLeaveNode;
   }
 
 
@@ -81,7 +97,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
   }
 
   static fromRange(config: ModelRangeTreeWalkerConfig) {
-    const {range, descend, visitParentUpwards, reverse = false, filter} = config;
+    const {range, descend, visitParentUpwards, reverse = false, filter, onLeaveNode, onEnterNode} = config;
     let startNode;
     let endNode;
     let startPos: ModelPosition;
@@ -130,7 +146,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     }
     const root = range.root;
     if (invalid) {
-      return GenTreeWalker.fromInvalid({root, descend, visitParentUpwards, reverse, filter});
+      return GenTreeWalker.fromInvalid({root, descend, visitParentUpwards, reverse, filter, onLeaveNode, onEnterNode});
     } else {
       if (!startNode || !endNode) {
         throw new AssertionError("Start and end nodes should be assigned by now");
@@ -146,7 +162,9 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
         descend,
         visitParentUpwards,
         reverse,
-        filter
+        filter,
+        onLeaveNode,
+        onEnterNode
       });
     }
   }
@@ -194,6 +212,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
       // If there is no currentNode but we're also not at the end,
       // we must be before the start.
       // first try if the startNode is a valid node
+      this._onEnterNode(this._start);
       if (this.filterNode(this._start) === FilterResult.FILTER_ACCEPT) {
         // if it is, use it
         next = this._start;
@@ -231,12 +250,14 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
       const child = getFirstChild(node, reverse);
       while (this.descend && child) {
         node = child;
+        this._onEnterNode(node as T);
         result = this.filterNode(node);
         if (result === FilterResult.FILTER_ACCEPT) {
           // we've found an acceptable node, save it and return it
           return node as T | null;
         }
       }
+      this._onLeaveNode(node as T);
 
       // at this point we've gone as deep as we can but haven't found a node yet
       // so we start going sideways or back up
@@ -251,12 +272,14 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
         if (sibling) {
           // there was a sibling, break here
           node = sibling;
+          this._onEnterNode(node as T);
           break;
         }
         // walk back up and try to find a sibling there
         // we don't care about these nodes since we've already visited them
         // unless visitParentUpwards is true
         temporary = temporary.parentNode;
+        this._onLeaveNode(temporary as T);
         if (this.visitParentUpwards && temporary) {
           result = this.filterNode(temporary);
           if (result === FilterResult.FILTER_ACCEPT) {

@@ -3,8 +3,12 @@ import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import GenTreeWalker from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import sinon from 'sinon';
 
-module("Unit | model | utils | gen-tree-walker-test", () => {
+module("Unit | model | utils | gen-tree-walker-test", hooks => {
+  hooks.afterEach(() => {
+    sinon.restore();
+  });
 
   module("Unit | model | utils | gen-tree-walker-test | subtree", () => {
     test("single node - no filter", assert => {
@@ -375,6 +379,70 @@ module("Unit | model | utils | gen-tree-walker-test", () => {
       assert.strictEqual(nodes[2], n2);
       assert.strictEqual(nodes[3], rangeStart);
       assert.strictEqual(nodes[4], n3);
+    });
+  });
+  module("Unit | model | utils | gen-tree-walker-test | node-handlers", () => {
+
+    test("the right node handlers are called in the right order", assert => {
+      // language=XML
+      const {elements: {n0, n1, n2, n5, n7, n8}, textNodes: {n3, n4, n6}} = vdom`
+        <div __id="n0">
+          <div __id="n1">
+            <span __id="n2">
+              <text __id="n3">test0</text>
+            </span>
+          </div>
+          <text __id="n4">test1</text>
+          <span __id="n5">
+            <text __id="n6">test2</text>
+          </span>
+          <div __id="n7"/>
+          <div __id="n8"/>
+        </div>
+      `;
+
+      const entryHandler = sinon.spy();
+      const exitHandler = sinon.spy();
+      const walker = GenTreeWalker.fromSubTree({root: n0, onEnterNode: entryHandler, onLeaveNode: exitHandler});
+      const nodes = [...walker.nodes()];
+      const entryCalls = entryHandler.getCalls();
+      const exitCalls = exitHandler.getCalls();
+      assert.strictEqual(entryCalls.length, nodes.length);
+      assert.strictEqual(exitCalls.length, nodes.length);
+
+      assert.true(entryCalls[0].calledWithExactly(n0));
+      assert.true(entryCalls[1].calledWithExactly(n1));
+      assert.true(entryCalls[2].calledWithExactly(n2));
+      // enter test0 textnode
+      assert.true(entryCalls[3].calledWithExactly(n3));
+      // and leave it
+      assert.true(exitCalls[0].calledWithExactly(n3));
+      // going up
+      assert.true(exitCalls[1].calledWithExactly(n2));
+      assert.true(exitCalls[2].calledWithExactly(n1));
+      //sideways, enter test1
+      assert.true(entryCalls[4].calledWithExactly(n4));
+      // and leave it
+      assert.true(exitCalls[3].calledWithExactly(n4));
+      //entering the n5 span
+      assert.true(entryCalls[5].calledWithExactly(n5));
+      // entering and leaving test2 node
+      assert.true(entryCalls[6].calledWithExactly(n6));
+      assert.true(exitCalls[4].calledWithExactly(n6));
+
+      // leaving the n5 span
+      assert.true(exitCalls[5].calledWithExactly(n5));
+
+      // entering and leaving the n7 div
+      assert.true(entryCalls[7].calledWithExactly(n7));
+      assert.true(exitCalls[6].calledWithExactly(n7));
+
+      // entering and leaving the n8 div
+      assert.true(entryCalls[8].calledWithExactly(n8));
+      assert.true(exitCalls[7].calledWithExactly(n8));
+
+      // leaving root
+      assert.true(exitCalls[8].calledWithExactly(n0));
     });
   });
 });

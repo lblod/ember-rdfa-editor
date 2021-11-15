@@ -12,3 +12,6 @@ export const INVISIBLE_SPACE = '\u200B';
 export const HIGHLIGHT_ATTRIBUTE = 'data-editor-highlight';
 export const PLACEHOLDER_CLASS = 'mark-highlight-manual';
 export const CORE_OWNER = 'rdfa-editor';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export const NOOP = () => {};
