@@ -1,3 +1,9 @@
+/**
+ * Modified from https://github.com/rubensworks/rdfa-streaming-parser.js
+ *
+ * Copyright © 2019 Ruben Taelman
+ */
+
 const INITIAL_CONTEXT = {
   "@context": {
     "as": "https://www.w3.org/ns/activitystreams#",

@@ -1,3 +1,9 @@
+/**
+ * Modified from https://github.com/rubensworks/rdfa-streaming-parser.js
+ *
+ * Copyright © 2019 Ruben Taelman
+ */
+
 const INITIAL_CONTEXT_XHTML = {
   "@context": {
     "alternate": "http://www.w3.org/1999/xhtml/vocab#alternate",

@@ -1,4 +1,10 @@
 /**
+ * Modified from https://github.com/rubensworks/rdfa-streaming-parser.js
+ *
+ * Copyright © 2019 Ruben Taelman
+ */
+
+/**
  * A type of RDFa profile
  */
 export type RdfaProfile =

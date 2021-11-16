@@ -1,3 +1,9 @@
+/**
+ * Modified from https://github.com/rubensworks/rdfa-streaming-parser.js
+ *
+ * Copyright © 2019 Ruben Taelman
+ */
+
 import * as RDF from "@rdfjs/types";
 import {resolve} from "relative-to-absolute-iri";
 import {IActiveTag} from "./IActiveTag";

@@ -178,3 +178,11 @@ Hints in the editor are displayed as cards that only apply on a specific portion
   - `options.noHighlight` [boolean]: Setting this to false removes the highlight by which users know a hint is given.  Use this for passive hints.
 
 The hints registry will render the hints with the specified component when the text the hint applies on is selected.
+
+# Credits
+
+This project makes use of a modified version of [rdfa-streaming-parser](https://github.com/rubensworks/rdfa-streaming-parser.js),
+created by [Ruben Taelman](https://github.com/rubensworks) and distributed under the [MIT license](https://github.com/rubensworks/rdfa-streaming-parser.js/blob/master/LICENSE.txt).
+
+Due to unique requirements which would not benefit the original project we opted to make our modifications 
+in-house rather than contributing to the upstream. 

@@ -1,4 +1,10 @@
 /**
+ * Modified from https://github.com/rubensworks/rdfa-streaming-parser.js
+ *
+ * Copyright © 2019 Ruben Taelman
+ */
+
+/**
  * An HTML parsing listener.
  */
 export interface IHtmlParseListener {
