@@ -51,23 +51,23 @@ declare module '@graphy/memory.dataset.fast' {
 
     delete(quad: AnyQuad): FastDataset;
 
-    deleteQuads(quads: Array<Quad>): number;
+    deleteQuads(quads: Array<AnyQuad>): number;
 
     clear(): void;
 
     disjoint(other: FastDataset): boolean;
 
-    union(other: RDF.Dataset): FastDataset;
+    union(other: FastDataset): FastDataset;
 
     intersection(other: FastDataset): FastDataset;
 
     minus(other: FastDataset): FastDataset;
 
-    difference(other: RDF.Dataset): FastDataset;
+    difference(other: FastDataset): FastDataset;
 
-    match(subject?: RDF.Quad_Subject, predicate?: RDF.Quad_Predicate, object?: RDF.Quad_Object, graph?: RDF.Quad_Graph): FastDataset;
+    match(subject?: RDF.Quad_Subject | null, predicate?: RDF.Quad_Predicate | null, object?: RDF.Quad_Object | null, graph?: RDF.Quad_Graph | null): FastDataset;
 
-    equals(other: RDF.Dataset): boolean;
+    equals(other: FastDataset): boolean;
 
     has(quad: AnyQuad): boolean;
   }

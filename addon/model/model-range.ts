@@ -326,3 +326,5 @@ export class ModelRangeFactory implements RangeFactory {
 
 
 }
+
+export enum RangeContextStrategy {}
