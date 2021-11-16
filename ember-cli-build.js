@@ -19,6 +19,28 @@ module.exports = function(defaults) {
       cascade: true,
       sourcemap: true
     },
+    autoImport: {
+      webpack: {
+        node: {
+          global: true,
+          __filename: true,
+          __dirname: true,
+        },
+        // plugins: [
+        //   new webpack.ProvidePlugin({
+        //     process: 'process/browser'
+        //   })
+        // ],
+        resolve: {
+          fallback: {
+            stream: require.resolve("stream-browserify"),
+            // buffer: require.resolve('buffer/'),
+            // events: require.resolve("events/"),
+            crypto: require.resolve("crypto-browserify")
+          }
+        }
+      }
+    },
   });
 
   /*
