@@ -20,7 +20,13 @@
     "baseUrl": ".",
     "module": "es6",
     "experimentalDecorators": true,
-    "lib": ["ES2017", "ES2019.Object", "ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2017",
+      "ES2019.Object",
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "paths": {
       "dummy/tests/*": [
         "tests/*"
@@ -28,7 +34,8 @@
       "dummy/*": [
         "tests/dummy/app/*",
         "app/*",
-        "lib/plugin-system-dispatcher/app/*"
+        "lib/plugin-system-dispatcher/app/*",
+        "lib/rdfa-parser/app/*"
       ],
       "@lblod/ember-rdfa-editor": [
         "addon"
@@ -56,6 +63,12 @@
       ],
       "*": [
         "types/*"
+      ],
+      "rdfa-parser/test-support": [
+        "lib/rdfa-parser/addon-test-support"
+      ],
+      "rdfa-parser/test-support/*": [
+        "lib/rdfa-parser/addon-test-support/*"
       ]
     }
   },

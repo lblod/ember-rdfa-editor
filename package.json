@@ -61,6 +61,8 @@
     "ember-maybe-import-regenerator": "^1.0.0",
     "ember-truth-helpers": "^2.0.0",
     "mdn-polyfills": "^5.16.0",
+    "rdf-data-factory": "^1.1.0",
+    "relative-to-absolute-iri": "^1.0.6",
     "stream-browserify": "^3.0.0",
     "xml-formatter": "^2.4.0"
   },

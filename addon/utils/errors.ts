@@ -1,6 +1,6 @@
 import {Manipulation} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
 
-abstract class CustomError extends Error {
+export abstract class CustomError extends Error {
   constructor(message?: string) {
     super(message);
     this.name = this.constructor.name;
@@ -143,3 +143,4 @@ export class TypeAssertionError extends CustomError {}
  * When a command gets executed in a state it shouldn't.
  */
 export class IllegalExecutionStateError extends CustomError {}
+

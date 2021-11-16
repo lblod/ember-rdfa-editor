@@ -6,6 +6,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import {Predicate} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
 import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -272,6 +273,10 @@ export default class ModelRange {
 
   clone(modelRoot?: ModelElement): ModelRange {
     return new ModelRange(this.start.clone(modelRoot), this.end.clone(modelRoot));
+  }
+
+  contextNodes(strategy: RangeContextStrategy): ModelNode[] {
+    throw new NotImplementedError();
   }
 
   toString(): string {

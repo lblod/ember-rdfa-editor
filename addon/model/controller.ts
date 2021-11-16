@@ -5,6 +5,7 @@ import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 import {EditorPlugin} from "@lblod/ember-rdfa-editor/utils/editor-plugin";
 import {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/model/model-range";
 import Datastore, {EditorStore} from "@lblod/ember-rdfa-editor/model/util/datastore";
+import {RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/RdfaParser";
 
 export type WidgetLocation = "toolbar" | "sidebar";
 
@@ -48,6 +49,7 @@ export class RawEditorController implements Controller {
     this._rawEditor = rawEditor;
     this._rangeFactory = new ModelRangeFactory(this._rawEditor.rootModelNode);
     this.dataStore = new EditorStore();
+    this.parser = new RdfaParser();
   }
 
   get name(): string {

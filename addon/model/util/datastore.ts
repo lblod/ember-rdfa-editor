@@ -2,6 +2,7 @@ import * as RDF from '@rdfjs/types';
 import dataset, {FastDataset} from '@graphy/memory.dataset.fast';
 import ModelRange, {RangeContextStrategy} from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 interface TripleQuery {
   subject?: RDF.Quad_Subject,
@@ -16,43 +17,46 @@ export interface Triple {
 }
 
 export default interface Datastore {
+  get dataSet(): RDF.Dataset;
+
+  subjectsForRange(range: ModelRange, strategy: RangeContextStrategy): Set<RDF.Quad_Subject>;
+
   dataForRange(range: ModelRange, strategy: RangeContextStrategy): RDF.Dataset;
 }
 
 export class EditorStore implements Datastore {
-  private dataSet: FastDataset = dataset();
+
+  private _dataSet: RDF.Dataset;
   private nodeToSubject = new WeakMap<ModelNode, RDF.Quad_Subject>();
   private subjectToNodes = new Map<RDF.Quad_Subject, ModelNode[]>();
 
-  getSubjectRanges(subject: RDF.Quad_Subject): ModelRange[] {
-    const nodes = this.getSubjectNodes(subject);
-    if (nodes) {
-      //TODO: merge these ranges if they overlap
-      return nodes.map(node => this.getRangeOfSubjectNode(node));
-    } else {
-      return [];
+  constructor(dataset: RDF.Dataset) {
+    this._dataSet = dataset;
+  }
+
+  get dataSet(): RDF.Dataset {
+    return this._dataSet;
+  }
+
+  subjectsForRange(range: ModelRange, strategy: RangeContextStrategy): Set<RDF.Quad_Subject> {
+    const subjects = new Set<RDF.Quad_Subject>();
+    for (const node of range.contextNodes(strategy)) {
+      const subject = this.nodeToSubject.get(node);
+      if (subject) {
+        subjects.add(subject);
+      }
     }
+    return subjects;
+
   }
 
-  getSubjectNodes(subject: RDF.Quad_Subject): ModelNode[] | undefined {
-    return this.subjectToNodes.get(subject);
-  }
-
-  getRangeOfSubjectNode(node: ModelNode): ModelRange {
-    return ModelRange.fromAroundNode(node);
-  }
-
-  * findTriples(query: TripleQuery): Generator<Triple> {
-    const {subject, predicate, object} = query;
-    const triples = this.dataSet.match(subject, predicate, object);
-    for (const triple of triples) {
-      yield triple;
+  dataForRange(range: ModelRange, strategy: RangeContextStrategy): RDF.Dataset {
+    const subjects = this.subjectsForRange(range, strategy);
+    const result = new GraphyDataset();
+    for (const subject of subjects) {
+      result.addAll(this.dataSet.match(subject));
     }
-  }
-
-
-  * findTriplesForRange(range: ModelRange, query: TripleQuery, strategy: RangeContextStrategy): Generator<RDF.Quad> {
-    return undefined;
+    return result;
   }
 
 }
@@ -169,7 +173,7 @@ export class GraphyDataset implements QuadDataSet {
   }
 
   import(stream: RDF.Stream<RDF.Quad>): Promise<this> {
-    throw new Error('Method not implemented.');
+    throw new NotImplementedError();
   }
 
   intersection(other: QuadDataSet): QuadDataSet {
@@ -211,15 +215,15 @@ export class GraphyDataset implements QuadDataSet {
   }
 
   toCanonical(): string {
-    throw new Error('Method not implemented.');
+    throw new NotImplementedError();
   }
 
   toStream(): RDF.Stream<RDF.Quad> {
-    throw new Error('Method not implemented.');
+    throw new NotImplementedError();
   }
 
   toString(): string {
-    throw new Error('Method not implemented.');
+    throw new NotImplementedError();
   }
 
   union(quads: RDF.Dataset<RDF.Quad, RDF.Quad>): RDF.Dataset<RDF.Quad, RDF.Quad> {
