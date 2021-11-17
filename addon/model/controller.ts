@@ -4,8 +4,7 @@ import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
 import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 import {EditorPlugin} from "@lblod/ember-rdfa-editor/utils/editor-plugin";
 import {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/model/model-range";
-import Datastore, {EditorStore} from "@lblod/ember-rdfa-editor/model/util/datastore";
-import {RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/RdfaParser";
+import Datastore from "@lblod/ember-rdfa-editor/model/util/datastore";
 
 export type WidgetLocation = "toolbar" | "sidebar";
 
@@ -26,6 +25,8 @@ export default interface Controller {
 
   get rangeFactory(): RangeFactory;
 
+  get datastore(): Datastore;
+
   executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void;
 
   registerCommand<A extends unknown[], R>(command: Command<A, R>): void;
@@ -42,14 +43,11 @@ export class RawEditorController implements Controller {
   private readonly _name: string;
   protected readonly _rawEditor: RawEditor;
   private _rangeFactory: RangeFactory;
-  private dataStore: Datastore;
 
   constructor(name: string, rawEditor: RawEditor) {
     this._name = name;
     this._rawEditor = rawEditor;
     this._rangeFactory = new ModelRangeFactory(this._rawEditor.rootModelNode);
-    this.dataStore = new EditorStore();
-    this.parser = new RdfaParser();
   }
 
   get name(): string {
@@ -62,6 +60,10 @@ export class RawEditorController implements Controller {
 
   get rangeFactory(): RangeFactory {
     return this._rangeFactory;
+  }
+
+  get datastore(): Datastore {
+    return this._rawEditor.datastore;
   }
 
   executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void {

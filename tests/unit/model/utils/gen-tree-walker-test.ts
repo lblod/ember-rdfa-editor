@@ -114,6 +114,56 @@ module("Unit | model | utils | gen-tree-walker-test", hooks => {
       assert.strictEqual(nodes[5], n5);
       assert.strictEqual(nodes[6], n6);
     });
+    test("real case", assert => {
+      // language=XML
+      const {root} = vdom`
+        <div id="ember102" class="container-flex--contain ember-view" vocab="http://data.vlaanderen.be/ns/besluit#"
+             prefix="eli: http://data.europa.eu/eli/ontology# prov: http://www.w3.org/ns/prov# mandaat: http://data.vlaanderen.be/ns/mandaat# besluit: http://data.vlaanderen.be/ns/besluit# ext: http://mu.semte.ch/vocabularies/ext/ person: http://www.w3.org/ns/person# persoon: http://data.vlaanderen.be/ns/persoon# dateplugin: http://say.data.gift/manipulators/insertion/ besluittype: https://data.vlaanderen.be/id/concept/BesluitType/ dct: http://purl.org/dc/terms/ mobiliteit: https://data.vlaanderen.be/ns/mobiliteit# lblodmow: http://data.lblod.info/vocabularies/mobiliteit/ "
+             typeof="foaf:Document" resource="#">
+          <div resource="http://data.lblod.info/id/zittingen/66dc1a95-1896-401b-a8a6-cf8d7750f851"
+               typeof="besluit:Zitting">
+            <text>
+            </text>
+            <div property="besluit:heeftNotulen"
+                 resource="http://data.lblod.info/id/lblod/notulen/c1815b872ad82781129e1630c601936952c3d59f8dbcd1c3ddd3228870a37f29">
+              <text>
+              </text>
+              <div property="prov:value">
+                <text>
+                </text>
+                <div typeof="besluit:Zitting"
+                     resource="http://data.lblod.info/id/zittingen/66dc1a95-1896-401b-a8a6-cf8d7750f851">
+                  <text>
+                  </text>
+                  <h1 property="dc:title">
+                    <text>
+                      Notulen van de/het
+                    </text>
+                    <span id="e0431768-cb7c-452a-a85d-7163a1ee3ee0">
+                      <span property="http://data.vlaanderen.be/ns/besluit#isGehoudenDoor"
+                            typeof="http://data.vlaanderen.be/ns/besluit#Bestuursorgaan"
+                            resource="http://data.lblod.info/id/bestuursorganen/f5c51e5e2f09f7f2c53f36127f4087da687e120264b4927286c9bbcf46dc12d6">
+                        <text>
+                          Gemeenteraad Laarne
+                        </text>
+                      </span>
+                    </span>
+                  </h1>
+                </div>
+              </div>
+              <text>
+              </text>
+            </div>
+            <text>
+            </text>
+          </div>
+        </div>
+      `;
+      const walker = GenTreeWalker.fromSubTree({root});
+      const nodes = [...walker.nodes()];
+      assert.strictEqual(nodes.length, 16);
+
+    });
   });
   module("Unit | model | utils | gen-tree-walker-test | start-end", () => {
     test("single node - no filter", assert => {

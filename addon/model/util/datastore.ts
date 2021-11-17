@@ -3,6 +3,7 @@ import dataset, {FastDataset} from '@graphy/memory.dataset.fast';
 import ModelRange, {RangeContextStrategy} from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import {RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
 
 interface TripleQuery {
   subject?: RDF.Quad_Subject,
@@ -17,25 +18,32 @@ export interface Triple {
 }
 
 export default interface Datastore {
-  get dataSet(): RDF.Dataset;
+  get dataset(): RDF.Dataset;
 
   subjectsForRange(range: ModelRange, strategy: RangeContextStrategy): Set<RDF.Quad_Subject>;
 
   dataForRange(range: ModelRange, strategy: RangeContextStrategy): RDF.Dataset;
 }
 
+interface DatastoreConfig {
+  root: ModelNode;
+  pathFromDomRoot?: Node[];
+}
+
 export class EditorStore implements Datastore {
 
-  private _dataSet: RDF.Dataset;
+  private _dataset: RDF.Dataset;
   private nodeToSubject = new WeakMap<ModelNode, RDF.Quad_Subject>();
   private subjectToNodes = new Map<RDF.Quad_Subject, ModelNode[]>();
 
-  constructor(dataset: RDF.Dataset) {
-    this._dataSet = dataset;
+  constructor({root, pathFromDomRoot}: DatastoreConfig) {
+    const parser = new RdfaParser({baseIRI: "http://example.org"});
+    const dataset = parser.parse(root, pathFromDomRoot);
+    this._dataset = dataset;
   }
 
-  get dataSet(): RDF.Dataset {
-    return this._dataSet;
+  get dataset(): RDF.Dataset {
+    return this._dataset;
   }
 
   subjectsForRange(range: ModelRange, strategy: RangeContextStrategy): Set<RDF.Quad_Subject> {
@@ -54,7 +62,7 @@ export class EditorStore implements Datastore {
     const subjects = this.subjectsForRange(range, strategy);
     const result = new GraphyDataset();
     for (const subject of subjects) {
-      result.addAll(this.dataSet.match(subject));
+      result.addAll(this.dataset.match(subject));
     }
     return result;
   }

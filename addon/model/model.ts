@@ -14,6 +14,8 @@ import ModelHistory from "@lblod/ember-rdfa-editor/model/model-history";
 import {Diary} from "diary";
 import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
 import SimplifiedModel from "@lblod/ember-rdfa-editor/model/simplified-model";
+import EventBus from "@lblod/ember-rdfa-editor/utils/event-bus";
+import {ModelReadEvent} from "@lblod/ember-rdfa-editor/utils/editor-event";
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -36,10 +38,11 @@ export default class Model {
   private selectionReader: SelectionReader;
   private selectionWriter: SelectionWriter;
   private history: ModelHistory = new ModelHistory();
+  private _eventBus?: EventBus;
 
   private logger: Diary;
 
-  constructor(rootNode: HTMLElement) {
+  constructor(rootNode: HTMLElement, eventBus?: EventBus) {
     this._rootNode = rootNode;
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
@@ -47,6 +50,7 @@ export default class Model {
     this.selectionReader = new SelectionReader(this);
     this.selectionWriter = new SelectionWriter();
     this._selection = new ModelSelection();
+    this._eventBus = eventBus;
     this.logger = createLogger("RawEditor");
   }
 
@@ -66,6 +70,7 @@ export default class Model {
    * Read in the document and build up the model.
    */
   read(readSelection = true) {
+    console.log("reading model");
     const parsedNodes = this.reader.read(this.rootNode);
     if (parsedNodes.length !== 1) {
       throw new Error("Could not create a rich root");
@@ -82,6 +87,9 @@ export default class Model {
     // This is essential, we change the root so we need to make sure the selection uses the new root.
     if (readSelection) {
       this.readSelection();
+    }
+    if(this._eventBus) {
+      this._eventBus.emit(new ModelReadEvent());
     }
   }
 

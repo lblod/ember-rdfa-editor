@@ -6,8 +6,8 @@
 
 import * as RDF from "@rdfjs/types";
 import {resolve} from "relative-to-absolute-iri";
-import {IActiveTag} from "./IActiveTag";
-import {RDFA_CONTENTTYPES, RdfaProfile} from "./RdfaProfile";
+import {IActiveTag} from "./active-tag";
+import {RDFA_CONTENTTYPES, RdfaProfile} from "./rdfa-profile";
 import {DataFactory} from "rdf-data-factory";
 
 /**

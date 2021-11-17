@@ -41,6 +41,8 @@ import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/ins
 import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
 import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
 import {InternalWidgetSpec, WidgetLocation} from "@lblod/ember-rdfa-editor/model/controller";
+import Datastore, {EditorStore} from "@lblod/ember-rdfa-editor/model/util/datastore";
+import {getPathFromRoot} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
@@ -59,6 +61,7 @@ class RawEditor extends EmberObject {
   modelSelectionTracker!: ModelSelectionTracker;
 
   private _model?: Model;
+  private _datastore: Datastore;
   protected tryOutVdom = true;
   protected eventBus: EventBus;
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<WidgetLocation, InternalWidgetSpec[]>(
@@ -78,6 +81,12 @@ class RawEditor extends EmberObject {
   constructor(properties?: Record<string, unknown>) {
     super(properties);
     this.eventBus = new EventBus();
+    this.eventBus.on("modelRead", () => {
+      this._datastore = new EditorStore({
+        root: this.model.rootModelNode,
+        pathFromDomRoot: getPathFromRoot(this.model.rootNode, false)
+      });
+    });
   }
 
   /**
@@ -94,11 +103,12 @@ class RawEditor extends EmberObject {
     }
 
     this.registeredCommands = new Map<string, Command>();
-    this._model = new Model(rootNode);
+    this._model = new Model(rootNode, this.eventBus);
     this.modelSelectionTracker = new ModelSelectionTracker(this._model);
     this.modelSelectionTracker.startTracking();
 
     window.__VDOM = this.model;
+    window.__EDITOR = this;
     window.__executeCommand = (commandName: string, ...args: unknown[]) => {
       this.executeCommand(commandName, ...args);
     };
@@ -170,6 +180,10 @@ class RawEditor extends EmberObject {
 
   set model(value: Model) {
     this._model = value;
+  }
+
+  get datastore(): Datastore {
+    return this._datastore;
   }
 
   /**

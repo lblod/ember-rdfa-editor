@@ -4,14 +4,18 @@
  * Copyright © 2019 Ruben Taelman
  */
 import * as RDF from "@rdfjs/types";
-import {IActiveTag} from "./IActiveTag";
-import {IHtmlParseListener} from "./IHtmlParseListener";
+import {IActiveTag} from "./active-tag";
+import {IHtmlParseListener} from "./html-parse-listener";
 import INITIAL_CONTEXT_XHTML from "./initial-context-xhtml";
 import INITIAL_CONTEXT from "./initial-context";
-import {IRdfaPattern} from "./IRdfaPattern";
-import {IRdfaFeatures, RDFA_FEATURES, RdfaProfile} from "./RdfaProfile";
-import {Util} from "./Util";
+import {IRdfaPattern} from "./rdfa-pattern";
+import {IRdfaFeatures, RDFA_FEATURES, RdfaProfile} from "./rdfa-profile";
+import {Util} from "./util";
 import {CustomError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import GenTreeWalker from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
+import {GraphyDataset} from "@lblod/ember-rdfa-editor/model/util/datastore";
+import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
 export class RdfaParser {
 
@@ -22,6 +26,7 @@ export class RdfaParser {
   private readonly htmlParseListener?: IHtmlParseListener;
   private readonly rdfaPatterns: Record<string, IRdfaPattern>;
   private readonly pendingRdfaPatternCopies: Record<string, IActiveTag[]>;
+  private resultSet: RDF.Dataset;
 
   private readonly activeTagStack: IActiveTag[] = [];
 
@@ -36,6 +41,7 @@ export class RdfaParser {
     this.htmlParseListener = options.htmlParseListener;
     this.rdfaPatterns = {};
     this.pendingRdfaPatternCopies = {};
+    this.resultSet = new GraphyDataset();
 
     this.activeTagStack.push({
       incompleteTriples: [],
@@ -54,8 +60,50 @@ export class RdfaParser {
     });
   }
 
+  parse(modelRoot: ModelNode, pathFromDomRoot: Node[] = []): RDF.Dataset {
+    this.resultSet = new GraphyDataset();
+    for (const domNode of pathFromDomRoot) {
+      if (isElement(domNode)) {
+        const attributeObj: Record<string, string> = {};
+        for (const attr of domNode.attributes) {
+          attributeObj[attr.name] = attr.value;
+        }
+        this.onTagOpen(domNode.tagName, attributeObj);
+      } else if (isTextNode(domNode)) {
+        this.onText(domNode.textContent || '');
+      }
+    }
+    const walker = GenTreeWalker.fromSubTree({
+      root: modelRoot,
+      onEnterNode: this.onEnterNode,
+      onLeaveNode: this.onLeaveNode
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _nodes = [...walker.nodes()];
+    for (const _ of pathFromDomRoot) {
+      this.onTagClose();
+    }
+    return this.resultSet;
+  }
 
-  public onTagOpen(name: string, attributes: { [s: string]: string }) {
+  protected onEnterNode = (node: ModelNode) => {
+    if (ModelNode.isModelText(node)) {
+      this.onText(node.content);
+    } else if (ModelNode.isModelElement(node)) {
+      const name = node.type;
+      const attributes = Object.fromEntries(node.attributeMap);
+      this.onTagOpen(name, attributes);
+    }
+  };
+
+  protected onLeaveNode = (node: ModelNode) => {
+    if (ModelNode.isModelElement(node)) {
+      this.onTagClose();
+    }
+  };
+
+
+  protected onTagOpen(name: string, attributes: Record<string, string>) {
     // Determine the parent tag (ignore skipped tags)
     let parentTagI: number = this.activeTagStack.length - 1;
     while (parentTagI > 0 && this.activeTagStack[parentTagI].skipElement) {
@@ -772,7 +820,7 @@ export class RdfaParser {
       || (object.termType === 'NamedNode' && object.value.indexOf(':') < 0)) {
       return;
     }
-    // this.push(this.util.dataFactory.quad(subject, predicate, object, this.defaultGraph));
+    this.resultSet.add(this.util.dataFactory.quad(subject, predicate, object, this.defaultGraph));
   }
 
   /**

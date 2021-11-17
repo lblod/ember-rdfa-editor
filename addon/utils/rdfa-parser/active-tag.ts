@@ -4,7 +4,7 @@
  * Copyright © 2019 Ruben Taelman
  */
 import * as RDF from "@rdfjs/types";
-import {IRdfaPattern} from "./IRdfaPattern";
+import {IRdfaPattern} from "./rdfa-pattern";
 
 /**
  * Data holder for the RDFa state in XML tags.

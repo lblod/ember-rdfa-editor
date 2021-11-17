@@ -5,7 +5,7 @@
  */
 
 import * as RDF from "@rdfjs/types";
-import {IActiveTag} from "./IActiveTag";
+import {IActiveTag} from "./active-tag";
 
 /**
  * A datastructure for storing an rdfa:Pattern.
