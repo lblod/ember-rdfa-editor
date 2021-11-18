@@ -6,7 +6,7 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import {Predicate} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
 import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import GenTreeWalker from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -276,7 +276,8 @@ export default class ModelRange {
   }
 
   contextNodes(strategy: RangeContextStrategy): ModelNode[] {
-    throw new NotImplementedError();
+    const walker = GenTreeWalker.fromRange({range: this});
+    return [...walker.nodes()];
   }
 
   toString(): string {

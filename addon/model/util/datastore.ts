@@ -3,7 +3,7 @@ import dataset, {FastDataset} from '@graphy/memory.dataset.fast';
 import ModelRange, {RangeContextStrategy} from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
+import {ModelQuadSubject, RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
 
 interface TripleQuery {
   subject?: RDF.Quad_Subject,
@@ -33,13 +33,15 @@ interface DatastoreConfig {
 export class EditorStore implements Datastore {
 
   private _dataset: RDF.Dataset;
-  private nodeToSubject = new WeakMap<ModelNode, RDF.Quad_Subject>();
-  private subjectToNodes = new Map<RDF.Quad_Subject, ModelNode[]>();
+  private _subjectToNodesMapping: Map<string, Set<ModelNode>>;
+  private _nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
 
   constructor({root, pathFromDomRoot}: DatastoreConfig) {
     const parser = new RdfaParser({baseIRI: "http://example.org"});
-    const dataset = parser.parse(root, pathFromDomRoot);
+    const {dataset, subjectToNodesMapping, nodeToSubjectMapping} = parser.parse(root, pathFromDomRoot);
     this._dataset = dataset;
+    this._subjectToNodesMapping = subjectToNodesMapping;
+    this._nodeToSubjectMapping = nodeToSubjectMapping;
   }
 
   get dataset(): RDF.Dataset {
@@ -49,7 +51,7 @@ export class EditorStore implements Datastore {
   subjectsForRange(range: ModelRange, strategy: RangeContextStrategy): Set<RDF.Quad_Subject> {
     const subjects = new Set<RDF.Quad_Subject>();
     for (const node of range.contextNodes(strategy)) {
-      const subject = this.nodeToSubject.get(node);
+      const subject = this._nodeToSubjectMapping.get(node);
       if (subject) {
         subjects.add(subject);
       }
@@ -65,6 +67,25 @@ export class EditorStore implements Datastore {
       result.addAll(this.dataset.match(subject));
     }
     return result;
+  }
+
+  nodesForSubject(subject: RDF.Quad_Subject): Set<ModelNode> | undefined {
+    return this._subjectToNodesMapping.get(subject.value);
+  }
+
+  nodesForType(type: string) {
+    const quads = [...this._dataset.match(
+      null,
+      {
+        value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        termType: "NamedNode",
+      },
+      {termType: "NamedNode", value: type})
+    ];
+    const subjects = quads.map((quad) => quad.subject);
+    const nodes = subjects.map(subject => ({subject, nodes: this.nodesForSubject(subject)}));
+    return nodes;
+
   }
 
 }

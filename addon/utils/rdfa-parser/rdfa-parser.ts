@@ -17,11 +17,35 @@ import GenTreeWalker from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
 import {GraphyDataset} from "@lblod/ember-rdfa-editor/model/util/datastore";
 import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
+export type ModelTerm = ModelQuadObject | ModelQuadPredicate | ModelQuadSubject;
+export type ModelQuadSubject = ModelNamedNode | ModelBlankNode;
+export type ModelQuadPredicate = ModelNamedNode;
+export type ModelQuadObject = ModelNamedNode | ModelBlankNode | ModelLiteral;
+
+export interface ModelNamedNode<I extends string = string> extends RDF.NamedNode<I> {
+  node?: ModelNode;
+}
+
+export interface ModelBlankNode extends RDF.BlankNode {
+  node?: ModelNode;
+}
+
+export interface ModelLiteral extends RDF.Literal {
+  node?: ModelNode;
+}
+
+export interface ModelQuad extends RDF.Quad {
+  subject: ModelQuadSubject;
+  predicate: ModelQuadPredicate;
+  object: ModelQuadObject;
+
+}
+
 export class RdfaParser {
 
   private readonly options: IRdfaParserOptions;
   private readonly util: Util;
-  private readonly defaultGraph?: RDF.Quad_Graph;
+  private readonly defaultGraph: RDF.Quad_Graph;
   private readonly features: IRdfaFeatures;
   private readonly htmlParseListener?: IHtmlParseListener;
   private readonly rdfaPatterns: Record<string, IRdfaPattern>;
@@ -29,12 +53,16 @@ export class RdfaParser {
   private resultSet: RDF.Dataset;
 
   private readonly activeTagStack: IActiveTag[] = [];
+  private nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
+  private subjectToNodesMapping: Map<string, Set<ModelNode>>;
+  private rootModelNode?: ModelNode;
 
   constructor(options?: IRdfaParserOptions) {
     options = options || {};
     this.options = options;
 
-    this.util = new Util(options.dataFactory, options.baseIRI);
+    this.rootModelNode = options.rootModelNode;
+    this.util = new Util(undefined, options.baseIRI);
     this.defaultGraph = options.defaultGraph || this.util.dataFactory.defaultGraph();
     const profile = options.contentType ? Util.contentTypeToProfile(options.contentType) : options.profile || '';
     this.features = options.features || RDFA_FEATURES[profile];
@@ -42,6 +70,8 @@ export class RdfaParser {
     this.rdfaPatterns = {};
     this.pendingRdfaPatternCopies = {};
     this.resultSet = new GraphyDataset();
+    this.nodeToSubjectMapping = new Map<ModelNode, ModelQuadSubject>();
+    this.subjectToNodesMapping = new Map<string, Set<ModelNode>>();
 
     this.activeTagStack.push({
       incompleteTriples: [],
@@ -57,18 +87,27 @@ export class RdfaParser {
       prefixesCustom: {},
       skipElement: false,
       vocab: options.vocab,
+      node: this.rootModelNode
     });
   }
 
-  parse(modelRoot: ModelNode, pathFromDomRoot: Node[] = []): RDF.Dataset {
+  parse(modelRoot: ModelNode, pathFromDomRoot: Node[] = []):
+    {
+      dataset: RDF.Dataset,
+      subjectToNodesMapping: Map<string, Set<ModelNode>>,
+      nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>
+    } {
     this.resultSet = new GraphyDataset();
+    this.rootModelNode = modelRoot;
+    this.nodeToSubjectMapping = new Map<ModelNode, ModelQuadSubject>();
+    this.subjectToNodesMapping = new Map<string, Set<ModelNode>>();
     for (const domNode of pathFromDomRoot) {
       if (isElement(domNode)) {
         const attributeObj: Record<string, string> = {};
         for (const attr of domNode.attributes) {
           attributeObj[attr.name] = attr.value;
         }
-        this.onTagOpen(domNode.tagName, attributeObj);
+        this.onTagOpen(domNode.tagName, attributeObj, this.rootModelNode);
       } else if (isTextNode(domNode)) {
         this.onText(domNode.textContent || '');
       }
@@ -83,7 +122,12 @@ export class RdfaParser {
     for (const _ of pathFromDomRoot) {
       this.onTagClose();
     }
-    return this.resultSet;
+    this.onEnd();
+    return {
+      dataset: this.resultSet,
+      nodeToSubjectMapping: this.nodeToSubjectMapping,
+      subjectToNodesMapping: this.subjectToNodesMapping
+    };
   }
 
   protected onEnterNode = (node: ModelNode) => {
@@ -92,7 +136,7 @@ export class RdfaParser {
     } else if (ModelNode.isModelElement(node)) {
       const name = node.type;
       const attributes = Object.fromEntries(node.attributeMap);
-      this.onTagOpen(name, attributes);
+      this.onTagOpen(name, attributes, node);
     }
   };
 
@@ -103,7 +147,7 @@ export class RdfaParser {
   };
 
 
-  protected onTagOpen(name: string, attributes: Record<string, string>) {
+  protected onTagOpen(name: string, attributes: Record<string, string>, node?: ModelNode) {
     // Determine the parent tag (ignore skipped tags)
     let parentTagI: number = this.activeTagStack.length - 1;
     while (parentTagI > 0 && this.activeTagStack[parentTagI].skipElement) {
@@ -133,6 +177,7 @@ export class RdfaParser {
       prefixesAll: {},
       prefixesCustom: {},
       skipElement: false,
+      node
     };
     this.activeTagStack.push(activeTag);
 
@@ -220,11 +265,11 @@ export class RdfaParser {
 
     // <base> tags override the baseIRI of the whole document
     if (this.features.baseTag && name === 'base' && attributes.href) {
-      this.util.baseIRI = this.util.getBaseIRI(attributes.href);
+      this.util.baseIRI = this.util.getBaseIRI(attributes.href, node);
     }
     // xml:base attributes override the baseIRI of the current tag and children
     if (this.features.xmlBase && attributes['xml:base']) {
-      activeTag.localBaseIRI = this.util.getBaseIRI(attributes['xml:base']);
+      activeTag.localBaseIRI = this.util.getBaseIRI(attributes['xml:base'], node);
     }
 
     // <time> tags set an initial datatype
@@ -234,9 +279,9 @@ export class RdfaParser {
 
     // Processing based on https://www.w3.org/TR/rdfa-core/#s_rdfaindetail
     // 1: initialize values
-    let newSubject: RDF.NamedNode | RDF.BlankNode | boolean | null = null;
-    let currentObjectResource: RDF.NamedNode | RDF.BlankNode | boolean | null = null;
-    let typedResource: RDF.NamedNode | RDF.BlankNode | boolean | null = null;
+    let newSubject: ModelNamedNode | ModelBlankNode | boolean | null = null;
+    let currentObjectResource: ModelNamedNode | ModelBlankNode | boolean | null = null;
+    let typedResource: ModelNamedNode | ModelBlankNode | boolean | null = null;
 
     // 2: handle vocab attribute to set active vocabulary
     // Vocab sets the active vocabulary
@@ -245,8 +290,8 @@ export class RdfaParser {
         activeTag.vocab = attributes.vocab;
         this.emitTriple(
           this.util.getBaseIriTerm(activeTag),
-          this.util.dataFactory.namedNode(Util.RDFA + 'usesVocabulary'),
-          this.util.dataFactory.namedNode(activeTag.vocab),
+          this.util.dataFactory.namedNode(Util.RDFA + 'usesVocabulary', node),
+          this.util.dataFactory.namedNode(activeTag.vocab, node),
         );
       } else {
         // If vocab is set to '', then we fallback to the root vocab as defined via the parser constructor
@@ -266,14 +311,14 @@ export class RdfaParser {
     if (this.features.roleAttribute && attributes.role) {
       const roleSubject = attributes.id
         ? this.util.createIri('#' + attributes.id, activeTag, false, false, false)
-        : this.util.createBlankNode();
+        : this.util.createBlankNode(node);
       // Temporarily override vocab
       const vocabOld = activeTag.vocab;
       activeTag.vocab = 'http://www.w3.org/1999/xhtml/vocab#';
       for (const role of this.util.createVocabIris(attributes.role, activeTag, true, false)) {
         this.emitTriple(
           roleSubject,
-          this.util.dataFactory.namedNode('http://www.w3.org/1999/xhtml/vocab#role'),
+          this.util.dataFactory.namedNode('http://www.w3.org/1999/xhtml/vocab#role', node),
           role,
         );
       }
@@ -321,7 +366,7 @@ export class RdfaParser {
             typedResource = newSubject;
           }
           if (!typedResource) {
-            typedResource = this.util.createBlankNode();
+            typedResource = this.util.createBlankNode(node);
           }
 
           currentObjectResource = typedResource;
@@ -343,7 +388,7 @@ export class RdfaParser {
           } else if (this.isInheritSubjectInHeadBody(name)) {
             newSubject = parentTag.object || null;
           } else if ('typeof' in attributes) {
-            newSubject = this.util.createBlankNode();
+            newSubject = this.util.createBlankNode(node);
             activeTag.explicitNewSubject = true;
           } else if (parentTag.object) {
             newSubject = parentTag.object;
@@ -382,7 +427,7 @@ export class RdfaParser {
         if ('href' in attributes || 'src' in attributes) {
           currentObjectResource = this.util.createIri(attributes.href || attributes.src, activeTag, false, false, true);
         } else if ('typeof' in attributes && !('about' in attributes) && !this.isInheritSubjectInHeadBody(name)) {
-          currentObjectResource = this.util.createBlankNode();
+          currentObjectResource = this.util.createBlankNode(node);
         }
       }
 
@@ -401,7 +446,7 @@ export class RdfaParser {
       for (const type of this.util.createVocabIris(attributes.typeof, activeTag, true, true)) {
         this.emitTriple(
           this.util.getResourceOrBaseIri(typedResource, activeTag),
-          this.util.dataFactory.namedNode(Util.RDF + 'type'),
+          this.util.dataFactory.namedNode(Util.RDF + 'type', node),
           type,
         );
       }
@@ -478,7 +523,7 @@ export class RdfaParser {
 
       // Set a blank node object, so the children can make use of this when completing the triples
       if (activeTag.incompleteTriples.length > 0) {
-        currentObjectResource = this.util.createBlankNode();
+        currentObjectResource = this.util.createBlankNode(node);
       }
     }
 
@@ -697,17 +742,17 @@ export class RdfaParser {
       if (activeTag.object && Object.keys(activeTag.listMapping).length > 0) {
         const subject = this.util.getResourceOrBaseIri(activeTag.object, activeTag);
         for (const predicateValue in activeTag.listMapping) {
-          const predicate = this.util.dataFactory.namedNode(predicateValue);
+          const predicate = this.util.dataFactory.namedNode(predicateValue, activeTag.node);
           const values = activeTag.listMapping[predicateValue];
 
           if (values.length > 0) {
             // Non-empty list, emit linked list of rdf:first and rdf:rest chains
-            const bnodes = values.map(() => this.util.createBlankNode());
+            const bnodes = values.map((value) => this.util.createBlankNode(typeof value === "boolean" ? undefined : value.node));
             for (let i = 0; i < values.length; i++) {
               const object = this.util.getResourceOrBaseIri(values[i], activeTag);
-              this.emitTriple(bnodes[i], this.util.dataFactory.namedNode(Util.RDF + 'first'),
+              this.emitTriple(bnodes[i], this.util.dataFactory.namedNode(Util.RDF + 'first', activeTag.node),
                 object);
-              this.emitTriple(bnodes[i], this.util.dataFactory.namedNode(Util.RDF + 'rest'),
+              this.emitTriple(bnodes[i], this.util.dataFactory.namedNode(Util.RDF + 'rest', activeTag.node),
                 (i < values.length - 1) ? bnodes[i + 1] : this.util.dataFactory.namedNode(Util.RDF + 'nil'));
             }
 
@@ -787,17 +832,17 @@ export class RdfaParser {
   /**
    * Add a list mapping for the given predicate and object in the active tag.
    */
-  protected addListMapping(activeTag: IActiveTag, subject: RDF.Quad_Subject | boolean, predicate: RDF.Quad_Predicate,
-                           currentObjectResource: RDF.Quad_Object | boolean | null) {
+  protected addListMapping(activeTag: IActiveTag, subject: ModelQuadSubject | boolean, predicate: ModelQuadPredicate,
+                           currentObjectResource: ModelQuadObject | boolean | null) {
     if (activeTag.explicitNewSubject) {
-      const bNode = this.util.createBlankNode();
+      const bNode = this.util.createBlankNode(activeTag.node);
       this.emitTriple(this.util.getResourceOrBaseIri(subject, activeTag), predicate, bNode);
       if (!currentObjectResource) {
         throw new NullOrUndefinedError();
       }
-      this.emitTriple(bNode, this.util.dataFactory.namedNode(Util.RDF + 'first'),
+      this.emitTriple(bNode, this.util.dataFactory.namedNode(Util.RDF + 'first', activeTag.node),
         this.util.getResourceOrBaseIri(currentObjectResource, activeTag));
-      this.emitTriple(bNode, this.util.dataFactory.namedNode(Util.RDF + 'rest'),
+      this.emitTriple(bNode, this.util.dataFactory.namedNode(Util.RDF + 'rest', activeTag.node),
         this.util.dataFactory.namedNode(Util.RDF + 'nil'));
     } else {
       let predicateList = activeTag.listMappingLocal[predicate.value];
@@ -813,12 +858,22 @@ export class RdfaParser {
   /**
    * Emit the given triple to the stream.
    */
-  protected emitTriple(subject: RDF.Quad_Subject, predicate: RDF.Quad_Predicate, object: RDF.Quad_Object) {
+  protected emitTriple(subject: ModelQuadSubject, predicate: ModelQuadPredicate, object: ModelQuadObject) {
     // Validate IRIs
     if ((subject.termType === 'NamedNode' && subject.value.indexOf(':') < 0)
       || (predicate.termType === 'NamedNode' && predicate.value.indexOf(':') < 0)
       || (object.termType === 'NamedNode' && object.value.indexOf(':') < 0)) {
       return;
+    }
+    if (subject.node) {
+      this.nodeToSubjectMapping.set(subject.node, subject);
+      const subToNodes = this.subjectToNodesMapping.get(subject.value);
+      if (subToNodes) {
+        subToNodes.add(subject.node);
+      } else {
+        this.subjectToNodesMapping.set(subject.value, new Set([subject.node]));
+      }
+
     }
     this.resultSet.add(this.util.dataFactory.quad(subject, predicate, object, this.defaultGraph));
   }
@@ -837,8 +892,8 @@ export class RdfaParser {
     // All next pattern copies will reuse the instantiated blank nodes from the first pattern.
     if (!pattern.constructedBlankNodes) {
       pattern.constructedBlankNodes = [];
-      this.util.blankNodeFactory = () => {
-        const bNode = this.util.dataFactory.blankNode();
+      this.util.blankNodeFactory = (node?: ModelNode) => {
+        const bNode = this.util.dataFactory.blankNode(undefined, node);
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         pattern.constructedBlankNodes!.push(bNode);
         return bNode;
@@ -927,6 +982,8 @@ export interface IRdfaParserOptions {
    * An optional listener for the internal HTML parse events.
    */
   htmlParseListener?: IHtmlParseListener;
+
+  rootModelNode?: ModelNode
 }
 
 /**

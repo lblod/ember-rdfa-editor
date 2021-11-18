@@ -9,6 +9,44 @@ import {resolve} from "relative-to-absolute-iri";
 import {IActiveTag} from "./active-tag";
 import {RDFA_CONTENTTYPES, RdfaProfile} from "./rdfa-profile";
 import {DataFactory} from "rdf-data-factory";
+import {
+  ModelBlankNode,
+  ModelLiteral,
+  ModelNamedNode,
+  ModelQuad,
+  ModelQuadObject,
+  ModelQuadPredicate,
+  ModelQuadSubject,
+  ModelTerm
+} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
+import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+
+export class ModelDataFactory extends DataFactory {
+  quad(subject: ModelQuadSubject, predicate: ModelQuadPredicate, object: ModelQuadObject, graph: RDF.Quad_Graph): ModelQuad {
+    const quad = super.quad(subject, predicate, object, graph);
+    return {...quad, subject, predicate, object, graph};
+  }
+
+  namedNode<I extends string = string>(iri: I, node?: ModelNode): ModelNamedNode<I> {
+    const namedNode: ModelNamedNode<I> = super.namedNode<I>(iri);
+    namedNode.node = node;
+    return namedNode;
+  }
+
+  blankNode(value?: string, node?: ModelNode): ModelBlankNode {
+    const blankNode: ModelBlankNode = super.blankNode(value);
+    blankNode.node = node;
+    return blankNode;
+  }
+
+  literal(value: string, languageOrDataType?: string | ModelNamedNode, node?: ModelNode): ModelLiteral {
+    const literal: ModelLiteral = super.literal(value, languageOrDataType);
+    literal.node = node;
+    return literal;
+
+  }
+
+}
 
 /**
  * A collection of utility functions.
@@ -36,13 +74,13 @@ export class Util {
   ];
   private static readonly IRI_REGEX: RegExp = /^([A-Za-z][A-Za-z0-9+-.]*|_):[^ "<>{}|\\[\]`]*$/;
 
-  public readonly dataFactory: RDF.DataFactory;
-  public baseIRI: RDF.NamedNode;
-  public blankNodeFactory: (() => RDF.BlankNode) | null = null;
-  private readonly baseIRIDocument: RDF.NamedNode;
+  public readonly dataFactory: ModelDataFactory;
+  public baseIRI: ModelNamedNode;
+  public blankNodeFactory: ((node?: ModelNode) => ModelBlankNode) | null = null;
+  private readonly baseIRIDocument: ModelNamedNode;
 
-  constructor(dataFactory?: RDF.DataFactory, baseIRI?: string) {
-    this.dataFactory = dataFactory || new DataFactory();
+  constructor(dataFactory?: ModelDataFactory, baseIRI?: string) {
+    this.dataFactory = dataFactory || new ModelDataFactory();
     this.baseIRI = this.dataFactory.namedNode(baseIRI || '');
     this.baseIRIDocument = this.baseIRI;
   }
@@ -145,15 +183,16 @@ export class Util {
   /**
    * Get the base IRI.
    * @param {string} baseIriValue A base IRI value.
+   * @param node
    * @return A base IRI named node.
    */
-  public getBaseIRI(baseIriValue: string): RDF.NamedNode {
+  public getBaseIRI(baseIriValue: string, node?: ModelNode): ModelNamedNode {
     let href: string = baseIriValue;
     const fragmentIndex = href.indexOf('#');
     if (fragmentIndex >= 0) {
       href = href.substr(0, fragmentIndex);
     }
-    return this.dataFactory.namedNode(resolve(href, this.baseIRI.value));
+    return this.dataFactory.namedNode(resolve(href, this.baseIRI.value), node);
   }
 
   /**
@@ -162,8 +201,8 @@ export class Util {
    * @param {IActiveTag} activeTag An active tag.
    * @returns {Term} A term.
    */
-  public getResourceOrBaseIri(term: RDF.Term | boolean, activeTag: IActiveTag): RDF.NamedNode {
-    return term === true ? this.getBaseIriTerm(activeTag) : <RDF.NamedNode>term;
+  public getResourceOrBaseIri(term: ModelTerm | boolean, activeTag: IActiveTag): ModelNamedNode {
+    return term === true ? this.getBaseIriTerm(activeTag) : term as ModelNamedNode;
   }
 
   /**
@@ -171,7 +210,7 @@ export class Util {
    * @param {IActiveTag} activeTag The active tag.
    * @return {NamedNode} The base IRI term.
    */
-  public getBaseIriTerm(activeTag: IActiveTag): RDF.NamedNode {
+  public getBaseIriTerm(activeTag: IActiveTag): ModelNamedNode {
     return activeTag.localBaseIRI || this.baseIRI;
   }
 
@@ -204,23 +243,23 @@ export class Util {
     if (activeTag.interpretObjectAsTime && !activeTag.datatype) {
       for (const entry of Util.TIME_REGEXES) {
         if (entry.regex.exec(literal)) {
-          activeTag.datatype = this.dataFactory.namedNode(Util.XSD + entry.type);
+          activeTag.datatype = this.dataFactory.namedNode(Util.XSD + entry.type, activeTag.node);
           break;
         }
       }
     }
-    return this.dataFactory.literal(literal, activeTag.datatype || activeTag.language);
+    return this.dataFactory.literal(literal, activeTag.datatype || activeTag.language, activeTag.node);
   }
 
   /**
    * Create a blank node.
    * @returns {BlankNode} A new blank node.
    */
-  public createBlankNode(): RDF.BlankNode {
+  public createBlankNode(node?: ModelNode): ModelBlankNode {
     if (this.blankNodeFactory) {
-      return this.blankNodeFactory();
+      return this.blankNodeFactory(node);
     }
-    return this.dataFactory.blankNode();
+    return this.dataFactory.blankNode(undefined, node);
   }
 
   /**
@@ -238,9 +277,9 @@ export class Util {
    */
   public createIri<B extends boolean>(term: string, activeTag: IActiveTag, vocab: boolean, allowSafeCurie: boolean,
                                       allowBlankNode: B): B extends true
-    ? (RDF.NamedNode | RDF.BlankNode) : RDF.NamedNode;
+    ? (ModelNamedNode | ModelBlankNode) : ModelNamedNode;
   public createIri<B extends boolean>(term: string, activeTag: IActiveTag, vocab: boolean, allowSafeCurie: boolean,
-                                      allowBlankNode: B): RDF.NamedNode | RDF.BlankNode | null {
+                                      allowBlankNode: B): ModelNamedNode | ModelBlankNode | null {
     term = term || '';
 
     if (!allowSafeCurie) {
@@ -250,7 +289,7 @@ export class Util {
       if (!Util.isValidIri(term)) {
         return null;
       }
-      return this.dataFactory.namedNode(term);
+      return this.dataFactory.namedNode(term, activeTag.node);
     }
 
     // Handle strict CURIEs
@@ -265,13 +304,13 @@ export class Util {
 
     // Handle blank nodes
     if (term.startsWith('_:')) {
-      return allowBlankNode ? this.dataFactory.blankNode(term.substr(2) || 'b_identity') : null;
+      return allowBlankNode ? this.dataFactory.blankNode(term.substr(2) || 'b_identity', activeTag.node) : null;
     }
 
     // Handle vocab IRIs
     if (vocab) {
       if (activeTag.vocab && term.indexOf(':') < 0) {
-        return this.dataFactory.namedNode(activeTag.vocab + term);
+        return this.dataFactory.namedNode(activeTag.vocab + term, activeTag.node);
       }
     }
 
@@ -286,7 +325,7 @@ export class Util {
     if (!Util.isValidIri(iri)) {
       return null;
     }
-    return this.dataFactory.namedNode(iri);
+    return this.dataFactory.namedNode(iri, activeTag.node);
   }
 
 }
