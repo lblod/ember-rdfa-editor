@@ -91,7 +91,7 @@ $say-input-font-size                 : $au-h6 !default;
   padding-right: $au-unit-small;
   overflow: visible;
   font-size: $say-smaller-font-size;
-  font-weight:$au-medium;
+  font-weight: var(--au-medium);
   color: $say-input-disabled-color;
   pointer-events: none;
   float: left;

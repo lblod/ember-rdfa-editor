@@ -69,19 +69,19 @@
       margin-right: -$say-annotation-gutter + $au-unit-tiny;
       width: $say-annotation-width-content;
       font-family: var(--au-font);
-      font-weight:$au-medium;
+      font-weight: var(--au-medium);
       letter-spacing: .01rem;
       text-transform: uppercase;
       text-overflow: ellipsis;
       white-space: nowrap;
-      color: $au-gray-600;
-      background-color: $au-gray-100;
+      color: var(--au-gray-600);
+      background-color: var(--au-gray-100);
       pointer-events: none;
       overflow: hidden;
       min-height: 2rem;
-      border-right: 1px dashed $au-gray-300;
-      border-top: 1px dashed $au-gray-300;
-      z-index: $au-z-index-gamma;
+      border-right: 1px dashed var(--au-gray-300);
+      border-top: 1px dashed var(--au-gray-300);
+      z-index: var(--au-z-index-gamma);
       background: linear-gradient(
         to right,
           $au-gray-100,
@@ -99,7 +99,7 @@
 
     // Bring highlighted annotation to the front
     &[data-editor-position-level]:before {
-      z-index: $au-z-index-alpha;
+      z-index: var(--au-z-index-alpha);
     }
 
     &[data-editor-position-level]:before {
@@ -109,7 +109,7 @@
     }
 
     &[data-editor-position-level="0"]:before {
-      z-index: $au-z-index-gamma;
+      z-index: var(--au-z-index-gamma);
     }
   }
 

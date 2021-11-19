@@ -23,7 +23,7 @@
 
 // Modal Dialog base styling
 .say-modal {
-  background: $au-white;
+  background: var(--au-white);
   margin: auto;
   height: auto;
   max-height: calc(100% - #{$au-unit});
@@ -72,7 +72,7 @@
   justify-content: space-between;
   align-items: center;
   padding: $au-unit-small;
-  border-bottom: 1px solid $au-gray-200;
+  border-bottom: 1px solid var(--au-gray-200);
 
   @include mq(medium) {
     padding: $au-unit;
@@ -105,14 +105,14 @@
   border: 0;
   padding: 0;
   text-align: center;
-  color: $au-gray-700;
+  color: var(--au-gray-700);
   transition: color var(--au-transition);
   text-decoration: underline;
-  text-decoration-color: $au-gray-300;
+  text-decoration-color: var(--au-gray-300);
 
   &:hover,
   &:focus {
-    color: $au-gray-600;
+    color: var(--au-gray-600);
     text-decoration: none;
   }
 }
@@ -128,14 +128,14 @@
   border: 0;
   padding: 0;
   text-align: center;
-  color: $au-gray-700;
+  color: var(--au-gray-700);
   transition: color var(--au-transition);
   text-decoration: underline;
-  text-decoration-color: $au-gray-300;
+  text-decoration-color: var(--au-gray-300);
 
   &:hover,
   &:focus {
-    color: $au-gray-600;
+    color: var(--au-gray-600);
     text-decoration: none;
   }
 }
@@ -146,7 +146,7 @@
   flex-grow: 1;
   position: relative;
   height: calc(100% - #{$au-unit-large + $au-unit-small});
-  background-color: $au-white;
+  background-color: var(--au-white);
 
   &:focus {
     outline: 0;
@@ -165,13 +165,13 @@
   flex-basis: 100%;
   padding: $au-unit-small;
   overflow: auto;
-  background-color: $au-gray-100;
-  border-bottom: .1rem solid $au-gray-200;
+  background-color: var(--au-gray-100);
+  border-bottom: .1rem solid var(--au-gray-200);
 
   @include mq(medium) {
     padding: $au-unit;
     border-bottom: 0;
-    border-right: .1rem solid $au-gray-200;
+    border-right: .1rem solid var(--au-gray-200);
     height: 100%;
     flex-basis: 35rem;
     flex-grow: 1;
@@ -198,6 +198,6 @@
 
 .say-modal__info {
   @include au-font-size($au-h6);
-  color: $au-gray-700;
+  color: var(--au-gray-700);
   padding: $au-unit;
 }

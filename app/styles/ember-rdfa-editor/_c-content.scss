@@ -361,7 +361,7 @@ $say-editor-highlight-hover-color: var(--au-yellow-100) !default;
 
     // Reset some table styles
     th {
-      font-weight:$au-medium;
+      font-weight: var(--au-medium);
       border-bottom: 1px solid var(--au-gray-300);
     }
 

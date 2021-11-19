@@ -13,12 +13,12 @@
   flex-direction: row-reverse;
 
   & + & {
-    border-top: .1rem solid $au-gray-200;
+    border-top: .1rem solid var(--au-gray-20);
   }
 }
 
 .say-article__section--highlight {
-  background-color: $au-gray-100;
+  background-color: var(--au-gray-100);
 }
 
 .say-article__action {
@@ -28,7 +28,7 @@
 }
 
 .say-article__content {
-  color: $au-gray-800;
+  color: var(--au-gray-800);
   margin-right: $au-unit;
 
   > * {

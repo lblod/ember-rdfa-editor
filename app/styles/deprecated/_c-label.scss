@@ -14,7 +14,7 @@ $say-label-color                   : var(--au-gray-800) !default;
 .say-label {
   color: $say-label-color;
   font-family: var(--au-font);
-  font-weight:$au-medium;
+  font-weight: var(--au-medium);
   margin-bottom: $au-unit-tiny;
 }
 

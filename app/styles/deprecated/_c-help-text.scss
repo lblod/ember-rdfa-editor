@@ -29,5 +29,5 @@ $say-help-text-font-size         : 1.4rem !default;
 
 .say-help-text--error {
   color: $say-help-text-error-color;
-  font-weight:$au-medium;
+  font-weight: var(--au-medium);
 }

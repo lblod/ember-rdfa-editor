@@ -132,7 +132,7 @@ $say-button-tertiary-bg-hover-color        : transparent !default;
   transition: opacity var(--au-transition);
   margin-left: $au-unit-small;
   color: var(--au-gray-700);
-  background-color: $au-gray-200;
+  background-color: var(--au-gray-200);
   padding-left: $au-unit-tiny;
   padding-right: $au-unit-tiny;
   border-radius: .3rem;

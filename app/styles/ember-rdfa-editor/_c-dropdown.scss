@@ -66,7 +66,7 @@ $say-smaller-font-size          : 1.4rem !default;
   font-family: var(--au-font);
   font-weight: var(--au-regular);
   position: absolute;
-  z-index: $au-z-index-beta;
+  z-index: var(--au-z-index-beta);
   background-color: $au-white;
   display: flex;
   flex-direction: column;

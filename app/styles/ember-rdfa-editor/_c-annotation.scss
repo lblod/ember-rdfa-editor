@@ -38,7 +38,7 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
 
     [property="besluit:geplandOpenbaar"],
     [property="besluit:openbaar"] {
-      color: $au-gray-600 !important;
+      color: var(--au-gray-600) !important;
     }
 
     [property="besluit:geplandOpenbaar"] i,
@@ -47,7 +47,7 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
       top: .2rem;
       padding-left: 1px;
       z-index: 2;
-      color: $au-gray-600 !important;
+      color: var(--au-gray-600) !important;
     }
 
     [property="besluit:geplandOpenbaar"][content="false"],
@@ -104,7 +104,7 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
   [typeof]:not([typeof="foaf:Document"]),
   [data-type],
   .mark-highlight-manual {
-    border-bottom: .2rem dotted $au-gray-300;
+    border-bottom: .2rem dotted var(--au-gray-300);
     padding-bottom: .2rem;
     transition: border var(--au-transition);
 
@@ -127,7 +127,7 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
     transition: background-color var(--au-transition);
 
     &::selection {
-      color: $au-gray-900;
+      color: var(--au-gray-900);
       background-color: $say-editor-highlight-color;
     }
 
@@ -148,8 +148,8 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
   }
 
   span.mark-highlight-manual {
-    color: $au-gray-700;
-    background-color: $au-gray-100;
+    color: var(--au-gray-700);
+    background-color: var(--au-gray-100);
     font-style: italic;
 
     &[data-editor-position-level="1"],
@@ -167,7 +167,7 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
   [data-type],
   .mark-highlight-manual {
     position: relative;
-    border: 1px solid $au-gray-200;
+    border: 1px solid var(--au-gray-200);
     display: block !important; // Override inline styles
     margin: $au-unit-tiny;
     padding: 0;
@@ -176,9 +176,9 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
     &:before {
       @include au-font-size($say-smallest-font-size,1.2);
       font-family: var(--au-font);
-      font-weight:$au-medium;
+      font-weight: var(--au-medium);
       letter-spacing: .01rem;
-      color: $au-gray-600;
+      color: var(--au-gray-600);
       text-transform: uppercase;
       pointer-events: none;
       content: attr(property) " " attr(typeof) " " attr(data-type);
@@ -190,8 +190,8 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
       width: 100%;
       padding: $au-unit-tiny/2;
       transition: none;
-      border-bottom: 1px solid $au-gray-200;
-      background-color: $au-gray-100;
+      border-bottom: 1px solid var(--au-gray-200);
+      background-color: var(--au-gray-100);
       opacity: 1;
     }
   }
@@ -203,7 +203,7 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
     font-family: var(--au-font);
     font-weight: var(--au-regular);
     letter-spacing: .01rem;
-    color: $au-gray-600;
+    color: var(--au-gray-600);
     text-transform: uppercase;
     pointer-events: none;
     position: relative;
@@ -214,8 +214,8 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
     width: 100%;
     padding: $au-unit-tiny/2;
     transition: none;
-    border-top: 1px solid $au-gray-200;
-    background-color: $au-white;
+    border-top: 1px solid var(--au-gray-200);
+    background-color: var(--au-white);
     opacity: 1;
     margin: 0;
   }
