@@ -1,3 +1,13 @@
+// Custom color variables
+$say-primary-100                 : #FAF4FF !default;
+$say-primary-200                 : #F2E0FF !default;
+$say-primary-300                 : #E1B8FF !default;
+$say-primary-500                 : #B34BFF !default;
+$say-primary-600                 : #A933FF !default;
+$say-primary-700                 : #9000FA !default;
+$say-primary-800                 : #7700CE !default;
+$say-primary-900                 : #550094 !default;
+
 // Appuniversum variables
 :root {
   // Colors
@@ -42,7 +52,7 @@
   // Typography
   --au-global-font-size: #{$au-global-font-size};
   --au-global-line-height: #{$au-global-line-height};
-  --au-font: #{$say-font-family};
+  --au-font: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --au-font-secondary: #{$au-font-secondary};
   --au-font-tertiary: #{$au-font-tertiary};
   --au-light: #{$au-light};

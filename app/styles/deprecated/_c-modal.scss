@@ -80,7 +80,7 @@
 }
 
 .say-modal__prefix {
-  @include au-font-size($say-base-font-size);
+  @include au-font-size($au-base);
   margin-bottom: $au-unit-tiny;
 }
 
@@ -95,7 +95,7 @@
 }
 
 .say-modal__back {
-  @include au-font-size($say-base-font-size);
+  @include au-font-size($au-base);
   font-family: var(--au-font);
   display: flex;
   align-items: center;
@@ -118,7 +118,7 @@
 }
 
 .say-modal__close {
-  @include au-font-size($say-base-font-size);
+  @include au-font-size($au-base);
   font-family: var(--au-font);
   display: flex;
   align-items: center;

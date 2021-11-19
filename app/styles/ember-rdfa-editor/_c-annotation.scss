@@ -3,12 +3,26 @@
    Shared styling (hover, click, show, regular)
    ================================== */
 
+/* Variables
+  ========================================================================== */
+
+$say-annotation-width                      : $au-unit-huge*1.5 !default;
+$say-annotation-offset                     : $au-unit-large !default;
+$say-annotation-gutter                     : $au-unit !default;
+$say-annotation-width-content              : $say-annotation-width !default;
+$say-annotation-text-color                 : var(--au-gray-700) !default;
+$say-annotation-background-color           : var(--au-gray-100) !default;
+
+
+/* Component
+  ========================================================================== */
+
 .rdfa-annotations {
   // Visibility annotations
   [property="dc:subject"],
   [property="besluit:geplandOpenbaar"],
   [property="besluit:openbaar"] {
-    font-weight: $au-regular;
+    font-weight: var(--au-regular);
     color: $say-annotation-text-color !important;
   }
 
@@ -16,8 +30,8 @@
   [property="ext:behandelt"],
   [property="besluit:heeftAgendapunt"],
   [typeof="besluit:Agendapunt"] {
-    @include au-font-size($say-base-font-size);
-    font-weight: $au-regular;
+    @include au-font-size($au-base);
+    font-weight: var(--au-regular);
     display: block !important;
     position: relative;
     color: $say-annotation-text-color  !important;
@@ -187,7 +201,7 @@
   [data-editor-highlight="true"]:not([contenteditable=""]):after {
     @include au-font-size($say-smallest-font-size,1.2);
     font-family: var(--au-font);
-    font-weight: $au-regular;
+    font-weight: var(--au-regular);
     letter-spacing: .01rem;
     color: $au-gray-600;
     text-transform: uppercase;

@@ -2,6 +2,16 @@
    #SAY CONTAINER
    ================================== */
 
+/* Variables
+  ========================================================================== */
+
+$say-editor-sidebar-medium       : 30% !default;
+$say-editor-sidebar-large        : 30% !default;
+
+
+/* Component
+  ========================================================================== */
+
 .say-container {
   height: 100%;
   position: relative;

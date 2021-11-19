@@ -2,6 +2,23 @@
    #SAY EDITOR STYLES
    ================================== */
 
+/* Variables
+  ========================================================================== */
+
+$say-editor-padding              : $au-unit !default;
+$say-editor-background           : var(--au-gray-100) !default;
+$say-editor-sidebar-medium       : 30% !default;
+$say-editor-sidebar-large        : 30% !default;
+$say-paper-min-height            : calc(100vh + #{$au-unit}) !default;
+$say-paper-padding               : $au-unit-large !default;
+$say-paper-background            : var(--au-white) !default;
+$say-paper-box-shadow            : 0 1px 3px rgba($au-gray-900, .1), 0 4px 20px rgba($au-gray-900, .035), 0 1px 1px rgba($au-gray-900, .025) !default;
+$say-annotation-width            : $au-unit-huge*1.5 !default;
+
+
+/* Component
+  ========================================================================== */
+
 .say-editor {
   background-color: $say-paper-background;
   padding: $say-editor-padding $say-editor-padding/2;

@@ -19,7 +19,7 @@ $say-checkbox-radius                    : var(--au-radius);
   position: relative;
   display: block;
   padding-left: $say-checkbox-height;
-  font-weight: $au-regular;
+  font-weight: var(--au-regular);
 }
 
 .say-checkbox-wrapper input {

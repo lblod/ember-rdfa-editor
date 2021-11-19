@@ -4,86 +4,9 @@
 
 // Define the look of the Say Editor by changing the variables.
 
-
 // UI
 // ---
 // Display options
 $say-paper                       : true !default; // True = displays a paper like background.
 $say-paper-sidebar               : true !default; // True = adds space for a sidebar to the right.
 $say-toolbar-bottom              : false !default; // True = position the toolbar at the bottom.
-
-
-// EDITOR
-// ---
-// Editor spacing and background
-$say-editor-padding              : $au-unit !default;
-$say-editor-background           : var(--au-gray-100) !default;
-$say-editor-sidebar-medium       : 30% !default;
-$say-editor-sidebar-large        : 30% !default;
-
-// Paper spacing and background
-$say-paper-min-height            : calc(100vh + #{$au-unit}) !default;
-$say-paper-padding               : $au-unit-large !default;
-$say-paper-background            : var(--au-white) !default;
-$say-paper-box-shadow            : 0 1px 3px rgba($au-gray-900, .1), 0 4px 20px rgba($au-gray-900, .035), 0 1px 1px rgba($au-gray-900, .025) !default;
-
-
-// Semantic color variables
-$say-primary-100                 : #FAF4FF !default;
-$say-primary-200                 : #F2E0FF !default;
-$say-primary-300                 : #E1B8FF !default;
-$say-primary-500                 : #B34BFF !default;
-$say-primary-600                 : #A933FF !default;
-$say-primary-700                 : #9000FA !default;
-$say-primary-800                 : #7700CE !default;
-$say-primary-900                 : #550094 !default;
-
-
-// Typography
-$say-font-family                 : BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !default;
-$say-h1-font-family              : var(--au-font) !default;
-$say-h1-font-weight              : var(--au-medium) !default;
-$say-h1-font-size                : $au-h1 !default;
-$say-h2-font-family              : var(--au-font) !default;
-$say-h2-font-weight              : var(--au-medium) !default;
-$say-h2-font-size                : $au-h2 !default;
-$say-h3-font-family              : var(--au-font) !default;
-$say-h3-font-weight              : var(--au-medium) !default;
-$say-h3-font-size                : $au-h3 !default;
-$say-h4-font-family              : var(--au-font) !default;
-$say-h4-font-weight              : var(--au-medium) !default;
-$say-h4-font-size                : $au-h4 !default;
-$say-h5-font-family              : var(--au-font) !default;
-$say-h5-font-weight              : var(--au-medium) !default;
-$say-h5-font-size                : $au-h5 !default;
-$say-h6-font-family              : var(--au-font) !default;
-$say-h6-font-weight              : var(--au-medium) !default;
-$say-h6-font-size                : $au-h6 !default;
-$say-base-font-family            : var(--au-font) !default;
-$say-base-font-weight            : var(--au-regular) !default;
-$say-base-font-size              : $au-base !default;
-$say-small-font-size             : $au-base !default;
-$say-smaller-font-size           : 1.4rem !default;
-$say-smallest-font-size          : 1.2rem !default;
-$say-typography-margin           : $au-unit-small !default;
-$say-editor-private-color        : var(--au-gray-900) !default;
-$say-editor-highlight-color      : var(--au-yellow-200) !default;
-$say-editor-highlight-hover-color: var(--au-yellow-100) !default;
-
-
-// TOOLBAR
-// ---
-$say-toolbar-background          : var(--au-gray-200) !default;
-$say-toolbar-border              : tint($au-gray-300,30) !default;
-$say-toolbar-height              : 44px !default;
-
-
-// ANNOTATIONS
-// ---
-// Annotation options
-$say-annotation-width                      : $au-unit-huge*1.5 !default;
-$say-annotation-offset                     : $au-unit-large !default;
-$say-annotation-gutter                     : $au-unit !default;
-$say-annotation-width-content              : $say-annotation-width !default;
-$say-annotation-text-color                 : var(--au-gray-700) !default;
-$say-annotation-background-color           : var(--au-gray-100) !default;

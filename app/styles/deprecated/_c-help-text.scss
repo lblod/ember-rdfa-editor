@@ -2,7 +2,7 @@
    #HELP TEXT
    ================================== */
 
-/* Component
+/* Variables
   ========================================================================== */
 
 $say-help-text-color             : var(--au-gray-800) !default;
@@ -17,7 +17,7 @@ $say-help-text-font-size         : 1.4rem !default;
   @include au-font-size($say-help-text-font-size);
   color: $say-help-text-color;
   margin-top: $au-unit-tiny;
-  font-weight: $au-regular;
+  font-weight: var(--au-regular);
 }
 
 .say-help-text + .say-help-text {

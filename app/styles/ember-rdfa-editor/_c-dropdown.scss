@@ -6,6 +6,9 @@
   ========================================================================== */
 
 $say-dropdown-caret-size        : .4rem !default;
+$say-toolbar-height             : 44px !default;
+$say-smaller-font-size          : 1.4rem !default;
+
 
 /* Component
   ========================================================================== */
@@ -20,7 +23,7 @@ $say-dropdown-caret-size        : .4rem !default;
 }
 
 .say-dropdown__button {
-  @include au-font-size($say-base-font-size,1);
+  @include au-font-size($au-base,1);
   appearance: none;
   outline: none;
   border: 0;
@@ -59,9 +62,9 @@ $say-dropdown-caret-size        : .4rem !default;
 }
 
 .say-dropdown__menu {
-  @include au-font-size($say-base-font-size,1.5);
+  @include au-font-size($au-base,1.5);
   font-family: var(--au-font);
-  font-weight: $au-regular;
+  font-weight: var(--au-regular);
   position: absolute;
   z-index: $au-z-index-beta;
   background-color: $au-white;

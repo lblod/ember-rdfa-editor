@@ -26,7 +26,7 @@ $say-input-font-size                 : $au-h6 !default;
   border: .1rem solid $say-input-border-color;
   color: $say-input-color;
   font-size: $say-input-font-size;
-  font-weight: $au-regular;
+  font-weight: var(--au-regular);
   font-family: var(--au-font);
   height: $say-input-height;
   max-width: 100%;

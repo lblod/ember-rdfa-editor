@@ -84,7 +84,7 @@
 
 .say-article__insert {
   @include au-font-size($au-h6);
-  color: $say-primary-700;
+  color: var(--au-blue-700);
   font-family: var(--au-font);
   appearance: none;
   padding: 0;
@@ -97,6 +97,6 @@
 
   &:hover,
   &:focus {
-    color: $say-primary-600;
+    color: var(--au-blue-600);
   }
 }

@@ -2,8 +2,19 @@
    #SAY TOOLBAR
    ================================== */
 
+/* Variables
+  ========================================================================== */
+
+$say-toolbar-background          : var(--au-gray-200) !default;
+$say-toolbar-border              : tint($au-gray-300,30) !default;
+$say-toolbar-height              : 44px !default;
+
+
+/* Component
+  ========================================================================== */
+
 .say-toolbar {
-  @include au-font-size($say-base-font-size);
+  @include au-font-size($au-base);
   display: flex;
   justify-content: space-between;
   min-height: $say-toolbar-height; // Fixes height bug on Safari
@@ -41,7 +52,7 @@
   }
 
   .say-toolbar__button {
-    @include au-font-size($say-base-font-size,1);
+    @include au-font-size($au-base,1);
     appearance: none;
     outline: none;
     border: 0;

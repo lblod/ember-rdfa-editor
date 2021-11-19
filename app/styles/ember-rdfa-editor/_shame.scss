@@ -182,7 +182,7 @@
   }
 
   .au-c-toggle-switch__label {
-    @include au-font-size($say-base-font-size);
+    @include au-font-size($au-base);
   }
 }
 
