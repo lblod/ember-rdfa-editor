@@ -68,7 +68,7 @@
       padding-right: $say-annotation-gutter + $au-unit-small;
       margin-right: -$say-annotation-gutter + $au-unit-tiny;
       width: $say-annotation-width-content;
-      font-family: $say-font-family;
+      font-family: var(--au-font);
       font-weight:$au-medium;
       letter-spacing: .01rem;
       text-transform: uppercase;

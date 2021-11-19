@@ -5,32 +5,32 @@
 .say-link {
   display: inline-flex;
   align-items: center;
-  color: $say-primary-700;
-  text-decoration-color: $say-primary-300;
-  transition: color $au-transition;
+  color: var(--au-blue-700);
+  text-decoration-color: var(--au-blue-300);
+  transition: color var(--au-transition);
 
   &:hover,
   &:focus {
-    color: $say-primary-600;
-    text-decoration-color: $say-primary-300;
+    color: var(--au-blue-600);
+    text-decoration-color: var(--au-blue-300);
   }
 
   &:focus {
-    outline: $au-outline;
+    outline: var(--au-outline);
   }
 }
 
 .say-link--secondary {
-  color: $au-gray-700;
-  text-decoration-color: $au-gray-300;
+  color: var(--au-gray-700);
+  text-decoration-color: var(--au-gray-300);
 
   &:hover,
   &:focus {
-    color: $au-gray-600;
-    text-decoration-color: $au-gray-300;
+    color: var(--au-gray-600);
+    text-decoration-color: var(--au-gray-300);
   }
 }
 
 .say-link__highlight {
-  background-color: $au-yellow-200;
+  background-color: var(--au-yellow-200);
 }

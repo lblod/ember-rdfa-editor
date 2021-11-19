@@ -2,10 +2,23 @@
    #CHECKBOX
    ================================== */
 
+/* Variables
+  ========================================================================== */
+
+$say-checkbox-height                    : $au-unit-large - $au-unit-small !default;
+$say-checkbox-background-color          : var(--au-white);
+$say-checkbox-border-color              : var(--au-gray-400) !default;
+$say-checkbox-focus-border-color        : var(--au-blue-300) !default;
+$say-checkbox-radius                    : var(--au-radius);
+
+
+/* Component
+  ========================================================================== */
+
 .say-checkbox-wrapper label {
   position: relative;
   display: block;
-  padding-left: $say-input-height;
+  padding-left: $say-checkbox-height;
   font-weight: $au-regular;
 }
 
@@ -21,9 +34,9 @@
 .say-checkbox-wrapper input + label::before {
   content: "";
   position: absolute;
-  background-color: $say-input-background-color;
-  border: .1rem solid $say-input-border-color;
-  border-radius: $say-input-radius;
+  background-color: $say-checkbox-background-color;
+  border: .1rem solid $say-checkbox-border-color;
+  border-radius: $say-checkbox-radius;
   width: $au-unit;
   height: $au-unit;
   top: 0;
@@ -47,6 +60,6 @@
 }
 
 .say-checkbox-wrapper input:focus + label::before {
-  box-shadow: inset 0 0 0 .2rem $say-input-focus-border-color;
+  box-shadow: inset 0 0 0 .2rem $say-checkbox-focus-border-color;
   outline: none;
 }

@@ -5,6 +5,14 @@
 /* Component
   ========================================================================== */
 
+$say-help-text-color             : var(--au-gray-800) !default;
+$say-help-text-error-color       : var(--au-red-600) !default;
+$say-help-text-font-size         : 1.4rem !default;
+
+
+/* Component
+  ========================================================================== */
+
 .say-help-text {
   @include au-font-size($say-help-text-font-size);
   color: $say-help-text-color;

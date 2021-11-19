@@ -92,7 +92,7 @@
   .mark-highlight-manual {
     border-bottom: .2rem dotted $au-gray-300;
     padding-bottom: .2rem;
-    transition: border $au-transition;
+    transition: border var(--au-transition);
 
     // Hide certain underlines
     [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] .mark-highlight-manual,
@@ -110,7 +110,7 @@
   [property^="ext:insert"],
   [data-editor-highlight="true"]:not([contenteditable=""]) {
     background-color: $say-editor-highlight-color;
-    transition: background-color $au-transition;
+    transition: background-color var(--au-transition);
 
     &::selection {
       color: $au-gray-900;
@@ -161,7 +161,7 @@
     // Style annotation blocks
     &:before {
       @include au-font-size($say-smallest-font-size,1.2);
-      font-family: $say-font-family;
+      font-family: var(--au-font);
       font-weight:$au-medium;
       letter-spacing: .01rem;
       color: $au-gray-600;
@@ -186,7 +186,7 @@
   .mark-highlight-manual:after,
   [data-editor-highlight="true"]:not([contenteditable=""]):after {
     @include au-font-size($say-smallest-font-size,1.2);
-    font-family: $say-font-family;
+    font-family: var(--au-font);
     font-weight: $au-regular;
     letter-spacing: .01rem;
     color: $au-gray-600;

@@ -118,23 +118,23 @@
 
   // Style links
   a {
-    transition: color $au-transition, text-decoration $au-transition;
+    transition: color var(--au-transition), text-decoration var(--au-transition);
     font-weight: $au-regular;
-    text-decoration-color: $say-primary-300;
+    text-decoration-color: var(--au-blue-300);
 
     &,
     &:visited {
-      color: $say-primary-700;
+      color: var(--au-blue-700);
     }
 
     &:hover,
     &:focus {
-      color: $say-primary-600;
-      text-decoration-color: $say-primary-300;
+      color: var(--au-blue-600);
+      text-decoration-color: var(--au-blue-300);
     }
 
     &:focus {
-      outline: $au-outline;
+      outline: var(--au-outline);
       outline-offset: $au-unit-tiny/2;
     }
   }
@@ -261,13 +261,13 @@
     margin-top: $au-unit;
     margin-bottom: $au-unit;
     border: 0;
-    border-bottom: 3px solid $au-gray-200;
+    border-bottom: 3px solid var(--au-gray-200);
   }
 
   // Add custom font styling
   strong,
   b {
-    font-weight: $au-bold;
+    font-weight: var(--au-bold);
   }
 
   em {
@@ -281,7 +281,7 @@
   // Table styling
   table th {
     white-space: initial;
-    background-color: $au-white;
+    background-color: var(--au-white);
   }
 
   .data-table th,
@@ -309,9 +309,9 @@
   // Imported HTML - Used for tables
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
     position: relative;
-    background-color: $au-gray-200;
+    background-color: var(--au-gray-200);
     border-radius: .2rem;
-    outline: 2px dashed $au-gray-300;
+    outline: 2px dashed var(--au-gray-300);
     outline-offset: .2rem;
     margin-top: 1.2rem;
     margin-bottom: 1.2rem;
@@ -326,7 +326,7 @@
     // Reset some table styles
     th {
       font-weight:$au-medium;
-      border-bottom: 1px solid $au-gray-300;
+      border-bottom: 1px solid var(--au-gray-300);
     }
 
     th,
@@ -335,7 +335,7 @@
       vertical-align: top;
       padding: .6rem;
       background-color: transparent !important;
-      border: 1px solid $au-gray-300;
+      border: 1px solid var(--au-gray-300);
     }
 
     // Style links as plain text
@@ -344,7 +344,7 @@
       &:hover,
       &:visited,
       &:focus {
-        color: $au-gray-800;
+        color: var(--au-gray-800);
         text-decoration: none;
       }
 

@@ -2,12 +2,18 @@
    #LABEL
    ================================== */
 
+/* Variables
+  ========================================================================== */
+
+$say-label-color                   : var(--au-gray-800) !default;
+
+
 /* Component
   ========================================================================== */
 
 .say-label {
   color: $say-label-color;
-  font-family: $say-font-family;
+  font-family: var(--au-font);
   font-weight:$au-medium;
   margin-bottom: $au-unit-tiny;
 }

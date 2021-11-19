@@ -85,14 +85,14 @@
 .say-article__insert {
   @include au-font-size($au-h6);
   color: $say-primary-700;
-  font-family: $say-font-family;
+  font-family: var(--au-font);
   appearance: none;
   padding: 0;
   border: 0;
   display: inline-flex;
   align-items: center;
   border-radius: .2rem;
-  transition: color $au-transition, background-color $au-transition;
+  transition: color var(--au-transition), background-color var(--au-transition);
   white-space: nowrap;
 
   &:hover,

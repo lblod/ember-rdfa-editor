@@ -2,6 +2,23 @@
    #INPUT
    ================================== */
 
+/* Variables
+  ========================================================================== */
+
+$say-input-height                    : $au-unit-large - $au-unit-small !default;
+$say-input-color                     : var(--au-gray-1000) !default;
+$say-input-background-color          : var(--au-white);
+$say-input-border-color              : var(--au-gray-400) !default;
+$say-input-focus-border-color        : var(--au-blue-300) !default;
+$say-input-error-border              : var(--au-red-600) !default;
+$say-input-radius                    : var(--au-radius);
+
+$say-input-disabled-background-color : var(--au-gray-100) !default;
+$say-input-disabled-border-color     : var(--au-gray-600) !default;
+$say-input-disabled-color            : var(--au-gray-700) !default;
+$say-input-font-size                 : $au-h6 !default;
+
+
 /* Component
   ========================================================================== */
 
@@ -10,7 +27,7 @@
   color: $say-input-color;
   font-size: $say-input-font-size;
   font-weight: $au-regular;
-  font-family: $say-font-family;
+  font-family: var(--au-font);
   height: $say-input-height;
   max-width: 100%;
   padding: 0 $au-unit-small .1ex;
