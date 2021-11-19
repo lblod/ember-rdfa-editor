@@ -19,7 +19,6 @@ export default class HTMLExportWriter implements Writer<ModelNode, Node> {
     let result = null;
 
     if (ModelNode.isModelElement(modelNode)) {
-      modelNode.removeAttribute('contenteditable');
       result = this.htmlElementWriter.write(modelNode);
       for (const child of modelNode.children) {
         result.appendChild(this.write(child));
