@@ -87,9 +87,7 @@ $say-primary-900                 : #550094 !default;
   --au-z-index-alpha: #{$au-z-index-alpha};
   --au-z-index-beta: #{$au-z-index-beta};
   --au-z-index-gamma: #{$au-z-index-gamma};
-}
 
-// Plugin variables
-:root {
+  // Duet datepicker
   --duet-color-primary: #{$say-primary-600};
 }
