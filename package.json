@@ -61,6 +61,8 @@
     "xml-formatter": "^2.4.0"
   },
   "devDependencies": {
+    "@appuniversum/appuniversum": "^0.2.1",
+    "@appuniversum/ember-appuniversum": "^0.7.0",
     "@codemirror/basic-setup": "^0.18.2",
     "@codemirror/lang-html": "^0.18.1",
     "@codemirror/lang-xml": "^0.18.0",
