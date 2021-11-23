@@ -34,7 +34,6 @@
     "postpack": "ember ts:clean"
   },
   "dependencies": {
-    "@appuniversum/ember-appuniversum": "0.7.0",
     "@ember/optional-features": "^1.3.0",
     "@ember/render-modifiers": "^1.0.2",
     "@glimmer/tracking": "^1.0.0",
@@ -133,6 +132,9 @@
     "typescript": "^4.3.4",
     "webpack": "^5.55.1",
     "yuidoc-ember-theme": "^2.0.1"
+  },
+  "peerDependencies": {
+    "@appuniversum/ember-appuniversum": "0.7.0"
   },
   "engines": {
     "node": "10.* || >= 12"
