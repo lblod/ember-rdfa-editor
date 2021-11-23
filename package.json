@@ -134,7 +134,7 @@
     "yuidoc-ember-theme": "^2.0.1"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "0.7.0"
+    "@appuniversum/ember-appuniversum": "^0.7.0"
   },
   "engines": {
     "node": "10.* || >= 12"

@@ -41,13 +41,25 @@
            class="app-view">
 
         <Rdfa::RdfaEditor
-                @rdfaEditorInit={{this.rdfaEditorInit}}
-                @initDebug={{this.initDebug}}
-                @profile="default"
-                class="rdfa-playground"
-                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
-                                      showRdfaHighlight="true" showRdfaHover="true"}}
-                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+          @rdfaEditorInit={{this.rdfaEditorInit}}
+          @initDebug={{this.initDebug}}
+          @profile="default"
+          class="rdfa-playground"
+          @editorOptions={{hash
+            showToggleRdfaAnnotations="true"
+            showInsertButton=null
+            showRdfa="true"
+            showRdfaHighlight="true"
+            showRdfaHover="true"
+            showPaper="true"
+            showSidebar="true"
+            showToolbarBottom=null
+          }}
+          @toolbarOptions={{hash
+            showTextStyleButtons="true"
+            showListButtons="true"
+            showIndentButtons="true"
+          }}
         />
       </div>
     </div>

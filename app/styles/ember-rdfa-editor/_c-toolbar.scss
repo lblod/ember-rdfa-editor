@@ -22,7 +22,7 @@ $say-toolbar-height              : 44px !default;
   background-color: $say-toolbar-background;
   border-bottom: 1px solid $say-toolbar-border;
 
-  @if $say-toolbar-bottom == true {
+  .say-container--toolbar-bottom & {
     border-bottom: 0;
     border-top: 1px solid $say-toolbar-border;
   }

@@ -25,7 +25,7 @@ $say-annotation-width            : $au-unit-huge*1.5 !default;
   width: 100%;
   position: relative;
 
-  @if $say-paper == true {
+  .say-container--paper & {
     background-color: $say-editor-background;
   }
 
@@ -34,22 +34,18 @@ $say-annotation-width            : $au-unit-huge*1.5 !default;
   }
 
   @include mq(medium) {
-    @if $say-paper == true {
-      @if $say-paper-sidebar == true {
-        padding-right: $say-editor-sidebar-medium;
-      }
+    .say-container--paper.say-container--sidebar-right & {
+      padding-right: $say-editor-sidebar-medium;
     }
   }
 
   @include mq(1280px) {
-    &.rdfa-annotations-hover {
+    .say-container.say-container--sidebar-right &.rdfa-annotations-hover {
       padding-left: $say-annotation-width;
     }
 
-    @if $say-paper == true {
-      @if $say-paper-sidebar == true {
-        padding-right: $say-editor-sidebar-large;
-      }
+    .say-container--paper.say-container--sidebar-right & {
+      padding-right: $say-editor-sidebar-large;
     }
   }
 }
@@ -63,7 +59,7 @@ $say-annotation-width            : $au-unit-huge*1.5 !default;
       outline: none;
     }
 
-    @if $say-paper == true {
+    .say-container--paper & {
       background-color: $say-paper-background;
       padding: $say-paper-padding;
       box-shadow: $say-paper-box-shadow;
@@ -84,16 +80,15 @@ $say-annotation-width            : $au-unit-huge*1.5 !default;
       outline: 0;
     }
 
-    // Add max-width when paper view is disabled
-    @if $say-paper == false {
+    .say-container--paper & {
+      min-height: calc(#{$say-paper-min-height} - #{$say-paper-padding} * 2);
+    }
+
+    :not(.say-container--paper) & {
       * {
         max-width: 120ch;
         margin-left: auto;
         margin-right: auto;
       }
-    }
-
-    @if $say-paper == true {
-      min-height: calc(#{$say-paper-min-height} - #{$say-paper-padding} * 2);
     }
   }

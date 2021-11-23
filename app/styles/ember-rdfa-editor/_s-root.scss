@@ -72,13 +72,13 @@ $say-primary-900                 : #550094 !default;
   // UI
   --au-page-bg: #{$au-page-bg};
   --au-select-text-color: #{$au-select-text-color};
-  --au-select-text-bg: #{$au-select-text-bg};
+  --au-select-text-bg: #{$say-primary-200};
   --au-radius: #{$au-radius};
   --au-border: #{$au-border};
   --au-outline-color: #{$say-primary-500};
   --au-outline-border: #{$au-outline-border};
   --au-outline-border-style: #{$au-outline-border-style};
-  --au-outline: #{$au-outline};
+  --au-outline: .3rem solid rgba(#A933FF,.65);
   --au-outline-offset: #{$au-outline-offset};
   --au-outline-offset-negative: #{$au-outline-offset-negative};
   --au-duration: #{$au-duration};
