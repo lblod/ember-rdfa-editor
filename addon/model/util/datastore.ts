@@ -4,24 +4,66 @@ import ModelRange, {RangeContextStrategy} from "@lblod/ember-rdfa-editor/model/m
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {ModelQuadSubject, RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
-import {RDF_TYPE} from "@lblod/ember-rdfa-editor/model/util/constants";
-import {ConBlankNode, ConLiteral, ConNamedNode} from "@lblod/ember-rdfa-editor/model/util/concise-term-string";
+import {
+  ConBlankNode,
+  conciseToRdfjs,
+  ConLiteral,
+  ConNamedNode
+} from "@lblod/ember-rdfa-editor/model/util/concise-term-string";
 
 export type SubjectSpec = RDF.Quad_Subject | ConNamedNode | ConBlankNode | null;
 export type PredicateSpec = RDF.Quad_Predicate | ConNamedNode | null;
 export type ObjectSpec = RDF.Quad_Object | ConNamedNode | ConBlankNode | ConLiteral;
+type Primitive = number | string | boolean;
+
+interface TermNodesResponse {
+  nodes: Set<ModelNode>
+}
+
+interface SubjectNodesResponse extends TermNodesResponse {
+  subject: RDF.Quad_Subject,
+}
+
+interface PredicateNodesResponse extends TermNodesResponse {
+  predicate: RDF.Quad_Predicate,
+}
+
+interface ObjectNodesResponse extends TermNodesResponse {
+  object: RDF.Quad_Object,
+}
+
+function isPrimitive(thing: unknown): thing is Primitive {
+  return typeof thing === "string" || typeof thing === "boolean" || typeof thing === "number";
+
+}
 
 export default interface Datastore {
   get dataset(): RDF.Dataset;
 
-  subjectsForRange(range: ModelRange, strategy: RangeContextStrategy): Set<RDF.Quad_Subject>;
+  get size(): number;
 
-  dataForRange(range: ModelRange, strategy: RangeContextStrategy): RDF.Dataset;
+  limitToRange(range: ModelRange, strategy?: RangeContextStrategy): Datastore;
+
+  match(subject?: SubjectSpec, predicate?: PredicateSpec, object?: ObjectSpec): Datastore;
+
+  asSubjectNodes(): Generator<SubjectNodesResponse>
+
+  asPredicateNodes(): Generator<PredicateNodesResponse>
+
+  asObjectNodes(): Generator<ObjectNodesResponse>
+
+  asQuads(): Generator<RDF.Quad>
+}
+
+interface DatastoreParseConfig {
+  root: ModelNode;
+  pathFromDomRoot?: Node[];
 }
 
 interface DatastoreConfig {
-  root: ModelNode;
-  pathFromDomRoot?: Node[];
+  dataset: RDF.Dataset;
+  subjectToNodes: Map<string, Set<ModelNode>>;
+  nodeToSubject: Map<ModelNode, ModelQuadSubject>;
 }
 
 export class EditorStore implements Datastore {
@@ -30,60 +72,99 @@ export class EditorStore implements Datastore {
   private _subjectToNodesMapping: Map<string, Set<ModelNode>>;
   private _nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
 
-  constructor({root, pathFromDomRoot}: DatastoreConfig) {
+  constructor({dataset, nodeToSubject, subjectToNodes}: DatastoreConfig) {
+    this._dataset = dataset;
+    this._nodeToSubjectMapping = nodeToSubject;
+    this._subjectToNodesMapping = subjectToNodes;
+  }
+
+  static fromParse({root, pathFromDomRoot}: DatastoreParseConfig): Datastore {
     const parser = new RdfaParser({baseIRI: "http://example.org"});
     const {dataset, subjectToNodesMapping, nodeToSubjectMapping} = parser.parse(root, pathFromDomRoot);
-    this._dataset = dataset;
-    this._subjectToNodesMapping = subjectToNodesMapping;
-    this._nodeToSubjectMapping = nodeToSubjectMapping;
+    return new EditorStore({dataset, subjectToNodes: subjectToNodesMapping, nodeToSubject: nodeToSubjectMapping});
   }
 
   get dataset(): RDF.Dataset {
     return this._dataset;
   }
 
-  match() {
-
+  get size(): number {
+    return this._dataset.size;
   }
 
-  subjectsForRange(range: ModelRange, strategy: RangeContextStrategy): Set<RDF.Quad_Subject> {
-    const subjects = new Set<RDF.Quad_Subject>();
+  match(subject?: SubjectSpec, predicate?: PredicateSpec, object?: ObjectSpec): Datastore {
+    const convertedSubject = typeof subject === "string" ? conciseToRdfjs(subject) : subject;
+    const convertedPredicate = typeof predicate === "string" ? conciseToRdfjs(predicate) : predicate;
+    const convertedObject = isPrimitive(object) ? conciseToRdfjs(object) : object;
+    const newSet = this.dataset.match(convertedSubject, convertedPredicate, convertedObject, null);
+    return this.fromDataset(newSet);
+  }
+
+  limitToRange(range: ModelRange, strategy: RangeContextStrategy): Datastore {
+    const subjects = this.subjectsForRange(range, strategy);
+    const subToNodesCopy = new Map(this._subjectToNodesMapping);
+    const nodeToSubCopy = new Map(this._nodeToSubjectMapping);
+    const newSet = this.dataset.filter((quad) => {
+      if (subjects.has(quad.subject.value)) {
+        return true;
+      } else {
+        const nodes = subToNodesCopy.get(quad.subject.value);
+        if (nodes) {
+          for (const node of nodes) {
+            nodeToSubCopy.delete(node);
+          }
+          subToNodesCopy.delete(quad.subject.value);
+        }
+        return false;
+      }
+    });
+    return new EditorStore({dataset: newSet, subjectToNodes: subToNodesCopy, nodeToSubject: nodeToSubCopy});
+  }
+
+  * asSubjectNodes(): Generator<SubjectNodesResponse> {
+    const seenSubjects = new Set<string>();
+    for (const quad of this.dataset) {
+      if (!seenSubjects.has(quad.subject.value)) {
+        const nodes = this._subjectToNodesMapping.get(quad.subject.value);
+        if (nodes) {
+          yield {subject: quad.subject, nodes};
+        }
+      }
+    }
+  }
+
+  asPredicateNodes(): Generator<PredicateNodesResponse> {
+    throw new Error('Method not implemented.');
+  }
+
+  asObjectNodes(): Generator<ObjectNodesResponse> {
+    throw new Error('Method not implemented.');
+  }
+
+  * asQuads(): Generator<RDF.Quad> {
+    for (const quad of this.dataset) {
+      yield quad;
+    }
+  }
+
+
+  private fromDataset(dataset: RDF.Dataset): Datastore {
+    return new EditorStore({
+      dataset,
+      nodeToSubject: this._nodeToSubjectMapping,
+      subjectToNodes: this._subjectToNodesMapping
+    });
+  }
+
+  private subjectsForRange(range: ModelRange, strategy: RangeContextStrategy): Set<string> {
+    const subjects = new Set<string>();
     for (const node of range.contextNodes(strategy)) {
       const subject = this._nodeToSubjectMapping.get(node);
       if (subject) {
-        subjects.add(subject);
+        subjects.add(subject.value);
       }
     }
     return subjects;
-
-  }
-
-  dataForRange(range: ModelRange, strategy: RangeContextStrategy): RDF.Dataset {
-    const subjects = this.subjectsForRange(range, strategy);
-    const result = new GraphyDataset();
-    for (const subject of subjects) {
-      result.addAll(this.dataset.match(subject));
-    }
-    return result;
-  }
-
-  nodesForSubject(subject: RDF.Quad_Subject): Set<ModelNode> | undefined {
-    return this._subjectToNodesMapping.get(subject.value);
-  }
-
-  nodesForType(type: string, searchRange?: ModelRange, strategy: RangeContextStrategy = "rangeContains") {
-    let dataset: RDF.Dataset;
-    if (searchRange) {
-      dataset = this.dataForRange(searchRange, strategy);
-    } else {
-      dataset = this.dataset;
-    }
-    const quads = [...dataset.match(
-      undefined,
-      {termType: "NamedNode", value: RDF_TYPE},
-      {termType: "NamedNode", value: type}
-    )];
-    return quads.map(quad => ({subject: quad.subject, nodes: this.nodesForSubject(quad.subject)}));
   }
 
 }

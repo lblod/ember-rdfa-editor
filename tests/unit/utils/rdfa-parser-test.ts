@@ -2,7 +2,7 @@ import {module, test} from "qunit";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import {RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
 
-module("Unit | utils | rdfa-parser-test", hooks => {
+module("Unit | utils | rdfa-parser-test", () => {
   test("parses simple dom correctly", assert => {
     // language=XML
     const {root} = vdom`

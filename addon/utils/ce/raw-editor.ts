@@ -61,7 +61,7 @@ class RawEditor extends EmberObject {
   modelSelectionTracker!: ModelSelectionTracker;
 
   private _model?: Model;
-  private _datastore: Datastore;
+  private _datastore!: Datastore;
   protected tryOutVdom = true;
   protected eventBus: EventBus;
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<WidgetLocation, InternalWidgetSpec[]>(
@@ -82,7 +82,7 @@ class RawEditor extends EmberObject {
     super(properties);
     this.eventBus = new EventBus();
     this.eventBus.on("modelRead", () => {
-      this._datastore = new EditorStore({
+      this._datastore =  EditorStore.fromParse({
         root: this.model.rootModelNode,
         pathFromDomRoot: getPathFromRoot(this.model.rootNode, false)
       });
