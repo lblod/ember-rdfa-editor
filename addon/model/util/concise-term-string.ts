@@ -3,6 +3,10 @@ import {DataFactory} from "rdf-data-factory";
 import {RDF_TYPE, XSD_PREFIX} from "@lblod/ember-rdfa-editor/model/util/constants";
 import {ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
 
+/**
+ * This is a simplified implementation of {@link https://graphy.link/concise#string/c1 Concise term syntax}
+ */
+
 export type ConciseTerm = CNamedNode | CBlankNode | CLiteral;
 
 export type CNamedNode = CAbsoluteIRI | CPrefixedName | CTypeAlias;
@@ -42,6 +46,11 @@ function toAbsIri(prefix: string, suffix: string, prefixMapping: PrefixMapping):
   return `${iri}${suffix}`;
 }
 
+/**
+ * Convert a {@link ConciseTerm} into an RDFjs-compliant node
+ * @param term
+ * @param prefixMapping
+ */
 export function conciseToRdfjs(term: CPrefixedName, prefixMapping: PrefixMapping): RDF.NamedNode;
 export function conciseToRdfjs(term: CAbsoluteIRI, prefixMapping?: PrefixMapping): RDF.NamedNode;
 export function conciseToRdfjs(term: CTypeAlias, prefixMapping?: PrefixMapping): RDF.NamedNode;
