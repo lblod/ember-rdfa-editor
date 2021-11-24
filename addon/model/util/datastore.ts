@@ -5,6 +5,11 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {ModelQuadSubject, RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
 import {RDF_TYPE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {ConBlankNode, ConLiteral, ConNamedNode} from "@lblod/ember-rdfa-editor/model/util/concise-term-string";
+
+export type SubjectSpec = RDF.Quad_Subject | ConNamedNode | ConBlankNode | null;
+export type PredicateSpec = RDF.Quad_Predicate | ConNamedNode | null;
+export type ObjectSpec = RDF.Quad_Object | ConNamedNode | ConBlankNode | ConLiteral;
 
 export default interface Datastore {
   get dataset(): RDF.Dataset;
@@ -35,6 +40,10 @@ export class EditorStore implements Datastore {
 
   get dataset(): RDF.Dataset {
     return this._dataset;
+  }
+
+  match() {
+
   }
 
   subjectsForRange(range: ModelRange, strategy: RangeContextStrategy): Set<RDF.Quad_Subject> {

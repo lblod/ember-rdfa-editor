@@ -7,19 +7,19 @@ import {ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
  * This is a simplified implementation of {@link https://graphy.link/concise#string/c1 Concise term syntax}
  */
 
-export type ConciseTerm = CNamedNode | CBlankNode | CLiteral;
+export type ConciseTerm = ConNamedNode | ConBlankNode | ConLiteral;
 
-export type CNamedNode = CAbsoluteIRI | CPrefixedName | CTypeAlias;
-type CAbsoluteIRI = `>${string}`;
-type CPrefixedName = `${string}:${string}`;
-type CTypeAlias = "a";
+export type ConNamedNode = ConAbsoluteIRI | ConPrefixedName | ConTypeAlias;
+type ConAbsoluteIRI = `>${string}`;
+type ConPrefixedName = `${string}:${string}`;
+type ConTypeAlias = "a";
 
-export type CBlankNode = `_:${string}`;
+export type ConBlankNode = `_:${string}`;
 
-export type CLiteral = CPlainLiteral | CDatatypedLiteral | CLanguagedLiteral | number | boolean;
-type CDatatypedLiteral = `^${string}"${CPlainLiteral}`;
-type CLanguagedLiteral = `@${string}"${CPlainLiteral}`;
-type CPlainLiteral = string;
+export type ConLiteral = ConPlainLiteral | ConDatatypedLiteral | ConLanguagedLiteral | number | boolean;
+type ConDatatypedLiteral = `^${string}"${ConPlainLiteral}`;
+type ConLanguagedLiteral = `@${string}"${ConPlainLiteral}`;
+type ConPlainLiteral = string;
 
 export type PrefixMapping = (prefix: string) => string | null;
 
@@ -51,11 +51,11 @@ function toAbsIri(prefix: string, suffix: string, prefixMapping: PrefixMapping):
  * @param term
  * @param prefixMapping
  */
-export function conciseToRdfjs(term: CPrefixedName, prefixMapping: PrefixMapping): RDF.NamedNode;
-export function conciseToRdfjs(term: CAbsoluteIRI, prefixMapping?: PrefixMapping): RDF.NamedNode;
-export function conciseToRdfjs(term: CTypeAlias, prefixMapping?: PrefixMapping): RDF.NamedNode;
-export function conciseToRdfjs(term: CLiteral, prefixMapping?: PrefixMapping): RDF.Literal;
-export function conciseToRdfjs(term: CBlankNode, prefixMapping?: PrefixMapping): RDF.BlankNode;
+export function conciseToRdfjs(term: ConPrefixedName, prefixMapping: PrefixMapping): RDF.NamedNode;
+export function conciseToRdfjs(term: ConAbsoluteIRI, prefixMapping?: PrefixMapping): RDF.NamedNode;
+export function conciseToRdfjs(term: ConTypeAlias, prefixMapping?: PrefixMapping): RDF.NamedNode;
+export function conciseToRdfjs(term: ConLiteral, prefixMapping?: PrefixMapping): RDF.Literal;
+export function conciseToRdfjs(term: ConBlankNode, prefixMapping?: PrefixMapping): RDF.BlankNode;
 export function conciseToRdfjs(term: ConciseTerm, prefixMapping?: PrefixMapping): RDF.Term {
   const factory = new DataFactory();
   if (typeof term === "number") {
