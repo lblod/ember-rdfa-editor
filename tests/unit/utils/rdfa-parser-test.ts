@@ -23,7 +23,7 @@ module("Unit | utils | rdfa-parser-test", hooks => {
       </div>`;
 
     const parser = new RdfaParser({baseIRI: "http://example.com"});
-    const dataset = parser.parse(root);
+    const {dataset} = parser.parse(root);
     const quads = [...dataset];
     console.log(quads);
     assert.strictEqual(dataset.size, 5);

@@ -4,18 +4,7 @@ import ModelRange, {RangeContextStrategy} from "@lblod/ember-rdfa-editor/model/m
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {ModelQuadSubject, RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
-
-interface TripleQuery {
-  subject?: RDF.Quad_Subject,
-  predicate?: RDF.Quad_Predicate,
-  object?: RDF.Quad_Object
-}
-
-export interface Triple {
-  subject: RDF.Quad_Subject;
-  predicate: RDF.Quad_Predicate;
-  object: RDF.Quad_Object;
-}
+import {RDF_TYPE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 export default interface Datastore {
   get dataset(): RDF.Dataset;
@@ -73,19 +62,19 @@ export class EditorStore implements Datastore {
     return this._subjectToNodesMapping.get(subject.value);
   }
 
-  nodesForType(type: string) {
-    const quads = [...this._dataset.match(
-      null,
-      {
-        value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        termType: "NamedNode",
-      },
-      {termType: "NamedNode", value: type})
-    ];
-    const subjects = quads.map((quad) => quad.subject);
-    const nodes = subjects.map(subject => ({subject, nodes: this.nodesForSubject(subject)}));
-    return nodes;
-
+  nodesForType(type: string, searchRange?: ModelRange, strategy: RangeContextStrategy = "rangeContains") {
+    let dataset: RDF.Dataset;
+    if (searchRange) {
+      dataset = this.dataForRange(searchRange, strategy);
+    } else {
+      dataset = this.dataset;
+    }
+    const quads = [...dataset.match(
+      undefined,
+      {termType: "NamedNode", value: RDF_TYPE},
+      {termType: "NamedNode", value: type}
+    )];
+    return quads.map(quad => ({subject: quad.subject, nodes: this.nodesForSubject(quad.subject)}));
   }
 
 }

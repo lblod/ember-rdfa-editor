@@ -13,5 +13,8 @@ export const HIGHLIGHT_ATTRIBUTE = 'data-editor-highlight';
 export const PLACEHOLDER_CLASS = 'mark-highlight-manual';
 export const CORE_OWNER = 'rdfa-editor';
 
+export const RDF_TYPE = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
+export const XSD_PREFIX = 'http://www.w3.org/2001/XMLSchema#';
+
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const NOOP = () => {};
