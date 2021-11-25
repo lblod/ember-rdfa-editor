@@ -8,7 +8,8 @@ import {
   ConBlankNode,
   conciseToRdfjs,
   ConLiteral,
-  ConNamedNode
+  ConNamedNode,
+  TermConverter
 } from "@lblod/ember-rdfa-editor/model/util/concise-term-string";
 
 export type SubjectSpec = RDF.Quad_Subject | ConNamedNode | ConBlankNode | null;
@@ -45,6 +46,8 @@ export default interface Datastore {
   limitToRange(range: ModelRange, strategy?: RangeContextStrategy): Datastore;
 
   match(subject?: SubjectSpec, predicate?: PredicateSpec, object?: ObjectSpec): Datastore;
+
+  transformDataset(action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset): Datastore;
 
   asSubjectNodes(): Generator<SubjectNodesResponse>
 
@@ -147,6 +150,9 @@ export class EditorStore implements Datastore {
     }
   }
 
+  transformDataset(action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset): Datastore {
+    return this.fromDataset(action(this.dataset, conciseToRdfjs));
+  }
 
   private fromDataset(dataset: RDF.Dataset): Datastore {
     return new EditorStore({
@@ -166,6 +172,7 @@ export class EditorStore implements Datastore {
     }
     return subjects;
   }
+
 
 }
 

@@ -22,6 +22,7 @@ type ConLanguagedLiteral = `@${string}"${ConPlainLiteral}`;
 type ConPlainLiteral = string;
 
 export type PrefixMapping = (prefix: string) => string | null;
+export type TermConverter = typeof conciseToRdfjs;
 
 export function xsd(type: string): string {
   return `${XSD_PREFIX}${type}`;
