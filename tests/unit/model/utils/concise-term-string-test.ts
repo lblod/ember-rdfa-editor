@@ -94,4 +94,11 @@ module("Unit | model | utils | concise-term-string-test", () => {
       conciseToRdfjs("example:test", prefixMapping);
     }, ParseError);
   });
+  test("explicit literal string", assert => {
+    const factory = new DataFactory();
+    const expected = factory.literal("this_string:is_literal");
+    const actual = conciseToRdfjs('"this_string:is_literal');
+    assert.true(expected.equals(actual));
+
+  });
 });

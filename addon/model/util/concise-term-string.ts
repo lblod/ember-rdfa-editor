@@ -19,7 +19,7 @@ export type ConBlankNode = `_:${string}`;
 export type ConLiteral = ConPlainLiteral | ConDatatypedLiteral | ConLanguagedLiteral | number | boolean;
 type ConDatatypedLiteral = `^${string}"${ConPlainLiteral}`;
 type ConLanguagedLiteral = `@${string}"${ConPlainLiteral}`;
-type ConPlainLiteral = string;
+type ConPlainLiteral = `"${string}`;
 
 export type PrefixMapping = (prefix: string) => string | null;
 export type TermConverter = (term: ConciseTerm) => RDF.Term;
@@ -74,6 +74,10 @@ export function conciseToRdfjs(term: ConciseTerm, prefixMapping?: PrefixMapping)
         case ">": {
           const content = term.substring(1);
           return factory.namedNode(content);
+        }
+        case '"': {
+          const content = term.substring(1);
+          return factory.literal(content);
         }
         case "_": {
           if (term.charAt(1) === ":") {
