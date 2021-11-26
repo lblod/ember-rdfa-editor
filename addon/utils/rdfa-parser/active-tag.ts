@@ -3,7 +3,6 @@
  *
  * Copyright © 2019 Ruben Taelman
  */
-import * as RDF from "@rdfjs/types";
 import {IRdfaPattern} from "./rdfa-pattern";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {
@@ -11,7 +10,6 @@ import {
   ModelNamedNode,
   ModelQuadPredicate, ModelTerm
 } from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
 
 /**
  * Data holder for the RDFa state in XML tags.
