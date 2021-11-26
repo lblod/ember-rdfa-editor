@@ -96,8 +96,8 @@
       background: linear-gradient(
         to right,
           $au-gray-100,
-          $au-gray-100 calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
-          transparent calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
+          $au-gray-100 calc(50% - #{$au-unit-tiny}),
+          transparent calc(50% - #{$au-unit-tiny}),
           transparent 100%
       );
     }
