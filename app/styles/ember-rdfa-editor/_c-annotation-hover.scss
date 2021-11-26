@@ -68,25 +68,36 @@
       padding-right: $say-annotation-gutter + $au-unit-small;
       margin-right: -$say-annotation-gutter + $au-unit-tiny;
       width: $say-annotation-width-content;
-      font-family: $say-font-family;
-      font-weight:$au-medium;
+      font-family: var(--au-font);
+      font-weight: var(--au-medium);
       letter-spacing: .01rem;
       text-transform: uppercase;
       text-overflow: ellipsis;
       white-space: nowrap;
-      color: $au-gray-600;
-      background-color: $au-gray-100;
+      color: var(--au-gray-600);
+      background-color: var(--au-white);
       pointer-events: none;
       overflow: hidden;
       min-height: 2rem;
-      border-right: 1px dashed $au-gray-300;
-      border-top: 1px dashed $au-gray-300;
-      z-index: $au-z-index-gamma;
+      border-right: 1px dashed var(--au-gray-300);
+      border-top: 1px dashed var(--au-gray-300);
+      z-index: var(--au-z-index-gamma);
+      background: linear-gradient(
+        to right,
+          $au-white,
+          $au-white calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
+          transparent calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
+          transparent 100%
+      );
+    }
+
+    .say-container--sidebar-right.say-container--paper &:before {
+      background-color: var(--au-gray-100);
       background: linear-gradient(
         to right,
           $au-gray-100,
-          $au-gray-100 calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
-          transparent calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
+          $au-gray-100 calc(50% - #{$au-unit-tiny}),
+          transparent calc(50% - #{$au-unit-tiny}),
           transparent 100%
       );
     }
@@ -99,7 +110,7 @@
 
     // Bring highlighted annotation to the front
     &[data-editor-position-level]:before {
-      z-index: $au-z-index-alpha;
+      z-index: var(--au-z-index-alpha);
     }
 
     &[data-editor-position-level]:before {
@@ -109,7 +120,7 @@
     }
 
     &[data-editor-position-level="0"]:before {
-      z-index: $au-z-index-gamma;
+      z-index: var(--au-z-index-gamma);
     }
   }
 

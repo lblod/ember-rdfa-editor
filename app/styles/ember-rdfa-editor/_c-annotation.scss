@@ -3,12 +3,26 @@
    Shared styling (hover, click, show, regular)
    ================================== */
 
+/* Variables
+  ========================================================================== */
+
+$say-annotation-width                      : $au-unit-huge*1.5 !default;
+$say-annotation-offset                     : $au-unit-large !default;
+$say-annotation-gutter                     : $au-unit !default;
+$say-annotation-width-content              : $say-annotation-width !default;
+$say-annotation-text-color                 : var(--au-gray-700) !default;
+$say-annotation-background-color           : var(--au-gray-100) !default;
+
+
+/* Component
+  ========================================================================== */
+
 .rdfa-annotations {
   // Visibility annotations
   [property="dc:subject"],
   [property="besluit:geplandOpenbaar"],
   [property="besluit:openbaar"] {
-    font-weight: $au-regular;
+    font-weight: var(--au-regular);
     color: $say-annotation-text-color !important;
   }
 
@@ -16,15 +30,15 @@
   [property="ext:behandelt"],
   [property="besluit:heeftAgendapunt"],
   [typeof="besluit:Agendapunt"] {
-    @include au-font-size($say-base-font-size);
-    font-weight: $au-regular;
+    @include au-font-size($au-base);
+    font-weight: var(--au-regular);
     display: block !important;
     position: relative;
     color: $say-annotation-text-color  !important;
 
     [property="besluit:geplandOpenbaar"],
     [property="besluit:openbaar"] {
-      color: $au-gray-600 !important;
+      color: var(--au-gray-600) !important;
     }
 
     [property="besluit:geplandOpenbaar"] i,
@@ -33,7 +47,7 @@
       top: .2rem;
       padding-left: 1px;
       z-index: 2;
-      color: $au-gray-600 !important;
+      color: var(--au-gray-600) !important;
     }
 
     [property="besluit:geplandOpenbaar"][content="false"],
@@ -90,9 +104,9 @@
   [typeof]:not([typeof="foaf:Document"]),
   [data-type],
   .mark-highlight-manual {
-    border-bottom: .2rem dotted $au-gray-300;
+    border-bottom: .2rem dotted var(--au-gray-300);
     padding-bottom: .2rem;
-    transition: border $au-transition;
+    transition: border var(--au-transition);
 
     // Hide certain underlines
     [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] .mark-highlight-manual,
@@ -110,10 +124,10 @@
   [property^="ext:insert"],
   [data-editor-highlight="true"]:not([contenteditable=""]) {
     background-color: $say-editor-highlight-color;
-    transition: background-color $au-transition;
+    transition: background-color var(--au-transition);
 
     &::selection {
-      color: $au-gray-900;
+      color: var(--au-gray-900);
       background-color: $say-editor-highlight-color;
     }
 
@@ -134,8 +148,8 @@
   }
 
   span.mark-highlight-manual {
-    color: $au-gray-700;
-    background-color: $au-gray-100;
+    color: var(--au-gray-700);
+    background-color: var(--au-gray-100);
     font-style: italic;
 
     &[data-editor-position-level="1"],
@@ -153,7 +167,7 @@
   [data-type],
   .mark-highlight-manual {
     position: relative;
-    border: 1px solid $au-gray-200;
+    border: 1px solid var(--au-gray-200);
     display: block !important; // Override inline styles
     margin: $au-unit-tiny;
     padding: 0;
@@ -161,10 +175,10 @@
     // Style annotation blocks
     &:before {
       @include au-font-size($say-smallest-font-size,1.2);
-      font-family: $say-font-family;
-      font-weight:$au-medium;
+      font-family: var(--au-font);
+      font-weight: var(--au-medium);
       letter-spacing: .01rem;
-      color: $au-gray-600;
+      color: var(--au-gray-600);
       text-transform: uppercase;
       pointer-events: none;
       content: attr(property) " " attr(typeof) " " attr(data-type);
@@ -176,8 +190,8 @@
       width: 100%;
       padding: $au-unit-tiny/2;
       transition: none;
-      border-bottom: 1px solid $au-gray-200;
-      background-color: $au-gray-100;
+      border-bottom: 1px solid var(--au-gray-200);
+      background-color: var(--au-gray-100);
       opacity: 1;
     }
   }
@@ -186,10 +200,10 @@
   .mark-highlight-manual:after,
   [data-editor-highlight="true"]:not([contenteditable=""]):after {
     @include au-font-size($say-smallest-font-size,1.2);
-    font-family: $say-font-family;
-    font-weight: $au-regular;
+    font-family: var(--au-font);
+    font-weight: var(--au-regular);
     letter-spacing: .01rem;
-    color: $au-gray-600;
+    color: var(--au-gray-600);
     text-transform: uppercase;
     pointer-events: none;
     position: relative;
@@ -200,8 +214,8 @@
     width: 100%;
     padding: $au-unit-tiny/2;
     transition: none;
-    border-top: 1px solid $au-gray-200;
-    background-color: $au-white;
+    border-top: 1px solid var(--au-gray-200);
+    background-color: var(--au-white);
     opacity: 1;
     margin: 0;
   }

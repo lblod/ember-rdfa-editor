@@ -32,27 +32,27 @@
   > p > a {
     transition: color .3s ease-in-out, text-decoration 3s ease-in-out;
     font-weight: 500;
-    text-decoration-color: $say-primary-300;
+    text-decoration-color: var(--au-blue-300);
   }
 
   > a,
   > p > a,
   > a:visited,
   > p > a:visited {
-    color: $say-primary-700;
+    color: var(--au-blue-700);
   }
 
   > a:hover,
   > p > a:hover,
   > a:focus,
   > p > a:focus {
-    color: $say-primary-700;
-    text-decoration-color: $say-primary-300;
+    color: var(--au-blue-700);
+    text-decoration-color: var(--au-blue-300);
   }
 
   > a:focus,
   > p > a:focus {
-    outline: .2rem dashed $say-primary-300;
+    outline: .2rem dashed var(--au-blue-300);
     outline-offset: .2rem;
   }
 

@@ -2,6 +2,42 @@
    #SAY CONTENT STYLES
    ================================== */
 
+/* Variables
+  ========================================================================== */
+
+$say-font-family                 : BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !default;
+$say-h1-font-family              : var(--au-font) !default;
+$say-h1-font-weight              : var(--au-medium) !default;
+$say-h1-font-size                : $au-h1 !default;
+$say-h2-font-family              : var(--au-font) !default;
+$say-h2-font-weight              : var(--au-medium) !default;
+$say-h2-font-size                : $au-h2 !default;
+$say-h3-font-family              : var(--au-font) !default;
+$say-h3-font-weight              : var(--au-medium) !default;
+$say-h3-font-size                : $au-h3 !default;
+$say-h4-font-family              : var(--au-font) !default;
+$say-h4-font-weight              : var(--au-medium) !default;
+$say-h4-font-size                : $au-h4 !default;
+$say-h5-font-family              : var(--au-font) !default;
+$say-h5-font-weight              : var(--au-medium) !default;
+$say-h5-font-size                : $au-h5 !default;
+$say-h6-font-family              : var(--au-font) !default;
+$say-h6-font-weight              : var(--au-medium) !default;
+$say-h6-font-size                : $au-h6 !default;
+$say-base-font-family            : var(--au-font) !default;
+$say-base-font-weight            : var(--au-regular) !default;
+$say-small-font-size             : $au-base !default;
+$say-smaller-font-size           : 1.4rem !default;
+$say-smallest-font-size          : 1.2rem !default;
+$say-typography-margin           : $au-unit-small !default;
+$say-editor-private-color        : var(--au-gray-900) !default;
+$say-editor-highlight-color      : var(--au-yellow-200) !default;
+$say-editor-highlight-hover-color: var(--au-yellow-100) !default;
+
+
+/* Component
+  ========================================================================== */
+
 .say-content {
   // Set base font size for elements
   &,
@@ -9,9 +45,9 @@
   ul,
   ol,
   div {
-    @include au-font-size($say-base-font-size);
-    font-family: $say-base-font-family;
-    font-weight: $say-base-font-weight;
+    @include au-font-size($au-base);
+    font-family: var(--au-font);
+    font-weight: var(--au-regular);
   }
 
   span,
@@ -118,23 +154,23 @@
 
   // Style links
   a {
-    transition: color $au-transition, text-decoration $au-transition;
-    font-weight: $au-regular;
-    text-decoration-color: $say-primary-300;
+    transition: color var(--au-transition), text-decoration var(--au-transition);
+    font-weight: var(--au-regular);
+    text-decoration-color: var(--au-blue-300);
 
     &,
     &:visited {
-      color: $say-primary-700;
+      color: var(--au-blue-700);
     }
 
     &:hover,
     &:focus {
-      color: $say-primary-600;
-      text-decoration-color: $say-primary-300;
+      color: var(--au-blue-600);
+      text-decoration-color: var(--au-blue-300);
     }
 
     &:focus {
-      outline: $au-outline;
+      outline: var(--au-outline);
       outline-offset: $au-unit-tiny/2;
     }
   }
@@ -261,13 +297,13 @@
     margin-top: $au-unit;
     margin-bottom: $au-unit;
     border: 0;
-    border-bottom: 3px solid $au-gray-200;
+    border-bottom: 3px solid var(--au-gray-200);
   }
 
   // Add custom font styling
   strong,
   b {
-    font-weight: $au-bold;
+    font-weight: var(--au-bold);
   }
 
   em {
@@ -281,12 +317,12 @@
   // Table styling
   table th {
     white-space: initial;
-    background-color: $au-white;
+    background-color: var(--au-white);
   }
 
   .data-table th,
   .data-table td {
-    @include au-font-size($say-base-font-size,1.5);
+    @include au-font-size($au-base,1.5);
   }
 
   .data-table--lined.data-table--tight {
@@ -309,9 +345,9 @@
   // Imported HTML - Used for tables
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
     position: relative;
-    background-color: $au-gray-200;
+    background-color: var(--au-gray-200);
     border-radius: .2rem;
-    outline: 2px dashed $au-gray-300;
+    outline: 2px dashed var(--au-gray-300);
     outline-offset: .2rem;
     margin-top: 1.2rem;
     margin-bottom: 1.2rem;
@@ -325,8 +361,8 @@
 
     // Reset some table styles
     th {
-      font-weight:$au-medium;
-      border-bottom: 1px solid $au-gray-300;
+      font-weight: var(--au-medium);
+      border-bottom: 1px solid var(--au-gray-300);
     }
 
     th,
@@ -335,7 +371,7 @@
       vertical-align: top;
       padding: .6rem;
       background-color: transparent !important;
-      border: 1px solid $au-gray-300;
+      border: 1px solid var(--au-gray-300);
     }
 
     // Style links as plain text
@@ -344,7 +380,7 @@
       &:hover,
       &:visited,
       &:focus {
-        color: $au-gray-800;
+        color: var(--au-gray-800);
         text-decoration: none;
       }
 

@@ -22,8 +22,21 @@ To include the editor in a template (ember octane syntax) you can use the follow
 ```
         <Rdfa::RdfaEditor
           @rdfaEditorInit={{this.rdfaEditorInit}}
-          @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-          @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+          @editorOptions={{hash 
+            showToggleRdfaAnnotations="true" 
+            showInsertButton=null 
+            showRdfa="true" 
+            showRdfaHighlight="true" 
+            showRdfaHover="true" 
+            showPaper="true" 
+            showSidebar="true" 
+            showToolbarBottom=null
+          }}
+          @toolbarOptions={{hash 
+            showTextStyleButtons="true" 
+            showListButtons="true" 
+            showIndentButtons="true"
+          }}
         />
 
 ```
@@ -43,6 +56,9 @@ You can pass basic options when you load the editor. Add a value of "true" to en
 - showRdfa: Show RDFA in the editor
 - showRdfaHighlight: Show Rdfa highlights
 - showRdfaHover: Show Rdfa information on hover
+- showPaper: Show the editor inside a paper like container
+- showSidebar: Show a right sidebar for plugins
+- showToolbarBottom: Display the toolbar at the bottom of the screen
 
 #### Toolbar Options
 
@@ -77,7 +93,7 @@ module.exports = function(environment) {
 
 ## Styling
 
-Ember-rdfa-editor requires users of the addon to import its SASS stylesheets. This has the advantage of easily allowing users to use and override variables to provide a custom theme for the editor. To support sass you must install `ember-cli-sass`. The stylesheets provided by ember-rdfa-editor can be imported with the following import statement:
+Ember-rdfa-editor requires users of the addon to import its SASS stylesheets. To support sass you must install `ember-cli-sass`. The stylesheets provided by ember-rdfa-editor can be imported with the following import statement:
 
 ```
 @import "ember-rdfa-editor";
@@ -87,8 +103,74 @@ When installing this through `ember install` the addon will add the snippet abov
 
 ### Customisation
 
-You can override the variables to provide a custom theme for the editor.
-- [_s-theme.scss](https://github.com/lblod/ember-rdfa-editor/blob/master/app/styles/ember-rdfa-editor/_s-theme.scss): Theme variables
+This addon uses CSS variables to customise the styling. You can override these variables by including and overriding the following variables:
+
+```
+:root {
+  --au-white: #FFFFFF;
+  --au-gray-100: #F4F5F6;
+  --au-gray-200: #E6E8EB;
+  --au-gray-300: #CCD1D9;
+  --au-gray-400: #A1ABBA;
+  --au-gray-500: #8E98A6;
+  --au-gray-600: #69717C;
+  --au-gray-700: #545961;
+  --au-gray-800: 2A2D31;
+  --au-gray-900: #212326;
+  --au-gray-1000: #000000;
+  --au-blue-100: #FAF4FF;
+  --au-blue-200: #F2E0FF;
+  --au-blue-300: #E1B8FF;
+  --au-blue-500: #B34BFF;
+  --au-blue-600: #A933FF;
+  --au-blue-700: #9000FA;
+  --au-blue-800: #7700CE;
+  --au-blue-900: #550094;
+  --au-yellow-100: #FFF9D5;
+  --au-yellow-200: #FFF29B;
+  --au-yellow-300: #FEE539;
+  --au-yellow-400: #FFC515;
+  --au-yellow-600: #7F6E3B;
+  --au-yellow-900: #473D21;
+  --au-red-100: #FCF3F3;
+  --au-red-200: #F7E3E3;
+  --au-red-500: #FF4141;
+  --au-red-600: #D92626;
+  --au-red-700: #AB1F1F;
+  --au-red-900: #470000;
+  --au-green-100: #F7FAE5;
+  --au-green-200: #ECF2CD;
+  --au-green-400: #B3E000;
+  --au-green-500: #8BAE00;
+  --au-green-700: #5F750B;
+  --au-green-900: #323D08;
+  --au-global-font-size: 1.5rem;
+  --au-global-line-height: 1.5;
+  --au-font: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --au-light: 300;
+  --au-regular: 400;
+  --au-medium: 500;
+  --au-bold: 700;
+  --au-page-bg: #FFFFFF;
+  --au-select-text-color: #212326;
+  --au-select-text-bg: #F2E0FF;
+  --au-radius: .3rem;
+  --au-border: .2rem;
+  --au-outline-color: #B34BFF;
+  --au-outline-border: .3rem;
+  --au-outline-border-style: solid;
+  --au-outline: .3rem solid rgba(#A933FF,.65);
+  --au-outline-offset: .2rem;
+  --au-outline-offset-negative: -.3rem;
+  --au-duration: .125s;
+  --au-easing: cubic-bezier(0.190,  1.000, 0.220, 1.000);
+  --au-transition: .125s cubic-bezier(0.190,  1.000, 0.220, 1.000);
+  --au-z-index-alpha: 1;
+  --au-z-index-beta: 2;
+  --au-z-index-gamma: 3;
+  --duet-color-primary: #A933FF;
+}
+```
 
 
 ## Compatibility

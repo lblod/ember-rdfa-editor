@@ -1,0 +1,93 @@
+// Custom color variables
+$say-primary-100                 : #FAF4FF !default;
+$say-primary-200                 : #F2E0FF !default;
+$say-primary-300                 : #E1B8FF !default;
+$say-primary-500                 : #B34BFF !default;
+$say-primary-600                 : #A933FF !default;
+$say-primary-700                 : #9000FA !default;
+$say-primary-800                 : #7700CE !default;
+$say-primary-900                 : #550094 !default;
+
+// Appuniversum variables
+:root {
+  // Colors
+  --au-white: #{$au-white};
+  --au-gray-100: #{$au-gray-100};
+  --au-gray-200: #{$au-gray-200};
+  --au-gray-300: #{$au-gray-300};
+  --au-gray-400: #{$au-gray-400};
+  --au-gray-500: #{$au-gray-500};
+  --au-gray-600: #{$au-gray-600};
+  --au-gray-700: #{$au-gray-700};
+  --au-gray-800: #{$au-gray-800};
+  --au-gray-900: #{$au-gray-900};
+  --au-gray-1000: #{$au-gray-1000};
+  --au-blue-100: #{$say-primary-100};
+  --au-blue-200: #{$say-primary-200};
+  --au-blue-300: #{$say-primary-300};
+  --au-blue-500: #{$say-primary-500};
+  --au-blue-600: #{$say-primary-600};
+  --au-blue-700: #{$say-primary-700};
+  --au-blue-800: #{$say-primary-800};
+  --au-blue-900: #{$say-primary-900};
+  --au-yellow-100: #{$au-yellow-100};
+  --au-yellow-200: #{$au-yellow-200};
+  --au-yellow-300: #{$au-yellow-300};
+  --au-yellow-400: #{$au-yellow-400};
+  --au-yellow-600: #{$au-yellow-600};
+  --au-yellow-900: #{$au-yellow-900};
+  --au-red-100: #{$au-red-100};
+  --au-red-200: #{$au-red-200};
+  --au-red-500: #{$au-red-500};
+  --au-red-600: #{$au-red-600};
+  --au-red-700: #{$au-red-700};
+  --au-red-900: #{$au-red-900};
+  --au-green-100: #{$au-green-100};
+  --au-green-200: #{$au-green-200};
+  --au-green-400: #{$au-green-400};
+  --au-green-500: #{$au-green-500};
+  --au-green-700: #{$au-green-700};
+  --au-green-900: #{$au-green-900};
+
+  // Typography
+  --au-global-font-size: #{$au-global-font-size};
+  --au-global-line-height: #{$au-global-line-height};
+  --au-font: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --au-font-secondary: #{$au-font-secondary};
+  --au-font-tertiary: #{$au-font-tertiary};
+  --au-light: #{$au-light};
+  --au-regular: #{$au-regular};
+  --au-medium: #{$au-medium};
+  --au-bold: #{$au-bold};
+  --au-base: #{$au-base};
+  --au-tiny: #{$au-tiny};
+  --au-small: #{$au-small};
+  --au-h6: #{$au-h6};
+  --au-h5: #{$au-h5};
+  --au-h4: #{$au-h4};
+  --au-h3: #{$au-h3};
+  --au-h2: #{$au-h2};
+  --au-h1: #{$au-h1};
+
+  // UI
+  --au-page-bg: #{$au-page-bg};
+  --au-select-text-color: #{$au-select-text-color};
+  --au-select-text-bg: #{$say-primary-200};
+  --au-radius: #{$au-radius};
+  --au-border: #{$au-border};
+  --au-outline-color: #{$say-primary-500};
+  --au-outline-border: #{$au-outline-border};
+  --au-outline-border-style: #{$au-outline-border-style};
+  --au-outline: .3rem solid rgba(#A933FF,.65);
+  --au-outline-offset: #{$au-outline-offset};
+  --au-outline-offset-negative: #{$au-outline-offset-negative};
+  --au-duration: #{$au-duration};
+  --au-easing: #{$au-easing};
+  --au-transition: #{$au-transition};
+  --au-z-index-alpha: #{$au-z-index-alpha};
+  --au-z-index-beta: #{$au-z-index-beta};
+  --au-z-index-gamma: #{$au-z-index-gamma};
+
+  // Duet datepicker
+  --duet-color-primary: #{$say-primary-600};
+}

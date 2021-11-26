@@ -9,11 +9,11 @@
 .rdfa-annotations:not(.show-rdfa-blocks) {
   [data-flagged-remove="almost-complete"][data-editor-position-level="0"],
   [data-flagged-remove="almost-complete"]:hover {
-    box-shadow: -2px 0 0 $au-yellow-400;
-    background-color: $au-yellow-200;
+    box-shadow: -2px 0 0 var(--au-yellow-400);
+    background-color: var(--au-yellow-200);
 
     &:hover {
-      background-color: $au-yellow-200 !important; // Conflict with .annotation style @TODO: remove when annotation classes are removed
+      background-color: var(--au-yellow-200) !important; // Conflict with .annotation style @TODO: remove when annotation classes are removed
     }
   }
 
@@ -21,15 +21,15 @@
   [data-flagged-remove="complete"] {
     cursor: text;
     box-shadow: none;
-    background-color: $au-gray-100;
+    background-color: var(--au-gray-100);
     min-width: $au-unit-tiny;
-    color: $au-gray-700;
+    color: var(--au-gray-700);
     font-style: italic;
     text-decoration: none;
-    font-weight: $au-light !important;
+    font-weight: var(--au-light) !important;
 
     &:hover {
-      background-color: $au-gray-100 !important; // Conflict with .annotation style @TODO: remove when annotation classes are removed
+      background-color: var(--au-gray-100) !important; // Conflict with .annotation style @TODO: remove when annotation classes are removed
     }
 
     &:hover:after,
@@ -46,7 +46,7 @@
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"] {
     position: relative;
     font-style: normal;
-    font-weight: $au-regular;
+    font-weight: var(--au-regular);
   }
 
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"]:after {

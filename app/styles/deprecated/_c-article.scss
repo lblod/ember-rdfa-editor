@@ -13,12 +13,12 @@
   flex-direction: row-reverse;
 
   & + & {
-    border-top: .1rem solid $au-gray-200;
+    border-top: .1rem solid var(--au-gray-20);
   }
 }
 
 .say-article__section--highlight {
-  background-color: $au-gray-100;
+  background-color: var(--au-gray-100);
 }
 
 .say-article__action {
@@ -28,7 +28,7 @@
 }
 
 .say-article__content {
-  color: $au-gray-800;
+  color: var(--au-gray-800);
   margin-right: $au-unit;
 
   > * {
@@ -84,19 +84,19 @@
 
 .say-article__insert {
   @include au-font-size($au-h6);
-  color: $say-primary-700;
-  font-family: $say-font-family;
+  color: var(--au-blue-700);
+  font-family: var(--au-font);
   appearance: none;
   padding: 0;
   border: 0;
   display: inline-flex;
   align-items: center;
   border-radius: .2rem;
-  transition: color $au-transition, background-color $au-transition;
+  transition: color var(--au-transition), background-color var(--au-transition);
   white-space: nowrap;
 
   &:hover,
   &:focus {
-    color: $say-primary-600;
+    color: var(--au-blue-600);
   }
 }

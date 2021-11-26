@@ -5,7 +5,7 @@
 .say-card {
   display: flex;
   flex-direction: column;
-  z-index: $au-z-index-gamma;
+  z-index: var(--au-z-index-gamma);
   background-color: $au-white;
   box-shadow: 0 1px 3px rgba($au-gray-900, .1), 0 4px 20px rgba($au-gray-900, .035), 0 1px 1px rgba($au-gray-900, .025);
   z-index: 99;
@@ -13,35 +13,35 @@
 
 .say-card__header {
   padding: $au-unit-small;
-  border-bottom: .1rem solid $au-gray-200;
+  border-bottom: .1rem solid var(--au-gray-200);
 }
 
 .say-card__title {
   @include au-font-size($au-h5);
-  font-weight:$au-medium;
-  color: $au-gray-800;
+  font-weight: var(--au-medium);
+  color: var(--au-gray-800);
 }
 
 .say-card__subtitle {
   @include au-font-size($au-h6);
-  font-weight:$au-medium;
-  color: $au-gray-800;
+  font-weight: var(--au-medium);
+  color: var(--au-gray-800);
 }
 
 .say-card__content {
   position: relative;
 
   & + & {
-    border-top: .1rem dotted $au-gray-300;
+    border-top: .1rem dotted var(--au-gray-300);
   }
 
   & + &.say-card__content--padding {
-    border-top: .1rem solid $au-gray-200;
+    border-top: .1rem solid var(--au-gray-200);
   }
 }
 
 .say-card__content--tint {
-  background-color: $au-gray-100;
+  background-color: var(--au-gray-100);
 }
 
 .say-card__content--padding {
@@ -56,7 +56,7 @@
 .say-card__info {
   @include au-font-size($au-h6);
   padding: $au-unit-small;
-  color: $au-gray-600;
+  color: var(--au-gray-600);
   font-style: italic;
 
   * + * {
@@ -66,7 +66,7 @@
 
 .say-card__footer {
   @include au-font-size($au-h6);
-  background-color: $au-gray-100;
+  background-color: var(--au-gray-100);
   padding: $au-unit-tiny $au-unit-small;
-  border-top: .1rem solid $au-gray-200;
+  border-top: .1rem solid var(--au-gray-200);
 }
