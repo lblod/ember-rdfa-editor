@@ -62,7 +62,7 @@ export class RdfaParser {
     this.options = options;
 
     this.rootModelNode = options.rootModelNode;
-    this.util = new Util(undefined, options.baseIRI);
+    this.util = new Util(this.rootModelNode, undefined, options.baseIRI);
     this.defaultGraph = options.defaultGraph || this.util.dataFactory.defaultGraph();
     const profile = options.contentType ? Util.contentTypeToProfile(options.contentType) : options.profile || '';
     this.features = options.features || RDFA_FEATURES[profile];
@@ -99,6 +99,7 @@ export class RdfaParser {
     } {
     this.resultSet = new GraphyDataset();
     this.rootModelNode = modelRoot;
+    this.util = new Util(modelRoot, undefined, this.options.baseIRI);
     this.nodeToSubjectMapping = new Map<ModelNode, ModelQuadSubject>();
     this.subjectToNodesMapping = new Map<string, Set<ModelNode>>();
     for (const domNode of pathFromDomRoot) {
@@ -142,7 +143,7 @@ export class RdfaParser {
 
   protected onLeaveNode = (node: ModelNode) => {
     if (ModelNode.isModelElement(node)) {
-      this.onTagClose();
+      this.onTagClose(node);
     }
   };
 
@@ -252,7 +253,7 @@ export class RdfaParser {
       if (attributes.property === 'rdfa:copy') {
         const copyTargetPatternId: string = attributes.resource || attributes.href || attributes.src;
         if (this.rdfaPatterns[copyTargetPatternId]) {
-          this.emitPatternCopy(parentTag, this.rdfaPatterns[copyTargetPatternId], copyTargetPatternId);
+          this.emitPatternCopy(parentTag, this.rdfaPatterns[copyTargetPatternId], copyTargetPatternId, activeTag.node);
         } else {
           if (!this.pendingRdfaPatternCopies[copyTargetPatternId]) {
             this.pendingRdfaPatternCopies[copyTargetPatternId] = [];
@@ -677,7 +678,7 @@ export class RdfaParser {
     activeTag.text.push(data);
   }
 
-  public onTagClose() {
+  public onTagClose(node?: ModelNode) {
     // Get the active tag
     const activeTag: IActiveTag = this.activeTagStack[this.activeTagStack.length - 1];
     const parentTag: IActiveTag = this.activeTagStack[this.activeTagStack.length - 2];
@@ -699,7 +700,7 @@ export class RdfaParser {
         // Apply all pending copies for this pattern
         if (this.pendingRdfaPatternCopies[patternId]) {
           for (const tag of this.pendingRdfaPatternCopies[patternId]) {
-            this.emitPatternCopy(tag, activeTag.collectedPatternTag, patternId);
+            this.emitPatternCopy(tag, activeTag.collectedPatternTag, patternId, activeTag.node);
           }
           delete this.pendingRdfaPatternCopies[patternId];
         }
@@ -884,7 +885,7 @@ export class RdfaParser {
    * @param {IRdfaPattern} pattern The pattern to instantiate.
    * @param {string} rootPatternId The pattern id.
    */
-  protected emitPatternCopy(parentTag: IActiveTag, pattern: IRdfaPattern, rootPatternId: string) {
+  protected emitPatternCopy(parentTag: IActiveTag, pattern: IRdfaPattern, rootPatternId: string, node?: ModelNode) {
     this.activeTagStack.push(parentTag);
     pattern.referenced = true;
 
@@ -892,7 +893,7 @@ export class RdfaParser {
     // All next pattern copies will reuse the instantiated blank nodes from the first pattern.
     if (!pattern.constructedBlankNodes) {
       pattern.constructedBlankNodes = [];
-      this.util.blankNodeFactory = (node?: ModelNode) => {
+      this.util.blankNodeFactory = () => {
         const bNode = this.util.dataFactory.blankNode(undefined, node);
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         pattern.constructedBlankNodes!.push(bNode);
@@ -925,20 +926,20 @@ export class RdfaParser {
    * @param {boolean} root If this is the root call for the given pattern.
    * @param {string} rootPatternId The pattern id.
    */
-  protected emitPatternCopyAbsolute(pattern: IRdfaPattern, root: boolean, rootPatternId: string) {
+  protected emitPatternCopyAbsolute(pattern: IRdfaPattern, root: boolean, rootPatternId: string, node?: ModelNode) {
     // Stop on detection of cyclic patterns
     if (!root && pattern.attributes.property === 'rdfa:copy' && pattern.attributes.href === rootPatternId) {
       return;
     }
 
-    this.onTagOpen(pattern.name, pattern.attributes);
+    this.onTagOpen(pattern.name, pattern.attributes, node);
     for (const text of pattern.text) {
       this.onText(text);
     }
     for (const child of pattern.children) {
       this.emitPatternCopyAbsolute(child, false, rootPatternId);
     }
-    this.onTagClose();
+    this.onTagClose(node);
   }
 }
 

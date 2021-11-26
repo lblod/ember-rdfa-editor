@@ -6,11 +6,13 @@ import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 import {ModelQuadSubject, RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
 import {
   ConBlankNode,
+  ConciseTerm,
   conciseToRdfjs,
   ConLiteral,
   ConNamedNode,
   TermConverter
 } from "@lblod/ember-rdfa-editor/model/util/concise-term-string";
+import {defaultPrefixes} from "@lblod/ember-rdfa-editor/config/rdfa";
 
 export type SubjectSpec = RDF.Quad_Subject | ConNamedNode | ConBlankNode | null;
 export type PredicateSpec = RDF.Quad_Predicate | ConNamedNode | null;
@@ -61,12 +63,14 @@ export default interface Datastore {
 interface DatastoreParseConfig {
   root: ModelNode;
   pathFromDomRoot?: Node[];
+  baseIRI: string;
 }
 
 interface DatastoreConfig {
   dataset: RDF.Dataset;
   subjectToNodes: Map<string, Set<ModelNode>>;
   nodeToSubject: Map<ModelNode, ModelQuadSubject>;
+  prefixMapping: Map<string, string>
 }
 
 export class EditorStore implements Datastore {
@@ -74,17 +78,26 @@ export class EditorStore implements Datastore {
   private _dataset: RDF.Dataset;
   private _subjectToNodesMapping: Map<string, Set<ModelNode>>;
   private _nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
+  private _prefixMapping: Map<string, string>;
 
-  constructor({dataset, nodeToSubject, subjectToNodes}: DatastoreConfig) {
+  constructor({dataset, nodeToSubject, subjectToNodes, prefixMapping}: DatastoreConfig) {
     this._dataset = dataset;
     this._nodeToSubjectMapping = nodeToSubject;
     this._subjectToNodesMapping = subjectToNodes;
+    this._prefixMapping = prefixMapping;
   }
 
-  static fromParse({root, pathFromDomRoot}: DatastoreParseConfig): Datastore {
-    const parser = new RdfaParser({baseIRI: "http://example.org"});
+  static fromParse({root, pathFromDomRoot, baseIRI}: DatastoreParseConfig): Datastore {
+    const parser = new RdfaParser({baseIRI});
     const {dataset, subjectToNodesMapping, nodeToSubjectMapping} = parser.parse(root, pathFromDomRoot);
-    return new EditorStore({dataset, subjectToNodes: subjectToNodesMapping, nodeToSubject: nodeToSubjectMapping});
+    const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
+
+    return new EditorStore({
+      dataset,
+      subjectToNodes: subjectToNodesMapping,
+      nodeToSubject: nodeToSubjectMapping,
+      prefixMapping: prefixMap
+    });
   }
 
   get dataset(): RDF.Dataset {
@@ -96,9 +109,9 @@ export class EditorStore implements Datastore {
   }
 
   match(subject?: SubjectSpec, predicate?: PredicateSpec, object?: ObjectSpec): Datastore {
-    const convertedSubject = typeof subject === "string" ? conciseToRdfjs(subject) : subject;
-    const convertedPredicate = typeof predicate === "string" ? conciseToRdfjs(predicate) : predicate;
-    const convertedObject = isPrimitive(object) ? conciseToRdfjs(object) : object;
+    const convertedSubject = typeof subject === "string" ? conciseToRdfjs(subject, this.getPrefix) : subject;
+    const convertedPredicate = typeof predicate === "string" ? conciseToRdfjs(predicate, this.getPrefix) : predicate;
+    const convertedObject = isPrimitive(object) ? conciseToRdfjs(object, this.getPrefix) : object;
     const newSet = this.dataset.match(convertedSubject, convertedPredicate, convertedObject, null);
     return this.fromDataset(newSet);
   }
@@ -121,7 +134,12 @@ export class EditorStore implements Datastore {
         return false;
       }
     });
-    return new EditorStore({dataset: newSet, subjectToNodes: subToNodesCopy, nodeToSubject: nodeToSubCopy});
+    return new EditorStore({
+      dataset: newSet,
+      subjectToNodes: subToNodesCopy,
+      nodeToSubject: nodeToSubCopy,
+      prefixMapping: this._prefixMapping
+    });
   }
 
   * asSubjectNodes(): Generator<SubjectNodesResponse> {
@@ -151,14 +169,15 @@ export class EditorStore implements Datastore {
   }
 
   transformDataset(action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset): Datastore {
-    return this.fromDataset(action(this.dataset, conciseToRdfjs));
+    return this.fromDataset(action(this.dataset, (term: ConciseTerm) => conciseToRdfjs(term, this.getPrefix)));
   }
 
   private fromDataset(dataset: RDF.Dataset): Datastore {
     return new EditorStore({
       dataset,
       nodeToSubject: this._nodeToSubjectMapping,
-      subjectToNodes: this._subjectToNodesMapping
+      subjectToNodes: this._subjectToNodesMapping,
+      prefixMapping: this._prefixMapping
     });
   }
 
@@ -172,6 +191,10 @@ export class EditorStore implements Datastore {
     }
     return subjects;
   }
+
+  private getPrefix = (prefix: string): string | null => {
+    return this._prefixMapping.get(prefix) || null;
+  };
 
 
 }
@@ -287,7 +310,7 @@ export class GraphyDataset implements QuadDataSet {
     }
   }
 
-  import(stream: RDF.Stream<RDF.Quad>): Promise<this> {
+  import(_stream: RDF.Stream<RDF.Quad>): Promise<this> {
     throw new NotImplementedError();
   }
 

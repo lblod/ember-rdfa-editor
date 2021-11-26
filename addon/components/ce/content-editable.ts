@@ -1,13 +1,13 @@
-import { action } from "@ember/object";
-import { inject as service } from '@ember/service';
+import {action} from "@ember/object";
+import {inject as service} from '@ember/service';
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
+import {tracked} from '@glimmer/tracking';
 import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
 import EnterHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/enter-handler';
 import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
-import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
-import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
+import {HandlerResponse} from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
+import {InputHandler} from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
 import PasteHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/paste-handler";
 import CutHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-handler";
 import CopyHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/copy-handler";
@@ -16,8 +16,8 @@ import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tex
 import LumpNodeMovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/lump-node-movement-observer';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import { IllegalAccessToRawEditor } from "@lblod/ember-rdfa-editor/utils/errors";
-import { taskFor } from "ember-concurrency-ts";
+import {IllegalAccessToRawEditor} from "@lblod/ember-rdfa-editor/utils/errors";
+import {taskFor} from "ember-concurrency-ts";
 import ArrowHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/arrow-handler";
 import IgnoreModifiersHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/ignore-modifiers-handler";
 import UndoHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler";
@@ -29,8 +29,11 @@ interface FeatureService {
 }
 
 interface ContentEditableArgs {
-  externalHandlers: InputHandler[]
-  rawEditorInit(editor: RawEditor): void
+  externalHandlers: InputHandler[];
+
+  rawEditorInit(editor: RawEditor): void;
+
+  baseIRI?: string;
 }
 
 /**
@@ -116,28 +119,32 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   constructor(owner: unknown, args: ContentEditableArgs) {
     super(owner, args);
-    const rawEditor = PernetRawEditor.create({});
+    const rawEditor = PernetRawEditor.create({baseIRI: this.baseIRI});
     rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
 
     this._rawEditor = rawEditor;
     this.defaultHandlers = [
-      new ArrowHandler({ rawEditor }),
-      new EnterHandler({ rawEditor }),
-      new BackspaceHandler({ rawEditor }),
-      new TabHandler({ rawEditor }),
-      new TextInputHandler({ rawEditor }),
-      new DisableDeleteHandler({ rawEditor }),
-      new IgnoreModifiersHandler({ rawEditor }),
-      new UndoHandler({ rawEditor }),
-      new BoldItalicUnderlineHandler({ rawEditor }),
-      new EscapeHandler({ rawEditor }),
-      new FallbackInputHandler({ rawEditor }),
+      new ArrowHandler({rawEditor}),
+      new EnterHandler({rawEditor}),
+      new BackspaceHandler({rawEditor}),
+      new TabHandler({rawEditor}),
+      new TextInputHandler({rawEditor}),
+      new DisableDeleteHandler({rawEditor}),
+      new IgnoreModifiersHandler({rawEditor}),
+      new UndoHandler({rawEditor}),
+      new BoldItalicUnderlineHandler({rawEditor}),
+      new EscapeHandler({rawEditor}),
+      new FallbackInputHandler({rawEditor}),
     ];
 
     this.externalHandlers = this.args.externalHandlers ? this.args.externalHandlers : [];
     this.cutHandler = new CutHandler({rawEditor});
     this.copyHandler = new CopyHandler({rawEditor});
     this.pasteHandler = new PasteHandler({rawEditor});
+  }
+
+  get baseIRI() {
+    return this.args.baseIRI || document.baseURI;
   }
 
   /**
@@ -313,8 +320,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       void taskFor(this.rawEditor.generateDiffEvents).perform();
       this.rawEditor.model.read();
       return preventDefault;
-    }
-    else {
+    } else {
       this.rawEditor.model.read();
       return false;
     }
@@ -325,7 +331,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * Currently tries to catch copy, paste, cut. Definitely needs testing on mac.
    * @method keydownMapsToOtherEvent
    */
-  keydownMapsToOtherEvent(event: KeyboardEvent) : boolean {
+  keydownMapsToOtherEvent(event: KeyboardEvent): boolean {
     return (event.ctrlKey || event.metaKey) && ["v", "c", "x"].includes(event.key);
   }
 }

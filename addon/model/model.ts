@@ -70,7 +70,6 @@ export default class Model {
    * Read in the document and build up the model.
    */
   read(readSelection = true) {
-    console.log("reading model");
     const parsedNodes = this.reader.read(this.rootNode);
     if (parsedNodes.length !== 1) {
       throw new Error("Could not create a rich root");

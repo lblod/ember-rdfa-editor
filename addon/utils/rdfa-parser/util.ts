@@ -79,9 +79,9 @@ export class Util {
   public blankNodeFactory: ((node?: ModelNode) => ModelBlankNode) | null = null;
   private readonly baseIRIDocument: ModelNamedNode;
 
-  constructor(dataFactory?: ModelDataFactory, baseIRI?: string) {
+  constructor(rootModelNode: ModelNode, dataFactory?: ModelDataFactory, baseIRI?: string) {
     this.dataFactory = dataFactory || new ModelDataFactory();
-    this.baseIRI = this.dataFactory.namedNode(baseIRI || '');
+    this.baseIRI = this.dataFactory.namedNode(baseIRI || '', rootModelNode);
     this.baseIRIDocument = this.baseIRI;
   }
 

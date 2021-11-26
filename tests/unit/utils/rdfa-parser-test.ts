@@ -23,9 +23,9 @@ module("Unit | utils | rdfa-parser-test", () => {
       </div>`;
 
     const parser = new RdfaParser({baseIRI: "http://example.com"});
-    const {dataset} = parser.parse(root);
-    const quads = [...dataset];
-    console.log(quads);
+    const {dataset,nodeToSubjectMapping, subjectToNodesMapping} = parser.parse(root);
     assert.strictEqual(dataset.size, 5);
+    assert.strictEqual(subjectToNodesMapping.size, 1);
+    assert.strictEqual(nodeToSubjectMapping.size, 1);
   });
 });

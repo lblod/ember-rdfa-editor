@@ -81,10 +81,11 @@ class RawEditor extends EmberObject {
   constructor(properties?: Record<string, unknown>) {
     super(properties);
     this.eventBus = new EventBus();
-    this.eventBus.on("modelRead", () => {
-      this._datastore =  EditorStore.fromParse({
+    this.eventBus.on("contentChanged", () => {
+      this._datastore = EditorStore.fromParse({
         root: this.model.rootModelNode,
-        pathFromDomRoot: getPathFromRoot(this.model.rootNode, false)
+        pathFromDomRoot: getPathFromRoot(this.model.rootNode, false),
+        baseIRI: (properties?.baseIRI as string | null) || document.baseURI
       });
     });
   }
