@@ -25,7 +25,7 @@ module("Unit | model | utils | datastore-test", () => {
       </div>
     `;
 
-    const datastore = EditorStore.fromParse({root, baseIRI: "http://example.com/"});
+    const datastore = EditorStore.fromParse({modelRoot: root, baseIRI: "http://example.com/"});
     const matched = datastore.match(null, "a", "schema:TechArticle");
     assert.strictEqual(matched.size, 1);
     const nodes = [...matched.asSubjectNodes()];
@@ -65,7 +65,7 @@ module("Unit | model | utils | datastore-test", () => {
       </div>
     `;
 
-    const datastore = EditorStore.fromParse({root, baseIRI: "http://example.com/"});
+    const datastore = EditorStore.fromParse({modelRoot: root, baseIRI: "http://example.com/"});
 
     const range = ModelRange.fromAroundNode(techNode);
     const matchedUrl = datastore.limitToRange(range, "rangeContains").match(null, "schema:url");

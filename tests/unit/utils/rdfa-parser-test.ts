@@ -22,8 +22,10 @@ module("Unit | utils | rdfa-parser-test", () => {
         </p>
       </div>`;
 
-    const parser = new RdfaParser({baseIRI: "http://example.com"});
-    const {dataset,nodeToSubjectMapping, subjectToNodesMapping} = parser.parse(root);
+    const {dataset, nodeToSubjectMapping, subjectToNodesMapping} = RdfaParser.parse({
+      modelRoot: root,
+      baseIRI: "http://example.com"
+    });
     assert.strictEqual(dataset.size, 5);
     assert.strictEqual(subjectToNodesMapping.size, 1);
     assert.strictEqual(nodeToSubjectMapping.size, 1);

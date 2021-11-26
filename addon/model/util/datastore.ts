@@ -3,7 +3,7 @@ import dataset, {FastDataset} from '@graphy/memory.dataset.fast';
 import ModelRange, {RangeContextStrategy} from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {ModelQuadSubject, RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
+import {ModelQuadSubject, RdfaParseConfig, RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
 import {
   ConBlankNode,
   ConciseTerm,
@@ -60,11 +60,6 @@ export default interface Datastore {
   asQuads(): Generator<RDF.Quad>
 }
 
-interface DatastoreParseConfig {
-  root: ModelNode;
-  pathFromDomRoot?: Node[];
-  baseIRI: string;
-}
 
 interface DatastoreConfig {
   dataset: RDF.Dataset;
@@ -87,9 +82,8 @@ export class EditorStore implements Datastore {
     this._prefixMapping = prefixMapping;
   }
 
-  static fromParse({root, pathFromDomRoot, baseIRI}: DatastoreParseConfig): Datastore {
-    const parser = new RdfaParser({baseIRI});
-    const {dataset, subjectToNodesMapping, nodeToSubjectMapping} = parser.parse(root, pathFromDomRoot);
+  static fromParse(config: RdfaParseConfig): Datastore {
+    const {dataset, subjectToNodesMapping, nodeToSubjectMapping} = RdfaParser.parse(config);
     const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
 
     return new EditorStore({

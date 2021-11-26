@@ -41,10 +41,16 @@ export interface ModelQuad extends RDF.Quad {
 
 }
 
+export interface RdfaParseConfig {
+  modelRoot: ModelNode;
+  baseIRI: string;
+  pathFromDomRoot?: Node[];
+}
+
 export class RdfaParser {
 
   private readonly options: IRdfaParserOptions;
-  private readonly util: Util;
+  private util: Util;
   private readonly defaultGraph: RDF.Quad_Graph;
   private readonly features: IRdfaFeatures;
   private readonly htmlParseListener?: IHtmlParseListener;
@@ -57,8 +63,7 @@ export class RdfaParser {
   private subjectToNodesMapping: Map<string, Set<ModelNode>>;
   private rootModelNode?: ModelNode;
 
-  constructor(options?: IRdfaParserOptions) {
-    options = options || {};
+  constructor(options: IRdfaParserOptions) {
     this.options = options;
 
     this.rootModelNode = options.rootModelNode;
@@ -91,43 +96,40 @@ export class RdfaParser {
     });
   }
 
-  parse(modelRoot: ModelNode, pathFromDomRoot: Node[] = []):
+  static parse({modelRoot, pathFromDomRoot = [], baseIRI}: RdfaParseConfig):
     {
       dataset: RDF.Dataset,
       subjectToNodesMapping: Map<string, Set<ModelNode>>,
       nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>
     } {
-    this.resultSet = new GraphyDataset();
-    this.rootModelNode = modelRoot;
-    this.util = new Util(modelRoot, undefined, this.options.baseIRI);
-    this.nodeToSubjectMapping = new Map<ModelNode, ModelQuadSubject>();
-    this.subjectToNodesMapping = new Map<string, Set<ModelNode>>();
+    const parser = new RdfaParser({rootModelNode: modelRoot, baseIRI});
     for (const domNode of pathFromDomRoot) {
       if (isElement(domNode)) {
         const attributeObj: Record<string, string> = {};
         for (const attr of domNode.attributes) {
           attributeObj[attr.name] = attr.value;
         }
-        this.onTagOpen(domNode.tagName, attributeObj, this.rootModelNode);
+        parser.onTagOpen(domNode.tagName, attributeObj, modelRoot);
       } else if (isTextNode(domNode)) {
-        this.onText(domNode.textContent || '');
+        parser.onText(domNode.textContent || '');
       }
     }
     const walker = GenTreeWalker.fromSubTree({
       root: modelRoot,
-      onEnterNode: this.onEnterNode,
-      onLeaveNode: this.onLeaveNode
+      onEnterNode: parser.onEnterNode,
+      onLeaveNode: parser.onLeaveNode
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _nodes = [...walker.nodes()];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const _ of pathFromDomRoot) {
-      this.onTagClose();
+      parser.onTagClose();
     }
-    this.onEnd();
+    parser.onEnd();
     return {
-      dataset: this.resultSet,
-      nodeToSubjectMapping: this.nodeToSubjectMapping,
-      subjectToNodesMapping: this.subjectToNodesMapping
+      dataset: parser.resultSet,
+      nodeToSubjectMapping: parser.nodeToSubjectMapping,
+      subjectToNodesMapping: parser.subjectToNodesMapping
     };
   }
 
@@ -143,7 +145,7 @@ export class RdfaParser {
 
   protected onLeaveNode = (node: ModelNode) => {
     if (ModelNode.isModelElement(node)) {
-      this.onTagClose(node);
+      this.onTagClose();
     }
   };
 
@@ -678,7 +680,7 @@ export class RdfaParser {
     activeTag.text.push(data);
   }
 
-  public onTagClose(node?: ModelNode) {
+  public onTagClose() {
     // Get the active tag
     const activeTag: IActiveTag = this.activeTagStack[this.activeTagStack.length - 1];
     const parentTag: IActiveTag = this.activeTagStack[this.activeTagStack.length - 2];
@@ -939,7 +941,7 @@ export class RdfaParser {
     for (const child of pattern.children) {
       this.emitPatternCopyAbsolute(child, false, rootPatternId);
     }
-    this.onTagClose(node);
+    this.onTagClose();
   }
 }
 
@@ -951,7 +953,7 @@ export interface IRdfaParserOptions {
   /**
    * An initial default base IRI.
    */
-  baseIRI?: string;
+  baseIRI: string;
   /**
    * A default language for string literals.
    */
@@ -984,7 +986,7 @@ export interface IRdfaParserOptions {
    */
   htmlParseListener?: IHtmlParseListener;
 
-  rootModelNode?: ModelNode
+  rootModelNode: ModelNode
 }
 
 /**
