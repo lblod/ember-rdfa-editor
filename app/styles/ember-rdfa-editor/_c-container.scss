@@ -2,6 +2,16 @@
    #SAY CONTAINER
    ================================== */
 
+/* Variables
+  ========================================================================== */
+
+$say-editor-sidebar-medium       : 30% !default;
+$say-editor-sidebar-large        : 30% !default;
+
+
+/* Component
+  ========================================================================== */
+
 .say-container {
   height: 100%;
   position: relative;
@@ -9,7 +19,7 @@
   display: flex;
   flex-direction: column;
 
-  @if $say-toolbar-bottom == true {
+  &.say-container--toolbar-bottom {
     flex-direction: column-reverse;
   }
 }
@@ -27,27 +37,24 @@
     overflow: auto;
     padding: $au-unit-small $au-unit-small + $au-unit-tiny;
 
-    @if $say-toolbar-bottom == true {
+    .say-container--toolbar-bottom & {
       top: 0;
       bottom: auto;
     }
 
-    @if $say-paper == true and $say-paper-sidebar == true {
+    .say-container--paper.say-container--sidebar-right & {
       top: 44px;
     }
 
-    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == false {
-      top: 0;
-    }
-
-    @if $say-paper == true and $say-toolbar-bottom == true and $say-paper-sidebar == true {
+    .say-container--paper.say-container--toolbar-bottom &,
+    .say-container--paper.say-container--toolbar-bottom.say-container--sidebar-right & {
       top: 0;
     }
 
     @include mq(medium) {
       width: $say-editor-sidebar-medium;
 
-      @if $say-paper == true and $say-paper-sidebar == true {
+      .say-container--paper.say-container--sidebar-right & {
         padding: $au-unit;
         bottom: auto;
       }

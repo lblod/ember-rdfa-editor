@@ -4,14 +4,14 @@
 
 .say-alert {
   display: flex;
-  color: $au-gray-800;
+  color: var(--au-gray-800);
   padding: $au-unit;
   margin-bottom: $au-unit;
-  background-color: $au-gray-200;
+  background-color: var(--au-gray-200);
 }
 
 .say-alert__icon {
-  background-color: $au-white;
+  background-color: var(--au-white);
   border-radius: $au-unit-large;
   height: $au-unit-large - .1rem; // compensate for visual distortion of perfect circle
   width: $au-unit-large;
@@ -37,5 +37,5 @@
 }
 
 .say-alert__title {
-  font-weight:$au-medium;
+  font-weight: var(--au-medium);
 }

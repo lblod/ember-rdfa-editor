@@ -2,13 +2,30 @@
    #SAY EDITOR STYLES
    ================================== */
 
+/* Variables
+  ========================================================================== */
+
+$say-editor-padding              : $au-unit !default;
+$say-editor-background           : var(--au-gray-100) !default;
+$say-editor-sidebar-medium       : 30% !default;
+$say-editor-sidebar-large        : 30% !default;
+$say-paper-min-height            : calc(100vh + #{$au-unit}) !default;
+$say-paper-padding               : $au-unit-large !default;
+$say-paper-background            : var(--au-white) !default;
+$say-paper-box-shadow            : 0 1px 3px rgba($au-gray-900, .1), 0 4px 20px rgba($au-gray-900, .035), 0 1px 1px rgba($au-gray-900, .025) !default;
+$say-annotation-width            : $au-unit-huge*1.5 !default;
+
+
+/* Component
+  ========================================================================== */
+
 .say-editor {
   background-color: $say-paper-background;
   padding: $say-editor-padding $say-editor-padding/2;
   width: 100%;
   position: relative;
 
-  @if $say-paper == true {
+  .say-container--paper & {
     background-color: $say-editor-background;
   }
 
@@ -17,22 +34,18 @@
   }
 
   @include mq(medium) {
-    @if $say-paper == true {
-      @if $say-paper-sidebar == true {
-        padding-right: $say-editor-sidebar-medium;
-      }
+    .say-container--paper.say-container--sidebar-right & {
+      padding-right: $say-editor-sidebar-medium;
     }
   }
 
   @include mq(1280px) {
-    &.rdfa-annotations-hover {
+    .say-container.say-container--sidebar-right &.rdfa-annotations-hover {
       padding-left: $say-annotation-width;
     }
 
-    @if $say-paper == true {
-      @if $say-paper-sidebar == true {
-        padding-right: $say-editor-sidebar-large;
-      }
+    .say-container--paper.say-container--sidebar-right & {
+      padding-right: $say-editor-sidebar-large;
     }
   }
 }
@@ -46,7 +59,7 @@
       outline: none;
     }
 
-    @if $say-paper == true {
+    .say-container--paper & {
       background-color: $say-paper-background;
       padding: $say-paper-padding;
       box-shadow: $say-paper-box-shadow;
@@ -55,7 +68,7 @@
 
   .say-editor__paper--disabled {
     background-color: $say-editor-background;
-    color: $au-gray-700;
+    color: var(--au-gray-700);
   }
 
   .say-editor__inner {
@@ -67,16 +80,15 @@
       outline: 0;
     }
 
-    // Add max-width when paper view is disabled
-    @if $say-paper == false {
+    .say-container--paper & {
+      min-height: calc(#{$say-paper-min-height} - #{$say-paper-padding} * 2);
+    }
+
+    :not(.say-container--paper) & {
       * {
         max-width: 120ch;
         margin-left: auto;
         margin-right: auto;
       }
-    }
-
-    @if $say-paper == true {
-      min-height: calc(#{$say-paper-min-height} - #{$say-paper-padding} * 2);
     }
   }

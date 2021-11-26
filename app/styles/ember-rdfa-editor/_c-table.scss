@@ -5,7 +5,7 @@
   position: relative;
   width: 100%;
   border-collapse: collapse;
-  border: .1rem solid $au-gray-300;
+  border: .1rem solid var(--au-gray-300);
   white-space: normal;
 
   & + & {
@@ -13,28 +13,28 @@
   }
 
   thead {
-    border-bottom: .2rem solid $au-gray-300;
+    border-bottom: .2rem solid var(--au-gray-300);
   }
 
   th,
   td {
-    @include au-font-size($say-base-font-size,1.2);
+    @include au-font-size($au-base,1.2);
     text-align: left;
     padding: $au-unit-small $au-unit-small;
     min-height: $au-unit-large;
   }
 
   th {
-    font-weight:$au-medium;
+    font-weight: var(--au-medium);
   }
 
   tr + tr {
-    border-top: .1rem solid $au-gray-300;
+    border-top: .1rem solid var(--au-gray-300);
   }
 
   th + th,
   td + td {
-    border-left: .1rem solid $au-gray-300;
+    border-left: .1rem solid var(--au-gray-300);
   }
 
   th,

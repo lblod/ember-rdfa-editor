@@ -8,7 +8,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   padding: $au-unit-tiny $au-unit-small;
-  border-top: .1rem solid $au-gray-200;
+  border-top: .1rem solid var(--au-gray-200);
 }
 
 .say-pagination--large {
@@ -23,12 +23,12 @@
   > * + * {
     margin-left: $au-unit-small;
     padding-left: $au-unit-small;
-    border-left: .1rem dotted $au-gray-300;
+    border-left: .1rem dotted var(--au-gray-300);
   }
 }
 
 .say-pagination__info {
-  color: $au-gray-700;
+  color: var(--au-gray-700);
 }
 
 .say-pagination__list {
@@ -42,6 +42,6 @@
   & + & {
     margin-left: $au-unit-tiny;
     padding-left: $au-unit-tiny;
-    border-left: .1rem dotted $au-gray-300;
+    border-left: .1rem dotted var(--au-gray-300);
   }
 }

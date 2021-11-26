@@ -21,7 +21,7 @@
 
   mark table {
     font-weight: normal;
-    border: 4px solid $au-yellow-400;
+    border: 4px solid var(--au-yellow-400);
 
     &:active {
       opacity: .5;
@@ -65,9 +65,9 @@
 
 .say-card .modal-dialog__header {
   @include au-font-size($au-h6);
-  color: $au-gray-800;
+  color: var(--au-gray-800);
   padding: $au-unit-small;
-  border-bottom: .1rem solid $au-gray-200;
+  border-bottom: .1rem solid var(--au-gray-200);
 
   * {
     margin-bottom: 0;
@@ -100,7 +100,7 @@
 }
 
 .say-card .modal-dialog__content--sectioned .modal-dialog__footer {
-  border-top: 1px solid $au-gray-200;
+  border-top: 1px solid var(--au-gray-200);
 }
 
 .say-card .modal-dialog__footer {
@@ -123,12 +123,12 @@
   }
 
   .link-list__item.link-list__item--sidenotes a:hover {
-    background-color: $au-gray-100;
+    background-color: var(--au-gray-100);
   }
 
   .link-list__item__sidenote.uppercase {
     @include au-font-size($say-smallest-font-size,1.3);
-    color: $au-gray-600;
+    color: var(--au-gray-600);
     padding: 0;
   }
 }
@@ -172,17 +172,17 @@
 }
 
 .say-border-bottom {
-  border-bottom: .1rem solid $au-gray-300;
+  border-bottom: .1rem solid var(--au-gray-300);
 }
 
 // Override toolbar switch
 .say-toolbar {
   .au-c-toggle-switch__toggle {
-    background-color: $au-gray-300;
+    background-color: var(--au-gray-300);
   }
 
   .au-c-toggle-switch__label {
-    @include au-font-size($say-base-font-size);
+    @include au-font-size($au-base);
   }
 }
 
