@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@appuniversum/appuniversum": "^0.2.1",
-    "@appuniversum/ember-appuniversum": "^0.7.0",
+    "@appuniversum/ember-appuniversum": "^0.7.2",
     "@codemirror/basic-setup": "^0.18.2",
     "@codemirror/lang-html": "^0.18.1",
     "@codemirror/lang-xml": "^0.18.0",
@@ -137,7 +137,7 @@
   },
   "peerDependencies": {
     "@appuniversum/appuniversum": "^0.2.1",
-    "@appuniversum/ember-appuniversum": "^0.7.0"
+    "@appuniversum/ember-appuniversum": "^0.7.2"
   },
   "engines": {
     "node": "10.* || >= 12"

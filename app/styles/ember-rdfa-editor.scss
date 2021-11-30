@@ -85,6 +85,11 @@
 @import "ember-rdfa-editor/custom-components";
 
 
+// PLUGINS
+@import "ember-appuniversum/p-ember-power-select";
+@import "ember-appuniversum/p-duet-datepicker";
+
+
 // UTILITIES
 @import "appuniversum/u-align-text";
 @import "appuniversum/u-background";
