@@ -1,5 +1,22 @@
 
 
+
+## 0.49.0 (2021-11-26)
+
+#### :rocket: Enhancement
+* [#184](https://github.com/lblod/ember-rdfa-editor/pull/184) Use css variables ([@Dietr](https://github.com/Dietr))
+* [#182](https://github.com/lblod/ember-rdfa-editor/pull/182) Add a more consistent and flexible treewalker ([@abeforgit](https://github.com/abeforgit))
+* [#179](https://github.com/lblod/ember-rdfa-editor/pull/179) Extend and improve eventbus ([@abeforgit](https://github.com/abeforgit))
+
+#### :bug: Bug Fix
+* [#183](https://github.com/lblod/ember-rdfa-editor/pull/183) Bugfix: we should not have contenteditable tables exported outside the editor ([@Asergey91](https://github.com/Asergey91))
+
+#### Committers: 3
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Dieter Peirs ([@Dietr](https://github.com/Dietr))
+- Sergey Andreev ([@Asergey91](https://github.com/Asergey91))
+
+
 ## 0.48.0 (2021-11-08)
 
 #### :boom: Breaking Change
