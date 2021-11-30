@@ -87,7 +87,7 @@ class RawEditor extends EmberObject {
         pathFromDomRoot: getPathFromRoot(this.model.rootNode, false),
         baseIRI: (properties?.baseIRI as string | null) || document.baseURI
       });
-    });
+    }, {priority: "highest"});
   }
 
   /**
