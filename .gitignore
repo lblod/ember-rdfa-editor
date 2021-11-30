@@ -23,7 +23,6 @@ testem.log
 .DS_Store
 
 *~
-package-lock.json
 
 # ember-try
 /.node_modules.ember-try/
