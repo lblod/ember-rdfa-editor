@@ -16,10 +16,11 @@ type ConTypeAlias = "a";
 
 export type ConBlankNode = `_:${string}`;
 
-export type ConLiteral = ConPlainLiteral | ConDatatypedLiteral | ConLanguagedLiteral | number | boolean;
+export type ConLiteral = ConPlainLiteral | ConDatatypedLiteral | ConLanguagedLiteral | ConImplicitLiteral | number | boolean;
 type ConDatatypedLiteral = `^${string}"${ConPlainLiteral}`;
 type ConLanguagedLiteral = `@${string}"${ConPlainLiteral}`;
 type ConPlainLiteral = `"${string}`;
+type ConImplicitLiteral = string;
 
 export type PrefixMapping = (prefix: string) => string | null;
 export type TermConverter = (term: ConciseTerm) => RDF.Term;
