@@ -68,9 +68,12 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @type String
    * @public
    */
-  @tracked currentTextContent: string | null = null;
+  @tracked
+  currentTextContent: string | null = null;
+  @tracked
   private _currentSelection?: InternalSelection;
 
+  @tracked
   history!: CappedHistory;
 
   /**

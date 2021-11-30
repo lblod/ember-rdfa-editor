@@ -41,6 +41,8 @@ import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
 import {InternalWidgetSpec, WidgetLocation} from "@lblod/ember-rdfa-editor/model/controller";
 import Datastore, {EditorStore} from "@lblod/ember-rdfa-editor/model/util/datastore";
 import {getPathFromRoot} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {tracked} from "@glimmer/tracking";
+
 
 export interface RawEditorProperties {
   baseIRI: string
@@ -50,14 +52,12 @@ export interface RawEditorProperties {
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
  * Any editing operations should be implemented as {@link Command commands}. External plugins can register their own commands.
  * Commands have access to the {@link Model} which represents our interface to the real DOM.
- * TODO: Do we really need to extend EmberObject?
  *
  * @module contenteditable-editor
  * @class RawEditor
  * @constructor
- * @extends EmberObject
  */
-class RawEditor {
+export default class RawEditor {
   registeredCommands: Map<string, Command> = new Map<string, Command>();
   modelSelectionTracker!: ModelSelectionTracker;
 
@@ -77,6 +77,7 @@ class RawEditor {
    * @type RichNode
    * @protected
    */
+  @tracked
   richNode!: RichNode;
 
   constructor(properties: RawEditorProperties) {
@@ -263,5 +264,3 @@ class RawEditor {
     this.eventBus.off(eventName, callback, config);
   }
 }
-
-export default RawEditor;
