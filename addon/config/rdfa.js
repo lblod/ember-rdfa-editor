@@ -59,7 +59,8 @@ const defaultPrefixes = {
   sioc:	"http://rdfs.org/sioc/ns#",
   v:	"http://rdf.data-vocabulary.org/#",
   vcard:	"http://www.w3.org/2006/vcard/ns#",
-  schema:	"http://schema.org/"
+  schema:	"http://schema.org/",
+  ext: "http://mu.semte.ch/vocabularies/ext/"
 };
 
 export { rdfaKeywords, prefixableRdfaKeywords, defaultPrefixes };
