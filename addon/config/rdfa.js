@@ -49,6 +49,7 @@ const defaultPrefixes = {
   cc:	"http://creativecommons.org/ns#",
   ctag:	"http://commontag.org/ns#",
   dc:	"http://purl.org/dc/terms/",
+  dct:	"http://purl.org/dc/terms/",
   dcterms:	"http://purl.org/dc/terms/",
   dc11:	"http://purl.org/dc/elements/1.1/",
   foaf:	"http://xmlns.com/foaf/0.1/",
