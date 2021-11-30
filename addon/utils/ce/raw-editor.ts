@@ -1,4 +1,3 @@
-import EmberObject from '@ember/object';
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
 import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
@@ -27,7 +26,6 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import {walk as walkDomNode} from "@lblod/marawa/node-walker";
 import RichNode from "@lblod/marawa/rich-node";
-import classic from 'ember-classic-decorator';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
@@ -44,6 +42,10 @@ import {InternalWidgetSpec, WidgetLocation} from "@lblod/ember-rdfa-editor/model
 import Datastore, {EditorStore} from "@lblod/ember-rdfa-editor/model/util/datastore";
 import {getPathFromRoot} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
 
+export interface RawEditorProperties {
+  baseIRI: string
+}
+
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
  * Any editing operations should be implemented as {@link Command commands}. External plugins can register their own commands.
@@ -55,8 +57,7 @@ import {getPathFromRoot} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
  * @constructor
  * @extends EmberObject
  */
-@classic
-class RawEditor extends EmberObject {
+class RawEditor {
   registeredCommands: Map<string, Command> = new Map<string, Command>();
   modelSelectionTracker!: ModelSelectionTracker;
 
@@ -78,8 +79,7 @@ class RawEditor extends EmberObject {
    */
   richNode!: RichNode;
 
-  constructor(properties?: Record<string, unknown>) {
-    super(properties);
+  constructor(properties: RawEditorProperties) {
     this.eventBus = new EventBus();
     this.eventBus.on("contentChanged", () => {
       this._datastore = EditorStore.fromParse({

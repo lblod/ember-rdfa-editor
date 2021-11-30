@@ -14,7 +14,7 @@ import {
   tagName
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {analyse as scanContexts} from '@lblod/marawa/rdfa-context-scanner';
-import RawEditor from "./raw-editor";
+import RawEditor, {RawEditorProperties} from "./raw-editor";
 import {
   isEmpty,
   replaceDomNode,
@@ -84,9 +84,9 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
   protected movementObservers: Ember.NativeArray<MovementObserver>;
 
-  constructor(properties?: Record<string, unknown>) {
+  constructor(properties: RawEditorProperties) {
     super(properties);
-    this.set('history', new CappedHistory({maxItems: 100}));
+    this.history = new CappedHistory({maxItems: 100});
     this.movementObservers = A();
     document.addEventListener("editorModelWrite", this.createSnapshot.bind(this));
   }
@@ -829,7 +829,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     if (previousSnapshot) {
       this.rootNode.innerHTML = previousSnapshot.content;
       this.updateRichNode();
-      this.set('currentNode', null);
+      this.currentNode = null;
       this.setCurrentPosition(previousSnapshot.currentSelection[0]);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       void taskFor(this.generateDiffEvents).perform([{noSnapshot: true}]);

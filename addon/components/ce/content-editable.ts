@@ -119,7 +119,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   constructor(owner: unknown, args: ContentEditableArgs) {
     super(owner, args);
-    const rawEditor = PernetRawEditor.create({baseIRI: this.baseIRI});
+    const rawEditor = new PernetRawEditor({baseIRI: this.baseIRI});
     rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
 
     this._rawEditor = rawEditor;
