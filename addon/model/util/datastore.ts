@@ -3,7 +3,13 @@ import dataset, {FastDataset} from '@graphy/memory.dataset.fast';
 import ModelRange, {RangeContextStrategy} from "@lblod/ember-rdfa-editor/model/model-range";
 import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {ModelQuadSubject, RdfaParseConfig, RdfaParser} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
+import {
+  ModelQuadObject,
+  ModelQuadPredicate,
+  ModelQuadSubject,
+  RdfaParseConfig,
+  RdfaParser
+} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
 import {
   ConBlankNode,
   ConciseTerm,
@@ -65,32 +71,67 @@ interface DatastoreConfig {
   dataset: RDF.Dataset;
   subjectToNodes: Map<string, Set<ModelNode>>;
   nodeToSubject: Map<ModelNode, ModelQuadSubject>;
+
+  predicateToNodes: Map<string, Set<ModelNode>>;
+  nodeToPredicates: Map<ModelNode, Set<ModelQuadPredicate>>;
+
+  objectToNodes: Map<string, Set<ModelNode>>;
+  nodeToObjects: Map<ModelNode, Set<ModelQuadObject>>;
   prefixMapping: Map<string, string>
 }
 
 export class EditorStore implements Datastore {
 
   private _dataset: RDF.Dataset;
-  private _subjectToNodesMapping: Map<string, Set<ModelNode>>;
-  private _nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
+  private _subjectToNodes: Map<string, Set<ModelNode>>;
+  private _nodeToSubject: Map<ModelNode, ModelQuadSubject>;
   private _prefixMapping: Map<string, string>;
+  private _nodeToPredicates: Map<ModelNode, Set<ModelQuadPredicate>>;
+  private _predicateToNodes: Map<string, Set<ModelNode>>;
+  private _nodeToObjects: Map<ModelNode, Set<ModelQuadObject>>;
+  private _objectToNodes: Map<string, Set<ModelNode>>;
 
-  constructor({dataset, nodeToSubject, subjectToNodes, prefixMapping}: DatastoreConfig) {
+  constructor({
+                dataset,
+                nodeToSubject,
+                subjectToNodes,
+                prefixMapping,
+                nodeToPredicates,
+                predicateToNodes,
+                nodeToObjects,
+                objectToNodes
+              }: DatastoreConfig) {
     this._dataset = dataset;
-    this._nodeToSubjectMapping = nodeToSubject;
-    this._subjectToNodesMapping = subjectToNodes;
+    this._nodeToSubject = nodeToSubject;
+    this._subjectToNodes = subjectToNodes;
     this._prefixMapping = prefixMapping;
+    this._nodeToPredicates = nodeToPredicates;
+    this._predicateToNodes = predicateToNodes;
+    this._nodeToObjects = nodeToObjects;
+    this._objectToNodes = objectToNodes;
   }
 
   static fromParse(config: RdfaParseConfig): Datastore {
-    const {dataset, subjectToNodesMapping, nodeToSubjectMapping} = RdfaParser.parse(config);
+    const {
+      dataset,
+      subjectToNodesMapping,
+      nodeToSubjectMapping,
+      objectToNodesMapping,
+      nodeToObjectsMapping,
+      predicateToNodesMapping,
+      nodeToPredicatesMapping
+    } = RdfaParser.parse(config);
     const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
 
     return new EditorStore({
       dataset,
       subjectToNodes: subjectToNodesMapping,
       nodeToSubject: nodeToSubjectMapping,
-      prefixMapping: prefixMap
+      prefixMapping: prefixMap,
+      objectToNodes: objectToNodesMapping,
+      nodeToObjects: nodeToObjectsMapping,
+      predicateToNodes: predicateToNodesMapping,
+      nodeToPredicates: nodeToPredicatesMapping
     });
   }
 
@@ -112,8 +153,12 @@ export class EditorStore implements Datastore {
 
   limitToRange(range: ModelRange, strategy: RangeContextStrategy): Datastore {
     const subjects = this.subjectsForRange(range, strategy);
-    const subToNodesCopy = new Map(this._subjectToNodesMapping);
-    const nodeToSubCopy = new Map(this._nodeToSubjectMapping);
+    const subToNodesCopy = new Map(this._subjectToNodes);
+    const nodeToSubCopy = new Map(this._nodeToSubject);
+    const predToNodesCopy = new Map(this._predicateToNodes);
+    const nodeToPredsCopy = new Map(this._nodeToPredicates);
+    const objToNodesCopy = new Map(this._objectToNodes);
+    const nodeToObjCopy = new Map(this._nodeToObjects);
     const newSet = this.dataset.filter((quad) => {
       if (subjects.has(quad.subject.value)) {
         return true;
@@ -132,6 +177,10 @@ export class EditorStore implements Datastore {
       dataset: newSet,
       subjectToNodes: subToNodesCopy,
       nodeToSubject: nodeToSubCopy,
+      predicateToNodes: predToNodesCopy,
+      nodeToPredicates: nodeToPredsCopy,
+      objectToNodes: objToNodesCopy,
+      nodeToObjects: nodeToObjCopy,
       prefixMapping: this._prefixMapping
     });
   }
@@ -140,7 +189,7 @@ export class EditorStore implements Datastore {
     const seenSubjects = new Set<string>();
     for (const quad of this.dataset) {
       if (!seenSubjects.has(quad.subject.value)) {
-        const nodes = this._subjectToNodesMapping.get(quad.subject.value);
+        const nodes = this._subjectToNodes.get(quad.subject.value);
         if (nodes) {
           yield {subject: quad.subject, nodes};
         }
@@ -148,12 +197,28 @@ export class EditorStore implements Datastore {
     }
   }
 
-  asPredicateNodes(): Generator<PredicateNodesResponse> {
-    throw new Error('Method not implemented.');
+  * asPredicateNodes(): Generator<PredicateNodesResponse> {
+    const seenPredicates = new Set<string>();
+    for (const quad of this.dataset) {
+      if (!seenPredicates.has(quad.predicate.value)) {
+        const nodes = this._predicateToNodes.get(quad.predicate.value);
+        if (nodes) {
+          yield {predicate: quad.predicate, nodes};
+        }
+      }
+    }
   }
 
-  asObjectNodes(): Generator<ObjectNodesResponse> {
-    throw new Error('Method not implemented.');
+  * asObjectNodes(): Generator<ObjectNodesResponse> {
+    const seenObjects = new Set<string>();
+    for (const quad of this.dataset) {
+      if (!seenObjects.has(quad.object.value)) {
+        const nodes = this._objectToNodes.get(quad.object.value);
+        if (nodes) {
+          yield {object: quad.object, nodes};
+        }
+      }
+    }
   }
 
   * asQuads(): Generator<RDF.Quad> {
@@ -169,8 +234,12 @@ export class EditorStore implements Datastore {
   private fromDataset(dataset: RDF.Dataset): Datastore {
     return new EditorStore({
       dataset,
-      nodeToSubject: this._nodeToSubjectMapping,
-      subjectToNodes: this._subjectToNodesMapping,
+      nodeToSubject: this._nodeToSubject,
+      subjectToNodes: this._subjectToNodes,
+      predicateToNodes: this._predicateToNodes,
+      nodeToPredicates: this._nodeToPredicates,
+      nodeToObjects: this._nodeToObjects,
+      objectToNodes: this._objectToNodes,
       prefixMapping: this._prefixMapping
     });
   }
@@ -178,7 +247,7 @@ export class EditorStore implements Datastore {
   private subjectsForRange(range: ModelRange, strategy: RangeContextStrategy): Set<string> {
     const subjects = new Set<string>();
     for (const node of range.contextNodes(strategy)) {
-      const subject = this._nodeToSubjectMapping.get(node);
+      const subject = this._nodeToSubject.get(node);
       if (subject) {
         subjects.add(subject.value);
       }

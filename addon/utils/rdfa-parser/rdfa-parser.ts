@@ -16,6 +16,7 @@ import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
 import GenTreeWalker from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
 import {GraphyDataset} from "@lblod/ember-rdfa-editor/model/util/datastore";
 import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
 
 export type ModelTerm = ModelQuadObject | ModelQuadPredicate | ModelQuadSubject;
 export type ModelQuadSubject = ModelNamedNode | ModelBlankNode;
@@ -47,6 +48,19 @@ export interface RdfaParseConfig {
   pathFromDomRoot?: Node[];
 }
 
+export interface RdfaParseResponse {
+  dataset: RDF.Dataset,
+
+  subjectToNodesMapping: Map<string, Set<ModelNode>>,
+  nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>
+
+  nodeToObjectsMapping: Map<ModelNode, Set<ModelQuadObject>>;
+  objectToNodesMapping: Map<string, Set<ModelNode>>;
+
+  nodeToPredicatesMapping: Map<ModelNode, Set<ModelQuadPredicate>>;
+  predicateToNodesMapping: Map<string, Set<ModelNode>>;
+}
+
 export class RdfaParser {
 
   private readonly options: IRdfaParserOptions;
@@ -61,6 +75,14 @@ export class RdfaParser {
   private readonly activeTagStack: IActiveTag[] = [];
   private nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
   private subjectToNodesMapping: Map<string, Set<ModelNode>>;
+
+  private nodeToObjectsMapping: Map<ModelNode, Set<ModelQuadObject>>;
+  private objectToNodesMapping: Map<string, Set<ModelNode>>;
+
+  // nodes can define multiple predicates
+  private nodeToPredicatesMapping: Map<ModelNode, Set<ModelQuadPredicate>>;
+  private predicateToNodesMapping: Map<string, Set<ModelNode>>;
+
   private rootModelNode?: ModelNode;
 
   constructor(options: IRdfaParserOptions) {
@@ -75,8 +97,15 @@ export class RdfaParser {
     this.rdfaPatterns = {};
     this.pendingRdfaPatternCopies = {};
     this.resultSet = new GraphyDataset();
+
     this.nodeToSubjectMapping = new Map<ModelNode, ModelQuadSubject>();
     this.subjectToNodesMapping = new Map<string, Set<ModelNode>>();
+
+    this.predicateToNodesMapping = new Map<string, Set<ModelNode>>();
+    this.nodeToPredicatesMapping = new Map<ModelNode, Set<ModelQuadPredicate>>();
+
+    this.nodeToObjectsMapping = new Map<ModelNode, Set<ModelQuadObject>>();
+    this.objectToNodesMapping = new Map<string, Set<ModelNode>>();
 
     this.activeTagStack.push({
       incompleteTriples: [],
@@ -96,12 +125,7 @@ export class RdfaParser {
     });
   }
 
-  static parse({modelRoot, pathFromDomRoot = [], baseIRI}: RdfaParseConfig):
-    {
-      dataset: RDF.Dataset,
-      subjectToNodesMapping: Map<string, Set<ModelNode>>,
-      nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>
-    } {
+  static parse({modelRoot, pathFromDomRoot = [], baseIRI}: RdfaParseConfig): RdfaParseResponse {
     const parser = new RdfaParser({rootModelNode: modelRoot, baseIRI});
     for (const domNode of pathFromDomRoot) {
       if (isElement(domNode)) {
@@ -129,7 +153,11 @@ export class RdfaParser {
     return {
       dataset: parser.resultSet,
       nodeToSubjectMapping: parser.nodeToSubjectMapping,
-      subjectToNodesMapping: parser.subjectToNodesMapping
+      subjectToNodesMapping: parser.subjectToNodesMapping,
+      nodeToPredicatesMapping: parser.nodeToPredicatesMapping,
+      predicateToNodesMapping: parser.predicateToNodesMapping,
+      nodeToObjectsMapping: parser.nodeToObjectsMapping,
+      objectToNodesMapping: parser.objectToNodesMapping
     };
   }
 
@@ -870,14 +898,18 @@ export class RdfaParser {
     }
     if (subject.node) {
       this.nodeToSubjectMapping.set(subject.node, subject);
-      const subToNodes = this.subjectToNodesMapping.get(subject.value);
-      if (subToNodes) {
-        subToNodes.add(subject.node);
-      } else {
-        this.subjectToNodesMapping.set(subject.value, new Set([subject.node]));
-      }
+      MapUtils.setOrAdd(this.subjectToNodesMapping, subject.value, subject.node);
+    }
+    if (predicate.node) {
+      MapUtils.setOrAdd(this.nodeToPredicatesMapping, predicate.node, predicate);
+      MapUtils.setOrAdd(this.predicateToNodesMapping, predicate.value, predicate.node);
+    }
+    if(object.node) {
+      MapUtils.setOrAdd(this.nodeToObjectsMapping, predicate.node, predicate);
+      MapUtils.setOrAdd(this.objectToNodesMapping, predicate.value, predicate.node);
 
     }
+
     this.resultSet.add(this.util.dataFactory.quad(subject, predicate, object, this.defaultGraph));
   }
 
