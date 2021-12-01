@@ -6,6 +6,7 @@ import {EditorPlugin} from "@lblod/ember-rdfa-editor/utils/editor-plugin";
 import {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/model/model-range";
 import Datastore from "@lblod/ember-rdfa-editor/model/util/datastore";
 import GenTreeWalker, {TreeWalkerFactory} from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
+import {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
 
 export type WidgetLocation = "toolbar" | "sidebar";
 
@@ -19,6 +20,10 @@ export type InternalWidgetSpec = WidgetSpec & {
   controller: Controller
 };
 
+interface EditorUtils {
+  toFilterSkipFalse: typeof toFilterSkipFalse;
+}
+
 export default interface Controller {
   get name(): string;
 
@@ -29,6 +34,8 @@ export default interface Controller {
   get treeWalkerFactory(): TreeWalkerFactory;
 
   get datastore(): Datastore;
+
+  get util(): EditorUtils;
 
   executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void;
 
@@ -68,6 +75,10 @@ export class RawEditorController implements Controller {
 
   get datastore(): Datastore {
     return this._rawEditor.datastore;
+  }
+
+  get util(): EditorUtils {
+    return {toFilterSkipFalse};
   }
 
   get treeWalkerFactory(): TreeWalkerFactory {
