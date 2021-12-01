@@ -5,6 +5,7 @@ import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
 import {EditorPlugin} from "@lblod/ember-rdfa-editor/utils/editor-plugin";
 import {ModelRangeFactory, RangeFactory} from "@lblod/ember-rdfa-editor/model/model-range";
 import Datastore from "@lblod/ember-rdfa-editor/model/util/datastore";
+import GenTreeWalker, {TreeWalkerFactory} from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
 
 export type WidgetLocation = "toolbar" | "sidebar";
 
@@ -25,6 +26,8 @@ export default interface Controller {
 
   get rangeFactory(): RangeFactory;
 
+  get treeWalkerFactory(): TreeWalkerFactory;
+
   get datastore(): Datastore;
 
   executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void;
@@ -36,6 +39,7 @@ export default interface Controller {
   onEvent<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig): void;
 
   offEvent<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig): void;
+
 
 }
 
@@ -65,6 +69,11 @@ export class RawEditorController implements Controller {
   get datastore(): Datastore {
     return this._rawEditor.datastore;
   }
+
+  get treeWalkerFactory(): TreeWalkerFactory {
+    return GenTreeWalker;
+  }
+
 
   executeCommand<A extends unknown[], R>(commandName: string, ...args: A): R | void {
     return this._rawEditor.executeCommand(commandName, ...args);

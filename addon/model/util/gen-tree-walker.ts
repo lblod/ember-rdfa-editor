@@ -39,6 +39,15 @@ export interface ModelRangeTreeWalkerConfig extends BaseTreeWalkerConfig<ModelNo
   range: ModelRange;
 }
 
+export interface TreeWalkerFactory {
+
+  fromSubTree<U extends Walkable>(config: RootTreeWalkerConfig<U>): GenTreeWalker<U>;
+
+  fromStartEnd<U extends Walkable>(config: StartEndTreeWalkerConfig<U>): GenTreeWalker<U>;
+
+  fromRange(config: ModelRangeTreeWalkerConfig): GenTreeWalker<ModelNode>;
+}
+
 export type WalkFilter<T extends Walkable> = (node: T) => FilterResult;
 
 export default class GenTreeWalker<T extends Walkable = Walkable> {
