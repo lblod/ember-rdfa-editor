@@ -30,7 +30,6 @@ import {computed, get} from '@ember/object';
 import flatMap from "@lblod/ember-rdfa-editor/utils/ce/flat-map";
 import {getTextContent, processDomNode as walkDomNodeAsText} from "@lblod/ember-rdfa-editor/utils/ce/text-node-walker";
 import nextTextNode from "@lblod/ember-rdfa-editor/utils/ce/next-text-node";
-import forgivingAction from "@lblod/ember-rdfa-editor/utils/ce/forgiving-action";
 import MovementObserver from "@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer";
 import getRichNodeMatchingDomNode from "@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node";
 import classic from 'ember-classic-decorator';
@@ -676,7 +675,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         this.updateSelectionAfterComplexInput();
       }
 
-      forgivingAction('elementUpdate', this)();
       // eslint-disable-next-line @typescript-eslint/unbound-method
       void taskFor(this.generateDiffEvents).perform();
     } else {
@@ -686,7 +684,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
       this.updateRichNode();
       this.updateSelectionAfterComplexInput();
-      forgivingAction('elementUpdate', this)();
       // eslint-disable-next-line @typescript-eslint/unbound-method
       void taskFor(this.generateDiffEvents).perform();
     }
