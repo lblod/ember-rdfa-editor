@@ -9,9 +9,24 @@ module.exports = {
     babel: {
       sourceMaps: "inline"
     },
+    autoImport: {
+      webpack: {
+        node: {
+          global: true,
+          __filename: true,
+          __dirname: true,
+        },
+        resolve: {
+          fallback: {
+            stream: require.resolve("stream-browserify"),
+            crypto: require.resolve("crypto-browserify")
+          }
+        }
+      }
+    },
   },
 
   included() {
-     this._super.included.apply(this, arguments);
+    this._super.included.apply(this, arguments);
   },
 };

@@ -6,6 +6,8 @@ import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
 import {Predicate} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
 import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
+import GenTreeWalker from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
+import {IllegalArgumentError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -274,6 +276,17 @@ export default class ModelRange {
     return new ModelRange(this.start.clone(modelRoot), this.end.clone(modelRoot));
   }
 
+  * contextNodes(strategy: RangeContextStrategy): Generator<ModelNode, void, void> {
+    if (strategy === "rangeContains") {
+      const walker = GenTreeWalker.fromRange({range: this});
+      yield* walker.nodes();
+    } else if (strategy === "rangeIsInside") {
+      yield* this.findCommonAncestorsWhere(() => true);
+    } else {
+      throw new IllegalArgumentError("Unsupported strategy");
+    }
+  }
+
   toString(): string {
     return `ModelRange<[${this.start.path.toString()}] - [${this.end.path.toString()}]>`;
   }
@@ -326,3 +339,5 @@ export class ModelRangeFactory implements RangeFactory {
 
 
 }
+
+export type RangeContextStrategy = "rangeContains" | "rangeIsInside";

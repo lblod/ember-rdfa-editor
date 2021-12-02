@@ -1,4 +1,3 @@
-import EmberObject from '@ember/object';
 import Command from "@lblod/ember-rdfa-editor/commands/command";
 import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
 import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
@@ -27,7 +26,6 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
 import {walk as walkDomNode} from "@lblod/marawa/node-walker";
 import RichNode from "@lblod/marawa/rich-node";
-import classic from 'ember-classic-decorator';
 import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
 import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
 import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
@@ -41,24 +39,30 @@ import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/ins
 import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
 import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
 import {InternalWidgetSpec, WidgetLocation} from "@lblod/ember-rdfa-editor/model/controller";
+import Datastore, {EditorStore} from "@lblod/ember-rdfa-editor/model/util/datastore";
+import {getPathFromRoot} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {tracked} from "@glimmer/tracking";
+
+
+export interface RawEditorProperties {
+  baseIRI: string
+}
 
 /**
  * Raw contenteditable editor. This acts as both the internal and external API to the DOM.
  * Any editing operations should be implemented as {@link Command commands}. External plugins can register their own commands.
  * Commands have access to the {@link Model} which represents our interface to the real DOM.
- * TODO: Do we really need to extend EmberObject?
  *
  * @module contenteditable-editor
  * @class RawEditor
  * @constructor
- * @extends EmberObject
  */
-@classic
-class RawEditor extends EmberObject {
+export default class RawEditor {
   registeredCommands: Map<string, Command> = new Map<string, Command>();
   modelSelectionTracker!: ModelSelectionTracker;
 
   private _model?: Model;
+  private _datastore!: Datastore;
   protected tryOutVdom = true;
   protected eventBus: EventBus;
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<WidgetLocation, InternalWidgetSpec[]>(
@@ -73,11 +77,18 @@ class RawEditor extends EmberObject {
    * @type RichNode
    * @protected
    */
+  @tracked
   richNode!: RichNode;
 
-  constructor(properties?: Record<string, unknown>) {
-    super(properties);
+  constructor(properties: RawEditorProperties) {
     this.eventBus = new EventBus();
+    this.eventBus.on("contentChanged", () => {
+      this._datastore = EditorStore.fromParse({
+        modelRoot: this.model.rootModelNode,
+        pathFromDomRoot: getPathFromRoot(this.model.rootNode, false),
+        baseIRI: (properties?.baseIRI as string | null) || document.baseURI
+      });
+    }, {priority: "highest"});
   }
 
   /**
@@ -94,11 +105,12 @@ class RawEditor extends EmberObject {
     }
 
     this.registeredCommands = new Map<string, Command>();
-    this._model = new Model(rootNode);
+    this._model = new Model(rootNode, this.eventBus);
     this.modelSelectionTracker = new ModelSelectionTracker(this._model);
     this.modelSelectionTracker.startTracking();
 
     window.__VDOM = this.model;
+    window.__EDITOR = this;
     window.__executeCommand = (commandName: string, ...args: unknown[]) => {
       this.executeCommand(commandName, ...args);
     };
@@ -170,6 +182,10 @@ class RawEditor extends EmberObject {
 
   set model(value: Model) {
     this._model = value;
+  }
+
+  get datastore(): Datastore {
+    return this._datastore;
   }
 
   /**
@@ -248,5 +264,3 @@ class RawEditor extends EmberObject {
     this.eventBus.off(eventName, callback, config);
   }
 }
-
-export default RawEditor;

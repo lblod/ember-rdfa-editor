@@ -14,7 +14,7 @@ import {
   tagName
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {analyse as scanContexts} from '@lblod/marawa/rdfa-context-scanner';
-import RawEditor from "./raw-editor";
+import RawEditor, {RawEditorProperties} from "./raw-editor";
 import {
   isEmpty,
   replaceDomNode,
@@ -30,7 +30,6 @@ import {computed, get} from '@ember/object';
 import flatMap from "@lblod/ember-rdfa-editor/utils/ce/flat-map";
 import {getTextContent, processDomNode as walkDomNodeAsText} from "@lblod/ember-rdfa-editor/utils/ce/text-node-walker";
 import nextTextNode from "@lblod/ember-rdfa-editor/utils/ce/next-text-node";
-import forgivingAction from "@lblod/ember-rdfa-editor/utils/ce/forgiving-action";
 import MovementObserver from "@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer";
 import getRichNodeMatchingDomNode from "@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node";
 import classic from 'ember-classic-decorator';
@@ -68,9 +67,12 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @type String
    * @public
    */
-  @tracked currentTextContent: string | null = null;
+  @tracked
+  currentTextContent: string | null = null;
+  @tracked
   private _currentSelection?: InternalSelection;
 
+  @tracked
   history!: CappedHistory;
 
   /**
@@ -84,9 +86,9 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
   protected movementObservers: Ember.NativeArray<MovementObserver>;
 
-  constructor(properties?: Record<string, unknown>) {
+  constructor(properties: RawEditorProperties) {
     super(properties);
-    this.set('history', new CappedHistory({maxItems: 100}));
+    this.history = new CappedHistory({maxItems: 100});
     this.movementObservers = A();
     document.addEventListener("editorModelWrite", this.createSnapshot.bind(this));
   }
@@ -673,7 +675,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         this.updateSelectionAfterComplexInput();
       }
 
-      forgivingAction('elementUpdate', this)();
       // eslint-disable-next-line @typescript-eslint/unbound-method
       void taskFor(this.generateDiffEvents).perform();
     } else {
@@ -683,7 +684,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
       this.updateRichNode();
       this.updateSelectionAfterComplexInput();
-      forgivingAction('elementUpdate', this)();
       // eslint-disable-next-line @typescript-eslint/unbound-method
       void taskFor(this.generateDiffEvents).perform();
     }
@@ -829,7 +829,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     if (previousSnapshot) {
       this.rootNode.innerHTML = previousSnapshot.content;
       this.updateRichNode();
-      this.set('currentNode', null);
+      this.currentNode = null;
       this.setCurrentPosition(previousSnapshot.currentSelection[0]);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       void taskFor(this.generateDiffEvents).perform([{noSnapshot: true}]);

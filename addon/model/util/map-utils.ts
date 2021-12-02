@@ -1,4 +1,21 @@
 export default class MapUtils {
+  static setOrPush<K, V>(map: Map<K, V[]>, key: K, value: V) {
+    const arr = map.get(key);
+    if(!arr) {
+      map.set(key, [value]);
+    } else {
+      arr.push(value);
+    }
+  }
+  static setOrAdd<K, V>(map: Map<K, Set<V>>, key: K, value: V) {
+    const set = map.get(key);
+    if(!set) {
+      map.set(key, new Set([value]));
+    } else {
+      set.add(value);
+    }
+
+  }
   static copyMapContents<K, V>(from: Map<K, V>, to: Map<K, V>) {
     for (const [key, value] of from) {
       to.set(key, value);

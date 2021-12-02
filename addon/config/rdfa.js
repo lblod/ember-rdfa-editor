@@ -49,6 +49,7 @@ const defaultPrefixes = {
   cc:	"http://creativecommons.org/ns#",
   ctag:	"http://commontag.org/ns#",
   dc:	"http://purl.org/dc/terms/",
+  dct:	"http://purl.org/dc/terms/",
   dcterms:	"http://purl.org/dc/terms/",
   dc11:	"http://purl.org/dc/elements/1.1/",
   foaf:	"http://xmlns.com/foaf/0.1/",
@@ -59,7 +60,8 @@ const defaultPrefixes = {
   sioc:	"http://rdfs.org/sioc/ns#",
   v:	"http://rdf.data-vocabulary.org/#",
   vcard:	"http://www.w3.org/2006/vcard/ns#",
-  schema:	"http://schema.org/"
+  schema:	"http://schema.org/",
+  ext: "http://mu.semte.ch/vocabularies/ext/"
 };
 
 export { rdfaKeywords, prefixableRdfaKeywords, defaultPrefixes };

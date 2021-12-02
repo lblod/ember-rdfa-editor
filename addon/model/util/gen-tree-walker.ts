@@ -39,6 +39,15 @@ export interface ModelRangeTreeWalkerConfig extends BaseTreeWalkerConfig<ModelNo
   range: ModelRange;
 }
 
+export interface TreeWalkerFactory {
+
+  fromSubTree<U extends Walkable>(config: RootTreeWalkerConfig<U>): GenTreeWalker<U>;
+
+  fromStartEnd<U extends Walkable>(config: StartEndTreeWalkerConfig<U>): GenTreeWalker<U>;
+
+  fromRange(config: ModelRangeTreeWalkerConfig): GenTreeWalker<ModelNode>;
+}
+
 export type WalkFilter<T extends Walkable> = (node: T) => FilterResult;
 
 export default class GenTreeWalker<T extends Walkable = Walkable> {
@@ -96,7 +105,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     return new GenTreeWalker<U>(config);
   }
 
-  static fromRange(config: ModelRangeTreeWalkerConfig) {
+  static fromRange(config: ModelRangeTreeWalkerConfig): GenTreeWalker<ModelNode> {
     const {range, descend, visitParentUpwards, reverse = false, filter, onLeaveNode, onEnterNode} = config;
     let startNode;
     let endNode;
@@ -155,10 +164,10 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
       if (nextDeepestDescendant) {
         endNode = nextDeepestDescendant;
       }
-      return new GenTreeWalker({
+      return new GenTreeWalker<ModelNode>({
         root,
-        start: startNode,
-        end: endNode,
+        start: startNode as ModelNode,
+        end: endNode as ModelNode,
         descend,
         visitParentUpwards,
         reverse,

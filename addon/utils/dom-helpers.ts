@@ -1,4 +1,4 @@
-import { PernetSelection, PernetSelectionBlock } from '@lblod/ember-rdfa-editor/editor/pernet';
+import {PernetSelection, PernetSelectionBlock} from '@lblod/ember-rdfa-editor/editor/pernet';
 import RichNode from "@lblod/marawa/rich-node";
 import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
@@ -387,7 +387,7 @@ export function getListTagName(listElement: HTMLUListElement | HTMLOListElement)
  * @param {PernetSelection} selection
  * @return {PernetSelectionBlock[]} array of selections
  */
-export function findWrappingSuitableNodes(selection: PernetSelection ): PernetSelectionBlock[] {
+export function findWrappingSuitableNodes(selection: PernetSelection): PernetSelectionBlock[] {
   if (!selection.selectedHighlightRange) {
     // TODO: Support context selections as well.
     // This might be fairly trivial, but focussing on text selection for now.
@@ -408,13 +408,15 @@ export function findWrappingSuitableNodes(selection: PernetSelection ): PernetSe
     } else {
       // Walk up the tree as longs as we fit within the range.
       let current = richNode;
-      const isNotRootNode = function(richNode : RichNode): boolean { return !!richNode.parent; };
+      const isNotRootNode = function (richNode: RichNode): boolean {
+        return !!richNode.parent;
+      };
       while (current.parent && isNotRootNode(current.parent) && current.parent.start >= start && current.parent.end <= end) {
         current = current.parent;
       }
 
       if (!domNodes.includes(current.domNode)) {
-        nodes.push({ richNode: current, range: [current.start, current.end], split: false });
+        nodes.push({richNode: current, range: [current.start, current.end], split: false});
         domNodes.push(current.domNode);
       }
     }
@@ -493,4 +495,19 @@ export function getWindowSelection(): Selection {
   }
 
   return selection;
+}
+
+export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
+  const path = [];
+  let cur = to.parentNode;
+  while (cur) {
+    path.push(cur);
+    cur = cur.parentNode;
+  }
+  path.reverse();
+  if (inclusive) {
+    path.push(to);
+  }
+  return path;
+
 }
