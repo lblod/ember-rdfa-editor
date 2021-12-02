@@ -1,6 +1,18 @@
 
 
 
+## 0.50.0-beta.0 (2021-12-02)
+
+#### :rocket: Enhancement
+* [#185](https://github.com/lblod/ember-rdfa-editor/pull/185) Add the datastore api ([@abeforgit](https://github.com/abeforgit))
+
+#### :house: Internal
+* [#187](https://github.com/lblod/ember-rdfa-editor/pull/187) Add package lock ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Dieter Peirs ([@Dietr](https://github.com/Dietr))
+
 ## 0.49.0 (2021-11-26)
 
 #### :rocket: Enhancement
