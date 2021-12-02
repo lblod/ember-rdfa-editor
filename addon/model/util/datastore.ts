@@ -199,14 +199,27 @@ export class EditorStore implements Datastore {
   }
 
   * asPredicateNodes(): Generator<PredicateNodesResponse> {
-    const seenPredicates = new Set<string>();
+    const seenPredicates = new Map<string, RDF.Quad_Predicate>();
+    const seenSubjects = new Set<string>();
+
+    // collect all unique predicates and subjects in the current dataset
     for (const quad of this.dataset) {
-      if (!seenPredicates.has(quad.predicate.value)) {
-        const nodes = this._predicateToNodes.get(quad.predicate.value);
-        if (nodes) {
-          yield {predicate: quad.predicate, nodes};
+      seenSubjects.add(quad.subject.value);
+      seenPredicates.set(quad.predicate.value, quad.predicate);
+    }
+
+    for (const pred of seenPredicates.keys()) {
+      const allNodes = this._predicateToNodes.get(pred);
+      if (allNodes) {
+        const nodes = new Set<ModelNode>();
+        // we have to filter out nodes that belong to a subject which is not in the dataset
+        for (const node of allNodes) {
+          const nodeSubject = this._nodeToSubject.get(node);
+          if (nodeSubject && seenSubjects.has(nodeSubject.value)) {
+            nodes.add(node);
+          }
         }
-        seenPredicates.add(quad.predicate.value);
+        yield {predicate: seenPredicates.get(pred)!, nodes};
       }
     }
   }
