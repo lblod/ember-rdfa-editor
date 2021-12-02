@@ -2,7 +2,6 @@ import {module, test} from "qunit";
 import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
 import {EditorStore} from "@lblod/ember-rdfa-editor/model/util/datastore";
 import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {NON_BREAKING_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 
 module("Unit | model | utils | datastore-test", () => {
   test("simple match gives correct nodes", assert => {
@@ -112,7 +111,6 @@ module("Unit | model | utils | datastore-test", () => {
       </div>
     `;
     const dataStore = EditorStore.fromParse({modelRoot: root, baseIRI: "http://test.org", pathFromDomRoot: []});
-    console.log([...dataStore.asQuads()]);
     const decisionUri = "http://data.lblod.info/artikels/bbeb89ae-998b-4339-8de4-c8ab3a0679b5";
     const decisionValueStore = dataStore.match(`>${decisionUri}`, 'prov:value');
     assert.strictEqual(decisionValueStore.size, 1);
