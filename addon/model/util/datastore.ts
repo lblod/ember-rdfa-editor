@@ -193,6 +193,7 @@ export class EditorStore implements Datastore {
         if (nodes) {
           yield {subject: quad.subject, nodes};
         }
+        seenSubjects.add(quad.subject.value);
       }
     }
   }
@@ -205,6 +206,7 @@ export class EditorStore implements Datastore {
         if (nodes) {
           yield {predicate: quad.predicate, nodes};
         }
+        seenPredicates.add(quad.predicate.value);
       }
     }
   }
@@ -217,6 +219,7 @@ export class EditorStore implements Datastore {
         if (nodes) {
           yield {object: quad.object, nodes};
         }
+        seenObjects.add(quad.object.value);
       }
     }
   }
