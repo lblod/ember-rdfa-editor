@@ -4,6 +4,8 @@ import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selec
 import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
 import ModelTestContext from "dummy/tests/utilities/model-test-context";
 import {setupTest} from "ember-qunit";
+import sinon from "sinon";
+import EventBus from "@lblod/ember-rdfa-editor/utils/event-bus";
 
 module("Unit | model | model-selection-tracker", hooks => {
   const ctx = new ModelTestContext();
@@ -23,7 +25,9 @@ module("Unit | model | model-selection-tracker", hooks => {
     testRoot.appendChild(rootNode);
     const selection = getWindowSelection();
     const text = new Text("abc");
-    const tracker = new ModelSelectionTracker(ctx.model);
+    const eventBus = new EventBus();
+    const stub = sinon.stub(eventBus, "emitDebounced");
+    const tracker = new ModelSelectionTracker(ctx.model, eventBus);
     rootNode.appendChild(text);
     sync();
 
@@ -33,6 +37,7 @@ module("Unit | model | model-selection-tracker", hooks => {
     assert.true(model.selection.getRangeAt(0).start.sameAs(ModelPosition.fromPath(model.rootModelNode, [0])));
     assert.true(model.selection.getRangeAt(0).end.sameAs(ModelPosition.fromPath(model.rootModelNode, [0])));
     assert.strictEqual(model.selection.getRangeAt(0).end.parent, model.rootModelNode);
+    assert.true(stub.calledOnce);
 
 
   });

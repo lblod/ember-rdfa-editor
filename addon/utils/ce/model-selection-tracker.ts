@@ -30,7 +30,7 @@ export default class ModelSelectionTracker {
       return;
     }
     this.model.readSelection();
-    this.eventBus.emitDebounced(1000, new SelectionChangedEvent({owner: CORE_OWNER, payload: this.model.selection}));
+    this.eventBus.emitDebounced(500, new SelectionChangedEvent({owner: CORE_OWNER, payload: this.model.selection}));
     const modelSelectionUpdatedEvent = new CustomEvent<ModelSelection>(
       'richSelectionUpdated',
       {detail: this.model.selection}
