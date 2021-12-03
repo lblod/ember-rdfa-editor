@@ -1,6 +1,22 @@
 
 
 
+
+## 0.50.0-beta.1 (2021-12-03)
+
+#### :rocket: Enhancement
+* [#189](https://github.com/lblod/ember-rdfa-editor/pull/189) Expose termconverter on the datastore directly ([@abeforgit](https://github.com/abeforgit))
+
+#### :bug: Bug Fix
+* [#190](https://github.com/lblod/ember-rdfa-editor/pull/190) Fire selectionChanged event when needed ([@abeforgit](https://github.com/abeforgit))
+
+#### :memo: Documentation
+* [#188](https://github.com/lblod/ember-rdfa-editor/pull/188) Add a todo test for the limitToRange method ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.50.0-beta.0 (2021-12-02)
 
 #### :rocket: Enhancement
