@@ -8,6 +8,7 @@
 
 #### :house: Internal
 * [#187](https://github.com/lblod/ember-rdfa-editor/pull/187) Add package lock ([@abeforgit](https://github.com/abeforgit))
+* [#186](https://github.com/lblod/ember-rdfa-editor/pull/186) Update ember-appuniversum ([@Dietr](https://github.com/Dietr))
 
 #### Committers: 2
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
