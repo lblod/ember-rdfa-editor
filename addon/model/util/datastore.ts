@@ -51,6 +51,8 @@ export default interface Datastore {
 
   get size(): number;
 
+  get termConverter(): TermConverter;
+
   limitToRange(range: ModelRange, strategy?: RangeContextStrategy): Datastore;
 
   match(subject?: SubjectSpec, predicate?: PredicateSpec, object?: ObjectSpec): Datastore;
@@ -142,6 +144,7 @@ export class EditorStore implements Datastore {
   get size(): number {
     return this._dataset.size;
   }
+  termConverter = (term: ConciseTerm) => conciseToRdfjs(term, this.getPrefix);
 
   match(subject?: SubjectSpec, predicate?: PredicateSpec, object?: ObjectSpec): Datastore {
     const convertedSubject = typeof subject === "string" ? conciseToRdfjs(subject, this.getPrefix) : subject;
@@ -244,7 +247,7 @@ export class EditorStore implements Datastore {
   }
 
   transformDataset(action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset): Datastore {
-    return this.fromDataset(action(this.dataset, (term: ConciseTerm) => conciseToRdfjs(term, this.getPrefix)));
+    return this.fromDataset(action(this.dataset, this.termConverter));
   }
 
   private fromDataset(dataset: RDF.Dataset): Datastore {
