@@ -106,7 +106,7 @@ export default class RawEditor {
 
     this.registeredCommands = new Map<string, Command>();
     this._model = new Model(rootNode, this.eventBus);
-    this.modelSelectionTracker = new ModelSelectionTracker(this._model);
+    this.modelSelectionTracker = new ModelSelectionTracker(this._model, this.eventBus);
     this.modelSelectionTracker.startTracking();
 
     window.__VDOM = this.model;
