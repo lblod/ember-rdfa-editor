@@ -48,7 +48,6 @@ export default class HinstRegistry {
    * @type Array
    * @private
    */
-  registryObservers;
   removedCardObservers;
   newCardObservers;
   registryObservers;
