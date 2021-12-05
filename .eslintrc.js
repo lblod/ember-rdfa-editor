@@ -25,6 +25,7 @@ module.exports = {
     semi: 'error',
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
+    'no-console': 'off',
   },
   overrides: [
     // node files
