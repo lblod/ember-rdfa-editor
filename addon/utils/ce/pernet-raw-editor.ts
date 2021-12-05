@@ -29,7 +29,7 @@ import {
   findUniqueRichNodes,
 } from '../rdfa/rdfa-rich-node-helpers';
 import { debug, warn } from '@ember/debug';
-import { computed, get } from '@ember/object';
+import { computed } from '@ember/object';
 import flatMap from '@lblod/ember-rdfa-editor/utils/ce/flat-map';
 import {
   getTextContent,
@@ -38,7 +38,6 @@ import {
 import nextTextNode from '@lblod/ember-rdfa-editor/utils/ce/next-text-node';
 import MovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer';
 import getRichNodeMatchingDomNode from '@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node';
-import classic from 'ember-classic-decorator';
 import CappedHistory from '@lblod/ember-rdfa-editor/utils/ce/capped-history';
 import RichNode from '@lblod/marawa/rich-node';
 import { tracked } from '@glimmer/tracking';
@@ -72,7 +71,6 @@ export interface InternalSelection {
 /**
  * Compatibility layer for components still using the Pernet API
  */
-@classic
 export default class PernetRawEditor extends RawEditor implements Editor {
   /**
    * current textContent from editor
@@ -446,7 +444,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         `received invalid position, resetting to ${richNode.end} end of document`,
         { id: 'contenteditable-editor.invalid-position' }
       );
-      position = get(richNode, 'end');
+      position = richNode.end;
     }
     const node = this.findSuitableNodeForPosition(position);
     if (node) {
@@ -606,18 +604,18 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @private
    */
   isDisplayedAsBlock(richNode: RichNode) {
-    isDisplayedAsBlock(get(richNode, 'domNode'));
+    isDisplayedAsBlock(richNode.domNode);
   }
 
   isTagWithOnlyABreakAsChild(node: RichNode) {
     const type = node.domNode.nodeType;
-    const children = get(node, 'children');
+    const children = node.children;
     return (
       type === Node.ELEMENT_NODE &&
       children &&
       children.length === 1 &&
-      get(children[0], 'type') === 'tag' &&
-      tagName(get(children[0], 'domNode')) === 'br'
+      children[0].type === 'tag' &&
+      tagName(children[0].domNode) === 'br'
     );
   }
 
@@ -626,7 +624,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     relativeToSibling = null,
     after = false
   ) {
-    const parentDomNode = get(parent, 'domNode');
+    const parentDomNode = parent.domNode;
     const textNode = insertTextNodeWithSpace(
       parentDomNode,
       relativeToSibling,
@@ -726,26 +724,20 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     const richNode = this.richNode;
     if (
       currentRichNode &&
-      get(currentRichNode, 'start') <= position &&
-      get(currentRichNode, 'end') >= position
+      currentRichNode.start <= position &&
+      currentRichNode.end >= position
     ) {
       const node = this.findSuitableNodeInRichNode(currentRichNode, position);
       return node;
-    } else if (
-      get(richNode, 'start') <= position &&
-      get(richNode, 'end') >= position
-    ) {
+    } else if (richNode.start <= position && richNode.end >= position) {
       const node = this.findSuitableNodeInRichNode(this.richNode, position);
       return node;
     } else {
       warn(
-        `position ${position} is not in range of document ${get(
-          richNode,
-          'start'
-        )} ${get(richNode, 'end')}`,
+        `position ${position} is not in range of document ${richNode.start} ${richNode.end}`,
         { id: 'content-editable:not-a-suitable-position' }
       );
-      return this.findSuitableNodeForPosition(get(richNode, 'end'));
+      return this.findSuitableNodeForPosition(richNode.end);
     }
   }
 

@@ -1,5 +1,4 @@
 import getRichNodeMatchingDomNode from '../get-rich-node-matching-dom-node';
-import { get } from '@ember/object';
 import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
 import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
@@ -72,11 +71,10 @@ export default class EmphasisMarkdownHandler {
 
     let insertElement = () => {
       let matchGroups = currentNode.textContent.match(markdown);
-      let contentEnd =
-        currentPosition - matchGroups[1].length - get(node, 'start');
+      let contentEnd = currentPosition - matchGroups[1].length - node.start;
       let contentStart =
         currentPosition -
-        get(node, 'start') -
+        node.start -
         matchGroups[0].length +
         matchGroups[1].length;
       let beforeContentNode = document.createTextNode(
@@ -115,7 +113,7 @@ export default class EmphasisMarkdownHandler {
       newCurrentNode,
       this.rawEditor.richNode
     );
-    this.rawEditor.setCurrentPosition(get(richNode, 'start'));
+    this.rawEditor.setCurrentPosition(richNode.start);
     return HandlerResponse.create({ allowPropagation: false });
   }
 }

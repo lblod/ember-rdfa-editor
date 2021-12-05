@@ -1,5 +1,4 @@
 import getRichNodeMatchingDomNode from '../get-rich-node-matching-dom-node';
-import { get } from '@ember/object';
 import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
 import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
@@ -55,7 +54,7 @@ export default class HeaderMarkdownHandler {
 
     let insertHeader = () => {
       let matchGroups = currentNode.textContent.match(HEADERMARKDOWN);
-      let headerEnd = currentPosition - get(node, 'start');
+      let headerEnd = currentPosition - node.start;
       let headerLevel = matchGroups[1].length; //number of '#' provides header level
       let headerStart = matchGroups.index + headerLevel;
       let beforeHeader = document.createTextNode(
@@ -87,7 +86,7 @@ export default class HeaderMarkdownHandler {
       newCurrentNode,
       this.rawEditor.richNode
     );
-    this.rawEditor.setCurrentPosition(get(richNode, 'start'));
+    this.rawEditor.setCurrentPosition(richNode.start);
     return HandlerResponse.create({ allowPropagation: false });
   }
 }

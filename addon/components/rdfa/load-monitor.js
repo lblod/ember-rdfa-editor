@@ -1,11 +1,10 @@
-import { get } from '@ember/object';
+import { computed } from '@ember/object';
 import classic from 'ember-classic-decorator';
 import { layout as templateLayout } from '@ember-decorators/component';
-import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@ember/component';
 import layout from '../../templates/components/rdfa/load-monitor';
-import { mapBy, and } from '@ember/object/computed';
+import { and, mapBy } from '@ember/object/computed';
 
 /**
  * Load monitor
@@ -24,6 +23,22 @@ export default class LoadMonitor extends Component {
    */
   @service
   rdfaEditorDispatcher;
+  /**
+   * plugins available in the dispatcher
+   * @property tasks
+   * @type array
+   * @protected
+   */
+  @mapBy('taskServices', 'execute')
+  tasks;
+  /**
+   * is the editor blocked or is any plugin running
+   * @property allBusy
+   * @type boolean
+   * @protected
+   */
+  @and('editorBusy', 'anyPluginBusy')
+  allBusy;
 
   /**
    * All services which have an async task
@@ -35,20 +50,13 @@ export default class LoadMonitor extends Component {
   get taskServices() {
     const tasks = [];
     for (const thing of this.rdfaEditorDispatcher.pluginServices || []) {
-      if (get(thing, 'execute.perform')) tasks.push(thing);
+      if (thing.execute.perform) {
+        tasks.push(thing);
+      }
     }
 
     return tasks;
   }
-
-  /**
-   * plugins available in the dispatcher
-   * @property tasks
-   * @type array
-   * @protected
-   */
-  @mapBy('taskServices', 'execute')
-  tasks;
 
   /**
    * is the editor working
@@ -70,17 +78,8 @@ export default class LoadMonitor extends Component {
    */
   @computed('tasks.@each.isRunning')
   get anyPluginBusy() {
-    return this.tasks.find((t) => get(t, 'isRunning') == true);
+    return this.tasks.find((t) => t.isRunning == true);
   }
-
-  /**
-   * is the editor blocked or is any plugin running
-   * @property allBusy
-   * @type boolean
-   * @protected
-   */
-  @and('editorBusy', 'anyPluginBusy')
-  allBusy;
 
   /**
    * Total number of plugins available
@@ -100,7 +99,7 @@ export default class LoadMonitor extends Component {
    */
   @computed('tasks.@each.isRunning')
   get busyPluginsCount() {
-    return this.tasks.filter((t) => get(t, 'isRunning') == true).length;
+    return this.tasks.filter((t) => t.isRunning == true).length;
   }
 
   /**

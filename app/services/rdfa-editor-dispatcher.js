@@ -1,6 +1,5 @@
 import Service from '@ember/service';
 import { A } from '@ember/array';
-import { get } from '@ember/object';
 import { runInDebug } from '@ember/debug';
 import RSVP from 'rsvp';
 import editorProfiles from '../config/editor-profiles';
@@ -111,12 +110,12 @@ export default class RdfaEditorDispatcher extends Service {
   }
 
   dispatchToExecute(plugin, pluginService, args) {
-    if (typeof get(pluginService, 'execute.perform') == 'function') {
+    if (typeof pluginService.execute.perform === 'function') {
       // ember-concurrency task
       next(() => {
         pluginService.get('execute').perform(...args);
       });
-    } else if (typeof get(pluginService, 'execute') == 'function') {
+    } else if (typeof pluginService.execute === 'function') {
       pluginService.execute(...args);
     } else {
       debug(

@@ -1,11 +1,10 @@
 import { set } from '@ember/object';
-import { get } from '@ember/object';
 import { rdfaKeywords } from '../../config/rdfa';
 import {
-  singleFilterKeywords,
-  listFilterKeywords,
   isMatchingContext,
   isMatchingRdfaAttribute,
+  listFilterKeywords,
+  singleFilterKeywords,
 } from '../ce/editor/select';
 
 // TODO: content-editable should not be rdfa aware
@@ -48,11 +47,11 @@ let getRdfaAttributes = function (domNode) {
  * @private
  */
 let enrichRichNodeWithRdfa = function (richNode) {
-  const rdfaAttributes = getRdfaAttributes(get(richNode, 'domNode'));
+  const rdfaAttributes = getRdfaAttributes(richNode.domNode);
   set(richNode, 'rdfaAttributes', rdfaAttributes);
 
-  if (get(richNode, 'children')) {
-    get(richNode, 'children').forEach((child) => {
+  if (richNode.children) {
+    richNode.children.forEach((child) => {
       enrichRichNodeWithRdfa(child);
     });
   }
