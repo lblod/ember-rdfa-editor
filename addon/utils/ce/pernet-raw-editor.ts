@@ -29,7 +29,6 @@ import {
   findUniqueRichNodes,
 } from '../rdfa/rdfa-rich-node-helpers';
 import { debug, warn } from '@ember/debug';
-import { computed } from '@ember/object';
 import flatMap from '@lblod/ember-rdfa-editor/utils/ce/flat-map';
 import {
   getTextContent,
@@ -248,7 +247,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @type boolean
    * @public
    */
-  @computed('currentSelection')
   get currentSelectionIsACursor() {
     const sel = this.currentSelection;
     return sel[0] === sel[1];
