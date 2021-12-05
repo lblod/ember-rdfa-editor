@@ -10,7 +10,7 @@ It also means we are currently sticking to v1 lockfiles.
 ## Installation
 
 * `git clone <repository-url>`
-* `cd my-addon`
+* `cd @lblod/ember-rdfa-editor`
 * `npm install`
 
 ## Linting
