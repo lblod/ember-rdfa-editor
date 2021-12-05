@@ -1,20 +1,6 @@
 import config from 'ember-get-config';
-import {
-  defaultReporter,
-  Diary,
-  diary,
-  LogEvent,
-  LogLevels,
-  Reporter,
-} from 'diary';
-import { compare } from 'diary/utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-
-// this array is sorted from lowest to highest "level"
-// aka setting loglevel to "info" will include info and everything to the right of it
-const LOGLEVELS = ['log', 'debug', 'info', 'warn', 'error', 'fatal'];
-
-export type Logger = Diary;
+import { debug, Debugger } from 'debug';
 
 /**
  * Create a diary logger with a default reporter if none provided.
@@ -23,62 +9,28 @@ export type Logger = Diary;
  * @param scope
  * @param onEmit
  */
-export function createLogger(scope: string, onEmit?: Reporter) {
-  return diary(scope, onEmit ?? logLevelReporter);
+export function createLogger(scope: string): Debugger {
+  return debug(`ember-rdfa-editor:${scope}`);
 }
 
-/**
- * Convenient debug logger for console.log style debugging, for when you don't want to think about what logger to use.
- */
-export const debug = createLogger('debug');
+export type Logger = Debugger;
 
 /**
  * Convenience method to easily set the log filter string
  * @param filter
  */
 function setLogFilter(filter: string) {
-  localStorage.setItem('DEBUG', filter);
+  localStorage.setItem('debug', filter);
 }
 
-/**
- * Convenience method to easily set the loglevel
- * @param level
- */
-function setLogLevel(level: LogLevels) {
-  localStorage.setItem('LOGLEVEL', level);
-}
-
-window.setLogLevel = setLogLevel;
 window.setLogFilter = setLogFilter;
 
 // Setup default loglevel based on environment.
-if (!localStorage.getItem('LOGLEVEL')) {
+if (!localStorage.getItem('debug')) {
   if (config.environment === 'development') {
-    setLogLevel('log');
+    setLogFilter('ember-rdfa-editor:*');
   } else {
-    setLogLevel('warn');
-  }
-}
-
-function isLogLevel(level: string | null): level is LogLevels {
-  if (!level) {
-    return false;
-  }
-  return LOGLEVELS.includes(level);
-}
-
-/**
- * Reporter which filters out messages based on the loglevel in localstorage.
- * @param event
- */
-function logLevelReporter(event: LogEvent) {
-  const configuredLogLevel = localStorage.getItem('LOGLEVEL');
-  const loglevel: LogLevels = isLogLevel(configuredLogLevel)
-    ? configuredLogLevel
-    : 'info';
-
-  if (compare(event.level, loglevel) >= 0) {
-    defaultReporter(event);
+    setLogFilter('');
   }
 }
 
@@ -104,12 +56,7 @@ interface LogMethodConfig {
   scopePrefix?: string;
   scopeSuffix?: string;
   scope?: string;
-  level?: LogLevels;
 }
-
-const defaultLogMethodConfig: LogMethodConfig = {
-  level: 'log',
-};
 
 /**
  * Logs a message when the decorated method is called.
@@ -125,12 +72,7 @@ const defaultLogMethodConfig: LogMethodConfig = {
  */
 export function logMethod(
   message: string | MethodMessageFunc = defaultLogMethodMessage,
-  {
-    scopePrefix,
-    scopeSuffix,
-    scope,
-    level = 'log',
-  }: LogMethodConfig = defaultLogMethodConfig
+  { scopePrefix, scopeSuffix, scope }: LogMethodConfig
 ) {
   return function (
     target: Record<never, never>,
@@ -141,8 +83,7 @@ export function logMethod(
     const suffix = scopeSuffix ? `:${scopeSuffix}` : '';
     const finalScope =
       scope ?? `${prefix}${target.constructor.name}:${propertyKey}${suffix}`;
-    const logger = createLogger(finalScope);
-    const doLog = logger[level];
+    const doLog = createLogger(finalScope);
     if (!descriptor.value) {
       return;
     }
