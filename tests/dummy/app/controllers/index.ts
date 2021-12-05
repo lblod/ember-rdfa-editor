@@ -7,6 +7,7 @@ import xmlFormat from 'xml-formatter';
 import { basicSetup, EditorState, EditorView } from '@codemirror/basic-setup';
 import { xml } from '@codemirror/lang-xml';
 import { html } from '@codemirror/lang-html';
+import RouterService from '@ember/routing/router-service';
 
 interface FeaturesService {
   disable: (feature: string) => void;
@@ -18,6 +19,7 @@ export default class IndexController extends Controller {
   @tracked debug: unknown;
   @tracked xmlDebuggerOpen = false;
   @tracked debuggerContent = '';
+  @service router!: RouterService;
   @service features!: FeaturesService;
   @tracked htmlDebuggerOpen = false;
   private unloadListener?: () => void;
@@ -28,6 +30,9 @@ export default class IndexController extends Controller {
     this.unloadListener = () => {
       this.saveEditorContentToLocalStorage();
     };
+    this.router.on('routeWillChange', () => {
+      this.saveEditorContentToLocalStorage();
+    });
     window.addEventListener('beforeunload', this.unloadListener);
   }
 
