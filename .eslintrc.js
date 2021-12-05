@@ -10,24 +10,21 @@ module.exports = {
       legacyDecorators: true,
     },
   },
-  plugins: [
-    'ember',
-    '@typescript-eslint',
-  ],
+  plugins: ['ember', '@typescript-eslint'],
   extends: [
     'eslint:recommended',
     'plugin:ember/recommended',
     'plugin:prettier/recommended',
-    'plugin:@typescript-eslint/eslint-recommended'
+    'plugin:@typescript-eslint/eslint-recommended',
   ],
   env: {
     browser: true,
   },
   rules: {
     'ember/no-jquery': 'error',
-    'semi': 'error',
+    semi: 'error',
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': 'error'
+    '@typescript-eslint/no-unused-vars': 'error',
   },
   overrides: [
     // node files
@@ -58,20 +55,27 @@ module.exports = {
       },
       plugins: ['node'],
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
-        // add your custom rules and overrides for node files here
-      })
+      rules: Object.assign(
+        {},
+        require('eslint-plugin-node').configs.recommended.rules,
+        {
+          // add your custom rules and overrides for node files here
+        }
+      ),
     },
     // typescript
     {
-      "files": ["**/*.ts", "**/*.tsx"],
+      files: ['**/*.ts', '**/*.tsx'],
       parserOptions: {
-        project: ['./tsconfig.json']
+        project: ['./tsconfig.json'],
       },
       rules: {
         'ember/no-jquery': 'error',
-        'semi': 'off',
-        '@typescript-eslint/no-unused-vars': ['error', {'argsIgnorePattern': '^_'}],
+        semi: 'off',
+        '@typescript-eslint/no-unused-vars': [
+          'error',
+          { argsIgnorePattern: '^_' },
+        ],
         '@typescript-eslint/semi': ['error', 'always'],
 
         '@typescript-eslint/adjacent-overload-signatures': 'error',
@@ -116,8 +120,8 @@ module.exports = {
         '@typescript-eslint/require-await': 'error',
         '@typescript-eslint/restrict-plus-operands': 'error',
         '@typescript-eslint/restrict-template-expressions': 'error',
-        '@typescript-eslint/unbound-method': ['error', {'ignoreStatic': true}],
+        '@typescript-eslint/unbound-method': ['error', { ignoreStatic: true }],
       },
-    }
-  ]
+    },
+  ],
 };

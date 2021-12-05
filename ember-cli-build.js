@@ -5,19 +5,19 @@ const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 module.exports = function (defaults) {
   let app = new EmberAddon(defaults, {
     babel: {
-      sourceMaps: 'inline'
+      sourceMaps: 'inline',
     },
     sassOptions: {
       sourceMapEmbed: true,
       includePaths: [
         'node_modules/@appuniversum/appuniversum',
-        'node_modules/@appuniversum/ember-appuniversum/app/styles'
-      ]
+        'node_modules/@appuniversum/ember-appuniversum/app/styles',
+      ],
     },
     autoprefixer: {
       enabled: true,
       cascade: true,
-      sourcemap: true
+      sourcemap: true,
     },
     autoImport: {
       webpack: {
@@ -33,13 +33,13 @@ module.exports = function (defaults) {
         // ],
         resolve: {
           fallback: {
-            stream: require.resolve("stream-browserify"),
+            stream: require.resolve('stream-browserify'),
             // buffer: require.resolve('buffer/'),
             // events: require.resolve("events/"),
-            crypto: require.resolve("crypto-browserify")
-          }
-        }
-      }
+            crypto: require.resolve('crypto-browserify'),
+          },
+        },
+      },
     },
   });
 

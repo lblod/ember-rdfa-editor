@@ -7,7 +7,7 @@ module.exports = {
   name: require('./package').name,
   options: {
     babel: {
-      sourceMaps: "inline"
+      sourceMaps: 'inline',
     },
     autoImport: {
       webpack: {
@@ -18,11 +18,11 @@ module.exports = {
         },
         resolve: {
           fallback: {
-            stream: require.resolve("stream-browserify"),
-            crypto: require.resolve("crypto-browserify")
-          }
-        }
-      }
+            stream: require.resolve('stream-browserify'),
+            crypto: require.resolve('crypto-browserify'),
+          },
+        },
+      },
     },
   },
 
