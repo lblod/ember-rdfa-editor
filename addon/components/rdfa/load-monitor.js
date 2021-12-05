@@ -1,19 +1,9 @@
-import { computed } from '@ember/object';
-import classic from 'ember-classic-decorator';
-import { layout as templateLayout } from '@ember-decorators/component';
 import { inject as service } from '@ember/service';
-import Component from '@ember/component';
-import layout from '../../templates/components/rdfa/load-monitor';
-import { and, mapBy } from '@ember/object/computed';
+import Component from '@glimmer/component';
 
 /**
  * Load monitor
- * @module rdfa-editor
- * @class RdfaEditorLoadMonitor
- * @construct
  */
-@classic
-@templateLayout(layout)
 export default class LoadMonitor extends Component {
   /**
    * editor dispatcher
@@ -23,22 +13,6 @@ export default class LoadMonitor extends Component {
    */
   @service
   rdfaEditorDispatcher;
-  /**
-   * plugins available in the dispatcher
-   * @property tasks
-   * @type array
-   * @protected
-   */
-  @mapBy('taskServices', 'execute')
-  tasks;
-  /**
-   * is the editor blocked or is any plugin running
-   * @property allBusy
-   * @type boolean
-   * @protected
-   */
-  @and('editorBusy', 'anyPluginBusy')
-  allBusy;
 
   /**
    * All services which have an async task
@@ -46,7 +20,6 @@ export default class LoadMonitor extends Component {
    * @type array
    * @private
    */
-  @computed('rdfaEditorDispatcher.pluginServices.[]')
   get taskServices() {
     const tasks = [];
     for (const thing of this.rdfaEditorDispatcher.pluginServices || []) {
@@ -59,15 +32,31 @@ export default class LoadMonitor extends Component {
   }
 
   /**
+   * is the editor blocked or is any plugin running
+   */
+  get allBusy() {
+    return !!this.editorBusy && !!this.anyPluginBusy;
+  }
+
+  /**
+   * Plugins available in the dispatcher
+   * @returns {*[]}
+   */
+  get tasks() {
+    return this.taskServices.map((service) => service.execute);
+  }
+
+  /**
    * is the editor working
    * @property editorBusy
    * @type boolean
    * @protected
    */
-  @computed('editor.generateDiffEvents.isRunning')
   get editorBusy() {
-    if (!this.editor) return true;
-    return this.editor.generateDiffEvents.isRunning === true;
+    if (!this.args.editor) {
+      return true;
+    }
+    return this.args.editor.generateDiffEvents.isRunning === true;
   }
 
   /**
@@ -76,9 +65,8 @@ export default class LoadMonitor extends Component {
    * @type boolean
    * @protected
    */
-  @computed('tasks.@each.isRunning')
   get anyPluginBusy() {
-    return this.tasks.find((t) => t.isRunning == true);
+    return this.tasks.some((t) => t.isRunning === true);
   }
 
   /**
@@ -97,7 +85,6 @@ export default class LoadMonitor extends Component {
    * @type number
    * @protected
    */
-  @computed('tasks.@each.isRunning')
   get busyPluginsCount() {
     return this.tasks.filter((t) => t.isRunning == true).length;
   }
@@ -108,7 +95,6 @@ export default class LoadMonitor extends Component {
    * @type Array
    * @protected
    */
-  @computed('tasks.@each.isRunning', 'rdfaEditorDispatcher.pluginServices')
   get runningPlugins() {
     return this.rdfaEditorDispatcher.pluginServices.filter(
       (p) => p.get('execute.isRunning') === true

@@ -7,6 +7,7 @@ import { next } from '@ember/runloop';
 import PluginEditorApi from '@lblod/ember-rdfa-editor/utils/plugin-editor-api';
 import PluginHintsRegistryApi from '@lblod/ember-rdfa-editor/utils/plugin-hints-registry-api';
 import { getOwner } from '@ember/application';
+import { tracked } from '@glimmer/tracking';
 
 // debug helper
 function debug(message) {
@@ -21,6 +22,9 @@ function debug(message) {
  * @extends Service
  */
 export default class RdfaEditorDispatcher extends Service {
+  @tracked
+  pluginServices;
+
   constructor() {
     super(...arguments);
     let profileArrays = [];
@@ -29,15 +33,16 @@ export default class RdfaEditorDispatcher extends Service {
     }
     const owner = getOwner(this);
     const serviceNames = new Set(profileArrays);
-    this.pluginServices = [];
+    const pluginServices = [];
     for (const name of serviceNames) {
       const service = owner.lookup(`service:${name}`);
       if (service) {
-        this.pluginServices.push(service);
+        pluginServices.push(service);
       } else {
         console.warn('could not find plugin ' + name); // eslint-disable-line no-console
       }
     }
+    this.pluginServices = pluginServices;
   }
 
   /**
