@@ -1,8 +1,8 @@
-import Ember from "ember";
-import {A} from '@ember/array';
-import {task, TaskGenerator, timeout} from 'ember-concurrency';
-import {diff_match_patch as DiffMatchPatch} from 'diff-match-patch';
-import {taskFor} from "ember-concurrency-ts";
+import Ember from 'ember';
+import { A } from '@ember/array';
+import { task, TaskGenerator, timeout } from 'ember-concurrency';
+import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
+import { taskFor } from 'ember-concurrency-ts';
 import {
   getWindowSelection,
   insertNodeBAfterNodeA,
@@ -11,10 +11,10 @@ import {
   isElement,
   isList,
   isTextNode,
-  tagName
+  tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import {analyse as scanContexts} from '@lblod/marawa/rdfa-context-scanner';
-import RawEditor, {RawEditorProperties} from "./raw-editor";
+import { analyse as scanContexts } from '@lblod/marawa/rdfa-context-scanner';
+import RawEditor, { RawEditorProperties } from './raw-editor';
 import {
   isEmpty,
   replaceDomNode,
@@ -22,30 +22,44 @@ import {
   selectCurrentSelection,
   selectHighlight,
   triplesDefinedInResource,
-  update
+  update,
 } from './editor';
-import {findRichNode, findUniqueRichNodes} from '../rdfa/rdfa-rich-node-helpers';
-import {debug, warn} from '@ember/debug';
-import {computed, get} from '@ember/object';
-import flatMap from "@lblod/ember-rdfa-editor/utils/ce/flat-map";
-import {getTextContent, processDomNode as walkDomNodeAsText} from "@lblod/ember-rdfa-editor/utils/ce/text-node-walker";
-import nextTextNode from "@lblod/ember-rdfa-editor/utils/ce/next-text-node";
-import MovementObserver from "@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer";
-import getRichNodeMatchingDomNode from "@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node";
+import {
+  findRichNode,
+  findUniqueRichNodes,
+} from '../rdfa/rdfa-rich-node-helpers';
+import { debug, warn } from '@ember/debug';
+import { computed, get } from '@ember/object';
+import flatMap from '@lblod/ember-rdfa-editor/utils/ce/flat-map';
+import {
+  getTextContent,
+  processDomNode as walkDomNodeAsText,
+} from '@lblod/ember-rdfa-editor/utils/ce/text-node-walker';
+import nextTextNode from '@lblod/ember-rdfa-editor/utils/ce/next-text-node';
+import MovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer';
+import getRichNodeMatchingDomNode from '@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node';
 import classic from 'ember-classic-decorator';
-import CappedHistory from "@lblod/ember-rdfa-editor/utils/ce/capped-history";
-import RichNode from "@lblod/marawa/rich-node";
-import {tracked} from '@glimmer/tracking';
-import {Editor} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {Region} from "@lblod/marawa/rdfa-block";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
-import {ContentChangedEvent} from "@lblod/ember-rdfa-editor/utils/editor-event";
+import CappedHistory from '@lblod/ember-rdfa-editor/utils/ce/capped-history';
+import RichNode from '@lblod/marawa/rich-node';
+import { tracked } from '@glimmer/tracking';
+import { Editor } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { Region } from '@lblod/marawa/rdfa-block';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 
 export interface ContentObserver {
-  handleTextInsert: (position: number, text: string, extraInfo: Array<unknown>) => void
-  handleTextRemoval: (start: number, end: number, extraInfo: Array<unknown>) => void
-  handleFullContentUpdate: (extraInfo: Array<unknown>) => void
+  handleTextInsert: (
+    position: number,
+    text: string,
+    extraInfo: Array<unknown>
+  ) => void;
+  handleTextRemoval: (
+    start: number,
+    end: number,
+    extraInfo: Array<unknown>
+  ) => void;
+  handleFullContentUpdate: (extraInfo: Array<unknown>) => void;
 }
 
 export type RawEditorSelection = Region;
@@ -88,9 +102,12 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
   constructor(properties: RawEditorProperties) {
     super(properties);
-    this.history = new CappedHistory({maxItems: 100});
+    this.history = new CappedHistory({ maxItems: 100 });
     this.movementObservers = A();
-    document.addEventListener("editorModelWrite", this.createSnapshot.bind(this));
+    document.addEventListener(
+      'editorModelWrite',
+      this.createSnapshot.bind(this)
+    );
   }
 
   /**
@@ -104,16 +121,18 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   // @ts-ignore
   get currentSelection(): RawEditorSelection {
     if (this._currentSelection)
-      return [this._currentSelection.startNode.absolutePosition, this._currentSelection.endNode.absolutePosition];
-    else
-      return [0, 0];
+      return [
+        this._currentSelection.startNode.absolutePosition,
+        this._currentSelection.endNode.absolutePosition,
+      ];
+    else return [0, 0];
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  set currentSelection({startNode, endNode}: InternalSelection) {
+  set currentSelection({ startNode, endNode }: InternalSelection) {
     const oldSelection = this._currentSelection;
-    this._currentSelection = {startNode, endNode};
+    this._currentSelection = { startNode, endNode };
     if (startNode.absolutePosition === endNode.absolutePosition) {
       this.moveCaretInTextNode(startNode.domNode, startNode.relativePosition);
       this.currentNode = startNode.domNode;
@@ -121,18 +140,19 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       this.currentNode = null;
     }
 
-    if (!oldSelection || (
+    if (
+      !oldSelection ||
       oldSelection.startNode.domNode != startNode.domNode ||
       oldSelection.startNode.absolutePosition != startNode.absolutePosition ||
       oldSelection.endNode.domNode != endNode.domNode ||
       oldSelection.endNode.absolutePosition != endNode.absolutePosition
-    )) {
+    ) {
       for (const obs of this.movementObservers) {
         // typescript is confused here, I think because of EmberObjects being weird,
         // but feel free to investigate
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        obs.handleMovement(this, oldSelection, {startNode, endNode});
+        obs.handleMovement(this, oldSelection, { startNode, endNode });
       }
       // eslint-disable-next-line @typescript-eslint/unbound-method
       void taskFor(this.generateDiffEvents).perform();
@@ -158,12 +178,16 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
   set currentNode(node) {
     // clean old marks
-    for (const oldNode of document.querySelectorAll("[data-editor-position-level]")) {
-      oldNode.removeAttribute("data-editor-position-level");
+    for (const oldNode of document.querySelectorAll(
+      '[data-editor-position-level]'
+    )) {
+      oldNode.removeAttribute('data-editor-position-level');
     }
     // clean old RDFa marks
-    for (const oldNode of document.querySelectorAll("[data-editor-rdfa-position-level]")) {
-      oldNode.removeAttribute("data-editor-rdfa-position-level");
+    for (const oldNode of document.querySelectorAll(
+      '[data-editor-rdfa-position-level]'
+    )) {
+      oldNode.removeAttribute('data-editor-rdfa-position-level');
     }
 
     // set current node
@@ -175,7 +199,10 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     while (walkedNode && walkedNode != this.rootNode) {
       if (isElement(walkedNode)) {
         counter++;
-        walkedNode.setAttribute("data-editor-position-level", counter.toString());
+        walkedNode.setAttribute(
+          'data-editor-position-level',
+          counter.toString()
+        );
       }
       walkedNode = walkedNode.parentNode;
     }
@@ -184,12 +211,22 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     walkedNode = node;
     while (walkedNode && walkedNode != this.rootNode) {
       if (isElement(walkedNode)) {
-        const isSemanticNode =
-          ["about", "content", "datatype", "property", "rel", "resource", "rev", "typeof"]
-            .find((name) => (walkedNode as Element).hasAttribute(name));
+        const isSemanticNode = [
+          'about',
+          'content',
+          'datatype',
+          'property',
+          'rel',
+          'resource',
+          'rev',
+          'typeof',
+        ].find((name) => (walkedNode as Element).hasAttribute(name));
         if (isSemanticNode) {
           rdfaCounter++;
-          walkedNode.setAttribute("data-editor-rdfa-position-level", rdfaCounter.toString());
+          walkedNode.setAttribute(
+            'data-editor-rdfa-position-level',
+            rdfaCounter.toString()
+          );
         }
       }
       walkedNode = walkedNode.parentNode;
@@ -227,11 +264,13 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @param extraInfo Optional argument pass info to event consumers.
    * @public
    */
-  @task({restartable: true})
-  * generateDiffEvents(extraInfo: Record<string, unknown>[] = []): TaskGenerator<void> {
+  @task({ restartable: true })
+  *generateDiffEvents(
+    extraInfo: Record<string, unknown>[] = []
+  ): TaskGenerator<void> {
     yield timeout(320);
     const newText: string = getTextContent(this.rootNode);
-    let oldText: string = this.currentTextContent || "";
+    let oldText: string = this.currentTextContent || '';
     const dmp = new DiffMatchPatch();
     const differences = dmp.diff_main(oldText, newText);
     let pos = 0;
@@ -241,7 +280,8 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     for (const [mode, text] of differences) {
       if (mode === 1) {
         textHasChanges = true;
-        this.currentTextContent = oldText.slice(0, pos) + text + oldText.slice(pos, oldText.length);
+        this.currentTextContent =
+          oldText.slice(0, pos) + text + oldText.slice(pos, oldText.length);
         for (const observer of contentObservers) {
           // eslint-disable-next-line ember/no-observers
           observer.handleTextInsert(pos, text, extraInfo);
@@ -249,7 +289,9 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         pos = pos + text.length;
       } else if (mode === -1) {
         textHasChanges = true;
-        this.currentTextContent = oldText.slice(0, pos) + oldText.slice(pos + text.length, oldText.length);
+        this.currentTextContent =
+          oldText.slice(0, pos) +
+          oldText.slice(pos + text.length, oldText.length);
         for (const observer of contentObservers) {
           // eslint-disable-next-line ember/no-observers
           observer.handleTextRemoval(pos, pos + text.length, extraInfo);
@@ -257,7 +299,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       } else {
         pos = pos + text.length;
       }
-      oldText = this.currentTextContent || "";
+      oldText = this.currentTextContent || '';
     }
 
     if (textHasChanges) {
@@ -292,7 +334,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     this.contentObservers.push(observer);
   }
 
-
   /**
    * unregister a content observer
    * @method unregisterContentObserver
@@ -317,7 +358,9 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @param _extraInfo Text content that has been inserted.
    */
   textInsert() {
-    warn("textInsert was called on raw-editor without listeners being set.", {id: 'content-editable.invalid-state'});
+    warn('textInsert was called on raw-editor without listeners being set.', {
+      id: 'content-editable.invalid-state',
+    });
   }
 
   /**
@@ -365,20 +408,23 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    */
   calculatePosition(richNode: RichNode, offset: number): number {
     const type = richNode.type;
-    if (type === 'text')
-      return richNode.start + offset;
+    if (type === 'text') return richNode.start + offset;
     else if (type === 'tag') {
       const children = richNode.children;
-      if (children && children.length > offset)
-        return children[offset].start;
+      if (children && children.length > offset) return children[offset].start;
       else if (children && children.length == offset)
         // this happens and in that case we want to be at the end of that node, but not outside
         return children[children.length - 1].end;
       else if (children) {
-        warn(`provided offset (${offset}) is invalid for richNode of type tag with ${children.length} children`, {id: 'contenteditable-editor.invalid-range'});
+        warn(
+          `provided offset (${offset}) is invalid for richNode of type tag with ${children.length} children`,
+          { id: 'contenteditable-editor.invalid-range' }
+        );
         return children[children.length - 1].end;
       } else {
-        throw new Error(`can't calculate position for richNode of type ${type}`);
+        throw new Error(
+          `can't calculate position for richNode of type ${type}`
+        );
       }
     } else {
       throw new Error(`can't calculate position for richNode of type ${type}`);
@@ -396,17 +442,21 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   setCurrentPosition(position: number) {
     const richNode = this.richNode;
     if (richNode.end < position || richNode.start > position) {
-      warn(`received invalid position, resetting to ${richNode.end} end of document`, {id: 'contenteditable-editor.invalid-position'});
+      warn(
+        `received invalid position, resetting to ${richNode.end} end of document`,
+        { id: 'contenteditable-editor.invalid-position' }
+      );
       position = get(richNode, 'end');
     }
     const node = this.findSuitableNodeForPosition(position);
     if (node) {
       this.setCaret(node.domNode, position - node.start);
     } else {
-      console.warn('did not receive a suitable node to set cursor, can\'t set cursor!'); // eslint-disable-line no-console
+      console.warn(
+        "did not receive a suitable node to set cursor, can't set cursor!"
+      ); // eslint-disable-line no-console
     }
   }
-
 
   /**
    * inserts an emtpy textnode after richnode, if non existant.
@@ -419,8 +469,14 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @return returns last inserted element as RichNode. That is a rich textNode
    * @private
    */
-  insertValidCursorNodeAfterRichNode(richParent: RichNode, richNode: RichNode): RichNode {
-    if (richNode.domNode.nextSibling === null || richNode.domNode.nextSibling.nodeType !== Node.TEXT_NODE) {
+  insertValidCursorNodeAfterRichNode(
+    richParent: RichNode,
+    richNode: RichNode
+  ): RichNode {
+    if (
+      richNode.domNode.nextSibling === null ||
+      richNode.domNode.nextSibling.nodeType !== Node.TEXT_NODE
+    ) {
       const newNode = document.createTextNode(INVISIBLE_SPACE);
       return this.insertElementsAfterRichNode(richParent, richNode, [newNode]);
     }
@@ -441,12 +497,18 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   prependElementsRichNode(richParent: RichNode, elements: ChildNode[]) {
     const newFirstChild = elements[0];
     if (richParent.domNode.firstChild)
-      richParent.domNode.insertBefore(newFirstChild, richParent.domNode.firstChild);
-    else
-      richParent.domNode.appendChild(newFirstChild);
+      richParent.domNode.insertBefore(
+        newFirstChild,
+        richParent.domNode.firstChild
+      );
+    else richParent.domNode.appendChild(newFirstChild);
 
     const newFirstRichChild = walkDomNodeAsText(newFirstChild);
-    return this.insertElementsAfterRichNode(richParent, newFirstRichChild, elements.slice(1));
+    return this.insertElementsAfterRichNode(
+      richParent,
+      newFirstRichChild,
+      elements.slice(1)
+    );
   }
 
   /**
@@ -461,17 +523,28 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @return {RichNode} returns last inserted element as RichNode
    * @private
    */
-  insertElementsAfterRichNode(richParent: RichNode, richNode: RichNode, remainingElements: ChildNode[]): RichNode {
-    if (remainingElements.length == 0)
-      return richNode;
+  insertElementsAfterRichNode(
+    richParent: RichNode,
+    richNode: RichNode,
+    remainingElements: ChildNode[]
+  ): RichNode {
+    if (remainingElements.length == 0) return richNode;
 
     const nodeToInsert = remainingElements[0];
 
-    insertNodeBAfterNodeA(richParent.domNode as HTMLElement, richNode.domNode as ChildNode, nodeToInsert);
+    insertNodeBAfterNodeA(
+      richParent.domNode as HTMLElement,
+      richNode.domNode as ChildNode,
+      nodeToInsert
+    );
 
     const richNodeToInsert = walkDomNodeAsText(nodeToInsert);
 
-    return this.insertElementsAfterRichNode(richParent, richNodeToInsert, remainingElements.slice(1));
+    return this.insertElementsAfterRichNode(
+      richParent,
+      richNodeToInsert,
+      remainingElements.slice(1)
+    );
   }
 
   /**
@@ -489,20 +562,33 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   resetCursor(oldRichNodecontainingCursor: RichNode) {
     const richNode = this.getRichNodeFor(this.currentNode);
     const currentPosition = this.currentSelection[1];
-    if (richNode && richNode.start >= currentPosition && richNode.end <= currentPosition) {
-      this.setCaret(richNode.domNode, Math.max(0, currentPosition - richNode.start));
+    if (
+      richNode &&
+      richNode.start >= currentPosition &&
+      richNode.end <= currentPosition
+    ) {
+      this.setCaret(
+        richNode.domNode,
+        Math.max(0, currentPosition - richNode.start)
+      );
     } else if (oldRichNodecontainingCursor) {
       // domNode containing cursor no longer exists, we have to reset the cursor in a different node
       // first let's try to find a parent that still exists
       let newNode = oldRichNodecontainingCursor;
-      while (newNode && newNode.domNode !== this.rootNode && !this.rootNode.contains(newNode.domNode)) {
+      while (
+        newNode &&
+        newNode.domNode !== this.rootNode &&
+        !this.rootNode.contains(newNode.domNode)
+      ) {
         newNode = newNode.parent;
       }
       // set the currentnode to that parent for better positioning
       this.currentNode = newNode.domNode;
       this.setCurrentPosition(currentPosition);
     } else {
-      console.debug("have to guess cursor position, no previous richnode was provided!"); // eslint-disable-line no-console
+      console.debug(
+        'have to guess cursor position, no previous richnode was provided!'
+      ); // eslint-disable-line no-console
       this.currentNode = null;
       this.setCurrentPosition(currentPosition);
     }
@@ -526,7 +612,8 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   isTagWithOnlyABreakAsChild(node: RichNode) {
     const type = node.domNode.nodeType;
     const children = get(node, 'children');
-    return (type === Node.ELEMENT_NODE &&
+    return (
+      type === Node.ELEMENT_NODE &&
       children &&
       children.length === 1 &&
       get(children[0], 'type') === 'tag' &&
@@ -534,12 +621,20 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     );
   }
 
-  insertTextNodeWithSpace(parent: RichNode, relativeToSibling = null, after = false) {
+  insertTextNodeWithSpace(
+    parent: RichNode,
+    relativeToSibling = null,
+    after = false
+  ) {
     const parentDomNode = get(parent, 'domNode');
-    const textNode = insertTextNodeWithSpace(parentDomNode, relativeToSibling, after);
+    const textNode = insertTextNodeWithSpace(
+      parentDomNode,
+      relativeToSibling,
+      after
+    );
     this.updateRichNode();
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    void taskFor(this.generateDiffEvents).perform([{noSnapshot: true}]);
+    void taskFor(this.generateDiffEvents).perform([{ noSnapshot: true }]);
     return this.getRichNodeFor(textNode);
   }
 
@@ -552,28 +647,40 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @return {RichNode}
    * @private
    */
-  findSuitableNodeInRichNode(node: RichNode, position: number): RichNode | null {
+  findSuitableNodeInRichNode(
+    node: RichNode,
+    position: number
+  ): RichNode | null {
     if (!node) {
-      console.warn("No node provided to findSuitableNodeInRichNode."); // eslint-disable-line no-console
+      console.warn('No node provided to findSuitableNodeInRichNode.'); // eslint-disable-line no-console
       return null;
     }
 
     const appropriateTextNodeFilter = (node: RichNode) =>
-      node.start <= position && node.end >= position
-      && node.type === "text"
-      && !isList(node.parent.domNode);
+      node.start <= position &&
+      node.end >= position &&
+      node.type === 'text' &&
+      !isList(node.parent.domNode);
 
-    const textNodeContainingPosition = flatMap(node, appropriateTextNodeFilter, true);
+    const textNodeContainingPosition = flatMap(
+      node,
+      appropriateTextNodeFilter,
+      true
+    );
     if (textNodeContainingPosition.length == 1) {
       // We've found a text node! Huzah!
       return textNodeContainingPosition[0];
     } else {
-      const elementContainingPosition = flatMap(node, appropriateTextNodeFilter);
+      const elementContainingPosition = flatMap(
+        node,
+        appropriateTextNodeFilter
+      );
       if (elementContainingPosition.length > 0) {
         // We have to guess which element matches, taking the last matching one is a strategy that sort of works.
         // This gives us the deepest/last node matching. It's horrid in the case of consecutive br's for example.
         const newTextNode = nextTextNode(
-          elementContainingPosition[elementContainingPosition.length - 1].domNode,
+          elementContainingPosition[elementContainingPosition.length - 1]
+            .domNode,
           this.rootNode
         );
         this.updateRichNode();
@@ -581,10 +688,16 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         return this.getRichNodeFor(newTextNode);
       } else {
         if (node.parent) {
-          console.debug(`no valid node found for provided position ${position} and richNode, going up one node`, node); // eslint-disable-line no-console
+          console.debug(
+            `no valid node found for provided position ${position} and richNode, going up one node`,
+            node
+          ); // eslint-disable-line no-console
           return this.findSuitableNodeInRichNode(node.parent, position);
         } else {
-          console.warn(`no valid node found for provided position ${position} and richNode`, node); // eslint-disable-line no-console
+          console.warn(
+            `no valid node found for provided position ${position} and richNode`,
+            node
+          ); // eslint-disable-line no-console
           if (node.domNode === this.rootNode && node.start === node.end) {
             console.debug(`empty editor, creating a textNode`); // eslint-disable-line no-console
             const newNode = document.createTextNode(INVISIBLE_SPACE);
@@ -611,14 +724,27 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   findSuitableNodeForPosition(position: number): RichNode | null {
     const currentRichNode = this.getRichNodeFor(this.currentNode);
     const richNode = this.richNode;
-    if (currentRichNode && get(currentRichNode, 'start') <= position && get(currentRichNode, 'end') >= position) {
+    if (
+      currentRichNode &&
+      get(currentRichNode, 'start') <= position &&
+      get(currentRichNode, 'end') >= position
+    ) {
       const node = this.findSuitableNodeInRichNode(currentRichNode, position);
       return node;
-    } else if (get(richNode, 'start') <= position && get(richNode, 'end') >= position) {
+    } else if (
+      get(richNode, 'start') <= position &&
+      get(richNode, 'end') >= position
+    ) {
       const node = this.findSuitableNodeInRichNode(this.richNode, position);
       return node;
     } else {
-      warn(`position ${position} is not in range of document ${get(richNode, 'start')} ${get(richNode, 'end')}`, {id: 'content-editable:not-a-suitable-position'});
+      warn(
+        `position ${position} is not in range of document ${get(
+          richNode,
+          'start'
+        )} ${get(richNode, 'end')}`,
+        { id: 'content-editable:not-a-suitable-position' }
+      );
       return this.findSuitableNodeForPosition(get(richNode, 'end'));
     }
   }
@@ -632,12 +758,14 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     try {
       const document = {
         content: this.rootNode.innerHTML,
-        currentSelection: this.currentSelection
+        currentSelection: this.currentSelection,
       };
       this.history.push(document);
     } catch (e) {
       if (e instanceof ModelError) {
-        console.info("Failed to create snapshot because of uninitialized model. This is probably fine.");
+        console.info(
+          'Failed to create snapshot because of uninitialized model. This is probably fine.'
+        );
       } else {
         throw e;
       }
@@ -652,7 +780,11 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    * @param {boolean} maintainCursor, keep cursor in place if possible
    * @public
    */
-  externalDomUpdate(description: string, domUpdate?: () => void, maintainCursor = false) {
+  externalDomUpdate(
+    description: string,
+    domUpdate?: () => void,
+    maintainCursor = false
+  ) {
     debug(`executing an external dom update: ${description}`);
     const currentNode = this.currentNode;
     const richNode = this.getRichNodeFor(currentNode);
@@ -663,13 +795,15 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       }
 
       this.updateRichNode();
-      if (maintainCursor
-        && currentNode
-        && isTextNode(currentNode)
-        && this.currentNode === currentNode
-        && this.rootNode.contains(currentNode)
-        && relativePosition
-        && currentNode.length >= relativePosition) {
+      if (
+        maintainCursor &&
+        currentNode &&
+        isTextNode(currentNode) &&
+        this.currentNode === currentNode &&
+        this.rootNode.contains(currentNode) &&
+        relativePosition &&
+        currentNode.length >= relativePosition
+      ) {
         this.setCaret(currentNode, relativePosition);
       } else {
         this.updateSelectionAfterComplexInput();
@@ -702,32 +836,40 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       const range = windowSelection.getRangeAt(0);
       let commonAncestor = range.commonAncestorContainer;
       // IE does not support contains for text nodes
-      commonAncestor = commonAncestor.nodeType === Node.TEXT_NODE ? commonAncestor.parentNode! : commonAncestor;
+      commonAncestor =
+        commonAncestor.nodeType === Node.TEXT_NODE
+          ? commonAncestor.parentNode!
+          : commonAncestor;
       if (this.rootNode.contains(commonAncestor)) {
         if (range.collapsed) {
           this.setCaret(range.startContainer, range.startOffset);
         } else {
           const startNode = this.getRichNodeFor(range.startContainer)!;
           const endNode = this.getRichNodeFor(range.endContainer)!;
-          const startPosition = this.calculatePosition(startNode, range.startOffset);
+          const startPosition = this.calculatePosition(
+            startNode,
+            range.startOffset
+          );
           const endPosition = this.calculatePosition(endNode, range.endOffset);
           const start = {
             relativePosition: startPosition - startNode.start,
             absolutePosition: startPosition,
-            domNode: startNode.domNode
+            domNode: startNode.domNode,
           };
           const end = {
             relativePosition: endPosition - endNode.start,
             absolutePosition: endPosition,
-            domNode: endNode.domNode
+            domNode: endNode.domNode,
           };
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          this.currentSelection = {startNode: start, endNode: end};
+          this.currentSelection = { startNode: start, endNode: end };
         }
       }
     } else {
-      warn('no selection found on window', {id: 'content-editable.unsupported-browser'});
+      warn('no selection found on window', {
+        id: 'content-editable.unsupported-browser',
+      });
     }
   }
 
@@ -749,22 +891,34 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   setCaret(node: Node, offset: number) {
     const richNode = this.getRichNodeFor(node);
     if (!richNode) {
-      console.debug('tried to set carret, but did not find a matching richNode for', node); // eslint-disable-line no-console
+      console.debug(
+        'tried to set carret, but did not find a matching richNode for',
+        node
+      ); // eslint-disable-line no-console
       return;
     }
     if (richNode.type === 'tag' && richNode.children) {
       if (richNode.children.length < offset) {
-        warn(`invalid offset ${offset} for node ${tagName(richNode.domNode)} with ${richNode.children.toString()} provided to setCaret`, {id: 'contenteditable.invalid-start'});
+        warn(
+          `invalid offset ${offset} for node ${tagName(
+            richNode.domNode
+          )} with ${richNode.children.toString()} provided to setCaret`,
+          { id: 'contenteditable.invalid-start' }
+        );
         return;
       }
       const richNodeAfterCarret = richNode.children[offset];
       if (richNodeAfterCarret && richNodeAfterCarret.type === 'text') {
         // the node after the carret is a text node, so we can set the cursor at the start of that node
         const absolutePosition = richNodeAfterCarret.start;
-        const position = {domNode: richNodeAfterCarret.domNode, absolutePosition, relativePosition: 0};
+        const position = {
+          domNode: richNodeAfterCarret.domNode,
+          absolutePosition,
+          relativePosition: 0,
+        };
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        this.currentSelection = {startNode: position, endNode: position};
+        this.currentSelection = { startNode: position, endNode: position };
       } else if (offset > 0 && richNode.children[offset - 1].type === 'text') {
         // the node before the carret is a text node, so we can set the cursor at the end of that node
         const richNodeBeforeCarret = richNode.children[offset - 1];
@@ -772,37 +926,58 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         const position = {
           domNode: richNodeBeforeCarret.domNode,
           absolutePosition,
-          relativePosition: richNodeBeforeCarret.end - richNodeBeforeCarret.start
+          relativePosition:
+            richNodeBeforeCarret.end - richNodeBeforeCarret.start,
         };
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        this.currentSelection = {startNode: position, endNode: position};
+        this.currentSelection = { startNode: position, endNode: position };
       } else {
         // no suitable text node is present, so we create a textnode
         let textNode;
-        if (richNodeAfterCarret) { // insert text node before the offset
-          textNode = insertTextNodeWithSpace(node, richNodeAfterCarret.domNode as ChildNode);
-        } else if (richNode.children.length === 0 && offset === 0) { // the node is empty (no child at position 0), offset should be zero
+        if (richNodeAfterCarret) {
+          // insert text node before the offset
+          textNode = insertTextNodeWithSpace(
+            node,
+            richNodeAfterCarret.domNode as ChildNode
+          );
+        } else if (richNode.children.length === 0 && offset === 0) {
+          // the node is empty (no child at position 0), offset should be zero
           // TODO: what if void element?
           textNode = insertTextNodeWithSpace(node);
-        } else { // no node at offset, insert after the previous node
-          textNode = insertTextNodeWithSpace(node, richNode.children[offset - 1].domNode as ChildNode, true);
+        } else {
+          // no node at offset, insert after the previous node
+          textNode = insertTextNodeWithSpace(
+            node,
+            richNode.children[offset - 1].domNode as ChildNode,
+            true
+          );
         }
         this.updateRichNode();
         const absolutePosition = this.getRichNodeFor(textNode)!.start;
-        const position = {domNode: textNode, relativePosition: 0, absolutePosition};
+        const position = {
+          domNode: textNode,
+          relativePosition: 0,
+          absolutePosition,
+        };
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        this.currentSelection = {startNode: position, endNode: position};
+        this.currentSelection = { startNode: position, endNode: position };
       }
     } else if (richNode.type === 'text') {
       const absolutePosition = richNode.start + offset;
-      const position = {domNode: node, absolutePosition, relativePosition: offset};
+      const position = {
+        domNode: node,
+        absolutePosition,
+        relativePosition: offset,
+      };
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      this.currentSelection = {startNode: position, endNode: position};
+      this.currentSelection = { startNode: position, endNode: position };
     } else {
-      warn(`invalid node ${tagName(node)} provided to setCaret`, {id: 'contenteditable.invalid-start'});
+      warn(`invalid node ${tagName(node)} provided to setCaret`, {
+        id: 'contenteditable.invalid-start',
+      });
     }
   }
 
@@ -832,10 +1007,12 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       this.currentNode = null;
       this.setCurrentPosition(previousSnapshot.currentSelection[0]);
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      void taskFor(this.generateDiffEvents).perform([{noSnapshot: true}]);
+      void taskFor(this.generateDiffEvents).perform([{ noSnapshot: true }]);
       this.model.read();
     } else {
-      warn('no more history to undo', {id: 'contenteditable-editor:history-empty'});
+      warn('no more history to undo', {
+        id: 'contenteditable-editor:history-empty',
+      });
     }
   }
 
@@ -844,12 +1021,18 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     return selectCurrentSelection.bind(this)();
   }
 
-  selectHighlight(region: RawEditorSelection, options: Record<string, unknown> = {}): { selectedHighlightRange: [number, number], selections: unknown[] } {
+  selectHighlight(
+    region: RawEditorSelection,
+    options: Record<string, unknown> = {}
+  ): { selectedHighlightRange: [number, number]; selections: unknown[] } {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
     return selectHighlight.bind(this)(region, options);
   }
 
-  selectContext(region: RawEditorSelection, options: Record<string, unknown> = {}) {
+  selectContext(
+    region: RawEditorSelection,
+    options: Record<string, unknown> = {}
+  ) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
     return selectContext.bind(this)(region, options);
   }
@@ -867,7 +1050,14 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     return rslt;
   }
 
-  replaceDomNode(domNode: Node, options: { callback: (...args: unknown[]) => unknown, failedCallBack: (...args: unknown[]) => unknown, motivation: string }) {
+  replaceDomNode(
+    domNode: Node,
+    options: {
+      callback: (...args: unknown[]) => unknown;
+      failedCallBack: (...args: unknown[]) => unknown;
+      motivation: string;
+    }
+  ) {
     this.createSnapshot();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
     return replaceDomNode.bind(this)(domNode, options);
@@ -891,17 +1081,18 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     return findRichNode.bind(this)(rdfaBlock, options);
   }
 
-  findUniqueRichNodes(rdfaBlock: unknown, options: Record<string, unknown> = {}) {
+  findUniqueRichNodes(
+    rdfaBlock: unknown,
+    options: Record<string, unknown> = {}
+  ) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
     return findUniqueRichNodes.bind(this)(rdfaBlock, options);
   }
 
   /* Potential methods for the new API */
   getContexts(options: { region: [number, number] }) {
-    const {region} = options || {};
-    if (region)
-      return scanContexts(this.rootNode, region);
-    else
-      return scanContexts(this.rootNode);
+    const { region } = options || {};
+    if (region) return scanContexts(this.rootNode, region);
+    else return scanContexts(this.rootNode);
   }
 }

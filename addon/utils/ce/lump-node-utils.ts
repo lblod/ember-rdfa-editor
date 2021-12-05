@@ -1,6 +1,6 @@
 import previousTextNode from './previous-text-node';
 import nextTextNode from './next-text-node';
-import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 /**
  * So, what is a lumpNode?
@@ -20,7 +20,7 @@ import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
  * - wiring: There is currently a dichotomy between CE and RDFA editor and even though this is contained in CE,
  *           whilst using RDFA here this means it probably should not belong here. So location will change.
  */
-const LUMP_NODE_URI = "http://lblod.data.gift/vocabularies/editor/isLumpNode";
+const LUMP_NODE_URI = 'http://lblod.data.gift/vocabularies/editor/isLumpNode';
 
 export function isInLumpNode(node: Node, rootNode: HTMLElement): boolean {
   return !!getParentLumpNode(node, rootNode);
@@ -34,7 +34,10 @@ export function isInLumpNode(node: Node, rootNode: HTMLElement): boolean {
  * @param {HTMLElement} rootNode
  * @return {Node | null}
  */
-export function getParentLumpNode(node: Node, rootNode: HTMLElement): HTMLElement | null {
+export function getParentLumpNode(
+  node: Node,
+  rootNode: HTMLElement
+): HTMLElement | null {
   if (isElement(node)) {
     if (hasLumpNodeProperty(node)) {
       return node;
@@ -52,7 +55,10 @@ export function getParentLumpNode(node: Node, rootNode: HTMLElement): HTMLElemen
   return null;
 }
 
-export function getPreviousNonLumpTextNode(node: Node, rootNode: HTMLElement): Text | null {
+export function getPreviousNonLumpTextNode(
+  node: Node,
+  rootNode: HTMLElement
+): Text | null {
   if (isInLumpNode(node, rootNode)) {
     const parentLumpNode = getParentLumpNode(node, rootNode);
     if (!parentLumpNode) {
@@ -74,7 +80,10 @@ export function getPreviousNonLumpTextNode(node: Node, rootNode: HTMLElement): T
   }
 }
 
-export function getNextNonLumpTextNode(node: Node, rootNode: HTMLElement): Text | null {
+export function getNextNonLumpTextNode(
+  node: Node,
+  rootNode: HTMLElement
+): Text | null {
   if (isInLumpNode(node, rootNode)) {
     const parentLumpNode = getParentLumpNode(node, rootNode);
     if (!parentLumpNode) {
@@ -97,7 +106,7 @@ export function getNextNonLumpTextNode(node: Node, rootNode: HTMLElement): Text 
 }
 
 export function hasLumpNodeProperty(element: HTMLElement): boolean {
-  const attribute: string | null = element.getAttribute("property");
+  const attribute: string | null = element.getAttribute('property');
   if (!attribute) {
     return false;
   }
@@ -106,7 +115,7 @@ export function hasLumpNodeProperty(element: HTMLElement): boolean {
 }
 
 export function animateLumpNode(element: HTMLElement): void {
-  const animationClass = "lump-node-highlight";
+  const animationClass = 'lump-node-highlight';
 
   element.classList.add(animationClass);
   window.setTimeout(() => element.classList.remove(animationClass), 500);

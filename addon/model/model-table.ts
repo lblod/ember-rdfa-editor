@@ -1,11 +1,11 @@
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelPosition from "./model-position";
-import ModelSelection from "./model-selection";
-import ImmediateModelMutator from "./mutators/immediate-model-mutator";
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelPosition from './model-position';
+import ModelSelection from './model-selection';
+import ImmediateModelMutator from './mutators/immediate-model-mutator';
 
 type TableIndex = {
-  x: number,
-  y: number
+  x: number;
+  y: number;
 };
 
 export default class ModelTable extends ModelElement {
@@ -15,9 +15,9 @@ export default class ModelTable extends ModelElement {
     if (!rows || !columns) return;
     const tbody = new ModelElement('tbody');
     this.addChild(tbody);
-    for(let i = 0; i < rows; i++) {
+    for (let i = 0; i < rows; i++) {
       const row = new ModelElement('tr');
-      for(let j = 0; j < columns; j++) {
+      for (let j = 0; j < columns; j++) {
         const td = new ModelElement('td');
         row.addChild(td);
       }
@@ -33,7 +33,7 @@ export default class ModelTable extends ModelElement {
     const y = tBody.children.length;
     const firstRow = tBody.children[0] as ModelElement;
     const x = firstRow.children.length;
-    return {x, y};
+    return { x, y };
   }
 
   getCell(x: number, y: number) {
@@ -50,30 +50,45 @@ export default class ModelTable extends ModelElement {
     const tBody = this.children[0] as ModelElement;
     const columns = (tBody.children[0] as ModelElement).children.length;
     const row = new ModelElement('tr');
-    for(let i = 0; i < columns; i++) {
+    for (let i = 0; i < columns; i++) {
       const cell = new ModelElement('td');
-      const lastPositionInsideRow = ModelPosition.fromInElement(row, row.getMaxOffset());
+      const lastPositionInsideRow = ModelPosition.fromInElement(
+        row,
+        row.getMaxOffset()
+      );
       mutator.insertAtPosition(lastPositionInsideRow, cell);
     }
-    if(index || index === 0) {
-      const positionOfIndex = ModelPosition.fromInElement(tBody, tBody.indexToOffset(index));
+    if (index || index === 0) {
+      const positionOfIndex = ModelPosition.fromInElement(
+        tBody,
+        tBody.indexToOffset(index)
+      );
       mutator.insertAtPosition(positionOfIndex, row);
     } else {
-      const lastPositionInsideTBody = ModelPosition.fromInElement(tBody, tBody.getMaxOffset());
+      const lastPositionInsideTBody = ModelPosition.fromInElement(
+        tBody,
+        tBody.getMaxOffset()
+      );
       mutator.insertAtPosition(lastPositionInsideTBody, row);
     }
   }
 
   addColumn(mutator: ImmediateModelMutator, index?: number) {
     const tBody = this.children[0] as ModelElement;
-    for(let i = 0; i < tBody.children.length; i++) {
+    for (let i = 0; i < tBody.children.length; i++) {
       const row = tBody.children[i] as ModelElement;
       const cell = new ModelElement('td');
-      if(index || index === 0) {
-        const positionOfIndex = ModelPosition.fromInElement(row, row.indexToOffset(index));
+      if (index || index === 0) {
+        const positionOfIndex = ModelPosition.fromInElement(
+          row,
+          row.indexToOffset(index)
+        );
         mutator.insertAtPosition(positionOfIndex, cell);
       } else {
-        const lastPositionInsideRow = ModelPosition.fromInElement(row, row.getMaxOffset());
+        const lastPositionInsideRow = ModelPosition.fromInElement(
+          row,
+          row.getMaxOffset()
+        );
         mutator.insertAtPosition(lastPositionInsideRow, cell);
       }
     }
@@ -87,7 +102,7 @@ export default class ModelTable extends ModelElement {
 
   removeColumn(mutator: ImmediateModelMutator, index: number) {
     const tBody = this.children[0] as ModelElement;
-    for(let i = 0; i < tBody.children.length; i++) {
+    for (let i = 0; i < tBody.children.length; i++) {
       const row = tBody.children[i] as ModelElement;
       const cellToDelete = row.children[index];
       mutator.deleteNode(cellToDelete);
@@ -98,20 +113,20 @@ export default class ModelTable extends ModelElement {
     mutator.deleteNode(this);
   }
 
-  static getCellIndex(cell: ModelElement) : TableIndex {
-    if(cell.type !== 'td') throw Error('Cell is not a TD');
+  static getCellIndex(cell: ModelElement): TableIndex {
+    if (cell.type !== 'td') throw Error('Cell is not a TD');
     const row = cell.parent;
-    if(!row) throw Error('Table doesn\'t have the expected structure');
+    if (!row) throw Error("Table doesn't have the expected structure");
     const xIndex = row.getChildIndex(cell) as number;
     const rowParent = row.parent;
-    if(!rowParent) throw Error('Table doesn\'t have the expected structure');
+    if (!rowParent) throw Error("Table doesn't have the expected structure");
     const yIndex = rowParent.getChildIndex(row) as number;
-    return {x: xIndex, y: yIndex};
+    return { x: xIndex, y: yIndex };
   }
 
   static getCellFromSelection(selection: ModelSelection) {
     const generator = selection.lastRange?.findCommonAncestorsWhere((node) => {
-      return this.isModelElement(node) && node.type === "td";
+      return this.isModelElement(node) && node.type === 'td';
     });
 
     return generator?.next().value;

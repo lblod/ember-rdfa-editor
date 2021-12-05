@@ -1,13 +1,13 @@
-import {module, test} from "qunit";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import RemoveListCommand from "@lblod/ember-rdfa-editor/commands/remove-list-command";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import { module, test } from 'qunit';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list-command';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 
-module("Unit | commands | remove-list-command", hooks => {
+module('Unit | commands | remove-list-command', (hooks) => {
   const ctx = new ModelTestContext();
   let command: RemoveListCommand;
   hooks.beforeEach(() => {
@@ -15,9 +15,12 @@ module("Unit | commands | remove-list-command", hooks => {
     command = new RemoveListCommand(ctx.model);
   });
 
-  test("removing a simple list", assert => {
+  test('removing a simple list', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {content}} = vdom`
+    const {
+      root: initial,
+      textNodes: { content },
+    } = vdom`
       <modelRoot>
         <ul>
           <li>
@@ -28,12 +31,11 @@ module("Unit | commands | remove-list-command", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text>test</text>
       </modelRoot>
     `;
-
 
     ctx.model.fillRoot(initial);
 
@@ -42,14 +44,14 @@ module("Unit | commands | remove-list-command", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("removing a nested list", assert => {
-    const {modelSelection, model} = ctx;
-    const ul = new ModelElement("ul");
-    const li = new ModelElement("li");
+  test('removing a nested list', (assert) => {
+    const { modelSelection, model } = ctx;
+    const ul = new ModelElement('ul');
+    const li = new ModelElement('li');
 
-    const ul2 = new ModelElement("ul");
-    const li2 = new ModelElement("li");
-    const content = new ModelText("test");
+    const ul2 = new ModelElement('ul');
+    const li2 = new ModelElement('li');
+    const content = new ModelText('test');
 
     model.rootModelNode.addChild(ul);
     ul.addChild(li);
@@ -64,9 +66,12 @@ module("Unit | commands | remove-list-command", hooks => {
     assert.strictEqual(model.rootModelNode.children.length, 1);
   });
 
-  test("removing a nested list item with more elements", assert => {
+  test('removing a nested list item with more elements', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {rangeStart}} = vdom`
+    const {
+      root: initial,
+      textNodes: { rangeStart },
+    } = vdom`
       <modelRoot>
         <ul>
           <li>
@@ -93,7 +98,7 @@ module("Unit | commands | remove-list-command", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <ul>
           <li>
@@ -125,9 +130,12 @@ module("Unit | commands | remove-list-command", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("removing a complex nested list", assert => {
+  test('removing a complex nested list', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {rangeStart}} = vdom`
+    const {
+      root: initial,
+      textNodes: { rangeStart },
+    } = vdom`
       <modelRoot>
         <ul>
           <li>
@@ -157,7 +165,7 @@ module("Unit | commands | remove-list-command", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <ul>
           <li>
@@ -204,11 +212,12 @@ module("Unit | commands | remove-list-command", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("removing list and a sublist using a selection", assert => {
-
+  test('removing list and a sublist using a selection', (assert) => {
     // language=XML
-    const {root: initialState, textNodes: {rangeStart, rangeEnd}}
-      = vdom`
+    const {
+      root: initialState,
+      textNodes: { rangeStart, rangeEnd },
+    } = vdom`
       <ul>
         <li>
           <text __id="rangeStart">top item 1</text>
@@ -231,7 +240,7 @@ module("Unit | commands | remove-list-command", hooks => {
     `;
 
     // language=XML
-    const {root: expectedRoot} = vdom`
+    const { root: expectedRoot } = vdom`
       <dummy>
         <text>top item 1</text>
         <br/>
@@ -248,7 +257,7 @@ module("Unit | commands | remove-list-command", hooks => {
       </dummy>
     `;
 
-    const {modelSelection, model} = ctx;
+    const { modelSelection, model } = ctx;
     model.rootModelNode.addChild(initialState);
     const startPosition = ModelPosition.fromInTextNode(rangeStart, 3);
     const endPosition = ModelPosition.fromInTextNode(rangeEnd, rangeEnd.length);

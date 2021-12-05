@@ -1,21 +1,27 @@
-import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
-import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {getWindowSelection, isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {ModelError, NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
+import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
+import HtmlWriter from '@lblod/ember-rdfa-editor/model/writers/html-writer';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import {
+  getWindowSelection,
+  isElement,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {
+  ModelError,
+  NotImplementedError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
-import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
-import BatchedModelMutator from "@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator";
-import ImmediateModelMutator from "@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelHistory from "@lblod/ember-rdfa-editor/model/model-history";
-import {Diary} from "diary";
-import {createLogger} from "@lblod/ember-rdfa-editor/utils/logging-utils";
-import SimplifiedModel from "@lblod/ember-rdfa-editor/model/simplified-model";
-import EventBus from "@lblod/ember-rdfa-editor/utils/event-bus";
-import {ModelReadEvent} from "@lblod/ember-rdfa-editor/utils/editor-event";
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
+import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
+import BatchedModelMutator from '@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator';
+import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelHistory from '@lblod/ember-rdfa-editor/model/model-history';
+import { Diary } from 'diary';
+import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import SimplifiedModel from '@lblod/ember-rdfa-editor/model/simplified-model';
+import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
+import { ModelReadEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -51,7 +57,7 @@ export default class Model {
     this.selectionWriter = new SelectionWriter();
     this._selection = new ModelSelection();
     this._eventBus = eventBus;
-    this.logger = createLogger("RawEditor");
+    this.logger = createLogger('RawEditor');
   }
 
   get rootNode(): HTMLElement {
@@ -72,12 +78,12 @@ export default class Model {
   read(readSelection = true) {
     const parsedNodes = this.reader.read(this.rootNode);
     if (parsedNodes.length !== 1) {
-      throw new Error("Could not create a rich root");
+      throw new Error('Could not create a rich root');
     }
 
     const newRoot = parsedNodes[0];
     if (!ModelNode.isModelElement(newRoot)) {
-      throw new Error("Root model node has to be an element");
+      throw new Error('Root model node has to be an element');
     }
 
     this._rootModelNode = newRoot;
@@ -87,7 +93,7 @@ export default class Model {
     if (readSelection) {
       this.readSelection();
     }
-    if(this._eventBus) {
+    if (this._eventBus) {
       this._eventBus.emit(new ModelReadEvent());
     }
   }
@@ -104,16 +110,18 @@ export default class Model {
    * have a real dom available.
    */
   write(tree: ModelElement = this.rootModelNode, writeSelection = true) {
-    const modelWriteEvent = new CustomEvent("editorModelWrite");
+    const modelWriteEvent = new CustomEvent('editorModelWrite');
     document.dispatchEvent(modelWriteEvent);
 
     const oldRoot = tree.boundNode;
     if (!oldRoot) {
-      throw new Error("Container without boundNode");
+      throw new Error('Container without boundNode');
     }
 
     if (!isElement(oldRoot)) {
-      throw new NotImplementedError("Root is not an element, not sure what to do");
+      throw new NotImplementedError(
+        'Root is not an element, not sure what to do'
+      );
     }
 
     const newRoot = this.writer.write(tree);
@@ -151,12 +159,12 @@ export default class Model {
    */
   public getModelNodeFor(domNode: Node): ModelNode {
     if (!this.nodeMap) {
-      throw new ModelError("Uninitialized nodeMap");
+      throw new ModelError('Uninitialized nodeMap');
     }
 
     const result = this.nodeMap.get(domNode);
     if (!result) {
-      throw new ModelError("No bound node for domNode");
+      throw new ModelError('No bound node for domNode');
     }
 
     return result;
@@ -169,7 +177,10 @@ export default class Model {
    * @param callback
    * @param writeBack
    */
-  change(callback: (mutator: ImmediateModelMutator) => ModelElement | void, writeBack = true) {
+  change(
+    callback: (mutator: ImmediateModelMutator) => ModelElement | void,
+    writeBack = true
+  ) {
     const mutator = new ImmediateModelMutator();
     const subTree = callback(mutator);
 
@@ -189,7 +200,10 @@ export default class Model {
    * @param callback
    * @param autoSelect
    */
-  batchChange(callback: (mutator: BatchedModelMutator) => ModelElement | void, autoSelect = true) {
+  batchChange(
+    callback: (mutator: BatchedModelMutator) => ModelElement | void,
+    autoSelect = true
+  ) {
     const mutator = new BatchedModelMutator();
     const subTree = callback(mutator);
 
@@ -243,7 +257,10 @@ export default class Model {
     this.history.push(snapshot);
   }
 
-  restoreSnapshot(snapshot: SimplifiedModel | undefined = this.history.pop(), writeBack = true) {
+  restoreSnapshot(
+    snapshot: SimplifiedModel | undefined = this.history.pop(),
+    writeBack = true
+  ) {
     if (snapshot) {
       this._rootModelNode = snapshot.rootModelNode;
       this._selection = snapshot.modelSelection;
@@ -252,7 +269,7 @@ export default class Model {
         this.write();
       }
     } else {
-      this.logger.warn("No snapshot to restore");
+      this.logger.warn('No snapshot to restore');
     }
   }
 }

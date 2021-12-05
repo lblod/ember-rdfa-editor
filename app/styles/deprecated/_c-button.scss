@@ -4,32 +4,31 @@
 
 /* Variables
   ========================================================================== */
-$say-button-height                         : $au-unit + $au-unit-tiny !default;
-$say-button-font-family                    : var(--au-font) !default;
-$say-button-font-size                      : $au-base !default;
-$say-button-font-weight                    : var(--au-regular) !default;
-$say-button-border                         : .1rem !default;
-$say-button-border-color                   : var(--au-blue-600) !default;
-$say-button-border-hover-color             : var(--au-blue-800) !default;
-$say-button-color                          : $au-white !default;
-$say-button-hover-color                    : $au-white !default;
-$say-button-bg-color                       : var(--au-blue-600) !default;
-$say-button-bg-hover-color                 : var(--au-blue-800) !default;
-$say-button-radius                         : var(--au-radius) !default;
-$say-button-secondary-color                : var(--au-gray-800) !default;
-$say-button-secondary-hover-color          : var(--au-gray-700) !default;
-$say-button-secondary-border-color         : var(--au-gray-300) !default;
-$say-button-secondary-border-hover-color   : var(--au-gray-300) !default;
-$say-button-secondary-bg-color             : var(--au-white) !default;
-$say-button-secondary-bg-hover-color       : transparent !default;
-$say-button-tertiary-height                : $au-unit !default;
-$say-button-tertiary-color                 : var(--au-blue-600) !default;
-$say-button-tertiary-hover-color           : var(--au-blue-800) !default;
-$say-button-tertiary-border-color          : transparent !default;
-$say-button-tertiary-border-hover-color    : transparent !default;
-$say-button-tertiary-bg-color              : var(--au-white) !default;
-$say-button-tertiary-bg-hover-color        : transparent !default;
-
+$say-button-height: $au-unit + $au-unit-tiny !default;
+$say-button-font-family: var(--au-font) !default;
+$say-button-font-size: $au-base !default;
+$say-button-font-weight: var(--au-regular) !default;
+$say-button-border: 0.1rem !default;
+$say-button-border-color: var(--au-blue-600) !default;
+$say-button-border-hover-color: var(--au-blue-800) !default;
+$say-button-color: $au-white !default;
+$say-button-hover-color: $au-white !default;
+$say-button-bg-color: var(--au-blue-600) !default;
+$say-button-bg-hover-color: var(--au-blue-800) !default;
+$say-button-radius: var(--au-radius) !default;
+$say-button-secondary-color: var(--au-gray-800) !default;
+$say-button-secondary-hover-color: var(--au-gray-700) !default;
+$say-button-secondary-border-color: var(--au-gray-300) !default;
+$say-button-secondary-border-hover-color: var(--au-gray-300) !default;
+$say-button-secondary-bg-color: var(--au-white) !default;
+$say-button-secondary-bg-hover-color: transparent !default;
+$say-button-tertiary-height: $au-unit !default;
+$say-button-tertiary-color: var(--au-blue-600) !default;
+$say-button-tertiary-hover-color: var(--au-blue-800) !default;
+$say-button-tertiary-border-color: transparent !default;
+$say-button-tertiary-border-hover-color: transparent !default;
+$say-button-tertiary-bg-color: var(--au-white) !default;
+$say-button-tertiary-bg-hover-color: transparent !default;
 
 /* Component
   ========================================================================== */
@@ -44,7 +43,7 @@ $say-button-tertiary-bg-hover-color        : transparent !default;
   appearance: none;
   display: inline-flex;
   align-items: center;
-  padding: 0 $au-unit-small .1ex; // Visually center the text in the button
+  padding: 0 $au-unit-small 0.1ex; // Visually center the text in the button
   border: $say-button-border solid $say-button-border-color;
   border-radius: $say-button-radius;
   white-space: nowrap;
@@ -52,7 +51,8 @@ $say-button-tertiary-bg-hover-color        : transparent !default;
   text-overflow: ellipsis;
   color: $say-button-color;
   background-color: $say-button-bg-color;
-  transition: background-color var(--au-transition), color var(--au-transition), border var(--au-transition);
+  transition: background-color var(--au-transition), color var(--au-transition),
+    border var(--au-transition);
   cursor: default;
 
   &:hover,
@@ -105,7 +105,6 @@ $say-button-tertiary-bg-hover-color        : transparent !default;
     background-color: $say-button-tertiary-bg-hover-color;
   }
 
-
   &:hover,
   &:focus,
   &:active {
@@ -117,7 +116,7 @@ $say-button-tertiary-bg-hover-color        : transparent !default;
 
 .say-button--tooltip {
   position: relative;
-  bottom: -.3rem;
+  bottom: -0.3rem;
   margin-top: -1rem;
 
   .say-icon {
@@ -135,21 +134,21 @@ $say-button-tertiary-bg-hover-color        : transparent !default;
   background-color: var(--au-gray-200);
   padding-left: $au-unit-tiny;
   padding-right: $au-unit-tiny;
-  border-radius: .3rem;
+  border-radius: 0.3rem;
 
   &:after {
     right: 100%;
     top: 50%;
     border: solid transparent;
-    content: " ";
+    content: ' ';
     height: 0;
     width: 0;
     position: absolute;
     pointer-events: none;
     border-color: rgba($au-white, 0);
     border-right-color: var(--au-gray-200);
-    border-width: .6rem;
-    margin-top: -.6rem;
+    border-width: 0.6rem;
+    margin-top: -0.6rem;
   }
 
   .say-button:hover &,

@@ -1,21 +1,22 @@
-import {analyse, Region} from '@lblod/marawa/rdfa-context-scanner';
+import { analyse, Region } from '@lblod/marawa/rdfa-context-scanner';
 import HintsRegistry from './hints-registry';
-import {isEmpty} from '@ember/utils';
+import { isEmpty } from '@ember/utils';
 import globalTextRegionToModelRange from '@lblod/ember-rdfa-editor/utils/global-text-region-to-model-range';
 import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
 import RawEditor from '../ce/raw-editor';
-import { ContentObserver, InternalSelection} from '../ce/pernet-raw-editor';
+import { ContentObserver, InternalSelection } from '../ce/pernet-raw-editor';
 import MovementObserver from '../ce/movement-observers/movement-observer';
 
-
 /**
-* Event processor orchastrating the hinting based on incoming editor events
-*
-* @module rdfa-editor
-* @class EventProcessor
-* @constructor
-*/
-export default class EventProcessor implements ContentObserver, MovementObserver {
+ * Event processor orchastrating the hinting based on incoming editor events
+ *
+ * @module rdfa-editor
+ * @class EventProcessor
+ * @constructor
+ */
+export default class EventProcessor
+  implements ContentObserver, MovementObserver
+{
   /**
    * @property registry
    * @type HintsRegistry
@@ -36,7 +37,17 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    */
   profile: string;
 
-  constructor({ registry, profile, dispatcher, editor} : { registry: HintsRegistry, profile: string, dispatcher: RdfaEditorDispatcher, editor: RawEditor}) {
+  constructor({
+    registry,
+    profile,
+    dispatcher,
+    editor,
+  }: {
+    registry: HintsRegistry;
+    profile: string;
+    dispatcher: RdfaEditorDispatcher;
+    editor: RawEditor;
+  }) {
     this.cardsLocationFlaggedNew = [];
     this.cardsLocationFlaggedRemoved = [];
     this.modifiedRange = [];
@@ -55,45 +66,42 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    * @private
    */
   updateModifiedRange(start: number, end: number, isRemove = false) {
-    if (isRemove && ! isEmpty(this.modifiedRange)) {
+    if (isRemove && !isEmpty(this.modifiedRange)) {
       const [currentStart, currentEnd] = this.modifiedRange;
       let newStart, newEnd;
       const delta = end - start;
-      if (currentStart > start  && currentStart > end) {
+      if (currentStart > start && currentStart > end) {
         // |removed text|[inserted text]
         newStart = currentStart - delta;
         newEnd = currentEnd - delta;
-        this.modifiedRange = [ newStart, newEnd ];
-      }
-      else if (currentStart == start && currentEnd == end) {
+        this.modifiedRange = [newStart, newEnd];
+      } else if (currentStart == start && currentEnd == end) {
         // [|removed text inserted text|]
         this.modifiedRange = [];
-      }
-      else if (currentStart > start && currentEnd > end) {
+      } else if (currentStart > start && currentEnd > end) {
         // | removed text [ inserted| text]
         newStart = currentStart - (currentStart - start);
         newEnd = currentEnd - delta;
-        this.modifiedRange = [ newStart, newEnd ];
-      }
-      else if ( currentStart <= start && currentEnd <= end ) {
+        this.modifiedRange = [newStart, newEnd];
+      } else if (currentStart <= start && currentEnd <= end) {
         // [ inserted |removed  text| text]
         // full equality is handled above
         newStart = currentStart;
         newEnd = currentEnd - delta;
-        this.modifiedRange = [ newStart, newEnd ];
-      }
-      else if (currentStart < start && currentEnd < start ) {
+        this.modifiedRange = [newStart, newEnd];
+      } else if (currentStart < start && currentEnd < start) {
         // no need to update range for [ inserted text][removed text]
       }
-    }
-    else {
+    } else {
       // insertText, increase range as necessary
       if (isEmpty(this.modifiedRange)) {
-        this.modifiedRange = [ start, end ];
-      }
-      else {
+        this.modifiedRange = [start, end];
+      } else {
         const [currentStart, currentEnd] = this.modifiedRange;
-        this.modifiedRange = [Math.min (currentStart, start), Math.max(currentEnd, end)];
+        this.modifiedRange = [
+          Math.min(currentStart, start),
+          Math.max(currentEnd, end),
+        ];
       }
     }
   }
@@ -110,31 +118,39 @@ export default class EventProcessor implements ContentObserver, MovementObserver
     let region = this.cardsLocationFlaggedRemoved.shift();
     while (region) {
       const [start, end] = region;
-      const range = globalTextRegionToModelRange(this.editor.rootModelNode, start, end);
+      const range = globalTextRegionToModelRange(
+        this.editor.rootModelNode,
+        start,
+        end
+      );
       const selection = this.editor.createSelection();
       selection.selectRange(range);
-      this.editor.executeCommand("remove-highlight", selection);
+      this.editor.executeCommand('remove-highlight', selection);
       region = this.cardsLocationFlaggedRemoved.shift();
     }
     region = this.cardsLocationFlaggedNew.shift();
     while (region) {
       const [start, end] = region;
-      const range = globalTextRegionToModelRange(this.editor.rootModelNode, start, end);
+      const range = globalTextRegionToModelRange(
+        this.editor.rootModelNode,
+        start,
+        end
+      );
       const selection = this.editor.createSelection();
       selection.selectRange(range);
-      this.editor.executeCommand("make-highlight", selection);
-      region = this.cardsLocationFlaggedNew.shift() ;
+      this.editor.executeCommand('make-highlight', selection);
+      region = this.cardsLocationFlaggedNew.shift();
     }
 
     this.cardsLocationFlaggedNew = [];
     this.cardsLocationFlaggedRemoved = [];
   }
 
-  handleNewCardInRegistry(hightLightLocation: [number, number]){
+  handleNewCardInRegistry(hightLightLocation: [number, number]) {
     this.cardsLocationFlaggedNew.push(hightLightLocation);
   }
 
-  handleRemovedCardInRegistry(hightLightLocation: [number, number]){
+  handleRemovedCardInRegistry(hightLightLocation: [number, number]) {
     this.cardsLocationFlaggedRemoved.push(hightLightLocation);
   }
 
@@ -150,7 +166,7 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    */
   analyseAndDispatch(extraInfo: Array<unknown> = []) {
     const node = this.editor.rootNode;
-    if (! isEmpty(this.modifiedRange)) {
+    if (!isEmpty(this.modifiedRange)) {
       const rdfaBlocks = analyse(node, this.modifiedRange as Region);
 
       void this.dispatcher.dispatch(
@@ -206,8 +222,15 @@ export default class EventProcessor implements ContentObserver, MovementObserver
    *
    * @public
    */
-  handleMovement(_controller: RawEditor, _oldSelection: InternalSelection , newSelection: InternalSelection) {
-    const {startNode, endNode } = newSelection;
-    this.registry.activeRegion = [startNode.absolutePosition, endNode.absolutePosition];
+  handleMovement(
+    _controller: RawEditor,
+    _oldSelection: InternalSelection,
+    newSelection: InternalSelection
+  ) {
+    const { startNode, endNode } = newSelection;
+    this.registry.activeRegion = [
+      startNode.absolutePosition,
+      endNode.absolutePosition,
+    ];
   }
 }

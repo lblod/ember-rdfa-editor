@@ -1,14 +1,13 @@
 module.exports = {
   env: {
-    embertest: true
+    embertest: true,
   },
   overrides: [
     {
-
-      "files": ["**/*.ts", "**/*.tsx"],
+      files: ['**/*.ts', '**/*.tsx'],
       parserOptions: {
-        project: ['../tsconfig.json']
+        project: ['../tsconfig.json'],
       },
-    }
-  ]
+    },
+  ],
 };

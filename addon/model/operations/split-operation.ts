@@ -1,8 +1,8 @@
-import Operation from "@lblod/ember-rdfa-editor/model/operations/operation";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/operation-algorithms";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 export default class SplitOperation extends Operation {
   private _splitParent: boolean;
@@ -29,8 +29,8 @@ export default class SplitOperation extends Operation {
       // be careful making changes here
       const end = this.doSplit(this.range.end);
       const afterEnd = end.nodeAfter();
-      if(!afterEnd) {
-        throw new ModelError("Unexpected model state");
+      if (!afterEnd) {
+        throw new ModelError('Unexpected model state');
       }
       const start = this.doSplit(this.range.start);
       return new ModelRange(start, ModelPosition.fromBeforeNode(afterEnd));
@@ -44,5 +44,4 @@ export default class SplitOperation extends Operation {
       return OperationAlgorithms.splitText(position);
     }
   }
-
 }

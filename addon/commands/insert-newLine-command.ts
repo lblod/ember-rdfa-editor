@@ -1,13 +1,16 @@
-import Command from "./command";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelElement from "../model/model-element";
-import {ImpossibleModelStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import Command from './command';
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import ModelElement from '../model/model-element';
+import {
+  ImpossibleModelStateError,
+  MisbehavedSelectionError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
 /**
  * Insert a newline at the cursor position. Is responsible for making sure
@@ -15,7 +18,7 @@ import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
  * that is technically an implementation detail.
  */
 export default class InsertNewLineCommand extends Command {
-  name = "insert-newLine";
+  name = 'insert-newLine';
 
   constructor(model: Model) {
     super(model);
@@ -31,12 +34,15 @@ export default class InsertNewLineCommand extends Command {
       throw new MisbehavedSelectionError();
     }
 
-    const br = new ModelElement("br");
-    this.model.change(mutator => {
+    const br = new ModelElement('br');
+    this.model.change((mutator) => {
       const nodeBefore = range.start.nodeBefore();
       // If we have a text node with a singe invisible space before us, extend the range
       // so it will be overwritten (this is mainly to clean up after ourselves).
-      if (ModelNode.isModelText(nodeBefore) && nodeBefore.content === INVISIBLE_SPACE) {
+      if (
+        ModelNode.isModelText(nodeBefore) &&
+        nodeBefore.content === INVISIBLE_SPACE
+      ) {
         range.start = ModelPosition.fromBeforeNode(nodeBefore);
       }
 

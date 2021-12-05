@@ -1,10 +1,10 @@
-import {module, test} from "qunit";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import InsertTableRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
+import { module, test } from 'qunit';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import InsertTableRowAboveCommand from '@lblod/ember-rdfa-editor/commands/insert-table-row-above-command';
 
-module("Unit | commands | insert-table-row-above-command-test", hooks => {
+module('Unit | commands | insert-table-row-above-command-test', (hooks) => {
   const ctx = new ModelTestContext();
   let command: InsertTableRowAboveCommand;
 
@@ -13,9 +13,12 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     command = new InsertTableRowAboveCommand(ctx.model);
   });
 
-  test("inserts above first row (empty td)", assert => {
+  test('inserts above first row (empty td)', (assert) => {
     // language=XML
-    const {root: initial, elements: {topRight}} = vdom`
+    const {
+      root: initial,
+      elements: { topRight },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -33,7 +36,7 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -62,9 +65,12 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts above first row (td with text node)", assert => {
+  test('inserts above first row (td with text node)', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {topRight}} = vdom`
+    const {
+      root: initial,
+      textNodes: { topRight },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -84,7 +90,7 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -115,9 +121,12 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts row in the middle (empty td)", assert => {
+  test('inserts row in the middle (empty td)', (assert) => {
     // language=XML
-    const {root: initial, elements: {middleRight}} = vdom`
+    const {
+      root: initial,
+      elements: { middleRight },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -139,7 +148,7 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -172,9 +181,12 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts row in the middle (td with text node)", assert => {
+  test('inserts row in the middle (td with text node)', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {middleRight}} = vdom`
+    const {
+      root: initial,
+      textNodes: { middleRight },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -198,7 +210,7 @@ module("Unit | commands | insert-table-row-above-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>

@@ -7,16 +7,16 @@
   position: relative;
 }
 
-  .say-editor-hints__list {
-    position: relative;
-    width: 100%;
+.say-editor-hints__list {
+  position: relative;
+  width: 100%;
 
-    @include mq(medium) {
-      width: auto;
-      max-width: 100%;
-    }
+  @include mq(medium) {
+    width: auto;
+    max-width: 100%;
   }
+}
 
-  .say-editor-hints__list-item {
-    margin-bottom: $au-unit-small;
-  }
+.say-editor-hints__list-item {
+  margin-bottom: $au-unit-small;
+}

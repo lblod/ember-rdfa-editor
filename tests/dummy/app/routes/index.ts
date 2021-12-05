@@ -1,6 +1,6 @@
 import Route from '@ember/routing/route';
-import IndexController from "dummy/controllers";
-import {action} from '@ember/object';
+import IndexController from 'dummy/controllers';
+import { action } from '@ember/object';
 
 export default class IndexRoute extends Route {
   controller!: IndexController;

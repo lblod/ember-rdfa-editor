@@ -1,6 +1,9 @@
-import {PernetSelection, PernetSelectionBlock} from '@lblod/ember-rdfa-editor/editor/pernet';
-import RichNode from "@lblod/marawa/rich-node";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {
+  PernetSelection,
+  PernetSelectionBlock,
+} from '@lblod/ember-rdfa-editor/editor/pernet';
+import RichNode from '@lblod/marawa/rich-node';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  * Fake class to list helper functions.
@@ -18,15 +21,19 @@ import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
  * @method sliceTextIntoTextNode
  * @public
  */
-export function sliceTextIntoTextNode(textNode: Text, text: string, start: number): void {
-  const textContent = textNode.textContent || "";
+export function sliceTextIntoTextNode(
+  textNode: Text,
+  text: string,
+  start: number
+): void {
+  const textContent = textNode.textContent || '';
   const content = [];
 
   content.push(textContent.slice(0, start));
   content.push(text);
   content.push(textContent.slice(start));
 
-  textNode.textContent = content.join("");
+  textNode.textContent = content.join('');
 }
 
 /**
@@ -35,7 +42,11 @@ export function sliceTextIntoTextNode(textNode: Text, text: string, start: numbe
  * @method insertTextNodeWithSpace
  * @public
  */
-export function insertTextNodeWithSpace(parentDomNode: Node, relativeToSibling: ChildNode | null = null, after = false): Text {
+export function insertTextNodeWithSpace(
+  parentDomNode: Node,
+  relativeToSibling: ChildNode | null = null,
+  after = false
+): Text {
   const textNode = document.createTextNode(INVISIBLE_SPACE);
 
   if (relativeToSibling) {
@@ -125,8 +136,12 @@ export function isLI(node: Node): node is HTMLLIElement {
  * @public
  */
 export function isVoidElement(node: Node): boolean {
-  return isElement(node)
-    && /^(AREA|BASE|BR|COL|EMBED|HR|IMG|INPUT|LINK|META|PARAM|SOURCE|TRACK|WBR)$/i.test(node.tagName);
+  return (
+    isElement(node) &&
+    /^(AREA|BASE|BR|COL|EMBED|HR|IMG|INPUT|LINK|META|PARAM|SOURCE|TRACK|WBR)$/i.test(
+      node.tagName
+    )
+  );
 }
 
 /**
@@ -138,7 +153,7 @@ export function isVoidElement(node: Node): boolean {
  */
 export function isAllWhitespace(node: Text): boolean {
   // Use ECMA-262 Edition 3 String and RegExp features.
-  return !(/[^\t\n\r ]/.test(node.textContent || ""));
+  return !/[^\t\n\r ]/.test(node.textContent || '');
 }
 
 /**
@@ -152,8 +167,8 @@ export function isDisplayedAsBlock(domNode: Node): boolean {
     return false;
   }
 
-  const displayStyle = window.getComputedStyle(domNode)["display"];
-  return displayStyle === "block" || displayStyle === "list-item";
+  const displayStyle = window.getComputedStyle(domNode)['display'];
+  return displayStyle === 'block' || displayStyle === 'list-item';
 }
 
 /**
@@ -165,11 +180,16 @@ export function isDisplayedAsBlock(domNode: Node): boolean {
  * @return {HTMLElement[]} The new dom elements that were inserted [parent, siblingParent].
  * @public
  */
-export function smartSplitTextNode(textNode: Text, splitAt: number): HTMLElement[] {
+export function smartSplitTextNode(
+  textNode: Text,
+  splitAt: number
+): HTMLElement[] {
   const parent = textNode.parentElement;
   if (parent) {
-    const textContent = textNode.textContent || "";
-    const firstTextNode = document.createTextNode(textContent.slice(0, splitAt));
+    const textContent = textNode.textContent || '';
+    const firstTextNode = document.createTextNode(
+      textContent.slice(0, splitAt)
+    );
     const lastTextNode = document.createTextNode(textContent.slice(splitAt));
     const extraParent = parent.cloneNode(false) as HTMLElement;
 
@@ -189,8 +209,56 @@ export function smartSplitTextNode(textNode: Text, splitAt: number): HTMLElement
  * @public
  */
 export function isPhrasingContent(node: HTMLElement): boolean {
-  return !isElement(node) ||
-    ['abbr', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'command', 'data', 'datalist', 'dfn', 'em', 'embed', 'i', 'iframe', 'img', 'input', 'kbd', 'keygen', 'label', 'mark', 'math', 'meter', 'noscript', 'object', 'output', 'picture', 'progress', 'q', 'ruby', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'svg', 'textarea', 'time', 'var', 'video'].includes(tagName(node));
+  return (
+    !isElement(node) ||
+    [
+      'abbr',
+      'audio',
+      'b',
+      'bdo',
+      'br',
+      'button',
+      'canvas',
+      'cite',
+      'code',
+      'command',
+      'data',
+      'datalist',
+      'dfn',
+      'em',
+      'embed',
+      'i',
+      'iframe',
+      'img',
+      'input',
+      'kbd',
+      'keygen',
+      'label',
+      'mark',
+      'math',
+      'meter',
+      'noscript',
+      'object',
+      'output',
+      'picture',
+      'progress',
+      'q',
+      'ruby',
+      'samp',
+      'script',
+      'select',
+      'small',
+      'span',
+      'strong',
+      'sub',
+      'sup',
+      'svg',
+      'textarea',
+      'time',
+      'var',
+      'video',
+    ].includes(tagName(node))
+  );
 }
 
 /**
@@ -204,8 +272,7 @@ export function isList(node?: Node | null): node is HTMLElement {
     return false;
   }
 
-  return isElement(node)
-    && ["ul", "ol"].includes(node.tagName.toLowerCase());
+  return isElement(node) && ['ul', 'ol'].includes(node.tagName.toLowerCase());
 }
 
 /**
@@ -233,7 +300,9 @@ export function siblingLis(node: HTMLLIElement): HTMLLIElement[] {
  * @method getAllLisFromList
  * @public
  */
-export function getAllLisFromList(list: HTMLUListElement | HTMLOListElement): HTMLLIElement[] {
+export function getAllLisFromList(
+  list: HTMLUListElement | HTMLOListElement
+): HTMLLIElement[] {
   const listItems: HTMLLIElement[] = [];
   for (const element of [...list.children]) {
     if (isLI(element)) {
@@ -250,7 +319,9 @@ export function getAllLisFromList(list: HTMLUListElement | HTMLOListElement): HT
  * @method isEmptyList
  * @public
  */
-export function isEmptyList(node: HTMLUListElement | HTMLOListElement): boolean {
+export function isEmptyList(
+  node: HTMLUListElement | HTMLOListElement
+): boolean {
   if (!isList(node)) {
     return false;
   }
@@ -273,7 +344,11 @@ export function isEmptyList(node: HTMLUListElement | HTMLOListElement): boolean 
  * @public
  */
 export function isIgnorableElement(node: Text): boolean {
-  return isTextNode(node) && node.parentElement !== null && tagName(node.parentElement) === "ul";
+  return (
+    isTextNode(node) &&
+    node.parentElement !== null &&
+    tagName(node.parentElement) === 'ul'
+  );
 }
 
 /**
@@ -283,7 +358,11 @@ export function isIgnorableElement(node: Text): boolean {
  * @deprecated Use ChildNode.after.
  * @public
  */
-export function insertNodeBAfterNodeA(_parent: HTMLElement, nodeA: ChildNode, nodeB: ChildNode) {
+export function insertNodeBAfterNodeA(
+  _parent: HTMLElement,
+  nodeA: ChildNode,
+  nodeB: ChildNode
+) {
   nodeA.after(nodeB);
 }
 
@@ -295,10 +374,10 @@ export function insertNodeBAfterNodeA(_parent: HTMLElement, nodeA: ChildNode, no
  */
 export function tagName(node?: Node | null): string {
   if (!node) {
-    return "";
+    return '';
   }
 
-  return isElement(node) ? node.tagName.toLowerCase() : "";
+  return isElement(node) ? node.tagName.toLowerCase() : '';
 }
 
 /**
@@ -309,7 +388,7 @@ export function tagName(node?: Node | null): string {
  * @public
  */
 export function isBlockOrBr(node: HTMLElement): boolean {
-  return tagName(node) === "br" || isDisplayedAsBlock(node);
+  return tagName(node) === 'br' || isDisplayedAsBlock(node);
 }
 
 /**
@@ -319,7 +398,7 @@ export function isBlockOrBr(node: HTMLElement): boolean {
  * @public
  */
 export function createElementsFromHTML(htmlString: string): ChildNode[] {
-  const div = document.createElement("div");
+  const div = document.createElement('div');
   div.innerHTML = htmlString.trim();
 
   return Array.from(div.childNodes);
@@ -367,8 +446,10 @@ export function getParentLI(node: Node): HTMLLIElement | null {
  * @deprecated
  * @public
  */
-export function getListTagName(listElement: HTMLUListElement | HTMLOListElement): "ul" | "ol" {
-  return tagName(listElement) === "ul" ? "ul" : "ol";
+export function getListTagName(
+  listElement: HTMLUListElement | HTMLOListElement
+): 'ul' | 'ol' {
+  return tagName(listElement) === 'ul' ? 'ul' : 'ol';
 }
 
 /**
@@ -387,22 +468,24 @@ export function getListTagName(listElement: HTMLUListElement | HTMLOListElement)
  * @param {PernetSelection} selection
  * @return {PernetSelectionBlock[]} array of selections
  */
-export function findWrappingSuitableNodes(selection: PernetSelection): PernetSelectionBlock[] {
+export function findWrappingSuitableNodes(
+  selection: PernetSelection
+): PernetSelectionBlock[] {
   if (!selection.selectedHighlightRange) {
     // TODO: Support context selections as well.
     // This might be fairly trivial, but focussing on text selection for now.
-    throw new Error("currently only selectedHighlightRange is supported");
+    throw new Error('currently only selectedHighlightRange is supported');
   }
 
   const nodes = [];
   const domNodes: Node[] = [];
   const [start, end] = selection.selectedHighlightRange;
-  for (const {richNode, range} of selection.selections) {
+  for (const { richNode, range } of selection.selections) {
     if (richNode.start < start || richNode.end > end) {
       // This node only partially matches the selected range,
       // so it needs to be split up later and we can't walk up the tree.
       if (!domNodes.includes(richNode.domNode)) {
-        nodes.push({richNode, range, split: true});
+        nodes.push({ richNode, range, split: true });
         domNodes.push(richNode.domNode);
       }
     } else {
@@ -411,12 +494,21 @@ export function findWrappingSuitableNodes(selection: PernetSelection): PernetSel
       const isNotRootNode = function (richNode: RichNode): boolean {
         return !!richNode.parent;
       };
-      while (current.parent && isNotRootNode(current.parent) && current.parent.start >= start && current.parent.end <= end) {
+      while (
+        current.parent &&
+        isNotRootNode(current.parent) &&
+        current.parent.start >= start &&
+        current.parent.end <= end
+      ) {
         current = current.parent;
       }
 
       if (!domNodes.includes(current.domNode)) {
-        nodes.push({richNode: current, range: [current.start, current.end], split: false});
+        nodes.push({
+          richNode: current,
+          range: [current.start, current.end],
+          split: false,
+        });
         domNodes.push(current.domNode);
       }
     }
@@ -426,8 +518,9 @@ export function findWrappingSuitableNodes(selection: PernetSelection): PernetSel
   const actualNodes: PernetSelectionBlock[] = [];
   for (const possibleNode of nodes) {
     const containedInAnotherPossibleNode = nodes.some(
-      (otherNode) => otherNode !== possibleNode
-        && otherNode.richNode.domNode.contains(possibleNode.richNode.domNode)
+      (otherNode) =>
+        otherNode !== possibleNode &&
+        otherNode.richNode.domNode.contains(possibleNode.richNode.domNode)
     );
 
     if (!containedInAnotherPossibleNode) {
@@ -444,9 +537,11 @@ export function findWrappingSuitableNodes(selection: PernetSelection): PernetSel
  * @return {HTMLLIElement | undefined} First li of the given list.
  * @public
  */
-export function findFirstLi(list: HTMLUListElement | HTMLOListElement): HTMLLIElement | undefined {
+export function findFirstLi(
+  list: HTMLUListElement | HTMLOListElement
+): HTMLLIElement | undefined {
   if (!isList(list)) {
-    throw new Error("Invalid argument: node is not a list.");
+    throw new Error('Invalid argument: node is not a list.');
   }
 
   return Array.from(list.childNodes).find(isLI);
@@ -458,9 +553,11 @@ export function findFirstLi(list: HTMLUListElement | HTMLOListElement): HTMLLIEl
  * @return {HTMLLIElement | undefined} Last li of the given list.
  * @public
  */
-export function findLastLi(list: HTMLUListElement | HTMLOListElement): HTMLLIElement | undefined {
+export function findLastLi(
+  list: HTMLUListElement | HTMLOListElement
+): HTMLLIElement | undefined {
   if (!isList(list)) {
-    throw new Error("Invalid argument: node is not a list.");
+    throw new Error('Invalid argument: node is not a list.');
   }
 
   return Array.from(list.children).reverse().find(isLI);
@@ -477,7 +574,11 @@ export function isVisibleElement(element: HTMLElement): boolean {
   // Stolen from https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js
   // SO likes this answer https://stackoverflow.com/a/33456469/1092608
   // Note: There is still some edge case (see comments): "This will return true for an element with visibility:hidden."
-  return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
+  return !!(
+    element.offsetWidth ||
+    element.offsetHeight ||
+    element.getClientRects().length
+  );
 }
 
 /**
@@ -489,8 +590,8 @@ export function getWindowSelection(): Selection {
   const selection = window.getSelection();
   if (!selection) {
     throw new Error(
-      "Window selection not found. This is an error and does not mean" +
-      "the selection was empty"
+      'Window selection not found. This is an error and does not mean' +
+        'the selection was empty'
     );
   }
 
@@ -509,5 +610,4 @@ export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
     path.push(to);
   }
   return path;
-
 }

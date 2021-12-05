@@ -1,10 +1,10 @@
-import {module, test} from "qunit";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
+import { module, test } from 'qunit';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import InsertTableColumnBeforeCommand from '@lblod/ember-rdfa-editor/commands/insert-table-column-before-command';
 
-module("Unit | commands | insert-table-column-before-command-test", hooks => {
+module('Unit | commands | insert-table-column-before-command-test', (hooks) => {
   const ctx = new ModelTestContext();
   let command: InsertTableColumnBeforeCommand;
 
@@ -13,9 +13,12 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     command = new InsertTableColumnBeforeCommand(ctx.model);
   });
 
-  test("inserts column before first column (empty table)", assert => {
+  test('inserts column before first column (empty table)', (assert) => {
     // language=XML
-    const {root: initial, elements: {bottomLeft}} = vdom`
+    const {
+      root: initial,
+      elements: { bottomLeft },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -33,7 +36,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -60,9 +63,12 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts column before first column (table filled with text)", assert => {
+  test('inserts column before first column (table filled with text)', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {bottomLeft}} = vdom`
+    const {
+      root: initial,
+      textNodes: { bottomLeft },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -88,7 +94,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -123,9 +129,12 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts column in the middle (empty table)", assert => {
+  test('inserts column in the middle (empty table)', (assert) => {
     // language=XML
-    const {root: initial, elements: {bottomRight}} = vdom`
+    const {
+      root: initial,
+      elements: { bottomRight },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -143,7 +152,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -170,9 +179,12 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts column in the middle (table filled with text)", assert => {
+  test('inserts column in the middle (table filled with text)', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {bottomRight}} = vdom`
+    const {
+      root: initial,
+      textNodes: { bottomRight },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -198,7 +210,7 @@ module("Unit | commands | insert-table-column-before-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>

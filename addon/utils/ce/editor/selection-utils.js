@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 /**
@@ -24,6 +24,4 @@ function isEmpty(selectedContexts) {
   return selectedContexts.selections.length == 0;
 }
 
-export {
-  isEmpty
-};
+export { isEmpty };

@@ -3,9 +3,9 @@ import {
   render,
   findAll,
   waitUntil,
-} from "@ember/test-helpers";
-import hbs from "htmlbars-inline-precompile";
-import { MagicSpan } from "@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler";
+} from '@ember/test-helpers';
+import hbs from 'htmlbars-inline-precompile';
+import { MagicSpan } from '@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler';
 
 /**
  * Utility to get the editor element in a type-safe way
@@ -13,8 +13,8 @@ import { MagicSpan } from "@lblod/ember-rdfa-editor/editor/input-handlers/delete
  * @returns the editor element
  */
 export function getEditorElement(): Element {
-  const editor = document.querySelector("div[contenteditable]");
-  if (!editor) throw new Error("Editor element not found in dom");
+  const editor = document.querySelector('div[contenteditable]');
+  if (!editor) throw new Error('Editor element not found in dom');
   return editor;
 }
 
@@ -24,7 +24,7 @@ export function getEditorElement(): Element {
  * @returns a promise which simulates a delete keypress
  */
 export async function pressDelete(timeout = 2000): Promise<void> {
-  await triggerKeyEvent("div[contenteditable]", "keydown", "Delete");
+  await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
   await waitUntil(() => findAll(`#${MagicSpan.ID}`).length === 0, {
     timeout,
   });

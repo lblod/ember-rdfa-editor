@@ -1,12 +1,15 @@
-import {module, test, todo} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import {EditorStore} from "@lblod/ember-rdfa-editor/model/util/datastore";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import { module, test, todo } from 'qunit';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { EditorStore } from '@lblod/ember-rdfa-editor/model/util/datastore';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-module("Unit | model | utils | datastore-test", () => {
-  test("simple match gives correct nodes", assert => {
+module('Unit | model | utils | datastore-test', () => {
+  test('simple match gives correct nodes', (assert) => {
     //language=XML
-    const {root, elements: {techNode, other}} = vdom`
+    const {
+      root,
+      elements: { techNode, other },
+    } = vdom`
       <div>
         <span vocab="http://schema.org/" typeof="TechArticle" __id="techNode">
           <a property="url" href="http://www.w3.org/TR/rdfa-primer/">
@@ -25,28 +28,34 @@ module("Unit | model | utils | datastore-test", () => {
       </div>
     `;
 
-    const datastore = EditorStore.fromParse({modelRoot: root, baseIRI: "http://example.com/"});
-    const matched = datastore.match(null, "a", "schema:TechArticle");
+    const datastore = EditorStore.fromParse({
+      modelRoot: root,
+      baseIRI: 'http://example.com/',
+    });
+    const matched = datastore.match(null, 'a', 'schema:TechArticle');
     assert.strictEqual(matched.size, 1);
     const nodes = [...matched.asSubjectNodes()];
     assert.strictEqual(nodes.length, 1);
 
-    assert.strictEqual(nodes[0].subject.termType, "BlankNode");
+    assert.strictEqual(nodes[0].subject.termType, 'BlankNode');
     assert.strictEqual(nodes[0].nodes.size, 1);
     assert.true(nodes[0].nodes.has(techNode));
 
-    const matchedUrl = datastore.match(null, "schema:url");
+    const matchedUrl = datastore.match(null, 'schema:url');
     const nodesWithUrl = [...matchedUrl.asSubjectNodes()];
     assert.strictEqual(nodesWithUrl.length, 2);
 
-    assert.strictEqual(nodesWithUrl[0].subject.termType, "BlankNode");
+    assert.strictEqual(nodesWithUrl[0].subject.termType, 'BlankNode');
     assert.strictEqual(nodesWithUrl[0].nodes.size, 1);
     assert.true(nodesWithUrl[0].nodes.has(techNode));
     assert.true(nodesWithUrl[1].nodes.has(other));
   });
-  test("limitRange limits range", assert => {
+  test('limitRange limits range', (assert) => {
     //language=XML
-    const {root, elements: {techNode}} = vdom`
+    const {
+      root,
+      elements: { techNode },
+    } = vdom`
       <div>
         <span vocab="http://schema.org/" typeof="TechArticle" __id="techNode">
           <a property="url" href="http://www.w3.org/TR/rdfa-primer/">
@@ -65,20 +74,25 @@ module("Unit | model | utils | datastore-test", () => {
       </div>
     `;
 
-    const datastore = EditorStore.fromParse({modelRoot: root, baseIRI: "http://example.com/"});
+    const datastore = EditorStore.fromParse({
+      modelRoot: root,
+      baseIRI: 'http://example.com/',
+    });
 
     const range = ModelRange.fromAroundNode(techNode);
-    const matchedUrl = datastore.limitToRange(range, "rangeContains").match(null, "schema:url");
+    const matchedUrl = datastore
+      .limitToRange(range, 'rangeContains')
+      .match(null, 'schema:url');
     const nodesWithUrl = [...matchedUrl.asSubjectNodes()];
     assert.strictEqual(nodesWithUrl.length, 1);
 
-    assert.strictEqual(nodesWithUrl[0].subject.termType, "BlankNode");
+    assert.strictEqual(nodesWithUrl[0].subject.termType, 'BlankNode');
     assert.strictEqual(nodesWithUrl[0].nodes.size, 1);
     assert.true(nodesWithUrl[0].nodes.has(techNode));
   });
-  test("filtering out subjects also filters out the relevant predicate nodes", assert => {
+  test('filtering out subjects also filters out the relevant predicate nodes', (assert) => {
     //language=XML
-    const {root} = vdom`
+    const { root } = vdom`
       <div vocab="http://data.vlaanderen.be/ns/besluit#"
            prefix="eli: http://data.europa.eu/eli/ontology# prov: http://www.w3.org/ns/prov# mandaat: http://data.vlaanderen.be/ns/mandaat# besluit: http://data.vlaanderen.be/ns/besluit# xsd: http://www.w3.org/2001/XMLSchema#"
            class="app-view">
@@ -110,15 +124,23 @@ module("Unit | model | utils | datastore-test", () => {
         </div>
       </div>
     `;
-    const dataStore = EditorStore.fromParse({modelRoot: root, baseIRI: "http://test.org", pathFromDomRoot: []});
-    const decisionUri = "http://data.lblod.info/artikels/bbeb89ae-998b-4339-8de4-c8ab3a0679b5";
+    const dataStore = EditorStore.fromParse({
+      modelRoot: root,
+      baseIRI: 'http://test.org',
+      pathFromDomRoot: [],
+    });
+    const decisionUri =
+      'http://data.lblod.info/artikels/bbeb89ae-998b-4339-8de4-c8ab3a0679b5';
     const decisionValueStore = dataStore.match(`>${decisionUri}`, 'prov:value');
     assert.strictEqual(decisionValueStore.size, 1);
   });
   // TODO limitToRange currently only works on subjectnodes, tbd how to handle this
-  todo("limitToRange works as expected", assert => {
+  todo('limitToRange works as expected', (assert) => {
     //language=XML
-    const {root, elements: {selected}} = vdom`
+    const {
+      root,
+      elements: { selected },
+    } = vdom`
       <div vocab="http://data.vlaanderen.be/ns/besluit#"
            prefix="eli: http://data.europa.eu/eli/ontology# prov: http://www.w3.org/ns/prov# mandaat: http://data.vlaanderen.be/ns/mandaat# besluit: http://data.vlaanderen.be/ns/besluit# xsd: http://www.w3.org/2001/XMLSchema#"
            class="app-view">
@@ -150,11 +172,12 @@ module("Unit | model | utils | datastore-test", () => {
         </div>
       </div>
     `;
-    const datastore = EditorStore.fromParse({modelRoot: root, baseIRI: "http://test.org"});
+    const datastore = EditorStore.fromParse({
+      modelRoot: root,
+      baseIRI: 'http://test.org',
+    });
     const range = ModelRange.fromAroundNode(selected);
-    const limitedStore = datastore.limitToRange(range, "rangeContains");
+    const limitedStore = datastore.limitToRange(range, 'rangeContains');
     assert.strictEqual(limitedStore.size, 1);
-
-
   });
 });

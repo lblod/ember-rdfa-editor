@@ -1,6 +1,11 @@
-import {isAllWhitespace, isDisplayedAsBlock, tagName, getWindowSelection} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import {runInDebug} from '@ember/debug';
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {
+  isAllWhitespace,
+  isDisplayedAsBlock,
+  tagName,
+  getWindowSelection,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { runInDebug } from '@ember/debug';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  * Awaits until just *after* the next animation frame.
@@ -12,13 +17,14 @@ import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
  * @return {Promise} A promise which resolves when the paint cycle has
  * occurred.
  */
-export function paintCycleHappened() : Promise<void> {
-  return new Promise( (cb) => {
-    requestAnimationFrame( () =>
+export function paintCycleHappened(): Promise<void> {
+  return new Promise((cb) => {
+    requestAnimationFrame(() =>
       setTimeout(() => {
         cb();
-      }, 0 ) );
-  } );
+      }, 0)
+    );
+  });
 }
 
 /**
@@ -41,26 +47,28 @@ export function moveCaret(node: Node, position: number): null | Selection {
   const currentSelection = window.getSelection();
   if (currentSelection) {
     if (node.nodeType == Node.TEXT_NODE) {
-      currentSelection.collapse(node,position);
-    }
-    else if (node.nodeType == Node.ELEMENT_NODE) {
+      currentSelection.collapse(node, position);
+    } else if (node.nodeType == Node.ELEMENT_NODE) {
       const element = node as HTMLElement;
-      if (position > 0 && element.childNodes[position-1].nodeType == Node.TEXT_NODE) {
+      if (
+        position > 0 &&
+        element.childNodes[position - 1].nodeType == Node.TEXT_NODE
+      ) {
         // cheat a bit and move cursor inside the previous text node if possible
-        const textNodeBeforeCursor = element.childNodes[position-1] as Text;
-        currentSelection.collapse(textNodeBeforeCursor, textNodeBeforeCursor.length);
+        const textNodeBeforeCursor = element.childNodes[position - 1] as Text;
+        currentSelection.collapse(
+          textNodeBeforeCursor,
+          textNodeBeforeCursor.length
+        );
+      } else {
+        currentSelection.collapse(node, position);
       }
-      else {
-        currentSelection.collapse(node,position);
-      }
-    }
-    else {
-      currentSelection.collapse(node,position);
+    } else {
+      currentSelection.collapse(node, position);
     }
     return currentSelection;
-  }
-  else {
-    throw "window.getSelection did not return a selection";
+  } else {
+    throw 'window.getSelection did not return a selection';
   }
 }
 
@@ -69,27 +77,29 @@ export function moveCaret(node: Node, position: number): null | Selection {
  * @method moveCaretBefore
  * @param {ChildNode} child
  */
-export function moveCaretBefore(child: ChildNode) : null | Selection {
+export function moveCaretBefore(child: ChildNode): null | Selection {
   const parentElement = child.parentElement;
   if (parentElement) {
     const indexOfChild = Array.from(parentElement.childNodes).indexOf(child);
     return moveCaret(parentElement, indexOfChild);
-  }
-  else {
-    console.warn('trying to move cursor before a child that is no longer connected to the dom tree');
+  } else {
+    console.warn(
+      'trying to move cursor before a child that is no longer connected to the dom tree'
+    );
     return null;
   }
 }
 
-export function moveCaretAfter(child: ChildNode) : null | Selection {
+export function moveCaretAfter(child: ChildNode): null | Selection {
   const parentElement = child.parentElement;
   if (parentElement) {
     const indexOfChild = Array.from(parentElement.childNodes).indexOf(child);
     //Note: index is always <= position, so no off by one possible
     return moveCaret(parentElement, indexOfChild + 1);
-  }
-  else {
-    console.warn('trying to move cursor before a child that is no longer connected to the dom tree');
+  } else {
+    console.warn(
+      'trying to move cursor before a child that is no longer connected to the dom tree'
+    );
     return null;
   }
 }
@@ -118,47 +128,51 @@ export function moveCaretToEndOfNode(node: Node): Selection {
  * @return boolean
  * @param parent
  */
-export function hasVisibleChildren(parent: Element) : boolean {
-    if (parent.childNodes.length === 0) {
-      // no need to check empty elements from check
-      return false;
-    }
-
-    let hasVisibleChildren = false;
-    for (const child of Array.from(parent.childNodes)) {
-      if (child.nodeType == Node.TEXT_NODE) {
-        const textNode = child as Text;
-        if (textNode.textContent && stringToVisibleText(textNode.textContent).length > 0  ) {
-          hasVisibleChildren = true;
-        }
-      }
-      else if (child.nodeType == Node.ELEMENT_NODE ) {
-        const element = child as HTMLElement;
-        if (element.nextSibling && tagName(element) == 'br') {
-          // it's a br, but not the last br which we can ignore (most of the time...)
-          hasVisibleChildren = true;
-        }
-        else if (element.innerText.length > 0) {
-          // it has visible text content so it is visible
-          hasVisibleChildren = true;
-        }
-        else if (element.clientWidth > 0) {
-          // it has visible width so it is visible
-          hasVisibleChildren = true;
-        }
-        else {
-          editorDebug('hasVisibleChildren',
-                      'assuming this node is not visible', child);
-        }
-      }
-      else {
-        // we assume other nodes can be ignored for now
-        editorDebug('hasVisibleChildren',
-                    'ignoring node, assuming non visible', child);
-      }
-    }
-    return hasVisibleChildren;
+export function hasVisibleChildren(parent: Element): boolean {
+  if (parent.childNodes.length === 0) {
+    // no need to check empty elements from check
+    return false;
   }
+
+  let hasVisibleChildren = false;
+  for (const child of Array.from(parent.childNodes)) {
+    if (child.nodeType == Node.TEXT_NODE) {
+      const textNode = child as Text;
+      if (
+        textNode.textContent &&
+        stringToVisibleText(textNode.textContent).length > 0
+      ) {
+        hasVisibleChildren = true;
+      }
+    } else if (child.nodeType == Node.ELEMENT_NODE) {
+      const element = child as HTMLElement;
+      if (element.nextSibling && tagName(element) == 'br') {
+        // it's a br, but not the last br which we can ignore (most of the time...)
+        hasVisibleChildren = true;
+      } else if (element.innerText.length > 0) {
+        // it has visible text content so it is visible
+        hasVisibleChildren = true;
+      } else if (element.clientWidth > 0) {
+        // it has visible width so it is visible
+        hasVisibleChildren = true;
+      } else {
+        editorDebug(
+          'hasVisibleChildren',
+          'assuming this node is not visible',
+          child
+        );
+      }
+    } else {
+      // we assume other nodes can be ignored for now
+      editorDebug(
+        'hasVisibleChildren',
+        'ignoring node, assuming non visible',
+        child
+      );
+    }
+  }
+  return hasVisibleChildren;
+}
 
 /**
  * Removes all whitespace, with the exception of non breaking spaces
@@ -176,11 +190,14 @@ export function hasVisibleChildren(parent: Element) : boolean {
  * @method stringToVisibleText
  * @public
  */
-export function stringToVisibleText(string : string) : string {
+export function stringToVisibleText(string: string): string {
   // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
   return string
-    .replace(new RegExp(`[${INVISIBLE_SPACE}]+`,'g'),'')
-    .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,'');
+    .replace(new RegExp(`[${INVISIBLE_SPACE}]+`, 'g'), '')
+    .replace(
+      /[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,
+      ''
+    );
 }
 
 /**
@@ -198,34 +215,34 @@ export function stringToVisibleText(string : string) : string {
  * @method ensureValidTextNodeForCaret
  * @public
  *
-*/
-export function ensureValidTextNodeForCaret(textNode : Text): Text {
+ */
+export function ensureValidTextNodeForCaret(textNode: Text): Text {
   const parentElement = textNode.parentElement;
   const nextSibling = textNode.nextElementSibling;
   const previousSibling = textNode.previousElementSibling;
   //To be sure, we check for the whole neighbourhood of textNodes.
-  const siblingsTextNodeNeighborhood = growAdjacentTextNodeNeighborhood(textNode);
+  const siblingsTextNodeNeighborhood =
+    growAdjacentTextNodeNeighborhood(textNode);
 
-  if(isWhiteSpaceTextNodesArray(siblingsTextNodeNeighborhood)){
-
+  if (isWhiteSpaceTextNodesArray(siblingsTextNodeNeighborhood)) {
     //Suppose textNode == [whiteSpace] and caret will be set there
 
     //case ```<div>foo</div>textNode``` -> caret will dissapear
-    if (previousSibling && isDisplayedAsBlock(previousSibling)){
+    if (previousSibling && isDisplayedAsBlock(previousSibling)) {
       //TODO: In theory the region could be merged.
       // But somewhere it feels better to minify the DOM operations. TBD
-       textNode.textContent = INVISIBLE_SPACE;
+      textNode.textContent = INVISIBLE_SPACE;
     }
 
     //case ```textNode<div>foo</div>``` -> caret will dissapear
-     else if(nextSibling && isDisplayedAsBlock(nextSibling)){
-       textNode.textContent = INVISIBLE_SPACE;
-     }
+    else if (nextSibling && isDisplayedAsBlock(nextSibling)) {
+      textNode.textContent = INVISIBLE_SPACE;
+    }
 
     //case ```<div>textNode</div>``` -> caret will dissapear
-     else if(parentElement && isDisplayedAsBlock(parentElement)){
-       textNode.textContent = INVISIBLE_SPACE;
-     }
+    else if (parentElement && isDisplayedAsBlock(parentElement)) {
+      textNode.textContent = INVISIBLE_SPACE;
+    }
     //Note: There is still a bug. There is no check if sbiling are inline elements...
   }
   return textNode;
@@ -236,20 +253,26 @@ export function ensureValidTextNodeForCaret(textNode : Text): Text {
  * @method ensureValidTextNodeForCaret
  * @public
  */
-export function growAdjacentTextNodeNeighborhood(textNode: Text) : Array<Text> {
+export function growAdjacentTextNodeNeighborhood(textNode: Text): Array<Text> {
   let region = new Array<Text>();
   let currentNode = textNode;
 
-  while(currentNode.previousSibling && currentNode.previousSibling.nodeType === Node.TEXT_NODE){
+  while (
+    currentNode.previousSibling &&
+    currentNode.previousSibling.nodeType === Node.TEXT_NODE
+  ) {
     region.push(currentNode.previousSibling as Text);
     currentNode = currentNode.previousSibling as Text;
   }
 
-  region = [ ...region, textNode];
+  region = [...region, textNode];
 
   currentNode = textNode;
 
-  while(currentNode.nextSibling && currentNode.nextSibling.nodeType === Node.TEXT_NODE){
+  while (
+    currentNode.nextSibling &&
+    currentNode.nextSibling.nodeType === Node.TEXT_NODE
+  ) {
     region.push(currentNode.nextSibling as Text);
     currentNode = currentNode.nextSibling as Text;
   }
@@ -261,13 +284,17 @@ export function growAdjacentTextNodeNeighborhood(textNode: Text) : Array<Text> {
  * @method isWhiteSpaceTextNodesArray
  * @public
  */
-export function isWhiteSpaceTextNodesArray(textNodes: Array<Text>) : boolean {
-  return ! textNodes.some(textNode => ! isAllWhitespace(textNode) );
+export function isWhiteSpaceTextNodesArray(textNodes: Array<Text>): boolean {
+  return !textNodes.some((textNode) => !isAllWhitespace(textNode));
 }
 
 /**
  * utility function for debug messages, allows messages to easily be disabled
  */
-export function editorDebug(callerName: string, message : string, ...args : unknown[]) : void {
-  runInDebug( () => console.debug(`${callerName}: ${message}`, ...args)); // eslint-disable-line no-console
+export function editorDebug(
+  callerName: string,
+  message: string,
+  ...args: unknown[]
+): void {
+  runInDebug(() => console.debug(`${callerName}: ${message}`, ...args)); // eslint-disable-line no-console
 }

@@ -5,9 +5,8 @@
 /* Variables
   ========================================================================== */
 
-$say-editor-sidebar-medium       : 30% !default;
-$say-editor-sidebar-large        : 30% !default;
-
+$say-editor-sidebar-medium: 30% !default;
+$say-editor-sidebar-large: 30% !default;
 
 /* Component
   ========================================================================== */
@@ -24,43 +23,46 @@ $say-editor-sidebar-large        : 30% !default;
   }
 }
 
-  .say-container__main {
-    overflow: auto;
+.say-container__main {
+  overflow: auto;
+}
+
+.say-container__aside {
+  position: absolute;
+  bottom: 0;
+  right: $au-unit-small + $au-unit-tiny;
+  width: 380px;
+  max-height: calc(100% - 44px);
+  overflow: auto;
+  padding: $au-unit-small $au-unit-small + $au-unit-tiny;
+
+  .say-container--toolbar-bottom & {
+    top: 0;
+    bottom: auto;
   }
 
-  .say-container__aside {
-    position: absolute;
-    bottom: 0;
-    right: $au-unit-small + $au-unit-tiny;
-    width: 380px;
-    max-height: calc(100% - 44px);
-    overflow: auto;
-    padding: $au-unit-small $au-unit-small + $au-unit-tiny;
+  .say-container--paper.say-container--sidebar-right & {
+    top: 44px;
+  }
 
-    .say-container--toolbar-bottom & {
-      top: 0;
-      bottom: auto;
-    }
+  .say-container--paper.say-container--toolbar-bottom &,
+  .say-container--paper.say-container--toolbar-bottom.say-container--sidebar-right
+    & {
+    top: 0;
+  }
+
+  @include mq(medium) {
+    width: $say-editor-sidebar-medium;
 
     .say-container--paper.say-container--sidebar-right & {
-      top: 44px;
-    }
-
-    .say-container--paper.say-container--toolbar-bottom &,
-    .say-container--paper.say-container--toolbar-bottom.say-container--sidebar-right & {
-      top: 0;
-    }
-
-    @include mq(medium) {
-      width: $say-editor-sidebar-medium;
-
-      .say-container--paper.say-container--sidebar-right & {
-        padding: $au-unit;
-        bottom: auto;
-      }
-    }
-
-    @include mq(1280px) {
-      width: calc(#{$say-editor-sidebar-large} - #{$au-unit-small + $au-unit-tiny});
+      padding: $au-unit;
+      bottom: auto;
     }
   }
+
+  @include mq(1280px) {
+    width: calc(
+      #{$say-editor-sidebar-large} - #{$au-unit-small + $au-unit-tiny}
+    );
+  }
+}

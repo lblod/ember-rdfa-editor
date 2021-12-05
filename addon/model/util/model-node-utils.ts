@@ -1,17 +1,26 @@
-import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import {
   LIST_CONTAINERS,
   LIST_TYPES,
   PLACEHOLDER_CLASS,
-  TABLE_CELLS
-} from "@lblod/ember-rdfa-editor/model/util/constants";
+  TABLE_CELLS,
+} from '@lblod/ember-rdfa-editor/model/util/constants';
 
 export default class ModelNodeUtils {
-  static DEFAULT_IGNORED_ATTRS: Set<string> = new Set(["__dummy_test_attr", "__id", "data-editor-position-level", "data-editor-rdfa-position-level"]);
+  static DEFAULT_IGNORED_ATTRS: Set<string> = new Set([
+    '__dummy_test_attr',
+    '__id',
+    'data-editor-position-level',
+    'data-editor-rdfa-position-level',
+  ]);
 
-  static areAttributeMapsSame(map1: Map<string, string>, map2: Map<string, string>, ignore: Set<string> = ModelNodeUtils.DEFAULT_IGNORED_ATTRS): boolean {
+  static areAttributeMapsSame(
+    map1: Map<string, string>,
+    map2: Map<string, string>,
+    ignore: Set<string> = ModelNodeUtils.DEFAULT_IGNORED_ATTRS
+  ): boolean {
     const filtered1 = new Map();
     map1.forEach((val, key) => {
       if (!ignore.has(key)) {
@@ -38,7 +47,7 @@ export default class ModelNodeUtils {
   }
 
   static isListElement(node: ModelNode | null): node is ModelElement {
-    return ModelNode.isModelElement(node) && node.type === "li";
+    return ModelNode.isModelElement(node) && node.type === 'li';
   }
 
   static isTableCell(node: ModelNode | null): node is ModelElement {
@@ -46,10 +55,17 @@ export default class ModelNodeUtils {
   }
 
   static isPlaceHolder(node: ModelNode): node is ModelElement {
-    return ModelNode.isModelElement(node) && !!node.getAttribute("class")?.includes(PLACEHOLDER_CLASS);
+    return (
+      ModelNode.isModelElement(node) &&
+      !!node.getAttribute('class')?.includes(PLACEHOLDER_CLASS)
+    );
   }
 
-  static findAncestor(node: ModelNode | null, predicate: (node: ModelNode) => boolean, includeSelf = false): ModelNode | null {
+  static findAncestor(
+    node: ModelNode | null,
+    predicate: (node: ModelNode) => boolean,
+    includeSelf = false
+  ): ModelNode | null {
     if (!node) {
       return null;
     }

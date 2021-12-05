@@ -1,8 +1,8 @@
-import {parseXml} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import { parseXml } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 //@formatter:off
 // DO NOT FORMAT THIS FILE
 // language=XML
-export const stackOverFlowOnGetMinimumConfinedRanges = parseXml( `
+export const stackOverFlowOnGetMinimumConfinedRanges = parseXml(`
 
 <div contenteditable="" class="say-editor__inner say-content"><div property="prov:generated" resource="http://data.lblod.info/id/besluiten/0be6f42c-590e-46d3-92ef-f725680c558f" typeof="besluit:Besluit ext:BesluitNieuweStijl"><text>
   </text><p><text>Openbare titel besluit:</text></p><text>

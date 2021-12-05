@@ -23,5 +23,5 @@ export default EmberObject.extend({
    * @default false
    * @public
    */
-  allowBrowserDefault: false
+  allowBrowserDefault: false,
 });

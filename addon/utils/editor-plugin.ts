@@ -8,10 +8,9 @@
  * There is however no real distinction between them and "external" plugins,
  * they use the exact same interface to do their thing.
  */
-import Controller from "@lblod/ember-rdfa-editor/model/controller";
+import Controller from '@lblod/ember-rdfa-editor/model/controller';
 
 export interface EditorPlugin {
-
   /**
    * Name of the plugin. Should be unique.
    * Convention is to use kebab-case for plugin names and to not repeat the word "plugin".

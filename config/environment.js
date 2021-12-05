@@ -6,8 +6,8 @@ module.exports = function (environment) {
       'editor-html-paste': true,
       'editor-force-paragraph': false,
       'editor-cut': true,
-      'editor-copy': true
-    }
+      'editor-copy': true,
+    },
   };
 
   if (environment === 'development') {

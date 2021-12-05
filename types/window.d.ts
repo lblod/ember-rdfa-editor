@@ -1,6 +1,6 @@
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import { LogLevels } from "diary";
-import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import { LogLevels } from 'diary';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 
 declare global {
   interface Window {

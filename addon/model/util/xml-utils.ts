@@ -1,11 +1,13 @@
-import XmlReader, {XmlReaderResult} from "@lblod/ember-rdfa-editor/model/readers/xml-reader";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
-import { oneLineTrim } from "common-tags";
+import XmlReader, {
+  XmlReaderResult,
+} from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import XmlWriter from '@lblod/ember-rdfa-editor/model/writers/xml-writer';
+import { oneLineTrim } from 'common-tags';
 
 export function parseXml(xml: string): XmlReaderResult {
   const parser = new DOMParser();
-  const doc = parser.parseFromString(xml, "application/xml");
+  const doc = parser.parseFromString(xml, 'application/xml');
 
   const reader = new XmlReader();
   return reader.read(doc.firstElementChild!);
@@ -14,16 +16,16 @@ export function parseXml(xml: string): XmlReaderResult {
 export function parseXmlSiblings(xml: string): ModelNode[] {
   const parser = new DOMParser();
   const xmlToParse = `<div>${xml}</div>`;
-  const doc = parser.parseFromString(xmlToParse, "application/xml");
+  const doc = parser.parseFromString(xmlToParse, 'application/xml');
 
   const reader = new XmlReader();
   if (!doc.firstElementChild) {
-    throw new Error("Resulting document has no nodes in it");
+    throw new Error('Resulting document has no nodes in it');
   }
 
   const topContainer = reader.read(doc.firstElementChild).root;
   if (!ModelNode.isModelElement(topContainer)) {
-    throw new Error("Container is not an element");
+    throw new Error('Container is not an element');
   }
 
   return topContainer.children;
@@ -31,20 +33,25 @@ export function parseXmlSiblings(xml: string): ModelNode[] {
 
 export function parseHtml(html: string): HTMLDocument {
   const parser = new DOMParser();
-  return parser.parseFromString(html, "text/html");
+  return parser.parseFromString(html, 'text/html');
 }
 
 function buildString(strings: TemplateStringsArray, ...expressions: unknown[]) {
   let result = '';
 
-  for(let i = 0; i<expressions.length; i++){
-    result += `${strings[i]}${(expressions[i] as Record<string, unknown>).toString()}`;
+  for (let i = 0; i < expressions.length; i++) {
+    result += `${strings[i]}${(
+      expressions[i] as Record<string, unknown>
+    ).toString()}`;
   }
   result += strings[expressions.length];
   return result;
 }
 
-export function vdom(strings: TemplateStringsArray, ...expressions: unknown[]): XmlReaderResult {
+export function vdom(
+  strings: TemplateStringsArray,
+  ...expressions: unknown[]
+): XmlReaderResult {
   const xmlStr = buildString(strings, ...expressions);
   return parseXml(xmlStr);
 }
@@ -66,7 +73,10 @@ export function dom(strings: TemplateStringsArray, ...expressions: unknown[]) {
  * @param expressions
  */
 
-export function domStripped(strings: TemplateStringsArray, ...expressions: unknown[]): HTMLDocument {
+export function domStripped(
+  strings: TemplateStringsArray,
+  ...expressions: unknown[]
+): HTMLDocument {
   const htmlStr = oneLineTrim(strings, ...expressions);
   return parseHtml(htmlStr);
 }
@@ -74,5 +84,4 @@ export function domStripped(strings: TemplateStringsArray, ...expressions: unkno
 export function printModel(modelNode: ModelNode) {
   const writer = new XmlWriter();
   return writer.write(modelNode);
-
 }

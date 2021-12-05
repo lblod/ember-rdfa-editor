@@ -1,10 +1,10 @@
-import {module, test} from "qunit";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list-command";
+import { module, test } from 'qunit';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import UnindentListCommand from '@lblod/ember-rdfa-editor/commands/unindent-list-command';
 
-module("Unit | commands | unindent-list-command-test", hooks => {
+module('Unit | commands | unindent-list-command-test', (hooks) => {
   let command: UnindentListCommand;
   const ctx = new ModelTestContext();
   hooks.beforeEach(() => {
@@ -12,31 +12,33 @@ module("Unit | commands | unindent-list-command-test", hooks => {
     command = new UnindentListCommand(ctx.model);
   });
 
-  test("should unindent simple list", assert => {
-    const {modelSelection, model: {rootModelNode}} = ctx;
+  test('should unindent simple list', (assert) => {
+    const {
+      modelSelection,
+      model: { rootModelNode },
+    } = ctx;
 
-    const ul11 = new ModelElement("ul");
-    const li11 = new ModelElement("li");
-    const li12 = new ModelElement("li");
-    const li13 = new ModelElement("li");
-    const li14 = new ModelElement("li");
+    const ul11 = new ModelElement('ul');
+    const li11 = new ModelElement('li');
+    const li12 = new ModelElement('li');
+    const li13 = new ModelElement('li');
+    const li14 = new ModelElement('li');
 
-    const ul21 = new ModelElement("ul");
-    const li21 = new ModelElement("li");
-    const li22 = new ModelElement("li");
-    const li23 = new ModelElement("li");
-    const li24 = new ModelElement("li");
+    const ul21 = new ModelElement('ul');
+    const li21 = new ModelElement('li');
+    const li22 = new ModelElement('li');
+    const li23 = new ModelElement('li');
+    const li24 = new ModelElement('li');
 
-    const content11 = new ModelText("test");
-    const content12 = new ModelText("test");
-    const content13 = new ModelText("test");
-    const content14 = new ModelText("test");
+    const content11 = new ModelText('test');
+    const content12 = new ModelText('test');
+    const content13 = new ModelText('test');
+    const content14 = new ModelText('test');
 
-    const content21 = new ModelText("test");
-    const content22 = new ModelText("test");
-    const content23 = new ModelText("test");
-    const content24 = new ModelText("test");
-
+    const content21 = new ModelText('test');
+    const content22 = new ModelText('test');
+    const content23 = new ModelText('test');
+    const content24 = new ModelText('test');
 
     rootModelNode.addChild(ul11);
 
@@ -65,10 +67,5 @@ module("Unit | commands | unindent-list-command-test", hooks => {
     command.execute();
 
     assert.strictEqual(content21.parent?.parent, ul11);
-
   });
-
-
 });
-
-

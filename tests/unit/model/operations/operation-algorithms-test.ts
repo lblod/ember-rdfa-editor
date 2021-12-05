@@ -1,12 +1,16 @@
-import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/operation-algorithms";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import { module, test } from 'qunit';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-module("Unit | model | operations | operation-algorithms-test", () => {
-  test("should only remove selected nodes", assert => {
-    const {root: initial, elements: {rangeStart}, textNodes: {rangeEnd}} = vdom`
+module('Unit | model | operations | operation-algorithms-test', () => {
+  test('should only remove selected nodes', (assert) => {
+    const {
+      root: initial,
+      elements: { rangeStart },
+      textNodes: { rangeEnd },
+    } = vdom`
       <modelRoot>
         <div __id="rangeStart">
           <span>
@@ -20,7 +24,7 @@ module("Unit | model | operations | operation-algorithms-test", () => {
       </modelRoot>
     `;
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div __id="rangeStart">
           <span>
@@ -39,16 +43,19 @@ module("Unit | model | operations | operation-algorithms-test", () => {
     assert.true(initial.sameAs(expected));
   });
 
-  test("remove splits when range is collapsed", assert => {
+  test('remove splits when range is collapsed', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {rangeStart}} = vdom`
+    const {
+      root: initial,
+      textNodes: { rangeStart },
+    } = vdom`
       <modelRoot>
         <text __id="rangeStart">abcd</text>
       </modelRoot>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text>ab</text>
         <text>cd</text>
@@ -59,9 +66,12 @@ module("Unit | model | operations | operation-algorithms-test", () => {
     assert.true(initial.sameAs(expected));
   });
 
-  test("remove removes things in document order", assert => {
+  test('remove removes things in document order', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {rangeStart, rangeEnd}} = vdom`
+    const {
+      root: initial,
+      textNodes: { rangeStart, rangeEnd },
+    } = vdom`
       <modelRoot>
         <div>
           <text __id="rangeStart">abcd</text>
@@ -81,7 +91,7 @@ module("Unit | model | operations | operation-algorithms-test", () => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text>ab</text>

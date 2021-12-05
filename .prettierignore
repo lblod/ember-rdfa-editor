@@ -1,6 +1,7 @@
 # unconventional js
 /blueprints/*/files/
 /vendor/
+/tests/dummy/app/config/sample-data.*
 
 # compiled output
 /dist/

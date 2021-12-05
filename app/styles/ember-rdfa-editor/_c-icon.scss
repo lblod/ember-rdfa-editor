@@ -4,10 +4,9 @@
 
 /* Variables
   ========================================================================== */
-$say-icon-size        : 1.3rem !default;
-$say-icon-size-medium : 1.25rem !default;
-$say-icon-size-large  : 1.7rem !default;
-
+$say-icon-size: 1.3rem !default;
+$say-icon-size-medium: 1.25rem !default;
+$say-icon-size-large: 1.7rem !default;
 
 /* Component
   ========================================================================== */
@@ -22,7 +21,6 @@ $say-icon-size-large  : 1.7rem !default;
   stroke: currentColor;
   fill: currentColor;
 }
-
 
 /* Modifiers
   ========================================================================== */

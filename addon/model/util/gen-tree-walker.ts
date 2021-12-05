@@ -1,9 +1,12 @@
-import {FilterResult} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {AssertionError, NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {NOOP} from "@lblod/ember-rdfa-editor/model/util/constants";
+import { FilterResult } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import {
+  AssertionError,
+  NotImplementedError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { NOOP } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 export interface Walkable {
   parentNode: Walkable | null;
@@ -13,7 +16,8 @@ export interface Walkable {
   previousSibling: Walkable | null;
 }
 
-export type GenTreeWalkerConfig<T extends Walkable> = StartEndTreeWalkerConfig<T>;
+export type GenTreeWalkerConfig<T extends Walkable> =
+  StartEndTreeWalkerConfig<T>;
 export type NodeHandler<T extends Walkable> = (node: T) => void;
 
 export interface BaseTreeWalkerConfig<T extends Walkable> {
@@ -25,25 +29,31 @@ export interface BaseTreeWalkerConfig<T extends Walkable> {
   visitParentUpwards?: boolean;
 }
 
-export interface RootTreeWalkerConfig<T extends Walkable> extends BaseTreeWalkerConfig<T> {
+export interface RootTreeWalkerConfig<T extends Walkable>
+  extends BaseTreeWalkerConfig<T> {
   root: T;
 }
 
-export interface StartEndTreeWalkerConfig<T extends Walkable> extends BaseTreeWalkerConfig<T> {
+export interface StartEndTreeWalkerConfig<T extends Walkable>
+  extends BaseTreeWalkerConfig<T> {
   start?: T;
   end?: T;
   root: T;
 }
 
-export interface ModelRangeTreeWalkerConfig extends BaseTreeWalkerConfig<ModelNode> {
+export interface ModelRangeTreeWalkerConfig
+  extends BaseTreeWalkerConfig<ModelNode> {
   range: ModelRange;
 }
 
 export interface TreeWalkerFactory {
+  fromSubTree<U extends Walkable>(
+    config: RootTreeWalkerConfig<U>
+  ): GenTreeWalker<U>;
 
-  fromSubTree<U extends Walkable>(config: RootTreeWalkerConfig<U>): GenTreeWalker<U>;
-
-  fromStartEnd<U extends Walkable>(config: StartEndTreeWalkerConfig<U>): GenTreeWalker<U>;
+  fromStartEnd<U extends Walkable>(
+    config: StartEndTreeWalkerConfig<U>
+  ): GenTreeWalker<U>;
 
   fromRange(config: ModelRangeTreeWalkerConfig): GenTreeWalker<ModelNode>;
 }
@@ -64,28 +74,30 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
   private _onLeaveNode: NodeHandler<T>;
 
   constructor({
-                root,
-                start = root,
-                end,
-                descend = true,
-                visitParentUpwards = false,
-                filter = () => FilterResult.FILTER_ACCEPT,
-                reverse = false,
-                onEnterNode = NOOP,
-                onLeaveNode = NOOP
-              }: GenTreeWalkerConfig<T>) {
+    root,
+    start = root,
+    end,
+    descend = true,
+    visitParentUpwards = false,
+    filter = () => FilterResult.FILTER_ACCEPT,
+    reverse = false,
+    onEnterNode = NOOP,
+    onLeaveNode = NOOP,
+  }: GenTreeWalkerConfig<T>) {
     this._root = root;
     this._start = start;
     this._end = end;
     this.descend = descend;
     if (visitParentUpwards) {
-      throw new NotImplementedError("WIP, not implemented yet");
+      throw new NotImplementedError('WIP, not implemented yet');
     }
     if (!descend) {
-      throw new NotImplementedError("WIP, not implemented yet");
+      throw new NotImplementedError('WIP, not implemented yet');
     }
     if (end && !descend) {
-      throw new NotImplementedError("It is currently not supported to disable descending while also providing an explicit endNode.");
+      throw new NotImplementedError(
+        'It is currently not supported to disable descending while also providing an explicit endNode.'
+      );
     }
     this.visitParentUpwards = visitParentUpwards;
     this._filter = filter;
@@ -96,17 +108,32 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     this._onLeaveNode = onLeaveNode;
   }
 
-
-  static fromSubTree<U extends Walkable>(config: RootTreeWalkerConfig<U>): GenTreeWalker<U> {
-    return new GenTreeWalker<U>({...config, start: undefined, end: undefined});
+  static fromSubTree<U extends Walkable>(
+    config: RootTreeWalkerConfig<U>
+  ): GenTreeWalker<U> {
+    return new GenTreeWalker<U>({
+      ...config,
+      start: undefined,
+      end: undefined,
+    });
   }
 
   static fromStartEnd<U extends Walkable>(config: StartEndTreeWalkerConfig<U>) {
     return new GenTreeWalker<U>(config);
   }
 
-  static fromRange(config: ModelRangeTreeWalkerConfig): GenTreeWalker<ModelNode> {
-    const {range, descend, visitParentUpwards, reverse = false, filter, onLeaveNode, onEnterNode} = config;
+  static fromRange(
+    config: ModelRangeTreeWalkerConfig
+  ): GenTreeWalker<ModelNode> {
+    const {
+      range,
+      descend,
+      visitParentUpwards,
+      reverse = false,
+      filter,
+      onLeaveNode,
+      onEnterNode,
+    } = config;
     let startNode;
     let endNode;
     let startPos: ModelPosition;
@@ -133,7 +160,9 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
       startNode = getNextNodeFromPosition(startPos, reverse);
       endNode = getPrevNodeFromPosition(endPos, reverse);
       if (!startNode) {
-        const ancestorWithSibling = startPos.parent.findSelfOrAncestors(node => !!getNextSibling(node, reverse)).next().value;
+        const ancestorWithSibling = startPos.parent
+          .findSelfOrAncestors((node) => !!getNextSibling(node, reverse))
+          .next().value;
         if (ancestorWithSibling) {
           startNode = getNextSibling(ancestorWithSibling, reverse)!;
         } else {
@@ -143,7 +172,9 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
         }
       }
       if (!invalid && !endNode) {
-        const ancestorWithSibling = endPos.parent.findSelfOrAncestors(node => !!getPreviousSibling(node, reverse)).next().value;
+        const ancestorWithSibling = endPos.parent
+          .findSelfOrAncestors((node) => !!getPreviousSibling(node, reverse))
+          .next().value;
         if (ancestorWithSibling) {
           endNode = getPreviousSibling(ancestorWithSibling, reverse)!;
         } else {
@@ -155,10 +186,20 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     }
     const root = range.root;
     if (invalid) {
-      return GenTreeWalker.fromInvalid({root, descend, visitParentUpwards, reverse, filter, onLeaveNode, onEnterNode});
+      return GenTreeWalker.fromInvalid({
+        root,
+        descend,
+        visitParentUpwards,
+        reverse,
+        filter,
+        onLeaveNode,
+        onEnterNode,
+      });
     } else {
       if (!startNode || !endNode) {
-        throw new AssertionError("Start and end nodes should be assigned by now");
+        throw new AssertionError(
+          'Start and end nodes should be assigned by now'
+        );
       }
       const nextDeepestDescendant = getNextDeepestDescendant(endNode, reverse);
       if (nextDeepestDescendant) {
@@ -173,7 +214,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
         reverse,
         filter,
         onLeaveNode,
-        onEnterNode
+        onEnterNode,
       });
     }
   }
@@ -183,7 +224,9 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
    * @param config
    * @private
    */
-  private static fromInvalid<U extends Walkable>(config: GenTreeWalkerConfig<U>) {
+  private static fromInvalid<U extends Walkable>(
+    config: GenTreeWalkerConfig<U>
+  ) {
     const result = GenTreeWalker.fromStartEnd(config);
     result._isAtEnd = true;
     return result;
@@ -197,7 +240,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     return this._currentNode as T | null;
   }
 
-  * nodes(): Generator<T> {
+  *nodes(): Generator<T> {
     let result = this.nextNode();
     while (result) {
       yield result;
@@ -306,7 +349,6 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     }
   }
 
-
   private filterNode(node: Walkable): FilterResult {
     if (!this._filter) {
       return FilterResult.FILTER_ACCEPT;
@@ -314,7 +356,6 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
 
     return this._filter(node as T);
   }
-
 }
 
 function getFirstChild(node: Walkable, reverse: boolean): Walkable | null {
@@ -341,7 +382,10 @@ function getPrevNodeFromPosition(position: ModelPosition, reverse: boolean) {
   return reverse ? position.nodeAfter() : position.nodeBefore();
 }
 
-function getNextDeepestDescendant(node: Walkable, reverse: boolean): Walkable | null {
+function getNextDeepestDescendant(
+  node: Walkable,
+  reverse: boolean
+): Walkable | null {
   let cur = node;
   let child = getLastChild(cur, reverse);
   while (child) {
@@ -350,5 +394,3 @@ function getNextDeepestDescendant(node: Walkable, reverse: boolean): Walkable | 
   }
   return cur;
 }
-
-

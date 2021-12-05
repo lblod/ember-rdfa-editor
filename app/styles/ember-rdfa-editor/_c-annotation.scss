@@ -6,54 +6,53 @@
 /* Variables
   ========================================================================== */
 
-$say-annotation-width                      : $au-unit-huge*1.5 !default;
-$say-annotation-offset                     : $au-unit-large !default;
-$say-annotation-gutter                     : $au-unit !default;
-$say-annotation-width-content              : $say-annotation-width !default;
-$say-annotation-text-color                 : var(--au-gray-700) !default;
-$say-annotation-background-color           : var(--au-gray-100) !default;
-
+$say-annotation-width: $au-unit-huge * 1.5 !default;
+$say-annotation-offset: $au-unit-large !default;
+$say-annotation-gutter: $au-unit !default;
+$say-annotation-width-content: $say-annotation-width !default;
+$say-annotation-text-color: var(--au-gray-700) !default;
+$say-annotation-background-color: var(--au-gray-100) !default;
 
 /* Component
   ========================================================================== */
 
 .rdfa-annotations {
   // Visibility annotations
-  [property="dc:subject"],
-  [property="besluit:geplandOpenbaar"],
-  [property="besluit:openbaar"] {
+  [property='dc:subject'],
+  [property='besluit:geplandOpenbaar'],
+  [property='besluit:openbaar'] {
     font-weight: var(--au-regular);
     color: $say-annotation-text-color !important;
   }
 
-  [typeof="besluit:BehandelingVanAgendapunt"],
-  [property="ext:behandelt"],
-  [property="besluit:heeftAgendapunt"],
-  [typeof="besluit:Agendapunt"] {
+  [typeof='besluit:BehandelingVanAgendapunt'],
+  [property='ext:behandelt'],
+  [property='besluit:heeftAgendapunt'],
+  [typeof='besluit:Agendapunt'] {
     @include au-font-size($au-base);
     font-weight: var(--au-regular);
     display: block !important;
     position: relative;
-    color: $say-annotation-text-color  !important;
+    color: $say-annotation-text-color !important;
 
-    [property="besluit:geplandOpenbaar"],
-    [property="besluit:openbaar"] {
+    [property='besluit:geplandOpenbaar'],
+    [property='besluit:openbaar'] {
       color: var(--au-gray-600) !important;
     }
 
-    [property="besluit:geplandOpenbaar"] i,
-    [property="besluit:openbaar"] i {
+    [property='besluit:geplandOpenbaar'] i,
+    [property='besluit:openbaar'] i {
       font-size: 1.5rem;
-      top: .2rem;
+      top: 0.2rem;
       padding-left: 1px;
       z-index: 2;
       color: var(--au-gray-600) !important;
     }
 
-    [property="besluit:geplandOpenbaar"][content="false"],
-    [property="besluit:openbaar"][content="false"],
-    [property="besluit:geplandOpenbaar"][content="false"] i,
-    [property="besluit:openbaar"][content="false"] i {
+    [property='besluit:geplandOpenbaar'][content='false'],
+    [property='besluit:openbaar'][content='false'],
+    [property='besluit:geplandOpenbaar'][content='false'] i,
+    [property='besluit:openbaar'][content='false'] i {
       color: $say-editor-private-color !important;
     }
   }
@@ -99,13 +98,13 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
   // }
 
   // Show underlines on annotation
-  [data-editor-highlight="true"]:not([contenteditable=""]),
+  [data-editor-highlight='true']:not([contenteditable='']),
   [property],
-  [typeof]:not([typeof="foaf:Document"]),
+  [typeof]:not([typeof='foaf:Document']),
   [data-type],
   .mark-highlight-manual {
-    border-bottom: .2rem dotted var(--au-gray-300);
-    padding-bottom: .2rem;
+    border-bottom: 0.2rem dotted var(--au-gray-300);
+    padding-bottom: 0.2rem;
     transition: border var(--au-transition);
 
     // Hide certain underlines
@@ -115,14 +114,15 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
     [property] [property] [property] [property] [property] [property] [property] [data-type],
     [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof],
     [property] [property] [property] [property] [property] [property] [property],
-    & [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
+    & [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"]
+    {
       border-bottom: 0;
     }
   }
 
   // Making it easy to discover elements that need to be filled out / take action upon
-  [property^="ext:insert"],
-  [data-editor-highlight="true"]:not([contenteditable=""]) {
+  [property^='ext:insert'],
+  [data-editor-highlight='true']:not([contenteditable='']) {
     background-color: $say-editor-highlight-color;
     transition: background-color var(--au-transition);
 
@@ -136,15 +136,15 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
     }
   }
 
-  [property="besluit:motivering"]:after {
+  [property='besluit:motivering']:after {
     position: absolute;
     z-index: -1;
-    content: "";
+    content: '';
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba($au-gray-100,.5);
+    background-color: rgba($au-gray-100, 0.5);
   }
 
   span.mark-highlight-manual {
@@ -152,18 +152,18 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
     background-color: var(--au-gray-100);
     font-style: italic;
 
-    &[data-editor-position-level="1"],
+    &[data-editor-position-level='1'],
     &:hover {
-      color: rgba($au-gray-700,.7);
+      color: rgba($au-gray-700, 0.7);
     }
   }
 }
 
 // Show RDFA blocks
 .rdfa-annotations.show-rdfa-blocks {
-  [data-editor-highlight="true"],
+  [data-editor-highlight='true'],
   [property],
-  [typeof]:not([typeof="foaf:Document"]),
+  [typeof]:not([typeof='foaf:Document']),
   [data-type],
   .mark-highlight-manual {
     position: relative;
@@ -174,14 +174,14 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
 
     // Style annotation blocks
     &:before {
-      @include au-font-size($say-smallest-font-size,1.2);
+      @include au-font-size($say-smallest-font-size, 1.2);
       font-family: var(--au-font);
       font-weight: var(--au-medium);
-      letter-spacing: .01rem;
+      letter-spacing: 0.01rem;
       color: var(--au-gray-600);
       text-transform: uppercase;
       pointer-events: none;
-      content: attr(property) " " attr(typeof) " " attr(data-type);
+      content: attr(property) ' ' attr(typeof) ' ' attr(data-type);
       position: relative;
       right: auto;
       top: 0;
@@ -198,11 +198,11 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
 
   // Add help text on highlights
   .mark-highlight-manual:after,
-  [data-editor-highlight="true"]:not([contenteditable=""]):after {
-    @include au-font-size($say-smallest-font-size,1.2);
+  [data-editor-highlight='true']:not([contenteditable='']):after {
+    @include au-font-size($say-smallest-font-size, 1.2);
     font-family: var(--au-font);
     font-weight: var(--au-regular);
-    letter-spacing: .01rem;
+    letter-spacing: 0.01rem;
     color: var(--au-gray-600);
     text-transform: uppercase;
     pointer-events: none;
@@ -225,7 +225,8 @@ $say-annotation-background-color           : var(--au-gray-100) !default;
   }
 
   // Hide nested lump node annotations
-  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"]
+  {
     margin: 0;
 
     &:before,

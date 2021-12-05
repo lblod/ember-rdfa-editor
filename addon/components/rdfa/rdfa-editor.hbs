@@ -1,53 +1,87 @@
-<div class="say-container {{if @editorOptions.showRdfaHover "say-container--sidebar-left" }} {{if @editorOptions.showPaper "say-container--paper" }} {{if @editorOptions.showSidebar "say-container--sidebar-right" }} {{if @editorOptions.showToolbarBottom "say-container--toolbar-bottom" }}" {{did-update this.updateProfile @profile}}>
+<div
+  class='say-container
+    {{if @editorOptions.showRdfaHover "say-container--sidebar-left"}}
+    {{if @editorOptions.showPaper "say-container--paper"}}
+    {{if @editorOptions.showSidebar "say-container--sidebar-right"}}
+    {{if @editorOptions.showToolbarBottom "say-container--toolbar-bottom"}}'
+  {{did-update this.updateProfile @profile}}
+>
   {{#if this.editor}}
     <Rdfa::EditorToolbar
       @editor={{this.editor}}
-      @showTextStyleButtons="{{if @toolbarOptions.showTextStyleButtons "true"}}" @showListButtons="{{if @toolbarOptions.showListButtons "true"}}"
-      @showIndentButtons="{{if @toolbarOptions.showIndentButtons "true"}}">
+      @showTextStyleButtons='{{if @toolbarOptions.showTextStyleButtons "true"}}'
+      @showListButtons='{{if @toolbarOptions.showListButtons "true"}}'
+      @showIndentButtons='{{if @toolbarOptions.showIndentButtons "true"}}'
+    >
       {{#if @editorOptions.showToggleRdfaAnnotations}}
-      <AuToggleSwitch {{on "click" this.toggleRdfaBlocks}} @label="Toon annotaties"/>
+        <AuToggleSwitch
+          {{on 'click' this.toggleRdfaBlocks}}
+          @label='Toon annotaties'
+        />
       {{/if}}
       {{#if @editorOptions.showInsertButton}}
-      <AuButton {{on "click" this.triggerHints}} @icon="add" @iconAlignment="left" @skin="link">
-        Voeg sjabloon in
-      </AuButton>
+        <AuButton
+          {{on 'click' this.triggerHints}}
+          @icon='add'
+          @iconAlignment='left'
+          @skin='link'
+        >
+          Voeg sjabloon in
+        </AuButton>
       {{/if}}
       {{#each this.toolbarWidgets as |widget|}}
-        {{component widget.componentName controller=widget.controller plugin=widget.plugin}}
+        {{component
+          widget.componentName
+          controller=widget.controller
+          plugin=widget.plugin
+        }}
       {{/each}}
     </Rdfa::EditorToolbar>
   {{/if}}
 
-  <div class="say-container__main">
-    <div class="say-editor {{if @editorOptions.showRdfa "rdfa-annotations" }} {{if @editorOptions.showRdfaHighlight "rdfa-annotations-highlight" }} {{if @editorOptions.showRdfaHover "rdfa-annotations-hover" }} {{if this.showRdfaBlocks "show-rdfa-blocks"}}">
-      <div class="say-editor__paper">
+  <div class='say-container__main'>
+    <div
+      class='say-editor
+        {{if @editorOptions.showRdfa "rdfa-annotations"}}
+        {{if @editorOptions.showRdfaHighlight "rdfa-annotations-highlight"}}
+        {{if @editorOptions.showRdfaHover "rdfa-annotations-hover"}}
+        {{if this.showRdfaBlocks "show-rdfa-blocks"}}'
+    >
+      <div class='say-editor__paper'>
         <Ce::ContentEditable
-          @class="say-editor__inner say-content"
+          @class='say-editor__inner say-content'
           @rawEditorInit={{this.handleRawEditorInit}}
           @baseIRI={{@baseIRI}}
         />
       </div>
     </div>
 
-    <div class="say-container__aside">
-      <div class="say-editor-hints">
-        <ul class="say-editor-hints__list">
+    <div class='say-container__aside'>
+      <div class='say-editor-hints'>
+        <ul class='say-editor-hints__list'>
           {{#if this.suggestedHints.length}}
-            <li class="say-editor-hints__list-item">
-              <Rdfa::EditorSuggestedHints @suggestedHints={{this.suggestedHints}} />
+            <li class='say-editor-hints__list-item'>
+              <Rdfa::EditorSuggestedHints
+                @suggestedHints={{this.suggestedHints}}
+              />
             </li>
           {{/if}}
           {{#if this.hasActiveHints}}
             {{#each this.hintsRegistry.activeHints as |card|}}
-              <li class="say-editor-hints__list-item">
+              <li class='say-editor-hints__list-item'>
                 {{component card.card info=card.info}}
               </li>
             {{/each}}
           {{/if}}
           {{#each this.sidebarWidgets as |widget|}}
-            <li class="say-editor-hints__list-item">
-              <div class="say-card"> {{!-- Todo: remove this div once it is over --}}
-                {{component widget.componentName controller=widget.controller plugin=widget.plugin}}
+            <li class='say-editor-hints__list-item'>
+              <div class='say-card'>
+                {{! Todo: remove this div once it is over }}
+                {{component
+                  widget.componentName
+                  controller=widget.controller
+                  plugin=widget.plugin
+                }}
               </div>
             </li>
           {{/each}}

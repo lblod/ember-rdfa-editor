@@ -15,13 +15,14 @@ let HEADERMARKDOWN = /(#+)(.*)/;
  * @constructor
  */
 export default class HeaderMarkdownHandler {
-  constructor({rawEditor}) {
+  constructor({ rawEditor }) {
     this.rawEditor = rawEditor;
   }
 
-  nodeContainsHeaderMarkdown(node){
-    return  node.nodeType === Node.TEXT_NODE &&
-      node.textContent.match(HEADERMARKDOWN);
+  nodeContainsHeaderMarkdown(node) {
+    return (
+      node.nodeType === Node.TEXT_NODE && node.textContent.match(HEADERMARKDOWN)
+    );
   }
 
   /**
@@ -31,11 +32,13 @@ export default class HeaderMarkdownHandler {
    * @return boolean
    * @public
    */
-  isHandlerFor(event){
-    return event.type === "keydown" &&
-      event.key === "Enter" &&
+  isHandlerFor(event) {
+    return (
+      event.type === 'keydown' &&
+      event.key === 'Enter' &&
       this.rawEditor.currentSelectionIsACursor &&
-      this.nodeContainsHeaderMarkdown(this.rawEditor.currentNode);
+      this.nodeContainsHeaderMarkdown(this.rawEditor.currentNode)
+    );
   }
 
   /**
@@ -54,20 +57,20 @@ export default class HeaderMarkdownHandler {
       let matchGroups = currentNode.textContent.match(HEADERMARKDOWN);
       let headerEnd = currentPosition - get(node, 'start');
       let headerLevel = matchGroups[1].length; //number of '#' provides header level
-      let headerStart= matchGroups.index + headerLevel;
-      let beforeHeader = document.createTextNode(currentNode.textContent.slice(0, matchGroups.index));
+      let headerStart = matchGroups.index + headerLevel;
+      let beforeHeader = document.createTextNode(
+        currentNode.textContent.slice(0, matchGroups.index)
+      );
       let headerContent = currentNode.textContent.slice(headerStart, headerEnd);
 
-      if (isBlank(headerContent))
-        headerContent = invisibleSpace;
+      if (isBlank(headerContent)) headerContent = invisibleSpace;
 
       let headerTextNode = document.createTextNode(headerContent);
       let headerNode = document.createElement(`h${headerLevel}`);
       headerNode.append(headerTextNode);
       let afterHeaderContent = currentNode.textContent.slice(headerEnd);
 
-      if (isBlank(afterHeaderContent))
-        afterHeaderContent = invisibleSpace;
+      if (isBlank(afterHeaderContent)) afterHeaderContent = invisibleSpace;
 
       let afterHeader = document.createTextNode(afterHeaderContent);
 
@@ -80,8 +83,11 @@ export default class HeaderMarkdownHandler {
 
     this.rawEditor.externalDomUpdate('inserting header', insertHeader);
     this.rawEditor.updateRichNode();
-    let richNode = getRichNodeMatchingDomNode(newCurrentNode, this.rawEditor.richNode);
+    let richNode = getRichNodeMatchingDomNode(
+      newCurrentNode,
+      this.rawEditor.richNode
+    );
     this.rawEditor.setCurrentPosition(get(richNode, 'start'));
-    return HandlerResponse.create({allowPropagation: false});
+    return HandlerResponse.create({ allowPropagation: false });
   }
 }

@@ -1,12 +1,12 @@
-import Command from "./command";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import Command from './command';
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
+import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
 export default class RemoveTableCommand extends Command {
-  name = "remove-table";
+  name = 'remove-table';
 
   constructor(model: Model) {
     super(model);
@@ -27,7 +27,7 @@ export default class RemoveTableCommand extends Command {
       throw new Error('The selection is not inside a table');
     }
 
-    this.model.change(mutator => {
+    this.model.change((mutator) => {
       if (table.parent) {
         const offset = table.getOffset();
         if (offset) {

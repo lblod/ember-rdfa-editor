@@ -1,6 +1,6 @@
-import classic from "ember-classic-decorator";
-import { action } from "@ember/object";
-import { layout as templateLayout } from "@ember-decorators/component";
+import classic from 'ember-classic-decorator';
+import { action } from '@ember/object';
+import { layout as templateLayout } from '@ember-decorators/component';
 import Component from '@ember/component';
 import layout from '../../templates/components/rdfa/editor-suggested-hints';
 import { A } from '@ember/array';

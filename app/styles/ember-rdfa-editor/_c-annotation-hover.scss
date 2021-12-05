@@ -46,31 +46,31 @@
   }
 
   // Style before and after elements
-  [typeof]:not([typeof="foaf:Document"]),
+  [typeof]:not([typeof='foaf:Document']),
   [property],
   [data-type],
-  [data-editor-highlight="true"]:not([contenteditable=""]) {
+  [data-editor-highlight='true']:not([contenteditable='']) {
     &:hover {
-      border-bottom-color: tint($au-gray-600,20);
+      border-bottom-color: tint($au-gray-600, 20);
     }
 
     &:before {
       position: absolute;
-      transition: opacity $au-easing .5s, left $au-easing .2s;
+      transition: opacity $au-easing 0.5s, left $au-easing 0.2s;
       right: calc(100% + #{$say-annotation-offset});
       opacity: 0;
     }
 
     &:before {
-      @include au-font-size($say-smallest-font-size,1.2);
+      @include au-font-size($say-smallest-font-size, 1.2);
       display: block;
-      margin-top: .2rem;
+      margin-top: 0.2rem;
       padding-right: $say-annotation-gutter + $au-unit-small;
       margin-right: -$say-annotation-gutter + $au-unit-tiny;
       width: $say-annotation-width-content;
       font-family: var(--au-font);
       font-weight: var(--au-medium);
-      letter-spacing: .01rem;
+      letter-spacing: 0.01rem;
       text-transform: uppercase;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -84,10 +84,10 @@
       z-index: var(--au-z-index-gamma);
       background: linear-gradient(
         to right,
-          $au-white,
-          $au-white calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
-          transparent calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
-          transparent 100%
+        $au-white,
+        $au-white calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
+        transparent calc(100% - #{$say-annotation-gutter + $au-unit-tiny}),
+        transparent 100%
       );
     }
 
@@ -95,14 +95,14 @@
       background-color: var(--au-gray-100);
       background: linear-gradient(
         to right,
-          $au-gray-100,
-          $au-gray-100 calc(50% - #{$au-unit-tiny}),
-          transparent calc(50% - #{$au-unit-tiny}),
-          transparent 100%
+        $au-gray-100,
+        $au-gray-100 calc(50% - #{$au-unit-tiny}),
+        transparent calc(50% - #{$au-unit-tiny}),
+        transparent 100%
       );
     }
 
-    &[data-editor-position-level="1"]:before,
+    &[data-editor-position-level='1']:before,
     &:hover:before {
       right: calc(100% + #{$say-annotation-offset});
       opacity: 1;
@@ -119,13 +119,14 @@
       opacity: 1;
     }
 
-    &[data-editor-position-level="0"]:before {
+    &[data-editor-position-level='0']:before {
       z-index: var(--au-z-index-gamma);
     }
   }
 
   // Hide nested lump node annotations
-  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] {
+  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"]
+  {
     &:before,
     &:hover:before {
       display: none;
@@ -136,7 +137,8 @@
   [property=""],
   [typeof=""],
   [property="http://mu.semte.ch/vocabularies/ext/noHighlight"],
-  [property="http://mu.semte.ch/vocabularies/ext/noHighlight"] {
+  [property="http://mu.semte.ch/vocabularies/ext/noHighlight"]
+  {
     border-bottom: 0 !important;
 
     &:before,
@@ -152,10 +154,10 @@
 
   @include mq($until: large) {
     // Hide all hover annotations on small screens
-    [typeof]:not([typeof="foaf:Document"]),
+    [typeof]:not([typeof='foaf:Document']),
     [property],
     [data-type],
-    [data-editor-highlight="true"] {
+    [data-editor-highlight='true'] {
       &:before {
         display: none !important;
       }

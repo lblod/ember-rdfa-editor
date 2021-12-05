@@ -1,14 +1,17 @@
-import Command from "@lblod/ember-rdfa-editor/commands/command";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import {ImpossibleModelStateError, MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import SimplifiedModel from "@lblod/ember-rdfa-editor/model/simplified-model";
+import Command from '@lblod/ember-rdfa-editor/commands/command';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import {
+  ImpossibleModelStateError,
+  MisbehavedSelectionError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import SimplifiedModel from '@lblod/ember-rdfa-editor/model/simplified-model';
 
 /**
  * The core purpose of this command is to return a valid html structure that best represents
@@ -16,7 +19,10 @@ import SimplifiedModel from "@lblod/ember-rdfa-editor/model/simplified-model";
  * model by default.
  * Optionally, it can also delete the selected content before returning it.
  */
-export default abstract class SelectionCommand extends Command<unknown[], ModelNode[]> {
+export default abstract class SelectionCommand extends Command<
+  unknown[],
+  ModelNode[]
+> {
   protected deleteSelection: boolean;
 
   protected constructor(model: Model, createSnapshot: boolean) {
@@ -41,22 +47,33 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
     // special cases:
     // either inside a list with CA the list container
     // or inside a list with CA the list item, but the list item is entirely surrounded with selection
-    if (ModelNodeUtils.isListContainer(commonAncestor)
-      || (ModelNodeUtils.isListElement(commonAncestor) && SelectionCommand.isElementFullySelected(commonAncestor, range))
+    if (
+      ModelNodeUtils.isListContainer(commonAncestor) ||
+      (ModelNodeUtils.isListElement(commonAncestor) &&
+        SelectionCommand.isElementFullySelected(commonAncestor, range))
     ) {
-      const newAncestor = ModelNodeUtils.findAncestor(commonAncestor, node => !ModelNodeUtils.isListContainer(node));
+      const newAncestor = ModelNodeUtils.findAncestor(
+        commonAncestor,
+        (node) => !ModelNodeUtils.isListContainer(node)
+      );
       if (!newAncestor || !ModelElement.isModelElement(newAncestor)) {
-        throw new ImpossibleModelStateError("No ancestor found that is not list container.");
+        throw new ImpossibleModelStateError(
+          'No ancestor found that is not list container.'
+        );
       }
 
       commonAncestor = newAncestor;
     }
 
-    this.model.change(mutator => {
-      let contentRange = mutator.splitRangeUntilElements(range, commonAncestor, commonAncestor);
+    this.model.change((mutator) => {
+      let contentRange = mutator.splitRangeUntilElements(
+        range,
+        commonAncestor,
+        commonAncestor
+      );
       let treeWalker = new ModelTreeWalker({
         range: contentRange,
-        descend: false
+        descend: false,
       });
 
       // Check if selection is inside table cell. If this is the case, cut children of said cell.
@@ -66,7 +83,7 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
         contentRange = range;
         treeWalker = new ModelTreeWalker({
           range: contentRange,
-          descend: false
+          descend: false,
         });
       }
       modelNodes = [...treeWalker];
@@ -93,9 +110,15 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
    * @param range
    * @private
    */
-  private static isElementFullySelected(element: ModelElement, range: ModelRange): boolean {
+  private static isElementFullySelected(
+    element: ModelElement,
+    range: ModelRange
+  ): boolean {
     let startPosition = range.start;
-    while (startPosition.parent !== element && startPosition.parentOffset === 0) {
+    while (
+      startPosition.parent !== element &&
+      startPosition.parentOffset === 0
+    ) {
       startPosition = ModelPosition.fromBeforeNode(startPosition.parent);
     }
 
@@ -104,7 +127,10 @@ export default abstract class SelectionCommand extends Command<unknown[], ModelN
     }
 
     let endPosition = range.end;
-    while (endPosition.parent !== element && endPosition.parentOffset === endPosition.parent.getMaxOffset()) {
+    while (
+      endPosition.parent !== element &&
+      endPosition.parentOffset === endPosition.parent.getMaxOffset()
+    ) {
       endPosition = ModelPosition.fromAfterNode(endPosition.parent);
     }
 

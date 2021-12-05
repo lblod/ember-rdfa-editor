@@ -27,8 +27,8 @@ export default class RdfaContextDebugger extends Component {
   }
 
   @tracked blocks = null;
-  @tracked selections = null
-  @tracked selectOptions = null
+  @tracked selections = null;
+  @tracked selectOptions = null;
   @tracked scanStart = 0;
   @tracked scanEnd = 1000;
   @tracked selectStart = 0;
@@ -43,7 +43,7 @@ export default class RdfaContextDebugger extends Component {
 
   resetResults() {
     this.blocks = A();
-    this.selections= A();
+    this.selections = A();
   }
 
   /**
@@ -76,11 +76,15 @@ export default class RdfaContextDebugger extends Component {
    * @private
    */
   @action
-  highlight([start, end]){
-    const range = globalTextRegionToModelRange(this.editor.rootModelNode, start, end);
+  highlight([start, end]) {
+    const range = globalTextRegionToModelRange(
+      this.editor.rootModelNode,
+      start,
+      end
+    );
     const selection = this.editor.createSelection();
     selection.selectRange(range);
-    this.editor.executeCommand("make-highlight", selection);
+    this.editor.executeCommand('make-highlight', selection);
   }
 
   @action
@@ -112,16 +116,21 @@ export default class RdfaContextDebugger extends Component {
   selectContext() {
     this.resetResults();
 
-    const splitValues = function(stringValue) {
-      return (stringValue || "").split('\n').map(s => s.trim()).filter(s => s.length);
+    const splitValues = function (stringValue) {
+      return (stringValue || '')
+        .split('\n')
+        .map((s) => s.trim())
+        .filter((s) => s.length);
     };
     const options = this.selectOptions;
     options.typeof = splitValues(options.typeofString);
     options.property = splitValues(options.propertyString);
 
-    const selections = this.editor.selectContext([this.scanStart, this.scanEnd], options);
+    const selections = this.editor.selectContext(
+      [this.scanStart, this.scanEnd],
+      options
+    );
     debug('Finished selecting contexts');
     this.selections = selections;
   }
 }
-

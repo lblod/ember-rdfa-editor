@@ -1,9 +1,9 @@
-import Writer from "@lblod/ember-rdfa-editor/model/writers/writer";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import HtmlTextWriter from "@lblod/ember-rdfa-editor/model/writers/html-text-writer";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {WriterError} from "@lblod/ember-rdfa-editor/utils/errors";
-import HtmlElementWriter from "@lblod/ember-rdfa-editor/model/writers/html-element-writer";
+import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import HtmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import { WriterError } from '@lblod/ember-rdfa-editor/utils/errors';
+import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
 
 /**
  * Top-level {@link Writer} for HTML documents.
@@ -28,7 +28,7 @@ export default class HtmlWriter implements Writer<ModelNode, Node> {
     } else if (ModelNode.isModelText(modelNode)) {
       result = this.htmlTextWriter.write(modelNode);
     } else {
-      throw new WriterError("Unsupported node type");
+      throw new WriterError('Unsupported node type');
     }
 
     if (!result) {

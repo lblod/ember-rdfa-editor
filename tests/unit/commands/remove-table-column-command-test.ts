@@ -1,10 +1,10 @@
-import {module, test} from "qunit";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import RemoveTableColumnCommand from "@lblod/ember-rdfa-editor/commands/remove-table-column-command";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import { module, test } from 'qunit';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import RemoveTableColumnCommand from '@lblod/ember-rdfa-editor/commands/remove-table-column-command';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-module("Unit | commands | remove-table-column-command-test", hooks => {
+module('Unit | commands | remove-table-column-command-test', (hooks) => {
   const ctx = new ModelTestContext();
   let command: RemoveTableColumnCommand;
 
@@ -13,9 +13,12 @@ module("Unit | commands | remove-table-column-command-test", hooks => {
     command = new RemoveTableColumnCommand(ctx.model);
   });
 
-  test("removes only column", assert => {
+  test('removes only column', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {top}} = vdom`
+    const {
+      root: initial,
+      textNodes: { top },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -35,7 +38,7 @@ module("Unit | commands | remove-table-column-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot></modelRoot>
     `;
 
@@ -47,9 +50,12 @@ module("Unit | commands | remove-table-column-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("removes first column", assert => {
+  test('removes first column', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {topLeft}} = vdom`
+    const {
+      root: initial,
+      textNodes: { topLeft },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -75,7 +81,7 @@ module("Unit | commands | remove-table-column-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -102,9 +108,12 @@ module("Unit | commands | remove-table-column-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("removes last column", assert => {
+  test('removes last column', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {topRight}} = vdom`
+    const {
+      root: initial,
+      textNodes: { topRight },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -130,7 +139,7 @@ module("Unit | commands | remove-table-column-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -157,9 +166,12 @@ module("Unit | commands | remove-table-column-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("removes middle column", assert => {
+  test('removes middle column', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {topMiddle}} = vdom`
+    const {
+      root: initial,
+      textNodes: { topMiddle },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -191,7 +203,7 @@ module("Unit | commands | remove-table-column-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>

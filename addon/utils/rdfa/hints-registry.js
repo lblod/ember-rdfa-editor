@@ -6,36 +6,36 @@ import { reorderBlocks, getExtendedRegions } from './rdfa-block-helpers';
 import { tracked } from '@glimmer/tracking';
 
 /**
-* Bookkeeping of the editor hints
-*
-* @module rdfa-editor
-* @class HintsRegistry
-* @constructor
-* @extends EmberObject
-*/
+ * Bookkeeping of the editor hints
+ *
+ * @module rdfa-editor
+ * @class HintsRegistry
+ * @constructor
+ * @extends EmberObject
+ */
 export default class HinstRegistry {
   /**
-  * @property index
-  * @type Array
-  */
+   * @property index
+   * @type Array
+   */
   index;
 
   /**
-  * @property registry
-  * @type Array
-  */
+   * @property registry
+   * @type Array
+   */
   @tracked registry;
 
   /**
-  * @property activeRegion
-  * @type Array
-  */
+   * @property activeRegion
+   * @type Array
+   */
   @tracked activeRegion;
 
   /**
-  * @property activeHints
-  * @type Array
-  */
+   * @property activeHints
+   * @type Array
+   */
   get activeHints() {
     const region = this.activeRegion;
     return this.registry.filter((hint) => {
@@ -55,7 +55,7 @@ export default class HinstRegistry {
   highlightsForFutureRemoval;
   highlightsForFutureInsert;
 
-  constructor(rawEditor){
+  constructor(rawEditor) {
     this.index = [];
     this.registry = [];
     this.activeRegion = [];
@@ -108,7 +108,12 @@ export default class HinstRegistry {
    * @public
    */
   insertText(startIdx, content) {
-    let index = this.initIndexEntry('insert', startIdx, startIdx + content.length, content.length);
+    let index = this.initIndexEntry(
+      'insert',
+      startIdx,
+      startIdx + content.length,
+      content.length
+    );
     this.updateRegistry(index);
     this.appendToIndex(index);
     return index;
@@ -155,7 +160,9 @@ export default class HinstRegistry {
    * @public
    */
   getHintsAtLocation(location, hrIdx, who) {
-    let updatedLocation = (hrIdx ? this.updateLocationToCurrentIndex(hrIdx, location) : location);
+    let updatedLocation = hrIdx
+      ? this.updateLocationToCurrentIndex(hrIdx, location)
+      : location;
 
     const atLocation = (location, other) => {
       return location.toString() === other.toString();
@@ -163,9 +170,13 @@ export default class HinstRegistry {
 
     let condition = null;
     if (who) {
-      condition = (entry) => { return atLocation(entry.location, updatedLocation) && entry.who == who; };
+      condition = (entry) => {
+        return atLocation(entry.location, updatedLocation) && entry.who == who;
+      };
     } else {
-      condition = (entry) => { return atLocation(entry.location, updatedLocation); };
+      condition = (entry) => {
+        return atLocation(entry.location, updatedLocation);
+      };
     }
 
     return this.registry.filter(condition);
@@ -185,7 +196,9 @@ export default class HinstRegistry {
    * @public
    */
   getHintsInRegion(region, hrIdx, who) {
-    let updatedRegion = (hrIdx ? this.updateLocationToCurrentIndex(hrIdx, region) : region);
+    let updatedRegion = hrIdx
+      ? this.updateLocationToCurrentIndex(hrIdx, region)
+      : region;
 
     const inRegion = (location, region) => {
       return region[0] <= location[0] && region[1] >= location[1];
@@ -193,9 +206,13 @@ export default class HinstRegistry {
 
     let condition = null;
     if (who) {
-      condition = (entry) => { return inRegion(entry.location, updatedRegion) && entry.who == who; };
+      condition = (entry) => {
+        return inRegion(entry.location, updatedRegion) && entry.who == who;
+      };
     } else {
-      condition = (entry) => { return inRegion(entry.location, updatedRegion); };
+      condition = (entry) => {
+        return inRegion(entry.location, updatedRegion);
+      };
     }
 
     return this.registry.filter(condition);
@@ -211,7 +228,7 @@ export default class HinstRegistry {
    * @public
    */
   getHintsFromPlugin(who) {
-    return this.registry.filter( entry => entry.who == who );
+    return this.registry.filter((entry) => entry.who == who);
   }
 
   /**
@@ -226,7 +243,9 @@ export default class HinstRegistry {
    * @public
    */
   removeHintsAtLocation(location, hrIdx, who) {
-    let updatedLocation = (hrIdx ? this.updateLocationToCurrentIndex(hrIdx, location) : location);
+    let updatedLocation = hrIdx
+      ? this.updateLocationToCurrentIndex(hrIdx, location)
+      : location;
 
     const notAtLocation = (location, other) => {
       return location.toString() != other.toString();
@@ -234,17 +253,24 @@ export default class HinstRegistry {
 
     let condition = null;
     if (who) {
-      condition = (entry) => { return (notAtLocation(entry.location, updatedLocation) && entry.who == who) || entry.who !== who; };
+      condition = (entry) => {
+        return (
+          (notAtLocation(entry.location, updatedLocation) &&
+            entry.who == who) ||
+          entry.who !== who
+        );
+      };
     } else {
-      condition = (entry) => { return notAtLocation(entry.location, updatedLocation); };
+      condition = (entry) => {
+        return notAtLocation(entry.location, updatedLocation);
+      };
     }
 
     let updatedRegistry = [];
     for (let entry of this.registry) {
       if (condition(entry)) {
         updatedRegistry.push(entry);
-      }
-      else {
+      } else {
         // TODO: why only location?
         this.sendRemovedCardToObservers(entry.location);
       }
@@ -269,7 +295,9 @@ export default class HinstRegistry {
     // Clone region in case it gets manipulated elsewhere
     region = [...region];
 
-    let updatedRegion = hrIdx ? this.updateLocationToCurrentIndex(hrIdx, region) : region;
+    let updatedRegion = hrIdx
+      ? this.updateLocationToCurrentIndex(hrIdx, region)
+      : region;
 
     const inRegion = (location, region) => {
       // return true iff location is fully in region
@@ -278,20 +306,23 @@ export default class HinstRegistry {
 
     let updatedRegistry = [];
 
-    for( const hint of this.registry ) {
+    for (const hint of this.registry) {
       const ourScope = hint.who == who;
-      const matchingRegion = inRegion( hint.location, updatedRegion );
+      const matchingRegion = inRegion(hint.location, updatedRegion);
 
-
-      if( ourScope && matchingRegion )
-        this.highlightsForFutureRemoval.push({location: hint.location, hrIdx});
-      else
-        updatedRegistry.push(hint);
+      if (ourScope && matchingRegion)
+        this.highlightsForFutureRemoval.push({
+          location: hint.location,
+          hrIdx,
+        });
+      else updatedRegistry.push(hint);
     }
 
     this.registry = updatedRegistry;
 
-    next(() => { this.batchProcessHighlightsUpdates.perform(); });
+    next(() => {
+      this.batchProcessHighlightsUpdates.perform();
+    });
   }
 
   /**
@@ -312,19 +343,21 @@ export default class HinstRegistry {
    *
    * @public
    */
-  removeHints( options ) {
+  removeHints(options) {
     const { hrId, scope } = options;
 
-    if( ! options.rdfaBlocks && ! options.region ){
-      console.warn( "HinstRegistry#removeHints was called without rdfaBlocks or location, no hints will be removed." );  // eslint-disable-line no-console
+    if (!options.rdfaBlocks && !options.region) {
+      console.warn(
+        'HinstRegistry#removeHints was called without rdfaBlocks or location, no hints will be removed.'
+      ); // eslint-disable-line no-console
     }
 
-    if( options.rdfaBlocks ) {
-      this.removeHintsInRdfaBlocks( options.rdfaBlocks, hrId, scope );
+    if (options.rdfaBlocks) {
+      this.removeHintsInRdfaBlocks(options.rdfaBlocks, hrId, scope);
     }
 
-    if( options.region ) {
-      this.removeHintsInRegion( options.region, hrId, scope );
+    if (options.region) {
+      this.removeHintsInRegion(options.region, hrId, scope);
     }
   }
 
@@ -351,14 +384,16 @@ export default class HinstRegistry {
   removeHintsInRdfaBlocks(rdfaBlocks, hrId, identifier) {
     if (rdfaBlocks.length > 0) {
       const orderedBlocks = reorderBlocks(rdfaBlocks);
-      const regions = getExtendedRegions(orderedBlocks.map(region => [region.start, region.end]));
+      const regions = getExtendedRegions(
+        orderedBlocks.map((region) => [region.start, region.end])
+      );
 
-      regions.forEach(region => {
-        this.removeHintsInRegion(region , hrId, identifier);
+      regions.forEach((region) => {
+        this.removeHintsInRegion(region, hrId, identifier);
       });
     }
-    rdfaBlocks.forEach( (block) => {
-      this.removeHintsInRegion( block.region, hrId, identifier );
+    rdfaBlocks.forEach((block) => {
+      this.removeHintsInRegion(block.region, hrId, identifier);
     });
   }
 
@@ -381,38 +416,45 @@ export default class HinstRegistry {
     // so wait for the editor to inform hintsregistry of the updates on the underlying DOM, so the hint registry
     // has a correct index to work on.
     // If busy, move this operation to the next runloop
-    if(this.rawEditor.generateDiffEvents.isRunning){
-      next(() => { this.batchProcessHighlightsUpdates.perform(); });
+    if (this.rawEditor.generateDiffEvents.isRunning) {
+      next(() => {
+        this.batchProcessHighlightsUpdates.perform();
+      });
       return;
     }
 
-    let updatedHlToRemove = this.highlightsForFutureRemoval.map( entry => {
+    let updatedHlToRemove = this.highlightsForFutureRemoval.map((entry) => {
       return this.updateLocationToCurrentIndex(entry.hrIdx, entry.location);
     });
 
     this.highlightsForFutureRemoval = [];
 
-    let updatedHlToInsert = this.highlightsForFutureInsert.map( entry => {
+    let updatedHlToInsert = this.highlightsForFutureInsert.map((entry) => {
       return this.updateLocationToCurrentIndex(entry.hrIdx, entry.location);
     });
 
     this.highlightsForFutureInsert = [];
 
-    let hasSameLocation = (loc1, loc2) =>  loc1[0] == loc2[0] && loc1[1] == loc2[1];
+    let hasSameLocation = (loc1, loc2) =>
+      loc1[0] == loc2[0] && loc1[1] == loc2[1];
 
-    let realRemoves = updatedHlToRemove.filter(rH => !this.registry.find(c => hasSameLocation(c.location, rH)));
+    let realRemoves = updatedHlToRemove.filter(
+      (rH) => !this.registry.find((c) => hasSameLocation(c.location, rH))
+    );
 
     //remove duplicates
     let realInserts = updatedHlToInsert.reduce((acc, card) => {
-      if(!acc.find(accCardSoFar => hasSameLocation(accCardSoFar, card)))
+      if (!acc.find((accCardSoFar) => hasSameLocation(accCardSoFar, card)))
         acc.push(card);
       return acc;
     }, []);
 
     //remove obsolete highlights
-    realInserts = realInserts.filter(rI=> this.registry.find(c => hasSameLocation(c.location, rI)));
+    realInserts = realInserts.filter((rI) =>
+      this.registry.find((c) => hasSameLocation(c.location, rI))
+    );
 
-    if(realInserts.length == 0 && realRemoves.length == 0){
+    if (realInserts.length == 0 && realRemoves.length == 0) {
       return;
     }
 
@@ -421,7 +463,6 @@ export default class HinstRegistry {
 
     this.replaceRegistryAndNotify(this.registry);
   }
-
 
   /**
    * Adds an individual hint to the HintsRegistry.
@@ -472,8 +513,10 @@ export default class HinstRegistry {
    * other information detected earlier such as a matched term.
    */
   addHint(hrIdx, who, card) {
-    this._addHint( hrIdx, who, card );
-    next(() => { this.batchProcessHighlightsUpdates.perform(); });
+    this._addHint(hrIdx, who, card);
+    next(() => {
+      this.batchProcessHighlightsUpdates.perform();
+    });
   }
 
   /**
@@ -487,8 +530,8 @@ export default class HinstRegistry {
     // clone location to ensure no external edits happen
     card.location = [...card.location];
     this.updateCardToCurrentIndex(hrIdx, card);
-    if( !card.options || !card.options.noHighlight)
-      this.highlightsForFutureInsert.push({location: card.location, hrIdx});
+    if (!card.options || !card.options.noHighlight)
+      this.highlightsForFutureInsert.push({ location: card.location, hrIdx });
   }
 
   /**
@@ -503,8 +546,10 @@ export default class HinstRegistry {
    * @public
    */
   addHints(hrIdx, who, cards) {
-    cards.forEach( (card) => this._addHint( hrIdx, who, card ) );
-    next(() => { this.batchProcessHighlightsUpdates.perform(); });
+    cards.forEach((card) => this._addHint(hrIdx, who, card));
+    next(() => {
+      this.batchProcessHighlightsUpdates.perform();
+    });
   }
 
   /**
@@ -520,7 +565,12 @@ export default class HinstRegistry {
    */
   updateLocationToCurrentIndex(indexEntry, location) {
     let remainingIndexes = this.getRemainingIndexes(indexEntry);
-    return remainingIndexes.length === 0 ? location : remainingIndexes.reduce(this.updateLocationWithIndex.bind(this), location);
+    return remainingIndexes.length === 0
+      ? location
+      : remainingIndexes.reduce(
+          this.updateLocationWithIndex.bind(this),
+          location
+        );
   }
 
   /**
@@ -533,7 +583,7 @@ export default class HinstRegistry {
    * @private
    */
   nextIndexId() {
-    if(this.index.length == 0) {
+    if (this.index.length == 0) {
       return 0;
     }
     return this.currentIndex().idx + 1;
@@ -561,7 +611,7 @@ export default class HinstRegistry {
    */
   initIndexEntry(operation, startIdx, endIdx, delta) {
     let idx = this.nextIndexId();
-    return {idx: idx, operation, startIdx, endIdx, delta};
+    return { idx: idx, operation, startIdx, endIdx, delta };
   }
 
   /**
@@ -587,14 +637,14 @@ export default class HinstRegistry {
     let updatedCards = [];
     let hasChanged = false;
 
-    for(let card of cards) {
+    for (let card of cards) {
       let cardData = this.applyIndexesToCard(indexes, card);
       hasChanged = cardData.hasChanged;
-      if(cardData.isValid) {
+      if (cardData.isValid) {
         updatedCards.push(cardData.card);
       }
     }
-    return {hasChanged, cards: updatedCards};
+    return { hasChanged, cards: updatedCards };
   }
 
   /**
@@ -614,22 +664,21 @@ export default class HinstRegistry {
     let hasChanged = false;
     let isValid = true;
 
-    for(let index of indexes) {
-      if(!this.doesLocationChange(index, card.location)) {
-          continue;
+    for (let index of indexes) {
+      if (!this.doesLocationChange(index, card.location)) {
+        continue;
       }
 
-      set( card, 'location', this.updateLocationWithIndex(card.location, index));
+      set(card, 'location', this.updateLocationWithIndex(card.location, index));
       hasChanged = true;
 
-      if(!this.isLocationValid(card.location)) {
+      if (!this.isLocationValid(card.location)) {
         isValid = false;
         break;
       }
     }
-    return {hasChanged, isValid, card};
+    return { hasChanged, isValid, card };
   }
-
 
   /**
    * Updates card registry with provided index entry.
@@ -642,7 +691,7 @@ export default class HinstRegistry {
    */
   updateRegistry(indexEntry) {
     let updatedRegistry = this.applyIndexesToCards([indexEntry], this.registry);
-    if(updatedRegistry.hasChanged) {
+    if (updatedRegistry.hasChanged) {
       this.replaceRegistryAndNotify(A(updatedRegistry.cards));
     }
   }
@@ -659,7 +708,8 @@ export default class HinstRegistry {
    * @private
    */
   isLocationValid(location) {
-    if(location[1] - 1 < location[0]) {  //TODO: do we allow 'pure' insert?
+    if (location[1] - 1 < location[0]) {
+      //TODO: do we allow 'pure' insert?
       return false;
     }
     return true;
@@ -680,7 +730,7 @@ export default class HinstRegistry {
    * @private
    */
   doesLocationChange(index, location) {
-    if(index.startIdx <= location[1] - 1) {
+    if (index.startIdx <= location[1] - 1) {
       return true;
     }
     return false;
@@ -703,19 +753,16 @@ export default class HinstRegistry {
    * @private
    */
   doesLocationShiftsAsBlock(index, location) {
-    if((location[0] - location[1] - 1) === 0) {
+    if (location[0] - location[1] - 1 === 0) {
       // Nothing moved in this index entry
       return false;
-    }
-    else if(index.operation === 'insert' && (index.startIdx < location[0])) {
+    } else if (index.operation === 'insert' && index.startIdx < location[0]) {
       // Insert happened strictly before our location (we want regions to grow)
       return true;
-    }
-    else if(index.operation === 'remove' && (index.endIdx - 1 < location[0])) {
+    } else if (index.operation === 'remove' && index.endIdx - 1 < location[0]) {
       // A remove happened before our location (-1 because index of end of selection)
       return true;
-    }
-    else {
+    } else {
       // All cases checked, must not shift as a block
       return false;
     }
@@ -735,24 +782,23 @@ export default class HinstRegistry {
    * @private
    */
   updateLocationWithIndex(location, index) {
-    if(!this.doesLocationChange(index, location)) {
+    if (!this.doesLocationChange(index, location)) {
       // nothing happens: text inserted or removed after location
       return location;
-    }
-    else if(this.doesLocationShiftsAsBlock(index, location)) {
+    } else if (this.doesLocationShiftsAsBlock(index, location)) {
       // shift location to right or left
-      return [location[0] + index.delta,  location[1] + index.delta];
-    }
-    else if(location.startIdx === location[1] - 1 && index.operation === 'insert') {
+      return [location[0] + index.delta, location[1] + index.delta];
+    } else if (
+      location.startIdx === location[1] - 1 &&
+      index.operation === 'insert'
+    ) {
       // shrink or expand location (may lead to negative interval)
       return [location[0], location[1] + index.delta - 1];
-    }
-    else {
+    } else {
       // shrink based on text removal
       return [location[0], location[1] + index.delta];
     }
   }
-
 
   /**
    * Given an index entry and a card, pull the card through the remaining index entries
@@ -768,9 +814,9 @@ export default class HinstRegistry {
   updateCardToCurrentIndex(idx, card) {
     let remainingIndexes = this.getRemainingIndexes(idx);
 
-    if(remainingIndexes.length > 0) {
+    if (remainingIndexes.length > 0) {
       let cardData = this.applyIndexesToCard(remainingIndexes, card);
-      if(!cardData.isValid) {
+      if (!cardData.isValid) {
         return;
       }
       card = cardData.card;
@@ -791,7 +837,6 @@ export default class HinstRegistry {
   getRemainingIndexes(indexEntry) {
     return this.index.slice(indexEntry.idx + 1);
   }
-
 
   /**
    * Update the registry and notify observers
@@ -820,13 +865,13 @@ export default class HinstRegistry {
     }
   }
 
-  sendNewCardToObservers(card){
+  sendNewCardToObservers(card) {
     for (let obs of this.newCardObservers) {
       obs(card);
     }
   }
 
-  sendRemovedCardToObservers(card){
+  sendRemovedCardToObservers(card) {
     for (let obs of this.removedCardObservers) {
       obs(card);
     }

@@ -1,7 +1,7 @@
 import {
   selectCurrentSelection,
   selectHighlight,
-  selectContext
+  selectContext,
 } from './editor/select';
 import { update } from './editor/update';
 import { triplesDefinedInResource } from './editor/triplestore';
@@ -70,5 +70,5 @@ export {
   update,
   replaceDomNode,
   triplesDefinedInResource,
-  isEmpty
+  isEmpty,
 };

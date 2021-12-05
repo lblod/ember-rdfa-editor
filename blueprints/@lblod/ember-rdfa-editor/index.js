@@ -6,7 +6,7 @@ const path = require('path');
 module.exports = {
   description: '',
 
-  normalizeEntityName() { },
+  normalizeEntityName() {},
 
   async afterInstall() {
     // Import styles if using SCSS
@@ -34,5 +34,5 @@ module.exports = {
         this.ui.writeLine(`Created ${file}`);
       }
     }
-  }
+  },
 };

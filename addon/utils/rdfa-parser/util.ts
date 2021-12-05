@@ -4,11 +4,11 @@
  * Copyright © 2019 Ruben Taelman
  */
 
-import * as RDF from "@rdfjs/types";
-import {resolve} from "relative-to-absolute-iri";
-import {IActiveTag} from "./active-tag";
-import {RDFA_CONTENTTYPES, RdfaProfile} from "./rdfa-profile";
-import {DataFactory} from "rdf-data-factory";
+import * as RDF from '@rdfjs/types';
+import { resolve } from 'relative-to-absolute-iri';
+import { IActiveTag } from './active-tag';
+import { RDFA_CONTENTTYPES, RdfaProfile } from './rdfa-profile';
+import { DataFactory } from 'rdf-data-factory';
 import {
   ModelBlankNode,
   ModelLiteral,
@@ -17,17 +17,25 @@ import {
   ModelQuadObject,
   ModelQuadPredicate,
   ModelQuadSubject,
-  ModelTerm
-} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+  ModelTerm,
+} from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 
 export class ModelDataFactory extends DataFactory {
-  quad(subject: ModelQuadSubject, predicate: ModelQuadPredicate, object: ModelQuadObject, graph: RDF.Quad_Graph): ModelQuad {
+  quad(
+    subject: ModelQuadSubject,
+    predicate: ModelQuadPredicate,
+    object: ModelQuadObject,
+    graph: RDF.Quad_Graph
+  ): ModelQuad {
     const quad = super.quad(subject, predicate, object, graph);
-    return {...quad, subject, predicate, object, graph};
+    return { ...quad, subject, predicate, object, graph };
   }
 
-  namedNode<I extends string = string>(iri: I, node?: ModelNode): ModelNamedNode<I> {
+  namedNode<I extends string = string>(
+    iri: I,
+    node?: ModelNode
+  ): ModelNamedNode<I> {
     const namedNode: ModelNamedNode<I> = super.namedNode<I>(iri);
     namedNode.node = node;
     return namedNode;
@@ -39,47 +47,60 @@ export class ModelDataFactory extends DataFactory {
     return blankNode;
   }
 
-  literal(value: string, languageOrDataType?: string | ModelNamedNode, node?: ModelNode): ModelLiteral {
+  literal(
+    value: string,
+    languageOrDataType?: string | ModelNamedNode,
+    node?: ModelNode
+  ): ModelLiteral {
     const literal: ModelLiteral = super.literal(value, languageOrDataType);
     literal.node = node;
     return literal;
-
   }
-
 }
 
 /**
  * A collection of utility functions.
  */
 export class Util {
-
   public static readonly RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
   public static readonly XSD = 'http://www.w3.org/2001/XMLSchema#';
   public static readonly RDFA = 'http://www.w3.org/ns/rdfa#';
 
-  private static readonly PREFIX_REGEX: RegExp = /\s*([^:\s]*)*:\s*([^\s]*)*\s*/g;
-  private static readonly TIME_REGEXES: { regex: RegExp, type: string }[] = [
+  private static readonly PREFIX_REGEX: RegExp =
+    /\s*([^:\s]*)*:\s*([^\s]*)*\s*/g;
+  private static readonly TIME_REGEXES: { regex: RegExp; type: string }[] = [
     {
-      regex: /^-?P([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\.[0-9])?S)?)?$/,
+      regex:
+        /^-?P([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\.[0-9])?S)?)?$/,
       type: 'duration',
     },
     {
-      regex: /^[0-9]+-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]((Z?)|([+-][0-9][0-9]:[0-9][0-9]))$/,
+      regex:
+        /^[0-9]+-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]((Z?)|([+-][0-9][0-9]:[0-9][0-9]))$/,
       type: 'dateTime',
     },
-    {regex: /^[0-9]+-[0-9][0-9]-[0-9][0-9]Z?$/, type: 'date'},
-    {regex: /^[0-9][0-9]:[0-9][0-9]:[0-9][0-9]((Z?)|([+-][0-9][0-9]:[0-9][0-9]))$/, type: 'time'},
-    {regex: /^[0-9]+-[0-9][0-9]$/, type: 'gYearMonth'},
-    {regex: /^[0-9]+$/, type: 'gYear'},
+    { regex: /^[0-9]+-[0-9][0-9]-[0-9][0-9]Z?$/, type: 'date' },
+    {
+      regex:
+        /^[0-9][0-9]:[0-9][0-9]:[0-9][0-9]((Z?)|([+-][0-9][0-9]:[0-9][0-9]))$/,
+      type: 'time',
+    },
+    { regex: /^[0-9]+-[0-9][0-9]$/, type: 'gYearMonth' },
+    { regex: /^[0-9]+$/, type: 'gYear' },
   ];
-  private static readonly IRI_REGEX: RegExp = /^([A-Za-z][A-Za-z0-9+-.]*|_):[^ "<>{}|\\[\]`]*$/;
+  private static readonly IRI_REGEX: RegExp =
+    /^([A-Za-z][A-Za-z0-9+-.]*|_):[^ "<>{}|\\[\]`]*$/;
 
   public readonly dataFactory: ModelDataFactory;
   public baseIRI: ModelNamedNode;
   public blankNodeFactory: ((node?: ModelNode) => ModelBlankNode) | null = null;
   private readonly baseIRIDocument: ModelNamedNode;
 
-  constructor(rootModelNode: ModelNode, dataFactory?: ModelDataFactory, baseIRI?: string) {
+  constructor(
+    rootModelNode: ModelNode,
+    dataFactory?: ModelDataFactory,
+    baseIRI?: string
+  ) {
     this.dataFactory = dataFactory || new ModelDataFactory();
     this.baseIRI = this.dataFactory.namedNode(baseIRI || '', rootModelNode);
     this.baseIRIDocument = this.baseIRI;
@@ -92,9 +113,11 @@ export class Util {
    * @param {boolean} xmlnsPrefixMappings If prefixes should be extracted from xmlnsPrefixMappings.
    * @return {{[p: string]: string}} The new prefixes.
    */
-  public static parsePrefixes(attributes: { [s: string]: string },
-                              parentPrefixes: { [prefix: string]: string },
-                              xmlnsPrefixMappings = false): { [prefix: string]: string } {
+  public static parsePrefixes(
+    attributes: { [s: string]: string },
+    parentPrefixes: { [prefix: string]: string },
+    xmlnsPrefixMappings = false
+  ): { [prefix: string]: string } {
     const additionalPrefixes: { [prefix: string]: string } = {};
     if (xmlnsPrefixMappings) {
       for (const attribute in attributes) {
@@ -105,7 +128,10 @@ export class Util {
     }
 
     if (attributes.prefix || Object.keys(additionalPrefixes).length > 0) {
-      const prefixes: { [prefix: string]: string } = {...parentPrefixes, ...additionalPrefixes};
+      const prefixes: { [prefix: string]: string } = {
+        ...parentPrefixes,
+        ...additionalPrefixes,
+      };
 
       if (attributes.prefix) {
         let prefixMatch = Util.PREFIX_REGEX.exec(attributes.prefix);
@@ -127,11 +153,14 @@ export class Util {
    * @param {{[p: string]: string}[]} prefixes The available prefixes.
    * @return {string} An expanded URL, or the term as-is.
    */
-  public static expandPrefixedTerm(term: string, activeTag: IActiveTag): string {
+  public static expandPrefixedTerm(
+    term: string,
+    activeTag: IActiveTag
+  ): string {
     // Check if the term is prefixed
     const colonIndex: number = term.indexOf(':');
     let prefix: string | null = null;
-    let local = "";
+    let local = '';
     if (colonIndex >= 0) {
       prefix = term.substr(0, colonIndex);
       local = term.substr(colonIndex + 1);
@@ -201,8 +230,13 @@ export class Util {
    * @param {IActiveTag} activeTag An active tag.
    * @returns {Term} A term.
    */
-  public getResourceOrBaseIri(term: ModelTerm | boolean, activeTag: IActiveTag): ModelNamedNode {
-    return term === true ? this.getBaseIriTerm(activeTag) : term as ModelNamedNode;
+  public getResourceOrBaseIri(
+    term: ModelTerm | boolean,
+    activeTag: IActiveTag
+  ): ModelNamedNode {
+    return term === true
+      ? this.getBaseIriTerm(activeTag)
+      : (term as ModelNamedNode);
   }
 
   /**
@@ -222,14 +256,24 @@ export class Util {
    * @param {boolean} allowBlankNode If blank nodes are allowed.
    * @return {Term[]} The IRI terms.
    */
-  public createVocabIris<B extends boolean>(terms: string, activeTag: IActiveTag, allowTerms: boolean,
-                                            allowBlankNode: B): B extends true
-    ? (RDF.BlankNode | RDF.NamedNode)[] : RDF.NamedNode[];
-  public createVocabIris(terms: string, activeTag: IActiveTag, allowTerms: boolean,
-                         allowBlankNode: boolean): (RDF.NamedNode | RDF.BlankNode)[] {
-    return terms.split(/\s+/)
+  public createVocabIris<B extends boolean>(
+    terms: string,
+    activeTag: IActiveTag,
+    allowTerms: boolean,
+    allowBlankNode: B
+  ): B extends true ? (RDF.BlankNode | RDF.NamedNode)[] : RDF.NamedNode[];
+  public createVocabIris(
+    terms: string,
+    activeTag: IActiveTag,
+    allowTerms: boolean,
+    allowBlankNode: boolean
+  ): (RDF.NamedNode | RDF.BlankNode)[] {
+    return terms
+      .split(/\s+/)
       .filter((term) => term && (allowTerms || term.indexOf(':') >= 0))
-      .map((property) => this.createIri(property, activeTag, true, true, allowBlankNode))
+      .map((property) =>
+        this.createIri(property, activeTag, true, true, allowBlankNode)
+      )
       .filter((term) => term != null);
   }
 
@@ -243,12 +287,19 @@ export class Util {
     if (activeTag.interpretObjectAsTime && !activeTag.datatype) {
       for (const entry of Util.TIME_REGEXES) {
         if (entry.regex.exec(literal)) {
-          activeTag.datatype = this.dataFactory.namedNode(Util.XSD + entry.type, activeTag.node);
+          activeTag.datatype = this.dataFactory.namedNode(
+            Util.XSD + entry.type,
+            activeTag.node
+          );
           break;
         }
       }
     }
-    return this.dataFactory.literal(literal, activeTag.datatype || activeTag.language, activeTag.node);
+    return this.dataFactory.literal(
+      literal,
+      activeTag.datatype || activeTag.language,
+      activeTag.node
+    );
   }
 
   /**
@@ -275,11 +326,20 @@ export class Util {
    * @param {boolean} allowBlankNode If blank nodes are allowed. Otherwise null will be returned.
    * @return {Term} An RDF term or null.
    */
-  public createIri<B extends boolean>(term: string, activeTag: IActiveTag, vocab: boolean, allowSafeCurie: boolean,
-                                      allowBlankNode: B): B extends true
-    ? (ModelNamedNode | ModelBlankNode) : ModelNamedNode;
-  public createIri<B extends boolean>(term: string, activeTag: IActiveTag, vocab: boolean, allowSafeCurie: boolean,
-                                      allowBlankNode: B): ModelNamedNode | ModelBlankNode | null {
+  public createIri<B extends boolean>(
+    term: string,
+    activeTag: IActiveTag,
+    vocab: boolean,
+    allowSafeCurie: boolean,
+    allowBlankNode: B
+  ): B extends true ? ModelNamedNode | ModelBlankNode : ModelNamedNode;
+  public createIri<B extends boolean>(
+    term: string,
+    activeTag: IActiveTag,
+    vocab: boolean,
+    allowSafeCurie: boolean,
+    allowBlankNode: B
+  ): ModelNamedNode | ModelBlankNode | null {
     term = term || '';
 
     if (!allowSafeCurie) {
@@ -304,13 +364,21 @@ export class Util {
 
     // Handle blank nodes
     if (term.startsWith('_:')) {
-      return allowBlankNode ? this.dataFactory.blankNode(term.substr(2) || 'b_identity', activeTag.node) : null;
+      return allowBlankNode
+        ? this.dataFactory.blankNode(
+            term.substr(2) || 'b_identity',
+            activeTag.node
+          )
+        : null;
     }
 
     // Handle vocab IRIs
     if (vocab) {
       if (activeTag.vocab && term.indexOf(':') < 0) {
-        return this.dataFactory.namedNode(activeTag.vocab + term, activeTag.node);
+        return this.dataFactory.namedNode(
+          activeTag.vocab + term,
+          activeTag.node
+        );
       }
     }
 
@@ -327,5 +395,4 @@ export class Util {
     }
     return this.dataFactory.namedNode(iri, activeTag.node);
   }
-
 }

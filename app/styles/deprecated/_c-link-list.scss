@@ -13,7 +13,7 @@
   position: relative;
 
   & + & {
-    border-top: .1rem solid var(--au-gray-200);
+    border-top: 0.1rem solid var(--au-gray-200);
   }
 }
 
@@ -22,7 +22,7 @@
 }
 
 .say-link-list__link {
-  @include au-font-size($au-base,1.3);
+  @include au-font-size($au-base, 1.3);
   font-family: var(--au-font);
   border: 0;
   outline: 0;
@@ -40,7 +40,7 @@
   .say-icon {
     flex: none;
     margin-right: $au-unit-tiny;
-    top: .3ex;
+    top: 0.3ex;
   }
 
   &:hover,
@@ -51,7 +51,7 @@
 
   &:focus {
     outline: var(--au-outline);
-    outline-offset: -.6rem;
+    outline-offset: -0.6rem;
   }
 }
 
@@ -59,7 +59,7 @@
   @include au-font-size($au-h6);
 
   .say-icon {
-    top: .5ex;
+    top: 0.5ex;
   }
   // padding: $au-unit-small $au-unit-large + $au-unit-tiny $au-unit-small $au-unit-small;
 
@@ -91,7 +91,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: .2rem;
+  border-radius: 0.2rem;
   transition: color var(--au-transition), background-color var(--au-transition);
   text-decoration: underline;
   text-decoration-color: var(--au-blue-300);
@@ -109,8 +109,6 @@
   max-height: $au-unit * 4.6;
   overflow: hidden;
 }
-
-
 
 // Disable fixed scrollbars on html element > @TODO: remove with new version of appuniversum
 .say-link-list--dark {

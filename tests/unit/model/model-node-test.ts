@@ -1,11 +1,11 @@
-import {module, test} from "qunit";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import { module, test } from 'qunit';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import { OutsideRootError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 
-module("Unit | model | model-node", hooks => {
+module('Unit | model | model-node', (hooks) => {
   const ctx = new ModelTestContext();
 
   hooks.beforeEach(() => {
@@ -43,18 +43,17 @@ module("Unit | model | model-node", hooks => {
   //   assert.deepEqual(rslt, [1, 2]);
   // });
 
-  module("Unit | model | model-node | getOffsetPath", () => {
-    test("path of root is empty list", assert => {
-
-      const elem = new ModelElement("div");
+  module('Unit | model | model-node | getOffsetPath', () => {
+    test('path of root is empty list', (assert) => {
+      const elem = new ModelElement('div');
       assert.strictEqual(elem.getOffsetPath().length, 0);
     });
 
-    test("path of children of root", assert => {
-      const root = new ModelElement("div");
-      const div = new ModelElement("div");
-      const text = new ModelText("abc");
-      const div2 = new ModelElement("div");
+    test('path of children of root', (assert) => {
+      const root = new ModelElement('div');
+      const div = new ModelElement('div');
+      const text = new ModelText('abc');
+      const div2 = new ModelElement('div');
       root.appendChildren(div, text, div2);
 
       assert.strictEqual(div.getOffsetPath().length, 1);
@@ -66,99 +65,92 @@ module("Unit | model | model-node", hooks => {
     });
   });
 
-module("Unit | model | model-node | promote", () => {
-  test("promote of child of root throws error", assert => {
-    const root = ctx.model.rootModelNode;
-    const childOfRoot = new ModelText("test");
-    root.addChild(childOfRoot);
+  module('Unit | model | model-node | promote', () => {
+    test('promote of child of root throws error', (assert) => {
+      const root = ctx.model.rootModelNode;
+      const childOfRoot = new ModelText('test');
+      root.addChild(childOfRoot);
 
-    assert.throws(() => childOfRoot.promote(), new OutsideRootError());
+      assert.throws(() => childOfRoot.promote(), new OutsideRootError());
+    });
+
+    test('promote(false) turns node into previoussibling of parent', (assert) => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement('div');
+      const content = new ModelText('test');
+      root.addChild(div);
+      div.addChild(content);
+
+      content.promote();
+      assert.strictEqual(div.previousSibling, content);
+    });
+
+    test('promote returns old parent', (assert) => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement('div');
+      const content = new ModelText('test');
+      root.addChild(div);
+      div.addChild(content);
+
+      const result = content.promote();
+      assert.strictEqual(result, div);
+    });
+
+    test('promote moves node into new parent', (assert) => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement('div');
+      const content = new ModelText('test');
+      root.addChild(div);
+      div.addChild(content);
+
+      content.promote();
+      assert.strictEqual(root.firstChild, content);
+      assert.strictEqual(root.lastChild, div);
+      assert.strictEqual(div.length, 0);
+      assert.strictEqual(root.length, 2);
+    });
+
+    test('promote(true) turns node into nextsibling of parent', (assert) => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement('div');
+      const content = new ModelText('test');
+      root.addChild(div);
+      div.addChild(content);
+
+      content.promote(true);
+      assert.strictEqual(div.nextSibling, content);
+    });
+
+    test('promote(true) returns old parent', (assert) => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement('div');
+      const content = new ModelText('test');
+      root.addChild(div);
+      div.addChild(content);
+
+      const result = content.promote(true);
+      assert.strictEqual(result, div);
+    });
+
+    test('promote(true) moves node into new parent', (assert) => {
+      const root = ctx.model.rootModelNode;
+      const div = new ModelElement('div');
+      const content = new ModelText('test');
+      root.addChild(div);
+      div.addChild(content);
+
+      content.promote(true);
+      assert.strictEqual(root.lastChild, content);
+      assert.strictEqual(root.firstChild, div);
+      assert.strictEqual(div.length, 0);
+      assert.strictEqual(root.length, 2);
+    });
   });
 
-  test("promote(false) turns node into previoussibling of parent", assert => {
-    const root = ctx.model.rootModelNode;
-    const div = new ModelElement("div");
-    const content = new ModelText("test");
-    root.addChild(div);
-    div.addChild(content);
-
-    content.promote();
-    assert.strictEqual(div.previousSibling, content);
-
-  });
-
-  test("promote returns old parent", assert => {
-    const root = ctx.model.rootModelNode;
-    const div = new ModelElement("div");
-    const content = new ModelText("test");
-    root.addChild(div);
-    div.addChild(content);
-
-    const result = content.promote();
-    assert.strictEqual(result, div);
-
-  });
-
-  test("promote moves node into new parent", assert => {
-    const root = ctx.model.rootModelNode;
-    const div = new ModelElement("div");
-    const content = new ModelText("test");
-    root.addChild(div);
-    div.addChild(content);
-
-    content.promote();
-    assert.strictEqual(root.firstChild, content);
-    assert.strictEqual(root.lastChild, div);
-    assert.strictEqual(div.length, 0);
-    assert.strictEqual(root.length, 2);
-
-  });
-
-
-  test("promote(true) turns node into nextsibling of parent", assert => {
-    const root = ctx.model.rootModelNode;
-    const div = new ModelElement("div");
-    const content = new ModelText("test");
-    root.addChild(div);
-    div.addChild(content);
-
-    content.promote(true);
-    assert.strictEqual(div.nextSibling, content);
-
-  });
-
-  test("promote(true) returns old parent", assert => {
-    const root = ctx.model.rootModelNode;
-    const div = new ModelElement("div");
-    const content = new ModelText("test");
-    root.addChild(div);
-    div.addChild(content);
-
-    const result = content.promote(true);
-    assert.strictEqual(result, div);
-
-  });
-
-  test("promote(true) moves node into new parent", assert => {
-    const root = ctx.model.rootModelNode;
-    const div = new ModelElement("div");
-    const content = new ModelText("test");
-    root.addChild(div);
-    div.addChild(content);
-
-    content.promote(true);
-    assert.strictEqual(root.lastChild, content);
-    assert.strictEqual(root.firstChild, div);
-    assert.strictEqual(div.length, 0);
-    assert.strictEqual(root.length, 2);
-
-  });
-});
-
-  module("Unit | model | model-node | sameAs", () => {
-    test("returns true for identical models", assert => {
+  module('Unit | model | model-node | sameAs', () => {
+    test('returns true for identical models', (assert) => {
       // language=XML
-      const {root: model1} = vdom`
+      const { root: model1 } = vdom`
         <div>
           <span>
             <text>abc</text>
@@ -179,10 +171,9 @@ module("Unit | model | model-node | promote", () => {
       const model2 = model1.clone();
       assert.true(model1.sameAs(model2));
     });
-    test("returns false for different models", assert => {
-
+    test('returns false for different models', (assert) => {
       // language=XML
-      const {root: model1} = vdom`
+      const { root: model1 } = vdom`
         <div>
           <span>
             <text>abc</text>
@@ -201,7 +192,7 @@ module("Unit | model | model-node | promote", () => {
         </div>
       `;
       // language=XML
-      const {root: model2} = vdom`
+      const { root: model2 } = vdom`
         <div>
           <!--          difference-->
           <div>
@@ -224,11 +215,9 @@ module("Unit | model | model-node | promote", () => {
       assert.false(model1.sameAs(model2));
     });
 
-
-    test("returns false models only differing in attributes", assert => {
-
+    test('returns false models only differing in attributes', (assert) => {
       // language=XML
-      const {root: model1} = vdom`
+      const { root: model1 } = vdom`
         <div>
           <span>
             <text>abc</text>
@@ -247,7 +236,7 @@ module("Unit | model | model-node | promote", () => {
         </div>
       `;
       // language=XML
-      const {root: model2} = vdom`
+      const { root: model2 } = vdom`
         <div>
           <span>
             <text bold="true">abc</text>
@@ -267,10 +256,9 @@ module("Unit | model | model-node | promote", () => {
       `;
       assert.false(model1.sameAs(model2));
     });
-    test("returns true for models only differing in ignored attributes", assert => {
-
+    test('returns true for models only differing in ignored attributes', (assert) => {
       // language=XML
-      const {root: model1} = vdom`
+      const { root: model1 } = vdom`
         <div>
           <span>
             <text>abc</text>
@@ -289,7 +277,7 @@ module("Unit | model | model-node | promote", () => {
         </div>
       `;
       // language=XML
-      const {root: model2} = vdom`
+      const { root: model2 } = vdom`
         <div>
           <span>
             <text __dummy_test_attr="test">abc</text>
@@ -309,10 +297,9 @@ module("Unit | model | model-node | promote", () => {
       `;
       assert.true(model1.sameAs(model2));
     });
-    test("returns false for models only differing in ignored attributes when strict", assert => {
-
+    test('returns false for models only differing in ignored attributes when strict', (assert) => {
       // language=XML
-      const {root: model1} = vdom`
+      const { root: model1 } = vdom`
         <div>
           <span>
             <text>abc</text>
@@ -331,7 +318,7 @@ module("Unit | model | model-node | promote", () => {
         </div>
       `;
       // language=XML
-      const {root: model2} = vdom`
+      const { root: model2 } = vdom`
         <div>
           <span>
             <text __dummy_test_attr="test">abc</text>

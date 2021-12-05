@@ -1,25 +1,38 @@
-import ModelNode, {ModelNodeType, NodeConfig} from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import {Cloneable} from "@lblod/ember-rdfa-editor/model/util/types";
-import {NON_BLOCK_NODES} from "@lblod/ember-rdfa-editor/model/util/constants";
-import {IndexOutOfRangeError, ModelError, OffsetOutOfRangeError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import {parsePrefixString} from "@lblod/ember-rdfa-editor/model/util/rdfa-utils";
-import RdfaAttributes from "@lblod/marawa/rdfa-attributes";
+import ModelNode, {
+  ModelNodeType,
+  NodeConfig,
+} from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelText, {
+  TextAttribute,
+} from '@lblod/ember-rdfa-editor/model/model-text';
+import { Cloneable } from '@lblod/ember-rdfa-editor/model/util/types';
+import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/model/util/constants';
+import {
+  IndexOutOfRangeError,
+  ModelError,
+  OffsetOutOfRangeError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import { parsePrefixString } from '@lblod/ember-rdfa-editor/model/util/rdfa-utils';
+import RdfaAttributes from '@lblod/marawa/rdfa-attributes';
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
-export default class ModelElement extends ModelNode implements Cloneable<ModelElement> {
-  modelNodeType: ModelNodeType = "ELEMENT";
+export default class ModelElement
+  extends ModelNode
+  implements Cloneable<ModelElement>
+{
+  modelNodeType: ModelNodeType = 'ELEMENT';
 
   private _children: ModelNode[] = [];
   private _type: ElementType;
   private _currentRdfaPrefixes: Map<string, string>;
 
-  constructor(type: ElementType = "span", config?: NodeConfig) {
+  constructor(type: ElementType = 'span', config?: NodeConfig) {
     super(config);
     this._type = type;
-    this._currentRdfaPrefixes = config?.rdfaPrefixes || new Map<string, string>();
+    this._currentRdfaPrefixes =
+      config?.rdfaPrefixes || new Map<string, string>();
   }
 
   get type(): ElementType {
@@ -84,14 +97,17 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   clone(): ModelElement {
-    const config = {debugInfo: "", rdfaPrefixes: new Map<string, string>(this._currentRdfaPrefixes)};
+    const config = {
+      debugInfo: '',
+      rdfaPrefixes: new Map<string, string>(this._currentRdfaPrefixes),
+    };
     const result = new ModelElement(this.type, config);
 
     result.attributeMap = new Map<string, string>(this.attributeMap);
     result.modelNodeType = this.modelNodeType;
     result.boundNode = this.boundNode;
 
-    const clonedChildren = this.children.map(c => c.clone());
+    const clonedChildren = this.children.map((c) => c.clone());
     result.appendChildren(...clonedChildren);
 
     return result;
@@ -172,7 +188,8 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
 
     if (this.length > index + 1) {
-      this.children[index + 1].previousSibling = this.children[index - 1] || null;
+      this.children[index + 1].previousSibling =
+        this.children[index - 1] || null;
     }
     this.children.splice(index, 1);
   }
@@ -195,7 +212,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * where possible
    * @param index
    */
-  split(index: number): { left: ModelElement, right: ModelElement } {
+  split(index: number): { left: ModelElement; right: ModelElement } {
     if (index < 0) {
       index = 0;
     }
@@ -216,7 +233,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     right.appendChildren(...rightChildren);
     this.parent?.addChild(right, this.index! + 1);
 
-    return {left: this, right};
+    return { left: this, right };
   }
 
   /**
@@ -235,7 +252,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
       this.parent?.addChild(child, insertIndex);
       insertIndex++;
       if (withBreaks) {
-        this.parent?.addChild(new ModelElement("br"), insertIndex);
+        this.parent?.addChild(new ModelElement('br'), insertIndex);
         insertIndex++;
       }
     }
@@ -243,7 +260,7 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   hasVisibleText(): boolean {
-    if (this.type === "br") {
+    if (this.type === 'br') {
       return true;
     }
     for (const child of this.children) {
@@ -261,29 +278,37 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
    * Throws an exception if index is out of range.
    * @param index
    */
-  isolateChildAt(index: number): { left: ModelElement | null, middle: ModelElement, right: ModelElement | null } {
+  isolateChildAt(index: number): {
+    left: ModelElement | null;
+    middle: ModelElement;
+    right: ModelElement | null;
+  } {
     if (index < 0 || index >= this.length) {
       throw new IndexOutOfRangeError();
     }
 
     if (this.length === 1) {
-      return {left: null, middle: this, right: null};
+      return { left: null, middle: this, right: null };
     }
 
     if (index === 0) {
-      const {left, right} = this.split(index + 1);
-      return {left: null, middle: left, right};
+      const { left, right } = this.split(index + 1);
+      return { left: null, middle: left, right };
     }
 
     if (index === this.length - 1) {
-      const {left, right} = this.split(index);
-      return {left, middle: right, right: null};
+      const { left, right } = this.split(index);
+      return { left, middle: right, right: null };
     }
 
     const firstSplit = this.split(index + 1);
     const secondSplit = firstSplit.left.split(index);
 
-    return {left: secondSplit.left, middle: secondSplit.right, right: firstSplit.right};
+    return {
+      left: secondSplit.left,
+      middle: secondSplit.right,
+      right: firstSplit.right,
+    };
   }
 
   /**
@@ -348,15 +373,15 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   }
 
   getVocab(): string | null {
-    return this.getRdfaPrefixes().get("") ?? null;
+    return this.getRdfaPrefixes().get('') ?? null;
   }
 
   getRdfaPrefixes(): Map<string, string> {
     // NOTE: We map vocab to an empty string prefix, because this is convenient for passing to children.
     //       It's also conveniently how marawa uses it in the RdfaAttributes class.
-    const vocab = this.getAttribute("vocab");
+    const vocab = this.getAttribute('vocab');
     if (vocab) {
-      return new Map([...this._currentRdfaPrefixes, ["", vocab]]);
+      return new Map([...this._currentRdfaPrefixes, ['', vocab]]);
     } else {
       return new Map([...this._currentRdfaPrefixes]);
     }
@@ -365,23 +390,25 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
   getAttributesRecord(): Record<string, string> {
     const record: Record<string, string> = {};
     for (const [key, value] of this.attributeMap.entries()) {
-      const rdfaAttribute = (this.getRdfaAttributes() as unknown as Record<string, string | string[]>)[key];
+      const rdfaAttribute = (
+        this.getRdfaAttributes() as unknown as Record<string, string | string[]>
+      )[key];
       if (rdfaAttribute) {
         if (rdfaAttribute instanceof Array) {
-          record[key] = rdfaAttribute.join(" ");
+          record[key] = rdfaAttribute.join(' ');
         } else {
           record[key] = rdfaAttribute;
         }
       } else {
         record[key] = value;
       }
-
     }
     return record;
-
   }
 
-  updateRdfaPrefixes(prefixes: Map<string, string> = this._currentRdfaPrefixes) {
+  updateRdfaPrefixes(
+    prefixes: Map<string, string> = this._currentRdfaPrefixes
+  ) {
     const myPrefixString = this.getAttribute('prefix');
     if (myPrefixString) {
       const myPrefixes = parsePrefixString(myPrefixString);
@@ -420,11 +447,22 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     }
 
     if (strict) {
-      if (!ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap, new Set<string>())) {
+      if (
+        !ModelNodeUtils.areAttributeMapsSame(
+          this.attributeMap,
+          other.attributeMap,
+          new Set<string>()
+        )
+      ) {
         return false;
       }
     } else {
-      if (!ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap)) {
+      if (
+        !ModelNodeUtils.areAttributeMapsSame(
+          this.attributeMap,
+          other.attributeMap
+        )
+      ) {
         return false;
       }
     }
@@ -445,6 +483,9 @@ export default class ModelElement extends ModelNode implements Cloneable<ModelEl
     if (other.type !== this.type) {
       return false;
     }
-    return ModelNodeUtils.areAttributeMapsSame(this.attributeMap, other.attributeMap);
+    return ModelNodeUtils.areAttributeMapsSame(
+      this.attributeMap,
+      other.attributeMap
+    );
   }
 }

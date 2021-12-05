@@ -3,27 +3,31 @@
  *
  * Copyright © 2019 Ruben Taelman
  */
-import * as RDF from "@rdfjs/types";
-import {IActiveTag} from "./active-tag";
-import {IHtmlParseListener} from "./html-parse-listener";
-import INITIAL_CONTEXT_XHTML from "./initial-context-xhtml";
-import INITIAL_CONTEXT from "./initial-context";
-import {IRdfaPattern} from "./rdfa-pattern";
-import {IRdfaFeatures, RDFA_FEATURES, RdfaProfile} from "./rdfa-profile";
-import {Util} from "./util";
-import {CustomError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import GenTreeWalker from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
-import {GraphyDataset} from "@lblod/ember-rdfa-editor/model/util/datastore";
-import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import MapUtils from "@lblod/ember-rdfa-editor/model/util/map-utils";
+import * as RDF from '@rdfjs/types';
+import { IActiveTag } from './active-tag';
+import { IHtmlParseListener } from './html-parse-listener';
+import INITIAL_CONTEXT_XHTML from './initial-context-xhtml';
+import INITIAL_CONTEXT from './initial-context';
+import { IRdfaPattern } from './rdfa-pattern';
+import { IRdfaFeatures, RDFA_FEATURES, RdfaProfile } from './rdfa-profile';
+import { Util } from './util';
+import { CustomError } from '@lblod/ember-rdfa-editor/utils/errors';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import { GraphyDataset } from '@lblod/ember-rdfa-editor/model/util/datastore';
+import {
+  isElement,
+  isTextNode,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
 
 export type ModelTerm = ModelQuadObject | ModelQuadPredicate | ModelQuadSubject;
 export type ModelQuadSubject = ModelNamedNode | ModelBlankNode;
 export type ModelQuadPredicate = ModelNamedNode;
 export type ModelQuadObject = ModelNamedNode | ModelBlankNode | ModelLiteral;
 
-export interface ModelNamedNode<I extends string = string> extends RDF.NamedNode<I> {
+export interface ModelNamedNode<I extends string = string>
+  extends RDF.NamedNode<I> {
   node?: ModelNode;
 }
 
@@ -39,7 +43,6 @@ export interface ModelQuad extends RDF.Quad {
   subject: ModelQuadSubject;
   predicate: ModelQuadPredicate;
   object: ModelQuadObject;
-
 }
 
 export interface RdfaParseConfig {
@@ -49,10 +52,10 @@ export interface RdfaParseConfig {
 }
 
 export interface RdfaParseResponse {
-  dataset: RDF.Dataset,
+  dataset: RDF.Dataset;
 
-  subjectToNodesMapping: Map<string, Set<ModelNode>>,
-  nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>
+  subjectToNodesMapping: Map<string, Set<ModelNode>>;
+  nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
 
   nodeToObjectsMapping: Map<ModelNode, Set<ModelQuadObject>>;
   objectToNodesMapping: Map<string, Set<ModelNode>>;
@@ -62,7 +65,6 @@ export interface RdfaParseResponse {
 }
 
 export class RdfaParser {
-
   private readonly options: IRdfaParserOptions;
   private util: Util;
   private readonly defaultGraph: RDF.Quad_Graph;
@@ -90,8 +92,11 @@ export class RdfaParser {
 
     this.rootModelNode = options.rootModelNode;
     this.util = new Util(this.rootModelNode, undefined, options.baseIRI);
-    this.defaultGraph = options.defaultGraph || this.util.dataFactory.defaultGraph();
-    const profile = options.contentType ? Util.contentTypeToProfile(options.contentType) : options.profile || '';
+    this.defaultGraph =
+      options.defaultGraph || this.util.dataFactory.defaultGraph();
+    const profile = options.contentType
+      ? Util.contentTypeToProfile(options.contentType)
+      : options.profile || '';
     this.features = options.features || RDFA_FEATURES[profile];
     this.htmlParseListener = options.htmlParseListener;
     this.rdfaPatterns = {};
@@ -102,7 +107,10 @@ export class RdfaParser {
     this.subjectToNodesMapping = new Map<string, Set<ModelNode>>();
 
     this.predicateToNodesMapping = new Map<string, Set<ModelNode>>();
-    this.nodeToPredicatesMapping = new Map<ModelNode, Set<ModelQuadPredicate>>();
+    this.nodeToPredicatesMapping = new Map<
+      ModelNode,
+      Set<ModelQuadPredicate>
+    >();
 
     this.nodeToObjectsMapping = new Map<ModelNode, Set<ModelQuadObject>>();
     this.objectToNodesMapping = new Map<string, Set<ModelNode>>();
@@ -116,17 +124,23 @@ export class RdfaParser {
       name: '',
       prefixesAll: {
         ...INITIAL_CONTEXT['@context'],
-        ...this.features.xhtmlInitialContext ? INITIAL_CONTEXT_XHTML['@context'] : {},
+        ...(this.features.xhtmlInitialContext
+          ? INITIAL_CONTEXT_XHTML['@context']
+          : {}),
       },
       prefixesCustom: {},
       skipElement: false,
       vocab: options.vocab,
-      node: this.rootModelNode
+      node: this.rootModelNode,
     });
   }
 
-  static parse({modelRoot, pathFromDomRoot = [], baseIRI}: RdfaParseConfig): RdfaParseResponse {
-    const parser = new RdfaParser({rootModelNode: modelRoot, baseIRI});
+  static parse({
+    modelRoot,
+    pathFromDomRoot = [],
+    baseIRI,
+  }: RdfaParseConfig): RdfaParseResponse {
+    const parser = new RdfaParser({ rootModelNode: modelRoot, baseIRI });
     for (const domNode of pathFromDomRoot) {
       if (isElement(domNode)) {
         const attributeObj: Record<string, string> = {};
@@ -141,7 +155,7 @@ export class RdfaParser {
     const walker = GenTreeWalker.fromSubTree({
       root: modelRoot,
       onEnterNode: parser.onEnterNode,
-      onLeaveNode: parser.onLeaveNode
+      onLeaveNode: parser.onLeaveNode,
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _nodes = [...walker.nodes()];
@@ -157,7 +171,7 @@ export class RdfaParser {
       nodeToPredicatesMapping: parser.nodeToPredicatesMapping,
       predicateToNodesMapping: parser.predicateToNodesMapping,
       nodeToObjectsMapping: parser.nodeToObjectsMapping,
-      objectToNodesMapping: parser.objectToNodesMapping
+      objectToNodesMapping: parser.objectToNodesMapping,
     };
   }
 
@@ -177,8 +191,11 @@ export class RdfaParser {
     }
   };
 
-
-  protected onTagOpen(name: string, attributes: Record<string, string>, node?: ModelNode) {
+  protected onTagOpen(
+    name: string,
+    attributes: Record<string, string>,
+    node?: ModelNode
+  ) {
     // Determine the parent tag (ignore skipped tags)
     let parentTagI: number = this.activeTagStack.length - 1;
     while (parentTagI > 0 && this.activeTagStack[parentTagI].skipElement) {
@@ -190,8 +207,10 @@ export class RdfaParser {
       parentTag = {
         ...parentTag,
         language: this.activeTagStack[this.activeTagStack.length - 1].language,
-        prefixesAll: this.activeTagStack[this.activeTagStack.length - 1].prefixesAll,
-        prefixesCustom: this.activeTagStack[this.activeTagStack.length - 1].prefixesCustom,
+        prefixesAll:
+          this.activeTagStack[this.activeTagStack.length - 1].prefixesAll,
+        prefixesCustom:
+          this.activeTagStack[this.activeTagStack.length - 1].prefixesCustom,
         vocab: this.activeTagStack[this.activeTagStack.length - 1].vocab,
       };
     }
@@ -208,7 +227,7 @@ export class RdfaParser {
       prefixesAll: {},
       prefixesCustom: {},
       skipElement: false,
-      node
+      node,
     };
     this.activeTagStack.push(activeTag);
 
@@ -224,8 +243,12 @@ export class RdfaParser {
         }
       }
 
-      const attributesSerialized = Object.keys(attributes).map((key) => `${key}="${attributes[key]}"`).join(' ');
-      activeTag.text = [`<${name}${attributesSerialized ? ' ' + attributesSerialized : ''}>`];
+      const attributesSerialized = Object.keys(attributes)
+        .map((key) => `${key}="${attributes[key]}"`)
+        .join(' ');
+      activeTag.text = [
+        `<${name}${attributesSerialized ? ' ' + attributesSerialized : ''}>`,
+      ];
       if (this.features.skipHandlingXmlLiteralChildren) {
         return;
       }
@@ -281,9 +304,15 @@ export class RdfaParser {
 
       // Instantiate patterns on rdfa:copy
       if (attributes.property === 'rdfa:copy') {
-        const copyTargetPatternId: string = attributes.resource || attributes.href || attributes.src;
+        const copyTargetPatternId: string =
+          attributes.resource || attributes.href || attributes.src;
         if (this.rdfaPatterns[copyTargetPatternId]) {
-          this.emitPatternCopy(parentTag, this.rdfaPatterns[copyTargetPatternId], copyTargetPatternId, activeTag.node);
+          this.emitPatternCopy(
+            parentTag,
+            this.rdfaPatterns[copyTargetPatternId],
+            copyTargetPatternId,
+            activeTag.node
+          );
         } else {
           if (!this.pendingRdfaPatternCopies[copyTargetPatternId]) {
             this.pendingRdfaPatternCopies[copyTargetPatternId] = [];
@@ -300,7 +329,10 @@ export class RdfaParser {
     }
     // xml:base attributes override the baseIRI of the current tag and children
     if (this.features.xmlBase && attributes['xml:base']) {
-      activeTag.localBaseIRI = this.util.getBaseIRI(attributes['xml:base'], node);
+      activeTag.localBaseIRI = this.util.getBaseIRI(
+        attributes['xml:base'],
+        node
+      );
     }
 
     // <time> tags set an initial datatype
@@ -311,7 +343,11 @@ export class RdfaParser {
     // Processing based on https://www.w3.org/TR/rdfa-core/#s_rdfaindetail
     // 1: initialize values
     let newSubject: ModelNamedNode | ModelBlankNode | boolean | null = null;
-    let currentObjectResource: ModelNamedNode | ModelBlankNode | boolean | null = null;
+    let currentObjectResource:
+      | ModelNamedNode
+      | ModelBlankNode
+      | boolean
+      | null = null;
     let typedResource: ModelNamedNode | ModelBlankNode | boolean | null = null;
 
     // 2: handle vocab attribute to set active vocabulary
@@ -322,7 +358,7 @@ export class RdfaParser {
         this.emitTriple(
           this.util.getBaseIriTerm(activeTag),
           this.util.dataFactory.namedNode(Util.RDFA + 'usesVocabulary', node),
-          this.util.dataFactory.namedNode(activeTag.vocab, node),
+          this.util.dataFactory.namedNode(activeTag.vocab, node)
         );
       } else {
         // If vocab is set to '', then we fallback to the root vocab as defined via the parser constructor
@@ -333,24 +369,43 @@ export class RdfaParser {
     }
 
     // 3: handle prefixes
-    activeTag.prefixesCustom = Util.parsePrefixes(attributes, parentTag.prefixesCustom,
-      this.features.xmlnsPrefixMappings);
-    activeTag.prefixesAll = Object.keys(activeTag.prefixesCustom).length > 0
-      ? {...parentTag.prefixesAll, ...activeTag.prefixesCustom} : parentTag.prefixesAll;
+    activeTag.prefixesCustom = Util.parsePrefixes(
+      attributes,
+      parentTag.prefixesCustom,
+      this.features.xmlnsPrefixMappings
+    );
+    activeTag.prefixesAll =
+      Object.keys(activeTag.prefixesCustom).length > 0
+        ? { ...parentTag.prefixesAll, ...activeTag.prefixesCustom }
+        : parentTag.prefixesAll;
 
     // Handle role attribute
     if (this.features.roleAttribute && attributes.role) {
       const roleSubject = attributes.id
-        ? this.util.createIri('#' + attributes.id, activeTag, false, false, false)
+        ? this.util.createIri(
+            '#' + attributes.id,
+            activeTag,
+            false,
+            false,
+            false
+          )
         : this.util.createBlankNode(node);
       // Temporarily override vocab
       const vocabOld = activeTag.vocab;
       activeTag.vocab = 'http://www.w3.org/1999/xhtml/vocab#';
-      for (const role of this.util.createVocabIris(attributes.role, activeTag, true, false)) {
+      for (const role of this.util.createVocabIris(
+        attributes.role,
+        activeTag,
+        true,
+        false
+      )) {
         this.emitTriple(
           roleSubject,
-          this.util.dataFactory.namedNode('http://www.w3.org/1999/xhtml/vocab#role', node),
-          role,
+          this.util.dataFactory.namedNode(
+            'http://www.w3.org/1999/xhtml/vocab#role',
+            node
+          ),
+          role
         );
       }
       activeTag.vocab = vocabOld;
@@ -358,7 +413,10 @@ export class RdfaParser {
 
     // 4: handle language
     // Save language attribute value in active tag
-    if ('xml:lang' in attributes || (this.features.langAttribute && 'lang' in attributes)) {
+    if (
+      'xml:lang' in attributes ||
+      (this.features.langAttribute && 'lang' in attributes)
+    ) {
       activeTag.language = attributes['xml:lang'] || attributes.lang;
     } else {
       activeTag.language = parentTag.language;
@@ -367,11 +425,21 @@ export class RdfaParser {
     const isRootTag: boolean = this.activeTagStack.length === 2;
     if (!('rel' in attributes) && !('rev' in attributes)) {
       // 5: Determine the new subject when rel and rev are not present
-      if ('property' in attributes && !('content' in attributes) && !('datatype' in attributes)) {
+      if (
+        'property' in attributes &&
+        !('content' in attributes) &&
+        !('datatype' in attributes)
+      ) {
         // 5.1: property is present, but not content and datatype
         // Determine new subject
         if ('about' in attributes) {
-          newSubject = this.util.createIri(attributes.about, activeTag, false, true, true);
+          newSubject = this.util.createIri(
+            attributes.about,
+            activeTag,
+            false,
+            true,
+            true
+          );
           activeTag.explicitNewSubject = !!newSubject;
         } else if (isRootTag) {
           newSubject = true;
@@ -382,16 +450,34 @@ export class RdfaParser {
         // Determine type
         if ('typeof' in attributes) {
           if ('about' in attributes) {
-            typedResource = this.util.createIri(attributes.about, activeTag, false, true, true);
+            typedResource = this.util.createIri(
+              attributes.about,
+              activeTag,
+              false,
+              true,
+              true
+            );
           }
           if (!typedResource && isRootTag) {
             typedResource = true;
           }
           if (!typedResource && 'resource' in attributes) {
-            typedResource = this.util.createIri(attributes.resource, activeTag, false, true, true);
+            typedResource = this.util.createIri(
+              attributes.resource,
+              activeTag,
+              false,
+              true,
+              true
+            );
           }
           if (!typedResource && ('href' in attributes || 'src' in attributes)) {
-            typedResource = this.util.createIri(attributes.href || attributes.src, activeTag, false, false, true);
+            typedResource = this.util.createIri(
+              attributes.href || attributes.src,
+              activeTag,
+              false,
+              false,
+              true
+            );
           }
           if (!typedResource && this.isInheritSubjectInHeadBody(name)) {
             typedResource = newSubject;
@@ -405,12 +491,23 @@ export class RdfaParser {
       } else {
         // 5.2
         if ('about' in attributes || 'resource' in attributes) {
-          newSubject = this.util.createIri(attributes.about || attributes.resource, activeTag, false, true, true);
+          newSubject = this.util.createIri(
+            attributes.about || attributes.resource,
+            activeTag,
+            false,
+            true,
+            true
+          );
           activeTag.explicitNewSubject = !!newSubject;
         }
         if (!newSubject && ('href' in attributes || 'src' in attributes)) {
-          newSubject = this.util.createIri(attributes.href || attributes.src,
-            activeTag, false, false, true);
+          newSubject = this.util.createIri(
+            attributes.href || attributes.src,
+            activeTag,
+            false,
+            false,
+            true
+          );
           activeTag.explicitNewSubject = !!newSubject;
         }
         if (!newSubject) {
@@ -434,12 +531,19 @@ export class RdfaParser {
           typedResource = newSubject;
         }
       }
-    } else { // either rel or rev is present
+    } else {
+      // either rel or rev is present
       // 6: Determine the new subject when rel or rev are present
 
       // Define new subject
       if ('about' in attributes) {
-        newSubject = this.util.createIri(attributes.about, activeTag, false, true, true);
+        newSubject = this.util.createIri(
+          attributes.about,
+          activeTag,
+          false,
+          true,
+          true
+        );
         activeTag.explicitNewSubject = !!newSubject;
         if ('typeof' in attributes) {
           typedResource = newSubject;
@@ -452,12 +556,28 @@ export class RdfaParser {
 
       // Define object
       if ('resource' in attributes) {
-        currentObjectResource = this.util.createIri(attributes.resource, activeTag, false, true, true);
+        currentObjectResource = this.util.createIri(
+          attributes.resource,
+          activeTag,
+          false,
+          true,
+          true
+        );
       }
       if (!currentObjectResource) {
         if ('href' in attributes || 'src' in attributes) {
-          currentObjectResource = this.util.createIri(attributes.href || attributes.src, activeTag, false, false, true);
-        } else if ('typeof' in attributes && !('about' in attributes) && !this.isInheritSubjectInHeadBody(name)) {
+          currentObjectResource = this.util.createIri(
+            attributes.href || attributes.src,
+            activeTag,
+            false,
+            false,
+            true
+          );
+        } else if (
+          'typeof' in attributes &&
+          !('about' in attributes) &&
+          !this.isInheritSubjectInHeadBody(name)
+        ) {
           currentObjectResource = this.util.createBlankNode(node);
         }
       }
@@ -474,11 +594,16 @@ export class RdfaParser {
 
     // 7: If a typed resource was defined, emit it as a triple
     if (typedResource) {
-      for (const type of this.util.createVocabIris(attributes.typeof, activeTag, true, true)) {
+      for (const type of this.util.createVocabIris(
+        attributes.typeof,
+        activeTag,
+        true,
+        true
+      )) {
         this.emitTriple(
           this.util.getResourceOrBaseIri(typedResource, activeTag),
           this.util.dataFactory.namedNode(Util.RDF + 'type', node),
-          type,
+          type
         );
       }
     }
@@ -495,31 +620,48 @@ export class RdfaParser {
       }
       // Handle list mapping
       if ('rel' in attributes && 'inlist' in attributes) {
-        for (const predicate of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates,
-          false)) {
-          this.addListMapping(activeTag, newSubject, predicate, currentObjectResource);
+        for (const predicate of this.util.createVocabIris(
+          attributes.rel,
+          activeTag,
+          allowTermsInRelPredicates,
+          false
+        )) {
+          this.addListMapping(
+            activeTag,
+            newSubject,
+            predicate,
+            currentObjectResource
+          );
         }
       }
 
       // Determine predicates using rel or rev (unless rel and inlist are present)
       if (!('rel' in attributes && 'inlist' in attributes)) {
         if ('rel' in attributes) {
-          for (const predicate of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates,
-            false)) {
+          for (const predicate of this.util.createVocabIris(
+            attributes.rel,
+            activeTag,
+            allowTermsInRelPredicates,
+            false
+          )) {
             this.emitTriple(
               this.util.getResourceOrBaseIri(newSubject, activeTag),
               predicate,
-              this.util.getResourceOrBaseIri(currentObjectResource, activeTag),
+              this.util.getResourceOrBaseIri(currentObjectResource, activeTag)
             );
           }
         }
         if ('rev' in attributes) {
-          for (const predicate of this.util.createVocabIris(attributes.rev, activeTag, allowTermsInRevPredicates,
-            false)) {
+          for (const predicate of this.util.createVocabIris(
+            attributes.rev,
+            activeTag,
+            allowTermsInRevPredicates,
+            false
+          )) {
             this.emitTriple(
               this.util.getResourceOrBaseIri(currentObjectResource, activeTag),
               predicate,
-              this.util.getResourceOrBaseIri(newSubject, activeTag),
+              this.util.getResourceOrBaseIri(newSubject, activeTag)
             );
           }
         }
@@ -530,25 +672,41 @@ export class RdfaParser {
     if (!currentObjectResource) {
       if ('rel' in attributes) {
         if ('inlist' in attributes) {
-          for (const predicate of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates,
-            false)) {
+          for (const predicate of this.util.createVocabIris(
+            attributes.rel,
+            activeTag,
+            allowTermsInRelPredicates,
+            false
+          )) {
             if (!newSubject) {
               throw new NullOrUndefinedError();
             }
             this.addListMapping(activeTag, newSubject, predicate, null);
-            activeTag.incompleteTriples.push({predicate, reverse: false, list: true});
+            activeTag.incompleteTriples.push({
+              predicate,
+              reverse: false,
+              list: true,
+            });
           }
         } else {
-          for (const predicate of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates,
-            false)) {
-            activeTag.incompleteTriples.push({predicate, reverse: false});
+          for (const predicate of this.util.createVocabIris(
+            attributes.rel,
+            activeTag,
+            allowTermsInRelPredicates,
+            false
+          )) {
+            activeTag.incompleteTriples.push({ predicate, reverse: false });
           }
         }
       }
       if ('rev' in attributes) {
-        for (const predicate of this.util.createVocabIris(attributes.rev, activeTag, allowTermsInRevPredicates,
-          false)) {
-          activeTag.incompleteTriples.push({predicate, reverse: true});
+        for (const predicate of this.util.createVocabIris(
+          attributes.rev,
+          activeTag,
+          allowTermsInRevPredicates,
+          false
+        )) {
+          activeTag.incompleteTriples.push({ predicate, reverse: true });
         }
       }
 
@@ -561,29 +719,65 @@ export class RdfaParser {
     // 11: Determine current property value
     if ('property' in attributes) {
       // Create predicates
-      activeTag.predicates = this.util.createVocabIris(attributes.property, activeTag, true, false);
+      activeTag.predicates = this.util.createVocabIris(
+        attributes.property,
+        activeTag,
+        true,
+        false
+      );
 
       // Save datatype attribute value in active tag
       let localObjectResource: RDF.Term | boolean | null = null;
 
       if ('datatype' in attributes) {
-        activeTag.datatype = this.util.createIri(attributes.datatype, activeTag, true, true, false);
-        if (activeTag.datatype
-          && (activeTag.datatype.value === Util.RDF + 'XMLLiteral'
-            || (this.features.htmlDatatype && activeTag.datatype.value === Util.RDF + 'HTML'))) {
+        activeTag.datatype = this.util.createIri(
+          attributes.datatype,
+          activeTag,
+          true,
+          true,
+          false
+        );
+        if (
+          activeTag.datatype &&
+          (activeTag.datatype.value === Util.RDF + 'XMLLiteral' ||
+            (this.features.htmlDatatype &&
+              activeTag.datatype.value === Util.RDF + 'HTML'))
+        ) {
           activeTag.collectChildTags = true;
         }
       } else {
         // Try to determine resource
-        if (!('rev' in attributes) && !('rel' in attributes) && !('content' in attributes)) {
+        if (
+          !('rev' in attributes) &&
+          !('rel' in attributes) &&
+          !('content' in attributes)
+        ) {
           if ('resource' in attributes) {
-            localObjectResource = this.util.createIri(attributes.resource, activeTag, false, true, true);
+            localObjectResource = this.util.createIri(
+              attributes.resource,
+              activeTag,
+              false,
+              true,
+              true
+            );
           }
           if (!localObjectResource && 'href' in attributes) {
-            localObjectResource = this.util.createIri(attributes.href, activeTag, false, false, true);
+            localObjectResource = this.util.createIri(
+              attributes.href,
+              activeTag,
+              false,
+              false,
+              true
+            );
           }
           if (!localObjectResource && 'src' in attributes) {
-            localObjectResource = this.util.createIri(attributes.src, activeTag, false, false, true);
+            localObjectResource = this.util.createIri(
+              attributes.src,
+              activeTag,
+              false,
+              false,
+              true
+            );
           }
         }
         if ('typeof' in attributes && !('about' in attributes)) {
@@ -632,7 +826,10 @@ export class RdfaParser {
         activeTag.predicates = null;
       } else if (localObjectResource) {
         // Emit triples for all resource objects
-        const object = this.util.getResourceOrBaseIri(localObjectResource, activeTag);
+        const object = this.util.getResourceOrBaseIri(
+          localObjectResource,
+          activeTag
+        );
         if ('inlist' in attributes) {
           for (const predicate of activeTag.predicates) {
             this.addListMapping(activeTag, newSubject, predicate, object);
@@ -651,12 +848,19 @@ export class RdfaParser {
 
     // 12: Complete incomplete triples
     let incompleteTriplesCompleted = false;
-    if (!activeTag.skipElement && newSubject && parentTag.incompleteTriples.length > 0) {
+    if (
+      !activeTag.skipElement &&
+      newSubject &&
+      parentTag.incompleteTriples.length > 0
+    ) {
       incompleteTriplesCompleted = true;
       if (!parentTag.subject) {
         throw new NullOrUndefinedError();
       }
-      const subject = this.util.getResourceOrBaseIri(parentTag.subject, activeTag);
+      const subject = this.util.getResourceOrBaseIri(
+        parentTag.subject,
+        activeTag
+      );
       const object = this.util.getResourceOrBaseIri(newSubject, activeTag);
       for (const incompleteTriple of parentTag.incompleteTriples) {
         if (!incompleteTriple.reverse) {
@@ -674,7 +878,12 @@ export class RdfaParser {
             if (!firstInListTag) {
               throw new NullOrUndefinedError();
             }
-            this.addListMapping(firstInListTag, newSubject, incompleteTriple.predicate, object);
+            this.addListMapping(
+              firstInListTag,
+              newSubject,
+              incompleteTriple.predicate,
+              object
+            );
           } else {
             this.emitTriple(subject, incompleteTriple.predicate, object);
           }
@@ -684,7 +893,9 @@ export class RdfaParser {
       }
     }
     if (!incompleteTriplesCompleted && parentTag.incompleteTriples.length > 0) {
-      activeTag.incompleteTriples = activeTag.incompleteTriples.concat(parentTag.incompleteTriples);
+      activeTag.incompleteTriples = activeTag.incompleteTriples.concat(
+        parentTag.incompleteTriples
+      );
     }
 
     // 13: Save evaluation context into active tag
@@ -693,7 +904,8 @@ export class RdfaParser {
   }
 
   public onText(data: string) {
-    const activeTag: IActiveTag = this.activeTagStack[this.activeTagStack.length - 1];
+    const activeTag: IActiveTag =
+      this.activeTagStack[this.activeTagStack.length - 1];
 
     // Collect text in pattern tag if needed
     if (this.features.copyRdfaPatterns && activeTag.collectedPatternTag) {
@@ -710,14 +922,24 @@ export class RdfaParser {
 
   public onTagClose() {
     // Get the active tag
-    const activeTag: IActiveTag = this.activeTagStack[this.activeTagStack.length - 1];
-    const parentTag: IActiveTag = this.activeTagStack[this.activeTagStack.length - 2];
+    const activeTag: IActiveTag =
+      this.activeTagStack[this.activeTagStack.length - 1];
+    const parentTag: IActiveTag =
+      this.activeTagStack[this.activeTagStack.length - 2];
 
-    if (!(activeTag.collectChildTags && parentTag.collectChildTags && this.features.skipHandlingXmlLiteralChildren)) {
-
+    if (
+      !(
+        activeTag.collectChildTags &&
+        parentTag.collectChildTags &&
+        this.features.skipHandlingXmlLiteralChildren
+      )
+    ) {
       // If we detect a finalized rdfa:Pattern tag, store it
-      if (this.features.copyRdfaPatterns && activeTag.collectedPatternTag
-        && activeTag.collectedPatternTag.rootPattern) {
+      if (
+        this.features.copyRdfaPatterns &&
+        activeTag.collectedPatternTag &&
+        activeTag.collectedPatternTag.rootPattern
+      ) {
         const patternId = activeTag.collectedPatternTag.attributes.resource;
 
         // Remove resource and typeof attributes to avoid it being seen as a new pattern
@@ -730,7 +952,12 @@ export class RdfaParser {
         // Apply all pending copies for this pattern
         if (this.pendingRdfaPatternCopies[patternId]) {
           for (const tag of this.pendingRdfaPatternCopies[patternId]) {
-            this.emitPatternCopy(tag, activeTag.collectedPatternTag, patternId, activeTag.node);
+            this.emitPatternCopy(
+              tag,
+              activeTag.collectedPatternTag,
+              patternId,
+              activeTag.node
+            );
           }
           delete this.pendingRdfaPatternCopies[patternId];
         }
@@ -746,13 +973,19 @@ export class RdfaParser {
         if (!activeTag.subject) {
           throw new NullOrUndefinedError();
         }
-        const subject = this.util.getResourceOrBaseIri(activeTag.subject, activeTag);
+        const subject = this.util.getResourceOrBaseIri(
+          activeTag.subject,
+          activeTag
+        );
         let textSegments: string[] = activeTag.text || [];
         if (activeTag.collectChildTags && parentTag.collectChildTags) {
           // If we are inside an XMLLiteral child that also has RDFa content, ignore the tag name that was collected.
           textSegments = textSegments.slice(1);
         }
-        const object = this.util.createLiteral(textSegments.join(''), activeTag);
+        const object = this.util.createLiteral(
+          textSegments.join(''),
+          activeTag
+        );
         if (activeTag.inlist) {
           for (const predicate of activeTag.predicates) {
             this.addListMapping(activeTag, subject, predicate, object);
@@ -771,31 +1004,61 @@ export class RdfaParser {
 
       // 14: Handle local list mapping
       if (activeTag.object && Object.keys(activeTag.listMapping).length > 0) {
-        const subject = this.util.getResourceOrBaseIri(activeTag.object, activeTag);
+        const subject = this.util.getResourceOrBaseIri(
+          activeTag.object,
+          activeTag
+        );
         for (const predicateValue in activeTag.listMapping) {
-          const predicate = this.util.dataFactory.namedNode(predicateValue, activeTag.node);
+          const predicate = this.util.dataFactory.namedNode(
+            predicateValue,
+            activeTag.node
+          );
           const values = activeTag.listMapping[predicateValue];
 
           if (values.length > 0) {
             // Non-empty list, emit linked list of rdf:first and rdf:rest chains
-            const bnodes = values.map((value) => this.util.createBlankNode(typeof value === "boolean" ? undefined : value.node));
+            const bnodes = values.map((value) =>
+              this.util.createBlankNode(
+                typeof value === 'boolean' ? undefined : value.node
+              )
+            );
             for (let i = 0; i < values.length; i++) {
-              const object = this.util.getResourceOrBaseIri(values[i], activeTag);
-              this.emitTriple(bnodes[i], this.util.dataFactory.namedNode(Util.RDF + 'first', activeTag.node),
-                object);
-              this.emitTriple(bnodes[i], this.util.dataFactory.namedNode(Util.RDF + 'rest', activeTag.node),
-                (i < values.length - 1) ? bnodes[i + 1] : this.util.dataFactory.namedNode(Util.RDF + 'nil'));
+              const object = this.util.getResourceOrBaseIri(
+                values[i],
+                activeTag
+              );
+              this.emitTriple(
+                bnodes[i],
+                this.util.dataFactory.namedNode(
+                  Util.RDF + 'first',
+                  activeTag.node
+                ),
+                object
+              );
+              this.emitTriple(
+                bnodes[i],
+                this.util.dataFactory.namedNode(
+                  Util.RDF + 'rest',
+                  activeTag.node
+                ),
+                i < values.length - 1
+                  ? bnodes[i + 1]
+                  : this.util.dataFactory.namedNode(Util.RDF + 'nil')
+              );
             }
 
             // Emit triple for the first linked list chain
             this.emitTriple(subject, predicate, bnodes[0]);
           } else {
             // Empty list, just emit rdf:nil
-            this.emitTriple(subject, predicate, this.util.dataFactory.namedNode(Util.RDF + 'nil'));
+            this.emitTriple(
+              subject,
+              predicate,
+              this.util.dataFactory.namedNode(Util.RDF + 'nil')
+            );
           }
         }
       }
-
     }
 
     // Remove the active tag from the stack
@@ -840,7 +1103,7 @@ export class RdfaParser {
       for (const patternId in this.pendingRdfaPatternCopies) {
         for (const parentTag of this.pendingRdfaPatternCopies[patternId]) {
           this.activeTagStack.push(parentTag);
-          this.onTagOpen('link', {property: 'rdfa:copy', href: patternId});
+          this.onTagOpen('link', { property: 'rdfa:copy', href: patternId });
           this.onTagClose();
           this.activeTagStack.pop();
         }
@@ -857,24 +1120,41 @@ export class RdfaParser {
    * @returns {boolean} If the subject can be inherited.
    */
   protected isInheritSubjectInHeadBody(name: string) {
-    return this.features.inheritSubjectInHeadBody && (name === 'head' || name === 'body');
+    return (
+      this.features.inheritSubjectInHeadBody &&
+      (name === 'head' || name === 'body')
+    );
   }
 
   /**
    * Add a list mapping for the given predicate and object in the active tag.
    */
-  protected addListMapping(activeTag: IActiveTag, subject: ModelQuadSubject | boolean, predicate: ModelQuadPredicate,
-                           currentObjectResource: ModelQuadObject | boolean | null) {
+  protected addListMapping(
+    activeTag: IActiveTag,
+    subject: ModelQuadSubject | boolean,
+    predicate: ModelQuadPredicate,
+    currentObjectResource: ModelQuadObject | boolean | null
+  ) {
     if (activeTag.explicitNewSubject) {
       const bNode = this.util.createBlankNode(activeTag.node);
-      this.emitTriple(this.util.getResourceOrBaseIri(subject, activeTag), predicate, bNode);
+      this.emitTriple(
+        this.util.getResourceOrBaseIri(subject, activeTag),
+        predicate,
+        bNode
+      );
       if (!currentObjectResource) {
         throw new NullOrUndefinedError();
       }
-      this.emitTriple(bNode, this.util.dataFactory.namedNode(Util.RDF + 'first', activeTag.node),
-        this.util.getResourceOrBaseIri(currentObjectResource, activeTag));
-      this.emitTriple(bNode, this.util.dataFactory.namedNode(Util.RDF + 'rest', activeTag.node),
-        this.util.dataFactory.namedNode(Util.RDF + 'nil'));
+      this.emitTriple(
+        bNode,
+        this.util.dataFactory.namedNode(Util.RDF + 'first', activeTag.node),
+        this.util.getResourceOrBaseIri(currentObjectResource, activeTag)
+      );
+      this.emitTriple(
+        bNode,
+        this.util.dataFactory.namedNode(Util.RDF + 'rest', activeTag.node),
+        this.util.dataFactory.namedNode(Util.RDF + 'nil')
+      );
     } else {
       let predicateList = activeTag.listMappingLocal[predicate.value];
       if (!predicateList) {
@@ -889,28 +1169,52 @@ export class RdfaParser {
   /**
    * Emit the given triple to the stream.
    */
-  protected emitTriple(subject: ModelQuadSubject, predicate: ModelQuadPredicate, object: ModelQuadObject) {
+  protected emitTriple(
+    subject: ModelQuadSubject,
+    predicate: ModelQuadPredicate,
+    object: ModelQuadObject
+  ) {
     // Validate IRIs
-    if ((subject.termType === 'NamedNode' && subject.value.indexOf(':') < 0)
-      || (predicate.termType === 'NamedNode' && predicate.value.indexOf(':') < 0)
-      || (object.termType === 'NamedNode' && object.value.indexOf(':') < 0)) {
+    if (
+      (subject.termType === 'NamedNode' && subject.value.indexOf(':') < 0) ||
+      (predicate.termType === 'NamedNode' &&
+        predicate.value.indexOf(':') < 0) ||
+      (object.termType === 'NamedNode' && object.value.indexOf(':') < 0)
+    ) {
       return;
     }
     if (subject.node) {
       this.nodeToSubjectMapping.set(subject.node, subject);
-      MapUtils.setOrAdd(this.subjectToNodesMapping, subject.value, subject.node);
+      MapUtils.setOrAdd(
+        this.subjectToNodesMapping,
+        subject.value,
+        subject.node
+      );
     }
     if (predicate.node) {
-      MapUtils.setOrAdd(this.nodeToPredicatesMapping, predicate.node, predicate);
-      MapUtils.setOrAdd(this.predicateToNodesMapping, predicate.value, predicate.node);
+      MapUtils.setOrAdd(
+        this.nodeToPredicatesMapping,
+        predicate.node,
+        predicate
+      );
+      MapUtils.setOrAdd(
+        this.predicateToNodesMapping,
+        predicate.value,
+        predicate.node
+      );
     }
-    if(object.node) {
+    if (object.node) {
       MapUtils.setOrAdd(this.nodeToObjectsMapping, predicate.node, predicate);
-      MapUtils.setOrAdd(this.objectToNodesMapping, predicate.value, predicate.node);
-
+      MapUtils.setOrAdd(
+        this.objectToNodesMapping,
+        predicate.value,
+        predicate.node
+      );
     }
 
-    this.resultSet.add(this.util.dataFactory.quad(subject, predicate, object, this.defaultGraph));
+    this.resultSet.add(
+      this.util.dataFactory.quad(subject, predicate, object, this.defaultGraph)
+    );
   }
 
   /**
@@ -919,7 +1223,12 @@ export class RdfaParser {
    * @param {IRdfaPattern} pattern The pattern to instantiate.
    * @param {string} rootPatternId The pattern id.
    */
-  protected emitPatternCopy(parentTag: IActiveTag, pattern: IRdfaPattern, rootPatternId: string, node?: ModelNode) {
+  protected emitPatternCopy(
+    parentTag: IActiveTag,
+    pattern: IRdfaPattern,
+    rootPatternId: string,
+    node?: ModelNode
+  ) {
     this.activeTagStack.push(parentTag);
     pattern.referenced = true;
 
@@ -960,9 +1269,18 @@ export class RdfaParser {
    * @param {boolean} root If this is the root call for the given pattern.
    * @param {string} rootPatternId The pattern id.
    */
-  protected emitPatternCopyAbsolute(pattern: IRdfaPattern, root: boolean, rootPatternId: string, node?: ModelNode) {
+  protected emitPatternCopyAbsolute(
+    pattern: IRdfaPattern,
+    root: boolean,
+    rootPatternId: string,
+    node?: ModelNode
+  ) {
     // Stop on detection of cyclic patterns
-    if (!root && pattern.attributes.property === 'rdfa:copy' && pattern.attributes.href === rootPatternId) {
+    if (
+      !root &&
+      pattern.attributes.property === 'rdfa:copy' &&
+      pattern.attributes.href === rootPatternId
+    ) {
       return;
     }
 
@@ -1018,7 +1336,7 @@ export interface IRdfaParserOptions {
    */
   htmlParseListener?: IHtmlParseListener;
 
-  rootModelNode: ModelNode
+  rootModelNode: ModelNode;
 }
 
 /**
@@ -1028,7 +1346,6 @@ export interface IRdfaParserOptions {
  */
 export class NullOrUndefinedError extends CustomError {
   constructor() {
-    super("Unexpected null/undefined value for variable");
+    super('Unexpected null/undefined value for variable');
   }
-
 }

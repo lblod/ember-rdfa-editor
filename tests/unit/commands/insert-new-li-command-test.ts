@@ -1,16 +1,16 @@
-import {module, test} from "qunit";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import { module, test } from 'qunit';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import InsertNewLiCommand from '@lblod/ember-rdfa-editor/commands/insert-newLi-command';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 //TODO: These tests serve at the moment as a documentation for
 // what the command currently does, and as a way of catching possible
 // regressions for things that might depend on its behavior.
 // In particular, all the extra empty textnodes should not be there.
 
-module("Unit | commands | insert-new-li-command-test", hooks => {
+module('Unit | commands | insert-new-li-command-test', (hooks) => {
   const ctx = new ModelTestContext();
   let command: InsertNewLiCommand;
   hooks.beforeEach(() => {
@@ -18,9 +18,12 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     command = new InsertNewLiCommand(ctx.model);
   });
 
-  test("insert li - single empty li - collapsed selection", assert => {
+  test('insert li - single empty li - collapsed selection', (assert) => {
     // language=XML
-    const {root: initial, elements: {testLi}} = vdom`
+    const {
+      root: initial,
+      elements: { testLi },
+    } = vdom`
       <div>
         <ul>
           <li __id="testLi">
@@ -31,7 +34,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <div>
         <ul>
           <li>
@@ -51,9 +54,12 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     assert.true(actual.sameAs(expected));
   });
 
-  test("insert li - single nonempty li - collapsed selection in front", assert => {
+  test('insert li - single nonempty li - collapsed selection in front', (assert) => {
     // language=XML
-    const {root: initial, elements: {testLi}} = vdom`
+    const {
+      root: initial,
+      elements: { testLi },
+    } = vdom`
       <div>
         <ul>
           <li __id="testLi">
@@ -64,7 +70,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <div>
         <ul>
           <li>
@@ -84,9 +90,12 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     assert.true(actual.sameAs(expected));
   });
 
-  test("insert li - single nonempty li - collapsed selection at end", assert => {
+  test('insert li - single nonempty li - collapsed selection at end', (assert) => {
     // language=XML
-    const {root: initial, elements: {testLi}} = vdom`
+    const {
+      root: initial,
+      elements: { testLi },
+    } = vdom`
       <div>
         <ul>
           <li __id="testLi">
@@ -97,7 +106,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <div>
         <ul>
           <li>
@@ -117,9 +126,12 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     assert.true(actual.sameAs(expected));
   });
 
-  test("insert li - single nonempty li - collapsed selection in middle", assert => {
+  test('insert li - single nonempty li - collapsed selection in middle', (assert) => {
     // language=XML
-    const {root: initial, elements: {testLi}} = vdom`
+    const {
+      root: initial,
+      elements: { testLi },
+    } = vdom`
       <div>
         <ul>
           <li __id="testLi">
@@ -130,7 +142,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <div>
         <ul>
           <li>
@@ -151,9 +163,12 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     assert.true(actual.sameAs(expected));
   });
 
-  test("insert li - single nonempty li with elements - collapsed selection inside child elem", assert => {
+  test('insert li - single nonempty li with elements - collapsed selection inside child elem', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {insideChild}} = vdom`
+    const {
+      root: initial,
+      textNodes: { insideChild },
+    } = vdom`
       <div>
         <ul>
           <li __id="testLi">
@@ -168,7 +183,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <div>
         <ul>
           <li>
@@ -188,16 +203,21 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     `;
 
     ctx.model.rootModelNode.addChild(initial);
-    ctx.modelSelection.selectRange(ModelRange.fromInTextNode(insideChild, 1, 1));
+    ctx.modelSelection.selectRange(
+      ModelRange.fromInTextNode(insideChild, 1, 1)
+    );
     command.execute();
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
   });
 
-  test("insert li - single nonempty li - uncollapsed within li", assert => {
+  test('insert li - single nonempty li - uncollapsed within li', (assert) => {
     // language=XML
-    const {root: initial, elements: {testLi}} = vdom`
+    const {
+      root: initial,
+      elements: { testLi },
+    } = vdom`
       <div>
         <ul>
           <li __id="testLi">
@@ -208,7 +228,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <div>
         <ul>
           <li>
@@ -229,9 +249,12 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     assert.true(actual.sameAs(expected));
   });
 
-  test("insert li - single nonempty li with elements - uncollapsed within li", assert => {
+  test('insert li - single nonempty li with elements - uncollapsed within li', (assert) => {
     // language=XML
-    const {root: initial, elements: {testLi}} = vdom`
+    const {
+      root: initial,
+      elements: { testLi },
+    } = vdom`
       <div>
         <ul>
           <li __id="testLi">
@@ -246,7 +269,7 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <div>
         <ul>
           <li>
@@ -260,11 +283,12 @@ module("Unit | commands | insert-new-li-command-test", hooks => {
     `;
 
     ctx.model.rootModelNode.addChild(initial);
-    ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 1, testLi.getMaxOffset() - 1));
+    ctx.modelSelection.selectRange(
+      ModelRange.fromInElement(testLi, 1, testLi.getMaxOffset() - 1)
+    );
     command.execute();
     const actual = ctx.model.rootModelNode.firstChild;
 
     assert.true(actual.sameAs(expected));
   });
 });
-

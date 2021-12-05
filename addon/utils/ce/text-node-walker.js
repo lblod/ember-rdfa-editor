@@ -3,25 +3,24 @@ import { typeOf } from '@ember/utils';
 import NodeWalker from '@lblod/marawa/node-walker';
 
 class TextNodeWalker extends NodeWalker {
-  finishChildSteps( richNode ) {
-    let myText = "";
-    richNode.children.map( (child) => {
-      if (typeOf(child.text) === "string")
-        myText += child.text;
-    } );
+  finishChildSteps(richNode) {
+    let myText = '';
+    richNode.children.map((child) => {
+      if (typeOf(child.text) === 'string') myText += child.text;
+    });
     richNode.text = myText;
   }
 }
 
-function getTextContent( node ) {
+function getTextContent(node) {
   const walker = new TextNodeWalker();
-  const processedNode = walker.processDomNode( node );
-  return processedNode.text || "";
+  const processedNode = walker.processDomNode(node);
+  return processedNode.text || '';
 }
 
-function processDomNode( node ) {
+function processDomNode(node) {
   const walker = new TextNodeWalker();
-  return walker.processDomNode( node );
+  return walker.processDomNode(node);
 }
 
 export { getTextContent, processDomNode };

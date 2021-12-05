@@ -1,11 +1,18 @@
 import config from 'ember-get-config';
-import {defaultReporter, Diary, diary, LogEvent, LogLevels, Reporter} from 'diary';
-import {compare} from 'diary/utils';
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import {
+  defaultReporter,
+  Diary,
+  diary,
+  LogEvent,
+  LogLevels,
+  Reporter,
+} from 'diary';
+import { compare } from 'diary/utils';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
 // this array is sorted from lowest to highest "level"
 // aka setting loglevel to "info" will include info and everything to the right of it
-const LOGLEVELS = ["log", "debug", "info", "warn", "error", "fatal"];
+const LOGLEVELS = ['log', 'debug', 'info', 'warn', 'error', 'fatal'];
 
 export type Logger = Diary;
 
@@ -23,14 +30,14 @@ export function createLogger(scope: string, onEmit?: Reporter) {
 /**
  * Convenient debug logger for console.log style debugging, for when you don't want to think about what logger to use.
  */
-export const debug = createLogger("debug");
+export const debug = createLogger('debug');
 
 /**
  * Convenience method to easily set the log filter string
  * @param filter
  */
 function setLogFilter(filter: string) {
-  localStorage.setItem("DEBUG", filter);
+  localStorage.setItem('DEBUG', filter);
 }
 
 /**
@@ -38,18 +45,18 @@ function setLogFilter(filter: string) {
  * @param level
  */
 function setLogLevel(level: LogLevels) {
-  localStorage.setItem("LOGLEVEL", level);
+  localStorage.setItem('LOGLEVEL', level);
 }
 
 window.setLogLevel = setLogLevel;
 window.setLogFilter = setLogFilter;
 
 // Setup default loglevel based on environment.
-if (!localStorage.getItem("LOGLEVEL")) {
-  if (config.environment === "development") {
-    setLogLevel("log");
+if (!localStorage.getItem('LOGLEVEL')) {
+  if (config.environment === 'development') {
+    setLogLevel('log');
   } else {
-    setLogLevel("warn");
+    setLogLevel('warn');
   }
 }
 
@@ -65,8 +72,10 @@ function isLogLevel(level: string | null): level is LogLevels {
  * @param event
  */
 function logLevelReporter(event: LogEvent) {
-  const configuredLogLevel = localStorage.getItem("LOGLEVEL");
-  const loglevel: LogLevels = isLogLevel(configuredLogLevel) ? configuredLogLevel : "info";
+  const configuredLogLevel = localStorage.getItem('LOGLEVEL');
+  const loglevel: LogLevels = isLogLevel(configuredLogLevel)
+    ? configuredLogLevel
+    : 'info';
 
   if (compare(event.level, loglevel) >= 0) {
     defaultReporter(event);
@@ -75,9 +84,15 @@ function logLevelReporter(event: LogEvent) {
 
 // ---- DECORATORS ----
 
-type MethodMessageFunc<T extends unknown[] = unknown[]> = (methodName: string, ...args: T) => string | [string, ...unknown[]];
+type MethodMessageFunc<T extends unknown[] = unknown[]> = (
+  methodName: string,
+  ...args: T
+) => string | [string, ...unknown[]];
 
-const defaultLogMethodMessage: MethodMessageFunc = (methodname: string, ...args: unknown[]) => {
+const defaultLogMethodMessage: MethodMessageFunc = (
+  methodname: string,
+  ...args: unknown[]
+) => {
   if (args.length) {
     return [`Calling ${methodname} with args: `, ...args];
   } else {
@@ -93,7 +108,7 @@ interface LogMethodConfig {
 }
 
 const defaultLogMethodConfig: LogMethodConfig = {
-  level: "log"
+  level: 'log',
 };
 
 /**
@@ -108,14 +123,24 @@ const defaultLogMethodConfig: LogMethodConfig = {
  * @param message
  * @param config
  */
-export function logMethod(message: string | MethodMessageFunc = defaultLogMethodMessage,
-                          {scopePrefix, scopeSuffix, scope, level = "log"}: LogMethodConfig = defaultLogMethodConfig) {
-  return function (target: Record<never, never>,
-                   propertyKey: string,
-                   descriptor: TypedPropertyDescriptor<(...args: unknown[]) => unknown>) {
+export function logMethod(
+  message: string | MethodMessageFunc = defaultLogMethodMessage,
+  {
+    scopePrefix,
+    scopeSuffix,
+    scope,
+    level = 'log',
+  }: LogMethodConfig = defaultLogMethodConfig
+) {
+  return function (
+    target: Record<never, never>,
+    propertyKey: string,
+    descriptor: TypedPropertyDescriptor<(...args: unknown[]) => unknown>
+  ) {
     const prefix = scopePrefix ? `${scopePrefix}:` : '';
     const suffix = scopeSuffix ? `:${scopeSuffix}` : '';
-    const finalScope = scope ?? `${prefix}${target.constructor.name}:${propertyKey}${suffix}`;
+    const finalScope =
+      scope ?? `${prefix}${target.constructor.name}:${propertyKey}${suffix}`;
     const logger = createLogger(finalScope);
     const doLog = logger[level];
     if (!descriptor.value) {
@@ -123,11 +148,14 @@ export function logMethod(message: string | MethodMessageFunc = defaultLogMethod
     }
     const orig = descriptor.value;
     descriptor.value = function (...args: unknown[]) {
-      if (typeof message === "string") {
+      if (typeof message === 'string') {
         doLog(message);
       } else {
-        const compiledMessage: string | [string, ...unknown[]] = message(propertyKey, ...args);
-        if (typeof compiledMessage === "string") {
+        const compiledMessage: string | [string, ...unknown[]] = message(
+          propertyKey,
+          ...args
+        );
+        if (typeof compiledMessage === 'string') {
           doLog(compiledMessage);
         } else {
           doLog(...compiledMessage);
@@ -141,18 +169,17 @@ export function logMethod(message: string | MethodMessageFunc = defaultLogMethod
 
 export const logExecute = logMethod(
   (_methodName: string, ...args) => {
-    const mappedArgs = args.map(arg => {
-        if (arg instanceof ModelRange) {
-          return arg.toString();
-        }
-        if (typeof arg === "string") {
-          return `string<"${arg}", ${arg.length}>`;
-        } else {
-          return arg;
-        }
+    const mappedArgs = args.map((arg) => {
+      if (arg instanceof ModelRange) {
+        return arg.toString();
       }
-    );
-    return ["Executing with args:", ...mappedArgs];
-
-  }, {scopePrefix: "command"});
-
+      if (typeof arg === 'string') {
+        return `string<"${arg}", ${arg.length}>`;
+      } else {
+        return arg;
+      }
+    });
+    return ['Executing with args:', ...mappedArgs];
+  },
+  { scopePrefix: 'command' }
+);

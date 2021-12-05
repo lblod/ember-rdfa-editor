@@ -1,7 +1,7 @@
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { TextAttribute } from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
 /**
  * A mutator is the only publicly accessible way to change the model.
@@ -14,14 +14,17 @@ import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
  * operation processing
  */
 export default abstract class ModelMutator<T> {
-
   /**
    * Set a {@link TextAttribute} on all text in a range.
    * @param range
    * @param key
    * @param value
    */
-  abstract setTextProperty(range: ModelRange, key: TextAttribute, value: boolean): T;
+  abstract setTextProperty(
+    range: ModelRange,
+    key: TextAttribute,
+    value: boolean
+  ): T;
 
   /**
    * Insert nodes into range, overwriting the previous content and splitting
@@ -37,6 +40,8 @@ export default abstract class ModelMutator<T> {
    * @param rangeToMove
    * @param targetPosition
    */
-  abstract moveToPosition(rangeToMove: ModelRange, targetPosition: ModelPosition): T;
-
+  abstract moveToPosition(
+    rangeToMove: ModelRange,
+    targetPosition: ModelPosition
+  ): T;
 }

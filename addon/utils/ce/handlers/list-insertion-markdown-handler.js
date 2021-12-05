@@ -2,13 +2,12 @@ import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
 import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
-
 let OLMARKDOWN = /(1\.\s)(.*)/;
 let ULMARKDOWN = /(\*\.\s)(.*)/;
 
 let MARKDOWNS = [
-  {pattern: OLMARKDOWN, tag: 'ol'},
-  {pattern: ULMARKDOWN, tag: 'ul'},
+  { pattern: OLMARKDOWN, tag: 'ol' },
+  { pattern: ULMARKDOWN, tag: 'ul' },
 ];
 
 /**
@@ -19,27 +18,29 @@ let MARKDOWNS = [
  * @constructor
  */
 export default class ListInsertionMarkdownHandler {
-  constructor({rawEditor}) {
+  constructor({ rawEditor }) {
     this.rawEditor = rawEditor;
   }
 
-  nodeContainsRelevantMarkdown(node){
-    if(!node.nodeType === Node.TEXT_NODE)
-      return false;
+  nodeContainsRelevantMarkdown(node) {
+    if (!node.nodeType === Node.TEXT_NODE) return false;
     return this.findMarkdown(node.textContent);
   }
 
-  findMarkdown(text){
-    return MARKDOWNS.find(m => { return text.match(m.pattern); });
+  findMarkdown(text) {
+    return MARKDOWNS.find((m) => {
+      return text.match(m.pattern);
+    });
   }
 
   isHandlerFor(event) {
-    return event.type === 'keydown' &&
+    return (
+      event.type === 'keydown' &&
       this.rawEditor.currentSelectionIsACursor &&
       event.key == 'Enter' &&
-      this.nodeContainsRelevantMarkdown(this.rawEditor.currentNode);
+      this.nodeContainsRelevantMarkdown(this.rawEditor.currentNode)
+    );
   }
-
 
   handleEvent() {
     const currentNode = this.rawEditor.currentNode;
@@ -52,8 +53,14 @@ export default class ListInsertionMarkdownHandler {
       let beforeContentNode = document.createTextNode(beforeContent);
       let elementContent = matchGroups[2];
 
-      let contentTextNode = document.createTextNode(this.isVisiblyEmptyString(elementContent) ? invisibleSpace: elementContent);
-      let listNode = document.createElement(this.findMarkdown(currentNode.textContent).tag);
+      let contentTextNode = document.createTextNode(
+        this.isVisiblyEmptyString(elementContent)
+          ? invisibleSpace
+          : elementContent
+      );
+      let listNode = document.createElement(
+        this.findMarkdown(currentNode.textContent).tag
+      );
 
       //insert the node with content
       let liNode = document.createElement('li');
@@ -61,7 +68,7 @@ export default class ListInsertionMarkdownHandler {
       listNode.append(liNode);
 
       let liNodeForCursor = liNode;
-      if(!this.isVisiblyEmptyString(elementContent)) {
+      if (!this.isVisiblyEmptyString(elementContent)) {
         //add a second li, because it feels as expected behaviour for user
         liNodeForCursor = document.createElement('li');
         liNodeForCursor.append(document.createTextNode(invisibleSpace));
@@ -69,12 +76,15 @@ export default class ListInsertionMarkdownHandler {
       }
 
       //TODO: is this required?
-      if(!isBlank(beforeContent))
+      if (!isBlank(beforeContent))
         currentNode.parentNode.insertBefore(beforeContentNode, currentNode);
 
       currentNode.parentNode.insertBefore(listNode, currentNode);
       // provide a text node after the list
-      currentNode.parentNode.insertBefore(document.createTextNode(invisibleSpace), currentNode);
+      currentNode.parentNode.insertBefore(
+        document.createTextNode(invisibleSpace),
+        currentNode
+      );
       currentNode.parentNode.removeChild(currentNode);
       newCurrentNode = liNodeForCursor.childNodes[0];
       this.rawEditor.updateRichNode();
@@ -84,10 +94,13 @@ export default class ListInsertionMarkdownHandler {
     };
 
     this.rawEditor.externalDomUpdate('inserting markdown', insertElement);
-    return HandlerResponse.create({allowPropagation: false});
+    return HandlerResponse.create({ allowPropagation: false });
   }
 
-  isVisiblyEmptyString(string_instance){
-    return string_instance.length === 0 || (new RegExp( '^' + invisibleSpace + '+$')).test(string_instance);
+  isVisiblyEmptyString(string_instance) {
+    return (
+      string_instance.length === 0 ||
+      new RegExp('^' + invisibleSpace + '+$').test(string_instance)
+    );
   }
 }

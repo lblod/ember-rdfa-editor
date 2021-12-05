@@ -1,4 +1,4 @@
-import CutCopyHandler from "@lblod/ember-rdfa-editor/editor/input-handlers/cut-copy-handler";
+import CutCopyHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/cut-copy-handler';
 
 /**
  * @module contenteditable-editor

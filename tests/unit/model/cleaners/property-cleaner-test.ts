@@ -1,13 +1,16 @@
-import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import PropertyCleaner from "@lblod/ember-rdfa-editor/model/cleaners/property-cleaner";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import { module, test } from 'qunit';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import PropertyCleaner from '@lblod/ember-rdfa-editor/model/cleaners/property-cleaner';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
-module("Unit | model | cleaners | property-cleaner-test", () => {
-  test("should not merge incompatible nodes", assert => {
+module('Unit | model | cleaners | property-cleaner-test', () => {
+  test('should not merge incompatible nodes', (assert) => {
     // language=XML
-    const {root, elements: {container}} = vdom`
+    const {
+      root,
+      elements: { container },
+    } = vdom`
       <div __id="container">
         <text bold="true">abc</text>
         <text italic="true">def</text>
@@ -18,16 +21,19 @@ module("Unit | model | cleaners | property-cleaner-test", () => {
     cleaner.clean(range);
     assert.true(root.sameAs(expected));
   });
-  test("should merge nodes with same textproperties", assert => {
+  test('should merge nodes with same textproperties', (assert) => {
     // language=XML
-    const {root, elements: {container}} = vdom`
+    const {
+      root,
+      elements: { container },
+    } = vdom`
       <div __id="container">
         <text bold="true">abc</text>
         <text bold="true">def</text>
       </div>`;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <div>
         <text bold="true">abcdef</text>
       </div>`;
@@ -37,9 +43,12 @@ module("Unit | model | cleaners | property-cleaner-test", () => {
     cleaner.clean(range);
     assert.true(root.sameAs(expected));
   });
-  test("should not merge nodes on different levels", assert => {
+  test('should not merge nodes on different levels', (assert) => {
     // language=XML
-    const {root, elements: {container}} = vdom`
+    const {
+      root,
+      elements: { container },
+    } = vdom`
       <div __id="container">
         <span>
           <text bold="true">abc</text>
@@ -54,9 +63,12 @@ module("Unit | model | cleaners | property-cleaner-test", () => {
     assert.true(root.sameAs(expected));
   });
 
-  test("should  merge deep nodes", assert => {
+  test('should  merge deep nodes', (assert) => {
     // language=XML
-    const {root, elements: {container}} = vdom`
+    const {
+      root,
+      elements: { container },
+    } = vdom`
       <div __id="container">
         <span>
           <text bold="true">abc</text>
@@ -65,7 +77,7 @@ module("Unit | model | cleaners | property-cleaner-test", () => {
       </div>`;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <div>
         <span>
           <text bold="true">abcdef</text>
@@ -76,9 +88,12 @@ module("Unit | model | cleaners | property-cleaner-test", () => {
     cleaner.clean(range);
     assert.true(root.sameAs(expected));
   });
-  test("should  merge many nodes", assert => {
+  test('should  merge many nodes', (assert) => {
     // language=XML
-    const {root, elements: {container}} = vdom`
+    const {
+      root,
+      elements: { container },
+    } = vdom`
       <div __id="container">
         <span>
           <text bold="true">abc</text>
@@ -91,7 +106,7 @@ module("Unit | model | cleaners | property-cleaner-test", () => {
       </div>`;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <div>
         <span>
           <text bold="true">abcdefghijklmnopqr</text>
@@ -103,16 +118,19 @@ module("Unit | model | cleaners | property-cleaner-test", () => {
     assert.true(root.sameAs(expected));
   });
 
-  test("should merge nodes with same textproperties not full range", assert => {
+  test('should merge nodes with same textproperties not full range', (assert) => {
     // language=XML
-    const {root, textNodes: {rangeStart, rangeEnd}} = vdom`
+    const {
+      root,
+      textNodes: { rangeStart, rangeEnd },
+    } = vdom`
       <div>
         <text bold="true" __id="rangeStart">abc</text>
         <text bold="true" __id="rangeEnd">def</text>
       </div>`;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <div>
         <text bold="true">abcdef</text>
       </div>`;

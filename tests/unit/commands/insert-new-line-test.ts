@@ -1,21 +1,23 @@
-import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import { module, test } from 'qunit';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import InsertNewLineCommand from '@lblod/ember-rdfa-editor/commands/insert-newLine-command';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-module("Unit | commands | insert-new-line-test", hooks => {
+module('Unit | commands | insert-new-line-test', (hooks) => {
   const ctx = new ModelTestContext();
   let command: InsertNewLineCommand;
   hooks.beforeEach(() => {
     ctx.reset();
     command = new InsertNewLineCommand(ctx.model);
   });
-  test("inserts a new line before a table", assert => {
-
+  test('inserts a new line before a table', (assert) => {
     // language=XML
-    const {root: initial, textNodes:{rangeMarker}} = vdom`
+    const {
+      root: initial,
+      textNodes: { rangeMarker },
+    } = vdom`
       <modelRoot>
         <text>
         </text>
@@ -47,9 +49,8 @@ module("Unit | commands | insert-new-line-test", hooks => {
       </modelRoot>
     `;
 
-
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text>
         </text>
@@ -83,12 +84,21 @@ module("Unit | commands | insert-new-line-test", hooks => {
     `;
     ctx.model.fillRoot(initial);
     ctx.model.disableSelectionWriting();
-    const range = ModelRange.fromInTextNode(rangeMarker, rangeMarker.length, rangeMarker.length);
+    const range = ModelRange.fromInTextNode(
+      rangeMarker,
+      rangeMarker.length,
+      rangeMarker.length
+    );
     command.execute(range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
-    assert.deepEqual(ctx.modelSelection.lastRange?.start.path.length, range.start.path.length);
-    assert.deepEqual(ctx.modelSelection.lastRange?.start.parentOffset, range.start.parentOffset + 1);
-
+    assert.deepEqual(
+      ctx.modelSelection.lastRange?.start.path.length,
+      range.start.path.length
+    );
+    assert.deepEqual(
+      ctx.modelSelection.lastRange?.start.parentOffset,
+      range.start.parentOffset + 1
+    );
   });
 });

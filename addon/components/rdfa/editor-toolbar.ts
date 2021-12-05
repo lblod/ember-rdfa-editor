@@ -1,9 +1,9 @@
-import Component from "@glimmer/component";
-import {action} from "@ember/object";
-import {tracked} from "@glimmer/tracking";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import {PropertyState} from "@lblod/ember-rdfa-editor/model/util/types";
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
+import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 
 interface Args {
   editor: PernetRawEditor;
@@ -31,7 +31,10 @@ export default class EditorToolbar extends Component<Args> {
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
-    document.addEventListener("richSelectionUpdated", this.updateProperties.bind(this));
+    document.addEventListener(
+      'richSelectionUpdated',
+      this.updateProperties.bind(this)
+    );
   }
 
   updateProperties(event: CustomEvent<ModelSelection>) {
@@ -40,70 +43,76 @@ export default class EditorToolbar extends Component<Args> {
     this.isUnderline = event.detail.underline === PropertyState.enabled;
     this.isStrikethrough = event.detail.strikethrough === PropertyState.enabled;
     this.isInList = event.detail.inListState === PropertyState.enabled;
-    this.canInsertList = this.args.editor.canExecuteCommand("make-list");
+    this.canInsertList = this.args.editor.canExecuteCommand('make-list');
     this.isInTable = event.detail.inTableState === PropertyState.enabled;
-    this.canIndent = this.isInList && this.args.editor.canExecuteCommand("indent-list");
-    this.canUnindent = this.isInList && this.args.editor.canExecuteCommand("unindent-list");
+    this.canIndent =
+      this.isInList && this.args.editor.canExecuteCommand('indent-list');
+    this.canUnindent =
+      this.isInList && this.args.editor.canExecuteCommand('unindent-list');
   }
 
   @action
   insertIndent() {
-    if(this.isInList) {
-      this.args.editor.executeCommand("indent-list");
+    if (this.isInList) {
+      this.args.editor.executeCommand('indent-list');
     }
   }
 
   @action
   insertUnindent() {
-    if(this.isInList) {
-      this.args.editor.executeCommand("unindent-list");
+    if (this.isInList) {
+      this.args.editor.executeCommand('unindent-list');
     }
   }
   @action
-  insertNewLine(){
-    this.args.editor.executeCommand("insert-newLine");
+  insertNewLine() {
+    this.args.editor.executeCommand('insert-newLine');
   }
 
   @action
-  insertNewLi(){
-    this.args.editor.executeCommand("insert-newLi");
+  insertNewLi() {
+    this.args.editor.executeCommand('insert-newLi');
   }
 
   @action
   toggleItalic() {
-    this.toggleProperty(this.isItalic, "make-italic", "remove-italic");
+    this.toggleProperty(this.isItalic, 'make-italic', 'remove-italic');
   }
 
   @action
   toggleUnorderedList() {
-    if(this.isInList) {
-      this.args.editor.executeCommand("remove-list");
+    if (this.isInList) {
+      this.args.editor.executeCommand('remove-list');
     } else {
-      this.args.editor.executeCommand("make-list", "ul");
+      this.args.editor.executeCommand('make-list', 'ul');
     }
   }
   @action
   toggleOrderedList() {
-    if(this.isInList) {
-      this.args.editor.executeCommand("remove-list");
+    if (this.isInList) {
+      this.args.editor.executeCommand('remove-list');
     } else {
-      this.args.editor.executeCommand("make-list", "ol");
+      this.args.editor.executeCommand('make-list', 'ol');
     }
   }
 
   @action
   toggleBold() {
-    this.toggleProperty(this.isBold, "make-bold", "remove-bold");
+    this.toggleProperty(this.isBold, 'make-bold', 'remove-bold');
   }
 
   @action
   toggleUnderline() {
-    this.toggleProperty(this.isUnderline, "make-underline", "remove-underline");
+    this.toggleProperty(this.isUnderline, 'make-underline', 'remove-underline');
   }
 
   @action
-  toggleStrikethrough(){
-    this.toggleProperty(this.isStrikethrough, "make-strikethrough", "remove-strikethrough");
+  toggleStrikethrough() {
+    this.toggleProperty(
+      this.isStrikethrough,
+      'make-strikethrough',
+      'remove-strikethrough'
+    );
   }
 
   @action
@@ -122,42 +131,42 @@ export default class EditorToolbar extends Component<Args> {
 
   // Table commands
   @action
-  insertTable(){
-    this.args.editor.executeCommand("insert-table");
+  insertTable() {
+    this.args.editor.executeCommand('insert-table');
   }
 
   @action
-  insertRowBelow(){
-    this.args.editor.executeCommand("insert-table-row-below");
+  insertRowBelow() {
+    this.args.editor.executeCommand('insert-table-row-below');
   }
 
   @action
-  insertRowAbove(){
-    this.args.editor.executeCommand("insert-table-row-above");
+  insertRowAbove() {
+    this.args.editor.executeCommand('insert-table-row-above');
   }
 
   @action
-  insertColumnAfter(){
-    this.args.editor.executeCommand("insert-table-column-after");
+  insertColumnAfter() {
+    this.args.editor.executeCommand('insert-table-column-after');
   }
 
   @action
-  insertColumnBefore(){
-    this.args.editor.executeCommand("insert-table-column-before");
+  insertColumnBefore() {
+    this.args.editor.executeCommand('insert-table-column-before');
   }
 
   @action
-  removeTableRow(){
-    this.args.editor.executeCommand("remove-table-row");
+  removeTableRow() {
+    this.args.editor.executeCommand('remove-table-row');
   }
 
   @action
-  removeTableColumn(){
-    this.args.editor.executeCommand("remove-table-column");
+  removeTableColumn() {
+    this.args.editor.executeCommand('remove-table-column');
   }
 
   @action
-  removeTable(){
-    this.args.editor.executeCommand("remove-table");
+  removeTable() {
+    this.args.editor.executeCommand('remove-table');
   }
 }

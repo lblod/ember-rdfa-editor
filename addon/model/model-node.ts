@@ -1,11 +1,17 @@
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {ModelError, NoParentError, OutsideRootError} from "@lblod/ember-rdfa-editor/utils/errors";
-import XmlWriter from "@lblod/ember-rdfa-editor/model/writers/xml-writer";
-import {Walkable} from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
-import {Predicate} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
+import ModelText, {
+  TextAttribute,
+} from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import {
+  ModelError,
+  NoParentError,
+  OutsideRootError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
+import XmlWriter from '@lblod/ember-rdfa-editor/model/writers/xml-writer';
+import { Walkable } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import { Predicate } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
 
-export type ModelNodeType = "TEXT" | "ELEMENT" | "FRAGMENT";
+export type ModelNodeType = 'TEXT' | 'ELEMENT' | 'FRAGMENT';
 
 export interface NodeConfig {
   debugInfo: unknown;
@@ -37,7 +43,7 @@ export default abstract class ModelNode implements Walkable {
    * @param node
    */
   static isModelElement(node?: ModelNode | null): node is ModelElement {
-    return !!node && node.modelNodeType === "ELEMENT";
+    return !!node && node.modelNodeType === 'ELEMENT';
   }
 
   /**
@@ -45,7 +51,7 @@ export default abstract class ModelNode implements Walkable {
    * @param node
    */
   static isModelText(node?: ModelNode | null): node is ModelText {
-    return !!node && node.modelNodeType === "TEXT";
+    return !!node && node.modelNodeType === 'TEXT';
   }
 
   get attributeMap(): Map<string, string> {
@@ -86,7 +92,7 @@ export default abstract class ModelNode implements Walkable {
       if (ModelNode.isModelElement(this)) {
         return this;
       } else {
-        throw new ModelError("Non-element node cannot be root");
+        throw new ModelError('Non-element node cannot be root');
       }
     }
     while (root.parent) {
@@ -229,7 +235,10 @@ export default abstract class ModelNode implements Walkable {
   /**
    * @deprecated TODO evaluate whether we need this or not
    */
-  findAncestor(predicate: (node: ModelNode) => boolean, includeSelf = true): ModelNode | null {
+  findAncestor(
+    predicate: (node: ModelNode) => boolean,
+    includeSelf = true
+  ): ModelNode | null {
     if (includeSelf) {
       if (predicate(this)) {
         return this;
@@ -248,14 +257,18 @@ export default abstract class ModelNode implements Walkable {
     return cur;
   }
 
-  * findSelfOrAncestors(predicate: Predicate<ModelNode>): Generator<ModelNode, void, void> {
+  *findSelfOrAncestors(
+    predicate: Predicate<ModelNode>
+  ): Generator<ModelNode, void, void> {
     if (predicate(this)) {
       yield this;
     }
     yield* this.findAncestors(predicate);
   }
 
-  * findAncestors(predicate: Predicate<ModelElement>): Generator<ModelElement, void, void> {
+  *findAncestors(
+    predicate: Predicate<ModelElement>
+  ): Generator<ModelElement, void, void> {
     let cur = this.parent;
     while (cur) {
       if (predicate(cur)) {
@@ -263,7 +276,6 @@ export default abstract class ModelNode implements Walkable {
       }
       cur = cur.parent;
     }
-
   }
 
   /**
@@ -273,7 +285,6 @@ export default abstract class ModelNode implements Walkable {
    * @return the old parent
    */
   promote(after = false): ModelElement {
-
     const oldParent = this.parent;
     if (!oldParent) {
       throw new NoParentError();
@@ -310,7 +321,7 @@ export default abstract class ModelNode implements Walkable {
 
   remove() {
     if (!this.parent) {
-      throw new ModelError("Cannot remove root");
+      throw new ModelError('Cannot remove root');
     }
     this.parent.removeChild(this);
   }
@@ -339,14 +350,11 @@ export default abstract class ModelNode implements Walkable {
    */
   abstract isMergeable(other: ModelNode): boolean;
 
-  abstract get firstChild(): ModelNode | null ;
+  abstract get firstChild(): ModelNode | null;
 
   abstract get lastChild(): ModelNode | null;
 
   get parentNode(): ModelElement | null {
     return this.parent;
   }
-
 }
-
-

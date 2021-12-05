@@ -1,51 +1,59 @@
-import Command from "@lblod/ember-rdfa-editor/commands/command";
-import IndentListCommand from "@lblod/ember-rdfa-editor/commands/indent-list-command";
+import Command from '@lblod/ember-rdfa-editor/commands/command';
+import IndentListCommand from '@lblod/ember-rdfa-editor/commands/indent-list-command';
 import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
-import InsertNewLiCommand from "@lblod/ember-rdfa-editor/commands/insert-newLi-command";
-import InsertNewLineCommand from "@lblod/ember-rdfa-editor/commands/insert-newLine-command";
-import InsertTableCommand from "@lblod/ember-rdfa-editor/commands/insert-table-command";
+import InsertNewLiCommand from '@lblod/ember-rdfa-editor/commands/insert-newLi-command';
+import InsertNewLineCommand from '@lblod/ember-rdfa-editor/commands/insert-newLine-command';
+import InsertTableCommand from '@lblod/ember-rdfa-editor/commands/insert-table-command';
 import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
 import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list-command';
-import RemoveTableColumnCommand from "@lblod/ember-rdfa-editor/commands/remove-table-column-command";
-import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-command";
-import RemoveTableRowCommand from "@lblod/ember-rdfa-editor/commands/remove-table-row-command";
+import RemoveTableColumnCommand from '@lblod/ember-rdfa-editor/commands/remove-table-column-command';
+import RemoveTableCommand from '@lblod/ember-rdfa-editor/commands/remove-table-command';
+import RemoveTableRowCommand from '@lblod/ember-rdfa-editor/commands/remove-table-row-command';
 import MakeBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-bold-command';
 import MakeHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-highlight-command';
 import MakeItalicCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-italic-command';
-import MakeStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-properties/make-strikethrough-command";
-import MakeUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/make-underline-command";
+import MakeStrikethroughCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-strikethrough-command';
+import MakeUnderlineCommand from '@lblod/ember-rdfa-editor/commands/text-properties/make-underline-command';
 import RemoveBoldCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-bold-command';
 import RemoveHighlightCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-highlight-command';
 import RemoveItalicCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-italic-command';
-import RemoveStrikethroughCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-strikethrough-command";
-import RemoveUnderlineCommand from "@lblod/ember-rdfa-editor/commands/text-properties/remove-underline-command";
-import UnindentListCommand from "@lblod/ember-rdfa-editor/commands/unindent-list-command";
-import Model from "@lblod/ember-rdfa-editor/model/model";
+import RemoveStrikethroughCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-strikethrough-command';
+import RemoveUnderlineCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-underline-command';
+import UnindentListCommand from '@lblod/ember-rdfa-editor/commands/unindent-list-command';
+import Model from '@lblod/ember-rdfa-editor/model/model';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import ModelSelectionTracker from "@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker";
-import {walk as walkDomNode} from "@lblod/marawa/node-walker";
-import RichNode from "@lblod/marawa/rich-node";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
-import InsertTextCommand from "@lblod/ember-rdfa-editor/commands/insert-text-command";
-import EventBus, {AnyEventName, EditorEventListener, ListenerConfig} from "@lblod/ember-rdfa-editor/utils/event-bus";
-import DeleteSelectionCommand from "@lblod/ember-rdfa-editor/commands/delete-selection-command";
-import InsertTableRowAboveCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-above-command";
-import InsertTableRowBelowCommand from "@lblod/ember-rdfa-editor/commands/insert-table-row-below-command";
-import InsertTableColumnBeforeCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-before-command";
-import InsertTableColumnAfterCommand from "@lblod/ember-rdfa-editor/commands/insert-table-column-after-command";
-import ReadSelectionCommand from "@lblod/ember-rdfa-editor/commands/read-selection-command";
-import UndoCommand from "@lblod/ember-rdfa-editor/commands/undo-command";
-import {InternalWidgetSpec, WidgetLocation} from "@lblod/ember-rdfa-editor/model/controller";
-import Datastore, {EditorStore} from "@lblod/ember-rdfa-editor/model/util/datastore";
-import {getPathFromRoot} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {tracked} from "@glimmer/tracking";
-
+import ModelSelectionTracker from '@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker';
+import { walk as walkDomNode } from '@lblod/marawa/node-walker';
+import RichNode from '@lblod/marawa/rich-node';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import InsertXmlCommand from '@lblod/ember-rdfa-editor/commands/insert-xml-command';
+import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
+import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
+import EventBus, {
+  AnyEventName,
+  EditorEventListener,
+  ListenerConfig,
+} from '@lblod/ember-rdfa-editor/utils/event-bus';
+import DeleteSelectionCommand from '@lblod/ember-rdfa-editor/commands/delete-selection-command';
+import InsertTableRowAboveCommand from '@lblod/ember-rdfa-editor/commands/insert-table-row-above-command';
+import InsertTableRowBelowCommand from '@lblod/ember-rdfa-editor/commands/insert-table-row-below-command';
+import InsertTableColumnBeforeCommand from '@lblod/ember-rdfa-editor/commands/insert-table-column-before-command';
+import InsertTableColumnAfterCommand from '@lblod/ember-rdfa-editor/commands/insert-table-column-after-command';
+import ReadSelectionCommand from '@lblod/ember-rdfa-editor/commands/read-selection-command';
+import UndoCommand from '@lblod/ember-rdfa-editor/commands/undo-command';
+import {
+  InternalWidgetSpec,
+  WidgetLocation,
+} from '@lblod/ember-rdfa-editor/model/controller';
+import Datastore, {
+  EditorStore,
+} from '@lblod/ember-rdfa-editor/model/util/datastore';
+import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { tracked } from '@glimmer/tracking';
 
 export interface RawEditorProperties {
-  baseIRI: string
+  baseIRI: string;
 }
 
 /**
@@ -65,11 +73,13 @@ export default class RawEditor {
   private _datastore!: Datastore;
   protected tryOutVdom = true;
   protected eventBus: EventBus;
-  widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<WidgetLocation, InternalWidgetSpec[]>(
-    [
-      ["toolbar", []],
-      ["sidebar", []]
-    ]);
+  widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<
+    WidgetLocation,
+    InternalWidgetSpec[]
+  >([
+    ['toolbar', []],
+    ['sidebar', []],
+  ]);
 
   /**
    * a rich representation of the dom tree created with {{#crossLink "NodeWalker"}}NodeWalker{{/crossLink}}
@@ -82,13 +92,17 @@ export default class RawEditor {
 
   constructor(properties: RawEditorProperties) {
     this.eventBus = new EventBus();
-    this.eventBus.on("contentChanged", () => {
-      this._datastore = EditorStore.fromParse({
-        modelRoot: this.model.rootModelNode,
-        pathFromDomRoot: getPathFromRoot(this.model.rootNode, false),
-        baseIRI: (properties?.baseIRI as string | null) || document.baseURI
-      });
-    }, {priority: "highest"});
+    this.eventBus.on(
+      'contentChanged',
+      () => {
+        this._datastore = EditorStore.fromParse({
+          modelRoot: this.model.rootModelNode,
+          pathFromDomRoot: getPathFromRoot(this.model.rootNode, false),
+          baseIRI: (properties?.baseIRI as string | null) || document.baseURI,
+        });
+      },
+      { priority: 'highest' }
+    );
   }
 
   /**
@@ -106,7 +120,10 @@ export default class RawEditor {
 
     this.registeredCommands = new Map<string, Command>();
     this._model = new Model(rootNode, this.eventBus);
-    this.modelSelectionTracker = new ModelSelectionTracker(this._model, this.eventBus);
+    this.modelSelectionTracker = new ModelSelectionTracker(
+      this._model,
+      this.eventBus
+    );
     this.modelSelectionTracker.startTracking();
 
     window.__VDOM = this.model;
@@ -175,7 +192,7 @@ export default class RawEditor {
 
   get model(): Model {
     if (!this._model) {
-      throw new ModelError("Model accessed before initialization is complete");
+      throw new ModelError('Model accessed before initialization is complete');
     }
     return this._model;
   }
@@ -256,11 +273,19 @@ export default class RawEditor {
     return new ModelSelection();
   }
 
-  on<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig) {
+  on<E extends AnyEventName>(
+    eventName: E,
+    callback: EditorEventListener<E>,
+    config?: ListenerConfig
+  ) {
     this.eventBus.on(eventName, callback, config);
   }
 
-  off<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig) {
+  off<E extends AnyEventName>(
+    eventName: E,
+    callback: EditorEventListener<E>,
+    config?: ListenerConfig
+  ) {
     this.eventBus.off(eventName, callback, config);
   }
 }

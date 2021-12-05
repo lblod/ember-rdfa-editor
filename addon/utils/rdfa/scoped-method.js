@@ -3,7 +3,7 @@ import { computed } from '@ember/object';
 /**
  * Binds a method of an Ember.Object so it can be deeply referenced in
  * other components.
- * 
+ *
  * When would you need this?  When passing functions through to other
  * components, you should wrap them in an action helper.  However,
  * when passing methods this way, their scope is being changed.  The
@@ -25,7 +25,7 @@ import { computed } from '@ember/object';
  */
 
 export default function scopedMethod(functor) {
-  return computed( function() {
+  return computed(function () {
     return functor.bind(this);
   });
 }

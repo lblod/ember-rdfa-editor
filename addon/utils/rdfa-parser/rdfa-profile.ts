@@ -8,11 +8,11 @@
  * A type of RDFa profile
  */
 export type RdfaProfile =
-  '' | // All possible RDFa features
-  'core' | // https://www.w3.org/TR/rdfa-core/
-  'html' | // https://www.w3.org/TR/html-rdfa/
-  'xhtml' | // https://www.w3.org/TR/xhtml-rdfa/
-  'xml';
+  | '' // All possible RDFa features
+  | 'core' // https://www.w3.org/TR/rdfa-core/
+  | 'html' // https://www.w3.org/TR/html-rdfa/
+  | 'xhtml' // https://www.w3.org/TR/xhtml-rdfa/
+  | 'xml';
 
 export interface IRdfaFeatures {
   /**
@@ -77,7 +77,7 @@ export interface IRdfaFeatures {
  * A mapping of RDFa profile to a features object.
  */
 // tslint:disable:object-literal-sort-keys
-export const RDFA_FEATURES: {[profile: string]: IRdfaFeatures} = {
+export const RDFA_FEATURES: { [profile: string]: IRdfaFeatures } = {
   '': {
     baseTag: true,
     xmlBase: true,
@@ -92,7 +92,7 @@ export const RDFA_FEATURES: {[profile: string]: IRdfaFeatures} = {
     xhtmlInitialContext: true,
     roleAttribute: true,
   },
-  'core': {
+  core: {
     baseTag: false,
     xmlBase: false,
     langAttribute: true,
@@ -106,7 +106,7 @@ export const RDFA_FEATURES: {[profile: string]: IRdfaFeatures} = {
     xhtmlInitialContext: false,
     roleAttribute: false,
   },
-  'html': {
+  html: {
     baseTag: true,
     xmlBase: false,
     langAttribute: true,
@@ -120,7 +120,7 @@ export const RDFA_FEATURES: {[profile: string]: IRdfaFeatures} = {
     xhtmlInitialContext: false,
     roleAttribute: true,
   },
-  'xhtml': {
+  xhtml: {
     baseTag: true,
     xmlBase: false,
     langAttribute: true,
@@ -134,7 +134,7 @@ export const RDFA_FEATURES: {[profile: string]: IRdfaFeatures} = {
     xhtmlInitialContext: true,
     roleAttribute: true,
   },
-  'xml': {
+  xml: {
     baseTag: false,
     xmlBase: true,
     langAttribute: true,
@@ -152,7 +152,7 @@ export const RDFA_FEATURES: {[profile: string]: IRdfaFeatures} = {
 // tslint:enable:object-literal-sort-keys
 
 // tslint:disable:object-literal-sort-keys
-export const RDFA_CONTENTTYPES: {[contentType: string]: RdfaProfile} = {
+export const RDFA_CONTENTTYPES: { [contentType: string]: RdfaProfile } = {
   // HTML
   'text/html': 'html',
 

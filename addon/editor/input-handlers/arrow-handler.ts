@@ -1,11 +1,11 @@
-import previousTextNode from "@lblod/ember-rdfa-editor/utils/ce/previous-text-node";
-import nextTextNode from "@lblod/ember-rdfa-editor/utils/ce/next-text-node";
-import {warn} from "@ember/debug";
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import {InputHandler} from "@lblod/ember-rdfa-editor/editor/input-handlers/input-handler";
-import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
-import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
-import {isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import previousTextNode from '@lblod/ember-rdfa-editor/utils/ce/previous-text-node';
+import nextTextNode from '@lblod/ember-rdfa-editor/utils/ce/next-text-node';
+import { warn } from '@ember/debug';
+import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
+import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
+import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
+import { isTextNode } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 /**
  * Arrow Handler, an event handler to handle arrow keys.
@@ -16,30 +16,32 @@ import {isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
  * @constructor
  */
 export default class ArrowHandler extends InputHandler {
-  constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
+  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
     super(rawEditor);
   }
 
   isHandlerFor(event: Event): boolean {
-    return isKeyDownEvent(event)
-      && (event.key === "ArrowLeft" || event.key === "ArrowRight")
-      && this.rawEditor.currentSelectionIsACursor;
+    return (
+      isKeyDownEvent(event) &&
+      (event.key === 'ArrowLeft' || event.key === 'ArrowRight') &&
+      this.rawEditor.currentSelectionIsACursor
+    );
   }
 
   handleEvent(event: KeyboardEvent): HandlerResponse {
     const position = this.rawEditor.currentSelection[0];
     const textNode = this.rawEditor.currentNode;
     if (!textNode || !isTextNode(textNode)) {
-      throw new Error("Current node is not a text node.");
+      throw new Error('Current node is not a text node.');
     }
 
     const richNode = this.rawEditor.getRichNodeFor(textNode);
     if (!richNode) {
-      throw new Error("No rich node for current node found.");
+      throw new Error('No rich node for current node found.');
     }
 
-    const isLeft = event.key === "ArrowLeft";
-    const isRight = event.key === "ArrowRight";
+    const isLeft = event.key === 'ArrowLeft';
+    const isRight = event.key === 'ArrowRight';
 
     if (richNode.start < position && richNode.end > position) {
       // Not at the start or end of a node.
@@ -92,9 +94,11 @@ export default class ArrowHandler extends InputHandler {
         }
       }
     } else {
-      warn(`Position ${position} is not inside current node.`, {id: 'contenteditable.invalid-start'});
+      warn(`Position ${position} is not inside current node.`, {
+        id: 'contenteditable.invalid-start',
+      });
     }
 
-    return {allowPropagation: false, allowBrowserDefault: false};
+    return { allowPropagation: false, allowBrowserDefault: false };
   }
 }

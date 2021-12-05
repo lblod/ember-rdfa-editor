@@ -1,9 +1,9 @@
-import {debug, warn} from '@ember/debug';
-import {action} from "@ember/object";
-import {inject as service} from "@ember/service";
+import { debug, warn } from '@ember/debug';
+import { action } from '@ember/object';
+import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import {tracked} from "@glimmer/tracking";
-import {analyse as analyseRdfa} from '@lblod/marawa/rdfa-context-scanner';
+import { tracked } from '@glimmer/tracking';
+import { analyse as analyseRdfa } from '@lblod/marawa/rdfa-context-scanner';
 import EventProcessor from '../../utils/rdfa/event-processor';
 import HintsRegistry from '../../utils/rdfa/hints-registry';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
@@ -12,13 +12,16 @@ import type IntlService from 'ember-intl/services/intl';
 import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
-import {EditorPlugin} from "@lblod/ember-rdfa-editor/utils/editor-plugin";
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import ApplicationInstance from '@ember/application/instance';
-import {InternalWidgetSpec, RawEditorController} from "@lblod/ember-rdfa-editor/model/controller";
+import {
+  InternalWidgetSpec,
+  RawEditorController,
+} from '@lblod/ember-rdfa-editor/model/controller';
 
 interface DebugInfo {
-  hintsRegistry: HintsRegistry
-  editor: RawEditor
+  hintsRegistry: HintsRegistry;
+  editor: RawEditor;
 }
 
 interface RdfaEditorArgs {
@@ -30,28 +33,28 @@ interface RdfaEditorArgs {
    *
    * @public
    */
-  initDebug(debugInfo: DebugInfo): void
+  initDebug(debugInfo: DebugInfo): void;
 
   /**
    * Plugin profile of the RDFa editor
    * @default 'default'
    * @public
    */
-  profile?: string
+  profile?: string;
 
   /**
    * callback that is called with an interface to the editor after editor init completed
    * @default 'default'
    * @public
    */
-  rdfaEditorInit(editor: RdfaDocument): void
+  rdfaEditorInit(editor: RdfaDocument): void;
 
   plugins: string[];
 }
 
 interface SuggestedHint {
-  component: string
-  info: Record<string, unknown>
+  component: string;
+  info: Record<string, unknown>;
 }
 
 /**
@@ -142,7 +145,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     return this.args.plugins || [];
   }
 
-
   /**
    * editor controller
    */
@@ -151,7 +153,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
     this.owner = owner;
-    const userLocale = (navigator.language || navigator.languages[0]);
+    const userLocale = navigator.language || navigator.languages[0];
     this.intl.setLocale([userLocale, 'nl-BE']);
     if (this.args.profile) {
       this.profile = this.args.profile;
@@ -174,7 +176,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   warnNotSetup() {
-    warn("An action was fired before the editor was set up", {id: "rdfa-editor.not-setup"});
+    warn('An action was fired before the editor was set up', {
+      id: 'rdfa-editor.not-setup',
+    });
   }
 
   /**
@@ -200,14 +204,14 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   async handleRawEditorInit(editor: PernetRawEditor) {
     this.editor = editor;
     await this.initializePlugins(editor);
-    this.toolbarWidgets = editor.widgetMap.get("toolbar") || [];
-    this.sidebarWidgets = editor.widgetMap.get("sidebar") || [];
+    this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
+    this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
     this.hintsRegistry = new HintsRegistry(editor);
     this.eventProcessor = new EventProcessor({
       registry: this.hintsRegistry,
       profile: this.profile,
       dispatcher: this.rdfaEditorDispatcher,
-      editor: this.editor
+      editor: this.editor,
     });
     editor.registerContentObserver(this.eventProcessor);
     editor.registerMovementObserver(this.eventProcessor);
@@ -230,7 +234,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       };
       this.args.initDebug(debugInfo);
     }
-    const rdfaDocument = new RdfaDocumentController("host-controller", editor);
+    const rdfaDocument = new RdfaDocumentController('host-controller', editor);
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
@@ -239,10 +243,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   async initializePlugins(editor: RawEditor) {
     const plugins = this.getPlugins();
     for (const plugin of plugins) {
-      console.log("INITIALIZING", plugin.name);
+      console.log('INITIALIZING', plugin.name);
       await this.initializePlugin(plugin, editor);
     }
-
   }
 
   getPlugins(): EditorPlugin[] {
@@ -255,14 +258,15 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       }
     }
     return plugins;
-
   }
 
-  async initializePlugin(plugin: EditorPlugin, editor: RawEditor): Promise<void> {
+  async initializePlugin(
+    plugin: EditorPlugin,
+    editor: RawEditor
+  ): Promise<void> {
     const controller = new RawEditorController(plugin.name, editor);
     await plugin.initialize(controller);
     this.activePlugins.push(plugin);
-
   }
 
   /**
@@ -290,7 +294,11 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       const contexts = analyseRdfa(rootNode, region);
       if (contexts && contexts.length) {
         const context = contexts[0];
-        const hints = await this.rdfaEditorDispatcher.requestHints(this.profile, context, this.editor);
+        const hints = await this.rdfaEditorDispatcher.requestHints(
+          this.profile,
+          context,
+          this.editor
+        );
         this.suggestedHints = hints;
       } else {
         debug('No RDFa blocks found in currentNode. Cannot hint suggestions.');

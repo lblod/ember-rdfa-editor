@@ -1,16 +1,19 @@
-import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import MoveOperation from "@lblod/ember-rdfa-editor/model/operations/move-operation";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {OperationError} from "@lblod/ember-rdfa-editor/utils/errors";
+import { module, test } from 'qunit';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import MoveOperation from '@lblod/ember-rdfa-editor/model/operations/move-operation';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';
 
-
-module("Unit | model | operations | move-operation-test", () => {
-  test("move simple range", assert => {
+module('Unit | model | operations | move-operation-test', () => {
+  test('move simple range', (assert) => {
     // language=XML
-    const {root: initial, elements: {target}, textNodes: {source}} = vdom`
+    const {
+      root: initial,
+      elements: { target },
+      textNodes: { source },
+    } = vdom`
       <modelRoot>
         <div __id="target"/>
         <text __id="source">abcd</text>
@@ -18,7 +21,7 @@ module("Unit | model | operations | move-operation-test", () => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text>abcd</text>
@@ -32,12 +35,20 @@ module("Unit | model | operations | move-operation-test", () => {
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
-    assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [0, 0], [0, 4])));
+    assert.true(
+      resultRange.sameAs(
+        ModelRange.fromPaths(initial as ModelElement, [0, 0], [0, 4])
+      )
+    );
   });
 
-  test("move simple range 2", assert => {
+  test('move simple range 2', (assert) => {
     // language=XML
-    const {root: initial, elements: {target}, textNodes: {source}} = vdom`
+    const {
+      root: initial,
+      elements: { target },
+      textNodes: { source },
+    } = vdom`
       <modelRoot>
         <div __id="target"/>
         <text __id="source">abcd</text>
@@ -45,7 +56,7 @@ module("Unit | model | operations | move-operation-test", () => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text>bc</text>
@@ -61,11 +72,18 @@ module("Unit | model | operations | move-operation-test", () => {
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
-    assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [0, 0], [0, 2])));
+    assert.true(
+      resultRange.sameAs(
+        ModelRange.fromPaths(initial as ModelElement, [0, 0], [0, 2])
+      )
+    );
   });
-  test("move uneven range inside textnode", assert => {
+  test('move uneven range inside textnode', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {rangeStart, rangeEnd, target}} = vdom`
+    const {
+      root: initial,
+      textNodes: { rangeStart, rangeEnd, target },
+    } = vdom`
       <modelRoot>
         <div>
           <text __id="target">abcd</text>
@@ -86,7 +104,7 @@ module("Unit | model | operations | move-operation-test", () => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text>ab</text>
@@ -120,11 +138,18 @@ module("Unit | model | operations | move-operation-test", () => {
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
-    assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [0, 2], [0, 11])));
+    assert.true(
+      resultRange.sameAs(
+        ModelRange.fromPaths(initial as ModelElement, [0, 2], [0, 11])
+      )
+    );
   });
-  test("throws when target inside src", assert => {
+  test('throws when target inside src', (assert) => {
     // language=XML
-    const {elements: {target}, textNodes: {rangeStart, rangeEnd}} = vdom`
+    const {
+      elements: { target },
+      textNodes: { rangeStart, rangeEnd },
+    } = vdom`
       <div>
         <text __id="rangeStart">ab</text>
         <div __id="target"/>
@@ -139,8 +164,6 @@ module("Unit | model | operations | move-operation-test", () => {
     const op = new MoveOperation(srcRange, targetPos);
     assert.throws(() => {
       op.execute();
-    }, new OperationError("Cannot move to target inside source range"));
-
+    }, new OperationError('Cannot move to target inside source range'));
   });
-
 });

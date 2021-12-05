@@ -1,10 +1,10 @@
-import {module, test} from "qunit";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import RemoveTableCommand from "@lblod/ember-rdfa-editor/commands/remove-table-command";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import { module, test } from 'qunit';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import RemoveTableCommand from '@lblod/ember-rdfa-editor/commands/remove-table-command';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-module("Unit | commands | remove-table-command-test", hooks => {
+module('Unit | commands | remove-table-command-test', (hooks) => {
   const ctx = new ModelTestContext();
   let command: RemoveTableCommand;
 
@@ -13,9 +13,12 @@ module("Unit | commands | remove-table-command-test", hooks => {
     command = new RemoveTableCommand(ctx.model);
   });
 
-  test("removes empty table (only element in document)", assert => {
+  test('removes empty table (only element in document)', (assert) => {
     // language=XML
-    const {root: initial, elements: {topLeft}} = vdom`
+    const {
+      root: initial,
+      elements: { topLeft },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -33,7 +36,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot></modelRoot>
     `;
 
@@ -43,14 +46,21 @@ module("Unit | commands | remove-table-command-test", hooks => {
 
     command.execute();
     const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
+    const expectedRange = ModelRange.fromPaths(
+      ctx.model.rootModelNode,
+      [0],
+      [0]
+    );
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
-  test("removes table filled with text (only element in document)", assert => {
+  test('removes table filled with text (only element in document)', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {topLeft}} = vdom`
+    const {
+      root: initial,
+      textNodes: { topLeft },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -76,7 +86,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot></modelRoot>
     `;
 
@@ -87,13 +97,20 @@ module("Unit | commands | remove-table-command-test", hooks => {
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
+    const expectedRange = ModelRange.fromPaths(
+      ctx.model.rootModelNode,
+      [0],
+      [0]
+    );
     assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
-  test("removes correctly before table", assert => {
+  test('removes correctly before table', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {topLeft}} = vdom`
+    const {
+      root: initial,
+      textNodes: { topLeft },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -139,7 +156,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -171,13 +188,20 @@ module("Unit | commands | remove-table-command-test", hooks => {
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
+    const expectedRange = ModelRange.fromPaths(
+      ctx.model.rootModelNode,
+      [0],
+      [0]
+    );
     assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
-  test("removes correctly after table", assert => {
+  test('removes correctly after table', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {topLeft}} = vdom`
+    const {
+      root: initial,
+      textNodes: { topLeft },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -223,7 +247,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -255,13 +279,20 @@ module("Unit | commands | remove-table-command-test", hooks => {
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [1], [1]);
+    const expectedRange = ModelRange.fromPaths(
+      ctx.model.rootModelNode,
+      [1],
+      [1]
+    );
     assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
-  test("removes correctly before list", assert => {
+  test('removes correctly before list', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {topLeft}} = vdom`
+    const {
+      root: initial,
+      textNodes: { topLeft },
+    } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -298,7 +329,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <ul>
           <li>
@@ -321,13 +352,20 @@ module("Unit | commands | remove-table-command-test", hooks => {
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0], [0]);
+    const expectedRange = ModelRange.fromPaths(
+      ctx.model.rootModelNode,
+      [0],
+      [0]
+    );
     assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
-  test("removes after before list", assert => {
+  test('removes after before list', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {topLeft}} = vdom`
+    const {
+      root: initial,
+      textNodes: { topLeft },
+    } = vdom`
       <modelRoot>
         <ul>
           <li>
@@ -364,7 +402,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <ul>
           <li>
@@ -387,13 +425,20 @@ module("Unit | commands | remove-table-command-test", hooks => {
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [1], [1]);
+    const expectedRange = ModelRange.fromPaths(
+      ctx.model.rootModelNode,
+      [1],
+      [1]
+    );
     assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 
-  test("removes correctly in div", assert => {
+  test('removes correctly in div', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {topLeft}} = vdom`
+    const {
+      root: initial,
+      textNodes: { topLeft },
+    } = vdom`
       <modelRoot>
         <div>
           <table>
@@ -421,7 +466,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div></div>
       </modelRoot>
@@ -434,12 +479,19 @@ module("Unit | commands | remove-table-command-test", hooks => {
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0,0], [0,0]);
+    const expectedRange = ModelRange.fromPaths(
+      ctx.model.rootModelNode,
+      [0, 0],
+      [0, 0]
+    );
     assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
-  test("removes correctly in div after text", assert => {
+  test('removes correctly in div after text', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {topLeft}} = vdom`
+    const {
+      root: initial,
+      textNodes: { topLeft },
+    } = vdom`
       <modelRoot>
         <div>
           <text>01234567</text>
@@ -468,7 +520,7 @@ module("Unit | commands | remove-table-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div><text>01234567</text></div>
       </modelRoot>
@@ -481,7 +533,11 @@ module("Unit | commands | remove-table-command-test", hooks => {
     command.execute();
     assert.true(ctx.model.rootModelNode.sameAs(expected));
     const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(ctx.model.rootModelNode, [0,8], [0,8]);
+    const expectedRange = ModelRange.fromPaths(
+      ctx.model.rootModelNode,
+      [0, 8],
+      [0, 8]
+    );
     assert.true(resultRange && expectedRange.sameAs(resultRange));
   });
 });

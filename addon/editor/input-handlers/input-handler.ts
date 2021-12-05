@@ -1,11 +1,11 @@
 import {
   Manipulation,
   ManipulationExecutor,
-  ManipulationGuidance
-} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
-import {editorDebug} from "@lblod/ember-rdfa-editor/editor/utils";
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import { HandlerResponse } from "./handler-response";
+  ManipulationGuidance,
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { editorDebug } from '@lblod/ember-rdfa-editor/editor/utils';
+import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import { HandlerResponse } from './handler-response';
 
 export interface InputPlugin {
   /**
@@ -18,7 +18,10 @@ export interface InputPlugin {
    * manipulation and/or if it intends to handle the manipulation
    * itself.
    */
-  guidanceForManipulation: (manipulation: Manipulation, editor: PernetRawEditor) => ManipulationGuidance | null;
+  guidanceForManipulation: (
+    manipulation: Manipulation,
+    editor: PernetRawEditor
+  ) => ManipulationGuidance | null;
 }
 
 export abstract class InputHandler {
@@ -53,22 +56,32 @@ export abstract class InputHandler {
    * @param {Manipulation} manipulation DOM manipulation which will be
    * checked by plugins.
    **/
-  checkManipulationByPlugins(manipulation: Manipulation): { mayExecute: boolean, dispatchedExecutor: ManipulationExecutor | null } {
+  checkManipulationByPlugins(manipulation: Manipulation): {
+    mayExecute: boolean;
+    dispatchedExecutor: ManipulationExecutor | null;
+  } {
     // Calculate reports submitted by each plugin.
-    const reports: Array<{plugin: InputPlugin, allow: boolean, executor: ManipulationExecutor | undefined}> = [];
+    const reports: Array<{
+      plugin: InputPlugin;
+      allow: boolean;
+      executor: ManipulationExecutor | undefined;
+    }> = [];
     for (const plugin of this.plugins) {
-      const guidance = plugin.guidanceForManipulation(manipulation, this.rawEditor);
+      const guidance = plugin.guidanceForManipulation(
+        manipulation,
+        this.rawEditor
+      );
       if (guidance) {
         const allow = guidance.allow === undefined ? true : guidance.allow;
         const executor = guidance.executor;
 
-        reports.push({plugin, allow, executor});
+        reports.push({ plugin, allow, executor });
       }
     }
 
     // Filter reports based on our interests.
-    const reportsNoExecute = reports.filter(({allow}) => !allow);
-    const reportsWithExecutor = reports.filter(({executor}) => executor);
+    const reportsNoExecute = reports.filter(({ allow }) => !allow);
+    const reportsWithExecutor = reports.filter(({ executor }) => executor);
 
     // Debug reporting.
     if (reports.length > 1) {
@@ -76,28 +89,35 @@ export abstract class InputHandler {
     }
 
     if (reportsNoExecute.length > 1 && reportsWithExecutor.length > 1) {
-      console.error(`Some plugins don't want execution, others want custom execution`, {
-        reportsNoExecute,
-        reportsWithExecutor
-      });
+      console.error(
+        `Some plugins don't want execution, others want custom execution`,
+        {
+          reportsNoExecute,
+          reportsWithExecutor,
+        }
+      );
     }
 
     if (reportsWithExecutor.length > 1) {
-      console.warn(`Multiple plugins want to execute this plugin. First entry in the list wins: ${reportsWithExecutor[0].plugin.label}`);
+      console.warn(
+        `Multiple plugins want to execute this plugin. First entry in the list wins: ${reportsWithExecutor[0].plugin.label}`
+      );
     }
 
-    for (const {plugin} of reportsNoExecute) {
+    for (const { plugin } of reportsNoExecute) {
       editorDebug(
         `${this.constructor.name}.checkManipulationByPlugins`,
         `Was not allowed to execute text manipulation by plugin ${plugin.label}`,
-        {manipulation, plugin}
+        { manipulation, plugin }
       );
     }
 
     // Yield result.
     return {
       mayExecute: reportsNoExecute.length === 0,
-      dispatchedExecutor: reportsWithExecutor.length ? reportsWithExecutor[0].executor as ManipulationExecutor : null
+      dispatchedExecutor: reportsWithExecutor.length
+        ? (reportsWithExecutor[0].executor as ManipulationExecutor)
+        : null,
     };
   }
 }

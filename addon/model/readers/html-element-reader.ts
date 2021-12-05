@@ -1,12 +1,15 @@
-import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import ModelElement, {ElementType} from "@lblod/ember-rdfa-editor/model/model-element";
-import {tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {HtmlReaderContext} from "@lblod/ember-rdfa-editor/model/readers/html-reader";
-import HtmlNodeReader from "@lblod/ember-rdfa-editor/model/readers/html-node-reader";
-import {copyAttributes} from "@lblod/ember-rdfa-editor/model/readers/reader-utils";
+import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
+import ModelElement, {
+  ElementType,
+} from '@lblod/ember-rdfa-editor/model/model-element';
+import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { HtmlReaderContext } from '@lblod/ember-rdfa-editor/model/readers/html-reader';
+import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
+import { copyAttributes } from '@lblod/ember-rdfa-editor/model/readers/reader-utils';
 
-export default class HtmlElementReader implements Reader<HTMLElement, ModelElement[], HtmlReaderContext> {
-
+export default class HtmlElementReader
+  implements Reader<HTMLElement, ModelElement[], HtmlReaderContext>
+{
   read(from: HTMLElement, context: HtmlReaderContext): ModelElement[] {
     const result = new ModelElement(tagName(from) as ElementType);
     copyAttributes(from, result);
@@ -20,5 +23,4 @@ export default class HtmlElementReader implements Reader<HTMLElement, ModelEleme
     context.bindNode(result, from);
     return [result];
   }
-
 }

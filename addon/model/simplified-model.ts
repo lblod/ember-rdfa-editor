@@ -1,5 +1,5 @@
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 
 export default class SimplifiedModel {
   rootModelNode: ModelElement;

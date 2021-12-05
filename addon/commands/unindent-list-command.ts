@@ -1,27 +1,29 @@
-import Command from "@lblod/ember-rdfa-editor/commands/command";
-import Model from "@lblod/ember-rdfa-editor/model/model";
+import Command from '@lblod/ember-rdfa-editor/commands/command';
+import Model from '@lblod/ember-rdfa-editor/model/model';
 import {
   IllegalExecutionStateError,
   MisbehavedSelectionError,
   SelectionError,
-  TypeAssertionError
-} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
-import ModelRangeUtils from "@lblod/ember-rdfa-editor/model/util/model-range-utils";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelPosition from "../model/model-position";
+  TypeAssertionError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelPosition from '../model/model-position';
 
 export default class UnindentListCommand extends Command {
-  name = "unindent-list";
+  name = 'unindent-list';
 
   constructor(model: Model) {
     super(model);
   }
 
-  canExecute(range: ModelRange | null = this.model.selection.lastRange): boolean {
+  canExecute(
+    range: ModelRange | null = this.model.selection.lastRange
+  ): boolean {
     if (!range) {
       return false;
     }
@@ -29,8 +31,15 @@ export default class UnindentListCommand extends Command {
     const predicate = (node: ModelNode) => {
       // Set `includeSelf` to true, because this predicate will be used in `findModelNodes`, where we start
       // searching from the parent of the current node. If we set it to false, the first parent will always be skipped.
-      const firstAncestorLi = ModelNodeUtils.findAncestor(node, ModelNodeUtils.isListElement, true);
-      const secondAncestorLi = ModelNodeUtils.findAncestor(firstAncestorLi, ModelNodeUtils.isListElement);
+      const firstAncestorLi = ModelNodeUtils.findAncestor(
+        node,
+        ModelNodeUtils.isListElement,
+        true
+      );
+      const secondAncestorLi = ModelNodeUtils.findAncestor(
+        firstAncestorLi,
+        ModelNodeUtils.isListElement
+      );
 
       return !!firstAncestorLi && !!secondAncestorLi;
     };
@@ -45,19 +54,22 @@ export default class UnindentListCommand extends Command {
       throw new MisbehavedSelectionError();
     }
 
-    const treeWalker = ModelRangeUtils.findModelNodes(range, ModelNodeUtils.isListElement);
+    const treeWalker = ModelRangeUtils.findModelNodes(
+      range,
+      ModelNodeUtils.isListElement
+    );
     const elements: ModelElement[] = [];
 
     for (const node of treeWalker) {
       if (!ModelNode.isModelElement(node)) {
-        throw new TypeAssertionError("Current node is not an element");
+        throw new TypeAssertionError('Current node is not an element');
       }
 
       elements.push(node);
     }
 
     if (elements.length === 0) {
-      throw new SelectionError("The selection is not inside a list");
+      throw new SelectionError('The selection is not inside a list');
     }
 
     // Get the shallowest common ancestors.
@@ -65,32 +77,53 @@ export default class UnindentListCommand extends Command {
     if (lisToShift) {
       // Iterate over all found li elements.
       for (const li of lisToShift) {
-        const parent = ModelNodeUtils.findAncestor(li, ModelNodeUtils.isListContainer);
-        const grandParent = ModelNodeUtils.findAncestor(parent, ModelNodeUtils.isListElement);
-        const greatGrandParent = ModelNodeUtils.findAncestor(grandParent, ModelNodeUtils.isListContainer);
+        const parent = ModelNodeUtils.findAncestor(
+          li,
+          ModelNodeUtils.isListContainer
+        );
+        const grandParent = ModelNodeUtils.findAncestor(
+          parent,
+          ModelNodeUtils.isListElement
+        );
+        const greatGrandParent = ModelNodeUtils.findAncestor(
+          grandParent,
+          ModelNodeUtils.isListContainer
+        );
 
-        if (li && ModelElement.isModelElement(li)
-          && parent && ModelElement.isModelElement(parent)
-          && grandParent && ModelElement.isModelElement(grandParent)
-          && greatGrandParent && ModelElement.isModelElement(greatGrandParent)
+        if (
+          li &&
+          ModelElement.isModelElement(li) &&
+          parent &&
+          ModelElement.isModelElement(parent) &&
+          grandParent &&
+          ModelElement.isModelElement(grandParent) &&
+          greatGrandParent &&
+          ModelElement.isModelElement(greatGrandParent)
         ) {
           // Remove node.
-          this.model.change(mutator => {
+          this.model.change((mutator) => {
             const liIndex = li.index;
 
             if (grandParent.index === null) {
-              throw new IllegalExecutionStateError("Couldn't find index of grandparent li");
+              throw new IllegalExecutionStateError(
+                "Couldn't find index of grandparent li"
+              );
             }
 
             if (parent.length === 1) {
               // Remove parent ul/ol if node is only child.
               mutator.deleteNode(li);
-              const positionToInsert = ModelPosition.fromInElement(greatGrandParent, grandParent.index + 1);
+              const positionToInsert = ModelPosition.fromInElement(
+                greatGrandParent,
+                grandParent.index + 1
+              );
               mutator.insertAtPosition(positionToInsert, li);
               mutator.deleteNode(parent);
             } else {
               if (liIndex === null) {
-                throw new IllegalExecutionStateError("Couldn't find index of current li");
+                throw new IllegalExecutionStateError(
+                  "Couldn't find index of current li"
+                );
               }
               const split = parent.split(liIndex);
 
@@ -104,12 +137,18 @@ export default class UnindentListCommand extends Command {
               }
 
               if (split.right.length > 0) {
-                const positionToInsertSplit = ModelPosition.fromInElement(li, li.getMaxOffset());
+                const positionToInsertSplit = ModelPosition.fromInElement(
+                  li,
+                  li.getMaxOffset()
+                );
                 mutator.deleteNode(split.right);
                 mutator.insertAtPosition(positionToInsertSplit, split.right);
               }
               mutator.deleteNode(li);
-              const positionToInsertListItem = ModelPosition.fromInElement(greatGrandParent, grandParent.index + 1);
+              const positionToInsertListItem = ModelPosition.fromInElement(
+                greatGrandParent,
+                grandParent.index + 1
+              );
               mutator.insertAtPosition(positionToInsertListItem, li);
             }
           });
@@ -118,9 +157,14 @@ export default class UnindentListCommand extends Command {
     }
   }
 
-  private relatedChunks(elementArray: ModelElement[], result: ModelElement[] = []): ModelElement[] {
+  private relatedChunks(
+    elementArray: ModelElement[],
+    result: ModelElement[] = []
+  ): ModelElement[] {
     // Check if the li is nested.
-    elementArray = elementArray.filter(element => ModelNodeUtils.findAncestor(element, ModelNodeUtils.isListElement));
+    elementArray = elementArray.filter((element) =>
+      ModelNodeUtils.findAncestor(element, ModelNodeUtils.isListElement)
+    );
 
     // Sort array, by depth, shallowest first.
     elementArray = elementArray.sort((a, b) => {
@@ -150,7 +194,10 @@ export default class UnindentListCommand extends Command {
     return result;
   }
 
-  private static areRelated(base: ModelElement, compare: ModelElement): boolean{
+  private static areRelated(
+    base: ModelElement,
+    compare: ModelElement
+  ): boolean {
     const basePath = base.getOffsetPath();
     const comparePath = compare.getOffsetPath();
 
