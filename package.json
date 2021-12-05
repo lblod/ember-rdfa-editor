@@ -70,9 +70,9 @@
   "devDependencies": {
     "@appuniversum/appuniversum": "^0.2.1",
     "@appuniversum/ember-appuniversum": "^0.7.2",
-    "@codemirror/basic-setup": "^0.18.2",
-    "@codemirror/lang-html": "^0.18.1",
-    "@codemirror/lang-xml": "^0.18.0",
+    "@codemirror/basic-setup": "^0.19.0",
+    "@codemirror/lang-html": "^0.19.4",
+    "@codemirror/lang-xml": "^0.19.2",
     "@ember/test-helpers": "^2.6.0",
     "@glimmer/component": "^1.0.3",
     "@rdfjs/types": "^1.0.1",
