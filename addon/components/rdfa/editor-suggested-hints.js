@@ -1,21 +1,20 @@
-import classic from 'ember-classic-decorator';
 import { action } from '@ember/object';
-import { layout as templateLayout } from '@ember-decorators/component';
-import Component from '@ember/component';
-import layout from '../../templates/components/rdfa/editor-suggested-hints';
-import { A } from '@ember/array';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+
 /**
  * @module rdfa-editor
  * @class RdfaEditorSuggestedHintsComponent
  */
-@classic
-@templateLayout(layout)
 export default class EditorSuggestedHints extends Component {
+  @tracked
+  suggestedHints;
+
   /**
    * @method closeHints
    */
   @action
   closeHints() {
-    this.set('suggestedHints', A());
+    this.suggestedHints = [];
   }
 }
