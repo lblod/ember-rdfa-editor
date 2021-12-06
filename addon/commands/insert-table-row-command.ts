@@ -1,9 +1,9 @@
-import Command from "@lblod/ember-rdfa-editor/commands/command";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
-import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
+import Command from '@lblod/ember-rdfa-editor/commands/command';
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
+import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
+import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
 export default abstract class InsertTableRowCommand extends Command {
   abstract insertAbove: boolean;
@@ -36,10 +36,10 @@ export default abstract class InsertTableRowCommand extends Command {
 
     const insertPosition = this.insertAbove ? position.y : position.y + 1;
 
-    this.model.change(mutator => {
+    this.model.change((mutator) => {
       table.addRow(mutator, insertPosition);
     });
-    
+
     this.model.write();
   }
 }

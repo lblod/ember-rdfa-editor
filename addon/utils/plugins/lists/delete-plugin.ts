@@ -2,15 +2,15 @@ import {
   DeleteHandlerManipulation,
   DeletePlugin,
   MagicSpan,
-} from "@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler";
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler';
 import {
   ManipulationGuidance,
   RemoveEmptyElementManipulation,
   RemoveElementWithChildrenThatArentVisible,
   RemoveBoundaryBackwards,
   RemoveBoundaryForwards,
-} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
-import { runInDebug } from "@ember/debug";
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { runInDebug } from '@ember/debug';
 import {
   isLI,
   isList,
@@ -21,14 +21,14 @@ import {
   getParentLI,
   isElement,
   unwrapElement,
-} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {
   stringToVisibleText,
   hasVisibleChildren,
   moveCaretToEndOfNode,
-} from "@lblod/ember-rdfa-editor/editor/utils";
-import { isInList } from "../../ce/list-helpers";
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
+} from '@lblod/ember-rdfa-editor/editor/utils';
+import { isInList } from '../../ce/list-helpers';
+import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function debug(message: string, object: unknown = null): void {
@@ -43,18 +43,18 @@ function debug(message: string, object: unknown = null): void {
  * @module plugin/lists
  */
 export default class ListDeletePlugin implements DeletePlugin {
-  label = "delete plugin for handling lists";
+  label = 'delete plugin for handling lists';
   hasChanged = false;
 
   guidanceForManipulation(
     manipulation: DeleteHandlerManipulation
   ): ManipulationGuidance | null {
     this.hasChanged = false;
-    if (manipulation.type === "removeBoundaryBackwards") {
+    if (manipulation.type === 'removeBoundaryBackwards') {
       return this.guidanceForRemoveBoundaryBackwards(manipulation);
-    } else if (manipulation.type === "removeBoundaryForwards") {
+    } else if (manipulation.type === 'removeBoundaryForwards') {
       return this.guidanceForRemoveBoundaryForwards(manipulation);
-    } else if (manipulation.type === "removeEmptyElement") {
+    } else if (manipulation.type === 'removeEmptyElement') {
       return this.guidanceForRemoveEmptyElement(manipulation);
     }
 
@@ -118,7 +118,7 @@ export default class ListDeletePlugin implements DeletePlugin {
         this.mergeForwards(manipulation.node, editor);
       };
 
-      return {allow: true, executor: dispatcher};
+      return { allow: true, executor: dispatcher };
     }
 
     return null;
@@ -223,7 +223,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     const parent = nodeToMerge.parentElement!;
     this.concatenateNodes(mergeNode, nodeToMerge);
 
-    if (stringToVisibleText(nodeToMerge.textContent || "")) {
+    if (stringToVisibleText(nodeToMerge.textContent || '')) {
       this.hasChanged = true;
     }
 
@@ -238,7 +238,7 @@ export default class ListDeletePlugin implements DeletePlugin {
       mergeEl.append(...elToMerge.childNodes);
     }
 
-    if (isLI(elToMerge) || tagName(elToMerge) === "br") {
+    if (isLI(elToMerge) || tagName(elToMerge) === 'br') {
       this.hasChanged = true;
     }
 
@@ -254,8 +254,8 @@ export default class ListDeletePlugin implements DeletePlugin {
       mergeNode.after(...elToMerge.childNodes);
     }
 
-    elToMerge.innerHTML = "";
-    if (isLI(elToMerge) || tagName(elToMerge) === "br") {
+    elToMerge.innerHTML = '';
+    if (isLI(elToMerge) || tagName(elToMerge) === 'br') {
       this.hasChanged = true;
     }
 
@@ -266,7 +266,7 @@ export default class ListDeletePlugin implements DeletePlugin {
     const parent = nodeToMerge.parentElement!;
     mergeEl.appendChild(nodeToMerge);
 
-    if (stringToVisibleText(nodeToMerge.textContent || "")) {
+    if (stringToVisibleText(nodeToMerge.textContent || '')) {
       this.hasChanged = true;
     } else {
       removeNode(nodeToMerge);
@@ -429,9 +429,7 @@ export default class ListDeletePlugin implements DeletePlugin {
    * @param node The node to check
    */
   private isMagicSpan(node?: Node | null) {
-    return node
-      && isElement(node)
-      && node.id === MagicSpan.ID;
+    return node && isElement(node) && node.id === MagicSpan.ID;
   }
 
   /**

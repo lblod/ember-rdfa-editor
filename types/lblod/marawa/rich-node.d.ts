@@ -1,6 +1,6 @@
 declare module '@lblod/marawa/rich-node' {
-  import RdfaBlock from "@lblod/marawa/rdfa-block";
-  import RdfaAttributes from "@lblod/marawa/rdfa-attributes";
+  import RdfaBlock from '@lblod/marawa/rdfa-block';
+  import RdfaAttributes from '@lblod/marawa/rdfa-attributes';
   type Region = [number, number];
 
   export interface RichNodeContent {

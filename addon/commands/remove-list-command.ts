@@ -1,15 +1,18 @@
-import Command from "./command";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import {MisbehavedSelectionError, SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelTreeWalker from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
+import Command from './command';
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import {
+  MisbehavedSelectionError,
+  SelectionError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
+import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 
 export default class RemoveListCommand extends Command {
-  name = "remove-list";
+  name = 'remove-list';
 
   constructor(model: Model) {
     super(model);
@@ -21,7 +24,7 @@ export default class RemoveListCommand extends Command {
       throw new MisbehavedSelectionError();
     }
 
-    this.model.change(mutator => {
+    this.model.change((mutator) => {
       const endLis = range.end.findAncestors(ModelNodeUtils.isListElement);
       const highestEndLi = endLis[endLis.length - 1];
       const lowestEndLi = endLis[0];
@@ -42,13 +45,21 @@ export default class RemoveListCommand extends Command {
       // (aka the first when walking up the ancestor line).
       // If not inside a list, we shouldn't split at all, so just use the position.
       // In combination with the limit above this will cause us not to split.
-      const endSplit = lowestEndLi ? ModelPosition.fromAfterNode(lowestEndLi) : range.end;
-      const startSplit = lowestStartLi ? ModelPosition.fromBeforeNode(lowestStartLi) : range.start;
+      const endSplit = lowestEndLi
+        ? ModelPosition.fromAfterNode(lowestEndLi)
+        : range.end;
+      const startSplit = lowestStartLi
+        ? ModelPosition.fromBeforeNode(lowestStartLi)
+        : range.start;
 
       // Split the surrounding lists, such that everything before and after the original range
       // remains a valid list with the same structure.
       // Resulting range contains everything in between.
-      const newRange = mutator.splitRangeUntilElements(new ModelRange(startSplit, endSplit), startLimit, endLimit);
+      const newRange = mutator.splitRangeUntilElements(
+        new ModelRange(startSplit, endSplit),
+        startLimit,
+        endLimit
+      );
 
       // We walk over all nodes here cause we also want to capture all textnodes that
       // were inside the split so we can set the resulting range properly.
@@ -72,12 +83,14 @@ export default class RemoveListCommand extends Command {
       // because the tree walker always walks in document order.
       if (unwrappedNodes.length) {
         const start = ModelPosition.fromBeforeNode(unwrappedNodes[0]);
-        const end = ModelPosition.fromAfterNode(unwrappedNodes[unwrappedNodes.length - 1]);
+        const end = ModelPosition.fromAfterNode(
+          unwrappedNodes[unwrappedNodes.length - 1]
+        );
         this.model.selectRange(new ModelRange(start, end));
       } else if (resultRange) {
         this.model.selectRange(resultRange);
       } else {
-        throw new SelectionError("No sensible selection possible");
+        throw new SelectionError('No sensible selection possible');
       }
     });
   }

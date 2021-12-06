@@ -4,10 +4,10 @@ import { render, triggerKeyEvent, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import type from '../util/type-helper';
 
-module.skip('Integration | Toolbar | list-insertion', function(hooks) {
+module.skip('Integration | Toolbar | list-insertion', function (hooks) {
   setupRenderingTest(hooks);
 
-  test('unordered list button inserts a list', async function(assert) {
+  test('unordered list button inserts a list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -19,7 +19,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="unordered-list"]');
     await type('div[contenteditable]', 'test');
 
@@ -31,7 +31,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(firstLi.textContent.includes('test'), true);
   });
 
-  test('ordered list button inserts a list', async function(assert) {
+  test('ordered list button inserts a list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -43,7 +43,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="ordered-list"]');
     await type('div[contenteditable]', 'test');
 
@@ -55,7 +55,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(firstLi.textContent.includes('test'), true);
   });
 
-  test('enter inserts another list item in an unordered list', async function(assert) {
+  test('enter inserts another list item in an unordered list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -67,7 +67,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="unordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -84,7 +84,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(lastLi.textContent.includes('second test'), true);
   });
 
-  test('enter inserts another list item in an ordered list', async function(assert) {
+  test('enter inserts another list item in an ordered list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -95,7 +95,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="ordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -112,7 +112,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(lastLi.textContent.includes('second test'), true);
   });
 
-  test('insert indentation insert another level of unordered list', async function(assert) {
+  test('insert indentation insert another level of unordered list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -124,7 +124,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="unordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -145,7 +145,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(innerLi.textContent.includes('second test'), true);
   });
 
-  test('insert indentation insert another level of ordered list', async function(assert) {
+  test('insert indentation insert another level of ordered list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -157,7 +157,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="ordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -176,10 +176,9 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(innerList.childElementCount, '1');
     const innerLi = innerList.firstElementChild;
     assert.equal(innerLi.textContent.includes('second test'), true);
-
   });
 
-  test('remove indentation removes a level of unordered list', async function(assert) {
+  test('remove indentation removes a level of unordered list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -191,7 +190,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="unordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -216,10 +215,9 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     const lastLi = list.lastElementChild;
     assert.equal(lastLi.tagName, 'LI');
     assert.equal(lastLi.textContent.includes('third test'), true);
-
   });
 
-  test('remove indentation removes a level of ordered list', async function(assert) {
+  test('remove indentation removes a level of ordered list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -231,7 +229,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="ordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -258,7 +256,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(lastLi.textContent.includes('third test'), true);
   });
 
-  test('inserting 2 indentations in an unordered list', async function(assert) {
+  test('inserting 2 indentations in an unordered list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -270,7 +268,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="unordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -298,7 +296,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(innnerInnerLi.textContent.includes('second test'), true);
   });
 
-  test('inserting 2 indentations in an ordered list', async function(assert) {
+  test('inserting 2 indentations in an ordered list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -310,7 +308,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="ordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -338,7 +336,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(innnerInnerLi.textContent.includes('second test'), true);
   });
 
-  test('enters keep the level of indentiation in an unordered list', async function(assert) {
+  test('enters keep the level of indentiation in an unordered list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -350,7 +348,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="unordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -375,7 +373,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(secondInnerLi.textContent.includes('third test'), true);
   });
 
-  test('enters keep the level of indentiation in an ordered list', async function(assert) {
+  test('enters keep the level of indentiation in an ordered list', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -387,7 +385,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="ordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -395,7 +393,6 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     await type('div[contenteditable]', 'second test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await type('div[contenteditable]', 'third test');
-
 
     assert.equal(editor.firstElementChild.tagName, 'OL');
     const list = editor.firstElementChild;
@@ -413,7 +410,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(secondInnerLi.textContent.includes('third test'), true);
   });
 
-  test('insert unindent into a unordered list without indents', async function(assert) {
+  test('insert unindent into a unordered list without indents', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -425,7 +422,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="unordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -439,10 +436,9 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     const firstLi = list.firstElementChild;
     assert.equal(firstLi.tagName, 'LI');
     assert.equal(firstLi.textContent.includes('test'), true);
-
   });
 
-  test('insert unindent into a ordered list without indents', async function(assert) {
+  test('insert unindent into a ordered list without indents', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -454,7 +450,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="ordered-list"]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
@@ -470,7 +466,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(firstLi.textContent.includes('test'), true);
   });
 
-  test('insert unordered list after writting', async function(assert) {
+  test('insert unordered list after writting', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -482,7 +478,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await type('div[contenteditable]', 'test');
     await await click('[data-test-button-id="unordered-list"]');
 
@@ -495,7 +491,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(firstLi.textContent.includes('test'), true);
   });
 
-  test('insert ordered list after writting', async function(assert) {
+  test('insert ordered list after writting', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -507,7 +503,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await type('div[contenteditable]', 'test');
     await click('[data-test-button-id="ordered-list"]');
 
@@ -520,7 +516,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(firstLi.textContent.includes('test'), true);
   });
 
-  test('insert unordered list after writting only affects last line', async function(assert) {
+  test('insert unordered list after writting only affects last line', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -532,7 +528,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await type('div[contenteditable]', 'second test');
@@ -549,7 +545,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(firstLi.textContent.includes('test'), true);
   });
 
-  test('insert ordered list after writting only affects last line', async function(assert) {
+  test('insert ordered list after writting only affects last line', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('');
     });
@@ -561,7 +557,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await type('div[contenteditable]', 'test');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await type('div[contenteditable]', 'second test');
@@ -578,7 +574,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(firstLi.textContent.includes('test'), true);
   });
 
-  test('insert unordered list with selection', async function(assert) {
+  test('insert unordered list with selection', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('beer<br>pong');
     });
@@ -590,7 +586,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await window.getSelection().selectAllChildren(editor);
     const range = window.getSelection().getRangeAt(0);
     range.setEnd(editor, 3);
@@ -605,7 +601,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(list.lastElementChild.textContent.includes('pong'), true);
   });
 
-  test('insert ordered list with selection', async function(assert) {
+  test('insert ordered list with selection', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
       editor.setHtmlContent('beer<br>pong');
     });
@@ -617,7 +613,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await window.getSelection().selectAllChildren(editor);
     const range = window.getSelection().getRangeAt(0);
     range.setEnd(editor, 3);
@@ -632,7 +628,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(list.lastElementChild.textContent.includes('pong'), true);
   });
 
-  test('Case 1', async function(assert) {
+  test('Case 1', async function (assert) {
     /*
      *   Call unorderedListAction x 1
      *   ```
@@ -655,7 +651,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await window.getSelection().selectAllChildren(editor);
     const range = window.getSelection().getRangeAt(0);
     range.setEnd(editor, 0);
@@ -666,10 +662,13 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
     assert.equal(firstLi.tagName, 'LI');
-    assert.equal(list.firstElementChild.textContent.includes('a some text'), true);
+    assert.equal(
+      list.firstElementChild.textContent.includes('a some text'),
+      true
+    );
   });
 
-  test('Case 2', async function(assert) {
+  test('Case 2', async function (assert) {
     /*
      *   ```
      *   a some <span> t | ext </span>
@@ -691,7 +690,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await window.getSelection().selectAllChildren(editor);
     const range = window.getSelection().getRangeAt(0);
     range.setStart(editor, 1);
@@ -703,11 +702,14 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
     assert.equal(firstLi.tagName, 'LI');
-    assert.equal(list.firstElementChild.textContent.includes('a some  text'), true);
+    assert.equal(
+      list.firstElementChild.textContent.includes('a some  text'),
+      true
+    );
   });
 
   // TODO: Not OK
-  skip('Case 3', async function(assert) {
+  skip('Case 3', async function (assert) {
     /*
      *   Call indent x 1
      *   ```
@@ -727,7 +729,9 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
      *   ```
      */
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('<ul><li> a some <div id="innerId"> block element text </div>  other text </li></ul>');
+      editor.setHtmlContent(
+        '<ul><li> a some <div id="innerId"> block element text </div>  other text </li></ul>'
+      );
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -737,7 +741,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("#innerId");
+    var editor = document.querySelector('#innerId');
     await window.getSelection().selectAllChildren(editor);
     const range = window.getSelection().getRangeAt(0);
     range.setStart(editor, 1);
@@ -756,10 +760,13 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     const innerLi = innerList.firstChild;
     assert.equal(innerLi.tagName, 'LI');
     assert.equal(innerLi.childElementCount, 1);
-    assert.equal(innerLi.firstElementChild.textContent.includes('block element text'), true);
+    assert.equal(
+      innerLi.firstElementChild.textContent.includes('block element text'),
+      true
+    );
   });
 
-   skip('Case 4', async function(assert) {
+  skip('Case 4', async function (assert) {
     /*
      *   Call unorderedListAction x 1
      *    ```
@@ -773,7 +780,9 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
      *    ```
      */
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('A case - with br-tag <br> new line. <br> we Will need to refine this.');
+      editor.setHtmlContent(
+        'A case - with br-tag <br> new line. <br> we Will need to refine this.'
+      );
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -783,7 +792,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    var editor = document.querySelector("div[contenteditable]");
+    var editor = document.querySelector('div[contenteditable]');
     await window.getSelection().selectAllChildren(editor);
     const range = window.getSelection().getRangeAt(0);
     range.setStart(editor, 0);
@@ -796,11 +805,16 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
     assert.equal(firstLi.tagName, 'LI');
-    assert.equal(list.firstElementChild.textContent.includes('A case - with br-tag  new line.  we Will need to refine this.'), true);
+    assert.equal(
+      list.firstElementChild.textContent.includes(
+        'A case - with br-tag  new line.  we Will need to refine this.'
+      ),
+      true
+    );
   });
 
   // TODO: Not OK yet
-  skip('Case 6', async function(assert) {
+  skip('Case 6', async function (assert) {
     /*
      *   Call unorderedListAction or unindent x 1
      *   ```
@@ -821,7 +835,9 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
      *    ```
      */
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('<ul><li> The first </li><li id="innerLi"> a some text </li><li> the last </li></ul>');
+      editor.setHtmlContent(
+        '<ul><li> The first </li><li id="innerLi"> a some text </li><li> the last </li></ul>'
+      );
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -831,12 +847,12 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    const innerLi = document.querySelector("#innerLi");
+    const innerLi = document.querySelector('#innerLi');
     await window.getSelection().selectAllChildren(innerLi);
     const range = window.getSelection().getRangeAt(0);
     range.setStart(innerLi, 1);
     range.setEnd(innerLi, 1);
-    const editor = document.querySelector("div[contenteditable]");
+    const editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="insert-unindent"]');
     assert.equal(editor.childElementCount, 3);
     const firstList = editor.firstElementChild;
@@ -855,7 +871,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(secondLi.textContent.includes(' the last '), true);
   });
 
-  test('Case 7', async function(assert) {
+  test('Case 7', async function (assert) {
     /*
      *   Call unorderedListAction or unindent x 1
      *   ```
@@ -879,18 +895,18 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    const innerLi = document.querySelector("#innerLi");
+    const innerLi = document.querySelector('#innerLi');
     await window.getSelection().selectAllChildren(innerLi);
     const range = window.getSelection().getRangeAt(0);
     range.setStart(innerLi, 1);
     range.setEnd(innerLi, 1);
-    const editor = document.querySelector("div[contenteditable]");
+    const editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="insert-unindent"]');
     assert.equal(editor.textContent.includes('a some text'), true);
   });
 
   //TODO: even though this is the intende behavoir, it feels strange
-  test('Case 8', async function(assert) {
+  test('Case 8', async function (assert) {
     /*
      *   Call unorderedListAction or unindent x 1
      *   ```
@@ -904,9 +920,11 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
      *    </ul>
      *    a | some
      *   ```
-    */
+     */
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('<ul><li id="innerLi"> a some <div> block element text </div>  other text </li></ul>');
+      editor.setHtmlContent(
+        '<ul><li id="innerLi"> a some <div> block element text </div>  other text </li></ul>'
+      );
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -915,11 +933,16 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
-    const innerLi = document.querySelector("#innerLi");
+    const innerLi = document.querySelector('#innerLi');
     await window.getSelection().selectAllChildren(innerLi);
     const selection = window.getSelection();
-    selection.setBaseAndExtent(innerLi.childNodes[0], 0, innerLi.childNodes[0], 0);
-    const editor = document.querySelector("div[contenteditable]");
+    selection.setBaseAndExtent(
+      innerLi.childNodes[0],
+      0,
+      innerLi.childNodes[0],
+      0
+    );
+    const editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="insert-unindent"]');
     assert.equal(editor.textContent.includes('a some '), true);
     const list = editor.childNodes[2];
@@ -928,12 +951,14 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     const listElement = list.firstElementChild;
     assert.equal(listElement.tagName, 'LI');
     assert.equal(listElement.childElementCount, 1);
-    assert.equal(listElement.textContent.includes('block element text  other text'), true);
-
+    assert.equal(
+      listElement.textContent.includes('block element text  other text'),
+      true
+    );
   });
 
   // TODO: Not OK yet
-  skip('Case 9', async function(assert) {
+  skip('Case 9', async function (assert) {
     /*
      *   Call unorderedListAction or unindent x 1
      *   ```
@@ -966,9 +991,11 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
      *     <li> item 2</li>
      *    </ul>
      *   ```
-    */
+     */
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('<ul><li> item 1</li><li><ul><li> subitem 1</li><li id="innerLi"> subitem 2 </li><li> subitem 3</li></ul></li><li> item 2</li></ul>');
+      editor.setHtmlContent(
+        '<ul><li> item 1</li><li><ul><li> subitem 1</li><li id="innerLi"> subitem 2 </li><li> subitem 3</li></ul></li><li> item 2</li></ul>'
+      );
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -978,12 +1005,12 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    const innerLi = document.querySelector("#innerLi");
+    const innerLi = document.querySelector('#innerLi');
     await window.getSelection().selectAllChildren(innerLi);
     const range = window.getSelection().getRangeAt(0);
     range.setStart(innerLi, 0);
     range.setEnd(innerLi, 0);
-    const editor = document.querySelector("div[contenteditable]");
+    const editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="insert-unindent"]');
     const list = editor.firstChild;
     assert.equal(list.tagName, 'UL');
@@ -994,10 +1021,14 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     const innerListOnSecondElement = secondElement.firstChild;
     assert.equal(innerListOnSecondElement.tagName, 'UL');
     assert.equal(innerListOnSecondElement.childElementCount, 1);
-    const listItemOnInnerListOnSecondElement = innerListOnSecondElement.firstChild;
+    const listItemOnInnerListOnSecondElement =
+      innerListOnSecondElement.firstChild;
     assert.equal(listItemOnInnerListOnSecondElement.tagName, 'LI');
     assert.equal(listItemOnInnerListOnSecondElement.childElementCount, 1);
-    assert.equal(listItemOnInnerListOnSecondElement.textContent.includes(' subitem 1'), true);
+    assert.equal(
+      listItemOnInnerListOnSecondElement.textContent.includes(' subitem 1'),
+      true
+    );
     const thirdElement = list.childNodes[2];
     assert.equal(thirdElement.tagName, 'LI');
     assert.equal(thirdElement.childElementCount, 1);
@@ -1008,16 +1039,22 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     const innerListOnFourthElement = fourthElement.firstChild;
     assert.equal(innerListOnFourthElement.tagName, 'UL');
     assert.equal(innerListOnFourthElement.childElementCount, 1);
-    const listItemOnInnerListOnFourthElement = innerListOnFourthElement.firstChild;
+    const listItemOnInnerListOnFourthElement =
+      innerListOnFourthElement.firstChild;
     assert.equal(listItemOnInnerListOnFourthElement.tagName, 'LI');
     assert.equal(listItemOnInnerListOnFourthElement.childElementCount, 1);
-    assert.equal(listItemOnInnerListOnFourthElement.textContent.includes(' subitem 3'), true);
+    assert.equal(
+      listItemOnInnerListOnFourthElement.textContent.includes(' subitem 3'),
+      true
+    );
   });
 
   // TODO: Not OK yet
-  skip('Case 10', async function(assert) {
+  skip('Case 10', async function (assert) {
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('<ul><li> item 1</li><li><ul><li> subitem 1</li><li><div id="innerLi"> subitem 2 </div></li><li> subitem 3</li></ul></li><li> item 2</li></ul>');
+      editor.setHtmlContent(
+        '<ul><li> item 1</li><li><ul><li> subitem 1</li><li><div id="innerLi"> subitem 2 </div></li><li> subitem 3</li></ul></li><li> item 2</li></ul>'
+      );
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -1027,12 +1064,12 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    const innerLi = document.querySelector("#innerLi");
+    const innerLi = document.querySelector('#innerLi');
     await window.getSelection().selectAllChildren(innerLi);
     const range = window.getSelection().getRangeAt(0);
     range.setStart(innerLi, 0);
     range.setEnd(innerLi, 0);
-    const editor = document.querySelector("div[contenteditable]");
+    const editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="insert-unindent"]');
     const list = editor.firstChild;
     assert.equal(list.tagName, 'UL');
@@ -1043,10 +1080,14 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     const innerListOnSecondElement = secondElement.firstChild;
     assert.equal(innerListOnSecondElement.tagName, 'UL');
     assert.equal(innerListOnSecondElement.childElementCount, 1);
-    const listItemOnInnerListOnSecondElement = innerListOnSecondElement.firstChild;
+    const listItemOnInnerListOnSecondElement =
+      innerListOnSecondElement.firstChild;
     assert.equal(listItemOnInnerListOnSecondElement.tagName, 'LI');
     assert.equal(listItemOnInnerListOnSecondElement.childElementCount, 1);
-    assert.equal(listItemOnInnerListOnSecondElement.textContent.includes(' subitem 1'), true);
+    assert.equal(
+      listItemOnInnerListOnSecondElement.textContent.includes(' subitem 1'),
+      true
+    );
     const thirdElement = list.childNodes[2];
     assert.equal(thirdElement.tagName, 'LI');
     assert.equal(thirdElement.childElementCount, 1);
@@ -1057,13 +1098,17 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     const innerListOnFourthElement = fourthElement.firstChild;
     assert.equal(innerListOnFourthElement.tagName, 'UL');
     assert.equal(innerListOnFourthElement.childElementCount, 1);
-    const listItemOnInnerListOnFourthElement = innerListOnFourthElement.firstChild;
+    const listItemOnInnerListOnFourthElement =
+      innerListOnFourthElement.firstChild;
     assert.equal(listItemOnInnerListOnFourthElement.tagName, 'LI');
     assert.equal(listItemOnInnerListOnFourthElement.childElementCount, 1);
-    assert.equal(listItemOnInnerListOnFourthElement.textContent.includes(' subitem 3'), true);
+    assert.equal(
+      listItemOnInnerListOnFourthElement.textContent.includes(' subitem 3'),
+      true
+    );
   });
 
-  test('Case 11', async function(assert) {
+  test('Case 11', async function (assert) {
     /*
      *   Call unorderedListAction x 1
      *
@@ -1084,7 +1129,9 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
      *  ```
      */
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('<ul><li> The first </li><li id="innerLi"> a some text</li><li> the last </li></ul>');
+      editor.setHtmlContent(
+        '<ul><li> The first </li><li id="innerLi"> a some text</li><li> the last </li></ul>'
+      );
     });
     await render(hbs`<Rdfa::RdfaEditor
       @rdfaEditorInit={{action rdfaEditorInit}}
@@ -1094,12 +1141,12 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    const innerLi = document.querySelector("#innerLi");
+    const innerLi = document.querySelector('#innerLi');
     await window.getSelection().selectAllChildren(innerLi);
     const range = window.getSelection().getRangeAt(0);
     range.setStart(innerLi, 0);
     range.setEnd(innerLi, 0);
-    const editor = document.querySelector("div[contenteditable]");
+    const editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="ordered-list"]');
     const list = editor.firstChild;
     assert.equal(list.tagName, 'OL');
@@ -1119,7 +1166,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    const editor = document.querySelector("div[contenteditable]");
+    const editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="ordered-list"]');
 
     const list = editor.firstElementChild;
@@ -1140,7 +1187,6 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
 
     assert.equal(editor.childElementCount, 0);
     assert.equal(editor.textContent.includes('beer pong'), true); //content remains, list is gone (but ugly whitspaces remain)
-
   });
 
   test('Inserting a list, press undo, insert again, press undo does not remove list content [UL]', async function (assert) {
@@ -1157,7 +1203,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    const editor = document.querySelector("div[contenteditable]");
+    const editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="ordered-list"]');
 
     const list = editor.firstElementChild;
@@ -1178,13 +1224,14 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
 
     assert.equal(editor.childElementCount, 0);
     assert.equal(editor.textContent.includes('beer pong'), true); //content remains, list is gone (but ugly whitspaces remain)
-
   });
 
   test('Undo a list item, with previous operation nesting it', async function (assert) {
     //This is a first shot at avoiding a totally unacceptable undo behavoir. This test will break once we optimize this
     this.set('rdfaEditorInit', (editor) => {
-      editor.setHtmlContent('<ul><li>beer</li><li>pong</li><li>in a bar</li></ul>');
+      editor.setHtmlContent(
+        '<ul><li>beer</li><li>pong</li><li>in a bar</li></ul>'
+      );
     });
 
     await render(hbs`<Rdfa::RdfaEditor
@@ -1195,7 +1242,7 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
 
-    const editor = document.querySelector("div[contenteditable]");
+    const editor = document.querySelector('div[contenteditable]');
     const li = editor.children[0].children[1];
     const range = window.getSelection().getRangeAt(0);
     range.setStart(li.childNodes[0], 0);
@@ -1214,5 +1261,4 @@ module.skip('Integration | Toolbar | list-insertion', function(hooks) {
     assert.equal(restoredList.childElementCount, 3);
     assert.equal(restoredList.children[1].textContent, 'testpong');
   });
-
 });

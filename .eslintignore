@@ -14,6 +14,7 @@
 /coverage/
 !.*
 /tests/dummy/app/config/sample-data.ts
+.eslintcache
 
 # ember-try
 /.node_modules.ember-try/

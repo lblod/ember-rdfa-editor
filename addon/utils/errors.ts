@@ -1,4 +1,4 @@
-import {Manipulation} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
+import { Manipulation } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 
 export abstract class CustomError extends Error {
   constructor(message?: string) {
@@ -10,75 +10,66 @@ export abstract class CustomError extends Error {
 /**
  * Utility error for when you want to define an API but not yet the implementation
  */
-export class NotImplementedError extends CustomError {
-}
+export class NotImplementedError extends CustomError {}
 
 /**
  * The selection is not in a state we expect
  */
-export class SelectionError extends CustomError {
-}
+export class SelectionError extends CustomError {}
 
 export class MisbehavedSelectionError extends SelectionError {
   constructor() {
-    super("Unexpected selection without anchor or focus");
+    super('Unexpected selection without anchor or focus');
   }
 }
 
 export class NoTopSelectionError extends SelectionError {
   constructor() {
-    super("Unable to find commonAncestor children that are part of the selection");
+    super(
+      'Unable to find commonAncestor children that are part of the selection'
+    );
   }
-
 }
 
 /**
  * A domelement is not in a state we expect
  */
-export class DomElementError extends CustomError {
-}
+export class DomElementError extends CustomError {}
 
 /**
  * Something went wrong while converting the DOM to the model
  */
-export class ReaderError extends CustomError {
-}
+export class ReaderError extends CustomError {}
 
 /**
  * Something went wrong while converting the model back to the DOM
  */
-export class WriterError extends CustomError {
-}
+export class WriterError extends CustomError {}
 
-
-export class ModelError extends CustomError {
-}
+export class ModelError extends CustomError {}
 
 export class OutsideRootError extends ModelError {
   constructor() {
-    super("Operating on elements outside of the root tree are not allowed");
+    super('Operating on elements outside of the root tree are not allowed');
   }
 }
 
 export class NoParentError extends ModelError {
   constructor() {
-    super("Trying to access the parent of a node without parent");
+    super('Trying to access the parent of a node without parent');
   }
 }
 
-export class PositionError extends CustomError {
-}
+export class PositionError extends CustomError {}
 
 /**
  * Error to throw in tests when asserting something you also want
  * typescript to know about
  * This is a workaround for qunit assertions not informing typescript about their result
  */
-export class AssertionError extends CustomError {
-}
+export class AssertionError extends CustomError {}
 
-export class IndexOutOfRangeError extends CustomError {
-}
+export class IndexOutOfRangeError extends CustomError {}
 
 export class OffsetOutOfRangeError extends CustomError {
   constructor(offset: number, maxOffset: number) {
@@ -86,28 +77,25 @@ export class OffsetOutOfRangeError extends CustomError {
   }
 }
 
-export class ModelRangeError extends SelectionError {
-}
+export class ModelRangeError extends SelectionError {}
 
 export class ImpossibleModelStateError extends ModelError {
   constructor(message?: string) {
     if (message) {
       super(message);
     } else {
-      super("Something went horribly wrong and a strong assumption was broken");
+      super('Something went horribly wrong and a strong assumption was broken');
     }
   }
 }
 
 export class UnconfinedRangeError extends ModelRangeError {
   constructor() {
-    super("Range is not confined to a single parent");
+    super('Range is not confined to a single parent');
   }
 }
 
-
-export class OperationError extends CustomError {
-}
+export class OperationError extends CustomError {}
 
 export class ParseError extends CustomError {}
 
@@ -127,13 +115,13 @@ export class UnsupportedManipulationError extends CustomError {
  */
 export class KeyError extends CustomError {
   constructor(key?: unknown) {
-    super(`Missing key ${String(key) || ""}`);
+    super(`Missing key ${String(key) || ''}`);
   }
 }
 
 export class IllegalAccessToRawEditor extends CustomError {
   constructor() {
-    super("raw editor was used before it was initialized");
+    super('raw editor was used before it was initialized');
   }
 }
 
@@ -143,4 +131,3 @@ export class TypeAssertionError extends CustomError {}
  * When a command gets executed in a state it shouldn't.
  */
 export class IllegalExecutionStateError extends CustomError {}
-

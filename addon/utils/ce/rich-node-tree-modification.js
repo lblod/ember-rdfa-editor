@@ -21,21 +21,25 @@ function splitRichTextNode(richNode, offset) {
   }
   const textContent = richNode.text;
   const relativeOffset = offset - richNode.start;
-  const prefixDomNode = document.createTextNode(textContent.slice(0, relativeOffset));
+  const prefixDomNode = document.createTextNode(
+    textContent.slice(0, relativeOffset)
+  );
   const prefixRichNode = new RichNode({
     domNode: prefixDomNode,
     start: richNode.start,
     end: richNode.start + relativeOffset,
-    type: "text",
-    text: prefixDomNode.textContent
+    type: 'text',
+    text: prefixDomNode.textContent,
   });
-  const postfixDomNode = document.createTextNode(textContent.slice(relativeOffset));
+  const postfixDomNode = document.createTextNode(
+    textContent.slice(relativeOffset)
+  );
   const postfixRichNode = new RichNode({
     domNode: postfixDomNode,
     start: richNode.start + relativeOffset,
     end: richNode.end,
-    type: "text",
-    text: postfixDomNode.textContent
+    type: 'text',
+    text: postfixDomNode.textContent,
   });
   return [prefixRichNode, postfixRichNode];
 }
@@ -47,29 +51,35 @@ function wrapRichNode(richNode, wrappingdomNode) {
     children: [richNode],
     start: richNode.start,
     end: richNode.end,
-    type: "tag"
+    type: 'tag',
   });
   richNode.parent = wrappingRichNode;
 }
 
 function mergeSiblingTextNodes(richNode) {
   const textNode = richNode.domNode;
-  while (textNode.previousSibling && textNode.previousSibling.nodeType === Node.TEXT_NODE) {
+  while (
+    textNode.previousSibling &&
+    textNode.previousSibling.nodeType === Node.TEXT_NODE
+  ) {
     const previousDOMSibling = textNode.previousSibling;
     const indexOfRichNode = richNode.parent.children.indexOf(richNode);
-    const previousRichSibling = richNode.parent.children[indexOfRichNode-1];
+    const previousRichSibling = richNode.parent.children[indexOfRichNode - 1];
     textNode.textContent = `${previousDOMSibling.textContent}${textNode.textContent}`;
     richNode.start = previousRichSibling.start;
     richNode.parent.children.splice(indexOfRichNode - 1, 1);
     previousDOMSibling.remove();
   }
-  while (textNode.nextSibling && textNode.nextSibling.nodeType === Node.TEXT_NODE) {
+  while (
+    textNode.nextSibling &&
+    textNode.nextSibling.nodeType === Node.TEXT_NODE
+  ) {
     const nextDOMSibling = textNode.nextSibling;
     const indexOfRichNode = richNode.parent.children.indexOf(richNode);
-    const nextRichSibling = richNode.parent.children[indexOfRichNode+1];
+    const nextRichSibling = richNode.parent.children[indexOfRichNode + 1];
     textNode.textContent = `${textNode.textContent}${nextDOMSibling.textContent}`;
     richNode.end = nextRichSibling.end;
-    richNode.parent.children.splice(indexOfRichNode + 1 , 1);
+    richNode.parent.children.splice(indexOfRichNode + 1, 1);
     nextDOMSibling.remove();
   }
 }
@@ -84,7 +94,7 @@ function mergeSiblings(...richNodes) {
   const firstNode = richNodes[0];
   if (firstNode.type !== 'text' || firstNode !== 'tag')
     throw new Error('illegal merge, can only merge tag or text nodes');
-  for (let i = 1; i<richNodes.length; i++) {
+  for (let i = 1; i < richNodes.length; i++) {
     const nodeI = richNodes[i];
     if (nodeI.type !== firstNode.type)
       throw new Error('illegal merge, nodes are not of same type');
@@ -92,8 +102,7 @@ function mergeSiblings(...richNodes) {
     if (firstNode.type === 'tag') {
       firstNode.children.push(nodeI.children);
       firstNode.domNode.append(nodeI.domNode.childNodes);
-    }
-    else if (firstNode.type === 'text') {
+    } else if (firstNode.type === 'text') {
       firstNode.textContent = `${firstNode.textContent}${nodeI.textContent}`;
       firstNode.domNode.textContent = `${firstNode.textContent}${nodeI.textContent}`;
     }
@@ -108,4 +117,11 @@ function unwrapRichNode(richNode) {
   replaceRichNodeWith(richNode, richNode.children);
 }
 
-export { replaceRichNodeWith, wrapRichNode, unwrapRichNode, mergeSiblings, mergeSiblingTextNodes, splitRichTextNode };
+export {
+  replaceRichNodeWith,
+  wrapRichNode,
+  unwrapRichNode,
+  mergeSiblings,
+  mergeSiblingTextNodes,
+  splitRichTextNode,
+};

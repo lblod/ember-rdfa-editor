@@ -1,20 +1,20 @@
-import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import SplitOperation from "@lblod/ember-rdfa-editor/model/operations/split-operation";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import { module, test } from 'qunit';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import SplitOperation from '@lblod/ember-rdfa-editor/model/operations/split-operation';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
-module("Unit | model | operations | split-operation-test", () => {
-  test("doesn't split root", assert => {
+module('Unit | model | operations | split-operation-test', () => {
+  test("doesn't split root", (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot>
       </modelRoot>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
       </modelRoot>
     `;
@@ -25,19 +25,21 @@ module("Unit | model | operations | split-operation-test", () => {
 
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(range));
-
   });
 
-  test("doesn't split root", assert => {
+  test("doesn't split root", (assert) => {
     // language=XML
-    const {root: initial, textNodes: {rangeStart}} = vdom`
+    const {
+      root: initial,
+      textNodes: { rangeStart },
+    } = vdom`
       <modelRoot>
         <text __id="rangeStart">abcd</text>
       </modelRoot>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text>ab</text>
         <text>cd</text>
@@ -50,11 +52,13 @@ module("Unit | model | operations | split-operation-test", () => {
 
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(range));
-
   });
-  test("splits an element", assert => {
+  test('splits an element', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {selectionStart}} = vdom`
+    const {
+      root: initial,
+      textNodes: { selectionStart },
+    } = vdom`
       <modelRoot>
         <div>
           <text __id="selectionStart">abcd</text>
@@ -63,7 +67,7 @@ module("Unit | model | operations | split-operation-test", () => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text>ab</text>
@@ -79,12 +83,18 @@ module("Unit | model | operations | split-operation-test", () => {
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
-    assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [1])));
-
+    assert.true(
+      resultRange.sameAs(
+        ModelRange.fromPaths(initial as ModelElement, [1], [1])
+      )
+    );
   });
-  test("only splits text when configured", assert => {
+  test('only splits text when configured', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {selectionStart}} = vdom`
+    const {
+      root: initial,
+      textNodes: { selectionStart },
+    } = vdom`
       <modelRoot>
         <div>
           <text __id="selectionStart">abcd</text>
@@ -93,7 +103,7 @@ module("Unit | model | operations | split-operation-test", () => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text>ab</text>
@@ -108,11 +118,13 @@ module("Unit | model | operations | split-operation-test", () => {
 
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(range));
-
   });
-  test("uncollapsed splits both ends", assert => {
+  test('uncollapsed splits both ends', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {selectionStart}} = vdom`
+    const {
+      root: initial,
+      textNodes: { selectionStart },
+    } = vdom`
       <modelRoot>
         <div>
           <text __id="selectionStart">abcd</text>
@@ -120,7 +132,7 @@ module("Unit | model | operations | split-operation-test", () => {
       </modelRoot>
     `;
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text __id="selectionStart">a</text>
@@ -138,13 +150,19 @@ module("Unit | model | operations | split-operation-test", () => {
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
-    assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [2])));
-
+    assert.true(
+      resultRange.sameAs(
+        ModelRange.fromPaths(initial as ModelElement, [1], [2])
+      )
+    );
   });
 
-  test("uncollapsed over multiple nodessplits both ends", assert => {
+  test('uncollapsed over multiple nodessplits both ends', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {selectionStart, selectionEnd}} = vdom`
+    const {
+      root: initial,
+      textNodes: { selectionStart, selectionEnd },
+    } = vdom`
       <modelRoot>
         <div>
           <text __id="selectionStart">ab</text>
@@ -156,7 +174,7 @@ module("Unit | model | operations | split-operation-test", () => {
       </modelRoot>
     `;
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text __id="selectionStart">ab</text>
@@ -178,13 +196,19 @@ module("Unit | model | operations | split-operation-test", () => {
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
-    assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [2])));
-
+    assert.true(
+      resultRange.sameAs(
+        ModelRange.fromPaths(initial as ModelElement, [1], [2])
+      )
+    );
   });
 
-  test("uncollapsed over multiple nodes and levels splits both ends", assert => {
+  test('uncollapsed over multiple nodes and levels splits both ends', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {selectionStart, selectionEnd}} = vdom`
+    const {
+      root: initial,
+      textNodes: { selectionStart, selectionEnd },
+    } = vdom`
       <modelRoot>
         <div>
           <text __id="selectionStart">ab</text>
@@ -198,7 +222,7 @@ module("Unit | model | operations | split-operation-test", () => {
       </modelRoot>
     `;
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text __id="selectionStart">ab</text>
@@ -221,7 +245,10 @@ module("Unit | model | operations | split-operation-test", () => {
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
-    assert.true(resultRange.sameAs(ModelRange.fromPaths(initial as ModelElement, [1], [1,2])));
-
+    assert.true(
+      resultRange.sameAs(
+        ModelRange.fromPaths(initial as ModelElement, [1], [1, 2])
+      )
+    );
   });
 });

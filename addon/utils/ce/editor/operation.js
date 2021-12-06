@@ -37,27 +37,25 @@ import { warn } from '@ember/debug';
  * @param {callback, failedCallback, motivation} callback, failedCallback, motivation
  * @public
  */
-function replaceDomNode( domNode, { callback, failedCallback, motivation } ){
+function replaceDomNode(domNode, { callback, failedCallback, motivation }) {
   const richNode = this.getRichNodeFor(domNode);
   if (richNode) {
     const currentNode = this.currentNode;
     const relativePosition = this.getRelativeCursorPosition();
-    warn(`Replacing DOM node: ${motivation}`, { id: 'contenteditable.replaceDomNode'});
+    warn(`Replacing DOM node: ${motivation}`, {
+      id: 'contenteditable.replaceDomNode',
+    });
     callback(domNode);
     this.updateRichNode();
     if (this.rootNode.contains(currentNode)) {
-      this.setCaret(currentNode,relativePosition);
-    }
-    else {
+      this.setCaret(currentNode, relativePosition);
+    } else {
       this.updateSelectionAfterComplexInput();
     }
     this.generateDiffEvents.perform();
-  }
-  else {
+  } else {
     failedCallback(domNode, 'DOM node not found in richNode');
   }
 }
 
-export {
-  replaceDomNode
-};
+export { replaceDomNode };

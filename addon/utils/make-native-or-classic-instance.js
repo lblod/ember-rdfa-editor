@@ -5,7 +5,7 @@
  * classes.
  */
 export default function makeNativeOrClassicInstance(klass, ...args) {
-  if( klass.create ) {
+  if (klass.create) {
     return klass.create(...args);
   } else {
     return new klass(...args);

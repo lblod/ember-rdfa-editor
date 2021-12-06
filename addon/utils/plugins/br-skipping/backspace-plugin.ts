@@ -1,16 +1,22 @@
 import {
   BackspaceHandlerManipulation,
-  BackspacePlugin
+  BackspacePlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import {
   ManipulationGuidance,
-  MoveCursorToEndOfElementManipulation
+  MoveCursorToEndOfElementManipulation,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {moveCaretBefore, stringToVisibleText} from '@lblod/ember-rdfa-editor/editor/utils';
-import {isElement, isTextNode} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
+import {
+  moveCaretBefore,
+  stringToVisibleText,
+} from '@lblod/ember-rdfa-editor/editor/utils';
+import {
+  isElement,
+  isTextNode,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 function isBr(node: Node): boolean {
-  return isElement(node) && node.tagName.toLowerCase() === "br";
+  return isElement(node) && node.tagName.toLowerCase() === 'br';
 }
 
 /**
@@ -18,33 +24,36 @@ function isBr(node: Node): boolean {
  * Setting the cursor at that location would create an extra line, which is odd.
  */
 export default class BrSkippingBackspacePlugin implements BackspacePlugin {
-  label = "This plugin jumps over brs where necessary";
+  label = 'This plugin jumps over brs where necessary';
 
-  guidanceForManipulation(manipulation: BackspaceHandlerManipulation): ManipulationGuidance | null {
-    if (manipulation.type === "moveCursorToEndOfElement") {
+  guidanceForManipulation(
+    manipulation: BackspaceHandlerManipulation
+  ): ManipulationGuidance | null {
+    if (manipulation.type === 'moveCursorToEndOfElement') {
       const element = manipulation.node;
-      if (window.getComputedStyle(element).display === "block") {
+      if (window.getComputedStyle(element).display === 'block') {
         const length = element.childNodes.length;
         if (length > 0 && isBr(element.childNodes[length - 1])) {
           // Last br in a block element is normally not visible, so jump before the br.
           return {
             allow: true,
-            executor: this.moveCaretBeforeLastBrOfElement
+            executor: this.moveCaretBeforeLastBrOfElement,
           };
         }
       }
     }
 
-    if (manipulation.type === "moveCursorBeforeElement") {
+    if (manipulation.type === 'moveCursorBeforeElement') {
       const element = manipulation.node;
-      if (window.getComputedStyle(element).display === "block") {
+      if (window.getComputedStyle(element).display === 'block') {
         // Moving before a block.
         let previousSibling = element.previousSibling;
         // TODO: This probably breaks things.
         // Jump over non visible text nodes.
-        while (previousSibling
-          && isTextNode(previousSibling)
-          && stringToVisibleText(previousSibling.textContent || "").length === 0
+        while (
+          previousSibling &&
+          isTextNode(previousSibling) &&
+          stringToVisibleText(previousSibling.textContent || '').length === 0
         ) {
           previousSibling = previousSibling.previousSibling;
         }
@@ -54,7 +63,7 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
             allow: true,
             executor: () => {
               this.moveCaretBeforeBr(previousSibling as HTMLElement);
-            }
+            },
           };
         }
       }
@@ -73,7 +82,9 @@ export default class BrSkippingBackspacePlugin implements BackspacePlugin {
   /**
    * Executor that will move the cursor before the last br of the element.
    */
-  moveCaretBeforeLastBrOfElement = (manipulation: MoveCursorToEndOfElementManipulation) => {
+  moveCaretBeforeLastBrOfElement = (
+    manipulation: MoveCursorToEndOfElementManipulation
+  ) => {
     const element = manipulation.node;
     moveCaretBefore(element.childNodes[element.childNodes.length - 1]);
   };

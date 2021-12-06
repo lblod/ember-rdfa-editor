@@ -1,28 +1,125 @@
-import {isElement, isTextNode, tagName} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import DOMPurify from "dompurify";
-import {ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import {
+  isElement,
+  isTextNode,
+  tagName,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import DOMPurify from 'dompurify';
+import { ParseError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
-export const DEFAULT_SAFE_ATTRIBUTES = ['colspan', 'rowspan', 'title', 'alt', 'cellspacing', 'axis', 'about', 'property', 'datatype', 'typeof', 'resource', 'rel', 'rev', 'content', 'vocab', 'prefix', 'href', 'src'];
-export const DEFAULT_LUMP_TAGS = ["table"];
-export const DEFAULT_SAFE_TAGS = ['a', 'br', 'body', 'code', 'data', 'datalist', 'div', 'dl', 'dt', 'dd', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'li', 'link', 'meta', 'nav', 'ol', 'p', 'pre', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'template', 'th', 'thead',  'time', 'tr', 'ul', 'var', 'wbr', 'u' ];
-export const DEFAULT_URI_SAFE_ATTRIBUTES = ['about', 'property', 'datatype', 'typeof', 'resource', 'vocab', 'prefix'];
+export const DEFAULT_SAFE_ATTRIBUTES = [
+  'colspan',
+  'rowspan',
+  'title',
+  'alt',
+  'cellspacing',
+  'axis',
+  'about',
+  'property',
+  'datatype',
+  'typeof',
+  'resource',
+  'rel',
+  'rev',
+  'content',
+  'vocab',
+  'prefix',
+  'href',
+  'src',
+];
+export const DEFAULT_LUMP_TAGS = ['table'];
+export const DEFAULT_SAFE_TAGS = [
+  'a',
+  'br',
+  'body',
+  'code',
+  'data',
+  'datalist',
+  'div',
+  'dl',
+  'dt',
+  'dd',
+  'em',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'img',
+  'li',
+  'link',
+  'meta',
+  'nav',
+  'ol',
+  'p',
+  'pre',
+  'q',
+  's',
+  'samp',
+  'small',
+  'span',
+  'strong',
+  'sub',
+  'sup',
+  'table',
+  'tbody',
+  'td',
+  'template',
+  'th',
+  'thead',
+  'time',
+  'tr',
+  'ul',
+  'var',
+  'wbr',
+  'u',
+];
+export const DEFAULT_URI_SAFE_ATTRIBUTES = [
+  'about',
+  'property',
+  'datatype',
+  'typeof',
+  'resource',
+  'vocab',
+  'prefix',
+];
 export const DEFAULT_TAG_MAP = new Map([
-  ["b", "strong"],
-  ["i", "em"],
-  ["del", "s"],
-  ["mark", "span"]
+  ['b', 'strong'],
+  ['i', 'em'],
+  ['del', 's'],
+  ['mark', 'span'],
 ]);
 
 // limited set of tags we allow for pasting
-export const LIMITED_SAFE_TAGS = ['a', 'p', 'br', 'ol', 'ul', 'li', 'strong', 'u', 'em', 's', 'b', 'table', 'thead', 'tbody', 'th', 'tr', 'td', 'div', 'span'];
+export const LIMITED_SAFE_TAGS = [
+  'a',
+  'p',
+  'br',
+  'ol',
+  'ul',
+  'li',
+  'strong',
+  'u',
+  'em',
+  's',
+  'b',
+  'table',
+  'thead',
+  'tbody',
+  'th',
+  'tr',
+  'td',
+  'div',
+  'span',
+];
 
 interface HTMLInputParserArguments {
-  safeAttributes?: string[],
-  lumpTags?: string[],
-  safeTags?: string[],
-  uriSafeAttributes?: string[],
-  tagMap?: Map<string, string>
+  safeAttributes?: string[];
+  lumpTags?: string[];
+  safeTags?: string[];
+  uriSafeAttributes?: string[];
+  tagMap?: Map<string, string>;
 }
 
 /**
@@ -40,7 +137,7 @@ export default class HTMLInputParser {
     lumpTags: DEFAULT_LUMP_TAGS,
     safeTags: DEFAULT_SAFE_TAGS,
     uriSafeAttributes: DEFAULT_URI_SAFE_ATTRIBUTES,
-    tagMap: DEFAULT_TAG_MAP
+    tagMap: DEFAULT_TAG_MAP,
   };
 
   private readonly safeAttributes: string[];
@@ -54,7 +151,7 @@ export default class HTMLInputParser {
     lumpTags = DEFAULT_LUMP_TAGS,
     safeTags = DEFAULT_SAFE_TAGS,
     uriSafeAttributes = DEFAULT_URI_SAFE_ATTRIBUTES,
-    tagMap = DEFAULT_TAG_MAP
+    tagMap = DEFAULT_TAG_MAP,
   }: HTMLInputParserArguments) {
     this.safeAttributes = safeAttributes;
     this.lumpTags = lumpTags;
@@ -71,13 +168,13 @@ export default class HTMLInputParser {
    */
   cleanupHTML(htmlString: string): string {
     const parser = new DOMParser();
-    const document = parser.parseFromString(htmlString, "text/html");
+    const document = parser.parseFromString(htmlString, 'text/html');
     const rootNode = document.body;
     rootNode.normalize();
 
     const preprocessedNode = this.preprocessNode(rootNode);
     if (!preprocessedNode || !isElement(preprocessedNode)) {
-      throw new ParseError("Root node must be an element");
+      throw new ParseError('Root node must be an element');
     }
 
     return DOMPurify.sanitize(preprocessedNode.innerHTML, {
@@ -117,15 +214,15 @@ export default class HTMLInputParser {
       // tag name and copy all the attribute of the original node.
       if (tagMapping) {
         newElement = this.createNewElement(tagMapping, cleanedNode);
-      } else if (tag === "a" && !(cleanedNode as HTMLLinkElement).href) {
-        newElement = this.createNewElement("span", cleanedNode);
+      } else if (tag === 'a' && !(cleanedNode as HTMLLinkElement).href) {
+        newElement = this.createNewElement('span', cleanedNode);
       }
 
-      newElement.textContent = "";
+      newElement.textContent = '';
       if (this.lumpTags.includes(tag)) {
         newElement.setAttribute(
-          "property",
-          "http://lblod.data.gift/vocabularies/editor/isLumpNode"
+          'property',
+          'http://lblod.data.gift/vocabularies/editor/isLumpNode'
         );
       }
 
@@ -137,14 +234,14 @@ export default class HTMLInputParser {
           if (cleanedChild) {
             if (this.lumpTags.includes(tag)) {
               // Make sure we can place the cursor before the non editable element.
-              newElement.appendChild(document.createTextNode(""));
+              newElement.appendChild(document.createTextNode(''));
             }
 
             newElement.appendChild(cleanedChild);
 
             if (this.lumpTags.includes(tag)) {
               // Make sure we can place the cursor after the non editable element.
-              newElement.appendChild(document.createTextNode(""));
+              newElement.appendChild(document.createTextNode(''));
             }
           }
         }
@@ -156,12 +253,15 @@ export default class HTMLInputParser {
       // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
       if (node.textContent) {
         cleanedNode.textContent = node.textContent
-          .replace(INVISIBLE_SPACE,"")
-          .replace(/[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g, " ");
+          .replace(INVISIBLE_SPACE, '')
+          .replace(
+            /[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,
+            ' '
+          );
       }
 
       if (cleanedNode.length === 0) {
-         return null;
+        return null;
       }
     }
 

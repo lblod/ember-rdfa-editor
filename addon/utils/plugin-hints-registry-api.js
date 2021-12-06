@@ -30,7 +30,7 @@ export default class PluginHintsRegistryApi {
    *
    * @public
    */
-  removeHints( options ) {
+  removeHints(options) {
     options.hrId = this._hrId;
     this._hintsRegistry.removeHints(options);
   }
@@ -95,5 +95,4 @@ export default class PluginHintsRegistryApi {
   addHints(who, cards) {
     this._hintsRegistry.addHints(this._hrId, who, cards);
   }
-
 }

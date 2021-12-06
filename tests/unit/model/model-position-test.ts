@@ -1,35 +1,36 @@
-import {module, test} from "qunit";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import { module, test } from 'qunit';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 
-module("Unit | model | model-position", () => {
-  module("Unit | model | model-position | getCommonAncestor", () => {
-    test("returns null when start and end have different root", assert => {
-      const root = new ModelElement("div");
-      const root2 = new ModelElement("div");
+module('Unit | model | model-position', () => {
+  module('Unit | model | model-position | getCommonAncestor', () => {
+    test('returns null when start and end have different root', (assert) => {
+      const root = new ModelElement('div');
+      const root2 = new ModelElement('div');
       const p1 = ModelPosition.fromPath(root, [0]);
       const p2 = ModelPosition.fromPath(root2, [0]);
 
-
       assert.strictEqual(p1.getCommonPosition(p2), null);
     });
-    test("returns root when start and end are root", assert => {
-      const root = new ModelElement("div");
+    test('returns root when start and end are root', (assert) => {
+      const root = new ModelElement('div');
       const p1 = ModelPosition.fromPath(root, []);
       const p2 = ModelPosition.fromPath(root, []);
-      assert.true(p1.getCommonPosition(p2)?.sameAs(ModelPosition.fromPath(root, [])));
+      assert.true(
+        p1.getCommonPosition(p2)?.sameAs(ModelPosition.fromPath(root, []))
+      );
     });
 
-    test("returns correct common ancestor", assert => {
-      const root = new ModelElement("div");
-      const common = new ModelElement("span");
+    test('returns correct common ancestor', (assert) => {
+      const root = new ModelElement('div');
+      const common = new ModelElement('span');
 
-      const t1 = new ModelText("abc");
-      const t2 = new ModelText("def");
+      const t1 = new ModelText('abc');
+      const t2 = new ModelText('def');
       root.addChild(common);
       common.appendChildren(t1, t2);
 
@@ -38,9 +39,12 @@ module("Unit | model | model-position", () => {
       assert.strictEqual(p1.getCommonAncestor(p2), common);
     });
 
-    test("returns correct common ancestor 2", assert => {
+    test('returns correct common ancestor 2', (assert) => {
       // language=XML
-      const {elements: {common}, textNodes: {rangeStart, rangeEnd}} = vdom`
+      const {
+        elements: { common },
+        textNodes: { rangeStart, rangeEnd },
+      } = vdom`
         <modelRoot>
           <div __id="common">
             <text __id="rangeStart">abcd</text>
@@ -56,9 +60,11 @@ module("Unit | model | model-position", () => {
       assert.strictEqual(p1.getCommonAncestor(p2), common);
     });
 
-    test("returns correct common ancestor for collapsed range at end", assert => {
+    test('returns correct common ancestor for collapsed range at end', (assert) => {
       // language=XML
-      const {elements: {common}} = vdom`
+      const {
+        elements: { common },
+      } = vdom`
         <modelRoot>
           <div __id="common">
             <text>abcd</text>
@@ -74,12 +80,11 @@ module("Unit | model | model-position", () => {
       assert.strictEqual(p1.getCommonAncestor(p2), common);
     });
   });
-  module("Unit | model | model-position | split", () => {
-    test("splits text nodes correctly", assert => {
+  module('Unit | model | model-position | split', () => {
+    test('splits text nodes correctly', (assert) => {
+      const root = new ModelElement('div');
 
-      const root = new ModelElement("div");
-
-      const text = new ModelText("abc");
+      const text = new ModelText('abc');
       root.addChild(text);
 
       const range = ModelRange.fromPaths(root, [0, 0], [0, 1]);
@@ -88,16 +93,14 @@ module("Unit | model | model-position", () => {
       range.end.split();
 
       assert.strictEqual(root.length, 2);
-      assert.strictEqual((root.children[0] as ModelText).content, "a");
-      assert.strictEqual((root.children[1] as ModelText).content, "bc");
-
+      assert.strictEqual((root.children[0] as ModelText).content, 'a');
+      assert.strictEqual((root.children[1] as ModelText).content, 'bc');
     });
 
-    test("splits text nodes correctly with saveEdges", assert => {
+    test('splits text nodes correctly with saveEdges', (assert) => {
+      const root = new ModelElement('div');
 
-      const root = new ModelElement("div");
-
-      const text = new ModelText("abc");
+      const text = new ModelText('abc');
       root.addChild(text);
 
       const range = ModelRange.fromPaths(root, [0, 0], [0, 1]);
@@ -106,19 +109,18 @@ module("Unit | model | model-position", () => {
       range.end.split();
 
       assert.strictEqual(root.length, 2);
-      assert.strictEqual((root.children[0] as ModelText).content, "a");
-      assert.strictEqual((root.children[1] as ModelText).content, "bc");
-
+      assert.strictEqual((root.children[0] as ModelText).content, 'a');
+      assert.strictEqual((root.children[1] as ModelText).content, 'bc');
     });
-    test("splits correctly 2 with saveEdges", assert => {
-      const root = new ModelElement("p", {debugInfo: "root"});
+    test('splits correctly 2 with saveEdges', (assert) => {
+      const root = new ModelElement('p', { debugInfo: 'root' });
 
       const t1 = new ModelText(`a paragraph with Lorem ipsum Itaque consequatur
     maxime repudiandae eos est. Et et officia est dolore eum ipsam laborum recusandae.
     Ab excepturi cum mollitia ut.…`);
-      const br1 = new ModelElement("br");
+      const br1 = new ModelElement('br');
       const t2 = new ModelText(` and a break (or two ?)`);
-      const br2 = new ModelElement("br");
+      const br2 = new ModelElement('br');
 
       root.appendChildren(t1, br1, t2, br2);
 
@@ -126,74 +128,99 @@ module("Unit | model | model-position", () => {
       range.start.split();
       range.end.split();
 
-
       assert.strictEqual(root.length, 6);
-      assert.strictEqual((root.children[0] as ModelText).content, "a par");
-      assert.strictEqual((root.children[1] as ModelText).content, "agrap");
+      assert.strictEqual((root.children[0] as ModelText).content, 'a par');
+      assert.strictEqual((root.children[1] as ModelText).content, 'agrap');
       // don't reformat this
-      assert.strictEqual((root.children[2] as ModelText).content,
+      assert.strictEqual(
+        (root.children[2] as ModelText).content,
         `h with Lorem ipsum Itaque consequatur
     maxime repudiandae eos est. Et et officia est dolore eum ipsam laborum recusandae.
-    Ab excepturi cum mollitia ut.…`);
-
+    Ab excepturi cum mollitia ut.…`
+      );
     });
-
-
   });
 
-  module("Unit | model | model-position | comparePath", () => {
-
-
-    test("recognizes identical paths", assert => {
+  module('Unit | model | model-position | comparePath', () => {
+    test('recognizes identical paths', (assert) => {
       const path1 = [0, 1, 2, 3];
       const path2 = [0, 1, 2, 3];
-      assert.strictEqual(ModelPosition.comparePath(path1, path2), RelativePosition.EQUAL);
-
+      assert.strictEqual(
+        ModelPosition.comparePath(path1, path2),
+        RelativePosition.EQUAL
+      );
     });
 
-    test("path1 before path2", assert => {
+    test('path1 before path2', (assert) => {
       let path1 = [0];
       let path2 = [1];
-      assert.strictEqual(ModelPosition.comparePath(path1, path2), RelativePosition.BEFORE);
+      assert.strictEqual(
+        ModelPosition.comparePath(path1, path2),
+        RelativePosition.BEFORE
+      );
 
       path1 = [0, 1, 2, 3, 3];
       path2 = [0, 1, 2, 3, 4];
-      assert.strictEqual(ModelPosition.comparePath(path1, path2), RelativePosition.BEFORE);
+      assert.strictEqual(
+        ModelPosition.comparePath(path1, path2),
+        RelativePosition.BEFORE
+      );
     });
 
-    test("path1 after path2", assert => {
+    test('path1 after path2', (assert) => {
       let path1 = [1];
       let path2 = [0];
-      assert.strictEqual(ModelPosition.comparePath(path1, path2), RelativePosition.AFTER);
+      assert.strictEqual(
+        ModelPosition.comparePath(path1, path2),
+        RelativePosition.AFTER
+      );
 
       path1 = [0, 1, 2, 3, 4];
       path2 = [0, 1, 2, 3, 3];
-      assert.strictEqual(ModelPosition.comparePath(path1, path2), RelativePosition.AFTER);
+      assert.strictEqual(
+        ModelPosition.comparePath(path1, path2),
+        RelativePosition.AFTER
+      );
     });
-    test("path1 shorter than path2", assert => {
+    test('path1 shorter than path2', (assert) => {
       let path1 = [1];
       let path2 = [1, 1];
-      assert.strictEqual(ModelPosition.comparePath(path1, path2), RelativePosition.BEFORE);
+      assert.strictEqual(
+        ModelPosition.comparePath(path1, path2),
+        RelativePosition.BEFORE
+      );
 
       path1 = [0, 1, 2, 3, 4];
       path2 = [0, 1, 2, 3, 4, 1];
-      assert.strictEqual(ModelPosition.comparePath(path1, path2), RelativePosition.BEFORE);
+      assert.strictEqual(
+        ModelPosition.comparePath(path1, path2),
+        RelativePosition.BEFORE
+      );
     });
-    test("path1 longer than path2", assert => {
+    test('path1 longer than path2', (assert) => {
       let path1 = [1, 1];
       let path2 = [1];
-      assert.strictEqual(ModelPosition.comparePath(path1, path2), RelativePosition.AFTER);
+      assert.strictEqual(
+        ModelPosition.comparePath(path1, path2),
+        RelativePosition.AFTER
+      );
 
       path1 = [0, 1, 2, 3, 4, 1];
       path2 = [0, 1, 2, 3, 4];
-      assert.strictEqual(ModelPosition.comparePath(path1, path2), RelativePosition.AFTER);
+      assert.strictEqual(
+        ModelPosition.comparePath(path1, path2),
+        RelativePosition.AFTER
+      );
     });
   });
 
-  module("Unit | model | model-position | findAncestors", () => {
-    test("finds root when only valid node", assert => {
+  module('Unit | model | model-position | findAncestors', () => {
+    test('finds root when only valid node', (assert) => {
       // language=XML
-      const {root, textNodes: {testNode}} = vdom`
+      const {
+        root,
+        textNodes: { testNode },
+      } = vdom`
         <div>
           <text __id="testNode">abc</text>
         </div>`;
@@ -201,19 +228,24 @@ module("Unit | model | model-position", () => {
       const rslt = pos.findAncestors();
       assert.deepEqual(rslt, [root]);
     });
-    test("finds nothing when no valid node", assert => {
+    test('finds nothing when no valid node', (assert) => {
       // language=XML
-      const {textNodes: {testNode}} = vdom`
+      const {
+        textNodes: { testNode },
+      } = vdom`
         <div>
           <text __id="testNode">abc</text>
         </div>`;
       const pos = ModelPosition.fromInTextNode(testNode, 1);
-      const rslt = pos.findAncestors(elem => elem.type === "a");
+      const rslt = pos.findAncestors((elem) => elem.type === 'a');
       assert.deepEqual(rslt, []);
     });
-    test("finds all valid nodes", assert => {
+    test('finds all valid nodes', (assert) => {
       // language=XML
-      const {textNodes: {testNode}, elements: {span0, span1}} = vdom`
+      const {
+        textNodes: { testNode },
+        elements: { span0, span1 },
+      } = vdom`
         <div>
           <span __id="span1">
             <div>
@@ -224,16 +256,16 @@ module("Unit | model | model-position", () => {
           </span>
         </div>`;
       const pos = ModelPosition.fromInTextNode(testNode, 1);
-      const rslt = pos.findAncestors(elem => elem.type === "span");
+      const rslt = pos.findAncestors((elem) => elem.type === 'span');
       assert.deepEqual(rslt, [span0, span1]);
     });
-
-
   });
-  module("Unit | model | model-position | charactersBefore", () => {
-    test("gives empty string when no characters before", assert => {
+  module('Unit | model | model-position | charactersBefore', () => {
+    test('gives empty string when no characters before', (assert) => {
       // language=XML
-      const {textNodes: {textNode}} = vdom`
+      const {
+        textNodes: { textNode },
+      } = vdom`
         <modelRoot>
           <text __id="textNode">abc</text>
         </modelRoot>
@@ -242,9 +274,11 @@ module("Unit | model | model-position", () => {
       const result = position.charactersBefore(3);
       assert.strictEqual(result, '');
     });
-    test("gives empty string when amount 0", assert => {
+    test('gives empty string when amount 0', (assert) => {
       // language=XML
-      const {textNodes: {textNode}} = vdom`
+      const {
+        textNodes: { textNode },
+      } = vdom`
         <modelRoot>
           <text __id="textNode">abc</text>
         </modelRoot>
@@ -253,9 +287,11 @@ module("Unit | model | model-position", () => {
       const result = position.charactersBefore(0);
       assert.strictEqual(result, '');
     });
-    test("gives empty string when in front of element", assert => {
+    test('gives empty string when in front of element', (assert) => {
       // language=XML
-      const {textNodes: {textNode}} = vdom`
+      const {
+        textNodes: { textNode },
+      } = vdom`
         <modelRoot>
           <text>abc</text>
           <span/>
@@ -266,9 +302,11 @@ module("Unit | model | model-position", () => {
       const result = position.charactersBefore(0);
       assert.strictEqual(result, '');
     });
-    test("gives desired characters", assert => {
+    test('gives desired characters', (assert) => {
       // language=XML
-      const {textNodes: {textNode}} = vdom`
+      const {
+        textNodes: { textNode },
+      } = vdom`
         <modelRoot>
           <text __id="textNode">abc</text>
         </modelRoot>
@@ -277,9 +315,11 @@ module("Unit | model | model-position", () => {
       const result = position.charactersBefore(2);
       assert.strictEqual(result, 'bc');
     });
-    test("gives desired characters when amount too big", assert => {
+    test('gives desired characters when amount too big', (assert) => {
       // language=XML
-      const {textNodes: {textNode}} = vdom`
+      const {
+        textNodes: { textNode },
+      } = vdom`
         <modelRoot>
           <text __id="textNode">abc</text>
         </modelRoot>
@@ -289,10 +329,11 @@ module("Unit | model | model-position", () => {
       assert.strictEqual(result, 'abc');
     });
 
-    test("gives desired characters when inside a string", assert => {
-
+    test('gives desired characters when inside a string', (assert) => {
       // language=XML
-      const {textNodes: {textNode}} = vdom`
+      const {
+        textNodes: { textNode },
+      } = vdom`
         <modelRoot>
           <text __id="textNode">abc</text>
         </modelRoot>
@@ -302,10 +343,11 @@ module("Unit | model | model-position", () => {
       assert.strictEqual(result, 'a');
     });
 
-    test("gives desired characters when inside a string over boundaries", assert => {
-
+    test('gives desired characters when inside a string over boundaries', (assert) => {
       // language=XML
-      const {textNodes: {textNode}} = vdom`
+      const {
+        textNodes: { textNode },
+      } = vdom`
         <modelRoot>
           <text>abc</text>
           <text __id="textNode">def</text>
@@ -315,10 +357,11 @@ module("Unit | model | model-position", () => {
       const result = position.charactersBefore(1);
       assert.strictEqual(result, 'c');
     });
-    test("gives desired multiple characters when inside a string over boundaries", assert => {
-
+    test('gives desired multiple characters when inside a string over boundaries', (assert) => {
       // language=XML
-      const {textNodes: {textNode}} = vdom`
+      const {
+        textNodes: { textNode },
+      } = vdom`
         <modelRoot>
           <text>abc</text>
           <text __id="textNode">def</text>
@@ -329,10 +372,12 @@ module("Unit | model | model-position", () => {
       assert.strictEqual(result, 'bcde');
     });
   });
-  module("Unit | model | model-position | shiftedBy", () => {
-    test("gives equivalent pos when already at start and moving left", assert => {
+  module('Unit | model | model-position | shiftedBy', () => {
+    test('gives equivalent pos when already at start and moving left', (assert) => {
       // language=XML
-      const {textNodes: {textNode}} = vdom`
+      const {
+        textNodes: { textNode },
+      } = vdom`
         <modelRoot>
           <text __id="textNode">abc</text>
         </modelRoot>
@@ -341,9 +386,11 @@ module("Unit | model | model-position", () => {
       const result = pos.shiftedBy(-10);
       assert.true(result.sameAs(pos));
     });
-    test("gives equivalent pos when already at end and moving right", assert => {
+    test('gives equivalent pos when already at end and moving right', (assert) => {
       // language=XML
-      const {textNodes: {textNode}} = vdom`
+      const {
+        textNodes: { textNode },
+      } = vdom`
         <modelRoot>
           <text __id="textNode">abc</text>
         </modelRoot>
@@ -352,9 +399,11 @@ module("Unit | model | model-position", () => {
       const result = pos.shiftedBy(10);
       assert.true(result.sameAs(pos));
     });
-    test("shifts by amount, counting elements as 1", assert => {
+    test('shifts by amount, counting elements as 1', (assert) => {
       // language=XML
-      const {elements: {parent}} = vdom`
+      const {
+        elements: { parent },
+      } = vdom`
         <modelRoot __id="parent">
           <text>abc</text>
           <span>
@@ -368,7 +417,5 @@ module("Unit | model | model-position", () => {
       const result = pos.shiftedBy(-1);
       assert.true(result.sameAs(expected));
     });
-
   });
 });
-

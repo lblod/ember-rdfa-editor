@@ -1,5 +1,5 @@
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {Direction} from "@lblod/ember-rdfa-editor/model/util/types";
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
 
 export type NodeFinderFilter<T, R extends T> = (node: T) => node is R;
 export type NodeFinderPredicate<T, R extends T> = (node: R) => boolean;
@@ -8,8 +8,8 @@ export interface NodeFinderConfig<T, R extends T> {
   startNode: T;
   endNode?: T;
   rootNode: T;
-  nodeFilter?: NodeFinderFilter<T, R>
-  predicate?: NodeFinderPredicate<T, R>
+  nodeFilter?: NodeFinderFilter<T, R>;
+  predicate?: NodeFinderPredicate<T, R>;
   direction?: Direction;
   useSiblingLinks?: boolean;
 }
@@ -25,7 +25,11 @@ function dummy() {
  * Can be implemented for different types of nodes.
  * @deprecated use {@link ModelTreeWalker} instead
  */
-export default abstract class NodeFinder<T extends Node | ModelNode, R extends T> implements Iterable<R> {
+export default abstract class NodeFinder<
+  T extends Node | ModelNode,
+  R extends T
+> implements Iterable<R>
+{
   startNode: T;
   private _current: T | null;
   endNode?: T;
@@ -74,14 +78,13 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
         found = this.nodeFilter(cur) && this.predicate(cur);
       }
     }
-    if(cur === this.endNode) {
-
+    if (cur === this.endNode) {
       // we've visited the endNode, so we clear out any pending nodes
       this.stack = [];
       this._current = cur;
     }
 
-    return found ? cur as R : null;
+    return found ? (cur as R) : null;
   }
 
   /**
@@ -90,7 +93,11 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
    */
   private findNextNode(): R | null {
     let candidate = this.findNextNodeToConsider();
-    while (candidate && !this.nodeFilter(candidate) && candidate !== this.endNode) {
+    while (
+      candidate &&
+      !this.nodeFilter(candidate) &&
+      candidate !== this.endNode
+    ) {
       candidate = this.findNextNodeToConsider();
     }
     return candidate as R;
@@ -126,13 +133,12 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
     }
     // TODO: I think this should not be configurable but instead should never
     // use the sibling links, it leads to too much confusion
-    if(this.visitSiblings) {
+    if (this.visitSiblings) {
       const sibling = this.nextSibling(node, this.direction);
       if (sibling && node !== this.rootNode) {
         this.stack.push(sibling);
       }
     }
-
 
     const children = this.getChildren(node);
     if (children) {
@@ -148,7 +154,9 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
    * @private
    */
   private inverseDirection(direction: Direction) {
-    return direction === Direction.FORWARDS ? Direction.BACKWARDS : Direction.FORWARDS;
+    return direction === Direction.FORWARDS
+      ? Direction.BACKWARDS
+      : Direction.FORWARDS;
   }
 
   /**
@@ -188,7 +196,6 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
     }
   }
 
-
   [Symbol.iterator](): Iterator<R> {
     return {
       next: (): IteratorResult<R, null> => {
@@ -196,7 +203,7 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
         if (value) {
           return {
             value,
-            done: false
+            done: false,
           };
         } else {
           return {
@@ -204,8 +211,7 @@ export default abstract class NodeFinder<T extends Node | ModelNode, R extends T
             done: true,
           };
         }
-      }
+      },
     };
   }
-
 }

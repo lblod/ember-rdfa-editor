@@ -5,11 +5,11 @@
  *
  * Extensions include support for stopping at an end node, the implementation of the Iterable interface
  */
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
 export enum FilterResult {
   // we like the node
@@ -17,11 +17,12 @@ export enum FilterResult {
   // we dont want the node, but we want to visit it's child tree
   FILTER_SKIP,
   // we don't want the entire subtree so skip the node and don't visit it's children
-  FILTER_REJECT
+  FILTER_REJECT,
 }
 
 enum TraverseType {
-  FIRST, LAST
+  FIRST,
+  LAST,
 }
 
 export type ModelNodeFilter = (node: ModelNode) => FilterResult;
@@ -33,7 +34,9 @@ export type ModelNodeFilter = (node: ModelNode) => FilterResult;
  * will be visited)
  * @param func
  */
-export function toFilterSkipFalse(func: (node: ModelNode) => boolean): ModelNodeFilter {
+export function toFilterSkipFalse(
+  func: (node: ModelNode) => boolean
+): ModelNodeFilter {
   return function (node: ModelNode) {
     return func(node) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP;
   };
@@ -46,7 +49,9 @@ export function toFilterSkipFalse(func: (node: ModelNode) => boolean): ModelNode
  * it's children will not be visited at all)
  * @param func
  */
-export function toFilterRejectFalse(func: (node: ModelNode) => boolean): ModelNodeFilter {
+export function toFilterRejectFalse(
+  func: (node: ModelNode) => boolean
+): ModelNodeFilter {
   return function (node: ModelNode) {
     return func(node) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_REJECT;
   };
@@ -59,7 +64,9 @@ export interface ModelTreeWalkerConfig {
   visitParentUpwards?: boolean;
 }
 
-export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements Iterable<T> {
+export default class ModelTreeWalker<T extends ModelNode = ModelNode>
+  implements Iterable<T>
+{
   private readonly _root: ModelElement;
   private readonly _filter?: ModelNodeFilter;
   private _currentNode: ModelNode;
@@ -69,8 +76,13 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
   private descend: boolean;
   private visitParentUpwards: boolean;
 
-  constructor({filter, range, descend = true, visitParentUpwards = false}: ModelTreeWalkerConfig) {
-    const {start: from, end: to} = range;
+  constructor({
+    filter,
+    range,
+    descend = true,
+    visitParentUpwards = false,
+  }: ModelTreeWalkerConfig) {
+    const { start: from, end: to } = range;
     this._root = range.root;
     this._filter = filter;
     this.descend = descend;
@@ -90,22 +102,25 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
       next: (): IteratorResult<T> => {
         if (!this.hasReturnedStartNode) {
           this.hasReturnedStartNode = true;
-          if (this.filterNode(this._currentNode) === FilterResult.FILTER_ACCEPT) {
-            return {value: this._currentNode as T, done: false};
+          if (
+            this.filterNode(this._currentNode) === FilterResult.FILTER_ACCEPT
+          ) {
+            return { value: this._currentNode as T, done: false };
           }
         }
         const value = this.nextNode() as T;
         if (value) {
           return {
-            value, done: false
+            value,
+            done: false,
           };
         } else {
           return {
             value: null,
-            done: true
+            done: true,
           };
         }
-      }
+      },
     };
   }
 
@@ -197,7 +212,11 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
     while (true) {
       // as long as we dont get a reject, go depth first into the child tree
       // if descend is false, don't do this (used to iterate over the toplevel nodes of a range)
-      while (this.descend && result !== FilterResult.FILTER_REJECT && this.hasChild(node)) {
+      while (
+        this.descend &&
+        result !== FilterResult.FILTER_REJECT &&
+        this.hasChild(node)
+      ) {
         node = node.firstChild;
         result = this.filterNode(node);
         if (result === FilterResult.FILTER_ACCEPT) {
@@ -261,15 +280,20 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
     return startNode.nextSibling!;
   }
 
-  private getNodeAfterEndFromPosition(position: ModelPosition, startNode: ModelNode): ModelNode | null {
+  private getNodeAfterEndFromPosition(
+    position: ModelPosition,
+    startNode: ModelNode
+  ): ModelNode | null {
     let nodeAfterEnd = position.nodeAfter();
     if (nodeAfterEnd) {
-      if (position.parentOffset - nodeAfterEnd.getOffset() > 0 || nodeAfterEnd === startNode) {
+      if (
+        position.parentOffset - nodeAfterEnd.getOffset() > 0 ||
+        nodeAfterEnd === startNode
+      ) {
         nodeAfterEnd = nodeAfterEnd.nextSibling;
       }
       if (nodeAfterEnd) {
         return nodeAfterEnd;
-
       }
     }
     nodeAfterEnd = position.parent;
@@ -303,7 +327,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
           continue;
         }
       } else {
-        throw new NotImplementedError("Unknown filter result");
+        throw new NotImplementedError('Unknown filter result');
       }
       while (node) {
         const sibling = this.getSibling(node, traverseType);
@@ -352,7 +376,10 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
     }
   }
 
-  private getSibling(node: ModelNode, traverseType: TraverseType): ModelNode | null {
+  private getSibling(
+    node: ModelNode,
+    traverseType: TraverseType
+  ): ModelNode | null {
     if (traverseType === TraverseType.FIRST) {
       return node.nextSibling;
     } else {
@@ -360,7 +387,10 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode> implements
     }
   }
 
-  private getChild(node: ModelNode, traverseType: TraverseType): ModelNode | null {
+  private getChild(
+    node: ModelNode,
+    traverseType: TraverseType
+  ): ModelNode | null {
     if (!ModelNode.isModelElement(node)) {
       return null;
     }

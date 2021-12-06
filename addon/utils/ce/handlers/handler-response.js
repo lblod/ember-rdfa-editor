@@ -1,13 +1,7 @@
-import EmberObject from '@ember/object';
-
 /**
  * response object for event handlers
- * @module contenteditable-editor
- * @class HandlerResponse
- * @constructor
- * @extends EmberObject
  */
-export default EmberObject.extend({
+export default class HandlerResponse {
   /**
    * specify if the event can be handled by another handler
    * @property allowPropagation
@@ -15,7 +9,7 @@ export default EmberObject.extend({
    * @default true
    * @public
    */
-  allowPropagation: true,
+  allowPropagation = true;
   /**
    * specify if the event can be handled by the browser
    * @property allowBrowserDefault
@@ -23,5 +17,5 @@ export default EmberObject.extend({
    * @default false
    * @public
    */
-  allowBrowserDefault: false
-});
+  allowBrowserDefault = false;
+}

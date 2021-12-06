@@ -1,10 +1,10 @@
-import {module, test} from "qunit";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import MakeListCommand from "@lblod/ember-rdfa-editor/commands/make-list-command";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
+import { module, test } from 'qunit';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 
-module("Unit | commands | make-list-command", hooks => {
+module('Unit | commands | make-list-command', (hooks) => {
   const ctx = new ModelTestContext();
   let command: MakeListCommand;
 
@@ -13,14 +13,14 @@ module("Unit | commands | make-list-command", hooks => {
     command = new MakeListCommand(ctx.model);
   });
 
-  test("adds list in an empty document", assert => {
+  test('adds list in an empty document', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot/>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <ul>
           <li></li>
@@ -32,22 +32,22 @@ module("Unit | commands | make-list-command", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
     ctx.model.selectRange(range);
 
-    command.execute("ul");
+    command.execute('ul');
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("adds list in a document with only a new line", assert => {
+  test('adds list in a document with only a new line', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot>
-        <text>${"\n"}</text>
+        <text>${'\n'}</text>
       </modelRoot>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
-        <text>${"\n"}</text>
+        <text>${'\n'}</text>
         <ul>
           <li></li>
         </ul>
@@ -58,13 +58,13 @@ module("Unit | commands | make-list-command", hooks => {
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 1, 1);
     ctx.model.selectRange(range);
 
-    command.execute("ul");
+    command.execute('ul');
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("creates list from lines of text", assert => {
+  test('creates list from lines of text', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot>
         <text>first line</text>
         <br/>
@@ -75,7 +75,7 @@ module("Unit | commands | make-list-command", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <ul>
           <li>
@@ -92,16 +92,23 @@ module("Unit | commands | make-list-command", hooks => {
     `;
 
     ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, ctx.model.rootModelNode.getMaxOffset());
+    const range = ModelRange.fromInElement(
+      ctx.model.rootModelNode,
+      0,
+      ctx.model.rootModelNode.getMaxOffset()
+    );
     ctx.model.selectRange(range);
 
-    command.execute("ul");
+    command.execute('ul');
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("creates list from text before list", assert => {
+  test('creates list from text before list', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {firstLine}} = vdom`
+    const {
+      root: initial,
+      textNodes: { firstLine },
+    } = vdom`
       <modelRoot>
         <text __id="firstLine">line before list</text>
         <ul>
@@ -115,7 +122,7 @@ module("Unit | commands | make-list-command", hooks => {
       </modelRoot>
     `;
 
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <ul>
           <li>
@@ -135,7 +142,7 @@ module("Unit | commands | make-list-command", hooks => {
     const range = ModelRange.fromInTextNode(firstLine, 1, 3);
     ctx.model.selectRange(range);
 
-    command.execute("ul");
+    command.execute('ul');
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 });

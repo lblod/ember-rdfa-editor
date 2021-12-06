@@ -9,9 +9,10 @@
  * The HTMLWbrElement type is a custom type which we have added
  * ourselves.  We did not find a type.
  */
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-export type VoidElement = HTMLAreaElement
+export type VoidElement =
+  | HTMLAreaElement
   | HTMLBaseElement
   | HTMLBRElement
   | HTMLTableColElement
@@ -32,7 +33,7 @@ export type VoidElement = HTMLAreaElement
  * Should this change, this can be removed.
  */
 interface HTMLWbrElement extends HTMLElement {
-  tagName: "wbr" | "WBR"
+  tagName: 'wbr' | 'WBR';
 }
 
 /**
@@ -42,11 +43,14 @@ interface HTMLWbrElement extends HTMLElement {
  * to handle the manipulation.  Returning such manipulation is
  * optional.  A plugin need not handle a manipulation.
  */
-export type ManipulationExecutor = (manipulation: Manipulation, editor: Editor) => void;
+export type ManipulationExecutor = (
+  manipulation: Manipulation,
+  editor: Editor
+) => void;
 
 export interface Editor {
-  setCaret: ( node: Node, position: number ) => void
-  updateRichNode: () => void
+  setCaret: (node: Node, position: number) => void;
+  updateRichNode: () => void;
 }
 
 /**
@@ -60,7 +64,7 @@ export interface Manipulation {
  * Represents the removal of an empty text node.
  */
 export interface RemoveEmptyTextNodeManipulation extends Manipulation {
-  type: "removeEmptyTextNode";
+  type: 'removeEmptyTextNode';
   node: Text;
 }
 
@@ -68,7 +72,7 @@ export interface RemoveEmptyTextNodeManipulation extends Manipulation {
  * Represents the removal of a single character from a text node.
  */
 export interface RemoveCharacterManipulation extends Manipulation {
-  type: "removeCharacter";
+  type: 'removeCharacter';
   node: Text;
   position: number;
 }
@@ -77,7 +81,7 @@ export interface RemoveCharacterManipulation extends Manipulation {
  * Represents keeping the cursor at the start of the editor
  */
 export interface KeepCursorAtStartManipulation extends Manipulation {
-  type: "keepCursorAtStart";
+  type: 'keepCursorAtStart';
   node: Element;
 }
 
@@ -85,7 +89,7 @@ export interface KeepCursorAtStartManipulation extends Manipulation {
  * Represents keeping the cursor at the End of the editor
  */
 export interface KeepCursorAtEndManipulation extends Manipulation {
-  type: "keepCursorAtEnd";
+  type: 'keepCursorAtEnd';
   node: Element;
 }
 
@@ -93,7 +97,7 @@ export interface KeepCursorAtEndManipulation extends Manipulation {
  * Represents the removal of an empty Element (so an Element without childNodes)
  */
 export interface RemoveEmptyElementManipulation extends Manipulation {
-  type: "removeEmptyElement";
+  type: 'removeEmptyElement';
   node: Element;
 }
 
@@ -101,7 +105,7 @@ export interface RemoveEmptyElementManipulation extends Manipulation {
  * Represents the removal of a void element
  */
 export interface RemoveVoidElementManipulation extends Manipulation {
-  type: "removeVoidElement";
+  type: 'removeVoidElement';
   node: VoidElement;
 }
 
@@ -109,13 +113,13 @@ export interface RemoveVoidElementManipulation extends Manipulation {
  * Represents moving the cursor after the last child of node
  */
 export interface MoveCursorToEndOfElementManipulation extends Manipulation {
-  type: "moveCursorToEndOfElement";
+  type: 'moveCursorToEndOfElement';
   node: HTMLElement;
   selection?: Selection;
 }
 
 export interface MoveCursorToStartOfElementManipulation extends Manipulation {
-  type: "moveCursorToStartOfElement";
+  type: 'moveCursorToStartOfElement';
   node: HTMLElement;
   selection?: Selection;
 }
@@ -124,24 +128,24 @@ export interface MoveCursorToStartOfElementManipulation extends Manipulation {
  * Represents moving the cursor before the element
  */
 export interface MoveCursorBeforeElementManipulation extends Manipulation {
-  type: "moveCursorBeforeElement";
+  type: 'moveCursorBeforeElement';
   node: HTMLElement;
   selection?: Selection;
 }
 
 export interface MoveCursorAfterElementManipulation extends Manipulation {
-  type: "moveCursorAfterElement";
+  type: 'moveCursorAfterElement';
   node: HTMLElement;
   selection?: Selection;
 }
 
 export interface MoveCursorAfterEditorManipulation extends Manipulation {
-  type: "moveCursorAfterEditor";
+  type: 'moveCursorAfterEditor';
   node: HTMLElement; //will be rootNode of editor
 }
 
 export interface MoveCursorBeforeEditorManipulation extends Manipulation {
-  type: "moveCursorBeforeEditor";
+  type: 'moveCursorBeforeEditor';
   node: HTMLElement; //will be rootNode of editor
 }
 
@@ -149,7 +153,7 @@ export interface MoveCursorBeforeEditorManipulation extends Manipulation {
  * Represents the removal of a node that is not of type Text of Element
  */
 export interface RemoveOtherNodeManipulation extends Manipulation {
-  type: "removeOtherNode";
+  type: 'removeOtherNode';
   node: Node;
 }
 
@@ -157,16 +161,18 @@ export interface RemoveOtherNodeManipulation extends Manipulation {
  * Represents the removal of an element that has only invisible text nodes as children
  * TODO: currently replaced by removeElementWithChildrenThatArentVisible
  */
-export interface RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation extends Manipulation {
-  type: "removeElementWithOnlyInvisibleTextNodeChildren";
+export interface RemoveElementWithOnlyInvisibleTextNodeChildrenManipulation
+  extends Manipulation {
+  type: 'removeElementWithOnlyInvisibleTextNodeChildren';
   node: Element;
 }
 
 /**
  * Represents the removal of an element that only has invisible children
  */
-export interface RemoveElementWithChildrenThatArentVisible extends Manipulation {
-  type: "removeElementWithChildrenThatArentVisible";
+export interface RemoveElementWithChildrenThatArentVisible
+  extends Manipulation {
+  type: 'removeElementWithChildrenThatArentVisible';
   node: Element;
 }
 
@@ -174,7 +180,7 @@ export interface RemoveElementWithChildrenThatArentVisible extends Manipulation 
  * Represents adding text into a text node
  */
 export interface InsertTextIntoTextNodeManipulation extends Manipulation {
-  type: "insertTextIntoTextNode";
+  type: 'insertTextIntoTextNode';
   node: Text;
   position: number;
   text: string;
@@ -185,7 +191,7 @@ export interface InsertTextIntoTextNodeManipulation extends Manipulation {
  * position is the number of childNodes between the start of the element and the position where the text should be inserted
  */
 export interface InsertTextIntoElementManipulation extends Manipulation {
-  type: "insertTextIntoElement";
+  type: 'insertTextIntoElement';
   node: HTMLElement;
   position: number;
   text: string;
@@ -195,29 +201,29 @@ export interface InsertTextIntoElementManipulation extends Manipulation {
  * Represents replacing a selection with text.
  */
 export interface ReplaceSelectionWithTextManipulation extends Manipulation {
-  type: "replaceSelectionWithText";
+  type: 'replaceSelectionWithText';
   node: Node; // the anchorNode
-  selection: Selection
+  selection: Selection;
   text: string;
 }
 
 export interface RemoveBoundaryForwards extends Manipulation {
-  type: "removeBoundaryForwards";
+  type: 'removeBoundaryForwards';
   node: ChildNode;
 }
 
 export interface RemoveBoundaryBackwards extends Manipulation {
-  type: "removeBoundaryBackwards";
+  type: 'removeBoundaryBackwards';
   node: Node;
 }
 
 export interface InsertTextIntoRange extends Manipulation {
-  type: "insertTextIntoRange";
+  type: 'insertTextIntoRange';
   range: ModelRange;
   text: string;
 }
 
 export interface ManipulationGuidance {
-  allow: boolean | undefined
-  executor: ManipulationExecutor | undefined
+  allow: boolean | undefined;
+  executor: ManipulationExecutor | undefined;
 }

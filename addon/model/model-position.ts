@@ -1,9 +1,12 @@
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {NotImplementedError, PositionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
-import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import {
+  NotImplementedError,
+  PositionError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
+import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
+import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
 /**
  * Represents a single position in the model. In contrast to the dom,
@@ -40,7 +43,9 @@ export default class ModelPosition {
 
   static fromInTextNode(node: ModelText, offset: number) {
     if (offset < 0 || offset > node.length) {
-      throw new PositionError(`Offset ${offset} out of range of text node with length ${node.length}`);
+      throw new PositionError(
+        `Offset ${offset} out of range of text node with length ${node.length}`
+      );
     }
 
     const path = node.getOffsetPath();
@@ -50,12 +55,14 @@ export default class ModelPosition {
   }
 
   static fromInElement(element: ModelElement, offset: number) {
-    if (element.type === "br") {
+    if (element.type === 'br') {
       return ModelPosition.fromBeforeNode(element);
     }
 
     if (offset < 0 || offset > element.getMaxOffset()) {
-      throw new PositionError(`Offset ${offset} out of range of element with maxOffset ${element.getMaxOffset()}`);
+      throw new PositionError(
+        `Offset ${offset} out of range of element with maxOffset ${element.getMaxOffset()}`
+      );
     }
 
     const path = element.getOffsetPath();
@@ -70,11 +77,14 @@ export default class ModelPosition {
     } else if (ModelNode.isModelElement(node)) {
       return ModelPosition.fromInElement(node, offset);
     } else {
-      throw new NotImplementedError("Unsupported node type");
+      throw new NotImplementedError('Unsupported node type');
     }
   }
 
-  static getCommonPosition(pos1: ModelPosition, pos2: ModelPosition): ModelPosition | null {
+  static getCommonPosition(
+    pos1: ModelPosition,
+    pos2: ModelPosition
+  ): ModelPosition | null {
     if (pos1.root !== pos2.root) {
       return null;
     }
@@ -126,7 +136,7 @@ export default class ModelPosition {
     }
 
     if (i > 0 && i !== this.path.length - 1) {
-      throw new PositionError("invalid path");
+      throw new PositionError('invalid path');
     }
     this.parentCache = current as ModelElement;
 
@@ -158,7 +168,9 @@ export default class ModelPosition {
 
   set parentOffset(offset: number) {
     if (offset < 0 || offset > this.parent.getMaxOffset()) {
-      throw new PositionError(`Offset ${offset} is out of range of parent with maxOffset ${this.parent.getMaxOffset()}`);
+      throw new PositionError(
+        `Offset ${offset} is out of range of parent with maxOffset ${this.parent.getMaxOffset()}`
+      );
     }
     this.path[this.path.length - 1] = offset;
     this.parentCache = null;
@@ -189,12 +201,16 @@ export default class ModelPosition {
    */
   compare(other: ModelPosition): RelativePosition {
     if (this.root !== other.root) {
-      throw new PositionError("cannot compare nodes with different roots");
+      throw new PositionError('cannot compare nodes with different roots');
     }
     return ModelPosition.comparePath(this.path, other.path);
   }
 
-  isBetween(start: ModelPosition, end: ModelPosition, inclusive = false): boolean {
+  isBetween(
+    start: ModelPosition,
+    end: ModelPosition,
+    inclusive = false
+  ): boolean {
     let startRslt = this.compare(start);
     let endRslt = this.compare(end);
 
@@ -206,7 +222,10 @@ export default class ModelPosition {
         endRslt = RelativePosition.BEFORE;
       }
     }
-    return startRslt === RelativePosition.AFTER && endRslt === RelativePosition.BEFORE;
+    return (
+      startRslt === RelativePosition.AFTER &&
+      endRslt === RelativePosition.BEFORE
+    );
   }
 
   getCommonPosition(other: ModelPosition): ModelPosition | null {
@@ -215,7 +234,7 @@ export default class ModelPosition {
 
   getCommonAncestor(other: ModelPosition): ModelElement {
     if (this.root !== other.root) {
-      throw new PositionError("Cannot compare nodes with different roots");
+      throw new PositionError('Cannot compare nodes with different roots');
     }
 
     const leftLength = this.path.length;
@@ -229,7 +248,7 @@ export default class ModelPosition {
       // left position is lower than right position
       for (let i = 0; i < lengthDiff; i++) {
         if (!left.parent) {
-          throw new PositionError("impossible position");
+          throw new PositionError('impossible position');
         }
         left = left.parent;
       }
@@ -237,7 +256,7 @@ export default class ModelPosition {
       // right position is lower than left position
       for (let i = 0; i < Math.abs(lengthDiff); i++) {
         if (!right.parent) {
-          throw new PositionError("impossible position");
+          throw new PositionError('impossible position');
         }
         right = right.parent;
       }
@@ -352,7 +371,7 @@ export default class ModelPosition {
     }
 
     result.reverse();
-    return result.join("");
+    return result.join('');
   }
 
   /**
@@ -385,9 +404,11 @@ export default class ModelPosition {
    * This returns true if the position is inside a text node (not right before not right after).
    */
   isInsideText(): boolean {
-    return this.nodeAfter() === this.nodeBefore()
-      && ModelNode.isModelText(this.nodeAfter())
-      && ModelNode.isModelText(this.nodeBefore());
+    return (
+      this.nodeAfter() === this.nodeBefore() &&
+      ModelNode.isModelText(this.nodeAfter()) &&
+      ModelNode.isModelText(this.nodeBefore())
+    );
   }
 
   clone(modelRoot?: ModelElement): ModelPosition {
@@ -395,7 +416,9 @@ export default class ModelPosition {
     return ModelPosition.fromPath(root, [...this.path]);
   }
 
-  findAncestors(predicate: (elem: ModelElement) => boolean = () => true): ModelElement[] {
+  findAncestors(
+    predicate: (elem: ModelElement) => boolean = () => true
+  ): ModelElement[] {
     let current = this.parent;
     const result = [];
 

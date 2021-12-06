@@ -4,8 +4,8 @@
  * Copyright © 2019 Ruben Taelman
  */
 
-import * as RDF from "@rdfjs/types";
-import {IActiveTag} from "./active-tag";
+import * as RDF from '@rdfjs/types';
+import { IActiveTag } from './active-tag';
 
 /**
  * A datastructure for storing an rdfa:Pattern.

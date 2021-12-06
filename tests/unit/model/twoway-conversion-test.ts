@@ -1,10 +1,10 @@
-import {module, test} from "qunit";
-import HtmlReader from "@lblod/ember-rdfa-editor/model/readers/html-reader";
-import HtmlWriter from "@lblod/ember-rdfa-editor/model/writers/html-writer";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import {AssertionError} from "@lblod/ember-rdfa-editor/utils/errors";
+import { module, test } from 'qunit';
+import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
+import HtmlWriter from '@lblod/ember-rdfa-editor/model/writers/html-writer';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 
-module("Unit | model | twoway-conversion", hooks => {
+module('Unit | model | twoway-conversion', (hooks) => {
   let reader: HtmlReader;
   let writer: HtmlWriter;
   const ctx = new ModelTestContext();
@@ -14,7 +14,7 @@ module("Unit | model | twoway-conversion", hooks => {
     reader = new HtmlReader(ctx.model);
     writer = new HtmlWriter(ctx.model);
   });
-  test("converting simple tree back and forth gives same tree", assert => {
+  test('converting simple tree back and forth gives same tree', (assert) => {
     const p = document.createElement('p');
     p.innerHTML = `<p><ul><li> some text <div style="background-color:green"><a href="#">an <em> italic |- </em> link</a></div></li></ul></p>`;
     const read = reader.read(p);
@@ -24,9 +24,8 @@ module("Unit | model | twoway-conversion", hooks => {
     const written = writer.write(read[0]) as HTMLElement;
 
     assert.strictEqual(written.outerHTML, p.outerHTML);
-
   });
-  test("<i> gets converted to <em>", assert => {
+  test('<i> gets converted to <em>', (assert) => {
     const p = document.createElement('p');
     p.innerHTML = `<p><ul> <li> some text <div style="background-color:green"><a href="#">an <i> italic |- </i> link</a></div></li> </ul></p>`;
     const read = reader.read(p);
@@ -40,7 +39,5 @@ module("Unit | model | twoway-conversion", hooks => {
     const expected = `<p></p><ul><li> some text <div style="background-color:green"><a href="#">an <em> italic |- </em> link</a></div></li></ul><p></p>`;
 
     assert.strictEqual(written.innerHTML, expected);
-
   });
-
 });

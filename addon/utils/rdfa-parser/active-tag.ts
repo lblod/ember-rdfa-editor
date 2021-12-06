@@ -3,13 +3,14 @@
  *
  * Copyright © 2019 Ruben Taelman
  */
-import {IRdfaPattern} from "./rdfa-pattern";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import { IRdfaPattern } from './rdfa-pattern';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import {
   ModelBlankNode,
   ModelNamedNode,
-  ModelQuadPredicate, ModelTerm
-} from "@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser";
+  ModelQuadPredicate,
+  ModelTerm,
+} from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
 
 /**
  * Data holder for the RDFa state in XML tags.
@@ -29,7 +30,11 @@ export interface IActiveTag {
   collectChildTags?: boolean;
   collectedPatternTag?: IRdfaPattern;
   interpretObjectAsTime?: boolean;
-  incompleteTriples: { predicate: ModelQuadPredicate, reverse: boolean, list?: boolean }[];
+  incompleteTriples: {
+    predicate: ModelQuadPredicate;
+    reverse: boolean;
+    list?: boolean;
+  }[];
   inlist: boolean;
   listMapping: Record<string, (ModelTerm | boolean)[]>;
   listMappingLocal: Record<string, (ModelTerm | boolean)[]>;

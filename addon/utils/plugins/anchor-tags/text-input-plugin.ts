@@ -1,23 +1,30 @@
 import {
   TextHandlerManipulation,
-  TextInputPlugin
-} from "@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler";
-import {ManipulationGuidance} from "@lblod/ember-rdfa-editor/editor/input-handlers/manipulation";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
+  TextInputPlugin,
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
+import { ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 
 export default class AnchorTagTextInputPlugin implements TextInputPlugin {
-  label = "Text input plugin for handling text input in anchors";
+  label = 'Text input plugin for handling text input in anchors';
 
-  guidanceForManipulation(manipulation: TextHandlerManipulation): ManipulationGuidance | null {
-    const {range, text} = manipulation;
-    if (manipulation.type === "insertTextIntoRange") {
+  guidanceForManipulation(
+    manipulation: TextHandlerManipulation
+  ): ManipulationGuidance | null {
+    const { range, text } = manipulation;
+    if (manipulation.type === 'insertTextIntoRange') {
       const clonedRange = range.clone();
       const collapsed = clonedRange.collapsed;
-      const {start, end, start: {parent: startParent}, end: {parent: endParent}} = clonedRange;
+      const {
+        start,
+        end,
+        start: { parent: startParent },
+        end: { parent: endParent },
+      } = clonedRange;
 
       let anyAnchors = false;
-      if (startParent.type === "a" && start.parentOffset === 0) {
+      if (startParent.type === 'a' && start.parentOffset === 0) {
         anyAnchors = true;
         clonedRange.start = ModelPosition.fromBeforeNode(startParent);
         if (collapsed) {
@@ -25,7 +32,10 @@ export default class AnchorTagTextInputPlugin implements TextInputPlugin {
         }
       }
 
-      if (endParent.type === "a" && end.parentOffset === endParent.getMaxOffset()) {
+      if (
+        endParent.type === 'a' &&
+        end.parentOffset === endParent.getMaxOffset()
+      ) {
         anyAnchors = true;
         clonedRange.end = ModelPosition.fromAfterNode(endParent);
         if (collapsed) {
@@ -35,9 +45,10 @@ export default class AnchorTagTextInputPlugin implements TextInputPlugin {
 
       if (anyAnchors) {
         return {
-          allow: true, executor: (_, rawEditor: PernetRawEditor) => {
-            rawEditor.executeCommand("insert-text", text, clonedRange);
-          }
+          allow: true,
+          executor: (_, rawEditor: PernetRawEditor) => {
+            rawEditor.executeCommand('insert-text', text, clonedRange);
+          },
         };
       }
     }
@@ -45,4 +56,3 @@ export default class AnchorTagTextInputPlugin implements TextInputPlugin {
     return null;
   }
 }
-

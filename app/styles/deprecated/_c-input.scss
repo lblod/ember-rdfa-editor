@@ -5,39 +5,38 @@
 /* Variables
   ========================================================================== */
 
-$say-input-height                    : $au-unit-large - $au-unit-small !default;
-$say-input-color                     : var(--au-gray-1000) !default;
-$say-input-background-color          : var(--au-white);
-$say-input-border-color              : var(--au-gray-400) !default;
-$say-input-focus-border-color        : var(--au-blue-300) !default;
-$say-input-error-border              : var(--au-red-600) !default;
-$say-input-radius                    : var(--au-radius);
+$say-input-height: $au-unit-large - $au-unit-small !default;
+$say-input-color: var(--au-gray-1000) !default;
+$say-input-background-color: var(--au-white);
+$say-input-border-color: var(--au-gray-400) !default;
+$say-input-focus-border-color: var(--au-blue-300) !default;
+$say-input-error-border: var(--au-red-600) !default;
+$say-input-radius: var(--au-radius);
 
-$say-input-disabled-background-color : var(--au-gray-100) !default;
-$say-input-disabled-border-color     : var(--au-gray-600) !default;
-$say-input-disabled-color            : var(--au-gray-700) !default;
-$say-input-font-size                 : $au-h6 !default;
-
+$say-input-disabled-background-color: var(--au-gray-100) !default;
+$say-input-disabled-border-color: var(--au-gray-600) !default;
+$say-input-disabled-color: var(--au-gray-700) !default;
+$say-input-font-size: $au-h6 !default;
 
 /* Component
   ========================================================================== */
 
 .say-input {
-  border: .1rem solid $say-input-border-color;
+  border: 0.1rem solid $say-input-border-color;
   color: $say-input-color;
   font-size: $say-input-font-size;
   font-weight: var(--au-regular);
   font-family: var(--au-font);
   height: $say-input-height;
   max-width: 100%;
-  padding: 0 $au-unit-small .1ex;
+  padding: 0 $au-unit-small 0.1ex;
   background-color: $say-input-background-color;
   border-radius: $say-input-radius;
 
   &:focus {
     outline: none;
     border-color: $say-input-focus-border-color;
-    box-shadow: inset 0 0 0 .1rem $say-input-focus-border-color;
+    box-shadow: inset 0 0 0 0.1rem $say-input-focus-border-color;
   }
 }
 
@@ -50,7 +49,7 @@ $say-input-font-size                 : $au-h6 !default;
 }
 
 .say-input--error {
-  border: .3rem solid $say-input-error-border;
+  border: 0.3rem solid $say-input-error-border;
 }
 
 .say-input--disabled {
@@ -62,7 +61,7 @@ $say-input-font-size                 : $au-h6 !default;
 
 .say-input--select,
 .say-input--search,
-.say-input[type="date"] {
+.say-input[type='date'] {
   background-repeat: no-repeat;
   background-size: 1.5rem;
   background-position: 95% 50%;
@@ -78,7 +77,7 @@ $say-input-font-size                 : $au-h6 !default;
   background-image: url('/@lblod/ember-rdfa-editor/icons/search.svg');
 }
 
-.say-input[type="date"] {
+.say-input[type='date'] {
   background-image: url('/@lblod/ember-rdfa-editor/icons/calendar.svg');
 }
 

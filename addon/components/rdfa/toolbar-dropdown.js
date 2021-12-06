@@ -1,8 +1,8 @@
-import Component from "@glimmer/component";
-import {action} from "@ember/object";
-import {guidFor} from '@ember/object/internals';
-import {tracked} from "@glimmer/tracking";
-import {paintCycleHappened} from "@lblod/ember-rdfa-editor/editor/utils";
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { guidFor } from '@ember/object/internals';
+import { tracked } from '@glimmer/tracking';
+import { paintCycleHappened } from '@lblod/ember-rdfa-editor/editor/utils';
 
 export default class AuDropdown extends Component {
   // Create a dropdown ID
@@ -18,8 +18,7 @@ export default class AuDropdown extends Component {
 
   @action
   async closeDropdown(event) {
-
-    if(event) {
+    if (event) {
       event.preventDefault();
     }
     this.dropdownOpen = false;

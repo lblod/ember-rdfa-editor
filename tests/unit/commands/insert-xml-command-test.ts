@@ -1,12 +1,12 @@
-import {module, test} from "qunit";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import InsertXmlCommand from "@lblod/ember-rdfa-editor/commands/insert-xml-command";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import {oneLineTrim} from "common-tags";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import { module, test } from 'qunit';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import InsertXmlCommand from '@lblod/ember-rdfa-editor/commands/insert-xml-command';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { oneLineTrim } from 'common-tags';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
-module("Unit | commands | insert-xml-command-test", hooks => {
+module('Unit | commands | insert-xml-command-test', (hooks) => {
   const ctx = new ModelTestContext();
   let command: InsertXmlCommand;
 
@@ -15,14 +15,14 @@ module("Unit | commands | insert-xml-command-test", hooks => {
     command = new InsertXmlCommand(ctx.model);
   });
 
-  test("inserts correctly in empty document", assert => {
+  test('inserts correctly in empty document', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot/>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text>hello world</text>
@@ -40,16 +40,16 @@ module("Unit | commands | insert-xml-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts correctly in document with empty text node", assert => {
+  test('inserts correctly in document with empty text node', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot>
         <text/>
       </modelRoot>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text/>
         <div>
@@ -68,16 +68,16 @@ module("Unit | commands | insert-xml-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("inserts correctly inside text node", assert => {
+  test('inserts correctly inside text node', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot>
         <text>elephant</text>
       </modelRoot>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text>ele</text>
         <div>
@@ -97,16 +97,16 @@ module("Unit | commands | insert-xml-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("correctly replaces part of text node", assert => {
+  test('correctly replaces part of text node', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot>
         <text>elephant</text>
       </modelRoot>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text>el</text>
         <div>
@@ -126,9 +126,12 @@ module("Unit | commands | insert-xml-command-test", hooks => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test("correctly replaces complex range", assert => {
+  test('correctly replaces complex range', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {rangeStart, rangeEnd}} = vdom`
+    const {
+      root: initial,
+      textNodes: { rangeStart, rangeEnd },
+    } = vdom`
       <modelRoot>
         <div>
           <text __id="rangeStart">elephant</text>
@@ -144,7 +147,7 @@ module("Unit | commands | insert-xml-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text>ele</text>

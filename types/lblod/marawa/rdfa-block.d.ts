@@ -1,5 +1,5 @@
 declare module '@lblod/marawa/rdfa-block' {
-  import RichNode from "@lblod/marawa/rich-node";
+  import RichNode from '@lblod/marawa/rich-node';
   type Region = [number, number];
   export default class RdfaBlock {
     constructor(content: unknown);
@@ -16,5 +16,4 @@ declare module '@lblod/marawa/rdfa-block' {
     containsRegion(region: Region): boolean;
     normalizeRegion(region: Region): Region;
   }
-
 }

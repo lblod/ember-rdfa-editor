@@ -5,8 +5,7 @@
 /* Variables
   ========================================================================== */
 
-$say-label-color                   : var(--au-gray-800) !default;
-
+$say-label-color: var(--au-gray-800) !default;
 
 /* Component
   ========================================================================== */
@@ -17,7 +16,6 @@ $say-label-color                   : var(--au-gray-800) !default;
   font-weight: var(--au-medium);
   margin-bottom: $au-unit-tiny;
 }
-
 
 /* Modifiers
   ========================================================================== */

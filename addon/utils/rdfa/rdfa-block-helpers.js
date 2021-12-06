@@ -9,11 +9,14 @@ function reorderBlocks(blocks) {
   //if (blocks.length == 1) return blocks;
 
   return blocks.sort((a, b) => {
-    if (a.start > b.start) { // a starts after b
+    if (a.start > b.start) {
+      // a starts after b
       return 1;
-    } else if (a.start == b.start) { // a and b start at the same place
+    } else if (a.start == b.start) {
+      // a and b start at the same place
       return a.end - b.end;
-    } else { // a starts before b
+    } else {
+      // a starts before b
       return -1;
     }
   });
@@ -27,7 +30,7 @@ function reorderBlocks(blocks) {
  * @param unprocessedOrderedRegions The ordered regions that need to be compared
  * @return [Array] The extended regions
  */
-function getExtendedRegions(unprocessedOrderedRegions, mergedRegions=[]) {
+function getExtendedRegions(unprocessedOrderedRegions, mergedRegions = []) {
   // Breaking condition: we processed all the regions
   if (unprocessedOrderedRegions.length == 0) {
     return mergedRegions;
@@ -35,16 +38,21 @@ function getExtendedRegions(unprocessedOrderedRegions, mergedRegions=[]) {
 
   // Initialization
   if (mergedRegions.length == 0) {
-    return getExtendedRegions(unprocessedOrderedRegions.slice(1), [unprocessedOrderedRegions[0]]);
+    return getExtendedRegions(unprocessedOrderedRegions.slice(1), [
+      unprocessedOrderedRegions[0],
+    ]);
   }
 
   const currentRegion = unprocessedOrderedRegions[0];
   let newMergedRegions = [];
   let hasBeenMerged = false;
 
-  for ( let mergedRegion of mergedRegions ) {
+  for (let mergedRegion of mergedRegions) {
     // As the regions are ordered, the current region we're testing will always be at the right of the mergedRegions
-    if (isLeftNeighbourOf(mergedRegion, currentRegion) || isPartiallyIncludedLeft(mergedRegion, currentRegion)) {
+    if (
+      isLeftNeighbourOf(mergedRegion, currentRegion) ||
+      isPartiallyIncludedLeft(mergedRegion, currentRegion)
+    ) {
       // Regions are neighbourgs or overlapping
       newMergedRegions.push([mergedRegion[0], currentRegion[1]]);
       hasBeenMerged = true;
@@ -63,9 +71,11 @@ function getExtendedRegions(unprocessedOrderedRegions, mergedRegions=[]) {
     newMergedRegions.push([currentRegion[0], currentRegion[1]]);
   }
 
-  return getExtendedRegions(unprocessedOrderedRegions.slice(1), newMergedRegions);
+  return getExtendedRegions(
+    unprocessedOrderedRegions.slice(1),
+    newMergedRegions
+  );
 }
-
 
 /*-----------------------------------------------------------------------*/
 /*                                Helpers                                */

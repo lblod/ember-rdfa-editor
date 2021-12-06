@@ -5,16 +5,16 @@
 /* Variables
   ========================================================================== */
 
-$say-editor-padding              : $au-unit !default;
-$say-editor-background           : var(--au-gray-100) !default;
-$say-editor-sidebar-medium       : 30% !default;
-$say-editor-sidebar-large        : 30% !default;
-$say-paper-min-height            : calc(100vh + #{$au-unit}) !default;
-$say-paper-padding               : $au-unit-large !default;
-$say-paper-background            : var(--au-white) !default;
-$say-paper-box-shadow            : 0 1px 3px rgba($au-gray-900, .1), 0 4px 20px rgba($au-gray-900, .035), 0 1px 1px rgba($au-gray-900, .025) !default;
-$say-annotation-width            : $au-unit-huge*1.5 !default;
-
+$say-editor-padding: $au-unit !default;
+$say-editor-background: var(--au-gray-100) !default;
+$say-editor-sidebar-medium: 30% !default;
+$say-editor-sidebar-large: 30% !default;
+$say-paper-min-height: calc(100vh + #{$au-unit}) !default;
+$say-paper-padding: $au-unit-large !default;
+$say-paper-background: var(--au-white) !default;
+$say-paper-box-shadow: 0 1px 3px rgba($au-gray-900, 0.1),
+  0 4px 20px rgba($au-gray-900, 0.035), 0 1px 1px rgba($au-gray-900, 0.025) !default;
+$say-annotation-width: $au-unit-huge * 1.5 !default;
 
 /* Component
   ========================================================================== */
@@ -50,45 +50,45 @@ $say-annotation-width            : $au-unit-huge*1.5 !default;
   }
 }
 
-  .say-editor__paper {
-    position: relative;
-    width: 100%;
-    min-height: $say-paper-min-height;
+.say-editor__paper {
+  position: relative;
+  width: 100%;
+  min-height: $say-paper-min-height;
 
-    &:focus {
-      outline: none;
-    }
-
-    .say-container--paper & {
-      background-color: $say-paper-background;
-      padding: $say-paper-padding;
-      box-shadow: $say-paper-box-shadow;
-    }
+  &:focus {
+    outline: none;
   }
 
-  .say-editor__paper--disabled {
-    background-color: $say-editor-background;
-    color: var(--au-gray-700);
+  .say-container--paper & {
+    background-color: $say-paper-background;
+    padding: $say-paper-padding;
+    box-shadow: $say-paper-box-shadow;
+  }
+}
+
+.say-editor__paper--disabled {
+  background-color: $say-editor-background;
+  color: var(--au-gray-700);
+}
+
+.say-editor__inner {
+  position: relative;
+  min-height: $say-paper-min-height;
+
+  // Remove start styles
+  &:focus {
+    outline: 0;
   }
 
-  .say-editor__inner {
-    position: relative;
-    min-height: $say-paper-min-height;
+  .say-container--paper & {
+    min-height: calc(#{$say-paper-min-height} - #{$say-paper-padding} * 2);
+  }
 
-    // Remove start styles
-    &:focus {
-      outline: 0;
-    }
-
-    .say-container--paper & {
-      min-height: calc(#{$say-paper-min-height} - #{$say-paper-padding} * 2);
-    }
-
-    :not(.say-container--paper) & {
-      * {
-        max-width: 120ch;
-        margin-left: auto;
-        margin-right: auto;
-      }
+  :not(.say-container--paper) & {
+    * {
+      max-width: 120ch;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
+}

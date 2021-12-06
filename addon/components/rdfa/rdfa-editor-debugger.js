@@ -4,60 +4,60 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
 /**
-* Debugger component for the RDFa Editor
-*
-* @module rdfa-editor
-* @class RdfaEditorDebugger
-* @extends Component
-*/
+ * Debugger component for the RDFa Editor
+ *
+ * @module rdfa-editor
+ * @class RdfaEditorDebugger
+ * @extends Component
+ */
 
 export default class RdfaEditorDebugger extends Component {
   /**
-  * Objects used for debugging containing the hints registry, context scanner and editor
-  *
-  * @property debug
-  * @type Object
-  *
-  * @public
-  */
+   * Objects used for debugging containing the hints registry, context scanner and editor
+   *
+   * @property debug
+   * @type Object
+   *
+   * @public
+   */
   get debug() {
     return this.args.debug;
   }
 
   /**
-  * Whether the debug panel is enabled
-  *
-  * @property debugEnabled
-  * @type boolean
-  *
-  * @public
-  */
+   * Whether the debug panel is enabled
+   *
+   * @property debugEnabled
+   * @type boolean
+   *
+   * @public
+   */
   @tracked debugEnabled = false;
 
   /**
-  * Currently active debug mode
-  *
-  * @property debugMode
-  * @type string
-  * @default 'context-scanner'
-  *
-  * @public
-  */
+   * Currently active debug mode
+   *
+   * @property debugMode
+   * @type string
+   * @default 'context-scanner'
+   *
+   * @public
+   */
   @tracked debugMode = 'context-scanner';
 
   /**
-  * Available debug modes
-  *
-  * @property debugModes
-  * @type Ember.Array
-  *
-  * @private
-  */
+   * Available debug modes
+   *
+   * @property debugModes
+   * @type Ember.Array
+   *
+   * @private
+   */
   debugModes = A(['hints-registry', 'context-scanner']);
 
   @action
   toggleDebug() {
-    this.debugEnabled = ! this.debugEnabled;
+    this.debugEnabled = !this.debugEnabled;
   }
 
   @action

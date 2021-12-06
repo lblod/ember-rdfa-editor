@@ -1,21 +1,25 @@
 import {
   BackspaceHandlerManipulation,
-  BackspacePlugin
+  BackspacePlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import {Editor, Manipulation, ManipulationGuidance} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {getParentLumpNode} from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
+import {
+  Editor,
+  Manipulation,
+  ManipulationGuidance,
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
 
 // We favour to be defensive in the stuff we accept.
 const SUPPORTED_MANIPULATIONS = [
-  "removeEmptyTextNode",
-  "removeCharacter",
-  "removeEmptyElement",
-  "removeVoidElement",
-  "moveCursorToEndOfElement",
-  "moveCursorBeforeElement",
-  "removeOtherNode",
-  "removeElementWithOnlyInvisibleTextNodeChildren",
-  "removeElementWithChildrenThatArentVisible",
+  'removeEmptyTextNode',
+  'removeCharacter',
+  'removeEmptyElement',
+  'removeVoidElement',
+  'moveCursorToEndOfElement',
+  'moveCursorBeforeElement',
+  'removeOtherNode',
+  'removeElementWithOnlyInvisibleTextNodeChildren',
+  'removeElementWithChildrenThatArentVisible',
 ];
 
 /**
@@ -26,13 +30,15 @@ const SUPPORTED_MANIPULATIONS = [
 export default class LumpNodeBackspacePlugin implements BackspacePlugin {
   label = 'Backspace plugin for handling LumpNodes';
 
-  guidanceForManipulation(manipulation: BackspaceHandlerManipulation): ManipulationGuidance | null {
+  guidanceForManipulation(
+    manipulation: BackspaceHandlerManipulation
+  ): ManipulationGuidance | null {
     //TODO: Fix case.manipulation.node === lump node
     const node = manipulation.node;
     const rootNode = node.getRootNode() as HTMLElement; // Assuming here that node is attached.
     let parentLump = getParentLumpNode(node, rootNode);
 
-    if (manipulation.type === "removeEmptyTextNode" && !parentLump) {
+    if (manipulation.type === 'removeEmptyTextNode' && !parentLump) {
       const prevSibling = manipulation.node.previousSibling;
       if (prevSibling) {
         parentLump = getParentLumpNode(prevSibling, rootNode);
@@ -55,14 +61,14 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
           allow: true,
           executor: (_, editor: Editor) => {
             this.removeLumpNode(parentLump!, editor);
-          }
+          },
         };
       } else {
         return {
           allow: true,
           executor: () => {
             this.flagForRemoval(parentLump!);
-          }
+          },
         };
       }
     }
@@ -107,7 +113,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * @method isSupportedManipulation
    */
   isSupportedManipulation(manipulation: Manipulation): boolean {
-    return SUPPORTED_MANIPULATIONS.some(m => m === manipulation.type);
+    return SUPPORTED_MANIPULATIONS.some((m) => m === manipulation.type);
   }
 
   /**
@@ -115,7 +121,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * @method isElementFlaggedForRemoval
    */
   isElementFlaggedForRemoval(element: Element): boolean {
-    return element.getAttribute("data-flagged-remove") === "complete";
+    return element.getAttribute('data-flagged-remove') === 'complete';
   }
 
   /**
@@ -123,6 +129,6 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * @method flagForRemoval
    */
   flagForRemoval = (lumpNode: Element): void => {
-    lumpNode.setAttribute("data-flagged-remove", "complete");
+    lumpNode.setAttribute('data-flagged-remove', 'complete');
   };
 }

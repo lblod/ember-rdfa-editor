@@ -1,13 +1,20 @@
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {PropertyState, RelativePosition} from "@lblod/ember-rdfa-editor/model/util/types";
-import ModelText, {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ArrayUtils from "@lblod/ember-rdfa-editor/model/util/array-utils";
-import {Predicate} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
-import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import GenTreeWalker from "@lblod/ember-rdfa-editor/model/util/gen-tree-walker";
-import {IllegalArgumentError} from "@lblod/ember-rdfa-editor/utils/errors";
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import {
+  PropertyState,
+  RelativePosition,
+} from '@lblod/ember-rdfa-editor/model/util/types';
+import ModelText, {
+  TextAttribute,
+} from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
+import { Predicate } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
+import ModelTreeWalker, {
+  toFilterSkipFalse,
+} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -29,7 +36,11 @@ export default class ModelRange {
     }
   }
 
-  static fromInElement(element: ModelElement, startOffset: number, endOffset: number) {
+  static fromInElement(
+    element: ModelElement,
+    startOffset: number,
+    endOffset: number
+  ) {
     const start = ModelPosition.fromInElement(element, startOffset);
     const end = ModelPosition.fromInElement(element, endOffset);
     return new ModelRange(start, end);
@@ -41,7 +52,11 @@ export default class ModelRange {
     return new ModelRange(start, end);
   }
 
-  static fromInTextNode(node: ModelText, startOffset: number, endOffset: number) {
+  static fromInTextNode(
+    node: ModelText,
+    startOffset: number,
+    endOffset: number
+  ) {
     const start = ModelPosition.fromInTextNode(node, startOffset);
     const end = ModelPosition.fromInTextNode(node, endOffset);
     return new ModelRange(start, end);
@@ -110,7 +125,9 @@ export default class ModelRange {
     return !!result.value;
   }
 
-  * findCommonAncestorsWhere(predicate: Predicate<ModelElement>): Generator<ModelElement, void, void> {
+  *findCommonAncestorsWhere(
+    predicate: Predicate<ModelElement>
+  ): Generator<ModelElement, void, void> {
     let commonAncestor: ModelElement | null = this.getCommonAncestor();
     while (commonAncestor) {
       if (predicate(commonAncestor)) {
@@ -125,14 +142,16 @@ export default class ModelRange {
     return !!result.value;
   }
 
-  * findContainedNodesWhere<T extends ModelNode = ModelNode>(predicate: Predicate<T>): Generator<T, void, void> {
+  *findContainedNodesWhere<T extends ModelNode = ModelNode>(
+    predicate: Predicate<T>
+  ): Generator<T, void, void> {
     if (this.collapsed) {
       return;
     }
     const walker = new ModelTreeWalker<T>({
       range: this,
       visitParentUpwards: true,
-      filter: toFilterSkipFalse(predicate)
+      filter: toFilterSkipFalse(predicate),
     });
     for (const node of walker) {
       yield node;
@@ -142,9 +161,12 @@ export default class ModelRange {
   getTextAttributes(): Map<TextAttribute, PropertyState> {
     const treeWalker = new ModelTreeWalker<ModelText>({
       range: this,
-      filter: toFilterSkipFalse(ModelNode.isModelText)
+      filter: toFilterSkipFalse(ModelNode.isModelText),
     });
-    const result: Map<TextAttribute, PropertyState> = new Map<TextAttribute, PropertyState>();
+    const result: Map<TextAttribute, PropertyState> = new Map<
+      TextAttribute,
+      PropertyState
+    >();
     for (const node of treeWalker) {
       for (const [attr, val] of node.getTextAttributes()) {
         const currentVal = result.get(attr);
@@ -162,7 +184,6 @@ export default class ModelRange {
           if (val) {
             result.set(attr, PropertyState.unknown);
           }
-
         }
       }
     }
@@ -212,14 +233,20 @@ export default class ModelRange {
    * Return the minimal set of confined ranges that, when combined, form an equivalent range to this one
    */
   getMinimumConfinedRanges(): ModelRange[] {
-    const commonPath = ArrayUtils.findCommonSlice(this.start.path, this.end.path);
+    const commonPath = ArrayUtils.findCommonSlice(
+      this.start.path,
+      this.end.path
+    );
     const commonLength = commonPath.length;
     const result = [];
 
     let startCur = this.start;
     while (startCur.path.length > commonLength + 1) {
       const parent = startCur.parent;
-      const range = new ModelRange(startCur, ModelPosition.fromInElement(parent, parent.getMaxOffset()));
+      const range = new ModelRange(
+        startCur,
+        ModelPosition.fromInElement(parent, parent.getMaxOffset())
+      );
       if (!range.collapsed) {
         result.push(range);
       }
@@ -230,7 +257,10 @@ export default class ModelRange {
     let endCur = this.end;
     while (endCur.path.length > commonLength + 1) {
       const parent = endCur.parent;
-      const range = new ModelRange(ModelPosition.fromInElement(parent, 0), endCur);
+      const range = new ModelRange(
+        ModelPosition.fromInElement(parent, 0),
+        endCur
+      );
       if (!range.collapsed) {
         temp.push(range);
       }
@@ -247,7 +277,11 @@ export default class ModelRange {
       // </div>
       // endCur is one level lower than startCur, so we can safely take
       // the range from the beginning of its parent and ignore startCur (the remaining range would be collapsed)
-      const middle = ModelRange.fromInElement(endCur.parent, 0, endCur.parentOffset);
+      const middle = ModelRange.fromInElement(
+        endCur.parent,
+        0,
+        endCur.parentOffset
+      );
       if (!middle.collapsed) {
         result.push(middle);
       }
@@ -257,7 +291,11 @@ export default class ModelRange {
       // </div>|
       // starCur is one level lower than endCur, so we can safely take
       // the range from startcur to the end of its parent and ignore endCur (the remaining range would be collapsed)
-      const middle = ModelRange.fromInElement(startCur.parent, startCur.parentOffset, startCur.parent.getMaxOffset());
+      const middle = ModelRange.fromInElement(
+        startCur.parent,
+        startCur.parentOffset,
+        startCur.parent.getMaxOffset()
+      );
       if (!middle.collapsed) {
         result.push(middle);
       }
@@ -265,7 +303,6 @@ export default class ModelRange {
     temp.reverse();
     result.push(...temp);
     return result;
-
   }
 
   sameAs(other: ModelRange): boolean {
@@ -273,17 +310,22 @@ export default class ModelRange {
   }
 
   clone(modelRoot?: ModelElement): ModelRange {
-    return new ModelRange(this.start.clone(modelRoot), this.end.clone(modelRoot));
+    return new ModelRange(
+      this.start.clone(modelRoot),
+      this.end.clone(modelRoot)
+    );
   }
 
-  * contextNodes(strategy: RangeContextStrategy): Generator<ModelNode, void, void> {
-    if (strategy === "rangeContains") {
-      const walker = GenTreeWalker.fromRange({range: this});
+  *contextNodes(
+    strategy: RangeContextStrategy
+  ): Generator<ModelNode, void, void> {
+    if (strategy === 'rangeContains') {
+      const walker = GenTreeWalker.fromRange({ range: this });
       yield* walker.nodes();
-    } else if (strategy === "rangeIsInside") {
+    } else if (strategy === 'rangeIsInside') {
       yield* this.findCommonAncestorsWhere(() => true);
     } else {
-      throw new IllegalArgumentError("Unsupported strategy");
+      throw new IllegalArgumentError('Unsupported strategy');
     }
   }
 
@@ -295,13 +337,25 @@ export default class ModelRange {
 export interface RangeFactory {
   fromPaths(path1: number[], path2: number[], root?: ModelElement): ModelRange;
 
-  fromInElement(element: ModelElement, startOffset: number, endOffset: number): ModelRange;
+  fromInElement(
+    element: ModelElement,
+    startOffset: number,
+    endOffset: number
+  ): ModelRange;
 
   fromAroundNode(node: ModelNode): ModelRange;
 
-  fromInTextNode(node: ModelText, startOffset: number, endOffset: number): ModelRange;
+  fromInTextNode(
+    node: ModelText,
+    startOffset: number,
+    endOffset: number
+  ): ModelRange;
 
-  fromInNode(node: ModelNode, startOffset: number, endOffset: number): ModelRange;
+  fromInNode(
+    node: ModelNode,
+    startOffset: number,
+    endOffset: number
+  ): ModelRange;
 
   fromAroundAll(): ModelRange;
 }
@@ -313,11 +367,19 @@ export class ModelRangeFactory implements RangeFactory {
     this.root = root;
   }
 
-  fromPaths(path1: number[], path2: number[], root: ModelElement = this.root): ModelRange {
+  fromPaths(
+    path1: number[],
+    path2: number[],
+    root: ModelElement = this.root
+  ): ModelRange {
     return ModelRange.fromPaths(root, path1, path2);
   }
 
-  fromInElement(element: ModelElement, startOffset = 0, endOffset: number = element.getMaxOffset()): ModelRange {
+  fromInElement(
+    element: ModelElement,
+    startOffset = 0,
+    endOffset: number = element.getMaxOffset()
+  ): ModelRange {
     return ModelRange.fromInElement(element, startOffset, endOffset);
   }
 
@@ -325,19 +387,25 @@ export class ModelRangeFactory implements RangeFactory {
     return ModelRange.fromAroundNode(node);
   }
 
-  fromInTextNode(node: ModelText, startOffset = 0, endOffset: number = node.length): ModelRange {
+  fromInTextNode(
+    node: ModelText,
+    startOffset = 0,
+    endOffset: number = node.length
+  ): ModelRange {
     return ModelRange.fromInTextNode(node, startOffset, endOffset);
   }
 
-  fromInNode(node: ModelNode, startOffset: number, endOffset: number): ModelRange {
+  fromInNode(
+    node: ModelNode,
+    startOffset: number,
+    endOffset: number
+  ): ModelRange {
     return ModelRange.fromInNode(node, startOffset, endOffset);
   }
 
   fromAroundAll(): ModelRange {
     return this.fromInElement(this.root);
   }
-
-
 }
 
-export type RangeContextStrategy = "rangeContains" | "rangeIsInside";
+export type RangeContextStrategy = 'rangeContains' | 'rangeIsInside';

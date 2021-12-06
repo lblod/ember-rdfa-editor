@@ -4,10 +4,10 @@ import {
   insertTextNodeWithSpace,
   isList,
   findFirstLi,
-  siblingLis
+  siblingLis,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import flatMap from './flat-map';
-import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  * @method findFirstThOrTd
@@ -18,7 +18,9 @@ import {INVISIBLE_SPACE} from "@lblod/ember-rdfa-editor/model/util/constants";
 function findFirstThOrTd(table: Node): Node | null {
   const matches = flatMap(
     table,
-    (node) => {return tagName(node) === "th" || tagName(node) === "td";},
+    (node) => {
+      return tagName(node) === 'th' || tagName(node) === 'td';
+    },
     true
   );
 
@@ -37,7 +39,7 @@ function findFirstThOrTd(table: Node): Node | null {
  */
 function firstTextChild(node: Node): Text {
   if (node.nodeType !== Node.ELEMENT_NODE || isVoidElement(node)) {
-    throw new Error("Invalid argument, expected a (non void) element.");
+    throw new Error('Invalid argument, expected a (non void) element.');
   }
 
   if (node.firstChild) {
@@ -64,12 +66,15 @@ function firstTextChild(node: Node): Text {
  * @return {Node} next applicable node
  * @private
  */
-function findNextApplicableNode(node: Node | null, rootNode: HTMLElement): Node {
+function findNextApplicableNode(
+  node: Node | null,
+  rootNode: HTMLElement
+): Node {
   if (!node || node === rootNode) {
     return rootNode;
   }
 
-  if (tagName(node) === "li") {
+  if (tagName(node) === 'li') {
     const siblings = siblingLis(node as HTMLLIElement);
     const index = siblings.indexOf(node as HTMLLIElement);
 
@@ -89,7 +94,7 @@ function findNextApplicableNode(node: Node | null, rootNode: HTMLElement): Node 
       }
 
       return findNextApplicableNode(node.parentNode, rootNode);
-    } else if (tagName(sibling) === "table") {
+    } else if (tagName(sibling) === 'table') {
       const validNodeForTable = findFirstThOrTd(sibling);
 
       if (validNodeForTable) {
@@ -99,7 +104,9 @@ function findNextApplicableNode(node: Node | null, rootNode: HTMLElement): Node 
         return findNextApplicableNode(sibling, rootNode);
       }
     } else if (isList(sibling)) {
-      const firstLi = findFirstLi(sibling as HTMLUListElement | HTMLOListElement);
+      const firstLi = findFirstLi(
+        sibling as HTMLUListElement | HTMLOListElement
+      );
 
       if (firstLi) {
         return firstTextChild(firstLi);
@@ -113,7 +120,10 @@ function findNextApplicableNode(node: Node | null, rootNode: HTMLElement): Node 
       return sibling.firstChild;
     }
 
-    if (sibling.nodeType !== Node.TEXT_NODE && sibling.nodeType !== Node.ELEMENT_NODE) {
+    if (
+      sibling.nodeType !== Node.TEXT_NODE &&
+      sibling.nodeType !== Node.ELEMENT_NODE
+    ) {
       return findNextApplicableNode(sibling, rootNode);
     }
 
@@ -122,7 +132,7 @@ function findNextApplicableNode(node: Node | null, rootNode: HTMLElement): Node 
     return findNextApplicableNode(node.parentNode, rootNode);
   }
 
-  throw new Error("Received a node without a parent node.");
+  throw new Error('Received a node without a parent node.');
 }
 
 /**
@@ -135,7 +145,10 @@ function findNextApplicableNode(node: Node | null, rootNode: HTMLElement): Node 
  * @return {Text | null} nextNode or null if textNode is at the end of the tree
  * @public
  */
-export default function nextTextNode(baseNode: Node, rootNode: HTMLElement): Text | null {
+export default function nextTextNode(
+  baseNode: Node,
+  rootNode: HTMLElement
+): Text | null {
   const nextNode = findNextApplicableNode(baseNode, rootNode);
   // Next node is rootNode, so I'm at the end of the tree.
   if (nextNode === rootNode) {

@@ -1,13 +1,12 @@
-import Command from "./command";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import ModelTable from "@lblod/ember-rdfa-editor/model/model-table";
-import {MisbehavedSelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {logExecute} from "@lblod/ember-rdfa-editor/utils/logging-utils";
-
+import Command from './command';
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
+import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
 export default class RemoveTableRowCommand extends Command {
-  name = "remove-table-row";
+  name = 'remove-table-row';
 
   constructor(model: Model) {
     super(model);
@@ -41,17 +40,16 @@ export default class RemoveTableRowCommand extends Command {
 
     const tableDimensions = table.getDimensions();
     if (position.y === 0 && tableDimensions.y === 1) {
-      this.model.change(mutator => {
+      this.model.change((mutator) => {
         table.removeTable(mutator);
       });
     } else {
-      const cellYToSelect = position.y === tableDimensions.y - 1
-        ? position.y - 1
-        : position.y;
+      const cellYToSelect =
+        position.y === tableDimensions.y - 1 ? position.y - 1 : position.y;
 
       const cellToSelect = table.getCell(position.x, cellYToSelect);
 
-      this.model.change(mutator => {
+      this.model.change((mutator) => {
         if (cellToSelect) {
           selection.collapseIn(cellToSelect);
         }

@@ -1,6 +1,6 @@
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {ModelError} from "@lblod/ember-rdfa-editor/utils/errors";
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 export default class TestModel extends Model {
   private shouldWriteSelection = true;
@@ -12,7 +12,7 @@ export default class TestModel extends Model {
     } else if (ModelNode.isModelText(node)) {
       this.rootModelNode.addChild(node);
     } else {
-      throw new ModelError("Non-element, non-text nodes not supported here");
+      throw new ModelError('Non-element, non-text nodes not supported here');
     }
 
     this.write();
@@ -27,7 +27,7 @@ export default class TestModel extends Model {
   }
 
   writeSelection() {
-    if(this.shouldWriteSelection) {
+    if (this.shouldWriteSelection) {
       super.writeSelection();
     }
   }

@@ -1,4 +1,4 @@
-import RichNode from "@lblod/marawa/rich-node";
+import RichNode from '@lblod/marawa/rich-node';
 
 /**
  * Takes a tree and returns a list of nodes that match the given predicate.
@@ -11,7 +11,11 @@ import RichNode from "@lblod/marawa/rich-node";
  *
  * @return {RichNode[]} list of nodes matching the predicate function
  */
-export default function flatMap<T extends Node | RichNode>(startNode: T, predicate: (node: T) => boolean, stopOnFirstMatch = false): Array<T> {
+export default function flatMap<T extends Node | RichNode>(
+  startNode: T,
+  predicate: (node: T) => boolean,
+  stopOnFirstMatch = false
+): Array<T> {
   const matches = [];
 
   let currentScan;

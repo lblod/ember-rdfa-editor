@@ -3,12 +3,12 @@
    ================================== */
 
 .say-toast {
-  @include au-font-size($au-h6,1.3);
+  @include au-font-size($au-h6, 1.3);
   display: flex;
   align-items: center;
   padding: $au-unit-tiny $au-unit-small;
   color: $au-white;
-  border-radius: .2rem;
+  border-radius: 0.2rem;
   background-color: var(--au-gray-800);
 
   &.is-loaded .say-icon {
@@ -19,7 +19,7 @@
   &.is-loaded {
     animation-name: dissappear;
     animation-iteration-count: 1;
-    animation-duration: .3s;
+    animation-duration: 0.3s;
     animation-delay: 1s;
     animation-fill-mode: forwards;
   }

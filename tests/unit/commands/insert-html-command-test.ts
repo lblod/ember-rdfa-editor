@@ -1,12 +1,12 @@
-import {module, test} from "qunit";
-import {vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import InsertHtmlCommand from "@lblod/ember-rdfa-editor/commands/insert-html-command";
-import {oneLineTrim} from "common-tags";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
+import { module, test } from 'qunit';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
+import { oneLineTrim } from 'common-tags';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
-module("Unit | commands | insert-html-command-test", hooks => {
+module('Unit | commands | insert-html-command-test', (hooks) => {
   const ctx = new ModelTestContext();
   let command: InsertHtmlCommand;
   hooks.beforeEach(() => {
@@ -14,15 +14,14 @@ module("Unit | commands | insert-html-command-test", hooks => {
     command = new InsertHtmlCommand(ctx.model);
   });
 
-
-  test("inserts correctly in empty document", assert => {
+  test('inserts correctly in empty document', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot/>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text>hello world</text>
@@ -36,18 +35,17 @@ module("Unit | commands | insert-html-command-test", hooks => {
     command.execute(htmlToInsert, range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
-
   });
-  test("inserts correctly in document with empty textnode", assert => {
+  test('inserts correctly in document with empty textnode', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot>
         <text/>
       </modelRoot>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text/>
         <div>
@@ -62,19 +60,18 @@ module("Unit | commands | insert-html-command-test", hooks => {
     command.execute(htmlToInsert, range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
-
   });
 
-  test("inserts correctly inside textnode", assert => {
+  test('inserts correctly inside textnode', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot>
         <text>abcd</text>
       </modelRoot>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text>ab</text>
         <div>
@@ -90,18 +87,17 @@ module("Unit | commands | insert-html-command-test", hooks => {
     command.execute(htmlToInsert, range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
-
   });
-  test("correctly replaces part of textnode", assert => {
+  test('correctly replaces part of textnode', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot>
         <text>abcd</text>
       </modelRoot>
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text>a</text>
         <div>
@@ -117,11 +113,13 @@ module("Unit | commands | insert-html-command-test", hooks => {
     command.execute(htmlToInsert, range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
-
   });
-  test("correctly replaces complex range", assert => {
+  test('correctly replaces complex range', (assert) => {
     // language=XML
-    const {root: initial, textNodes: {rangeStart, rangeEnd}} = vdom`
+    const {
+      root: initial,
+      textNodes: { rangeStart, rangeEnd },
+    } = vdom`
       <modelRoot>
         <div>
           <text __id="rangeStart">abcd</text>
@@ -136,7 +134,7 @@ module("Unit | commands | insert-html-command-test", hooks => {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text>a</text>
@@ -161,15 +159,14 @@ module("Unit | commands | insert-html-command-test", hooks => {
     command.execute(htmlToInsert, range);
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
-
   });
 
-  test("can insert bold text as a direct child of the root node", assert => {
+  test('can insert bold text as a direct child of the root node', (assert) => {
     // language=XML
-    const {root: initial} = vdom`
+    const { root: initial } = vdom`
       <modelRoot/>`;
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text bold="true">my text</text>
       </modelRoot>`;

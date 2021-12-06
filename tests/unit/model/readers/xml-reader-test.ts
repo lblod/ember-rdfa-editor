@@ -1,19 +1,17 @@
-import {module, test} from "qunit";
-import {parseXml, vdom} from "@lblod/ember-rdfa-editor/model/util/xml-utils";
-import ModelTestContext from "dummy/tests/utilities/model-test-context";
+import { module, test } from 'qunit';
+import { parseXml, vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 
-module("Unit | model | readers | xml-reader-test", () => {
-
-  test("rootNode gets read as a modelrootnode", assert => {
+module('Unit | model | readers | xml-reader-test', () => {
+  test('rootNode gets read as a modelrootnode', (assert) => {
     const context = new ModelTestContext();
     context.reset();
 
     // language=XML
-    const {root} = vdom`<modelRoot />`;
+    const { root } = vdom`<modelRoot />`;
     assert.true(root.sameAs(context.model.rootModelNode));
-
   });
-  test("test xml", assert => {
+  test('test xml', (assert) => {
     const xml = `
       <div>
         this text will be ignored because it's not inside a text node
@@ -31,13 +29,15 @@ module("Unit | model | readers | xml-reader-test", () => {
         <img><document><invalidNodeName>warning: there are no checks for invalid html/model state</invalidNodeName></document></img>
       </div>`;
 
-    const {root, elements: {coolSpan, paragraph}, textNodes: {myText}} = parseXml(xml);
+    const {
+      root,
+      elements: { coolSpan, paragraph },
+      textNodes: { myText },
+    } = parseXml(xml);
 
     assert.strictEqual(root.length, 4);
     assert.strictEqual(coolSpan.length, 3);
-    assert.strictEqual(myText.content, "content");
-    assert.strictEqual(paragraph.getAttribute("testAttr"), "value");
-
+    assert.strictEqual(myText.content, 'content');
+    assert.strictEqual(paragraph.getAttribute('testAttr'), 'value');
   });
 });
-

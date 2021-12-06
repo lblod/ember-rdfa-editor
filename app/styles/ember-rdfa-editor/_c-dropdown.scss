@@ -5,10 +5,9 @@
 /* Variables
   ========================================================================== */
 
-$say-dropdown-caret-size        : .4rem !default;
-$say-toolbar-height             : 44px !default;
-$say-smaller-font-size          : 1.4rem !default;
-
+$say-dropdown-caret-size: 0.4rem !default;
+$say-toolbar-height: 44px !default;
+$say-smaller-font-size: 1.4rem !default;
 
 /* Component
   ========================================================================== */
@@ -19,11 +18,10 @@ $say-smaller-font-size          : 1.4rem !default;
 }
 
 .say-toolbar__button {
-
 }
 
 .say-dropdown__button {
-  @include au-font-size($au-base,1);
+  @include au-font-size($au-base, 1);
   appearance: none;
   outline: none;
   border: 0;
@@ -40,7 +38,7 @@ $say-smaller-font-size          : 1.4rem !default;
   margin: 0;
 
   & + & {
-    border-left: .1rem solid var(--au-gray-200);
+    border-left: 0.1rem solid var(--au-gray-200);
   }
 
   &:hover,
@@ -51,18 +49,18 @@ $say-smaller-font-size          : 1.4rem !default;
 
   &:focus {
     outline: var(--au-outline);
-    outline-offset: -.4rem;
+    outline-offset: -0.4rem;
   }
 
   &.is-active {
     color: var(--au-gray-900);
     background-color: var(--au-gray-300);
-    box-shadow: inset 0 -.3rem 0 0 var(--au-gray-400);
+    box-shadow: inset 0 -0.3rem 0 0 var(--au-gray-400);
   }
 }
 
 .say-dropdown__menu {
-  @include au-font-size($au-base,1.5);
+  @include au-font-size($au-base, 1.5);
   font-family: var(--au-font);
   font-weight: var(--au-regular);
   position: absolute;
@@ -76,8 +74,8 @@ $say-smaller-font-size          : 1.4rem !default;
   min-width: 100%;
   width: auto;
   top: calc(100% + #{$au-unit-tiny});
-  box-shadow: 0 0 12px rgba($au-gray-900,.15), 0 0 2px rgba($au-gray-900,.1);
-  border-radius: .3rem;
+  box-shadow: 0 0 12px rgba($au-gray-900, 0.15), 0 0 2px rgba($au-gray-900, 0.1);
+  border-radius: 0.3rem;
   display: none;
 
   &:before,
@@ -85,7 +83,7 @@ $say-smaller-font-size          : 1.4rem !default;
     bottom: 100%;
     left: 50%;
     border: solid transparent;
-    content: " ";
+    content: ' ';
     height: 0;
     width: 0;
     position: absolute;
@@ -113,8 +111,8 @@ $say-smaller-font-size          : 1.4rem !default;
   }
 }
 
-.say-dropdown__menu [role="menuitem"] {
-  @include au-font-size($say-smaller-font-size,1.5);
+.say-dropdown__menu [role='menuitem'] {
+  @include au-font-size($say-smaller-font-size, 1.5);
   font-family: var(--au-font);
   font-weight: var(--au-regular);
   color: var(--au-gray-700);
@@ -127,13 +125,13 @@ $say-smaller-font-size          : 1.4rem !default;
   text-align: left;
 
   &:first-child {
-    border-top-right-radius: .3rem;
-    border-top-left-radius: .3rem;
+    border-top-right-radius: 0.3rem;
+    border-top-left-radius: 0.3rem;
   }
 
   &:last-child {
-    border-bottom-right-radius: .3rem;
-    border-bottom-left-radius: .3rem;
+    border-bottom-right-radius: 0.3rem;
+    border-bottom-left-radius: 0.3rem;
   }
 
   &:hover {
@@ -143,10 +141,10 @@ $say-smaller-font-size          : 1.4rem !default;
 
   &:focus {
     outline: var(--au-outline);
-    outline-offset: -.2rem;
+    outline-offset: -0.2rem;
   }
 }
 
-.say-dropdown__menu [role="menuitem"] + [role="menuitem"] {
+.say-dropdown__menu [role='menuitem'] + [role='menuitem'] {
   border-top: 1px dotted var(--au-gray-300);
 }

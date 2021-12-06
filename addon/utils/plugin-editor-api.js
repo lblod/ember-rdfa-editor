@@ -25,7 +25,10 @@ export default class PluginEditorApi {
   }
 
   createModelRangeFromTextRegion(region) {
-    const [start, end] = this._hintsRegistry.updateLocationToCurrentIndex(this._hrId, region);
+    const [start, end] = this._hintsRegistry.updateLocationToCurrentIndex(
+      this._hrId,
+      region
+    );
     return globalTextRegionToModelRange(this._editor.rootModelNode, start, end);
   }
 
@@ -42,7 +45,9 @@ export default class PluginEditorApi {
    * @return {Array} The region that is currently selected
    * @public
    */
-  get currentSelection() { return this._editor.currentSelection; }
+  get currentSelection() {
+    return this._editor.currentSelection;
+  }
 
   /**
    * Selects the current selection for applying operations.
@@ -52,7 +57,9 @@ export default class PluginEditorApi {
    * @return {Selection} Instance on which operations can be executed (see:
    * @public
    */
-  selectCurrentSelection() { return this._editor.selectCurrentSelection(); }
+  selectCurrentSelection() {
+    return this._editor.selectCurrentSelection();
+  }
 
   /**
    * Selects the highlighted range, or part of it, for applying
@@ -79,8 +86,12 @@ export default class PluginEditorApi {
    * @public
    */
   selectHighlight(range, options) {
-    const updatedLocation = this._hintsRegistry.updateLocationToCurrentIndex(this._hrId, range);
-    return this._editor.selectHighlight(updatedLocation, options); }
+    const updatedLocation = this._hintsRegistry.updateLocationToCurrentIndex(
+      this._hrId,
+      range
+    );
+    return this._editor.selectHighlight(updatedLocation, options);
+  }
 
   /**
    * Selects nodes based on an RDFa context that should be applied.
@@ -126,8 +137,12 @@ export default class PluginEditorApi {
    * @public
    */
   selectContext(region, options) {
-    const updatedLocation = this._hintsRegistry.updateLocationToCurrentIndex(this._hrId, region);
-    return this._editor.selectContext(updatedLocation, options); }
+    const updatedLocation = this._hintsRegistry.updateLocationToCurrentIndex(
+      this._hrId,
+      region
+    );
+    return this._editor.selectContext(updatedLocation, options);
+  }
 
   /**
    * Updates a selection as described above.
@@ -715,7 +730,9 @@ export default class PluginEditorApi {
    * regardless of whether or not there are other types on your
    * selection.
    */
-  update(selection, operation) { return this._editor.update(selection, operation); }
+  update(selection, operation) {
+    return this._editor.update(selection, operation);
+  }
 
   /**
    * Sets the carret position in the editor.
@@ -726,7 +743,9 @@ export default class PluginEditorApi {
    * @param {boolean} notify observers, default true
    * @public
    */
-  setCurrentPosition(position) { this._editor.setCurrentPosition(position); }
+  setCurrentPosition(position) {
+    this._editor.setCurrentPosition(position);
+  }
 
   /**
    * Set the cursor position on the desired location.  This function
@@ -762,5 +781,7 @@ export default class PluginEditorApi {
    *
    * @public
    */
-  setCaret(domNode, relativePostion) { this._editor.setCaret  (domNode, relativePostion);}
+  setCaret(domNode, relativePostion) {
+    this._editor.setCaret(domNode, relativePostion);
+  }
 }

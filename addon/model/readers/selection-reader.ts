@@ -1,18 +1,31 @@
-import Reader from "@lblod/ember-rdfa-editor/model/readers/reader";
-import ModelSelection from "@lblod/ember-rdfa-editor/model/model-selection";
-import Model from "@lblod/ember-rdfa-editor/model/model";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import {isElement, isTextNode, tagName} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {ModelError, NotImplementedError, ParseError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {HIGHLIGHT_ATTRIBUTE, TEXT_PROPERTY_NODES} from "@lblod/ember-rdfa-editor/model/util/constants";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
-import ModelText from "@lblod/ember-rdfa-editor/model/model-text";
+import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import {
+  isElement,
+  isTextNode,
+  tagName,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {
+  ModelError,
+  NotImplementedError,
+  ParseError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
+import {
+  HIGHLIGHT_ATTRIBUTE,
+  TEXT_PROPERTY_NODES,
+} from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
 /**
  * Reader to convert a {@link Selection} to a {@link ModelSelection}.
  */
-export default class SelectionReader implements Reader<Selection, ModelSelection, void> {
+export default class SelectionReader
+  implements Reader<Selection, ModelSelection, void>
+{
   private model: Model;
 
   constructor(model: Model) {
@@ -74,19 +87,24 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     }
   }
 
-  private readDomPositionUnsafe(container: Node, domOffset: number): ModelPosition | null {
+  private readDomPositionUnsafe(
+    container: Node,
+    domOffset: number
+  ): ModelPosition | null {
     let result = null;
     if (SelectionReader.isTextPropertyNode(container)) {
       return this.findPositionForTextPropertyNode(container, domOffset);
     } else if (isElement(container)) {
-      const modelContainer = this.model.getModelNodeFor(container) as ModelElement;
+      const modelContainer = this.model.getModelNodeFor(
+        container
+      ) as ModelElement;
       const finalOffset = modelContainer.indexToOffset(domOffset);
       result = ModelPosition.fromInElement(modelContainer, finalOffset);
     } else if (isTextNode(container)) {
       const modelTextNode = this.model.getModelNodeFor(container) as ModelText;
       const modelContainer = modelTextNode.parent;
       if (!modelContainer) {
-        throw new ParseError("Text node without parent node");
+        throw new ParseError('Text node without parent node');
       }
 
       const basePath = modelContainer.getOffsetPath();
@@ -106,14 +124,20 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
     if (!TEXT_PROPERTY_NODES.has(tagName(elem))) {
       return false;
     }
-    if (tagName(elem) === "span" && !elem.getAttribute(HIGHLIGHT_ATTRIBUTE)) {
+    if (tagName(elem) === 'span' && !elem.getAttribute(HIGHLIGHT_ATTRIBUTE)) {
       return false;
     }
     return true;
   }
 
-  private findPositionForTextPropertyNode(container: Node, domOffset: number): ModelPosition {
-    const walker = document.createTreeWalker(this.model.rootNode, NodeFilter.SHOW_TEXT);
+  private findPositionForTextPropertyNode(
+    container: Node,
+    domOffset: number
+  ): ModelPosition {
+    const walker = document.createTreeWalker(
+      this.model.rootNode,
+      NodeFilter.SHOW_TEXT
+    );
     walker.currentNode = container;
 
     let resultingNode;
@@ -147,10 +171,14 @@ export default class SelectionReader implements Reader<Selection, ModelSelection
    */
   private static isReverseSelection(selection: Selection): boolean {
     if (!selection.anchorNode || !selection.focusNode) return false;
-    const position = selection.anchorNode.compareDocumentPosition(selection.focusNode);
+    const position = selection.anchorNode.compareDocumentPosition(
+      selection.focusNode
+    );
 
     // Position == 0 if nodes are the same.
-    return !position && selection.anchorOffset > selection.focusOffset
-      || position === Node.DOCUMENT_POSITION_PRECEDING;
+    return (
+      (!position && selection.anchorOffset > selection.focusOffset) ||
+      position === Node.DOCUMENT_POSITION_PRECEDING
+    );
   }
 }

@@ -1,6 +1,6 @@
-import {InputHandler} from './input-handler';
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
+import { InputHandler } from './input-handler';
+import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
 
 /**
  * EscapeHandler, an event handler to handle escape.
@@ -10,12 +10,12 @@ import {isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/eve
  * @constructor
  */
 export default class EscapeHandler extends InputHandler {
-  constructor({rawEditor}: {rawEditor: PernetRawEditor}) {
+  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
     super(rawEditor);
   }
 
   isHandlerFor(event: Event) {
-    return isKeyDownEvent(event) && event.key === "Escape";
+    return isKeyDownEvent(event) && event.key === 'Escape';
   }
 
   handleEvent(_: KeyboardEvent) {
@@ -24,7 +24,6 @@ export default class EscapeHandler extends InputHandler {
       (activeElement as HTMLElement).blur();
     }
 
-    return {allowPropagation: false};
+    return { allowPropagation: false };
   }
 }
-

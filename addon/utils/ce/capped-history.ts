@@ -14,12 +14,15 @@ export default class CappedHistory {
   maxItems;
   history: Document[] = [];
 
-  constructor({maxItems = 10}: {maxItems: number}) {
+  constructor({ maxItems = 10 }: { maxItems: number }) {
     this.maxItems = maxItems;
   }
 
   push(document: Document) {
-    if (this.history.length > 0 && this.history[this.history.length - 1] === document) {
+    if (
+      this.history.length > 0 &&
+      this.history[this.history.length - 1] === document
+    ) {
       return;
     }
 

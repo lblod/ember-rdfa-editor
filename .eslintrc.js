@@ -7,70 +7,76 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
     ecmaFeatures: {
-      legacyDecorators: true
+      legacyDecorators: true,
     },
-
   },
-  plugins: [
-    'ember',
-    '@typescript-eslint',
-  ],
+  plugins: ['ember', '@typescript-eslint'],
   extends: [
     'eslint:recommended',
     'plugin:ember/recommended',
-    'plugin:@typescript-eslint/eslint-recommended'
+    'plugin:prettier/recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
   ],
   env: {
-    browser: true
+    browser: true,
   },
   rules: {
     'ember/no-jquery': 'error',
-    'semi': 'error',
+    semi: 'error',
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': 'error'
+    '@typescript-eslint/no-unused-vars': 'error',
+    'no-console': 'off',
   },
   overrides: [
     // node files
     {
       files: [
         '.eslintrc.js',
+        '.prettierrc.js',
         '.template-lintrc.js',
         'ember-cli-build.js',
         'index.js',
         'testem.js',
         'blueprints/*/index.js',
         'config/**/*.js',
-        'tests/dummy/config/**/*.js'
+        'tests/dummy/config/**/*.js',
       ],
       excludedFiles: [
         'addon/**',
         'addon-test-support/**',
         'app/**',
-        'tests/dummy/app/**'
+        'tests/dummy/app/**',
       ],
       parserOptions: {
-        sourceType: 'script'
+        sourceType: 'script',
       },
       env: {
         browser: true,
-        node: true
+        node: true,
       },
       plugins: ['node'],
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
-        // add your custom rules and overrides for node files here
-      })
+      rules: Object.assign(
+        {},
+        require('eslint-plugin-node').configs.recommended.rules,
+        {
+          // add your custom rules and overrides for node files here
+        }
+      ),
     },
     // typescript
     {
-      "files": ["**/*.ts", "**/*.tsx"],
+      files: ['**/*.ts', '**/*.tsx'],
       parserOptions: {
-        project: ['./tsconfig.json']
+        project: ['./tsconfig.json'],
       },
       rules: {
         'ember/no-jquery': 'error',
-        'semi': 'off',
-        '@typescript-eslint/no-unused-vars': ['error', {'argsIgnorePattern': '^_'}],
+        semi: 'off',
+        '@typescript-eslint/no-unused-vars': [
+          'error',
+          { argsIgnorePattern: '^_' },
+        ],
         '@typescript-eslint/semi': ['error', 'always'],
 
         '@typescript-eslint/adjacent-overload-signatures': 'error',
@@ -115,8 +121,8 @@ module.exports = {
         '@typescript-eslint/require-await': 'error',
         '@typescript-eslint/restrict-plus-operands': 'error',
         '@typescript-eslint/restrict-template-expressions': 'error',
-        '@typescript-eslint/unbound-method': ['error', {'ignoreStatic': true}],
+        '@typescript-eslint/unbound-method': ['error', { ignoreStatic: true }],
       },
-    }
-  ]
+    },
+  ],
 };

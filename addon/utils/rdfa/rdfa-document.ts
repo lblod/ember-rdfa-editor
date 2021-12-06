@@ -1,8 +1,12 @@
 import xmlFormat from 'xml-formatter';
 import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import {AnyEventName, EditorEventListener, ListenerConfig} from "@lblod/ember-rdfa-editor/utils/event-bus";
-import {RawEditorController} from "@lblod/ember-rdfa-editor/model/controller";
+import {
+  AnyEventName,
+  EditorEventListener,
+  ListenerConfig,
+} from '@lblod/ember-rdfa-editor/utils/event-bus';
+import { RawEditorController } from '@lblod/ember-rdfa-editor/model/controller';
 
 /**
  * Legacy interface for external consumers. They expect to receive this interface
@@ -22,10 +26,17 @@ interface RdfaDocument {
 
   setHtmlContent(html: string): void;
 
-  on<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig): void;
+  on<E extends AnyEventName>(
+    eventName: E,
+    callback: EditorEventListener<E>,
+    config?: ListenerConfig
+  ): void;
 
-  off<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>, config?: ListenerConfig): void;
-
+  off<E extends AnyEventName>(
+    eventName: E,
+    callback: EditorEventListener<E>,
+    config?: ListenerConfig
+  ): void;
 }
 
 /**
@@ -35,19 +46,22 @@ interface RdfaDocument {
  *
  * This is both to protect the internal dom of the editor and to remove internals
  */
-export default class RdfaDocumentController extends RawEditorController implements RdfaDocument {
-
-
+export default class RdfaDocumentController
+  extends RawEditorController
+  implements RdfaDocument
+{
   get htmlContent() {
     const htmlWriter = new HTMLExportWriter(this._rawEditor.model);
-    const output = (htmlWriter.write(this._rawEditor.model.rootModelNode) as HTMLElement);
+    const output = htmlWriter.write(
+      this._rawEditor.model.rootModelNode
+    ) as HTMLElement;
     return output.innerHTML;
   }
 
   set htmlContent(html: string) {
     const root = this._rawEditor.model.rootModelNode;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
-    this._rawEditor.executeCommand("insert-html", html, range);
+    this._rawEditor.executeCommand('insert-html', html, range);
     this._rawEditor.selection.lastRange?.collapse(true);
     this._rawEditor.model.writeSelection();
   }
@@ -59,7 +73,7 @@ export default class RdfaDocumentController extends RawEditorController implemen
   set xmlContent(xml: string) {
     const root = this._rawEditor.model.rootModelNode;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
-    this._rawEditor.executeCommand("insert-xml", xml, range);
+    this._rawEditor.executeCommand('insert-xml', xml, range);
   }
 
   get xmlContentPrettified() {

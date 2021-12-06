@@ -1,5 +1,5 @@
-import {warn} from '@ember/debug';
-import {isVoidElement} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { warn } from '@ember/debug';
+import { isVoidElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ListBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/backspace-plugin';
 import LumpNodeBackspacePlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/backspace-plugin';
 import EmptyTextNodePlugin from '@lblod/ember-rdfa-editor/utils/plugins/empty-text-node/backspace-plugin';
@@ -20,21 +20,24 @@ import {
   RemoveEmptyTextNodeManipulation,
   RemoveOtherNodeManipulation,
   RemoveVoidElementManipulation,
-  VoidElement
+  VoidElement,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {InputHandler, InputPlugin} from './input-handler';
+import { InputHandler, InputPlugin } from './input-handler';
 import {
   editorDebug,
   hasVisibleChildren,
   moveCaret,
   moveCaretBefore,
   paintCycleHappened,
-  stringToVisibleText
+  stringToVisibleText,
 } from '@lblod/ember-rdfa-editor/editor/utils';
-import RawEditor from "@lblod/ember-rdfa-editor/utils/ce/raw-editor";
-import PernetRawEditor from "@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor";
-import {HandlerResponse} from "@lblod/ember-rdfa-editor/editor/input-handlers/handler-response";
-import {isBeforeInputEvent, isKeyDownEvent} from "@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers";
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
+import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
+import {
+  isBeforeInputEvent,
+  isKeyDownEvent,
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
 
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
@@ -61,7 +64,7 @@ interface DOMRectCoordinatesInEditor {
  * 2.
  */
 type ThingBeforeCursor =
-  CharacterPosition
+  | CharacterPosition
   | EmptyTextNodeStartPosition
   | EmptyTextNodeEndPosition
   | ElementStartPosition
@@ -81,7 +84,7 @@ interface BaseThingBeforeCursor {
  * the provided node or in an adjacent text node.
  */
 interface CharacterPosition extends BaseThingBeforeCursor {
-  type: "character";
+  type: 'character';
   node: Text;
   position: number;
 }
@@ -94,7 +97,7 @@ interface CharacterPosition extends BaseThingBeforeCursor {
  *
  */
 interface EmptyTextNodeEndPosition extends BaseThingBeforeCursor {
-  type: "emptyTextNodeEnd";
+  type: 'emptyTextNodeEnd';
   node: Text;
 }
 
@@ -103,7 +106,7 @@ interface EmptyTextNodeEndPosition extends BaseThingBeforeCursor {
  * We consider the current position of the cursor at the beginning of the empty text node.
  */
 interface EmptyTextNodeStartPosition extends BaseThingBeforeCursor {
-  type: "emptyTextNodeStart";
+  type: 'emptyTextNodeStart';
   node: Text;
 }
 
@@ -114,7 +117,7 @@ interface EmptyTextNodeStartPosition extends BaseThingBeforeCursor {
  * beginning of the element.
  */
 interface ElementStartPosition extends BaseThingBeforeCursor {
-  type: "elementStart";
+  type: 'elementStart';
   node: Element;
 }
 
@@ -124,7 +127,7 @@ interface ElementStartPosition extends BaseThingBeforeCursor {
  * We consider the cursor to be right after the element.
  */
 interface ElementEndPosition extends BaseThingBeforeCursor {
-  type: "elementEnd";
+  type: 'elementEnd';
   node: HTMLElement;
 }
 
@@ -134,8 +137,8 @@ interface ElementEndPosition extends BaseThingBeforeCursor {
  * We consider the cursor to be right after the element
  */
 interface VoidElementPosition extends BaseThingBeforeCursor {
-  type: "voidElement"
-  node: VoidElement
+  type: 'voidElement';
+  node: VoidElement;
 }
 
 /**
@@ -149,8 +152,8 @@ interface VoidElementPosition extends BaseThingBeforeCursor {
  * expected types are Comment and (possibly) CDATASection
  */
 interface UncommonNodeEndPosition extends BaseThingBeforeCursor {
-  type: "uncommonNodeEnd";
-  node: UncommonNode
+  type: 'uncommonNodeEnd';
+  node: UncommonNode;
 }
 
 /**
@@ -160,7 +163,13 @@ interface UncommonNodeEndPosition extends BaseThingBeforeCursor {
  * depth as we get to understand how they appear in a text document in
  * the wild.
  */
-type UncommonNode = CDATASection | ProcessingInstruction | Comment | Document | DocumentType | DocumentFragment;
+type UncommonNode =
+  | CDATASection
+  | ProcessingInstruction
+  | Comment
+  | Document
+  | DocumentType
+  | DocumentFragment;
 
 /**
  * Ensures the received node is an UncommonNode.
@@ -173,15 +182,21 @@ type UncommonNode = CDATASection | ProcessingInstruction | Comment | Document | 
  * case this is not an UncommonNode.
  */
 function ensureUncommonNode(node: Node, errorMessage?: string): UncommonNode {
-  if ([Node.CDATA_SECTION_NODE,
-    Node.PROCESSING_INSTRUCTION_NODE,
-    Node.COMMENT_NODE,
-    Node.DOCUMENT_NODE,
-    Node.DOCUMENT_TYPE_NODE,
-    Node.DOCUMENT_FRAGMENT_NODE].includes(node.nodeType)) {
+  if (
+    [
+      Node.CDATA_SECTION_NODE,
+      Node.PROCESSING_INSTRUCTION_NODE,
+      Node.COMMENT_NODE,
+      Node.DOCUMENT_NODE,
+      Node.DOCUMENT_TYPE_NODE,
+      Node.DOCUMENT_FRAGMENT_NODE,
+    ].includes(node.nodeType)
+  ) {
     return node as UncommonNode;
   } else {
-    throw errorMessage || `Received node ${node.toString()} is not an UncommonNode.`;
+    throw (
+      errorMessage || `Received node ${node.toString()} is not an UncommonNode.`
+    );
   }
 }
 
@@ -192,12 +207,12 @@ function ensureUncommonNode(node: Node, errorMessage?: string): UncommonNode {
  * of the editor.
  */
 interface EditorRootPosition extends BaseThingBeforeCursor {
-  type: "editorRootStart";
+  type: 'editorRootStart';
   node: Element;
 }
 
 export type BackspaceHandlerManipulation =
-  RemoveCharacterManipulation
+  | RemoveCharacterManipulation
   | RemoveEmptyTextNodeManipulation
   | RemoveVoidElementManipulation
   | MoveCursorToEndOfElementManipulation
@@ -217,7 +232,10 @@ export interface BackspacePlugin extends InputPlugin {
    *
    * Hint: return false if you don't detect location updates.
    */
-  detectChange: (manipulation: BackspaceHandlerManipulation, editor: RawEditor) => boolean;
+  detectChange: (
+    manipulation: BackspaceHandlerManipulation,
+    editor: RawEditor
+  ) => boolean;
 }
 
 /**
@@ -313,7 +331,7 @@ export default class BackspaceHandler extends InputHandler {
    * @public
    * @constructor
    */
-  constructor({rawEditor}: {rawEditor: PernetRawEditor }) {
+  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
     super(rawEditor);
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [
@@ -325,7 +343,7 @@ export default class BackspaceHandler extends InputHandler {
       new EmptyElementBackspacePlugin(),
       new BrSkippingBackspacePlugin(),
       new PlaceholderTextBackspacePlugin(),
-      new TableBackspacePlugin()
+      new TableBackspacePlugin(),
     ];
   }
 
@@ -338,10 +356,13 @@ export default class BackspaceHandler extends InputHandler {
    */
   isHandlerFor(event: Event): boolean {
     const selection = window.getSelection();
-    return ((isKeyDownEvent(event) && event.key === "Backspace")
-      || (isBeforeInputEvent(event) && event.inputType === "deleteContentsBackwards"))
-      && selection !== null
-      && selection.isCollapsed;
+    return (
+      ((isKeyDownEvent(event) && event.key === 'Backspace') ||
+        (isBeforeInputEvent(event) &&
+          event.inputType === 'deleteContentsBackwards')) &&
+      selection !== null &&
+      selection.isCollapsed
+    );
   }
 
   /**
@@ -356,15 +377,18 @@ export default class BackspaceHandler extends InputHandler {
 
     //TODO: Think harder about manageability of the lock state, now a bit all over the place.
     if (this.isLocked) {
-      editorDebug(`backspace-handler.handleEvent`, `Handler is busy removing, skipping`);
-      return {allowPropagation: false};
+      editorDebug(
+        `backspace-handler.handleEvent`,
+        `Handler is busy removing, skipping`
+      );
+      return { allowPropagation: false };
     }
 
     void this.backspace().then(() => {
       this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
     });
 
-    return {allowPropagation: false};
+    return { allowPropagation: false };
   }
 
   ////////////////////
@@ -379,12 +403,17 @@ export default class BackspaceHandler extends InputHandler {
    */
   async backspace(max_tries = 50) {
     if (this.isLocked) {
-      editorDebug(`backspace-handler.backspace`, `Handler is busy removing, skipping`);
+      editorDebug(
+        `backspace-handler.backspace`,
+        `Handler is busy removing, skipping`
+      );
       return;
     }
 
     if (max_tries == 0) {
-      warn("Too many backspace tries, giving up removing content", {id: "backspace-handler-too-many-tries"});
+      warn('Too many backspace tries, giving up removing content', {
+        id: 'backspace-handler-too-many-tries',
+      });
       return;
     }
 
@@ -399,11 +428,14 @@ export default class BackspaceHandler extends InputHandler {
       const manipulation = this.getNextManipulation();
 
       // Check if we can execute it.
-      const {mayExecute, dispatchedExecutor} = this.checkManipulationByPlugins(manipulation);
+      const { mayExecute, dispatchedExecutor } =
+        this.checkManipulationByPlugins(manipulation);
 
       // Error if we're not allowed to execute.
       if (!mayExecute) {
-        warn("Not allowed to execute manipulation for backspace", {id: "backspace-handler-manipulation-not-allowed"});
+        warn('Not allowed to execute manipulation for backspace', {
+          id: 'backspace-handler-manipulation-not-allowed',
+        });
         return;
       }
 
@@ -424,7 +456,12 @@ export default class BackspaceHandler extends InputHandler {
     }
 
     // Maybe iterate again.
-    if (pluginSeesChange || this.checkVisibleChange({previousVisualCursorCoordinates: visualCursorCoordinates})) {
+    if (
+      pluginSeesChange ||
+      this.checkVisibleChange({
+        previousVisualCursorCoordinates: visualCursorCoordinates,
+      })
+    ) {
       // TODO: Do we need to make sure cursor state in the editor corresponds with browser state here?
       return;
     } else {
@@ -443,31 +480,55 @@ export default class BackspaceHandler extends InputHandler {
    * @param options.previousVisualCursorCoordinates {Array<DOMRectCoordinatesInEditor>}
    * Coordinates of the rectangles defining the selection.
    */
-  checkVisibleChange(options: {previousVisualCursorCoordinates: Array<DOMRectCoordinatesInEditor>}): boolean {
-    const {previousVisualCursorCoordinates} = options;
+  checkVisibleChange(options: {
+    previousVisualCursorCoordinates: Array<DOMRectCoordinatesInEditor>;
+  }): boolean {
+    const { previousVisualCursorCoordinates } = options;
 
-    if (!previousVisualCursorCoordinates.length && !this.selectionCoordinatesInEditor.length) {
-      editorDebug(`backspace-handler.checkVisibleChange`,
+    if (
+      !previousVisualCursorCoordinates.length &&
+      !this.selectionCoordinatesInEditor.length
+    ) {
+      editorDebug(
+        `backspace-handler.checkVisibleChange`,
         `Did not see a visual change when removing character, no visualCoordinates whatsoever`,
-        {new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates});
+        {
+          new: this.selectionCoordinatesInEditor,
+          old: previousVisualCursorCoordinates,
+        }
+      );
       return false;
-    } else if (!previousVisualCursorCoordinates.length && this.selectionCoordinatesInEditor.length) {
-      editorDebug(`backspace-handler.checkVisibleChange`, `no previous coordinates`);
+    } else if (
+      !previousVisualCursorCoordinates.length &&
+      this.selectionCoordinatesInEditor.length
+    ) {
+      editorDebug(
+        `backspace-handler.checkVisibleChange`,
+        `no previous coordinates`
+      );
       return true;
-    } else if (previousVisualCursorCoordinates.length && !this.selectionCoordinatesInEditor.length) {
+    } else if (
+      previousVisualCursorCoordinates.length &&
+      !this.selectionCoordinatesInEditor.length
+    ) {
       editorDebug(`backspace-handler.checkVisibleChange`, 'no new coordinates');
       return true;
     }
     //Previous and current have visual coordinates, we need to compare the contents
     else {
-      const {left: ol, top: ot} = previousVisualCursorCoordinates[0];
-      const {left: nl, top: nt} = this.selectionCoordinatesInEditor[0];
+      const { left: ol, top: ot } = previousVisualCursorCoordinates[0];
+      const { left: nl, top: nt } = this.selectionCoordinatesInEditor[0];
       const visibleChange = ol !== nl || ot !== nt;
 
       if (!visibleChange) {
-        editorDebug(`backspace-handler.checkVisibleChange`,
+        editorDebug(
+          `backspace-handler.checkVisibleChange`,
           `Did not see a visual change when removing character`,
-          {new: this.selectionCoordinatesInEditor, old: previousVisualCursorCoordinates});
+          {
+            new: this.selectionCoordinatesInEditor,
+            old: previousVisualCursorCoordinates,
+          }
+        );
       }
 
       return visibleChange;
@@ -522,38 +583,51 @@ export default class BackspaceHandler extends InputHandler {
    */
   handleNativeManipulation(manipulation: BackspaceHandlerManipulation) {
     switch (manipulation.type) {
-      case "removeCharacter": {
-        const {node, position} = manipulation;
-        let nodeText = node.textContent || "";
-        if (nodeText.length > position + 2 && nodeText.slice(position + 1, position + 2) == " ") {
+      case 'removeCharacter': {
+        const { node, position } = manipulation;
+        let nodeText = node.textContent || '';
+        if (
+          nodeText.length > position + 2 &&
+          nodeText.slice(position + 1, position + 2) == ' '
+        ) {
           // if the character after our current position is a space, it might become invisible, so we need to convert it to a non breaking space
           // cases where this happens:
           // - two spaces becoming neighbours after the delete
           // - spaces moving to the start of a node
-          nodeText = `${nodeText.slice(0, position + 1)}\u00A0${nodeText.slice(position + 2)}`;
+          nodeText = `${nodeText.slice(0, position + 1)}\u00A0${nodeText.slice(
+            position + 2
+          )}`;
         }
-        if (nodeText.length - 1 == position && nodeText.length > 1 && nodeText.slice(position - 1, position) == " ") {
+        if (
+          nodeText.length - 1 == position &&
+          nodeText.length > 1 &&
+          nodeText.slice(position - 1, position) == ' '
+        ) {
           // if the character before our new position is a space, it might become invisible, so we need to convert it to a non breaking space
           // cases where this happens:
           // - two spaces becoming neighbours after the delete
           // - spaces moving to the end of a node
-          nodeText = `${nodeText.slice(0, position - 1)}\u00A0${nodeText.slice(position)}`;
+          nodeText = `${nodeText.slice(0, position - 1)}\u00A0${nodeText.slice(
+            position
+          )}`;
         }
-        node.textContent = `${nodeText.slice(0, position)}${nodeText.slice(position + 1)}`;
+        node.textContent = `${nodeText.slice(0, position)}${nodeText.slice(
+          position + 1
+        )}`;
         this.rawEditor.updateRichNode();
         moveCaret(node, position);
         break;
       }
-      case "removeEmptyTextNode": {
+      case 'removeEmptyTextNode': {
         // TODO: I don't think we ever enter this case
-        const {node: textNode} = manipulation;
+        const { node: textNode } = manipulation;
         moveCaretBefore(textNode);
         textNode.remove();
         break;
       }
-      case "removeEmptyElement": {
+      case 'removeEmptyElement': {
         if (!manipulation.node.parentElement) {
-          throw "Received other node does not have a parent.  Backspace failed te remove this node.";
+          throw 'Received other node does not have a parent.  Backspace failed te remove this node.';
         }
         const emptyElement = manipulation.node;
         moveCaretBefore(emptyElement);
@@ -561,10 +635,10 @@ export default class BackspaceHandler extends InputHandler {
         this.rawEditor.updateRichNode();
         break;
       }
-      case "removeOtherNode": {
+      case 'removeOtherNode': {
         // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
         if (!manipulation.node.parentElement) {
-          throw "Received other node does not have a parent.  Backspace failed to remove this node.";
+          throw 'Received other node does not have a parent.  Backspace failed to remove this node.';
         }
         const otherNode = manipulation.node as ChildNode;
         if (otherNode.parentElement) {
@@ -577,10 +651,10 @@ export default class BackspaceHandler extends InputHandler {
         }
         break;
       }
-      case "removeVoidElement": {
+      case 'removeVoidElement': {
         // TODO: currently this is a duplication of removeEmptyElement, do we need this extra branch?
         if (!manipulation.node.parentElement) {
-          throw "Received void element without parent.  Backspace failed to remove this node.";
+          throw 'Received void element without parent.  Backspace failed to remove this node.';
         }
         const voidElement = manipulation.node;
         moveCaretBefore(voidElement);
@@ -588,7 +662,7 @@ export default class BackspaceHandler extends InputHandler {
         this.rawEditor.updateRichNode();
         break;
       }
-      case "removeElementWithChildrenThatArentVisible": {
+      case 'removeElementWithChildrenThatArentVisible': {
         const elementWithOnlyInvisibleNodes = manipulation.node;
         const parentElement = elementWithOnlyInvisibleNodes.parentElement;
         if (parentElement) {
@@ -598,22 +672,24 @@ export default class BackspaceHandler extends InputHandler {
         }
         break;
       }
-      case "moveCursorToEndOfElement": {
+      case 'moveCursorToEndOfElement': {
         const element = manipulation.node;
         const length = element.childNodes.length;
         moveCaret(element, length);
         break;
       }
-      case "moveCursorBeforeElement": {
+      case 'moveCursorBeforeElement': {
         const elementOfManipulation = manipulation.node;
         moveCaretBefore(elementOfManipulation);
         break;
       }
-      case "keepCursorAtStart":
+      case 'keepCursorAtStart':
         // do nothing
         break;
       default:
-        throw `Case ${(manipulation as Manipulation).type} was not handled by handleNativeInputManipulation.`;
+        throw `Case ${
+          (manipulation as Manipulation).type
+        } was not handled by handleNativeInputManipulation.`;
     }
   }
 
@@ -634,94 +710,101 @@ export default class BackspaceHandler extends InputHandler {
     // the cursor (character or node)
     const thingBeforeCursor: ThingBeforeCursor = this.getThingBeforeCursor();
     switch (thingBeforeCursor.type) {
-      case "character": {
+      case 'character': {
         // character: remove the character
         const characterBeforeCursor = thingBeforeCursor;
         return {
-          type: "removeCharacter",
+          type: 'removeCharacter',
           node: characterBeforeCursor.node,
-          position: characterBeforeCursor.position
+          position: characterBeforeCursor.position,
         };
       }
-      case "emptyTextNodeStart": {
+      case 'emptyTextNodeStart': {
         // empty text node: remove the text node
         const textNodeBeforeCursor = thingBeforeCursor;
-        if (stringToVisibleText(textNodeBeforeCursor.node.textContent || "").length === 0) {
+        if (
+          stringToVisibleText(textNodeBeforeCursor.node.textContent || '')
+            .length === 0
+        ) {
           return {
-            type: "removeEmptyTextNode",
-            node: textNodeBeforeCursor.node
+            type: 'removeEmptyTextNode',
+            node: textNodeBeforeCursor.node,
           };
         } else {
-          throw "Received text node which is not empty as previous node.  Some assumption broke.";
+          throw 'Received text node which is not empty as previous node.  Some assumption broke.';
         }
       }
-      case "emptyTextNodeEnd": {
+      case 'emptyTextNodeEnd': {
         // empty text node: remove the text node
         const textNodePositionBeforeCursor = thingBeforeCursor;
         if (textNodePositionBeforeCursor.node.length === 0) {
           return {
-            type: "removeEmptyTextNode",
-            node: textNodePositionBeforeCursor.node
+            type: 'removeEmptyTextNode',
+            node: textNodePositionBeforeCursor.node,
           };
         } else {
-          throw "Received text node which is not empty as previous node.  Some assumption broke.";
+          throw 'Received text node which is not empty as previous node.  Some assumption broke.';
         }
       }
-      case "voidElement": {
+      case 'voidElement': {
         const voidElementBeforeCursor = thingBeforeCursor;
         return {
-          type: "removeVoidElement",
-          node: voidElementBeforeCursor.node
+          type: 'removeVoidElement',
+          node: voidElementBeforeCursor.node,
         };
       }
-      case "elementEnd": {
+      case 'elementEnd': {
         const elementBeforeCursor = thingBeforeCursor;
         return {
-          type: "moveCursorToEndOfElement",
-          node: elementBeforeCursor.node
+          type: 'moveCursorToEndOfElement',
+          node: elementBeforeCursor.node,
         };
       }
-      case "elementStart": {
+      case 'elementStart': {
         const parentBeforeCursor = thingBeforeCursor;
         const element = parentBeforeCursor.node;
         if (element.childNodes.length == 0) {
           return {
-            type: "removeEmptyElement",
-            node: element
+            type: 'removeEmptyElement',
+            node: element,
           };
         } else {
           // if  an element has no visible text nodes, we remove it
           if (hasVisibleChildren(element)) {
             return {
-              type: "moveCursorBeforeElement",
-              node: element as HTMLElement
+              type: 'moveCursorBeforeElement',
+              node: element as HTMLElement,
             };
           } else {
             return {
-              type: "removeElementWithChildrenThatArentVisible",
-              node: element
+              type: 'removeElementWithChildrenThatArentVisible',
+              node: element,
             };
           }
         }
       }
-      case "uncommonNodeEnd": {
+      case 'uncommonNodeEnd': {
         const positionBeforeCursor = thingBeforeCursor;
         const node = positionBeforeCursor.node;
         return {
-          type: "removeOtherNode",
-          node: node
+          type: 'removeOtherNode',
+          node: node,
         };
       }
-      case "editorRootStart": {
+      case 'editorRootStart': {
         return {
-          type: "keepCursorAtStart",
-          node: thingBeforeCursor.node
+          type: 'keepCursorAtStart',
+          node: thingBeforeCursor.node,
         };
       }
     }
 
     // TODO: Take care of other cases.
-    throw new Error(`Could not find manipulation to suggest for backspace ${(thingBeforeCursor as ThingBeforeCursor).type}`);
+    throw new Error(
+      `Could not find manipulation to suggest for backspace ${
+        (thingBeforeCursor as ThingBeforeCursor).type
+      }`
+    );
   }
 
   /**
@@ -808,10 +891,10 @@ export default class BackspaceHandler extends InputHandler {
           if (position == 0) {
             if (element == this.rawEditor.rootNode) {
               // special case, we're at the start of the editor
-              return {type: "editorRootStart", node: element};
+              return { type: 'editorRootStart', node: element };
             } else {
               // at the start of the element
-              return {type: "elementStart", node: element};
+              return { type: 'elementStart', node: element };
             }
           } else {
             // position > 1 so there is a child node before our cursor
@@ -819,17 +902,20 @@ export default class BackspaceHandler extends InputHandler {
             const child = element.childNodes[position - 1];
             if (child.nodeType == Node.TEXT_NODE) {
               const text = child as Text;
-              return {type: "character", position: text.length, node: text};
+              return { type: 'character', position: text.length, node: text };
             } else if (child.nodeType === Node.ELEMENT_NODE) {
               const element = child as HTMLElement;
               if (isVoidElement(element)) {
-                return {type: "voidElement", node: element as VoidElement};
+                return { type: 'voidElement', node: element as VoidElement };
               } else {
-                return {type: "elementEnd", node: element};
+                return { type: 'elementEnd', node: element };
               }
             } else {
-              const uncommonNode = ensureUncommonNode(child, "Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node.");
-              return {type: "uncommonNodeEnd", node: uncommonNode};
+              const uncommonNode = ensureUncommonNode(
+                child,
+                'Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node.'
+              );
+              return { type: 'uncommonNodeEnd', node: uncommonNode };
             }
           }
         } else if (node.nodeType == Node.TEXT_NODE) {
@@ -837,10 +923,10 @@ export default class BackspaceHandler extends InputHandler {
           // cursor is in a text node
           if (position > 0) {
             // can delete a character
-            return {type: "character", position: position - 1, node: text};
-          } else if (stringToVisibleText(text.textContent || "").length == 0) {
+            return { type: 'character', position: position - 1, node: text };
+          } else if (stringToVisibleText(text.textContent || '').length == 0) {
             // at the start an empty text node
-            return {type: "emptyTextNodeStart", node: text};
+            return { type: 'emptyTextNodeStart', node: text };
           } else {
             // at the start of a non empty text node
             const previousSibling = text.previousSibling;
@@ -849,41 +935,50 @@ export default class BackspaceHandler extends InputHandler {
                 const sibling = previousSibling as Text;
                 if (sibling.length > 0) {
                   // previous is text node with stuff
-                  return {type: "character", position: sibling.length - 1, node: sibling};
+                  return {
+                    type: 'character',
+                    position: sibling.length - 1,
+                    node: sibling,
+                  };
                 } else {
                   // previous is empty text node (only possible in non chrome based browsers)
-                  return {type: "emptyTextNodeEnd", node: sibling};
+                  return { type: 'emptyTextNodeEnd', node: sibling };
                 }
               } else if (previousSibling.nodeType === Node.ELEMENT_NODE) {
                 const sibling = previousSibling as HTMLElement;
                 if (isVoidElement(sibling)) {
-                  return {type: "voidElement", node: sibling as VoidElement};
+                  return { type: 'voidElement', node: sibling as VoidElement };
                 } else {
-                  return {type: "elementEnd", node: sibling};
+                  return { type: 'elementEnd', node: sibling };
                 }
               } else {
-                const uncommonNode = ensureUncommonNode(previousSibling, "Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node.");
-                return {type: "uncommonNodeEnd", node: uncommonNode};
+                const uncommonNode = ensureUncommonNode(
+                  previousSibling,
+                  'Assumed all node cases exhausted and uncommon node found in backspace handler.  But node is not an uncommon node.'
+                );
+                return { type: 'uncommonNodeEnd', node: uncommonNode };
               }
             } else if (text.parentElement) {
               const parent = text.parentElement;
               if (parent != this.rawEditor.rootNode) {
-                return {type: "elementStart", node: parent};
+                return { type: 'elementStart', node: parent };
               } else {
-                return {type: "editorRootStart", node: parent};
+                return { type: 'editorRootStart', node: parent };
               }
             } else {
-              throw "no previous sibling or parentnode found";
+              throw 'no previous sibling or parentnode found';
             }
           }
         } else {
-          console.warn(`did not expect a startcontainer of type ${node.nodeType} from range`); // eslint-disable-line-console
+          console.warn(
+            `did not expect a startcontainer of type ${node.nodeType} from range`
+          ); // eslint-disable-line-console
           // there should not be an else per spec
         }
       }
-      throw "backspace handler only understands collapsed ranges";
+      throw 'backspace handler only understands collapsed ranges';
     }
-    throw "no selection found";
+    throw 'no selection found';
   }
 
   /**
@@ -894,21 +989,28 @@ export default class BackspaceHandler extends InputHandler {
    * @private
    * @method runChangeDetectionByPlugins
    */
-  runChangeDetectionByPlugins(manipulation: BackspaceHandlerManipulation): boolean {
-    const reports =
-      this
-        .plugins
-        .map((plugin) => {
-          return {plugin, detectedChange: plugin.detectChange(manipulation, this.rawEditor)};
-        })
-        .filter(({detectedChange}) => detectedChange);
+  runChangeDetectionByPlugins(
+    manipulation: BackspaceHandlerManipulation
+  ): boolean {
+    const reports = this.plugins
+      .map((plugin) => {
+        return {
+          plugin,
+          detectedChange: plugin.detectChange(manipulation, this.rawEditor),
+        };
+      })
+      .filter(({ detectedChange }) => detectedChange);
 
     // debug reporting
-    for (const {plugin} of reports) {
-      editorDebug(`backspace-handler.runChangeDetectionByPlugins`, `Change detected by plugin ${plugin.label}`, {
-        manipulation,
-        plugin
-      });
+    for (const { plugin } of reports) {
+      editorDebug(
+        `backspace-handler.runChangeDetectionByPlugins`,
+        `Change detected by plugin ${plugin.label}`,
+        {
+          manipulation,
+          plugin,
+        }
+      );
     }
 
     return reports.length > 0;

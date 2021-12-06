@@ -1,8 +1,10 @@
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import ModelNodeUtils from "@lblod/ember-rdfa-editor/model/util/model-node-utils";
-import ModelTreeWalker, {toFilterSkipFalse} from "@lblod/ember-rdfa-editor/model/util/model-tree-walker";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import ModelTreeWalker, {
+  toFilterSkipFalse,
+} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 
 export default class ModelRangeUtils {
   static getExtendedToPlaceholder(range: ModelRange): ModelRange {
@@ -19,7 +21,11 @@ export default class ModelRangeUtils {
     return copyRange;
   }
 
-  static findModelNodes(range: ModelRange, predicate: (node: ModelNode) => boolean, wrapStart = true): ModelTreeWalker<ModelNode> {
+  static findModelNodes(
+    range: ModelRange,
+    predicate: (node: ModelNode) => boolean,
+    wrapStart = true
+  ): ModelTreeWalker<ModelNode> {
     if (wrapStart) {
       // The start of the selected range is inside an element satisfying the predicate.
       // In this case, place the start position of the range before this element,
@@ -42,13 +48,16 @@ export default class ModelRangeUtils {
 
       // Select first ancestor.
       if (startAncestors.length > 0) {
-        range = new ModelRange(ModelPosition.fromBeforeNode(startAncestors[0]), range.end);
+        range = new ModelRange(
+          ModelPosition.fromBeforeNode(startAncestors[0]),
+          range.end
+        );
       }
     }
 
     return new ModelTreeWalker({
       filter: toFilterSkipFalse(predicate),
-      range: range
+      range: range,
     });
   }
 }

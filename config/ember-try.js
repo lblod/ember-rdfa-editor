@@ -9,45 +9,45 @@ module.exports = async function () {
         name: 'ember-lts-3.20',
         npm: {
           devDependencies: {
-            'ember-source': '~3.20.5'
-          }
-        }
+            'ember-source': '~3.20.5',
+          },
+        },
       },
       {
         name: 'ember-lts-3.24',
         npm: {
           devDependencies: {
-            'ember-source': '~3.24.6'
-          }
-        }
+            'ember-source': '~3.24.6',
+          },
+        },
       },
       {
         name: 'ember-release',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('release')
-          }
+            'ember-source': await getChannelURL('release'),
+          },
         },
-        allowedToFail: true
+        allowedToFail: true,
       },
       {
         name: 'ember-beta',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('beta')
-          }
+            'ember-source': await getChannelURL('beta'),
+          },
         },
-        allowedToFail: true
+        allowedToFail: true,
       },
       {
         name: 'ember-canary',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('canary')
-          }
+            'ember-source': await getChannelURL('canary'),
+          },
         },
-        allowedToFail: true
+        allowedToFail: true,
       },
-    ]
+    ],
   };
 };

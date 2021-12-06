@@ -7,7 +7,7 @@ import nextTextNode from '../next-text-node';
  * @constructor
  */
 export default class TabHandler {
-  constructor({rawEditor}) {
+  constructor({ rawEditor }) {
     this.rawEditor = rawEditor;
   }
 
@@ -18,8 +18,12 @@ export default class TabHandler {
    * @return boolean
    * @public
    */
-  isHandlerFor(event){
-    return (event.type === "keydown" && event.key === "Tab" && this.rawEditor.currentNode);
+  isHandlerFor(event) {
+    return (
+      event.type === 'keydown' &&
+      event.key === 'Tab' &&
+      this.rawEditor.currentNode
+    );
   }
 
   /**

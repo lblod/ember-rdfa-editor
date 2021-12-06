@@ -4,25 +4,28 @@
  * convienently it is also  how the RdfaAttributes class of marawa uses it when calculating rdfa attributes.
  * This is highly reliant on the internals of that class and may stop working at some point.
  */
-export function calculateRdfaPrefixes(start: Node): Map<string,string> {
-  const parents : HTMLElement[] = [];
+export function calculateRdfaPrefixes(start: Node): Map<string, string> {
+  const parents: HTMLElement[] = [];
   let currentNode = start.parentElement;
-  while(currentNode !== null) {
+  while (currentNode !== null) {
     parents.push(currentNode);
     currentNode = currentNode.parentElement;
   }
 
   // parse parents top down
-  let currentPrefixes: Map<string,string> = new Map<string,string>();
-  let vocab = "";
+  let currentPrefixes: Map<string, string> = new Map<string, string>();
+  let vocab = '';
   for (const element of parents.reverse()) {
-    const prefixString: string = element.getAttribute('prefix') || "";
-    currentPrefixes = new Map([...currentPrefixes, ...parsePrefixString(prefixString)]);
+    const prefixString: string = element.getAttribute('prefix') || '';
+    currentPrefixes = new Map([
+      ...currentPrefixes,
+      ...parsePrefixString(prefixString),
+    ]);
     if (element.hasAttribute('vocab')) {
-      vocab = element.getAttribute('vocab') || ""; // TODO: verify if empty vocab really should clear out vocab
+      vocab = element.getAttribute('vocab') || ''; // TODO: verify if empty vocab really should clear out vocab
     }
   }
-  currentPrefixes.set("", vocab);
+  currentPrefixes.set('', vocab);
   return currentPrefixes;
 }
 
@@ -34,7 +37,7 @@ export function calculateRdfaPrefixes(start: Node): Map<string,string> {
  */
 export function parsePrefixString(prefixString: string) {
   const parts = prefixString.split(' ');
-  const prefixes: Map<string,string> = new Map<string,string>();
+  const prefixes: Map<string, string> = new Map<string, string>();
   for (let i = 0; i < parts.length; i = i + 2) {
     const key = parts[i].substr(0, parts[i].length - 1);
     prefixes.set(key, parts[i + 1]);

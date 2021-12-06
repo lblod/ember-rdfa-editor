@@ -1,14 +1,18 @@
-import {isElement} from "@lblod/ember-rdfa-editor/utils/dom-helpers";
-import {TextAttribute} from "@lblod/ember-rdfa-editor/model/model-text";
-import ModelNode from "@lblod/ember-rdfa-editor/model/model-node";
-import {SelectionError} from "@lblod/ember-rdfa-editor/utils/errors";
-import {analyse} from '@lblod/marawa/rdfa-context-scanner';
-import ModelNodeFinder from "@lblod/ember-rdfa-editor/model/util/model-node-finder";
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import ModelPosition from "@lblod/ember-rdfa-editor/model/model-position";
-import {Direction, FilterAndPredicate, PropertyState,} from "@lblod/ember-rdfa-editor/model/util/types";
-import {nodeIsElementOfType} from "@lblod/ember-rdfa-editor/model/util/predicate-utils";
-import ModelElement from "@lblod/ember-rdfa-editor/model/model-element";
+import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { TextAttribute } from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import { SelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { analyse } from '@lblod/marawa/rdfa-context-scanner';
+import ModelNodeFinder from '@lblod/ember-rdfa-editor/model/util/model-node-finder';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import {
+  Direction,
+  FilterAndPredicate,
+  PropertyState,
+} from '@lblod/ember-rdfa-editor/model/util/types';
+import { nodeIsElementOfType } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
@@ -36,7 +40,9 @@ export default class ModelSelection {
    * most operations that work on selections probably have no meaning.
    * @param selection
    */
-  static isWellBehaved(selection: ModelSelection): selection is WellbehavedSelection {
+  static isWellBehaved(
+    selection: ModelSelection
+  ): selection is WellbehavedSelection {
     return !!(selection.anchor && selection.focus);
   }
 
@@ -146,27 +152,29 @@ export default class ModelSelection {
   }
 
   get bold(): PropertyState {
-    return this.getTextPropertyStatus("bold");
+    return this.getTextPropertyStatus('bold');
   }
 
   get italic(): PropertyState {
-    return this.getTextPropertyStatus("italic");
+    return this.getTextPropertyStatus('italic');
   }
 
   get underline(): PropertyState {
-    return this.getTextPropertyStatus("underline");
+    return this.getTextPropertyStatus('underline');
   }
 
   get strikethrough(): PropertyState {
-    return this.getTextPropertyStatus("strikethrough");
+    return this.getTextPropertyStatus('strikethrough');
   }
 
   /**
    * @param {FilterAndPredicate<T>} config
    * @deprecated Use {@link ModelTreeWalker} instead.
    */
-  findAllInSelection<T extends ModelNode = ModelNode>(config: FilterAndPredicate<T>): Iterable<T> | null {
-    const {filter, predicate} = config;
+  findAllInSelection<T extends ModelNode = ModelNode>(
+    config: FilterAndPredicate<T>
+  ): Iterable<T> | null {
+    const { filter, predicate } = config;
 
     const range = this.lastRange;
     if (!range) {
@@ -187,43 +195,45 @@ export default class ModelSelection {
           let done = false;
           return {
             next: (): IteratorResult<T, null> => {
-              const value = anchorNode.findAncestor(node => filterFunc(node) && predicateFunc(node)) as T;
+              const value = anchorNode.findAncestor(
+                (node) => filterFunc(node) && predicateFunc(node)
+              ) as T;
               if (value && !done) {
                 done = true;
                 return {
                   value,
-                  done: false
+                  done: false,
                 };
               } else {
                 return {
                   value: null,
-                  done: true
+                  done: true,
                 };
               }
-            }
+            },
           };
-        }
+        },
       };
     } else {
-      return new ModelNodeFinder<T>(
-        {
-          direction: Direction.FORWARDS,
-          startNode: anchorNode,
-          endNode: focusNode,
-          rootNode: range.root,
-          nodeFilter: filter,
-          useSiblingLinks: false,
-          predicate
-        }
-      );
+      return new ModelNodeFinder<T>({
+        direction: Direction.FORWARDS,
+        startNode: anchorNode,
+        endNode: focusNode,
+        rootNode: range.root,
+        nodeFilter: filter,
+        useSiblingLinks: false,
+        predicate,
+      });
     }
   }
 
   get inListState(): PropertyState {
     if (ModelSelection.isWellBehaved(this)) {
       const range = this.lastRange;
-      const predicate = nodeIsElementOfType("li", "ul", "ol");
-      const result = range.containsNodeWhere(predicate) || range.hasCommonAncestorWhere(predicate);
+      const predicate = nodeIsElementOfType('li', 'ul', 'ol');
+      const result =
+        range.containsNodeWhere(predicate) ||
+        range.hasCommonAncestorWhere(predicate);
       return result ? PropertyState.enabled : PropertyState.disabled;
     } else {
       return PropertyState.unknown;
@@ -233,8 +243,10 @@ export default class ModelSelection {
   get inTableState(): PropertyState {
     if (ModelSelection.isWellBehaved(this)) {
       const range = this.lastRange;
-      const predicate = nodeIsElementOfType("table");
-      const result = range.containsNodeWhere(predicate) || range.hasCommonAncestorWhere(predicate);
+      const predicate = nodeIsElementOfType('table');
+      const result =
+        range.containsNodeWhere(predicate) ||
+        range.hasCommonAncestorWhere(predicate);
       return result ? PropertyState.enabled : PropertyState.disabled;
     } else {
       return PropertyState.unknown;
@@ -283,7 +295,12 @@ export default class ModelSelection {
     this.addRange(ModelRange.fromInNode(node, offset, offset));
   }
 
-  setStartAndEnd(start: ModelNode, startOffset: number, end: ModelNode, endOffset: number) {
+  setStartAndEnd(
+    start: ModelNode,
+    startOffset: number,
+    end: ModelNode,
+    endOffset: number
+  ) {
     const startPos = ModelPosition.fromInNode(start, startOffset);
     const endPos = ModelPosition.fromInNode(end, endOffset);
     const range = new ModelRange(startPos, endPos);
@@ -294,7 +311,7 @@ export default class ModelSelection {
   calculateRdfaSelection(selection: Selection) {
     if (selection.type === 'Caret') {
       if (!selection.anchorNode) {
-        throw new SelectionError("Selection has no anchorNode");
+        throw new SelectionError('Selection has no anchorNode');
       }
       return analyse(selection.anchorNode);
     } else {
@@ -307,7 +324,7 @@ export default class ModelSelection {
   clone(modelRoot?: ModelElement) {
     const modelSelection = new ModelSelection();
     modelSelection.isRightToLeft = this._isRightToLeft;
-    modelSelection.ranges = this.ranges.map(range => range.clone(modelRoot));
+    modelSelection.ranges = this.ranges.map((range) => range.clone(modelRoot));
 
     return modelSelection;
   }

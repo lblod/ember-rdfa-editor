@@ -1,18 +1,16 @@
 import getRichNodeMatchingDomNode from '../get-rich-node-matching-dom-node';
-import { get } from '@ember/object';
 import { isBlank } from '@ember/utils';
 import HandlerResponse from './handler-response';
 import { invisibleSpace } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-
 
 let BOLDMARKDOWN = /(\*\*)(.*?)\1/;
 let EMPHASISMARKDOWN = /(\*)([^*].+?)\1/;
 let UNDERLINEMARKDOWN = /(_)(.*?)\1/;
 
 let MARKDOWNS = [
-  {pattern: BOLDMARKDOWN, tag: 'strong'},
-  {pattern: EMPHASISMARKDOWN, tag: 'em'},
-  {pattern: UNDERLINEMARKDOWN, tag: 'u'}
+  { pattern: BOLDMARKDOWN, tag: 'strong' },
+  { pattern: EMPHASISMARKDOWN, tag: 'em' },
+  { pattern: UNDERLINEMARKDOWN, tag: 'u' },
 ];
 
 /**
@@ -26,18 +24,19 @@ let MARKDOWNS = [
  * @constructor
  */
 export default class EmphasisMarkdownHandler {
-  constructor({rawEditor}) {
+  constructor({ rawEditor }) {
     this.rawEditor = rawEditor;
   }
 
-  nodeContainsRelevantMarkdown(node){
-    if(!node.nodeType === Node.TEXT_NODE)
-      return false;
+  nodeContainsRelevantMarkdown(node) {
+    if (!node.nodeType === Node.TEXT_NODE) return false;
     return this.findMarkdown(node.textContent);
   }
 
-  findMarkdown(text){
-    return MARKDOWNS.find(m => { return text.match(m.pattern); });
+  findMarkdown(text) {
+    return MARKDOWNS.find((m) => {
+      return text.match(m.pattern);
+    });
   }
 
   /**
@@ -47,11 +46,13 @@ export default class EmphasisMarkdownHandler {
    * @return boolean
    * @public
    */
-  isHandlerFor(event){
-    return event.type === "keydown" &&
+  isHandlerFor(event) {
+    return (
+      event.type === 'keydown' &&
       this.rawEditor.currentSelectionIsACursor &&
       event.key == ' ' &&
-      this.nodeContainsRelevantMarkdown(this.rawEditor.currentNode);
+      this.nodeContainsRelevantMarkdown(this.rawEditor.currentNode)
+    );
   }
 
   /**
@@ -70,21 +71,32 @@ export default class EmphasisMarkdownHandler {
 
     let insertElement = () => {
       let matchGroups = currentNode.textContent.match(markdown);
-      let contentEnd = currentPosition - matchGroups[1].length - get(node, 'start');
-      let contentStart = currentPosition - get(node, 'start') - matchGroups[0].length + matchGroups[1].length;
-      let beforeContentNode = document.createTextNode(currentNode.textContent.slice(0, matchGroups.index));
-      let elementContent = currentNode.textContent.slice(contentStart, contentEnd);
+      let contentEnd = currentPosition - matchGroups[1].length - node.start;
+      let contentStart =
+        currentPosition -
+        node.start -
+        matchGroups[0].length +
+        matchGroups[1].length;
+      let beforeContentNode = document.createTextNode(
+        currentNode.textContent.slice(0, matchGroups.index)
+      );
+      let elementContent = currentNode.textContent.slice(
+        contentStart,
+        contentEnd
+      );
 
-      if (isBlank(elementContent))
-        elementContent = invisibleSpace;
+      if (isBlank(elementContent)) elementContent = invisibleSpace;
 
       let contentTextNode = document.createTextNode(elementContent);
-      let contentNode = document.createElement(this.findMarkdown(currentNode.textContent).tag);
+      let contentNode = document.createElement(
+        this.findMarkdown(currentNode.textContent).tag
+      );
       contentNode.append(contentTextNode);
-      let afterContent = currentNode.textContent.slice(contentEnd + matchGroups[1].length);
+      let afterContent = currentNode.textContent.slice(
+        contentEnd + matchGroups[1].length
+      );
 
-      if(isBlank(afterContent))
-        afterContent = invisibleSpace;
+      if (isBlank(afterContent)) afterContent = invisibleSpace;
 
       let afterContentNode = document.createTextNode(afterContent);
 
@@ -97,10 +109,11 @@ export default class EmphasisMarkdownHandler {
 
     this.rawEditor.externalDomUpdate('inserting markdown', insertElement);
     this.rawEditor.updateRichNode();
-    let richNode = getRichNodeMatchingDomNode(newCurrentNode, this.rawEditor.richNode);
-    this.rawEditor.setCurrentPosition(get(richNode, 'start'));
-    return HandlerResponse.create({allowPropagation: false});
+    let richNode = getRichNodeMatchingDomNode(
+      newCurrentNode,
+      this.rawEditor.richNode
+    );
+    this.rawEditor.setCurrentPosition(richNode.start);
+    return HandlerResponse.create({ allowPropagation: false });
   }
-
 }
-

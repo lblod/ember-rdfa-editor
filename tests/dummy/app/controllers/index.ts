@@ -1,24 +1,25 @@
 import Controller from '@ember/controller';
-import {action} from '@ember/object';
-import {tracked} from '@glimmer/tracking';
-import {inject as service} from '@ember/service';
-import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
+import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import { inject as service } from '@ember/service';
+import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
 import xmlFormat from 'xml-formatter';
-import {basicSetup, EditorState, EditorView} from "@codemirror/basic-setup";
-import {xml} from "@codemirror/lang-xml";
-import {html} from "@codemirror/lang-html";
+import { basicSetup, EditorState, EditorView } from '@codemirror/basic-setup';
+import { xml } from '@codemirror/lang-xml';
+import { html } from '@codemirror/lang-html';
+import RouterService from '@ember/routing/router-service';
 
 interface FeaturesService {
   disable: (feature: string) => void;
-  enable: (feature: string) => void
+  enable: (feature: string) => void;
 }
 
 export default class IndexController extends Controller {
-
   @tracked rdfaEditor?: RdfaDocument;
   @tracked debug: unknown;
   @tracked xmlDebuggerOpen = false;
-  @tracked debuggerContent = "";
+  @tracked debuggerContent = '';
+  @service router!: RouterService;
   @service features!: FeaturesService;
   @tracked htmlDebuggerOpen = false;
   private unloadListener?: () => void;
@@ -29,12 +30,15 @@ export default class IndexController extends Controller {
     this.unloadListener = () => {
       this.saveEditorContentToLocalStorage();
     };
-    window.addEventListener("beforeunload", this.unloadListener);
+    this.router.on('routeWillChange', () => {
+      this.saveEditorContentToLocalStorage();
+    });
+    window.addEventListener('beforeunload', this.unloadListener);
   }
 
   teardown() {
     if (this.unloadListener) {
-      window.removeEventListener("beforeunload", this.unloadListener);
+      window.removeEventListener('beforeunload', this.unloadListener);
     }
   }
 
@@ -45,26 +49,28 @@ export default class IndexController extends Controller {
 
   @action
   setupXmlEditor(element: HTMLElement) {
-
     this.xmlEditor = new EditorView({
       state: EditorState.create({
-        extensions: [basicSetup, xml()]
+        extensions: [basicSetup, xml()],
       }),
-      parent: element
+      parent: element,
     });
-    this.xmlEditor.dispatch({changes: {from: 0, insert: this.debuggerContent}});
+    this.xmlEditor.dispatch({
+      changes: { from: 0, insert: this.debuggerContent },
+    });
   }
 
   @action
   setupHtmlEditor(element: HTMLElement) {
-
     this.htmlEditor = new EditorView({
       state: EditorState.create({
-        extensions: [basicSetup, html()]
+        extensions: [basicSetup, html()],
       }),
-      parent: element
+      parent: element,
     });
-    this.htmlEditor.dispatch({changes: {from: 0, insert: this.debuggerContent}});
+    this.htmlEditor.dispatch({
+      changes: { from: 0, insert: this.debuggerContent },
+    });
   }
 
   get formattedXmlContent() {
@@ -74,18 +80,16 @@ export default class IndexController extends Controller {
       } catch (e) {
         return this.debuggerContent;
       }
-
     }
     return this.debuggerContent;
   }
 
-
   @action
   rdfaEditorInit(rdfaEditor: RdfaDocument) {
-    const presetContent = localStorage.getItem("EDITOR_CONTENT") ?? "";
+    const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.setHtmlContent(presetContent);
-    const editorDone = new CustomEvent("editor-done");
+    const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }
 
@@ -95,9 +99,9 @@ export default class IndexController extends Controller {
   }
 
   @action
-  setEditorContent(type: "xml" | "html", content: string) {
+  setEditorContent(type: 'xml' | 'html', content: string) {
     if (this.rdfaEditor) {
-      if (type === "html") {
+      if (type === 'html') {
         this.rdfaEditor.setHtmlContent(content);
         this.saveEditorContentToLocalStorage();
       } else {
@@ -107,9 +111,9 @@ export default class IndexController extends Controller {
     }
   }
 
-  @action openContentDebugger(type: "xml" | "html") {
+  @action openContentDebugger(type: 'xml' | 'html') {
     if (this.rdfaEditor) {
-      if (type === "xml") {
+      if (type === 'xml') {
         this.debuggerContent = this.rdfaEditor.xmlContentPrettified;
         this.xmlDebuggerOpen = true;
       } else {
@@ -119,8 +123,8 @@ export default class IndexController extends Controller {
     }
   }
 
-  @action closeContentDebugger(type: "xml" | "html", save: boolean) {
-    if (type === "xml") {
+  @action closeContentDebugger(type: 'xml' | 'html', save: boolean) {
+    if (type === 'xml') {
       this.debuggerContent = this.xmlEditor!.state.sliceDoc();
       this.xmlDebuggerOpen = false;
     } else {
@@ -131,24 +135,23 @@ export default class IndexController extends Controller {
       const content = this.debuggerContent;
       if (!content) {
         //xml parser doesn't accept an empty string
-        this.setEditorContent("html", "");
+        this.setEditorContent('html', '');
       } else {
         this.setEditorContent(type, content);
       }
     }
-
   }
 
   @action
   setPasteBehaviour(event: InputEvent) {
     const val = (event.target as HTMLSelectElement).value;
-    if (val === "textonly") {
+    if (val === 'textonly') {
       this.features.disable('editor-extended-html-paste');
       this.features.disable('editor-html-paste');
-    } else if (val === "limited") {
+    } else if (val === 'limited') {
       this.features.disable('editor-extended-html-paste');
       this.features.enable('editor-html-paste');
-    } else if (val === "full") {
+    } else if (val === 'full') {
       this.features.enable('editor-extended-html-paste');
       this.features.enable('editor-html-paste');
     }
@@ -156,7 +159,7 @@ export default class IndexController extends Controller {
 
   saveEditorContentToLocalStorage() {
     if (this.rdfaEditor) {
-      localStorage.setItem("EDITOR_CONTENT", this.rdfaEditor.htmlContent);
+      localStorage.setItem('EDITOR_CONTENT', this.rdfaEditor.htmlContent);
     }
   }
 }

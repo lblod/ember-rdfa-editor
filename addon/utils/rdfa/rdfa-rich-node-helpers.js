@@ -1,16 +1,13 @@
 import { set } from '@ember/object';
-import { get } from '@ember/object';
 import { rdfaKeywords } from '../../config/rdfa';
 import {
-  singleFilterKeywords,
-  listFilterKeywords,
   isMatchingContext,
-  isMatchingRdfaAttribute
+  isMatchingRdfaAttribute,
+  listFilterKeywords,
+  singleFilterKeywords,
 } from '../ce/editor/select';
 
-
 // TODO: content-editable should not be rdfa aware
-
 
 /**
  * Get the RDFa attributes of a DOM node
@@ -23,12 +20,11 @@ import {
  *
  * @private
  */
-let getRdfaAttributes = function(domNode) {
+let getRdfaAttributes = function (domNode) {
   const rdfaAttributes = {};
 
-  if (domNode && domNode.getAttribute)
-  {
-    rdfaKeywords.forEach(function(key) {
+  if (domNode && domNode.getAttribute) {
+    rdfaKeywords.forEach(function (key) {
       rdfaAttributes[key] = domNode.getAttribute(key);
     });
 
@@ -50,12 +46,12 @@ let getRdfaAttributes = function(domNode) {
  *
  * @private
  */
-let enrichRichNodeWithRdfa = function(richNode) {
-  const rdfaAttributes = getRdfaAttributes(get(richNode, 'domNode'));
-  set(richNode,'rdfaAttributes', rdfaAttributes);
+let enrichRichNodeWithRdfa = function (richNode) {
+  const rdfaAttributes = getRdfaAttributes(richNode.domNode);
+  set(richNode, 'rdfaAttributes', rdfaAttributes);
 
-  if (get(richNode, 'children')) {
-    get(richNode, 'children').forEach((child) => {
+  if (richNode.children) {
+    richNode.children.forEach((child) => {
       enrichRichNodeWithRdfa(child);
     });
   }
@@ -72,14 +68,17 @@ let enrichRichNodeWithRdfa = function(richNode) {
  *
  * @private
  */
-let isEmptyRdfaAttributes = function(rdfaAttributes) {
+let isEmptyRdfaAttributes = function (rdfaAttributes) {
   return rdfaKeywords
-    .map(function (key) { return rdfaAttributes[key] == null; })
-    .reduce(function(a, b) { return a && b; });
+    .map(function (key) {
+      return rdfaAttributes[key] == null;
+    })
+    .reduce(function (a, b) {
+      return a && b;
+    });
 };
 
-
-let isRdfaNode = function(richNode){
+let isRdfaNode = function (richNode) {
   enrichRichNodeWithRdfa(richNode);
   return !isEmptyRdfaAttributes(richNode.rdfaAttributes);
 };
@@ -103,18 +102,29 @@ let isRdfaNode = function(richNode){
  *
  * @return {Object} The first rich node in the tree complying to the conditions.
  */
-let findRichNode = function(rdfaBlock, options={}) {
-  if ( !options.resource && !options.property && !options.typeof && !options.datatype ) {
-    console.warn('At least one of the following parameters should be filled: resource, property, typeof or datatype'); // eslint-disable-line no-console
+let findRichNode = function (rdfaBlock, options = {}) {
+  if (
+    !options.resource &&
+    !options.property &&
+    !options.typeof &&
+    !options.datatype
+  ) {
+    console.warn(
+      'At least one of the following parameters should be filled: resource, property, typeof or datatype'
+    ); // eslint-disable-line no-console
     return;
   }
 
   const filter = {};
-  singleFilterKeywords.forEach( key => filter[key] = options[key] );
-  listFilterKeywords.forEach( key => filter[key] = options[key] ? [ options[key] ].flat() : [] );
+  singleFilterKeywords.forEach((key) => (filter[key] = options[key]));
+  listFilterKeywords.forEach(
+    (key) => (filter[key] = options[key] ? [options[key]].flat() : [])
+  );
 
   // Check if the rdfaBlock has a suitable node in its context
-  const hasSuitableNode = rdfaBlock.semanticNode.rdfaAttributes ? isMatchingContext(rdfaBlock, filter) : false;
+  const hasSuitableNode = rdfaBlock.semanticNode.rdfaAttributes
+    ? isMatchingContext(rdfaBlock, filter)
+    : false;
   if (!hasSuitableNode) return null;
 
   // Find the suitable node by walking up the dom tree
@@ -125,7 +135,11 @@ let findRichNode = function(rdfaBlock, options={}) {
     if (!currentNode) break;
 
     if (currentNode.rdfaAttributes) {
-      const nodeIsMatching = isMatchingRdfaAttribute(currentNode.rdfaAttributes, filter, ['resource', 'property', 'typeof', 'datatype']);
+      const nodeIsMatching = isMatchingRdfaAttribute(
+        currentNode.rdfaAttributes,
+        filter,
+        ['resource', 'property', 'typeof', 'datatype']
+      );
       if (nodeIsMatching) {
         suitableNode = currentNode;
       } else {
@@ -158,9 +172,9 @@ let findRichNode = function(rdfaBlock, options={}) {
  *
  * @return {Array} An array of unique rich nodes complying to the conditions.
  */
-let findUniqueRichNodes = function(rdfaBlocks, options={}) {
+let findUniqueRichNodes = function (rdfaBlocks, options = {}) {
   let uniqueRichNodes = [];
-  rdfaBlocks.forEach( rdfaBlock => {
+  rdfaBlocks.forEach((rdfaBlock) => {
     const richNode = findRichNode(rdfaBlock, options);
     if (richNode && !uniqueRichNodes.includes(richNode)) {
       uniqueRichNodes.push(richNode);
@@ -169,4 +183,11 @@ let findUniqueRichNodes = function(rdfaBlocks, options={}) {
   return uniqueRichNodes;
 };
 
-export { getRdfaAttributes, isRdfaNode, isEmptyRdfaAttributes, enrichRichNodeWithRdfa, findRichNode, findUniqueRichNodes };
+export {
+  getRdfaAttributes,
+  isRdfaNode,
+  isEmptyRdfaAttributes,
+  enrichRichNodeWithRdfa,
+  findRichNode,
+  findUniqueRichNodes,
+};

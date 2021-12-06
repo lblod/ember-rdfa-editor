@@ -7,7 +7,6 @@ declare module '@graphy/memory.dataset.fast' {
   export type TermIsolate = AnyTerm;
   export type QuadIsolate = AnyQuad;
 
-
   export interface Quad extends AnyQuad {
     equals(other: AnyQuad): boolean;
 
@@ -20,7 +19,6 @@ declare module '@graphy/memory.dataset.fast' {
     isolate(): QuadIsolate;
   }
 
-
   export interface AnyTerm {
     termType: TermType;
     value: string;
@@ -31,7 +29,6 @@ declare module '@graphy/memory.dataset.fast' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   export interface DatasetConfig {
     //TODO
-
   }
 
   export default function dataset(config?: DatasetConfig): FastDataset;
@@ -45,7 +42,7 @@ declare module '@graphy/memory.dataset.fast' {
 
     add(quad: AnyQuad): FastDataset;
 
-    addAll(quads: RDF.Dataset | AnyQuad []): FastDataset;
+    addAll(quads: RDF.Dataset | AnyQuad[]): FastDataset;
 
     addQuads(quads: Array<Quad>): number;
 
@@ -65,11 +62,15 @@ declare module '@graphy/memory.dataset.fast' {
 
     difference(other: FastDataset): FastDataset;
 
-    match(subject?: RDF.Quad_Subject | null, predicate?: RDF.Quad_Predicate | null, object?: RDF.Quad_Object | null, graph?: RDF.Quad_Graph | null): FastDataset;
+    match(
+      subject?: RDF.Quad_Subject | null,
+      predicate?: RDF.Quad_Predicate | null,
+      object?: RDF.Quad_Object | null,
+      graph?: RDF.Quad_Graph | null
+    ): FastDataset;
 
     equals(other: FastDataset): boolean;
 
     has(quad: AnyQuad): boolean;
   }
-
 }
