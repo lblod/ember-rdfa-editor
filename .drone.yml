@@ -42,6 +42,7 @@ trigger:
 kind: pipeline
 type: docker
 name: ember-compat-test
+steps:
 - name: ember-try
   image: danlynn/ember-cli:3.20.0
   commands:
