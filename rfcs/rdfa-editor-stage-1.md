@@ -331,19 +331,29 @@ Note: it seems sensible that Nodes as well as Ranges and the Selection would hav
 Note: we've made abstraction of subject, predicate and object types here. Assume string to be a valid value, as well as Rdfjs types.
 Note: search methods should be implemented as generators (or iterators) where possible. Generators are preferred over iterators (easier to use and implement).
 
+**UPDATE**: This has already been implemented. Documentation to be found [here](https://github.com/lblod/ember-rdfa-editor/wiki/Datastore). 
+The interface has changed as a result of this implementation, but the core concepts haven't changed. Below reflects the updated interface.
+
+The interface is based on the idea of a fluent interface. It consist of two types of methods: transformers and consumers. A transformer is simply a method that returns a 
+new datastore object, probably altered in some way. The original is never mutated, matching the immutability principle.
+A consumer method is then a method that does _not_ return a new datastore. Typically it provides the contained knowledge in a more convenient format. 
+
 ```typescript
-interface TripleQuery {
-  subject?: Subject,
-  predicate?: Predicate,
-  object?: Object
-}
 
 interface Datastore {
-  *findRangesForTriple(query: TripleQuery, strategy: RangeContextStrategy): Generator<ModelRange>
-  *findTriplesForRange(range: ModelRange, query: TripleQuery, strategy: RangeContextStrategy): Generator<Triple>
-  *findSubjectNodes(query: TripleQuery): Generator<Node>
-  *findObjectNodes(query: TripleQuery): Generator<Node>
-  *findPredicateNodes(query: TripleQuery): Generator<Node>
+  // transformers
+  limitToRange(range: ModelRange, strategy?: RangeContextStrategy): Datastore;
+  match(subject?: SubjectSpec, predicate?: PredicateSpec, object?: ObjectSpec): Datastore;
+  transformDataset(action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset): Datastore;
+
+  // consumers
+  get dataset(): RDF.Dataset;
+  get size(): number;
+  get termConverter(): TermConverter;
+  asSubjectNodes(): Generator<SubjectNodesResponse>;
+  asPredicateNodes(): Generator<PredicateNodesResponse>;
+  asObjectNodes(): Generator<ObjectNodesResponse>;
+  asQuads(): Generator<RDF.Quad>;
 }
 ```
 #### RangeContextStrategy
