@@ -250,18 +250,42 @@ interface ModelNode {
   type: string;
   children: ModelNode[];
   parent?: ModelNode;
-  
+  marks: Mark[];
+}
+interface ModelNodeSpec {
+  implementation: new () => ModelNode;
+  reader: Reader;
+  writer: Writer;
 }
 ```
+#### Mark (immutable)
 
-#### Datastore
+Another idea commonly found in editor implementations is the idea of a mark, being a generalization of somethng like "bold" or "italic". It is in essence
+a way to attach metadata to a node. The main reason for codifying this as a separate class is to allow plugins to introduce
+new mark types, e.g.: highlighting, that work for any other nodeType. 
+It is similar to a node in the sense that it requires a reader and a writer to be converted from and to the DOM, and
+the implementation of these can vary wildly. 
+
+```typescript
+interface Mark {
+  type: string;
+}
+interface MarkSpec {
+  implementation: new () => Mark;
+  reader: Reader;
+  writer: Writer;
+}
+
+```
+
+#### Datastore (immutable)
 
 At its core, rdfa is a method of attaching linked data knowledge to a structured markup document. It is designed around the idea
 that a document can contain human-readable and machine-readable information at the same time.
 
 To make that machine-readable information editable by humans, we need to define some new concepts.
 For one, there needs to be a clear indication of _what_ we are currently working on.
-This is not a trivial question. To demonstrate this, an example (taken from [](rdfa.info/play)):
+This is not a trivial question. To demonstrate this, an example (taken from [rdfa play](rdfa.info/play)):
 
 ```html
 <div vocab="http://schema.org/" typeof="Person">
