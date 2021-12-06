@@ -2,25 +2,9 @@
 
 const getChannelURL = require('ember-source-channel-url');
 
-module.exports = async function() {
+module.exports = async function () {
   return {
     scenarios: [
-      {
-        name: 'ember-lts-3.12',
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.12.0'
-          }
-        }
-      },
-      {
-        name: 'ember-lts-3.16',
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.16.0'
-          }
-        }
-      },
       {
         name: 'ember-lts-3.20',
         npm: {
@@ -30,12 +14,21 @@ module.exports = async function() {
         }
       },
       {
+        name: 'ember-lts-3.24',
+        npm: {
+          devDependencies: {
+            'ember-source': '~3.24.6'
+          }
+        }
+      },
+      {
         name: 'ember-release',
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('release')
           }
-        }
+        },
+        allowedToFail: true
       },
       {
         name: 'ember-beta',
@@ -43,7 +36,8 @@ module.exports = async function() {
           devDependencies: {
             'ember-source': await getChannelURL('beta')
           }
-        }
+        },
+        allowedToFail: true
       },
       {
         name: 'ember-canary',
@@ -51,36 +45,9 @@ module.exports = async function() {
           devDependencies: {
             'ember-source': await getChannelURL('canary')
           }
-        }
-      },
-      {
-        name: 'ember-default-with-jquery',
-        env: {
-          EMBER_OPTIONAL_FEATURES: JSON.stringify({
-            'jquery-integration': true
-          })
         },
-        npm: {
-          devDependencies: {
-            '@ember/jquery': '^1.1.0'
-          }
-        }
+        allowedToFail: true
       },
-      {
-        name: 'ember-classic',
-        env: {
-          EMBER_OPTIONAL_FEATURES: JSON.stringify({
-            'application-template-wrapper': true,
-            'default-async-observers': false,
-            'template-only-glimmer-components': false
-          })
-        },
-        npm: {
-          ember: {
-            edition: 'classic'
-          }
-        }
-      }
     ]
   };
 };
