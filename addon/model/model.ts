@@ -17,8 +17,10 @@ import BatchedModelMutator from '@lblod/ember-rdfa-editor/model/mutators/batched
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelHistory from '@lblod/ember-rdfa-editor/model/model-history';
-import { Diary } from 'diary';
-import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import {
+  createLogger,
+  Logger,
+} from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import SimplifiedModel from '@lblod/ember-rdfa-editor/model/simplified-model';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ModelReadEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
@@ -46,7 +48,7 @@ export default class Model {
   private history: ModelHistory = new ModelHistory();
   private _eventBus?: EventBus;
 
-  private logger: Diary;
+  private logger: Logger;
 
   constructor(rootNode: HTMLElement, eventBus?: EventBus) {
     this._rootNode = rootNode;
@@ -269,7 +271,7 @@ export default class Model {
         this.write();
       }
     } else {
-      this.logger.warn('No snapshot to restore');
+      this.logger('No snapshot to restore');
     }
   }
 }
