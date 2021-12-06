@@ -18,7 +18,6 @@ steps:
 trigger:
   event:
     - pull_request
-
 ---
 kind: pipeline
 type: docker
@@ -33,6 +32,22 @@ steps:
     password:
       from_secret: docker_password
     purge: true
+trigger:
+  branch:
+    - development
+  event:
+    exclude:
+    - pull_request
+---
+kind: pipeline
+type: docker
+name: ember-compat-test
+- name: ember-try
+  image: danlynn/ember-cli:3.20.0
+  commands:
+    - npm ci
+    - npm run test:ember-compatibility
+  failure: ignore
 trigger:
   branch:
     - development
