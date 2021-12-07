@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import EmberArray from '@ember/array';
 import { A } from '@ember/array';
 import { task, TaskGenerator, timeout } from 'ember-concurrency';
 import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
@@ -95,7 +95,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    */
   protected _currentNode: Node | null = null;
 
-  protected movementObservers: Ember.NativeArray<MovementObserver>;
+  protected movementObservers: EmberArray<MovementObserver>;
 
   constructor(properties: RawEditorProperties) {
     super(properties);
