@@ -2,6 +2,20 @@
 
 
 
+
+## 0.50.0-beta.2 (2021-12-07)
+
+#### :house: Internal
+* [#198](https://github.com/lblod/ember-rdfa-editor/pull/198) Switch to using debug for logging ([@abeforgit](https://github.com/abeforgit))
+* [#197](https://github.com/lblod/ember-rdfa-editor/pull/197) Bump codemirror packages to v0.19.x ([@abeforgit](https://github.com/abeforgit))
+* [#194](https://github.com/lblod/ember-rdfa-editor/pull/194) Update types for ember-test-helper ([@abeforgit](https://github.com/abeforgit))
+* [#193](https://github.com/lblod/ember-rdfa-editor/pull/193) Update typescript-eslint packages to v5.5.0 ([@abeforgit](https://github.com/abeforgit))
+* [#192](https://github.com/lblod/ember-rdfa-editor/pull/192) Update ember to 3.24 ([@abeforgit](https://github.com/abeforgit))
+* [#191](https://github.com/lblod/ember-rdfa-editor/pull/191) Update ember-try to 1.4.0 and drop support for old ember versions ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
 ## 0.50.0-beta.1 (2021-12-03)
 
 #### :rocket: Enhancement
