@@ -191,7 +191,7 @@ function updateEditorStateAfterUpdate(
     const richNode = this.getRichNodeFor(this.currentNode);
     this.setCaret(richNode.domNode, Math.min(relativePosition, richNode.end));
   } else {
-    this.set('currentNode', null);
+    this.currentNode = null;
     this.setCurrentPosition(this.currentPosition);
   }
 }
