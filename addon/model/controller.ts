@@ -7,7 +7,7 @@ import {
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
-import {
+import ModelRange, {
   ModelRangeFactory,
   RangeFactory,
 } from '@lblod/ember-rdfa-editor/model/model-range';
@@ -39,6 +39,8 @@ export default interface Controller {
   get selection(): ModelSelection;
 
   get rangeFactory(): RangeFactory;
+  
+  get ModelRange(): ModelRange;
 
   get treeWalkerFactory(): TreeWalkerFactory;
 
@@ -89,6 +91,10 @@ export class RawEditorController implements Controller {
 
   get rangeFactory(): RangeFactory {
     return this._rangeFactory;
+  }
+
+  get ModelRange(): ModelRange {
+    return ModelRange;
   }
 
   get datastore(): Datastore {
