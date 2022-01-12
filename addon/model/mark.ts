@@ -1,38 +1,46 @@
-import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
 import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
+import Handlebars from 'handlebars';
+
+export type TagMatch = keyof HTMLElementTagNameMap | '*';
 
 export interface Mark {
   name: string;
+
+  priority: number;
+
+  matchers: DomNodeMatcher[];
+
+  write(render: Renderer): Renderable;
+}
+
+export class BoldMark implements Mark {
+  matchers: DomNodeMatcher[] = [{ tag: 'b' }, { tag: 'strong' }];
+  name = 'bold';
+  priority = 100;
+
+  write(render: Renderer): Renderable {
+    //language=hbs
+    return render('<strong>{{{children}}}</strong>');
+  }
+}
+
+export class ItalicMark implements Mark {
+  matchers: DomNodeMatcher[] = [{ tag: 'em' }, { tag: 'i' }];
+  priority = 200;
+  name = 'italic';
+
+  write(render: Renderer): Renderable {
+    return render('<em>{{{children}}}</em>');
+  }
 }
 
 export interface DomNodeMatcher {
-  tag?: keyof HTMLElementTagNameMap;
+  tag: TagMatch;
   predicate?: (node: Node) => boolean;
 }
 
-export type Renderer = typeof hbs;
-export type Renderable = TemplateFactory;
-
-export interface MarkSpec {
-  name: string;
-
-  fromHtml(node: Node): DomNodeMatcher[];
-
-  toHtml(mark: Mark): Renderable;
-}
-
-const BoldSpec: MarkSpec = {
-  name: 'bold',
-
-  fromHtml(): DomNodeMatcher[] {
-    return [{ tag: 'strong' }, { tag: 'b' }];
-  },
-
-  toHtml(render: Renderer): Renderable {
-    //language=hbs
-    return render('<strong>{{yield}}</strong>');
-  },
-};
+export type Renderer = typeof Handlebars.compile;
+export type Renderable = HandlebarsTemplateDelegate;
 
 export class MarkSet extends HashSet<Mark> {
   constructor() {

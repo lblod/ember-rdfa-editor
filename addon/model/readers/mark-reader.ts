@@ -11,7 +11,7 @@ import { pushOrExpand } from '@lblod/ember-rdfa-editor/model/util/array-utils';
 /**
  * Reader responsible for reading HTML elements which we want to translate into text styles.
  */
-export default class WrappedAttributeReader
+export default class MarkReader
   implements Reader<HTMLElement, ModelNode[], HtmlReaderContext>
 {
   static tagMap: Map<HtmlTag, TextAttribute> = new Map<HtmlTag, TextAttribute>([
@@ -24,7 +24,7 @@ export default class WrappedAttributeReader
   ]);
 
   read(from: HTMLElement, context: HtmlReaderContext): ModelNode[] {
-    const attribute = WrappedAttributeReader.tagMap.get(
+    const attribute = MarkReader.tagMap.get(
       tagName(from) as HtmlTag
     );
     if (!attribute) {

@@ -5,7 +5,7 @@ import ModelNode, {
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import {Mark} from "@lblod/ember-rdfa-editor/model/mark";
+import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
 const NON_BREAKING_SPACE = '\u00A0';
 export type TextAttribute =
@@ -25,7 +25,7 @@ export const TEXT_ATTRIBUTES: TextAttribute[] = [
 export default class ModelText extends ModelNode {
   modelNodeType: ModelNodeType = 'TEXT';
   private _content: string;
-  private marks: Mark[];
+  private _marks: MarkSet = new MarkSet();
 
   constructor(content = '', config?: NodeConfig) {
     super(config);
@@ -40,6 +40,14 @@ export default class ModelText extends ModelNode {
     this._content = value;
   }
 
+  get marks(): MarkSet {
+    return this._marks;
+  }
+
+  set marks(value: MarkSet) {
+    this._marks = value;
+  }
+
   get length() {
     return this._content.length;
   }
@@ -50,6 +58,10 @@ export default class ModelText extends ModelNode {
 
   get offsetSize() {
     return this.length;
+  }
+
+  hasMarkName(markName: string): boolean {
+    return this.marks.hasHash(markName);
   }
 
   getTextAttribute(key: TextAttribute): boolean {
@@ -82,6 +94,7 @@ export default class ModelText extends ModelNode {
     result.attributeMap = new Map<string, string>(this.attributeMap);
     result.modelNodeType = this.modelNodeType;
     result.content = this.content;
+    result.marks = this.marks.clone();
 
     return result;
   }

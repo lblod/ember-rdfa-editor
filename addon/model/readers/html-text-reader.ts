@@ -14,7 +14,7 @@ export default class HtmlTextReader
       return [];
     }
     const result = new ModelText(from.textContent);
-    MapUtils.copyMapContents(context.textAttributes, result.attributeMap);
+    result.marks = context.activeMarks.clone();
     context.bindNode(result, from);
     return [result];
   }

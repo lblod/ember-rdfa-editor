@@ -51,6 +51,7 @@ import Datastore, {
 } from '@lblod/ember-rdfa-editor/model/util/datastore';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { tracked } from '@glimmer/tracking';
+import {Mark} from "@lblod/ember-rdfa-editor/model/mark";
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -175,7 +176,7 @@ export default class RawEditor {
   set rootNode(rootNode: HTMLElement) {
     if (rootNode) {
       this.initialize(rootNode);
-      this.model.read(false);
+      this.read();
       this.model.selection.collapseIn(this.model.rootModelNode);
       this.model.write();
       this.updateRichNode();
@@ -263,6 +264,13 @@ export default class RawEditor {
    */
   createRangeFromPaths(path1: number[], path2: number[]): ModelRange {
     return ModelRange.fromPaths(this.model.rootModelNode, path1, path2);
+  }
+
+  read() {
+
+  }
+  registerMark(mark: Mark) {
+
   }
 
   /**

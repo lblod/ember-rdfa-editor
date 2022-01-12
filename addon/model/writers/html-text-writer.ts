@@ -1,8 +1,11 @@
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
+import Handlebars from 'handlebars';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import ModelText, {
   TextAttribute,
 } from '@lblod/ember-rdfa-editor/model/model-text';
+import { hbs } from 'ember-cli-htmlbars';
+import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/html-input-parser';
 
 /**
  * Writer responsible for converting {@link ModelText} nodes into HTML subtrees
@@ -31,22 +34,29 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
 
     const result = new Text(modelNode.content);
     this.model.bindNode(modelNode, result);
-    const top = document.createElement('span');
 
-    let wrapper = top;
-    for (const entry of modelNode.getTextAttributes()) {
-      const attributeMapping = HtmlTextWriter.attributeMap.get(entry[0]);
-      if (entry[1] && attributeMapping) {
-        const wrappingElement = document.createElement(attributeMapping);
-        if (entry[0] === 'highlighted') {
-          wrappingElement.setAttribute('data-editor-highlight', 'true');
-        }
-        wrapper.appendChild(wrappingElement);
-        wrapper = wrappingElement;
-      }
+    // for (const entry of modelNode.getTextAttributes()) {
+    //   const attributeMapping = HtmlTextWriter.attributeMap.get(entry[0]);
+    //   if (entry[1] && attributeMapping) {
+    //     const wrappingElement = document.createElement(attributeMapping);
+    //     if (entry[0] === 'highlighted') {
+    //       wrappingElement.setAttribute('data-editor-highlight', 'true');
+    //     }
+    //     wrapper.appendChild(wrappingElement);
+    //     wrapper = wrappingElement;
+    //   }
+    // }
+    let current = modelNode.content;
+    for (const entry of [...modelNode.marks].sort((a, b) =>
+      a.priority >= b.priority ? 1 : -1
+    )) {
+      const wrappingElement = entry.write(Handlebars.compile)({
+        children: current,
+      });
+      current = wrappingElement;
     }
 
-    wrapper.appendChild(result);
-    return top.firstChild!;
+    const parser = new DOMParser();
+    return parser.parseFromString(current, 'text/html').body.firstChild!;
   }
 }

@@ -1,14 +1,8 @@
 import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import HtmlWriter from '@lblod/ember-rdfa-editor/model/writers/html-writer';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import {
-  getWindowSelection,
-  isElement,
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import {
-  ModelError,
-  NotImplementedError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
+import {getWindowSelection, isElement,} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {ModelError, NotImplementedError,} from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
@@ -17,13 +11,11 @@ import BatchedModelMutator from '@lblod/ember-rdfa-editor/model/mutators/batched
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelHistory from '@lblod/ember-rdfa-editor/model/model-history';
-import {
-  createLogger,
-  Logger,
-} from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import {createLogger, Logger,} from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import SimplifiedModel from '@lblod/ember-rdfa-editor/model/simplified-model';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
-import { ModelReadEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
+import {ModelReadEvent} from '@lblod/ember-rdfa-editor/utils/editor-event';
+import {Mark, TagMatch} from '@lblod/ember-rdfa-editor/model/mark';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -47,6 +39,7 @@ export default class Model {
   private selectionWriter: SelectionWriter;
   private history: ModelHistory = new ModelHistory();
   private _eventBus?: EventBus;
+  tagMap: Map<TagMatch, Mark> = new Map<keyof HTMLElementTagNameMap, Mark>();
 
   private logger: Logger;
 
@@ -72,6 +65,12 @@ export default class Model {
 
   get rootModelNode(): ModelElement {
     return this._rootModelNode;
+  }
+
+  registerMark(mark: Mark) {
+    for (const matcher of mark.matchers) {
+      this.tagMap.set(matcher.tag, mark);
+    }
   }
 
   /**

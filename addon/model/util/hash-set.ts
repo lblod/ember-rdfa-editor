@@ -1,6 +1,7 @@
 type HashFunction<I> = (item: I) => unknown;
 
 interface HashSetConfig<I> {
+  init?: Iterable<I>;
   hashFunc?: HashFunction<I>;
 }
 
@@ -13,8 +14,11 @@ export default class HashSet<I> implements Set<I> {
   private hashes = new Set<unknown>();
   private readonly hashFunc: HashFunction<I>;
 
-  constructor({ hashFunc = identity }: HashSetConfig<I>) {
+  constructor({ hashFunc = identity, init = [] }: HashSetConfig<I>) {
     this.hashFunc = hashFunc;
+    for (const item of init) {
+      this.add(item);
+    }
   }
 
   get size(): number {
@@ -63,11 +67,19 @@ export default class HashSet<I> implements Set<I> {
     return this.hashes.has(this.hashFunc(value));
   }
 
+  hasHash(hash: unknown) {
+    return this.hashes.has(hash);
+  }
+
   keys(): IterableIterator<I> {
     return this.items.keys();
   }
 
   values(): IterableIterator<I> {
     return this.items.values();
+  }
+
+  clone(): HashSet<I> {
+    return new HashSet<I>({ hashFunc: this.hashFunc, init: this });
   }
 }
