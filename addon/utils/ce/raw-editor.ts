@@ -51,7 +51,16 @@ import Datastore, {
 } from '@lblod/ember-rdfa-editor/model/util/datastore';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { tracked } from '@glimmer/tracking';
-import {Mark} from "@lblod/ember-rdfa-editor/model/mark";
+import {
+  boldMarkSpec,
+  highlightMarkSpec,
+  italicMarkSpec,
+  MarkSpec,
+  strikethroughMarkSpec,
+  underlineMarkSpec,
+} from '@lblod/ember-rdfa-editor/model/markSpec';
+import AddMarkCommand from '@lblod/ember-rdfa-editor/commands/add-mark-command';
+import RemoveMarkCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-command';
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -163,6 +172,13 @@ export default class RawEditor {
     this.registerCommand(new DeleteSelectionCommand(this.model));
     this.registerCommand(new ReadSelectionCommand(this.model));
     this.registerCommand(new UndoCommand(this.model));
+    this.registerCommand(new AddMarkCommand(this.model));
+    this.registerCommand(new RemoveMarkCommand(this.model));
+    this.registerMark(boldMarkSpec);
+    this.registerMark(italicMarkSpec);
+    this.registerMark(highlightMarkSpec);
+    this.registerMark(underlineMarkSpec);
+    this.registerMark(strikethroughMarkSpec);
   }
 
   /**
@@ -176,7 +192,7 @@ export default class RawEditor {
   set rootNode(rootNode: HTMLElement) {
     if (rootNode) {
       this.initialize(rootNode);
-      this.read();
+      this.model.read();
       this.model.selection.collapseIn(this.model.rootModelNode);
       this.model.write();
       this.updateRichNode();
@@ -266,11 +282,8 @@ export default class RawEditor {
     return ModelRange.fromPaths(this.model.rootModelNode, path1, path2);
   }
 
-  read() {
-
-  }
-  registerMark(mark: Mark) {
-
+  registerMark(markSpec: MarkSpec) {
+    this.model.registerMark(markSpec);
   }
 
   /**

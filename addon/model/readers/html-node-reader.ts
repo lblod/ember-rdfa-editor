@@ -32,9 +32,9 @@ export default class HtmlNodeReader
     if (isElement(from)) {
       const tag = tagName(from) as ElementType;
 
-      const mark = context.matchMark(from);
-      if (mark) {
-        context.activeMarks.add(mark);
+      const marks = context.matchMark(from);
+      if (marks.size) {
+        context.activeMarks.add(...marks);
         const reader = new HtmlNodeReader();
         result = [];
 
@@ -44,7 +44,7 @@ export default class HtmlNodeReader
             pushOrExpand(result, modelChild);
           }
         }
-        context.activeMarks.delete(mark);
+        context.activeMarks.delete(...marks);
       } else {
         let reader: ElementReader;
         const ctor = HtmlNodeReader.elementConfig.get(tag);

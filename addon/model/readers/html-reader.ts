@@ -3,9 +3,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import { calculateRdfaPrefixes } from '../util/rdfa-utils';
-import { Mark, MarkSet, TagMatch } from '@lblod/ember-rdfa-editor/model/mark';
-import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
-import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { MarkSet } from '@lblod/ember-rdfa-editor/model/markSpec';
 
 export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;
@@ -39,12 +37,8 @@ export class HtmlReaderContext {
     return this._rdfaPrefixes;
   }
 
-  matchMark(node: Node): Mark | null {
-    let mark = this.model.tagMap.get(tagName(node) as TagMatch);
-    if (!mark) {
-      mark = this.model.tagMap.get('*');
-    }
-    return mark || null;
+  matchMark(node: Node): MarkSet {
+    return this.model.marksRegistry.matchMark(node);
   }
 }
 

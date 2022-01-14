@@ -1,43 +1,51 @@
-import ModelRange from '../model-range';
 import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { Mark } from '@lblod/ember-rdfa-editor/model/markSpec';
 import { UnconfinedRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelText, {
-  TextAttribute,
-} from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelTreeWalker, {
   FilterResult,
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 
-export default class AttributeOperation extends Operation {
-  private _key: TextAttribute;
-  private _value: boolean;
+type MarkAction = 'add' | 'remove';
+export default class MarkOperation extends Operation {
+  private _mark: Mark;
+  private _action: MarkAction;
 
-  constructor(range: ModelRange, key: TextAttribute, value: boolean) {
+  constructor(range: ModelRange, mark: Mark, action: MarkAction) {
     super(range);
-    this._key = key;
-    this._value = value;
+    this._mark = mark;
+    this._action = action;
   }
 
-  get value(): boolean {
-    return this._value;
+  get action(): MarkAction {
+    return this._action;
   }
 
-  set value(value: boolean) {
-    this._value = value;
+  set action(value: MarkAction) {
+    this._action = value;
   }
 
-  get key(): TextAttribute {
-    return this._key;
+  get mark(): Mark {
+    return this._mark;
   }
 
-  set key(value: TextAttribute) {
-    this._key = value;
+  set mark(value: Mark) {
+    this._mark = value;
   }
 
   canExecute() {
     return true;
+  }
+
+  markAction(node: ModelText, mark: Mark, action: MarkAction) {
+    if (action === 'add') {
+      node.addMark(mark);
+    } else {
+      node.removeMark(mark);
+    }
   }
 
   execute(): ModelRange {
@@ -52,12 +60,10 @@ export default class AttributeOperation extends Operation {
         this.range.start.nodeBefore() || this.range.start.nodeAfter()!;
       const node = new ModelText(INVISIBLE_SPACE);
       if (ModelNode.isModelText(referenceNode)) {
-        for (const [prop, val] of referenceNode.getTextAttributes()) {
-          node.setTextAttribute(prop, val);
-        }
+        node.marks = referenceNode.marks.clone();
       }
       //insert new textNode with property set
-      node.setTextAttribute(this._key, this._value);
+      this.markAction(node, this.mark, this.action);
       const insertionIndex = this.range.start.parent.offsetToIndex(
         this.range.start.parentOffset
       );
@@ -75,7 +81,7 @@ export default class AttributeOperation extends Operation {
       this.range.start.split();
       this.range.end.split();
 
-      const walker = new ModelTreeWalker({
+      const walker = new ModelTreeWalker<ModelText>({
         range: this.range,
         filter: (node: ModelNode) => {
           return ModelNode.isModelText(node)
@@ -86,7 +92,7 @@ export default class AttributeOperation extends Operation {
       const textNodes = Array.from(walker);
 
       for (const node of textNodes) {
-        node.setTextAttribute(this._key, this._value);
+        this.markAction(node, this.mark, this.action);
       }
     }
     return this.range;

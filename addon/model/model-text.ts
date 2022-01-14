@@ -5,22 +5,9 @@ import ModelNode, {
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
+import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/markSpec';
 
 const NON_BREAKING_SPACE = '\u00A0';
-export type TextAttribute =
-  | 'bold'
-  | 'italic'
-  | 'underline'
-  | 'strikethrough'
-  | 'highlighted';
-export const TEXT_ATTRIBUTES: TextAttribute[] = [
-  'bold',
-  'italic',
-  'underline',
-  'strikethrough',
-  'highlighted',
-];
 
 export default class ModelText extends ModelNode {
   modelNodeType: ModelNodeType = 'TEXT';
@@ -64,24 +51,12 @@ export default class ModelText extends ModelNode {
     return this.marks.hasHash(markName);
   }
 
-  getTextAttribute(key: TextAttribute): boolean {
-    return this.attributeMap.get(key) === 'true';
+  addMark(mark: Mark) {
+    this.marks.add(mark);
   }
 
-  getTextAttributes(): Array<[TextAttribute, boolean]> {
-    const rslt: Array<[TextAttribute, boolean]> = [];
-    for (const textAttribute of TEXT_ATTRIBUTES) {
-      rslt.push([textAttribute, this.getTextAttribute(textAttribute)]);
-    }
-    return rslt;
-  }
-
-  setTextAttribute(key: TextAttribute, value: boolean) {
-    this.attributeMap.set(key, String(value));
-  }
-
-  toggleTextAttribute(key: TextAttribute) {
-    this.setTextAttribute(key, !this.getTextAttribute(key));
+  removeMark(mark: Mark) {
+    this.marks.deleteHash(mark.name);
   }
 
   insertTextNodeAt(index: number): ModelText {
@@ -105,7 +80,10 @@ export default class ModelText extends ModelNode {
    * possible.
    * @param index
    */
-  split(index: number): { left: ModelText; right: ModelText } {
+  split(index: number): {
+    left: ModelText;
+    right: ModelText;
+  } {
     let leftContent = this.content.substring(0, index);
     if (leftContent.endsWith(' ')) {
       leftContent =
@@ -139,6 +117,9 @@ export default class ModelText extends ModelNode {
       return false;
     }
     if (this.content !== other.content) {
+      return false;
+    }
+    if (!this.marks.hasSameHashes(other.marks)) {
       return false;
     }
     if (strict) {

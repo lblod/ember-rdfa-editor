@@ -1,12 +1,7 @@
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import {
-  PropertyState,
-  RelativePosition,
-} from '@lblod/ember-rdfa-editor/model/util/types';
-import ModelText, {
-  TextAttribute,
-} from '@lblod/ember-rdfa-editor/model/model-text';
+import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import { Predicate } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
@@ -15,6 +10,7 @@ import ModelTreeWalker, {
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { MarkSet } from '@lblod/ember-rdfa-editor/model/markSpec';
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -158,36 +154,22 @@ export default class ModelRange {
     }
   }
 
-  getTextAttributes(): Map<TextAttribute, PropertyState> {
+  getMarks(): MarkSet {
+    //TODO use gentreewalker here
     const treeWalker = new ModelTreeWalker<ModelText>({
       range: this,
       filter: toFilterSkipFalse(ModelNode.isModelText),
     });
-    const result: Map<TextAttribute, PropertyState> = new Map<
-      TextAttribute,
-      PropertyState
-    >();
-    for (const node of treeWalker) {
-      for (const [attr, val] of node.getTextAttributes()) {
-        const currentVal = result.get(attr);
-        if (!currentVal) {
-          if (val) {
-            result.set(attr, PropertyState.enabled);
-          } else {
-            result.set(attr, PropertyState.disabled);
-          }
-        } else if (currentVal === PropertyState.enabled) {
-          if (!val) {
-            result.set(attr, PropertyState.unknown);
-          }
-        } else if (currentVal === PropertyState.disabled) {
-          if (val) {
-            result.set(attr, PropertyState.unknown);
-          }
-        }
+    const nodes = [...treeWalker];
+    if (nodes.length) {
+      let result = nodes[0].marks.clone();
+      for (const node of nodes.slice(1)) {
+        result = result.intersection(node.marks);
       }
+      return result;
+    } else {
+      return new MarkSet();
     }
-    return result;
   }
 
   /**

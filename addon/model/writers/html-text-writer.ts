@@ -1,11 +1,8 @@
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import Handlebars from 'handlebars';
 import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelText, {
-  TextAttribute,
-} from '@lblod/ember-rdfa-editor/model/model-text';
-import { hbs } from 'ember-cli-htmlbars';
-import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/html-input-parser';
+import ModelText, {TextAttribute,} from '@lblod/ember-rdfa-editor/model/model-text';
+import {isElement, isTextNode,} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 /**
  * Writer responsible for converting {@link ModelText} nodes into HTML subtrees
@@ -32,9 +29,6 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
       return null;
     }
 
-    const result = new Text(modelNode.content);
-    this.model.bindNode(modelNode, result);
-
     // for (const entry of modelNode.getTextAttributes()) {
     //   const attributeMapping = HtmlTextWriter.attributeMap.get(entry[0]);
     //   if (entry[1] && attributeMapping) {
@@ -46,7 +40,7 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
     //     wrapper = wrappingElement;
     //   }
     // }
-    let current = modelNode.content;
+    let current = modelNode.content || '';
     for (const entry of [...modelNode.marks].sort((a, b) =>
       a.priority >= b.priority ? 1 : -1
     )) {
@@ -57,6 +51,27 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
     }
 
     const parser = new DOMParser();
-    return parser.parseFromString(current, 'text/html').body.firstChild!;
+    const parseResult = parser.parseFromString(current, 'text/html').body
+      .firstChild!;
+    if (parseResult) {
+      if (isTextNode(parseResult)) {
+        this.model.bindNode(modelNode, parseResult);
+      } else if (isElement(parseResult)) {
+        this.model.bindNode(modelNode, this.firstLeafNode(parseResult));
+      }
+      return parseResult;
+    } else {
+      const result = new Text();
+      this.model.bindNode(modelNode, result);
+      return result;
+    }
+  }
+
+  firstLeafNode(node: Element) {
+    let current: Node = node;
+    while (current.firstChild) {
+      current = current.firstChild;
+    }
+    return current;
   }
 }

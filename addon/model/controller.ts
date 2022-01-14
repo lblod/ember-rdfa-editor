@@ -16,6 +16,7 @@ import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import { MarkSet, MarkSpec } from '@lblod/ember-rdfa-editor/model/markSpec';
 
 export type WidgetLocation = 'toolbar' | 'sidebar';
 
@@ -54,6 +55,8 @@ export default interface Controller {
   registerCommand<A extends unknown[], R>(command: Command<A, R>): void;
 
   registerWidget(spec: WidgetSpec): void;
+
+  registerMark(spec: MarkSpec): void;
 
   onEvent<E extends AnyEventName>(
     eventName: E,
@@ -132,5 +135,9 @@ export class RawEditorController implements Controller {
 
   registerWidget(_spec: WidgetSpec): void {
     this._rawEditor.registerWidget({ ..._spec, controller: this });
+  }
+
+  registerMark(spec: MarkSpec) {
+    this._rawEditor.registerMark(spec);
   }
 }

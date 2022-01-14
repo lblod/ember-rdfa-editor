@@ -1,21 +1,30 @@
 import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import HtmlWriter from '@lblod/ember-rdfa-editor/model/writers/html-writer';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import {getWindowSelection, isElement,} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import {ModelError, NotImplementedError,} from '@lblod/ember-rdfa-editor/utils/errors';
+import {
+  getWindowSelection,
+  isElement,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {
+  ModelError,
+  NotImplementedError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
-import BatchedModelMutator from '@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelHistory from '@lblod/ember-rdfa-editor/model/model-history';
-import {createLogger, Logger,} from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import {
+  createLogger,
+  Logger,
+} from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import SimplifiedModel from '@lblod/ember-rdfa-editor/model/simplified-model';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
-import {ModelReadEvent} from '@lblod/ember-rdfa-editor/utils/editor-event';
-import {Mark, TagMatch} from '@lblod/ember-rdfa-editor/model/mark';
+import { ModelReadEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
+import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
+import { MarkSpec } from '@lblod/ember-rdfa-editor/model/markSpec';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -39,7 +48,7 @@ export default class Model {
   private selectionWriter: SelectionWriter;
   private history: ModelHistory = new ModelHistory();
   private _eventBus?: EventBus;
-  tagMap: Map<TagMatch, Mark> = new Map<keyof HTMLElementTagNameMap, Mark>();
+  private _marksRegistry: MarksRegistry;
 
   private logger: Logger;
 
@@ -53,6 +62,7 @@ export default class Model {
     this._selection = new ModelSelection();
     this._eventBus = eventBus;
     this.logger = createLogger('RawEditor');
+    this._marksRegistry = new MarksRegistry();
   }
 
   get rootNode(): HTMLElement {
@@ -67,10 +77,8 @@ export default class Model {
     return this._rootModelNode;
   }
 
-  registerMark(mark: Mark) {
-    for (const matcher of mark.matchers) {
-      this.tagMap.set(matcher.tag, mark);
-    }
+  get marksRegistry(): MarksRegistry {
+    return this._marksRegistry;
   }
 
   /**
@@ -138,6 +146,10 @@ export default class Model {
     }
   }
 
+  registerMark(markSpec: MarkSpec) {
+    this._marksRegistry.registerMark(markSpec);
+  }
+
   writeSelection() {
     this.selectionWriter.write(this.selection);
   }
@@ -191,32 +203,6 @@ export default class Model {
       } else {
         this.write(this.rootModelNode);
       }
-    }
-  }
-
-  /**
-   * Change the model by providing a callback that will receive a {@link BatchedModelMutator batched mutator}
-   * The mutator gets flushed and the model gets written out automatically after the callback finishes.
-   *
-   * @param callback
-   * @param autoSelect
-   */
-  batchChange(
-    callback: (mutator: BatchedModelMutator) => ModelElement | void,
-    autoSelect = true
-  ) {
-    const mutator = new BatchedModelMutator();
-    const subTree = callback(mutator);
-
-    const resultingRange = mutator.flush();
-    if (autoSelect && resultingRange) {
-      this.selection.selectRange(resultingRange);
-    }
-
-    if (subTree) {
-      this.write(subTree);
-    } else {
-      this.write();
     }
   }
 
