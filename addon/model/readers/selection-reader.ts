@@ -6,17 +6,12 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import {
   isElement,
   isTextNode,
-  tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {
   ModelError,
   NotImplementedError,
   ParseError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import {
-  HIGHLIGHT_ATTRIBUTE,
-  TEXT_PROPERTY_NODES,
-} from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
@@ -92,7 +87,7 @@ export default class SelectionReader
     domOffset: number
   ): ModelPosition | null {
     let result = null;
-    if (SelectionReader.isTextPropertyNode(container)) {
+    if (this.isTextPropertyNode(container)) {
       return this.findPositionForTextPropertyNode(container, domOffset);
     } else if (isElement(container)) {
       const modelContainer = this.model.getModelNodeFor(
@@ -117,17 +112,11 @@ export default class SelectionReader
     return result;
   }
 
-  private static isTextPropertyNode(elem: Node): boolean {
+  private isTextPropertyNode(elem: Node): boolean {
     if (!isElement(elem)) {
       return false;
     }
-    if (!TEXT_PROPERTY_NODES.has(tagName(elem))) {
-      return false;
-    }
-    if (tagName(elem) === 'span' && !elem.getAttribute(HIGHLIGHT_ATTRIBUTE)) {
-      return false;
-    }
-    return true;
+    return !!this.model.marksRegistry.matchMark(elem).size;
   }
 
   private findPositionForTextPropertyNode(

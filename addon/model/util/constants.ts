@@ -1,5 +1,5 @@
 import {
-  boldMarkSpec,
+  boldMarkSpec, highlightMarkSpec,
   italicMarkSpec,
   Mark,
   strikethroughMarkSpec,
@@ -48,4 +48,5 @@ export const compatTextAttributeMap: Map<TextAttribute, Mark> = new Map([
   ['italic', new Mark(italicMarkSpec, {})],
   ['underline', new Mark(underlineMarkSpec, {})],
   ['strikethrough', new Mark(strikethroughMarkSpec, {})],
+  ['highlighted', new Mark(highlightMarkSpec, {})],
 ]);

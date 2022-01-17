@@ -4,6 +4,7 @@ import { tracked } from '@glimmer/tracking';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
 interface Args {
   editor: PernetRawEditor;
@@ -28,6 +29,7 @@ export default class EditorToolbar extends Component<Args> {
   @tracked isInTable = false;
   @tracked canIndent = false;
   @tracked canUnindent = false;
+  selection: ModelSelection | null;
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
@@ -49,6 +51,7 @@ export default class EditorToolbar extends Component<Args> {
       this.isInList && this.args.editor.canExecuteCommand('indent-list');
     this.canUnindent =
       this.isInList && this.args.editor.canExecuteCommand('unindent-list');
+    this.selection = event.detail;
   }
 
   @action
@@ -64,6 +67,7 @@ export default class EditorToolbar extends Component<Args> {
       this.args.editor.executeCommand('unindent-list');
     }
   }
+
   @action
   insertNewLine() {
     this.args.editor.executeCommand('insert-newLine');
@@ -87,12 +91,30 @@ export default class EditorToolbar extends Component<Args> {
       this.args.editor.executeCommand('make-list', 'ul');
     }
   }
+
   @action
   toggleOrderedList() {
     if (this.isInList) {
       this.args.editor.executeCommand('remove-list');
     } else {
       this.args.editor.executeCommand('make-list', 'ol');
+    }
+  }
+
+  @action
+  randomColor() {
+    if (this.selection) {
+      this.args.editor.executeCommand(
+        'remove-mark',
+        this.selection.lastRange,
+        'color'
+      );
+      this.args.editor.executeCommand(
+        'add-mark',
+        this.selection.lastRange,
+        'color',
+        { color: 'green' }
+      );
     }
   }
 

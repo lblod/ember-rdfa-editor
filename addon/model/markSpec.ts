@@ -106,6 +106,27 @@ export const highlightMarkSpec: MarkSpec = {
   },
 };
 
+export const testMarkSpec: MarkSpec<{ color: string }> = {
+  name: 'color',
+  priority: 1100,
+  matchers: [
+    {
+      tag: 'span',
+      attributeBuilder: (node: Node) => {
+        if (isElement(node) && node.style.background) {
+          return { color: node.style.background };
+        }
+        return null;
+      },
+    },
+  ],
+  write(render: Renderer, mark: Mark<{ color: string }>): Renderable {
+    return render(
+      `<span style="background: ${mark.attributes.color}">{{{children}}}</span>`
+    );
+  },
+};
+
 export interface DomNodeMatcher<
   A extends Record<string, unknown> = Record<string, unknown>
 > {

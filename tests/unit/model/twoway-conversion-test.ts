@@ -3,6 +3,7 @@ import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import HtmlWriter from '@lblod/ember-rdfa-editor/model/writers/html-writer';
 import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
+import {italicMarkSpec} from "@lblod/ember-rdfa-editor/model/markSpec";
 
 module('Unit | model | twoway-conversion', (hooks) => {
   let reader: HtmlReader;
@@ -11,6 +12,7 @@ module('Unit | model | twoway-conversion', (hooks) => {
 
   hooks.beforeEach(() => {
     ctx.reset();
+    ctx.model.registerMark(italicMarkSpec);
     reader = new HtmlReader(ctx.model);
     writer = new HtmlWriter(ctx.model);
   });

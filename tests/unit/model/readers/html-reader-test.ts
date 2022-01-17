@@ -9,12 +9,24 @@ import {
 } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import {
+  boldMarkSpec,
+  highlightMarkSpec,
+  italicMarkSpec,
+  strikethroughMarkSpec,
+  underlineMarkSpec,
+} from '@lblod/ember-rdfa-editor/model/markSpec';
 
 module('Unit | model | readers | html-reader', (hooks) => {
   let reader: HtmlReader;
   const ctx = new ModelTestContext();
   hooks.beforeEach(() => {
     ctx.reset();
+    ctx.model.registerMark(boldMarkSpec);
+    ctx.model.registerMark(italicMarkSpec);
+    ctx.model.registerMark(underlineMarkSpec);
+    ctx.model.registerMark(strikethroughMarkSpec);
+    ctx.model.registerMark(highlightMarkSpec);
     reader = new HtmlReader(ctx.model);
   });
 
@@ -35,7 +47,7 @@ module('Unit | model | readers | html-reader', (hooks) => {
     // language=XML
     const { root: expected } = vdom`
       <span>
-        <text bold="true">abc</text>
+        <text __marks="bold">abc</text>
       </span>
     `;
 
@@ -50,7 +62,7 @@ module('Unit | model | readers | html-reader', (hooks) => {
     // language=XML
     const { root: expected } = vdom`
       <span>
-        <text bold="true" italic="true" underline="true">abc</text>
+        <text __marks="bold,italic,underline">abc</text>
       </span>
     `;
 
@@ -65,8 +77,8 @@ module('Unit | model | readers | html-reader', (hooks) => {
     // language=XML
     const { root: expected } = vdom`
       <span>
-        <text bold="true" italic="true" underline="true">abc</text>
-        <text bold="true" italic="true">def</text>
+        <text __marks="bold,italic,underline">abc</text>
+        <text __marks="bold,italic">def</text>
       </span>
     `;
 
@@ -97,11 +109,11 @@ module('Unit | model | readers | html-reader', (hooks) => {
       <span>
         <br/>
         <br/>
-        <text bold="true" italic="true" underline="true">abc</text>
+        <text __marks="bold,italic,underline">abc</text>
         <span>
-          <text bold="true" italic="true">def</text>
+          <text __marks="bold,italic">def</text>
         </span>
-        <text bold="true" italic="true">ghi</text>
+        <text __marks="bold,italic">ghi</text>
       </span>
     `;
 
@@ -117,16 +129,20 @@ module('Unit | model | readers | html-reader', (hooks) => {
           <span data-editor-highlight="true">def</span>
         </strong>
       </span>`;
+    console.log(doc)
 
     // language=XML
-    const { root: expected } = vdom`
+    const { root: expected, textNodes: {abc, def} } = vdom`
       <span>
-        <text highlighted="true">abc</text>
-        <text bold="true" highlighted="true">def</text>
+        <text __id="abc" __marks="highlighted">abc</text>
+        <text __id="def" __marks="bold,highlighted">def</text>
       </span>
     `;
 
     const actual = reader.read(doc.body.firstChild!)!;
+    console.log(actual[0].toXml())
+    console.log(abc);
+    console.log(def);
     assert.true(actual[0].sameAs(expected));
   });
   test('reads table', (assert) => {
