@@ -3,6 +3,18 @@
 
 
 
+## 0.50.0-beta.3 (2022-01-18)
+
+#### :bug: Bug Fix
+* [#202](https://github.com/lblod/ember-rdfa-editor/pull/202) set field directly instead of using this.set ([@nvdk](https://github.com/nvdk))
+
+#### :house: Internal
+* [#195](https://github.com/lblod/ember-rdfa-editor/pull/195) Update eslint and various non-ember plugins to latest ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Niels V ([@nvdk](https://github.com/nvdk))
+
 ## 0.50.0-beta.2 (2021-12-07)
 
 #### :house: Internal
