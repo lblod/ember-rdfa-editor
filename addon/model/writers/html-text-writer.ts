@@ -28,17 +28,6 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
       return null;
     }
 
-    // for (const entry of modelNode.getTextAttributes()) {
-    //   const attributeMapping = HtmlTextWriter.attributeMap.get(entry[0]);
-    //   if (entry[1] && attributeMapping) {
-    //     const wrappingElement = document.createElement(attributeMapping);
-    //     if (entry[0] === 'highlighted') {
-    //       wrappingElement.setAttribute('data-editor-highlight', 'true');
-    //     }
-    //     wrapper.appendChild(wrappingElement);
-    //     wrapper = wrappingElement;
-    //   }
-    // }
     let current: Node = new Text(modelNode.content);
     this.model.bindNode(modelNode, current);
 
