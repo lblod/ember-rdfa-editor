@@ -4,7 +4,12 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
 
-export type TextAttribute = 'bold' | 'italic' | 'underline' | 'strikethrough';
+export type TextAttribute =
+  | 'bold'
+  | 'italic'
+  | 'underline'
+  | 'strikethrough'
+  | 'highlighted';
 
 /**
  * @deprecated

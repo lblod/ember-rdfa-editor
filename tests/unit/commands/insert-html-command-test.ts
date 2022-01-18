@@ -177,7 +177,6 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
     const root = ctx.model.rootModelNode;
     const range = ModelRange.fromInElement(root, 0, root.getMaxOffset());
     command.execute(htmlToInsert, range);
-    console.log(root.toXml());
     assert.true(root.sameAs(expected));
   });
 });

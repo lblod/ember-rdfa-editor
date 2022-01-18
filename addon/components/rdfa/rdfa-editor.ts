@@ -243,7 +243,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   async initializePlugins(editor: RawEditor) {
     const plugins = this.getPlugins();
     for (const plugin of plugins) {
-      console.log('INITIALIZING', plugin.name);
       await this.initializePlugin(plugin, editor);
     }
   }

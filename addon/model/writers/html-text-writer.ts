@@ -57,7 +57,8 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
       if (isTextNode(parseResult)) {
         this.model.bindNode(modelNode, parseResult);
       } else if (isElement(parseResult)) {
-        this.model.bindNode(modelNode, this.firstLeafNode(parseResult));
+        const leafNode = this.firstLeafNode(parseResult);
+        this.model.bindNode(modelNode, leafNode);
       }
       return parseResult;
     } else {

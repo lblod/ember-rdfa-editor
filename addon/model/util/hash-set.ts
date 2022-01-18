@@ -56,7 +56,8 @@ export default class HashSet<I> implements Set<I> {
   deleteHash(...hashes: unknown[]): boolean {
     let didDelete = false;
     for (const hash of hashes) {
-      didDelete = didDelete || this.items.delete(hash);
+      const deleted = this.items.delete(hash);
+      didDelete = didDelete || deleted;
     }
     return didDelete;
   }

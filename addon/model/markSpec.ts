@@ -102,7 +102,7 @@ export const highlightMarkSpec: MarkSpec = {
   name: 'highlighted',
 
   write(render: Renderer): Renderable {
-    return render('<span data-editor-highlight>{{{children}}}</span>');
+    return render('<span data-editor-highlight="true">{{{children}}}</span>');
   },
 };
 

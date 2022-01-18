@@ -107,13 +107,12 @@ export default class EditorToolbar extends Component<Args> {
       this.args.editor.executeCommand(
         'remove-mark',
         this.selection.lastRange,
-        'color'
+        'highlighted'
       );
       this.args.editor.executeCommand(
         'add-mark',
         this.selection.lastRange,
-        'color',
-        { color: 'green' }
+        'highlighted'
       );
     }
   }

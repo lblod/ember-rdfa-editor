@@ -129,7 +129,6 @@ module('Unit | model | readers | html-reader', (hooks) => {
           <span data-editor-highlight="true">def</span>
         </strong>
       </span>`;
-    console.log(doc)
 
     // language=XML
     const { root: expected, textNodes: {abc, def} } = vdom`
@@ -140,9 +139,6 @@ module('Unit | model | readers | html-reader', (hooks) => {
     `;
 
     const actual = reader.read(doc.body.firstChild!)!;
-    console.log(actual[0].toXml())
-    console.log(abc);
-    console.log(def);
     assert.true(actual[0].sameAs(expected));
   });
   test('reads table', (assert) => {
