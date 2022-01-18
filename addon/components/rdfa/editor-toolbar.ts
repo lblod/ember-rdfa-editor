@@ -4,7 +4,6 @@ import { tracked } from '@glimmer/tracking';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
 interface Args {
   editor: PernetRawEditor;
@@ -29,7 +28,7 @@ export default class EditorToolbar extends Component<Args> {
   @tracked isInTable = false;
   @tracked canIndent = false;
   @tracked canUnindent = false;
-  selection: ModelSelection | null;
+  selection: ModelSelection | null = null;
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);

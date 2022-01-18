@@ -1,5 +1,5 @@
 import Command from '@lblod/ember-rdfa-editor/commands/command';
-import { Mark } from '@lblod/ember-rdfa-editor/model/markSpec';
+import { Mark, Serializable } from '@lblod/ember-rdfa-editor/model/markSpec';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
@@ -17,7 +17,7 @@ export default class AddMarkCommand extends Command<
   execute(
     range: ModelRange,
     markName: string,
-    markAttributes: Record<string, unknown> = {}
+    markAttributes: Record<string, Serializable> = {}
   ): void {
     const spec = this.model.marksRegistry.lookupMark(markName);
     if (spec) {

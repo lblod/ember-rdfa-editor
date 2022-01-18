@@ -26,10 +26,10 @@ export default class MarksRegistry {
         if (matcher.attributeBuilder) {
           const attrs = matcher.attributeBuilder(node);
           if (attrs) {
-            result.add(new Mark<Record<string, unknown>>(spec, attrs));
+            result.add(new Mark(spec, attrs));
           }
         } else {
-          result.add(new Mark<Record<string, unknown>>(spec, {}));
+          result.add(new Mark(spec, {}));
         }
       }
     }

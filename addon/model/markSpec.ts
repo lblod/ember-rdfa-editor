@@ -69,11 +69,11 @@ export const underlineMarkSpec: MarkSpec = {
 };
 
 export const strikethroughMarkSpec: MarkSpec = {
-  matchers: [{ tag: 's' }],
+  matchers: [{ tag: 's' }, { tag: 'del' }],
   priority: 400,
   name: 'strikethrough',
   renderSpec(): RenderSpec {
-    return ['s', [SLOT]];
+    return ['del', [SLOT]];
   },
 };
 export const highlightMarkSpec: MarkSpec = {

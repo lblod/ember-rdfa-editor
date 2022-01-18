@@ -2,9 +2,7 @@ import ModelNode, {
   ModelNodeType,
   NodeConfig,
 } from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelText, {
-  TextAttribute,
-} from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { Cloneable } from '@lblod/ember-rdfa-editor/model/util/types';
 import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/model/util/constants';
 import {
@@ -15,6 +13,7 @@ import {
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import { parsePrefixString } from '@lblod/ember-rdfa-editor/model/util/rdfa-utils';
 import RdfaAttributes from '@lblod/marawa/rdfa-attributes';
+import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-property-command';
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
