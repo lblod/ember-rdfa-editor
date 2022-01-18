@@ -1,22 +1,22 @@
 import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
 import Handlebars from 'handlebars';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { HtmlTag } from '@lblod/ember-rdfa-editor/model/util/types';
 
 export type TagMatch = keyof HTMLElementTagNameMap | '*';
+export type AttributeSpec = Record<string, Serializable>;
 
-export interface MarkSpec<
-  A extends Record<string, unknown> = Record<string, unknown>
-> {
+export interface MarkSpec<A extends AttributeSpec = AttributeSpec> {
   name: string;
 
   priority: number;
 
   matchers: DomNodeMatcher<A>[];
 
-  write(render: Renderer, mark: Mark<A>): Renderable;
+  renderSpec(mark: Renderable<A>): RenderSpec;
 }
 
-export class Mark<A extends Record<string, unknown> = Record<string, unknown>> {
+export class Mark<A extends AttributeSpec = AttributeSpec> {
   private readonly _spec: MarkSpec<A>;
   private readonly _attributes: A;
 
@@ -37,8 +37,8 @@ export class Mark<A extends Record<string, unknown> = Record<string, unknown>> {
     return this._spec.priority;
   }
 
-  write(render: Renderer): Renderable {
-    return this._spec.write(render, this);
+  write(block: Node): Node {
+    return renderFromSpec(this._spec.renderSpec(this), block);
   }
 }
 
@@ -46,10 +46,8 @@ export const boldMarkSpec: MarkSpec = {
   matchers: [{ tag: 'b' }, { tag: 'strong' }],
   name: 'bold',
   priority: 100,
-
-  write(render: Renderer): Renderable {
-    //language=hbs
-    return render('<strong>{{{children}}}</strong>');
+  renderSpec(): RenderSpec {
+    return ['strong', [SLOT]];
   },
 };
 
@@ -57,17 +55,16 @@ export const italicMarkSpec: MarkSpec = {
   matchers: [{ tag: 'em' }, { tag: 'i' }],
   priority: 200,
   name: 'italic',
-
-  write(render: Renderer): Renderable {
-    return render('<em>{{{children}}}</em>');
+  renderSpec(): RenderSpec {
+    return ['em', [SLOT]];
   },
 };
 export const underlineMarkSpec: MarkSpec = {
   matchers: [{ tag: 'u' }],
   priority: 300,
   name: 'underline',
-  write(render: Renderer): Renderable {
-    return render('<u>{{{children}}}</u>');
+  renderSpec(): RenderSpec {
+    return ['u', [SLOT]];
   },
 };
 
@@ -75,8 +72,8 @@ export const strikethroughMarkSpec: MarkSpec = {
   matchers: [{ tag: 's' }],
   priority: 400,
   name: 'strikethrough',
-  write(render: Renderer): Renderable {
-    return render('<s>{{{children}}}</s>');
+  renderSpec(): RenderSpec {
+    return ['s', [SLOT]];
   },
 };
 export const highlightMarkSpec: MarkSpec = {
@@ -101,8 +98,11 @@ export const highlightMarkSpec: MarkSpec = {
   priority: 1000,
   name: 'highlighted',
 
-  write(render: Renderer): Renderable {
-    return render('<span data-editor-highlight="true">{{{children}}}</span>');
+  renderSpec(): RenderSpec {
+    return [
+      { tag: 'span', attributes: { 'data-editor-highlight': true } },
+      [SLOT],
+    ];
   },
 };
 
@@ -120,25 +120,70 @@ export const testMarkSpec: MarkSpec<{ color: string }> = {
       },
     },
   ],
-  write(render: Renderer, mark: Mark<{ color: string }>): Renderable {
-    return render(
-      `<span style="background: ${mark.attributes.color}">{{{children}}}</span>`
-    );
+  renderSpec(mark: Renderable<{ color: string }>): RenderSpec {
+    return [
+      {
+        tag: 'span',
+        attributes: { style: `background: ${mark.attributes.color}` },
+      },
+      [SLOT],
+    ];
   },
 };
 
 export interface DomNodeMatcher<
-  A extends Record<string, unknown> = Record<string, unknown>
+  A extends Record<string, Serializable> | void = void
 > {
   tag: TagMatch;
   attributeBuilder?: (node: Node) => A | null;
 }
 
 export type Renderer = typeof Handlebars.compile;
-export type Renderable = HandlebarsTemplateDelegate;
+
+export interface Serializable {
+  toString(): string;
+}
+
+export interface Renderable<A extends Record<string, Serializable> | void> {
+  name: string;
+  attributes: A;
+}
 
 export class MarkSet extends HashSet<Mark> {
   constructor() {
     super({ hashFunc: (mark: Mark) => mark.name });
+  }
+}
+
+const SLOT: SLOT = 0;
+type SLOT = 0;
+type HtmlNodeSpec =
+  | HtmlTag
+  | { tag: HtmlTag; attributes: Record<string, Serializable> };
+type RenderSpec = [HtmlNodeSpec, RenderSpec[]] | SLOT;
+
+function renderFromSpec(spec: RenderSpec, block: Node): Node {
+  if (spec === SLOT) {
+    return block;
+  } else {
+    const [nodeSpec, children] = spec;
+    let result: Node;
+    if (typeof nodeSpec === 'string') {
+      result = document.createElement(nodeSpec);
+    } else {
+      result = document.createElement(nodeSpec.tag);
+      for (const [key, val] of Object.entries(nodeSpec.attributes)) {
+        (result as HTMLElement).setAttribute(key, val.toString());
+      }
+    }
+
+    for (const child of children) {
+      if (child === SLOT) {
+        result.appendChild(block);
+      } else {
+        result.appendChild(renderFromSpec(child, block));
+      }
+    }
+    return result;
   }
 }

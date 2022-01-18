@@ -1,8 +1,7 @@
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
-import Handlebars from 'handlebars';
 import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelText, {TextAttribute,} from '@lblod/ember-rdfa-editor/model/model-text';
-import {isElement, isTextNode,} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-property-command';
 
 /**
  * Writer responsible for converting {@link ModelText} nodes into HTML subtrees
@@ -40,32 +39,15 @@ export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
     //     wrapper = wrappingElement;
     //   }
     // }
-    let current = modelNode.content || '';
+    let current: Node = new Text(modelNode.content);
+    this.model.bindNode(modelNode, current);
+
     for (const entry of [...modelNode.marks].sort((a, b) =>
       a.priority >= b.priority ? 1 : -1
     )) {
-      const wrappingElement = entry.write(Handlebars.compile)({
-        children: current,
-      });
-      current = wrappingElement;
+      current = entry.write(current);
     }
-
-    const parser = new DOMParser();
-    const parseResult = parser.parseFromString(current, 'text/html').body
-      .firstChild!;
-    if (parseResult) {
-      if (isTextNode(parseResult)) {
-        this.model.bindNode(modelNode, parseResult);
-      } else if (isElement(parseResult)) {
-        const leafNode = this.firstLeafNode(parseResult);
-        this.model.bindNode(modelNode, leafNode);
-      }
-      return parseResult;
-    } else {
-      const result = new Text();
-      this.model.bindNode(modelNode, result);
-      return result;
-    }
+    return current;
   }
 
   firstLeafNode(node: Element) {
