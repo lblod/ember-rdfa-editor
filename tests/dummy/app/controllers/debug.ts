@@ -4,7 +4,6 @@ import {tracked} from '@glimmer/tracking';
 import RdfaDocument from "@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document";
 
 export default class DebugController extends Controller {
-  @tracked randomText = "This is fine";
   @tracked rdfaEditor?: RdfaDocument;
   @action
   rdfaEditorInit(rdfaEditor: RdfaDocument) {
