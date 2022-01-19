@@ -7,6 +7,7 @@ module.exports = function (environment) {
       'editor-force-paragraph': false,
       'editor-cut': true,
       'editor-copy': true,
+      'editor-browser-delete': false,
     },
   };
 
