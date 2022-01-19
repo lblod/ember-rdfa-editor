@@ -129,13 +129,19 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       new BackspaceHandler({ rawEditor }),
       new TabHandler({ rawEditor }),
       new TextInputHandler({ rawEditor }),
-      new DisableDeleteHandler({ rawEditor }),
+    ];
+    const allowBrowserDelete = this.features.isEnabled('editorBrowserDelete');
+    console.log('allow browser default', allowBrowserDelete);
+    if (!allowBrowserDelete) {
+      this.defaultHandlers.push(new DisableDeleteHandler({ rawEditor }));
+    }
+    this.defaultHandlers.push(
       new IgnoreModifiersHandler({ rawEditor }),
       new UndoHandler({ rawEditor }),
       new BoldItalicUnderlineHandler({ rawEditor }),
       new EscapeHandler({ rawEditor }),
-      new FallbackInputHandler({ rawEditor }),
-    ];
+      new FallbackInputHandler({ rawEditor })
+    );
 
     this.externalHandlers = this.args.externalHandlers
       ? this.args.externalHandlers
