@@ -249,6 +249,17 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
   }
 
   /**
+   * Walk over all nodes. Use this if you only care about the
+   * side-effects of the onEnter and onLeave callbacks
+   */
+  walk(): void {
+    let result = this.nextNode();
+    while (result) {
+      result = this.nextNode();
+    }
+  }
+
+  /**
    * Reset the walker state so the generator can be reused.
    */
   reset() {

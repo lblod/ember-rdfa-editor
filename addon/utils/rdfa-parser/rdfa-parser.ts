@@ -157,8 +157,7 @@ export class RdfaParser {
       onEnterNode: parser.onEnterNode,
       onLeaveNode: parser.onLeaveNode,
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _nodes = [...walker.nodes()];
+    walker.walk();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const _ of pathFromDomRoot) {
       parser.onTagClose();
