@@ -3,6 +3,18 @@
 
 
 
+## 0.50.0-beta.4 (2022-01-19)
+
+#### :rocket: Enhancement
+* [#204](https://github.com/lblod/ember-rdfa-editor/pull/204) allow browser delete if the feature flag is enabled ([@nvdk](https://github.com/nvdk))
+
+#### :bug: Bug Fix
+* [#205](https://github.com/lblod/ember-rdfa-editor/pull/205) Fix broken datastore in prod ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Niels V ([@nvdk](https://github.com/nvdk))
+
 ## 0.50.0-beta.3 (2022-01-18)
 
 #### :bug: Bug Fix
