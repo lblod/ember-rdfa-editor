@@ -41,25 +41,12 @@
            prefix="eli: http://data.europa.eu/eli/ontology# prov: http://www.w3.org/ns/prov# mandaat: http://data.vlaanderen.be/ns/mandaat# besluit: http://data.vlaanderen.be/ns/besluit#"
            class="app-view">
         <Rdfa::RdfaEditor
-          @rdfaEditorInit={{this.rdfaEditorInit}}
+          class="rdfa-playground"
+          @rdfaEditorInit={{this.rdfaEditorInitFromArg}}
           @initDebug={{this.initDebug}}
           @profile="default"
-          class="rdfa-playground"
-          @editorOptions={{hash
-            showToggleRdfaAnnotations="true"
-            showInsertButton=null
-            showRdfa="true"
-            showRdfaHighlight="true"
-            showRdfaHover="true"
-            showPaper="true"
-            showSidebar="true"
-            showToolbarBottom=null
-          }}
-          @toolbarOptions={{hash
-            showTextStyleButtons="true"
-            showListButtons="true"
-            showIndentButtons="true"
-          }}
+          @editorOptions={{@editorOptions}}
+          @toolbarOptions={{@toolbarOptions}}
         />
       </div>
     </div>

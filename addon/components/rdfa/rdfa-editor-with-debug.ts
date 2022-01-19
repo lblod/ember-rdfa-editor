@@ -28,8 +28,6 @@ export default class RdfaRdfaEditorWithDebug extends Component {
 
   @action
   setup() {
-    console.log("Setup of the component");
-    console.log("This model is", this.sampleData);
     this.unloadListener = () => {
       this.saveEditorContentToLocalStorage();
     };
@@ -38,7 +36,6 @@ export default class RdfaRdfaEditorWithDebug extends Component {
 
   @action
   teardown() {
-    console.log("Teardown of the component");
     if (this.unloadListener) {
       window.removeEventListener("beforeunload", this.unloadListener);
     }
@@ -86,12 +83,9 @@ export default class RdfaRdfaEditorWithDebug extends Component {
   }
 
   @action
-  rdfaEditorInit(rdfaEditor: RdfaDocument) {
-    const presetContent = localStorage.getItem("EDITOR_CONTENT") ?? "";
+  rdfaEditorInitFromArg(rdfaEditor: RdfaDocument) {
+    this.args.rdfaEditorInit(rdfaEditor);
     this.rdfaEditor = rdfaEditor;
-    this.rdfaEditor.setHtmlContent(presetContent);
-    const editorDone = new CustomEvent("editor-done");
-    window.dispatchEvent(editorDone);
   }
 
   @action
