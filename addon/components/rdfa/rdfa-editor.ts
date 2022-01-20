@@ -306,6 +306,11 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     }
   }
 
+  @action
+  closeHints() {
+    this.suggestedHints = [];
+  }
+
   // Toggle RDFA blocks
   @tracked showRdfaBlocks = false;
 
