@@ -1,4 +1,4 @@
-FROM madnificent/ember:3.5.0 as builder
+FROM madnificent/ember:3.26.1 as builder
 
 LABEL maintainer="info@redpencil.io"
 
