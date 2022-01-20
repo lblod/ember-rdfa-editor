@@ -13,8 +13,11 @@ interface FeaturesService {
   disable: (feature: string) => void;
   enable: (feature: string) => void
 }
+interface RdfaEditorDebugArgs {
+  rdfaEditorInit: (rdfaDocument: RdfaDocument) => void;
+}
 
-export default class RdfaRdfaEditorWithDebug extends Component {
+export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugArgs> {
   @tracked rdfaEditor?: RdfaDocument;
   @tracked debug: unknown;
   @tracked xmlDebuggerOpen = false;
@@ -81,6 +84,7 @@ export default class RdfaRdfaEditorWithDebug extends Component {
     }
     return this.debuggerContent;
   }
+
 
   @action
   rdfaEditorInitFromArg(rdfaEditor: RdfaDocument) {
