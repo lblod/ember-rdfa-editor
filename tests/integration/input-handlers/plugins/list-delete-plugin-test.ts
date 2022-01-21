@@ -9,7 +9,7 @@ import {
   moveCaret,
   hasVisibleChildren,
 } from '@lblod/ember-rdfa-editor/editor/utils';
-import { pressDelete, wait, renderEditor } from 'dummy/tests/test-utils';
+import { pressDelete, delayMs, renderEditor } from 'dummy/tests/test-utils';
 module.skip(
   'Integration | InputHandler | list-delete-plugin',
   function (hooks) {
@@ -42,7 +42,7 @@ module.skip(
 
       selection.collapse(editor, 0);
       await pressDelete();
-      await wait(3000);
+      await delayMs(3000);
 
       assert.equal(editor.childElementCount, 0);
       assert.dom('.say-content > ul').doesNotExist();
@@ -162,7 +162,7 @@ module.skip(
       selection.collapse(firstItem, 0);
 
       await pressDelete();
-      await wait(500);
+      await delayMs(500);
       assert.equal(list.childElementCount, 1);
     });
 
@@ -196,7 +196,7 @@ module.skip(
       const selection = getWindowSelection();
       selection.collapse(textNode, 1);
       await pressDelete();
-      await wait(500);
+      await delayMs(500);
       assert.equal(list.children.length, 1);
       assert.equal(firstItem.innerText, 'ab');
     });
@@ -487,7 +487,7 @@ module.skip(
       selection.collapse(textNode, 2);
 
       await pressDelete();
-      await wait(3000);
+      await delayMs(3000);
       assert.equal(list.childElementCount, 1);
       assert.equal(list.children[0].textContent, 'ab');
     });
@@ -627,7 +627,7 @@ module.skip(
 
       moveCaret(lastLi, 0);
       await pressDelete();
-      await wait(200);
+      await delayMs(200);
 
       assert.equal(list.childElementCount, 2);
       assert.equal(lastLi.textContent, 'efg');

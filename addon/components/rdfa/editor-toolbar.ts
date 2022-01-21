@@ -83,7 +83,7 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   toggleItalic() {
-    this.toggleMark(this.isItalic, 'make-italic', 'remove-italic');
+    this.setMark(!this.isItalic, 'italic');
   }
 
   @action
@@ -122,29 +122,34 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   toggleBold() {
-    this.toggleMark(this.isBold, 'make-bold', 'remove-bold');
+    this.setMark(!this.isBold, 'bold');
   }
 
   @action
   toggleUnderline() {
-    this.toggleMark(this.isUnderline, 'make-underline', 'remove-underline');
+    this.setMark(!this.isUnderline, 'underline');
   }
 
   @action
   toggleStrikethrough() {
-    this.toggleMark(
-      this.isStrikethrough,
-      'make-strikethrough',
-      'remove-strikethrough'
-    );
+    this.setMark(!this.isStrikethrough, 'strikethrough');
   }
 
   @action
-  toggleMark(value: boolean, makeCommand: string, removeCommand: string) {
+  setMark(value: boolean, markName: string, attributes = {}) {
     if (value) {
-      this.args.controller.executeCommand(removeCommand);
+      this.args.controller.executeCommand(
+        'add-mark',
+        this.selection?.lastRange,
+        markName,
+        attributes
+      );
     } else {
-      this.args.controller.executeCommand(makeCommand);
+      this.args.controller.executeCommand(
+        'remove-mark',
+        this.selection?.lastRange,
+        markName
+      );
     }
   }
 

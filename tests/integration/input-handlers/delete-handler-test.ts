@@ -4,7 +4,7 @@ import { render, triggerKeyEvent } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { getEditorElement, wait } from 'dummy/tests/test-utils';
+import { getEditorElement, delayMs } from 'dummy/tests/test-utils';
 
 module.skip('Integration | InputHandler | delete-handler', function (hooks) {
   setupRenderingTest(hooks);
@@ -215,7 +215,7 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     selection.collapse(wordNode, 4);
     const previousCaretPostion = selection.getRangeAt(0).getClientRects();
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
-    await wait(200);
+    await delayMs(200);
     const currentSelection = getWindowSelection();
     assert.equal(
       currentSelection.anchorNode?.parentElement?.innerText,
@@ -364,7 +364,7 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     selection.collapse(spanNode, 0);
     assert.equal(editor.innerHTML, 'beer<span></span>bar'); //make sure this is not removed somehow
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
-    await wait(100);
+    await delayMs(100);
     const currentSelection = getWindowSelection();
     assert.equal(
       currentSelection.anchorNode?.parentElement?.innerText,

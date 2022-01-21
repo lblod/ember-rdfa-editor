@@ -114,8 +114,7 @@ export default class Model {
   readSelection(domSelection: Selection = getWindowSelection()) {
     this._selection = this.selectionReader.read(domSelection);
     if (this._eventBus) {
-      this._eventBus.emitDebounced(
-        500,
+      this._eventBus.emit(
         new SelectionChangedEvent({
           owner: CORE_OWNER,
           payload: this.selection,

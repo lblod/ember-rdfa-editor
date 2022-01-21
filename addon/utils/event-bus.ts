@@ -3,7 +3,7 @@ import {
   EDITOR_EVENT_MAP,
   EventWithName,
 } from '@lblod/ember-rdfa-editor/utils/editor-event';
-import { debouncedAdjustable } from '@lblod/ember-rdfa-editor/utils/debounce';
+import { debounced } from '@lblod/ember-rdfa-editor/utils/debounce';
 
 export type EditorEventName = keyof EDITOR_EVENT_MAP;
 
@@ -39,8 +39,19 @@ export interface ListenerConfig {
 export default class EventBus {
   private listeners: Map<AnyEventName, PriorityListenerQueue<AnyEventName>> =
     new Map<EditorEventName, PriorityListenerQueue<EditorEventName>>();
-  private debouncedEmitters: Map<AnyEventName, DebouncedEmitter<AnyEventName>> =
-    new Map();
+  private debouncedEmitters: Map<
+    AnyEventName,
+    EditorEventListener<AnyEventName>
+  >;
+
+  constructor() {
+    this.debouncedEmitters = new Map([
+      [
+        'selectionChanged',
+        debounced(this.doEmit, 300, { leading: true, trailing: true }),
+      ],
+    ]);
+  }
 
   on<E extends AnyEventName>(
     eventName: E,
@@ -68,7 +79,7 @@ export default class EventBus {
     }
   }
 
-  emit = <E extends AnyEventName>(event: EventWithName<E>): void => {
+  private doEmit = <E extends AnyEventName>(event: EventWithName<E>): void => {
     const listenerQueue = this.listeners.get(event.name);
 
     console.debug(
@@ -79,22 +90,16 @@ export default class EventBus {
       listenerQueue.propagate(event);
     }
   };
-  emitCustom = <P>(event: CustomEditorEvent<P>) => {
-    this.emit<string>(event);
-  };
-
-  emitDebounced = <E extends AnyEventName>(
-    delayMs: number,
-    event: EventWithName<E>
-  ): void => {
+  emit = <E extends AnyEventName>(event: EventWithName<E>): void => {
     const emitter = this.debouncedEmitters.get(event.name);
     if (emitter) {
-      emitter(delayMs, event);
+      emitter(event);
     } else {
-      const emitter = debouncedAdjustable(this.emit);
-      this.debouncedEmitters.set(event.name, emitter);
-      emitter(delayMs, event);
+      this.doEmit(event);
     }
+  };
+  emitCustom = <P>(event: CustomEditorEvent<P>) => {
+    this.emit<string>(event);
   };
 }
 

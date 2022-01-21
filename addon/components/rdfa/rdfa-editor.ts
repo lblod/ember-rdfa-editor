@@ -107,7 +107,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked suggestedHints: SuggestedHint[] = [];
   @tracked toolbarWidgets: InternalWidgetSpec[] = [];
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
-  @tracked toolbarController: Controller;
+  @tracked toolbarController: Controller | null = null;
   private owner: ApplicationInstance;
   activePlugins: EditorPlugin[] = [];
 
