@@ -27,13 +27,6 @@
       {{#if @showTextStyleButtons}}
         <button
           type='button'
-          class='say-toolbar__button {{if this.hasColor "is-active"}}'
-          {{on 'click' this.randomColor}}
-        >
-          rainbow
-        </button>
-        <button
-          type='button'
           class='say-toolbar__button {{if this.isBold "is-active"}}'
           {{on 'click' this.toggleBold}}
         >

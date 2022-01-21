@@ -105,22 +105,6 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   @action
-  randomColor() {
-    if (this.selection) {
-      this.args.controller.executeCommand(
-        'remove-mark',
-        this.selection.lastRange,
-        'highlighted'
-      );
-      this.args.controller.executeCommand(
-        'add-mark',
-        this.selection.lastRange,
-        'highlighted'
-      );
-    }
-  }
-
-  @action
   toggleBold() {
     this.setMark(!this.isBold, 'bold');
   }

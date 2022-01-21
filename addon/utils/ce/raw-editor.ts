@@ -57,7 +57,6 @@ import {
   italicMarkSpec,
   MarkSpec,
   strikethroughMarkSpec,
-  testMarkSpec,
   underlineMarkSpec,
 } from '@lblod/ember-rdfa-editor/model/markSpec';
 import AddMarkCommand from '@lblod/ember-rdfa-editor/commands/add-mark-command';
@@ -178,7 +177,6 @@ export default class RawEditor {
     this.registerMark(highlightMarkSpec);
     this.registerMark(underlineMarkSpec);
     this.registerMark(strikethroughMarkSpec);
-    this.registerMark(testMarkSpec);
   }
 
   /**

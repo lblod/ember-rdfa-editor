@@ -1,5 +1,4 @@
 import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
-import Handlebars from 'handlebars';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { HtmlTag } from '@lblod/ember-rdfa-editor/model/util/types';
 
@@ -106,39 +105,12 @@ export const highlightMarkSpec: MarkSpec = {
   },
 };
 
-export const testMarkSpec: MarkSpec<{ color: string }> = {
-  name: 'color',
-  priority: 1100,
-  matchers: [
-    {
-      tag: 'span',
-      attributeBuilder: (node: Node) => {
-        if (isElement(node) && node.style.background) {
-          return { color: node.style.background };
-        }
-        return null;
-      },
-    },
-  ],
-  renderSpec(mark: Renderable<{ color: string }>): RenderSpec {
-    return [
-      {
-        tag: 'span',
-        attributes: { style: `background: ${mark.attributes.color}` },
-      },
-      [SLOT],
-    ];
-  },
-};
-
 export interface DomNodeMatcher<
   A extends Record<string, Serializable> | void = void
 > {
   tag: TagMatch;
   attributeBuilder?: (node: Node) => A | null;
 }
-
-export type Renderer = typeof Handlebars.compile;
 
 export interface Serializable {
   toString(): string;
