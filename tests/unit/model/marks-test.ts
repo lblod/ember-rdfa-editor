@@ -120,20 +120,4 @@ module('Unit | model | marks-test', (hooks) => {
     set.deleteHash('test2');
     assert.strictEqual(set.size, 1);
   });
-  test('correct selection writing after setting highlight mark', (assert) => {
-    //language=XML
-    const {
-      root,
-      textNodes: { textNode },
-    } = vdom`
-      <modelRoot>
-        <text __id="textNode">abcd</text>
-      </modelRoot>`;
-    ctx.model.fillRoot(root);
-    const range = ModelRange.fromInTextNode(textNode, 1, 3);
-    const command = new AddMarkCommand(ctx.model);
-    command.execute(range, 'highlighted');
-    const selection = getWindowSelection();
-    assert.true(selection.anchorNode);
-  });
 });
