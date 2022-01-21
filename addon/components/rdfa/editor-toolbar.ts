@@ -51,6 +51,8 @@ export default class EditorToolbar extends Component<Args> {
     this.canUnindent =
       this.isInList && this.args.editor.canExecuteCommand('unindent-list');
     this.selection = event.detail;
+    console.assert(this.selection.lastRange?.root === this.args.editor.rootModelNode, "toolbar event handler");
+    console.log(this.selection.lastRange?.root === this.args.editor.rootModelNode, "toolbar event handler");
   }
 
   @action
@@ -103,6 +105,7 @@ export default class EditorToolbar extends Component<Args> {
   @action
   randomColor() {
     if (this.selection) {
+      console.assert(this.selection.lastRange?.root === this.args.editor.model.rootModelNode, "Toolbar selection root")
       this.args.editor.executeCommand(
         'remove-mark',
         this.selection.lastRange,

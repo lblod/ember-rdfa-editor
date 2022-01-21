@@ -15,6 +15,7 @@ export default class RemoveMarkCommand extends Command<
   }
 
   execute(range: ModelRange, markName: string): void {
+    console.assert(this.model.rootModelNode === range.root, "root not same");
     const spec = this.model.marksRegistry.lookupMark(markName);
     if (spec) {
       this.model.change((mutator) => {

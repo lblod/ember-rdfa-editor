@@ -22,9 +22,13 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import SimplifiedModel from '@lblod/ember-rdfa-editor/model/simplified-model';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
-import { ModelReadEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
+import {
+  ModelReadEvent,
+  SelectionChangedEvent,
+} from '@lblod/ember-rdfa-editor/utils/editor-event';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import { MarkSpec } from '@lblod/ember-rdfa-editor/model/markSpec';
+import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -109,6 +113,24 @@ export default class Model {
 
   readSelection(domSelection: Selection = getWindowSelection()) {
     this._selection = this.selectionReader.read(domSelection);
+    if (this._eventBus) {
+      this._eventBus.emitDebounced(
+        500,
+        new SelectionChangedEvent({
+          owner: CORE_OWNER,
+          payload: this.selection,
+        })
+      );
+    } else {
+      this.logger.log(
+        'Selection changed without EventBus present, no event will be fired'
+      );
+    }
+    const modelSelectionUpdatedEvent = new CustomEvent<ModelSelection>(
+      'richSelectionUpdated',
+      { detail: this.selection }
+    );
+    document.dispatchEvent(modelSelectionUpdatedEvent);
   }
 
   /**

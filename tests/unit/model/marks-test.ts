@@ -129,6 +129,7 @@ module('Unit | model | marks-test', (hooks) => {
       <modelRoot>
         <text __id="textNode">abcd</text>
       </modelRoot>`;
+    ctx.model.fillRoot(root);
     const range = ModelRange.fromInTextNode(textNode, 1, 3);
     const command = new AddMarkCommand(ctx.model);
     command.execute(range, 'highlighted');
