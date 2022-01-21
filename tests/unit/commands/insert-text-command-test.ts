@@ -146,7 +146,7 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     command.execute(SPACE, range);
     const rslt = ctx.model.rootModelNode.sameAs(expected);
     if (!rslt) {
-      logger.log(
+      logger(
         'space does not eat the character before it: ACTUAL:',
         ctx.model.toXml()
       );

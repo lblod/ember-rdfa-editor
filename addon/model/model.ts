@@ -111,7 +111,7 @@ export default class Model {
     }
   }
 
-  readSelection(domSelection: Selen = getWindowSelection()) {
+  readSelection(domSelection: Selection = getWindowSelection()) {
     this._selection = this.selectionReader.read(domSelection);
     if (this._eventBus) {
       this._eventBus.emitDebounced(
