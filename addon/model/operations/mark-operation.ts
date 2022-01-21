@@ -8,7 +8,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelTreeWalker, {
   FilterResult,
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import OperationAlgorithms from "@lblod/ember-rdfa-editor/model/operations/operation-algorithms";
+import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 
 type MarkAction = 'add' | 'remove';
 export default class MarkOperation extends Operation {

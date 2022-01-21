@@ -140,9 +140,11 @@ export default class ModelText extends ModelNode {
     if (!ModelNode.isModelText(other)) {
       return false;
     }
-    return ModelNodeUtils.areAttributeMapsSame(
-      this.attributeMap,
-      other.attributeMap
+    return (
+      ModelNodeUtils.areAttributeMapsSame(
+        this.attributeMap,
+        other.attributeMap
+      ) && this.marks.hasSameHashes(other.marks)
     );
   }
 
