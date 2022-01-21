@@ -26,7 +26,7 @@ module('Unit | model | model-selection-tracker', (hooks) => {
     const text = new Text('abc');
     const eventBus = new EventBus();
     const stub = sinon.stub(eventBus, 'emitDebounced');
-    const tracker = new ModelSelectionTracker(ctx.model, eventBus);
+    const tracker = new ModelSelectionTracker(ctx.model);
     rootNode.appendChild(text);
     sync();
 
