@@ -9,11 +9,13 @@ import { debug, Debugger } from 'debug';
  * @param scope
  * @param onEmit
  */
-export function createLogger(scope: string): Debugger {
+export function createLogger(scope: string): Logger {
   return debug(`ember-rdfa-editor:${scope}`);
 }
 
-export type Logger = Debugger;
+export interface Logger {
+  (...args: unknown[]): void;
+}
 
 /**
  * Convenience method to easily set the log filter string

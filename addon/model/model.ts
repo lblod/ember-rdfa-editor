@@ -111,7 +111,7 @@ export default class Model {
     }
   }
 
-  readSelection(domSelection: Selection = getWindowSelection()) {
+  readSelection(domSelection: Selen = getWindowSelection()) {
     this._selection = this.selectionReader.read(domSelection);
     if (this._eventBus) {
       this._eventBus.emitDebounced(
@@ -122,7 +122,7 @@ export default class Model {
         })
       );
     } else {
-      this.logger.log(
+      this.logger(
         'Selection changed without EventBus present, no event will be fired'
       );
     }
