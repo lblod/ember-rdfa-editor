@@ -14,7 +14,7 @@ import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import ApplicationInstance from '@ember/application/instance';
-import {
+import Controller, {
   InternalWidgetSpec,
   RawEditorController,
 } from '@lblod/ember-rdfa-editor/model/controller';
@@ -107,6 +107,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked suggestedHints: SuggestedHint[] = [];
   @tracked toolbarWidgets: InternalWidgetSpec[] = [];
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
+  @tracked toolbarController: Controller;
   private owner: ApplicationInstance;
   activePlugins: EditorPlugin[] = [];
 
@@ -234,6 +235,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       };
       this.args.initDebug(debugInfo);
     }
+    this.toolbarController = new RawEditorController('toolbar', editor);
     const rdfaDocument = new RdfaDocumentController('host-controller', editor);
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);

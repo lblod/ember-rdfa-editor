@@ -62,6 +62,7 @@ import {
 } from '@lblod/ember-rdfa-editor/model/markSpec';
 import AddMarkCommand from '@lblod/ember-rdfa-editor/commands/add-mark-command';
 import RemoveMarkCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-command';
+import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -239,6 +240,13 @@ export default class RawEditor {
    * @param args
    */
   executeCommand(commandName: string, ...args: unknown[]) {
+    //TODO this is a hack to keep legacy undo behavior, to be removed when vdom-based undo is solidified
+    if (commandName === 'undo') {
+      if (this instanceof PernetRawEditor) {
+        this.undo();
+        return;
+      }
+    }
     try {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {

@@ -52,6 +52,11 @@ export default interface Controller {
     ...args: A
   ): R | void;
 
+  canExecuteCommand<A extends unknown[]>(
+    commandName: string,
+    ...args: A
+  ): boolean;
+
   registerCommand<A extends unknown[], R>(command: Command<A, R>): void;
 
   registerWidget(spec: WidgetSpec): void;
@@ -111,6 +116,13 @@ export class RawEditorController implements Controller {
     ...args: A
   ): R | void {
     return this._rawEditor.executeCommand(commandName, ...args);
+  }
+
+  canExecuteCommand<A extends unknown[]>(
+    commandName: string,
+    ...args: A
+  ): boolean {
+    return this._rawEditor.canExecuteCommand(commandName, ...args);
   }
 
   offEvent<E extends AnyEventName>(
