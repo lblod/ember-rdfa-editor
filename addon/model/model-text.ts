@@ -5,7 +5,12 @@ import ModelNode, {
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/markSpec';
+import {
+  AttributeSpec,
+  Mark,
+  MarkSet,
+  MarkSpec,
+} from '@lblod/ember-rdfa-editor/model/markSpec';
 
 const NON_BREAKING_SPACE = '\u00A0';
 
@@ -51,12 +56,15 @@ export default class ModelText extends ModelNode {
     return this.marks.hasHash(markName);
   }
 
-  addMark(mark: Mark) {
-    this.marks.add(mark);
+  addMark<A extends AttributeSpec = AttributeSpec>(
+    markSpec: MarkSpec<A>,
+    attributes: A
+  ) {
+    this.marks.add(new Mark(markSpec, attributes, this));
   }
 
-  removeMark(mark: Mark) {
-    this.marks.deleteHash(mark.name);
+  removeMarkByName(markName: string) {
+    this.marks.deleteHash(markName);
   }
 
   insertTextNodeAt(index: number): ModelText {

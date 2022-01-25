@@ -3,14 +3,14 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import { calculateRdfaPrefixes } from '../util/rdfa-utils';
-import { MarkSet } from '@lblod/ember-rdfa-editor/model/markSpec';
+import { SpecAttributes } from '@lblod/ember-rdfa-editor/model/marks-registry';
 
 export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;
   private readonly _model: Model;
   private _rdfaPrefixes: Map<string, string>;
 
-  activeMarks: MarkSet = new MarkSet();
+  activeMarks: Set<SpecAttributes> = new Set<SpecAttributes>();
 
   constructor(
     model: Model,
@@ -37,8 +37,8 @@ export class HtmlReaderContext {
     return this._rdfaPrefixes;
   }
 
-  matchMark(node: Node): MarkSet {
-    return this.model.marksRegistry.matchMark(node);
+  matchMark(node: Node): Set<SpecAttributes> {
+    return this.model.marksRegistry.matchMarkSpec(node);
   }
 }
 

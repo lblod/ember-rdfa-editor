@@ -1,8 +1,5 @@
 import { module, test } from 'qunit';
-import {
-  domStripped,
-  vdom,
-} from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { domStripped } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import sinon from 'sinon';
@@ -10,22 +7,18 @@ import {
   boldMarkSpec,
   highlightMarkSpec,
   italicMarkSpec,
-  Mark,
 } from '@lblod/ember-rdfa-editor/model/markSpec';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import HtmlWriter from '@lblod/ember-rdfa-editor/model/writers/html-writer';
 import {
-  getWindowSelection,
   isElement,
   isTextNode,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelTestContext from 'dummy/tests/utilities/model-test-context';
-import AddMarkCommand from '@lblod/ember-rdfa-editor/commands/add-mark-command';
 
 module('Unit | model | marks-test', (hooks) => {
   const ctx = new ModelTestContext();
@@ -50,7 +43,7 @@ module('Unit | model | marks-test', (hooks) => {
 
   test('writing works', (assert) => {
     const textNode = new ModelText('abc');
-    textNode.marks.add(new Mark(boldMarkSpec, {}));
+    textNode.addMark(boldMarkSpec, {});
 
     const model = new Model(sinon.createStubInstance(HTMLElement));
     model.registerMark(boldMarkSpec);
@@ -63,8 +56,8 @@ module('Unit | model | marks-test', (hooks) => {
   });
   test('writing works with multiple marks', (assert) => {
     const textNode = new ModelText('abc');
-    textNode.marks.add(new Mark(boldMarkSpec, {}));
-    textNode.marks.add(new Mark(italicMarkSpec, {}));
+    textNode.addMark(boldMarkSpec, {});
+    textNode.addMark(italicMarkSpec, {});
 
     const model = new Model(sinon.createStubInstance(HTMLElement));
     model.registerMark(boldMarkSpec);

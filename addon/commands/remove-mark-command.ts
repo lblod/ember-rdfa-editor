@@ -1,6 +1,5 @@
 import Command from '@lblod/ember-rdfa-editor/commands/command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { Mark } from '@lblod/ember-rdfa-editor/model/markSpec';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 
@@ -15,11 +14,11 @@ export default class RemoveMarkCommand extends Command<
   }
 
   execute(range: ModelRange, markName: string): void {
-    console.assert(this.model.rootModelNode === range.root, "root not same");
+    console.assert(this.model.rootModelNode === range.root, 'root not same');
     const spec = this.model.marksRegistry.lookupMark(markName);
     if (spec) {
       this.model.change((mutator) => {
-        const resultRange = mutator.removeMark(range, new Mark(spec, {}));
+        const resultRange = mutator.removeMark(range, spec);
         this.model.selectRange(resultRange);
       });
     } else {

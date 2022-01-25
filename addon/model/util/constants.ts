@@ -1,11 +1,12 @@
 import {
-  boldMarkSpec, highlightMarkSpec,
+  boldMarkSpec,
+  highlightMarkSpec,
   italicMarkSpec,
-  Mark,
   strikethroughMarkSpec,
   underlineMarkSpec,
 } from '@lblod/ember-rdfa-editor/model/markSpec';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-property-command';
+import { SpecAttributes } from '@lblod/ember-rdfa-editor/model/marks-registry';
 
 export const NON_BLOCK_NODES = new Set(['b', 'strong', 'i', 'em', 'span', 'a']);
 export const LIST_TYPES = new Set(['li', 'ul', 'ol']);
@@ -43,10 +44,11 @@ export const XSD_PREFIX = 'http://www.w3.org/2001/XMLSchema#';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const NOOP = () => {};
-export const compatTextAttributeMap: Map<TextAttribute, Mark> = new Map([
-  ['bold', new Mark(boldMarkSpec, {})],
-  ['italic', new Mark(italicMarkSpec, {})],
-  ['underline', new Mark(underlineMarkSpec, {})],
-  ['strikethrough', new Mark(strikethroughMarkSpec, {})],
-  ['highlighted', new Mark(highlightMarkSpec, {})],
-]);
+export const compatTextAttributeMap: Map<TextAttribute, SpecAttributes> =
+  new Map([
+    ['bold', { spec: boldMarkSpec, attributes: {} }],
+    ['italic', { spec: italicMarkSpec, attributes: {} }],
+    ['underline', { spec: underlineMarkSpec, attributes: {} }],
+    ['strikethrough', { spec: strikethroughMarkSpec, attributes: {} }],
+    ['highlighted', { spec: highlightMarkSpec, attributes: {} }],
+  ]);

@@ -32,14 +32,18 @@ export default abstract class SetPropertyCommand extends Command {
     }
 
     const range = selection.lastRange;
-    const mark = compatTextAttributeMap.get(property);
-    if (mark) {
+    const specAttribute = compatTextAttributeMap.get(property);
+    if (specAttribute) {
       this.model.change((mutator) => {
         let resultRange;
         if (value) {
-          resultRange = mutator.addMark(range, mark);
+          resultRange = mutator.addMark(
+            range,
+            specAttribute.spec,
+            specAttribute.attributes
+          );
         } else {
-          resultRange = mutator.removeMark(range, mark);
+          resultRange = mutator.removeMark(range, specAttribute.spec);
         }
         this.model.selectRange(resultRange);
       });

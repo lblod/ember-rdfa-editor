@@ -8,7 +8,10 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import SplitOperation from '@lblod/ember-rdfa-editor/model/operations/split-operation';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import { Mark } from '@lblod/ember-rdfa-editor/model/markSpec';
+import {
+  AttributeSpec,
+  MarkSpec,
+} from '@lblod/ember-rdfa-editor/model/markSpec';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
 
 /**
@@ -90,13 +93,13 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return op.execute();
   }
 
-  addMark(range: ModelRange, mark: Mark) {
-    const op = new MarkOperation(range, mark, 'add');
+  addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
+    const op = new MarkOperation(range, spec, attributes, 'add');
     return op.execute();
   }
 
-  removeMark(range: ModelRange, mark: Mark) {
-    const op = new MarkOperation(range, mark, 'remove');
+  removeMark(range: ModelRange, spec: MarkSpec) {
+    const op = new MarkOperation(range, spec, {}, 'remove');
     return op.execute();
   }
 

@@ -1,6 +1,7 @@
 import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { HtmlTag } from '@lblod/ember-rdfa-editor/model/util/types';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
 export type TagMatch = keyof HTMLElementTagNameMap | '*';
 export type AttributeSpec = Record<string, Serializable>;
@@ -18,10 +19,12 @@ export interface MarkSpec<A extends AttributeSpec = AttributeSpec> {
 export class Mark<A extends AttributeSpec = AttributeSpec> {
   private readonly _spec: MarkSpec<A>;
   private readonly _attributes: A;
+  private readonly _node: ModelText;
 
-  constructor(spec: MarkSpec<A>, attributes: A) {
+  constructor(spec: MarkSpec<A>, attributes: A, node: ModelText) {
     this._spec = spec;
     this._attributes = attributes;
+    this._node = node;
   }
 
   get attributes(): A {
@@ -30,6 +33,10 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
 
   get name(): string {
     return this._spec.name;
+  }
+
+  get node(): ModelText {
+    return this._node;
   }
 
   get priority(): number {

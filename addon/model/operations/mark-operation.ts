@@ -1,6 +1,9 @@
 import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { Mark } from '@lblod/ember-rdfa-editor/model/markSpec';
+import {
+  AttributeSpec,
+  MarkSpec,
+} from '@lblod/ember-rdfa-editor/model/markSpec';
 import { UnconfinedRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
@@ -12,12 +15,19 @@ import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/opera
 
 type MarkAction = 'add' | 'remove';
 export default class MarkOperation extends Operation {
-  private _mark: Mark;
   private _action: MarkAction;
+  private _spec: MarkSpec;
+  private _attributes: AttributeSpec;
 
-  constructor(range: ModelRange, mark: Mark, action: MarkAction) {
+  constructor(
+    range: ModelRange,
+    spec: MarkSpec,
+    attributes: AttributeSpec,
+    action: MarkAction
+  ) {
     super(range);
-    this._mark = mark;
+    this._spec = spec;
+    this._attributes = attributes;
     this._action = action;
   }
 
@@ -29,23 +39,36 @@ export default class MarkOperation extends Operation {
     this._action = value;
   }
 
-  get mark(): Mark {
-    return this._mark;
+  get attributes(): AttributeSpec {
+    return this._attributes;
   }
 
-  set mark(value: Mark) {
-    this._mark = value;
+  set attributes(value: AttributeSpec) {
+    this._attributes = value;
+  }
+
+  get spec(): MarkSpec {
+    return this._spec;
+  }
+
+  set spec(value: MarkSpec) {
+    this._spec = value;
   }
 
   canExecute() {
     return true;
   }
 
-  markAction(node: ModelText, mark: Mark, action: MarkAction) {
+  markAction(
+    node: ModelText,
+    spec: MarkSpec,
+    attributes: AttributeSpec,
+    action: MarkAction
+  ) {
     if (action === 'add') {
-      node.addMark(mark);
+      node.addMark(spec, attributes);
     } else {
-      node.removeMark(mark);
+      node.removeMarkByName(spec.name);
     }
   }
 
@@ -64,7 +87,7 @@ export default class MarkOperation extends Operation {
         node.marks = referenceNode.marks.clone();
       }
       //insert new textNode with property set
-      this.markAction(node, this.mark, this.action);
+      this.markAction(node, this.spec, this.attributes, this.action);
       const insertionIndex = this.range.start.parent.offsetToIndex(
         this.range.start.parentOffset
       );
@@ -93,7 +116,7 @@ export default class MarkOperation extends Operation {
       const textNodes = Array.from(walker);
 
       for (const node of textNodes) {
-        this.markAction(node, this.mark, this.action);
+        this.markAction(node, this.spec, this.attributes, this.action);
       }
     }
     return this.range;

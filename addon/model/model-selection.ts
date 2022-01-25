@@ -294,9 +294,9 @@ export default class ModelSelection {
    */
   getTextPropertyStatus(property: TextAttribute): PropertyState {
     if (ModelSelection.isWellBehaved(this)) {
-      const mark = compatTextAttributeMap.get(property);
-      if (mark) {
-        return this.hasMark(mark.name)
+      const specAttributes = compatTextAttributeMap.get(property);
+      if (specAttributes) {
+        return this.hasMark(specAttributes.spec.name)
           ? PropertyState.enabled
           : PropertyState.disabled;
       }

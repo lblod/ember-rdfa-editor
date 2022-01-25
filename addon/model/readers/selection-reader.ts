@@ -116,7 +116,7 @@ export default class SelectionReader
     if (!isElement(elem)) {
       return false;
     }
-    return !!this.model.marksRegistry.matchMark(elem).size;
+    return !!this.model.marksRegistry.matchMarkSpec(elem).size;
   }
 
   private findPositionForTextPropertyNode(

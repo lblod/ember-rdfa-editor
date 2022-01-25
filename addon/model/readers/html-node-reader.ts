@@ -13,6 +13,7 @@ import HtmlTextReader from '@lblod/ember-rdfa-editor/model/readers/html-text-rea
 import HtmlTableReader from '@lblod/ember-rdfa-editor/model/readers/html-table-reader';
 import HtmlSpanReader from '@lblod/ember-rdfa-editor/model/readers/html-span-reader';
 import { pushOrExpand } from '@lblod/ember-rdfa-editor/model/util/array-utils';
+import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
 
 type Constructor<T> = new (...args: unknown[]) => T;
 type ElementReader = Reader<Element, ModelNode[], HtmlReaderContext>;
@@ -34,7 +35,7 @@ export default class HtmlNodeReader
 
       const marks = context.matchMark(from);
       if (marks.size) {
-        context.activeMarks.add(...marks);
+        SetUtils.addMany(context.activeMarks, ...marks);
         const reader = new HtmlNodeReader();
         result = [];
 
@@ -44,7 +45,7 @@ export default class HtmlNodeReader
             pushOrExpand(result, modelChild);
           }
         }
-        context.activeMarks.delete(...marks);
+        SetUtils.deleteMany(context.activeMarks, ...marks);
       } else {
         let reader: ElementReader;
         const ctor = HtmlNodeReader.elementConfig.get(tag);
