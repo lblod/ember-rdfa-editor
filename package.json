@@ -64,8 +64,7 @@
     "mdn-polyfills": "^5.16.0",
     "rdf-data-factory": "^1.1.0",
     "relative-to-absolute-iri": "^1.0.6",
-    "stream-browserify": "^3.0.0",
-    "xml-formatter": "^2.4.0"
+    "stream-browserify": "^3.0.0"
   },
   "devDependencies": {
     "@appuniversum/appuniversum": "^0.2.1",
@@ -149,11 +148,30 @@
     "tracked-built-ins": "^1.1.1",
     "typescript": "^4.3.4",
     "webpack": "^5.55.1",
+    "xml-formatter": "^2.4.0",
     "yuidoc-ember-theme": "^2.0.1"
   },
   "peerDependencies": {
     "@appuniversum/appuniversum": "^0.2.1",
-    "@appuniversum/ember-appuniversum": "^0.7.2"
+    "@appuniversum/ember-appuniversum": "^0.7.2",
+    "@codemirror/basic-setup": "^0.19.0",
+    "@codemirror/lang-html": "^0.19.4",
+    "@codemirror/lang-xml": "^0.19.2",
+    "xml-formatter": "^2.4.0"
+  },
+  "peerDependenciesMeta": {
+    "@codemirror/basic-setup": {
+      "optional": true
+    },
+    "@codemirror/lang-html": {
+      "optional": true
+    },
+    "@codemirror/lang-xml": {
+      "optional": true
+    },
+    "xml-formatter": {
+      "optional": true
+    }
   },
   "engines": {
     "node": "10.* || >= 12"
