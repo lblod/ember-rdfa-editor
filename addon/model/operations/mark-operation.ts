@@ -6,13 +6,18 @@ import {
 } from '@lblod/ember-rdfa-editor/model/markSpec';
 import { UnconfinedRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import {
+  CORE_OWNER,
+  INVISIBLE_SPACE,
+} from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelTreeWalker, {
   FilterResult,
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
+import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
+import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 
 type MarkAction = 'add' | 'remove';
 export default class MarkOperation extends Operation {
@@ -22,13 +27,14 @@ export default class MarkOperation extends Operation {
   private _registry: MarksRegistry;
 
   constructor(
+    eventbus: EventBus,
     range: ModelRange,
     spec: MarkSpec,
     attributes: AttributeSpec,
     action: MarkAction,
     registry: MarksRegistry
   ) {
-    super(range);
+    super(eventbus, range);
     this._spec = spec;
     this._attributes = attributes;
     this._action = action;
@@ -104,6 +110,19 @@ export default class MarkOperation extends Operation {
         cursorPath,
         cursorPath
       );
+      this.eventBus.emit(
+        new ContentChangedEvent({
+          owner: CORE_OWNER,
+          payload: {
+            type: 'insert',
+            oldRange: this.range,
+            newRange,
+            overwrittenNodes: [],
+            insertedNodes: [node],
+            _markCheckNodes: [node],
+          },
+        })
+      );
       return newRange;
     } else {
       OperationAlgorithms.splitText(this.range.start);
@@ -122,7 +141,29 @@ export default class MarkOperation extends Operation {
       for (const node of textNodes) {
         this.markAction(node, this.spec, this.attributes, this.action);
       }
+      const before = this.range.start.nodeBefore();
+      const after = this.range.end.nodeAfter();
+      const _markCheckNodes: ModelNode[] = [...textNodes];
+      if (before) {
+        _markCheckNodes.push(before);
+      }
+      if (after) {
+        _markCheckNodes.push(after);
+      }
+      this.eventBus.emit(
+        new ContentChangedEvent({
+          owner: CORE_OWNER,
+          payload: {
+            type: 'insert',
+            oldRange: this.range,
+            newRange: this.range,
+            overwrittenNodes: [],
+            insertedNodes: [],
+            _markCheckNodes,
+          },
+        })
+      );
+      return this.range;
     }
-    return this.range;
   }
 }

@@ -1,6 +1,9 @@
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { AnyEventName } from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
 export type EDITOR_EVENT_MAP = {
   dummy: DummyEvent;
@@ -95,7 +98,40 @@ export class DummyEvent extends AbstractEditorEvent<void> {
   }
 }
 
-export class ContentChangedEvent extends VoidEvent {
+interface MovePayload {
+  type: 'move';
+  startRange: ModelRange;
+  resultRange: ModelRange;
+  targetPosition: ModelPosition;
+  insertedNodes: ModelNode[];
+  /**
+   * Temporary workaround until immutability allows for a cleaner
+   * view on which nodes have changed and which have not.
+   *
+   * At the moment it is impossible to provide a definition of
+   * "changed/affected node" that is useful in a general way.
+   * (Has a node changed if its children have changed? what about its parent?
+   * If you keep saying yes, eventually all nodes will be included all the time)
+   */
+  _markCheckNodes: ModelNode[];
+}
+
+interface InsertionPayload {
+  type: 'insert';
+  oldRange: ModelRange;
+  newRange: ModelRange;
+  overwrittenNodes: ModelNode[];
+  insertedNodes: ModelNode[];
+  /**
+   * Temporary workaround until immutability allows for a cleaner
+   * view on which nodes have changed and which have not.
+   */
+  _markCheckNodes: ModelNode[];
+}
+
+type ContentChangedPayload = InsertionPayload | MovePayload;
+
+export class ContentChangedEvent extends AbstractEditorEvent<ContentChangedPayload> {
   _name: EditorEventName = 'contentChanged';
 }
 

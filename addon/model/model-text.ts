@@ -80,7 +80,10 @@ export default class ModelText extends ModelNode {
    * possible.
    * @param index
    */
-  split(index: number): {
+  split(
+    index: number,
+    keepRight = false
+  ): {
     left: ModelText;
     right: ModelText;
   } {
@@ -93,19 +96,34 @@ export default class ModelText extends ModelNode {
     if (rightContent.startsWith(' ')) {
       rightContent = NON_BREAKING_SPACE + rightContent.substring(1);
     }
-    this.content = leftContent;
-    const right = this.clone();
-    right.content = rightContent;
+    if (keepRight) {
+      this.content = rightContent;
+      const left = this.clone();
+      left.content = leftContent;
+      if (!this.parent) {
+        throw new ModelError('splitting a node without a parent');
+      }
 
-    if (!this.parent) {
-      throw new ModelError('splitting a node without a parent');
+      const childIndex = this.parent.children.indexOf(this);
+
+      this.parent.addChild(left, childIndex);
+
+      return { left, right: this };
+    } else {
+      this.content = leftContent;
+      const right = this.clone();
+      right.content = rightContent;
+
+      if (!this.parent) {
+        throw new ModelError('splitting a node without a parent');
+      }
+
+      const childIndex = this.parent.children.indexOf(this);
+
+      this.parent.addChild(right, childIndex + 1);
+
+      return { left: this, right };
     }
-
-    const childIndex = this.parent.children.indexOf(this);
-
-    this.parent?.addChild(right, childIndex + 1);
-
-    return { left: this, right };
   }
 
   hasVisibleText(): boolean {
