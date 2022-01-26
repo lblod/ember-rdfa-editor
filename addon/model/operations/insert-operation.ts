@@ -60,7 +60,7 @@ export default class InsertOperation extends Operation {
       const end = ModelPosition.fromAfterNode(last);
       resultRange = new ModelRange(start, end);
     }
-    this.eventBus.emit(
+    this.emit(
       new ContentChangedEvent({
         owner: CORE_OWNER,
         payload: {

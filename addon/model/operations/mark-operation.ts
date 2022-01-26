@@ -110,7 +110,7 @@ export default class MarkOperation extends Operation {
         cursorPath,
         cursorPath
       );
-      this.eventBus.emit(
+      this.emit(
         new ContentChangedEvent({
           owner: CORE_OWNER,
           payload: {
@@ -150,7 +150,7 @@ export default class MarkOperation extends Operation {
       if (after) {
         _markCheckNodes.push(after);
       }
-      this.eventBus.emit(
+      this.emit(
         new ContentChangedEvent({
           owner: CORE_OWNER,
           payload: {

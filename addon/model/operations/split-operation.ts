@@ -28,7 +28,7 @@ export default class SplitOperation extends Operation {
       const newPos = this.doSplit(this.range.start);
       const newRange = new ModelRange(newPos, newPos);
       const nodeAfter = newPos.nodeAfter();
-      this.eventBus.emit(
+      this.emit(
         new ContentChangedEvent({
           owner: CORE_OWNER,
           payload: {
@@ -63,7 +63,7 @@ export default class SplitOperation extends Operation {
       if (afterEnd) {
         _markCheckNodes.push(afterEnd);
       }
-      this.eventBus.emit(
+      this.emit(
         new ContentChangedEvent({
           owner: CORE_OWNER,
           payload: {

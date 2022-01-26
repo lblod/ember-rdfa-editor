@@ -45,7 +45,7 @@ export default class MoveOperation extends Operation {
         movedNodes[movedNodes.length - 1]
       );
       const newRange = new ModelRange(start, end);
-      this.eventBus.emit(
+      this.emit(
         new ContentChangedEvent({
           owner: CORE_OWNER,
           payload: {
@@ -61,7 +61,7 @@ export default class MoveOperation extends Operation {
       return newRange;
     } else {
       const newRange = new ModelRange(this.targetPosition, this.targetPosition);
-      this.eventBus.emit(
+      this.emit(
         new ContentChangedEvent({
           owner: CORE_OWNER,
           payload: {

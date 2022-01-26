@@ -14,6 +14,7 @@ import {
 } from '@lblod/ember-rdfa-editor/model/markSpec';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
+import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 
 /**
  * {@link ModelMutator} implementation where all operations immediately
@@ -22,6 +23,13 @@ import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
  * on the modified state after the previous.
  */
 export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
+  private eventbus?: EventBus;
+
+  constructor(eventbus?: EventBus) {
+    super();
+    this.eventbus = eventbus;
+  }
+
   /**
    * @inheritDoc
    * @param range
@@ -29,7 +37,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
    * @return resultRange the resulting range of the execution
    */
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
-    const op = new InsertOperation(range, ...nodes);
+    const op = new InsertOperation(this.eventbus, range, ...nodes);
     return op.execute();
   }
 
@@ -40,7 +48,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   insertText(range: ModelRange, text: string): ModelRange {
     const textNode = new ModelText(text);
     textNode.marks = range.getMarks().clone();
-    const op = new InsertOperation(range, textNode);
+    const op = new InsertOperation(this.eventbus, range, textNode);
 
     const resultRange = op.execute();
     const start = ModelPosition.fromBeforeNode(
@@ -76,7 +84,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
       }
     }
 
-    const op = new InsertOperation(range, ...nodes);
+    const op = new InsertOperation(this.eventbus, range, ...nodes);
     op.execute();
   }
 
@@ -90,7 +98,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     rangeToMove: ModelRange,
     targetPosition: ModelPosition
   ): ModelRange {
-    const op = new MoveOperation(rangeToMove, targetPosition);
+    const op = new MoveOperation(this.eventbus, rangeToMove, targetPosition);
     return op.execute();
   }
 
@@ -100,18 +108,32 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     attributes: AttributeSpec,
     registry: MarksRegistry
   ) {
-    const op = new MarkOperation(range, spec, attributes, 'add', registry);
+    const op = new MarkOperation(
+      this.eventbus,
+      range,
+      spec,
+      attributes,
+      'add',
+      registry
+    );
     return op.execute();
   }
 
   removeMark(range: ModelRange, spec: MarkSpec, registry: MarksRegistry) {
-    const op = new MarkOperation(range, spec, {}, 'remove', registry);
+    const op = new MarkOperation(
+      this.eventbus,
+      range,
+      spec,
+      {},
+      'remove',
+      registry
+    );
     return op.execute();
   }
 
   splitTextAt(position: ModelPosition): ModelPosition {
     const range = new ModelRange(position, position);
-    const op = new SplitOperation(range, false);
+    const op = new SplitOperation(this.eventbus, range, false);
     const resultRange = op.execute();
     return resultRange.start;
   }
@@ -127,7 +149,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     }
 
     const range = new ModelRange(position, position);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(this.eventbus, range);
     const resultRange = op.execute();
     return resultRange.start;
   }
@@ -174,7 +196,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
 
   private executeSplitOperation(position: ModelPosition, splitParent = true) {
     const range = new ModelRange(position, position);
-    const op = new SplitOperation(range, splitParent);
+    const op = new SplitOperation(this.eventbus, range, splitParent);
     return op.execute().start;
   }
 
@@ -235,7 +257,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
       element.getMaxOffset()
     );
     const target = ModelPosition.fromBeforeNode(element);
-    const op = new MoveOperation(srcRange, target);
+    const op = new MoveOperation(this.eventbus, srcRange, target);
     const resultRange = op.execute();
     this.deleteNode(element);
 
@@ -269,7 +291,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   }
 
   delete(range: ModelRange): ModelRange {
-    const op = new InsertOperation(range);
+    const op = new InsertOperation(this.eventbus, range);
     return op.execute();
   }
 

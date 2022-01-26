@@ -216,7 +216,7 @@ export default class Model {
     callback: (mutator: ImmediateModelMutator) => ModelElement | void,
     writeBack = true
   ) {
-    const mutator = new ImmediateModelMutator();
+    const mutator = new ImmediateModelMutator(this._eventBus);
     const subTree = callback(mutator);
 
     if (writeBack) {
