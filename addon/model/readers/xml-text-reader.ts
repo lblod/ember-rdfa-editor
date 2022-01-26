@@ -3,6 +3,7 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { XmlNodeRegistry } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
 import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-property-command';
+import { Mark } from '@lblod/ember-rdfa-editor/model/markSpec';
 
 export default class XmlTextReader implements Reader<Element, ModelText, void> {
   constructor(private registry: XmlNodeRegistry<ModelText>) {}
@@ -19,7 +20,10 @@ export default class XmlTextReader implements Reader<Element, ModelText, void> {
             markName as TextAttribute
           );
           if (specAttribute) {
-            rslt.addMark(specAttribute.spec, specAttribute.attributes);
+            console.warn("ADDING MARK WITHOUT PASSING REGISTRY");
+            rslt.addMark(
+              new Mark(specAttribute.spec, specAttribute.attributes, rslt)
+            );
           }
         }
       } else {

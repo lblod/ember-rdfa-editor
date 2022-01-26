@@ -7,6 +7,7 @@ import {
   boldMarkSpec,
   highlightMarkSpec,
   italicMarkSpec,
+  Mark,
 } from '@lblod/ember-rdfa-editor/model/markSpec';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
@@ -43,7 +44,8 @@ module('Unit | model | marks-test', (hooks) => {
 
   test('writing works', (assert) => {
     const textNode = new ModelText('abc');
-    textNode.addMark(boldMarkSpec, {});
+    const mark = new Mark(boldMarkSpec, {}, textNode);
+    textNode.addMark(mark);
 
     const model = new Model(sinon.createStubInstance(HTMLElement));
     model.registerMark(boldMarkSpec);
@@ -56,8 +58,8 @@ module('Unit | model | marks-test', (hooks) => {
   });
   test('writing works with multiple marks', (assert) => {
     const textNode = new ModelText('abc');
-    textNode.addMark(boldMarkSpec, {});
-    textNode.addMark(italicMarkSpec, {});
+    textNode.addMark(new Mark(boldMarkSpec, {}, textNode));
+    textNode.addMark(new Mark(italicMarkSpec, {}, textNode));
 
     const model = new Model(sinon.createStubInstance(HTMLElement));
     model.registerMark(boldMarkSpec);

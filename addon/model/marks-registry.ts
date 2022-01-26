@@ -8,6 +8,7 @@ import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
 
 export interface SpecAttributes {
   spec: MarkSpec;
@@ -27,7 +28,10 @@ export default class MarksRegistry {
       this.markMatchMap.get(tagName(node) as TagMatch) || [];
     const defaultMatches = this.markMatchMap.get('*') || [];
 
-    const result = new Set<SpecAttributes>();
+    const result = new HashSet<SpecAttributes>({
+      hashFunc: (specAttr) =>
+        specAttr.spec.name + JSON.stringify(specAttr.attributes),
+    });
     potentialMatches.concat(defaultMatches);
     for (const spec of potentialMatches) {
       for (const matcher of spec.matchers) {
@@ -74,5 +78,9 @@ export default class MarksRegistry {
     for (const matcher of mark.matchers) {
       MapUtils.setOrPush(this.markMatchMap, matcher.tag, mark);
     }
+  }
+
+  clear() {
+    this.markStore.clear();
   }
 }

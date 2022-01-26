@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { boldMarkSpec } from '@lblod/ember-rdfa-editor/model/markSpec';
+import { boldMarkSpec, Mark } from '@lblod/ember-rdfa-editor/model/markSpec';
 
 module('Unit | model | model-text-test', () => {
   module('Unit | model | model-text-test | sameAs', () => {
@@ -12,7 +12,7 @@ module('Unit | model | model-text-test', () => {
     test('textnodes with different properties are not the same', (assert) => {
       const t0 = new ModelText('abc');
       const t1 = new ModelText('abc');
-      t1.addMark(boldMarkSpec, {});
+      t1.addMark(new Mark(boldMarkSpec, {}, t1));
       assert.false(t0.sameAs(t1));
     });
   });
