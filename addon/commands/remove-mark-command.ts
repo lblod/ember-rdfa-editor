@@ -18,7 +18,11 @@ export default class RemoveMarkCommand extends Command<
     const spec = this.model.marksRegistry.lookupMark(markName);
     if (spec) {
       this.model.change((mutator) => {
-        const resultRange = mutator.removeMark(range, spec);
+        const resultRange = mutator.removeMark(
+          range,
+          spec,
+          this.model.marksRegistry
+        );
         this.model.selectRange(resultRange);
       });
     } else {

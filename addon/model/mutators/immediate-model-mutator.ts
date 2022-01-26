@@ -13,6 +13,7 @@ import {
   MarkSpec,
 } from '@lblod/ember-rdfa-editor/model/markSpec';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
+import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 
 /**
  * {@link ModelMutator} implementation where all operations immediately
@@ -93,13 +94,18 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return op.execute();
   }
 
-  addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
-    const op = new MarkOperation(range, spec, attributes, 'add');
+  addMark(
+    range: ModelRange,
+    spec: MarkSpec,
+    attributes: AttributeSpec,
+    registry: MarksRegistry
+  ) {
+    const op = new MarkOperation(range, spec, attributes, 'add', registry);
     return op.execute();
   }
 
-  removeMark(range: ModelRange, spec: MarkSpec) {
-    const op = new MarkOperation(range, spec, {}, 'remove');
+  removeMark(range: ModelRange, spec: MarkSpec, registry: MarksRegistry) {
+    const op = new MarkOperation(range, spec, {}, 'remove', registry);
     return op.execute();
   }
 

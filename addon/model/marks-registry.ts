@@ -1,11 +1,13 @@
 import {
   AttributeSpec,
+  Mark,
   MarkSpec,
   TagMatch,
 } from '@lblod/ember-rdfa-editor/model/markSpec';
 import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 export interface SpecAttributes {
   spec: MarkSpec;
@@ -13,6 +15,7 @@ export interface SpecAttributes {
 }
 
 export default class MarksRegistry {
+  private markStore: Map<string, Set<Mark>> = new Map<string, Set<Mark>>();
   private markMatchMap: Map<TagMatch, MarkSpec[]> = new Map<
     keyof HTMLElementTagNameMap,
     MarkSpec[]
@@ -46,7 +49,20 @@ export default class MarksRegistry {
     spec: MarkSpec<A>,
     attributes: A
   ) {
-    node.addMark(spec, attributes);
+    const mark = new Mark(spec, attributes, node);
+    MapUtils.setOrAdd(this.markStore, attributes.setBy ?? CORE_OWNER, mark);
+    node.addMark(mark);
+  }
+
+  removeMarkByName(node: ModelText, markName: string) {
+    node.removeMarkByName(markName);
+    const mark = node.marks.lookupHash(markName);
+    if (mark) {
+      const marks = this.markStore.get(mark.attributes.setBy ?? CORE_OWNER);
+      if (marks) {
+        marks.delete(mark);
+      }
+    }
   }
 
   lookupMark(name: string): MarkSpec | null {

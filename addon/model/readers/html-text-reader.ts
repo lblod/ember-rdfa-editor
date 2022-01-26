@@ -14,7 +14,7 @@ export default class HtmlTextReader
     }
     const result = new ModelText(from.textContent);
     context.activeMarks.forEach(({ spec, attributes }) =>
-      result.addMark(spec, attributes)
+      context.addMark(result, spec, attributes)
     );
     context.bindNode(result, from);
     return [result];

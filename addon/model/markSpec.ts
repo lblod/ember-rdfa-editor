@@ -4,7 +4,7 @@ import { HtmlTag } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
 export type TagMatch = keyof HTMLElementTagNameMap | '*';
-export type AttributeSpec = Record<string, Serializable>;
+export type AttributeSpec = { setBy?: string } & Record<string, Serializable>;
 
 export interface MarkSpec<A extends AttributeSpec = AttributeSpec> {
   name: string;

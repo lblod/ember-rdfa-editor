@@ -56,11 +56,8 @@ export default class ModelText extends ModelNode {
     return this.marks.hasHash(markName);
   }
 
-  addMark<A extends AttributeSpec = AttributeSpec>(
-    markSpec: MarkSpec<A>,
-    attributes: A
-  ) {
-    this.marks.add(new Mark(markSpec, attributes, this));
+  addMark(mark: Mark) {
+    this.marks.add(mark);
   }
 
   removeMarkByName(markName: string) {

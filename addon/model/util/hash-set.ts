@@ -66,6 +66,10 @@ export default class HashSet<I> implements Set<I> {
     return new Set<I>(this.items.values()).entries();
   }
 
+  lookupHash(hash: unknown): I | null {
+    return this.items.get(hash) || null;
+  }
+
   forEach(
     callbackfn: (value: I, value2: I, set: Set<I>) => void,
     thisArg?: unknown

@@ -12,23 +12,27 @@ import ModelTreeWalker, {
   FilterResult,
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
+import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 
 type MarkAction = 'add' | 'remove';
 export default class MarkOperation extends Operation {
   private _action: MarkAction;
   private _spec: MarkSpec;
   private _attributes: AttributeSpec;
+  private _registry: MarksRegistry;
 
   constructor(
     range: ModelRange,
     spec: MarkSpec,
     attributes: AttributeSpec,
-    action: MarkAction
+    action: MarkAction,
+    registry: MarksRegistry
   ) {
     super(range);
     this._spec = spec;
     this._attributes = attributes;
     this._action = action;
+    this._registry = registry;
   }
 
   get action(): MarkAction {
@@ -66,9 +70,9 @@ export default class MarkOperation extends Operation {
     action: MarkAction
   ) {
     if (action === 'add') {
-      node.addMark(spec, attributes);
+      this._registry.addMark(node, spec, attributes);
     } else {
-      node.removeMarkByName(spec.name);
+      this._registry.removeMarkByName(node, spec.name);
     }
   }
 
