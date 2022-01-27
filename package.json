@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "0.50.0-beta.4",
+  "version": "0.50.0-beta.6",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -149,7 +149,8 @@
     "typescript": "^4.3.4",
     "webpack": "^5.55.1",
     "xml-formatter": "^2.4.0",
-    "yuidoc-ember-theme": "^2.0.1"
+    "yuidoc-ember-theme": "^2.0.1",
+    "stream-browserify": "^3.0.0"
   },
   "peerDependencies": {
     "@appuniversum/appuniversum": "^0.2.1",

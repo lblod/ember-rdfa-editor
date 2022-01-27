@@ -11,9 +11,11 @@
   showToolbarBottom=null
 }}
   @toolbarOptions={{hash
-  showTextStyleButtons="true"
-  showListButtons="true"
-  showIndentButtons="true"
-}}
+    showTextStyleButtons="true"
+    showListButtons="true"
+    showIndentButtons="true"
+  }}
   @plugins={{this.plugins}}
-/>
+>
+  App version: {{app-version versionOnly=true showExtended=true}}
+</Rdfa::RdfaEditorWithDebug>

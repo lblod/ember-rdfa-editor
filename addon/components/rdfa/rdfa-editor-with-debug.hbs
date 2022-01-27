@@ -3,7 +3,7 @@
 	 {{will-destroy this.teardown}}>
   <div class="c-dummy__header">
     <p>
-      App version: {{app-version versionOnly=true showExtended=true}}
+      {{yield}}
       {{#if this.debug}}
         <Rdfa::RdfaEditorDebugger @debug={{this.debug}} />
       {{/if}}
@@ -43,6 +43,7 @@
         <Rdfa::RdfaEditor
           class="rdfa-playground"
           @rdfaEditorInit={{this.rdfaEditorInitFromArg}}
+          @plugins={{@plugins}}
           @initDebug={{this.initDebug}}
           @profile="default"
           @editorOptions={{@editorOptions}}
