@@ -25,6 +25,7 @@ export default class IndexController extends Controller {
   private unloadListener?: () => void;
   private xmlEditor?: EditorView;
   private htmlEditor?: EditorView;
+  @tracked plugins = ['dummy'];
 
   setup() {
     this.unloadListener = () => {

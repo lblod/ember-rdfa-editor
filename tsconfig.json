@@ -35,7 +35,8 @@
         "tests/dummy/app/*",
         "app/*",
         "lib/plugin-system-dispatcher/app/*",
-        "lib/rdfa-parser/app/*"
+        "lib/rdfa-parser/app/*",
+        "lib/dummy-plugin/app/*"
       ],
       "@lblod/ember-rdfa-editor": [
         "addon"
@@ -69,6 +70,18 @@
       ],
       "rdfa-parser/test-support/*": [
         "lib/rdfa-parser/addon-test-support/*"
+      ],
+      "dummy-plugin": [
+        "lib/dummy-plugin/addon"
+      ],
+      "dummy-plugin/*": [
+        "lib/dummy-plugin/addon/*"
+      ],
+      "dummy-plugin/test-support": [
+        "lib/dummy-plugin/addon-test-support"
+      ],
+      "dummy-plugin/test-support/*": [
+        "lib/dummy-plugin/addon-test-support/*"
       ]
     }
   },
@@ -79,6 +92,7 @@
     "types/**/*",
     "lib/plugin-system-dispatcher/**/*",
     "test-support/**/*",
-    "addon-test-support/**/*"
+    "addon-test-support/**/*",
+    "lib/dummy-plugin"
   ]
 }
