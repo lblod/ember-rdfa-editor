@@ -14,31 +14,32 @@ Main features:
 
 
 ## Installation
-```
+
+```sh
 ember install @lblod/ember-rdfa-editor
 ```
 
 To include the editor in a template (ember octane syntax) you can use the following block:
-```
-        <Rdfa::RdfaEditor
-          @rdfaEditorInit={{this.rdfaEditorInit}}
-          @editorOptions={{hash 
-            showToggleRdfaAnnotations="true" 
-            showInsertButton=null 
-            showRdfa="true" 
-            showRdfaHighlight="true" 
-            showRdfaHover="true" 
-            showPaper="true" 
-            showSidebar="true" 
-            showToolbarBottom=null
-          }}
-          @toolbarOptions={{hash 
-            showTextStyleButtons="true" 
-            showListButtons="true" 
-            showIndentButtons="true"
-          }}
-        />
 
+```handlebars
+<Rdfa::RdfaEditor
+  @rdfaEditorInit={{this.rdfaEditorInit}}
+  @editorOptions={{hash 
+    showToggleRdfaAnnotations="true" 
+    showInsertButton=null 
+    showRdfa="true" 
+    showRdfaHighlight="true" 
+    showRdfaHover="true" 
+    showPaper="true" 
+    showSidebar="true" 
+    showToolbarBottom=null
+  }}
+  @toolbarOptions={{hash 
+    showTextStyleButtons="true" 
+    showListButtons="true" 
+    showIndentButtons="true"
+  }}
+/>
 ```
 
 The callback provided to rdfaEditorInit is called when the editor element is inserted and provides an object with the following interface:
@@ -68,10 +69,11 @@ You can pass basic options when you load the editor. Add a value of "true" to en
 
 
 ## Feature flags
+
 Some experimental features of the editor are hidden behind feature flags. They can be enabled for testing, but probably should not be enabled on a production system. 
 The flags can be set in the config/environment.js of your application.
 
-```
+```javascript
 // config/environment.js
 module.exports = function(environment) {
   var ENV = {
@@ -87,6 +89,7 @@ module.exports = function(environment) {
   return ENV;
 };
 ```
+
 * editor-html-paste: if enabled, support html paste input
 * editor-extended-html-paste: if enabled, support extended html paste input (old behavior)
 * editor-force-paragraph: if enabled, wrap text input in a paragraph if it's not already wrapped.
@@ -105,7 +108,7 @@ When installing this through `ember install` the addon will add the snippet abov
 
 This addon uses CSS variables to customise the styling. You can override these variables by including and overriding the following variables:
 
-```
+```css
 :root {
   --au-white: #FFFFFF;
   --au-gray-100: #F4F5F6;
@@ -184,15 +187,20 @@ This addon uses CSS variables to customise the styling. You can override these v
 
 See the [Contributing](CONTRIBUTING.md) guide for details.
 
+
 ## Plugins
+
 ### Adding a plugin to the editor
+
 To enrich the editor functionality with rdfa-editor-plugins, execute the following steps:
-1. Install the rdfa-editor-plugin as an Ember addon in your host app.
-2. Add the name of the plugin to one or more editor profiles in `app/config/editor-profiles.js` in your host app
+
+1.  Install the rdfa-editor-plugin as an Ember addon in your host app.
+2.  Add the name of the plugin to one or more editor profiles in `app/config/editor-profiles.js` in your host app
 
 The plugin will automatically be picked up by the editor.
 
 E.g. `app/config/editor-profiles.js`
+
 ```javascript
 export default {
   default: [
@@ -209,9 +217,37 @@ export default {
 ```
 
 ### Developing a plugin
+
 A plugin is an Ember addon providing a service that implements `execute` to handle changes in the editor and provides a component to display hints.
 
+If you want to test the addon with a dummy app, you could use the debug component to enable debugging features (this was previously done by copying dummy code from the editor). The debug component can be added with `<Rdfa::RdfaEditorWithDebug>` and should support the same variables as the `<Rdfa::RdfaEditor>`. The block content of the debug component is yielded at the top of the component, right before the debug features. E.g.:
+
+```handlebars
+<Rdfa::RdfaEditorWithDebug
+  @rdfaEditorInit={{this.rdfaEditorInit}}
+  @plugins={{this.plugins}}
+  @editorOptions={{hash
+    showToggleRdfaAnnotations="true"
+    showInsertButton=null
+    showRdfa="true"
+    showRdfaHighlight="true"
+    showRdfaHover="true"
+    showPaper="true"
+    showSidebar="true"
+    showToolbarBottom=null
+  }}
+  @toolbarOptions={{hash
+    showTextStyleButtons="true"
+    showListButtons="true"
+    showIndentButtons="true"
+  }}>
+  <h1>Plugin title - dummy app</h1>
+</Rdfa::RdfaEditorWithDebug>
+```
+
+
 #### Service interface
+
 The Ember Service must provide an `execute` property that updates the hints in the hints registry based on changes in the editor. `execute` might be an async function or a [Ember Concurrency](http://ember-concurrency.com) task accepting the following parameters:
 * `hrId` [string]: Unique identifier of the event in the hintsRegistry
 * `contexts` [Array]: RDFa contexts of the text snippets the event applies on
@@ -242,6 +278,7 @@ export default Service.extend({
 ```
 
 #### Updating the hints registry
+
 `execute` must update the hints of this plugin in the [editor's hints registry](https://github.com/lblod/ember-rdfa-editor/blob/master/addon/utils/hints-registry.js). The following methods might be of use:
 - __addHints(hrId, who, cards)__
   - `hrId` [string]: Unique identifier of the event in the hintsRegistry
@@ -253,6 +290,7 @@ export default Service.extend({
   - `who` [string]: Identifier of the type of hint in the hints registry (e.g. `editor-plugins/date-card`)
 
 #### Hint cards
+
 Hints in the editor are displayed as cards that only apply on a specific portion of the text. A hint added to the hints registry must be an `EmberObject` with the following properties:
   - `card` [string]: name of the component to display the hint
   - `location` [int, int]: [start, end] index of the text in the editor the hint must be displayed on
@@ -261,10 +299,12 @@ Hints in the editor are displayed as cards that only apply on a specific portion
 
 The hints registry will render the hints with the specified component when the text the hint applies on is selected.
 
+
 # Credits
 
 This project makes use of a modified version of [rdfa-streaming-parser](https://github.com/rubensworks/rdfa-streaming-parser.js),
 created by [Ruben Taelman](https://github.com/rubensworks) and distributed under the [MIT license](https://github.com/rubensworks/rdfa-streaming-parser.js/blob/master/LICENSE.txt).
 
 Due to unique requirements which would not benefit the original project we opted to make our modifications 
-in-house rather than contributing to the upstream. 
+in-house rather than contributing to the upstream.
+
