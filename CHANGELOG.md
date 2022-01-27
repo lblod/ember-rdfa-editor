@@ -3,6 +3,16 @@
 
 
 
+
+## 0.50.0-beta.6 (2022-01-27)
+
+#### :bug: Bug Fix
+* [#208](https://github.com/lblod/ember-rdfa-editor/pull/208) Needed support for @plugins on debug component ([@benjay10](https://github.com/benjay10))
+
+#### Committers: 1
+- Ben ([@benjay10](https://github.com/benjay10))
+
+
 ## 0.50.0-beta.5 (2022-01-26)
 
 #### :rocket: Enhancement
