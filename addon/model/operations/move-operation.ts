@@ -11,7 +11,7 @@ export default class MoveOperation extends Operation {
   private _targetPosition: ModelPosition;
 
   constructor(
-    eventbus: EventBus,
+    eventbus: EventBus | undefined,
     rangeToMove: ModelRange,
     targetPosition: ModelPosition
   ) {

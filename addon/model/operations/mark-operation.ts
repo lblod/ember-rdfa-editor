@@ -2,6 +2,7 @@ import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import {
   AttributeSpec,
+  Mark,
   MarkSpec,
 } from '@lblod/ember-rdfa-editor/model/markSpec';
 import { UnconfinedRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
@@ -15,7 +16,6 @@ import ModelTreeWalker, {
   FilterResult,
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
-import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 
@@ -24,21 +24,18 @@ export default class MarkOperation extends Operation {
   private _action: MarkAction;
   private _spec: MarkSpec;
   private _attributes: AttributeSpec;
-  private _registry: MarksRegistry;
 
   constructor(
-    eventbus: EventBus,
+    eventbus: EventBus | undefined,
     range: ModelRange,
     spec: MarkSpec,
     attributes: AttributeSpec,
-    action: MarkAction,
-    registry: MarksRegistry
+    action: MarkAction
   ) {
     super(eventbus, range);
     this._spec = spec;
     this._attributes = attributes;
     this._action = action;
-    this._registry = registry;
   }
 
   get action(): MarkAction {
@@ -76,9 +73,9 @@ export default class MarkOperation extends Operation {
     action: MarkAction
   ) {
     if (action === 'add') {
-      this._registry.addMark(node, spec, attributes);
+      node.addMark(new Mark(spec, attributes, node));
     } else {
-      this._registry.removeMarkByName(node, spec.name);
+      node.removeMarkByName(spec.name);
     }
   }
 

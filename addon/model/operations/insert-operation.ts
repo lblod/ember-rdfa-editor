@@ -10,7 +10,7 @@ import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 export default class InsertOperation extends Operation {
   private _nodes: ModelNode[];
 
-  constructor(eventBus: EventBus, range: ModelRange, ...nodes: ModelNode[]) {
+  constructor(eventBus: EventBus | undefined, range: ModelRange, ...nodes: ModelNode[]) {
     super(eventBus, range);
     this._nodes = nodes;
   }

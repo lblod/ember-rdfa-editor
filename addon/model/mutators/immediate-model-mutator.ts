@@ -102,20 +102,8 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return op.execute();
   }
 
-  addMark(
-    range: ModelRange,
-    spec: MarkSpec,
-    attributes: AttributeSpec,
-    registry: MarksRegistry
-  ) {
-    const op = new MarkOperation(
-      this.eventbus,
-      range,
-      spec,
-      attributes,
-      'add',
-      registry
-    );
+  addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
+    const op = new MarkOperation(this.eventbus, range, spec, attributes, 'add');
     return op.execute();
   }
 

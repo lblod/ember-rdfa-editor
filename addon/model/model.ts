@@ -66,7 +66,7 @@ export default class Model {
     this._selection = new ModelSelection();
     this._eventBus = eventBus;
     this.logger = createLogger('RawEditor');
-    this._marksRegistry = new MarksRegistry();
+    this._marksRegistry = new MarksRegistry(this._eventBus);
   }
 
   get rootNode(): HTMLElement {

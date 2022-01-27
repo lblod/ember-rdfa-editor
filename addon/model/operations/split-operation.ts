@@ -10,7 +10,11 @@ import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 export default class SplitOperation extends Operation {
   private _splitParent: boolean;
 
-  constructor(eventbus: EventBus, range: ModelRange, splitParent = true) {
+  constructor(
+    eventbus: EventBus | undefined,
+    range: ModelRange,
+    splitParent = true
+  ) {
     super(eventbus, range);
     this._splitParent = splitParent;
   }
