@@ -3,6 +3,22 @@
 
 
 
+## 0.50.0-beta.5 (2022-01-26)
+
+#### :rocket: Enhancement
+* [#206](https://github.com/lblod/ember-rdfa-editor/pull/206) Feature/gn 3152 create a debug component for the rdfa editor ([@benjay10](https://github.com/benjay10))
+
+#### :bug: Bug Fix
+* [#207](https://github.com/lblod/ember-rdfa-editor/pull/207) moved hints logic to the editor component so it gets tracked ([@lagartoverde](https://github.com/lagartoverde))
+
+#### :house: Internal
+* [#200](https://github.com/lblod/ember-rdfa-editor/pull/200) bump docker ember image ([@nvdk](https://github.com/nvdk))
+
+#### Committers: 3
+- Ben ([@benjay10](https://github.com/benjay10))
+- Niels V ([@nvdk](https://github.com/nvdk))
+- Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
+
 ## 0.50.0-beta.4 (2022-01-19)
 
 #### :rocket: Enhancement
