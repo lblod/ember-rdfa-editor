@@ -10,7 +10,7 @@ import ModelTreeWalker, {
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
-import { MarkSet } from '@lblod/ember-rdfa-editor/model/markSpec';
+import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -34,8 +34,8 @@ export default class ModelRange {
 
   static fromInElement(
     element: ModelElement,
-    startOffset: number,
-    endOffset: number
+    startOffset = 0,
+    endOffset: number = element.getMaxOffset()
   ) {
     const start = ModelPosition.fromInElement(element, startOffset);
     const end = ModelPosition.fromInElement(element, endOffset);

@@ -8,7 +8,7 @@ import {
   highlightMarkSpec,
   italicMarkSpec,
   Mark,
-} from '@lblod/ember-rdfa-editor/model/markSpec';
+} from '@lblod/ember-rdfa-editor/model/mark';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';

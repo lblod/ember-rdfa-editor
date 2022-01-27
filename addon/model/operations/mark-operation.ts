@@ -4,7 +4,7 @@ import {
   AttributeSpec,
   Mark,
   MarkSpec,
-} from '@lblod/ember-rdfa-editor/model/markSpec';
+} from '@lblod/ember-rdfa-editor/model/mark';
 import { UnconfinedRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import {

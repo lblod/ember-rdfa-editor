@@ -98,6 +98,10 @@ export class DummyEvent extends AbstractEditorEvent<void> {
   }
 }
 
+interface LegacyPayload {
+  type: 'legacy';
+}
+
 interface MovePayload {
   type: 'move';
   startRange: ModelRange;
@@ -129,7 +133,7 @@ interface InsertionPayload {
   _markCheckNodes: ModelNode[];
 }
 
-type ContentChangedPayload = InsertionPayload | MovePayload;
+type ContentChangedPayload = InsertionPayload | MovePayload | LegacyPayload;
 
 export class ContentChangedEvent extends AbstractEditorEvent<ContentChangedPayload> {
   _name: EditorEventName = 'contentChanged';

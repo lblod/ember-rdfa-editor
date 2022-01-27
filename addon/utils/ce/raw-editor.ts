@@ -58,7 +58,7 @@ import {
   MarkSpec,
   strikethroughMarkSpec,
   underlineMarkSpec,
-} from '@lblod/ember-rdfa-editor/model/markSpec';
+} from '@lblod/ember-rdfa-editor/model/mark';
 import AddMarkCommand from '@lblod/ember-rdfa-editor/commands/add-mark-command';
 import RemoveMarkCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-command';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';

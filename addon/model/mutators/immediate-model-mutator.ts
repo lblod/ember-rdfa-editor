@@ -11,7 +11,7 @@ import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walk
 import {
   AttributeSpec,
   MarkSpec,
-} from '@lblod/ember-rdfa-editor/model/markSpec';
+} from '@lblod/ember-rdfa-editor/model/mark';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';

@@ -8,7 +8,7 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import {
   AttributeSpec,
   MarkSpec,
-} from '@lblod/ember-rdfa-editor/model/markSpec';
+} from '@lblod/ember-rdfa-editor/model/mark';
 
 export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;

@@ -5,7 +5,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
 import { oneLineTrim } from 'common-tags';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import {boldMarkSpec} from "@lblod/ember-rdfa-editor/model/markSpec";
+import {boldMarkSpec} from "@lblod/ember-rdfa-editor/model/mark";
 
 module('Unit | commands | insert-html-command-test', (hooks) => {
   const ctx = new ModelTestContext();

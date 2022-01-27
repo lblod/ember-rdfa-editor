@@ -16,7 +16,7 @@ import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import { MarkSpec } from '@lblod/ember-rdfa-editor/model/markSpec';
+import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 
 export type WidgetLocation = 'toolbar' | 'sidebar';
 

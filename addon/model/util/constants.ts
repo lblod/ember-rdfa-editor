@@ -4,7 +4,7 @@ import {
   italicMarkSpec,
   strikethroughMarkSpec,
   underlineMarkSpec,
-} from '@lblod/ember-rdfa-editor/model/markSpec';
+} from '@lblod/ember-rdfa-editor/model/mark';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-property-command';
 import { SpecAttributes } from '@lblod/ember-rdfa-editor/model/marks-registry';
 

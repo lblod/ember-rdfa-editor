@@ -3,7 +3,7 @@ import {
   Mark,
   MarkSpec,
   TagMatch,
-} from '@lblod/ember-rdfa-editor/model/markSpec';
+} from '@lblod/ember-rdfa-editor/model/mark';
 import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
@@ -47,7 +47,7 @@ export default class MarksRegistry {
       this.updateMarksForNodes(owner, insertedNodes);
       this.updateMarksForNodes(owner, _markCheckNodes);
       this.removeMarksForNodes(owner, overwrittenNodes);
-    } else {
+    } else if (payload.type === 'move') {
       const { insertedNodes, _markCheckNodes } = payload;
       this.updateMarksForNodes(owner, insertedNodes);
       this.updateMarksForNodes(owner, _markCheckNodes);

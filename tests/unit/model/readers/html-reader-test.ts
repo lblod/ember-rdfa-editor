@@ -15,7 +15,7 @@ import {
   italicMarkSpec,
   strikethroughMarkSpec,
   underlineMarkSpec,
-} from '@lblod/ember-rdfa-editor/model/markSpec';
+} from '@lblod/ember-rdfa-editor/model/mark';
 
 module('Unit | model | readers | html-reader', (hooks) => {
   let reader: HtmlReader;

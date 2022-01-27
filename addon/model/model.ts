@@ -27,7 +27,7 @@ import {
   SelectionChangedEvent,
 } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
-import { MarkSpec } from '@lblod/ember-rdfa-editor/model/markSpec';
+import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
