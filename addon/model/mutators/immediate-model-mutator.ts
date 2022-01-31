@@ -8,12 +8,8 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import SplitOperation from '@lblod/ember-rdfa-editor/model/operations/split-operation';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import {
-  AttributeSpec,
-  MarkSpec,
-} from '@lblod/ember-rdfa-editor/model/mark';
+import { AttributeSpec, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
-import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 
 /**
@@ -56,7 +52,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     );
     const end = ModelPosition.fromAfterNode(textNode.nextSibling || textNode);
     const mergeRange = new ModelRange(start, end);
-    this.mergeTextNodesInRange(mergeRange);
+    // this.mergeTextNodesInRange(mergeRange);
 
     return resultRange;
   }
@@ -107,15 +103,8 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return op.execute();
   }
 
-  removeMark(range: ModelRange, spec: MarkSpec, registry: MarksRegistry) {
-    const op = new MarkOperation(
-      this.eventbus,
-      range,
-      spec,
-      {},
-      'remove',
-      registry
-    );
+  removeMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
+    const op = new MarkOperation(this.eventbus, range, spec, attributes, 'remove');
     return op.execute();
   }
 

@@ -5,7 +5,7 @@ import {
   TagMatch,
 } from '@lblod/ember-rdfa-editor/model/mark';
 import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
-import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
@@ -26,7 +26,9 @@ export default class MarksRegistry {
   constructor(eventBus?: EventBus) {
     this._eventBus = eventBus;
     if (this._eventBus) {
-      this._eventBus.on('contentChanged', this.updateMarks);
+      this._eventBus.on('contentChanged', this.updateMarks, {
+        priority: 'internal',
+      });
     }
   }
 
@@ -44,53 +46,63 @@ export default class MarksRegistry {
     const { owner, payload } = event;
     if (payload.type === 'insert') {
       const { overwrittenNodes, insertedNodes, _markCheckNodes } = payload;
-      this.updateMarksForNodes(owner, insertedNodes);
-      this.updateMarksForNodes(owner, _markCheckNodes);
-      this.removeMarksForNodes(owner, overwrittenNodes);
+      this.updateMarksForNodes(insertedNodes);
+      this.updateMarksForNodes(_markCheckNodes);
+      this.removeMarksForNodes(overwrittenNodes);
     } else if (payload.type === 'move') {
       const { insertedNodes, _markCheckNodes } = payload;
-      this.updateMarksForNodes(owner, insertedNodes);
-      this.updateMarksForNodes(owner, _markCheckNodes);
+      this.updateMarksForNodes(insertedNodes);
+      this.updateMarksForNodes(_markCheckNodes);
     }
   };
 
-  private updateMarksForNodes(owner: string, nodes: ModelNode[]) {
+  private updateMarksForNodes(nodes: ModelNode[]) {
     for (const node of nodes) {
       const walker = GenTreeWalker.fromSubTree({
         root: node,
         filter: toFilterSkipFalse(ModelNode.isModelText),
       });
       for (const textNode of walker.nodes() as Generator<ModelText>) {
-        const ownerNodes = this.markStore.get(owner);
-        if (ownerNodes) {
-          if (textNode.marks.size) {
-            ownerNodes.add(textNode);
+        for (const mark of textNode.marks) {
+          const owner = mark.attributes.setBy || CORE_OWNER;
+          const ownerNodes = this.markStore.get(owner);
+          if (ownerNodes) {
+            if (textNode.marks.size) {
+              ownerNodes.add(textNode);
+            } else {
+              ownerNodes.delete(textNode);
+            }
           } else {
-            ownerNodes.delete(textNode);
+            this.markStore.set(owner, new Set([textNode]));
           }
-        } else {
-          this.markStore.set(owner, new Set([textNode]));
         }
       }
     }
   }
 
-  private removeMarksForNodes(owner: string, nodes: ModelNode[]) {
+  private removeMarksForNodes(nodes: ModelNode[]) {
     for (const node of nodes) {
       const walker = GenTreeWalker.fromSubTree({
         root: node,
         filter: toFilterSkipFalse(ModelNode.isModelText),
       });
       for (const textNode of walker.nodes() as Generator<ModelText>) {
-        const ownerNodes = this.markStore.get(owner);
-        if (ownerNodes) {
-          ownerNodes.delete(textNode);
+        for (const mark of textNode.marks) {
+          const owner = mark.attributes.setBy || CORE_OWNER;
+          const ownerNodes = this.markStore.get(owner);
+          if (ownerNodes) {
+            ownerNodes.delete(textNode);
+          }
         }
       }
     }
   }
 
   matchMarkSpec(node: Node): Set<SpecAttributes> {
+    const setBy = isElement(node)
+      ? node.dataset['__setBy'] || CORE_OWNER
+      : CORE_OWNER;
+
     const potentialMatches =
       this.markMatchMap.get(tagName(node) as TagMatch) || [];
     const defaultMatches = this.markMatchMap.get('*') || [];
@@ -105,10 +117,10 @@ export default class MarksRegistry {
         if (matcher.attributeBuilder) {
           const attributes = matcher.attributeBuilder(node);
           if (attributes) {
-            result.add({ spec, attributes });
+            result.add({ spec, attributes: { setBy, ...attributes } });
           }
         } else {
-          result.add({ spec, attributes: {} });
+          result.add({ spec, attributes: { setBy } });
         }
       }
     }
@@ -149,6 +161,21 @@ export default class MarksRegistry {
     for (const matcher of mark.matchers) {
       MapUtils.setOrPush(this.markMatchMap, matcher.tag, mark);
     }
+  }
+
+  getMarksFor(name: string): Set<Mark> {
+    const nodes = this.markStore.get(name);
+    const result = new Set<Mark>();
+    if (nodes) {
+      for (const node of nodes) {
+        for (const mark of node.marks) {
+          if (mark.attributes.setBy === name) {
+            result.add(mark);
+          }
+        }
+      }
+    }
+    return result;
   }
 
   clear() {

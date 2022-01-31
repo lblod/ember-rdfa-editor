@@ -18,6 +18,10 @@ import Controller, {
   InternalWidgetSpec,
   RawEditorController,
 } from '@lblod/ember-rdfa-editor/model/controller';
+import {
+  createLogger,
+  Logger,
+} from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
 interface DebugInfo {
   hintsRegistry: HintsRegistry;
@@ -110,6 +114,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked toolbarController: Controller | null = null;
   private owner: ApplicationInstance;
   activePlugins: EditorPlugin[] = [];
+  private logger: Logger;
 
   /**
    * @property hasHints
@@ -159,6 +164,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.args.profile) {
       this.profile = this.args.profile;
     }
+    this.logger = createLogger(this.constructor.name);
   }
 
   @action
@@ -250,12 +256,15 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   }
 
   getPlugins(): EditorPlugin[] {
+    this.logger(this.plugins)
     const pluginNames = this.plugins;
     const plugins = [];
     for (const name of pluginNames) {
       const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
       if (plugin) {
         plugins.push(plugin);
+      } else {
+        this.logger(`plugin ${name} not found! Skipping...`);
       }
     }
     return plugins;
@@ -267,6 +276,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   ): Promise<void> {
     const controller = new RawEditorController(plugin.name, editor);
     await plugin.initialize(controller);
+    this.logger(`Initialized plugin ${plugin.name}`);
     this.activePlugins.push(plugin);
   }
 

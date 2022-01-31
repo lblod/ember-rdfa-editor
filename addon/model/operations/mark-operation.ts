@@ -75,7 +75,7 @@ export default class MarkOperation extends Operation {
     if (action === 'add') {
       node.addMark(new Mark(spec, attributes, node));
     } else {
-      node.removeMarkByName(spec.name);
+      node.removeMarkByName(`${spec.name}-${attributes.setBy || CORE_OWNER}`);
     }
   }
 

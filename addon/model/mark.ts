@@ -2,6 +2,7 @@ import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { HtmlTag } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 export type TagMatch = keyof HTMLElementTagNameMap | '*';
 export type AttributeSpec = { setBy?: string } & Record<string, Serializable>;
@@ -43,8 +44,16 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
     return this._spec.priority;
   }
 
+  get spec(): MarkSpec {
+    return this._spec;
+  }
+
   write(block: Node): Node {
-    return renderFromSpec(this._spec.renderSpec(this), block);
+    const rendered = renderFromSpec(this._spec.renderSpec(this), block);
+    if (isElement(rendered)) {
+      rendered.dataset['__setBy'] = this.attributes.setBy || CORE_OWNER;
+    }
+    return rendered;
   }
 }
 
@@ -130,7 +139,10 @@ export interface Renderable<A extends Record<string, Serializable> | void> {
 
 export class MarkSet extends HashSet<Mark> {
   constructor() {
-    super({ hashFunc: (mark: Mark) => mark.name });
+    super({
+      hashFunc: (mark: Mark) =>
+        `${mark.name}-${mark.attributes.setBy || CORE_OWNER}`,
+    });
   }
 }
 
@@ -146,13 +158,13 @@ function renderFromSpec(spec: RenderSpec, block: Node): Node {
     return block;
   } else {
     const [nodeSpec, children] = spec;
-    let result: Node;
+    let result: HTMLElement;
     if (typeof nodeSpec === 'string') {
       result = document.createElement(nodeSpec);
     } else {
       result = document.createElement(nodeSpec.tag);
       for (const [key, val] of Object.entries(nodeSpec.attributes)) {
-        (result as HTMLElement).setAttribute(key, val.toString());
+        result.setAttribute(key, val.toString());
       }
     }
 

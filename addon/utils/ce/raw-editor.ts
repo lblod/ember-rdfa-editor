@@ -59,9 +59,10 @@ import {
   strikethroughMarkSpec,
   underlineMarkSpec,
 } from '@lblod/ember-rdfa-editor/model/mark';
-import AddMarkCommand from '@lblod/ember-rdfa-editor/commands/add-mark-command';
-import RemoveMarkCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-command';
+import AddMarkToRangeCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to-range-command';
+import RemoveMarkFromRangeCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-range-command';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RemoveMarkCommand from "@lblod/ember-rdfa-editor/commands/remove-mark-command";
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -170,7 +171,8 @@ export default class RawEditor {
     this.registerCommand(new DeleteSelectionCommand(this.model));
     this.registerCommand(new ReadSelectionCommand(this.model));
     this.registerCommand(new UndoCommand(this.model));
-    this.registerCommand(new AddMarkCommand(this.model));
+    this.registerCommand(new AddMarkToRangeCommand(this.model));
+    this.registerCommand(new RemoveMarkFromRangeCommand(this.model));
     this.registerCommand(new RemoveMarkCommand(this.model));
     this.registerMark(boldMarkSpec);
     this.registerMark(italicMarkSpec);

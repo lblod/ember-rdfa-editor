@@ -4,6 +4,8 @@ import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import sinon from 'sinon';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 
 module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
   hooks.afterEach(() => {
@@ -135,6 +137,39 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
       assert.strictEqual(nodes[4], n4);
       assert.strictEqual(nodes[5], n5);
       assert.strictEqual(nodes[6], n6);
+    });
+    test('complex dom - filter without usable nodes finishes', (assert) => {
+      assert.timeout(1000);
+      console.log(assert);
+      const done = assert.async();
+      // language=XML
+      const { root } = vdom`
+        <div __id="n0">
+          <text __id="n6">test</text>
+          <text __id="n5">test</text>
+          <span __id="n3">
+            <text __id="n4">test</text>
+          </span>
+          <div __id="n2"/>
+          <div __id="n1"/>
+        </div>
+      `;
+
+      const walker = GenTreeWalker.fromSubTree({
+        root,
+        reverse: true,
+        filter: toFilterSkipFalse(
+          (node) =>
+            ModelNode.isModelText(node) && node.content === 'DOES NOT EXIST'
+        ),
+      });
+      const nodes = [...walker.nodes()];
+      let count = 0;
+      for (const node of walker.nodes()) {
+        count++;
+      }
+      done();
+      assert.strictEqual(nodes.length, 0);
     });
     test('real case', (assert) => {
       // language=XML

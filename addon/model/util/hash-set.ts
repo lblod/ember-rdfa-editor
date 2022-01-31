@@ -85,6 +85,11 @@ export default class HashSet<I> implements Set<I> {
     return this.items.has(hash);
   }
 
+  hasItemRef(value: I): boolean {
+    const item = this.items.get(this.hashFunc(value));
+    return !!item && item === value;
+  }
+
   keys(): IterableIterator<I> {
     return this.items.values();
   }

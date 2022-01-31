@@ -1,32 +1,27 @@
+import { Mark } from '@lblod/ember-rdfa-editor/model/mark';
 import Command from '@lblod/ember-rdfa-editor/commands/command';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import Model from '@lblod/ember-rdfa-editor/model/model';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-export default class RemoveMarkCommand extends Command<
-  [ModelRange, string, Record<string, unknown> | void],
-  void
-> {
+export default class RemoveMarkCommand extends Command<[Mark], boolean> {
   name = 'remove-mark';
 
   constructor(model: Model) {
     super(model);
   }
 
-  execute(range: ModelRange, markName: string): void {
-    console.assert(this.model.rootModelNode === range.root, 'root not same');
-    const spec = this.model.marksRegistry.lookupMark(markName);
-    if (spec) {
-      this.model.change((mutator) => {
-        const resultRange = mutator.removeMark(
-          range,
-          spec,
-          this.model.marksRegistry
-        );
-        this.model.selectRange(resultRange);
-      });
-    } else {
-      throw new ModelError(`Unrecognized mark: ${markName}`);
+  execute(mark: Mark): boolean {
+    const node = mark.node;
+    if (!node.hasMark(mark)) {
+      return false;
     }
+    this.model.change((mutator) => {
+      mutator.removeMark(
+        ModelRange.fromAroundNode(node),
+        mark.spec,
+        mark.attributes
+      );
+    });
+    return true;
   }
 }

@@ -51,6 +51,10 @@ export default class ModelText extends ModelNode {
     return this.marks.hasHash(markName);
   }
 
+  hasMark(mark: Mark): boolean {
+    return this.marks.hasItemRef(mark);
+  }
+
   addMark(mark: Mark) {
     this.marks.add(mark);
   }

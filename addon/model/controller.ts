@@ -16,7 +16,8 @@ import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 
 export type WidgetLocation = 'toolbar' | 'sidebar';
 
@@ -46,6 +47,12 @@ export default interface Controller {
   get datastore(): Datastore;
 
   get util(): EditorUtils;
+
+  get ownMarks(): Set<Mark>;
+
+  get modelRoot(): ModelElement;
+
+  getMarksFor(owner: string): Set<Mark>;
 
   executeCommand<A extends unknown[], R>(
     commandName: string,
@@ -109,6 +116,18 @@ export class RawEditorController implements Controller {
 
   get treeWalkerFactory(): TreeWalkerFactory {
     return GenTreeWalker;
+  }
+
+  get ownMarks(): Set<Mark> {
+    return this.getMarksFor(this.name);
+  }
+
+  get modelRoot(): ModelElement {
+    return this._rawEditor.rootModelNode;
+  }
+
+  getMarksFor(owner: string): Set<Mark> {
+    return this._rawEditor.model.marksRegistry.getMarksFor(owner);
   }
 
   executeCommand<A extends unknown[], R>(

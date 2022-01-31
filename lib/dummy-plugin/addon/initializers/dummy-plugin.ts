@@ -13,7 +13,7 @@ function pluginFactory(plugin: new () => EditorPlugin) {
 }
 
 export function initialize(application: Application) {
-  application.register('plugin:besluit', pluginFactory(DummyPlugin), {
+  application.register('plugin:dummy', pluginFactory(DummyPlugin), {
     singleton: false,
   });
 }

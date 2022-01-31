@@ -106,6 +106,7 @@ export default class EventBus {
 class PriorityListenerQueue<E extends AnyEventName> {
   private listeners: Map<EventListenerPriority, EditorEventListener<E>[]> =
     new Map<EventListenerPriority, EditorEventListener<E>[]>();
+  private callStack: EditorEventListener<E>[] = [];
 
   addListener(
     listener: EditorEventListener<E>,
@@ -138,7 +139,13 @@ class PriorityListenerQueue<E extends AnyEventName> {
           if (event.stopped) {
             break;
           }
-          listener(event);
+          if (!this.callStack.includes(listener)) {
+            console.log(this.callStack.length);
+            this.callStack.push(listener);
+
+            listener(event);
+            this.callStack.pop();
+          }
         }
       }
     }

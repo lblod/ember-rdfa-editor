@@ -22,10 +22,10 @@ export default class IndexController extends Controller {
   @service router!: RouterService;
   @service features!: FeaturesService;
   @tracked htmlDebuggerOpen = false;
+  @tracked plugins = ['dummy'];
   private unloadListener?: () => void;
   private xmlEditor?: EditorView;
   private htmlEditor?: EditorView;
-  @tracked plugins = ['dummy'];
 
   setup() {
     this.unloadListener = () => {

@@ -310,14 +310,14 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         observer.handleFullContentUpdate(extraInfo);
       }
     }
-    this.eventBus.emit(
-      new ContentChangedEvent({
-        owner: CORE_OWNER,
-        payload: {
-          type: 'legacy',
-        },
-      })
-    );
+    // this.eventBus.emit(
+    //   new ContentChangedEvent({
+    //     owner: CORE_OWNER,
+    //     payload: {
+    //       type: 'legacy',
+    //     },
+    //   })
+    // );
   }
 
   /**
