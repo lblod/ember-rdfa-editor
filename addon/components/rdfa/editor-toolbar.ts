@@ -123,14 +123,14 @@ export default class EditorToolbar extends Component<Args> {
   setMark(value: boolean, markName: string, attributes = {}) {
     if (value) {
       this.args.controller.executeCommand(
-        'add-mark',
+        'add-mark-to-range',
         this.selection?.lastRange,
         markName,
         attributes
       );
     } else {
       this.args.controller.executeCommand(
-        'remove-mark',
+        'remove-mark-from-range',
         this.selection?.lastRange,
         markName
       );
