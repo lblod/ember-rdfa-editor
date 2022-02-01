@@ -189,6 +189,6 @@
     "last 1 Edge version"
   ],
   "volta": {
-    "node": "12.22.7"
+    "node": "14.18.3"
   }
 }
