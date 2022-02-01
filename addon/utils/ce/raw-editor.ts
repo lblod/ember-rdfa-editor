@@ -52,17 +52,13 @@ import Datastore, {
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { tracked } from '@glimmer/tracking';
 import {
-  boldMarkSpec,
   highlightMarkSpec,
-  italicMarkSpec,
   MarkSpec,
-  strikethroughMarkSpec,
-  underlineMarkSpec,
 } from '@lblod/ember-rdfa-editor/model/mark';
 import AddMarkToRangeCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to-range-command';
 import RemoveMarkFromRangeCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-range-command';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
-import RemoveMarkCommand from "@lblod/ember-rdfa-editor/commands/remove-mark-command";
+import RemoveMarkCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-command';
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -174,11 +170,7 @@ export default class RawEditor {
     this.registerCommand(new AddMarkToRangeCommand(this.model));
     this.registerCommand(new RemoveMarkFromRangeCommand(this.model));
     this.registerCommand(new RemoveMarkCommand(this.model));
-    this.registerMark(boldMarkSpec);
-    this.registerMark(italicMarkSpec);
     this.registerMark(highlightMarkSpec);
-    this.registerMark(underlineMarkSpec);
-    this.registerMark(strikethroughMarkSpec);
   }
 
   /**

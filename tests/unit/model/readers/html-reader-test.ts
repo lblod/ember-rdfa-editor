@@ -10,12 +10,12 @@ import {
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import {
-  boldMarkSpec,
   highlightMarkSpec,
-  italicMarkSpec,
-  strikethroughMarkSpec,
-  underlineMarkSpec,
 } from '@lblod/ember-rdfa-editor/model/mark';
+import {italicMarkSpec} from "@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic";
+import {boldMarkSpec} from "@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold";
+import {underlineMarkSpec} from "@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline";
+import {strikethroughMarkSpec} from "@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough";
 
 module('Unit | model | readers | html-reader', (hooks) => {
   let reader: HtmlReader;

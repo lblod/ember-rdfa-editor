@@ -20,7 +20,7 @@ module('Unit | model | operations | split-operation-test', () => {
     `;
 
     const range = ModelRange.fromPaths(initial as ModelElement, [0], [0]);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(undefined, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -47,7 +47,7 @@ module('Unit | model | operations | split-operation-test', () => {
     `;
 
     const range = ModelRange.fromInTextNode(rangeStart, 2, 2);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(undefined, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -79,7 +79,7 @@ module('Unit | model | operations | split-operation-test', () => {
     `;
 
     const range = ModelRange.fromInTextNode(selectionStart, 2, 2);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(undefined, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -113,7 +113,7 @@ module('Unit | model | operations | split-operation-test', () => {
     `;
 
     const range = ModelRange.fromInTextNode(selectionStart, 2, 2);
-    const op = new SplitOperation(range, false);
+    const op = new SplitOperation(undefined, range, false);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -146,7 +146,7 @@ module('Unit | model | operations | split-operation-test', () => {
       </modelRoot>
     `;
     const range = ModelRange.fromInTextNode(selectionStart, 1, 3);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(undefined, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -192,7 +192,7 @@ module('Unit | model | operations | split-operation-test', () => {
     const start = ModelPosition.fromInTextNode(selectionStart, 2);
     const end = ModelPosition.fromInTextNode(selectionEnd, 0);
     const range = new ModelRange(start, end);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(undefined, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -231,7 +231,7 @@ module('Unit | model | operations | split-operation-test', () => {
           <div>
             <text>test</text>
           </div>
-          <span />
+          <span/>
           <span>
             <text __id="selectionEnd">cd</text>
           </span>
@@ -241,7 +241,7 @@ module('Unit | model | operations | split-operation-test', () => {
     const start = ModelPosition.fromInTextNode(selectionStart, 2);
     const end = ModelPosition.fromInTextNode(selectionEnd, 0);
     const range = new ModelRange(start, end);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(undefined, range);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));

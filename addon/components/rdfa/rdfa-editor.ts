@@ -22,6 +22,7 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
 
 interface DebugInfo {
   hintsRegistry: HintsRegistry;
@@ -256,9 +257,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   }
 
   getPlugins(): EditorPlugin[] {
-    this.logger(this.plugins)
     const pluginNames = this.plugins;
-    const plugins = [];
+    const plugins = [new BasicStyles()];
     for (const name of pluginNames) {
       const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
       if (plugin) {

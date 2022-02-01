@@ -139,6 +139,9 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
       assert.strictEqual(nodes[6], n6);
     });
     test('complex dom - filter without usable nodes finishes', (assert) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       assert.timeout(1000);
       const done = assert.async(7);
       const visitor = sinon.spy();

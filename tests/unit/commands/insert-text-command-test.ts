@@ -44,6 +44,7 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(parent, 2, 2);
     command.execute('c', range);
+    console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
   test('overwrites complex range', (assert) => {

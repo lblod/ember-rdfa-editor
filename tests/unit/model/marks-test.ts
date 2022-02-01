@@ -3,12 +3,7 @@ import { domStripped } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import sinon from 'sinon';
-import {
-  boldMarkSpec,
-  highlightMarkSpec,
-  italicMarkSpec,
-  Mark,
-} from '@lblod/ember-rdfa-editor/model/mark';
+import { highlightMarkSpec, Mark } from '@lblod/ember-rdfa-editor/model/mark';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
@@ -20,6 +15,8 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
 import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
+import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
 
 module('Unit | model | marks-test', (hooks) => {
   const ctx = new ModelTestContext();

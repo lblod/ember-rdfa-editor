@@ -40,14 +40,13 @@ export default abstract class SetPropertyCommand extends Command {
           resultRange = mutator.addMark(
             range,
             specAttribute.spec,
-            specAttribute.attributes,
-            this.model.marksRegistry
+            specAttribute.attributes
           );
         } else {
           resultRange = mutator.removeMark(
             range,
             specAttribute.spec,
-            this.model.marksRegistry
+            specAttribute.attributes
           );
         }
         this.model.selectRange(resultRange);

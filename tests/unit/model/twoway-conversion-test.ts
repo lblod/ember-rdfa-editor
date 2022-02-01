@@ -3,7 +3,7 @@ import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import HtmlWriter from '@lblod/ember-rdfa-editor/model/writers/html-writer';
 import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
-import {italicMarkSpec} from "@lblod/ember-rdfa-editor/model/mark";
+import {italicMarkSpec} from "@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic";
 
 module('Unit | model | twoway-conversion', (hooks) => {
   let reader: HtmlReader;

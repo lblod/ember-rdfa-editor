@@ -57,40 +57,6 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
   }
 }
 
-export const boldMarkSpec: MarkSpec = {
-  matchers: [{ tag: 'b' }, { tag: 'strong' }],
-  name: 'bold',
-  priority: 100,
-  renderSpec(): RenderSpec {
-    return ['strong', [SLOT]];
-  },
-};
-
-export const italicMarkSpec: MarkSpec = {
-  matchers: [{ tag: 'em' }, { tag: 'i' }],
-  priority: 200,
-  name: 'italic',
-  renderSpec(): RenderSpec {
-    return ['em', [SLOT]];
-  },
-};
-export const underlineMarkSpec: MarkSpec = {
-  matchers: [{ tag: 'u' }],
-  priority: 300,
-  name: 'underline',
-  renderSpec(): RenderSpec {
-    return ['u', [SLOT]];
-  },
-};
-
-export const strikethroughMarkSpec: MarkSpec = {
-  matchers: [{ tag: 's' }, { tag: 'del' }],
-  priority: 400,
-  name: 'strikethrough',
-  renderSpec(): RenderSpec {
-    return ['del', [SLOT]];
-  },
-};
 export const highlightMarkSpec: MarkSpec = {
   matchers: [
     {
@@ -146,12 +112,12 @@ export class MarkSet extends HashSet<Mark> {
   }
 }
 
-const SLOT: SLOT = 0;
+export const SLOT: SLOT = 0;
 type SLOT = 0;
 type HtmlNodeSpec =
   | HtmlTag
   | { tag: HtmlTag; attributes: Record<string, Serializable> };
-type RenderSpec = [HtmlNodeSpec, RenderSpec[]] | SLOT;
+export type RenderSpec = [HtmlNodeSpec, RenderSpec[]] | SLOT;
 
 function renderFromSpec(spec: RenderSpec, block: Node): Node {
   if (spec === SLOT) {
