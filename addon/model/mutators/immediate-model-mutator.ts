@@ -7,7 +7,6 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import SplitOperation from '@lblod/ember-rdfa-editor/model/operations/split-operation';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import { AttributeSpec, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
@@ -42,46 +41,31 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   }
 
   insertText(range: ModelRange, text: string): ModelRange {
+    if (range.collapsed) {
+      const insertNode = range.start.nodeBefore() || range.start.nodeAfter();
+      if (ModelNode.isModelText(insertNode)) {
+        const newNode = insertNode.clone();
+        const insertPos = range.start.parentOffset - insertNode.getOffset();
+        newNode.content =
+          insertNode.content.substring(0, insertPos) +
+          text +
+          insertNode.content.substring(insertPos);
+        const op = new InsertOperation(
+          this.eventbus,
+          ModelRange.fromAroundNode(insertNode),
+          newNode
+        );
+        op.execute();
+        return ModelRange.fromInNode(newNode, insertPos + 1, insertPos + 1);
+      }
+    }
+
     const textNode = new ModelText(text);
     textNode.marks = range.getMarks().clone();
     const op = new InsertOperation(this.eventbus, range, textNode);
 
     const resultRange = op.execute();
-    const start = ModelPosition.fromBeforeNode(
-      textNode.previousSibling || textNode
-    );
-    const end = ModelPosition.fromAfterNode(textNode.nextSibling || textNode);
-    const mergeRange = new ModelRange(start, end);
-    // this.mergeTextNodesInRange(mergeRange);
-
     return resultRange;
-  }
-
-  private mergeTextNodesInRange(range: ModelRange) {
-    if (!range.isConfined()) {
-      return;
-    }
-    if (range.collapsed) {
-      return;
-    }
-    const walker = new ModelTreeWalker({ range, descend: false });
-
-    const nodes: ModelNode[] = [];
-    for (const node of walker) {
-      const last = nodes[nodes.length - 1];
-      if (
-        ModelNode.isModelText(last) &&
-        ModelNode.isModelText(node) &&
-        last.isMergeable(node)
-      ) {
-        last.content += node.content;
-      } else {
-        nodes.push(node.clone());
-      }
-    }
-
-    const op = new InsertOperation(this.eventbus, range, ...nodes);
-    op.execute();
   }
 
   /**
@@ -104,7 +88,13 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   }
 
   removeMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
-    const op = new MarkOperation(this.eventbus, range, spec, attributes, 'remove');
+    const op = new MarkOperation(
+      this.eventbus,
+      range,
+      spec,
+      attributes,
+      'remove'
+    );
     return op.execute();
   }
 
