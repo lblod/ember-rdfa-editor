@@ -140,8 +140,8 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
     });
     test('complex dom - filter without usable nodes finishes', (assert) => {
       assert.timeout(1000);
-      console.log(assert);
-      const done = assert.async();
+      const done = assert.async(7);
+      const visitor = sinon.spy();
       // language=XML
       const { root } = vdom`
         <div __id="n0">
@@ -162,14 +162,13 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
           (node) =>
             ModelNode.isModelText(node) && node.content === 'DOES NOT EXIST'
         ),
+        onEnterNode: () => {
+          visitor();
+          done();
+        },
       });
-      const nodes = [...walker.nodes()];
-      let count = 0;
-      for (const node of walker.nodes()) {
-        count++;
-      }
-      done();
-      assert.strictEqual(nodes.length, 0);
+      walker.walk();
+      assert.strictEqual(visitor.callCount, 7);
     });
     test('real case', (assert) => {
       // language=XML
