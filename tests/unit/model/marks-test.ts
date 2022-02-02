@@ -87,7 +87,10 @@ module('Unit | model | marks-test', (hooks) => {
       throw new AssertionError();
     }
     assert.strictEqual(result.content, 'abc');
-    assert.true(result.hasMarkName('highlighted'));
+    assert.true(
+      result.hasMarkName('highlighted'),
+      `Marks: ${JSON.stringify(result.marks)}`
+    );
   });
   test("reading non-highlight spans doesn't read highlight marks", (assert) => {
     const html = domStripped`

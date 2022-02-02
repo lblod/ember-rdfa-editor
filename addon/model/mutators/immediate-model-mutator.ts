@@ -40,32 +40,210 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return this.insertNodes(new ModelRange(position, position), ...nodes);
   }
 
-  insertText(range: ModelRange, text: string): ModelRange {
-    if (range.collapsed) {
-      const insertNode = range.start.nodeBefore() || range.start.nodeAfter();
-      if (ModelNode.isModelText(insertNode)) {
-        const newNode = insertNode.clone();
-        const insertPos = range.start.parentOffset - insertNode.getOffset();
+  private insertTextNotConfined(range: ModelRange, text: string): ModelRange {
+    const before = range.start.nodeBefore();
+
+    if (ModelNode.isModelText(before)) {
+      //case: <text>abc|de</text><span><text>f|gh</text></span>
+      const newNode = before.clone();
+      const insertOffset = range.start.parentOffset - before.getOffset();
+      newNode.content = before.content.substring(0, insertOffset) + text;
+      const op = new InsertOperation(
+        this.eventbus,
+        new ModelRange(ModelPosition.fromBeforeNode(before), range.end),
+        newNode
+      );
+      const resultRange = op.execute();
+      return new ModelRange(
+        ModelPosition.fromInTextNode(newNode, insertOffset),
+        resultRange.end
+      );
+    } else {
+      //case: <span>|</span><span><text>|defg</text></span
+      const newNode = new ModelText(text);
+      const op = new InsertOperation(this.eventbus, range, newNode);
+      return op.execute();
+    }
+  }
+
+  private insertTextConfined(range: ModelRange, text: string): ModelRange {
+    const before = range.start.nodeBefore();
+    const after = range.end.nodeAfter();
+    if (ModelNode.isModelText(before)) {
+      if (before === after) {
+        //case <text>ab|cd|ef</text>
+        const newNode = before.clone();
+        const insertOffset = range.start.parentOffset - before.getOffset();
+        const endOffset = range.end.parentOffset - before.getOffset();
         newNode.content =
-          insertNode.content.substring(0, insertPos) +
+          before.content.substring(0, insertOffset) +
           text +
-          insertNode.content.substring(insertPos);
+          before.content.substring(endOffset);
         const op = new InsertOperation(
           this.eventbus,
-          ModelRange.fromAroundNode(insertNode),
+          ModelRange.fromAroundNode(before),
           newNode
         );
         op.execute();
-        return ModelRange.fromInNode(newNode, insertPos + 1, insertPos + 1);
+        return ModelRange.fromInTextNode(
+          newNode,
+          insertOffset,
+          insertOffset + text.length
+        );
+      } else if (ModelNode.isModelText(after) && before.isMergeable(after)) {
+        //case <text>ab|c</text><text>d|ef</text>
+        const newNode = before.clone();
+        const insertOffset = range.start.parentOffset - before.getOffset();
+        const endOffset = range.end.parentOffset - after.getOffset();
+        newNode.content =
+          before.content.substring(0, insertOffset) +
+          text +
+          after.content.substring(endOffset);
+        const op = new InsertOperation(
+          this.eventbus,
+          new ModelRange(
+            ModelPosition.fromBeforeNode(before),
+            ModelPosition.fromAfterNode(after)
+          ),
+          newNode
+        );
+        op.execute();
+        return ModelRange.fromInTextNode(
+          newNode,
+          insertOffset,
+          insertOffset + text.length
+        );
+      } else {
+        //case <span><text>ab|c|</text></span>
+        //case <text>ab|c</text><text __marks=["bold"]>d|ef</text>
+        const newNode = before.clone();
+        const insertOffset = range.start.parentOffset - before.getOffset();
+        newNode.content = before.content.substring(0, insertOffset) + text;
+        const op = new InsertOperation(
+          this.eventbus,
+          new ModelRange(ModelPosition.fromBeforeNode(before), range.end),
+          newNode
+        );
+        op.execute();
+        return ModelRange.fromInTextNode(
+          newNode,
+          insertOffset,
+          insertOffset + text.length
+        );
+      }
+    } else if (ModelNode.isModelText(after)) {
+      //case <span><text>|ab|cd</text></span>
+      const newNode = after.clone();
+      const endPos = range.end.parentOffset - after.getOffset();
+      newNode.content = text + after.content.substring(endPos);
+      const op = new InsertOperation(
+        this.eventbus,
+        new ModelRange(range.start, ModelPosition.fromAfterNode(after)),
+        newNode
+      );
+      op.execute();
+      return ModelRange.fromInTextNode(newNode, 0, text.length);
+    } else {
+      //case <div><span>|</span><span>|</span></div>
+      const newNode = new ModelText(text);
+      const op = new InsertOperation(this.eventbus, range, newNode);
+      return op.execute();
+    }
+  }
+
+  private insertTextCollapsed(range: ModelRange, text: string): ModelRange {
+    const before = range.start.nodeBefore();
+    const after = range.end.nodeAfter();
+    if (ModelNode.isModelText(before)) {
+      if (before === after) {
+        //case: <span><text>a|bcd</text></span>
+        const newNode = before.clone();
+        const insertOffset = range.start.parentOffset - before.getOffset();
+        newNode.content =
+          before.content.substring(0, insertOffset) +
+          text +
+          before.content.substring(insertOffset);
+        const op = new InsertOperation(
+          this.eventbus,
+          ModelRange.fromAroundNode(before),
+          newNode
+        );
+        op.execute();
+        return ModelRange.fromInTextNode(
+          newNode,
+          insertOffset + text.length,
+          insertOffset + text.length
+        );
+      } else if (ModelNode.isModelText(after) && before.isMergeable(after)) {
+        //case: <span><text>abc|</text><text>def</text></span>
+        const newNode = before.clone();
+        newNode.content = before.content + text + after.content;
+        const op = new InsertOperation(
+          this.eventbus,
+          new ModelRange(
+            ModelPosition.fromBeforeNode(before),
+            ModelPosition.fromAfterNode(after)
+          ),
+          newNode
+        );
+        op.execute();
+        return ModelRange.fromInTextNode(
+          newNode,
+          before.content.length + text.length,
+          before.content.length + text.length
+        );
+      } else {
+        //case: <span><text>abc|</text></span>
+        //case: <span><text>abc|</text><text __marks=["bold"]>def</text></span>
+        const newNode = before.clone();
+        newNode.content = before.content + text;
+        const op = new InsertOperation(
+          this.eventbus,
+          ModelRange.fromAroundNode(before),
+          newNode
+        );
+        op.execute();
+        return new ModelRange(
+          ModelPosition.fromAfterNode(newNode),
+          ModelPosition.fromAfterNode(newNode)
+        );
+      }
+    } else if (ModelNode.isModelText(after)) {
+      //case: <span><text>|abcd</text></span>
+      const newNode = after.clone();
+      newNode.content = text + after.content;
+      const op = new InsertOperation(
+        this.eventbus,
+        ModelRange.fromAroundNode(after),
+        newNode
+      );
+      op.execute();
+      return new ModelRange(
+        ModelPosition.fromInTextNode(newNode, text.length),
+        ModelPosition.fromInTextNode(newNode, text.length)
+      );
+    } else {
+      //case: <span>|</span>
+      const newNode = new ModelText(text);
+      const op = new InsertOperation(this.eventbus, range, newNode);
+      op.execute();
+      return new ModelRange(
+        ModelPosition.fromAfterNode(newNode),
+        ModelPosition.fromAfterNode(newNode)
+      );
+    }
+  }
+
+  insertText(range: ModelRange, text: string): ModelRange {
+    if (range.collapsed) {
+      return this.insertTextCollapsed(range, text);
+    } else {
+      if (range.isConfined()) {
+        return this.insertTextConfined(range, text);
+      } else {
+        return this.insertTextNotConfined(range, text);
       }
     }
-
-    const textNode = new ModelText(text);
-    textNode.marks = range.getMarks().clone();
-    const op = new InsertOperation(this.eventbus, range, textNode);
-
-    const resultRange = op.execute();
-    return resultRange;
   }
 
   /**

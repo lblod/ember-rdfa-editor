@@ -43,7 +43,7 @@ export default class MarksRegistry {
   private registeredMarks: Map<string, MarkSpec> = new Map<string, MarkSpec>();
 
   updateMarks = (event: ContentChangedEvent) => {
-    const { owner, payload } = event;
+    const { payload } = event;
     if (payload.type === 'insert') {
       const { overwrittenNodes, insertedNodes, _markCheckNodes } = payload;
       this.updateMarksForNodes(insertedNodes);

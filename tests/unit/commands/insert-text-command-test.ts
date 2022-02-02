@@ -86,6 +86,7 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     const range = new ModelRange(start, end);
 
     command.execute('c', range);
+    console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
   test('replaces spaces with nbsp when needed', (assert) => {

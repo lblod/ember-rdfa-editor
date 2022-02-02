@@ -18,7 +18,7 @@ module('Unit | model | twoway-conversion', (hooks) => {
   });
   test('converting simple tree back and forth gives same tree', (assert) => {
     const p = document.createElement('p');
-    p.innerHTML = `<p><ul><li> some text <div style="background-color:green"><a href="#">an <em> italic |- </em> link</a></div></li></ul></p>`;
+    p.innerHTML = `<p><ul><li> some text <div style="background-color:green"><a href="#">an <em data-__set-by="rdfa-editor"> italic |- </em> link</a></div></li></ul></p>`;
     const read = reader.read(p);
     if (!read) {
       throw new AssertionError();
@@ -38,7 +38,7 @@ module('Unit | model | twoway-conversion', (hooks) => {
     // the inner p will get broken up by the dom as per the html standard
     // this happens before the model reads it
     // https://developer.mozilla.org/en-us/docs/Web/HTML/Element/p
-    const expected = `<p></p><ul><li> some text <div style="background-color:green"><a href="#">an <em> italic |- </em> link</a></div></li></ul><p></p>`;
+    const expected = `<p></p><ul><li> some text <div style="background-color:green"><a href="#">an <em data-__set-by="rdfa-editor"> italic |- </em> link</a></div></li></ul><p></p>`;
 
     assert.strictEqual(written.innerHTML, expected);
   });
