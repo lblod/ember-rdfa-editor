@@ -5,10 +5,7 @@ import Model from '@lblod/ember-rdfa-editor/model/model';
 import { calculateRdfaPrefixes } from '../util/rdfa-utils';
 import { SpecAttributes } from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import {
-  AttributeSpec,
-  MarkSpec,
-} from '@lblod/ember-rdfa-editor/model/mark';
+import { AttributeSpec, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 
 export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;

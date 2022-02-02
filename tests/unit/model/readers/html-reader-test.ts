@@ -9,13 +9,11 @@ import {
 } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import {
-  highlightMarkSpec,
-} from '@lblod/ember-rdfa-editor/model/mark';
-import {italicMarkSpec} from "@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic";
-import {boldMarkSpec} from "@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold";
-import {underlineMarkSpec} from "@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline";
-import {strikethroughMarkSpec} from "@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough";
+import { highlightMarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
+import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
+import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline';
+import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough';
 
 module('Unit | model | readers | html-reader', (hooks) => {
   let reader: HtmlReader;
@@ -131,7 +129,7 @@ module('Unit | model | readers | html-reader', (hooks) => {
       </span>`;
 
     // language=XML
-    const { root: expected, textNodes: {abc, def} } = vdom`
+    const { root: expected } = vdom`
       <span>
         <text __id="abc" __marks="highlighted">abc</text>
         <text __id="def" __marks="bold,highlighted">def</text>

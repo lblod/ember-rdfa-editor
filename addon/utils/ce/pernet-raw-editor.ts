@@ -43,11 +43,7 @@ import { tracked } from '@glimmer/tracking';
 import { Editor } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { Region } from '@lblod/marawa/rdfa-block';
-import {
-  CORE_OWNER,
-  INVISIBLE_SPACE,
-} from '@lblod/ember-rdfa-editor/model/util/constants';
-import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 export interface ContentObserver {
   handleTextInsert: (

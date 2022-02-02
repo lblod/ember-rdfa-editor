@@ -1,5 +1,3 @@
-import SetUtils from "@lblod/ember-rdfa-editor/model/util/set-utils";
-
 type HashFunction<I> = (item: I) => unknown;
 
 interface HashSetConfig<I> {

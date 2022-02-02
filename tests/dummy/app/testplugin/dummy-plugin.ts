@@ -7,6 +7,7 @@ import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tre
 export default class DummyPlugin implements EditorPlugin {
   private controller!: Controller;
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: Controller): Promise<void> {
     this.controller = controller;
     this.controller.onEvent('contentChanged', () => {

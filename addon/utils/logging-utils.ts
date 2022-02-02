@@ -1,6 +1,6 @@
 import config from 'ember-get-config';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { debug, Debugger } from 'debug';
+import { debug } from 'debug';
 
 /**
  * Create a diary logger with a default reporter if none provided.
