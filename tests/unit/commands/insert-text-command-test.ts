@@ -47,6 +47,40 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
+  test('overwrites unconfined range', (assert) => {
+    // language=XML
+    const {
+      root: initial,
+      textNodes: { rangeStart, rangeEnd },
+    } = vdom`
+      <modelRoot>
+        <span>
+          <text __id="rangeStart">abc</text>
+        </span>
+        <span>
+          <text __id="rangeEnd">def</text>
+        </span>
+      </modelRoot>
+    `;
+    const { root: expected } = vdom`
+      <modelRoot>
+        <span>
+          <text>abx</text>
+        </span>
+        <span>
+          <text>ef</text>
+        </span>
+      </modelRoot>
+    `;
+    ctx.model.fillRoot(initial);
+    const start = ModelPosition.fromInTextNode(rangeStart, 2);
+    const end = ModelPosition.fromInTextNode(rangeEnd, 1);
+    const range = new ModelRange(start, end);
+
+    command.execute('x', range);
+    console.log(ctx.model.rootModelNode.toXml());
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
   test('overwrites complex range', (assert) => {
     // language=XML
     const {

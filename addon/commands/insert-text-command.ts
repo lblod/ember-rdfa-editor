@@ -34,11 +34,12 @@ export default class InsertTextCommand extends Command {
       }
 
       const resultRange = mutator.insertText(range, text);
-      const commonAncestor = resultRange.getCommonAncestor();
+      // TODO re-enable incremental updates somehow
+      // const commonAncestor = resultRange.getCommonAncestor();
       resultRange.collapse();
       this.model.selectRange(resultRange);
 
-      return commonAncestor;
+      // return commonAncestor;
     });
   }
 }
