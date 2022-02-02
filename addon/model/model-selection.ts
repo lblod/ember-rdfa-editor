@@ -282,7 +282,13 @@ export default class ModelSelection {
   hasMark(markName: string): boolean {
     if (ModelSelection.isWellBehaved(this)) {
       const range = this.lastRange;
-      return range.getMarks().hasHash(markName);
+      if (range) {
+        for (const mark of range.getMarks()) {
+          if (mark.name === markName) {
+            return true;
+          }
+        }
+      }
     }
     return false;
   }

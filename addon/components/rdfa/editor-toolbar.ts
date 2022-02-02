@@ -132,7 +132,8 @@ export default class EditorToolbar extends Component<Args> {
       this.args.controller.executeCommand(
         'remove-mark-from-range',
         this.selection?.lastRange,
-        markName
+        markName,
+        attributes
       );
     }
   }
