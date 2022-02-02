@@ -112,6 +112,20 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return op.execute();
   }
 
+  setProperty(range: ModelRange, key: string, value: string): ModelRange {
+    let oldNode = range.start.nodeBefore() || range.start.nodeAfter();
+    if (!oldNode) throw new Error('no node in range');
+    if (ModelNode.isModelText(oldNode)) {
+      oldNode = oldNode.parentNode;
+    }
+    if (!oldNode) throw new Error('no element in range');
+    const newNode = oldNode.clone();
+    newNode.setAttribute(key, value);
+    const oldNodeRange = ModelRange.fromAroundNode(oldNode);
+    const op = new InsertOperation(oldNodeRange, newNode);
+    return op.execute();
+  }
+
   splitTextAt(position: ModelPosition): ModelPosition {
     const range = new ModelRange(position, position);
     const op = new SplitOperation(range, false);
