@@ -14,28 +14,46 @@ To further complicate things browsers themselves sometimes convert regular space
 This RFC proposes a different approach using CSS styles to ensure all whitespace is shown. This seems a more elegant solution and moves the difficulty of whitespace handling to loading into - and exporting content from the editor.
 
 ## Motivation
-non breaking spaces make it hard to render text properly as it's unclear where the browser can break up sentences for overflowing text. If we can use css to make spaces visible without the `nbsp` hack we can forego complex/ugly logic to clean up spurious `nbsp`'s.
+non breaking spaces make it hard to render text properly as it's unclear where the browser can break up sentences for overflowing text. If we can use css to make spaces visible without the `nbsp` hack we can forego complex/ugly logic to clean up spurious `nbsp`'s. It will also simplify logic in the backspace handler since you can now assume all whitespace is visible to the user, so need for complex heuristics anymore.
 
 ## Implementation
 
+### css
 The css-3 `white-space` property can be used to tell the browser to preserve (and show) whitespace. [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/white-space) has a good explanation of the property. 
 
 We could set this property within the editor stylesheet with a `!important` to make sure it's applied. This would make most (depending on the selected value) whitespace visible to users.
 
 Candidate values would be:
 
-###  pre-wrap 
+####  pre-wrap 
 
 Sequences of white space are preserved. Lines are broken at newline characters, at `<br>`, and as necessary to fill line boxes.
 
-### break-spaces
-| break-spaces |     The behavior is identical to that of pre-wrap, except that:
+#### break-spaces
+The behavior is identical to that of pre-wrap, except that:
 
  *   Any sequence of preserved white space always takes up space, including at the end of the line.
  * A line breaking opportunity exists after every preserved white space character, including between white space characters.
  * Such preserved spaces take up space and do not hang, and thus affect the box’s intrinsic sizes (min-content size and max-content size).
 
 Since this would show all whitespaces we will have to strip unwanted whitespace on setting/loading the editor content. This would mean any textnode only consisting of whitespace, any linebreak, ...
+
+### text input
+#### spaces
+
+Text input becomes simpler, spaces can just be inserted as a space into the VDOM. 
+
+#### linebreak
+Breaks are odd in html, being a void element. We could consider using linebreaks (inside a textnode) instead, though this likely has it's own downsides. In any case it's best to stay consistent and go for either the `br` element or linebreaks consistently.
+
+### backspace/delete
+Becomes easier because we can now assume any whitespace is visible to the user and as such removing it will be too. This means we can get rid of a lot of complex heuristics in the backspace handler.
+
+### loading content
+Load content through the insert-html command (and others) becomes more complex because we will want to filter out any unwanted whitespace and linebreaks.
+
+### exporting content
+Exporting content becomes more complex because we will want to translate whitespace that would normally fold (consecutive spaces, linebreaks, spaces at the end of a node, etc.) to something visible.
 
 ## Caveats
 ### are we the only ones?
