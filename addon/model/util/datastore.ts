@@ -55,6 +55,51 @@ function isPrimitive(thing: unknown): thing is Primitive {
   );
 }
 
+export class ResultSet<I, R = unknown, N = unknown>
+  implements Generator<I, R, N>
+{
+  private generator: Generator<I, R, N>;
+  private generatorFunc: () => Generator<I, R, N>;
+
+  constructor(generatorFunc: () => Generator<I, R, N>) {
+    this.generatorFunc = generatorFunc;
+    this.generator = this.generatorFunc();
+  }
+
+  [Symbol.iterator](): Generator<I, R, N> {
+    return this.generator[Symbol.iterator]();
+  }
+
+  next(...args: [] | [N]): IteratorResult<I, R>;
+  next(...args: [] | [N]): IteratorResult<I, R>;
+  next(...args: [] | [N]): IteratorResult<I, R> {
+    return this.generator.next(...args);
+  }
+
+  return(value: R): IteratorResult<I, R> {
+    return this.generator.return(value);
+  }
+
+  throw(e: unknown): IteratorResult<I, R> {
+    return this.generator.throw(e);
+  }
+
+  first(...args: [] | [N]): I | null {
+    this.reset();
+    const first = this.generator.next(...args);
+    this.reset();
+    if (!first.done) {
+      return first.value;
+    } else {
+      return null;
+    }
+  }
+
+  reset() {
+    this.generator = this.generatorFunc();
+  }
+}
+
 export default interface Datastore {
   get dataset(): RDF.Dataset;
 
@@ -74,13 +119,13 @@ export default interface Datastore {
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
   ): Datastore;
 
-  asSubjectNodes(): Generator<SubjectNodesResponse>;
+  asSubjectNodes(): ResultSet<SubjectNodesResponse>;
 
-  asPredicateNodes(): Generator<PredicateNodesResponse>;
+  asPredicateNodes(): ResultSet<PredicateNodesResponse>;
 
-  asObjectNodes(): Generator<ObjectNodesResponse>;
+  asObjectNodes(): ResultSet<ObjectNodesResponse>;
 
-  asQuads(): Generator<RDF.Quad>;
+  asQuads(): ResultSet<RDF.Quad>;
 }
 
 interface DatastoreConfig {
@@ -157,6 +202,7 @@ export class EditorStore implements Datastore {
   get size(): number {
     return this._dataset.size;
   }
+
   termConverter = (term: ConciseTerm) => conciseToRdfjs(term, this.getPrefix);
 
   match(
@@ -218,7 +264,13 @@ export class EditorStore implements Datastore {
     });
   }
 
-  *asSubjectNodes(): Generator<SubjectNodesResponse> {
+  asSubjectNodes(): ResultSet<SubjectNodesResponse> {
+    return new ResultSet<SubjectNodesResponse>(
+      this.subjectNodeGenerator.bind(this)
+    );
+  }
+
+  private *subjectNodeGenerator(): Generator<SubjectNodesResponse> {
     const seenSubjects = new Set<string>();
     for (const quad of this.dataset) {
       if (!seenSubjects.has(quad.subject.value)) {
@@ -231,7 +283,13 @@ export class EditorStore implements Datastore {
     }
   }
 
-  *asPredicateNodes(): Generator<PredicateNodesResponse> {
+  asPredicateNodes(): ResultSet<PredicateNodesResponse> {
+    return new ResultSet<PredicateNodesResponse>(
+      this.predicateNodeGenerator.bind(this)
+    );
+  }
+
+  private *predicateNodeGenerator(): Generator<PredicateNodesResponse> {
     const seenPredicates = new Map<string, RDF.Quad_Predicate>();
     const seenSubjects = new Set<string>();
 
@@ -257,7 +315,13 @@ export class EditorStore implements Datastore {
     }
   }
 
-  *asObjectNodes(): Generator<ObjectNodesResponse> {
+  asObjectNodes(): ResultSet<ObjectNodesResponse> {
+    return new ResultSet<ObjectNodesResponse>(
+      this.objectNodeGenerator.bind(this)
+    );
+  }
+
+  private *objectNodeGenerator(): Generator<ObjectNodesResponse> {
     const seenObjects = new Set<string>();
     for (const quad of this.dataset) {
       if (!seenObjects.has(quad.object.value)) {
@@ -270,7 +334,11 @@ export class EditorStore implements Datastore {
     }
   }
 
-  *asQuads(): Generator<RDF.Quad> {
+  asQuads(): ResultSet<RDF.Quad> {
+    return new ResultSet<RDF.Quad>(this.quadGenerator.bind(this));
+  }
+
+  private *quadGenerator(): Generator<RDF.Quad> {
     for (const quad of this.dataset) {
       yield quad;
     }
