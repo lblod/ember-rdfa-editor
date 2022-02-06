@@ -2,6 +2,7 @@ import { module, test, todo } from 'qunit';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import { EditorStore } from '@lblod/ember-rdfa-editor/model/util/datastore';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 module('Unit | model | utils | datastore-test', () => {
   test('simple match gives correct nodes', (assert) => {
@@ -133,6 +134,60 @@ module('Unit | model | utils | datastore-test', () => {
       'http://data.lblod.info/artikels/bbeb89ae-998b-4339-8de4-c8ab3a0679b5';
     const decisionValueStore = dataStore.match(`>${decisionUri}`, 'prov:value');
     assert.strictEqual(decisionValueStore.size, 1);
+  });
+  test('nodes are returned in document order', (assert) => {
+    //language=XML
+    const {
+      root,
+      elements: { node1, node2, node3, node4 },
+    } = vdom`
+      <div vocab="http://mu.semte.ch/vocabularies/ext/">
+        <div resource="r1" typeof="test" __id="node1">
+          <span property="testProp">
+            <text>testValue1</text>
+          </span>
+          <span property="testProp2">
+            <text>testValue2</text>
+          </span>
+        </div>
+        <div resource="r1" typeof="test" __id="node2">
+          <span property="testProp3">
+            <text>testValue3</text>
+            <div resource="r2" typeof="test" __id="node3">
+              <span property="testProp">
+                <text>testValue</text>
+              </span>
+            </div>
+          </span>
+        </div>
+        <div resource="r2" typeof="test" __id="node4">
+          <span property="testProp2">
+            <text>testValue2</text>
+          </span>
+        </div>
+      </div>
+    `;
+    const datastore = EditorStore.fromParse({
+      modelRoot: root,
+      baseIRI: 'http://test.org',
+    });
+    const result = datastore.match(null, 'a', 'ext:test').asSubjectNodes();
+    const subjectNodes1 = result.get('>http://test.org/r1');
+    if (!subjectNodes1) {
+      throw new AssertionError();
+    }
+
+    assert.strictEqual(subjectNodes1.length, 2);
+    assert.strictEqual(subjectNodes1[0], node1);
+    assert.strictEqual(subjectNodes1[1], node2);
+    const subjectNodes2 = result.get('>http://test.org/r2');
+    if (!subjectNodes1) {
+      throw new AssertionError();
+    }
+
+    assert.strictEqual(subjectNodes2.length, 2);
+    assert.strictEqual(subjectNodes2[0], node3);
+    assert.strictEqual(subjectNodes2[1], node4);
   });
   // TODO limitToRange currently only works on subjectnodes, tbd how to handle this
   todo('limitToRange works as expected', (assert) => {

@@ -54,7 +54,7 @@ export interface RdfaParseConfig {
 export interface RdfaParseResponse {
   dataset: RDF.Dataset;
 
-  subjectToNodesMapping: Map<string, Set<ModelNode>>;
+  subjectToNodesMapping: Map<string, ModelNode[]>;
   nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
 
   nodeToObjectsMapping: Map<ModelNode, Set<ModelQuadObject>>;
@@ -76,7 +76,7 @@ export class RdfaParser {
 
   private readonly activeTagStack: IActiveTag[] = [];
   private nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
-  private subjectToNodesMapping: Map<string, Set<ModelNode>>;
+  private subjectToNodesMapping: Map<string, ModelNode[]>;
 
   private nodeToObjectsMapping: Map<ModelNode, Set<ModelQuadObject>>;
   private objectToNodesMapping: Map<string, Set<ModelNode>>;
@@ -86,6 +86,7 @@ export class RdfaParser {
   private predicateToNodesMapping: Map<string, Set<ModelNode>>;
 
   private rootModelNode?: ModelNode;
+  private seenNodes: Set<ModelNode>;
 
   constructor(options: IRdfaParserOptions) {
     this.options = options;
@@ -104,7 +105,7 @@ export class RdfaParser {
     this.resultSet = new GraphyDataset();
 
     this.nodeToSubjectMapping = new Map<ModelNode, ModelQuadSubject>();
-    this.subjectToNodesMapping = new Map<string, Set<ModelNode>>();
+    this.subjectToNodesMapping = new Map<string, ModelNode[]>();
 
     this.predicateToNodesMapping = new Map<string, Set<ModelNode>>();
     this.nodeToPredicatesMapping = new Map<
@@ -114,6 +115,7 @@ export class RdfaParser {
 
     this.nodeToObjectsMapping = new Map<ModelNode, Set<ModelQuadObject>>();
     this.objectToNodesMapping = new Map<string, Set<ModelNode>>();
+    this.seenNodes = new Set<ModelNode>();
 
     this.activeTagStack.push({
       incompleteTriples: [],
@@ -1182,15 +1184,17 @@ export class RdfaParser {
     ) {
       return;
     }
-    if (subject.node) {
+    if (subject.node && !this.seenNodes.has(subject.node)) {
+      this.seenNodes.add(subject.node);
       this.nodeToSubjectMapping.set(subject.node, subject);
-      MapUtils.setOrAdd(
+      MapUtils.setOrPush(
         this.subjectToNodesMapping,
         subject.value,
         subject.node
       );
     }
-    if (predicate.node) {
+    if (predicate.node && !this.seenNodes.has(predicate.node)) {
+      this.seenNodes.add(predicate.node);
       MapUtils.setOrAdd(
         this.nodeToPredicatesMapping,
         predicate.node,
@@ -1202,7 +1206,8 @@ export class RdfaParser {
         predicate.node
       );
     }
-    if (object.node) {
+    if (object.node && !this.seenNodes.has(object.node)) {
+      this.seenNodes.add(object.node);
       MapUtils.setOrAdd(this.nodeToObjectsMapping, predicate.node, predicate);
       MapUtils.setOrAdd(
         this.objectToNodesMapping,

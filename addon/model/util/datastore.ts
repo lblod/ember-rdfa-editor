@@ -18,9 +18,12 @@ import {
   conciseToRdfjs,
   ConLiteral,
   ConNamedNode,
+  PrefixMapping,
   TermConverter,
 } from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
 import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa';
+import { first, from, IterableX } from 'ix/iterable';
+import { filter, map, take } from 'ix/iterable/operators';
 
 export type SubjectSpec = RDF.Quad_Subject | ConNamedNode | ConBlankNode | null;
 export type PredicateSpec = RDF.Quad_Predicate | ConNamedNode | null;
@@ -55,48 +58,77 @@ function isPrimitive(thing: unknown): thing is Primitive {
   );
 }
 
-export class ResultSet<I, R = unknown, N = unknown>
-  implements Generator<I, R, N>
+export class ResultSet<I> implements Iterable<I> {
+  private engine: IterableX<I>;
+
+  constructor(iterable: Iterable<I>) {
+    this.engine = from(iterable);
+  }
+
+  first(): I | undefined {
+    return [...this.engine.pipe(take(1))][0];
+  }
+
+  map<T>(mappingFunc: (item: I) => T): ResultSet<T> {
+    return new ResultSet<T>(this.engine.pipe(map(mappingFunc)));
+  }
+
+  [Symbol.iterator](): Iterator<I> {
+    return this.engine[Symbol.iterator]();
+  }
+}
+
+export class TermMapping<T extends RDF.Term>
+  implements
+    Iterable<{
+      term: T;
+      nodes: ModelNode[];
+    }>
 {
-  private generator: Generator<I, R, N>;
-  private generatorFunc: () => Generator<I, R, N>;
+  private termMap: Map<T, ModelNode[]>;
+  private getPrefix: PrefixMapping;
 
-  constructor(generatorFunc: () => Generator<I, R, N>) {
-    this.generatorFunc = generatorFunc;
-    this.generator = this.generatorFunc();
+  constructor(map: Map<T, ModelNode[]>, getPrefix: PrefixMapping) {
+    this.termMap = map;
+    this.getPrefix = getPrefix;
   }
 
-  [Symbol.iterator](): Generator<I, R, N> {
-    return this.generator[Symbol.iterator]();
+  one(): { term: T; nodes: ModelNode[] } {
+    return [
+      ...from(this.termMap.entries()).pipe(
+        map((entry) => ({
+          term: entry[0],
+          nodes: entry[1],
+        })),
+        take(1)
+      ),
+    ][0];
   }
 
-  next(...args: [] | [N]): IteratorResult<I, R>;
-  next(...args: [] | [N]): IteratorResult<I, R>;
-  next(...args: [] | [N]): IteratorResult<I, R> {
-    return this.generator.next(...args);
+  [Symbol.iterator]() {
+    return from(this.termMap.entries())
+      .pipe(
+        map((entry) => ({
+          term: entry[0],
+          nodes: entry[1],
+        }))
+      )
+      [Symbol.iterator]();
   }
 
-  return(value: R): IteratorResult<I, R> {
-    return this.generator.return(value);
-  }
-
-  throw(e: unknown): IteratorResult<I, R> {
-    return this.generator.throw(e);
-  }
-
-  first(...args: [] | [N]): I | null {
-    this.reset();
-    const first = this.generator.next(...args);
-    this.reset();
-    if (!first.done) {
-      return first.value;
-    } else {
-      return null;
-    }
-  }
-
-  reset() {
-    this.generator = this.generatorFunc();
+  get(subject: SubjectSpec): ModelNode[] | null {
+    const convertedSubject =
+      typeof subject === 'string'
+        ? conciseToRdfjs(subject, this.getPrefix)
+        : subject;
+    return (
+      first(
+        from(this.termMap.entries()).pipe(
+          filter((entry) => entry[0].equals(convertedSubject)),
+          map((entry) => entry[1])
+        )
+      ) || null
+    );
   }
 }
 
@@ -119,7 +151,7 @@ export default interface Datastore {
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
   ): Datastore;
 
-  asSubjectNodes(): ResultSet<SubjectNodesResponse>;
+  asSubjectNodes(): TermMapping<RDF.Quad_Subject>;
 
   asPredicateNodes(): ResultSet<PredicateNodesResponse>;
 
@@ -130,7 +162,7 @@ export default interface Datastore {
 
 interface DatastoreConfig {
   dataset: RDF.Dataset;
-  subjectToNodes: Map<string, Set<ModelNode>>;
+  subjectToNodes: Map<string, ModelNode[]>;
   nodeToSubject: Map<ModelNode, ModelQuadSubject>;
 
   predicateToNodes: Map<string, Set<ModelNode>>;
@@ -143,7 +175,7 @@ interface DatastoreConfig {
 
 export class EditorStore implements Datastore {
   private _dataset: RDF.Dataset;
-  private _subjectToNodes: Map<string, Set<ModelNode>>;
+  private _subjectToNodes: Map<string, ModelNode[]>;
   private _nodeToSubject: Map<ModelNode, ModelQuadSubject>;
   private _prefixMapping: Map<string, string>;
   private _nodeToPredicates: Map<ModelNode, Set<ModelQuadPredicate>>;
@@ -264,29 +296,30 @@ export class EditorStore implements Datastore {
     });
   }
 
-  asSubjectNodes(): ResultSet<SubjectNodesResponse> {
-    return new ResultSet<SubjectNodesResponse>(
-      this.subjectNodeGenerator.bind(this)
+  asSubjectNodes(): TermMapping<RDF.Quad_Subject> {
+    return new TermMapping<RDF.Quad_Subject>(
+      this.subjectNodeGenerator(),
+      this.getPrefix
     );
   }
 
-  private *subjectNodeGenerator(): Generator<SubjectNodesResponse> {
+  private subjectNodeGenerator(): Map<RDF.Quad_Subject, ModelNode[]> {
     const seenSubjects = new Set<string>();
+    const rslt = new Map<RDF.Quad_Subject, ModelNode[]>();
     for (const quad of this.dataset) {
       if (!seenSubjects.has(quad.subject.value)) {
         const nodes = this._subjectToNodes.get(quad.subject.value);
         if (nodes) {
-          yield { subject: quad.subject, nodes };
+          rslt.set(quad.subject, nodes);
         }
         seenSubjects.add(quad.subject.value);
       }
     }
+    return rslt;
   }
 
   asPredicateNodes(): ResultSet<PredicateNodesResponse> {
-    return new ResultSet<PredicateNodesResponse>(
-      this.predicateNodeGenerator.bind(this)
-    );
+    return new ResultSet<PredicateNodesResponse>(this.predicateNodeGenerator());
   }
 
   private *predicateNodeGenerator(): Generator<PredicateNodesResponse> {
@@ -316,9 +349,7 @@ export class EditorStore implements Datastore {
   }
 
   asObjectNodes(): ResultSet<ObjectNodesResponse> {
-    return new ResultSet<ObjectNodesResponse>(
-      this.objectNodeGenerator.bind(this)
-    );
+    return new ResultSet<ObjectNodesResponse>(this.objectNodeGenerator());
   }
 
   private *objectNodeGenerator(): Generator<ObjectNodesResponse> {
@@ -335,7 +366,7 @@ export class EditorStore implements Datastore {
   }
 
   asQuads(): ResultSet<RDF.Quad> {
-    return new ResultSet<RDF.Quad>(this.quadGenerator.bind(this));
+    return new ResultSet<RDF.Quad>(this.quadGenerator());
   }
 
   private *quadGenerator(): Generator<RDF.Quad> {

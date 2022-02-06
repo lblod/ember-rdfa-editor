@@ -59,7 +59,13 @@ export default class ModelRange {
     return new ModelRange(start, end);
   }
 
-  static fromInNode(node: ModelNode, startOffset: number, endOffset: number) {
+  static fromInNode(
+    node: ModelNode,
+    startOffset = 0,
+    endOffset: number = ModelNode.isModelElement(node)
+      ? node.getMaxOffset()
+      : node.length
+  ) {
     const start = ModelPosition.fromInNode(node, startOffset);
     const end = ModelPosition.fromInNode(node, endOffset);
     return new ModelRange(start, end);
@@ -469,8 +475,8 @@ export interface RangeFactory {
 
   fromInNode(
     node: ModelNode,
-    startOffset: number,
-    endOffset: number
+    startOffset?: number,
+    endOffset?: number
   ): ModelRange;
 
   fromAroundAll(): ModelRange;
@@ -513,8 +519,8 @@ export class ModelRangeFactory implements RangeFactory {
 
   fromInNode(
     node: ModelNode,
-    startOffset: number,
-    endOffset: number
+    startOffset?: number,
+    endOffset?: number
   ): ModelRange {
     return ModelRange.fromInNode(node, startOffset, endOffset);
   }
