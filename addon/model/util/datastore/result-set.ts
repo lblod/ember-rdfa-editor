@@ -1,5 +1,5 @@
-import { from, IterableX } from 'ix/iterable';
-import { map, take } from 'ix/iterable/operators';
+import { from, IterableX, single } from 'ix/iterable';
+import { map } from 'ix/iterable/operators';
 
 export class ResultSet<I> implements Iterable<I> {
   private engine: IterableX<I>;
@@ -8,8 +8,8 @@ export class ResultSet<I> implements Iterable<I> {
     this.engine = from(iterable);
   }
 
-  first(): I | undefined {
-    return [...this.engine.pipe(take(1))][0];
+  single(): I | undefined {
+    return single(this.engine);
   }
 
   map<T>(mappingFunc: (item: I) => T): ResultSet<T> {
