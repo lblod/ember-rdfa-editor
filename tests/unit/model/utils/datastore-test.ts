@@ -9,7 +9,7 @@ module('Unit | model | utils | datastore-test', () => {
     //language=XML
     const {
       root,
-      elements: { techNode, other },
+      elements: { techNode },
     } = vdom`
       <div>
         <span vocab="http://schema.org/" typeof="TechArticle" __id="techNode">
@@ -35,21 +35,20 @@ module('Unit | model | utils | datastore-test', () => {
     });
     const matched = datastore.match(null, 'a', 'schema:TechArticle');
     assert.strictEqual(matched.size, 1);
-    const nodes = [...matched.asSubjectNodes()];
-    assert.strictEqual(nodes.length, 1);
+    const matches = [...matched.asSubjectNodes()];
+    assert.strictEqual(matches.length, 1);
+    const match = matched.asSubjectNodes().single();
+    if (!match) {
+      throw new AssertionError();
+    }
 
-    assert.strictEqual(nodes[0].subject.termType, 'BlankNode');
-    assert.strictEqual(nodes[0].nodes.size, 1);
-    assert.true(nodes[0].nodes.has(techNode));
+    assert.strictEqual(match.term.termType, 'BlankNode');
+    assert.strictEqual(match.nodes.length, 1);
+    assert.true(match.nodes.includes(techNode));
 
     const matchedUrl = datastore.match(null, 'schema:url');
-    const nodesWithUrl = [...matchedUrl.asSubjectNodes()];
-    assert.strictEqual(nodesWithUrl.length, 2);
-
-    assert.strictEqual(nodesWithUrl[0].subject.termType, 'BlankNode');
-    assert.strictEqual(nodesWithUrl[0].nodes.size, 1);
-    assert.true(nodesWithUrl[0].nodes.has(techNode));
-    assert.true(nodesWithUrl[1].nodes.has(other));
+    const matchesWithUrl = [...matchedUrl.asSubjectNodes()];
+    assert.strictEqual(matchesWithUrl.length, 2);
   });
   test('limitRange limits range', (assert) => {
     //language=XML
@@ -87,9 +86,9 @@ module('Unit | model | utils | datastore-test', () => {
     const nodesWithUrl = [...matchedUrl.asSubjectNodes()];
     assert.strictEqual(nodesWithUrl.length, 1);
 
-    assert.strictEqual(nodesWithUrl[0].subject.termType, 'BlankNode');
-    assert.strictEqual(nodesWithUrl[0].nodes.size, 1);
-    assert.true(nodesWithUrl[0].nodes.has(techNode));
+    assert.strictEqual(nodesWithUrl[0].term.termType, 'BlankNode');
+    assert.strictEqual(nodesWithUrl[0].nodes.length, 1);
+    assert.true(nodesWithUrl[0].nodes.includes(techNode));
   });
   test('filtering out subjects also filters out the relevant predicate nodes', (assert) => {
     //language=XML
@@ -181,7 +180,7 @@ module('Unit | model | utils | datastore-test', () => {
     assert.strictEqual(subjectNodes1[0], node1);
     assert.strictEqual(subjectNodes1[1], node2);
     const subjectNodes2 = result.get('>http://test.org/r2');
-    if (!subjectNodes1) {
+    if (!subjectNodes2) {
       throw new AssertionError();
     }
 

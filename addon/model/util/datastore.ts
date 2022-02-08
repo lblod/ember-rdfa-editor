@@ -22,9 +22,10 @@ import {
   TermConverter,
 } from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
 import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa';
-import { first, from, IterableX } from 'ix/iterable';
+import { first, from, IterableX, single } from 'ix/iterable';
 import { filter, map, take } from 'ix/iterable/operators';
 
+export type TermSpec = SubjectSpec | PredicateSpec | ObjectSpec;
 export type SubjectSpec = RDF.Quad_Subject | ConNamedNode | ConBlankNode | null;
 export type PredicateSpec = RDF.Quad_Predicate | ConNamedNode | null;
 export type ObjectSpec =
@@ -33,22 +34,6 @@ export type ObjectSpec =
   | ConBlankNode
   | ConLiteral;
 type Primitive = number | string | boolean;
-
-interface TermNodesResponse {
-  nodes: Set<ModelNode>;
-}
-
-interface SubjectNodesResponse extends TermNodesResponse {
-  subject: RDF.Quad_Subject;
-}
-
-interface PredicateNodesResponse extends TermNodesResponse {
-  predicate: RDF.Quad_Predicate;
-}
-
-interface ObjectNodesResponse extends TermNodesResponse {
-  object: RDF.Quad_Object;
-}
 
 function isPrimitive(thing: unknown): thing is Primitive {
   return (
@@ -93,16 +78,25 @@ export class TermMapping<T extends RDF.Term>
     this.getPrefix = getPrefix;
   }
 
-  one(): { term: T; nodes: ModelNode[] } {
-    return [
-      ...from(this.termMap.entries()).pipe(
-        map((entry) => ({
-          term: entry[0],
-          nodes: entry[1],
-        })),
-        take(1)
-      ),
-    ][0];
+  /**
+   * Return the only mapping, if there is one.
+   * Throws if there is more than 1 mapping.
+   *
+   * Saves you from unpacking the iterator
+   * when you know for sure there can only be one answer,
+   * e.g. you matched on a subject and are requesting subjectNodes
+   */
+  single(): { term: T; nodes: ModelNode[] } | null {
+    return (
+      single(
+        from(this.termMap.entries()).pipe(
+          map((entry) => ({
+            term: entry[0],
+            nodes: entry[1],
+          }))
+        )
+      ) || null
+    );
   }
 
   [Symbol.iterator]() {
@@ -116,15 +110,18 @@ export class TermMapping<T extends RDF.Term>
       [Symbol.iterator]();
   }
 
-  get(subject: SubjectSpec): ModelNode[] | null {
-    const convertedSubject =
-      typeof subject === 'string'
-        ? conciseToRdfjs(subject, this.getPrefix)
-        : subject;
+  /**
+   * Request the mapping for a specific term.
+   * @param term
+   */
+  get(term: TermSpec): ModelNode[] | null {
+    const convertedTerm = (
+      typeof term === 'string' ? conciseToRdfjs(term, this.getPrefix) : term
+    ) as T;
     return (
       first(
         from(this.termMap.entries()).pipe(
-          filter((entry) => entry[0].equals(convertedSubject)),
+          filter((entry) => entry[0].equals(convertedTerm)),
           map((entry) => entry[1])
         )
       ) || null
@@ -153,9 +150,9 @@ export default interface Datastore {
 
   asSubjectNodes(): TermMapping<RDF.Quad_Subject>;
 
-  asPredicateNodes(): ResultSet<PredicateNodesResponse>;
+  asPredicateNodes(): TermMapping<RDF.Quad_Predicate>;
 
-  asObjectNodes(): ResultSet<ObjectNodesResponse>;
+  asObjectNodes(): TermMapping<RDF.Quad_Object>;
 
   asQuads(): ResultSet<RDF.Quad>;
 }
@@ -165,10 +162,10 @@ interface DatastoreConfig {
   subjectToNodes: Map<string, ModelNode[]>;
   nodeToSubject: Map<ModelNode, ModelQuadSubject>;
 
-  predicateToNodes: Map<string, Set<ModelNode>>;
+  predicateToNodes: Map<string, ModelNode[]>;
   nodeToPredicates: Map<ModelNode, Set<ModelQuadPredicate>>;
 
-  objectToNodes: Map<string, Set<ModelNode>>;
+  objectToNodes: Map<string, ModelNode[]>;
   nodeToObjects: Map<ModelNode, Set<ModelQuadObject>>;
   prefixMapping: Map<string, string>;
 }
@@ -179,9 +176,9 @@ export class EditorStore implements Datastore {
   private _nodeToSubject: Map<ModelNode, ModelQuadSubject>;
   private _prefixMapping: Map<string, string>;
   private _nodeToPredicates: Map<ModelNode, Set<ModelQuadPredicate>>;
-  private _predicateToNodes: Map<string, Set<ModelNode>>;
+  private _predicateToNodes: Map<string, ModelNode[]>;
   private _nodeToObjects: Map<ModelNode, Set<ModelQuadObject>>;
-  private _objectToNodes: Map<string, Set<ModelNode>>;
+  private _objectToNodes: Map<string, ModelNode[]>;
 
   constructor({
     dataset,
@@ -318,13 +315,17 @@ export class EditorStore implements Datastore {
     return rslt;
   }
 
-  asPredicateNodes(): ResultSet<PredicateNodesResponse> {
-    return new ResultSet<PredicateNodesResponse>(this.predicateNodeGenerator());
+  asPredicateNodes(): TermMapping<RDF.Quad_Predicate> {
+    return new TermMapping<RDF.Quad_Predicate>(
+      this.predicateNodeGenerator(),
+      this.getPrefix
+    );
   }
 
-  private *predicateNodeGenerator(): Generator<PredicateNodesResponse> {
+  private predicateNodeGenerator(): Map<RDF.Quad_Predicate, ModelNode[]> {
     const seenPredicates = new Map<string, RDF.Quad_Predicate>();
     const seenSubjects = new Set<string>();
+    const rslt = new Map<RDF.Quad_Predicate, ModelNode[]>();
 
     // collect all unique predicates and subjects in the current dataset
     for (const quad of this.dataset) {
@@ -335,34 +336,40 @@ export class EditorStore implements Datastore {
     for (const pred of seenPredicates.keys()) {
       const allNodes = this._predicateToNodes.get(pred);
       if (allNodes) {
-        const nodes = new Set<ModelNode>();
+        const nodes = [];
         // we have to filter out nodes that belong to a subject which is not in the dataset
         for (const node of allNodes) {
           const nodeSubject = this._nodeToSubject.get(node);
           if (nodeSubject && seenSubjects.has(nodeSubject.value)) {
-            nodes.add(node);
+            nodes.push(node);
           }
         }
-        yield { predicate: seenPredicates.get(pred)!, nodes };
+        rslt.set(seenPredicates.get(pred)!, nodes);
       }
     }
+    return rslt;
   }
 
-  asObjectNodes(): ResultSet<ObjectNodesResponse> {
-    return new ResultSet<ObjectNodesResponse>(this.objectNodeGenerator());
+  asObjectNodes(): TermMapping<RDF.Quad_Object> {
+    return new TermMapping<RDF.Quad_Object>(
+      this.objectNodeGenerator(),
+      this.getPrefix
+    );
   }
 
-  private *objectNodeGenerator(): Generator<ObjectNodesResponse> {
+  private objectNodeGenerator(): Map<RDF.Quad_Object, ModelNode[]> {
     const seenObjects = new Set<string>();
+    const rslt = new Map<RDF.Quad_Object, ModelNode[]>();
     for (const quad of this.dataset) {
       if (!seenObjects.has(quad.object.value)) {
         const nodes = this._objectToNodes.get(quad.object.value);
         if (nodes) {
-          yield { object: quad.object, nodes };
+          rslt.set(quad.object, nodes);
         }
         seenObjects.add(quad.object.value);
       }
     }
+    return rslt;
   }
 
   asQuads(): ResultSet<RDF.Quad> {

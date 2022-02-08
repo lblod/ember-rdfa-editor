@@ -58,10 +58,10 @@ export interface RdfaParseResponse {
   nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
 
   nodeToObjectsMapping: Map<ModelNode, Set<ModelQuadObject>>;
-  objectToNodesMapping: Map<string, Set<ModelNode>>;
+  objectToNodesMapping: Map<string, ModelNode[]>;
 
   nodeToPredicatesMapping: Map<ModelNode, Set<ModelQuadPredicate>>;
-  predicateToNodesMapping: Map<string, Set<ModelNode>>;
+  predicateToNodesMapping: Map<string, ModelNode[]>;
 }
 
 export class RdfaParser {
@@ -79,14 +79,14 @@ export class RdfaParser {
   private subjectToNodesMapping: Map<string, ModelNode[]>;
 
   private nodeToObjectsMapping: Map<ModelNode, Set<ModelQuadObject>>;
-  private objectToNodesMapping: Map<string, Set<ModelNode>>;
+  private objectToNodesMapping: Map<string, ModelNode[]>;
 
   // nodes can define multiple predicates
   private nodeToPredicatesMapping: Map<ModelNode, Set<ModelQuadPredicate>>;
-  private predicateToNodesMapping: Map<string, Set<ModelNode>>;
+  private predicateToNodesMapping: Map<string, ModelNode[]>;
 
   private rootModelNode?: ModelNode;
-  private seenNodes: Set<ModelNode>;
+  private seenNodes: Map<RDF.Term, ModelNode>;
 
   constructor(options: IRdfaParserOptions) {
     this.options = options;
@@ -107,15 +107,15 @@ export class RdfaParser {
     this.nodeToSubjectMapping = new Map<ModelNode, ModelQuadSubject>();
     this.subjectToNodesMapping = new Map<string, ModelNode[]>();
 
-    this.predicateToNodesMapping = new Map<string, Set<ModelNode>>();
+    this.predicateToNodesMapping = new Map<string, ModelNode[]>();
     this.nodeToPredicatesMapping = new Map<
       ModelNode,
       Set<ModelQuadPredicate>
     >();
 
     this.nodeToObjectsMapping = new Map<ModelNode, Set<ModelQuadObject>>();
-    this.objectToNodesMapping = new Map<string, Set<ModelNode>>();
-    this.seenNodes = new Set<ModelNode>();
+    this.objectToNodesMapping = new Map<string, ModelNode[]>();
+    this.seenNodes = new Map<RDF.Term, ModelNode>();
 
     this.activeTagStack.push({
       incompleteTriples: [],
@@ -1184,8 +1184,8 @@ export class RdfaParser {
     ) {
       return;
     }
-    if (subject.node && !this.seenNodes.has(subject.node)) {
-      this.seenNodes.add(subject.node);
+    if (subject.node && !this.seenNodes.has(subject)) {
+      this.seenNodes.set(subject, subject.node);
       this.nodeToSubjectMapping.set(subject.node, subject);
       MapUtils.setOrPush(
         this.subjectToNodesMapping,
@@ -1193,23 +1193,23 @@ export class RdfaParser {
         subject.node
       );
     }
-    if (predicate.node && !this.seenNodes.has(predicate.node)) {
-      this.seenNodes.add(predicate.node);
+    if (predicate.node && !this.seenNodes.has(predicate)) {
+      this.seenNodes.set(predicate, predicate.node);
       MapUtils.setOrAdd(
         this.nodeToPredicatesMapping,
         predicate.node,
         predicate
       );
-      MapUtils.setOrAdd(
+      MapUtils.setOrPush(
         this.predicateToNodesMapping,
         predicate.value,
         predicate.node
       );
     }
-    if (object.node && !this.seenNodes.has(object.node)) {
-      this.seenNodes.add(object.node);
+    if (object.node && !this.seenNodes.has(object)) {
+      this.seenNodes.set(object, object.node);
       MapUtils.setOrAdd(this.nodeToObjectsMapping, predicate.node, predicate);
-      MapUtils.setOrAdd(
+      MapUtils.setOrPush(
         this.objectToNodesMapping,
         predicate.value,
         predicate.node

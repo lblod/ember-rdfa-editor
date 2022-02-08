@@ -23,6 +23,10 @@ import IgnoreModifiersHandler from '@lblod/ember-rdfa-editor/editor/input-handle
 import UndoHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler';
 import FallbackInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/fallback-input-handler';
 import DisableDeleteHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/disable-delete-handler';
+import {
+  createLogger,
+  Logger,
+} from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
 interface FeatureService {
   isEnabled(key: string): boolean;
@@ -75,6 +79,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * @private
    */
   @tracked rootNode: HTMLElement | null = null;
+  private logger: Logger;
 
   /**
    *
@@ -131,7 +136,8 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       new TextInputHandler({ rawEditor }),
     ];
     const allowBrowserDelete = this.features.isEnabled('editorBrowserDelete');
-    console.log('allow browser default', allowBrowserDelete);
+    this.logger = createLogger(this.constructor.name);
+    this.logger('allow browser default', allowBrowserDelete);
     if (!allowBrowserDelete) {
       this.defaultHandlers.push(new DisableDeleteHandler({ rawEditor }));
     }

@@ -140,7 +140,6 @@ class PriorityListenerQueue<E extends AnyEventName> {
             break;
           }
           if (!this.callStack.includes(listener)) {
-            console.log(this.callStack.length);
             this.callStack.push(listener);
 
             listener(event);
