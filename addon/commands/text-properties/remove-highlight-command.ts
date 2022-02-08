@@ -7,6 +7,6 @@ export default class RemoveHighlightCommand extends SetTextPropertyCommand {
 
   @logExecute
   execute(selection?: ModelSelection) {
-    this.setProperty('highlighted', false, selection);
+    this.setTextProperty('highlighted', false, selection);
   }
 }

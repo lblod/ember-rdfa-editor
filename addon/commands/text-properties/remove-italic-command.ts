@@ -5,6 +5,6 @@ export default class RemoveItalicCommand extends SetTextPropertyCommand {
   name = 'remove-italic';
   @logExecute
   execute() {
-    super.setProperty('italic', false);
+    super.setTextProperty('italic', false);
   }
 }

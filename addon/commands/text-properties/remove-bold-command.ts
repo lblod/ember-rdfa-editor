@@ -6,6 +6,6 @@ export default class RemoveBoldCommand extends SetTextPropertyCommand {
 
   @logExecute
   execute() {
-    super.setProperty('bold', false);
+    super.setTextProperty('bold', false);
   }
 }

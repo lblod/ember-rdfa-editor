@@ -5,6 +5,6 @@ export default class RemoveUnderlineCommand extends SetTextPropertyCommand {
   name = 'remove-underline';
   @logExecute
   execute() {
-    super.setProperty('underline', false);
+    super.setTextProperty('underline', false);
   }
 }

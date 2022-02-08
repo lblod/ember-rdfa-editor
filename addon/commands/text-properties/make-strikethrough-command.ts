@@ -5,6 +5,6 @@ export default class MakeStrikethroughCommand extends SetTextPropertyCommand {
   name = 'make-strikethrough';
   @logExecute
   execute() {
-    super.setProperty('strikethrough', true);
+    super.setTextProperty('strikethrough', true);
   }
 }

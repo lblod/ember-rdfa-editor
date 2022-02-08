@@ -6,6 +6,6 @@ export default class RemoveStrikethroughCommand extends SetTextPropertyCommand {
 
   @logExecute
   execute() {
-    super.setProperty('strikethrough', false);
+    super.setTextProperty('strikethrough', false);
   }
 }

@@ -6,6 +6,6 @@ export default class MakeItalicCommand extends SetTextPropertyCommand {
 
   @logExecute
   execute() {
-    super.setProperty('italic', true);
+    super.setTextProperty('italic', true);
   }
 }

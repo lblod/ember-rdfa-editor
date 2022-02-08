@@ -7,6 +7,6 @@ export default class MakeHighlightCommand extends SetTextPropertyCommand {
 
   @logExecute
   execute(selection?: ModelSelection) {
-    this.setProperty('highlighted', true, selection);
+    this.setTextProperty('highlighted', true, selection);
   }
 }

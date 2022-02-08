@@ -3,14 +3,14 @@ import Model from '@lblod/ember-rdfa-editor/model/model';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 
-export default abstract class SetPropertyCommand extends Command {
+export default abstract class SetTextPropertyCommand extends Command {
   constructor(model: Model) {
     super(model);
   }
 
-  protected setProperty(
-    property: string,
-    value: string,
+  protected setTextProperty(
+    property: TextAttribute,
+    value: boolean,
     selection: ModelSelection = this.model.selection
   ) {
     if (!ModelSelection.isWellBehaved(selection)) {
@@ -23,7 +23,7 @@ export default abstract class SetPropertyCommand extends Command {
     const range = selection.lastRange;
 
     this.model.change((mutator) => {
-      const resultRange = mutator.setProperty(range, property, value);
+      const resultRange = mutator.setTextProperty(range, property, value);
       this.model.selectRange(resultRange);
     });
   }
