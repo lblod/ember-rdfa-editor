@@ -1,17 +1,18 @@
-import SetPropertyCommand from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
+import Command from '@lblod/ember-rdfa-editor/commands/command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import ModelSelection from '../../model/model-selection';
 
-export default class RemoveUnderlineCommand extends SetPropertyCommand {
+export default class AddTypeCommand extends Command {
   name = 'add-type';
   @logExecute
   execute(type: string, element: ModelElement) {
-    const oldTypeof = node.getAttribute('typeof');
-    const newType = oldTypeof + type;
+    let oldTypeof = element.getAttribute('typeof');
+    if (!oldTypeof) oldTypeof = '';
+    const newType = `${oldTypeof} ${type}`;
     this.model.change((mutator) => {
-      const resultRange = mutator.setProperty(element, 'typeof', newType);
-      this.model.selectRange(resultRange);
+      const newNode = mutator.setProperty(element, 'typeof', newType);
+      this.model.selectRange(ModelRange.fromAroundNode(newNode));
     });
   }
 }
