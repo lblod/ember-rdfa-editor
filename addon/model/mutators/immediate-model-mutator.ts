@@ -112,9 +112,8 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return op.execute();
   }
 
-  setProperty(range: ModelRange, key: string, value: string): ModelRange {
-    let oldNode = range.start.nodeBefore() || range.start.nodeAfter();
-    if (!oldNode) throw new Error('no node in range');
+  setProperty(element: ModelElement, key: string, value: string): ModelRange {
+    let oldNode = element;
     if (ModelNode.isModelText(oldNode)) {
       oldNode = oldNode.parentNode;
     }
