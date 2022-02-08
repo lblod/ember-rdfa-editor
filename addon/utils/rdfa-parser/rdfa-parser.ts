@@ -14,12 +14,12 @@ import { Util } from './util';
 import { CustomError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
-import { GraphyDataset } from '@lblod/ember-rdfa-editor/model/util/datastore';
 import {
   isElement,
   isTextNode,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
+import {GraphyDataset} from "@lblod/ember-rdfa-editor/model/util/datastore/graphy-dataset";
 
 export type ModelTerm = ModelQuadObject | ModelQuadPredicate | ModelQuadSubject;
 export type ModelQuadSubject = ModelNamedNode | ModelBlankNode;
