@@ -19,7 +19,7 @@ import {
   isTextNode,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
-import {GraphyDataset} from "@lblod/ember-rdfa-editor/model/util/datastore/graphy-dataset";
+import { GraphyDataset } from '@lblod/ember-rdfa-editor/model/util/datastore/graphy-dataset';
 
 export type ModelTerm = ModelQuadObject | ModelQuadPredicate | ModelQuadSubject;
 export type ModelQuadSubject = ModelNamedNode | ModelBlankNode;
