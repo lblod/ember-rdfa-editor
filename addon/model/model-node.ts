@@ -1,6 +1,4 @@
-import ModelText, {
-  TextAttribute,
-} from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import {
   ModelError,
@@ -10,6 +8,7 @@ import {
 import XmlWriter from '@lblod/ember-rdfa-editor/model/writers/xml-writer';
 import { Walkable } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { Predicate } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
+import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-property-command';
 
 export type ModelNodeType = 'TEXT' | 'ELEMENT' | 'FRAGMENT';
 

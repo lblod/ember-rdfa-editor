@@ -12,7 +12,8 @@ import HtmlElementReader from '@lblod/ember-rdfa-editor/model/readers/html-eleme
 import HtmlTextReader from '@lblod/ember-rdfa-editor/model/readers/html-text-reader';
 import HtmlTableReader from '@lblod/ember-rdfa-editor/model/readers/html-table-reader';
 import HtmlSpanReader from '@lblod/ember-rdfa-editor/model/readers/html-span-reader';
-import WrappedAttributeReader from '@lblod/ember-rdfa-editor/model/readers/wrapped-attribute-reader';
+import { pushOrExpand } from '@lblod/ember-rdfa-editor/model/util/array-utils';
+import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
 
 type Constructor<T> = new (...args: unknown[]) => T;
 type ElementReader = Reader<Element, ModelNode[], HtmlReaderContext>;
@@ -25,26 +26,36 @@ export default class HtmlNodeReader
     ['ol', HtmlListReader],
     ['table', HtmlTableReader],
     ['span', HtmlSpanReader],
-    ['strong', WrappedAttributeReader],
-    ['em', WrappedAttributeReader],
-    ['b', WrappedAttributeReader],
-    ['i', WrappedAttributeReader],
-    ['u', WrappedAttributeReader],
-    ['del', WrappedAttributeReader],
   ]);
 
   read(from: Node, context: HtmlReaderContext): ModelNode[] {
     let result: ModelNode[];
     if (isElement(from)) {
       const tag = tagName(from) as ElementType;
-      let reader: ElementReader;
-      const ctor = HtmlNodeReader.elementConfig.get(tag);
-      if (ctor) {
-        reader = new ctor();
+
+      const marks = context.matchMark(from);
+      if (marks.size) {
+        SetUtils.addMany(context.activeMarks, ...marks);
+        const reader = new HtmlNodeReader();
+        result = [];
+
+        for (const child of from.childNodes) {
+          const modelChild = reader.read(child, context);
+          if (modelChild) {
+            pushOrExpand(result, modelChild);
+          }
+        }
+        SetUtils.deleteMany(context.activeMarks, ...marks);
       } else {
-        reader = new HtmlElementReader();
+        let reader: ElementReader;
+        const ctor = HtmlNodeReader.elementConfig.get(tag);
+        if (ctor) {
+          reader = new ctor();
+        } else {
+          reader = new HtmlElementReader();
+        }
+        result = reader.read(from, context);
       }
-      result = reader.read(from, context);
     } else if (isTextNode(from)) {
       const reader = new HtmlTextReader();
       result = reader.read(from, context);

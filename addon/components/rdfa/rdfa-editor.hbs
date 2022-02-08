@@ -6,12 +6,13 @@
     {{if @editorOptions.showToolbarBottom "say-container--toolbar-bottom"}}'
   {{did-update this.updateProfile @profile}}
 >
-  {{#if this.editor}}
+  {{#if this.toolbarController}}
     <Rdfa::EditorToolbar
       @editor={{this.editor}}
       @showTextStyleButtons='{{if @toolbarOptions.showTextStyleButtons "true"}}'
       @showListButtons='{{if @toolbarOptions.showListButtons "true"}}'
       @showIndentButtons='{{if @toolbarOptions.showIndentButtons "true"}}'
+      @controller={{this.toolbarController}}
     >
       {{#if @editorOptions.showToggleRdfaAnnotations}}
         <AuToggleSwitch

@@ -1,8 +1,19 @@
 import Command from '../command';
 import Model from '@lblod/ember-rdfa-editor/model/model';
-import { TextAttribute } from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
 
+export type TextAttribute =
+  | 'bold'
+  | 'italic'
+  | 'underline'
+  | 'strikethrough'
+  | 'highlighted';
+
+/**
+ * @deprecated
+ */
 export default abstract class SetPropertyCommand extends Command {
   constructor(model: Model) {
     super(model);
@@ -21,10 +32,27 @@ export default abstract class SetPropertyCommand extends Command {
     }
 
     const range = selection.lastRange;
-
-    this.model.change((mutator) => {
-      const resultRange = mutator.setTextProperty(range, property, value);
-      this.model.selectRange(resultRange);
-    });
+    const specAttribute = compatTextAttributeMap.get(property);
+    if (specAttribute) {
+      this.model.change((mutator) => {
+        let resultRange;
+        if (value) {
+          resultRange = mutator.addMark(
+            range,
+            specAttribute.spec,
+            specAttribute.attributes
+          );
+        } else {
+          resultRange = mutator.removeMark(
+            range,
+            specAttribute.spec,
+            specAttribute.attributes
+          );
+        }
+        this.model.selectRange(resultRange);
+      });
+    } else {
+      throw new ModelError(`No mark found for property: ${property}`);
+    }
   }
 }

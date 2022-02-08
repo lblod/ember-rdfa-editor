@@ -51,6 +51,14 @@ import Datastore, {
 } from '@lblod/ember-rdfa-editor/model/util/datastore';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { tracked } from '@glimmer/tracking';
+import {
+  highlightMarkSpec,
+  MarkSpec,
+} from '@lblod/ember-rdfa-editor/model/mark';
+import AddMarkToRangeCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to-range-command';
+import RemoveMarkFromRangeCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-range-command';
+import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RemoveMarkCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-command';
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -120,10 +128,7 @@ export default class RawEditor {
 
     this.registeredCommands = new Map<string, Command>();
     this._model = new Model(rootNode, this.eventBus);
-    this.modelSelectionTracker = new ModelSelectionTracker(
-      this._model,
-      this.eventBus
-    );
+    this.modelSelectionTracker = new ModelSelectionTracker(this._model);
     this.modelSelectionTracker.startTracking();
 
     window.__VDOM = this.model;
@@ -162,6 +167,10 @@ export default class RawEditor {
     this.registerCommand(new DeleteSelectionCommand(this.model));
     this.registerCommand(new ReadSelectionCommand(this.model));
     this.registerCommand(new UndoCommand(this.model));
+    this.registerCommand(new AddMarkToRangeCommand(this.model));
+    this.registerCommand(new RemoveMarkFromRangeCommand(this.model));
+    this.registerCommand(new RemoveMarkCommand(this.model));
+    this.registerMark(highlightMarkSpec);
   }
 
   /**
@@ -175,7 +184,7 @@ export default class RawEditor {
   set rootNode(rootNode: HTMLElement) {
     if (rootNode) {
       this.initialize(rootNode);
-      this.model.read(false);
+      this.model.read();
       this.model.selection.collapseIn(this.model.rootModelNode);
       this.model.write();
       this.updateRichNode();
@@ -223,6 +232,13 @@ export default class RawEditor {
    * @param args
    */
   executeCommand(commandName: string, ...args: unknown[]) {
+    //TODO this is a hack to keep legacy undo behavior, to be removed when vdom-based undo is solidified
+    if (commandName === 'undo') {
+      if (this instanceof PernetRawEditor) {
+        this.undo();
+        return;
+      }
+    }
     try {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
@@ -263,6 +279,10 @@ export default class RawEditor {
    */
   createRangeFromPaths(path1: number[], path2: number[]): ModelRange {
     return ModelRange.fromPaths(this.model.rootModelNode, path1, path2);
+  }
+
+  registerMark(markSpec: MarkSpec) {
+    this.model.registerMark(markSpec);
   }
 
   /**

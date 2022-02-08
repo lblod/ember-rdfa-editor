@@ -310,7 +310,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     while (true) {
       // as long as we dont get a reject, go depth first into the child tree
       // if descend is false, don't do this (used to iterate over the toplevel nodes of a range)
-      const child = getFirstChild(node, reverse);
+      let child = getFirstChild(node, reverse);
       while (this.descend && child) {
         node = child;
         this._onEnterNode(node as T);
@@ -319,6 +319,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
           // we've found an acceptable node, save it and return it
           return node as T | null;
         }
+        child = getFirstChild(node, reverse);
       }
       this._onLeaveNode(node as T);
 

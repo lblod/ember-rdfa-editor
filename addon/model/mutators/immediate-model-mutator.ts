@@ -1,17 +1,15 @@
 import ModelMutator from '@lblod/ember-rdfa-editor/model/mutators/model-mutator';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import AttributeOperation from '@lblod/ember-rdfa-editor/model/operations/attribute-operation';
 import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
 import MoveOperation from '@lblod/ember-rdfa-editor/model/operations/move-operation';
-import ModelText, {
-  TextAttribute,
-} from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import SplitOperation from '@lblod/ember-rdfa-editor/model/operations/split-operation';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import { AttributeSpec, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
+import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 
 /**
  * {@link ModelMutator} implementation where all operations immediately
@@ -20,6 +18,13 @@ import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walk
  * on the modified state after the previous.
  */
 export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
+  private eventbus?: EventBus;
+
+  constructor(eventbus?: EventBus) {
+    super();
+    this.eventbus = eventbus;
+  }
+
   /**
    * @inheritDoc
    * @param range
@@ -27,7 +32,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
    * @return resultRange the resulting range of the execution
    */
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
-    const op = new InsertOperation(range, ...nodes);
+    const op = new InsertOperation(this.eventbus, range, ...nodes);
     return op.execute();
   }
 
@@ -35,51 +40,210 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return this.insertNodes(new ModelRange(position, position), ...nodes);
   }
 
-  insertText(range: ModelRange, text: string): ModelRange {
-    const textNode = new ModelText(text);
-    for (const [attr, val] of range.getTextAttributes().entries()) {
-      if (val === PropertyState.enabled) {
-        textNode.setTextAttribute(attr, true);
-      }
+  private insertTextNotConfined(range: ModelRange, text: string): ModelRange {
+    const before = range.start.nodeBefore();
+
+    if (ModelNode.isModelText(before)) {
+      //case: <text>abc|de</text><span><text>f|gh</text></span>
+      const newNode = before.clone();
+      const insertOffset = range.start.parentOffset - before.getOffset();
+      newNode.content = before.content.substring(0, insertOffset) + text;
+      const op = new InsertOperation(
+        this.eventbus,
+        new ModelRange(ModelPosition.fromBeforeNode(before), range.end),
+        newNode
+      );
+      const resultRange = op.execute();
+      return new ModelRange(
+        ModelPosition.fromInTextNode(newNode, insertOffset),
+        resultRange.end
+      );
+    } else {
+      //case: <span>|</span><span><text>|defg</text></span
+      const newNode = new ModelText(text);
+      const op = new InsertOperation(this.eventbus, range, newNode);
+      return op.execute();
     }
-    const op = new InsertOperation(range, textNode);
-
-    const resultRange = op.execute();
-    const start = ModelPosition.fromBeforeNode(
-      textNode.previousSibling || textNode
-    );
-    const end = ModelPosition.fromAfterNode(textNode.nextSibling || textNode);
-    const mergeRange = new ModelRange(start, end);
-    this.mergeTextNodesInRange(mergeRange);
-
-    return resultRange;
   }
 
-  private mergeTextNodesInRange(range: ModelRange) {
-    if (!range.isConfined()) {
-      return;
-    }
-    if (range.collapsed) {
-      return;
-    }
-    const walker = new ModelTreeWalker({ range, descend: false });
-
-    const nodes: ModelNode[] = [];
-    for (const node of walker) {
-      const last = nodes[nodes.length - 1];
-      if (
-        ModelNode.isModelText(last) &&
-        ModelNode.isModelText(node) &&
-        last.isMergeable(node)
-      ) {
-        last.content += node.content;
+  private insertTextConfined(range: ModelRange, text: string): ModelRange {
+    const before = range.start.nodeBefore();
+    const after = range.end.nodeAfter();
+    if (ModelNode.isModelText(before)) {
+      if (before === after) {
+        //case <text>ab|cd|ef</text>
+        const newNode = before.clone();
+        const insertOffset = range.start.parentOffset - before.getOffset();
+        const endOffset = range.end.parentOffset - before.getOffset();
+        newNode.content =
+          before.content.substring(0, insertOffset) +
+          text +
+          before.content.substring(endOffset);
+        const op = new InsertOperation(
+          this.eventbus,
+          ModelRange.fromAroundNode(before),
+          newNode
+        );
+        op.execute();
+        return ModelRange.fromInTextNode(
+          newNode,
+          insertOffset,
+          insertOffset + text.length
+        );
+      } else if (ModelNode.isModelText(after) && before.isMergeable(after)) {
+        //case <text>ab|c</text><text>d|ef</text>
+        const newNode = before.clone();
+        const insertOffset = range.start.parentOffset - before.getOffset();
+        const endOffset = range.end.parentOffset - after.getOffset();
+        newNode.content =
+          before.content.substring(0, insertOffset) +
+          text +
+          after.content.substring(endOffset);
+        const op = new InsertOperation(
+          this.eventbus,
+          new ModelRange(
+            ModelPosition.fromBeforeNode(before),
+            ModelPosition.fromAfterNode(after)
+          ),
+          newNode
+        );
+        op.execute();
+        return ModelRange.fromInTextNode(
+          newNode,
+          insertOffset,
+          insertOffset + text.length
+        );
       } else {
-        nodes.push(node.clone());
+        //case <span><text>ab|c|</text></span>
+        //case <text>ab|c</text><text __marks=["bold"]>d|ef</text>
+        const newNode = before.clone();
+        const insertOffset = range.start.parentOffset - before.getOffset();
+        newNode.content = before.content.substring(0, insertOffset) + text;
+        const op = new InsertOperation(
+          this.eventbus,
+          new ModelRange(ModelPosition.fromBeforeNode(before), range.end),
+          newNode
+        );
+        op.execute();
+        return ModelRange.fromInTextNode(
+          newNode,
+          insertOffset,
+          insertOffset + text.length
+        );
+      }
+    } else if (ModelNode.isModelText(after)) {
+      //case <span><text>|ab|cd</text></span>
+      const newNode = after.clone();
+      const endPos = range.end.parentOffset - after.getOffset();
+      newNode.content = text + after.content.substring(endPos);
+      const op = new InsertOperation(
+        this.eventbus,
+        new ModelRange(range.start, ModelPosition.fromAfterNode(after)),
+        newNode
+      );
+      op.execute();
+      return ModelRange.fromInTextNode(newNode, 0, text.length);
+    } else {
+      //case <div><span>|</span><span>|</span></div>
+      const newNode = new ModelText(text);
+      const op = new InsertOperation(this.eventbus, range, newNode);
+      return op.execute();
+    }
+  }
+
+  private insertTextCollapsed(range: ModelRange, text: string): ModelRange {
+    const before = range.start.nodeBefore();
+    const after = range.end.nodeAfter();
+    if (ModelNode.isModelText(before)) {
+      if (before === after) {
+        //case: <span><text>a|bcd</text></span>
+        const newNode = before.clone();
+        const insertOffset = range.start.parentOffset - before.getOffset();
+        newNode.content =
+          before.content.substring(0, insertOffset) +
+          text +
+          before.content.substring(insertOffset);
+        const op = new InsertOperation(
+          this.eventbus,
+          ModelRange.fromAroundNode(before),
+          newNode
+        );
+        op.execute();
+        return ModelRange.fromInTextNode(
+          newNode,
+          insertOffset + text.length,
+          insertOffset + text.length
+        );
+      } else if (ModelNode.isModelText(after) && before.isMergeable(after)) {
+        //case: <span><text>abc|</text><text>def</text></span>
+        const newNode = before.clone();
+        newNode.content = before.content + text + after.content;
+        const op = new InsertOperation(
+          this.eventbus,
+          new ModelRange(
+            ModelPosition.fromBeforeNode(before),
+            ModelPosition.fromAfterNode(after)
+          ),
+          newNode
+        );
+        op.execute();
+        return ModelRange.fromInTextNode(
+          newNode,
+          before.content.length + text.length,
+          before.content.length + text.length
+        );
+      } else {
+        //case: <span><text>abc|</text></span>
+        //case: <span><text>abc|</text><text __marks=["bold"]>def</text></span>
+        const newNode = before.clone();
+        newNode.content = before.content + text;
+        const op = new InsertOperation(
+          this.eventbus,
+          ModelRange.fromAroundNode(before),
+          newNode
+        );
+        op.execute();
+        return new ModelRange(
+          ModelPosition.fromAfterNode(newNode),
+          ModelPosition.fromAfterNode(newNode)
+        );
+      }
+    } else if (ModelNode.isModelText(after)) {
+      //case: <span><text>|abcd</text></span>
+      const newNode = after.clone();
+      newNode.content = text + after.content;
+      const op = new InsertOperation(
+        this.eventbus,
+        ModelRange.fromAroundNode(after),
+        newNode
+      );
+      op.execute();
+      return new ModelRange(
+        ModelPosition.fromInTextNode(newNode, text.length),
+        ModelPosition.fromInTextNode(newNode, text.length)
+      );
+    } else {
+      //case: <span>|</span>
+      const newNode = new ModelText(text);
+      const op = new InsertOperation(this.eventbus, range, newNode);
+      op.execute();
+      return new ModelRange(
+        ModelPosition.fromAfterNode(newNode),
+        ModelPosition.fromAfterNode(newNode)
+      );
+    }
+  }
+
+  insertText(range: ModelRange, text: string): ModelRange {
+    if (range.collapsed) {
+      return this.insertTextCollapsed(range, text);
+    } else {
+      if (range.isConfined()) {
+        return this.insertTextConfined(range, text);
+      } else {
+        return this.insertTextNotConfined(range, text);
       }
     }
-
-    const op = new InsertOperation(range, ...nodes);
-    op.execute();
   }
 
   /**
@@ -92,29 +256,29 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     rangeToMove: ModelRange,
     targetPosition: ModelPosition
   ): ModelRange {
-    const op = new MoveOperation(rangeToMove, targetPosition);
+    const op = new MoveOperation(this.eventbus, rangeToMove, targetPosition);
     return op.execute();
   }
 
-  /**
-   * @inheritDoc
-   * @param range
-   * @param key
-   * @param value
-   * @return resultRange the resulting range of the execution
-   */
-  setTextProperty(
-    range: ModelRange,
-    key: TextAttribute,
-    value: boolean
-  ): ModelRange {
-    const op = new AttributeOperation(range, key, value);
+  addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
+    const op = new MarkOperation(this.eventbus, range, spec, attributes, 'add');
+    return op.execute();
+  }
+
+  removeMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
+    const op = new MarkOperation(
+      this.eventbus,
+      range,
+      spec,
+      attributes,
+      'remove'
+    );
     return op.execute();
   }
 
   splitTextAt(position: ModelPosition): ModelPosition {
     const range = new ModelRange(position, position);
-    const op = new SplitOperation(range, false);
+    const op = new SplitOperation(this.eventbus, range, false);
     const resultRange = op.execute();
     return resultRange.start;
   }
@@ -130,7 +294,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     }
 
     const range = new ModelRange(position, position);
-    const op = new SplitOperation(range);
+    const op = new SplitOperation(this.eventbus, range);
     const resultRange = op.execute();
     return resultRange.start;
   }
@@ -177,7 +341,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
 
   private executeSplitOperation(position: ModelPosition, splitParent = true) {
     const range = new ModelRange(position, position);
-    const op = new SplitOperation(range, splitParent);
+    const op = new SplitOperation(this.eventbus, range, splitParent);
     return op.execute().start;
   }
 
@@ -238,7 +402,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
       element.getMaxOffset()
     );
     const target = ModelPosition.fromBeforeNode(element);
-    const op = new MoveOperation(srcRange, target);
+    const op = new MoveOperation(this.eventbus, srcRange, target);
     const resultRange = op.execute();
     this.deleteNode(element);
 
@@ -272,7 +436,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
   }
 
   delete(range: ModelRange): ModelRange {
-    const op = new InsertOperation(range);
+    const op = new InsertOperation(this.eventbus, range);
     return op.execute();
   }
 

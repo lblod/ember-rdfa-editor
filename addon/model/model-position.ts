@@ -302,13 +302,13 @@ export default class ModelPosition {
    * Split the text node at the position. If position is not inside a textNode, do nothing.
    * If position is at the end or start of a text node, do nothing.
    */
-  split() {
+  split(keepRight = false) {
     const before = this.nodeBefore();
     const after = this.nodeAfter();
 
     if (ModelNode.isModelText(before)) {
       if (before === after) {
-        before.split(this.parentOffset - before.getOffset());
+        before.split(this.parentOffset - before.getOffset(), keepRight);
       }
       this.parentCache = null;
     }

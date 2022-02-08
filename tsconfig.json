@@ -77,8 +77,8 @@
     "addon/**/*",
     "tests/**/*",
     "types/**/*",
-    "lib/plugin-system-dispatcher/**/*",
     "test-support/**/*",
-    "addon-test-support/**/*"
+    "addon-test-support/**/*",
+    "lib/dummy-plugin"
   ]
 }

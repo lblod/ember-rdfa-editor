@@ -23,6 +23,7 @@ module('Unit | model | operations | insert-operation-test', () => {
     const { root: nodeToInsert } = vdom`<text>abc</text>`;
 
     const op = new InsertOperation(
+      undefined,
       ModelRange.fromInElement(initial as ModelElement, 0, 0),
       nodeToInsert
     );
@@ -51,6 +52,7 @@ module('Unit | model | operations | insert-operation-test', () => {
       </div>`;
 
     const op = new InsertOperation(
+      undefined,
       ModelRange.fromInElement(initial as ModelElement, 0, 0),
       nodeToInsert
     );
@@ -65,6 +67,7 @@ module('Unit | model | operations | insert-operation-test', () => {
     const nodeToInsert = new ModelText('abc');
 
     const op = new InsertOperation(
+      undefined,
       ModelRange.fromPaths(root, [0], [0]),
       nodeToInsert
     );
@@ -80,6 +83,7 @@ module('Unit | model | operations | insert-operation-test', () => {
     const nodeToInsert = new ModelText('abc');
 
     const op = new InsertOperation(
+      undefined,
       ModelRange.fromPaths(root, [1], [1]),
       nodeToInsert
     );
@@ -95,6 +99,7 @@ module('Unit | model | operations | insert-operation-test', () => {
     const nodeToInsert = new ModelText('abc');
 
     const op = new InsertOperation(
+      undefined,
       ModelRange.fromPaths(root, [0], [1]),
       nodeToInsert
     );
@@ -109,7 +114,11 @@ module('Unit | model | operations | insert-operation-test', () => {
 
     const p1 = ModelPosition.fromInTextNode(t00, 0);
     const p2 = ModelPosition.fromInTextNode(t22, 3);
-    const op = new InsertOperation(new ModelRange(p1, p2), nodeToInsert);
+    const op = new InsertOperation(
+      undefined,
+      new ModelRange(p1, p2),
+      nodeToInsert
+    );
     op.execute();
     assert.strictEqual(root.length, 3);
     assert.strictEqual(root.children[0], s0);
@@ -146,7 +155,7 @@ module('Unit | model | operations | insert-operation-test', () => {
     const start = ModelPosition.fromInTextNode(rangeStart, 2);
     const end = ModelPosition.fromInTextNode(rangeEnd, 2);
     const range = new ModelRange(start, end);
-    const op = new InsertOperation(range);
+    const op = new InsertOperation(undefined, range);
 
     const resultRange = op.execute();
 
@@ -200,6 +209,7 @@ module('Unit | model | operations | insert-operation-test', () => {
     const end = ModelPosition.fromInTextNode(rangeEnd, 2);
     const range = new ModelRange(start, end);
     const op = new InsertOperation(
+      undefined,
       range,
       new ModelText('ins0'),
       new ModelText('ins1')

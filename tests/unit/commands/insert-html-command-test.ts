@@ -5,6 +5,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
 import { oneLineTrim } from 'common-tags';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
 
 module('Unit | commands | insert-html-command-test', (hooks) => {
   const ctx = new ModelTestContext();
@@ -168,10 +169,11 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
     // language=XML
     const { root: expected } = vdom`
       <modelRoot>
-        <text bold="true">my text</text>
+        <text __marks="bold">my text</text>
       </modelRoot>`;
     const htmlToInsert = oneLineTrim`<strong>my text</strong>`;
     ctx.model.fillRoot(initial);
+    ctx.model.registerMark(boldMarkSpec);
     const root = ctx.model.rootModelNode;
     const range = ModelRange.fromInElement(root, 0, root.getMaxOffset());
     command.execute(htmlToInsert, range);

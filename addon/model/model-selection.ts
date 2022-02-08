@@ -1,5 +1,4 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { TextAttribute } from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { SelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { analyse } from '@lblod/marawa/rdfa-context-scanner';
@@ -13,6 +12,8 @@ import {
 } from '@lblod/ember-rdfa-editor/model/util/types';
 import { nodeIsElementOfType } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-property-command';
+import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
@@ -278,14 +279,33 @@ export default class ModelSelection {
     return this.lastRange.getCommonPosition();
   }
 
+  hasMark(markName: string): boolean {
+    if (ModelSelection.isWellBehaved(this)) {
+      const range = this.lastRange;
+      if (range) {
+        for (const mark of range.getMarks()) {
+          if (mark.name === markName) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   /**
+   * @deprecated use {@link hasMark}
    * Generic method for determining the status of a text attribute in the selection.
    * @param property
    */
   getTextPropertyStatus(property: TextAttribute): PropertyState {
     if (ModelSelection.isWellBehaved(this)) {
-      const range = this.lastRange;
-      return range.getTextAttributes().get(property) || PropertyState.unknown;
+      const specAttributes = compatTextAttributeMap.get(property);
+      if (specAttributes) {
+        return this.hasMark(specAttributes.spec.name)
+          ? PropertyState.enabled
+          : PropertyState.disabled;
+      }
     }
     return PropertyState.unknown;
   }

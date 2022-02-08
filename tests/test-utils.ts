@@ -35,7 +35,7 @@ export async function pressDelete(timeout = 2000): Promise<void> {
  * @param ms number of milliseconds to wait
  * @returns A Promise which waits for ms milliseconds
  */
-export function wait(ms: number): Promise<void> {
+export function delayMs(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
