@@ -18,7 +18,7 @@ export default class RemoveTypeCommand extends Command {
     let newNode;
     this.model.change((mutator) => {
       newNode = mutator.setProperty(element, 'typeof', newType);
-      this.model.selectRange(ModelRange.fromAroundNode(newNode));
+      this.model.selectRange(ModelRange.fromInElement(newNode, 0, 0));
     });
     return newNode;
   }

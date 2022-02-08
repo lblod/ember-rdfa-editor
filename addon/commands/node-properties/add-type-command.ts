@@ -12,7 +12,7 @@ export default class AddTypeCommand extends Command {
     const newType = `${oldTypeof} ${type}`;
     this.model.change((mutator) => {
       const newNode = mutator.setProperty(element, 'typeof', newType);
-      this.model.selectRange(ModelRange.fromAroundNode(newNode));
+      this.model.selectRange(ModelRange.fromInElement(newNode, 0, 0));
     });
   }
 }
