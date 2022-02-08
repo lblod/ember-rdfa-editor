@@ -16,6 +16,8 @@ import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 
 export type WidgetLocation = 'toolbar' | 'sidebar';
 
@@ -46,14 +48,27 @@ export default interface Controller {
 
   get util(): EditorUtils;
 
+  get ownMarks(): Set<Mark>;
+
+  get modelRoot(): ModelElement;
+
+  getMarksFor(owner: string): Set<Mark>;
+
   executeCommand<A extends unknown[], R>(
     commandName: string,
     ...args: A
   ): R | void;
 
+  canExecuteCommand<A extends unknown[]>(
+    commandName: string,
+    ...args: A
+  ): boolean;
+
   registerCommand<A extends unknown[], R>(command: Command<A, R>): void;
 
   registerWidget(spec: WidgetSpec): void;
+
+  registerMark(spec: MarkSpec): void;
 
   onEvent<E extends AnyEventName>(
     eventName: E,
@@ -103,11 +118,30 @@ export class RawEditorController implements Controller {
     return GenTreeWalker;
   }
 
+  get ownMarks(): Set<Mark> {
+    return this.getMarksFor(this.name);
+  }
+
+  get modelRoot(): ModelElement {
+    return this._rawEditor.rootModelNode;
+  }
+
+  getMarksFor(owner: string): Set<Mark> {
+    return this._rawEditor.model.marksRegistry.getMarksFor(owner);
+  }
+
   executeCommand<A extends unknown[], R>(
     commandName: string,
     ...args: A
   ): R | void {
     return this._rawEditor.executeCommand(commandName, ...args);
+  }
+
+  canExecuteCommand<A extends unknown[]>(
+    commandName: string,
+    ...args: A
+  ): boolean {
+    return this._rawEditor.canExecuteCommand(commandName, ...args);
   }
 
   offEvent<E extends AnyEventName>(
@@ -132,5 +166,9 @@ export class RawEditorController implements Controller {
 
   registerWidget(_spec: WidgetSpec): void {
     this._rawEditor.registerWidget({ ..._spec, controller: this });
+  }
+
+  registerMark(spec: MarkSpec) {
+    this._rawEditor.registerMark(spec);
   }
 }

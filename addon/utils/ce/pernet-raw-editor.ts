@@ -44,7 +44,6 @@ import { Editor } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulat
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { Region } from '@lblod/marawa/rdfa-block';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 
 export interface ContentObserver {
   handleTextInsert: (
@@ -307,7 +306,14 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         observer.handleFullContentUpdate(extraInfo);
       }
     }
-    this.eventBus.emit(new ContentChangedEvent());
+    // this.eventBus.emit(
+    //   new ContentChangedEvent({
+    //     owner: CORE_OWNER,
+    //     payload: {
+    //       type: 'legacy',
+    //     },
+    //   })
+    // );
   }
 
   /**

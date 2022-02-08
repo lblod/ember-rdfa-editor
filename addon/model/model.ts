@@ -13,7 +13,6 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
-import BatchedModelMutator from '@lblod/ember-rdfa-editor/model/mutators/batched-model-mutator';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelHistory from '@lblod/ember-rdfa-editor/model/model-history';
@@ -23,7 +22,13 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import SimplifiedModel from '@lblod/ember-rdfa-editor/model/simplified-model';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
-import { ModelReadEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
+import {
+  ModelReadEvent,
+  SelectionChangedEvent,
+} from '@lblod/ember-rdfa-editor/utils/editor-event';
+import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
+import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -47,6 +52,7 @@ export default class Model {
   private selectionWriter: SelectionWriter;
   private history: ModelHistory = new ModelHistory();
   private _eventBus?: EventBus;
+  private _marksRegistry: MarksRegistry;
 
   private logger: Logger;
 
@@ -60,6 +66,7 @@ export default class Model {
     this._selection = new ModelSelection();
     this._eventBus = eventBus;
     this.logger = createLogger('RawEditor');
+    this._marksRegistry = new MarksRegistry(this._eventBus);
   }
 
   get rootNode(): HTMLElement {
@@ -74,10 +81,15 @@ export default class Model {
     return this._rootModelNode;
   }
 
+  get marksRegistry(): MarksRegistry {
+    return this._marksRegistry;
+  }
+
   /**
    * Read in the document and build up the model.
    */
   read(readSelection = true) {
+    this.marksRegistry.clear();
     const parsedNodes = this.reader.read(this.rootNode);
     if (parsedNodes.length !== 1) {
       throw new Error('Could not create a rich root');
@@ -102,6 +114,23 @@ export default class Model {
 
   readSelection(domSelection: Selection = getWindowSelection()) {
     this._selection = this.selectionReader.read(domSelection);
+    if (this._eventBus) {
+      this._eventBus.emit(
+        new SelectionChangedEvent({
+          owner: CORE_OWNER,
+          payload: this.selection,
+        })
+      );
+    } else {
+      this.logger(
+        'Selection changed without EventBus present, no event will be fired'
+      );
+    }
+    const modelSelectionUpdatedEvent = new CustomEvent<ModelSelection>(
+      'richSelectionUpdated',
+      { detail: this.selection }
+    );
+    document.dispatchEvent(modelSelectionUpdatedEvent);
   }
 
   /**
@@ -137,6 +166,10 @@ export default class Model {
     if (writeSelection) {
       this.writeSelection();
     }
+  }
+
+  registerMark(markSpec: MarkSpec) {
+    this._marksRegistry.registerMark(markSpec);
   }
 
   writeSelection() {
@@ -183,7 +216,7 @@ export default class Model {
     callback: (mutator: ImmediateModelMutator) => ModelElement | void,
     writeBack = true
   ) {
-    const mutator = new ImmediateModelMutator();
+    const mutator = new ImmediateModelMutator(this._eventBus);
     const subTree = callback(mutator);
 
     if (writeBack) {
@@ -192,32 +225,6 @@ export default class Model {
       } else {
         this.write(this.rootModelNode);
       }
-    }
-  }
-
-  /**
-   * Change the model by providing a callback that will receive a {@link BatchedModelMutator batched mutator}
-   * The mutator gets flushed and the model gets written out automatically after the callback finishes.
-   *
-   * @param callback
-   * @param autoSelect
-   */
-  batchChange(
-    callback: (mutator: BatchedModelMutator) => ModelElement | void,
-    autoSelect = true
-  ) {
-    const mutator = new BatchedModelMutator();
-    const subTree = callback(mutator);
-
-    const resultingRange = mutator.flush();
-    if (autoSelect && resultingRange) {
-      this.selection.selectRange(resultingRange);
-    }
-
-    if (subTree) {
-      this.write(subTree);
-    } else {
-      this.write();
     }
   }
 

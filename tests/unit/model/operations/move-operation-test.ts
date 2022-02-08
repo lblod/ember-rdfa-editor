@@ -31,7 +31,7 @@ module('Unit | model | operations | move-operation-test', () => {
 
     const srcRange = ModelRange.fromInTextNode(source, 0, 4);
     const targetPos = ModelPosition.fromInElement(target, 0);
-    const op = new MoveOperation(srcRange, targetPos);
+    const op = new MoveOperation(undefined, srcRange, targetPos);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -68,7 +68,7 @@ module('Unit | model | operations | move-operation-test', () => {
 
     const srcRange = ModelRange.fromInTextNode(source, 1, 3);
     const targetPos = ModelPosition.fromInElement(target, 0);
-    const op = new MoveOperation(srcRange, targetPos);
+    const op = new MoveOperation(undefined, srcRange, targetPos);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -134,7 +134,7 @@ module('Unit | model | operations | move-operation-test', () => {
     const end = ModelPosition.fromInTextNode(rangeEnd, 2);
     const srcRange = new ModelRange(start, end);
     const targetPos = ModelPosition.fromInTextNode(target, 2);
-    const op = new MoveOperation(srcRange, targetPos);
+    const op = new MoveOperation(undefined, srcRange, targetPos);
     const resultRange = op.execute();
 
     assert.true(initial.sameAs(expected));
@@ -161,7 +161,7 @@ module('Unit | model | operations | move-operation-test', () => {
     const targetPos = ModelPosition.fromInElement(target, 0);
     const srcRange = new ModelRange(start, end);
 
-    const op = new MoveOperation(srcRange, targetPos);
+    const op = new MoveOperation(undefined, srcRange, targetPos);
     assert.throws(() => {
       op.execute();
     }, new OperationError('Cannot move to target inside source range'));

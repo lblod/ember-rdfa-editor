@@ -44,6 +44,41 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(parent, 2, 2);
     command.execute('c', range);
+    console.log(ctx.model.rootModelNode.toXml());
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
+  test('overwrites unconfined range', (assert) => {
+    // language=XML
+    const {
+      root: initial,
+      textNodes: { rangeStart, rangeEnd },
+    } = vdom`
+      <modelRoot>
+        <span>
+          <text __id="rangeStart">abc</text>
+        </span>
+        <span>
+          <text __id="rangeEnd">def</text>
+        </span>
+      </modelRoot>
+    `;
+    const { root: expected } = vdom`
+      <modelRoot>
+        <span>
+          <text>abx</text>
+        </span>
+        <span>
+          <text>ef</text>
+        </span>
+      </modelRoot>
+    `;
+    ctx.model.fillRoot(initial);
+    const start = ModelPosition.fromInTextNode(rangeStart, 2);
+    const end = ModelPosition.fromInTextNode(rangeEnd, 1);
+    const range = new ModelRange(start, end);
+
+    command.execute('x', range);
+    console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
   test('overwrites complex range', (assert) => {
@@ -85,6 +120,7 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     const range = new ModelRange(start, end);
 
     command.execute('c', range);
+    console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
   test('replaces spaces with nbsp when needed', (assert) => {
@@ -146,7 +182,7 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     command.execute(SPACE, range);
     const rslt = ctx.model.rootModelNode.sameAs(expected);
     if (!rslt) {
-      logger.log(
+      logger(
         'space does not eat the character before it: ACTUAL:',
         ctx.model.toXml()
       );

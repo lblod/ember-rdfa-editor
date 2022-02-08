@@ -5,25 +5,14 @@ import ModelNode, {
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
 const NON_BREAKING_SPACE = '\u00A0';
-export type TextAttribute =
-  | 'bold'
-  | 'italic'
-  | 'underline'
-  | 'strikethrough'
-  | 'highlighted';
-export const TEXT_ATTRIBUTES: TextAttribute[] = [
-  'bold',
-  'italic',
-  'underline',
-  'strikethrough',
-  'highlighted',
-];
 
 export default class ModelText extends ModelNode {
   modelNodeType: ModelNodeType = 'TEXT';
   private _content: string;
+  private _marks: MarkSet = new MarkSet();
 
   constructor(content = '', config?: NodeConfig) {
     super(config);
@@ -38,6 +27,14 @@ export default class ModelText extends ModelNode {
     this._content = value;
   }
 
+  get marks(): MarkSet {
+    return this._marks;
+  }
+
+  set marks(value: MarkSet) {
+    this._marks = value;
+  }
+
   get length() {
     return this._content.length;
   }
@@ -50,24 +47,25 @@ export default class ModelText extends ModelNode {
     return this.length;
   }
 
-  getTextAttribute(key: TextAttribute): boolean {
-    return this.attributeMap.get(key) === 'true';
-  }
-
-  getTextAttributes(): Array<[TextAttribute, boolean]> {
-    const rslt: Array<[TextAttribute, boolean]> = [];
-    for (const textAttribute of TEXT_ATTRIBUTES) {
-      rslt.push([textAttribute, this.getTextAttribute(textAttribute)]);
+  hasMarkName(markName: string): boolean {
+    for (const mark of this.marks) {
+      if (mark.name === markName) {
+        return true;
+      }
     }
-    return rslt;
+    return false;
   }
 
-  setTextAttribute(key: TextAttribute, value: boolean) {
-    this.attributeMap.set(key, String(value));
+  hasMark(mark: Mark): boolean {
+    return this.marks.hasItemRef(mark);
   }
 
-  toggleTextAttribute(key: TextAttribute) {
-    this.setTextAttribute(key, !this.getTextAttribute(key));
+  addMark(mark: Mark) {
+    this.marks.add(mark);
+  }
+
+  removeMarkByName(markName: string) {
+    this.marks.deleteHash(markName);
   }
 
   insertTextNodeAt(index: number): ModelText {
@@ -80,6 +78,7 @@ export default class ModelText extends ModelNode {
     result.attributeMap = new Map<string, string>(this.attributeMap);
     result.modelNodeType = this.modelNodeType;
     result.content = this.content;
+    result.marks = this.marks.clone();
 
     return result;
   }
@@ -90,7 +89,13 @@ export default class ModelText extends ModelNode {
    * possible.
    * @param index
    */
-  split(index: number): { left: ModelText; right: ModelText } {
+  split(
+    index: number,
+    keepRight = false
+  ): {
+    left: ModelText;
+    right: ModelText;
+  } {
     let leftContent = this.content.substring(0, index);
     if (leftContent.endsWith(' ')) {
       leftContent =
@@ -100,19 +105,34 @@ export default class ModelText extends ModelNode {
     if (rightContent.startsWith(' ')) {
       rightContent = NON_BREAKING_SPACE + rightContent.substring(1);
     }
-    this.content = leftContent;
-    const right = this.clone();
-    right.content = rightContent;
+    if (keepRight) {
+      this.content = rightContent;
+      const left = this.clone();
+      left.content = leftContent;
+      if (!this.parent) {
+        throw new ModelError('splitting a node without a parent');
+      }
 
-    if (!this.parent) {
-      throw new ModelError('splitting a node without a parent');
+      const childIndex = this.parent.children.indexOf(this);
+
+      this.parent.addChild(left, childIndex);
+
+      return { left, right: this };
+    } else {
+      this.content = leftContent;
+      const right = this.clone();
+      right.content = rightContent;
+
+      if (!this.parent) {
+        throw new ModelError('splitting a node without a parent');
+      }
+
+      const childIndex = this.parent.children.indexOf(this);
+
+      this.parent.addChild(right, childIndex + 1);
+
+      return { left: this, right };
     }
-
-    const childIndex = this.parent.children.indexOf(this);
-
-    this.parent?.addChild(right, childIndex + 1);
-
-    return { left: this, right };
   }
 
   hasVisibleText(): boolean {
@@ -124,6 +144,9 @@ export default class ModelText extends ModelNode {
       return false;
     }
     if (this.content !== other.content) {
+      return false;
+    }
+    if (!this.marks.hasSameHashes(other.marks)) {
       return false;
     }
     if (strict) {
@@ -144,9 +167,11 @@ export default class ModelText extends ModelNode {
     if (!ModelNode.isModelText(other)) {
       return false;
     }
-    return ModelNodeUtils.areAttributeMapsSame(
-      this.attributeMap,
-      other.attributeMap
+    return (
+      ModelNodeUtils.areAttributeMapsSame(
+        this.attributeMap,
+        other.attributeMap
+      ) && this.marks.hasSameHashes(other.marks)
     );
   }
 

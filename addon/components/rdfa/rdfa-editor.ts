@@ -14,10 +14,15 @@ import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import ApplicationInstance from '@ember/application/instance';
-import {
+import Controller, {
   InternalWidgetSpec,
   RawEditorController,
 } from '@lblod/ember-rdfa-editor/model/controller';
+import {
+  createLogger,
+  Logger,
+} from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
 
 interface DebugInfo {
   hintsRegistry: HintsRegistry;
@@ -107,8 +112,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked suggestedHints: SuggestedHint[] = [];
   @tracked toolbarWidgets: InternalWidgetSpec[] = [];
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
+  @tracked toolbarController: Controller | null = null;
   private owner: ApplicationInstance;
   activePlugins: EditorPlugin[] = [];
+  private logger: Logger;
 
   /**
    * @property hasHints
@@ -158,6 +165,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.args.profile) {
       this.profile = this.args.profile;
     }
+    this.logger = createLogger(this.constructor.name);
   }
 
   @action
@@ -234,6 +242,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       };
       this.args.initDebug(debugInfo);
     }
+    this.toolbarController = new RawEditorController('toolbar', editor);
     const rdfaDocument = new RdfaDocumentController('host-controller', editor);
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
@@ -243,18 +252,19 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   async initializePlugins(editor: RawEditor) {
     const plugins = this.getPlugins();
     for (const plugin of plugins) {
-      console.log('INITIALIZING', plugin.name);
       await this.initializePlugin(plugin, editor);
     }
   }
 
   getPlugins(): EditorPlugin[] {
     const pluginNames = this.plugins;
-    const plugins = [];
+    const plugins = [new BasicStyles()];
     for (const name of pluginNames) {
       const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
       if (plugin) {
         plugins.push(plugin);
+      } else {
+        this.logger(`plugin ${name} not found! Skipping...`);
       }
     }
     return plugins;
@@ -266,6 +276,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   ): Promise<void> {
     const controller = new RawEditorController(plugin.name, editor);
     await plugin.initialize(controller);
+    this.logger(`Initialized plugin ${plugin.name}`);
     this.activePlugins.push(plugin);
   }
 

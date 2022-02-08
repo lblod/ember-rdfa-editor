@@ -99,7 +99,7 @@
     "@types/ember__test-helpers": "^2.6.0",
     "@types/ember__utils": "^3.16.2",
     "@types/htmlbars-inline-precompile": "^1.0.1",
-    "@types/qunit": "^2.11.1",
+    "@types/qunit": "^2.11.3",
     "@types/rsvp": "^4.0.3",
     "@types/sinon": "^10.0.6",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
@@ -189,6 +189,6 @@
     "last 1 Edge version"
   ],
   "volta": {
-    "node": "12.22.7"
+    "node": "14.18.3"
   }
 }

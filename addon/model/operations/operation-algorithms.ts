@@ -10,7 +10,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 export default class OperationAlgorithms {
   static remove(range: ModelRange): ModelNode[] {
     OperationAlgorithms.splitText(range.start);
-    OperationAlgorithms.splitText(range.end);
+    OperationAlgorithms.splitText(range.end, true);
     const confinedRanges = range.getMinimumConfinedRanges();
     const nodesToRemove = [];
     for (const range of confinedRanges) {
@@ -25,12 +25,25 @@ export default class OperationAlgorithms {
     return nodesToRemove;
   }
 
-  static insert(range: ModelRange, ...nodes: ModelNode[]) {
+  static insert(
+    range: ModelRange,
+    ...nodes: ModelNode[]
+  ): { overwrittenNodes: ModelNode[]; _markCheckNodes: ModelNode[] } {
+    let overwrittenNodes: ModelNode[] = [];
+    const _markCheckNodes: ModelNode[] = [...nodes];
     if (range.collapsed) {
       if (range.start.path.length === 0) {
         range.root.appendChildren(...nodes);
       } else {
         range.start.split();
+        const before = range.start.nodeBefore();
+        const after = range.start.nodeAfter();
+        if (before) {
+          _markCheckNodes.push(before);
+        }
+        if (after) {
+          _markCheckNodes.push(after);
+        }
         range.start.parent.insertChildrenAtOffset(
           range.start.parentOffset,
           ...nodes
@@ -38,35 +51,55 @@ export default class OperationAlgorithms {
       }
     } else {
       range.start.split();
-      range.end.split();
-      OperationAlgorithms.remove(range);
+      range.end.split(true);
+      const before = range.start.nodeBefore();
+      const after = range.end.nodeAfter();
+      if (before) {
+        _markCheckNodes.push(before);
+      }
+      if (after) {
+        _markCheckNodes.push(after);
+      }
+      overwrittenNodes = OperationAlgorithms.remove(range);
 
       range.start.parent.insertChildrenAtOffset(
         range.start.parentOffset,
         ...nodes
       );
     }
+    return { overwrittenNodes, _markCheckNodes };
   }
 
   static move(
     rangeToMove: ModelRange,
     targetPosition: ModelPosition
-  ): ModelNode[] {
-    const nodes = OperationAlgorithms.remove(rangeToMove);
+  ): {
+    movedNodes: ModelNode[];
+    overwrittenNodes: ModelNode[];
+    _markCheckNodes: ModelNode[];
+  } {
+    const nodesToMove = OperationAlgorithms.remove(rangeToMove);
     const targetRange = new ModelRange(targetPosition, targetPosition);
-    if (nodes.length) {
-      OperationAlgorithms.insert(targetRange, ...nodes);
+    if (nodesToMove.length) {
+      return {
+        ...OperationAlgorithms.insert(targetRange, ...nodesToMove),
+        movedNodes: nodesToMove,
+      };
     }
-    return nodes;
+    return {
+      overwrittenNodes: [],
+      _markCheckNodes: [],
+      movedNodes: nodesToMove,
+    };
   }
 
-  static splitText(position: ModelPosition) {
-    position.split();
+  static splitText(position: ModelPosition, keepright = false) {
+    position.split(keepright);
     return position;
   }
 
-  static split(position: ModelPosition): ModelPosition {
-    OperationAlgorithms.splitText(position);
+  static split(position: ModelPosition, keepright = false): ModelPosition {
+    OperationAlgorithms.splitText(position, keepright);
     const parent = position.parent;
     if (parent === position.root) {
       return position;
@@ -76,19 +109,36 @@ export default class OperationAlgorithms {
       return position;
     }
 
-    const newNode = parent.shallowClone();
-    const after = position.nodeAfter();
-    if (after) {
-      const rightSideChildren = parent.children.splice(after.index!);
-      if (parent.lastChild) {
-        parent.lastChild.nextSibling = null;
+    if (keepright) {
+      const left = parent.shallowClone();
+      const before = position.nodeBefore();
+      if (before) {
+        const leftSideChildren = parent.children.splice(0, before.index!);
+        if (parent.firstChild) {
+          parent.firstChild.previousSibling = null;
+        }
+        if (leftSideChildren[leftSideChildren.length - 1]) {
+          leftSideChildren[leftSideChildren.length - 1].nextSibling = null;
+        }
+        left.appendChildren(...leftSideChildren);
       }
-      if (rightSideChildren[0]) {
-        rightSideChildren[0].previousSibling = null;
+      grandParent.addChild(left, parent.index!);
+      return ModelPosition.fromAfterNode(left);
+    } else {
+      const right = parent.shallowClone();
+      const after = position.nodeAfter();
+      if (after) {
+        const rightSideChildren = parent.children.splice(after.index!);
+        if (parent.lastChild) {
+          parent.lastChild.nextSibling = null;
+        }
+        if (rightSideChildren[0]) {
+          rightSideChildren[0].previousSibling = null;
+        }
+        right.appendChildren(...rightSideChildren);
       }
-      newNode.appendChildren(...rightSideChildren);
+      grandParent.addChild(right, parent.index! + 1);
+      return ModelPosition.fromBeforeNode(right);
     }
-    grandParent.addChild(newNode, parent.index! + 1);
-    return ModelPosition.fromBeforeNode(newNode);
   }
 }
