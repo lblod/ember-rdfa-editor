@@ -6,8 +6,16 @@ import {
 } from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
 import { first, from, single } from 'ix/iterable';
 import { filter, map } from 'ix/iterable/operators';
-import {TermSpec} from "@lblod/ember-rdfa-editor/model/util/datastore/term-spec";
+import { TermSpec } from '@lblod/ember-rdfa-editor/model/util/datastore/term-spec';
 
+/**
+ * Utility class to represent a collection of terms with their
+ * respective {@link ModelNode ModelNodes}. The nodes per term
+ * are in document order and unique (no duplicates per term).
+ *
+ * There is no meaningful way to define order on the terms,
+ * so don't count on consistent ordering between them.
+ */
 export class TermMapping<T extends RDF.Term>
   implements
     Iterable<{
@@ -70,6 +78,19 @@ export class TermMapping<T extends RDF.Term>
           map((entry) => entry[1])
         )
       ) || null
+    );
+  }
+
+  /**
+   * Return an iterable that applies mappingFunc for each entry
+   * @param mappingFunc
+   */
+  map<R>(
+    mappingFunc: (entry: { term: T; nodes: ModelNode[] }) => R
+  ): Iterable<R> {
+    return from(this.termMap.entries()).pipe(
+      map((entry) => ({ term: entry[0], nodes: entry[1] })),
+      map(mappingFunc)
     );
   }
 }
