@@ -1,12 +1,12 @@
-import SetPropertyCommand from './set-property-command';
+import SetTextPropertyCommand from './set-text-property-command';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
-export default class MakeHighlightCommand extends SetPropertyCommand {
+export default class MakeHighlightCommand extends SetTextPropertyCommand {
   name = 'make-highlight';
 
   @logExecute
   execute(selection?: ModelSelection) {
-    this.setProperty('highlighted', true, selection);
+    this.setTextProperty('highlighted', true, selection);
   }
 }

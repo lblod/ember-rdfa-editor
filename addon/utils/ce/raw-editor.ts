@@ -42,6 +42,9 @@ import InsertTableColumnBeforeCommand from '@lblod/ember-rdfa-editor/commands/in
 import InsertTableColumnAfterCommand from '@lblod/ember-rdfa-editor/commands/insert-table-column-after-command';
 import ReadSelectionCommand from '@lblod/ember-rdfa-editor/commands/read-selection-command';
 import UndoCommand from '@lblod/ember-rdfa-editor/commands/undo-command';
+import AddTypeCommand from '@lblod/ember-rdfa-editor/commands/node-properties/add-type-command';
+import RemoveTypeCommand from '@lblod/ember-rdfa-editor/commands/node-properties/remove-type-command';
+import SetPropertyCommand from '@lblod/ember-rdfa-editor/commands/node-properties/set-property-command';
 import {
   InternalWidgetSpec,
   WidgetLocation,
@@ -167,6 +170,9 @@ export default class RawEditor {
     this.registerCommand(new DeleteSelectionCommand(this.model));
     this.registerCommand(new ReadSelectionCommand(this.model));
     this.registerCommand(new UndoCommand(this.model));
+    this.registerCommand(new AddTypeCommand(this.model));
+    this.registerCommand(new RemoveTypeCommand(this.model));
+    this.registerCommand(new SetPropertyCommand(this.model));
     this.registerCommand(new AddMarkToRangeCommand(this.model));
     this.registerCommand(new RemoveMarkFromRangeCommand(this.model));
     this.registerCommand(new RemoveMarkCommand(this.model));

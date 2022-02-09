@@ -14,12 +14,12 @@ export type TextAttribute =
 /**
  * @deprecated
  */
-export default abstract class SetPropertyCommand extends Command {
+export default abstract class SetTextPropertyCommand extends Command {
   constructor(model: Model) {
     super(model);
   }
 
-  protected setProperty(
+  protected setTextProperty(
     property: TextAttribute,
     value: boolean,
     selection: ModelSelection = this.model.selection
