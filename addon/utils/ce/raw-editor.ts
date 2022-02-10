@@ -114,6 +114,17 @@ export default class RawEditor {
       },
       { priority: 'highest' }
     );
+    this.eventBus.on(
+      'modelRead',
+      () => {
+        this._datastore = EditorStore.fromParse({
+          modelRoot: this.model.rootModelNode,
+          pathFromDomRoot: getPathFromRoot(this.model.rootNode, false),
+          baseIRI: (properties?.baseIRI as string | null) || document.baseURI,
+        });
+      },
+      { priority: 'highest' }
+    );
   }
 
   /**
