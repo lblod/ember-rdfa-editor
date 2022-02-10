@@ -14,7 +14,7 @@ To further complicate things browsers themselves sometimes convert regular space
 This RFC proposes a different approach using CSS styles to ensure all whitespace is shown. This seems a more elegant solution and moves the difficulty of whitespace handling to loading into - and exporting content from the editor.
 
 ## Motivation
-non breaking spaces make it hard to render text properly as it's unclear where the browser can break up sentences for overflowing text. If we can use css to make spaces visible without the `nbsp` hack we can forego complex/ugly logic to clean up spurious `nbsp`'s. It will also simplify logic in the backspace handler since you can now assume all whitespace is visible to the user, so need for complex heuristics anymore.
+non breaking spaces make it hard to render text properly as it's unclear where the browser can break up sentences for overflowing text. If we can use css to make spaces visible without the `nbsp` hack we can forego complex/ugly logic to clean up spurious `nbsp`'s. It will also simplify logic in the backspace handler since you can now assume all whitespace is visible to the user, so no need for complex heuristics anymore.
 
 ## Implementation
 
@@ -58,6 +58,15 @@ Exporting content becomes more complex because we will want to translate whitesp
 ## Caveats
 ### are we the only ones?
 It's unclear whether other editors use this css property and that's something we should investigate. If they don't, perhaps there's a good reason not to do this.
+
+Update: did some research
+
+| editor | solution |
+| ------------- | ------------- |
+| prosemirror | use pre-wrap by default, plugins exist to use nbsp behaviour |
+| ckeditor 4 & 5 | use nbsp, seems this is mostly handled in the view |
+| tinymce | use pre-wrap |
+
 
 ### old content
 Older documents, pasted content and our templates contain a lot of spurious whitespace which will likely be shown when we use this css property. We will need some kind of strategy to deal with that.
