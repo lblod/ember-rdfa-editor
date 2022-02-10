@@ -98,8 +98,8 @@ export default class HashSet<I> implements Set<I> {
     return this.items.values();
   }
 
-  intersection(other: HashSet<I>): HashSet<I> {
-    const result = new HashSet<I>({ hashFunc: this.hashFunc });
+  intersection(other: HashSet<I>): this {
+    const result = new HashSet<I>({ hashFunc: this.hashFunc }) as this;
     for (const item of this) {
       if (other.has(item)) {
         result.add(item);
@@ -114,7 +114,7 @@ export default class HashSet<I> implements Set<I> {
     );
   }
 
-  clone(): HashSet<I> {
-    return new HashSet<I>({ hashFunc: this.hashFunc, init: this });
+  clone(): this {
+    return new HashSet<I>({ hashFunc: this.hashFunc, init: this }) as this;
   }
 }

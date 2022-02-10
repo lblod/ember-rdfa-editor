@@ -284,7 +284,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     console.log(oldNode);
     const oldNodeRange = ModelRange.fromAroundNode(oldNode);
     console.log(oldNodeRange);
-    const op = new InsertOperation(oldNodeRange, newNode);
+    const op = new InsertOperation(this.eventbus, oldNodeRange, newNode);
     op.execute();
     return newNode;
   }

@@ -2,8 +2,8 @@ import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { XmlNodeRegistry } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
 import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
-import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-property-command';
 import { Mark } from '@lblod/ember-rdfa-editor/model/mark';
+import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 
 export default class XmlTextReader implements Reader<Element, ModelText, void> {
   constructor(private registry: XmlNodeRegistry<ModelText>) {}
