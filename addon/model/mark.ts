@@ -110,6 +110,15 @@ export class MarkSet extends HashSet<Mark> {
         `${mark.name}-${mark.attributes.setBy || CORE_OWNER}`,
     });
   }
+
+  hasMarkName(markName: string): boolean {
+    for (const mark of this.items.values()) {
+      if (mark.name === markName) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
 
 export const SLOT: SLOT = 0;

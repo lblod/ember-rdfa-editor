@@ -10,8 +10,8 @@ function identity<I>(thing: I): I {
 }
 
 export default class HashSet<I> implements Set<I> {
-  private items: Map<unknown, I> = new Map<unknown, I>();
-  private readonly hashFunc: HashFunction<I>;
+  protected items: Map<unknown, I> = new Map<unknown, I>();
+  protected readonly hashFunc: HashFunction<I>;
 
   constructor({ hashFunc = identity, init = [] }: HashSetConfig<I>) {
     this.hashFunc = hashFunc;
