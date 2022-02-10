@@ -4,6 +4,21 @@
 
 
 
+
+## 0.50.0-beta.7 (2022-02-10)
+
+#### :rocket: Enhancement
+* [#212](https://github.com/lblod/ember-rdfa-editor/pull/212) Feature/set attribute in mutator ([@lagartoverde](https://github.com/lagartoverde))
+* [#209](https://github.com/lblod/ember-rdfa-editor/pull/209) Feature: Marks and MarksRegistry ([@abeforgit](https://github.com/abeforgit))
+
+#### :bug: Bug Fix
+* [#213](https://github.com/lblod/ember-rdfa-editor/pull/213) Also recalculate datastore on model-read ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
+
+
 ## 0.50.0-beta.6 (2022-01-27)
 
 #### :bug: Bug Fix
