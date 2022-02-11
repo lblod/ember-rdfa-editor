@@ -22,7 +22,7 @@ export default class AddMarkToRangeCommand extends Command<
     const spec = this.model.marksRegistry.lookupMark(markName);
     if (spec) {
       this.model.change((mutator) => {
-        const resultRange = mutator.addMark(range, spec, markAttributes);
+        mutator.addMark(range, spec, markAttributes);
       });
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);

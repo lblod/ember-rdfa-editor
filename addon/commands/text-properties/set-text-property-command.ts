@@ -35,21 +35,15 @@ export default abstract class SetTextPropertyCommand extends Command {
     const specAttribute = compatTextAttributeMap.get(property);
     if (specAttribute) {
       this.model.change((mutator) => {
-        let resultRange;
         if (value) {
-          resultRange = mutator.addMark(
-            range,
-            specAttribute.spec,
-            specAttribute.attributes
-          );
+          mutator.addMark(range, specAttribute.spec, specAttribute.attributes);
         } else {
-          resultRange = mutator.removeMark(
+          mutator.removeMark(
             range,
             specAttribute.spec,
             specAttribute.attributes
           );
         }
-        this.model.selectRange(resultRange);
       });
     } else {
       throw new ModelError(`No mark found for property: ${property}`);
