@@ -23,7 +23,6 @@ export default class AddMarkToRangeCommand extends Command<
     if (spec) {
       this.model.change((mutator) => {
         const resultRange = mutator.addMark(range, spec, markAttributes);
-        this.model.selectRange(resultRange);
       });
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);
