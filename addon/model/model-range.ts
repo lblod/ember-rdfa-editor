@@ -11,6 +11,7 @@ import ModelTreeWalker, {
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -353,12 +354,16 @@ export default class ModelRange {
     for (const node of walker.nodes()) {
       if (ModelNode.isModelText(node)) {
         // keep a sparse mapping of character indices in the resulting string to paths
+        const sanitizedContent = node.content.replace(INVISIBLE_SPACE, '');
         if (calculateMapping) {
           const path = ModelPosition.fromBeforeNode(node).path;
-          mapping.push([currentIndex + node.length - startOffset, path]);
-          currentIndex += node.length;
+          mapping.push([
+            currentIndex + sanitizedContent.length - startOffset,
+            path,
+          ]);
+          currentIndex += sanitizedContent.length;
         }
-        textContent = textContent.concat(node.content);
+        textContent = textContent.concat(sanitizedContent);
       } else if (node.isBlock) {
         if (calculateMapping) {
           const path = node.length
@@ -403,9 +408,10 @@ export default class ModelRange {
 
   /**
    * Make a range that is this range with its edges "shrunk" until they
-   * are right before or after a textNode
+   * are right before or after a textNode or blocknode
+   * This means you get the smallest range that is still visually equivalent to this range.
    */
-  shrinkToTextNodes(): ModelRange {
+  shrinkToVisible(): ModelRange {
     const walker = GenTreeWalker.fromRange({
       range: this,
       filter: toFilterSkipFalse(

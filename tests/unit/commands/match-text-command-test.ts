@@ -4,6 +4,7 @@ import MatchTextCommand from '@lblod/ember-rdfa-editor/commands/match-text-comma
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 module('Unit | commands | match-text-command-text', (hooks) => {
   const ctx = new ModelTestContext();
@@ -118,6 +119,21 @@ module('Unit | commands | match-text-command-text', (hooks) => {
     ctx.model.fillRoot(root as ModelElement);
     assert.strictEqual(results.length, 0);
   });
+  test('match across invisible spaces', (assert) => {
+    //language=XML
+    const { root } = vdom`
+      <modelRoot>
+        <div>
+          <text>te${INVISIBLE_SPACE}st</text>
+        </div>
+      </modelRoot>
+    `;
+    const searchRange = ModelRange.fromInElement(root as ModelElement);
+    const results = command.execute(searchRange, /test/g);
+
+    ctx.model.fillRoot(root as ModelElement);
+    assert.strictEqual(results.length, 1);
+  });
   test('match block node boundary as newline', (assert) => {
     //language=XML
     const { root } = vdom`
@@ -148,7 +164,7 @@ module('Unit | commands | match-text-command-text', (hooks) => {
     const { root } = vdom`
       <modelRoot>
         <span>text</span>
-        <div/>
+        <br/>
         <div/>
         <div>
           <text>st</text>
