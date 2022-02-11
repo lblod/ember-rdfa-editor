@@ -5,6 +5,16 @@
 
 
 
+
+## 0.50.0-beta.8 (2022-02-11)
+
+#### :bug: Bug Fix
+* [#215](https://github.com/lblod/ember-rdfa-editor/pull/215) Dont update selection on setting marks ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.50.0-beta.7 (2022-02-10)
 
 #### :rocket: Enhancement
