@@ -11,7 +11,6 @@ import ModelTreeWalker, {
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -342,6 +341,7 @@ export default class ModelRange {
     // get all textnodes in range
     const walker = GenTreeWalker.fromRange({
       range: this,
+      descend: true,
     });
 
     // calculate difference between start of range and start of the first textnode
@@ -354,7 +354,7 @@ export default class ModelRange {
     for (const node of walker.nodes()) {
       if (ModelNode.isModelText(node)) {
         // keep a sparse mapping of character indices in the resulting string to paths
-        const sanitizedContent = node.content.replace(INVISIBLE_SPACE, '');
+        const sanitizedContent = node.content;
         if (calculateMapping) {
           const path = ModelPosition.fromBeforeNode(node).path;
           mapping.push([
@@ -363,7 +363,7 @@ export default class ModelRange {
           ]);
           currentIndex += sanitizedContent.length;
         }
-        textContent = textContent.concat(sanitizedContent);
+        textContent += sanitizedContent;
       } else if (node.isBlock) {
         if (calculateMapping) {
           const path = node.length

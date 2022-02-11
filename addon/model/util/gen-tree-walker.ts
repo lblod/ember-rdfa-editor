@@ -159,6 +159,16 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     } else {
       startNode = getNextNodeFromPosition(startPos, reverse);
       endNode = getPrevNodeFromPosition(endPos, reverse);
+      if (startNode && endNode && startNode === endNode) {
+        return GenTreeWalker.fromSubTree({
+          root: startNode,
+          descend,
+          reverse,
+          visitParentUpwards,
+          onEnterNode,
+          onLeaveNode,
+        });
+      }
       if (!startNode) {
         const ancestorWithSibling = startPos.parent
           .findSelfOrAncestors((node) => !!getNextSibling(node, reverse))
