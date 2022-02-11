@@ -354,7 +354,7 @@ export default class ModelRange {
     for (const node of walker.nodes()) {
       if (ModelNode.isModelText(node)) {
         // keep a sparse mapping of character indices in the resulting string to paths
-        const sanitizedContent = node.content;
+        const sanitizedContent = node.content.replace(/\u200B/g, '');
         if (calculateMapping) {
           const path = ModelPosition.fromBeforeNode(node).path;
           mapping.push([
