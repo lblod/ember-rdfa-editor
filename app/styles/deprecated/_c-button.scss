@@ -65,7 +65,7 @@ $say-button-tertiary-bg-hover-color: transparent !default;
 
   &:focus {
     outline: var(--au-outline);
-    outline-offset: $au-unit-tiny/2;
+    outline-offset: $au-unit-tiny * .5;
   }
 }
 

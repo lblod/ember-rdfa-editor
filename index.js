@@ -26,7 +26,16 @@ module.exports = {
     },
   },
 
-  included() {
+  included: function (app) {
     this._super.included.apply(this, arguments);
+
+    app.options.sassOptions = app.options.sassOptions || {};
+    app.options.sassOptions.includePaths =
+      app.options.sassOptions.includePaths || [];
+
+    app.options.sassOptions.includePaths.push(
+      'node_modules/@appuniversum/appuniversum',
+      'node_modules/@appuniversum/ember-appuniversum/app/styles'
+    );
   },
 };

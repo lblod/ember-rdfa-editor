@@ -172,7 +172,7 @@ $say-editor-highlight-hover-color: var(--au-yellow-100) !default;
 
     &:focus {
       outline: var(--au-outline);
-      outline-offset: $au-unit-tiny/2;
+      outline-offset: $au-unit-tiny * .5;
     }
   }
 

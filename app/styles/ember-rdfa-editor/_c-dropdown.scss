@@ -89,7 +89,7 @@ $say-smaller-font-size: 1.4rem !default;
     position: absolute;
     pointer-events: none;
     border-width: $say-dropdown-caret-size;
-    margin-left: -$say-dropdown-caret-size/2;
+    margin-left: -$say-dropdown-caret-size * .5;
   }
 
   &:before {
