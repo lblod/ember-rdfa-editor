@@ -23,8 +23,7 @@ export default class RemoveMarkFromRangeCommand extends Command<
     const spec = this.model.marksRegistry.lookupMark(markName);
     if (spec) {
       this.model.change((mutator) => {
-        const resultRange = mutator.removeMark(range, spec, attributes);
-        this.model.selectRange(resultRange);
+        mutator.removeMark(range, spec, attributes);
       });
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);

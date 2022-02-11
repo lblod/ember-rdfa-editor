@@ -104,6 +104,13 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       'editorModelWrite',
       this.createSnapshot.bind(this)
     );
+    this.eventBus.on(
+      'contentChanged',
+      () => {
+        this.updateRichNode();
+      },
+      { priority: 'highest' }
+    );
   }
 
   /**
@@ -305,6 +312,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         // eslint-disable-next-line ember/no-observers
         observer.handleFullContentUpdate(extraInfo);
       }
+      this.updateRichNode();
     }
     // this.eventBus.emit(
     //   new ContentChangedEvent({
