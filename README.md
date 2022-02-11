@@ -182,7 +182,6 @@ This addon uses CSS variables to customise the styling. You can override these v
 * Node.js v10 or above
 
 
-
 ## Contributing
 
 See the [Contributing](CONTRIBUTING.md) guide for details.
@@ -223,22 +222,24 @@ A plugin is an Ember addon providing a service that implements `execute` to hand
 If you want to test the addon with a dummy app, you could use the debug component to enable debugging features (this was previously done by copying dummy code from the editor). 
 
 To use the debug component create an rdfa-editor-with-debug.js file in `/tests/dummy/app/components` with the contents:
+
 ```js
 export {default} from "@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor-with-debug";
 ```
 
-include the following dependencies as devDependencies:
+include the following dependencies as devDependencies in `package.json`:
+
 ```
-        @codemirror/basic-setup
-        @codemirror/lang-html
-        @codemirror/lang-xml
-        xml-formatter
+@codemirror/basic-setup
+@codemirror/lang-html
+@codemirror/lang-xml
+xml-formatter
 ```
 
-The debug component can then be added with `<Rdfa::RdfaEditorWithDebug>` to your dummy app templates. It should support the same variables as the `<Rdfa::RdfaEditor>`. The block content of the debug component is yielded at the top of the component, right before the debug features. E.g.:
+The debug component can then be added with `<RdfaEditorWithDebug>` to your dummy app templates. It should support the same variables as the `<Rdfa::RdfaEditor>`. Note that the debug component does not require a namespace prefix because you just imported it directly in the dummy app with the previous steps. The block content of the debug component is yielded at the top of the component, right before the debug features. E.g.:
 
 ```handlebars
-<Rdfa::RdfaEditorWithDebug
+<RdfaEditorWithDebug
   @rdfaEditorInit={{this.rdfaEditorInit}}
   @plugins={{this.plugins}}
   @editorOptions={{hash
@@ -257,9 +258,8 @@ The debug component can then be added with `<Rdfa::RdfaEditorWithDebug>` to your
     showIndentButtons="true"
   }}>
   <h1>Plugin title - dummy app</h1>
-</Rdfa::RdfaEditorWithDebug>
+</RdfaEditorWithDebug>
 ```
-
 
 #### Service interface
 
