@@ -177,8 +177,8 @@ This addon uses CSS variables to customise the styling. You can override these v
 
 
 ## Compatibility
-* Ember.js v3.12 or above
-* Ember CLI v2.13 or above
+* Ember.js v3.20 or above
+* Ember CLI v2.20 or above
 * Node.js v10 or above
 
 
@@ -220,7 +220,22 @@ export default {
 
 A plugin is an Ember addon providing a service that implements `execute` to handle changes in the editor and provides a component to display hints.
 
-If you want to test the addon with a dummy app, you could use the debug component to enable debugging features (this was previously done by copying dummy code from the editor). The debug component can be added with `<Rdfa::RdfaEditorWithDebug>` and should support the same variables as the `<Rdfa::RdfaEditor>`. The block content of the debug component is yielded at the top of the component, right before the debug features. E.g.:
+If you want to test the addon with a dummy app, you could use the debug component to enable debugging features (this was previously done by copying dummy code from the editor). 
+
+To use the debug component create an rdfa-editor-with-debug.js file in `/tests/dummy/app/components` with the contents:
+```js
+export {default} from "@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor-with-debug";
+```
+
+include the following dependencies as devDependencies:
+```
+        @codemirror/basic-setup
+        @codemirror/lang-html
+        @codemirror/lang-xml
+        xml-formatter
+```
+
+The debug component can then be added with `<Rdfa::RdfaEditorWithDebug>` to your dummy app templates. It should support the same variables as the `<Rdfa::RdfaEditor>`. The block content of the debug component is yielded at the top of the component, right before the debug features. E.g.:
 
 ```handlebars
 <Rdfa::RdfaEditorWithDebug
