@@ -74,7 +74,7 @@ function convertMatch(
       input: match.input || '',
       text: matchedString,
       groups: match.slice(1),
-      range: new ModelRange(startPos, endPos),
+      range: new ModelRange(startPos, endPos).shrinkToTextNodes(),
       index: matchIndex,
     };
   }

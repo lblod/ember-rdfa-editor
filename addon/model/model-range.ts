@@ -315,12 +315,18 @@ export default class ModelRange {
     return this.textContentHelper(false).textContent;
   }
 
-  getTextContentWithMapping(): { textContent: string, indexToPos: (textIndex: number) => ModelPosition } {
+  getTextContentWithMapping(): {
+    textContent: string;
+    indexToPos: (textIndex: number) => ModelPosition;
+  } {
     return this.textContentHelper(true);
   }
 
-  private textContentHelper(calculateMapping: boolean): { textContent: string, indexToPos: (textIndex: number) => ModelPosition } {
-    let textContent = "";
+  private textContentHelper(calculateMapping: boolean): {
+    textContent: string;
+    indexToPos: (textIndex: number) => ModelPosition;
+  } {
+    let textContent = '';
 
     // a sparse map of character indices of the resultstring to paths
     // it looks something like this:
@@ -333,24 +339,36 @@ export default class ModelRange {
     const mapping: [number, number[]][] = [];
 
     // get all textnodes in range
-    const walker = new ModelTreeWalker<ModelText>({
+    const walker = GenTreeWalker.fromRange({
       range: this,
-      descend: true,
-      filter: toFilterSkipFalse(ModelNode.isModelText)
     });
+
     // calculate difference between start of range and start of the first textnode
-    const startOffset = this.start.isInsideText() ? this.start.parentOffset - this.start.nodeAfter()!.getOffset() : 0;
+    const startOffset = this.start.isInsideText()
+      ? this.start.parentOffset - this.start.nodeAfter()!.getOffset()
+      : 0;
 
     let currentIndex = 0;
     // build the resultstring
-    for (const textNode of walker) {
-      // keep a sparse mapping of character indices in the resulting string to paths
-      if (calculateMapping) {
-        const path = ModelPosition.fromBeforeNode(textNode).path;
-        mapping.push([currentIndex + textNode.length - startOffset, path]);
-        currentIndex += textNode.length;
+    for (const node of walker.nodes()) {
+      if (ModelNode.isModelText(node)) {
+        // keep a sparse mapping of character indices in the resulting string to paths
+        if (calculateMapping) {
+          const path = ModelPosition.fromBeforeNode(node).path;
+          mapping.push([currentIndex + node.length - startOffset, path]);
+          currentIndex += node.length;
+        }
+        textContent = textContent.concat(node.content);
+      } else if (node.isBlock) {
+        if (calculateMapping) {
+          const path = node.length
+            ? ModelPosition.fromInNode(node, 0).path
+            : ModelPosition.fromBeforeNode(node).path;
+          mapping.push([currentIndex + 1 - startOffset, path]);
+          currentIndex += 1;
+        }
+        textContent += '\n';
       }
-      textContent = textContent.concat(textNode.content);
     }
 
     // calculate endoffset, or the difference between the offset just after the final textnode and the endposition of
@@ -364,7 +382,6 @@ export default class ModelRange {
 
     // the mapping function to convert resultstring indices back to positions
     const indexToPos = (index: number): ModelPosition => {
-
       let lastLimit = 0;
       for (const [limit, path] of mapping) {
         if (index < limit) {
@@ -378,8 +395,48 @@ export default class ModelRange {
       return this.end;
     };
 
-    return {textContent: textContent.substring(startOffset, endOffset), indexToPos};
+    return {
+      textContent: textContent.substring(startOffset, endOffset),
+      indexToPos,
+    };
   }
+
+  /**
+   * Make a range that is this range with its edges "shrunk" until they
+   * are right before or after a textNode
+   */
+  shrinkToTextNodes(): ModelRange {
+    const walker = GenTreeWalker.fromRange({
+      range: this,
+      filter: toFilterSkipFalse(
+        (node) => ModelNode.isModelText(node) || node.isBlock
+      ),
+    });
+    const textNodes = [...walker.nodes()];
+    let start;
+    let end;
+    const afterStart = this.start.nodeAfter();
+    const beforeEnd = this.end.nodeBefore();
+    if (
+      afterStart &&
+      (ModelNode.isModelText(afterStart) || afterStart.isBlock)
+    ) {
+      start = this.start;
+    } else {
+      start = ModelPosition.fromBeforeNode(textNodes[0]);
+    }
+    if (
+      // we are right after the opening of a block tag
+      (!beforeEnd && this.end.parent.isBlock) ||
+      (beforeEnd && ModelNode.isModelText(beforeEnd))
+    ) {
+      end = this.end;
+    } else {
+      end = ModelPosition.fromAfterNode(textNodes[textNodes.length - 1]);
+    }
+    return new ModelRange(start, end);
+  }
+
   toString(): string {
     return `ModelRange<[${this.start.path.toString()}] - [${this.end.path.toString()}]>`;
   }
