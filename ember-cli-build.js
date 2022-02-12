@@ -8,7 +8,7 @@ module.exports = function (defaults) {
       sourceMaps: 'inline',
     },
     sassOptions: {
-      sourceMapEmbed: true
+      sourceMapEmbed: true,
     },
     autoprefixer: {
       enabled: true,
