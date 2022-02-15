@@ -119,6 +119,9 @@ export class MarkSet extends HashSet<Mark> {
     }
     return false;
   }
+  clone(): this {
+    return new MarkSet() as this;
+  }
 }
 
 export const SLOT: SLOT = 0;

@@ -99,7 +99,8 @@ export default class HashSet<I> implements Set<I> {
   }
 
   intersection(other: HashSet<I>): this {
-    const result = new HashSet<I>({ hashFunc: this.hashFunc }) as this;
+    const result = this.clone();
+    result.clear();
     for (const item of this) {
       if (other.has(item)) {
         result.add(item);
