@@ -13,7 +13,7 @@ import {
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import { parsePrefixString } from '@lblod/ember-rdfa-editor/model/util/rdfa-utils';
 import RdfaAttributes from '@lblod/marawa/rdfa-attributes';
-import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-property-command';
+import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 
 export type ElementType = keyof HTMLElementTagNameMap;
 

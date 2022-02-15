@@ -12,8 +12,8 @@ import {
 } from '@lblod/ember-rdfa-editor/model/util/types';
 import { nodeIsElementOfType } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-property-command';
 import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus

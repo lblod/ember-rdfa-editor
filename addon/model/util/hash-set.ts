@@ -10,8 +10,8 @@ function identity<I>(thing: I): I {
 }
 
 export default class HashSet<I> implements Set<I> {
-  private items: Map<unknown, I> = new Map<unknown, I>();
-  private readonly hashFunc: HashFunction<I>;
+  protected items: Map<unknown, I> = new Map<unknown, I>();
+  protected readonly hashFunc: HashFunction<I>;
 
   constructor({ hashFunc = identity, init = [] }: HashSetConfig<I>) {
     this.hashFunc = hashFunc;
@@ -98,8 +98,9 @@ export default class HashSet<I> implements Set<I> {
     return this.items.values();
   }
 
-  intersection(other: HashSet<I>): HashSet<I> {
-    const result = new HashSet<I>({ hashFunc: this.hashFunc });
+  intersection(other: HashSet<I>): this {
+    const result = this.clone();
+    result.clear();
     for (const item of this) {
       if (other.has(item)) {
         result.add(item);
@@ -114,7 +115,7 @@ export default class HashSet<I> implements Set<I> {
     );
   }
 
-  clone(): HashSet<I> {
-    return new HashSet<I>({ hashFunc: this.hashFunc, init: this });
+  clone(): this {
+    return new HashSet<I>({ hashFunc: this.hashFunc, init: this }) as this;
   }
 }

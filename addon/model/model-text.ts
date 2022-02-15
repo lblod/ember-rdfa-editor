@@ -48,12 +48,7 @@ export default class ModelText extends ModelNode {
   }
 
   hasMarkName(markName: string): boolean {
-    for (const mark of this.marks) {
-      if (mark.name === markName) {
-        return true;
-      }
-    }
-    return false;
+    return this.marks.hasMarkName(markName);
   }
 
   hasMark(mark: Mark): boolean {
