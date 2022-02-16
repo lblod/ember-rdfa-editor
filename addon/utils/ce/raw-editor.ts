@@ -21,7 +21,9 @@ import RemoveStrikethroughCommand from '@lblod/ember-rdfa-editor/commands/text-p
 import RemoveUnderlineCommand from '@lblod/ember-rdfa-editor/commands/text-properties/remove-underline-command';
 import UnindentListCommand from '@lblod/ember-rdfa-editor/commands/unindent-list-command';
 import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange, {
+  ModelRangeFactory,
+} from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelSelectionTracker from '@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker';
 import { walk as walkDomNode } from '@lblod/marawa/node-walker';
@@ -62,6 +64,7 @@ import AddMarkToRangeCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to
 import RemoveMarkFromRangeCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-range-command';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import RemoveMarkCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-command';
+import MatchTextCommand from '@lblod/ember-rdfa-editor/commands/match-text-command';
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -100,6 +103,7 @@ export default class RawEditor {
    */
   @tracked
   richNode!: RichNode;
+  rangeFactory!: ModelRangeFactory;
 
   constructor(properties: RawEditorProperties) {
     this.eventBus = new EventBus();
@@ -187,6 +191,7 @@ export default class RawEditor {
     this.registerCommand(new AddMarkToRangeCommand(this.model));
     this.registerCommand(new RemoveMarkFromRangeCommand(this.model));
     this.registerCommand(new RemoveMarkCommand(this.model));
+    this.registerCommand(new MatchTextCommand(this.model));
     this.registerMark(highlightMarkSpec);
   }
 
@@ -205,6 +210,7 @@ export default class RawEditor {
       this.model.selection.collapseIn(this.model.rootModelNode);
       this.model.write();
       this.updateRichNode();
+      this.rangeFactory = new ModelRangeFactory(this.rootModelNode);
     }
   }
 

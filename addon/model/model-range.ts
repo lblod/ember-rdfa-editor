@@ -11,6 +11,7 @@ import ModelTreeWalker, {
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -309,6 +310,139 @@ export default class ModelRange {
     } else {
       throw new IllegalArgumentError('Unsupported strategy');
     }
+  }
+
+  getTextContent(): string {
+    return this.textContentHelper(false).textContent;
+  }
+
+  getTextContentWithMapping(): {
+    textContent: string;
+    indexToPos: (textIndex: number) => ModelPosition;
+  } {
+    return this.textContentHelper(true);
+  }
+
+  private textContentHelper(calculateMapping: boolean): {
+    textContent: string;
+    indexToPos: (textIndex: number) => ModelPosition;
+  } {
+    let textContent = '';
+
+    // a sparse map of character indices of the resultstring to paths
+    // it looks something like this:
+    // [[4, [0, 0]], [18, [1,3,4]]]
+    // the first number is the limitnumber
+    // meaning all indices up to 4 correspond to textnode with path [0,0],
+    // all indices between 4 and 18 correspond to textnode with path [1,3,4], etc
+    // to get the final path of the index, add the difference between the index
+    // and the last encountered limit to the last element of the path
+    const mapping: [number, number[]][] = [];
+
+    // get all textnodes in range
+    const walker = GenTreeWalker.fromRange({
+      range: this,
+      descend: true,
+    });
+
+    // calculate difference between start of range and start of the first textnode
+    const startOffset = this.start.isInsideText()
+      ? this.start.parentOffset - this.start.nodeAfter()!.getOffset()
+      : 0;
+
+    let currentIndex = 0;
+    // build the resultstring
+    for (const node of walker.nodes()) {
+      if (ModelNode.isModelText(node)) {
+        // keep a sparse mapping of character indices in the resulting string to paths
+        const pattern = new RegExp(`${INVISIBLE_SPACE}`, 'g');
+        const sanitizedContent = node.content.replace(pattern, '');
+        if (calculateMapping) {
+          const path = ModelPosition.fromBeforeNode(node).path;
+          mapping.push([
+            currentIndex + sanitizedContent.length - startOffset,
+            path,
+          ]);
+          currentIndex += sanitizedContent.length;
+        }
+        textContent += sanitizedContent;
+      } else if (node.isBlock) {
+        if (calculateMapping) {
+          const path = node.length
+            ? ModelPosition.fromInNode(node, 0).path
+            : ModelPosition.fromBeforeNode(node).path;
+          mapping.push([currentIndex + 1 - startOffset, path]);
+          currentIndex += 1;
+        }
+        textContent += '\n';
+      }
+    }
+
+    // calculate endoffset, or the difference between the offset just after the final textnode and the endposition of
+    // the range
+    let endOffset = textContent.length;
+    if (this.end.isInsideText()) {
+      const textNode = this.end.nodeAfter()!;
+      const maxOffset = textNode.getOffset() + textNode.length;
+      endOffset -= maxOffset - this.end.parentOffset;
+    }
+
+    // the mapping function to convert resultstring indices back to positions
+    const indexToPos = (index: number): ModelPosition => {
+      let lastLimit = 0;
+      for (const [limit, path] of mapping) {
+        if (index < limit) {
+          const resultPath = [...path];
+          const final = resultPath[resultPath.length - 1];
+          resultPath[resultPath.length - 1] = final + index - lastLimit;
+          return ModelPosition.fromPath(this.root, resultPath);
+        }
+        lastLimit = limit;
+      }
+      return this.end;
+    };
+
+    return {
+      textContent: textContent.substring(startOffset, endOffset),
+      indexToPos,
+    };
+  }
+
+  /**
+   * Make a range that is this range with its edges "shrunk" until they
+   * are right before or after a textNode or blocknode
+   * This means you get the smallest range that is still visually equivalent to this range.
+   */
+  shrinkToVisible(): ModelRange {
+    const walker = GenTreeWalker.fromRange({
+      range: this,
+      filter: toFilterSkipFalse(
+        (node) => ModelNode.isModelText(node) || node.isBlock
+      ),
+    });
+    const textNodes = [...walker.nodes()];
+    let start;
+    let end;
+    const afterStart = this.start.nodeAfter();
+    const beforeEnd = this.end.nodeBefore();
+    if (
+      afterStart &&
+      (ModelNode.isModelText(afterStart) || afterStart.isBlock)
+    ) {
+      start = this.start;
+    } else {
+      start = ModelPosition.fromBeforeNode(textNodes[0]);
+    }
+    if (
+      // we are right after the opening of a block tag
+      (!beforeEnd && this.end.parent.isBlock) ||
+      (beforeEnd && ModelNode.isModelText(beforeEnd))
+    ) {
+      end = this.end;
+    } else {
+      end = ModelPosition.fromAfterNode(textNodes[textNodes.length - 1]);
+    }
+    return new ModelRange(start, end);
   }
 
   toString(): string {
