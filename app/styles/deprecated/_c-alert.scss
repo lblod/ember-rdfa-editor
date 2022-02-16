@@ -13,9 +13,9 @@
 .say-alert__icon {
   background-color: var(--au-white);
   border-radius: $au-unit-large;
-  height: $au-unit-large - 0.1rem; // compensate for visual distortion of perfect circle
+  height: $au-unit-large - .1rem; // compensate for visual distortion of perfect circle
   width: $au-unit-large;
-  margin-right: $au-unit-large / 2;
+  margin-right: $au-unit-large * .5;
 
   display: flex;
   align-items: center;
@@ -23,7 +23,7 @@
   flex-shrink: 0;
 
   .say-icon {
-    height: 2rem - 0.1rem; // compensate for visual distortion of perfect circle
+    height: 2rem - .1rem; // compensate for visual distortion of perfect circle
     width: 2rem;
     bottom: 0;
   }

@@ -67,8 +67,7 @@
     "stream-browserify": "^3.0.0"
   },
   "devDependencies": {
-    "@appuniversum/appuniversum": "^0.2.1",
-    "@appuniversum/ember-appuniversum": "^0.7.2",
+    "@appuniversum/ember-appuniversum": "^0.11.0",
     "@codemirror/basic-setup": "^0.19.0",
     "@codemirror/lang-html": "^0.19.4",
     "@codemirror/lang-xml": "^0.19.2",
@@ -153,8 +152,7 @@
     "stream-browserify": "^3.0.0"
   },
   "peerDependencies": {
-    "@appuniversum/appuniversum": "^0.2.1",
-    "@appuniversum/ember-appuniversum": "^0.7.2",
+    "@appuniversum/ember-appuniversum": "^0.11.0",
     "@codemirror/basic-setup": "^0.19.0",
     "@codemirror/lang-html": "^0.19.4",
     "@codemirror/lang-xml": "^0.19.2",
