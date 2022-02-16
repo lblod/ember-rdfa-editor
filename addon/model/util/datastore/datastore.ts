@@ -41,39 +41,122 @@ interface ObjectNodesResponse extends TermNodesResponse {
   object: RDF.Quad_Object;
 }
 
+/**
+ * High-level interface to query RDF-knowledge from the document.
+ * Designed with the principles of a fluent interface in mind.
+ *
+ * There are two method types: transformers and consumers.
+ * Transformers operate on the underlying knowledge (e.g. filtering triples)
+ * and always return a datastore, allowing easy method chaining.
+ *
+ * Consumers are methods that return anything other than a datastore, typically
+ * representing the transformed knowledge in some convenient format.
+ */
 export default interface Datastore {
   get dataset(): RDF.Dataset;
 
   get size(): number;
 
+  /**
+   * The function used to convert concise term syntax (see {@link ConciseTerm})
+   * into RDFjs term objects
+   */
   get termConverter(): TermConverter;
 
+  /**
+   * Transformer method.
+   * Filters out any triples of which their subject does not have a node within the given range's context nodes
+   * The definition of a range's context nodes depends on the strategy.
+   * More info at {@link ModelRange.contextNodes}
+   * @param range
+   * @param strategy
+   */
   limitToRange(range: ModelRange, strategy?: RangeContextStrategy): Datastore;
 
+  /**
+   * Transformer method.
+   * Filters out any triples which do not match the given pattern.
+   * Pattern matching behaves similar as in SPARQL (but don't stretch that metaphor too far).
+   *
+   * Passing in undefined for any of the arguments means any term will match it.
+   *
+   * This method accepts concise term syntax, as defined in {@link ConciseTerm}
+   *
+   * @param subject
+   * @param predicate
+   * @param object
+   */
   match(
     subject?: SubjectSpec,
     predicate?: PredicateSpec,
     object?: ObjectSpec
   ): Datastore;
 
+  /**
+   * Transformer method.
+   * Low-level escape hatch.
+   * Pass in a callback which will receive the underlying RDFjs-compliant {@link RDF.Dataset}
+   * and a termconverter function to convert concise term syntax (see {@link ConciseTerm})
+   * into RDFjs Term objects.
+   * @param action
+   */
   transformDataset(
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
   ): Datastore;
 
+  /**
+   * Consumer method.
+   * Returns a {@link TermMapping} of the currently valid subjects and the nodes that define them.
+   */
   asSubjectNodeMapping(): TermMapping<RDF.Quad_Subject>;
 
+  /**
+   * Consumer method.
+   * Returns a {@link TermMapping} of the currently valid predicates and the nodes that define them.
+   */
   asPredicateNodeMapping(): TermMapping<RDF.Quad_Predicate>;
 
+  /**
+   * Consumer method.
+   * Returns a {@link TermMapping} of the currently valid objects and the nodes that define them.
+   */
   asObjectNodeMapping(): TermMapping<RDF.Quad_Object>;
 
+  /**
+   * Consumer method.
+   * Returns a {@link ResultSet} of all currently valid quads.
+   */
   asQuadResultSet(): ResultSet<RDF.Quad>;
 
+  /**
+   * @deprecated
+   * Consumer Method.
+   * Returns a generator of mappings between subjects and their nodes.
+   * No order is implied.
+   */
   asSubjectNodes(): Generator<SubjectNodesResponse>;
 
+  /**
+   * @deprecated
+   * Consumer Method.
+   * Returns a generator of mappings between predicates and their nodes.
+   * No order is implied.
+   */
   asPredicateNodes(): Generator<PredicateNodesResponse>;
 
+  /**
+   * @deprecated
+   * Consumer Method.
+   * Returns a generator of mappings between objects and their nodes.
+   * No order is implied.
+   */
   asObjectNodes(): Generator<ObjectNodesResponse>;
 
+  /**
+   * @deprecated
+   * Consumer Method.
+   * Returns a generator of current relevant quads
+   */
   asQuads(): Generator<RDF.Quad>;
 }
 
