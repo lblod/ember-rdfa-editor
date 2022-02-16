@@ -9,10 +9,23 @@ export default class HtmlTextReader
   implements Reader<Text, ModelText[], HtmlReaderContext>
 {
   read(from: Text, context: HtmlReaderContext): ModelText[] {
-    if (!from.textContent || from.textContent === '') {
+    if (!from.textContent) {
       return [];
     }
-    const result = new ModelText(from.textContent);
+    let trimmed = from.textContent;
+    // Use ECMA-262 Edition 3 String and RegExp features
+    // trimmed = trimmed.replace(/[\t\n\r ]+/g, ' ');
+    const pattern = /[\f\n\r\t\v ]{2,}/g;
+    const replacement = ' ';
+
+    trimmed = trimmed.replace(pattern, replacement);
+    if (trimmed.charAt(0) == ' ') {
+      trimmed = trimmed.substring(1, trimmed.length);
+    }
+    if (!trimmed.length) {
+      return [];
+    }
+    const result = new ModelText(trimmed);
     context.activeMarks.forEach(({ spec, attributes }) =>
       context.addMark(result, spec, attributes)
     );
