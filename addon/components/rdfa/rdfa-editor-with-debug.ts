@@ -26,6 +26,7 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   @service features!: FeaturesService;
   @tracked htmlDebuggerOpen = false;
   @tracked sampleData = sampleData;
+  @tracked exportContent = '';
   private unloadListener?: () => void;
   private xmlEditor?: EditorView;
   private htmlEditor?: EditorView;
@@ -154,6 +155,14 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
     } else if (val === 'full') {
       this.features.enable('editor-extended-html-paste');
       this.features.enable('editor-html-paste');
+    }
+  }
+
+  @action
+  showExportPreview() {
+    const wnd = window.open('about:blank', '', '_blank');
+    if (wnd) {
+      wnd.document.write(this.rdfaEditor?.htmlContent || '');
     }
   }
 
