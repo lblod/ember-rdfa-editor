@@ -11,6 +11,7 @@ import ModelTreeWalker, {
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -354,7 +355,8 @@ export default class ModelRange {
     for (const node of walker.nodes()) {
       if (ModelNode.isModelText(node)) {
         // keep a sparse mapping of character indices in the resulting string to paths
-        const sanitizedContent = node.content.replace(/\u200B/g, '');
+        const pattern = new RegExp(`${INVISIBLE_SPACE}`, 'g');
+        const sanitizedContent = node.content.replace(pattern, '');
         if (calculateMapping) {
           const path = ModelPosition.fromBeforeNode(node).path;
           mapping.push([
