@@ -25,6 +25,22 @@ import {
   SubjectSpec,
 } from '@lblod/ember-rdfa-editor/model/util/datastore/term-spec';
 
+interface TermNodesResponse {
+  nodes: Set<ModelNode>;
+}
+
+interface SubjectNodesResponse extends TermNodesResponse {
+  subject: RDF.Quad_Subject;
+}
+
+interface PredicateNodesResponse extends TermNodesResponse {
+  predicate: RDF.Quad_Predicate;
+}
+
+interface ObjectNodesResponse extends TermNodesResponse {
+  object: RDF.Quad_Object;
+}
+
 export default interface Datastore {
   get dataset(): RDF.Dataset;
 
@@ -44,13 +60,21 @@ export default interface Datastore {
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
   ): Datastore;
 
-  asSubjectNodes(): TermMapping<RDF.Quad_Subject>;
+  asSubjectNodeMapping(): TermMapping<RDF.Quad_Subject>;
 
-  asPredicateNodes(): TermMapping<RDF.Quad_Predicate>;
+  asPredicateNodeMapping(): TermMapping<RDF.Quad_Predicate>;
 
-  asObjectNodes(): TermMapping<RDF.Quad_Object>;
+  asObjectNodeMapping(): TermMapping<RDF.Quad_Object>;
 
-  asQuads(): ResultSet<RDF.Quad>;
+  asQuadResultSet(): ResultSet<RDF.Quad>;
+
+  asSubjectNodes(): Generator<SubjectNodesResponse>;
+
+  asPredicateNodes(): Generator<PredicateNodesResponse>;
+
+  asObjectNodes(): Generator<ObjectNodesResponse>;
+
+  asQuads(): Generator<RDF.Quad>;
 }
 
 interface DatastoreConfig {
@@ -189,7 +213,7 @@ export class EditorStore implements Datastore {
     });
   }
 
-  asSubjectNodes(): TermMapping<RDF.Quad_Subject> {
+  asSubjectNodeMapping(): TermMapping<RDF.Quad_Subject> {
     return new TermMapping<RDF.Quad_Subject>(
       this.subjectNodeGenerator(),
       this.getPrefix
@@ -211,7 +235,7 @@ export class EditorStore implements Datastore {
     return rslt;
   }
 
-  asPredicateNodes(): TermMapping<RDF.Quad_Predicate> {
+  asPredicateNodeMapping(): TermMapping<RDF.Quad_Predicate> {
     return new TermMapping<RDF.Quad_Predicate>(
       this.predicateNodeGenerator(),
       this.getPrefix
@@ -246,7 +270,7 @@ export class EditorStore implements Datastore {
     return rslt;
   }
 
-  asObjectNodes(): TermMapping<RDF.Quad_Object> {
+  asObjectNodeMapping(): TermMapping<RDF.Quad_Object> {
     return new TermMapping<RDF.Quad_Object>(
       this.objectNodeGenerator(),
       this.getPrefix
@@ -268,11 +292,69 @@ export class EditorStore implements Datastore {
     return rslt;
   }
 
-  asQuads(): ResultSet<RDF.Quad> {
+  asQuadResultSet(): ResultSet<RDF.Quad> {
     return new ResultSet<RDF.Quad>(this.quadGenerator());
   }
 
   private *quadGenerator(): Generator<RDF.Quad> {
+    for (const quad of this.dataset) {
+      yield quad;
+    }
+  }
+
+  *asSubjectNodes(): Generator<SubjectNodesResponse> {
+    const seenSubjects = new Set<string>();
+    for (const quad of this.dataset) {
+      if (!seenSubjects.has(quad.subject.value)) {
+        const nodes = this._subjectToNodes.get(quad.subject.value);
+        if (nodes) {
+          yield { subject: quad.subject, nodes: new Set<ModelNode>(nodes) };
+        }
+        seenSubjects.add(quad.subject.value);
+      }
+    }
+  }
+
+  *asPredicateNodes(): Generator<PredicateNodesResponse> {
+    const seenPredicates = new Map<string, RDF.Quad_Predicate>();
+    const seenSubjects = new Set<string>();
+
+    // collect all unique predicates and subjects in the current dataset
+    for (const quad of this.dataset) {
+      seenSubjects.add(quad.subject.value);
+      seenPredicates.set(quad.predicate.value, quad.predicate);
+    }
+
+    for (const pred of seenPredicates.keys()) {
+      const allNodes = this._predicateToNodes.get(pred);
+      if (allNodes) {
+        const nodes = new Set<ModelNode>();
+        // we have to filter out nodes that belong to a subject which is not in the dataset
+        for (const node of allNodes) {
+          const nodeSubject = this._nodeToSubject.get(node);
+          if (nodeSubject && seenSubjects.has(nodeSubject.value)) {
+            nodes.add(node);
+          }
+        }
+        yield { predicate: seenPredicates.get(pred)!, nodes };
+      }
+    }
+  }
+
+  *asObjectNodes(): Generator<ObjectNodesResponse> {
+    const seenObjects = new Set<string>();
+    for (const quad of this.dataset) {
+      if (!seenObjects.has(quad.object.value)) {
+        const nodes = this._objectToNodes.get(quad.object.value);
+        if (nodes) {
+          yield { object: quad.object, nodes: new Set<ModelNode>(nodes) };
+        }
+        seenObjects.add(quad.object.value);
+      }
+    }
+  }
+
+  *asQuads(): Generator<RDF.Quad> {
     for (const quad of this.dataset) {
       yield quad;
     }
