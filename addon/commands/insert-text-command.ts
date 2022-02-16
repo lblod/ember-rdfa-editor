@@ -25,13 +25,6 @@ export default class InsertTextCommand extends Command {
     }
 
     this.model.change((mutator) => {
-      if (text.charAt(0) === SPACE) {
-        const charBefore = range.start.charactersBefore(1);
-        if (charBefore === SPACE) {
-          text = NON_BREAKING_SPACE + text;
-          range.start = range.start.shiftedBy(-1);
-        }
-      }
 
       const resultRange = mutator.insertText(range, text);
       // TODO re-enable incremental updates somehow
