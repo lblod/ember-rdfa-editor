@@ -6,6 +6,29 @@
 
 
 
+
+## 0.50.0-beta.9 (2022-02-16)
+
+#### :boom: Breaking Change
+* [#216](https://github.com/lblod/ember-rdfa-editor/pull/216) Don't export the debug component ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#219](https://github.com/lblod/ember-rdfa-editor/pull/219) Implement text-matching command ([@abeforgit](https://github.com/abeforgit))
+* [#214](https://github.com/lblod/ember-rdfa-editor/pull/214) Expose query utility on markset ([@abeforgit](https://github.com/abeforgit))
+
+#### :bug: Bug Fix
+* [#220](https://github.com/lblod/ember-rdfa-editor/pull/220) Fix dummy component import ([@abeforgit](https://github.com/abeforgit))
+* [#216](https://github.com/lblod/ember-rdfa-editor/pull/216) Don't export the debug component ([@abeforgit](https://github.com/abeforgit))
+
+#### :house: Internal
+* [#218](https://github.com/lblod/ember-rdfa-editor/pull/218) Ember-appuniversum upgrade > 0.11.0 ([@Dietr](https://github.com/Dietr))
+
+#### Committers: 3
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Dieter Peirs ([@Dietr](https://github.com/Dietr))
+- Niels V ([@nvdk](https://github.com/nvdk))
+
+
 ## 0.50.0-beta.8 (2022-02-11)
 
 #### :bug: Bug Fix
