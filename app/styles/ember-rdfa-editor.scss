@@ -3,16 +3,10 @@
    ================================== */
 
 /**
- * Appuniversum
- */
-
-/**
  * CONTENTS
  * ---
- * SETTINGS: Project settings and variables
+ * VARIABLES: Project settings and variables
  * TOOLS: Mixins
- * GENERIC: Reset, global box-sizing and font-styles
- * ELEMENTS: Plain html tag styling
  * OBJECTS: OOCSS unstyled objects (namespace: '.au-o-...')
  * COMPONENTS: Components (namespace: '.au-c-...')
  * CUSTOM COMPONENTS: Say editor components (namespace: '.say-...')
@@ -26,76 +20,20 @@
 @import 'appuniversum/s-utilities';
 @import 'ember-rdfa-editor/s-root'; // Say theme settings
 
-// MIXINS
-@import 'appuniversum/t-font-size';
-@import 'appuniversum/t-sass-mq';
+// TOOLS
+@import "ember-appuniversum/a-tools";
 
 // OBJECTS
-@import 'appuniversum/o-box';
-@import 'appuniversum/o-flow';
-@import 'appuniversum/o-grid';
-@import 'appuniversum/o-layout';
-@import 'appuniversum/o-region';
-
-// COMPONENTS
-@import 'ember-appuniversum/c-accordion';
-@import 'ember-appuniversum/c-alert';
-@import 'ember-appuniversum/c-app';
-@import 'ember-appuniversum/c-badge';
-@import 'ember-appuniversum/c-body-container';
-@import 'ember-appuniversum/c-brand';
-@import 'ember-appuniversum/c-button';
-@import 'ember-appuniversum/c-button-group';
-@import 'ember-appuniversum/c-card';
-@import 'ember-appuniversum/c-content';
-@import 'ember-appuniversum/c-content-header';
-@import 'ember-appuniversum/c-control';
-@import 'ember-appuniversum/c-data-table';
-@import 'ember-appuniversum/c-dropdown';
-@import 'ember-appuniversum/c-form';
-@import 'ember-appuniversum/c-heading';
-@import 'ember-appuniversum/c-help-text';
-@import 'ember-appuniversum/c-hr';
-@import 'ember-appuniversum/c-icon';
-@import 'ember-appuniversum/c-input';
-@import 'ember-appuniversum/c-label';
-@import 'ember-appuniversum/c-link';
-@import 'ember-appuniversum/c-list-horizontal';
-@import 'ember-appuniversum/c-list-navigation';
-@import 'ember-appuniversum/c-loader';
-@import 'ember-appuniversum/c-pagination';
-@import 'ember-appuniversum/c-pill';
-@import 'ember-appuniversum/c-main-container';
-@import 'ember-appuniversum/c-main-header';
-@import 'ember-appuniversum/c-main-footer';
-@import 'ember-appuniversum/c-modal';
-@import 'ember-appuniversum/c-sidebar';
-@import 'ember-appuniversum/c-sidebar-action';
-@import 'ember-appuniversum/c-textarea';
-@import 'ember-appuniversum/c-timepicker';
-@import 'ember-appuniversum/c-toolbar';
-@import 'ember-appuniversum/c-toggle-switch';
+@import "ember-appuniversum/a-objects";
 
 // CUSTOM COMPONENTS
-@import 'ember-rdfa-editor/custom-components';
+@import 'ember-rdfa-editor/a-custom-components';
 
 // PLUGINS
-@import 'ember-appuniversum/p-ember-power-select';
-@import 'ember-appuniversum/p-duet-datepicker';
+@import "ember-appuniversum/a-plugins";
 
 // UTILITIES
-@import "appuniversum/u-align-text";
-@import "appuniversum/u-background";
-@import "appuniversum/u-break-word";
-@import "appuniversum/u-headings";
-@import "appuniversum/u-hide";
-@import "appuniversum/u-flex";
-@import "appuniversum/u-font-family";
-@import "appuniversum/u-font-weights";
-@import "appuniversum/u-max-widths";
-@import "appuniversum/u-paragraphs";
-@import "appuniversum/u-print";
-@import "appuniversum/u-responsive-spacings";
-@import "appuniversum/u-spacings";
-@import "appuniversum/u-visible";
-@import "appuniversum/u-widths";
+@import "ember-appuniversum/a-utilities";
+
+// SHAME
+@import 'ember-rdfa-editor/shame';

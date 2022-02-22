@@ -95,8 +95,8 @@
       background-color: var(--au-gray-100);
       background: linear-gradient(
         to right,
-        $au-gray-100,
-        $au-gray-100 calc(50% - #{$au-unit-tiny}),
+        var(--au-gray-100),
+        var(--au-gray-100) calc(50% - #{$au-unit-tiny}),
         transparent calc(50% - #{$au-unit-tiny}),
         transparent 100%
       );
