@@ -399,6 +399,7 @@ export default class ModelRange {
       ['left', 'both'].includes(start)
     ) {
       extraNodes.push(beforeStart);
+      seenNodes.add(beforeStart);
     }
     if (
       ModelNode.isModelText(afterStart) &&
