@@ -11,13 +11,13 @@ export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;
   private readonly _model: Model;
   private _rdfaPrefixes: Map<string, string>;
-  private _shouldConvertWhitespace:boolean;
+  private _shouldConvertWhitespace: boolean;
   activeMarks: Set<SpecAttributes> = new Set<SpecAttributes>();
 
   constructor(
     model: Model,
     rdfaPrefixes: Map<string, string> = new Map<string, string>(),
-    shouldConvertWhitespace:boolean = false
+    shouldConvertWhitespace = false
   ) {
     this._textAttributes = new Map<string, string>();
     this._model = model;
@@ -62,12 +62,19 @@ export class HtmlReaderContext {
  * Top-level reader for HTML documents
  */
 export default class HtmlReader implements Reader<Node, ModelNode[], void> {
-  constructor(private model: Model, private shouldConvertWhitespace: boolean = false) {}
+  constructor(
+    private model: Model,
+    private shouldConvertWhitespace: boolean = false
+  ) {}
 
   read(from: Node): ModelNode[] {
     from.normalize();
     const prefixes = calculateRdfaPrefixes(from);
-    const context = new HtmlReaderContext(this.model, prefixes, this.shouldConvertWhitespace);
+    const context = new HtmlReaderContext(
+      this.model,
+      prefixes,
+      this.shouldConvertWhitespace
+    );
     const nodeReader = new HtmlNodeReader();
     return nodeReader.read(from, context);
   }

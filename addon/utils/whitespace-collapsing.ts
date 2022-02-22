@@ -7,7 +7,7 @@ import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/model/util/constant
  * More information on https://drafts.csswg.org/css-text/#white-space-property
  * and https://drafts.csswg.org/css-text/#line-break-transform
  */
-export function preWrapToNormalWhiteSpace(from: string) : string {
+export function preWrapToNormalWhiteSpace(from: string): string {
   // // step 1: replace \r\n sequence with a single \n
   // const windowsNewLinePattern = /\r\n/g;
   // const replacement = '\n';
@@ -20,8 +20,8 @@ export function preWrapToNormalWhiteSpace(from: string) : string {
   let output = from.replace(/[\v\t ]{2}/g, `${NON_BREAKING_SPACE} `);
 
   // step 4: replaces spaces that would not render
-  output = output.replace(/[\v\t ]$/g,`${NON_BREAKING_SPACE}`);
-  return output
+  output = output.replace(/[\v\t ]$/g, `${NON_BREAKING_SPACE}`);
+  return output;
 }
 
 /**
@@ -35,7 +35,7 @@ export function preWrapToNormalWhiteSpace(from: string) : string {
  * More information on https://drafts.csswg.org/css-text/#white-space-property
  * and https://drafts.csswg.org/css-text/#line-break-transform
  */
-export function normalToPreWrapWhiteSpace(from: string) : string  {
+export function normalToPreWrapWhiteSpace(from: string): string {
   // step 1 collapse whitespace
   let trimmed = from;
   // Use ECMA-262 Edition 3 String and RegExp features
@@ -55,7 +55,7 @@ export function normalToPreWrapWhiteSpace(from: string) : string  {
   }
 
   if (!trimmed.length) {
-    return "";
+    return '';
   }
 
   return trimmed;

@@ -8,9 +8,9 @@ import ModelText from '../model-text';
  */
 export default class UnpollutedHtmlTextWriter extends HtmlTextWriter {
   write(modelNode: ModelText): Node | null {
-    let clone = modelNode.clone();
+    const clone = modelNode.clone();
     clone.content = preWrapToNormalWhiteSpace(modelNode.content);
-    let current = super.write(clone);
+    const current = super.write(clone);
     return current;
   }
 }
