@@ -123,33 +123,6 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
-  test('replaces spaces with nbsp when needed', (assert) => {
-    // language=XML
-    const {
-      root: initial,
-      elements: { parent },
-    } = vdom`
-      <modelRoot>
-        <div __id="parent">
-          <text>abcd${SPACE}</text>
-        </div>
-      </modelRoot>
-    `;
-
-    // language=XML
-    const { root: expected } = vdom`
-      <modelRoot>
-        <div>
-          <text>abcd${NON_BREAKING_SPACE}${SPACE}</text>
-        </div>
-      </modelRoot>
-    `;
-
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(parent, 5, 5);
-    command.execute(SPACE, range);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-  });
   test('space does not eat the character before it', (assert) => {
     // language=XML
     const {
