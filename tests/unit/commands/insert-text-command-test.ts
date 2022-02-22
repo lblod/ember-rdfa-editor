@@ -4,6 +4,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
 module('Unit | commands | insert-text-command-test', (hooks) => {
