@@ -13,6 +13,54 @@ import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
+export type StickySide = 'none' | 'left' | 'right' | 'both';
+
+export type SimpleRangeContextStrategy =
+  | 'rangeContains'
+  | 'rangeIsInside'
+  | 'rangeTouches';
+
+export type DetailedRangeContextStrategy =
+  | RangeIsInsideStrategy
+  | {
+      type: 'rangeContains';
+    }
+  | {
+      type: 'rangeTouches';
+    };
+/**
+ * Consider all nodes which the range "is inside of"
+ * This means: consider the common ancestor of start and end,
+ * and its entire ancestry tree up to and including root.
+ *
+ * If both start and end have the same parent, and both are located "inside"
+ * the same textnode (i.e. their offset falls between the offset of a textnode and (offset + length)
+ * that node is also considered.
+ */
+export type RangeIsInsideStrategy = {
+  type: 'rangeIsInside';
+  /**
+   * Bias for when start or end is adjacent to, but not "inside of", a textnode.
+   * e.g.: <text>1</text>|<text>2</text>|<text>3</text>
+   * Without stickyness, neither of the textnodes would be considered.
+   * Stickyness only affects textnodes. Elements have an unambiguous definition of "inside".
+   *
+   * with stickyness:
+   * start: right -> 2 is considered
+   * start: left -> 1 is considered
+   * start: both -> 1 & 2 are considered, in that order
+   * end: both -> 2 & 3 are considered, in that order
+   * start: left + end: both -> 1, 2 & 3 are considered, in that order
+   */
+  textNodeStickyness?: {
+    start?: StickySide;
+    end?: StickySide;
+  };
+};
+
+export type RangeContextStrategy =
+  | SimpleRangeContextStrategy
+  | DetailedRangeContextStrategy;
 /**
  * Model-space equivalent of a {@link Range}
  * Not much more than a container for two {@link ModelPosition ModelPositions}
@@ -308,14 +356,77 @@ export default class ModelRange {
   *contextNodes(
     strategy: RangeContextStrategy
   ): Generator<ModelNode, void, void> {
-    if (strategy === 'rangeContains') {
+    let strat: DetailedRangeContextStrategy;
+    if (typeof strategy === 'string') {
+      strat = {
+        type: strategy,
+      };
+    } else {
+      strat = strategy;
+    }
+
+    if (strat.type === 'rangeContains') {
       const walker = GenTreeWalker.fromRange({ range: this });
       yield* walker.nodes();
-    } else if (strategy === 'rangeIsInside') {
+    } else if (strat.type === 'rangeIsInside') {
+      yield* this.nodesInside(strat.textNodeStickyness);
+    } else if (strat.type === 'rangeTouches') {
       yield* this.findCommonAncestorsWhere(() => true);
+      const walker = GenTreeWalker.fromRange({ range: this });
+      yield* walker.nodes();
     } else {
       throw new IllegalArgumentError('Unsupported strategy');
     }
+  }
+
+  private *nodesInside({
+    start = 'none',
+    end = 'none',
+  }: { start?: StickySide; end?: StickySide } = {}): Generator<
+    ModelNode,
+    void,
+    void
+  > {
+    const extraNodes = [];
+    const seenNodes = new Set();
+    const beforeStart = this.start.nodeBefore();
+    const afterStart = this.start.nodeAfter();
+    const beforeEnd = this.end.nodeBefore();
+    const afterEnd = this.end.nodeAfter();
+
+    if (
+      ModelNode.isModelText(beforeStart) &&
+      ['left', 'both'].includes(start)
+    ) {
+      extraNodes.push(beforeStart);
+    }
+    if (
+      ModelNode.isModelText(afterStart) &&
+      // extra check if range is inside a single textNode, that will always be included
+      (['right', 'both'].includes(start) ||
+        ArrayUtils.areAllEqual([beforeStart, afterStart, beforeEnd, afterEnd]))
+    ) {
+      if (!seenNodes.has(afterStart)) {
+        extraNodes.push(afterStart);
+      }
+      seenNodes.add(afterStart);
+    }
+    if (ModelNode.isModelText(beforeEnd) && ['left', 'both'].includes(end)) {
+      if (!seenNodes.has(beforeEnd)) {
+        extraNodes.push(beforeEnd);
+      }
+      seenNodes.add(beforeEnd);
+    }
+    if (ModelNode.isModelText(afterEnd) && ['right', 'both'].includes(end)) {
+      if (!seenNodes.has(afterEnd)) {
+        extraNodes.push(afterEnd);
+      }
+      seenNodes.add(afterEnd);
+    }
+    for (const node of extraNodes) {
+      yield node;
+    }
+    yield* this.findCommonAncestorsWhere(() => true);
   }
 
   getTextContent(): string {
@@ -530,4 +641,3 @@ export class ModelRangeFactory implements RangeFactory {
   }
 }
 
-export type RangeContextStrategy = 'rangeContains' | 'rangeIsInside';

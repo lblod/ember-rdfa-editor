@@ -10,6 +10,7 @@ import {
   elementHasType,
   nodeIsElementOfType,
 } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
+import { XmlReaderResult } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
 
 module('Unit | model | model-range', () => {
   module('Unit | model | model-range | getMinimumConfinedRanges', () => {
@@ -365,6 +366,126 @@ module('Unit | model | model-range', () => {
 
         assert.true(range.containsNodeWhere(nodeIsElementOfType('li')));
       });
+    });
+  });
+  module('Unit | model | model-range | contextNodes', (hooks) => {
+    let testDoc: XmlReaderResult;
+    let collapsedInText: ModelRange;
+    let collapsedBeforeText: ModelRange;
+    let collapsedAfterText: ModelRange;
+    let unCollapsedInText: ModelRange;
+    let collapsedInEmpty: ModelRange;
+    let acrossTwoTextNodes: ModelRange;
+    let overLineBreak: ModelRange;
+    let endDeeperThanStart: ModelRange;
+    let differentSubtrees: ModelRange;
+    let aroundText: ModelRange;
+    hooks.beforeEach(() => {
+      //language=XML
+      testDoc = vdom`
+        <modelRoot>
+          <div __id="emptyDiv"/>
+          <div __id="div1">
+            <text __id="text1">test</text>
+          </div>
+          <div __id="div2">
+            <text __id="text2">test</text>
+            <text __id="text3">test</text>
+          </div>
+          <div __id="div3">
+            <text __id="text4">test</text>
+            <br/>
+            <text __id="text5">test</text>
+          </div>
+          <div __id="div4">
+            <text __id="text6">test</text>
+            <br/>
+            <span>
+              <text __id="text7">test</text>
+            </span>
+          </div>
+          <div __id="div5">
+            <span>
+              <text __id="text8">test</text>
+            </span>
+            <br/>
+            <span>
+              <text __id="text9">test</text>
+            </span>
+          </div>
+        </modelRoot>
+      `;
+      const {
+        root,
+        textNodes: { text1, text6, text7, text8, text9 },
+        elements: { emptyDiv, div1, div2, div3 },
+      } = testDoc;
+      collapsedInText = ModelRange.fromInNode(text1, 1, 1);
+      collapsedBeforeText = ModelRange.fromInNode(div1, 0, 0);
+      collapsedAfterText = ModelRange.fromInNode(div1, 4, 4);
+      collapsedInEmpty = ModelRange.fromInNode(emptyDiv, 0, 0);
+      unCollapsedInText = ModelRange.fromInNode(text1, 1, 3);
+      aroundText = ModelRange.fromAroundNode(text1);
+      acrossTwoTextNodes = ModelRange.fromInNode(div2, 2, 6);
+      overLineBreak = ModelRange.fromInNode(div3, 2, 7);
+      endDeeperThanStart = new ModelRange(
+        ModelPosition.fromInTextNode(text6, 2),
+        ModelPosition.fromInTextNode(text7, 2)
+      );
+      differentSubtrees = new ModelRange(
+        ModelPosition.fromInTextNode(text8, 2),
+        ModelPosition.fromInTextNode(text9, 2)
+      );
+    });
+
+    test('isInside gives correct nodes', (assert) => {
+      const {
+        root,
+        elements: { div1 },
+        textNodes: { text1 },
+      } = testDoc;
+      const collapsedInTextContext = [
+        ...collapsedInText.contextNodes('rangeIsInside'),
+      ];
+      assert.deepEqual(collapsedInTextContext, [text1, div1, root]);
+
+      const unCollapsedInTextContext = [
+        ...unCollapsedInText.contextNodes('rangeIsInside'),
+      ];
+      assert.deepEqual(unCollapsedInTextContext, [text1, div1, root]);
+
+      const aroundTextContext = [...aroundText.contextNodes('rangeIsInside')];
+      assert.deepEqual(aroundTextContext, [div1, root]);
+    });
+    test('isInside with both sides sticky gives correct nodes', (assert) => {
+      const {
+        root,
+        elements: { div1 },
+        textNodes: { text1 },
+      } = testDoc;
+      const collapsedInTextContext = [
+        ...collapsedInText.contextNodes({
+          type: 'rangeIsInside',
+          textNodeStickyness: { start: 'both', end: 'both' },
+        }),
+      ];
+      assert.deepEqual(collapsedInTextContext, [text1, div1, root]);
+
+      const unCollapsedInTextContext = [
+        ...unCollapsedInText.contextNodes({
+          type: 'rangeIsInside',
+          textNodeStickyness: { start: 'both', end: 'both' },
+        }),
+      ];
+      assert.deepEqual(unCollapsedInTextContext, [text1, div1, root]);
+
+      const aroundTextContext = [
+        ...aroundText.contextNodes({
+          type: 'rangeIsInside',
+          textNodeStickyness: { start: 'both', end: 'both' },
+        }),
+      ];
+      assert.deepEqual(aroundTextContext, [text1, div1, root]);
     });
   });
 });

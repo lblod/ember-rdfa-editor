@@ -32,6 +32,20 @@ export default class ArrayUtils {
     }
     return null;
   }
+
+  static areAllEqual<I>(array: Array<I>) {
+    if (array.length === 0) {
+      return true;
+    }
+    let prev = array[0];
+    for (const item of array) {
+      if (item !== prev) {
+        return false;
+      }
+      prev = item;
+    }
+    return true;
+  }
 }
 
 export function pushOrExpand<T>(parent: T[], child: T | T[]): void {
