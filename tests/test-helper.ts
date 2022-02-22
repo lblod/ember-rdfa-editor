@@ -10,6 +10,7 @@ import { setup } from 'qunit-dom';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 
 setup(QUnit.assert);
+const defaultDumpDepth = QUnit.dump.maxDepth;
 
 // eslint-disable-next-line @typescript-eslint/unbound-method
 const defaultParse: (
@@ -108,6 +109,9 @@ QUnit.dump.parse = function (
     return defaultParse.call(this, data, objType, stack) as string;
   }
 };
+QUnit.hooks.afterEach(() => {
+  QUnit.dump.maxDepth = defaultDumpDepth;
+});
 
 setApplication(Application.create(config.APP));
 

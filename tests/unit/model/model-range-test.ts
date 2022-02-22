@@ -439,15 +439,31 @@ module('Unit | model | model-range', () => {
     });
 
     test('isInside gives correct nodes', (assert) => {
+      QUnit.dump.maxDepth = 2;
       const {
         root,
-        elements: { div1 },
+        elements: { div1, emptyDiv },
         textNodes: { text1 },
       } = testDoc;
+      const collapsedInEmptyContext = [
+        ...collapsedInEmpty.contextNodes('rangeIsInside'),
+      ];
+      assert.deepEqual(collapsedInEmptyContext, [emptyDiv, root]);
+
       const collapsedInTextContext = [
         ...collapsedInText.contextNodes('rangeIsInside'),
       ];
       assert.deepEqual(collapsedInTextContext, [text1, div1, root]);
+
+      const collapsedBeforeTextContext = [
+        ...collapsedBeforeText.contextNodes('rangeIsInside'),
+      ];
+      assert.deepEqual(collapsedBeforeTextContext, [div1, root]);
+
+      const collapsedAfterTextContext = [
+        ...collapsedAfterText.contextNodes('rangeIsInside'),
+      ];
+      assert.deepEqual(collapsedAfterTextContext, [text1, div1, root]);
 
       const unCollapsedInTextContext = [
         ...unCollapsedInText.contextNodes('rangeIsInside'),
