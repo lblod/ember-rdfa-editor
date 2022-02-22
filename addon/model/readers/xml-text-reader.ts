@@ -13,6 +13,7 @@ export default class XmlTextReader implements Reader<Element, ModelText, void> {
     for (const attribute of from.attributes) {
       if (attribute.name === '__id') {
         this.registry[attribute.value] = rslt;
+        rslt.setAttribute(attribute.name, attribute.value);
       } else if (attribute.name === '__marks') {
         const markNames = attribute.value.split(',');
         for (const markName of markNames) {

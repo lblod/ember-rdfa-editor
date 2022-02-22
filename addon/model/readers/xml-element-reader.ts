@@ -1,16 +1,16 @@
 import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import XmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/xml-node-reader';
-import { XmlNodeRegistry } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
+import {XmlNodeRegistry} from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
 export default class XmlElementReader
-  implements Reader<Element, ModelElement, void>
-{
+  implements Reader<Element, ModelElement, void> {
   constructor(
     private elementRegistry: XmlNodeRegistry<ModelElement>,
     private textRegistry: XmlNodeRegistry<ModelText>
-  ) {}
+  ) {
+  }
 
   read(from: Element): ModelElement {
     let rslt;
@@ -28,9 +28,8 @@ export default class XmlElementReader
     for (const attribute of from.attributes) {
       if (attribute.name === '__id') {
         this.elementRegistry[attribute.value] = rslt;
-      } else {
-        rslt.setAttribute(attribute.name, attribute.value);
       }
+      rslt.setAttribute(attribute.name, attribute.value);
     }
     for (const childNode of from.childNodes) {
       const child = nodeReader.read(childNode);

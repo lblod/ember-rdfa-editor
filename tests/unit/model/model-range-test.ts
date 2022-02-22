@@ -458,6 +458,7 @@ module('Unit | model | model-range', () => {
       assert.deepEqual(aroundTextContext, [div1, root]);
     });
     test('isInside with both sides sticky gives correct nodes', (assert) => {
+      QUnit.dump.maxDepth = 2;
       const {
         root,
         elements: { div1 },
