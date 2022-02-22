@@ -44,16 +44,19 @@ export function normalToPreWrapWhiteSpace(from: string) : string  {
   const replacement = ' ';
 
   trimmed = trimmed.replace(pattern, replacement);
-  if (trimmed.charAt(0) == ' ') {
-    trimmed = trimmed.substring(1, trimmed.length);
-  }
-  if (!trimmed.length) {
-    return "";
-  }
 
   // step 2 replace linebreaks with spaces
   const linebreakPattern = /[\n\r]/g;
   trimmed = trimmed.replace(linebreakPattern, ' ');
+
+  // step 3, remove starting spaces because they don't show
+  if (trimmed.charAt(0) == ' ') {
+    trimmed = trimmed.substring(1, trimmed.length);
+  }
+
+  if (!trimmed.length) {
+    return "";
+  }
 
   return trimmed;
 }
