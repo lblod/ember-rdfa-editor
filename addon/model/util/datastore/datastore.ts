@@ -7,6 +7,8 @@ import {
   ModelQuadObject,
   ModelQuadPredicate,
   ModelQuadSubject,
+  quadHash,
+  QuadNodes,
   RdfaParseConfig,
   RdfaParser,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
@@ -170,6 +172,7 @@ interface DatastoreConfig {
 
   objectToNodes: Map<string, ModelNode[]>;
   nodeToObjects: Map<ModelNode, Set<ModelQuadObject>>;
+  quadToNodes: Map<string, QuadNodes>;
   prefixMapping: Map<string, string>;
 }
 
@@ -182,6 +185,7 @@ export class EditorStore implements Datastore {
   private _predicateToNodes: Map<string, ModelNode[]>;
   private _nodeToObjects: Map<ModelNode, Set<ModelQuadObject>>;
   private _objectToNodes: Map<string, ModelNode[]>;
+  private _quadToNodes: Map<string, QuadNodes>;
 
   constructor({
     dataset,
@@ -192,6 +196,7 @@ export class EditorStore implements Datastore {
     predicateToNodes,
     nodeToObjects,
     objectToNodes,
+    quadToNodes,
   }: DatastoreConfig) {
     this._dataset = dataset;
     this._nodeToSubject = nodeToSubject;
@@ -201,6 +206,7 @@ export class EditorStore implements Datastore {
     this._predicateToNodes = predicateToNodes;
     this._nodeToObjects = nodeToObjects;
     this._objectToNodes = objectToNodes;
+    this._quadToNodes = quadToNodes;
   }
 
   static fromParse(config: RdfaParseConfig): Datastore {
@@ -212,6 +218,7 @@ export class EditorStore implements Datastore {
       nodeToObjectsMapping,
       predicateToNodesMapping,
       nodeToPredicatesMapping,
+      quadToNodesMapping,
     } = RdfaParser.parse(config);
     const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
 
@@ -224,6 +231,7 @@ export class EditorStore implements Datastore {
       nodeToObjects: nodeToObjectsMapping,
       predicateToNodes: predicateToNodesMapping,
       nodeToPredicates: nodeToPredicatesMapping,
+      quadToNodes: quadToNodesMapping,
     });
   }
 
@@ -263,36 +271,21 @@ export class EditorStore implements Datastore {
   }
 
   limitToRange(range: ModelRange, strategy: RangeContextStrategy): Datastore {
-    const subjects = this.subjectsForRange(range, strategy);
-    const subToNodesCopy = new Map(this._subjectToNodes);
-    const nodeToSubCopy = new Map(this._nodeToSubject);
-    const predToNodesCopy = new Map(this._predicateToNodes);
-    const nodeToPredsCopy = new Map(this._nodeToPredicates);
-    const objToNodesCopy = new Map(this._objectToNodes);
-    const nodeToObjCopy = new Map(this._nodeToObjects);
-    const newSet = this.dataset.filter((quad) => {
-      if (subjects.has(quad.subject.value)) {
-        return true;
-      } else {
-        const nodes = subToNodesCopy.get(quad.subject.value);
-        if (nodes) {
-          for (const node of nodes) {
-            nodeToSubCopy.delete(node);
-          }
-          subToNodesCopy.delete(quad.subject.value);
+    const contextNodes = new Set(range.contextNodes(strategy));
+    return this.transformDataset((dataset) => {
+      return dataset.filter((quad) => {
+        const quadNodes = this._quadToNodes.get(quadHash(quad));
+        if (quadNodes) {
+          const { subjectNode, predicateNode, objectNode } = quadNodes;
+          return (
+            contextNodes.has(subjectNode) &&
+            contextNodes.has(predicateNode) &&
+            contextNodes.has(objectNode)
+          );
+        } else {
+          return false;
         }
-        return false;
-      }
-    });
-    return new EditorStore({
-      dataset: newSet,
-      subjectToNodes: subToNodesCopy,
-      nodeToSubject: nodeToSubCopy,
-      predicateToNodes: predToNodesCopy,
-      nodeToPredicates: nodeToPredsCopy,
-      objectToNodes: objToNodesCopy,
-      nodeToObjects: nodeToObjCopy,
-      prefixMapping: this._prefixMapping,
+      });
     });
   }
 
@@ -459,6 +452,7 @@ export class EditorStore implements Datastore {
       nodeToObjects: this._nodeToObjects,
       objectToNodes: this._objectToNodes,
       prefixMapping: this._prefixMapping,
+      quadToNodes: this._quadToNodes,
     });
   }
 

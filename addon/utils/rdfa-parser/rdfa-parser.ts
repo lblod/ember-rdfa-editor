@@ -51,6 +51,12 @@ export interface RdfaParseConfig {
   pathFromDomRoot?: Node[];
 }
 
+export interface QuadNodes {
+  subjectNode: ModelNode;
+  predicateNode: ModelNode;
+  objectNode: ModelNode;
+}
+
 export interface RdfaParseResponse {
   dataset: RDF.Dataset;
 
@@ -62,6 +68,8 @@ export interface RdfaParseResponse {
 
   nodeToPredicatesMapping: Map<ModelNode, Set<ModelQuadPredicate>>;
   predicateToNodesMapping: Map<string, ModelNode[]>;
+
+  quadToNodesMapping: Map<string, QuadNodes>;
 }
 
 export class RdfaParser {
@@ -84,6 +92,8 @@ export class RdfaParser {
   // nodes can define multiple predicates
   private nodeToPredicatesMapping: Map<ModelNode, Set<ModelQuadPredicate>>;
   private predicateToNodesMapping: Map<string, ModelNode[]>;
+
+  private quadToNodesMapping: Map<string, QuadNodes>;
 
   private rootModelNode?: ModelNode;
   private seenNodes: Map<RDF.Term, ModelNode>;
@@ -116,6 +126,8 @@ export class RdfaParser {
     this.nodeToObjectsMapping = new Map<ModelNode, Set<ModelQuadObject>>();
     this.objectToNodesMapping = new Map<string, ModelNode[]>();
     this.seenNodes = new Map<RDF.Term, ModelNode>();
+
+    this.quadToNodesMapping = new Map<string, QuadNodes>();
 
     this.activeTagStack.push({
       incompleteTriples: [],
@@ -173,6 +185,7 @@ export class RdfaParser {
       predicateToNodesMapping: parser.predicateToNodesMapping,
       nodeToObjectsMapping: parser.nodeToObjectsMapping,
       objectToNodesMapping: parser.objectToNodesMapping,
+      quadToNodesMapping: parser.quadToNodesMapping,
     };
   }
 
@@ -1208,17 +1221,22 @@ export class RdfaParser {
     }
     if (object.node && !this.seenNodes.has(object)) {
       this.seenNodes.set(object, object.node);
-      MapUtils.setOrAdd(this.nodeToObjectsMapping, predicate.node, predicate);
-      MapUtils.setOrPush(
-        this.objectToNodesMapping,
-        predicate.value,
-        predicate.node
-      );
+      MapUtils.setOrAdd(this.nodeToObjectsMapping, object.node, object);
+      MapUtils.setOrPush(this.objectToNodesMapping, object.value, object.node);
     }
-
-    this.resultSet.add(
-      this.util.dataFactory.quad(subject, predicate, object, this.defaultGraph)
+    const resultQuad = this.util.dataFactory.quad(
+      subject,
+      predicate,
+      object,
+      this.defaultGraph
     );
+    this.quadToNodesMapping.set(quadHash(resultQuad), {
+      subjectNode: subject.node!,
+      predicateNode: predicate.node!,
+      objectNode: object.node!,
+    });
+
+    this.resultSet.add(resultQuad);
   }
 
   /**
@@ -1352,4 +1370,8 @@ export class NullOrUndefinedError extends CustomError {
   constructor() {
     super('Unexpected null/undefined value for variable');
   }
+}
+
+export function quadHash(quad: RDF.Quad): string {
+  return `${quad.subject.termType}${quad.subject.value}${quad.predicate.termType}${quad.predicate.value}${quad.object.termType}${quad.object.value}${quad.graph.termType}${quad.graph.value}`;
 }

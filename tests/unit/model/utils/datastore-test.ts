@@ -368,12 +368,13 @@ module('Unit | model | utils | legacy-datastore-test', () => {
     const decisionValueStore = dataStore.match(`>${decisionUri}`, 'prov:value');
     assert.strictEqual(decisionValueStore.size, 1);
   });
-  // TODO limitToRange currently only works on subjectnodes, tbd how to handle this
-  todo('limitToRange works as expected', (assert) => {
+
+  test('limitToRange works as expected', (assert) => {
     //language=XML
     const {
       root,
       elements: { selected },
+      textNodes: { insideProv },
     } = vdom`
       <div vocab="http://data.vlaanderen.be/ns/besluit#"
            prefix="eli: http://data.europa.eu/eli/ontology# prov: http://www.w3.org/ns/prov# mandaat: http://data.vlaanderen.be/ns/mandaat# besluit: http://data.vlaanderen.be/ns/besluit# xsd: http://www.w3.org/2001/XMLSchema#"
@@ -391,7 +392,7 @@ module('Unit | model | utils | legacy-datastore-test', () => {
                     resource="http://publications.europa.eu/resource/authority/language/NLD" typeof="skos:Concept"/>
               <div property="prov:value" datatype="xsd:string" __id="selected">
                 <span class="mark-highlight-manual">
-                  <text>Voer inhoud in</text>
+                  <text __id="insideProv">Voer inhoud in</text>
                 </span>
               </div>
             </div>
@@ -412,6 +413,12 @@ module('Unit | model | utils | legacy-datastore-test', () => {
     });
     const range = ModelRange.fromAroundNode(selected);
     const limitedStore = datastore.limitToRange(range, 'rangeContains');
-    assert.strictEqual(limitedStore.size, 1);
+    assert.strictEqual(limitedStore.size, 0);
+
+    const rangeInside = ModelRange.fromInNode(insideProv, 2, 2);
+    const insideStore = datastore
+      .limitToRange(rangeInside, 'rangeIsInside')
+      .match(null, 'prov:value');
+    assert.strictEqual(insideStore.size, 2);
   });
 });
