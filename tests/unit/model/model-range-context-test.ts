@@ -192,7 +192,7 @@ module('Unit | model | model-range | contextNodes', () => {
           type: 'rangeIsInside',
           textNodeStickyness: { start: 'both', end: 'both' },
         },
-        [text2, text3, div2, root]
+        [div2, root]
       );
 
       contextTest(
@@ -202,7 +202,7 @@ module('Unit | model | model-range | contextNodes', () => {
           type: 'rangeIsInside',
           textNodeStickyness: { start: 'both', end: 'both' },
         },
-        [text4, text5, div3, root]
+        [div3, root]
       );
 
       contextTest(

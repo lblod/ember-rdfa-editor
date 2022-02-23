@@ -36,21 +36,76 @@ export type DetailedRangeContextStrategy =
  * If both start and end have the same parent, and both are located "inside"
  * the same textnode (i.e. their offset falls between the offset of a textnode and (offset + length)
  * that node is also considered.
+ *
+ * For cases where either side of the range falls just in front or just after a common textnode,
+ * the stickyness parameter determines whether that textnode is considered or not
  */
 export type RangeIsInsideStrategy = {
   type: 'rangeIsInside';
   /**
-   * Bias for when start or end is adjacent to, but not "inside of", a textnode.
-   * e.g.: <text>1</text>|<text>2</text>|<text>3</text>
-   * Without stickyness, neither of the textnodes would be considered.
-   * Stickyness only affects textnodes. Elements have an unambiguous definition of "inside".
    *
-   * with stickyness:
-   * start: right -> 2 is considered
-   * start: left -> 1 is considered
-   * start: both -> 1 & 2 are considered, in that order
-   * end: both -> 2 & 3 are considered, in that order
-   * start: left + end: both -> 1, 2 & 3 are considered, in that order
+   * Recall that a textnode is only considered if both start and end of the range
+   * can be considered to be inside of that textnode.
+   *
+   * With that in mind, the stickyness parameter determines whether either side of
+   * the range is "sticky", meaning that the position will be considered to be inside any textnode it
+   * is directly adjacent to, in the chosen direction.
+   *
+   * This leads to the following results:
+   *
+   * collapsed ranges:
+   *
+   * <text>abc</text>||
+   *
+   * without stickyness, the textnode would not be considered.
+   * following combinations would consider it:
+   * start: left, end: left
+   * start: both, end: left
+   * start: left, end: both
+   * start: both, end: both
+   *
+   * <text>abc</text>||<text>def</text>
+   *
+   * the first node would be considered if:
+   * start: left, end: left
+   * start: left, end: both
+   *
+   * the second node would be considered if:
+   * start: right, end:right
+   * start: both, end: right
+   *
+   * both nodes would be considered if:
+   * start: both, end: both
+   *
+   * uncollapsed ranges:
+   *
+   * recall: uncollapsed ranges where the node after the start and the node before the end are not the same,
+   * are never affected, since they can never be considered to be fully "inside" a textnode.
+   *
+   * e.g.:
+   *
+   * <text>ab|c</text><text>de|f</text>
+   *
+   * No matter the stickyness, neither textnode will be considered.
+   *
+   * However in the following scenario, stickyness does matter:
+   *
+   * |<text>abc</text>|
+   *
+   * the node will be considered if:
+   * start: right, end: left
+   * start: right, end: both
+   * start: both, end: left
+   * start: both, end: both
+   *
+   * and another scenario:
+   *
+   * <text>ab|c</text>|
+   *
+   * considered if:
+   * end: left or both
+   * (start stickyness doesn't matter here since start is unambiguously inside the node already)
+   *
    */
   textNodeStickyness?: {
     start?: StickySide;
@@ -394,39 +449,44 @@ export default class ModelRange {
     const beforeEnd = this.end.nodeBefore();
     const afterEnd = this.end.nodeAfter();
 
-    if (
-      ModelNode.isModelText(beforeStart) &&
-      ['left', 'both'].includes(start)
-    ) {
-      extraNodes.push(beforeStart);
-      seenNodes.add(beforeStart);
-    }
-    if (
-      ModelNode.isModelText(afterStart) &&
-      // extra check if range is inside a single textNode, that will always be included
-      (['right', 'both'].includes(start) ||
-        ArrayUtils.areAllEqual([beforeStart, afterStart, beforeEnd, afterEnd]))
-    ) {
-      if (!seenNodes.has(afterStart)) {
-        extraNodes.push(afterStart);
+    if (this.collapsed && !this.start.isInsideText()) {
+      if (
+        ModelNode.isModelText(beforeStart) &&
+        ['left', 'both'].includes(start) &&
+        ['left', 'both'].includes(end)
+      ) {
+        if (!seenNodes.has(beforeStart)) {
+          extraNodes.push(beforeStart);
+          seenNodes.add(beforeStart);
+        }
       }
-      seenNodes.add(afterStart);
-    }
-    if (ModelNode.isModelText(beforeEnd) && ['left', 'both'].includes(end)) {
-      if (!seenNodes.has(beforeEnd)) {
-        extraNodes.push(beforeEnd);
+      if (
+        ModelNode.isModelText(afterEnd) &&
+        ['right', 'both'].includes(start) &&
+        ['right', 'both'].includes(end)
+      ) {
+        if (!seenNodes.has(afterEnd)) {
+          extraNodes.push(afterEnd);
+          seenNodes.add(afterEnd);
+        }
       }
-      seenNodes.add(beforeEnd);
-    }
-    if (ModelNode.isModelText(afterEnd) && ['right', 'both'].includes(end)) {
-      if (!seenNodes.has(afterEnd)) {
-        extraNodes.push(afterEnd);
+    } else {
+      if (ModelNode.isModelText(afterStart) && afterStart === beforeEnd) {
+        if (
+          (this.start.isInsideText() || ['right', 'both'].includes(start)) &&
+          (this.end.isInsideText() || ['left', 'both'].includes(end))
+        ) {
+          if (!seenNodes.has(afterStart)) {
+            extraNodes.push(afterStart);
+            seenNodes.add(afterStart);
+          }
+        }
       }
-      seenNodes.add(afterEnd);
     }
     for (const node of extraNodes) {
       yield node;
     }
+
     yield* this.findCommonAncestorsWhere(() => true);
   }
 
