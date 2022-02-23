@@ -21,13 +21,38 @@ export type SimpleRangeContextStrategy =
   | 'rangeTouches';
 
 export type DetailedRangeContextStrategy =
+  | RangeContainsStrategy
   | RangeIsInsideStrategy
-  | {
-      type: 'rangeContains';
-    }
-  | {
-      type: 'rangeTouches';
-    };
+  | RangeTouchesStrategy;
+/**
+ * Consider all nodes contained by this range.
+ *
+ * Conceptually, imagine selecting your range in the serialized
+ * html representation and considering all opening tags and full textNodes you encounter.
+ * (in this metaphor, consider textnodes to not have tags).
+ *
+ * With this image in mind, we should consider what happens with textnodes at the edges.
+ *
+ * e.g.
+ *
+ * <text>ab|c</text><text>de|f</text>
+ *
+ * For historical reasons, the default behavior of this strategy is to always
+ * consider textnodes at the start and end if the start or end positions
+ * are "inside" the respective textnode. So in the above example,
+ * both would be considered.
+ *
+ * But if we have:
+ * <text>abc</text>|<text>de|f</text>
+ *
+ * Only the second node would be considered.
+ *
+ * TODO: add options to adjust this behavior when the need arises
+ *
+ */
+export type RangeContainsStrategy = {
+  type: 'rangeContains';
+};
 /**
  * Consider all nodes which the range "is inside of"
  * This means: consider the common ancestor of start and end,
@@ -113,6 +138,16 @@ export type RangeIsInsideStrategy = {
   };
 };
 
+/**
+ * Consider all nodes that this range "touches".
+ * Essentially, this is a combination of the "rangeIsInside" and
+ * "rangeContains" strategies, giving you first the contained nodes
+ * and then the ancestry tree.
+ * TODO: respect document order
+ */
+export type RangeTouchesStrategy = {
+  type: 'rangeTouches';
+};
 export type RangeContextStrategy =
   | SimpleRangeContextStrategy
   | DetailedRangeContextStrategy;
@@ -426,9 +461,9 @@ export default class ModelRange {
     } else if (strat.type === 'rangeIsInside') {
       yield* this.nodesInside(strat.textNodeStickyness);
     } else if (strat.type === 'rangeTouches') {
-      yield* this.findCommonAncestorsWhere(() => true);
       const walker = GenTreeWalker.fromRange({ range: this });
       yield* walker.nodes();
+      yield* this.findCommonAncestorsWhere(() => true);
     } else {
       throw new IllegalArgumentError('Unsupported strategy');
     }

@@ -21,12 +21,12 @@ module('Unit | model | model-range | contextNodes', () => {
       </div>
       <div __id="div3">
         <text __id="text4">test</text>
-        <br/>
+        <br __id="br1"/>
         <text __id="text5">test</text>
       </div>
       <div __id="div4">
         <text __id="text6">test</text>
-        <br/>
+        <br __id="br2"/>
         <span __id="span1">
           <text __id="text7">test</text>
         </span>
@@ -35,7 +35,7 @@ module('Unit | model | model-range | contextNodes', () => {
         <span __id="span2">
           <text __id="text8">test</text>
         </span>
-        <br/>
+        <br __id="br3"/>
         <span __id="span3">
           <text __id="text9">test</text>
         </span>
@@ -45,8 +45,19 @@ module('Unit | model | model-range | contextNodes', () => {
   const { root, textNodes, elements } = testDoc;
   const { text1, text2, text3, text4, text5, text6, text7, text8, text9 } =
     textNodes;
-  const { emptyDiv, div1, div2, div3, div4, div5, span1, span2, span3 } =
-    elements;
+  const {
+    emptyDiv,
+    br1,
+    br2,
+    br3,
+    div1,
+    div2,
+    div3,
+    div4,
+    div5,
+    span1,
+    span3,
+  } = elements;
 
   const collapsedInText: ModelRange = ModelRange.fromInNode(text1, 1, 1);
   const collapsedBeforeText: ModelRange = ModelRange.fromInNode(div1, 0, 0);
@@ -65,7 +76,7 @@ module('Unit | model | model-range | contextNodes', () => {
     ModelPosition.fromInTextNode(text9, 2)
   );
   module(
-    'Unit | model | model-range | contextNodes | isInside | sticky: none',
+    'Unit | model | model-range | contextNodes | isInside | default',
     () => {
       contextTest('collapsed in empty', collapsedInEmpty, 'rangeIsInside', [
         emptyDiv,
@@ -224,6 +235,135 @@ module('Unit | model | model-range | contextNodes', () => {
         },
         [div5, root]
       );
+    }
+  );
+
+  module(
+    'Unit | model | model-range | contextNodes | rangeContains | default',
+    () => {
+      contextTest('collapsed in empty', collapsedInEmpty, 'rangeContains', []);
+      contextTest('collapsed in text', collapsedInText, 'rangeContains', [
+        text1,
+      ]);
+
+      contextTest(
+        'collapsed before text',
+        collapsedBeforeText,
+        'rangeContains',
+        []
+      );
+
+      contextTest(
+        'collapsed after text',
+        collapsedAfterText,
+        'rangeContains',
+        []
+      );
+
+      contextTest('uncollapsed in text', unCollapsedInText, 'rangeContains', [
+        text1,
+      ]);
+
+      contextTest('around text', aroundText, 'rangeContains', [text1]);
+
+      contextTest(
+        'across two text nodes',
+        acrossTwoTextNodes,
+        'rangeContains',
+        [text2, text3]
+      );
+
+      contextTest('over linebreak', overLineBreak, 'rangeContains', [
+        text4,
+        br1,
+        text5,
+      ]);
+
+      contextTest(
+        'end deeper than start',
+        endDeeperThanStart,
+        'rangeContains',
+        [text6, br2, span1, text7]
+      );
+
+      contextTest('different subtrees', differentSubtrees, 'rangeContains', [
+        text8,
+        br3,
+        span3,
+        text9,
+      ]);
+    }
+  );
+
+  module(
+    'Unit | model | model-range | contextNodes | rangeTouches | default',
+    () => {
+      contextTest('collapsed in empty', collapsedInEmpty, 'rangeTouches', [
+        emptyDiv,
+        root,
+      ]);
+      contextTest('collapsed in text', collapsedInText, 'rangeTouches', [
+        text1,
+        div1,
+        root,
+      ]);
+
+      contextTest(
+        'collapsed before text',
+        collapsedBeforeText,
+        'rangeTouches',
+        [div1, root]
+      );
+
+      contextTest('collapsed after text', collapsedAfterText, 'rangeTouches', [
+        div1,
+        root,
+      ]);
+
+      contextTest('uncollapsed in text', unCollapsedInText, 'rangeTouches', [
+        text1,
+        div1,
+        root,
+      ]);
+
+      contextTest('around text', aroundText, 'rangeTouches', [
+        text1,
+        div1,
+        root,
+      ]);
+
+      contextTest('across two text nodes', acrossTwoTextNodes, 'rangeTouches', [
+        text2,
+        text3,
+        div2,
+        root,
+      ]);
+
+      contextTest('over linebreak', overLineBreak, 'rangeTouches', [
+        text4,
+        br1,
+        text5,
+        div3,
+        root,
+      ]);
+
+      contextTest('end deeper than start', endDeeperThanStart, 'rangeTouches', [
+        text6,
+        br2,
+        span1,
+        text7,
+        div4,
+        root,
+      ]);
+
+      contextTest('different subtrees', differentSubtrees, 'rangeTouches', [
+        text8,
+        br3,
+        span3,
+        text9,
+        div5,
+        root,
+      ]);
     }
   );
 });
