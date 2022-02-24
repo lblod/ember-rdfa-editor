@@ -3,46 +3,7 @@
    ================================== */
 
 // CUSTOM UI COMPONENTS
-@import 'c-container';
-@import 'c-dropdown';
-@import 'c-content';
-@import 'c-editor';
-@import 'c-editor-hints';
-@import 'c-icon';
-@import 'c-toast';
-@import 'c-toolbar';
-@import 'c-table';
-
-// RDFA AND ANNOTATION COMPONENTS
-@import 'c-annotation';
-@import 'c-annotation-hover';
-@import 'c-annotation-flag';
-@import 'c-annotation-content-nl';
-@import 'c-annotation-content-en';
-
-// PLUGIN COMPONENTS > DEPRECATED > Use ember-appuniversum components where possible
-// @TODO: remove when all plugins are using appuniversum
-@import '../deprecated/c-button';
-@import '../deprecated/c-checkbox';
-@import '../deprecated/c-label';
-@import '../deprecated/c-input';
-@import '../deprecated/c-modal';
-@import '../deprecated/c-help-text';
-@import '../deprecated/c-card';
-@import '../deprecated/c-link-list';
-@import '../deprecated/c-loader';
-@import '../deprecated/c-link';
-@import '../deprecated/c-pagination';
-@import '../deprecated/c-form';
-@import '../deprecated/c-article';
-@import '../deprecated/c-alert';
-// THIRD PARTY PLUGIN STYLE
-@import '../deprecated/p-flatpickr'; // DEPRECATED > Use ember-appuniversum date-picker where possible
-
-// UTILITIES > DEPRECATED > Use ember-appuniversum utilities where possible
-@import '../deprecated/u-align-text';
-@import '../deprecated/u-hide';
-@import '../deprecated/u-word-break';
+@import 'a-custom-components';
 
 // SHAME
 @import 'shame';
