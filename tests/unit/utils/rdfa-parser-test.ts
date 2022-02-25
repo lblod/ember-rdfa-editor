@@ -75,8 +75,8 @@ module('Unit | utils | rdfa-parser-test', () => {
     if (!nameMapping) {
       throw new AssertionError();
     }
-    assert.strictEqual(nameMapping.size, 1);
-    assert.true(nameMapping.has(namePred));
+    assert.strictEqual(nameMapping.length, 1);
+    assert.true(nameMapping.includes(namePred));
     const expected = conciseToRdfjs('>http://xmlns.com/foaf/0.1/name');
     const namePredicates = nodeToPredicatesMapping.get(namePred);
     assert.ok(namePredicates);
@@ -90,9 +90,9 @@ module('Unit | utils | rdfa-parser-test', () => {
     if (!mboxMapping) {
       throw new AssertionError();
     }
-    assert.strictEqual(mboxMapping.size, 2);
-    assert.true(mboxMapping.has(mboxPred));
-    assert.true(mboxMapping.has(mboxPred2));
+    assert.strictEqual(mboxMapping.length, 2);
+    assert.true(mboxMapping.includes(mboxPred));
+    assert.true(mboxMapping.includes(mboxPred2));
     const mboxExpected = conciseToRdfjs('>http://xmlns.com/foaf/0.1/mbox');
     const mboxPredicates = nodeToPredicatesMapping.get(mboxPred);
     assert.ok(mboxPredicates);

@@ -28,9 +28,8 @@ export default class XmlElementReader
     for (const attribute of from.attributes) {
       if (attribute.name === '__id') {
         this.elementRegistry[attribute.value] = rslt;
-      } else {
-        rslt.setAttribute(attribute.name, attribute.value);
       }
+      rslt.setAttribute(attribute.name, attribute.value);
     }
     for (const childNode of from.childNodes) {
       const child = nodeReader.read(childNode);

@@ -11,7 +11,7 @@ import {
   ModelRangeFactory,
   RangeFactory,
 } from '@lblod/ember-rdfa-editor/model/model-range';
-import Datastore from '@lblod/ember-rdfa-editor/model/util/datastore';
+import Datastore from '@lblod/ember-rdfa-editor/model/util/datastore/datastore';
 import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';

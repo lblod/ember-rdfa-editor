@@ -15,7 +15,6 @@ export default abstract class Operation {
   private eventBus?: EventBus;
 
   protected constructor(eventBus: EventBus | undefined, range: ModelRange) {
-    console.log('Created Operation', this.constructor.name);
     this.eventBus = eventBus;
     this._range = range;
     this.logger = createLogger(this.constructor.name);

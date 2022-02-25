@@ -53,7 +53,7 @@ import {
 } from '@lblod/ember-rdfa-editor/model/controller';
 import Datastore, {
   EditorStore,
-} from '@lblod/ember-rdfa-editor/model/util/datastore';
+} from '@lblod/ember-rdfa-editor/model/util/datastore/datastore';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { tracked } from '@glimmer/tracking';
 import {

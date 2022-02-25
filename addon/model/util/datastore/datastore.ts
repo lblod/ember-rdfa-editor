@@ -1,35 +1,31 @@
 import * as RDF from '@rdfjs/types';
-import dataset, { FastDataset } from '@graphy/memory.dataset.fast';
 import ModelRange, {
   RangeContextStrategy,
 } from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import {
   ModelQuadObject,
   ModelQuadPredicate,
   ModelQuadSubject,
+  quadHash,
+  QuadNodes,
   RdfaParseConfig,
   RdfaParser,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
 import {
-  ConBlankNode,
   ConciseTerm,
   conciseToRdfjs,
-  ConLiteral,
-  ConNamedNode,
   TermConverter,
 } from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
 import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa';
-
-export type SubjectSpec = RDF.Quad_Subject | ConNamedNode | ConBlankNode | null;
-export type PredicateSpec = RDF.Quad_Predicate | ConNamedNode | null;
-export type ObjectSpec =
-  | RDF.Quad_Object
-  | ConNamedNode
-  | ConBlankNode
-  | ConLiteral;
-type Primitive = number | string | boolean;
+import { ResultSet } from '@lblod/ember-rdfa-editor/model/util/datastore/result-set';
+import { TermMapping } from '@lblod/ember-rdfa-editor/model/util/datastore/term-mapping';
+import {
+  isPrimitive,
+  ObjectSpec,
+  PredicateSpec,
+  SubjectSpec,
+} from '@lblod/ember-rdfa-editor/model/util/datastore/term-spec';
 
 interface TermNodesResponse {
   nodes: Set<ModelNode>;
@@ -47,64 +43,149 @@ interface ObjectNodesResponse extends TermNodesResponse {
   object: RDF.Quad_Object;
 }
 
-function isPrimitive(thing: unknown): thing is Primitive {
-  return (
-    typeof thing === 'string' ||
-    typeof thing === 'boolean' ||
-    typeof thing === 'number'
-  );
-}
-
+/**
+ * High-level interface to query RDF-knowledge from the document.
+ * Designed with the principles of a fluent interface in mind.
+ *
+ * There are two method types: transformers and consumers.
+ * Transformers operate on the underlying knowledge (e.g. filtering triples)
+ * and always return a datastore, allowing easy method chaining.
+ *
+ * Consumers are methods that return anything other than a datastore, typically
+ * representing the transformed knowledge in some convenient format.
+ */
 export default interface Datastore {
   get dataset(): RDF.Dataset;
 
   get size(): number;
 
+  /**
+   * The function used to convert concise term syntax (see {@link ConciseTerm})
+   * into RDFjs term objects
+   */
   get termConverter(): TermConverter;
 
+  /**
+   * Transformer method.
+   * Filters out any triples of which their subject does not have a node within the given range's context nodes
+   * The definition of a range's context nodes depends on the strategy.
+   * More info at {@link ModelRange.contextNodes}
+   * @param range
+   * @param strategy
+   */
   limitToRange(range: ModelRange, strategy?: RangeContextStrategy): Datastore;
 
+  /**
+   * Transformer method.
+   * Filters out any triples which do not match the given pattern.
+   * Pattern matching behaves similar as in SPARQL (but don't stretch that metaphor too far).
+   *
+   * Passing in undefined for any of the arguments means any term will match it.
+   *
+   * This method accepts concise term syntax, as defined in {@link ConciseTerm}
+   *
+   * @param subject
+   * @param predicate
+   * @param object
+   */
   match(
     subject?: SubjectSpec,
     predicate?: PredicateSpec,
     object?: ObjectSpec
   ): Datastore;
 
+  /**
+   * Transformer method.
+   * Low-level escape hatch.
+   * Pass in a callback which will receive the underlying RDFjs-compliant {@link RDF.Dataset}
+   * and a termconverter function to convert concise term syntax (see {@link ConciseTerm})
+   * into RDFjs Term objects.
+   * @param action
+   */
   transformDataset(
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
   ): Datastore;
 
+  /**
+   * Consumer method.
+   * Returns a {@link TermMapping} of the currently valid subjects and the nodes that define them.
+   */
+  asSubjectNodeMapping(): TermMapping<RDF.Quad_Subject>;
+
+  /**
+   * Consumer method.
+   * Returns a {@link TermMapping} of the currently valid predicates and the nodes that define them.
+   */
+  asPredicateNodeMapping(): TermMapping<RDF.Quad_Predicate>;
+
+  /**
+   * Consumer method.
+   * Returns a {@link TermMapping} of the currently valid objects and the nodes that define them.
+   */
+  asObjectNodeMapping(): TermMapping<RDF.Quad_Object>;
+
+  /**
+   * Consumer method.
+   * Returns a {@link ResultSet} of all currently valid quads.
+   */
+  asQuadResultSet(): ResultSet<RDF.Quad>;
+
+  /**
+   * @deprecated
+   * Consumer Method.
+   * Returns a generator of mappings between subjects and their nodes.
+   * No order is implied.
+   */
   asSubjectNodes(): Generator<SubjectNodesResponse>;
 
+  /**
+   * @deprecated
+   * Consumer Method.
+   * Returns a generator of mappings between predicates and their nodes.
+   * No order is implied.
+   */
   asPredicateNodes(): Generator<PredicateNodesResponse>;
 
+  /**
+   * @deprecated
+   * Consumer Method.
+   * Returns a generator of mappings between objects and their nodes.
+   * No order is implied.
+   */
   asObjectNodes(): Generator<ObjectNodesResponse>;
 
+  /**
+   * @deprecated
+   * Consumer Method.
+   * Returns a generator of current relevant quads
+   */
   asQuads(): Generator<RDF.Quad>;
 }
 
 interface DatastoreConfig {
   dataset: RDF.Dataset;
-  subjectToNodes: Map<string, Set<ModelNode>>;
+  subjectToNodes: Map<string, ModelNode[]>;
   nodeToSubject: Map<ModelNode, ModelQuadSubject>;
 
-  predicateToNodes: Map<string, Set<ModelNode>>;
+  predicateToNodes: Map<string, ModelNode[]>;
   nodeToPredicates: Map<ModelNode, Set<ModelQuadPredicate>>;
 
-  objectToNodes: Map<string, Set<ModelNode>>;
+  objectToNodes: Map<string, ModelNode[]>;
   nodeToObjects: Map<ModelNode, Set<ModelQuadObject>>;
+  quadToNodes: Map<string, QuadNodes>;
   prefixMapping: Map<string, string>;
 }
 
 export class EditorStore implements Datastore {
   private _dataset: RDF.Dataset;
-  private _subjectToNodes: Map<string, Set<ModelNode>>;
+  private _subjectToNodes: Map<string, ModelNode[]>;
   private _nodeToSubject: Map<ModelNode, ModelQuadSubject>;
   private _prefixMapping: Map<string, string>;
   private _nodeToPredicates: Map<ModelNode, Set<ModelQuadPredicate>>;
-  private _predicateToNodes: Map<string, Set<ModelNode>>;
+  private _predicateToNodes: Map<string, ModelNode[]>;
   private _nodeToObjects: Map<ModelNode, Set<ModelQuadObject>>;
-  private _objectToNodes: Map<string, Set<ModelNode>>;
+  private _objectToNodes: Map<string, ModelNode[]>;
+  private _quadToNodes: Map<string, QuadNodes>;
 
   constructor({
     dataset,
@@ -115,6 +196,7 @@ export class EditorStore implements Datastore {
     predicateToNodes,
     nodeToObjects,
     objectToNodes,
+    quadToNodes,
   }: DatastoreConfig) {
     this._dataset = dataset;
     this._nodeToSubject = nodeToSubject;
@@ -124,6 +206,7 @@ export class EditorStore implements Datastore {
     this._predicateToNodes = predicateToNodes;
     this._nodeToObjects = nodeToObjects;
     this._objectToNodes = objectToNodes;
+    this._quadToNodes = quadToNodes;
   }
 
   static fromParse(config: RdfaParseConfig): Datastore {
@@ -135,6 +218,7 @@ export class EditorStore implements Datastore {
       nodeToObjectsMapping,
       predicateToNodesMapping,
       nodeToPredicatesMapping,
+      quadToNodesMapping,
     } = RdfaParser.parse(config);
     const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
 
@@ -147,6 +231,7 @@ export class EditorStore implements Datastore {
       nodeToObjects: nodeToObjectsMapping,
       predicateToNodes: predicateToNodesMapping,
       nodeToPredicates: nodeToPredicatesMapping,
+      quadToNodes: quadToNodesMapping,
     });
   }
 
@@ -157,6 +242,7 @@ export class EditorStore implements Datastore {
   get size(): number {
     return this._dataset.size;
   }
+
   termConverter = (term: ConciseTerm) => conciseToRdfjs(term, this.getPrefix);
 
   match(
@@ -185,37 +271,111 @@ export class EditorStore implements Datastore {
   }
 
   limitToRange(range: ModelRange, strategy: RangeContextStrategy): Datastore {
-    const subjects = this.subjectsForRange(range, strategy);
-    const subToNodesCopy = new Map(this._subjectToNodes);
-    const nodeToSubCopy = new Map(this._nodeToSubject);
-    const predToNodesCopy = new Map(this._predicateToNodes);
-    const nodeToPredsCopy = new Map(this._nodeToPredicates);
-    const objToNodesCopy = new Map(this._objectToNodes);
-    const nodeToObjCopy = new Map(this._nodeToObjects);
-    const newSet = this.dataset.filter((quad) => {
-      if (subjects.has(quad.subject.value)) {
-        return true;
-      } else {
-        const nodes = subToNodesCopy.get(quad.subject.value);
-        if (nodes) {
-          for (const node of nodes) {
-            nodeToSubCopy.delete(node);
-          }
-          subToNodesCopy.delete(quad.subject.value);
+    const contextNodes = new Set(range.contextNodes(strategy));
+    return this.transformDataset((dataset) => {
+      return dataset.filter((quad) => {
+        const quadNodes = this._quadToNodes.get(quadHash(quad));
+        if (quadNodes) {
+          const { subjectNode, predicateNode, objectNode } = quadNodes;
+          return (
+            contextNodes.has(subjectNode) &&
+            contextNodes.has(predicateNode) &&
+            contextNodes.has(objectNode)
+          );
+        } else {
+          return false;
         }
-        return false;
+      });
+    });
+  }
+
+  asSubjectNodeMapping(): TermMapping<RDF.Quad_Subject> {
+    return new TermMapping<RDF.Quad_Subject>(
+      this.subjectNodeGenerator(),
+      this.getPrefix
+    );
+  }
+
+  private subjectNodeGenerator(): Map<RDF.Quad_Subject, ModelNode[]> {
+    const seenSubjects = new Set<string>();
+    const rslt = new Map<RDF.Quad_Subject, ModelNode[]>();
+    for (const quad of this.dataset) {
+      if (!seenSubjects.has(quad.subject.value)) {
+        const nodes = this._subjectToNodes.get(quad.subject.value);
+        if (nodes) {
+          rslt.set(quad.subject, nodes);
+        }
+        seenSubjects.add(quad.subject.value);
       }
-    });
-    return new EditorStore({
-      dataset: newSet,
-      subjectToNodes: subToNodesCopy,
-      nodeToSubject: nodeToSubCopy,
-      predicateToNodes: predToNodesCopy,
-      nodeToPredicates: nodeToPredsCopy,
-      objectToNodes: objToNodesCopy,
-      nodeToObjects: nodeToObjCopy,
-      prefixMapping: this._prefixMapping,
-    });
+    }
+    return rslt;
+  }
+
+  asPredicateNodeMapping(): TermMapping<RDF.Quad_Predicate> {
+    return new TermMapping<RDF.Quad_Predicate>(
+      this.predicateNodeGenerator(),
+      this.getPrefix
+    );
+  }
+
+  private predicateNodeGenerator(): Map<RDF.Quad_Predicate, ModelNode[]> {
+    const seenPredicates = new Map<string, RDF.Quad_Predicate>();
+    const seenSubjects = new Set<string>();
+    const rslt = new Map<RDF.Quad_Predicate, ModelNode[]>();
+
+    // collect all unique predicates and subjects in the current dataset
+    for (const quad of this.dataset) {
+      seenSubjects.add(quad.subject.value);
+      seenPredicates.set(quad.predicate.value, quad.predicate);
+    }
+
+    for (const pred of seenPredicates.keys()) {
+      const allNodes = this._predicateToNodes.get(pred);
+      if (allNodes) {
+        const nodes = [];
+        // we have to filter out nodes that belong to a subject which is not in the dataset
+        for (const node of allNodes) {
+          const nodeSubject = this._nodeToSubject.get(node);
+          if (nodeSubject && seenSubjects.has(nodeSubject.value)) {
+            nodes.push(node);
+          }
+        }
+        rslt.set(seenPredicates.get(pred)!, nodes);
+      }
+    }
+    return rslt;
+  }
+
+  asObjectNodeMapping(): TermMapping<RDF.Quad_Object> {
+    return new TermMapping<RDF.Quad_Object>(
+      this.objectNodeGenerator(),
+      this.getPrefix
+    );
+  }
+
+  private objectNodeGenerator(): Map<RDF.Quad_Object, ModelNode[]> {
+    const seenObjects = new Set<string>();
+    const rslt = new Map<RDF.Quad_Object, ModelNode[]>();
+    for (const quad of this.dataset) {
+      if (!seenObjects.has(quad.object.value)) {
+        const nodes = this._objectToNodes.get(quad.object.value);
+        if (nodes) {
+          rslt.set(quad.object, nodes);
+        }
+        seenObjects.add(quad.object.value);
+      }
+    }
+    return rslt;
+  }
+
+  asQuadResultSet(): ResultSet<RDF.Quad> {
+    return new ResultSet<RDF.Quad>(this.quadGenerator());
+  }
+
+  private *quadGenerator(): Generator<RDF.Quad> {
+    for (const quad of this.dataset) {
+      yield quad;
+    }
   }
 
   *asSubjectNodes(): Generator<SubjectNodesResponse> {
@@ -224,7 +384,7 @@ export class EditorStore implements Datastore {
       if (!seenSubjects.has(quad.subject.value)) {
         const nodes = this._subjectToNodes.get(quad.subject.value);
         if (nodes) {
-          yield { subject: quad.subject, nodes };
+          yield { subject: quad.subject, nodes: new Set<ModelNode>(nodes) };
         }
         seenSubjects.add(quad.subject.value);
       }
@@ -263,7 +423,7 @@ export class EditorStore implements Datastore {
       if (!seenObjects.has(quad.object.value)) {
         const nodes = this._objectToNodes.get(quad.object.value);
         if (nodes) {
-          yield { object: quad.object, nodes };
+          yield { object: quad.object, nodes: new Set<ModelNode>(nodes) };
         }
         seenObjects.add(quad.object.value);
       }
@@ -292,6 +452,7 @@ export class EditorStore implements Datastore {
       nodeToObjects: this._nodeToObjects,
       objectToNodes: this._objectToNodes,
       prefixMapping: this._prefixMapping,
+      quadToNodes: this._quadToNodes,
     });
   }
 
@@ -312,216 +473,4 @@ export class EditorStore implements Datastore {
   private getPrefix = (prefix: string): string | null => {
     return this._prefixMapping.get(prefix) || null;
   };
-}
-
-function isFastDataset(thing: unknown): thing is FastDataset {
-  // ts fails us here, see https://github.com/Microsoft/TypeScript/issues/21732
-  if (thing && 'isGraphyFastDataset' in (thing as Record<string, unknown>)) {
-    return (thing as FastDataset).isGraphyFastDataset;
-  }
-  return false;
-}
-
-function isGraphyDataset(thing: unknown): thing is GraphyDataset {
-  return thing instanceof GraphyDataset;
-}
-
-type QuadDataSet = RDF.Dataset<RDF.Quad, RDF.Quad>;
-
-/**
- * Spec-compliant wrapper for graphy
- */
-export class GraphyDataset implements QuadDataSet {
-  private _fastDataset: FastDataset;
-
-  constructor(quads?: RDF.Dataset | RDF.Quad[] | FastDataset | GraphyDataset) {
-    if (isFastDataset(quads)) {
-      this._fastDataset = quads;
-    } else if (isGraphyDataset(quads)) {
-      this._fastDataset = quads.fastDataset;
-    } else {
-      this._fastDataset = dataset();
-      if (quads) {
-        this._fastDataset.addAll(quads);
-      }
-    }
-  }
-
-  get size(): number {
-    return this.fastDataset.size;
-  }
-
-  get fastDataset(): FastDataset {
-    return this._fastDataset;
-  }
-
-  add(quad: RDF.Quad): this {
-    this.fastDataset.add(quad);
-    return this;
-  }
-
-  delete(quad: RDF.Quad): this {
-    this.fastDataset.delete(quad);
-    return this;
-  }
-
-  has(quad: RDF.Quad): boolean {
-    return this.fastDataset.has(quad);
-  }
-
-  match(
-    subject?: RDF.Quad_Subject | null,
-    predicate?: RDF.Quad_Predicate | null,
-    object?: RDF.Quad_Object | null,
-    graph?: RDF.Quad_Graph | null
-  ): QuadDataSet {
-    return new GraphyDataset(
-      this.fastDataset.match(subject, predicate, object, graph)
-    );
-  }
-
-  addAll(quads: QuadDataSet | RDF.Quad[]): this {
-    this._fastDataset.addAll(quads);
-    return this;
-  }
-
-  contains(other: QuadDataSet): boolean {
-    return this.intersection(other).size === other.size;
-  }
-
-  deleteMatches(
-    subject?: RDF.Quad_Subject,
-    predicate?: RDF.Quad_Predicate,
-    object?: RDF.Quad_Object,
-    graph?: RDF.Quad_Graph
-  ): this {
-    const matches = this.match(subject, predicate, object, graph);
-    const quads: RDF.Quad[] = [...matches];
-    this.fastDataset.deleteQuads(quads);
-    return this;
-  }
-
-  difference(other: QuadDataSet): QuadDataSet {
-    const gds = new GraphyDataset(other);
-    return new GraphyDataset(this.fastDataset.difference(gds.fastDataset));
-  }
-
-  equals(other: RDF.Dataset<RDF.Quad, RDF.Quad>): boolean {
-    const gds = new GraphyDataset(other);
-    return this.fastDataset.equals(gds.fastDataset);
-  }
-
-  every(
-    iteratee: (
-      quad: RDF.Quad,
-      dataset: RDF.Dataset<RDF.Quad, RDF.Quad>
-    ) => boolean
-  ): boolean {
-    for (const quad of this) {
-      if (!iteratee(quad, this)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  filter(
-    iteratee: (
-      quad: RDF.Quad,
-      dataset: RDF.Dataset<RDF.Quad, RDF.Quad>
-    ) => boolean
-  ): RDF.Dataset<RDF.Quad, RDF.Quad> {
-    const rslt = [];
-    for (const quad of this) {
-      if (iteratee(quad, this)) {
-        rslt.push(quad);
-      }
-    }
-    return new GraphyDataset(rslt);
-  }
-
-  forEach(
-    iteratee: (quad: RDF.Quad, dataset: RDF.Dataset<RDF.Quad, RDF.Quad>) => void
-  ): void {
-    for (const quad of this) {
-      iteratee(quad, this);
-    }
-  }
-
-  import(_stream: RDF.Stream<RDF.Quad>): Promise<this> {
-    throw new NotImplementedError();
-  }
-
-  intersection(other: QuadDataSet): QuadDataSet {
-    const gds = new GraphyDataset(other);
-    return new GraphyDataset(this.fastDataset.intersection(gds.fastDataset));
-  }
-
-  map(
-    iteratee: (
-      quad: RDF.Quad,
-      dataset: RDF.Dataset<RDF.Quad, RDF.Quad>
-    ) => RDF.Quad
-  ): RDF.Dataset<RDF.Quad, RDF.Quad> {
-    const result = [];
-    for (const quad of this) {
-      result.push(iteratee(quad, this));
-    }
-    return new GraphyDataset(result);
-  }
-
-  reduce<A>(
-    iteratee: (accumulator: A, quad: RDF.Quad, dataset: QuadDataSet) => A,
-    initialValue?: A
-  ): A {
-    const firstQuad = this[Symbol.iterator]().next().value as RDF.Quad | null;
-    let accumulator = initialValue || firstQuad;
-    // some bad typing in the spec causes these ugly casts
-    for (const quad of this) {
-      accumulator = iteratee(accumulator as A, quad, this);
-    }
-
-    return accumulator as A;
-  }
-
-  some(
-    iteratee: (
-      quad: RDF.Quad,
-      dataset: RDF.Dataset<RDF.Quad, RDF.Quad>
-    ) => boolean
-  ): boolean {
-    for (const quad of this) {
-      if (iteratee(quad, this)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  toArray(): RDF.Quad[] {
-    return [...this];
-  }
-
-  toCanonical(): string {
-    throw new NotImplementedError();
-  }
-
-  toStream(): RDF.Stream<RDF.Quad> {
-    throw new NotImplementedError();
-  }
-
-  toString(): string {
-    throw new NotImplementedError();
-  }
-
-  union(
-    quads: RDF.Dataset<RDF.Quad, RDF.Quad>
-  ): RDF.Dataset<RDF.Quad, RDF.Quad> {
-    const gds = new GraphyDataset(quads);
-    return new GraphyDataset(this.fastDataset.union(gds.fastDataset));
-  }
-
-  [Symbol.iterator](): Iterator<RDF.Quad> {
-    return this.fastDataset[Symbol.iterator]();
-  }
 }

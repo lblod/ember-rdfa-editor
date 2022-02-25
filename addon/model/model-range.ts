@@ -13,6 +13,144 @@ import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
+export type StickySide = 'none' | 'left' | 'right' | 'both';
+
+export type SimpleRangeContextStrategy =
+  | 'rangeContains'
+  | 'rangeIsInside'
+  | 'rangeTouches';
+
+export type DetailedRangeContextStrategy =
+  | RangeContainsStrategy
+  | RangeIsInsideStrategy
+  | RangeTouchesStrategy;
+/**
+ * Consider all nodes contained by this range.
+ *
+ * Conceptually, imagine selecting your range in the serialized
+ * html representation and considering all opening tags and full textNodes you encounter.
+ * (in this metaphor, consider textnodes to not have tags).
+ *
+ * With this image in mind, we should consider what happens with textnodes at the edges.
+ *
+ * e.g.
+ *
+ * <text>ab|c</text><text>de|f</text>
+ *
+ * For historical reasons, the default behavior of this strategy is to always
+ * consider textnodes at the start and end if the start or end positions
+ * are "inside" the respective textnode. So in the above example,
+ * both would be considered.
+ *
+ * But if we have:
+ * <text>abc</text>|<text>de|f</text>
+ *
+ * Only the second node would be considered.
+ *
+ * TODO: add options to adjust this behavior when the need arises
+ *
+ */
+export type RangeContainsStrategy = {
+  type: 'rangeContains';
+};
+/**
+ * Consider all nodes which the range "is inside of"
+ * This means: consider the common ancestor of start and end,
+ * and its entire ancestry tree up to and including root.
+ *
+ * If both start and end have the same parent, and both are located "inside"
+ * the same textnode (i.e. their offset falls between the offset of a textnode and (offset + length)
+ * that node is also considered.
+ *
+ * For cases where either side of the range falls just in front or just after a common textnode,
+ * the stickyness parameter determines whether that textnode is considered or not
+ */
+export type RangeIsInsideStrategy = {
+  type: 'rangeIsInside';
+  /**
+   *
+   * Recall that a textnode is only considered if both start and end of the range
+   * can be considered to be inside of that textnode.
+   *
+   * With that in mind, the stickyness parameter determines whether either side of
+   * the range is "sticky", meaning that the position will be considered to be inside any textnode it
+   * is directly adjacent to, in the chosen direction.
+   *
+   * This leads to the following results:
+   *
+   * collapsed ranges:
+   *
+   * <text>abc</text>||
+   *
+   * without stickyness, the textnode would not be considered.
+   * following combinations would consider it:
+   * start: left, end: left
+   * start: both, end: left
+   * start: left, end: both
+   * start: both, end: both
+   *
+   * <text>abc</text>||<text>def</text>
+   *
+   * the first node would be considered if:
+   * start: left, end: left
+   * start: left, end: both
+   *
+   * the second node would be considered if:
+   * start: right, end:right
+   * start: both, end: right
+   *
+   * both nodes would be considered if:
+   * start: both, end: both
+   *
+   * uncollapsed ranges:
+   *
+   * recall: uncollapsed ranges where the node after the start and the node before the end are not the same,
+   * are never affected, since they can never be considered to be fully "inside" a textnode.
+   *
+   * e.g.:
+   *
+   * <text>ab|c</text><text>de|f</text>
+   *
+   * No matter the stickyness, neither textnode will be considered.
+   *
+   * However in the following scenario, stickyness does matter:
+   *
+   * |<text>abc</text>|
+   *
+   * the node will be considered if:
+   * start: right, end: left
+   * start: right, end: both
+   * start: both, end: left
+   * start: both, end: both
+   *
+   * and another scenario:
+   *
+   * <text>ab|c</text>|
+   *
+   * considered if:
+   * end: left or both
+   * (start stickyness doesn't matter here since start is unambiguously inside the node already)
+   *
+   */
+  textNodeStickyness?: {
+    start?: StickySide;
+    end?: StickySide;
+  };
+};
+
+/**
+ * Consider all nodes that this range "touches".
+ * Essentially, this is a combination of the "rangeIsInside" and
+ * "rangeContains" strategies, giving you first the contained nodes
+ * and then the ancestry tree.
+ * TODO: respect document order
+ */
+export type RangeTouchesStrategy = {
+  type: 'rangeTouches';
+};
+export type RangeContextStrategy =
+  | SimpleRangeContextStrategy
+  | DetailedRangeContextStrategy;
 /**
  * Model-space equivalent of a {@link Range}
  * Not much more than a container for two {@link ModelPosition ModelPositions}
@@ -59,7 +197,13 @@ export default class ModelRange {
     return new ModelRange(start, end);
   }
 
-  static fromInNode(node: ModelNode, startOffset: number, endOffset: number) {
+  static fromInNode(
+    node: ModelNode,
+    startOffset = 0,
+    endOffset: number = ModelNode.isModelElement(node)
+      ? node.getMaxOffset()
+      : node.length
+  ) {
     const start = ModelPosition.fromInNode(node, startOffset);
     const end = ModelPosition.fromInNode(node, endOffset);
     return new ModelRange(start, end);
@@ -302,14 +446,83 @@ export default class ModelRange {
   *contextNodes(
     strategy: RangeContextStrategy
   ): Generator<ModelNode, void, void> {
-    if (strategy === 'rangeContains') {
+    let strat: DetailedRangeContextStrategy;
+    if (typeof strategy === 'string') {
+      strat = {
+        type: strategy,
+      };
+    } else {
+      strat = strategy;
+    }
+
+    if (strat.type === 'rangeContains') {
       const walker = GenTreeWalker.fromRange({ range: this });
       yield* walker.nodes();
-    } else if (strategy === 'rangeIsInside') {
+    } else if (strat.type === 'rangeIsInside') {
+      yield* this.nodesInside(strat.textNodeStickyness);
+    } else if (strat.type === 'rangeTouches') {
+      const walker = GenTreeWalker.fromRange({ range: this });
+      yield* walker.nodes();
       yield* this.findCommonAncestorsWhere(() => true);
     } else {
       throw new IllegalArgumentError('Unsupported strategy');
     }
+  }
+
+  private *nodesInside({
+    start = 'none',
+    end = 'none',
+  }: { start?: StickySide; end?: StickySide } = {}): Generator<
+    ModelNode,
+    void,
+    void
+  > {
+    const extraNodes = [];
+    const seenNodes = new Set();
+    const beforeStart = this.start.nodeBefore();
+    const afterStart = this.start.nodeAfter();
+    const beforeEnd = this.end.nodeBefore();
+    const afterEnd = this.end.nodeAfter();
+
+    if (this.collapsed && !this.start.isInsideText()) {
+      if (
+        ModelNode.isModelText(beforeStart) &&
+        ['left', 'both'].includes(start) &&
+        ['left', 'both'].includes(end)
+      ) {
+        if (!seenNodes.has(beforeStart)) {
+          extraNodes.push(beforeStart);
+          seenNodes.add(beforeStart);
+        }
+      }
+      if (
+        ModelNode.isModelText(afterEnd) &&
+        ['right', 'both'].includes(start) &&
+        ['right', 'both'].includes(end)
+      ) {
+        if (!seenNodes.has(afterEnd)) {
+          extraNodes.push(afterEnd);
+          seenNodes.add(afterEnd);
+        }
+      }
+    } else {
+      if (ModelNode.isModelText(afterStart) && afterStart === beforeEnd) {
+        if (
+          (this.start.isInsideText() || ['right', 'both'].includes(start)) &&
+          (this.end.isInsideText() || ['left', 'both'].includes(end))
+        ) {
+          if (!seenNodes.has(afterStart)) {
+            extraNodes.push(afterStart);
+            seenNodes.add(afterStart);
+          }
+        }
+      }
+    }
+    for (const node of extraNodes) {
+      yield node;
+    }
+
+    yield* this.findCommonAncestorsWhere(() => true);
   }
 
   getTextContent(): string {
@@ -469,8 +682,8 @@ export interface RangeFactory {
 
   fromInNode(
     node: ModelNode,
-    startOffset: number,
-    endOffset: number
+    startOffset?: number,
+    endOffset?: number
   ): ModelRange;
 
   fromAroundAll(): ModelRange;
@@ -513,8 +726,8 @@ export class ModelRangeFactory implements RangeFactory {
 
   fromInNode(
     node: ModelNode,
-    startOffset: number,
-    endOffset: number
+    startOffset?: number,
+    endOffset?: number
   ): ModelRange {
     return ModelRange.fromInNode(node, startOffset, endOffset);
   }
@@ -523,5 +736,3 @@ export class ModelRangeFactory implements RangeFactory {
     return this.fromInElement(this.root);
   }
 }
-
-export type RangeContextStrategy = 'rangeContains' | 'rangeIsInside';
