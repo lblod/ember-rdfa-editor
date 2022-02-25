@@ -8,18 +8,10 @@ import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/model/util/constant
  * and https://drafts.csswg.org/css-text/#line-break-transform
  */
 export function preWrapToNormalWhiteSpace(from: string): string {
-  // // step 1: replace \r\n sequence with a single \n
-  // const windowsNewLinePattern = /\r\n/g;
-  // const replacement = '\n';
-  // let output = from.replace(windowsNewLinePattern, replacement);
-
-  // // step 2: replace \n with a <br> element
-  // output = output.replace(/\n/g, '<br>');
-
-  // step 3: replace spaces that would collapse with non breaking ones
+  // step 1: replace spaces that would collapse with non breaking ones
   let output = from.replace(/[\v\t ]{2}/g, `${NON_BREAKING_SPACE} `);
 
-  // step 4: replaces spaces that would not render
+  // step 2: replaces spaces that would not render
   output = output.replace(/[\v\t ]$/g, `${NON_BREAKING_SPACE}`);
   return output;
 }
@@ -36,25 +28,23 @@ export function preWrapToNormalWhiteSpace(from: string): string {
  * and https://drafts.csswg.org/css-text/#line-break-transform
  */
 export function normalToPreWrapWhiteSpace(from: string): string {
-  // step 1 collapse whitespace
   let trimmed = from;
-  // Use ECMA-262 Edition 3 String and RegExp features
-  // trimmed = trimmed.replace(/[\t\n\r ]+/g, ' ');
-  const pattern = /[\f\n\r\t\v ]{2,}/g;
-  const replacement = ' ';
-
-  trimmed = trimmed.replace(pattern, replacement);
-
-  // step 2 replace linebreaks with spaces
+  // step 1 replace linebreaks with spaces
   const linebreakPattern = /[\n\r]/g;
   trimmed = trimmed.replace(linebreakPattern, ' ');
+
+  // step 2 collapse whitespace (no need to replace newline and return characters here, this was done in step 1)
+  // Use ECMA-262 Edition 3 String and RegExp features
+  const pattern = /[\f\t\v ]{2,}/g;
+  const replacement = ' ';
+  trimmed = trimmed.replace(pattern, replacement);
 
   // step 3, remove starting spaces because they don't show
   if (trimmed.charAt(0) == ' ') {
     trimmed = trimmed.substring(1, trimmed.length);
   }
 
-  if (!trimmed.length) {
+  if (!trimmed.length || trimmed.trim().length == 0) {
     return '';
   }
 

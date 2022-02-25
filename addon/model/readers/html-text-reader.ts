@@ -19,6 +19,10 @@ export default class HtmlTextReader
       trimmed = normalToPreWrapWhiteSpace(trimmed);
     }
 
+    if (trimmed.length == 0) {
+      return [];
+    }
+
     const result = new ModelText(trimmed);
     context.activeMarks.forEach(({ spec, attributes }) =>
       context.addMark(result, spec, attributes)
