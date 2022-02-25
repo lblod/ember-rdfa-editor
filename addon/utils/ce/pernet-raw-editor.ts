@@ -314,14 +314,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       }
       this.updateRichNode();
     }
-    // this.eventBus.emit(
-    //   new ContentChangedEvent({
-    //     owner: CORE_OWNER,
-    //     payload: {
-    //       type: 'legacy',
-    //     },
-    //   })
-    // );
   }
 
   /**

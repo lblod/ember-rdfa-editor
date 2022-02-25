@@ -53,6 +53,8 @@ export default class MarksRegistry {
       const { insertedNodes, _markCheckNodes } = payload;
       this.updateMarksForNodes(insertedNodes);
       this.updateMarksForNodes(_markCheckNodes);
+    } else if (payload.type === 'unknown') {
+      this.updateMarksForNodes(payload.rootModelNode.children);
     }
   };
 

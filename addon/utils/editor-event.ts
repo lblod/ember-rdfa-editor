@@ -4,6 +4,7 @@ import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 
 export type EDITOR_EVENT_MAP = {
   dummy: DummyEvent;
@@ -98,8 +99,9 @@ export class DummyEvent extends AbstractEditorEvent<void> {
   }
 }
 
-interface LegacyPayload {
-  type: 'legacy';
+interface UnknownPayload {
+  type: 'unknown';
+  rootModelNode: ModelElement;
 }
 
 interface MovePayload {
@@ -133,7 +135,7 @@ interface InsertionPayload {
   _markCheckNodes: ModelNode[];
 }
 
-type ContentChangedPayload = InsertionPayload | MovePayload | LegacyPayload;
+type ContentChangedPayload = InsertionPayload | MovePayload | UnknownPayload;
 
 export class ContentChangedEvent extends AbstractEditorEvent<ContentChangedPayload> {
   _name: EditorEventName = 'contentChanged';
