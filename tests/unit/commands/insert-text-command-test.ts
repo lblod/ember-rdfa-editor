@@ -41,7 +41,6 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(parent, 2, 2);
     command.execute('c', range);
-    console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
   test('overwrites unconfined range', (assert) => {
@@ -75,7 +74,6 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     const range = new ModelRange(start, end);
 
     command.execute('x', range);
-    console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
   test('overwrites complex range', (assert) => {
@@ -117,7 +115,6 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     const range = new ModelRange(start, end);
 
     command.execute('c', range);
-    console.log(ctx.model.rootModelNode.toXml());
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
   test('space does not eat the character before it', (assert) => {
