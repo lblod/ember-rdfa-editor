@@ -1,4 +1,4 @@
-import { from, IterableX, single } from 'ix/iterable';
+import { isEmpty, from, IterableX, single } from 'ix/iterable';
 import { map } from 'ix/iterable/operators';
 
 export class ResultSet<I> implements Iterable<I> {
@@ -14,6 +14,10 @@ export class ResultSet<I> implements Iterable<I> {
 
   map<T>(mappingFunc: (item: I) => T): ResultSet<T> {
     return new ResultSet<T>(this.engine.pipe(map(mappingFunc)));
+  }
+
+  isEmpty(): boolean {
+    return isEmpty(this.engine);
   }
 
   [Symbol.iterator](): Iterator<I> {
