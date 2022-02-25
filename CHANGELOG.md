@@ -7,6 +7,24 @@
 
 
 
+## 0.50.0-beta.10 (2022-02-25)
+
+#### :boom: Breaking Change
+* [#222](https://github.com/lblod/ember-rdfa-editor/pull/222) Provide a single stylesheet for the dummy app ([@Dietr](https://github.com/Dietr))
+
+#### :rocket: Enhancement
+* [#211](https://github.com/lblod/ember-rdfa-editor/pull/211) Improve datastore interface ([@abeforgit](https://github.com/abeforgit))
+
+#### :house: Internal
+* [#222](https://github.com/lblod/ember-rdfa-editor/pull/222) Provide a single stylesheet for the dummy app ([@Dietr](https://github.com/Dietr))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Dieter Peirs ([@Dietr](https://github.com/Dietr))
+
+If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with it
+
+
 ## 0.50.0-beta.9 (2022-02-16)
 
 #### :boom: Breaking Change
