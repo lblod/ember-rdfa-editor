@@ -736,4 +736,3 @@ export class ModelRangeFactory implements RangeFactory {
     return this.fromInElement(this.root);
   }
 }
-
