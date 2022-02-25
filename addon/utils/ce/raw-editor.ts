@@ -86,7 +86,7 @@ export default class RawEditor {
   private _model?: Model;
   private _datastore!: Datastore;
   protected tryOutVdom = true;
-  protected eventBus: EventBus;
+  eventBus: EventBus;
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map<
     WidgetLocation,
     InternalWidgetSpec[]

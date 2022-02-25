@@ -38,6 +38,8 @@ import {
   isBeforeInputEvent,
   isKeyDownEvent,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
+import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
+import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
@@ -386,6 +388,15 @@ export default class BackspaceHandler extends InputHandler {
 
     void this.backspace().then(() => {
       this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
+      this.rawEditor.eventBus.emit(
+        new ContentChangedEvent({
+          owner: CORE_OWNER,
+          payload: {
+            type: 'unknown',
+            rootModelNode: this.rawEditor.rootModelNode,
+          },
+        })
+      );
     });
 
     return { allowPropagation: false };
