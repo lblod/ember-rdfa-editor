@@ -7,6 +7,19 @@
 
 
 
+
+## 0.50.0 (2022-02-25)
+
+#### :rocket: Enhancement
+* [#224](https://github.com/lblod/ember-rdfa-editor/pull/224) Add isEmpty utility method on resultset and term-mapping ([@abeforgit](https://github.com/abeforgit))
+
+#### :bug: Bug Fix
+* [#225](https://github.com/lblod/ember-rdfa-editor/pull/225) Make backspace handler trigger contentchanged event ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.50.0-beta.10 (2022-02-25)
 
 #### :boom: Breaking Change
