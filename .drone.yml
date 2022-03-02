@@ -83,3 +83,20 @@ steps:
 trigger:
   event:
     - tag
+---
+kind: secret
+name: docker_username
+data: qxhPonu4ydzxuOAN8PgespnNNp5dpuep/IqVXjHSBGbUPmouw7Eh6Q==
+---
+kind: secret
+name: docker_password
+data: rUpRXFXYZ+wyFlshEl8T0SrUEhCyO4TmjSSgxUhANv4CcfdA3SjT2B5ndVTw8zBeDaNlJ4XJBuyY65gRssr5EQ==
+---
+kind: secret
+name: npm_access_token
+data: d7368bba-01b6-4fc8-aa34-a4856cb16e28
+---
+kind: signature
+hmac: 84b099e7da9c6ac914adadfabe9fcf499154004904f5356dcacc91219fa760b1
+
+...
