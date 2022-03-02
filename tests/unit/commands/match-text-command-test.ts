@@ -184,4 +184,42 @@ module('Unit | commands | match-text-command-text', (hooks) => {
 
     assert.true(results[0].range.sameAs(expectedRange));
   });
+  test('only match inside of searchRange', (assert) => {
+    //language=XML
+    const {
+      root,
+      textNodes: { resultNode },
+      elements: { searchContainer },
+    } = vdom`
+      <modelRoot>
+        <div __id="searchContainer">
+          <span><text __id="resultNode">text</text></span>
+        </div>
+        <span>text</span>
+      </modelRoot>
+    `;
+    const searchRange = ModelRange.fromInElement(searchContainer);
+    const results = command.execute(searchRange, /text/g);
+    assert.strictEqual(results.length, 1);
+    assert.true(results[0].range.sameAs(ModelRange.fromAroundNode(resultNode)));
+  });
+  test('only match greedy', (assert) => {
+    //language=XML
+    const {
+      root,
+      textNodes: { resultNode },
+      elements: { searchContainer },
+    } = vdom`
+      <modelRoot>
+        <div __id="searchContainer">
+          <span><text __id="resultNode">text</text></span>
+        </div>
+        <span>text</span>
+      </modelRoot>
+    `;
+    const searchRange = ModelRange.fromInElement(searchContainer);
+    const results = command.execute(searchRange, /t.*/g);
+    assert.strictEqual(results.length, 1);
+    assert.true(results[0].range.sameAs(ModelRange.fromAroundNode(resultNode)));
+  });
 });
