@@ -10,6 +10,8 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
+import { restartableTask, TaskGenerator, timeout } from 'ember-concurrency';
+import { taskFor } from 'ember-concurrency-ts';
 
 export type TextHandlerManipulation = InsertTextIntoRange;
 
@@ -36,6 +38,7 @@ export interface TextInputPlugin extends InputPlugin {
  */
 export default class TextInputHandler extends InputHandler {
   plugins: Array<TextInputPlugin>;
+  capturedText = '';
 
   constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
     super(rawEditor);
@@ -88,13 +91,18 @@ export default class TextInputHandler extends InputHandler {
     return { allowPropagation: false };
   }
 
+  @restartableTask
+  *inserText(): TaskGenerator<void> {
+    yield timeout(50);
+    this.rawEditor.executeCommand('insert-text', this.capturedText);
+    this.capturedText = '';
+  }
+
   handleNativeManipulation(manipulation: TextHandlerManipulation) {
     if (manipulation.type === 'insertTextIntoRange') {
-      this.rawEditor.executeCommand(
-        'insert-text',
-        manipulation.text,
-        manipulation.range
-      );
+      this.capturedText = `${this.capturedText}${manipulation.text}`;
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      void taskFor(this.inserText).perform();
     } else {
       throw new UnsupportedManipulationError(manipulation);
     }
