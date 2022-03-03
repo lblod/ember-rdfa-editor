@@ -52,7 +52,6 @@ function replaceDomNode(domNode, { callback, failedCallback, motivation }) {
     } else {
       this.updateSelectionAfterComplexInput();
     }
-    this.generateDiffEvents.perform();
   } else {
     failedCallback(domNode, 'DOM node not found in richNode');
   }

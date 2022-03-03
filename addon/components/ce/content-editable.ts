@@ -171,10 +171,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     this.rawEditor.rootNode = element;
     this.rawEditor.updateRichNode();
     this.rawEditor.setCurrentPosition(0);
-    // TODO: this is pretty unclear
-    // e.g. because of the debounce in generateDiffEvents rawEditorInit will be called before any diffs are calculated
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    void taskFor(this.rawEditor.generateDiffEvents).perform();
     if (this.args.rawEditorInit) {
       this.args.rawEditorInit(this.rawEditor);
     }
@@ -330,8 +326,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
           break;
         }
       }
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      void taskFor(this.rawEditor.generateDiffEvents).perform();
       this.rawEditor.model.read();
       return preventDefault;
     } else {

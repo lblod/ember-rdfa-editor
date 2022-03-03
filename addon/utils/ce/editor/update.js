@@ -127,9 +127,6 @@ function update(
     relativePosition,
     currentNode
   );
-  // TODO: should send out diff events when just the html has changed.
-  // TODO: should probably only trigger diff events if all updates have been executed
-  this.generateDiffEvents.perform([{ source: 'pernet' }]);
 }
 
 // HELPERS

@@ -1,11 +1,8 @@
 import Ember from 'ember';
 import { A } from '@ember/array';
-import { task, TaskGenerator, timeout } from 'ember-concurrency';
-import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
 import { taskFor } from 'ember-concurrency-ts';
 import {
   getWindowSelection,
-  insertNodeBAfterNodeA,
   insertTextNodeWithSpace,
   isDisplayedAsBlock,
   isElement,
@@ -31,7 +28,6 @@ import {
 import { debug, warn } from '@ember/debug';
 import flatMap from '@lblod/ember-rdfa-editor/utils/ce/flat-map';
 import {
-  getTextContent,
   processDomNode as walkDomNodeAsText,
 } from '@lblod/ember-rdfa-editor/utils/ce/text-node-walker';
 import nextTextNode from '@lblod/ember-rdfa-editor/utils/ce/next-text-node';
@@ -157,8 +153,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         // @ts-ignore
         obs.handleMovement(this, oldSelection, { startNode, endNode });
       }
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      void taskFor(this.generateDiffEvents).perform();
     }
   }
 
@@ -169,9 +163,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
    */
   executeCommand(commandName: string, ...args: unknown[]): unknown {
     const result = super.executeCommand(commandName, ...args);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    void taskFor(this.generateDiffEvents).perform();
-
     return result;
   }
 
@@ -256,64 +247,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   get currentSelectionIsACursor() {
     const sel = this.currentSelection;
     return sel[0] === sel[1];
-  }
-
-  /**
-   * Called after relevant input. Checks content and calls closureActions when changes detected
-   * handleTextInsert, handleTextRemove, handleFullContentUpdate
-   * @method generateDiffEvents
-   *
-   * @param extraInfo Optional argument pass info to event consumers.
-   * @public
-   */
-  @task({ restartable: true })
-  *generateDiffEvents(
-    extraInfo: Record<string, unknown>[] = []
-  ): TaskGenerator<void> {
-    yield timeout(320);
-    const newText: string = getTextContent(this.rootNode);
-    let oldText: string = this.currentTextContent || '';
-    const dmp = new DiffMatchPatch();
-    const differences = dmp.diff_main(oldText, newText);
-    let pos = 0;
-    let textHasChanges = false;
-
-    const contentObservers = this.contentObservers;
-    for (const [mode, text] of differences) {
-      if (mode === 1) {
-        textHasChanges = true;
-        this.currentTextContent =
-          oldText.slice(0, pos) + text + oldText.slice(pos, oldText.length);
-        for (const observer of contentObservers) {
-          // eslint-disable-next-line ember/no-observers
-          observer.handleTextInsert(pos, text, extraInfo);
-        }
-        pos = pos + text.length;
-      } else if (mode === -1) {
-        textHasChanges = true;
-        this.currentTextContent =
-          oldText.slice(0, pos) +
-          oldText.slice(pos + text.length, oldText.length);
-        for (const observer of contentObservers) {
-          // eslint-disable-next-line ember/no-observers
-          observer.handleTextRemoval(pos, pos + text.length, extraInfo);
-        }
-      } else {
-        pos = pos + text.length;
-      }
-      oldText = this.currentTextContent || '';
-    }
-
-    if (textHasChanges) {
-      if (!extraInfo.some((x) => x.noSnapshot)) {
-        this.createSnapshot();
-      }
-      for (const observer of contentObservers) {
-        // eslint-disable-next-line ember/no-observers
-        observer.handleFullContentUpdate(extraInfo);
-      }
-      this.updateRichNode();
-    }
   }
 
   /**
@@ -635,8 +568,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       after
     );
     this.updateRichNode();
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    void taskFor(this.generateDiffEvents).perform([{ noSnapshot: true }]);
     return this.getRichNodeFor(textNode);
   }
 
@@ -804,9 +735,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       } else {
         this.updateSelectionAfterComplexInput();
       }
-
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      void taskFor(this.generateDiffEvents).perform();
     } else {
       if (domUpdate) {
         domUpdate();
@@ -814,8 +742,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
       this.updateRichNode();
       this.updateSelectionAfterComplexInput();
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      void taskFor(this.generateDiffEvents).perform();
     }
   }
 
@@ -1002,8 +928,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
       this.updateRichNode();
       this.currentNode = null;
       this.setCurrentPosition(previousSnapshot.currentSelection[0]);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      void taskFor(this.generateDiffEvents).perform([{ noSnapshot: true }]);
       this.model.read();
     } else {
       warn('no more history to undo', {

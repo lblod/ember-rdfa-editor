@@ -76,8 +76,6 @@ export default class PasteHandler extends InputHandler {
     this.rawEditor.model.writeSelection();
 
     this.rawEditor.updateSelectionAfterComplexInput();
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    void taskFor(this.rawEditor.generateDiffEvents).perform();
 
     return { allowPropagation: false, allowBrowserDefault: false };
   }
