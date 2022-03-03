@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import { A } from '@ember/array';
-import { taskFor } from 'ember-concurrency-ts';
 import {
   getWindowSelection,
   insertTextNodeWithSpace,
@@ -10,21 +9,7 @@ import {
   isTextNode,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { analyse as scanContexts } from '@lblod/marawa/rdfa-context-scanner';
 import RawEditor, { RawEditorProperties } from './raw-editor';
-import {
-  isEmpty,
-  replaceDomNode,
-  selectContext,
-  selectCurrentSelection,
-  selectHighlight,
-  triplesDefinedInResource,
-  update,
-} from './editor';
-import {
-  findRichNode,
-  findUniqueRichNodes,
-} from '../rdfa/rdfa-rich-node-helpers';
 import { debug, warn } from '@ember/debug';
 import flatMap from '@lblod/ember-rdfa-editor/utils/ce/flat-map';
 import {
@@ -419,34 +404,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   }
 
   /**
-   * Prepends a list of elements to children
-   *
-   * @method prependElementsRichNode
-   *
-   * @param richParent parent element where the elements should be added.
-   * @param elements array of (DOM) elements to insert
-   *
-   * @return {RichNode} returns last inserted element as RichNode
-   * @private
-   */
-  prependElementsRichNode(richParent: RichNode, elements: ChildNode[]) {
-    const newFirstChild = elements[0];
-    if (richParent.domNode.firstChild)
-      richParent.domNode.insertBefore(
-        newFirstChild,
-        richParent.domNode.firstChild
-      );
-    else richParent.domNode.appendChild(newFirstChild);
-
-    const newFirstRichChild = walkDomNodeAsText(newFirstChild);
-    return this.insertElementsAfterRichNode(
-      richParent,
-      newFirstRichChild,
-      elements.slice(1)
-    );
-  }
-
-  /**
    * Inserts an array of elements into the editor.
    *
    * @method insertElementsAfterRichNode
@@ -466,12 +423,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     if (remainingElements.length == 0) return richNode;
 
     const nodeToInsert = remainingElements[0];
-
-    insertNodeBAfterNodeA(
-      richParent.domNode as HTMLElement,
-      richNode.domNode as ChildNode,
-      nodeToInsert
-    );
+    (richNode.domNode as ChildNode).after(nodeToInsert);
 
     const richNodeToInsert = walkDomNodeAsText(nodeToInsert);
 
@@ -934,85 +886,5 @@ export default class PernetRawEditor extends RawEditor implements Editor {
         id: 'contenteditable-editor:history-empty',
       });
     }
-  }
-
-  selectCurrentSelection() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
-    return selectCurrentSelection.bind(this)();
-  }
-
-  selectHighlight(
-    region: RawEditorSelection,
-    options: Record<string, unknown> = {}
-  ): { selectedHighlightRange: [number, number]; selections: unknown[] } {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
-    return selectHighlight.bind(this)(region, options);
-  }
-
-  selectContext(
-    region: RawEditorSelection,
-    options: Record<string, unknown> = {}
-  ) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
-    return selectContext.bind(this)(region, options);
-  }
-
-  update(selection: unknown, options: Record<string, unknown>) {
-    this.createSnapshot();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
-    const rslt = update.bind(this)(selection, options);
-    if (this.tryOutVdom) {
-      this.model.read();
-      this.model.write();
-      this.updateRichNode();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return rslt;
-  }
-
-  replaceDomNode(
-    domNode: Node,
-    options: {
-      callback: (...args: unknown[]) => unknown;
-      failedCallBack: (...args: unknown[]) => unknown;
-      motivation: string;
-    }
-  ) {
-    this.createSnapshot();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
-    return replaceDomNode.bind(this)(domNode, options);
-  }
-
-  triplesDefinedInResource(resourceUri: string) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
-    return triplesDefinedInResource.bind(this)(resourceUri);
-  }
-
-  isEmpty(selectedContexts: unknown) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
-    return isEmpty.bind(this)(selectedContexts);
-  }
-
-  /**
-   * Helpers
-   */
-  findRichNode(rdfaBlock: unknown, options: Record<string, unknown> = {}) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
-    return findRichNode.bind(this)(rdfaBlock, options);
-  }
-
-  findUniqueRichNodes(
-    rdfaBlock: unknown,
-    options: Record<string, unknown> = {}
-  ) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
-    return findUniqueRichNodes.bind(this)(rdfaBlock, options);
-  }
-
-  /* Potential methods for the new API */
-  getContexts(options: { region: [number, number] }) {
-    const { region } = options || {};
-    if (region) return scanContexts(this.rootNode, region);
-    else return scanContexts(this.rootNode);
   }
 }

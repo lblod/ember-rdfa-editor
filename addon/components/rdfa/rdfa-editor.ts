@@ -6,7 +6,6 @@ import { tracked } from '@glimmer/tracking';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
 import RdfaDocumentController from '../../utils/rdfa/rdfa-document';
 import type IntlService from 'ember-intl/services/intl';
-import RdfaEditorDispatcher from 'dummy/services/rdfa-editor-dispatcher';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
@@ -54,14 +53,6 @@ interface RdfaEditorArgs {
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @service declare intl: IntlService;
   @tracked profile = 'default';
-
-  /**
-   * @property rdfaEditorDispatcher
-   * @type RdfaEditorDispatcher
-   *
-   * @private
-   */
-  @service declare rdfaEditorDispatcher: RdfaEditorDispatcher;
 
   @tracked toolbarWidgets: InternalWidgetSpec[] = [];
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
