@@ -6,6 +6,10 @@ import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-com
 import { oneLineTrim } from 'common-tags';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
+import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import { FilterResult } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
 module('Unit | commands | insert-html-command-test', (hooks) => {
   const ctx = new ModelTestContext();
@@ -178,5 +182,45 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
     const range = ModelRange.fromInElement(root, 0, root.getMaxOffset());
     command.execute(htmlToInsert, range);
     assert.true(root.sameAs(expected));
+  });
+
+  test('properly removes empty text nodes', (assert) => {
+    // language=XML
+    const { root: initial } = vdom`
+<modelRoot/>`;
+    // language=HTML
+    const htmlString = `
+<div>
+  <span>my text</span>
+</div>
+<div>
+\t\t
+</div>
+`;
+    ctx.model.fillRoot(initial);
+    const root = ctx.model.rootModelNode;
+    const range = ModelRange.fromInElement(root, 0, root.getMaxOffset());
+    command.execute(htmlString, range);
+    const filter = (node: ModelNode) =>
+      ModelNode.isModelText(node)
+        ? FilterResult.FILTER_ACCEPT
+        : FilterResult.FILTER_SKIP;
+    const textNodes = Array.from(new ModelTreeWalker({ range, filter }));
+    assert.equal(textNodes.length, 1);
+  });
+  test('properly collapses spaces', (assert) => {
+    // language=XML
+    const { root: initial } = vdom`
+<modelRoot/>`;
+    // language=HTML
+    const htmlString = `  the spaces before this don't show and should be removed`;
+    ctx.model.fillRoot(initial);
+    const root = ctx.model.rootModelNode;
+    const range = ModelRange.fromInElement(root, 0, root.getMaxOffset());
+    command.execute(htmlString, range);
+    assert.equal(
+      (root.firstChild as ModelText).content,
+      "the spaces before this don't show and should be removed"
+    );
   });
 });
