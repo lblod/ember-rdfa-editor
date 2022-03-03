@@ -12,9 +12,7 @@ import {
 import RawEditor, { RawEditorProperties } from './raw-editor';
 import { debug, warn } from '@ember/debug';
 import flatMap from '@lblod/ember-rdfa-editor/utils/ce/flat-map';
-import {
-  processDomNode as walkDomNodeAsText,
-} from '@lblod/ember-rdfa-editor/utils/ce/text-node-walker';
+import { processDomNode as walkDomNodeAsText } from '@lblod/ember-rdfa-editor/utils/ce/text-node-walker';
 import nextTextNode from '@lblod/ember-rdfa-editor/utils/ce/next-text-node';
 import MovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer';
 import getRichNodeMatchingDomNode from '@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node';

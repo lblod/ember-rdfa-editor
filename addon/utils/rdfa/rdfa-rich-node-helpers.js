@@ -77,10 +77,9 @@ let isRdfaNode = function (richNode) {
   return !isEmptyRdfaAttributes(richNode.rdfaAttributes);
 };
 
-
 export {
   getRdfaAttributes,
   isRdfaNode,
   isEmptyRdfaAttributes,
-  enrichRichNodeWithRdfa
+  enrichRichNodeWithRdfa,
 };
