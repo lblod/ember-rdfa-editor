@@ -195,7 +195,6 @@ To enrich the editor functionality with rdfa-editor-plugins, execute the followi
 1.  Install the plugin as an Ember addon in your host app using `ember install [plugin-name]`
 2.  pass the required plugins by name to the editor
 
-```
 ```handlebars
 <Rdfa::RdfaEditor
   @plugins={{array "besluit" "standard-template"}}
@@ -218,7 +217,6 @@ To enrich the editor functionality with rdfa-editor-plugins, execute the followi
 />
 ```
 
-```
 ### Developing a plugin
 
 A plugin is an Ember addon that provides at minimum a plugin class. An instance of this class is constructed by the editor and provided with a [controller](https://github.com/lblod/ember-rdfa-editor/blob/master/addon/model/controller.ts) in an (optionally async) initialize method.  An example can be found in the [standard-template plugin](https://github.com/lblod/ember-rdfa-editor-standard-template-plugin/blob/master/addon/standard-template-plugin.js). Make sure to register this class in the ember container using an initializer, for example:
