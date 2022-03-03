@@ -187,7 +187,6 @@ module('Unit | commands | match-text-command-text', (hooks) => {
   test('only match inside of searchRange', (assert) => {
     //language=XML
     const {
-      root,
       textNodes: { resultNode },
       elements: { searchContainer },
     } = vdom`
@@ -206,7 +205,6 @@ module('Unit | commands | match-text-command-text', (hooks) => {
   test('only match greedy', (assert) => {
     //language=XML
     const {
-      root,
       textNodes: { resultNode },
       elements: { searchContainer },
     } = vdom`
