@@ -1,9 +1,10 @@
 <div class="c-dummy"
-	 {{did-insert this.setup}}
-	 {{will-destroy this.teardown}}>
+  {{did-insert this.setup}}
+  {{will-destroy this.teardown}}>
   <div class="c-dummy__header">
     <p>
       {{yield}}
+      <button type="button" {{on "click" this.showExportPreview}}>Show Export Preview</button>
     </p>
     <div>
       <label for="pasteSelect">
