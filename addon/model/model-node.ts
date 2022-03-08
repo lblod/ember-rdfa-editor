@@ -17,6 +17,13 @@ export interface NodeConfig {
   rdfaPrefixes?: Map<string, string>;
 }
 
+export type DirtyType = 'content' | 'node';
+
+export interface NodeCompareOpts {
+  ignoredAttributes?: Set<string>;
+  ignoreDirtiness?: boolean;
+}
+
 /**
  * Basic building block of the model. Cannot be instantiated, any node will always have a more specific type
  */
@@ -29,12 +36,14 @@ export default abstract class ModelNode implements Walkable {
   private _nextSibling: ModelNode | null = null;
   private _previousSibling: ModelNode | null = null;
   private _debugInfo: unknown;
+  public dirtiness: Set<DirtyType>;
 
   protected constructor(config?: NodeConfig) {
     this._attributeMap = new Map<string, string>();
     if (config) {
       this._debugInfo = config.debugInfo;
     }
+    this.dirtiness = new Set<DirtyType>();
   }
 
   /**
@@ -127,6 +136,14 @@ export default abstract class ModelNode implements Walkable {
    */
   get offsetSize(): number {
     return 1;
+  }
+
+  setDirty(...dirtyTypes: DirtyType[]) {
+    this.dirtiness = new Set<DirtyType>(dirtyTypes);
+  }
+
+  isDirty(type: DirtyType) {
+    return this.dirtiness.has(type);
   }
 
   /**
@@ -337,9 +354,9 @@ export default abstract class ModelNode implements Walkable {
    * Deep, but not reference equality
    * All properties except boundNode, parent and siblings will be compared, and children will be compared recursively
    * @param other
-   * @param strict
+   * @param ignoredAttributes
    */
-  abstract sameAs(other: ModelNode, strict?: boolean): boolean;
+  abstract sameAs(other: ModelNode, compareOpts?: NodeCompareOpts): boolean;
 
   /**
    * True if node can be merged with other

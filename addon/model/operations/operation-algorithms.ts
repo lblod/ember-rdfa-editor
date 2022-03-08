@@ -1,7 +1,10 @@
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode, {
+  DirtyType,
+} from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 
 /**
  * A shared library of algorithms to be used by operations only
@@ -29,6 +32,7 @@ export default class OperationAlgorithms {
     range: ModelRange,
     ...nodes: ModelNode[]
   ): { overwrittenNodes: ModelNode[]; _markCheckNodes: ModelNode[] } {
+    nodes.forEach((node) => this.markSubtreeDirty(node, 'content', 'node'));
     let overwrittenNodes: ModelNode[] = [];
     const _markCheckNodes: ModelNode[] = [...nodes];
     if (range.collapsed) {
@@ -48,6 +52,7 @@ export default class OperationAlgorithms {
           range.start.parentOffset,
           ...nodes
         );
+        range.start.parent.setDirty('content');
       }
     } else {
       range.start.split();
@@ -140,5 +145,19 @@ export default class OperationAlgorithms {
       grandParent.addChild(right, parent.index! + 1);
       return ModelPosition.fromBeforeNode(right);
     }
+  }
+
+  static markDirty(range: ModelRange, ...types: DirtyType[]) {
+    for (const node of range.contextNodes('rangeContains')) {
+      node.setDirty(...types);
+    }
+  }
+
+  static markSubtreeDirty(root: ModelNode, ...types: DirtyType[]) {
+    const walker = GenTreeWalker.fromSubTree({
+      root,
+      onEnterNode: (node) => node.setDirty(...types),
+    });
+    walker.walk();
   }
 }

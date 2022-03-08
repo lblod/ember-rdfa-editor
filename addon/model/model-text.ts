@@ -1,11 +1,13 @@
 import ModelNode, {
   ModelNodeType,
+  NodeCompareOpts,
   NodeConfig,
 } from '@lblod/ember-rdfa-editor/model/model-node';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
+import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
 
 const NON_BREAKING_SPACE = '\u00A0';
 
@@ -134,7 +136,15 @@ export default class ModelText extends ModelNode {
     return stringToVisibleText(this.content).length > 0;
   }
 
-  sameAs(other: ModelNode, strict = false): boolean {
+  sameAs(other: ModelNode, compareOpts?: NodeCompareOpts): boolean {
+    let ignoredAttributes = ModelNodeUtils.DEFAULT_IGNORED_ATTRS;
+    let ignoreDirtyness: boolean | undefined = true;
+    if (compareOpts) {
+      if (compareOpts.ignoredAttributes) {
+        ignoredAttributes = compareOpts.ignoredAttributes;
+      }
+      ignoreDirtyness = compareOpts.ignoreDirtiness;
+    }
     if (!ModelNode.isModelText(other)) {
       return false;
     }
@@ -144,18 +154,16 @@ export default class ModelText extends ModelNode {
     if (!this.marks.hasSameHashes(other.marks)) {
       return false;
     }
-    if (strict) {
-      return ModelNodeUtils.areAttributeMapsSame(
-        this.attributeMap,
-        other.attributeMap,
-        new Set()
-      );
-    } else {
-      return ModelNodeUtils.areAttributeMapsSame(
-        this.attributeMap,
-        other.attributeMap
-      );
+    if (!ignoreDirtyness) {
+      if (!SetUtils.areSetsSame(this.dirtiness, other.dirtiness)) {
+        return false;
+      }
     }
+    return ModelNodeUtils.areAttributeMapsSame(
+      this.attributeMap,
+      other.attributeMap,
+      ignoredAttributes
+    );
   }
 
   isMergeable(other: ModelNode): boolean {

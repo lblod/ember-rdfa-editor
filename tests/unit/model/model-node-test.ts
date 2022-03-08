@@ -336,7 +336,7 @@ module('Unit | model | model-node', (hooks) => {
           </ul>
         </div>
       `;
-      assert.false(model1.sameAs(model2, true));
+      assert.false(model1.sameAs(model2, { ignoredAttributes: new Set() }));
     });
   });
 });

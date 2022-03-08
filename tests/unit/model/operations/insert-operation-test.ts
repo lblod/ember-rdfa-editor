@@ -15,8 +15,8 @@ module('Unit | model | operations | insert-operation-test', () => {
 
     // language=XML
     const { root: expected } = vdom`
-      <modelRoot>
-        <text>abc</text>
+      <modelRoot __dirty="content">
+        <text __dirty="content,node">abc</text>
       </modelRoot>
     `;
 
@@ -28,7 +28,7 @@ module('Unit | model | operations | insert-operation-test', () => {
       nodeToInsert
     );
     op.execute();
-    assert.true(initial.sameAs(expected));
+    assert.true(initial.sameAs(expected, {ignoreDirtiness: false}));
   });
   test('inserts element into empty root', (assert) => {
     // language=XML
@@ -38,9 +38,9 @@ module('Unit | model | operations | insert-operation-test', () => {
 
     // language=XML
     const { root: expected } = vdom`
-      <modelRoot>
-        <div>
-          <text>abc</text>
+      <modelRoot __dirty="content">
+        <div __dirty="content,node">
+          <text __dirty="content,node">abc</text>
         </div>
       </modelRoot>
     `;
@@ -57,7 +57,7 @@ module('Unit | model | operations | insert-operation-test', () => {
       nodeToInsert
     );
     op.execute();
-    assert.true(initial.sameAs(expected));
+    assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
   });
   test('inserts into root when collapsed', (assert) => {
     const root = new ModelElement('div');

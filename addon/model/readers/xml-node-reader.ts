@@ -1,4 +1,6 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode, {
+  DirtyType,
+} from '@lblod/ember-rdfa-editor/model/model-node';
 import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import XmlElementReader from '@lblod/ember-rdfa-editor/model/readers/xml-element-reader';
 import XmlTextReader from '@lblod/ember-rdfa-editor/model/readers/xml-text-reader';
@@ -25,16 +27,23 @@ export default class XmlNodeReader
   }
 
   read(from: Node): ModelNode | null {
+    let result;
     if (isElement(from)) {
       if (from.tagName === 'text') {
-        return this.textReader.read(from);
+        result = this.textReader.read(from);
       } else if (from.tagName === 'table') {
-        return this.tableReader.read(from as Element);
+        result = this.tableReader.read(from as Element);
+      } else {
+        result = this.elementReader.read(from as Element);
       }
-
-      return this.elementReader.read(from as Element);
+      const dirtyFlags = from.attributes.getNamedItem('__dirty');
+      if (dirtyFlags?.value) {
+        const dirtyConfig = dirtyFlags.value.split(',') as DirtyType[];
+        result.setDirty(...dirtyConfig);
+      }
     } else {
-      return null;
+      result = null;
     }
+    return result;
   }
 }
