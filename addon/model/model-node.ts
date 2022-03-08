@@ -140,6 +140,9 @@ export default abstract class ModelNode implements Walkable {
 
   setDirty(...dirtyTypes: DirtyType[]) {
     this.dirtiness = new Set<DirtyType>(dirtyTypes);
+    if (!this.parent?.isDirty('content')) {
+      this.parent?.setDirty('content');
+    }
   }
 
   isDirty(type: DirtyType) {

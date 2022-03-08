@@ -100,6 +100,20 @@ export default class OperationAlgorithms {
 
   static splitText(position: ModelPosition, keepright = false) {
     position.split(keepright);
+    const before = position.nodeBefore();
+    const after = position.nodeAfter();
+    if (before) {
+      before.setDirty('content');
+      if (keepright) {
+        before.setDirty('node');
+      }
+    }
+    if (after) {
+      after.setDirty('content');
+      if (!keepright) {
+        after.setDirty('node');
+      }
+    }
     return position;
   }
 
