@@ -5,6 +5,9 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { XmlReaderResult } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 
 module('Unit | model | operations | insert-operation-test', () => {
   test('inserts into empty root', (assert) => {
@@ -20,8 +23,8 @@ module('Unit | model | operations | insert-operation-test', () => {
       </modelRoot>
     `;
 
-    const { root: nodeToInsert } = vdom`
-      <text>abc</text>`;
+    const { root: nodeToInsert } = asNew(vdom`
+      <text __dirty="content,node">abc</text>`);
 
     const op = new InsertOperation(
       undefined,
@@ -47,10 +50,10 @@ module('Unit | model | operations | insert-operation-test', () => {
     `;
 
     // language=XML
-    const { root: nodeToInsert } = vdom`
+    const { root: nodeToInsert } = asNew(vdom`
       <div>
         <text>abc</text>
-      </div>`;
+      </div>`);
 
     const op = new InsertOperation(
       undefined,
@@ -71,8 +74,8 @@ module('Unit | model | operations | insert-operation-test', () => {
       </modelRoot>
     `;
     //language=XML
-    const { root: nodeToInsert } = vdom`
-      <text>abc</text>`;
+    const { root: nodeToInsert } = asNew(vdom`
+      <text>abc</text>`);
 
     const op = new InsertOperation(
       undefined,
@@ -104,8 +107,8 @@ module('Unit | model | operations | insert-operation-test', () => {
     `;
 
     //language=XML
-    const { root: nodeToInsert } = vdom`
-      <text>abc</text>`;
+    const { root: nodeToInsert } = asNew(vdom`
+      <text>abc</text>`);
     const { root: expected } = vdom`
       <modelRoot __dirty="content">
         <span/>
@@ -161,8 +164,8 @@ module('Unit | model | operations | insert-operation-test', () => {
         <span/>
       </modelRoot>
     `;
-    const { root: nodeToInsert } = vdom`
-      <text>abc</text>`;
+    const { root: nodeToInsert } = asNew(vdom`
+      <text>abc</text>`);
 
     const { root: expected } = vdom`
       <modelRoot __dirty="content">
@@ -199,8 +202,8 @@ module('Unit | model | operations | insert-operation-test', () => {
 
     // language=XML
     const { root: expected } = vdom`
-      <modelRoot __dirty="content">
-        <div __dirty="content">
+      <modelRoot>
+        <div>
           <text __dirty="content">te</text>
         </div>
         <text __dirty="content">st</text>
@@ -212,7 +215,7 @@ module('Unit | model | operations | insert-operation-test', () => {
     const op = new InsertOperation(undefined, range);
 
     const resultRange = op.execute();
-    console.log(expected.toXml());
+    console.log(initial.toXml())
 
     assert.true(expected.sameAs(initial, { ignoreDirtiness: false }));
     assert.true(
@@ -254,7 +257,7 @@ module('Unit | model | operations | insert-operation-test', () => {
           <text __dirty="node,content">ins1</text>
         </div>
         <div __dirty="content">
-          <span __dirty="content">
+          <span>
             <text __dirty="content">op</text>
           </span>
         </div>
@@ -278,3 +281,11 @@ module('Unit | model | operations | insert-operation-test', () => {
     );
   });
 });
+
+function asNew(result: XmlReaderResult) {
+  const walker = GenTreeWalker.fromSubTree<ModelNode>({ root: result.root });
+  for (const node of walker.nodes()) {
+    node.setDirty('node', 'content');
+  }
+  return result;
+}

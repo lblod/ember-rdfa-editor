@@ -36,11 +36,6 @@ export default class XmlNodeReader
       } else {
         result = this.elementReader.read(from as Element);
       }
-      const dirtyFlags = from.attributes.getNamedItem('__dirty');
-      if (dirtyFlags?.value) {
-        const dirtyConfig = dirtyFlags.value.split(',') as DirtyType[];
-        result.setDirty(...dirtyConfig);
-      }
     } else {
       result = null;
     }

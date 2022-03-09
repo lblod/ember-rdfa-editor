@@ -1,10 +1,7 @@
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelNode, {
-  DirtyType,
-} from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 
 /**
  * A shared library of algorithms to be used by operations only
@@ -12,18 +9,47 @@ import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
  */
 export default class OperationAlgorithms {
   static remove(range: ModelRange): ModelNode[] {
-    OperationAlgorithms.splitText(range.start);
-    OperationAlgorithms.splitText(range.end, true);
-    const confinedRanges = range.getMinimumConfinedRanges();
+    let newStartNode: ModelNode | null = null;
+    let newEndNode: ModelNode | null = null;
+    let splitStart = false;
+    let splitEnd = false;
+    if (range.start.isInsideText()) {
+      range.start.split();
+      splitStart = true;
+    }
+    if (range.end.isInsideText()) {
+      range.end.split(true);
+      splitEnd = true;
+    }
+    if (splitStart) {
+      newStartNode = range.start.nodeAfter();
+    }
+    if (splitEnd) {
+      newEndNode = range.end.nodeBefore();
+    }
+
     const nodesToRemove = [];
+
+    const confinedRanges = range.getMinimumConfinedRanges();
     for (const range of confinedRanges) {
       if (!range.collapsed) {
         const walker = new ModelTreeWalker({ range, descend: false });
         nodesToRemove.push(...walker);
       }
     }
-    for (const node of nodesToRemove) {
+
+    if (!range.collapsed && newStartNode) {
+      newStartNode.remove();
+      newStartNode.parent!.removeDirty('content');
+    }
+    for (const node of nodesToRemove.filter(
+      (node) => node !== newStartNode && node !== newEndNode
+    )) {
       node.remove();
+    }
+    if (!range.collapsed && newEndNode) {
+      newEndNode.remove();
+      newEndNode.parent!.removeDirty('content');
     }
     return nodesToRemove;
   }
@@ -32,7 +58,6 @@ export default class OperationAlgorithms {
     range: ModelRange,
     ...nodes: ModelNode[]
   ): { overwrittenNodes: ModelNode[]; _markCheckNodes: ModelNode[] } {
-    nodes.forEach((node) => this.markSubtreeDirty(node, 'content', 'node'));
     let overwrittenNodes: ModelNode[] = [];
     const _markCheckNodes: ModelNode[] = [...nodes];
     if (range.collapsed) {
@@ -52,19 +77,18 @@ export default class OperationAlgorithms {
           range.start.parentOffset,
           ...nodes
         );
-        range.start.parent.setDirty('content');
       }
     } else {
-      range.start.split();
-      range.end.split(true);
-      const before = range.start.nodeBefore();
-      const after = range.end.nodeAfter();
-      if (before) {
-        _markCheckNodes.push(before);
-      }
-      if (after) {
-        _markCheckNodes.push(after);
-      }
+      // range.start.split();
+      // range.end.split(true);
+      // const before = range.start.nodeBefore();
+      // const after = range.end.nodeAfter();
+      // if (before) {
+      //   _markCheckNodes.push(before);
+      // }
+      // if (after) {
+      //   _markCheckNodes.push(after);
+      // }
       overwrittenNodes = OperationAlgorithms.remove(range);
 
       range.start.parent.insertChildrenAtOffset(
@@ -100,20 +124,6 @@ export default class OperationAlgorithms {
 
   static splitText(position: ModelPosition, keepright = false) {
     position.split(keepright);
-    const before = position.nodeBefore();
-    const after = position.nodeAfter();
-    if (before) {
-      before.setDirty('content');
-      if (keepright) {
-        before.setDirty('node');
-      }
-    }
-    if (after) {
-      after.setDirty('content');
-      if (!keepright) {
-        after.setDirty('node');
-      }
-    }
     return position;
   }
 
@@ -133,6 +143,7 @@ export default class OperationAlgorithms {
       const before = position.nodeBefore();
       if (before) {
         const leftSideChildren = parent.children.splice(0, before.index!);
+        parent.addDirty('content');
         if (parent.firstChild) {
           parent.firstChild.previousSibling = null;
         }
@@ -148,6 +159,7 @@ export default class OperationAlgorithms {
       const after = position.nodeAfter();
       if (after) {
         const rightSideChildren = parent.children.splice(after.index!);
+        parent.addDirty('content');
         if (parent.lastChild) {
           parent.lastChild.nextSibling = null;
         }
@@ -159,19 +171,5 @@ export default class OperationAlgorithms {
       grandParent.addChild(right, parent.index! + 1);
       return ModelPosition.fromBeforeNode(right);
     }
-  }
-
-  static markDirty(range: ModelRange, ...types: DirtyType[]) {
-    for (const node of range.contextNodes('rangeContains')) {
-      node.setDirty(...types);
-    }
-  }
-
-  static markSubtreeDirty(root: ModelNode, ...types: DirtyType[]) {
-    const walker = GenTreeWalker.fromSubTree({
-      root,
-      onEnterNode: (node) => node.setDirty(...types),
-    });
-    walker.walk();
   }
 }

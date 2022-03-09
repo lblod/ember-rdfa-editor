@@ -27,6 +27,7 @@ export default class ModelText extends ModelNode {
 
   set content(value: string) {
     this._content = value;
+    this.addDirty('content');
   }
 
   get marks(): MarkSet {
@@ -35,6 +36,7 @@ export default class ModelText extends ModelNode {
 
   set marks(value: MarkSet) {
     this._marks = value;
+    this.addDirty('mark');
   }
 
   get length() {
@@ -59,10 +61,12 @@ export default class ModelText extends ModelNode {
 
   addMark(mark: Mark) {
     this.marks.add(mark);
+    this.addDirty('mark');
   }
 
   removeMarkByName(markName: string) {
     this.marks.deleteHash(markName);
+    this.addDirty('mark');
   }
 
   insertTextNodeAt(index: number): ModelText {

@@ -42,6 +42,7 @@ export default class ModelElement
 
   set type(value: ElementType) {
     this._type = value;
+    this.addDirty('node');
   }
 
   set className(value: string) {
@@ -63,6 +64,7 @@ export default class ModelElement
 
   set children(value: ModelNode[]) {
     this._children = value;
+    this.addDirty('content');
   }
 
   get childCount() {
@@ -148,6 +150,7 @@ export default class ModelElement
     }
 
     child.parent = this;
+    this.addDirty('content');
   }
 
   insertChildAtOffset(child: ModelNode, offset: number) {
@@ -181,6 +184,9 @@ export default class ModelElement
 
   removeChild(child: ModelNode) {
     const index = this.children.indexOf(child);
+    if (index === -1) {
+      return;
+    }
     if (child.previousSibling) {
       child.previousSibling.nextSibling = child.nextSibling;
     }
@@ -193,6 +199,7 @@ export default class ModelElement
         this.children[index - 1] || null;
     }
     this.children.splice(index, 1);
+    this.addDirty('content');
   }
 
   getChildIndex(child: ModelNode): number | null {
@@ -229,6 +236,7 @@ export default class ModelElement
     }
 
     this.children = leftChildren;
+    this.addDirty('content');
     const right = this.clone();
     right.children = [];
     right.appendChildren(...rightChildren);
@@ -424,6 +432,7 @@ export default class ModelElement
     if (key === 'prefix') {
       this.updateRdfaPrefixes();
     }
+    this.addDirty('node');
   }
 
   /**
