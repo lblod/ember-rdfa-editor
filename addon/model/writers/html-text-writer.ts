@@ -6,12 +6,12 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
  * Writer responsible for converting {@link ModelText} nodes into HTML subtrees
  * This takes care of converting the textattributes into HTML elements
  */
-export default class HtmlTextWriter implements Writer<ModelText, Node | null> {
+export default class HtmlTextWriter implements Writer<ModelText, Node> {
   constructor(protected model: Model) {}
 
-  write(modelNode: ModelText): Node | null {
+  write(modelNode: ModelText): Node {
     if (modelNode.length === 0) {
-      return null;
+      return new Text();
     }
 
     let current: Node = new Text(modelNode.content);

@@ -1,14 +1,8 @@
 import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import HtmlWriter from '@lblod/ember-rdfa-editor/model/writers/html-writer';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import {
-  getWindowSelection,
-  isElement,
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import {
-  ModelError,
-  NotImplementedError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
+import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
@@ -144,24 +138,7 @@ export default class Model {
     const modelWriteEvent = new CustomEvent('editorModelWrite');
     document.dispatchEvent(modelWriteEvent);
 
-    const oldRoot = tree.boundNode;
-    if (!oldRoot) {
-      throw new Error('Container without boundNode');
-    }
-
-    if (!isElement(oldRoot)) {
-      throw new NotImplementedError(
-        'Root is not an element, not sure what to do'
-      );
-    }
-
-    const newRoot = this.writer.write(tree);
-    while (oldRoot.firstChild) {
-      oldRoot.removeChild(oldRoot.firstChild);
-    }
-
-    oldRoot.append(...newRoot.childNodes);
-    this.bindNode(tree, oldRoot);
+    this.writer.write(tree);
 
     if (writeSelection) {
       this.writeSelection();
