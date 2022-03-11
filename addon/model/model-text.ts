@@ -80,8 +80,6 @@ export default class ModelText extends ModelNode {
     result.modelNodeType = this.modelNodeType;
     result.content = this.content;
     result.marks = this.marks.clone();
-    result.dirtiness = new Set(this.dirtiness);
-    result.boundNode = this.boundNode;
 
     return result;
   }

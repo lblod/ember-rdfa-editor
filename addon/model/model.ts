@@ -163,7 +163,7 @@ export default class Model {
    * @param modelNode
    * @param domNode
    */
-  bindNode(modelNode: ModelNode, domNode: Node) {
+  bindNode(modelNode: ModelNode, domNode: Node): void {
     this.nodeMap.delete(domNode);
     modelNode.boundNode = domNode;
     this.nodeMap.set(domNode, modelNode);

@@ -7,7 +7,7 @@ import ModelText from '../model-text';
  * This takes care of converting the textattributes into HTML elements
  */
 export default class UnpollutedHtmlTextWriter extends HtmlTextWriter {
-  write(modelNode: ModelText): Node | null {
+  write(modelNode: ModelText): Node {
     const clone = modelNode.clone();
     clone.content = preWrapToNormalWhiteSpace(modelNode.content);
     const current = super.write(clone);

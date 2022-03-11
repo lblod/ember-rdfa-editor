@@ -4,7 +4,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { ModelError, WriterError } from '@lblod/ember-rdfa-editor/utils/errors';
 import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
 
-type TextOrElement = Text | HTMLElement;
+export type TextOrElement = Text | HTMLElement;
 
 /**
  * Top-level {@link Writer} for HTML documents.
@@ -18,7 +18,7 @@ export default class HtmlWriter {
     this.htmlElementWriter = new HtmlElementWriter(model);
   }
 
-  write(modelNode: ModelNode, parseOnly = false): Node {
+  write(modelNode: ModelNode): Node {
     let boundNode: TextOrElement = modelNode.boundNode as TextOrElement;
 
     if (!boundNode) {
@@ -49,10 +49,9 @@ export default class HtmlWriter {
         return result;
       } else if (ModelNode.isModelText(modelNode)) {
         let result = boundNode;
-        if (modelNode.isDirty('node')) {
-          const domNode = this.htmlTextWriter.write(modelNode);
+        if (modelNode.isDirty('node') || modelNode.isDirty('mark')) {
+          const domNode = this.htmlTextWriter.write(modelNode) as Text;
           (boundNode as Text).replaceWith(domNode);
-          console.log('text replace');
           this.model.bindNode(modelNode, domNode);
           result = domNode;
         } else if (modelNode.isDirty('content')) {
@@ -61,7 +60,6 @@ export default class HtmlWriter {
             (boundNode as Text).length,
             modelNode.content
           );
-          console.log('text edit');
         }
         modelNode.clearDirty();
         return result;
@@ -85,12 +83,9 @@ export default class HtmlWriter {
     }
   }
 
-  getDomnodeFor(modelNode: ModelNode): Node {}
-
   swapElement(node: HTMLElement, replacement: HTMLElement) {
     const children = node.childNodes;
     replacement.append(...children);
     node.replaceWith(replacement);
-    console.log('domNode swap');
   }
 }
