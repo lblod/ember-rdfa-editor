@@ -8,6 +8,30 @@
 
 
 
+
+## 0.51.0 (2022-03-11)
+
+#### :rocket: Enhancement
+* [#231](https://github.com/lblod/ember-rdfa-editor/pull/231) debounce text input slightly ([@nvdk](https://github.com/nvdk))
+* [#223](https://github.com/lblod/ember-rdfa-editor/pull/223) Enhancement/whitespace handling ([@nvdk](https://github.com/nvdk))
+
+#### :bug: Bug Fix
+* [#233](https://github.com/lblod/ember-rdfa-editor/pull/233) Fix bug with predicate node generation ([@abeforgit](https://github.com/abeforgit))
+* [#234](https://github.com/lblod/ember-rdfa-editor/pull/234) Bug/mark attribute rendering ([@abeforgit](https://github.com/abeforgit))
+* [#235](https://github.com/lblod/ember-rdfa-editor/pull/235) Fix list indentation ([@Dietr](https://github.com/Dietr))
+
+#### :house: Internal
+* [#229](https://github.com/lblod/ember-rdfa-editor/pull/229) Bump nanoid from 3.1.30 to 3.3.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#228](https://github.com/lblod/ember-rdfa-editor/pull/228) Bump follow-redirects from 1.14.5 to 1.14.9 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#227](https://github.com/lblod/ember-rdfa-editor/pull/227) Bump engine.io from 6.1.0 to 6.1.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#226](https://github.com/lblod/ember-rdfa-editor/pull/226) Bump node-fetch from 2.6.6 to 2.6.7 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 3
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Dieter Peirs ([@Dietr](https://github.com/Dietr))
+- Niels V ([@nvdk](https://github.com/nvdk))
+
+
 ## 0.50.0 (2022-02-25)
 
 #### :rocket: Enhancement
