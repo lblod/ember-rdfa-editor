@@ -135,7 +135,11 @@ export default class Model {
    * have a real dom available.
    */
   write(tree: ModelElement = this.rootModelNode, writeSelection = true) {
+    console.log(tree.toXml());
     const modelWriteEvent = new CustomEvent('editorModelWrite');
+    if (tree === this.rootModelNode) {
+      tree.removeDirty('node');
+    }
     document.dispatchEvent(modelWriteEvent);
 
     this.writer.write(tree);

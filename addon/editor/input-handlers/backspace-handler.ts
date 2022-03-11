@@ -397,6 +397,7 @@ export default class BackspaceHandler extends InputHandler {
           },
         })
       );
+      this.rawEditor.model.read();
     });
 
     return { allowPropagation: false };

@@ -1,8 +1,10 @@
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import HtmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { WriterError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { ModelError, WriterError } from '@lblod/ember-rdfa-editor/utils/errors';
 import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
+
+type TextOrElement = Text | HTMLElement;
 
 /**
  * Top-level {@link Writer} for HTML documents.
@@ -16,51 +18,79 @@ export default class HtmlWriter {
     this.htmlElementWriter = new HtmlElementWriter(model);
   }
 
-  write(modelNode: ModelNode) {
-    const boundNode = modelNode.boundNode;
-    if (boundNode) {
-      if (ModelNode.isModelElement(modelNode)) {
-        if (modelNode.isDirty('node')) {
-          const domNode = this.htmlElementWriter.write(modelNode);
-          (boundNode as HTMLElement).replaceWith(domNode);
-        }
-        if (modelNode.isDirty('content')) {
-          const childNodes = [];
+  write(modelNode: ModelNode, parseOnly = false): Node {
+    let boundNode: TextOrElement = modelNode.boundNode as TextOrElement;
 
-          for (const child of modelNode.children) {
-            childNodes.push(this.getDomnodeFor(child));
-          }
-          boundNode.childNodes.forEach((child) => {
-            child.remove();
-          });
-          childNodes.forEach((child) => boundNode.appendChild(child));
+    if (!boundNode) {
+      if (!modelNode.parent?.boundNode) {
+        throw new ModelError('Impossible state');
+      }
+      boundNode = this.parseTree(modelNode);
+      this.model.bindNode(modelNode, boundNode);
+      modelNode.clearDirty();
+      return boundNode;
+    } else {
+      if (ModelNode.isModelElement(modelNode)) {
+        let result = boundNode;
+        if (modelNode.isDirty('node')) {
+          result = this.htmlElementWriter.write(modelNode);
+          this.swapElement(boundNode as HTMLElement, result);
+          this.model.bindNode(modelNode, result);
+          boundNode = result;
         }
+        const domChildren = modelNode.children.map((child) =>
+          this.write(child)
+        );
+
+        if (modelNode.isDirty('content')) {
+          (boundNode as HTMLElement).replaceChildren(...domChildren);
+        }
+        modelNode.clearDirty();
+        return result;
       } else if (ModelNode.isModelText(modelNode)) {
+        let result = boundNode;
         if (modelNode.isDirty('node')) {
           const domNode = this.htmlTextWriter.write(modelNode);
           (boundNode as Text).replaceWith(domNode);
+          console.log('text replace');
           this.model.bindNode(modelNode, domNode);
+          result = domNode;
         } else if (modelNode.isDirty('content')) {
           (boundNode as Text).replaceData(
             0,
             (boundNode as Text).length,
             modelNode.content
           );
+          console.log('text edit');
         }
+        modelNode.clearDirty();
+        return result;
+      } else {
+        throw new ModelError('Unsupported node type');
       }
-    } else {
-      const domNode = this.getDomnodeFor(modelNode);
-      this.model.bindNode(modelNode, domNode);
     }
   }
 
-  getDomnodeFor(modelNode: ModelNode): Node {
+  parseTree(modelNode: ModelNode): TextOrElement {
     if (ModelNode.isModelElement(modelNode)) {
-      return this.htmlElementWriter.write(modelNode);
+      const result = this.htmlElementWriter.write(modelNode);
+      for (const child of modelNode.children) {
+        result.appendChild(this.parseTree(child));
+      }
+      return result;
     } else if (ModelNode.isModelText(modelNode)) {
-      return this.htmlTextWriter.write(modelNode);
+      return this.htmlTextWriter.write(modelNode) as HTMLElement;
     } else {
       throw new WriterError('Unsupported node type');
     }
+  }
+
+  getDomnodeFor(modelNode: ModelNode): Node {}
+
+  swapElement(node: HTMLElement, replacement: HTMLElement) {
+    const children = node.childNodes;
+    replacement.append(...children);
+    node.replaceWith(replacement);
+    console.log('domNode swap');
   }
 }

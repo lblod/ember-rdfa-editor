@@ -13,6 +13,7 @@ export default class DisableDeleteHandler extends InputHandler {
   }
 
   handleEvent(_: KeyboardEvent): HandlerResponse {
+    this.rawEditor.model.read();
     return { allowPropagation: false, allowBrowserDefault: false };
   }
 }
