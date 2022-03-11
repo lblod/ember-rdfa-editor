@@ -335,7 +335,7 @@ export class EditorStore implements Datastore {
         const nodes = [];
         // we have to filter out nodes that belong to a subject which is not in the dataset
         for (const node of allNodes) {
-          const nodeSubject = this._nodeToSubject.get(node);
+          const nodeSubject = this.getSubjectForNode(node);
           if (nodeSubject && seenSubjects.has(nodeSubject.value)) {
             nodes.push(node);
           }
@@ -407,7 +407,7 @@ export class EditorStore implements Datastore {
         const nodes = new Set<ModelNode>();
         // we have to filter out nodes that belong to a subject which is not in the dataset
         for (const node of allNodes) {
-          const nodeSubject = this._nodeToSubject.get(node);
+          const nodeSubject = this.getSubjectForNode(node);
           if (nodeSubject && seenSubjects.has(nodeSubject.value)) {
             nodes.add(node);
           }
@@ -468,6 +468,16 @@ export class EditorStore implements Datastore {
       }
     }
     return subjects;
+  }
+
+  private getSubjectForNode(node: ModelNode) {
+    let current: ModelNode | null = node;
+    let subject;
+    while (current && !subject) {
+      subject = this._nodeToSubject.get(current);
+      current = current.parent;
+    }
+    return subject;
   }
 
   private getPrefix = (prefix: string): string | null => {

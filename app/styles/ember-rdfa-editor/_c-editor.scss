@@ -21,16 +21,12 @@ $say-annotation-width: $au-unit-huge * 1.5 !default;
 
 .say-editor {
   background-color: $say-paper-background;
-  padding: $say-editor-padding $say-editor-padding * .5;
+  padding: $say-editor-padding;
   width: 100%;
   position: relative;
 
   .say-container--paper & {
     background-color: $say-editor-background;
-  }
-
-  @include mq(small) {
-    padding: $say-editor-padding;
   }
 
   @include mq(medium) {
@@ -74,6 +70,7 @@ $say-annotation-width: $au-unit-huge * 1.5 !default;
 .say-editor__inner {
   position: relative;
   min-height: $say-paper-min-height;
+  white-space: pre-wrap;
 
   // Remove start styles
   &:focus {
@@ -84,11 +81,9 @@ $say-annotation-width: $au-unit-huge * 1.5 !default;
     min-height: calc(#{$say-paper-min-height} - #{$say-paper-padding} * 2);
   }
 
-  :not(.say-container--paper) & {
-    * {
-      max-width: 120ch;
-      margin-left: auto;
-      margin-right: auto;
-    }
+  .say-container:not(.say-container--paper) & {
+    max-width: 120ch;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
