@@ -18,14 +18,19 @@ module('Unit | model | twoway-conversion', (hooks) => {
   });
   test('converting simple tree back and forth gives same tree', (assert) => {
     const p = document.createElement('p');
-    p.innerHTML = `<p><ul><li> some text <div style="background-color:green"><a href="#">an <em data-__set-by="rdfa-editor"> italic |- </em> link</a></div></li></ul></p>`;
+    // the inner p will get broken up by the dom as per the html standard
+    // this happens before the model reads it
+    // https://developer.mozilla.org/en-us/docs/Web/HTML/Element/p
+    const innerContent = `<p></p><ul><li> some text <div style="background-color:green"><a href="#">an <em data-__set-by="rdfa-editor"> italic |- </em> link</a></div></li></ul><p></p>`;
+    p.innerHTML = innerContent;
     const read = reader.read(p);
     if (!read) {
       throw new AssertionError();
     }
-    const written = writer.write(read[0]) as HTMLElement;
+    console.log(read[0].toXml());
+    const written = writer.write(read[0]).viewRoot as HTMLElement;
 
-    assert.strictEqual(written.outerHTML, p.outerHTML);
+    assert.strictEqual(written.innerHTML, innerContent);
   });
   test('<i> gets converted to <em>', (assert) => {
     const p = document.createElement('p');
@@ -34,7 +39,7 @@ module('Unit | model | twoway-conversion', (hooks) => {
     if (!read) {
       throw new AssertionError();
     }
-    const written = writer.write(read[0]) as HTMLElement;
+    const written = writer.write(read[0]).viewRoot as HTMLElement;
     // the inner p will get broken up by the dom as per the html standard
     // this happens before the model reads it
     // https://developer.mozilla.org/en-us/docs/Web/HTML/Element/p

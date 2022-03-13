@@ -77,7 +77,7 @@ export default class HtmlWriter {
     return this.model.modelToView(modelNode);
   }
 
-  private createElementView(modelElement: ModelElement): NodeView {
+  private createElementView(modelElement: ModelElement): ElementView {
     const view = this.htmlElementWriter.write(modelElement);
     this.model.registerNodeView(modelElement, view);
     return view;
@@ -88,9 +88,8 @@ export default class HtmlWriter {
     view: ElementView
   ): NodeView {
     if (modelElement.isDirty('node')) {
-      const newView = this.htmlElementWriter.write(modelElement);
+      const newView = this.createElementView(modelElement);
       this.swapElement(view.viewRoot, newView.viewRoot);
-      this.model.registerNodeView(modelElement, newView);
       return newView;
     }
     return view;
