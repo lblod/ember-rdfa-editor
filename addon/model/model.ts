@@ -58,7 +58,7 @@ export default class Model {
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
     this.selectionReader = new SelectionReader(this);
-    this.selectionWriter = new SelectionWriter();
+    this.selectionWriter = new SelectionWriter(this);
     this._selection = new ModelSelection();
     this._eventBus = eventBus;
     this.logger = createLogger('RawEditor');
