@@ -16,6 +16,7 @@ import { parsePrefixString } from '@lblod/ember-rdfa-editor/model/util/rdfa-util
 import RdfaAttributes from '@lblod/marawa/rdfa-attributes';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
+import { ElementView } from '@lblod/ember-rdfa-editor/model/node-view';
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -28,7 +29,7 @@ export default class ModelElement
   private _children: ModelNode[] = [];
   private _type: ElementType;
   private _currentRdfaPrefixes: Map<string, string>;
-  protected _viewRoot: HTMLElement | null = null;
+  protected _view: ElementView | null = null;
 
   constructor(type: ElementType = 'span', config?: NodeConfig) {
     super(config);
@@ -88,20 +89,16 @@ export default class ModelElement
     return !NON_BLOCK_NODES.has(this.type);
   }
 
+  get view(): ElementView | null {
+    return this._view;
+  }
+
+  set view(value: ElementView | null) {
+    this._view = value;
+  }
+
   get viewRoot(): HTMLElement | null {
-    return this._viewRoot;
-  }
-
-  set viewRoot(value: HTMLElement | null) {
-    this._viewRoot = value;
-  }
-
-  get contentRoot(): HTMLElement | null {
-    return this._viewRoot;
-  }
-
-  set contentRoot(node: HTMLElement | null) {
-    this._viewRoot = node;
+    return this.view?.viewRoot || null;
   }
 
   /**
@@ -125,7 +122,6 @@ export default class ModelElement
 
     result.attributeMap = new Map<string, string>(this.attributeMap);
     result.modelNodeType = this.modelNodeType;
-    result.viewRoot = this.viewRoot;
 
     const clonedChildren = this.children.map((c) => c.clone());
     result.appendChildren(...clonedChildren);

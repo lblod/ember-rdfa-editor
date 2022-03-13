@@ -95,6 +95,7 @@ export default class Model {
     }
 
     this._rootModelNode = newRoot;
+    this._rootModelNode.model = this;
     this.bindNode(this.rootModelNode, this.rootNode);
 
     // This is essential, we change the root so we need to make sure the selection uses the new root.
@@ -253,6 +254,7 @@ export default class Model {
   ) {
     if (snapshot) {
       this._rootModelNode = snapshot.rootModelNode;
+      this._rootModelNode.model = this;
       this._selection = snapshot.modelSelection;
 
       if (writeBack) {

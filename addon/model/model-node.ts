@@ -10,10 +10,13 @@ import { Walkable } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { Predicate } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
 
 export type ModelNodeType = 'TEXT' | 'ELEMENT' | 'FRAGMENT';
 
 export interface NodeConfig {
+  model?: Model;
   debugInfo: unknown;
   rdfaPrefixes?: Map<string, string>;
 }
@@ -33,17 +36,20 @@ export default abstract class ModelNode implements Walkable {
 
   private _attributeMap: Map<string, string>;
   private _parent: ModelElement | null = null;
-  protected _viewRoot: Node | null = null;
-  protected _contentRoot: Node | null = null;
+  protected _view: NodeView | null = null;
   private _nextSibling: ModelNode | null = null;
   private _previousSibling: ModelNode | null = null;
   private _debugInfo: unknown;
   public dirtiness: Set<DirtyType>;
+  private _model: Model | null = null;
 
   protected constructor(config?: NodeConfig) {
     this._attributeMap = new Map<string, string>();
     if (config) {
       this._debugInfo = config.debugInfo;
+      if (config.model) {
+        this._model = config.model;
+      }
     }
     this.dirtiness = new Set<DirtyType>(['node', 'content']);
   }
@@ -112,20 +118,24 @@ export default abstract class ModelNode implements Walkable {
     return root;
   }
 
+  get model(): Model | null {
+    return this.root._model;
+  }
+
+  set model(model: Model | null) {
+    this.root._model = model;
+  }
+
+  get view(): NodeView | null {
+    return this._view;
+  }
+
+  set view(value: NodeView | null) {
+    this._view = value;
+  }
+
   get viewRoot(): Node | null {
-    return this._viewRoot;
-  }
-
-  set viewRoot(value: Node | null) {
-    this._viewRoot = value;
-  }
-
-  get contentRoot(): Node | null {
-    return this._contentRoot;
-  }
-
-  set contentRoot(value: Node | null) {
-    this._contentRoot = value;
+    return this._view?.viewRoot || null;
   }
 
   abstract get length(): number;
