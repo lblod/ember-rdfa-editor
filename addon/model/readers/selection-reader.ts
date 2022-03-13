@@ -10,10 +10,10 @@ import {
 import {
   ModelError,
   NotImplementedError,
-  ParseError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+
+type Bias = 'left' | 'right' | 'center';
 
 /**
  * Reader to convert a {@link Selection} to a {@link ModelSelection}.
@@ -84,72 +84,43 @@ export default class SelectionReader
 
   private readDomPositionUnsafe(
     container: Node,
-    domOffset: number
+    domOffset: number,
+    bias: Bias = 'right'
   ): ModelPosition | null {
-    let result = null;
-    if (this.isTextPropertyNode(container)) {
-      return this.findPositionForTextPropertyNode(container, domOffset);
-    } else if (isElement(container)) {
-      const modelContainer = this.model.getModelNodeFor(
-        container
-      ) as ModelElement;
-      const finalOffset = modelContainer.indexToOffset(domOffset);
-      result = ModelPosition.fromInElement(modelContainer, finalOffset);
-    } else if (isTextNode(container)) {
-      const modelTextNode = this.model.getModelNodeFor(container) as ModelText;
-      const modelContainer = modelTextNode.parent;
-      if (!modelContainer) {
-        throw new ParseError('Text node without parent node');
+    const modelNode = this.model.viewToModel(container);
+    const nodeView = this.model.modelToView(modelNode);
+    if (!nodeView) {
+      throw new ModelError('Could not find nodeview for domNode');
+    }
+
+    if (nodeView.contentRoot.contains(container)) {
+      // dom selection is inside some content-node we control, this
+      // means we can build a "real" model selection
+      return this.readContentPosition(container, modelNode, domOffset);
+    } else {
+      // dom selection is outside of the content
+      // we return some position either in front or after the modelnode
+      // based on heuristics and influenced by bias
+      if (bias === 'right') {
+        return ModelPosition.fromAfterNode(modelNode);
+      } else {
+        return ModelPosition.fromBeforeNode(modelNode);
       }
-
-      const basePath = modelContainer.getOffsetPath();
-
-      const finalOffset = modelTextNode.getOffset() + domOffset;
-      basePath.push(finalOffset);
-      result = ModelPosition.fromPath(modelContainer.root, basePath);
     }
-
-    return result;
   }
 
-  private isTextPropertyNode(elem: Node): boolean {
-    if (!isElement(elem)) {
-      return false;
-    }
-    return !!this.model.marksRegistry.matchMarkSpec(elem).size;
-  }
-
-  private findPositionForTextPropertyNode(
+  private readContentPosition(
     container: Node,
+    modelNode: ModelNode,
     domOffset: number
   ): ModelPosition {
-    const walker = document.createTreeWalker(
-      this.model.rootNode,
-      NodeFilter.SHOW_TEXT
-    );
-    walker.currentNode = container;
-
-    let resultingNode;
-    if (container.childNodes.length === 0) {
-      resultingNode = walker.previousNode();
-    } else if (domOffset < container.childNodes.length) {
-      resultingNode = walker.firstChild();
-      if (!resultingNode) {
-        resultingNode = walker.previousNode();
-      }
+    if (isTextNode(container) && ModelNode.isModelText(modelNode)) {
+      return ModelPosition.fromInTextNode(modelNode, domOffset);
+    } else if (isElement(container) && ModelNode.isModelElement(modelNode)) {
+      return ModelPosition.fromBeforeNode(modelNode.children[domOffset]);
     } else {
-      resultingNode = walker.lastChild();
-      if (!resultingNode) {
-        resultingNode = walker.previousNode();
-      }
+      throw new NotImplementedError('impossible selection');
     }
-
-    if (!resultingNode) {
-      throw new NotImplementedError();
-    }
-
-    const modelNode = this.model.getModelNodeFor(resultingNode) as ModelText;
-    return ModelPosition.fromInTextNode(modelNode, modelNode.length);
   }
 
   /**

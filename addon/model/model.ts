@@ -100,7 +100,6 @@ export default class Model {
     }
 
     this._rootModelNode = newRoot;
-    this.registerNodeView(this.rootModelNode, this.rootNode);
 
     // This is essential, we change the root so we need to make sure the selection uses the new root.
     if (readSelection) {
