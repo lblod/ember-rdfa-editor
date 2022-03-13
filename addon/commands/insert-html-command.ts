@@ -35,6 +35,7 @@ export default class InsertHtmlCommand extends Command {
           modelNodes.push(...parsed);
         }
       });
+      modelNodes.forEach((node) => console.log(node.toXml()));
 
       const newRange = mutator.insertNodes(range, ...modelNodes);
       this.model.selectRange(newRange);

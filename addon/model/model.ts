@@ -55,7 +55,7 @@ export default class Model {
 
   constructor(rootNode: HTMLElement, eventBus?: EventBus) {
     this._rootNode = rootNode;
-    this.reader = new HtmlReader(this);
+    this.reader = new HtmlReader(this, true);
     this.writer = new HtmlWriter(this);
     this.selectionReader = new SelectionReader(this);
     this.selectionWriter = new SelectionWriter(this);
@@ -198,15 +198,12 @@ export default class Model {
     writeBack = true
   ) {
     const mutator = new ImmediateModelMutator(this._eventBus);
-    const subTree = callback(mutator);
+    callback(mutator);
 
     if (writeBack) {
-      if (subTree) {
-        this.write(subTree);
-      } else {
-        this.write(this.rootModelNode);
-      }
+      this.write();
     }
+    console.log(this.toXml());
   }
 
   static getChildIndex(child: Node): number | null {

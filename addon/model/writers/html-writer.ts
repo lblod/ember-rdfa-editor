@@ -1,7 +1,10 @@
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import HtmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
+import {
+  ModelError,
+  NotImplementedError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
 import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
 import NodeView, {
   ElementView,
@@ -34,7 +37,7 @@ export default class HtmlWriter {
         if (!isElementView(view)) {
           throw new ModelError('ModelElement with non-element view');
         }
-        this.updateElementView(modelNode, view);
+        view = this.updateElementView(modelNode, view);
       } else {
         view = this.createElementView(modelNode);
       }
@@ -58,13 +61,13 @@ export default class HtmlWriter {
         if (!isTextView(view)) {
           throw new ModelError('ModelText with non-text view');
         }
-        this.updateTextView(modelNode, view);
+        view = this.updateTextView(modelNode, view);
       } else {
         view = this.createTextView(modelNode);
       }
       resultView = view;
     } else {
-      throw new ModelError('Unsupported modelnode type');
+      throw new NotImplementedError('Unsupported modelnode type');
     }
     modelNode.clearDirty();
     return resultView;
@@ -80,12 +83,17 @@ export default class HtmlWriter {
     return view;
   }
 
-  private updateElementView(modelElement: ModelElement, view: ElementView) {
+  private updateElementView(
+    modelElement: ModelElement,
+    view: ElementView
+  ): NodeView {
     if (modelElement.isDirty('node')) {
       const newView = this.htmlElementWriter.write(modelElement);
       this.swapElement(view.viewRoot, newView.viewRoot);
       this.model.registerNodeView(modelElement, newView);
+      return newView;
     }
+    return view;
   }
 
   private createTextView(modelText: ModelText): NodeView {
@@ -94,11 +102,11 @@ export default class HtmlWriter {
     return view;
   }
 
-  private updateTextView(modelText: ModelText, view: TextView) {
+  private updateTextView(modelText: ModelText, view: TextView): NodeView {
     if (modelText.isDirty('node') || modelText.isDirty('mark')) {
-      const newView = this.htmlTextWriter.write(modelText);
+      const newView = this.createTextView(modelText);
       view.viewRoot.replaceWith(newView.viewRoot);
-      this.model.registerNodeView(modelText, newView);
+      return newView;
     } else if (modelText.isDirty('content')) {
       view.contentRoot.replaceData(
         0,
@@ -106,6 +114,7 @@ export default class HtmlWriter {
         modelText.content
       );
     }
+    return view;
   }
 
   swapElement(node: HTMLElement, replacement: HTMLElement) {
