@@ -46,28 +46,28 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
     const nodeBefore = position.nodeBefore();
     if (!nodeAfter) {
       return {
-        anchor: position.parent.boundNode!,
-        offset: position.parent.boundNode!.childNodes.length,
+        anchor: position.parent.viewRoot!,
+        offset: position.parent.viewRoot!.childNodes.length,
       };
     }
     if (ModelElement.isModelText(nodeAfter)) {
       return {
-        anchor: nodeAfter.boundNode!,
+        anchor: nodeAfter.viewRoot!,
         offset: position.parentOffset - nodeAfter.getOffset(),
       };
     } else if (ModelElement.isModelText(nodeBefore)) {
       // we prefer text node anchors, so we look both ways
       return {
-        anchor: nodeBefore.boundNode!,
+        anchor: nodeBefore.viewRoot!,
         offset: position.parentOffset - nodeBefore.getOffset(),
       };
     } else if (ModelElement.isModelElement(nodeAfter)) {
-      const domAnchor = position.parent.boundNode!;
+      const domAnchor = position.parent.viewRoot!;
       const domIndex = ArrayUtils.indexOf(
-        nodeAfter.boundNode!,
+        nodeAfter.viewRoot!,
         (domAnchor as HTMLElement).childNodes
       )!;
-      return { anchor: position.parent.boundNode!, offset: domIndex };
+      return { anchor: position.parent.viewRoot!, offset: domIndex };
     } else {
       throw new ModelError('Unsupported node type');
     }

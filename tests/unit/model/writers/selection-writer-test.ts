@@ -25,7 +25,7 @@ module('Unit | model | writers | selection-writer', (hooks) => {
     const writer = new SelectionWriter();
     const domRange = writer.writeDomRange(model.selection.lastRange!);
 
-    assert.strictEqual(domRange.startContainer, text.boundNode);
+    assert.strictEqual(domRange.startContainer, text.viewRoot);
     assert.strictEqual(domRange.startOffset, 0);
     assert.strictEqual(domRange.endContainer, model.rootNode);
     assert.strictEqual(domRange.endOffset, 1);

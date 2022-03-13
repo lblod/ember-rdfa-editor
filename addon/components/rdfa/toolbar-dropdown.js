@@ -26,7 +26,7 @@ export default class AuDropdown extends Component {
     // some kind of focus event always seems to happen at the wrong time
     // so this is a bit of hack, but it works well.
     await paintCycleHappened();
-    this.args.editor.model.selection.lastRange.start.parent.boundNode?.focus();
+    this.args.editor.model.selection.lastRange.start.parent.viewRoot?.focus();
     this.args.editor.model.writeSelection();
     return true;
   }

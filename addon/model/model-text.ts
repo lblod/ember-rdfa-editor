@@ -15,6 +15,7 @@ export default class ModelText extends ModelNode {
   modelNodeType: ModelNodeType = 'TEXT';
   private _content: string;
   private _marks: MarkSet = new MarkSet();
+  private _contentRoot: Text | null = null;
 
   constructor(content = '', config?: NodeConfig) {
     super(config);
@@ -49,6 +50,14 @@ export default class ModelText extends ModelNode {
 
   get offsetSize() {
     return this.length;
+  }
+
+  get contentRoot(): Text | null {
+    return this._contentRoot;
+  }
+
+  set contentRoot(value: Text | null) {
+    this._contentRoot = value;
   }
 
   hasMarkName(markName: string): boolean {

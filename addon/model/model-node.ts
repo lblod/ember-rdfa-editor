@@ -33,7 +33,8 @@ export default abstract class ModelNode implements Walkable {
 
   private _attributeMap: Map<string, string>;
   private _parent: ModelElement | null = null;
-  private _boundNode: Node | null = null;
+  protected _viewRoot: Node | null = null;
+  protected _contentRoot: Node | null = null;
   private _nextSibling: ModelNode | null = null;
   private _previousSibling: ModelNode | null = null;
   private _debugInfo: unknown;
@@ -111,12 +112,20 @@ export default abstract class ModelNode implements Walkable {
     return root;
   }
 
-  get boundNode(): Node | null {
-    return this._boundNode;
+  get viewRoot(): Node | null {
+    return this._viewRoot;
   }
 
-  set boundNode(value: Node | null) {
-    this._boundNode = value;
+  set viewRoot(value: Node | null) {
+    this._viewRoot = value;
+  }
+
+  get contentRoot(): Node | null {
+    return this._contentRoot;
+  }
+
+  set contentRoot(value: Node | null) {
+    this._contentRoot = value;
   }
 
   abstract get length(): number;

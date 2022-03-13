@@ -165,7 +165,7 @@ export default class Model {
    */
   bindNode(modelNode: ModelNode, domNode: Node): void {
     this.nodeMap.delete(domNode);
-    modelNode.boundNode = domNode;
+    modelNode.viewRoot = domNode;
     this.nodeMap.set(domNode, modelNode);
   }
 

@@ -19,10 +19,10 @@ export default class HtmlWriter {
   }
 
   write(modelNode: ModelNode): Node {
-    let boundNode: TextOrElement = modelNode.boundNode as TextOrElement;
+    let boundNode: TextOrElement = modelNode.viewRoot as TextOrElement;
 
     if (!boundNode) {
-      if (!modelNode.parent?.boundNode) {
+      if (!modelNode.parent?.viewRoot) {
         throw new ModelError('Impossible state');
       }
       boundNode = this.parseTree(modelNode);

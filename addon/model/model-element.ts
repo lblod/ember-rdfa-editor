@@ -28,6 +28,7 @@ export default class ModelElement
   private _children: ModelNode[] = [];
   private _type: ElementType;
   private _currentRdfaPrefixes: Map<string, string>;
+  protected _viewRoot: HTMLElement | null = null;
 
   constructor(type: ElementType = 'span', config?: NodeConfig) {
     super(config);
@@ -87,6 +88,22 @@ export default class ModelElement
     return !NON_BLOCK_NODES.has(this.type);
   }
 
+  get viewRoot(): HTMLElement | null {
+    return this._viewRoot;
+  }
+
+  set viewRoot(value: HTMLElement | null) {
+    this._viewRoot = value;
+  }
+
+  get contentRoot(): HTMLElement | null {
+    return this._viewRoot;
+  }
+
+  set contentRoot(node: HTMLElement | null) {
+    this._viewRoot = node;
+  }
+
   /**
    * Get the largest valid offset inside this element.
    * You can think of it as the cursor position right before the
@@ -108,7 +125,7 @@ export default class ModelElement
 
     result.attributeMap = new Map<string, string>(this.attributeMap);
     result.modelNodeType = this.modelNodeType;
-    result.boundNode = this.boundNode;
+    result.viewRoot = this.viewRoot;
 
     const clonedChildren = this.children.map((c) => c.clone());
     result.appendChildren(...clonedChildren);
