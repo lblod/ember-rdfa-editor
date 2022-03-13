@@ -1,13 +1,14 @@
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import Model from '@lblod/ember-rdfa-editor/model/model';
+import { ElementView } from '@lblod/ember-rdfa-editor/model/node-view';
 
 export default class HtmlElementWriter
-  implements Writer<ModelElement, HTMLElement>
+  implements Writer<ModelElement, ElementView>
 {
   constructor(private model: Model) {}
 
-  write(modelNode: ModelElement): HTMLElement {
+  write(modelNode: ModelElement): ElementView {
     const result = document.createElement(modelNode.type);
 
     // This will disable the selection of multiple cells on table.
@@ -18,12 +19,11 @@ export default class HtmlElementWriter
     if (modelNode.type === 'td' || modelNode.type === 'th') {
       result.contentEditable = 'true';
     }
-    this.model.registerNodeView(modelNode, result);
 
     for (const item of modelNode.attributeMap.entries()) {
       result.setAttribute(item[0], item[1]);
     }
 
-    return result;
+    return { viewRoot: result, contentRoot: result };
   }
 }

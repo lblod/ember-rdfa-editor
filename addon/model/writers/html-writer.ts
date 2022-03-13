@@ -1,10 +1,17 @@
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import HtmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { ModelError, WriterError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
-
-export type TextOrElement = Text | HTMLElement;
+import NodeView, {
+  ElementView,
+  isElementView,
+  isTextView,
+  TextView,
+} from '@lblod/ember-rdfa-editor/model/node-view';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
 /**
  * Top-level {@link Writer} for HTML documents.
@@ -18,68 +25,86 @@ export default class HtmlWriter {
     this.htmlElementWriter = new HtmlElementWriter(model);
   }
 
-  write(modelNode: ModelNode): Node {
-    let boundNode: TextOrElement = modelNode.viewRoot as TextOrElement;
+  write(modelNode: ModelNode): NodeView {
+    let resultView: NodeView;
 
-    if (!boundNode) {
-      if (!modelNode.parent?.viewRoot) {
-        throw new ModelError('Impossible state');
-      }
-      boundNode = this.parseTree(modelNode);
-      this.model.registerNodeView(modelNode, boundNode);
-      modelNode.clearDirty();
-      return boundNode;
-    } else {
-      if (ModelNode.isModelElement(modelNode)) {
-        let result = boundNode;
-        if (modelNode.isDirty('node')) {
-          result = this.htmlElementWriter.write(modelNode);
-          this.swapElement(boundNode as HTMLElement, result);
-          this.model.registerNodeView(modelNode, result);
-          boundNode = result;
+    if (ModelNode.isModelElement(modelNode)) {
+      let view = this.getView(modelNode);
+      if (view) {
+        if (!isElementView(view)) {
+          throw new ModelError('ModelElement with non-element view');
         }
-        const domChildren = modelNode.children.map((child) =>
-          this.write(child)
-        );
-
-        if (modelNode.isDirty('content')) {
-          (boundNode as HTMLElement).replaceChildren(...domChildren);
-        }
-        modelNode.clearDirty();
-        return result;
-      } else if (ModelNode.isModelText(modelNode)) {
-        let result = boundNode;
-        if (modelNode.isDirty('node') || modelNode.isDirty('mark')) {
-          const domNode = this.htmlTextWriter.write(modelNode) as Text;
-          (boundNode as Text).replaceWith(domNode);
-          this.model.registerNodeView(modelNode, domNode);
-          result = domNode;
-        } else if (modelNode.isDirty('content')) {
-          (boundNode as Text).replaceData(
-            0,
-            (boundNode as Text).length,
-            modelNode.content
-          );
-        }
-        modelNode.clearDirty();
-        return result;
+        this.updateElementView(modelNode, view);
       } else {
-        throw new ModelError('Unsupported node type');
+        view = this.createElementView(modelNode);
       }
+      const childViews = [];
+      for (const child of modelNode.children) {
+        childViews.push(this.write(child));
+      }
+      if (modelNode.isDirty('content')) {
+        if (isElement(view.viewRoot)) {
+          view.viewRoot.replaceChildren(
+            ...childViews.map((view) => view.viewRoot)
+          );
+        } else {
+          throw new ModelError('Model element with non-element viewroot');
+        }
+      }
+      resultView = view;
+    } else if (ModelNode.isModelText(modelNode)) {
+      let view = this.getView(modelNode);
+      if (view) {
+        if (!isTextView(view)) {
+          throw new ModelError('ModelText with non-text view');
+        }
+        this.updateTextView(modelNode, view);
+      } else {
+        view = this.createTextView(modelNode);
+      }
+      resultView = view;
+    } else {
+      throw new ModelError('Unsupported modelnode type');
+    }
+    modelNode.clearDirty();
+    return resultView;
+  }
+
+  private getView(modelNode: ModelNode) {
+    return this.model.modelToView(modelNode);
+  }
+
+  private createElementView(modelElement: ModelElement): NodeView {
+    const view = this.htmlElementWriter.write(modelElement);
+    this.model.registerNodeView(modelElement, view);
+    return view;
+  }
+
+  private updateElementView(modelElement: ModelElement, view: ElementView) {
+    if (modelElement.isDirty('node')) {
+      const newView = this.htmlElementWriter.write(modelElement);
+      this.swapElement(view.viewRoot, newView.viewRoot);
+      this.model.registerNodeView(modelElement, newView);
     }
   }
 
-  parseTree(modelNode: ModelNode): TextOrElement {
-    if (ModelNode.isModelElement(modelNode)) {
-      const result = this.htmlElementWriter.write(modelNode);
-      for (const child of modelNode.children) {
-        result.appendChild(this.parseTree(child));
-      }
-      return result;
-    } else if (ModelNode.isModelText(modelNode)) {
-      return this.htmlTextWriter.write(modelNode) as HTMLElement;
-    } else {
-      throw new WriterError('Unsupported node type');
+  private createTextView(modelText: ModelText): NodeView {
+    const view = this.htmlTextWriter.write(modelText);
+    this.model.registerNodeView(modelText, view);
+    return view;
+  }
+
+  private updateTextView(modelText: ModelText, view: TextView) {
+    if (modelText.isDirty('node') || modelText.isDirty('mark')) {
+      const newView = this.htmlTextWriter.write(modelText);
+      view.viewRoot.replaceWith(newView.viewRoot);
+      this.model.registerNodeView(modelText, newView);
+    } else if (modelText.isDirty('content')) {
+      view.contentRoot.replaceData(
+        0,
+        view.contentRoot.length,
+        modelText.content
+      );
     }
   }
 
