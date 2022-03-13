@@ -8,7 +8,6 @@ import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
-import { TextView } from '@lblod/ember-rdfa-editor/model/node-view';
 
 const NON_BREAKING_SPACE = '\u00A0';
 
@@ -16,7 +15,6 @@ export default class ModelText extends ModelNode {
   modelNodeType: ModelNodeType = 'TEXT';
   private _content: string;
   private _marks: MarkSet = new MarkSet();
-  protected _view: TextView | null = null;
 
   constructor(content = '', config?: NodeConfig) {
     super(config);
@@ -51,14 +49,6 @@ export default class ModelText extends ModelNode {
 
   get offsetSize() {
     return this.length;
-  }
-
-  get view(): TextView | null {
-    return this._view;
-  }
-
-  set view(value: TextView | null) {
-    this._view = value;
   }
 
   hasMarkName(markName: string): boolean {

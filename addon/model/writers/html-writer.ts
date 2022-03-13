@@ -26,7 +26,7 @@ export default class HtmlWriter {
         throw new ModelError('Impossible state');
       }
       boundNode = this.parseTree(modelNode);
-      this.model.bindNode(modelNode, boundNode);
+      this.model.registerNodeView(modelNode, boundNode);
       modelNode.clearDirty();
       return boundNode;
     } else {
@@ -35,7 +35,7 @@ export default class HtmlWriter {
         if (modelNode.isDirty('node')) {
           result = this.htmlElementWriter.write(modelNode);
           this.swapElement(boundNode as HTMLElement, result);
-          this.model.bindNode(modelNode, result);
+          this.model.registerNodeView(modelNode, result);
           boundNode = result;
         }
         const domChildren = modelNode.children.map((child) =>
@@ -52,7 +52,7 @@ export default class HtmlWriter {
         if (modelNode.isDirty('node') || modelNode.isDirty('mark')) {
           const domNode = this.htmlTextWriter.write(modelNode) as Text;
           (boundNode as Text).replaceWith(domNode);
-          this.model.bindNode(modelNode, domNode);
+          this.model.registerNodeView(modelNode, domNode);
           result = domNode;
         } else if (modelNode.isDirty('content')) {
           (boundNode as Text).replaceData(

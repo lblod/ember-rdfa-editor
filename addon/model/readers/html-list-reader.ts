@@ -40,7 +40,7 @@ export default class HtmlListReader
       return [];
     }
     copyAttributes(from, wrapper);
-    context.bindNode(wrapper, from);
+    context.registerNodeView(wrapper, { viewRoot: from, contentRoot: from });
     return [wrapper];
   }
 }

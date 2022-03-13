@@ -23,6 +23,7 @@ import {
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -41,7 +42,6 @@ export default class Model {
 
   private reader: HtmlReader;
   private writer: HtmlWriter;
-  private nodeMap: WeakMap<Node, ModelNode>;
   private selectionReader: SelectionReader;
   private selectionWriter: SelectionWriter;
   private history: ModelHistory = new ModelHistory();
@@ -50,17 +50,22 @@ export default class Model {
 
   private logger: Logger;
 
+  private viewToModelMap: WeakMap<Node, ModelNode>;
+  private modelToViewMap: WeakMap<ModelNode, NodeView>;
+
   constructor(rootNode: HTMLElement, eventBus?: EventBus) {
     this._rootNode = rootNode;
     this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
-    this.nodeMap = new WeakMap<Node, ModelNode>();
     this.selectionReader = new SelectionReader(this);
     this.selectionWriter = new SelectionWriter();
     this._selection = new ModelSelection();
     this._eventBus = eventBus;
     this.logger = createLogger('RawEditor');
     this._marksRegistry = new MarksRegistry(this._eventBus);
+
+    this.viewToModelMap = new WeakMap<Node, ModelNode>();
+    this.modelToViewMap = new WeakMap<ModelNode, NodeView>();
   }
 
   get rootNode(): HTMLElement {
@@ -95,8 +100,7 @@ export default class Model {
     }
 
     this._rootModelNode = newRoot;
-    this._rootModelNode.model = this;
-    this.bindNode(this.rootModelNode, this.rootNode);
+    this.registerNodeView(this.rootModelNode, this.rootNode);
 
     // This is essential, we change the root so we need to make sure the selection uses the new root.
     if (readSelection) {
@@ -162,29 +166,28 @@ export default class Model {
    * Bind a modelNode to a domNode. This ensures that we can reach the corresponding node from
    * either side.
    * @param modelNode
-   * @param domNode
+   * @param view
    */
-  bindNode(modelNode: ModelNode, domNode: Node): void {
-    this.nodeMap.delete(domNode);
-    modelNode.viewRoot = domNode;
-    this.nodeMap.set(domNode, modelNode);
+  registerNodeView(modelNode: ModelNode, view: NodeView): void {
+    this.viewToModelMap.set(view.viewRoot, modelNode);
+    this.modelToViewMap.set(modelNode, view);
   }
 
-  /**
-   * Get the corresponding modelNode for domNode.
-   * @param domNode
-   */
-  public getModelNodeFor(domNode: Node): ModelNode {
-    if (!this.nodeMap) {
-      throw new ModelError('Uninitialized nodeMap');
+  viewToModel(domNode: Node): ModelNode {
+    let cur: Node | null = domNode;
+    let result = null;
+    while (cur && !result) {
+      result = this.viewToModelMap.get(cur);
+      cur = cur.parentNode;
     }
-
-    const result = this.nodeMap.get(domNode);
     if (!result) {
-      throw new ModelError('No bound node for domNode');
+      throw new ModelError('Domnode without corresponding modelNode');
     }
-
     return result;
+  }
+
+  modelToView(modelNode: ModelNode): NodeView | null {
+    return this.modelToViewMap.get(modelNode) || null;
   }
 
   /**
@@ -254,7 +257,6 @@ export default class Model {
   ) {
     if (snapshot) {
       this._rootModelNode = snapshot.rootModelNode;
-      this._rootModelNode.model = this;
       this._selection = snapshot.modelSelection;
 
       if (writeBack) {

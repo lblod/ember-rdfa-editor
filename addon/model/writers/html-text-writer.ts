@@ -15,7 +15,7 @@ export default class HtmlTextWriter implements Writer<ModelText, Node> {
     }
 
     let current: Node = new Text(modelNode.content);
-    this.model.bindNode(modelNode, current);
+    this.model.registerNodeView(modelNode, current);
 
     for (const entry of [...modelNode.marks].sort((a, b) =>
       a.priority >= b.priority ? 1 : -1

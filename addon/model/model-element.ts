@@ -16,7 +16,6 @@ import { parsePrefixString } from '@lblod/ember-rdfa-editor/model/util/rdfa-util
 import RdfaAttributes from '@lblod/marawa/rdfa-attributes';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
-import { ElementView } from '@lblod/ember-rdfa-editor/model/node-view';
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -29,7 +28,6 @@ export default class ModelElement
   private _children: ModelNode[] = [];
   private _type: ElementType;
   private _currentRdfaPrefixes: Map<string, string>;
-  protected _view: ElementView | null = null;
 
   constructor(type: ElementType = 'span', config?: NodeConfig) {
     super(config);
@@ -87,18 +85,6 @@ export default class ModelElement
 
   get isBlock() {
     return !NON_BLOCK_NODES.has(this.type);
-  }
-
-  get view(): ElementView | null {
-    return this._view;
-  }
-
-  set view(value: ElementView | null) {
-    this._view = value;
-  }
-
-  get viewRoot(): HTMLElement | null {
-    return this.view?.viewRoot || null;
   }
 
   /**

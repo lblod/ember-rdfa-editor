@@ -18,7 +18,7 @@ export default class HtmlElementWriter
     if (modelNode.type === 'td' || modelNode.type === 'th') {
       result.contentEditable = 'true';
     }
-    this.model.bindNode(modelNode, result);
+    this.model.registerNodeView(modelNode, result);
 
     for (const item of modelNode.attributeMap.entries()) {
       result.setAttribute(item[0], item[1]);
