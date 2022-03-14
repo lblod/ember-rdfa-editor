@@ -143,7 +143,7 @@ export default class Model {
     document.dispatchEvent(modelWriteEvent);
     this.rootModelNode.removeDirty('node');
 
-    this.writer.write(this.rootModelNode);
+    this.writer.write(tree);
 
     if (writeSelection) {
       this.writeSelection();

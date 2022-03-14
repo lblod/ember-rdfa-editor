@@ -215,7 +215,7 @@ module('Unit | model | operations | insert-operation-test', () => {
     const op = new InsertOperation(undefined, range);
 
     const resultRange = op.execute();
-    console.log(initial.toXml())
+    console.log(initial.toXml());
 
     assert.true(expected.sameAs(initial, { ignoreDirtiness: false }));
     assert.true(

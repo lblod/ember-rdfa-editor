@@ -2,8 +2,7 @@ import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
 export default class XmlTextWriter implements Writer<ModelText, Element> {
-  constructor(private document: XMLDocument) {
-  }
+  constructor(private document: XMLDocument) {}
 
   write(text: ModelText): Element {
     const result = this.document.createElement('text');

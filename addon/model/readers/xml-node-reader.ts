@@ -1,6 +1,4 @@
-import ModelNode, {
-  DirtyType,
-} from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import XmlElementReader from '@lblod/ember-rdfa-editor/model/readers/xml-element-reader';
 import XmlTextReader from '@lblod/ember-rdfa-editor/model/readers/xml-text-reader';

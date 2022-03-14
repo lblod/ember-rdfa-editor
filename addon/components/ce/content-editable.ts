@@ -210,7 +210,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   @action
   handleKeyDown(event: KeyboardEvent) {
-    console.log("yeet")
     if (!this.keydownMapsToOtherEvent(event)) {
       const preventDefault = this.passEventToHandlers(event);
       if (preventDefault) {
