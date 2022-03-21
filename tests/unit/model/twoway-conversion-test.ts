@@ -27,7 +27,6 @@ module('Unit | model | twoway-conversion', (hooks) => {
     if (!read) {
       throw new AssertionError();
     }
-    console.log(read[0].toXml());
     const written = writer.write(read[0]).viewRoot as HTMLElement;
 
     assert.strictEqual(written.innerHTML, innerContent);

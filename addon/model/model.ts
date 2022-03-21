@@ -203,7 +203,6 @@ export default class Model {
     if (writeBack) {
       this.write();
     }
-    console.log(this.toXml());
   }
 
   static getChildIndex(child: Node): number | null {

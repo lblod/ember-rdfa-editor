@@ -116,7 +116,6 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(ctx.model.rootModelNode, 1, 3);
     command.execute(htmlToInsert, range);
-    console.log(ctx.model.rootModelNode.toXml());
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
