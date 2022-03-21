@@ -124,7 +124,16 @@ export default class SelectionReader
         );
       } else {
         if (domOffset === 0) {
-          return ModelPosition.fromInElement(modelNode, 0);
+          // Setting a cursor inside an element without height leads to invisible
+          // cursor, so work around it
+          // note I haven't been able to even reproduce this case
+          if (!modelNode.parent) {
+            // in case the node is root, there's not much we can do
+            return ModelPosition.fromInNode(modelNode, 0);
+          } else {
+            // otherwise default to setting it in front of the element
+            return ModelPosition.fromBeforeNode(modelNode);
+          }
         } else {
           throw new NotImplementedError();
         }
