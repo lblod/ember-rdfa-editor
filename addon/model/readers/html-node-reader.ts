@@ -64,7 +64,6 @@ export default class HtmlNodeReader
     } else {
       result = [];
     }
-    // result.forEach(node => node.clearDirty())
 
     return result;
   }

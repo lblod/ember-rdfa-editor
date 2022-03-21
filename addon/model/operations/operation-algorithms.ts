@@ -79,16 +79,6 @@ export default class OperationAlgorithms {
         );
       }
     } else {
-      // range.start.split();
-      // range.end.split(true);
-      // const before = range.start.nodeBefore();
-      // const after = range.end.nodeAfter();
-      // if (before) {
-      //   _markCheckNodes.push(before);
-      // }
-      // if (after) {
-      //   _markCheckNodes.push(after);
-      // }
       overwrittenNodes = OperationAlgorithms.remove(range);
 
       range.start.parent.insertChildrenAtOffset(
