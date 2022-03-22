@@ -99,14 +99,8 @@ export default class IndentListCommand extends Command {
 
   hasSublist(listElement: ModelElement): ModelElement | undefined {
     const children = listElement.children;
-    for (const child of children) {
-      if (
-        ModelNode.isModelElement(child) &&
-        (child.type === 'ul' || child.type === 'ol')
-      ) {
-        return child;
-      }
-    }
+    for (const child of children)
+      if (ModelNodeUtils.isListContainer(child)) return child;
     return undefined;
   }
 }
