@@ -83,7 +83,7 @@ export default class IndentListCommand extends Command {
           mutator.deleteNode(li);
         }
 
-        //First check for already existing ssublist on the new parent
+        //First check for already existing sublist on the new parent
         //If it exists, just add the elements to it, otherwise create a new sublist
         const possibleNewList = this.hasSublist(newParent);
         if (possibleNewList) {
