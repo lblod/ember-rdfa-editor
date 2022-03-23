@@ -97,6 +97,6 @@ name: npm_access_token
 data: GrKv0avLg7OMiirYoRceI3ktIBjZeFYt2yblNKuAxUY46SBgX8yPtCe82q5ASQY2kfEwT+FDB1MkpTJDXU0z8nZDzrM=
 ---
 kind: signature
-hmac: 84b099e7da9c6ac914adadfabe9fcf499154004904f5356dcacc91219fa760b1
+hmac: a506def5e16463b6ae930259bbb866633ae7f7f104e7a1ac5c7c0d0467164d3f
 
 ...
