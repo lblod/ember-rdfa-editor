@@ -65,7 +65,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     manipulation: TabHandlerManipulation,
     editor: PernetRawEditor
   ) {
-    const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
+    const table = editor.model.viewToModel(manipulation.node) as ModelTable;
     const firstCell = table.getCell(0, 0);
     if (firstCell) {
       editor.selection.collapseIn(firstCell);
@@ -77,7 +77,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     manipulation: TabHandlerManipulation,
     editor: PernetRawEditor
   ) {
-    const table = editor.model.getModelNodeFor(manipulation.node) as ModelTable;
+    const table = editor.model.viewToModel(manipulation.node) as ModelTable;
     const { x, y } = table.getDimensions();
     const lastCell = table.getCell(x - 1, y - 1);
     if (lastCell) {

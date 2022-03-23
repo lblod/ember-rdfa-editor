@@ -22,10 +22,13 @@ module('Unit | model | writers | selection-writer', (hooks) => {
     model.selection.selectRange(new ModelRange(start, end));
 
     model.write();
-    const writer = new SelectionWriter();
+    const writer = new SelectionWriter(model);
     const domRange = writer.writeDomRange(model.selection.lastRange!);
 
-    assert.strictEqual(domRange.startContainer, text.boundNode);
+    assert.strictEqual(
+      domRange.startContainer,
+      model.modelToView(text)?.viewRoot
+    );
     assert.strictEqual(domRange.startOffset, 0);
     assert.strictEqual(domRange.endContainer, model.rootNode);
     assert.strictEqual(domRange.endOffset, 1);

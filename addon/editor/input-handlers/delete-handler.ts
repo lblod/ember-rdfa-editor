@@ -446,6 +446,7 @@ export default class DeleteHandler extends InputHandler {
 
     void this.deleteForward().then(() => {
       this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
+      this.rawEditor.model.read();
     });
     return { allowPropagation: false };
   }

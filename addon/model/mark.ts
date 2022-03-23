@@ -104,10 +104,11 @@ export interface Renderable<A extends Record<string, Serializable> | void> {
 }
 
 export class MarkSet extends HashSet<Mark> {
-  constructor() {
+  constructor(init?: Iterable<Mark>) {
     super({
       hashFunc: (mark: Mark) =>
         `${mark.name}-${mark.attributes.setBy || CORE_OWNER}`,
+      init,
     });
   }
 
@@ -121,7 +122,7 @@ export class MarkSet extends HashSet<Mark> {
   }
 
   clone(): this {
-    return new MarkSet() as this;
+    return new MarkSet(this.values()) as this;
   }
 }
 

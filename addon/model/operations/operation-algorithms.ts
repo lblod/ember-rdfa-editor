@@ -9,18 +9,47 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
  */
 export default class OperationAlgorithms {
   static remove(range: ModelRange): ModelNode[] {
-    OperationAlgorithms.splitText(range.start);
-    OperationAlgorithms.splitText(range.end, true);
-    const confinedRanges = range.getMinimumConfinedRanges();
+    let newStartNode: ModelNode | null = null;
+    let newEndNode: ModelNode | null = null;
+    let splitStart = false;
+    let splitEnd = false;
+    if (range.start.isInsideText()) {
+      range.start.split();
+      splitStart = true;
+    }
+    if (range.end.isInsideText()) {
+      range.end.split(true);
+      splitEnd = true;
+    }
+    if (splitStart) {
+      newStartNode = range.start.nodeAfter();
+    }
+    if (splitEnd) {
+      newEndNode = range.end.nodeBefore();
+    }
+
     const nodesToRemove = [];
+
+    const confinedRanges = range.getMinimumConfinedRanges();
     for (const range of confinedRanges) {
       if (!range.collapsed) {
         const walker = new ModelTreeWalker({ range, descend: false });
         nodesToRemove.push(...walker);
       }
     }
-    for (const node of nodesToRemove) {
+
+    if (!range.collapsed && newStartNode) {
+      newStartNode.remove();
+      newStartNode.parent!.removeDirty('content');
+    }
+    for (const node of nodesToRemove.filter(
+      (node) => node !== newStartNode && node !== newEndNode
+    )) {
       node.remove();
+    }
+    if (!range.collapsed && newEndNode) {
+      newEndNode.remove();
+      newEndNode.parent!.removeDirty('content');
     }
     return nodesToRemove;
   }
@@ -50,16 +79,6 @@ export default class OperationAlgorithms {
         );
       }
     } else {
-      range.start.split();
-      range.end.split(true);
-      const before = range.start.nodeBefore();
-      const after = range.end.nodeAfter();
-      if (before) {
-        _markCheckNodes.push(before);
-      }
-      if (after) {
-        _markCheckNodes.push(after);
-      }
       overwrittenNodes = OperationAlgorithms.remove(range);
 
       range.start.parent.insertChildrenAtOffset(
@@ -114,6 +133,7 @@ export default class OperationAlgorithms {
       const before = position.nodeBefore();
       if (before) {
         const leftSideChildren = parent.children.splice(0, before.index!);
+        parent.addDirty('content');
         if (parent.firstChild) {
           parent.firstChild.previousSibling = null;
         }
@@ -129,6 +149,7 @@ export default class OperationAlgorithms {
       const after = position.nodeAfter();
       if (after) {
         const rightSideChildren = parent.children.splice(after.index!);
+        parent.addDirty('content');
         if (parent.lastChild) {
           parent.lastChild.nextSibling = null;
         }
