@@ -1,14 +1,8 @@
 import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import HtmlWriter from '@lblod/ember-rdfa-editor/model/writers/html-writer';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import {
-  getWindowSelection,
-  isElement,
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import {
-  ModelError,
-  NotImplementedError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
+import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
@@ -29,6 +23,7 @@ import {
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -47,7 +42,6 @@ export default class Model {
 
   private reader: HtmlReader;
   private writer: HtmlWriter;
-  private nodeMap: WeakMap<Node, ModelNode>;
   private selectionReader: SelectionReader;
   private selectionWriter: SelectionWriter;
   private history: ModelHistory = new ModelHistory();
@@ -56,17 +50,22 @@ export default class Model {
 
   private logger: Logger;
 
+  private viewToModelMap: WeakMap<Node, ModelNode>;
+  private modelToViewMap: WeakMap<ModelNode, NodeView>;
+
   constructor(rootNode: HTMLElement, eventBus?: EventBus) {
     this._rootNode = rootNode;
-    this.reader = new HtmlReader(this);
+    this.reader = new HtmlReader(this, true);
     this.writer = new HtmlWriter(this);
-    this.nodeMap = new WeakMap<Node, ModelNode>();
     this.selectionReader = new SelectionReader(this);
-    this.selectionWriter = new SelectionWriter();
+    this.selectionWriter = new SelectionWriter(this);
     this._selection = new ModelSelection();
     this._eventBus = eventBus;
     this.logger = createLogger('RawEditor');
     this._marksRegistry = new MarksRegistry(this._eventBus);
+
+    this.viewToModelMap = new WeakMap<Node, ModelNode>();
+    this.modelToViewMap = new WeakMap<ModelNode, NodeView>();
   }
 
   get rootNode(): HTMLElement {
@@ -101,7 +100,6 @@ export default class Model {
     }
 
     this._rootModelNode = newRoot;
-    this.bindNode(this.rootModelNode, this.rootNode);
 
     // This is essential, we change the root so we need to make sure the selection uses the new root.
     if (readSelection) {
@@ -143,25 +141,9 @@ export default class Model {
   write(tree: ModelElement = this.rootModelNode, writeSelection = true) {
     const modelWriteEvent = new CustomEvent('editorModelWrite');
     document.dispatchEvent(modelWriteEvent);
+    this.rootModelNode.removeDirty('node');
 
-    const oldRoot = tree.boundNode;
-    if (!oldRoot) {
-      throw new Error('Container without boundNode');
-    }
-
-    if (!isElement(oldRoot)) {
-      throw new NotImplementedError(
-        'Root is not an element, not sure what to do'
-      );
-    }
-
-    const newRoot = this.writer.write(tree);
-    while (oldRoot.firstChild) {
-      oldRoot.removeChild(oldRoot.firstChild);
-    }
-
-    oldRoot.append(...newRoot.childNodes);
-    this.bindNode(tree, oldRoot);
+    this.writer.write(tree);
 
     if (writeSelection) {
       this.writeSelection();
@@ -180,29 +162,28 @@ export default class Model {
    * Bind a modelNode to a domNode. This ensures that we can reach the corresponding node from
    * either side.
    * @param modelNode
-   * @param domNode
+   * @param view
    */
-  bindNode(modelNode: ModelNode, domNode: Node) {
-    this.nodeMap.delete(domNode);
-    modelNode.boundNode = domNode;
-    this.nodeMap.set(domNode, modelNode);
+  registerNodeView(modelNode: ModelNode, view: NodeView): void {
+    this.viewToModelMap.set(view.viewRoot, modelNode);
+    this.modelToViewMap.set(modelNode, view);
   }
 
-  /**
-   * Get the corresponding modelNode for domNode.
-   * @param domNode
-   */
-  public getModelNodeFor(domNode: Node): ModelNode {
-    if (!this.nodeMap) {
-      throw new ModelError('Uninitialized nodeMap');
+  viewToModel(domNode: Node): ModelNode {
+    let cur: Node | null = domNode;
+    let result = null;
+    while (cur && !result) {
+      result = this.viewToModelMap.get(cur);
+      cur = cur.parentNode;
     }
-
-    const result = this.nodeMap.get(domNode);
     if (!result) {
-      throw new ModelError('No bound node for domNode');
+      throw new ModelError('Domnode without corresponding modelNode');
     }
-
     return result;
+  }
+
+  modelToView(modelNode: ModelNode): NodeView | null {
+    return this.modelToViewMap.get(modelNode) || null;
   }
 
   /**
@@ -217,14 +198,10 @@ export default class Model {
     writeBack = true
   ) {
     const mutator = new ImmediateModelMutator(this._eventBus);
-    const subTree = callback(mutator);
+    callback(mutator);
 
     if (writeBack) {
-      if (subTree) {
-        this.write(subTree);
-      } else {
-        this.write(this.rootModelNode);
-      }
+      this.write();
     }
   }
 

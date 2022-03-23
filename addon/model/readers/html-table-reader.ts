@@ -15,7 +15,7 @@ export default class HtmlTableReader
       const parsedChildren = nodeReader.read(child, context);
       table.appendChildren(...parsedChildren);
     }
-    context.bindNode(table, from);
+    context.registerNodeView(table, { viewRoot: from, contentRoot: from });
     return [table];
   }
 }

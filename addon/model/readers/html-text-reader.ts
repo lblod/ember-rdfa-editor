@@ -27,7 +27,14 @@ export default class HtmlTextReader
     context.activeMarks.forEach(({ spec, attributes }) =>
       context.addMark(result, spec, attributes)
     );
-    context.bindNode(result, from);
+    if (context.markViewRootStack.length) {
+      context.registerNodeView(result, {
+        viewRoot: context.markViewRootStack[0],
+        contentRoot: from,
+      });
+    } else {
+      context.registerNodeView(result, { viewRoot: from, contentRoot: from });
+    }
     return [result];
   }
 }

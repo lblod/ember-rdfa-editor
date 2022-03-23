@@ -1,5 +1,6 @@
 import ModelNode, {
   ModelNodeType,
+  NodeCompareOpts,
   NodeConfig,
 } from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
@@ -14,6 +15,7 @@ import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils
 import { parsePrefixString } from '@lblod/ember-rdfa-editor/model/util/rdfa-utils';
 import RdfaAttributes from '@lblod/marawa/rdfa-attributes';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
+import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -40,6 +42,7 @@ export default class ModelElement
 
   set type(value: ElementType) {
     this._type = value;
+    this.addDirty('node');
   }
 
   set className(value: string) {
@@ -61,6 +64,7 @@ export default class ModelElement
 
   set children(value: ModelNode[]) {
     this._children = value;
+    this.addDirty('content');
   }
 
   get childCount() {
@@ -104,7 +108,6 @@ export default class ModelElement
 
     result.attributeMap = new Map<string, string>(this.attributeMap);
     result.modelNodeType = this.modelNodeType;
-    result.boundNode = this.boundNode;
 
     const clonedChildren = this.children.map((c) => c.clone());
     result.appendChildren(...clonedChildren);
@@ -146,6 +149,7 @@ export default class ModelElement
     }
 
     child.parent = this;
+    this.addDirty('content');
   }
 
   insertChildAtOffset(child: ModelNode, offset: number) {
@@ -179,6 +183,9 @@ export default class ModelElement
 
   removeChild(child: ModelNode) {
     const index = this.children.indexOf(child);
+    if (index === -1) {
+      return;
+    }
     if (child.previousSibling) {
       child.previousSibling.nextSibling = child.nextSibling;
     }
@@ -191,6 +198,7 @@ export default class ModelElement
         this.children[index - 1] || null;
     }
     this.children.splice(index, 1);
+    this.addDirty('content');
   }
 
   getChildIndex(child: ModelNode): number | null {
@@ -227,6 +235,7 @@ export default class ModelElement
     }
 
     this.children = leftChildren;
+    this.addDirty('content');
     const right = this.clone();
     right.children = [];
     right.appendChildren(...rightChildren);
@@ -422,6 +431,7 @@ export default class ModelElement
     if (key === 'prefix') {
       this.updateRdfaPrefixes();
     }
+    this.addDirty('node');
   }
 
   /**
@@ -432,7 +442,7 @@ export default class ModelElement
     return new RdfaAttributes(this, Object.fromEntries(this.getRdfaPrefixes()));
   }
 
-  sameAs(other: ModelNode, strict = false): boolean {
+  sameAs(other: ModelNode, compareOpts?: NodeCompareOpts): boolean {
     if (!ModelNode.isModelElement(other)) {
       return false;
     }
@@ -445,29 +455,32 @@ export default class ModelElement
       return false;
     }
 
-    if (strict) {
-      if (
-        !ModelNodeUtils.areAttributeMapsSame(
-          this.attributeMap,
-          other.attributeMap,
-          new Set<string>()
-        )
-      ) {
-        return false;
+    let ignoredAttributes = ModelNodeUtils.DEFAULT_IGNORED_ATTRS;
+    let ignoreDirtyness: boolean | undefined = true;
+    if (compareOpts) {
+      if (compareOpts.ignoredAttributes) {
+        ignoredAttributes = compareOpts.ignoredAttributes;
       }
-    } else {
-      if (
-        !ModelNodeUtils.areAttributeMapsSame(
-          this.attributeMap,
-          other.attributeMap
-        )
-      ) {
+      ignoreDirtyness = compareOpts.ignoreDirtiness;
+    }
+    if (!ignoreDirtyness) {
+      if (!SetUtils.areSetsSame(this.dirtiness, other.dirtiness)) {
         return false;
       }
     }
 
+    if (
+      !ModelNodeUtils.areAttributeMapsSame(
+        this.attributeMap,
+        other.attributeMap,
+        ignoredAttributes
+      )
+    ) {
+      return false;
+    }
+
     for (let i = 0; i < this.length; i++) {
-      if (!other.children[i].sameAs(this.children[i], strict)) {
+      if (!other.children[i].sameAs(this.children[i], compareOpts)) {
         return false;
       }
     }

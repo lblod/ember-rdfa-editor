@@ -25,16 +25,18 @@ export default class XmlNodeReader
   }
 
   read(from: Node): ModelNode | null {
+    let result;
     if (isElement(from)) {
       if (from.tagName === 'text') {
-        return this.textReader.read(from);
+        result = this.textReader.read(from);
       } else if (from.tagName === 'table') {
-        return this.tableReader.read(from as Element);
+        result = this.tableReader.read(from as Element);
+      } else {
+        result = this.elementReader.read(from as Element);
       }
-
-      return this.elementReader.read(from as Element);
     } else {
-      return null;
+      result = null;
     }
+    return result;
   }
 }
