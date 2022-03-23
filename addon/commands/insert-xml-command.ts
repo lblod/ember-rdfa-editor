@@ -4,8 +4,7 @@ import { parseXmlSiblings } from '@lblod/ember-rdfa-editor/model/util/xml-utils'
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelNode from '../model/model-node';
-import ModelElement from '../model/model-element';
+import setNodeAndChildDirty from '@lblod/ember-rdfa-editor/model/util/set-node-and-child-dirty';
 
 /**
  * Allows you to insert model nodes from an xml string.
@@ -31,17 +30,9 @@ export default class InsertXmlCommand extends Command {
       //All nodes are marked as dirty by default when inserted but not in the xml writer
       // as we need to set dirtiness statuses in the tests, in order to solve bugs related to
       // nodes not being properly inserted we set them all dirty in this function below
-      parsedModelNodes.forEach((node) => this.setNodeAndChildDirty(node));
+      parsedModelNodes.forEach((node) => setNodeAndChildDirty(node));
       const newRange = mutator.insertNodes(range, ...parsedModelNodes);
       this.model.selectRange(newRange);
     });
-  }
-  setNodeAndChildDirty(node: ModelNode) {
-    node.addDirty('content');
-    if (ModelElement.isModelElement(node)) {
-      for (const child of node.children) {
-        this.setNodeAndChildDirty(child);
-      }
-    }
   }
 }
