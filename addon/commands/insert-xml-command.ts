@@ -28,6 +28,9 @@ export default class InsertXmlCommand extends Command {
 
     const parsedModelNodes = parseXmlSiblings(xml);
     this.model.change((mutator) => {
+      //All nodes are marked as dirty by default when inserted but not in the xml writer
+      // as we need to set dirtiness statuses in the tests, in order to solve bugs related to
+      // nodes not being properly inserted we set them all dirty in this function below
       parsedModelNodes.forEach((node) => this.setNodeAndChildDirty(node));
       const newRange = mutator.insertNodes(range, ...parsedModelNodes);
       this.model.selectRange(newRange);
