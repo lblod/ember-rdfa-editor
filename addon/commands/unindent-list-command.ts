@@ -132,24 +132,23 @@ export default class UnindentListCommand extends Command {
                 mutator.deleteNode(split.left);
               }
 
-              if (split.right.length === 0) {
+              if (split.right.length >= 1) {
+                //Select li's AFTER the li that is unindenting
+                const otherLis = split.right.children.slice(1);
+                //Remove unindenting li and all next ones, they are relocating
                 mutator.deleteNode(split.right);
-              }
 
-              if (split.right.length > 0) {
-                const positionToInsertSplit = ModelPosition.fromInElement(
-                  li,
-                  li.getMaxOffset()
+                //Add a new sublist to the li of the elements that previously followed that li as a child element
+                const sublist = new ModelElement(parent.type);
+                sublist.appendChildren(...otherLis);
+                li.addChild(sublist);
+
+                //After the parent li, add the unindenting li (and its sublist at once)
+                mutator.insertAtPosition(
+                  ModelPosition.fromAfterNode(grandParent),
+                  li
                 );
-                mutator.deleteNode(split.right);
-                mutator.insertAtPosition(positionToInsertSplit, split.right);
               }
-              mutator.deleteNode(li);
-              const positionToInsertListItem = ModelPosition.fromInElement(
-                greatGrandParent,
-                grandParent.index + 1
-              );
-              mutator.insertAtPosition(positionToInsertListItem, li);
             }
           });
         }
