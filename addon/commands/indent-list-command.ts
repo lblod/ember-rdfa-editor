@@ -12,6 +12,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
 export default class IndentListCommand extends Command {
   name = 'indent-list';
@@ -87,11 +88,20 @@ export default class IndentListCommand extends Command {
         //If it exists, just add the elements to it, otherwise create a new sublist
         const possibleNewList = this.hasSublist(newParent);
         if (possibleNewList) {
-          possibleNewList.appendChildren(...lis);
+          mutator.insertAtPosition(
+            ModelPosition.fromInElement(
+              possibleNewList,
+              possibleNewList.getMaxOffset()
+            ),
+            ...lis
+          );
         } else {
           const newList = new ModelElement(parent.type);
           newList.appendChildren(...lis);
-          newParent.addChild(newList);
+          mutator.insertAtPosition(
+            ModelPosition.fromInElement(newParent, newParent.getMaxOffset()),
+            newList
+          );
         }
       }
     });
