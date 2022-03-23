@@ -73,6 +73,7 @@
     "@codemirror/lang-html": "^0.19.4",
     "@codemirror/lang-xml": "^0.19.2",
     "@ember/test-helpers": "^2.6.0",
+    "@embroider/test-setup": "^1.5.0",
     "@glimmer/component": "^1.0.3",
     "@rdfjs/types": "^1.0.1",
     "@types/common-tags": "^1.8.0",
