@@ -4,6 +4,8 @@ import { parseXmlSiblings } from '@lblod/ember-rdfa-editor/model/util/xml-utils'
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelNode from '../model/model-node';
+import ModelElement from '../model/model-element';
 
 /**
  * Allows you to insert model nodes from an xml string.
@@ -26,8 +28,17 @@ export default class InsertXmlCommand extends Command {
 
     const parsedModelNodes = parseXmlSiblings(xml);
     this.model.change((mutator) => {
+      parsedModelNodes.forEach((node) => this.setNodeAndChildDirty(node));
       const newRange = mutator.insertNodes(range, ...parsedModelNodes);
       this.model.selectRange(newRange);
     });
+  }
+  setNodeAndChildDirty(node: ModelNode) {
+    node.addDirty('content');
+    if (ModelElement.isModelElement(node)) {
+      for (const child of node.children) {
+        this.setNodeAndChildDirty(child);
+      }
+    }
   }
 }
