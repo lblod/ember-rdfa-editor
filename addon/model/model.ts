@@ -197,11 +197,11 @@ export default class Model {
     writeBack = true,
     saveSnapshot = true
   ) {
-    const mutator = new ImmediateModelMutator(this._eventBus);
-    callback(mutator);
     if (saveSnapshot) {
       this.saveSnapshot();
     }
+    const mutator = new ImmediateModelMutator(this._eventBus);
+    callback(mutator);
     if (writeBack) {
       this.write();
     }
