@@ -325,8 +325,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
           break;
         }
       }
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      void taskFor(this.rawEditor.generateDiffEvents).perform();
       return preventDefault;
     } else {
       return false;
