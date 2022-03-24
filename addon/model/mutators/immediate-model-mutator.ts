@@ -281,9 +281,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     if (!oldNode) throw new Error('no element in range');
     const newNode = oldNode.clone();
     newNode.setAttribute(key, value);
-    console.log(oldNode);
     const oldNodeRange = ModelRange.fromAroundNode(oldNode);
-    console.log(oldNodeRange);
     const op = new InsertOperation(this.eventbus, oldNodeRange, newNode);
     op.execute();
     return newNode;

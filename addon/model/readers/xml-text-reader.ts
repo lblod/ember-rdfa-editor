@@ -4,6 +4,7 @@ import { XmlNodeRegistry } from '@lblod/ember-rdfa-editor/model/readers/xml-read
 import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
 import { Mark } from '@lblod/ember-rdfa-editor/model/mark';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
+import { DirtyType } from '@lblod/ember-rdfa-editor/model/model-node';
 
 export default class XmlTextReader implements Reader<Element, ModelText, void> {
   constructor(private registry: XmlNodeRegistry<ModelText>) {}
@@ -31,6 +32,9 @@ export default class XmlTextReader implements Reader<Element, ModelText, void> {
         rslt.setAttribute(attribute.name, attribute.value);
       }
     }
+    const dirtyFlags = from.attributes.getNamedItem('__dirty');
+    const dirtyConfig = (dirtyFlags?.value.split(',') || []) as DirtyType[];
+    rslt.setDirty(...dirtyConfig);
     return rslt;
   }
 }

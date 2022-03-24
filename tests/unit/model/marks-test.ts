@@ -47,7 +47,7 @@ module('Unit | model | marks-test', (hooks) => {
     const model = new Model(sinon.createStubInstance(HTMLElement));
     model.registerMark(boldMarkSpec);
     const writer = new HtmlWriter(model);
-    const result = writer.write(textNode);
+    const result = writer.write(textNode).viewRoot;
     assert.true(isElement(result));
     assert.strictEqual(tagName(result), 'strong');
     assert.strictEqual(result.childNodes.length, 1);
@@ -62,7 +62,7 @@ module('Unit | model | marks-test', (hooks) => {
     model.registerMark(boldMarkSpec);
     model.registerMark(italicMarkSpec);
     const writer = new HtmlWriter(model);
-    const result = writer.write(textNode);
+    const result = writer.write(textNode).viewRoot;
     assert.true(isElement(result));
     assert.strictEqual(tagName(result), 'em');
     assert.strictEqual(result.childNodes.length, 1);

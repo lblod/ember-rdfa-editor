@@ -18,7 +18,7 @@ export default class UndoHandler extends InputHandler {
 
   handleEvent(_: KeyboardEvent): HandlerResponse {
     this.rawEditor.undo();
-
+    this.rawEditor.model.read();
     return { allowPropagation: false, allowBrowserDefault: true };
   }
 }

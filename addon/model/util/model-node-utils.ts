@@ -12,6 +12,7 @@ export default class ModelNodeUtils {
   static DEFAULT_IGNORED_ATTRS: Set<string> = new Set([
     '__dummy_test_attr',
     '__id',
+    '__dirty',
     'data-editor-position-level',
     'data-editor-rdfa-position-level',
   ]);

@@ -22,12 +22,8 @@ export default class InsertTextCommand extends Command {
 
     this.model.change((mutator) => {
       const resultRange = mutator.insertText(range, text);
-      // TODO re-enable incremental updates somehow
-      // const commonAncestor = resultRange.getCommonAncestor();
       resultRange.collapse();
       this.model.selectRange(resultRange);
-
-      // return commonAncestor;
     });
   }
 }

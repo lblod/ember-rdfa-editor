@@ -325,10 +325,10 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
           break;
         }
       }
-      this.rawEditor.model.read();
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      void taskFor(this.rawEditor.generateDiffEvents).perform();
       return preventDefault;
     } else {
-      this.rawEditor.model.read();
       return false;
     }
   }

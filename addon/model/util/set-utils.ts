@@ -1,4 +1,16 @@
 export default class SetUtils {
+  static areSetsSame<I>(setA: Set<I>, setB: Set<I>): boolean {
+    if (setA.size !== setB.size) {
+      return false;
+    }
+    for (const elem of setA) {
+      if (!setB.has(elem)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   /**
    * Calculates A / B in set arithmetic
    */

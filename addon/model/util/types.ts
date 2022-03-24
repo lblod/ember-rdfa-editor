@@ -34,3 +34,13 @@ export interface FilterAndPredicate<T extends ModelNode> {
 }
 
 export type RdfaEditorInitializer = (rdfaEditor: RdfaDocument) => void;
+export type TextOrElement = Text | HTMLElement;
+
+export function isTextOrElement(
+  node: Node | null | undefined
+): node is TextOrElement {
+  return (
+    !!node &&
+    (node.nodeType === Node.TEXT_NODE || node.nodeType === node.ELEMENT_NODE)
+  );
+}

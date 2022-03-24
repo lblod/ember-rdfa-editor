@@ -5,6 +5,9 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { XmlReaderResult } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 
 module('Unit | model | operations | insert-operation-test', () => {
   test('inserts into empty root', (assert) => {
@@ -15,12 +18,13 @@ module('Unit | model | operations | insert-operation-test', () => {
 
     // language=XML
     const { root: expected } = vdom`
-      <modelRoot>
-        <text>abc</text>
+      <modelRoot __dirty="content">
+        <text __dirty="content,node">abc</text>
       </modelRoot>
     `;
 
-    const { root: nodeToInsert } = vdom`<text>abc</text>`;
+    const { root: nodeToInsert } = asNew(vdom`
+      <text __dirty="content,node">abc</text>`);
 
     const op = new InsertOperation(
       undefined,
@@ -28,7 +32,7 @@ module('Unit | model | operations | insert-operation-test', () => {
       nodeToInsert
     );
     op.execute();
-    assert.true(initial.sameAs(expected));
+    assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
   });
   test('inserts element into empty root', (assert) => {
     // language=XML
@@ -38,18 +42,18 @@ module('Unit | model | operations | insert-operation-test', () => {
 
     // language=XML
     const { root: expected } = vdom`
-      <modelRoot>
-        <div>
-          <text>abc</text>
+      <modelRoot __dirty="content">
+        <div __dirty="content,node">
+          <text __dirty="content,node">abc</text>
         </div>
       </modelRoot>
     `;
 
     // language=XML
-    const { root: nodeToInsert } = vdom`
+    const { root: nodeToInsert } = asNew(vdom`
       <div>
         <text>abc</text>
-      </div>`;
+      </div>`);
 
     const op = new InsertOperation(
       undefined,
@@ -57,39 +61,68 @@ module('Unit | model | operations | insert-operation-test', () => {
       nodeToInsert
     );
     op.execute();
-    assert.true(initial.sameAs(expected));
+    assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
   });
   test('inserts into root when collapsed', (assert) => {
-    const root = new ModelElement('div');
-    const s0 = new ModelElement('span');
-    root.addChild(s0);
-
-    const nodeToInsert = new ModelText('abc');
+    //language=XML
+    const {
+      root: initial,
+      elements: { rangeAnchor },
+    } = vdom`
+      <modelRoot __id="rangeAnchor">
+        <span/>
+      </modelRoot>
+    `;
+    //language=XML
+    const { root: nodeToInsert } = asNew(vdom`
+      <text>abc</text>`);
 
     const op = new InsertOperation(
       undefined,
-      ModelRange.fromPaths(root, [0], [0]),
+      ModelRange.fromInNode(rangeAnchor, 0, 0),
       nodeToInsert
     );
+    //language=XML
+    const { root: expected } = vdom`
+      <modelRoot __dirty="content">
+        <text __dirty="node,content">abc</text>
+        <span/>
+      </modelRoot>
+    `;
     op.execute();
-    assert.strictEqual(root.length, 2);
-    assert.strictEqual(root.firstChild, nodeToInsert);
+    assert.true(expected.sameAs(initial, { ignoreDirtiness: false }));
   });
   test('inserts into root when collapsed2', (assert) => {
     const root = new ModelElement('div');
     const s0 = new ModelElement('span');
     root.addChild(s0);
+    //language=XML
+    const {
+      root: initial,
+      elements: { rangeAnchor },
+    } = vdom`
+      <modelRoot __id="rangeAnchor">
+        <span/>
+      </modelRoot>
+    `;
 
-    const nodeToInsert = new ModelText('abc');
+    //language=XML
+    const { root: nodeToInsert } = asNew(vdom`
+      <text>abc</text>`);
+    const { root: expected } = vdom`
+      <modelRoot __dirty="content">
+        <span/>
+        <text __dirty="content,node">abc</text>
+      </modelRoot>
+    `;
 
     const op = new InsertOperation(
       undefined,
-      ModelRange.fromPaths(root, [1], [1]),
+      ModelRange.fromInNode(rangeAnchor, 1, 1),
       nodeToInsert
     );
     op.execute();
-    assert.strictEqual(root.length, 2);
-    assert.strictEqual(root.lastChild, nodeToInsert);
+    assert.true(expected.sameAs(initial, { ignoreDirtiness: false }));
   });
   test('replaces when not collapsed', (assert) => {
     const root = new ModelElement('div');
@@ -108,10 +141,41 @@ module('Unit | model | operations | insert-operation-test', () => {
     assert.strictEqual(root.firstChild, nodeToInsert);
   });
   test('replaces complex range', (assert) => {
-    const { root, s0, s2, s3, t00, t22 } = buildStructure1();
+    const {
+      root: initial,
+      textNodes: { t00, t22 },
+    } = vdom`
+      <modelRoot>
+        <span>
+          <text __id="t00">t00</text>
+          <text>t01</text>
+          <text>t02</text>
+        </span>
+        <span>
+          <text>t10</text>
+          <text>t11</text>
+          <text>t12</text>
+        </span>
+        <span>
+          <text>t20</text>
+          <text>t21</text>
+          <text __id="t22">t22</text>
+        </span>
+        <span/>
+      </modelRoot>
+    `;
+    const { root: nodeToInsert } = asNew(vdom`
+      <text>abc</text>`);
 
-    const nodeToInsert = new ModelText('abc');
-
+    const { root: expected } = vdom`
+      <modelRoot __dirty="content">
+        <span __dirty="content">
+          <text __dirty="node,content">abc</text>
+        </span>
+        <span __dirty="content"/>
+        <span/>
+      </modelRoot>
+    `;
     const p1 = ModelPosition.fromInTextNode(t00, 0);
     const p2 = ModelPosition.fromInTextNode(t22, 3);
     const op = new InsertOperation(
@@ -120,14 +184,7 @@ module('Unit | model | operations | insert-operation-test', () => {
       nodeToInsert
     );
     op.execute();
-    assert.strictEqual(root.length, 3);
-    assert.strictEqual(root.children[0], s0);
-    assert.strictEqual(root.children[1], s2);
-    assert.strictEqual(root.children[2], s3);
-    assert.strictEqual(s0.length, 1);
-    assert.strictEqual(s0.children[0], nodeToInsert);
-    assert.strictEqual(s2.length, 0);
-    assert.strictEqual(s3.length, 0);
+    assert.true(expected.sameAs(initial, { ignoreDirtiness: false }));
   });
   test('removes items when no nodes to insert are provided', (assert) => {
     // language=XML
@@ -147,9 +204,9 @@ module('Unit | model | operations | insert-operation-test', () => {
     const { root: expected } = vdom`
       <modelRoot>
         <div>
-          <text>te</text>
+          <text __dirty="content">te</text>
         </div>
-        <text>st</text>
+        <text __dirty="content">st</text>
       </modelRoot>
     `;
     const start = ModelPosition.fromInTextNode(rangeStart, 2);
@@ -159,7 +216,7 @@ module('Unit | model | operations | insert-operation-test', () => {
 
     const resultRange = op.execute();
 
-    assert.true(expected.sameAs(initial));
+    assert.true(expected.sameAs(initial, { ignoreDirtiness: false }));
     assert.true(
       resultRange.sameAs(
         ModelRange.fromPaths(initial as ModelElement, [1], [1])
@@ -192,15 +249,15 @@ module('Unit | model | operations | insert-operation-test', () => {
 
     // language=XML
     const { root: expected } = vdom`
-      <modelRoot>
-        <div>
-          <text>ab</text>
-          <text>ins0</text>
-          <text>ins1</text>
+      <modelRoot __dirty="content">
+        <div __dirty="content">
+          <text __dirty="content">ab</text>
+          <text __dirty="node,content">ins0</text>
+          <text __dirty="node,content">ins1</text>
         </div>
-        <div>
+        <div __dirty="content">
           <span>
-            <text>op</text>
+            <text __dirty="content">op</text>
           </span>
         </div>
       </modelRoot>
@@ -215,7 +272,7 @@ module('Unit | model | operations | insert-operation-test', () => {
       new ModelText('ins1')
     );
     const resultRange = op.execute();
-    assert.true(initial.sameAs(expected));
+    assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
     assert.true(
       resultRange.sameAs(
         ModelRange.fromPaths(initial as ModelElement, [0, 2], [0, 10])
@@ -224,30 +281,10 @@ module('Unit | model | operations | insert-operation-test', () => {
   });
 });
 
-function buildStructure1() {
-  const root = new ModelElement('div');
-
-  const s0 = new ModelElement('span');
-  const t00 = new ModelText('t00');
-  const t01 = new ModelText('t01');
-  const t02 = new ModelText('t02');
-
-  const s1 = new ModelElement('span');
-  const t10 = new ModelText('t10');
-  const t11 = new ModelText('t11');
-  const t12 = new ModelText('t12');
-
-  const s2 = new ModelElement('span');
-  const t20 = new ModelText('t20');
-  const t21 = new ModelText('t21');
-  const t22 = new ModelText('t22');
-
-  const s3 = new ModelElement('span');
-
-  root.appendChildren(s0, s1, s2, s3);
-  s0.appendChildren(t00, t01, t02);
-  s1.appendChildren(t10, t11, t12);
-  s2.appendChildren(t20, t21, t22);
-
-  return { root, s0, s1, s2, s3, t00, t01, t02, t10, t11, t12, t20, t21, t22 };
+function asNew(result: XmlReaderResult) {
+  const walker = GenTreeWalker.fromSubTree<ModelNode>({ root: result.root });
+  for (const node of walker.nodes()) {
+    node.setDirty('node', 'content');
+  }
+  return result;
 }

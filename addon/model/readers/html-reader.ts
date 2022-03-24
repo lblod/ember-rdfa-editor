@@ -6,6 +6,7 @@ import { calculateRdfaPrefixes } from '../util/rdfa-utils';
 import { SpecAttributes } from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { AttributeSpec, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
 
 export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;
@@ -13,6 +14,7 @@ export class HtmlReaderContext {
   private _rdfaPrefixes: Map<string, string>;
   private _shouldConvertWhitespace: boolean;
   activeMarks: Set<SpecAttributes> = new Set<SpecAttributes>();
+  markViewRootStack: Node[] = [];
 
   constructor(
     model: Model,
@@ -29,8 +31,8 @@ export class HtmlReaderContext {
     return this._model;
   }
 
-  bindNode(modelNode: ModelNode, domNode: Node) {
-    this.model.bindNode(modelNode, domNode);
+  registerNodeView(modelNode: ModelNode, view: NodeView) {
+    this.model.registerNodeView(modelNode, view);
   }
 
   get shouldConvertWhitespace() {

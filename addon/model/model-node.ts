@@ -9,12 +9,20 @@ import XmlWriter from '@lblod/ember-rdfa-editor/model/writers/xml-writer';
 import { Walkable } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { Predicate } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
+import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
 
 export type ModelNodeType = 'TEXT' | 'ELEMENT' | 'FRAGMENT';
 
 export interface NodeConfig {
   debugInfo: unknown;
   rdfaPrefixes?: Map<string, string>;
+}
+
+export type DirtyType = 'content' | 'node' | 'mark';
+
+export interface NodeCompareOpts {
+  ignoredAttributes?: Set<string>;
+  ignoreDirtiness?: boolean;
 }
 
 /**
@@ -25,16 +33,17 @@ export default abstract class ModelNode implements Walkable {
 
   private _attributeMap: Map<string, string>;
   private _parent: ModelElement | null = null;
-  private _boundNode: Node | null = null;
   private _nextSibling: ModelNode | null = null;
   private _previousSibling: ModelNode | null = null;
   private _debugInfo: unknown;
+  public dirtiness: Set<DirtyType>;
 
   protected constructor(config?: NodeConfig) {
     this._attributeMap = new Map<string, string>();
     if (config) {
       this._debugInfo = config.debugInfo;
     }
+    this.dirtiness = new Set<DirtyType>(['node', 'content']);
   }
 
   /**
@@ -59,6 +68,7 @@ export default abstract class ModelNode implements Walkable {
 
   set attributeMap(value: Map<string, string>) {
     this._attributeMap = value;
+    this.addDirty('node');
   }
 
   get previousSibling(): ModelNode | null {
@@ -100,14 +110,6 @@ export default abstract class ModelNode implements Walkable {
     return root;
   }
 
-  get boundNode(): Node | null {
-    return this._boundNode;
-  }
-
-  set boundNode(value: Node | null) {
-    this._boundNode = value;
-  }
-
   abstract get length(): number;
 
   get index(): number | null {
@@ -127,6 +129,35 @@ export default abstract class ModelNode implements Walkable {
    */
   get offsetSize(): number {
     return 1;
+  }
+
+  setDirty(...dirtyTypes: DirtyType[]) {
+    this.dirtiness = new Set<DirtyType>(dirtyTypes);
+  }
+
+  addDirty(...dirtyTypes: DirtyType[]) {
+    SetUtils.addMany(this.dirtiness, ...dirtyTypes);
+  }
+
+  removeDirty(...dirtyTypes: DirtyType[]) {
+    SetUtils.deleteMany(this.dirtiness, ...dirtyTypes);
+  }
+
+  isDirty(type: DirtyType) {
+    return this.dirtiness.has(type);
+  }
+
+  clearDirty() {
+    this.dirtiness.clear();
+  }
+
+  clearDirtyTree() {
+    this.dirtiness.clear();
+    if (ModelNode.isModelElement(this)) {
+      for (const child of this.children) {
+        child.clearDirtyTree();
+      }
+    }
   }
 
   /**
@@ -208,6 +239,7 @@ export default abstract class ModelNode implements Walkable {
 
   setAttribute(key: string, value: string) {
     this._attributeMap.set(key, value);
+    this.addDirty('node');
   }
 
   /**
@@ -217,6 +249,7 @@ export default abstract class ModelNode implements Walkable {
    * @param key
    */
   removeAttribute(key: string): boolean {
+    this.addDirty('node');
     return this._attributeMap.delete(key);
   }
 
@@ -337,9 +370,9 @@ export default abstract class ModelNode implements Walkable {
    * Deep, but not reference equality
    * All properties except boundNode, parent and siblings will be compared, and children will be compared recursively
    * @param other
-   * @param strict
+   * @param ignoredAttributes
    */
-  abstract sameAs(other: ModelNode, strict?: boolean): boolean;
+  abstract sameAs(other: ModelNode, compareOpts?: NodeCompareOpts): boolean;
 
   /**
    * True if node can be merged with other
