@@ -48,8 +48,6 @@ declare module '@graphy/memory.dataset.fast' {
 
     delete(quad: AnyQuad): FastDataset;
 
-    deleteQuads(quads: Array<AnyQuad>): number;
-
     clear(): void;
 
     disjoint(other: FastDataset): boolean;

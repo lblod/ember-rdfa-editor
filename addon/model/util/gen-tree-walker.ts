@@ -72,6 +72,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
   private _isAtEnd: boolean;
   private _onEnterNode: NodeHandler<T>;
   private _onLeaveNode: NodeHandler<T>;
+  private _didDescend: Set<Walkable>;
 
   constructor({
     root,
@@ -88,9 +89,6 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     this._start = start;
     this._end = end;
     this.descend = descend;
-    if (visitParentUpwards) {
-      throw new NotImplementedError('WIP, not implemented yet');
-    }
     if (!descend) {
       throw new NotImplementedError('WIP, not implemented yet');
     }
@@ -106,6 +104,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     this._isAtEnd = false;
     this._onEnterNode = onEnterNode;
     this._onLeaveNode = onLeaveNode;
+    this._didDescend = new Set<T>();
   }
 
   static fromSubTree<U extends Walkable>(
@@ -321,7 +320,8 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
       // as long as we dont get a reject, go depth first into the child tree
       // if descend is false, don't do this (used to iterate over the toplevel nodes of a range)
       let child = getFirstChild(node, reverse);
-      while (this.descend && child) {
+      while (this.descend && child && !this._didDescend.has(node)) {
+        this._didDescend.add(node);
         node = child;
         this._onEnterNode(node as T);
         result = this.filterNode(node);
@@ -385,7 +385,7 @@ function getFirstChild(node: Walkable, reverse: boolean): Walkable | null {
 }
 
 function getLastChild(node: Walkable, reverse: boolean): Walkable | null {
-  return reverse ? node.firstChild : node.firstChild;
+  return reverse ? node.firstChild : node.lastChild;
 }
 
 function getNextSibling(node: Walkable, reverse: boolean): Walkable | null {

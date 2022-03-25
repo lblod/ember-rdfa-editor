@@ -26,6 +26,10 @@ import {
   PredicateSpec,
   SubjectSpec,
 } from '@lblod/ember-rdfa-editor/model/util/datastore/term-spec';
+import {
+  matchText,
+  TextMatch,
+} from '@lblod/ember-rdfa-editor/utils/match-text';
 
 interface TermNodesResponse {
   nodes: Set<ModelNode>;
@@ -42,6 +46,8 @@ interface PredicateNodesResponse extends TermNodesResponse {
 interface ObjectNodesResponse extends TermNodesResponse {
   object: RDF.Quad_Object;
 }
+
+export type WhichTerm = 'subject' | 'predicate' | 'object';
 
 /**
  * High-level interface to query RDF-knowledge from the document.
@@ -160,6 +166,8 @@ export default interface Datastore {
    * Returns a generator of current relevant quads
    */
   asQuads(): Generator<RDF.Quad>;
+
+  searchTextIn(whichTerm: WhichTerm, regex: RegExp): TextMatch[];
 }
 
 interface DatastoreConfig {
@@ -440,6 +448,23 @@ export class EditorStore implements Datastore {
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
   ): Datastore {
     return this.fromDataset(action(this.dataset, this.termConverter));
+  }
+
+  searchTextIn(whichTerm: WhichTerm, regex: RegExp): TextMatch[] {
+    const results = [];
+    let mapping: TermMapping<RDF.Term>;
+    if (whichTerm === 'subject') {
+      mapping = this.asSubjectNodeMapping();
+    } else if (whichTerm === 'predicate') {
+      mapping = this.asPredicateNodeMapping();
+    } else {
+      mapping = this.asObjectNodeMapping();
+    }
+    for (const node of mapping.nodes()) {
+      const searchRange = ModelRange.fromAroundNode(node);
+      results.push(...matchText(searchRange, regex));
+    }
+    return results;
   }
 
   private fromDataset(dataset: RDF.Dataset): Datastore {

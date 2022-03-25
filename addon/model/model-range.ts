@@ -433,6 +433,8 @@ export default class ModelRange {
   }
 
   sameAs(other: ModelRange): boolean {
+    console.log("THISROOT", this.root);
+    console.log("OTHERROOT", other.root)
     return this.start.sameAs(other.start) && this.end.sameAs(other.end);
   }
 
@@ -461,7 +463,7 @@ export default class ModelRange {
     } else if (strat.type === 'rangeIsInside') {
       yield* this.nodesInside(strat.textNodeStickyness);
     } else if (strat.type === 'rangeTouches') {
-      const walker = GenTreeWalker.fromRange({ range: this });
+      const walker = GenTreeWalker.fromRange({ range: this, visitParentUpwards: true });
       yield* walker.nodes();
       yield* this.findCommonAncestorsWhere(() => true);
     } else {
