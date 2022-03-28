@@ -1,7 +1,9 @@
 import { module, test } from 'qunit';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange, {
+  RangeComparison,
+} from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { parseXml, vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import { stackOverFlowOnGetMinimumConfinedRanges } from 'dummy/tests/unit/model/testing-vdoms';
@@ -365,6 +367,36 @@ module('Unit | model | model-range', () => {
 
         assert.true(range.containsNodeWhere(nodeIsElementOfType('li')));
       });
+    });
+  });
+  module('Unit | model | model-range | compare', () => {
+    const testDom = vdom`
+      <modelRoot>
+        <span __id="span1">
+          <text __id="text1">test1</text>
+        </span>
+        <span __id="span2">
+          <text __id="text2">test2</text>
+          <text __id="text3">test3</text>
+        </span>
+        <div __id="div1">
+          <span __id="span3">
+            <text __id="text4">test4</text>
+          </span>
+          <span __id="span4">
+            <text __id="text5">test5</text>
+          </span>
+        </div>
+      </modelRoot>`;
+    const {
+      root,
+      textNodes: { text1, text2, text3, text4, text5 },
+      elements: { span1, span2, span3, span4, div1 },
+    } = testDom;
+    test('comparing equal ranges', (assert) => {
+      const left = ModelRange.fromAroundNode(text1);
+      const right = ModelRange.fromAroundNode(text1);
+      assert.strictEqual(left.compare(right), RangeComparison.EQUAL);
     });
   });
 });

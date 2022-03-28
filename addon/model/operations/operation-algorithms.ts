@@ -1,14 +1,22 @@
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange, {
+  RangeComparison,
+} from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import RangeMapper, {
+  LeftOrRight,
+} from '@lblod/ember-rdfa-editor/model/range-mapper';
 
+export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
 /**
  * A shared library of algorithms to be used by operations only
  * Any use outside of operations is not supported
  */
 export default class OperationAlgorithms {
-  static remove(range: ModelRange): ModelNode[] {
+  static remove(
+    range: ModelRange
+  ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
     let newStartNode: ModelNode | null = null;
     let newEndNode: ModelNode | null = null;
     let splitStart = false;
@@ -51,7 +59,27 @@ export default class OperationAlgorithms {
       newEndNode.remove();
       newEndNode.parent!.removeDirty('content');
     }
-    return nodesToRemove;
+
+    function rangeMapping(
+      rangeToMap: ModelRange,
+      bias: LeftOrRight = 'right'
+    ): ModelRange {
+      const comparison = rangeToMap.compare(range);
+      if (comparison === RangeComparison.BEFORE) {
+        return rangeToMap;
+      }
+      if (comparison === RangeComparison.IS_INSIDE) {
+        return new ModelRange(range.start.clone(), range.start.clone());
+      }
+      if (comparison === RangeComparison.LEFT_OVERLAP) {
+        return new ModelRange(rangeToMap.start.clone(), range.start.clone());
+      }
+    }
+
+    return {
+      removedNodes: nodesToRemove,
+      mapper: new RangeMapper([rangeMapping]),
+    };
   }
 
   static insert(
