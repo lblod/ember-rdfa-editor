@@ -1,6 +1,4 @@
-import ModelRange, {
-  RangeComparison,
-} from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
@@ -60,25 +58,16 @@ export default class OperationAlgorithms {
       newEndNode.parent!.removeDirty('content');
     }
 
-    function rangeMapping(
-      rangeToMap: ModelRange,
+    function positionMapping(
+      positionToMap: ModelPosition,
       bias: LeftOrRight = 'right'
-    ): ModelRange {
-      const comparison = rangeToMap.compare(range);
-      if (comparison === RangeComparison.BEFORE) {
-        return rangeToMap;
-      }
-      if (comparison === RangeComparison.IS_INSIDE) {
-        return new ModelRange(range.start.clone(), range.start.clone());
-      }
-      if (comparison === RangeComparison.LEFT_OVERLAP) {
-        return new ModelRange(rangeToMap.start.clone(), range.start.clone());
-      }
+    ): ModelPosition {
+      return positionToMap;
     }
 
     return {
       removedNodes: nodesToRemove,
-      mapper: new RangeMapper([rangeMapping]),
+      mapper: new RangeMapper([positionMapping]),
     };
   }
 
@@ -107,7 +96,7 @@ export default class OperationAlgorithms {
         );
       }
     } else {
-      overwrittenNodes = OperationAlgorithms.remove(range);
+      overwrittenNodes = OperationAlgorithms.remove(range).removedNodes;
 
       range.start.parent.insertChildrenAtOffset(
         range.start.parentOffset,
@@ -125,7 +114,7 @@ export default class OperationAlgorithms {
     overwrittenNodes: ModelNode[];
     _markCheckNodes: ModelNode[];
   } {
-    const nodesToMove = OperationAlgorithms.remove(rangeToMove);
+    const nodesToMove = OperationAlgorithms.remove(rangeToMove).removedNodes;
     const targetRange = new ModelRange(targetPosition, targetPosition);
     if (nodesToMove.length) {
       return {
