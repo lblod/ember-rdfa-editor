@@ -1,4 +1,4 @@
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
 export type LeftOrRight = 'left' | 'right';
 export type PositionMapping = (
@@ -10,5 +10,13 @@ export default class RangeMapper {
 
   constructor(mappings: PositionMapping[] = []) {
     this.mappings = mappings;
+  }
+
+  mapPosition(position: ModelPosition, bias?: LeftOrRight): ModelPosition {
+    let current = position;
+    for (const mapping of this.mappings) {
+      current = mapping(current, bias);
+    }
+    return current;
   }
 }

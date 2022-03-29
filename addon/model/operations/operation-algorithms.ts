@@ -5,6 +5,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import RangeMapper, {
   LeftOrRight,
 } from '@lblod/ember-rdfa-editor/model/range-mapper';
+import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
 
 export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
 /**
@@ -33,6 +34,8 @@ export default class OperationAlgorithms {
     if (splitEnd) {
       newEndNode = range.end.nodeBefore();
     }
+    const afterEnd = range.end.nodeAfter();
+    const endParent = range.end.parent!;
 
     const nodesToRemove = [];
 
@@ -58,16 +61,16 @@ export default class OperationAlgorithms {
       newEndNode.parent!.removeDirty('content');
     }
 
-    function positionMapping(
-      positionToMap: ModelPosition,
-      bias: LeftOrRight = 'right'
-    ): ModelPosition {
-      return positionToMap;
+    let newEndPos;
+    if (afterEnd) {
+      newEndPos = ModelPosition.fromBeforeNode(afterEnd);
+    } else {
+      newEndPos = ModelPosition.fromInNode(endParent, endParent.getMaxOffset());
     }
 
     return {
       removedNodes: nodesToRemove,
-      mapper: new RangeMapper([positionMapping]),
+      mapper: new RangeMapper([buildPositionMapping(range, newEndPos)]),
     };
   }
 
@@ -180,3 +183,41 @@ export default class OperationAlgorithms {
     }
   }
 }
+
+function buildPositionMapping(
+  affectedRange: ModelRange,
+  newEndPosition: ModelPosition
+) {
+  const pathOffsets: number[] = [];
+  newEndPosition.path.forEach((val, index) => {
+    pathOffsets.push(val - affectedRange.end.path[index]);
+  });
+  return function (position: ModelPosition, bias?: LeftOrRight = 'right') {
+    if (
+      [RelativePosition.BEFORE, RelativePosition.EQUAL].includes(
+        position.compare(affectedRange.start)
+      )
+    ) {
+      return position;
+    }
+    if (
+      [RelativePosition.AFTER, RelativePosition.EQUAL].includes(
+        position.compare(affectedRange.end)
+      )
+    ) {
+      const root = position.root;
+      const path = [...position.path];
+      path.forEach((val, index) => {
+        path[index] = val + pathOffsets[index];
+      });
+      return ModelPosition.fromPath(root, path);
+    } else {
+      if (bias === 'left') {
+        return affectedRange.start.clone();
+      } else {
+        return newEndPosition.clone(position.root);
+      }
+    }
+  };
+}
+
