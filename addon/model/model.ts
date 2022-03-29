@@ -24,6 +24,7 @@ import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
+import setNodeAndChildDirty from './util/set-node-and-child-dirty';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -139,8 +140,6 @@ export default class Model {
    * have a real dom available.
    */
   write(tree: ModelElement = this.rootModelNode, writeSelection = true) {
-    const modelWriteEvent = new CustomEvent('editorModelWrite');
-    document.dispatchEvent(modelWriteEvent);
     this.rootModelNode.removeDirty('node');
 
     this.writer.write(tree);
@@ -195,11 +194,14 @@ export default class Model {
    */
   change(
     callback: (mutator: ImmediateModelMutator) => ModelElement | void,
-    writeBack = true
+    writeBack = true,
+    saveSnapshot = true
   ) {
+    if (saveSnapshot) {
+      this.saveSnapshot();
+    }
     const mutator = new ImmediateModelMutator(this._eventBus);
     callback(mutator);
-
     if (writeBack) {
       this.write();
     }
@@ -248,11 +250,23 @@ export default class Model {
     writeBack = true
   ) {
     if (snapshot) {
-      this._rootModelNode = snapshot.rootModelNode;
-      this._selection = snapshot.modelSelection;
-
+      this.change(
+        (mutator) => {
+          const range = ModelRange.fromPaths(
+            this.rootModelNode,
+            [0],
+            [this.rootModelNode.getMaxOffset()]
+          );
+          setNodeAndChildDirty(snapshot.rootModelNode);
+          mutator.insertNodes(range, ...snapshot.rootModelNode.children);
+        },
+        false,
+        false
+      );
       if (writeBack) {
-        this.write();
+        this.write(this.rootModelNode, false);
+        this._selection = snapshot.modelSelection.clone(this.rootModelNode);
+        this.writeSelection();
       }
     } else {
       this.logger('No snapshot to restore');

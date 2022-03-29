@@ -16,11 +16,9 @@ import { processDomNode as walkDomNodeAsText } from '@lblod/ember-rdfa-editor/ut
 import nextTextNode from '@lblod/ember-rdfa-editor/utils/ce/next-text-node';
 import MovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/movement-observer';
 import getRichNodeMatchingDomNode from '@lblod/ember-rdfa-editor/utils/ce/get-rich-node-matching-dom-node';
-import CappedHistory from '@lblod/ember-rdfa-editor/utils/ce/capped-history';
 import RichNode from '@lblod/marawa/rich-node';
 import { tracked } from '@glimmer/tracking';
 import { Editor } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { Region } from '@lblod/marawa/rdfa-block';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
@@ -61,9 +59,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   @tracked
   private _currentSelection?: InternalSelection;
 
-  @tracked
-  history!: CappedHistory;
-
   /**
    * the domNode containing our caret
    *
@@ -77,12 +72,7 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
   constructor(properties: RawEditorProperties) {
     super(properties);
-    this.history = new CappedHistory({ maxItems: 100 });
     this.movementObservers = A();
-    document.addEventListener(
-      'editorModelWrite',
-      this.createSnapshot.bind(this)
-    );
     this.eventBus.on(
       'contentChanged',
       () => {
@@ -627,29 +617,6 @@ export default class PernetRawEditor extends RawEditor implements Editor {
   }
 
   /**
-   * create a snapshot for undo history
-   * @method createSnapshot
-   * @public
-   */
-  createSnapshot() {
-    try {
-      const document = {
-        content: this.rootNode.innerHTML,
-        currentSelection: this.currentSelection,
-      };
-      this.history.push(document);
-    } catch (e) {
-      if (e instanceof ModelError) {
-        console.info(
-          'Failed to create snapshot because of uninitialized model. This is probably fine.'
-        );
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  /**
    * execute a DOM transformation on the editor content, ensures a consistent editor state
    * @method externalDomUpdate
    * @param {String} description
@@ -864,25 +831,5 @@ export default class PernetRawEditor extends RawEditor implements Editor {
 
   getRelativeCursorPostion() {
     return this.getRelativeCursorPosition();
-  }
-
-  /**
-   * restore a snapshot from undo history
-   * @method undo
-   * @public
-   */
-  undo() {
-    const previousSnapshot = this.history.pop();
-    if (previousSnapshot) {
-      this.rootNode.innerHTML = previousSnapshot.content;
-      this.updateRichNode();
-      this.currentNode = null;
-      this.setCurrentPosition(previousSnapshot.currentSelection[0]);
-      this.model.read();
-    } else {
-      warn('no more history to undo', {
-        id: 'contenteditable-editor:history-empty',
-      });
-    }
   }
 }
