@@ -7,6 +7,7 @@ export default class MapUtils {
       arr.push(value);
     }
   }
+
   static setOrAdd<K, V>(map: Map<K, Set<V>>, key: K, value: V) {
     const set = map.get(key);
     if (!set) {
@@ -15,11 +16,13 @@ export default class MapUtils {
       set.add(value);
     }
   }
+
   static copyMapContents<K, V>(from: Map<K, V>, to: Map<K, V>) {
     for (const [key, value] of from) {
       to.set(key, value);
     }
   }
+
   static areMapsSame<K, V>(map1: Map<K, V>, map2: Map<K, V>): boolean {
     if (map1.size !== map2.size) {
       return false;
@@ -32,5 +35,14 @@ export default class MapUtils {
       }
     }
     return true;
+  }
+
+  static hasAny<K, V>(map: Map<K, V>, ...keys: K[]): boolean {
+    for (const key of keys) {
+      if (map.has(key)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

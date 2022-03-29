@@ -134,6 +134,66 @@ module('Unit | model | utils | datastore-test', () => {
     const decisionValueStore = dataStore.match(`>${decisionUri}`, 'prov:value');
     assert.strictEqual(decisionValueStore.size, 1);
   });
+
+  test('nodes with same value for objects get filtered correctly', (assert) => {
+    // language=XML
+    const { root } = vdom`
+      <div vocab="http://data.vlaanderen.be/ns/besluit#"
+           prefix="eli: http://data.europa.eu/eli/ontology# prov: http://www.w3.org/ns/prov# mandaat: http://data.vlaanderen.be/ns/mandaat# besluit: http://data.vlaanderen.be/ns/besluit# xsd: http://www.w3.org/2001/XMLSchema#">
+        <div typeof="Artikel"
+             resource="http://data.lblod.info/artikels/1">
+          <div property="prov:value">
+            <text>test</text>
+          </div>
+        </div>
+        <div typeof="Artikel"
+             resource="http://data.lblod.info/artikels/2">
+          <div property="prov:value">
+            <text>test</text>
+          </div>
+        </div>
+      </div>
+    `;
+    const dataStore = EditorStore.fromParse({
+      modelRoot: root,
+      baseIRI: 'http://test.org',
+      pathFromDomRoot: [],
+    });
+    const articleUri = 'http://data.lblod.info/artikels/1';
+    const objectResult = dataStore
+      .match(`>${articleUri}`, 'prov:value')
+      .asObjectNodeMapping()
+      .single()?.nodes;
+    assert.strictEqual(objectResult?.length, 1);
+  });
+  test('nodes with same value for objects but different predicates get filtered correctly', (assert) => {
+    // language=XML
+    const { root } = vdom`
+      <div vocab="http://data.vlaanderen.be/ns/besluit#"
+           prefix="eli: http://data.europa.eu/eli/ontology# prov: http://www.w3.org/ns/prov# mandaat: http://data.vlaanderen.be/ns/mandaat# besluit: http://data.vlaanderen.be/ns/besluit# xsd: http://www.w3.org/2001/XMLSchema#">
+        <div typeof="Artikel"
+             resource="http://data.lblod.info/artikels/1">
+          <div property="prov:value">
+            <text>test</text>
+          </div>
+          <div property="prov:otherValue">
+            <text>test</text>
+          </div>
+        </div>
+      </div>
+    `;
+    const dataStore = EditorStore.fromParse({
+      modelRoot: root,
+      baseIRI: 'http://test.org',
+      pathFromDomRoot: [],
+    });
+    const articleUri = 'http://data.lblod.info/artikels/1';
+    const objectResult = dataStore
+      .match(`>${articleUri}`, 'prov:value')
+      .asObjectNodeMapping()
+      .single()?.nodes;
+    assert.strictEqual(objectResult?.length, 1);
+  });
   test('nodes are returned in document order', (assert) => {
     //language=XML
     const {
