@@ -21,7 +21,7 @@ export function indentAction(rawEditor: PernetRawEditor): void {
 
   if (filteredSuitableNodes.length) {
     const handleAction = () => {
-      rawEditor.createSnapshot();
+      rawEditor.model.saveSnapshot();
 
       const groupedLogicalBlocks = getGroupedLogicalBlocks(
         filteredSuitableNodes,
@@ -55,7 +55,7 @@ export function unindentAction(rawEditor: PernetRawEditor): void {
 
   if (filteredSuitableNodes.length) {
     const handleAction = () => {
-      rawEditor.createSnapshot();
+      rawEditor.model.saveSnapshot();
 
       const groupedLogicalBlocks = getGroupedLogicalBlocks(
         filteredSuitableNodes,
