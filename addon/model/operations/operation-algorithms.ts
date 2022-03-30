@@ -35,7 +35,7 @@ export default class OperationAlgorithms {
       newEndNode = range.end.nodeBefore();
     }
     const afterEnd = range.end.nodeAfter();
-    const endParent = range.end.parent!;
+    const endParent = range.end.parent;
 
     const nodesToRemove = [];
 
@@ -77,8 +77,12 @@ export default class OperationAlgorithms {
   static insert(
     range: ModelRange,
     ...nodes: ModelNode[]
-  ): { overwrittenNodes: ModelNode[]; _markCheckNodes: ModelNode[] } {
+  ): OperationAlgorithmResponse<{
+    overwrittenNodes: ModelNode[];
+    _markCheckNodes: ModelNode[];
+  }> {
     let overwrittenNodes: ModelNode[] = [];
+    let newEndPos;
     const _markCheckNodes: ModelNode[] = [...nodes];
     if (range.collapsed) {
       if (range.start.path.length === 0) {
@@ -98,15 +102,31 @@ export default class OperationAlgorithms {
           ...nodes
         );
       }
+      newEndPos = ModelPosition.fromAfterNode(nodes[nodes.length - 1]);
     } else {
+      const afterEnd = range.end.nodeAfter();
+      const endParent = range.end.parent;
       overwrittenNodes = OperationAlgorithms.remove(range).removedNodes;
 
       range.start.parent.insertChildrenAtOffset(
         range.start.parentOffset,
         ...nodes
       );
+
+      if (afterEnd) {
+        newEndPos = ModelPosition.fromBeforeNode(afterEnd);
+      } else {
+        newEndPos = ModelPosition.fromInNode(
+          endParent,
+          endParent.getMaxOffset()
+        );
+      }
     }
-    return { overwrittenNodes, _markCheckNodes };
+    return {
+      overwrittenNodes,
+      _markCheckNodes,
+      mapper: new RangeMapper([buildPositionMapping(range, newEndPos)]),
+    };
   }
 
   static move(
@@ -188,18 +208,21 @@ function buildPositionMapping(
   affectedRange: ModelRange,
   newEndPosition: ModelPosition
 ) {
-  const pathOffsets: number[] = [];
-  newEndPosition.path.forEach((val, index) => {
-    pathOffsets.push(val - affectedRange.end.path[index]);
-  });
-  return function (position: ModelPosition, bias?: LeftOrRight = 'right') {
-    if (
-      [RelativePosition.BEFORE, RelativePosition.EQUAL].includes(
-        position.compare(affectedRange.start)
-      )
-    ) {
+  const pathOffsets = newEndPosition.path.map(
+    (val, index) => val - affectedRange.end.path[index]
+  );
+  return function (position: ModelPosition, bias: LeftOrRight = 'right') {
+    if (position.compare(affectedRange.start) === RelativePosition.BEFORE) {
       return position;
     }
+    if (position.compare(affectedRange.start) === RelativePosition.EQUAL) {
+      if (bias === 'left') {
+        return position;
+      } else {
+        return newEndPosition;
+      }
+    }
+
     if (
       [RelativePosition.AFTER, RelativePosition.EQUAL].includes(
         position.compare(affectedRange.end)
@@ -207,10 +230,24 @@ function buildPositionMapping(
     ) {
       const root = position.root;
       const path = [...position.path];
-      path.forEach((val, index) => {
-        path[index] = val + pathOffsets[index];
+      const newPath: number[] = [];
+      let outOfSubtree = false;
+      path.forEach((value, index) => {
+        if (outOfSubtree) {
+          newPath.push(value);
+        } else {
+          if (
+            pathOffsets[index] === 0 &&
+            value !== affectedRange.end.path[index]
+          ) {
+            outOfSubtree = true;
+            newPath.push(value);
+          } else {
+            newPath.push(value + (pathOffsets[index] ?? 0));
+          }
+        }
       });
-      return ModelPosition.fromPath(root, path);
+      return ModelPosition.fromPath(root, newPath);
     } else {
       if (bias === 'left') {
         return affectedRange.start.clone();
@@ -220,4 +257,3 @@ function buildPositionMapping(
     }
   };
 }
-

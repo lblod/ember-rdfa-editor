@@ -214,12 +214,12 @@ module('Unit | model | operations | insert-operation-test', () => {
     const range = new ModelRange(start, end);
     const op = new InsertOperation(undefined, range);
 
-    const resultRange = op.execute();
+    const resultRange = op.execute().defaultRange;
 
     assert.true(expected.sameAs(initial, { ignoreDirtiness: false }));
     assert.true(
       resultRange.sameAs(
-        ModelRange.fromPaths(initial as ModelElement, [1], [1])
+        ModelRange.fromPaths(initial as ModelElement, [0, 2], [1])
       )
     );
   });
@@ -271,11 +271,11 @@ module('Unit | model | operations | insert-operation-test', () => {
       new ModelText('ins0'),
       new ModelText('ins1')
     );
-    const resultRange = op.execute();
+    const resultRange = op.execute().defaultRange;
     assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
     assert.true(
       resultRange.sameAs(
-        ModelRange.fromPaths(initial as ModelElement, [0, 2], [0, 10])
+        ModelRange.fromPaths(initial as ModelElement, [0, 2], [1, 0, 0])
       )
     );
   });

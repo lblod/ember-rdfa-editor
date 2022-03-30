@@ -61,6 +61,7 @@ export default class LiveMarkSet {
     const { matchesToAdd, matchesToRemove } = this.calculateRanges();
     const mutator = this.controller.getMutator();
     const marksRegistry = this.controller.marksRegistry;
+    const currentRange = this.controller.selection.lastRange!;
 
     console.log('TOADD', matchesToAdd);
     console.log('TOREMOVE', matchesToRemove);
@@ -104,7 +105,8 @@ export default class LiveMarkSet {
       }
       this._activeMatches.set(match.range.toString(), match);
     }
-    this.controller.write();
+    // this.controller.selection.selectRange(mutator.mapRange(currentRange));
+    // this.controller.write();
   };
 
   calculateRanges(): TextMatchDiff {

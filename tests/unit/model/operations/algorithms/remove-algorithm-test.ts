@@ -11,8 +11,8 @@ module(
     test('should only remove selected nodes', (assert) => {
       const {
         root: initial,
-        elements: { span1, span2, span3, span4, div1 },
-        textNodes: { text1, text2, text3, text4, text5, text6 },
+        elements: { span3, div1 },
+        textNodes: { text3, text4, text6, text7, superDeep },
       } = vdom`
         <modelRoot>
           <span __id="span1">
@@ -29,10 +29,22 @@ module(
                 <!--                 ]-->
                 <text __id="text4">test4</text>
                 <text __id="text5">test5</text>
+                <span>
+                  <text __id="text6">test6</text>
+                </span>
               </span>
             </span>
           </div>
-          <text __id="text6">test6</text>
+          <text __id="text7">test7</text>
+          <span>
+            <span>
+              <span>
+                <span>
+                  <text __id="superDeep">test</text>
+                </span>
+              </span>
+            </span>
+          </span>
         </modelRoot>
       `;
       // language=XML
@@ -46,23 +58,35 @@ module(
               <span>
                 <text>st4</text>
                 <text>test5</text>
+                <span>
+                  <text __id="text6">test6</text>
+                </span>
               </span>
             </span>
           </div>
-          <text>test6</text>
+          <text>test7</text>
+          <span>
+            <span>
+              <span>
+                <span>
+                  <text __id="superDeep">test</text>
+                </span>
+              </span>
+            </span>
+          </span>
         </modelRoot>
       `;
       const start = ModelPosition.fromInElement(div1, 0);
       const end = ModelPosition.fromInTextNode(text4, 2);
       const testpos1 = ModelPosition.fromInTextNode(text4, 3);
       const testpos2 = ModelPosition.fromAfterNode(span3);
-      const testpos3 = ModelPosition.fromInTextNode(text6, 2);
+      const testpos3 = ModelPosition.fromInTextNode(text7, 2);
       // position inside deleted range
       const testpos4 = ModelPosition.fromInTextNode(text3, 2);
+      const testpos5 = ModelPosition.fromInTextNode(text6, 2);
 
-      const { removedNodes, mapper } = OperationAlgorithms.remove(
-        new ModelRange(start, end)
-      );
+      const deepPos = ModelPosition.fromInTextNode(superDeep, 2);
+      const { mapper } = OperationAlgorithms.remove(new ModelRange(start, end));
 
       const newEndPos = mapper.mapPosition(end);
       const newStartPos = mapper.mapPosition(start);
@@ -71,6 +95,8 @@ module(
       const newTestPos3 = mapper.mapPosition(testpos3);
       const newTestPos4LeftBias = mapper.mapPosition(testpos4, 'left');
       const newTestPos4RightBias = mapper.mapPosition(testpos4, 'right');
+      const newTestPos5 = mapper.mapPosition(testpos5);
+      const newDeepPos = mapper.mapPosition(deepPos);
 
       assert.true(initial.sameAs(expected));
       assert.deepEqual(newEndPos.path, [1, 0, 0, 0]);
@@ -80,9 +106,8 @@ module(
       assert.deepEqual(newTestPos3.path, [4]);
       assert.true(newTestPos4LeftBias.sameAs(newStartPos));
       assert.true(newTestPos4RightBias.sameAs(newEndPos));
-
-      // assert.deepEqual(newPos.path, [2]);
+      assert.deepEqual(newTestPos5.path, [1, 0, 0, 8, 2]);
+      assert.deepEqual(newDeepPos.path, [7, 0, 0, 0, 2]);
     });
   }
 );
-
