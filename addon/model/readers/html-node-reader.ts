@@ -35,6 +35,7 @@ export default class HtmlNodeReader
 
       const marks = context.matchMark(from);
       if (marks.size) {
+        context.markViewRootStack.push(from);
         SetUtils.addMany(context.activeMarks, ...marks);
         const reader = new HtmlNodeReader();
         result = [];
@@ -46,6 +47,7 @@ export default class HtmlNodeReader
           }
         }
         SetUtils.deleteMany(context.activeMarks, ...marks);
+        context.markViewRootStack.pop();
       } else {
         let reader: ElementReader;
         const ctor = HtmlNodeReader.elementConfig.get(tag);

@@ -6,6 +6,8 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
+import Model from '@lblod/ember-rdfa-editor/model/model';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
 /**
  * Writer to convert a {@link ModelSelection} to a {@link Selection}
@@ -13,6 +15,12 @@ import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
  * create a {@link Selection}
  */
 export default class SelectionWriter implements Writer<ModelSelection, void> {
+  private _model: Model;
+
+  constructor(model: Model) {
+    this._model = model;
+  }
+
   write(modelSelection: ModelSelection): void {
     const domSelection = getWindowSelection();
 
@@ -45,31 +53,53 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
     const nodeAfter = position.nodeAfter();
     const nodeBefore = position.nodeBefore();
     if (!nodeAfter) {
+      const nodeView = this._model.modelToView(position.parent);
+      if (!nodeView) {
+        throw new ModelError(
+          'Writing selection of modelNode which is not in dom'
+        );
+      }
       return {
-        anchor: position.parent.boundNode!,
-        offset: position.parent.boundNode!.childNodes.length,
+        anchor: nodeView.contentRoot,
+        offset: nodeView.contentRoot.childNodes.length,
       };
     }
+    let textAnchor: ModelText | null = null;
     if (ModelElement.isModelText(nodeAfter)) {
-      return {
-        anchor: nodeAfter.boundNode!,
-        offset: position.parentOffset - nodeAfter.getOffset(),
-      };
+      textAnchor = nodeAfter;
     } else if (ModelElement.isModelText(nodeBefore)) {
-      // we prefer text node anchors, so we look both ways
+      textAnchor = nodeBefore;
+    }
+    if (textAnchor) {
+      const nodeView = this._model.modelToView(textAnchor);
+      if (!nodeView) {
+        throw new ModelError(
+          'Writing selection of modelNode which is not in dom'
+        );
+      }
       return {
-        anchor: nodeBefore.boundNode!,
-        offset: position.parentOffset - nodeBefore.getOffset(),
+        anchor: nodeView.contentRoot,
+        offset: position.parentOffset - textAnchor.getOffset(),
       };
-    } else if (ModelElement.isModelElement(nodeAfter)) {
-      const domAnchor = position.parent.boundNode!;
-      const domIndex = ArrayUtils.indexOf(
-        nodeAfter.boundNode!,
-        (domAnchor as HTMLElement).childNodes
-      )!;
-      return { anchor: position.parent.boundNode!, offset: domIndex };
     } else {
-      throw new ModelError('Unsupported node type');
+      if (ModelElement.isModelElement(nodeAfter)) {
+        const parentView = this._model.modelToView(position.parent);
+        const nodeView = this._model.modelToView(nodeAfter);
+        if (!nodeView || !parentView) {
+          throw new ModelError(
+            'Writing selection of modelNode which is not in dom'
+          );
+        }
+
+        const domAnchor = parentView.contentRoot;
+        const domIndex = ArrayUtils.indexOf(
+          nodeView.contentRoot,
+          (domAnchor as HTMLElement).childNodes
+        )!;
+        return { anchor: parentView.contentRoot, offset: domIndex };
+      } else {
+        throw new ModelError('Unsupported node type');
+      }
     }
   }
 }

@@ -388,6 +388,8 @@ export default class BackspaceHandler extends InputHandler {
 
     void this.backspace().then(() => {
       this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
+      this.rawEditor.model.read();
+      this.rawEditor.model.saveSnapshot();
       this.rawEditor.eventBus.emit(
         new ContentChangedEvent({
           owner: CORE_OWNER,

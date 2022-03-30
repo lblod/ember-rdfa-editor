@@ -22,8 +22,8 @@ module('Unit | model | operations | move-operation-test', () => {
 
     // language=XML
     const { root: expected } = vdom`
-      <modelRoot>
-        <div>
+      <modelRoot __dirty="content">
+        <div __dirty="content">
           <text>abcd</text>
         </div>
       </modelRoot>
@@ -34,7 +34,7 @@ module('Unit | model | operations | move-operation-test', () => {
     const op = new MoveOperation(undefined, srcRange, targetPos);
     const resultRange = op.execute();
 
-    assert.true(initial.sameAs(expected));
+    assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
     assert.true(
       resultRange.sameAs(
         ModelRange.fromPaths(initial as ModelElement, [0, 0], [0, 4])

@@ -98,6 +98,7 @@ export default class ArrowHandler extends InputHandler {
         id: 'contenteditable.invalid-start',
       });
     }
+    this.rawEditor.model.read();
 
     return { allowPropagation: false, allowBrowserDefault: false };
   }

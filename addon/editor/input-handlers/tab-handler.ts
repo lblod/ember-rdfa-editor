@@ -106,6 +106,7 @@ export default class TabInputHandler extends InputHandler {
       this.handleNativeManipulation(manipulation);
     }
 
+    this.rawEditor.model.read();
     return { allowPropagation: false };
   }
 
