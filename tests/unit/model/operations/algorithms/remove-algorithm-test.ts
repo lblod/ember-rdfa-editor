@@ -92,6 +92,7 @@ module(
 
       const newEndPos = removeMapper.mapPosition(end);
       const newStartPos = removeMapper.mapPosition(start);
+      const newStartPosLeft = removeMapper.mapPosition(start, 'left');
       const newTestPos1 = removeMapper.mapPosition(testpos1);
       const newTestPos2 = removeMapper.mapPosition(testpos2);
       const newTestPos3 = removeMapper.mapPosition(testpos3);
@@ -102,11 +103,12 @@ module(
 
       assert.true(initial.sameAs(expected));
       assert.deepEqual(newEndPos.path, [1, 0, 0, 0]);
-      assert.deepEqual(newStartPos.path, [1, 0]);
+      assert.deepEqual(newStartPos.path, [1, 0, 0, 0]);
+      assert.deepEqual(newStartPosLeft.path, [1, 0]);
       assert.deepEqual(newTestPos1.path, [1, 0, 0, 1]);
       assert.deepEqual(newTestPos2.path, [1, 0, 1]);
       assert.deepEqual(newTestPos3.path, [4]);
-      assert.true(newTestPos4LeftBias.sameAs(newStartPos));
+      assert.true(newTestPos4LeftBias.sameAs(newStartPosLeft));
       assert.true(newTestPos4RightBias.sameAs(newEndPos));
       assert.deepEqual(newTestPos5.path, [1, 0, 0, 8, 2]);
       assert.deepEqual(newDeepPos.path, [7, 0, 0, 0, 2]);
