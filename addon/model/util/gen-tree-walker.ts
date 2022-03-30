@@ -138,6 +138,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     let startPos: ModelPosition;
     let endPos: ModelPosition;
     let invalid = false;
+    let shouldDescendEnd = true;
     if (reverse) {
       startPos = range.end;
       endPos = range.start;
@@ -181,16 +182,8 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
         }
       }
       if (!invalid && !endNode) {
-        const ancestorWithSibling = endPos.parent
-          .findSelfOrAncestors((node) => !!getPreviousSibling(node, reverse))
-          .next().value;
-        if (ancestorWithSibling) {
-          endNode = getPreviousSibling(ancestorWithSibling, reverse)!;
-        } else {
-          // the end position is at the start of the document
-          // no valid nodes can be found
-          invalid = true;
-        }
+        endNode = endPos.parent;
+        shouldDescendEnd = false;
       }
     }
     const root = range.root;
@@ -210,9 +203,14 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
           'Start and end nodes should be assigned by now'
         );
       }
-      const nextDeepestDescendant = getNextDeepestDescendant(endNode, reverse);
-      if (nextDeepestDescendant) {
-        endNode = nextDeepestDescendant;
+      if (shouldDescendEnd) {
+        const nextDeepestDescendant = getNextDeepestDescendant(
+          endNode,
+          reverse
+        );
+        if (nextDeepestDescendant) {
+          endNode = nextDeepestDescendant;
+        }
       }
       return new GenTreeWalker<ModelNode>({
         root,
@@ -252,6 +250,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
   *nodes(): Generator<T> {
     let result = this.nextNode();
     while (result) {
+      console.log(result.toXml());
       yield result;
       result = this.nextNode();
     }
@@ -317,12 +316,30 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
+      if (this._end && fromNode === this._end) {
+        result = this.filterNode(node);
+        this._isAtEnd = true;
+        if (result === FilterResult.FILTER_ACCEPT) {
+          return node as T | null;
+        } else {
+          return null;
+        }
+      }
       // as long as we dont get a reject, go depth first into the child tree
       // if descend is false, don't do this (used to iterate over the toplevel nodes of a range)
       let child = getFirstChild(node, reverse);
       while (this.descend && child && !this._didDescend.has(node)) {
         this._didDescend.add(node);
         node = child;
+        if (this._end && node === this._end) {
+          this._isAtEnd = true;
+          result = this.filterNode(node);
+          if (result === FilterResult.FILTER_ACCEPT) {
+            return node as T | null;
+          } else {
+            return null;
+          }
+        }
         this._onEnterNode(node as T);
         result = this.filterNode(node);
         if (result === FilterResult.FILTER_ACCEPT) {
@@ -356,12 +373,22 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
         this._onLeaveNode(temporary as T);
         if (this.visitParentUpwards && temporary) {
           result = this.filterNode(temporary);
+          this._didDescend.add(temporary);
           if (result === FilterResult.FILTER_ACCEPT) {
             return temporary as T | null;
           }
         }
       }
       // test the node we found (this was a sibling or a sibling of the parent)
+      if (this._end && node === this._end) {
+        this._isAtEnd = true;
+        result = this.filterNode(node);
+        if (result === FilterResult.FILTER_ACCEPT) {
+          return node as T | null;
+        } else {
+          return null;
+        }
+      }
       result = this.filterNode(node);
       if (result === FilterResult.FILTER_ACCEPT) {
         return node as T | null;

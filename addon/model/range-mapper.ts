@@ -31,7 +31,8 @@ export default class RangeMapper {
     return new ModelRange(newStart, newEnd);
   }
 
-  appendMapper(mapper: RangeMapper) {
+  appendMapper(mapper: RangeMapper): this {
     this.mappings.push(...mapper.mappings);
+    return this;
   }
 }

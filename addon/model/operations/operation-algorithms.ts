@@ -83,6 +83,7 @@ export default class OperationAlgorithms {
   }> {
     let overwrittenNodes: ModelNode[] = [];
     let newEndPos;
+    let mapper: RangeMapper;
     const _markCheckNodes: ModelNode[] = [...nodes];
     if (range.collapsed) {
       if (range.start.path.length === 0) {
@@ -103,13 +104,17 @@ export default class OperationAlgorithms {
         );
       }
       newEndPos = ModelPosition.fromAfterNode(nodes[nodes.length - 1]);
+      mapper = new RangeMapper([buildPositionMapping(range, newEndPos)]);
     } else {
-      const afterEnd = range.end.nodeAfter();
-      const endParent = range.end.parent;
-      overwrittenNodes = OperationAlgorithms.remove(range).removedNodes;
+      const { removedNodes, mapper: removeMapper } =
+        OperationAlgorithms.remove(range);
+      overwrittenNodes = removedNodes;
+      const rangeAfterRemove = removeMapper.mapRange(range);
+      const afterEnd = rangeAfterRemove.end.nodeAfter();
+      const endParent = rangeAfterRemove.end.parent;
 
-      range.start.parent.insertChildrenAtOffset(
-        range.start.parentOffset,
+      rangeAfterRemove.start.parent.insertChildrenAtOffset(
+        rangeAfterRemove.start.parentOffset,
         ...nodes
       );
 
@@ -121,11 +126,14 @@ export default class OperationAlgorithms {
           endParent.getMaxOffset()
         );
       }
+      mapper = removeMapper.appendMapper(
+        new RangeMapper([buildPositionMapping(rangeAfterRemove, newEndPos)])
+      );
     }
     return {
       overwrittenNodes,
       _markCheckNodes,
-      mapper: new RangeMapper([buildPositionMapping(range, newEndPos)]),
+      mapper,
     };
   }
 

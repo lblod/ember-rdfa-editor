@@ -86,17 +86,17 @@ module(
       const testpos5 = ModelPosition.fromInTextNode(text6, 2);
 
       const deepPos = ModelPosition.fromInTextNode(superDeep, 2);
-      const { mapper } = OperationAlgorithms.remove(new ModelRange(start, end));
+      const { removeMapper } = OperationAlgorithms.remove(new ModelRange(start, end));
 
-      const newEndPos = mapper.mapPosition(end);
-      const newStartPos = mapper.mapPosition(start);
-      const newTestPos1 = mapper.mapPosition(testpos1);
-      const newTestPos2 = mapper.mapPosition(testpos2);
-      const newTestPos3 = mapper.mapPosition(testpos3);
-      const newTestPos4LeftBias = mapper.mapPosition(testpos4, 'left');
-      const newTestPos4RightBias = mapper.mapPosition(testpos4, 'right');
-      const newTestPos5 = mapper.mapPosition(testpos5);
-      const newDeepPos = mapper.mapPosition(deepPos);
+      const newEndPos = removeMapper.mapPosition(end);
+      const newStartPos = removeMapper.mapPosition(start);
+      const newTestPos1 = removeMapper.mapPosition(testpos1);
+      const newTestPos2 = removeMapper.mapPosition(testpos2);
+      const newTestPos3 = removeMapper.mapPosition(testpos3);
+      const newTestPos4LeftBias = removeMapper.mapPosition(testpos4, 'left');
+      const newTestPos4RightBias = removeMapper.mapPosition(testpos4, 'right');
+      const newTestPos5 = removeMapper.mapPosition(testpos5);
+      const newDeepPos = removeMapper.mapPosition(deepPos);
 
       assert.true(initial.sameAs(expected));
       assert.deepEqual(newEndPos.path, [1, 0, 0, 0]);

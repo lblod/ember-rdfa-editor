@@ -150,6 +150,7 @@ export type RangeIsInsideStrategy = {
  */
 export type RangeTouchesStrategy = {
   type: 'rangeTouches';
+  includeEndTags?: boolean;
 };
 export type RangeContextStrategy =
   | SimpleRangeContextStrategy
@@ -525,7 +526,7 @@ export default class ModelRange {
     } else if (strat.type === 'rangeTouches') {
       const walker = GenTreeWalker.fromRange({
         range: this,
-        visitParentUpwards: true,
+        visitParentUpwards: strat.includeEndTags,
       });
       yield* walker.nodes();
       yield* this.findCommonAncestorsWhere(() => true);
