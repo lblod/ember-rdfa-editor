@@ -86,7 +86,9 @@ module(
       const testpos5 = ModelPosition.fromInTextNode(text6, 2);
 
       const deepPos = ModelPosition.fromInTextNode(superDeep, 2);
-      const { removeMapper } = OperationAlgorithms.remove(new ModelRange(start, end));
+      const { mapper: removeMapper } = OperationAlgorithms.remove(
+        new ModelRange(start, end)
+      );
 
       const newEndPos = removeMapper.mapPosition(end);
       const newStartPos = removeMapper.mapPosition(start);

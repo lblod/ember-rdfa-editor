@@ -140,16 +140,24 @@ export default class OperationAlgorithms {
   static move(
     rangeToMove: ModelRange,
     targetPosition: ModelPosition
-  ): {
+  ): OperationAlgorithmResponse<{
     movedNodes: ModelNode[];
     overwrittenNodes: ModelNode[];
     _markCheckNodes: ModelNode[];
-  } {
-    const nodesToMove = OperationAlgorithms.remove(rangeToMove).removedNodes;
+  }> {
+    const { removedNodes: nodesToMove, mapper: deletionMapper } =
+      OperationAlgorithms.remove(rangeToMove);
     const targetRange = new ModelRange(targetPosition, targetPosition);
     if (nodesToMove.length) {
+      const {
+        overwrittenNodes,
+        _markCheckNodes,
+        mapper: insertionMapper,
+      } = OperationAlgorithms.insert(targetRange, ...nodesToMove);
       return {
-        ...OperationAlgorithms.insert(targetRange, ...nodesToMove),
+        mapper: deletionMapper.appendMapper(insertionMapper),
+        overwrittenNodes,
+        _markCheckNodes,
         movedNodes: nodesToMove,
       };
     }
@@ -157,23 +165,30 @@ export default class OperationAlgorithms {
       overwrittenNodes: [],
       _markCheckNodes: [],
       movedNodes: nodesToMove,
+      mapper: deletionMapper,
     };
   }
 
-  static splitText(position: ModelPosition, keepright = false) {
+  static splitText(
+    position: ModelPosition,
+    keepright = false
+  ): OperationAlgorithmResponse<{ position: ModelPosition }> {
     position.split(keepright);
-    return position;
+    return { position, mapper: new RangeMapper() };
   }
 
-  static split(position: ModelPosition, keepright = false): ModelPosition {
+  static split(
+    position: ModelPosition,
+    keepright = false
+  ): OperationAlgorithmResponse<{ position: ModelPosition }> {
     OperationAlgorithms.splitText(position, keepright);
     const parent = position.parent;
     if (parent === position.root) {
-      return position;
+      return { position, mapper: new RangeMapper() };
     }
     const grandParent = parent.parent;
     if (!grandParent) {
-      return position;
+      return { position, mapper: new RangeMapper() };
     }
 
     if (keepright) {
@@ -191,7 +206,17 @@ export default class OperationAlgorithms {
         left.appendChildren(...leftSideChildren);
       }
       grandParent.addChild(left, parent.index!);
-      return ModelPosition.fromAfterNode(left);
+      return {
+        position: ModelPosition.fromAfterNode(left),
+        mapper: new RangeMapper([
+          buildPositionMapping(
+            new ModelRange(position, position),
+            left.lastChild
+              ? ModelPosition.fromAfterNode(left.lastChild)
+              : ModelPosition.fromAfterNode(left)
+          ),
+        ]),
+      };
     } else {
       const right = parent.shallowClone();
       const after = position.nodeAfter();
@@ -207,7 +232,17 @@ export default class OperationAlgorithms {
         right.appendChildren(...rightSideChildren);
       }
       grandParent.addChild(right, parent.index! + 1);
-      return ModelPosition.fromBeforeNode(right);
+      return {
+        position: ModelPosition.fromBeforeNode(right),
+        mapper: new RangeMapper([
+          buildPositionMapping(
+            new ModelRange(position, position),
+            right.firstChild
+              ? ModelPosition.fromBeforeNode(right.firstChild)
+              : ModelPosition.fromBeforeNode(right)
+          ),
+        ]),
+      };
     }
   }
 }
