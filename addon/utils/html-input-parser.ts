@@ -252,9 +252,12 @@ export default class HTMLInputParser {
       if (node.textContent) {
         cleanedNode.textContent = node.textContent
           // replace special spaces with regular spaces
-          .replace(/[\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]/, ' ')
+          .replace(
+            /[\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]/g,
+            ' '
+          )
           // remove invisible spaces
-          .replace(INVISIBLE_SPACE, '');
+          .replace(new RegExp(INVISIBLE_SPACE, 'g'), '');
       }
 
       if (cleanedNode.length === 0) {
