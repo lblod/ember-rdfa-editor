@@ -27,7 +27,7 @@ export default class RangeMapper {
       return new ModelRange(newPos, newPos);
     }
     const newStart = this.mapPosition(range.start, 'left');
-    const newEnd = this.mapPosition(range.end);
+    const newEnd = this.mapPosition(range.end, bias);
     return new ModelRange(newStart, newEnd);
   }
 

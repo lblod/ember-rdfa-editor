@@ -21,15 +21,9 @@ export default class InsertTextCommand extends Command {
     }
 
     this.model.change((mutator) => {
-      mutator.insertText(range, text);
-      let resultRange;
+      const resultRange = mutator.insertText(range, text);
 
-      if (range.collapsed) {
-        resultRange = mutator.mapRange(range, 'right');
-      } else {
-        resultRange = mutator.mapRange(range, 'left');
-        resultRange.collapse(true);
-      }
+      resultRange.collapse(false);
       this.model.selectRange(resultRange);
     });
   }

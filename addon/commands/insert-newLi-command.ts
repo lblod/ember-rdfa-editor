@@ -81,8 +81,9 @@ export default class InsertNewLiCommand extends Command {
         ModelRange.fromInElement(liNode),
         new ModelText(INVISIBLE_SPACE)
       );
+      this.model.selectRange(ModelRange.fromInElement(liNode, 1, 1));
+    } else {
+      this.model.selectRange(ModelRange.fromInElement(liNode, 0, 0));
     }
-
-    this.model.selectRange(ModelRange.fromInElement(liNode, 0, 0));
   }
 }

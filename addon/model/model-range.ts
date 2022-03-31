@@ -6,9 +6,12 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import { Predicate } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
 import ModelTreeWalker, {
+  FilterResult,
   toFilterSkipFalse,
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import GenTreeWalker, {
+  WalkFilter,
+} from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import {
   IllegalArgumentError,
   NotImplementedError,
@@ -151,6 +154,10 @@ export type RangeIsInsideStrategy = {
 export type RangeTouchesStrategy = {
   type: 'rangeTouches';
   includeEndTags?: boolean;
+  textNodeStickyness?: {
+    start?: StickySide;
+    end?: StickySide;
+  };
 };
 export type RangeContextStrategy =
   | SimpleRangeContextStrategy
@@ -315,12 +322,18 @@ export default class ModelRange {
   }
 
   getMarks(): MarkSet {
-    //TODO use gentreewalker here
-    const treeWalker = new ModelTreeWalker<ModelText>({
-      range: this,
-      filter: toFilterSkipFalse(ModelNode.isModelText),
-    });
-    const nodes = [...treeWalker];
+    const nodes = [
+      ...this.contextNodes(
+        {
+          type: 'rangeIsInside',
+          textNodeStickyness: {
+            start: 'both',
+            end: 'both',
+          },
+        },
+        toFilterSkipFalse(ModelNode.isModelText)
+      ),
+    ] as ModelText[];
     if (nodes.length) {
       let result = nodes[0].marks.clone();
       for (const node of nodes.slice(1)) {
@@ -507,7 +520,8 @@ export default class ModelRange {
   }
 
   *contextNodes(
-    strategy: RangeContextStrategy
+    strategy: RangeContextStrategy,
+    filter?: WalkFilter<ModelNode>
   ): Generator<ModelNode, void, void> {
     let strat: DetailedRangeContextStrategy;
     if (typeof strategy === 'string') {
@@ -519,36 +533,39 @@ export default class ModelRange {
     }
 
     if (strat.type === 'rangeContains') {
-      const walker = GenTreeWalker.fromRange({ range: this });
+      const walker = GenTreeWalker.fromRange({ range: this, filter });
       yield* walker.nodes();
     } else if (strat.type === 'rangeIsInside') {
-      yield* this.nodesInside(strat.textNodeStickyness);
+      yield* this.nodesInside(strat.textNodeStickyness, filter);
     } else if (strat.type === 'rangeTouches') {
       const walker = GenTreeWalker.fromRange({
         range: this,
         visitParentUpwards: strat.includeEndTags,
+        filter,
       });
       yield* walker.nodes();
-      yield* this.findCommonAncestorsWhere(() => true);
+      yield* this.nodesInside(strat.textNodeStickyness, filter);
     } else {
       throw new IllegalArgumentError('Unsupported strategy');
     }
   }
 
-  private *nodesInside({
-    start = 'none',
-    end = 'none',
-  }: { start?: StickySide; end?: StickySide } = {}): Generator<
-    ModelNode,
-    void,
-    void
-  > {
+  private *nodesInside(
+    {
+      start = 'none',
+      end = 'none',
+    }: { start?: StickySide; end?: StickySide } = {},
+    filter?: WalkFilter<ModelNode>
+  ): Generator<ModelNode, void, void> {
     const extraNodes = [];
     const seenNodes = new Set();
     const beforeStart = this.start.nodeBefore();
     const afterStart = this.start.nodeAfter();
     const beforeEnd = this.end.nodeBefore();
     const afterEnd = this.end.nodeAfter();
+    const nodeFilter = filter
+      ? (node: ModelNode) => filter(node) === FilterResult.FILTER_ACCEPT
+      : () => true;
 
     if (this.collapsed && !this.start.isInsideText()) {
       if (
@@ -585,10 +602,12 @@ export default class ModelRange {
       }
     }
     for (const node of extraNodes) {
-      yield node;
+      if (nodeFilter(node)) {
+        yield node;
+      }
     }
 
-    yield* this.findCommonAncestorsWhere(() => true);
+    yield* this.findCommonAncestorsWhere(nodeFilter);
   }
 
   getTextContent(): string {

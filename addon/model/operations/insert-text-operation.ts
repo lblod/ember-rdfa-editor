@@ -32,6 +32,7 @@ export default class InsertTextOperation extends Operation {
     }
     const { mapper, overwrittenNodes, _markCheckNodes } =
       OperationAlgorithms.insert(this.range, newText);
+    const defaultRange = ModelRange.fromAroundNode(newText);
 
     const previousSibling = newText.previousSibling;
     if (
@@ -54,7 +55,6 @@ export default class InsertTextOperation extends Operation {
       newText = nextSibling;
     }
 
-    const defaultRange = mapper.mapRange(this.range, 'right');
     this.emit(
       new ContentChangedEvent({
         owner: CORE_OWNER,

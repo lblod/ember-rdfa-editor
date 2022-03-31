@@ -250,7 +250,6 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
   *nodes(): Generator<T> {
     let result = this.nextNode();
     while (result) {
-      console.log(result.toXml());
       yield result;
       result = this.nextNode();
     }
