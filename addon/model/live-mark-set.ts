@@ -62,7 +62,6 @@ export default class LiveMarkSet {
     const mutator = this.controller.getMutator();
     const marksRegistry = this.controller.marksRegistry;
 
-    console.log('TOREMOVE', matchesToRemove);
     for (const match of matchesToRemove) {
       for (const liveSpec of this.liveMarkSpecs) {
         let markSpec;
