@@ -461,7 +461,6 @@ export default class ModelRange {
   }
 
   sameAs(other: ModelRange): boolean {
-    console.log('OTHERROOT', other.root);
     return this.start.sameAs(other.start) && this.end.sameAs(other.end);
   }
 
