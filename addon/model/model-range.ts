@@ -12,10 +12,7 @@ import ModelTreeWalker, {
 import GenTreeWalker, {
   WalkFilter,
 } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
-import {
-  IllegalArgumentError,
-  NotImplementedError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
+import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
@@ -162,16 +159,6 @@ export type RangeTouchesStrategy = {
 export type RangeContextStrategy =
   | SimpleRangeContextStrategy
   | DetailedRangeContextStrategy;
-
-export enum RangeComparison {
-  EQUAL,
-  BEFORE,
-  LEFT_OVERLAP,
-  RIGHT_OVERLAP,
-  CONTAINS,
-  IS_INSIDE,
-  AFTER,
-}
 
 /**
  * Model-space equivalent of a {@link Range}
@@ -462,52 +449,6 @@ export default class ModelRange {
 
   sameAs(other: ModelRange): boolean {
     return this.start.sameAs(other.start) && this.end.sameAs(other.end);
-  }
-
-  compare(other: ModelRange): RangeComparison {
-    const startCompStart = this.start.compare(other.start);
-    const endCompEnd = this.end.compare(other.end);
-    const startCompEnd = this.start.compare(other.end);
-    const endCompStart = this.end.compare(other.start);
-    if (
-      startCompStart === RelativePosition.EQUAL &&
-      endCompEnd === RelativePosition.EQUAL
-    ) {
-      return RangeComparison.EQUAL;
-    }
-    if (endCompStart === RelativePosition.BEFORE) {
-      return RangeComparison.BEFORE;
-    }
-    if (startCompEnd === RelativePosition.AFTER) {
-      return RangeComparison.AFTER;
-    }
-    if (
-      startCompStart === RelativePosition.BEFORE &&
-      inclusive(endCompStart, RelativePosition.AFTER) &&
-      endCompEnd === RelativePosition.BEFORE
-    ) {
-      return RangeComparison.LEFT_OVERLAP;
-    }
-    if (
-      startCompStart === RelativePosition.AFTER &&
-      inclusive(startCompEnd, RelativePosition.BEFORE) &&
-      endCompEnd === RelativePosition.AFTER
-    ) {
-      return RangeComparison.RIGHT_OVERLAP;
-    }
-    if (
-      inclusive(startCompStart, RelativePosition.AFTER) &&
-      inclusive(endCompEnd, RelativePosition.BEFORE)
-    ) {
-      return RangeComparison.IS_INSIDE;
-    }
-    if (
-      inclusive(startCompStart, RelativePosition.BEFORE) &&
-      inclusive(endCompEnd, RelativePosition.AFTER)
-    ) {
-      return RangeComparison.CONTAINS;
-    }
-    throw new NotImplementedError('Seems I forgot a combination');
   }
 
   clone(modelRoot?: ModelElement): ModelRange {
@@ -827,8 +768,4 @@ export class ModelRangeFactory implements RangeFactory {
   fromAroundAll(): ModelRange {
     return this.fromInElement(this.root);
   }
-}
-
-function inclusive(actual: RelativePosition, expected: RelativePosition) {
-  return actual === expected || actual === RelativePosition.EQUAL;
 }
