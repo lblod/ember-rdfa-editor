@@ -533,21 +533,30 @@ export default class ModelRange {
     }
 
     if (strat.type === 'rangeContains') {
-      const walker = GenTreeWalker.fromRange({ range: this, filter });
-      yield* walker.nodes();
+      yield* this.containedNodes(filter);
     } else if (strat.type === 'rangeIsInside') {
       yield* this.nodesInside(strat.textNodeStickyness, filter);
     } else if (strat.type === 'rangeTouches') {
-      const walker = GenTreeWalker.fromRange({
-        range: this,
-        visitParentUpwards: strat.includeEndTags,
-        filter,
-      });
-      yield* walker.nodes();
-      yield* this.nodesInside(strat.textNodeStickyness, filter);
+      const yieldedNodes = new Set<ModelNode>();
+      if (!this.collapsed) {
+        for (const node of this.containedNodes(filter)) {
+          yield node;
+          yieldedNodes.add(node);
+        }
+      }
+      for (const node of this.nodesInside(strat.textNodeStickyness, filter)) {
+        if (!yieldedNodes.has(node)) {
+          yield node;
+        }
+      }
     } else {
       throw new IllegalArgumentError('Unsupported strategy');
     }
+  }
+
+  private *containedNodes(filter?: WalkFilter<ModelNode>) {
+    const walker = GenTreeWalker.fromRange({ range: this, filter });
+    yield* walker.nodes();
   }
 
   private *nodesInside(
