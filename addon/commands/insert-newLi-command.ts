@@ -66,11 +66,17 @@ export default class InsertNewLiCommand extends Command {
   }
 
   private insertLi(mutator: ImmediateModelMutator, position: ModelPosition) {
-    const newPosition = mutator.splitUntil(
+    let newPosition = mutator.splitUntil(
       position,
+      (node) => ModelNodeUtils.isListContainer(node.parent),
+      false
+    );
+    newPosition = mutator.splitUntil(
+      newPosition,
       ModelNodeUtils.isListContainer,
       true
     );
+
     const liNode = newPosition.nodeAfter();
 
     if (!liNode || !ModelNodeUtils.isListElement(liNode)) {
