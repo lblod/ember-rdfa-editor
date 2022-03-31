@@ -10,6 +10,8 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 export default class InsertNewLiCommand extends Command {
   name = 'insert-newLi';
@@ -73,6 +75,12 @@ export default class InsertNewLiCommand extends Command {
 
     if (!liNode || !ModelNodeUtils.isListElement(liNode)) {
       throw new TypeAssertionError('Node right after the cursor is not an li');
+    }
+    if (liNode.length === 0) {
+      mutator.insertNodes(
+        ModelRange.fromInElement(liNode),
+        new ModelText(INVISIBLE_SPACE)
+      );
     }
 
     this.model.selectRange(ModelRange.fromInElement(liNode, 0, 0));

@@ -137,13 +137,14 @@ export default class MarkOperation extends Operation {
         },
       });
       const textNodes = Array.from(walker);
+      const _markCheckNodes: ModelNode[] = [...textNodes];
 
       for (const node of textNodes) {
         this.markAction(node, this.spec, this.attributes, this.action);
       }
+      OperationAlgorithms.mergeTextNodes(textNodes);
       const before = this.range.start.nodeBefore();
       const after = this.range.end.nodeAfter();
-      const _markCheckNodes: ModelNode[] = [...textNodes];
       if (before) {
         _markCheckNodes.push(before);
       }

@@ -6,6 +6,7 @@ import RangeMapper, {
   LeftOrRight,
 } from '@lblod/ember-rdfa-editor/model/range-mapper';
 import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
 export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
 /**
@@ -243,6 +244,20 @@ export default class OperationAlgorithms {
           ),
         ]),
       };
+    }
+  }
+
+  static mergeTextNodes(nodes: ModelText[]) {
+    for (const node of nodes) {
+      const sibling = node.nextSibling;
+      if (
+        sibling &&
+        ModelNode.isModelText(sibling) &&
+        node.isMergeable(sibling)
+      ) {
+        sibling.content = node.content + sibling.content;
+        node.remove();
+      }
     }
   }
 }

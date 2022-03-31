@@ -61,7 +61,6 @@ export default class LiveMarkSet {
     const { matchesToAdd, matchesToRemove } = this.calculateRanges();
     const mutator = this.controller.getMutator();
     const marksRegistry = this.controller.marksRegistry;
-    const currentRange = this.controller.selection.lastRange!;
 
     console.log('TOADD', matchesToAdd);
     console.log('TOREMOVE', matchesToRemove);
