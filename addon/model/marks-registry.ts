@@ -14,7 +14,6 @@ import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import LiveMarkSet from '@lblod/ember-rdfa-editor/model/live-mark-set';
 
 export interface SpecAttributes {
   spec: MarkSpec;
@@ -56,7 +55,6 @@ export default class MarksRegistry {
    * @private
    */
   private registeredMarks: Map<string, MarkSpec> = new Map<string, MarkSpec>();
-  private liveMarkSets: LiveMarkSet[];
 
   updateMarks = (event: ContentChangedEvent) => {
     const { payload } = event;
@@ -73,7 +71,6 @@ export default class MarksRegistry {
       this.updateMarksForNodes(payload.rootModelNode.children);
     }
   };
-
 
   private updateMarksForNodes(nodes: ModelNode[]) {
     for (const node of nodes) {

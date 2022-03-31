@@ -5,7 +5,6 @@ import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/opera
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
 module('Unit | model | operations | operation-algorithms-test', () => {
-
   test('remove splits when range is collapsed', (assert) => {
     // language=XML
     const {

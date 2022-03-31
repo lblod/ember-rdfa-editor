@@ -418,6 +418,7 @@ function getNextSibling(node: Walkable, reverse: boolean): Walkable | null {
   return reverse ? node.previousSibling : node.nextSibling;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getPreviousSibling(node: Walkable, reverse: boolean): Walkable | null {
   return reverse ? node.nextSibling : node.previousSibling;
 }

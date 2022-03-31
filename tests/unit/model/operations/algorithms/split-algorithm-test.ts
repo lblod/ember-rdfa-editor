@@ -31,7 +31,7 @@ module(
       const testPos1 = ModelPosition.fromInTextNode(splitPoint, 3);
       const testPos2 = ModelPosition.fromAfterNode(div1);
       const splitPos = ModelPosition.fromInTextNode(splitPoint, 2);
-      const { position, mapper } = OperationAlgorithms.split(splitPos);
+      const { mapper } = OperationAlgorithms.split(splitPos);
       const newSplitPos = mapper.mapPosition(splitPos);
       const newSplitPosLeft = mapper.mapPosition(splitPos, 'left');
       const newTestPos1 = mapper.mapPosition(testPos1);
@@ -67,7 +67,7 @@ module(
       const testPos1 = ModelPosition.fromInTextNode(splitPoint, 3);
       const testPos2 = ModelPosition.fromAfterNode(div1);
       const splitPos = ModelPosition.fromInTextNode(splitPoint, 4);
-      const { position, mapper } = OperationAlgorithms.split(splitPos);
+      const { mapper } = OperationAlgorithms.split(splitPos);
       const newSplitPos = mapper.mapPosition(splitPos);
       const newSplitPosLeft = mapper.mapPosition(splitPos, 'left');
       const newTestPos1 = mapper.mapPosition(testPos1);

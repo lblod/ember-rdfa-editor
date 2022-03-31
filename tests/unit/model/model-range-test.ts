@@ -389,9 +389,7 @@ module('Unit | model | model-range', () => {
         </div>
       </modelRoot>`;
     const {
-      root,
-      textNodes: { text1, text2, text3, text4, text5 },
-      elements: { span1, span2, span3, span4, div1 },
+      textNodes: { text1 },
     } = testDom;
     test('comparing equal ranges', (assert) => {
       const left = ModelRange.fromAroundNode(text1);
