@@ -43,6 +43,7 @@ export default class FallbackInputHandler extends InputHandler {
       `Uncaptured event of type ${event.type}, restoring editor state.`
     );
     this.rawEditor.model.read();
+    this.rawEditor.model.saveSnapshot();
     return { allowPropagation: false, allowBrowserDefault: true };
   }
 }

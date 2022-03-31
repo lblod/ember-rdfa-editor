@@ -7,13 +7,12 @@ import {
   NoParentError,
   TypeAssertionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import ListCleaner from '@lblod/ember-rdfa-editor/model/cleaners/list-cleaner';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelPosition from '../model/model-position';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
 export default class IndentListCommand extends Command {
   name = 'indent-list';
@@ -85,20 +84,33 @@ export default class IndentListCommand extends Command {
           mutator.deleteNode(li);
         }
 
-        const newList = new ModelElement(parent.type);
-        const positionToInsertListElements = ModelPosition.fromInElement(
-          newList,
-          newList.getMaxOffset()
-        );
-        mutator.insertAtPosition(positionToInsertListElements, ...lis);
-        const positionToInsertList = ModelPosition.fromInElement(
-          newParent,
-          newParent.getMaxOffset()
-        );
-        mutator.insertAtPosition(positionToInsertList, newList);
+        //First check for already existing sublist on the new parent
+        //If it exists, just add the elements to it, otherwise create a new sublist
+        const possibleNewList = this.hasSublist(newParent);
+        if (possibleNewList) {
+          mutator.insertAtPosition(
+            ModelPosition.fromInElement(
+              possibleNewList,
+              possibleNewList.getMaxOffset()
+            ),
+            ...lis
+          );
+        } else {
+          const newList = new ModelElement(parent.type);
+          newList.appendChildren(...lis);
+          mutator.insertAtPosition(
+            ModelPosition.fromInElement(newParent, newParent.getMaxOffset()),
+            newList
+          );
+        }
       }
-      const cleaner = new ListCleaner();
-      cleaner.clean(range, mutator);
     });
+  }
+
+  hasSublist(listElement: ModelElement): ModelElement | undefined {
+    const children = listElement.children;
+    for (const child of children)
+      if (ModelNodeUtils.isListContainer(child)) return child;
+    return undefined;
   }
 }
