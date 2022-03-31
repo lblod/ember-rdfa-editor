@@ -31,6 +31,7 @@ import {
   TextMatch,
 } from '@lblod/ember-rdfa-editor/utils/match-text';
 import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
+import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
 
 interface TermNodesResponse {
   nodes: Set<ModelNode>;
@@ -285,12 +286,14 @@ export class EditorStore implements Datastore {
       return dataset.filter((quad) => {
         const quadNodes = this._quadToNodes.get(quadHash(quad));
         if (quadNodes) {
-          const { subjectNode, predicateNode, objectNode } = quadNodes;
-          return (
-            contextNodes.has(subjectNode) &&
-            contextNodes.has(predicateNode) &&
-            contextNodes.has(objectNode)
+          const { subjectNodes, predicateNodes, objectNodes } = quadNodes;
+          const hasSubjectNode = SetUtils.hasAny(contextNodes, ...subjectNodes);
+          const hasPredicateNode = SetUtils.hasAny(
+            contextNodes,
+            ...predicateNodes
           );
+          const hasObjectNode = SetUtils.hasAny(contextNodes, ...objectNodes);
+          return hasSubjectNode && hasPredicateNode && hasObjectNode;
         } else {
           return false;
         }

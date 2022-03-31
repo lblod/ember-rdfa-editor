@@ -4,14 +4,14 @@
  * Copyright © 2019 Ruben Taelman
  */
 import * as RDF from '@rdfjs/types';
-import { IActiveTag } from './active-tag';
-import { IHtmlParseListener } from './html-parse-listener';
+import {IActiveTag} from './active-tag';
+import {IHtmlParseListener} from './html-parse-listener';
 import INITIAL_CONTEXT_XHTML from './initial-context-xhtml';
 import INITIAL_CONTEXT from './initial-context';
-import { IRdfaPattern } from './rdfa-pattern';
-import { IRdfaFeatures, RDFA_FEATURES, RdfaProfile } from './rdfa-profile';
-import { Util } from './util';
-import { CustomError } from '@lblod/ember-rdfa-editor/utils/errors';
+import {IRdfaPattern} from './rdfa-pattern';
+import {IRdfaFeatures, RDFA_FEATURES, RdfaProfile} from './rdfa-profile';
+import {Util} from './util';
+import {CustomError} from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import {
@@ -19,7 +19,7 @@ import {
   isTextNode,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
-import { GraphyDataset } from '@lblod/ember-rdfa-editor/model/util/datastore/graphy-dataset';
+import {GraphyDataset} from '@lblod/ember-rdfa-editor/model/util/datastore/graphy-dataset';
 
 export type ModelTerm = ModelQuadObject | ModelQuadPredicate | ModelQuadSubject;
 export type ModelQuadSubject = ModelNamedNode | ModelBlankNode;
@@ -52,9 +52,9 @@ export interface RdfaParseConfig {
 }
 
 export interface QuadNodes {
-  subjectNode: ModelNode;
-  predicateNode: ModelNode;
-  objectNode: ModelNode;
+  subjectNodes: ModelNode[];
+  predicateNodes: ModelNode[];
+  objectNodes: ModelNode[];
 }
 
 export interface RdfaParseResponse {
@@ -118,10 +118,8 @@ export class RdfaParser {
     this.subjectToNodesMapping = new Map<string, ModelNode[]>();
 
     this.predicateToNodesMapping = new Map<string, ModelNode[]>();
-    this.nodeToPredicatesMapping = new Map<
-      ModelNode,
-      Set<ModelQuadPredicate>
-    >();
+    this.nodeToPredicatesMapping = new Map<ModelNode,
+      Set<ModelQuadPredicate>>();
 
     this.nodeToObjectsMapping = new Map<ModelNode, Set<ModelQuadObject>>();
     this.objectToNodesMapping = new Map<string, ModelNode[]>();
@@ -150,11 +148,11 @@ export class RdfaParser {
   }
 
   static parse({
-    modelRoot,
-    pathFromDomRoot = [],
-    baseIRI,
-  }: RdfaParseConfig): RdfaParseResponse {
-    const parser = new RdfaParser({ rootModelNode: modelRoot, baseIRI });
+                 modelRoot,
+                 pathFromDomRoot = [],
+                 baseIRI,
+               }: RdfaParseConfig): RdfaParseResponse {
+    const parser = new RdfaParser({rootModelNode: modelRoot, baseIRI});
     for (const domNode of pathFromDomRoot) {
       if (isElement(domNode)) {
         const attributeObj: Record<string, string> = {};
@@ -222,9 +220,9 @@ export class RdfaParser {
         ...parentTag,
         language: this.activeTagStack[this.activeTagStack.length - 1].language,
         prefixesAll:
-          this.activeTagStack[this.activeTagStack.length - 1].prefixesAll,
+        this.activeTagStack[this.activeTagStack.length - 1].prefixesAll,
         prefixesCustom:
-          this.activeTagStack[this.activeTagStack.length - 1].prefixesCustom,
+        this.activeTagStack[this.activeTagStack.length - 1].prefixesCustom,
         vocab: this.activeTagStack[this.activeTagStack.length - 1].vocab,
       };
     }
@@ -390,19 +388,19 @@ export class RdfaParser {
     );
     activeTag.prefixesAll =
       Object.keys(activeTag.prefixesCustom).length > 0
-        ? { ...parentTag.prefixesAll, ...activeTag.prefixesCustom }
+        ? {...parentTag.prefixesAll, ...activeTag.prefixesCustom}
         : parentTag.prefixesAll;
 
     // Handle role attribute
     if (this.features.roleAttribute && attributes.role) {
       const roleSubject = attributes.id
         ? this.util.createIri(
-            '#' + attributes.id,
-            activeTag,
-            false,
-            false,
-            false
-          )
+          '#' + attributes.id,
+          activeTag,
+          false,
+          false,
+          false
+        )
         : this.util.createBlankNode(node);
       // Temporarily override vocab
       const vocabOld = activeTag.vocab;
@@ -709,7 +707,7 @@ export class RdfaParser {
             allowTermsInRelPredicates,
             false
           )) {
-            activeTag.incompleteTriples.push({ predicate, reverse: false });
+            activeTag.incompleteTriples.push({predicate, reverse: false});
           }
         }
       }
@@ -720,7 +718,7 @@ export class RdfaParser {
           allowTermsInRevPredicates,
           false
         )) {
-          activeTag.incompleteTriples.push({ predicate, reverse: true });
+          activeTag.incompleteTriples.push({predicate, reverse: true});
         }
       }
 
@@ -1117,7 +1115,7 @@ export class RdfaParser {
       for (const patternId in this.pendingRdfaPatternCopies) {
         for (const parentTag of this.pendingRdfaPatternCopies[patternId]) {
           this.activeTagStack.push(parentTag);
-          this.onTagOpen('link', { property: 'rdfa:copy', href: patternId });
+          this.onTagOpen('link', {property: 'rdfa:copy', href: patternId});
           this.onTagClose();
           this.activeTagStack.pop();
         }
@@ -1231,9 +1229,9 @@ export class RdfaParser {
       this.defaultGraph
     );
     this.quadToNodesMapping.set(quadHash(resultQuad), {
-      subjectNode: subject.node!,
-      predicateNode: predicate.node!,
-      objectNode: object.node!,
+      subjectNodes: this.subjectToNodesMapping.get(subject.value) ?? [],
+      predicateNodes: this.predicateToNodesMapping.get(predicate.value) ?? [],
+      objectNodes: this.objectToNodesMapping.get(object.value) ?? [],
     });
 
     this.resultSet.add(resultQuad);
