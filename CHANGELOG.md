@@ -9,6 +9,14 @@
 
 
 
+## 0.52.1 (2022-04-01)
+
+#### :bug: Bug Fix
+* [#243](https://github.com/lblod/ember-rdfa-editor/pull/243) Fix object node matching ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
 ## 0.52.0 (2022-03-30)
 
 #### :rocket: Enhancement
