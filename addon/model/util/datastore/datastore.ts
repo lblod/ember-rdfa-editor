@@ -26,6 +26,7 @@ import {
   PredicateSpec,
   SubjectSpec,
 } from '@lblod/ember-rdfa-editor/model/util/datastore/term-spec';
+import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
 
 interface TermNodesResponse {
   nodes: Set<ModelNode>;
@@ -354,15 +355,39 @@ export class EditorStore implements Datastore {
   }
 
   private objectNodeGenerator(): Map<RDF.Quad_Object, ModelNode[]> {
-    const seenObjects = new Set<string>();
+    const seenSubjects = new Set<string>();
+    const seenPredicates = new Map<string, RDF.Quad_Predicate>();
+    const seenObjects = new Set<RDF.Quad_Object>();
+
     const rslt = new Map<RDF.Quad_Object, ModelNode[]>();
+
+    // collect all unique predicates and subjects in the current dataset
     for (const quad of this.dataset) {
-      if (!seenObjects.has(quad.object.value)) {
-        const nodes = this._objectToNodes.get(quad.object.value);
-        if (nodes) {
-          rslt.set(quad.object, nodes);
+      seenSubjects.add(quad.subject.value);
+      seenPredicates.set(quad.predicate.value, quad.predicate);
+      seenObjects.add(quad.object);
+    }
+    for (const object of seenObjects) {
+      const allNodes = this._objectToNodes.get(object.value);
+      if (allNodes) {
+        const nodes = [];
+
+        for (const node of allNodes) {
+          const nodeSubject = this.getSubjectForNode(node);
+          const nodePredicates = this.getPredicatesForNode(node);
+          if (
+            nodeSubject &&
+            seenSubjects.has(nodeSubject.value) &&
+            nodePredicates &&
+            MapUtils.hasAny(
+              seenPredicates,
+              ...[...nodePredicates].map((pred) => pred.value)
+            )
+          ) {
+            nodes.push(node);
+          }
         }
-        seenObjects.add(quad.object.value);
+        rslt.set(object, nodes);
       }
     }
     return rslt;
@@ -418,15 +443,9 @@ export class EditorStore implements Datastore {
   }
 
   *asObjectNodes(): Generator<ObjectNodesResponse> {
-    const seenObjects = new Set<string>();
-    for (const quad of this.dataset) {
-      if (!seenObjects.has(quad.object.value)) {
-        const nodes = this._objectToNodes.get(quad.object.value);
-        if (nodes) {
-          yield { object: quad.object, nodes: new Set<ModelNode>(nodes) };
-        }
-        seenObjects.add(quad.object.value);
-      }
+    const mapping = this.asObjectNodeMapping();
+    for (const entry of mapping) {
+      yield { object: entry.term, nodes: new Set(entry.nodes) };
     }
   }
 
@@ -478,6 +497,16 @@ export class EditorStore implements Datastore {
       current = current.parent;
     }
     return subject;
+  }
+
+  private getPredicatesForNode(node: ModelNode) {
+    let current: ModelNode | null = node;
+    let predicates;
+    while (current && !predicates) {
+      predicates = this._nodeToPredicates.get(current);
+      current = current.parent;
+    }
+    return predicates;
   }
 
   private getPrefix = (prefix: string): string | null => {
