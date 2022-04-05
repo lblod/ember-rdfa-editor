@@ -18,6 +18,11 @@ import GenTreeWalker, {
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import LiveMarkSet, {
+  LiveMarkSetArgs,
+} from '@lblod/ember-rdfa-editor/model/live-mark-set';
+import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
+import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 
 export type WidgetLocation = 'toolbar' | 'sidebar';
 
@@ -52,7 +57,13 @@ export default interface Controller {
 
   get modelRoot(): ModelElement;
 
+  get marksRegistry(): MarksRegistry;
+
+  getMutator(): ImmediateModelMutator;
+
   getMarksFor(owner: string): Set<Mark>;
+
+  createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet;
 
   executeCommand<A extends unknown[], R>(
     commandName: string,
@@ -81,6 +92,8 @@ export default interface Controller {
     callback: EditorEventListener<E>,
     config?: ListenerConfig
   ): void;
+
+  write(writeSelection?: boolean): void;
 }
 
 export class RawEditorController implements Controller {
@@ -126,8 +139,20 @@ export class RawEditorController implements Controller {
     return this._rawEditor.rootModelNode;
   }
 
+  get marksRegistry(): MarksRegistry {
+    return this._rawEditor.model.marksRegistry;
+  }
+
+  getMutator(): ImmediateModelMutator {
+    return new ImmediateModelMutator(this._rawEditor.eventBus);
+  }
+
   getMarksFor(owner: string): Set<Mark> {
     return this._rawEditor.model.marksRegistry.getMarksFor(owner);
+  }
+
+  createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
+    return new LiveMarkSet(this, args);
   }
 
   executeCommand<A extends unknown[], R>(
@@ -170,5 +195,9 @@ export class RawEditorController implements Controller {
 
   registerMark(spec: MarkSpec) {
     this._rawEditor.registerMark(spec);
+  }
+
+  write(writeSelection = true) {
+    this._rawEditor.model.write(this.modelRoot, writeSelection);
   }
 }

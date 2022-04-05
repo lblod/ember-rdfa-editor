@@ -32,14 +32,28 @@ export default class MarksRegistry {
     }
   }
 
+  /**
+   * A map of all unique markNames in the document
+   * onto the nodes that have them currently active
+   * @private
+   */
   private markStore: Map<string, Set<ModelText>> = new Map<
     string,
     Set<ModelText>
   >();
+  /**
+   * A map of html element tagnames onto the markspecs that
+   * match on them.
+   * @private
+   */
   private markMatchMap: Map<TagMatch, MarkSpec[]> = new Map<
     keyof HTMLElementTagNameMap,
     MarkSpec[]
   >();
+  /**
+   * A registry of the currently supported markSpecs in the document
+   * @private
+   */
   private registeredMarks: Map<string, MarkSpec> = new Map<string, MarkSpec>();
 
   updateMarks = (event: ContentChangedEvent) => {
