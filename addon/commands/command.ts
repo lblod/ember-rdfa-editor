@@ -1,3 +1,7 @@
+/**
+ * @module Commands
+ * @mergeTarget
+ */
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import {
   createLogger,

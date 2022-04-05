@@ -1,0 +1,12 @@
+{
+  "entryPointStrategy": "Expand",
+  "entryPoints": [
+    "addon"
+  ],
+  "out": "docs",
+  "tsconfig": "tsconfig.json",
+  "external-modulemap": [
+    ".*/addon/([\\w\\-_]+)/.*",
+    ".*<(internal)>.*"
+  ]
+}
