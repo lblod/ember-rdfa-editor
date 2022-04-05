@@ -9,6 +9,19 @@
 
 
 
+
+## 0.53.0 (2022-04-05)
+
+#### :rocket: Enhancement
+* [#245](https://github.com/lblod/ember-rdfa-editor/pull/245) replace all special spaces when regular spaces when parsing html ([@nvdk](https://github.com/nvdk))
+
+#### :house: Internal
+* [#244](https://github.com/lblod/ember-rdfa-editor/pull/244) ran npm update ([@nvdk](https://github.com/nvdk))
+
+#### Committers: 1
+- Niels V ([@nvdk](https://github.com/nvdk))
+
+
 ## 0.52.1 (2022-04-01)
 
 #### :bug: Bug Fix
