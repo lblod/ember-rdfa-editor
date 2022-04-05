@@ -203,31 +203,31 @@
       >
         {{#if this.isInTable}}
           <Menu.Item @menuAction={{this.insertRowBelow}} title={{t 'ember-rdfa-editor.add-row-below'}}>
-            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-row-below.svg' />
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-row-below.svg' alt={{t 'ember-rdfa-editor.add-row-below'}} />
             {{t 'ember-rdfa-editor.add-row-below'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.insertRowAbove}} title={{t 'ember-rdfa-editor.add-row-above'}}>
-            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-row-above.svg' />
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-row-above.svg' alt={{t 'ember-rdfa-editor.add-row-above'}} />
             {{t 'ember-rdfa-editor.add-row-above'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.insertColumnAfter}} title={{t 'ember-rdfa-editor.add-column-after'}}>
-            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-column-after.svg' />
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-column-after.svg' alt={{t 'ember-rdfa-editor.add-column-after'}} />
             {{t 'ember-rdfa-editor.add-column-after'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.insertColumnBefore}} title={{t 'ember-rdfa-editor.add-column-before'}}>
-            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-column-before.svg' />
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-column-before.svg' alt={{t 'ember-rdfa-editor.add-column-before'}} />
             {{t 'ember-rdfa-editor.add-column-before'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.removeTableRow}} title={{t 'ember-rdfa-editor.delete-row'}}>
-            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-delete-row.svg' />
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-delete-row.svg' alt={{t 'ember-rdfa-editor.delete-row'}} />
             {{t 'ember-rdfa-editor.delete-row'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.removeTableColumn}} title={{t 'ember-rdfa-editor.delete-column'}}>
-            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-delete-column.svg' />
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table-delete-column.svg' alt={{t 'ember-rdfa-editor.delete-column'}} />
             {{t 'ember-rdfa-editor.delete-column'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.removeTable}} title={{t 'ember-rdfa-editor.delete-table'}}>
-            <img class='say-icon say-icon--large' src='@appuniversum/ember-appuniversum/icons/cross.svg' />
+            <img class='say-icon say-icon--large' src='@appuniversum/ember-appuniversum/icons/cross.svg' alt={{t 'ember-rdfa-editor.delete-table'}} />
             {{t 'ember-rdfa-editor.delete-table'}}
           </Menu.Item>
         {{else}}
@@ -238,7 +238,7 @@
             {{t 'ember-rdfa-editor.rows'}} <Input class='say-input say-input--small' size='1' @value={{this.tableAddRows}} />
           </div>
           <Menu.Item @menuAction={{fn this.insertTable this.tableAddRows this.tableAddColumns}} title={{t 'ember-rdfa-editor.insert-table'}}>
-            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table.svg' />
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table.svg' alt={{t 'ember-rdfa-editor.insert-table'}} />
             {{t 'ember-rdfa-editor.insert-table'}}
           </Menu.Item>
         {{/if}}
@@ -251,9 +251,9 @@
           {{on 'click' this.insertColumnAfter}}
           title={{t 'ember-rdfa-editor.add-column-after'}}
         >
-          <img src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-column-after.svg' />
+          <img src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-column-after.svg' alt={{t 'ember-rdfa-editor.add-column-after'}} />
           <span class='au-u-hidden-visually'>
-            {{t 'ember-rdfa-editor.add-column-below'}}
+            {{t 'ember-rdfa-editor.add-column-after'}}
           </span>
         </button>
         <button
@@ -263,7 +263,7 @@
           {{on 'click' this.insertRowBelow}}
           title={{t 'ember-rdfa-editor.add-row-below'}}
         >
-          <img src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-row-below.svg' />
+          <img src='@lblod/ember-rdfa-editor/assets/editor-icons/table-add-row-below.svg' alt={{t 'ember-rdfa-editor.add-row-below'}} />
           <span class='au-u-hidden-visually'>
             {{t 'ember-rdfa-editor.add-row-below'}}
           </span>

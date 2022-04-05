@@ -149,7 +149,9 @@ export default class EditorToolbar extends Component<Args> {
   @action
   insertTable() {
     this.tableAddRows = isNaN(this.tableAddRows) ? 2 : this.tableAddRows;
-    this.tableAddColumns = isNaN(this.tableAddColumns) ? 2 : this.tableAddColumns;
+    this.tableAddColumns = isNaN(this.tableAddColumns)
+      ? 2
+      : this.tableAddColumns;
     this.tableAddRows = this.tableAddRows < 1 ? 1 : this.tableAddRows;
     this.tableAddColumns = this.tableAddColumns < 1 ? 1 : this.tableAddColumns;
     this.args.controller.executeCommand(
