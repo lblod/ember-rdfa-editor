@@ -231,12 +231,10 @@
             {{t 'ember-rdfa-editor.delete-table'}}
           </Menu.Item>
         {{else}}
-          <div role='menuitem'>
-            <!-- TODO float to the right, usign flex boxing? -->
+          <div role='menuitem' class='say-dropdown__menu-with-inputs'>
             {{t 'ember-rdfa-editor.columns'}} <Input class='say-input say-input--small' size='1' @value={{this.tableAddColumns}} />
           </div>
-          <div role="menuitem">
-            <!-- TODO float to the right, usign flex boxing? -->
+          <div role='menuitem' class='say-dropdown__menu-with-inputs'>
             {{t 'ember-rdfa-editor.rows'}} <Input class='say-input say-input--small' size='1' @value={{this.tableAddRows}} />
           </div>
           <Menu.Item @menuAction={{fn this.insertTable this.tableAddRows this.tableAddColumns}} title={{t 'ember-rdfa-editor.insert-table'}}>

@@ -103,6 +103,6 @@ $say-input-font-size: $au-h6 !default;
 }
 
 .say-input--small {
-  font-size: 14px; /* TODO: use variable */
+  font-size: $say-smaller-font-size;
   padding: 0 $au-unit-tiny;
 }

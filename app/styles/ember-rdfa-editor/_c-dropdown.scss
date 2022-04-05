@@ -113,6 +113,10 @@ $say-smaller-font-size: 1.4rem !default;
 
 .say-dropdown__menu [role='menuitem'] {
   @include au-font-size($say-smaller-font-size, 1.5);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
   font-family: var(--au-font);
   font-weight: var(--au-regular);
   color: var(--au-gray-700);
@@ -151,5 +155,16 @@ $say-smaller-font-size: 1.4rem !default;
 
 .say-dropdown__menu [role='menuitem'] img,
 .say-dropdown__menu [role='menuitem'] svg {
-  vertical-align: middle;
+  margin-right: $au-unit-tiny;
+}
+
+.say-dropdown__menu .say-dropdown__menu-with-inputs {
+  justify-content: space-between;
+}
+
+.say-dropdown__menu [role='menuitem'] input {
+  margin-left: $au-unit-tiny;
+}
+
+.say-dropdown__menu [role='menuitem'] .say-menu-item-text {
 }
