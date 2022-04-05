@@ -1,4 +1,6 @@
-import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
+import Operation, {
+  OperationResult,
+} from '@lblod/ember-rdfa-editor/model/operations/operation';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import {
   AttributeSpec,
@@ -18,6 +20,7 @@ import ModelTreeWalker, {
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
+import RangeMapper from '@lblod/ember-rdfa-editor/model/range-mapper';
 
 type MarkAction = 'add' | 'remove';
 export default class MarkOperation extends Operation {
@@ -79,7 +82,7 @@ export default class MarkOperation extends Operation {
     }
   }
 
-  execute(): ModelRange {
+  execute(): OperationResult {
     if (!this.canExecute()) {
       throw new UnconfinedRangeError();
     }
@@ -120,7 +123,7 @@ export default class MarkOperation extends Operation {
           },
         })
       );
-      return newRange;
+      return { defaultRange: newRange, mapper: new RangeMapper() };
     } else {
       OperationAlgorithms.splitText(this.range.start);
       OperationAlgorithms.splitText(this.range.end);
@@ -134,13 +137,14 @@ export default class MarkOperation extends Operation {
         },
       });
       const textNodes = Array.from(walker);
+      const _markCheckNodes: ModelNode[] = [...textNodes];
 
       for (const node of textNodes) {
         this.markAction(node, this.spec, this.attributes, this.action);
       }
+      OperationAlgorithms.mergeTextNodes(textNodes);
       const before = this.range.start.nodeBefore();
       const after = this.range.end.nodeAfter();
-      const _markCheckNodes: ModelNode[] = [...textNodes];
       if (before) {
         _markCheckNodes.push(before);
       }
@@ -160,7 +164,7 @@ export default class MarkOperation extends Operation {
           },
         })
       );
-      return this.range;
+      return { defaultRange: this.range, mapper: new RangeMapper() };
     }
   }
 }

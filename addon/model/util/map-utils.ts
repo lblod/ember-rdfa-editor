@@ -38,6 +38,9 @@ export default class MapUtils {
   }
 
   static hasAny<K, V>(map: Map<K, V>, ...keys: K[]): boolean {
+    if (!keys.length) {
+      return true;
+    }
     for (const key of keys) {
       if (map.has(key)) {
         return true;

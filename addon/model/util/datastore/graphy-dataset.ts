@@ -83,9 +83,11 @@ export class GraphyDataset implements QuadDataSet {
     object?: RDF.Quad_Object,
     graph?: RDF.Quad_Graph
   ): this {
-    const matches = this.match(subject, predicate, object, graph);
-    const quads: RDF.Quad[] = [...matches];
-    this.fastDataset.deleteQuads(quads);
+    const matches = new GraphyDataset(
+      this.match(subject, predicate, object, graph)
+    );
+    this._fastDataset = this.fastDataset.difference(matches.fastDataset);
+
     return this;
   }
 

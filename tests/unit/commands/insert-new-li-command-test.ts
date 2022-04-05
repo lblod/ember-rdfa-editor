@@ -113,6 +113,7 @@ module('Unit | commands | insert-new-li-command-test', (hooks) => {
             <text>abc</text>
           </li>
           <li>
+            <text>${INVISIBLE_SPACE}</text>
           </li>
         </ul>
       </div>
