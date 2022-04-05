@@ -6,6 +6,7 @@
         class='say-toolbar__button'
         {{on 'click' this.undo}}
         data-test-button-id='undo-button'
+        title={{t 'ember-rdfa-editor.undo'}}
       >
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -29,6 +30,7 @@
           type='button'
           class='say-toolbar__button {{if this.isBold "is-active"}}'
           {{on 'click' this.toggleBold}}
+          title={{t 'ember-rdfa-editor.bold'}}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -48,6 +50,7 @@
           type='button'
           class='say-toolbar__button {{if this.isItalic " is-active"}}'
           {{on 'click' this.toggleItalic}}
+          title={{t 'ember-rdfa-editor.italic'}}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -67,6 +70,7 @@
           type='button'
           class='say-toolbar__button {{if this.isUnderline "is-active"}}'
           {{on 'click' this.toggleUnderline}}
+          title={{t 'ember-rdfa-editor.underline'}}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -87,6 +91,7 @@
           type='button'
           class='say-toolbar__button {{if this.isStrikethrough "is-active"}}'
           {{on 'click' this.toggleStrikethrough}}
+          title={{t 'ember-rdfa-editor.strikethrough'}}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -113,6 +118,7 @@
             class='say-toolbar__button {{if this.isInList "is-active"}}'
             {{on 'click' this.toggleUnorderedList}}
             data-test-button-id='unordered-list'
+            title={{t 'ember-rdfa-editor.unordered-list'}}
           >
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -129,7 +135,7 @@
             </span>
           </button>
         {{!--
-      <button type="button" class="say-toolbar__button {{if this.isInList "is-active"}}"  {{on "click" this.toggleOrderedList}} data-test-button-id="ordered-list">
+      <button type="button" class="say-toolbar__button {{if this.isInList "is-active"}}"  {{on "click" this.toggleOrderedList}} data-test-button-id="ordered-list" title={{t 'ember-rdfa-editor.ordered-list'}}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" class="say-icon say-icon--large" aria-hidden="true">
           <path d="M0,33.5789474 L4.63157895,33.5789474 L4.63157895,34.7368421 L2.31578947,34.7368421 L2.31578947,37.0526316 L4.63157895,37.0526316 L4.63157895,38.2105263 L0,38.2105263 L0,40.5263158 L6.94736842,40.5263158 L6.94736842,31.2631579 L0,31.2631579 L0,33.5789474 Z M2.31578947,12.7368421 L4.63157895,12.7368421 L4.63157895,3.47368421 L0,3.47368421 L0,5.78947368 L2.31578947,5.78947368 L2.31578947,12.7368421 Z M0,19.6842105 L4.16842105,19.6842105 L0,24.5473684 L0,26.6315789 L6.94736842,26.6315789 L6.94736842,24.3157895 L2.77894737,24.3157895 L6.94736842,19.4526316 L6.94736842,17.3684211 L0,17.3684211 L0,19.6842105 Z M11.5789474,5.78947368 L11.5789474,10.4210526 L44,10.4210526 L44,5.78947368 L11.5789474,5.78947368 Z M11.5789474,38.2105263 L44,38.2105263 L44,33.5789474 L11.5789474,33.5789474 L11.5789474,38.2105263 Z M11.5789474,24.3157895 L44,24.3157895 L44,19.6842105 L11.5789474,19.6842105 L11.5789474,24.3157895 Z"/>
         </svg>
@@ -146,6 +152,7 @@
               class='say-toolbar__button'
               {{on 'click' this.insertUnindent}}
               data-test-button-id='insert-unindent'
+              title={{t 'ember-rdfa-editor.unindent-list'}}
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -168,6 +175,7 @@
               class='say-toolbar__button'
               data-test-button-id='insert-indent'
               {{on 'click' this.insertIndent}}
+              title={{t 'ember-rdfa-editor.indent-list'}}
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -194,31 +202,31 @@
         as |Menu|
       >
         {{#if this.isInTable}}
-          <Menu.Item @menuAction={{this.insertRowBelow}}>
+          <Menu.Item @menuAction={{this.insertRowBelow}} title={{t 'ember-rdfa-editor.add-row-below'}}>
             <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-row-below.svg' />
             {{t 'ember-rdfa-editor.add-row-below'}}
           </Menu.Item>
-          <Menu.Item @menuAction={{this.insertRowAbove}}>
+          <Menu.Item @menuAction={{this.insertRowAbove}} title={{t 'ember-rdfa-editor.add-row-above'}}>
             <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-row-above.svg' />
             {{t 'ember-rdfa-editor.add-row-above'}}
           </Menu.Item>
-          <Menu.Item @menuAction={{this.insertColumnAfter}}>
+          <Menu.Item @menuAction={{this.insertColumnAfter}} title={{t 'ember-rdfa-editor.add-column-after'}}>
             <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-column-after.svg' />
             {{t 'ember-rdfa-editor.add-column-after'}}
           </Menu.Item>
-          <Menu.Item @menuAction={{this.insertColumnBefore}}>
+          <Menu.Item @menuAction={{this.insertColumnBefore}} title={{t 'ember-rdfa-editor.add-column-before'}}>
             <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-column-before.svg' />
             {{t 'ember-rdfa-editor.add-column-before'}}
           </Menu.Item>
-          <Menu.Item @menuAction={{this.removeTableRow}}>
-            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-remove-row.svg' />
+          <Menu.Item @menuAction={{this.removeTableRow}} title={{t 'ember-rdfa-editor.delete-row'}}>
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-delete-row.svg' />
             {{t 'ember-rdfa-editor.delete-row'}}
           </Menu.Item>
-          <Menu.Item @menuAction={{this.removeTableColumn}}>
-            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-remove-column.svg' />
+          <Menu.Item @menuAction={{this.removeTableColumn}} title={{t 'ember-rdfa-editor.delete-column'}}>
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-delete-column.svg' />
             {{t 'ember-rdfa-editor.delete-column'}}
           </Menu.Item>
-          <Menu.Item @menuAction={{this.removeTable}}>
+          <Menu.Item @menuAction={{this.removeTable}} title={{t 'ember-rdfa-editor.delete-table'}}>
             <img class='say-icon say-icon--large' src='@appuniversum/ember-appuniversum/icons/cross.svg' />
             {{t 'ember-rdfa-editor.delete-table'}}
           </Menu.Item>
@@ -231,7 +239,7 @@
             <!-- TODO float to the right, usign flex boxing? -->
             {{t 'ember-rdfa-editor.rows'}} <Input class='say-input say-input--small' size='1' @value={{this.tableAddRows}} />
           </div>
-          <Menu.Item @menuAction={{fn this.insertTable this.tableAddRows this.tableAddColumns}}>
+          <Menu.Item @menuAction={{fn this.insertTable this.tableAddRows this.tableAddColumns}} title={{t 'ember-rdfa-editor.insert-table'}}>
             <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2.svg' />
             {{t 'ember-rdfa-editor.insert-table'}}
           </Menu.Item>
@@ -243,6 +251,7 @@
           class='say-toolbar__button'
           data-test-button-id='insert-table-column'
           {{on 'click' this.insertColumnAfter}}
+          title={{t 'ember-rdfa-editor.add-column-after'}}
         >
           <img src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-column-after.svg' />
           {{!--
@@ -266,6 +275,7 @@
           class='say-toolbar__button'
           data-test-button-id='insert-table-row'
           {{on 'click' this.insertRowBelow}}
+          title={{t 'ember-rdfa-editor.add-row-below'}}
         >
           <img src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-row-below.svg' />
           {{!--
@@ -281,7 +291,7 @@
           </svg>
           --}}
           <span class='au-u-hidden-visually'>
-            {{t 'ember-rdfa-editor.add-row-after'}}
+            {{t 'ember-rdfa-editor.add-row-below'}}
           </span>
         </button>
       {{/if}}

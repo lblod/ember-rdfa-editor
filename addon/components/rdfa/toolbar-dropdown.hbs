@@ -5,8 +5,9 @@
     aria-expanded='{{if this.dropdownOpen "true" "false"}}'
     type='button'
     {{on 'click' this.openDropdown}}
+    title={{t 'ember-rdfa-editor.table-options'}}
   >
-    <img src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-more.svg' alt='Table options' title='Table options' />
+    <img src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-more.svg' alt='Table options' />
     {{!--
     <svg
       xmlns='http://www.w3.org/2000/svg'
