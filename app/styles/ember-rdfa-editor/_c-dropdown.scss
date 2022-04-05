@@ -148,3 +148,8 @@ $say-smaller-font-size: 1.4rem !default;
 .say-dropdown__menu [role='menuitem'] + [role='menuitem'] {
   border-top: 1px dotted var(--au-gray-300);
 }
+
+.say-dropdown__menu [role='menuitem'] img,
+.say-dropdown__menu [role='menuitem'] svg {
+  vertical-align: middle;
+}

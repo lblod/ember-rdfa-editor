@@ -195,32 +195,96 @@
       >
         {{#if this.isInTable}}
           <Menu.Item @menuAction={{this.insertRowBelow}}>
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-row-below.svg' />
             {{t 'ember-rdfa-editor.add-row-below'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.insertRowAbove}}>
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-row-above.svg' />
             {{t 'ember-rdfa-editor.add-row-above'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.insertColumnAfter}}>
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-column-after.svg' />
             {{t 'ember-rdfa-editor.add-column-after'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.insertColumnBefore}}>
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-column-before.svg' />
             {{t 'ember-rdfa-editor.add-column-before'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.removeTableRow}}>
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-remove-row.svg' />
             {{t 'ember-rdfa-editor.delete-row'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.removeTableColumn}}>
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-remove-column.svg' />
             {{t 'ember-rdfa-editor.delete-column'}}
           </Menu.Item>
           <Menu.Item @menuAction={{this.removeTable}}>
+            <img class='say-icon say-icon--large' src='@appuniversum/ember-appuniversum/icons/cross.svg' />
             {{t 'ember-rdfa-editor.delete-table'}}
           </Menu.Item>
         {{else}}
-          <Menu.Item @menuAction={{this.insertTable}}>
+          <div role='menuitem'>
+            <!-- TODO float to the right, usign flex boxing? -->
+            {{t 'ember-rdfa-editor.columns'}} <Input class='say-input say-input--small' size='1' @value={{this.tableAddColumns}} />
+          </div>
+          <div role="menuitem">
+            <!-- TODO float to the right, usign flex boxing? -->
+            {{t 'ember-rdfa-editor.rows'}} <Input class='say-input say-input--small' size='1' @value={{this.tableAddRows}} />
+          </div>
+          <Menu.Item @menuAction={{fn this.insertTable this.tableAddRows this.tableAddColumns}}>
+            <img class='say-icon say-icon--large' src='@lblod/ember-rdfa-editor/assets/editor-icons/table2.svg' />
             {{t 'ember-rdfa-editor.insert-table'}}
           </Menu.Item>
         {{/if}}
       </Rdfa::ToolbarDropdown>
+      {{#if this.isInTable}}
+        <button
+          type='button'
+          class='say-toolbar__button'
+          data-test-button-id='insert-table-column'
+          {{on 'click' this.insertColumnAfter}}
+        >
+          <img src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-column-after.svg' />
+          {{!--
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox='0 0 44 44'
+            class='say-icon say-icon--large'
+            aria-hidden='true'
+          >
+            <path
+              d='M2.09933036,41.9006696 L41.9006696,41.9006696 L41.9006696,37.4782986 L2.09933036,37.4782986 L2.09933036,41.9006696 Z M2.09933036,13.1552579 L2.09933036,30.8447421 L10.9440724,22 L2.09933036,13.1552579 Z M19.7888145,33.0559276 L41.9006696,33.0559276 L41.9006696,28.6335565 L19.7888145,28.6335565 L19.7888145,33.0559276 Z M2.09933036,2.09933036 L2.09933036,6.52170139 L41.9006696,6.52170139 L41.9006696,2.09933036 L2.09933036,2.09933036 Z M19.7888145,15.3664435 L41.9006696,15.3664435 L41.9006696,10.9440724 L19.7888145,10.9440724 L19.7888145,15.3664435 Z M19.7888145,24.2111855 L41.9006696,24.2111855 L41.9006696,19.7888145 L19.7888145,19.7888145 L19.7888145,24.2111855 Z'
+            ></path>
+          </svg>
+          --}}
+          <span class='au-u-hidden-visually'>
+            {{t 'ember-rdfa-editor.add-column-below'}}
+          </span>
+        </button>
+        <button
+          type='button'
+          class='say-toolbar__button'
+          data-test-button-id='insert-table-row'
+          {{on 'click' this.insertRowBelow}}
+        >
+          <img src='@lblod/ember-rdfa-editor/assets/editor-icons/table2-add-row-below.svg' />
+          {{!--
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox='0 0 44 44'
+            class='say-icon say-icon--large'
+            aria-hidden='true'
+          >
+            <path
+              d='M2.09933036,41.9006696 L41.9006696,41.9006696 L41.9006696,37.4782986 L2.09933036,37.4782986 L2.09933036,41.9006696 Z M2.09933036,13.1552579 L2.09933036,30.8447421 L10.9440724,22 L2.09933036,13.1552579 Z M19.7888145,33.0559276 L41.9006696,33.0559276 L41.9006696,28.6335565 L19.7888145,28.6335565 L19.7888145,33.0559276 Z M2.09933036,2.09933036 L2.09933036,6.52170139 L41.9006696,6.52170139 L41.9006696,2.09933036 L2.09933036,2.09933036 Z M19.7888145,15.3664435 L41.9006696,15.3664435 L41.9006696,10.9440724 L19.7888145,10.9440724 L19.7888145,15.3664435 Z M19.7888145,24.2111855 L41.9006696,24.2111855 L41.9006696,19.7888145 L19.7888145,19.7888145 L19.7888145,24.2111855 Z'
+            ></path>
+          </svg>
+          --}}
+          <span class='au-u-hidden-visually'>
+            {{t 'ember-rdfa-editor.add-row-after'}}
+          </span>
+        </button>
+      {{/if}}
     </div>
   </div>
   <div class='say-toolbar__actions'>

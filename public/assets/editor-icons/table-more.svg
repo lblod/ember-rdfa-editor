@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 44 44"
+   class="say-icon say-icon--large"
+   aria-hidden="true"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="table-more.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:object-paths="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:snap-page="true"
+     inkscape:zoom="10.522727"
+     inkscape:cx="6.1771058"
+     inkscape:cy="22"
+     inkscape:window-width="1366"
+     inkscape:window-height="711"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     d="M 7.8686593,3.2369434 V 31.499625 H 36.131341 V 3.2369434 Z M 20.429867,28.359358 h -9.420913 v -9.42094 h 9.420913 z m 0,-12.561207 H 11.008954 V 6.3772382 h 9.420913 z m 12.561207,12.561207 h -9.42094 v -9.42094 h 9.42094 z m 0,-12.561207 h -9.42094 V 6.3772382 h 9.42094 z"
+     id="path2"
+     style="stroke-width:0.753147" />
+  <polygon
+     points="12,16.9 3.6,8.49999 5,7.1 12,14.1 19,7.1 20.4,8.49999 "
+     id="polygon109"
+     transform="matrix(0.7529491,0,0,0.7529491,12.964611,28.038061)" />
+</svg>
