@@ -10,6 +10,22 @@
 
 
 
+## 0.54.0 (2022-04-05)
+
+#### :boom: Breaking Change
+* [#246](https://github.com/lblod/ember-rdfa-editor/pull/246) Implement self-updating regex-constrained sets of marks ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#246](https://github.com/lblod/ember-rdfa-editor/pull/246) Implement self-updating regex-constrained sets of marks ([@abeforgit](https://github.com/abeforgit))
+
+#### :bug: Bug Fix
+* [#247](https://github.com/lblod/ember-rdfa-editor/pull/247) convert newlines to br elements when inserting text ([@nvdk](https://github.com/nvdk))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Niels V ([@nvdk](https://github.com/nvdk))
+
+
 ## 0.53.0 (2022-04-05)
 
 #### :rocket: Enhancement
