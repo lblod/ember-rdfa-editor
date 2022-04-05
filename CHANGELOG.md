@@ -10,6 +10,15 @@
 
 
 
+## 0.53.1 (2022-04-05)
+
+#### :bug: Bug Fix
+* [#247](https://github.com/lblod/ember-rdfa-editor/pull/247) convert newlines to br elements when inserting text ([@nvdk](https://github.com/nvdk))
+
+#### Committers: 1
+- Niels V ([@nvdk](https://github.com/nvdk))
+
+
 ## 0.53.0 (2022-04-05)
 
 #### :rocket: Enhancement
