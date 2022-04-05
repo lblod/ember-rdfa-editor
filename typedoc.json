@@ -8,5 +8,6 @@
   "external-modulemap": [
     ".*/addon/([\\w\\-_]+)/.*",
     ".*<(internal)>.*"
-  ]
+  ],
+  "internalNamespace": "unexported"
 }
