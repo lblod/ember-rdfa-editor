@@ -9,6 +9,35 @@
 
 
 
+## 0.52.1 (2022-04-01)
+
+#### :bug: Bug Fix
+* [#243](https://github.com/lblod/ember-rdfa-editor/pull/243) Fix object node matching ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+## 0.52.0 (2022-03-30)
+
+#### :rocket: Enhancement
+* [#239](https://github.com/lblod/ember-rdfa-editor/pull/239) execute undo on VDOM ([@nvdk](https://github.com/nvdk))
+* [#236](https://github.com/lblod/ember-rdfa-editor/pull/236) Implement incremental dom writing ([@abeforgit](https://github.com/abeforgit))
+
+#### :bug: Bug Fix
+* [#237](https://github.com/lblod/ember-rdfa-editor/pull/237) Fixing unindenting ([@benjay10](https://github.com/benjay10))
+
+#### :house: Internal
+* [#242](https://github.com/lblod/ember-rdfa-editor/pull/242) dev packages spring cleaning ([@nvdk](https://github.com/nvdk))
+* [#240](https://github.com/lblod/ember-rdfa-editor/pull/240) add embroider test scenarios to ember try ([@nvdk](https://github.com/nvdk))
+* [#241](https://github.com/lblod/ember-rdfa-editor/pull/241) bump ember-cli-app-version to 5.0.0 ([@nvdk](https://github.com/nvdk))
+* [#238](https://github.com/lblod/ember-rdfa-editor/pull/238) bump ember-truth-helpers to 3.0.0 ([@nvdk](https://github.com/nvdk))
+* [#230](https://github.com/lblod/ember-rdfa-editor/pull/230) Bump tar from 2.2.1 to 2.2.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 3
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Ben ([@benjay10](https://github.com/benjay10))
+- Niels V ([@nvdk](https://github.com/nvdk))
+
 ## 0.51.0 (2022-03-11)
 
 #### :rocket: Enhancement
