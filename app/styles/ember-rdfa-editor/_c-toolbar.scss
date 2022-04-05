@@ -44,6 +44,8 @@ $say-toolbar-height: 44px !default;
 
 .say-toolbar__group {
   display: flex;
+  padding-left: $au-unit-tiny;
+  padding-right: $au-unit-tiny;
 }
 
 .say-toolbar__group + .say-toolbar__group {
