@@ -4,6 +4,7 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import InsertTableCommand from '@lblod/ember-rdfa-editor/commands/insert-table-command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 module('Unit | commands | insert-table-command-test', (hooks) => {
   const ctx = new ModelTestContext();
@@ -26,12 +27,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
         <table class="say-table">
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -61,12 +62,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
         <table class="say-table">
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -114,12 +115,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
         <table class="say-table">
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -169,12 +170,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
         <table class="say-table">
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -205,12 +206,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
         <table class="say-table">
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -254,12 +255,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
           <table class="say-table">
             <tbody>
               <tr>
-                <td></td>
-                <td></td>
+                <td><text>${INVISIBLE_SPACE}</text></td>
+                <td><text>${INVISIBLE_SPACE}</text></td>
               </tr>
               <tr>
-                <td></td>
-                <td></td>
+                <td><text>${INVISIBLE_SPACE}</text></td>
+                <td><text>${INVISIBLE_SPACE}</text></td>
               </tr>
             </tbody>
           </table>
