@@ -27,6 +27,11 @@ $say-toolbar-height: 44px !default;
   }
 }
 
+.say-toolbar img {
+  max-width: inherit;
+  height: 100%;
+}
+
 .say-toolbar__styling-tools {
   display: flex;
   align-items: center;
