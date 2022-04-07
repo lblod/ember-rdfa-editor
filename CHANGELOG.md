@@ -10,6 +10,19 @@
 
 
 
+
+## 0.55.0 (2022-04-07)
+
+#### :boom: Breaking Change
+* [#250](https://github.com/lblod/ember-rdfa-editor/pull/250) Provide ranges per capture group ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#250](https://github.com/lblod/ember-rdfa-editor/pull/250) Provide ranges per capture group ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.54.0 (2022-04-05)
 
 #### :boom: Breaking Change
