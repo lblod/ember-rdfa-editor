@@ -13,6 +13,7 @@ export interface TextMatch {
   text: string;
   /**
    * The matched text in the capture groups
+   * The first element contains the full match, in line with how the DOM spec does it
    */
   groups: Array<string | undefined>;
   /**
@@ -21,10 +22,12 @@ export interface TextMatch {
   index: number;
   /**
    * The [start, end] indices of each capture group
+   * The first element contains start and end of the full match, in line with how the DOM spec does it
    */
   indices: Array<[number, number] | undefined>;
   /**
    * The range where each capture group was found
+   * The first element contains the range encompassing the full match, in line with how the DOM spec does it
    */
   groupRanges: Array<ModelRange | undefined>;
   /**
