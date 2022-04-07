@@ -1,5 +1,6 @@
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 export interface TextMatch {
   /**
@@ -12,24 +13,46 @@ export interface TextMatch {
   text: string;
   /**
    * The matched text in the capture groups
+   * The first element contains the full match, in line with how the DOM spec does it
    */
-  groups: string[];
+  groups: Array<string | undefined>;
   /**
    * The index in the inputstring where the match was found (0-based)
    */
   index: number;
+  /**
+   * The [start, end] indices of each capture group
+   * The first element contains start and end of the full match, in line with how the DOM spec does it
+   */
+  indices: Array<[number, number] | undefined>;
+  /**
+   * The range where each capture group was found
+   * The first element contains the range encompassing the full match, in line with how the DOM spec does it
+   */
+  groupRanges: Array<ModelRange | undefined>;
   /**
    * The inputstring that was matched against
    */
   input: string;
 }
 
-export function matchText(limitRange: ModelRange, regex: RegExp) {
+/**
+ * Regex match the text content inside limitRange.
+ * Block element boundaries are converted into newlines, as that is how
+ * they appear when rendered.
+ * Flags are respected, but the "d" flag (generate substring match indices) is forced.
+ * Note that the state (e.g. lastIndex) of the passed in regex object is not respected.
+ * @param limitRange
+ * @param regex
+ */
+export function matchText(limitRange: ModelRange, regex: RegExp): TextMatch[] {
+  // the d flag is crucial to generating ranges for every capture group, so we force it
+  const myRegex = new RegExp(regex, `${regex.flags}d`);
   const { textContent, indexToPos } = limitRange.getTextContentWithMapping();
 
   const result: TextMatch[] = [];
-  if (regex.global) {
-    for (const match of textContent.matchAll(regex)) {
+  if (myRegex.global) {
+    for (const match of textContent.matchAll(myRegex)) {
       const textMatch = convertMatch(match, indexToPos);
       if (textMatch) {
         result.push(textMatch);
@@ -37,7 +60,7 @@ export function matchText(limitRange: ModelRange, regex: RegExp) {
     }
     return result;
   } else {
-    const match = textContent.match(regex);
+    const match = textContent.match(myRegex);
     if (match) {
       const textMatch = convertMatch(match, indexToPos);
       if (textMatch) {
@@ -49,19 +72,38 @@ export function matchText(limitRange: ModelRange, regex: RegExp) {
 }
 
 function convertMatch(
-  match: RegExpMatchArray,
+  match: RegExpMatchArray & { indices?: Array<[number, number] | undefined> },
   indexToPos: (textIndex: number) => ModelPosition
 ): TextMatch | null {
+  if (!match.indices) {
+    throw new IllegalArgumentError(
+      "can not work with a regex which does not have a 'd' flag"
+    );
+  }
   const matchIndex = match.index;
   if (matchIndex !== undefined) {
-    const startPos = indexToPos(matchIndex);
+    const groups = match;
+    const indices = match.indices;
+    const groupRanges = indices.map((value) => {
+      if (!value) {
+        return value;
+      } else {
+        const startPos = indexToPos(value[0]);
+        const endPos = indexToPos(value[1]);
+        return new ModelRange(startPos, endPos).shrinkToVisible();
+      }
+    });
     const matchedString = match[0];
-    const endPos = indexToPos(matchIndex + matchedString.length);
+    const range = groupRanges[0]!;
+
+    console.log(match);
     return {
       input: match.input || '',
       text: matchedString,
-      groups: match.slice(1),
-      range: new ModelRange(startPos, endPos).shrinkToVisible(),
+      groups,
+      groupRanges,
+      indices,
+      range,
       index: matchIndex,
     };
   }
