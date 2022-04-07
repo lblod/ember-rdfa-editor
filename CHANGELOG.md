@@ -11,6 +11,14 @@
 
 
 
+## 0.55.1 (2022-04-07)
+
+
+#### :bug: Bug fix
+
+* [#251](https://github.com/lblod/ember-rdfa-editor/pull/251) Fix toolbar marks using wrong command arguments ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.55.0 (2022-04-07)
 
 #### :boom: Breaking Change
