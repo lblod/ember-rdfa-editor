@@ -96,7 +96,6 @@ function convertMatch(
     const matchedString = match[0];
     const range = groupRanges[0]!;
 
-    console.log(match);
     return {
       input: match.input || '',
       text: matchedString,
