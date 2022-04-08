@@ -63,19 +63,16 @@ export class HtmlReaderContext {
 /**
  * Top-level reader for HTML documents
  */
-export default class HtmlReader implements Reader<Node, ModelNode[], void> {
-  constructor(
-    private model: Model,
-    private shouldConvertWhitespace: boolean = false
-  ) {}
+export default class HtmlReader implements Reader<Node, ModelNode[], boolean> {
+  constructor(private model: Model) {}
 
-  read(from: Node): ModelNode[] {
+  read(from: Node, shouldConvertWhitespace = false): ModelNode[] {
     from.normalize();
     const prefixes = calculateRdfaPrefixes(from);
     const context = new HtmlReaderContext(
       this.model,
       prefixes,
-      this.shouldConvertWhitespace
+      shouldConvertWhitespace
     );
     const nodeReader = new HtmlNodeReader();
     return nodeReader.read(from, context);
