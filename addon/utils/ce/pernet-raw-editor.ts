@@ -979,6 +979,8 @@ export default class PernetRawEditor extends RawEditor implements Editor {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
     const rslt = update.bind(this)(selection, options);
     if (this.tryOutVdom) {
+      // it's debatable whether we should convert whitespace here or not,
+      // but not doing it is the safer option since it is a destructive process.
       this.model.read();
       this.model.write();
       this.updateRichNode();
