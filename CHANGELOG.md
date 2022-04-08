@@ -11,6 +11,16 @@
 
 
 
+
+## 0.55.2 (2022-04-08)
+
+#### :bug: Bug Fix
+* [#252](https://github.com/lblod/ember-rdfa-editor/pull/252) Fix space-eating issues ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.55.1 (2022-04-07)
 
 
