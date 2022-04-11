@@ -14,16 +14,11 @@ export default class RemoveTypeCommand extends Command {
   @logExecute
   execute(type: string, element: ModelElement) {
     const oldTypeof = element.getAttribute('typeof');
-    let typesArray = oldTypeof?.split(' ');
-    if (!typesArray) typesArray = [];
-    let newType = '';
-    for (const typeString of typesArray) {
-      if (type === typeString) continue;
-      newType += typeString + ' ';
-    }
+    const typesArray = oldTypeof ? oldTypeof.split(' ') : [];
+    const newTypeof = typesArray.filter((t) => t !== type).join(' ');
     let newNode;
     this.model.change((mutator) => {
-      newNode = mutator.setProperty(element, 'typeof', newType);
+      newNode = mutator.setProperty(element, 'typeof', newTypeof);
       this.model.selectRange(ModelRange.fromInElement(newNode, 0, 0));
     });
     return newNode;
