@@ -27,7 +27,6 @@ export default class UnindentListCommand extends Command {
     if (!range) {
       return false;
     }
-
     const predicate = (node: ModelNode) => {
       // Set `includeSelf` to true, because this predicate will be used in `findModelNodes`, where we start
       // searching from the parent of the current node. If we set it to false, the first parent will always be skipped.
@@ -40,11 +39,15 @@ export default class UnindentListCommand extends Command {
         firstAncestorLi,
         ModelNodeUtils.isListElement
       );
-
       return !!firstAncestorLi && !!secondAncestorLi;
     };
 
-    const treeWalker = ModelRangeUtils.findModelNodes(range, predicate);
+    const treeWalker = ModelRangeUtils.findModelNodes(
+      range,
+      predicate,
+      true,
+      false
+    );
     return !![...treeWalker].length;
   }
 

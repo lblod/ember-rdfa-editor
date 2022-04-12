@@ -30,7 +30,9 @@ export default class IndentListCommand extends Command {
 
     const treeWalker = ModelRangeUtils.findModelNodes(
       range,
-      ModelNodeUtils.isListElement
+      ModelNodeUtils.isListElement,
+      true,
+      false
     );
     for (const li of treeWalker) {
       if (!li || li.index === 0) {
