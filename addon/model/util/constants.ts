@@ -6,7 +6,61 @@ import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles
 import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 
-export const NON_BLOCK_NODES = new Set(['b', 'strong', 'i', 'em', 'span', 'a']);
+// based on https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories#phrasing_content
+// we've added a, del, ins to the list since we assume they only contain phrasing content in the editor
+export const PHRASING_CONTENT = [
+  'a',
+  'abbr',
+  'audio',
+  'b',
+  'bdo',
+  'br',
+  'button',
+  'canvas',
+  'cite',
+  'code',
+  'command',
+  'data',
+  'datalist',
+  'del',
+  'dfn',
+  'em',
+  'embed',
+  'i',
+  'iframe',
+  'img',
+  'input',
+  'ins',
+  'kbd',
+  'keygen',
+  'label',
+  'mark',
+  'math',
+  'meter',
+  'noscript',
+  'object',
+  'output',
+  'picture',
+  'progress',
+  'q',
+  'ruby',
+  'samp',
+  'script',
+  'select',
+  'small',
+  'span',
+  'strong',
+  'sub',
+  'sup',
+  'svg',
+  'textarea',
+  'time',
+  'u',
+  'var',
+  'video',
+  'wbr',
+];
+export const NON_BLOCK_NODES = new Set(PHRASING_CONTENT);
 export const LIST_TYPES = new Set(['li', 'ul', 'ol']);
 export const LIST_CONTAINERS = new Set(['ul', 'ol']);
 export const TABLE_TYPES = new Set([
