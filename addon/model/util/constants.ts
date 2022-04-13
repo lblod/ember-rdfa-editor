@@ -8,13 +8,13 @@ import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties
 
 // based on https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories#phrasing_content
 // we've added a, del, ins to the list since we assume they only contain phrasing content in the editor
+// we've removed br from the list to be inline with editor behaviour, which treats it as a block
 export const PHRASING_CONTENT = [
   'a',
   'abbr',
   'audio',
   'b',
   'bdo',
-  'br',
   'button',
   'canvas',
   'cite',
