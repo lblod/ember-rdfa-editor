@@ -1,0 +1,11 @@
+<span {{on "click" this.toggle}}style="">
+  {{#if this.expanded}}  
+    -
+  {{else}}
+    <AuIcon @icon="add"/>
+  {{/if}}
+  {{@title}}
+</span>
+<div style={{if this.expanded "" "visibility: hidden; height: 0;"}}>
+  {{yield}}
+</div>

@@ -61,12 +61,11 @@
       <div class='say-editor-hints'>
         <ul class='say-editor-hints__list'>
           {{#if this.suggestedHints.length}}
-            <li class='say-editor-hints__list-item'>
-              <Rdfa::EditorSuggestedHints
-                @suggestedHints={{this.suggestedHints}}
-                @closeHints={{this.closeHints}}
-              />
-            </li>
+            {{#each this.suggestedHints as |hint|}}
+              <li class='say-editor-hints__list-item'>
+                {{component hint.component info=hint.info closeHints=this.closeHints}}
+              </li>
+            {{/each}}
           {{/if}}
           {{#if this.hasActiveHints}}
             {{#each this.hintsRegistry.activeHints as |card|}}
@@ -75,17 +74,29 @@
               </li>
             {{/each}}
           {{/if}}
+          <Rdfa::PluginWrapper @title="Insert">
+            {{#each this.sidebarWidgets as |widget|}}
+              {{#if (is-insert-widget widget)}}
+                <li class='say-editor-hints__list-item'>
+                  {{component
+                    widget.componentName
+                    controller=widget.controller
+                    plugin=widget.plugin
+                  }}
+                </li>
+              {{/if}}
+            {{/each}}
+          </Rdfa::PluginWrapper>
           {{#each this.sidebarWidgets as |widget|}}
-            <li class='say-editor-hints__list-item'>
-              <div class='say-card'>
-                {{! Todo: remove this div once it is over }}
+            {{#if (not-insert-widget widget)}}
+              <li class='say-editor-hints__list-item'>
                 {{component
                   widget.componentName
                   controller=widget.controller
                   plugin=widget.plugin
                 }}
-              </div>
-            </li>
+              </li>
+            {{/if}}
           {{/each}}
         </ul>
       </div>
