@@ -1,8 +1,9 @@
-import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
+import Operation, {
+  OperationResult,
+} from '@lblod/ember-rdfa-editor/model/operations/operation';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
@@ -27,11 +28,11 @@ export default class SplitOperation extends Operation {
     this._splitParent = value;
   }
 
-  execute(): ModelRange {
+  execute(): OperationResult {
     if (this.range.collapsed) {
-      const newPos = this.doSplit(this.range.start);
-      const newRange = new ModelRange(newPos, newPos);
-      const nodeAfter = newPos.nodeAfter();
+      const { position, mapper } = this.doSplit(this.range.start);
+      const newRange = new ModelRange(position, position);
+      const nodeAfter = position.nodeAfter();
       this.emit(
         new ContentChangedEvent({
           owner: CORE_OWNER,
@@ -45,22 +46,19 @@ export default class SplitOperation extends Operation {
           },
         })
       );
-      return newRange;
+      return { defaultRange: newRange, mapper };
     } else {
       // this is very fragile and depends heavily on execution order.
       // be careful making changes here
-      const end = this.doSplit(this.range.end);
-      const afterEnd = end.nodeAfter();
-      if (!afterEnd) {
-        throw new ModelError('Unexpected model state');
-      }
-      const start = this.doSplit(this.range.start);
-      const newRange = new ModelRange(
-        start,
-        ModelPosition.fromBeforeNode(afterEnd)
+      const { position: end, mapper: endMapper } = this.doSplit(this.range.end);
+      const { position: start, mapper: startMapper } = this.doSplit(
+        endMapper.mapPosition(this.range.start)
       );
+      const finalMapper = endMapper.appendMapper(startMapper);
+      const newRange = new ModelRange(start, startMapper.mapPosition(end));
       const _markCheckNodes = [];
       const afterStart = start.nodeAfter();
+      const afterEnd = end.nodeAfter();
       if (afterStart) {
         _markCheckNodes.push(afterStart);
       }
@@ -81,7 +79,7 @@ export default class SplitOperation extends Operation {
         })
       );
 
-      return newRange;
+      return { defaultRange: newRange, mapper: finalMapper };
     }
   }
 

@@ -38,4 +38,16 @@ export default class SetUtils {
     }
     return didDelete;
   }
+
+  static hasAny<I>(set: Set<I>, ...items: I[]): boolean {
+    if (!items.length) {
+      return true;
+    }
+    for (const item of items) {
+      if (set.has(item)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

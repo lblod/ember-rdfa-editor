@@ -5,7 +5,7 @@ import Model from '@lblod/ember-rdfa-editor/model/model';
 import { AttributeSpec } from '@lblod/ember-rdfa-editor/model/mark';
 
 export default class RemoveMarkFromRangeCommand extends Command<
-  [ModelRange, string, Record<string, unknown> | void],
+  [ModelRange, string, AttributeSpec],
   void
 > {
   name = 'remove-mark-from-range';

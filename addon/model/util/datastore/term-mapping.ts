@@ -4,8 +4,8 @@ import {
   conciseToRdfjs,
   PrefixMapping,
 } from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
-import { isEmpty, first, from, single } from 'ix/iterable';
-import { filter, map } from 'ix/iterable/operators';
+import { first, from, isEmpty, single } from 'ix/iterable';
+import { filter, flatMap, map } from 'ix/iterable/operators';
 import { TermSpec } from '@lblod/ember-rdfa-editor/model/util/datastore/term-spec';
 
 /**
@@ -93,6 +93,11 @@ export class TermMapping<T extends RDF.Term>
       map(mappingFunc)
     );
   }
+
+  nodes(): Iterable<ModelNode> {
+    return from(this.termMap.entries()).pipe(flatMap((entry) => entry[1]));
+  }
+
   isEmpty(): boolean {
     return isEmpty(from(this.termMap.entries()));
   }

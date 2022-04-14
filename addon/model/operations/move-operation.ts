@@ -1,4 +1,6 @@
-import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
+import Operation, {
+  OperationResult,
+} from '@lblod/ember-rdfa-editor/model/operations/operation';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
@@ -31,11 +33,11 @@ export default class MoveOperation extends Operation {
     return !this.targetPosition.isBetween(this.range.start, this.range.end);
   }
 
-  execute(): ModelRange {
+  execute(): OperationResult {
     if (!this.canExecute()) {
       throw new OperationError('Cannot move to target inside source range');
     }
-    const { movedNodes, _markCheckNodes } = OperationAlgorithms.move(
+    const { movedNodes, _markCheckNodes, mapper } = OperationAlgorithms.move(
       this.range,
       this.targetPosition
     );
@@ -58,7 +60,7 @@ export default class MoveOperation extends Operation {
           },
         })
       );
-      return newRange;
+      return { defaultRange: newRange, mapper };
     } else {
       const newRange = new ModelRange(this.targetPosition, this.targetPosition);
       this.emit(
@@ -74,7 +76,7 @@ export default class MoveOperation extends Operation {
           },
         })
       );
-      return newRange;
+      return { defaultRange: newRange, mapper };
     }
   }
 }

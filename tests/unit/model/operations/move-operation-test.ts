@@ -32,7 +32,7 @@ module('Unit | model | operations | move-operation-test', () => {
     const srcRange = ModelRange.fromInTextNode(source, 0, 4);
     const targetPos = ModelPosition.fromInElement(target, 0);
     const op = new MoveOperation(undefined, srcRange, targetPos);
-    const resultRange = op.execute();
+    const resultRange = op.execute().defaultRange;
 
     assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
     assert.true(
@@ -69,7 +69,7 @@ module('Unit | model | operations | move-operation-test', () => {
     const srcRange = ModelRange.fromInTextNode(source, 1, 3);
     const targetPos = ModelPosition.fromInElement(target, 0);
     const op = new MoveOperation(undefined, srcRange, targetPos);
-    const resultRange = op.execute();
+    const resultRange = op.execute().defaultRange;
 
     assert.true(initial.sameAs(expected));
     assert.true(
@@ -135,7 +135,7 @@ module('Unit | model | operations | move-operation-test', () => {
     const srcRange = new ModelRange(start, end);
     const targetPos = ModelPosition.fromInTextNode(target, 2);
     const op = new MoveOperation(undefined, srcRange, targetPos);
-    const resultRange = op.execute();
+    const resultRange = op.execute().defaultRange;
 
     assert.true(initial.sameAs(expected));
     assert.true(

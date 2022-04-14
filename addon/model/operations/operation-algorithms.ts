@@ -2,13 +2,21 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import RangeMapper, {
+  LeftOrRight,
+} from '@lblod/ember-rdfa-editor/model/range-mapper';
+import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
+export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
 /**
  * A shared library of algorithms to be used by operations only
  * Any use outside of operations is not supported
  */
 export default class OperationAlgorithms {
-  static remove(range: ModelRange): ModelNode[] {
+  static remove(
+    range: ModelRange
+  ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
     let newStartNode: ModelNode | null = null;
     let newEndNode: ModelNode | null = null;
     let splitStart = false;
@@ -27,6 +35,8 @@ export default class OperationAlgorithms {
     if (splitEnd) {
       newEndNode = range.end.nodeBefore();
     }
+    const afterEnd = range.end.nodeAfter();
+    const endParent = range.end.parent;
 
     const nodesToRemove = [];
 
@@ -51,14 +61,30 @@ export default class OperationAlgorithms {
       newEndNode.remove();
       newEndNode.parent!.removeDirty('content');
     }
-    return nodesToRemove;
+
+    let newEndPos;
+    if (afterEnd) {
+      newEndPos = ModelPosition.fromBeforeNode(afterEnd);
+    } else {
+      newEndPos = ModelPosition.fromInNode(endParent, endParent.getMaxOffset());
+    }
+
+    return {
+      removedNodes: nodesToRemove,
+      mapper: new RangeMapper([buildPositionMapping(range, newEndPos)]),
+    };
   }
 
   static insert(
     range: ModelRange,
     ...nodes: ModelNode[]
-  ): { overwrittenNodes: ModelNode[]; _markCheckNodes: ModelNode[] } {
+  ): OperationAlgorithmResponse<{
+    overwrittenNodes: ModelNode[];
+    _markCheckNodes: ModelNode[];
+  }> {
     let overwrittenNodes: ModelNode[] = [];
+    let newEndPos;
+    let mapper: RangeMapper;
     const _markCheckNodes: ModelNode[] = [...nodes];
     if (range.collapsed) {
       if (range.start.path.length === 0) {
@@ -78,30 +104,61 @@ export default class OperationAlgorithms {
           ...nodes
         );
       }
+      newEndPos = ModelPosition.fromAfterNode(nodes[nodes.length - 1]);
+      mapper = new RangeMapper([buildPositionMapping(range, newEndPos)]);
     } else {
-      overwrittenNodes = OperationAlgorithms.remove(range);
+      const { removedNodes, mapper: removeMapper } =
+        OperationAlgorithms.remove(range);
+      overwrittenNodes = removedNodes;
+      const rangeAfterRemove = removeMapper.mapRange(range);
+      const afterEnd = rangeAfterRemove.end.nodeAfter();
+      const endParent = rangeAfterRemove.end.parent;
 
-      range.start.parent.insertChildrenAtOffset(
-        range.start.parentOffset,
+      rangeAfterRemove.start.parent.insertChildrenAtOffset(
+        rangeAfterRemove.start.parentOffset,
         ...nodes
       );
+
+      if (afterEnd) {
+        newEndPos = ModelPosition.fromBeforeNode(afterEnd);
+      } else {
+        newEndPos = ModelPosition.fromInNode(
+          endParent,
+          endParent.getMaxOffset()
+        );
+      }
+      mapper = removeMapper.appendMapper(
+        new RangeMapper([buildPositionMapping(rangeAfterRemove, newEndPos)])
+      );
     }
-    return { overwrittenNodes, _markCheckNodes };
+    return {
+      overwrittenNodes,
+      _markCheckNodes,
+      mapper,
+    };
   }
 
   static move(
     rangeToMove: ModelRange,
     targetPosition: ModelPosition
-  ): {
+  ): OperationAlgorithmResponse<{
     movedNodes: ModelNode[];
     overwrittenNodes: ModelNode[];
     _markCheckNodes: ModelNode[];
-  } {
-    const nodesToMove = OperationAlgorithms.remove(rangeToMove);
+  }> {
+    const { removedNodes: nodesToMove, mapper: deletionMapper } =
+      OperationAlgorithms.remove(rangeToMove);
     const targetRange = new ModelRange(targetPosition, targetPosition);
     if (nodesToMove.length) {
+      const {
+        overwrittenNodes,
+        _markCheckNodes,
+        mapper: insertionMapper,
+      } = OperationAlgorithms.insert(targetRange, ...nodesToMove);
       return {
-        ...OperationAlgorithms.insert(targetRange, ...nodesToMove),
+        mapper: deletionMapper.appendMapper(insertionMapper),
+        overwrittenNodes,
+        _markCheckNodes,
         movedNodes: nodesToMove,
       };
     }
@@ -109,23 +166,30 @@ export default class OperationAlgorithms {
       overwrittenNodes: [],
       _markCheckNodes: [],
       movedNodes: nodesToMove,
+      mapper: deletionMapper,
     };
   }
 
-  static splitText(position: ModelPosition, keepright = false) {
+  static splitText(
+    position: ModelPosition,
+    keepright = false
+  ): OperationAlgorithmResponse<{ position: ModelPosition }> {
     position.split(keepright);
-    return position;
+    return { position, mapper: new RangeMapper() };
   }
 
-  static split(position: ModelPosition, keepright = false): ModelPosition {
+  static split(
+    position: ModelPosition,
+    keepright = false
+  ): OperationAlgorithmResponse<{ position: ModelPosition }> {
     OperationAlgorithms.splitText(position, keepright);
     const parent = position.parent;
     if (parent === position.root) {
-      return position;
+      return { position, mapper: new RangeMapper() };
     }
     const grandParent = parent.parent;
     if (!grandParent) {
-      return position;
+      return { position, mapper: new RangeMapper() };
     }
 
     if (keepright) {
@@ -143,7 +207,17 @@ export default class OperationAlgorithms {
         left.appendChildren(...leftSideChildren);
       }
       grandParent.addChild(left, parent.index!);
-      return ModelPosition.fromAfterNode(left);
+      return {
+        position: ModelPosition.fromAfterNode(left),
+        mapper: new RangeMapper([
+          buildPositionMapping(
+            new ModelRange(position, position),
+            left.lastChild
+              ? ModelPosition.fromAfterNode(left.lastChild)
+              : ModelPosition.fromAfterNode(left)
+          ),
+        ]),
+      };
     } else {
       const right = parent.shallowClone();
       const after = position.nodeAfter();
@@ -159,7 +233,85 @@ export default class OperationAlgorithms {
         right.appendChildren(...rightSideChildren);
       }
       grandParent.addChild(right, parent.index! + 1);
-      return ModelPosition.fromBeforeNode(right);
+      return {
+        position: ModelPosition.fromBeforeNode(right),
+        mapper: new RangeMapper([
+          buildPositionMapping(
+            new ModelRange(position, position),
+            right.firstChild
+              ? ModelPosition.fromBeforeNode(right.firstChild)
+              : ModelPosition.fromBeforeNode(right)
+          ),
+        ]),
+      };
     }
   }
+
+  static mergeTextNodes(nodes: ModelText[]) {
+    for (const node of nodes) {
+      const sibling = node.nextSibling;
+      if (
+        sibling &&
+        ModelNode.isModelText(sibling) &&
+        node.isMergeable(sibling)
+      ) {
+        sibling.content = node.content + sibling.content;
+        node.remove();
+      }
+    }
+  }
+}
+
+function buildPositionMapping(
+  affectedRange: ModelRange,
+  newEndPosition: ModelPosition
+) {
+  const pathOffsets = newEndPosition.path.map(
+    (val, index) => val - affectedRange.end.path[index]
+  );
+  return function (position: ModelPosition, bias: LeftOrRight = 'right') {
+    if (position.compare(affectedRange.start) === RelativePosition.BEFORE) {
+      return position;
+    }
+    if (position.compare(affectedRange.start) === RelativePosition.EQUAL) {
+      if (bias === 'left') {
+        return position;
+      } else {
+        return newEndPosition;
+      }
+    }
+
+    if (
+      [RelativePosition.AFTER, RelativePosition.EQUAL].includes(
+        position.compare(affectedRange.end)
+      )
+    ) {
+      const root = position.root;
+      const path = [...position.path];
+      const newPath: number[] = [];
+      let outOfSubtree = false;
+      path.forEach((value, index) => {
+        if (outOfSubtree) {
+          newPath.push(value);
+        } else {
+          if (
+            pathOffsets[index] === 0 &&
+            value !== affectedRange.end.path[index]
+          ) {
+            outOfSubtree = true;
+            newPath.push(value);
+          } else {
+            newPath.push(value + (pathOffsets[index] ?? 0));
+          }
+        }
+      });
+      return ModelPosition.fromPath(root, newPath);
+    } else {
+      if (bias === 'left') {
+        return affectedRange.start.clone();
+      } else {
+        return newEndPosition.clone(position.root);
+      }
+    }
+  };
 }

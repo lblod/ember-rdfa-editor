@@ -52,9 +52,9 @@ export interface RdfaParseConfig {
 }
 
 export interface QuadNodes {
-  subjectNode: ModelNode;
-  predicateNode: ModelNode;
-  objectNode: ModelNode;
+  subjectNodes: ModelNode[];
+  predicateNodes: ModelNode[];
+  objectNodes: ModelNode[];
 }
 
 export interface RdfaParseResponse {
@@ -1231,9 +1231,9 @@ export class RdfaParser {
       this.defaultGraph
     );
     this.quadToNodesMapping.set(quadHash(resultQuad), {
-      subjectNode: subject.node!,
-      predicateNode: predicate.node!,
-      objectNode: object.node!,
+      subjectNodes: this.subjectToNodesMapping.get(subject.value) ?? [],
+      predicateNodes: this.predicateToNodesMapping.get(predicate.value) ?? [],
+      objectNodes: this.objectToNodesMapping.get(object.value) ?? [],
     });
 
     this.resultSet.add(resultQuad);

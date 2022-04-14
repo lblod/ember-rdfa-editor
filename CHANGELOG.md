@@ -9,6 +9,95 @@
 
 
 
+
+
+
+## 0.55.2 (2022-04-08)
+
+#### :bug: Bug Fix
+* [#252](https://github.com/lblod/ember-rdfa-editor/pull/252) Fix space-eating issues ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
+## 0.55.1 (2022-04-07)
+
+
+#### :bug: Bug fix
+
+* [#251](https://github.com/lblod/ember-rdfa-editor/pull/251) Fix toolbar marks using wrong command arguments ([@abeforgit](https://github.com/abeforgit))
+
+
+## 0.55.0 (2022-04-07)
+
+#### :boom: Breaking Change
+* [#250](https://github.com/lblod/ember-rdfa-editor/pull/250) Provide ranges per capture group ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#250](https://github.com/lblod/ember-rdfa-editor/pull/250) Provide ranges per capture group ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
+## 0.54.0 (2022-04-05)
+
+#### :boom: Breaking Change
+* [#246](https://github.com/lblod/ember-rdfa-editor/pull/246) Implement self-updating regex-constrained sets of marks ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#246](https://github.com/lblod/ember-rdfa-editor/pull/246) Implement self-updating regex-constrained sets of marks ([@abeforgit](https://github.com/abeforgit))
+
+#### :bug: Bug Fix
+* [#247](https://github.com/lblod/ember-rdfa-editor/pull/247) convert newlines to br elements when inserting text ([@nvdk](https://github.com/nvdk))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Niels V ([@nvdk](https://github.com/nvdk))
+
+
+## 0.53.0 (2022-04-05)
+
+#### :rocket: Enhancement
+* [#245](https://github.com/lblod/ember-rdfa-editor/pull/245) replace all special spaces when regular spaces when parsing html ([@nvdk](https://github.com/nvdk))
+
+#### :house: Internal
+* [#244](https://github.com/lblod/ember-rdfa-editor/pull/244) ran npm update ([@nvdk](https://github.com/nvdk))
+
+#### Committers: 1
+- Niels V ([@nvdk](https://github.com/nvdk))
+
+
+## 0.52.1 (2022-04-01)
+
+#### :bug: Bug Fix
+* [#243](https://github.com/lblod/ember-rdfa-editor/pull/243) Fix object node matching ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+## 0.52.0 (2022-03-30)
+
+#### :rocket: Enhancement
+* [#239](https://github.com/lblod/ember-rdfa-editor/pull/239) execute undo on VDOM ([@nvdk](https://github.com/nvdk))
+* [#236](https://github.com/lblod/ember-rdfa-editor/pull/236) Implement incremental dom writing ([@abeforgit](https://github.com/abeforgit))
+
+#### :bug: Bug Fix
+* [#237](https://github.com/lblod/ember-rdfa-editor/pull/237) Fixing unindenting ([@benjay10](https://github.com/benjay10))
+
+#### :house: Internal
+* [#242](https://github.com/lblod/ember-rdfa-editor/pull/242) dev packages spring cleaning ([@nvdk](https://github.com/nvdk))
+* [#240](https://github.com/lblod/ember-rdfa-editor/pull/240) add embroider test scenarios to ember try ([@nvdk](https://github.com/nvdk))
+* [#241](https://github.com/lblod/ember-rdfa-editor/pull/241) bump ember-cli-app-version to 5.0.0 ([@nvdk](https://github.com/nvdk))
+* [#238](https://github.com/lblod/ember-rdfa-editor/pull/238) bump ember-truth-helpers to 3.0.0 ([@nvdk](https://github.com/nvdk))
+* [#230](https://github.com/lblod/ember-rdfa-editor/pull/230) Bump tar from 2.2.1 to 2.2.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 3
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Ben ([@benjay10](https://github.com/benjay10))
+- Niels V ([@nvdk](https://github.com/nvdk))
+
 ## 0.51.0 (2022-03-11)
 
 #### :rocket: Enhancement

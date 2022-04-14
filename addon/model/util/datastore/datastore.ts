@@ -26,6 +26,12 @@ import {
   PredicateSpec,
   SubjectSpec,
 } from '@lblod/ember-rdfa-editor/model/util/datastore/term-spec';
+import {
+  matchText,
+  TextMatch,
+} from '@lblod/ember-rdfa-editor/utils/match-text';
+import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
+import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
 
 interface TermNodesResponse {
   nodes: Set<ModelNode>;
@@ -42,6 +48,8 @@ interface PredicateNodesResponse extends TermNodesResponse {
 interface ObjectNodesResponse extends TermNodesResponse {
   object: RDF.Quad_Object;
 }
+
+export type WhichTerm = 'subject' | 'predicate' | 'object';
 
 /**
  * High-level interface to query RDF-knowledge from the document.
@@ -160,6 +168,8 @@ export default interface Datastore {
    * Returns a generator of current relevant quads
    */
   asQuads(): Generator<RDF.Quad>;
+
+  searchTextIn(whichTerm: WhichTerm, regex: RegExp): TextMatch[];
 }
 
 interface DatastoreConfig {
@@ -276,12 +286,14 @@ export class EditorStore implements Datastore {
       return dataset.filter((quad) => {
         const quadNodes = this._quadToNodes.get(quadHash(quad));
         if (quadNodes) {
-          const { subjectNode, predicateNode, objectNode } = quadNodes;
-          return (
-            contextNodes.has(subjectNode) &&
-            contextNodes.has(predicateNode) &&
-            contextNodes.has(objectNode)
+          const { subjectNodes, predicateNodes, objectNodes } = quadNodes;
+          const hasSubjectNode = SetUtils.hasAny(contextNodes, ...subjectNodes);
+          const hasPredicateNode = SetUtils.hasAny(
+            contextNodes,
+            ...predicateNodes
           );
+          const hasObjectNode = SetUtils.hasAny(contextNodes, ...objectNodes);
+          return hasSubjectNode && hasPredicateNode && hasObjectNode;
         } else {
           return false;
         }
@@ -354,15 +366,39 @@ export class EditorStore implements Datastore {
   }
 
   private objectNodeGenerator(): Map<RDF.Quad_Object, ModelNode[]> {
-    const seenObjects = new Set<string>();
+    const seenSubjects = new Set<string>();
+    const seenPredicates = new Map<string, RDF.Quad_Predicate>();
+    const seenObjects = new Set<RDF.Quad_Object>();
+
     const rslt = new Map<RDF.Quad_Object, ModelNode[]>();
+
+    // collect all unique predicates and subjects in the current dataset
     for (const quad of this.dataset) {
-      if (!seenObjects.has(quad.object.value)) {
-        const nodes = this._objectToNodes.get(quad.object.value);
-        if (nodes) {
-          rslt.set(quad.object, nodes);
+      seenSubjects.add(quad.subject.value);
+      seenPredicates.set(quad.predicate.value, quad.predicate);
+      seenObjects.add(quad.object);
+    }
+    for (const object of seenObjects) {
+      const allNodes = this._objectToNodes.get(object.value);
+      if (allNodes) {
+        const nodes = [];
+
+        for (const node of allNodes) {
+          const nodeSubject = this.getSubjectForNode(node);
+          const nodePredicates = this.getPredicatesForNode(node);
+          if (
+            nodeSubject &&
+            seenSubjects.has(nodeSubject.value) &&
+            nodePredicates &&
+            MapUtils.hasAny(
+              seenPredicates,
+              ...[...nodePredicates].map((pred) => pred.value)
+            )
+          ) {
+            nodes.push(node);
+          }
         }
-        seenObjects.add(quad.object.value);
+        rslt.set(object, nodes);
       }
     }
     return rslt;
@@ -418,15 +454,9 @@ export class EditorStore implements Datastore {
   }
 
   *asObjectNodes(): Generator<ObjectNodesResponse> {
-    const seenObjects = new Set<string>();
-    for (const quad of this.dataset) {
-      if (!seenObjects.has(quad.object.value)) {
-        const nodes = this._objectToNodes.get(quad.object.value);
-        if (nodes) {
-          yield { object: quad.object, nodes: new Set<ModelNode>(nodes) };
-        }
-        seenObjects.add(quad.object.value);
-      }
+    const mapping = this.asObjectNodeMapping();
+    for (const entry of mapping) {
+      yield { object: entry.term, nodes: new Set(entry.nodes) };
     }
   }
 
@@ -440,6 +470,23 @@ export class EditorStore implements Datastore {
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
   ): Datastore {
     return this.fromDataset(action(this.dataset, this.termConverter));
+  }
+
+  searchTextIn(whichTerm: WhichTerm, regex: RegExp): TextMatch[] {
+    const results = [];
+    let mapping: TermMapping<RDF.Term>;
+    if (whichTerm === 'subject') {
+      mapping = this.asSubjectNodeMapping();
+    } else if (whichTerm === 'predicate') {
+      mapping = this.asPredicateNodeMapping();
+    } else {
+      mapping = this.asObjectNodeMapping();
+    }
+    for (const node of mapping.nodes()) {
+      const searchRange = ModelRange.fromAroundNode(node);
+      results.push(...matchText(searchRange, regex));
+    }
+    return results;
   }
 
   private fromDataset(dataset: RDF.Dataset): Datastore {
@@ -478,6 +525,16 @@ export class EditorStore implements Datastore {
       current = current.parent;
     }
     return subject;
+  }
+
+  private getPredicatesForNode(node: ModelNode) {
+    let current: ModelNode | null = node;
+    let predicates;
+    while (current && !predicates) {
+      predicates = this._nodeToPredicates.get(current);
+      current = current.parent;
+    }
+    return predicates;
   }
 
   private getPrefix = (prefix: string): string | null => {

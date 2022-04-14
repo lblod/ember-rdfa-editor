@@ -1,11 +1,13 @@
-import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
+import Operation, {
+  OperationResult,
+} from '@lblod/ember-rdfa-editor/model/operations/operation';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import RangeMapper from '@lblod/ember-rdfa-editor/model/range-mapper';
 
 export default class InsertOperation extends Operation {
   private _nodes: ModelNode[];
@@ -27,23 +29,14 @@ export default class InsertOperation extends Operation {
     this._nodes = value;
   }
 
-  execute(): ModelRange {
-    let resultRange: ModelRange;
+  execute(): OperationResult {
     let overwrittenNodes: ModelNode[];
+    let resultMapper: RangeMapper;
     let _markCheckNodes: ModelNode[] = [];
     if (!this.nodes.length) {
-      const nodeAtEnd = this.range.end.nodeAfter();
-      if (nodeAtEnd) {
-        overwrittenNodes = OperationAlgorithms.remove(this.range);
-        resultRange = ModelRange.fromInNode(nodeAtEnd, 0, 0);
-      } else {
-        // this depends on the behavior that the remove algorithm will never remove
-        // the parent of the edges of its range
-        const parent = this.range.end.parent;
-        overwrittenNodes = OperationAlgorithms.remove(this.range);
-        const pos = ModelPosition.fromAfterNode(parent);
-        resultRange = new ModelRange(pos, pos);
-      }
+      const { mapper, removedNodes } = OperationAlgorithms.remove(this.range);
+      overwrittenNodes = removedNodes;
+      resultMapper = mapper;
     } else {
       const insertionResult = OperationAlgorithms.insert(
         this.range,
@@ -51,32 +44,25 @@ export default class InsertOperation extends Operation {
       );
       overwrittenNodes = insertionResult.overwrittenNodes;
       _markCheckNodes = insertionResult._markCheckNodes;
-      if (this.range.collapsed) {
-        const last = this.nodes[this.nodes.length - 1];
-        const pos = ModelPosition.fromAfterNode(last);
-        resultRange = new ModelRange(pos, pos);
-      }
-
-      const first = this.nodes[0];
-
-      const last = this.nodes[this.nodes.length - 1];
-      const start = ModelPosition.fromBeforeNode(first);
-      const end = ModelPosition.fromAfterNode(last);
-      resultRange = new ModelRange(start, end);
+      resultMapper = insertionResult.mapper;
     }
+    const defaultRange = resultMapper.mapRange(this.range);
     this.emit(
       new ContentChangedEvent({
         owner: CORE_OWNER,
         payload: {
           type: 'insert',
           oldRange: this.range,
-          newRange: resultRange,
+          newRange: defaultRange,
           insertedNodes: this.nodes,
           overwrittenNodes,
           _markCheckNodes,
         },
       })
     );
-    return resultRange;
+    return {
+      defaultRange,
+      mapper: resultMapper,
+    };
   }
 }
