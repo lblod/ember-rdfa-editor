@@ -1,11 +1,10 @@
 import { helper } from '@ember/component/helper';
-import { insertWidgets } from "../utils/widget-map";
+import { insertWidgets } from '../utils/widget-map';
 
-export function isInsertWidget ([widget]) {
-  if(insertWidgets.indexOf(widget.componentName) > -1){
+export function isInsertWidget([widget]) {
+  if (insertWidgets.indexOf(widget.componentName) > -1) {
     return true;
-  }
-  else{
+  } else {
     return false;
   }
 }

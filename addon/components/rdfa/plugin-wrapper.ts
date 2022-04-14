@@ -5,10 +5,10 @@ import { tracked } from '@glimmer/tracking';
 interface RdfaPluginWrapperArgs {}
 
 export default class RdfaPluginWrapper extends Component<RdfaPluginWrapperArgs> {
-  @tracked expanded=false;
+  @tracked expanded = false;
 
   @action
-  toggle(){
-    this.expanded=!this.expanded
+  toggle() {
+    this.expanded = !this.expanded;
   }
 }
