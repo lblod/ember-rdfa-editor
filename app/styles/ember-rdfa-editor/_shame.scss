@@ -192,6 +192,7 @@
 }
 
 //hidden compoents
+//this is necessary because hiding components behind {{#if}} doesnt rerender them
 .hidden-component{
   visibility: hidden; 
   height: 0;
