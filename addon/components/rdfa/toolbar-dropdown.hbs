@@ -7,7 +7,7 @@
     {{on 'click' this.openDropdown}}
     title={{t 'ember-rdfa-editor.table-options'}}
   >
-  <img src='@lblod/ember-rdfa-editor/assets/editor-icons/table-more.svg' alt={{t 'ember-rdfa-editor.table-options'}} />
+    <AuIcon @icon="table" @ariaHidden={{true}} @size="large" />
     <span class='au-u-hidden-visually'>{{@dropdownButtonLabel}}</span>
   </button>
   {{#if this.dropdownOpen}}
