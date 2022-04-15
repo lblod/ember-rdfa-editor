@@ -93,6 +93,7 @@ export default class RawEditor {
   >([
     ['toolbar', []],
     ['sidebar', []],
+    ['insertSidebar', []]
   ]);
 
   /**

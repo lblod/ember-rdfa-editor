@@ -75,28 +75,25 @@
             {{/each}}
           {{/if}}
           <Rdfa::PluginWrapper @title="Insert">
-            {{#each this.sidebarWidgets as |widget|}}
-              {{#if (is-insert-widget widget)}}
-                <li class='say-editor-hints__list-item'>
-                  {{component
-                    widget.componentName
-                    controller=widget.controller
-                    plugin=widget.plugin
-                  }}
-                </li>
-              {{/if}}
-            {{/each}}
-          </Rdfa::PluginWrapper>
-          {{#each this.sidebarWidgets as |widget|}}
-            {{#if (not-insert-widget widget)}}
+            {{#each this.insertSidebarWidgets as |widget|}}
               <li class='say-editor-hints__list-item'>
+                {{widget.componentName}}
                 {{component
                   widget.componentName
                   controller=widget.controller
                   plugin=widget.plugin
                 }}
               </li>
-            {{/if}}
+            {{/each}}
+          </Rdfa::PluginWrapper>
+          {{#each this.sidebarWidgets as |widget|}}
+            <li class='say-editor-hints__list-item'>
+              {{component
+                widget.componentName
+                controller=widget.controller
+                plugin=widget.plugin
+              }}
+            </li>
           {{/each}}
         </ul>
       </div>
