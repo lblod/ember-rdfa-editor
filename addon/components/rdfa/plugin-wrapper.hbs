@@ -6,5 +6,7 @@
   @buttonLabel={{@title}}
   @loading={{this.loading}}
 >
-  {{yield}}
+  <div class={{if this.expanded "" "au-u-hidden"}}>
+    {{yield}}
+  </div>
 </AuAccordion>

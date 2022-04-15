@@ -74,18 +74,19 @@
               </li>
             {{/each}}
           {{/if}}
-          <Rdfa::PluginWrapper @title="Insert">
-            {{#each this.insertSidebarWidgets as |widget|}}
-              <li class='say-editor-hints__list-item'>
-                {{widget.componentName}}
-                {{component
-                  widget.componentName
-                  controller=widget.controller
-                  plugin=widget.plugin
-                }}
-              </li>
-            {{/each}}
-          </Rdfa::PluginWrapper>
+          {{#if this.insertSidebarWidgets.length}}
+            <Rdfa::PluginWrapper @title="Insert">
+              {{#each this.insertSidebarWidgets as |widget|}}
+                <li class='say-editor-hints__list-item'>
+                  {{component
+                    widget.componentName
+                    controller=widget.controller
+                    plugin=widget.plugin
+                  }}
+                </li>
+              {{/each}}
+            </Rdfa::PluginWrapper>
+          {{/if}}
           {{#each this.sidebarWidgets as |widget|}}
             <li class='say-editor-hints__list-item'>
               {{component
