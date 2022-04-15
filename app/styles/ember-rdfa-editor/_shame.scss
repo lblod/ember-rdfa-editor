@@ -190,3 +190,9 @@
 .form__row + .form__row {
   margin-top: $au-unit-tiny;
 }
+
+//hidden compoents
+.hidden-component{
+  visibility: hidden; 
+  height: 0;
+}
