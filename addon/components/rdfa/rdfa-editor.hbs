@@ -20,16 +20,6 @@
           @label='Toon annotaties'
         />
       {{/if}}
-      {{#if @editorOptions.showInsertButton}}
-        <AuButton
-          {{on 'click' this.triggerHints}}
-          @icon='add'
-          @iconAlignment='left'
-          @skin='link'
-        >
-          Voeg sjabloon in
-        </AuButton>
-      {{/if}}
       {{#each this.toolbarWidgets as |widget|}}
         {{component
           widget.componentName
@@ -60,21 +50,6 @@
     <div class='say-container__aside'>
       <div class='say-editor-hints'>
         <ul class='say-editor-hints__list'>
-          {{#if this.suggestedHints.length}}
-            <li class='say-editor-hints__list-item'>
-              <Rdfa::EditorSuggestedHints
-                @suggestedHints={{this.suggestedHints}}
-                @closeHints={{this.closeHints}}
-              />
-            </li>
-          {{/if}}
-          {{#if this.hasActiveHints}}
-            {{#each this.hintsRegistry.activeHints as |card|}}
-              <li class='say-editor-hints__list-item'>
-                {{component card.card info=card.info}}
-              </li>
-            {{/each}}
-          {{/if}}
           {{#each this.sidebarWidgets as |widget|}}
             <li class='say-editor-hints__list-item'>
               <div class='say-card'>
@@ -90,7 +65,6 @@
         </ul>
       </div>
       {{yield}}
-      <Rdfa::LoadMonitor @editor={{this.eventProcessor.editor}} />
     </div>
   </div>
 </div>

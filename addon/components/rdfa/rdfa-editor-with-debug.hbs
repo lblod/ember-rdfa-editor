@@ -4,9 +4,6 @@
   <div class="c-dummy__header">
     <p>
       {{yield}}
-      {{#if this.debug}}
-        <Rdfa::RdfaEditorDebugger @debug={{this.debug}} />
-      {{/if}}
       <button type="button" {{on "click" this.showExportPreview}}>Show Export Preview</button>
     </p>
     <div>
@@ -45,7 +42,6 @@
           class="rdfa-playground"
           @rdfaEditorInit={{this.rdfaEditorInitFromArg}}
           @plugins={{@plugins}}
-          @initDebug={{this.initDebug}}
           @profile="default"
           @editorOptions={{@editorOptions}}
           @toolbarOptions={{@toolbarOptions}}
