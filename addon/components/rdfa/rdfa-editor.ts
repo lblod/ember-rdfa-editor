@@ -52,7 +52,6 @@ interface RdfaEditorArgs {
  */
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @service declare intl: IntlService;
-  @tracked profile = 'default';
 
   @tracked toolbarWidgets: InternalWidgetSpec[] = [];
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
@@ -76,30 +75,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     const userLocale = navigator.language || navigator.languages[0];
     this.intl.setLocale([userLocale, 'nl-BE']);
     this.logger = createLogger(this.constructor.name);
-  }
-
-  /**
-   * This function is called when an action is fired on the editor,
-   * before the editor itself has been set up.  When this happens, we
-   * can't dispatch the action to the correct component.
-   *
-   * @method warnNotSetup
-   * @private
-   */
-  warnNotSetup() {
-    warn('An action was fired before the editor was set up', {
-      id: 'rdfa-editor.not-setup',
-    });
-  }
-
-  /**
-   * This is called in cases where an optional action is triggered
-   * from the frontend.  This noop can be called as a fallback in case no operation
-   * needs to occur if the action is not defined.
-   * @method noop
-   */
-  noop() {
-    return;
   }
 
   /**
