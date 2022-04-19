@@ -1,4 +1,14 @@
 ember-rdfa-editor:
+  undo: Undo
+  bold: Bold
+  italic: Italic
+  underline: Underline
+  strikethrough: Strikethrough
+  unordered-list: Unordered list
+  ordered-list: Ordered list
+  unindent-list: List level higher
+  indent-list: List level lower
+  table-options: Table options
   insert-table: Insert table
   add-row-below: Add row below
   add-row-above: Add row above
@@ -7,3 +17,5 @@ ember-rdfa-editor:
   delete-row: Delete row
   delete-column: Delete column
   delete-table: Delete table
+  columns: Columns
+  rows: Rows
