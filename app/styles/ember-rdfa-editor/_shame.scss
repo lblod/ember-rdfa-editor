@@ -192,7 +192,7 @@
 }
 
 // Fix ember basic dropdown z-index
-.ember-basic-dropdown-wormhole {
+#ember-basic-dropdown-wormhole {
   position: relative;
   z-index: 9999;
 }
