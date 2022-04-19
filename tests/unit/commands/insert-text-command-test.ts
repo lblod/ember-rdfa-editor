@@ -156,4 +156,33 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     }
     assert.true(rslt);
   });
+
+  test('newlines are converted to br elements', (assert) => {
+    // language=XML
+    const {
+      root: initial,
+      elements: { parent },
+    } = vdom`
+      <modelRoot>
+        <div __id="parent">
+          <text>ab</text>
+        </div>
+      </modelRoot>
+    `;
+
+    // language=XML
+    const { root: expected } = vdom`
+      <modelRoot>
+        <div>
+          <text>abc</text>
+          <br />
+          <text>de</text>
+        </div>
+      </modelRoot>
+    `;
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInElement(parent, 2, 2);
+    command.execute('c\nde', range);
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
 });

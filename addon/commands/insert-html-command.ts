@@ -24,13 +24,13 @@ export default class InsertHtmlCommand extends Command {
     const parser = new DOMParser();
     const html = parser.parseFromString(htmlString, 'text/html');
     const bodyContent = html.body.childNodes;
-    const reader = new HtmlReader(this.model, true);
+    const reader = new HtmlReader(this.model);
 
     this.model.change((mutator) => {
       // dom NodeList doesn't have a map method
       const modelNodes: ModelNode[] = [];
       bodyContent.forEach((node) => {
-        const parsed = reader.read(node);
+        const parsed = reader.read(node, true);
         if (parsed) {
           modelNodes.push(...parsed);
         }

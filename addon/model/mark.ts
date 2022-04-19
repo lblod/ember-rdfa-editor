@@ -55,6 +55,10 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
     }
     return rendered;
   }
+
+  clone(): Mark<A> {
+    return new Mark<A>(this._spec, this.attributes, this.node);
+  }
 }
 
 export const highlightMarkSpec: MarkSpec = {

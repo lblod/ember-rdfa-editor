@@ -83,9 +83,11 @@ export class GraphyDataset implements QuadDataSet {
     object?: RDF.Quad_Object,
     graph?: RDF.Quad_Graph
   ): this {
-    const matches = this.match(subject, predicate, object, graph);
-    const quads: RDF.Quad[] = [...matches];
-    this.fastDataset.deleteQuads(quads);
+    const matches = new GraphyDataset(
+      this.match(subject, predicate, object, graph)
+    );
+    this._fastDataset = this.fastDataset.difference(matches.fastDataset);
+
     return this;
   }
 
@@ -99,12 +101,7 @@ export class GraphyDataset implements QuadDataSet {
     return this.fastDataset.equals(gds.fastDataset);
   }
 
-  every(
-    iteratee: (
-      quad: RDF.Quad,
-      dataset: RDF.Dataset<RDF.Quad, RDF.Quad>
-    ) => boolean
-  ): boolean {
+  every(iteratee: (quad: RDF.Quad, dataset: this) => boolean): boolean {
     for (const quad of this) {
       if (!iteratee(quad, this)) {
         return false;
@@ -114,10 +111,7 @@ export class GraphyDataset implements QuadDataSet {
   }
 
   filter(
-    iteratee: (
-      quad: RDF.Quad,
-      dataset: RDF.Dataset<RDF.Quad, RDF.Quad>
-    ) => boolean
+    iteratee: (quad: RDF.Quad, dataset: this) => boolean
   ): RDF.Dataset<RDF.Quad, RDF.Quad> {
     const rslt = [];
     for (const quad of this) {
@@ -128,9 +122,7 @@ export class GraphyDataset implements QuadDataSet {
     return new GraphyDataset(rslt);
   }
 
-  forEach(
-    iteratee: (quad: RDF.Quad, dataset: RDF.Dataset<RDF.Quad, RDF.Quad>) => void
-  ): void {
+  forEach(iteratee: (quad: RDF.Quad, dataset: this) => void): void {
     for (const quad of this) {
       iteratee(quad, this);
     }
@@ -159,7 +151,7 @@ export class GraphyDataset implements QuadDataSet {
   }
 
   reduce<A>(
-    iteratee: (accumulator: A, quad: RDF.Quad, dataset: QuadDataSet) => A,
+    iteratee: (accumulator: A, quad: RDF.Quad, dataset: this) => A,
     initialValue?: A
   ): A {
     const firstQuad = this[Symbol.iterator]().next().value as RDF.Quad | null;
@@ -172,12 +164,7 @@ export class GraphyDataset implements QuadDataSet {
     return accumulator as A;
   }
 
-  some(
-    iteratee: (
-      quad: RDF.Quad,
-      dataset: RDF.Dataset<RDF.Quad, RDF.Quad>
-    ) => boolean
-  ): boolean {
+  some(iteratee: (quad: RDF.Quad, dataset: this) => boolean): boolean {
     for (const quad of this) {
       if (iteratee(quad, this)) {
         return true;

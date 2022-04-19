@@ -56,7 +56,7 @@ export default class Model {
 
   constructor(rootNode: HTMLElement, eventBus?: EventBus) {
     this._rootNode = rootNode;
-    this.reader = new HtmlReader(this, true);
+    this.reader = new HtmlReader(this);
     this.writer = new HtmlWriter(this);
     this.selectionReader = new SelectionReader(this);
     this.selectionWriter = new SelectionWriter(this);
@@ -88,9 +88,12 @@ export default class Model {
   /**
    * Read in the document and build up the model.
    */
-  read(readSelection = true) {
+  read(readSelection = true, shouldConvertWhitespace = false) {
     this.marksRegistry.clear();
-    const parsedNodes = this.reader.read(this.rootNode);
+    const parsedNodes = this.reader.read(
+      this.rootNode,
+      shouldConvertWhitespace
+    );
     if (parsedNodes.length !== 1) {
       throw new Error('Could not create a rich root');
     }

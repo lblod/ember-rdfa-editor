@@ -7,6 +7,12 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import RangeMapper from '@lblod/ember-rdfa-editor/model/range-mapper';
+
+export interface OperationResult {
+  mapper: RangeMapper;
+  defaultRange: ModelRange;
+}
 
 export default abstract class Operation {
   private _range: ModelRange;
@@ -42,5 +48,5 @@ export default abstract class Operation {
     return true;
   }
 
-  abstract execute(): ModelRange;
+  abstract execute(): OperationResult;
 }

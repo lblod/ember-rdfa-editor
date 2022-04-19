@@ -249,15 +249,15 @@ export default class HTMLInputParser {
 
       cleanedNode = newElement;
     } else if (isTextNode(cleanedNode)) {
-      // Remove invisible whitespace (so keeping non breaking space).
-      // \s as per JS [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff].
       if (node.textContent) {
         cleanedNode.textContent = node.textContent
-          .replace(INVISIBLE_SPACE, '')
+          // replace special spaces with regular spaces
           .replace(
-            /[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,
+            /[\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]/g,
             ' '
-          );
+          )
+          // remove invisible spaces
+          .replace(new RegExp(INVISIBLE_SPACE, 'g'), '');
       }
 
       if (cleanedNode.length === 0) {
