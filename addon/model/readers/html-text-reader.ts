@@ -16,7 +16,7 @@ export default class HtmlTextReader
 
     let trimmed = from.textContent;
     if (context.shouldConvertWhitespace) {
-      trimmed = normalToPreWrapWhiteSpace(trimmed);
+      trimmed = normalToPreWrapWhiteSpace(from);
     }
 
     if (trimmed.length == 0) {
