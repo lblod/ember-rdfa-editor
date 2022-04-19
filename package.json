@@ -34,7 +34,8 @@
     "prepare": "svg-symbols ./public/icons > ./public/say-symbolset.svg",
     "release": "release-it",
     "prepack": "ember ts:precompile",
-    "postpack": "ember ts:clean"
+    "postpack": "ember ts:clean",
+    "docs": "typedoc"
   },
   "dependencies": {
     "@ember/optional-features": "^2.0.0",

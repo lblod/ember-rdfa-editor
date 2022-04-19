@@ -7,10 +7,8 @@
 The editor can be enriched with plugins to give hints for specific content entered in the editor (e.g. dates, templates, citations, etc.). The hints will typically insert RDFa annotations in the content.</p>
 <p>Main features:</p>
 <ul>
-<li>toolbar for bold/italic/lists/indentation</li>
+<li>basic styling, lists and tables</li>
 <li>support for plugins</li>
-<li>support for plugin profiles</li>
-<li>hints registry</li>
 <li>RDFa aware</li>
 </ul>
 
@@ -103,20 +101,21 @@ The flags can be set in the config/environment.js of your application.</p>
 <a href="#adding-a-plugin-to-the-editor" id="adding-a-plugin-to-the-editor" style="color: inherit; text-decoration: none;">
   <h3>Adding a plugin to the editor</h3>
 </a>
+<p>You can easily find plugins developed for lblod by using the following <a href="https://github.com/search?q=org%3Alblod+ember-rdfa-editor+plugin+archived%3Afalse&amp;type=Repositories&amp;ref=advsearch&amp;l=&amp;l=">github search</a>.</p>
 <p>To enrich the editor functionality with rdfa-editor-plugins, execute the following steps:</p>
 <ol>
-<li>Install the rdfa-editor-plugin as an Ember addon in your host app.</li>
-<li>Add the name of the plugin to one or more editor profiles in <code>app/config/editor-profiles.js</code> in your host app</li>
+<li>Install the plugin as an Ember addon in your host app using <code>ember install [plugin-name]</code></li>
+<li>pass the required plugins by name to the editor</li>
 </ol>
-<p>The plugin will automatically be picked up by the editor.</p>
-<p>E.g. <code>app/config/editor-profiles.js</code></p>
-<pre><code class="language-javascript"><span class="hl-12">export</span><span class="hl-0"> </span><span class="hl-12">default</span><span class="hl-0"> {</span><br/><span class="hl-0">  </span><span class="hl-5">default:</span><span class="hl-0"> [</span><br/><span class="hl-0">    </span><span class="hl-11">&quot;rdfa-editor-standard-template-plugin&quot;</span><span class="hl-0">,</span><br/><span class="hl-0">    </span><span class="hl-11">&quot;rdfa-editor-date-plugin&quot;</span><br/><span class="hl-0">  ],</span><br/><span class="hl-0">  </span><span class="hl-5">all:</span><span class="hl-0"> [</span><br/><span class="hl-0">    </span><span class="hl-11">&quot;rdfa-editor-console-logger-plugin&quot;</span><span class="hl-0">,</span><br/><span class="hl-0">    </span><span class="hl-11">&quot;rdfa-editor-standard-template-plugin&quot;</span><span class="hl-0">,</span><br/><span class="hl-0">    </span><span class="hl-11">&quot;rdfa-editor-date-plugin&quot;</span><br/><span class="hl-0">  ],</span><br/><span class="hl-0">  </span><span class="hl-5">none:</span><span class="hl-0"> []</span><br/><span class="hl-0">};</span>
+<pre><code class="language-handlebars"><span class="hl-1">&lt;</span><span class="hl-2">Rdfa::RdfaEditor</span><br/><span class="hl-0">  @</span><span class="hl-3">plugins=</span><span class="hl-4">{{</span><span class="hl-5">array</span><span class="hl-0"> </span><span class="hl-6">&quot;besluit&quot;</span><span class="hl-0"> </span><span class="hl-6">&quot;standard-template&quot;</span><span class="hl-4">}}</span><br/><span class="hl-0">  @</span><span class="hl-3">rdfaEditorInit=</span><span class="hl-4">{{</span><span class="hl-5">this.rdfaEditorInit</span><span class="hl-4">}}</span><br/><span class="hl-0">  @</span><span class="hl-3">editorOptions=</span><span class="hl-4">{{</span><span class="hl-5">hash</span><span class="hl-0"> </span><br/><span class="hl-0">    </span><span class="hl-5">showToggleRdfaAnnotations</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><span class="hl-0"> </span><br/><span class="hl-0">    </span><span class="hl-5">showInsertButton</span><span class="hl-3">=</span><span class="hl-5">null</span><span class="hl-0"> </span><br/><span class="hl-0">    </span><span class="hl-5">showRdfa</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><span class="hl-0"> </span><br/><span class="hl-0">    </span><span class="hl-5">showRdfaHighlight</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><span class="hl-0"> </span><br/><span class="hl-0">    </span><span class="hl-5">showRdfaHover</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><span class="hl-0"> </span><br/><span class="hl-0">    </span><span class="hl-5">showPaper</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><span class="hl-0"> </span><br/><span class="hl-0">    </span><span class="hl-5">showSidebar</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><span class="hl-0"> </span><br/><span class="hl-0">    </span><span class="hl-5">showToolbarBottom</span><span class="hl-3">=</span><span class="hl-5">null</span><br/><span class="hl-0">  </span><span class="hl-4">}}</span><br/><span class="hl-0">  @</span><span class="hl-3">toolbarOptions=</span><span class="hl-4">{{</span><span class="hl-5">hash</span><span class="hl-0"> </span><br/><span class="hl-0">    </span><span class="hl-5">showTextStyleButtons</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><span class="hl-0"> </span><br/><span class="hl-0">    </span><span class="hl-5">showListButtons</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><span class="hl-0"> </span><br/><span class="hl-0">    </span><span class="hl-5">showIndentButtons</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-0">  </span><span class="hl-4">}}</span><br/><span class="hl-0">/</span><span class="hl-1">&gt;</span>
 </code></pre>
 
 <a href="#developing-a-plugin" id="developing-a-plugin" style="color: inherit; text-decoration: none;">
   <h3>Developing a plugin</h3>
 </a>
-<p>A plugin is an Ember addon providing a service that implements <code>execute</code> to handle changes in the editor and provides a component to display hints.</p>
+<p>A plugin is an Ember addon that provides at minimum a plugin class. An instance of this class is constructed by the editor and provided with a <a href="https://github.com/lblod/ember-rdfa-editor/blob/master/addon/model/controller.ts">controller</a> in an (optionally async) initialize method.  An example can be found in the <a href="https://github.com/lblod/ember-rdfa-editor-standard-template-plugin/blob/master/addon/standard-template-plugin.js">standard-template plugin</a>. Make sure to register this class in the ember container using an initializer, for example:</p>
+<pre><code class="language-js"><span class="hl-12">import</span><span class="hl-0"> </span><span class="hl-5">StandardTemplatePlugin</span><span class="hl-0"> </span><span class="hl-12">from</span><span class="hl-0"> </span><span class="hl-11">&#39;../standard-template-plugin&#39;</span><span class="hl-0">;</span><br/><br/><span class="hl-9">function</span><span class="hl-0"> </span><span class="hl-4">pluginFactory</span><span class="hl-0">(</span><span class="hl-5">plugin</span><span class="hl-0">) {</span><br/><span class="hl-0">  </span><span class="hl-12">return</span><span class="hl-0"> {</span><br/><span class="hl-0">    </span><span class="hl-4">create</span><span class="hl-5">:</span><span class="hl-0"> (</span><span class="hl-5">initializers</span><span class="hl-0">) </span><span class="hl-9">=&gt;</span><span class="hl-0"> {</span><br/><span class="hl-0">      </span><span class="hl-9">const</span><span class="hl-0"> </span><span class="hl-10">pluginInstance</span><span class="hl-0"> = </span><span class="hl-9">new</span><span class="hl-0"> </span><span class="hl-4">plugin</span><span class="hl-0">();</span><br/><span class="hl-0">      </span><span class="hl-8">Object</span><span class="hl-0">.</span><span class="hl-4">assign</span><span class="hl-0">(</span><span class="hl-5">pluginInstance</span><span class="hl-0">, </span><span class="hl-5">initializers</span><span class="hl-0">);</span><br/><span class="hl-0">      </span><span class="hl-12">return</span><span class="hl-0"> </span><span class="hl-5">pluginInstance</span><span class="hl-0">;</span><br/><span class="hl-0">    },</span><br/><span class="hl-0">  };</span><br/><span class="hl-0">}</span><br/><br/><span class="hl-12">export</span><span class="hl-0"> </span><span class="hl-9">function</span><span class="hl-0"> </span><span class="hl-4">initialize</span><span class="hl-0">(</span><span class="hl-5">application</span><span class="hl-0">) {</span><br/><span class="hl-0">  </span><span class="hl-5">application</span><span class="hl-0">.</span><span class="hl-4">register</span><span class="hl-0">(</span><br/><span class="hl-0">    </span><span class="hl-11">&#39;plugin:standard-template&#39;</span><span class="hl-0">,</span><br/><span class="hl-0">    </span><span class="hl-4">pluginFactory</span><span class="hl-0">(</span><span class="hl-5">StandardTemplatePlugin</span><span class="hl-0">),</span><br/><span class="hl-0">    {</span><br/><span class="hl-0">      </span><span class="hl-5">singleton:</span><span class="hl-0"> </span><span class="hl-9">false</span><span class="hl-0">,</span><br/><span class="hl-0">    }</span><br/><span class="hl-0">  );</span><br/><span class="hl-0">}</span><br/><br/><span class="hl-12">export</span><span class="hl-0"> </span><span class="hl-12">default</span><span class="hl-0"> {</span><br/><span class="hl-0">  </span><span class="hl-5">initialize</span><span class="hl-0">,</span><br/><span class="hl-0">};</span>
+</code></pre>
 <p>If you want to test the addon with a dummy app, you could use the debug component to enable debugging features (this was previously done by copying dummy code from the editor). </p>
 <p>To use the debug component create an rdfa-editor-with-debug.js file in <code>/tests/dummy/app/components</code> with the contents:</p>
 <pre><code class="language-js"><span class="hl-12">export</span><span class="hl-0"> {</span><span class="hl-12">default</span><span class="hl-0">} </span><span class="hl-12">from</span><span class="hl-0"> </span><span class="hl-11">&quot;@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor-with-debug&quot;</span><span class="hl-0">;</span>
@@ -127,54 +126,6 @@ The flags can be set in the config/environment.js of your application.</p>
 <p>The debug component can then be added with <code>&lt;RdfaEditorWithDebug&gt;</code> to your dummy app templates. It should support the same variables as the <code>&lt;Rdfa::RdfaEditor&gt;</code>. Note that the debug component does not require a namespace prefix because you just imported it directly in the dummy app with the previous steps. The block content of the debug component is yielded at the top of the component, right before the debug features. E.g.:</p>
 <pre><code class="language-handlebars"><span class="hl-1">&lt;</span><span class="hl-2">RdfaEditorWithDebug</span><br/><span class="hl-0">  @</span><span class="hl-3">rdfaEditorInit=</span><span class="hl-4">{{</span><span class="hl-5">this.rdfaEditorInit</span><span class="hl-4">}}</span><br/><span class="hl-0">  @</span><span class="hl-3">plugins=</span><span class="hl-4">{{</span><span class="hl-5">this.plugins</span><span class="hl-4">}}</span><br/><span class="hl-0">  @</span><span class="hl-3">editorOptions=</span><span class="hl-4">{{</span><span class="hl-5">hash</span><br/><span class="hl-0">    </span><span class="hl-5">showToggleRdfaAnnotations</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-0">    </span><span class="hl-5">showInsertButton</span><span class="hl-3">=</span><span class="hl-5">null</span><br/><span class="hl-0">    </span><span class="hl-5">showRdfa</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-0">    </span><span class="hl-5">showRdfaHighlight</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-0">    </span><span class="hl-5">showRdfaHover</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-0">    </span><span class="hl-5">showPaper</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-0">    </span><span class="hl-5">showSidebar</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-0">    </span><span class="hl-5">showToolbarBottom</span><span class="hl-3">=</span><span class="hl-5">null</span><br/><span class="hl-0">  </span><span class="hl-4">}}</span><br/><span class="hl-0">  @</span><span class="hl-3">toolbarOptions=</span><span class="hl-4">{{</span><span class="hl-5">hash</span><br/><span class="hl-0">    </span><span class="hl-5">showTextStyleButtons</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-0">    </span><span class="hl-5">showListButtons</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-0">    </span><span class="hl-5">showIndentButtons</span><span class="hl-3">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-0">  </span><span class="hl-4">}}</span><span class="hl-1">&gt;</span><br/><span class="hl-0">  </span><span class="hl-1">&lt;</span><span class="hl-2">h1</span><span class="hl-1">&gt;</span><span class="hl-0">Plugin title - dummy app</span><span class="hl-1">&lt;/</span><span class="hl-2">h1</span><span class="hl-1">&gt;</span><br/><span class="hl-1">&lt;/</span><span class="hl-2">RdfaEditorWithDebug</span><span class="hl-1">&gt;</span>
 </code></pre>
-
-<a href="#service-interface" id="service-interface" style="color: inherit; text-decoration: none;">
-  <h4>Service interface</h4>
-</a>
-<p>The Ember Service must provide an <code>execute</code> property that updates the hints in the hints registry based on changes in the editor. <code>execute</code> might be an async function or a <a href="http://ember-concurrency.com">Ember Concurrency</a> task accepting the following parameters:</p>
-<ul>
-<li><code>hrId</code> [string]: Unique identifier of the event in the hintsRegistry</li>
-<li><code>contexts</code> [Array]: RDFa contexts of the text snippets the event applies on</li>
-<li><code>hintsRegistry</code> [Object]: Registry of hints in the editor</li>
-<li><code>editor</code> [Object]: editor The RDFa editor instance</li>
-</ul>
-<p><strong>Execute as an async function</strong></p>
-<pre><code class="language-javascript"><span class="hl-12">export</span><span class="hl-0"> </span><span class="hl-12">default</span><span class="hl-0"> </span><span class="hl-5">Service</span><span class="hl-0">.</span><span class="hl-4">extend</span><span class="hl-0">({</span><br/><br/><span class="hl-0">  </span><span class="hl-9">async</span><span class="hl-0"> </span><span class="hl-4">execute</span><span class="hl-0">(</span><span class="hl-5">hrId</span><span class="hl-0">, </span><span class="hl-5">contexts</span><span class="hl-0">, </span><span class="hl-5">hintsRegistry</span><span class="hl-0">, </span><span class="hl-5">editor</span><span class="hl-0">) {</span><br/><span class="hl-0">    </span><span class="hl-7">// update hints in the hints registry</span><br/><span class="hl-0">  }</span><br/><br/><span class="hl-0">})</span>
-</code></pre>
-<p><strong>Execute as a task</strong></p>
-<pre><code class="language-javascript"><span class="hl-12">export</span><span class="hl-0"> </span><span class="hl-12">default</span><span class="hl-0"> </span><span class="hl-5">Service</span><span class="hl-0">.</span><span class="hl-4">extend</span><span class="hl-0">({</span><br/><span class="hl-0">  </span><span class="hl-5">execute:</span><span class="hl-0"> </span><span class="hl-4">task</span><span class="hl-0">(</span><span class="hl-9">function</span><span class="hl-0"> </span><span class="hl-9">*</span><span class="hl-0"> (</span><span class="hl-5">hrId</span><span class="hl-0">, </span><span class="hl-5">contexts</span><span class="hl-0">, </span><span class="hl-5">hintsRegistry</span><span class="hl-0">, </span><span class="hl-5">editor</span><span class="hl-0">) {</span><br/><span class="hl-0">    </span><span class="hl-7">// update hints in the hints registry</span><br/><span class="hl-0">  })</span><br/><br/><span class="hl-0">})</span>
-</code></pre>
-
-<a href="#updating-the-hints-registry" id="updating-the-hints-registry" style="color: inherit; text-decoration: none;">
-  <h4>Updating the hints registry</h4>
-</a>
-<p><code>execute</code> must update the hints of this plugin in the <a href="https://github.com/lblod/ember-rdfa-editor/blob/master/addon/utils/hints-registry.js">editor&#39;s hints registry</a>. The following methods might be of use:</p>
-<ul>
-<li><strong>addHints(hrId, who, cards)</strong><ul>
-<li><code>hrId</code> [string]: Unique identifier of the event in the hintsRegistry</li>
-<li><code>who</code> [string]: Identifier of the type of hint in the hints registry (e.g. <code>editor-plugins/date-card</code>)</li>
-<li><code>cards</code> [Array]: Array of hint objects to add to the hints registry</li>
-</ul>
-</li>
-<li><strong>removeHintsInRegion(region, hrId, who)</strong><ul>
-<li><code>region</code> [int, int]: [start, end] of the region to remove hints in</li>
-<li><code>hrId</code> [string]: Unique identifier of the event in the hintsRegistry</li>
-<li><code>who</code> [string]: Identifier of the type of hint in the hints registry (e.g. <code>editor-plugins/date-card</code>)</li>
-</ul>
-</li>
-</ul>
-
-<a href="#hint-cards" id="hint-cards" style="color: inherit; text-decoration: none;">
-  <h4>Hint cards</h4>
-</a>
-<p>Hints in the editor are displayed as cards that only apply on a specific portion of the text. A hint added to the hints registry must be an <code>EmberObject</code> with the following properties:</p>
-<ul>
-<li><code>card</code> [string]: name of the component to display the hint</li>
-<li><code>location</code> [int, int]: [start, end] index of the text in the editor the hint must be displayed on</li>
-<li><code>info</code> [Object]: custom object that will be passed in the <code>info</code> property to the card component</li>
-<li><code>options.noHighlight</code> [boolean]: Setting this to false removes the highlight by which users know a hint is given.  Use this for passive hints.</li>
-</ul>
-<p>The hints registry will render the hints with the specified component when the text the hint applies on is selected.</p>
 
 <a href="#credits" id="credits" style="color: inherit; text-decoration: none;">
   <h1>Credits</h1>
