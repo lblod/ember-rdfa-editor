@@ -3,10 +3,10 @@ import {
   BackspacePlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import {
-  Editor,
   ManipulationGuidance,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import RawEditor from '../../ce/raw-editor';
 
 /**
  *
@@ -37,7 +37,7 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
    */
   removePlaceholder = (
     manipulation: BackspaceHandlerManipulation,
-    editor: Editor
+    editor: RawEditor
   ): void => {
     const node = manipulation.node;
     const parentNode = node.parentElement;
@@ -45,8 +45,8 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
     if (parentNode) {
       const textNode = document.createTextNode(INVISIBLE_SPACE);
       parentNode.replaceWith(textNode);
-      editor.updateRichNode();
-      editor.setCaret(textNode, 0);
+      window.getSelection()?.collapse(textNode, 0);
+      editor.model.read(true);
     }
   };
 

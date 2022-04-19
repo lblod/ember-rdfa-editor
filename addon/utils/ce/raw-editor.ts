@@ -26,7 +26,6 @@ import ModelRange, {
 } from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelSelectionTracker from '@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker';
-import { walk as walkDomNode } from '@lblod/marawa/node-walker';
 import RichNode from '@lblod/marawa/rich-node';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import InsertXmlCommand from '@lblod/ember-rdfa-editor/commands/insert-xml-command';
@@ -131,14 +130,6 @@ export default class RawEditor {
     );
   }
 
-  /**
-   * @method updateRichNode
-   * @private
-   */
-  updateRichNode() {
-    this.richNode = walkDomNode(this.rootNode);
-  }
-
   initialize(rootNode: HTMLElement) {
     if (this.modelSelectionTracker) {
       this.modelSelectionTracker.stopTracking();
@@ -210,7 +201,6 @@ export default class RawEditor {
       this.model.read(true, true);
       this.model.selection.collapseIn(this.model.rootModelNode);
       this.model.write();
-      this.updateRichNode();
       this.rangeFactory = new ModelRangeFactory(this.rootModelNode);
     }
   }
@@ -260,8 +250,6 @@ export default class RawEditor {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
         const result = command.execute(...args);
-        this.updateRichNode();
-
         return result;
       }
     } catch (e) {

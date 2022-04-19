@@ -1,5 +1,5 @@
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
 import {
   isInputEvent,
@@ -22,7 +22,7 @@ export default class FallbackInputHandler extends InputHandler {
     'beforeinput',
   ];
 
-  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
+  constructor({ rawEditor }: { rawEditor: RawEditor }) {
     super(rawEditor);
   }
 
@@ -38,10 +38,7 @@ export default class FallbackInputHandler extends InputHandler {
     );
   }
 
-  handleEvent(event: Event): HandlerResponse {
-    this.rawEditor.externalDomUpdate(
-      `Uncaptured event of type ${event.type}, restoring editor state.`
-    );
+  handleEvent(_event: Event): HandlerResponse {
     this.rawEditor.model.read();
     this.rawEditor.model.saveSnapshot();
     return { allowPropagation: false, allowBrowserDefault: true };

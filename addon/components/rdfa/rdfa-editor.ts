@@ -1,4 +1,3 @@
-import { warn } from '@ember/debug';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
@@ -7,7 +6,6 @@ import RdfaDocument from '../../utils/rdfa/rdfa-document';
 import RdfaDocumentController from '../../utils/rdfa/rdfa-document';
 import type IntlService from 'ember-intl/services/intl';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import ApplicationInstance from '@ember/application/instance';
 import Controller, {
@@ -67,7 +65,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   /**
    * editor controller
    */
-  @tracked editor?: PernetRawEditor;
+  @tracked editor?: RawEditor;
 
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
@@ -87,7 +85,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  async handleRawEditorInit(editor: PernetRawEditor) {
+  async handleRawEditorInit(editor: RawEditor) {
     this.editor = editor;
     await this.initializePlugins(editor);
     this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];

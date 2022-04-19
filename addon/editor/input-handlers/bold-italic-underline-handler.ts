@@ -1,7 +1,7 @@
 import { InputHandler } from './input-handler';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
 
 /**
@@ -17,7 +17,7 @@ export default class BoldItalicUnderlineHandler extends InputHandler {
   isUnderline = false;
   isStrikethrough = false;
 
-  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
+  constructor({ rawEditor }: { rawEditor: RawEditor }) {
     super(rawEditor);
     document.addEventListener(
       'richSelectionUpdated',

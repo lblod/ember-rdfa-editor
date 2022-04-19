@@ -1,5 +1,5 @@
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
 import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
@@ -11,7 +11,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 export default abstract class CutCopyHandler extends InputHandler {
   abstract deleteSelection: boolean;
 
-  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
+  constructor({ rawEditor }: { rawEditor: RawEditor }) {
     super(rawEditor);
   }
 

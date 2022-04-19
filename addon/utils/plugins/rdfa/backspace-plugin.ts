@@ -3,7 +3,6 @@ import {
   BackspacePlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import {
-  Editor,
   ManipulationGuidance,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import NodeWalker from '@lblod/marawa/node-walker';
@@ -16,6 +15,7 @@ import {
   isElement,
   isTextNode,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import RawEditor from '../../ce/raw-editor';
 
 /**
  * Class responsible for the handling of RDFA.
@@ -235,7 +235,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    */
   executeCompleteStep = (
     manipulation: BackspaceHandlerManipulation,
-    editor: Editor
+    editor: RawEditor
   ): void => {
     const node = manipulation.node;
     const parent = node.parentElement;
@@ -249,8 +249,9 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     ) {
       parent.removeChild(node);
       parent.setAttribute('data-flagged-remove', 'complete');
-      editor.updateRichNode();
-      editor.setCaret(parent, 0); //TODO
+      window.getSelection()?.collapse(parent, 0); // TODO
+      editor.model.read(true);
+
     } else if (
       this.isManipulationSupportedFor(
         SUPPORTED_ELEMENT_MANIPULATIONS,
@@ -258,8 +259,8 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       )
     ) {
       (node as Element).setAttribute('data-flagged-remove', 'complete');
-      editor.updateRichNode();
-      editor.setCaret(node, 0);
+      window.getSelection()?.collapse(node, 0);
+      editor.model.read(true);
     }
   };
 
@@ -268,7 +269,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
    */
   executeRemoveStep = (
     manipulation: BackspaceHandlerManipulation,
-    editor: Editor
+    editor: RawEditor
   ): void => {
     let removedElement;
     let updatedSelection;
@@ -291,7 +292,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       updatedSelection = moveCaretBefore(rdfaElement);
       rdfaElement.remove();
       removedElement = rdfaElement; //TODO: is this wrong to assume so?
-      editor.updateRichNode();
+      editor.model.read();
     } else if (
       this.isManipulationSupportedFor(
         SUPPORTED_ELEMENT_MANIPULATIONS,
@@ -302,7 +303,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       updatedSelection = moveCaretBefore(rdfaElement);
       rdfaElement.remove();
       removedElement = rdfaElement as HTMLElement;
-      editor.updateRichNode();
+      editor.model.read();
     }
 
     if (!updatedSelection) {

@@ -13,8 +13,6 @@ import CutHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/cut-handl
 import CopyHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/copy-handler';
 import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
-import LumpNodeMovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/lump-node-movement-observer';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { IllegalAccessToRawEditor } from '@lblod/ember-rdfa-editor/utils/errors';
 import IgnoreModifiersHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/ignore-modifiers-handler';
@@ -25,6 +23,7 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import { RawEditorController } from '@lblod/ember-rdfa-editor/model/controller';
 
 interface FeatureService {
   isEnabled(key: string): boolean;
@@ -66,7 +65,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   copyHandler: InputHandler;
   pasteHandler: InputHandler;
 
-  _rawEditor: PernetRawEditor;
+  _rawEditor: RawEditor;
 
   /**
    * Element of the component. It is aliased to the rawEditor.rootNode.
@@ -84,7 +83,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * @property rawEditor
    * @type RawEditor
    */
-  get rawEditor(): PernetRawEditor {
+  get rawEditor(): RawEditor {
     if (!this._rawEditor) {
       throw new IllegalAccessToRawEditor();
     }
@@ -114,8 +113,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   constructor(owner: unknown, args: ContentEditableArgs) {
     super(owner, args);
-    const rawEditor = new PernetRawEditor({ baseIRI: this.baseIRI });
-    rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
+    const rawEditor = new RawEditor({ baseIRI: this.baseIRI });
 
     this._rawEditor = rawEditor;
     this.defaultHandlers = [
@@ -154,8 +152,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @action
   insertedEditorElement(element: HTMLElement) {
     this.rawEditor.rootNode = element;
-    this.rawEditor.updateRichNode();
-    this.rawEditor.setCurrentPosition(0);
     if (this.args.rawEditorInit) {
       this.args.rawEditorInit(this.rawEditor);
     }
