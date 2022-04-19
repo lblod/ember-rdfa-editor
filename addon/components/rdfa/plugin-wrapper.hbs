@@ -1,12 +1,48 @@
-<AuAccordion
-  @skin="border"
-  @reverse={{true}}
-  @iconOpen="nav-down"
-  @iconClosed="nav-right"
-  @buttonLabel={{@title}}
-  @loading={{this.loading}}
->
-  <div class={{if this.expanded "" "au-u-hidden"}}>
-    {{yield}}
+<div class="say-editor-hints__insert">
+  <div class="au-c-accordion au-c-accordion--reverse au-c-accordion--border">
+    <AuToolbar
+      @nowrap={{true}}
+      @reverse={{true}}
+      {{on 'click' this.toggle}}
+    >
+      <AuToolbarGroup>
+        <div>
+          <AuButton
+            @skin='tertiary'
+            aria-hidden='true'
+            focusable='false'
+            aria-expanded='{{if this.expanded 'true' 'false'}}'
+          >
+            {{@title}}
+          </AuButton>
+        </div>
+      </AuToolbarGroup>
+      <AuToolbarGroup>
+        {{#if this.expanded}}
+          <AuIcon
+            @icon="remove"
+            @alignment='left'
+            @size='large'
+            @ariaHidden='true'
+          />
+          <span class='au-u-hidden-visually'>
+            Open accordion
+          </span>
+        {{else}}
+          <AuIcon
+            @icon="add"
+            @alignment='left'
+            @size='large'
+            @ariaHidden='true'
+          />
+          <span class='au-u-hidden-visually'>
+            Sluit accordion
+          </span>
+        {{/if}}
+      </AuToolbarGroup>
+    </AuToolbar>
+    <div class={{if this.expanded "au-c-accordion__content" "au-u-hidden"}}>
+      {{yield}}
+    </div>
   </div>
-</AuAccordion>
+</div>

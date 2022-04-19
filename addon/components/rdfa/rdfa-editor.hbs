@@ -59,6 +59,17 @@
 
     <div class='say-container__aside'>
       <div class='say-editor-hints'>
+        {{#if this.insertSidebarWidgets.length}}
+          <Rdfa::PluginWrapper @title="Invoegen">
+            {{#each this.insertSidebarWidgets as |widget|}}
+              {{component
+                widget.componentName
+                controller=widget.controller
+                plugin=widget.plugin
+              }}
+            {{/each}}
+          </Rdfa::PluginWrapper>
+        {{/if}}
         <ul class='say-editor-hints__list'>
           {{#if this.suggestedHints.length}}
             {{#each this.suggestedHints as |hint|}}
@@ -74,19 +85,6 @@
               </li>
             {{/each}}
           {{/if}}
-          {{#if this.insertSidebarWidgets.length}}
-            <Rdfa::PluginWrapper @title="Insert">
-              {{#each this.insertSidebarWidgets as |widget|}}
-                <li class='say-editor-hints__list-item'>
-                  {{component
-                    widget.componentName
-                    controller=widget.controller
-                    plugin=widget.plugin
-                  }}
-                </li>
-              {{/each}}
-            </Rdfa::PluginWrapper>
-          {{/if}}
           {{#each this.sidebarWidgets as |widget|}}
             <li class='say-editor-hints__list-item'>
               {{component
@@ -99,7 +97,8 @@
         </ul>
       </div>
       {{yield}}
-      <Rdfa::LoadMonitor @editor={{this.eventProcessor.editor}} />
     </div>
+
+    <Rdfa::LoadMonitor @editor={{this.eventProcessor.editor}} />
   </div>
 </div>
