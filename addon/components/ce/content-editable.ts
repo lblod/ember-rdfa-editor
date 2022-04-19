@@ -17,7 +17,6 @@ import LumpNodeMovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { IllegalAccessToRawEditor } from '@lblod/ember-rdfa-editor/utils/errors';
-import { taskFor } from 'ember-concurrency-ts';
 import ArrowHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/arrow-handler';
 import IgnoreModifiersHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/ignore-modifiers-handler';
 import UndoHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler';
@@ -171,10 +170,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     this.rawEditor.rootNode = element;
     this.rawEditor.updateRichNode();
     this.rawEditor.setCurrentPosition(0);
-    // TODO: this is pretty unclear
-    // e.g. because of the debounce in generateDiffEvents rawEditorInit will be called before any diffs are calculated
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    void taskFor(this.rawEditor.generateDiffEvents).perform();
     if (this.args.rawEditorInit) {
       this.args.rawEditorInit(this.rawEditor);
     }
@@ -330,8 +325,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
           break;
         }
       }
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      void taskFor(this.rawEditor.generateDiffEvents).perform();
       return preventDefault;
     } else {
       return false;

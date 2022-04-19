@@ -207,7 +207,7 @@ export default class RawEditor {
   set rootNode(rootNode: HTMLElement) {
     if (rootNode) {
       this.initialize(rootNode);
-      this.model.read();
+      this.model.read(true, true);
       this.model.selection.collapseIn(this.model.rootModelNode);
       this.model.write();
       this.updateRichNode();

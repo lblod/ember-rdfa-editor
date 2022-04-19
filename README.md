@@ -6,10 +6,8 @@ The editor can be enriched with plugins to give hints for specific content enter
 
 Main features:
 
- * toolbar for bold/italic/lists/indentation
+ * basic styling, lists and tables
  * support for plugins
- * support for plugin profiles
- * hints registry
  * RDFa aware
 
 
@@ -190,34 +188,66 @@ See the [Contributing](CONTRIBUTING.md) guide for details.
 ## Plugins
 
 ### Adding a plugin to the editor
+You can easily find plugins developed for lblod by using the following [github search](https://github.com/search?q=org%3Alblod+ember-rdfa-editor+plugin+archived%3Afalse&type=Repositories&ref=advsearch&l=&l=).
 
 To enrich the editor functionality with rdfa-editor-plugins, execute the following steps:
 
-1.  Install the rdfa-editor-plugin as an Ember addon in your host app.
-2.  Add the name of the plugin to one or more editor profiles in `app/config/editor-profiles.js` in your host app
+1.  Install the plugin as an Ember addon in your host app using `ember install [plugin-name]`
+2.  pass the required plugins by name to the editor
 
-The plugin will automatically be picked up by the editor.
-
-E.g. `app/config/editor-profiles.js`
-
-```javascript
-export default {
-  default: [
-    "rdfa-editor-standard-template-plugin",
-    "rdfa-editor-date-plugin"
-  ],
-  all: [
-    "rdfa-editor-console-logger-plugin",
-    "rdfa-editor-standard-template-plugin",
-    "rdfa-editor-date-plugin"
-  ],
-  none: []
-};
+```handlebars
+<Rdfa::RdfaEditor
+  @plugins={{array "besluit" "standard-template"}}
+  @rdfaEditorInit={{this.rdfaEditorInit}}
+  @editorOptions={{hash 
+    showToggleRdfaAnnotations="true" 
+    showInsertButton=null 
+    showRdfa="true" 
+    showRdfaHighlight="true" 
+    showRdfaHover="true" 
+    showPaper="true" 
+    showSidebar="true" 
+    showToolbarBottom=null
+  }}
+  @toolbarOptions={{hash 
+    showTextStyleButtons="true" 
+    showListButtons="true" 
+    showIndentButtons="true"
+  }}
+/>
 ```
 
 ### Developing a plugin
 
-A plugin is an Ember addon providing a service that implements `execute` to handle changes in the editor and provides a component to display hints.
+A plugin is an Ember addon that provides at minimum a plugin class. An instance of this class is constructed by the editor and provided with a [controller](https://github.com/lblod/ember-rdfa-editor/blob/master/addon/model/controller.ts) in an (optionally async) initialize method.  An example can be found in the [standard-template plugin](https://github.com/lblod/ember-rdfa-editor-standard-template-plugin/blob/master/addon/standard-template-plugin.js). Make sure to register this class in the ember container using an initializer, for example:
+
+```js
+import StandardTemplatePlugin from '../standard-template-plugin';
+
+function pluginFactory(plugin) {
+  return {
+    create: (initializers) => {
+      const pluginInstance = new plugin();
+      Object.assign(pluginInstance, initializers);
+      return pluginInstance;
+    },
+  };
+}
+
+export function initialize(application) {
+  application.register(
+    'plugin:standard-template',
+    pluginFactory(StandardTemplatePlugin),
+    {
+      singleton: false,
+    }
+  );
+}
+
+export default {
+  initialize,
+};
+```
 
 If you want to test the addon with a dummy app, you could use the debug component to enable debugging features (this was previously done by copying dummy code from the editor). 
 
@@ -260,60 +290,6 @@ The debug component can then be added with `<RdfaEditorWithDebug>` to your dummy
   <h1>Plugin title - dummy app</h1>
 </RdfaEditorWithDebug>
 ```
-
-#### Service interface
-
-The Ember Service must provide an `execute` property that updates the hints in the hints registry based on changes in the editor. `execute` might be an async function or a [Ember Concurrency](http://ember-concurrency.com) task accepting the following parameters:
-* `hrId` [string]: Unique identifier of the event in the hintsRegistry
-* `contexts` [Array]: RDFa contexts of the text snippets the event applies on
-* `hintsRegistry` [Object]: Registry of hints in the editor
-* `editor` [Object]: editor The RDFa editor instance
-
-__Execute as an async function__
-
-```javascript
-export default Service.extend({
-
-  async execute(hrId, contexts, hintsRegistry, editor) {
-    // update hints in the hints registry
-  }
-
-})
-```
-
-__Execute as a task__
-
-```javascript
-export default Service.extend({
-  execute: task(function * (hrId, contexts, hintsRegistry, editor) {
-    // update hints in the hints registry
-  })
-
-})
-```
-
-#### Updating the hints registry
-
-`execute` must update the hints of this plugin in the [editor's hints registry](https://github.com/lblod/ember-rdfa-editor/blob/master/addon/utils/hints-registry.js). The following methods might be of use:
-- __addHints(hrId, who, cards)__
-  - `hrId` [string]: Unique identifier of the event in the hintsRegistry
-  - `who` [string]: Identifier of the type of hint in the hints registry (e.g. `editor-plugins/date-card`)
-  - `cards` [Array]: Array of hint objects to add to the hints registry
-- __removeHintsInRegion(region, hrId, who)__
-  - `region` [int, int]: [start, end] of the region to remove hints in
-  - `hrId` [string]: Unique identifier of the event in the hintsRegistry
-  - `who` [string]: Identifier of the type of hint in the hints registry (e.g. `editor-plugins/date-card`)
-
-#### Hint cards
-
-Hints in the editor are displayed as cards that only apply on a specific portion of the text. A hint added to the hints registry must be an `EmberObject` with the following properties:
-  - `card` [string]: name of the component to display the hint
-  - `location` [int, int]: [start, end] index of the text in the editor the hint must be displayed on
-  - `info` [Object]: custom object that will be passed in the `info` property to the card component
-  - `options.noHighlight` [boolean]: Setting this to false removes the highlight by which users know a hint is given.  Use this for passive hints.
-
-The hints registry will render the hints with the specified component when the text the hint applies on is selected.
-
 
 # Credits
 
