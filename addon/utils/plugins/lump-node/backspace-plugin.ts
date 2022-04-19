@@ -87,7 +87,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
 
     const offset = Array.from(parentOfLumpNode.childNodes).indexOf(lumpNode);
     lumpNode.remove();
-    window.getSelection()?.collapse(parentOfLumpNode, offset)
+    window.getSelection()?.collapse(parentOfLumpNode, offset);
     editor.model.read(true);
   };
 

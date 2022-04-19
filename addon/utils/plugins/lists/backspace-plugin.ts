@@ -280,7 +280,12 @@ export default class ListBackspacePlugin implements BackspacePlugin {
 
     if (list && ['ul', 'ol'].includes(tagName(list))) {
       if (list.parentElement) {
-        window.getSelection()?.collapse(list.parentElement, Array.from(list.parentElement.childNodes).indexOf(list));
+        window
+          .getSelection()
+          ?.collapse(
+            list.parentElement,
+            Array.from(list.parentElement.childNodes).indexOf(list)
+          );
         element.remove();
         editor.model.read(true);
       } else {
@@ -307,7 +312,12 @@ export default class ListBackspacePlugin implements BackspacePlugin {
 
     if (list && ['ul', 'ol'].includes(tagName(list))) {
       if (list.parentElement) {
-        window.getSelection()?.collapse(list.parentElement, Array.from(list.parentElement.childNodes).indexOf(list));
+        window
+          .getSelection()
+          ?.collapse(
+            list.parentElement,
+            Array.from(list.parentElement.childNodes).indexOf(list)
+          );
         element.remove();
         list.remove();
         editor.model.read(true);
@@ -364,7 +374,6 @@ function helpMergeWithPreviousLi(element: Element, editor: RawEditor): void {
     );
     window.getSelection()?.collapse(previousLi, index);
     editor.model.read(true);
-
   } else {
     console.warn("Previous sibling is not a list item, can't execute merge");
   }
@@ -404,7 +413,12 @@ function helpRemoveListItemAndListButKeepContent(
   if (list && ['ul', 'ol'].includes(tagName(list))) {
     if (list.parentElement) {
       const parentOfList = list.parentElement;
-      window.getSelection()?.collapse(list.parentElement, Array.from(parentOfList.childNodes).indexOf(list));
+      window
+        .getSelection()
+        ?.collapse(
+          list.parentElement,
+          Array.from(parentOfList.childNodes).indexOf(list)
+        );
       list.replaceWith(...element.childNodes);
       editor.model.read(true);
     } else {

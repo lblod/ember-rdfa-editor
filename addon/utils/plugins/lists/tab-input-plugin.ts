@@ -149,10 +149,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Note: Depends on list helpers from a long time ago.
    * TODO: Indent means the same as nested list, perhaps rename the action
    */
-  indentLiContent = (
-    _: TabHandlerManipulation,
-    editor: RawEditor
-  ): void => {
+  indentLiContent = (_: TabHandlerManipulation, editor: RawEditor): void => {
     editor.executeCommand('indent-list');
   };
 
@@ -161,10 +158,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Note: Depends on list helpers from a long time ago.
    * TODO: Indent means the same as merge nested list, perhaps rename the action
    */
-  unindentLiContent = (
-    _: TabHandlerManipulation,
-    editor: RawEditor
-  ): void => {
+  unindentLiContent = (_: TabHandlerManipulation, editor: RawEditor): void => {
     editor.executeCommand('unindent-list');
   };
 
@@ -244,14 +238,10 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     textNode = ensureValidTextNodeForCaret(textNode);
     window.getSelection()?.collapse(textNode, textNode.length);
     editor.model.read(true);
-
   };
 }
 
-function setCursorAtStartOfLi(
-  listItem: HTMLElement,
-  editor: RawEditor
-): void {
+function setCursorAtStartOfLi(listItem: HTMLElement, editor: RawEditor): void {
   let textNode;
   if (listItem.firstChild && isTextNode(listItem.firstChild)) {
     textNode = listItem.firstChild;
@@ -263,13 +253,9 @@ function setCursorAtStartOfLi(
   textNode = ensureValidTextNodeForCaret(textNode);
   window.getSelection()?.collapse(textNode, 0);
   editor.model.read(true);
-
 }
 
-function setCursorAtEndOfLi(
-  listItem: HTMLElement,
-  editor: RawEditor
-): void {
+function setCursorAtEndOfLi(listItem: HTMLElement, editor: RawEditor): void {
   let textNode;
   if (listItem.lastChild && isTextNode(listItem.lastChild)) {
     textNode = listItem.lastChild;

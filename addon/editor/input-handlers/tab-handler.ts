@@ -124,7 +124,6 @@ export default class TabInputHandler extends InputHandler {
       textNode = ensureValidTextNodeForCaret(textNode);
       window.getSelection()?.collapse(textNode, textNode.length);
       this.rawEditor.model.read(true);
-
     } else if (manipulation.type == 'moveCursorBeforeElement') {
       const element = manipulation.node;
 

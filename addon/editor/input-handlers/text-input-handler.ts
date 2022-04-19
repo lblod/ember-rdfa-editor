@@ -105,4 +105,3 @@ export default class TextInputHandler extends InputHandler {
     return { type: 'insertTextIntoRange', range, text: event.key };
   }
 }
-

@@ -85,10 +85,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
   }
 
-  static tabHandler(
-    manipulation: TabHandlerManipulation,
-    editor: RawEditor
-  ) {
+  static tabHandler(manipulation: TabHandlerManipulation, editor: RawEditor) {
     let table;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);

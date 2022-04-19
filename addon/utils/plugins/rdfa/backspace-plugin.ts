@@ -2,9 +2,7 @@ import {
   BackspaceHandlerManipulation,
   BackspacePlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import {
-  ManipulationGuidance,
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
+import { ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import NodeWalker from '@lblod/marawa/node-walker';
 import { isRdfaNode } from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-rich-node-helpers';
 import {
@@ -251,7 +249,6 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       parent.setAttribute('data-flagged-remove', 'complete');
       window.getSelection()?.collapse(parent, 0); // TODO
       editor.model.read(true);
-
     } else if (
       this.isManipulationSupportedFor(
         SUPPORTED_ELEMENT_MANIPULATIONS,

@@ -69,7 +69,7 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
   ) => {
     const { node } = manipulation;
     node.textContent = INVISIBLE_SPACE;
-    window.getSelection()?.collapse(node,  0);
+    window.getSelection()?.collapse(node, 0);
     moveCaret(node, 0);
     editor.model.read(true);
   };
