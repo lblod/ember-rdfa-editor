@@ -314,8 +314,8 @@ export default class ModelRange {
         {
           type: 'rangeIsInside',
           textNodeStickyness: {
-            start: 'both',
-            end: 'both',
+            start: 'left',
+            end: 'left',
           },
         },
         toFilterSkipFalse(ModelNode.isModelText)
