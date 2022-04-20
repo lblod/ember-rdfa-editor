@@ -14,6 +14,7 @@ import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walk
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { PropertyState } from '../model/util/types';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import ModelText from '../model/model-text';
 
 /**
  * Command will convert all nodes in the selection to a list, if they are not already in a list.
@@ -146,7 +147,7 @@ export default class MakeListCommand extends Command {
     }
 
     const confinedRanges = range.getMinimumConfinedRanges();
-    const result = [[]];
+    const result = [[new ModelText()]];
     let pos = 0;
 
     for (const range of confinedRanges) {
