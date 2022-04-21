@@ -52,8 +52,7 @@ export default class IndentListCommand extends Command {
     const treeWalker = ModelRangeUtils.findModelNodes(
       range,
       ModelNodeUtils.isListElement,
-      true,
-      false
+      true
     );
     const setsToIndent = new Map<ModelElement, ModelElement[]>();
 
