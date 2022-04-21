@@ -1,4 +1,7 @@
 import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { PHRASING_CONTENT } from '@lblod/ember-rdfa-editor/model/util/constants';
+
 /**
  * utility function to convert text content styled using `white-space: pre-wrap`
  * so that it will display the same using `white-space: normal`.
@@ -27,8 +30,8 @@ export function preWrapToNormalWhiteSpace(from: string): string {
  * More information on https://drafts.csswg.org/css-text/#white-space-property
  * and https://drafts.csswg.org/css-text/#line-break-transform
  */
-export function normalToPreWrapWhiteSpace(from: string): string {
-  let trimmed = from;
+export function normalToPreWrapWhiteSpace(from: Text): string {
+  let trimmed = from.textContent ? from.textContent : '';
   // step 1 replace linebreaks with spaces
   const linebreakPattern = /[\n\r]/g;
   trimmed = trimmed.replace(linebreakPattern, ' ');
@@ -40,7 +43,8 @@ export function normalToPreWrapWhiteSpace(from: string): string {
   trimmed = trimmed.replace(pattern, replacement);
 
   // step 3, remove starting spaces because they don't show
-  if (trimmed.charAt(0) == ' ') {
+  const stripFirstSpace = !shouldRenderFirstSpace(from);
+  if (stripFirstSpace && trimmed.charAt(0) == ' ') {
     trimmed = trimmed.substring(1, trimmed.length);
   }
 
@@ -49,4 +53,38 @@ export function normalToPreWrapWhiteSpace(from: string): string {
   }
 
   return trimmed;
+}
+
+function shouldRenderFirstSpace(from: Text | Element): boolean {
+  if (from.previousSibling) {
+    const sibling = from.previousSibling;
+    if (sibling.nodeType === Node.TEXT_NODE) {
+      if (sibling.textContent?.endsWith(' ')) {
+        return false;
+      } else {
+        return true;
+      }
+    } else if (sibling.nodeType === Node.ELEMENT_NODE) {
+      if (PHRASING_CONTENT.includes(tagName(sibling))) {
+        if (sibling.textContent?.endsWith(' ')) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  } else if (from.parentElement) {
+    if (PHRASING_CONTENT.includes(tagName(from.parentElement))) {
+      return shouldRenderFirstSpace(from.parentElement);
+    } else {
+      // first child of block element
+      return false;
+    }
+  } else {
+    return false;
+  }
 }

@@ -1,8 +1,3 @@
-import {
-  PernetSelection,
-  PernetSelectionBlock,
-} from '@lblod/ember-rdfa-editor/editor/pernet';
-import RichNode from '@lblod/marawa/rich-node';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 /**
@@ -450,85 +445,6 @@ export function getListTagName(
   listElement: HTMLUListElement | HTMLOListElement
 ): 'ul' | 'ol' {
   return tagName(listElement) === 'ul' ? 'ul' : 'ol';
-}
-
-/**
- * TODO: Not a dom helper!
- * We need to apply or remove a property to all portions of text based on the output
- * contained in them. We can split the important nodes in three pieces:
- *
- * - start: text nodes which contain partial content to highlight
- * - middle: rich nodes which are the highest parent of a text node that are still contained in the selected range
- * - end: trailing text nodes which contain partial content to highlight
- *
- * Detecting this range is tricky
- *
- * @method findWrappingSuitableNodes
- * @for PropertyHelpers
- * @param {PernetSelection} selection
- * @return {PernetSelectionBlock[]} array of selections
- */
-export function findWrappingSuitableNodes(
-  selection: PernetSelection
-): PernetSelectionBlock[] {
-  if (!selection.selectedHighlightRange) {
-    // TODO: Support context selections as well.
-    // This might be fairly trivial, but focussing on text selection for now.
-    throw new Error('currently only selectedHighlightRange is supported');
-  }
-
-  const nodes = [];
-  const domNodes: Node[] = [];
-  const [start, end] = selection.selectedHighlightRange;
-  for (const { richNode, range } of selection.selections) {
-    if (richNode.start < start || richNode.end > end) {
-      // This node only partially matches the selected range,
-      // so it needs to be split up later and we can't walk up the tree.
-      if (!domNodes.includes(richNode.domNode)) {
-        nodes.push({ richNode, range, split: true });
-        domNodes.push(richNode.domNode);
-      }
-    } else {
-      // Walk up the tree as longs as we fit within the range.
-      let current = richNode;
-      const isNotRootNode = function (richNode: RichNode): boolean {
-        return !!richNode.parent;
-      };
-      while (
-        current.parent &&
-        isNotRootNode(current.parent) &&
-        current.parent.start >= start &&
-        current.parent.end <= end
-      ) {
-        current = current.parent;
-      }
-
-      if (!domNodes.includes(current.domNode)) {
-        nodes.push({
-          richNode: current,
-          range: [current.start, current.end],
-          split: false,
-        });
-        domNodes.push(current.domNode);
-      }
-    }
-  }
-
-  // Remove nodes that are contained within other nodes.
-  const actualNodes: PernetSelectionBlock[] = [];
-  for (const possibleNode of nodes) {
-    const containedInAnotherPossibleNode = nodes.some(
-      (otherNode) =>
-        otherNode !== possibleNode &&
-        otherNode.richNode.domNode.contains(possibleNode.richNode.domNode)
-    );
-
-    if (!containedInAnotherPossibleNode) {
-      actualNodes.push(possibleNode);
-    }
-  }
-
-  return actualNodes;
 }
 
 /**

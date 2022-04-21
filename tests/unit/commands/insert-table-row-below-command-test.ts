@@ -3,6 +3,7 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import InsertTableRowBelowCommand from '@lblod/ember-rdfa-editor/commands/insert-table-row-below-command';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
   const ctx = new ModelTestContext();
@@ -23,12 +24,12 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
         <table>
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td __id="bottomRight"></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td __id="bottomRight"><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -41,16 +42,16 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
         <table>
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -105,8 +106,8 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
               </td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -161,8 +162,8 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
               <td></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
               <td></td>
@@ -225,8 +226,8 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
               </td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
               <td></td>

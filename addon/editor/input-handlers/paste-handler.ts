@@ -5,7 +5,6 @@ import HTMLInputParser, {
   LIMITED_SAFE_TAGS,
 } from '@lblod/ember-rdfa-editor/utils/html-input-parser';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
-import { taskFor } from 'ember-concurrency-ts';
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
 import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
 import {
@@ -76,8 +75,6 @@ export default class PasteHandler extends InputHandler {
     this.rawEditor.model.writeSelection();
 
     this.rawEditor.updateSelectionAfterComplexInput();
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    void taskFor(this.rawEditor.generateDiffEvents).perform();
 
     return { allowPropagation: false, allowBrowserDefault: false };
   }
