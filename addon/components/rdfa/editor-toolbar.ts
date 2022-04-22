@@ -130,7 +130,11 @@ export default class EditorToolbar extends Component<Args> {
         attributes
       );
     } else {
-      this.args.controller.executeCommand('remove-mark-from-selection', markName, attributes);
+      this.args.controller.executeCommand(
+        'remove-mark-from-selection',
+        markName,
+        attributes
+      );
     }
   }
 
