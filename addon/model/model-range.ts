@@ -314,7 +314,7 @@ export default class ModelRange {
         {
           type: 'rangeIsInside',
           textNodeStickyness: {
-            start: 'left',
+            start: 'both',
             end: 'left',
           },
         },

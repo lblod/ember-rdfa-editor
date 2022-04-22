@@ -157,6 +157,7 @@ export default class ModelSelection {
   selectRange(range: ModelRange, rightToLeft = false) {
     this.clearRanges();
     this.addRange(range);
+    this.activeMarks = range.getMarks();
     this._isRightToLeft = rightToLeft;
   }
 
