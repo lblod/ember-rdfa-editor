@@ -294,7 +294,6 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
       // There is a currentNode, so we can simply walk from it
       next = this.walkNode(this._currentNode, this._reverse);
     }
-
     // whatever we found is now the currentNode
     this._currentNode = next;
     if (!next) {
@@ -370,6 +369,11 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
         // unless visitParentUpwards is true
         temporary = temporary.parentNode;
         this._onLeaveNode(temporary as T);
+
+        if (node === fromNode) {
+          return null;
+        }
+
         if (this.visitParentUpwards && temporary) {
           result = this.filterNode(temporary);
           this._didDescend.add(temporary);
