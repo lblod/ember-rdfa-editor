@@ -312,16 +312,18 @@ export default class ModelRange {
     const nodes = [
       ...this.contextNodes(
         {
-          type: 'rangeIsInside',
+          type: 'rangeTouches',
           textNodeStickyness: {
             start: 'both',
             end: 'left',
           },
+          includeEndTags: false,
         },
         toFilterSkipFalse(ModelNode.isModelText)
       ),
     ] as ModelText[];
     if (nodes.length) {
+      console.log(nodes);
       let result = nodes[0].marks.clone();
       for (const node of nodes.slice(1)) {
         result = result.intersection(node.marks);
