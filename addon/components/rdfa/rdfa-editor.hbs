@@ -51,13 +51,15 @@
       <div class='say-editor-hints'>
         {{#if this.insertSidebarWidgets.length}}
           <Rdfa::PluginWrapper @title="Invoegen">
-            {{#each this.insertSidebarWidgets as |widget|}}
-              {{component
-                widget.componentName
-                controller=widget.controller
-                plugin=widget.plugin
-              }}
-            {{/each}}
+            <AuList @divider={{true}}>
+              {{#each this.insertSidebarWidgets as |widget|}}
+                {{component
+                  widget.componentName
+                  controller=widget.controller
+                  plugin=widget.plugin
+                }}
+              {{/each}}
+            </AuList>
           </Rdfa::PluginWrapper>
         {{/if}}
         <ul class='say-editor-hints__list'>
@@ -69,7 +71,7 @@
               </li>
             {{/each}}
           {{/if}}
-          
+
           {{#if this.hasActiveHints}}
             {{#each this.hintsRegistry.activeHints as |card|}}
               <li class='say-editor-hints__list-item'>
@@ -91,7 +93,5 @@
       </div>
       {{yield}}
     </div>
-
-    <Rdfa::LoadMonitor @editor={{this.eventProcessor.editor}} />
   </div>
 </div>
