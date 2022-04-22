@@ -24,7 +24,8 @@ export default class ModelRangeUtils {
   static findModelNodes(
     range: ModelRange,
     predicate: (node: ModelNode) => boolean,
-    wrapStart = true
+    wrapStart = true,
+    descend = true
   ): ModelTreeWalker<ModelNode> {
     if (wrapStart) {
       // The start of the selected range is inside an element satisfying the predicate.
@@ -58,6 +59,7 @@ export default class ModelRangeUtils {
     return new ModelTreeWalker({
       filter: toFilterSkipFalse(predicate),
       range: range,
+      descend,
     });
   }
 }
