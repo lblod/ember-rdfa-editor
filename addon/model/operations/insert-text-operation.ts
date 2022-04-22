@@ -8,13 +8,21 @@ import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
 export default class InsertTextOperation extends Operation {
   private _text: string;
+  private _marks: MarkSet;
 
-  constructor(eventbus: EventBus | undefined, range: ModelRange, text: string) {
+  constructor(
+    eventbus: EventBus | undefined,
+    range: ModelRange,
+    text: string,
+    marks: MarkSet
+  ) {
     super(eventbus, range);
     this._text = text;
+    this._marks = marks;
   }
 
   get text(): string {
@@ -25,9 +33,17 @@ export default class InsertTextOperation extends Operation {
     this._text = value;
   }
 
+  get marks(): MarkSet {
+    return this._marks;
+  }
+
+  set marks(value: MarkSet) {
+    this._marks = value;
+  }
+
   execute(): OperationResult {
     let newText = new ModelText(this.text);
-    for (const mark of this.range.getMarks()) {
+    for (const mark of this.marks) {
       newText.addMark(mark.clone());
     }
     const { mapper, overwrittenNodes, _markCheckNodes } =
