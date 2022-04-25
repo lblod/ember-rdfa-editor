@@ -369,11 +369,6 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
         // unless visitParentUpwards is true
         temporary = temporary.parentNode;
         this._onLeaveNode(temporary as T);
-
-        if (node === fromNode) {
-          return null;
-        }
-
         if (this.visitParentUpwards && temporary) {
           result = this.filterNode(temporary);
           this._didDescend.add(temporary);
@@ -394,6 +389,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
       }
       result = this.filterNode(node);
       if (result === FilterResult.FILTER_ACCEPT) {
+        if (node === fromNode) return null;
         return node as T | null;
       }
 
