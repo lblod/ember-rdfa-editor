@@ -6,6 +6,7 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import { setupTest } from 'ember-qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
 module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
   const ctx = new ModelTestContext();
@@ -631,7 +632,7 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
 
         const mut = new ImmediateModelMutator();
         const range = ModelRange.fromInElement(initial as ModelElement, 0, 0);
-        const resultRange = mut.insertText(range, 'abc');
+        const resultRange = mut.insertText(range, 'abc', new MarkSet());
         assert.true(initial.sameAs(expected), QUnit.dump.parse(initial));
         assert.true(
           resultRange.sameAs(
@@ -656,7 +657,7 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
 
         const mut = new ImmediateModelMutator();
         const range = ModelRange.fromInElement(initial as ModelElement, 0, 0);
-        const resultRange = mut.insertText(range, '');
+        const resultRange = mut.insertText(range, '', new MarkSet());
         assert.true(initial.sameAs(expected));
         assert.true(
           resultRange.sameAs(
@@ -682,7 +683,7 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
 
         const mut = new ImmediateModelMutator();
         const range = ModelRange.fromInElement(initial as ModelElement, 2, 2);
-        const resultRange = mut.insertText(range, 'cd');
+        const resultRange = mut.insertText(range, 'cd', new MarkSet());
 
         assert.true(initial.sameAs(expected));
         assert.true(

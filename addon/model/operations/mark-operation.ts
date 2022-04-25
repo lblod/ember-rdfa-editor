@@ -104,12 +104,7 @@ export default class MarkOperation extends Operation {
       this.range.start.parent.addChild(node, insertionIndex);
 
       //put the cursor inside that node
-      const cursorPath = node.getOffsetPath();
-      const newRange = ModelRange.fromPaths(
-        this.range.root,
-        cursorPath,
-        cursorPath
-      );
+      const newRange = ModelRange.fromInNode(node, 1, 1);
       this.emit(
         new ContentChangedEvent({
           owner: CORE_OWNER,

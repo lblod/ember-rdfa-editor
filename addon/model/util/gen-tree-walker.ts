@@ -164,6 +164,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
           root: startNode,
           descend,
           reverse,
+          filter,
           visitParentUpwards,
           onEnterNode,
           onLeaveNode,
