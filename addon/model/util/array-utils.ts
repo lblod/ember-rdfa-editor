@@ -46,8 +46,17 @@ export default class ArrayUtils {
     }
     return true;
   }
+  static arrayEquals(a: Array<unknown>, b: Array<unknown>): boolean {
+    return Array.isArray(a) &&
+      Array.isArray(b) &&
+      a.length === b.length &&
+      a.every((val, index) => val === b[index]);
+  }
 }
 
+/**
+ * compares two arrays, assuming elements are primitives
+ */
 export function pushOrExpand<T>(parent: T[], child: T | T[]): void {
   if (child instanceof Array) {
     parent.push(...child);

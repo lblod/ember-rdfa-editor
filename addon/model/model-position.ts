@@ -411,6 +411,13 @@ export default class ModelPosition {
     );
   }
 
+  equals(position?: ModelPosition): boolean {
+    if (!position) {
+      return false;
+    }
+    return ArrayUtils.arrayEquals(this.path, position.path);
+  }
+
   clone(modelRoot?: ModelElement): ModelPosition {
     const root = modelRoot ? modelRoot : this.root;
     return ModelPosition.fromPath(root, [...this.path]);
