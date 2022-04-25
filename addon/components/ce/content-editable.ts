@@ -23,7 +23,6 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import { RawEditorController } from '@lblod/ember-rdfa-editor/model/controller';
 
 interface FeatureService {
   isEnabled(key: string): boolean;

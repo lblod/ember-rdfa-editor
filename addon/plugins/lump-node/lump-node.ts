@@ -2,7 +2,6 @@ import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import { LUMP_NODE_PROPERTY } from '@lblod/ember-rdfa-editor/model/util/constants';
-import { action } from '@ember/object';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
@@ -17,11 +16,10 @@ export default class LumpNodePlugin implements EditorPlugin {
 
   initialize(controller: Controller): Promise<void> {
     this.controller = controller;
-    controller.onEvent('selectionChanged', this.selectionChanged);
+    controller.onEvent('selectionChanged', this.selectionChanged.bind(this));
     return Promise.resolve();
   }
 
-  @action
   selectionChanged() {
     const selection = this.controller?.selection;
     if (selection?.isCollapsed) {
