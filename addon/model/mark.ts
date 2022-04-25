@@ -20,9 +20,9 @@ export interface MarkSpec<A extends AttributeSpec = AttributeSpec> {
 export class Mark<A extends AttributeSpec = AttributeSpec> {
   private readonly _spec: MarkSpec<A>;
   private readonly _attributes: A;
-  private readonly _node: ModelText;
+  private readonly _node?: ModelText;
 
-  constructor(spec: MarkSpec<A>, attributes: A, node: ModelText) {
+  constructor(spec: MarkSpec<A>, attributes: A, node?: ModelText) {
     this._spec = spec;
     this._attributes = attributes;
     this._node = node;
@@ -36,7 +36,7 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
     return this._spec.name;
   }
 
-  get node(): ModelText {
+  get node(): ModelText | undefined {
     return this._node;
   }
 
