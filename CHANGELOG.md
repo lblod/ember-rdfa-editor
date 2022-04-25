@@ -13,6 +13,16 @@
 
 
 
+
+## 0.56.1 (2022-04-25)
+
+#### :bug: Bug Fix
+* [#259](https://github.com/lblod/ember-rdfa-editor/pull/259) Fix collapsed selections not detecting marks correctly ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.56.0 (2022-04-25)
 
 #### :boom: Breaking Change
