@@ -42,7 +42,9 @@
       </AuToolbarGroup>
     </AuToolbar>
     <div class={{if this.expanded "au-c-accordion__content" "au-u-hidden"}}>
-      {{yield}}
+      <AuList @divider={{true}}>
+        {{yield}}
+      </AuList>
     </div>
   </div>
 </div>

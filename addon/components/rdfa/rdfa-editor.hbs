@@ -51,35 +51,16 @@
       <div class='say-editor-hints'>
         {{#if this.insertSidebarWidgets.length}}
           <Rdfa::PluginWrapper @title="Invoegen">
-            <AuList @divider={{true}}>
-              {{#each this.insertSidebarWidgets as |widget|}}
-                {{component
-                  widget.componentName
-                  controller=widget.controller
-                  plugin=widget.plugin
-                }}
-              {{/each}}
-            </AuList>
+            {{#each this.insertSidebarWidgets as |widget|}}
+              {{component
+                widget.componentName
+                controller=widget.controller
+                plugin=widget.plugin
+              }}
+            {{/each}}
           </Rdfa::PluginWrapper>
         {{/if}}
         <ul class='say-editor-hints__list'>
-          
-          {{#if this.suggestedHints.length}}
-            {{#each this.suggestedHints as |hint|}}
-              <li class='say-editor-hints__list-item'>
-                {{component hint.component info=hint.info closeHints=this.closeHints}}
-              </li>
-            {{/each}}
-          {{/if}}
-
-          {{#if this.hasActiveHints}}
-            {{#each this.hintsRegistry.activeHints as |card|}}
-              <li class='say-editor-hints__list-item'>
-                {{component card.card info=card.info}}
-              </li>
-            {{/each}}
-          {{/if}}
-
           {{#each this.sidebarWidgets as |widget|}}
             <li class='say-editor-hints__list-item'>
               {{component
