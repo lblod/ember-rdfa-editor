@@ -31,13 +31,13 @@ module('Unit | utils | whitespace-collapsing | pre-wrap-to-normal ', () => {
 
 module('Unit | utils | whitespace-collapsing | normal-to-pre-wrap', () => {
   test('properly collapses spaces', function (assert) {
-    const inputText = '            my title';
+    const inputText = document.createTextNode('            my title');
     const result = normalToPreWrapWhiteSpace(inputText);
     assert.strictEqual(result, 'my title');
   });
 
   test('removes linebreaks', function (assert) {
-    const inputText = 'line one\nline two\nline 3';
+    const inputText = document.createTextNode('line one\nline two\nline 3');
     const result = normalToPreWrapWhiteSpace(inputText);
     assert.strictEqual(result, 'line one line two line 3');
   });

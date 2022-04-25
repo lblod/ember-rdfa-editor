@@ -31,6 +31,8 @@ export default class EditorToolbar extends Component<Args> {
   @tracked isInTable = false;
   @tracked canIndent = false;
   @tracked canUnindent = false;
+  @tracked tableAddRows = 2;
+  @tracked tableAddColumns = 2;
   selection: ModelSelection | null = null;
 
   constructor(parent: unknown, args: Args) {
@@ -123,16 +125,16 @@ export default class EditorToolbar extends Component<Args> {
   setMark(value: boolean, markName: string, attributes = {}) {
     if (value) {
       this.args.controller.executeCommand(
-        'add-mark-to-range',
-        this.selection?.lastRange,
+        'add-mark-to-selection',
         markName,
         attributes
       );
     } else {
-      this.args.controller.executeCommand('remove-marks-from-ranges', {
-        ranges: this.selection?.ranges,
-        markConfigs: [{ name: markName, attributes }],
-      });
+      this.args.controller.executeCommand(
+        'remove-mark-from-selection',
+        markName,
+        attributes
+      );
     }
   }
 
@@ -144,7 +146,18 @@ export default class EditorToolbar extends Component<Args> {
   // Table commands
   @action
   insertTable() {
-    this.args.controller.executeCommand('insert-table');
+    this.tableAddRows = isNaN(this.tableAddRows) ? 2 : this.tableAddRows;
+    this.tableAddColumns = isNaN(this.tableAddColumns)
+      ? 2
+      : this.tableAddColumns;
+    this.tableAddRows = this.tableAddRows < 1 ? 1 : this.tableAddRows;
+    this.tableAddColumns = this.tableAddColumns < 1 ? 1 : this.tableAddColumns;
+    this.args.controller.executeCommand(
+      'insert-table',
+      this.selection,
+      this.tableAddRows,
+      this.tableAddColumns
+    );
   }
 
   @action

@@ -162,7 +162,7 @@ export default class MarksRegistry {
     const mark = node.marks.lookupHash(markName);
     if (mark) {
       const marks = this.markStore.get(mark.attributes.setBy ?? CORE_OWNER);
-      if (marks) {
+      if (marks && mark.node) {
         marks.delete(mark.node);
       }
     }

@@ -116,6 +116,15 @@ export default class Model {
 
   readSelection(domSelection: Selection = getWindowSelection()) {
     this._selection = this.selectionReader.read(domSelection);
+    this.emitSelectionChanged();
+    const modelSelectionUpdatedEvent = new CustomEvent<ModelSelection>(
+      'richSelectionUpdated',
+      { detail: this.selection }
+    );
+    document.dispatchEvent(modelSelectionUpdatedEvent);
+  }
+
+  emitSelectionChanged() {
     if (this._eventBus) {
       this._eventBus.emit(
         new SelectionChangedEvent({
@@ -128,11 +137,6 @@ export default class Model {
         'Selection changed without EventBus present, no event will be fired'
       );
     }
-    const modelSelectionUpdatedEvent = new CustomEvent<ModelSelection>(
-      'richSelectionUpdated',
-      { detail: this.selection }
-    );
-    document.dispatchEvent(modelSelectionUpdatedEvent);
   }
 
   /**

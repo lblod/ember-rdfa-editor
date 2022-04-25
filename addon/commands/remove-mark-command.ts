@@ -12,16 +12,19 @@ export default class RemoveMarkCommand extends Command<[Mark], boolean> {
 
   execute(mark: Mark): boolean {
     const node = mark.node;
-    if (!node.hasMark(mark)) {
-      return false;
+    if (node) {
+      if (!node.hasMark(mark)) {
+        return false;
+      }
+      this.model.change((mutator) => {
+        mutator.removeMark(
+          ModelRange.fromAroundNode(node),
+          mark.spec,
+          mark.attributes
+        );
+      });
+      return true;
     }
-    this.model.change((mutator) => {
-      mutator.removeMark(
-        ModelRange.fromAroundNode(node),
-        mark.spec,
-        mark.attributes
-      );
-    });
-    return true;
+    return false;
   }
 }
