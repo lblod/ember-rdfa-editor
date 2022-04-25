@@ -7,7 +7,6 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
-
 export default class LumpNodePlugin implements EditorPlugin {
   controller?: Controller;
   lumpNodePreviouslyBeforeCursor?: ModelElement;
@@ -28,8 +27,15 @@ export default class LumpNodePlugin implements EditorPlugin {
     if (selection?.isCollapsed) {
       const lumpNode = lumpNodeBeforeCursor(selection);
       const newPosition = selection.lastRange?.start;
-      if (this.lumpNodePreviouslyBeforeCursor && ! this.lastPosition?.equals(newPosition) ) {
-        this.controller?.executeCommand('remove-property', this.lumpNodePreviouslyBeforeCursor, 'data-flagged-remove');
+      if (
+        this.lumpNodePreviouslyBeforeCursor &&
+        !this.lastPosition?.equals(newPosition)
+      ) {
+        this.controller?.executeCommand(
+          'remove-property',
+          this.lumpNodePreviouslyBeforeCursor,
+          'data-flagged-remove'
+        );
       }
       this.lumpNodePreviouslyBeforeCursor = lumpNode;
       this.lastPosition = selection.lastRange?.start;
@@ -40,9 +46,10 @@ export default class LumpNodePlugin implements EditorPlugin {
   }
 }
 
-function lumpNodeBeforeCursor(selection: ModelSelection): ModelElement | undefined {
+function lumpNodeBeforeCursor(
+  selection: ModelSelection
+): ModelElement | undefined {
   const previousSibling = selection.anchor?.nodeBefore();
-  console.log(previousSibling)
   if (previousSibling && ModelNode.isModelElement(previousSibling)) {
     const properties = previousSibling.getRdfaAttributes().properties;
     if (properties && properties.includes(LUMP_NODE_PROPERTY))
