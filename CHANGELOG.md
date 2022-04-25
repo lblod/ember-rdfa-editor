@@ -12,6 +12,25 @@
 
 
 
+
+## 0.56.0 (2022-04-25)
+
+#### :boom: Breaking Change
+* [#232](https://github.com/lblod/ember-rdfa-editor/pull/232) Breaking/remove old plugin wiring ([@nvdk](https://github.com/nvdk))
+
+#### :rocket: Enhancement
+* [#249](https://github.com/lblod/ember-rdfa-editor/pull/249) Improved table insert, and column and row insert ([@benjay10](https://github.com/benjay10))
+
+#### :bug: Bug Fix
+* [#254](https://github.com/lblod/ember-rdfa-editor/pull/254) Fixed weird cases where the unindent button appeared without being available ([@lagartoverde](https://github.com/lagartoverde))
+* [#255](https://github.com/lblod/ember-rdfa-editor/pull/255) improve whitespace collapsing ([@nvdk](https://github.com/nvdk))
+* [#253](https://github.com/lblod/ember-rdfa-editor/pull/253) More consice removing of RDFa type ([@benjay10](https://github.com/benjay10))
+
+#### Committers: 3
+- Ben ([@benjay10](https://github.com/benjay10))
+- Niels V ([@nvdk](https://github.com/nvdk))
+- Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
+
 ## 0.55.2 (2022-04-08)
 
 #### :bug: Bug Fix
