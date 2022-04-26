@@ -70,6 +70,7 @@ export interface RdfaParseResponse {
   predicateToNodesMapping: Map<string, ModelNode[]>;
 
   quadToNodesMapping: Map<string, QuadNodes>;
+  seenPrefixes: Map<string, string>;
 }
 
 export class RdfaParser {
@@ -97,6 +98,7 @@ export class RdfaParser {
 
   private rootModelNode?: ModelNode;
   private seenNodes: Map<RDF.Term, ModelNode>;
+  private globallySeenPrefixes: Map<string, string>;
 
   constructor(options: IRdfaParserOptions) {
     this.options = options;
@@ -113,6 +115,7 @@ export class RdfaParser {
     this.rdfaPatterns = {};
     this.pendingRdfaPatternCopies = {};
     this.resultSet = new GraphyDataset();
+    this.globallySeenPrefixes = new Map<string, string>();
 
     this.nodeToSubjectMapping = new Map<ModelNode, ModelQuadSubject>();
     this.subjectToNodesMapping = new Map<string, ModelNode[]>();
@@ -186,6 +189,7 @@ export class RdfaParser {
       nodeToObjectsMapping: parser.nodeToObjectsMapping,
       objectToNodesMapping: parser.objectToNodesMapping,
       quadToNodesMapping: parser.quadToNodesMapping,
+      seenPrefixes: parser.globallySeenPrefixes
     };
   }
 
@@ -386,7 +390,8 @@ export class RdfaParser {
     activeTag.prefixesCustom = Util.parsePrefixes(
       attributes,
       parentTag.prefixesCustom,
-      this.features.xmlnsPrefixMappings
+      this.features.xmlnsPrefixMappings,
+      this.globallySeenPrefixes
     );
     activeTag.prefixesAll =
       Object.keys(activeTag.prefixesCustom).length > 0

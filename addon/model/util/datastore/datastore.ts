@@ -230,6 +230,7 @@ export class EditorStore implements Datastore {
       nodeToPredicatesMapping,
       quadToNodesMapping,
     } = RdfaParser.parse(config);
+    console.log([...dataset]);
     const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
 
     return new EditorStore({
