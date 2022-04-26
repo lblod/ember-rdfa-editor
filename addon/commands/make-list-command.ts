@@ -147,7 +147,7 @@ export default class MakeListCommand extends Command {
     }
 
     const confinedRanges = range.getMinimumConfinedRanges();
-    const result = [[new ModelText()]];
+    const result: ModelNode[][] = [[]];
     let pos = 0;
 
     for (const range of confinedRanges) {
@@ -165,6 +165,9 @@ export default class MakeListCommand extends Command {
           ArrayUtils.pushOrCreate(result, pos, node);
         }
       }
+    }
+    if (result[0].length === 0) {
+      result[0].push(new ModelText());
     }
 
     return result;
