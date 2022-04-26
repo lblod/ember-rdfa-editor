@@ -189,7 +189,7 @@ export class RdfaParser {
       nodeToObjectsMapping: parser.nodeToObjectsMapping,
       objectToNodesMapping: parser.objectToNodesMapping,
       quadToNodesMapping: parser.quadToNodesMapping,
-      seenPrefixes: parser.globallySeenPrefixes
+      seenPrefixes: parser.globallySeenPrefixes,
     };
   }
 
