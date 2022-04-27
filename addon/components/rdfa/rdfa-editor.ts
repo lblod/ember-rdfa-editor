@@ -56,6 +56,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   @tracked toolbarWidgets: InternalWidgetSpec[] = [];
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
+  @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
   private owner: ApplicationInstance;
   activePlugins: EditorPlugin[] = [];
@@ -117,6 +118,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     await this.initializePlugins(editor);
     this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
     this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
+    this.insertSidebarWidgets = editor.widgetMap.get('insertSidebar') || [];
     this.toolbarController = new RawEditorController('toolbar', editor);
     const rdfaDocument = new RdfaDocumentController('host-controller', editor);
     if (this.args.rdfaEditorInit) {

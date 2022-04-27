@@ -30,8 +30,8 @@ $say-editor-sidebar-large: 30% !default;
 .say-container__aside {
   position: absolute;
   bottom: 0;
-  right: $au-unit-small + $au-unit-tiny;
-  width: 380px;
+  right: $au-unit-small;
+  max-width: 380px;
   max-height: calc(100% - 44px);
   overflow: auto;
   padding: $au-unit-small $au-unit-small + $au-unit-tiny;
@@ -53,6 +53,7 @@ $say-editor-sidebar-large: 30% !default;
 
   @include mq(medium) {
     width: $say-editor-sidebar-medium;
+    max-width: $say-editor-sidebar-medium;
 
     .say-container--paper.say-container--sidebar-right & {
       padding: $au-unit;
@@ -62,6 +63,9 @@ $say-editor-sidebar-large: 30% !default;
 
   @include mq(1280px) {
     width: calc(
+      #{$say-editor-sidebar-large} - #{$au-unit-small + $au-unit-tiny}
+    );
+    max-width: calc(
       #{$say-editor-sidebar-large} - #{$au-unit-small + $au-unit-tiny}
     );
   }
