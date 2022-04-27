@@ -483,7 +483,14 @@ export class EditorStore implements Datastore {
       mapping = this.asObjectNodeMapping();
     }
     for (const node of mapping.nodes()) {
-      const searchRange = ModelRange.fromAroundNode(node);
+      let searchRange;
+      // we test if the node is root, which will be the case when the
+      // rdfa knowledge is defined above the document root.
+      if (node.parent) {
+        searchRange = ModelRange.fromAroundNode(node);
+      } else {
+        searchRange = ModelRange.fromInNode(node);
+      }
       results.push(...matchText(searchRange, regex));
     }
     return results;
