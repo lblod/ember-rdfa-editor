@@ -6,8 +6,7 @@ import ModelNode, {
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { Cloneable } from '@lblod/ember-rdfa-editor/model/util/types';
 import {
-  LEAF_NODES,
-  NON_BLOCK_NODES,
+  LEAF_NODES, NON_BLOCK_NODES,
 } from '@lblod/ember-rdfa-editor/model/util/constants';
 import {
   IndexOutOfRangeError,
