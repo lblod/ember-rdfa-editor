@@ -16,6 +16,19 @@
 
 
 
+## 0.57.0 (2022-04-27)
+
+#### :rocket: Enhancement
+* [#262](https://github.com/lblod/ember-rdfa-editor/pull/262) feature/improved prefix handling ([@abeforgit](https://github.com/abeforgit))
+* [#257](https://github.com/lblod/ember-rdfa-editor/pull/257) Enhancement/better handlers ([@nvdk](https://github.com/nvdk))
+* [#256](https://github.com/lblod/ember-rdfa-editor/pull/256) widget redesign ([@Asergey91](https://github.com/Asergey91))
+
+#### Committers: 3
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Niels V ([@nvdk](https://github.com/nvdk))
+- Sergey Andreev ([@Asergey91](https://github.com/Asergey91))
+
+
 ## 0.57.0-0 (2022-04-27)
 
 #### :rocket: Enhancement
