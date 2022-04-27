@@ -3,9 +3,9 @@ import {
   TextInputPlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import { ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
+import RawEditor from '../../ce/raw-editor';
 
 /**
  * @class PlaceholderTextInputPlugin
@@ -27,7 +27,7 @@ export default class PlaceholderTextInputPlugin implements TextInputPlugin {
       range = ModelRangeUtils.getExtendedToPlaceholder(originalRange);
       return {
         allow: true,
-        executor: (_, rawEditor: PernetRawEditor) => {
+        executor: (_, rawEditor: RawEditor) => {
           rawEditor.executeCommand('insert-text', text, range);
         },
       };

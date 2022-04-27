@@ -1,4 +1,4 @@
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
 import HTMLInputParser, {
@@ -15,7 +15,7 @@ import {
 export default class PasteHandler extends InputHandler {
   private logger: Logger;
 
-  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
+  constructor({ rawEditor }: { rawEditor: RawEditor }) {
     super(rawEditor);
     this.logger = createLogger('PasteHandler');
   }
@@ -73,9 +73,6 @@ export default class PasteHandler extends InputHandler {
 
     this.rawEditor.model.selection.lastRange?.collapse();
     this.rawEditor.model.writeSelection();
-
-    this.rawEditor.updateSelectionAfterComplexInput();
-
     return { allowPropagation: false, allowBrowserDefault: false };
   }
 

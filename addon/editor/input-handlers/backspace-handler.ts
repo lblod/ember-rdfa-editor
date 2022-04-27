@@ -32,7 +32,6 @@ import {
   stringToVisibleText,
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
 import {
   isBeforeInputEvent,
@@ -333,7 +332,7 @@ export default class BackspaceHandler extends InputHandler {
    * @public
    * @constructor
    */
-  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
+  constructor({ rawEditor }: { rawEditor: RawEditor }) {
     super(rawEditor);
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [
@@ -387,7 +386,6 @@ export default class BackspaceHandler extends InputHandler {
     }
 
     void this.backspace().then(() => {
-      this.rawEditor.updateSelectionAfterComplexInput(); // make sure currentSelection of editor is up to date with actual cursor position
       this.rawEditor.model.read();
       this.rawEditor.model.saveSnapshot();
       this.rawEditor.eventBus.emit(
@@ -627,8 +625,8 @@ export default class BackspaceHandler extends InputHandler {
         node.textContent = `${nodeText.slice(0, position)}${nodeText.slice(
           position + 1
         )}`;
-        this.rawEditor.updateRichNode();
         moveCaret(node, position);
+        this.rawEditor.model.read(true);
         break;
       }
       case 'removeEmptyTextNode': {
@@ -645,7 +643,7 @@ export default class BackspaceHandler extends InputHandler {
         const emptyElement = manipulation.node;
         moveCaretBefore(emptyElement);
         emptyElement.remove();
-        this.rawEditor.updateRichNode();
+        this.rawEditor.model.read(true);
         break;
       }
       case 'removeOtherNode': {
@@ -660,7 +658,7 @@ export default class BackspaceHandler extends InputHandler {
           // https://developer.mozilla.org/en-US/docs/Web/API/ChildNode
           moveCaretBefore(otherNode);
           otherNode.parentElement.removeChild(otherNode);
-          this.rawEditor.updateRichNode();
+          this.rawEditor.model.read(true);
         }
         break;
       }
@@ -672,7 +670,7 @@ export default class BackspaceHandler extends InputHandler {
         const voidElement = manipulation.node;
         moveCaretBefore(voidElement);
         voidElement.remove();
-        this.rawEditor.updateRichNode();
+        this.rawEditor.model.read(true);
         break;
       }
       case 'removeElementWithChildrenThatArentVisible': {
@@ -681,7 +679,7 @@ export default class BackspaceHandler extends InputHandler {
         if (parentElement) {
           moveCaretBefore(elementWithOnlyInvisibleNodes);
           elementWithOnlyInvisibleNodes.remove();
-          this.rawEditor.updateRichNode();
+          this.rawEditor.model.read(true);
         }
         break;
       }

@@ -12,12 +12,8 @@ import {
   findLastLi,
   isTextNode,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import {
-  indentAction,
-  unindentAction,
-} from '@lblod/ember-rdfa-editor/utils/ce/list-helpers';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 
 /**
  * Current behaviour
@@ -110,7 +106,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpIntoFirstLi = (
     manipulation: TabHandlerManipulation,
-    editor: PernetRawEditor
+    editor: RawEditor
   ): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let firstLi;
@@ -131,7 +127,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpIntoLastLi = (
     manipulation: TabHandlerManipulation,
-    editor: PernetRawEditor
+    editor: RawEditor
   ): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let lastLi;
@@ -153,11 +149,8 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Note: Depends on list helpers from a long time ago.
    * TODO: Indent means the same as nested list, perhaps rename the action
    */
-  indentLiContent = (
-    _: TabHandlerManipulation,
-    editor: PernetRawEditor
-  ): void => {
-    indentAction(editor); //TODO: this is legacy, this should be revisited.
+  indentLiContent = (_: TabHandlerManipulation, editor: RawEditor): void => {
+    editor.executeCommand('indent-list');
   };
 
   /**
@@ -165,11 +158,8 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Note: Depends on list helpers from a long time ago.
    * TODO: Indent means the same as merge nested list, perhaps rename the action
    */
-  unindentLiContent = (
-    _: TabHandlerManipulation,
-    editor: PernetRawEditor
-  ): void => {
-    unindentAction(editor); //TODO: this is legacy, this should be revisited.
+  unindentLiContent = (_: TabHandlerManipulation, editor: RawEditor): void => {
+    editor.executeCommand('unindent-list');
   };
 
   /**
@@ -177,7 +167,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpToNextLi = (
     manipulation: TabHandlerManipulation,
-    editor: PernetRawEditor
+    editor: RawEditor
   ): void => {
     //Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLLIElement;
@@ -191,7 +181,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpToPreviousLi = (
     manipulation: TabHandlerManipulation,
-    editor: PernetRawEditor
+    editor: RawEditor
   ): void => {
     // Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLLIElement;
@@ -205,7 +195,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpOutOfList = (
     manipulation: TabHandlerManipulation,
-    editor: PernetRawEditor
+    editor: RawEditor
   ): void => {
     const element = manipulation.node.parentElement; // This is the list.
     if (!element) {
@@ -221,8 +211,8 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     }
 
     textNode = ensureValidTextNodeForCaret(textNode);
-    editor.updateRichNode();
-    editor.setCaret(textNode, 0);
+    window.getSelection()?.collapse(textNode, 0);
+    editor.model.read(true);
   };
 
   /**
@@ -230,7 +220,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpOutOfListToStart = (
     manipulation: TabHandlerManipulation,
-    editor: PernetRawEditor
+    editor: RawEditor
   ): void => {
     const element = manipulation.node.parentElement; // This is the list.
     if (!element) {
@@ -246,15 +236,12 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     }
 
     textNode = ensureValidTextNodeForCaret(textNode);
-    editor.updateRichNode();
-    editor.setCaret(textNode, textNode.length);
+    window.getSelection()?.collapse(textNode, textNode.length);
+    editor.model.read(true);
   };
 }
 
-function setCursorAtStartOfLi(
-  listItem: HTMLElement,
-  editor: PernetRawEditor
-): void {
+function setCursorAtStartOfLi(listItem: HTMLElement, editor: RawEditor): void {
   let textNode;
   if (listItem.firstChild && isTextNode(listItem.firstChild)) {
     textNode = listItem.firstChild;
@@ -264,14 +251,11 @@ function setCursorAtStartOfLi(
   }
 
   textNode = ensureValidTextNodeForCaret(textNode);
-  editor.updateRichNode();
-  editor.setCaret(textNode, 0);
+  window.getSelection()?.collapse(textNode, 0);
+  editor.model.read(true);
 }
 
-function setCursorAtEndOfLi(
-  listItem: HTMLElement,
-  editor: PernetRawEditor
-): void {
+function setCursorAtEndOfLi(listItem: HTMLElement, editor: RawEditor): void {
   let textNode;
   if (listItem.lastChild && isTextNode(listItem.lastChild)) {
     textNode = listItem.lastChild;
@@ -281,6 +265,6 @@ function setCursorAtEndOfLi(
   }
 
   textNode = ensureValidTextNodeForCaret(textNode);
-  editor.updateRichNode();
-  editor.setCaret(textNode, textNode.length);
+  window.getSelection()?.collapse(textNode, textNode.length);
+  editor.model.read(true);
 }

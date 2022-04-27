@@ -1,4 +1,3 @@
-import { warn } from '@ember/debug';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
@@ -7,7 +6,6 @@ import RdfaDocument from '../../utils/rdfa/rdfa-document';
 import RdfaDocumentController from '../../utils/rdfa/rdfa-document';
 import type IntlService from 'ember-intl/services/intl';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import ApplicationInstance from '@ember/application/instance';
 import Controller, {
@@ -19,6 +17,7 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
+import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
 
 interface RdfaEditorArgs {
   /**
@@ -52,7 +51,6 @@ interface RdfaEditorArgs {
  */
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @service declare intl: IntlService;
-  @tracked profile = 'default';
 
   @tracked toolbarWidgets: InternalWidgetSpec[] = [];
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
@@ -69,7 +67,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   /**
    * editor controller
    */
-  @tracked editor?: PernetRawEditor;
+  @tracked editor?: RawEditor;
 
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
@@ -77,30 +75,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     const userLocale = navigator.language || navigator.languages[0];
     this.intl.setLocale([userLocale, 'nl-BE']);
     this.logger = createLogger(this.constructor.name);
-  }
-
-  /**
-   * This function is called when an action is fired on the editor,
-   * before the editor itself has been set up.  When this happens, we
-   * can't dispatch the action to the correct component.
-   *
-   * @method warnNotSetup
-   * @private
-   */
-  warnNotSetup() {
-    warn('An action was fired before the editor was set up', {
-      id: 'rdfa-editor.not-setup',
-    });
-  }
-
-  /**
-   * This is called in cases where an optional action is triggered
-   * from the frontend.  This noop can be called as a fallback in case no operation
-   * needs to occur if the action is not defined.
-   * @method noop
-   */
-  noop() {
-    return;
   }
 
   /**
@@ -113,7 +87,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  async handleRawEditorInit(editor: PernetRawEditor) {
+  async handleRawEditorInit(editor: RawEditor) {
     this.editor = editor;
     await this.initializePlugins(editor);
     this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
@@ -135,7 +109,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   getPlugins(): EditorPlugin[] {
     const pluginNames = this.plugins;
-    const plugins = [new BasicStyles()];
+    const plugins = [new BasicStyles(), new LumpNodePlugin()];
     for (const name of pluginNames) {
       const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
       if (plugin) {

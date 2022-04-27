@@ -10,7 +10,6 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import PernetRawEditor from '../../ce/pernet-raw-editor';
 
 /**
  *
@@ -63,7 +62,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
 
   static selectFirstCell(
     manipulation: TabHandlerManipulation,
-    editor: PernetRawEditor
+    editor: RawEditor
   ) {
     const table = editor.model.viewToModel(manipulation.node) as ModelTable;
     const firstCell = table.getCell(0, 0);
@@ -75,7 +74,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
 
   static selectLastCell(
     manipulation: TabHandlerManipulation,
-    editor: PernetRawEditor
+    editor: RawEditor
   ) {
     const table = editor.model.viewToModel(manipulation.node) as ModelTable;
     const { x, y } = table.getDimensions();
@@ -86,10 +85,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
   }
 
-  static tabHandler(
-    manipulation: TabHandlerManipulation,
-    editor: PernetRawEditor
-  ) {
+  static tabHandler(manipulation: TabHandlerManipulation, editor: RawEditor) {
     let table;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);

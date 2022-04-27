@@ -20,7 +20,6 @@ import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab
 import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
 
 export type TabHandlerManipulation =
@@ -61,7 +60,7 @@ export interface TabInputPlugin extends InputPlugin {
 export default class TabInputHandler extends InputHandler {
   plugins: Array<TabInputPlugin>;
 
-  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
+  constructor({ rawEditor }: { rawEditor: RawEditor }) {
     super(rawEditor);
     this.plugins = [
       new LumpNodeTabInputPlugin(),
@@ -114,7 +113,6 @@ export default class TabInputHandler extends InputHandler {
     /************************ SHIFT TAB ************************/
     if (manipulation.type === 'moveCursorToEndOfElement') {
       const element = manipulation.node;
-
       let textNode;
       if (element.lastChild && isTextNode(element.lastChild)) {
         textNode = element.lastChild;
@@ -124,8 +122,8 @@ export default class TabInputHandler extends InputHandler {
       }
 
       textNode = ensureValidTextNodeForCaret(textNode);
-      this.rawEditor.updateRichNode();
-      this.rawEditor.setCaret(textNode, textNode.length);
+      window.getSelection()?.collapse(textNode, textNode.length);
+      this.rawEditor.model.read(true);
     } else if (manipulation.type == 'moveCursorBeforeElement') {
       const element = manipulation.node;
 
@@ -138,8 +136,8 @@ export default class TabInputHandler extends InputHandler {
       }
 
       textNode = ensureValidTextNodeForCaret(textNode);
-      this.rawEditor.updateRichNode();
-      this.rawEditor.setCaret(textNode, textNode.length);
+      window.getSelection()?.collapse(textNode, textNode.length);
+      this.rawEditor.model.read(true);
     } else if (manipulation.type === 'moveCursorBeforeEditor') {
       //TODO: this could be moved to a plugin eventually.
       console.warn(
@@ -158,8 +156,8 @@ export default class TabInputHandler extends InputHandler {
       }
 
       textNode = ensureValidTextNodeForCaret(textNode);
-      this.rawEditor.updateRichNode();
-      this.rawEditor.setCaret(textNode, 0);
+      window.getSelection()?.collapse(textNode, 0);
+      this.rawEditor.model.read(true);
     } else if (manipulation.type === 'moveCursorAfterElement') {
       const element = manipulation.node;
 
@@ -172,8 +170,8 @@ export default class TabInputHandler extends InputHandler {
       }
 
       textNode = ensureValidTextNodeForCaret(textNode);
-      this.rawEditor.updateRichNode();
-      this.rawEditor.setCaret(textNode, 0);
+      window.getSelection()?.collapse(textNode, 0);
+      this.rawEditor.model.read(true);
     } else if (manipulation.type === 'moveCursorAfterEditor') {
       //TODO: this could be moved to a plugin eventually.
       console.warn(

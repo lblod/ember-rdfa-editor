@@ -159,7 +159,7 @@ export class RawEditorController implements Controller {
     commandName: string,
     ...args: A
   ): R | void {
-    return this._rawEditor.executeCommand(commandName, ...args);
+    return this._rawEditor.executeCommand(commandName, ...args) as R | void;
   }
 
   canExecuteCommand<A extends unknown[]>(

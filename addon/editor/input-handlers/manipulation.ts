@@ -10,6 +10,7 @@
  * ourselves.  We did not find a type.
  */
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 
 export type VoidElement =
   | HTMLAreaElement
@@ -45,13 +46,8 @@ interface HTMLWbrElement extends HTMLElement {
  */
 export type ManipulationExecutor = (
   manipulation: Manipulation,
-  editor: Editor
+  editor: RawEditor
 ) => void;
-
-export interface Editor {
-  setCaret: (node: Node, position: number) => void;
-  updateRichNode: () => void;
-}
 
 /**
  * Base type for any manipulation, ensuring the type interface exists.
