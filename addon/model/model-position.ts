@@ -47,7 +47,7 @@ export default class ModelPosition {
     return ModelPosition.fromPath(node.root, node.getOffsetPath());
   }
 
-  static fromInTextNode(node: ModelText, offset: number) {
+  static fromInTextNode(node: ModelText, offset: number): ModelPosition {
     if (offset < 0 || offset > node.length) {
       throw new PositionError(
         `Offset ${offset} out of range of text node with length ${node.length}`
