@@ -24,7 +24,16 @@ export default abstract class CutCopyHandler extends InputHandler {
     const command = this.deleteSelection
       ? 'delete-selection'
       : 'read-selection';
-    const modelNodes = this.rawEditor.executeCommand(command) as ModelNode[];
+    const selectedNodes = this.rawEditor.executeCommand(command);
+    let modelNodes: ModelNode[];
+    if (selectedNodes) {
+      modelNodes = selectedNodes as ModelNode[];
+    } else {
+      console.warn(
+        'Select command did not execute properly. Defaulting to empty node array.'
+      );
+      modelNodes = [];
+    }
 
     // Filter out model nodes that are text related
     const filter = toFilterSkipFalse((node) => {

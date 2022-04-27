@@ -251,15 +251,16 @@ export default class RawEditor {
    * @param commandName
    * @param args
    */
-  executeCommand(commandName: string, ...args: unknown[]) {
+  executeCommand(commandName: string, ...args: unknown[]): unknown {
     try {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
-        const result = command.execute(...args);
-        return result;
+        return command.execute(...args);
       }
+      return undefined;
     } catch (e) {
       console.error(e);
+      return undefined;
     }
   }
 
