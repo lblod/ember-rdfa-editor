@@ -23,7 +23,7 @@ module('Unit | commands | make-list-command', (hooks) => {
     const { root: expected } = vdom`
       <modelRoot>
         <ul>
-          <li></li>
+          <li><text></text></li>
         </ul>
       </modelRoot>
     `;
@@ -49,7 +49,7 @@ module('Unit | commands | make-list-command', (hooks) => {
       <modelRoot>
         <text>${'\n'}</text>
         <ul>
-          <li></li>
+          <li><text></text></li>
         </ul>
       </modelRoot>
     `;
