@@ -114,6 +114,16 @@ export default interface Datastore {
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
   ): Datastore;
 
+  /** Transformer method.
+   * Allows specifying of custom prefixes for use in the {@link match} method
+   * and the termConverter in the {@link transformDataset} method,
+   * or overwrite the ones that were scanned from the document.
+   *
+   * Reminder: only has an effect on the convenience "concise term syntax".
+   * Has no effect on the actual rdfa parsing.
+   */
+  withExtraPrefixes(prefixes: Record<string, string>): this;
+
   /**
    * Consumer method.
    * Returns a {@link TermMapping} of the currently valid subjects and the nodes that define them.
@@ -229,8 +239,12 @@ export class EditorStore implements Datastore {
       predicateToNodesMapping,
       nodeToPredicatesMapping,
       quadToNodesMapping,
+      seenPrefixes,
     } = RdfaParser.parse(config);
     const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
+    for (const [key, value] of seenPrefixes.entries()) {
+      prefixMap.set(key, value);
+    }
 
     return new EditorStore({
       dataset,
@@ -299,6 +313,13 @@ export class EditorStore implements Datastore {
         }
       });
     });
+  }
+
+  withExtraPrefixes(prefixes: Record<string, string>): this {
+    for (const [key, value] of Object.entries(prefixes)) {
+      this._prefixMapping.set(key, value);
+    }
+    return this;
   }
 
   asSubjectNodeMapping(): TermMapping<RDF.Quad_Subject> {

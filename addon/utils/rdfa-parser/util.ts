@@ -111,12 +111,14 @@ export class Util {
    * @param {{[p: string]: string}} attributes A tag's attributes.
    * @param {{[p: string]: string}} parentPrefixes The prefixes from the parent tag.
    * @param {boolean} xmlnsPrefixMappings If prefixes should be extracted from xmlnsPrefixMappings.
+   * @param globallySeenPrefixes Optionally keep track of all encountered prefixes
    * @return {{[p: string]: string}} The new prefixes.
    */
   public static parsePrefixes(
     attributes: { [s: string]: string },
     parentPrefixes: { [prefix: string]: string },
-    xmlnsPrefixMappings = false
+    xmlnsPrefixMappings = false,
+    globallySeenPrefixes?: Map<string, string>
   ): { [prefix: string]: string } {
     const additionalPrefixes: { [prefix: string]: string } = {};
     if (xmlnsPrefixMappings) {
@@ -137,6 +139,17 @@ export class Util {
         let prefixMatch = Util.PREFIX_REGEX.exec(attributes.prefix);
         while (prefixMatch) {
           prefixes[prefixMatch[1]] = prefixMatch[2];
+          if (globallySeenPrefixes) {
+            const key = prefixMatch[1];
+            const uri = prefixMatch[2];
+            const previousUri = globallySeenPrefixes.get(key);
+            if (previousUri && uri !== previousUri) {
+              console.warn(`Prefix ${key} is defined multiple times with a different uri.
+              Previous uri was ${previousUri}, now found ${uri}.
+              Will use latest value in concise-term-mapping logic`);
+            }
+            globallySeenPrefixes.set(key, uri);
+          }
           prefixMatch = Util.PREFIX_REGEX.exec(attributes.prefix);
         }
       }
