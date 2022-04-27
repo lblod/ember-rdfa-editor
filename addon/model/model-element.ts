@@ -5,7 +5,7 @@ import ModelNode, {
 } from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { Cloneable } from '@lblod/ember-rdfa-editor/model/util/types';
-import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/model/util/constants';
+import {LEAF_NODES, NON_BLOCK_NODES} from '@lblod/ember-rdfa-editor/model/util/constants';
 import {
   IndexOutOfRangeError,
   ModelError,
@@ -85,6 +85,9 @@ export default class ModelElement
 
   get isBlock() {
     return !NON_BLOCK_NODES.has(this.type);
+  }
+  get isLeaf() {
+    return LEAF_NODES.has(this.type);
   }
 
   /**

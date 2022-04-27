@@ -122,6 +122,8 @@ export default abstract class ModelNode implements Walkable {
 
   abstract get isBlock(): boolean;
 
+  abstract get isLeaf(): boolean;
+
   /**
    * Represents how much "space" this node takes up in it's parent
    * Elements take up 1 offset, textnodes take up as many offsets as they
@@ -385,6 +387,7 @@ export default abstract class ModelNode implements Walkable {
   abstract get firstChild(): ModelNode | null;
 
   abstract get lastChild(): ModelNode | null;
+
 
   get parentNode(): ModelElement | null {
     return this.parent;

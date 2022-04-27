@@ -418,4 +418,61 @@ module('Unit | model | model-position', () => {
       assert.true(result.sameAs(expected));
     });
   });
+  module('Unit | model | model-position | shiftedVisually', () => {
+    test('shifts by amount - in text node', (assert) => {
+      const {
+        textNodes: { text },
+      } = vdom`
+        <modelRoot>
+          <text __id="text">abc</text>
+        </modelRoot>
+      `;
+      const referencePos = ModelPosition.fromInTextNode(text, 1);
+      const oneLeft = ModelPosition.fromInTextNode(text, 0);
+      const oneRight = ModelPosition.fromInTextNode(text, 2);
+      assert.true(oneLeft.sameAs(referencePos.shiftedVisually(-1)));
+      assert.true(oneRight.sameAs(referencePos.shiftedVisually(1)));
+    });
+    test('shifts by amount - at doc boundaries', (assert) => {
+      const {
+        textNodes: { text },
+      } = vdom`
+        <modelRoot>
+          <text __id="text">a</text>
+        </modelRoot>
+      `;
+      const referencePosLeft = ModelPosition.fromInTextNode(text, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(text, 1);
+      assert.true(
+        referencePosLeft.sameAs(referencePosLeft.shiftedVisually(-1))
+      );
+      assert.true(
+        referencePosRight.sameAs(referencePosRight.shiftedVisually(1))
+      );
+    });
+    test('shifts by amount - descends into inline element', (assert) => {
+      const {
+        textNodes: { text, textLeft, textRight },
+      } = vdom`
+        <modelRoot>
+          <span>
+            <text __id="textLeft">ab</text>
+          </span>
+          <text __id="text">c</text>
+          <span>
+            <text __id="textRight">d</text>
+          </span>
+        </modelRoot>
+      `;
+      const referencePosLeft = ModelPosition.fromInTextNode(text, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(text, 1);
+      const oneLeft = ModelPosition.fromInTextNode(textLeft, 1);
+      const oneRight = ModelPosition.fromInTextNode(textRight, 1);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
+  });
 });
