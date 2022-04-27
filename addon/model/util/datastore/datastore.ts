@@ -241,7 +241,6 @@ export class EditorStore implements Datastore {
       quadToNodesMapping,
       seenPrefixes,
     } = RdfaParser.parse(config);
-    console.log([...dataset]);
     const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
     for (const [key, value] of seenPrefixes.entries()) {
       prefixMap.set(key, value);
