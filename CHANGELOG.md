@@ -14,6 +14,19 @@
 
 
 
+
+## 0.56.2 (2022-04-27)
+
+#### :bug: Bug Fix
+* [#260](https://github.com/lblod/ember-rdfa-editor/pull/260) Fixed bug with making list at the end of the document ([@lagartoverde](https://github.com/lagartoverde))
+* [#258](https://github.com/lblod/ember-rdfa-editor/pull/258) Fix bug that selection was wrong when creating en empty list ([@lagartoverde](https://github.com/lagartoverde))
+* [#261](https://github.com/lblod/ember-rdfa-editor/pull/261) Fix textsearch on quads defined outside the root element ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
+
+
 ## 0.56.1 (2022-04-25)
 
 #### :bug: Bug Fix
