@@ -10,11 +10,11 @@ import ModelTreeWalker, {
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RawEditor from '../../ce/raw-editor';
 
 function updateDataFlaggedRemove(
   manipulation: TextHandlerManipulation,
-  editor: PernetRawEditor
+  editor: RawEditor
 ) {
   const { range } = manipulation;
   const parent = range.start.parent;

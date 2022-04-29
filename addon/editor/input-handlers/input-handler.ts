@@ -4,7 +4,7 @@ import {
   ManipulationGuidance,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { editorDebug } from '@lblod/ember-rdfa-editor/editor/utils';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { HandlerResponse } from './handler-response';
 
 export interface InputPlugin {
@@ -20,15 +20,15 @@ export interface InputPlugin {
    */
   guidanceForManipulation: (
     manipulation: Manipulation,
-    editor: PernetRawEditor
+    editor: RawEditor
   ) => ManipulationGuidance | null;
 }
 
 export abstract class InputHandler {
   plugins: InputPlugin[];
-  protected rawEditor: PernetRawEditor;
+  protected rawEditor: RawEditor;
 
-  protected constructor(rawEditor: PernetRawEditor) {
+  protected constructor(rawEditor: RawEditor) {
     this.rawEditor = rawEditor;
     this.plugins = [];
   }

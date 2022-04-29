@@ -3,12 +3,12 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 
 interface Args {
-  editor: PernetRawEditor;
+  editor: RawEditor;
   showTextStyleButtons: boolean;
   showListButtons: boolean;
   showIndentButtons: boolean;

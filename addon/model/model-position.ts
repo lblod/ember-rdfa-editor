@@ -7,6 +7,7 @@ import {
 import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
 import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import arrayEquals from '../utils/array-equals';
 
 /**
  * Represents a single position in the model. In contrast to the dom,
@@ -409,6 +410,13 @@ export default class ModelPosition {
       ModelNode.isModelText(this.nodeAfter()) &&
       ModelNode.isModelText(this.nodeBefore())
     );
+  }
+
+  equals(position?: ModelPosition): boolean {
+    if (!position) {
+      return false;
+    }
+    return arrayEquals(this.path, position.path);
   }
 
   clone(modelRoot?: ModelElement): ModelPosition {

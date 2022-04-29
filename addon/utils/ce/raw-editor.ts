@@ -26,7 +26,6 @@ import ModelRange, {
 } from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelSelectionTracker from '@lblod/ember-rdfa-editor/utils/ce/model-selection-tracker';
-import { walk as walkDomNode } from '@lblod/marawa/node-walker';
 import RichNode from '@lblod/marawa/rich-node';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import InsertXmlCommand from '@lblod/ember-rdfa-editor/commands/insert-xml-command';
@@ -65,6 +64,7 @@ import RemoveMarksFromRangesCommand from '@lblod/ember-rdfa-editor/commands/remo
 import RemoveMarkCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-command';
 import MatchTextCommand from '@lblod/ember-rdfa-editor/commands/match-text-command';
 import RemoveMarkFromRangeCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-range-command';
+import RemovePropertyCommand from '@lblod/ember-rdfa-editor/commands/node-properties/remove-property-command';
 import AddMarkToSelectionCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to-selection-command';
 import RemoveMarkFromSelectionCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-selection-command';
 
@@ -95,6 +95,7 @@ export default class RawEditor {
   >([
     ['toolbar', []],
     ['sidebar', []],
+    ['insertSidebar', []],
   ]);
 
   /**
@@ -131,14 +132,6 @@ export default class RawEditor {
       },
       { priority: 'highest' }
     );
-  }
-
-  /**
-   * @method updateRichNode
-   * @private
-   */
-  updateRichNode() {
-    this.richNode = walkDomNode(this.rootNode);
   }
 
   initialize(rootNode: HTMLElement) {
@@ -190,6 +183,7 @@ export default class RawEditor {
     this.registerCommand(new AddTypeCommand(this.model));
     this.registerCommand(new RemoveTypeCommand(this.model));
     this.registerCommand(new SetPropertyCommand(this.model));
+    this.registerCommand(new RemovePropertyCommand(this.model));
     this.registerCommand(new AddMarkToRangeCommand(this.model));
     this.registerCommand(new RemoveMarkFromRangeCommand(this.model));
     this.registerCommand(new RemoveMarksFromRangesCommand(this.model));
@@ -214,7 +208,6 @@ export default class RawEditor {
       this.model.read(true, true);
       this.model.selection.collapseIn(this.model.rootModelNode);
       this.model.write();
-      this.updateRichNode();
       this.rangeFactory = new ModelRangeFactory(this.rootModelNode);
     }
   }
@@ -259,17 +252,16 @@ export default class RawEditor {
    * @param commandName
    * @param args
    */
-  executeCommand(commandName: string, ...args: unknown[]) {
+  executeCommand(commandName: string, ...args: unknown[]): unknown {
     try {
       const command = this.getCommand(commandName);
       if (command.canExecute(...args)) {
-        const result = command.execute(...args);
-        this.updateRichNode();
-
-        return result;
+        return command.execute(...args);
       }
+      return undefined;
     } catch (e) {
       console.error(e);
+      return undefined;
     }
   }
 
