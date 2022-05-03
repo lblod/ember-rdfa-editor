@@ -98,7 +98,7 @@ module('Unit | commands | make-list-command', (hooks) => {
       ctx.model.rootModelNode.getMaxOffset()
     );
     ctx.model.selectRange(range);
-
+    console.log(ctx.model.rootModelNode)
     command.execute('ul');
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });

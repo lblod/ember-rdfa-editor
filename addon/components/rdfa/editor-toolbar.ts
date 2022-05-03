@@ -146,7 +146,8 @@ export default class EditorToolbar extends Component<Args> {
   // Table commands
   @action
   insertTable() {
-    this.tableAddRows = isNaN(this.tableAddRows) ? 2 : this.tableAddRows;
+    this.args.controller.executeCommand('validate', this.args.controller);
+    /*this.tableAddRows = isNaN(this.tableAddRows) ? 2 : this.tableAddRows;
     this.tableAddColumns = isNaN(this.tableAddColumns)
       ? 2
       : this.tableAddColumns;
@@ -157,7 +158,7 @@ export default class EditorToolbar extends Component<Args> {
       this.selection,
       this.tableAddRows,
       this.tableAddColumns
-    );
+    );*/
   }
 
   @action

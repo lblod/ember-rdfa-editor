@@ -67,6 +67,7 @@ import RemoveMarkFromRangeCommand from '@lblod/ember-rdfa-editor/commands/remove
 import RemovePropertyCommand from '@lblod/ember-rdfa-editor/commands/node-properties/remove-property-command';
 import AddMarkToSelectionCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to-selection-command';
 import RemoveMarkFromSelectionCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-selection-command';
+import ValidateCommand from '@lblod/ember-rdfa-editor/commands/validate-command';
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -191,6 +192,7 @@ export default class RawEditor {
     this.registerCommand(new MatchTextCommand(this.model));
     this.registerCommand(new AddMarkToSelectionCommand(this.model));
     this.registerCommand(new RemoveMarkFromSelectionCommand(this.model));
+    this.registerCommand(new ValidateCommand(this.model));
     this.registerMark(highlightMarkSpec);
   }
 
