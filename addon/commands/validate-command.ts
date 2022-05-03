@@ -5,8 +5,10 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import Controller from '../model/controller';
 import { DataFactory } from 'rdf-data-factory';
 import dataset, { FastDataset } from '@graphy/memory.dataset.fast';
-import rdflib from "rdflib";
+import rdflib from 'rdflib';
 import SHACLValidator from 'rdf-validate-shacl';
+
+// Refer to info on https://binnenland.atlassian.net/browse/GN-3245
 
 const file = `@prefix sh:      <http://www.w3.org/ns/shacl#> .
     @prefix qb:      <http://purl.org/linked-data/cube#> .
@@ -139,27 +141,29 @@ export default class ValidateCommand extends Command {
     return true;
   }
 
-  async loadDataset (filePath) {
-    console.log('parsing')
-    var uri = 'https://example.org/resource.ttl'
-    var mimeType = 'text/turtle'
-    var store = rdflib.graph()
-    rdflib.parse(file, store, uri, mimeType)
+  async loadDataset() {
+    console.log('parsing');
+    const uri = 'https://example.org/resource.ttl';
+    const mimeType = 'text/turtle';
+    const store = rdflib.graph();
+    rdflib.parse(file, store, uri, mimeType);
     return store.statements;
   }
 
   @logExecute
-  async execute(controller: Controller, range: ModelRange | null = this.model.selection.lastRange): void {
-
+  async execute(
+    controller: Controller,
+    range: ModelRange | null = this.model.selection.lastRange
+  ): void {
     console.log(controller.datastore.dataset);
-    const shapes = await this.loadDataset('/decision-list.ttl')
+    const shapes = await this.loadDataset();
     const data = controller.datastore.dataset;
-    console.log(data)
-    console.log('validating')
-    const factory = new DataFactory()
-    factory.dataset = dataset
-    console.log(shapes)
-    console.log(factory)
+    console.log(data);
+    console.log('validating');
+    const factory = new DataFactory();
+    factory.dataset = dataset;
+    console.log(shapes);
+    console.log(factory);
     const validator = new SHACLValidator(shapes, { factory });
     const report = await validator.validate(data);
     console.log(report);
