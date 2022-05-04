@@ -40,7 +40,7 @@
     "@ember/optional-features": "^2.0.0",
     "@ember/render-modifiers": "^2.0.4",
     "@glimmer/tracking": "^1.0.4",
-    "@graphy/memory.dataset.fast": "^4.3.4",
+    "@graphy/memory.dataset.fast": "4.3.3",
     "@lblod/marawa": "^0.8.0-beta.2",
     "@types/diff-match-patch": "^1.0.32",
     "common-tags": "^1.8.0",
@@ -68,7 +68,7 @@
     "stream-browserify": "^3.0.0"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "^1.0.5",
+    "@appuniversum/ember-appuniversum": "^1.0.7",
     "@codemirror/basic-setup": ">=0.20.0",
     "@codemirror/lang-html": ">=0.20.0",
     "@codemirror/lang-xml": ">=0.20.0",
@@ -151,7 +151,7 @@
     "xml-formatter": "^2.6.1"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^1.0.5",
+    "@appuniversum/ember-appuniversum": "^1.0.7",
     "@codemirror/basic-setup": ">=0.19.0",
     "@codemirror/lang-html": ">=0.19.4",
     "@codemirror/lang-xml": ">=0.19.2",

@@ -118,10 +118,10 @@ module.exports = {
         '@typescript-eslint/unbound-method': ['error', { ignoreStatic: true }],
       },
     },
-    {
-      // Test files:
-      files: ['tests/**/*-test.{js,ts}'],
-      extends: ['plugin:qunit/recommended'],
-    },
+    //{
+    //  // Test files:
+    //  files: ['tests/**/*-test.{js,ts}'],
+    //  extends: ['plugin:qunit/recommended'],
+    //},
   ],
 };
