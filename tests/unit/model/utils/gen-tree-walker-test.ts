@@ -7,13 +7,13 @@ import sinon from 'sinon';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 
-module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
+module('Unit | model | utils | gen-tree-walker-test', function (hooks) {
   hooks.afterEach(() => {
     sinon.restore();
   });
 
-  module('Unit | model | utils | gen-tree-walker-test | subtree', () => {
-    test('single node - no filter', (assert) => {
+  module('Unit | model | utils | gen-tree-walker-test | subtree', function () {
+    test('single node - no filter', function (assert) {
       // language=XML
       const {
         root,
@@ -28,7 +28,7 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
       assert.strictEqual(nodes[0], e0);
     });
 
-    test('trivial dom - no filter', (assert) => {
+    test('trivial dom - no filter', function (assert) {
       // language=XML
       const {
         root,
@@ -46,7 +46,7 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
       assert.strictEqual(nodes[0], n0);
       assert.strictEqual(nodes[1], n1);
     });
-    test('complex dom - no filter', (assert) => {
+    test('complex dom - no filter', function (assert) {
       // language=XML
       const {
         root,
@@ -76,7 +76,7 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
       assert.strictEqual(nodes[6], n6);
     });
 
-    test('single node - no filter - reverse', (assert) => {
+    test('single node - no filter - reverse', function (assert) {
       // language=XML
       const {
         root,
@@ -91,7 +91,7 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
       assert.strictEqual(nodes[0], e0);
     });
 
-    test('trivial dom - no filter - reverse', (assert) => {
+    test('trivial dom - no filter - reverse', function (assert) {
       // language=XML
       const {
         root,
@@ -109,7 +109,7 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
       assert.strictEqual(nodes[0], n0);
       assert.strictEqual(nodes[1], n1);
     });
-    test('complex dom - no filter - reverse', (assert) => {
+    test('complex dom - no filter - reverse', function (assert) {
       // language=XML
       const {
         root,
@@ -138,7 +138,7 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
       assert.strictEqual(nodes[5], n5);
       assert.strictEqual(nodes[6], n6);
     });
-    test('complex dom - filter without usable nodes finishes', (assert) => {
+    test('complex dom - filter without usable nodes finishes', function (assert) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -173,7 +173,7 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
       walker.walk();
       assert.strictEqual(visitor.callCount, 7);
     });
-    test('real case', (assert) => {
+    test('real case', function (assert) {
       // language=XML
       const { root } = vdom`
         <div id="ember102" class="container-flex--contain ember-view" vocab="http://data.vlaanderen.be/ns/besluit#"
@@ -223,48 +223,50 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
       assert.strictEqual(nodes.length, 16);
     });
   });
-  module('Unit | model | utils | gen-tree-walker-test | start-end', () => {
-    test('single node - no filter', (assert) => {
-      // language=XML
-      const {
-        root,
-        elements: { e0 },
-      } = vdom`
+  module(
+    'Unit | model | utils | gen-tree-walker-test | start-end',
+    function () {
+      test('single node - no filter', function (assert) {
+        // language=XML
+        const {
+          root,
+          elements: { e0 },
+        } = vdom`
         <div __id="e0"/>
       `;
 
-      const walker = GenTreeWalker.fromStartEnd({ root, start: e0 });
-      const nodes = [...walker.nodes()];
-      assert.strictEqual(nodes.length, 1);
-      assert.strictEqual(nodes[0], e0);
-    });
-
-    test('single node - no filter - reverse', (assert) => {
-      // language=XML
-      const {
-        root,
-        elements: { e0 },
-      } = vdom`
-        <div __id="e0"/>
-      `;
-
-      const walker = GenTreeWalker.fromStartEnd({
-        root,
-        start: e0,
-        reverse: true,
+        const walker = GenTreeWalker.fromStartEnd({ root, start: e0 });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 1);
+        assert.strictEqual(nodes[0], e0);
       });
-      const nodes = [...walker.nodes()];
-      assert.strictEqual(nodes.length, 1);
-      assert.strictEqual(nodes[0], e0);
-    });
 
-    test('trivial dom - no filter', (assert) => {
-      // language=XML
-      const {
-        root,
-        elements: { n0 },
-        textNodes: { n1, n2 },
-      } = vdom`
+      test('single node - no filter - reverse', function (assert) {
+        // language=XML
+        const {
+          root,
+          elements: { e0 },
+        } = vdom`
+        <div __id="e0"/>
+      `;
+
+        const walker = GenTreeWalker.fromStartEnd({
+          root,
+          start: e0,
+          reverse: true,
+        });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 1);
+        assert.strictEqual(nodes[0], e0);
+      });
+
+      test('trivial dom - no filter', function (assert) {
+        // language=XML
+        const {
+          root,
+          elements: { n0 },
+          textNodes: { n1, n2 },
+        } = vdom`
         <div __id="n0">
           <text __id="n1">test</text>
           <text __id="n2">test</text>
@@ -272,27 +274,31 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
         </div>
       `;
 
-      const walker = GenTreeWalker.fromStartEnd({ root, start: n1, end: n2 });
-      const nodes = [...walker.nodes()];
-      assert.strictEqual(nodes.length, 2);
-      assert.strictEqual(nodes[0], n1);
-      assert.strictEqual(nodes[1], n2);
+        const walker = GenTreeWalker.fromStartEnd({ root, start: n1, end: n2 });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 2);
+        assert.strictEqual(nodes[0], n1);
+        assert.strictEqual(nodes[1], n2);
 
-      const walker2 = GenTreeWalker.fromStartEnd({ root, start: n0, end: n2 });
-      const nodes2 = [...walker2.nodes()];
-      assert.strictEqual(nodes2.length, 3);
-      assert.strictEqual(nodes2[0], n0);
-      assert.strictEqual(nodes2[1], n1);
-      assert.strictEqual(nodes2[2], n2);
-    });
+        const walker2 = GenTreeWalker.fromStartEnd({
+          root,
+          start: n0,
+          end: n2,
+        });
+        const nodes2 = [...walker2.nodes()];
+        assert.strictEqual(nodes2.length, 3);
+        assert.strictEqual(nodes2[0], n0);
+        assert.strictEqual(nodes2[1], n1);
+        assert.strictEqual(nodes2[2], n2);
+      });
 
-    test('trivial dom - no filter - reverse', (assert) => {
-      // language=XML
-      const {
-        root,
-        elements: { n0 },
-        textNodes: { start, end },
-      } = vdom`
+      test('trivial dom - no filter - reverse', function (assert) {
+        // language=XML
+        const {
+          root,
+          elements: { n0 },
+          textNodes: { start, end },
+        } = vdom`
         <div __id="n0">
           <text __id="end">test</text>
           <text __id="start">test</text>
@@ -300,35 +306,35 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
         </div>
       `;
 
-      const walker = GenTreeWalker.fromStartEnd({
-        root,
-        start,
-        end,
-        reverse: true,
-      });
-      const nodes = [...walker.nodes()];
-      assert.strictEqual(nodes.length, 2);
-      assert.strictEqual(nodes[0], start);
-      assert.strictEqual(nodes[1], end);
+        const walker = GenTreeWalker.fromStartEnd({
+          root,
+          start,
+          end,
+          reverse: true,
+        });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 2);
+        assert.strictEqual(nodes[0], start);
+        assert.strictEqual(nodes[1], end);
 
-      const walker2 = GenTreeWalker.fromStartEnd({
-        root,
-        start,
-        end: n0,
-        reverse: true,
+        const walker2 = GenTreeWalker.fromStartEnd({
+          root,
+          start,
+          end: n0,
+          reverse: true,
+        });
+        const nodes2 = [...walker2.nodes()];
+        assert.strictEqual(nodes2.length, 2);
+        assert.strictEqual(nodes2[0], start);
+        assert.strictEqual(nodes2[1], end);
       });
-      const nodes2 = [...walker2.nodes()];
-      assert.strictEqual(nodes2.length, 2);
-      assert.strictEqual(nodes2[0], start);
-      assert.strictEqual(nodes2[1], end);
-    });
-    test('complex dom - no filter - reverse', (assert) => {
-      // language=XML
-      const {
-        root,
-        elements: { n2, end },
-        textNodes: { n1, start },
-      } = vdom`
+      test('complex dom - no filter - reverse', function (assert) {
+        // language=XML
+        const {
+          root,
+          elements: { n2, end },
+          textNodes: { n1, start },
+        } = vdom`
         <div>
           <div __id="n2">
             <span __id="end">
@@ -344,27 +350,30 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
         </div>
       `;
 
-      const walker = GenTreeWalker.fromStartEnd({
-        root,
-        start,
-        end,
-        reverse: true,
+        const walker = GenTreeWalker.fromStartEnd({
+          root,
+          start,
+          end,
+          reverse: true,
+        });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 4);
+        assert.strictEqual(nodes[0], start);
+        assert.strictEqual(nodes[1], n1);
+        assert.strictEqual(nodes[2], n2);
+        assert.strictEqual(nodes[3], end);
       });
-      const nodes = [...walker.nodes()];
-      assert.strictEqual(nodes.length, 4);
-      assert.strictEqual(nodes[0], start);
-      assert.strictEqual(nodes[1], n1);
-      assert.strictEqual(nodes[2], n2);
-      assert.strictEqual(nodes[3], end);
-    });
-  });
-  module('Unit | model | utils | gen-tree-walker-test | start-end', () => {
-    test('complex dom - no filter', (assert) => {
-      // language=XML
-      const {
-        elements: { start, n3 },
-        textNodes: { n1, n2, end },
-      } = vdom`
+    }
+  );
+  module(
+    'Unit | model | utils | gen-tree-walker-test | start-end 2',
+    function () {
+      test('complex dom - no filter', function (assert) {
+        // language=XML
+        const {
+          elements: { start, n3 },
+          textNodes: { n1, n2, end },
+        } = vdom`
         <div>
           <div>
             <span __id="start">
@@ -380,25 +389,25 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
         </div>
       `;
 
-      const startPos = ModelPosition.fromBeforeNode(start);
-      const endPos = ModelPosition.fromInTextNode(end, 1);
-      const range = new ModelRange(startPos, endPos);
-      const walker = GenTreeWalker.fromRange({ range });
-      const nodes = [...walker.nodes()];
-      assert.strictEqual(nodes.length, 5);
-      assert.strictEqual(nodes[0], start);
-      assert.strictEqual(nodes[1], n1);
-      assert.strictEqual(nodes[2], n2);
-      assert.strictEqual(nodes[3], n3);
-      assert.strictEqual(nodes[4], end);
-    });
+        const startPos = ModelPosition.fromBeforeNode(start);
+        const endPos = ModelPosition.fromInTextNode(end, 1);
+        const range = new ModelRange(startPos, endPos);
+        const walker = GenTreeWalker.fromRange({ range });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 5);
+        assert.strictEqual(nodes[0], start);
+        assert.strictEqual(nodes[1], n1);
+        assert.strictEqual(nodes[2], n2);
+        assert.strictEqual(nodes[3], n3);
+        assert.strictEqual(nodes[4], end);
+      });
 
-    test('complex dom - no filter - range after element', (assert) => {
-      // language=XML
-      const {
-        elements: { start, end },
-        textNodes: { n1, n2, n3 },
-      } = vdom`
+      test('complex dom - no filter - range after element', function (assert) {
+        // language=XML
+        const {
+          elements: { start, end },
+          textNodes: { n1, n2, n3 },
+        } = vdom`
         <div>
           <div>
             <span __id="start">
@@ -414,23 +423,23 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
         </div>
       `;
 
-      const startPos = ModelPosition.fromBeforeNode(start);
-      const endPos = ModelPosition.fromAfterNode(end);
-      const range = new ModelRange(startPos, endPos);
-      const walker = GenTreeWalker.fromRange({ range });
-      const nodes = [...walker.nodes()];
-      assert.strictEqual(nodes.length, 5);
-      assert.strictEqual(nodes[0], start);
-      assert.strictEqual(nodes[1], n1);
-      assert.strictEqual(nodes[2], n2);
-      assert.strictEqual(nodes[3], end);
-      assert.strictEqual(nodes[4], n3);
-    });
-    test('complex dom - collapsed range in textNode', (assert) => {
-      // language=XML
-      const {
-        textNodes: { textNode },
-      } = vdom`
+        const startPos = ModelPosition.fromBeforeNode(start);
+        const endPos = ModelPosition.fromAfterNode(end);
+        const range = new ModelRange(startPos, endPos);
+        const walker = GenTreeWalker.fromRange({ range });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 5);
+        assert.strictEqual(nodes[0], start);
+        assert.strictEqual(nodes[1], n1);
+        assert.strictEqual(nodes[2], n2);
+        assert.strictEqual(nodes[3], end);
+        assert.strictEqual(nodes[4], n3);
+      });
+      test('complex dom - collapsed range in textNode', function (assert) {
+        // language=XML
+        const {
+          textNodes: { textNode },
+        } = vdom`
         <div>
           <div>
             <span>
@@ -445,18 +454,18 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
           <div/>
         </div>
       `;
-      const range = ModelRange.fromInTextNode(textNode, 1, 1);
+        const range = ModelRange.fromInTextNode(textNode, 1, 1);
 
-      const walker = GenTreeWalker.fromRange({ range });
-      const nodes = [...walker.nodes()];
-      assert.strictEqual(nodes.length, 1);
-      assert.strictEqual(nodes[0], textNode);
-    });
-    test('complex dom - collapsed range outside textNode', (assert) => {
-      // language=XML
-      const {
-        textNodes: { textNode },
-      } = vdom`
+        const walker = GenTreeWalker.fromRange({ range });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 1);
+        assert.strictEqual(nodes[0], textNode);
+      });
+      test('complex dom - collapsed range outside textNode', function (assert) {
+        // language=XML
+        const {
+          textNodes: { textNode },
+        } = vdom`
         <div>
           <div>
             <span>
@@ -471,18 +480,18 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
           <div/>
         </div>
       `;
-      const start = ModelPosition.fromBeforeNode(textNode);
-      const range = new ModelRange(start, start);
+        const start = ModelPosition.fromBeforeNode(textNode);
+        const range = new ModelRange(start, start);
 
-      const walker = GenTreeWalker.fromRange({ range });
-      const nodes = [...walker.nodes()];
-      assert.strictEqual(nodes.length, 0);
-    });
-    test('complex dom - range containing no nodes', (assert) => {
-      // language=XML
-      const {
-        elements: { start, end },
-      } = vdom`
+        const walker = GenTreeWalker.fromRange({ range });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 0);
+      });
+      test('complex dom - range containing no nodes', function (assert) {
+        // language=XML
+        const {
+          elements: { start, end },
+        } = vdom`
         <div>
           <div>
             <span>
@@ -499,20 +508,20 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
           <div/>
         </div>
       `;
-      const startPos = ModelPosition.fromAfterNode(start);
-      const endPos = ModelPosition.fromBeforeNode(end);
-      const range = new ModelRange(startPos, endPos);
+        const startPos = ModelPosition.fromAfterNode(start);
+        const endPos = ModelPosition.fromBeforeNode(end);
+        const range = new ModelRange(startPos, endPos);
 
-      const walker = GenTreeWalker.fromRange({ range });
-      const nodes = [...walker.nodes()];
-      assert.strictEqual(nodes.length, 0);
-    });
-    test('complex dom - no filter - reverse', (assert) => {
-      // language=XML
-      const {
-        elements: { rangeStart, n2 },
-        textNodes: { n1, n3, rangeEnd },
-      } = vdom`
+        const walker = GenTreeWalker.fromRange({ range });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 0);
+      });
+      test('complex dom - no filter - reverse', function (assert) {
+        // language=XML
+        const {
+          elements: { rangeStart, n2 },
+          textNodes: { n1, n3, rangeEnd },
+        } = vdom`
         <div>
           <div __id="n2">
             <span __id="rangeStart"><!--[-->
@@ -528,26 +537,29 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
         </div>
       `;
 
-      const startPos = ModelPosition.fromBeforeNode(rangeStart);
-      const endPos = ModelPosition.fromInTextNode(rangeEnd, 1);
-      const range = new ModelRange(startPos, endPos);
-      const walker = GenTreeWalker.fromRange({ range, reverse: true });
-      const nodes = [...walker.nodes()];
-      assert.strictEqual(nodes.length, 5);
-      assert.strictEqual(nodes[0], rangeEnd);
-      assert.strictEqual(nodes[1], n1);
-      assert.strictEqual(nodes[2], n2);
-      assert.strictEqual(nodes[3], rangeStart);
-      assert.strictEqual(nodes[4], n3);
-    });
-  });
-  module('Unit | model | utils | gen-tree-walker-test | node-handlers', () => {
-    test('the right node handlers are called in the right order', (assert) => {
-      // language=XML
-      const {
-        elements: { n0, n1, n2, n5, n7, n8 },
-        textNodes: { n3, n4, n6 },
-      } = vdom`
+        const startPos = ModelPosition.fromBeforeNode(rangeStart);
+        const endPos = ModelPosition.fromInTextNode(rangeEnd, 1);
+        const range = new ModelRange(startPos, endPos);
+        const walker = GenTreeWalker.fromRange({ range, reverse: true });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 5);
+        assert.strictEqual(nodes[0], rangeEnd);
+        assert.strictEqual(nodes[1], n1);
+        assert.strictEqual(nodes[2], n2);
+        assert.strictEqual(nodes[3], rangeStart);
+        assert.strictEqual(nodes[4], n3);
+      });
+    }
+  );
+  module(
+    'Unit | model | utils | gen-tree-walker-test | node-handlers',
+    function () {
+      test('the right node handlers are called in the right order', function (assert) {
+        // language=XML
+        const {
+          elements: { n0, n1, n2, n5, n7, n8 },
+          textNodes: { n3, n4, n6 },
+        } = vdom`
         <div __id="n0">
           <div __id="n1">
             <span __id="n2">
@@ -563,52 +575,53 @@ module('Unit | model | utils | gen-tree-walker-test', (hooks) => {
         </div>
       `;
 
-      const entryHandler = sinon.spy();
-      const exitHandler = sinon.spy();
-      const walker = GenTreeWalker.fromSubTree({
-        root: n0,
-        onEnterNode: entryHandler,
-        onLeaveNode: exitHandler,
+        const entryHandler = sinon.spy();
+        const exitHandler = sinon.spy();
+        const walker = GenTreeWalker.fromSubTree({
+          root: n0,
+          onEnterNode: entryHandler,
+          onLeaveNode: exitHandler,
+        });
+        const nodes = [...walker.nodes()];
+        const entryCalls = entryHandler.getCalls();
+        const exitCalls = exitHandler.getCalls();
+        assert.strictEqual(entryCalls.length, nodes.length);
+        assert.strictEqual(exitCalls.length, nodes.length);
+
+        assert.true(entryCalls[0].calledWithExactly(n0));
+        assert.true(entryCalls[1].calledWithExactly(n1));
+        assert.true(entryCalls[2].calledWithExactly(n2));
+        // enter test0 textnode
+        assert.true(entryCalls[3].calledWithExactly(n3));
+        // and leave it
+        assert.true(exitCalls[0].calledWithExactly(n3));
+        // going up
+        assert.true(exitCalls[1].calledWithExactly(n2));
+        assert.true(exitCalls[2].calledWithExactly(n1));
+        //sideways, enter test1
+        assert.true(entryCalls[4].calledWithExactly(n4));
+        // and leave it
+        assert.true(exitCalls[3].calledWithExactly(n4));
+        //entering the n5 span
+        assert.true(entryCalls[5].calledWithExactly(n5));
+        // entering and leaving test2 node
+        assert.true(entryCalls[6].calledWithExactly(n6));
+        assert.true(exitCalls[4].calledWithExactly(n6));
+
+        // leaving the n5 span
+        assert.true(exitCalls[5].calledWithExactly(n5));
+
+        // entering and leaving the n7 div
+        assert.true(entryCalls[7].calledWithExactly(n7));
+        assert.true(exitCalls[6].calledWithExactly(n7));
+
+        // entering and leaving the n8 div
+        assert.true(entryCalls[8].calledWithExactly(n8));
+        assert.true(exitCalls[7].calledWithExactly(n8));
+
+        // leaving root
+        assert.true(exitCalls[8].calledWithExactly(n0));
       });
-      const nodes = [...walker.nodes()];
-      const entryCalls = entryHandler.getCalls();
-      const exitCalls = exitHandler.getCalls();
-      assert.strictEqual(entryCalls.length, nodes.length);
-      assert.strictEqual(exitCalls.length, nodes.length);
-
-      assert.true(entryCalls[0].calledWithExactly(n0));
-      assert.true(entryCalls[1].calledWithExactly(n1));
-      assert.true(entryCalls[2].calledWithExactly(n2));
-      // enter test0 textnode
-      assert.true(entryCalls[3].calledWithExactly(n3));
-      // and leave it
-      assert.true(exitCalls[0].calledWithExactly(n3));
-      // going up
-      assert.true(exitCalls[1].calledWithExactly(n2));
-      assert.true(exitCalls[2].calledWithExactly(n1));
-      //sideways, enter test1
-      assert.true(entryCalls[4].calledWithExactly(n4));
-      // and leave it
-      assert.true(exitCalls[3].calledWithExactly(n4));
-      //entering the n5 span
-      assert.true(entryCalls[5].calledWithExactly(n5));
-      // entering and leaving test2 node
-      assert.true(entryCalls[6].calledWithExactly(n6));
-      assert.true(exitCalls[4].calledWithExactly(n6));
-
-      // leaving the n5 span
-      assert.true(exitCalls[5].calledWithExactly(n5));
-
-      // entering and leaving the n7 div
-      assert.true(entryCalls[7].calledWithExactly(n7));
-      assert.true(exitCalls[6].calledWithExactly(n7));
-
-      // entering and leaving the n8 div
-      assert.true(entryCalls[8].calledWithExactly(n8));
-      assert.true(exitCalls[7].calledWithExactly(n8));
-
-      // leaving root
-      assert.true(exitCalls[8].calledWithExactly(n0));
-    });
-  });
+    }
+  );
 });

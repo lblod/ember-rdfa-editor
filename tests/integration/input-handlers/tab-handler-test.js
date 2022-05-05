@@ -27,9 +27,9 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().anchorNode.textContent, 'foo');
+    assert.strictEqual(window.getSelection().anchorNode.textContent, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.strictEqual(cursorPosition, 0);
   });
 
   test('tab works with div', async function (assert) {
@@ -49,9 +49,9 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().anchorNode.textContent, 'foo');
+    assert.strictEqual(window.getSelection().anchorNode.textContent, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.strictEqual(cursorPosition, 0);
   });
 
   test('tab exits div', async function (assert) {
@@ -70,9 +70,9 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     window.getSelection().collapse(bazWordNode, 0);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().anchorNode.textContent, 'bar');
+    assert.strictEqual(window.getSelection().anchorNode.textContent, 'bar');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.strictEqual(cursorPosition, 0);
   });
 
   test('tab jumps in next sibling element', async function (assert) {
@@ -91,9 +91,9 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     window.getSelection().collapse(bazWordNode, 1); //Arbitrary set of position
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().anchorNode.textContent, 'foo');
+    assert.strictEqual(window.getSelection().anchorNode.textContent, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.strictEqual(cursorPosition, 0);
   });
 
   test('tab jumps in next sibling element and skips a void element', async function (assert) {
@@ -112,9 +112,9 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     window.getSelection().collapse(bazWordNode, 1); //Arbitrary set of position
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().anchorNode.textContent, 'foo');
+    assert.strictEqual(window.getSelection().anchorNode.textContent, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.strictEqual(cursorPosition, 0);
   });
 
   test('tab and two adjecedant elements, makes sure the selection ends between the elements', async function (assert) {
@@ -134,12 +134,15 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
 
-    assert.equal(
+    assert.strictEqual(
       window.getSelection().anchorNode.previousSibling.nodeType,
       Node.ELEMENT_NODE
     );
-    assert.equal(window.getSelection().anchorNode.nodeType, Node.TEXT_NODE);
-    assert.equal(
+    assert.strictEqual(
+      window.getSelection().anchorNode.nodeType,
+      Node.TEXT_NODE
+    );
+    assert.strictEqual(
       window.getSelection().anchorNode.nextSibling.nodeType,
       Node.ELEMENT_NODE
     );
@@ -162,10 +165,22 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
 
-    assert.equal(window.getSelection().anchorNode.parentElement.tagName, 'DIV');
-    assert.equal(window.getSelection().anchorNode.previousSibling, undefined);
-    assert.equal(window.getSelection().anchorNode.nodeType, Node.TEXT_NODE);
-    assert.equal(window.getSelection().anchorNode.nextSibling.tagName, 'SPAN');
+    assert.strictEqual(
+      window.getSelection().anchorNode.parentElement.tagName,
+      'DIV'
+    );
+    assert.strictEqual(
+      window.getSelection().anchorNode.previousSibling,
+      undefined
+    );
+    assert.strictEqual(
+      window.getSelection().anchorNode.nodeType,
+      Node.TEXT_NODE
+    );
+    assert.strictEqual(
+      window.getSelection().anchorNode.nextSibling.tagName,
+      'SPAN'
+    );
   });
 
   /************************************
@@ -188,9 +203,9 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     window.getSelection().collapse(bazWordNode, 1);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().anchorNode.data, 'foo');
+    assert.strictEqual(window.getSelection().anchorNode.data, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.strictEqual(cursorPosition, 0);
   });
 
   test('tab in last LI, jumps out of list', async function (assert) {
@@ -209,11 +224,14 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     window.getSelection().collapse(fooWordNode, 1);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(
+    assert.strictEqual(
       window.getSelection().anchorNode.previousSibling.tagName,
       'UL'
     );
-    assert.equal(window.getSelection().anchorNode.nodeType, Node.TEXT_NODE);
+    assert.strictEqual(
+      window.getSelection().anchorNode.nodeType,
+      Node.TEXT_NODE
+    );
   });
 
   test('tab in last LI of nested list, exits the nested list remains in LI', async function (assert) {
@@ -244,7 +262,7 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     window.getSelection().collapse(barWordNode, 1);
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().anchorNode.data, ' foo ');
+    assert.strictEqual(window.getSelection().anchorNode.data, ' foo ');
   });
 
   test('tab in last LI of nested list, exits the nested list, but remains in parent', async function (assert) {
@@ -276,9 +294,9 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
 
     const parentLi = window.getSelection().anchorNode.parentElement;
-    assert.equal(parentLi.tagName, 'LI');
+    assert.strictEqual(parentLi.tagName, 'LI');
     const parentList = editor.children[0]; //make sure this is from the top we come...
-    assert.equal(parentList.isSameNode(parentLi.parentElement), true);
+    assert.true(parentList.isSameNode(parentLi.parentElement));
   });
 
   test('tab at beginning of LI, will create sublist', async function (assert) {
@@ -305,14 +323,14 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
 
     const listItem = window.getSelection().anchorNode.parentElement;
-    assert.equal(listItem.tagName, 'LI');
+    assert.strictEqual(listItem.tagName, 'LI');
     const nestedList = listItem.parentElement;
-    assert.equal(nestedList.tagName, 'UL');
+    assert.strictEqual(nestedList.tagName, 'UL');
     const parentLi = nestedList.parentElement;
-    assert.equal(parentLi.tagName, 'LI');
+    assert.strictEqual(parentLi.tagName, 'LI');
     const parentList = parentLi.parentElement;
-    assert.equal(parentList, editor.children[0]);
-    assert.equal(window.getSelection().anchorNode.textContent, 'baz');
+    assert.strictEqual(parentList, editor.children[0]);
+    assert.strictEqual(window.getSelection().anchorNode.textContent, 'baz');
   });
 
   /************************************
@@ -343,8 +361,8 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     click('div[contenteditable]');
 
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().anchorNode.textContent, ' foo'); //the space beause the new line shizzel in the snippet
-    assert.equal(
+    assert.strictEqual(window.getSelection().anchorNode.textContent, ' foo'); //the space beause the new line shizzel in the snippet
+    assert.strictEqual(
       window.getSelection().anchorNode.previousSibling.tagName,
       'UL'
     );
@@ -375,8 +393,8 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     click('div[contenteditable]');
 
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab');
-    assert.equal(window.getSelection().anchorNode.textContent, ' foo'); //the space beause the new line shizzel in the snippet
-    assert.equal(
+    assert.strictEqual(window.getSelection().anchorNode.textContent, ' foo'); //the space beause the new line shizzel in the snippet
+    assert.strictEqual(
       window.getSelection().anchorNode.previousSibling.tagName,
       'UL'
     );
@@ -404,9 +422,9 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab', {
       shiftKey: true,
     });
-    assert.equal(window.getSelection().anchorNode.textContent, 'bar');
+    assert.strictEqual(window.getSelection().anchorNode.textContent, 'bar');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(
+    assert.strictEqual(
       cursorPosition,
       window.getSelection().anchorNode.textContent.length
     );
@@ -430,9 +448,9 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab', {
       shiftKey: true,
     });
-    assert.equal(window.getSelection().anchorNode.textContent, 'bar');
+    assert.strictEqual(window.getSelection().anchorNode.textContent, 'bar');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(
+    assert.strictEqual(
       cursorPosition,
       window.getSelection().anchorNode.textContent.length
     );
@@ -457,13 +475,11 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab', {
       shiftKey: true,
     });
-    assert.equal(
-      window.getSelection().anchorNode.nextSibling.isSameNode(bazWordNode),
-      true
+    assert.true(
+      window.getSelection().anchorNode.nextSibling.isSameNode(bazWordNode)
     );
-    assert.equal(
-      window.getSelection().anchorNode.previousSibling.isSameNode(barWordNode),
-      true
+    assert.true(
+      window.getSelection().anchorNode.previousSibling.isSameNode(barWordNode)
     );
   });
 
@@ -487,13 +503,11 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab', {
       shiftKey: true,
     });
-    assert.equal(
-      window.getSelection().anchorNode.parentElement.isSameNode(divElement),
-      true
+    assert.true(
+      window.getSelection().anchorNode.parentElement.isSameNode(divElement)
     );
-    assert.equal(
-      window.getSelection().anchorNode.previousSibling.isSameNode(barWordNode),
-      true
+    assert.true(
+      window.getSelection().anchorNode.previousSibling.isSameNode(barWordNode)
     );
   });
 
@@ -527,8 +541,11 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab', {
       shiftKey: true,
     });
-    assert.equal(window.getSelection().anchorNode.textContent, 'bar '); //the space beause the new line shizzel in the snippet
-    assert.equal(window.getSelection().anchorNode.nextSibling.tagName, 'UL');
+    assert.strictEqual(window.getSelection().anchorNode.textContent, 'bar '); //the space beause the new line shizzel in the snippet
+    assert.strictEqual(
+      window.getSelection().anchorNode.nextSibling.tagName,
+      'UL'
+    );
   });
 
   test('shift tab from within lumpNode, leaves the lumpNode alltogether (edge case)', async function (assert) {
@@ -558,8 +575,11 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab', {
       shiftKey: true,
     });
-    assert.equal(window.getSelection().anchorNode.textContent, 'bar '); //the space beause the new line shizzel in the snippet
-    assert.equal(window.getSelection().anchorNode.nextSibling.tagName, 'UL');
+    assert.strictEqual(window.getSelection().anchorNode.textContent, 'bar '); //the space beause the new line shizzel in the snippet
+    assert.strictEqual(
+      window.getSelection().anchorNode.nextSibling.tagName,
+      'UL'
+    );
   });
 
   /************************************
@@ -584,9 +604,12 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab', {
       shiftKey: true,
     });
-    assert.equal(window.getSelection().anchorNode.data, 'foo');
+    assert.strictEqual(window.getSelection().anchorNode.data, 'foo');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, window.getSelection().anchorNode.data.length);
+    assert.strictEqual(
+      cursorPosition,
+      window.getSelection().anchorNode.data.length
+    );
   });
 
   test('shift tab in first LI, jumps out of list', async function (assert) {
@@ -607,8 +630,14 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Tab', {
       shiftKey: true,
     });
-    assert.equal(window.getSelection().anchorNode.nextSibling.tagName, 'UL');
-    assert.equal(window.getSelection().anchorNode.nodeType, Node.TEXT_NODE);
+    assert.strictEqual(
+      window.getSelection().anchorNode.nextSibling.tagName,
+      'UL'
+    );
+    assert.strictEqual(
+      window.getSelection().anchorNode.nodeType,
+      Node.TEXT_NODE
+    );
   });
 
   test('shift tab in LI, goes back to previous LI (even if there is a nested list)', async function (assert) {
@@ -642,7 +671,10 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
       shiftKey: true,
     });
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, window.getSelection().anchorNode.data.length);
+    assert.strictEqual(
+      cursorPosition,
+      window.getSelection().anchorNode.data.length
+    );
   });
 
   test('shift tab before list, enters last element of list (even if list is nested)', async function (assert) {
@@ -677,10 +709,9 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
       shiftKey: true,
     });
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, lastLi.childNodes[2].length);
-    assert.equal(
-      window.getSelection().anchorNode.parentElement.isSameNode(lastLi),
-      true
+    assert.strictEqual(cursorPosition, lastLi.childNodes[2].length);
+    assert.true(
+      window.getSelection().anchorNode.parentElement.isSameNode(lastLi)
     );
   });
 
@@ -709,8 +740,8 @@ module.skip('Integration | InputHandler | tab-handler', function (hooks) {
       shiftKey: true,
     });
 
-    assert.equal(bazWordNode.parentElement, null);
-    assert.equal(
+    assert.strictEqual(bazWordNode.parentElement, null);
+    assert.strictEqual(
       [...editor.children].find((element) => element.tagName == 'UL'),
       undefined
     );

@@ -5,7 +5,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import { setupTest } from 'ember-qunit';
 
-module('Unit | model | model-selection-tracker', (hooks) => {
+module('Unit | model | model-selection-tracker', function (hooks) {
   const ctx = new ModelTestContext();
   hooks.beforeEach(() => {
     ctx.reset();

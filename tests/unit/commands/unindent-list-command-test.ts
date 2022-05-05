@@ -4,7 +4,7 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import UnindentListCommand from '@lblod/ember-rdfa-editor/commands/unindent-list-command';
 
-module('Unit | commands | unindent-list-command-test', (hooks) => {
+module('Unit | commands | unindent-list-command-test', function (hooks) {
   let command: UnindentListCommand;
   const ctx = new ModelTestContext();
   hooks.beforeEach(() => {
@@ -12,7 +12,7 @@ module('Unit | commands | unindent-list-command-test', (hooks) => {
     command = new UnindentListCommand(ctx.model);
   });
 
-  test('should unindent simple list', (assert) => {
+  test('should unindent simple list', function (assert) {
     const {
       modelSelection,
       model: { rootModelNode },

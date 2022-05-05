@@ -5,7 +5,7 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import { domStripped } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 
-module('Unit | model | readers | selection-reader', (hooks) => {
+module('Unit | model | readers | selection-reader', function (hooks) {
   let reader: SelectionReader;
   let ctx: ModelTestContext;
   hooks.beforeEach(() => {
@@ -14,7 +14,7 @@ module('Unit | model | readers | selection-reader', (hooks) => {
     reader = new SelectionReader(ctx.model);
   });
 
-  test('converts a dom range correctly', (assert) => {
+  test('converts a dom range correctly', function (assert) {
     const { model, rootNode } = ctx;
     const text = new Text('abc');
     rootNode.appendChild(text);
@@ -29,7 +29,7 @@ module('Unit | model | readers | selection-reader', (hooks) => {
       result?.start.sameAs(ModelPosition.fromPath(model.rootModelNode, [0]))
     );
   });
-  test('correctly handles a tripleclick selection', (assert) => {
+  test('correctly handles a tripleclick selection', function (assert) {
     const { rootNode } = ctx;
     const paragraph = document.createElement('p');
     const t1 = new Text('abc');
@@ -52,98 +52,101 @@ module('Unit | model | readers | selection-reader', (hooks) => {
     assert.deepEqual(modelRange?.start.path, [0, 0]);
     assert.deepEqual(modelRange?.end.path, [0, 8]);
   });
-  module('Unit | model | reader | selection-reader | readDomPosition', () => {
-    test('converts a dom position correctly', (assert) => {
-      const { model, rootNode } = ctx;
-      const text = new Text('abc');
-      rootNode.appendChild(text);
-      ctx.model.read(false);
+  module(
+    'Unit | model | reader | selection-reader | readDomPosition',
+    function () {
+      test('converts a dom position correctly', function (assert) {
+        const { model, rootNode } = ctx;
+        const text = new Text('abc');
+        rootNode.appendChild(text);
+        ctx.model.read(false);
 
-      const result = reader.readDomPosition(text, 0);
-      assert.true(
-        result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0]))
-      );
-    });
-    test('converts a dom position correctly before text node', (assert) => {
-      const { model, rootNode } = ctx;
-      const text = new Text('abc');
-      rootNode.appendChild(text);
-      ctx.model.read(false);
+        const result = reader.readDomPosition(text, 0);
+        assert.true(
+          result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0]))
+        );
+      });
+      test('converts a dom position correctly before text node', function (assert) {
+        const { model, rootNode } = ctx;
+        const text = new Text('abc');
+        rootNode.appendChild(text);
+        ctx.model.read(false);
 
-      const result = reader.readDomPosition(rootNode, 0);
-      assert.true(
-        result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0]))
-      );
-    });
-    test('converts a dom position correctly after text node', (assert) => {
-      const { model, rootNode } = ctx;
-      const text = new Text('abc');
-      rootNode.appendChild(text);
-      ctx.model.read(false);
+        const result = reader.readDomPosition(rootNode, 0);
+        assert.true(
+          result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [0]))
+        );
+      });
+      test('converts a dom position correctly after text node', function (assert) {
+        const { model, rootNode } = ctx;
+        const text = new Text('abc');
+        rootNode.appendChild(text);
+        ctx.model.read(false);
 
-      const result = reader.readDomPosition(rootNode, 1);
-      assert.true(
-        result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [3]))
-      );
-    });
+        const result = reader.readDomPosition(rootNode, 1);
+        assert.true(
+          result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [3]))
+        );
+      });
 
-    test('converts a dom position correctly when before element', (assert) => {
-      const { model, rootNode } = ctx;
-      const child0 = document.createElement('div');
-      const child1 = document.createElement('div');
-      const child2 = document.createElement('div');
-      rootNode.append(child0, child1, child2);
+      test('converts a dom position correctly when before element', function (assert) {
+        const { model, rootNode } = ctx;
+        const child0 = document.createElement('div');
+        const child1 = document.createElement('div');
+        const child2 = document.createElement('div');
+        rootNode.append(child0, child1, child2);
 
-      const child10 = document.createElement('div');
-      const child11 = document.createElement('div');
-      const child12 = new Text('abc');
-      const child13 = document.createElement('div');
-      child1.append(child10, child11, child12, child13);
-      ctx.model.read(false);
+        const child10 = document.createElement('div');
+        const child11 = document.createElement('div');
+        const child12 = new Text('abc');
+        const child13 = document.createElement('div');
+        child1.append(child10, child11, child12, child13);
+        ctx.model.read(false);
 
-      let result = reader.readDomPosition(child1, 0);
-      assert.true(
-        result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 0]))
-      );
+        let result = reader.readDomPosition(child1, 0);
+        assert.true(
+          result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 0]))
+        );
 
-      result = reader.readDomPosition(child1, 0);
-      assert.true(
-        result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 0]))
-      );
+        result = reader.readDomPosition(child1, 0);
+        assert.true(
+          result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 0]))
+        );
 
-      result = reader.readDomPosition(child1, 1);
-      assert.true(
-        result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 1]))
-      );
+        result = reader.readDomPosition(child1, 1);
+        assert.true(
+          result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 1]))
+        );
 
-      result = reader.readDomPosition(child12, 3);
-      assert.true(
-        result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 5]))
-      );
-    });
-    test('converts a position inside a br correctly', (assert) => {
-      // A cursor position inside a br element is perfectly valid in the dom spec
-      // Visually it looks identical to the position before the br
-      // We currently don't allow (or at least dont handle)
-      // positions inside brs so this test is to make sure the
-      // conversion is correct
-      const testDoc = domStripped`
+        result = reader.readDomPosition(child12, 3);
+        assert.true(
+          result?.sameAs(ModelPosition.fromPath(model.rootModelNode, [1, 5]))
+        );
+      });
+      test('converts a position inside a br correctly', function (assert) {
+        // A cursor position inside a br element is perfectly valid in the dom spec
+        // Visually it looks identical to the position before the br
+        // We currently don't allow (or at least dont handle)
+        // positions inside brs so this test is to make sure the
+        // conversion is correct
+        const testDoc = domStripped`
       <div contenteditable>
         abc
         <br>
         def
       </div>
       `;
-      const docRoot = testDoc.body.firstElementChild as HTMLElement;
-      const br = testDoc.getElementsByTagName('br')[0];
-      document.body.appendChild(docRoot);
+        const docRoot = testDoc.body.firstElementChild as HTMLElement;
+        const br = testDoc.getElementsByTagName('br')[0];
+        document.body.appendChild(docRoot);
 
-      const model = new Model(docRoot);
-      model.read(false);
-      const reader = new SelectionReader(model);
+        const model = new Model(docRoot);
+        model.read(false);
+        const reader = new SelectionReader(model);
 
-      const result = reader.readDomPosition(br, 0);
-      assert.deepEqual(result!.path, [3]);
-    });
-  });
+        const result = reader.readDomPosition(br, 0);
+        assert.deepEqual(result!.path, [3]);
+      });
+    }
+  );
 });

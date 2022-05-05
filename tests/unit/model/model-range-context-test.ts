@@ -7,7 +7,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 
-module('Unit | model | model-range | contextNodes', () => {
+module('Unit | model | model-range | contextNodes', function () {
   //language=XML
   const testDoc: XmlReaderResult = vdom`
     <modelRoot>
@@ -77,7 +77,7 @@ module('Unit | model | model-range | contextNodes', () => {
   );
   module(
     'Unit | model | model-range | contextNodes | isInside | default',
-    () => {
+    function () {
       contextTest('collapsed in empty', collapsedInEmpty, 'rangeIsInside', [
         emptyDiv,
         root,
@@ -136,7 +136,7 @@ module('Unit | model | model-range | contextNodes', () => {
 
   module(
     'Unit | model | model-range | contextNodes | isInside | sticky: start-both, end-both',
-    () => {
+    function () {
       contextTest(
         'collapsed in empty',
         collapsedInEmpty,
@@ -240,7 +240,7 @@ module('Unit | model | model-range | contextNodes', () => {
 
   module(
     'Unit | model | model-range | contextNodes | rangeContains | default',
-    () => {
+    function () {
       contextTest('collapsed in empty', collapsedInEmpty, 'rangeContains', []);
       contextTest('collapsed in text', collapsedInText, 'rangeContains', [
         text1,
@@ -297,7 +297,7 @@ module('Unit | model | model-range | contextNodes', () => {
 
   module(
     'Unit | model | model-range | contextNodes | rangeTouches | default',
-    () => {
+    function () {
       contextTest('collapsed in empty', collapsedInEmpty, 'rangeTouches', [
         emptyDiv,
         root,
@@ -374,7 +374,7 @@ function contextTest(
   strategy: RangeContextStrategy,
   expectedNodes: ModelNode[]
 ) {
-  return test(name, (assert) => {
+  return test(name, function (assert) {
     QUnit.dump.maxDepth = 2;
     const actualNodes = [...range.contextNodes(strategy)];
     assert.deepEqual(actualNodes, expectedNodes);

@@ -6,8 +6,8 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';
 
-module('Unit | model | operations | move-operation-test', () => {
-  test('move simple range', (assert) => {
+module('Unit | model | operations | move-operation-test', function () {
+  test('move simple range', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -42,7 +42,7 @@ module('Unit | model | operations | move-operation-test', () => {
     );
   });
 
-  test('move simple range 2', (assert) => {
+  test('move simple range 2', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -78,7 +78,7 @@ module('Unit | model | operations | move-operation-test', () => {
       )
     );
   });
-  test('move uneven range inside textnode', (assert) => {
+  test('move uneven range inside textnode', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -144,7 +144,7 @@ module('Unit | model | operations | move-operation-test', () => {
       )
     );
   });
-  test('throws when target inside src', (assert) => {
+  test('throws when target inside src', function (assert) {
     // language=XML
     const {
       elements: { target },

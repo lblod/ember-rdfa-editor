@@ -5,13 +5,13 @@ import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-wr
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-module('Unit | model | writers | selection-writer', (hooks) => {
+module('Unit | model | writers | selection-writer', function (hooks) {
   const ctx = new ModelTestContext();
 
   hooks.beforeEach(() => {
     ctx.reset();
   });
-  test('converts a modelSelection correctly', (assert) => {
+  test('converts a modelSelection correctly', function (assert) {
     const { model } = ctx;
     const text = new ModelText('asdf');
     model.rootModelNode.addChild(text);

@@ -5,8 +5,8 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
 module(
   'Unit | model | operations | algorithms | split-algorithm-test | ',
-  () => {
-    test('rangeMapping is correct after split', (assert) => {
+  function () {
+    test('rangeMapping is correct after split', function (assert) {
       const {
         root: initial,
         elements: { div1 },
@@ -44,7 +44,7 @@ module(
       assert.deepEqual(newTestPos1Left.path, [1, 1]);
       assert.deepEqual(newTestPos2.path, [2]);
     });
-    test('rangeMapping is correct after split at end', (assert) => {
+    test('rangeMapping is correct after split at end', function (assert) {
       const {
         root: initial,
         elements: { div1 },

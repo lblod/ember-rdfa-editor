@@ -5,14 +5,14 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import InsertNewLineCommand from '@lblod/ember-rdfa-editor/commands/insert-newLine-command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-module('Unit | commands | insert-new-line-test', (hooks) => {
+module('Unit | commands | insert-new-line-test', function (hooks) {
   const ctx = new ModelTestContext();
   let command: InsertNewLineCommand;
   hooks.beforeEach(() => {
     ctx.reset();
     command = new InsertNewLineCommand(ctx.model);
   });
-  test('inserts a new line before a table', (assert) => {
+  test('inserts a new line before a table', function (assert) {
     // language=XML
     const {
       root: initial,
