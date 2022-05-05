@@ -139,7 +139,7 @@
     "prettier": "^2.6.1",
     "qunit": "^2.18.1",
     "qunit-dom": "^2.0.0",
-    "release-it": "^14.13.1",
+    "release-it": "^15.0.0",
     "release-it-lerna-changelog": "^4.0.1",
     "sass": "^1.49.9",
     "sinon": "^13.0.2",
