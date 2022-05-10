@@ -56,6 +56,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
   @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
+
+  @tracked editorLoading: boolean = true;
   private owner: ApplicationInstance;
   activePlugins: EditorPlugin[] = [];
   private logger: Logger;
@@ -98,6 +100,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
+    this.editorLoading = false
   }
 
   async initializePlugins(editor: RawEditor) {
