@@ -22,7 +22,7 @@ module.skip('Integration | InputHandler | arrow-handler', function (hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 1);
+    assert.strictEqual(cursorPosition, 1);
   });
 
   test('arrow left works', async function (assert) {
@@ -42,7 +42,7 @@ module.skip('Integration | InputHandler | arrow-handler', function (hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowLeft');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.strictEqual(cursorPosition, 0);
   });
 
   test('arrow right works with blocks', async function (assert) {
@@ -65,7 +65,7 @@ module.skip('Integration | InputHandler | arrow-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowRight');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.strictEqual(cursorPosition, 0);
   });
 
   test('arrow left works with blocks', async function (assert) {
@@ -85,6 +85,6 @@ module.skip('Integration | InputHandler | arrow-handler', function (hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'ArrowLeft');
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 3);
+    assert.strictEqual(cursorPosition, 3);
   });
 });

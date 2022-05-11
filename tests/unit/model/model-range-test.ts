@@ -11,9 +11,9 @@ import {
   nodeIsElementOfType,
 } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
 
-module('Unit | model | model-range', () => {
-  module('Unit | model | model-range | getMinimumConfinedRanges', () => {
-    test('returns range if range is confined', (assert) => {
+module('Unit | model | model-range', function () {
+  module('Unit | model | model-range | getMinimumConfinedRanges', function () {
+    test('returns range if range is confined', function (assert) {
       const root = new ModelElement('div');
       const text = new ModelText('abc');
       root.addChild(text);
@@ -26,7 +26,7 @@ module('Unit | model | model-range', () => {
       assert.strictEqual(rslt.length, 1);
       assert.true(rslt[0].sameAs(range));
     });
-    test('returns range if range is confined2', (assert) => {
+    test('returns range if range is confined2', function (assert) {
       const root = new ModelElement('div');
       const t1 = new ModelText('abc');
       const div = new ModelElement('div');
@@ -43,7 +43,7 @@ module('Unit | model | model-range', () => {
       assert.true(rslt[0].sameAs(range));
     });
 
-    test('returns confined ranges', (assert) => {
+    test('returns confined ranges', function (assert) {
       const root = new ModelElement('div');
 
       const s0 = new ModelElement('span');
@@ -109,7 +109,7 @@ module('Unit | model | model-range', () => {
       );
     });
 
-    test('returns confined ranges with uncles', (assert) => {
+    test('returns confined ranges with uncles', function (assert) {
       // language=XML
       const xml = `
         <div>
@@ -161,14 +161,14 @@ module('Unit | model | model-range', () => {
       assert.strictEqual(confinedRanges.length, 5);
     });
 
-    test("doesn't crash", (assert) => {
+    test("doesn't crash", function (assert) {
       // language=XML
       const { root } = stackOverFlowOnGetMinimumConfinedRanges;
       assert.true(true);
-      assert.true(root !== null);
+      assert.notStrictEqual(root, null);
     });
 
-    test('all ranges are confined', (assert) => {
+    test('all ranges are confined', function (assert) {
       // language=XML
       const {
         elements: { rangeStart },
@@ -192,13 +192,14 @@ module('Unit | model | model-range', () => {
 
       const result = range.getMinimumConfinedRanges();
 
+      assert.expect(result.length);
       for (const rsltRange of result) {
         assert.true(rsltRange.isConfined());
       }
     });
   });
-  module('Unit | model | model-range | getCommonAncestor', () => {
-    test('returns null when start and end have different root', (assert) => {
+  module('Unit | model | model-range | getCommonAncestor', function () {
+    test('returns null when start and end have different root', function (assert) {
       const root = new ModelElement('div');
       const root2 = new ModelElement('div');
       const p1 = ModelPosition.fromPath(root, [0]);
@@ -208,7 +209,7 @@ module('Unit | model | model-range', () => {
 
       assert.strictEqual(range.getCommonPosition(), null);
     });
-    test('returns root when start and end are root', (assert) => {
+    test('returns root when start and end are root', function (assert) {
       const root = new ModelElement('div');
       const p1 = ModelPosition.fromPath(root, []);
       const p2 = ModelPosition.fromPath(root, []);
@@ -221,8 +222,8 @@ module('Unit | model | model-range', () => {
     });
   });
 
-  module('Unit | model | model-range | getMaximizedRange', () => {
-    test('gets the same range when start and end in commonAncestor', (assert) => {
+  module('Unit | model | model-range | getMaximizedRange', function () {
+    test('gets the same range when start and end in commonAncestor', function (assert) {
       // language=XML
       const xml = `
         <div>
@@ -242,7 +243,7 @@ module('Unit | model | model-range', () => {
       const maximized = range.getMaximizedRange();
       assert.true(range.sameAs(maximized));
     });
-    test('gets the maximized range', (assert) => {
+    test('gets the maximized range', function (assert) {
       // language=XML
       const xml = `
         <div>
@@ -278,12 +279,14 @@ module('Unit | model | model-range', () => {
       assert.deepEqual(maximized.end.path, [0, 3]);
     });
 
-    module('Unit | model | model-range | findCommonAncestorsWhere', () => {
-      test('collapsed selection inside an element', (assert) => {
-        // language=XML
-        const {
-          elements: { testLi },
-        } = vdom`
+    module(
+      'Unit | model | model-range | findCommonAncestorsWhere',
+      function () {
+        test('collapsed selection inside an element', function (assert) {
+          // language=XML
+          const {
+            elements: { testLi },
+          } = vdom`
           <div>
             <ul>
               <li __id="testLi">
@@ -293,17 +296,17 @@ module('Unit | model | model-range', () => {
           </div>
         `;
 
-        const range = ModelRange.fromInElement(testLi, 0, 0);
+          const range = ModelRange.fromInElement(testLi, 0, 0);
 
-        assert.true(range.hasCommonAncestorWhere(elementHasType('li')));
-      });
+          assert.true(range.hasCommonAncestorWhere(elementHasType('li')));
+        });
 
-      test('uncollapsed selection does not have common ancestors of type', (assert) => {
-        // language=XML
-        const {
-          textNodes: { testText },
-          elements: { testLi },
-        } = vdom`
+        test('uncollapsed selection does not have common ancestors of type', function (assert) {
+          // language=XML
+          const {
+            textNodes: { testText },
+            elements: { testLi },
+          } = vdom`
           <div>
             <text __id="testText">before li</text>
             <ul>
@@ -314,16 +317,17 @@ module('Unit | model | model-range', () => {
           </div>
         `;
 
-        // debugger;
-        const startPosition = ModelPosition.fromInTextNode(testText, 0);
-        const endPosition = ModelPosition.fromInElement(testLi, 0);
-        const range = new ModelRange(startPosition, endPosition);
+          // debugger;
+          const startPosition = ModelPosition.fromInTextNode(testText, 0);
+          const endPosition = ModelPosition.fromInElement(testLi, 0);
+          const range = new ModelRange(startPosition, endPosition);
 
-        assert.false(range.hasCommonAncestorWhere(elementHasType('li')));
-      });
-    });
-    module('Unit | model | model-range | findContainedNodesWhere', () => {
-      test('collapsed range does not contain an element', (assert) => {
+          assert.false(range.hasCommonAncestorWhere(elementHasType('li')));
+        });
+      }
+    );
+    module('Unit | model | model-range | findContainedNodesWhere', function () {
+      test('collapsed range does not contain an element', function (assert) {
         // language=XML
         const {
           elements: { testLi },
@@ -342,7 +346,7 @@ module('Unit | model | model-range', () => {
         assert.false(range.containsNodeWhere(nodeIsElementOfType('li')));
       });
 
-      test('uncollapsed selection contains an element', (assert) => {
+      test('uncollapsed selection contains an element', function (assert) {
         // language=XML
         const {
           textNodes: { testText },

@@ -4,8 +4,8 @@ import {
   vdom,
 } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 
-module('Unit | model | writers | xml-writer-test', () => {
-  test('writes out a sensible document', (assert) => {
+module('Unit | model | writers | xml-writer-test', function () {
+  test('writes out a sensible document', function (assert) {
     // language=XML
     const { root } = vdom`
       <div>

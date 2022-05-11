@@ -8,18 +8,20 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
-module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
-  const ctx = new ModelTestContext();
-  setupTest(hooks);
-  hooks.beforeEach(() => {
-    ctx.reset();
-  });
-  test('splitUntil splits until predicate true', (assert) => {
-    // language=XML
-    const {
-      root: initial,
-      textNodes: { rangeStart },
-    } = vdom`
+module(
+  'Unit | model | mutators | immediate-model-mutator-test',
+  function (hooks) {
+    const ctx = new ModelTestContext();
+    setupTest(hooks);
+    hooks.beforeEach(() => {
+      ctx.reset();
+    });
+    test('splitUntil splits until predicate true', function (assert) {
+      // language=XML
+      const {
+        root: initial,
+        textNodes: { rangeStart },
+      } = vdom`
       <modelRoot>
         <div>
           <span>
@@ -31,8 +33,8 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
       </modelRoot>
     `;
 
-    // language=XML
-    const { root: expected } = vdom`
+      // language=XML
+      const { root: expected } = vdom`
       <modelRoot>
         <div>
           <span>
@@ -48,26 +50,28 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
         </div>
       </modelRoot>
     `;
-    const position = ModelPosition.fromInTextNode(rangeStart, 2);
-    const mut = new ImmediateModelMutator();
-    const resultPos = mut.splitUntil(
-      position,
-      (element) => element.type === 'div'
-    );
-    assert.true(initial.sameAs(expected));
-    assert.true(
-      resultPos.sameAs(ModelPosition.fromPath(initial as ModelElement, [0, 1]))
-    );
-  });
-  module(
-    'Unit | model | mutators | immediate-model-mutator-test | unwrap',
-    () => {
-      test('unwrap simple element', (assert) => {
-        // language=XML
-        const {
-          root: initial,
-          elements: { wrapper },
-        } = vdom`
+      const position = ModelPosition.fromInTextNode(rangeStart, 2);
+      const mut = new ImmediateModelMutator();
+      const resultPos = mut.splitUntil(
+        position,
+        (element) => element.type === 'div'
+      );
+      assert.true(initial.sameAs(expected));
+      assert.true(
+        resultPos.sameAs(
+          ModelPosition.fromPath(initial as ModelElement, [0, 1])
+        )
+      );
+    });
+    module(
+      'Unit | model | mutators | immediate-model-mutator-test | unwrap',
+      function () {
+        test('unwrap simple element', function (assert) {
+          // language=XML
+          const {
+            root: initial,
+            elements: { wrapper },
+          } = vdom`
           <modelRoot>
             <div __id="wrapper">
               <text>abc</text>
@@ -75,29 +79,29 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <text>abc</text>
           </modelRoot>
         `;
 
-        const mut = new ImmediateModelMutator();
-        const resultRange = mut.unwrap(wrapper);
-        assert.true(expected.sameAs(initial));
-        assert.true(
-          resultRange.sameAs(
-            ModelRange.fromPaths(initial as ModelElement, [0], [3])
-          )
-        );
-      });
+          const mut = new ImmediateModelMutator();
+          const resultRange = mut.unwrap(wrapper);
+          assert.true(expected.sameAs(initial));
+          assert.true(
+            resultRange.sameAs(
+              ModelRange.fromPaths(initial as ModelElement, [0], [3])
+            )
+          );
+        });
 
-      test('unwrap complex element', (assert) => {
-        // language=XML
-        const {
-          root: initial,
-          elements: { wrapper },
-        } = vdom`
+        test('unwrap complex element', function (assert) {
+          // language=XML
+          const {
+            root: initial,
+            elements: { wrapper },
+          } = vdom`
           <modelRoot>
             <span>
               <text>stuff</text>
@@ -116,8 +120,8 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <span>
               <text>stuff</text>
@@ -133,21 +137,21 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        const mut = new ImmediateModelMutator();
-        const resultRange = mut.unwrap(wrapper);
-        assert.true(expected.sameAs(initial));
-        assert.true(
-          resultRange.sameAs(
-            ModelRange.fromPaths(initial as ModelElement, [1, 0], [1, 5])
-          )
-        );
-      });
-      test('unwrap complex nested elements in sequence', (assert) => {
-        // language=XML
-        const {
-          root: initial,
-          elements: { n0, n1, n2, n3 },
-        } = vdom`
+          const mut = new ImmediateModelMutator();
+          const resultRange = mut.unwrap(wrapper);
+          assert.true(expected.sameAs(initial));
+          assert.true(
+            resultRange.sameAs(
+              ModelRange.fromPaths(initial as ModelElement, [1, 0], [1, 5])
+            )
+          );
+        });
+        test('unwrap complex nested elements in sequence', function (assert) {
+          // language=XML
+          const {
+            root: initial,
+            elements: { n0, n1, n2, n3 },
+          } = vdom`
           <modelRoot>
             <ul>
               <li>
@@ -181,8 +185,8 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <ul>
               <li>
@@ -207,19 +211,19 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
             </ul>
           </modelRoot>
         `;
-        const mut = new ImmediateModelMutator();
-        mut.unwrap(n0);
-        mut.unwrap(n1);
-        mut.unwrap(n2);
-        mut.unwrap(n3);
-        assert.true(initial.sameAs(expected));
-      });
-      test('unwrap with ensureBlocks inserts brs correctly', (assert) => {
-        // language=XML
-        const {
-          root: initial,
-          elements: { wrapper },
-        } = vdom`
+          const mut = new ImmediateModelMutator();
+          mut.unwrap(n0);
+          mut.unwrap(n1);
+          mut.unwrap(n2);
+          mut.unwrap(n3);
+          assert.true(initial.sameAs(expected));
+        });
+        test('unwrap with ensureBlocks inserts brs correctly', function (assert) {
+          // language=XML
+          const {
+            root: initial,
+            elements: { wrapper },
+          } = vdom`
           <modelRoot>
             <div>
               <text>abcd</text>
@@ -231,8 +235,8 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <div>
               <text>abcd</text>
@@ -243,43 +247,43 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
             </div>
           </modelRoot>
         `;
-        const mut = new ImmediateModelMutator();
-        mut.unwrap(wrapper, true);
-        assert.true(initial.sameAs(expected));
-      });
-    }
-  );
-  module(
-    'Unit | model | mutators | immediate-model-mutator-test | inserting',
-    () => {
-      test('inserts into position correctly', (assert) => {
-        // language=XML
-        const {
-          root: initial,
-          textNodes: { rangeStart },
-        } = vdom`
+          const mut = new ImmediateModelMutator();
+          mut.unwrap(wrapper, true);
+          assert.true(initial.sameAs(expected));
+        });
+      }
+    );
+    module(
+      'Unit | model | mutators | immediate-model-mutator-test | inserting',
+      function () {
+        test('inserts into position correctly', function (assert) {
+          // language=XML
+          const {
+            root: initial,
+            textNodes: { rangeStart },
+          } = vdom`
           <modelRoot>
             <text __id="rangeStart">abcd</text>
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <text>abcd</text>
             <br/>
           </modelRoot>
         `;
-        const mut = new ImmediateModelMutator();
-        const pos = ModelPosition.fromAfterNode(rangeStart);
-        mut.insertAtPosition(pos, new ModelElement('br'));
+          const mut = new ImmediateModelMutator();
+          const pos = ModelPosition.fromAfterNode(rangeStart);
+          mut.insertAtPosition(pos, new ModelElement('br'));
 
-        assert.true(initial.sameAs(expected));
-      });
+          assert.true(initial.sameAs(expected));
+        });
 
-      test('inserts into position correctly nested', (assert) => {
-        // language=XML
-        const { root: initial } = vdom`
+        test('inserts into position correctly nested', function (assert) {
+          // language=XML
+          const { root: initial } = vdom`
           <modelRoot>
             <div>
               <text>abcd</text>
@@ -289,8 +293,8 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <div>
               <text>abcd</text>
@@ -300,27 +304,27 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
             </div>
           </modelRoot>
         `;
-        const range = ModelRange.fromPaths(
-          initial as ModelElement,
-          [0, 4],
-          [0, 11]
-        );
-        const mut = new ImmediateModelMutator();
-        mut.insertAtPosition(range.end, new ModelElement('br'));
+          const range = ModelRange.fromPaths(
+            initial as ModelElement,
+            [0, 4],
+            [0, 11]
+          );
+          const mut = new ImmediateModelMutator();
+          mut.insertAtPosition(range.end, new ModelElement('br'));
 
-        assert.true(initial.sameAs(expected));
-      });
-    }
-  );
-  module(
-    'Unit | model | mutators | immediate-model-mutator-test | splitting',
-    () => {
-      test('split simple range', (assert) => {
-        // language=XML
-        const {
-          root: initial,
-          textNodes: { rangeStart },
-        } = vdom`
+          assert.true(initial.sameAs(expected));
+        });
+      }
+    );
+    module(
+      'Unit | model | mutators | immediate-model-mutator-test | splitting',
+      function () {
+        test('split simple range', function (assert) {
+          // language=XML
+          const {
+            root: initial,
+            textNodes: { rangeStart },
+          } = vdom`
           <modelRoot>
             <div>
               <text __id="rangeStart">abcd</text>
@@ -328,8 +332,8 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <div>
               <text>ab</text>
@@ -339,28 +343,28 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
             </div>
           </modelRoot>
         `;
-        const mut = new ImmediateModelMutator();
-        const range = ModelRange.fromInTextNode(rangeStart, 2, 2);
-        const resultRange = mut.splitRangeUntilElements(
-          range,
-          initial as ModelElement,
-          initial as ModelElement,
-          false
-        );
-        assert.true(expected.sameAs(initial));
-        assert.true(
-          resultRange.sameAs(
-            ModelRange.fromPaths(initial as ModelElement, [1], [1])
-          )
-        );
-      });
+          const mut = new ImmediateModelMutator();
+          const range = ModelRange.fromInTextNode(rangeStart, 2, 2);
+          const resultRange = mut.splitRangeUntilElements(
+            range,
+            initial as ModelElement,
+            initial as ModelElement,
+            false
+          );
+          assert.true(expected.sameAs(initial));
+          assert.true(
+            resultRange.sameAs(
+              ModelRange.fromPaths(initial as ModelElement, [1], [1])
+            )
+          );
+        });
 
-      test('split simple uncollapsed range', (assert) => {
-        // language=XML
-        const {
-          root: initial,
-          textNodes: { rangeStart },
-        } = vdom`
+        test('split simple uncollapsed range', function (assert) {
+          // language=XML
+          const {
+            root: initial,
+            textNodes: { rangeStart },
+          } = vdom`
           <modelRoot>
             <div>
               <text __id="rangeStart">abcd</text>
@@ -368,8 +372,8 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <div>
               <text>a</text>
@@ -383,36 +387,36 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        const mut = new ImmediateModelMutator();
-        const range = ModelRange.fromInTextNode(rangeStart, 1, 3);
-        const resultRange = mut.splitRangeUntilElements(
-          range,
-          initial as ModelElement,
-          initial as ModelElement,
-          false
-        );
+          const mut = new ImmediateModelMutator();
+          const range = ModelRange.fromInTextNode(rangeStart, 1, 3);
+          const resultRange = mut.splitRangeUntilElements(
+            range,
+            initial as ModelElement,
+            initial as ModelElement,
+            false
+          );
 
-        assert.true(expected.sameAs(initial));
-        assert.true(
-          resultRange.sameAs(
-            ModelRange.fromPaths(initial as ModelElement, [1], [2])
-          )
-        );
-      });
+          assert.true(expected.sameAs(initial));
+          assert.true(
+            resultRange.sameAs(
+              ModelRange.fromPaths(initial as ModelElement, [1], [2])
+            )
+          );
+        });
 
-      test('split simple uncollapsed range in text (child of root)', (assert) => {
-        // language=XML
-        const {
-          root: initial,
-          textNodes: { rangeStart },
-        } = vdom`
+        test('split simple uncollapsed range in text (child of root)', function (assert) {
+          // language=XML
+          const {
+            root: initial,
+            textNodes: { rangeStart },
+          } = vdom`
           <modelRoot>
             <text __id="rangeStart">abcd</text>
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <text>a</text>
             <text>bc</text>
@@ -420,26 +424,26 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        const mut = new ImmediateModelMutator();
-        const range = ModelRange.fromInTextNode(rangeStart, 1, 3);
-        const resultRange = mut.splitRangeUntilElements(
-          range,
-          initial as ModelElement,
-          initial as ModelElement,
-          false
-        );
+          const mut = new ImmediateModelMutator();
+          const range = ModelRange.fromInTextNode(rangeStart, 1, 3);
+          const resultRange = mut.splitRangeUntilElements(
+            range,
+            initial as ModelElement,
+            initial as ModelElement,
+            false
+          );
 
-        assert.true(expected.sameAs(initial));
-        assert.true(
-          resultRange.sameAs(
-            ModelRange.fromPaths(initial as ModelElement, [1], [3])
-          )
-        );
-      });
+          assert.true(expected.sameAs(initial));
+          assert.true(
+            resultRange.sameAs(
+              ModelRange.fromPaths(initial as ModelElement, [1], [3])
+            )
+          );
+        });
 
-      test('split simple uncollapsed range selecting div', (assert) => {
-        // language=XML
-        const { root: initial } = vdom`
+        test('split simple uncollapsed range selecting div', function (assert) {
+          // language=XML
+          const { root: initial } = vdom`
           <modelRoot>
             <div>
               <text>abcd</text>
@@ -450,8 +454,8 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <div>
               <text>abcd</text>
@@ -462,29 +466,29 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        const mut = new ImmediateModelMutator();
-        const range = ModelRange.fromInNode(initial, 0, 1);
-        const resultRange = mut.splitRangeUntilElements(
-          range,
-          initial as ModelElement,
-          initial as ModelElement,
-          false
-        );
+          const mut = new ImmediateModelMutator();
+          const range = ModelRange.fromInNode(initial, 0, 1);
+          const resultRange = mut.splitRangeUntilElements(
+            range,
+            initial as ModelElement,
+            initial as ModelElement,
+            false
+          );
 
-        assert.true(expected.sameAs(initial));
-        assert.true(
-          resultRange.sameAs(
-            ModelRange.fromPaths(initial as ModelElement, [0], [1])
-          )
-        );
-      });
+          assert.true(expected.sameAs(initial));
+          assert.true(
+            resultRange.sameAs(
+              ModelRange.fromPaths(initial as ModelElement, [0], [1])
+            )
+          );
+        });
 
-      test('split uneven uncollapsed range', (assert) => {
-        // language=XML
-        const {
-          root: initial,
-          textNodes: { rangeStart, rangeEnd },
-        } = vdom`
+        test('split uneven uncollapsed range', function (assert) {
+          // language=XML
+          const {
+            root: initial,
+            textNodes: { rangeStart, rangeEnd },
+          } = vdom`
           <modelRoot>
             <div>
               <text __id="rangeStart">abcd</text>
@@ -495,8 +499,8 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <div>
               <text>a</text>
@@ -514,30 +518,30 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
             </div>
           </modelRoot>
         `;
-        const mut = new ImmediateModelMutator();
-        const start = ModelPosition.fromInTextNode(rangeStart, 1);
-        const end = ModelPosition.fromInTextNode(rangeEnd, 2);
-        const range = new ModelRange(start, end);
-        const resultRange = mut.splitRangeUntilElements(
-          range,
-          initial as ModelElement,
-          initial as ModelElement,
-          false
-        );
-        assert.true(expected.sameAs(initial));
-        assert.true(
-          resultRange.sameAs(
-            ModelRange.fromPaths(initial as ModelElement, [1], [2])
-          )
-        );
-      });
+          const mut = new ImmediateModelMutator();
+          const start = ModelPosition.fromInTextNode(rangeStart, 1);
+          const end = ModelPosition.fromInTextNode(rangeEnd, 2);
+          const range = new ModelRange(start, end);
+          const resultRange = mut.splitRangeUntilElements(
+            range,
+            initial as ModelElement,
+            initial as ModelElement,
+            false
+          );
+          assert.true(expected.sameAs(initial));
+          assert.true(
+            resultRange.sameAs(
+              ModelRange.fromPaths(initial as ModelElement, [1], [2])
+            )
+          );
+        });
 
-      test('split complex uncollapsed range', (assert) => {
-        // language=XML
-        const {
-          root: initial,
-          elements: { rangeContainer },
-        } = vdom`
+        test('split complex uncollapsed range', function (assert) {
+          // language=XML
+          const {
+            root: initial,
+            elements: { rangeContainer },
+          } = vdom`
           <modelRoot>
             <ul>
               <li>
@@ -563,8 +567,8 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <ul>
               <li>
@@ -597,102 +601,103 @@ module('Unit | model | mutators | immediate-model-mutator-test', (hooks) => {
             </ul>
           </modelRoot>
         `;
-        const mut = new ImmediateModelMutator();
-        const range = ModelRange.fromInElement(rangeContainer, 0, 1);
-        const resultRange = mut.splitRangeUntilElements(
-          range,
-          initial as ModelElement,
-          initial as ModelElement,
-          false
-        );
-        assert.true(expected.sameAs(initial));
-        assert.true(
-          resultRange.sameAs(
-            ModelRange.fromPaths(initial as ModelElement, [1], [2])
-          )
-        );
-      });
-    }
-  );
-  module(
-    'Unit | model | mutators | immediate-model-mutator-test | insertText',
-    () => {
-      test('insert text into root', (assert) => {
-        // language=XML
-        const { root: initial } = vdom`
+          const mut = new ImmediateModelMutator();
+          const range = ModelRange.fromInElement(rangeContainer, 0, 1);
+          const resultRange = mut.splitRangeUntilElements(
+            range,
+            initial as ModelElement,
+            initial as ModelElement,
+            false
+          );
+          assert.true(expected.sameAs(initial));
+          assert.true(
+            resultRange.sameAs(
+              ModelRange.fromPaths(initial as ModelElement, [1], [2])
+            )
+          );
+        });
+      }
+    );
+    module(
+      'Unit | model | mutators | immediate-model-mutator-test | insertText',
+      function () {
+        test('insert text into root', function (assert) {
+          // language=XML
+          const { root: initial } = vdom`
           <modelRoot/>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <text>abc</text>
           </modelRoot>
         `;
 
-        const mut = new ImmediateModelMutator();
-        const range = ModelRange.fromInElement(initial as ModelElement, 0, 0);
-        const resultRange = mut.insertText(range, 'abc', new MarkSet());
-        assert.true(initial.sameAs(expected), QUnit.dump.parse(initial));
-        assert.true(
-          resultRange.sameAs(
-            ModelRange.fromInElement(initial as ModelElement, 0, 3)
-          ),
-          resultRange.toString()
-        );
-      });
+          const mut = new ImmediateModelMutator();
+          const range = ModelRange.fromInElement(initial as ModelElement, 0, 0);
+          const resultRange = mut.insertText(range, 'abc', new MarkSet());
+          assert.true(initial.sameAs(expected), QUnit.dump.parse(initial));
+          assert.true(
+            resultRange.sameAs(
+              ModelRange.fromInElement(initial as ModelElement, 0, 3)
+            ),
+            resultRange.toString()
+          );
+        });
 
-      test('insert empty text into root', (assert) => {
-        // language=XML
-        const { root: initial } = vdom`
+        test('insert empty text into root', function (assert) {
+          // language=XML
+          const { root: initial } = vdom`
           <modelRoot/>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <text/>
           </modelRoot>
         `;
 
-        const mut = new ImmediateModelMutator();
-        const range = ModelRange.fromInElement(initial as ModelElement, 0, 0);
-        const resultRange = mut.insertText(range, '', new MarkSet());
-        assert.true(initial.sameAs(expected));
-        assert.true(
-          resultRange.sameAs(
-            ModelRange.fromInElement(initial as ModelElement, 0, 0)
-          )
-        );
-      });
+          const mut = new ImmediateModelMutator();
+          const range = ModelRange.fromInElement(initial as ModelElement, 0, 0);
+          const resultRange = mut.insertText(range, '', new MarkSet());
+          assert.true(initial.sameAs(expected));
+          assert.true(
+            resultRange.sameAs(
+              ModelRange.fromInElement(initial as ModelElement, 0, 0)
+            )
+          );
+        });
 
-      test('insert text into text node merges', (assert) => {
-        // language=XML
-        const { root: initial } = vdom`
+        test('insert text into text node merges', function (assert) {
+          // language=XML
+          const { root: initial } = vdom`
           <modelRoot>
             <text>abef</text>
           </modelRoot>
         `;
 
-        // language=XML
-        const { root: expected } = vdom`
+          // language=XML
+          const { root: expected } = vdom`
           <modelRoot>
             <text>abcdef</text>
           </modelRoot>
         `;
 
-        const mut = new ImmediateModelMutator();
-        const range = ModelRange.fromInElement(initial as ModelElement, 2, 2);
-        const resultRange = mut.insertText(range, 'cd', new MarkSet());
+          const mut = new ImmediateModelMutator();
+          const range = ModelRange.fromInElement(initial as ModelElement, 2, 2);
+          const resultRange = mut.insertText(range, 'cd', new MarkSet());
 
-        assert.true(initial.sameAs(expected));
-        assert.true(
-          resultRange.sameAs(
-            ModelRange.fromInElement(initial as ModelElement, 2, 4)
-          ),
-          resultRange.toString()
-        );
-      });
-    }
-  );
-});
+          assert.true(initial.sameAs(expected));
+          assert.true(
+            resultRange.sameAs(
+              ModelRange.fromInElement(initial as ModelElement, 2, 4)
+            ),
+            resultRange.toString()
+          );
+        });
+      }
+    );
+  }
+);

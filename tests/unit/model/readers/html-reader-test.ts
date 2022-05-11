@@ -15,7 +15,7 @@ import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/mark
 import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline';
 import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough';
 
-module('Unit | model | readers | html-reader', (hooks) => {
+module('Unit | model | readers | html-reader', function (hooks) {
   let reader: HtmlReader;
   const ctx = new ModelTestContext();
   hooks.beforeEach(() => {
@@ -28,7 +28,7 @@ module('Unit | model | readers | html-reader', (hooks) => {
     reader = new HtmlReader(ctx.model);
   });
 
-  test('read simple tree', (assert) => {
+  test('read simple tree', function (assert) {
     const doc = dom`<p>abc</p>`;
     // language=XML
     const { root: expected } = vdom`
@@ -39,7 +39,7 @@ module('Unit | model | readers | html-reader', (hooks) => {
     const actual = reader.read(doc.body.firstChild!)!;
     assert.true(actual[0].sameAs(expected));
   });
-  test('read tree with textStyle elements', (assert) => {
+  test('read tree with textStyle elements', function (assert) {
     const doc = dom`<span><strong>abc</strong></span>`;
 
     // language=XML
@@ -53,7 +53,7 @@ module('Unit | model | readers | html-reader', (hooks) => {
     assert.true(actual[0].sameAs(expected));
   });
 
-  test('read tree with nested textStyle elements', (assert) => {
+  test('read tree with nested textStyle elements', function (assert) {
     // language=HTML
     const doc = dom`<span><strong><em><u>abc</u></em></strong></span>`;
 
@@ -68,7 +68,7 @@ module('Unit | model | readers | html-reader', (hooks) => {
     assert.true(actual[0].sameAs(expected));
   });
 
-  test('read tree with nested textStyle elements 2', (assert) => {
+  test('read tree with nested textStyle elements 2', function (assert) {
     // language=HTML
     const doc = dom`<span><strong><em><u>abc</u>def</em></strong></span>`;
 
@@ -87,7 +87,7 @@ module('Unit | model | readers | html-reader', (hooks) => {
   // Note that the DOM specification limits the types of element which can be children of textStyle elements:
   // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/strong
   // https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories#phrasing_content
-  test('read tree with nested textStyle elements and other elements', (assert) => {
+  test('read tree with nested textStyle elements and other elements', function (assert) {
     // language=HTML
     const doc = domStripped`
       <span>
@@ -118,7 +118,7 @@ module('Unit | model | readers | html-reader', (hooks) => {
     const actual = reader.read(doc.body.firstChild!)!;
     assert.true(actual[0].sameAs(expected));
   });
-  test('read tree with highlights', (assert) => {
+  test('read tree with highlights', function (assert) {
     // language=HTML
     const doc = domStripped`
       <span>
@@ -139,7 +139,7 @@ module('Unit | model | readers | html-reader', (hooks) => {
     const actual = reader.read(doc.body.firstChild!)!;
     assert.true(actual[0].sameAs(expected));
   });
-  test('reads table', (assert) => {
+  test('reads table', function (assert) {
     // language=HTML
     const doc = domStripped`
       <table>
@@ -190,8 +190,8 @@ module('Unit | model | readers | html-reader', (hooks) => {
       'cell00'
     );
   });
-  module('Unit | model | readers | html-reader | rdfa attributes', () => {
-    test('it should take prefixes from parent elements into account', (assert) => {
+  module('Unit | model | readers | html-reader | rdfa attributes', function () {
+    test('it should take prefixes from parent elements into account', function (assert) {
       const child = document.createElement('div');
       child.setAttribute('property', 'mu:uuid');
       const parent = document.createElement('div');
@@ -203,36 +203,36 @@ module('Unit | model | readers | html-reader', (hooks) => {
       const actual = reader.read(child)[0] as ModelElement;
       assert.true(actual.getRdfaPrefixes().has('mu'));
       assert.true(actual.getRdfaPrefixes().has('eli'));
-      assert.equal(
+      assert.strictEqual(
         actual.getRdfaPrefixes().get('mu'),
         'http://mu.semte.ch/vocabularies/core/'
       );
-      assert.equal(
+      assert.strictEqual(
         actual.getRdfaPrefixes().get('eli'),
         'http://data.europa.eu/eli/ontology#'
       );
-      assert.equal(actual.getRdfaAttributes().properties.length, 1);
-      assert.equal(
+      assert.strictEqual(actual.getRdfaAttributes().properties.length, 1);
+      assert.strictEqual(
         actual.getRdfaAttributes().properties[0],
         'http://mu.semte.ch/vocabularies/core/uuid'
       );
     });
 
-    test('it should properly expand a property without a prefix when a vocab was provided in the context', (assert) => {
+    test('it should properly expand a property without a prefix when a vocab was provided in the context', function (assert) {
       const child = document.createElement('span');
       child.setAttribute('property', 'title');
       const parent = document.createElement('div');
       parent.setAttribute('vocab', 'http://data.europa.eu/eli/ontology#');
       parent.appendChild(child);
       const actual = reader.read(child)[0] as ModelElement;
-      assert.equal(actual.getRdfaAttributes().properties.length, 1);
-      assert.equal(
+      assert.strictEqual(actual.getRdfaAttributes().properties.length, 1);
+      assert.strictEqual(
         actual.getRdfaAttributes().properties[0],
         'http://data.europa.eu/eli/ontology#title'
       );
     });
 
-    test('it should properly expand a property without a prefix in a nested child when a vocab was provided in the context', (assert) => {
+    test('it should properly expand a property without a prefix in a nested child when a vocab was provided in the context', function (assert) {
       const doc = dom`<div><span property="title">my title</span></div>`;
       const child = doc.body.firstChild as HTMLElement;
       const parent = document.createElement('div');
@@ -240,8 +240,8 @@ module('Unit | model | readers | html-reader', (hooks) => {
       parent.appendChild(child);
       const root = reader.read(child)[0] as ModelElement;
       const actual = root.firstChild as ModelElement;
-      assert.equal(actual.getRdfaAttributes().properties.length, 1);
-      assert.equal(
+      assert.strictEqual(actual.getRdfaAttributes().properties.length, 1);
+      assert.strictEqual(
         actual.getRdfaAttributes().properties[0],
         'http://data.europa.eu/eli/ontology#title'
       );

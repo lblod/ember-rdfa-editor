@@ -4,8 +4,8 @@ import PropertyCleaner from '@lblod/ember-rdfa-editor/model/cleaners/property-cl
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
-module('Unit | model | cleaners | property-cleaner-test', () => {
-  test('should not merge incompatible nodes', (assert) => {
+module('Unit | model | cleaners | property-cleaner-test', function () {
+  test('should not merge incompatible nodes', function (assert) {
     // language=XML
     const {
       root,
@@ -21,7 +21,7 @@ module('Unit | model | cleaners | property-cleaner-test', () => {
     cleaner.clean(range);
     assert.true(root.sameAs(expected));
   });
-  test('should merge nodes with same textproperties', (assert) => {
+  test('should merge nodes with same textproperties', function (assert) {
     // language=XML
     const {
       root,
@@ -43,7 +43,7 @@ module('Unit | model | cleaners | property-cleaner-test', () => {
     cleaner.clean(range);
     assert.true(root.sameAs(expected));
   });
-  test('should not merge nodes on different levels', (assert) => {
+  test('should not merge nodes on different levels', function (assert) {
     // language=XML
     const {
       root,
@@ -63,7 +63,7 @@ module('Unit | model | cleaners | property-cleaner-test', () => {
     assert.true(root.sameAs(expected));
   });
 
-  test('should  merge deep nodes', (assert) => {
+  test('should  merge deep nodes', function (assert) {
     // language=XML
     const {
       root,
@@ -88,7 +88,7 @@ module('Unit | model | cleaners | property-cleaner-test', () => {
     cleaner.clean(range);
     assert.true(root.sameAs(expected));
   });
-  test('should  merge many nodes', (assert) => {
+  test('should  merge many nodes', function (assert) {
     // language=XML
     const {
       root,
@@ -118,7 +118,7 @@ module('Unit | model | cleaners | property-cleaner-test', () => {
     assert.true(root.sameAs(expected));
   });
 
-  test('should merge nodes with same textproperties not full range', (assert) => {
+  test('should merge nodes with same textproperties not full range', function (assert) {
     // language=XML
     const {
       root,
