@@ -11,6 +11,7 @@ import arrayEquals from '../utils/array-equals';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import { VISUAL_NODES } from './util/constants';
 
 /**
  * Represents a single position in the model. In contrast to the dom,
@@ -432,6 +433,7 @@ export default class ModelPosition {
       filter: toFilterSkipFalse((node) => node.isLeaf),
     });
 
+
     while (stepsToShift !== 0) {
       if (currentPos.isInsideText()) {
         const newPos = currentPos.shiftedBy(stepsToShift);
@@ -439,27 +441,63 @@ export default class ModelPosition {
         stepsToShift -= shiftedSteps;
         currentPos = newPos;
       } else {
-        const nextLeaf = walker.nextNode();
-        if (nextLeaf) {
-          if (forwards) {
-            currentPos = ModelPosition.fromInNode(
-              nextLeaf,
-              Math.min(stepsToShift, nextLeaf.length)
-            );
-            stepsToShift = Math.max(stepsToShift - nextLeaf.length, 0);
-          } else {
-            currentPos = ModelPosition.fromInNode(
-              nextLeaf,
-              Math.max(nextLeaf.length + stepsToShift, 0)
-            );
-            stepsToShift = Math.min(stepsToShift + nextLeaf.length, 0);
+        if(currentPos.parentOffset === currentPos.parent.getMaxOffset() && forwards && this.getVisualLength(currentPos.parent) > 0){
+          stepsToShift = Math.max(stepsToShift - this.getVisualLength(currentPos.parent), 0);
+          currentPos = ModelPosition.fromAfterNode(currentPos.parent);
+          while(currentPos.parentOffset === currentPos.parent.getMaxOffset()){
+            currentPos = ModelPosition.fromAfterNode(currentPos.parent);
+          }
+        } 
+         else if(currentPos.parentOffset === 0 && !forwards && this.getVisualLength(currentPos.parent) > 0){
+          stepsToShift = Math.min(stepsToShift + this.getVisualLength(currentPos.parent), 0);
+          currentPos = ModelPosition.fromBeforeNode(currentPos.parent);
+          while(currentPos.parentOffset === 0){
+            currentPos = ModelPosition.fromBeforeNode(currentPos.parent);
           }
         } else {
-          break;
+          const nextLeaf = walker.nextNode();
+          if (nextLeaf) {
+            if (forwards) {
+              if(ModelNode.isModelElement(nextLeaf)){
+                currentPos = ModelPosition.fromAfterNode(nextLeaf);
+              } else {
+                currentPos = ModelPosition.fromInNode(
+                  nextLeaf,
+                  Math.min(stepsToShift, this.getVisualLength(nextLeaf))
+                );
+              }
+              
+              stepsToShift = Math.max(stepsToShift - this.getVisualLength(nextLeaf), 0);
+            } else {
+              if(ModelNode.isModelElement(nextLeaf)){
+                currentPos = ModelPosition.fromBeforeNode(nextLeaf);
+              } else {
+                currentPos = ModelPosition.fromInNode(
+                  nextLeaf,
+                  Math.max(this.getVisualLength(nextLeaf) + stepsToShift, 0)
+                );
+              }
+              stepsToShift = Math.min(stepsToShift + this.getVisualLength(nextLeaf), 0);
+            }
+          } else {
+            break;
+          }
         }
+        
       }
     }
     return currentPos;
+  }
+
+
+  getVisualLength(node: ModelNode): number {
+    if(node instanceof ModelText){
+      return node.length;
+    } 
+    else if(node instanceof ModelElement && VISUAL_NODES.has(node.type)){
+        return 1;
+    }
+    return 0;
   }
 
   /**
