@@ -100,7 +100,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
-    this.editorLoading = false
+    this.editorLoading = false;
   }
 
   async initializePlugins(editor: RawEditor) {
