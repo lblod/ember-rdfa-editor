@@ -32,19 +32,18 @@
 
   <div class='say-container__main'>
     {{#if this.editorLoading}}
-      <AuLoader style="margin: 0 auto;"/>
+      <AuLoader />
     {{/if}}
-    
 
     <div
-      class="say-editor
+      class='say-editor
         {{if @editorOptions.showRdfa "rdfa-annotations"}}
         {{if @editorOptions.showRdfaHighlight "rdfa-annotations-highlight"}}
         {{if @editorOptions.showRdfaHover "rdfa-annotations-hover"}}
         {{if this.showRdfaBlocks "show-rdfa-blocks"}}
-        {{if this.editorLoading 'au-u-hidden-visually'}}"
+        {{if this.editorLoading "au-u-hidden-visually"}}'
     >
-      <div class="say-editor__paper">
+      <div class='say-editor__paper'>
         <Ce::ContentEditable
           @class='say-editor__inner say-content'
           @rawEditorInit={{this.handleRawEditorInit}}
@@ -53,11 +52,10 @@
       </div>
     </div>
 
-
     <div class='say-container__aside'>
       <div class='say-editor-hints'>
         {{#if this.insertSidebarWidgets.length}}
-          <Rdfa::PluginWrapper @title="Invoegen">
+          <Rdfa::PluginWrapper @title='Invoegen'>
             {{#each this.insertSidebarWidgets as |widget|}}
               {{component
                 widget.componentName
