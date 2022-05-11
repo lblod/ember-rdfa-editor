@@ -6,6 +6,7 @@ import {
   LIST_TYPES,
   PLACEHOLDER_CLASS,
   TABLE_CELLS,
+  VISUAL_NODES,
 } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 export default class ModelNodeUtils {
@@ -77,5 +78,15 @@ export default class ModelNodeUtils {
     }
 
     return current;
+  }
+  
+  static getVisualLength(node: ModelNode){
+    if(ModelNode.isModelText(node)){
+      return node.length;
+    } 
+    else if(node instanceof ModelElement && VISUAL_NODES.has(node.type)){
+        return 1;
+    }
+    return 0;
   }
 }
