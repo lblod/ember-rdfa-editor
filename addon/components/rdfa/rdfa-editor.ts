@@ -57,7 +57,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
 
-  @tracked editorLoading: boolean = true;
+  @tracked editorLoading = true;
   private owner: ApplicationInstance;
   activePlugins: EditorPlugin[] = [];
   private logger: Logger;
