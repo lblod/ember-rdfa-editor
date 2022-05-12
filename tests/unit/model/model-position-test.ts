@@ -501,14 +501,14 @@ module('Unit | model | model-position', () => {
       const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
       const referencePosRight = ModelPosition.fromInTextNode(text2, 1);
 
-      const twoLeft = ModelPosition.fromInTextNode(text1, 1);
-      const twoRight = ModelPosition.fromInTextNode(text3, 1);
+      const oneLeft = ModelPosition.fromInTextNode(text1, 2);
+      const oneRight = ModelPosition.fromInTextNode(text3, 0);
 
-      const shiftedLeft = referencePosLeft.shiftedVisually(-2);
-      const shiftedRight = referencePosRight.shiftedVisually(2);
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
 
-      assert.true(twoLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
-      assert.true(twoRight.sameAs(shiftedRight), shiftedRight.path.toString());
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
     test('shifts by amount - sublists', (assert) => {
       const {
@@ -537,14 +537,14 @@ module('Unit | model | model-position', () => {
       const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
       const referencePosRight = ModelPosition.fromInTextNode(text3, 2);
 
-      const twoLeft = ModelPosition.fromInTextNode(text1, 1);
-      const twoRight = ModelPosition.fromInTextNode(text4, 1);
+      const oneLeft = ModelPosition.fromInTextNode(text1, 2);
+      const oneRight = ModelPosition.fromInTextNode(text4, 0);
 
-      const shiftedLeft = referencePosLeft.shiftedVisually(-2);
-      const shiftedRight = referencePosRight.shiftedVisually(2);
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
 
-      assert.true(twoLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
-      assert.true(twoRight.sameAs(shiftedRight), shiftedRight.path.toString());
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
 
     test('shifted by amount, going out of a list', (assert) => {
