@@ -5,7 +5,10 @@ import ModelNode, {
 } from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { Cloneable } from '@lblod/ember-rdfa-editor/model/util/types';
-import {LEAF_NODES, NON_BLOCK_NODES} from '@lblod/ember-rdfa-editor/model/util/constants';
+import {
+  LEAF_NODES,
+  NON_BLOCK_NODES,
+} from '@lblod/ember-rdfa-editor/model/util/constants';
 import {
   IndexOutOfRangeError,
   ModelError,

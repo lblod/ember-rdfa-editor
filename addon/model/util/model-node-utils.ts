@@ -2,6 +2,7 @@ import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import {
+  INVISIBLE_SPACE,
   LIST_CONTAINERS,
   LIST_TYPES,
   PLACEHOLDER_CLASS,
@@ -79,13 +80,13 @@ export default class ModelNodeUtils {
 
     return current;
   }
-  
-  static getVisualLength(node: ModelNode){
-    if(ModelNode.isModelText(node)){
+
+  static getVisualLength(node: ModelNode): number {
+    if (ModelNode.isModelText(node)) {
+      node.content.split('').filter((c) => c !== INVISIBLE_SPACE).length;
       return node.length;
-    } 
-    else if(node instanceof ModelElement && VISUAL_NODES.has(node.type)){
-        return 1;
+    } else if (node instanceof ModelElement && VISUAL_NODES.has(node.type)) {
+      return 1;
     }
     return 0;
   }

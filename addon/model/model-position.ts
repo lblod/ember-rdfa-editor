@@ -412,7 +412,7 @@ export default class ModelPosition {
    * Negative values go left, positive values go right.
    * @param steps
    */
-  shiftedVisually(steps: number): ModelPosition {
+  shiftedVisually(steps: number) {
     let stepsToShift = steps;
     let currentPos: ModelPosition = this.clone();
     let searchRange: ModelRange;
@@ -433,57 +433,69 @@ export default class ModelPosition {
       filter: toFilterSkipFalse((node) => node.isLeaf),
     });
 
-
     while (stepsToShift !== 0) {
       if (currentPos.isInsideText()) {
-        const newPos = currentPos.shiftedBy(stepsToShift);
+        let newPos = currentPos;
+        newPos = newPos.shiftedBy(stepsToShift);
+
         const shiftedSteps = newPos.parentOffset - currentPos.parentOffset;
         stepsToShift -= shiftedSteps;
         currentPos = newPos;
       } else {
-        if(currentPos.parentOffset === currentPos.parent.getMaxOffset() && forwards && ModelNodeUtils.getVisualLength(currentPos.parent) > 0){
-          stepsToShift = Math.max(stepsToShift - ModelNodeUtils.getVisualLength(currentPos.parent), 0);
-          currentPos = ModelPosition.fromAfterNode(currentPos.parent);
-          while(currentPos.parentOffset === currentPos.parent.getMaxOffset()){
-            currentPos = ModelPosition.fromAfterNode(currentPos.parent);
-          }
-        } 
-         else if(currentPos.parentOffset === 0 && !forwards && ModelNodeUtils.getVisualLength(currentPos.parent) > 0){
-          stepsToShift = Math.min(stepsToShift + ModelNodeUtils.getVisualLength(currentPos.parent), 0);
-          currentPos = ModelPosition.fromBeforeNode(currentPos.parent);
-          while(currentPos.parentOffset === 0){
-            currentPos = ModelPosition.fromBeforeNode(currentPos.parent);
+        if (
+          currentPos.parentOffset === currentPos.parent.getMaxOffset() &&
+          forwards &&
+          ModelNodeUtils.getVisualLength(currentPos.parent) > 0
+        ) {
+          stepsToShift = Math.max(
+            stepsToShift - ModelNodeUtils.getVisualLength(currentPos.parent),
+            0
+          );
+        } else if (
+          currentPos.parentOffset === 0 &&
+          !forwards &&
+          ModelNodeUtils.getVisualLength(currentPos.parent) > 0
+        ) {
+          stepsToShift = Math.min(
+            stepsToShift + ModelNodeUtils.getVisualLength(currentPos.parent),
+            0
+          );
+        }
+        const nextLeaf = walker.nextNode();
+        if (nextLeaf) {
+          if (forwards) {
+            if (ModelNode.isModelElement(nextLeaf)) {
+              currentPos = ModelPosition.fromAfterNode(nextLeaf);
+            } else {
+              currentPos = ModelPosition.fromInNode(
+                nextLeaf,
+                Math.min(stepsToShift, ModelNodeUtils.getVisualLength(nextLeaf))
+              );
+            }
+            stepsToShift = Math.max(
+              stepsToShift - ModelNodeUtils.getVisualLength(nextLeaf),
+              0
+            );
+          } else {
+            if (ModelNode.isModelElement(nextLeaf)) {
+              currentPos = ModelPosition.fromBeforeNode(nextLeaf);
+            } else {
+              currentPos = ModelPosition.fromInNode(
+                nextLeaf,
+                Math.max(
+                  ModelNodeUtils.getVisualLength(nextLeaf) + stepsToShift,
+                  0
+                )
+              );
+            }
+            stepsToShift = Math.min(
+              stepsToShift + ModelNodeUtils.getVisualLength(nextLeaf),
+              0
+            );
           }
         } else {
-          const nextLeaf = walker.nextNode();
-          if (nextLeaf) {
-            if (forwards) {
-              if(ModelNode.isModelElement(nextLeaf)){
-                currentPos = ModelPosition.fromAfterNode(nextLeaf);
-              } else {
-                currentPos = ModelPosition.fromInNode(
-                  nextLeaf,
-                  Math.min(stepsToShift, ModelNodeUtils.getVisualLength(nextLeaf))
-                );
-              }
-              
-              stepsToShift = Math.max(stepsToShift - ModelNodeUtils.getVisualLength(nextLeaf), 0);
-            } else {
-              if(ModelNode.isModelElement(nextLeaf)){
-                currentPos = ModelPosition.fromBeforeNode(nextLeaf);
-              } else {
-                currentPos = ModelPosition.fromInNode(
-                  nextLeaf,
-                  Math.max(ModelNodeUtils.getVisualLength(nextLeaf) + stepsToShift, 0)
-                );
-              }
-              stepsToShift = Math.min(stepsToShift + ModelNodeUtils.getVisualLength(nextLeaf), 0);
-            }
-          } else {
-            break;
-          }
+          break;
         }
-        
       }
     }
     return currentPos;

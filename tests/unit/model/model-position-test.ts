@@ -447,10 +447,12 @@ module('Unit | model | model-position', () => {
       const shiftedLeft = referencePosLeft.shiftedVisually(-1);
       const shiftedRight = referencePosRight.shiftedVisually(1);
       assert.true(
-        referencePosLeft.sameAs(shiftedLeft), shiftedLeft.path.toString()
+        referencePosLeft.sameAs(shiftedLeft),
+        shiftedLeft.path.toString()
       );
       assert.true(
-        referencePosRight.sameAs(shiftedRight), shiftedRight.path.toString()
+        referencePosRight.sameAs(shiftedRight),
+        shiftedRight.path.toString()
       );
     });
     test('shifts by amount - descends into inline element', (assert) => {
@@ -505,9 +507,9 @@ module('Unit | model | model-position', () => {
       const shiftedLeft = referencePosLeft.shiftedVisually(-2);
       const shiftedRight = referencePosRight.shiftedVisually(2);
 
-      assert.true(twoLeft.sameAs(shiftedLeft), shiftedLeft.path.toString())
-      assert.true(twoRight.sameAs(shiftedRight), shiftedRight.path.toString())
-    })
+      assert.true(twoLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(twoRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
     test('shifts by amount - sublists', (assert) => {
       const {
         textNodes: { text1, text2, text3, text4 },
@@ -531,7 +533,7 @@ module('Unit | model | model-position', () => {
           </li>
         </ul>
       </modelRoot>
-      `
+      `;
       const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
       const referencePosRight = ModelPosition.fromInTextNode(text3, 2);
 
@@ -541,11 +543,9 @@ module('Unit | model | model-position', () => {
       const shiftedLeft = referencePosLeft.shiftedVisually(-2);
       const shiftedRight = referencePosRight.shiftedVisually(2);
 
-      assert.true(twoLeft.sameAs(shiftedLeft), shiftedLeft.path.toString())
-      assert.true(twoRight.sameAs(shiftedRight), shiftedRight.path.toString())
-
-      
-    })
+      assert.true(twoLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(twoRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
 
     test('shifted by amount, going out of a list', (assert) => {
       const {
@@ -560,21 +560,20 @@ module('Unit | model | model-position', () => {
         </ul>
         <text __id="text3">ef</text>
       </modelRoot>
-      `
+      `;
 
       const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
       const referencePosRight = ModelPosition.fromInTextNode(text2, 2);
-      
+
       const oneLeft = ModelPosition.fromInTextNode(text1, 2);
       const oneRight = ModelPosition.fromInTextNode(text3, 0);
 
       const shiftedLeft = referencePosLeft.shiftedVisually(-1);
       const shiftedRight = referencePosRight.shiftedVisually(1);
 
-      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString())
-      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString())
-
-    })
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
     test('shifted by amount, br', (assert) => {
       const {
         textNodes: { text1, text2, text3 },
@@ -586,7 +585,7 @@ module('Unit | model | model-position', () => {
         <br/>
         <text __id="text3">ef</text>
       </modelRoot>
-      `
+      `;
       const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
       const referencePosRight = ModelPosition.fromInTextNode(text2, 2);
 
@@ -597,9 +596,8 @@ module('Unit | model | model-position', () => {
       const shiftedLeft = referencePosLeft.shiftedVisually(-1);
       const shiftedRight = referencePosRight.shiftedVisually(1);
 
-      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString())
-      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString())
-
-    })
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
   });
 });
