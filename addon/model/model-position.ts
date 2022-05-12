@@ -496,11 +496,11 @@ export default class ModelPosition {
         }
         let nextLeaf = walker.nextNode();
         if (forwards) {
-          while (nextLeaf && currentPos.nodeBefore()?.sameAs(nextLeaf)) {
+          while (nextLeaf && currentPos.nodeBefore() === nextLeaf) {
             nextLeaf = walker.nextNode();
           }
         } else {
-          while (nextLeaf && currentPos.nodeAfter()?.sameAs(nextLeaf)) {
+          while (nextLeaf && currentPos.nodeAfter() === nextLeaf) {
             nextLeaf = walker.nextNode();
           }
         }
