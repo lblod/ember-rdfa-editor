@@ -13,7 +13,6 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelNodeUtils from './util/model-node-utils';
 import { INVISIBLE_SPACE } from './util/constants';
-import StringUtils from './util/string-utils';
 
 /**
  * Represents a single position in the model. In contrast to the dom,
@@ -463,21 +462,19 @@ export default class ModelPosition {
     });
 
     while (stepsToShift !== 0) {
-      if (forwards) {
-        while (
-          currentPos.parentOffset === currentPos.parent.getMaxOffset() &&
-          ModelNodeUtils.getVisualLength(currentPos.parent) === 0 &&
-          !currentPos.parent.sameAs(this.root)
+      while (
+        ModelNodeUtils.getVisualLength(currentPos.parent) === 0 &&
+        !currentPos.parent.sameAs(this.root)
+      ) {
+        if (
+          forwards &&
+          currentPos.parentOffset === currentPos.parent.getMaxOffset()
         ) {
           currentPos = ModelPosition.fromAfterNode(currentPos.parent);
-        }
-      } else {
-        while (
-          currentPos.parentOffset === 0 &&
-          ModelNodeUtils.getVisualLength(currentPos.parent) === 0 &&
-          !currentPos.parent.sameAs(this.root)
-        ) {
+        } else if (!forwards && currentPos.parentOffset === 0) {
           currentPos = ModelPosition.fromBeforeNode(currentPos.parent);
+        } else {
+          break;
         }
       }
       if (currentPos.isInsideText()) {
@@ -492,24 +489,21 @@ export default class ModelPosition {
         }
         currentPos = currentPos.shiftedBy(direction);
       } else {
-        if (
-          currentPos.parentOffset === currentPos.parent.getMaxOffset() &&
-          forwards &&
-          ModelNodeUtils.getVisualLength(currentPos.parent) > 0
-        ) {
-          stepsToShift = Math.max(
-            stepsToShift - ModelNodeUtils.getVisualLength(currentPos.parent),
-            0
-          );
-        } else if (
-          currentPos.parentOffset === 0 &&
-          !forwards &&
-          ModelNodeUtils.getVisualLength(currentPos.parent) > 0
-        ) {
-          stepsToShift = Math.min(
-            stepsToShift + ModelNodeUtils.getVisualLength(currentPos.parent),
-            0
-          );
+        if (ModelNodeUtils.getVisualLength(currentPos.parent) > 0) {
+          if (
+            currentPos.parentOffset === currentPos.parent.getMaxOffset() &&
+            forwards
+          ) {
+            stepsToShift = Math.max(
+              stepsToShift - ModelNodeUtils.getVisualLength(currentPos.parent),
+              0
+            );
+          } else if (currentPos.parentOffset === 0 && !forwards) {
+            stepsToShift = Math.min(
+              stepsToShift + ModelNodeUtils.getVisualLength(currentPos.parent),
+              0
+            );
+          }
         }
         let nextLeaf = walker.nextNode();
         if (forwards) {
@@ -522,58 +516,28 @@ export default class ModelPosition {
           }
         }
         if (nextLeaf) {
-          if (forwards) {
-            if (ModelNode.isModelElement(nextLeaf)) {
-              currentPos = ModelPosition.fromAfterNode(nextLeaf);
-            } else if (ModelNode.isModelText(nextLeaf)) {
-              let charactersAfter = nextLeaf.content.substring(0, stepsToShift);
-              let invisibleCount =
-                StringUtils.getInvisibleSpaceCount(charactersAfter);
-              let newInvisibleCount = invisibleCount;
-              while (newInvisibleCount !== 0) {
-                charactersAfter = nextLeaf.content.substring(
-                  0,
-                  stepsToShift + invisibleCount
-                );
-                newInvisibleCount =
-                  StringUtils.getInvisibleSpaceCount(charactersAfter) -
-                  invisibleCount;
-                invisibleCount += newInvisibleCount;
-              }
-              currentPos = ModelPosition.fromInNode(
+          if (ModelElement.isModelText(nextLeaf)) {
+            currentPos = ModelPosition.fromInNode(
+              nextLeaf,
+              ModelNodeUtils.getVisibleIndex(
                 nextLeaf,
-                Math.min(charactersAfter.length, nextLeaf.length)
-              );
+                Math.abs(stepsToShift),
+                direction
+              )
+            );
+          } else if (ModelNode.isModelElement(nextLeaf)) {
+            if (forwards) {
+              currentPos = ModelPosition.fromAfterNode(nextLeaf);
+            } else {
+              currentPos = ModelPosition.fromBeforeNode(nextLeaf);
             }
+          }
+          if (forwards) {
             stepsToShift = Math.max(
               stepsToShift - ModelNodeUtils.getVisualLength(nextLeaf),
               0
             );
           } else {
-            if (ModelNode.isModelElement(nextLeaf)) {
-              currentPos = ModelPosition.fromBeforeNode(nextLeaf);
-            } else if (ModelNode.isModelText(nextLeaf)) {
-              let charactersBefore = nextLeaf.content.substring(
-                nextLeaf.content.length + stepsToShift
-              );
-              let invisibleCount =
-                StringUtils.getInvisibleSpaceCount(charactersBefore);
-              let newInvisibleCount = invisibleCount;
-              while (newInvisibleCount !== 0) {
-                charactersBefore = nextLeaf.content.substring(
-                  nextLeaf.content.length + stepsToShift - invisibleCount
-                );
-                newInvisibleCount =
-                  StringUtils.getInvisibleSpaceCount(charactersBefore) -
-                  invisibleCount;
-                invisibleCount += newInvisibleCount;
-              }
-
-              currentPos = ModelPosition.fromInNode(
-                nextLeaf,
-                Math.max(nextLeaf.length - charactersBefore.length, 0)
-              );
-            }
             stepsToShift = Math.min(
               stepsToShift + ModelNodeUtils.getVisualLength(nextLeaf),
               0

@@ -9,6 +9,8 @@ import {
   TABLE_CELLS,
   VISUAL_NODES,
 } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelText from '../model-text';
+import StringUtils from './string-utils';
 
 export default class ModelNodeUtils {
   static DEFAULT_IGNORED_ATTRS: Set<string> = new Set([
@@ -89,5 +91,39 @@ export default class ModelNodeUtils {
       return 1;
     }
     return 0;
+  }
+
+  static getVisibleIndex(
+    node: ModelText,
+    steps: number,
+    direction: number
+  ): number {
+    if (direction === 1) {
+      let charactersAfter = node.content.substring(0, steps);
+      let invisibleCount = StringUtils.getInvisibleSpaceCount(charactersAfter);
+      let newInvisibleCount = invisibleCount;
+      while (newInvisibleCount !== 0) {
+        charactersAfter = node.content.substring(0, steps + invisibleCount);
+        newInvisibleCount =
+          StringUtils.getInvisibleSpaceCount(charactersAfter) - invisibleCount;
+        invisibleCount += newInvisibleCount;
+      }
+      return charactersAfter.length;
+    } else {
+      let charactersBefore = node.content.substring(
+        node.content.length - steps
+      );
+      let invisibleCount = StringUtils.getInvisibleSpaceCount(charactersBefore);
+      let newInvisibleCount = invisibleCount;
+      while (newInvisibleCount !== 0) {
+        charactersBefore = node.content.substring(
+          node.content.length - steps - invisibleCount
+        );
+        newInvisibleCount =
+          StringUtils.getInvisibleSpaceCount(charactersBefore) - invisibleCount;
+        invisibleCount += newInvisibleCount;
+      }
+      return node.length - charactersBefore.length;
+    }
   }
 }
