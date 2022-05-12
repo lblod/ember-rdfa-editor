@@ -532,7 +532,7 @@ module('Unit | model | model-position', function () {
     });
   });
   module('Unit | model | model-position | shiftedVisually', () => {
-    test('shifts by amount - in text node', (assert) => {
+    test('shifts by amount - in text node', function (assert) {
       const {
         textNodes: { text },
       } = vdom`
@@ -546,7 +546,7 @@ module('Unit | model | model-position', function () {
       assert.true(oneLeft.sameAs(referencePos.shiftedVisually(-1)));
       assert.true(oneRight.sameAs(referencePos.shiftedVisually(1)));
     });
-    test('shifts by amount - at doc boundaries', (assert) => {
+    test('shifts by amount - at doc boundaries', function (assert) {
       const {
         textNodes: { text },
       } = vdom`
@@ -568,7 +568,7 @@ module('Unit | model | model-position', function () {
         shiftedRight.path.toString()
       );
     });
-    test('shifts by amount - descends into inline element', (assert) => {
+    test('shifts by amount - descends into inline element', function (assert) {
       const {
         textNodes: { text, textLeft, textRight },
       } = vdom`
@@ -592,7 +592,7 @@ module('Unit | model | model-position', function () {
       const shiftedRight = referencePosRight.shiftedVisually(1);
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
-    test('shifts by amount - at beginning of li tag', (assert) => {
+    test('shifts by amount - at beginning of li tag', function (assert) {
       const {
         textNodes: { text1, text2, text3 },
       } = vdom`
@@ -623,7 +623,7 @@ module('Unit | model | model-position', function () {
       assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
-    test('shifts by amount - sublists', (assert) => {
+    test('shifts by amount - sublists', function (assert) {
       const {
         textNodes: { text1, text2, text3, text4 },
       } = vdom`
@@ -660,7 +660,7 @@ module('Unit | model | model-position', function () {
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
 
-    test('shifted by amount - going out of a list', (assert) => {
+    test('shifted by amount - going out of a list', function (assert) {
       const {
         textNodes: { text1, text2, text3 },
       } = vdom`
@@ -687,7 +687,7 @@ module('Unit | model | model-position', function () {
       assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
-    test('shifted by amount - span inside li', (assert) => {
+    test('shifted by amount - span inside li', function (assert) {
       const {
         textNodes: { text1, text2, text3 },
       } = vdom`
@@ -724,7 +724,7 @@ module('Unit | model | model-position', function () {
       assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
-    test('shifted by amount - br', (assert) => {
+    test('shifted by amount - br', function (assert) {
       const {
         textNodes: { text1, text2, text3 },
       } = vdom`
@@ -749,7 +749,7 @@ module('Unit | model | model-position', function () {
       assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
-    test('shifted by amount - invisible spaces', (assert) => {
+    test('shifted by amount - invisible spaces', function (assert) {
       const {
         textNodes: { text1, text2, text3 },
       } = vdom`
