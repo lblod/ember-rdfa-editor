@@ -142,10 +142,14 @@ export default class MarkOperation extends Operation {
       const after = this.range.end.nodeAfter();
       if (before) {
         _markCheckNodes.push(before);
+        if (ModelNode.isModelText(before)) {
+          OperationAlgorithms.mergeTextNodes([before]);
+        }
       }
       if (after) {
         _markCheckNodes.push(after);
       }
+      OperationAlgorithms.mergeTextNodes([textNodes[textNodes.length - 1]]);
       this.emit(
         new ContentChangedEvent({
           owner: CORE_OWNER,
