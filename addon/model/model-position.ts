@@ -445,6 +445,7 @@ export default class ModelPosition {
     let currentPos: ModelPosition = this.clone();
     let searchRange: ModelRange;
     const forwards = steps > 0;
+    const direction = forwards ? 1 : -1;
     if (forwards) {
       const endOfDoc = ModelPosition.fromInNode(
         currentPos.root,
@@ -462,20 +463,34 @@ export default class ModelPosition {
     });
 
     while (stepsToShift !== 0) {
-      if (currentPos.isInsideText()) {
-        if (forwards) {
-          const charAfter = currentPos.charactersAfter(1);
-          if (charAfter !== INVISIBLE_SPACE) {
-            stepsToShift -= 1;
-          }
-          currentPos = currentPos.shiftedBy(1);
-        } else {
-          const charBefore = currentPos.charactersBefore(1);
-          if (charBefore !== INVISIBLE_SPACE) {
-            stepsToShift += 1;
-          }
-          currentPos = currentPos.shiftedBy(-1);
+      if (forwards) {
+        while (
+          currentPos.parentOffset === currentPos.parent.getMaxOffset() &&
+          ModelNodeUtils.getVisualLength(currentPos.parent) === 0 &&
+          !currentPos.parent.sameAs(this.root)
+        ) {
+          currentPos = ModelPosition.fromAfterNode(currentPos.parent);
         }
+      } else {
+        while (
+          currentPos.parentOffset === 0 &&
+          ModelNodeUtils.getVisualLength(currentPos.parent) === 0 &&
+          !currentPos.parent.sameAs(this.root)
+        ) {
+          currentPos = ModelPosition.fromBeforeNode(currentPos.parent);
+        }
+      }
+      if (currentPos.isInsideText()) {
+        let nextChar;
+        if (forwards) {
+          nextChar = currentPos.charactersAfter(1);
+        } else {
+          nextChar = currentPos.charactersBefore(1);
+        }
+        if (nextChar !== INVISIBLE_SPACE) {
+          stepsToShift -= direction;
+        }
+        currentPos = currentPos.shiftedBy(direction);
       } else {
         if (
           currentPos.parentOffset === currentPos.parent.getMaxOffset() &&

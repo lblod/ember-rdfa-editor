@@ -574,6 +574,43 @@ module('Unit | model | model-position', () => {
       assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
+    test('span inside li', (assert) => {
+      const {
+        textNodes: { text1, text2, text3 },
+      } = vdom`
+        <modelRoot>
+          <ul>
+            <li>
+              <span>
+                <text __id="text1">ab</text>
+              </span>
+            </li>
+            <li>
+              <span>
+                <text __id="text2">c</text>
+              </span>
+            </li>
+            <li>
+              <span>
+                <text __id="text3">de</text>
+              </span>
+            </li>
+          </ul>
+        </modelRoot>
+      `;
+
+      const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(text2, 1);
+
+      const oneLeft = ModelPosition.fromInTextNode(text1, 2);
+      const oneRight = ModelPosition.fromInTextNode(text3, 0);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
     test('shifted by amount, br', (assert) => {
       const {
         textNodes: { text1, text2, text3 },
