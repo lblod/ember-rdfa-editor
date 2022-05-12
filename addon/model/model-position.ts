@@ -380,7 +380,7 @@ export default class ModelPosition {
       let charIndex = forwards ? startSearch + i : startSearch - 1 - i;
       while (
         i < amountToCollect &&
-        ((forwards && charIndex <= cur.length) || (!forwards && charIndex >= 0))
+        ((forwards && charIndex < cur.length) || (!forwards && charIndex >= 0))
       ) {
         result.push(cur.content.charAt(charIndex));
         counter++;

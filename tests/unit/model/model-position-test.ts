@@ -373,6 +373,118 @@ module('Unit | model | model-position', () => {
       assert.strictEqual(result, 'bcde');
     });
   });
+  module('Unit | model | model-position | charactersAfter', () => {
+    test('gives empty string when no characters after', (assert) => {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 3);
+      const result = position.charactersAfter(3);
+      assert.strictEqual(result, '');
+    });
+    test('gives empty string when amount 0', (assert) => {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 3);
+      const result = position.charactersAfter(0);
+      assert.strictEqual(result, '');
+    });
+    test('gives empty string when in front of element', (assert) => {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+          <span/>
+          <text>def</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 3);
+      const result = position.charactersAfter(0);
+      assert.strictEqual(result, '');
+    });
+    test('gives desired characters', (assert) => {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 0);
+      const result = position.charactersAfter(2);
+      assert.strictEqual(result, 'ab');
+    });
+    test('gives desired characters when amount too big', (assert) => {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 0);
+      const result = position.charactersAfter(20);
+      assert.strictEqual(result, 'abc');
+    });
+
+    test('gives desired characters when inside a string', (assert) => {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 1);
+      const result = position.charactersAfter(1);
+      assert.strictEqual(result, 'b');
+    });
+
+    test('gives desired characters when inside a string over boundaries', (assert) => {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+          <text>def</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 3);
+      const result = position.charactersAfter(1);
+      assert.strictEqual(result, 'd');
+    });
+    test('gives desired multiple characters when inside a string over boundaries', (assert) => {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+          <text>def</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 1);
+      const result = position.charactersAfter(4);
+      assert.strictEqual(result, 'bcde');
+    });
+  });
   module('Unit | model | model-position | shiftedBy', () => {
     test('gives equivalent pos when already at start and moving left', (assert) => {
       // language=XML
