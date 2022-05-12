@@ -98,32 +98,30 @@ export default class ModelNodeUtils {
     steps: number,
     direction: number
   ): number {
-    if (direction === 1) {
-      let charactersAfter = node.content.substring(0, steps);
-      let invisibleCount = StringUtils.getInvisibleSpaceCount(charactersAfter);
-      let newInvisibleCount = invisibleCount;
-      while (newInvisibleCount !== 0) {
-        charactersAfter = node.content.substring(0, steps + invisibleCount);
-        newInvisibleCount =
-          StringUtils.getInvisibleSpaceCount(charactersAfter) - invisibleCount;
-        invisibleCount += newInvisibleCount;
-      }
-      return charactersAfter.length;
-    } else {
-      let charactersBefore = node.content.substring(
-        node.content.length - steps
-      );
-      let invisibleCount = StringUtils.getInvisibleSpaceCount(charactersBefore);
-      let newInvisibleCount = invisibleCount;
-      while (newInvisibleCount !== 0) {
-        charactersBefore = node.content.substring(
-          node.content.length - steps - invisibleCount
-        );
-        newInvisibleCount =
-          StringUtils.getInvisibleSpaceCount(charactersBefore) - invisibleCount;
-        invisibleCount += newInvisibleCount;
-      }
-      return node.length - charactersBefore.length;
+    const index = this.getIndex(node, steps, direction);
+
+    let charactersAfter =
+      direction === 1
+        ? node.content.substring(0, index)
+        : node.content.substring(index);
+    let invisibleCount = StringUtils.getInvisibleSpaceCount(charactersAfter);
+    let newInvisibleCount = invisibleCount;
+    while (newInvisibleCount !== 0) {
+      const index = this.getIndex(node, steps + invisibleCount, direction);
+      charactersAfter =
+        direction === 1
+          ? node.content.substring(0, index)
+          : node.content.substring(index);
+      newInvisibleCount =
+        StringUtils.getInvisibleSpaceCount(charactersAfter) - invisibleCount;
+      invisibleCount += newInvisibleCount;
     }
+    return direction === 1
+      ? charactersAfter.length
+      : node.length - charactersAfter.length;
+  }
+
+  static getIndex(node: ModelText, steps: number, direction: number) {
+    return direction === 1 ? steps : node.content.length - steps;
   }
 }
