@@ -15,11 +15,12 @@ export default class SidewayArrowsHandler extends InputHandler {
     );
   }
   handleEvent(event: KeyboardEvent): HandlerResponse {
+    const direction = event.key === 'ArrowLeft' ? -1 : 1;
     const selection = this.rawEditor.model.selection;
-    const selectionEnd = selection.lastRange?.end;
-    if (selectionEnd) {
-      const direction = event.key === 'ArrowLeft' ? -1 : 1;
-      const newPosition = selectionEnd.shiftedVisually(direction);
+    const start = selection.ranges[0].start;
+    const end = selection.lastRange?.end;
+    if (end && start.sameAs(end)) {
+      const newPosition = start.shiftedVisually(direction);
       const range = new ModelRange(newPosition);
       this.rawEditor.model.change(() => {
         this.rawEditor.model.selectRange(range);

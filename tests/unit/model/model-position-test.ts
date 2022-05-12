@@ -5,6 +5,7 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 module('Unit | model | model-position', () => {
   module('Unit | model | model-position | getCommonAncestor', () => {
@@ -547,7 +548,7 @@ module('Unit | model | model-position', () => {
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
 
-    test('shifted by amount, going out of a list', (assert) => {
+    test('shifted by amount - going out of a list', (assert) => {
       const {
         textNodes: { text1, text2, text3 },
       } = vdom`
@@ -574,7 +575,7 @@ module('Unit | model | model-position', () => {
       assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
-    test('span inside li', (assert) => {
+    test('shifted by amount - span inside li', (assert) => {
       const {
         textNodes: { text1, text2, text3 },
       } = vdom`
@@ -611,7 +612,7 @@ module('Unit | model | model-position', () => {
       assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
-    test('shifted by amount, br', (assert) => {
+    test('shifted by amount - br', (assert) => {
       const {
         textNodes: { text1, text2, text3 },
       } = vdom`
@@ -629,6 +630,29 @@ module('Unit | model | model-position', () => {
       const oneLeft = ModelPosition.fromInTextNode(text1, 2);
 
       const oneRight = ModelPosition.fromInTextNode(text3, 0);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
+    test('shifted by amount - invisible spaces', (assert) => {
+      const {
+        textNodes: { text1, text2, text3 },
+      } = vdom`
+      <modelRoot>
+        <text __id="text1">ab${INVISIBLE_SPACE}</text>
+        <text __id="text2">${INVISIBLE_SPACE}cd${INVISIBLE_SPACE}</text>
+        <text __id="text3">${INVISIBLE_SPACE}ef</text>
+      </modelRoot>
+      `;
+      const referencePosLeft = ModelPosition.fromInTextNode(text2, 1);
+      const referencePosRight = ModelPosition.fromInTextNode(text2, 3);
+
+      const oneLeft = ModelPosition.fromInTextNode(text1, 1);
+
+      const oneRight = ModelPosition.fromInTextNode(text3, 2);
 
       const shiftedLeft = referencePosLeft.shiftedVisually(-1);
       const shiftedRight = referencePosRight.shiftedVisually(1);
