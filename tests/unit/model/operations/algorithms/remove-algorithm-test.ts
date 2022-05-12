@@ -7,8 +7,8 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 module(
   'Unit | model | operations | algorithms | remove-algorithm-test | ',
 
-  () => {
-    test('should only remove selected nodes', (assert) => {
+  function () {
+    test('should only remove selected nodes', function (assert) {
       const {
         root: initial,
         elements: { span3, div1 },

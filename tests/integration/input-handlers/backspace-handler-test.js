@@ -58,7 +58,7 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     click('div[contenteditable]'); // ensure editor state
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const cursorNode = window.getSelection().anchorNode;
-    assert.equal(
+    assert.strictEqual(
       cursorNode.previousSibling,
       editor.childNodes[0],
       'cursor should be after first div'
@@ -102,13 +102,12 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 100);
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'baz<br>foo');
+    assert.strictEqual(innerHtml, 'baz<br>foo');
     const cursorPosition = window.getSelection().anchorOffset;
     const cursorNode = window.getSelection().anchorNode;
-    assert.ok(
-      cursorPosition == 0 && cursorNode.textContent == 'foo',
-      'cursor is where it should be'
-    );
+    const positionCorrect =
+      cursorPosition == 0 && cursorNode.textContent == 'foo';
+    assert.ok(positionCorrect, 'cursor is where it should be');
   });
 
   test('backspace inline elements: invisible span', async function (assert) {
@@ -129,13 +128,12 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'bafoo');
+    assert.strictEqual(innerHtml, 'bafoo');
     const cursorPosition = window.getSelection().anchorOffset;
     const cursorNode = window.getSelection().anchorNode;
-    assert.ok(
-      cursorPosition == 2 && cursorNode.textContent == 'ba',
-      'cursor is where it should be'
-    );
+    const positionCorrect =
+      cursorPosition == 2 && cursorNode.textContent == 'ba';
+    assert.ok(positionCorrect, 'cursor is where it should be');
   });
 
   test('backspace inline elements: spans with text', async function (assert) {
@@ -158,12 +156,12 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
     await setTimeout(() => {}, 100);
-    assert.equal(
+    assert.strictEqual(
       innerHtml,
       'baz <span data-editor-position-level="0">ba</span>foo'
     );
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 2);
+    assert.strictEqual(cursorPosition, 2);
   });
 
   test('backspace block elements: backspacing into a div with a br', async function (assert) {
@@ -183,16 +181,15 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
     const innerHtml = editor.innerHTML;
-    assert.equal(
+    assert.strictEqual(
       innerHtml,
       '<div data-editor-position-level="0">foo<br></div>&nbsp;'
     );
     const cursorNode = window.getSelection().anchorNode;
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.ok(
-      cursorNode.textContent == 'foo' && cursorPosition == 3,
-      'cursor at the end of foo'
-    );
+    const positionCorrect =
+      cursorNode.textContent == 'foo' && cursorPosition == 3;
+    assert.ok(positionCorrect, 'cursor at the end of foo');
   });
 
   test('backspace block elements: backspacing into an empty div', async function (assert) {
@@ -215,9 +212,9 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 100);
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'baz foo');
+    assert.strictEqual(innerHtml, 'baz foo');
     const cursorPosition = window.getSelection().anchorNode;
-    assert.equal(cursorPosition.textContent, 'baz ');
+    assert.strictEqual(cursorPosition.textContent, 'baz ');
   });
 
   test('backspace block elements: backspacing into a div', async function (assert) {
@@ -239,16 +236,15 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
-    assert.equal(
+    assert.strictEqual(
       innerHtml,
       'baz <div data-editor-position-level="0">foo</div>&nbsp;'
     );
     const cursorPosition = window.getSelection().anchorOffset;
     const cursorNode = window.getSelection().anchorNode;
-    assert.ok(
-      cursorPosition == 3 && cursorNode.textContent == 'foo',
-      'cursor at the end of foo'
-    );
+    const positionCorrect =
+      cursorPosition == 3 && cursorNode.textContent == 'foo';
+    assert.ok(positionCorrect, 'cursor at the end of foo');
   });
 
   test('backspace lump node case 1: it flags the block', async function (assert) {
@@ -271,12 +267,12 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await setTimeout(() => {}, 100);
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
-    assert.equal(
+    assert.strictEqual(
       innerHtml,
       'baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" data-flagged-remove="complete">bar</div>foo'
     );
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.strictEqual(cursorPosition, 0);
   });
 
   test('backspace lump node case 1: it removes the block on the second backspace', async function (assert) {
@@ -301,7 +297,7 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 100);
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'baz foo');
+    assert.strictEqual(innerHtml, 'baz foo');
   });
 
   test('backspace lump node case 2: it flags the block', async function (assert) {
@@ -323,12 +319,12 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     const innerHtml = editor.innerHTML;
-    assert.equal(
+    assert.strictEqual(
       innerHtml,
       'baz <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode" data-flagged-remove="complete">bar</div>&nbsp;'
     );
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.strictEqual(cursorPosition, 0);
   });
 
   test('backspace lumpnode case 2: it removes the block on the second backspace', async function (assert) {
@@ -353,7 +349,7 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
     const innerHtml = editor.innerHTML;
-    assert.equal(innerHtml, 'baz &nbsp;');
+    assert.strictEqual(innerHtml, 'baz &nbsp;');
   });
 
   test('backspace lump node case 3: it flags the block', async function (assert) {
@@ -382,9 +378,12 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
     const lumpNode = editor.childNodes[2];
-    assert.equal(lumpNode.getAttribute('data-flagged-remove'), 'complete');
+    assert.strictEqual(
+      lumpNode.getAttribute('data-flagged-remove'),
+      'complete'
+    );
     const cursorPosition = window.getSelection().anchorOffset;
-    assert.equal(cursorPosition, 0);
+    assert.strictEqual(cursorPosition, 0);
   });
 
   test('backspace lump node case 3: it removes the block on the second backspace', async function (assert) {
@@ -414,7 +413,7 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await setTimeout(() => {}, 500);
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
-    assert.equal(editor.childNodes.length, 3);
+    assert.strictEqual(editor.childNodes.length, 3);
   });
 
   test('backspace properly handles spaces at end properly', async function (assert) {
@@ -434,7 +433,10 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
-    assert.equal(divNode.innerText.replace(/\s/g, ' '), 'a visual space test ');
+    assert.strictEqual(
+      divNode.innerText.replace(/\s/g, ' '),
+      'a visual space test '
+    );
   });
 
   test('backspace properly handles spaces at start properly', async function (assert) {
@@ -455,7 +457,10 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     click('div[contenteditable]');
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
-    assert.equal(divNode.innerText.replace(/\s/g, ' '), ' visual space test f');
+    assert.strictEqual(
+      divNode.innerText.replace(/\s/g, ' '),
+      ' visual space test f'
+    );
   });
 
   /********************************************************************************
@@ -479,8 +484,8 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     window.getSelection().collapse(textNode, 0); // before 'pong'
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
-    assert.equal(list.children.length, 1);
-    assert.equal(list.children[0].innerText, 'beerpong');
+    assert.strictEqual(list.children.length, 1);
+    assert.strictEqual(list.children[0].innerText, 'beerpong');
   });
 
   test('backspace and empty-ing the <li> which is not the first <li>, will remove the li and keep the list', async function (assert) {
@@ -503,7 +508,7 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await setTimeout(() => {}, 500);
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
-    assert.equal(list.children.length, 1);
+    assert.strictEqual(list.children.length, 1);
   });
 
   test('backspace at beginning of non-empty, first <li>, removes it and merges content back on top', async function (assert) {
@@ -523,8 +528,8 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     window.getSelection().collapse(textNode, 0); // before 'beer'
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
-    assert.equal(list.children.length, 1);
-    assert.equal(editor.childNodes[0].textContent.includes('beer'), true);
+    assert.strictEqual(list.children.length, 1);
+    assert.true(editor.childNodes[0].textContent.includes('beer'));
   });
 
   test('backspace and empty-ing the <li> which the first <li>, will remove the li and keep the list', async function (assert) {
@@ -546,8 +551,8 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await setTimeout(() => {}, 500);
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
-    assert.equal(list.children.length, 1);
-    assert.equal(list.children[0].innerText, 'pong');
+    assert.strictEqual(list.children.length, 1);
+    assert.strictEqual(list.children[0].innerText, 'pong');
   });
 
   test('backspace at beginning of non-empty, the only <li>, removes it and merges content back on top', async function (assert) {
@@ -567,8 +572,8 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     window.getSelection().collapse(textNode, 0); // before 'beer'
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
-    assert.equal(editor.childElementCount, 0); //hence the list was removed
-    assert.equal(editor.childNodes[0].textContent.includes('beer'), true);
+    assert.strictEqual(editor.childElementCount, 0); //hence the list was removed
+    assert.true(editor.childNodes[0].textContent.includes('beer'));
   });
 
   test('backspace and empty-ing the only <li>, will remove the li and keep the list', async function (assert) {
@@ -590,6 +595,6 @@ module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
     await setTimeout(() => {}, 500);
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Backspace');
     await setTimeout(() => {}, 500);
-    assert.equal(editor.childElementCount, 0); //hence the list was removed
+    assert.strictEqual(editor.childElementCount, 0); //hence the list was removed
   });
 });

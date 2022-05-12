@@ -4,8 +4,8 @@ import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 
-module('Unit | model | cleaners | list-cleaner-test', () => {
-  test('should merge two adjacent lists', (assert) => {
+module('Unit | model | cleaners | list-cleaner-test', function () {
+  test('should merge two adjacent lists', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -47,7 +47,7 @@ module('Unit | model | cleaners | list-cleaner-test', () => {
     assert.true(initial.sameAs(expected));
   });
 
-  test('does not merge lists on a different level', (assert) => {
+  test('does not merge lists on a different level', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -78,7 +78,7 @@ module('Unit | model | cleaners | list-cleaner-test', () => {
     assert.true(initial.sameAs(expected));
   });
 
-  test('does not merge lists with different attributes', (assert) => {
+  test('does not merge lists with different attributes', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -108,7 +108,7 @@ module('Unit | model | cleaners | list-cleaner-test', () => {
     assert.true(initial.sameAs(expected));
   });
 
-  test('should merge lists with different but ignored attributes', (assert) => {
+  test('should merge lists with different but ignored attributes', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -149,7 +149,7 @@ module('Unit | model | cleaners | list-cleaner-test', () => {
 
     assert.true(initial.sameAs(expected));
   });
-  test('should merge nested lists correctly', (assert) => {
+  test('should merge nested lists correctly', function (assert) {
     // language=XML
     const {
       root: initial,

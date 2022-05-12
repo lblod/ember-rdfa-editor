@@ -4,7 +4,7 @@ import RemoveTableCommand from '@lblod/ember-rdfa-editor/commands/remove-table-c
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-module('Unit | commands | remove-table-command-test', (hooks) => {
+module('Unit | commands | remove-table-command-test', function (hooks) {
   const ctx = new ModelTestContext();
   let command: RemoveTableCommand;
 
@@ -13,7 +13,7 @@ module('Unit | commands | remove-table-command-test', (hooks) => {
     command = new RemoveTableCommand(ctx.model);
   });
 
-  test('removes empty table (only element in document)', (assert) => {
+  test('removes empty table (only element in document)', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -52,10 +52,12 @@ module('Unit | commands | remove-table-command-test', (hooks) => {
       [0]
     );
     assert.true(ctx.model.rootModelNode.sameAs(expected));
-    assert.true(resultRange && expectedRange.sameAs(resultRange));
+    const result = resultRange ? expectedRange.sameAs(resultRange) : false;
+    assert.ok(resultRange);
+    assert.ok(result);
   });
 
-  test('removes table filled with text (only element in document)', (assert) => {
+  test('removes table filled with text (only element in document)', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -102,10 +104,12 @@ module('Unit | commands | remove-table-command-test', (hooks) => {
       [0],
       [0]
     );
-    assert.true(resultRange && expectedRange.sameAs(resultRange));
+    const result = resultRange ? expectedRange.sameAs(resultRange) : false;
+    assert.ok(resultRange);
+    assert.ok(result);
   });
 
-  test('removes correctly before table', (assert) => {
+  test('removes correctly before table', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -193,10 +197,12 @@ module('Unit | commands | remove-table-command-test', (hooks) => {
       [0],
       [0]
     );
-    assert.true(resultRange && expectedRange.sameAs(resultRange));
+    const result = resultRange ? expectedRange.sameAs(resultRange) : false;
+    assert.ok(resultRange);
+    assert.ok(result);
   });
 
-  test('removes correctly after table', (assert) => {
+  test('removes correctly after table', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -284,10 +290,12 @@ module('Unit | commands | remove-table-command-test', (hooks) => {
       [1],
       [1]
     );
-    assert.true(resultRange && expectedRange.sameAs(resultRange));
+    const result = resultRange ? expectedRange.sameAs(resultRange) : false;
+    assert.ok(resultRange);
+    assert.ok(result);
   });
 
-  test('removes correctly before list', (assert) => {
+  test('removes correctly before list', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -357,10 +365,12 @@ module('Unit | commands | remove-table-command-test', (hooks) => {
       [0],
       [0]
     );
-    assert.true(resultRange && expectedRange.sameAs(resultRange));
+    const result = resultRange ? expectedRange.sameAs(resultRange) : false;
+    assert.ok(resultRange);
+    assert.ok(result);
   });
 
-  test('removes after before list', (assert) => {
+  test('removes after before list', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -430,10 +440,12 @@ module('Unit | commands | remove-table-command-test', (hooks) => {
       [1],
       [1]
     );
-    assert.true(resultRange && expectedRange.sameAs(resultRange));
+    const result = resultRange ? expectedRange.sameAs(resultRange) : false;
+    assert.ok(resultRange);
+    assert.ok(result);
   });
 
-  test('removes correctly in div', (assert) => {
+  test('removes correctly in div', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -484,9 +496,11 @@ module('Unit | commands | remove-table-command-test', (hooks) => {
       [0, 0],
       [0, 0]
     );
-    assert.true(resultRange && expectedRange.sameAs(resultRange));
+    const result = resultRange ? expectedRange.sameAs(resultRange) : false;
+    assert.ok(resultRange);
+    assert.ok(result);
   });
-  test('removes correctly in div after text', (assert) => {
+  test('removes correctly in div after text', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -538,6 +552,8 @@ module('Unit | commands | remove-table-command-test', (hooks) => {
       [0, 8],
       [0, 8]
     );
-    assert.true(resultRange && expectedRange.sameAs(resultRange));
+    const result = resultRange ? expectedRange.sameAs(resultRange) : false;
+    assert.ok(resultRange);
+    assert.ok(result);
   });
 });

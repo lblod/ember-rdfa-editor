@@ -4,8 +4,8 @@ import { RdfaParser } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-pars
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { conciseToRdfjs } from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
 
-module('Unit | utils | rdfa-parser-test', () => {
-  test('parses simple dom correctly', (assert) => {
+module('Unit | utils | rdfa-parser-test', function () {
+  test('parses simple dom correctly', function (assert) {
     // language=XML
     const { root } = vdom`
       <div vocab="http://xmlns.com/foaf/0.1/" typeof="Person"> <!-- about:alice -->
@@ -33,7 +33,7 @@ module('Unit | utils | rdfa-parser-test', () => {
     assert.strictEqual(subjectToNodesMapping.size, 1);
     assert.strictEqual(nodeToSubjectMapping.size, 1);
   });
-  test('correct predicate node mapping', (assert) => {
+  test('correct predicate node mapping', function (assert) {
     // language=XML
     const {
       root,

@@ -3,7 +3,7 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import UndoCommand from '@lblod/ember-rdfa-editor/commands/undo-command';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 
-module('Unit | commands | undo-command-test', (hooks) => {
+module('Unit | commands | undo-command-test', function (hooks) {
   const ctx = new ModelTestContext();
   let command: UndoCommand;
 
@@ -12,7 +12,7 @@ module('Unit | commands | undo-command-test', (hooks) => {
     command = new UndoCommand(ctx.model);
   });
 
-  test('undo deletion of only text in document', (assert) => {
+  test('undo deletion of only text in document', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
@@ -32,7 +32,7 @@ module('Unit | commands | undo-command-test', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(initial));
   });
 
-  test('undo addition of only text in document', (assert) => {
+  test('undo addition of only text in document', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot/>

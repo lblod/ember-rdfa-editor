@@ -27,7 +27,7 @@ module.skip(
       });
 
       const innerHtml = editor.innerHTML;
-      assert.equal(
+      assert.strictEqual(
         innerHtml,
         '<strong data-editor-position-level="0">baz</strong>'
       );
@@ -52,7 +52,10 @@ module.skip(
       });
 
       const innerHtml = editor.innerHTML;
-      assert.equal(innerHtml, '<em data-editor-position-level="0">baz</em>');
+      assert.strictEqual(
+        innerHtml,
+        '<em data-editor-position-level="0">baz</em>'
+      );
     });
 
     test('converting to underline works', async function (assert) {
@@ -74,7 +77,10 @@ module.skip(
       });
 
       const innerHtml = editor.innerHTML;
-      assert.equal(innerHtml, '<u data-editor-position-level="0">baz</u>');
+      assert.strictEqual(
+        innerHtml,
+        '<u data-editor-position-level="0">baz</u>'
+      );
     });
   }
 );
