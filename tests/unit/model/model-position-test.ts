@@ -374,7 +374,7 @@ module('Unit | model | model-position', function () {
     });
   });
   module('Unit | model | model-position | charactersAfter', () => {
-    test('gives empty string when no characters after', (assert) => {
+    test('gives empty string when no characters after', function (assert) {
       // language=XML
       const {
         textNodes: { textNode },
@@ -387,7 +387,7 @@ module('Unit | model | model-position', function () {
       const result = position.charactersAfter(3);
       assert.strictEqual(result, '');
     });
-    test('gives empty string when amount 0', (assert) => {
+    test('gives empty string when amount 0', function (assert) {
       // language=XML
       const {
         textNodes: { textNode },
@@ -400,7 +400,7 @@ module('Unit | model | model-position', function () {
       const result = position.charactersAfter(0);
       assert.strictEqual(result, '');
     });
-    test('gives empty string when in front of element', (assert) => {
+    test('gives empty string when in front of element', function (assert) {
       // language=XML
       const {
         textNodes: { textNode },
@@ -415,7 +415,7 @@ module('Unit | model | model-position', function () {
       const result = position.charactersAfter(0);
       assert.strictEqual(result, '');
     });
-    test('gives desired characters', (assert) => {
+    test('gives desired characters', function (assert) {
       // language=XML
       const {
         textNodes: { textNode },
@@ -428,7 +428,7 @@ module('Unit | model | model-position', function () {
       const result = position.charactersAfter(2);
       assert.strictEqual(result, 'ab');
     });
-    test('gives desired characters when amount too big', (assert) => {
+    test('gives desired characters when amount too big', function (assert) {
       // language=XML
       const {
         textNodes: { textNode },
@@ -442,7 +442,7 @@ module('Unit | model | model-position', function () {
       assert.strictEqual(result, 'abc');
     });
 
-    test('gives desired characters when inside a string', (assert) => {
+    test('gives desired characters when inside a string', function (assert) {
       // language=XML
       const {
         textNodes: { textNode },
@@ -456,7 +456,7 @@ module('Unit | model | model-position', function () {
       assert.strictEqual(result, 'b');
     });
 
-    test('gives desired characters when inside a string over boundaries', (assert) => {
+    test('gives desired characters when inside a string over boundaries', function (assert) {
       // language=XML
       const {
         textNodes: { textNode },
@@ -470,7 +470,7 @@ module('Unit | model | model-position', function () {
       const result = position.charactersAfter(1);
       assert.strictEqual(result, 'd');
     });
-    test('gives desired multiple characters when inside a string over boundaries', (assert) => {
+    test('gives desired multiple characters when inside a string over boundaries', function (assert) {
       // language=XML
       const {
         textNodes: { textNode },
