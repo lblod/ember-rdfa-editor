@@ -352,44 +352,44 @@ export default class ModelPosition {
    * @return string the collected characters, in display order
    */
   charactersBefore(amount: number): string {
-    return this.charactersInDirection(amount, -1);
+    return this.charactersInDirection(amount, false);
   }
 
   charactersAfter(amount: number): string {
-    return this.charactersInDirection(amount, 1);
+    return this.charactersInDirection(amount, true);
   }
 
-  charactersInDirection(amount: number, direction: number) {
-    let cur = direction === 1 ? this.nodeAfter() : this.nodeBefore();
+  charactersInDirection(amount: number, forwards: boolean) {
+    const direction = forwards ? 1 : -1;
+    let cur = forwards ? this.nodeAfter() : this.nodeBefore();
     let counter = 0;
     const result = [];
     while (ModelNode.isModelText(cur) && counter < amount) {
       const amountToCollect = amount - counter;
       let startSearch;
       if (
-        (cur === this.nodeBefore() && direction === 1) ||
-        (cur === this.nodeAfter() && direction === -1)
+        (cur === this.nodeBefore() && forwards) ||
+        (cur === this.nodeAfter() && !forwards)
       ) {
         startSearch = this.parentOffset - cur.getOffset();
       } else {
-        startSearch = direction === 1 ? 0 : cur.length;
+        startSearch = forwards ? 0 : cur.length;
       }
 
       let i = 0;
-      let charIndex = direction === 1 ? startSearch + i : startSearch - 1 - i;
+      let charIndex = forwards ? startSearch + i : startSearch - 1 - i;
       while (
         i < amountToCollect &&
-        ((direction === 1 && charIndex <= cur.length) ||
-          (direction === -1 && charIndex >= 0))
+        ((forwards && charIndex <= cur.length) || (!forwards && charIndex >= 0))
       ) {
         result.push(cur.content.charAt(charIndex));
         counter++;
         i++;
         charIndex += direction;
       }
-      cur = direction === 1 ? cur.nextSibling : cur.previousSibling;
+      cur = forwards ? cur.nextSibling : cur.previousSibling;
     }
-    if (direction === -1) {
+    if (!forwards) {
       result.reverse();
     }
     return result.join('');
