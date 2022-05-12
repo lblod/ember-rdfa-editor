@@ -12,6 +12,8 @@ import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelNodeUtils from './util/model-node-utils';
+import { INVISIBLE_SPACE } from './util/constants';
+import StringUtils from './util/string-utils';
 
 /**
  * Represents a single position in the model. In contrast to the dom,
@@ -379,6 +381,32 @@ export default class ModelPosition {
     return result.join('');
   }
 
+  charactersAfter(amount: number): string {
+    let cur = this.nodeAfter();
+    let counter = 0;
+    const result = [];
+    while (ModelNode.isModelText(cur) && counter < amount) {
+      const amountToCollect = amount - counter;
+      let startSearch;
+      if (cur === this.nodeBefore()) {
+        startSearch = this.parentOffset - cur.getOffset();
+      } else {
+        startSearch = 0;
+      }
+
+      let i = 0;
+      let charIndex = startSearch + i;
+      while (i < amountToCollect && charIndex <= cur.length) {
+        result.push(cur.content.charAt(charIndex));
+        counter++;
+        i++;
+        charIndex += 1;
+      }
+      cur = cur.nextSibling;
+    }
+    return result.join('');
+  }
+
   /**
    * Return a new position which is this position shifted by a certain offset amount.
    * The path of the new position will be identical except for the last element.
@@ -435,12 +463,19 @@ export default class ModelPosition {
 
     while (stepsToShift !== 0) {
       if (currentPos.isInsideText()) {
-        let newPos = currentPos;
-        newPos = newPos.shiftedBy(stepsToShift);
-
-        const shiftedSteps = newPos.parentOffset - currentPos.parentOffset;
-        stepsToShift -= shiftedSteps;
-        currentPos = newPos;
+        if (forwards) {
+          const charAfter = currentPos.charactersAfter(1);
+          if (charAfter !== INVISIBLE_SPACE) {
+            stepsToShift -= 1;
+          }
+          currentPos = currentPos.shiftedBy(1);
+        } else {
+          const charBefore = currentPos.charactersBefore(1);
+          if (charBefore !== INVISIBLE_SPACE) {
+            stepsToShift += 1;
+          }
+          currentPos = currentPos.shiftedBy(-1);
+        }
       } else {
         if (
           currentPos.parentOffset === currentPos.parent.getMaxOffset() &&
@@ -461,15 +496,38 @@ export default class ModelPosition {
             0
           );
         }
-        const nextLeaf = walker.nextNode();
+        let nextLeaf = walker.nextNode();
+        if (forwards) {
+          while (nextLeaf && currentPos.nodeBefore()?.sameAs(nextLeaf)) {
+            nextLeaf = walker.nextNode();
+          }
+        } else {
+          while (nextLeaf && currentPos.nodeAfter()?.sameAs(nextLeaf)) {
+            nextLeaf = walker.nextNode();
+          }
+        }
         if (nextLeaf) {
           if (forwards) {
             if (ModelNode.isModelElement(nextLeaf)) {
               currentPos = ModelPosition.fromAfterNode(nextLeaf);
-            } else {
+            } else if (ModelNode.isModelText(nextLeaf)) {
+              let charactersAfter = nextLeaf.content.substring(0, stepsToShift);
+              let invisibleCount =
+                StringUtils.getInvisibleSpaceCount(charactersAfter);
+              let newInvisibleCount = invisibleCount;
+              while (newInvisibleCount !== 0) {
+                charactersAfter = nextLeaf.content.substring(
+                  0,
+                  stepsToShift + invisibleCount
+                );
+                newInvisibleCount =
+                  StringUtils.getInvisibleSpaceCount(charactersAfter) -
+                  invisibleCount;
+                invisibleCount += newInvisibleCount;
+              }
               currentPos = ModelPosition.fromInNode(
                 nextLeaf,
-                Math.min(stepsToShift, ModelNodeUtils.getVisualLength(nextLeaf))
+                Math.min(charactersAfter.length, nextLeaf.length)
               );
             }
             stepsToShift = Math.max(
@@ -479,13 +537,26 @@ export default class ModelPosition {
           } else {
             if (ModelNode.isModelElement(nextLeaf)) {
               currentPos = ModelPosition.fromBeforeNode(nextLeaf);
-            } else {
+            } else if (ModelNode.isModelText(nextLeaf)) {
+              let charactersBefore = nextLeaf.content.substring(
+                nextLeaf.content.length + stepsToShift
+              );
+              let invisibleCount =
+                StringUtils.getInvisibleSpaceCount(charactersBefore);
+              let newInvisibleCount = invisibleCount;
+              while (newInvisibleCount !== 0) {
+                charactersBefore = nextLeaf.content.substring(
+                  nextLeaf.content.length + stepsToShift - invisibleCount
+                );
+                newInvisibleCount =
+                  StringUtils.getInvisibleSpaceCount(charactersBefore) -
+                  invisibleCount;
+                invisibleCount += newInvisibleCount;
+              }
+
               currentPos = ModelPosition.fromInNode(
                 nextLeaf,
-                Math.max(
-                  ModelNodeUtils.getVisualLength(nextLeaf) + stepsToShift,
-                  0
-                )
+                Math.max(nextLeaf.length - charactersBefore.length, 0)
               );
             }
             stepsToShift = Math.min(

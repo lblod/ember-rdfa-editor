@@ -23,6 +23,7 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import SidewayArrowsHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/sideway-arrows-handler';
 
 interface FeatureService {
   isEnabled(key: string): boolean;
@@ -131,6 +132,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       new IgnoreModifiersHandler({ rawEditor }),
       new UndoHandler({ rawEditor }),
       new BoldItalicUnderlineHandler({ rawEditor }),
+      new SidewayArrowsHandler({ rawEditor }),
       new EscapeHandler({ rawEditor }),
       new FallbackInputHandler({ rawEditor })
     );
