@@ -352,56 +352,45 @@ export default class ModelPosition {
    * @return string the collected characters, in display order
    */
   charactersBefore(amount: number): string {
-    let cur = this.nodeBefore();
-    let counter = 0;
-    const result = [];
-
-    while (ModelNode.isModelText(cur) && counter < amount) {
-      const amountToCollect = amount - counter;
-      let startSearch;
-      if (cur === this.nodeAfter()) {
-        startSearch = this.parentOffset - cur.getOffset();
-      } else {
-        startSearch = cur.length;
-      }
-
-      let i = 0;
-      let charIndex = startSearch - 1 - i;
-      while (i < amountToCollect && charIndex >= 0) {
-        result.push(cur.content.charAt(startSearch - 1 - i));
-        counter++;
-        i++;
-        charIndex = startSearch - 1 - i;
-      }
-      cur = cur.previousSibling;
-    }
-
-    result.reverse();
-    return result.join('');
+    return this.charactersInDirection(amount, -1);
   }
 
   charactersAfter(amount: number): string {
-    let cur = this.nodeAfter();
+    return this.charactersInDirection(amount, 1);
+  }
+
+  charactersInDirection(amount: number, direction: number) {
+    let cur = direction === 1 ? this.nodeAfter() : this.nodeBefore();
     let counter = 0;
     const result = [];
     while (ModelNode.isModelText(cur) && counter < amount) {
       const amountToCollect = amount - counter;
       let startSearch;
-      if (cur === this.nodeBefore()) {
+      if (
+        (cur === this.nodeBefore() && direction === 1) ||
+        (cur === this.nodeAfter() && direction === -1)
+      ) {
         startSearch = this.parentOffset - cur.getOffset();
       } else {
-        startSearch = 0;
+        startSearch = direction === 1 ? 0 : cur.length;
       }
 
       let i = 0;
-      let charIndex = startSearch + i;
-      while (i < amountToCollect && charIndex <= cur.length) {
+      let charIndex = direction === 1 ? startSearch + i : startSearch - 1 - i;
+      while (
+        i < amountToCollect &&
+        ((direction === 1 && charIndex <= cur.length) ||
+          (direction === -1 && charIndex >= 0))
+      ) {
         result.push(cur.content.charAt(charIndex));
         counter++;
         i++;
-        charIndex += 1;
+        charIndex += direction;
       }
-      cur = cur.nextSibling;
+      cur = direction === 1 ? cur.nextSibling : cur.previousSibling;
+    }
+    if (direction === -1) {
+      result.reverse();
     }
     return result.join('');
   }
