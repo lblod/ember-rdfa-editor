@@ -511,7 +511,7 @@ export default class ModelPosition {
               ModelNodeUtils.getVisibleIndex(
                 nextLeaf,
                 Math.abs(stepsToShift),
-                direction
+                forwards
               )
             );
           } else if (ModelNode.isModelElement(nextLeaf)) {

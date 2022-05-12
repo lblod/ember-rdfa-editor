@@ -96,32 +96,30 @@ export default class ModelNodeUtils {
   static getVisibleIndex(
     node: ModelText,
     steps: number,
-    direction: number
+    forwards: boolean
   ): number {
-    const index = this.getIndex(node, steps, direction);
+    const index = this.getIndex(node, steps, forwards);
 
-    let charactersAfter =
-      direction === 1
-        ? node.content.substring(0, index)
-        : node.content.substring(index);
+    let charactersAfter = forwards
+      ? node.content.substring(0, index)
+      : node.content.substring(index);
     let invisibleCount = StringUtils.getInvisibleSpaceCount(charactersAfter);
     let newInvisibleCount = invisibleCount;
     while (newInvisibleCount !== 0) {
-      const index = this.getIndex(node, steps + invisibleCount, direction);
-      charactersAfter =
-        direction === 1
-          ? node.content.substring(0, index)
-          : node.content.substring(index);
+      const index = this.getIndex(node, steps + invisibleCount, forwards);
+      charactersAfter = forwards
+        ? node.content.substring(0, index)
+        : node.content.substring(index);
       newInvisibleCount =
         StringUtils.getInvisibleSpaceCount(charactersAfter) - invisibleCount;
       invisibleCount += newInvisibleCount;
     }
-    return direction === 1
+    return forwards
       ? charactersAfter.length
       : node.length - charactersAfter.length;
   }
 
-  static getIndex(node: ModelText, steps: number, direction: number) {
-    return direction === 1 ? steps : node.content.length - steps;
+  static getIndex(node: ModelText, steps: number, forwards: boolean) {
+    return forwards ? steps : node.content.length - steps;
   }
 }
