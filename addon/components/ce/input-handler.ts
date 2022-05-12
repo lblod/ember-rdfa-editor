@@ -32,6 +32,15 @@ export class EditorInputHandler implements InputHandler {
       case 'insertText':
         transaction = insertText(eventWithState);
         break;
+      case 'insertLineBreak':
+        transaction = identity(this.editor.state);
+        break;
+      case 'deleteWordBackward':
+        transaction = identity(this.editor.state);
+        break;
+      case 'deleteWordForward':
+        transaction = identity(this.editor.state);
+        break;
       default:
         transaction = identity(this.editor.state);
         break;
