@@ -15,6 +15,8 @@ import GenTreeWalker, {
 import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
+import Model from '@lblod/ember-rdfa-editor/model/model';
 
 export type StickySide = 'none' | 'left' | 'right' | 'both';
 
@@ -257,6 +259,32 @@ export default class ModelRange {
    */
   get collapsed(): boolean {
     return this.start.sameAs(this.end);
+  }
+
+  /** 
+   * janky debug function
+   */
+  visualize(): string{
+    let root=this.root
+    while(root.parent){
+      root=root.parent;
+    }
+    root=root.clone();
+    const range=ModelRange.fromPaths(root, this.start.path, this.end.path);
+  
+    const startRange = new ModelRange(range.start, range.start);
+    const endRange = new ModelRange(range.end, range.end);
+    const startText = new ModelText('[===START===]');
+    const endText = new ModelText('[===END===]');
+
+    OperationAlgorithms.insert(endRange, endText);
+    OperationAlgorithms.insert(startRange, startText);
+
+    let modelString : string=root.toXml().innerHTML;
+    modelString = modelString.replace('<text __dirty="node,content">[===START===]</text>', '  {[===  ');
+    modelString = modelString.replace('<text __dirty="node,content">[===END===]</text>', '  ===]}  ');
+
+    return modelString;
   }
 
   getCommonPosition(): ModelPosition | null {

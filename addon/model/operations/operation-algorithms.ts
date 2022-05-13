@@ -7,6 +7,8 @@ import RangeMapper, {
 } from '@lblod/ember-rdfa-editor/model/range-mapper';
 import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { test } from 'qunit';
+import { nodeIsElementOfType } from '../util/predicate-utils';
 
 export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
 /**
@@ -14,6 +16,85 @@ export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
  * Any use outside of operations is not supported
  */
 export default class OperationAlgorithms {
+  static removeNew(
+    range: ModelRange
+  ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
+    
+    if(range.collapsed){
+      return {
+        removedNodes: [],
+        mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
+      };
+    }
+
+    let splitStart = false;
+    let splitEnd = false;
+    let beforeStart;
+    let afterEnd;
+    if (range.start.isInsideText()) {
+      range.start.split();
+      splitStart = true;
+    }
+    if (range.end.isInsideText()) {
+      range.end.split(true);
+      splitEnd = true;
+    }
+    if (splitStart) {
+      beforeStart = range.start.nodeBefore();
+    }
+    if (splitEnd) {
+      afterEnd = range.end.nodeAfter();
+    }
+    const allNodes:ModelNode[] = [];
+    const walker = new ModelTreeWalker({ range: range });
+    for (const node of walker){
+      allNodes.push(node);
+    }
+    const confinedNodes:ModelNode[]=[];
+    const confinedRanges = range.getMinimumConfinedRanges();
+    for (const range of confinedRanges) {
+      if (!range.collapsed) {
+        const walker = new ModelTreeWalker({ range, descend: false });
+        confinedNodes.push(...walker);
+      }
+    }
+
+    const openingTagNodes=allNodes.filter(node => {
+      if(confinedNodes.includes(node)){
+        return false;
+      }
+      return true;
+    });    
+    
+    confinedNodes.forEach(node => {
+      node.remove();
+    });
+
+    openingTagNodes.forEach(opNode => {
+      const nodesToUnindent = opNode.children;
+      nodesToUnindent.forEach((node, index)=>{
+        node.remove();
+        opNode.parent?.addChild(node);
+      });
+      opNode.parent?.removeChild(opNode);
+    });
+
+    debugger;
+    //merge logic... needs more work
+    if(splitEnd && splitStart){
+      beforeStart.content+=afterEnd.content;
+      afterEnd.remove();
+    }
+
+    const newEndPos=range.start;
+
+    return {
+      removedNodes: [...confinedNodes, ...openingTagNodes],
+      mapper: new RangeMapper([buildPositionMapping(range, newEndPos)]),
+    };
+  }
+
+
   static remove(
     range: ModelRange
   ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
