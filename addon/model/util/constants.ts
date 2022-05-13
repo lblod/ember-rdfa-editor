@@ -81,6 +81,25 @@ export const TEXT_PROPERTY_NODES = new Set([
   'del',
   'span',
 ]);
+export const LEAF_NODES = new Set(['br', 'img', 'hr']);
+
+export const VISUAL_NODES = new Set([
+  'br',
+  'img',
+  'hr',
+  'li',
+  'p',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'div',
+  'pre',
+  'address',
+  'blockquote',
+]);
 
 export const SPACE = ' ';
 export const NON_BREAKING_SPACE = '\u00A0';

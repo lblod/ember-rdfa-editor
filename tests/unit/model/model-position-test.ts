@@ -5,6 +5,7 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 module('Unit | model | model-position', function () {
   module('Unit | model | model-position | getCommonAncestor', function () {
@@ -372,6 +373,118 @@ module('Unit | model | model-position', function () {
       assert.strictEqual(result, 'bcde');
     });
   });
+  module('Unit | model | model-position | charactersAfter', () => {
+    test('gives empty string when no characters after', function (assert) {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 3);
+      const result = position.charactersAfter(3);
+      assert.strictEqual(result, '');
+    });
+    test('gives empty string when amount 0', function (assert) {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 3);
+      const result = position.charactersAfter(0);
+      assert.strictEqual(result, '');
+    });
+    test('gives empty string when in front of element', function (assert) {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+          <span/>
+          <text>def</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 3);
+      const result = position.charactersAfter(0);
+      assert.strictEqual(result, '');
+    });
+    test('gives desired characters', function (assert) {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 0);
+      const result = position.charactersAfter(2);
+      assert.strictEqual(result, 'ab');
+    });
+    test('gives desired characters when amount too big', function (assert) {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 0);
+      const result = position.charactersAfter(20);
+      assert.strictEqual(result, 'abc');
+    });
+
+    test('gives desired characters when inside a string', function (assert) {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 1);
+      const result = position.charactersAfter(1);
+      assert.strictEqual(result, 'b');
+    });
+
+    test('gives desired characters when inside a string over boundaries', function (assert) {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+          <text>def</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 3);
+      const result = position.charactersAfter(1);
+      assert.strictEqual(result, 'd');
+    });
+    test('gives desired multiple characters when inside a string over boundaries', function (assert) {
+      // language=XML
+      const {
+        textNodes: { textNode },
+      } = vdom`
+        <modelRoot>
+          <text __id="textNode">abc</text>
+          <text>def</text>
+        </modelRoot>
+      `;
+      const position = ModelPosition.fromInTextNode(textNode, 1);
+      const result = position.charactersAfter(4);
+      assert.strictEqual(result, 'bcde');
+    });
+  });
   module('Unit | model | model-position | shiftedBy', function () {
     test('gives equivalent pos when already at start and moving left', function (assert) {
       // language=XML
@@ -416,6 +529,248 @@ module('Unit | model | model-position', function () {
       const expected = ModelPosition.fromInElement(parent, 3);
       const result = pos.shiftedBy(-1);
       assert.true(result.sameAs(expected));
+    });
+  });
+  module('Unit | model | model-position | shiftedVisually', () => {
+    test('shifts by amount - in text node', function (assert) {
+      const {
+        textNodes: { text },
+      } = vdom`
+        <modelRoot>
+          <text __id="text">abc</text>
+        </modelRoot>
+      `;
+      const referencePos = ModelPosition.fromInTextNode(text, 1);
+      const oneLeft = ModelPosition.fromInTextNode(text, 0);
+      const oneRight = ModelPosition.fromInTextNode(text, 2);
+      assert.true(oneLeft.sameAs(referencePos.shiftedVisually(-1)));
+      assert.true(oneRight.sameAs(referencePos.shiftedVisually(1)));
+    });
+    test('shifts by amount - at doc boundaries', function (assert) {
+      const {
+        textNodes: { text },
+      } = vdom`
+        <modelRoot>
+          <text __id="text">a</text>
+        </modelRoot>
+      `;
+      const referencePosLeft = ModelPosition.fromInTextNode(text, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(text, 1);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+      assert.true(
+        referencePosLeft.sameAs(shiftedLeft),
+        shiftedLeft.path.toString()
+      );
+      assert.true(
+        referencePosRight.sameAs(shiftedRight),
+        shiftedRight.path.toString()
+      );
+    });
+    test('shifts by amount - descends into inline element', function (assert) {
+      const {
+        textNodes: { text, textLeft, textRight },
+      } = vdom`
+        <modelRoot>
+          <span>
+            <text __id="textLeft">ab</text>
+          </span>
+          <text __id="text">c</text>
+          <span>
+            <text __id="textRight">d</text>
+          </span>
+        </modelRoot>
+      `;
+      const referencePosLeft = ModelPosition.fromInTextNode(text, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(text, 1);
+      const oneLeft = ModelPosition.fromInTextNode(textLeft, 1);
+      const oneRight = ModelPosition.fromInTextNode(textRight, 1);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
+    test('shifts by amount - at beginning of li tag', function (assert) {
+      const {
+        textNodes: { text1, text2, text3 },
+      } = vdom`
+        <modelRoot>
+          <ul>
+            <li>
+              <text __id="text1">ab</text>
+            </li>
+            <li>
+              <text __id="text2">c</text>
+            </li>
+            <li>
+              <text __id="text3">de</text>
+            </li>
+          </ul>
+        </modelRoot>
+      `;
+
+      const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(text2, 1);
+
+      const oneLeft = ModelPosition.fromInTextNode(text1, 2);
+      const oneRight = ModelPosition.fromInTextNode(text3, 0);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
+    test('shifts by amount - sublists', function (assert) {
+      const {
+        textNodes: { text1, text2, text3, text4 },
+      } = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+            <text __id="text1">ab</text>
+            <ul>
+              <li>
+                  <text __id="text2">cd</text>
+              </li>
+              <li>
+                  <text __id="text3">ef</text>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <text __id="text4">gh</text>
+            <ul/>
+          </li>
+        </ul>
+      </modelRoot>
+      `;
+      const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(text3, 2);
+
+      const oneLeft = ModelPosition.fromInTextNode(text1, 2);
+      const oneRight = ModelPosition.fromInTextNode(text4, 0);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
+
+    test('shifted by amount - going out of a list', function (assert) {
+      const {
+        textNodes: { text1, text2, text3 },
+      } = vdom`
+      <modelRoot>
+        <text __id="text1">ab</text>
+        <ul>
+            <li>
+                <text __id="text2">cd</text>
+            </li>
+        </ul>
+        <text __id="text3">ef</text>
+      </modelRoot>
+      `;
+
+      const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(text2, 2);
+
+      const oneLeft = ModelPosition.fromInTextNode(text1, 2);
+      const oneRight = ModelPosition.fromInTextNode(text3, 0);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
+    test('shifted by amount - span inside li', function (assert) {
+      const {
+        textNodes: { text1, text2, text3 },
+      } = vdom`
+        <modelRoot>
+          <ul>
+            <li>
+              <span __id="span1">
+                <text __id="text1">ab</text>
+              </span>
+            </li>
+            <li>
+              <span>
+                <text __id="text2">c</text>
+              </span>
+            </li>
+            <li>
+              <span __id="span2">
+                <text  __id="text3">de</text>
+              </span>
+            </li>
+          </ul>
+        </modelRoot>
+      `;
+
+      const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(text2, 1);
+
+      const oneLeft = ModelPosition.fromInNode(text1, 2);
+      const oneRight = ModelPosition.fromInNode(text3, 0);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
+    test('shifted by amount - br', function (assert) {
+      const {
+        textNodes: { text1, text2, text3 },
+      } = vdom`
+      <modelRoot>
+        <text __id="text1">ab</text>
+        <br/>
+        <text __id="text2">cd</text>
+        <br/>
+        <text __id="text3">ef</text>
+      </modelRoot>
+      `;
+      const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(text2, 2);
+
+      const oneLeft = ModelPosition.fromInTextNode(text1, 2);
+
+      const oneRight = ModelPosition.fromInTextNode(text3, 0);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
+    test('shifted by amount - invisible spaces', function (assert) {
+      const {
+        textNodes: { text1, text2, text3 },
+      } = vdom`
+      <modelRoot>
+        <text __id="text1">ab${INVISIBLE_SPACE}</text>
+        <text __id="text2">${INVISIBLE_SPACE}cd${INVISIBLE_SPACE}</text>
+        <text __id="text3">${INVISIBLE_SPACE}ef</text>
+      </modelRoot>
+      `;
+      const referencePosLeft = ModelPosition.fromInTextNode(text2, 1);
+      const referencePosRight = ModelPosition.fromInTextNode(text2, 3);
+
+      const oneLeft = ModelPosition.fromInTextNode(text1, 1);
+
+      const oneRight = ModelPosition.fromInTextNode(text3, 2);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
   });
 });
