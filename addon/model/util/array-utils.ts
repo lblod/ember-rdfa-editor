@@ -46,6 +46,10 @@ export default class ArrayUtils {
     }
     return true;
   }
+
+  static sum(array: Array<number>): number {
+    return array.reduce((a, b) => a + b, 0);
+  }
 }
 
 export function pushOrExpand<T>(parent: T[], child: T | T[]): void {

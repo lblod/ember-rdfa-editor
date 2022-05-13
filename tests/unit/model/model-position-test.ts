@@ -689,34 +689,35 @@ module('Unit | model | model-position', function () {
     });
     test('shifted by amount - span inside li', function (assert) {
       const {
-        textNodes: { text1, text2, text3 },
+        textNodes: { text },
+        elements: { span1, span2 },
       } = vdom`
         <modelRoot>
           <ul>
             <li>
-              <span>
-                <text __id="text1">ab</text>
+              <span __id="span1">
+                <text>ab</text>
               </span>
             </li>
             <li>
               <span>
-                <text __id="text2">c</text>
+                <text __id="text">c</text>
               </span>
             </li>
             <li>
-              <span>
-                <text __id="text3">de</text>
+              <span __id="span2">
+                <text>de</text>
               </span>
             </li>
           </ul>
         </modelRoot>
       `;
 
-      const referencePosLeft = ModelPosition.fromInTextNode(text2, 0);
-      const referencePosRight = ModelPosition.fromInTextNode(text2, 1);
+      const referencePosLeft = ModelPosition.fromInTextNode(text, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(text, 1);
 
-      const oneLeft = ModelPosition.fromInTextNode(text1, 2);
-      const oneRight = ModelPosition.fromInTextNode(text3, 0);
+      const oneLeft = ModelPosition.fromAfterNode(span1);
+      const oneRight = ModelPosition.fromBeforeNode(span2);
 
       const shiftedLeft = referencePosLeft.shiftedVisually(-1);
       const shiftedRight = referencePosRight.shiftedVisually(1);
