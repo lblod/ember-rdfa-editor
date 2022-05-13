@@ -690,7 +690,6 @@ module('Unit | model | model-position', function () {
     test('shifted by amount - span inside li', function (assert) {
       const {
         textNodes: { text1, text2, text3 },
-        elements: { span1, span2 },
       } = vdom`
         <modelRoot>
           <ul>
