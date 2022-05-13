@@ -355,10 +355,33 @@ export default class ModelPosition {
     return this.charactersInDirection(amount, false);
   }
 
+  /**
+   * Collects the characters after the position until either one of the following happens:
+   * - an element is encountered
+   * - we have reached the start of the parent element of the position
+   * - we have collected the desired amount of characters
+   *
+   * as such, the length of the returned string can vary between 0 (no characters found)
+   * and amount
+   * @param amount
+   * @return string the collected characters, in display order
+   */
   charactersAfter(amount: number): string {
     return this.charactersInDirection(amount, true);
   }
 
+  /**
+   * Collects the characters in a certain direction before or after the position until either one of the following happens:
+   * - an element is encountered
+   * - we have reached the start of the parent element of the position
+   * - we have collected the desired amount of characters
+   *
+   * as such, the length of the returned string can vary between 0 (no characters found)
+   * and amount
+   * @param amount
+   * @param forwards The direction in which to look
+   * @return string the collected characters, in display order
+   */
   charactersInDirection(amount: number, forwards: boolean) {
     const direction = forwards ? 1 : -1;
     let cur = forwards ? this.nodeAfter() : this.nodeBefore();
@@ -451,6 +474,7 @@ export default class ModelPosition {
     });
 
     while (stepsToShift !== 0) {
+      // Check if there are any direct parent elements to the current position which are not visible and traverse out of them.
       while (
         ModelNodeUtils.getVisualLength(currentPos.parent) === 0 &&
         !currentPos.parent.sameAs(this.root)
@@ -467,6 +491,7 @@ export default class ModelPosition {
         }
       }
       if (currentPos.isInsideText()) {
+        // If the current position is situated inside a text node, traverse in the right direction
         let nextChar;
         if (forwards) {
           nextChar = currentPos.charactersAfter(1);
@@ -478,6 +503,8 @@ export default class ModelPosition {
         }
         currentPos = currentPos.shiftedBy(direction);
       } else {
+        // Check if the current position has a direct parent which is visible (such as li, p, header elements)
+        // Adjust the number of steps to shift
         if (ModelNodeUtils.getVisualLength(currentPos.parent) > 0) {
           if (
             currentPos.parentOffset === currentPos.parent.getMaxOffset() &&
@@ -494,7 +521,9 @@ export default class ModelPosition {
             );
           }
         }
+        // Get the next leaf node in the step direction
         let nextLeaf = walker.nextNode();
+        // Assert the next leaf is not the node the current position is currently situated on
         if (forwards) {
           while (nextLeaf && currentPos.nodeBefore() === nextLeaf) {
             nextLeaf = walker.nextNode();
@@ -506,6 +535,7 @@ export default class ModelPosition {
         }
         if (nextLeaf) {
           if (ModelElement.isModelText(nextLeaf)) {
+            // If the next leaf is text, determine the correct next position based on the number of steps to take
             currentPos = ModelPosition.fromInNode(
               nextLeaf,
               ModelNodeUtils.getVisibleIndex(
@@ -515,12 +545,14 @@ export default class ModelPosition {
               )
             );
           } else if (ModelNode.isModelElement(nextLeaf)) {
+            // If the next leaf is a node, set the position after or before the node based on the direction
             if (forwards) {
               currentPos = ModelPosition.fromAfterNode(nextLeaf);
             } else {
               currentPos = ModelPosition.fromBeforeNode(nextLeaf);
             }
           }
+          // Update the number of steps to shift based on the visual length of the leaf
           if (forwards) {
             stepsToShift = Math.max(
               stepsToShift - ModelNodeUtils.getVisualLength(nextLeaf),
