@@ -15,149 +15,112 @@ module(
       
       <div>tes[]t</div>
     */
-      test('range is collapsed test', (assert) => {
-        const {
-          root: initial,
-          elements: { div1 },
-          textNodes: { text1 }
-        } = vdom`
-          <modelRoot>
-            <div __id="div1">
-              <text __id="text1">test</text>
-            </div>
-          </modelRoot>
-        `;
+    test('range is collapsed test', (assert) => {
+      const {
+        root: initial,
+        elements: { div1 },
+        textNodes: { text1 }
+      } = vdom`
+        <modelRoot>
+          <div __id="div1">
+            <text __id="text1">test</text>
+          </div>
+        </modelRoot>
+      `;
 
-        const { root: expected } = vdom`
-          <modelRoot>
-            <div __id="div1">
-              <text __id="text1">test</text>
-            </div>
-          </modelRoot>
-        `
-        const start = ModelPosition.fromInTextNode(text1, 3);
-        const end = ModelPosition.fromInTextNode(text1, 3);
-        OperationAlgorithms.removeNew(new ModelRange(start, end));
-        assert.true(initial.sameAs(expected));
-      });
-    /*
+      const { root: expected } = vdom`
+        <modelRoot>
+          <div __id="div1">
+            <text __id="text1">test</text>
+          </div>
+        </modelRoot>
+      `
+      const start = ModelPosition.fromInTextNode(text1, 3);
+      const end = ModelPosition.fromInTextNode(text1, 3);
+      OperationAlgorithms.removeNew(new ModelRange(start, end));
+      assert.true(initial.sameAs(expected));
+    });
+    /* 
       test2
       ==========================
       <modelRoot>
-        <div>
-          test
-          <div>
-            test
-            <span>
-              <text __id="text1">te[st</text>
-            </span>
-            test
+        <div __id="div1">
+          <text __id="text1">test[</text>
+        </div>
+        <text __id="text2">te]st</text>
+      </modelRoot>
+
+      <modelRoot>
+        <div __id="div1">
+          <text __id="text1">test[]st</text>
+        </div>
+      </modelRoot>
+      
+    */
+    test('start is nested and on edge', (assert) => {
+      const {
+        root: initial,
+        elements: { div1 },
+        textNodes: { text1, text2 }
+      } = vdom`
+        <modelRoot>
+          <div __id="div1">
+            <text __id="text1">test</text>
           </div>
-          <div>
-            <text __id="text2">te]st</text>
+          <text __id="text2">test</text>
+        </modelRoot>
+      `;
+
+      const { root: expected } = vdom`
+        <modelRoot>
+          <div __id="div1">
+            <text __id="text1">test[]st</text>
           </div>
+        </modelRoot>
+      `
+      const start = ModelPosition.fromInTextNode(text1, 4);
+      const end = ModelPosition.fromInTextNode(text2, 2);
+      OperationAlgorithms.removeNew(new ModelRange(start, end));
+      assert.true(initial.sameAs(expected));
+    });
+    /* 
+      test3
+      ==========================
+      <modelRoot>
+        <text __id="text1">te[st</text>
+        <div __id="div1">
+          <text __id="text2">]test</text>
         </div>
       </modelRoot>
 
       <modelRoot>
-        <div>
-          test
-          <div>
-            test
-            <span>
-              <text __id="text1">te[]st</text>
-            </span>
-          </div>
-        </div>
+        <text __id="text2">te[]test</text>
       </modelRoot>
-    */
-      test('range is part of a nested structure test', (assert) => {
-        const {
-          root: initial,
-          elements: { div1, div2 },
-          textNodes: { text1, text2 }
-        } = vdom`
-          <modelRoot>
-            <div>
-              test
-              <div __id="div1">
-                <text>test</text>
-                  <span>
-                    <text __id="text1">test</text>
-                  </span>
-                <text>test</text>
-              </div>
-              <div __id="div2">
-                <text __id="text2">test</text>
-              </div>
-            </div>
-          </modelRoot>
-        `;
-
-        const { root: expected } = vdom`
-          <modelRoot>
-            <div>
-              test
-              <div>
-                <text>test</text>
-                <span>
-                  <text __id="text1">test</text>
-                </span>
-              </div>
-            </div>
-          </modelRoot>
-        `
-
-        const start = ModelPosition.fromInTextNode(text1, 2);
-        const end = ModelPosition.fromInTextNode(text2, 2);
-        const range = new ModelRange(start, end);
-        OperationAlgorithms.removeNew(range);
-        assert.true(initial.sameAs(expected));
-      });
-    /*
-      test3
-      ==========================
-      <div>
-      te[st
-      <div>test
-        <div>te]st</div>
-      </div>
-      </div>
-
-      <div>
-      te[]st
-      </div>
-
-      test4
-      ==========================
-      <div>
-        <span>
-            <text>ab[c</text>
-        </span>
-      </div>
-      <span>
-        <text>de]f</text>
-      </span>
-
-      <div>
-        <span>
-          <text>ab[]f</text>
-        </span>
-      </div>
       
-      test5
-      ==========================
-      <div>
-        <span>
-            <text>ab[c</text>
-        </span>
-      </div>
-      <span>
-        <text>de]f</text>
-      </span>
-
     */
+    test('end is nested and on edge', (assert) => {
+      const {
+        root: initial,
+        elements: { div1 },
+        textNodes: { text1, text2 }
+      } = vdom`
+        <modelRoot>
+          <text __id="text1">te[st</text>
+          <div __id="div1">
+            <text __id="text2">]test</text>
+          </div>
+        </modelRoot>
+      `;
 
-    
+      const { root: expected } = vdom`
+        <modelRoot>
+          <text __id="text1">te[]test</text>
+        </modelRoot>
+      `
+      const start = ModelPosition.fromInTextNode(text1, 4);
+      const end = ModelPosition.fromInTextNode(text2, 2);
+      OperationAlgorithms.removeNew(new ModelRange(start, end));
+      assert.true(initial.sameAs(expected));
+    });
   }
 );
