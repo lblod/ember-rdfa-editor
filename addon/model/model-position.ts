@@ -539,59 +539,9 @@ export default class ModelPosition {
             nextNode = walker.nextNode();
           }
         }
-        if (nextNode) {
-          if (nextNode.isLeaf) {
-            if (ModelElement.isModelText(nextNode)) {
-              // If the next leaf is text, determine the correct next position based on the number of steps to take
-              currentPos = ModelPosition.fromInNode(
-                nextNode,
-                ModelNodeUtils.getVisibleIndex(
-                  nextNode,
-                  Math.abs(stepsToShift),
-                  forwards
-                )
-              );
-            } else if (ModelNode.isModelElement(nextNode)) {
-              // If the next leaf is a node, set the position after or before the node based on the direction
-              if (forwards) {
-                if (blockNodeFound) {
-                  currentPos = ModelPosition.fromBeforeNode(nextNode);
-                } else {
-                  if (nextNode.nextSibling) {
-                    currentPos = ModelPosition.fromBeforeNode(
-                      nextNode.nextSibling
-                    );
-                  } else {
-                    currentPos = ModelPosition.fromAfterNode(nextNode);
-                  }
-                }
-              } else {
-                if (blockNodeFound) {
-                  currentPos = ModelPosition.fromAfterNode(nextNode);
-                } else {
-                  if (nextNode.previousSibling) {
-                    currentPos = ModelPosition.fromAfterNode(
-                      nextNode.previousSibling
-                    );
-                  } else {
-                    currentPos = ModelPosition.fromBeforeNode(nextNode);
-                  }
-                }
-              }
-            }
-            // Update the number of steps to shift based on the visual length of the leaf
-            if (forwards) {
-              stepsToShift = Math.max(
-                stepsToShift - ModelNodeUtils.getVisualLength(nextNode),
-                0
-              );
-            } else {
-              stepsToShift = Math.min(
-                stepsToShift + ModelNodeUtils.getVisualLength(nextNode),
-                0
-              );
-            }
-          } else if (!nextNode.isLeaf && ModelNode.isModelElement(nextNode)) {
+
+        while (nextNode && !nextNode.isLeaf) {
+          if (ModelNode.isModelElement(nextNode)) {
             if (forwards) {
               currentPos = ModelPosition.fromInNode(nextNode, 0);
               if (!blockNodeFound) {
@@ -600,6 +550,7 @@ export default class ModelPosition {
                   0
                 );
               }
+              blockNodeFound = true;
             } else {
               currentPos = ModelPosition.fromInNode(
                 nextNode,
@@ -611,7 +562,65 @@ export default class ModelPosition {
                   0
                 );
               }
+              blockNodeFound = true;
             }
+          }
+          nextNode = walker.nextNode();
+        }
+        if (nextNode) {
+          if (ModelElement.isModelText(nextNode)) {
+            // If the next leaf is text, determine the correct next position based on the number of steps to take
+            currentPos = ModelPosition.fromInNode(
+              nextNode,
+              ModelNodeUtils.getVisibleIndex(
+                nextNode,
+                Math.abs(stepsToShift),
+                forwards
+              )
+            );
+          } else if (ModelNode.isModelElement(nextNode)) {
+            // If the next leaf is a node, set the position after or before the node based on the direction
+            if (forwards) {
+              if (blockNodeFound) {
+                currentPos = ModelPosition.fromInNode(nextNode, 0);
+              } else {
+                if (nextNode.nextSibling) {
+                  currentPos = ModelPosition.fromInNode(
+                    nextNode.nextSibling,
+                    0
+                  );
+                } else {
+                  currentPos = ModelPosition.fromAfterNode(nextNode);
+                }
+              }
+            } else {
+              if (blockNodeFound) {
+                currentPos = ModelPosition.fromInNode(
+                  nextNode,
+                  ModelNodeUtils.getVisualLength(nextNode)
+                );
+              } else {
+                if (nextNode.previousSibling) {
+                  currentPos = ModelPosition.fromAfterNode(
+                    nextNode.previousSibling
+                  );
+                } else {
+                  currentPos = ModelPosition.fromBeforeNode(nextNode);
+                }
+              }
+            }
+          }
+          // Update the number of steps to shift based on the visual length of the leaf
+          if (forwards) {
+            stepsToShift = Math.max(
+              stepsToShift - ModelNodeUtils.getVisualLength(nextNode),
+              0
+            );
+          } else {
+            stepsToShift = Math.min(
+              stepsToShift + ModelNodeUtils.getVisualLength(nextNode),
+              0
+            );
           }
         } else {
           break;
