@@ -2,13 +2,16 @@ import State, { cloneState } from '@lblod/ember-rdfa-editor/core/state';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { MarkSet } from '../model/mark';
 import ModelNode from '../model/model-node';
+import ModelSelection from '../model/model-selection';
 import InsertTextOperation from '../model/operations/insert-text-operation';
 import Operation from '../model/operations/operation';
 import RangeMapper from '../model/range-mapper';
 import HtmlReader, { HtmlReaderContext } from '../model/readers/html-reader';
+import SelectionReader from '../model/readers/selection-reader';
+import { getWindowSelection } from '../utils/dom-helpers';
 import { EditorPlugin } from '../utils/editor-plugin';
 import { NotImplementedError } from '../utils/errors';
-import { View } from "./View";
+import { View } from './view';
 
 interface TextInsertion {
   range: ModelRange;
@@ -48,7 +51,12 @@ export default class Transaction {
     if (!ModelNode.isModelElement(newVdom)) {
       throw new NotImplementedError();
     }
-    this.workingCopy.modelRoot = newVdom;
+    const selectionReader = new SelectionReader();
+    const newSelection = selectionReader.read(view, getWindowSelection());
+
+    this.workingCopy.document = newVdom;
+    this.workingCopy.selection = newSelection;
+    this.needsToWrite = true;
   }
 
   apply(): State {
@@ -58,11 +66,12 @@ export default class Transaction {
   insertText({ range, text, marks }: TextInsertion) {
     const operation = new InsertTextOperation(
       undefined,
-      range,
+      range.clone(this.workingCopy.document),
       text,
       marks || new MarkSet()
     );
-    this.operations.push(operation);
+    operation.execute();
+    console.log(this.workingCopy.document.toXml())
   }
 
   cloneRange(range: ModelRange): ModelRange {
@@ -71,5 +80,11 @@ export default class Transaction {
     const newEnd = range.end.clone(newRoot);
 
     return new ModelRange(newStart, newEnd);
+  }
+  setSelection(selection: ModelSelection) {
+    if (!selection.sameAs(this.workingCopy.selection)) {
+      this.needsToWrite = true;
+    }
+    this.workingCopy.selection = selection;
   }
 }

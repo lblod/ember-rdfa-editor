@@ -2,7 +2,7 @@ import State, { emptyState } from '@lblod/ember-rdfa-editor/core/state';
 import { EditorPlugin } from '../utils/editor-plugin';
 import Transaction from './transaction';
 import { View, EditorView } from './view';
-export default interface EditorArgs {
+export interface EditorArgs {
   domRoot: HTMLElement;
   plugins: EditorPlugin[];
 }

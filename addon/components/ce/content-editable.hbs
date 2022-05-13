@@ -1,9 +1,9 @@
 {{! template-lint-disable no-invalid-interactive }}
 {{! template-lint-disable no-down-event-binding }}
 <div
-  {{on 'beforeinput' this.beforeInput}}
-  {{on 'input' this.handleInput}}
   {{did-insert this.insertedEditorElement}}
+  {{on 'beforeinput' this.beforeInput}}
+  {{will-destroy this.teardown}}
   contenteditable='true'
   class={{@class}}
   ...attributes

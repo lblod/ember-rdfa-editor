@@ -1,28 +1,9 @@
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
-import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
-import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
-import EnterHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/enter-handler';
-import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
-import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
+import { createEditor, Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
-import PasteHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/paste-handler';
-import CutHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/cut-handler';
-import CopyHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/copy-handler';
-import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import { IllegalAccessToRawEditor } from '@lblod/ember-rdfa-editor/utils/errors';
-import IgnoreModifiersHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/ignore-modifiers-handler';
-import UndoHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler';
-import FallbackInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/fallback-input-handler';
-import DisableDeleteHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/disable-delete-handler';
-import {
-  createLogger,
-  Logger,
-} from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import { EditorInputHandler } from './input-handler';
 import SidewayArrowsHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/sideway-arrows-handler';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
@@ -64,9 +45,23 @@ interface ContentEditableArgs {
  * @extends Component
  */
 export default class ContentEditable extends Component<ContentEditableArgs> {
+
+  editor: Editor | null = null;
+  inputHandler: EditorInputHandler | null = null;
+
+  @action
+  afterSelectionChange(event: Event) {
+    if(this.inputHandler) {
+      this.inputHandler.afterSelectionChange(event);
+    }
+
+  }
+
   @action
   beforeInput(event: InputEvent) {
-
+if(this.inputHandler) {
+      this.inputHandler.beforeInput(event);
+    }
   }
 
   /**
@@ -75,14 +70,21 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * @method insertedEditorElement
    */
   @action
-  async insertedEditorElement(element: HTMLElement) {
-    await this.rawEditor.initialize(element, this.args.plugins);
-    if (this.args.rawEditorInit) {
-      this.args.rawEditorInit(this.rawEditor);
-    }
-    if (this.stealFocus) {
-      element.focus();
-    }
+  insertedEditorElement(element: HTMLElement) {
+
+    document.addEventListener('selectionchange', this.afterSelectionChange);
+    this.editor = createEditor({
+      domRoot: element,
+      plugins: []
+    })
+    this.inputHandler = new EditorInputHandler(this.editor);
+
+  }
+
+  @action
+  teardown() {
+    document.removeEventListener('selectionchange', this.afterSelectionChange)
+
   }
   // @service declare features: FeatureService;
   //

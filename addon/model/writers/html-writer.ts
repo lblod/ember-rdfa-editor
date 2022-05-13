@@ -29,6 +29,7 @@ export default class HtmlWriter {
   }
 
   write(view: View, modelNode: ModelNode): NodeView {
+    console.log("writing", modelNode.toXml());
     let resultView: NodeView;
 
     if (ModelNode.isModelElement(modelNode)) {
