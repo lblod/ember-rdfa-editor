@@ -11,7 +11,9 @@ export default class SidewayArrowsHandler extends InputHandler {
 
   isHandlerFor(event: Event): boolean {
     return (
-      isKeyDownEvent(event) && ['ArrowLeft', 'ArrowRight'].includes(event.key)
+      isKeyDownEvent(event) &&
+      !(event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) &&
+      ['ArrowLeft', 'ArrowRight'].includes(event.key)
     );
   }
   handleEvent(event: KeyboardEvent): HandlerResponse {

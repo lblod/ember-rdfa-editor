@@ -121,6 +121,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       new BackspaceHandler({ rawEditor }),
       new TabHandler({ rawEditor }),
       new TextInputHandler({ rawEditor }),
+      new SidewayArrowsHandler({ rawEditor }),
     ];
     const allowBrowserDelete = this.features.isEnabled('editorBrowserDelete');
     this.logger = createLogger(this.constructor.name);
@@ -132,7 +133,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       new IgnoreModifiersHandler({ rawEditor }),
       new UndoHandler({ rawEditor }),
       new BoldItalicUnderlineHandler({ rawEditor }),
-      new SidewayArrowsHandler({ rawEditor }),
       new EscapeHandler({ rawEditor }),
       new FallbackInputHandler({ rawEditor })
     );
