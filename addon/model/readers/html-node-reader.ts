@@ -1,6 +1,6 @@
 import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { HtmlReaderContext } from '@lblod/ember-rdfa-editor/model/readers/html-reader';
+import { HtmlReaderContext } from "@lblod/ember-rdfa-editor/model/readers/HtmlReaderContext";
 import { ElementType } from '@lblod/ember-rdfa-editor/model/model-element';
 import HtmlListReader from '@lblod/ember-rdfa-editor/model/readers/html-list-reader';
 import {

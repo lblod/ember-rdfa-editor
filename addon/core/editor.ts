@@ -1,22 +1,30 @@
-import State, { fromDomView } from '@lblod/ember-rdfa-editor/core/state';
-import { InputHandler } from '../components/ce/input-handler';
+import State, { emptyState } from '@lblod/ember-rdfa-editor/core/state';
 import { EditorPlugin } from '../utils/editor-plugin';
-import DomView, { createDomView } from './view';
-
-export default interface Editor {
-  state: State;
-  view: DomView;
+import Transaction from './transaction';
+import { View, EditorView } from './view';
+export default interface EditorArgs {
+  domRoot: HTMLElement;
   plugins: EditorPlugin[];
 }
-export function createEditor(
-  domRoot: HTMLElement,
-  plugins: EditorPlugin[]
-): Editor {
-  const view = createDomView(domRoot);
-  const initialState = fromDomView(view);
+
+export interface Editor {
+  state: State;
+  view: View;
+}
+
+export function createEditor(args: EditorArgs): Editor {
+  const { domRoot, plugins } = args;
+  const view = new EditorView(domRoot);
+
+  let initialState = emptyState();
+  const tr = new Transaction(initialState);
+  tr.setPlugins(plugins);
+  tr.readFromView(view);
+  initialState = tr.apply();
+  view.update(initialState);
+
   return {
     state: initialState,
-    view: createDomView(domRoot),
-    plugins,
+    view,
   };
 }

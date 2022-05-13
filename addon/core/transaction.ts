@@ -1,12 +1,14 @@
-import State from '@lblod/ember-rdfa-editor/core/state';
-import { EventWithState } from '@lblod/ember-rdfa-editor/components/ce/input-handler';
-import ModelRange from "@lblod/ember-rdfa-editor/model/model-range";
-import SelectionReader from "@lblod/ember-rdfa-editor/model/readers/selection-reader";
-import Operation from '../model/operations/operation';
-import InsertTextOperation from '../model/operations/insert-text-operation';
+import State, { cloneState } from '@lblod/ember-rdfa-editor/core/state';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { MarkSet } from '../model/mark';
+import ModelNode from '../model/model-node';
+import InsertTextOperation from '../model/operations/insert-text-operation';
+import Operation from '../model/operations/operation';
 import RangeMapper from '../model/range-mapper';
-import ModelPosition from '../model/model-position';
+import HtmlReader, { HtmlReaderContext } from '../model/readers/html-reader';
+import { EditorPlugin } from '../utils/editor-plugin';
+import { NotImplementedError } from '../utils/errors';
+import { View } from "./View";
 
 interface TextInsertion {
   range: ModelRange;
@@ -15,39 +17,51 @@ interface TextInsertion {
 }
 
 export default class Transaction {
-
-  initialState: State
+  initialState: State;
+  private workingCopy: State;
   needsToWrite: boolean;
   operations: Operation[];
   rangeMapper: RangeMapper;
 
   constructor(state: State) {
     this.initialState = state;
+    this.workingCopy = cloneState(state);
     this.needsToWrite = false;
     this.operations = [];
     this.rangeMapper = new RangeMapper();
   }
+  setPlugins(plugins: EditorPlugin[]): void {
+    this.workingCopy.plugins = plugins;
+  }
+
+  readFromView(view: View): void {
+    const htmlReader = new HtmlReader();
+    const context = new HtmlReaderContext({
+      view,
+      marksRegistry: this.workingCopy.marksRegistry,
+    });
+    const parsedNodes = htmlReader.read(view.domRoot, context);
+    if (parsedNodes.length !== 1) {
+      throw new NotImplementedError();
+    }
+    const newVdom = parsedNodes[0];
+    if (!ModelNode.isModelElement(newVdom)) {
+      throw new NotImplementedError();
+    }
+    this.workingCopy.modelRoot = newVdom;
+  }
 
   apply(): State {
-    if(this.operations.length === 0) {
-      return this.initialState;
-    }
-    let currentState = this.initialState;
-    this.operations[0].range = this.cloneRange(this.operations.[0]);
+    return this.workingCopy;
+  }
 
-
-
-    for (const op of this.operations) {
-      op.range =
-
-
-
-    }
-
-  };
-
-  insertText({range, text, marks}: TextInsertion) {
-    const operation = new InsertTextOperation(undefined, range, text, marks || new MarkSet());
+  insertText({ range, text, marks }: TextInsertion) {
+    const operation = new InsertTextOperation(
+      undefined,
+      range,
+      text,
+      marks || new MarkSet()
+    );
     this.operations.push(operation);
   }
 
@@ -57,41 +71,5 @@ export default class Transaction {
     const newEnd = range.end.clone(newRoot);
 
     return new ModelRange(newStart, newEnd);
-
   }
-
-
-}
-function asModelRange(domRange: StaticRange): ModelRange {
-  const selectionReader =
-
-}
-
-export function insertText({
-  range, text, state
-}: {range: ModelRange, text: string, state: State}): Transaction {
-  return {
-    initialState: state;
-    apply(): State {
-      return {
-
-      }
-
-    },
-    needsToWrite: false
-
-  }
-
-
-}
-
-
-export function identity(state: State): Transaction {
-  return {
-    initialState: state,
-    apply(): State {
-      return state;
-    },
-    needsToWrite: false,
-  };
 }

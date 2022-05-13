@@ -1,13 +1,11 @@
-import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import { ElementView } from '@lblod/ember-rdfa-editor/model/node-view';
+import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import { LUMP_NODE_PROPERTY } from '../util/constants';
 
 export default class HtmlElementWriter
   implements Writer<ModelElement, ElementView>
 {
-  constructor(private model: Model) {}
 
   write(modelNode: ModelElement): ElementView {
     const result = document.createElement(modelNode.type);

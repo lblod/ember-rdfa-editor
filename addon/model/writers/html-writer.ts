@@ -1,19 +1,21 @@
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import {
-  ModelError,
-  NotImplementedError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
-import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
-import NodeView, {
-  ElementView,
-  isElementView,
-  isTextView,
-} from '@lblod/ember-rdfa-editor/model/node-view';
+import { View } from "@lblod/ember-rdfa-editor/core/View";
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import HtmlAdjacentTextWriter from './html-adjacent-text-writer';
+import NodeView, {
+    ElementView,
+    isElementView,
+    isTextView,
+    TextView
+} from '@lblod/ember-rdfa-editor/model/node-view';
+import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
+import HtmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
+import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {
+    ModelError,
+    NotImplementedError
+} from '@lblod/ember-rdfa-editor/utils/errors';
+
 /**
  * Top-level {@link Writer} for HTML documents.
  */
@@ -26,18 +28,18 @@ export default class HtmlWriter {
     this.htmlElementWriter = new HtmlElementWriter(model);
   }
 
-  write(modelNode: ModelNode): NodeView {
+  write(view: View, modelNode: ModelNode): NodeView {
     let resultView: NodeView;
 
     if (ModelNode.isModelElement(modelNode)) {
-      let view = this.getView(modelNode);
-      if (view) {
-        if (!isElementView(view)) {
+      let nodeView = view.modelToView(modelNode);
+      if (nodeView) {
+        if (!isElementView(nodeView)) {
           throw new ModelError('ModelElement with non-element view');
         }
-        view = this.updateElementView(modelNode, view);
+        nodeView = this.updateElementView(view, modelNode, nodeView);
       } else {
-        view = this.createElementView(modelNode);
+        nodeView = this.createElementView(view, modelNode);
       }
       const childViews = [];
       let adjacentTextNodes: ModelText[] = [];
@@ -67,7 +69,7 @@ export default class HtmlWriter {
           throw new ModelError('Model element with non-element viewroot');
         }
       }
-      resultView = view;
+      resultView = nodeView;
     } else if (ModelNode.isModelText(modelNode)) {
       this.processTextViews([modelNode]);
       resultView = this.getView(modelNode)!;
@@ -78,26 +80,26 @@ export default class HtmlWriter {
     return resultView;
   }
 
-  private getView(modelNode: ModelNode) {
-    return this.model.modelToView(modelNode);
-  }
-
-  private createElementView(modelElement: ModelElement): ElementView {
-    const view = this.htmlElementWriter.write(modelElement);
-    this.model.registerNodeView(modelElement, view);
-    return view;
+  private createElementView(
+    view: View,
+    modelElement: ModelElement
+  ): ElementView {
+    const nodeView = this.htmlElementWriter.write(modelElement);
+    view.registerNodeView(modelElement, nodeView);
+    return nodeView;
   }
 
   private updateElementView(
+    view: View,
     modelElement: ModelElement,
-    view: ElementView
+    elementView: ElementView
   ): NodeView {
     if (modelElement.isDirty('node')) {
-      const newView = this.createElementView(modelElement);
-      this.swapElement(view.viewRoot, newView.viewRoot);
+      const newView = this.createElementView(view, modelElement);
+      this.swapElement(elementView.viewRoot, newView.viewRoot);
       return newView;
     }
-    return view;
+    return elementView;
   }
 
   private processTextViews(modelTexts: ModelText[]): Set<Node> {
