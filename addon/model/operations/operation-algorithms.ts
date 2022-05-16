@@ -9,6 +9,7 @@ import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { test } from 'qunit';
 import { nodeIsElementOfType } from '../util/predicate-utils';
+import ModelElement from '../model-element';
 
 export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
 /**
@@ -19,18 +20,21 @@ export default class OperationAlgorithms {
   static removeNew(
     range: ModelRange
   ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
-    
+       
     if(range.collapsed){
       return {
         removedNodes: [],
         mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
       };
     }
+    debugger;
+    range.normalize();
 
     let splitStart = false;
     let splitEnd = false;
     let beforeStart;
     let afterEnd;
+    
     if (range.start.isInsideText()) {
       range.start.split();
       splitStart = true;
@@ -39,22 +43,33 @@ export default class OperationAlgorithms {
       range.end.split(true);
       splitEnd = true;
     }
+
     if (splitStart) {
       beforeStart = range.start.nodeBefore();
     }
+    
     if (splitEnd) {
       afterEnd = range.end.nodeAfter();
     }
+
+    const nodesToMove:ModelNode[] = [];
+    let nextNode=range.end.nodeAfter();
+    while(nextNode){
+      nodesToMove.push(nextNode);
+      nextNode=nextNode.nextSibling;
+    }
+
     const allNodes:ModelNode[] = [];
     const walker = new ModelTreeWalker({ range: range });
     for (const node of walker){
       allNodes.push(node);
     }
+
     const confinedNodes:ModelNode[]=[];
     const confinedRanges = range.getMinimumConfinedRanges();
     for (const range of confinedRanges) {
       if (!range.collapsed) {
-        const walker = new ModelTreeWalker({ range, descend: false });
+        const walker = new ModelTreeWalker({ range: range });
         confinedNodes.push(...walker);
       }
     }
@@ -63,7 +78,9 @@ export default class OperationAlgorithms {
       if(confinedNodes.includes(node)){
         return false;
       }
-      return true;
+      else{
+        return true;
+      }
     });    
     
     confinedNodes.forEach(node => {
@@ -72,25 +89,32 @@ export default class OperationAlgorithms {
 
     openingTagNodes.forEach(opNode => {
       const nodesToUnindent = opNode.children;
-      nodesToUnindent.forEach((node, index)=>{
+      nodesToUnindent.forEach((node)=>{
         node.remove();
         opNode.parent?.addChild(node);
       });
       opNode.parent?.removeChild(opNode);
     });
 
-    debugger;
-    //merge logic... needs more work
-    if(splitEnd && splitStart){
-      beforeStart.content+=afterEnd.content;
-      afterEnd.remove();
+    const before = range.start.nodeBefore();
+    if(before?.parent){
+      nodesToMove.forEach(node=>node.remove());
+      before.parent.insertChildrenAtIndex(before.index+1, ...nodesToMove);
     }
 
-    const newEndPos=range.start;
+    //merge logic... needs more work
+    const after = range.start.nodeAfter(); 
+    if(before && after){
+      if(before.modelNodeType === 'TEXT' && after.modelNodeType === 'TEXT'){
+        before.content+=after.content;
+        after.remove();
+      }
+    }
 
+    debugger;
     return {
       removedNodes: [...confinedNodes, ...openingTagNodes],
-      mapper: new RangeMapper([buildPositionMapping(range, newEndPos)]),
+      mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
     };
   }
 
