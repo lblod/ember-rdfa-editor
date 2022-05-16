@@ -14,7 +14,7 @@ interface FeatureService {
 interface ContentEditableArgs {
   externalHandlers: InputHandler[];
 
-  rawEditorInit(editor: RawEditor): void;
+  editorInit(editor: Editor): void;
 
   plugins: EditorPlugin[];
 
@@ -45,21 +45,19 @@ interface ContentEditableArgs {
  * @extends Component
  */
 export default class ContentEditable extends Component<ContentEditableArgs> {
-
   editor: Editor | null = null;
   inputHandler: EditorInputHandler | null = null;
 
   @action
   afterSelectionChange(event: Event) {
-    if(this.inputHandler) {
+    if (this.inputHandler) {
       this.inputHandler.afterSelectionChange(event);
     }
-
   }
 
   @action
   beforeInput(event: InputEvent) {
-if(this.inputHandler) {
+if (this.inputHandler) {
       this.inputHandler.beforeInput(event);
     }
   }
@@ -71,21 +69,20 @@ if(this.inputHandler) {
    */
   @action
   insertedEditorElement(element: HTMLElement) {
-
     document.addEventListener('selectionchange', this.afterSelectionChange);
     this.editor = createEditor({
       domRoot: element,
-      plugins: []
-    })
+      plugins: [],
+    });
     this.inputHandler = new EditorInputHandler(this.editor);
-
+    this.args.editorInit(this.editor);
   }
 
   @action
   teardown() {
-    document.removeEventListener('selectionchange', this.afterSelectionChange)
-
+    document.removeEventListener('selectionchange', this.afterSelectionChange);
   }
+
   // @service declare features: FeatureService;
   //
   // cutHandler: InputHandler;

@@ -1,19 +1,19 @@
-import { View } from "@lblod/ember-rdfa-editor/core/View";
+import { View } from '@lblod/ember-rdfa-editor/core/view';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import NodeView, {
-    ElementView,
-    isElementView,
-    isTextView,
-    TextView
+  ElementView,
+  isElementView,
+  isTextView,
+  TextView,
 } from '@lblod/ember-rdfa-editor/model/node-view';
 import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
 import HtmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {
-    ModelError,
-    NotImplementedError
+  ModelError,
+  NotImplementedError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 
 /**
@@ -29,7 +29,8 @@ export default class HtmlWriter {
   }
 
   write(view: View, modelNode: ModelNode): NodeView {
-    console.log("writing", modelNode.toXml());
+    console.log('writing', modelNode.toXml());
+
     let resultView: NodeView;
 
     if (ModelNode.isModelElement(modelNode)) {

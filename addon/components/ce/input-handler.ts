@@ -1,13 +1,7 @@
 import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
-import State from '@lblod/ember-rdfa-editor/core/state';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-
-export interface EventWithState<E extends Event> {
-  event: E;
-  state: State;
-}
 
 export interface InputHandler {
   afterInput(event: InputEvent): void;
@@ -25,19 +19,19 @@ export class EditorInputHandler implements InputHandler {
   afterInput(event: InputEvent): void {}
 
   beforeInput(event: InputEvent): void {
-    let transaction = new Transaction(this.editor.state);
-        console.log(event);
+    const transaction = new Transaction(this.editor.state);
     switch (event.inputType) {
-      case 'insertText':
+      case 'insertText': {
         event.preventDefault();
         const selectionReader = new SelectionReader();
         const insertRange = selectionReader.readDomRange(
           this.editor.view,
           event.getTargetRanges()[0]
         )!;
-        transaction.insertText({ range: insertRange, text: event.data || "" });
+        transaction.insertText({ range: insertRange, text: event.data || '' });
         transaction.needsToWrite = true;
         break;
+      }
       case 'insertLineBreak':
         break;
       case 'deleteWordBackward':

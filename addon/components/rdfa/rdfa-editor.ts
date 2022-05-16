@@ -18,6 +18,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
 import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
+import {Editor} from "@lblod/ember-rdfa-editor/core/editor";
 
 interface RdfaEditorArgs {
   /**
@@ -72,7 +73,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   /**
    * editor controller
    */
-  @tracked editor?: RawEditor;
+  @tracked editor?: Editor;
 
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
@@ -92,16 +93,17 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  handleRawEditorInit(editor: RawEditor) {
+  async handleRawEditorInit(editor: Editor) {
     this.editor = editor;
-    this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
-    this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
-    this.insertSidebarWidgets = editor.widgetMap.get('insertSidebar') || [];
-    this.toolbarController = new RawEditorController('toolbar', editor);
-    const rdfaDocument = new RdfaDocumentController('host-controller', editor);
-    if (this.args.rdfaEditorInit) {
-      this.args.rdfaEditorInit(rdfaDocument);
-    }
+    // await this.initializePlugins(editor);
+    // this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
+    // this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
+    // this.insertSidebarWidgets = editor.widgetMap.get('insertSidebar') || [];
+    // this.toolbarController = new RawEditorController('toolbar', editor);
+    // const rdfaDocument = new RdfaDocumentController('host-controller', editor);
+    // if (this.args.rdfaEditorInit) {
+    //   this.args.rdfaEditorInit(rdfaDocument);
+    // }
     this.editorLoading = false;
   }
 

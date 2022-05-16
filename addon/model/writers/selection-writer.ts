@@ -8,25 +8,20 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { View } from '@lblod/ember-rdfa-editor/core/view';
 
 /**
  * Writer to convert a {@link ModelSelection} to a {@link Selection}
  * Note, unlike most writers, this is not a functional writer, since we cannot (or should not)
  * create a {@link Selection}
  */
-export default class SelectionWriter implements Writer<ModelSelection, void> {
-  private _model: Model;
-
-  constructor(model: Model) {
-    this._model = model;
-  }
-
-  write(modelSelection: ModelSelection): void {
+export default class SelectionWriter {
+  write(view: View, modelSelection: ModelSelection): void {
     const domSelection = getWindowSelection();
 
     domSelection.removeAllRanges();
     for (const range of modelSelection.ranges) {
-      domSelection.addRange(this.writeDomRange(range));
+      domSelection.addRange(this.writeDomRange(view, range));
     }
   }
 
@@ -34,10 +29,10 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
    * Convert a single {@link ModelRange} to a {@link Range}
    * @param range
    */
-  writeDomRange(range: ModelRange): Range {
+  writeDomRange(view: View, range: ModelRange): Range {
     const result = document.createRange();
-    const startPos = this.writeDomPosition(range.start);
-    const endPos = this.writeDomPosition(range.end);
+    const startPos = this.writeDomPosition(view, range.start);
+    const endPos = this.writeDomPosition(view, range.end);
     result.setStart(startPos.anchor, startPos.offset);
     result.setEnd(endPos.anchor, endPos.offset);
 
@@ -49,11 +44,14 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
    * (aka a {@link Node} and an offset).
    * @param position
    */
-  writeDomPosition(position: ModelPosition): { anchor: Node; offset: number } {
+  writeDomPosition(
+    view: View,
+    position: ModelPosition
+  ): { anchor: Node; offset: number } {
     const nodeAfter = position.nodeAfter();
     const nodeBefore = position.nodeBefore();
     if (!nodeAfter) {
-      const nodeView = this._model.modelToView(position.parent);
+      const nodeView = view.modelToView(position.parent);
       if (!nodeView) {
         throw new ModelError(
           'Writing selection of modelNode which is not in dom'
@@ -71,7 +69,7 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
       textAnchor = nodeBefore;
     }
     if (textAnchor) {
-      const nodeView = this._model.modelToView(textAnchor);
+      const nodeView = view.modelToView(textAnchor);
       if (!nodeView) {
         throw new ModelError(
           'Writing selection of modelNode which is not in dom'
@@ -83,8 +81,8 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
       };
     } else {
       if (ModelElement.isModelElement(nodeAfter)) {
-        const parentView = this._model.modelToView(position.parent);
-        const nodeView = this._model.modelToView(nodeAfter);
+        const parentView = view.modelToView(position.parent);
+        const nodeView = view.modelToView(nodeAfter);
         if (!nodeView || !parentView) {
           throw new ModelError(
             'Writing selection of modelNode which is not in dom'

@@ -74,17 +74,11 @@ export default class Transaction {
     console.log(this.workingCopy.document.toXml())
   }
 
-  cloneRange(range: ModelRange): ModelRange {
-    const newRoot = range.root.clone();
-    const newStart = range.start.clone(newRoot);
-    const newEnd = range.end.clone(newRoot);
-
-    return new ModelRange(newStart, newEnd);
-  }
   setSelection(selection: ModelSelection) {
-    if (!selection.sameAs(this.workingCopy.selection)) {
+    const clone = selection.clone(this.workingCopy.document);
+    if (!clone.sameAs(this.workingCopy.selection)) {
       this.needsToWrite = true;
     }
-    this.workingCopy.selection = selection;
+    this.workingCopy.selection = clone;
   }
 }

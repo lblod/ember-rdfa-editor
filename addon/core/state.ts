@@ -10,21 +10,22 @@ export default interface State {
   marksRegistry: MarksRegistry;
 }
 
-
 export function emptyState(): State {
   return {
-    document: new ModelElement("div"),
+    document: new ModelElement('div'),
     selection: new ModelSelection(),
     plugins: [],
-    marksRegistry: new MarksRegistry()
-  }
+    marksRegistry: new MarksRegistry(),
+  };
 }
+
 export function cloneState(state: State): State {
+  const documentClone = state.document.clone();
+  const selectionClone = state.selection.clone(documentClone);
   return {
-    document: state.document.clone(),
+    document: documentClone,
     marksRegistry: state.marksRegistry,
     plugins: [...state.plugins],
-    selection: state.selection.clone()
-
-  }
+    selection: selectionClone,
+  };
 }

@@ -3,25 +3,33 @@ import ModelNode from '../model/model-node';
 import NodeView from '../model/node-view';
 import HtmlWriter from '../model/writers/html-writer';
 import { ModelError } from '../utils/errors';
+import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
 
 export interface View {
   domRoot: HTMLElement;
   viewToModelMap: WeakMap<Node, ModelNode>;
   modelToViewMap: WeakMap<ModelNode, NodeView>;
+
   registerNodeView(modelNode: ModelNode, nodeView: NodeView): void;
+
   modelToView(modelNode: ModelNode): NodeView | null;
+
   viewToModel(domNode: Node): ModelNode;
+
   update(state: State): void;
 }
+
 export class EditorView implements View {
   domRoot: HTMLElement;
   viewToModelMap: WeakMap<Node, ModelNode>;
   modelToViewMap: WeakMap<ModelNode, NodeView>;
+
   constructor(domRoot: HTMLElement) {
     this.viewToModelMap = new WeakMap<Node, ModelNode>();
     this.modelToViewMap = new WeakMap<ModelNode, NodeView>();
     this.domRoot = domRoot;
   }
+
   /**
    * Bind a modelNode to a domNode. This ensures that we can reach the corresponding node from
    * either side.
@@ -32,9 +40,11 @@ export class EditorView implements View {
     this.viewToModelMap.set(view.viewRoot, modelNode);
     this.modelToViewMap.set(modelNode, view);
   }
+
   modelToView(modelNode: ModelNode): NodeView | null {
     return this.modelToViewMap.get(modelNode) || null;
   }
+
   viewToModel(domNode: Node): ModelNode {
     let cur: Node | null = domNode;
     let result = null;
@@ -47,11 +57,18 @@ export class EditorView implements View {
     }
     return result;
   }
+
   update(state: State): void {
     //TODO this is a hack
     state.document.removeDirty('node');
-    console.log("updating view");
+    this.registerNodeView(state.document, {
+      viewRoot: this.domRoot,
+      contentRoot: this.domRoot,
+    });
+    console.log('updating view');
     const writer = new HtmlWriter();
     writer.write(this, state.document);
+    const selectionWriter = new SelectionWriter();
+    selectionWriter.write(this, state.selection);
   }
 }
