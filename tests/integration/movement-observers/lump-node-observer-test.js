@@ -31,9 +31,8 @@ module.skip(
       window.getSelection().collapse(drinkNode, 1);
       click('div[contenteditable]');
       await new Promise((r) => setTimeout(r, 500)); //observer is some post-processing, hence the waiting. TODO: some day this will be consitent
-      assert.equal(
-        window.getSelection().anchorNode.textContent.indexOf('pong') > 0,
-        true
+      assert.true(
+        window.getSelection().anchorNode.textContent.indexOf('pong') > 0
       );
     });
 
@@ -57,9 +56,9 @@ module.skip(
       window.getSelection().collapse(drinkNode, 1);
       click('div[contenteditable]');
       await new Promise((r) => setTimeout(r, 500)); //observer is some post-processing, hence the waiting. TODO: some day this will be consitent
-      assert.equal(
-        window.getSelection().anchorNode.parentElement == editor,
-        true
+      assert.strictEqual(
+        window.getSelection().anchorNode.parentElement,
+        editor
       );
     });
   }

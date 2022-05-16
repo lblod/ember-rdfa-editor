@@ -32,3 +32,9 @@ testem.log
 
 # jetbrains
 .idea
+
+# vscode
+.vscode
+
+# nvm
+.nvmrc

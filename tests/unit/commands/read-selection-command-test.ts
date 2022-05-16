@@ -8,7 +8,7 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
-module('Unit | commands | read-selection-command-test', (hooks) => {
+module('Unit | commands | read-selection-command-test', function (hooks) {
   const ctx = new ModelTestContext();
   let command: ReadSelectionCommand;
 
@@ -28,7 +28,7 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
     }
   };
 
-  test('reads correctly all text in document', (assert) => {
+  test('reads correctly all text in document', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -49,14 +49,16 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(text, 0, text.length);
     ctx.modelSelection.selectRange(range);
-
     const readNodes = command.execute();
+
+    assert.expect(2 + readNodes.length);
+
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [text], assert);
   });
 
-  test('reads correctly text in the middle of text', (assert) => {
+  test('reads correctly text in the middle of text', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -77,14 +79,16 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
     ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(text, 9, 16);
     ctx.modelSelection.selectRange(range);
-
     const readNodes: ModelNode[] = command.execute();
+
+    assert.expect(2 + readNodes.length);
+
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [new ModelText('only te')], assert);
   });
 
-  test('reads correctly list element', (assert) => {
+  test('reads correctly list element', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -130,8 +134,9 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
       selectedText.length
     );
     ctx.modelSelection.selectRange(range);
-
     const readNodes: ModelNode[] = command.execute();
+
+    assert.expect(2 + readNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     const ulElement = new ModelElement('ul');
@@ -140,7 +145,7 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
     compareModelNodeList(readNodes, [ulElement], assert);
   });
 
-  test('reads correctly list before other list (ul selection)', (assert) => {
+  test('reads correctly list before other list (ul selection)', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -207,14 +212,15 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
       firstList.getMaxOffset()
     );
     ctx.model.selectRange(range);
-
     const readNodes = command.execute();
+
+    assert.expect(2 + readNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstList], assert);
   });
 
-  test('reads correctly list before other list (li selection)', (assert) => {
+  test('reads correctly list before other list (li selection)', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -281,12 +287,13 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const readNodes = command.execute();
+    assert.expect(2 + readNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstList], assert);
   });
 
-  test('reads correctly list before text (ul selection)', (assert) => {
+  test('reads correctly list before text (ul selection)', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -337,12 +344,13 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const readNodes = command.execute();
+    assert.expect(2 + readNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstList], assert);
   });
 
-  test('reads correctly list before text (li selection)', (assert) => {
+  test('reads correctly list before text (li selection)', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -391,12 +399,13 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const readNodes = command.execute();
+    assert.expect(2 + readNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [list], assert);
   });
 
-  test('reads correctly content of table cell', (assert) => {
+  test('reads correctly content of table cell', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -453,12 +462,13 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const readNodes = command.execute();
+    assert.expect(2 + readNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstLine], assert);
   });
 
-  test('reads correctly elements of nested list', (assert) => {
+  test('reads correctly elements of nested list', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -542,6 +552,7 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const readNodes = command.execute();
+    assert.expect(2 + readNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     const ulElement = new ModelElement('ul');
@@ -550,7 +561,7 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
     compareModelNodeList(readNodes, [ulElement], assert);
   });
 
-  test('reads correctly first part of list element', (assert) => {
+  test('reads correctly first part of list element', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -593,6 +604,7 @@ module('Unit | commands | read-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const readNodes = command.execute();
+    assert.expect(2 + readNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [new ModelText('fir')], assert);

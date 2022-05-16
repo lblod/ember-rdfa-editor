@@ -155,10 +155,14 @@
           </Menu.Item>
         {{else}}
           <div role='menuitem' class='say-dropdown__menu-with-inputs'>
-            {{t 'ember-rdfa-editor.columns'}} <Input class='say-input say-input--small' size='1' @value={{this.tableAddColumns}} />
+            {{t 'ember-rdfa-editor.columns'}}
+            <AuLabel for="editor-table-columns" class="au-u-hidden-visually">{{t 'ember-rdfa-editor.columns'}}</AuLabel>
+            <Input id="editor-table-columns" class='say-input say-input--small' size='1' @value={{this.tableAddColumns}} />
           </div>
           <div role='menuitem' class='say-dropdown__menu-with-inputs'>
-            {{t 'ember-rdfa-editor.rows'}} <Input class='say-input say-input--small' size='1' @value={{this.tableAddRows}} />
+            {{t 'ember-rdfa-editor.rows'}}
+            <AuLabel for="editor-table-rows" class="au-u-hidden-visually">{{t 'ember-rdfa-editor.rows'}}</AuLabel>
+            <Input id="editor-table-rows" class='say-input say-input--small' size='1' @value={{this.tableAddRows}} />
           </div>
           <Menu.Item @menuAction={{fn this.insertTable this.tableAddRows this.tableAddColumns}} title={{t 'ember-rdfa-editor.insert-table'}}>
             <AuIcon @icon="table-insert" @ariaHidden={{true}} />

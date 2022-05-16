@@ -3,10 +3,7 @@
    ================================== */
 
 // VARIABLES
-@import 'appuniversum/s-colors.scss';
-@import 'appuniversum/s-global';
-@import 'appuniversum/s-utilities';
-@import 's-root'; // Say theme settings
+@import "ember-appuniversum/a-settings";
 
 // TOOLS
 @import "ember-appuniversum/a-tools";

@@ -4,8 +4,8 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-module('Unit | model | operations | operation-algorithms-test', () => {
-  test('remove splits when range is collapsed', (assert) => {
+module('Unit | model | operations | operation-algorithms-test', function () {
+  test('remove splits when range is collapsed', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -28,7 +28,7 @@ module('Unit | model | operations | operation-algorithms-test', () => {
     assert.true(initial.sameAs(expected));
   });
 
-  test('remove removes things in document order', (assert) => {
+  test('remove removes things in document order', function (assert) {
     // language=XML
     const {
       root: initial,

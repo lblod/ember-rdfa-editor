@@ -2,8 +2,8 @@ import { module, test } from 'qunit';
 import { parseXml, vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 
-module('Unit | model | readers | xml-reader-test', () => {
-  test('rootNode gets read as a modelrootnode', (assert) => {
+module('Unit | model | readers | xml-reader-test', function () {
+  test('rootNode gets read as a modelrootnode', function (assert) {
     const context = new ModelTestContext();
     context.reset();
 
@@ -11,7 +11,7 @@ module('Unit | model | readers | xml-reader-test', () => {
     const { root } = vdom`<modelRoot />`;
     assert.true(root.sameAs(context.model.rootModelNode));
   });
-  test('test xml', (assert) => {
+  test('test xml', function (assert) {
     const xml = `
       <div>
         this text will be ignored because it's not inside a text node

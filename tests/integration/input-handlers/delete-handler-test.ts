@@ -31,8 +31,8 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     assert.dom('div[contenteditable]').hasText('apybaras');
     const currentSelection = getWindowSelection();
     const newCaretPostion = currentSelection?.getRangeAt(0).getClientRects();
-    assert.equal(currentSelection?.anchorNode?.textContent, 'apybaras');
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.strictEqual(currentSelection?.anchorNode?.textContent, 'apybaras');
+    assert.false(didCaretMove(previousCaretPostion, newCaretPostion));
   });
 
   test('it deletes a character, middle of textNode keeps position', async function (assert) {
@@ -55,8 +55,8 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     assert.dom('div[contenteditable]').hasText('capybras');
     const currentSelection = getWindowSelection();
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(currentSelection.anchorNode?.textContent, 'capybras');
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.strictEqual(currentSelection.anchorNode?.textContent, 'capybras');
+    assert.false(didCaretMove(previousCaretPostion, newCaretPostion));
   });
 
   test('it deletes a character, 2 adjacent whitespaces appear, make sure they remain visible', async function (assert) {
@@ -78,12 +78,12 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = getWindowSelection();
     //comparing only the length, as the effective replacement might be very implementation specific.
-    assert.equal(
+    assert.strictEqual(
       currentSelection.anchorNode?.parentElement?.innerText.length,
       'bar  beer'.length
     );
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.false(didCaretMove(previousCaretPostion, newCaretPostion));
   });
 
   test('it deletes a character, 2 adjacent whitespaces appear over two textNodes, make sure they remain visible [edge case]', async function (assert) {
@@ -106,12 +106,12 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = getWindowSelection();
     //comparing only the length, as the effective replacement might be very implementation specific.
-    assert.equal(
+    assert.strictEqual(
       currentSelection.anchorNode?.parentElement?.innerText.length,
       'bar  beer'.length
     );
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.false(didCaretMove(previousCaretPostion, newCaretPostion));
   });
 
   test('it deletes a character, 2 adjacent whitespaces appear over two textNodes, make sure they remain visible [edge case number 2]', async function (assert) {
@@ -134,12 +134,12 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = getWindowSelection();
     //comparing only the length, as the effective replacement might be very implementation specific.
-    assert.equal(
+    assert.strictEqual(
       currentSelection.anchorNode?.parentElement?.innerText.length,
       'bar  beer'.length
     );
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.false(didCaretMove(previousCaretPostion, newCaretPostion));
   });
 
   test('it deletes the character of the next TextNode, when at the end of the current node', async function (assert) {
@@ -161,12 +161,12 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     const previousCaretPostion = selection.getRangeAt(0).getClientRects();
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = getWindowSelection();
-    assert.equal(
+    assert.strictEqual(
       currentSelection.anchorNode?.parentElement?.innerText,
       'a beerar'
     );
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.false(didCaretMove(previousCaretPostion, newCaretPostion));
   });
 
   test('it deletes the character of the next + 1 TextNode, when we have [text|][emptyTextNode][text]', async function (assert) {
@@ -184,18 +184,18 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     const wordNode = editor.childNodes[0];
     editor.append(document.createTextNode(''));
     editor.append(document.createTextNode('bar'));
-    assert.equal(editor.childNodes.length, 3); //make sure we have the three textnodes, no specific browser quircks
+    assert.strictEqual(editor.childNodes.length, 3); //make sure we have the three textnodes, no specific browser quircks
     const selection = getWindowSelection();
     selection.collapse(wordNode, 6);
     const previousCaretPostion = selection.getRangeAt(0).getClientRects();
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = getWindowSelection();
-    assert.equal(
+    assert.strictEqual(
       currentSelection.anchorNode?.parentElement?.innerText,
       'a beerar'
     );
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.false(didCaretMove(previousCaretPostion, newCaretPostion));
   });
 
   test('it removes empty span', async function (assert) {
@@ -217,13 +217,13 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     await delayMs(200);
     const currentSelection = getWindowSelection();
-    assert.equal(
+    assert.strictEqual(
       currentSelection.anchorNode?.parentElement?.innerText,
       'beerar'
     );
-    assert.equal(editor.innerHTML, 'beerar');
+    assert.strictEqual(editor.innerHTML, 'beerar');
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.false(didCaretMove(previousCaretPostion, newCaretPostion));
   });
 
   test('it removes empty div', async function (assert) {
@@ -245,13 +245,13 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = getWindowSelection();
     //triggers visual change, hence no text is removed
-    assert.equal(
+    assert.strictEqual(
       currentSelection.anchorNode?.parentElement?.innerText,
       'beerbar'
     );
-    assert.equal(editor.innerHTML, 'beerbar');
+    assert.strictEqual(editor.innerHTML, 'beerbar');
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.false(didCaretMove(previousCaretPostion, newCaretPostion));
   });
 
   test('it removes other node (e.g. comment)', async function (assert) {
@@ -267,20 +267,20 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     />`);
     const editor = getEditorElement();
     editor.insertAdjacentHTML('beforeend', '<!--comment-->bar');
-    assert.equal(editor.innerHTML, 'beer<!--comment-->bar'); //make sure the comment is included
+    assert.strictEqual(editor.innerHTML, 'beer<!--comment-->bar'); //make sure the comment is included
     const wordNode = editor.childNodes[0];
     const selection = getWindowSelection();
     selection.collapse(wordNode, 4);
     const previousCaretPostion = selection.getRangeAt(0).getClientRects();
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = getWindowSelection();
-    assert.equal(
+    assert.strictEqual(
       currentSelection.anchorNode?.parentElement?.innerText,
       'beerar'
     );
-    assert.equal(editor.innerHTML, 'beerar');
+    assert.strictEqual(editor.innerHTML, 'beerar');
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.false(didCaretMove(previousCaretPostion, newCaretPostion));
   });
 
   test('it removes void element', async function (assert) {
@@ -302,15 +302,14 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = getWindowSelection();
     //we exepect visual change
-    assert.equal(
+    assert.strictEqual(
       currentSelection.anchorNode?.parentElement?.innerText,
       'beerbar'
     );
-    assert.equal(editor.innerHTML, 'beerbar');
+    assert.strictEqual(editor.innerHTML, 'beerbar');
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(
+    assert.false(
       didCaretMove(previousCaretPostion, newCaretPostion),
-      false,
       ' did the caret move'
     );
   });
@@ -327,22 +326,21 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
     const editor = getEditorElement();
-    assert.equal(editor.innerHTML, 'beer<div><span></span></div>bar'); //make sure this is not removed somehow
+    assert.strictEqual(editor.innerHTML, 'beer<div><span></span></div>bar'); //make sure this is not removed somehow
     const wordNode = editor.childNodes[0];
     const selection = getWindowSelection();
     selection.collapse(wordNode, 4);
     const previousCaretPostion = selection.getRangeAt(0).getClientRects();
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = getWindowSelection();
-    assert.equal(
+    assert.strictEqual(
       currentSelection.anchorNode?.parentElement?.innerText,
       'beerbar'
     );
-    assert.equal(editor.innerHTML, 'beerbar');
+    assert.strictEqual(editor.innerHTML, 'beerbar');
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(
+    assert.false(
       didCaretMove(previousCaretPostion, newCaretPostion),
-      false,
       'did the caret move'
     );
   });
@@ -362,15 +360,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     const spanNode = editor.childNodes[1];
     const selection = getWindowSelection();
     selection.collapse(spanNode, 0);
-    assert.equal(editor.innerHTML, 'beer<span></span>bar'); //make sure this is not removed somehow
+    assert.strictEqual(editor.innerHTML, 'beer<span></span>bar'); //make sure this is not removed somehow
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     await delayMs(100);
     const currentSelection = getWindowSelection();
-    assert.equal(
+    assert.strictEqual(
       currentSelection.anchorNode?.parentElement?.innerText,
       'beerar'
     );
-    assert.equal(editor.innerHTML, 'beerar');
+    assert.strictEqual(editor.innerHTML, 'beerar');
   });
 
   test('it removes a character of a far away in a nested div', async function (assert) {
@@ -393,10 +391,13 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     );
     const selection = getWindowSelection();
     selection.collapse(divNode, 0);
-    assert.equal(divNode.innerHTML, '   <h1 resource="title">Notulen Van</h1>'); //make sure this is not removed somehow
+    assert.strictEqual(
+      divNode.innerHTML,
+      '   <h1 resource="title">Notulen Van</h1>'
+    ); //make sure this is not removed somehow
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const resultString = `<h1 resource="title" data-editor-position-level="0" data-editor-rdfa-position-level="0">otulen Van</h1>`;
-    assert.equal(divNode.innerHTML, resultString);
+    assert.strictEqual(divNode.innerHTML, resultString);
   });
 
   test('it removes a character as expected [Chromium edge case]', async function (assert) {
@@ -419,9 +420,12 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     const previousCaretPostion = selection.getRangeAt(0).getClientRects();
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Delete');
     const currentSelection = getWindowSelection();
-    assert.equal(currentSelection.anchorNode?.parentElement?.innerText, 'Pit ');
+    assert.strictEqual(
+      currentSelection.anchorNode?.parentElement?.innerText,
+      'Pit '
+    );
     const newCaretPostion = currentSelection.getRangeAt(0).getClientRects();
-    assert.equal(didCaretMove(previousCaretPostion, newCaretPostion), false);
+    assert.false(didCaretMove(previousCaretPostion, newCaretPostion));
   });
 });
 

@@ -10,7 +10,7 @@ import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 // regressions for things that might depend on its behavior.
 // In particular, all the extra empty textnodes should not be there.
 
-module('Unit | commands | insert-new-li-command-test', (hooks) => {
+module('Unit | commands | insert-new-li-command-test', function (hooks) {
   const ctx = new ModelTestContext();
   let command: InsertNewLiCommand;
   hooks.beforeEach(() => {
@@ -18,7 +18,7 @@ module('Unit | commands | insert-new-li-command-test', (hooks) => {
     command = new InsertNewLiCommand(ctx.model);
   });
 
-  test('insert li - single empty li - collapsed selection', (assert) => {
+  test('insert li - single empty li - collapsed selection', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -54,7 +54,7 @@ module('Unit | commands | insert-new-li-command-test', (hooks) => {
     assert.true(actual.sameAs(expected));
   });
 
-  test('insert li - single nonempty li - collapsed selection in front', (assert) => {
+  test('insert li - single nonempty li - collapsed selection in front', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -90,7 +90,7 @@ module('Unit | commands | insert-new-li-command-test', (hooks) => {
     assert.true(actual.sameAs(expected));
   });
 
-  test('insert li - single nonempty li - collapsed selection at end', (assert) => {
+  test('insert li - single nonempty li - collapsed selection at end', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -127,7 +127,7 @@ module('Unit | commands | insert-new-li-command-test', (hooks) => {
     assert.true(actual.sameAs(expected));
   });
 
-  test('insert li - single nonempty li - collapsed selection in middle', (assert) => {
+  test('insert li - single nonempty li - collapsed selection in middle', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -164,7 +164,7 @@ module('Unit | commands | insert-new-li-command-test', (hooks) => {
     assert.true(actual.sameAs(expected));
   });
 
-  test('insert li - single nonempty li with elements - collapsed selection inside child elem', (assert) => {
+  test('insert li - single nonempty li with elements - collapsed selection inside child elem', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -213,7 +213,7 @@ module('Unit | commands | insert-new-li-command-test', (hooks) => {
     assert.true(actual.sameAs(expected));
   });
 
-  test('insert li - single nonempty li - uncollapsed within li', (assert) => {
+  test('insert li - single nonempty li - uncollapsed within li', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -250,7 +250,7 @@ module('Unit | commands | insert-new-li-command-test', (hooks) => {
     assert.true(actual.sameAs(expected));
   });
 
-  test('insert li - single nonempty li with elements - uncollapsed within li', (assert) => {
+  test('insert li - single nonempty li with elements - uncollapsed within li', function (assert) {
     // language=XML
     const {
       root: initial,

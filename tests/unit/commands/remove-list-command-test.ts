@@ -7,7 +7,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 
-module('Unit | commands | remove-list-command', (hooks) => {
+module('Unit | commands | remove-list-command', function (hooks) {
   const ctx = new ModelTestContext();
   let command: RemoveListCommand;
   hooks.beforeEach(() => {
@@ -15,7 +15,7 @@ module('Unit | commands | remove-list-command', (hooks) => {
     command = new RemoveListCommand(ctx.model);
   });
 
-  test('removing a simple list', (assert) => {
+  test('removing a simple list', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -44,7 +44,7 @@ module('Unit | commands | remove-list-command', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('removing a nested list', (assert) => {
+  test('removing a nested list', function (assert) {
     const { modelSelection, model } = ctx;
     const ul = new ModelElement('ul');
     const li = new ModelElement('li');
@@ -66,7 +66,7 @@ module('Unit | commands | remove-list-command', (hooks) => {
     assert.strictEqual(model.rootModelNode.children.length, 1);
   });
 
-  test('removing a nested list item with more elements', (assert) => {
+  test('removing a nested list item with more elements', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -130,7 +130,7 @@ module('Unit | commands | remove-list-command', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('removing a complex nested list', (assert) => {
+  test('removing a complex nested list', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -212,7 +212,7 @@ module('Unit | commands | remove-list-command', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('removing list and a sublist using a selection', (assert) => {
+  test('removing list and a sublist using a selection', function (assert) {
     // language=XML
     const {
       root: initialState,
@@ -266,6 +266,8 @@ module('Unit | commands | remove-list-command', (hooks) => {
     modelSelection.addRange(range);
     command.execute();
     const resultRoot = model.rootModelNode;
+
+    assert.expect(resultRoot.children.length);
 
     for (let i = 0; i < resultRoot.children.length; i++) {
       const actual = resultRoot.children[i];

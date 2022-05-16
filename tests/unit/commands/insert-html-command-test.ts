@@ -11,7 +11,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { FilterResult } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
-module('Unit | commands | insert-html-command-test', (hooks) => {
+module('Unit | commands | insert-html-command-test', function (hooks) {
   const ctx = new ModelTestContext();
   let command: InsertHtmlCommand;
   hooks.beforeEach(() => {
@@ -19,7 +19,7 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
     command = new InsertHtmlCommand(ctx.model);
   });
 
-  test('inserts correctly in empty document', (assert) => {
+  test('inserts correctly in empty document', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot/>
@@ -41,7 +41,7 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
-  test('inserts correctly in document with empty textnode', (assert) => {
+  test('inserts correctly in document with empty textnode', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
@@ -67,7 +67,7 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('inserts correctly inside textnode', (assert) => {
+  test('inserts correctly inside textnode', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
@@ -93,7 +93,7 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
-  test('correctly replaces part of textnode', (assert) => {
+  test('correctly replaces part of textnode', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
@@ -119,7 +119,7 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
 
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
-  test('correctly replaces complex range', (assert) => {
+  test('correctly replaces complex range', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -166,7 +166,7 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('can insert bold text as a direct child of the root node', (assert) => {
+  test('can insert bold text as a direct child of the root node', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot/>`;
@@ -184,7 +184,7 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
     assert.true(root.sameAs(expected));
   });
 
-  test('properly removes empty text nodes', (assert) => {
+  test('properly removes empty text nodes', function (assert) {
     // language=XML
     const { root: initial } = vdom`
 <modelRoot/>`;
@@ -206,9 +206,9 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
         ? FilterResult.FILTER_ACCEPT
         : FilterResult.FILTER_SKIP;
     const textNodes = Array.from(new ModelTreeWalker({ range, filter }));
-    assert.equal(textNodes.length, 1);
+    assert.strictEqual(textNodes.length, 1);
   });
-  test('properly collapses spaces', (assert) => {
+  test('properly collapses spaces', function (assert) {
     // language=XML
     const { root: initial } = vdom`
 <modelRoot/>`;
@@ -218,7 +218,7 @@ module('Unit | commands | insert-html-command-test', (hooks) => {
     const root = ctx.model.rootModelNode;
     const range = ModelRange.fromInElement(root, 0, root.getMaxOffset());
     command.execute(htmlString, range);
-    assert.equal(
+    assert.strictEqual(
       (root.firstChild as ModelText).content,
       "the spaces before this don't show and should be removed"
     );

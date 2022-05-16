@@ -4,8 +4,8 @@ import { EditorStore } from '@lblod/ember-rdfa-editor/model/util/datastore/datas
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 
-module('Unit | model | utils | datastore-test', () => {
-  test('simple match gives correct nodes', (assert) => {
+module('Unit | model | utils | datastore-test', function () {
+  test('simple match gives correct nodes', function (assert) {
     //language=XML
     const {
       root,
@@ -50,7 +50,7 @@ module('Unit | model | utils | datastore-test', () => {
     const matchesWithUrl = [...matchedUrl.asSubjectNodeMapping()];
     assert.strictEqual(matchesWithUrl.length, 2);
   });
-  test('limitRange limits range', (assert) => {
+  test('limitRange limits range', function (assert) {
     //language=XML
     const {
       root,
@@ -90,7 +90,7 @@ module('Unit | model | utils | datastore-test', () => {
     assert.strictEqual(nodesWithUrl[0].nodes.length, 1);
     assert.true(nodesWithUrl[0].nodes.includes(techNode));
   });
-  test('filtering out subjects also filters out the relevant predicate nodes', (assert) => {
+  test('filtering out subjects also filters out the relevant predicate nodes', function (assert) {
     //language=XML
     const { root } = vdom`
       <div vocab="http://data.vlaanderen.be/ns/besluit#"
@@ -135,7 +135,7 @@ module('Unit | model | utils | datastore-test', () => {
     assert.strictEqual(decisionValueStore.size, 1);
   });
 
-  test('nodes with same value for objects get filtered correctly', (assert) => {
+  test('nodes with same value for objects get filtered correctly', function (assert) {
     // language=XML
     const { root } = vdom`
       <div vocab="http://data.vlaanderen.be/ns/besluit#"
@@ -166,7 +166,7 @@ module('Unit | model | utils | datastore-test', () => {
       .single()?.nodes;
     assert.strictEqual(objectResult?.length, 1);
   });
-  test('nodes with same value for objects but different predicates get filtered correctly', (assert) => {
+  test('nodes with same value for objects but different predicates get filtered correctly', function (assert) {
     // language=XML
     const { root } = vdom`
       <div vocab="http://data.vlaanderen.be/ns/besluit#"
@@ -194,7 +194,7 @@ module('Unit | model | utils | datastore-test', () => {
       .single()?.nodes;
     assert.strictEqual(objectResult?.length, 1);
   });
-  test('nodes are returned in document order', (assert) => {
+  test('nodes are returned in document order', function (assert) {
     //language=XML
     const {
       root,
@@ -251,7 +251,7 @@ module('Unit | model | utils | datastore-test', () => {
     assert.strictEqual(subjectNodes2[1], node4);
   });
   // TODO limitToRange currently only works on subjectnodes, tbd how to handle this
-  todo('limitToRange works as expected', (assert) => {
+  todo('limitToRange works as expected', function (assert) {
     //language=XML
     const {
       root,
@@ -297,8 +297,8 @@ module('Unit | model | utils | datastore-test', () => {
     assert.strictEqual(limitedStore.size, 1);
   });
 });
-module('Unit | model | utils | legacy-datastore-test', () => {
-  test('simple match gives correct nodes', (assert) => {
+module('Unit | model | utils | legacy-datastore-test', function () {
+  test('simple match gives correct nodes', function (assert) {
     //language=XML
     const {
       root,
@@ -344,7 +344,7 @@ module('Unit | model | utils | legacy-datastore-test', () => {
     assert.true(nodesWithUrl[0].nodes.has(techNode));
     assert.true(nodesWithUrl[1].nodes.has(other));
   });
-  test('limitRange limits range', (assert) => {
+  test('limitRange limits range', function (assert) {
     //language=XML
     const {
       root,
@@ -384,7 +384,7 @@ module('Unit | model | utils | legacy-datastore-test', () => {
     assert.strictEqual(nodesWithUrl[0].nodes.size, 1);
     assert.true(nodesWithUrl[0].nodes.has(techNode));
   });
-  test('filtering out subjects also filters out the relevant predicate nodes', (assert) => {
+  test('filtering out subjects also filters out the relevant predicate nodes', function (assert) {
     //language=XML
     const { root } = vdom`
       <div vocab="http://data.vlaanderen.be/ns/besluit#"
@@ -429,7 +429,7 @@ module('Unit | model | utils | legacy-datastore-test', () => {
     assert.strictEqual(decisionValueStore.size, 1);
   });
 
-  test('limitToRange works as expected', (assert) => {
+  test('limitToRange works as expected', function (assert) {
     //language=XML
     const {
       root,

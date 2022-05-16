@@ -6,14 +6,14 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import IndentListCommand from '@lblod/ember-rdfa-editor/commands/indent-list-command';
 import { setupTest } from 'ember-qunit';
 
-module('Unit | commands | indent-list-command-test', (hooks) => {
+module('Unit | commands | indent-list-command-test', function (hooks) {
   const ctx = new ModelTestContext();
   setupTest(hooks);
   hooks.beforeEach(() => {
     ctx.reset();
   });
 
-  test('indents a simple list', (assert) => {
+  test('indents a simple list', function (assert) {
     // language=XML
     const {
       root: test,

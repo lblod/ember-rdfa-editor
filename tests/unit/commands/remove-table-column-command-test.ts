@@ -4,7 +4,7 @@ import RemoveTableColumnCommand from '@lblod/ember-rdfa-editor/commands/remove-t
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
-module('Unit | commands | remove-table-column-command-test', (hooks) => {
+module('Unit | commands | remove-table-column-command-test', function (hooks) {
   const ctx = new ModelTestContext();
   let command: RemoveTableColumnCommand;
 
@@ -13,7 +13,7 @@ module('Unit | commands | remove-table-column-command-test', (hooks) => {
     command = new RemoveTableColumnCommand(ctx.model);
   });
 
-  test('removes only column', (assert) => {
+  test('removes only column', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -50,7 +50,7 @@ module('Unit | commands | remove-table-column-command-test', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('removes first column', (assert) => {
+  test('removes first column', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -108,7 +108,7 @@ module('Unit | commands | remove-table-column-command-test', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('removes last column', (assert) => {
+  test('removes last column', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -166,7 +166,7 @@ module('Unit | commands | remove-table-column-command-test', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('removes middle column', (assert) => {
+  test('removes middle column', function (assert) {
     // language=XML
     const {
       root: initial,
