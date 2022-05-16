@@ -20,8 +20,7 @@ export default class OperationAlgorithms {
   static removeNew(
     range: ModelRange
   ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
-       
-    if(range.collapsed){
+    if (range.collapsed) {
       return {
         removedNodes: [],
         mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
@@ -32,9 +31,7 @@ export default class OperationAlgorithms {
 
     let splitStart = false;
     let splitEnd = false;
-    let beforeStart;
-    let afterEnd;
-    
+
     if (range.start.isInsideText()) {
       range.start.split();
       splitStart = true;
@@ -44,28 +41,20 @@ export default class OperationAlgorithms {
       splitEnd = true;
     }
 
-    if (splitStart) {
-      beforeStart = range.start.nodeBefore();
-    }
-    
-    if (splitEnd) {
-      afterEnd = range.end.nodeAfter();
-    }
-
-    const nodesToMove:ModelNode[] = [];
-    let nextNode=range.end.nodeAfter();
-    while(nextNode){
+    const nodesToMove: ModelNode[] = [];
+    let nextNode = range.end.nodeAfter();
+    while (nextNode) {
       nodesToMove.push(nextNode);
-      nextNode=nextNode.nextSibling;
+      nextNode = nextNode.nextSibling;
     }
 
-    const allNodes:ModelNode[] = [];
+    const allNodes: ModelNode[] = [];
     const walker = new ModelTreeWalker({ range: range });
-    for (const node of walker){
+    for (const node of walker) {
       allNodes.push(node);
     }
 
-    const confinedNodes:ModelNode[]=[];
+    const confinedNodes: ModelNode[] = [];
     const confinedRanges = range.getMinimumConfinedRanges();
     for (const range of confinedRanges) {
       if (!range.collapsed) {
@@ -74,50 +63,46 @@ export default class OperationAlgorithms {
       }
     }
 
-    const openingTagNodes=allNodes.filter(node => {
-      if(confinedNodes.includes(node)){
+    const openingTagNodes = allNodes.filter((node) => {
+      if (confinedNodes.includes(node)) {
         return false;
-      }
-      else{
+      } else {
         return true;
       }
-    });    
-    
-    confinedNodes.forEach(node => {
+    });
+
+    openingTagNodes.forEach((opNode) => {
+      const nodesToUnindent = (<ModelElement>opNode).children;
+      const i = 0;
+      nodesToUnindent.forEach((node, index) => {
+        opNode.parent?.addChild(node, <number>opNode.index + index);
+      });
+      opNode.remove();
+    });
+
+    confinedNodes.forEach((node) => {
       node.remove();
     });
 
-    openingTagNodes.forEach(opNode => {
-      const nodesToUnindent = opNode.children;
-      nodesToUnindent.forEach((node)=>{
-        node.remove();
-        opNode.parent?.addChild(node);
-      });
-      opNode.parent?.removeChild(opNode);
-    });
-
     const before = range.start.nodeBefore();
-    if(before?.parent){
-      nodesToMove.forEach(node=>node.remove());
-      before.parent.insertChildrenAtIndex(before.index+1, ...nodesToMove);
+    if (before?.parent && before.index != null) {
+      nodesToMove.forEach((node) => node.remove());
+      before.parent.insertChildrenAtIndex(before.index + 1, ...nodesToMove);
     }
 
     //merge logic... needs more work
-    const after = range.start.nodeAfter(); 
-    if(before && after){
-      if(before.modelNodeType === 'TEXT' && after.modelNodeType === 'TEXT'){
-        before.content+=after.content;
+    const after = range.start.nodeAfter();
+    if (before && after) {
+      if (before.modelNodeType === 'TEXT' && after.modelNodeType === 'TEXT') {
+        (<ModelText>before).content += (<ModelText>after).content;
         after.remove();
       }
     }
-
-    debugger;
     return {
       removedNodes: [...confinedNodes, ...openingTagNodes],
       mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
     };
   }
-
 
   static remove(
     range: ModelRange

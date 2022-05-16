@@ -19,7 +19,7 @@ module(
       const {
         root: initial,
         elements: { div1 },
-        textNodes: { text1 }
+        textNodes: { text1 },
       } = vdom`
         <modelRoot>
           <div __id="div1">
@@ -34,7 +34,7 @@ module(
             <text __id="text1">test</text>
           </div>
         </modelRoot>
-      `
+      `;
       const start = ModelPosition.fromInTextNode(text1, 3);
       const end = ModelPosition.fromInTextNode(text1, 3);
       OperationAlgorithms.removeNew(new ModelRange(start, end));
@@ -61,7 +61,7 @@ module(
       const {
         root: initial,
         elements: { div1 },
-        textNodes: { text1, text2 }
+        textNodes: { text1, text2 },
       } = vdom`
         <modelRoot>
           <div __id="div1">
@@ -77,7 +77,7 @@ module(
             <text __id="text1">testst</text>
           </div>
         </modelRoot>
-      `
+      `;
       const start = ModelPosition.fromInTextNode(text1, 4);
       const end = ModelPosition.fromInTextNode(text2, 2);
       OperationAlgorithms.removeNew(new ModelRange(start, end));
@@ -101,8 +101,7 @@ module(
     test('end is nested and on edge', (assert) => {
       const {
         root: initial,
-        elements: { div1 },
-        textNodes: { text1, text2 }
+        textNodes: { text1, text2 },
       } = vdom`
         <modelRoot>
           <text __id="text1">test</text>
@@ -116,7 +115,7 @@ module(
         <modelRoot>
           <text __id="text1">te</text>
         </modelRoot>
-      `
+      `;
       const start = ModelPosition.fromInTextNode(text1, 2);
       const end = ModelPosition.fromInTextNode(text2, 4);
       OperationAlgorithms.removeNew(new ModelRange(start, end));
@@ -139,6 +138,7 @@ module(
             <text>moving</text>
             <text>up</text>
           </div>
+          <text>staying here</text>
         </div>
       </modelRoot>
 
@@ -148,15 +148,16 @@ module(
           <text>moving</text>
           <text>up</text>
         </span>
+        <text>staying here</text>
       </modelRoot>
       
     */
-      test('deep nesting test', (assert) => {
-        const {
-          root: initial,
-          elements: { div1 },
-          textNodes: { text1, text2 }
-        } = vdom`
+    test('deep nesting test', (assert) => {
+      const {
+        root: initial,
+        elements: { div1 },
+        textNodes: { text1, text2 },
+      } = vdom`
           <modelRoot>
             <span>
               <text __id="text1">test</text>
@@ -171,24 +172,25 @@ module(
                 <text>moving</text>
                 <text>up</text>
               </div>
+              <text>staying here</text>
             </div>
           </modelRoot>
         `;
-  
-        const { root: expected } = vdom`
+
+      const { root: expected } = vdom`
         <modelRoot>
           <span>
             <text __id="text1">test</text>
             <text>moving</text>
             <text>up</text>
           </span>
+          <text>staying here</text>
         </modelRoot>
-        `
-        const start = ModelPosition.fromInTextNode(text1, 2);
-        const end = ModelPosition.fromInTextNode(text2, 2);
-        OperationAlgorithms.removeNew(new ModelRange(start, end));
-        assert.true(initial.sameAs(expected));
-      });
-    
+        `;
+      const start = ModelPosition.fromInTextNode(text1, 2);
+      const end = ModelPosition.fromInTextNode(text2, 2);
+      OperationAlgorithms.removeNew(new ModelRange(start, end));
+      assert.true(initial.sameAs(expected));
+    });
   }
 );

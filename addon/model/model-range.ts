@@ -262,47 +262,42 @@ export default class ModelRange {
     return this.start.sameAs(this.end);
   }
 
+  normalize(): void {
+    let flip = false;
+    const length =
+      this.start.path.length > this.end.path.length
+        ? this.start.path.length
+        : this.end.path.length;
 
-  normalize(): void{
-    let flip = false; 
-    let length = this.start.path.length > this.end.path.length ?
-      this.start.path.length :
-      this.end.path.length;
-    
-    for(let i = 0; i < length; i++){
-      if((this.start.path[i] == undefined) || (this.end.path[i] == undefined)){
+    for (let i = 0; i < length; i++) {
+      if (this.start.path[i] == undefined || this.end.path[i] == undefined) {
         break;
-      }
-      else if(this.start.path[i]==this.end.path[i]){
-
-      }
-      else if(this.start.path[i]>this.end.path[i]){
-        flip=true;
+      } else if (this.start.path[i] == this.end.path[i]) {
+      } else if (this.start.path[i] > this.end.path[i]) {
+        flip = true;
         break;
-      }
-      else if(this.start.path[i]<this.end.path[i]){
+      } else if (this.start.path[i] < this.end.path[i]) {
         break;
       }
     }
 
-    if(flip){
-      const buffer=this.start;
-      this.start=this.end;
-      this.end=buffer;
+    if (flip) {
+      const buffer = this.start;
+      this.start = this.end;
+      this.end = buffer;
     }
-
   }
-  /** 
+  /**
    * janky debug function
    */
-  visualize(): string{
-    let root=this.root
-    while(root.parent){
-      root=root.parent;
+  visualize(): string {
+    let root = this.root;
+    while (root.parent) {
+      root = root.parent;
     }
-    root=root.clone();
-    const range=ModelRange.fromPaths(root, this.start.path, this.end.path);
-  
+    root = root.clone();
+    const range = ModelRange.fromPaths(root, this.start.path, this.end.path);
+
     const startRange = new ModelRange(range.start, range.start);
     const endRange = new ModelRange(range.end, range.end);
     const startText = new ModelText('[===START===]');
@@ -311,9 +306,15 @@ export default class ModelRange {
     OperationAlgorithms.insert(endRange, endText);
     OperationAlgorithms.insert(startRange, startText);
 
-    let modelString : string=root.toXml().innerHTML;
-    modelString = modelString.replace('<text __dirty="node,content">[===START===]</text>', '  {[===  ');
-    modelString = modelString.replace('<text __dirty="node,content">[===END===]</text>', '  ===]}  ');
+    let modelString: string = root.toXml().innerHTML;
+    modelString = modelString.replace(
+      '<text __dirty="node,content">[===START===]</text>',
+      '  {[===  '
+    );
+    modelString = modelString.replace(
+      '<text __dirty="node,content">[===END===]</text>',
+      '  ===]}  '
+    );
 
     return modelString;
   }
