@@ -1,8 +1,9 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
+/*eslint no-undef: "warn"*/
 module.exports = {
   description: '',
 

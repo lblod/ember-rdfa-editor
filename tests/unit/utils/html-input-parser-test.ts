@@ -11,7 +11,7 @@ module('Unit | Utility | html-input-parser', function () {
     const parser = new HtmlInputParser({});
     const html = `${NON_BREAKING_SPACE}${NON_BREAKING_SPACE}`;
     const result = parser.cleanupHTML(html);
-    assert.equal(result, '  ');
+    assert.strictEqual(result, '  ');
   });
 
   test('it correctly removes invisible spaces', function (assert) {
@@ -19,6 +19,6 @@ module('Unit | Utility | html-input-parser', function () {
     const html = `${INVISIBLE_SPACE}${INVISIBLE_SPACE}`;
     const result = parser.cleanupHTML(html);
     console.log(result.charCodeAt(1));
-    assert.equal(result, '');
+    assert.strictEqual(result, '');
   });
 });

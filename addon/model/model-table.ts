@@ -1,4 +1,6 @@
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelText from './model-text';
+import { INVISIBLE_SPACE } from './util/constants';
 import ModelPosition from './model-position';
 import ModelSelection from './model-selection';
 import ImmediateModelMutator from './mutators/immediate-model-mutator';
@@ -19,6 +21,8 @@ export default class ModelTable extends ModelElement {
       const row = new ModelElement('tr');
       for (let j = 0; j < columns; j++) {
         const td = new ModelElement('td');
+        const invisibleSpace = new ModelText(INVISIBLE_SPACE);
+        td.addChild(invisibleSpace);
         row.addChild(td);
       }
       tbody.addChild(row);
@@ -52,6 +56,7 @@ export default class ModelTable extends ModelElement {
     const row = new ModelElement('tr');
     for (let i = 0; i < columns; i++) {
       const cell = new ModelElement('td');
+      cell.addChild(new ModelText(INVISIBLE_SPACE));
       const lastPositionInsideRow = ModelPosition.fromInElement(
         row,
         row.getMaxOffset()
@@ -78,6 +83,7 @@ export default class ModelTable extends ModelElement {
     for (let i = 0; i < tBody.children.length; i++) {
       const row = tBody.children[i] as ModelElement;
       const cell = new ModelElement('td');
+      cell.addChild(new ModelText(INVISIBLE_SPACE));
       if (index || index === 0) {
         const positionOfIndex = ModelPosition.fromInElement(
           row,

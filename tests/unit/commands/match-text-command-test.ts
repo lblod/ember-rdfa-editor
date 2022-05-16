@@ -6,14 +6,14 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
-module('Unit | commands | match-text-command-text', (hooks) => {
+module('Unit | commands | match-text-command-text', function (hooks) {
   const ctx = new ModelTestContext();
   let command: MatchTextCommand;
   hooks.beforeEach(() => {
     ctx.reset();
     command = new MatchTextCommand(ctx.model);
   });
-  test('finds text in simple range', (assert) => {
+  test('finds text in simple range', function (assert) {
     //language=XML
     const {
       root,
@@ -35,7 +35,7 @@ module('Unit | commands | match-text-command-text', (hooks) => {
     assert.strictEqual(result[0].index, 4);
     assert.true(result[0].range.sameAs(expectedRange));
   });
-  test('match across nodes', (assert) => {
+  test('match across nodes', function (assert) {
     //language=XML
     const { root } = vdom`
       <modelRoot>
@@ -58,7 +58,7 @@ module('Unit | commands | match-text-command-text', (hooks) => {
     assert.strictEqual(result[0].index, 2);
     assert.true(result[0].range.sameAs(expectedRange));
   });
-  test('match multiple occurences', (assert) => {
+  test('match multiple occurences', function (assert) {
     //language=XML
     const { root } = vdom`
       <modelRoot>
@@ -101,7 +101,7 @@ module('Unit | commands | match-text-command-text', (hooks) => {
     assert.true(results[1].range.sameAs(expectedRange2));
     assert.true(results[2].range.sameAs(expectedRange3));
   });
-  test('dont match across block nodes', (assert) => {
+  test('dont match across block nodes', function (assert) {
     //language=XML
     const { root } = vdom`
       <modelRoot>
@@ -119,7 +119,7 @@ module('Unit | commands | match-text-command-text', (hooks) => {
     ctx.model.fillRoot(root as ModelElement);
     assert.strictEqual(results.length, 0);
   });
-  test('match across invisible spaces', (assert) => {
+  test('match across invisible spaces', function (assert) {
     //language=XML
     const { root } = vdom`
       <modelRoot>
@@ -134,7 +134,7 @@ module('Unit | commands | match-text-command-text', (hooks) => {
     ctx.model.fillRoot(root as ModelElement);
     assert.strictEqual(results.length, 1);
   });
-  test('match block node boundary as newline', (assert) => {
+  test('match block node boundary as newline', function (assert) {
     //language=XML
     const { root } = vdom`
       <modelRoot>
@@ -159,7 +159,7 @@ module('Unit | commands | match-text-command-text', (hooks) => {
 
     assert.true(results[0].range.sameAs(expectedRange));
   });
-  test('match block nodes as newlines', (assert) => {
+  test('match block nodes as newlines', function (assert) {
     //language=XML
     const { root } = vdom`
       <modelRoot>
@@ -184,7 +184,7 @@ module('Unit | commands | match-text-command-text', (hooks) => {
 
     assert.true(results[0].range.sameAs(expectedRange));
   });
-  test('only match inside of searchRange', (assert) => {
+  test('only match inside of searchRange', function (assert) {
     //language=XML
     const {
       textNodes: { resultNode },
@@ -202,7 +202,7 @@ module('Unit | commands | match-text-command-text', (hooks) => {
     assert.strictEqual(results.length, 1);
     assert.true(results[0].range.sameAs(ModelRange.fromAroundNode(resultNode)));
   });
-  test('only match greedy', (assert) => {
+  test('only match greedy', function (assert) {
     //language=XML
     const {
       textNodes: { resultNode },

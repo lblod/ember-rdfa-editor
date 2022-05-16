@@ -9,7 +9,7 @@ import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/model/util/constant
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 
-module('Unit | commands | delete-selection-command-test', (hooks) => {
+module('Unit | commands | delete-selection-command-test', function (hooks) {
   const ctx = new ModelTestContext();
   let command: DeleteSelectionCommand;
 
@@ -29,7 +29,7 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     }
   };
 
-  test('deletes correctly all text in document', (assert) => {
+  test('deletes correctly all text in document', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -50,12 +50,13 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     ctx.modelSelection.selectRange(range);
 
     const deletedNodes = command.execute();
+    assert.expect(2 + deletedNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [text], assert);
   });
 
-  test('deletes correctly text in the middle of text', (assert) => {
+  test('deletes correctly text in the middle of text', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -79,12 +80,13 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     ctx.modelSelection.selectRange(range);
 
     const deletedNodes: ModelNode[] = command.execute();
+    assert.expect(2 + deletedNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [new ModelText('only te')], assert);
   });
 
-  test('deletes correctly list element', (assert) => {
+  test('deletes correctly list element', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -131,6 +133,7 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     ctx.modelSelection.selectRange(range);
 
     const deletedNodes: ModelNode[] = command.execute();
+    assert.expect(2 + deletedNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     const ulElement = new ModelElement('ul');
@@ -139,7 +142,7 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     compareModelNodeList(deletedNodes, [ulElement], assert);
   });
 
-  test('deletes correctly list before other list (ul selection)', (assert) => {
+  test('deletes correctly list before other list (ul selection)', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -197,12 +200,13 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const deletedNodes = command.execute();
+    assert.expect(2 + deletedNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [firstList], assert);
   });
 
-  test('deletes correctly list before other list (li selection)', (assert) => {
+  test('deletes correctly list before other list (li selection)', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -259,12 +263,13 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const deletedNodes = command.execute();
+    assert.expect(2 + deletedNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [firstList], assert);
   });
 
-  test('deletes correctly list before text (ul selection)', (assert) => {
+  test('deletes correctly list before text (ul selection)', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -304,12 +309,13 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const deletedNodes = command.execute();
+    assert.expect(2 + deletedNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [firstList], assert);
   });
 
-  test('deletes correctly list before text (li selection)', (assert) => {
+  test('deletes correctly list before text (li selection)', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -348,12 +354,13 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const deletedNodes = command.execute();
+    assert.expect(2 + deletedNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [list], assert);
   });
 
-  test('deletes correctly content of table cell', (assert) => {
+  test('deletes correctly content of table cell', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -409,12 +416,13 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const deletedNodes = command.execute();
+    assert.expect(2 + deletedNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [firstLine], assert);
   });
 
-  test('deletes correctly elements of nested list', (assert) => {
+  test('deletes correctly elements of nested list', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -473,6 +481,7 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const deletedNodes = command.execute();
+    assert.expect(2 + deletedNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     const ulElement = new ModelElement('ul');
@@ -481,7 +490,7 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     compareModelNodeList(deletedNodes, [ulElement], assert);
   });
 
-  test('deletes correctly first part of list element', (assert) => {
+  test('deletes correctly first part of list element', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -524,6 +533,7 @@ module('Unit | commands | delete-selection-command-test', (hooks) => {
     ctx.model.selectRange(range);
 
     const deletedNodes = command.execute();
+    assert.expect(2 + deletedNodes.length);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(deletedNodes, [new ModelText('fir')], assert);

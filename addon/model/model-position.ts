@@ -7,6 +7,12 @@ import {
 import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
 import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import arrayEquals from '../utils/array-equals';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelNodeUtils from './util/model-node-utils';
+import { INVISIBLE_SPACE } from './util/constants';
 
 /**
  * Represents a single position in the model. In contrast to the dom,
@@ -346,31 +352,69 @@ export default class ModelPosition {
    * @return string the collected characters, in display order
    */
   charactersBefore(amount: number): string {
-    let cur = this.nodeBefore();
+    return this.charactersInDirection(amount, false);
+  }
+
+  /**
+   * Collects the characters after the position until either one of the following happens:
+   * - an element is encountered
+   * - we have reached the start of the parent element of the position
+   * - we have collected the desired amount of characters
+   *
+   * as such, the length of the returned string can vary between 0 (no characters found)
+   * and amount
+   * @param amount
+   * @return string the collected characters, in display order
+   */
+  charactersAfter(amount: number): string {
+    return this.charactersInDirection(amount, true);
+  }
+
+  /**
+   * Collects the characters in a certain direction before or after the position until either one of the following happens:
+   * - an element is encountered
+   * - we have reached the start of the parent element of the position
+   * - we have collected the desired amount of characters
+   *
+   * as such, the length of the returned string can vary between 0 (no characters found)
+   * and amount
+   * @param amount
+   * @param forwards The direction in which to look
+   * @return string the collected characters, in display order
+   */
+  charactersInDirection(amount: number, forwards: boolean) {
+    const direction = forwards ? 1 : -1;
+    let cur = forwards ? this.nodeAfter() : this.nodeBefore();
     let counter = 0;
     const result = [];
-
     while (ModelNode.isModelText(cur) && counter < amount) {
       const amountToCollect = amount - counter;
       let startSearch;
-      if (cur === this.nodeAfter()) {
+      if (
+        (cur === this.nodeBefore() && forwards) ||
+        (cur === this.nodeAfter() && !forwards)
+      ) {
         startSearch = this.parentOffset - cur.getOffset();
       } else {
-        startSearch = cur.length;
+        startSearch = forwards ? 0 : cur.length;
       }
 
       let i = 0;
-      let charIndex = startSearch - 1 - i;
-      while (i < amountToCollect && charIndex >= 0) {
-        result.push(cur.content.charAt(startSearch - 1 - i));
+      let charIndex = forwards ? startSearch + i : startSearch - 1 - i;
+      while (
+        i < amountToCollect &&
+        ((forwards && charIndex < cur.length) || (!forwards && charIndex >= 0))
+      ) {
+        result.push(cur.content.charAt(charIndex));
         counter++;
         i++;
-        charIndex = startSearch - 1 - i;
+        charIndex += direction;
       }
-      cur = cur.previousSibling;
+      cur = forwards ? cur.nextSibling : cur.previousSibling;
     }
-
-    result.reverse();
+    if (!forwards) {
+      result.reverse();
+    }
     return result.join('');
   }
 
@@ -401,6 +445,192 @@ export default class ModelPosition {
   }
 
   /**
+   * Return a new position which is this position shifted by a certain
+   * amount of "visual steps" aka what an end user would expect to happen
+   * when hitting the left or right arrowkey "steps" amount of times.
+   * Negative values go left, positive values go right.
+   * @param steps
+   * @returns The new position after having took the provided number of visual steps
+   */
+  shiftedVisually(steps: number) {
+    let stepsToShift = steps;
+    let currentPos: ModelPosition = this.clone();
+    let searchRange: ModelRange;
+    const forwards = steps > 0;
+    const direction = forwards ? 1 : -1;
+    if (forwards) {
+      const endOfDoc = ModelPosition.fromInNode(
+        currentPos.root,
+        currentPos.root.getMaxOffset()
+      );
+      searchRange = new ModelRange(currentPos, endOfDoc);
+    } else {
+      const startOfDoc = ModelPosition.fromInNode(currentPos.root, 0);
+      searchRange = new ModelRange(startOfDoc, currentPos);
+    }
+    const walker = GenTreeWalker.fromRange({
+      range: searchRange,
+      reverse: !forwards,
+      filter: toFilterSkipFalse(
+        (node) => ModelNodeUtils.getVisualLength(node) > 0
+      ),
+    });
+
+    while (stepsToShift !== 0) {
+      // Check if there are any direct parent elements to the current position which are not visible and traverse out of them.
+      while (
+        ModelNodeUtils.getVisualLength(currentPos.parent) === 0 &&
+        !currentPos.parent.sameAs(this.root)
+      ) {
+        if (
+          forwards &&
+          currentPos.parentOffset === currentPos.parent.getMaxOffset()
+        ) {
+          currentPos = ModelPosition.fromAfterNode(currentPos.parent);
+        } else if (!forwards && currentPos.parentOffset === 0) {
+          currentPos = ModelPosition.fromBeforeNode(currentPos.parent);
+        } else {
+          break;
+        }
+      }
+      if (currentPos.isInsideText()) {
+        // If the current position is situated inside a text node, traverse in the right direction
+        let nextChar;
+        if (forwards) {
+          nextChar = currentPos.charactersAfter(1);
+        } else {
+          nextChar = currentPos.charactersBefore(1);
+        }
+        if (nextChar !== INVISIBLE_SPACE) {
+          stepsToShift -= direction;
+        }
+        currentPos = currentPos.shiftedBy(direction);
+      } else {
+        // Check if the current position has a direct parent which is visible (such as li, p, header elements)
+        // Adjust the number of steps to shift
+        let blockNodeFound = false;
+        if (ModelNodeUtils.getVisualLength(currentPos.parent) > 0) {
+          if (
+            currentPos.parentOffset === currentPos.parent.getMaxOffset() &&
+            forwards
+          ) {
+            stepsToShift = Math.max(
+              stepsToShift - ModelNodeUtils.getVisualLength(currentPos.parent),
+              0
+            );
+            blockNodeFound = true;
+          } else if (currentPos.parentOffset === 0 && !forwards) {
+            stepsToShift = Math.min(
+              stepsToShift + ModelNodeUtils.getVisualLength(currentPos.parent),
+              0
+            );
+            blockNodeFound = true;
+          }
+        }
+        // Get the next leaf node in the step direction
+        let nextNode = walker.nextNode();
+        // Assert the next leaf is not the node the current position is currently situated on
+        if (forwards) {
+          while (nextNode && currentPos.nodeBefore() === nextNode) {
+            nextNode = walker.nextNode();
+          }
+        } else {
+          while (nextNode && currentPos.nodeAfter() === nextNode) {
+            nextNode = walker.nextNode();
+          }
+        }
+
+        while (nextNode && !nextNode.isLeaf) {
+          if (ModelNode.isModelElement(nextNode)) {
+            if (forwards) {
+              currentPos = ModelPosition.fromInNode(nextNode, 0);
+              if (!blockNodeFound) {
+                stepsToShift = Math.max(
+                  stepsToShift - ModelNodeUtils.getVisualLength(nextNode),
+                  0
+                );
+              }
+              blockNodeFound = true;
+            } else {
+              currentPos = ModelPosition.fromInNode(
+                nextNode,
+                nextNode.lastChild.getOffset() + nextNode.lastChild.offsetSize
+              );
+              if (!blockNodeFound) {
+                stepsToShift = Math.min(
+                  stepsToShift + ModelNodeUtils.getVisualLength(nextNode),
+                  0
+                );
+              }
+              blockNodeFound = true;
+            }
+          }
+          nextNode = walker.nextNode();
+        }
+        if (nextNode) {
+          if (ModelElement.isModelText(nextNode)) {
+            // If the next leaf is text, determine the correct next position based on the number of steps to take
+            currentPos = ModelPosition.fromInNode(
+              nextNode,
+              ModelNodeUtils.getVisibleIndex(
+                nextNode,
+                Math.abs(stepsToShift),
+                forwards
+              )
+            );
+          } else if (ModelNode.isModelElement(nextNode)) {
+            // If the next leaf is a node, set the position after or before the node based on the direction
+            if (forwards) {
+              if (blockNodeFound) {
+                currentPos = ModelPosition.fromInNode(nextNode, 0);
+              } else {
+                if (nextNode.nextSibling) {
+                  currentPos = ModelPosition.fromInNode(
+                    nextNode.nextSibling,
+                    0
+                  );
+                } else {
+                  currentPos = ModelPosition.fromAfterNode(nextNode);
+                }
+              }
+            } else {
+              if (blockNodeFound) {
+                currentPos = ModelPosition.fromInNode(
+                  nextNode,
+                  ModelNodeUtils.getVisualLength(nextNode)
+                );
+              } else {
+                if (nextNode.previousSibling) {
+                  currentPos = ModelPosition.fromAfterNode(
+                    nextNode.previousSibling
+                  );
+                } else {
+                  currentPos = ModelPosition.fromBeforeNode(nextNode);
+                }
+              }
+            }
+          }
+          // Update the number of steps to shift based on the visual length of the leaf
+          if (forwards) {
+            stepsToShift = Math.max(
+              stepsToShift - ModelNodeUtils.getVisualLength(nextNode),
+              0
+            );
+          } else {
+            stepsToShift = Math.min(
+              stepsToShift + ModelNodeUtils.getVisualLength(nextNode),
+              0
+            );
+          }
+        } else {
+          break;
+        }
+      }
+    }
+    return currentPos;
+  }
+
+  /**
    * This returns true if the position is inside a text node (not right before not right after).
    */
   isInsideText(): boolean {
@@ -409,6 +639,13 @@ export default class ModelPosition {
       ModelNode.isModelText(this.nodeAfter()) &&
       ModelNode.isModelText(this.nodeBefore())
     );
+  }
+
+  equals(position?: ModelPosition): boolean {
+    if (!position) {
+      return false;
+    }
+    return arrayEquals(this.path, position.path);
   }
 
   clone(modelRoot?: ModelElement): ModelPosition {

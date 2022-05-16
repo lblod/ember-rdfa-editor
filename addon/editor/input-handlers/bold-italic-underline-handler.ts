@@ -1,7 +1,5 @@
 import { InputHandler } from './input-handler';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
 
 /**
@@ -17,12 +15,8 @@ export default class BoldItalicUnderlineHandler extends InputHandler {
   isUnderline = false;
   isStrikethrough = false;
 
-  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
+  constructor({ rawEditor }: { rawEditor: RawEditor }) {
     super(rawEditor);
-    document.addEventListener(
-      'richSelectionUpdated',
-      this.updateProperties.bind(this)
-    );
   }
 
   isHandlerFor(event: Event) {
@@ -33,29 +27,31 @@ export default class BoldItalicUnderlineHandler extends InputHandler {
     );
   }
 
-  updateProperties(event: CustomEvent<ModelSelection>) {
-    this.isBold = event.detail.bold === PropertyState.enabled;
-    this.isItalic = event.detail.italic === PropertyState.enabled;
-    this.isUnderline = event.detail.underline === PropertyState.enabled;
-    this.isStrikethrough = event.detail.strikethrough === PropertyState.enabled;
-  }
-
   handleEvent(event: KeyboardEvent) {
-    let property;
+    const selection = this.rawEditor.model.selection;
+    let markName;
     switch (event.key) {
       case 'b':
-        property = this.isBold ? 'remove-bold' : 'make-bold';
+        markName = 'bold';
         break;
       case 'u':
-        property = this.isUnderline ? 'remove-underline' : 'make-underline';
+        markName = 'underline';
         break;
       case 'i':
-        property = this.isItalic ? 'remove-italic' : 'make-italic';
+        markName = 'italic';
         break;
     }
 
-    if (property) {
-      this.rawEditor.executeCommand(property);
+    if (markName) {
+      if (selection.hasMark(markName)) {
+        this.rawEditor.executeCommand(
+          'remove-mark-from-selection',
+          markName,
+          {}
+        );
+      } else {
+        this.rawEditor.executeCommand('add-mark-to-selection', markName, {});
+      }
       return { allowBrowserDefault: false, allowPropagation: false };
     } else {
       return { allowBrowserDefault: true, allowPropagation: true };

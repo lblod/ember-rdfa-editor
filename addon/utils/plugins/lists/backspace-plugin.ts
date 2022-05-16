@@ -1,7 +1,6 @@
 import {
   MoveCursorToEndOfElementManipulation,
   ManipulationGuidance,
-  Editor,
   RemoveEmptyElementManipulation,
   RemoveElementWithChildrenThatArentVisible,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
@@ -14,6 +13,7 @@ import {
   findLastLi,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import RawEditor from '../../ce/raw-editor';
 
 function debug(message: string, object: unknown = null): void {
   runInDebug(() => {
@@ -134,13 +134,13 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   jumpToLastLiOfList = (
     manipulation: MoveCursorToEndOfElementManipulation,
-    editor: Editor
+    _editor: RawEditor
   ) => {
     const list = manipulation.node;
     if (['ul', 'ol'].includes(tagName(list))) {
       const li = findLastLi(list as HTMLUListElement | HTMLOListElement);
       if (li) {
-        editor.setCaret(li, li.childNodes.length);
+        window.getSelection()?.collapse(li, li.childNodes.length);
       } else {
         console.warn('No list item found in list');
       }
@@ -158,7 +158,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   removeListItemAndListButKeepContent = (
     manipulation: BackspaceHandlerManipulation,
-    editor: Editor
+    editor: RawEditor
   ) => {
     let element;
     if (manipulation.type === 'moveCursorBeforeElement') {
@@ -189,7 +189,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   removeListItemAndMoveContentBeforeList = (
     manipulation: BackspaceHandlerManipulation,
-    editor: Editor
+    editor: RawEditor
   ) => {
     let element;
     if (manipulation.type === 'moveCursorBeforeElement') {
@@ -220,7 +220,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   mergeWithPreviousLi = (
     manipulation: BackspaceHandlerManipulation,
-    editor: Editor
+    editor: RawEditor
   ): void => {
     let element;
     if (manipulation.type === 'moveCursorBeforeElement') {
@@ -250,7 +250,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   removeListItemAndMoveToPreviousListItem = (
     manipulation: ElementRemovalManipulation,
-    editor: Editor
+    editor: RawEditor
   ): void => {
     const element = manipulation.node;
     const li = element.previousElementSibling;
@@ -258,10 +258,9 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     if (li === null) {
       console.warn('Want to move to previous li, but that no longer exists');
     } else {
-      editor.setCaret(li, li.childNodes.length);
-
+      window.getSelection()?.collapse(li, li.childNodes.length);
       element.remove();
-      editor.updateRichNode();
+      editor.model.read(true);
     }
   };
 
@@ -274,20 +273,21 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   removeListItemAndJumpBeforeList = (
     manipulation: ElementRemovalManipulation,
-    editor: Editor
+    editor: RawEditor
   ): void => {
     const element = manipulation.node;
     const list = element.parentElement;
 
     if (list && ['ul', 'ol'].includes(tagName(list))) {
       if (list.parentElement) {
-        editor.setCaret(
-          list.parentElement,
-          Array.from(list.parentElement.childNodes).indexOf(list)
-        );
-
+        window
+          .getSelection()
+          ?.collapse(
+            list.parentElement,
+            Array.from(list.parentElement.childNodes).indexOf(list)
+          );
         element.remove();
-        editor.updateRichNode();
+        editor.model.read(true);
       } else {
         console.warn('List item has no parent element');
       }
@@ -305,21 +305,22 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   removeListItemAndList = (
     manipulation: ElementRemovalManipulation,
-    editor: Editor
+    editor: RawEditor
   ): void => {
     const element = manipulation.node;
     const list = element.parentElement;
 
     if (list && ['ul', 'ol'].includes(tagName(list))) {
       if (list.parentElement) {
-        editor.setCaret(
-          list.parentElement,
-          Array.from(list.parentElement.childNodes).indexOf(list)
-        );
-
+        window
+          .getSelection()
+          ?.collapse(
+            list.parentElement,
+            Array.from(list.parentElement.childNodes).indexOf(list)
+          );
         element.remove();
         list.remove();
-        editor.updateRichNode();
+        editor.model.read(true);
       } else {
         console.warn('List item has no parent element');
       }
@@ -357,7 +358,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
  * HELPERS
  *************************************************************************************/
 
-function helpMergeWithPreviousLi(element: Element, editor: Editor): void {
+function helpMergeWithPreviousLi(element: Element, editor: RawEditor): void {
   if (
     element.previousElementSibling &&
     tagName(element.previousElementSibling) === 'li'
@@ -367,12 +368,12 @@ function helpMergeWithPreviousLi(element: Element, editor: Editor): void {
 
     previousLi.append(...element.childNodes);
     element.remove();
-    editor.updateRichNode();
 
     const index = Array.from(previousLi.childNodes).indexOf(
       firstChildOfListItem
     );
-    editor.setCaret(previousLi, index);
+    window.getSelection()?.collapse(previousLi, index);
+    editor.model.read(true);
   } else {
     console.warn("Previous sibling is not a list item, can't execute merge");
   }
@@ -380,7 +381,7 @@ function helpMergeWithPreviousLi(element: Element, editor: Editor): void {
 
 function helpRemoveListItemAndMoveContentBeforeList(
   element: Element,
-  editor: Editor
+  editor: RawEditor
 ): void {
   const list = element.parentElement;
   if (list && ['ul', 'ol'].includes(tagName(list))) {
@@ -389,13 +390,13 @@ function helpRemoveListItemAndMoveContentBeforeList(
 
       list.before(...element.childNodes);
       element.remove();
-      editor.updateRichNode();
 
       const parentOfList = list.parentElement;
       const index = Array.from(parentOfList.childNodes).indexOf(
         firstChildOfListItem
       );
-      editor.setCaret(parentOfList, index);
+      window.getSelection()?.collapse(parentOfList, index);
+      editor.model.read(true);
     } else {
       console.warn('List item has no parent element');
     }
@@ -406,18 +407,20 @@ function helpRemoveListItemAndMoveContentBeforeList(
 
 function helpRemoveListItemAndListButKeepContent(
   element: Element,
-  editor: Editor
+  editor: RawEditor
 ) {
   const list = element.parentElement;
   if (list && ['ul', 'ol'].includes(tagName(list))) {
     if (list.parentElement) {
       const parentOfList = list.parentElement;
-      editor.setCaret(
-        list.parentElement,
-        Array.from(parentOfList.childNodes).indexOf(list)
-      );
+      window
+        .getSelection()
+        ?.collapse(
+          list.parentElement,
+          Array.from(parentOfList.childNodes).indexOf(list)
+        );
       list.replaceWith(...element.childNodes);
-      editor.updateRichNode();
+      editor.model.read(true);
     } else {
       console.warn('List item has no parent element');
     }

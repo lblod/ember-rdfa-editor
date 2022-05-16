@@ -6,7 +6,11 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import SplitOperation from '@lblod/ember-rdfa-editor/model/operations/split-operation';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { AttributeSpec, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import {
+  AttributeSpec,
+  MarkSet,
+  MarkSpec,
+} from '@lblod/ember-rdfa-editor/model/mark';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import RangeMapper, {
@@ -56,8 +60,8 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return defaultRange;
   }
 
-  insertText(range: ModelRange, text: string): ModelRange {
-    const op = new InsertTextOperation(this.eventbus, range, text);
+  insertText(range: ModelRange, text: string, marks: MarkSet): ModelRange {
+    const op = new InsertTextOperation(this.eventbus, range, text, marks);
     return this.executeOperation(op);
   }
 
@@ -96,6 +100,17 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     if (!oldNode) throw new Error('no element in range');
     const newNode = oldNode.clone();
     newNode.setAttribute(key, value);
+    const oldNodeRange = ModelRange.fromAroundNode(oldNode);
+    const op = new InsertOperation(this.eventbus, oldNodeRange, newNode);
+    this.executeOperation(op);
+    return newNode;
+  }
+
+  removeProperty(element: ModelElement, key: string): ModelElement {
+    const oldNode = element;
+    if (!oldNode) throw new Error('no element in range');
+    const newNode = oldNode.clone();
+    newNode.removeAttribute(key);
     const oldNodeRange = ModelRange.fromAroundNode(oldNode);
     const op = new InsertOperation(this.eventbus, oldNodeRange, newNode);
     this.executeOperation(op);

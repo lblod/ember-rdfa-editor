@@ -7,7 +7,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
-module('Unit | commands | insert-text-command-test', (hooks) => {
+module('Unit | commands | insert-text-command-test', function (hooks) {
   const ctx = new ModelTestContext();
   let command: InsertTextCommand;
   const logger = createLogger('test:insert-text-command-test');
@@ -16,7 +16,7 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     command = new InsertTextCommand(ctx.model);
   });
 
-  test('inserts character into textnode', (assert) => {
+  test('inserts character into textnode', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -43,7 +43,7 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     command.execute('c', range);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
-  test('overwrites unconfined range', (assert) => {
+  test('overwrites unconfined range', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -76,7 +76,7 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     command.execute('x', range);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
-  test('overwrites complex range', (assert) => {
+  test('overwrites complex range', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -117,7 +117,7 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     command.execute('c', range);
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
-  test('space does not eat the character before it', (assert) => {
+  test('space does not eat the character before it', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -157,7 +157,7 @@ module('Unit | commands | insert-text-command-test', (hooks) => {
     assert.true(rslt);
   });
 
-  test('newlines are converted to br elements', (assert) => {
+  test('newlines are converted to br elements', function (assert) {
     // language=XML
     const {
       root: initial,

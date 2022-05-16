@@ -19,8 +19,8 @@ module('Unit | model | util | node-finder', function () {
       startNode: root,
       rootNode: root,
     });
-    assert.equal(nodeFinder.next(), root);
-    assert.equal(nodeFinder.next(), null);
+    assert.strictEqual(nodeFinder.next(), root);
+    assert.strictEqual(nodeFinder.next(), null);
   });
 
   test('converts to an array with only one element', function (assert) {
@@ -31,8 +31,8 @@ module('Unit | model | util | node-finder', function () {
       rootNode: root,
     });
     const result = [...nodeFinder];
-    assert.equal(result[0], root);
-    assert.equal(result.length, 1);
+    assert.strictEqual(result[0], root);
+    assert.strictEqual(result.length, 1);
   });
 
   test('finds no nodes when only one invalid node', function (assert) {
@@ -45,7 +45,7 @@ module('Unit | model | util | node-finder', function () {
       predicate: (node) => node.type === 'span',
     });
     const result = [...nodeFinder];
-    assert.equal(result.length, 0);
+    assert.strictEqual(result.length, 0);
   });
 
   test("finds one valid node when it's the endnode", function (assert) {
@@ -63,8 +63,8 @@ module('Unit | model | util | node-finder', function () {
       predicate: (node) => node.type === 'span',
     });
     const result = [...nodeFinder];
-    assert.equal(result.length, 1);
-    assert.equal(result[0], end);
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0], end);
   });
 
   test('finds all nodes of a small tree in expected order when starting at root', function (assert) {
@@ -80,10 +80,10 @@ module('Unit | model | util | node-finder', function () {
       endNode: end,
     });
     const result = [...nodeFinder];
-    assert.equal(result.length, 3);
-    assert.equal(result[0], root);
-    assert.equal(result[1], start);
-    assert.equal(result[2], end);
+    assert.strictEqual(result.length, 3);
+    assert.strictEqual(result[0], root);
+    assert.strictEqual(result[1], start);
+    assert.strictEqual(result[2], end);
   });
 
   test('finds all nodes of a small tree in expected order when starting at root BACKWARDS', function (assert) {
@@ -100,10 +100,10 @@ module('Unit | model | util | node-finder', function () {
       direction: Direction.BACKWARDS,
     });
     const result = [...nodeFinder];
-    assert.equal(result.length, 3);
-    assert.equal(result[0], root);
-    assert.equal(result[1], start);
-    assert.equal(result[2], end);
+    assert.strictEqual(result.length, 3);
+    assert.strictEqual(result[0], root);
+    assert.strictEqual(result[1], start);
+    assert.strictEqual(result[2], end);
   });
   test('finds start and end nodes of a small tree in expected order', function (assert) {
     const root = new ModelElement('div');
@@ -118,9 +118,9 @@ module('Unit | model | util | node-finder', function () {
       endNode: end,
     });
     const result = [...nodeFinder];
-    assert.equal(result.length, 2);
-    assert.equal(result[0], start);
-    assert.equal(result[1], end);
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0], start);
+    assert.strictEqual(result[1], end);
   });
 
   test('does not go past endnode', function (assert) {
@@ -137,9 +137,9 @@ module('Unit | model | util | node-finder', function () {
       endNode: end,
     });
     const result = [...nodeFinder];
-    assert.equal(result.length, 2);
-    assert.equal(result[0], start);
-    assert.equal(result[1], end);
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0], start);
+    assert.strictEqual(result[1], end);
   });
 
   test('does not find nodes before startnode', function (assert) {
@@ -156,9 +156,9 @@ module('Unit | model | util | node-finder', function () {
       endNode: end,
     });
     const result = [...nodeFinder];
-    assert.equal(result.length, 2);
-    assert.equal(result[0], start);
-    assert.equal(result[1], end);
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0], start);
+    assert.strictEqual(result[1], end);
   });
 
   test('finds all nodes of a small tree in expected order when starting at root without endnode', function (assert) {
@@ -173,10 +173,10 @@ module('Unit | model | util | node-finder', function () {
       rootNode: root,
     });
     const result = [...nodeFinder];
-    assert.equal(result.length, 3);
-    assert.equal(result[0], root);
-    assert.equal(result[1], start);
-    assert.equal(result[2], end);
+    assert.strictEqual(result.length, 3);
+    assert.strictEqual(result[0], root);
+    assert.strictEqual(result[1], start);
+    assert.strictEqual(result[2], end);
   });
   test('does not find nodes above root', function (assert) {
     const aboveRoot = new ModelElement('div');
@@ -192,10 +192,10 @@ module('Unit | model | util | node-finder', function () {
       rootNode: root,
     });
     const result = [...nodeFinder];
-    assert.equal(result.length, 3);
-    assert.equal(result[0], start);
-    assert.equal(result[1], end);
-    assert.equal(result[2], root);
+    assert.strictEqual(result.length, 3);
+    assert.strictEqual(result[0], start);
+    assert.strictEqual(result[1], end);
+    assert.strictEqual(result[2], root);
   });
   test('does not find samelevel nodes outside subtree', function (assert) {
     const aboveRoot = testElement('div', 'aboveRoot');
@@ -212,10 +212,10 @@ module('Unit | model | util | node-finder', function () {
       rootNode: root,
     });
     const result = [...nodeFinder];
-    assert.equal(result.length, 3);
-    assert.equal(result[0], start);
-    assert.equal(result[1], end);
-    assert.equal(result[2], root);
+    assert.strictEqual(result.length, 3);
+    assert.strictEqual(result[0], start);
+    assert.strictEqual(result[1], end);
+    assert.strictEqual(result[2], root);
   });
   test('finds one node if start is end and start is also valid', function (assert) {
     const start = testElement('div');
@@ -226,8 +226,8 @@ module('Unit | model | util | node-finder', function () {
       endNode: start,
     });
     const result = [...nodeFinder];
-    assert.equal(result.length, 1);
-    assert.equal(result[0], start);
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0], start);
   });
   test('finds nodes correctly when start is child of end', function (assert) {
     const root = testElement('div');
@@ -255,7 +255,7 @@ module('Unit | model | util | node-finder', function () {
     });
     const result = [...nodeFinder];
 
-    assert.equal(result.length, 2);
+    assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0], start);
     assert.strictEqual(result[1], startsibling);
   });

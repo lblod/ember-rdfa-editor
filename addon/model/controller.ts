@@ -24,7 +24,7 @@ import LiveMarkSet, {
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 
-export type WidgetLocation = 'toolbar' | 'sidebar';
+export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
 export interface WidgetSpec {
   componentName: string;
@@ -159,7 +159,7 @@ export class RawEditorController implements Controller {
     commandName: string,
     ...args: A
   ): R | void {
-    return this._rawEditor.executeCommand(commandName, ...args);
+    return this._rawEditor.executeCommand(commandName, ...args) as R | void;
   }
 
   canExecuteCommand<A extends unknown[]>(

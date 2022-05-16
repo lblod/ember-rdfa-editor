@@ -8,8 +8,8 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 module(
   'Unit | model | operations | algorithms | insert-algorithm-test | ',
 
-  () => {
-    test('should insert properly', (assert) => {
+  function () {
+    test('should insert properly', function (assert) {
       const {
         root: initial,
         elements: { span3, div1 },
@@ -140,7 +140,7 @@ module(
       assert.deepEqual(newTestPos5.path, [1, 2, 0, 8, 2]);
       assert.deepEqual(newDeepPos.path, [7, 0, 0, 0, 2]);
     });
-    test('collapsed insertion', (assert) => {
+    test('collapsed insertion', function (assert) {
       const {
         root: initial,
         elements: { span3 },
@@ -267,7 +267,7 @@ module(
       assert.deepEqual(newTestPos5.path, [1, 0, 7, 11, 2]);
       assert.deepEqual(newDeepPos.path, [7, 0, 0, 0, 2]);
     });
-    test('insert single char', (assert) => {
+    test('insert single char', function (assert) {
       const {
         root: initial,
         textNodes: { text1 },

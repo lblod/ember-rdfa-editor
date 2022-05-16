@@ -18,13 +18,13 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
 
-module('Unit | model | marks-test', (hooks) => {
+module('Unit | model | marks-test', function (hooks) {
   const ctx = new ModelTestContext();
   hooks.beforeEach(() => {
     ctx.reset();
     ctx.model.registerMark(highlightMarkSpec);
   });
-  test('reading works', (assert) => {
+  test('reading works', function (assert) {
     const html = domStripped`
       <strong>abc</strong>
     `;
@@ -39,7 +39,7 @@ module('Unit | model | marks-test', (hooks) => {
     assert.true(result.hasMarkName('bold'));
   });
 
-  test('writing works', (assert) => {
+  test('writing works', function (assert) {
     const textNode = new ModelText('abc');
     const mark = new Mark(boldMarkSpec, {}, textNode);
     textNode.addMark(mark);
@@ -53,7 +53,7 @@ module('Unit | model | marks-test', (hooks) => {
     assert.strictEqual(result.childNodes.length, 1);
     assert.strictEqual((result.firstChild as Text).textContent, 'abc');
   });
-  test('writing works with multiple marks', (assert) => {
+  test('writing works with multiple marks', function (assert) {
     const textNode = new ModelText('abc');
     textNode.addMark(new Mark(boldMarkSpec, {}, textNode));
     textNode.addMark(new Mark(italicMarkSpec, {}, textNode));
@@ -75,7 +75,7 @@ module('Unit | model | marks-test', (hooks) => {
     assert.true(isTextNode(fc.firstChild!));
     assert.strictEqual(fc.firstChild!.textContent, 'abc');
   });
-  test('reading highlights works', (assert) => {
+  test('reading highlights works', function (assert) {
     const html = domStripped`
       <span data-editor-highlight>abc</span>
     `;
@@ -92,7 +92,7 @@ module('Unit | model | marks-test', (hooks) => {
       `Marks: ${JSON.stringify(result.marks)}`
     );
   });
-  test("reading non-highlight spans doesn't read highlight marks", (assert) => {
+  test("reading non-highlight spans doesn't read highlight marks", function (assert) {
     const html = domStripped`
       <span>abc</span>
     `;
@@ -106,7 +106,7 @@ module('Unit | model | marks-test', (hooks) => {
     assert.strictEqual((result.firstChild as ModelText).content, 'abc');
     assert.false((result.firstChild as ModelText).hasMarkName('highlighted'));
   });
-  test('hashset', (assert) => {
+  test('hashset', function (assert) {
     const set = new HashSet({
       hashFunc: (item) => item.name,
       init: [{ name: 'test1' }, { name: 'test2' }],

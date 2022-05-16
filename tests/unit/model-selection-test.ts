@@ -6,13 +6,13 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 
-module('Unit | model | model-selection', (hooks) => {
+module('Unit | model | model-selection', function (hooks) {
   const ctx = new ModelTestContext();
 
   hooks.beforeEach(() => {
     ctx.reset();
   });
-  test('collapseOn sets position correctly', (assert) => {
+  test('collapseOn sets position correctly', function (assert) {
     const { modelSelection, model } = ctx;
     const p = new ModelElement('p');
     const content = new ModelText('test');
@@ -25,7 +25,7 @@ module('Unit | model | model-selection', (hooks) => {
     );
   });
 
-  test('findAllInSelection finds all relevant nodes', (assert) => {
+  test('findAllInSelection finds all relevant nodes', function (assert) {
     const {
       modelSelection,
       model: { rootModelNode },

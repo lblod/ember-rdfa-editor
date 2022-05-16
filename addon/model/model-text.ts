@@ -47,6 +47,10 @@ export default class ModelText extends ModelNode {
     return false;
   }
 
+  get isLeaf() {
+    return true;
+  }
+
   get offsetSize() {
     return this.length;
   }

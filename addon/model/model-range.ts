@@ -191,6 +191,9 @@ export default class ModelRange {
   }
 
   static fromAroundNode(node: ModelNode) {
+    if (!node.parent) {
+      throw new IllegalArgumentError('Cannot create a range around the root');
+    }
     const start = ModelPosition.fromBeforeNode(node);
     const end = ModelPosition.fromAfterNode(node);
     return new ModelRange(start, end);
@@ -312,11 +315,12 @@ export default class ModelRange {
     const nodes = [
       ...this.contextNodes(
         {
-          type: 'rangeIsInside',
+          type: 'rangeTouches',
           textNodeStickyness: {
             start: 'both',
-            end: 'both',
+            end: 'left',
           },
+          includeEndTags: false,
         },
         toFilterSkipFalse(ModelNode.isModelText)
       ),

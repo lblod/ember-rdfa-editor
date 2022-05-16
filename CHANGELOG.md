@@ -12,6 +12,75 @@
 
 
 
+
+
+
+
+## 0.57.0 (2022-04-27)
+
+#### :rocket: Enhancement
+* [#262](https://github.com/lblod/ember-rdfa-editor/pull/262) feature/improved prefix handling ([@abeforgit](https://github.com/abeforgit))
+* [#257](https://github.com/lblod/ember-rdfa-editor/pull/257) Enhancement/better handlers ([@nvdk](https://github.com/nvdk))
+* [#256](https://github.com/lblod/ember-rdfa-editor/pull/256) widget redesign ([@Asergey91](https://github.com/Asergey91))
+
+#### Committers: 3
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Niels V ([@nvdk](https://github.com/nvdk))
+- Sergey Andreev ([@Asergey91](https://github.com/Asergey91))
+
+
+## 0.57.0-0 (2022-04-27)
+
+#### :rocket: Enhancement
+* [#262](https://github.com/lblod/ember-rdfa-editor/pull/262) feature/improved prefix handling ([@abeforgit](https://github.com/abeforgit))
+* [#257](https://github.com/lblod/ember-rdfa-editor/pull/257) Enhancement/better handlers ([@nvdk](https://github.com/nvdk))
+* [#256](https://github.com/lblod/ember-rdfa-editor/pull/256) widget redesign ([@Asergey91](https://github.com/Asergey91))
+
+#### Committers: 3
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Niels V ([@nvdk](https://github.com/nvdk))
+- Sergey Andreev ([@Asergey91](https://github.com/Asergey91))
+
+
+## 0.56.2 (2022-04-27)
+
+#### :bug: Bug Fix
+* [#260](https://github.com/lblod/ember-rdfa-editor/pull/260) Fixed bug with making list at the end of the document ([@lagartoverde](https://github.com/lagartoverde))
+* [#258](https://github.com/lblod/ember-rdfa-editor/pull/258) Fix bug that selection was wrong when creating en empty list ([@lagartoverde](https://github.com/lagartoverde))
+* [#261](https://github.com/lblod/ember-rdfa-editor/pull/261) Fix textsearch on quads defined outside the root element ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
+
+
+## 0.56.1 (2022-04-25)
+
+#### :bug: Bug Fix
+* [#259](https://github.com/lblod/ember-rdfa-editor/pull/259) Fix collapsed selections not detecting marks correctly ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
+## 0.56.0 (2022-04-25)
+
+#### :boom: Breaking Change
+* [#232](https://github.com/lblod/ember-rdfa-editor/pull/232) Breaking/remove old plugin wiring ([@nvdk](https://github.com/nvdk))
+
+#### :rocket: Enhancement
+* [#249](https://github.com/lblod/ember-rdfa-editor/pull/249) Improved table insert, and column and row insert ([@benjay10](https://github.com/benjay10))
+
+#### :bug: Bug Fix
+* [#254](https://github.com/lblod/ember-rdfa-editor/pull/254) Fixed weird cases where the unindent button appeared without being available ([@lagartoverde](https://github.com/lagartoverde))
+* [#255](https://github.com/lblod/ember-rdfa-editor/pull/255) improve whitespace collapsing ([@nvdk](https://github.com/nvdk))
+* [#253](https://github.com/lblod/ember-rdfa-editor/pull/253) More consice removing of RDFa type ([@benjay10](https://github.com/benjay10))
+
+#### Committers: 3
+- Ben ([@benjay10](https://github.com/benjay10))
+- Niels V ([@nvdk](https://github.com/nvdk))
+- Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
+
 ## 0.55.2 (2022-04-08)
 
 #### :bug: Bug Fix

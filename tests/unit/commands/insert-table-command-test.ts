@@ -4,8 +4,9 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import InsertTableCommand from '@lblod/ember-rdfa-editor/commands/insert-table-command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
-module('Unit | commands | insert-table-command-test', (hooks) => {
+module('Unit | commands | insert-table-command-test', function (hooks) {
   const ctx = new ModelTestContext();
   let command: InsertTableCommand;
 
@@ -14,7 +15,7 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
     command = new InsertTableCommand(ctx.model);
   });
 
-  test('inserts correctly in empty document', (assert) => {
+  test('inserts correctly in empty document', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot/>
@@ -26,12 +27,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
         <table class="say-table">
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -46,7 +47,7 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('inserts correctly in document with empty text node', (assert) => {
+  test('inserts correctly in document with empty text node', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
@@ -61,12 +62,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
         <table class="say-table">
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -81,7 +82,7 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('inserts correctly before table', (assert) => {
+  test('inserts correctly before table', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
@@ -114,12 +115,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
         <table class="say-table">
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -154,7 +155,7 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('inserts correctly inside text node', (assert) => {
+  test('inserts correctly inside text node', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
@@ -169,12 +170,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
         <table class="say-table">
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -190,7 +191,7 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('correctly replaces part of text node', (assert) => {
+  test('correctly replaces part of text node', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
@@ -205,12 +206,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
         <table class="say-table">
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
@@ -226,7 +227,7 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('correctly replaces complex range', (assert) => {
+  test('correctly replaces complex range', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -254,12 +255,12 @@ module('Unit | commands | insert-table-command-test', (hooks) => {
           <table class="say-table">
             <tbody>
               <tr>
-                <td></td>
-                <td></td>
+                <td><text>${INVISIBLE_SPACE}</text></td>
+                <td><text>${INVISIBLE_SPACE}</text></td>
               </tr>
               <tr>
-                <td></td>
-                <td></td>
+                <td><text>${INVISIBLE_SPACE}</text></td>
+                <td><text>${INVISIBLE_SPACE}</text></td>
               </tr>
             </tbody>
           </table>

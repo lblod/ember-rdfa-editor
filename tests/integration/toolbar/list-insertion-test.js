@@ -23,12 +23,12 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await click('[data-test-button-id="unordered-list"]');
     await type('div[contenteditable]', 'test');
 
-    assert.equal(editor.firstElementChild.tagName, 'UL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'UL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
   });
 
   test('ordered list button inserts a list', async function (assert) {
@@ -47,12 +47,12 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await click('[data-test-button-id="ordered-list"]');
     await type('div[contenteditable]', 'test');
 
-    assert.equal(editor.firstElementChild.tagName, 'OL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'OL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
   });
 
   test('enter inserts another list item in an unordered list', async function (assert) {
@@ -73,15 +73,15 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await type('div[contenteditable]', 'second test');
 
-    assert.equal(editor.firstElementChild.tagName, 'UL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'UL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 2);
+    assert.strictEqual(list.childElementCount, 2);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
     const lastLi = list.lastElementChild;
-    assert.equal(lastLi.tagName, 'LI');
-    assert.equal(lastLi.textContent.includes('second test'), true);
+    assert.strictEqual(lastLi.tagName, 'LI');
+    assert.true(lastLi.textContent.includes('second test'));
   });
 
   test('enter inserts another list item in an ordered list', async function (assert) {
@@ -101,15 +101,15 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await type('div[contenteditable]', 'second test');
 
-    assert.equal(editor.firstElementChild.tagName, 'OL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'OL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 2);
+    assert.strictEqual(list.childElementCount, 2);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
     const lastLi = list.lastElementChild;
-    assert.equal(lastLi.tagName, 'LI');
-    assert.equal(lastLi.textContent.includes('second test'), true);
+    assert.strictEqual(lastLi.tagName, 'LI');
+    assert.true(lastLi.textContent.includes('second test'));
   });
 
   test('insert indentation insert another level of unordered list', async function (assert) {
@@ -131,18 +131,18 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await click('[data-test-button-id="insert-indent"]');
     await type('div[contenteditable]', 'second test');
 
-    assert.equal(editor.firstElementChild.tagName, 'UL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'UL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
-    assert.equal(firstLi.childElementCount, 1);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
+    assert.strictEqual(firstLi.childElementCount, 1);
     const innerList = firstLi.lastElementChild;
-    assert.equal(innerList.tagName, 'UL');
-    assert.equal(innerList.childElementCount, '1');
+    assert.strictEqual(innerList.tagName, 'UL');
+    assert.strictEqual(innerList.childElementCount, '1');
     const innerLi = innerList.firstElementChild;
-    assert.equal(innerLi.textContent.includes('second test'), true);
+    assert.true(innerLi.textContent.includes('second test'));
   });
 
   test('insert indentation insert another level of ordered list', async function (assert) {
@@ -164,18 +164,18 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await click('[data-test-button-id="insert-indent"]');
     await type('div[contenteditable]', 'second test');
 
-    assert.equal(editor.firstElementChild.tagName, 'OL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'OL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
-    assert.equal(firstLi.childElementCount, 1);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
+    assert.strictEqual(firstLi.childElementCount, 1);
     const innerList = firstLi.lastElementChild;
-    assert.equal(innerList.tagName, 'OL');
-    assert.equal(innerList.childElementCount, '1');
+    assert.strictEqual(innerList.tagName, 'OL');
+    assert.strictEqual(innerList.childElementCount, '1');
     const innerLi = innerList.firstElementChild;
-    assert.equal(innerLi.textContent.includes('second test'), true);
+    assert.true(innerLi.textContent.includes('second test'));
   });
 
   test('remove indentation removes a level of unordered list', async function (assert) {
@@ -200,21 +200,21 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await click('[data-test-button-id="insert-unindent"]');
     await type('div[contenteditable]', 'third test');
 
-    assert.equal(editor.firstElementChild.tagName, 'UL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'UL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 2);
+    assert.strictEqual(list.childElementCount, 2);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
-    assert.equal(firstLi.childElementCount, 1);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
+    assert.strictEqual(firstLi.childElementCount, 1);
     const innerList = firstLi.lastElementChild;
-    assert.equal(innerList.tagName, 'UL');
-    assert.equal(innerList.childElementCount, '1');
+    assert.strictEqual(innerList.tagName, 'UL');
+    assert.strictEqual(innerList.childElementCount, '1');
     const innerLi = innerList.firstElementChild;
-    assert.equal(innerLi.textContent.includes('second test'), true);
+    assert.true(innerLi.textContent.includes('second test'));
     const lastLi = list.lastElementChild;
-    assert.equal(lastLi.tagName, 'LI');
-    assert.equal(lastLi.textContent.includes('third test'), true);
+    assert.strictEqual(lastLi.tagName, 'LI');
+    assert.true(lastLi.textContent.includes('third test'));
   });
 
   test('remove indentation removes a level of ordered list', async function (assert) {
@@ -239,21 +239,21 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await click('[data-test-button-id="insert-unindent"]');
     await type('div[contenteditable]', 'third test');
 
-    assert.equal(editor.firstElementChild.tagName, 'OL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'OL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 2);
+    assert.strictEqual(list.childElementCount, 2);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
-    assert.equal(firstLi.childElementCount, 1);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
+    assert.strictEqual(firstLi.childElementCount, 1);
     const innerList = firstLi.lastElementChild;
-    assert.equal(innerList.tagName, 'OL');
-    assert.equal(innerList.childElementCount, '1');
+    assert.strictEqual(innerList.tagName, 'OL');
+    assert.strictEqual(innerList.childElementCount, '1');
     const innerLi = innerList.firstElementChild;
-    assert.equal(innerLi.textContent.includes('second test'), true);
+    assert.true(innerLi.textContent.includes('second test'));
     const lastLi = list.lastElementChild;
-    assert.equal(lastLi.tagName, 'LI');
-    assert.equal(lastLi.textContent.includes('third test'), true);
+    assert.strictEqual(lastLi.tagName, 'LI');
+    assert.true(lastLi.textContent.includes('third test'));
   });
 
   test('inserting 2 indentations in an unordered list', async function (assert) {
@@ -276,24 +276,24 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await click('[data-test-button-id="insert-indent"]');
     await type('div[contenteditable]', 'second test');
 
-    assert.equal(editor.firstElementChild.tagName, 'UL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'UL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
-    assert.equal(firstLi.childElementCount, 1);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
+    assert.strictEqual(firstLi.childElementCount, 1);
     const innerList = firstLi.lastElementChild;
-    assert.equal(innerList.tagName, 'UL');
-    assert.equal(innerList.childElementCount, '1');
+    assert.strictEqual(innerList.tagName, 'UL');
+    assert.strictEqual(innerList.childElementCount, '1');
     const innerLi = innerList.firstElementChild;
-    assert.equal(innerLi.childElementCount, 1);
+    assert.strictEqual(innerLi.childElementCount, 1);
     const innerInnerList = innerLi.firstElementChild;
-    assert.equal(innerInnerList.tagName, 'UL');
-    assert.equal(innerInnerList.childElementCount, '1');
+    assert.strictEqual(innerInnerList.tagName, 'UL');
+    assert.strictEqual(innerInnerList.childElementCount, '1');
     const innnerInnerLi = innerInnerList.firstElementChild;
-    assert.equal(innnerInnerLi.tagName, 'LI');
-    assert.equal(innnerInnerLi.textContent.includes('second test'), true);
+    assert.strictEqual(innnerInnerLi.tagName, 'LI');
+    assert.true(innnerInnerLi.textContent.includes('second test'));
   });
 
   test('inserting 2 indentations in an ordered list', async function (assert) {
@@ -316,24 +316,24 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await click('[data-test-button-id="insert-indent"]');
     await type('div[contenteditable]', 'second test');
 
-    assert.equal(editor.firstElementChild.tagName, 'OL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'OL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
-    assert.equal(firstLi.childElementCount, 1);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
+    assert.strictEqual(firstLi.childElementCount, 1);
     const innerList = firstLi.lastElementChild;
-    assert.equal(innerList.tagName, 'OL');
-    assert.equal(innerList.childElementCount, '1');
+    assert.strictEqual(innerList.tagName, 'OL');
+    assert.strictEqual(innerList.childElementCount, '1');
     const innerLi = innerList.firstElementChild;
-    assert.equal(innerLi.childElementCount, 1);
+    assert.strictEqual(innerLi.childElementCount, 1);
     const innerInnerList = innerLi.firstElementChild;
-    assert.equal(innerInnerList.tagName, 'OL');
-    assert.equal(innerInnerList.childElementCount, '1');
+    assert.strictEqual(innerInnerList.tagName, 'OL');
+    assert.strictEqual(innerInnerList.childElementCount, '1');
     const innnerInnerLi = innerInnerList.firstElementChild;
-    assert.equal(innnerInnerLi.tagName, 'LI');
-    assert.equal(innnerInnerLi.textContent.includes('second test'), true);
+    assert.strictEqual(innnerInnerLi.tagName, 'LI');
+    assert.true(innnerInnerLi.textContent.includes('second test'));
   });
 
   test('enters keep the level of indentiation in an unordered list', async function (assert) {
@@ -357,20 +357,20 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await type('div[contenteditable]', 'third test');
 
-    assert.equal(editor.firstElementChild.tagName, 'UL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'UL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
-    assert.equal(firstLi.childElementCount, 1);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
+    assert.strictEqual(firstLi.childElementCount, 1);
     const innerList = firstLi.lastElementChild;
-    assert.equal(innerList.tagName, 'UL');
-    assert.equal(innerList.childElementCount, '2');
+    assert.strictEqual(innerList.tagName, 'UL');
+    assert.strictEqual(innerList.childElementCount, '2');
     const firstInnerLi = innerList.firstElementChild;
-    assert.equal(firstInnerLi.textContent.includes('second test'), true);
+    assert.true(firstInnerLi.textContent.includes('second test'));
     const secondInnerLi = innerList.lastElementChild;
-    assert.equal(secondInnerLi.textContent.includes('third test'), true);
+    assert.true(secondInnerLi.textContent.includes('third test'));
   });
 
   test('enters keep the level of indentiation in an ordered list', async function (assert) {
@@ -394,20 +394,20 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await triggerKeyEvent('div[contenteditable]', 'keydown', 'Enter');
     await type('div[contenteditable]', 'third test');
 
-    assert.equal(editor.firstElementChild.tagName, 'OL');
+    assert.strictEqual(editor.firstElementChild.tagName, 'OL');
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
-    assert.equal(firstLi.childElementCount, 1);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
+    assert.strictEqual(firstLi.childElementCount, 1);
     const innerList = firstLi.lastElementChild;
-    assert.equal(innerList.tagName, 'OL');
-    assert.equal(innerList.childElementCount, '2');
+    assert.strictEqual(innerList.tagName, 'OL');
+    assert.strictEqual(innerList.childElementCount, '2');
     const firstInnerLi = innerList.firstElementChild;
-    assert.equal(firstInnerLi.textContent.includes('second test'), true);
+    assert.true(firstInnerLi.textContent.includes('second test'));
     const secondInnerLi = innerList.lastElementChild;
-    assert.equal(secondInnerLi.textContent.includes('third test'), true);
+    assert.true(secondInnerLi.textContent.includes('third test'));
   });
 
   test('insert unindent into a unordered list without indents', async function (assert) {
@@ -429,13 +429,13 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await click('[data-test-button-id="insert-unindent"]');
     await type('div[contenteditable]', 'second test');
 
-    assert.equal(editor.firstElementChild.tagName, 'UL');
-    assert.equal(editor.childElementCount, 2);
+    assert.strictEqual(editor.firstElementChild.tagName, 'UL');
+    assert.strictEqual(editor.childElementCount, 2);
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
   });
 
   test('insert unindent into a ordered list without indents', async function (assert) {
@@ -457,13 +457,13 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await click('[data-test-button-id="insert-unindent"]');
     await type('div[contenteditable]', 'second test');
 
-    assert.equal(editor.firstElementChild.tagName, 'OL');
-    assert.equal(editor.childElementCount, 2);
+    assert.strictEqual(editor.firstElementChild.tagName, 'OL');
+    assert.strictEqual(editor.childElementCount, 2);
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
   });
 
   test('insert unordered list after writting', async function (assert) {
@@ -482,13 +482,13 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await type('div[contenteditable]', 'test');
     await await click('[data-test-button-id="unordered-list"]');
 
-    assert.equal(editor.firstElementChild.tagName, 'UL');
-    assert.equal(editor.childElementCount, 1);
+    assert.strictEqual(editor.firstElementChild.tagName, 'UL');
+    assert.strictEqual(editor.childElementCount, 1);
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
   });
 
   test('insert ordered list after writting', async function (assert) {
@@ -507,13 +507,13 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await type('div[contenteditable]', 'test');
     await click('[data-test-button-id="ordered-list"]');
 
-    assert.equal(editor.firstElementChild.tagName, 'OL');
-    assert.equal(editor.childElementCount, 1);
+    assert.strictEqual(editor.firstElementChild.tagName, 'OL');
+    assert.strictEqual(editor.childElementCount, 1);
     const list = editor.firstElementChild;
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
   });
 
   test('insert unordered list after writting only affects last line', async function (assert) {
@@ -534,15 +534,15 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await type('div[contenteditable]', 'second test');
     await await click('[data-test-button-id="unordered-list"]');
 
-    assert.equal(editor.childElementCount, 2);
+    assert.strictEqual(editor.childElementCount, 2);
     const breakLine = editor.firstElementChild;
-    assert.equal(breakLine.tagName, 'BR');
+    assert.strictEqual(breakLine.tagName, 'BR');
     const list = editor.lastElementChild;
-    assert.equal(list.tagName, 'UL');
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.tagName, 'UL');
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
   });
 
   test('insert ordered list after writting only affects last line', async function (assert) {
@@ -563,15 +563,15 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await type('div[contenteditable]', 'second test');
     await await click('[data-test-button-id="ordered-list"]');
 
-    assert.equal(editor.childElementCount, 2);
+    assert.strictEqual(editor.childElementCount, 2);
     const breakLine = editor.firstElementChild;
-    assert.equal(breakLine.tagName, 'BR');
+    assert.strictEqual(breakLine.tagName, 'BR');
     const list = editor.lastElementChild;
-    assert.equal(list.tagName, 'OL');
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.tagName, 'OL');
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(firstLi.textContent.includes('test'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(firstLi.textContent.includes('test'));
   });
 
   test('insert unordered list with selection', async function (assert) {
@@ -591,14 +591,14 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     const range = window.getSelection().getRangeAt(0);
     range.setEnd(editor, 3);
     await click('[data-test-button-id="unordered-list"]');
-    assert.equal(editor.childElementCount, 2);
+    assert.strictEqual(editor.childElementCount, 2);
     const list = editor.firstElementChild;
-    assert.equal(list.tagName, 'UL');
-    assert.equal(list.childElementCount, 2);
+    assert.strictEqual(list.tagName, 'UL');
+    assert.strictEqual(list.childElementCount, 2);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(list.firstElementChild.textContent.includes('beer'), true);
-    assert.equal(list.lastElementChild.textContent.includes('pong'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(list.firstElementChild.textContent.includes('beer'));
+    assert.true(list.lastElementChild.textContent.includes('pong'));
   });
 
   test('insert ordered list with selection', async function (assert) {
@@ -618,14 +618,14 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     const range = window.getSelection().getRangeAt(0);
     range.setEnd(editor, 3);
     await click('[data-test-button-id="ordered-list"]');
-    assert.equal(editor.childElementCount, 2);
+    assert.strictEqual(editor.childElementCount, 2);
     const list = editor.firstElementChild;
-    assert.equal(list.tagName, 'OL');
-    assert.equal(list.childElementCount, 2);
+    assert.strictEqual(list.tagName, 'OL');
+    assert.strictEqual(list.childElementCount, 2);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(list.firstElementChild.textContent.includes('beer'), true);
-    assert.equal(list.lastElementChild.textContent.includes('pong'), true);
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(list.firstElementChild.textContent.includes('beer'));
+    assert.true(list.lastElementChild.textContent.includes('pong'));
   });
 
   test('Case 1', async function (assert) {
@@ -656,16 +656,13 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     const range = window.getSelection().getRangeAt(0);
     range.setEnd(editor, 0);
     await click('[data-test-button-id="unordered-list"]');
-    assert.equal(editor.childElementCount, 1);
+    assert.strictEqual(editor.childElementCount, 1);
     const list = editor.firstElementChild;
-    assert.equal(list.tagName, 'UL');
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.tagName, 'UL');
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(
-      list.firstElementChild.textContent.includes('a some text'),
-      true
-    );
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(list.firstElementChild.textContent.includes('a some text'));
   });
 
   test('Case 2', async function (assert) {
@@ -696,16 +693,13 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     range.setStart(editor, 1);
     range.setEnd(editor, 1);
     await click('[data-test-button-id="unordered-list"]');
-    assert.equal(editor.childElementCount, 1);
+    assert.strictEqual(editor.childElementCount, 1);
     const list = editor.firstElementChild;
-    assert.equal(list.tagName, 'UL');
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.tagName, 'UL');
+    assert.strictEqual(list.childElementCount, 1);
     const firstLi = list.firstElementChild;
-    assert.equal(firstLi.tagName, 'LI');
-    assert.equal(
-      list.firstElementChild.textContent.includes('a some  text'),
-      true
-    );
+    assert.strictEqual(firstLi.tagName, 'LI');
+    assert.true(list.firstElementChild.textContent.includes('a some  text'));
   });
 
   // TODO: Not OK
@@ -902,7 +896,7 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     range.setEnd(innerLi, 1);
     const editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="insert-unindent"]');
-    assert.equal(editor.textContent.includes('a some text'), true);
+    assert.true(editor.textContent.includes('a some text'));
   });
 
   //TODO: even though this is the intende behavoir, it feels strange
@@ -944,16 +938,15 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     );
     const editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="insert-unindent"]');
-    assert.equal(editor.textContent.includes('a some '), true);
+    assert.true(editor.textContent.includes('a some '));
     const list = editor.childNodes[2];
-    assert.equal(list.tagName, 'UL');
-    assert.equal(list.childElementCount, 1);
+    assert.strictEqual(list.tagName, 'UL');
+    assert.strictEqual(list.childElementCount, 1);
     const listElement = list.firstElementChild;
-    assert.equal(listElement.tagName, 'LI');
-    assert.equal(listElement.childElementCount, 1);
-    assert.equal(
-      listElement.textContent.includes('block element text  other text'),
-      true
+    assert.strictEqual(listElement.tagName, 'LI');
+    assert.strictEqual(listElement.childElementCount, 1);
+    assert.true(
+      listElement.textContent.includes('block element text  other text')
     );
   });
 
@@ -1149,7 +1142,7 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     const editor = document.querySelector('div[contenteditable]');
     await click('[data-test-button-id="ordered-list"]');
     const list = editor.firstChild;
-    assert.equal(list.tagName, 'OL');
+    assert.strictEqual(list.tagName, 'OL');
   });
 
   test('Inserting a list, press undo, insert again, press undo does not remove list content [OL]', async function (assert) {
@@ -1171,22 +1164,22 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
 
     const list = editor.firstElementChild;
     let li = list.firstElementChild;
-    assert.equal(li.textContent, 'beer pong'); //we have a list
+    assert.strictEqual(li.textContent, 'beer pong'); //we have a list
 
     await click('[data-test-button-id="undo-button"]');
 
-    assert.equal(editor.childElementCount, 0);
-    assert.equal(editor.textContent, 'beer pong'); //content remains, list is gone
+    assert.strictEqual(editor.childElementCount, 0);
+    assert.strictEqual(editor.textContent, 'beer pong'); //content remains, list is gone
 
     await click('[data-test-button-id="ordered-list"]');
 
     li = list.firstElementChild;
-    assert.equal(li.textContent, 'beer pong'); //we have a list
+    assert.strictEqual(li.textContent, 'beer pong'); //we have a list
 
     await click('[data-test-button-id="undo-button"]');
 
-    assert.equal(editor.childElementCount, 0);
-    assert.equal(editor.textContent.includes('beer pong'), true); //content remains, list is gone (but ugly whitspaces remain)
+    assert.strictEqual(editor.childElementCount, 0);
+    assert.true(editor.textContent.includes('beer pong')); //content remains, list is gone (but ugly whitspaces remain)
   });
 
   test('Inserting a list, press undo, insert again, press undo does not remove list content [UL]', async function (assert) {
@@ -1208,22 +1201,22 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
 
     const list = editor.firstElementChild;
     let li = list.firstElementChild;
-    assert.equal(li.textContent, 'beer pong'); //we have a list
+    assert.strictEqual(li.textContent, 'beer pong'); //we have a list
 
     await click('[data-test-button-id="undo-button"]');
 
-    assert.equal(editor.childElementCount, 0);
-    assert.equal(editor.textContent, 'beer pong'); //content remains, list is gone
+    assert.strictEqual(editor.childElementCount, 0);
+    assert.strictEqual(editor.textContent, 'beer pong'); //content remains, list is gone
 
     await click('[data-test-button-id="unordered-list"]');
 
     li = list.firstElementChild;
-    assert.equal(li.textContent, 'beer pong'); //we have a list
+    assert.strictEqual(li.textContent, 'beer pong'); //we have a list
 
     await click('[data-test-button-id="undo-button"]');
 
-    assert.equal(editor.childElementCount, 0);
-    assert.equal(editor.textContent.includes('beer pong'), true); //content remains, list is gone (but ugly whitspaces remain)
+    assert.strictEqual(editor.childElementCount, 0);
+    assert.true(editor.textContent.includes('beer pong')); //content remains, list is gone (but ugly whitspaces remain)
   });
 
   test('Undo a list item, with previous operation nesting it', async function (assert) {
@@ -1252,13 +1245,13 @@ module.skip('Integration | Toolbar | list-insertion', function (hooks) {
     await click('[data-test-button-id="insert-indent"]');
 
     const mergedLi = editor.children[0].children[0];
-    assert.equal(mergedLi.childElementCount, 1); //sublist ok
+    assert.strictEqual(mergedLi.childElementCount, 1); //sublist ok
 
     await click('[data-test-button-id="undo-button"]');
     await click('[data-test-button-id="undo-button"]'); //some implentation issue, forces us to trigger twice
 
     const restoredList = editor.children[0];
-    assert.equal(restoredList.childElementCount, 3);
-    assert.equal(restoredList.children[1].textContent, 'testpong');
+    assert.strictEqual(restoredList.childElementCount, 3);
+    assert.strictEqual(restoredList.children[1].textContent, 'testpong');
   });
 });

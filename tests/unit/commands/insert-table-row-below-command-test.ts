@@ -3,74 +3,77 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import InsertTableRowBelowCommand from '@lblod/ember-rdfa-editor/commands/insert-table-row-below-command';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
-module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
-  const ctx = new ModelTestContext();
-  let command: InsertTableRowBelowCommand;
+module(
+  'Unit | commands | insert-table-row-below-command-test',
+  function (hooks) {
+    const ctx = new ModelTestContext();
+    let command: InsertTableRowBelowCommand;
 
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new InsertTableRowBelowCommand(ctx.model);
-  });
+    hooks.beforeEach(() => {
+      ctx.reset();
+      command = new InsertTableRowBelowCommand(ctx.model);
+    });
 
-  test('inserts below last row (empty td)', (assert) => {
-    // language=XML
-    const {
-      root: initial,
-      elements: { bottomRight },
-    } = vdom`
+    test('inserts below last row (empty td)', function (assert) {
+      // language=XML
+      const {
+        root: initial,
+        elements: { bottomRight },
+      } = vdom`
       <modelRoot>
         <table>
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td __id="bottomRight"></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td __id="bottomRight"><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
       </modelRoot>
     `;
 
-    // language=XML
-    const { root: expected } = vdom`
+      // language=XML
+      const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInNode(bottomRight, 0, 0);
-    ctx.model.selectRange(range);
+      ctx.model.fillRoot(initial);
+      const range = ModelRange.fromInNode(bottomRight, 0, 0);
+      ctx.model.selectRange(range);
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-  });
+      command.execute();
+      assert.true(ctx.model.rootModelNode.sameAs(expected));
+    });
 
-  test('inserts below last row (td with text node)', (assert) => {
-    // language=XML
-    const {
-      root: initial,
-      textNodes: { bottomRight },
-    } = vdom`
+    test('inserts below last row (td with text node)', function (assert) {
+      // language=XML
+      const {
+        root: initial,
+        textNodes: { bottomRight },
+      } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -89,8 +92,8 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
       </modelRoot>
     `;
 
-    // language=XML
-    const { root: expected } = vdom`
+      // language=XML
+      const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -105,28 +108,28 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
               </td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
           </tbody>
         </table>
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInTextNode(bottomRight, 1, 1);
-    ctx.model.selectRange(range);
+      ctx.model.fillRoot(initial);
+      const range = ModelRange.fromInTextNode(bottomRight, 1, 1);
+      ctx.model.selectRange(range);
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-  });
+      command.execute();
+      assert.true(ctx.model.rootModelNode.sameAs(expected));
+    });
 
-  test('inserts row in the middle (empty td)', (assert) => {
-    // language=XML
-    const {
-      root: initial,
-      elements: { middleRight },
-    } = vdom`
+    test('inserts row in the middle (empty td)', function (assert) {
+      // language=XML
+      const {
+        root: initial,
+        elements: { middleRight },
+      } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -147,8 +150,8 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
       </modelRoot>
     `;
 
-    // language=XML
-    const { root: expected } = vdom`
+      // language=XML
+      const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -161,8 +164,8 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
               <td></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
               <td></td>
@@ -173,20 +176,20 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInNode(middleRight, 0, 0);
-    ctx.model.selectRange(range);
+      ctx.model.fillRoot(initial);
+      const range = ModelRange.fromInNode(middleRight, 0, 0);
+      ctx.model.selectRange(range);
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-  });
+      command.execute();
+      assert.true(ctx.model.rootModelNode.sameAs(expected));
+    });
 
-  test('inserts row in the middle (td with text node)', (assert) => {
-    // language=XML
-    const {
-      root: initial,
-      textNodes: { middleRight },
-    } = vdom`
+    test('inserts row in the middle (td with text node)', function (assert) {
+      // language=XML
+      const {
+        root: initial,
+        textNodes: { middleRight },
+      } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -209,8 +212,8 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
       </modelRoot>
     `;
 
-    // language=XML
-    const { root: expected } = vdom`
+      // language=XML
+      const { root: expected } = vdom`
       <modelRoot>
         <table>
           <tbody>
@@ -225,8 +228,8 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
               </td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
+              <td><text>${INVISIBLE_SPACE}</text></td>
             </tr>
             <tr>
               <td></td>
@@ -237,11 +240,12 @@ module('Unit | commands | insert-table-row-below-command-test', (hooks) => {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInTextNode(middleRight, 1, 1);
-    ctx.model.selectRange(range);
+      ctx.model.fillRoot(initial);
+      const range = ModelRange.fromInTextNode(middleRight, 1, 1);
+      ctx.model.selectRange(range);
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-  });
-});
+      command.execute();
+      assert.true(ctx.model.rootModelNode.sameAs(expected));
+    });
+  }
+);

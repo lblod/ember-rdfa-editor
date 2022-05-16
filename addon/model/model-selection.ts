@@ -14,6 +14,7 @@ import { nodeIsElementOfType } from '@lblod/ember-rdfa-editor/model/util/predica
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
+import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
 /**
  * Utility interface describing a selection with an non-null anchor and focus
@@ -35,6 +36,7 @@ export default class ModelSelection {
 
   private _ranges: ModelRange[];
   private _isRightToLeft: boolean;
+  private _activeMarks: MarkSet;
 
   /**
    * Utility type guard to check if a selection has and anchor and a focus, as without them
@@ -50,6 +52,7 @@ export default class ModelSelection {
   constructor() {
     this._ranges = [];
     this._isRightToLeft = false;
+    this._activeMarks = new MarkSet();
   }
 
   /**
@@ -115,6 +118,26 @@ export default class ModelSelection {
     this._isRightToLeft = value;
   }
 
+  get activeMarks(): MarkSet {
+    return this._activeMarks;
+  }
+
+  set activeMarks(value: MarkSet) {
+    this._activeMarks = value.clone();
+  }
+
+  addMark(mark: Mark) {
+    this.activeMarks.add(mark);
+  }
+
+  removeMarkByName(markName: string) {
+    for (const mark of this.activeMarks) {
+      if (mark.name === markName) {
+        this.activeMarks.delete(mark);
+      }
+    }
+  }
+
   /**
    * Append a range to this selection's ranges.
    * @param range
@@ -134,6 +157,7 @@ export default class ModelSelection {
   selectRange(range: ModelRange, rightToLeft = false) {
     this.clearRanges();
     this.addRange(range);
+    this.activeMarks = range.getMarks();
     this._isRightToLeft = rightToLeft;
   }
 
@@ -280,17 +304,7 @@ export default class ModelSelection {
   }
 
   hasMark(markName: string): boolean {
-    if (ModelSelection.isWellBehaved(this)) {
-      const range = this.lastRange;
-      if (range) {
-        for (const mark of range.getMarks()) {
-          if (mark.name === markName) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
+    return this.activeMarks.hasMarkName(markName);
   }
 
   /**

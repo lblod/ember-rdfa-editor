@@ -31,12 +31,17 @@
   {{/if}}
 
   <div class='say-container__main'>
+    {{#if this.editorLoading}}
+      <AuLoader />
+    {{/if}}
+
     <div
       class='say-editor
         {{if @editorOptions.showRdfa "rdfa-annotations"}}
         {{if @editorOptions.showRdfaHighlight "rdfa-annotations-highlight"}}
         {{if @editorOptions.showRdfaHover "rdfa-annotations-hover"}}
-        {{if this.showRdfaBlocks "show-rdfa-blocks"}}'
+        {{if this.showRdfaBlocks "show-rdfa-blocks"}}
+        {{if this.editorLoading "au-u-hidden-visually"}}'
     >
       <div class='say-editor__paper'>
         <Ce::ContentEditable
@@ -49,17 +54,25 @@
 
     <div class='say-container__aside'>
       <div class='say-editor-hints'>
+        {{#if this.insertSidebarWidgets.length}}
+          <Rdfa::PluginWrapper @title='Invoegen'>
+            {{#each this.insertSidebarWidgets as |widget|}}
+              {{component
+                widget.componentName
+                controller=widget.controller
+                plugin=widget.plugin
+              }}
+            {{/each}}
+          </Rdfa::PluginWrapper>
+        {{/if}}
         <ul class='say-editor-hints__list'>
           {{#each this.sidebarWidgets as |widget|}}
             <li class='say-editor-hints__list-item'>
-              <div class='say-card'>
-                {{! Todo: remove this div once it is over }}
-                {{component
-                  widget.componentName
-                  controller=widget.controller
-                  plugin=widget.plugin
-                }}
-              </div>
+              {{component
+                widget.componentName
+                controller=widget.controller
+                plugin=widget.plugin
+              }}
             </li>
           {{/each}}
         </ul>

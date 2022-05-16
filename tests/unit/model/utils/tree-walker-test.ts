@@ -6,8 +6,8 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 
-module('Unit | model | utils | tree-walker-test', () => {
-  test('finds root when its the only node and position starts there', (assert) => {
+module('Unit | model | utils | tree-walker-test', function () {
+  test('finds root when its the only node and position starts there', function (assert) {
     const root = new ModelElement('div', { debugInfo: 'root' });
 
     const range = ModelRange.fromPaths(root, [], []);
@@ -17,7 +17,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0], root);
   });
-  test('finds the single node when from and to are the same position', (assert) => {
+  test('finds the single node when from and to are the same position', function (assert) {
     const root = new ModelElement('div', { debugInfo: 'root' });
     const childNode = new ModelElement('div', { debugInfo: 'child' });
     root.addChild(childNode);
@@ -30,7 +30,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result[0], childNode);
   });
 
-  test('finds all nodes when starting from root', (assert) => {
+  test('finds all nodes when starting from root', function (assert) {
     const root = new ModelElement('div', { debugInfo: 'root' });
     const childNode = new ModelElement('div', { debugInfo: 'child' });
     root.addChild(childNode);
@@ -43,7 +43,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result[0], root);
     assert.strictEqual(result[1], childNode);
   });
-  test('finds all nodes when starting from root complex', (assert) => {
+  test('finds all nodes when starting from root complex', function (assert) {
     const root = new ModelElement('div', { debugInfo: 'root' });
     const c0 = new ModelElement('span', { debugInfo: 'c0' });
     const c1 = new ModelElement('span', { debugInfo: 'c1' });
@@ -65,7 +65,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result[3], c1);
     assert.strictEqual(result[4], c11);
   });
-  test('stops at end node', (assert) => {
+  test('stops at end node', function (assert) {
     const root = new ModelElement('div', { debugInfo: 'root' });
     const c0 = new ModelElement('span', { debugInfo: 'c0' });
     const c1 = new ModelElement('span', { debugInfo: 'c1' });
@@ -83,7 +83,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result[0], c0);
     assert.strictEqual(result[1], c01);
   });
-  test('stops at end node 2', (assert) => {
+  test('stops at end node 2', function (assert) {
     const root = new ModelElement('div', { debugInfo: 'root' });
     const c0 = new ModelElement('span', { debugInfo: 'c0' });
     const c1 = new ModelElement('span', { debugInfo: 'c1' });
@@ -102,7 +102,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result[0], c01);
   });
 
-  test('stops at end node 3', (assert) => {
+  test('stops at end node 3', function (assert) {
     const root = new ModelElement('div', { debugInfo: 'root' });
     const c0 = new ModelElement('span', { debugInfo: 'c0' });
     const c1 = new ModelElement('span', { debugInfo: 'c1' });
@@ -122,7 +122,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result[1], c1);
   });
 
-  test('stops at end node 4', (assert) => {
+  test('stops at end node 4', function (assert) {
     const root = new ModelElement('div', { debugInfo: 'root' });
     const c0 = new ModelElement('span', { debugInfo: 'c0' });
     const c1 = new ModelElement('span', { debugInfo: 'c1' });
@@ -145,7 +145,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result[2], c11);
   });
 
-  test('stops at end node 5', (assert) => {
+  test('stops at end node 5', function (assert) {
     const root = new ModelElement('p', { debugInfo: 'root' });
 
     const t1 = new ModelText(`a paragraph with Lorem ipsum Itaque consequatur
@@ -180,7 +180,7 @@ module('Unit | model | utils | tree-walker-test', () => {
   //        span
   //           #te[]xt
   //span
-  test('stops at end node with br elements', (assert) => {
+  test('stops at end node with br elements', function (assert) {
     // language=XML
     const {
       textNodes: { startRange, endRange },
@@ -246,7 +246,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result2.length, 1);
     assert.strictEqual(result2[result2.length - 1], endRange);
   });
-  test('Does not visit children when descend false', (assert) => {
+  test('Does not visit children when descend false', function (assert) {
     const root = new ModelElement('div', { debugInfo: 'root' });
 
     const s0 = new ModelElement('span');
@@ -278,7 +278,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result[3], s3);
   });
 
-  test('only finds one textNode', (assert) => {
+  test('only finds one textNode', function (assert) {
     // language=XML
     const {
       root,
@@ -296,7 +296,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0], node0);
   });
-  test('walks tree in document order', (assert) => {
+  test('walks tree in document order', function (assert) {
     // language=XML
     const {
       textNodes: { n0, n1, n5, n6 },
@@ -336,7 +336,7 @@ module('Unit | model | utils | tree-walker-test', () => {
     assert.strictEqual(result[5], n5);
     assert.strictEqual(result[6], n6);
   });
-  test('stops at end', (assert) => {
+  test('stops at end', function (assert) {
     // language=XML
     const {
       root: initial,

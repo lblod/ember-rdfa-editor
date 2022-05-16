@@ -12,6 +12,7 @@ import {
   NotImplementedError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
 type Bias = 'left' | 'right' | 'center';
 
@@ -31,15 +32,20 @@ export default class SelectionReader
     const ranges = [];
     const result = new ModelSelection();
 
+    let commonMarks: MarkSet | null = null;
     for (let i = 0; i < from.rangeCount; i++) {
       const range = from.getRangeAt(i);
       const modelRange = this.readDomRange(range);
       if (modelRange) {
+        commonMarks = commonMarks
+          ? commonMarks.intersection(modelRange.getMarks())
+          : modelRange.getMarks();
         ranges.push(modelRange);
       }
     }
     result.ranges = ranges;
     result.isRightToLeft = SelectionReader.isReverseSelection(from);
+    result.activeMarks = commonMarks || new MarkSet();
 
     return result;
   }

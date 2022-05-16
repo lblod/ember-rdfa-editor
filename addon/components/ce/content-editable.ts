@@ -13,11 +13,8 @@ import CutHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/cut-handl
 import CopyHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/copy-handler';
 import TabHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import TextInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/text-input-handler';
-import LumpNodeMovementObserver from '@lblod/ember-rdfa-editor/utils/ce/movement-observers/lump-node-movement-observer';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { IllegalAccessToRawEditor } from '@lblod/ember-rdfa-editor/utils/errors';
-import ArrowHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/arrow-handler';
 import IgnoreModifiersHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/ignore-modifiers-handler';
 import UndoHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/undo-handler';
 import FallbackInputHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/fallback-input-handler';
@@ -26,6 +23,7 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import SidewayArrowsHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/sideway-arrows-handler';
 
 interface FeatureService {
   isEnabled(key: string): boolean;
@@ -67,7 +65,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   copyHandler: InputHandler;
   pasteHandler: InputHandler;
 
-  _rawEditor: PernetRawEditor;
+  _rawEditor: RawEditor;
 
   /**
    * Element of the component. It is aliased to the rawEditor.rootNode.
@@ -85,7 +83,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * @property rawEditor
    * @type RawEditor
    */
-  get rawEditor(): PernetRawEditor {
+  get rawEditor(): RawEditor {
     if (!this._rawEditor) {
       throw new IllegalAccessToRawEditor();
     }
@@ -99,7 +97,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * @public
    */
   get inputHandlers(): InputHandler[] {
-    return this.externalHandlers.concat(this.defaultHandlers);
+    return this.defaultHandlers;
   }
 
   /**
@@ -111,28 +109,19 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @tracked defaultHandlers: InputHandler[];
 
   /**
-   * External input handlers.
-   * @property externalHandlers
-   * @type Array
-   * @private
-   */
-  externalHandlers: InputHandler[];
-
-  /**
    * @constructor
    */
   constructor(owner: unknown, args: ContentEditableArgs) {
     super(owner, args);
-    const rawEditor = new PernetRawEditor({ baseIRI: this.baseIRI });
-    rawEditor.registerMovementObserver(new LumpNodeMovementObserver());
+    const rawEditor = new RawEditor({ baseIRI: this.baseIRI });
 
     this._rawEditor = rawEditor;
     this.defaultHandlers = [
-      new ArrowHandler({ rawEditor }),
       new EnterHandler({ rawEditor }),
       new BackspaceHandler({ rawEditor }),
       new TabHandler({ rawEditor }),
       new TextInputHandler({ rawEditor }),
+      new SidewayArrowsHandler({ rawEditor }),
     ];
     const allowBrowserDelete = this.features.isEnabled('editorBrowserDelete');
     this.logger = createLogger(this.constructor.name);
@@ -147,10 +136,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       new EscapeHandler({ rawEditor }),
       new FallbackInputHandler({ rawEditor })
     );
-
-    this.externalHandlers = this.args.externalHandlers
-      ? this.args.externalHandlers
-      : [];
     this.cutHandler = new CutHandler({ rawEditor });
     this.copyHandler = new CopyHandler({ rawEditor });
     this.pasteHandler = new PasteHandler({ rawEditor });
@@ -168,8 +153,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @action
   insertedEditorElement(element: HTMLElement) {
     this.rawEditor.rootNode = element;
-    this.rawEditor.updateRichNode();
-    this.rawEditor.setCurrentPosition(0);
     if (this.args.rawEditorInit) {
       this.args.rawEditorInit(this.rawEditor);
     }

@@ -8,7 +8,7 @@ import {
   MisbehavedSelectionError,
   UnsupportedManipulationError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
 
 export type TextHandlerManipulation = InsertTextIntoRange;
@@ -37,7 +37,7 @@ export interface TextInputPlugin extends InputPlugin {
 export default class TextInputHandler extends InputHandler {
   plugins: Array<TextInputPlugin>;
 
-  constructor({ rawEditor }: { rawEditor: PernetRawEditor }) {
+  constructor({ rawEditor }: { rawEditor: RawEditor }) {
     super(rawEditor);
     this.plugins = [
       new RdfaTextInputPlugin(),

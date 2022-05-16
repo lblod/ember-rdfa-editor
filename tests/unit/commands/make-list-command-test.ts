@@ -4,7 +4,7 @@ import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 
-module('Unit | commands | make-list-command', (hooks) => {
+module('Unit | commands | make-list-command', function (hooks) {
   const ctx = new ModelTestContext();
   let command: MakeListCommand;
 
@@ -13,7 +13,7 @@ module('Unit | commands | make-list-command', (hooks) => {
     command = new MakeListCommand(ctx.model);
   });
 
-  test('adds list in an empty document', (assert) => {
+  test('adds list in an empty document', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot/>
@@ -23,7 +23,7 @@ module('Unit | commands | make-list-command', (hooks) => {
     const { root: expected } = vdom`
       <modelRoot>
         <ul>
-          <li></li>
+          <li><text></text></li>
         </ul>
       </modelRoot>
     `;
@@ -36,7 +36,7 @@ module('Unit | commands | make-list-command', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('adds list in a document with only a new line', (assert) => {
+  test('adds list in a document with only a new line', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
@@ -49,7 +49,7 @@ module('Unit | commands | make-list-command', (hooks) => {
       <modelRoot>
         <text>${'\n'}</text>
         <ul>
-          <li></li>
+          <li><text></text></li>
         </ul>
       </modelRoot>
     `;
@@ -62,7 +62,7 @@ module('Unit | commands | make-list-command', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('creates list from lines of text', (assert) => {
+  test('creates list from lines of text', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
@@ -103,7 +103,7 @@ module('Unit | commands | make-list-command', (hooks) => {
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
-  test('creates list from text before list', (assert) => {
+  test('creates list from text before list', function (assert) {
     // language=XML
     const {
       root: initial,

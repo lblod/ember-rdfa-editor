@@ -5,8 +5,8 @@ import SplitOperation from '@lblod/ember-rdfa-editor/model/operations/split-oper
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
-module('Unit | model | operations | split-operation-test', () => {
-  test("doesn't split root", (assert) => {
+module('Unit | model | operations | split-operation-test', function () {
+  test("doesn't split root", function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
@@ -27,7 +27,7 @@ module('Unit | model | operations | split-operation-test', () => {
     assert.true(resultRange.sameAs(range));
   });
 
-  test("doesn't split root", (assert) => {
+  test("doesn't split root with content", function (assert) {
     // language=XML
     const {
       root: initial,
@@ -53,7 +53,7 @@ module('Unit | model | operations | split-operation-test', () => {
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(range));
   });
-  test('splits an element', (assert) => {
+  test('splits an element', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -89,7 +89,7 @@ module('Unit | model | operations | split-operation-test', () => {
       )
     );
   });
-  test('only splits text when configured', (assert) => {
+  test('only splits text when configured', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -119,7 +119,7 @@ module('Unit | model | operations | split-operation-test', () => {
     assert.true(initial.sameAs(expected));
     assert.true(resultRange.sameAs(range));
   });
-  test('uncollapsed splits both ends', (assert) => {
+  test('uncollapsed splits both ends', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -157,7 +157,7 @@ module('Unit | model | operations | split-operation-test', () => {
     );
   });
 
-  test('uncollapsed over multiple nodessplits both ends', (assert) => {
+  test('uncollapsed over multiple nodessplits both ends', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -203,7 +203,7 @@ module('Unit | model | operations | split-operation-test', () => {
     );
   });
 
-  test('uncollapsed over multiple nodes and levels splits both ends', (assert) => {
+  test('uncollapsed over multiple nodes and levels splits both ends', function (assert) {
     // language=XML
     const {
       root: initial,
