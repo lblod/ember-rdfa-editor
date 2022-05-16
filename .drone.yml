@@ -15,6 +15,18 @@ steps:
   image: danlynn/ember-cli:3.28.2
   commands:
   - npm run test:ember
+- name: precompile
+  image: danlynn/ember-cli:3.28.2
+  commands:
+  - ember ts:precompile
+trigger:
+  event:
+    - pull_request
+---
+kind: pipeline
+type: docker
+name: verify-build
+steps:
 - name: build-dry-run
   image: plugins/docker
   settings:
