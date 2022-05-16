@@ -26,7 +26,7 @@ export default class OperationAlgorithms {
         mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
       };
     }
-    debugger;
+    
     range.normalize();
 
     let splitStart = false;

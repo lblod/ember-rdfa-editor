@@ -29,41 +29,7 @@ export default class RemoveOperation extends Operation {
     this._nodes = value;
   }
 
-  execute(): OperationResult {
-    let overwrittenNodes: ModelNode[];
-    let resultMapper: RangeMapper;
-    let _markCheckNodes: ModelNode[] = [];
-
-    if (!this.nodes.length) {
-      const { mapper, removedNodes } = OperationAlgorithms.remove(this.range);
-      overwrittenNodes = removedNodes;
-      resultMapper = mapper;
-    } else {
-      const insertionResult = OperationAlgorithms.insert(
-        this.range,
-        ...this.nodes
-      );
-      overwrittenNodes = insertionResult.overwrittenNodes;
-      _markCheckNodes = insertionResult._markCheckNodes;
-      resultMapper = insertionResult.mapper;
-    }
-    const defaultRange = resultMapper.mapRange(this.range);
-    this.emit(
-      new ContentChangedEvent({
-        owner: CORE_OWNER,
-        payload: {
-          type: 'insert',
-          oldRange: this.range,
-          newRange: defaultRange,
-          insertedNodes: this.nodes,
-          overwrittenNodes,
-          _markCheckNodes,
-        },
-      })
-    );
-    return {
-      defaultRange,
-      mapper: resultMapper,
-    };
+  execute(): void {
+    
   }
 }
