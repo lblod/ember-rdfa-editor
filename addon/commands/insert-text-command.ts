@@ -1,54 +1,68 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelElement from '../model/model-element';
 import { logExecute } from '../utils/logging-utils';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
-export default class InsertTextCommand extends Command {
+export interface InsertTextCommandArgs {
+  text: string;
+  range: ModelRange | null;
+  marks: MarkSet;
+  needsToWrite?: boolean;
+}
+
+export default class InsertTextCommand
+  implements Command<InsertTextCommandArgs, void>
+{
   name = 'insert-text';
 
-  constructor(model: Model) {
-    super(model);
+  canExecute(): boolean {
+    return true;
   }
 
   @logExecute
   execute(
-    text: string,
-    range: ModelRange | null = this.model.selection.lastRange,
-    marks: MarkSet = range === this.model.selection.lastRange
-      ? this.model.selection.activeMarks
-      : range?.getMarks() || new MarkSet()
+    { transaction }: CommandContext,
+    { text, marks, range, needsToWrite = true }: InsertTextCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
 
     const newLines = text.matchAll(/\n/g);
-    this.model.change((mutator) => {
-      let resultRange = range;
-      if (newLines) {
-        let previousIndex = 0;
-        for (const newLineMatch of newLines) {
-          const position = newLineMatch.index!;
-          const line = text.substring(previousIndex, position);
-          resultRange = mutator.insertText(resultRange, line, marks);
-          resultRange.collapse(false);
-          resultRange = mutator.insertNodes(
-            resultRange,
-            new ModelElement('br')
-          );
-          resultRange.collapse(false);
-          previousIndex = position + 1;
-        }
-        const lastLine = text.substring(previousIndex, text.length);
-        resultRange = mutator.insertText(resultRange, lastLine, marks);
-      } else {
-        resultRange = mutator.insertText(range, text, marks);
+    let resultRange = range;
+    if (newLines) {
+      let previousIndex = 0;
+      for (const newLineMatch of newLines) {
+        const position = newLineMatch.index!;
+        const line = text.substring(previousIndex, position);
+        resultRange = transaction.insertText({
+          range: resultRange,
+          text: line,
+          marks,
+        });
+        resultRange.collapse(false);
+        resultRange = transaction.insertNodes(
+          resultRange,
+          new ModelElement('br')
+        );
+        resultRange.collapse(false);
+        previousIndex = position + 1;
       }
-      resultRange.collapse(false);
-      this.model.selectRange(resultRange);
-    });
+      const lastLine = text.substring(previousIndex, text.length);
+      resultRange = transaction.insertText({
+        range: resultRange,
+        text: lastLine,
+        marks,
+      });
+    } else {
+      resultRange = transaction.insertText({ range, text, marks });
+    }
+    resultRange.collapse(false);
+    transaction.selectRange(resultRange);
+    transaction.needsToWrite = needsToWrite;
   }
 }

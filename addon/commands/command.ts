@@ -1,33 +1,19 @@
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import {
-  createLogger,
-  Logger,
-} from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
+import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 
-/**
- * Commands are the only things that are allowed to modify the model.
- * TODO: Currently this restriction is not enforced yet.
- * They need to be registered with {@link RawEditor.registerCommand()} before they
- * can be executed with {@link RawEditor.executeCommand()}.
- */
-export default abstract class Command<
-  A extends unknown[] = unknown[],
-  R = void
-> {
-  abstract name: string;
-  protected model: Model;
-  protected logger: Logger;
-  createSnapshot: boolean;
+export type CommandMap = {
+  'insert-text': InsertTextCommand;
+};
+export type CommandName = keyof CommandMap;
 
-  protected constructor(model: Model, createSnapshot = true) {
-    this.model = model;
-    this.createSnapshot = createSnapshot;
-    this.logger = createLogger(`command:${this.constructor.name}`);
-  }
+export interface CommandContext {
+  transaction: Transaction;
+}
 
-  canExecute(..._args: A): boolean {
-    return true;
-  }
+export default interface Command<A, R> {
+  name: string;
 
-  abstract execute(...args: A): R;
+  canExecute(context: CommandContext, args: A): boolean;
+
+  execute(context: CommandContext, args: A): R;
 }

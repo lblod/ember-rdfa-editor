@@ -19,7 +19,6 @@ export class EditorInputHandler implements InputHandler {
   afterInput(event: InputEvent): void {}
 
   beforeInput(event: InputEvent): void {
-    const transaction = new Transaction(this.editor.state);
     switch (event.inputType) {
       case 'insertText': {
         event.preventDefault();
@@ -28,8 +27,11 @@ export class EditorInputHandler implements InputHandler {
           this.editor.view,
           event.getTargetRanges()[0]
         )!;
-        transaction.insertText({ range: insertRange, text: event.data || '' });
-        transaction.needsToWrite = true;
+        this.editor.executeCommand("insert-text", {
+          range: insertRange,
+          text: event.data || ''
+
+        })
         break;
       }
       case 'insertLineBreak':
@@ -41,7 +43,6 @@ export class EditorInputHandler implements InputHandler {
       default:
         break;
     }
-    updateState(this.editor, transaction);
   }
 
   beforeSelectionChange(event: Event): void {}
@@ -74,7 +75,6 @@ function updateState(editor: Editor, transaction: Transaction) {
   const finalTransaction = runTransactionByPlugins(transaction);
   const newState = finalTransaction.apply();
   editor.state = newState;
-  console.log(finalTransaction);
   if (finalTransaction.needsToWrite) {
     editor.view.update(newState);
   }

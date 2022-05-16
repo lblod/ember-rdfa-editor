@@ -12,6 +12,7 @@ import { getWindowSelection } from '../utils/dom-helpers';
 import { EditorPlugin } from '../utils/editor-plugin';
 import { NotImplementedError } from '../utils/errors';
 import { View } from './view';
+import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
 
 interface TextInsertion {
   range: ModelRange;
@@ -33,6 +34,7 @@ export default class Transaction {
     this.operations = [];
     this.rangeMapper = new RangeMapper();
   }
+
   setPlugins(plugins: EditorPlugin[]): void {
     this.workingCopy.plugins = plugins;
   }
@@ -63,15 +65,19 @@ export default class Transaction {
     return this.workingCopy;
   }
 
-  insertText({ range, text, marks }: TextInsertion) {
+  insertText({ range, text, marks }: TextInsertion): ModelRange {
     const operation = new InsertTextOperation(
       undefined,
       range.clone(this.workingCopy.document),
       text,
       marks || new MarkSet()
     );
-    operation.execute();
-    console.log(this.workingCopy.document.toXml())
+    return operation.execute().defaultRange;
+  }
+
+  insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
+    const op = new InsertOperation(undefined, range, ...nodes);
+    return op.execute().defaultRange;
   }
 
   setSelection(selection: ModelSelection) {
@@ -80,5 +86,9 @@ export default class Transaction {
       this.needsToWrite = true;
     }
     this.workingCopy.selection = clone;
+  }
+
+  selectRange(range: ModelRange): void {
+    this.workingCopy.selection.selectRange(range);
   }
 }
