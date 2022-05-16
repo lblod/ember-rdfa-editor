@@ -169,7 +169,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       )
     ) {
       const node = manipulation.node;
-      return this.isRdfaNode((node as Element));
+      return this.isRdfaNode(node as Element);
     }
 
     return false;
