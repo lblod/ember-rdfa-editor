@@ -15,16 +15,21 @@ import NodeView, {
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import HtmlAdjacentTextWriter from './html-adjacent-text-writer';
+import { TextOrElement } from '../util/types';
+import ArrayUtils from '../util/array-utils';
 
 /**
  * Top-level {@link Writer} for HTML documents.
  */
 export default class HtmlWriter {
   private htmlTextWriter: HtmlTextWriter;
+  private htmlAdjacentTextWriter: HtmlAdjacentTextWriter;
   private htmlElementWriter: HtmlElementWriter;
 
   constructor(private model: Model) {
     this.htmlTextWriter = new HtmlTextWriter(model);
+    this.htmlAdjacentTextWriter = new HtmlAdjacentTextWriter(model);
     this.htmlElementWriter = new HtmlElementWriter(model);
   }
 
@@ -42,28 +47,29 @@ export default class HtmlWriter {
         view = this.createElementView(modelNode);
       }
       const childViews = [];
+      let adjacentTextNodes: ModelText[] = [];
+
       for (const child of modelNode.children) {
-        childViews.push(this.write(child));
+        if (ModelNode.isModelText(child)) {
+          adjacentTextNodes.push(child);
+        } else {
+          if (adjacentTextNodes.length > 0) {
+            // process adjacent text nodes
+            childViews.push(...this.processTextViews(adjacentTextNodes));
+            adjacentTextNodes = [];
+          }
+          childViews.push(this.write(child).viewRoot);
+        }
+      }
+      if (adjacentTextNodes.length > 0) {
+        childViews.push(...this.processTextViews(adjacentTextNodes));
       }
       if (modelNode.isDirty('content')) {
         if (isElement(view.viewRoot)) {
-          view.viewRoot.replaceChildren(
-            ...childViews.map((view) => view.viewRoot)
-          );
+          view.viewRoot.replaceChildren(...childViews);
         } else {
           throw new ModelError('Model element with non-element viewroot');
         }
-      }
-      resultView = view;
-    } else if (ModelNode.isModelText(modelNode)) {
-      let view = this.getView(modelNode);
-      if (view) {
-        if (!isTextView(view)) {
-          throw new ModelError('ModelText with non-text view');
-        }
-        view = this.updateTextView(modelNode, view);
-      } else {
-        view = this.createTextView(modelNode);
       }
       resultView = view;
     } else {
@@ -95,25 +101,48 @@ export default class HtmlWriter {
     return view;
   }
 
-  private createTextView(modelText: ModelText): NodeView {
-    const view = this.htmlTextWriter.write(modelText);
-    this.model.registerNodeView(modelText, view);
-    return view;
-  }
-
-  private updateTextView(modelText: ModelText, view: TextView): NodeView {
-    if (modelText.isDirty('node') || modelText.isDirty('mark')) {
-      const newView = this.createTextView(modelText);
-      view.viewRoot.replaceWith(newView.viewRoot);
-      return newView;
-    } else if (modelText.isDirty('content')) {
-      view.contentRoot.replaceData(
-        0,
-        view.contentRoot.length,
-        modelText.content
-      );
+  private processTextViews(modelTexts: ModelText[]): Set<Node> {
+    const result: Set<Node> = new Set();
+    if (
+      modelTexts.some(
+        (modelText) =>
+          modelText.isDirty('node') ||
+          modelText.isDirty('mark') ||
+          !this.getView(modelText)
+      )
+    ) {
+      const textViews = this.htmlAdjacentTextWriter.write(modelTexts);
+      modelTexts.forEach((modelText, i) => {
+        const view = this.getView(modelText);
+        if (view) {
+          view.viewRoot = textViews[i].viewRoot;
+          view.contentRoot = textViews[i].contentRoot;
+          result.add(view.viewRoot);
+        } else {
+          this.model.registerNodeView(modelText, textViews[i]);
+          result.add(textViews[i].viewRoot);
+        }
+      });
+      //apply html-adjacent-text-writer
+    } else {
+      modelTexts.forEach((modelText) => {
+        if (modelText.isDirty('content')) {
+          const view = this.getView(modelText);
+          if (view) {
+            if (!isTextView(view)) {
+              throw new ModelError('ModelText with non-text view');
+            }
+            view.contentRoot.replaceData(
+              0,
+              view.contentRoot.length,
+              modelText.content
+            );
+            result.add(view.viewRoot);
+          }
+        }
+      });
     }
-    return view;
+    return result;
   }
 
   swapElement(node: HTMLElement, replacement: HTMLElement) {

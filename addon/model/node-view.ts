@@ -9,7 +9,7 @@ import {
 
 export default interface NodeView {
   viewRoot: Node;
-  contentRoot: Node;
+  contentRoot: Node | Text[];
 }
 
 export interface ElementView extends NodeView {
@@ -18,12 +18,21 @@ export interface ElementView extends NodeView {
 }
 
 export function isElementView(view: NodeView): view is ElementView {
-  return isElement(view.viewRoot) && isElement(view.contentRoot);
+  return (
+    isElement(view.viewRoot) &&
+    view.contentRoot instanceof Node &&
+    isElement(view.contentRoot)
+  );
 }
 
 export interface TextView extends NodeView {
   viewRoot: TextOrElement;
   contentRoot: Text;
+}
+
+export interface AdjacentTextView {
+  viewRoot: TextOrElement;
+  contentRoot: Text[];
 }
 
 export function isTextView(view: NodeView): view is TextView {
