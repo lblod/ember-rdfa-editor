@@ -117,11 +117,17 @@ export default class HtmlWriter {
       const textViews = this.htmlAdjacentTextWriter.write(modelTexts);
       modelTexts.forEach((modelText, i) => {
         const view = this.getView(modelText);
+
         if (view) {
+          if (!isTextView(view)) {
+            throw new ModelError('ModelText with non-text view');
+          }
           view.viewRoot = textViews[i].viewRoot;
           if (modelText.isDirty('content')) {
+            // view.contentRoot.replaceWith(textViews[i].contentRoot);
             view.contentRoot = textViews[i].contentRoot;
           }
+          this.model.registerNodeView(modelText, view);
           result.add(view.viewRoot);
         } else {
           this.model.registerNodeView(modelText, textViews[i]);
