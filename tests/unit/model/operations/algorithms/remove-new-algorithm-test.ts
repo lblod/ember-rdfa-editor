@@ -192,5 +192,76 @@ module(
       OperationAlgorithms.removeNew(new ModelRange(start, end));
       assert.true(initial.sameAs(expected));
     });
+    /* 
+      test5
+      ==========================
+      <modelRoot>
+        <span>
+          <text __id="text1">te[s]t</text>
+          <text __id="text2">test[2]</text>
+          <text __id="text3">test3</text>
+          <text __id="text4">[test4</text>
+          <text __id="text5">test5]</text>
+          <text __id="text6">test[6</text>
+          <text __id="text7">t]est7</text>
+        </span>
+      </modelRoot>
+
+      <modelRoot>
+        <span>
+          <text __id="text1">tet</text>
+          <text __id="text2">testtest3</text>
+          <text __id="text6">testest7</text>
+        </span>
+      </modelRoot>
+      
+    */
+    test('sibling tests', (assert) => {
+      const {
+        root: initial,
+        textNodes: { text1, text2, text4, text5, text6, text7 },
+      } = vdom`
+        <modelRoot>
+          <span>
+            <text __id="text1">test</text>
+            <text __id="text2">test2</text>
+            <text>test3</text>
+            <text __id="text4">test4</text>
+            <text __id="text5">test5</text>
+            <text __id="text6">test6</text>
+            <text __id="text7">test7</text>
+          </span>
+        </modelRoot>
+        `;
+
+      const { root: expected } = vdom`
+        <modelRoot>
+          <span>
+            <text __id="text1">tet</text>
+            <text __id="text2">testtest3</text>
+            <text __id="text6">testest7</text>
+          </span>
+        </modelRoot>
+        `;
+      
+      debugger;
+
+      const start1 = ModelPosition.fromInTextNode(text1, 2);
+      const end1 = ModelPosition.fromInTextNode(text1, 3);
+      OperationAlgorithms.removeNew(new ModelRange(start1, end1));
+
+      const start2 = ModelPosition.fromInTextNode(text2, 3);
+      const end2 = ModelPosition.fromInTextNode(text2, 4);
+      OperationAlgorithms.removeNew(new ModelRange(start2, end2));
+      
+      const start4 = ModelPosition.fromInTextNode(text4, 0);
+      const end4 = ModelPosition.fromInTextNode(text5, 4);
+      OperationAlgorithms.removeNew(new ModelRange(start4, end4));
+
+      const start5 = ModelPosition.fromInTextNode(text6, 3);
+      const end5 = ModelPosition.fromInTextNode(text7, 1);
+      OperationAlgorithms.removeNew(new ModelRange(start5, end5));
+      // assert.true(initial.sameAs(expected));
+    });
   }
 );

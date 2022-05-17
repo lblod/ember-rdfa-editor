@@ -72,10 +72,11 @@ export default class OperationAlgorithms {
     });
 
     openingTagNodes.forEach((opNode) => {
-      const nodesToUnindent = (<ModelElement>opNode).children;
-      const i = 0;
+      const nodesToUnindent = (opNode as ModelElement).children;
       nodesToUnindent.forEach((node, index) => {
-        opNode.parent?.addChild(node, <number>opNode.index + index);
+        if(opNode.index){
+          opNode.parent?.addChild(node, opNode.index + index);
+        }
       });
       opNode.remove();
     });
@@ -93,8 +94,8 @@ export default class OperationAlgorithms {
     //merge logic... needs more work
     const after = range.start.nodeAfter();
     if (before && after) {
-      if (before.modelNodeType === 'TEXT' && after.modelNodeType === 'TEXT') {
-        (<ModelText>before).content += (<ModelText>after).content;
+      if (ModelNode.isModelText(before) && ModelNode.isModelText(after)) {
+        (<ModelText>before).content += after.content;
         after.remove();
       }
     }

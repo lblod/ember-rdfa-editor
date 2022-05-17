@@ -15,7 +15,7 @@ import GenTreeWalker, {
 import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
+import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import { range } from 'ix/asynciterable';
 
@@ -270,7 +270,7 @@ export default class ModelRange {
         : this.end.path.length;
 
     for (let i = 0; i < length; i++) {
-      if (this.start.path[i] == undefined || this.end.path[i] == undefined) {
+      if (this.start.path[i] === undefined || this.end.path[i] === undefined) {
         break;
       } else if (this.start.path[i] == this.end.path[i]) {
       } else if (this.start.path[i] > this.end.path[i]) {
@@ -303,8 +303,17 @@ export default class ModelRange {
     const startText = new ModelText('[===START===]');
     const endText = new ModelText('[===END===]');
 
-    OperationAlgorithms.insert(endRange, endText);
-    OperationAlgorithms.insert(startRange, startText);
+    new InsertOperation(
+      undefined,
+      endRange,
+      endText
+    ).execute();
+
+    new InsertOperation(
+      undefined,
+      startRange,
+      startText
+    ).execute();
 
     let modelString: string = root.toXml().innerHTML;
     modelString = modelString.replace(
