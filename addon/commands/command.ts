@@ -1,5 +1,6 @@
-import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
+import { Dispatch } from '../core/editor';
+import State from '../core/state';
 
 export type CommandMap = {
   'insert-text': InsertTextCommand;
@@ -7,7 +8,8 @@ export type CommandMap = {
 export type CommandName = keyof CommandMap;
 
 export interface CommandContext {
-  transaction: Transaction;
+  dispatch: Dispatch;
+  state: State;
 }
 
 export default interface Command<A, R> {

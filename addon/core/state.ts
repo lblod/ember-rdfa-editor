@@ -7,6 +7,15 @@ import Command, {
   CommandName,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
+import Transaction from './transaction';
+
+export interface StateArgs {
+  document: ModelElement;
+  selection: ModelSelection;
+  plugins: EditorPlugin[];
+  commands: Record<CommandName, CommandMap[CommandName]>;
+  marksRegistry: MarksRegistry;
+}
 
 export default interface State {
   document: ModelElement;
@@ -14,6 +23,24 @@ export default interface State {
   plugins: EditorPlugin[];
   commands: Record<CommandName, CommandMap[CommandName]>;
   marksRegistry: MarksRegistry;
+  createTransaction(): Transaction;
+}
+export class SayState implements State {
+  document: ModelElement;
+  selection: ModelSelection;
+  plugins: EditorPlugin[];
+  commands: Record<'insert-text', InsertTextCommand>;
+  marksRegistry: MarksRegistry;
+  constructor(args: StateArgs) {
+    this.document = args.document;
+    this.selection = args.selection;
+    this.plugins = args.plugins;
+    this.commands = args.commands;
+    this.marksRegistry = args.marksRegistry;
+  }
+  createTransaction(): Transaction {
+    return new Transaction(this);
+  }
 }
 
 function defaultCommands(): Record<CommandName, CommandMap[CommandName]> {
@@ -23,23 +50,23 @@ function defaultCommands(): Record<CommandName, CommandMap[CommandName]> {
 }
 
 export function emptyState(): State {
-  return {
+  return new SayState({
     document: new ModelElement('div'),
     selection: new ModelSelection(),
     plugins: [],
     commands: defaultCommands(),
     marksRegistry: new MarksRegistry(),
-  };
+  });
 }
 
 export function cloneState(state: State): State {
   const documentClone = state.document.clone();
   const selectionClone = state.selection.clone(documentClone);
-  return {
+  return new SayState({
     document: documentClone,
     marksRegistry: state.marksRegistry,
     plugins: [...state.plugins],
     commands: state.commands,
     selection: selectionClone,
-  };
+  });
 }

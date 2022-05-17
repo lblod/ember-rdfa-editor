@@ -3,10 +3,12 @@ import { EditorPlugin } from '../utils/editor-plugin';
 import Transaction from './transaction';
 import { View, EditorView } from './view';
 import { CommandName } from '@lblod/ember-rdfa-editor/commands/command';
+export type Dispatch = (transaction: Transaction) => void;
 
 export interface EditorArgs {
   domRoot: HTMLElement;
   plugins: EditorPlugin[];
+  dispatch?: Dispatch;
 }
 
 export interface Editor {
@@ -19,6 +21,7 @@ export interface Editor {
 class SayEditor implements Editor {
   state: State;
   view: View;
+  dispatch: Dispatch;
 
   constructor(args: EditorArgs) {
     const { domRoot, plugins } = args;
@@ -31,6 +34,7 @@ class SayEditor implements Editor {
     initialState = tr.apply();
     this.view.update(initialState);
     this.state = initialState;
+    this.dispatch = args.dispatch ?? this.defaultDispatch;
   }
 
   executeCommand(commandName: CommandName, args: unknown): unknown {
@@ -38,14 +42,17 @@ class SayEditor implements Editor {
     const tr = new Transaction(this.state);
     const result = command.execute(
       {
-        transaction: tr,
+        dispatch: this.dispatch,
+        state: this.state,
       },
       args
     );
-    this.state = tr.apply();
-    this.view.update(this.state);
     return result;
   }
+  defaultDispatch = (transaction: Transaction): void => {
+    this.state = transaction.apply();
+    this.view.update(this.state);
+  };
 }
 
 export function createEditor(args: EditorArgs): Editor {

@@ -21,17 +21,16 @@ export class EditorInputHandler implements InputHandler {
   beforeInput(event: InputEvent): void {
     switch (event.inputType) {
       case 'insertText': {
-        event.preventDefault();
         const selectionReader = new SelectionReader();
         const insertRange = selectionReader.readDomRange(
           this.editor.view,
           event.getTargetRanges()[0]
         )!;
-        this.editor.executeCommand("insert-text", {
+        this.editor.executeCommand('insert-text', {
           range: insertRange,
-          text: event.data || ''
-
-        })
+          text: event.data || '',
+          needsToWrite: false,
+        });
         break;
       }
       case 'insertLineBreak':
