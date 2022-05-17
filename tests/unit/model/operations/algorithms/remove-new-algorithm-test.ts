@@ -243,8 +243,6 @@ module(
           </span>
         </modelRoot>
         `;
-      
-      debugger;
 
       const start1 = ModelPosition.fromInTextNode(text1, 2);
       const end1 = ModelPosition.fromInTextNode(text1, 3);
@@ -253,7 +251,7 @@ module(
       const start2 = ModelPosition.fromInTextNode(text2, 3);
       const end2 = ModelPosition.fromInTextNode(text2, 4);
       OperationAlgorithms.removeNew(new ModelRange(start2, end2));
-      
+
       const start4 = ModelPosition.fromInTextNode(text4, 0);
       const end4 = ModelPosition.fromInTextNode(text5, 4);
       OperationAlgorithms.removeNew(new ModelRange(start4, end4));

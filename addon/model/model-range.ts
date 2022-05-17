@@ -303,17 +303,9 @@ export default class ModelRange {
     const startText = new ModelText('[===START===]');
     const endText = new ModelText('[===END===]');
 
-    new InsertOperation(
-      undefined,
-      endRange,
-      endText
-    ).execute();
+    new InsertOperation(undefined, endRange, endText).execute();
 
-    new InsertOperation(
-      undefined,
-      startRange,
-      startText
-    ).execute();
+    new InsertOperation(undefined, startRange, startText).execute();
 
     let modelString: string = root.toXml().innerHTML;
     modelString = modelString.replace(

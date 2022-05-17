@@ -26,7 +26,7 @@ export default class OperationAlgorithms {
         mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
       };
     }
-    
+
     range.normalize();
 
     let splitStart = false;
@@ -74,7 +74,7 @@ export default class OperationAlgorithms {
     openingTagNodes.forEach((opNode) => {
       const nodesToUnindent = (opNode as ModelElement).children;
       nodesToUnindent.forEach((node, index) => {
-        if(opNode.index){
+        if (opNode.index) {
           opNode.parent?.addChild(node, opNode.index + index);
         }
       });
@@ -95,7 +95,7 @@ export default class OperationAlgorithms {
     const after = range.start.nodeAfter();
     if (before && after) {
       if (ModelNode.isModelText(before) && ModelNode.isModelText(after)) {
-        (<ModelText>before).content += after.content;
+        before.content += after.content;
         after.remove();
       }
     }
