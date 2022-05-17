@@ -72,6 +72,9 @@ export default class HtmlWriter {
         }
       }
       resultView = view;
+    } else if (ModelNode.isModelText(modelNode)) {
+      this.processTextViews([modelNode]);
+      resultView = this.getView(modelNode)!;
     } else {
       throw new NotImplementedError('Unsupported modelnode type');
     }
