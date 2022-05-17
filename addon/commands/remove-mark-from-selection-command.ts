@@ -1,40 +1,48 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import {
-  MisbehavedSelectionError,
-  ModelError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import Command, {
+    CommandContext
+} from '@lblod/ember-rdfa-editor/commands/command';
 import { AttributeSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import {
+    MisbehavedSelectionError,
+    ModelError
+} from '@lblod/ember-rdfa-editor/utils/errors';
 
-export default class RemoveMarkFromSelectionCommand extends Command<
-  [string, AttributeSpec],
-  void
-> {
+export interface RemoveMarkFromSelectionCommandArgs {
+  name: string;
+  attributes: AttributeSpec;
+}
+
+export default class RemoveMarkFromSelectionCommand
+  implements Command<RemoveMarkFromSelectionCommandArgs, void>
+{
   name = 'remove-mark-from-selection';
 
-  constructor(model: Model) {
-    super(model);
+  canExecute(): boolean {
+    return true;
   }
-
-  execute(name: string, attributes: AttributeSpec): void {
-    const selection = this.model.selection;
+  execute(
+    { state, dispatch }: CommandContext,
+    { name, attributes }: RemoveMarkFromSelectionCommandArgs
+  ): void {
+    const selection = state.selection;
+    const tr = state.createTransaction();
     if (selection.isCollapsed) {
-      this.model.selection.removeMarkByName(name);
-      this.model.rootNode.focus();
-      this.model.emitSelectionChanged();
+      tr.removeMarkFromSelection(name);
+      // TODO
+      // this.model.rootNode.focus();
+      // this.model.emitSelectionChanged();
     } else {
-      const spec = this.model.marksRegistry.lookupMark(name);
+      const spec = state.marksRegistry.lookupMark(name);
       if (!ModelSelection.isWellBehaved(selection)) {
         throw new MisbehavedSelectionError();
       }
       if (spec) {
-        this.model.change((mutator) => {
-          mutator.removeMark(selection.lastRange, spec, attributes);
-        });
+        tr.removeMark(selection.lastRange, spec, attributes);
       } else {
         throw new ModelError(`Unrecognized mark: ${name}`);
       }
     }
+    dispatch(tr);
   }
 }

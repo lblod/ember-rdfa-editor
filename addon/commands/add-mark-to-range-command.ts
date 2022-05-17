@@ -1,32 +1,36 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
+import Command, {
+    CommandContext
+} from '@lblod/ember-rdfa-editor/commands/command';
 import { Serializable } from '@lblod/ember-rdfa-editor/model/mark';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 
-export default class AddMarkToRangeCommand extends Command<
-  [ModelRange, string],
-  void
-> {
+export interface AddMarkToRangeCommandArgs {
+  range: ModelRange;
+  markName: string;
+  markAttributes?: Record<string, Serializable>;
+}
+export default class AddMarkToRangeCommand
+  implements Command<AddMarkToRangeCommandArgs, void>
+{
   name = 'add-mark-to-range';
 
-  constructor(model: Model) {
-    super(model);
+  canExecute(): boolean {
+    return true;
   }
 
   execute(
-    range: ModelRange,
-    markName: string,
-    markAttributes: Record<string, Serializable> = {}
+    { state, dispatch }: CommandContext,
+    { range, markName, markAttributes = {} }: AddMarkToRangeCommandArgs
   ): void {
-    const spec = this.model.marksRegistry.lookupMark(markName);
+    const spec = state.marksRegistry.lookupMark(markName);
+    const tr = state.createTransaction();
     if (spec) {
-      this.model.change((mutator) => {
-        const resultRange = mutator.addMark(range, spec, markAttributes);
-        this.model.selectRange(resultRange);
-      });
+      const resultRange = tr.addMark(range, spec, markAttributes);
+      tr.selectRange(resultRange);
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);
     }
+    dispatch(tr);
   }
 }

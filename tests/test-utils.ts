@@ -1,4 +1,15 @@
 import { render } from '@ember/test-helpers';
+import Command from '@lblod/ember-rdfa-editor/commands/command';
+import State, {
+  defaultCommands,
+  SayState,
+  StateArgs,
+} from '@lblod/ember-rdfa-editor/core/state';
+import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
+import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import hbs from 'htmlbars-inline-precompile';
 
 /**
@@ -34,4 +45,47 @@ export async function renderEditor() {
       @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
     />`);
   return getEditorElement();
+}
+type OptionalStateArgs = Omit<Partial<StateArgs>, "document"> & {document: ModelNode};
+export function testState({
+  document = new ModelElement('div'),
+  commands = defaultCommands(),
+  marksRegistry = new MarksRegistry(),
+  plugins = [],
+  selection = new ModelSelection(),
+}: OptionalStateArgs): State {
+  if(!ModelNode.isModelElement(document)){
+    throw new TypeError("Cannot set non-element as document root");
+  }
+  return new SayState({
+    document,
+    commands,
+    marksRegistry,
+    plugins,
+    selection,
+  });
+}
+export function testDispatch(transaction: Transaction): State {
+  return transaction.apply();
+}
+export interface CommandResult<R> {
+  resultValue: R;
+  resultState: State;
+}
+export function makeTestExecute<A, R>(command: Command<A, R>) {
+  let resultState: State;
+  function dispatch(transaction: Transaction): State {
+    resultState = transaction.apply();
+    return resultState;
+  }
+  return function (state: State, args: A): CommandResult<R> {
+    const resultValue = command.execute(
+      {
+        dispatch,
+        state,
+      },
+      args
+    );
+    return { resultValue, resultState };
+  };
 }

@@ -1,28 +1,31 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import {
-  IllegalExecutionStateError,
-  MisbehavedSelectionError,
-  SelectionError,
-  TypeAssertionError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
+import Command, {
+    CommandContext
+} from '@lblod/ember-rdfa-editor/commands/command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
+import {
+    IllegalExecutionStateError,
+    MisbehavedSelectionError,
+    SelectionError,
+    TypeAssertionError
+} from '@lblod/ember-rdfa-editor/utils/errors';
+import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelPosition from '../model/model-position';
+export interface UnindentListCommandArgs {
+  range?: ModelRange | null;
+}
 
-export default class UnindentListCommand extends Command {
+export default class UnindentListCommand
+  implements Command<UnindentListCommandArgs, void>
+{
   name = 'unindent-list';
 
-  constructor(model: Model) {
-    super(model);
-  }
-
   canExecute(
-    range: ModelRange | null = this.model.selection.lastRange
+    { state, dispatch }: CommandContext,
+    { range = state.selection.lastRange }
   ): boolean {
     if (!range) {
       return false;
@@ -52,7 +55,10 @@ export default class UnindentListCommand extends Command {
   }
 
   @logExecute
-  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+  execute(
+    { state, dispatch }: CommandContext,
+    { range = state.selection.lastRange }: UnindentListCommandArgs
+  ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
@@ -75,6 +81,7 @@ export default class UnindentListCommand extends Command {
       throw new SelectionError('The selection is not inside a list');
     }
 
+    const tr = state.createTransaction();
     // Get the shallowest common ancestors.
     const lisToShift = this.relatedChunks(elements);
     if (lisToShift) {
@@ -104,59 +111,55 @@ export default class UnindentListCommand extends Command {
           ModelElement.isModelElement(greatGrandParent)
         ) {
           // Remove node.
-          this.model.change((mutator) => {
-            const liIndex = li.index;
+          const liIndex = li.index;
 
-            if (grandParent.index === null) {
+          if (grandParent.index === null) {
+            throw new IllegalExecutionStateError(
+              "Couldn't find index of grandparent li"
+            );
+          }
+
+          if (parent.length === 1) {
+            // Remove parent ul/ol if node is only child.
+            tr.deleteNode(li);
+            const positionToInsert = ModelPosition.fromInElement(
+              greatGrandParent,
+              grandParent.index + 1
+            );
+            tr.insertAtPosition(positionToInsert, li);
+            tr.deleteNode(parent);
+          } else {
+            if (liIndex === null) {
               throw new IllegalExecutionStateError(
-                "Couldn't find index of grandparent li"
+                "Couldn't find index of current li"
               );
             }
+            const split = parent.split(liIndex);
 
-            if (parent.length === 1) {
-              // Remove parent ul/ol if node is only child.
-              mutator.deleteNode(li);
-              const positionToInsert = ModelPosition.fromInElement(
-                greatGrandParent,
-                grandParent.index + 1
-              );
-              mutator.insertAtPosition(positionToInsert, li);
-              mutator.deleteNode(parent);
-            } else {
-              if (liIndex === null) {
-                throw new IllegalExecutionStateError(
-                  "Couldn't find index of current li"
-                );
-              }
-              const split = parent.split(liIndex);
-
-              // Remove empty uls.
-              if (split.left.length === 0) {
-                mutator.deleteNode(split.left);
-              }
-
-              if (split.right.length >= 1) {
-                //Select li's AFTER the li that is unindenting
-                const otherLis = split.right.children.slice(1);
-                //Remove unindenting li and all next ones, they are relocating
-                mutator.deleteNode(split.right);
-
-                //Add a new sublist to the li of the elements that previously followed that li as a child element
-                const sublist = new ModelElement(parent.type);
-                sublist.appendChildren(...otherLis);
-                li.addChild(sublist);
-
-                //After the parent li, add the unindenting li (and its sublist at once)
-                mutator.insertAtPosition(
-                  ModelPosition.fromAfterNode(grandParent),
-                  li
-                );
-              }
+            // Remove empty uls.
+            if (split.left.length === 0) {
+              tr.deleteNode(split.left);
             }
-          });
+
+            if (split.right.length >= 1) {
+              //Select li's AFTER the li that is unindenting
+              const otherLis = split.right.children.slice(1);
+              //Remove unindenting li and all next ones, they are relocating
+              tr.deleteNode(split.right);
+
+              //Add a new sublist to the li of the elements that previously followed that li as a child element
+              const sublist = new ModelElement(parent.type);
+              sublist.appendChildren(...otherLis);
+              li.addChild(sublist);
+
+              //After the parent li, add the unindenting li (and its sublist at once)
+              tr.insertAtPosition(ModelPosition.fromAfterNode(grandParent), li);
+            }
+          }
         }
       }
     }
+    dispatch(tr);
   }
 
   private relatedChunks(

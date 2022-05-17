@@ -285,4 +285,5 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     const range = ModelRange.fromAroundNode(node);
     return this.delete(range);
   }
+
 }

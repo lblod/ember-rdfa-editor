@@ -1,6 +1,6 @@
 import State, { cloneState } from '@lblod/ember-rdfa-editor/core/state';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { MarkSet } from '../model/mark';
+import { AttributeSpec, Mark, MarkSet, MarkSpec } from '../model/mark';
 import ModelNode from '../model/model-node';
 import ModelSelection from '../model/model-selection';
 import InsertTextOperation from '../model/operations/insert-text-operation';
@@ -13,6 +13,11 @@ import { EditorPlugin } from '../utils/editor-plugin';
 import { NotImplementedError } from '../utils/errors';
 import { View } from './view';
 import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
+import ModelElement from '../model/model-element';
+import MarkOperation from '../model/operations/mark-operation';
+import ModelPosition from '../model/model-position';
+import SplitOperation from '../model/operations/split-operation';
+import MoveOperation from '../model/operations/move-operation';
 
 interface TextInsertion {
   range: ModelRange;
@@ -37,6 +42,17 @@ export default class Transaction {
 
   setPlugins(plugins: EditorPlugin[]): void {
     this.workingCopy.plugins = plugins;
+  }
+
+  addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
+    const op = new MarkOperation(
+      undefined,
+      this.cloneRange(range),
+      spec,
+      attributes,
+      'add'
+    );
+    return this.executeOperation(op);
   }
 
   readFromView(view: View): void {
@@ -68,7 +84,7 @@ export default class Transaction {
   insertText({ range, text, marks }: TextInsertion): ModelRange {
     const operation = new InsertTextOperation(
       undefined,
-      range.clone(this.workingCopy.document),
+      this.cloneRange(range),
       text,
       marks || new MarkSet()
     );
@@ -76,19 +92,260 @@ export default class Transaction {
   }
 
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
-    const op = new InsertOperation(undefined, range, ...nodes);
+    const op = new InsertOperation(undefined, this.cloneRange(range), ...nodes);
     return op.execute().defaultRange;
   }
 
   setSelection(selection: ModelSelection) {
-    const clone = selection.clone(this.workingCopy.document);
+    const clone = this.cloneSelection(selection);
     if (!clone.sameAs(this.workingCopy.selection)) {
       this.needsToWrite = true;
     }
     this.workingCopy.selection = clone;
   }
 
+  setProperty(element: ModelElement, key: string, value: string): ModelElement {
+    const oldNode = element;
+    if (!oldNode) throw new Error('no element in range');
+    const newNode = oldNode.clone();
+    newNode.setAttribute(key, value);
+    const oldNodeRange = ModelRange.fromAroundNode(oldNode);
+    const op = new InsertOperation(
+      undefined,
+      this.cloneRange(oldNodeRange),
+      newNode
+    );
+    this.executeOperation(op);
+    return newNode;
+  }
+
+  removeProperty(element: ModelElement, key: string): ModelElement {
+    const oldNode = element;
+    if (!oldNode) throw new Error('no element in range');
+    const newNode = oldNode.clone();
+    newNode.removeAttribute(key);
+    const oldNodeRange = ModelRange.fromAroundNode(oldNode);
+    const op = new InsertOperation(
+      undefined,
+      this.cloneRange(oldNodeRange),
+      newNode
+    );
+    this.executeOperation(op);
+    return newNode;
+  }
+  private executeOperation(op: Operation): ModelRange {
+    const { defaultRange, mapper } = op.execute();
+    // this.mapper.appendMapper(mapper);
+    return defaultRange;
+  }
   selectRange(range: ModelRange): void {
-    this.workingCopy.selection.selectRange(range);
+    this.workingCopy.selection.selectRange(this.cloneRange(range));
+  }
+  addMarkToSelection(mark: Mark) {
+    this.workingCopy.selection.activeMarks.add(mark);
+  }
+  removeMarkFromSelection(markname: string) {
+    for (const mark of this.workingCopy.selection.activeMarks) {
+      if (mark.name === markname) {
+        this.workingCopy.selection.activeMarks.delete(mark);
+      }
+    }
+  }
+  createSnapshot() {
+    this.workingCopy.previousState = this.initialState;
+    return this.initialState;
+  }
+  rollback() {
+    this.workingCopy = this.initialState;
+    return this.workingCopy;
+  }
+
+  /**
+   * Split the given range until start.parent === startLimit
+   * and end.parent === endLimit
+   * The resulting range fully contains the split-off elements
+   * @param range
+   * @param startLimit
+   * @param endLimit
+   * @param splitAtEnds
+   */
+  splitRangeUntilElements(
+    range: ModelRange,
+    startLimit: ModelElement,
+    endLimit: ModelElement,
+    splitAtEnds = false
+  ) {
+    const endPos = this.splitUntilElement(range.end, endLimit, splitAtEnds);
+    const afterEnd = endPos.nodeAfter();
+    const startpos = this.splitUntilElement(
+      range.start,
+      startLimit,
+      splitAtEnds
+    );
+
+    if (afterEnd) {
+      return new ModelRange(startpos, ModelPosition.fromBeforeNode(afterEnd));
+    } else {
+      return new ModelRange(
+        startpos,
+        ModelPosition.fromInElement(endPos.parent, endPos.parent.getMaxOffset())
+      );
+    }
+  }
+
+  splitUntilElement(
+    position: ModelPosition,
+    limitElement: ModelElement,
+    splitAtEnds = false
+  ): ModelPosition {
+    return this.splitUntil(
+      position,
+      (element) => element === limitElement,
+      splitAtEnds
+    );
+  }
+
+  splitUntil(
+    position: ModelPosition,
+    untilPredicate: (element: ModelElement) => boolean,
+    splitAtEnds = false
+  ): ModelPosition {
+    let pos = position;
+
+    // Execute split at least once
+    if (pos.parent === pos.root || untilPredicate(pos.parent)) {
+      return this.executeSplit(pos, splitAtEnds, false, false);
+    }
+
+    while (pos.parent !== pos.root && !untilPredicate(pos.parent)) {
+      pos = this.executeSplit(pos, splitAtEnds, true);
+    }
+
+    return pos;
+  }
+
+  private executeSplit(
+    position: ModelPosition,
+    splitAtEnds = false,
+    splitParent = true,
+    wrapAround = true
+  ) {
+    if (!splitAtEnds) {
+      if (position.parentOffset === 0) {
+        return !wrapAround || position.parent === position.root
+          ? position
+          : ModelPosition.fromBeforeNode(position.parent);
+      } else if (position.parentOffset === position.parent.getMaxOffset()) {
+        return !wrapAround || position.parent === position.root
+          ? position
+          : ModelPosition.fromAfterNode(position.parent);
+      }
+    }
+
+    return this.executeSplitOperation(position, splitParent);
+  }
+
+  private executeSplitOperation(position: ModelPosition, splitParent = true) {
+    const range = new ModelRange(position, position);
+    const op = new SplitOperation(
+      undefined,
+      this.cloneRange(range),
+      splitParent
+    );
+    return this.executeOperation(op).start;
+  }
+
+  insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange {
+    const posClone = this.clonePos(position);
+    return this.insertNodes(new ModelRange(posClone, posClone), ...nodes);
+  }
+  deleteNode(node: ModelNode): ModelRange {
+    const range = this.cloneRange(ModelRange.fromAroundNode(node));
+    return this.delete(range);
+  }
+  delete(range: ModelRange): ModelRange {
+    const op = new InsertOperation(undefined, this.cloneRange(range));
+    return this.executeOperation(op);
+  }
+  cloneRange(range: ModelRange): ModelRange {
+    return range.clone(this.workingCopy.document);
+  }
+  clonePos(pos: ModelPosition): ModelPosition {
+    return pos.clone(this.workingCopy.document);
+  }
+  cloneSelection(selection: ModelSelection): ModelSelection {
+    return selection.clone(this.workingCopy.document);
+  }
+  collapseIn(node: ModelNode, offset = 0) {
+    this.workingCopy.selection.clearRanges();
+    this.workingCopy.selection.addRange(
+      this.cloneRange(ModelRange.fromInNode(node, offset, offset))
+    );
+  }
+
+  /**
+   * Replaces the element by its children. Returns a range containing the unwrapped children
+   * @param element
+   * @param ensureBlock ensure the unwrapped children are rendered as a block by surrounding them with br elements when necessary
+   */
+  unwrap(element: ModelElement, ensureBlock = false): ModelRange {
+    const srcRange = ModelRange.fromInElement(
+      element,
+      0,
+      element.getMaxOffset()
+    );
+    const target = ModelPosition.fromBeforeNode(element);
+    const op = new MoveOperation(
+      undefined,
+      this.cloneRange(srcRange),
+      this.clonePos(target)
+    );
+    const resultRange = this.executeOperation(op);
+    this.deleteNode(element);
+
+    if (ensureBlock) {
+      const nodeBeforeStart = resultRange.start.nodeBefore();
+      const nodeAfterStart = resultRange.start.nodeAfter();
+      const nodeBeforeEnd = resultRange.end.nodeBefore();
+      const nodeAfterEnd = resultRange.end.nodeAfter();
+
+      if (
+        nodeBeforeEnd &&
+        nodeAfterEnd &&
+        nodeBeforeEnd !== nodeAfterEnd &&
+        !nodeBeforeEnd.isBlock &&
+        !nodeAfterEnd.isBlock
+      ) {
+        this.insertAtPosition(resultRange.end, new ModelElement('br'));
+      }
+      if (
+        nodeBeforeStart &&
+        nodeAfterStart &&
+        nodeBeforeStart !== nodeAfterStart &&
+        !nodeBeforeStart.isBlock &&
+        !nodeAfterStart.isBlock
+      ) {
+        this.insertAtPosition(resultRange.start, new ModelElement('br'));
+      }
+    }
+
+    return resultRange;
+  }
+
+  removeMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
+    const op = new MarkOperation(
+      undefined,
+      this.cloneRange(range),
+      spec,
+      attributes,
+      'remove'
+    );
+    return this.executeOperation(op);
+  }
+  restoreSnapshot() {
+    const prev = this.initialState.previousState;
+    if (prev) {
+      this.workingCopy = prev;
+    }
   }
 }

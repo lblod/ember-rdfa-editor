@@ -4,6 +4,7 @@ import { INVISIBLE_SPACE } from './util/constants';
 import ModelPosition from './model-position';
 import ModelSelection from './model-selection';
 import ImmediateModelMutator from './mutators/immediate-model-mutator';
+import Transaction from '../core/transaction';
 
 type TableIndex = {
   x: number;
@@ -50,7 +51,7 @@ export default class ModelTable extends ModelElement {
     }
   }
 
-  addRow(mutator: ImmediateModelMutator, index?: number) {
+  addRow(tr: Transaction, index?: number) {
     const tBody = this.children[0] as ModelElement;
     const columns = (tBody.children[0] as ModelElement).children.length;
     const row = new ModelElement('tr');
@@ -61,24 +62,24 @@ export default class ModelTable extends ModelElement {
         row,
         row.getMaxOffset()
       );
-      mutator.insertAtPosition(lastPositionInsideRow, cell);
+      tr.insertAtPosition(lastPositionInsideRow, cell);
     }
     if (index || index === 0) {
       const positionOfIndex = ModelPosition.fromInElement(
         tBody,
         tBody.indexToOffset(index)
       );
-      mutator.insertAtPosition(positionOfIndex, row);
+      tr.insertAtPosition(positionOfIndex, row);
     } else {
       const lastPositionInsideTBody = ModelPosition.fromInElement(
         tBody,
         tBody.getMaxOffset()
       );
-      mutator.insertAtPosition(lastPositionInsideTBody, row);
+      tr.insertAtPosition(lastPositionInsideTBody, row);
     }
   }
 
-  addColumn(mutator: ImmediateModelMutator, index?: number) {
+  addColumn(tr: Transaction, index?: number) {
     const tBody = this.children[0] as ModelElement;
     for (let i = 0; i < tBody.children.length; i++) {
       const row = tBody.children[i] as ModelElement;
@@ -89,34 +90,34 @@ export default class ModelTable extends ModelElement {
           row,
           row.indexToOffset(index)
         );
-        mutator.insertAtPosition(positionOfIndex, cell);
+        tr.insertAtPosition(positionOfIndex, cell);
       } else {
         const lastPositionInsideRow = ModelPosition.fromInElement(
           row,
           row.getMaxOffset()
         );
-        mutator.insertAtPosition(lastPositionInsideRow, cell);
+        tr.insertAtPosition(lastPositionInsideRow, cell);
       }
     }
   }
 
-  removeRow(mutator: ImmediateModelMutator, index: number) {
+  removeRow(tr: Transaction, index: number) {
     const tBody = this.children[0] as ModelElement;
     const rowToRemove = tBody.children[index];
-    mutator.deleteNode(rowToRemove);
+    tr.deleteNode(rowToRemove);
   }
 
-  removeColumn(mutator: ImmediateModelMutator, index: number) {
+  removeColumn(tr: Transaction, index: number) {
     const tBody = this.children[0] as ModelElement;
     for (let i = 0; i < tBody.children.length; i++) {
       const row = tBody.children[i] as ModelElement;
       const cellToDelete = row.children[index];
-      mutator.deleteNode(cellToDelete);
+      tr.deleteNode(cellToDelete);
     }
   }
 
-  removeTable(mutator: ImmediateModelMutator) {
-    mutator.deleteNode(this);
+  removeTable(tr: Transaction) {
+    tr.deleteNode(this);
   }
 
   static getCellIndex(cell: ModelElement): TableIndex {

@@ -3,7 +3,7 @@ import { EditorPlugin } from '../utils/editor-plugin';
 import Transaction from './transaction';
 import { View, EditorView } from './view';
 import { CommandName } from '@lblod/ember-rdfa-editor/commands/command';
-export type Dispatch = (transaction: Transaction) => void;
+export type Dispatch = (transaction: Transaction) => State;
 
 export interface EditorArgs {
   domRoot: HTMLElement;
@@ -49,9 +49,10 @@ class SayEditor implements Editor {
     );
     return result;
   }
-  defaultDispatch = (transaction: Transaction): void => {
+  defaultDispatch = (transaction: Transaction): State => {
     this.state = transaction.apply();
     this.view.update(this.state);
+    return this.state;
   };
 }
 

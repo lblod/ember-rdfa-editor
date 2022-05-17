@@ -45,7 +45,7 @@ import ReadSelectionCommand from '@lblod/ember-rdfa-editor/commands/read-selecti
 import UndoCommand from '@lblod/ember-rdfa-editor/commands/undo-command';
 import AddTypeCommand from '@lblod/ember-rdfa-editor/commands/node-properties/add-type-command';
 import RemoveTypeCommand from '@lblod/ember-rdfa-editor/commands/node-properties/remove-type-command';
-import SetPropertyCommand from '@lblod/ember-rdfa-editor/commands/node-properties/set-property-command';
+import SetPropertyCommand from "@lblod/ember-rdfa-editor/commands/node-properties/SetPropertyCommand";
 import {
   InternalWidgetSpec,
   RawEditorController,

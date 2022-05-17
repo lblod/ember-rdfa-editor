@@ -1,24 +1,32 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
+import Command, {
+    CommandContext
+} from '@lblod/ember-rdfa-editor/commands/command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import Model from '@lblod/ember-rdfa-editor/model/model';
+export interface AddTypeCommandArgs {
+  type: string;
+  element: ModelElement;
+}
 
-export default class AddTypeCommand extends Command {
+export default class AddTypeCommand implements Command<AddTypeCommandArgs, void> {
   name = 'add-type';
 
-  constructor(model: Model) {
-    super(model);
+  canExecute(): boolean {
+    return true;
   }
 
   @logExecute
-  execute(type: string, element: ModelElement) {
+  execute(
+    { state, dispatch }: CommandContext,
+    { type, element }: AddTypeCommandArgs
+  ) {
     let oldTypeof = element.getAttribute('typeof');
     if (!oldTypeof) oldTypeof = '';
+    const tr = state.createTransaction();
     const newType = `${oldTypeof} ${type}`;
-    this.model.change((mutator) => {
-      const newNode = mutator.setProperty(element, 'typeof', newType);
-      this.model.selectRange(ModelRange.fromInElement(newNode, 0, 0));
-    });
+    const newNode = tr.setProperty(element, 'typeof', newType);
+    tr.selectRange(ModelRange.fromInElement(newNode, 0, 0));
+    dispatch(tr);
   }
 }

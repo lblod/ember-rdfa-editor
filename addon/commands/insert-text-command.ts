@@ -10,7 +10,7 @@ import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 export interface InsertTextCommandArgs {
   text: string;
   range: ModelRange | null;
-  marks: MarkSet;
+  marks?: MarkSet;
   needsToWrite?: boolean;
 }
 
@@ -26,7 +26,7 @@ export default class InsertTextCommand
   @logExecute
   execute(
     { dispatch, state }: CommandContext,
-    { text, marks, range, needsToWrite = true }: InsertTextCommandArgs
+    { text, marks = new MarkSet(), range, needsToWrite = true }: InsertTextCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();

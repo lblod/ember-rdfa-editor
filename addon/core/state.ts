@@ -15,6 +15,7 @@ export interface StateArgs {
   plugins: EditorPlugin[];
   commands: Record<CommandName, CommandMap[CommandName]>;
   marksRegistry: MarksRegistry;
+  previousState?: State | null;
 }
 
 export default interface State {
@@ -23,27 +24,34 @@ export default interface State {
   plugins: EditorPlugin[];
   commands: Record<CommandName, CommandMap[CommandName]>;
   marksRegistry: MarksRegistry;
+  previousState: State | null;
   createTransaction(): Transaction;
 }
 export class SayState implements State {
   document: ModelElement;
   selection: ModelSelection;
   plugins: EditorPlugin[];
-  commands: Record<'insert-text', InsertTextCommand>;
+  commands: Record<CommandName, CommandMap[CommandName]>;
   marksRegistry: MarksRegistry;
+  previousState: State | null;
   constructor(args: StateArgs) {
+    const { previousState = null } = args;
     this.document = args.document;
     this.selection = args.selection;
     this.plugins = args.plugins;
     this.commands = args.commands;
     this.marksRegistry = args.marksRegistry;
+    this.previousState = previousState;
   }
   createTransaction(): Transaction {
     return new Transaction(this);
   }
 }
 
-function defaultCommands(): Record<CommandName, CommandMap[CommandName]> {
+export function defaultCommands(): Record<
+  CommandName,
+  CommandMap[CommandName]
+> {
   return {
     'insert-text': new InsertTextCommand(),
   };
@@ -68,5 +76,6 @@ export function cloneState(state: State): State {
     plugins: [...state.plugins],
     commands: state.commands,
     selection: selectionClone,
+    previousState: state.previousState,
   });
 }

@@ -1,34 +1,37 @@
-import Model from '@lblod/ember-rdfa-editor/model/model';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
+import ListCleaner from '@lblod/ember-rdfa-editor/model/cleaners/list-cleaner';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import ModelElement from '../model/model-element';
+import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
+import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import {
   MisbehavedSelectionError,
   ModelError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
-import ListCleaner from '@lblod/ember-rdfa-editor/model/cleaners/list-cleaner';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { PropertyState } from '../model/util/types';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import ModelElement from '../model/model-element';
 import ModelText from '../model/model-text';
+import { PropertyState } from '../model/util/types';
 
+export interface MakeListCommandArgs {
+  listType: 'ul' | 'ol';
+  selection?: ModelSelection;
+}
 /**
  * Command will convert all nodes in the selection to a list, if they are not already in a list.
  */
-export default class MakeListCommand extends Command {
+export default class MakeListCommand
+  implements Command<MakeListCommandArgs, void>
+{
   name = 'make-list';
 
-  constructor(model: Model) {
-    super(model);
-  }
-
   canExecute(
-    _listType: 'ul' | 'ol',
-    selection: ModelSelection = this.model.selection
+    { state }: CommandContext,
+    { selection = state.selection }: MakeListCommandArgs
   ) {
     return (
       !selection.inTableState ||
@@ -38,8 +41,9 @@ export default class MakeListCommand extends Command {
 
   @logExecute
   execute(
-    listType: 'ul' | 'ol',
-    selection: ModelSelection = this.model.selection
+    { state, dispatch }: CommandContext,
+
+    { listType, selection = state.selection }: MakeListCommandArgs
   ) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
@@ -47,7 +51,7 @@ export default class MakeListCommand extends Command {
 
     const range = selection.lastRange;
     const wasCollapsed = range.collapsed;
-    const blocks = this.getBlocksFromRange(range);
+    const blocks = this.getBlocksFromRange(range, state.document);
 
     const list = new ModelElement(listType);
     for (const block of blocks) {
@@ -56,45 +60,49 @@ export default class MakeListCommand extends Command {
       li.appendChildren(...block.map((node) => node.clone()));
       list.addChild(li);
     }
+    const tr = state.createTransaction();
 
-    this.model.change((mutator) => {
-      mutator.insertNodes(range, list);
-      if (!list.firstChild || !list.lastChild) {
-        throw new ModelError('List without list item.');
-      }
+    tr.insertNodes(range, list);
+    if (!list.firstChild || !list.lastChild) {
+      throw new ModelError('List without list item.');
+    }
+    const newState = tr.apply();
 
-      const fullRange = ModelRange.fromInElement(
-        this.model.rootModelNode,
+    const fullRange = ModelRange.fromInElement(
+      newState.document,
+      0,
+      newState.document.getMaxOffset()
+    );
+    const cleaner = new ListCleaner();
+    cleaner.clean(fullRange, tr);
+
+    let resultRange;
+    if (wasCollapsed) {
+      const firstChild = list.firstChild as ModelElement;
+      resultRange = ModelRange.fromInElement(
+        firstChild,
         0,
-        this.model.rootModelNode.getMaxOffset()
+        firstChild.getMaxOffset()
       );
-      const cleaner = new ListCleaner();
-      cleaner.clean(fullRange, mutator);
+    } else {
+      const firstChild = list.firstChild as ModelElement;
+      const lastChild = list.lastChild as ModelElement;
+      const start = ModelPosition.fromInElement(firstChild, 0);
+      const end = ModelPosition.fromInElement(
+        lastChild,
+        lastChild.getMaxOffset()
+      );
+      resultRange = new ModelRange(start, end);
+    }
 
-      let resultRange;
-      if (wasCollapsed) {
-        const firstChild = list.firstChild as ModelElement;
-        resultRange = ModelRange.fromInElement(
-          firstChild,
-          0,
-          firstChild.getMaxOffset()
-        );
-      } else {
-        const firstChild = list.firstChild as ModelElement;
-        const lastChild = list.lastChild as ModelElement;
-        const start = ModelPosition.fromInElement(firstChild, 0);
-        const end = ModelPosition.fromInElement(
-          lastChild,
-          lastChild.getMaxOffset()
-        );
-        resultRange = new ModelRange(start, end);
-      }
-
-      this.model.selection.selectRange(resultRange);
-    });
+    tr.selectRange(resultRange);
+    dispatch(tr);
   }
 
-  private getBlocksFromRange(range: ModelRange): ModelNode[][] {
+  private getBlocksFromRange(
+    range: ModelRange,
+    documentRoot: ModelElement
+  ): ModelNode[][] {
     // Expand range until it is bound by blocks.
     let current: ModelNode | null = range.start.nodeAfter();
     if (current) {
@@ -106,12 +114,9 @@ export default class MakeListCommand extends Command {
       }
 
       if (range.start.parentOffset === 0) {
-        if (range.start.parent === this.model.rootModelNode) {
+        if (range.start.parent === documentRoot) {
           // Expanded to the start of the root node.
-          range.start = ModelPosition.fromInElement(
-            this.model.rootModelNode,
-            0
-          );
+          range.start = ModelPosition.fromInElement(documentRoot, 0);
         } else {
           range.start = ModelPosition.fromInElement(
             range.start.parent.parent!,
@@ -131,11 +136,11 @@ export default class MakeListCommand extends Command {
       }
 
       if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
-        if (range.end.parent === this.model.rootModelNode) {
+        if (range.end.parent === documentRoot) {
           // Expanded to the end of root node.
           range.end = ModelPosition.fromInElement(
-            this.model.rootModelNode,
-            this.model.rootModelNode.getMaxOffset()
+            documentRoot,
+            documentRoot.getMaxOffset()
           );
         } else {
           range.end = ModelPosition.fromInElement(

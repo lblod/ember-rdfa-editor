@@ -1,23 +1,26 @@
-import Command from './command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import Command, { CommandContext } from './command';
 
-export default class RemoveTableColumnCommand extends Command {
+export interface RemoveTableColumnCommandArgs {
+  selection?: ModelSelection;
+}
+export default class RemoveTableColumnCommand
+  implements Command<RemoveTableColumnCommandArgs, void>
+{
   name = 'remove-table-column';
-
-  constructor(model: Model) {
-    super(model);
-  }
 
   canExecute(): boolean {
     return true;
   }
 
   @logExecute
-  execute(selection: ModelSelection = this.model.selection): void {
+  execute(
+    { state, dispatch }: CommandContext,
+    { selection = state.selection }: RemoveTableColumnCommandArgs
+  ): void {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -39,22 +42,20 @@ export default class RemoveTableColumnCommand extends Command {
     }
 
     const tableDimensions = table.getDimensions();
+    const tr = state.createTransaction();
     if (position.x === 0 && tableDimensions.x === 1) {
-      this.model.change((mutator) => {
-        table.removeTable(mutator);
-      });
+      table.removeTable(tr);
     } else {
       const cellXToSelect =
         position.x === tableDimensions.x - 1 ? position.x - 1 : position.x;
 
       const cellToSelect = table.getCell(cellXToSelect, position.y);
 
-      this.model.change((mutator) => {
-        if (cellToSelect) {
-          selection.collapseIn(cellToSelect);
-        }
-        table.removeColumn(mutator, position.x);
-      });
+      if (cellToSelect) {
+        tr.collapseIn(cellToSelect);
+      }
+      table.removeColumn(tr, position.x);
     }
+    dispatch(tr);
   }
 }
