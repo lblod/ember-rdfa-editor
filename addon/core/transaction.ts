@@ -175,11 +175,16 @@ export default class Transaction {
     endLimit: ModelElement,
     splitAtEnds = false
   ) {
-    const endPos = this.splitUntilElement(range.end, endLimit, splitAtEnds);
+    const clonedRange = this.cloneRange(range);
+    const endPos = this.splitUntilElement(
+      clonedRange.end,
+      this.inWorkingCopy(endLimit),
+      splitAtEnds
+    );
     const afterEnd = endPos.nodeAfter();
     const startpos = this.splitUntilElement(
-      range.start,
-      startLimit,
+      clonedRange.start,
+      this.inWorkingCopy(startLimit),
       splitAtEnds
     );
 
@@ -200,7 +205,7 @@ export default class Transaction {
   ): ModelPosition {
     return this.splitUntil(
       position,
-      (element) => element === limitElement,
+      (element) => element === this.inWorkingCopy(limitElement),
       splitAtEnds
     );
   }
@@ -347,5 +352,17 @@ export default class Transaction {
     if (prev) {
       this.workingCopy = prev;
     }
+  }
+
+  /**
+   * Find the relative node in the workingcopy
+   * TODO: this is a shortcut, should ultimately not be needed
+   * */
+  inWorkingCopy<N extends ModelNode>(node: N): N {
+    if(node.root === this.workingCopy.document) {
+      return node;
+    }
+    const pos = this.clonePos(ModelPosition.fromBeforeNode(node));
+    return pos.nodeAfter()! as N;
   }
 }

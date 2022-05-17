@@ -30,6 +30,7 @@ module('Unit | commands | insert-text-command-test', function () {
     `;
     const initialState = testState({ document: initial });
 
+
     // language=XML
     const { root: expected } = vdom`
       <modelRoot>
