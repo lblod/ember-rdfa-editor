@@ -6,7 +6,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import { makeTestExecute, testState } from 'dummy/tests/test-utils';
+import { makeTestExecute, stateWithRange, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
 module('Unit | commands | delete-selection-command-test', function () {
@@ -22,13 +22,6 @@ module('Unit | commands | delete-selection-command-test', function () {
     for (let i = 0; i < received.length; i++) {
       assert.true(received[i].sameAs(expected[i]));
     }
-  };
-  const stateWithRange = (root: ModelNode, range: ModelRange) => {
-    let initialState = testState({ document: root });
-    const tr = initialState.createTransaction();
-    tr.selectRange(range);
-    initialState = tr.apply();
-    return initialState;
   };
 
   test('deletes correctly all text in document', function (assert) {

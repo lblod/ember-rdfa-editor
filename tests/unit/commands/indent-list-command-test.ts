@@ -1,22 +1,18 @@
-import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import IndentListCommand from '@lblod/ember-rdfa-editor/commands/indent-list-command';
-import { setupTest } from 'ember-qunit';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
 module('Unit | commands | indent-list-command-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  setupTest(hooks);
-  hooks.beforeEach(() => {
-    ctx.reset();
-  });
+  const command = new IndentListCommand();
+  const executeCommand = makeTestExecute(command);
 
   test('indents a simple list', function (assert) {
     // language=XML
     const {
-      root: test,
+      root: initial,
       textNodes: { content },
     } = vdom`
       <div>
@@ -30,14 +26,12 @@ module('Unit | commands | indent-list-command-test', function (hooks) {
         </ul>
       </div>`;
 
-    ctx.model.rootModelNode.addChild(test);
     const start = ModelPosition.fromInTextNode(content, 0);
     const range = new ModelRange(start, start);
-    ctx.modelSelection.selectRange(range);
-    const command = new IndentListCommand(ctx.model);
-    command.execute();
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue } = executeCommand(initialState, {});
     // language=XML
-    const { root: rslt } = vdom`
+    const { root: expected } = vdom`
       <div>
         <ul>
           <li>
@@ -50,6 +44,6 @@ module('Unit | commands | indent-list-command-test', function (hooks) {
           </li>
         </ul>
       </div>`;
-    assert.true(rslt.sameAs(ctx.model.rootModelNode.firstChild));
+    assert.true(resultState.document.sameAs(expected));
   });
 });

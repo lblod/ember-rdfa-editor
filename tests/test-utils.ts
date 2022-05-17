@@ -46,7 +46,9 @@ export async function renderEditor() {
     />`);
   return getEditorElement();
 }
-type OptionalStateArgs = Omit<Partial<StateArgs>, "document"> & {document: ModelNode};
+type OptionalStateArgs = Omit<Partial<StateArgs>, 'document'> & {
+  document: ModelNode;
+};
 export function testState({
   document = new ModelElement('div'),
   commands = defaultCommands(),
@@ -54,8 +56,8 @@ export function testState({
   plugins = [],
   selection = new ModelSelection(),
 }: OptionalStateArgs): State {
-  if(!ModelNode.isModelElement(document)){
-    throw new TypeError("Cannot set non-element as document root");
+  if (!ModelNode.isModelElement(document)) {
+    throw new TypeError('Cannot set non-element as document root');
   }
   return new SayState({
     document,
@@ -88,4 +90,11 @@ export function makeTestExecute<A, R>(command: Command<A, R>) {
     );
     return { resultValue, resultState };
   };
+}
+export function stateWithRange(root: ModelNode, range: ModelRange) {
+  let initialState = testState({ document: root });
+  const tr = initialState.createTransaction();
+  tr.selectRange(range);
+  initialState = tr.apply();
+  return initialState;
 }

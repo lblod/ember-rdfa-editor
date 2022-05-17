@@ -17,7 +17,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
 export interface IndentListCommandArgs {
-  range: ModelRange | null;
+  range?: ModelRange | null;
 }
 export default class IndentListCommand
   implements Command<IndentListCommandArgs, void>
