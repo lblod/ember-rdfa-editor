@@ -56,6 +56,17 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
     return rendered;
   }
 
+  writeMultiple(nodes: Iterable<Node>) {
+    const rendered = renderFromSpecMultipleChildren(
+      this._spec.renderSpec(this),
+      nodes
+    );
+    if (isElement(rendered)) {
+      rendered.dataset['__setBy'] = this.attributes.setBy || CORE_OWNER;
+    }
+    return rendered;
+  }
+
   clone(): Mark<A> {
     return new Mark<A>(this._spec, this.attributes, this.node);
   }
@@ -159,6 +170,39 @@ function renderFromSpec(spec: RenderSpec, block: Node): Node {
         result.appendChild(block);
       } else {
         result.appendChild(renderFromSpec(child, block));
+      }
+    }
+    return result;
+  }
+}
+
+function renderFromSpecMultipleChildren(
+  spec: RenderSpec,
+  nodes: Iterable<Node>
+) {
+  if (spec === SLOT) {
+    const result = document.createElement('span');
+    result.append(...nodes);
+    return result;
+  } else {
+    const [nodeSpec, children] = spec;
+    let result: HTMLElement;
+    if (typeof nodeSpec === 'string') {
+      result = document.createElement(nodeSpec);
+    } else {
+      result = document.createElement(nodeSpec.tag);
+      for (const [key, val] of Object.entries(nodeSpec.attributes)) {
+        if (val !== undefined) {
+          result.setAttribute(key, val.toString());
+        }
+      }
+    }
+
+    for (const child of children) {
+      if (child === SLOT) {
+        result.append(...nodes);
+      } else {
+        result.appendChild(renderFromSpecMultipleChildren(child, nodes));
       }
     }
     return result;

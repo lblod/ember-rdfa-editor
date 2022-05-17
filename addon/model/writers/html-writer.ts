@@ -116,7 +116,9 @@ export default class HtmlWriter {
         const view = this.getView(modelText);
         if (view) {
           view.viewRoot = textViews[i].viewRoot;
-          view.contentRoot = textViews[i].contentRoot;
+          if (modelText.isDirty('content')) {
+            view.contentRoot = textViews[i].contentRoot;
+          }
           result.add(view.viewRoot);
         } else {
           this.model.registerNodeView(modelText, textViews[i]);
