@@ -3,15 +3,11 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import RemoveTableCommand from '@lblod/ember-rdfa-editor/commands/remove-table-command';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 
-module('Unit | commands | remove-table-command-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: RemoveTableCommand;
-
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new RemoveTableCommand(ctx.model);
-  });
+module('Unit | commands | remove-table-command-test', function () {
+  const command = new RemoveTableCommand();
+  const executeCommand = makeTestExecute(command);
 
   test('removes empty table (only element in document)', function (assert) {
     // language=XML
@@ -40,18 +36,13 @@ module('Unit | commands | remove-table-command-test', function (hooks) {
       <modelRoot></modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(topLeft, 0, 0);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
 
-    command.execute();
-    const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(
-      ctx.model.rootModelNode,
-      [0],
-      [0]
-    );
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const resultRange = resultState.selection.lastRange;
+    const expectedRange = ModelRange.fromPaths(resultState.document, [0], [0]);
     const result = resultRange ? expectedRange.sameAs(resultRange) : false;
     assert.ok(resultRange);
     assert.ok(result);
@@ -92,18 +83,13 @@ module('Unit | commands | remove-table-command-test', function (hooks) {
       <modelRoot></modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-    const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(
-      ctx.model.rootModelNode,
-      [0],
-      [0]
-    );
+    const resultRange = resultState.selection.lastRange;
+    const expectedRange = ModelRange.fromPaths(resultState.document, [0], [0]);
     const result = resultRange ? expectedRange.sameAs(resultRange) : false;
     assert.ok(resultRange);
     assert.ok(result);
@@ -185,18 +171,13 @@ module('Unit | commands | remove-table-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-    const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(
-      ctx.model.rootModelNode,
-      [0],
-      [0]
-    );
+    const resultRange = resultState.selection.lastRange;
+    const expectedRange = ModelRange.fromPaths(resultState.document, [0], [0]);
     const result = resultRange ? expectedRange.sameAs(resultRange) : false;
     assert.ok(resultRange);
     assert.ok(result);
@@ -278,18 +259,13 @@ module('Unit | commands | remove-table-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-    const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(
-      ctx.model.rootModelNode,
-      [1],
-      [1]
-    );
+    const resultRange = resultState.selection.lastRange;
+    const expectedRange = ModelRange.fromPaths(resultState.document, [1], [1]);
     const result = resultRange ? expectedRange.sameAs(resultRange) : false;
     assert.ok(resultRange);
     assert.ok(result);
@@ -353,18 +329,13 @@ module('Unit | commands | remove-table-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-    const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(
-      ctx.model.rootModelNode,
-      [0],
-      [0]
-    );
+    const resultRange = resultState.selection.lastRange;
+    const expectedRange = ModelRange.fromPaths(resultState.document, [0], [0]);
     const result = resultRange ? expectedRange.sameAs(resultRange) : false;
     assert.ok(resultRange);
     assert.ok(result);
@@ -428,18 +399,13 @@ module('Unit | commands | remove-table-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-    const resultRange = ctx.modelSelection.lastRange;
-    const expectedRange = ModelRange.fromPaths(
-      ctx.model.rootModelNode,
-      [1],
-      [1]
-    );
+    const resultRange = resultState.selection.lastRange;
+    const expectedRange = ModelRange.fromPaths(resultState.document, [1], [1]);
     const result = resultRange ? expectedRange.sameAs(resultRange) : false;
     assert.ok(resultRange);
     assert.ok(result);
@@ -484,15 +450,14 @@ module('Unit | commands | remove-table-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-    const resultRange = ctx.modelSelection.lastRange;
+    const resultRange = resultState.selection.lastRange;
     const expectedRange = ModelRange.fromPaths(
-      ctx.model.rootModelNode,
+      resultState.document,
       [0, 0],
       [0, 0]
     );
@@ -540,15 +505,14 @@ module('Unit | commands | remove-table-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
-    const resultRange = ctx.modelSelection.lastRange;
+    const resultRange = resultState.selection.lastRange;
     const expectedRange = ModelRange.fromPaths(
-      ctx.model.rootModelNode,
+      resultState.document,
       [0, 8],
       [0, 8]
     );
