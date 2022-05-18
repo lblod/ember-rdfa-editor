@@ -1,5 +1,4 @@
 import Model from '@lblod/ember-rdfa-editor/model/model';
-import HtmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import {
   ModelError,
@@ -19,12 +18,10 @@ import HtmlAdjacentTextWriter from './html-adjacent-text-writer';
  * Top-level {@link Writer} for HTML documents.
  */
 export default class HtmlWriter {
-  private htmlTextWriter: HtmlTextWriter;
   private htmlAdjacentTextWriter: HtmlAdjacentTextWriter;
   private htmlElementWriter: HtmlElementWriter;
 
   constructor(private model: Model) {
-    this.htmlTextWriter = new HtmlTextWriter(model);
     this.htmlAdjacentTextWriter = new HtmlAdjacentTextWriter(model);
     this.htmlElementWriter = new HtmlElementWriter(model);
   }
@@ -116,7 +113,6 @@ export default class HtmlWriter {
           if (!isTextView(view)) {
             throw new ModelError('ModelText with non-text view');
           }
-
           view.viewRoot = textViews[i].viewRoot;
           if (modelText.isDirty('content')) {
             view.contentRoot = textViews[i].contentRoot;
