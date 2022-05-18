@@ -365,6 +365,8 @@ export default class ModelElement
     return this.children[index].getOffset();
   }
 
+  domOffsetToModelOffset(domOffset: number): number {}
+
   /**
    * Return the child containing, or immediately after, the offset
    * @param offset
