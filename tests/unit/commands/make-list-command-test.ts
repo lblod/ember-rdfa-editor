@@ -3,15 +3,12 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 
-module('Unit | commands | make-list-command', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: MakeListCommand;
-
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new MakeListCommand(ctx.model);
-  });
+module('Unit | commands | make-list-command', function () {
+  const command = new MakeListCommand();
+  const executeCommand = makeTestExecute(command);
 
   test('adds list in an empty document', function (assert) {
     // language=XML
@@ -28,12 +25,10 @@ module('Unit | commands | make-list-command', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInNode(initial, 0, 0);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('adds list in a document with only a new line', function (assert) {
@@ -54,12 +49,10 @@ module('Unit | commands | make-list-command', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 1, 1);
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInNode(initial, 1, 1);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('creates list from lines of text', function (assert) {
@@ -91,16 +84,14 @@ module('Unit | commands | make-list-command', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(
-      ctx.model.rootModelNode,
+    const range = ModelRange.fromInNode(
+      initial,
       0,
-      ctx.model.rootModelNode.getMaxOffset()
+      (initial as ModelElement).getMaxOffset()
     );
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('creates list from text before list', function (assert) {
@@ -138,11 +129,9 @@ module('Unit | commands | make-list-command', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(firstLine, 1, 3);
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
   });
 });
