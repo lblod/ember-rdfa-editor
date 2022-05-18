@@ -2,7 +2,7 @@ import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { TextView } from '@lblod/ember-rdfa-editor/model/node-view';
-import { Mark, MarkSet } from '../mark';
+import { MarkSet } from '../mark';
 
 /**
  * Writer responsible for converting {@link ModelText} nodes into HTML subtrees
