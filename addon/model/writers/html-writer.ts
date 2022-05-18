@@ -10,15 +10,11 @@ import NodeView, {
   ElementView,
   isElementView,
   isTextView,
-  TextView,
 } from '@lblod/ember-rdfa-editor/model/node-view';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import HtmlAdjacentTextWriter from './html-adjacent-text-writer';
-import { TextOrElement } from '../util/types';
-import ArrayUtils from '../util/array-utils';
-
 /**
  * Top-level {@link Writer} for HTML documents.
  */
@@ -64,12 +60,10 @@ export default class HtmlWriter {
       if (adjacentTextNodes.length > 0) {
         childViews.push(...this.processTextViews(adjacentTextNodes));
       }
-      if (modelNode.isDirty('content')) {
-        if (isElement(view.viewRoot)) {
-          view.viewRoot.replaceChildren(...childViews);
-        } else {
-          throw new ModelError('Model element with non-element viewroot');
-        }
+      if (isElement(view.viewRoot)) {
+        view.viewRoot.replaceChildren(...childViews);
+      } else {
+        throw new ModelError('Model element with non-element viewroot');
       }
       resultView = view;
     } else if (ModelNode.isModelText(modelNode)) {
@@ -122,15 +116,15 @@ export default class HtmlWriter {
           if (!isTextView(view)) {
             throw new ModelError('ModelText with non-text view');
           }
+
           view.viewRoot = textViews[i].viewRoot;
           if (modelText.isDirty('content')) {
-            // view.contentRoot.replaceWith(textViews[i].contentRoot);
             view.contentRoot = textViews[i].contentRoot;
           }
-          this.model.registerNodeView(modelText, view);
+          this.model.registerTextNode(modelText, view);
           result.add(view.viewRoot);
         } else {
-          this.model.registerNodeView(modelText, textViews[i]);
+          this.model.registerTextNode(modelText, textViews[i]);
           result.add(textViews[i].viewRoot);
         }
       });

@@ -25,6 +25,7 @@ import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
 import setNodeAndChildDirty from './util/set-node-and-child-dirty';
+import ModelText from './model-text';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -172,6 +173,11 @@ export default class Model {
    */
   registerNodeView(modelNode: ModelNode, view: NodeView): void {
     this.viewToModelMap.set(view.viewRoot, modelNode);
+    this.modelToViewMap.set(modelNode, view);
+  }
+
+  registerTextNode(modelNode: ModelText, view: NodeView): void {
+    this.viewToModelMap.set(view.contentRoot, modelNode);
     this.modelToViewMap.set(modelNode, view);
   }
 
