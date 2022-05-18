@@ -1,10 +1,9 @@
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelText from './model-text';
-import { INVISIBLE_SPACE } from './util/constants';
+import Transaction from '../core/transaction';
 import ModelPosition from './model-position';
 import ModelSelection from './model-selection';
-import ImmediateModelMutator from './mutators/immediate-model-mutator';
-import Transaction from '../core/transaction';
+import ModelText from './model-text';
+import { INVISIBLE_SPACE } from './util/constants';
 
 type TableIndex = {
   x: number;
@@ -145,5 +144,18 @@ export default class ModelTable extends ModelElement {
     });
 
     return generator?.next().value as ModelTable;
+  }
+
+  clone(): ModelTable {
+    const result = new ModelTable();
+
+    result.attributeMap = new Map<string, string>(this.attributeMap);
+    result.modelNodeType = this.modelNodeType;
+
+    const clonedChildren = this.children.map((c) => c.clone());
+
+    result.appendChildren(...clonedChildren);
+
+    return result;
   }
 }

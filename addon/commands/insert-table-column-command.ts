@@ -1,14 +1,18 @@
-import Command, { CommandContext } from '@lblod/ember-rdfa-editor/commands/command';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 export interface InsertTableColumnCommandArgs {
-  selection?: ModelSelection
+  selection?: ModelSelection;
 }
 
-export default abstract class InsertTableColumnCommand implements Command<InsertTableColumnCommandArgs, void> {
-  name = "insert-table-column";
+export default abstract class InsertTableColumnCommand
+  implements Command<InsertTableColumnCommandArgs, void>
+{
+  name = 'insert-table-column';
   abstract insertBefore: boolean;
 
   canExecute(): boolean {
@@ -16,7 +20,10 @@ export default abstract class InsertTableColumnCommand implements Command<Insert
   }
 
   @logExecute
-  execute({state, dispatch}: CommandContext, {selection = state.selection}: InsertTableColumnCommandArgs) {
+  execute(
+    { state, dispatch }: CommandContext,
+    { selection = state.selection }: InsertTableColumnCommandArgs
+  ) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -39,7 +46,7 @@ export default abstract class InsertTableColumnCommand implements Command<Insert
     const tr = state.createTransaction();
 
     const insertPosition = this.insertBefore ? position.x : position.x + 1;
-      table.addColumn(tr, insertPosition);
+    table.addColumn(tr, insertPosition);
 
     dispatch(tr);
   }
