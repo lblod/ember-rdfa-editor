@@ -30,12 +30,7 @@ export default class RemoveMarkFromSelectionCommand extends Command<
       }
       if (spec) {
         this.model.change((mutator) => {
-          const resultRange = mutator.removeMark(
-            selection.lastRange,
-            spec,
-            attributes
-          );
-          // this.model.selectRange(resultRange);
+          mutator.removeMark(selection.lastRange, spec, attributes);
         });
       } else {
         throw new ModelError(`Unrecognized mark: ${name}`);
