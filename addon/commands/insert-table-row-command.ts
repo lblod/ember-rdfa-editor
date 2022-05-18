@@ -1,16 +1,18 @@
-import Command, { CommandContext } from '@lblod/ember-rdfa-editor/commands/command';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 export interface InsertTableRowCommandArgs {
-  selection?: ModelSelection
+  selection?: ModelSelection;
 }
 
 export default abstract class InsertTableRowCommand
   implements Command<InsertTableRowCommandArgs, void>
 {
-  name = "insert-table-row";
+  name = 'insert-table-row';
 
   abstract insertAbove: boolean;
 
@@ -46,7 +48,7 @@ export default abstract class InsertTableRowCommand
     const insertPosition = this.insertAbove ? position.y : position.y + 1;
     const tr = state.createTransaction();
 
-      table.addRow(tr, insertPosition);
+    table.addRow(tr, insertPosition);
 
     dispatch(tr);
   }

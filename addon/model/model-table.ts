@@ -57,11 +57,7 @@ export default class ModelTable extends ModelElement {
     for (let i = 0; i < columns; i++) {
       const cell = new ModelElement('td');
       cell.addChild(new ModelText(INVISIBLE_SPACE));
-      const lastPositionInsideRow = ModelPosition.fromInElement(
-        row,
-        row.getMaxOffset()
-      );
-      tr.insertAtPosition(lastPositionInsideRow, cell);
+      row.addChild(cell);
     }
     if (index || index === 0) {
       const positionOfIndex = ModelPosition.fromInElement(

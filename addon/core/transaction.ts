@@ -93,7 +93,7 @@ export default class Transaction {
 
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const op = new InsertOperation(undefined, this.cloneRange(range), ...nodes);
-    return op.execute().defaultRange;
+    return this.executeOperation(op);
   }
 
   setSelection(selection: ModelSelection) {
