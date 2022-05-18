@@ -16,7 +16,7 @@ export interface InsertNewLiCommandArgs {
   range?: ModelRange | null;
 }
 
-export default class InsertNewLiCommand extends Command<
+export default class InsertNewLiCommand implements Command<
   InsertNewLiCommandArgs,
   void
 > {

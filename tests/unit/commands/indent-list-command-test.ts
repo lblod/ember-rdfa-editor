@@ -5,7 +5,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
-module('Unit | commands | indent-list-command-test', function (hooks) {
+module('Unit | commands | indent-list-command-test', function () {
   const command = new IndentListCommand();
   const executeCommand = makeTestExecute(command);
 

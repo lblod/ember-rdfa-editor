@@ -1,22 +1,18 @@
-import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import InsertNewLiCommand from '@lblod/ember-rdfa-editor/commands/insert-newLi-command';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
 //TODO: These tests serve at the moment as a documentation for
 // what the command currently does, and as a way of catching possible
 // regressions for things that might depend on its behavior.
 // In particular, all the extra empty textnodes should not be there.
 
-module('Unit | commands | insert-new-li-command-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: InsertNewLiCommand;
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new InsertNewLiCommand(ctx.model);
-  });
+module('Unit | commands | insert-new-li-command-test', function () {
+  const command = new InsertNewLiCommand();
+  const executeCommand = makeTestExecute(command);
 
   test('insert li - single empty li - collapsed selection', function (assert) {
     // language=XML
@@ -46,12 +42,10 @@ module('Unit | commands | insert-new-li-command-test', function (hooks) {
       </div>
     `;
 
-    ctx.model.rootModelNode.addChild(initial);
-    ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 0, 0));
-    command.execute();
-    const actual = ctx.model.rootModelNode.firstChild;
-
-    assert.true(actual.sameAs(expected));
+    const range = ModelRange.fromInElement(testLi, 0, 0);
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('insert li - single nonempty li - collapsed selection in front', function (assert) {
@@ -82,12 +76,10 @@ module('Unit | commands | insert-new-li-command-test', function (hooks) {
       </div>
     `;
 
-    ctx.model.rootModelNode.addChild(initial);
-    ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 0, 0));
-    command.execute();
-    const actual = ctx.model.rootModelNode.firstChild;
-
-    assert.true(actual.sameAs(expected));
+    const range = ModelRange.fromInElement(testLi, 0, 0);
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('insert li - single nonempty li - collapsed selection at end', function (assert) {
@@ -118,13 +110,10 @@ module('Unit | commands | insert-new-li-command-test', function (hooks) {
         </ul>
       </div>
     `;
-
-    ctx.model.rootModelNode.addChild(initial);
-    ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 3, 3));
-    command.execute();
-    const actual = ctx.model.rootModelNode.firstChild;
-
-    assert.true(actual.sameAs(expected));
+    const range = ModelRange.fromInElement(testLi, 3, 3);
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('insert li - single nonempty li - collapsed selection in middle', function (assert) {
@@ -156,12 +145,10 @@ module('Unit | commands | insert-new-li-command-test', function (hooks) {
       </div>
     `;
 
-    ctx.model.rootModelNode.addChild(initial);
-    ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 1, 1));
-    command.execute();
-    const actual = ctx.model.rootModelNode.firstChild;
-
-    assert.true(actual.sameAs(expected));
+    const range = ModelRange.fromInElement(testLi, 1, 1);
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('insert li - single nonempty li with elements - collapsed selection inside child elem', function (assert) {
@@ -203,14 +190,11 @@ module('Unit | commands | insert-new-li-command-test', function (hooks) {
       </div>
     `;
 
-    ctx.model.rootModelNode.addChild(initial);
-    ctx.modelSelection.selectRange(
-      ModelRange.fromInTextNode(insideChild, 1, 1)
-    );
-    command.execute();
-    const actual = ctx.model.rootModelNode.firstChild;
+    const range = ModelRange.fromInTextNode(insideChild, 1, 1);
 
-    assert.true(actual.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('insert li - single nonempty li - uncollapsed within li', function (assert) {
@@ -242,12 +226,10 @@ module('Unit | commands | insert-new-li-command-test', function (hooks) {
       </div>
     `;
 
-    ctx.model.rootModelNode.addChild(initial);
-    ctx.modelSelection.selectRange(ModelRange.fromInElement(testLi, 1, 3));
-    command.execute();
-    const actual = ctx.model.rootModelNode.firstChild;
-
-    assert.true(actual.sameAs(expected));
+    const range = ModelRange.fromInElement(testLi, 1, 3);
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('insert li - single nonempty li with elements - uncollapsed within li', function (assert) {
@@ -283,13 +265,14 @@ module('Unit | commands | insert-new-li-command-test', function (hooks) {
       </div>
     `;
 
-    ctx.model.rootModelNode.addChild(initial);
-    ctx.modelSelection.selectRange(
-      ModelRange.fromInElement(testLi, 1, testLi.getMaxOffset() - 1)
+    const range = ModelRange.fromInElement(
+      testLi,
+      1,
+      testLi.getMaxOffset() - 1
     );
-    command.execute();
-    const actual = ctx.model.rootModelNode.firstChild;
 
-    assert.true(actual.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 });
