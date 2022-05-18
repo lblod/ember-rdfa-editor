@@ -35,6 +35,10 @@ export class HtmlReaderContext {
     this.model.registerNodeView(modelNode, view);
   }
 
+  registerTextNode(modelNode: ModelText, view: NodeView): void {
+    this.model.registerTextNode(modelNode, view);
+  }
+
   get shouldConvertWhitespace() {
     return this._shouldConvertWhitespace;
   }

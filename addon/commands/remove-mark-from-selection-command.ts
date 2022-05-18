@@ -35,7 +35,7 @@ export default class RemoveMarkFromSelectionCommand extends Command<
             spec,
             attributes
           );
-          this.model.selectRange(resultRange);
+          // this.model.selectRange(resultRange);
         });
       } else {
         throw new ModelError(`Unrecognized mark: ${name}`);
