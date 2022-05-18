@@ -9,7 +9,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelElement from '../model/model-element';
-import Command from './command';
+import Command, { CommandContext } from './command';
 export interface InsertNewLineCommandArgs {
   range?: ModelRange | null;
 }
@@ -19,7 +19,7 @@ export interface InsertNewLineCommandArgs {
  * that newline renders correctly. Newlines are currently done using <br> elements, but
  * that is technically an implementation detail.
  */
-export default class InsertNewLineCommand extends Command<
+export default class InsertNewLineCommand implements Command<
   InsertNewLineCommandArgs,
   void
 > {

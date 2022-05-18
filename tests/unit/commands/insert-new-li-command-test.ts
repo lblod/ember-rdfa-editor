@@ -44,7 +44,7 @@ module('Unit | commands | insert-new-li-command-test', function () {
 
     const range = ModelRange.fromInElement(testLi, 0, 0);
     const initialState = stateWithRange(initial, range);
-    const { resultState, resultValue } = executeCommand(initialState, {});
+    const { resultState } = executeCommand(initialState, {});
     assert.true(resultState.document.sameAs(expected));
   });
 
@@ -78,7 +78,7 @@ module('Unit | commands | insert-new-li-command-test', function () {
 
     const range = ModelRange.fromInElement(testLi, 0, 0);
     const initialState = stateWithRange(initial, range);
-    const { resultState, resultValue } = executeCommand(initialState, {});
+    const { resultState } = executeCommand(initialState, {});
     assert.true(resultState.document.sameAs(expected));
   });
 
@@ -112,7 +112,7 @@ module('Unit | commands | insert-new-li-command-test', function () {
     `;
     const range = ModelRange.fromInElement(testLi, 3, 3);
     const initialState = stateWithRange(initial, range);
-    const { resultState, resultValue } = executeCommand(initialState, {});
+    const { resultState } = executeCommand(initialState, {});
     assert.true(resultState.document.sameAs(expected));
   });
 
@@ -147,7 +147,7 @@ module('Unit | commands | insert-new-li-command-test', function () {
 
     const range = ModelRange.fromInElement(testLi, 1, 1);
     const initialState = stateWithRange(initial, range);
-    const { resultState, resultValue } = executeCommand(initialState, {});
+    const { resultState } = executeCommand(initialState, {});
     assert.true(resultState.document.sameAs(expected));
   });
 
@@ -193,7 +193,7 @@ module('Unit | commands | insert-new-li-command-test', function () {
     const range = ModelRange.fromInTextNode(insideChild, 1, 1);
 
     const initialState = stateWithRange(initial, range);
-    const { resultState, resultValue } = executeCommand(initialState, {});
+    const { resultState } = executeCommand(initialState, {});
     assert.true(resultState.document.sameAs(expected));
   });
 
@@ -228,7 +228,7 @@ module('Unit | commands | insert-new-li-command-test', function () {
 
     const range = ModelRange.fromInElement(testLi, 1, 3);
     const initialState = stateWithRange(initial, range);
-    const { resultState, resultValue } = executeCommand(initialState, {});
+    const { resultState } = executeCommand(initialState, {});
     assert.true(resultState.document.sameAs(expected));
   });
 
@@ -272,7 +272,7 @@ module('Unit | commands | insert-new-li-command-test', function () {
     );
 
     const initialState = stateWithRange(initial, range);
-    const { resultState, resultValue } = executeCommand(initialState, {});
+    const { resultState } = executeCommand(initialState, {});
     assert.true(resultState.document.sameAs(expected));
   });
 });

@@ -1,4 +1,4 @@
-import Command from './command';
+import Command, { CommandContext } from './command';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
@@ -39,7 +39,7 @@ export default class InsertTableCommand
     const tr = state.createTransaction();
 
     tr.insertNodes(selection.lastRange, table);
-    tr.collapseSelectionIn(firstCell);
+    tr.collapseIn(firstCell);
     dispatch(tr);
   }
 }

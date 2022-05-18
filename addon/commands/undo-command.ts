@@ -5,6 +5,9 @@ import { logExecute } from '../utils/logging-utils';
 export default class UndoCommand implements Command<void, void> {
   name = 'undo';
 
+  canExecute(): boolean {
+    return true;
+  }
 
   @logExecute
   execute({state, dispatch}: CommandContext): void {

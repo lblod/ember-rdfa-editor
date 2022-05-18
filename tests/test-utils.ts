@@ -9,6 +9,7 @@ import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import hbs from 'htmlbars-inline-precompile';
 

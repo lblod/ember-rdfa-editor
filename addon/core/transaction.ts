@@ -359,7 +359,7 @@ export default class Transaction {
    * TODO: this is a shortcut, should ultimately not be needed
    * */
   inWorkingCopy<N extends ModelNode>(node: N): N {
-    if(node.root === this.workingCopy.document) {
+    if (node.root === this.workingCopy.document) {
       return node;
     }
     const pos = this.clonePos(ModelPosition.fromBeforeNode(node));

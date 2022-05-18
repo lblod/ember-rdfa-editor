@@ -4,11 +4,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import {
-  makeTestExecute,
-  testDispatch,
-  testState,
-} from 'dummy/tests/test-utils';
+import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
 module('Unit | commands | insert-text-command-test', function () {
@@ -29,7 +25,6 @@ module('Unit | commands | insert-text-command-test', function () {
       </modelRoot>
     `;
     const initialState = testState({ document: initial });
-
 
     // language=XML
     const { root: expected } = vdom`

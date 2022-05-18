@@ -29,7 +29,7 @@ module('Unit | commands | indent-list-command-test', function () {
     const start = ModelPosition.fromInTextNode(content, 0);
     const range = new ModelRange(start, start);
     const initialState = stateWithRange(initial, range);
-    const { resultState, resultValue } = executeCommand(initialState, {});
+    const { resultState } = executeCommand(initialState, {});
     // language=XML
     const { root: expected } = vdom`
       <div>
