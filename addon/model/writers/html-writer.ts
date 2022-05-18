@@ -49,6 +49,7 @@ export default class HtmlWriter {
           if (adjacentTextNodes.length > 0) {
             // process adjacent text nodes
             childViews.push(...this.processTextViews(adjacentTextNodes));
+            adjacentTextNodes.forEach((textNode) => textNode.clearDirty());
             adjacentTextNodes = [];
           }
           childViews.push(this.write(child).viewRoot);
@@ -56,11 +57,15 @@ export default class HtmlWriter {
       }
       if (adjacentTextNodes.length > 0) {
         childViews.push(...this.processTextViews(adjacentTextNodes));
+        adjacentTextNodes.forEach((textNode) => textNode.clearDirty());
       }
-      if (isElement(view.viewRoot)) {
-        view.viewRoot.replaceChildren(...childViews);
-      } else {
-        throw new ModelError('Model element with non-element viewroot');
+
+      if (modelNode.isDirty('content')) {
+        if (isElement(view.viewRoot)) {
+          view.viewRoot.replaceChildren(...childViews);
+        } else {
+          throw new ModelError('Model element with non-element viewroot');
+        }
       }
       resultView = view;
     } else if (ModelNode.isModelText(modelNode)) {
@@ -113,12 +118,16 @@ export default class HtmlWriter {
           if (!isTextView(view)) {
             throw new ModelError('ModelText with non-text view');
           }
-          view.viewRoot = textViews[i].viewRoot;
-          if (modelText.isDirty('content')) {
-            view.contentRoot = textViews[i].contentRoot;
-          }
-          this.model.registerTextNode(modelText, view);
-          result.add(view.viewRoot);
+          view.viewRoot.replaceWith(textViews[i].viewRoot);
+          // view.viewRoot = textViews[i].viewRoot;
+          // if (modelText.isDirty('content')) {
+          //   // view.contentRoot.replaceWith(textViews[i].contentRoot);
+          //   // view.contentRoot.replaceWith(textViews[i].contentRoot);
+          //   // view.contentRoot = textViews[i].contentRoot;
+          // }
+          this.model.registerTextNode(modelText, textViews[i]);
+          // this.model.registerTextNode(modelText, view);
+          result.add(textViews[i].viewRoot);
         } else {
           this.model.registerTextNode(modelText, textViews[i]);
           result.add(textViews[i].viewRoot);
@@ -127,9 +136,9 @@ export default class HtmlWriter {
       //apply html-adjacent-text-writer
     } else {
       modelTexts.forEach((modelText) => {
-        if (modelText.isDirty('content')) {
-          const view = this.getView(modelText);
-          if (view) {
+        const view = this.getView(modelText);
+        if (view) {
+          if (modelText.isDirty('content')) {
             if (!isTextView(view)) {
               throw new ModelError('ModelText with non-text view');
             }
@@ -138,8 +147,8 @@ export default class HtmlWriter {
               view.contentRoot.length,
               modelText.content
             );
-            result.add(view.viewRoot);
           }
+          result.add(view.viewRoot);
         }
       });
     }

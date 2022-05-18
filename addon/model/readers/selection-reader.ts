@@ -126,16 +126,23 @@ export default class SelectionReader
       if (modelNode.children.length) {
         let modelIndex = 0;
         if (domOffset !== 0) {
-          const targetChild = container.childNodes[Math.max(domOffset, 1) - 1];
-
-          for (let i = 0; i < modelNode.length; i++) {
+          const targetChild = container.childNodes[domOffset - 1];
+          let found = false;
+          let domChild;
+          let i = 0;
+          while (i < modelNode.length && (!found || domChild === targetChild)) {
             const child = modelNode.children[i];
-            const domChild = this.model.modelToView(child)?.viewRoot;
-            modelIndex++;
-            if (domChild === targetChild) {
-              break;
+            domChild = this.model.modelToView(child)?.viewRoot;
+            if (domChild === targetChild && !found) {
+              found = true;
+              if (i + 1 < modelNode.length) {
+                const child = modelNode.children[i + 1];
+                domChild = this.model.modelToView(child)?.viewRoot;
+              }
             }
+            i++;
           }
+          modelIndex = i;
         }
 
         // text<b>asdf<u>asdf</u>afsdf</b>asdfasdf
