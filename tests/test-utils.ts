@@ -76,12 +76,12 @@ export interface CommandResult<R> {
   resultState: State;
 }
 export function makeTestExecute<A, R>(command: Command<A, R>) {
-  let resultState: State;
-  function dispatch(transaction: Transaction): State {
-    resultState = transaction.apply();
-    return resultState;
-  }
   return function (state: State, args: A): CommandResult<R> {
+    let resultState: State | null = null;
+    function dispatch(transaction: Transaction): State {
+      resultState = transaction.apply();
+      return resultState;
+    }
     const resultValue = command.execute(
       {
         dispatch,
@@ -89,6 +89,9 @@ export function makeTestExecute<A, R>(command: Command<A, R>) {
       },
       args
     );
+    if (!resultState) {
+      resultState = state;
+    }
     return { resultValue, resultState };
   };
 }
