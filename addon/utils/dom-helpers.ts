@@ -1,4 +1,5 @@
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import State from '../core/state';
 import ModelElement from '../model/model-element';
 import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
@@ -517,19 +518,29 @@ export function getWindowSelection(): Selection {
 
   return selection;
 }
-
-export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
+export function getPathFromAncestor(
+  from: Node,
+  to: Node,
+  inclusive: boolean
+): Node[] {
   const path = [];
   let cur = to.parentNode;
-  while (cur) {
+  while (cur && cur !== from) {
     path.push(cur);
     cur = cur.parentNode;
+  }
+  if (cur) {
+    path.push(cur);
   }
   path.reverse();
   if (inclusive) {
     path.push(to);
   }
   return path;
+}
+
+export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
+  return getPathFromAncestor(to.getRootNode(), to, inclusive);
 }
 export function getIndexPath(node: Node): number[] {
   let cur = node;
@@ -555,24 +566,34 @@ export function nodeIndex(node: Node): number {
   return -1;
 }
 export function domPosToModelPos(
-  document: ModelElement,
+  state: State,
+  viewRoot: HTMLElement,
   container: Node,
   offset: number
 ): ModelPosition {
-  const indexPath = getIndexPath(container);
-  const offsetPath = resolveIndexPath(document, indexPath);
-  return ModelPosition.fromPath(document, offsetPath);
-}
-export function resolveIndexPath(tree: ModelNode, path: number[]): number[] {
-  let cur = tree;
-  const result = [];
-  for (const index of path) {
-    if (ModelNode.isModelElement(cur)) {
-      result.push(cur.indexToOffset(index));
-      cur = cur.children[index];
+  const path = getPathFromAncestor(viewRoot, container, true);
+  const modelIndexPath = [];
+  let markOffset = 0;
+  for (const node of path.slice(1)) {
+    const parseResult = state.parseNode(node);
+    if (parseResult.type === 'mark') {
+      markOffset += nodeIndex(node);
+    } else if (parseResult.type === 'element') {
+      modelIndexPath.push(nodeIndex(node) + markOffset);
     } else {
-      throw new PositionError();
+      modelIndexPath.push(nodeIndex(node) + markOffset);
     }
   }
-  return result;
+  let cur: ModelNode = state.document;
+  const offsetPath = [];
+  for (const index of modelIndexPath) {
+    if (ModelNode.isModelElement(cur) && !cur.isLeaf) {
+      offsetPath.push(cur.indexToOffset(index));
+      cur = cur.children[index];
+    } else {
+      throw new PositionError('got path that extends past leafnode');
+    }
+  }
+  console.log('PATH', offsetPath);
+  return ModelPosition.fromPath(state.document, offsetPath);
 }

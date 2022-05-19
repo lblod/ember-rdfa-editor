@@ -70,7 +70,11 @@ export default class Transaction {
       throw new NotImplementedError();
     }
     const selectionReader = new SelectionReader();
-    const newSelection = selectionReader.read(view, getWindowSelection());
+    const newSelection = selectionReader.read(
+      this.workingCopy,
+      view.domRoot,
+      getWindowSelection()
+    );
 
     this.workingCopy.document = newVdom;
     this.workingCopy.selection = newSelection;

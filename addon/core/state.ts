@@ -9,6 +9,8 @@ import Command, {
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 import Transaction from './transaction';
 import InsertNewLineCommand from '../commands/insert-newLine-command';
+import { isElement, isTextNode } from '../utils/dom-helpers';
+import { NotImplementedError } from '../utils/errors';
 
 export interface StateArgs {
   document: ModelElement;
@@ -17,6 +19,9 @@ export interface StateArgs {
   commands: Record<CommandName, CommandMap[CommandName]>;
   marksRegistry: MarksRegistry;
   previousState?: State | null;
+}
+export interface NodeParseResult {
+  type: 'mark' | 'text' | 'element';
 }
 
 export default interface State {
@@ -27,6 +32,7 @@ export default interface State {
   marksRegistry: MarksRegistry;
   previousState: State | null;
   createTransaction(): Transaction;
+  parseNode(node: Node): NodeParseResult;
 }
 export class SayState implements State {
   document: ModelElement;
@@ -46,6 +52,18 @@ export class SayState implements State {
   }
   createTransaction(): Transaction {
     return new Transaction(this);
+  }
+  parseNode(node: Node): NodeParseResult {
+    const matchedMarks = this.marksRegistry.matchMarkSpec(node);
+    if (matchedMarks.size) {
+      return { type: 'mark' };
+    } else if (isElement(node)) {
+      return { type: 'element' };
+    } else if (isTextNode(node)) {
+      return { type: 'text' };
+    } else {
+      throw new NotImplementedError();
+    }
   }
 }
 

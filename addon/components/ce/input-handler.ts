@@ -55,7 +55,8 @@ export class EditorInputHandler implements InputHandler {
     }
     const selectionReader = new SelectionReader();
     const newSelection = selectionReader.read(
-      this.editor.state.document,
+      this.editor.state,
+      this.editor.view.domRoot,
       currentSelection
     );
     const tr = new Transaction(this.editor.state);
