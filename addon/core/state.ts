@@ -8,6 +8,7 @@ import Command, {
 } from '@lblod/ember-rdfa-editor/commands/command';
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 import Transaction from './transaction';
+import InsertNewLineCommand from '../commands/insert-newLine-command';
 
 export interface StateArgs {
   document: ModelElement;
@@ -54,6 +55,7 @@ export function defaultCommands(): Record<
 > {
   return {
     'insert-text': new InsertTextCommand(),
+    'insert-newLine': new InsertNewLineCommand(),
   };
 }
 

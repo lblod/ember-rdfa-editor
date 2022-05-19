@@ -1,5 +1,7 @@
 import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
+import { handleInsertLineBreak } from '@lblod/ember-rdfa-editor/input/insert-line-break';
+import { handleInsertText } from '@lblod/ember-rdfa-editor/input/insert-text';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
@@ -19,21 +21,13 @@ export class EditorInputHandler implements InputHandler {
   afterInput(event: InputEvent): void {}
 
   beforeInput(event: InputEvent): void {
+    console.log('handling beforeInput');
     switch (event.inputType) {
-      case 'insertText': {
-        const selectionReader = new SelectionReader();
-        const insertRange = selectionReader.readDomRange(
-          this.editor.view,
-          event.getTargetRanges()[0]
-        )!;
-        this.editor.executeCommand('insert-text', {
-          range: insertRange,
-          text: event.data || '',
-          needsToWrite: false,
-        });
+      case 'insertText':
+        handleInsertText(this.editor, event);
         break;
-      }
       case 'insertLineBreak':
+        handleInsertLineBreak(this.editor, event);
         break;
       case 'deleteWordBackward':
         break;
@@ -47,8 +41,8 @@ export class EditorInputHandler implements InputHandler {
   beforeSelectionChange(event: Event): void {}
 
   afterSelectionChange(event: Event): void {
+    console.log('handling selectionChanged');
     const currentSelection = getWindowSelection();
-    const view = this.editor.view;
     const viewRoot = this.editor.view.domRoot;
     if (
       !viewRoot.contains(currentSelection.anchorNode) ||
@@ -61,11 +55,12 @@ export class EditorInputHandler implements InputHandler {
     }
     const selectionReader = new SelectionReader();
     const newSelection = selectionReader.read(
-      this.editor.view,
+      this.editor.state.document,
       currentSelection
     );
     const tr = new Transaction(this.editor.state);
     tr.setSelection(newSelection);
+
     updateState(this.editor, tr);
   }
 }

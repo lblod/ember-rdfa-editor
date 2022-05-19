@@ -1,9 +1,11 @@
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 import { Dispatch } from '../core/editor';
 import State from '../core/state';
+import InsertNewLineCommand from './insert-newLine-command';
 
 export type CommandMap = {
   'insert-text': InsertTextCommand;
+  'insert-newLine': InsertNewLineCommand;
 };
 export type CommandName = keyof CommandMap;
 

@@ -26,7 +26,12 @@ export default class InsertTextCommand
   @logExecute
   execute(
     { dispatch, state }: CommandContext,
-    { text, marks = new MarkSet(), range, needsToWrite = true }: InsertTextCommandArgs
+    {
+      text,
+      marks = new MarkSet(),
+      range,
+      needsToWrite = true,
+    }: InsertTextCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();

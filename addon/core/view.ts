@@ -2,8 +2,14 @@ import State from '@lblod/ember-rdfa-editor/core/state';
 import ModelNode from '../model/model-node';
 import NodeView from '../model/node-view';
 import HtmlWriter from '../model/writers/html-writer';
-import { ModelError } from '../utils/errors';
-import SelectionWriter from "@lblod/ember-rdfa-editor/model/writers/selection-writer";
+import {
+  IndexOutOfRangeError,
+  ModelError,
+  PositionError,
+} from '../utils/errors';
+import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
+import ModelPosition from '../model/model-position';
+import { getIndexPath } from '../utils/dom-helpers';
 
 export interface View {
   domRoot: HTMLElement;

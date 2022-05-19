@@ -3,25 +3,38 @@ import { EditorPlugin } from '../utils/editor-plugin';
 import Transaction from './transaction';
 import { View, EditorView } from './view';
 import { CommandName } from '@lblod/ember-rdfa-editor/commands/command';
+export type Dispatcher = (view: View, updateView?: boolean) => Dispatch;
 export type Dispatch = (transaction: Transaction) => State;
 
 export interface EditorArgs {
   domRoot: HTMLElement;
   plugins: EditorPlugin[];
-  dispatch?: Dispatch;
+  dispatcher?: Dispatcher;
 }
 
 export interface Editor {
   state: State;
   view: View;
 
-  executeCommand(commandName: CommandName, args: unknown): unknown;
+  executeCommand(
+    commandName: CommandName,
+    args: unknown,
+    updateView?: boolean
+  ): unknown;
 }
 
 class SayEditor implements Editor {
-  state: State;
+  private _state: State;
   view: View;
-  dispatch: Dispatch;
+  dispatchUpdate: Dispatch;
+  dispatchNoUpdate: Dispatch;
+  get state(): State {
+    return this._state;
+  }
+  set state(value: State) {
+    console.log('Setting state', value.document.toXml());
+    this._state = value;
+  }
 
   constructor(args: EditorArgs) {
     const { domRoot, plugins } = args;
@@ -33,27 +46,37 @@ class SayEditor implements Editor {
     tr.readFromView(this.view);
     initialState = tr.apply();
     this.view.update(initialState);
-    this.state = initialState;
-    this.dispatch = args.dispatch ?? this.defaultDispatch;
+    this._state = initialState;
+    const dispatcher = args.dispatcher || this.defaultDispatcher;
+    this.dispatchUpdate = dispatcher(this.view, true);
+    this.dispatchNoUpdate = dispatcher(this.view, false);
   }
 
-  executeCommand(commandName: CommandName, args: unknown): unknown {
+  executeCommand(
+    commandName: CommandName,
+    args: unknown,
+    updateView = true
+  ): unknown {
     const command = this.state.commands[commandName];
     const tr = new Transaction(this.state);
     const result = command.execute(
       {
-        dispatch: this.dispatch,
+        dispatch: updateView ? this.dispatchUpdate : this.dispatchNoUpdate,
         state: this.state,
       },
       args
     );
     return result;
   }
-  defaultDispatch = (transaction: Transaction): State => {
-    this.state = transaction.apply();
-    this.view.update(this.state);
-    return this.state;
-  };
+  defaultDispatcher =
+    (view: View, updateView = true) =>
+    (transaction: Transaction): State => {
+      this.state = transaction.apply();
+      if (updateView) {
+        view.update(this.state);
+      }
+      return this.state;
+    };
 }
 
 export function createEditor(args: EditorArgs): Editor {

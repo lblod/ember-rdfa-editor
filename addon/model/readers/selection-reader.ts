@@ -5,13 +5,15 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import {
-    isElement,
-    isTextNode
+  domPosToModelPos,
+  isElement,
+  isTextNode,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {
-    ModelError,
-    NotImplementedError
+  ModelError,
+  NotImplementedError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
+import ModelElement from '../model-element';
 
 type Bias = 'left' | 'right' | 'center';
 
@@ -19,7 +21,7 @@ type Bias = 'left' | 'right' | 'center';
  * Reader to convert a {@link Selection} to a {@link ModelSelection}.
  */
 export default class SelectionReader {
-  read(view: View, from: Selection): ModelSelection {
+  read(document: ModelElement, from: Selection): ModelSelection {
     const ranges = [];
     const result = new ModelSelection();
 
@@ -46,9 +48,9 @@ export default class SelectionReader {
    * Can be null when the {@link Selection} is empty.
    * @param range
    */
-  readDomRange(view: View, range: StaticRange): ModelRange | null {
+  readDomRange(document: ModelElement, range: StaticRange): ModelRange | null {
     const start = this.readDomPosition(
-      view,
+      document,
       range.startContainer,
       range.startOffset
     );
@@ -60,7 +62,11 @@ export default class SelectionReader {
       return new ModelRange(start);
     }
 
-    const end = this.readDomPosition(view, range.endContainer, range.endOffset);
+    const end = this.readDomPosition(
+      document,
+      range.endContainer,
+      range.endOffset
+    );
     return new ModelRange(start, end ?? start);
   }
 
@@ -71,12 +77,12 @@ export default class SelectionReader {
    * @param domOffset
    */
   readDomPosition(
-    view: View,
+    document: ModelElement,
     container: Node,
     domOffset: number
   ): ModelPosition | null {
     try {
-      return this.readDomPositionUnsafe(view, container, domOffset);
+      return this.readDomPositionUnsafe(document, container, domOffset);
     } catch (e) {
       if (e instanceof ModelError) {
         console.warn(e.message);
@@ -88,31 +94,12 @@ export default class SelectionReader {
   }
 
   private readDomPositionUnsafe(
-    view: View,
+    document: ModelElement,
     container: Node,
     domOffset: number,
     bias: Bias = 'right'
   ): ModelPosition | null {
-    const modelNode = view.viewToModel(container);
-    const nodeView = view.modelToView(modelNode);
-    if (!nodeView) {
-      throw new ModelError('Could not find nodeview for domNode');
-    }
-
-    if (nodeView.contentRoot.contains(container)) {
-      // dom selection is inside some content-node we control, this
-      // means we can build a "real" model selection
-      return this.readContentPosition(container, modelNode, domOffset);
-    } else {
-      // dom selection is outside of the content
-      // we return some position either in front or after the modelnode
-      // based on heuristics and influenced by bias
-      if (bias === 'right') {
-        return ModelPosition.fromAfterNode(modelNode);
-      } else {
-        return ModelPosition.fromBeforeNode(modelNode);
-      }
-    }
+    return domPosToModelPos(document, container, domOffset);
   }
 
   private readContentPosition(

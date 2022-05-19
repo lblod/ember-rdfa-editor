@@ -2,15 +2,11 @@ import { module, test } from 'qunit';
 import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import UndoCommand from '@lblod/ember-rdfa-editor/commands/undo-command';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { makeTestExecute } from 'dummy/tests/test-utils';
 
-module('Unit | commands | undo-command-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: UndoCommand;
-
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new UndoCommand(ctx.model);
-  });
+module('Unit | commands | undo-command-test', function () {
+  const command = new UndoCommand();
+  const executeCommand = makeTestExecute(command);
 
   test('undo deletion of only text in document', function (assert) {
     // language=XML

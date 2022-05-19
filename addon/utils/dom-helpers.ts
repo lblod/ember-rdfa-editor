@@ -1,4 +1,8 @@
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelElement from '../model/model-element';
+import ModelNode from '../model/model-node';
+import ModelPosition from '../model/model-position';
+import { PositionError } from './errors';
 
 /**
  * Fake class to list helper functions.
@@ -526,4 +530,49 @@ export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
     path.push(to);
   }
   return path;
+}
+export function getIndexPath(node: Node): number[] {
+  let cur = node;
+  const resultPath = [];
+  while (cur.parentNode) {
+    resultPath.push(nodeIndex(cur));
+    cur = cur.parentNode;
+  }
+  resultPath.reverse();
+  return resultPath;
+}
+export function nodeIndex(node: Node): number {
+  if (!node.parentNode) {
+    return -1;
+  }
+  let index = 0;
+  for (const child of node.parentNode.childNodes) {
+    if (child === node) {
+      return index;
+    }
+    index++;
+  }
+  return -1;
+}
+export function domPosToModelPos(
+  document: ModelElement,
+  container: Node,
+  offset: number
+): ModelPosition {
+  const indexPath = getIndexPath(container);
+  const offsetPath = resolveIndexPath(document, indexPath);
+  return ModelPosition.fromPath(document, offsetPath);
+}
+export function resolveIndexPath(tree: ModelNode, path: number[]): number[] {
+  let cur = tree;
+  const result = [];
+  for (const index of path) {
+    if (ModelNode.isModelElement(cur)) {
+      result.push(cur.indexToOffset(index));
+      cur = cur.children[index];
+    } else {
+      throw new PositionError();
+    }
+  }
+  return result;
 }

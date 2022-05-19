@@ -19,10 +19,9 @@ export interface InsertNewLineCommandArgs {
  * that newline renders correctly. Newlines are currently done using <br> elements, but
  * that is technically an implementation detail.
  */
-export default class InsertNewLineCommand implements Command<
-  InsertNewLineCommandArgs,
-  void
-> {
+export default class InsertNewLineCommand
+  implements Command<InsertNewLineCommandArgs, void>
+{
   name = 'insert-newLine';
 
   canExecute(): boolean {
