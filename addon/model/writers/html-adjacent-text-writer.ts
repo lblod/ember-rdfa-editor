@@ -24,10 +24,12 @@ export default class HtmlAdjacentTextWriter
     );
     let parent!: HTMLElement;
     let children: Iterable<Node> = differentViewRoots;
-    marksInCommon.forEach((mark) => {
-      parent = mark.writeMultiple(children);
-      children = [parent];
-    });
+    [...marksInCommon]
+      .sort((a, b) => (a.priority >= b.priority ? 1 : -1))
+      .forEach((mark) => {
+        parent = mark.writeMultiple(children);
+        children = [parent];
+      });
     return { views: viewsRec, parent: parent };
   }
 
@@ -42,8 +44,16 @@ export default class HtmlAdjacentTextWriter
       const contentRoot: Text = new Text(modelNode.content);
       const marks = modelNode.marks.difference(marksToIgnore);
       const intersection = marksInCommon.intersection(marks);
-
-      if (intersection.size === 0) {
+      const highestPriorityMarks = Math.max(
+        ...[...marks].map((mark) => mark.priority)
+      );
+      const highestPriorityCommonMarks = Math.max(
+        ...[...marksInCommon].map((mark) => mark.priority)
+      );
+      if (
+        intersection.size === 0 ||
+        highestPriorityMarks !== highestPriorityCommonMarks
+      ) {
         if (marksInCommon.size > 0) {
           const { parent, views } = this.handleSplit(
             streak,

@@ -126,7 +126,6 @@ export default class HtmlWriter {
           //   // view.contentRoot = textViews[i].contentRoot;
           // }
           this.model.registerTextNode(modelText, textViews[i]);
-          // this.model.registerTextNode(modelText, view);
           result.add(textViews[i].viewRoot);
         } else {
           this.model.registerTextNode(modelText, textViews[i]);

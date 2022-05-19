@@ -137,10 +137,14 @@ export default class MarkOperation extends Operation {
       for (const node of textNodes) {
         this.markAction(node, this.spec, this.attributes, this.action);
       }
-      // OperationAlgorithms.mergeTextNodes(textNodes);
+      OperationAlgorithms.mergeTextNodes(textNodes);
       const before = this.range.start.nodeBefore();
       const after = this.range.end.nodeAfter();
       if (before) {
+        if (ModelNode.isModelText(before)) {
+          OperationAlgorithms.mergeTextNodes([before]);
+        }
+
         _markCheckNodes.push(before);
       }
       if (after) {
