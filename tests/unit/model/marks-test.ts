@@ -17,12 +17,17 @@ import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
 import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
 
 module('Unit | model | marks-test', function (hooks) {
   const ctx = new ModelTestContext();
   hooks.beforeEach(() => {
     ctx.reset();
     ctx.model.registerMark(highlightMarkSpec);
+    ctx.model.registerMark(boldMarkSpec);
+    ctx.model.registerMark(italicMarkSpec);
   });
   test('reading works', function (assert) {
     const html = domStripped`
@@ -74,6 +79,26 @@ module('Unit | model | marks-test', function (hooks) {
     assert.strictEqual(fc.childNodes.length, 1);
     assert.true(isTextNode(fc.firstChild!));
     assert.strictEqual(fc.firstChild!.textContent, 'abc');
+  });
+  test('marks are correctly merged and nested', function (assert) {
+    const text = new ModelText('abcdefghi');
+    text.addMark(new Mark(italicMarkSpec, {}, text));
+
+    ctx.model.rootModelNode.appendChildren(text);
+
+    const range = new ModelRange(
+      ModelPosition.fromInTextNode(text, 3),
+      ModelPosition.fromInTextNode(text, 6)
+    );
+
+    const op = new MarkOperation(undefined, range, boldMarkSpec, {}, 'add');
+    op.execute();
+    ctx.model.write();
+    assert.strictEqual(ctx.model.rootNode.childNodes.length, 1);
+    const emNode = ctx.model.rootNode.childNodes[0];
+    assert.strictEqual(tagName(emNode), 'em');
+    assert.strictEqual(emNode.childNodes.length, 3);
+    assert.strictEqual(tagName(emNode.childNodes[1]), 'strong');
   });
   test('reading highlights works', function (assert) {
     const html = domStripped`
