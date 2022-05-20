@@ -82,7 +82,10 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
         offset: position.parentOffset - textAnchor.getOffset(),
       };
     } else {
-      if (ModelElement.isModelElement(nodeAfter)) {
+      if (
+        ModelElement.isModelElement(nodeAfter) ||
+        ModelElement.isModelInlineComponent(nodeAfter)
+      ) {
         const parentView = this._model.modelToView(position.parent);
         const nodeView = this._model.modelToView(nodeAfter);
         if (!nodeView || !parentView) {

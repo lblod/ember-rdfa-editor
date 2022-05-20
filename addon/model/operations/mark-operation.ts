@@ -2,11 +2,7 @@ import Operation, {
   OperationResult,
 } from '@lblod/ember-rdfa-editor/model/operations/operation';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import {
-  AttributeSpec,
-  Mark,
-  MarkSpec,
-} from '@lblod/ember-rdfa-editor/model/mark';
+import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import { UnconfinedRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import {
@@ -21,6 +17,7 @@ import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/opera
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import RangeMapper from '@lblod/ember-rdfa-editor/model/range-mapper';
+import { AttributeSpec } from '../util/render-spec';
 
 type MarkAction = 'add' | 'remove';
 export default class MarkOperation extends Operation {

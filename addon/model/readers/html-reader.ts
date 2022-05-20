@@ -5,8 +5,9 @@ import Model from '@lblod/ember-rdfa-editor/model/model';
 import { calculateRdfaPrefixes } from '../util/rdfa-utils';
 import { SpecAttributes } from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { AttributeSpec, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
+import { AttributeSpec } from '../util/render-spec';
 
 export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;
@@ -49,6 +50,10 @@ export class HtmlReaderContext {
 
   matchMark(node: Node): Set<SpecAttributes> {
     return this.model.marksRegistry.matchMarkSpec(node);
+  }
+
+  matchInlineComponent(node: Node) {
+    return this.model.inlineComponentsRegistry.matchInlineComponentSpec(node);
   }
 
   addMark<A extends AttributeSpec>(

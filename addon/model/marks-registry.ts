@@ -1,9 +1,4 @@
-import {
-  AttributeSpec,
-  Mark,
-  MarkSpec,
-  TagMatch,
-} from '@lblod/ember-rdfa-editor/model/mark';
+import { Mark, MarkSpec, TagMatch } from '@lblod/ember-rdfa-editor/model/mark';
 import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
 import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
@@ -14,6 +9,7 @@ import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import { AttributeSpec } from './util/render-spec';
 
 export interface SpecAttributes {
   spec: MarkSpec;

@@ -23,6 +23,7 @@ import LiveMarkSet, {
 } from '@lblod/ember-rdfa-editor/model/live-mark-set';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
+import { InlineComponent } from './inline-components/model-inline-component';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
@@ -80,6 +81,8 @@ export default interface Controller {
   registerWidget(spec: WidgetSpec): void;
 
   registerMark(spec: MarkSpec): void;
+
+  registerInlineComponent(component: InlineComponent): void;
 
   onEvent<E extends AnyEventName>(
     eventName: E,
@@ -195,6 +198,10 @@ export class RawEditorController implements Controller {
 
   registerMark(spec: MarkSpec) {
     this._rawEditor.registerMark(spec);
+  }
+
+  registerInlineComponent(component: InlineComponent) {
+    this._rawEditor.registerComponent(component);
   }
 
   write(writeSelection = true) {

@@ -25,6 +25,8 @@ import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
 import setNodeAndChildDirty from './util/set-node-and-child-dirty';
+import InlineComponentsRegistry from './inline-components/inline-components-registry';
+import { InlineComponent } from './inline-components/model-inline-component';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -48,6 +50,7 @@ export default class Model {
   private history: ModelHistory = new ModelHistory();
   private _eventBus?: EventBus;
   private _marksRegistry: MarksRegistry;
+  private _inlineComponentsRegistry: InlineComponentsRegistry;
 
   private logger: Logger;
 
@@ -64,7 +67,7 @@ export default class Model {
     this._eventBus = eventBus;
     this.logger = createLogger('RawEditor');
     this._marksRegistry = new MarksRegistry(this._eventBus);
-
+    this._inlineComponentsRegistry = new InlineComponentsRegistry();
     this.viewToModelMap = new WeakMap<Node, ModelNode>();
     this.modelToViewMap = new WeakMap<ModelNode, NodeView>();
   }
@@ -83,6 +86,10 @@ export default class Model {
 
   get marksRegistry(): MarksRegistry {
     return this._marksRegistry;
+  }
+
+  get inlineComponentsRegistry(): InlineComponentsRegistry {
+    return this._inlineComponentsRegistry;
   }
 
   /**
@@ -158,6 +165,10 @@ export default class Model {
 
   registerMark(markSpec: MarkSpec) {
     this._marksRegistry.registerMark(markSpec);
+  }
+
+  registerInlineComponent(component: InlineComponent) {
+    this._inlineComponentsRegistry.registerComponent(component);
   }
 
   writeSelection() {

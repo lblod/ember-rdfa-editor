@@ -6,6 +6,8 @@ import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 interface Args {
   editor: RawEditor;
@@ -193,5 +195,14 @@ export default class EditorToolbar extends Component<Args> {
   @action
   removeTable() {
     this.args.controller.executeCommand('remove-table');
+  }
+
+  @action
+  insertExampleComponent() {
+    this.args.controller.executeCommand(
+      'insert-component',
+      'example-inline-component',
+      new ModelText(INVISIBLE_SPACE)
+    );
   }
 }

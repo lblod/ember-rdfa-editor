@@ -1,11 +1,15 @@
 import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { HtmlTag } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import renderFromSpec, {
+  AttributeSpec,
+  RenderSpec,
+  Serializable,
+  SLOT,
+} from './util/render-spec';
 
 export type TagMatch = keyof HTMLElementTagNameMap | '*';
-export type AttributeSpec = { setBy?: string } & Record<string, Serializable>;
 
 export interface MarkSpec<A extends AttributeSpec = AttributeSpec> {
   name: string;
@@ -48,12 +52,15 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
     return this._spec;
   }
 
-  write(block: Node): Node {
+  write(block: Node): Node | null {
     const rendered = renderFromSpec(this._spec.renderSpec(this), block);
-    if (isElement(rendered)) {
-      rendered.dataset['__setBy'] = this.attributes.setBy || CORE_OWNER;
+    if (rendered) {
+      if (isElement(rendered)) {
+        rendered.dataset['__setBy'] = this.attributes.setBy || CORE_OWNER;
+      }
+      return rendered;
     }
-    return rendered;
+    return null;
   }
 
   clone(): Mark<A> {
@@ -98,9 +105,9 @@ export interface DomNodeMatcher<
   attributeBuilder?: (node: Node) => A | null;
 }
 
-export interface Serializable {
-  toString(): string;
-}
+// export interface Serializable {
+//   toString(): string;
+// }
 
 export interface Renderable<A extends Record<string, Serializable> | void> {
   name: string;
@@ -127,40 +134,5 @@ export class MarkSet extends HashSet<Mark> {
 
   clone(): this {
     return new MarkSet(this.values()) as this;
-  }
-}
-
-export const SLOT: SLOT = 0;
-type SLOT = 0;
-type HtmlNodeSpec =
-  | HtmlTag
-  | { tag: HtmlTag; attributes: Record<string, Serializable> };
-export type RenderSpec = [HtmlNodeSpec, RenderSpec[]] | SLOT;
-
-function renderFromSpec(spec: RenderSpec, block: Node): Node {
-  if (spec === SLOT) {
-    return block;
-  } else {
-    const [nodeSpec, children] = spec;
-    let result: HTMLElement;
-    if (typeof nodeSpec === 'string') {
-      result = document.createElement(nodeSpec);
-    } else {
-      result = document.createElement(nodeSpec.tag);
-      for (const [key, val] of Object.entries(nodeSpec.attributes)) {
-        if (val !== undefined) {
-          result.setAttribute(key, val.toString());
-        }
-      }
-    }
-
-    for (const child of children) {
-      if (child === SLOT) {
-        result.appendChild(block);
-      } else {
-        result.appendChild(renderFromSpec(child, block));
-      }
-    }
-    return result;
   }
 }

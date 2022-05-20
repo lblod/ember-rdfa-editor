@@ -15,6 +15,7 @@ import NodeView, {
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import HtmlInlineComponentWriter from './html-inline-component-writer';
 
 /**
  * Top-level {@link Writer} for HTML documents.
@@ -22,15 +23,16 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 export default class HtmlWriter {
   private htmlTextWriter: HtmlTextWriter;
   private htmlElementWriter: HtmlElementWriter;
+  private htmlInlineComponentWriter: HtmlInlineComponentWriter;
 
   constructor(private model: Model) {
     this.htmlTextWriter = new HtmlTextWriter(model);
     this.htmlElementWriter = new HtmlElementWriter(model);
+    this.htmlInlineComponentWriter = new HtmlInlineComponentWriter();
   }
 
   write(modelNode: ModelNode): NodeView {
     let resultView: NodeView;
-
     if (ModelNode.isModelElement(modelNode)) {
       let view = this.getView(modelNode);
       if (view) {
@@ -66,6 +68,15 @@ export default class HtmlWriter {
         view = this.createTextView(modelNode);
       }
       resultView = view;
+    } else if (ModelNode.isModelInlineComponent(modelNode)) {
+      let child: NodeView | undefined;
+      if (modelNode.children.length) {
+        child = this.write(modelNode.children[0]);
+      }
+      resultView = this.htmlInlineComponentWriter.write(
+        modelNode,
+        child?.viewRoot
+      );
     } else {
       throw new NotImplementedError('Unsupported modelnode type');
     }

@@ -14,6 +14,9 @@ import HtmlTableReader from '@lblod/ember-rdfa-editor/model/readers/html-table-r
 import HtmlSpanReader from '@lblod/ember-rdfa-editor/model/readers/html-span-reader';
 import { pushOrExpand } from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
+import InlineComponentReader from './inline-component-reader';
+import { ModelInlineComponent } from '../inline-components/model-inline-component';
+import { extractChild } from '../util/render-spec';
 
 type Constructor<T> = new (...args: unknown[]) => T;
 type ElementReader = Reader<Element, ModelNode[], HtmlReaderContext>;
@@ -32,31 +35,45 @@ export default class HtmlNodeReader
     let result: ModelNode[];
     if (isElement(from)) {
       const tag = tagName(from) as ElementType;
-
-      const marks = context.matchMark(from);
-      if (marks.size) {
-        context.markViewRootStack.push(from);
-        SetUtils.addMany(context.activeMarks, ...marks);
-        const reader = new HtmlNodeReader();
-        result = [];
-
-        for (const child of from.childNodes) {
-          const modelChild = reader.read(child, context);
-          if (modelChild) {
-            pushOrExpand(result, modelChild);
-          }
+      const inlineComponent = context.matchInlineComponent(from);
+      if (inlineComponent) {
+        const component = new ModelInlineComponent(inlineComponent);
+        const childNode = extractChild(
+          component.spec.renderSpec(component),
+          from
+        );
+        if (childNode) {
+          const reader = new HtmlNodeReader();
+          const nodes = reader.read(childNode, context);
+          component.appendChildren(...nodes);
         }
-        SetUtils.deleteMany(context.activeMarks, ...marks);
-        context.markViewRootStack.pop();
+        result = [component];
       } else {
-        let reader: ElementReader;
-        const ctor = HtmlNodeReader.elementConfig.get(tag);
-        if (ctor) {
-          reader = new ctor();
+        const marks = context.matchMark(from);
+        if (marks.size) {
+          context.markViewRootStack.push(from);
+          SetUtils.addMany(context.activeMarks, ...marks);
+          const reader = new HtmlNodeReader();
+          result = [];
+
+          for (const child of from.childNodes) {
+            const modelChild = reader.read(child, context);
+            if (modelChild) {
+              pushOrExpand(result, modelChild);
+            }
+          }
+          SetUtils.deleteMany(context.activeMarks, ...marks);
+          context.markViewRootStack.pop();
         } else {
-          reader = new HtmlElementReader();
+          let reader: ElementReader;
+          const ctor = HtmlNodeReader.elementConfig.get(tag);
+          if (ctor) {
+            reader = new ctor();
+          } else {
+            reader = new HtmlElementReader();
+          }
+          result = reader.read(from, context);
         }
-        result = reader.read(from, context);
       }
     } else if (isTextNode(from)) {
       const reader = new HtmlTextReader();
