@@ -16,6 +16,10 @@
 
 
 
+## 0.56.5 (2022-05-20)
+Fix type issues preventing the build
+
+
 ## 0.56.4 (2022-05-20)
 
 :bug: fix drone config
