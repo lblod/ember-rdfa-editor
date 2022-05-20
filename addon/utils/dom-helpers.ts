@@ -518,10 +518,15 @@ export function getWindowSelection(): Selection {
 
   return selection;
 }
+interface Inclusiveness {
+  includeFrom?: boolean;
+  includeTo?: boolean;
+}
+
 export function getPathFromAncestor(
   from: Node,
   to: Node,
-  inclusive: boolean
+  { includeFrom = true, includeTo = true }: Inclusiveness = {}
 ): Node[] {
   const path = [];
   if (to !== from) {
@@ -530,19 +535,19 @@ export function getPathFromAncestor(
       path.push(cur);
       cur = cur.parentNode;
     }
-    if (cur) {
+    if (cur && includeFrom) {
       path.push(cur);
     }
   }
   path.reverse();
-  if (inclusive) {
+  if (includeTo) {
     path.push(to);
   }
   return path;
 }
 
 export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
-  return getPathFromAncestor(to.getRootNode(), to, inclusive);
+  return getPathFromAncestor(to.getRootNode(), to, { includeTo: inclusive });
 }
 export function getIndexPath(node: Node): number[] {
   let cur = node;
@@ -573,7 +578,10 @@ export function domPosToModelPos(
   container: Node,
   offset: number
 ): ModelPosition {
-  const path = getPathFromAncestor(viewRoot, container, true);
+  const path = getPathFromAncestor(viewRoot, container, {
+    includeFrom: false,
+    includeTo: true,
+  });
   const modelIndexPath = [];
   let markOffset = 0;
   for (const node of path.slice(1)) {
@@ -591,11 +599,17 @@ export function domPosToModelPos(
   for (const index of modelIndexPath) {
     if (ModelNode.isModelElement(cur) && !cur.isLeaf) {
       offsetPath.push(cur.indexToOffset(index));
-      cur = cur.children[index];
     } else {
-      throw new PositionError('got path that extends past leafnode');
+      break;
     }
+    cur = cur.children[index];
   }
+  if (ModelNode.isModelText(cur)) {
+    offsetPath.push(cur.getOffset() + offset);
+  } else {
+    offsetPath.push(offset);
+  }
+
   console.log('PATH', offsetPath);
   return ModelPosition.fromPath(state.document, offsetPath);
 }
