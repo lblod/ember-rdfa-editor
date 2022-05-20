@@ -6,7 +6,6 @@ import { tracked } from '@glimmer/tracking';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
 import RdfaDocumentController from '../../utils/rdfa/rdfa-document';
 import type IntlService from 'ember-intl/services/intl';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import ApplicationInstance from '@ember/application/instance';
@@ -19,7 +18,6 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
-import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 
 interface RdfaEditorArgs {
   /**

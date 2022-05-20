@@ -68,8 +68,6 @@ import MatchTextCommand from '@lblod/ember-rdfa-editor/commands/match-text-comma
 import RemoveMarkFromRangeCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-range-command';
 import AddMarkToSelectionCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to-selection-command';
 import RemoveMarkFromSelectionCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-selection-command';
-import { ContentChangedEvent, EventWithName } from '../editor-event';
-import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import { EditorPlugin } from '../editor-plugin';
 import { createLogger, Logger } from '../logging-utils';
 
