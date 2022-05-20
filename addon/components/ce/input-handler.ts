@@ -21,12 +21,15 @@ export class EditorInputHandler implements InputHandler {
   afterInput(event: InputEvent): void {}
 
   beforeInput(event: InputEvent): void {
-    console.log('handling beforeInput');
+    console.log('handling beforeInput with type', event.inputType);
     switch (event.inputType) {
       case 'insertText':
         handleInsertText(this.editor, event);
         break;
       case 'insertLineBreak':
+        handleInsertLineBreak(this.editor, event);
+        break;
+      case 'insertParagraph':
         handleInsertLineBreak(this.editor, event);
         break;
       case 'deleteWordBackward':
@@ -61,6 +64,7 @@ export class EditorInputHandler implements InputHandler {
     );
     const tr = new Transaction(this.editor.state);
     tr.setSelection(newSelection);
+    tr.needsToWrite = false;
 
     updateState(this.editor, tr);
   }

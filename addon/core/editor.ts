@@ -58,7 +58,6 @@ class SayEditor implements Editor {
     updateView = true
   ): unknown {
     const command = this.state.commands[commandName];
-    const tr = new Transaction(this.state);
     const result = command.execute(
       {
         dispatch: updateView ? this.dispatchUpdate : this.dispatchNoUpdate,
