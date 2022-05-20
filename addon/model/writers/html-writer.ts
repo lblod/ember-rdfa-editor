@@ -107,6 +107,7 @@ export default class HtmlWriter {
         (modelText) =>
           modelText.isDirty('node') ||
           modelText.isDirty('mark') ||
+          modelText.isDirty('content') ||
           !this.getView(modelText)
       )
     ) {
@@ -119,12 +120,6 @@ export default class HtmlWriter {
             throw new ModelError('ModelText with non-text view');
           }
           view.viewRoot.replaceWith(textViews[i].viewRoot);
-          // view.viewRoot = textViews[i].viewRoot;
-          // if (modelText.isDirty('content')) {
-          //   // view.contentRoot.replaceWith(textViews[i].contentRoot);
-          //   // view.contentRoot.replaceWith(textViews[i].contentRoot);
-          //   // view.contentRoot = textViews[i].contentRoot;
-          // }
           this.model.registerTextNode(modelText, textViews[i]);
           result.add(textViews[i].viewRoot);
         } else {
@@ -132,25 +127,8 @@ export default class HtmlWriter {
           result.add(textViews[i].viewRoot);
         }
       });
-      //apply html-adjacent-text-writer
-    } else {
-      modelTexts.forEach((modelText) => {
-        const view = this.getView(modelText);
-        if (view) {
-          if (modelText.isDirty('content')) {
-            if (!isTextView(view)) {
-              throw new ModelError('ModelText with non-text view');
-            }
-            view.contentRoot.replaceData(
-              0,
-              view.contentRoot.length,
-              modelText.content
-            );
-          }
-          result.add(view.viewRoot);
-        }
-      });
     }
+
     return result;
   }
 
