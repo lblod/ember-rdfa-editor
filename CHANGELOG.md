@@ -15,6 +15,16 @@
 
 
 
+
+## 0.56.3 (2022-05-20)
+
+#### :bug: Bug Fix
+* [#273](https://github.com/lblod/ember-rdfa-editor/pull/273) Fix initialization issues ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.56.2 (2022-04-27)
 
 #### :bug: Bug Fix
