@@ -33,6 +33,7 @@ declare module '@lblod/marawa/rich-node' {
     children: RichNode[];
     absolutePosition: number;
     relativePosition: number;
+    rdfaAttributes: Record<string, unknown>;
 
     constructor(content: RichNodeContent);
     get region(): Region;
