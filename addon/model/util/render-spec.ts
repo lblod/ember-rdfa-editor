@@ -1,3 +1,7 @@
+import {
+  InlineComponent,
+  ModelInlineComponent,
+} from '../inline-components/model-inline-component';
 import { HtmlTag } from './types';
 
 export interface Serializable {
@@ -11,10 +15,9 @@ type SLOT = 0;
 type HtmlNodeSpec = {
   tag: HtmlTag;
   attributes?: Record<string, Serializable>;
-  content?: string;
   children?: RenderSpec[];
 };
-export type RenderSpec = HtmlNodeSpec | SLOT;
+export type RenderSpec = HtmlNodeSpec | string | SLOT;
 
 export default function renderFromSpec(
   spec: RenderSpec,
@@ -22,6 +25,8 @@ export default function renderFromSpec(
 ): Node | null {
   if (spec === SLOT) {
     return block;
+  } else if (typeof spec === 'string') {
+    return document.createTextNode(spec);
   } else {
     const result = document.createElement(spec.tag);
     if (spec.attributes) {
@@ -30,10 +35,6 @@ export default function renderFromSpec(
           result.setAttribute(key, val.toString());
         }
       }
-    }
-
-    if (spec.content) {
-      result.innerText = spec.content;
     }
     if (spec.children) {
       for (const child of spec.children) {
@@ -48,13 +49,22 @@ export default function renderFromSpec(
   }
 }
 
+// export default function createModelFromSpec(
+//   componentSpec: InlineComponent,
+//   element: Node
+// ) {
+//   const model = new ModelInlineComponent(componentSpec);
+//   componentSpec.render()
+//   return model;
+// }
+
 export function extractChild(
   spec: RenderSpec,
   element: ChildNode
 ): Node | null {
   if (spec === SLOT) {
     return element;
-  } else {
+  } else if (!(typeof spec === 'string')) {
     let result: Node | null = null;
     if (spec.children) {
       spec.children.forEach((child, i) => {
@@ -67,4 +77,5 @@ export function extractChild(
 
     return result;
   }
+  return null;
 }

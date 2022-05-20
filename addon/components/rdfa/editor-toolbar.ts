@@ -8,6 +8,7 @@ import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import { ExampleProperties } from '@lblod/ember-rdfa-editor/plugins/inline-components/components/example-inline-component';
 
 interface Args {
   editor: RawEditor;
@@ -199,15 +200,18 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   insertExampleComponent() {
-    const attributes = new Map<string, string>();
-    attributes.set('style', 'background: red; padding: 10px;');
     const child = new ModelElement('span');
     child.addChild(new ModelText('Test'));
+    const props: ExampleProperties = {
+      headLine: 'Headline',
+      content: 'Lorem Ipsum',
+    };
     this.args.controller.executeCommand(
       'insert-component',
       'example-inline-component',
       child,
-      attributes
+      new Map(),
+      props
     );
   }
 

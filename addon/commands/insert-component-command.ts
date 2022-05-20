@@ -1,4 +1,7 @@
-import { ModelInlineComponent } from '../model/inline-components/model-inline-component';
+import {
+  ModelInlineComponent,
+  Properties,
+} from '../model/inline-components/model-inline-component';
 import Model from '../model/model';
 import ModelNode from '../model/model-node';
 import ModelSelection from '../model/model-selection';
@@ -22,6 +25,7 @@ export default class InsertComponentCommand extends Command {
     componentName: string,
     child: ModelNode | null = null,
     attributes: Map<string, string> = new Map(),
+    props: Properties = {},
     selection: ModelSelection = this.model.selection
   ): void {
     if (!ModelSelection.isWellBehaved(selection)) {
@@ -30,7 +34,11 @@ export default class InsertComponentCommand extends Command {
     const componentSpec =
       this.model.inlineComponentsRegistry.lookUpComponent(componentName);
     if (componentSpec) {
-      const component = new ModelInlineComponent(componentSpec, attributes);
+      const component = new ModelInlineComponent(
+        componentSpec,
+        attributes,
+        props
+      );
       if (child) {
         component.addChild(child);
       }

@@ -44,10 +44,7 @@ export default class HtmlNodeReader
           }
         });
         const component = new ModelInlineComponent(inlineComponent, attributes);
-        const childNode = extractChild(
-          component.spec.renderSpec(component),
-          from
-        );
+        const childNode = extractChild(component.spec.render(), from);
         if (childNode) {
           const reader = new HtmlNodeReader();
           const nodes = reader.read(childNode, context);

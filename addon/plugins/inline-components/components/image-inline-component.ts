@@ -1,6 +1,13 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { RenderSpec } from '../../../model/util/render-spec';
-import { InlineComponent } from '../../../model/inline-components/model-inline-component';
+import {
+  InlineComponent,
+  Properties,
+} from '../../../model/inline-components/model-inline-component';
+
+export interface ImageProperties extends Properties {
+  imageSrc?: string;
+}
 
 export const imageInlineComponent: InlineComponent = {
   name: 'image-inline-component',
@@ -17,11 +24,11 @@ export const imageInlineComponent: InlineComponent = {
       },
     },
   ],
-  renderSpec(): RenderSpec {
+  render(props: ImageProperties = {}): RenderSpec {
     return {
       tag: 'img',
       attributes: {
-        src: 'https://emberjs.com/images/tomsters/a11y-tomster750w-2137b8b891485dd920ccf5c0d5d1645d.png',
+        src: props.imageSrc || '',
       },
     };
   },
