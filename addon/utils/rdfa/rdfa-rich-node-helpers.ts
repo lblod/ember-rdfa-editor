@@ -1,4 +1,5 @@
 import { set } from '@ember/object';
+import RichNode from '@lblod/marawa/rich-node';
 import { rdfaKeywords } from '../../config/rdfa';
 
 // TODO: content-editable should not be rdfa aware
@@ -14,8 +15,8 @@ import { rdfaKeywords } from '../../config/rdfa';
  *
  * @private
  */
-let getRdfaAttributes = function (domNode) {
-  const rdfaAttributes = {};
+const getRdfaAttributes = function (domNode: Element) {
+  const rdfaAttributes: Record<string, string | null> = {};
 
   if (domNode && domNode.getAttribute) {
     rdfaKeywords.forEach(function (key) {
@@ -23,6 +24,8 @@ let getRdfaAttributes = function (domNode) {
     });
 
     if (rdfaAttributes['typeof'] != null)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       rdfaAttributes['typeof'] = rdfaAttributes['typeof'].split(' ');
   }
 
@@ -40,8 +43,8 @@ let getRdfaAttributes = function (domNode) {
  *
  * @private
  */
-let enrichRichNodeWithRdfa = function (richNode) {
-  const rdfaAttributes = getRdfaAttributes(richNode.domNode);
+const enrichRichNodeWithRdfa = function (richNode: RichNode) {
+  const rdfaAttributes = getRdfaAttributes(richNode.domNode as Element);
   set(richNode, 'rdfaAttributes', rdfaAttributes);
 
   if (richNode.children) {
@@ -62,7 +65,9 @@ let enrichRichNodeWithRdfa = function (richNode) {
  *
  * @private
  */
-let isEmptyRdfaAttributes = function (rdfaAttributes) {
+const isEmptyRdfaAttributes = function (
+  rdfaAttributes: Record<string, unknown>
+) {
   return rdfaKeywords
     .map(function (key) {
       return rdfaAttributes[key] == null;
@@ -72,7 +77,7 @@ let isEmptyRdfaAttributes = function (rdfaAttributes) {
     });
 };
 
-let isRdfaNode = function (richNode) {
+const isRdfaNode = function (richNode: RichNode) {
   enrichRichNodeWithRdfa(richNode);
   return !isEmptyRdfaAttributes(richNode.rdfaAttributes);
 };
