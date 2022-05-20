@@ -20,6 +20,9 @@ import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/ma
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
+import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline';
+import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough';
+import { reverse } from 'ix/iterable/operators';
 
 function testMarkToggling(
   assert: Assert,
@@ -181,6 +184,35 @@ module('Unit | model | marks-test', function (hooks) {
   test('mark toggling on end of text works with different nested marks', function (assert) {
     assert.expect(5);
     testMarkToggling(assert, 6, 9, ctx.model);
+  });
+
+  test('marks are rendered in the correct order following priority in the DOM', function (assert) {
+    const text = new ModelText('abcdefghi');
+    assert.expect(8);
+    const markSpecs = [
+      italicMarkSpec,
+      boldMarkSpec,
+      underlineMarkSpec,
+      strikethroughMarkSpec,
+    ];
+    markSpecs.forEach((markSpec) => {
+      text.addMark(new Mark(markSpec, {}, text));
+    });
+
+    markSpecs.sort((m1, m2) => m2.priority - m1.priority);
+
+    ctx.model.rootModelNode.appendChildren(text);
+
+    ctx.model.write();
+
+    let node: Node = ctx.model.rootNode;
+    for (const markSpec of markSpecs) {
+      assert.strictEqual(node.childNodes.length, 1);
+      node = node.childNodes[0];
+      assert.true(
+        !!markSpec.matchers.find((matcher) => matcher.tag === tagName(node))
+      );
+    }
   });
   test('reading highlights works', function (assert) {
     const html = domStripped`
