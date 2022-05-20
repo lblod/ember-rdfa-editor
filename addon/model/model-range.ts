@@ -326,7 +326,6 @@ export default class ModelRange {
       ),
     ] as ModelText[];
     if (nodes.length) {
-      console.log(nodes);
       let result = nodes[0].marks.clone();
       for (const node of nodes.slice(1)) {
         result = result.intersection(node.marks);
