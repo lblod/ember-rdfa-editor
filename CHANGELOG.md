@@ -16,6 +16,11 @@
 
 
 
+## 0.56.6 (2022-05-20)
+
+fix types again
+
+
 ## 0.56.5 (2022-05-20)
 Fix type issues preventing the build
 
