@@ -15,8 +15,6 @@
 
 
 
-
-
 ## 0.58.1 (2022-05-23)
 
 #### :bug: Bug Fix
@@ -74,6 +72,27 @@
 - Niels V ([@nvdk](https://github.com/nvdk))
 - Sergey Andreev ([@Asergey91](https://github.com/Asergey91))
 
+## 0.56.6 (2022-05-20)
+
+fix types again
+
+
+## 0.56.5 (2022-05-20)
+Fix type issues preventing the build
+
+
+## 0.56.4 (2022-05-20)
+
+:bug: fix drone config
+
+
+## 0.56.3 (2022-05-20)
+
+#### :bug: Bug Fix
+* [#273](https://github.com/lblod/ember-rdfa-editor/pull/273) Fix initialization issues ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 
 ## 0.56.2 (2022-04-27)
 
