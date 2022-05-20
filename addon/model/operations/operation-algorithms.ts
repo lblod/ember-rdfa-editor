@@ -93,7 +93,7 @@ export default class OperationAlgorithms {
 
     //merge logic... needs more work
     const after = range.start.nodeAfter();
-    if (before && after) {
+    if (before && after && splitEnd && splitStart) {
       if (ModelNode.isModelText(before) && ModelNode.isModelText(after)) {
         before.content += after.content;
         after.remove();
