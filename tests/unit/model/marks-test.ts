@@ -21,6 +21,51 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
 
+function testMarkToggling(
+  assert: Assert,
+  start: number,
+  end: number,
+  model: Model
+) {
+  const textStr = 'abcdefghi';
+  const text = new ModelText(textStr);
+  text.addMark(new Mark(italicMarkSpec, {}, text));
+  model.rootModelNode.appendChildren(text);
+  const rangeBeginning = new ModelRange(
+    ModelPosition.fromInTextNode(text, start),
+    ModelPosition.fromInTextNode(text, end)
+  );
+  const op1 = new MarkOperation(
+    undefined,
+    rangeBeginning,
+    boldMarkSpec,
+    {},
+    'add'
+  );
+  const op2 = new MarkOperation(
+    undefined,
+    rangeBeginning,
+    boldMarkSpec,
+    {},
+    'remove'
+  );
+  op1.execute();
+  model.write();
+  op2.execute();
+  model.write();
+  op1.execute();
+  model.write();
+  op2.execute();
+  model.write();
+
+  assert.strictEqual(model.rootNode.childNodes.length, 1);
+  const emNode = model.rootNode.childNodes[0];
+  assert.strictEqual(tagName(emNode), 'em');
+  assert.strictEqual(emNode.childNodes.length, 1);
+  assert.true(emNode.childNodes[0] instanceof Text);
+  assert.strictEqual(emNode.textContent, 'abcdefghi');
+}
+
 module('Unit | model | marks-test', function (hooks) {
   const ctx = new ModelTestContext();
   hooks.beforeEach(() => {
@@ -80,7 +125,7 @@ module('Unit | model | marks-test', function (hooks) {
     assert.true(isTextNode(fc.firstChild!));
     assert.strictEqual(fc.firstChild!.textContent, 'abc');
   });
-  test('marks are correctly merged and nested', function (assert) {
+  test('marks are correctly merged and nested: simple case', function (assert) {
     const text = new ModelText('abcdefghi');
     text.addMark(new Mark(italicMarkSpec, {}, text));
 
@@ -99,6 +144,43 @@ module('Unit | model | marks-test', function (hooks) {
     assert.strictEqual(tagName(emNode), 'em');
     assert.strictEqual(emNode.childNodes.length, 3);
     assert.strictEqual(tagName(emNode.childNodes[1]), 'strong');
+  });
+  test('adjacent marks are merged', function (assert) {
+    const text = new ModelText('abcdefghi');
+
+    ctx.model.rootModelNode.appendChildren(text);
+
+    const range1 = new ModelRange(
+      ModelPosition.fromInTextNode(text, 3),
+      ModelPosition.fromInTextNode(text, 6)
+    );
+    const range2 = new ModelRange(
+      ModelPosition.fromInTextNode(text, 6),
+      ModelPosition.fromInTextNode(text, 9)
+    );
+
+    const op1 = new MarkOperation(undefined, range1, boldMarkSpec, {}, 'add');
+    const op2 = new MarkOperation(undefined, range2, boldMarkSpec, {}, 'add');
+    op1.execute();
+    op2.execute();
+    ctx.model.write();
+    assert.strictEqual(ctx.model.rootNode.childNodes.length, 2);
+    const boldNode = ctx.model.rootNode.childNodes[1];
+    assert.strictEqual(tagName(boldNode), 'strong');
+    assert.strictEqual(boldNode.childNodes.length, 1);
+    assert.strictEqual(boldNode.childNodes[0].textContent, 'defghi');
+  });
+  test('mark toggling on beginning of text works with different nested marks', function (assert) {
+    assert.expect(5);
+    testMarkToggling(assert, 0, 3, ctx.model);
+  });
+  test('mark toggling on middle of text works with different nested marks', function (assert) {
+    assert.expect(5);
+    testMarkToggling(assert, 3, 6, ctx.model);
+  });
+  test('mark toggling on end of text works with different nested marks', function (assert) {
+    assert.expect(5);
+    testMarkToggling(assert, 6, 9, ctx.model);
   });
   test('reading highlights works', function (assert) {
     const html = domStripped`
