@@ -524,13 +524,15 @@ export function getPathFromAncestor(
   inclusive: boolean
 ): Node[] {
   const path = [];
-  let cur = to.parentNode;
-  while (cur && cur !== from) {
-    path.push(cur);
-    cur = cur.parentNode;
-  }
-  if (cur) {
-    path.push(cur);
+  if (to !== from) {
+    let cur = to.parentNode;
+    while (cur && cur !== from) {
+      path.push(cur);
+      cur = cur.parentNode;
+    }
+    if (cur) {
+      path.push(cur);
+    }
   }
   path.reverse();
   if (inclusive) {

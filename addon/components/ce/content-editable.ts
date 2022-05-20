@@ -2,7 +2,6 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { createEditor, Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { EditorInputHandler } from './input-handler';
 import SidewayArrowsHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/sideway-arrows-handler';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';

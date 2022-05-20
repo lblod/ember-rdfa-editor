@@ -1,8 +1,16 @@
-import { View } from '../core/view';
+import State from '../core/state';
 import ModelRange from '../model/model-range';
 import SelectionReader from '../model/readers/selection-reader';
 
-export function eventTargetRange(view: View, event: InputEvent): ModelRange {
+export function eventTargetRange(
+  state: State,
+  viewRoot: HTMLElement,
+  event: InputEvent
+): ModelRange {
   const selectionReader = new SelectionReader();
-  return selectionReader.readDomRange(view, event.getTargetRanges()[0])!;
+  return selectionReader.readDomRange(
+    state,
+    viewRoot,
+    event.getTargetRanges()[0]
+  )!;
 }

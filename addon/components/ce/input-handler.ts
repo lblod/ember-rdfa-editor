@@ -40,7 +40,7 @@ export class EditorInputHandler implements InputHandler {
 
   beforeSelectionChange(event: Event): void {}
 
-  afterSelectionChange(event: Event): void {
+  afterSelectionChange(): void {
     console.log('handling selectionChanged');
     const currentSelection = getWindowSelection();
     const viewRoot = this.editor.view.domRoot;

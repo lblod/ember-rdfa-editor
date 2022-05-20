@@ -6,7 +6,10 @@ import {
   EditorEventListener,
   ListenerConfig,
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
-import { RawEditorController } from '@lblod/ember-rdfa-editor/model/controller';
+import {
+  EditorController,
+  RawEditorController,
+} from '@lblod/ember-rdfa-editor/model/controller';
 
 /**
  * Legacy interface for external consumers. They expect to receive this interface
@@ -47,23 +50,22 @@ interface RdfaDocument {
  * This is both to protect the internal dom of the editor and to remove internals
  */
 export default class RdfaDocumentController
-  extends RawEditorController
+  extends EditorController
   implements RdfaDocument
 {
   get htmlContent() {
-    const htmlWriter = new HTMLExportWriter(this._rawEditor.model);
-    const output = htmlWriter.write(
-      this._rawEditor.model.rootModelNode
-    ) as HTMLElement;
-    return output.innerHTML;
+    // const htmlWriter = new HTMLExportWriter(this._editor.);
+    // const output = htmlWriter.write(
+    //   this._rawEditor.model.rootModelNode
+    // ) as HTMLElement;
+    // return output.innerHTML;
+    return '';
   }
 
   set htmlContent(html: string) {
-    const root = this._rawEditor.model.rootModelNode;
+    const root = this._editor.state.document;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
-    this._rawEditor.executeCommand('insert-html', html, range);
-    this._rawEditor.selection.lastRange?.collapse(true);
-    this._rawEditor.model.writeSelection();
+    this._editor.executeCommand('insert-html', { htmlString: html, range });
   }
 
   get xmlContent() {

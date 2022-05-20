@@ -11,6 +11,7 @@ import Transaction from './transaction';
 import InsertNewLineCommand from '../commands/insert-newLine-command';
 import { isElement, isTextNode } from '../utils/dom-helpers';
 import { NotImplementedError } from '../utils/errors';
+import InsertHtmlCommand from '../commands/insert-html-command';
 
 export interface StateArgs {
   document: ModelElement;
@@ -74,6 +75,7 @@ export function defaultCommands(): Record<
   return {
     'insert-text': new InsertTextCommand(),
     'insert-newLine': new InsertNewLineCommand(),
+    'insert-html': new InsertHtmlCommand(),
   };
 }
 

@@ -1,4 +1,4 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
+import Command, { CommandName } from '@lblod/ember-rdfa-editor/commands/command';
 import {
   AnyEventName,
   EditorEventListener,
@@ -16,13 +16,18 @@ import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import {
+  AttributeSpec,
+  Mark,
+  MarkSpec,
+} from '@lblod/ember-rdfa-editor/model/mark';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import LiveMarkSet, {
   LiveMarkSetArgs,
 } from '@lblod/ember-rdfa-editor/model/live-mark-set';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
+import { Editor } from '../core/editor';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
@@ -94,6 +99,89 @@ export default interface Controller {
   ): void;
 
   write(writeSelection?: boolean): void;
+}
+
+export class EditorController implements Controller {
+  private _name: string;
+  protected _editor: Editor;
+  constructor(name: string, editor: Editor) {
+    this._name = name;
+    this._editor = editor;
+  }
+  get name(): string {
+    return this._name;
+  }
+  get selection(): ModelSelection {
+    return this._editor.state.selection;
+  }
+  get rangeFactory(): RangeFactory {
+    return new ModelRangeFactory(this._editor.state.document);
+  }
+  get treeWalkerFactory(): TreeWalkerFactory {
+    return GenTreeWalker;
+  }
+  get datastore(): Datastore {
+    throw new Error('Method not implemented.');
+  }
+  get util(): EditorUtils {
+    throw new Error('Method not implemented.');
+  }
+  get ownMarks(): Set<Mark<AttributeSpec>> {
+    throw new Error('Method not implemented.');
+  }
+  get modelRoot(): ModelElement {
+    return this._editor.state.document;
+  }
+  get marksRegistry(): MarksRegistry {
+    return this._editor.state.marksRegistry;
+  }
+  getMutator(): ImmediateModelMutator {
+    throw new Error('Method not implemented.');
+  }
+  getMarksFor(owner: string): Set<Mark<AttributeSpec>> {
+    throw new Error('Method not implemented.');
+  }
+  createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
+    throw new Error('Method not implemented.');
+  }
+  executeCommand<A extends unknown[], R>(
+    commandName: string,
+    ...args: A
+  ): void | R {
+    return this._editor.executeCommand(commandName as CommandName, args);
+  }
+  canExecuteCommand<A extends unknown[]>(
+    commandName: string,
+    ...args: A
+  ): boolean {
+    throw new Error('Method not implemented.');
+  }
+  registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
+    throw new Error('Method not implemented.');
+  }
+  registerWidget(spec: WidgetSpec): void {
+    throw new Error('Method not implemented.');
+  }
+  registerMark(spec: MarkSpec<AttributeSpec>): void {
+    throw new Error('Method not implemented.');
+  }
+  onEvent<E extends string>(
+    eventName: E,
+    callback: EditorEventListener<E>,
+    config?: ListenerConfig
+  ): void {
+    // throw new Error('Method not implemented.');
+  }
+  offEvent<E extends string>(
+    eventName: E,
+    callback: EditorEventListener<E>,
+    config?: ListenerConfig
+  ): void {
+    throw new Error('Method not implemented.');
+  }
+  write(writeSelection?: boolean): void {
+    throw new Error('Method not implemented.');
+  }
 }
 
 export class RawEditorController implements Controller {
