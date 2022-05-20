@@ -18,15 +18,15 @@ export const exampleInlineComponent: InlineComponent = {
     },
   ],
   renderSpec(): RenderSpec {
-    return [
-      {
-        tag: 'div',
-        attributes: {
-          style: 'background-color:red;padding:10px;',
-          class: 'inline-component',
-        },
+    return {
+      tag: 'div',
+      attributes: {
+        style: 'background-color:red;padding:10px;',
       },
-      [['h1', [SLOT]]],
-    ];
+      children: [
+        { tag: 'h1', children: [SLOT] },
+        { tag: 'h2', content: 'content' },
+      ],
+    };
   },
 };

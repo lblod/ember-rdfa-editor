@@ -14,7 +14,6 @@ import HtmlTableReader from '@lblod/ember-rdfa-editor/model/readers/html-table-r
 import HtmlSpanReader from '@lblod/ember-rdfa-editor/model/readers/html-span-reader';
 import { pushOrExpand } from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
-import InlineComponentReader from './inline-component-reader';
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
 import { extractChild } from '../util/render-spec';
 
@@ -37,7 +36,14 @@ export default class HtmlNodeReader
       const tag = tagName(from) as ElementType;
       const inlineComponent = context.matchInlineComponent(from);
       if (inlineComponent) {
-        const component = new ModelInlineComponent(inlineComponent);
+        const attributes = new Map<string, string>();
+        from.getAttributeNames().forEach((attributeName) => {
+          const attributeValue = from.getAttribute(attributeName);
+          if (attributeValue) {
+            attributes.set(attributeName, attributeValue);
+          }
+        });
+        const component = new ModelInlineComponent(inlineComponent, attributes);
         const childNode = extractChild(
           component.spec.renderSpec(component),
           from

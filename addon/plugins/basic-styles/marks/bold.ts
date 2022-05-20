@@ -9,6 +9,9 @@ export const boldMarkSpec: MarkSpec = {
   name: 'bold',
   priority: 100,
   renderSpec(): RenderSpec {
-    return ['strong', [SLOT]];
+    return {
+      tag: 'strong',
+      children: [SLOT],
+    };
   },
 };

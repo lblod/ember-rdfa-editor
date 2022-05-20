@@ -21,6 +21,7 @@ export default class InsertComponentCommand extends Command {
   execute(
     componentName: string,
     child: ModelNode | null = null,
+    attributes: Map<string, string> = new Map(),
     selection: ModelSelection = this.model.selection
   ): void {
     if (!ModelSelection.isWellBehaved(selection)) {
@@ -29,7 +30,7 @@ export default class InsertComponentCommand extends Command {
     const componentSpec =
       this.model.inlineComponentsRegistry.lookUpComponent(componentName);
     if (componentSpec) {
-      const component = new ModelInlineComponent(componentSpec);
+      const component = new ModelInlineComponent(componentSpec, attributes);
       if (child) {
         component.addChild(child);
       }

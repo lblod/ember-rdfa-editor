@@ -8,10 +8,13 @@ export type AttributeSpec = { setBy?: string } & Record<string, Serializable>;
 
 export const SLOT: SLOT = 0;
 type SLOT = 0;
-type HtmlNodeSpec =
-  | HtmlTag
-  | { tag: HtmlTag; attributes: Record<string, Serializable> };
-export type RenderSpec = [HtmlNodeSpec, RenderSpec[]] | SLOT;
+type HtmlNodeSpec = {
+  tag: HtmlTag;
+  attributes?: Record<string, Serializable>;
+  content?: string;
+  children?: RenderSpec[];
+};
+export type RenderSpec = HtmlNodeSpec | SLOT;
 
 export default function renderFromSpec(
   spec: RenderSpec,
@@ -20,25 +23,27 @@ export default function renderFromSpec(
   if (spec === SLOT) {
     return block;
   } else {
-    const [nodeSpec, children] = spec;
-    let result: HTMLElement;
-    if (typeof nodeSpec === 'string') {
-      result = document.createElement(nodeSpec);
-    } else {
-      result = document.createElement(nodeSpec.tag);
-      for (const [key, val] of Object.entries(nodeSpec.attributes)) {
+    const result = document.createElement(spec.tag);
+    if (spec.attributes) {
+      for (const [key, val] of Object.entries(spec.attributes)) {
         if (val !== undefined) {
           result.setAttribute(key, val.toString());
         }
       }
     }
 
-    for (const child of children) {
-      const render = renderFromSpec(child, block);
-      if (render) {
-        result.appendChild(render);
+    if (spec.content) {
+      result.innerText = spec.content;
+    }
+    if (spec.children) {
+      for (const child of spec.children) {
+        const render = renderFromSpec(child, block);
+        if (render) {
+          result.appendChild(render);
+        }
       }
     }
+
     return result;
   }
 }
@@ -50,14 +55,16 @@ export function extractChild(
   if (spec === SLOT) {
     return element;
   } else {
-    const [, children] = spec;
     let result: Node | null = null;
-    children.forEach((child, i) => {
-      result = extractChild(child, element.childNodes[i]);
-      if (result) {
-        return;
-      }
-    });
+    if (spec.children) {
+      spec.children.forEach((child, i) => {
+        result = extractChild(child, element.childNodes[i]);
+        if (result) {
+          return;
+        }
+      });
+    }
+
     return result;
   }
 }

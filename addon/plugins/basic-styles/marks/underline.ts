@@ -9,6 +9,9 @@ export const underlineMarkSpec: MarkSpec = {
   priority: 300,
   name: 'underline',
   renderSpec(): RenderSpec {
-    return ['u', [SLOT]];
+    return {
+      tag: 'u',
+      children: [SLOT],
+    };
   },
 };

@@ -91,10 +91,11 @@ export const highlightMarkSpec: MarkSpec = {
   name: 'highlighted',
 
   renderSpec(): RenderSpec {
-    return [
-      { tag: 'span', attributes: { 'data-editor-highlight': true } },
-      [SLOT],
-    ];
+    return {
+      tag: 'span',
+      attributes: { 'data-editor-highlight': true },
+      children: [SLOT],
+    };
   },
 };
 

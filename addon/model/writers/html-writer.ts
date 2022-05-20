@@ -77,6 +77,7 @@ export default class HtmlWriter {
         modelNode,
         child?.viewRoot
       );
+      this.model.registerNodeView(modelNode, resultView);
     } else {
       throw new NotImplementedError('Unsupported modelnode type');
     }

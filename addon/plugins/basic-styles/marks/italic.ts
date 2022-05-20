@@ -9,6 +9,9 @@ export const italicMarkSpec: MarkSpec = {
   priority: 200,
   name: 'italic',
   renderSpec(): RenderSpec {
-    return ['em', [SLOT]];
+    return {
+      tag: 'em',
+      children: [SLOT],
+    };
   },
 };

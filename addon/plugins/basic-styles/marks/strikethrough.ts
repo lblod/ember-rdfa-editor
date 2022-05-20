@@ -9,6 +9,9 @@ export const strikethroughMarkSpec: MarkSpec = {
   priority: 400,
   name: 'strikethrough',
   renderSpec(): RenderSpec {
-    return ['del', [SLOT]];
+    return {
+      tag: 'del',
+      children: [SLOT],
+    };
   },
 };
