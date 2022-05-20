@@ -60,11 +60,10 @@ kind: pipeline
 type: docker
 name: release
 steps:
-- name: build-dry-run
-  image: plugins/docker
-  settings:
-    repo: lblod/ember-rdfa-editor
-    dry_run: true
+- name: install dependencies
+  image: danlynn/ember-cli:3.28.2
+  commands:
+    - npm ci
 - name: npm-release
   image: plugins/npm
   settings:
