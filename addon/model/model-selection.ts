@@ -49,8 +49,8 @@ export default class ModelSelection {
     return !!(selection.anchor && selection.focus);
   }
 
-  constructor() {
-    this._ranges = [];
+  constructor(ranges: ModelRange[] = []) {
+    this._ranges = ranges;
     this._isRightToLeft = false;
     this._activeMarks = new MarkSet();
   }

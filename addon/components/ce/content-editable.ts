@@ -26,6 +26,7 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 interface FeatureService {
   isEnabled(key: string): boolean;
@@ -36,7 +37,11 @@ interface ContentEditableArgs {
 
   rawEditorInit(editor: RawEditor): void;
 
+  plugins: EditorPlugin[];
+
   baseIRI?: string;
+
+  stealFocus?: boolean;
 }
 
 /**
@@ -100,6 +105,9 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   get inputHandlers(): InputHandler[] {
     return this.externalHandlers.concat(this.defaultHandlers);
+  }
+  get stealFocus() {
+    return this.args.stealFocus ?? true;
   }
 
   /**
@@ -166,12 +174,13 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * @method insertedEditorElement
    */
   @action
-  insertedEditorElement(element: HTMLElement) {
-    this.rawEditor.rootNode = element;
-    this.rawEditor.updateRichNode();
-    this.rawEditor.setCurrentPosition(0);
+  async insertedEditorElement(element: HTMLElement) {
+    await this.rawEditor.initialize(element, this.args.plugins);
     if (this.args.rawEditorInit) {
       this.args.rawEditorInit(this.rawEditor);
+    }
+    if (this.stealFocus) {
+      element.focus();
     }
   }
 

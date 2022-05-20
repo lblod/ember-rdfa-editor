@@ -6,7 +6,6 @@ import { tracked } from '@glimmer/tracking';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
 import RdfaDocumentController from '../../utils/rdfa/rdfa-document';
 import type IntlService from 'ember-intl/services/intl';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import PernetRawEditor from '@lblod/ember-rdfa-editor/utils/ce/pernet-raw-editor';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import ApplicationInstance from '@ember/application/instance';
@@ -29,6 +28,7 @@ interface RdfaEditorArgs {
   rdfaEditorInit(editor: RdfaDocument): void;
 
   plugins: string[];
+  stealFocus?: boolean;
 }
 
 /**
@@ -58,11 +58,13 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
   private owner: ApplicationInstance;
-  activePlugins: EditorPlugin[] = [];
   private logger: Logger;
 
   get plugins(): string[] {
     return this.args.plugins || [];
+  }
+  get editorPlugins(): EditorPlugin[] {
+    return this.getPlugins();
   }
 
   /**
@@ -112,22 +114,14 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  async handleRawEditorInit(editor: PernetRawEditor) {
+  handleRawEditorInit(editor: PernetRawEditor) {
     this.editor = editor;
-    await this.initializePlugins(editor);
     this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
     this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
     this.toolbarController = new RawEditorController('toolbar', editor);
     const rdfaDocument = new RdfaDocumentController('host-controller', editor);
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
-    }
-  }
-
-  async initializePlugins(editor: RawEditor) {
-    const plugins = this.getPlugins();
-    for (const plugin of plugins) {
-      await this.initializePlugin(plugin, editor);
     }
   }
 
@@ -143,16 +137,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       }
     }
     return plugins;
-  }
-
-  async initializePlugin(
-    plugin: EditorPlugin,
-    editor: RawEditor
-  ): Promise<void> {
-    const controller = new RawEditorController(plugin.name, editor);
-    await plugin.initialize(controller);
-    this.logger(`Initialized plugin ${plugin.name}`);
-    this.activePlugins.push(plugin);
   }
 
   // Toggle RDFA blocks
