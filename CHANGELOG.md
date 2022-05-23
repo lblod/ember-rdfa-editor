@@ -16,6 +16,27 @@
 
 
 
+## 0.58.0 (2022-05-16)
+
+#### :rocket: Enhancement
+* [#267](https://github.com/lblod/ember-rdfa-editor/pull/267) Addition of a loading indicator when the editor has not yet fully loaded ([@elpoelma](https://github.com/elpoelma))
+* [#264](https://github.com/lblod/ember-rdfa-editor/pull/264) Ember upgrade to v3.28 and others ([@benjay10](https://github.com/benjay10))
+* [#266](https://github.com/lblod/ember-rdfa-editor/pull/266) Rework styling of mark-highlight-manual and codelist highlight ([@Dietr](https://github.com/Dietr))
+* [#263](https://github.com/lblod/ember-rdfa-editor/pull/263) Remove dummy Say theming ([@benjay10](https://github.com/benjay10))
+* [#265](https://github.com/lblod/ember-rdfa-editor/pull/265) Successful package upgrades ([@benjay10](https://github.com/benjay10))
+
+#### :bug: Bug Fix
+* [#272](https://github.com/lblod/ember-rdfa-editor/pull/272) rework backspace rdfa plugin to avoid some ts issues ([@nvdk](https://github.com/nvdk))
+
+#### :house: Internal
+* [#268](https://github.com/lblod/ember-rdfa-editor/pull/268) Addition of the shiftedVisually method which determines a new position based on an existing position and a number of visual steps. ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 4
+- Ben ([@benjay10](https://github.com/benjay10))
+- Dieter Peirs ([@Dietr](https://github.com/Dietr))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+- Niels V ([@nvdk](https://github.com/nvdk))
+
 ## 0.57.0 (2022-04-27)
 
 #### :rocket: Enhancement
