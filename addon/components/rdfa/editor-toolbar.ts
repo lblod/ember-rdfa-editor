@@ -9,7 +9,6 @@ import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-eve
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { ExampleProperties } from '@lblod/ember-rdfa-editor/plugins/inline-components/components/example-inline-component';
-import { ImageProperties } from '@lblod/ember-rdfa-editor/plugins/inline-components/components/image-inline-component';
 
 interface Args {
   editor: RawEditor;
@@ -211,21 +210,6 @@ export default class EditorToolbar extends Component<Args> {
       'insert-component',
       'example-inline-component',
       child,
-      new Map(),
-      props
-    );
-  }
-
-  @action
-  insertImageComponent() {
-    const props: ImageProperties = {
-      imageSrc:
-        'https://emberjs.com/images/tomsters/a11y-tomster750w-2137b8b891485dd920ccf5c0d5d1645d.png',
-    };
-    this.args.controller.executeCommand(
-      'insert-component',
-      'image-inline-component',
-      null,
       new Map(),
       props
     );

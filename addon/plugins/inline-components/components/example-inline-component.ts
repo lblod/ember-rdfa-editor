@@ -4,7 +4,6 @@ import {
   InlineComponent,
   Properties,
 } from '../../../model/inline-components/model-inline-component';
-import { imageInlineComponent } from './image-inline-component';
 
 export interface ExampleProperties extends Properties {
   headLine?: string;
@@ -40,10 +39,6 @@ export const exampleInlineComponent: InlineComponent = {
           attributes: { style: 'overflow-y: scroll; height:150px;' },
           children: [props.content || ''],
         },
-        imageInlineComponent.render({
-          imageSrc:
-            'https://emberjs.com/images/tomsters/a11y-tomster750w-2137b8b891485dd920ccf5c0d5d1645d.png',
-        }),
       ],
     };
   },
