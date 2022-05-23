@@ -16,6 +16,18 @@
 
 
 
+
+## 0.58.1 (2022-05-23)
+
+#### :bug: Bug Fix
+* [#275](https://github.com/lblod/ember-rdfa-editor/pull/275) Fix error this.app is not defined on loket ([@lagartoverde](https://github.com/lagartoverde))
+* [#270](https://github.com/lblod/ember-rdfa-editor/pull/270) Make sidebar min-height same as window height ([@Dietr](https://github.com/Dietr))
+
+#### Committers: 2
+- Dieter Peirs ([@Dietr](https://github.com/Dietr))
+- Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
+
+
 ## 0.58.0 (2022-05-16)
 
 #### :rocket: Enhancement
