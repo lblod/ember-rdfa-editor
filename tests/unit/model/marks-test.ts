@@ -22,7 +22,6 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
 import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline';
 import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough';
-import { reverse } from 'ix/iterable/operators';
 
 function testMarkToggling(
   assert: Assert,
