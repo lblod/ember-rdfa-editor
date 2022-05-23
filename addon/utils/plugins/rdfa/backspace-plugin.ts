@@ -3,8 +3,6 @@ import {
   BackspacePlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import NodeWalker from '@lblod/marawa/node-walker';
-import { isRdfaNode } from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-rich-node-helpers';
 import {
   moveCaretBefore,
   stringToVisibleText,
@@ -14,6 +12,7 @@ import {
   isTextNode,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import RawEditor from '../../ce/raw-editor';
+import { rdfaKeywords } from '@lblod/ember-rdfa-editor/config/rdfa';
 
 /**
  * Class responsible for the handling of RDFA.
@@ -116,7 +115,9 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       )
     ) {
       const node = manipulation.node;
-      return this.hasFlagComplete(node as Element);
+      if (isElement(node)) {
+        return this.hasFlagComplete(node as Element);
+      }
     }
 
     return false;
@@ -168,7 +169,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       )
     ) {
       const node = manipulation.node;
-      return this.isRdfaNode(node);
+      return this.isRdfaNode(node as Element);
     }
 
     return false;
@@ -371,9 +372,13 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
     return visibleLength < TEXT_LENGTH_ALMOST_COMPLETE_TRESHOLD;
   }
 
-  isRdfaNode(node: Node): boolean {
-    const nodeWalker = new NodeWalker();
-    return isRdfaNode(nodeWalker.processDomNode(node));
+  isRdfaNode(node: Element): boolean {
+    for (const key of rdfaKeywords) {
+      if (node.getAttribute(key)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   hasFlagForRemoval(element: Element): boolean {
