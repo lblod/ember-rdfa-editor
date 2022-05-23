@@ -37,12 +37,6 @@ export default class HtmlNodeReader
       const inlineComponent = context.matchInlineComponent(from);
       if (inlineComponent) {
         const attributes = new Map<string, string>();
-        from.getAttributeNames().forEach((attributeName) => {
-          const attributeValue = from.getAttribute(attributeName);
-          if (attributeValue) {
-            attributes.set(attributeName, attributeValue);
-          }
-        });
         const component = new ModelInlineComponent(inlineComponent, attributes);
         const childNode = extractChild(component.spec.render(), from);
         if (childNode) {
