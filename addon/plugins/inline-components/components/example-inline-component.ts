@@ -1,4 +1,3 @@
-import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { RenderSpec } from '../../../model/util/render-spec';
 import {
   InlineComponent,
@@ -9,24 +8,14 @@ export interface ExampleProperties extends Properties {
   headLine?: string;
   content?: string;
 }
-export const exampleInlineComponent: InlineComponent = {
-  name: 'example-inline-component',
-  matchers: [
-    {
-      tag: 'div',
-      attributeBuilder: (node) => {
-        if (isElement(node)) {
-          if (node.classList.contains('inline-component')) {
-            return {};
-          }
-        }
-        return null;
-      },
-    },
-  ],
+
+export default class ExampleInlineComponent extends InlineComponent {
+  constructor() {
+    super('example-inline-component', 'div');
+  }
   render(props: ExampleProperties = {}): RenderSpec {
     return {
-      tag: 'div',
+      tag: this.tag,
       attributes: {
         style: 'border: 2px solid;padding:10px;width:60%;',
       },
@@ -41,5 +30,5 @@ export const exampleInlineComponent: InlineComponent = {
         },
       ],
     };
-  },
-};
+  }
+}

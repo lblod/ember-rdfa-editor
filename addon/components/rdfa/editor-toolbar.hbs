@@ -260,17 +260,19 @@
         type='button'
         class='say-toolbar__button'
         {{on 'click' this.insertExampleComponent}}
-        title={{t 'ember-rdfa-editor.insertImageComponent'}}
+        title={{t 'ember-rdfa-editor.insertExampleComponent'}}
       >
         Header
       </button>
+    </div>
+    <div class='say-toolbar__group'>
       <button
         type='button'
         class='say-toolbar__button'
-        {{on 'click' this.insertImageComponent}}
-        title={{t 'ember-rdfa-editor.insertImageComponent'}}
+        {{on 'click' this.insertReglementaireBijlageComponent}}
+        title={{t 'ember-rdfa-editor.insertRBComponent'}}
       >
-        Image
+        RB
       </button>
     </div>
   </div>

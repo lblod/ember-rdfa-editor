@@ -1,7 +1,7 @@
 import controller from '@lblod/ember-rdfa-editor/model/controller';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
-import { exampleInlineComponent } from './components/example-inline-component';
-import { imageInlineComponent } from './components/image-inline-component';
+import ExampleInlineComponent from './components/example-inline-component';
+import ReglementaireBijlageInlineComponent from './components/reglementaire-bijlage-component';
 
 export default class InlineComponents implements EditorPlugin {
   get name(): string {
@@ -10,7 +10,9 @@ export default class InlineComponents implements EditorPlugin {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: controller): Promise<void> {
-    controller.registerInlineComponent(exampleInlineComponent);
-    controller.registerInlineComponent(imageInlineComponent);
+    controller.registerInlineComponent(new ExampleInlineComponent());
+    controller.registerInlineComponent(
+      new ReglementaireBijlageInlineComponent()
+    );
   }
 }

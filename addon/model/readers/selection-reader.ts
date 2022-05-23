@@ -122,7 +122,11 @@ export default class SelectionReader
   ): ModelPosition {
     if (isTextNode(container) && ModelNode.isModelText(modelNode)) {
       return ModelPosition.fromInTextNode(modelNode, domOffset);
-    } else if (isElement(container) && ModelNode.isModelElement(modelNode)) {
+    } else if (
+      isElement(container) &&
+      (ModelNode.isModelElement(modelNode) ||
+        ModelNode.isModelInlineComponent(modelNode))
+    ) {
       if (modelNode.children.length) {
         return ModelPosition.fromInElement(
           modelNode,

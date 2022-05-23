@@ -7,11 +7,33 @@ import renderFromSpec, { AttributeSpec, RenderSpec } from '../util/render-spec';
 export type Properties = {
   [index: string]: string | undefined;
 };
-export interface InlineComponent {
+export abstract class InlineComponent {
   name: string;
-  matchers: DomNodeMatcher<AttributeSpec>[];
+  tag: keyof HTMLElementTagNameMap;
 
-  render(props?: Properties): RenderSpec;
+  baseMatcher: DomNodeMatcher<AttributeSpec>;
+  matchers?: DomNodeMatcher<AttributeSpec>[];
+
+  constructor(name: string, tag: keyof HTMLElementTagNameMap) {
+    this.name = name;
+    this.tag = tag;
+    this.baseMatcher = {
+      tag,
+      attributeBuilder: (node) => {
+        if (isElement(node)) {
+          if (
+            node.classList.contains('inline-component') &&
+            node.classList.contains(this.name)
+          ) {
+            return {};
+          }
+        }
+        return null;
+      },
+    };
+  }
+
+  abstract render(props?: Properties): RenderSpec;
 }
 
 export class ModelInlineComponent extends ModelElement {
@@ -39,7 +61,7 @@ export class ModelInlineComponent extends ModelElement {
     }
     const rendered = renderFromSpec(this._spec.render(this._props), block);
     if (rendered && isElement(rendered)) {
-      rendered.classList.add('inline-component');
+      rendered.classList.add('inline-component', this._spec.name);
       rendered.setAttribute('contenteditable', 'false');
       this.attributeMap.forEach((val, key) => {
         rendered.setAttribute(key, val);

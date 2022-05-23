@@ -16,11 +16,18 @@ export default class InlineComponentsRegistry {
     let result: InlineComponent | null = null;
 
     for (const component of potentialMatches) {
-      for (const matcher of component.matchers) {
-        if (matcher.attributeBuilder) {
-          const attributes = matcher.attributeBuilder(node);
-          if (attributes) {
-            result = component;
+      const baseAttributesMatch = component.baseMatcher.attributeBuilder!(node);
+      if (baseAttributesMatch) {
+        if (component.matchers) {
+          for (const matcher of component.matchers) {
+            if (matcher.attributeBuilder) {
+              const attributes = matcher.attributeBuilder(node);
+              if (attributes) {
+                result = component;
+              }
+            } else {
+              result = component;
+            }
           }
         } else {
           result = component;
@@ -33,9 +40,11 @@ export default class InlineComponentsRegistry {
 
   registerComponent(component: InlineComponent) {
     this.registeredComponents.set(component.name, component);
-    component.matchers.forEach((matcher) => {
-      MapUtils.setOrPush(this.componentMatchMap, matcher.tag, component);
-    });
+    MapUtils.setOrPush(
+      this.componentMatchMap,
+      component.baseMatcher.tag,
+      component
+    );
   }
 
   lookUpComponent(name: string) {

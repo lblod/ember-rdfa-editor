@@ -9,6 +9,7 @@ import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-eve
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { ExampleProperties } from '@lblod/ember-rdfa-editor/plugins/inline-components/components/example-inline-component';
+import { ReglementaireBijlageProperties } from '@lblod/ember-rdfa-editor/plugins/inline-components/components/reglementaire-bijlage-component';
 
 interface Args {
   editor: RawEditor;
@@ -210,6 +211,20 @@ export default class EditorToolbar extends Component<Args> {
       'insert-component',
       'example-inline-component',
       child,
+      new Map(),
+      props
+    );
+  }
+
+  @action
+  insertReglementaireBijlageComponent() {
+    const props: ReglementaireBijlageProperties = {
+      title: 'Reglementaire bijlage',
+    };
+    this.args.controller.executeCommand(
+      'insert-component',
+      'reglementaire-bijlage-inline-component',
+      null,
       new Map(),
       props
     );
