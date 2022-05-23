@@ -2,7 +2,7 @@
 
 module.exports = {
   isDevelopingAddon() {
-    return this.app.env === 'development';
+    return process.env.EMBER_ENV === 'development';
   },
   name: require('./package').name,
   options: {
