@@ -28,12 +28,12 @@ export default class HtmlTextReader
       context.addMark(result, spec, attributes)
     );
     if (context.markViewRootStack.length) {
-      context.registerNodeView(result, {
+      context.registerTextNode(result, {
         viewRoot: context.markViewRootStack[0],
         contentRoot: from,
       });
     } else {
-      context.registerNodeView(result, { viewRoot: from, contentRoot: from });
+      context.registerTextNode(result, { viewRoot: from, contentRoot: from });
     }
     return [result];
   }
