@@ -523,31 +523,18 @@ interface Inclusiveness {
   includeTo?: boolean;
 }
 
-export function getPathFromAncestor(
-  from: Node,
-  to: Node,
-  { includeFrom = true, includeTo = true }: Inclusiveness = {}
-): Node[] {
+export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
   const path = [];
-  if (to !== from) {
-    let cur = to.parentNode;
-    while (cur && cur !== from) {
-      path.push(cur);
-      cur = cur.parentNode;
-    }
-    if (cur && includeFrom) {
-      path.push(cur);
-    }
+  let cur = to.parentNode;
+  while (cur) {
+    path.push(cur);
+    cur = cur.parentNode;
   }
   path.reverse();
-  if (includeTo) {
+  if (inclusive) {
     path.push(to);
   }
   return path;
-}
-
-export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
-  return getPathFromAncestor(to.getRootNode(), to, { includeTo: inclusive });
 }
 export function getIndexPath(node: Node): number[] {
   let cur = node;
@@ -572,19 +559,37 @@ export function nodeIndex(node: Node): number {
   }
   return -1;
 }
+function getPositionPathFromAncestor(from: Node, to: Node): Node[] {
+  const path: Node[] = [];
+  if (to === from) {
+    return path;
+  }
+  let cur = to.parentNode;
+  while (cur && cur !== from) {
+    path.push(cur);
+    cur = cur.parentNode;
+  }
+  if (cur) {
+    path.push(cur);
+  }
+  path.reverse();
+  path.push(to);
+  return path.slice(1);
+}
 export function domPosToModelPos(
   state: State,
   viewRoot: HTMLElement,
   container: Node,
   offset: number
 ): ModelPosition {
-  const path = getPathFromAncestor(viewRoot, container, {
-    includeFrom: false,
-    includeTo: true,
-  });
+  // get the path of dom index to the container node
+  const path = getPositionPathFromAncestor(viewRoot, container);
+
+  // calculate the path of corresponding model indexes. These
+  // can differ in cases like marks and inline components
   const modelIndexPath = [];
   let markOffset = 0;
-  for (const node of path.slice(1)) {
+  for (const node of path) {
     const parseResult = state.parseNode(node);
     if (parseResult.type === 'mark') {
       markOffset += nodeIndex(node);
@@ -594,20 +599,28 @@ export function domPosToModelPos(
       modelIndexPath.push(nodeIndex(node) + markOffset);
     }
   }
+  // convert the modelIndex path into a path of offsets
   let cur: ModelNode = state.document;
   const offsetPath = [];
-  for (const index of modelIndexPath) {
-    if (ModelNode.isModelElement(cur) && !cur.isLeaf) {
-      offsetPath.push(cur.indexToOffset(index));
-    } else {
-      break;
+  if (modelIndexPath.length) {
+    cur = state.document.children[modelIndexPath[0]];
+    offsetPath.push(state.document.indexToOffset(modelIndexPath[0]));
+    for (const index of modelIndexPath.slice(1)) {
+      if (ModelNode.isModelElement(cur) && !cur.isLeaf) {
+        offsetPath.push(cur.indexToOffset(index));
+      } else {
+        break;
+      }
+      cur = cur.children[index];
     }
-    cur = cur.children[index];
   }
+
   if (ModelNode.isModelText(cur)) {
-    offsetPath.push(cur.getOffset() + offset);
-  } else {
-    offsetPath.push(offset);
+    offsetPath[offsetPath.length - 1] = cur.getOffset() + offset;
+  } else if (ModelNode.isModelElement(cur)) {
+    if (cur.children.length > offset) {
+      offsetPath.push(cur.children[offset].getOffset());
+    }
   }
 
   console.log('PATH', offsetPath);
