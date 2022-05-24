@@ -10,13 +10,16 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { test } from 'qunit';
 import { nodeIsElementOfType } from '../util/predicate-utils';
 import ModelElement from '../model-element';
+import type from 'dummy/tests/integration/util/type-helper';
 
 export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
 /**
  * A shared library of algorithms to be used by operations only
  * Any use outside of operations is not supported
  */
+
 export default class OperationAlgorithms {
+
   static removeNew(
     range: ModelRange
   ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
@@ -26,6 +29,23 @@ export default class OperationAlgorithms {
         mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
       };
     }
+
+    //config consts
+    const cantMergeIntoTypes=[
+      'a'
+    ];
+
+    const cantRemoveOpeningTagNodeTypes=[
+      'a',
+      'ul',
+      'li'
+    ];
+
+    const cantRemoveRdfa=true;
+
+    const cantRemoveOpeningTagNodes:ModelElement[]=[];
+    const canteMergeInto=[]; 
+    const cantRemoveRdfaNodes=[];
 
     range.normalize();
 
@@ -70,33 +90,71 @@ export default class OperationAlgorithms {
         return true;
       }
     });
-
     openingTagNodes.forEach((opNode) => {
-      const nodesToUnindent = (opNode as ModelElement).children;
-      nodesToUnindent.forEach((node, index) => {
-        if (opNode.index) {
-          opNode.parent?.addChild(node, opNode.index + index);
-        }
-      });
-      opNode.remove();
+      //check if we can remove it
+      const cantRemove=
+        ModelNode.isModelElement(opNode) &&
+        cantRemoveOpeningTagNodeTypes.find(
+          type => type === opNode.type
+        ) ? true : false;
+      if (cantRemove){
+        cantRemoveOpeningTagNodes.push(opNode);
+      }
+      else {
+        const nodesToUnindent = (opNode as ModelElement).children;
+        nodesToUnindent.forEach((node, index) => {
+          if (opNode.index) {
+            opNode.parent?.addChild(node, opNode.index + index);
+          }
+        });
+        opNode.remove();
+      }
     });
 
     confinedNodes.forEach((node) => {
-      node.remove();
+      const cantRemove=
+        cantRemoveRdfa &&
+        ModelNode.isModelElement(node) &&
+        node.getRdfaPrefixes().size > 0 ?
+        true : false;
+      
+      if(cantRemove){
+        cantRemoveRdfaNodes.push(node);
+      }
+      else{
+        node.remove();
+      }
     });
 
     const before = range.start.nodeBefore();
-    if (before?.parent && before.index != null) {
+
+    
+    const cantMerge=function(){
+      if(cantMergeIntoTypes.find(type=>before?.findAncestorByType(type))){
+        return true;
+      }
+      else if(cantRemoveOpeningTagNodes.length>0)
+      {
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+    if (
+        !cantMerge() &&
+        before?.parent && 
+        before.index != null
+    ){
       nodesToMove.forEach((node) => node.remove());
       before.parent.insertChildrenAtIndex(before.index + 1, ...nodesToMove);
     }
 
-    //merge logic... needs more work
+    //merge text nodes that end up next to each other
     const after = range.start.nodeAfter();
-    if (before && after && splitEnd && splitStart) {
+    if (before && after) {
       if (ModelNode.isModelText(before) && ModelNode.isModelText(after)) {
-        before.content += after.content;
-        after.remove();
+        this.mergeTextNodes([before]);
       }
     }
     return {

@@ -266,6 +266,19 @@ export default abstract class ModelNode implements Walkable {
     //no-op function
   }
 
+  findAncestorByType( 
+    type: string
+  )
+  : ModelNode | null{
+    let parent=this.parent;
+    while(parent){
+      if(parent.type === type){
+        return this.parent;
+      }
+      parent=parent.parent;
+    }
+    return null;
+  }
   /**
    * @deprecated TODO evaluate whether we need this or not
    */
