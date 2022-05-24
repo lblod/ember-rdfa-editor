@@ -24,7 +24,6 @@ export default class InsertComponentCommand extends Command {
   execute(
     componentName: string,
     child: ModelNode | null = null,
-    attributes: Map<string, string> = new Map(),
     props: Properties = {},
     selection: ModelSelection = this.model.selection
   ): void {
@@ -34,11 +33,7 @@ export default class InsertComponentCommand extends Command {
     const componentSpec =
       this.model.inlineComponentsRegistry.lookUpComponent(componentName);
     if (componentSpec) {
-      const component = new ModelInlineComponent(
-        componentSpec,
-        attributes,
-        props
-      );
+      const component = new ModelInlineComponent(componentSpec, props);
       if (child) {
         component.addChild(child);
       }

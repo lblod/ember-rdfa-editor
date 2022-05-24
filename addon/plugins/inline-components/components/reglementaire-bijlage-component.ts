@@ -9,15 +9,22 @@ export interface ReglementaireBijlageProperties extends Properties {
   bijlage?: string;
 }
 
-export default class ReglementaireBijlageInlineComponent extends InlineComponent {
+export default class ReglementaireBijlageInlineComponent extends InlineComponent<ReglementaireBijlageProperties> {
   constructor() {
     super('reglementaire-bijlage-inline-component', 'div');
   }
 
-  render(props?: Properties): RenderSpec {
+  click() {
+    console.log('test');
+  }
+
+  render(props?: ReglementaireBijlageProperties): RenderSpec {
     return {
       tag: this.tag,
-      children: [{ tag: 'h5', children: [props?.title || ''] }],
+      children: [
+        { tag: 'span', children: [props?.title || ''] },
+        { tag: 'button', children: ['button'] },
+      ],
     };
   }
 }

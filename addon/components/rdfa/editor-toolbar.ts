@@ -211,7 +211,6 @@ export default class EditorToolbar extends Component<Args> {
       'insert-component',
       'example-inline-component',
       child,
-      new Map(),
       props
     );
   }
@@ -225,7 +224,6 @@ export default class EditorToolbar extends Component<Args> {
       'insert-component',
       'reglementaire-bijlage-inline-component',
       null,
-      new Map(),
       props
     );
   }

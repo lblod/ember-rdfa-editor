@@ -10,7 +10,10 @@ import { Walkable } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { Predicate } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
-import { ModelInlineComponent } from './inline-components/model-inline-component';
+import {
+  ModelInlineComponent,
+  Properties,
+} from './inline-components/model-inline-component';
 
 export type ModelNodeType =
   | 'TEXT'
@@ -73,7 +76,7 @@ export default abstract class ModelNode implements Walkable {
    */
   static isModelInlineComponent(
     node?: ModelNode | null
-  ): node is ModelInlineComponent {
+  ): node is ModelInlineComponent<Properties> {
     return !!node && node.modelNodeType === 'INLINE-COMPONENT';
   }
 

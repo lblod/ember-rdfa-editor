@@ -1,7 +1,3 @@
-import {
-  InlineComponent,
-  ModelInlineComponent,
-} from '../inline-components/model-inline-component';
 import { HtmlTag } from './types';
 
 export interface Serializable {
@@ -14,7 +10,7 @@ export const SLOT: SLOT = 0;
 type SLOT = 0;
 type HtmlNodeSpec = {
   tag: HtmlTag;
-  attributes?: Record<string, Serializable>;
+  attributes?: Record<string, Serializable | undefined>;
   children?: RenderSpec[];
 };
 export type RenderSpec = HtmlNodeSpec | string | SLOT;

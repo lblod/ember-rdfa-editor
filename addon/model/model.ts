@@ -26,7 +26,10 @@ import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
 import setNodeAndChildDirty from './util/set-node-and-child-dirty';
 import InlineComponentsRegistry from './inline-components/inline-components-registry';
-import { InlineComponent } from './inline-components/model-inline-component';
+import {
+  InlineComponent,
+  Properties,
+} from './inline-components/model-inline-component';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -167,7 +170,7 @@ export default class Model {
     this._marksRegistry.registerMark(markSpec);
   }
 
-  registerInlineComponent(component: InlineComponent) {
+  registerInlineComponent(component: InlineComponent<Properties>) {
     this._inlineComponentsRegistry.registerComponent(component);
   }
 
