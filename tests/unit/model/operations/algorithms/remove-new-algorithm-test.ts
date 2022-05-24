@@ -251,12 +251,12 @@ module(
           </span>
         </modelRoot>
       `;
-
+      
       const start1 = ModelPosition.fromInTextNode(text1, 2);
       const end1 = ModelPosition.fromInTextNode(text1, 3);
       OperationAlgorithms.removeNew(new ModelRange(start1, end1));
 
-      const start2 = ModelPosition.fromInTextNode(text2, 4);
+      const start2 = ModelPosition.fromInTextNode(text2,   4);
       const end2 = ModelPosition.fromInTextNode(text2, 5);
       OperationAlgorithms.removeNew(new ModelRange(start2, end2));
 
@@ -267,7 +267,7 @@ module(
       const start5 = ModelPosition.fromInTextNode(text6, 4);
       const end5 = ModelPosition.fromInTextNode(text7, 1);
       OperationAlgorithms.removeNew(new ModelRange(start5, end5));
-
+      
       assert.true(initial.sameAs(expected));
     });
 
@@ -296,11 +296,11 @@ module(
         </span>
       </modelRoot>
     */
-    test('link tests', (assert) => {
-      const {
-        root: initial,
-        textNodes: { text1, text2, text3, text4, text5, text6 },
-      } = vdom`
+      test('link tests', (assert) => {
+        const {
+          root: initial,
+          textNodes: { text1, text2, text3, text4, text5, text6 },
+        } = vdom`
           <modelRoot>
             <span>
               <a><text __id="text1">test</text></a>
@@ -312,33 +312,33 @@ module(
             </span>
           </modelRoot>
         `;
-
-      const { root: expected } = vdom`
+  
+        const { root: expected } = vdom`
           <modelRoot>
             <span>
-              <a><text __id="text1">te</text></a>
-              <text __id="text2">st</text>
+              <a><text __id="text1">t</text></a>
             </span>
             <a><text __id="text4">t</text></a>
           </modelRoot>
         `;
-      const start = ModelPosition.fromInTextNode(text1, 2);
-      const end = ModelPosition.fromInTextNode(text2, 2);
-      OperationAlgorithms.removeNew(new ModelRange(start, end));
+        const start = ModelPosition.fromInTextNode(text1, 2);
+        const end = ModelPosition.fromInTextNode(text2, 2);
+        OperationAlgorithms.removeNew(new ModelRange(start, end));
 
-      const start1 = ModelPosition.fromInTextNode(text3, 1);
-      const end1 = ModelPosition.fromInTextNode(text4, 1);
-      OperationAlgorithms.removeNew(new ModelRange(start1, end1));
+        const start1 = ModelPosition.fromInTextNode(text3, 1);
+        const end1 = ModelPosition.fromInTextNode(text4, 1);
+        OperationAlgorithms.removeNew(new ModelRange(start1, end1));
 
-      const start2 = ModelPosition.fromInTextNode(text4, 0);
-      const end2 = ModelPosition.fromInTextNode(text4, 1);
-      OperationAlgorithms.removeNew(new ModelRange(start2, end2));
+        const start2 = ModelPosition.fromInTextNode(text4, 0);
+        const end2 = ModelPosition.fromInTextNode(text4, 1);
+        OperationAlgorithms.removeNew(new ModelRange(start2, end2));
 
-      const start3 = ModelPosition.fromInTextNode(text1, 1);
-      const end3 = ModelPosition.fromInTextNode(text4, 1);
-      OperationAlgorithms.removeNew(new ModelRange(start3, end3));
+        const start3 = ModelPosition.fromInTextNode(text1, 1);
+        const end3 = ModelPosition.fromInTextNode(text4, 1);
+        OperationAlgorithms.removeNew(new ModelRange(start3, end3));
 
-      assert.true(initial.sameAs(expected));
-    });
+
+        assert.true(initial.sameAs(expected));
+      });
   }
 );
