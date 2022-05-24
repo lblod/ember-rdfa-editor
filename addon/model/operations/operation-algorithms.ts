@@ -19,7 +19,6 @@ export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
  */
 
 export default class OperationAlgorithms {
-
   static removeNew(
     range: ModelRange
   ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
@@ -31,21 +30,15 @@ export default class OperationAlgorithms {
     }
 
     //config consts
-    const cantMergeIntoTypes=[
-      'a'
-    ];
+    const cantMergeIntoTypes = ['a'];
 
-    const cantRemoveOpeningTagNodeTypes=[
-      'a',
-      'ul',
-      'li'
-    ];
+    const cantRemoveOpeningTagNodeTypes = ['a', 'ul', 'li'];
 
-    const cantRemoveRdfa=true;
+    const cantRemoveRdfa = true;
 
-    const cantRemoveOpeningTagNodes:ModelElement[]=[];
-    const canteMergeInto=[]; 
-    const cantRemoveRdfaNodes=[];
+    const cantRemoveOpeningTagNodes: ModelElement[] = [];
+    const canteMergeInto = [];
+    const cantRemoveRdfaNodes = [];
 
     range.normalize();
 
@@ -92,15 +85,15 @@ export default class OperationAlgorithms {
     });
     openingTagNodes.forEach((opNode) => {
       //check if we can remove it
-      const cantRemove=
+      const cantRemove =
         ModelNode.isModelElement(opNode) &&
-        cantRemoveOpeningTagNodeTypes.find(
-          type => type === opNode.type
-        ) ? true : false;
-      if (cantRemove){
+        cantRemoveOpeningTagNodeTypes.find((type) => type === opNode.type)
+          ? true
+          : false;
+
+      if (cantRemove) {
         cantRemoveOpeningTagNodes.push(opNode);
-      }
-      else {
+      } else {
         const nodesToUnindent = (opNode as ModelElement).children;
         nodesToUnindent.forEach((node, index) => {
           if (opNode.index) {
@@ -112,40 +105,32 @@ export default class OperationAlgorithms {
     });
 
     confinedNodes.forEach((node) => {
-      const cantRemove=
+      const cantRemove =
         cantRemoveRdfa &&
         ModelNode.isModelElement(node) &&
-        node.getRdfaPrefixes().size > 0 ?
-        true : false;
-      
-      if(cantRemove){
+        node.getRdfaPrefixes().size > 0
+          ? true
+          : false;
+
+      if (cantRemove) {
         cantRemoveRdfaNodes.push(node);
-      }
-      else{
+      } else {
         node.remove();
       }
     });
 
     const before = range.start.nodeBefore();
 
-    
-    const cantMerge=function(){
-      if(cantMergeIntoTypes.find(type=>before?.findAncestorByType(type))){
+    const cantMerge = function () {
+      if (cantMergeIntoTypes.find((type) => before?.findAncestorByType(type))) {
         return true;
-      }
-      else if(cantRemoveOpeningTagNodes.length>0)
-      {
+      } else if (cantRemoveOpeningTagNodes.length > 0) {
         return true;
-      }
-      else{
+      } else {
         return false;
       }
-    }
-    if (
-        !cantMerge() &&
-        before?.parent && 
-        before.index != null
-    ){
+    };
+    if (!cantMerge() && before?.parent && before.index != null) {
       nodesToMove.forEach((node) => node.remove());
       before.parent.insertChildrenAtIndex(before.index + 1, ...nodesToMove);
     }
