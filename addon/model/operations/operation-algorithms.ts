@@ -36,7 +36,7 @@ export default class OperationAlgorithms {
 
     const cantRemoveRdfa = true;
 
-    const cantRemoveOpeningTagNodes: ModelElement[] = [];
+    const cantRemoveOpeningTagNodes = [];
     const canteMergeInto = [];
     const cantRemoveRdfaNodes = [];
 
