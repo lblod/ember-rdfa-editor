@@ -148,7 +148,7 @@ export class EditorController implements Controller {
     commandName: string,
     ...args: A
   ): void | R {
-    return this._editor.executeCommand(commandName as CommandName, args);
+    return this._editor.executeCommand(commandName as CommandName, args[0]);
   }
   canExecuteCommand<A extends unknown[]>(
     commandName: string,

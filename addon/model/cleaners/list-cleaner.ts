@@ -3,7 +3,7 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import ModelTreeWalker, {
-    toFilterSkipFalse
+  toFilterSkipFalse,
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelPosition from '../model-position';
 

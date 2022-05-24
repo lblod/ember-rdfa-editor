@@ -1,8 +1,12 @@
 {{! template-lint-disable no-invalid-interactive }}
 {{! template-lint-disable no-down-event-binding }}
 <div
-  {{did-insert this.insertedEditorElement}}
   {{on 'beforeinput' this.beforeInput}}
+  {{on 'paste' this.paste}}
+  {{on 'cut' this.cut}}
+  {{on 'copy' this.copy}}
+  {{on 'dragstart' this.dragstart}}
+  {{did-insert this.insertedEditorElement}}
   {{will-destroy this.teardown}}
   contenteditable='true'
   class={{@class}}

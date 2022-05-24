@@ -1,7 +1,11 @@
 import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
-import { handleInsertLineBreak } from '@lblod/ember-rdfa-editor/input/insert-line-break';
-import { handleInsertText } from '@lblod/ember-rdfa-editor/input/insert-text';
+import { handleBasicStyle } from '@lblod/ember-rdfa-editor/input/format';
+import {
+  handleInsertLineBreak,
+  handleInsertListItem,
+  handleInsertText,
+} from '@lblod/ember-rdfa-editor/input/insert';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
@@ -26,17 +30,65 @@ export class EditorInputHandler implements InputHandler {
       case 'insertText':
         handleInsertText(this.editor, event);
         break;
+      case 'insertReplacementText':
+        break;
       case 'insertLineBreak':
         handleInsertLineBreak(this.editor, event);
         break;
       case 'insertParagraph':
         handleInsertLineBreak(this.editor, event);
         break;
+      case 'insertOrderedList':
+        handleInsertListItem(this.editor, event, 'ol');
+        break;
+      case 'insertUnorderedList':
+        handleInsertListItem(this.editor, event, 'ul');
+        break;
+      case 'insertHorizontalRule':
+        break;
+      case 'insertCompositionText':
+        break;
+      case 'insertFromPaste':
+        break;
       case 'deleteWordBackward':
         break;
       case 'deleteWordForward':
         break;
+      case 'deleteSoftLineBackward':
+        break;
+      case 'deleteSoftLineForward':
+        break;
+      case 'deleteEntireSoftLine':
+        break;
+      case 'deleteHardLineBackward':
+        break;
+      case 'deleteHardLineForward':
+        break;
+      case 'deleteContent':
+        break;
+      case 'deleteContentBackward':
+        break;
+      case 'deleteContentForward':
+        break;
+      case 'historyUndo':
+        break;
+      case 'historyRedo':
+        break;
+      case 'formatBold':
+        handleBasicStyle(this.editor, event, 'bold');
+        break;
+      case 'formatItalic':
+        handleBasicStyle(this.editor, event, 'italic');
+        break;
+      case 'formatUnderline':
+        handleBasicStyle(this.editor, event, 'underline');
+        break;
+      case 'formatStrikeThrough':
+        handleBasicStyle(this.editor, event, 'strikethrough');
+        break;
+
       default:
+        console.warn('Unhandled beforeinput event type:', event.inputType);
         break;
     }
   }

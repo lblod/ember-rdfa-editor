@@ -93,7 +93,7 @@ export default class EditorToolbar extends Component<Args> {
     if (this.isInList) {
       this.args.controller.executeCommand('remove-list');
     } else {
-      this.args.controller.executeCommand('make-list', 'ul');
+      this.args.controller.executeCommand('make-list', { listType: 'ul' });
     }
   }
 
@@ -102,7 +102,7 @@ export default class EditorToolbar extends Component<Args> {
     if (this.isInList) {
       this.args.controller.executeCommand('remove-list');
     } else {
-      this.args.controller.executeCommand('make-list', 'ol');
+      this.args.controller.executeCommand('make-list', { listType: 'ol' });
     }
   }
 

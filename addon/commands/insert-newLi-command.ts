@@ -4,9 +4,9 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import {
-    IllegalExecutionStateError,
-    MisbehavedSelectionError,
-    TypeAssertionError
+  IllegalExecutionStateError,
+  MisbehavedSelectionError,
+  TypeAssertionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Transaction from '../core/transaction';
@@ -16,10 +16,9 @@ export interface InsertNewLiCommandArgs {
   range?: ModelRange | null;
 }
 
-export default class InsertNewLiCommand implements Command<
-  InsertNewLiCommandArgs,
-  void
-> {
+export default class InsertNewLiCommand
+  implements Command<InsertNewLiCommandArgs, void>
+{
   name = 'insert-newLi';
 
   canExecute(
