@@ -15,7 +15,7 @@ module(
       
       <div>tes[]t</div>
     */
-    test('range is collapsed test', (assert) => {
+    test('range is collapsed test', function (assert) {
       const {
         root: initial,
         textNodes: { text1 },
@@ -37,6 +37,7 @@ module(
       const start = ModelPosition.fromInTextNode(text1, 3);
       const end = ModelPosition.fromInTextNode(text1, 3);
       OperationAlgorithms.removeNew(new ModelRange(start, end));
+      assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
     /* 
@@ -56,7 +57,7 @@ module(
       </modelRoot>
       
     */
-    test('start is nested and on edge', (assert) => {
+    test('start is nested and on edge', function (assert) {
       const {
         root: initial,
         textNodes: { text1, text2 },
@@ -79,6 +80,7 @@ module(
       const start = ModelPosition.fromInTextNode(text1, 4);
       const end = ModelPosition.fromInTextNode(text2, 2);
       OperationAlgorithms.removeNew(new ModelRange(start, end));
+      assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
     /* 
@@ -96,7 +98,7 @@ module(
       </modelRoot>
       
     */
-    test('end is nested and on edge', (assert) => {
+    test('end is nested and on edge', function (assert) {
       const {
         root: initial,
         textNodes: { text1, text2 },
@@ -117,6 +119,7 @@ module(
       const start = ModelPosition.fromInTextNode(text1, 2);
       const end = ModelPosition.fromInTextNode(text2, 4);
       OperationAlgorithms.removeNew(new ModelRange(start, end));
+      assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
     /* 
@@ -150,7 +153,7 @@ module(
       </modelRoot>
       
     */
-    test('deep nesting test', (assert) => {
+    test('deep nesting test', function (assert) {
       const {
         root: initial,
         textNodes: { text1, text2 },
@@ -187,6 +190,7 @@ module(
       const start = ModelPosition.fromInTextNode(text1, 2);
       const end = ModelPosition.fromInTextNode(text2, 2);
       OperationAlgorithms.removeNew(new ModelRange(start, end));
+      assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
     /* 
@@ -217,7 +221,7 @@ module(
       </modelRoot>
       
     */
-    test('sibling tests', (assert) => {
+    test('sibling tests', function (assert) {
       const {
         root: initial,
         textNodes: { text1, text2, text4, text5, text6, text7 },
@@ -265,10 +269,11 @@ module(
       const end5 = ModelPosition.fromInTextNode(text7, 1);
       OperationAlgorithms.removeNew(new ModelRange(start5, end5));
 
+      assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
 
-    test('link tests', (assert) => {
+    test('link tests', function (assert) {
       const {
         root: initial,
         textNodes: { text1, text2, text3, text4 },
@@ -309,7 +314,8 @@ module(
       const start3 = ModelPosition.fromInTextNode(text1, 1);
       const end3 = ModelPosition.fromInTextNode(text4, 1);
       OperationAlgorithms.removeNew(new ModelRange(start3, end3));
-      
+
+      assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
 
@@ -362,6 +368,7 @@ module(
       const end1 = ModelPosition.fromInTextNode(text1, 2);
       OperationAlgorithms.removeNew(new ModelRange(start1, end1));
 
+      assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
   }
