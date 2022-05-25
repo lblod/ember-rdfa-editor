@@ -246,7 +246,7 @@ module(
             <text __id="text1">tet</text>
             <text __id="text2">testtest3</text>
             <span>
-              <text __id="text6">testest7</text>
+              <text __id="text7">testest7</text>
             </span>
           </span>
         </modelRoot>
@@ -293,21 +293,22 @@ module(
           <span>
             <a><text __id="text1">t</text></a>
           </span>
-          <a><text __id="text4">t</text></a>
+          <a></a>
         </modelRoot>
       `;
+      debugger;
       const start = ModelPosition.fromInTextNode(text1, 2);
       const end = ModelPosition.fromInTextNode(text2, 2);
       OperationAlgorithms.removeNew(new ModelRange(start, end));
 
-      const start1 = ModelPosition.fromInTextNode(text3, 1);
-      const end1 = ModelPosition.fromInTextNode(text4, 1);
+      const start1 = ModelPosition.fromInTextNode(text3, 2);
+      const end1 = ModelPosition.fromInTextNode(text4, 2);
       OperationAlgorithms.removeNew(new ModelRange(start1, end1));
 
       const start2 = ModelPosition.fromInTextNode(text4, 0);
       const end2 = ModelPosition.fromInTextNode(text4, 1);
       OperationAlgorithms.removeNew(new ModelRange(start2, end2));
-
+      
       const start3 = ModelPosition.fromInTextNode(text1, 1);
       const end3 = ModelPosition.fromInTextNode(text4, 1);
       OperationAlgorithms.removeNew(new ModelRange(start3, end3));
@@ -315,15 +316,16 @@ module(
       assert.true(initial.sameAs(expected));
     });
 
-    test('correct predicate node mapping', function (assert) {
+    test('rdfa tests', function (assert) {
       // language=XML
       const {
         root: initial,
-        elements: { text1, text2, text3, text4, text5, text6 },
+        elements: {p1, span1},
+        textNodes: { text1, text2, text3, text4, text5, text6 }
       } = vdom`
         <div vocab="http://xmlns.com/foaf/0.1/" typeof="Person"> <!-- about:alice -->
-          <p>
-            <span property="name">
+          <p __id="p1">
+            <span __id="span1" property="name">
               <text __id="text1">Alice Birpemswick</text>
             </span>
             <text __id="text2">Email:</text>
@@ -342,24 +344,28 @@ module(
       `
       const { root: expected } = vdom`
       <div vocab="http://xmlns.com/foaf/0.1/" typeof="Person"> <!-- about:alice -->
-        <p>
-          <span property="name">
-            <text __id="text1">Alice Birpemswick</text>
-          </span>
-          <text __id="text2">Email:</text>
-          <a property="mbox" href="mailto:alice@example.com">
-            <text __id="text3">alice@example.com</text>
-          </a>
-          <a property="mbox" href="mailto2:alice@example.com">
-            <text __id="text4">alice@example.com</text>
-          </a>
-          <text __id="text5">Phone:</text>
-          <a property="phone" href="tel:+1-617-555-7332">
-            <text __id="text6">+1 617.555.7332</text>
-          </a>
-        </p>
+        <span __id="span1" property="name">
+          <text __id="text1">ice Birpemswick</text>
+        </span>
+        <text __id="text2">Email:</text>
+        <a property="mbox" href="mailto:alice@example.com">
+          <text __id="text3">alice@example.com</text>
+        </a>
+        <a property="mbox" href="mailto2:alice@example.com">
+          <text __id="text4">alice@example.com</text>
+        </a>
+        <text __id="text5">Phone:</text>
+        <a property="phone" href="tel:+1-617-555-7332">
+          <text __id="text6">+1 617.555.7332</text>
+        </a>
       </div>
       `
+      
+      const start1 = ModelPosition.fromBeforeNode(p1);
+      const end1 = ModelPosition.fromInTextNode(text1, 2);
+      OperationAlgorithms.removeNew(new ModelRange(start1, end1));
+
+      assert.true(initial.sameAs(expected));
     });
   }
 );
