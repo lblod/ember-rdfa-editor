@@ -11,7 +11,7 @@ import { createLogger, Logger } from '../utils/logging-utils';
 export interface View {
   domRoot: HTMLElement;
 
-  modelToView(state: State, modelNode: ModelNode): NodeView | null;
+  modelToView(state: State, modelNode: ModelNode): Node | null;
 
   viewToModel(state: State, domNode: Node): ModelNode;
 
@@ -27,7 +27,7 @@ export class EditorView implements View {
     this.domRoot = domRoot;
   }
 
-  modelToView(state: State, modelNode: ModelNode): NodeView | null {
+  modelToView(state: State, modelNode: ModelNode): Node | null {
     return modelToView(state, this.domRoot, modelNode);
   }
   viewToModel(state: State, domNode: Node): ModelNode {
@@ -36,10 +36,9 @@ export class EditorView implements View {
 
   update(state: State): void {
     //TODO this is a hack
-    state.document.removeDirty('node');
     this.logger('Updating view with state:', state);
     const writer = new HtmlWriter();
-    writer.write(state, this, state.document);
+    writer.write(state, this);
     const selectionWriter = new SelectionWriter();
     selectionWriter.write(state, this.domRoot, state.selection);
   }

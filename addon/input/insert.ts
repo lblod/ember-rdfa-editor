@@ -7,13 +7,14 @@ export function handleInsertLineBreak(editor: Editor, event: InputEvent): void {
 }
 
 export function handleInsertText(editor: Editor, event: InputEvent): void {
+  event.preventDefault();
   editor.executeCommand(
     'insert-text',
     {
       range: eventTargetRange(editor.state, editor.view.domRoot, event),
       text: event.data || '',
     },
-    false
+    true
   );
 }
 export function handleInsertListItem(
