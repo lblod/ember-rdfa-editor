@@ -3,12 +3,6 @@ import { View } from '@lblod/ember-rdfa-editor/core/view';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import NodeView, {
-  ElementView,
-  isElementView,
-  isTextView,
-  TextView,
-} from '@lblod/ember-rdfa-editor/model/node-view';
 import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
 import HtmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
 import {
@@ -16,10 +10,7 @@ import {
   isTextNode,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import {
-  ModelError,
-  NotImplementedError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
+import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { LUMP_NODE_PROPERTY } from '../util/constants';
 import { isTextOrElement, TextOrElement } from '../util/types';
 type Difference = 'type' | 'tag' | 'attrs' | 'content' | 'none';

@@ -3,9 +3,9 @@ import ModelElement, {
   ElementType,
 } from '@lblod/ember-rdfa-editor/model/model-element';
 import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { HtmlReaderContext } from "@lblod/ember-rdfa-editor/model/readers/HtmlReaderContext";
 import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import { copyAttributes } from '@lblod/ember-rdfa-editor/model/readers/reader-utils';
+import { HtmlReaderContext } from './html-reader';
 
 /**
  * Reader for an <ul> or <ol> element.
@@ -40,7 +40,6 @@ export default class HtmlListReader
       return [];
     }
     copyAttributes(from, wrapper);
-    context.registerNodeView(wrapper, { viewRoot: from, contentRoot: from });
     return [wrapper];
   }
 }

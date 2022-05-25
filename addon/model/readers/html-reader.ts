@@ -1,9 +1,10 @@
-import { View } from "@lblod/ember-rdfa-editor/core/View";
+import { View } from '@lblod/ember-rdfa-editor/core/view';
 import { AttributeSpec, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
-import MarksRegistry, { SpecAttributes } from '@lblod/ember-rdfa-editor/model/marks-registry';
+import MarksRegistry, {
+  SpecAttributes,
+} from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
 import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import { calculateRdfaPrefixes } from '../util/rdfa-utils';
 

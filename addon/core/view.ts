@@ -2,7 +2,6 @@ import State from '@lblod/ember-rdfa-editor/core/state';
 import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
 import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
-import NodeView from '../model/node-view';
 import HtmlWriter from '../model/writers/html-writer';
 import { domPosToModelPos, modelPosToDomPos } from '../utils/dom-helpers';
 import { PositionError } from '../utils/errors';
@@ -35,7 +34,6 @@ export class EditorView implements View {
   }
 
   update(state: State): void {
-    //TODO this is a hack
     this.logger('Updating view with state:', state);
     const writer = new HtmlWriter();
     writer.write(state, this);

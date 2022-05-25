@@ -1,8 +1,8 @@
 import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
-import { HtmlReaderContext } from "@lblod/ember-rdfa-editor/model/readers/HtmlReaderContext";
 import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import { copyAttributes } from '@lblod/ember-rdfa-editor/model/readers/reader-utils';
+import { HtmlReaderContext } from './html-reader';
 
 export default class HtmlTableReader
   implements Reader<HTMLElement, ModelTable[], HtmlReaderContext>
@@ -15,7 +15,6 @@ export default class HtmlTableReader
       const parsedChildren = nodeReader.read(child, context);
       table.appendChildren(...parsedChildren);
     }
-    context.registerNodeView(table, { viewRoot: from, contentRoot: from });
     return [table];
   }
 }
