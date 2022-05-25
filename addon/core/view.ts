@@ -1,80 +1,69 @@
 import State from '@lblod/ember-rdfa-editor/core/state';
+import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
 import ModelNode from '../model/model-node';
+import ModelPosition from '../model/model-position';
 import NodeView from '../model/node-view';
 import HtmlWriter from '../model/writers/html-writer';
-import {
-  IndexOutOfRangeError,
-  ModelError,
-  PositionError,
-} from '../utils/errors';
-import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
-import ModelPosition from '../model/model-position';
-import { getIndexPath } from '../utils/dom-helpers';
+import { domPosToModelPos, modelPosToDomPos } from '../utils/dom-helpers';
+import { PositionError } from '../utils/errors';
+import { createLogger, Logger } from '../utils/logging-utils';
 
 export interface View {
   domRoot: HTMLElement;
-  viewToModelMap: WeakMap<Node, ModelNode>;
-  modelToViewMap: WeakMap<ModelNode, NodeView>;
 
-  registerNodeView(modelNode: ModelNode, nodeView: NodeView): void;
+  modelToView(state: State, modelNode: ModelNode): NodeView | null;
 
-  modelToView(modelNode: ModelNode): NodeView | null;
-
-  viewToModel(domNode: Node): ModelNode;
+  viewToModel(state: State, domNode: Node): ModelNode;
 
   update(state: State): void;
 }
 
 export class EditorView implements View {
   domRoot: HTMLElement;
-  viewToModelMap: WeakMap<Node, ModelNode>;
-  modelToViewMap: WeakMap<ModelNode, NodeView>;
+  logger: Logger;
 
   constructor(domRoot: HTMLElement) {
-    this.viewToModelMap = new WeakMap<Node, ModelNode>();
-    this.modelToViewMap = new WeakMap<ModelNode, NodeView>();
+    this.logger = createLogger('editorView');
     this.domRoot = domRoot;
   }
 
-  /**
-   * Bind a modelNode to a domNode. This ensures that we can reach the corresponding node from
-   * either side.
-   * @param modelNode
-   * @param view
-   */
-  registerNodeView(modelNode: ModelNode, view: NodeView): void {
-    this.viewToModelMap.set(view.viewRoot, modelNode);
-    this.modelToViewMap.set(modelNode, view);
+  modelToView(state: State, modelNode: ModelNode): NodeView | null {
+    return modelToView(state, this.domRoot, modelNode);
   }
-
-  modelToView(modelNode: ModelNode): NodeView | null {
-    return this.modelToViewMap.get(modelNode) || null;
-  }
-
-  viewToModel(domNode: Node): ModelNode {
-    let cur: Node | null = domNode;
-    let result = null;
-    while (cur && !result) {
-      result = this.viewToModelMap.get(cur);
-      cur = cur.parentNode;
-    }
-    if (!result) {
-      throw new ModelError('Domnode without corresponding modelNode');
-    }
-    return result;
+  viewToModel(state: State, domNode: Node): ModelNode {
+    return viewToModel(state, this.domRoot, domNode);
   }
 
   update(state: State): void {
     //TODO this is a hack
     state.document.removeDirty('node');
-    this.registerNodeView(state.document, {
-      viewRoot: this.domRoot,
-      contentRoot: this.domRoot,
-    });
-    console.log('updating view');
+    this.logger('Updating view with state:', state);
     const writer = new HtmlWriter();
-    writer.write(this, state.document);
+    writer.write(state, this, state.document);
     const selectionWriter = new SelectionWriter();
-    selectionWriter.write(this, state.selection);
+    selectionWriter.write(state, this.domRoot, state.selection);
   }
+}
+export function modelToView(
+  state: State,
+  viewRoot: HTMLElement,
+  modelNode: ModelNode
+): Node {
+  const modelPosition = ModelPosition.fromBeforeNode(modelNode);
+  const domPosition = modelPosToDomPos(state, viewRoot, modelPosition);
+  const domNode = domPosition.container;
+  return domNode;
+}
+
+export function viewToModel(
+  state: State,
+  viewRoot: HTMLElement,
+  domNode: Node
+): ModelNode {
+  const position = domPosToModelPos(state, viewRoot, domNode, 0);
+  const node = position.nodeAfter();
+  if (!node) {
+    throw new PositionError('no node found after position');
+  }
+  return node;
 }

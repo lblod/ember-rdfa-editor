@@ -1,3 +1,4 @@
+import State from '@lblod/ember-rdfa-editor/core/state';
 import { View } from '@lblod/ember-rdfa-editor/core/view';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
@@ -28,13 +29,11 @@ export default class HtmlWriter {
     this.htmlElementWriter = new HtmlElementWriter(model);
   }
 
-  write(view: View, modelNode: ModelNode): NodeView {
-    console.log('writing', modelNode.toXml());
-
+  write(state: State, view: View, modelNode: ModelNode): NodeView {
     let resultView: NodeView;
 
     if (ModelNode.isModelElement(modelNode)) {
-      let nodeView = view.modelToView(modelNode);
+      let nodeView = view.modelToView(state, modelNode);
       if (nodeView) {
         if (!isElementView(nodeView)) {
           throw new ModelError('ModelElement with non-element view');
@@ -47,17 +46,7 @@ export default class HtmlWriter {
       let adjacentTextNodes: ModelText[] = [];
 
       for (const child of modelNode.children) {
-        if (ModelNode.isModelText(child)) {
-          adjacentTextNodes.push(child);
-        } else {
-          if (adjacentTextNodes.length > 0) {
-            // process adjacent text nodes
-            childViews.push(...this.processTextViews(adjacentTextNodes));
-            adjacentTextNodes.forEach((textNode) => textNode.clearDirty());
-            adjacentTextNodes = [];
-          }
-          childViews.push(this.write(child).viewRoot);
-        }
+        childViews.push(this.write(state, view, child));
       }
       if (adjacentTextNodes.length > 0) {
         childViews.push(...this.processTextViews(adjacentTextNodes));
@@ -73,8 +62,16 @@ export default class HtmlWriter {
       }
       resultView = nodeView;
     } else if (ModelNode.isModelText(modelNode)) {
-      this.processTextViews([modelNode]);
-      resultView = this.getView(modelNode)!;
+      let nodeView = view.modelToView(state, modelNode);
+      if (nodeView) {
+        if (!isTextView(nodeView)) {
+          throw new ModelError('ModelText with non-text view');
+        }
+        nodeView = this.updateTextView(view, modelNode, nodeView);
+      } else {
+        nodeView = this.createTextView(view, modelNode);
+      }
+      resultView = nodeView;
     } else {
       throw new NotImplementedError('Unsupported modelnode type');
     }
@@ -87,7 +84,6 @@ export default class HtmlWriter {
     modelElement: ModelElement
   ): ElementView {
     const nodeView = this.htmlElementWriter.write(modelElement);
-    view.registerNodeView(modelElement, nodeView);
     return nodeView;
   }
 
@@ -104,20 +100,10 @@ export default class HtmlWriter {
     return elementView;
   }
 
-  private processTextViews(modelTexts: ModelText[]): Set<Node> {
-    const result: Set<Node> = new Set();
-    if (
-      modelTexts.some(
-        (modelText) =>
-          modelText.isDirty('node') ||
-          modelText.isDirty('mark') ||
-          modelText.isDirty('content') ||
-          !this.getView(modelText)
-      )
-    ) {
-      const textViews = this.htmlAdjacentTextWriter.write(modelTexts);
-      modelTexts.forEach((modelText, i) => {
-        const view = this.getView(modelText);
+  private createTextView(view: View, modelText: ModelText): NodeView {
+    const nodeView = this.htmlTextWriter.write(modelText);
+    return nodeView;
+  }
 
         if (view) {
           if (!isTextView(view)) {

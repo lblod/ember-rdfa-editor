@@ -20,7 +20,6 @@ export default class HtmlElementReader
       const parsedChildren = nodeReader.read(child, context);
       result.appendChildren(...parsedChildren);
     }
-    context.registerNodeView(result, { viewRoot: from, contentRoot: from });
     return [result];
   }
 }

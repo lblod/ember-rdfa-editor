@@ -35,14 +35,6 @@ export class HtmlReaderContext {
     this.marksRegistry = marksRegistry;
   }
 
-  registerNodeView(modelNode: ModelNode, view: NodeView) {
-    this._view.registerNodeView(modelNode, view);
-  }
-
-  registerTextNode(modelNode: ModelText, view: NodeView): void {
-    this.model.registerTextNode(modelNode, view);
-  }
-
   get shouldConvertWhitespace() {
     return this._shouldConvertWhitespace;
   }
