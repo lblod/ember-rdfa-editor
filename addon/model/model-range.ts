@@ -16,8 +16,6 @@ import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import { range } from 'ix/asynciterable';
 
 export type StickySide = 'none' | 'left' | 'right' | 'both';
 
@@ -272,7 +270,6 @@ export default class ModelRange {
     for (let i = 0; i < length; i++) {
       if (this.start.path[i] === undefined || this.end.path[i] === undefined) {
         break;
-      } else if (this.start.path[i] == this.end.path[i]) {
       } else if (this.start.path[i] > this.end.path[i]) {
         flip = true;
         break;
@@ -307,7 +304,7 @@ export default class ModelRange {
 
     new InsertOperation(undefined, startRange, startText).execute();
 
-    let modelString: string = root.toXml().innerHTML;
+    let modelString = (root.toXml() as Element).innerHTML;
     modelString = modelString.replace(
       '<text __dirty="node,content">[===START===]</text>',
       '  {[===  '

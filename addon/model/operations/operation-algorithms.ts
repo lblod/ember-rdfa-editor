@@ -7,10 +7,7 @@ import RangeMapper, {
 } from '@lblod/ember-rdfa-editor/model/range-mapper';
 import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { test } from 'qunit';
-import { nodeIsElementOfType } from '../util/predicate-utils';
 import ModelElement from '../model-element';
-import type from 'dummy/tests/integration/util/type-helper';
 
 export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
 /**
@@ -24,9 +21,15 @@ export default class OperationAlgorithms {
   ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
     //config consts
     const cantMergeIntoTypes = ['a'];
-    const cantRemoveOpeningTagNodeTypes = ['a', 'ul', 'li', 'td', 'tr', 'table'];
-    const cantRemoveOpeningOrMergeRdfa = true;
-    
+    const cantRemoveOpeningTagNodeTypes = [
+      'a',
+      'ul',
+      'li',
+      'td',
+      'tr',
+      'table',
+    ];
+
     //start algorithm
     if (range.collapsed) {
       return {
@@ -34,20 +37,15 @@ export default class OperationAlgorithms {
         mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
       };
     }
-    
+
     range.normalize();
 
     //split end and start if they are inside a text node
-    let splitStart = false;
-    let splitEnd = false;
-
     if (range.start.isInsideText()) {
       range.start.split();
-      splitStart = true;
     }
     if (range.end.isInsideText()) {
       range.end.split(true);
-      splitEnd = true;
     }
 
     //get nodes that will move after the delition operation
@@ -71,7 +69,7 @@ export default class OperationAlgorithms {
 
     //get all nodes that are fully contained in the range
     //ie [<span><text>abc</text>]</span>
-    //would grab just the text node 
+    //would grab just the text node
     const confinedNodes: ModelNode[] = [];
     const confinedRanges = range.getMinimumConfinedRanges();
     for (const range of confinedRanges) {
@@ -95,22 +93,22 @@ export default class OperationAlgorithms {
     //will become: <div><text>abc</text></div>
     //avoid doing this to nodes that we dont want to remove as stated in the begining of the function
     //collect those nodes
-    
+
     const cantRemoveOpeningTagNodes = [];
 
     openingTagNodes.forEach((opNode) => {
       //check if we can remove it
-      let cantRemove 
-      
+      let cantRemove;
+
       //check in the config const
       cantRemove =
         ModelNode.isModelElement(opNode) &&
         cantRemoveOpeningTagNodeTypes.find((type) => type == opNode.type)
           ? true
           : false;
-      
+
       //check if rdfa
-      if(!cantRemove){
+      if (!cantRemove) {
         cantRemove =
           ModelNode.isModelElement(opNode) &&
           !opNode.getRdfaAttributes().isEmpty;
@@ -133,38 +131,38 @@ export default class OperationAlgorithms {
     });
 
     //merge the nodes we collected before (siblings at the end position) to the start position
-    //unless if the start position is a descendant of one of the tags we dont merge into 
-    const parent=range.start.parent;
-    
+    //unless if the start position is a descendant of one of the tags we dont merge into
+    const parent = range.start.parent;
+
     let index;
 
-    if(range.start.nodeBefore()){
-      index=(range.start.nodeBefore()?.index as number)+1;
-    }
-    else if(range.start.nodeAfter()){
-      index=(range.start.nodeAfter()?.index  as number);
-    }
-    else{
-      index=0;
+    if (range.start.nodeBefore()) {
+      index = (range.start.nodeBefore()?.index as number) + 1;
+    } else if (range.start.nodeAfter()) {
+      index = range.start.nodeAfter()?.index as number;
+    } else {
+      index = 0;
     }
 
-    let merge; 
-    merge = 
-      cantMergeIntoTypes.find((type) => 
-        parent.findSelfOrAncestors(node =>
-          ModelNode.isModelElement(node) && node.type==type
-        ).next().value
-      )?
-    false:
-    true;
+    let merge;
+    merge = cantMergeIntoTypes.find(
+      (type) =>
+        parent
+          .findSelfOrAncestors(
+            (node) => ModelNode.isModelElement(node) && node.type == type
+          )
+          .next().value
+    )
+      ? false
+      : true;
 
     //if there are nodes with opening tags we cant remove they are parents of the moved nodes
     //merging nodes that cant be removed is iffy, this should probably change but needs some thought
-    if(merge){
-      merge = cantRemoveOpeningTagNodes.length === 0  
+    if (merge) {
+      merge = cantRemoveOpeningTagNodes.length === 0;
     }
 
-    if(merge){
+    if (merge) {
       nodesToMove.forEach((node) => node.remove());
       parent.insertChildrenAtIndex(index, ...nodesToMove);
     }

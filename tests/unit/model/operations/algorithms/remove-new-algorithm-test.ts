@@ -18,7 +18,6 @@ module(
     test('range is collapsed test', (assert) => {
       const {
         root: initial,
-        elements: { div1 },
         textNodes: { text1 },
       } = vdom`
         <modelRoot>
@@ -60,7 +59,6 @@ module(
     test('start is nested and on edge', (assert) => {
       const {
         root: initial,
-        elements: { div1 },
         textNodes: { text1, text2 },
       } = vdom`
         <modelRoot>
@@ -155,7 +153,6 @@ module(
     test('deep nesting test', (assert) => {
       const {
         root: initial,
-        elements: { div1 },
         textNodes: { text1, text2 },
       } = vdom`
           <modelRoot>
@@ -223,7 +220,7 @@ module(
     test('sibling tests', (assert) => {
       const {
         root: initial,
-        textNodes: { text1, text2, text3, text4, text5, text6, text7 },
+        textNodes: { text1, text2, text4, text5, text6, text7 },
       } = vdom`
         <modelRoot>
           <span>
@@ -251,12 +248,12 @@ module(
           </span>
         </modelRoot>
       `;
-      
+
       const start1 = ModelPosition.fromInTextNode(text1, 2);
       const end1 = ModelPosition.fromInTextNode(text1, 3);
       OperationAlgorithms.removeNew(new ModelRange(start1, end1));
 
-      const start2 = ModelPosition.fromInTextNode(text2,   4);
+      const start2 = ModelPosition.fromInTextNode(text2, 4);
       const end2 = ModelPosition.fromInTextNode(text2, 5);
       OperationAlgorithms.removeNew(new ModelRange(start2, end2));
 
@@ -267,14 +264,14 @@ module(
       const start5 = ModelPosition.fromInTextNode(text6, 4);
       const end5 = ModelPosition.fromInTextNode(text7, 1);
       OperationAlgorithms.removeNew(new ModelRange(start5, end5));
-      
+
       assert.true(initial.sameAs(expected));
     });
-  
+
     test('link tests', (assert) => {
       const {
         root: initial,
-        textNodes: { text1, text2, text3, text4, text5, text6 },
+        textNodes: { text1, text2, text3, text4 },
       } = vdom`
         <modelRoot>
           <span>
@@ -296,7 +293,7 @@ module(
           <a></a>
         </modelRoot>
       `;
-      debugger;
+
       const start = ModelPosition.fromInTextNode(text1, 2);
       const end = ModelPosition.fromInTextNode(text2, 2);
       OperationAlgorithms.removeNew(new ModelRange(start, end));
@@ -308,11 +305,11 @@ module(
       const start2 = ModelPosition.fromInTextNode(text4, 0);
       const end2 = ModelPosition.fromInTextNode(text4, 1);
       OperationAlgorithms.removeNew(new ModelRange(start2, end2));
-      
+
       const start3 = ModelPosition.fromInTextNode(text1, 1);
       const end3 = ModelPosition.fromInTextNode(text4, 1);
       OperationAlgorithms.removeNew(new ModelRange(start3, end3));
-
+      
       assert.true(initial.sameAs(expected));
     });
 
@@ -320,8 +317,8 @@ module(
       // language=XML
       const {
         root: initial,
-        elements: {p1, span1},
-        textNodes: { text1, text2, text3, text4, text5, text6 }
+        elements: { p1 },
+        textNodes: { text1 },
       } = vdom`
         <div vocab="http://xmlns.com/foaf/0.1/" typeof="Person"> <!-- about:alice -->
           <p __id="p1">
@@ -341,7 +338,7 @@ module(
             </a>
           </p>
         </div>
-      `
+      `;
       const { root: expected } = vdom`
       <div vocab="http://xmlns.com/foaf/0.1/" typeof="Person"> <!-- about:alice -->
         <span __id="span1" property="name">
@@ -359,8 +356,8 @@ module(
           <text __id="text6">+1 617.555.7332</text>
         </a>
       </div>
-      `
-      
+      `;
+
       const start1 = ModelPosition.fromBeforeNode(p1);
       const end1 = ModelPosition.fromInTextNode(text1, 2);
       OperationAlgorithms.removeNew(new ModelRange(start1, end1));
