@@ -16,6 +16,16 @@
 
 
 
+
+## 0.56.7 (2022-05-25)
+
+#### :bug: Bug Fix
+* [#276](https://github.com/lblod/ember-rdfa-editor/pull/276) Fix broken copying behavior ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.56.6 (2022-05-20)
 
 fix types again
