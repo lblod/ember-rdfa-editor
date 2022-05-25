@@ -626,3 +626,37 @@ export function domPosToModelPos(
   console.log('PATH', offsetPath);
   return ModelPosition.fromPath(state.document, offsetPath);
 }
+function domNodeFromPath(path: number[], root: HTMLElement): Node {
+  let cur: Node = root;
+  for (const index of path) {
+    if (isElement(cur)) {
+      cur = cur.childNodes[index];
+    } else {
+      break;
+    }
+  }
+  return cur;
+}
+export function modelPosToDomPos(
+  state: State,
+  domRoot: HTMLElement,
+  pos: ModelPosition
+): { container: Node; offset: number } {
+  const path = pos.path;
+  let cur: ModelNode = state.document;
+  const indexPath = [];
+  for (const offset of path) {
+    if (ModelNode.isModelElement(cur)) {
+      const index = cur.offsetToIndex(offset);
+      indexPath.push(index);
+      cur = cur.children[index];
+    }
+  }
+  if (ModelNode.isModelText(cur)) {
+    indexPath.push(path[path.length - 1] - cur.getOffset());
+  }
+  return {
+    container: domNodeFromPath(indexPath.slice(0, -1), domRoot),
+    offset: indexPath[indexPath.length - 1] ?? 0,
+  };
+}
