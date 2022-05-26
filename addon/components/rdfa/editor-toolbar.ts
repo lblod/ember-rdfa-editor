@@ -124,17 +124,15 @@ export default class EditorToolbar extends Component<Args> {
   @action
   setMark(value: boolean, markName: string, attributes = {}) {
     if (value) {
-      this.args.controller.executeCommand(
-        'add-mark-to-selection',
+      this.args.controller.executeCommand('add-mark-to-selection', {
         markName,
-        attributes
-      );
+        markAttributes: attributes,
+      });
     } else {
-      this.args.controller.executeCommand(
-        'remove-mark-from-selection',
+      this.args.controller.executeCommand('remove-mark-from-selection', {
         markName,
-        attributes
-      );
+        markAttributes: attributes,
+      });
     }
   }
 
@@ -152,12 +150,10 @@ export default class EditorToolbar extends Component<Args> {
       : this.tableAddColumns;
     this.tableAddRows = this.tableAddRows < 1 ? 1 : this.tableAddRows;
     this.tableAddColumns = this.tableAddColumns < 1 ? 1 : this.tableAddColumns;
-    this.args.controller.executeCommand(
-      'insert-table',
-      this.selection,
-      this.tableAddRows,
-      this.tableAddColumns
-    );
+    this.args.controller.executeCommand('insert-table', {
+      rows: this.tableAddRows,
+      columns: this.tableAddColumns,
+    });
   }
 
   @action

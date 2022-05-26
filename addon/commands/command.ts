@@ -37,7 +37,7 @@ export type CommandMap = {
   'insert-newLine': InsertNewLineCommand;
   'insert-table-column-afer': InsertTableColumnAfterCommand;
   'insert-table-column-before': InsertTableColumnBeforeCommand;
-  'insert-table-command': InsertTableCommand;
+  'insert-table': InsertTableCommand;
   'insert-table-row-above': InsertTableRowAboveCommand;
   'insert-table-row-below': InsertTableRowBelowCommand;
   'insert-text': InsertTextCommand;

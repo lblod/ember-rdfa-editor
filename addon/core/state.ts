@@ -113,7 +113,7 @@ export function defaultCommands(): Record<
     'insert-newLine': new InsertNewLineCommand(),
     'insert-table-column-afer': new InsertTableColumnAfterCommand(),
     'insert-table-column-before': new InsertTableColumnBeforeCommand(),
-    'insert-table-command': new InsertTableCommand(),
+    'insert-table': new InsertTableCommand(),
     'insert-table-row-above': new InsertTableRowAboveCommand(),
     'insert-table-row-below': new InsertTableRowBelowCommand(),
     'insert-text': new InsertTextCommand(),
