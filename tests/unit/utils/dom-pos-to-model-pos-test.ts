@@ -84,4 +84,44 @@ module('Unit | model | dom-pos-to-model-pos', function () {
     const expectedPos = ModelPosition.fromBeforeNode(span);
     assert.deepEqual(resultPos.path, expectedPos.path);
   });
+  test('correctly converts positions in marks', function (assert) {
+    const dom = domStripped`
+      <div>
+        <strong>abcd</strong>
+      </div>`.body.childNodes[0];
+
+    const {
+      root,
+      textNodes: { text },
+    } = vdom`
+      <modelRoot>
+        <text __marks="bold" __id="text">abcd</text>
+      </modelRoot>`;
+    const state = testState({ document: root });
+    const container = dom.firstChild?.firstChild;
+    const resultPos = domPosToModelPos(state, dom, container, 1);
+    const expectedPos = ModelPosition.fromInNode(text, 1);
+    assert.deepEqual(resultPos.path, expectedPos.path);
+  });
+  test('correctly converts positions in marks 2', function (assert) {
+    const dom = domStripped`
+      <div>
+        <em>
+          <strong>abcd</strong>
+        </em>
+      </div>`.body.childNodes[0];
+
+    const {
+      root,
+      textNodes: { text },
+    } = vdom`
+      <modelRoot>
+        <text __marks="bold" __id="text">abcd</text>
+      </modelRoot>`;
+    const state = testState({ document: root });
+    const container = dom.firstChild?.firstChild?.firstChild;
+    const resultPos = domPosToModelPos(state, dom, container, 1);
+    const expectedPos = ModelPosition.fromInNode(text, 1);
+    assert.deepEqual(resultPos.path, expectedPos.path);
+  });
 });

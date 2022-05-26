@@ -174,4 +174,54 @@ module('Unit | model | model-pos-to-dom-pos', function () {
     assert.strictEqual(resultPos.container, expectedPos.container);
     assert.strictEqual(resultPos.offset, expectedPos.offset);
   });
+  test('correctly converts positions in marks', (assert) => {
+    const dom = domStripped`
+      <div>
+        <strong>abcd</strong>
+      </div>`.body.childNodes[0];
+
+    const {
+      root,
+      textNodes: { text },
+    } = vdom`
+      <modelRoot>
+        <text __marks="bold" __id="text">abcd</text>
+      </modelRoot>`;
+    const state = testState({ document: root });
+    const container = dom.firstChild?.firstChild;
+    const expectedPos = { container, offset: 1 };
+    const resultPos = modelPosToDomPos(
+      state,
+      dom,
+      ModelPosition.fromInNode(text, 1)
+    );
+    assert.strictEqual(resultPos.container, expectedPos.container);
+    assert.strictEqual(resultPos.offset, expectedPos.offset);
+  });
+  test('correctly converts positions in marks 2', (assert) => {
+    const dom = domStripped`
+      <div>
+        <em>
+          <strong>abcd</strong>
+        </em>
+      </div>`.body.childNodes[0];
+
+    const {
+      root,
+      textNodes: { text },
+    } = vdom`
+      <modelRoot>
+        <text __marks="bold" __id="text">abcd</text>
+      </modelRoot>`;
+    const state = testState({ document: root });
+    const container = dom.firstChild?.firstChild?.firstChild;
+    const expectedPos = { container, offset: 1 };
+    const resultPos = modelPosToDomPos(
+      state,
+      dom,
+      ModelPosition.fromInNode(text, 1)
+    );
+    assert.strictEqual(resultPos.container, expectedPos.container);
+    assert.strictEqual(resultPos.offset, expectedPos.offset);
+  });
 });

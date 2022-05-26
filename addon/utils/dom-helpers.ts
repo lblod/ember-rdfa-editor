@@ -1,9 +1,7 @@
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import State from '../core/state';
-import ModelElement from '../model/model-element';
 import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
-import { PositionError } from './errors';
 
 /**
  * Fake class to list helper functions.
@@ -626,11 +624,19 @@ export function domPosToModelPos(
   console.log('PATH', offsetPath);
   return ModelPosition.fromPath(state.document, offsetPath);
 }
-function domNodeFromPath(path: number[], root: HTMLElement): Node {
+function domNodeFromPath(
+  state: State,
+  path: number[],
+  root: HTMLElement
+): Node {
   let cur: Node = root;
   for (const index of path) {
     if (isElement(cur)) {
       cur = cur.childNodes[index];
+      // TODO make this compatible with merged marks
+      while (state.marksRegistry.matchMarkSpec(cur).size) {
+        cur = cur.firstChild!;
+      }
     } else {
       break;
     }
@@ -656,7 +662,7 @@ export function modelPosToDomPos(
     indexPath.push(path[path.length - 1] - cur.getOffset());
   }
   return {
-    container: domNodeFromPath(indexPath.slice(0, -1), domRoot),
+    container: domNodeFromPath(state, indexPath.slice(0, -1), domRoot),
     offset: indexPath[indexPath.length - 1] ?? 0,
   };
 }
