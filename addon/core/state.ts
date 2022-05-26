@@ -128,7 +128,7 @@ export function defaultCommands(): Record<
     'remove-marks-from-ranges': new RemoveMarksFromRangesCommand(),
     'remove-table-column': new RemoveTableColumnCommand(),
     'remove-table-row': new RemoveTableRowCommand(),
-    'undo-command': new UndoCommand(),
+    undo: new UndoCommand(),
     'unindent-list': new UnindentListCommand(),
   };
 }

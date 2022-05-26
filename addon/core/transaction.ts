@@ -35,7 +35,6 @@ export default class Transaction {
   constructor(state: State) {
     this.initialState = state;
     this.workingCopy = cloneState(state);
-    this.workingCopy.previousState = this.initialState;
     this.needsToWrite = false;
     this.operations = [];
     this.rangeMapper = new RangeMapper();
@@ -53,6 +52,7 @@ export default class Transaction {
       attributes,
       'add'
     );
+    this.createSnapshot();
     return this.executeOperation(op);
   }
 
@@ -79,6 +79,7 @@ export default class Transaction {
     this.workingCopy.document = newVdom;
     this.workingCopy.selection = newSelection;
     this.needsToWrite = true;
+    this.createSnapshot();
   }
 
   apply(): State {
@@ -92,11 +93,13 @@ export default class Transaction {
       text,
       marks || new MarkSet()
     );
+    this.createSnapshot();
     return operation.execute().defaultRange;
   }
 
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const op = new InsertOperation(undefined, this.cloneRange(range), ...nodes);
+    this.createSnapshot();
     return this.executeOperation(op);
   }
 
@@ -147,6 +150,7 @@ export default class Transaction {
   }
   addMarkToSelection(mark: Mark) {
     this.workingCopy.selection.activeMarks.add(mark);
+    this.createSnapshot();
   }
   removeMarkFromSelection(markname: string) {
     for (const mark of this.workingCopy.selection.activeMarks) {
@@ -154,6 +158,7 @@ export default class Transaction {
         this.workingCopy.selection.activeMarks.delete(mark);
       }
     }
+    this.createSnapshot();
   }
   createSnapshot() {
     this.workingCopy.previousState = this.initialState;
@@ -200,6 +205,7 @@ export default class Transaction {
         ModelPosition.fromInElement(endPos.parent, endPos.parent.getMaxOffset())
       );
     }
+    this.createSnapshot();
   }
 
   splitUntilElement(
@@ -207,6 +213,7 @@ export default class Transaction {
     limitElement: ModelElement,
     splitAtEnds = false
   ): ModelPosition {
+    this.createSnapshot();
     return this.splitUntil(
       position,
       (element) => element === this.inWorkingCopy(limitElement),
@@ -230,6 +237,7 @@ export default class Transaction {
       pos = this.executeSplit(pos, splitAtEnds, true);
     }
 
+    this.createSnapshot();
     return pos;
   }
 
@@ -251,6 +259,7 @@ export default class Transaction {
       }
     }
 
+    this.createSnapshot();
     return this.executeSplitOperation(position, splitParent);
   }
 
@@ -261,19 +270,23 @@ export default class Transaction {
       this.cloneRange(range),
       splitParent
     );
+    this.createSnapshot();
     return this.executeOperation(op).start;
   }
 
   insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange {
     const posClone = this.clonePos(position);
+    this.createSnapshot();
     return this.insertNodes(new ModelRange(posClone, posClone), ...nodes);
   }
   deleteNode(node: ModelNode): ModelRange {
     const range = this.cloneRange(ModelRange.fromAroundNode(node));
+    this.createSnapshot();
     return this.delete(range);
   }
   delete(range: ModelRange): ModelRange {
     const op = new InsertOperation(undefined, this.cloneRange(range));
+    this.createSnapshot();
     return this.executeOperation(op);
   }
   cloneRange(range: ModelRange): ModelRange {
@@ -338,6 +351,7 @@ export default class Transaction {
       }
     }
 
+    this.createSnapshot();
     return resultRange;
   }
 
@@ -349,6 +363,7 @@ export default class Transaction {
       attributes,
       'remove'
     );
+    this.createSnapshot();
     return this.executeOperation(op);
   }
   restoreSnapshot(steps: number) {

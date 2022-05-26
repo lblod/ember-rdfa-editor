@@ -1,6 +1,7 @@
 import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import { handleBasicStyle } from '@lblod/ember-rdfa-editor/input/format';
+import { handleUndo } from '@lblod/ember-rdfa-editor/input/history';
 import {
   handleInsertLineBreak,
   handleInsertListItem,
@@ -71,6 +72,7 @@ export class EditorInputHandler implements InputHandler {
       case 'deleteContentForward':
         break;
       case 'historyUndo':
+        handleUndo(this.editor, event);
         break;
       case 'historyRedo':
         break;
