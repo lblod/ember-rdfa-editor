@@ -35,6 +35,7 @@ export default class Transaction {
   constructor(state: State) {
     this.initialState = state;
     this.workingCopy = cloneState(state);
+    this.workingCopy.previousState = this.initialState;
     this.needsToWrite = false;
     this.operations = [];
     this.rangeMapper = new RangeMapper();
@@ -350,8 +351,14 @@ export default class Transaction {
     );
     return this.executeOperation(op);
   }
-  restoreSnapshot() {
-    const prev = this.initialState.previousState;
+  restoreSnapshot(steps: number) {
+    let prev: State | null = this.initialState;
+    let reverts = 0;
+    while (prev && reverts < steps) {
+      this.workingCopy = prev;
+      prev = prev.previousState;
+      reverts++;
+    }
     if (prev) {
       this.workingCopy = prev;
     }
