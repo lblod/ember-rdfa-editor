@@ -58,7 +58,6 @@ export default class Transaction {
   readFromView(view: View): void {
     const htmlReader = new HtmlReader();
     const context = new HtmlReaderContext({
-      view,
       marksRegistry: this.workingCopy.marksRegistry,
     });
     const parsedNodes = htmlReader.read(view.domRoot, context);

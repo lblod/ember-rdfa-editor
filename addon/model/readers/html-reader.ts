@@ -9,14 +9,12 @@ import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-rea
 import { calculateRdfaPrefixes } from '../util/rdfa-utils';
 
 export interface HtmlReaderContextArgs {
-  view: View;
   rdfaPrefixes?: Map<string, string>;
   shouldConvertWhitespace?: boolean;
   marksRegistry: MarksRegistry;
 }
 export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;
-  private readonly _view: View;
   private marksRegistry: MarksRegistry;
   private _rdfaPrefixes: Map<string, string>;
   private _shouldConvertWhitespace: boolean;
@@ -24,13 +22,11 @@ export class HtmlReaderContext {
   markViewRootStack: Node[] = [];
 
   constructor({
-    view,
     marksRegistry,
     rdfaPrefixes = new Map<string, string>(),
     shouldConvertWhitespace = false,
   }: HtmlReaderContextArgs) {
     this._textAttributes = new Map<string, string>();
-    this._view = view;
     this._rdfaPrefixes = rdfaPrefixes;
     this._shouldConvertWhitespace = shouldConvertWhitespace;
     this.marksRegistry = marksRegistry;
