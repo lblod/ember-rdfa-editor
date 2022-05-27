@@ -15,6 +15,20 @@
 
 
 
+
+## 0.59.0 (2022-05-27)
+
+#### :rocket: Enhancement
+* [#269](https://github.com/lblod/ember-rdfa-editor/pull/269) implemented merging of marks on adjacent text nodes ([@elpoelma](https://github.com/elpoelma))
+
+#### :bug: Bug Fix
+* [#277](https://github.com/lblod/ember-rdfa-editor/pull/277) Bug/fix copy ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
 ## 0.58.1 (2022-05-23)
 
 #### :bug: Bug Fix
