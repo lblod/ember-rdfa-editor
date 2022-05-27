@@ -15,7 +15,7 @@ import {
 export default class SelectionWriter {
   write(
     state: State,
-    viewRoot: HTMLElement,
+    viewRoot: Element,
     modelSelection: ModelSelection
   ): void {
     const domSelection = getWindowSelection();
@@ -30,7 +30,7 @@ export default class SelectionWriter {
    * Convert a single {@link ModelRange} to a {@link Range}
    * @param range
    */
-  writeDomRange(state: State, viewRoot: HTMLElement, range: ModelRange): Range {
+  writeDomRange(state: State, viewRoot: Element, range: ModelRange): Range {
     const result = document.createRange();
     const startPos = this.writeDomPosition(state, viewRoot, range.start);
     const endPos = this.writeDomPosition(state, viewRoot, range.end);
@@ -47,7 +47,7 @@ export default class SelectionWriter {
    */
   writeDomPosition(
     state: State,
-    viewRoot: HTMLElement,
+    viewRoot: Element,
     position: ModelPosition
   ): { anchor: Node; offset: number } {
     const { container: anchor, offset } = modelPosToDomPos(

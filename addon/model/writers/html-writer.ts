@@ -23,9 +23,9 @@ export default class HtmlWriter {
   private htmlAdjacentTextWriter: HtmlAdjacentTextWriter;
   private htmlElementWriter: HtmlElementWriter;
 
-  constructor(private model: Model) {
-    this.htmlAdjacentTextWriter = new HtmlAdjacentTextWriter(model);
-    this.htmlElementWriter = new HtmlElementWriter(model);
+  constructor() {
+    this.htmlAdjacentTextWriter = new HtmlAdjacentTextWriter();
+    this.htmlElementWriter = new HtmlElementWriter();
   }
 
   write(state: State, view: View) {
@@ -106,7 +106,7 @@ export default class HtmlWriter {
       throw new NotImplementedError('Unsupported node type');
     }
   }
-  private parseSubTree(modelNode: ModelNode): Node {
+  parseSubTree(modelNode: ModelNode): Node {
     if (modelNode.isLeaf) {
       return this.parseNode(modelNode);
     } else {

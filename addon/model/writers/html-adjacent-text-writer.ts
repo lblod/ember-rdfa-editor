@@ -11,7 +11,6 @@ import { MarkSet } from '../mark';
 export default class HtmlAdjacentTextWriter
   implements Writer<ModelText[], TextView[]>
 {
-  constructor(protected model: Model) {}
 
   handleSplit(
     streak: ModelText[],

@@ -8,7 +8,7 @@ import { PositionError } from '../utils/errors';
 import { createLogger, Logger } from '../utils/logging-utils';
 
 export interface View {
-  domRoot: HTMLElement;
+  domRoot: Element;
 
   modelToView(state: State, modelNode: ModelNode): Node | null;
 
@@ -18,10 +18,10 @@ export interface View {
 }
 
 export class EditorView implements View {
-  domRoot: HTMLElement;
+  domRoot: Element;
   logger: Logger;
 
-  constructor(domRoot: HTMLElement) {
+  constructor(domRoot: Element) {
     this.logger = createLogger('editorView');
     this.domRoot = domRoot;
   }
@@ -43,7 +43,7 @@ export class EditorView implements View {
 }
 export function modelToView(
   state: State,
-  viewRoot: HTMLElement,
+  viewRoot: Element,
   modelNode: ModelNode
 ): Node {
   const modelPosition = ModelPosition.fromBeforeNode(modelNode);
@@ -54,7 +54,7 @@ export function modelToView(
 
 export function viewToModel(
   state: State,
-  viewRoot: HTMLElement,
+  viewRoot: Element,
   domNode: Node
 ): ModelNode {
   const position = domPosToModelPos(state, viewRoot, domNode, 0);

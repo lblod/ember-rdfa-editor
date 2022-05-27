@@ -6,6 +6,7 @@ import State, {
   StateArgs,
 } from '@lblod/ember-rdfa-editor/core/state';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
+import { EditorView } from '@lblod/ember-rdfa-editor/core/view';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
@@ -48,15 +49,25 @@ export async function renderEditor() {
   return getEditorElement();
 }
 type OptionalStateArgs = Omit<Partial<StateArgs>, 'document'> & {
-  document: ModelNode;
+  document?: ModelNode;
 };
+function createModelRoot(): ModelElement {
+  const el = new ModelElement('div');
+  el.setAttribute('contenteditable', '');
+  el.setAttribute('class', 'say-editor_inner say_content');
+  return el;
+}
+export function testView() {
+  const root = document.createElement('div');
+  return new EditorView(root);
+}
 export function testState({
-  document = new ModelElement('div'),
+  document = createModelRoot(),
   commands = defaultCommands(),
   marksRegistry = new MarksRegistry(),
   plugins = [],
   selection = new ModelSelection(),
-}: OptionalStateArgs): State {
+}: OptionalStateArgs = {}): State {
   if (!ModelNode.isModelElement(document)) {
     throw new TypeError('Cannot set non-element as document root');
   }
@@ -67,6 +78,13 @@ export function testState({
     plugins,
     selection,
   });
+}
+export function stateFromDom(root: Element, stateArgs: OptionalStateArgs = {}) {
+  const state = testState(stateArgs);
+  const tr = state.createTransaction();
+  const view = new EditorView(root);
+  tr.readFromView(view);
+  return tr.apply();
 }
 export function testDispatch(transaction: Transaction): State {
   return transaction.apply();
@@ -101,4 +119,10 @@ export function stateWithRange(root: ModelNode, range: ModelRange) {
   tr.selectRange(range);
   initialState = tr.apply();
   return initialState;
+}
+export function vdomToDom(vdom: ModelNode): Node {
+  const state = testState({ document: vdom });
+  const view = testView();
+  view.update(state);
+  return view.domRoot;
 }
