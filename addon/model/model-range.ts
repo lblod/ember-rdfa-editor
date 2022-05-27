@@ -338,7 +338,7 @@ export default class ModelRange {
 
       return node;
     };
-    console.log(process(modelString), '/n');
+    console.log(process(modelString), '\n');
   }
 
   getCommonPosition(): ModelPosition | null {
