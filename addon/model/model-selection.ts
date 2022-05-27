@@ -192,66 +192,6 @@ export default class ModelSelection {
     return this.getTextPropertyStatus('strikethrough');
   }
 
-  /**
-   * @param {FilterAndPredicate<T>} config
-   * @deprecated Use {@link ModelTreeWalker} instead.
-   */
-  findAllInSelection<T extends ModelNode = ModelNode>(
-    config: FilterAndPredicate<T>
-  ): Iterable<T> | null {
-    const { filter, predicate } = config;
-
-    const range = this.lastRange;
-    if (!range) {
-      return null;
-    }
-
-    // Ignore selection direction.
-    const anchorNode = range.start.parent;
-    const focusNode = range.end.parent;
-
-    if (anchorNode === focusNode) {
-      const noop = () => true;
-      const filterFunc = filter || noop;
-      const predicateFunc = predicate || noop;
-
-      return {
-        [Symbol.iterator]: (): Iterator<T> => {
-          let done = false;
-          return {
-            next: (): IteratorResult<T, null> => {
-              const value = anchorNode.findAncestor(
-                (node) => filterFunc(node) && predicateFunc(node)
-              ) as T;
-              if (value && !done) {
-                done = true;
-                return {
-                  value,
-                  done: false,
-                };
-              } else {
-                return {
-                  value: null,
-                  done: true,
-                };
-              }
-            },
-          };
-        },
-      };
-    } else {
-      return new ModelNodeFinder<T>({
-        direction: Direction.FORWARDS,
-        startNode: anchorNode,
-        endNode: focusNode,
-        rootNode: range.root,
-        nodeFilter: filter,
-        useSiblingLinks: false,
-        predicate,
-      });
-    }
-  }
-
   get inListState(): PropertyState {
     if (ModelSelection.isWellBehaved(this)) {
       const range = this.lastRange;
