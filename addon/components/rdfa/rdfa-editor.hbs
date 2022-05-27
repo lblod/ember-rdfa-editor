@@ -47,7 +47,9 @@
         <Ce::ContentEditable
           @class='say-editor__inner say-content'
           @rawEditorInit={{this.handleRawEditorInit}}
+          @plugins={{this.editorPlugins}}
           @baseIRI={{@baseIRI}}
+          @stealFocus={{@stealFocus}}
         />
       </div>
     </div>

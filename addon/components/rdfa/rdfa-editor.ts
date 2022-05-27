@@ -28,6 +28,7 @@ interface RdfaEditorArgs {
   rdfaEditorInit(editor: RdfaDocument): void;
 
   plugins: string[];
+  stealFocus?: boolean;
 }
 
 /**
@@ -59,11 +60,13 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   @tracked editorLoading = true;
   private owner: ApplicationInstance;
-  activePlugins: EditorPlugin[] = [];
   private logger: Logger;
 
   get plugins(): string[] {
     return this.args.plugins || [];
+  }
+  get editorPlugins(): EditorPlugin[] {
+    return this.getPlugins();
   }
 
   /**
@@ -89,9 +92,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  async handleRawEditorInit(editor: RawEditor) {
+  handleRawEditorInit(editor: RawEditor) {
     this.editor = editor;
-    await this.initializePlugins(editor);
     this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
     this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
     this.insertSidebarWidgets = editor.widgetMap.get('insertSidebar') || [];
@@ -101,13 +103,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       this.args.rdfaEditorInit(rdfaDocument);
     }
     this.editorLoading = false;
-  }
-
-  async initializePlugins(editor: RawEditor) {
-    const plugins = this.getPlugins();
-    for (const plugin of plugins) {
-      await this.initializePlugin(plugin, editor);
-    }
   }
 
   getPlugins(): EditorPlugin[] {
@@ -122,16 +117,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       }
     }
     return plugins;
-  }
-
-  async initializePlugin(
-    plugin: EditorPlugin,
-    editor: RawEditor
-  ): Promise<void> {
-    const controller = new RawEditorController(plugin.name, editor);
-    await plugin.initialize(controller);
-    this.logger(`Initialized plugin ${plugin.name}`);
-    this.activePlugins.push(plugin);
   }
 
   // Toggle RDFA blocks

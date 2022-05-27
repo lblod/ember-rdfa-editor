@@ -48,6 +48,7 @@ import RemoveTypeCommand from '@lblod/ember-rdfa-editor/commands/node-properties
 import SetPropertyCommand from '@lblod/ember-rdfa-editor/commands/node-properties/set-property-command';
 import {
   InternalWidgetSpec,
+  RawEditorController,
   WidgetLocation,
 } from '@lblod/ember-rdfa-editor/model/controller';
 import Datastore, {
@@ -67,6 +68,8 @@ import RemoveMarkFromRangeCommand from '@lblod/ember-rdfa-editor/commands/remove
 import RemovePropertyCommand from '@lblod/ember-rdfa-editor/commands/node-properties/remove-property-command';
 import AddMarkToSelectionCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to-selection-command';
 import RemoveMarkFromSelectionCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-selection-command';
+import { EditorPlugin } from '../editor-plugin';
+import { createLogger, Logger } from '../logging-utils';
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -84,6 +87,7 @@ export interface RawEditorProperties {
 export default class RawEditor {
   registeredCommands: Map<string, Command> = new Map<string, Command>();
   modelSelectionTracker!: ModelSelectionTracker;
+  logger: Logger;
 
   private _model?: Model;
   private _datastore!: Datastore;
@@ -109,6 +113,7 @@ export default class RawEditor {
   rangeFactory!: ModelRangeFactory;
 
   constructor(properties: RawEditorProperties) {
+    this.logger = createLogger('raw-editor');
     this.eventBus = new EventBus();
     this.eventBus.on(
       'contentChanged',
@@ -134,16 +139,26 @@ export default class RawEditor {
     );
   }
 
-  initialize(rootNode: HTMLElement) {
+  async initializePlugins(plugins: EditorPlugin[]) {
+    for (const plugin of plugins) {
+      await this.initializePlugin(plugin);
+    }
+  }
+
+  async initializePlugin(plugin: EditorPlugin): Promise<void> {
+    const controller = new RawEditorController(plugin.name, this);
+    await plugin.initialize(controller);
+    this.logger(`Initialized plugin ${plugin.name}`);
+  }
+
+  async initialize(rootNode: HTMLElement, plugins: EditorPlugin[]) {
+    this.registeredCommands = new Map<string, Command>();
     if (this.modelSelectionTracker) {
       this.modelSelectionTracker.stopTracking();
     }
-
-    this.registeredCommands = new Map<string, Command>();
     this._model = new Model(rootNode, this.eventBus);
-    this.modelSelectionTracker = new ModelSelectionTracker(this._model);
-    this.modelSelectionTracker.startTracking();
 
+    await this.initializePlugins(plugins);
     window.__VDOM = this.model;
     window.__EDITOR = this;
     window.__executeCommand = (commandName: string, ...args: unknown[]) => {
@@ -192,6 +207,13 @@ export default class RawEditor {
     this.registerCommand(new AddMarkToSelectionCommand(this.model));
     this.registerCommand(new RemoveMarkFromSelectionCommand(this.model));
     this.registerMark(highlightMarkSpec);
+
+    this.model.read(true, true);
+    this.model.selection.collapseIn(this.model.rootModelNode);
+    this.model.write();
+    this.rangeFactory = new ModelRangeFactory(this.rootModelNode);
+    this.modelSelectionTracker = new ModelSelectionTracker(this._model);
+    this.modelSelectionTracker.startTracking();
   }
 
   /**
@@ -200,16 +222,6 @@ export default class RawEditor {
    */
   get rootNode(): HTMLElement {
     return this.model.rootNode;
-  }
-
-  set rootNode(rootNode: HTMLElement) {
-    if (rootNode) {
-      this.initialize(rootNode);
-      this.model.read(true, true);
-      this.model.selection.collapseIn(this.model.rootModelNode);
-      this.model.write();
-      this.rangeFactory = new ModelRangeFactory(this.rootModelNode);
-    }
   }
 
   get selection(): ModelSelection {
