@@ -9,13 +9,12 @@ import { module, test } from 'qunit';
 module('Unit | model | dom-pos-to-model-pos', function () {
   test('converts position in empty root', function (assert) {
     const dom = domStripped`
-      <div />`.body.childNodes[0];
+      <div />`.body.children[0];
 
     const {
-      root,
-      textNodes: { text1 },
+      elements: { root },
     } = vdom`
-      <modelRoot></modelRoot>`;
+      <modelRoot __id="root"></modelRoot>`;
 
     const state = testState({ document: root });
     const container = dom;
@@ -27,7 +26,7 @@ module('Unit | model | dom-pos-to-model-pos', function () {
     const dom = domStripped`
       <div>
         abcd
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
@@ -46,7 +45,7 @@ module('Unit | model | dom-pos-to-model-pos', function () {
     const dom = domStripped`
       <div>
         abcd
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
@@ -66,7 +65,7 @@ module('Unit | model | dom-pos-to-model-pos', function () {
       <div>
         abcd
         <span>efgh</span>
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
@@ -88,7 +87,7 @@ module('Unit | model | dom-pos-to-model-pos', function () {
     const dom = domStripped`
       <div>
         <strong>abcd</strong>
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
@@ -99,6 +98,9 @@ module('Unit | model | dom-pos-to-model-pos', function () {
       </modelRoot>`;
     const state = testState({ document: root });
     const container = dom.firstChild?.firstChild;
+    if (!container) {
+      throw new TypeError();
+    }
     const resultPos = domPosToModelPos(state, dom, container, 1);
     const expectedPos = ModelPosition.fromInNode(text, 1);
     assert.deepEqual(resultPos.path, expectedPos.path);
@@ -109,7 +111,7 @@ module('Unit | model | dom-pos-to-model-pos', function () {
         <em>
           <strong>abcd</strong>
         </em>
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
@@ -120,6 +122,9 @@ module('Unit | model | dom-pos-to-model-pos', function () {
       </modelRoot>`;
     const state = testState({ document: root });
     const container = dom.firstChild?.firstChild?.firstChild;
+    if (!container) {
+      throw new TypeError();
+    }
     const resultPos = domPosToModelPos(state, dom, container, 1);
     const expectedPos = ModelPosition.fromInNode(text, 1);
     assert.deepEqual(resultPos.path, expectedPos.path);

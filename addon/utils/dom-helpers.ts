@@ -576,7 +576,7 @@ function getPositionPathFromAncestor(from: Node, to: Node): Node[] {
 }
 export function domPosToModelPos(
   state: State,
-  viewRoot: HTMLElement,
+  viewRoot: Element,
   container: Node,
   offset: number
 ): ModelPosition {
@@ -645,7 +645,7 @@ function domNodeFromPath(
 }
 export function modelPosToDomPos(
   state: State,
-  domRoot: HTMLElement,
+  domRoot: Element,
   pos: ModelPosition
 ): { container: Node; offset: number } {
   const path = pos.path;

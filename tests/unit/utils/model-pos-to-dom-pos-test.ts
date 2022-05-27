@@ -11,7 +11,7 @@ import { module, test } from 'qunit';
 module('Unit | model | model-pos-to-dom-pos', function () {
   test('converts position in empty root', function (assert) {
     const dom = domStripped`
-      <div />`.body.childNodes[0] as HTMLElement;
+      <div />`.body.children[0] as HTMLElement;
 
     const { root } = vdom`
       <modelRoot></modelRoot>`;
@@ -30,7 +30,7 @@ module('Unit | model | model-pos-to-dom-pos', function () {
     const dom = domStripped`
       <div>
         abcd
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
@@ -54,7 +54,7 @@ module('Unit | model | model-pos-to-dom-pos', function () {
     const dom = domStripped`
       <div>
         abcd
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
@@ -80,7 +80,7 @@ module('Unit | model | model-pos-to-dom-pos', function () {
         <span>
           abcd
         </span>
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
@@ -111,7 +111,7 @@ module('Unit | model | model-pos-to-dom-pos', function () {
         <span>
           abcd
         </span>
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
@@ -146,7 +146,7 @@ module('Unit | model | model-pos-to-dom-pos', function () {
           </span>
           abcd
         </span>
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
@@ -174,11 +174,11 @@ module('Unit | model | model-pos-to-dom-pos', function () {
     assert.strictEqual(resultPos.container, expectedPos.container);
     assert.strictEqual(resultPos.offset, expectedPos.offset);
   });
-  test('correctly converts positions in marks', (assert) => {
+  test('correctly converts positions in marks', function (assert) {
     const dom = domStripped`
       <div>
         <strong>abcd</strong>
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
@@ -198,13 +198,13 @@ module('Unit | model | model-pos-to-dom-pos', function () {
     assert.strictEqual(resultPos.container, expectedPos.container);
     assert.strictEqual(resultPos.offset, expectedPos.offset);
   });
-  test('correctly converts positions in marks 2', (assert) => {
+  test('correctly converts positions in marks 2', function (assert) {
     const dom = domStripped`
       <div>
         <em>
           <strong>abcd</strong>
         </em>
-      </div>`.body.childNodes[0];
+      </div>`.body.children[0];
 
     const {
       root,
