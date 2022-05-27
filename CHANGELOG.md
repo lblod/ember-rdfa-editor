@@ -23,6 +23,7 @@
 
 #### :bug: Bug Fix
 * [#277](https://github.com/lblod/ember-rdfa-editor/pull/277) Bug/fix copy ([@abeforgit](https://github.com/abeforgit))
+* [#274](https://github.com/lblod/ember-rdfa-editor/pull/274) Bug/editor-initialization ([@abeforgit](https://github.com/abeforgit))
 
 #### Committers: 2
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
