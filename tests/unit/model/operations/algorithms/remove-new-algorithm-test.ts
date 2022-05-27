@@ -371,5 +371,50 @@ module(
       assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
+
+    test('misc tests', function (assert) {
+      // language=XML
+      const {
+        root: initial,
+        elements: { p1 },
+        textNodes: { text3 },
+      } = vdom`
+        <div>
+          <div vocab="http://xmlns.com/foaf/0.1/" typeof="Person" __id="div1"> <!-- about:alice -->
+            <p __id="p1">
+              <span __id="span1" property="name">
+                <text __id="text1">Alice Birpemswick</text>
+              </span>
+            </p>
+          </div>
+          <ul>
+            <li>
+              <text __id="text2">test</text>
+            </li>
+            <li>
+              <text __id="text3">test</text>    
+            </li>
+          </ul>
+          <text __id="text4">test</text>
+        </div>
+      `;
+      const { root: expected } = vdom`
+      <div>
+        <div vocab="http://xmlns.com/foaf/0.1/" typeof="Person" __id="div1"> <!-- about:alice -->
+        </div>
+        <ul>
+          <li>    
+          </li>
+        </ul>
+        <text __id="text4">test</text>
+      </div>
+      `;
+
+      const start1 = ModelPosition.fromBeforeNode(p1);
+      const end1 = ModelPosition.fromAfterNode(text3);
+      OperationAlgorithms.removeNew(new ModelRange(start1, end1));
+      assert.expect(1);
+      assert.true(initial.sameAs(expected));
+    });
   }
 );
