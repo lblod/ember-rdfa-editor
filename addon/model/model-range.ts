@@ -263,7 +263,7 @@ export default class ModelRange {
   /**
    * not so janky debug function
    */
-  visualize(): Element {
+  visualize(): void {
     let root = this.root;
     while (root.parent) {
       root = root.parent;
@@ -312,11 +312,11 @@ export default class ModelRange {
         '  ===]}  '
       );
     }
-    const process = (str: string): Element => {
+    const process = (str: string): string => {
       const div = document.createElement('div');
       div.innerHTML = str.trim();
 
-      return format(div, 0);
+      return format(div, 0).innerHTML;
     };
 
     const format = (node: Element, level: number): Element => {
@@ -338,7 +338,7 @@ export default class ModelRange {
 
       return node;
     };
-    return process(modelString);
+    console.log(process(modelString), '/n');
   }
 
   getCommonPosition(): ModelPosition | null {
