@@ -13,6 +13,7 @@ import {
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { LUMP_NODE_PROPERTY } from '../util/constants';
 import { isTextOrElement, TextOrElement } from '../util/types';
+import HtmlAdjacentTextWriter from './html-adjacent-text-writer';
 type Difference = 'type' | 'tag' | 'attrs' | 'content' | 'none';
 
 /**
@@ -154,47 +155,6 @@ export default class HtmlWriter {
     }
     return result;
   }
-<<<<<<< variant A
-
-  private createElementView(
-    view: View,
-    modelElement: ModelElement
-  ): ElementView {
-    const nodeView = this.htmlElementWriter.write(modelElement);
-    return nodeView;
-  }
-
-  private updateElementView(
-    view: View,
-    modelElement: ModelElement,
-    elementView: ElementView
-  ): NodeView {
-    if (modelElement.isDirty('node')) {
-      const newView = this.createElementView(view, modelElement);
-      this.swapElement(elementView.viewRoot, newView.viewRoot);
-      return newView;
-    }
-    return elementView;
-  }
-
-  private createTextView(view: View, modelText: ModelText): NodeView {
-    const nodeView = this.htmlTextWriter.write(modelText);
-    return nodeView;
-  }
-
-        if (view) {
-          if (!isTextView(view)) {
-            throw new ModelError('ModelText with non-text view');
-          }
-          view.viewRoot.replaceWith(textViews[i].viewRoot);
-          this.model.registerTextNode(modelText, textViews[i]);
-          result.add(textViews[i].viewRoot);
-        } else {
-          this.model.registerTextNode(modelText, textViews[i]);
-          result.add(textViews[i].viewRoot);
-        }
-      });
->>>>>>> variant B
   private parseText(text: ModelText): Node {
     const contentRoot: Text = new Text(text.content);
     let current: TextOrElement = contentRoot;
@@ -210,59 +170,8 @@ export default class HtmlWriter {
           'Mark is trying to render as something other than an element or a text node'
         );
       }
-####### Ancestor
-
-  private createElementView(
-    view: View,
-    modelElement: ModelElement
-  ): ElementView {
-    const nodeView = this.htmlElementWriter.write(modelElement);
-    return nodeView;
-  }
-
-  private updateElementView(
-    view: View,
-    modelElement: ModelElement,
-    elementView: ElementView
-  ): NodeView {
-    if (modelElement.isDirty('node')) {
-      const newView = this.createElementView(view, modelElement);
-      this.swapElement(elementView.viewRoot, newView.viewRoot);
-      return newView;
     }
-    return elementView;
-  }
-
-  private createTextView(view: View, modelText: ModelText): NodeView {
-    const nodeView = this.htmlTextWriter.write(modelText);
-    return nodeView;
-  }
-
-  private updateTextView(
-    view: View,
-    modelText: ModelText,
-    nodeView: TextView
-  ): NodeView {
-    if (modelText.isDirty('node') || modelText.isDirty('mark')) {
-      const newView = this.createTextView(view, modelText);
-      nodeView.viewRoot.replaceWith(newView.viewRoot);
-      return newView;
-    } else if (modelText.isDirty('content')) {
-      nodeView.contentRoot.replaceData(
-        0,
-        nodeView.contentRoot.length,
-        modelText.content
-      );
-======= end
-    }
-<<<<<<< variant A
-
-    return result;
->>>>>>> variant B
     return current;
-####### Ancestor
-    return nodeView;
-======= end
   }
 
   swapElement(node: HTMLElement, replacement: HTMLElement) {

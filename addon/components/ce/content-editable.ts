@@ -86,6 +86,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   @action
   insertedEditorElement(element: HTMLElement) {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     document.addEventListener('selectionchange', this.afterSelectionChange);
     this.editor = createEditor({
       domRoot: element,
@@ -97,6 +98,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
 
   @action
   teardown() {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     document.removeEventListener('selectionchange', this.afterSelectionChange);
   }
 
