@@ -7,7 +7,6 @@ import RangeMapper, {
 } from '@lblod/ember-rdfa-editor/model/range-mapper';
 import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import ModelElement from '../model-element';
 
 export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
 /**
@@ -15,21 +14,33 @@ export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
  * Any use outside of operations is not supported
  */
 
+//config consts for removeNew algo
+const cantMergeIntoTypes = new Set<string>([
+  'a',
+  'table',
+  'tr',
+  'th',
+  'thead',
+  'tbody',
+  'ul',
+]);
+
+const cantRemoveOpeningTagNodeTypes = new Set<string>([
+  'a',
+  'ul',
+  'li',
+  'td',
+  'tr',
+  'table',
+  'thead',
+  'tbody',
+  'th',
+]);
+
 export default class OperationAlgorithms {
   static removeNew(
     range: ModelRange
   ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
-    //config consts
-    const cantMergeIntoTypes = ['a'];
-    const cantRemoveOpeningTagNodeTypes = [
-      'a',
-      'ul',
-      'li',
-      'td',
-      'tr',
-      'table',
-    ];
-
     //start algorithm
     if (range.collapsed) {
       return {
@@ -37,8 +48,6 @@ export default class OperationAlgorithms {
         mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
       };
     }
-
-    range.normalize();
 
     //split end and start if they are inside a text node
     if (range.start.isInsideText()) {
@@ -53,6 +62,7 @@ export default class OperationAlgorithms {
     //assumption: nodeAfter doesn't grab anything if the next node to the end of the range is one level up
     const nodesToMove: ModelNode[] = [];
     let nextNode = range.end.nodeAfter();
+
     while (nextNode) {
       nodesToMove.push(nextNode);
       nextNode = nextNode.nextSibling;
@@ -61,11 +71,8 @@ export default class OperationAlgorithms {
     //grab all nodes inside the range
     //assumption: the only partial nodes that treewalker grabs are the ones that have opening tags in the selection
     //assumption: opening tag nodes are always parents of the last node in range
-    const allNodes: ModelNode[] = [];
     const walker = new ModelTreeWalker({ range: range });
-    for (const node of walker) {
-      allNodes.push(node);
-    }
+    const allNodes = [...walker];
 
     //get all nodes that are fully contained in the range
     //ie [<span><text>abc</text>]</span>
@@ -88,40 +95,28 @@ export default class OperationAlgorithms {
       }
     });
 
-    //remove all the opening tag nodes and unindent their contents
+    //remove all the opening tag nodes and unwrap their contents
     //ie: <div>[<span><text>abc</text>]</span></div>
     //will become: <div><text>abc</text></div>
     //avoid doing this to nodes that we dont want to remove as stated in the begining of the function
+    //dont do this to rdfa either
     //collect those nodes
 
     const cantRemoveOpeningTagNodes = [];
 
     openingTagNodes.forEach((opNode) => {
       //check if we can remove it
-      let cantRemove;
-
-      //check in the config const
-      cantRemove =
-        ModelNode.isModelElement(opNode) &&
-        cantRemoveOpeningTagNodeTypes.find((type) => type == opNode.type)
-          ? true
-          : false;
-
-      //check if rdfa
-      if (!cantRemove) {
-        cantRemove =
-          ModelNode.isModelElement(opNode) &&
+      if (ModelNode.isModelElement(opNode)) {
+        const cantRemove =
+          cantRemoveOpeningTagNodeTypes.has(opNode.type) ||
           !opNode.getRdfaAttributes().isEmpty;
-      }
-
-      if (cantRemove) {
-        cantRemoveOpeningTagNodes.push(opNode);
+        if (cantRemove) {
+          cantRemoveOpeningTagNodes.push(opNode);
+        } else {
+          opNode.unwrap();
+        }
       } else {
-        const nodesToUnindent = (opNode as ModelElement).children;
-        nodesToUnindent.forEach((node, index) => {
-          opNode.parent?.addChild(node, (opNode.index as number) + index);
-        });
-        opNode.remove();
+        throw new Error('opening tag node is not an element, deletion failed');
       }
     });
 
@@ -135,29 +130,28 @@ export default class OperationAlgorithms {
     const parent = range.start.parent;
 
     let index;
-
-    if (range.start.nodeBefore()) {
-      index = (range.start.nodeBefore()?.index as number) + 1;
-    } else if (range.start.nodeAfter()) {
-      index = range.start.nodeAfter()?.index as number;
+    const nodeBefore = range.start.nodeBefore();
+    const nodeAfter = range.start.nodeAfter();
+    if (nodeBefore) {
+      index = nodeBefore.index! + 1;
+    } else if (nodeAfter) {
+      index = nodeAfter.index!;
     } else {
       index = 0;
     }
 
     let merge;
-    merge = cantMergeIntoTypes.find(
-      (type) =>
-        parent
-          .findSelfOrAncestors(
-            (node) => ModelNode.isModelElement(node) && node.type == type
-          )
-          .next().value
-    )
-      ? false
-      : true;
+
+    merge = !parent
+      .findSelfOrAncestors(
+        (node) =>
+          ModelNode.isModelElement(node) && cantMergeIntoTypes.has(node.type)
+      )
+      .next().value;
 
     //if there are nodes with opening tags we cant remove they are parents of the moved nodes
     //merging nodes that cant be removed is iffy, this should probably change but needs some thought
+    //maybe a truth table of what can be merged into what?
     if (merge) {
       merge = cantRemoveOpeningTagNodes.length === 0;
     }

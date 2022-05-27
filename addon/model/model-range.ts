@@ -260,30 +260,6 @@ export default class ModelRange {
     return this.start.sameAs(this.end);
   }
 
-  normalize(): void {
-    let flip = false;
-    const length =
-      this.start.path.length > this.end.path.length
-        ? this.start.path.length
-        : this.end.path.length;
-
-    for (let i = 0; i < length; i++) {
-      if (this.start.path[i] === undefined || this.end.path[i] === undefined) {
-        break;
-      } else if (this.start.path[i] > this.end.path[i]) {
-        flip = true;
-        break;
-      } else if (this.start.path[i] < this.end.path[i]) {
-        break;
-      }
-    }
-
-    if (flip) {
-      const buffer = this.start;
-      this.start = this.end;
-      this.end = buffer;
-    }
-  }
   /**
    * janky debug function
    */
