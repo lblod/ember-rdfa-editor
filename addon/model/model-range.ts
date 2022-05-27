@@ -261,9 +261,9 @@ export default class ModelRange {
   }
 
   /**
-   * janky debug function
+   * not so janky debug function
    */
-  visualize(): string {
+  visualize(): Element {
     let root = this.root;
     while (root.parent) {
       root = root.parent;
@@ -275,22 +275,70 @@ export default class ModelRange {
     const endRange = new ModelRange(range.end, range.end);
     const startText = new ModelText('[===START===]');
     const endText = new ModelText('[===END===]');
+    let startSplit = false;
+    let endSplit = false;
+
+    if (range.start.isInsideText() && range.start.parentOffset != 0) {
+      startSplit = true;
+    }
+    if (range.end.isInsideText() && range.end.parentOffset != 0) {
+      endSplit = true;
+    }
 
     new InsertOperation(undefined, endRange, endText).execute();
 
     new InsertOperation(undefined, startRange, startText).execute();
 
     let modelString = (root.toXml() as Element).innerHTML;
-    modelString = modelString.replace(
-      '<text __dirty="node,content">[===START===]</text>',
-      '  {[===  '
-    );
-    modelString = modelString.replace(
-      '<text __dirty="node,content">[===END===]</text>',
-      '  ===]}  '
-    );
+    if (startSplit) {
+      modelString = modelString.replace(
+        /<\/text><text __dirty="node,content">\[===START===\]<\/text><text.+?>/,
+        '  {[===  '
+      );
+    } else {
+      modelString = modelString.replace(
+        '<text __dirty="node,content">[===START===]</text>',
+        '  {[===  '
+      );
+    }
+    if (endSplit) {
+      modelString = modelString.replace(
+        /<\/text><text __dirty="node,content">\[===END===\]<\/text><text.+?>/,
+        '  ===]}  '
+      );
+    } else {
+      modelString = modelString.replace(
+        '<text __dirty="node,content">[===END===]</text>',
+        '  ===]}  '
+      );
+    }
+    const process = (str: string): Element => {
+      const div = document.createElement('div');
+      div.innerHTML = str.trim();
 
-    return modelString;
+      return format(div, 0);
+    };
+
+    const format = (node: Element, level: number): Element => {
+      const indentBefore = new Array(level++ + 1).join('  '),
+        indentAfter = new Array(level - 1).join('  ');
+      let textNode;
+
+      for (let i = 0; i < node.children.length; i++) {
+        textNode = document.createTextNode('\n' + indentBefore);
+        node.insertBefore(textNode, node.children[i]);
+
+        format(node.children[i], level);
+
+        if (node.lastElementChild == node.children[i]) {
+          textNode = document.createTextNode('\n' + indentAfter);
+          node.appendChild(textNode);
+        }
+      }
+
+      return node;
+    };
+    return process(modelString);
   }
 
   getCommonPosition(): ModelPosition | null {
