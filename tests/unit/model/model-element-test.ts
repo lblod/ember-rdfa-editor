@@ -1,17 +1,15 @@
-import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { IndexOutOfRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { IndexOutOfRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { module, test } from 'qunit';
 
 module('Unit | model | model-element-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  hooks.beforeEach(() => {
-    ctx.reset();
-  });
   module('Unit | model | model-element-test | offsetToIndex', function () {
     test('offset 0 should give index 0', function (assert) {
-      const div = new ModelElement('div');
+      const {
+        elements: { div },
+      } = vdom`<div __id="div" />`;
       assert.strictEqual(div.offsetToIndex(0), 0);
     });
 
