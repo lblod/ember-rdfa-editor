@@ -323,7 +323,7 @@ export default class Transaction {
       this.clonePos(target)
     );
     const resultRange = this.executeOperation(op);
-    this.deleteNode(element);
+    this.deleteNode(resultRange.end.nodeAfter()!);
 
     if (ensureBlock) {
       const nodeBeforeStart = resultRange.start.nodeBefore();
