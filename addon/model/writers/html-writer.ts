@@ -4,7 +4,6 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
-import HtmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
 import {
   isElement,
   isTextNode,
@@ -32,9 +31,7 @@ export default class HtmlWriter {
     const domRoot = view.domRoot;
     const modelRoot = state.document;
     if (modelRoot.children.length !== domRoot.childNodes.length) {
-      const parsedChildren = modelRoot.children.map((child) =>
-        this.parseSubTree(child)
-      );
+      const parsedChildren = this.parseChildren(modelRoot.children);
       domRoot.replaceChildren(...parsedChildren);
     } else {
       modelRoot.children.forEach((child, index) => {
@@ -111,12 +108,32 @@ export default class HtmlWriter {
       return this.parseNode(modelNode);
     } else {
       const result = this.parseNode(modelNode) as HTMLElement;
-      const parsedChildren = (modelNode as ModelElement).children.map((child) =>
-        this.parseSubTree(child)
-      );
-      result.append(...parsedChildren);
-      return result;
+      const children = (modelNode as ModelElement).children;
+      result.append(...this.parseChildren(children));
     }
+  }
+  parseChildren(children: ModelNode[]): Node[] {
+    let adjacentTextNodes = [];
+    const parsedChildren = [];
+    for (const child of children) {
+      if (ModelNode.isModelText(child)) {
+        adjacentTextNodes.push(child);
+      } else {
+        if (adjacentTextNodes.length > 0) {
+          // process adjacent text nodes
+          parsedChildren.push(...this.parseTextNodes(adjacentTextNodes));
+          adjacentTextNodes = [];
+        }
+        parsedChildren.push(this.parseSubTree(child));
+      }
+    }
+    if (adjacentTextNodes.length > 0) {
+      parsedChildren.push(...this.parseTextNodes(adjacentTextNodes));
+    }
+    return parsedChildren;
+  }
+  private parseTextNodes(modelTexts: ModelText[]): Set<Node> {
+    return new Set(this.htmlAdjacentTextWriter.write(modelTexts));
   }
   private areDomAttributesSame(
     left: NamedNodeMap,
@@ -179,15 +196,4 @@ export default class HtmlWriter {
     replacement.append(...children);
     node.replaceWith(replacement);
   }
-}
-
-function parentIsLumpNode(modelNode: ModelElement): boolean {
-  while (modelNode.parent) {
-    const properties = modelNode.parent.getRdfaAttributes().properties;
-    if (properties && properties.includes(LUMP_NODE_PROPERTY)) {
-      return true;
-    }
-    modelNode = modelNode.parent;
-  }
-  return false;
 }

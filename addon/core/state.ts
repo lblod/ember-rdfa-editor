@@ -31,6 +31,7 @@ import RemoveTableColumnCommand from '../commands/remove-table-column-command';
 import RemoveTableRowCommand from '../commands/remove-table-row-command';
 import UndoCommand from '../commands/undo-command';
 import UnindentListCommand from '../commands/unindent-list-command';
+import { highlightMarkSpec } from '../model/mark';
 import MarksRegistry from '../model/marks-registry';
 import { boldMarkSpec } from '../plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '../plugins/basic-styles/marks/italic';
@@ -81,6 +82,7 @@ export class SayState implements State {
     this.marksRegistry.registerMark(italicMarkSpec);
     this.marksRegistry.registerMark(underlineMarkSpec);
     this.marksRegistry.registerMark(strikethroughMarkSpec);
+    this.marksRegistry.registerMark(highlightMarkSpec);
   }
   createTransaction(): Transaction {
     return new Transaction(this);

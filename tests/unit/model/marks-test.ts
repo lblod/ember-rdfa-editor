@@ -1,36 +1,22 @@
-import { module, test } from 'qunit';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
+import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
 import {
   domStripped,
   vdom,
 } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import sinon from 'sinon';
-import { highlightMarkSpec, Mark } from '@lblod/ember-rdfa-editor/model/mark';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import HtmlWriter from '@lblod/ember-rdfa-editor/model/writers/html-writer';
+import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
+import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
+import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough';
+import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline';
 import {
   isElement,
   isTextNode,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
-import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
-import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
-import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline';
-import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough';
-import {
-  stateFromDom,
-  testState,
-  testView,
-  vdomToDom,
-} from 'dummy/tests/test-utils';
+import { stateFromDom, vdomToDom } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
 function testMarkToggling(assert: Assert, start: number, end: number) {
   const {
@@ -126,21 +112,13 @@ module('Unit | model | marks-test', function () {
     assert.strictEqual(fc.firstChild!.textContent, 'abc');
   });
   test('marks are correctly merged and nested: simple case', function (assert) {
-    const {
-      root: initial,
-      textNodes: { text },
-    } = vdom`
+    const { root: initial } = vdom`
       <modelRoot>
-        <text __id="text" __marks="bold,italic">abcdefghi</text>
+        <text __marks="italic">abc</text>
+        <text __marks="bold,italic">def</text>
+        <text __marks="italic">ghi</text>
       </modelRoot>`;
 
-    const range = new ModelRange(
-      ModelPosition.fromInTextNode(text, 3),
-      ModelPosition.fromInTextNode(text, 6)
-    );
-
-    const op = new MarkOperation(undefined, range, boldMarkSpec, {}, 'add');
-    op.execute();
     const result = vdomToDom(initial);
     assert.strictEqual(result.childNodes.length, 1);
     const emNode = result.childNodes[0];
@@ -149,28 +127,15 @@ module('Unit | model | marks-test', function () {
     assert.strictEqual(tagName(emNode.childNodes[1]), 'strong');
   });
   test('adjacent marks are merged', function (assert) {
-    const {
-      root: initial,
-      textNodes: { text },
-    } = vdom`
+    const { root: initial } = vdom`
       <modelRoot>
-        <text __id="text" __marks="bold,italic">abcdefghi</text>
+        <text>abc</text>
+        <text __marks="bold">def</text>
+        <text __marks="bold">ghi</text>
       </modelRoot>`;
 
-    const range1 = new ModelRange(
-      ModelPosition.fromInTextNode(text, 3),
-      ModelPosition.fromInTextNode(text, 6)
-    );
-    const range2 = new ModelRange(
-      ModelPosition.fromInTextNode(text, 6),
-      ModelPosition.fromInTextNode(text, 9)
-    );
-
-    const op1 = new MarkOperation(undefined, range1, boldMarkSpec, {}, 'add');
-    const op2 = new MarkOperation(undefined, range2, boldMarkSpec, {}, 'add');
-    op1.execute();
-    op2.execute();
     const result = vdomToDom(initial);
+    console.log(result);
     assert.strictEqual(result.childNodes.length, 2);
     const boldNode = result.childNodes[1];
     assert.strictEqual(tagName(boldNode), 'strong');
@@ -205,9 +170,7 @@ module('Unit | model | marks-test', function () {
 
     markSpecs.sort((m1, m2) => m2.priority - m1.priority);
 
-    const writer = new HtmlWriter();
-
-    let node = writer.parseSubTree(initial);
+    let node = vdomToDom(initial);
 
     for (const markSpec of markSpecs) {
       assert.strictEqual(node.childNodes.length, 1);
@@ -233,7 +196,9 @@ module('Unit | model | marks-test', function () {
   });
   test("reading non-highlight spans doesn't read highlight marks", function (assert) {
     const html = domStripped`
-      <span>abc</span>
+      <div>
+        <span>abc</span>
+      </div>
     `.body.children[0];
 
     const result = stateFromDom(html);
