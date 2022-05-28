@@ -12,7 +12,7 @@ type Bias = 'left' | 'right' | 'center';
  * Reader to convert a {@link Selection} to a {@link ModelSelection}.
  */
 export default class SelectionReader {
-  read(state: State, viewRoot: HTMLElement, from: Selection): ModelSelection {
+  read(state: State, viewRoot: Element, from: Selection): ModelSelection {
     const ranges = [];
     const result = new ModelSelection();
 
@@ -41,7 +41,7 @@ export default class SelectionReader {
    */
   readDomRange(
     state: State,
-    viewRoot: HTMLElement,
+    viewRoot: Element,
     range: StaticRange
   ): ModelRange | null {
     const start = this.readDomPosition(
@@ -75,7 +75,7 @@ export default class SelectionReader {
    */
   readDomPosition(
     state: State,
-    viewRoot: HTMLElement,
+    viewRoot: Element,
     container: Node,
     domOffset: number
   ): ModelPosition | null {
@@ -93,7 +93,7 @@ export default class SelectionReader {
 
   private readDomPositionUnsafe(
     state: State,
-    viewRoot: HTMLElement,
+    viewRoot: Element,
     container: Node,
     domOffset: number,
     bias: Bias = 'right'
