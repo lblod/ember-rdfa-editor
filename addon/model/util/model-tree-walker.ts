@@ -10,6 +10,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { Walkable, WalkFilter } from './gen-tree-walker';
 
 export enum FilterResult {
   // we like the node
@@ -34,10 +35,10 @@ export type ModelNodeFilter = (node: ModelNode) => FilterResult;
  * will be visited)
  * @param func
  */
-export function toFilterSkipFalse(
-  func: (node: ModelNode) => boolean
-): ModelNodeFilter {
-  return function (node: ModelNode) {
+export function toFilterSkipFalse<N extends Walkable>(
+  func: (node: N) => boolean
+): WalkFilter<N> {
+  return function (node: N) {
     return func(node) ? FilterResult.FILTER_ACCEPT : FilterResult.FILTER_SKIP;
   };
 }

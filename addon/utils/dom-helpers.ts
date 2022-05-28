@@ -2,6 +2,8 @@ import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import State from '../core/state';
 import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
+import GenTreeWalker from '../model/util/gen-tree-walker';
+import { toFilterSkipFalse } from '../model/util/model-tree-walker';
 
 /**
  * Fake class to list helper functions.
@@ -627,21 +629,41 @@ export function domPosToModelPos(
 function domNodeFromPath(
   state: State,
   path: number[],
-  root: HTMLElement
+  root: Element,
+  endsInText: boolean
 ): Node {
   let cur: Node = root;
-  for (const index of path) {
+  if (!path.length) {
+    return cur;
+  }
+  for (const index of path.slice(0, -1)) {
     if (isElement(cur)) {
       cur = cur.childNodes[index];
-      // TODO make this compatible with merged marks
-      while (state.marksRegistry.matchMarkSpec(cur).size) {
-        cur = cur.firstChild!;
-      }
     } else {
-      break;
+      return cur;
     }
   }
-  return cur;
+  if (isElement(cur)) {
+    if (endsInText) {
+      // we know that the original position ended in a textnode
+      // so we handle marks by simply searching for pure textnodes
+      // and skipping all the rest
+      // by passing in this knowledge, we avoid having to do this every loop,
+      // as marks are exclusive to text nodes
+      // this relies on there being as many dom textnodes as there are modelText nodes
+      const walker = GenTreeWalker.fromSubTree<Node>({
+        root: cur,
+        filter: toFilterSkipFalse(isTextNode),
+      });
+      const textChildren = [...walker.nodes()];
+      cur = textChildren[path[path.length - 1]];
+    } else {
+      cur = cur.childNodes[path[path.length - 1]];
+    }
+    return cur;
+  } else {
+    return cur;
+  }
 }
 export function modelPosToDomPos(
   state: State,
@@ -658,11 +680,18 @@ export function modelPosToDomPos(
       cur = cur.children[index];
     }
   }
+  let endsInText = false;
   if (ModelNode.isModelText(cur)) {
     indexPath.push(path[path.length - 1] - cur.getOffset());
+    endsInText = true;
   }
   return {
-    container: domNodeFromPath(state, indexPath.slice(0, -1), domRoot),
+    container: domNodeFromPath(
+      state,
+      indexPath.slice(0, -1),
+      domRoot,
+      endsInText
+    ),
     offset: indexPath[indexPath.length - 1] ?? 0,
   };
 }

@@ -1,36 +1,35 @@
-import { module, test } from 'qunit';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
-import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
+import { isTextNode } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { testState, testView } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
-module('Unit | model | writers | selection-writer', function (hooks) {
-  const ctx = new ModelTestContext();
-
-  hooks.beforeEach(() => {
-    ctx.reset();
-  });
-  test('converts a modelSelection correctly', function (assert) {
-    const { model } = ctx;
-    const text = new ModelText('asdf');
-    model.rootModelNode.addChild(text);
-    assert.strictEqual(text.length, 4);
-
-    const start = ModelPosition.fromInTextNode(text, 0);
-    const end = ModelPosition.fromInTextNode(text, 4);
-    model.selection.selectRange(new ModelRange(start, end));
-
-    model.write();
-    const writer = new SelectionWriter(model);
-    const domRange = writer.writeDomRange(model.selection.lastRange!);
-
-    assert.strictEqual(
-      domRange.startContainer,
-      model.modelToView(text)?.viewRoot
+module('Unit | model | writers | selection-writer', function () {
+  test(`converts a simple selection correctly`, function (assert) {
+    const {
+      root: initial,
+      textNodes: { text },
+    } = vdom`
+      <modelRoot>
+        <text __id="text">test</text>
+      </modelRoot>`;
+    const result = parseRangeInVdom(
+      initial,
+      ModelRange.fromInTextNode(text, 2, 2)
     );
-    assert.strictEqual(domRange.startOffset, 0);
-    assert.strictEqual(domRange.endContainer, model.rootNode);
-    assert.strictEqual(domRange.endOffset, 1);
+    console.log(result);
+    assert.true(isTextNode(result.startContainer));
+    assert.true(isTextNode(result.endContainer));
+    assert.strictEqual(result.startOffset, 2);
+    assert.strictEqual(result.endOffset, 2);
   });
 });
+function parseRangeInVdom(root: ModelNode, range: ModelRange): Range {
+  const state = testState({ document: root });
+  const view = testView();
+  view.update(state);
+  const writer = new SelectionWriter();
+  return writer.writeDomRange(state, view.domRoot, range);
+}

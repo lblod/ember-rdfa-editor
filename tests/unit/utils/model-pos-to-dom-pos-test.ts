@@ -224,4 +224,37 @@ module('Unit | model | model-pos-to-dom-pos', function () {
     assert.strictEqual(resultPos.container, expectedPos.container);
     assert.strictEqual(resultPos.offset, expectedPos.offset);
   });
+  test('converts correctly in merged marks', function (assert) {
+    const dom = domStripped`
+      <div>
+        <em>
+          abc
+          <strong>def</strong>
+          ghi
+        </em>
+      </div>`.body.children[0];
+
+    const {
+      root,
+      textNodes: { text },
+    } = vdom`
+      <modelRoot>
+        <text __marks="italic">abc</text>
+        <text __marks="italic,bold" __id="text">def</text>
+        <text __marks="italic">ghi</text>
+      </modelRoot>`;
+    const state = testState({ document: root });
+    const container = dom.firstChild?.childNodes[1].firstChild;
+    if (!container) {
+      throw new TypeError();
+    }
+    const expectedPos = { container, offset: 1 };
+    const resultPos = modelPosToDomPos(
+      state,
+      dom,
+      ModelPosition.fromInNode(text, 1)
+    );
+    assert.strictEqual(resultPos.container, expectedPos.container);
+    assert.strictEqual(resultPos.offset, expectedPos.offset);
+  });
 });
