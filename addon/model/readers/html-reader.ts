@@ -1,4 +1,3 @@
-import { View } from '@lblod/ember-rdfa-editor/core/view';
 import { AttributeSpec, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import MarksRegistry, {
   SpecAttributes,
@@ -43,6 +42,9 @@ export class HtmlReaderContext {
   get rdfaPrefixes() {
     return this._rdfaPrefixes;
   }
+  set rdfaPrefixes(value: Map<string, string>) {
+    this._rdfaPrefixes = value;
+  }
 
   matchMark(node: Node): Set<SpecAttributes> {
     return this.marksRegistry.matchMarkSpec(node);
@@ -64,6 +66,7 @@ export default class HtmlReader {
   read(from: Node, context: HtmlReaderContext): ModelNode[] {
     from.normalize();
     const prefixes = calculateRdfaPrefixes(from);
+    context.rdfaPrefixes = prefixes;
     const nodeReader = new HtmlNodeReader();
     return nodeReader.read(from, context);
   }
