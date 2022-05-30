@@ -13,6 +13,11 @@ export default class HtmlInlineComponentWriter
 
   write(modelNode: ModelInlineComponent<Properties>): NodeView {
     const result = modelNode.write();
+    this.model.addComponentInstance(
+      result,
+      modelNode.spec.name,
+      modelNode.props
+    );
     return { viewRoot: result, contentRoot: result };
   }
 }

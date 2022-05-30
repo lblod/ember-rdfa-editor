@@ -6,8 +6,7 @@ import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
-import { ExampleProperties } from '@lblod/ember-rdfa-editor/plugins/inline-components/components/example-inline-component';
-import { ReglementaireBijlageProperties } from '@lblod/ember-rdfa-editor/plugins/inline-components/components/reglementaire-bijlage-component';
+import { Properties } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
 
 interface Args {
   editor: RawEditor;
@@ -199,8 +198,8 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   insertExampleComponent() {
-    const props: ExampleProperties = {
-      headLine: 'Headline',
+    const props: Properties = {
+      title: 'Headline',
       content: 'Lorem Ipsum',
     };
     this.args.controller.executeCommand(
@@ -212,7 +211,7 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   insertReglementaireBijlageComponent() {
-    const props: ReglementaireBijlageProperties = {
+    const props: Properties = {
       title: 'Reglementaire bijlage',
     };
     this.args.controller.executeCommand(

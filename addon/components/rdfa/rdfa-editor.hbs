@@ -82,6 +82,10 @@
     </div>
   </div>
   {{#each this.inlineComponents as |compEntry|}}
-    {{component compEntry.emberComponentName destinationElement=compEntry.node}}
+    {{component
+      compEntry.emberComponentName
+      destinationElement=compEntry.node
+      props=compEntry.props
+    }}
   {{/each}}
 </div>

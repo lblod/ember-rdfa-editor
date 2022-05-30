@@ -35,10 +35,6 @@ export default class InsertComponentCommand extends Command {
       this.model.change((mutator) => {
         mutator.insertNodes(selection.lastRange, component);
       });
-      const node = this.model.modelToView(component)?.viewRoot;
-      if (node) {
-        this.model.addComponentInstance(node, componentName);
-      }
     } else {
       throw new ModelError(`Unrecognized component: ${componentName}`);
     }
