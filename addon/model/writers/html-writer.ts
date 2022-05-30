@@ -28,7 +28,7 @@ export default class HtmlWriter {
   constructor(private model: Model) {
     this.htmlTextWriter = new HtmlTextWriter(model);
     this.htmlElementWriter = new HtmlElementWriter(model);
-    this.htmlInlineComponentWriter = new HtmlInlineComponentWriter(model);
+    this.htmlInlineComponentWriter = new HtmlInlineComponentWriter();
   }
 
   write(modelNode: ModelNode): NodeView {
@@ -70,6 +70,11 @@ export default class HtmlWriter {
       resultView = view;
     } else if (ModelNode.isModelInlineComponent(modelNode)) {
       resultView = this.htmlInlineComponentWriter.write(modelNode);
+      this.model.addComponentInstance(
+        resultView.viewRoot,
+        modelNode.spec.name,
+        modelNode.props
+      );
       this.model.registerNodeView(modelNode, resultView);
     } else {
       throw new NotImplementedError('Unsupported modelnode type');

@@ -10,7 +10,7 @@ export default class UnpollutedHtmlInlineComponentWriter
   implements Writer<ModelInlineComponent<Properties>, Node>
 {
   constructor(private model: Model) {}
-  private inlineComponentWriter = new HtmlInlineComponentWriter(this.model);
+  private inlineComponentWriter = new HtmlInlineComponentWriter();
 
   write(modelNode: ModelInlineComponent<Properties>): Node {
     return this.inlineComponentWriter.write(modelNode).viewRoot;
