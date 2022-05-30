@@ -6,8 +6,6 @@ import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { ExampleProperties } from '@lblod/ember-rdfa-editor/plugins/inline-components/components/example-inline-component';
 import { ReglementaireBijlageProperties } from '@lblod/ember-rdfa-editor/plugins/inline-components/components/reglementaire-bijlage-component';
 
@@ -201,16 +199,13 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   insertExampleComponent() {
-    const child = new ModelElement('span');
-    child.addChild(new ModelText('Test'));
     const props: ExampleProperties = {
       headLine: 'Headline',
       content: 'Lorem Ipsum',
     };
     this.args.controller.executeCommand(
       'insert-component',
-      'example-inline-component',
-      child,
+      'inline-components/example-inline-component',
       props
     );
   }
@@ -222,8 +217,7 @@ export default class EditorToolbar extends Component<Args> {
     };
     this.args.controller.executeCommand(
       'insert-component',
-      'reglementaire-bijlage-inline-component',
-      null,
+      'inline-components/reglementaire-bijlage-inline-component',
       props
     );
   }

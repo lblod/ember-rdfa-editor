@@ -3,7 +3,6 @@ import {
   Properties,
 } from '../model/inline-components/model-inline-component';
 import Model from '../model/model';
-import ModelNode from '../model/model-node';
 import ModelSelection from '../model/model-selection';
 import { MisbehavedSelectionError, ModelError } from '../utils/errors';
 import { logExecute } from '../utils/logging-utils';
@@ -23,7 +22,6 @@ export default class InsertComponentCommand extends Command {
   @logExecute
   execute(
     componentName: string,
-    child: ModelNode | null = null,
     props: Properties = {},
     selection: ModelSelection = this.model.selection
   ): void {
@@ -34,12 +32,13 @@ export default class InsertComponentCommand extends Command {
       this.model.inlineComponentsRegistry.lookUpComponent(componentName);
     if (componentSpec) {
       const component = new ModelInlineComponent(componentSpec, props);
-      if (child) {
-        component.addChild(child);
-      }
       this.model.change((mutator) => {
         mutator.insertNodes(selection.lastRange, component);
       });
+      const node = this.model.modelToView(component)?.viewRoot;
+      if (node) {
+        this.model.addComponentInstance(node, componentName);
+      }
     } else {
       throw new ModelError(`Unrecognized component: ${componentName}`);
     }

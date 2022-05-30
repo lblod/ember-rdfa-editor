@@ -50,6 +50,7 @@
           @baseIRI={{@baseIRI}}
         />
       </div>
+
     </div>
 
     <div class='say-container__aside'>
@@ -80,4 +81,7 @@
       {{yield}}
     </div>
   </div>
+  {{#each this.inlineComponents as |compEntry|}}
+    {{component compEntry.emberComponentName destinationElement=compEntry.node}}
+  {{/each}}
 </div>

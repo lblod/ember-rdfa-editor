@@ -2,21 +2,16 @@ import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { DomNodeMatcher } from '../mark';
 import ModelElement from '../model-element';
 import { ModelNodeType } from '../model-node';
-import renderFromSpec, {
-  AttributeSpec,
-  RenderSpec,
-  Serializable,
-} from '../util/render-spec';
+import { AttributeSpec, Serializable } from '../util/render-spec';
 
 export type Properties = {
   [index: string]: Serializable | undefined;
 };
-export abstract class InlineComponent<A extends Properties> {
+export abstract class InlineComponent {
   name: string;
   tag: keyof HTMLElementTagNameMap;
 
   baseMatcher: DomNodeMatcher<AttributeSpec>;
-  matchers?: DomNodeMatcher<AttributeSpec>[];
 
   constructor(name: string, tag: keyof HTMLElementTagNameMap) {
     this.name = name;
@@ -37,15 +32,20 @@ export abstract class InlineComponent<A extends Properties> {
     };
   }
 
-  abstract render(props?: A): RenderSpec;
+  render() {
+    const node = document.createElement(this.tag);
+    node.contentEditable = 'false';
+    node.classList.add('inline-component', this.name);
+    return node;
+  }
 }
 
 export class ModelInlineComponent<A extends Properties> extends ModelElement {
   modelNodeType: ModelNodeType = 'INLINE-COMPONENT';
-  private _spec: InlineComponent<A>;
+  private _spec: InlineComponent;
   private _props: A;
 
-  constructor(spec: InlineComponent<A>, props: A) {
+  constructor(spec: InlineComponent, props: A) {
     super();
     this._spec = spec;
     this._props = props;
@@ -54,39 +54,7 @@ export class ModelInlineComponent<A extends Properties> extends ModelElement {
   get spec() {
     return this._spec;
   }
-  write(block?: Node): Node | null {
-    if (block && isElement(block)) {
-      block.setAttribute('contenteditable', 'true');
-    }
-    const rendered = renderFromSpec(this._spec.render(this._props), block);
-    if (rendered && isElement(rendered)) {
-      rendered.classList.add('inline-component', this._spec.name);
-      rendered.setAttribute('contenteditable', 'false');
-      rendered.dataset['__props'] = JSON.stringify(this._props);
-      this.attributeMap.forEach((val, key) => {
-        rendered.setAttribute(key, val);
-      });
-    }
-    return rendered;
+  write(): Node {
+    return this.spec.render();
   }
-}
-
-export abstract class BaseComponent extends HTMLElement {
-  constructor() {
-    super();
-
-    this.attachShadow({ mode: 'open' });
-  }
-
-  attributeChangedCallback() {
-    if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = this.render();
-    }
-  }
-
-  getAttributeValue(attributeName: string) {
-    return this.getAttribute(attributeName) || '';
-  }
-
-  abstract render(): string;
 }

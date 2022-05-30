@@ -18,7 +18,6 @@ import {
   ModelInlineComponent,
   Properties,
 } from '../inline-components/model-inline-component';
-import { extractChild } from '../util/render-spec';
 
 type Constructor<T> = new (...args: unknown[]) => T;
 type ElementReader = Reader<Element, ModelNode[], HtmlReaderContext>;
@@ -45,12 +44,6 @@ export default class HtmlNodeReader
           props = JSON.parse(propsAttribute) as Properties;
         }
         const component = new ModelInlineComponent(inlineComponent, props);
-        const childNode = extractChild(component.spec.render(), from);
-        if (childNode) {
-          const reader = new HtmlNodeReader();
-          const nodes = reader.read(childNode, context);
-          component.appendChildren(...nodes);
-        }
         result = [component];
       } else {
         const marks = context.matchMark(from);

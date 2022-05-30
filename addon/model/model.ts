@@ -170,8 +170,24 @@ export default class Model {
     this._marksRegistry.registerMark(markSpec);
   }
 
-  registerInlineComponent(component: InlineComponent<Properties>) {
+  registerInlineComponent(component: InlineComponent) {
     this._inlineComponentsRegistry.registerComponent(component);
+  }
+
+  addComponentInstance(
+    node: Node,
+    emberComponentName: string,
+    props: Properties = {}
+  ) {
+    this._inlineComponentsRegistry.addComponentInstance(
+      node,
+      emberComponentName,
+      props
+    );
+  }
+
+  get componentInstances() {
+    return this._inlineComponentsRegistry.componentInstances;
   }
 
   writeSelection() {
