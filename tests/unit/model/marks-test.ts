@@ -15,7 +15,12 @@ import {
   isTextNode,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { stateFromDom, vdomToDom } from 'dummy/tests/test-utils';
+import {
+  stateFromDom,
+  testState,
+  testView,
+  vdomToDom,
+} from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
 function testMarkToggling(assert: Assert, start: number, end: number) {
@@ -126,15 +131,26 @@ module('Unit | model | marks-test', function () {
     assert.strictEqual(emNode.childNodes.length, 3);
     assert.strictEqual(tagName(emNode.childNodes[1]), 'strong');
   });
-  test('adjacent marks are merged', function (assert) {
-    const { root: initial } = vdom`
+  test('adjacent marks are merged when set', function (assert) {
+    const {
+      root: initial,
+      textNodes: { text },
+    } = vdom`
       <modelRoot>
-        <text>abc</text>
-        <text __marks="bold">def</text>
-        <text __marks="bold">ghi</text>
+        <text __id="text">abcdefghi</text>
       </modelRoot>`;
 
-    const result = vdomToDom(initial);
+    const state = testState({ document: initial });
+    const tr = state.createTransaction();
+    const range1 = ModelRange.fromInNode(text, 3, 6);
+    const range2 = ModelRange.fromInNode(text, 6, 9);
+    tr.addMark(range1, boldMarkSpec, {});
+    tr.addMark(range2, boldMarkSpec, {});
+    const resultState = tr.apply();
+    const view = testView();
+    view.update(resultState);
+    const result = view.domRoot;
+
     console.log(result);
     assert.strictEqual(result.childNodes.length, 2);
     const boldNode = result.childNodes[1];
