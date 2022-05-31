@@ -1,7 +1,6 @@
-import { A } from '@ember/array';
-import { tracked } from '@glimmer/tracking';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { TagMatch } from '../mark';
+import { tracked } from 'tracked-built-ins';
 import MapUtils from '../util/map-utils';
 import { InlineComponentSpec, Properties } from './model-inline-component';
 export type ActiveComponentEntry = {
@@ -16,8 +15,7 @@ export default class InlineComponentsRegistry {
     InlineComponentSpec[]
   >();
 
-  @tracked
-  activeComponents = A<ActiveComponentEntry>([]);
+  activeComponents = tracked<ActiveComponentEntry>([]);
 
   matchInlineComponentSpec(node: Node): InlineComponentSpec | null {
     const potentialMatches =
@@ -49,12 +47,16 @@ export default class InlineComponentsRegistry {
     return this.registeredComponents.get(name);
   }
 
+  clearComponentInstances() {
+    this.activeComponents.length = 0;
+  }
+
   addComponentInstance(
     node: Node,
     emberComponentName: string,
     props: Properties = {}
   ) {
-    this.activeComponents.pushObject({ node, emberComponentName, props });
+    this.activeComponents.push({ node, emberComponentName, props });
   }
 
   get componentInstances() {

@@ -1,7 +1,7 @@
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
+import { tracked } from 'tracked-built-ins';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
 import RdfaDocumentController from '../../utils/rdfa/rdfa-document';
 import type IntlService from 'ember-intl/services/intl';
@@ -58,7 +58,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
   @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
-  @tracked inlineComponents: ActiveComponentEntry[] = [];
+  @tracked inlineComponents = tracked<ActiveComponentEntry>([]);
 
   @tracked editorLoading = true;
   private owner: ApplicationInstance;

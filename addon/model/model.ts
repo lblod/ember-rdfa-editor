@@ -158,7 +158,7 @@ export default class Model {
    */
   write(tree: ModelElement = this.rootModelNode, writeSelection = true) {
     this.rootModelNode.removeDirty('node');
-
+    this._inlineComponentsRegistry.clearComponentInstances();
     this.writer.write(tree);
 
     if (writeSelection) {

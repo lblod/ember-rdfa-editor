@@ -404,7 +404,7 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
   }
 
   .inline-component {
-    white-space: break-spaces;
+    white-space: normal;
   }
 
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"],
