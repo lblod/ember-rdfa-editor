@@ -3,8 +3,6 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 module('Unit | model | model-selection', function (hooks) {
   const ctx = new ModelTestContext();
