@@ -213,10 +213,11 @@ export default class EditorToolbar extends Component<Args> {
   insertReglementaireBijlageComponent() {
     const props: Properties = {
       title: 'Reglementaire bijlage',
+      content: 'Content',
     };
     this.args.controller.executeCommand(
       'insert-component',
-      'inline-components/reglementaire-bijlage-inline-component',
+      'inline-components/example-inline-component',
       props
     );
   }

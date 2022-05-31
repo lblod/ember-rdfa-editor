@@ -7,7 +7,7 @@ import { AttributeSpec, Serializable } from '../util/render-spec';
 export type Properties = {
   [index: string]: Serializable | undefined;
 };
-export class InlineComponent {
+export class InlineComponentSpec {
   name: string;
   tag: keyof HTMLElementTagNameMap;
 
@@ -45,10 +45,10 @@ export class InlineComponent {
 
 export class ModelInlineComponent<A extends Properties> extends ModelElement {
   modelNodeType: ModelNodeType = 'INLINE-COMPONENT';
-  private _spec: InlineComponent;
+  private _spec: InlineComponentSpec;
   private _props: A;
 
-  constructor(spec: InlineComponent, props: A) {
+  constructor(spec: InlineComponentSpec, props: A) {
     super(spec.tag);
     this._spec = spec;
     this._props = props;

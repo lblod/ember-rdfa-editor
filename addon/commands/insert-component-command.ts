@@ -35,7 +35,10 @@ export default class InsertComponentCommand extends Command {
       const component = new ModelInlineComponent(componentSpec, props);
       this.model.change((mutator) => {
         const newRange = mutator.insertNodes(selection.lastRange, component);
-        mutator.insertNodes(newRange, new ModelElement('br'));
+        const brAfterComponent = new ModelElement('br');
+        brAfterComponent.setAttribute('class', 'trailing');
+        mutator.insertNodes(newRange, brAfterComponent);
+        this.model.selectRange(newRange);
       });
     } else {
       throw new ModelError(`Unrecognized component: ${componentName}`);

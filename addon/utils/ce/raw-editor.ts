@@ -68,7 +68,7 @@ import RemovePropertyCommand from '@lblod/ember-rdfa-editor/commands/node-proper
 import AddMarkToSelectionCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to-selection-command';
 import RemoveMarkFromSelectionCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-selection-command';
 import {
-  InlineComponent,
+  InlineComponentSpec,
   Properties,
 } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
 import InsertComponentCommand from '@lblod/ember-rdfa-editor/commands/insert-component-command';
@@ -304,7 +304,7 @@ export default class RawEditor {
     this.model.registerMark(markSpec);
   }
 
-  registerComponent(component: InlineComponent<Properties>) {
+  registerComponent(component: InlineComponentSpec<Properties>) {
     this.model.registerInlineComponent(component);
   }
 

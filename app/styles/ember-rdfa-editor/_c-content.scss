@@ -399,6 +399,14 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     }
   }
 
+  .trailing br {
+    display: none;
+  }
+
+  .inline-component {
+    white-space: break-spaces;
+  }
+
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"],
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] *
   {

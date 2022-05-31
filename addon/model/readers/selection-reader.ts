@@ -145,7 +145,7 @@ export default class SelectionReader
         }
       }
     } else if (ModelNode.isModelInlineComponent(modelNode)) {
-      return ModelPosition.fromBeforeNode(modelNode);
+      return ModelPosition.fromAfterNode(modelNode);
     } else {
       throw new NotImplementedError('impossible selection');
     }

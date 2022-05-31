@@ -3,27 +3,27 @@ import { tracked } from '@glimmer/tracking';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { TagMatch } from '../mark';
 import MapUtils from '../util/map-utils';
-import { InlineComponent, Properties } from './model-inline-component';
+import { InlineComponentSpec, Properties } from './model-inline-component';
 export type ActiveComponentEntry = {
   node: Node;
   emberComponentName: string;
   props?: Properties;
 };
 export default class InlineComponentsRegistry {
-  private registeredComponents: Map<string, InlineComponent> = new Map();
-  private componentMatchMap: Map<TagMatch, InlineComponent[]> = new Map<
+  private registeredComponents: Map<string, InlineComponentSpec> = new Map();
+  private componentMatchMap: Map<TagMatch, InlineComponentSpec[]> = new Map<
     keyof HTMLElementTagNameMap,
-    InlineComponent[]
+    InlineComponentSpec[]
   >();
 
   @tracked
   activeComponents = A<ActiveComponentEntry>([]);
 
-  matchInlineComponentSpec(node: Node): InlineComponent | null {
+  matchInlineComponentSpec(node: Node): InlineComponentSpec | null {
     const potentialMatches =
       this.componentMatchMap.get(tagName(node) as TagMatch) || [];
 
-    let result: InlineComponent | null = null;
+    let result: InlineComponentSpec | null = null;
 
     for (const component of potentialMatches) {
       const baseAttributesMatch = component.baseMatcher.attributeBuilder!(node);
@@ -36,7 +36,7 @@ export default class InlineComponentsRegistry {
     return result;
   }
 
-  registerComponent(component: InlineComponent) {
+  registerComponent(component: InlineComponentSpec) {
     this.registeredComponents.set(component.name, component);
     MapUtils.setOrPush(
       this.componentMatchMap,
