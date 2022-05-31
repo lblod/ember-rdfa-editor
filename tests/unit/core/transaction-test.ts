@@ -3,7 +3,7 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import { testState } from 'dummy/tests/test-utils';
+import { stateWithRange, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
 module('Unit | core | transaction-test', function () {
@@ -684,5 +684,24 @@ module('Unit | core | transaction-test', function () {
         resultRange.toString()
       );
     });
+  });
+  test('collapseIn sets position correctly', function (assert) {
+    const {
+      root: initial,
+      textNodes: { content },
+    } = vdom`
+        <modelRoot>
+          <p>
+            <text __id="content">test</text>
+          </p>
+        </modelRoot>`;
+    const state = testState({ document: initial });
+    const tr = state.createTransaction();
+    tr.collapseIn(content);
+    const { selection } = tr.apply();
+    assert.true(selection.isCollapsed);
+    assert.true(
+      selection.focus?.sameAs(tr.clonePos(ModelPosition.fromInNode(content, 0)))
+    );
   });
 });
