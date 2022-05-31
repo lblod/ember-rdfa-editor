@@ -29,12 +29,7 @@ export default class HTMLExportWriter implements Writer<ModelNode, Node> {
     } else if (ModelNode.isModelText(modelNode)) {
       result = this.htmlTextWriter.write(modelNode);
     } else if (ModelNode.isModelInlineComponent(modelNode)) {
-      //do stuff
-      let child: Node | undefined;
-      if (modelNode.children.length) {
-        child = this.write(modelNode.children[0]);
-      }
-      result = this.htmlInlineComponentWriter.write(modelNode, child);
+      result = this.htmlInlineComponentWriter.write(modelNode);
     } else {
       throw new WriterError('Unsupported node type');
     }

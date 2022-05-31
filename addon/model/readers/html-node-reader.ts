@@ -17,6 +17,7 @@ import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
 import {
   ModelInlineComponent,
   Properties,
+  State,
 } from '../inline-components/model-inline-component';
 
 type Constructor<T> = new (...args: unknown[]) => T;
@@ -43,7 +44,16 @@ export default class HtmlNodeReader
         if (propsAttribute) {
           props = JSON.parse(propsAttribute) as Properties;
         }
-        const component = new ModelInlineComponent(inlineComponent, props);
+        const stateAttribute = from.dataset['__state'];
+        let state: State = {};
+        if (stateAttribute) {
+          state = JSON.parse(stateAttribute) as State;
+        }
+        const component = new ModelInlineComponent(
+          inlineComponent,
+          props,
+          state
+        );
         result = [component];
       } else {
         const marks = context.matchMark(from);

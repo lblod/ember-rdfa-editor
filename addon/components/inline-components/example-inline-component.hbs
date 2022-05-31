@@ -1,7 +1,7 @@
-<span style='white-space: normal;' contenteditable="false">
-<span>{{@props.title}}</span>
-<AuButton type='button' {{on 'click' this.click}}>Test</AuButton>
-{{#if this.contentVisible}}
-  <p>{{@props.content}}</p>
-{{/if}}
+<span style='white-space: normal;' contenteditable='false'>
+  <span>{{this.title}}</span>
+  <AuButton type='button' {{on 'click' this.click}}>Test</AuButton>
+  {{#if this.contentVisible}}
+    <p>{{@model.props.content}}</p>
+  {{/if}}
 </span>

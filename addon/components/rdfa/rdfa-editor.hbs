@@ -83,10 +83,7 @@
   </div>
   {{#each this.inlineComponents as |compEntry|}}
     {{#in-element compEntry.node insertBefore=null}}
-    {{component
-      compEntry.emberComponentName
-      props=compEntry.props
-    }}
+      {{component compEntry.emberComponentName model=compEntry.model}}
     {{/in-element}}
   {{/each}}
 </div>

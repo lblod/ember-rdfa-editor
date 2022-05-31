@@ -73,7 +73,7 @@ export default class HtmlWriter {
       this.model.addComponentInstance(
         resultView.viewRoot,
         modelNode.spec.name,
-        modelNode.props
+        modelNode
       );
       // this.model.registerNodeView(modelNode, resultView);
     } else {

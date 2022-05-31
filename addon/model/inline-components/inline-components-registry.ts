@@ -2,11 +2,15 @@ import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { TagMatch } from '../mark';
 import { tracked } from 'tracked-built-ins';
 import MapUtils from '../util/map-utils';
-import { InlineComponentSpec, Properties } from './model-inline-component';
+import {
+  InlineComponentSpec,
+  ModelInlineComponent,
+  Properties,
+} from './model-inline-component';
 export type ActiveComponentEntry = {
   node: Node;
   emberComponentName: string;
-  props?: Properties;
+  model: ModelInlineComponent<Properties>;
 };
 export default class InlineComponentsRegistry {
   private registeredComponents: Map<string, InlineComponentSpec> = new Map();
@@ -54,9 +58,9 @@ export default class InlineComponentsRegistry {
   addComponentInstance(
     node: Node,
     emberComponentName: string,
-    props: Properties = {}
+    model: ModelInlineComponent<Properties>
   ) {
-    this.activeComponents.push({ node, emberComponentName, props });
+    this.activeComponents.push({ node, emberComponentName, model });
   }
 
   get componentInstances() {

@@ -28,6 +28,7 @@ import setNodeAndChildDirty from './util/set-node-and-child-dirty';
 import InlineComponentsRegistry from './inline-components/inline-components-registry';
 import {
   InlineComponentSpec,
+  ModelInlineComponent,
   Properties,
 } from './inline-components/model-inline-component';
 
@@ -177,12 +178,12 @@ export default class Model {
   addComponentInstance(
     node: Node,
     emberComponentName: string,
-    props: Properties = {}
+    model: ModelInlineComponent<Properties>
   ) {
     this._inlineComponentsRegistry.addComponentInstance(
       node,
       emberComponentName,
-      props
+      model
     );
   }
 
