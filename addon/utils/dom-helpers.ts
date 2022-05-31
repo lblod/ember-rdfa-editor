@@ -615,14 +615,15 @@ export function domPosToModelPos(
     }
   }
 
-  if (ModelNode.isModelText(cur)) {
+  if (ModelNode.isModelText(cur) || cur.isLeaf) {
     offsetPath[offsetPath.length - 1] = cur.getOffset() + offset;
   } else if (ModelNode.isModelElement(cur)) {
-    if (cur.children.length > offset) {
+    if (!cur.length) {
+      offsetPath.push(0);
+    } else if (cur.children.length > offset) {
       offsetPath.push(cur.children[offset].getOffset());
-    } else if (offset === cur.children.length) {
-      const last = cur.children[cur.children.length - 1];
-      offsetPath.push(last.getOffset() + last.offsetSize);
+    } else {
+      offsetPath.push(cur.getMaxOffset());
     }
   }
 

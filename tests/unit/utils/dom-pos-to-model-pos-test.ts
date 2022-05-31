@@ -19,7 +19,7 @@ module('Unit | model | dom-pos-to-model-pos', function () {
     const state = testState({ document: root });
     const container = dom;
     const resultPos = domPosToModelPos(state, dom, container, 0);
-    const expectedPos = ModelPosition.fromPath(root, []);
+    const expectedPos = ModelPosition.fromPath(root, [0]);
     assert.true(resultPos.sameAs(expectedPos));
   });
   test('converts simple positions correctly 1', function (assert) {
