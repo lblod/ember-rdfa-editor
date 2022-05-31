@@ -80,15 +80,17 @@ export function mapKeyEvent(editor: Editor, event: KeyboardEvent): void {
 }
 function moveCursor(steps: number) {
   return function (editor: Editor, event: KeyboardEvent) {
-    const selection = editor.state.selection;
-    const start = selection.ranges[0].start;
-    const end = selection.lastRange?.end;
-    if (end && start.sameAs(end)) {
-      const newPosition = start.shiftedVisually(steps);
-      const range = new ModelRange(newPosition);
-      const tr = editor.state.createTransaction();
-      tr.selectRange(range);
+    const range = editor.state.selection.lastRange;
+    if (!range) {
+      return;
+    }
+    if (range.collapsed) {
       event.preventDefault();
+      const start = range.start;
+      const newPosition = start.shiftedVisually(steps);
+      const resultRange = new ModelRange(newPosition);
+      const tr = editor.state.createTransaction();
+      tr.selectRange(resultRange);
       editor.dispatchTransaction(tr);
     }
   };

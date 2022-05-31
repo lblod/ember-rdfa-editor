@@ -66,6 +66,12 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     }
   }
   @action
+  keydown(event: KeyboardEvent) {
+    if (this.inputHandler) {
+      this.inputHandler.keydown(event);
+    }
+  }
+  @action
   paste(event: PasteEvent) {}
   @action
   cut(event: CutEvent) {}
