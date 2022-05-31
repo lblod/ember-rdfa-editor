@@ -1,5 +1,7 @@
 {{#in-element @destinationElement insertBefore=null}}
-  <h2>Component</h2>
-  <h3>{{@props.title}}</h3>
-  <p>{{@props.content}}</p>
+<h3>{{@props.title}}</h3>
+<AuButton type='button' {{on 'click' this.click}}>Test</AuButton>
+{{#if this.contentVisible}}
+<p>{{@props.content}}</p>
+{{/if}}
 {{/in-element}}
