@@ -112,6 +112,7 @@ export default class HtmlWriter {
       const result = this.parseNode(modelNode) as HTMLElement;
       const children = (modelNode as ModelElement).children;
       result.append(...this.parseChildren(children));
+      return result;
     }
   }
   parseChildren(children: ModelNode[]): Node[] {
