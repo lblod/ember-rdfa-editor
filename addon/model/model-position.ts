@@ -454,7 +454,7 @@ export default class ModelPosition {
    */
   shiftedVisually(steps: number) {
     let stepsToShift = steps;
-    let currentPos: ModelPosition = this.shiftedBy(steps);
+    let currentPos: ModelPosition = this.clone();
     let searchRange: ModelRange;
     const forwards = steps > 0;
     const direction = forwards ? 1 : -1;
