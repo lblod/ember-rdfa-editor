@@ -44,34 +44,3 @@ export default function renderFromSpec(
     return result;
   }
 }
-
-// export default function createModelFromSpec(
-//   componentSpec: InlineComponent,
-//   element: Node
-// ) {
-//   const model = new ModelInlineComponent(componentSpec);
-//   componentSpec.render()
-//   return model;
-// }
-
-export function extractChild(
-  spec: RenderSpec,
-  element: ChildNode
-): Node | null {
-  if (spec === SLOT) {
-    return element;
-  } else if (!(typeof spec === 'string')) {
-    let result: Node | null = null;
-    if (spec.children) {
-      spec.children.forEach((child, i) => {
-        result = extractChild(child, element.childNodes[i]);
-        if (result) {
-          return;
-        }
-      });
-    }
-
-    return result;
-  }
-  return null;
-}
