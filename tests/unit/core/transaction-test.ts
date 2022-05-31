@@ -199,10 +199,14 @@ module('Unit | core | transaction-test', function () {
         `;
       const initialState = testState({ document: initial });
       const tr = initialState.createTransaction();
-      tr.unwrap(n0);
-      tr.unwrap(n1);
-      tr.unwrap(n2);
-      tr.unwrap(n3);
+      const n0c = tr.inWorkingCopy(n0);
+      const n1c = tr.inWorkingCopy(n1);
+      const n2c = tr.inWorkingCopy(n2);
+      const n3c = tr.inWorkingCopy(n3);
+      tr.unwrap(n0c);
+      tr.unwrap(n1c);
+      tr.unwrap(n2c);
+      tr.unwrap(n3c);
 
       const result = tr.apply().document;
       assert.true(result.sameAs(expected));

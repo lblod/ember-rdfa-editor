@@ -311,6 +311,7 @@ export default class Transaction {
 
   /**
    * Replaces the element by its children. Returns a range containing the unwrapped children
+   * TODO while it works, this interface doesn't work intuitively with the immutable style
    * @param element
    * @param ensureBlock ensure the unwrapped children are rendered as a block by surrounding them with br elements when necessary
    */

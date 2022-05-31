@@ -31,12 +31,15 @@ export default class RemoveListCommand
       throw new MisbehavedSelectionError();
     }
     const tr = state.createTransaction();
+    const clonedRange = tr.cloneRange(range);
 
-    const endLis = range.end.findAncestors(ModelNodeUtils.isListElement);
+    const endLis = clonedRange.end.findAncestors(ModelNodeUtils.isListElement);
     const highestEndLi = endLis[endLis.length - 1];
     const lowestEndLi = endLis[0];
 
-    const startLis = range.start.findAncestors(ModelNodeUtils.isListElement);
+    const startLis = clonedRange.start.findAncestors(
+      ModelNodeUtils.isListElement
+    );
     const highestStartLi = startLis[startLis.length - 1];
     const lowestStartLi = startLis[0];
 
@@ -44,8 +47,9 @@ export default class RemoveListCommand
     // If position is inside a list, this is the grandparent of the highest li
     // (so that the parent ul will still get split).
     // If position is not in a list, we shouldn't split at all, so take the parent of the position.
-    const endLimit = highestEndLi?.parent?.parent ?? range.end.parent;
-    const startLimit = highestStartLi?.parent?.parent ?? range.start.parent;
+    const endLimit = highestEndLi?.parent?.parent ?? clonedRange.end.parent;
+    const startLimit =
+      highestStartLi?.parent?.parent ?? clonedRange.start.parent;
 
     // Position to start splitting.
     // If inside of a list, take the position before or after the lowest li
@@ -54,10 +58,10 @@ export default class RemoveListCommand
     // In combination with the limit above this will cause us not to split.
     const endSplit = lowestEndLi
       ? ModelPosition.fromAfterNode(lowestEndLi)
-      : range.end;
+      : clonedRange.end;
     const startSplit = lowestStartLi
       ? ModelPosition.fromBeforeNode(lowestStartLi)
-      : range.start;
+      : clonedRange.start;
 
     // Split the surrounding lists, such that everything before and after the original range
     // remains a valid list with the same structure.
