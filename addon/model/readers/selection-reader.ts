@@ -122,11 +122,7 @@ export default class SelectionReader
   ): ModelPosition {
     if (isTextNode(container) && ModelNode.isModelText(modelNode)) {
       return ModelPosition.fromInTextNode(modelNode, domOffset);
-    } else if (
-      isElement(container) &&
-      (ModelNode.isModelElement(modelNode) ||
-        ModelNode.isModelInlineComponent(modelNode))
-    ) {
+    } else if (isElement(container) && ModelNode.isModelElement(modelNode)) {
       if (modelNode.children.length) {
         return ModelPosition.fromInElement(
           modelNode,
@@ -148,6 +144,8 @@ export default class SelectionReader
           throw new NotImplementedError();
         }
       }
+    } else if (ModelNode.isModelInlineComponent(modelNode)) {
+      return ModelPosition.fromBeforeNode(modelNode);
     } else {
       throw new NotImplementedError('impossible selection');
     }

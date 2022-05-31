@@ -49,7 +49,7 @@ export class ModelInlineComponent<A extends Properties> extends ModelElement {
   private _props: A;
 
   constructor(spec: InlineComponent, props: A) {
-    super();
+    super(spec.tag);
     this._spec = spec;
     this._props = props;
   }

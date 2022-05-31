@@ -3,6 +3,7 @@ import {
   Properties,
 } from '../model/inline-components/model-inline-component';
 import Model from '../model/model';
+import ModelElement from '../model/model-element';
 import ModelSelection from '../model/model-selection';
 import { MisbehavedSelectionError, ModelError } from '../utils/errors';
 import { logExecute } from '../utils/logging-utils';
@@ -33,7 +34,8 @@ export default class InsertComponentCommand extends Command {
     if (componentSpec) {
       const component = new ModelInlineComponent(componentSpec, props);
       this.model.change((mutator) => {
-        mutator.insertNodes(selection.lastRange, component);
+        const newRange = mutator.insertNodes(selection.lastRange, component);
+        mutator.insertNodes(newRange, new ModelElement('br'));
       });
     } else {
       throw new ModelError(`Unrecognized component: ${componentName}`);
