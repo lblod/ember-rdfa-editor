@@ -1,13 +1,10 @@
-import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import UnindentListCommand from '@lblod/ember-rdfa-editor/commands/unindent-list-command';
-import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
-module('Unit | commands | unindent-list-command-test', function (hooks) {
+module('Unit | commands | unindent-list-command-test', function () {
   const command = new UnindentListCommand();
   const executeCommand = makeTestExecute(command);
 
@@ -83,7 +80,6 @@ module('Unit | commands | unindent-list-command-test', function (hooks) {
       ModelRange.fromInTextNode(content21, 2, 2)
     );
     const { resultState } = executeCommand(initialState, {});
-    console.log(resultState.document.toXml());
 
     assert.true(resultState.document.sameAs(expected));
   });

@@ -1,5 +1,5 @@
 import Command, {
-    CommandContext
+  CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
@@ -7,10 +7,10 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
 import {
-    IllegalExecutionStateError,
-    MisbehavedSelectionError,
-    SelectionError,
-    TypeAssertionError
+  IllegalExecutionStateError,
+  MisbehavedSelectionError,
+  SelectionError,
+  TypeAssertionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelPosition from '../model/model-position';
@@ -59,12 +59,14 @@ export default class UnindentListCommand
     { state, dispatch }: CommandContext,
     { range = state.selection.lastRange }: UnindentListCommandArgs
   ): void {
+    const tr = state.createTransaction();
     if (!range) {
       throw new MisbehavedSelectionError();
     }
+    const cloneRange = tr.cloneRange(range);
 
     const treeWalker = ModelRangeUtils.findModelNodes(
-      range,
+      cloneRange,
       ModelNodeUtils.isListElement
     );
     const elements: ModelElement[] = [];
@@ -81,7 +83,6 @@ export default class UnindentListCommand
       throw new SelectionError('The selection is not inside a list');
     }
 
-    const tr = state.createTransaction();
     // Get the shallowest common ancestors.
     const lisToShift = this.relatedChunks(elements);
     if (lisToShift) {

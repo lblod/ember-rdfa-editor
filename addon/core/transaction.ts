@@ -290,7 +290,11 @@ export default class Transaction {
     return this.executeOperation(op);
   }
   cloneRange(range: ModelRange): ModelRange {
-    return range.clone(this.workingCopy.document);
+    if (range.root !== this.workingCopy.document) {
+      return range.clone(this.workingCopy.document);
+    } else {
+      return range;
+    }
   }
   clonePos(pos: ModelPosition): ModelPosition {
     return pos.clone(this.workingCopy.document);
