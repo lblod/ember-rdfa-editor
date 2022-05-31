@@ -620,6 +620,9 @@ export function domPosToModelPos(
   } else if (ModelNode.isModelElement(cur)) {
     if (cur.children.length > offset) {
       offsetPath.push(cur.children[offset].getOffset());
+    } else if (offset === cur.children.length) {
+      const last = cur.children[cur.children.length - 1];
+      offsetPath.push(last.getOffset() + last.offsetSize);
     }
   }
 
