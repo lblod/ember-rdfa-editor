@@ -31,6 +31,7 @@ import RemoveTableColumnCommand from '../commands/remove-table-column-command';
 import RemoveTableRowCommand from '../commands/remove-table-row-command';
 import UndoCommand from '../commands/undo-command';
 import UnindentListCommand from '../commands/unindent-list-command';
+import { defaultKeyMap, KeyMap } from '../input/keymap';
 import { InternalWidgetSpec, WidgetLocation } from '../model/controller';
 import { highlightMarkSpec } from '../model/mark';
 import MarksRegistry from '../model/marks-registry';
@@ -54,6 +55,7 @@ export interface StateArgs {
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]>;
   pathFromDomRoot: Node[];
   baseIRI: string;
+  keymap?: KeyMap;
 }
 export interface NodeParseResult {
   type: 'mark' | 'text' | 'element';
@@ -70,6 +72,7 @@ export default interface State {
   datastore: Datastore;
   pathFromDomRoot: Node[];
   baseIRI: string;
+  keymap: KeyMap;
   createTransaction(): Transaction;
   parseNode(node: Node): NodeParseResult;
 }
@@ -84,6 +87,7 @@ export class SayState implements State {
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]>;
   pathFromDomRoot: Node[];
   baseIRI: string;
+  keymap: KeyMap;
   constructor(args: StateArgs) {
     const { previousState = null } = args;
     this.document = args.document;
@@ -101,6 +105,7 @@ export class SayState implements State {
     this.widgetMap = args.widgetMap;
     this.pathFromDomRoot = args.pathFromDomRoot;
     this.baseIRI = args.baseIRI;
+    this.keymap = args.keymap ?? defaultKeyMap;
   }
   createTransaction(): Transaction {
     return new Transaction(this);
@@ -167,6 +172,7 @@ export function emptyState(): State {
     datastore: EditorStore.empty(),
     pathFromDomRoot: [],
     baseIRI: 'http://example.org',
+    keymap: defaultKeyMap,
   });
 }
 
@@ -183,5 +189,6 @@ export function cloneState(state: State): State {
     widgetMap: state.widgetMap,
     datastore: state.datastore,
     pathFromDomRoot: state.pathFromDomRoot,
+    keymap: state.keymap,
   });
 }

@@ -1,3 +1,4 @@
+import { KeyEvent } from '@ember/test-helpers/dom/trigger-key-event';
 import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import { handleBasicStyle } from '@lblod/ember-rdfa-editor/input/format';
@@ -7,6 +8,7 @@ import {
   handleInsertListItem,
   handleInsertText,
 } from '@lblod/ember-rdfa-editor/input/insert';
+import { mapKeyEvent } from '@lblod/ember-rdfa-editor/input/keymap';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
@@ -22,8 +24,15 @@ export class EditorInputHandler implements InputHandler {
   constructor(editor: Editor) {
     this.editor = editor;
   }
+  keydown(event: KeyboardEvent) {
+    mapKeyEvent(this.editor, event);
+  }
+  dragstart(event: DragEvent) {}
 
-  afterInput(event: InputEvent): void {}
+  afterInput(event: InputEvent): void {
+    switch (event.inputType) {
+    }
+  }
 
   beforeInput(event: InputEvent): void {
     console.log('handling beforeInput with type', event.inputType);
@@ -32,6 +41,7 @@ export class EditorInputHandler implements InputHandler {
         handleInsertText(this.editor, event);
         break;
       case 'insertReplacementText':
+        handleInsertText(this.editor, event);
         break;
       case 'insertLineBreak':
         handleInsertLineBreak(this.editor, event);
