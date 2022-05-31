@@ -1,15 +1,12 @@
-import xmlFormat from 'xml-formatter';
-import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
+import { EditorController } from '@lblod/ember-rdfa-editor/model/controller';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 import {
   AnyEventName,
   EditorEventListener,
   ListenerConfig,
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
-import {
-  EditorController,
-  RawEditorController,
-} from '@lblod/ember-rdfa-editor/model/controller';
+import xmlFormat from 'xml-formatter';
 
 /**
  * Legacy interface for external consumers. They expect to receive this interface
@@ -54,12 +51,9 @@ export default class RdfaDocumentController
   implements RdfaDocument
 {
   get htmlContent() {
-    // const htmlWriter = new HTMLExportWriter(this._editor.);
-    // const output = htmlWriter.write(
-    //   this._rawEditor.model.rootModelNode
-    // ) as HTMLElement;
-    // return output.innerHTML;
-    return '';
+    const htmlWriter = new HTMLExportWriter();
+    const output = htmlWriter.write(this._editor.state.document) as HTMLElement;
+    return output.innerHTML;
   }
 
   set htmlContent(html: string) {
@@ -69,17 +63,17 @@ export default class RdfaDocumentController
   }
 
   get xmlContent() {
-    return (this._rawEditor.model.toXml() as Element).innerHTML;
+    return (this._editor.state.document.toXml() as Element).innerHTML;
   }
 
   set xmlContent(xml: string) {
-    const root = this._rawEditor.model.rootModelNode;
+    const root = this._editor.state.document;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
-    this._rawEditor.executeCommand('insert-xml', xml, range);
+    this.executeCommand('insert-xml', { xml, range });
   }
 
   get xmlContentPrettified() {
-    const root = this._rawEditor.model.toXml() as Element;
+    const root = this._editor.state.document.toXml() as Element;
     let result = '';
     for (const child of root.childNodes) {
       let formatted;
@@ -101,10 +95,10 @@ export default class RdfaDocumentController
   }
 
   on<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>) {
-    this._rawEditor.on(eventName, callback);
+    this.on(eventName, callback);
   }
 
   off<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>) {
-    this._rawEditor.off(eventName, callback);
+    this.off(eventName, callback);
   }
 }

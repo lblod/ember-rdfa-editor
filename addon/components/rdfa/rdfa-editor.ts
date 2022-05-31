@@ -5,22 +5,18 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import Controller, {
-    EditorController,
+  EditorController,
   InternalWidgetSpec,
-  RawEditorController,
 } from '@lblod/ember-rdfa-editor/model/controller';
 import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
 import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import type IntlService from 'ember-intl/services/intl';
-import {
-  default as RdfaDocumentController,
-} from '../../utils/rdfa/rdfa-document';
+import { default as RdfaDocumentController } from '../../utils/rdfa/rdfa-document';
 
 interface RdfaEditorArgs {
   /**
@@ -95,7 +91,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  async handleRawEditorInit(editor: Editor) {
+  handleRawEditorInit(editor: Editor) {
     this.editor = editor;
     // await this.initializePlugins(editor);
     // this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
@@ -129,8 +125,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @action
   toggleRdfaBlocks() {
     this.showRdfaBlocks = !this.showRdfaBlocks;
-    if (this.editor?.model) {
-      this.editor.model.writeSelection();
-    }
+    // if (this.editor?.model) {
+    //   this.editor.model.writeSelection();
+    // }
   }
 }

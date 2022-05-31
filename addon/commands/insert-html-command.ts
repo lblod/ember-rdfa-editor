@@ -1,9 +1,10 @@
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import HtmlReader, { HtmlReaderContext } from '@lblod/ember-rdfa-editor/model/readers/html-reader';
+import HtmlReader, {
+  HtmlReaderContext,
+} from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import ModelRange from '../model/model-range';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 export interface InsertHtmlCommandArgs {
@@ -37,10 +38,13 @@ export default class InsertHtmlCommand
     // dom NodeList doesn't have a map method
     const modelNodes: ModelNode[] = [];
     bodyContent.forEach((node) => {
-      const parsed = reader.read(node, new HtmlReaderContext({
-        marksRegistry: state.marksRegistry,
-        shouldConvertWhitespace: true
-      }));
+      const parsed = reader.read(
+        node,
+        new HtmlReaderContext({
+          marksRegistry: state.marksRegistry,
+          shouldConvertWhitespace: true,
+        })
+      );
       if (parsed) {
         modelNodes.push(...parsed);
       }

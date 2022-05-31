@@ -518,10 +518,6 @@ export function getWindowSelection(): Selection {
 
   return selection;
 }
-interface Inclusiveness {
-  includeFrom?: boolean;
-  includeTo?: boolean;
-}
 
 export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
   const path = [];
@@ -631,7 +627,7 @@ export function domPosToModelPos(
   return ModelPosition.fromPath(state.document, offsetPath);
 }
 function domNodeFromPath(
-  state: State,
+  _state: State,
   path: number[],
   root: Element,
   endsInText: boolean

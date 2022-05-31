@@ -32,6 +32,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/match-text';
 import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
 import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
+import { GraphyDataset } from './graphy-dataset';
 
 interface TermNodesResponse {
   nodes: Set<ModelNode>;
@@ -227,6 +228,27 @@ export class EditorStore implements Datastore {
     this._nodeToObjects = nodeToObjects;
     this._objectToNodes = objectToNodes;
     this._quadToNodes = quadToNodes;
+  }
+  static empty(): Datastore {
+    const subjectToNodes = new Map<string, ModelNode[]>();
+    const nodeToSubject = new Map<ModelNode, ModelQuadSubject>();
+    const prefixMapping = new Map<string, string>();
+    const nodeToPredicates = new Map<ModelNode, Set<ModelQuadPredicate>>();
+    const predicateToNodes = new Map<string, ModelNode[]>();
+    const nodeToObjects = new Map<ModelNode, Set<ModelQuadObject>>();
+    const objectToNodes = new Map<string, ModelNode[]>();
+    const quadToNodes = new Map<string, QuadNodes>();
+    return new EditorStore({
+      dataset: new GraphyDataset(),
+      subjectToNodes,
+      nodeToObjects,
+      prefixMapping,
+      nodeToPredicates,
+      nodeToSubject,
+      quadToNodes,
+      objectToNodes,
+      predicateToNodes,
+    });
   }
 
   static fromParse(config: RdfaParseConfig): Datastore {

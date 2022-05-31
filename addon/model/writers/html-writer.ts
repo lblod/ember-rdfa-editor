@@ -10,7 +10,6 @@ import {
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
-import { LUMP_NODE_PROPERTY } from '../util/constants';
 import { isTextOrElement, TextOrElement } from '../util/types';
 import HtmlAdjacentTextWriter from './html-adjacent-text-writer';
 type Difference = 'type' | 'tag' | 'attrs' | 'content' | 'none';
@@ -81,7 +80,10 @@ export default class HtmlWriter {
       if (parsedNode.childNodes.length !== domNode.childNodes.length) {
         return 'content';
       } else if (
-        !this.areDomAttributesSame(parsedNode.attributes, domNode.attributes)
+        !this.areDomAttributesSame(
+          parsedNode.attributes,
+          (domNode as Element).attributes
+        )
       ) {
         return 'attrs';
       }

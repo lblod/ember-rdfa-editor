@@ -1,6 +1,5 @@
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 
 const INTERNAL_ATTRIBUTES = [
   'data-editor-highlight',
@@ -12,8 +11,6 @@ const INTERNAL_ATTRIBUTES = [
 export default class UnpollutedHtmlElementWriter
   implements Writer<ModelElement, HTMLElement>
 {
-  constructor(private model: Model) {}
-
   write(modelNode: ModelElement): HTMLElement {
     const result = document.createElement(modelNode.type);
 

@@ -2,7 +2,11 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { createEditor, Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
-import { CopyEvent, CutEvent, PasteEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
+import {
+  CopyEvent,
+  CutEvent,
+  PasteEvent,
+} from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { EditorInputHandler } from './input-handler';
 import SidewayArrowsHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/sideway-arrows-handler';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
@@ -49,9 +53,9 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   inputHandler: EditorInputHandler | null = null;
 
   @action
-  afterSelectionChange(event: Event) {
+  afterSelectionChange() {
     if (this.inputHandler) {
-      this.inputHandler.afterSelectionChange(event);
+      this.inputHandler.afterSelectionChange();
     }
   }
 
@@ -62,22 +66,14 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     }
   }
   @action
-  paste(event: PasteEvent) {
-
-  }
+  paste(event: PasteEvent) {}
   @action
-  cut(event: CutEvent) {
-
-  }
+  cut(event: CutEvent) {}
   @action
-  copy(event: CopyEvent) {
-
-  }
+  copy(event: CopyEvent) {}
 
   @action
-  dragstart(event: DragEvent) {
-
-  }
+  dragstart(event: DragEvent) {}
 
   /**
    * "didRender" hook: Makes sure the element is focused and calls the rootNodeUpdated action.
@@ -85,10 +81,10 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    * @method insertedEditorElement
    */
   @action
-  insertedEditorElement(element: HTMLElement) {
+  async insertedEditorElement(element: HTMLElement) {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     document.addEventListener('selectionchange', this.afterSelectionChange);
-    this.editor = createEditor({
+    this.editor = await createEditor({
       domRoot: element,
       plugins: [],
     });

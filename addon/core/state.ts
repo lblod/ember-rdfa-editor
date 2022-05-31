@@ -5,7 +5,7 @@ import {
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import { InitializedPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import AddMarkToRangeCommand from '../commands/add-mark-to-range-command';
 import AddMarkToSelectionCommand from '../commands/add-mark-to-selection-command';
 import DeleteSelectionCommand from '../commands/delete-selection-command';
@@ -31,8 +31,10 @@ import RemoveTableColumnCommand from '../commands/remove-table-column-command';
 import RemoveTableRowCommand from '../commands/remove-table-row-command';
 import UndoCommand from '../commands/undo-command';
 import UnindentListCommand from '../commands/unindent-list-command';
+import { InternalWidgetSpec, WidgetLocation } from '../model/controller';
 import { highlightMarkSpec } from '../model/mark';
 import MarksRegistry from '../model/marks-registry';
+import Datastore, { EditorStore } from '../model/util/datastore/datastore';
 import { boldMarkSpec } from '../plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '../plugins/basic-styles/marks/italic';
 import { strikethroughMarkSpec } from '../plugins/basic-styles/marks/strikethrough';
@@ -44,10 +46,14 @@ import Transaction from './transaction';
 export interface StateArgs {
   document: ModelElement;
   selection: ModelSelection;
-  plugins: EditorPlugin[];
-  commands: Record<CommandName, CommandMap[CommandName]>;
+  plugins: InitializedPlugin[];
+  commands: CommandMap;
   marksRegistry: MarksRegistry;
   previousState?: State | null;
+  datastore: Datastore;
+  widgetMap: Map<WidgetLocation, InternalWidgetSpec[]>;
+  pathFromDomRoot: Node[];
+  baseIRI: string;
 }
 export interface NodeParseResult {
   type: 'mark' | 'text' | 'element';
@@ -56,20 +62,28 @@ export interface NodeParseResult {
 export default interface State {
   document: ModelElement;
   selection: ModelSelection;
-  plugins: EditorPlugin[];
-  commands: Record<CommandName, CommandMap[CommandName]>;
+  plugins: InitializedPlugin[];
+  commands: CommandMap;
   marksRegistry: MarksRegistry;
   previousState: State | null;
+  widgetMap: Map<WidgetLocation, InternalWidgetSpec[]>;
+  datastore: Datastore;
+  pathFromDomRoot: Node[];
+  baseIRI: string;
   createTransaction(): Transaction;
   parseNode(node: Node): NodeParseResult;
 }
 export class SayState implements State {
   document: ModelElement;
   selection: ModelSelection;
-  plugins: EditorPlugin[];
-  commands: Record<CommandName, CommandMap[CommandName]>;
+  plugins: InitializedPlugin[];
+  commands: CommandMap;
+  datastore: Datastore;
   marksRegistry: MarksRegistry;
   previousState: State | null;
+  widgetMap: Map<WidgetLocation, InternalWidgetSpec[]>;
+  pathFromDomRoot: Node[];
+  baseIRI: string;
   constructor(args: StateArgs) {
     const { previousState = null } = args;
     this.document = args.document;
@@ -83,6 +97,10 @@ export class SayState implements State {
     this.marksRegistry.registerMark(underlineMarkSpec);
     this.marksRegistry.registerMark(strikethroughMarkSpec);
     this.marksRegistry.registerMark(highlightMarkSpec);
+    this.datastore = args.datastore;
+    this.widgetMap = args.widgetMap;
+    this.pathFromDomRoot = args.pathFromDomRoot;
+    this.baseIRI = args.baseIRI;
   }
   createTransaction(): Transaction {
     return new Transaction(this);
@@ -101,10 +119,7 @@ export class SayState implements State {
   }
 }
 
-export function defaultCommands(): Record<
-  CommandName,
-  CommandMap[CommandName]
-> {
+export function defaultCommands(): CommandMap {
   return {
     'add-mark-to-range': new AddMarkToRangeCommand(),
     'add-mark-to-selection': new AddMarkToSelectionCommand(),
@@ -134,6 +149,12 @@ export function defaultCommands(): Record<
     'unindent-list': new UnindentListCommand(),
   };
 }
+export type CommandReturn<C extends CommandName> = ReturnType<
+  CommandMap[C]['execute']
+>;
+export type CommandArgs<C extends CommandName> = Parameters<
+  CommandMap[C]['execute']
+>[1];
 
 export function emptyState(): State {
   return new SayState({
@@ -142,6 +163,10 @@ export function emptyState(): State {
     plugins: [],
     commands: defaultCommands(),
     marksRegistry: new MarksRegistry(),
+    widgetMap: new Map<WidgetLocation, InternalWidgetSpec[]>(),
+    datastore: EditorStore.empty(),
+    pathFromDomRoot: [],
+    baseIRI: 'http://example.org',
   });
 }
 
@@ -155,5 +180,8 @@ export function cloneState(state: State): State {
     commands: state.commands,
     selection: selectionClone,
     previousState: state.previousState,
+    widgetMap: state.widgetMap,
+    datastore: state.datastore,
+    pathFromDomRoot: state.pathFromDomRoot,
   });
 }

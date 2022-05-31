@@ -3,7 +3,7 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import { stateWithRange, testState } from 'dummy/tests/test-utils';
+import { testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
 module('Unit | core | transaction-test', function () {

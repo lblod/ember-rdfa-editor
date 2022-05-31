@@ -52,7 +52,7 @@ export type CommandMap = {
   'remove-marks-from-ranges': RemoveMarksFromRangesCommand;
   'remove-table-column': RemoveTableColumnCommand;
   'remove-table-row': RemoveTableRowCommand;
-  'undo': UndoCommand;
+  undo: UndoCommand;
   'unindent-list': UnindentListCommand;
 };
 export type CommandName = keyof CommandMap;

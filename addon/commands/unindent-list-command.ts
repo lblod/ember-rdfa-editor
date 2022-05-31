@@ -24,7 +24,7 @@ export default class UnindentListCommand
   name = 'unindent-list';
 
   canExecute(
-    { state, dispatch }: CommandContext,
+    { state }: CommandContext,
     { range = state.selection.lastRange }
   ): boolean {
     if (!range) {

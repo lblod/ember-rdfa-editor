@@ -9,7 +9,7 @@ import RangeMapper from '../model/range-mapper';
 import HtmlReader, { HtmlReaderContext } from '../model/readers/html-reader';
 import SelectionReader from '../model/readers/selection-reader';
 import { getWindowSelection } from '../utils/dom-helpers';
-import { EditorPlugin } from '../utils/editor-plugin';
+import { InitializedPlugin } from '../utils/editor-plugin';
 import { NotImplementedError } from '../utils/errors';
 import { View } from './view';
 import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
@@ -18,6 +18,7 @@ import MarkOperation from '../model/operations/mark-operation';
 import ModelPosition from '../model/model-position';
 import SplitOperation from '../model/operations/split-operation';
 import MoveOperation from '../model/operations/move-operation';
+import { EditorStore } from '../model/util/datastore/datastore';
 
 interface TextInsertion {
   range: ModelRange;
@@ -40,8 +41,14 @@ export default class Transaction {
     this.rangeMapper = new RangeMapper();
   }
 
-  setPlugins(plugins: EditorPlugin[]): void {
+  setPlugins(plugins: InitializedPlugin[]): void {
     this.workingCopy.plugins = plugins;
+  }
+  setBaseIRI(iri: string): void {
+    this.workingCopy.baseIRI = iri;
+  }
+  setPathFromDomRoot(path: Node[]) {
+    this.workingCopy.pathFromDomRoot = path;
   }
 
   addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
@@ -83,6 +90,17 @@ export default class Transaction {
   }
 
   apply(): State {
+    if (
+      this.initialState.baseIRI !== this.workingCopy.baseIRI ||
+      this.initialState.pathFromDomRoot !== this.workingCopy.pathFromDomRoot ||
+      this.workingCopy !== this.initialState
+    ) {
+      this.workingCopy.datastore = EditorStore.fromParse({
+        modelRoot: this.workingCopy.document,
+        baseIRI: this.workingCopy.baseIRI,
+        pathFromDomRoot: this.workingCopy.pathFromDomRoot,
+      });
+    }
     return this.workingCopy;
   }
 
@@ -141,7 +159,7 @@ export default class Transaction {
     return newNode;
   }
   private executeOperation(op: Operation): ModelRange {
-    const { defaultRange, mapper } = op.execute();
+    const { defaultRange } = op.execute();
     // this.mapper.appendMapper(mapper);
     return defaultRange;
   }

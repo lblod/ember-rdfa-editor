@@ -1,5 +1,4 @@
 import Command, { CommandContext } from './command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import {
   MisbehavedSelectionError,
   SelectionError,
