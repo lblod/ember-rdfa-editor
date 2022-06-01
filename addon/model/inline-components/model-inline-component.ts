@@ -69,15 +69,18 @@ export abstract class InlineComponentSpec {
   }
 }
 
-export class ModelInlineComponent<A extends Properties> extends ModelElement {
+export class ModelInlineComponent<
+  A extends Properties = Properties,
+  S extends State = State
+> extends ModelElement {
   modelNodeType: ModelNodeType = 'INLINE-COMPONENT';
   private _spec: InlineComponentSpec;
   private _props: A;
 
   @tracked
-  private _state: State;
+  private _state: S;
 
-  constructor(spec: InlineComponentSpec, props: A, state: State = {}) {
+  constructor(spec: InlineComponentSpec, props: A, state: S) {
     super(spec.tag);
     this._spec = spec;
     this._props = props;
@@ -92,11 +95,11 @@ export class ModelInlineComponent<A extends Properties> extends ModelElement {
     return this._state;
   }
 
-  setStateProperty(property: string, value: Serializable) {
+  setStateProperty(property: keyof S, value: Serializable) {
     this._state = tracked({ ...this.state, [property]: value });
   }
 
-  getStateProperty(property: string) {
+  getStateProperty(property: keyof S) {
     if (property in this.state) {
       return this.state[property];
     } else {

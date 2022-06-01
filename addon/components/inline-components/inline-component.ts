@@ -2,17 +2,19 @@ import Component from '@glimmer/component';
 import {
   ModelInlineComponent,
   Properties,
+  State,
 } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
 import { Serializable } from '@lblod/ember-rdfa-editor/model/util/render-spec';
 
-interface Args<A extends Properties> {
-  model: ModelInlineComponent<A>;
+interface Args<A extends Properties = Properties, S extends State = State> {
+  model: ModelInlineComponent<A, S>;
   node: HTMLElement;
 }
 
-export default class InlineComponent<A extends Properties> extends Component<
-  Args<A>
-> {
+export default class InlineComponent<
+  A extends Properties = Properties,
+  S extends State = State
+> extends Component<Args<A, S>> {
   get props() {
     return this.args.model.props;
   }
@@ -21,12 +23,12 @@ export default class InlineComponent<A extends Properties> extends Component<
     return this.args.model.state;
   }
 
-  setStateProperty(property: string, value: Serializable) {
+  setStateProperty(property: keyof S, value: Serializable) {
     this.args.model.setStateProperty(property, value);
     this.args.node.dataset['__state'] = JSON.stringify(this.args.model.state);
   }
 
-  getStateProperty(property: string) {
+  getStateProperty(property: keyof S) {
     return this.args.model.getStateProperty(property);
   }
 }

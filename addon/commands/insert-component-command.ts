@@ -1,6 +1,7 @@
 import {
   ModelInlineComponent,
   Properties,
+  State,
 } from '../model/inline-components/model-inline-component';
 import Model from '../model/model';
 import ModelElement from '../model/model-element';
@@ -24,6 +25,7 @@ export default class InsertComponentCommand extends Command {
   execute(
     componentName: string,
     props: Properties = {},
+    state: State = {},
     selection: ModelSelection = this.model.selection
   ): void {
     if (!ModelSelection.isWellBehaved(selection)) {
@@ -32,7 +34,7 @@ export default class InsertComponentCommand extends Command {
     const componentSpec =
       this.model.inlineComponentsRegistry.lookUpComponent(componentName);
     if (componentSpec) {
-      const component = new ModelInlineComponent(componentSpec, props);
+      const component = new ModelInlineComponent(componentSpec, props, state);
       this.model.change((mutator) => {
         const newRange = mutator.insertNodes(selection.lastRange, component);
         const brAfterComponent = new ModelElement('br');

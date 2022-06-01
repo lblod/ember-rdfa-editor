@@ -1,12 +1,14 @@
 import { action } from '@ember/object';
-import { Properties } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
+import {
+  ExampleProps,
+  ExampleState,
+} from '@lblod/ember-rdfa-editor/plugins/inline-components/specs/example';
 import InlineComponent from './inline-component';
 
-interface Props extends Properties {
-  title: string;
-  content: string;
-}
-export default class ExampleInlineComponent extends InlineComponent<Props> {
+export default class ExampleInlineComponent extends InlineComponent<
+  ExampleProps,
+  ExampleState
+> {
   @action
   click() {
     this.setStateProperty('contentVisible', !this.contentVisible);
