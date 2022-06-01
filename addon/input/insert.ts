@@ -7,20 +7,20 @@ export function handleInsertLineBreak(editor: Editor, event: InputEvent): void {
 }
 
 export function handleInsertText(editor: Editor, event: InputEvent): void {
-  event.preventDefault();
+  // event.preventDefault();
   editor.executeCommand(
     'insert-text',
     {
       range: eventTargetRange(editor.state, editor.view.domRoot, event),
       text: event.data || '',
     },
-    true
+    false
   );
 }
 export function handleInsertListItem(
   editor: Editor,
   event: InputEvent,
-  listType: 'ul' | 'ol'
+  _listType: 'ul' | 'ol'
 ) {
   event.preventDefault();
   editor.executeCommand(

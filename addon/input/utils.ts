@@ -4,7 +4,7 @@ import SelectionReader from '../model/readers/selection-reader';
 
 export function eventTargetRange(
   state: State,
-  viewRoot: HTMLElement,
+  viewRoot: Element,
   event: InputEvent
 ): ModelRange {
   const selectionReader = new SelectionReader();

@@ -26,12 +26,7 @@ export default class InsertTextCommand
   @logExecute
   execute(
     { dispatch, state }: CommandContext,
-    {
-      text,
-      marks = new MarkSet(),
-      range,
-      needsToWrite = true,
-    }: InsertTextCommandArgs
+    { text, marks = new MarkSet(), range }: InsertTextCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
@@ -69,7 +64,6 @@ export default class InsertTextCommand
     }
     resultRange.collapse(false);
     transaction.selectRange(resultRange);
-    transaction.needsToWrite = needsToWrite;
     dispatch(transaction);
   }
 }

@@ -8,7 +8,6 @@ import {
   PasteEvent,
 } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { EditorInputHandler } from './input-handler';
-import SidewayArrowsHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/sideway-arrows-handler';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 interface FeatureService {
