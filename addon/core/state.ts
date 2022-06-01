@@ -133,7 +133,7 @@ export function defaultCommands(): CommandMap {
     'insert-html': new InsertHtmlCommand(),
     'insert-newLi': new InsertNewLiCommand(),
     'insert-newLine': new InsertNewLineCommand(),
-    'insert-table-column-afer': new InsertTableColumnAfterCommand(),
+    'insert-table-column-after': new InsertTableColumnAfterCommand(),
     'insert-table-column-before': new InsertTableColumnBeforeCommand(),
     'insert-table': new InsertTableCommand(),
     'insert-table-row-above': new InsertTableRowAboveCommand(),
