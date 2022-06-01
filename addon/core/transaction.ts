@@ -26,6 +26,10 @@ interface TextInsertion {
   marks?: MarkSet;
 }
 
+/**
+ * This is the main way to produce a new state based on an initial state.
+ * As such, this class implements all editing primitives available.
+ * */
 export default class Transaction {
   initialState: State;
   private workingCopy: State;
@@ -35,6 +39,12 @@ export default class Transaction {
 
   constructor(state: State) {
     this.initialState = state;
+    /*
+     * Current implementation is heavily influenced by time and complexity constraints.
+     * By simply copying the state and then mutating the copy, most logic could be ported over verbatim.
+     * However this simplicity comes at a cost of awkward workarounds in certain situations,
+     * so is an immediate target for improvement later.
+     */
     this.workingCopy = cloneState(state);
     this.needsToWrite = false;
     this.operations = [];
@@ -63,6 +73,10 @@ export default class Transaction {
     return this.executeOperation(op);
   }
 
+  /**
+   * Build the new state from the viewstate (aka the DOM)
+   * Typically done as (one of) the first transaction upon loading the editor.
+   * */
   readFromView(view: View): void {
     const htmlReader = new HtmlReader();
     const context = new HtmlReaderContext({
@@ -89,6 +103,11 @@ export default class Transaction {
     this.createSnapshot();
   }
 
+  /**
+   * Produce the new state from the initial state.
+   * It is left to implementation details what this means,
+   * providing flexibility to implement batch-style editing or otherwise.
+   * */
   apply(): State {
     if (
       this.initialState.baseIRI !== this.workingCopy.baseIRI ||
@@ -178,10 +197,17 @@ export default class Transaction {
     }
     this.createSnapshot();
   }
+  /**
+   * Make a snapshot of the new state, meaning that it will be registered
+   * in the history and can be recalled later.
+   * */
   createSnapshot() {
     this.workingCopy.previousState = this.initialState;
     return this.initialState;
   }
+  /**
+   * Reset this transaction, discarding any changes made
+   * */
   rollback() {
     this.workingCopy = this.initialState;
     return this.workingCopy;
@@ -307,6 +333,11 @@ export default class Transaction {
     this.createSnapshot();
     return this.executeOperation(op);
   }
+  /**
+   * Clone a range and set its root in the new state.
+   * This is currently public to provide a workaround for various editing implementations
+   * which depended on stateful logic, but should eventually become private or dissapear
+   * */
   cloneRange(range: ModelRange): ModelRange {
     if (range.root !== this.workingCopy.document) {
       return range.clone(this.workingCopy.document);
@@ -314,9 +345,15 @@ export default class Transaction {
       return range;
     }
   }
+  /**
+   * Position version of @link{cloneRange}
+   * */
   clonePos(pos: ModelPosition): ModelPosition {
     return pos.clone(this.workingCopy.document);
   }
+  /**
+   * Selection version of @link{cloneRange}
+   * */
   cloneSelection(selection: ModelSelection): ModelSelection {
     return selection.clone(this.workingCopy.document);
   }
@@ -389,6 +426,10 @@ export default class Transaction {
     this.createSnapshot();
     return this.executeOperation(op);
   }
+  /**
+   * Restore a state from the history
+   * @param steps Amount of steps to look back
+   * */
   restoreSnapshot(steps: number) {
     let prev: State | null = this.initialState;
     let reverts = 0;
