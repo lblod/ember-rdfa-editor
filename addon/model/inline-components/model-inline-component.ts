@@ -3,7 +3,11 @@ import { tracked } from 'tracked-built-ins';
 import { DomNodeMatcher } from '../mark';
 import ModelElement from '../model-element';
 import { ModelNodeType } from '../model-node';
-import { AttributeSpec, Serializable } from '../util/render-spec';
+import renderFromSpec, {
+  AttributeSpec,
+  RenderSpec,
+  Serializable,
+} from '../util/render-spec';
 
 export type Properties = {
   [index: string]: Serializable | undefined;
@@ -12,7 +16,7 @@ export type Properties = {
 export type State = {
   [index: string]: Serializable;
 };
-export class InlineComponentSpec {
+export abstract class InlineComponentSpec {
   name: string;
   tag: keyof HTMLElementTagNameMap;
 
@@ -37,17 +41,31 @@ export class InlineComponentSpec {
     };
   }
 
-  render(props?: Properties, state?: State) {
-    const node = document.createElement(this.tag);
-    if (props) {
-      node.dataset['__props'] = JSON.stringify(props);
-    }
-    if (state) {
-      node.dataset['__state'] = JSON.stringify(state);
-    }
-    node.contentEditable = 'false';
-    node.classList.add('inline-component', this.name);
-    return node;
+  _renderDynamic(props?: Properties, state?: State): RenderSpec {
+    return {
+      tag: this.tag,
+      attributes: {
+        'data-__props': JSON.stringify(props),
+        'data-__state': JSON.stringify(state),
+        contenteditable: false,
+        class: `inline-component ${this.name}`,
+      },
+    };
+  }
+
+  abstract _renderStatic(props?: Properties, state?: State): RenderSpec;
+
+  render(props?: Properties, state?: State, dynamic = true): RenderSpec {
+    return {
+      tag: this.tag,
+      attributes: {
+        'data-__props': JSON.stringify(props),
+        'data-__state': JSON.stringify(state),
+        contenteditable: false,
+        class: `inline-component ${this.name}`,
+      },
+      children: dynamic ? undefined : [this._renderStatic(props, state)],
+    };
   }
 }
 
@@ -89,7 +107,7 @@ export class ModelInlineComponent<A extends Properties> extends ModelElement {
   get spec() {
     return this._spec;
   }
-  write(): Node {
-    return this.spec.render(this.props, this.state);
+  write(dynamic = true): Node {
+    return renderFromSpec(this.spec.render(this.props, this.state, dynamic))!;
   }
 }

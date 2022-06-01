@@ -13,6 +13,6 @@ export default class UnpollutedHtmlInlineComponentWriter
   private inlineComponentWriter = new HtmlInlineComponentWriter();
 
   write(modelNode: ModelInlineComponent<Properties>): Node {
-    return this.inlineComponentWriter.write(modelNode).viewRoot;
+    return this.inlineComponentWriter.write(modelNode, false).viewRoot;
   }
 }

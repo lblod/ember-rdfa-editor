@@ -17,8 +17,8 @@ export type RenderSpec = HtmlNodeSpec | string | SLOT;
 
 export default function renderFromSpec(
   spec: RenderSpec,
-  block: Node | null = null
-): Node | null {
+  block?: Node
+): Node | undefined {
   if (spec === SLOT) {
     return block;
   } else if (typeof spec === 'string') {
