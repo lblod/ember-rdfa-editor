@@ -11,10 +11,30 @@ import { mapKeyEvent } from '@lblod/ember-rdfa-editor/input/keymap';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
+/**
+ * Represents an object which collects all the various dom-events
+ * that are needed to respond to user input
+ * */
 export interface InputHandler {
+  keydown(event: KeyboardEvent): void;
+  dragstart(event: DragEvent): void;
+
+  /**
+   * Handles the (relatively) new "beforeinput" events as specified here:
+   * https://www.w3.org/TR/input-events-1/#events-inputevents
+   * There are fired _before_ the browser handles a user input and describe what the
+   * browser is planning to do in a much more descriptive way than handling bare keyboardevents
+   *
+   * Using these to capture input is always preferred if possible
+   * */
+  beforeInput(event: InputEvent): void;
   afterInput(event: InputEvent): void;
 
-  beforeInput(event: InputEvent): void;
+  /**
+   * Corresponds to the "selectionstart" event
+   * */
+  beforeSelectionChange(event: Event): void;
+  afterSelectionChange(event: Event): void;
 }
 
 export class EditorInputHandler implements InputHandler {
