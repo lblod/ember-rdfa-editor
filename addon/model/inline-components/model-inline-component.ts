@@ -1,21 +1,14 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import Handlebars from 'handlebars';
 import { tracked } from 'tracked-built-ins';
 import { DomNodeMatcher } from '../mark';
 import ModelElement from '../model-element';
 import { ModelNodeType } from '../model-node';
-import renderFromSpec, {
-  AttributeSpec,
-  RenderSpec,
-  Serializable,
-} from '../util/render-spec';
+import { AttributeSpec, RenderSpec, Serializable } from '../util/render-spec';
 
-export type Properties = {
-  [index: string]: Serializable | undefined;
-};
+export type Properties = Record<string, Serializable | undefined>;
 
-export type State = {
-  [index: string]: Serializable;
-};
+export type State = Record<string, Serializable>;
 export abstract class InlineComponentSpec {
   name: string;
   tag: keyof HTMLElementTagNameMap;
@@ -53,19 +46,23 @@ export abstract class InlineComponentSpec {
     };
   }
 
-  abstract _renderStatic(props?: Properties, state?: State): RenderSpec;
+  abstract _renderStatic(props?: Properties, state?: State): string;
 
-  render(props?: Properties, state?: State, dynamic = true): RenderSpec {
-    return {
-      tag: this.tag,
-      attributes: {
-        'data-__props': JSON.stringify(props),
-        'data-__state': JSON.stringify(state),
-        contenteditable: false,
-        class: `inline-component ${this.name}`,
-      },
-      children: dynamic ? undefined : [this._renderStatic(props, state)],
-    };
+  render(props?: Properties, state?: State, dynamic = true) {
+    const node = document.createElement(this.tag);
+    if (props) {
+      node.dataset['__props'] = JSON.stringify(props);
+    }
+    if (state) {
+      node.dataset['__state'] = JSON.stringify(state);
+    }
+    node.contentEditable = 'false';
+    node.classList.add('inline-component', this.name);
+    if (!dynamic) {
+      const template = Handlebars.compile(this._renderStatic(props, state));
+      node.innerHTML = template({});
+    }
+    return node;
   }
 }
 
@@ -111,6 +108,6 @@ export class ModelInlineComponent<
     return this._spec;
   }
   write(dynamic = true): Node {
-    return renderFromSpec(this.spec.render(this.props, this.state, dynamic))!;
+    return this.spec.render(this.props, this.state, dynamic);
   }
 }

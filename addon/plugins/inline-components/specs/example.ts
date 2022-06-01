@@ -14,16 +14,17 @@ export interface ExampleState extends State {
   contentVisible: boolean;
 }
 export default class ExampleSpec extends InlineComponentSpec {
+  _renderStatic(props?: ExampleProps, _state?: State): string {
+    const title = props?.title?.toString() || '';
+    const content = props?.content?.toString() || '';
+    return `
+      <div>
+        <h2>${title}</h2>
+        <p>${content}</p>
+      </div>
+    `;
+  }
   constructor() {
     super('inline-components/example-inline-component', 'span');
-  }
-  _renderStatic(props?: ExampleProps, _state?: State): RenderSpec {
-    return {
-      tag: 'div',
-      children: [
-        { tag: 'h2', children: [props?.title || ''] },
-        { tag: 'p', children: [props?.content || ''] },
-      ],
-    };
   }
 }

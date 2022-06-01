@@ -10,11 +10,13 @@ export interface CounterState extends State {
 }
 
 export default class CounterSpec extends InlineComponentSpec {
+  _renderStatic(_props?: Properties, state?: State): string {
+    const count = state?.count.toString() || '0';
+    return `
+      <p>${count}</p>
+    `;
+  }
   constructor() {
     super('inline-components/counter', 'span');
-  }
-  _renderStatic(_props?: Properties, state?: State): RenderSpec {
-    const count = state?.count.toString() || '0';
-    return { tag: 'p', children: [count] };
   }
 }

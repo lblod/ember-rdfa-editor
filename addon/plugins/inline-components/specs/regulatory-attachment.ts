@@ -6,10 +6,12 @@ import {
 import { RenderSpec } from '@lblod/ember-rdfa-editor/model/util/render-spec';
 
 export default class RegulatoryAttachmentSpec extends InlineComponentSpec {
+  _renderStatic(props?: Properties, state?: State): string {
+    return `
+      <p>Regulatory Attachment</p>
+    `;
+  }
   constructor() {
     super('inline-components/regulatory-attachment', 'span');
-  }
-  _renderStatic(_props?: Properties, _state?: State): RenderSpec {
-    return { tag: 'p', children: ['Regulatory Attachment'] };
   }
 }
