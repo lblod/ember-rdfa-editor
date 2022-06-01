@@ -8,7 +8,7 @@ import { AttributeSpec, RenderSpec, Serializable } from '../util/render-spec';
 
 export type Properties = Record<string, Serializable | undefined>;
 
-export type State = Record<string, Serializable>;
+export type State = Record<string, Serializable | undefined>;
 export abstract class InlineComponentSpec {
   name: string;
   tag: keyof HTMLElementTagNameMap;
