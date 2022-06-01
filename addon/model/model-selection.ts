@@ -299,6 +299,7 @@ export default class ModelSelection {
     const modelSelection = new ModelSelection();
     modelSelection.isRightToLeft = this._isRightToLeft;
     modelSelection.ranges = this.ranges.map((range) => range.clone(modelRoot));
+    modelSelection.activeMarks = this._activeMarks.clone();
 
     return modelSelection;
   }
