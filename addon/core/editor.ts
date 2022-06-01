@@ -27,32 +27,79 @@ export type Dispatcher = (view: View, updateView?: boolean) => Dispatch;
 export type Dispatch = (transaction: Transaction) => State;
 
 export interface EditorArgs {
+  /**
+   * The element the editor will render in
+   * */
   domRoot: HTMLElement;
+  /**
+   * The plugins that should be active from the start of the editor
+   * */
   plugins: EditorPlugin[];
+  /**
+   * A higher-order function returning a dispatch function, to be used in place of the default.
+   * Likely only needed for advanced usecases. The dispatch function takes in a transaction
+   * and is expected to update the editor state and if needed update the view.
+   * */
   dispatcher?: Dispatcher;
+  /**
+   * The base IRI used for all rdfa subjects that don't explicitly specify an absolute IRI.
+   * Will be inferred from the document if not provided.
+   * */
   baseIRI?: string;
 }
 
+/**
+ * The editor interface represents the outermost container. For every editable document on the page,
+ * there will be one Editor instance.
+ * */
 export interface Editor {
+  /**
+   * Represents the currently active state of the editor.
+   * */
   state: State;
   view: View;
 
+  /**
+   * Executes a {@link Command} by name. Command will recieve the editor's current state
+   * as part of its context argument.
+   * */
   executeCommand<C extends CommandName>(
     commandName: C,
     args: CommandArgs<C>,
     updateView?: boolean
   ): CommandReturn<C>;
+  /**
+   * Checks if the @{link Command} with name can be executed for the given args.
+   * */
   canExecuteCommand<N extends keyof CommandMap>(
     commandName: N,
     args: CommandArgs<N>
   ): boolean;
+  /**
+   * Low-level way to dispatch a given transaction.
+   * @argument tr The transaction to be dispatched
+   * @argument updateView Whether or not the view needs to be updated after updating the editor state.
+   * */
   dispatchTransaction(tr: Transaction, updateView?: boolean): void;
+  /**
+   * @deprecated
+   * Emits an event on the eventbus. This mechanism will be replaced (or at least mostly replaced) by a transaction-passing mechanism
+   * and is mainly provided for backwards compatibility
+   * */
   emitEvent<E extends AnyEventName>(event: EventWithName<E>): void;
+  /**
+   * @deprecated
+   * Register an event listener
+   * */
   onEvent<E extends AnyEventName>(
     eventName: E,
     callback: EditorEventListener<E>,
     config?: ListenerConfig
   );
+  /**
+   * @deprecated
+   * Unregister an event listener
+   * */
   offEvent<E extends AnyEventName>(
     eventName: E,
     callback: EditorEventListener<E>,
@@ -60,6 +107,9 @@ export interface Editor {
   );
 }
 
+/**
+ * Default implementation of the editor interface. Is a class for convenience and clearer `this` semantics.
+ * */
 class SayEditor implements Editor {
   private _state: State;
   view: View;
@@ -168,6 +218,11 @@ class SayEditor implements Editor {
     this.eventbus.off(eventName, callback, config);
   }
 }
+/**
+ * Before use, plugins need to be initialized, which provides them with the controller
+ * they need to interact with the editor. Since plugins often interact with backends,
+ * this is async.
+ * */
 async function initializePlugins(
   editor: Editor,
   plugins: EditorPlugin[]
@@ -182,6 +237,9 @@ async function initializePlugins(
   return result;
 }
 
+/**
+ * Creates an editor and initializes the initial plugins
+ * */
 export async function createEditor(args: EditorArgs): Promise<Editor> {
   const editor = new SayEditor(args);
   const initPlugins = await initializePlugins(editor, args.plugins);
