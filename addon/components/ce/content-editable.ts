@@ -7,7 +7,7 @@ import {
   CutEvent,
   PasteEvent,
 } from '@lblod/ember-rdfa-editor/utils/editor-event';
-import { EditorInputHandler } from './input-handler';
+import { EditorInputHandler } from '../../input/input-handler';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 interface FeatureService {
