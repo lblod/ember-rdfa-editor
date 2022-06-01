@@ -61,6 +61,14 @@ export interface NodeParseResult {
   type: 'mark' | 'text' | 'element';
 }
 
+/**
+ * This interface represents all state needed for the editor to draw itself.
+ * The main assumption is that this state is immutable, and is treated as being a simple value in all parts of the codebase.
+ * This immutability is not enforced because that would be costly to do in javascript.
+ * Performing editing actions, or changing any settings means creating a new state derived from the previous one,
+ * and setting it as the active editor state, and then updating the view if necessary.
+ * This is pretty much always done using a @link {Transaction}
+ * */
 export default interface State {
   document: ModelElement;
   selection: ModelSelection;
@@ -83,10 +91,24 @@ export class SayState implements State {
   commands: CommandMap;
   datastore: Datastore;
   marksRegistry: MarksRegistry;
+  /**
+   * The previous "relevant" state. This is not necessarily
+   * the state directly preceding this one. It is up to the discretion
+   * of the @link{Transaction} to determine whether a newly created state
+   * is relevant for the history or not.
+   * */
   previousState: State | null;
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]>;
+  /**
+   * The path from the root of the html document to the element that the editor
+   * renders in. This is used to be aware of rdfa-knowledge
+   * that is defined outside the editor element.
+   * */
   pathFromDomRoot: Node[];
   baseIRI: string;
+  /**
+   * A mapping of keycodes to their handler functions
+   * */
   keymap: KeyMap;
   constructor(args: StateArgs) {
     const { previousState = null } = args;
@@ -107,9 +129,17 @@ export class SayState implements State {
     this.baseIRI = args.baseIRI;
     this.keymap = args.keymap ?? defaultKeyMap;
   }
+  /**
+   * Create a new @link{Transaction} with this state as its initial state.
+   * */
   createTransaction(): Transaction {
     return new Transaction(this);
   }
+  /**
+   * Given the current state, determine how a certain html node
+   * would be interpreted. This is used for internal logic,
+   * and may become private or dissapear in the future.
+   * */
   parseNode(node: Node): NodeParseResult {
     const matchedMarks = this.marksRegistry.matchMarkSpec(node);
     if (matchedMarks.size) {
