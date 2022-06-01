@@ -3,7 +3,6 @@ import {
   Properties,
   State,
 } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
-import { RenderSpec } from '@lblod/ember-rdfa-editor/model/util/render-spec';
 
 export interface ExampleProps extends Properties {
   title: string;
