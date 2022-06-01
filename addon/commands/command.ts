@@ -28,6 +28,12 @@ import RemoveTableRowCommand from './remove-table-row-command';
 import UndoCommand from './undo-command';
 import UnindentListCommand from './unindent-list-command';
 
+/**
+ * A registry of all existing commands in type-space.
+ * TODO: figure out and document how plugins can extend this, refer to
+ * https://typed-ember.gitbook.io/glint/using-glint/ember/template-registry
+ * for an example of this pattern
+ * */
 export type CommandMap = {
   'add-mark-to-range': AddMarkToRangeCommand;
   'add-mark-to-selection': AddMarkToSelectionCommand;
@@ -64,6 +70,20 @@ export interface CommandContext {
   state: State;
 }
 
+/**
+ * Represents an editing action at the highest level, and are built on top of the @link{Transaction} primitive.
+ * You can think of it this way:
+ * if a series of edits made with transactions would be a private script,
+ * turning them into a command would be to turn that script into a real, published package
+ *
+ * Emacs users might also consider them "interactive" functions as opposed to non-interactive ones.
+ *
+ * Essentially commands are the answer to the question "Hey editor, what can you do?"
+ * Whereas transactions are the answer to the followup question "Ah but what if I wanted to do _this other thing_?"
+ *
+ * You may encounter commands that do not follow this logic, that's because commands predate
+ * this insight.
+ * */
 export default interface Command<A, R> {
   name: string;
 
