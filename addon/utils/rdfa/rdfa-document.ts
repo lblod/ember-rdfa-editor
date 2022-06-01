@@ -52,6 +52,7 @@ export default class RdfaDocumentController
 {
   get htmlContent() {
     const htmlWriter = new HTMLExportWriter(this._rawEditor.model);
+    this._rawEditor.model.read();
     const output = htmlWriter.write(
       this._rawEditor.model.rootModelNode
     ) as HTMLElement;
@@ -64,6 +65,10 @@ export default class RdfaDocumentController
     this._rawEditor.executeCommand('insert-html', html, range);
     this._rawEditor.selection.lastRange?.collapse(true);
     this._rawEditor.model.writeSelection();
+  }
+
+  get model() {
+    return this._rawEditor.model;
   }
 
   get xmlContent() {

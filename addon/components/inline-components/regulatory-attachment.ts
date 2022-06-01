@@ -1,6 +1,7 @@
-import Component from '@glimmer/component';
+import { Properties } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
+import InlineComponent from './inline-component';
 
-export default class InlineComponentsRegulatoryAttachment extends Component {
+export default class InlineComponentsRegulatoryAttachment extends InlineComponent<Properties> {
   get title() {
     return 'Example Regulatory Attachment';
   }

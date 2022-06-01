@@ -220,4 +220,12 @@ export default class EditorToolbar extends Component<Args> {
       props
     );
   }
+
+  @action
+  insertCounter() {
+    this.args.controller.executeCommand(
+      'insert-component',
+      'inline-components/counter'
+    );
+  }
 }

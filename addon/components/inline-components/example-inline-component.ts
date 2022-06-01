@@ -1,39 +1,25 @@
 import { action } from '@ember/object';
-import Component from '@glimmer/component';
-import {
-  ModelInlineComponent,
-  Properties,
-} from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
+import { Properties } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
+import InlineComponent from './inline-component';
 
 interface Props extends Properties {
   title: string;
   content: string;
 }
-interface Args {
-  model: ModelInlineComponent<Props>;
-}
-export default class ExampleInlineComponent extends Component<Args> {
-  // @tracked contentVisible = false;
-
+export default class ExampleInlineComponent extends InlineComponent<Props> {
   @action
   click() {
-    this.model.setStateProperty('contentVisible', !this.contentVisible);
-    console.log('click');
+    this.setStateProperty('contentVisible', !this.contentVisible);
   }
 
   get contentVisible() {
-    return this.model.getStateProperty('contentVisible') || false;
+    return this.getStateProperty('contentVisible') || false;
   }
-
-  get model() {
-    return this.args.model;
-  }
-
   get title() {
-    return this.model.props.title;
+    return this.props.title;
   }
 
   get content() {
-    return this.model.props.content;
+    return this.props.content;
   }
 }

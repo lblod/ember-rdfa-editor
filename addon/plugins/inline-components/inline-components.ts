@@ -18,5 +18,9 @@ export default class InlineComponents implements EditorPlugin {
     controller.registerInlineComponent(
       new InlineComponentSpec('inline-components/regulatory-attachment', 'span')
     );
+
+    controller.registerInlineComponent(
+      new InlineComponentSpec('inline-components/counter', 'span')
+    );
   }
 }

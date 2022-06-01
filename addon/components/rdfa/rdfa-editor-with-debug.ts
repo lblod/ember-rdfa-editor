@@ -168,7 +168,10 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
 
   saveEditorContentToLocalStorage() {
     if (this.rdfaEditor) {
-      localStorage.setItem('EDITOR_CONTENT', this.rdfaEditor.htmlContent);
+      this.rdfaEditor.localStorage.setItem(
+        'EDITOR_CONTENT',
+        this.rdfaEditor.htmlContent
+      );
     }
   }
 }
