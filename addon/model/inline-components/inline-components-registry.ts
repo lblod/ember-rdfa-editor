@@ -5,12 +5,11 @@ import MapUtils from '../util/map-utils';
 import {
   InlineComponentSpec,
   ModelInlineComponent,
-  Properties,
 } from './model-inline-component';
 export type ActiveComponentEntry = {
   node: Node;
   emberComponentName: string;
-  model: ModelInlineComponent<Properties>;
+  model: ModelInlineComponent;
 };
 export default class InlineComponentsRegistry {
   private registeredComponents: Map<string, InlineComponentSpec> = new Map();
@@ -58,7 +57,7 @@ export default class InlineComponentsRegistry {
   addComponentInstance(
     node: Node,
     emberComponentName: string,
-    model: ModelInlineComponent<Properties>
+    model: ModelInlineComponent
   ) {
     this.activeComponents.push({ node, emberComponentName, model });
   }

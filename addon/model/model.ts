@@ -29,7 +29,6 @@ import InlineComponentsRegistry from './inline-components/inline-components-regi
 import {
   InlineComponentSpec,
   ModelInlineComponent,
-  Properties,
 } from './inline-components/model-inline-component';
 
 /**
@@ -178,7 +177,7 @@ export default class Model {
   addComponentInstance(
     node: Node,
     emberComponentName: string,
-    model: ModelInlineComponent<Properties>
+    model: ModelInlineComponent
   ) {
     this._inlineComponentsRegistry.addComponentInstance(
       node,
