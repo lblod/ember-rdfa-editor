@@ -206,9 +206,6 @@ export default class ModelPosition {
    * @param other
    */
   compare(other: ModelPosition): RelativePosition {
-    if (this.root !== other.root) {
-      throw new PositionError('cannot compare nodes with different roots');
-    }
     return ModelPosition.comparePath(this.path, other.path);
   }
 

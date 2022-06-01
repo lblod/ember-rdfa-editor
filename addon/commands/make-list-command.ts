@@ -18,7 +18,7 @@ import ModelText from '../model/model-text';
 import { PropertyState } from '../model/util/types';
 
 export interface MakeListCommandArgs {
-  listType: 'ul' | 'ol';
+  listType?: 'ul' | 'ol';
   selection?: ModelSelection;
 }
 /**
@@ -43,7 +43,7 @@ export default class MakeListCommand
   execute(
     { state, dispatch }: CommandContext,
 
-    { listType, selection = state.selection }: MakeListCommandArgs
+    { listType = 'ul', selection = state.selection }: MakeListCommandArgs
   ) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();

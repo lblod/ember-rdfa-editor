@@ -23,6 +23,7 @@ import RemoveMarkFromRangeCommand from './remove-mark-from-range-command';
 import RemoveMarkFromSelectionCommand from './remove-mark-from-selection-command';
 import RemoveMarksFromRangesCommand from './remove-marks-from-ranges-command';
 import RemoveTableColumnCommand from './remove-table-column-command';
+import RemoveTableCommand from './remove-table-command';
 import RemoveTableRowCommand from './remove-table-row-command';
 import UndoCommand from './undo-command';
 import UnindentListCommand from './unindent-list-command';
@@ -35,7 +36,7 @@ export type CommandMap = {
   'insert-html': InsertHtmlCommand;
   'insert-newLi': InsertNewLiCommand;
   'insert-newLine': InsertNewLineCommand;
-  'insert-table-column-afer': InsertTableColumnAfterCommand;
+  'insert-table-column-after': InsertTableColumnAfterCommand;
   'insert-table-column-before': InsertTableColumnBeforeCommand;
   'insert-table': InsertTableCommand;
   'insert-table-row-above': InsertTableRowAboveCommand;
@@ -52,6 +53,7 @@ export type CommandMap = {
   'remove-marks-from-ranges': RemoveMarksFromRangesCommand;
   'remove-table-column': RemoveTableColumnCommand;
   'remove-table-row': RemoveTableRowCommand;
+  'remove-table': RemoveTableCommand;
   undo: UndoCommand;
   'unindent-list': UnindentListCommand;
 };
@@ -65,7 +67,7 @@ export interface CommandContext {
 export default interface Command<A, R> {
   name: string;
 
-  canExecute(context: CommandContext, args: A): boolean;
+  canExecute(context: Omit<CommandContext, 'dispatch'>, args: A): boolean;
 
   execute(context: CommandContext, args: A): R;
 }

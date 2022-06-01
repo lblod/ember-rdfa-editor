@@ -1,4 +1,5 @@
 import Command, {
+  CommandMap,
   CommandName,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import {
@@ -103,88 +104,6 @@ export default interface Controller {
     config?: ListenerConfig
   ): void;
 }
-export class CompatController implements Controller {
-  private _name: string;
-  protected _editor: Editor;
-  constructor(name: string, editor: Editor) {
-    this._name = name;
-    this._editor = editor;
-  }
-  get name(): string {
-    return this._name;
-  }
-  get selection(): ModelSelection {
-    return this._editor.state.selection;
-  }
-  get rangeFactory(): RangeFactory {
-    return new ModelRangeFactory(this._editor.state.document);
-  }
-  get treeWalkerFactory(): TreeWalkerFactory {
-    return GenTreeWalker;
-  }
-  get datastore(): Datastore {
-    throw new Error('Method not implemented.');
-  }
-  get util(): EditorUtils {
-    throw new Error('Method not implemented.');
-  }
-  get ownMarks(): Set<Mark<AttributeSpec>> {
-    throw new Error('Method not implemented.');
-  }
-  get modelRoot(): ModelElement {
-    return this._editor.state.document;
-  }
-  get marksRegistry(): MarksRegistry {
-    return this._editor.state.marksRegistry;
-  }
-  getMarksFor(owner: string): Set<Mark<AttributeSpec>> {
-    throw new Error('Method not implemented.');
-  }
-  createTransaction(): Transaction {
-    return this._editor.state.createTransaction();
-  }
-  dispatchTransaction(tr: Transaction) {
-    this._editor.dispatchTransaction(tr);
-  }
-  createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
-    throw new Error('Method not implemented.');
-  }
-  executeCommand<N extends CommandName>(
-    commandName: N,
-    args: CommandArgs<N>
-  ): CommandReturn<N> {
-    return this._editor.executeCommand(commandName, args);
-  }
-  canExecuteCommand<N extends CommandName>(
-    commandName: N,
-    args: CommandArgs<N>
-  ): boolean {
-    throw new Error('Method not implemented.');
-  }
-  registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
-    throw new Error('Method not implemented.');
-  }
-  registerWidget(spec: WidgetSpec): void {
-    throw new Error('Method not implemented.');
-  }
-  registerMark(spec: MarkSpec<AttributeSpec>): void {
-    throw new Error('Method not implemented.');
-  }
-  onEvent<E extends string>(
-    eventName: E,
-    callback: EditorEventListener<E>,
-    config?: ListenerConfig
-  ): void {
-    // throw new Error('Method not implemented.');
-  }
-  offEvent<E extends string>(
-    eventName: E,
-    callback: EditorEventListener<E>,
-    config?: ListenerConfig
-  ): void {
-    throw new Error('Method not implemented.');
-  }
-}
 
 export class EditorController implements Controller {
   private _name: string;
@@ -206,7 +125,7 @@ export class EditorController implements Controller {
     return GenTreeWalker;
   }
   get datastore(): Datastore {
-    throw new Error('Method not implemented.');
+    return this._editor.state.datastore;
   }
   get util(): EditorUtils {
     throw new Error('Method not implemented.');
@@ -220,6 +139,24 @@ export class EditorController implements Controller {
   get marksRegistry(): MarksRegistry {
     return this._editor.state.marksRegistry;
   }
+  createTransaction(): Transaction {
+    return this._editor.state.createTransaction();
+  }
+  dispatchTransaction(tr: Transaction): void {
+    this._editor.dispatchTransaction(tr);
+  }
+  executeCommand<N extends keyof CommandMap>(
+    commandName: N,
+    args: CommandArgs<N>
+  ): ReturnType<CommandMap[N]['execute']> {
+    return this._editor.executeCommand(commandName, args);
+  }
+  canExecuteCommand<N extends keyof CommandMap>(
+    commandName: N,
+    args: CommandArgs<N>
+  ): boolean {
+    return this._editor.canExecuteCommand(commandName, args);
+  }
   getMutator(): ImmediateModelMutator {
     throw new Error('Method not implemented.');
   }
@@ -227,18 +164,6 @@ export class EditorController implements Controller {
     throw new Error('Method not implemented.');
   }
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
-    throw new Error('Method not implemented.');
-  }
-  executeCommand<A extends unknown[], R>(
-    commandName: string,
-    ...args: A
-  ): void | R {
-    return this._editor.executeCommand(commandName as CommandName, args[0]);
-  }
-  canExecuteCommand<A extends unknown[]>(
-    commandName: string,
-    ...args: A
-  ): boolean {
     throw new Error('Method not implemented.');
   }
   registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
@@ -255,16 +180,13 @@ export class EditorController implements Controller {
     callback: EditorEventListener<E>,
     config?: ListenerConfig
   ): void {
-    // throw new Error('Method not implemented.');
+    this._editor.onEvent(eventName, callback, config);
   }
   offEvent<E extends string>(
     eventName: E,
     callback: EditorEventListener<E>,
     config?: ListenerConfig
   ): void {
-    throw new Error('Method not implemented.');
-  }
-  write(writeSelection?: boolean): void {
-    throw new Error('Method not implemented.');
+    this._editor.offEvent(eventName, callback, config);
   }
 }

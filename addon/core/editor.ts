@@ -1,17 +1,28 @@
+import Command, {
+  CommandMap,
+  CommandName,
+} from '@lblod/ember-rdfa-editor/commands/command';
 import State, {
   CommandArgs,
   CommandReturn,
   emptyState,
 } from '@lblod/ember-rdfa-editor/core/state';
-import { EditorPlugin, InitializedPlugin } from '../utils/editor-plugin';
-import Transaction from './transaction';
-import { View, EditorView } from './view';
-import Command, {
-  CommandMap,
-  CommandName,
-} from '@lblod/ember-rdfa-editor/commands/command';
-import { CompatController } from '../model/controller';
+import { EditorController } from '../model/controller';
+import { CORE_OWNER } from '../model/util/constants';
 import { getPathFromRoot } from '../utils/dom-helpers';
+import {
+  ContentChangedEvent,
+  EventWithName,
+  SelectionChangedEvent,
+} from '../utils/editor-event';
+import { EditorPlugin, InitializedPlugin } from '../utils/editor-plugin';
+import EventBus, {
+  AnyEventName,
+  EditorEventListener,
+  ListenerConfig,
+} from '../utils/event-bus';
+import Transaction from './transaction';
+import { EditorView, View } from './view';
 export type Dispatcher = (view: View, updateView?: boolean) => Dispatch;
 export type Dispatch = (transaction: Transaction) => State;
 
@@ -31,7 +42,22 @@ export interface Editor {
     args: CommandArgs<C>,
     updateView?: boolean
   ): CommandReturn<C>;
-  dispatchTransaction(tr: Transaction): void;
+  canExecuteCommand<N extends keyof CommandMap>(
+    commandName: N,
+    args: CommandArgs<N>
+  ): boolean;
+  dispatchTransaction(tr: Transaction, updateView?: boolean): void;
+  emitEvent<E extends AnyEventName>(event: EventWithName<E>): void;
+  onEvent<E extends AnyEventName>(
+    eventName: E,
+    callback: EditorEventListener<E>,
+    config?: ListenerConfig
+  );
+  offEvent<E extends AnyEventName>(
+    eventName: E,
+    callback: EditorEventListener<E>,
+    config?: ListenerConfig
+  );
 }
 
 class SayEditor implements Editor {
@@ -39,17 +65,12 @@ class SayEditor implements Editor {
   view: View;
   dispatchUpdate: Dispatch;
   dispatchNoUpdate: Dispatch;
-  get state(): State {
-    return this._state;
-  }
-  set state(value: State) {
-    console.log('Setting state', value.document.toXml());
-    this._state = value;
-  }
+  eventbus: EventBus;
 
   constructor(args: EditorArgs) {
     const { domRoot } = args;
     this.view = new EditorView(domRoot);
+    this.eventbus = new EventBus();
 
     let initialState = emptyState();
     const tr = new Transaction(initialState);
@@ -64,6 +85,13 @@ class SayEditor implements Editor {
     this.dispatchNoUpdate = dispatcher(this.view, false);
   }
 
+  get state(): State {
+    return this._state;
+  }
+  set state(value: State) {
+    console.log('Setting state', value.document.toXml());
+    this._state = value;
+  }
   executeCommand<C extends CommandName>(
     commandName: C,
     args: CommandArgs<C>,
@@ -80,17 +108,64 @@ class SayEditor implements Editor {
     );
     return result;
   }
+  canExecuteCommand<C extends keyof CommandMap>(
+    commandName: C,
+    args: CommandArgs<C>
+  ): boolean {
+    const command: Command<CommandArgs<C>, CommandReturn<C>> = this.state
+      .commands[commandName];
+    return command.canExecute({ state: this.state }, args);
+  }
   defaultDispatcher =
     (view: View, updateView = true) =>
     (transaction: Transaction): State => {
-      this.state = transaction.apply();
+      const newState = transaction.apply();
+      this.state = newState;
       if (updateView || transaction.needsToWrite) {
         view.update(this.state);
       }
+      if (!newState.document.sameAs(transaction.initialState.document)) {
+        this.emitEvent(
+          new ContentChangedEvent({
+            owner: CORE_OWNER,
+            payload: { type: 'unknown', rootModelNode: newState.document },
+          })
+        );
+      }
+      if (!newState.selection.sameAs(transaction.initialState.selection)) {
+        this.emitEvent(
+          new SelectionChangedEvent({
+            owner: CORE_OWNER,
+            payload: newState.selection,
+          })
+        );
+      }
+
       return this.state;
     };
-  dispatchTransaction(tr: Transaction): void {
-    this.dispatchUpdate(tr);
+  dispatchTransaction(tr: Transaction, updateView = true): void {
+    if (updateView) {
+      this.dispatchUpdate(tr);
+    } else {
+      this.dispatchNoUpdate(tr);
+    }
+  }
+  emitEvent<E extends string>(event: EventWithName<E>): void {
+    this.eventbus.emit(event);
+  }
+  onEvent<E extends string>(
+    eventName: E,
+    callback: EditorEventListener<E>,
+    config?: ListenerConfig
+  ) {
+    this.eventbus.on(eventName, callback, config);
+  }
+  offEvent<E extends string>(
+    eventName: E,
+    callback: EditorEventListener<E>,
+    config?: ListenerConfig
+  ) {
+    this.eventbus.off(eventName, callback, config);
   }
 }
 async function initializePlugins(
@@ -99,7 +174,7 @@ async function initializePlugins(
 ): Promise<InitializedPlugin[]> {
   const result: InitializedPlugin[] = [];
   for (const plugin of plugins) {
-    const controller = new CompatController(plugin.name, editor);
+    const controller = new EditorController(plugin.name, editor);
     await plugin.initialize(controller);
     const { initialize: _, ...rest } = plugin;
     result.push(rest);

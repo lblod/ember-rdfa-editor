@@ -1,14 +1,12 @@
-import Component from '@glimmer/component';
 import { action } from '@ember/object';
+import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
+import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 
 interface Args {
-  editor: RawEditor;
   showTextStyleButtons: boolean;
   showListButtons: boolean;
   showIndentButtons: boolean;
@@ -44,43 +42,49 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   updateProperties(event: SelectionChangedEvent) {
+    console.log("Toolbar is handling selectionchanged", event);
     this.isBold = event.payload.bold === PropertyState.enabled;
     this.isItalic = event.payload.italic === PropertyState.enabled;
     this.isUnderline = event.payload.underline === PropertyState.enabled;
     this.isStrikethrough =
       event.payload.strikethrough === PropertyState.enabled;
     this.isInList = event.payload.inListState === PropertyState.enabled;
-    this.canInsertList = this.args.controller.canExecuteCommand('make-list');
+    this.canInsertList = this.args.controller.canExecuteCommand(
+      'make-list',
+      {}
+    );
     this.isInTable = event.payload.inTableState === PropertyState.enabled;
     this.canIndent =
-      this.isInList && this.args.controller.canExecuteCommand('indent-list');
+      this.isInList &&
+      this.args.controller.canExecuteCommand('indent-list', {});
     this.canUnindent =
-      this.isInList && this.args.controller.canExecuteCommand('unindent-list');
+      this.isInList &&
+      this.args.controller.canExecuteCommand('unindent-list', {});
     this.selection = event.payload;
   }
 
   @action
   insertIndent() {
     if (this.isInList) {
-      this.args.controller.executeCommand('indent-list');
+      this.args.controller.executeCommand('indent-list', {});
     }
   }
 
   @action
   insertUnindent() {
     if (this.isInList) {
-      this.args.controller.executeCommand('unindent-list');
+      this.args.controller.executeCommand('unindent-list', {});
     }
   }
 
   @action
   insertNewLine() {
-    this.args.controller.executeCommand('insert-newLine');
+    this.args.controller.executeCommand('insert-newLine', {});
   }
 
   @action
   insertNewLi() {
-    this.args.controller.executeCommand('insert-newLi');
+    this.args.controller.executeCommand('insert-newLi', {});
   }
 
   @action
@@ -91,7 +95,7 @@ export default class EditorToolbar extends Component<Args> {
   @action
   toggleUnorderedList() {
     if (this.isInList) {
-      this.args.controller.executeCommand('remove-list');
+      this.args.controller.executeCommand('remove-list', {});
     } else {
       this.args.controller.executeCommand('make-list', { listType: 'ul' });
     }
@@ -100,7 +104,7 @@ export default class EditorToolbar extends Component<Args> {
   @action
   toggleOrderedList() {
     if (this.isInList) {
-      this.args.controller.executeCommand('remove-list');
+      this.args.controller.executeCommand('remove-list', {});
     } else {
       this.args.controller.executeCommand('make-list', { listType: 'ol' });
     }
@@ -138,7 +142,7 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   undo() {
-    this.args.controller.executeCommand('undo');
+    this.args.controller.executeCommand('undo', undefined);
   }
 
   // Table commands
@@ -158,36 +162,36 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   insertRowBelow() {
-    this.args.controller.executeCommand('insert-table-row-below');
+    this.args.controller.executeCommand('insert-table-row-below', {});
   }
 
   @action
   insertRowAbove() {
-    this.args.controller.executeCommand('insert-table-row-above');
+    this.args.controller.executeCommand('insert-table-row-above', {});
   }
 
   @action
   insertColumnAfter() {
-    this.args.controller.executeCommand('insert-table-column-after');
+    this.args.controller.executeCommand('insert-table-column-after', {});
   }
 
   @action
   insertColumnBefore() {
-    this.args.controller.executeCommand('insert-table-column-before');
+    this.args.controller.executeCommand('insert-table-column-before', {});
   }
 
   @action
   removeTableRow() {
-    this.args.controller.executeCommand('remove-table-row');
+    this.args.controller.executeCommand('remove-table-row', {});
   }
 
   @action
   removeTableColumn() {
-    this.args.controller.executeCommand('remove-table-column');
+    this.args.controller.executeCommand('remove-table-column', {});
   }
 
   @action
   removeTable() {
-    this.args.controller.executeCommand('remove-table');
+    this.args.controller.executeCommand('remove-table', {});
   }
 }

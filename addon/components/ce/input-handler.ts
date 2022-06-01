@@ -1,4 +1,3 @@
-import { KeyEvent } from '@ember/test-helpers/dom/trigger-key-event';
 import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import { handleBasicStyle } from '@lblod/ember-rdfa-editor/input/format';
@@ -29,10 +28,7 @@ export class EditorInputHandler implements InputHandler {
   }
   dragstart(event: DragEvent) {}
 
-  afterInput(event: InputEvent): void {
-    switch (event.inputType) {
-    }
-  }
+  afterInput(event: InputEvent): void {}
 
   beforeInput(event: InputEvent): void {
     console.log('handling beforeInput with type', event.inputType);
@@ -129,21 +125,6 @@ export class EditorInputHandler implements InputHandler {
     const tr = new Transaction(this.editor.state);
     tr.setSelection(newSelection);
     tr.needsToWrite = false;
-
-    updateState(this.editor, tr);
+    this.editor.dispatchTransaction(tr, false);
   }
-}
-
-function updateState(editor: Editor, transaction: Transaction) {
-  const finalTransaction = runTransactionByPlugins(transaction);
-  const newState = finalTransaction.apply();
-  editor.state = newState;
-  if (finalTransaction.needsToWrite) {
-    editor.view.update(newState);
-  }
-}
-
-function runTransactionByPlugins(transaction: Transaction): Transaction {
-  // TODO
-  return transaction;
 }
