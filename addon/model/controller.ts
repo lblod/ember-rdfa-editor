@@ -81,6 +81,11 @@ export default interface Controller {
     args: CommandArgs<N>
   ): CommandReturn<N>;
 
+  executeCommand<N extends CommandName>(
+    commandName: N,
+    ...args: unknown[]
+  ): CommandReturn<N>;
+
   canExecuteCommand<N extends CommandName>(
     commandName: N,
     args: CommandArgs<N>
@@ -151,6 +156,7 @@ export class EditorController implements Controller {
   ): ReturnType<CommandMap[N]['execute']> {
     return this._editor.executeCommand(commandName, args);
   }
+
   canExecuteCommand<N extends keyof CommandMap>(
     commandName: N,
     args: CommandArgs<N>

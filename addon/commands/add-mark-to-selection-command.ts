@@ -19,6 +19,7 @@ export interface AddMarkToSelectionCommandArgs {
 export default class AddMarkToSelectionCommand
   implements Command<AddMarkToSelectionCommandArgs, void>
 {
+  arguments = ['markName', 'markAttributes'];
   name = 'add-mark-to-selection';
 
   canExecute(): boolean {

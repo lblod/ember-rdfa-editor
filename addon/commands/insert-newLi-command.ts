@@ -20,7 +20,7 @@ export default class InsertNewLiCommand
   implements Command<InsertNewLiCommandArgs, void>
 {
   name = 'insert-newLi';
-
+  arguments: string[] = ['range'];
   canExecute(
     { state }: CommandContext,
     { range = state.selection.lastRange }

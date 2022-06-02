@@ -1,5 +1,4 @@
 import Command, { CommandContext } from './command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
@@ -15,6 +14,7 @@ export default class InsertTableCommand
   implements Command<InsertTableCommandArgs, void>
 {
   name = 'insert-table';
+  arguments: string[] = ['selection', 'rows', 'columns'];
 
   canExecute(): boolean {
     return true;

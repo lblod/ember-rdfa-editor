@@ -13,6 +13,7 @@ export default abstract class InsertTableRowCommand
   implements Command<InsertTableRowCommandArgs, void>
 {
   name = 'insert-table-row';
+  arguments: string[] = ['selection'];
 
   abstract insertAbove: boolean;
 

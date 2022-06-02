@@ -18,6 +18,7 @@ export default class InsertTextCommand
   implements Command<InsertTextCommandArgs, void>
 {
   name = 'insert-text';
+  arguments: string[] = ['text', 'range', 'marks', 'needsToWrite'];
 
   canExecute(): boolean {
     return true;

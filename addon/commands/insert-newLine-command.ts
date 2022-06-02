@@ -23,7 +23,7 @@ export default class InsertNewLineCommand
   implements Command<InsertNewLineCommandArgs, void>
 {
   name = 'insert-newLine';
-
+  arguments: string[] = ['range'];
   canExecute(): boolean {
     return true;
   }

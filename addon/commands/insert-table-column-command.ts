@@ -13,6 +13,7 @@ export default abstract class InsertTableColumnCommand
   implements Command<InsertTableColumnCommandArgs, void>
 {
   name = 'insert-table-column';
+  arguments: string[] = ['selection'];
   abstract insertBefore: boolean;
 
   canExecute(): boolean {

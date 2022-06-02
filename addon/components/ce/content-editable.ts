@@ -71,11 +71,23 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     }
   }
   @action
-  paste(event: PasteEvent) {}
+  paste(event: ClipboardEvent) {
+    if (this.inputHandler) {
+      this.inputHandler.paste(event);
+    }
+  }
   @action
-  cut(event: CutEvent) {}
+  cut(event: ClipboardEvent) {
+    if (this.inputHandler) {
+      this.inputHandler.cut(event);
+    }
+  }
   @action
-  copy(event: CopyEvent) {}
+  copy(event: ClipboardEvent) {
+    if (this.inputHandler) {
+      this.inputHandler.copy(event);
+    }
+  }
 
   @action
   dragstart(event: DragEvent) {}

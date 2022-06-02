@@ -1,7 +1,6 @@
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import {
   IllegalExecutionStateError,
@@ -23,6 +22,7 @@ export default class IndentListCommand
   implements Command<IndentListCommandArgs, void>
 {
   name = 'indent-list';
+  arguments = ['range'];
 
   canExecute(
     { state }: CommandContext,

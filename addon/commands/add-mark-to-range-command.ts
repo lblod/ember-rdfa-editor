@@ -14,6 +14,7 @@ export default class AddMarkToRangeCommand
   implements Command<AddMarkToRangeCommandArgs, void>
 {
   name = 'add-mark-to-range';
+  arguments = ['range', 'markName', 'markAttributes'];
 
   canExecute(): boolean {
     return true;

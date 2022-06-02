@@ -10,6 +10,9 @@ import {
 import { mapKeyEvent } from '@lblod/ember-rdfa-editor/input/keymap';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { PasteEvent } from '../utils/editor-event';
+import handleCutCopy from './cut-copy';
+import handlePaste from './paste';
 
 /**
  * Represents an object which collects all the various dom-events
@@ -46,7 +49,25 @@ export class EditorInputHandler implements InputHandler {
   keydown(event: KeyboardEvent) {
     mapKeyEvent(this.editor, event);
   }
-  dragstart(event: DragEvent) {}
+  dragstart(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  //TODO: pass pasteHTML arguments
+  paste(event: ClipboardEvent) {
+    event.preventDefault();
+    handlePaste(this.editor, event);
+  }
+
+  cut(event: ClipboardEvent) {
+    event.preventDefault();
+    handleCutCopy(this.editor, event, true);
+  }
+
+  copy(event: ClipboardEvent) {
+    event.preventDefault();
+    handleCutCopy(this.editor, event, false);
+  }
 
   afterInput(event: InputEvent): void {}
 

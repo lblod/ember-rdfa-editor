@@ -15,6 +15,7 @@ export default class InsertHtmlCommand
   implements Command<InsertHtmlCommandArgs, void>
 {
   name = 'insert-html';
+  arguments = ['htmlString', 'range'];
 
   canExecute(): boolean {
     return true;
