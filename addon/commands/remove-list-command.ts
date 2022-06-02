@@ -17,6 +17,7 @@ export default class RemoveListCommand
   implements Command<RemoveListCommandArgs, void>
 {
   name = 'remove-list';
+  arguments: string[] = ['range'];
 
   canExecute(): boolean {
     return true;

@@ -11,6 +11,7 @@ export default class RemoveTableCommand
   implements Command<RemoveTableCommandArgs, void>
 {
   name = 'remove-table';
+  arguments: string[] = ['selection'];
 
   canExecute(): boolean {
     return true;

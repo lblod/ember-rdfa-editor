@@ -22,6 +22,7 @@ export default class UnindentListCommand
   implements Command<UnindentListCommandArgs, void>
 {
   name = 'unindent-list';
+  arguments: string[] = ['range'];
 
   canExecute(
     { state }: CommandContext,

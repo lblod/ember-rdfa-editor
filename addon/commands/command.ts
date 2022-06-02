@@ -86,6 +86,7 @@ export interface CommandContext {
  * */
 export default interface Command<A, R> {
   name: string;
+  arguments: string[];
 
   canExecute(context: Omit<CommandContext, 'dispatch'>, args: A): boolean;
 

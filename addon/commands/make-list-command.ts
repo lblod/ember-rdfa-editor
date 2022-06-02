@@ -28,6 +28,7 @@ export default class MakeListCommand
   implements Command<MakeListCommandArgs, void>
 {
   name = 'make-list';
+  arguments: string[] = ['listType', 'selection'];
 
   canExecute(
     { state }: CommandContext,

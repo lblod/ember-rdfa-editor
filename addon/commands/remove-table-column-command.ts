@@ -11,6 +11,7 @@ export default class RemoveTableColumnCommand
   implements Command<RemoveTableColumnCommandArgs, void>
 {
   name = 'remove-table-column';
+  arguments: string[] = ['selection'];
 
   canExecute(): boolean {
     return true;

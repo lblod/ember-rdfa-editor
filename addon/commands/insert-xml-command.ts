@@ -19,6 +19,7 @@ export default class InsertXmlCommand
   implements Command<InsertXmlCommandArgs, void>
 {
   name = 'insert-xml';
+  arguments: string[] = ['xml', 'range'];
 
   canExecute(): boolean {
     return true;

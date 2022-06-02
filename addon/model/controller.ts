@@ -32,6 +32,7 @@ import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immed
 import { Editor } from '../core/editor';
 import Transaction from '../core/transaction';
 import { CommandArgs, CommandReturn } from '../core/state';
+import ArrayUtils from './util/array-utils';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
@@ -152,9 +153,29 @@ export class EditorController implements Controller {
   }
   executeCommand<N extends keyof CommandMap>(
     commandName: N,
-    args: CommandArgs<N>
+    ...args: [CommandArgs<N>] | unknown[]
   ): ReturnType<CommandMap[N]['execute']> {
-    return this._editor.executeCommand(commandName, args);
+    const command: Command<CommandArgs<N>, CommandReturn<N>> = this._editor
+      .state.commands[commandName];
+    let objectArgs: { [key: string]: unknown } = {};
+    if (
+      args.length === 1 &&
+      args[0] &&
+      typeof args[0] === 'object' &&
+      ArrayUtils.all(Object.entries(args[0]), ([key, _]) =>
+        command.arguments.includes(key)
+      )
+    ) {
+      objectArgs = args[0] as { [key: string]: unknown };
+    } else {
+      objectArgs = {};
+      for (let i = 0; i < command.arguments.length; i++) {
+        const k = command.arguments[i];
+        objectArgs[k] = args[i];
+      }
+    }
+    command.arguments;
+    return this._editor.executeCommand(commandName, objectArgs);
   }
 
   canExecuteCommand<N extends keyof CommandMap>(

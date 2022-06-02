@@ -12,6 +12,7 @@ export default class RemoveTableRowCommand
   implements Command<RemoveTableRowCommandArgs, void>
 {
   name = 'remove-table-row';
+  arguments: string[] = ['selection'];
 
   canExecute(): boolean {
     return true;

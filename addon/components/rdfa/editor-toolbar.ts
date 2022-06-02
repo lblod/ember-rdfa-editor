@@ -42,7 +42,7 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   updateProperties(event: SelectionChangedEvent) {
-    console.log("Toolbar is handling selectionchanged", event);
+    console.log('Toolbar is handling selectionchanged', event);
     this.isBold = event.payload.bold === PropertyState.enabled;
     this.isItalic = event.payload.italic === PropertyState.enabled;
     this.isUnderline = event.payload.underline === PropertyState.enabled;

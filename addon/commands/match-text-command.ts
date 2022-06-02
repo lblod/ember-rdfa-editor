@@ -1,10 +1,10 @@
 import Command, {
-    CommandContext
+  CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import {
-    matchText,
-    TextMatch
+  matchText,
+  TextMatch,
 } from '@lblod/ember-rdfa-editor/utils/match-text';
 export interface MatchTextCommandArgs {
   limitRange: ModelRange;
@@ -15,6 +15,7 @@ export default class MatchTextCommand
   implements Command<MatchTextCommandArgs, TextMatch[]>
 {
   name = 'match-text';
+  arguments: string[] = ['limitRange', 'regex'];
 
   canExecute(): boolean {
     return true;

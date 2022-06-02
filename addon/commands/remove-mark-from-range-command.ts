@@ -1,5 +1,5 @@
 import Command, {
-    CommandContext
+  CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import { AttributeSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
@@ -14,6 +14,7 @@ export default class RemoveMarkFromRangeCommand
   implements Command<RemoveMarkFromRangeCommandArgs, void>
 {
   name = 'remove-mark-from-range';
+  arguments: string[] = ['range', 'markName', 'attributes'];
   canExecute(): boolean {
     return true;
   }
