@@ -3,7 +3,11 @@ import { eventTargetRange } from './utils';
 
 export function handleInsertLineBreak(editor: Editor, event: InputEvent): void {
   event.preventDefault();
-  editor.executeCommand('insert-newLine', {}, true);
+  if (editor.canExecuteCommand('insert-newLi', {})) {
+    editor.executeCommand('insert-newLi', {}, true);
+  } else {
+    editor.executeCommand('insert-newLine', {}, true);
+  }
 }
 
 export function handleInsertText(editor: Editor, event: InputEvent): void {
