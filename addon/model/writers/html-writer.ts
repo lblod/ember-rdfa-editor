@@ -3,7 +3,9 @@ import { View } from '@lblod/ember-rdfa-editor/core/view';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
+import HtmlElementWriter, {
+  parentIsLumpNode,
+} from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
 import {
   isElement,
   isTextNode,

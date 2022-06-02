@@ -31,7 +31,6 @@ import {
   paintCycleHappened,
   stringToVisibleText,
 } from '@lblod/ember-rdfa-editor/editor/utils';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
 import {
   isBeforeInputEvent,
@@ -39,6 +38,7 @@ import {
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 
 /**
  * Represents the coordinates of a DOMRect relative to RootNode of the editor.
@@ -235,7 +235,7 @@ export interface BackspacePlugin extends InputPlugin {
    */
   detectChange: (
     manipulation: BackspaceHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ) => boolean;
 }
 
@@ -332,7 +332,7 @@ export default class BackspaceHandler extends InputHandler {
    * @public
    * @constructor
    */
-  constructor({ rawEditor }: { rawEditor: RawEditor }) {
+  constructor({ rawEditor }: { rawEditor: Editor }) {
     super(rawEditor);
     // Order is now the sole parameter for conflict resolution of plugins. Think before changing.
     this.plugins = [
@@ -453,7 +453,7 @@ export default class BackspaceHandler extends InputHandler {
       // Run the manipulation.
       if (dispatchedExecutor) {
         // NOTE: We should pass some sort of editor interface here in the future.
-        dispatchedExecutor(manipulation, this.rawEditor);
+        dispatchedExecutor(manipulation, this.editor);
       } else {
         this.handleNativeManipulation(manipulation);
       }
@@ -560,7 +560,7 @@ export default class BackspaceHandler extends InputHandler {
    *
    */
   get selectionCoordinatesInEditor(): Array<DOMRectCoordinatesInEditor> {
-    const editorDomRect = this.rawEditor.rootNode.getBoundingClientRect();
+    const editorDomRect = this.editor.view.domRoot.getBoundingClientRect();
     //Note: we select '0' because we only assume one selection. No multi-cursor
     if (window.getSelection() != null) {
       const selection = window.getSelection() as Selection;
@@ -900,7 +900,7 @@ export default class BackspaceHandler extends InputHandler {
           // the cursor is inside an element
           const element = node as Element;
           if (position == 0) {
-            if (element == this.rawEditor.rootNode) {
+            if (element == this.editor.view.domRoot) {
               // special case, we're at the start of the editor
               return { type: 'editorRootStart', node: element };
             } else {
@@ -971,7 +971,7 @@ export default class BackspaceHandler extends InputHandler {
               }
             } else if (text.parentElement) {
               const parent = text.parentElement;
-              if (parent != this.rawEditor.rootNode) {
+              if (parent != this.editor.view.domRoot) {
                 return { type: 'elementStart', node: parent };
               } else {
                 return { type: 'editorRootStart', node: parent };
@@ -1007,7 +1007,7 @@ export default class BackspaceHandler extends InputHandler {
       .map((plugin) => {
         return {
           plugin,
-          detectedChange: plugin.detectChange(manipulation, this.rawEditor),
+          detectedChange: plugin.detectChange(manipulation, this.editor),
         };
       })
       .filter(({ detectedChange }) => detectedChange);

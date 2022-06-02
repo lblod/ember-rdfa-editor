@@ -6,7 +6,6 @@ import { LUMP_NODE_PROPERTY } from '../util/constants';
 export default class HtmlElementWriter
   implements Writer<ModelElement, ElementView>
 {
-
   write(modelNode: ModelElement): ElementView {
     const result = document.createElement(modelNode.type);
 
@@ -31,7 +30,7 @@ export default class HtmlElementWriter
   }
 }
 
-function parentIsLumpNode(modelNode: ModelElement): boolean {
+export function parentIsLumpNode(modelNode: ModelElement): boolean {
   while (modelNode.parent) {
     const properties = modelNode.parent.getRdfaAttributes().properties;
     if (properties && properties.includes(LUMP_NODE_PROPERTY)) {

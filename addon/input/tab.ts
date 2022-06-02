@@ -21,7 +21,14 @@ const PLUGINS = [
 
 export default function handleTab() {
   return function (editor: Editor, event: KeyboardEvent) {
-    event.preventDefault();
+    const selection = window.getSelection();
+
+    if (
+      selection !== null &&
+      selection.isCollapsed &&
+      editor.view.domRoot.contains(selection.anchorNode)
+    )
+      event.preventDefault();
     const manipulation = getNextManipulation(editor, event);
     // Check if we can execute it.
     const { mayExecute, dispatchedExecutor } = checkManipulationByPlugins(
