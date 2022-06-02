@@ -1,5 +1,6 @@
 import { Editor } from '../core/editor';
 import ModelRange from '../model/model-range';
+import handleEscape from './escape';
 type Modifier = 'C' | 'M' | 'S' | 'A';
 
 type Alphabet =
@@ -56,6 +57,7 @@ export type KeyMap = Partial<Record<KeyCode, KeyHandler>>;
 export const defaultKeyMap: KeyMap = {
   ArrowLeft: moveCursor(-1),
   ArrowRight: moveCursor(1),
+  Escape: handleEscape(),
 };
 
 /**

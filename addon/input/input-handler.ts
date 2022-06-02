@@ -10,7 +10,6 @@ import {
 import { mapKeyEvent } from '@lblod/ember-rdfa-editor/input/keymap';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { PasteEvent } from '../utils/editor-event';
 import handleCutCopy from './cut-copy';
 import handlePaste from './paste';
 
