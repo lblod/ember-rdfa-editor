@@ -133,6 +133,7 @@ export class EditorInputHandler implements InputHandler {
         handleUndo(this.editor, event);
         break;
       case 'historyRedo':
+        event.preventDefault();
         break;
       case 'formatBold':
         handleBasicStyle(this.editor, event, 'bold');
