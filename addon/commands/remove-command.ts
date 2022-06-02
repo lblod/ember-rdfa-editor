@@ -14,23 +14,22 @@ export default class RemoveCommand extends Command {
 
   @logExecute
   execute(
-    direction: "left" | "right",
+    direction: 'left' | 'right',
     range: ModelRange | null = this.model.selection.lastRange
   ) {
     if (!range) {
       return;
     }
-    if(range.collapsed){
-      if(direction==='left'){
-        const newStart=range.start.shiftedVisually(-1);
-        const newEnd=range.start;
+    if (range.collapsed) {
+      if (direction === 'left') {
+        const newStart = range.start.shiftedVisually(-1);
+        const newEnd = range.start;
         const removeRange = new ModelRange(newStart, newEnd);
         this.model.change((mutator) => {
-          const newRange=mutator.removeNodes(removeRange);
+          const newRange = mutator.removeNodes(removeRange);
           this.model.selectRange(newRange);
         });
       }
     }
-    
   }
 }
