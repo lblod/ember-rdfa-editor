@@ -104,24 +104,30 @@ export class EditorInputHandler implements InputHandler {
       case 'insertFromPaste':
         break;
       case 'deleteWordBackward':
+        event.preventDefault();
         break;
       case 'deleteWordForward':
+        event.preventDefault();
         break;
       case 'deleteSoftLineBackward':
         break;
       case 'deleteSoftLineForward':
+        event.preventDefault();
         break;
       case 'deleteEntireSoftLine':
         break;
       case 'deleteHardLineBackward':
         break;
       case 'deleteHardLineForward':
+        event.preventDefault();
         break;
       case 'deleteContent':
+        event.preventDefault();
         break;
       case 'deleteContentBackward':
         break;
       case 'deleteContentForward':
+        event.preventDefault();
         break;
       case 'historyUndo':
         handleUndo(this.editor, event);
