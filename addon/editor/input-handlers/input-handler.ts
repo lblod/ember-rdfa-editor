@@ -1,10 +1,10 @@
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import {
   Manipulation,
   ManipulationExecutor,
   ManipulationGuidance,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { editorDebug } from '@lblod/ember-rdfa-editor/editor/utils';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { HandlerResponse } from './handler-response';
 
 export interface InputPlugin {
@@ -20,16 +20,16 @@ export interface InputPlugin {
    */
   guidanceForManipulation: (
     manipulation: Manipulation,
-    editor: RawEditor
+    editor: Editor
   ) => ManipulationGuidance | null;
 }
 
 export abstract class InputHandler {
   plugins: InputPlugin[];
-  protected rawEditor: RawEditor;
+  protected editor: Editor;
 
-  protected constructor(rawEditor: RawEditor) {
-    this.rawEditor = rawEditor;
+  protected constructor(editor: Editor) {
+    this.editor = editor;
     this.plugins = [];
   }
 
@@ -69,7 +69,7 @@ export abstract class InputHandler {
     for (const plugin of this.plugins) {
       const guidance = plugin.guidanceForManipulation(
         manipulation,
-        this.rawEditor
+        this.editor
       );
       if (guidance) {
         const allow = guidance.allow === undefined ? true : guidance.allow;

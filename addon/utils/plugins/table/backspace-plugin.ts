@@ -3,8 +3,8 @@ import {
   BackspacePlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
 import { ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 
 /**
  *
@@ -16,14 +16,14 @@ export default class TableBackspacePlugin implements BackspacePlugin {
 
   guidanceForManipulation(
     manipulation: BackspaceHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): ManipulationGuidance | null {
     const voidExecutor = {
       allow: false,
       executor: undefined,
     };
 
-    const selection = editor.selection;
+    const selection = editor.state.selection;
     if (selection.inTableState === PropertyState.enabled) {
       if (
         manipulation.type === 'moveCursorBeforeElement' ||
@@ -46,9 +46,9 @@ export default class TableBackspacePlugin implements BackspacePlugin {
    */
   detectChange(
     manipulation: BackspaceHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): boolean {
-    const selection = editor.selection;
+    const selection = editor.state.selection;
     if (selection.inTableState === PropertyState.enabled) {
       if (
         manipulation.type === 'moveCursorBeforeElement' ||

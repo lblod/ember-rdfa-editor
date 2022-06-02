@@ -19,8 +19,8 @@ import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-
 import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
 import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 
 export type TabHandlerManipulation =
   | MoveCursorBeforeElementManipulation
@@ -46,7 +46,7 @@ export interface TabInputPlugin extends InputPlugin {
    */
   guidanceForManipulation: (
     manipulation: TabHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ) => ManipulationGuidance | null;
 }
 

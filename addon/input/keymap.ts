@@ -1,6 +1,7 @@
 import { Editor } from '../core/editor';
 import ModelRange from '../model/model-range';
 import handleEscape from './escape';
+import handleTab from './tab';
 type Modifier = 'C' | 'M' | 'S' | 'A';
 
 type Alphabet =
@@ -34,6 +35,7 @@ type Alphabet =
 // except for 'Space'
 type Key =
   | Alphabet
+  | 'Tab'
   | 'ArrowLeft'
   | 'ArrowRight'
   | 'Space'
@@ -58,12 +60,14 @@ export const defaultKeyMap: KeyMap = {
   ArrowLeft: moveCursor(-1),
   ArrowRight: moveCursor(1),
   Escape: handleEscape(),
+  Tab: handleTab(),
 };
 
 /**
  * Parse a @link{KeyboardEvent} into a string that can be used to index a @link{KeyMap}
  * */
 export function mapKeyEvent(editor: Editor, event: KeyboardEvent): void {
+  console.log(event);
   const keymap = editor.state.keymap;
   if (event.isComposing) {
     return;
