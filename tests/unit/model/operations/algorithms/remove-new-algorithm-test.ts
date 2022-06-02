@@ -416,5 +416,58 @@ module(
       assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
+
+    // test('bug tests', function (assert) {
+    //   // language=XML
+    //   const {
+    //     root: initial,
+    //     textNodes: { text1, text2 }
+    //   } = vdom`
+
+    //   `;
+    //   const { root: expected } = vdom`
+    //   <div>
+    //     <text>Aanwezige leden</text>
+    //     <span property="besluit:heeftAanwezigeBijStart" resource="http://data.lblod.info/id/mandatarissen/5C375DC89E5B640009000A33" typeof="http://data.vlaanderen.be/ns/mandaat#Mandataris">
+    //       <span property="mandaat:isBestuurlijkeAliasVan" resource="http://data.lblod.info/id/personen/6e0e7704374b634c6aeb4f7f708e1e75dff95672f44081874dab83a64e7ced6e">
+    //         <span property="persoon:gebruikteVoornaam">
+    //           <text>Piet </text>
+    //         </span>
+    //         <span property="foaf:familyName">
+    //           <text>Baetens </text>
+    //         </span>
+    //       </span>
+    //     </span>
+    //     <text __id="text1">, &nbsp; test</text>
+    //     <span property="besluit:heeftAanwezigeBijStart" resource="http://data.lblod.info/id/mandatarissen/5C375F809E5B640009000A44" typeof="http://data.vlaanderen.be/ns/mandaat#Mandataris">
+    //       <span property="mandaat:isBestuurlijkeAliasVan" resource="http://data.lblod.info/id/personen/fd9a824889135494d74aee0f3dc530369beb592c46932fe309a83c8a565d9fa7">
+    //         <span property="persoon:gebruikteVoornaam">
+    //           <text>Andy </text>
+    //         </span>
+    //         <span property="foaf:familyName">
+    //           <text>De Cock </text>
+    //         </span>
+    //       </span>
+    //     </span>
+    //     <text>,&nbsp;</text>
+    //     <span property="besluit:heeftAanwezigeBijStart" resource="http://data.lblod.info/id/mandatarissen/5C375E889E5B640009000A3C" typeof="http://data.vlaanderen.be/ns/mandaat#Mandataris">
+    //       <span property="mandaat:isBestuurlijkeAliasVan" resource="http://data.lblod.info/id/personen/903e29d196d4b7c80d217ed77234605ef5c41ce498c5f57e3c08a2f7389a2dc8">
+    //         <span property="persoon:gebruikteVoornaam">
+    //           <text>Filip </text>
+    //         </span>
+    //         <span property="foaf:familyName">
+    //           <text>De Landtsheer </text>
+    //         </span>
+    //       </span>
+    //     </span>
+    //   </div>
+    //   `;
+
+    //   const start1 = ModelPosition.fromBeforeNode(text1);
+    //   const end1 = ModelPosition.fromInTextNode(text1, 1);
+    //   OperationAlgorithms.removeNew(new ModelRange(start1, end1));
+    //   assert.expect(1);
+    //   assert.true(initial.sameAs(expected));
+    // });
   }
 );

@@ -262,8 +262,9 @@ export default class ModelRange {
 
   /**
    * not so janky debug function
+   * @trim to trim the whole document to only the internded range
    */
-  visualize(): void {
+  visualize(truncate=true): void {
     let root = this.root;
     while (root.parent) {
       root = root.parent;
@@ -290,6 +291,7 @@ export default class ModelRange {
     new InsertOperation(undefined, startRange, startText).execute();
 
     let modelString = (root.toXml() as Element).innerHTML;
+
     if (startSplit) {
       modelString = modelString.replace(
         /<\/text><text __dirty="node,content">\[===START===\]<\/text><text.+?>/,
@@ -312,13 +314,14 @@ export default class ModelRange {
         '  ===]}  '
       );
     }
+
+    //convert back to an element and pretty print as a string
     const process = (str: string): string => {
       const div = document.createElement('div');
       div.innerHTML = str.trim();
 
       return format(div, 0).innerHTML;
     };
-
     const format = (node: Element, level: number): Element => {
       const indentBefore = new Array(level++ + 1).join('  '),
         indentAfter = new Array(level - 1).join('  ');
@@ -338,7 +341,23 @@ export default class ModelRange {
 
       return node;
     };
-    console.log(process(modelString), '\n');
+
+    
+    modelString=process(modelString);
+    if(truncate){
+      const margin=200;
+      let startIndex = modelString.indexOf('  {[===  ');
+      let endIndex = modelString.indexOf('  ===]}  ');
+      const length = modelString.length;
+      if(startIndex>margin){
+        startIndex-=margin;
+      }
+      if(length-endIndex>margin){
+        endIndex+=margin;
+      }
+      modelString=modelString.substring(startIndex, endIndex);
+    }
+    console.log(modelString, '\n');
   }
 
   getCommonPosition(): ModelPosition | null {

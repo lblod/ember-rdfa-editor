@@ -171,8 +171,12 @@ export default class OperationAlgorithms {
     }
 
     //not sure i did this correcctly
+    const removedOpeningTagNodes = openingTagNodes.filter( node => {
+      return !cantRemoveOpeningTagNodes.includes( node );
+    });
+    
     return {
-      removedNodes: [...confinedNodes, ...openingTagNodes],
+      removedNodes: [...confinedNodes, ...removedOpeningTagNodes],
       mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
     };
   }
