@@ -210,7 +210,7 @@ export class EditorControllerCompat extends EditorController {
   ): ReturnType<CommandMap[N]['execute']> {
     const command: Command<CommandArgs<N>, CommandReturn<N>> = this._editor
       .state.commands[commandName];
-    const objectArgs = parseArguments(command.arguments, ...args);
+    const objectArgs = parsePositionalToNamed(command.arguments, ...args);
     return super.executeCommand(commandName, objectArgs);
   }
 
@@ -220,12 +220,12 @@ export class EditorControllerCompat extends EditorController {
   ): boolean {
     const command: Command<CommandArgs<N>, CommandReturn<N>> = this._editor
       .state.commands[commandName];
-    const objectArgs = parseArguments(command.arguments, ...args);
+    const objectArgs = parsePositionalToNamed(command.arguments, ...args);
     return super.canExecuteCommand(commandName, objectArgs);
   }
 }
 
-function parseArguments(argument_names: string[], ...args: unknown[]) {
+function parsePositionalToNamed(argument_names: string[], ...args: unknown[]) {
   let objectArgs: { [key: string]: unknown } = {};
   objectArgs = {};
   for (let i = 0; i < Math.min(argument_names.length, args.length); i++) {
