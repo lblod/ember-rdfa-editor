@@ -135,18 +135,6 @@ export class EditorInputHandler implements InputHandler {
       case 'historyRedo':
         event.preventDefault();
         break;
-      case 'formatBold':
-        handleBasicStyle(this.editor, event, 'bold');
-        break;
-      case 'formatItalic':
-        handleBasicStyle(this.editor, event, 'italic');
-        break;
-      case 'formatUnderline':
-        handleBasicStyle(this.editor, event, 'underline');
-        break;
-      case 'formatStrikeThrough':
-        handleBasicStyle(this.editor, event, 'strikethrough');
-        break;
 
       default:
         console.warn('Unhandled beforeinput event type:', event.inputType);

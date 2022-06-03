@@ -21,3 +21,16 @@ export function handleBasicStyle(
   event.preventDefault();
   editor.executeCommand('add-mark-to-selection', { markName: style });
 }
+
+export function handleBasicStyle2(style: FontStyle) {
+  return function (editor: Editor, event: KeyboardEvent) {
+    console.log(event);
+    event.preventDefault();
+    const selection = editor.state.selection;
+    if (selection.hasMark(style)) {
+      editor.executeCommand('remove-mark-from-selection', { markName: style });
+    } else {
+      editor.executeCommand('add-mark-to-selection', { markName: style });
+    }
+  };
+}

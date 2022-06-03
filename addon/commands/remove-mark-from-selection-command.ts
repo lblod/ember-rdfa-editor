@@ -12,7 +12,7 @@ import { SelectionChangedEvent } from '../utils/editor-event';
 
 export interface RemoveMarkFromSelectionCommandArgs {
   markName: string;
-  markAttributes: AttributeSpec;
+  markAttributes?: AttributeSpec;
 }
 
 export default class RemoveMarkFromSelectionCommand
@@ -26,7 +26,7 @@ export default class RemoveMarkFromSelectionCommand
   }
   execute(
     { state, dispatch }: CommandContext,
-    { markName, markAttributes }: RemoveMarkFromSelectionCommandArgs
+    { markName, markAttributes = {} }: RemoveMarkFromSelectionCommandArgs
   ): void {
     const selection = state.selection;
     const tr = state.createTransaction();

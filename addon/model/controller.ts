@@ -32,7 +32,6 @@ import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immed
 import { Editor } from '../core/editor';
 import Transaction from '../core/transaction';
 import { CommandArgs, CommandReturn } from '../core/state';
-import ArrayUtils from './util/array-utils';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 

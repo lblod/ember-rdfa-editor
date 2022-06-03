@@ -1,6 +1,7 @@
 import { Editor } from '../core/editor';
 import ModelRange from '../model/model-range';
 import handleEscape from './escape';
+import { handleBasicStyle2 } from './format';
 import handleTab from './tab';
 type Modifier = 'C' | 'M' | 'S' | 'A';
 
@@ -61,6 +62,9 @@ export const defaultKeyMap: KeyMap = {
   ArrowRight: moveCursor(1),
   Escape: handleEscape(),
   Tab: handleTab(),
+  'C-b': handleBasicStyle2('bold'),
+  'C-i': handleBasicStyle2('italic'),
+  'C-u': handleBasicStyle2('underline'),
 };
 
 /**
