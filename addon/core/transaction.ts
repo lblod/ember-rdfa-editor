@@ -37,7 +37,6 @@ export default class Transaction {
   needsToWrite: boolean;
   operations: Operation[];
   rangeMapper: RangeMapper;
-  eventBus: EventBus;
 
   constructor(state: State) {
     this.initialState = state;
@@ -51,7 +50,6 @@ export default class Transaction {
     this.needsToWrite = false;
     this.operations = [];
     this.rangeMapper = new RangeMapper();
-    this.eventBus = state.eventBus;
   }
 
   setPlugins(plugins: InitializedPlugin[]): void {
@@ -66,7 +64,7 @@ export default class Transaction {
 
   addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
     const op = new MarkOperation(
-      this.eventBus,
+      undefined,
       this.cloneRange(range),
       spec,
       attributes,
@@ -128,7 +126,7 @@ export default class Transaction {
 
   insertText({ range, text, marks }: TextInsertion): ModelRange {
     const operation = new InsertTextOperation(
-      this.eventBus,
+      undefined,
       this.cloneRange(range),
       text,
       marks || new MarkSet()
@@ -138,11 +136,7 @@ export default class Transaction {
   }
 
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
-    const op = new InsertOperation(
-      this.eventBus,
-      this.cloneRange(range),
-      ...nodes
-    );
+    const op = new InsertOperation(undefined, this.cloneRange(range), ...nodes);
     this.createSnapshot();
     return this.executeOperation(op);
   }
@@ -162,7 +156,7 @@ export default class Transaction {
     newNode.setAttribute(key, value);
     const oldNodeRange = ModelRange.fromAroundNode(oldNode);
     const op = new InsertOperation(
-      this.eventBus,
+      undefined,
       this.cloneRange(oldNodeRange),
       newNode
     );
@@ -177,7 +171,7 @@ export default class Transaction {
     newNode.removeAttribute(key);
     const oldNodeRange = ModelRange.fromAroundNode(oldNode);
     const op = new InsertOperation(
-      this.eventBus,
+      undefined,
       this.cloneRange(oldNodeRange),
       newNode
     );
@@ -317,7 +311,7 @@ export default class Transaction {
   private executeSplitOperation(position: ModelPosition, splitParent = true) {
     const range = new ModelRange(position, position);
     const op = new SplitOperation(
-      this.eventBus,
+      undefined,
       this.cloneRange(range),
       splitParent
     );
@@ -336,7 +330,7 @@ export default class Transaction {
     return this.delete(range);
   }
   delete(range: ModelRange): ModelRange {
-    const op = new InsertOperation(this.eventBus, this.cloneRange(range));
+    const op = new InsertOperation(undefined, this.cloneRange(range));
     this.createSnapshot();
     return this.executeOperation(op);
   }
@@ -385,7 +379,7 @@ export default class Transaction {
     );
     const target = ModelPosition.fromBeforeNode(element);
     const op = new MoveOperation(
-      this.eventBus,
+      undefined,
       this.cloneRange(srcRange),
       this.clonePos(target)
     );
@@ -424,7 +418,7 @@ export default class Transaction {
 
   removeMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
     const op = new MarkOperation(
-      this.eventBus,
+      undefined,
       this.cloneRange(range),
       spec,
       attributes,
