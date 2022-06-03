@@ -73,7 +73,7 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
     moveCaret(node, 0);
     const tr = editor.state.createTransaction();
     tr.readFromView(editor.view);
-    editor.dispatchTransaction(tr);
+    editor.dispatchTransaction(tr, false);
   };
 
   /**
@@ -88,7 +88,7 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
       element.remove();
       const tr = editor.state.createTransaction();
       tr.readFromView(editor.view);
-      editor.dispatchTransaction(tr);
+      editor.dispatchTransaction(tr, false);
     }
   }
 

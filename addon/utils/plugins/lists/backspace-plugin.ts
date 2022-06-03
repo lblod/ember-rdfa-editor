@@ -262,7 +262,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
       element.remove();
       const tr = editor.state.createTransaction();
       tr.readFromView(editor.view);
-      editor.dispatchTransaction(tr);
+      editor.dispatchTransaction(tr, false);
     }
   };
 
@@ -291,7 +291,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
         element.remove();
         const tr = editor.state.createTransaction();
         tr.readFromView(editor.view);
-        editor.dispatchTransaction(tr);
+        editor.dispatchTransaction(tr, false);
       } else {
         console.warn('List item has no parent element');
       }
@@ -326,7 +326,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
         list.remove();
         const tr = editor.state.createTransaction();
         tr.readFromView(editor.view);
-        editor.dispatchTransaction(tr);
+        editor.dispatchTransaction(tr, false);
       } else {
         console.warn('List item has no parent element');
       }
@@ -381,7 +381,7 @@ function helpMergeWithPreviousLi(element: Element, editor: Editor): void {
     window.getSelection()?.collapse(previousLi, index);
     const tr = editor.state.createTransaction();
     tr.readFromView(editor.view);
-    editor.dispatchTransaction(tr);
+    editor.dispatchTransaction(tr, false);
   } else {
     console.warn("Previous sibling is not a list item, can't execute merge");
   }
@@ -406,7 +406,7 @@ function helpRemoveListItemAndMoveContentBeforeList(
       window.getSelection()?.collapse(parentOfList, index);
       const tr = editor.state.createTransaction();
       tr.readFromView(editor.view);
-      editor.dispatchTransaction(tr);
+      editor.dispatchTransaction(tr, false);
     } else {
       console.warn('List item has no parent element');
     }
@@ -432,7 +432,7 @@ function helpRemoveListItemAndListButKeepContent(
       list.replaceWith(...element.childNodes);
       const tr = editor.state.createTransaction();
       tr.readFromView(editor.view);
-      editor.dispatchTransaction(tr);
+      editor.dispatchTransaction(tr, false);
     } else {
       console.warn('List item has no parent element');
     }

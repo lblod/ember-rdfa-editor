@@ -46,7 +46,7 @@ export default class PlaceholderTextBackspacePlugin implements BackspacePlugin {
       window.getSelection()?.collapse(textNode, 0);
       const tr = editor.state.createTransaction();
       tr.readFromView(editor.view);
-      editor.dispatchTransaction(tr);
+      editor.dispatchTransaction(tr, false);
     }
   };
 

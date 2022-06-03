@@ -390,7 +390,7 @@ export default class BackspaceHandler {
       const tr = this.editor.state.createTransaction();
       tr.readFromView(this.editor.view);
       tr.createSnapshot();
-      this.editor.dispatchTransaction(tr);
+      this.editor.dispatchTransaction(tr, false);
 
       this.editor.emitEvent(
         new ContentChangedEvent({

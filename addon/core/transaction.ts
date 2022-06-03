@@ -100,7 +100,7 @@ export default class Transaction {
 
     this.workingCopy.document = newVdom;
     this.workingCopy.selection = newSelection;
-    this.needsToWrite = true;
+    // this.needsToWrite = true;
     this.createSnapshot();
   }
 

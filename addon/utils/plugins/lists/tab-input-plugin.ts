@@ -214,7 +214,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     window.getSelection()?.collapse(textNode, 0);
     const tr = editor.state.createTransaction();
     tr.readFromView(editor.view);
-    editor.dispatchTransaction(tr);
+    editor.dispatchTransaction(tr, false);
   };
 
   /**
@@ -241,7 +241,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     window.getSelection()?.collapse(textNode, textNode.length);
     const tr = editor.state.createTransaction();
     tr.readFromView(editor.view);
-    editor.dispatchTransaction(tr);
+    editor.dispatchTransaction(tr, false);
   };
 }
 
@@ -258,7 +258,7 @@ function setCursorAtStartOfLi(listItem: HTMLElement, editor: Editor): void {
   window.getSelection()?.collapse(textNode, 0);
   const tr = editor.state.createTransaction();
   tr.readFromView(editor.view);
-  editor.dispatchTransaction(tr);
+  editor.dispatchTransaction(tr, false);
 }
 
 function setCursorAtEndOfLi(listItem: HTMLElement, editor: Editor): void {
@@ -274,5 +274,5 @@ function setCursorAtEndOfLi(listItem: HTMLElement, editor: Editor): void {
   window.getSelection()?.collapse(textNode, textNode.length);
   const tr = editor.state.createTransaction();
   tr.readFromView(editor.view);
-  editor.dispatchTransaction(tr);
+  editor.dispatchTransaction(tr, false);
 }

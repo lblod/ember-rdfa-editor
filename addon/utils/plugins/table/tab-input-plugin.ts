@@ -71,7 +71,6 @@ export default class TableTabInputPlugin implements TabInputPlugin {
       const tr = editor.state.createTransaction();
       tr.collapseIn(firstCell);
       editor.dispatchTransaction(tr);
-      // editor.model.write();
     }
   }
 

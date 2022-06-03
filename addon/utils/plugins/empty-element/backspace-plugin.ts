@@ -45,7 +45,7 @@ export default class EmptyElementBackspacePlugin implements BackspacePlugin {
     element.remove();
     const tr = editor.state.createTransaction();
     tr.readFromView(editor.view);
-    editor.dispatchTransaction(tr);
+    editor.dispatchTransaction(tr, false);
   };
 
   /**

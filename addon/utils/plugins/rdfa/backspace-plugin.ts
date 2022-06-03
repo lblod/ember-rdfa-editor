@@ -251,7 +251,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       window.getSelection()?.collapse(parent, 0); // TODO
       const tr = editor.state.createTransaction();
       tr.readFromView(editor.view);
-      editor.dispatchTransaction(tr);
+      editor.dispatchTransaction(tr, false);
     } else if (
       this.isManipulationSupportedFor(
         SUPPORTED_ELEMENT_MANIPULATIONS,
@@ -262,7 +262,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       window.getSelection()?.collapse(node, 0);
       const tr = editor.state.createTransaction();
       tr.readFromView(editor.view);
-      editor.dispatchTransaction(tr);
+      editor.dispatchTransaction(tr, false);
     }
   };
 
@@ -296,7 +296,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       removedElement = rdfaElement; //TODO: is this wrong to assume so?
       const tr = editor.state.createTransaction();
       tr.readFromView(editor.view);
-      editor.dispatchTransaction(tr);
+      editor.dispatchTransaction(tr, false);
     } else if (
       this.isManipulationSupportedFor(
         SUPPORTED_ELEMENT_MANIPULATIONS,
@@ -309,7 +309,7 @@ export default class RdfaBackspacePlugin implements BackspacePlugin {
       removedElement = rdfaElement as HTMLElement;
       const tr = editor.state.createTransaction();
       tr.readFromView(editor.view);
-      editor.dispatchTransaction(tr);
+      editor.dispatchTransaction(tr, false);
     }
 
     if (!updatedSelection) {

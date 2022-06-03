@@ -90,7 +90,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
     window.getSelection()?.collapse(parentOfLumpNode, offset);
     const tr = editor.state.createTransaction();
     tr.readFromView(editor.view);
-    editor.dispatchTransaction(tr);
+    editor.dispatchTransaction(tr, false);
   };
 
   /**
