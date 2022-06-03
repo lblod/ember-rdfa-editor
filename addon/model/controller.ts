@@ -169,7 +169,11 @@ export class EditorController implements Controller {
       objectArgs = args[0] as { [key: string]: unknown };
     } else {
       objectArgs = {};
-      for (let i = 0; i < command.arguments.length; i++) {
+      for (
+        let i = 0;
+        i < Math.min(command.arguments.length, args.length);
+        i++
+      ) {
         const k = command.arguments[i];
         objectArgs[k] = args[i];
       }
