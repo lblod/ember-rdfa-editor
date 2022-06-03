@@ -92,6 +92,11 @@ export default interface Controller {
     args: CommandArgs<N>
   ): boolean;
 
+  canExecuteCommand<N extends CommandName>(
+    commandName: N,
+    ...args: unknown[]
+  ): boolean;
+
   registerCommand<A extends unknown[], R>(command: Command<A, R>): void;
 
   registerWidget(spec: WidgetSpec): void;
@@ -163,9 +168,12 @@ export class EditorController implements Controller {
 
   canExecuteCommand<N extends keyof CommandMap>(
     commandName: N,
-    args: CommandArgs<N>
+    ...args: [CommandArgs<N>] | unknown[]
   ): boolean {
-    return this._editor.canExecuteCommand(commandName, args);
+    const command: Command<CommandArgs<N>, CommandReturn<N>> = this._editor
+      .state.commands[commandName];
+    const objectArgs = parseArguments(command.arguments, ...args);
+    return this._editor.canExecuteCommand(commandName, objectArgs);
   }
   getMutator(): ImmediateModelMutator {
     throw new Error('Method not implemented.');
