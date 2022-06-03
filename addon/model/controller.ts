@@ -158,22 +158,16 @@ export class EditorController implements Controller {
   }
   executeCommand<N extends keyof CommandMap>(
     commandName: N,
-    ...args: [CommandArgs<N>] | unknown[]
+    args: CommandArgs<N>
   ): ReturnType<CommandMap[N]['execute']> {
-    const command: Command<CommandArgs<N>, CommandReturn<N>> = this._editor
-      .state.commands[commandName];
-    const objectArgs = parseArguments(command.arguments, ...args);
-    return this._editor.executeCommand(commandName, objectArgs);
+    return this._editor.executeCommand(commandName, args);
   }
 
   canExecuteCommand<N extends keyof CommandMap>(
     commandName: N,
-    ...args: [CommandArgs<N>] | unknown[]
+    args: CommandArgs<N>
   ): boolean {
-    const command: Command<CommandArgs<N>, CommandReturn<N>> = this._editor
-      .state.commands[commandName];
-    const objectArgs = parseArguments(command.arguments, ...args);
-    return this._editor.canExecuteCommand(commandName, objectArgs);
+    return this._editor.canExecuteCommand(commandName, args);
   }
   getMutator(): ImmediateModelMutator {
     throw new Error('Method not implemented.');
@@ -209,23 +203,34 @@ export class EditorController implements Controller {
   }
 }
 
+export class EditorControllerCompat extends EditorController {
+  executeCommand<N extends keyof CommandMap>(
+    commandName: N,
+    ...args: unknown[]
+  ): ReturnType<CommandMap[N]['execute']> {
+    const command: Command<CommandArgs<N>, CommandReturn<N>> = this._editor
+      .state.commands[commandName];
+    const objectArgs = parseArguments(command.arguments, ...args);
+    return super.executeCommand(commandName, objectArgs);
+  }
+
+  canExecuteCommand<N extends keyof CommandMap>(
+    commandName: N,
+    ...args: unknown[]
+  ): boolean {
+    const command: Command<CommandArgs<N>, CommandReturn<N>> = this._editor
+      .state.commands[commandName];
+    const objectArgs = parseArguments(command.arguments, ...args);
+    return super.canExecuteCommand(commandName, objectArgs);
+  }
+}
+
 function parseArguments(argument_names: string[], ...args: unknown[]) {
   let objectArgs: { [key: string]: unknown } = {};
-  if (
-    args.length === 1 &&
-    args[0] &&
-    typeof args[0] === 'object' &&
-    ArrayUtils.all(Object.entries(args[0]), ([key, _]) =>
-      argument_names.includes(key)
-    )
-  ) {
-    objectArgs = args[0] as { [key: string]: unknown };
-  } else {
-    objectArgs = {};
-    for (let i = 0; i < Math.min(argument_names.length, args.length); i++) {
-      const k = argument_names[i];
-      objectArgs[k] = args[i];
-    }
+  objectArgs = {};
+  for (let i = 0; i < Math.min(argument_names.length, args.length); i++) {
+    const k = argument_names[i];
+    objectArgs[k] = args[i];
   }
   return objectArgs;
 }
