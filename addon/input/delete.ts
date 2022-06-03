@@ -712,7 +712,7 @@ export default class BackspaceHandler {
           (manipulation as Manipulation).type
         } was not handled by handleNativeInputManipulation.`;
     }
-    this.editor.dispatchTransaction(tr);
+    this.editor.dispatchTransaction(tr, false);
   }
 
   /**

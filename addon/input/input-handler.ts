@@ -51,6 +51,7 @@ export class EditorInputHandler implements InputHandler {
 
   constructor(editor: Editor) {
     this.editor = editor;
+    this.backSpaceHandler = new BackspaceHandler({ editor });
   }
   keydown(event: KeyboardEvent) {
     mapKeyEvent(this.editor, event);
@@ -126,7 +127,7 @@ export class EditorInputHandler implements InputHandler {
         event.preventDefault();
         break;
       case 'deleteContentBackward':
-        // this.backSpaceHandler.handleEvent(event);
+        this.backSpaceHandler.handleEvent(event);
         break;
       case 'deleteContentForward':
         event.preventDefault();
