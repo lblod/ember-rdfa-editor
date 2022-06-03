@@ -157,28 +157,7 @@ export class EditorController implements Controller {
   ): ReturnType<CommandMap[N]['execute']> {
     const command: Command<CommandArgs<N>, CommandReturn<N>> = this._editor
       .state.commands[commandName];
-    let objectArgs: { [key: string]: unknown } = {};
-    if (
-      args.length === 1 &&
-      args[0] &&
-      typeof args[0] === 'object' &&
-      ArrayUtils.all(Object.entries(args[0]), ([key, _]) =>
-        command.arguments.includes(key)
-      )
-    ) {
-      objectArgs = args[0] as { [key: string]: unknown };
-    } else {
-      objectArgs = {};
-      for (
-        let i = 0;
-        i < Math.min(command.arguments.length, args.length);
-        i++
-      ) {
-        const k = command.arguments[i];
-        objectArgs[k] = args[i];
-      }
-    }
-    command.arguments;
+    const objectArgs = parseArguments(command.arguments, ...args);
     return this._editor.executeCommand(commandName, objectArgs);
   }
 
@@ -220,4 +199,25 @@ export class EditorController implements Controller {
   ): void {
     this._editor.offEvent(eventName, callback, config);
   }
+}
+
+function parseArguments(argument_names: string[], ...args: unknown[]) {
+  let objectArgs: { [key: string]: unknown } = {};
+  if (
+    args.length === 1 &&
+    args[0] &&
+    typeof args[0] === 'object' &&
+    ArrayUtils.all(Object.entries(args[0]), ([key, _]) =>
+      argument_names.includes(key)
+    )
+  ) {
+    objectArgs = args[0] as { [key: string]: unknown };
+  } else {
+    objectArgs = {};
+    for (let i = 0; i < Math.min(argument_names.length, args.length); i++) {
+      const k = argument_names[i];
+      objectArgs[k] = args[i];
+    }
+  }
+  return objectArgs;
 }
