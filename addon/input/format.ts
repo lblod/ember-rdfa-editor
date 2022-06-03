@@ -1,5 +1,5 @@
 import { Editor } from '../core/editor';
-import { MarkSet, MarkSpec } from '../model/mark';
+import { MarkSpec } from '../model/mark';
 import { boldMarkSpec } from '../plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '../plugins/basic-styles/marks/italic';
 import { strikethroughMarkSpec } from '../plugins/basic-styles/marks/strikethrough';
@@ -12,17 +12,8 @@ const fontStyleMap: Map<FontStyle, MarkSpec> = new Map<FontStyle, MarkSpec>([
   ['underline', underlineMarkSpec],
   ['strikethrough', strikethroughMarkSpec],
 ]);
-export function handleBasicStyle(
-  editor: Editor,
-  event: InputEvent,
-  style: FontStyle
-) {
-  console.log(event);
-  event.preventDefault();
-  editor.executeCommand('add-mark-to-selection', { markName: style });
-}
 
-export function handleBasicStyle2(style: FontStyle) {
+export function handleBasicStyle(style: FontStyle) {
   return function (editor: Editor, event: KeyboardEvent) {
     console.log(event);
     event.preventDefault();

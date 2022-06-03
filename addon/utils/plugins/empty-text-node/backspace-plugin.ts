@@ -12,7 +12,7 @@ import {
   stringToVisibleText,
 } from '@lblod/ember-rdfa-editor/editor/utils';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import RawEditor from '../../ce/raw-editor';
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 
 /**
  * In some cases the browser acts a bit weird when we empty a text node. This plugin tries to handle these edge cases.
@@ -65,26 +65,30 @@ export default class EmptyTextNodeBackspacePlugin implements BackspacePlugin {
    */
   replaceLastCharacterWithInvisibleSpace = (
     manipulation: RemoveCharacterManipulation,
-    editor: RawEditor
+    editor: Editor
   ) => {
     const { node } = manipulation;
     node.textContent = INVISIBLE_SPACE;
     window.getSelection()?.collapse(node, 0);
     moveCaret(node, 0);
-    editor.model.read(true);
+    const tr = editor.state.createTransaction();
+    tr.readFromView(editor.view);
+    editor.dispatchTransaction(tr);
   };
 
   /**
    * This remove the text node completely.
    */
-  removeTextNode(manipulation: RemoveCharacterManipulation, editor: RawEditor) {
+  removeTextNode(manipulation: RemoveCharacterManipulation, editor: Editor) {
     const element = manipulation.node;
 
     if (element.parentElement) {
       moveCaretBefore(element);
 
       element.remove();
-      editor.model.read();
+      const tr = editor.state.createTransaction();
+      tr.readFromView(editor.view);
+      editor.dispatchTransaction(tr);
     }
   }
 

@@ -1,3 +1,4 @@
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import {
   BackspaceHandlerManipulation,
   BackspacePlugin,
@@ -7,7 +8,6 @@ import {
   ManipulationGuidance,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { getParentLumpNode } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
-import RawEditor from '../../ce/raw-editor';
 
 // We favour to be defensive in the stuff we accept.
 const SUPPORTED_MANIPULATIONS = [
@@ -59,7 +59,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
       if (this.isElementFlaggedForRemoval(parentLump)) {
         return {
           allow: true,
-          executor: (_, editor: RawEditor) => {
+          executor: (_, editor: Editor) => {
             this.removeLumpNode(parentLump!, editor);
           },
         };
@@ -79,7 +79,7 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
    * It assumes manipulation.node is located in a LumpNode.
    * @method removeLumpNode
    */
-  removeLumpNode = (lumpNode: Element, editor: RawEditor): void => {
+  removeLumpNode = (lumpNode: Element, editor: Editor): void => {
     const parentOfLumpNode = lumpNode.parentNode;
     if (!parentOfLumpNode) {
       throw new Error("Lump node doesn't have parent node");
@@ -88,7 +88,9 @@ export default class LumpNodeBackspacePlugin implements BackspacePlugin {
     const offset = Array.from(parentOfLumpNode.childNodes).indexOf(lumpNode);
     lumpNode.remove();
     window.getSelection()?.collapse(parentOfLumpNode, offset);
-    editor.model.read(true);
+    const tr = editor.state.createTransaction();
+    tr.readFromView(editor.view);
+    editor.dispatchTransaction(tr);
   };
 
   /**

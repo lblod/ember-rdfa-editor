@@ -1,3 +1,4 @@
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import {
   BackspaceHandlerManipulation,
   BackspacePlugin,
@@ -7,7 +8,6 @@ import {
   MoveCursorToEndOfElementManipulation,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import { moveCaretBefore } from '@lblod/ember-rdfa-editor/editor/utils';
-import RawEditor from '../../ce/raw-editor';
 
 /**
  * This plugin removes empty elements instead of jumping into them
@@ -38,12 +38,14 @@ export default class EmptyElementBackspacePlugin implements BackspacePlugin {
    */
   jumpBeforeAndRemoveEmptyElement = (
     manipulation: MoveCursorToEndOfElementManipulation,
-    editor: RawEditor
+    editor: Editor
   ) => {
     const element = manipulation.node;
     moveCaretBefore(element);
     element.remove();
-    editor.model.read(true);
+    const tr = editor.state.createTransaction();
+    tr.readFromView(editor.view);
+    editor.dispatchTransaction(tr);
   };
 
   /**

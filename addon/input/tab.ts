@@ -42,7 +42,7 @@ export default function handleTab() {
       warn(`Not allowed to execute manipulation`, {
         id: 'tab-input-handler-manipulation-not-allowed',
       });
-      return { allowPropagation: false };
+      return;
     }
 
     // Run the manipulation.

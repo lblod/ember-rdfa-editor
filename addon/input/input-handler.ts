@@ -1,6 +1,5 @@
 import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
-import { handleBasicStyle } from '@lblod/ember-rdfa-editor/input/format';
 import { handleUndo } from '@lblod/ember-rdfa-editor/input/history';
 import {
   handleInsertLineBreak,
@@ -17,6 +16,7 @@ import {
 } from '../editor/input-handlers/manipulation';
 import { editorDebug } from '../editor/utils';
 import handleCutCopy from './cut-copy';
+import BackspaceHandler from './delete';
 import handlePaste from './paste';
 
 /**
@@ -47,6 +47,7 @@ export interface InputHandler {
 
 export class EditorInputHandler implements InputHandler {
   private editor: Editor;
+  private backSpaceHandler: BackspaceHandler;
 
   constructor(editor: Editor) {
     this.editor = editor;
@@ -125,6 +126,7 @@ export class EditorInputHandler implements InputHandler {
         event.preventDefault();
         break;
       case 'deleteContentBackward':
+        // this.backSpaceHandler.handleEvent(event);
         break;
       case 'deleteContentForward':
         event.preventDefault();
