@@ -42,6 +42,7 @@ import { strikethroughMarkSpec } from '../plugins/basic-styles/marks/strikethrou
 import { underlineMarkSpec } from '../plugins/basic-styles/marks/underline';
 import { isElement, isTextNode } from '../utils/dom-helpers';
 import { NotImplementedError } from '../utils/errors';
+import EventBus from '../utils/event-bus';
 import Transaction from './transaction';
 
 export interface StateArgs {
@@ -56,6 +57,7 @@ export interface StateArgs {
   pathFromDomRoot: Node[];
   baseIRI: string;
   keymap?: KeyMap;
+  eventBus: EventBus;
 }
 export interface NodeParseResult {
   type: 'mark' | 'text' | 'element';
@@ -83,6 +85,7 @@ export default interface State {
   keymap: KeyMap;
   createTransaction(): Transaction;
   parseNode(node: Node): NodeParseResult;
+  eventBus: EventBus;
 }
 export class SayState implements State {
   document: ModelElement;
@@ -91,6 +94,7 @@ export class SayState implements State {
   commands: CommandMap;
   datastore: Datastore;
   marksRegistry: MarksRegistry;
+  eventBus: EventBus;
   /**
    * The previous "relevant" state. This is not necessarily
    * the state directly preceding this one. It is up to the discretion
@@ -128,6 +132,7 @@ export class SayState implements State {
     this.pathFromDomRoot = args.pathFromDomRoot;
     this.baseIRI = args.baseIRI;
     this.keymap = args.keymap ?? defaultKeyMap;
+    this.eventBus = args.eventBus;
   }
   /**
    * Create a new @link{Transaction} with this state as its initial state.
@@ -191,7 +196,7 @@ export type CommandArgs<C extends CommandName> = Parameters<
   CommandMap[C]['execute']
 >[1];
 
-export function emptyState(): State {
+export function emptyState(eventBus: EventBus): State {
   return new SayState({
     document: new ModelElement('div'),
     selection: new ModelSelection(),
@@ -203,6 +208,7 @@ export function emptyState(): State {
     pathFromDomRoot: [],
     baseIRI: 'http://example.org',
     keymap: defaultKeyMap,
+    eventBus: eventBus,
   });
 }
 
@@ -220,5 +226,6 @@ export function cloneState(state: State): State {
     datastore: state.datastore,
     pathFromDomRoot: state.pathFromDomRoot,
     keymap: state.keymap,
+    eventBus: state.eventBus,
   });
 }

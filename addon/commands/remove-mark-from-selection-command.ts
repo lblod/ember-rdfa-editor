@@ -7,6 +7,8 @@ import {
   MisbehavedSelectionError,
   ModelError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
+import { CORE_OWNER } from '../model/util/constants';
+import { SelectionChangedEvent } from '../utils/editor-event';
 
 export interface RemoveMarkFromSelectionCommandArgs {
   markName: string;
@@ -44,6 +46,12 @@ export default class RemoveMarkFromSelectionCommand
         throw new ModelError(`Unrecognized mark: ${markName}`);
       }
     }
-    dispatch(tr);
+    const newState = dispatch(tr);
+    state.eventBus.emit(
+      new SelectionChangedEvent({
+        owner: CORE_OWNER,
+        payload: newState.selection,
+      })
+    );
   }
 }

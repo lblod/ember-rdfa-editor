@@ -11,6 +11,8 @@ import {
   MisbehavedSelectionError,
   ModelError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
+import { CORE_OWNER } from '../model/util/constants';
+import { SelectionChangedEvent } from '../utils/editor-event';
 
 export interface AddMarkToSelectionCommandArgs {
   markName: string;
@@ -36,6 +38,7 @@ export default class AddMarkToSelectionCommand
     if (spec) {
       if (selection.isCollapsed) {
         tr.addMarkToSelection(new Mark<AttributeSpec>(spec, markAttributes));
+
         // TODO
         // this.model.rootNode.focus();
         // this.model.emitSelectionChanged();
@@ -50,7 +53,13 @@ export default class AddMarkToSelectionCommand
         );
         tr.selectRange(resultRange);
       }
-      dispatch(tr);
+      const newState = dispatch(tr);
+      state.eventBus.emit(
+        new SelectionChangedEvent({
+          owner: CORE_OWNER,
+          payload: newState.selection,
+        })
+      );
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);
     }

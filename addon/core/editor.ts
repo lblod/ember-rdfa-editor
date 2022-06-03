@@ -122,7 +122,7 @@ class SayEditor implements Editor {
     this.view = new EditorView(domRoot);
     this.eventbus = new EventBus();
 
-    let initialState = emptyState();
+    let initialState = emptyState(this.eventbus);
     const tr = new Transaction(initialState);
     tr.readFromView(this.view);
     tr.setBaseIRI(args.baseIRI ?? document.baseURI);
