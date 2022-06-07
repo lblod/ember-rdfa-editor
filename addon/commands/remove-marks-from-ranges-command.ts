@@ -2,7 +2,7 @@ import Command from '@lblod/ember-rdfa-editor/commands/command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import Model from '@lblod/ember-rdfa-editor/model/model';
-import { AttributeSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import { AttributeSpec } from '../model/util/render-spec';
 
 interface MarkConfig {
   name: string;

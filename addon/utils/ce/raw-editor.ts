@@ -304,7 +304,7 @@ export default class RawEditor {
     this.model.registerMark(markSpec);
   }
 
-  registerComponent(component: InlineComponentSpec<Properties>) {
+  registerComponent(component: InlineComponentSpec) {
     this.model.registerInlineComponent(component);
   }
 
