@@ -10,7 +10,7 @@ import ModelPosition from '../model-position';
 export default class ListCleaner {
   clean(range: ModelRange, tr: Transaction) {
     const listNodes = new ModelTreeWalker<ModelElement>({
-      filter: toFilterSkipFalse(ModelNodeUtils.isListContainer),
+      filter: toFilterSkipFalse((node) => ModelNodeUtils.isListContainer(node)),
       range,
     });
 

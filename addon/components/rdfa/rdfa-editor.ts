@@ -15,6 +15,8 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
+
 import type IntlService from 'ember-intl/services/intl';
 import { default as RdfaDocumentController } from '../../utils/rdfa/rdfa-document';
 

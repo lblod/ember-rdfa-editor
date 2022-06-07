@@ -19,7 +19,6 @@ import ModelPosition from '../model/model-position';
 import SplitOperation from '../model/operations/split-operation';
 import MoveOperation from '../model/operations/move-operation';
 import { EditorStore } from '../model/util/datastore/datastore';
-import EventBus from '../utils/event-bus';
 
 interface TextInsertion {
   range: ModelRange;

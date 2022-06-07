@@ -67,7 +67,7 @@ export interface Editor {
     commandName: C,
     args: CommandArgs<C>,
     updateView?: boolean
-  ): CommandReturn<C>;
+  ): CommandReturn<C> | void;
   /**
    * Checks if the @{link Command} with name can be executed for the given args.
    * */
@@ -146,8 +146,8 @@ class SayEditor implements Editor {
     commandName: C,
     args: CommandArgs<C>,
     updateView = true
-  ): CommandReturn<C> {
-    const command: Command<CommandArgs<C>, CommandReturn<C>> = this.state
+  ): CommandReturn<C> | void {
+    const command: Command<CommandArgs<C>, CommandReturn<C> | void> = this.state
       .commands[commandName];
     const result = command.execute(
       {
@@ -162,8 +162,8 @@ class SayEditor implements Editor {
     commandName: C,
     args: CommandArgs<C>
   ): boolean {
-    const command: Command<CommandArgs<C>, CommandReturn<C>> = this.state
-      .commands[commandName];
+    const command: Command<CommandArgs<CommandName>, CommandReturn<C>> = this
+      .state.commands[commandName];
     return command.canExecute({ state: this.state }, args);
   }
   defaultDispatcher =
