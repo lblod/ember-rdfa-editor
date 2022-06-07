@@ -6,7 +6,6 @@ import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
-import { Properties } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
 
 interface Args {
   editor: RawEditor;
@@ -194,38 +193,5 @@ export default class EditorToolbar extends Component<Args> {
   @action
   removeTable() {
     this.args.controller.executeCommand('remove-table');
-  }
-
-  @action
-  insertExampleComponent() {
-    const props: Properties = {
-      title: 'Headline',
-      content: 'Lorem Ipsum',
-    };
-    this.args.controller.executeCommand(
-      'insert-component',
-      'inline-components/example-inline-component',
-      props
-    );
-  }
-
-  @action
-  insertReglementaireBijlageComponent() {
-    const props: Properties = {
-      title: 'Reglementaire bijlage',
-    };
-    this.args.controller.executeCommand(
-      'insert-component',
-      'inline-components/regulatory-attachment',
-      props
-    );
-  }
-
-  @action
-  insertCounter() {
-    this.args.controller.executeCommand(
-      'insert-component',
-      'inline-components/counter'
-    );
   }
 }

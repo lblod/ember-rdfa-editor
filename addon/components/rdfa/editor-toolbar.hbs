@@ -255,32 +255,6 @@
         </button>
       {{/if}}
     </div>
-    <div class='say-toolbar__group'>
-      <button
-        type='button'
-        class='say-toolbar__button'
-        {{on 'click' this.insertExampleComponent}}
-        title={{t 'ember-rdfa-editor.insertExampleComponent'}}
-      >
-        Header
-      </button>
-      <button
-        type='button'
-        class='say-toolbar__button'
-        {{on 'click' this.insertReglementaireBijlageComponent}}
-        title={{t 'ember-rdfa-editor.insertRBComponent'}}
-      >
-        RB
-      </button>
-      <button
-        type='button'
-        class='say-toolbar__button'
-        {{on 'click' this.insertCounter}}
-        title={{t 'ember-rdfa-editor.insertCounter'}}
-      >
-        C
-      </button>
-    </div>
   </div>
   <div class='say-toolbar__actions'>
     {{yield}}
