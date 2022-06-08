@@ -31,9 +31,10 @@ export default class InsertComponentCommand extends Command {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
-    const componentSpec =
+    const match =
       this.model.inlineComponentsRegistry.lookUpComponent(componentName);
-    if (componentSpec) {
+    if (match) {
+      const { componentSpec } = match;
       const component = new ModelInlineComponent(componentSpec, props, state);
       this.model.change((mutator) => {
         const newRange = mutator.insertNodes(selection.lastRange, component);
