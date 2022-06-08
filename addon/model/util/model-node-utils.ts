@@ -136,4 +136,18 @@ export default class ModelNodeUtils {
   static getIndex(node: ModelText, steps: number, forwards: boolean) {
     return forwards ? steps : node.content.length - steps;
   }
+
+  static getTextContent(node: ModelNode): string {
+    if (ModelNode.isModelElement(node)) {
+      let result = '';
+      node.children.forEach((child) => {
+        this.getTextContent(child);
+      });
+      return result;
+    } else if (ModelNode.isModelText(node)) {
+      return node.content;
+    } else {
+      return '';
+    }
+  }
 }
