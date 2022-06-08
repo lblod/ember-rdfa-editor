@@ -141,7 +141,7 @@ export default class ModelNodeUtils {
     if (ModelNode.isModelElement(node)) {
       let result = '';
       node.children.forEach((child) => {
-        this.getTextContent(child);
+        result += ModelNodeUtils.getTextContent(child);
       });
       return result;
     } else if (ModelNode.isModelText(node)) {
