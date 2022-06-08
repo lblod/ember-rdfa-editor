@@ -54,6 +54,11 @@ export default class HtmlNodeReader
           props,
           state
         );
+
+        context.registerNodeView(component, {
+          viewRoot: from,
+          contentRoot: from,
+        });
         result = [component];
       } else {
         const marks = context.matchMark(from);

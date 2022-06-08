@@ -69,13 +69,18 @@ export default class HtmlWriter {
       }
       resultView = view;
     } else if (ModelNode.isModelInlineComponent(modelNode)) {
-      resultView = this.htmlInlineComponentWriter.write(modelNode);
+      const view = this.getView(modelNode);
+      if (view) {
+        resultView = view;
+      } else {
+        resultView = this.htmlInlineComponentWriter.write(modelNode);
+        this.model.registerNodeView(modelNode, resultView);
+      }
       this.model.addComponentInstance(
         resultView.viewRoot,
         modelNode.spec.name,
         modelNode
       );
-      // this.model.registerNodeView(modelNode, resultView);
     } else {
       throw new NotImplementedError('Unsupported modelnode type');
     }
