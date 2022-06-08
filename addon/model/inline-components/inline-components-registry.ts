@@ -4,19 +4,22 @@ import { tracked } from 'tracked-built-ins';
 import MapUtils from '../util/map-utils';
 import {
   InlineComponentSpec,
+  InternalInlineComponentSpec,
   ModelInlineComponent,
 } from './model-inline-component';
+import Controller from '../controller';
+import { ComponentNotFoundError } from '@lblod/ember-rdfa-editor/utils/errors';
 export type ActiveComponentEntry = {
   node: Node;
   emberComponentName: string;
   model: ModelInlineComponent;
+  controller: Controller;
 };
 export default class InlineComponentsRegistry {
-  private registeredComponents: Map<string, InlineComponentSpec> = new Map();
-  private componentMatchMap: Map<TagMatch, InlineComponentSpec[]> = new Map<
-    keyof HTMLElementTagNameMap,
-    InlineComponentSpec[]
-  >();
+  private registeredComponents: Map<string, InternalInlineComponentSpec> =
+    new Map();
+  private componentMatchMap: Map<TagMatch, InternalInlineComponentSpec[]> =
+    new Map<keyof HTMLElementTagNameMap, InternalInlineComponentSpec[]>();
 
   activeComponents = tracked<ActiveComponentEntry>([]);
 
@@ -26,10 +29,11 @@ export default class InlineComponentsRegistry {
 
     let result: InlineComponentSpec | null = null;
 
-    for (const component of potentialMatches) {
-      const baseAttributesMatch = component.baseMatcher.attributeBuilder!(node);
+    for (const match of potentialMatches) {
+      const baseAttributesMatch =
+        match.componentSpec.baseMatcher.attributeBuilder!(node);
       if (baseAttributesMatch) {
-        result = component;
+        result = match.componentSpec;
         break;
       }
     }
@@ -37,13 +41,18 @@ export default class InlineComponentsRegistry {
     return result;
   }
 
-  registerComponent(component: InlineComponentSpec) {
-    this.registeredComponents.set(component.name, component);
-    MapUtils.setOrPush(
-      this.componentMatchMap,
-      component.baseMatcher.tag,
-      component
-    );
+  registerComponent({
+    componentSpec,
+    controller,
+  }: InternalInlineComponentSpec) {
+    this.registeredComponents.set(componentSpec.name, {
+      componentSpec,
+      controller,
+    });
+    MapUtils.setOrPush(this.componentMatchMap, componentSpec.baseMatcher.tag, {
+      componentSpec,
+      controller,
+    });
   }
 
   lookUpComponent(name: string) {
@@ -59,7 +68,19 @@ export default class InlineComponentsRegistry {
     emberComponentName: string,
     model: ModelInlineComponent
   ) {
-    this.activeComponents.push({ node, emberComponentName, model });
+    const componentSpec = this.lookUpComponent(emberComponentName);
+    if (componentSpec) {
+      this.activeComponents.push({
+        node,
+        emberComponentName,
+        model,
+        controller: componentSpec.controller,
+      });
+    } else {
+      throw new ComponentNotFoundError(
+        `Component ${emberComponentName} not found`
+      );
+    }
   }
 
   get componentInstances() {

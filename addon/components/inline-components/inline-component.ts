@@ -1,4 +1,5 @@
 import Component from '@glimmer/component';
+import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import {
   ModelInlineComponent,
   Properties,
@@ -9,6 +10,7 @@ import { Serializable } from '@lblod/ember-rdfa-editor/model/util/render-spec';
 interface Args<A extends Properties = Properties, S extends State = State> {
   model: ModelInlineComponent<A, S>;
   node: HTMLElement;
+  controller: Controller;
 }
 
 export default class InlineComponent<

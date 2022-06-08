@@ -131,3 +131,5 @@ export class TypeAssertionError extends CustomError {}
  * When a command gets executed in a state it shouldn't.
  */
 export class IllegalExecutionStateError extends CustomError {}
+
+export class ComponentNotFoundError extends CustomError {}

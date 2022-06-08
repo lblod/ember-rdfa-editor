@@ -1,6 +1,7 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import Handlebars from 'handlebars';
 import { tracked } from 'tracked-built-ins';
+import Controller from '../controller';
 import { DomNodeMatcher } from '../mark';
 import ModelElement from '../model-element';
 import { ModelNodeType } from '../model-node';
@@ -9,6 +10,11 @@ import { AttributeSpec, RenderSpec, Serializable } from '../util/render-spec';
 export type Properties = Record<string, Serializable | undefined>;
 
 export type State = Record<string, Serializable | undefined>;
+
+export type InternalInlineComponentSpec = {
+  componentSpec: InlineComponentSpec;
+  controller: Controller;
+};
 export abstract class InlineComponentSpec {
   name: string;
   tag: keyof HTMLElementTagNameMap;
