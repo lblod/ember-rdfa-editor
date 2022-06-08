@@ -127,6 +127,13 @@ export default class HtmlWriter {
           result.add(textViews[i].viewRoot);
         }
       });
+    } else {
+      modelTexts.forEach((modelText) => {
+        const view = this.getView(modelText);
+        if (view) {
+          result.add(view.viewRoot);
+        }
+      });
     }
 
     return result;
