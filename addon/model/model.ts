@@ -156,13 +156,17 @@ export default class Model {
    * almost always true, but can be useful for testing to turn it off when you dont
    * have a real dom available.
    */
-  write(tree: ModelElement = this.rootModelNode, writeSelection = true) {
+  write(
+    tree: ModelElement = this.rootModelNode,
+    writeSelection = true,
+    moveSelectionIntoView = false
+  ) {
     this.rootModelNode.removeDirty('node');
     this._inlineComponentsRegistry.clearComponentInstances();
     this.writer.write(tree);
 
     if (writeSelection) {
-      this.writeSelection();
+      this.writeSelection(moveSelectionIntoView);
     }
   }
 
@@ -190,8 +194,8 @@ export default class Model {
     return this._inlineComponentsRegistry.componentInstances;
   }
 
-  writeSelection() {
-    this.selectionWriter.write(this.selection);
+  writeSelection(moveSelectionIntoView = false) {
+    this.selectionWriter.write(this.selection, moveSelectionIntoView);
   }
 
   /**
