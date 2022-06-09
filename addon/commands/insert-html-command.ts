@@ -38,6 +38,7 @@ export default class InsertHtmlCommand extends Command {
 
       const newRange = mutator.insertNodes(range, ...modelNodes);
       this.model.selectRange(newRange);
+      this.model.read();
     });
   }
 }
