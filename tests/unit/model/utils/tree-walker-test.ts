@@ -388,7 +388,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     assert.strictEqual(result[3], n3);
     assert.strictEqual(result[4], n4);
   });
-  test('empty range returns an empty list', function (assert) {
+  test('empty range returns an empty list 1', function (assert) {
     const { root: initial } = vdom`
     <modelRoot>
       <div>
@@ -421,5 +421,107 @@ module('Unit | model | utils | tree-walker-test', function () {
     });
     const result = [...walker];
     assert.strictEqual(result.length, 0);
+  });
+  test('range containing closing tag works correctly', function (assert) {
+    const { root: initial } = vdom`
+    <modelRoot>
+      <text>outside</text>
+      <div>
+        <text>inside</text>
+      </div>
+    </modelRoot>
+    `;
+    const range = ModelRange.fromPaths(initial as ModelElement, [7, 3], [8]);
+    const walker = new ModelTreeWalker({
+      filter: toFilterSkipFalse(ModelNode.isModelText),
+      range,
+    });
+    const result = [...walker];
+    assert.strictEqual(result.length, 1);
+  });
+  test('range containing closing tag works correctly 2', function (assert) {
+    const { root: initial } = vdom`
+    <modelRoot>
+      <text>outside</text>
+      <div>
+        <text>inside</text>
+      </div>
+    </modelRoot>
+    `;
+    const range = ModelRange.fromPaths(initial as ModelElement, [7], [8]);
+    const walker = new ModelTreeWalker({
+      filter: toFilterSkipFalse(ModelNode.isModelText),
+      range,
+    });
+    const result = [...walker];
+    assert.strictEqual(result.length, 1);
+  });
+  test('range containing closing tag works correctly 3', function (assert) {
+    const { root: initial } = vdom`
+    <modelRoot>
+      <text>outside</text>
+      <div>
+        <text>inside</text>
+      </div>
+    </modelRoot>
+    `;
+    const range = ModelRange.fromPaths(initial as ModelElement, [4], [8]);
+    const walker = new ModelTreeWalker({
+      filter: toFilterSkipFalse(ModelNode.isModelText),
+      range,
+    });
+    const result = [...walker];
+    assert.strictEqual(result.length, 2);
+  });
+  test('range containing opening tag works correctly 1', function (assert) {
+    const { root: initial } = vdom`
+    <modelRoot>
+      <div>
+        <text>inside</text>
+      </div>
+      <text>outside</text>
+    </modelRoot>
+    `;
+    const range = ModelRange.fromPaths(initial as ModelElement, [0], [0, 4]);
+    const walker = new ModelTreeWalker({
+      filter: toFilterSkipFalse(ModelNode.isModelText),
+      range,
+    });
+    const result = [...walker];
+    assert.strictEqual(result.length, 1);
+  });
+  test('range containing opening tag works correctly 2', function (assert) {
+    const { root: initial } = vdom`
+    <modelRoot>
+      <div>
+        <text>inside</text>
+      </div>
+      <text>outside</text>
+    </modelRoot>
+    `;
+    const range = ModelRange.fromPaths(initial as ModelElement, [0], [1]);
+    const walker = new ModelTreeWalker({
+      filter: toFilterSkipFalse(ModelNode.isModelText),
+      range,
+    });
+    const result = [...walker];
+    assert.strictEqual(result.length, 1);
+  });
+  test('range containing opening tag works correctly 3', function (assert) {
+    const { root: initial } = vdom`
+    <modelRoot>
+      <div>
+        <text>inside</text>
+      </div>
+      <text>outside</text>
+    </modelRoot>
+    `;
+    const range = ModelRange.fromPaths(initial as ModelElement, [0], [2]);
+    const walker = new ModelTreeWalker({
+      filter: toFilterSkipFalse(ModelNode.isModelText),
+      range,
+    });
+    const result = [...walker];
+    assert.strictEqual(result.length, 2);
   });
 });
