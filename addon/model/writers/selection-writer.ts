@@ -1,6 +1,9 @@
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {
+  getWindowSelection,
+  isElement,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
@@ -27,6 +30,9 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
     domSelection.removeAllRanges();
     for (const range of modelSelection.ranges) {
       domSelection.addRange(this.writeDomRange(range));
+    }
+    if (domSelection.anchorNode && isElement(domSelection.anchorNode)) {
+      domSelection.anchorNode.scrollIntoView();
     }
   }
 
