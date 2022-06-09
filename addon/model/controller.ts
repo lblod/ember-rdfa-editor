@@ -207,7 +207,11 @@ export class RawEditorController implements Controller {
     });
   }
 
-  write(writeSelection = true) {
-    this._rawEditor.model.write(this.modelRoot, writeSelection);
+  write(writeSelection = true, moveSelectionIntoView = false) {
+    this._rawEditor.model.write(
+      this.modelRoot,
+      writeSelection,
+      moveSelectionIntoView
+    );
   }
 }
