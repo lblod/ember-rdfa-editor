@@ -96,7 +96,7 @@ export default interface Controller {
     config?: ListenerConfig
   ): void;
 
-  write(writeSelection?: boolean): void;
+  write(writeSelection?: boolean, moveSelectionIntoView?: boolean): void;
 }
 
 export class RawEditorController implements Controller {
