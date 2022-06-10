@@ -31,12 +31,12 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
     for (const range of modelSelection.ranges) {
       domSelection.addRange(this.writeDomRange(range));
     }
-    if (
-      domSelection.anchorNode &&
-      isElement(domSelection.anchorNode) &&
-      moveSelectionIntoView
-    ) {
-      domSelection.anchorNode.scrollIntoView();
+    if (domSelection.anchorNode && moveSelectionIntoView) {
+      if (isElement(domSelection.anchorNode)) {
+        domSelection.anchorNode.scrollIntoView();
+      } else {
+        domSelection.anchorNode.parentElement?.scrollIntoView();
+      }
     }
   }
 
