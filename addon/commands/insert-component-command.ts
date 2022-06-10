@@ -26,6 +26,7 @@ export default class InsertComponentCommand extends Command {
     componentName: string,
     props: Properties = {},
     state: State = {},
+    createSnapshot = true,
     selection: ModelSelection = this.model.selection
   ): void {
     if (!ModelSelection.isWellBehaved(selection)) {
@@ -36,13 +37,17 @@ export default class InsertComponentCommand extends Command {
     if (match) {
       const { componentSpec } = match;
       const component = new ModelInlineComponent(componentSpec, props, state);
-      this.model.change((mutator) => {
-        const newRange = mutator.insertNodes(selection.lastRange, component);
-        const brAfterComponent = new ModelElement('br');
-        brAfterComponent.setAttribute('class', 'trailing');
-        mutator.insertNodes(newRange, brAfterComponent);
-        this.model.selectRange(newRange);
-      });
+      this.model.change(
+        (mutator) => {
+          const newRange = mutator.insertNodes(selection.lastRange, component);
+          const brAfterComponent = new ModelElement('br');
+          brAfterComponent.setAttribute('class', 'trailing');
+          mutator.insertNodes(newRange, brAfterComponent);
+          this.model.selectRange(newRange);
+        },
+        true,
+        createSnapshot
+      );
     } else {
       throw new ModelError(`Unrecognized component: ${componentName}`);
     }
