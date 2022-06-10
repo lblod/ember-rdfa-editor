@@ -116,4 +116,9 @@ export class ModelInlineComponent<
   write(dynamic = true): Node {
     return this.spec.render(this.props, this.state, dynamic);
   }
+
+  clone(): ModelInlineComponent<A, S> {
+    const result = new ModelInlineComponent(this.spec, this.props, this.state);
+    return result;
+  }
 }
