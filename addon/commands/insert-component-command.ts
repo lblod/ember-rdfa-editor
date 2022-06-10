@@ -32,10 +32,9 @@ export default class InsertComponentCommand extends Command {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
-    const match =
+    const componentSpec =
       this.model.inlineComponentsRegistry.lookUpComponent(componentName);
-    if (match) {
-      const { componentSpec } = match;
+    if (componentSpec) {
       const component = new ModelInlineComponent(componentSpec, props, state);
       this.model.change(
         (mutator) => {

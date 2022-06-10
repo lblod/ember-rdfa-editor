@@ -209,10 +209,7 @@ export class RawEditorController implements Controller {
   }
 
   registerInlineComponent(component: InlineComponentSpec) {
-    this._rawEditor.registerComponent({
-      componentSpec: component,
-      controller: this,
-    });
+    this._rawEditor.registerComponent(component);
   }
 
   write(writeSelection = true, moveSelectionIntoView = false) {
