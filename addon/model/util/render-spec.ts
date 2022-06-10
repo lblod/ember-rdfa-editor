@@ -44,3 +44,39 @@ export default function renderFromSpec(
     return result;
   }
 }
+
+export function renderFromSpecMultipleChildren(
+  spec: RenderSpec,
+  nodes: Iterable<Node>
+): Node {
+  if (spec === SLOT) {
+    const result = document.createElement('span');
+    result.append(...nodes);
+    return result;
+  } else {
+    let result: HTMLElement;
+    if (typeof spec === 'string') {
+      result = document.createElement(spec);
+    } else {
+      result = document.createElement(spec.tag);
+      if (spec.attributes) {
+        for (const [key, val] of Object.entries(spec.attributes)) {
+          if (val !== undefined) {
+            result.setAttribute(key, val.toString());
+          }
+        }
+      }
+      if (spec.children) {
+        for (const child of spec.children) {
+          if (child === SLOT) {
+            result.append(...nodes);
+          } else {
+            result.appendChild(renderFromSpecMultipleChildren(child, nodes));
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+}

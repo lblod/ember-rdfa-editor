@@ -53,6 +53,13 @@ export default class HashSet<I> implements Set<I> {
     return didDelete;
   }
 
+  deleteAll(...values: I[]) {
+    for (const value of values) {
+      const key = this.hashFunc(value);
+      this.items.delete(key);
+    }
+  }
+
   deleteHash(...hashes: unknown[]): boolean {
     let didDelete = false;
     for (const hash of hashes) {
@@ -106,6 +113,18 @@ export default class HashSet<I> implements Set<I> {
         result.add(item);
       }
     }
+    return result;
+  }
+
+  difference(other: HashSet<I>): this {
+    const result = this.clone();
+    result.deleteAll(...other.values());
+    return result;
+  }
+
+  union(other: HashSet<I>): this {
+    const result = this.clone();
+    result.add(...other);
     return result;
   }
 

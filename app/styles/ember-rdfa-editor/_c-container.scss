@@ -54,6 +54,7 @@ $say-editor-sidebar-large: 30% !default;
   @include mq(medium) {
     width: $say-editor-sidebar-medium;
     max-width: $say-editor-sidebar-medium;
+    min-height: calc(100% - 44px);
 
     .say-container--paper.say-container--sidebar-right & {
       padding: $au-unit;

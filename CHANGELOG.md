@@ -16,6 +16,57 @@
 
 
 
+## 0.59.1 (2022-06-08)
+
+fix issues with disappearing text nodes after inserting newlines
+
+
+## 0.59.0 (2022-05-27)
+
+#### :rocket: Enhancement
+* [#269](https://github.com/lblod/ember-rdfa-editor/pull/269) implemented merging of marks on adjacent text nodes ([@elpoelma](https://github.com/elpoelma))
+
+#### :bug: Bug Fix
+* [#277](https://github.com/lblod/ember-rdfa-editor/pull/277) Bug/fix copy ([@abeforgit](https://github.com/abeforgit))
+* [#274](https://github.com/lblod/ember-rdfa-editor/pull/274) Bug/editor-initialization ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
+## 0.58.1 (2022-05-23)
+
+#### :bug: Bug Fix
+* [#275](https://github.com/lblod/ember-rdfa-editor/pull/275) Fix error this.app is not defined on loket ([@lagartoverde](https://github.com/lagartoverde))
+* [#270](https://github.com/lblod/ember-rdfa-editor/pull/270) Make sidebar min-height same as window height ([@Dietr](https://github.com/Dietr))
+
+#### Committers: 2
+- Dieter Peirs ([@Dietr](https://github.com/Dietr))
+- Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
+
+
+## 0.58.0 (2022-05-16)
+
+#### :rocket: Enhancement
+* [#267](https://github.com/lblod/ember-rdfa-editor/pull/267) Addition of a loading indicator when the editor has not yet fully loaded ([@elpoelma](https://github.com/elpoelma))
+* [#264](https://github.com/lblod/ember-rdfa-editor/pull/264) Ember upgrade to v3.28 and others ([@benjay10](https://github.com/benjay10))
+* [#266](https://github.com/lblod/ember-rdfa-editor/pull/266) Rework styling of mark-highlight-manual and codelist highlight ([@Dietr](https://github.com/Dietr))
+* [#263](https://github.com/lblod/ember-rdfa-editor/pull/263) Remove dummy Say theming ([@benjay10](https://github.com/benjay10))
+* [#265](https://github.com/lblod/ember-rdfa-editor/pull/265) Successful package upgrades ([@benjay10](https://github.com/benjay10))
+
+#### :bug: Bug Fix
+* [#272](https://github.com/lblod/ember-rdfa-editor/pull/272) rework backspace rdfa plugin to avoid some ts issues ([@nvdk](https://github.com/nvdk))
+
+#### :house: Internal
+* [#268](https://github.com/lblod/ember-rdfa-editor/pull/268) Addition of the shiftedVisually method which determines a new position based on an existing position and a number of visual steps. ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 4
+- Ben ([@benjay10](https://github.com/benjay10))
+- Dieter Peirs ([@Dietr](https://github.com/Dietr))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+- Niels V ([@nvdk](https://github.com/nvdk))
+
 ## 0.57.0 (2022-04-27)
 
 #### :rocket: Enhancement
@@ -41,6 +92,27 @@
 - Niels V ([@nvdk](https://github.com/nvdk))
 - Sergey Andreev ([@Asergey91](https://github.com/Asergey91))
 
+## 0.56.6 (2022-05-20)
+
+fix types again
+
+
+## 0.56.5 (2022-05-20)
+Fix type issues preventing the build
+
+
+## 0.56.4 (2022-05-20)
+
+:bug: fix drone config
+
+
+## 0.56.3 (2022-05-20)
+
+#### :bug: Bug Fix
+* [#273](https://github.com/lblod/ember-rdfa-editor/pull/273) Fix initialization issues ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 
 ## 0.56.2 (2022-04-27)
 

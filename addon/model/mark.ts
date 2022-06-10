@@ -4,6 +4,7 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import renderFromSpec, {
   AttributeSpec,
+  renderFromSpecMultipleChildren,
   RenderSpec,
   Serializable,
   SLOT,
@@ -61,6 +62,17 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
       return rendered;
     }
     return null;
+  }
+
+  writeMultiple(nodes: Iterable<Node>) {
+    const rendered = renderFromSpecMultipleChildren(
+      this._spec.renderSpec(this),
+      nodes
+    );
+    if (rendered && isElement(rendered)) {
+      rendered.dataset['__setBy'] = this.attributes.setBy || CORE_OWNER;
+    }
+    return rendered;
   }
 
   clone(): Mark<A> {

@@ -124,9 +124,31 @@ export default class SelectionReader
       return ModelPosition.fromInTextNode(modelNode, domOffset);
     } else if (isElement(container) && ModelNode.isModelElement(modelNode)) {
       if (modelNode.children.length) {
+        let modelIndex = 0;
+        if (domOffset !== 0) {
+          const targetChild = container.childNodes[domOffset - 1];
+          let found = false;
+          let domChild;
+          let i = 0;
+          while (i < modelNode.length && (!found || domChild === targetChild)) {
+            const child = modelNode.children[i];
+            domChild = this.model.modelToView(child)?.viewRoot;
+            if (domChild === targetChild && !found) {
+              found = true;
+              if (i + 1 < modelNode.length) {
+                const child = modelNode.children[i + 1];
+                domChild = this.model.modelToView(child)?.viewRoot;
+              }
+            }
+            i++;
+          }
+          modelIndex = i;
+        }
+
+        // text<b>asdf<u>asdf</u>afsdf</b>asdfasdf
         return ModelPosition.fromInElement(
           modelNode,
-          modelNode.indexToOffset(domOffset)
+          modelNode.indexToOffset(modelIndex)
         );
       } else {
         if (domOffset === 0) {

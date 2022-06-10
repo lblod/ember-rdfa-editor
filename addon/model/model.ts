@@ -30,6 +30,7 @@ import {
   InternalInlineComponentSpec,
   ModelInlineComponent,
 } from './inline-components/model-inline-component';
+import ModelText from './model-text';
 
 /**
  * Abstraction layer for the DOM. This is the only class that is allowed to call DOM methods.
@@ -206,6 +207,11 @@ export default class Model {
    */
   registerNodeView(modelNode: ModelNode, view: NodeView): void {
     this.viewToModelMap.set(view.viewRoot, modelNode);
+    this.modelToViewMap.set(modelNode, view);
+  }
+
+  registerTextNode(modelNode: ModelText, view: NodeView): void {
+    this.viewToModelMap.set(view.contentRoot, modelNode);
     this.modelToViewMap.set(modelNode, view);
   }
 

@@ -13,7 +13,170 @@ export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
  * A shared library of algorithms to be used by operations only
  * Any use outside of operations is not supported
  */
+
+//config consts for removeNew algo
+const cantMergeIntoTypes = new Set<string>([
+  'a',
+  'table',
+  'tr',
+  'th',
+  'thead',
+  'tbody',
+  'ul',
+]);
+
+const cantRemoveOpeningTagNodeTypes = new Set<string>([
+  'a',
+  'ul',
+  'li',
+  'td',
+  'tr',
+  'table',
+  'thead',
+  'tbody',
+  'th',
+]);
+
 export default class OperationAlgorithms {
+  static removeNew(
+    range: ModelRange
+  ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
+    //start algorithm
+    if (range.collapsed) {
+      return {
+        removedNodes: [],
+        mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
+      };
+    }
+
+    //split end and start if they are inside a text node
+    if (range.start.isInsideText()) {
+      range.start.split();
+    }
+    if (range.end.isInsideText()) {
+      range.end.split(true);
+    }
+
+    //get nodes that will move after the delition operation
+    //these are siblings of the closest node to the end of the range (if any)
+    //assumption: nodeAfter doesn't grab anything if the next node to the end of the range is one level up
+    const nodesToMove: ModelNode[] = [];
+    let nextNode = range.end.nodeAfter();
+
+    while (nextNode) {
+      nodesToMove.push(nextNode);
+      nextNode = nextNode.nextSibling;
+    }
+
+    //grab all nodes inside the range
+    //assumption: the only partial nodes that treewalker grabs are the ones that have opening tags in the selection
+    //assumption: opening tag nodes are always parents of the last node in range
+    const walker = new ModelTreeWalker({ range: range });
+    const allNodes = [...walker];
+
+    //get all nodes that are fully contained in the range
+    //ie [<span><text>abc</text>]</span>
+    //would grab just the text node
+    const confinedNodes: ModelNode[] = [];
+    const confinedRanges = range.getMinimumConfinedRanges();
+    for (const range of confinedRanges) {
+      if (!range.collapsed) {
+        const walker = new ModelTreeWalker({ range: range });
+        confinedNodes.push(...walker);
+      }
+    }
+
+    //get all the nodes that have only the opening tags in the range
+    const openingTagNodes = allNodes.filter((node) => {
+      if (confinedNodes.includes(node)) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+
+    //remove all the opening tag nodes and unwrap their contents
+    //ie: <div>[<span><text>abc</text>]</span></div>
+    //will become: <div><text>abc</text></div>
+    //avoid doing this to nodes that we dont want to remove as stated in the begining of the function
+    //dont do this to rdfa either
+    //collect those nodes
+
+    const cantRemoveOpeningTagNodes = [];
+
+    openingTagNodes.forEach((opNode) => {
+      //check if we can remove it
+      if (ModelNode.isModelElement(opNode)) {
+        const cantRemove =
+          cantRemoveOpeningTagNodeTypes.has(opNode.type) ||
+          !opNode.getRdfaAttributes().isEmpty;
+        if (cantRemove) {
+          cantRemoveOpeningTagNodes.push(opNode);
+        } else {
+          opNode.unwrap();
+        }
+      } else {
+        throw new Error('opening tag node is not an element, deletion failed');
+      }
+    });
+
+    //remove nodes that are fully confined in the selection
+    confinedNodes.forEach((node) => {
+      node.remove();
+    });
+
+    //merge the nodes we collected before (siblings at the end position) to the start position
+    //unless if the start position is a descendant of one of the tags we dont merge into
+    const parent = range.start.parent;
+
+    let index;
+    const nodeBefore = range.start.nodeBefore();
+    const nodeAfter = range.start.nodeAfter();
+    if (nodeBefore) {
+      index = nodeBefore.index! + 1;
+    } else if (nodeAfter) {
+      index = nodeAfter.index!;
+    } else {
+      index = 0;
+    }
+
+    let merge;
+
+    merge = !parent
+      .findSelfOrAncestors(
+        (node) =>
+          ModelNode.isModelElement(node) && cantMergeIntoTypes.has(node.type)
+      )
+      .next().value;
+
+    //if there are nodes with opening tags we cant remove they are parents of the moved nodes
+    //merging nodes that cant be removed is iffy, this should probably change but needs some thought
+    //maybe a truth table of what can be merged into what?
+    if (merge) {
+      merge = cantRemoveOpeningTagNodes.length === 0;
+    }
+
+    if (merge) {
+      nodesToMove.forEach((node) => node.remove());
+      parent.insertChildrenAtIndex(index, ...nodesToMove);
+    }
+
+    //merge text nodes that end up next to each other
+    const after = range.start.nodeAfter();
+    const before = range.start.nodeBefore();
+    if (before && after) {
+      if (ModelNode.isModelText(before) && ModelNode.isModelText(after)) {
+        this.mergeTextNodes([before]);
+      }
+    }
+
+    //not sure i did this correcctly
+    return {
+      removedNodes: [...confinedNodes, ...openingTagNodes],
+      mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
+    };
+  }
+
   static remove(
     range: ModelRange
   ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {

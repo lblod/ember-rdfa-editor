@@ -1,12 +1,10 @@
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
-import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelTreeWalker, {
-  toFilterSkipFalse,
-} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 
 export default abstract class CutCopyHandler extends InputHandler {
   abstract deleteSelection: boolean;
@@ -49,10 +47,12 @@ export default abstract class CutCopyHandler extends InputHandler {
     for (const modelNode of modelNodes) {
       if (ModelNode.isModelElement(modelNode)) {
         modelNode.parent = null;
-        const range = ModelRange.fromAroundNode(modelNode);
-        const treeWalker = new ModelTreeWalker({ filter, range });
+        const treeWalker = GenTreeWalker.fromSubTree({
+          root: modelNode,
+          filter,
+        });
 
-        for (const node of treeWalker) {
+        for (const node of treeWalker.nodes()) {
           textString += ModelNode.isModelText(node) ? node.content : '\n';
         }
       } else if (ModelNode.isModelText(modelNode)) {

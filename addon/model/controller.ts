@@ -17,7 +17,9 @@ import GenTreeWalker, {
 } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement, {
+  ElementType,
+} from '@lblod/ember-rdfa-editor/model/model-element';
 import LiveMarkSet, {
   LiveMarkSetArgs,
 } from '@lblod/ember-rdfa-editor/model/live-mark-set';
@@ -65,6 +67,8 @@ export default interface Controller {
   getMarksFor(owner: string): Set<Mark>;
 
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet;
+
+  createModelElement(type: ElementType): ModelElement;
 
   executeCommand<A extends unknown[], R>(
     commandName: string,
@@ -156,6 +160,10 @@ export class RawEditorController implements Controller {
 
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
     return new LiveMarkSet(this, args);
+  }
+
+  createModelElement(type: ElementType): ModelElement {
+    return new ModelElement(type);
   }
 
   executeCommand<A extends unknown[], R>(

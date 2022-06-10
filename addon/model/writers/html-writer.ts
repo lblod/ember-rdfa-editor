@@ -1,5 +1,4 @@
 import Model from '@lblod/ember-rdfa-editor/model/model';
-import HtmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import {
   ModelError,
@@ -10,23 +9,22 @@ import NodeView, {
   ElementView,
   isElementView,
   isTextView,
-  TextView,
 } from '@lblod/ember-rdfa-editor/model/node-view';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import HtmlAdjacentTextWriter from './html-adjacent-text-writer';
 import HtmlInlineComponentWriter from './html-inline-component-writer';
-
 /**
  * Top-level {@link Writer} for HTML documents.
  */
 export default class HtmlWriter {
-  private htmlTextWriter: HtmlTextWriter;
+  private htmlAdjacentTextWriter: HtmlAdjacentTextWriter;
   private htmlElementWriter: HtmlElementWriter;
   private htmlInlineComponentWriter: HtmlInlineComponentWriter;
 
   constructor(private model: Model) {
-    this.htmlTextWriter = new HtmlTextWriter(model);
+    this.htmlAdjacentTextWriter = new HtmlAdjacentTextWriter(model);
     this.htmlElementWriter = new HtmlElementWriter(model);
     this.htmlInlineComponentWriter = new HtmlInlineComponentWriter();
   }
@@ -44,30 +42,37 @@ export default class HtmlWriter {
         view = this.createElementView(modelNode);
       }
       const childViews = [];
+      let adjacentTextNodes: ModelText[] = [];
+
       for (const child of modelNode.children) {
-        childViews.push(this.write(child));
+        if (ModelNode.isModelText(child)) {
+          adjacentTextNodes.push(child);
+        } else {
+          if (adjacentTextNodes.length > 0) {
+            // process adjacent text nodes
+            childViews.push(...this.processTextViews(adjacentTextNodes));
+            adjacentTextNodes.forEach((textNode) => textNode.clearDirty());
+            adjacentTextNodes = [];
+          }
+          childViews.push(this.write(child).viewRoot);
+        }
       }
+      if (adjacentTextNodes.length > 0) {
+        childViews.push(...this.processTextViews(adjacentTextNodes));
+        adjacentTextNodes.forEach((textNode) => textNode.clearDirty());
+      }
+
       if (modelNode.isDirty('content')) {
         if (isElement(view.viewRoot)) {
-          view.viewRoot.replaceChildren(
-            ...childViews.map((view) => view.viewRoot)
-          );
+          view.viewRoot.replaceChildren(...childViews);
         } else {
           throw new ModelError('Model element with non-element viewroot');
         }
       }
       resultView = view;
     } else if (ModelNode.isModelText(modelNode)) {
-      let view = this.getView(modelNode);
-      if (view) {
-        if (!isTextView(view)) {
-          throw new ModelError('ModelText with non-text view');
-        }
-        view = this.updateTextView(modelNode, view);
-      } else {
-        view = this.createTextView(modelNode);
-      }
-      resultView = view;
+      this.processTextViews([modelNode]);
+      resultView = this.getView(modelNode)!;
     } else if (ModelNode.isModelInlineComponent(modelNode)) {
       const view = this.getView(modelNode);
       if (view) {
@@ -110,25 +115,43 @@ export default class HtmlWriter {
     return view;
   }
 
-  private createTextView(modelText: ModelText): NodeView {
-    const view = this.htmlTextWriter.write(modelText);
-    this.model.registerNodeView(modelText, view);
-    return view;
-  }
+  private processTextViews(modelTexts: ModelText[]): Set<Node> {
+    const result: Set<Node> = new Set();
+    if (
+      modelTexts.some(
+        (modelText) =>
+          modelText.isDirty('node') ||
+          modelText.isDirty('mark') ||
+          modelText.isDirty('content') ||
+          !this.getView(modelText)
+      )
+    ) {
+      const textViews = this.htmlAdjacentTextWriter.write(modelTexts);
+      modelTexts.forEach((modelText, i) => {
+        const view = this.getView(modelText);
 
-  private updateTextView(modelText: ModelText, view: TextView): NodeView {
-    if (modelText.isDirty('node') || modelText.isDirty('mark')) {
-      const newView = this.createTextView(modelText);
-      view.viewRoot.replaceWith(newView.viewRoot);
-      return newView;
-    } else if (modelText.isDirty('content')) {
-      view.contentRoot.replaceData(
-        0,
-        view.contentRoot.length,
-        modelText.content
-      );
+        if (view) {
+          if (!isTextView(view)) {
+            throw new ModelError('ModelText with non-text view');
+          }
+          view.viewRoot.replaceWith(textViews[i].viewRoot);
+          this.model.registerTextNode(modelText, textViews[i]);
+          result.add(textViews[i].viewRoot);
+        } else {
+          this.model.registerTextNode(modelText, textViews[i]);
+          result.add(textViews[i].viewRoot);
+        }
+      });
+    } else {
+      modelTexts.forEach((modelText) => {
+        const view = this.getView(modelText);
+        if (view) {
+          result.add(view.viewRoot);
+        }
+      });
     }
-    return view;
+
+    return result;
   }
 
   swapElement(node: HTMLElement, replacement: HTMLElement) {
