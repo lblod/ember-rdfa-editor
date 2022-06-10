@@ -4,7 +4,6 @@ import { tracked } from 'tracked-built-ins';
 import MapUtils from '../util/map-utils';
 import {
   InlineComponentSpec,
-  InternalInlineComponentSpec,
   ModelInlineComponent,
 } from './model-inline-component';
 import Controller from '../controller';
@@ -16,10 +15,11 @@ export type ActiveComponentEntry = {
   controller: Controller;
 };
 export default class InlineComponentsRegistry {
-  private registeredComponents: Map<string, InternalInlineComponentSpec> =
-    new Map();
-  private componentMatchMap: Map<TagMatch, InternalInlineComponentSpec[]> =
-    new Map<keyof HTMLElementTagNameMap, InternalInlineComponentSpec[]>();
+  private registeredComponents: Map<string, InlineComponentSpec> = new Map();
+  private componentMatchMap: Map<TagMatch, InlineComponentSpec[]> = new Map<
+    keyof HTMLElementTagNameMap,
+    InlineComponentSpec[]
+  >();
 
   activeComponents = tracked<ActiveComponentEntry>([]);
 
@@ -30,10 +30,9 @@ export default class InlineComponentsRegistry {
     let result: InlineComponentSpec | null = null;
 
     for (const match of potentialMatches) {
-      const baseAttributesMatch =
-        match.componentSpec.baseMatcher.attributeBuilder!(node);
+      const baseAttributesMatch = match.baseMatcher.attributeBuilder!(node);
       if (baseAttributesMatch) {
-        result = match.componentSpec;
+        result = match;
         break;
       }
     }
@@ -41,18 +40,13 @@ export default class InlineComponentsRegistry {
     return result;
   }
 
-  registerComponent({
-    componentSpec,
-    controller,
-  }: InternalInlineComponentSpec) {
-    this.registeredComponents.set(componentSpec.name, {
-      componentSpec,
-      controller,
-    });
-    MapUtils.setOrPush(this.componentMatchMap, componentSpec.baseMatcher.tag, {
-      componentSpec,
-      controller,
-    });
+  registerComponent(componentSpec: InlineComponentSpec) {
+    this.registeredComponents.set(componentSpec.name, componentSpec);
+    MapUtils.setOrPush(
+      this.componentMatchMap,
+      componentSpec.baseMatcher.tag,
+      componentSpec
+    );
   }
 
   lookUpComponent(name: string) {

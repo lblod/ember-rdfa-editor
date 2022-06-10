@@ -10,20 +10,21 @@ import { AttributeSpec, RenderSpec, Serializable } from '../util/render-spec';
 export type Properties = Record<string, Serializable | undefined>;
 
 export type State = Record<string, Serializable | undefined>;
-
-export type InternalInlineComponentSpec = {
-  componentSpec: InlineComponentSpec;
-  controller: Controller;
-};
 export abstract class InlineComponentSpec {
   name: string;
   tag: keyof HTMLElementTagNameMap;
 
   baseMatcher: DomNodeMatcher<AttributeSpec>;
+  controller: Controller;
 
-  constructor(name: string, tag: keyof HTMLElementTagNameMap) {
+  constructor(
+    name: string,
+    tag: keyof HTMLElementTagNameMap,
+    controller: Controller
+  ) {
     this.name = name;
     this.tag = tag;
+    this.controller = controller;
     this.baseMatcher = {
       tag: this.tag,
       attributeBuilder: (node) => {

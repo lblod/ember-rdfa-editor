@@ -27,7 +27,7 @@ import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
 import setNodeAndChildDirty from './util/set-node-and-child-dirty';
 import InlineComponentsRegistry from './inline-components/inline-components-registry';
 import {
-  InternalInlineComponentSpec,
+  InlineComponentSpec,
   ModelInlineComponent,
 } from './inline-components/model-inline-component';
 import ModelText from './model-text';
@@ -175,7 +175,7 @@ export default class Model {
     this._marksRegistry.registerMark(markSpec);
   }
 
-  registerInlineComponent(component: InternalInlineComponentSpec) {
+  registerInlineComponent(component: InlineComponentSpec) {
     this._inlineComponentsRegistry.registerComponent(component);
   }
 
