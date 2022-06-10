@@ -72,6 +72,7 @@ import { InternalInlineComponentSpec } from '@lblod/ember-rdfa-editor/model/inli
 import InsertComponentCommand from '@lblod/ember-rdfa-editor/commands/insert-component-command';
 import { EditorPlugin } from '../editor-plugin';
 import { createLogger, Logger } from '../logging-utils';
+import RemoveComponentCommand from '@lblod/ember-rdfa-editor/commands/remove-component-command';
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -209,6 +210,7 @@ export default class RawEditor {
     this.registerCommand(new AddMarkToSelectionCommand(this.model));
     this.registerCommand(new RemoveMarkFromSelectionCommand(this.model));
     this.registerCommand(new InsertComponentCommand(this.model));
+    this.registerCommand(new RemoveComponentCommand(this.model));
     this.registerMark(highlightMarkSpec);
 
     this.model.read(true, true);
