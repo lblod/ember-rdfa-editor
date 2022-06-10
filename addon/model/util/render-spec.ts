@@ -48,7 +48,7 @@ export default function renderFromSpec(
 export function renderFromSpecMultipleChildren(
   spec: RenderSpec,
   nodes: Iterable<Node>
-): Node {
+): HTMLElement {
   if (spec === SLOT) {
     const result = document.createElement('span');
     result.append(...nodes);
