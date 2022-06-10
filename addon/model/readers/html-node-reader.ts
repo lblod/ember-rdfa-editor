@@ -14,11 +14,7 @@ import HtmlTableReader from '@lblod/ember-rdfa-editor/model/readers/html-table-r
 import HtmlSpanReader from '@lblod/ember-rdfa-editor/model/readers/html-span-reader';
 import { pushOrExpand } from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
-import {
-  ModelInlineComponent,
-  Properties,
-  State,
-} from '../inline-components/model-inline-component';
+import HtmlInlineComponentReader from './html-inline-component-reader';
 
 type Constructor<T> = new (...args: unknown[]) => T;
 type ElementReader = Reader<Element, ModelNode[], HtmlReaderContext>;
@@ -39,27 +35,8 @@ export default class HtmlNodeReader
       const tag = tagName(from) as ElementType;
       const inlineComponent = context.matchInlineComponent(from);
       if (inlineComponent) {
-        const propsAttribute = from.dataset['__props'];
-        let props: Properties = {};
-        if (propsAttribute) {
-          props = JSON.parse(propsAttribute) as Properties;
-        }
-        const stateAttribute = from.dataset['__state'];
-        let state: State = {};
-        if (stateAttribute) {
-          state = JSON.parse(stateAttribute) as State;
-        }
-        const component = new ModelInlineComponent(
-          inlineComponent,
-          props,
-          state
-        );
-
-        context.registerNodeView(component, {
-          viewRoot: from,
-          contentRoot: from,
-        });
-        result = [component];
+        const reader = new HtmlInlineComponentReader();
+        result = reader.read({ element: from, spec: inlineComponent }, context);
       } else {
         const marks = context.matchMark(from);
         if (marks.size) {
