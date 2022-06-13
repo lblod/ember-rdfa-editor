@@ -59,11 +59,13 @@ export class EditorInputHandler implements InputHandler {
   dragstart(event: DragEvent) {
     event.preventDefault();
   }
-
-  //TODO: pass pasteHTML arguments
-  paste(event: ClipboardEvent) {
+  paste(
+    event: ClipboardEvent,
+    pasteHTML?: boolean,
+    pasteExtendedHTML?: boolean
+  ) {
     event.preventDefault();
-    handlePaste(this.editor, event);
+    handlePaste(this.editor, event, pasteHTML, pasteExtendedHTML);
   }
 
   cut(event: ClipboardEvent) {

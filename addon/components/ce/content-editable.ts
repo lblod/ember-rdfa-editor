@@ -4,6 +4,7 @@ import { createEditor, Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
 import { EditorInputHandler } from '../../input/input-handler';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import { inject as service } from '@ember/service';
 
 interface FeatureService {
   isEnabled(key: string): boolean;
@@ -46,6 +47,8 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   editor: Editor | null = null;
   inputHandler: EditorInputHandler | null = null;
 
+  @service declare features: FeatureService;
+
   @action
   afterSelectionChange() {
     if (this.inputHandler) {
@@ -68,7 +71,11 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @action
   paste(event: ClipboardEvent) {
     if (this.inputHandler) {
-      this.inputHandler.paste(event);
+      this.inputHandler.paste(
+        event,
+        this.features.isEnabled('editor-html-paste'),
+        this.features.isEnabled('editor-extended-html-paste')
+      );
     }
   }
   @action
