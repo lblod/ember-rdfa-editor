@@ -16,6 +16,11 @@
 
 
 
+## 0.59.1 (2022-06-08)
+
+fix issues with disappearing text nodes after inserting newlines
+
+
 ## 0.59.0 (2022-05-27)
 
 #### :rocket: Enhancement
