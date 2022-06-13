@@ -33,7 +33,6 @@ interface TextInsertion {
 export default class Transaction {
   initialState: State;
   private workingCopy: State;
-  needsToWrite: boolean;
   operations: Operation[];
   rangeMapper: RangeMapper;
 
@@ -46,7 +45,6 @@ export default class Transaction {
      * so is an immediate target for improvement later.
      */
     this.workingCopy = cloneState(state);
-    this.needsToWrite = false;
     this.operations = [];
     this.rangeMapper = new RangeMapper();
   }
@@ -99,7 +97,6 @@ export default class Transaction {
 
     this.workingCopy.document = newVdom;
     this.workingCopy.selection = newSelection;
-    // this.needsToWrite = true;
     this.createSnapshot();
   }
 
@@ -140,12 +137,14 @@ export default class Transaction {
     return this.executeOperation(op);
   }
 
+  /**
+   * Sets a new selection and returns whether the new selection differs from the old one
+   * */
   setSelection(selection: ModelSelection) {
     const clone = this.cloneSelection(selection);
-    if (!clone.sameAs(this.workingCopy.selection)) {
-      this.needsToWrite = true;
-    }
+    const changed = !clone.sameAs(this.workingCopy.selection);
     this.workingCopy.selection = clone;
+    return changed;
   }
 
   setProperty(element: ModelElement, key: string, value: string): ModelElement {

@@ -171,7 +171,7 @@ class SayEditor implements Editor {
     (transaction: Transaction): State => {
       const newState = transaction.apply();
       this.state = newState;
-      if (updateView || transaction.needsToWrite) {
+      if (updateView) {
         view.update(this.state);
       }
       if (!newState.document.sameAs(transaction.initialState.document)) {

@@ -168,7 +168,6 @@ export class EditorInputHandler implements InputHandler {
     );
     const tr = new Transaction(this.editor.state);
     tr.setSelection(newSelection);
-    tr.needsToWrite = false;
     this.editor.dispatchTransaction(tr, false);
   }
 }
