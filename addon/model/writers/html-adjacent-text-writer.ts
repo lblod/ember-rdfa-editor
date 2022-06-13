@@ -27,7 +27,7 @@ export default class HtmlAdjacentTextWriter
     [...marksInCommon]
       .sort((a, b) => (a.priority >= b.priority ? 1 : -1))
       .forEach((mark) => {
-        parent = mark.writeMultiple(children);
+        parent = mark.write(...children);
         children = [parent];
       });
     return { views: viewsRec, parent: parent };

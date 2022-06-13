@@ -4,7 +4,6 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import renderFromSpec, {
   AttributeSpec,
-  renderFromSpecMultipleChildren,
   RenderSpec,
   Serializable,
   SLOT,
@@ -53,25 +52,9 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
     return this._spec;
   }
 
-  write(block: Node): Node | null {
-    const rendered = renderFromSpec(this._spec.renderSpec(this), block);
-    if (rendered) {
-      if (isElement(rendered)) {
-        rendered.dataset['__setBy'] = this.attributes.setBy || CORE_OWNER;
-      }
-      return rendered;
-    }
-    return null;
-  }
-
-  writeMultiple(nodes: Iterable<Node>) {
-    const rendered = renderFromSpecMultipleChildren(
-      this._spec.renderSpec(this),
-      nodes
-    );
-    if (rendered && isElement(rendered)) {
-      rendered.dataset['__setBy'] = this.attributes.setBy || CORE_OWNER;
-    }
+  write(...nodes: Node[]): HTMLElement {
+    const rendered = renderFromSpec(this._spec.renderSpec(this), ...nodes);
+    rendered.dataset['__setBy'] = this.attributes.setBy || CORE_OWNER;
     return rendered;
   }
 
@@ -117,10 +100,6 @@ export interface DomNodeMatcher<
   tag: TagMatch;
   attributeBuilder?: (node: Node) => A | null;
 }
-
-// export interface Serializable {
-//   toString(): string;
-// }
 
 export interface Renderable<A extends Record<string, Serializable> | void> {
   name: string;
