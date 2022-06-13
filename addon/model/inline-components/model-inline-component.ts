@@ -5,7 +5,7 @@ import Controller from '../controller';
 import { DomNodeMatcher } from '../mark';
 import ModelElement from '../model-element';
 import { ModelNodeType } from '../model-node';
-import { AttributeSpec, RenderSpec, Serializable } from '../util/render-spec';
+import { AttributeSpec, Serializable } from '../util/render-spec';
 
 export type Properties = Record<string, Serializable | undefined>;
 
@@ -37,18 +37,6 @@ export abstract class InlineComponentSpec {
           }
         }
         return null;
-      },
-    };
-  }
-
-  _renderDynamic(props?: Properties, state?: State): RenderSpec {
-    return {
-      tag: this.tag,
-      attributes: {
-        'data-__props': JSON.stringify(props),
-        'data-__state': JSON.stringify(state),
-        contenteditable: false,
-        class: `inline-component ${this.name}`,
       },
     };
   }

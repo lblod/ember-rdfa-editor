@@ -76,7 +76,6 @@ export default class HtmlReader implements Reader<Node, ModelNode[], boolean> {
   constructor(private model: Model) {}
 
   read(from: Node, shouldConvertWhitespace = false): ModelNode[] {
-    // from.normalize();
     const prefixes = calculateRdfaPrefixes(from);
     const context = new HtmlReaderContext(
       this.model,

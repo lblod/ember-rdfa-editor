@@ -5,7 +5,7 @@ import {
 } from '@lblod/ember-rdfa-editor/model/util/model-node-finder';
 import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
 
-export type HtmlTag = string;
+export type HtmlTag = keyof HTMLElementTagNameMap;
 
 export interface Cloneable<T> {
   clone(): T;
