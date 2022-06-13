@@ -30,6 +30,21 @@ export default class RemoveCommand extends Command {
           this.model.selectRange(newRange);
         });
       }
+      else if(direction === 'right'){
+        const newEnd = range.start.shiftedVisually(1);
+        const newStart = range.start;
+        const removeRange = new ModelRange(newStart, newEnd);
+        this.model.change((mutator) => {
+          const newRange = mutator.removeNodes(removeRange);
+          this.model.selectRange(newRange);
+        });
+      }
+    }
+    else{
+      this.model.change((mutator) => {
+        const newRange = mutator.removeNodes(range);
+        this.model.selectRange(range);
+      });
     }
   }
 }

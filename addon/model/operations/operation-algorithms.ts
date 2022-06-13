@@ -71,7 +71,7 @@ export default class OperationAlgorithms {
     //grab all nodes inside the range
     //assumption: the only partial nodes that treewalker grabs are the ones that have opening tags in the selection
     //assumption: opening tag nodes are always parents of the last node in range
-    const walker = new ModelTreeWalker({ range: range });
+    const walker = new ModelTreeWalker({ range: range, visitParentUpwards: false });
     const allNodes = [...walker];
 
     //get all nodes that are fully contained in the range
@@ -102,7 +102,7 @@ export default class OperationAlgorithms {
     //dont do this to rdfa either
     //collect those nodes
 
-    const cantRemoveOpeningTagNodes = [];
+    const cantRemoveOpeningTagNodes : ModelNode[] = [];
 
     openingTagNodes.forEach((opNode) => {
       //check if we can remove it
