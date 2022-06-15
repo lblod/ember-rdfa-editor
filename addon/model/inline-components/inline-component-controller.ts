@@ -33,6 +33,10 @@ export default class InlineComponentController<
     return this._model.state;
   }
 
+  get model() {
+    return this._model;
+  }
+
   setStateProperty(property: keyof S, value: Serializable) {
     this._model.setStateProperty(property, value);
     this._node.dataset['__state'] = JSON.stringify(this._model.state);
