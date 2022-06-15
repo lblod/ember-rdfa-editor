@@ -100,4 +100,8 @@ export class ModelInlineComponent<
     const result = new ModelInlineComponent(this.spec, this.props, this.state);
     return result;
   }
+
+  get isLeaf() {
+    return true;
+  }
 }

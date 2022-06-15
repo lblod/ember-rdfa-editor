@@ -87,9 +87,13 @@ export default class ModelNodeUtils {
     if (ModelNode.isModelText(node)) {
       node.content.split('').filter((c) => c !== INVISIBLE_SPACE).length;
       return node.length;
-    } else if (node instanceof ModelElement && VISUAL_NODES.has(node.type)) {
+    } else if (
+      (ModelNode.isModelElement(node) && VISUAL_NODES.has(node.type)) ||
+      ModelNode.isModelInlineComponent(node)
+    ) {
       return 1;
     }
+
     return 0;
   }
 
