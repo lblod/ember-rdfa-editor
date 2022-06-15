@@ -72,11 +72,17 @@ export default class HtmlWriter {
             this.writeRec(child, domNode.childNodes[index], state);
           });
         } else if (ModelNode.isModelInlineComponent(modelNode)) {
-          state.inlineComponentsRegistry.addComponentInstance(
-            domNode,
-            modelNode.spec.name,
-            modelNode
-          );
+          if (isElement(domNode)) {
+            state.inlineComponentsRegistry.addComponentInstance(
+              domNode,
+              modelNode.spec.name,
+              modelNode
+            );
+          } else {
+            throw new NotImplementedError(
+              'Inline component should have an htmlelement as root'
+            );
+          }
         }
         break;
     }
@@ -210,11 +216,18 @@ export default class HtmlWriter {
 
   private parseInlineComponent(component: ModelInlineComponent, state: State) {
     const node = this.htmlInlineComponentWriter.write(component, true);
-    state.inlineComponentsRegistry.addComponentInstance(
-      node,
-      component.spec.name,
-      component
-    );
+    if (isElement(node)) {
+      state.inlineComponentsRegistry.addComponentInstance(
+        node,
+        component.spec.name,
+        component
+      );
+    } else {
+      throw new NotImplementedError(
+        'Inline component should have an htmlelement as root'
+      );
+    }
+
     return node;
   }
 

@@ -1,10 +1,8 @@
-import triggerTab from '@ember/test-helpers/dom/triggerTab';
 import {
   ModelInlineComponent,
   Properties,
   State,
 } from '../model/inline-components/model-inline-component';
-import Model from '../model/model';
 import ModelElement from '../model/model-element';
 import ModelSelection from '../model/model-selection';
 import { MisbehavedSelectionError, ModelError } from '../utils/errors';
@@ -43,7 +41,7 @@ export default class InsertComponentCommand
       throw new MisbehavedSelectionError();
     }
     const componentSpec =
-      this.model.inlineComponentsRegistry.lookUpComponent(componentName);
+      state.inlineComponentsRegistry.lookUpComponent(componentName);
     if (componentSpec) {
       const component = new ModelInlineComponent(
         componentSpec,
@@ -52,6 +50,7 @@ export default class InsertComponentCommand
       );
       const tr = state.createTransaction();
       const newRange = tr.insertNodes(selection.lastRange, component);
+      newRange.collapse();
       const brAfterComponent = new ModelElement('br');
       brAfterComponent.setAttribute('class', 'trailing');
       tr.insertNodes(newRange, brAfterComponent);

@@ -1,4 +1,3 @@
-import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import Handlebars from 'handlebars';
 import { tracked } from 'tracked-built-ins';
 import Controller from '../controller';
@@ -14,7 +13,7 @@ export abstract class InlineComponentSpec {
   name: string;
   tag: keyof HTMLElementTagNameMap;
 
-  baseMatcher: DomNodeMatcher<AttributeSpec>;
+  abstract matcher: DomNodeMatcher<AttributeSpec>;
   controller: Controller;
 
   constructor(
@@ -25,40 +24,31 @@ export abstract class InlineComponentSpec {
     this.name = name;
     this.tag = tag;
     this.controller = controller;
-    this.baseMatcher = {
-      tag: this.tag,
-      attributeBuilder: (node) => {
-        if (isElement(node)) {
-          if (
-            node.classList.contains('inline-component') &&
-            node.classList.contains(this.name)
-          ) {
-            return {};
-          }
-        }
-        return null;
-      },
-    };
   }
 
   abstract _renderStatic(props?: Properties, state?: State): string;
+}
 
-  render(props?: Properties, state?: State, dynamic = true) {
-    const node = document.createElement(this.tag);
-    if (props) {
-      node.dataset['__props'] = JSON.stringify(props);
-    }
-    if (state) {
-      node.dataset['__state'] = JSON.stringify(state);
-    }
-    node.contentEditable = 'false';
-    node.classList.add('inline-component', this.name);
-    if (!dynamic) {
-      const template = Handlebars.compile(this._renderStatic(props, state));
-      node.innerHTML = template({});
-    }
-    return node;
+function render(
+  spec: InlineComponentSpec,
+  props?: Properties,
+  state?: State,
+  dynamic = true
+) {
+  const node = document.createElement(spec.tag);
+  if (props) {
+    node.dataset['__props'] = JSON.stringify(props);
   }
+  if (state) {
+    node.dataset['__state'] = JSON.stringify(state);
+  }
+  node.contentEditable = 'false';
+  node.classList.add('inline-component', spec.name);
+  if (!dynamic) {
+    const template = Handlebars.compile(spec._renderStatic(props, state));
+    node.innerHTML = template({});
+  }
+  return node;
 }
 
 export class ModelInlineComponent<
@@ -103,11 +93,15 @@ export class ModelInlineComponent<
     return this._spec;
   }
   write(dynamic = true): Node {
-    return this.spec.render(this.props, this.state, dynamic);
+    return render(this.spec, this.props, this.state, dynamic);
   }
 
   clone(): ModelInlineComponent<A, S> {
     const result = new ModelInlineComponent(this.spec, this.props, this.state);
     return result;
+  }
+
+  get isLeaf() {
+    return true;
   }
 }

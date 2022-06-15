@@ -87,9 +87,8 @@
     {{#in-element compEntry.node insertBefore=null}}
       {{component
         compEntry.emberComponentName
-        model=compEntry.model
-        node=compEntry.node
-        controller=compEntry.controller
+        componentController=compEntry.componentController
+        editorController=compEntry.editorController
       }}
     {{/in-element}}
   {{/each}}

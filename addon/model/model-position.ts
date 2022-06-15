@@ -575,7 +575,10 @@ export default class ModelPosition {
                 forwards
               )
             );
-          } else if (ModelNode.isModelElement(nextNode)) {
+          } else if (
+            ModelNode.isModelElement(nextNode) ||
+            ModelNode.isModelInlineComponent(nextNode)
+          ) {
             // If the next leaf is a node, set the position after or before the node based on the direction
             if (forwards) {
               if (blockNodeFound) {

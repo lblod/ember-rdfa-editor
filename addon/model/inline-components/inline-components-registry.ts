@@ -8,11 +8,12 @@ import {
 } from './model-inline-component';
 import Controller from '../controller';
 import { ComponentNotFoundError } from '@lblod/ember-rdfa-editor/utils/errors';
+import InlineComponentController from './inline-component-controller';
 export type ActiveComponentEntry = {
-  node: Node;
   emberComponentName: string;
-  model: ModelInlineComponent;
-  controller: Controller;
+  node: HTMLElement;
+  componentController: InlineComponentController;
+  editorController: Controller;
 };
 export default class InlineComponentsRegistry {
   private registeredComponents: Map<string, InlineComponentSpec> = new Map();
@@ -29,11 +30,15 @@ export default class InlineComponentsRegistry {
 
     let result: InlineComponentSpec | null = null;
 
-    for (const match of potentialMatches) {
-      const baseAttributesMatch = match.baseMatcher.attributeBuilder!(node);
-      if (baseAttributesMatch) {
-        result = match;
-        break;
+    for (const spec of potentialMatches) {
+      if (spec.matcher.attributeBuilder) {
+        const baseAttributesMatch = spec.matcher.attributeBuilder(node);
+        if (baseAttributesMatch) {
+          result = spec;
+          break;
+        }
+      } else {
+        result = spec;
       }
     }
 
@@ -44,7 +49,7 @@ export default class InlineComponentsRegistry {
     this.registeredComponents.set(componentSpec.name, componentSpec);
     MapUtils.setOrPush(
       this.componentMatchMap,
-      componentSpec.baseMatcher.tag,
+      componentSpec.matcher.tag,
       componentSpec
     );
   }
@@ -58,17 +63,18 @@ export default class InlineComponentsRegistry {
   }
 
   addComponentInstance(
-    node: Node,
+    node: HTMLElement,
     emberComponentName: string,
     model: ModelInlineComponent
   ) {
     const componentSpec = this.lookUpComponent(emberComponentName);
     if (componentSpec) {
+      const componentController = new InlineComponentController(model, node);
       this.activeComponents.push({
-        node,
         emberComponentName,
-        model,
-        controller: componentSpec.controller,
+        node,
+        componentController,
+        editorController: componentSpec.controller,
       });
     } else {
       throw new ComponentNotFoundError(
