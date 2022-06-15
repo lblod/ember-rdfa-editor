@@ -172,19 +172,22 @@ export class EditorController implements Controller {
     throw new Error('Method not implemented.');
   }
   getMarksFor(owner: string): Set<Mark<AttributeSpec>> {
-    throw new Error('Method not implemented.');
+    return this.marksRegistry.getMarksFor(owner);
   }
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
-    throw new Error('Method not implemented.');
+    return new LiveMarkSet(this, args);
   }
   registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
     throw new Error('Method not implemented.');
   }
   registerWidget(spec: WidgetSpec): void {
+    this._editor.state.widgetMap
+      .get(spec.desiredLocation)
+      ?.push({ controller: this, ...spec });
     throw new Error('Method not implemented.');
   }
   registerMark(spec: MarkSpec<AttributeSpec>): void {
-    throw new Error('Method not implemented.');
+    this.marksRegistry.registerMark(spec);
   }
   onEvent<E extends string>(
     eventName: E,
