@@ -1,6 +1,6 @@
 import State, { cloneState } from '@lblod/ember-rdfa-editor/core/state';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { AttributeSpec, Mark, MarkSet, MarkSpec } from '../model/mark';
+import { Mark, MarkSet, MarkSpec } from '../model/mark';
 import ModelNode from '../model/model-node';
 import ModelSelection from '../model/model-selection';
 import InsertTextOperation from '../model/operations/insert-text-operation';
@@ -19,6 +19,7 @@ import ModelPosition from '../model/model-position';
 import SplitOperation from '../model/operations/split-operation';
 import MoveOperation from '../model/operations/move-operation';
 import { EditorStore } from '../model/util/datastore/datastore';
+import { AttributeSpec } from '../model/util/render-spec';
 
 interface TextInsertion {
   range: ModelRange;
