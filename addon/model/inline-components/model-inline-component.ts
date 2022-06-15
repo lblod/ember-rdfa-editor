@@ -1,4 +1,3 @@
-import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import Handlebars from 'handlebars';
 import { tracked } from 'tracked-built-ins';
 import Controller from '../controller';
@@ -14,7 +13,7 @@ export abstract class InlineComponentSpec {
   name: string;
   tag: keyof HTMLElementTagNameMap;
 
-  baseMatcher: DomNodeMatcher<AttributeSpec>;
+  abstract matcher: DomNodeMatcher<AttributeSpec>;
   controller: Controller;
 
   constructor(
@@ -25,20 +24,6 @@ export abstract class InlineComponentSpec {
     this.name = name;
     this.tag = tag;
     this.controller = controller;
-    this.baseMatcher = {
-      tag: this.tag,
-      attributeBuilder: (node) => {
-        if (isElement(node)) {
-          if (
-            node.classList.contains('inline-component') &&
-            node.classList.contains(this.name)
-          ) {
-            return {};
-          }
-        }
-        return null;
-      },
-    };
   }
 
   abstract _renderStatic(props?: Properties, state?: State): string;

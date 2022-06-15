@@ -29,11 +29,15 @@ export default class InlineComponentsRegistry {
 
     let result: InlineComponentSpec | null = null;
 
-    for (const match of potentialMatches) {
-      const baseAttributesMatch = match.baseMatcher.attributeBuilder!(node);
-      if (baseAttributesMatch) {
-        result = match;
-        break;
+    for (const spec of potentialMatches) {
+      if (spec.matcher.attributeBuilder) {
+        const baseAttributesMatch = spec.matcher.attributeBuilder(node);
+        if (baseAttributesMatch) {
+          result = spec;
+          break;
+        }
+      } else {
+        result = spec;
       }
     }
 
@@ -44,7 +48,7 @@ export default class InlineComponentsRegistry {
     this.registeredComponents.set(componentSpec.name, componentSpec);
     MapUtils.setOrPush(
       this.componentMatchMap,
-      componentSpec.baseMatcher.tag,
+      componentSpec.matcher.tag,
       componentSpec
     );
   }
