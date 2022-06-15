@@ -11,6 +11,7 @@ import { ComponentNotFoundError } from '@lblod/ember-rdfa-editor/utils/errors';
 import InlineComponentController from './inline-component-controller';
 export type ActiveComponentEntry = {
   emberComponentName: string;
+  node: HTMLElement;
   componentController: InlineComponentController;
   editorController: Controller;
 };
@@ -71,6 +72,7 @@ export default class InlineComponentsRegistry {
       const componentController = new InlineComponentController(model, node);
       this.activeComponents.push({
         emberComponentName,
+        node,
         componentController,
         editorController: componentSpec.controller,
       });
