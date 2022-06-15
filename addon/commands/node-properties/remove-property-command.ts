@@ -1,19 +1,29 @@
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 
-export default class RemovePropertyCommand extends Command {
+export interface RemovePropertyCommandArgs {
+  element: ModelElement;
+  property: string;
+}
+export default class RemovePropertyCommand
+  implements Command<RemovePropertyCommandArgs, void>
+{
   name = 'remove-property';
 
-  constructor(model: Model) {
-    super(model);
+  canExecute(): boolean {
+    return true;
   }
 
   @logExecute
-  execute(element: ModelElement, property: string) {
-    this.model.change((mutator) => {
-      mutator.removeProperty(element, property);
-    });
+  execute(
+    { state, dispatch }: CommandContext,
+    { element, property }: RemovePropertyCommandArgs
+  ) {
+    const tr = state.createTransaction();
+    tr.removeProperty(element, property);
+    dispatch(tr);
   }
 }

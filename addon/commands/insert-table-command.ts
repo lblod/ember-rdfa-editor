@@ -1,17 +1,20 @@
-import Command from './command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
+import Command, { CommandContext } from './command';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+export interface InsertTableCommandArgs {
+  selection?: ModelSelection;
+  rows?: number;
+  columns?: number;
+}
 
-export default class InsertTableCommand extends Command {
+export default class InsertTableCommand
+  implements Command<InsertTableCommandArgs, void>
+{
   name = 'insert-table';
-
-  constructor(model: Model) {
-    super(model);
-  }
+  arguments: string[] = ['selection', 'rows', 'columns'];
 
   canExecute(): boolean {
     return true;
@@ -19,9 +22,13 @@ export default class InsertTableCommand extends Command {
 
   @logExecute
   execute(
-    selection: ModelSelection = this.model.selection,
-    rows = 2,
-    columns = 2
+    { state, dispatch }: CommandContext,
+
+    {
+      selection = state.selection,
+      rows = 2,
+      columns = 2,
+    }: InsertTableCommandArgs
   ): void {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
@@ -29,10 +36,10 @@ export default class InsertTableCommand extends Command {
 
     const table = new ModelTable(rows, columns);
     const firstCell = table.getCell(0, 0) as ModelElement;
+    const tr = state.createTransaction();
 
-    this.model.change((mutator) => {
-      mutator.insertNodes(selection.lastRange, table);
-      selection.collapseIn(firstCell);
-    });
+    tr.insertNodes(selection.lastRange, table);
+    tr.collapseIn(firstCell);
+    dispatch(tr);
   }
 }

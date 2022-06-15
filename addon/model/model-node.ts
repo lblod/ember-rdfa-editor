@@ -403,6 +403,7 @@ export default abstract class ModelNode implements Walkable {
 
   abstract get lastChild(): ModelNode | null;
 
+
   get parentNode(): ModelElement | null {
     return this.parent;
   }

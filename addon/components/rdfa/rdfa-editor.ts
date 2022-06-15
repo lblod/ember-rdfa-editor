@@ -1,24 +1,25 @@
+import ApplicationInstance from '@ember/application/instance';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { tracked } from 'tracked-built-ins';
-import RdfaDocument from '../../utils/rdfa/rdfa-document';
-import RdfaDocumentController from '../../utils/rdfa/rdfa-document';
-import type IntlService from 'ember-intl/services/intl';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
-import ApplicationInstance from '@ember/application/instance';
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import Controller, {
+  EditorController,
   InternalWidgetSpec,
-  RawEditorController,
 } from '@lblod/ember-rdfa-editor/model/controller';
+import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
+import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
+import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
-import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
-import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
+import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
+
+import type IntlService from 'ember-intl/services/intl';
+import { tracked } from 'tracked-built-ins';
+import { default as RdfaDocumentController } from '../../utils/rdfa/rdfa-document';
 
 interface RdfaEditorArgs {
   /**
@@ -74,7 +75,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   /**
    * editor controller
    */
-  @tracked editor?: RawEditor;
+  @tracked editor?: Editor;
 
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
@@ -94,12 +95,13 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  handleRawEditorInit(editor: RawEditor) {
+  handleRawEditorInit(editor: Editor) {
     this.editor = editor;
-    this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
-    this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
-    this.insertSidebarWidgets = editor.widgetMap.get('insertSidebar') || [];
-    this.toolbarController = new RawEditorController('toolbar', editor);
+    // await this.initializePlugins(editor);
+    // this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
+    // this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
+    // this.insertSidebarWidgets = editor.widgetMap.get('insertSidebar') || [];
+    this.toolbarController = new EditorController('toolbar', editor);
     const rdfaDocument = new RdfaDocumentController('host-controller', editor);
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
@@ -128,14 +130,15 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @action
   toggleRdfaBlocks() {
     this.showRdfaBlocks = !this.showRdfaBlocks;
-    if (this.editor?.model) {
-      this.editor.model.writeSelection();
-    }
+    // if (this.editor?.model) {
+    //   this.editor.model.writeSelection();
+    // }
   }
 
   initializeComponents() {
     if (this.editor) {
-      this.inlineComponents = this.editor.model.componentInstances;
+      this.editor.state.inlineComponentsRegistry.componentInstances;
+      // this.inlineComponents = this.editor.model.componentInstances;
     }
   }
 }

@@ -1,6 +1,5 @@
 import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { HtmlReaderContext } from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import { ElementType } from '@lblod/ember-rdfa-editor/model/model-element';
 import HtmlListReader from '@lblod/ember-rdfa-editor/model/readers/html-list-reader';
 import {
@@ -15,6 +14,7 @@ import HtmlSpanReader from '@lblod/ember-rdfa-editor/model/readers/html-span-rea
 import { pushOrExpand } from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
 import HtmlInlineComponentReader from './html-inline-component-reader';
+import { HtmlReaderContext } from './html-reader';
 
 type Constructor<T> = new (...args: unknown[]) => T;
 type ElementReader = Reader<Element, ModelNode[], HtmlReaderContext>;

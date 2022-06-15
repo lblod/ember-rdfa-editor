@@ -1,8 +1,8 @@
-import Command from '../command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
+import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
+import Command, { CommandContext } from '../command';
 
 export type TextAttribute =
   | 'bold'
@@ -14,15 +14,18 @@ export type TextAttribute =
 /**
  * @deprecated
  */
-export default abstract class SetTextPropertyCommand extends Command {
-  constructor(model: Model) {
-    super(model);
-  }
+export default abstract class SetTextPropertyCommand<A>
+  implements Command<A, void>
+{
+  abstract name: string;
+  abstract canExecute(context: CommandContext, args: A): boolean;
+  abstract execute(context: CommandContext, args: A): void;
 
   protected setTextProperty(
+    tr: Transaction,
     property: TextAttribute,
     value: boolean,
-    selection: ModelSelection = this.model.selection
+    selection: ModelSelection
   ) {
     if (!ModelSelection.isWellBehaved(selection)) {
       console.info(
@@ -34,17 +37,11 @@ export default abstract class SetTextPropertyCommand extends Command {
     const range = selection.lastRange;
     const specAttribute = compatTextAttributeMap.get(property);
     if (specAttribute) {
-      this.model.change((mutator) => {
-        if (value) {
-          mutator.addMark(range, specAttribute.spec, specAttribute.attributes);
-        } else {
-          mutator.removeMark(
-            range,
-            specAttribute.spec,
-            specAttribute.attributes
-          );
-        }
-      });
+      if (value) {
+        tr.addMark(range, specAttribute.spec, specAttribute.attributes);
+      } else {
+        tr.removeMark(range, specAttribute.spec, specAttribute.attributes);
+      }
     } else {
       throw new ModelError(`No mark found for property: ${property}`);
     }

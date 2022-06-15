@@ -1,12 +1,11 @@
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
-import NodeView from '../node-view';
 import Writer from './writer';
 
 export default class HtmlInlineComponentWriter
-  implements Writer<ModelInlineComponent, NodeView | null>
+  implements Writer<ModelInlineComponent, Node>
 {
-  write(modelNode: ModelInlineComponent, dynamic = true): NodeView {
+  write(modelNode: ModelInlineComponent, dynamic = true): Node {
     const result = modelNode.write(dynamic);
-    return { viewRoot: result, contentRoot: result };
+    return result;
   }
 }

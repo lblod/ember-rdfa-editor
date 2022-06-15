@@ -1,19 +1,30 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
+import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+export interface InsertTableColumnCommandArgs {
+  selection?: ModelSelection;
+}
 
-export default abstract class InsertTableColumnCommand extends Command {
+export default abstract class InsertTableColumnCommand
+  implements Command<InsertTableColumnCommandArgs, void>
+{
+  name = 'insert-table-column';
+  arguments: string[] = ['selection'];
   abstract insertBefore: boolean;
 
-  constructor(model: Model) {
-    super(model);
+  canExecute(): boolean {
+    return true;
   }
 
   @logExecute
-  execute(selection: ModelSelection = this.model.selection) {
+  execute(
+    { state, dispatch }: CommandContext,
+    { selection = state.selection }: InsertTableColumnCommandArgs
+  ) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -33,12 +44,11 @@ export default abstract class InsertTableColumnCommand extends Command {
       //Shouldn't happen
       throw new Error('Position is null');
     }
+    const tr = state.createTransaction();
 
     const insertPosition = this.insertBefore ? position.x : position.x + 1;
-    this.model.change((mutator) => {
-      table.addColumn(mutator, insertPosition);
-    });
+    table.addColumn(tr, insertPosition);
 
-    this.model.write();
+    dispatch(tr);
   }
 }

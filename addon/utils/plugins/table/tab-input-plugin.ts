@@ -3,13 +3,13 @@ import {
   TabInputPlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
 import { ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 
 /**
  *
@@ -21,9 +21,9 @@ export default class TableTabInputPlugin implements TabInputPlugin {
 
   guidanceForManipulation(
     manipulation: TabHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): ManipulationGuidance | null {
-    const selection = editor.selection;
+    const selection = editor.state.selection;
     if (selection.inTableState === PropertyState.enabled) {
       return {
         allow: true,
@@ -60,34 +60,38 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     return tagName(element) === 'table';
   }
 
-  static selectFirstCell(
-    manipulation: TabHandlerManipulation,
-    editor: RawEditor
-  ) {
-    const table = editor.model.viewToModel(manipulation.node) as ModelTable;
+  static selectFirstCell(manipulation: TabHandlerManipulation, editor: Editor) {
+    const table = editor.view.viewToModel(
+      editor.state,
+      manipulation.node
+    ) as ModelTable;
+    // const table = editor.model.viewToModel(manipulation.node) as ModelTable;
     const firstCell = table.getCell(0, 0);
     if (firstCell) {
-      editor.selection.collapseIn(firstCell);
-      editor.model.write();
+      const tr = editor.state.createTransaction();
+      tr.collapseIn(firstCell);
+      editor.dispatchTransaction(tr);
     }
   }
 
-  static selectLastCell(
-    manipulation: TabHandlerManipulation,
-    editor: RawEditor
-  ) {
-    const table = editor.model.viewToModel(manipulation.node) as ModelTable;
+  static selectLastCell(manipulation: TabHandlerManipulation, editor: Editor) {
+    const table = editor.view.viewToModel(
+      editor.state,
+      manipulation.node
+    ) as ModelTable;
     const { x, y } = table.getDimensions();
     const lastCell = table.getCell(x - 1, y - 1);
     if (lastCell) {
-      editor.model.selection.collapseIn(lastCell);
-      editor.model.write();
+      const tr = editor.state.createTransaction();
+      tr.collapseIn(lastCell);
+      editor.dispatchTransaction(tr);
     }
   }
 
-  static tabHandler(manipulation: TabHandlerManipulation, editor: RawEditor) {
+  static tabHandler(manipulation: TabHandlerManipulation, editor: Editor) {
+    const tr = editor.state.createTransaction();
+    const selection = tr.cloneSelection(editor.state.selection);
     let table;
-    const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);
     if (!selectedCell) {
       throw new Error('Selection is not inside a cell');
@@ -130,14 +134,15 @@ export default class TableTabInputPlugin implements TabInputPlugin {
       } else {
         // at the end of the table
         if (table.nextSibling) {
-          selection.collapseIn(table.nextSibling);
+          tr.collapseIn(table.nextSibling);
+          // selection.collapseIn(table.nextSibling);
         } else {
           const text = new ModelText(INVISIBLE_SPACE);
           table.parent?.appendChildren(text);
-          selection.collapseIn(text);
+          tr.collapseIn(text);
         }
 
-        editor.model.write();
+        editor.dispatchTransaction(tr);
         return;
       }
     } else if (
@@ -156,8 +161,8 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         };
       } else {
         if (table.previousSibling) {
-          selection.collapseIn(table.previousSibling);
-          editor.model.write();
+          tr.collapseIn(table.previousSibling);
+          editor.dispatchTransaction(tr);
         }
         return;
       }
@@ -166,7 +171,8 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     }
     const newSelectedCell = table?.getCell(newPosition.x, newPosition.y);
     if (!newSelectedCell) return;
+    tr.collapseIn(newSelectedCell);
     selection.collapseIn(newSelectedCell);
-    editor.model.write();
+    editor.dispatchTransaction(tr);
   }
 }

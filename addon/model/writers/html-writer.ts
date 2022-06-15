@@ -1,20 +1,23 @@
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import {
-  ModelError,
-  NotImplementedError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
-import HtmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
-import NodeView, {
-  ElementView,
-  isElementView,
-  isTextView,
-} from '@lblod/ember-rdfa-editor/model/node-view';
+import State from '@lblod/ember-rdfa-editor/core/state';
+import { View } from '@lblod/ember-rdfa-editor/core/view';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import HtmlElementWriter, {
+  parentIsLumpNode,
+} from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
+import {
+  isElement,
+  isTextNode,
+  tagName,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { ModelInlineComponent } from '../inline-components/model-inline-component';
+import { isTextOrElement, TextOrElement } from '../util/types';
 import HtmlAdjacentTextWriter from './html-adjacent-text-writer';
 import HtmlInlineComponentWriter from './html-inline-component-writer';
+type Difference = 'type' | 'tag' | 'attrs' | 'content' | 'none';
+
 /**
  * Top-level {@link Writer} for HTML documents.
  */
@@ -23,135 +26,196 @@ export default class HtmlWriter {
   private htmlElementWriter: HtmlElementWriter;
   private htmlInlineComponentWriter: HtmlInlineComponentWriter;
 
-  constructor(private model: Model) {
-    this.htmlAdjacentTextWriter = new HtmlAdjacentTextWriter(model);
-    this.htmlElementWriter = new HtmlElementWriter(model);
+  constructor() {
+    this.htmlAdjacentTextWriter = new HtmlAdjacentTextWriter();
+    this.htmlElementWriter = new HtmlElementWriter();
     this.htmlInlineComponentWriter = new HtmlInlineComponentWriter();
   }
 
-  write(modelNode: ModelNode): NodeView {
-    let resultView: NodeView;
+  write(state: State, view: View) {
+    const domRoot = view.domRoot;
+    const modelRoot = state.document;
+    if (modelRoot.children.length !== domRoot.childNodes.length) {
+      const parsedChildren = this.parseChildren(modelRoot.children, state);
+      domRoot.replaceChildren(...parsedChildren);
+    } else {
+      modelRoot.children.forEach((child, index) => {
+        this.writeRec(child, domRoot.childNodes[index], state);
+      });
+    }
+  }
+  private writeRec(modelNode: ModelNode, domNode: Node, state: State) {
+    const parsedNode = this.parseNode(modelNode, state);
+    const diff = this.compareNodes(parsedNode, domNode);
+    switch (diff) {
+      case 'type':
+        (domNode as HTMLElement | Text).replaceWith(
+          this.parseSubTree(modelNode, state)
+        );
+        break;
+      case 'tag':
+        (domNode as HTMLElement | Text).replaceWith(
+          this.parseSubTree(modelNode, state)
+        );
+        break;
+      case 'attrs':
+        this.swapElement(domNode as HTMLElement, parsedNode as HTMLElement);
+        break;
+      case 'content':
+        (domNode as HTMLElement | Text).replaceWith(
+          this.parseSubTree(modelNode, state)
+        );
+        break;
+      case 'none':
+        if (ModelNode.isModelElement(modelNode)) {
+          modelNode.children.forEach((child, index) => {
+            this.writeRec(child, domNode.childNodes[index], state);
+          });
+        } else if (ModelNode.isModelInlineComponent(modelNode)) {
+          state.inlineComponentsRegistry.addComponentInstance(
+            domNode,
+            modelNode.spec.name,
+            modelNode
+          );
+        }
+        break;
+    }
+  }
+  private compareNodes(parsedNode: Node, domNode: Node): Difference {
+    if (parsedNode.nodeType !== domNode.nodeType) {
+      return 'type';
+    }
+    if (isElement(parsedNode)) {
+      if (tagName(parsedNode) !== tagName(domNode)) {
+        return 'tag';
+      }
+      if (parsedNode.childNodes.length !== domNode.childNodes.length) {
+        return 'content';
+      } else if (
+        !this.areDomAttributesSame(
+          parsedNode.attributes,
+          (domNode as Element).attributes
+        )
+      ) {
+        return 'attrs';
+      }
+    } else if (isTextNode(parsedNode)) {
+      if (parsedNode.textContent !== domNode.textContent) {
+        return 'content';
+      }
+    } else {
+      throw new NotImplementedError('unsupported node type');
+    }
+    return 'none';
+  }
+  private parseNode(modelNode: ModelNode, state: State): Node {
     if (ModelNode.isModelElement(modelNode)) {
-      let view = this.getView(modelNode);
-      if (view) {
-        if (!isElementView(view)) {
-          throw new ModelError('ModelElement with non-element view');
-        }
-        view = this.updateElementView(modelNode, view);
-      } else {
-        view = this.createElementView(modelNode);
-      }
-      const childViews = [];
-      let adjacentTextNodes: ModelText[] = [];
-
-      for (const child of modelNode.children) {
-        if (ModelNode.isModelText(child)) {
-          adjacentTextNodes.push(child);
-        } else {
-          if (adjacentTextNodes.length > 0) {
-            // process adjacent text nodes
-            childViews.push(...this.processTextViews(adjacentTextNodes));
-            adjacentTextNodes.forEach((textNode) => textNode.clearDirty());
-            adjacentTextNodes = [];
-          }
-          childViews.push(this.write(child).viewRoot);
-        }
-      }
-      if (adjacentTextNodes.length > 0) {
-        childViews.push(...this.processTextViews(adjacentTextNodes));
-        adjacentTextNodes.forEach((textNode) => textNode.clearDirty());
-      }
-
-      if (modelNode.isDirty('content')) {
-        if (isElement(view.viewRoot)) {
-          view.viewRoot.replaceChildren(...childViews);
-        } else {
-          throw new ModelError('Model element with non-element viewroot');
-        }
-      }
-      resultView = view;
+      return this.parseElement(modelNode);
     } else if (ModelNode.isModelText(modelNode)) {
-      this.processTextViews([modelNode]);
-      resultView = this.getView(modelNode)!;
+      return this.parseText(modelNode);
     } else if (ModelNode.isModelInlineComponent(modelNode)) {
-      const view = this.getView(modelNode);
-      if (view) {
-        resultView = view;
+      return this.parseInlineComponent(modelNode, state);
+    } else {
+      throw new NotImplementedError('Unsupported node type');
+    }
+  }
+  parseSubTree(modelNode: ModelNode, state: State): Node {
+    if (modelNode.isLeaf) {
+      return this.parseNode(modelNode, state);
+    } else {
+      const result = this.parseNode(modelNode, state) as HTMLElement;
+      const children = (modelNode as ModelElement).children;
+      result.append(...this.parseChildren(children, state));
+      return result;
+    }
+  }
+  parseChildren(children: ModelNode[], state: State): Node[] {
+    let adjacentTextNodes = [];
+    const parsedChildren = [];
+    for (const child of children) {
+      if (ModelNode.isModelText(child)) {
+        adjacentTextNodes.push(child);
       } else {
-        resultView = this.htmlInlineComponentWriter.write(modelNode);
-        this.model.registerNodeView(modelNode, resultView);
+        if (adjacentTextNodes.length > 0) {
+          // process adjacent text nodes
+          parsedChildren.push(...this.parseTextNodes(adjacentTextNodes));
+          adjacentTextNodes = [];
+        }
+        parsedChildren.push(this.parseSubTree(child, state));
       }
-      this.model.addComponentInstance(
-        resultView.viewRoot,
-        modelNode.spec.name,
-        modelNode
-      );
-    } else {
-      throw new NotImplementedError('Unsupported modelnode type');
     }
-    modelNode.clearDirty();
-    return resultView;
-  }
-
-  private getView(modelNode: ModelNode) {
-    return this.model.modelToView(modelNode);
-  }
-
-  private createElementView(modelElement: ModelElement): ElementView {
-    const view = this.htmlElementWriter.write(modelElement);
-    this.model.registerNodeView(modelElement, view);
-    return view;
-  }
-
-  private updateElementView(
-    modelElement: ModelElement,
-    view: ElementView
-  ): NodeView {
-    if (modelElement.isDirty('node')) {
-      const newView = this.createElementView(modelElement);
-      this.swapElement(view.viewRoot, newView.viewRoot);
-      return newView;
+    if (adjacentTextNodes.length > 0) {
+      parsedChildren.push(...this.parseTextNodes(adjacentTextNodes));
     }
-    return view;
+    return parsedChildren;
+  }
+  private parseTextNodes(modelTexts: ModelText[]): Set<Node> {
+    return new Set(this.htmlAdjacentTextWriter.write(modelTexts));
+  }
+  private areDomAttributesSame(
+    left: NamedNodeMap,
+    right: NamedNodeMap
+  ): boolean {
+    if (left.length !== right.length) {
+      return false;
+    }
+    for (const leftAttr of left) {
+      const rightAttr = right.getNamedItem(leftAttr.name);
+      if (!rightAttr || rightAttr.value !== leftAttr.value) {
+        return false;
+      }
+    }
+    return true;
   }
 
-  private processTextViews(modelTexts: ModelText[]): Set<Node> {
-    const result: Set<Node> = new Set();
-    if (
-      modelTexts.some(
-        (modelText) =>
-          modelText.isDirty('node') ||
-          modelText.isDirty('mark') ||
-          modelText.isDirty('content') ||
-          !this.getView(modelText)
-      )
-    ) {
-      const textViews = this.htmlAdjacentTextWriter.write(modelTexts);
-      modelTexts.forEach((modelText, i) => {
-        const view = this.getView(modelText);
+  private parseElement(element: ModelElement): HTMLElement {
+    const result = document.createElement(element.type);
 
-        if (view) {
-          if (!isTextView(view)) {
-            throw new ModelError('ModelText with non-text view');
-          }
-          view.viewRoot.replaceWith(textViews[i].viewRoot);
-          this.model.registerTextNode(modelText, textViews[i]);
-          result.add(textViews[i].viewRoot);
-        } else {
-          this.model.registerTextNode(modelText, textViews[i]);
-          result.add(textViews[i].viewRoot);
-        }
-      });
-    } else {
-      modelTexts.forEach((modelText) => {
-        const view = this.getView(modelText);
-        if (view) {
-          result.add(view.viewRoot);
-        }
-      });
+    // This will disable the selection of multiple cells on table.
+    // Idea reverse-engineered from readctor.
+    if (element.type === 'table') {
+      result.contentEditable = 'false';
+    }
+    if (element.type === 'td' || element.type === 'th') {
+      if (parentIsLumpNode(element)) {
+        result.contentEditable = 'false';
+      } else {
+        result.contentEditable = 'true';
+      }
     }
 
+    for (const item of element.attributeMap.entries()) {
+      result.setAttribute(item[0], item[1]);
+    }
     return result;
+  }
+  private parseText(text: ModelText): Node {
+    const contentRoot: Text = new Text(text.content);
+    let current: TextOrElement = contentRoot;
+
+    for (const entry of [...text.marks].sort((a, b) =>
+      a.priority >= b.priority ? 1 : -1
+    )) {
+      const rendered = entry.write(current);
+      if (isTextOrElement(rendered)) {
+        current = rendered;
+      } else {
+        throw new NotImplementedError(
+          'Mark is trying to render as something other than an element or a text node'
+        );
+      }
+    }
+    return current;
+  }
+
+  private parseInlineComponent(component: ModelInlineComponent, state: State) {
+    const node = this.htmlInlineComponentWriter.write(component, true);
+    state.inlineComponentsRegistry.addComponentInstance(
+      node,
+      component.spec.name,
+      component
+    );
+    return node;
   }
 
   swapElement(node: HTMLElement, replacement: HTMLElement) {

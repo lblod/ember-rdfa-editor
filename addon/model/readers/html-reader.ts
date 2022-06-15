@@ -1,43 +1,40 @@
-import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import { calculateRdfaPrefixes } from '../util/rdfa-utils';
-import { SpecAttributes } from '@lblod/ember-rdfa-editor/model/marks-registry';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
-import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
+import MarksRegistry, {
+  SpecAttributes,
+} from '@lblod/ember-rdfa-editor/model/marks-registry';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
+import InlineComponentsRegistry from '../inline-components/inline-components-registry';
+import { calculateRdfaPrefixes } from '../util/rdfa-utils';
 import { AttributeSpec } from '../util/render-spec';
 
+export interface HtmlReaderContextArgs {
+  rdfaPrefixes?: Map<string, string>;
+  shouldConvertWhitespace?: boolean;
+  marksRegistry: MarksRegistry;
+  inlineComponentsRegistry: InlineComponentsRegistry;
+}
 export class HtmlReaderContext {
   private readonly _textAttributes: Map<string, string>;
-  private readonly _model: Model;
+  private marksRegistry: MarksRegistry;
+  private inlineComponentsRegistry: InlineComponentsRegistry;
   private _rdfaPrefixes: Map<string, string>;
   private _shouldConvertWhitespace: boolean;
   activeMarks: Set<SpecAttributes> = new Set<SpecAttributes>();
   markViewRootStack: Node[] = [];
 
-  constructor(
-    model: Model,
-    rdfaPrefixes: Map<string, string> = new Map<string, string>(),
-    shouldConvertWhitespace = false
-  ) {
+  constructor({
+    marksRegistry,
+    inlineComponentsRegistry,
+    rdfaPrefixes = new Map<string, string>(),
+    shouldConvertWhitespace = false,
+  }: HtmlReaderContextArgs) {
     this._textAttributes = new Map<string, string>();
-    this._model = model;
     this._rdfaPrefixes = rdfaPrefixes;
     this._shouldConvertWhitespace = shouldConvertWhitespace;
-  }
-
-  get model() {
-    return this._model;
-  }
-
-  registerNodeView(modelNode: ModelNode, view: NodeView) {
-    this.model.registerNodeView(modelNode, view);
-  }
-
-  registerTextNode(modelNode: ModelText, view: NodeView): void {
-    this.model.registerTextNode(modelNode, view);
+    this.marksRegistry = marksRegistry;
+    this.inlineComponentsRegistry = inlineComponentsRegistry;
   }
 
   get shouldConvertWhitespace() {
@@ -51,13 +48,16 @@ export class HtmlReaderContext {
   get rdfaPrefixes() {
     return this._rdfaPrefixes;
   }
+  set rdfaPrefixes(value: Map<string, string>) {
+    this._rdfaPrefixes = value;
+  }
 
   matchMark(node: Node): Set<SpecAttributes> {
-    return this.model.marksRegistry.matchMarkSpec(node);
+    return this.marksRegistry.matchMarkSpec(node);
   }
 
   matchInlineComponent(node: Node) {
-    return this.model.inlineComponentsRegistry.matchInlineComponentSpec(node);
+    return this.inlineComponentsRegistry.matchInlineComponentSpec(node);
   }
 
   addMark<A extends AttributeSpec>(
@@ -65,23 +65,17 @@ export class HtmlReaderContext {
     spec: MarkSpec<A>,
     attributes: A
   ) {
-    return this._model.marksRegistry.addMark(node, spec, attributes);
+    return this.marksRegistry.addMark(node, spec, attributes);
   }
 }
 
 /**
  * Top-level reader for HTML documents
  */
-export default class HtmlReader implements Reader<Node, ModelNode[], boolean> {
-  constructor(private model: Model) {}
-
-  read(from: Node, shouldConvertWhitespace = false): ModelNode[] {
+export default class HtmlReader {
+  read(from: Node, context: HtmlReaderContext): ModelNode[] {
     const prefixes = calculateRdfaPrefixes(from);
-    const context = new HtmlReaderContext(
-      this.model,
-      prefixes,
-      shouldConvertWhitespace
-    );
+    context.rdfaPrefixes = prefixes;
     const nodeReader = new HtmlNodeReader();
     return nodeReader.read(from, context);
   }

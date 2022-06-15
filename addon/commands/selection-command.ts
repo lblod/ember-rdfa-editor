@@ -1,17 +1,21 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import Model from '@lblod/ember-rdfa-editor/model/model';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import {
   ImpossibleModelStateError,
   MisbehavedSelectionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import SimplifiedModel from '@lblod/ember-rdfa-editor/model/simplified-model';
+
+export interface SelectionCommandArgs {
+  selection?: ModelSelection;
+}
 
 /**
  * The core purpose of this command is to return a valid html structure that best represents
@@ -19,26 +23,29 @@ import SimplifiedModel from '@lblod/ember-rdfa-editor/model/simplified-model';
  * model by default.
  * Optionally, it can also delete the selected content before returning it.
  */
-export default abstract class SelectionCommand extends Command<
-  unknown[],
-  ModelNode[]
-> {
+export default abstract class SelectionCommand
+  implements Command<SelectionCommandArgs, ModelNode[]>
+{
   protected deleteSelection: boolean;
 
-  protected constructor(model: Model, createSnapshot: boolean) {
-    super(model, createSnapshot);
+  protected constructor(createSnapshot: boolean) {
     this.deleteSelection = createSnapshot;
   }
+  name = 'selection-command';
+  arguments: string[] = ['selection'];
+  canExecute(): boolean {
+    return true;
+  }
 
-  execute(selection: ModelSelection = this.model.selection): ModelNode[] {
+  execute(
+    { state, dispatch }: CommandContext,
+    { selection = state.selection }: SelectionCommandArgs
+  ): ModelNode[] {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
 
-    let buffer: SimplifiedModel | null = null;
-    if (!this.deleteSelection) {
-      buffer = this.model.createSnapshot();
-    }
+    const tr = state.createTransaction();
 
     let modelNodes: ModelNode[] = [];
     const range = selection.lastRange;
@@ -65,40 +72,34 @@ export default abstract class SelectionCommand extends Command<
       commonAncestor = newAncestor;
     }
 
-    this.model.change((mutator) => {
-      let contentRange = mutator.splitRangeUntilElements(
-        range,
-        commonAncestor,
-        commonAncestor
-      );
-      let treeWalker = new ModelTreeWalker({
+    let contentRange = tr.splitRangeUntilElements(
+      range,
+      commonAncestor,
+      commonAncestor
+    );
+    let treeWalker = new ModelTreeWalker({
+      range: contentRange,
+      descend: false,
+    });
+
+    // Check if selection is inside table cell. If this is the case, cut children of said cell.
+    // Assumption: if table cell is selected, no other nodes at the same level can be selected.
+    const firstModelNode = treeWalker.currentNode;
+    if (ModelNodeUtils.isTableCell(firstModelNode)) {
+      contentRange = range;
+      treeWalker = new ModelTreeWalker({
         range: contentRange,
         descend: false,
       });
-
-      // Check if selection is inside table cell. If this is the case, cut children of said cell.
-      // Assumption: if table cell is selected, no other nodes at the same level can be selected.
-      const firstModelNode = treeWalker.currentNode;
-      if (ModelNodeUtils.isTableCell(firstModelNode)) {
-        contentRange = range;
-        treeWalker = new ModelTreeWalker({
-          range: contentRange,
-          descend: false,
-        });
-      }
-      modelNodes = [...treeWalker];
-
-      if (this.deleteSelection) {
-        selection.selectRange(mutator.insertNodes(contentRange));
-      }
-    }, this.deleteSelection);
-
-    if (buffer) {
-      // If `deleteSelection` is false, we will have stored a snapshot of the model right before the execution of this
-      // command. This means we will enter this if-case. Since, we don't want the changes on the VDOM to get written
-      // back in this case, we restore the stored model.
-      this.model.restoreSnapshot(buffer, false);
     }
+    modelNodes = [...treeWalker];
+
+    if (this.deleteSelection) {
+      tr.selectRange(tr.insertNodes(contentRange));
+      dispatch(tr);
+    }
+    // when deleteSelection is false, we simply don't dispatch the transaction
+    // and the state will remain unchanged
 
     return modelNodes;
   }

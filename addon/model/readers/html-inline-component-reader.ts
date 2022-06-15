@@ -17,7 +17,7 @@ export default class HtmlInlineComponentReader
 {
   read(
     from: { element: HTMLElement; spec: InlineComponentSpec },
-    context: HtmlReaderContext
+    _context: HtmlReaderContext
   ): ModelInlineComponent[] {
     const { element, spec } = from;
     const propsAttribute = element.dataset['__props'];
@@ -31,11 +31,6 @@ export default class HtmlInlineComponentReader
       state = JSON.parse(stateAttribute) as State;
     }
     const component = new ModelInlineComponent(spec, props, state);
-
-    context.registerNodeView(component, {
-      viewRoot: element,
-      contentRoot: element,
-    });
     return [component];
   }
 }

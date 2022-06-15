@@ -1,6 +1,6 @@
 import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { HtmlReaderContext } from '@lblod/ember-rdfa-editor/model/readers/html-reader';
+import { HtmlReaderContext } from "@lblod/ember-rdfa-editor/model/readers/HtmlReaderContext";
 import { normalToPreWrapWhiteSpace } from '@lblod/ember-rdfa-editor/utils/whitespace-collapsing';
 
 /**
@@ -27,14 +27,6 @@ export default class HtmlTextReader
     context.activeMarks.forEach(({ spec, attributes }) =>
       context.addMark(result, spec, attributes)
     );
-    if (context.markViewRootStack.length) {
-      context.registerTextNode(result, {
-        viewRoot: context.markViewRootStack[0],
-        contentRoot: from,
-      });
-    } else {
-      context.registerTextNode(result, { viewRoot: from, contentRoot: from });
-    }
     return [result];
   }
 }

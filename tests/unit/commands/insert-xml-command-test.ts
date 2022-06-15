@@ -1,19 +1,14 @@
-import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import InsertXmlCommand from '@lblod/ember-rdfa-editor/commands/insert-xml-command';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import { oneLineTrim } from 'common-tags';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
-module('Unit | commands | insert-xml-command-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: InsertXmlCommand;
-
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new InsertXmlCommand(ctx.model);
-  });
+module('Unit | commands | insert-xml-command-test', function () {
+  const command = new InsertXmlCommand();
+  const executeCommand = makeTestExecute(command);
 
   test('inserts correctly in empty document', function (assert) {
     // language=XML
@@ -32,12 +27,10 @@ module('Unit | commands | insert-xml-command-test', function (hooks) {
 
     const xmlToInsert = oneLineTrim`<div><text>hello world</text></div>`;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
-    ctx.model.selectRange(range);
-
-    command.execute(xmlToInsert);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInNode(initial, 0, 0);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { xml: xmlToInsert });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('inserts correctly in document with empty text node', function (assert) {
@@ -60,12 +53,10 @@ module('Unit | commands | insert-xml-command-test', function (hooks) {
 
     const xmlToInsert = oneLineTrim`<div><text>hello world</text></div>`;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
-    ctx.model.selectRange(range);
-
-    command.execute(xmlToInsert);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInNode(initial, 0, 0);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { xml: xmlToInsert });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('inserts correctly inside text node', function (assert) {
@@ -89,12 +80,10 @@ module('Unit | commands | insert-xml-command-test', function (hooks) {
 
     const xmlToInsert = oneLineTrim`<div><text>hello world</text></div>`;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 3, 3);
-    ctx.model.selectRange(range);
-
-    command.execute(xmlToInsert);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInNode(initial, 3, 3);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { xml: xmlToInsert });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('correctly replaces part of text node', function (assert) {
@@ -118,12 +107,10 @@ module('Unit | commands | insert-xml-command-test', function (hooks) {
 
     const xmlToInsert = oneLineTrim`<div><text>hello world</text></div>`;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 2, 5);
-    ctx.model.selectRange(range);
-
-    command.execute(xmlToInsert);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInNode(initial, 2, 5);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { xml: xmlToInsert });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('correctly replaces complex range', function (assert) {
@@ -166,14 +153,12 @@ module('Unit | commands | insert-xml-command-test', function (hooks) {
 
     const xmlToInsert = oneLineTrim`<div><text>hello world</text></div>`;
 
-    ctx.model.fillRoot(initial);
     const range = new ModelRange(
       ModelPosition.fromInTextNode(rangeStart, 3),
       ModelPosition.fromInTextNode(rangeEnd, 3)
     );
-    ctx.model.selectRange(range);
-
-    command.execute(xmlToInsert);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { xml: xmlToInsert });
+    assert.true(resultState.document.sameAs(expected));
   });
 });

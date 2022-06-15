@@ -1,23 +1,28 @@
 import { ModelInlineComponent } from '../model/inline-components/model-inline-component';
-import Model from '../model/model';
 import { logExecute } from '../utils/logging-utils';
-import Command from './command';
+import Command, { CommandContext } from './command';
 
-export default class RemoveComponentCommand extends Command {
+export interface RemoveComponentCommandArgs {
+  component: ModelInlineComponent;
+}
+export default class RemoveComponentCommand
+  implements Command<RemoveComponentCommandArgs, void>
+{
   name = 'remove-component';
 
-  constructor(model: Model) {
-    super(model);
-  }
+  arguments = ['component'];
 
   canExecute(): boolean {
     return true;
   }
 
   @logExecute
-  execute(component: ModelInlineComponent): void {
-    this.model.change(() => {
-      component.remove();
-    });
+  execute(
+    { state, dispatch }: CommandContext,
+    { component }: RemoveComponentCommandArgs
+  ): void {
+    const tr = state.createTransaction();
+    tr.deleteNode(component);
+    dispatch(tr);
   }
 }

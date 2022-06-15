@@ -1,7 +1,5 @@
-import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { TextView } from '@lblod/ember-rdfa-editor/model/node-view';
+import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import { MarkSet } from '../mark';
 
 /**
@@ -9,19 +7,15 @@ import { MarkSet } from '../mark';
  * This takes care of converting the textattributes into HTML elements
  */
 export default class HtmlAdjacentTextWriter
-  implements Writer<ModelText[], TextView[]>
+  implements Writer<ModelText[], Node[]>
 {
-  constructor(protected model: Model) {}
-
   handleSplit(
     streak: ModelText[],
     marksInCommon: MarkSet,
     marksToIgnore: MarkSet
-  ): { views: TextView[]; parent: HTMLElement } {
+  ): { views: Node[]; parent: HTMLElement } {
     const viewsRec = this.write(streak, marksToIgnore.union(marksInCommon));
-    const differentViewRoots: Set<Node> = new Set(
-      viewsRec.map((view) => view.viewRoot)
-    );
+    const differentViewRoots: Set<Node> = new Set(viewsRec);
     let parent!: HTMLElement;
     let children: Iterable<Node> = differentViewRoots;
     [...marksInCommon]
@@ -36,8 +30,8 @@ export default class HtmlAdjacentTextWriter
   write(
     modelNodes: ModelText[],
     marksToIgnore: MarkSet = new MarkSet()
-  ): TextView[] {
-    const result: TextView[] = [];
+  ): Node[] {
+    const result: Node[] = [];
     let marksInCommon = new MarkSet();
     let streak: ModelText[] = [];
     modelNodes.forEach((modelNode) => {
@@ -61,10 +55,7 @@ export default class HtmlAdjacentTextWriter
             marksToIgnore
           );
           views.forEach((view) => {
-            result.push({
-              viewRoot: parent,
-              contentRoot: view.contentRoot,
-            });
+            result.push(parent);
           });
         }
         marksInCommon = new MarkSet();
@@ -72,7 +63,7 @@ export default class HtmlAdjacentTextWriter
         if (marks.size === 0) {
           streak = [];
           // Handle a textnode without marks
-          result.push({ viewRoot: contentRoot, contentRoot: contentRoot });
+          result.push(contentRoot);
         } else {
           streak = [modelNode];
         }
@@ -89,10 +80,7 @@ export default class HtmlAdjacentTextWriter
         marksToIgnore
       );
       views.forEach((view) => {
-        result.push({
-          viewRoot: parent,
-          contentRoot: view.contentRoot,
-        });
+        result.push(parent);
       });
     }
 

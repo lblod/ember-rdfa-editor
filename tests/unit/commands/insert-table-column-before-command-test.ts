@@ -1,20 +1,15 @@
-import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import InsertTableColumnBeforeCommand from '@lblod/ember-rdfa-editor/commands/insert-table-column-before-command';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
 module(
   'Unit | commands | insert-table-column-before-command-test',
-  function (hooks) {
-    const ctx = new ModelTestContext();
-    let command: InsertTableColumnBeforeCommand;
-
-    hooks.beforeEach(() => {
-      ctx.reset();
-      command = new InsertTableColumnBeforeCommand(ctx.model);
-    });
+  function () {
+    const command = new InsertTableColumnBeforeCommand();
+    const executeCommand = makeTestExecute(command);
 
     test('inserts column before first column (empty table)', function (assert) {
       // language=XML
@@ -58,12 +53,10 @@ module(
       </modelRoot>
     `;
 
-      ctx.model.fillRoot(initial);
       const range = ModelRange.fromInElement(bottomLeft, 0, 0);
-      ctx.model.selectRange(range);
-
-      command.execute();
-      assert.true(ctx.model.rootModelNode.sameAs(expected));
+      const initialState = stateWithRange(initial, range);
+      const { resultState } = executeCommand(initialState, {});
+      assert.true(resultState.document.sameAs(expected));
     });
 
     test('inserts column before first column (table filled with text)', function (assert) {
@@ -124,12 +117,10 @@ module(
       </modelRoot>
     `;
 
-      ctx.model.fillRoot(initial);
       const range = ModelRange.fromInTextNode(bottomLeft, 1, 3);
-      ctx.model.selectRange(range);
-
-      command.execute();
-      assert.true(ctx.model.rootModelNode.sameAs(expected));
+      const initialState = stateWithRange(initial, range);
+      const { resultState } = executeCommand(initialState, {});
+      assert.true(resultState.document.sameAs(expected));
     });
 
     test('inserts column in the middle (empty table)', function (assert) {
@@ -174,12 +165,10 @@ module(
       </modelRoot>
     `;
 
-      ctx.model.fillRoot(initial);
       const range = ModelRange.fromInElement(bottomRight, 0, 0);
-      ctx.model.selectRange(range);
-
-      command.execute();
-      assert.true(ctx.model.rootModelNode.sameAs(expected));
+      const initialState = stateWithRange(initial, range);
+      const { resultState } = executeCommand(initialState, {});
+      assert.true(resultState.document.sameAs(expected));
     });
 
     test('inserts column in the middle (table filled with text)', function (assert) {
@@ -240,12 +229,10 @@ module(
       </modelRoot>
     `;
 
-      ctx.model.fillRoot(initial);
       const range = ModelRange.fromInTextNode(bottomRight, 1, 3);
-      ctx.model.selectRange(range);
-
-      command.execute();
-      assert.true(ctx.model.rootModelNode.sameAs(expected));
+      const initialState = stateWithRange(initial, range);
+      const { resultState } = executeCommand(initialState, {});
+      assert.true(resultState.document.sameAs(expected));
     });
   }
 );

@@ -3,15 +3,12 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import RemoveTableRowCommand from '@lblod/ember-rdfa-editor/commands/remove-table-row-command';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 
-module('Unit | commands | remove-table-row-command-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: RemoveTableRowCommand;
+module('Unit | commands | remove-table-row-command-test', function () {
+  const command = new RemoveTableRowCommand();
+  const executeCommand = makeTestExecute(command);
 
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new RemoveTableRowCommand(ctx.model);
-  });
 
   test('removes only row', function (assert) {
     // language=XML
@@ -40,12 +37,11 @@ module('Unit | commands | remove-table-row-command-test', function (hooks) {
       <modelRoot></modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(left, 1, 3);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
 
   test('removes first row', function (assert) {
@@ -96,12 +92,10 @@ module('Unit | commands | remove-table-row-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(topLeft, 1, 3);
-    ctx.model.selectRange(range);
-
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('removes last row', function (assert) {
@@ -152,12 +146,10 @@ module('Unit | commands | remove-table-row-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(bottomLeft, 1, 3);
-    ctx.model.selectRange(range);
-
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('removes middle row', function (assert) {
@@ -224,11 +216,9 @@ module('Unit | commands | remove-table-row-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(middleLeft, 1, 3);
-    ctx.model.selectRange(range);
-
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 });

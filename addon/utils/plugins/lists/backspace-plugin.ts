@@ -13,7 +13,7 @@ import {
   findLastLi,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import RawEditor from '../../ce/raw-editor';
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 
 function debug(message: string, object: unknown = null): void {
   runInDebug(() => {
@@ -134,7 +134,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   jumpToLastLiOfList = (
     manipulation: MoveCursorToEndOfElementManipulation,
-    _editor: RawEditor
+    _editor: Editor
   ) => {
     const list = manipulation.node;
     if (['ul', 'ol'].includes(tagName(list))) {
@@ -158,7 +158,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   removeListItemAndListButKeepContent = (
     manipulation: BackspaceHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ) => {
     let element;
     if (manipulation.type === 'moveCursorBeforeElement') {
@@ -189,7 +189,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   removeListItemAndMoveContentBeforeList = (
     manipulation: BackspaceHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ) => {
     let element;
     if (manipulation.type === 'moveCursorBeforeElement') {
@@ -220,7 +220,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   mergeWithPreviousLi = (
     manipulation: BackspaceHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     let element;
     if (manipulation.type === 'moveCursorBeforeElement') {
@@ -250,7 +250,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   removeListItemAndMoveToPreviousListItem = (
     manipulation: ElementRemovalManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     const element = manipulation.node;
     const li = element.previousElementSibling;
@@ -260,7 +260,9 @@ export default class ListBackspacePlugin implements BackspacePlugin {
     } else {
       window.getSelection()?.collapse(li, li.childNodes.length);
       element.remove();
-      editor.model.read(true);
+      const tr = editor.state.createTransaction();
+      tr.readFromView(editor.view);
+      editor.dispatchTransaction(tr, false);
     }
   };
 
@@ -273,7 +275,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   removeListItemAndJumpBeforeList = (
     manipulation: ElementRemovalManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     const element = manipulation.node;
     const list = element.parentElement;
@@ -287,7 +289,9 @@ export default class ListBackspacePlugin implements BackspacePlugin {
             Array.from(list.parentElement.childNodes).indexOf(list)
           );
         element.remove();
-        editor.model.read(true);
+        const tr = editor.state.createTransaction();
+        tr.readFromView(editor.view);
+        editor.dispatchTransaction(tr, false);
       } else {
         console.warn('List item has no parent element');
       }
@@ -305,7 +309,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
    */
   removeListItemAndList = (
     manipulation: ElementRemovalManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     const element = manipulation.node;
     const list = element.parentElement;
@@ -320,7 +324,9 @@ export default class ListBackspacePlugin implements BackspacePlugin {
           );
         element.remove();
         list.remove();
-        editor.model.read(true);
+        const tr = editor.state.createTransaction();
+        tr.readFromView(editor.view);
+        editor.dispatchTransaction(tr, false);
       } else {
         console.warn('List item has no parent element');
       }
@@ -358,7 +364,7 @@ export default class ListBackspacePlugin implements BackspacePlugin {
  * HELPERS
  *************************************************************************************/
 
-function helpMergeWithPreviousLi(element: Element, editor: RawEditor): void {
+function helpMergeWithPreviousLi(element: Element, editor: Editor): void {
   if (
     element.previousElementSibling &&
     tagName(element.previousElementSibling) === 'li'
@@ -373,7 +379,9 @@ function helpMergeWithPreviousLi(element: Element, editor: RawEditor): void {
       firstChildOfListItem
     );
     window.getSelection()?.collapse(previousLi, index);
-    editor.model.read(true);
+    const tr = editor.state.createTransaction();
+    tr.readFromView(editor.view);
+    editor.dispatchTransaction(tr, false);
   } else {
     console.warn("Previous sibling is not a list item, can't execute merge");
   }
@@ -381,7 +389,7 @@ function helpMergeWithPreviousLi(element: Element, editor: RawEditor): void {
 
 function helpRemoveListItemAndMoveContentBeforeList(
   element: Element,
-  editor: RawEditor
+  editor: Editor
 ): void {
   const list = element.parentElement;
   if (list && ['ul', 'ol'].includes(tagName(list))) {
@@ -396,7 +404,9 @@ function helpRemoveListItemAndMoveContentBeforeList(
         firstChildOfListItem
       );
       window.getSelection()?.collapse(parentOfList, index);
-      editor.model.read(true);
+      const tr = editor.state.createTransaction();
+      tr.readFromView(editor.view);
+      editor.dispatchTransaction(tr, false);
     } else {
       console.warn('List item has no parent element');
     }
@@ -407,7 +417,7 @@ function helpRemoveListItemAndMoveContentBeforeList(
 
 function helpRemoveListItemAndListButKeepContent(
   element: Element,
-  editor: RawEditor
+  editor: Editor
 ) {
   const list = element.parentElement;
   if (list && ['ul', 'ol'].includes(tagName(list))) {
@@ -420,7 +430,9 @@ function helpRemoveListItemAndListButKeepContent(
           Array.from(parentOfList.childNodes).indexOf(list)
         );
       list.replaceWith(...element.childNodes);
-      editor.model.read(true);
+      const tr = editor.state.createTransaction();
+      tr.readFromView(editor.view);
+      editor.dispatchTransaction(tr, false);
     } else {
       console.warn('List item has no parent element');
     }

@@ -1,17 +1,13 @@
-import { module, test } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import InsertNewLineCommand from '@lblod/ember-rdfa-editor/commands/insert-newLine-command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { makeTestExecute, testState } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
-module('Unit | commands | insert-new-line-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: InsertNewLineCommand;
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new InsertNewLineCommand(ctx.model);
-  });
+module('Unit | commands | insert-new-line-test', function () {
+  const command = new InsertNewLineCommand();
+  const executeCommand = makeTestExecute(command);
   test('inserts a new line before a table', function (assert) {
     // language=XML
     const {
@@ -82,22 +78,21 @@ module('Unit | commands | insert-new-line-test', function (hooks) {
         </text>
       </modelRoot>
     `;
-    ctx.model.fillRoot(initial);
-    ctx.model.disableSelectionWriting();
+    const initialState = testState({ document: initial });
     const range = ModelRange.fromInTextNode(
       rangeMarker,
       rangeMarker.length,
       rangeMarker.length
     );
-    command.execute(range);
+    const { resultState } = executeCommand(initialState, { range });
 
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    assert.true(resultState.document.sameAs(expected));
     assert.deepEqual(
-      ctx.modelSelection.lastRange?.start.path.length,
+      resultState.selection.lastRange?.start.path.length,
       range.start.path.length
     );
     assert.deepEqual(
-      ctx.modelSelection.lastRange?.start.parentOffset,
+      resultState.selection.lastRange?.start.parentOffset,
       range.start.parentOffset + 1
     );
   });

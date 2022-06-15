@@ -1,5 +1,6 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import {
   IllegalExecutionStateError,
@@ -14,15 +15,18 @@ import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
-export default class IndentListCommand extends Command {
+export interface IndentListCommandArgs {
+  range?: ModelRange | null;
+}
+export default class IndentListCommand
+  implements Command<IndentListCommandArgs, void>
+{
   name = 'indent-list';
-
-  constructor(model: Model) {
-    super(model);
-  }
+  arguments = ['range'];
 
   canExecute(
-    range: ModelRange | null = this.model.selection.lastRange
+    { state }: CommandContext,
+    { range = state.selection.lastRange }: IndentListCommandArgs
   ): boolean {
     if (!range) {
       return false;
@@ -44,10 +48,14 @@ export default class IndentListCommand extends Command {
   }
 
   @logExecute
-  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+  execute(
+    { state, dispatch }: CommandContext,
+    { range = state.selection.lastRange }: IndentListCommandArgs
+  ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
+    const tr = state.createTransaction();
 
     const treeWalker = ModelRangeUtils.findModelNodes(
       range,
@@ -73,41 +81,40 @@ export default class IndentListCommand extends Command {
       }
     }
 
-    this.model.change((mutator) => {
-      for (const [parent, lis] of setsToIndent.entries()) {
-        // First li of (nested) list can never be selected here, so previousSibling is always another li.
-        const newParent = lis[0].previousSibling;
-        if (!newParent || !ModelNode.isModelElement(newParent)) {
-          throw new IllegalExecutionStateError(
-            "First selected li doesn't have previous sibling"
-          );
-        }
-
-        for (const li of lis) {
-          mutator.deleteNode(li);
-        }
-
-        //First check for already existing sublist on the new parent
-        //If it exists, just add the elements to it, otherwise create a new sublist
-        const possibleNewList = this.hasSublist(newParent);
-        if (possibleNewList) {
-          mutator.insertAtPosition(
-            ModelPosition.fromInElement(
-              possibleNewList,
-              possibleNewList.getMaxOffset()
-            ),
-            ...lis
-          );
-        } else {
-          const newList = new ModelElement(parent.type);
-          newList.appendChildren(...lis);
-          mutator.insertAtPosition(
-            ModelPosition.fromInElement(newParent, newParent.getMaxOffset()),
-            newList
-          );
-        }
+    for (const [parent, lis] of setsToIndent.entries()) {
+      // First li of (nested) list can never be selected here, so previousSibling is always another li.
+      const newParent = lis[0].previousSibling;
+      if (!newParent || !ModelNode.isModelElement(newParent)) {
+        throw new IllegalExecutionStateError(
+          "First selected li doesn't have previous sibling"
+        );
       }
-    });
+
+      for (const li of lis) {
+        tr.deleteNode(li);
+      }
+
+      //First check for already existing sublist on the new parent
+      //If it exists, just add the elements to it, otherwise create a new sublist
+      const possibleNewList = this.hasSublist(newParent);
+      if (possibleNewList) {
+        tr.insertAtPosition(
+          ModelPosition.fromInElement(
+            possibleNewList,
+            possibleNewList.getMaxOffset()
+          ),
+          ...lis
+        );
+      } else {
+        const newList = new ModelElement(parent.type);
+        newList.appendChildren(...lis);
+        tr.insertAtPosition(
+          ModelPosition.fromInElement(newParent, newParent.getMaxOffset()),
+          newList
+        );
+      }
+    }
+    dispatch(tr);
   }
 
   hasSublist(listElement: ModelElement): ModelElement | undefined {

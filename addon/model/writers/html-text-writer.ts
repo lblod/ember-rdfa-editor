@@ -13,7 +13,6 @@ import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
  * This takes care of converting the textattributes into HTML elements
  */
 export default class HtmlTextWriter implements Writer<ModelText, TextView> {
-  constructor(protected model: Model) {}
 
   write(modelNode: ModelText): TextView {
     const contentRoot: Text = new Text(modelNode.content);

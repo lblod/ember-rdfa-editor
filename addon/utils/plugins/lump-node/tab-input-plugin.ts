@@ -12,7 +12,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 import { isTextNode } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import RawEditor from '../../ce/raw-editor';
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 
 /**
  *
@@ -63,7 +63,7 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
 
   jumpOverLumpNode = (
     manipulation: TabHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     const node = manipulation.node;
     const rootNode = node.getRootNode() as HTMLElement;
@@ -82,12 +82,14 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
 
     textNode = ensureValidTextNodeForCaret(textNode);
     window.getSelection()?.collapse(textNode, 0);
-    editor.model.read(true);
+    const tr = editor.state.createTransaction();
+    tr.readFromView(editor.view);
+    editor.dispatchTransaction(tr, false);
   };
 
   jumpOverLumpNodeBackwards = (
     manipulation: TabHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     const node = manipulation.node;
     const rootNode = node.getRootNode() as HTMLElement;
@@ -106,6 +108,8 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
 
     textNode = ensureValidTextNodeForCaret(textNode);
     window.getSelection()?.collapse(textNode, textNode.length);
-    editor.model.read(true);
+    const tr = editor.state.createTransaction();
+    tr.readFromView(editor.view);
+    editor.dispatchTransaction(tr, false);
   };
 }

@@ -1,30 +1,33 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import { AttributeSpec } from '../model/util/render-spec';
 
-export default class RemoveMarkFromRangeCommand extends Command<
-  [ModelRange, string, AttributeSpec],
-  void
-> {
+export interface RemoveMarkFromRangeCommandArgs {
+  range: ModelRange;
+  markName: string;
+  attributes: AttributeSpec;
+}
+export default class RemoveMarkFromRangeCommand
+  implements Command<RemoveMarkFromRangeCommandArgs, void>
+{
   name = 'remove-mark-from-range';
-
-  constructor(model: Model) {
-    super(model);
+  arguments: string[] = ['range', 'markName', 'attributes'];
+  canExecute(): boolean {
+    return true;
   }
 
   execute(
-    range: ModelRange,
-    markName: string,
-    attributes: AttributeSpec
+    { state, dispatch }: CommandContext,
+    { range, markName, attributes }: RemoveMarkFromRangeCommandArgs
   ): void {
-    console.assert(this.model.rootModelNode === range.root, 'root not same');
-    const spec = this.model.marksRegistry.lookupMark(markName);
+    const tr = state.createTransaction();
+    const spec = state.marksRegistry.lookupMark(markName);
     if (spec) {
-      this.model.change((mutator) => {
-        mutator.removeMark(range, spec, attributes);
-      });
+      tr.removeMark(range, spec, attributes);
+      dispatch(tr);
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);
     }

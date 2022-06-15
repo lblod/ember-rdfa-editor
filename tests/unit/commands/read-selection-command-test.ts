@@ -1,21 +1,16 @@
-import { module, test } from 'qunit';
 import ReadSelectionCommand from '@lblod/ember-rdfa-editor/commands/read-selection-command';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
-module('Unit | commands | read-selection-command-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: ReadSelectionCommand;
-
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new ReadSelectionCommand(ctx.model);
-  });
+module('Unit | commands | read-selection-command-test', function () {
+  const command = new ReadSelectionCommand();
+  const executeCommand = makeTestExecute(command);
 
   const compareModelNodeList = (
     received: ModelNode[],
@@ -46,14 +41,18 @@ module('Unit | commands | read-selection-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(text, 0, text.length);
-    ctx.modelSelection.selectRange(range);
-    const readNodes = command.execute();
+    const initialState = stateWithRange(initial, range);
+
+    const { resultState, resultValue: readNodes } = executeCommand(
+      initialState,
+      {}
+    );
+    console.log(resultState.document.toXml());
 
     assert.expect(2 + readNodes.length);
 
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    assert.true(resultState.document.sameAs(expected));
 
     compareModelNodeList(readNodes, [text], assert);
   });
@@ -76,14 +75,16 @@ module('Unit | commands | read-selection-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(text, 9, 16);
-    ctx.modelSelection.selectRange(range);
-    const readNodes: ModelNode[] = command.execute();
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue: readNodes } = executeCommand(
+      initialState,
+      {}
+    );
 
     assert.expect(2 + readNodes.length);
 
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    assert.true(resultState.document.sameAs(expected));
 
     compareModelNodeList(readNodes, [new ModelText('only te')], assert);
   });
@@ -127,17 +128,19 @@ module('Unit | commands | read-selection-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(
       selectedText,
       0,
       selectedText.length
     );
-    ctx.modelSelection.selectRange(range);
-    const readNodes: ModelNode[] = command.execute();
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue: readNodes } = executeCommand(
+      initialState,
+      {}
+    );
+    assert.true(resultState.document.sameAs(expected));
 
     assert.expect(2 + readNodes.length);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     const ulElement = new ModelElement('ul');
     ulElement.addChild(selectedLi);
@@ -205,17 +208,18 @@ module('Unit | commands | read-selection-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(
       firstList,
       0,
       firstList.getMaxOffset()
     );
-    ctx.model.selectRange(range);
-    const readNodes = command.execute();
-
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue: readNodes } = executeCommand(
+      initialState,
+      {}
+    );
     assert.expect(2 + readNodes.length);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    assert.true(resultState.document.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstList], assert);
   });
@@ -280,15 +284,17 @@ module('Unit | commands | read-selection-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const startPos = ModelPosition.fromInElement(firstLi, 0);
     const endPos = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
     const range = new ModelRange(startPos, endPos);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue: readNodes } = executeCommand(
+      initialState,
+      {}
+    );
+    assert.true(resultState.document.sameAs(expected));
 
-    const readNodes = command.execute();
     assert.expect(2 + readNodes.length);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstList], assert);
   });
@@ -335,17 +341,19 @@ module('Unit | commands | read-selection-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(
       firstList,
       0,
       firstList.getMaxOffset()
     );
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue: readNodes } = executeCommand(
+      initialState,
+      {}
+    );
+    assert.true(resultState.document.sameAs(expected));
 
-    const readNodes = command.execute();
     assert.expect(2 + readNodes.length);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstList], assert);
   });
@@ -392,15 +400,17 @@ module('Unit | commands | read-selection-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const startPos = ModelPosition.fromInElement(firstLi, 0);
     const endPos = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
     const range = new ModelRange(startPos, endPos);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue: readNodes } = executeCommand(
+      initialState,
+      {}
+    );
+    assert.true(resultState.document.sameAs(expected));
 
-    const readNodes = command.execute();
     assert.expect(2 + readNodes.length);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [list], assert);
   });
@@ -457,13 +467,15 @@ module('Unit | commands | read-selection-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(firstLine, 0, firstLine.length);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue: readNodes } = executeCommand(
+      initialState,
+      {}
+    );
+    assert.true(resultState.document.sameAs(expected));
 
-    const readNodes = command.execute();
     assert.expect(2 + readNodes.length);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [firstLine], assert);
   });
@@ -545,15 +557,17 @@ module('Unit | commands | read-selection-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const startPos = ModelPosition.fromInTextNode(middleText, 0);
     const endPos = ModelPosition.fromInTextNode(lastText, lastText.length);
     const range = new ModelRange(startPos, endPos);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue: readNodes } = executeCommand(
+      initialState,
+      {}
+    );
+    assert.true(resultState.document.sameAs(expected));
 
-    const readNodes = command.execute();
     assert.expect(2 + readNodes.length);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     const ulElement = new ModelElement('ul');
     ulElement.appendChildren(middleLi, lastLi);
@@ -599,13 +613,15 @@ module('Unit | commands | read-selection-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(firstText, 0, 3);
-    ctx.model.selectRange(range);
+    const initialState = stateWithRange(initial, range);
+    const { resultState, resultValue: readNodes } = executeCommand(
+      initialState,
+      {}
+    );
+    assert.true(resultState.document.sameAs(expected));
 
-    const readNodes = command.execute();
     assert.expect(2 + readNodes.length);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
 
     compareModelNodeList(readNodes, [new ModelText('fir')], assert);
   });

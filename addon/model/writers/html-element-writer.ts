@@ -1,14 +1,11 @@
-import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import { ElementView } from '@lblod/ember-rdfa-editor/model/node-view';
+import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import { LUMP_NODE_PROPERTY } from '../util/constants';
 
 export default class HtmlElementWriter
   implements Writer<ModelElement, ElementView>
 {
-  constructor(private model: Model) {}
-
   write(modelNode: ModelElement): ElementView {
     const result = document.createElement(modelNode.type);
     // This will disable the selection of multiple cells on table.
@@ -32,7 +29,7 @@ export default class HtmlElementWriter
   }
 }
 
-function parentIsLumpNode(modelNode: ModelElement): boolean {
+export function parentIsLumpNode(modelNode: ModelElement): boolean {
   while (modelNode.parent) {
     const properties = modelNode.parent.getRdfaAttributes().properties;
     if (properties && properties.includes(LUMP_NODE_PROPERTY)) {

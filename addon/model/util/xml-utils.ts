@@ -31,7 +31,7 @@ export function parseXmlSiblings(xml: string): ModelNode[] {
   return topContainer.children;
 }
 
-export function parseHtml(html: string): HTMLDocument {
+export function parseHtml(html: string): Document {
   const parser = new DOMParser();
   return parser.parseFromString(html, 'text/html');
 }
@@ -76,7 +76,7 @@ export function dom(strings: TemplateStringsArray, ...expressions: unknown[]) {
 export function domStripped(
   strings: TemplateStringsArray,
   ...expressions: unknown[]
-): HTMLDocument {
+): Document {
   const htmlStr = oneLineTrim(strings, ...expressions);
   return parseHtml(htmlStr);
 }

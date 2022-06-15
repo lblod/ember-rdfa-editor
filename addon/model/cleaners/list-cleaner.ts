@@ -1,16 +1,16 @@
+import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import ModelTreeWalker, {
   toFilterSkipFalse,
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import ImmediateModelMutator from '../mutators/immediate-model-mutator';
 import ModelPosition from '../model-position';
 
 export default class ListCleaner {
-  clean(range: ModelRange, mutator: ImmediateModelMutator) {
+  clean(range: ModelRange, tr: Transaction) {
     const listNodes = new ModelTreeWalker<ModelElement>({
-      filter: toFilterSkipFalse(ModelNodeUtils.isListContainer),
+      filter: toFilterSkipFalse((node) => ModelNodeUtils.isListContainer(node)),
       range,
     });
 
@@ -24,7 +24,7 @@ export default class ListCleaner {
           next.attributeMap
         )
       ) {
-        ListCleaner.mergeListNodes(listNode, next, mutator);
+        ListCleaner.mergeListNodes(listNode, next, tr);
       }
     }
   }
@@ -32,10 +32,10 @@ export default class ListCleaner {
   private static mergeListNodes(
     node1: ModelElement,
     node2: ModelElement,
-    mutator: ImmediateModelMutator
+    tr: Transaction
   ) {
     const positionToInsert = ModelPosition.fromInElement(node2, 0);
-    mutator.insertAtPosition(positionToInsert, ...node1.children);
-    mutator.deleteNode(node1);
+    tr.insertAtPosition(positionToInsert, ...node1.children);
+    tr.deleteNode(node1);
   }
 }

@@ -43,3 +43,4 @@ export interface EditorPlugin {
    */
   initialize(controller: Controller): Promise<void>;
 }
+export type InitializedPlugin = Omit<EditorPlugin, 'initialize'>;

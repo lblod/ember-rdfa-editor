@@ -1,4 +1,9 @@
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import State from '../core/state';
+import ModelNode from '../model/model-node';
+import ModelPosition from '../model/model-position';
+import GenTreeWalker from '../model/util/gen-tree-walker';
+import { toFilterSkipFalse } from '../model/util/model-tree-walker';
 
 /**
  * Fake class to list helper functions.
@@ -526,4 +531,167 @@ export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
     path.push(to);
   }
   return path;
+}
+export function getIndexPath(node: Node): number[] {
+  let cur = node;
+  const resultPath = [];
+  while (cur.parentNode) {
+    resultPath.push(nodeIndex(cur));
+    cur = cur.parentNode;
+  }
+  resultPath.reverse();
+  return resultPath;
+}
+export function nodeIndex(node: Node): number {
+  if (!node.parentNode) {
+    return -1;
+  }
+  let index = 0;
+  for (const child of node.parentNode.childNodes) {
+    if (child === node) {
+      return index;
+    }
+    index++;
+  }
+  return -1;
+}
+function getPositionPathFromAncestor(from: Node, to: Node): Node[] {
+  const path: Node[] = [];
+  if (to === from) {
+    return path;
+  }
+  let cur = to.parentNode;
+  while (cur && cur !== from) {
+    path.push(cur);
+    cur = cur.parentNode;
+  }
+  if (cur) {
+    path.push(cur);
+  }
+  path.reverse();
+  path.push(to);
+  return path.slice(1);
+}
+export function domPosToModelPos(
+  state: State,
+  viewRoot: Element,
+  container: Node,
+  offset: number
+): ModelPosition {
+  // get the path of dom index to the container node
+  const path = getPositionPathFromAncestor(viewRoot, container);
+
+  // calculate the path of corresponding model indexes. These
+  // can differ in cases like marks and inline components
+  const modelIndexPath = [];
+  let markOffset = 0;
+  for (const node of path) {
+    const parseResult = state.parseNode(node);
+    if (parseResult.type === 'mark') {
+      markOffset += nodeIndex(node);
+    } else if (parseResult.type === 'element') {
+      modelIndexPath.push(nodeIndex(node) + markOffset);
+    } else {
+      modelIndexPath.push(nodeIndex(node) + markOffset);
+    }
+  }
+  // convert the modelIndex path into a path of offsets
+  let cur: ModelNode = state.document;
+  const offsetPath = [];
+  if (modelIndexPath.length) {
+    cur = state.document.children[modelIndexPath[0]];
+    offsetPath.push(state.document.indexToOffset(modelIndexPath[0]));
+    for (const index of modelIndexPath.slice(1)) {
+      if (ModelNode.isModelElement(cur) && !cur.isLeaf) {
+        offsetPath.push(cur.indexToOffset(index));
+      } else {
+        break;
+      }
+      cur = cur.children[index];
+    }
+  }
+
+  if (ModelNode.isModelText(cur) || cur.isLeaf) {
+    offsetPath[offsetPath.length - 1] = cur.getOffset() + offset;
+  } else if (ModelNode.isModelElement(cur)) {
+    if (!cur.length) {
+      offsetPath.push(0);
+    } else if (cur.children.length > offset) {
+      offsetPath.push(cur.children[offset].getOffset());
+    } else {
+      offsetPath.push(cur.getMaxOffset());
+    }
+  }
+
+  console.log('PATH', offsetPath);
+  return ModelPosition.fromPath(state.document, offsetPath);
+}
+function domNodeFromPath(
+  _state: State,
+  path: number[],
+  root: Element,
+  endsInText: boolean
+): Node {
+  let cur: Node = root;
+  if (!path.length) {
+    return cur;
+  }
+  for (const index of path.slice(0, -1)) {
+    if (isElement(cur)) {
+      cur = cur.childNodes[index];
+    } else {
+      return cur;
+    }
+  }
+  if (isElement(cur)) {
+    if (endsInText) {
+      // we know that the original position ended in a textnode
+      // so we handle marks by simply searching for pure textnodes
+      // and skipping all the rest
+      // by passing in this knowledge, we avoid having to do this every loop,
+      // as marks are exclusive to text nodes
+      // this relies on there being as many dom textnodes as there are modelText nodes
+      const walker = GenTreeWalker.fromSubTree<Node>({
+        root: cur,
+        filter: toFilterSkipFalse(isTextNode),
+      });
+      const textChildren = [...walker.nodes()];
+      cur = textChildren[path[path.length - 1]];
+    } else {
+      cur = cur.childNodes[path[path.length - 1]];
+    }
+    return cur;
+  } else {
+    return cur;
+  }
+}
+export function modelPosToDomPos(
+  state: State,
+  domRoot: Element,
+  pos: ModelPosition
+): { container: Node; offset: number } {
+  const path = pos.path;
+  let cur: ModelNode = state.document;
+  const indexPath = [];
+  for (const offset of path) {
+    if (ModelNode.isModelElement(cur)) {
+      const index = cur.offsetToIndex(offset);
+      indexPath.push(index);
+      cur = cur.children[index];
+    }
+  }
+  let endsInText = false;
+  if (ModelNode.isModelText(cur)) {
+    indexPath.push(path[path.length - 1] - cur.getOffset());
+    endsInText = true;
+  }
+  return {
+    container: domNodeFromPath(
+      state,
+      indexPath.slice(0, -1),
+      domRoot,
+      endsInText
+    ),
+    offset: indexPath[indexPath.length - 1] ?? 0,
+  };
 }

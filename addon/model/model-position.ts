@@ -47,7 +47,7 @@ export default class ModelPosition {
     return ModelPosition.fromPath(node.root, node.getOffsetPath());
   }
 
-  static fromInTextNode(node: ModelText, offset: number) {
+  static fromInTextNode(node: ModelText, offset: number): ModelPosition {
     if (offset < 0 || offset > node.length) {
       throw new PositionError(
         `Offset ${offset} out of range of text node with length ${node.length}`
@@ -206,9 +206,6 @@ export default class ModelPosition {
    * @param other
    */
   compare(other: ModelPosition): RelativePosition {
-    if (this.root !== other.root) {
-      throw new PositionError('cannot compare nodes with different roots');
-    }
     return ModelPosition.comparePath(this.path, other.path);
   }
 

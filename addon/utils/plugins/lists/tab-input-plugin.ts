@@ -13,7 +13,7 @@ import {
   isTextNode,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
+import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 
 /**
  * Current behaviour
@@ -106,7 +106,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpIntoFirstLi = (
     manipulation: TabHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let firstLi;
@@ -127,7 +127,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpIntoLastLi = (
     manipulation: TabHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     const list = manipulation.node as HTMLUListElement | HTMLOListElement;
     let lastLi;
@@ -149,8 +149,8 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Note: Depends on list helpers from a long time ago.
    * TODO: Indent means the same as nested list, perhaps rename the action
    */
-  indentLiContent = (_: TabHandlerManipulation, editor: RawEditor): void => {
-    editor.executeCommand('indent-list');
+  indentLiContent = (_: TabHandlerManipulation, editor: Editor): void => {
+    editor.executeCommand('indent-list', {});
   };
 
   /**
@@ -158,8 +158,8 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    * Note: Depends on list helpers from a long time ago.
    * TODO: Indent means the same as merge nested list, perhaps rename the action
    */
-  unindentLiContent = (_: TabHandlerManipulation, editor: RawEditor): void => {
-    editor.executeCommand('unindent-list');
+  unindentLiContent = (_: TabHandlerManipulation, editor: Editor): void => {
+    editor.executeCommand('unindent-list', {});
   };
 
   /**
@@ -167,7 +167,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpToNextLi = (
     manipulation: TabHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     //Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLLIElement;
@@ -181,7 +181,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpToPreviousLi = (
     manipulation: TabHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     // Assumes the LI is not the last one
     const listItem = manipulation.node as HTMLLIElement;
@@ -195,7 +195,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpOutOfList = (
     manipulation: TabHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     const element = manipulation.node.parentElement; // This is the list.
     if (!element) {
@@ -212,7 +212,9 @@ export default class ListTabInputPlugin implements TabInputPlugin {
 
     textNode = ensureValidTextNodeForCaret(textNode);
     window.getSelection()?.collapse(textNode, 0);
-    editor.model.read(true);
+    const tr = editor.state.createTransaction();
+    tr.readFromView(editor.view);
+    editor.dispatchTransaction(tr, false);
   };
 
   /**
@@ -220,7 +222,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
    */
   jumpOutOfListToStart = (
     manipulation: TabHandlerManipulation,
-    editor: RawEditor
+    editor: Editor
   ): void => {
     const element = manipulation.node.parentElement; // This is the list.
     if (!element) {
@@ -237,11 +239,13 @@ export default class ListTabInputPlugin implements TabInputPlugin {
 
     textNode = ensureValidTextNodeForCaret(textNode);
     window.getSelection()?.collapse(textNode, textNode.length);
-    editor.model.read(true);
+    const tr = editor.state.createTransaction();
+    tr.readFromView(editor.view);
+    editor.dispatchTransaction(tr, false);
   };
 }
 
-function setCursorAtStartOfLi(listItem: HTMLElement, editor: RawEditor): void {
+function setCursorAtStartOfLi(listItem: HTMLElement, editor: Editor): void {
   let textNode;
   if (listItem.firstChild && isTextNode(listItem.firstChild)) {
     textNode = listItem.firstChild;
@@ -252,10 +256,12 @@ function setCursorAtStartOfLi(listItem: HTMLElement, editor: RawEditor): void {
 
   textNode = ensureValidTextNodeForCaret(textNode);
   window.getSelection()?.collapse(textNode, 0);
-  editor.model.read(true);
+  const tr = editor.state.createTransaction();
+  tr.readFromView(editor.view);
+  editor.dispatchTransaction(tr, false);
 }
 
-function setCursorAtEndOfLi(listItem: HTMLElement, editor: RawEditor): void {
+function setCursorAtEndOfLi(listItem: HTMLElement, editor: Editor): void {
   let textNode;
   if (listItem.lastChild && isTextNode(listItem.lastChild)) {
     textNode = listItem.lastChild;
@@ -266,5 +272,7 @@ function setCursorAtEndOfLi(listItem: HTMLElement, editor: RawEditor): void {
 
   textNode = ensureValidTextNodeForCaret(textNode);
   window.getSelection()?.collapse(textNode, textNode.length);
-  editor.model.read(true);
+  const tr = editor.state.createTransaction();
+  tr.readFromView(editor.view);
+  editor.dispatchTransaction(tr, false);
 }
