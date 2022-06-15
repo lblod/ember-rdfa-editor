@@ -7,7 +7,7 @@ import State, {
   CommandReturn,
   emptyState,
 } from '@lblod/ember-rdfa-editor/core/state';
-import { EditorController } from '../model/controller';
+import { EditorController, EditorControllerCompat } from '../model/controller';
 import { CORE_OWNER } from '../model/util/constants';
 import { getPathFromRoot } from '../utils/dom-helpers';
 import {
@@ -229,7 +229,7 @@ async function initializePlugins(
 ): Promise<InitializedPlugin[]> {
   const result: InitializedPlugin[] = [];
   for (const plugin of plugins) {
-    const controller = new EditorController(plugin.name, editor);
+    const controller = new EditorControllerCompat(plugin.name, editor);
     await plugin.initialize(controller);
     const { initialize: _, ...rest } = plugin;
     result.push(rest);

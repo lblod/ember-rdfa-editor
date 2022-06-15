@@ -105,7 +105,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     document.addEventListener('selectionchange', this.afterSelectionChange);
     this.editor = await createEditor({
       domRoot: element,
-      plugins: [],
+      plugins: this.args.plugins,
     });
     this.inputHandler = new EditorInputHandler(this.editor);
     this.args.editorInit(this.editor);

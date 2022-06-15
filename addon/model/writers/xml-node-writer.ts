@@ -3,6 +3,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import XmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/xml-element-writer';
 import XmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/xml-text-writer';
+import XmlInlineComponentWriter from './xml-inline-component-writer';
 
 export default class XmlNodeWriter implements Writer<ModelNode, Node> {
   constructor(private document: XMLDocument) {}
@@ -14,6 +15,9 @@ export default class XmlNodeWriter implements Writer<ModelNode, Node> {
       result = writer.write(modelNode);
     } else if (ModelNode.isModelText(modelNode)) {
       const writer = new XmlTextWriter(this.document);
+      result = writer.write(modelNode);
+    } else if (ModelNode.isModelInlineComponent(modelNode)) {
+      const writer = new XmlInlineComponentWriter(this.document);
       result = writer.write(modelNode);
     } else {
       throw new NotImplementedError();

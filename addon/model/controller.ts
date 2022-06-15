@@ -32,6 +32,7 @@ import { Editor } from '../core/editor';
 import Transaction from '../core/transaction';
 import { CommandArgs, CommandReturn } from '../core/state';
 import { AttributeSpec } from './util/render-spec';
+import MapUtils from './util/map-utils';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
@@ -170,6 +171,7 @@ export class EditorController implements Controller {
     return new ModelElement(type);
   }
   registerInlineComponent(component: InlineComponentSpec) {
+    this._editor.state.inlineComponentsRegistry.registerComponent(component);
     // this._rawEditor.registerComponent(component);
   }
   canExecuteCommand<N extends keyof CommandMap>(
@@ -191,10 +193,10 @@ export class EditorController implements Controller {
     throw new Error('Method not implemented.');
   }
   registerWidget(spec: WidgetSpec): void {
-    this._editor.state.widgetMap
-      .get(spec.desiredLocation)
-      ?.push({ controller: this, ...spec });
-    throw new Error('Method not implemented.');
+    MapUtils.setOrPush(this._editor.state.widgetMap, spec.desiredLocation, {
+      controller: this,
+      ...spec,
+    });
   }
   registerMark(spec: MarkSpec<AttributeSpec>): void {
     this.marksRegistry.registerMark(spec);

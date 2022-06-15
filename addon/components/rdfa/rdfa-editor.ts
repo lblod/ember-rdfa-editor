@@ -97,10 +97,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @action
   handleRawEditorInit(editor: Editor) {
     this.editor = editor;
-    // await this.initializePlugins(editor);
-    // this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
-    // this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
-    // this.insertSidebarWidgets = editor.widgetMap.get('insertSidebar') || [];
+    this.toolbarWidgets = editor.state.widgetMap.get('toolbar') || [];
+    this.sidebarWidgets = editor.state.widgetMap.get('sidebar') || [];
+    this.insertSidebarWidgets =
+      editor.state.widgetMap.get('insertSidebar') || [];
     this.toolbarController = new EditorController('toolbar', editor);
     const rdfaDocument = new RdfaDocumentController('host-controller', editor);
     if (this.args.rdfaEditorInit) {
@@ -112,7 +112,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   getPlugins(): EditorPlugin[] {
     const pluginNames = this.plugins;
-    const plugins = [new BasicStyles(), new LumpNodePlugin()];
+    // const plugins = [new BasicStyles(), new LumpNodePlugin()];
+    const plugins = [];
     for (const name of pluginNames) {
       const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
       if (plugin) {
@@ -137,8 +138,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   initializeComponents() {
     if (this.editor) {
-      this.editor.state.inlineComponentsRegistry.componentInstances;
-      // this.inlineComponents = this.editor.model.componentInstances;
+      this.inlineComponents =
+        this.editor.state.inlineComponentsRegistry.componentInstances;
     }
   }
 }
