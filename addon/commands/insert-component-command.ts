@@ -38,11 +38,15 @@ export default class InsertComponentCommand extends Command {
       const component = new ModelInlineComponent(componentSpec, props, state);
       this.model.change(
         (mutator) => {
-          const newRange = mutator.insertNodes(selection.lastRange, component);
+          const resultingRange = mutator.insertNodes(
+            selection.lastRange,
+            component
+          );
+          resultingRange.collapse();
           const brAfterComponent = new ModelElement('br');
           brAfterComponent.setAttribute('class', 'trailing');
-          mutator.insertNodes(newRange, brAfterComponent);
-          this.model.selectRange(newRange);
+          mutator.insertNodes(resultingRange, brAfterComponent);
+          this.model.selectRange(resultingRange);
         },
         true,
         createSnapshot
