@@ -42,23 +42,28 @@ export abstract class InlineComponentSpec {
   }
 
   abstract _renderStatic(props?: Properties, state?: State): string;
+}
 
-  render(props?: Properties, state?: State, dynamic = true) {
-    const node = document.createElement(this.tag);
-    if (props) {
-      node.dataset['__props'] = JSON.stringify(props);
-    }
-    if (state) {
-      node.dataset['__state'] = JSON.stringify(state);
-    }
-    node.contentEditable = 'false';
-    node.classList.add('inline-component', this.name);
-    if (!dynamic) {
-      const template = Handlebars.compile(this._renderStatic(props, state));
-      node.innerHTML = template({});
-    }
-    return node;
+function render(
+  spec: InlineComponentSpec,
+  props?: Properties,
+  state?: State,
+  dynamic = true
+) {
+  const node = document.createElement(spec.tag);
+  if (props) {
+    node.dataset['__props'] = JSON.stringify(props);
   }
+  if (state) {
+    node.dataset['__state'] = JSON.stringify(state);
+  }
+  node.contentEditable = 'false';
+  node.classList.add('inline-component', spec.name);
+  if (!dynamic) {
+    const template = Handlebars.compile(spec._renderStatic(props, state));
+    node.innerHTML = template({});
+  }
+  return node;
 }
 
 export class ModelInlineComponent<
@@ -103,7 +108,7 @@ export class ModelInlineComponent<
     return this._spec;
   }
   write(dynamic = true): Node {
-    return this.spec.render(this.props, this.state, dynamic);
+    return render(this.spec, this.props, this.state, dynamic);
   }
 
   clone(): ModelInlineComponent<A, S> {
