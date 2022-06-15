@@ -8,11 +8,11 @@ import {
 } from './model-inline-component';
 import Controller from '../controller';
 import { ComponentNotFoundError } from '@lblod/ember-rdfa-editor/utils/errors';
+import InlineComponentController from './inline-component-controller';
 export type ActiveComponentEntry = {
-  node: Node;
   emberComponentName: string;
-  model: ModelInlineComponent;
-  controller: Controller;
+  componentController: InlineComponentController;
+  editorController: Controller;
 };
 export default class InlineComponentsRegistry {
   private registeredComponents: Map<string, InlineComponentSpec> = new Map();
@@ -62,17 +62,17 @@ export default class InlineComponentsRegistry {
   }
 
   addComponentInstance(
-    node: Node,
+    node: HTMLElement,
     emberComponentName: string,
     model: ModelInlineComponent
   ) {
     const componentSpec = this.lookUpComponent(emberComponentName);
     if (componentSpec) {
+      const componentController = new InlineComponentController(model, node);
       this.activeComponents.push({
-        node,
         emberComponentName,
-        model,
-        controller: componentSpec.controller,
+        componentController,
+        editorController: componentSpec.controller,
       });
     } else {
       throw new ComponentNotFoundError(
