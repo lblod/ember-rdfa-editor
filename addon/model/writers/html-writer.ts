@@ -81,11 +81,15 @@ export default class HtmlWriter {
         resultView = this.htmlInlineComponentWriter.write(modelNode);
         this.model.registerNodeView(modelNode, resultView);
       }
-      this.model.addComponentInstance(
-        resultView.viewRoot,
-        modelNode.spec.name,
-        modelNode
-      );
+      if (isElement(resultView.viewRoot)) {
+        this.model.addComponentInstance(
+          resultView.viewRoot,
+          modelNode.spec.name,
+          modelNode
+        );
+      } else {
+        throw new ModelError('Inline component with non-element viewroot');
+      }
     } else {
       throw new NotImplementedError('Unsupported modelnode type');
     }

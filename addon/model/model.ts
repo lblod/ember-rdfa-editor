@@ -180,7 +180,7 @@ export default class Model {
   }
 
   addComponentInstance(
-    node: Node,
+    node: HTMLElement,
     emberComponentName: string,
     model: ModelInlineComponent
   ) {
