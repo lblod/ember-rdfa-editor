@@ -118,6 +118,10 @@ export function isTextNode(node: Node): node is Text {
   return node.nodeType === Node.TEXT_NODE;
 }
 
+export function isLeaf(node: Node): boolean {
+  return node.childNodes.length === 0;
+}
+
 /**
  * Determine whether the provided node is an li.
  *
@@ -546,8 +550,19 @@ export function nodeIndex(node: Node): number {
   if (!node.parentNode) {
     return -1;
   }
+  let children;
+  if (isLeaf(node)) {
+    const walker = GenTreeWalker.fromSubTree<Node>({
+      root: node.parentNode,
+      filter: toFilterSkipFalse(isLeaf),
+    });
+    children = [...walker.nodes()];
+  } else {
+    children = node.parentNode.childNodes;
+  }
+
   let index = 0;
-  for (const child of node.parentNode.childNodes) {
+  for (const child of children) {
     if (child === node) {
       return index;
     }
