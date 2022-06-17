@@ -164,8 +164,8 @@ module('Unit | model | model-pos-to-dom-pos', function () {
     const state = testState({ document: root });
     // note: container = the top span and offset = 2 would also be correct
     // since they are the same visual position
-    const container = dom.childNodes[0].childNodes[2];
-    const expectedPos = { container, offset: 0 };
+    const container = dom.childNodes[0];
+    const expectedPos = { container, offset: 2 };
     const resultPos = modelPosToDomPos(
       state,
       dom,
