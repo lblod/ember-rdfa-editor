@@ -625,7 +625,7 @@ export function domPosToModelPos(
       cur = cur.children[index];
     }
   }
-  const modelOffset = domOffsetToModelOffset(offset, container);
+  const modelOffset = domOffsetToModelOffset(state, offset, container);
   if (ModelNode.isModelText(cur) || cur.isLeaf) {
     offsetPath[offsetPath.length - 1] = cur.getOffset() + modelOffset;
   } else if (ModelNode.isModelElement(cur)) {
@@ -670,8 +670,8 @@ function domNodeFromPath(
         root: cur,
         filter: toFilterSkipFalse(isLeaf),
       });
-      const textChildren = [...walker.nodes()];
-      cur = textChildren[path[path.length - 1]];
+      const leafChildren = [...walker.nodes()];
+      cur = leafChildren[path[path.length - 1]];
     } else {
       cur = cur.childNodes[path[path.length - 1]];
     }
@@ -693,13 +693,23 @@ export function getLeafCount(node: Node) {
   }
 }
 
-export function domOffsetToModelOffset(domOffset: number, modelNode: Node) {
+export function domOffsetToModelOffset(
+  state: State,
+  domOffset: number,
+  modelNode: Node
+) {
   let childNode: ChildNode | null = modelNode.firstChild;
   if (childNode) {
     let modelOffset = 0;
     while (domOffset > 0 && childNode) {
       domOffset -= 1;
-      modelOffset += getLeafCount(childNode);
+      const result = state.parseNode(childNode);
+      //Check if the element is a mark, otherwise just do +1
+      if (result.type === 'mark') {
+        modelOffset += getLeafCount(childNode);
+      } else {
+        modelOffset += 1;
+      }
       childNode = childNode.nextSibling;
     }
     return modelOffset;
@@ -709,14 +719,20 @@ export function domOffsetToModelOffset(domOffset: number, modelNode: Node) {
 }
 
 export function modelOffsetToDomOffset(
+  state: State,
   modelOffset: number,
   node: Node
 ): number {
   let childNode: ChildNode | null = node.firstChild;
   if (childNode) {
     let domOffset = 0;
-    while (modelOffset >= 0 && childNode) {
-      modelOffset -= getLeafCount(childNode);
+    while (modelOffset > 0 && childNode) {
+      const result = state.parseNode(childNode);
+      if (result.type === 'mark') {
+        modelOffset -= getLeafCount(childNode);
+      } else {
+        modelOffset -= 1;
+      }
       childNode = childNode.nextSibling;
       domOffset += 1;
     }
@@ -735,7 +751,7 @@ export function modelPosToDomPos(
   const indexPath = [];
   for (const offset of path) {
     if (ModelNode.isModelElement(cur)) {
-      const index = cur.offsetToIndex(offset, false);
+      const index = cur.offsetToIndex(offset, true);
       indexPath.push(index);
       cur = cur.children[index];
     }
@@ -765,6 +781,7 @@ export function modelPosToDomPos(
     endsInText
   );
   const domOffset = modelOffsetToDomOffset(
+    state,
     indexPath[indexPath.length - 1],
     container
   );
