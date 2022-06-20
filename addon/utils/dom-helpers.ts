@@ -536,37 +536,31 @@ export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
   }
   return path;
 }
-export function getIndexPath(node: Node): number[] {
+export function getIndexPath(state: State, node: Node): number[] {
   let cur = node;
   const resultPath = [];
   while (cur.parentNode) {
-    resultPath.push(nodeIndex(cur));
+    resultPath.push(nodeIndex(state, cur));
     cur = cur.parentNode;
   }
   resultPath.reverse();
   return resultPath;
 }
-export function nodeIndex(node: Node): number {
+export function nodeIndex(state: State, node: Node): number {
   if (!node.parentNode) {
     return -1;
   }
-  let children;
-  if (isLeaf(node)) {
-    const walker = GenTreeWalker.fromSubTree<Node>({
-      root: node.parentNode,
-      filter: toFilterSkipFalse(isLeaf),
-    });
-    children = [...walker.nodes()];
-  } else {
-    children = node.parentNode.childNodes;
-  }
-
   let index = 0;
-  for (const child of children) {
+  for (const child of node.parentNode.childNodes) {
     if (child === node) {
       return index;
     }
-    index++;
+    const result = state.parseNode(child);
+    if (result.type === 'mark') {
+      index += getLeafCount(child);
+    } else {
+      index += 1;
+    }
   }
   return -1;
 }
@@ -603,11 +597,11 @@ export function domPosToModelPos(
   for (const node of path) {
     const parseResult = state.parseNode(node);
     if (parseResult.type === 'mark') {
-      markOffset += nodeIndex(node);
+      markOffset += nodeIndex(state, node);
     } else if (parseResult.type === 'element') {
-      modelIndexPath.push(nodeIndex(node) + markOffset);
+      modelIndexPath.push(nodeIndex(state, node) + markOffset);
     } else {
-      modelIndexPath.push(nodeIndex(node) + markOffset);
+      modelIndexPath.push(nodeIndex(state, node) + markOffset);
     }
   }
   // convert the modelIndex path into a path of offsets
