@@ -635,8 +635,28 @@ export function domPosToModelPos(
   console.log('PATH', offsetPath);
   return ModelPosition.fromPath(state.document, offsetPath);
 }
+
+function getDomNodeAtModelIndex(state: State, parent: Node, index: number) {
+  for (const child of parent.childNodes) {
+    if (state.parseNode(child).type === 'mark') {
+      const leafs = getLeafChildren(child);
+      if (leafs.length <= index) {
+        index -= leafs.length;
+      } else {
+        return leafs[index];
+      }
+      //search in subchildren
+    } else {
+      index -= 1;
+    }
+    if (index === -1) {
+      return child;
+    }
+  }
+  throw new Error('Index out of range in node');
+}
 function domNodeFromPath(
-  _state: State,
+  state: State,
   path: number[],
   root: Element,
   endsInText: boolean
@@ -645,7 +665,8 @@ function domNodeFromPath(
   if (!path.length) {
     return cur;
   }
-  for (const index of path.slice(0, -1)) {
+  for (let index of path.slice(0, -1)) {
+    index = modelOffsetToDomOffset(state, index, cur);
     if (isElement(cur)) {
       cur = cur.childNodes[index];
     } else {
@@ -654,20 +675,34 @@ function domNodeFromPath(
   }
   if (isElement(cur)) {
     if (endsInText) {
-      // we know that the original position ended in a textnode
-      // so we handle marks by simply searching for pure textnodes
-      // and skipping all the rest
-      // by passing in this knowledge, we avoid having to do this every loop,
-      // as marks are exclusive to text nodes
-      // this relies on there being as many dom textnodes as there are modelText nodes
-      const walker = GenTreeWalker.fromSubTree<Node>({
-        root: cur,
-        filter: toFilterSkipFalse(isLeaf),
-      });
-      const leafChildren = [...walker.nodes()];
-      cur = leafChildren[path[path.length - 1]];
+      let index = path[path.length - 1];
+      for (const child of cur.childNodes) {
+        if (state.parseNode(child).type === 'mark') {
+          const leafs = getLeafChildren(child);
+          if (leafs.length <= index) {
+            index -= leafs.length;
+          } else {
+            cur = leafs[index];
+            break;
+          }
+          //search in subchildren
+        } else {
+          index -= 1;
+        }
+        if (index === -1) {
+          cur = child;
+          break;
+        }
+      }
+      if (!isTextNode(cur)) {
+        throw new Error(
+          'Resulting dom node is not a text node while the selection occured in a model text node'
+        );
+      }
     } else {
-      cur = cur.childNodes[path[path.length - 1]];
+      const index = modelOffsetToDomOffset(state, path[path.length - 1], cur);
+
+      cur = cur.childNodes[index];
     }
     return cur;
   } else {
@@ -684,6 +719,17 @@ export function getLeafCount(node: Node) {
     return count;
   } else {
     return 1;
+  }
+}
+
+export function getLeafChildren(node: Node) {
+  if (node.childNodes.length) {
+    const leafs: Node[] = [...node.childNodes].flatMap((node) =>
+      getLeafChildren(node)
+    );
+    return leafs;
+  } else {
+    return [node];
   }
 }
 
