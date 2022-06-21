@@ -1,4 +1,6 @@
 import { Editor } from '../core/editor';
+import ModelNodeUtils from '../model/util/model-node-utils';
+import ModelRangeUtils from '../model/util/model-range-utils';
 import { eventTargetRange } from './utils';
 
 export function handleInsertLineBreak(editor: Editor, event: InputEvent): void {
@@ -11,15 +13,33 @@ export function handleInsertLineBreak(editor: Editor, event: InputEvent): void {
 }
 
 export function handleInsertText(editor: Editor, event: InputEvent): void {
-  // event.preventDefault();
-  editor.executeCommand(
-    'insert-text',
-    {
-      range: eventTargetRange(editor.state, editor.view.domRoot, event),
-      text: event.data || '',
-    },
-    false
-  );
+  const range = eventTargetRange(editor.state, editor.view.domRoot, event);
+  const text = event.data || '';
+  if (
+    ModelNodeUtils.isPlaceHolder(range.start.parent) ||
+    ModelNodeUtils.isPlaceHolder(range.start.parent)
+  ) {
+    event.preventDefault();
+    const extendedRange = ModelRangeUtils.getExtendedToPlaceholder(range);
+    editor.executeCommand('insert-text', { range: extendedRange, text }, true);
+  } else {
+    let updateView = false;
+    if (
+      editor.state.selection.lastRange?.sameAs(range) &&
+      editor.state.selection.activeMarks.size !== 0
+    ) {
+      event.preventDefault();
+      updateView = true;
+    }
+    editor.executeCommand(
+      'insert-text',
+      {
+        range: eventTargetRange(editor.state, editor.view.domRoot, event),
+        text,
+      },
+      updateView
+    );
+  }
 }
 export function handleInsertListItem(
   editor: Editor,

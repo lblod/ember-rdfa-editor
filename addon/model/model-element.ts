@@ -6,7 +6,8 @@ import ModelNode, {
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { Cloneable } from '@lblod/ember-rdfa-editor/model/util/types';
 import {
-  LEAF_NODES, NON_BLOCK_NODES,
+  LEAF_NODES,
+  NON_BLOCK_NODES,
 } from '@lblod/ember-rdfa-editor/model/util/constants';
 import {
   IndexOutOfRangeError,
@@ -330,7 +331,7 @@ export default class ModelElement
    * or right after that offset
    * @param offset
    */
-  offsetToIndex(offset: number): number {
+  offsetToIndex(offset: number, inclusive = true): number {
     if (offset < 0 || offset > this.getMaxOffset()) {
       throw new OffsetOutOfRangeError(offset, this.getMaxOffset());
     }
@@ -339,7 +340,10 @@ export default class ModelElement
     let indexCounter = 0;
     for (const child of this.children) {
       offsetCounter += child.offsetSize;
-      if (offsetCounter > offset) {
+      if (
+        (inclusive && offsetCounter > offset) ||
+        (!inclusive && offsetCounter >= offset)
+      ) {
         return indexCounter;
       }
       indexCounter++;

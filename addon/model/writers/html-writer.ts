@@ -104,6 +104,8 @@ export default class HtmlWriter {
         )
       ) {
         return 'attrs';
+      } else if (parsedNode.textContent !== domNode.textContent) {
+        return 'content';
       }
     } else if (isTextNode(parsedNode)) {
       if (parsedNode.textContent !== domNode.textContent) {

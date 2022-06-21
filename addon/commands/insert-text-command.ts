@@ -27,7 +27,14 @@ export default class InsertTextCommand
   @logExecute
   execute(
     { dispatch, state }: CommandContext,
-    { text, marks = new MarkSet(), range }: InsertTextCommandArgs
+    {
+      text,
+      range,
+      marks = state.selection.lastRange &&
+      range?.sameAs(state.selection.lastRange)
+        ? state.selection.activeMarks
+        : range?.getMarks() || new MarkSet(),
+    }: InsertTextCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();

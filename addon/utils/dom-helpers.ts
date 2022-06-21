@@ -118,6 +118,10 @@ export function isTextNode(node: Node): node is Text {
   return node.nodeType === Node.TEXT_NODE;
 }
 
+export function isLeaf(node: Node): boolean {
+  return node.childNodes.length === 0;
+}
+
 /**
  * Determine whether the provided node is an li.
  *
@@ -532,17 +536,17 @@ export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
   }
   return path;
 }
-export function getIndexPath(node: Node): number[] {
+export function getIndexPath(state: State, node: Node): number[] {
   let cur = node;
   const resultPath = [];
   while (cur.parentNode) {
-    resultPath.push(nodeIndex(cur));
+    resultPath.push(nodeIndex(state, cur));
     cur = cur.parentNode;
   }
   resultPath.reverse();
   return resultPath;
 }
-export function nodeIndex(node: Node): number {
+export function nodeIndex(state: State, node: Node): number {
   if (!node.parentNode) {
     return -1;
   }
@@ -551,7 +555,12 @@ export function nodeIndex(node: Node): number {
     if (child === node) {
       return index;
     }
-    index++;
+    const result = state.parseNode(child);
+    if (result.type === 'mark') {
+      index += getLeafCount(child);
+    } else {
+      index += 1;
+    }
   }
   return -1;
 }
@@ -588,11 +597,11 @@ export function domPosToModelPos(
   for (const node of path) {
     const parseResult = state.parseNode(node);
     if (parseResult.type === 'mark') {
-      markOffset += nodeIndex(node);
+      markOffset += nodeIndex(state, node);
     } else if (parseResult.type === 'element') {
-      modelIndexPath.push(nodeIndex(node) + markOffset);
+      modelIndexPath.push(nodeIndex(state, node) + markOffset);
     } else {
-      modelIndexPath.push(nodeIndex(node) + markOffset);
+      modelIndexPath.push(nodeIndex(state, node) + markOffset);
     }
   }
   // convert the modelIndex path into a path of offsets
@@ -610,14 +619,14 @@ export function domPosToModelPos(
       cur = cur.children[index];
     }
   }
-
+  const modelOffset = domOffsetToModelOffset(state, offset, container);
   if (ModelNode.isModelText(cur) || cur.isLeaf) {
-    offsetPath[offsetPath.length - 1] = cur.getOffset() + offset;
+    offsetPath[offsetPath.length - 1] = cur.getOffset() + modelOffset;
   } else if (ModelNode.isModelElement(cur)) {
     if (!cur.length) {
       offsetPath.push(0);
-    } else if (cur.children.length > offset) {
-      offsetPath.push(cur.children[offset].getOffset());
+    } else if (cur.children.length > modelOffset) {
+      offsetPath.push(cur.children[modelOffset].getOffset());
     } else {
       offsetPath.push(cur.getMaxOffset());
     }
@@ -626,8 +635,28 @@ export function domPosToModelPos(
   console.log('PATH', offsetPath);
   return ModelPosition.fromPath(state.document, offsetPath);
 }
+
+function getDomNodeAtModelIndex(state: State, parent: Node, index: number) {
+  for (const child of parent.childNodes) {
+    if (state.parseNode(child).type === 'mark') {
+      const leafs = getLeafChildren(child);
+      if (leafs.length <= index) {
+        index -= leafs.length;
+      } else {
+        return leafs[index];
+      }
+      //search in subchildren
+    } else {
+      index -= 1;
+    }
+    if (index === -1) {
+      return child;
+    }
+  }
+  throw new Error('Index out of range in node');
+}
 function domNodeFromPath(
-  _state: State,
+  state: State,
   path: number[],
   root: Element,
   endsInText: boolean
@@ -636,7 +665,8 @@ function domNodeFromPath(
   if (!path.length) {
     return cur;
   }
-  for (const index of path.slice(0, -1)) {
+  for (let index of path.slice(0, -1)) {
+    index = modelOffsetToDomOffset(state, index, cur);
     if (isElement(cur)) {
       cur = cur.childNodes[index];
     } else {
@@ -645,24 +675,110 @@ function domNodeFromPath(
   }
   if (isElement(cur)) {
     if (endsInText) {
-      // we know that the original position ended in a textnode
-      // so we handle marks by simply searching for pure textnodes
-      // and skipping all the rest
-      // by passing in this knowledge, we avoid having to do this every loop,
-      // as marks are exclusive to text nodes
-      // this relies on there being as many dom textnodes as there are modelText nodes
-      const walker = GenTreeWalker.fromSubTree<Node>({
-        root: cur,
-        filter: toFilterSkipFalse(isTextNode),
-      });
-      const textChildren = [...walker.nodes()];
-      cur = textChildren[path[path.length - 1]];
+      let index = path[path.length - 1];
+      for (const child of cur.childNodes) {
+        if (state.parseNode(child).type === 'mark') {
+          const leafs = getLeafChildren(child);
+          if (leafs.length <= index) {
+            index -= leafs.length;
+          } else {
+            cur = leafs[index];
+            break;
+          }
+          //search in subchildren
+        } else {
+          index -= 1;
+        }
+        if (index === -1) {
+          cur = child;
+          break;
+        }
+      }
+      if (!isTextNode(cur)) {
+        throw new Error(
+          'Resulting dom node is not a text node while the selection occured in a model text node'
+        );
+      }
     } else {
-      cur = cur.childNodes[path[path.length - 1]];
+      const index = modelOffsetToDomOffset(state, path[path.length - 1], cur);
+
+      cur = cur.childNodes[index];
     }
     return cur;
   } else {
     return cur;
+  }
+}
+
+export function getLeafCount(node: Node) {
+  if (node.childNodes.length) {
+    let count = 0;
+    node.childNodes.forEach((node) => {
+      count += getLeafCount(node);
+    });
+    return count;
+  } else {
+    return 1;
+  }
+}
+
+export function getLeafChildren(node: Node) {
+  if (node.childNodes.length) {
+    const leafs: Node[] = [...node.childNodes].flatMap((node) =>
+      getLeafChildren(node)
+    );
+    return leafs;
+  } else {
+    return [node];
+  }
+}
+
+export function domOffsetToModelOffset(
+  state: State,
+  domOffset: number,
+  modelNode: Node
+) {
+  let childNode: ChildNode | null = modelNode.firstChild;
+  if (childNode) {
+    let modelOffset = 0;
+    while (domOffset > 0 && childNode) {
+      domOffset -= 1;
+      const result = state.parseNode(childNode);
+      //Check if the element is a mark, otherwise just do +1
+      if (result.type === 'mark') {
+        modelOffset += getLeafCount(childNode);
+      } else {
+        modelOffset += 1;
+      }
+      childNode = childNode.nextSibling;
+    }
+    return modelOffset;
+  } else {
+    return domOffset;
+  }
+}
+
+export function modelOffsetToDomOffset(
+  state: State,
+  modelOffset: number,
+  node: Node
+): number {
+  let childNode: ChildNode | null = node.firstChild;
+  if (childNode) {
+    let domOffset = 0;
+    while (modelOffset > 0 && childNode) {
+      const result = state.parseNode(childNode);
+      if (result.type === 'mark') {
+        modelOffset -= getLeafCount(childNode);
+      } else {
+        modelOffset -= 1;
+      }
+      childNode = childNode.nextSibling;
+      domOffset += 1;
+    }
+    return domOffset;
+  } else {
+    return modelOffset;
   }
 }
 export function modelPosToDomPos(
@@ -675,23 +791,42 @@ export function modelPosToDomPos(
   const indexPath = [];
   for (const offset of path) {
     if (ModelNode.isModelElement(cur)) {
-      const index = cur.offsetToIndex(offset);
+      const index = cur.offsetToIndex(offset, true);
       indexPath.push(index);
       cur = cur.children[index];
     }
   }
   let endsInText = false;
-  if (ModelNode.isModelText(cur)) {
-    indexPath.push(path[path.length - 1] - cur.getOffset());
-    endsInText = true;
+  if (cur) {
+    if (ModelNode.isModelText(cur)) {
+      indexPath.push(path[path.length - 1] - cur.getOffset());
+      endsInText = true;
+    }
+    // else if (ModelNode.isModelText(cur.nextSibling)) {
+    //   cur = cur.nextSibling;
+    //   indexPath[indexPath.length - 1] += 1;
+    //   indexPath.push(path[path.length - 1] - cur.getOffset());
+    //   endsInText = true;
+    // } else if (ModelNode.isModelText(cur.previousSibling)) {
+    //   cur = cur.previousSibling;
+    //   indexPath[indexPath.length - 1] -= 1;
+    //   indexPath.push(path[path.length - 1] - cur.getOffset());
+    //   endsInText = true;
+    // }
   }
+  const container = domNodeFromPath(
+    state,
+    indexPath.slice(0, -1),
+    domRoot,
+    endsInText
+  );
+  const domOffset = modelOffsetToDomOffset(
+    state,
+    indexPath[indexPath.length - 1],
+    container
+  );
   return {
-    container: domNodeFromPath(
-      state,
-      indexPath.slice(0, -1),
-      domRoot,
-      endsInText
-    ),
-    offset: indexPath[indexPath.length - 1] ?? 0,
+    container: container,
+    offset: domOffset ?? 0,
   };
 }
