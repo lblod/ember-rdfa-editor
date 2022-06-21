@@ -143,7 +143,9 @@ export default class Transaction {
   setSelection(selection: ModelSelection) {
     const clone = this.cloneSelection(selection);
     const changed = !clone.sameAs(this.workingCopy.selection);
-    this.workingCopy.selection = clone;
+    if (changed) {
+      this.workingCopy.selection = clone;
+    }
     return changed;
   }
 

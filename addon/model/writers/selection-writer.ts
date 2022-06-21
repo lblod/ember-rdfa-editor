@@ -13,11 +13,7 @@ import {
  * create a {@link Selection}
  */
 export default class SelectionWriter {
-  write(
-    state: State,
-    viewRoot: Element,
-    modelSelection: ModelSelection
-  ): void {
+  write(state: State, viewRoot: Element, modelSelection: ModelSelection): void {
     const domSelection = getWindowSelection();
 
     domSelection.removeAllRanges();

@@ -23,13 +23,21 @@ export function handleInsertText(editor: Editor, event: InputEvent): void {
     const extendedRange = ModelRangeUtils.getExtendedToPlaceholder(range);
     editor.executeCommand('insert-text', { range: extendedRange, text }, true);
   } else {
+    let updateView = false;
+    if (
+      editor.state.selection.lastRange?.sameAs(range) &&
+      editor.state.selection.activeMarks.size !== 0
+    ) {
+      event.preventDefault();
+      updateView = true;
+    }
     editor.executeCommand(
       'insert-text',
       {
         range: eventTargetRange(editor.state, editor.view.domRoot, event),
         text,
       },
-      false
+      updateView
     );
   }
 }

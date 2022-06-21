@@ -41,41 +41,34 @@ export default class HtmlWriter {
     }
   }
   private writeRec(modelNode: ModelNode, domNode: Node) {
-    if (
-      ModelNode.isModelElement(modelNode) &&
-      modelNode.children.length !== domNode.childNodes.length
-    ) {
-      (domNode as HTMLElement | Text).replaceWith(this.parseSubTree(modelNode));
-    } else {
-      const parsedNode = this.parseNode(modelNode);
-      const diff = this.compareNodes(parsedNode, domNode);
-      switch (diff) {
-        case 'type':
-          (domNode as HTMLElement | Text).replaceWith(
-            this.parseSubTree(modelNode)
-          );
-          break;
-        case 'tag':
-          (domNode as HTMLElement | Text).replaceWith(
-            this.parseSubTree(modelNode)
-          );
-          break;
-        case 'attrs':
-          this.swapElement(domNode as HTMLElement, parsedNode as HTMLElement);
-          break;
-        case 'content':
-          (domNode as HTMLElement | Text).replaceWith(
-            this.parseSubTree(modelNode)
-          );
-          break;
-        case 'none':
-          if (ModelNode.isModelElement(modelNode)) {
-            modelNode.children.forEach((child, index) => {
-              this.writeRec(child, domNode.childNodes[index]);
-            });
-          }
-          break;
-      }
+    const parsedNode = this.parseNode(modelNode);
+    const diff = this.compareNodes(parsedNode, domNode);
+    switch (diff) {
+      case 'type':
+        (domNode as HTMLElement | Text).replaceWith(
+          this.parseSubTree(modelNode)
+        );
+        break;
+      case 'tag':
+        (domNode as HTMLElement | Text).replaceWith(
+          this.parseSubTree(modelNode)
+        );
+        break;
+      case 'attrs':
+        this.swapElement(domNode as HTMLElement, parsedNode as HTMLElement);
+        break;
+      case 'content':
+        (domNode as HTMLElement | Text).replaceWith(
+          this.parseSubTree(modelNode)
+        );
+        break;
+      case 'none':
+        if (ModelNode.isModelElement(modelNode)) {
+          modelNode.children.forEach((child, index) => {
+            this.writeRec(child, domNode.childNodes[index]);
+          });
+        }
+        break;
     }
   }
   private compareNodes(parsedNode: Node, domNode: Node): Difference {
@@ -86,16 +79,17 @@ export default class HtmlWriter {
       if (tagName(parsedNode) !== tagName(domNode)) {
         return 'tag';
       }
-      // if (parsedNode.childNodes.length !== domNode.childNodes.length) {
-      //   return 'content';
-      // } else
-      if (
+      if (parsedNode.childNodes.length !== domNode.childNodes.length) {
+        return 'content';
+      } else if (
         !this.areDomAttributesSame(
           parsedNode.attributes,
           (domNode as Element).attributes
         )
       ) {
         return 'attrs';
+      } else if (parsedNode.textContent !== domNode.textContent) {
+        return 'content';
       }
     } else if (isTextNode(parsedNode)) {
       if (parsedNode.textContent !== domNode.textContent) {

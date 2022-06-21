@@ -322,7 +322,7 @@ export default class ModelRange {
           },
           includeEndTags: false,
         },
-        toFilterSkipFalse(ModelNode.isModelText)
+        toFilterSkipFalse<ModelNode>(ModelNode.isModelText)
       ),
     ] as ModelText[];
     if (nodes.length) {
