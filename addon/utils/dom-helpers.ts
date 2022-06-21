@@ -801,18 +801,17 @@ export function modelPosToDomPos(
     if (ModelNode.isModelText(cur)) {
       indexPath.push(path[path.length - 1] - cur.getOffset());
       endsInText = true;
+    } else if (pos.nodeAfter() && ModelNode.isModelText(pos.nodeAfter())) {
+      cur = pos.nodeAfter()!;
+      indexPath[indexPath.length - 1] += 1;
+      indexPath.push(path[path.length - 1] - cur.getOffset());
+      endsInText = true;
+    } else if (pos.nodeBefore() && ModelNode.isModelText(pos.nodeBefore())) {
+      cur = pos.nodeBefore()!;
+      indexPath[indexPath.length - 1] -= 1;
+      indexPath.push(path[path.length - 1] - cur.getOffset());
+      endsInText = true;
     }
-    // else if (ModelNode.isModelText(cur.nextSibling)) {
-    //   cur = cur.nextSibling;
-    //   indexPath[indexPath.length - 1] += 1;
-    //   indexPath.push(path[path.length - 1] - cur.getOffset());
-    //   endsInText = true;
-    // } else if (ModelNode.isModelText(cur.previousSibling)) {
-    //   cur = cur.previousSibling;
-    //   indexPath[indexPath.length - 1] -= 1;
-    //   indexPath.push(path[path.length - 1] - cur.getOffset());
-    //   endsInText = true;
-    // }
   }
   const container = domNodeFromPath(
     state,

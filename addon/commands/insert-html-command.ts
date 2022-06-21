@@ -44,6 +44,7 @@ export default class InsertHtmlCommand
         new HtmlReaderContext({
           marksRegistry: state.marksRegistry,
           shouldConvertWhitespace: true,
+          inlineComponentsRegistry: state.inlineComponentsRegistry,
         })
       );
       if (parsed) {
