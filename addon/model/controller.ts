@@ -146,7 +146,7 @@ export class EditorController implements Controller {
     throw new Error('Method not implemented.');
   }
   get ownMarks(): Set<Mark<AttributeSpec>> {
-    throw new Error('Method not implemented.');
+    return this.getMarksFor(this.name);
   }
   get modelRoot(): ModelElement {
     return this._editor.state.document;

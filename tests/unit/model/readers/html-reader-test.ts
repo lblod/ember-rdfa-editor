@@ -1,3 +1,4 @@
+import InlineComponentsRegistry from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
 import { highlightMarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
@@ -21,13 +22,17 @@ import { module, test } from 'qunit';
 module('Unit | model | readers | html-reader', function () {
   const reader = new HtmlReader();
   const marksRegistry = new MarksRegistry();
+  const inlineComponentsRegistry = new InlineComponentsRegistry();
   marksRegistry.registerMark(boldMarkSpec);
   marksRegistry.registerMark(italicMarkSpec);
   marksRegistry.registerMark(underlineMarkSpec);
   marksRegistry.registerMark(strikethroughMarkSpec);
   marksRegistry.registerMark(highlightMarkSpec);
   function readHtml(node: Node): ModelNode[] {
-    const ctx = new HtmlReaderContext({ marksRegistry });
+    const ctx = new HtmlReaderContext({
+      marksRegistry,
+      inlineComponentsRegistry,
+    });
     return reader.read(node, ctx);
   }
 

@@ -7,6 +7,7 @@ import State, {
 } from '@lblod/ember-rdfa-editor/core/state';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import { EditorView } from '@lblod/ember-rdfa-editor/core/view';
+import InlineComponentsRegistry from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
@@ -65,6 +66,7 @@ export function testState({
   document = createModelRoot(),
   commands = defaultCommands(),
   marksRegistry = new MarksRegistry(),
+  inlineComponentsRegistry = new InlineComponentsRegistry(),
   plugins = [],
   selection = new ModelSelection(),
 }: OptionalStateArgs = {}): State {
@@ -75,6 +77,7 @@ export function testState({
     document,
     commands,
     marksRegistry,
+    inlineComponentsRegistry,
     plugins,
     selection,
   });
