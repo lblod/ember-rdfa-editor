@@ -1,15 +1,12 @@
 import Command from '@lblod/ember-rdfa-editor/commands/command';
 import Model from '@lblod/ember-rdfa-editor/model/model';
-import {
-  AttributeSpec,
-  Mark,
-  Serializable,
-} from '@lblod/ember-rdfa-editor/model/mark';
+import { Mark } from '@lblod/ember-rdfa-editor/model/mark';
 import {
   MisbehavedSelectionError,
   ModelError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import { AttributeSpec, Serializable } from '../model/util/render-spec';
 
 export default class AddMarkToSelectionCommand extends Command<
   [string, Record<string, Serializable>],

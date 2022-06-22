@@ -11,7 +11,6 @@ export default class HtmlElementWriter
 
   write(modelNode: ModelElement): ElementView {
     const result = document.createElement(modelNode.type);
-
     // This will disable the selection of multiple cells on table.
     // Idea reverse-engineered from readctor.
     if (modelNode.type === 'table') {

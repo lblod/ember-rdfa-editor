@@ -52,6 +52,7 @@
           @stealFocus={{@stealFocus}}
         />
       </div>
+
     </div>
 
     <div class='say-container__aside'>
@@ -82,4 +83,13 @@
       {{yield}}
     </div>
   </div>
+  {{#each this.inlineComponents as |compEntry|}}
+    {{#in-element compEntry.node insertBefore=null}}
+      {{component
+        compEntry.emberComponentName
+        componentController=compEntry.componentController
+        editorController=compEntry.editorController
+      }}
+    {{/in-element}}
+  {{/each}}
 </div>

@@ -1,11 +1,15 @@
 import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { HtmlTag } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import renderFromSpec, {
+  AttributeSpec,
+  RenderSpec,
+  Serializable,
+  SLOT,
+} from './util/render-spec';
 
 export type TagMatch = keyof HTMLElementTagNameMap | '*';
-export type AttributeSpec = { setBy?: string } & Record<string, Serializable>;
 
 export interface MarkSpec<A extends AttributeSpec = AttributeSpec> {
   name: string;
@@ -48,22 +52,9 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
     return this._spec;
   }
 
-  write(block: Node): Node {
-    const rendered = renderFromSpec(this._spec.renderSpec(this), block);
-    if (isElement(rendered)) {
-      rendered.dataset['__setBy'] = this.attributes.setBy || CORE_OWNER;
-    }
-    return rendered;
-  }
-
-  writeMultiple(nodes: Iterable<Node>) {
-    const rendered = renderFromSpecMultipleChildren(
-      this._spec.renderSpec(this),
-      nodes
-    );
-    if (isElement(rendered)) {
-      rendered.dataset['__setBy'] = this.attributes.setBy || CORE_OWNER;
-    }
+  write(...nodes: Node[]): HTMLElement {
+    const rendered = renderFromSpec(this._spec.renderSpec(this), ...nodes);
+    rendered.dataset['__setBy'] = this.attributes.setBy || CORE_OWNER;
     return rendered;
   }
 
@@ -95,10 +86,11 @@ export const highlightMarkSpec: MarkSpec = {
   name: 'highlighted',
 
   renderSpec(): RenderSpec {
-    return [
-      { tag: 'span', attributes: { 'data-editor-highlight': true } },
-      [SLOT],
-    ];
+    return {
+      tag: 'span',
+      attributes: { 'data-editor-highlight': true },
+      children: [SLOT],
+    };
   },
 };
 
@@ -107,10 +99,6 @@ export interface DomNodeMatcher<
 > {
   tag: TagMatch;
   attributeBuilder?: (node: Node) => A | null;
-}
-
-export interface Serializable {
-  toString(): string;
 }
 
 export interface Renderable<A extends Record<string, Serializable> | void> {
@@ -138,73 +126,5 @@ export class MarkSet extends HashSet<Mark> {
 
   clone(): this {
     return new MarkSet(this.values()) as this;
-  }
-}
-
-export const SLOT: SLOT = 0;
-type SLOT = 0;
-type HtmlNodeSpec =
-  | HtmlTag
-  | { tag: HtmlTag; attributes: Record<string, Serializable> };
-export type RenderSpec = [HtmlNodeSpec, RenderSpec[]] | SLOT;
-
-function renderFromSpec(spec: RenderSpec, block: Node): Node {
-  if (spec === SLOT) {
-    return block;
-  } else {
-    const [nodeSpec, children] = spec;
-    let result: HTMLElement;
-    if (typeof nodeSpec === 'string') {
-      result = document.createElement(nodeSpec);
-    } else {
-      result = document.createElement(nodeSpec.tag);
-      for (const [key, val] of Object.entries(nodeSpec.attributes)) {
-        if (val !== undefined) {
-          result.setAttribute(key, val.toString());
-        }
-      }
-    }
-
-    for (const child of children) {
-      if (child === SLOT) {
-        result.appendChild(block);
-      } else {
-        result.appendChild(renderFromSpec(child, block));
-      }
-    }
-    return result;
-  }
-}
-
-function renderFromSpecMultipleChildren(
-  spec: RenderSpec,
-  nodes: Iterable<Node>
-) {
-  if (spec === SLOT) {
-    const result = document.createElement('span');
-    result.append(...nodes);
-    return result;
-  } else {
-    const [nodeSpec, children] = spec;
-    let result: HTMLElement;
-    if (typeof nodeSpec === 'string') {
-      result = document.createElement(nodeSpec);
-    } else {
-      result = document.createElement(nodeSpec.tag);
-      for (const [key, val] of Object.entries(nodeSpec.attributes)) {
-        if (val !== undefined) {
-          result.setAttribute(key, val.toString());
-        }
-      }
-    }
-
-    for (const child of children) {
-      if (child === SLOT) {
-        result.append(...nodes);
-      } else {
-        result.appendChild(renderFromSpecMultipleChildren(child, nodes));
-      }
-    }
-    return result;
   }
 }

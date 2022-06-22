@@ -87,9 +87,13 @@ export default class ModelNodeUtils {
     if (ModelNode.isModelText(node)) {
       node.content.split('').filter((c) => c !== INVISIBLE_SPACE).length;
       return node.length;
-    } else if (node instanceof ModelElement && VISUAL_NODES.has(node.type)) {
+    } else if (
+      (ModelNode.isModelElement(node) && VISUAL_NODES.has(node.type)) ||
+      ModelNode.isModelInlineComponent(node)
+    ) {
       return 1;
     }
+
     return 0;
   }
 
@@ -135,5 +139,19 @@ export default class ModelNodeUtils {
 
   static getIndex(node: ModelText, steps: number, forwards: boolean) {
     return forwards ? steps : node.content.length - steps;
+  }
+
+  static getTextContent(node: ModelNode): string {
+    if (ModelNode.isModelElement(node)) {
+      let result = '';
+      node.children.forEach((child) => {
+        result += ModelNodeUtils.getTextContent(child);
+      });
+      return result;
+    } else if (ModelNode.isModelText(node)) {
+      return node.content;
+    } else {
+      return '';
+    }
   }
 }

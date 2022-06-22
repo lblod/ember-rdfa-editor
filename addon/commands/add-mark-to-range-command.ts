@@ -1,8 +1,8 @@
 import Command from '@lblod/ember-rdfa-editor/commands/command';
-import { Serializable } from '@lblod/ember-rdfa-editor/model/mark';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { Serializable } from '../model/util/render-spec';
 
 export default class AddMarkToRangeCommand extends Command<
   [ModelRange, string],

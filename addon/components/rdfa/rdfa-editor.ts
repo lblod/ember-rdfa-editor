@@ -1,7 +1,7 @@
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
+import { tracked } from 'tracked-built-ins';
 import RdfaDocument from '../../utils/rdfa/rdfa-document';
 import RdfaDocumentController from '../../utils/rdfa/rdfa-document';
 import type IntlService from 'ember-intl/services/intl';
@@ -18,6 +18,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
 import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
+import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
 
 interface RdfaEditorArgs {
   /**
@@ -57,6 +58,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
   @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
+  @tracked inlineComponents = tracked<ActiveComponentEntry>([]);
 
   @tracked editorLoading = true;
   private owner: ApplicationInstance;
@@ -102,6 +104,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
+    this.initializeComponents();
     this.editorLoading = false;
   }
 
@@ -127,6 +130,12 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     this.showRdfaBlocks = !this.showRdfaBlocks;
     if (this.editor?.model) {
       this.editor.model.writeSelection();
+    }
+  }
+
+  initializeComponents() {
+    if (this.editor) {
+      this.inlineComponents = this.editor.model.componentInstances;
     }
   }
 }
