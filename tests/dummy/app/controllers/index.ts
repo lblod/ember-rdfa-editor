@@ -160,7 +160,6 @@ export default class IndexController extends Controller {
 
   saveEditorContentToLocalStorage() {
     if (this.rdfaEditor) {
-      this.rdfaEditor.model.read();
       localStorage.setItem('EDITOR_CONTENT', this.rdfaEditor.htmlContent);
     }
   }
