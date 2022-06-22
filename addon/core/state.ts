@@ -30,6 +30,7 @@ import RemoveMarkFromRangeCommand from '../commands/remove-mark-from-range-comma
 import RemoveMarkFromSelectionCommand from '../commands/remove-mark-from-selection-command';
 import RemoveMarksFromRangesCommand from '../commands/remove-marks-from-ranges-command';
 import RemoveTableColumnCommand from '../commands/remove-table-column-command';
+import RemoveTableCommand from '../commands/remove-table-command';
 import RemoveTableRowCommand from '../commands/remove-table-row-command';
 import UndoCommand from '../commands/undo-command';
 import UnindentListCommand from '../commands/unindent-list-command';
@@ -194,6 +195,7 @@ export function defaultCommands(): CommandMap {
     'remove-marks-from-ranges': new RemoveMarksFromRangesCommand(),
     'remove-table-column': new RemoveTableColumnCommand(),
     'remove-table-row': new RemoveTableRowCommand(),
+    'remove-table': new RemoveTableCommand(),
     undo: new UndoCommand(),
     'unindent-list': new UnindentListCommand(),
   };
@@ -238,5 +240,6 @@ export function cloneState(state: State): State {
     pathFromDomRoot: state.pathFromDomRoot,
     keymap: state.keymap,
     eventBus: state.eventBus,
+    baseIRI: state.baseIRI,
   });
 }

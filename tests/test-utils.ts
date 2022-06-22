@@ -7,12 +7,18 @@ import State, {
 } from '@lblod/ember-rdfa-editor/core/state';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import { EditorView } from '@lblod/ember-rdfa-editor/core/view';
+import {
+  InternalWidgetSpec,
+  WidgetLocation,
+} from '@lblod/ember-rdfa-editor/model/controller';
 import InlineComponentsRegistry from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import { EditorStore } from '@lblod/ember-rdfa-editor/model/util/datastore/datastore';
+import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import hbs from 'htmlbars-inline-precompile';
 
 /**
@@ -73,6 +79,7 @@ export function testState({
   if (!ModelNode.isModelElement(document)) {
     throw new TypeError('Cannot set non-element as document root');
   }
+  const baseIRI = 'http://example.org';
   return new SayState({
     document,
     commands,
@@ -80,6 +87,11 @@ export function testState({
     inlineComponentsRegistry,
     plugins,
     selection,
+    baseIRI,
+    datastore: EditorStore.fromParse({ baseIRI, modelRoot: document }),
+    eventBus: new EventBus(),
+    pathFromDomRoot: [],
+    widgetMap: new Map<WidgetLocation, InternalWidgetSpec[]>(),
   });
 }
 export function stateFromDom(root: Element, stateArgs: OptionalStateArgs = {}) {
