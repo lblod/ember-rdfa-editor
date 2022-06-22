@@ -7,12 +7,11 @@ import ModelTreeWalker, {
   FilterResult,
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
 import { oneLineTrim } from 'common-tags';
 import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
-module('Unit | commands | insert-html-command-test', function (hooks) {
+module('Unit | commands | insert-html-command-test', function () {
   const command = new InsertHtmlCommand();
   const executeCommand = makeTestExecute(command);
 

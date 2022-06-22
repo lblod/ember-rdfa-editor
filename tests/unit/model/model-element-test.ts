@@ -4,7 +4,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import { IndexOutOfRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { module, test } from 'qunit';
 
-module('Unit | model | model-element-test', function (hooks) {
+module('Unit | model | model-element-test', function () {
   module('Unit | model | model-element-test | offsetToIndex', function () {
     test('offset 0 should give index 0', function (assert) {
       const {
