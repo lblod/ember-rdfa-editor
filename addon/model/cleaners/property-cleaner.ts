@@ -10,7 +10,7 @@ export default class PropertyCleaner {
   clean(range: ModelRange) {
     const textNodes = new ModelTreeWalker<ModelText>({
       range,
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelText>(ModelNode.isModelText),
     });
     // careful, we are modifying the nodes in the iterator inside the loop
     // this only works because we are going left to right and merging the left
