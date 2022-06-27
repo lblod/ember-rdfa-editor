@@ -68,7 +68,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     const firstCell = table.getCell(0, 0);
     if (firstCell) {
       editor.selection.collapseIn(firstCell);
-      editor.model.write();
+      editor.model.writeSelection(true);
     }
   }
 
@@ -81,7 +81,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     const lastCell = table.getCell(x - 1, y - 1);
     if (lastCell) {
       editor.model.selection.collapseIn(lastCell);
-      editor.model.write();
+      editor.model.writeSelection(true);
     }
   }
 
@@ -137,7 +137,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
           selection.collapseIn(text);
         }
 
-        editor.model.write();
+        editor.model.writeSelection(true);
         return;
       }
     } else if (
@@ -157,7 +157,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
       } else {
         if (table.previousSibling) {
           selection.collapseIn(table.previousSibling);
-          editor.model.write();
+          editor.model.writeSelection(true);
         }
         return;
       }
@@ -167,6 +167,6 @@ export default class TableTabInputPlugin implements TabInputPlugin {
     const newSelectedCell = table?.getCell(newPosition.x, newPosition.y);
     if (!newSelectedCell) return;
     selection.collapseIn(newSelectedCell);
-    editor.model.write();
+    editor.model.writeSelection(true);
   }
 }

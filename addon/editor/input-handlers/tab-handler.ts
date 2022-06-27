@@ -116,7 +116,7 @@ export default class TabInputHandler extends InputHandler {
     const selRange = selection.lastRange!;
     const pos = selRange.start;
 
-    const direction = event.shiftKey ? Direction.FORWARDS : Direction.BACKWARDS;
+    const direction = event.shiftKey ? Direction.BACKWARDS : Direction.FORWARDS;
     const nextEl = findNextElement(pos, direction);
     let resultPos;
     if (nextEl) {
