@@ -26,6 +26,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
 
 export type TabHandlerManipulation =
   | MoveCursorBeforeElementManipulation
@@ -104,7 +105,6 @@ export default class TabInputHandler extends InputHandler {
 
     // Run the manipulation.
     if (dispatchedExecutor) {
-      // NOTE: We should pass some sort of editor interface here in the future.
       dispatchedExecutor(manipulation, this.rawEditor);
     } else {
       this.handleTab(event);
@@ -116,17 +116,22 @@ export default class TabInputHandler extends InputHandler {
     const selRange = selection.lastRange!;
     const pos = selRange.start;
 
-    const direction = event.shiftKey ? 'left' : 'right';
+    const direction = event.shiftKey ? Direction.FORWARDS : Direction.BACKWARDS;
     const nextEl = findNextElement(pos, direction);
     let resultPos;
     if (nextEl) {
+      // next pos is position inside sibling element
       resultPos = posInside(nextEl, direction);
     } else {
-      let parent = pos.parent;
+      // next pos is after parent, or inside element sibling of parent
+      // if it has one
+      const parent = pos.parent;
       resultPos = posNextTo(parent, direction);
-      const parentSib = findNextElement(resultPos, direction);
-      if (parentSib) {
-        resultPos = posInside(parentSib, direction);
+      if (resultPos) {
+        const parentSib = findNextElement(resultPos, direction);
+        if (parentSib) {
+          resultPos = posInside(parentSib, direction);
+        }
       }
     }
     if (resultPos) {
@@ -354,9 +359,12 @@ export default class TabInputHandler extends InputHandler {
     return nextManipulation;
   }
 }
-type Direction = 'left' | 'right';
+
+/**
+ * Get node in direction from pos
+ */
 function peekNode(pos: ModelPosition, direction: Direction): ModelNode | null {
-  if (direction === 'left') {
+  if (direction === Direction.BACKWARDS) {
     return pos.nodeBefore();
   } else {
     return pos.nodeAfter();
@@ -376,7 +384,7 @@ function findNextElement(
   return cur;
 }
 function sibling(node: ModelNode, direction: Direction): ModelNode | null {
-  if (direction === 'left') {
+  if (direction === Direction.BACKWARDS) {
     return node.previousSibling;
   } else {
     return node.nextSibling;
@@ -390,14 +398,14 @@ function posNextTo(
   if (!node.parent) {
     return null;
   }
-  if (direction === 'left') {
+  if (direction === Direction.BACKWARDS) {
     return ModelPosition.fromBeforeNode(node);
   } else {
     return ModelPosition.fromAfterNode(node);
   }
 }
 function posInside(element: ModelElement, direction: Direction): ModelPosition {
-  if (direction === 'left') {
+  if (direction === Direction.BACKWARDS) {
     return ModelPosition.fromInElement(element, element.getMaxOffset());
   } else {
     return ModelPosition.fromInElement(element, 0);

@@ -12,8 +12,8 @@ export interface Cloneable<T> {
 }
 
 export enum Direction {
-  FORWARDS,
-  BACKWARDS,
+  FORWARDS = 'forwards',
+  BACKWARDS = 'backwards',
 }
 
 export enum RelativePosition {

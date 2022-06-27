@@ -5,6 +5,7 @@ import {
   INVISIBLE_SPACE,
   LIST_CONTAINERS,
   LIST_TYPES,
+  LUMP_NODE_PROPERTY,
   PLACEHOLDER_CLASS,
   TABLE_CELLS,
   VISUAL_NODES,
@@ -153,5 +154,23 @@ export default class ModelNodeUtils {
     } else {
       return '';
     }
+  }
+  static isInLumpNode(node: ModelNode): boolean {
+    return !!ModelNodeUtils.getParentLumpNode(node);
+  }
+  static getParentLumpNode(node: ModelNode): ModelElement | void {
+    // SAFETY: hesLumpNodeProperty filters out non-element nodes
+    return node.findSelfOrAncestors(ModelNodeUtils.hasLumpNodeProperty).next()
+      .value as ModelElement;
+  }
+  static hasLumpNodeProperty(node: ModelNode): node is ModelElement {
+    if (!ModelNode.isModelElement(node)) {
+      return false;
+    }
+    const attrs = node.getRdfaAttributes();
+    if (!attrs.properties) {
+      return false;
+    }
+    return attrs.properties.indexOf(LUMP_NODE_PROPERTY) > -1;
   }
 }
