@@ -1,6 +1,6 @@
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import RangeMapper, {
   LeftOrRight,
@@ -71,8 +71,8 @@ export default class OperationAlgorithms {
     //grab all nodes inside the range
     //assumption: the only partial nodes that treewalker grabs are the ones that have opening tags in the selection
     //assumption: opening tag nodes are always parents of the last node in range
-    const walker = new ModelTreeWalker({ range: range, visitParentUpwards: false });
-    const allNodes = [...walker];
+    const walker = GenTreeWalker.fromRange({ range: range });
+    const allNodes = [...walker.nodes()];
 
     //get all nodes that are fully contained in the range
     //ie [<span><text>abc</text>]</span>
@@ -81,8 +81,8 @@ export default class OperationAlgorithms {
     const confinedRanges = range.getMinimumConfinedRanges();
     for (const range of confinedRanges) {
       if (!range.collapsed) {
-        const walker = new ModelTreeWalker({ range: range });
-        confinedNodes.push(...walker);
+        const walker = GenTreeWalker.fromRange({ range: range });
+        confinedNodes.push(...walker.nodes());
       }
     }
 
@@ -210,7 +210,7 @@ export default class OperationAlgorithms {
     const confinedRanges = range.getMinimumConfinedRanges();
     for (const range of confinedRanges) {
       if (!range.collapsed) {
-        const walker = new ModelTreeWalker({ range, descend: false });
+        const walker = GenTreeWalker.fromRange({ range, descend: false });
         nodesToRemove.push(...walker);
       }
     }
