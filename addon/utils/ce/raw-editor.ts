@@ -69,8 +69,11 @@ import RemoveMarkFromRangeCommand from '@lblod/ember-rdfa-editor/commands/remove
 import RemovePropertyCommand from '@lblod/ember-rdfa-editor/commands/node-properties/remove-property-command';
 import AddMarkToSelectionCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to-selection-command';
 import RemoveMarkFromSelectionCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-selection-command';
+import InsertComponentCommand from '@lblod/ember-rdfa-editor/commands/insert-component-command';
 import { EditorPlugin } from '../editor-plugin';
 import { createLogger, Logger } from '../logging-utils';
+import RemoveComponentCommand from '@lblod/ember-rdfa-editor/commands/remove-component-command';
+import { InlineComponentSpec } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -208,6 +211,8 @@ export default class RawEditor {
     this.registerCommand(new MatchTextCommand(this.model));
     this.registerCommand(new AddMarkToSelectionCommand(this.model));
     this.registerCommand(new RemoveMarkFromSelectionCommand(this.model));
+    this.registerCommand(new InsertComponentCommand(this.model));
+    this.registerCommand(new RemoveComponentCommand(this.model));
     this.registerMark(highlightMarkSpec);
 
     this.model.read(true, true);
@@ -310,6 +315,10 @@ export default class RawEditor {
 
   registerMark(markSpec: MarkSpec) {
     this.model.registerMark(markSpec);
+  }
+
+  registerComponent(component: InlineComponentSpec) {
+    this.model.registerInlineComponent(component);
   }
 
   /**

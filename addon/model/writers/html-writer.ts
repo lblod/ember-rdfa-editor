@@ -14,21 +14,23 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import HtmlAdjacentTextWriter from './html-adjacent-text-writer';
+import HtmlInlineComponentWriter from './html-inline-component-writer';
 /**
  * Top-level {@link Writer} for HTML documents.
  */
 export default class HtmlWriter {
   private htmlAdjacentTextWriter: HtmlAdjacentTextWriter;
   private htmlElementWriter: HtmlElementWriter;
+  private htmlInlineComponentWriter: HtmlInlineComponentWriter;
 
   constructor(private model: Model) {
     this.htmlAdjacentTextWriter = new HtmlAdjacentTextWriter(model);
     this.htmlElementWriter = new HtmlElementWriter(model);
+    this.htmlInlineComponentWriter = new HtmlInlineComponentWriter();
   }
 
   write(modelNode: ModelNode): NodeView {
     let resultView: NodeView;
-
     if (ModelNode.isModelElement(modelNode)) {
       let view = this.getView(modelNode);
       if (view) {
@@ -71,6 +73,23 @@ export default class HtmlWriter {
     } else if (ModelNode.isModelText(modelNode)) {
       this.processTextViews([modelNode]);
       resultView = this.getView(modelNode)!;
+    } else if (ModelNode.isModelInlineComponent(modelNode)) {
+      const view = this.getView(modelNode);
+      if (view) {
+        resultView = view;
+      } else {
+        resultView = this.htmlInlineComponentWriter.write(modelNode);
+        this.model.registerNodeView(modelNode, resultView);
+      }
+      if (isElement(resultView.viewRoot)) {
+        this.model.addComponentInstance(
+          resultView.viewRoot,
+          modelNode.spec.name,
+          modelNode
+        );
+      } else {
+        throw new ModelError('Inline component with non-element viewroot');
+      }
     } else {
       throw new NotImplementedError('Unsupported modelnode type');
     }

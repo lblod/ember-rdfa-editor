@@ -172,7 +172,7 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
 
     &:focus {
       outline: var(--au-outline);
-      outline-offset: $au-unit-tiny * .5;
+      outline-offset: $au-unit-tiny * 0.5;
     }
   }
 
@@ -397,6 +397,10 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     ol {
       margin-left: $au-unit-small + $au-unit-tiny;
     }
+  }
+
+  .trailing br {
+    display: none;
   }
 
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"],

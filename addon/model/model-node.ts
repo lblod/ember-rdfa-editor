@@ -10,8 +10,13 @@ import { Walkable } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { Predicate } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
+import { ModelInlineComponent } from './inline-components/model-inline-component';
 
-export type ModelNodeType = 'TEXT' | 'ELEMENT' | 'FRAGMENT';
+export type ModelNodeType =
+  | 'TEXT'
+  | 'ELEMENT'
+  | 'FRAGMENT'
+  | 'INLINE-COMPONENT';
 
 export interface NodeConfig {
   debugInfo: unknown;
@@ -60,6 +65,16 @@ export default abstract class ModelNode implements Walkable {
    */
   static isModelText(node?: ModelNode | null): node is ModelText {
     return !!node && node.modelNodeType === 'TEXT';
+  }
+
+  /**
+   * Typechecking utility to verify whether the node is {@link ModelInlineComponent}
+   * @param node
+   */
+  static isModelInlineComponent(
+    node?: ModelNode | null
+  ): node is ModelInlineComponent {
+    return !!node && node.modelNodeType === 'INLINE-COMPONENT';
   }
 
   get attributeMap(): Map<string, string> {

@@ -7,11 +7,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import SplitOperation from '@lblod/ember-rdfa-editor/model/operations/split-operation';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import {
-  AttributeSpec,
-  MarkSet,
-  MarkSpec,
-} from '@lblod/ember-rdfa-editor/model/mark';
+import { MarkSet, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import RangeMapper, {
@@ -19,6 +15,7 @@ import RangeMapper, {
 } from '@lblod/ember-rdfa-editor/model/range-mapper';
 import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
 import InsertTextOperation from '@lblod/ember-rdfa-editor/model/operations/insert-text-operation';
+import { AttributeSpec } from '../util/render-spec';
 
 /**
  * {@link ModelMutator} implementation where all operations immediately

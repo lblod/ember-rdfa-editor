@@ -25,6 +25,11 @@ import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import NodeView from '@lblod/ember-rdfa-editor/model/node-view';
 import setNodeAndChildDirty from './util/set-node-and-child-dirty';
+import InlineComponentsRegistry from './inline-components/inline-components-registry';
+import {
+  InlineComponentSpec,
+  ModelInlineComponent,
+} from './inline-components/model-inline-component';
 import ModelText from './model-text';
 
 /**
@@ -49,6 +54,7 @@ export default class Model {
   private history: ModelHistory = new ModelHistory();
   private _eventBus?: EventBus;
   private _marksRegistry: MarksRegistry;
+  private _inlineComponentsRegistry: InlineComponentsRegistry;
 
   private logger: Logger;
 
@@ -65,7 +71,7 @@ export default class Model {
     this._eventBus = eventBus;
     this.logger = createLogger('RawEditor');
     this._marksRegistry = new MarksRegistry(this._eventBus);
-
+    this._inlineComponentsRegistry = new InlineComponentsRegistry();
     this.viewToModelMap = new WeakMap<Node, ModelNode>();
     this.modelToViewMap = new WeakMap<ModelNode, NodeView>();
   }
@@ -84,6 +90,10 @@ export default class Model {
 
   get marksRegistry(): MarksRegistry {
     return this._marksRegistry;
+  }
+
+  get inlineComponentsRegistry(): InlineComponentsRegistry {
+    return this._inlineComponentsRegistry;
   }
 
   /**
@@ -147,13 +157,17 @@ export default class Model {
    * almost always true, but can be useful for testing to turn it off when you dont
    * have a real dom available.
    */
-  write(tree: ModelElement = this.rootModelNode, writeSelection = true) {
+  write(
+    tree: ModelElement = this.rootModelNode,
+    writeSelection = true,
+    moveSelectionIntoView = false
+  ) {
     this.rootModelNode.removeDirty('node');
-
+    this._inlineComponentsRegistry.clearComponentInstances();
     this.writer.write(tree);
 
     if (writeSelection) {
-      this.writeSelection();
+      this.writeSelection(moveSelectionIntoView);
     }
   }
 
@@ -161,8 +175,28 @@ export default class Model {
     this._marksRegistry.registerMark(markSpec);
   }
 
-  writeSelection() {
-    this.selectionWriter.write(this.selection);
+  registerInlineComponent(component: InlineComponentSpec) {
+    this._inlineComponentsRegistry.registerComponent(component);
+  }
+
+  addComponentInstance(
+    node: HTMLElement,
+    emberComponentName: string,
+    model: ModelInlineComponent
+  ) {
+    this._inlineComponentsRegistry.addComponentInstance(
+      node,
+      emberComponentName,
+      model
+    );
+  }
+
+  get componentInstances() {
+    return this._inlineComponentsRegistry.componentInstances;
+  }
+
+  writeSelection(moveSelectionIntoView = false) {
+    this.selectionWriter.write(this.selection, moveSelectionIntoView);
   }
 
   /**

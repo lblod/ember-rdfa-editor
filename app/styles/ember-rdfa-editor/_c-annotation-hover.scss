@@ -45,6 +45,10 @@
     }
   }
 
+  .au-c-dropdown__menu {
+    position: absolute;
+  } 
+
   // Style before and after elements
   [typeof]:not([typeof='foaf:Document']),
   [property],

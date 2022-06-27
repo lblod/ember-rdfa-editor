@@ -6,8 +6,8 @@ import EventBus, {
   ListenerConfig,
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
-import { AttributeSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import { TextMatch } from '@lblod/ember-rdfa-editor/utils/match-text';
+import { AttributeSpec } from './util/render-spec';
 
 export type LiveMarkSpec =
   | string
