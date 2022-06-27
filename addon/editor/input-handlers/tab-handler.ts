@@ -21,6 +21,11 @@ import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/ta
 import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 
 export type TabHandlerManipulation =
   | MoveCursorBeforeElementManipulation
@@ -102,11 +107,36 @@ export default class TabInputHandler extends InputHandler {
       // NOTE: We should pass some sort of editor interface here in the future.
       dispatchedExecutor(manipulation, this.rawEditor);
     } else {
-      this.handleNativeManipulation(manipulation);
+      this.handleTab(event);
     }
-
-    this.rawEditor.model.read();
     return { allowPropagation: false };
+  }
+  handleTab(event: KeyboardEvent) {
+    const selection = this.rawEditor.selection;
+    const selRange = selection.lastRange!;
+    const pos = selRange.start;
+
+    const direction = event.shiftKey ? 'left' : 'right';
+    const nextEl = findNextElement(pos, direction);
+    let resultPos;
+    if (nextEl) {
+      resultPos = posInside(nextEl, direction);
+    } else {
+      let parent = pos.parent;
+      resultPos = posNextTo(parent, direction);
+      const parentSib = findNextElement(resultPos, direction);
+      if (parentSib) {
+        resultPos = posInside(parentSib, direction);
+      }
+    }
+    if (resultPos) {
+      const newRange = new ModelRange(resultPos, resultPos);
+      this.rawEditor.selection.selectRange(newRange);
+      this.rawEditor.model.writeSelection(true);
+    } else {
+      // cursor at start or end of document, do nothing for now
+      console.warn('Cursor should be at end');
+    }
   }
 
   handleNativeManipulation(manipulation: TabHandlerManipulation) {
@@ -117,13 +147,13 @@ export default class TabInputHandler extends InputHandler {
       if (element.lastChild && isTextNode(element.lastChild)) {
         textNode = element.lastChild;
       } else {
-        textNode = document.createTextNode('');
+        textNode = document.createTextNode(INVISIBLE_SPACE);
         element.append(textNode);
       }
 
       textNode = ensureValidTextNodeForCaret(textNode);
-      window.getSelection()?.collapse(textNode, textNode.length);
       this.rawEditor.model.read(true);
+      window.getSelection()?.collapse(textNode, textNode.length);
     } else if (manipulation.type == 'moveCursorBeforeElement') {
       const element = manipulation.node;
 
@@ -131,13 +161,13 @@ export default class TabInputHandler extends InputHandler {
       if (element.previousSibling && isTextNode(element.previousSibling)) {
         textNode = element.previousSibling;
       } else {
-        textNode = document.createTextNode('');
+        textNode = document.createTextNode(INVISIBLE_SPACE);
         element.before(textNode);
       }
 
       textNode = ensureValidTextNodeForCaret(textNode);
-      window.getSelection()?.collapse(textNode, textNode.length);
       this.rawEditor.model.read(true);
+      window.getSelection()?.collapse(textNode, textNode.length);
     } else if (manipulation.type === 'moveCursorBeforeEditor') {
       //TODO: this could be moved to a plugin eventually.
       console.warn(
@@ -151,13 +181,13 @@ export default class TabInputHandler extends InputHandler {
       if (element.firstChild && isTextNode(element.firstChild)) {
         textNode = element.firstChild;
       } else {
-        textNode = document.createTextNode('');
+        textNode = document.createTextNode(INVISIBLE_SPACE);
         element.prepend(textNode);
       }
 
       textNode = ensureValidTextNodeForCaret(textNode);
-      window.getSelection()?.collapse(textNode, 0);
       this.rawEditor.model.read(true);
+      window.getSelection()?.collapse(textNode, 0);
     } else if (manipulation.type === 'moveCursorAfterElement') {
       const element = manipulation.node;
 
@@ -165,13 +195,13 @@ export default class TabInputHandler extends InputHandler {
       if (element.nextSibling && isTextNode(element.nextSibling)) {
         textNode = element.nextSibling;
       } else {
-        textNode = document.createTextNode('');
+        textNode = document.createTextNode(INVISIBLE_SPACE);
         element.after(textNode);
       }
 
       textNode = ensureValidTextNodeForCaret(textNode);
-      window.getSelection()?.collapse(textNode, 0);
       this.rawEditor.model.read(true);
+      window.getSelection()?.collapse(textNode, 0);
     } else if (manipulation.type === 'moveCursorAfterEditor') {
       //TODO: this could be moved to a plugin eventually.
       console.warn(
@@ -272,6 +302,8 @@ export default class TabInputHandler extends InputHandler {
       parentElement.lastChild &&
       parentElement.lastChild.isSameNode(anchorNode)
     ) {
+      // case: cursor is inside the lastchild of an element
+      // behavior: move the cursor after that element
       nextManipulation = {
         type: 'moveCursorAfterElement',
         node: parentElement,
@@ -289,12 +321,16 @@ export default class TabInputHandler extends InputHandler {
       });
 
       if (nextElementForCursor) {
+        // case: cursor is inside another child of an element, and there is a valid element sibling
+        // behavior: move cursor inside that sibling
         nextManipulation = {
           type: 'moveCursorToStartOfElement',
           node: nextElementForCursor as HTMLElement,
           selection,
         };
       } else {
+        // case: cursor is inside another child, but there are no valid element siblings after cursor
+        // behavior: move cursor after parent
         nextManipulation = {
           type: 'moveCursorAfterElement',
           node: parentElement,
@@ -307,6 +343,8 @@ export default class TabInputHandler extends InputHandler {
       nextManipulation.type === 'moveCursorAfterElement' &&
       nextManipulation.node.isSameNode(this.rawEditor.rootNode)
     ) {
+      // case: node we want to move after is the rootnode
+      // behavior: move cursor after editor (not implemented, maybe focus next tabstop?)
       nextManipulation = {
         type: 'moveCursorAfterEditor',
         node: nextManipulation.node,
@@ -314,5 +352,54 @@ export default class TabInputHandler extends InputHandler {
     }
 
     return nextManipulation;
+  }
+}
+type Direction = 'left' | 'right';
+function peekNode(pos: ModelPosition, direction: Direction): ModelNode | null {
+  if (direction === 'left') {
+    return pos.nodeBefore();
+  } else {
+    return pos.nodeAfter();
+  }
+}
+function isNonLeafElement(node: ModelNode): node is ModelElement {
+  return ModelNode.isModelElement(node) && !node.isLeaf;
+}
+function findNextElement(
+  pos: ModelPosition,
+  direction: Direction
+): ModelElement | null {
+  let cur = peekNode(pos, direction);
+  while (cur && !isNonLeafElement(cur)) {
+    cur = sibling(cur, direction);
+  }
+  return cur;
+}
+function sibling(node: ModelNode, direction: Direction): ModelNode | null {
+  if (direction === 'left') {
+    return node.previousSibling;
+  } else {
+    return node.nextSibling;
+  }
+}
+function posNextTo(
+  node: ModelNode,
+  direction: Direction
+): ModelPosition | null {
+  // node is rootnode
+  if (!node.parent) {
+    return null;
+  }
+  if (direction === 'left') {
+    return ModelPosition.fromBeforeNode(node);
+  } else {
+    return ModelPosition.fromAfterNode(node);
+  }
+}
+function posInside(element: ModelElement, direction: Direction): ModelPosition {
+  if (direction === 'left') {
+    return ModelPosition.fromInElement(element, element.getMaxOffset());
+  } else {
+    return ModelPosition.fromInElement(element, 0);
   }
 }
