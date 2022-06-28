@@ -31,6 +31,7 @@
   [property="prov:generated"] > [property="besluit:motivering"],
   [property="prov:generated"] > [property="prov:value"],
   [typeof="besluit:Zitting"],
+  [property="say:hasPart"],
   [property="openbaar"],
   [property^="ext"]:not([property="ext:heeftAfwezigeBijAgendapunt"]):not(span),
   [data-editor-highlight="true"]:not(ol):not(ul):not(li):not(span),
@@ -47,7 +48,7 @@
 
   .au-c-dropdown__menu {
     position: absolute;
-  } 
+  }
 
   // Style before and after elements
   [typeof]:not([typeof='foaf:Document']),
@@ -107,7 +108,8 @@
     }
 
     &[data-editor-position-level='1']:before,
-    &:hover:before {
+    &:hover:before,
+    [property="say:hasPart"]:hover > [property="say:heading"]:before {
       right: calc(100% + #{$say-annotation-offset});
       opacity: 1;
     }
@@ -156,7 +158,7 @@
     }
   }
 
-  @include mq($until: large) {
+  @include mq($until: 1280px) {
     // Hide all hover annotations on small screens
     [typeof]:not([typeof='foaf:Document']),
     [property],
