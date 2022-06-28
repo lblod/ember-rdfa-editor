@@ -1,6 +1,7 @@
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import RangeMapper, {
   LeftOrRight,
@@ -102,7 +103,7 @@ export default class OperationAlgorithms {
     //dont do this to rdfa either
     //collect those nodes
 
-    const cantRemoveOpeningTagNodes : ModelNode[] = [];
+    const cantRemoveOpeningTagNodes: ModelNode[] = [];
 
     openingTagNodes.forEach((opNode) => {
       //check if we can remove it
@@ -171,10 +172,10 @@ export default class OperationAlgorithms {
     }
 
     //not sure i did this correcctly
-    const removedOpeningTagNodes = openingTagNodes.filter( node => {
-      return !cantRemoveOpeningTagNodes.includes( node );
+    const removedOpeningTagNodes = openingTagNodes.filter((node) => {
+      return !cantRemoveOpeningTagNodes.includes(node);
     });
-    
+
     return {
       removedNodes: [...confinedNodes, ...removedOpeningTagNodes],
       mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
@@ -210,7 +211,7 @@ export default class OperationAlgorithms {
     const confinedRanges = range.getMinimumConfinedRanges();
     for (const range of confinedRanges) {
       if (!range.collapsed) {
-        const walker = GenTreeWalker.fromRange({ range, descend: false });
+        const walker = new ModelTreeWalker({ range, descend: false });
         nodesToRemove.push(...walker);
       }
     }

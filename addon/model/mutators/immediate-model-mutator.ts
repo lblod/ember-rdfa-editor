@@ -48,7 +48,7 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     return this.executeOperation(op);
   }
 
-  removeNodes(range: ModelRange, ...nodes: ModelNode[]):ModelRange{
+  removeNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const op = new RemoveOperation(this.eventbus, range, ...nodes);
     return this.executeOperation(op);
   }

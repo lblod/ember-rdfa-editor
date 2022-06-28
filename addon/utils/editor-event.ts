@@ -145,7 +145,11 @@ interface RemovePayload {
   _markCheckNodes: ModelNode[];
 }
 
-type ContentChangedPayload = InsertionPayload | MovePayload | RemovePayload | UnknownPayload;
+type ContentChangedPayload =
+  | InsertionPayload
+  | MovePayload
+  | RemovePayload
+  | UnknownPayload;
 
 export class ContentChangedEvent extends AbstractEditorEvent<ContentChangedPayload> {
   _name: EditorEventName = 'contentChanged';

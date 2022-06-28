@@ -1,7 +1,5 @@
 import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import Command from '@lblod/ember-rdfa-editor/commands/command';
-import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import ModelRange from '../model/model-range';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
@@ -29,8 +27,7 @@ export default class RemoveCommand extends Command {
           const newRange = mutator.removeNodes(removeRange);
           this.model.selectRange(newRange);
         });
-      }
-      else if(direction === 'right'){
+      } else if (direction === 'right') {
         const newEnd = range.start.shiftedVisually(1);
         const newStart = range.start;
         const removeRange = new ModelRange(newStart, newEnd);
@@ -39,11 +36,10 @@ export default class RemoveCommand extends Command {
           this.model.selectRange(newRange);
         });
       }
-    }
-    else{
+    } else {
       this.model.change((mutator) => {
         const newRange = mutator.removeNodes(range);
-        this.model.selectRange(range);
+        this.model.selectRange(newRange);
       });
     }
   }

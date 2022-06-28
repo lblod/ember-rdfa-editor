@@ -30,14 +30,12 @@ export default class RemoveOperation extends Operation {
   }
 
   execute(): OperationResult {
-    let overwrittenNodes: ModelNode[];
-    let resultMapper: RangeMapper;
-    let _markCheckNodes: ModelNode[] = [];
-    
+    const _markCheckNodes: ModelNode[] = [];
+
     const { mapper, removedNodes } = OperationAlgorithms.removeNew(this.range);
-    overwrittenNodes = removedNodes;
-    resultMapper = mapper;
-    
+    const overwrittenNodes: ModelNode[] = removedNodes;
+    const resultMapper: RangeMapper = mapper;
+
     const defaultRange = new ModelRange(this.range.start, this.range.start);
     this.emit(
       new ContentChangedEvent({

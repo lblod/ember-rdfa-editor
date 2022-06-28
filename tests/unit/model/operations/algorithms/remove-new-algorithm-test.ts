@@ -422,7 +422,7 @@ module(
       const {
         root: initial,
         textNodes: { text1 },
-        elements: { p1 }
+        elements: { p1 },
       } = vdom`
       <div>
         <span>
@@ -445,10 +445,8 @@ module(
         </span>
       </div>
       `;
-      debugger;
       const start1 = ModelPosition.fromAfterNode(text1);
       const end1 = ModelPosition.fromAfterNode(p1);
-      debugger;
       OperationAlgorithms.removeNew(new ModelRange(start1, end1));
       assert.expect(1);
       assert.true(initial.sameAs(expected));

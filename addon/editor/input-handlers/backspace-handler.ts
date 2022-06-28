@@ -1,7 +1,6 @@
 import { InputHandler } from './input-handler';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
-import { toFilterRejectFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 
 /**
  * EnterHandler, an event handler to handle the generic enter case.

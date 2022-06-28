@@ -264,7 +264,7 @@ export default class ModelRange {
    * not so janky debug function
    * @trim to trim the whole document to only the internded range
    */
-  visualize(truncate=true): void {
+  visualize(truncate = true): void {
     let root = this.root;
     while (root.parent) {
       root = root.parent;
@@ -342,20 +342,19 @@ export default class ModelRange {
       return node;
     };
 
-    
-    modelString=process(modelString);
-    if(truncate){
-      const margin=200;
+    modelString = process(modelString);
+    if (truncate) {
+      const margin = 200;
       let startIndex = modelString.indexOf('  {[===  ');
       let endIndex = modelString.indexOf('  ===]}  ');
       const length = modelString.length;
-      if(startIndex>margin){
-        startIndex-=margin;
+      if (startIndex > margin) {
+        startIndex -= margin;
       }
-      if(length-endIndex>margin){
-        endIndex+=margin;
+      if (length - endIndex > margin) {
+        endIndex += margin;
       }
-      modelString=modelString.substring(startIndex, endIndex);
+      modelString = modelString.substring(startIndex, endIndex);
     }
     console.log(modelString, '\n');
   }
