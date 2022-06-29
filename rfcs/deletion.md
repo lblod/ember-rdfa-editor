@@ -289,10 +289,50 @@ I opt for the former for now, but I consider the latter to be a better UX provid
 
 ### lists
 
-In essence, the default behavior of merging is what other editors seem to tend towards.
-Theoretically, a list-item can also contain rdfa-knowledge, in which the same stipulations 
-as mentioned above apply.
+The difficulty with lists is that they are a two-level structure
+```xml
+<text>tes[t</text>
+<ul>
+  <li>
+    <text>a]bc</text>
+  </li>
+  <li>
+    <text>def</text>
+  </li>
+</ul>
 
+```
+
+**result:**
+
+```xml
+<text>tes[]bc</text>
+<ul>
+  <li>
+    <text>def</text>
+  </li>
+</ul>
+
+```
+
+so rather than removing every opening tag we encounter, we cannot remove the `<ul>` tag 
+or it would break the list. However, if the list has only one item, we _should_ remove the `<ul>`
+
+```xml
+<text>tes[t</text>
+<ul>
+  <li>
+    <text>a]bc</text>
+  </li>
+</ul>
+
+```
+
+**result:**
+
+```xml
+<text>tes[]bc</text>
+```
 ### complex example
 
 Above examples outline the general principles of element merging, but it's worth 
