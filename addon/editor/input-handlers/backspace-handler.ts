@@ -20,7 +20,6 @@ export default class BackspaceHandler extends InputHandler {
 
   handleEvent(_: KeyboardEvent) {
     this.rawEditor.executeCommand('remove', 'left');
-    console.log('BACKSPACE AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
     return { allowPropagation: true, allowBrowserDefault: false };
   }
 }
