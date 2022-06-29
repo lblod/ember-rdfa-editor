@@ -12,6 +12,7 @@ import {
 } from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelText from '../model-text';
 import StringUtils from './string-utils';
+import { Direction } from './types';
 
 export default class ModelNodeUtils {
   static DEFAULT_IGNORED_ATTRS: Set<string> = new Set([
@@ -140,6 +141,13 @@ export default class ModelNodeUtils {
 
   static getIndex(node: ModelText, steps: number, forwards: boolean) {
     return forwards ? steps : node.content.length - steps;
+  }
+  static siblingInDirection(node: ModelNode, direction: Direction) {
+    if (direction === Direction.FORWARDS) {
+      return node.nextSibling;
+    } else {
+      return node.previousSibling;
+    }
   }
 
   static getTextContent(node: ModelNode): string {

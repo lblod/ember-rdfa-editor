@@ -27,8 +27,9 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
+type BaseTabHandlerManipulation = { direction: Direction };
 
-export type TabHandlerManipulation =
+type InternalTabHandlerManipulation =
   | MoveCursorBeforeElementManipulation
   | MoveCursorToEndOfElementManipulation
   | MoveCursorBeforeEditorManipulation
@@ -36,6 +37,8 @@ export type TabHandlerManipulation =
   | MoveCursorAfterElementManipulation
   | MoveCursorAfterEditorManipulation;
 
+export type TabHandlerManipulation = BaseTabHandlerManipulation &
+  InternalTabHandlerManipulation;
 /**
  * Interface for specific plugins.
  */
@@ -236,6 +239,7 @@ export default class TabInputHandler extends InputHandler {
   helpGetShiftTabNextManipulation(
     selection: Selection
   ): TabHandlerManipulation {
+    const direction = Direction.BACKWARDS;
     const { anchorNode } = selection;
     if (!(anchorNode && anchorNode.parentElement)) {
       throw new Error('Tab input expected anchorNode and parentElement');
@@ -251,6 +255,7 @@ export default class TabInputHandler extends InputHandler {
       nextManipulation = {
         type: 'moveCursorBeforeElement',
         node: parentElement,
+        direction,
         selection,
       };
     } else {
@@ -270,12 +275,14 @@ export default class TabInputHandler extends InputHandler {
         nextManipulation = {
           type: 'moveCursorToEndOfElement',
           node: previousElementForCursor as HTMLElement,
+          direction,
           selection,
         };
       } else {
         nextManipulation = {
           type: 'moveCursorBeforeElement',
           node: parentElement,
+          direction,
           selection,
         };
       }
@@ -288,6 +295,7 @@ export default class TabInputHandler extends InputHandler {
       nextManipulation = {
         type: 'moveCursorBeforeEditor',
         node: nextManipulation.node,
+        direction,
       };
     }
 
@@ -295,6 +303,7 @@ export default class TabInputHandler extends InputHandler {
   }
 
   helpGetTabNextManipulation(selection: Selection): TabHandlerManipulation {
+    const direction = Direction.FORWARDS;
     const { anchorNode } = selection;
     if (!(anchorNode && anchorNode.parentElement)) {
       throw new Error('Tab input expected anchorNode and parentElement');
@@ -312,6 +321,7 @@ export default class TabInputHandler extends InputHandler {
       nextManipulation = {
         type: 'moveCursorAfterElement',
         node: parentElement,
+        direction,
         selection,
       };
     } else {
@@ -331,6 +341,7 @@ export default class TabInputHandler extends InputHandler {
         nextManipulation = {
           type: 'moveCursorToStartOfElement',
           node: nextElementForCursor as HTMLElement,
+          direction,
           selection,
         };
       } else {
@@ -339,6 +350,7 @@ export default class TabInputHandler extends InputHandler {
         nextManipulation = {
           type: 'moveCursorAfterElement',
           node: parentElement,
+          direction,
           selection,
         };
       }
@@ -353,6 +365,7 @@ export default class TabInputHandler extends InputHandler {
       nextManipulation = {
         type: 'moveCursorAfterEditor',
         node: nextManipulation.node,
+        direction,
       };
     }
 
