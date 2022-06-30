@@ -402,10 +402,6 @@ module(
       <div>
         <div vocab="http://xmlns.com/foaf/0.1/" typeof="Person" __id="div1"> <!-- about:alice -->
         </div>
-        <ul>
-          <li>    
-          </li>
-        </ul>
         <text __id="text4">test</text>
       </div>
       `;

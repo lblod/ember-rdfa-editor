@@ -23,13 +23,10 @@ const cantMergeIntoTypes = new Set<string>([
   'th',
   'thead',
   'tbody',
-  'ul',
 ]);
 
 const cantRemoveOpeningTagNodeTypes = new Set<string>([
   'a',
-  'ul',
-  'li',
   'td',
   'tr',
   'table',
