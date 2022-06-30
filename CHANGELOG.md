@@ -16,6 +16,27 @@
 
 
 
+
+## 0.60.0 (2022-06-30)
+
+#### :rocket: Enhancement
+* [#284](https://github.com/lblod/ember-rdfa-editor/pull/284) Feature/inline components ([@elpoelma](https://github.com/elpoelma))
+* [#271](https://github.com/lblod/ember-rdfa-editor/pull/271) Feature/better remove algo ([@Asergey91](https://github.com/Asergey91))
+
+#### :bug: Bug Fix
+* [#283](https://github.com/lblod/ember-rdfa-editor/pull/283) modified the lists sample data so it contains valid html ([@elpoelma](https://github.com/elpoelma))
+* [#282](https://github.com/lblod/ember-rdfa-editor/pull/282) Fix/tree walker ([@elpoelma](https://github.com/elpoelma))
+* [#281](https://github.com/lblod/ember-rdfa-editor/pull/281) fix dissappearing nodes in text writer ([@elpoelma](https://github.com/elpoelma))
+
+#### :memo: Documentation
+* [#176](https://github.com/lblod/ember-rdfa-editor/pull/176) [RFC] ember-rdfa-editor stage 1 ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 4
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+- Sam Van Campenhout ([@Windvis](https://github.com/Windvis))
+- Sergey Andreev ([@Asergey91](https://github.com/Asergey91))
+
 ## 0.59.1 (2022-06-08)
 
 fix issues with disappearing text nodes after inserting newlines
