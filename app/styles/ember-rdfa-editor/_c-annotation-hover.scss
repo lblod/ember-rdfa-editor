@@ -37,6 +37,7 @@
   [data-editor-highlight="true"]:not(ol):not(ul):not(li):not(span),
   [typeof="http://data.vlaanderen.be/ns/besluit#Besluit http://data.vlaanderen.be/ns/besluit#AanvullendReglement"],
   [typeof="besluit:Artikel"],
+  [typeof="say:Article"],
   [typeof="mobiliteit:Opstelling"] {
     position: relative;
 

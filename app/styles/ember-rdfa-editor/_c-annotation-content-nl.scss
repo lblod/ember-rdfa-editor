@@ -169,15 +169,22 @@
     content: 'Besluit';
   }
 
-  [typeof~='besluit:Artikel']:before {
+  [property='say:hasPart']:before {
+    content: '';
+  }
+
+  [typeof~='besluit:Artikel']:before,
+  [typeof='say:Article']:before {
     content: 'Artikel';
   }
 
-  [property='eli:has_part'][typeof='besluit:Artikel']:before {
+  [property='eli:has_part'][typeof='besluit:Artikel']:before,
+  [property='eli:has_part'][typeof='say:Article']:before {
     content: 'Artikel';
   }
 
-  [typeof='besluit:Artikel'] [property='prov:value']:before {
+  [typeof='besluit:Artikel'] [property='say:body']:before,
+  [typeof='say:Article'] [property='say:body']:before {
     content: 'Inhoud';
   }
 
@@ -191,10 +198,6 @@
 
   [property="ext:hasParagraph"]:before {
     content: 'Paragraaf';
-  }
-
-  [property="say:hasPart"]:before {
-    content: ''
   }
 
   [resource="http://mu.semte.ch/vocabularies/ext/Title"] + [property="say:heading"]:before {
@@ -615,16 +618,14 @@
     content: 'Besluit';
   }
 
-  [typeof~='besluit:Artikel']:before {
+  [typeof~='besluit:Artikel']:before,
+  [typeof='say:Article']:before {
     content: 'Artikel';
   }
 
-  [property='eli:has_part'][typeof='besluit:Artikel']:before {
+  [property='eli:has_part'][typeof='besluit:Artikel']:before,
+  [property='eli:has_part'][typeof='say:Article']:before {
     content: 'Artikel';
-  }
-
-  [typeof='besluit:Artikel'] [property='prov:value']:before {
-    content: 'Inhoud';
   }
 
   [property='eli:has_part']:before {
