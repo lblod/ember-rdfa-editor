@@ -12,7 +12,7 @@ import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { from, isEmpty, last, first } from 'ix/iterable';
 import { filter } from 'ix/iterable/operators';
-import { ImpossibleModelStateError } from '../../errors';
+import { ImpossibleModelStateError, ModelError } from '../../errors';
 
 /**
  * Current behaviour
@@ -30,7 +30,10 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     manipulation: TabHandlerManipulation,
     editor: RawEditor
   ): ManipulationGuidance | null {
-    const modelNode = editor.model.viewToModel(manipulation.node);
+    const modelNode = editor.model.viewToModelSafe(manipulation.node);
+    if (!modelNode) {
+      return null;
+    }
     const { direction } = manipulation;
     const { selection } = editor;
     if (manipulation.type === 'moveCursorToStartOfElement') {

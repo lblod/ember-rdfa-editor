@@ -214,14 +214,18 @@ export default class Model {
     this.viewToModelMap.set(view.contentRoot, modelNode);
     this.modelToViewMap.set(modelNode, view);
   }
-
-  viewToModel(domNode: Node): ModelNode {
+  viewToModelSafe(domNode: Node): ModelNode | null {
     let cur: Node | null = domNode;
     let result = null;
     while (cur && !result) {
       result = this.viewToModelMap.get(cur);
       cur = cur.parentNode;
     }
+    return result || null;
+  }
+
+  viewToModel(domNode: Node): ModelNode {
+    const result = this.viewToModelSafe(domNode);
     if (!result) {
       throw new ModelError('Domnode without corresponding modelNode');
     }

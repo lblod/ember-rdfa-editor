@@ -27,6 +27,10 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
+import {
+  createLogger,
+  Logger,
+} from '@lblod/ember-rdfa-editor/utils/logging-utils';
 type BaseTabHandlerManipulation = { direction: Direction };
 
 type InternalTabHandlerManipulation =
@@ -68,9 +72,11 @@ export interface TabInputPlugin extends InputPlugin {
  */
 export default class TabInputHandler extends InputHandler {
   plugins: Array<TabInputPlugin>;
+  logger: Logger;
 
   constructor({ rawEditor }: { rawEditor: RawEditor }) {
     super(rawEditor);
+    this.logger = createLogger(this.constructor.name);
     this.plugins = [
       new LumpNodeTabInputPlugin(),
       new ListTabInputPlugin(),
@@ -143,7 +149,7 @@ export default class TabInputHandler extends InputHandler {
       this.rawEditor.model.writeSelection(true);
     } else {
       // cursor at start or end of document, do nothing for now
-      console.warn('Cursor should be at end');
+      this.logger('Cursor should be at end');
     }
   }
 
