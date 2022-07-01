@@ -15,7 +15,6 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { PropertyState } from '../model/util/types';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelText from '../model/model-text';
-import RangeMapper from '../model/range-mapper';
 
 /**
  * Command will convert all nodes in the selection to a list, if they are not already in a list.
