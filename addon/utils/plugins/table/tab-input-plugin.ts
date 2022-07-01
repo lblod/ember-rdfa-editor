@@ -8,8 +8,11 @@ import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
 /**
  *
@@ -86,7 +89,7 @@ export default class TableTabInputPlugin implements TabInputPlugin {
   }
 
   static tabHandler(manipulation: TabHandlerManipulation, editor: RawEditor) {
-    let table;
+    let table: ModelTable | null = null;
     const selection = editor.selection;
     let selectedCell = ModelTable.getCellFromSelection(selection);
     if (!selectedCell) {
@@ -131,14 +134,23 @@ export default class TableTabInputPlugin implements TabInputPlugin {
         // at the end of the table
         if (table.nextSibling) {
           selection.collapseIn(table.nextSibling);
+          editor.model.writeSelection(true);
+          return;
         } else {
-          const text = new ModelText(INVISIBLE_SPACE);
-          table.parent?.appendChildren(text);
-          selection.collapseIn(text);
+          editor.model.change((mutator: ImmediateModelMutator) => {
+            // SAFETY: table was checked above, typescript can't know
+            // because of closure
+            const insertPos = ModelPosition.fromAfterNode(table!);
+            const resultRange = mutator.insertText(
+              new ModelRange(insertPos, insertPos),
+              INVISIBLE_SPACE,
+              new MarkSet()
+            );
+            resultRange.collapse();
+            selection.selectRange(resultRange);
+          });
+          return;
         }
-
-        editor.model.writeSelection(true);
-        return;
       }
     } else if (
       manipulation.type === 'moveCursorToEndOfElement' ||

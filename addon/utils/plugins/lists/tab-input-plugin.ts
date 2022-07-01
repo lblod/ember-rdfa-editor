@@ -3,16 +3,13 @@ import {
   TabHandlerManipulation,
   TabInputPlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import { isTextNode } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { from, isEmpty, last, first } from 'ix/iterable';
 import { filter } from 'ix/iterable/operators';
 import { ImpossibleModelStateError } from '../../errors';
