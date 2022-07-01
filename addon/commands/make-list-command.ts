@@ -15,6 +15,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { PropertyState } from '../model/util/types';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelText from '../model/model-text';
+import RangeMapper from '../model/range-mapper';
 
 /**
  * Command will convert all nodes in the selection to a list, if they are not already in a list.
@@ -45,7 +46,7 @@ export default class MakeListCommand extends Command {
       throw new MisbehavedSelectionError();
     }
 
-    const range = selection.lastRange;
+    const range = selection.lastRange.clone();
     const wasCollapsed = range.collapsed;
     const blocks = this.getBlocksFromRange(range);
 
@@ -95,8 +96,12 @@ export default class MakeListCommand extends Command {
   }
 
   private getBlocksFromRange(range: ModelRange): ModelNode[][] {
+    // Do a check if we are at the end of a text node
     // Expand range until it is bound by blocks.
     let current: ModelNode | null = range.start.nodeAfter();
+    if (!current && !range.start.nodeBefore()?.isBlock) {
+      current = range.start.nodeBefore();
+    }
     if (current) {
       range.start.parentOffset = current.getOffset();
 

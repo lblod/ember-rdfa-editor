@@ -40,14 +40,14 @@ module('Unit | commands | make-list-command', function (hooks) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
-        <text>${'\n'}</text>
+        <br/>
       </modelRoot>
     `;
 
     // language=XML
     const { root: expected } = vdom`
       <modelRoot>
-        <text>${'\n'}</text>
+        <br/>
         <ul>
           <li><text></text></li>
         </ul>
@@ -55,7 +55,7 @@ module('Unit | commands | make-list-command', function (hooks) {
     `;
 
     ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 1, 1);
+    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 1);
     ctx.model.selectRange(range);
 
     command.execute('ul');
