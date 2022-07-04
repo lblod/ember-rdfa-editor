@@ -39,7 +39,7 @@ export default class BackspaceHandler extends InputHandler {
         !ModelNode.isModelElement(nextNode) ||
         nextNode.getRdfaAttributes().isEmpty
       ) {
-        this.rawEditor.executeCommand('remove', 'left');
+        this.rawEditor.executeCommand('remove', removeRange);
       } else {
         this.rawEditor.model.change(() => {
           this.rawEditor.model.selectRange(new ModelRange(newEnd));

@@ -20,33 +20,13 @@ export default class RemoveCommand extends Command {
   }
 
   @logExecute
-  execute(
-    direction: 'left' | 'right',
-    range: ModelRange | null = this.model.selection.lastRange
-  ) {
-    if (!range) {
-      return;
-    }
-    let removeRange = range;
-    if (range.collapsed) {
-      if (direction === 'left') {
-        const newStart = range.start.shiftedVisually(-1);
-        const newEnd = range.start;
-        removeRange = new ModelRange(newStart, newEnd);
-      } else if (direction === 'right') {
-        const newEnd = range.start.shiftedVisually(1);
-        const newStart = range.start;
-        removeRange = new ModelRange(newStart, newEnd);
-      }
-    }
+  execute(range: ModelRange) {
     this.model.change((mutator) => {
       // we only have to consider ancestors of the end of the range since we always merge
       // towards the left
       // SAFETY: filter guarantees results to be elements
       const lis = [
-        ...removeRange.end.parent.findSelfOrAncestors(
-          ModelNodeUtils.isListElement
-        ),
+        ...range.end.parent.findSelfOrAncestors(ModelNodeUtils.isListElement),
       ] as ModelElement[];
       const lowestLi = lis[0];
       const highestLi = lis[lis.length - 1];
@@ -60,7 +40,7 @@ export default class RemoveCommand extends Command {
           mutator,
           highestLi,
           lowestLi,
-          removeRange
+          range
         );
         // perform the deletion
         rangeAfterDelete = mutator.removeNodes(adjustedRange);
@@ -74,7 +54,7 @@ export default class RemoveCommand extends Command {
         }
         rangeAfterDelete = cleanupRangeAfterDelete(mutator, rangeAfterDelete);
       } else {
-        rangeAfterDelete = mutator.removeNodes(removeRange);
+        rangeAfterDelete = mutator.removeNodes(range);
       }
 
       if (rangeAfterDelete.start.parent.length === 0) {

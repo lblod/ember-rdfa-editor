@@ -38,7 +38,7 @@ module('Unit | commands | remove-command', function (hooks) {
     const start = ModelPosition.fromInNode(text1, 3);
     const end = ModelPosition.fromInNode(text2, 1);
     const removeRange = new ModelRange(start, end);
-    command.execute('left', removeRange);
+    command.execute(removeRange);
     assert.true(
       ctx.model.rootModelNode.sameAs(expected),
       QUnit.dump.parse(ctx.model.rootModelNode)
@@ -77,7 +77,7 @@ module('Unit | commands | remove-command', function (hooks) {
     const start = ModelPosition.fromInNode(text1, 3);
     const end = ModelPosition.fromInNode(text2, 1);
     const removeRange = new ModelRange(start, end);
-    command.execute('left', removeRange);
+    command.execute(removeRange);
     assert.true(
       ctx.model.rootModelNode.sameAs(expected),
       QUnit.dump.parse(ctx.model.rootModelNode)
@@ -127,7 +127,7 @@ module('Unit | commands | remove-command', function (hooks) {
     const start = ModelPosition.fromInNode(text1, 3);
     const end = ModelPosition.fromInNode(text2, 1);
     const removeRange = new ModelRange(start, end);
-    command.execute('left', removeRange);
+    command.execute(removeRange);
     assert.true(
       ctx.model.rootModelNode.sameAs(expected),
       QUnit.dump.parse(ctx.model.rootModelNode)
@@ -171,7 +171,7 @@ module('Unit | commands | remove-command', function (hooks) {
     const start = ModelPosition.fromInNode(text1, 2);
     const end = ModelPosition.fromInNode(text2, 1);
     const removeRange = new ModelRange(start, end);
-    command.execute('left', removeRange);
+    command.execute(removeRange);
     assert.true(
       ctx.model.rootModelNode.sameAs(expected),
       QUnit.dump.parse(ctx.model.rootModelNode)
