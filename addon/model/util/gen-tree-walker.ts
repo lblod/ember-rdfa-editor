@@ -7,6 +7,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { NOOP } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { RelativePosition } from './types';
 
 export interface Walkable {
   parentNode: Walkable | null;
@@ -175,7 +176,10 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
           .findSelfOrAncestors((node) => !!getNextSibling(node, reverse))
           .next().value;
         if (ancestorWithSibling) {
-          startNode = getNextSibling(ancestorWithSibling, reverse)!;
+          startNode = getNextSibling(
+            ancestorWithSibling,
+            reverse
+          )! as ModelNode | null;
         } else {
           // the start position is at the end of the document
           // no valid nodes can be found
@@ -186,6 +190,15 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
         endNode = endPos.parent;
         shouldDescendEnd = false;
       }
+    }
+    //check if start comes after end (or reverse if reverse is true)
+    if (
+      startNode &&
+      endNode &&
+      ((reverse && compareNodes(endNode, startNode) >= 0) ||
+        (!reverse && compareNodes(startNode, endNode) >= 0))
+    ) {
+      invalid = true;
     }
     const root = range.root;
     if (invalid) {
@@ -443,4 +456,10 @@ function getNextDeepestDescendant(
     child = getLastChild(cur, reverse);
   }
   return cur;
+}
+
+function compareNodes(node1: ModelNode, node2: ModelNode): number {
+  const pos1 = ModelPosition.fromBeforeNode(node1);
+  const pos2 = ModelPosition.fromAfterNode(node2);
+  return ModelPosition.comparePath(pos1.path, pos2.path) - 1;
 }

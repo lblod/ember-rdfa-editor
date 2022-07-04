@@ -1,7 +1,9 @@
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelTreeWalker, {
+  toFilterSkipFalse,
+} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import RangeMapper, {
   LeftOrRight,
@@ -69,7 +71,10 @@ export default class OperationAlgorithms {
     //grab all nodes inside the range
     //assumption: the only partial nodes that treewalker grabs are the ones that have opening tags in the selection
     //assumption: opening tag nodes are always parents of the last node in range
-    const walker = GenTreeWalker.fromRange({ range: range });
+    const walker = GenTreeWalker.fromRange({
+      range: range,
+      filter: toFilterSkipFalse((node) => ModelNode.isModelElement(node)),
+    });
     const allNodes = [...walker.nodes()];
 
     //get all nodes that are fully contained in the range
