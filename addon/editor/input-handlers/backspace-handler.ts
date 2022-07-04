@@ -42,7 +42,7 @@ export default class BackspaceHandler extends InputHandler {
         this.rawEditor.executeCommand('remove', removeRange);
       } else {
         this.rawEditor.model.change(() => {
-          this.rawEditor.model.selectRange(new ModelRange(newEnd));
+          this.rawEditor.model.selectRange(new ModelRange(newStart));
         });
       }
     }
