@@ -23,24 +23,28 @@ export default class DeleteHandler extends InputHandler {
   }
 
   handleEvent(_: KeyboardEvent) {
-    const range = this.rawEditor.selection.lastRange;
+    let range = this.rawEditor.selection.lastRange;
     if (range) {
-      const newStart = range.start;
-      const newEnd = range.start.shiftedVisually(1);
-      const removeRange = new ModelRange(newStart, newEnd);
-      const nextNode = GenTreeWalker.fromRange({
-        range: removeRange,
-        filter: toFilterSkipFalse((node) => ModelNode.isModelElement(node)),
-      }).nextNode();
-      if (
-        !ModelNode.isModelElement(nextNode) ||
-        nextNode.getRdfaAttributes().isEmpty
-      ) {
-        this.rawEditor.executeCommand('remove', removeRange);
+      if (range.collapsed) {
+        const newStart = range.start;
+        const newEnd = range.start.shiftedVisually(1);
+        range = new ModelRange(newStart, newEnd);
+        const nextNode = GenTreeWalker.fromRange({
+          range,
+          filter: toFilterSkipFalse((node) => ModelNode.isModelElement(node)),
+        }).nextNode();
+        if (
+          !ModelNode.isModelElement(nextNode) ||
+          nextNode.getRdfaAttributes().isEmpty
+        ) {
+          this.rawEditor.executeCommand('remove', range);
+        } else {
+          this.rawEditor.model.change(() => {
+            this.rawEditor.model.selectRange(new ModelRange(newEnd));
+          });
+        }
       } else {
-        this.rawEditor.model.change(() => {
-          this.rawEditor.model.selectRange(new ModelRange(newEnd));
-        });
+        this.rawEditor.executeCommand('remove', range);
       }
     }
     return { allowPropagation: true, allowBrowserDefault: false };
