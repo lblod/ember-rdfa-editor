@@ -20,6 +20,17 @@ import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-sty
 import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
 import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
 
+export type PluginConfig =
+  | string
+  | {
+      name: string;
+      options: unknown;
+    };
+
+export interface ResolvedPluginConfig {
+  instance: EditorPlugin;
+  options: unknown;
+}
 interface RdfaEditorArgs {
   /**
    * callback that is called with an interface to the editor after editor init completed
@@ -28,7 +39,7 @@ interface RdfaEditorArgs {
    */
   rdfaEditorInit(editor: RdfaDocument): void;
 
-  plugins: string[];
+  plugins: PluginConfig[];
   stealFocus?: boolean;
 }
 
@@ -64,10 +75,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   private owner: ApplicationInstance;
   private logger: Logger;
 
-  get plugins(): string[] {
+  get plugins(): PluginConfig[] {
     return this.args.plugins || [];
   }
-  get editorPlugins(): EditorPlugin[] {
+  get editorPlugins(): ResolvedPluginConfig[] {
     return this.getPlugins();
   }
 
@@ -108,13 +119,25 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     this.editorLoading = false;
   }
 
-  getPlugins(): EditorPlugin[] {
-    const pluginNames = this.plugins;
-    const plugins = [new BasicStyles(), new LumpNodePlugin()];
-    for (const name of pluginNames) {
+  getPlugins(): ResolvedPluginConfig[] {
+    const pluginConfigs = this.plugins;
+    const plugins: ResolvedPluginConfig[] = [
+      { instance: new BasicStyles(), options: null },
+      { instance: new LumpNodePlugin(), options: null },
+    ];
+    for (const config of pluginConfigs) {
+      let name;
+      let options: unknown = null;
+      if (typeof config === 'string') {
+        name = config;
+      } else {
+        name = config.name;
+        options = config.options;
+      }
+
       const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
       if (plugin) {
-        plugins.push(plugin);
+        plugins.push({ instance: plugin, options });
       } else {
         this.logger(`plugin ${name} not found! Skipping...`);
       }

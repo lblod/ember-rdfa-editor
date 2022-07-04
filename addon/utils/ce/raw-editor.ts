@@ -69,10 +69,10 @@ import RemovePropertyCommand from '@lblod/ember-rdfa-editor/commands/node-proper
 import AddMarkToSelectionCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to-selection-command';
 import RemoveMarkFromSelectionCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-selection-command';
 import InsertComponentCommand from '@lblod/ember-rdfa-editor/commands/insert-component-command';
-import { EditorPlugin } from '../editor-plugin';
 import { createLogger, Logger } from '../logging-utils';
 import RemoveComponentCommand from '@lblod/ember-rdfa-editor/commands/remove-component-command';
 import { InlineComponentSpec } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
+import { ResolvedPluginConfig } from '@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor';
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -142,19 +142,23 @@ export default class RawEditor {
     );
   }
 
-  async initializePlugins(plugins: EditorPlugin[]) {
-    for (const plugin of plugins) {
-      await this.initializePlugin(plugin);
+  async initializePlugins(configs: ResolvedPluginConfig[]) {
+    for (const config of configs) {
+      await this.initializePlugin(config);
     }
   }
 
-  async initializePlugin(plugin: EditorPlugin): Promise<void> {
-    const controller = new RawEditorController(plugin.name, this);
-    await plugin.initialize(controller);
-    this.logger(`Initialized plugin ${plugin.name}`);
+  async initializePlugin(config: ResolvedPluginConfig): Promise<void> {
+    const controller = new RawEditorController(config.instance.name, this);
+    await config.instance.initialize(controller, config.options);
+    this.logger(
+      `Initialized plugin ${config.instance.name} with options: ${
+        config.options as string
+      }`
+    );
   }
 
-  async initialize(rootNode: HTMLElement, plugins: EditorPlugin[]) {
+  async initialize(rootNode: HTMLElement, plugins: ResolvedPluginConfig[]) {
     this.registeredCommands = new Map<string, Command>();
     if (this.modelSelectionTracker) {
       this.modelSelectionTracker.stopTracking();
