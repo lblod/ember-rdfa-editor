@@ -152,9 +152,8 @@ export default class RawEditor {
     const controller = new RawEditorController(config.instance.name, this);
     await config.instance.initialize(controller, config.options);
     this.logger(
-      `Initialized plugin ${config.instance.name} with options: ${
-        config.options as string
-      }`
+      `Initialized plugin ${config.instance.name} with options: `,
+      config.options
     );
   }
 
