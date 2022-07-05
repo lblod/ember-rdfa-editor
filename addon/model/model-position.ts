@@ -554,7 +554,8 @@ export default class ModelPosition {
             } else {
               currentPos = ModelPosition.fromInNode(
                 nextNode,
-                nextNode.lastChild.getOffset() + nextNode.lastChild.offsetSize
+                (nextNode.lastChild?.getOffset() || 0) +
+                  (nextNode.lastChild?.offsetSize || 0)
               );
               if (!blockNodeFound) {
                 stepsToShift = Math.min(

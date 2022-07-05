@@ -83,7 +83,9 @@ export default class ModelElement
   }
 
   get lastChild() {
-    return this._children[this._children.length - 1];
+    return this._children.length
+      ? this._children[this._children.length - 1]
+      : null;
   }
 
   get isBlock() {
