@@ -24,7 +24,7 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import SidewayArrowsHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/sideway-arrows-handler';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import { ResolvedPluginConfig } from '../rdfa/rdfa-editor';
 
 interface FeatureService {
   isEnabled(key: string): boolean;
@@ -35,7 +35,7 @@ interface ContentEditableArgs {
 
   rawEditorInit(editor: RawEditor): void;
 
-  plugins: EditorPlugin[];
+  plugins: ResolvedPluginConfig[];
 
   baseIRI?: string;
 
