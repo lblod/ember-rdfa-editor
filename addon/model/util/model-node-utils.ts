@@ -5,6 +5,7 @@ import {
   INVISIBLE_SPACE,
   LIST_CONTAINERS,
   LIST_TYPES,
+  LUMP_NODE_PROPERTY,
   PLACEHOLDER_CLASS,
   TABLE_CELLS,
   VISUAL_NODES,
@@ -153,5 +154,16 @@ export default class ModelNodeUtils {
     } else {
       return '';
     }
+  }
+
+  static parentIsLumpNode(modelNode: ModelNode): boolean {
+    while (modelNode.parent) {
+      const properties = modelNode.parent.getRdfaAttributes().properties;
+      if (properties && properties.includes(LUMP_NODE_PROPERTY)) {
+        return true;
+      }
+      modelNode = modelNode.parent;
+    }
+    return false;
   }
 }

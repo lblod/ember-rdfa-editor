@@ -472,7 +472,9 @@ export default class ModelPosition {
       range: searchRange,
       reverse: !forwards,
       filter: toFilterSkipFalse(
-        (node) => ModelNodeUtils.getVisualLength(node) > 0
+        (node) =>
+          ModelNodeUtils.getVisualLength(node) > 0 &&
+          !ModelNodeUtils.parentIsLumpNode(node)
       ),
     });
 
@@ -589,9 +591,8 @@ export default class ModelPosition {
                 currentPos = ModelPosition.fromInNode(nextNode, 0);
               } else {
                 if (nextNode.nextSibling) {
-                  currentPos = ModelPosition.fromInNode(
-                    nextNode.nextSibling,
-                    0
+                  currentPos = ModelPosition.fromBeforeNode(
+                    nextNode.nextSibling
                   );
                 } else {
                   currentPos = ModelPosition.fromAfterNode(nextNode);
@@ -599,10 +600,7 @@ export default class ModelPosition {
               }
             } else {
               if (blockNodeFound) {
-                currentPos = ModelPosition.fromInNode(
-                  nextNode,
-                  ModelNodeUtils.getVisualLength(nextNode)
-                );
+                currentPos = ModelPosition.fromAfterNode(nextNode);
               } else {
                 if (nextNode.previousSibling) {
                   currentPos = ModelPosition.fromAfterNode(

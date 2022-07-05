@@ -7,6 +7,7 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { Cloneable } from '@lblod/ember-rdfa-editor/model/util/types';
 import {
   LEAF_NODES,
+  LUMP_NODE_PROPERTY,
   NON_BLOCK_NODES,
 } from '@lblod/ember-rdfa-editor/model/util/constants';
 import {
@@ -92,7 +93,11 @@ export default class ModelElement
     return !NON_BLOCK_NODES.has(this.type);
   }
   get isLeaf() {
-    return LEAF_NODES.has(this.type);
+    const properties = this.getRdfaAttributes().properties;
+    return (
+      LEAF_NODES.has(this.type) ||
+      (properties && properties.includes(LUMP_NODE_PROPERTY))
+    );
   }
 
   /**
