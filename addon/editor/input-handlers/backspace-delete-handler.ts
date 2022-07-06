@@ -31,7 +31,8 @@ export default abstract class BackspaceDeleteHandler extends InputHandler {
             (node) =>
               ModelNode.isModelElement(node) &&
               !node.getRdfaAttributes().isEmpty
-          )
+          ) &&
+          nodes.length
         ) {
           this.rawEditor.model.change(() => {
             this.rawEditor.model.selectRange(new ModelRange(shifted));
