@@ -84,6 +84,7 @@ export default class ModelElement
   }
 
   get lastChild() {
+    //TODO: Check correctness
     return this._children.length
       ? this._children[this._children.length - 1]
       : null;
@@ -93,6 +94,7 @@ export default class ModelElement
     return !NON_BLOCK_NODES.has(this.type);
   }
   get isLeaf() {
+     //TODO: Check correctness
     const properties = this.getRdfaAttributes().properties;
     return (
       LEAF_NODES.has(this.type) ||
