@@ -178,6 +178,147 @@ module('Unit | commands | remove-command', function (hooks) {
       QUnit.dump.parse(ctx.model.rootModelNode)
     );
   });
+  test('remove second li', function (assert) {
+    const {
+      root: initial,
+      textNodes: { text },
+      elements: { li },
+    } = vdom`
+      <modelRoot>
+        <ul>
+          <li><text>abc</text></li>
+          <li __id="li"><text __id="text">d</text></li>
+        </ul>
+      </modelRoot>`;
+
+    const { root: expected } = vdom`
+    <modelRoot>
+      <ul>
+        <li><text>abc</text></li>
+      </ul>
+    </modelRoot>`;
+
+    ctx.model.fillRoot(initial);
+    const start = ModelPosition.fromBeforeNode(li);
+    const end = ModelPosition.fromInNode(text, 1);
+    const removeRange = new ModelRange(start, end);
+    command.execute(removeRange);
+    assert.true(
+      ctx.model.rootModelNode.sameAs(expected),
+      QUnit.dump.parse(ctx.model.rootModelNode)
+    );
+  });
+  test('remove first li at the beginning of the document', function (assert) {
+    const {
+      root: initial,
+      textNodes: { text },
+      elements: { ul },
+    } = vdom`
+      <modelRoot>
+        <ul __id="ul">
+          <li><text __id="text">abc</text></li>
+          <li><text>d</text></li>
+        </ul>
+      </modelRoot>`;
+
+    const { root: expected } = vdom`
+    <modelRoot>
+      <text>abc</text>
+      <ul>
+        <li><text>d</text></li>
+      </ul>
+    </modelRoot>`;
+    ctx.model.fillRoot(initial);
+    const start = ModelPosition.fromBeforeNode(ul);
+    const end = ModelPosition.fromInNode(text, 0);
+    const removeRange = new ModelRange(start, end);
+    command.execute(removeRange);
+    assert.true(
+      ctx.model.rootModelNode.sameAs(expected),
+      QUnit.dump.parse(ctx.model.rootModelNode)
+    );
+  });
+  test('remove first li and its content at the beginning of the document', function (assert) {
+    const {
+      root: initial,
+      textNodes: { text },
+      elements: { ul },
+    } = vdom`
+      <modelRoot>
+        <ul __id="ul">
+          <li><text __id="text">d</text></li>
+          <li><text>abc</text></li>
+        </ul>
+      </modelRoot>`;
+
+    const { root: expected } = vdom`
+    <modelRoot>
+      <ul>
+        <li><text>abc</text></li>
+      </ul>
+    </modelRoot>`;
+    ctx.model.fillRoot(initial);
+    const start = ModelPosition.fromBeforeNode(ul);
+    const end = ModelPosition.fromInNode(text, 1);
+    const removeRange = new ModelRange(start, end);
+    command.execute(removeRange);
+    assert.true(
+      ctx.model.rootModelNode.sameAs(expected),
+      QUnit.dump.parse(ctx.model.rootModelNode)
+    );
+  });
+  test('remove only li at the beginning of the document', function (assert) {
+    const {
+      root: initial,
+      textNodes: { text },
+      elements: { ul },
+    } = vdom`
+      <modelRoot>
+        <ul __id="ul">
+          <li><text __id="text">abc</text></li>
+        </ul>
+      </modelRoot>`;
+
+    const { root: expected } = vdom`
+    <modelRoot>
+      <text>abc</text>
+    </modelRoot>`;
+    ctx.model.fillRoot(initial);
+    const start = ModelPosition.fromBeforeNode(ul);
+    const end = ModelPosition.fromInNode(text, 0);
+    const removeRange = new ModelRange(start, end);
+    command.execute(removeRange);
+    assert.true(
+      ctx.model.rootModelNode.sameAs(expected),
+      QUnit.dump.parse(ctx.model.rootModelNode)
+    );
+  });
+  test('remove only li with content at the beginning of the document', function (assert) {
+    const {
+      root: initial,
+      textNodes: { text },
+      elements: { ul },
+    } = vdom`
+      <modelRoot>
+        <ul __id="ul">
+          <li><text __id="text">d</text></li>
+        </ul>
+      </modelRoot>`;
+
+    const { root: expected } = vdom`
+    <modelRoot>
+      <text></text>
+    </modelRoot>`;
+    ctx.model.fillRoot(initial);
+    const start = ModelPosition.fromBeforeNode(ul);
+    const end = ModelPosition.fromInNode(text, 1);
+    const removeRange = new ModelRange(start, end);
+    command.execute(removeRange);
+    assert.true(
+      ctx.model.rootModelNode.sameAs(expected),
+      QUnit.dump.parse(ctx.model.rootModelNode)
+    );
+  });
   test('remove break between divs', function (assert) {
     const {
       root: initial,
