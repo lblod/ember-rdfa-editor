@@ -533,12 +533,8 @@ export default class ModelPosition {
             ModelNode.isModelInlineComponent(nextNode)
           ) {
             // If the next leaf is a node, set the position after or before the node based on the direction
-            if (blockNodeFound) {
+            if (blockNodeFound && !nextNode.isLeaf) {
               //TODO: Check correctness
-              // currentPos = ModelPosition.fromInNode(
-              //   nextNode,
-              //   ModelNodeUtils.getVisualLength(nextNode)
-              // );
               currentPos = ModelPosition.fromAfterNode(nextNode);
             } else {
               if (nextNode.previousSibling) {
@@ -645,16 +641,16 @@ export default class ModelPosition {
           ) {
             // If the next leaf is a node, set the position after or before the node based on the direction
 
-            if (blockNodeFound) {
-              currentPos = ModelPosition.fromInNode(nextNode, 0);
+            if (blockNodeFound && !nextNode.isLeaf) {
+              // if (nextNode.isLeaf) {
+              //   currentPos = ModelPosition.fromAfterNode(nextNode);
+              // } else {
+              currentPos = ModelPosition.fromBeforeNode(nextNode);
+              // }
+              // currentPos = ModelPosition.fromInNode(nextNode, 0);
             } else {
               if (nextNode.nextSibling) {
-                //TODO: Check correctness
-                // currentPos = ModelPosition.fromInNode(
-                //   nextNode.nextSibling,
-                //   0
-                // );
-                currentPos = ModelPosition.fromBeforeNode(nextNode.nextSibling);
+                currentPos = ModelPosition.fromInNode(nextNode.nextSibling, 0);
               } else {
                 currentPos = ModelPosition.fromAfterNode(nextNode);
               }

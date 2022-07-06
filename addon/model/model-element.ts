@@ -94,7 +94,7 @@ export default class ModelElement
     return !NON_BLOCK_NODES.has(this.type);
   }
   get isLeaf() {
-     //TODO: Check correctness
+    //TODO: Check correctness
     const properties = this.getRdfaAttributes().properties;
     return (
       LEAF_NODES.has(this.type) ||

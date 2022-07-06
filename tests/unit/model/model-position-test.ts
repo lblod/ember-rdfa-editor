@@ -772,28 +772,6 @@ module('Unit | model | model-position', function () {
       assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
-    test('shifted by amount - header tag', function (assert) {
-      const {
-        textNodes: { foo },
-        elements: { h1 },
-      } = vdom`
-      <modelRoot>
-        <h1 __id="h1"><text __id="foo">foo</text></h1>
-      </modelRoot>
-      `;
-      const referencePosLeft = ModelPosition.fromAfterNode(h1);
-      const referencePosRight = ModelPosition.fromBeforeNode(h1);
-
-      const oneLeft = ModelPosition.fromInTextNode(foo, 2);
-
-      const oneRight = ModelPosition.fromInTextNode(foo, 1);
-
-      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
-      const shiftedRight = referencePosRight.shiftedVisually(1);
-
-      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
-      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
-    });
     test('shifted by amount - lump node', function (assert) {
       const {
         textNodes: { baz, foo },
@@ -821,10 +799,11 @@ module('Unit | model | model-position', function () {
     test('shifted by amount - div before and after lump node', function (assert) {
       const {
         textNodes: { baz, foo },
+        elements: { lump },
       } = vdom`
       <modelRoot>
         <div><text __id="baz">baz</text></div>
-        <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode">
+        <div __id="lump" property="http://lblod.data.gift/vocabularies/editor/isLumpNode">
             <text>bar</text>
         </div>
         <div><text __id="foo">foo</text></div>
@@ -832,7 +811,7 @@ module('Unit | model | model-position', function () {
       const referencePosLeft = ModelPosition.fromInTextNode(foo, 0);
       const referencePosRight = ModelPosition.fromInTextNode(baz, 3);
 
-      const oneLeft = ModelPosition.fromInTextNode(baz, 3);
+      const oneLeft = ModelPosition.fromBeforeNode(lump);
 
       const oneRight = ModelPosition.fromInTextNode(foo, 0);
 

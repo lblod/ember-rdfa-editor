@@ -98,6 +98,10 @@ export default class ModelNodeUtils {
     return 0;
   }
 
+  static isVisible(node: ModelNode): boolean {
+    return this.getVisualLength(node) > 0;
+  }
+
   /**
    * Determines the index in the text node after having took a number of visual steps in a specific direction
    * from either the start or the end of the text node
