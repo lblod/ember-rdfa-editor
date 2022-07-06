@@ -3,7 +3,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, triggerKeyEvent, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-module('Integration | InputHandler | backspace-handler', function (hooks) {
+module.skip('Integration | InputHandler | backspace-handler', function (hooks) {
   setupRenderingTest(hooks);
 
   test('editor renders', async function (assert) {
