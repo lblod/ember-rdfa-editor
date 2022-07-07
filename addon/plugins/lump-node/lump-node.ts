@@ -27,7 +27,8 @@ export default class LumpNodePlugin implements EditorPlugin {
       const newPosition = selection.lastRange?.start;
       if (
         this.lumpNodePreviouslyBeforeCursor &&
-        !this.lastPosition?.equals(newPosition)
+        !this.lastPosition?.equals(newPosition) &&
+        this.lumpNodePreviouslyBeforeCursor.parent
       ) {
         this.controller?.executeCommand(
           'remove-property',

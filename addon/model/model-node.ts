@@ -373,6 +373,7 @@ export default abstract class ModelNode implements Walkable {
       throw new ModelError('Cannot remove root');
     }
     this.parent.removeChild(this);
+    this.parent = null;
   }
 
   /**
