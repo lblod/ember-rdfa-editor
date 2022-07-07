@@ -27,6 +27,7 @@ import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 import { InlineComponentSpec } from './inline-components/model-inline-component';
 import NodeView from './node-view';
+import { ConfigUpdatedEvent } from '../utils/editor-event';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
@@ -101,6 +102,10 @@ export default interface Controller {
     config?: ListenerConfig
   ): void;
 
+  getConfig(key: string): string | null;
+
+  setConfig(key: string, value: string | null): void;
+
   write(writeSelection?: boolean, moveSelectionIntoView?: boolean): void;
 }
 
@@ -159,6 +164,23 @@ export class RawEditorController implements Controller {
     return this._rawEditor.model.marksRegistry.getMarksFor(owner);
   }
 
+  getConfig(key: string): string | null {
+    return this._rawEditor.config.get(key) || null;
+  }
+  setConfig(key: string, value: string | null): void {
+    const oldValue = this.getConfig(key);
+    this._rawEditor.config.set(key, value);
+    this._rawEditor.eventBus.emit(
+      new ConfigUpdatedEvent({
+        owner: this.name,
+        payload: {
+          changedKey: key,
+          oldValue,
+          newValue: value,
+        },
+      })
+    );
+  }
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
     return new LiveMarkSet(this, args);
   }

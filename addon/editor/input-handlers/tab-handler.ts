@@ -130,15 +130,23 @@ export default class TabInputHandler extends InputHandler {
     const selRange = selection.lastRange!;
     let pos = selRange.start;
     const direction = event.shiftKey ? Direction.BACKWARDS : Direction.FORWARDS;
+    let filter;
+    if (this.rawEditor.config.get('showRdfaBlocks')) {
+      filter = toFilterSkipFalse(
+        (node: ModelNode) =>
+          ModelNode.isModelText(node) ||
+          (ModelNode.isModelElement(node) && !node.getRdfaAttributes().isEmpty)
+      );
+    } else {
+      filter = toFilterSkipFalse((node: ModelNode) =>
+        ModelNode.isModelText(node)
+      );
+    }
 
     const walker = GenTreeWalker.fromPosition({
       position: pos,
       reverse: event.shiftKey,
-      filter: toFilterSkipFalse(
-        (node: ModelNode) =>
-          ModelNode.isModelText(node) ||
-          (ModelNode.isModelElement(node) && !node.getRdfaAttributes().isEmpty)
-      ),
+      filter,
     });
     const nodes = walker.nodes();
     let resultPos;

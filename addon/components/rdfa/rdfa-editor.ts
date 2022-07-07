@@ -152,9 +152,12 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   @action
   toggleRdfaBlocks() {
-    this.showRdfaBlocks = !this.showRdfaBlocks;
-    if (this.editor?.model) {
-      this.editor.model.writeSelection();
+    if (!this.toolbarController!.getConfig('showRdfaBlocks')) {
+      this.showRdfaBlocks = true;
+      this.toolbarController!.setConfig('showRdfaBlocks', 'true');
+    } else {
+      this.showRdfaBlocks = false;
+      this.toolbarController!.setConfig('showRdfaBlocks', null);
     }
   }
 
