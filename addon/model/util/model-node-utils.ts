@@ -170,4 +170,12 @@ export default class ModelNodeUtils {
     }
     return false;
   }
+
+  static isLumpNode(modelElement: ModelElement): boolean {
+    const properties = modelElement.getRdfaAttributes().properties;
+    if (properties && properties.includes(LUMP_NODE_PROPERTY)) {
+      return true;
+    }
+    return false;
+  }
 }
