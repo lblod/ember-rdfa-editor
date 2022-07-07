@@ -581,7 +581,7 @@ module('Unit | model | utils | gen-tree-walker-test', function (hooks) {
         const nodes = [...walker.nodes()];
         assert.strictEqual(nodes.length, 0);
       });
-      test('Range does not contain any nodes 2 - reverse', function (assert) {
+      test('Range does not contain any nodes 2', function (assert) {
         const {
           elements: { first },
           textNodes: { second },

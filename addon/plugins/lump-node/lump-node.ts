@@ -1,8 +1,6 @@
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
-import { LUMP_NODE_PROPERTY } from '@lblod/ember-rdfa-editor/model/util/constants';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';

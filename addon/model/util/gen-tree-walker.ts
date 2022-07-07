@@ -7,7 +7,6 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { NOOP } from '@lblod/ember-rdfa-editor/model/util/constants';
-import { RelativePosition } from './types';
 
 export interface Walkable {
   parentNode: Walkable | null;
@@ -228,7 +227,7 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
       }
       return new GenTreeWalker<ModelNode>({
         root,
-        start: startNode as ModelNode,
+        start: startNode,
         end: endNode as ModelNode,
         descend,
         visitParentUpwards,

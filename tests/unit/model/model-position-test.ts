@@ -823,7 +823,7 @@ module('Unit | model | model-position', function () {
     });
     test('shifted by amount - br between divs', function (assert) {
       const {
-        textNodes: { baz, foo },
+        textNodes: { foo },
         elements: { br },
       } = vdom`
       <modelRoot>
