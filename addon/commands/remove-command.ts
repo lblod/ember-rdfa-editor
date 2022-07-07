@@ -67,6 +67,7 @@ export default class RemoveCommand extends Command {
       } else {
         this.model.selectRange(rangeAfterDelete);
       }
+      this.model.emitSelectionChanged();
     });
   }
 }
