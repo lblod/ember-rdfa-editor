@@ -11,7 +11,6 @@ import GenTreeWalker from '../model/util/gen-tree-walker';
 import ModelElement from '../model/model-element';
 import { toFilterSkipFalse } from '../model/util/model-tree-walker';
 import ModelNode from '../model/model-node';
-import ArrayUtils from '../model/util/array-utils';
 
 export default class RemoveCommand extends Command {
   name = 'remove';
@@ -96,11 +95,8 @@ function isolateLowestLi(
 
   const splitPoint = mutator.splitUntilElement(splitPos, topUl.parent);
   const newPos = ModelPosition.fromInNode(endParent, end.parentOffset);
-  let start = removeRange.start;
-  //check if the li is just at the beginning of the document and adjust the start of the range accordingly
-  if (ArrayUtils.all(start.path, (i) => i === 0)) {
-    start = ModelPosition.fromBeforeNode(topUl);
-  }
+  const start = removeRange.start;
+
   const adjustedRange = new ModelRange(start, newPos);
   const rightSideOfSplit = splitPoint.nodeAfter();
   return { adjustedRange, rightSideOfSplit };
@@ -135,16 +131,14 @@ function cleanupRangeAfterDelete(
 function findNestedListFromPos(
   pos: ModelPosition,
   inLi: ModelElement
-): ModelElement | null {
+): ModelNode | null {
   return GenTreeWalker.fromRange({
     range: new ModelRange(
       pos,
       ModelPosition.fromInNode(inLi, inLi.getMaxOffset())
     ),
     filter: toFilterSkipFalse(ModelNodeUtils.isListContainer),
-  })
-    .nodes()
-    .next().value;
+  }).nextNode();
 }
 /**
  * Completely flatten a nested list up to the level of the given li container

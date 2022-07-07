@@ -1,14 +1,26 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import { warn } from '@ember/debug';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import { InputHandler } from './input-handler';
 
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
+import { ListBackspaceDeleteInputPlugin } from '@lblod/ember-rdfa-editor/utils/plugins/lists/backspace-delete-plugin';
+import { RdfaBackspaceDeleteInputPlugin } from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/backspace-delete-plugin';
+import { InputHandler, InputPlugin } from './input-handler';
+import { Manipulation, ManipulationGuidance } from './manipulation';
+
+export interface BackspaceDeleteHandlerManipulation extends Manipulation {
+  type: 'backspace-delete-handler';
+  range: ModelRange;
+  direction: number;
+}
 export default abstract class BackspaceDeleteHandler extends InputHandler {
   abstract direction: number;
+  plugins: Array<BackspaceDeletePlugin>;
   constructor({ rawEditor }: { rawEditor: RawEditor }) {
     super(rawEditor);
+    this.plugins = [
+      new RdfaBackspaceDeleteInputPlugin(),
+      new ListBackspaceDeleteInputPlugin(),
+    ];
   }
 
   handleEvent(_: KeyboardEvent) {
@@ -20,23 +32,27 @@ export default abstract class BackspaceDeleteHandler extends InputHandler {
           this.direction === -1
             ? new ModelRange(shifted, range.start)
             : new ModelRange(range.start, shifted);
-        const walker = GenTreeWalker.fromRange({
-          range: range,
-          reverse: this.direction === -1,
-        });
-        const nodes = [...walker.nodes()];
-        if (
-          ArrayUtils.all(
-            nodes,
-            (node) =>
-              ModelNode.isModelElement(node) &&
-              !node.getRdfaAttributes().isEmpty
-          ) &&
-          nodes.length
-        ) {
-          this.rawEditor.model.change(() => {
-            this.rawEditor.model.selectRange(new ModelRange(shifted));
-          });
+        const manipulation: BackspaceDeleteHandlerManipulation = {
+          type: 'backspace-delete-handler',
+          range,
+          direction: this.direction,
+        };
+        const { mayExecute, dispatchedExecutor } =
+          this.checkManipulationByPlugins(manipulation);
+
+        // Error if we're not allowed to execute.
+        if (!mayExecute) {
+          warn(
+            `Not allowed to execute manipulation for ${this.constructor.toString()}`,
+            { id: 'backspace-delete-handler-manipulation-not-allowed' }
+          );
+          return { allowPropagation: false, allowBrowserDefault: false };
+        }
+
+        // Run the manipulation.
+        if (dispatchedExecutor) {
+          // NOTE: We should pass some sort of editor interface here in the future.
+          dispatchedExecutor(manipulation, this.rawEditor);
         } else {
           this.rawEditor.executeCommand('remove', range);
         }
@@ -47,4 +63,21 @@ export default abstract class BackspaceDeleteHandler extends InputHandler {
 
     return { allowPropagation: true, allowBrowserDefault: false };
   }
+}
+
+export interface BackspaceDeletePlugin extends InputPlugin {
+  /**
+   * One-liner explaining what the plugin solves.
+   */
+  label: string;
+
+  /**
+   * Callback executed to see if the plugin allows a certain
+   * manipulation and/or if it intends to handle the manipulation
+   * itself.
+   */
+  guidanceForManipulation: (
+    manipulation: BackspaceDeleteHandlerManipulation,
+    editor: RawEditor
+  ) => ManipulationGuidance | null;
 }
