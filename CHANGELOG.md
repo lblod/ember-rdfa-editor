@@ -17,6 +17,22 @@
 
 
 
+## 0.60.1 (2022-07-07)
+
+#### :rocket: Enhancement
+* [#291](https://github.com/lblod/ember-rdfa-editor/pull/291) Pass options object to plugins ([@abeforgit](https://github.com/abeforgit))
+* [#287](https://github.com/lblod/ember-rdfa-editor/pull/287) Article plugin styling ([@Dietr](https://github.com/Dietr))
+
+#### :bug: Bug Fix
+* [#290](https://github.com/lblod/ember-rdfa-editor/pull/290) Fix cursor behavior in empty lists ([@abeforgit](https://github.com/abeforgit))
+* [#289](https://github.com/lblod/ember-rdfa-editor/pull/289) fixed issue where insert a list a the end of line caused the insertion of a newline ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 3
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Dieter Peirs ([@Dietr](https://github.com/Dietr))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
 ## 0.60.0 (2022-06-30)
 
 #### :rocket: Enhancement
