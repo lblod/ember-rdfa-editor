@@ -4,6 +4,7 @@ import {
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-delete-handler';
 import { ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
@@ -36,6 +37,18 @@ export class ListBackspaceDeleteInputPlugin implements BackspaceDeletePlugin {
           };
         }
       }
+    }
+    const nodeAfter = range.end.nodeAfter();
+    if (ModelNode.isModelElement(nodeAfter) && nodeAfter.type === 'li') {
+      return {
+        allow: true,
+        executor: () => {
+          editor.executeCommand(
+            'remove',
+            new ModelRange(range.start, ModelPosition.fromInNode(nodeAfter, 0))
+          );
+        },
+      };
     }
     return null;
   }
