@@ -31,6 +31,11 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import {
+  toFilterRejectFalse,
+  toFilterSkipFalse,
+} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 type BaseTabHandlerManipulation = { direction: Direction };
 
 type InternalTabHandlerManipulation =
@@ -123,26 +128,57 @@ export default class TabInputHandler extends InputHandler {
   handleTab(event: KeyboardEvent) {
     const selection = this.rawEditor.selection;
     const selRange = selection.lastRange!;
-    const pos = selRange.start;
-
+    let pos = selRange.start;
     const direction = event.shiftKey ? Direction.BACKWARDS : Direction.FORWARDS;
-    const nextEl = findNextElement(pos, direction);
+
+    const walker = GenTreeWalker.fromPosition({
+      position: pos,
+      reverse: event.shiftKey,
+      filter: toFilterSkipFalse(
+        (node: ModelNode) =>
+          ModelNode.isModelText(node) ||
+          (ModelNode.isModelElement(node) && !node.getRdfaAttributes().isEmpty)
+      ),
+    });
+    const nodes = walker.nodes();
     let resultPos;
-    if (nextEl) {
-      // next pos is position inside sibling element
-      resultPos = posInside(nextEl, direction);
-    } else {
-      // next pos is after parent, or inside element sibling of parent
-      // if it has one
-      const parent = pos.parent;
-      resultPos = posNextTo(parent, direction);
-      if (resultPos) {
-        const parentSib = findNextElement(resultPos, direction);
-        if (parentSib) {
-          resultPos = posInside(parentSib, direction);
-        }
+    const nextNode = nodes.next().value;
+    if (ModelNode.isModelElement(nextNode)) {
+      resultPos = ModelPosition.fromInNode(nextNode, 0);
+    } else if (nextNode) {
+      resultPos = ModelPosition.fromBeforeNode(nextNode);
+    }
+    if (resultPos && resultPos.sameAs(pos)) {
+      const nextNode = nodes.next().value;
+      if (ModelNode.isModelElement(nextNode)) {
+        resultPos = posInside(nextNode, direction);
+      } else if (nextNode) {
+        resultPos = ModelPosition.fromBeforeNode(nextNode);
       }
     }
+    // const nextNode = peekNode(pos, direction);
+    // if (nextNode) {
+    //   if (nextNode.isLeaf) {
+    //     resultPos = posAfter(nextNode, direction);
+    //     const afterResult = peekNode(resultPos, direction);
+    //     if (ModelNode.isModelElement(afterResult) && !afterResult.isLeaf) {
+    //       resultPos = posInside(afterResult, direction);
+    //     }
+    //   } else if (ModelNode.isModelElement(nextNode)) {
+    //     resultPos = posInside(nextNode, direction);
+    //   }
+    // } else {
+    //   // next pos is after parent, or inside element sibling of parent
+    //   // if it has one
+    //   const parent = pos.parent;
+    //   resultPos = posAfter(parent, direction);
+    //   const parentSib = sibling(parent, direction);
+    //   if (parentSib && parentSib.isLeaf) {
+    //     resultPos = posBefore(parentSib, direction);
+    //   } else if (ModelNode.isModelElement(parentSib)) {
+    //     resultPos = posInside(parentSib, direction);
+    //   }
+    // }
     if (resultPos) {
       const newRange = new ModelRange(resultPos, resultPos);
       this.rawEditor.selection.selectRange(newRange);
@@ -409,24 +445,25 @@ function sibling(node: ModelNode, direction: Direction): ModelNode | null {
     return node.nextSibling;
   }
 }
-function posNextTo(
-  node: ModelNode,
-  direction: Direction
-): ModelPosition | null {
-  // node is rootnode
-  if (!node.parent) {
-    return null;
-  }
-  if (direction === Direction.BACKWARDS) {
-    return ModelPosition.fromBeforeNode(node);
-  } else {
-    return ModelPosition.fromAfterNode(node);
-  }
-}
 function posInside(element: ModelElement, direction: Direction): ModelPosition {
   if (direction === Direction.BACKWARDS) {
     return ModelPosition.fromInElement(element, element.getMaxOffset());
   } else {
     return ModelPosition.fromInElement(element, 0);
+  }
+}
+
+function posAfter(node: ModelNode, direction: Direction): ModelPosition {
+  if (direction === Direction.FORWARDS) {
+    return ModelPosition.fromAfterNode(node);
+  } else {
+    return ModelPosition.fromBeforeNode(node);
+  }
+}
+function posBefore(node: ModelNode, direction: Direction): ModelPosition {
+  if (direction === Direction.FORWARDS) {
+    return ModelPosition.fromBeforeNode(node);
+  } else {
+    return ModelPosition.fromAfterNode(node);
   }
 }

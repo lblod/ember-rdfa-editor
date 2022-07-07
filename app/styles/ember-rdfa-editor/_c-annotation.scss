@@ -252,3 +252,9 @@ $say-annotation-background-color: var(--au-gray-100) !default;
     }
   }
 }
+
+  .active {
+    border-color: green !important;
+    border-width: 3px !important;
+    border-style: solid !important;
+  }

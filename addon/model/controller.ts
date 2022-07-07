@@ -26,6 +26,7 @@ import LiveMarkSet, {
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 import { InlineComponentSpec } from './inline-components/model-inline-component';
+import NodeView from './node-view';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
@@ -178,6 +179,9 @@ export class RawEditorController implements Controller {
     ...args: A
   ): boolean {
     return this._rawEditor.canExecuteCommand(commandName, ...args);
+  }
+  modelToView(node: ModelNode): NodeView | null {
+    return this._rawEditor.model.modelToView(node);
   }
 
   offEvent<E extends AnyEventName>(
