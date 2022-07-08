@@ -63,21 +63,27 @@ export default class LiveMarkSet {
     const marksRegistry = this.controller.marksRegistry;
 
     for (const match of matchesToRemove) {
-      for (const liveSpec of this.liveMarkSpecs) {
-        let markSpec;
-        if (typeof liveSpec === 'string') {
-          markSpec = marksRegistry.lookupMark(liveSpec);
-        } else {
-          markSpec = marksRegistry.lookupMark(liveSpec.name);
-        }
-        if (markSpec) {
-          // TODO this is a hack to workaround the current awkwardness of removing marks
-          // needs a rethink
-          mutator.removeMark(match.range, markSpec, {
-            setBy: this.controller.name,
-          });
-        } else {
-          throw new ModelError(`Unrecognized mark: ${liveSpec.toString()}`);
+      // Conservative check which determines if range in its current form still exists
+      // TODO: The range should ideally be mapped to a correct new range which does exist
+      match.range.start.invalidateParentCache();
+      match.range.end.invalidateParentCache();
+      if (match.range.start.parent && match.range.end.parent) {
+        for (const liveSpec of this.liveMarkSpecs) {
+          let markSpec;
+          if (typeof liveSpec === 'string') {
+            markSpec = marksRegistry.lookupMark(liveSpec);
+          } else {
+            markSpec = marksRegistry.lookupMark(liveSpec.name);
+          }
+          if (markSpec) {
+            // TODO this is a hack to workaround the current awkwardness of removing marks
+            // needs a rethink
+            mutator.removeMark(match.range, markSpec, {
+              setBy: this.controller.name,
+            });
+          } else {
+            throw new ModelError(`Unrecognized mark: ${liveSpec.toString()}`);
+          }
         }
       }
       this._activeMatches.delete(match.range.toString());
