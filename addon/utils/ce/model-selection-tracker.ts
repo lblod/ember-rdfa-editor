@@ -2,9 +2,9 @@ import Model from '@lblod/ember-rdfa-editor/model/model';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 interface DomSelection {
-  anchorNode: Node | null;
+  anchorNode?: Node;
 
-  focusNode: Node | null;
+  focusNode?: Node;
 
   anchorOffset: number;
 
@@ -43,8 +43,8 @@ export default class ModelSelectionTracker {
     }
     this.previousSelection = {
       anchorOffset: currentSelection.anchorOffset,
-      focusNode: currentSelection.focusNode,
-      anchorNode: currentSelection.anchorNode,
+      focusNode: currentSelection.focusNode?.cloneNode(),
+      anchorNode: currentSelection.anchorNode?.cloneNode(),
       focusOffset: currentSelection.focusOffset,
     };
     this.model.readSelection();
