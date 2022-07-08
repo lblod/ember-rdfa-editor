@@ -3,6 +3,7 @@ import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 
 module('Unit | commands | make-list-command', function (hooks) {
   const ctx = new ModelTestContext();
@@ -23,7 +24,7 @@ module('Unit | commands | make-list-command', function (hooks) {
     const { root: expected } = vdom`
       <modelRoot>
         <ul>
-          <li><text></text></li>
+          <li><text>${INVISIBLE_SPACE}</text></li>
         </ul>
       </modelRoot>
     `;
@@ -40,22 +41,22 @@ module('Unit | commands | make-list-command', function (hooks) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
-        <text>${'\n'}</text>
+        <br/>
       </modelRoot>
     `;
 
     // language=XML
     const { root: expected } = vdom`
       <modelRoot>
-        <text>${'\n'}</text>
+        <br/>
         <ul>
-          <li><text></text></li>
+          <li><text>${INVISIBLE_SPACE}</text></li>
         </ul>
       </modelRoot>
     `;
 
     ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 1, 1);
+    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 1);
     ctx.model.selectRange(range);
 
     command.execute('ul');

@@ -15,6 +15,7 @@ import GenTreeWalker, {
 import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
 
 export type StickySide = 'none' | 'left' | 'right' | 'both';
 
@@ -257,6 +258,87 @@ export default class ModelRange {
    */
   get collapsed(): boolean {
     return this.start.sameAs(this.end);
+  }
+
+  /**
+   * not so janky debug function
+   */
+  visualize(): void {
+    let root = this.root;
+    while (root.parent) {
+      root = root.parent;
+    }
+    root = root.clone();
+    const range = ModelRange.fromPaths(root, this.start.path, this.end.path);
+
+    const startRange = new ModelRange(range.start, range.start);
+    const endRange = new ModelRange(range.end, range.end);
+    const startText = new ModelText('[===START===]');
+    const endText = new ModelText('[===END===]');
+    let startSplit = false;
+    let endSplit = false;
+
+    if (range.start.isInsideText() && range.start.parentOffset != 0) {
+      startSplit = true;
+    }
+    if (range.end.isInsideText() && range.end.parentOffset != 0) {
+      endSplit = true;
+    }
+
+    new InsertOperation(undefined, endRange, endText).execute();
+
+    new InsertOperation(undefined, startRange, startText).execute();
+
+    let modelString = (root.toXml() as Element).innerHTML;
+    if (startSplit) {
+      modelString = modelString.replace(
+        /<\/text><text __dirty="node,content">\[===START===\]<\/text><text.+?>/,
+        '  {[===  '
+      );
+    } else {
+      modelString = modelString.replace(
+        '<text __dirty="node,content">[===START===]</text>',
+        '  {[===  '
+      );
+    }
+    if (endSplit) {
+      modelString = modelString.replace(
+        /<\/text><text __dirty="node,content">\[===END===\]<\/text><text.+?>/,
+        '  ===]}  '
+      );
+    } else {
+      modelString = modelString.replace(
+        '<text __dirty="node,content">[===END===]</text>',
+        '  ===]}  '
+      );
+    }
+    const process = (str: string): string => {
+      const div = document.createElement('div');
+      div.innerHTML = str.trim();
+
+      return format(div, 0).innerHTML;
+    };
+
+    const format = (node: Element, level: number): Element => {
+      const indentBefore = new Array(level++ + 1).join('  '),
+        indentAfter = new Array(level - 1).join('  ');
+      let textNode;
+
+      for (let i = 0; i < node.children.length; i++) {
+        textNode = document.createTextNode('\n' + indentBefore);
+        node.insertBefore(textNode, node.children[i]);
+
+        format(node.children[i], level);
+
+        if (node.lastElementChild == node.children[i]) {
+          textNode = document.createTextNode('\n' + indentAfter);
+          node.appendChild(textNode);
+        }
+      }
+
+      return node;
+    };
+    console.log(process(modelString), '\n');
   }
 
   getCommonPosition(): ModelPosition | null {

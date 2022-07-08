@@ -4,14 +4,18 @@ import Model from '@lblod/ember-rdfa-editor/model/model';
 import { WriterError } from '@lblod/ember-rdfa-editor/utils/errors';
 import UnpollutedHtmlElementWriter from './unpolluted-html-element-writer';
 import UnpollutedHtmlTextWriter from './unpolluted-html-text-writer';
+import UnpollutedHtmlInlineComponentWriter from './unpolluted-html-inline-component-writer';
 
 export default class HTMLExportWriter implements Writer<ModelNode, Node> {
   private htmlTextWriter: UnpollutedHtmlTextWriter;
   private htmlElementWriter: UnpollutedHtmlElementWriter;
-
+  private htmlInlineComponentWriter: UnpollutedHtmlInlineComponentWriter;
   constructor(private model: Model) {
     this.htmlTextWriter = new UnpollutedHtmlTextWriter(model);
     this.htmlElementWriter = new UnpollutedHtmlElementWriter(model);
+    this.htmlInlineComponentWriter = new UnpollutedHtmlInlineComponentWriter(
+      model
+    );
   }
 
   write(modelNode: ModelNode): Node {
@@ -24,6 +28,8 @@ export default class HTMLExportWriter implements Writer<ModelNode, Node> {
       }
     } else if (ModelNode.isModelText(modelNode)) {
       result = this.htmlTextWriter.write(modelNode);
+    } else if (ModelNode.isModelInlineComponent(modelNode)) {
+      result = this.htmlInlineComponentWriter.write(modelNode);
     } else {
       throw new WriterError('Unsupported node type');
     }

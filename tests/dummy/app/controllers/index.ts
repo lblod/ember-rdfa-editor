@@ -22,7 +22,7 @@ export default class IndexController extends Controller {
   @service router!: RouterService;
   @service features!: FeaturesService;
   @tracked htmlDebuggerOpen = false;
-  @tracked plugins = ['dummy'];
+  @tracked plugins = [{ name: 'dummy', options: { testKey: 'hello' } }];
   private unloadListener?: () => void;
   private xmlEditor?: EditorView;
   private htmlEditor?: EditorView;
@@ -160,6 +160,7 @@ export default class IndexController extends Controller {
 
   saveEditorContentToLocalStorage() {
     if (this.rdfaEditor) {
+      this.rdfaEditor.model.read();
       localStorage.setItem('EDITOR_CONTENT', this.rdfaEditor.htmlContent);
     }
   }

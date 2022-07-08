@@ -17,12 +17,15 @@ import GenTreeWalker, {
 } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement, {
+  ElementType,
+} from '@lblod/ember-rdfa-editor/model/model-element';
 import LiveMarkSet, {
   LiveMarkSetArgs,
 } from '@lblod/ember-rdfa-editor/model/live-mark-set';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
+import { InlineComponentSpec } from './inline-components/model-inline-component';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
@@ -65,6 +68,8 @@ export default interface Controller {
 
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet;
 
+  createModelElement(type: ElementType): ModelElement;
+
   executeCommand<A extends unknown[], R>(
     commandName: string,
     ...args: A
@@ -81,6 +86,8 @@ export default interface Controller {
 
   registerMark(spec: MarkSpec): void;
 
+  registerInlineComponent(component: InlineComponentSpec): void;
+
   onEvent<E extends AnyEventName>(
     eventName: E,
     callback: EditorEventListener<E>,
@@ -93,7 +100,7 @@ export default interface Controller {
     config?: ListenerConfig
   ): void;
 
-  write(writeSelection?: boolean): void;
+  write(writeSelection?: boolean, moveSelectionIntoView?: boolean): void;
 }
 
 export class RawEditorController implements Controller {
@@ -155,6 +162,10 @@ export class RawEditorController implements Controller {
     return new LiveMarkSet(this, args);
   }
 
+  createModelElement(type: ElementType): ModelElement {
+    return new ModelElement(type);
+  }
+
   executeCommand<A extends unknown[], R>(
     commandName: string,
     ...args: A
@@ -197,7 +208,15 @@ export class RawEditorController implements Controller {
     this._rawEditor.registerMark(spec);
   }
 
-  write(writeSelection = true) {
-    this._rawEditor.model.write(this.modelRoot, writeSelection);
+  registerInlineComponent(component: InlineComponentSpec) {
+    this._rawEditor.registerComponent(component);
+  }
+
+  write(writeSelection = true, moveSelectionIntoView = false) {
+    this._rawEditor.model.write(
+      this.modelRoot,
+      writeSelection,
+      moveSelectionIntoView
+    );
   }
 }

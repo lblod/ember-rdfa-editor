@@ -5,7 +5,7 @@ import {
   ModelError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { AttributeSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import { AttributeSpec } from '../model/util/render-spec';
 
 export default class RemoveMarkFromSelectionCommand extends Command<
   [string, AttributeSpec],

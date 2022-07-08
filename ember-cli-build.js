@@ -22,6 +22,9 @@ module.exports = function (defaults) {
           __filename: true,
           __dirname: true,
         },
+        module: {
+          rules: [{ test: /\.handlebars$/, loader: 'handlebars-loader' }],
+        },
         // plugins: [
         //   new webpack.ProvidePlugin({
         //     process: 'process/browser'

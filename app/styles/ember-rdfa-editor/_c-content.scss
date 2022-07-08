@@ -172,7 +172,7 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
 
     &:focus {
       outline: var(--au-outline);
-      outline-offset: $au-unit-tiny * .5;
+      outline-offset: $au-unit-tiny * 0.5;
     }
   }
 
@@ -399,6 +399,10 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     }
   }
 
+  .trailing br {
+    display: none;
+  }
+
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"],
   [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] *
   {
@@ -419,5 +423,20 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
   [typeof='ext:Variable'],
   [property='ext:metadata'] {
     display: none !important;
+  }
+
+  // Structures
+  [property="say:hasPart"] + [property="say:hasPart"] {
+    margin-top: $au-unit-small;
+  }
+
+  [property="say:hasPart"] [property="say:hasPart"],
+  [property="say:hasPart"] [property="eli:has_part"] {
+    margin-left: $au-unit-tiny;
+  }
+
+  [typeof="besluit:Artikel"] >[property='say:heading'],
+  [typeof="say:Article"] >[property='say:heading'] {
+    font-weight: var(--au-medium);
   }
 }

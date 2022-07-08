@@ -1,6 +1,9 @@
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {
+  getWindowSelection,
+  isElement,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
@@ -21,12 +24,19 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
     this._model = model;
   }
 
-  write(modelSelection: ModelSelection): void {
+  write(modelSelection: ModelSelection, moveSelectionIntoView = false): void {
     const domSelection = getWindowSelection();
 
     domSelection.removeAllRanges();
     for (const range of modelSelection.ranges) {
       domSelection.addRange(this.writeDomRange(range));
+    }
+    if (domSelection.anchorNode && moveSelectionIntoView) {
+      if (isElement(domSelection.anchorNode)) {
+        domSelection.anchorNode.scrollIntoView();
+      } else {
+        domSelection.anchorNode.parentElement?.scrollIntoView();
+      }
     }
   }
 
@@ -82,7 +92,10 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
         offset: position.parentOffset - textAnchor.getOffset(),
       };
     } else {
-      if (ModelElement.isModelElement(nodeAfter)) {
+      if (
+        ModelElement.isModelElement(nodeAfter) ||
+        ModelElement.isModelInlineComponent(nodeAfter)
+      ) {
         const parentView = this._model.modelToView(position.parent);
         const nodeView = this._model.modelToView(nodeAfter);
         if (!nodeView || !parentView) {

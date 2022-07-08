@@ -2,6 +2,7 @@ import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/inp
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { HandlerResponse } from '@lblod/ember-rdfa-editor/editor/input-handlers/handler-response';
 import {
+  isInInlineComponent,
   isInputEvent,
   isKeyUpEvent,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
@@ -34,11 +35,13 @@ export default class FallbackInputHandler extends InputHandler {
       // Motion events were captured above this if we don't want catch other keyup events,
       // they also generate an input event which we do handle.
       // Mouse down is not interesting at the moment, only mouse up.
-      !this.HANDLED_EVENT_TYPES.includes(event.type)
+      (!this.HANDLED_EVENT_TYPES.includes(event.type) &&
+        !isInInlineComponent(event))
     );
   }
 
-  handleEvent(_event: Event): HandlerResponse {
+  handleEvent(event: Event): HandlerResponse {
+    console.log(event);
     this.rawEditor.model.read();
     this.rawEditor.model.saveSnapshot();
     return { allowPropagation: false, allowBrowserDefault: true };
