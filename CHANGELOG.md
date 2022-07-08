@@ -17,6 +17,17 @@
 
 
 
+## 0.60.2 (2022-07-08)
+
+#### :bug: Bug Fix
+* [#295](https://github.com/lblod/ember-rdfa-editor/pull/295) Insert empty space when inserting an li above another one ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#292](https://github.com/lblod/ember-rdfa-editor/pull/292) Bump parse-url from 6.0.0 to 6.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 0.60.1 (2022-07-07)
 
 #### :rocket: Enhancement
