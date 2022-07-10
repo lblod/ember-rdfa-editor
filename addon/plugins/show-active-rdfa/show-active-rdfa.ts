@@ -1,6 +1,4 @@
-import Controller, {
-  RawEditorController,
-} from '@lblod/ember-rdfa-editor/model/controller';
+import { RawEditorController } from '@lblod/ember-rdfa-editor/model/controller';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { ConfigUpdatedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
@@ -11,6 +9,7 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
   get name() {
     return 'show-active-rdfa';
   }
+  // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: RawEditorController) {
     controller.onEvent('configUpdated', (event: ConfigUpdatedEvent) => {
       if (
@@ -32,13 +31,15 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
         const nearestRdfaNode = controller.selection.lastRange
           ?.findCommonAncestorsWhere((el) => !el.getRdfaAttributes().isEmpty)
           .next().value;
-        const activeRdfaNode =
-          controller.modelToView(nearestRdfaNode)?.viewRoot;
-        if (activeRdfaNode) {
-          if (isElement(activeRdfaNode)) {
-            activeRdfaNode.classList.add('active');
-          } else {
-            activeRdfaNode.parentElement!.classList.add('active');
+        if (nearestRdfaNode) {
+          const activeRdfaNode =
+            controller.modelToView(nearestRdfaNode)?.viewRoot;
+          if (activeRdfaNode) {
+            if (isElement(activeRdfaNode)) {
+              activeRdfaNode.classList.add('active');
+            } else {
+              activeRdfaNode.parentElement!.classList.add('active');
+            }
           }
         }
       }
