@@ -28,6 +28,7 @@ import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immed
 import { InlineComponentSpec } from './inline-components/model-inline-component';
 import NodeView from './node-view';
 import { ConfigUpdatedEvent } from '../utils/editor-event';
+import ModelNode from './model-node';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 

@@ -1,3 +1,27 @@
+import { warn } from '@ember/debug';
+import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
+import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
+import {
+  isElement,
+  isTextNode,
+  isVisibleElement,
+  isVoidElement,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {
+  createLogger,
+  Logger,
+} from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
+import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
 import { InputHandler, InputPlugin } from './input-handler';
 import {
   ManipulationGuidance,
@@ -8,34 +32,6 @@ import {
   MoveCursorToEndOfElementManipulation,
   MoveCursorToStartOfElementManipulation,
 } from './manipulation';
-import { warn } from '@ember/debug';
-import {
-  isElement,
-  isTextNode,
-  isVisibleElement,
-  isVoidElement,
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import LumpNodeTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/tab-input-plugin';
-import ListTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/lists/tab-input-plugin';
-import TableTabInputPlugin from '@lblod/ember-rdfa-editor/utils/plugins/table/tab-input-plugin';
-import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import { isKeyDownEvent } from '@lblod/ember-rdfa-editor/editor/input-handlers/event-helpers';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
-import {
-  createLogger,
-  Logger,
-} from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
-import {
-  toFilterRejectFalse,
-  toFilterSkipFalse,
-} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 type BaseTabHandlerManipulation = { direction: Direction };
 
 type InternalTabHandlerManipulation =
@@ -82,11 +78,7 @@ export default class TabInputHandler extends InputHandler {
   constructor({ rawEditor }: { rawEditor: RawEditor }) {
     super(rawEditor);
     this.logger = createLogger(this.constructor.name);
-    this.plugins = [
-      new LumpNodeTabInputPlugin(),
-      new ListTabInputPlugin(),
-      new TableTabInputPlugin(),
-    ];
+    this.plugins = [new LumpNodeTabInputPlugin(), new TableTabInputPlugin()];
   }
 
   isHandlerFor(event: Event): boolean {
@@ -128,7 +120,7 @@ export default class TabInputHandler extends InputHandler {
   handleTab(event: KeyboardEvent) {
     const selection = this.rawEditor.selection;
     const selRange = selection.lastRange!;
-    let pos = selRange.start;
+    const pos = selRange.start;
     const direction = event.shiftKey ? Direction.BACKWARDS : Direction.FORWARDS;
     let filter;
     if (this.rawEditor.config.get('showRdfaBlocks')) {
@@ -423,55 +415,10 @@ export default class TabInputHandler extends InputHandler {
   }
 }
 
-/**
- * Get node in direction from pos
- */
-function peekNode(pos: ModelPosition, direction: Direction): ModelNode | null {
-  if (direction === Direction.BACKWARDS) {
-    return pos.nodeBefore();
-  } else {
-    return pos.nodeAfter();
-  }
-}
-function isNonLeafElement(node: ModelNode): node is ModelElement {
-  return ModelNode.isModelElement(node) && !node.isLeaf;
-}
-function findNextElement(
-  pos: ModelPosition,
-  direction: Direction
-): ModelElement | null {
-  let cur = peekNode(pos, direction);
-  while (cur && !isNonLeafElement(cur)) {
-    cur = sibling(cur, direction);
-  }
-  return cur;
-}
-function sibling(node: ModelNode, direction: Direction): ModelNode | null {
-  if (direction === Direction.BACKWARDS) {
-    return node.previousSibling;
-  } else {
-    return node.nextSibling;
-  }
-}
 function posInside(element: ModelElement, direction: Direction): ModelPosition {
   if (direction === Direction.BACKWARDS) {
     return ModelPosition.fromInElement(element, element.getMaxOffset());
   } else {
     return ModelPosition.fromInElement(element, 0);
-  }
-}
-
-function posAfter(node: ModelNode, direction: Direction): ModelPosition {
-  if (direction === Direction.FORWARDS) {
-    return ModelPosition.fromAfterNode(node);
-  } else {
-    return ModelPosition.fromBeforeNode(node);
-  }
-}
-function posBefore(node: ModelNode, direction: Direction): ModelPosition {
-  if (direction === Direction.FORWARDS) {
-    return ModelPosition.fromBeforeNode(node);
-  } else {
-    return ModelPosition.fromAfterNode(node);
   }
 }
