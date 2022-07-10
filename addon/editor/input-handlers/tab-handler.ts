@@ -120,7 +120,11 @@ export default class TabInputHandler extends InputHandler {
   handleTab(event: KeyboardEvent) {
     const selection = this.rawEditor.selection;
     const selRange = selection.lastRange!;
-    const pos = selRange.start;
+    let pos = selRange.start;
+    if (pos.isInsideText()) {
+      // SAFETY: pos inside text guarantees nodeAfter to be non-null
+      pos = ModelPosition.fromAfterNode(pos.nodeAfter()!);
+    }
     const direction = event.shiftKey ? Direction.BACKWARDS : Direction.FORWARDS;
     let filter;
     if (this.rawEditor.config.get('showRdfaBlocks')) {
