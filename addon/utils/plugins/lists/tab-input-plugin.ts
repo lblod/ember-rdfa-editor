@@ -12,7 +12,7 @@ import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { from, isEmpty, last, first } from 'ix/iterable';
 import { filter } from 'ix/iterable/operators';
-import { ImpossibleModelStateError, ModelError } from '../../errors';
+import { ImpossibleModelStateError } from '../../errors';
 
 /**
  * Current behaviour
