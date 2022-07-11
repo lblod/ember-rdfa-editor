@@ -26,11 +26,20 @@ export default class SelectionWriter implements Writer<ModelSelection, void> {
 
   write(modelSelection: ModelSelection, moveSelectionIntoView = false): void {
     const domSelection = getWindowSelection();
-
-    domSelection.removeAllRanges();
-    for (const range of modelSelection.ranges) {
-      domSelection.addRange(this.writeDomRange(range));
+    const relevantRange = modelSelection.lastRange;
+    if (!relevantRange) {
+      return;
     }
+
+    const { startContainer, startOffset, endContainer, endOffset } =
+      this.writeDomRange(relevantRange);
+
+    domSelection.setBaseAndExtent(
+      startContainer,
+      startOffset,
+      endContainer,
+      endOffset
+    );
     if (domSelection.anchorNode && moveSelectionIntoView) {
       if (isElement(domSelection.anchorNode)) {
         domSelection.anchorNode.scrollIntoView();
