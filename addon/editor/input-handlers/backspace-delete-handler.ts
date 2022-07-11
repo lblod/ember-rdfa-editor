@@ -5,10 +5,7 @@ import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { ListBackspaceDeleteInputPlugin } from '@lblod/ember-rdfa-editor/utils/plugins/lists/backspace-delete-plugin';
 import { LumpNodeBackspaceDeleteInputPlugin } from '@lblod/ember-rdfa-editor/utils/plugins/lump-node/backspace-delete-plugin';
 import { RdfaBackspaceDeleteInputPlugin } from '@lblod/ember-rdfa-editor/utils/plugins/rdfa/backspace-delete-plugin';
-import {
-  TableBackspaceDeleteInputPlugin,
-  TaBLEBackspaceDeleteInputPlugin,
-} from '@lblod/ember-rdfa-editor/utils/plugins/table/backspace-delete-plugin';
+import { TableBackspaceDeleteInputPlugin } from '@lblod/ember-rdfa-editor/utils/plugins/table/backspace-delete-plugin';
 import { InputHandler, InputPlugin } from './input-handler';
 import { Manipulation, ManipulationGuidance } from './manipulation';
 
