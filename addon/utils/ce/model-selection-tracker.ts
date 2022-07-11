@@ -1,5 +1,6 @@
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { createLogger, Logger } from '../logging-utils';
 
 interface DomSelection {
   anchorNode?: Node;
@@ -14,9 +15,11 @@ interface DomSelection {
 export default class ModelSelectionTracker {
   model: Model;
   previousSelection: DomSelection | null = null;
+  logger: Logger;
 
   constructor(model: Model) {
     this.model = model;
+    this.logger = createLogger(this.constructor.name);
   }
 
   startTracking() {
@@ -47,6 +50,7 @@ export default class ModelSelectionTracker {
       anchorNode: currentSelection.anchorNode?.cloneNode(),
       focusOffset: currentSelection.focusOffset,
     };
+    this.logger('Dom selection updated, recalculating selection');
     this.model.readSelection();
   };
 
