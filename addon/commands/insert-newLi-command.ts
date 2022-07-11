@@ -77,19 +77,31 @@ export default class InsertNewLiCommand extends Command {
       true
     );
 
-    const liNode = newPosition.nodeAfter();
+    const nodeBefore = newPosition.nodeBefore();
+    const nodeAfter = newPosition.nodeAfter();
 
-    if (!liNode || !ModelNodeUtils.isListElement(liNode)) {
+    if (
+      !nodeBefore ||
+      !nodeAfter ||
+      !ModelNodeUtils.isListElement(nodeBefore) ||
+      !ModelNodeUtils.isListElement(nodeAfter)
+    ) {
       throw new TypeAssertionError('Node right after the cursor is not an li');
     }
-    if (liNode.length === 0) {
+    if (nodeBefore.length === 0) {
       mutator.insertNodes(
-        ModelRange.fromInElement(liNode),
+        ModelRange.fromInElement(nodeBefore),
         new ModelText(INVISIBLE_SPACE)
       );
-      this.model.selectRange(ModelRange.fromInElement(liNode, 1, 1));
+    }
+    if (nodeAfter.length === 0) {
+      mutator.insertNodes(
+        ModelRange.fromInElement(nodeAfter),
+        new ModelText(INVISIBLE_SPACE)
+      );
+      this.model.selectRange(ModelRange.fromInElement(nodeAfter, 1, 1));
     } else {
-      this.model.selectRange(ModelRange.fromInElement(liNode, 0, 0));
+      this.model.selectRange(ModelRange.fromInElement(nodeAfter, 0, 0));
     }
   }
 }

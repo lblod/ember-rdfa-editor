@@ -10,14 +10,13 @@ import {
   INVISIBLE_SPACE,
 } from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelTreeWalker, {
-  FilterResult,
-} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import RangeMapper from '@lblod/ember-rdfa-editor/model/range-mapper';
 import { AttributeSpec } from '../util/render-spec';
+import GenTreeWalker from '../util/gen-tree-walker';
 
 type MarkAction = 'add' | 'remove';
 export default class MarkOperation extends Operation {
@@ -120,15 +119,11 @@ export default class MarkOperation extends Operation {
       OperationAlgorithms.splitText(this.range.start);
       OperationAlgorithms.splitText(this.range.end);
 
-      const walker = new ModelTreeWalker<ModelText>({
+      const walker = GenTreeWalker.fromRange({
         range: this.range,
-        filter: (node: ModelNode) => {
-          return ModelNode.isModelText(node)
-            ? FilterResult.FILTER_ACCEPT
-            : FilterResult.FILTER_SKIP;
-        },
+        filter: toFilterSkipFalse(ModelNode.isModelText),
       });
-      const textNodes = Array.from(walker);
+      const textNodes = [...walker.nodes()] as ModelText[];
       const _markCheckNodes: ModelNode[] = [...textNodes];
 
       for (const node of textNodes) {

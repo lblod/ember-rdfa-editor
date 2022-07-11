@@ -169,16 +169,23 @@
     content: 'Besluit';
   }
 
-  [typeof~='besluit:Artikel']:before {
+  [property='say:hasPart']:before {
+    content: '';
+  }
+
+  [typeof~='besluit:Artikel']:before,
+  [typeof='say:Article']:before {
     content: 'Artikel';
   }
 
-  [property='eli:has_part'][typeof='besluit:Artikel']:before {
+  [property='eli:has_part'][typeof='besluit:Artikel']:before,
+  [property='eli:has_part'][typeof='say:Article']:before {
     content: 'Artikel';
   }
 
-  [typeof='besluit:Artikel'] [property='prov:value']:before {
-    content: 'Inhoud artikel';
+  [typeof='besluit:Artikel'] [property='say:body']:before,
+  [typeof='say:Article'] [property='say:body']:before {
+    content: 'Inhoud';
   }
 
   [property='eli:has_part']:before {
@@ -187,6 +194,26 @@
 
   [property='eli:number']:before {
     content: 'Nummer';
+  }
+
+  [property="ext:hasParagraph"]:before {
+    content: 'Paragraaf';
+  }
+
+  [resource="http://mu.semte.ch/vocabularies/ext/Title"] + [property="say:heading"]:before {
+    content: 'Titel';
+  }
+
+  [resource="http://mu.semte.ch/vocabularies/ext/Chapter"] + [property="say:heading"]:before {
+    content: 'Hoofdstuk';
+  }
+
+  [resource="http://mu.semte.ch/vocabularies/ext/Section"] + [property="say:heading"]:before {
+    content: 'Afdeling';
+  }
+
+  [resource="http://mu.semte.ch/vocabularies/ext/Subsection"] + [property="say:heading"]:before {
+    content: 'Onderafdeling';
   }
 
   /* Mobiliteit */
@@ -591,16 +618,14 @@
     content: 'Besluit';
   }
 
-  [typeof~='besluit:Artikel']:before {
+  [typeof~='besluit:Artikel']:before,
+  [typeof='say:Article']:before {
     content: 'Artikel';
   }
 
-  [property='eli:has_part'][typeof='besluit:Artikel']:before {
+  [property='eli:has_part'][typeof='besluit:Artikel']:before,
+  [property='eli:has_part'][typeof='say:Article']:before {
     content: 'Artikel';
-  }
-
-  [typeof='besluit:Artikel'] [property='prov:value']:before {
-    content: 'Inhoud artikel';
   }
 
   [property='eli:has_part']:before {

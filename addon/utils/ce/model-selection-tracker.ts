@@ -1,22 +1,14 @@
 import Model from '@lblod/ember-rdfa-editor/model/model';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-
-interface DomSelection {
-  anchorNode: Node | null;
-
-  focusNode: Node | null;
-
-  anchorOffset: number;
-
-  focusOffset: number;
-}
+import { createLogger, Logger } from '../logging-utils';
 
 export default class ModelSelectionTracker {
   model: Model;
-  previousSelection: DomSelection | null = null;
+  logger: Logger;
 
   constructor(model: Model) {
     this.model = model;
+    this.logger = createLogger(this.constructor.name);
   }
 
   startTracking() {
@@ -29,9 +21,6 @@ export default class ModelSelectionTracker {
 
   updateSelection = () => {
     const currentSelection = getWindowSelection();
-    if (this.isSameAsPrevious(currentSelection)) {
-      return;
-    }
     if (
       !this.model.rootNode.contains(currentSelection.anchorNode) ||
       !this.model.rootNode.contains(currentSelection.focusNode) ||
@@ -41,24 +30,7 @@ export default class ModelSelectionTracker {
     ) {
       return;
     }
-    this.previousSelection = {
-      anchorOffset: currentSelection.anchorOffset,
-      focusNode: currentSelection.focusNode,
-      anchorNode: currentSelection.anchorNode,
-      focusOffset: currentSelection.focusOffset,
-    };
+    this.logger('Dom selection updated, recalculating selection');
     this.model.readSelection();
   };
-
-  isSameAsPrevious(selection: Selection) {
-    if (!this.previousSelection) {
-      return false;
-    }
-    return (
-      selection.anchorNode === this.previousSelection.anchorNode &&
-      selection.focusNode === this.previousSelection.focusNode &&
-      selection.anchorOffset === this.previousSelection.anchorOffset &&
-      selection.focusOffset === this.previousSelection.focusOffset
-    );
-  }
 }
