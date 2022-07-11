@@ -160,29 +160,6 @@ export default class TabInputHandler extends InputHandler {
         resultPos = ModelPosition.fromBeforeNode(nextNode);
       }
     }
-    // const nextNode = peekNode(pos, direction);
-    // if (nextNode) {
-    //   if (nextNode.isLeaf) {
-    //     resultPos = posAfter(nextNode, direction);
-    //     const afterResult = peekNode(resultPos, direction);
-    //     if (ModelNode.isModelElement(afterResult) && !afterResult.isLeaf) {
-    //       resultPos = posInside(afterResult, direction);
-    //     }
-    //   } else if (ModelNode.isModelElement(nextNode)) {
-    //     resultPos = posInside(nextNode, direction);
-    //   }
-    // } else {
-    //   // next pos is after parent, or inside element sibling of parent
-    //   // if it has one
-    //   const parent = pos.parent;
-    //   resultPos = posAfter(parent, direction);
-    //   const parentSib = sibling(parent, direction);
-    //   if (parentSib && parentSib.isLeaf) {
-    //     resultPos = posBefore(parentSib, direction);
-    //   } else if (ModelNode.isModelElement(parentSib)) {
-    //     resultPos = posInside(parentSib, direction);
-    //   }
-    // }
     if (resultPos) {
       const newRange = new ModelRange(resultPos, resultPos);
       this.rawEditor.selection.selectRange(newRange);
