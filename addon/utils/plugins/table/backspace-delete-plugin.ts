@@ -30,14 +30,14 @@ export class TableBackspaceDeleteInputPlugin implements BackspaceDeletePlugin {
         return {
           allow: true,
           executor: () => {
-            editor.executeCommand('remove', new ModelRange(range.start));
+            return;
           },
         };
       } else {
         return {
           allow: true,
           executor: () => {
-            editor.executeCommand('remove', new ModelRange(range.end));
+            return;
           },
         };
       }
