@@ -86,8 +86,8 @@ export default class ModelNodeUtils {
 
   static getVisualLength(node: ModelNode): number {
     if (ModelNode.isModelText(node)) {
-      node.content.split('').filter((c) => c !== INVISIBLE_SPACE).length;
-      return node.length;
+      return node.content.split('').filter((c) => c !== INVISIBLE_SPACE).length;
+      // return node.length;
     } else if (
       (ModelNode.isModelElement(node) && VISUAL_NODES.has(node.type)) ||
       ModelNode.isModelInlineComponent(node)

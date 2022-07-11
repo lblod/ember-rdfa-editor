@@ -457,6 +457,7 @@ export default class ModelPosition {
           ModelNodeUtils.getVisualLength(node) > 0 &&
           !ModelNodeUtils.parentIsLumpNode(node)
       ),
+      visitParentUpwards: true,
     });
 
     while (stepsToShift > 0) {
@@ -515,7 +516,11 @@ export default class ModelPosition {
             );
           }
           blockNodeFound = true;
+          const previousNode = nextNode;
           nextNode = walker.nextNode();
+          if (nextNode && !previousNode.parent?.sameAs(nextNode)) {
+            break;
+          }
         }
         if (nextNode) {
           if (ModelElement.isModelText(nextNode)) {
@@ -535,7 +540,12 @@ export default class ModelPosition {
             // If the next leaf is a node, set the position after or before the node based on the direction
             if (blockNodeFound && !nextNode.isLeaf) {
               //TODO: Check correctness
-              currentPos = ModelPosition.fromAfterNode(nextNode);
+              currentPos = ModelPosition.fromInNode(
+                nextNode,
+                (nextNode.lastChild?.getOffset() || 0) +
+                  (nextNode.lastChild?.offsetSize || 0)
+              );
+              // currentPos = ModelPosition.fromAfterNode(nextNode);
             } else {
               if (nextNode.previousSibling) {
                 currentPos = ModelPosition.fromAfterNode(
@@ -571,6 +581,7 @@ export default class ModelPosition {
           ModelNodeUtils.getVisualLength(node) > 0 &&
           !ModelNodeUtils.parentIsLumpNode(node)
       ),
+      visitParentUpwards: true,
     });
 
     while (stepsToShift > 0) {
@@ -622,7 +633,11 @@ export default class ModelPosition {
             );
           }
           blockNodeFound = true;
+          const previousNode = nextNode;
           nextNode = walker.nextNode();
+          if (nextNode && !previousNode.parent?.sameAs(nextNode)) {
+            break;
+          }
         }
         if (nextNode) {
           if (ModelElement.isModelText(nextNode)) {
@@ -642,12 +657,7 @@ export default class ModelPosition {
             // If the next leaf is a node, set the position after or before the node based on the direction
 
             if (blockNodeFound && !nextNode.isLeaf) {
-              // if (nextNode.isLeaf) {
-              //   currentPos = ModelPosition.fromAfterNode(nextNode);
-              // } else {
-              currentPos = ModelPosition.fromBeforeNode(nextNode);
-              // }
-              // currentPos = ModelPosition.fromInNode(nextNode, 0);
+              currentPos = ModelPosition.fromInNode(nextNode, 0);
             } else {
               if (nextNode.nextSibling) {
                 currentPos = ModelPosition.fromInNode(nextNode.nextSibling, 0);
