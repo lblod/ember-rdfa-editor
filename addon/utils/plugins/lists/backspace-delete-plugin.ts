@@ -8,10 +8,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
-import {
-  INVISIBLE_SPACE,
-  SPACE,
-} from '@lblod/ember-rdfa-editor/model/util/constants';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import rawEditor from '../../ce/raw-editor';
 

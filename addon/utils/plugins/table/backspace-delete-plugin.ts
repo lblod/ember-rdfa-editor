@@ -3,7 +3,6 @@ import {
   BackspaceDeletePlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-delete-handler';
 import { ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import rawEditor from '../../ce/raw-editor';
 
@@ -11,7 +10,7 @@ export class TableBackspaceDeleteInputPlugin implements BackspaceDeletePlugin {
   label = 'Backspace/Delete plugin for handling table cells in a range';
   guidanceForManipulation(
     manipulation: BackspaceDeleteHandlerManipulation,
-    editor: rawEditor
+    _editor: rawEditor
   ): ManipulationGuidance | null {
     const { range, direction } = manipulation;
     const startCell =
