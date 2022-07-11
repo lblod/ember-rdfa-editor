@@ -17,6 +17,18 @@
 
 
 
+
+## 0.60.3 (2022-07-11)
+
+#### :bug: Bug Fix
+* [#294](https://github.com/lblod/ember-rdfa-editor/pull/294) when storing the previous selection, clone the anchor nodes ([@elpoelma](https://github.com/elpoelma))
+* [#296](https://github.com/lblod/ember-rdfa-editor/pull/296) Remove erroneous check to avoid duplicate selectionchange events ([@abeforgit](https://github.com/abeforgit))
+* [#293](https://github.com/lblod/ember-rdfa-editor/pull/293) Null check on the parent of the range in live mark set ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 0.60.2 (2022-07-08)
 
 #### :bug: Bug Fix
