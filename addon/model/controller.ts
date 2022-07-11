@@ -152,6 +152,9 @@ export class RawEditorController implements Controller {
   get modelRoot(): ModelElement {
     return this._rawEditor.rootModelNode;
   }
+  get domRoot(): Element {
+    return this._rawEditor.rootNode;
+  }
 
   get marksRegistry(): MarksRegistry {
     return this._rawEditor.model.marksRegistry;
