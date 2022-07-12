@@ -32,7 +32,11 @@ export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 export interface WidgetSpec {
   componentName: string;
   desiredLocation: WidgetLocation;
-  plugin: EditorPlugin;
+  /**
+   * @deprecated use widgetArgs instead
+   * */
+  plugin?: EditorPlugin;
+  widgetArgs?: unknown;
 }
 
 export type InternalWidgetSpec = WidgetSpec & {
