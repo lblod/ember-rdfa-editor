@@ -41,6 +41,6 @@ export interface EditorPlugin {
    * However, it is not advised to depend on this fact.
    * @param controller Each plugin receives a unique controller instance. It is their only interface to the editor.
    */
-  initialize(controller: Controller): Promise<void>;
+  initialize(controller: Controller, options: unknown): Promise<void>;
 }
 export type InitializedPlugin = Omit<EditorPlugin, 'initialize'>;

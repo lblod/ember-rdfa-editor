@@ -82,19 +82,25 @@ export default class InsertNewLiCommand
       true
     );
 
-    const liNode = newPosition.nodeAfter();
+    const nodeBefore = newPosition.nodeBefore();
+    const nodeAfter = newPosition.nodeAfter();
 
-    if (!liNode || !ModelNodeUtils.isListElement(liNode)) {
+    if (
+      !nodeBefore ||
+      !nodeAfter ||
+      !ModelNodeUtils.isListElement(nodeBefore) ||
+      !ModelNodeUtils.isListElement(nodeAfter)
+    ) {
       throw new TypeAssertionError('Node right after the cursor is not an li');
     }
-    if (liNode.length === 0) {
+    if (nodeBefore.length === 0) {
       tr.insertNodes(
-        ModelRange.fromInElement(liNode),
+        ModelRange.fromInElement(nodeBefore),
         new ModelText(INVISIBLE_SPACE)
       );
-      tr.selectRange(ModelRange.fromInElement(liNode, 1, 1));
+      tr.selectRange(ModelRange.fromInElement(nodeBefore, 1, 1));
     } else {
-      tr.selectRange(ModelRange.fromInElement(liNode, 0, 0));
+      tr.selectRange(ModelRange.fromInElement(nodeBefore, 0, 0));
     }
   }
 }

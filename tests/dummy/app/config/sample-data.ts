@@ -173,7 +173,6 @@ export default {
           some text <div style="background-color:green"><a href="#">an <i> italic |- </i> link</a></div>
         </p>
         <h4>case 5 </h4>
-        <p>
           <ul>
             <li> some text
               <div style="background-color:green">
@@ -181,9 +180,7 @@ export default {
               </div>
             </li>
           </ul>
-        </p>
         <h4>case 6 </h4>
-        <p>
           <ul>
             <li> some text
               <div style="background-color:green">
@@ -191,15 +188,11 @@ export default {
               </div>
             </li>
           </ul>
-        </p>
         <h4>case 7 </h4>
-        <p>
           <ul>
             <li> some |- text </li>
           </ul>
-        </p>
         <h4>case 8 </h4>
-        <p>
           <ul>
             <li> some text |-
               <div style="background-color:green">
@@ -207,39 +200,30 @@ export default {
               </div>
             </li>
           </ul>
-        </p>
         <h4>case 9 </h4>
-        <p>
           <ul>
             <li> some text </li>
             <li> some text 2 |- </li>
             <li> some text 3</li>
           </ul>
-        </p>
         <h4>case 10 </h4>
-        <p>
           <ul>
             <li> some text </li>
             <li> some text 2 </li>
             <li> some text 3|-</li>
           </ul>
-        </p>
         <h4>case 11 </h4>
-        <p>
           <ul>
             <li> some text -| </li>
             <li> some text 2 </li>
             <li> some text 3</li>
           </ul>
-        </p>
         <h4>case 12 </h4>
-        <p>
           <ul>
             <li> some text </li>
             <li> some text 2 <a href="#"> a link |-</a> </li>
             <li> some text 3</li>
           </ul>
-        </p>
         <h4>case 13 </h4>
         <p>
           This part will not be in the list <br /> But this part |- will
@@ -249,15 +233,12 @@ export default {
           <div style="background-color: green"><a href="#">i can put my cursor in li before and after the link</a></div>
         </p>
         <h4>case 15 </h4>
-        <p>
           <ol>
             <li> some text </li>
             <li> some text 2 <a href="#"> a link |-</a> </li>
             <li> some text 3</li>
           </ol>
-        </p>
         <h4>case 16 </h4>
-        <p>
           <ol>
             <li> some text </li>
             <li>
@@ -267,9 +248,7 @@ export default {
             </li>
             <li> some text 3</li>
           </ol>
-        </p>
         <h4>case 17 </h4>
-        <p>
           <ol>
             <li> some text </li>
             <li>
@@ -280,15 +259,11 @@ export default {
             </li>
             <li> some text 3</li>
           </ol>
-        </p>
         <h4>case 18 </h4>
-        <p>
           <ol>
             <li> indenting |- case </li>
           </ol>
-        </p>
         <h4>case 19 </h4>
-        <p>
           <ul>
             <li> complex unindenting item 1</li>
             <li>
@@ -300,9 +275,7 @@ export default {
             </li>
             <li> item 2</li>
           </ul>
-        </p>
         <h4>case 20 </h4>
-        <p>
           <ul>
             <li> complex extra complex unindenting. Note: it doesn't work</li>
             <li> I share space with ul
@@ -314,9 +287,7 @@ export default {
             </li>
             <li> item 2</li>
           </ul>
-        </p>
         <h4>case 21</h4>
-        <p>
           <ul>
             <li> a some
               <div style="background-color:green"> block element text to unindent simple case |- </div>
@@ -324,9 +295,7 @@ export default {
             </li>
             <li>second item </li>
           </ul>
-        </p>
         <h4>case 22</h4>
-        <p>
           <ul>
             <li>
               <ol>
@@ -340,7 +309,6 @@ export default {
               other text
             </li>
           </ul>
-        </p>
         <h4>case 23 : create list from multiple selected lines</h4>
         <p>
           Sauté de v-|eau
@@ -354,7 +322,6 @@ export default {
           <b>Raclet|-te</b> au comté
         </p>
         Should give
-        <p>
           <ul>
             <li>Sauté de veau</li>
             <li>Trou <i>normand</i></li>
@@ -362,17 +329,13 @@ export default {
             <li><i>Crêpes</i></li>
             <li><b>Raclette</b> au comté</li>
           </ul>
-        </p>
         <h4>case 24 : indent list from multiple selected lines</h4>
-        <p>
           <ul>
             <li>Pot au feu</li>
             <li><i>Tarte a|ux pommes</i></li>
             <li><b>Croziflette</b> au vi-|n blanc</li>
           </ul>
-        </p>
         Should give
-        <p>
           <ul>
             <li>
               Pot au feu
@@ -382,9 +345,7 @@ export default {
               </ul>
             </li>
           </ul>
-        </p>
         <h4>case 25 : unindent list from multiple selected lines</h4>
-        <p>
           <ul>
             <li>
               Choucroute
@@ -396,9 +357,7 @@ export default {
               </ul>
             </li>
           </ul>
-        </p>
         Should give
-        <p>
           <ul>
             <li>
               Choucroute
@@ -414,7 +373,6 @@ export default {
               </ul>
             </li>
           </ul>
-        </p>
       </div>`,
   "brs": `<h1>Break heaven/hell</h1><br><br><p>Yo-ho-ho scourge of the seven seas log Shiver me timbers chase code of conduct fire in the hole gunwalls interloper dead men tell no tales. Bounty long clothes trysail Pirate Round Sink me parley fire in the hole reef sails red ensign coxswain. Bilge water dance the hempen jig draft mutiny fire in the hole Corsair crack Jennys tea cup run a rig driver swing the lead.<br></p><br><p>Yardarm transom draught Spanish Main rutters lass long clothes belay reef sails haul wind. Strike colors chase topgallant swing the lead topsail hail-shot cable Shiver me timbers hogshead warp. Draft rigging parrel nipperkin case shot crow's nest sutler pillage grapple trysail.<br></p><div>Shrouds spyglass yard black jack Gold Road sutler hornswaggle sloop splice the main brace knave. Furl ahoy quarterdeck hornswaggle walk the plank hang the jib scuttle hearties pirate American Main. Starboard pressgang Chain Shot wherry hail-shot lanyard killick topgallant galleon crim<br></div><br>Yo-ho-ho scourge of the seven seas log Shiver me timbers chase code of conduct fire in the hole gunwalls interloper dead men tell no tales. Bounty long clothes trysail Pirate Round Sink me parley fire in the hole reef sails red ensign coxswain. Bilge water dance the hempen jig draft mutiny fire in the hole Corsair crack Jennys tea cup run a rig driver swing the lead. <br><br>
 <h1>Breaks before blocks</h1>

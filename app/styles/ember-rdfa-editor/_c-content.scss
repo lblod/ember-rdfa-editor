@@ -424,4 +424,19 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
   [property='ext:metadata'] {
     display: none !important;
   }
+
+  // Structures
+  [property="say:hasPart"] + [property="say:hasPart"] {
+    margin-top: $au-unit-small;
+  }
+
+  [property="say:hasPart"] [property="say:hasPart"],
+  [property="say:hasPart"] [property="eli:has_part"] {
+    margin-left: $au-unit-tiny;
+  }
+
+  [typeof="besluit:Artikel"] >[property='say:heading'],
+  [typeof="say:Article"] >[property='say:heading'] {
+    font-weight: var(--au-medium);
+  }
 }

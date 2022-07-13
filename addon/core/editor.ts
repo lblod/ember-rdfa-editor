@@ -7,7 +7,8 @@ import State, {
   CommandReturn,
   emptyState,
 } from '@lblod/ember-rdfa-editor/core/state';
-import { EditorController, EditorControllerCompat } from '../model/controller';
+import { ResolvedPluginConfig } from '../components/rdfa/rdfa-editor';
+import { EditorControllerCompat } from '../model/controller';
 import { CORE_OWNER } from '../model/util/constants';
 import { getPathFromRoot } from '../utils/dom-helpers';
 import {
@@ -15,7 +16,7 @@ import {
   EventWithName,
   SelectionChangedEvent,
 } from '../utils/editor-event';
-import { EditorPlugin, InitializedPlugin } from '../utils/editor-plugin';
+import { InitializedPlugin } from '../utils/editor-plugin';
 import EventBus, {
   AnyEventName,
   EditorEventListener,
@@ -34,7 +35,7 @@ export interface EditorArgs {
   /**
    * The plugins that should be active from the start of the editor
    * */
-  plugins: EditorPlugin[];
+  plugins: ResolvedPluginConfig[];
   /**
    * A higher-order function returning a dispatch function, to be used in place of the default.
    * Likely only needed for advanced usecases. The dispatch function takes in a transaction
@@ -95,7 +96,7 @@ export interface Editor {
     eventName: E,
     callback: EditorEventListener<E>,
     config?: ListenerConfig
-  );
+  ): void;
   /**
    * @deprecated
    * Unregister an event listener
@@ -104,7 +105,7 @@ export interface Editor {
     eventName: E,
     callback: EditorEventListener<E>,
     config?: ListenerConfig
-  );
+  ): void;
 }
 
 /**
@@ -225,14 +226,14 @@ class SayEditor implements Editor {
  * */
 async function initializePlugins(
   editor: Editor,
-  plugins: EditorPlugin[]
+  configs: ResolvedPluginConfig[]
 ): Promise<InitializedPlugin[]> {
   const result: InitializedPlugin[] = [];
-  for (const plugin of plugins) {
+  for (const config of configs) {
+    const plugin = config.instance;
     const controller = new EditorControllerCompat(plugin.name, editor);
-    await plugin.initialize(controller);
-    const { initialize: _, ...rest } = plugin;
-    result.push(rest);
+    await plugin.initialize(controller, config.options);
+    result.push(plugin);
   }
   return result;
 }

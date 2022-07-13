@@ -34,6 +34,7 @@ module('Unit | commands | insert-new-li-command-test', function () {
       <div>
         <ul>
           <li>
+          <text>${INVISIBLE_SPACE}</text>
           </li>
           <li>
             <text>${INVISIBLE_SPACE}</text>
@@ -68,6 +69,7 @@ module('Unit | commands | insert-new-li-command-test', function () {
       <div>
         <ul>
           <li>
+          <text>${INVISIBLE_SPACE}</text>
           </li>
           <li>
             <text>abc</text>

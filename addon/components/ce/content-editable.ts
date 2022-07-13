@@ -15,7 +15,7 @@ interface ContentEditableArgs {
 
   editorInit(editor: Editor): void;
 
-  plugins: EditorPlugin[];
+  plugins: ResolvedPluginConfig[];
 
   baseIRI?: string;
 
