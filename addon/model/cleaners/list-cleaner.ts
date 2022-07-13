@@ -2,17 +2,18 @@ import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import ModelTreeWalker, {
-  toFilterSkipFalse,
-} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelPosition from '../model-position';
+import GenTreeWalker from '../util/gen-tree-walker';
 
 export default class ListCleaner {
   clean(range: ModelRange, tr: Transaction) {
-    const listNodes = new ModelTreeWalker<ModelElement>({
+    const clonedRange = tr.cloneRange(range);
+    // SAFETY: listcontainers are always elements
+    const listNodes = GenTreeWalker.fromRange({
       filter: toFilterSkipFalse((node) => ModelNodeUtils.isListContainer(node)),
-      range,
-    });
+      range: clonedRange,
+    }).nodes() as Generator<ModelElement>;
 
     for (const listNode of listNodes) {
       const next = listNode.nextSibling;
