@@ -1,14 +1,16 @@
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
-import { LUMP_NODE_PROPERTY } from '@lblod/ember-rdfa-editor/model/util/constants';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 
 export default class LumpNodePlugin implements EditorPlugin {
   controller?: Controller;
-  lumpNodePreviouslyBeforeCursor?: ModelElement;
+  lumpNodePreviouslyBeforeCursor?: ModelNode | null;
   lastPosition?: ModelPosition;
   get name() {
     return 'lump-node';
@@ -22,12 +24,15 @@ export default class LumpNodePlugin implements EditorPlugin {
 
   selectionChanged() {
     const selection = this.controller?.selection;
+    console.log(selection);
     if (selection?.isCollapsed) {
       const lumpNode = lumpNodeBeforeCursor(selection);
+      console.log('LUMP', lumpNode);
       const newPosition = selection.lastRange?.start;
       if (
         this.lumpNodePreviouslyBeforeCursor &&
-        !this.lastPosition?.equals(newPosition)
+        !this.lastPosition?.equals(newPosition) &&
+        this.lumpNodePreviouslyBeforeCursor.connected
       ) {
         this.controller?.executeCommand(
           'remove-property',
@@ -46,12 +51,19 @@ export default class LumpNodePlugin implements EditorPlugin {
 
 function lumpNodeBeforeCursor(
   selection: ModelSelection
-): ModelElement | undefined {
-  const previousSibling = selection.anchor?.nodeBefore();
-  if (previousSibling && ModelNode.isModelElement(previousSibling)) {
-    const properties = previousSibling.getRdfaAttributes().properties;
-    if (properties && properties.includes(LUMP_NODE_PROPERTY))
-      return previousSibling;
+): ModelNode | undefined | null {
+  const start = selection.anchor?.shiftedVisually(-1);
+  const end = selection.anchor;
+  if (start && end) {
+    const lumpNode = GenTreeWalker.fromRange({
+      range: new ModelRange(start, end),
+      reverse: true,
+      filter: toFilterSkipFalse(
+        (node) =>
+          ModelNode.isModelElement(node) && ModelNodeUtils.isLumpNode(node)
+      ),
+    }).nextNode();
+    return lumpNode;
   }
   return;
 }

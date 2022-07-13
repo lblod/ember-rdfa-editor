@@ -177,7 +177,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
         node = sibling;
         let result = this.filterNode(node);
         while (result !== FilterResult.FILTER_REJECT && this.hasChild(node)) {
-          node = node.lastChild;
+          node = node.lastChild!;
           result = this.filterNode(node);
         }
 

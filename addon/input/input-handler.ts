@@ -16,7 +16,7 @@ import {
 } from '../editor/input-handlers/manipulation';
 import { editorDebug } from '../editor/utils';
 import handleCutCopy from './cut-copy';
-import BackspaceHandler from './delete';
+import { handleDelete } from './delete';
 import handlePaste from './paste';
 
 /**
@@ -47,11 +47,9 @@ export interface InputHandler {
 
 export class EditorInputHandler implements InputHandler {
   private editor: Editor;
-  private backSpaceHandler: BackspaceHandler;
 
   constructor(editor: Editor) {
     this.editor = editor;
-    this.backSpaceHandler = new BackspaceHandler({ editor });
   }
   keydown(event: KeyboardEvent) {
     mapKeyEvent(this.editor, event);
@@ -129,7 +127,7 @@ export class EditorInputHandler implements InputHandler {
         event.preventDefault();
         break;
       case 'deleteContentBackward':
-        this.backSpaceHandler.handleEvent(event);
+        handleDelete(this.editor, event, -1);
         break;
       case 'deleteContentForward':
         event.preventDefault();

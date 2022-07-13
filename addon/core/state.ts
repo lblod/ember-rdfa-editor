@@ -23,6 +23,7 @@ import InsertXmlCommand from '../commands/insert-xml-command';
 import MakeListCommand from '../commands/make-list-command';
 import MatchTextCommand from '../commands/match-text-command';
 import ReadSelectionCommand from '../commands/read-selection-command';
+import RemoveCommand from '../commands/remove-command';
 import RemoveComponentCommand from '../commands/remove-component-command';
 import RemoveListCommand from '../commands/remove-list-command';
 import RemoveMarkCommand from '../commands/remove-mark-command';
@@ -198,6 +199,7 @@ export function defaultCommands(): CommandMap {
     'remove-table': new RemoveTableCommand(),
     undo: new UndoCommand(),
     'unindent-list': new UnindentListCommand(),
+    remove: new RemoveCommand(),
   };
 }
 export type CommandReturn<C extends CommandName> = ReturnType<

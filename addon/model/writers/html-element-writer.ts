@@ -1,7 +1,7 @@
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { ElementView } from '@lblod/ember-rdfa-editor/model/node-view';
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
-import { LUMP_NODE_PROPERTY } from '../util/constants';
+import ModelNodeUtils from '../util/model-node-utils';
 
 export default class HtmlElementWriter
   implements Writer<ModelElement, ElementView>
@@ -14,7 +14,7 @@ export default class HtmlElementWriter
       result.contentEditable = 'false';
     }
     if (modelNode.type === 'td' || modelNode.type === 'th') {
-      if (parentIsLumpNode(modelNode)) {
+      if (ModelNodeUtils.parentIsLumpNode(modelNode)) {
         result.contentEditable = 'false';
       } else {
         result.contentEditable = 'true';
@@ -27,15 +27,4 @@ export default class HtmlElementWriter
 
     return { viewRoot: result, contentRoot: result };
   }
-}
-
-export function parentIsLumpNode(modelNode: ModelElement): boolean {
-  while (modelNode.parent) {
-    const properties = modelNode.parent.getRdfaAttributes().properties;
-    if (properties && properties.includes(LUMP_NODE_PROPERTY)) {
-      return true;
-    }
-    modelNode = modelNode.parent;
-  }
-  return false;
 }

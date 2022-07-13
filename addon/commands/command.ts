@@ -18,6 +18,7 @@ import InsertXmlCommand from './insert-xml-command';
 import MakeListCommand from './make-list-command';
 import MatchTextCommand from './match-text-command';
 import ReadSelectionCommand from './read-selection-command';
+import RemoveCommand from './remove-command';
 import RemoveComponentCommand from './remove-component-command';
 import RemoveListCommand from './remove-list-command';
 import RemoveMarkCommand from './remove-mark-command';
@@ -66,6 +67,7 @@ export type CommandMap = {
   'remove-table': RemoveTableCommand;
   undo: UndoCommand;
   'unindent-list': UnindentListCommand;
+  remove: RemoveCommand;
 };
 export type CommandName = keyof CommandMap;
 

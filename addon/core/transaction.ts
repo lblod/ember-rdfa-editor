@@ -20,6 +20,7 @@ import SplitOperation from '../model/operations/split-operation';
 import MoveOperation from '../model/operations/move-operation';
 import { EditorStore } from '../model/util/datastore/datastore';
 import { AttributeSpec } from '../model/util/render-spec';
+import RemoveOperation from '../model/operations/remove-operation';
 
 interface TextInsertion {
   range: ModelRange;
@@ -180,6 +181,11 @@ export default class Transaction {
     this.executeOperation(op);
     return newNode;
   }
+  removeNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
+    const clonedRange = this.cloneRange(range);
+    const op = new RemoveOperation(undefined, clonedRange, ...nodes);
+    return this.executeOperation(op);
+  }
   private executeOperation(op: Operation): ModelRange {
     const { defaultRange } = op.execute();
     // this.mapper.appendMapper(mapper);
@@ -191,6 +197,15 @@ export default class Transaction {
   addMarkToSelection(mark: Mark) {
     this.workingCopy.selection.activeMarks.add(mark);
     this.createSnapshot();
+  }
+  moveToPosition(
+    rangeToMove: ModelRange,
+    targetPosition: ModelPosition
+  ): ModelRange {
+    const rangeClone = this.cloneRange(rangeToMove);
+    const posClone = this.clonePos(targetPosition);
+    const op = new MoveOperation(undefined, rangeClone, posClone);
+    return this.executeOperation(op);
   }
   removeMarkFromSelection(markname: string) {
     for (const mark of this.workingCopy.selection.activeMarks) {
