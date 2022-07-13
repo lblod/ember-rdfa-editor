@@ -1,4 +1,5 @@
 import ModelNode, {
+  DirtyType,
   ModelNodeType,
   NodeCompareOpts,
   NodeConfig,
@@ -184,6 +185,27 @@ export default class ModelText extends ModelNode {
         other.attributeMap
       ) && this.marks.hasSameHashes(other.marks)
     );
+  }
+
+  diff(other: ModelNode): Set<DirtyType> {
+    const dirtiness: Set<DirtyType> = new Set();
+    if (!ModelNode.isModelText(other)) {
+      dirtiness.add('node');
+    } else {
+      if (!this.marks.hasSameHashes(other.marks)) dirtiness.add('mark');
+
+      if (
+        !ModelNodeUtils.areAttributeMapsSame(
+          this.attributeMap,
+          other.attributeMap
+        )
+      ) {
+        dirtiness.add('node');
+      }
+      if (this.content !== other.content) dirtiness.add('content');
+    }
+
+    return dirtiness;
   }
 
   get firstChild(): ModelNode | null {

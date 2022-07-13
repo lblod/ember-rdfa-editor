@@ -399,10 +399,11 @@ export default abstract class ModelNode implements Walkable {
    */
   abstract isMergeable(other: ModelNode): boolean;
 
+  abstract diff(other: ModelNode): Set<DirtyType>;
+
   abstract get firstChild(): ModelNode | null;
 
   abstract get lastChild(): ModelNode | null;
-
 
   get parentNode(): ModelElement | null {
     return this.parent;
