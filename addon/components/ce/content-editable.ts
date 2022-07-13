@@ -160,12 +160,20 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   @action
   async insertedEditorElement(element: HTMLElement) {
-    await this.rawEditor.initialize(element, this.args.plugins);
-    if (this.args.rawEditorInit) {
-      this.args.rawEditorInit(this.rawEditor);
-    }
-    if (this.stealFocus) {
-      element.focus();
+    this.rootNode = element;
+    await this.initialize();
+  }
+
+  @action
+  async initialize() {
+    if (this.rootNode) {
+      await this.rawEditor.initialize(this.rootNode, this.args.plugins);
+      if (this.args.rawEditorInit) {
+        this.args.rawEditorInit(this.rawEditor);
+      }
+      if (this.stealFocus) {
+        this.rootNode.focus();
+      }
     }
   }
 

@@ -159,6 +159,9 @@ export default class RawEditor {
 
   async initialize(rootNode: HTMLElement, plugins: ResolvedPluginConfig[]) {
     this.registeredCommands = new Map<string, Command>();
+    this.widgetMap.set('toolbar', []);
+    this.widgetMap.set('sidebar', []);
+    this.widgetMap.set('insertSidebar', []);
     if (this.modelSelectionTracker) {
       this.modelSelectionTracker.stopTracking();
     }
