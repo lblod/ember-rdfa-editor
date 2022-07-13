@@ -115,7 +115,10 @@ module('Unit | commands | insert-new-li-command-test', function () {
     const range = ModelRange.fromInElement(testLi, 3, 3);
     const initialState = stateWithRange(initial, range);
     const { resultState } = executeCommand(initialState, {});
-    assert.true(resultState.document.sameAs(expected));
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
   });
 
   test('insert li - single nonempty li - collapsed selection in middle', function (assert) {

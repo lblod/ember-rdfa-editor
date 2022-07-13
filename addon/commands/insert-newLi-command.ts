@@ -98,9 +98,15 @@ export default class InsertNewLiCommand
         ModelRange.fromInElement(nodeBefore),
         new ModelText(INVISIBLE_SPACE)
       );
-      tr.selectRange(ModelRange.fromInElement(nodeBefore, 1, 1));
+    }
+    if (nodeAfter.length === 0) {
+      tr.insertNodes(
+        ModelRange.fromInElement(nodeAfter),
+        new ModelText(INVISIBLE_SPACE)
+      );
+      tr.selectRange(ModelRange.fromInElement(nodeAfter, 1, 1));
     } else {
-      tr.selectRange(ModelRange.fromInElement(nodeBefore, 0, 0));
+      tr.selectRange(ModelRange.fromInElement(nodeAfter, 0, 0));
     }
   }
 }
