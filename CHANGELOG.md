@@ -18,6 +18,16 @@
 
 
 
+
+## 0.60.4 (2022-07-13)
+
+#### :rocket: Enhancement
+* [#297](https://github.com/lblod/ember-rdfa-editor/pull/297) Allow plugins to send arguments to their components ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.60.3 (2022-07-11)
 
 #### :bug: Bug Fix
