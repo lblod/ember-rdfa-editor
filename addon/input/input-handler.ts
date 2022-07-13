@@ -130,7 +130,7 @@ export class EditorInputHandler implements InputHandler {
         handleDelete(this.editor, event, -1);
         break;
       case 'deleteContentForward':
-        event.preventDefault();
+        handleDelete(this.editor, event, 1);
         break;
       case 'historyUndo':
         handleUndo(this.editor, event);
