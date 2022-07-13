@@ -16,6 +16,7 @@ import { PropertyState } from '../model/util/types';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelText from '../model/model-text';
 import { INVISIBLE_SPACE } from '../model/util/constants';
+import GenTreeWalker from '../model/util/gen-tree-walker';
 
 /**
  * Command will convert all nodes in the selection to a list, if they are not already in a list.
@@ -99,58 +100,58 @@ export default class MakeListCommand extends Command {
   private getBlocksFromRange(range: ModelRange): ModelNode[][] {
     // Do a check if we are at the end of a text node
     // Expand range until it is bound by blocks.
-    let current: ModelNode | null = range.start.nodeAfter();
-    if (!current && !range.start.nodeBefore()?.isBlock) {
-      current = range.start.nodeBefore();
+    let walker = GenTreeWalker.fromRange({
+      range: new ModelRange(
+        ModelPosition.fromInNode(range.root, 0),
+        range.start
+      ),
+      reverse: true,
+    });
+    let nextNode = walker.nextNode();
+    while (nextNode && !nextNode.isBlock) {
+      range.start = ModelPosition.fromInNode(nextNode, 0);
+      nextNode = walker.nextNode();
     }
-    if (current) {
-      range.start.parentOffset = current.getOffset();
 
-      while (current?.previousSibling && !current.previousSibling.isBlock) {
-        current = current.previousSibling;
-        range.start.parentOffset = current.getOffset();
-      }
-
-      if (range.start.parentOffset === 0) {
-        if (range.start.parent === this.model.rootModelNode) {
-          // Expanded to the start of the root node.
-          range.start = ModelPosition.fromInElement(
-            this.model.rootModelNode,
-            0
-          );
-        } else {
-          range.start = ModelPosition.fromInElement(
-            range.start.parent.parent!,
-            range.start.parent.getOffset()
-          );
-        }
+    if (range.start.parentOffset === 0) {
+      if (range.start.parent === this.model.rootModelNode) {
+        // Expanded to the start of the root node.
+        range.start = ModelPosition.fromInElement(this.model.rootModelNode, 0);
+      } else {
+        range.start = ModelPosition.fromInElement(
+          range.start.parent.parent!,
+          range.start.parent.getOffset()
+        );
       }
     }
 
-    current = range.end.nodeBefore();
+    walker = GenTreeWalker.fromRange({
+      range: new ModelRange(
+        range.end,
+        ModelPosition.fromInNode(range.root, range.root.getMaxOffset())
+      ),
+    });
+    nextNode = walker.nextNode();
+    while (nextNode && !nextNode.isBlock) {
+      range.end = ModelPosition.fromAfterNode(nextNode);
+      nextNode = walker.nextNode();
+    }
 
-    if (current) {
-      range.end.parentOffset = current.getOffset() + current.offsetSize;
-      while (current?.nextSibling && !current.nextSibling.isBlock) {
-        current = current.nextSibling;
-        range.end.parentOffset = current.getOffset() + current.offsetSize;
-      }
-
-      if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
-        if (range.end.parent === this.model.rootModelNode) {
-          // Expanded to the end of root node.
-          range.end = ModelPosition.fromInElement(
-            this.model.rootModelNode,
-            this.model.rootModelNode.getMaxOffset()
-          );
-        } else {
-          range.end = ModelPosition.fromInElement(
-            range.end.parent.parent!,
-            range.end.parent.getOffset() + range.end.parent.offsetSize
-          );
-        }
+    if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
+      if (range.end.parent === this.model.rootModelNode) {
+        // Expanded to the end of root node.
+        range.end = ModelPosition.fromInElement(
+          this.model.rootModelNode,
+          this.model.rootModelNode.getMaxOffset()
+        );
+      } else {
+        range.end = ModelPosition.fromInElement(
+          range.end.parent.parent!,
+          range.end.parent.getOffset() + range.end.parent.offsetSize
+        );
       }
     }
+    // }
 
     const confinedRanges = range.getMinimumConfinedRanges();
     const result: ModelNode[][] = [[]];
