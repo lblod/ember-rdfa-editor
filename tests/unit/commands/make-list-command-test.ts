@@ -146,4 +146,31 @@ module('Unit | commands | make-list-command', function (hooks) {
     command.execute('ul');
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
+  test('create list from line with link in it', function (assert) {
+    const {
+      root: initial,
+      textNodes: { link },
+    } = vdom`
+      <modelRoot>
+        <text>line before list</text><a><text __id="link">link</text></a>
+      </modelRoot>
+    `;
+
+    const { root: expected } = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+            <text>line before list</text><a><text __id="link">link</text></a>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(link, 2, 2);
+    ctx.model.selectRange(range);
+
+    command.execute('ul');
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
 });
