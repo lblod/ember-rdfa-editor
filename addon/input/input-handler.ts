@@ -15,6 +15,7 @@ import {
   ManipulationExecutor,
 } from '../editor/input-handlers/manipulation';
 import { editorDebug } from '../editor/utils';
+import { NotImplementedError } from '../utils/errors';
 import handleCutCopy from './cut-copy';
 import { handleDelete } from './delete';
 import handlePaste from './paste';
@@ -76,7 +77,9 @@ export class EditorInputHandler implements InputHandler {
     handleCutCopy(this.editor, event, false);
   }
 
-  afterInput(event: InputEvent): void {}
+  afterInput(event: InputEvent): void {
+    throw new NotImplementedError(`Did not handle ${event.type}`);
+  }
 
   beforeInput(event: InputEvent): void {
     console.log('handling beforeInput with type', event.inputType);
@@ -145,7 +148,9 @@ export class EditorInputHandler implements InputHandler {
     }
   }
 
-  beforeSelectionChange(event: Event): void {}
+  beforeSelectionChange(event: Event): void {
+    throw new NotImplementedError(`did not handle ${event.type}`);
+  }
 
   afterSelectionChange(): void {
     console.log('handling selectionChanged');
