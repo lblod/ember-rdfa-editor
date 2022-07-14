@@ -17,6 +17,7 @@ import InsertTableRowBelowCommand from './insert-table-row-below-command';
 import InsertXmlCommand from './insert-xml-command';
 import MakeListCommand from './make-list-command';
 import MatchTextCommand from './match-text-command';
+import RemovePropertyCommand from './node-properties/remove-property-command';
 import ReadSelectionCommand from './read-selection-command';
 import RemoveCommand from './remove-command';
 import RemoveComponentCommand from './remove-component-command';
@@ -68,6 +69,7 @@ export type CommandMap = {
   undo: UndoCommand;
   'unindent-list': UnindentListCommand;
   remove: RemoveCommand;
+  'remove-property': RemovePropertyCommand;
 };
 export type CommandName = keyof CommandMap;
 

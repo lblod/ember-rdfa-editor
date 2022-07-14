@@ -22,6 +22,7 @@ import InsertTableRowBelowCommand from '../commands/insert-table-row-below-comma
 import InsertXmlCommand from '../commands/insert-xml-command';
 import MakeListCommand from '../commands/make-list-command';
 import MatchTextCommand from '../commands/match-text-command';
+import RemovePropertyCommand from '../commands/node-properties/remove-property-command';
 import ReadSelectionCommand from '../commands/read-selection-command';
 import RemoveCommand from '../commands/remove-command';
 import RemoveComponentCommand from '../commands/remove-component-command';
@@ -200,6 +201,7 @@ export function defaultCommands(): CommandMap {
     undo: new UndoCommand(),
     'unindent-list': new UnindentListCommand(),
     remove: new RemoveCommand(),
+    'remove-property': new RemovePropertyCommand(),
   };
 }
 export type CommandReturn<C extends CommandName> = ReturnType<
