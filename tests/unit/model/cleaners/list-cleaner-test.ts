@@ -4,7 +4,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { testState } from 'dummy/tests/test-utils';
 
-module.skip('Unit | model | cleaners | list-cleaner-test', function () {
+module('Unit | model | cleaners | list-cleaner-test', function () {
   test('should merge two adjacent lists', function (assert) {
     // language=XML
     const {
