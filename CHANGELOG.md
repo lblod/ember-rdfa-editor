@@ -19,6 +19,18 @@
 
 
 
+
+## 0.60.5 (2022-07-14)
+
+#### :rocket: Enhancement
+* [#299](https://github.com/lblod/ember-rdfa-editor/pull/299) Enabling reload of plugins ([@elpoelma](https://github.com/elpoelma))
+
+#### :bug: Bug Fix
+* [#298](https://github.com/lblod/ember-rdfa-editor/pull/298) Use GentreeWalker in make-list-command ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 0.60.4 (2022-07-13)
 
 #### :rocket: Enhancement
