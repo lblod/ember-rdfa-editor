@@ -10,6 +10,7 @@ import State, {
 import { ResolvedPluginConfig } from '../components/rdfa/rdfa-editor';
 import { EditorControllerCompat } from '../model/controller';
 import { CORE_OWNER } from '../model/util/constants';
+import TreeDiffer from '../model/util/tree-differ';
 import { getPathFromRoot } from '../utils/dom-helpers';
 import {
   ContentChangedEvent,
@@ -123,14 +124,18 @@ class SayEditor implements Editor {
     this.view = new EditorView(domRoot);
     this.eventbus = new EventBus();
 
-    let initialState = emptyState(this.eventbus);
+    const initialState = emptyState(this.eventbus);
     const tr = new Transaction(initialState);
     tr.readFromView(this.view);
     tr.setBaseIRI(args.baseIRI ?? document.baseURI);
     tr.setPathFromDomRoot(getPathFromRoot(domRoot, false));
-    initialState = tr.apply();
-    this.view.update(initialState);
-    this._state = initialState;
+    const newState = tr.apply();
+    const differences = new TreeDiffer(
+      initialState.document,
+      newState.document
+    ).getDifference();
+    this.view.update(newState, differences);
+    this._state = newState;
     const dispatcher = args.dispatcher || this.defaultDispatcher;
     this.dispatchUpdate = dispatcher(this.view, true);
     this.dispatchNoUpdate = dispatcher(this.view, false);
@@ -171,9 +176,13 @@ class SayEditor implements Editor {
     (view: View, updateView = true) =>
     (transaction: Transaction): State => {
       const newState = transaction.apply();
+      const differences = new TreeDiffer(
+        this.state.document,
+        newState.document
+      ).getDifference();
       this.state = newState;
       if (updateView) {
-        view.update(this.state);
+        view.update(this.state, differences);
       }
       if (!newState.document.sameAs(transaction.initialState.document)) {
         this.emitEvent(

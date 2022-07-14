@@ -1,7 +1,9 @@
 import State from '@lblod/ember-rdfa-editor/core/state';
-import { View } from '@lblod/ember-rdfa-editor/core/view';
+import { modelToView, View } from '@lblod/ember-rdfa-editor/core/view';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode, {
+  DirtyType,
+} from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import HtmlElementWriter, {
   parentIsLumpNode,
@@ -30,6 +32,31 @@ export default class HtmlWriter {
     this.htmlAdjacentTextWriter = new HtmlAdjacentTextWriter();
     this.htmlElementWriter = new HtmlElementWriter();
     this.htmlInlineComponentWriter = new HtmlInlineComponentWriter();
+  }
+
+  write2(state: State, view: View, node: ModelNode, changes: Set<DirtyType>) {
+    const currentView = modelToView(state, view.domRoot, node);
+    let updatedView = currentView;
+    if (ModelNode.isModelElement(node)) {
+      if (changes.has('node')) {
+        updatedView = this.parseElement(node);
+        this.swapElement(
+          currentView as HTMLElement,
+          updatedView as HTMLElement
+        );
+      }
+      if (changes.has('content')) {
+        const parsedChildren = this.parseChildren(node.children, state);
+        (updatedView as HTMLElement).replaceChildren(...parsedChildren);
+      }
+    } else if (ModelNode.isModelText(node)) {
+      if (changes.has('content')) {
+        (updatedView as Text).textContent = node.content;
+      }
+    }
+    // else if (ModelNode.isModelInlineComponent(node)) {
+
+    // }
   }
 
   write(state: State, view: View) {

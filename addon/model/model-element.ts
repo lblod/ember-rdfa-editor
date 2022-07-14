@@ -527,11 +527,12 @@ export default class ModelElement
       dirtiness.add('content');
     } else {
       if (
-        this.type !== other.type ||
-        !ModelNodeUtils.areAttributeMapsSame(
-          this.attributeMap,
-          other.attributeMap
-        )
+        (this.type !== other.type ||
+          !ModelNodeUtils.areAttributeMapsSame(
+            this.attributeMap,
+            other.attributeMap
+          )) &&
+        !(other === other.root)
       ) {
         dirtiness.add('node');
       }
