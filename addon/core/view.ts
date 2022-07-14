@@ -79,8 +79,11 @@ export function modelToView(
 ): Node {
   const modelPosition = ModelPosition.fromBeforeNode(modelNode);
   const domPosition = modelPosToDomPos(state, viewRoot, modelPosition);
-  const domNode = domPosition.container;
-  return domNode;
+  if (domPosition.offset) {
+    return domPosition.container.childNodes[domPosition.offset];
+  } else {
+    return domPosition.container;
+  }
 }
 
 export function viewToModel(

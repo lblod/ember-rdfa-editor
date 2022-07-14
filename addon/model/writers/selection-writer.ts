@@ -73,6 +73,6 @@ export default class SelectionWriter {
       viewRoot,
       position
     );
-    return { anchor, offset };
+    return { anchor, offset: offset ?? 0 };
   }
 }

@@ -145,7 +145,7 @@ class SayEditor implements Editor {
     return this._state;
   }
   set state(value: State) {
-    console.log('Setting state', value.document.toXml());
+    // console.log('Setting state', value.document.toXml());
     this._state = value;
   }
   executeCommand<C extends CommandName>(
