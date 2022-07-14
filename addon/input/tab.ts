@@ -1,6 +1,4 @@
-import { warn } from '@ember/debug';
 import { Editor } from '../core/editor';
-import { TabHandlerManipulation } from '../editor/input-handlers/tab-handler';
 import { ensureValidTextNodeForCaret } from '../editor/utils';
 import {
   isElement,
@@ -8,16 +6,22 @@ import {
   isVisibleElement,
   isVoidElement,
 } from '../utils/dom-helpers';
-import ListTabInputPlugin from '../utils/plugins/lists/tab-input-plugin';
-import LumpNodeTabInputPlugin from '../utils/plugins/lump-node/tab-input-plugin';
-import TableTabInputPlugin from '../utils/plugins/table/tab-input-plugin';
-import { checkManipulationByPlugins } from './input-handler';
+import {
+  MoveCursorAfterEditorManipulation,
+  MoveCursorAfterElementManipulation,
+  MoveCursorBeforeEditorManipulation,
+  MoveCursorBeforeElementManipulation,
+  MoveCursorToEndOfElementManipulation,
+  MoveCursorToStartOfElementManipulation,
+} from './manipulation';
 
-const PLUGINS = [
-  new LumpNodeTabInputPlugin(),
-  new ListTabInputPlugin(),
-  new TableTabInputPlugin(),
-];
+export type TabHandlerManipulation =
+  | MoveCursorBeforeElementManipulation
+  | MoveCursorToEndOfElementManipulation
+  | MoveCursorBeforeEditorManipulation
+  | MoveCursorToStartOfElementManipulation
+  | MoveCursorAfterElementManipulation
+  | MoveCursorAfterEditorManipulation;
 
 export default function handleTab() {
   return function (editor: Editor, event: KeyboardEvent) {
@@ -30,28 +34,28 @@ export default function handleTab() {
     )
       event.preventDefault();
     const manipulation = getNextManipulation(editor, event);
-    // Check if we can execute it.
-    const { mayExecute, dispatchedExecutor } = checkManipulationByPlugins(
-      editor,
-      manipulation,
-      PLUGINS
-    );
+    // // Check if we can execute it.
+    // const { mayExecute, dispatchedExecutor } = checkManipulationByPlugins(
+    //   editor,
+    //   manipulation,
+    //   PLUGINS
+    // );
 
     // Error if we're not allowed to execute.
-    if (!mayExecute) {
-      warn(`Not allowed to execute manipulation`, {
-        id: 'tab-input-handler-manipulation-not-allowed',
-      });
-      return;
-    }
+    // if (!mayExecute) {
+    //   warn(`Not allowed to execute manipulation`, {
+    //     id: 'tab-input-handler-manipulation-not-allowed',
+    //   });
+    //   return;
+    // }
 
-    // Run the manipulation.
-    if (dispatchedExecutor) {
-      // NOTE: We should pass some sort of editor interface here in the future.
-      dispatchedExecutor(manipulation, editor);
-    } else {
-      handleNativeManipulation(manipulation, editor);
-    }
+    // // Run the manipulation.
+    // if (dispatchedExecutor) {
+    //   // NOTE: We should pass some sort of editor interface here in the future.
+    //   dispatchedExecutor(manipulation, editor);
+    // } else {
+    handleNativeManipulation(manipulation, editor);
+    // }
 
     const tr = editor.state.createTransaction();
     tr.readFromView(editor.view);
