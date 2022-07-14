@@ -109,10 +109,10 @@ export class EditorInputHandler implements InputHandler {
       case 'insertFromPaste':
         break;
       case 'deleteWordBackward':
-        event.preventDefault();
+        handleDelete(this.editor, event, -1);
         break;
       case 'deleteWordForward':
-        event.preventDefault();
+        handleDelete(this.editor, event, 1);
         break;
       case 'deleteSoftLineBackward':
         break;
