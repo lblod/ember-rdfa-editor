@@ -1,5 +1,5 @@
-import previousTextNode from './previous-text-node';
-import nextTextNode from './next-text-node';
+import nextTextNode from '@lblod/ember-rdfa-editor/utils/ce/next-text-node';
+import previousTextNode from '@lblod/ember-rdfa-editor/utils/ce/previous-text-node';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 /**
