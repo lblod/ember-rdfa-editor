@@ -10,7 +10,6 @@
  * ourselves.  We did not find a type.
  */
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 
 export type VoidElement =
   | HTMLAreaElement
@@ -37,17 +36,6 @@ interface HTMLWbrElement extends HTMLElement {
   tagName: 'wbr' | 'WBR';
 }
 
-/**
- * Executor of a single Manipulation, as offered by plugins.
- *
- * The plugin receives a Manipulation and an Editor, and can use both
- * to handle the manipulation.  Returning such manipulation is
- * optional.  A plugin need not handle a manipulation.
- */
-export type ManipulationExecutor = (
-  manipulation: Manipulation,
-  editor: RawEditor
-) => void;
 
 /**
  * Base type for any manipulation, ensuring the type interface exists.
@@ -219,7 +207,3 @@ export interface InsertTextIntoRange extends Manipulation {
   text: string;
 }
 
-export interface ManipulationGuidance {
-  allow: boolean | undefined;
-  executor: ManipulationExecutor | undefined;
-}
