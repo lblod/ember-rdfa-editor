@@ -2,7 +2,7 @@ import ModelElement from '../model-element';
 import ModelNode, { DirtyType } from '../model-node';
 import ModelNodeUtils from './model-node-utils';
 
-type Difference = {
+export type Difference = {
   node: ModelNode;
   changes?: Set<DirtyType>;
 };
@@ -46,7 +46,7 @@ function _computeDifference(
     }
   }
   if (difference.changes?.size) {
-    result.push(difference);
+    result.unshift(difference);
   }
   return result;
 }
