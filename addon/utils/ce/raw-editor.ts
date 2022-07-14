@@ -1,6 +1,7 @@
 import Command from '@lblod/ember-rdfa-editor/commands/command';
 import IndentListCommand from '@lblod/ember-rdfa-editor/commands/indent-list-command';
 import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
+import RemoveCommand from '@lblod/ember-rdfa-editor/commands/remove-command';
 import InsertNewLiCommand from '@lblod/ember-rdfa-editor/commands/insert-newLi-command';
 import InsertNewLineCommand from '@lblod/ember-rdfa-editor/commands/insert-newLine-command';
 import InsertTableCommand from '@lblod/ember-rdfa-editor/commands/insert-table-command';
@@ -69,10 +70,10 @@ import RemovePropertyCommand from '@lblod/ember-rdfa-editor/commands/node-proper
 import AddMarkToSelectionCommand from '@lblod/ember-rdfa-editor/commands/add-mark-to-selection-command';
 import RemoveMarkFromSelectionCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-selection-command';
 import InsertComponentCommand from '@lblod/ember-rdfa-editor/commands/insert-component-command';
-import { EditorPlugin } from '../editor-plugin';
 import { createLogger, Logger } from '../logging-utils';
 import RemoveComponentCommand from '@lblod/ember-rdfa-editor/commands/remove-component-command';
 import { InlineComponentSpec } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
+import { ResolvedPluginConfig } from '@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor';
 
 export interface RawEditorProperties {
   baseIRI: string;
@@ -142,19 +143,22 @@ export default class RawEditor {
     );
   }
 
-  async initializePlugins(plugins: EditorPlugin[]) {
-    for (const plugin of plugins) {
-      await this.initializePlugin(plugin);
+  async initializePlugins(configs: ResolvedPluginConfig[]) {
+    for (const config of configs) {
+      await this.initializePlugin(config);
     }
   }
 
-  async initializePlugin(plugin: EditorPlugin): Promise<void> {
-    const controller = new RawEditorController(plugin.name, this);
-    await plugin.initialize(controller);
-    this.logger(`Initialized plugin ${plugin.name}`);
+  async initializePlugin(config: ResolvedPluginConfig): Promise<void> {
+    const controller = new RawEditorController(config.instance.name, this);
+    await config.instance.initialize(controller, config.options);
+    this.logger(
+      `Initialized plugin ${config.instance.name} with options: `,
+      config.options
+    );
   }
 
-  async initialize(rootNode: HTMLElement, plugins: EditorPlugin[]) {
+  async initialize(rootNode: HTMLElement, plugins: ResolvedPluginConfig[]) {
     this.registeredCommands = new Map<string, Command>();
     if (this.modelSelectionTracker) {
       this.modelSelectionTracker.stopTracking();
@@ -193,6 +197,7 @@ export default class RawEditor {
     this.registerCommand(new RemoveTableColumnCommand(this.model));
     this.registerCommand(new RemoveTableCommand(this.model));
     this.registerCommand(new InsertHtmlCommand(this.model));
+    this.registerCommand(new RemoveCommand(this.model));
     this.registerCommand(new InsertXmlCommand(this.model));
     this.registerCommand(new InsertTextCommand(this.model));
     this.registerCommand(new DeleteSelectionCommand(this.model));

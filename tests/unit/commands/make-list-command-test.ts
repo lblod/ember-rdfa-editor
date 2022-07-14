@@ -1,10 +1,10 @@
-import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import { module, test } from 'qunit';
 
 module('Unit | commands | make-list-command', function () {
   const command = new MakeListCommand();
@@ -20,7 +20,7 @@ module('Unit | commands | make-list-command', function () {
     const { root: expected } = vdom`
       <modelRoot>
         <ul>
-          <li><text></text></li>
+          <li><text>${INVISIBLE_SPACE}</text></li>
         </ul>
       </modelRoot>
     `;
@@ -35,16 +35,16 @@ module('Unit | commands | make-list-command', function () {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot>
-        <text>${'\n'}</text>
+        <br/>
       </modelRoot>
     `;
 
     // language=XML
     const { root: expected } = vdom`
       <modelRoot>
-        <text>${'\n'}</text>
+        <br/>
         <ul>
-          <li><text></text></li>
+          <li><text>${INVISIBLE_SPACE}</text></li>
         </ul>
       </modelRoot>
     `;

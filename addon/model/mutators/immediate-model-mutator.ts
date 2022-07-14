@@ -1,6 +1,7 @@
 import ModelMutator from '@lblod/ember-rdfa-editor/model/mutators/model-mutator';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
+import RemoveOperation from '@lblod/ember-rdfa-editor/model/operations/remove-operation';
 import MoveOperation from '@lblod/ember-rdfa-editor/model/operations/move-operation';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
@@ -44,6 +45,11 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
    */
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const op = new InsertOperation(this.eventbus, range, ...nodes);
+    return this.executeOperation(op);
+  }
+
+  removeNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
+    const op = new RemoveOperation(this.eventbus, range, ...nodes);
     return this.executeOperation(op);
   }
 
@@ -282,5 +288,4 @@ export default class ImmediateModelMutator extends ModelMutator<ModelRange> {
     const range = ModelRange.fromAroundNode(node);
     return this.delete(range);
   }
-
 }

@@ -1,9 +1,9 @@
 /**
  * TreeWalker implementation based on specification of the TreeWalker in the DOM spec, but for ModelNodes
- * and working with a {@link ModelRange}
+ * and working with a {@link ModelRange}.
  * https://dom.spec.whatwg.org/#interface-treewalker
  *
- * Extensions include support for stopping at an end node, the implementation of the Iterable interface
+ * Extensions include support for stopping at an end node, the implementation of the Iterable interface.
  */
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
@@ -13,11 +13,11 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { Walkable, WalkFilter } from './gen-tree-walker';
 
 export enum FilterResult {
-  // we like the node
+  // We like the node.
   FILTER_ACCEPT,
-  // we dont want the node, but we want to visit it's child tree
+  // We don't want the node, but we want to visit its child tree.
   FILTER_SKIP,
-  // we don't want the entire subtree so skip the node and don't visit it's children
+  // We don't want the entire subtree, so skip the node and don't visit its children.
   FILTER_REJECT,
 }
 
@@ -29,10 +29,9 @@ enum TraverseType {
 export type ModelNodeFilter = (node: ModelNode) => FilterResult;
 
 /**
- * Utility function to turn a boolean filter into a filter that is compatible with the
- * TreeWalker.
+ * Utility function to turn a boolean filter into a filter that is compatible with the TreeWalker.
  * If the provided filter function returns false, the node will be skipped (but it's children
- * will be visited)
+ * will be visited).
  * @param func
  */
 export function toFilterSkipFalse<N extends Walkable>(
@@ -44,10 +43,9 @@ export function toFilterSkipFalse<N extends Walkable>(
 }
 
 /**
- * Utility function to turn a boolean filter into a filter that is compatible with the
- * TreeWalker.
+ * Utility function to turn a boolean filter into a filter that is compatible with the TreeWalker.
  * If the provided filter function returns false, the node will be rejected (aka
- * it's children will not be visited at all)
+ * it's children will not be visited at all).
  * @param func
  */
 export function toFilterRejectFalse(
@@ -70,12 +68,14 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
 {
   private readonly _root: ModelElement;
   private readonly _filter?: ModelNodeFilter;
-  private _currentNode: ModelNode;
-  private hasReturnedStartNode = false;
+  private _currentNode: ModelNode | null;
+
   private readonly nodeAfterEnd: ModelNode | null = null;
+  private readonly descend: boolean;
+  private readonly visitParentUpwards: boolean;
+
+  private hasReturnedStartNode = false;
   private hasSeenEnd = false;
-  private descend: boolean;
-  private visitParentUpwards: boolean;
 
   constructor({
     filter,
@@ -91,38 +91,13 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
 
     if (from.path.length > 0) {
       const startNode = this.getStartNodeFromPosition(from);
-      this.nodeAfterEnd = this.getNodeAfterEndFromPosition(to, startNode);
+      this.nodeAfterEnd = startNode
+        ? this.getNodeAfterEndFromPosition(to, startNode)
+        : null;
       this._currentNode = startNode;
     } else {
       this._currentNode = this.root;
     }
-  }
-
-  [Symbol.iterator](): Iterator<T> {
-    return {
-      next: (): IteratorResult<T> => {
-        if (!this.hasReturnedStartNode) {
-          this.hasReturnedStartNode = true;
-          if (
-            this.filterNode(this._currentNode) === FilterResult.FILTER_ACCEPT
-          ) {
-            return { value: this._currentNode as T, done: false };
-          }
-        }
-        const value = this.nextNode() as T;
-        if (value) {
-          return {
-            value,
-            done: false,
-          };
-        } else {
-          return {
-            value: null,
-            done: true,
-          };
-        }
-      },
-    };
   }
 
   get root(): ModelElement {
@@ -133,8 +108,35 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
     return this._currentNode;
   }
 
+  [Symbol.iterator](): Iterator<T> {
+    return {
+      next: (): IteratorResult<T> => {
+        if (!this._currentNode) {
+          return { value: null, done: true };
+        }
+
+        if (!this.hasReturnedStartNode) {
+          this.hasReturnedStartNode = true;
+          if (
+            this.filterNode(this._currentNode) === FilterResult.FILTER_ACCEPT
+          ) {
+            return { value: this._currentNode as T, done: false };
+          }
+        }
+
+        const value = this.nextNode() as T;
+        if (value) {
+          return { value, done: false };
+        } else {
+          return { value: null, done: true };
+        }
+      },
+    };
+  }
+
   parentNode(): ModelElement | null {
     let node: ModelNode | null = this._currentNode;
+
     while (node && node !== this.root) {
       node = node.parent;
       if (node && this.filterNode(node) === FilterResult.FILTER_ACCEPT) {
@@ -142,6 +144,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
         return node as ModelElement;
       }
     }
+
     return null;
   }
 
@@ -162,6 +165,10 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
   }
 
   previousNode(): ModelNode | null {
+    if (!this._currentNode) {
+      return null;
+    }
+
     let node = this._currentNode;
     while (node !== this.root) {
       let sibling = node.previousSibling;
@@ -170,18 +177,22 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
         node = sibling;
         let result = this.filterNode(node);
         while (result !== FilterResult.FILTER_REJECT && this.hasChild(node)) {
-          node = node.lastChild;
+          node = node.lastChild!;
           result = this.filterNode(node);
         }
+
         if (result === FilterResult.FILTER_ACCEPT) {
           this._currentNode = node;
           return node;
         }
+
         sibling = node.previousSibling;
       }
+
       if (node === this.root || !node.parent) {
         return null;
       }
+
       node = node.parent;
       if (this.filterNode(node) === FilterResult.FILTER_ACCEPT) {
         this._currentNode = node;
@@ -194,18 +205,18 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
 
   /**
    * Main iterator driver. This visits the nodes in document order.
-   * Algorithm is heavily based on the dom spec, with a few modifications
+   * Algorithm is heavily based on the dom spec, with a few modifications.
    * On the surface some of the control flow choices may seem odd, but I trust
    * that the DOM people know what they're doing.
    */
   nextNode(): ModelNode | null {
-    if (this.hasSeenEnd) {
-      // stop when we've seen the last node
+    if (!this._currentNode || this.hasSeenEnd) {
+      // Stop when there is no current node or we have seen the last node.
       return null;
     }
 
-    // start at the currentNode, which is the node we ended on the last time
-    // this method was run
+    // Start at the currentNode, which is the node we ended on the last time
+    // this method was run.
     let node = this._currentNode;
 
     let result = FilterResult.FILTER_ACCEPT;
@@ -221,29 +232,31 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
         node = node.firstChild;
         result = this.filterNode(node);
         if (result === FilterResult.FILTER_ACCEPT) {
-          // we've found an acceptable node, save it and return it
+          // We've found an acceptable node, save it and return it.
           this._currentNode = node;
           return node;
         }
       }
 
-      // at this point we've gone as deep as we can but haven't found a node yet
-      // so we start going sideways or back up
+      // At this point we've gone as deep as we can but haven't found a node yet,
+      // so we start going sideways or back up.
       let sibling = null;
       let temporary: ModelNode | null = node;
       while (temporary) {
         if (temporary === this.root) {
           return null;
         }
-        // try going sideways first
+
+        // Try going sideways first.
         sibling = temporary.nextSibling;
         if (sibling) {
-          // there was a sibling, break here
+          // There was a sibling, break here.
           node = sibling;
           break;
         }
-        // walk back up and try to find a sibling there
-        // we don't care about these nodes since we've already visited them
+
+        // Walk back up and try to find a sibling there.
+        // We don't care about these nodes since we've already visited them.
         temporary = temporary.parent;
         if (this.visitParentUpwards && temporary) {
           result = this.filterNode(temporary);
@@ -253,17 +266,21 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
           }
         }
       }
-      // test the node we found (this was a sibling or a sibling of the parent)
+
+      // Test the node we found (this was a sibling or a sibling of the parent).
       result = this.filterNode(node);
       if (result === FilterResult.FILTER_ACCEPT) {
         this._currentNode = node;
         return node;
       }
-      // the node did not qualify, we will visit its children on the next loop
+
+      // The node did not qualify, we will visit its children on the next loop.
     }
   }
 
-  private getStartNodeFromPosition(startPosition: ModelPosition): ModelNode {
+  private getStartNodeFromPosition(
+    startPosition: ModelPosition
+  ): ModelNode | null {
     let startNode = startPosition.nodeAfter();
     if (startNode) {
       return startNode;
@@ -275,8 +292,11 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
     while (!startNode.nextSibling && startNode !== this.root) {
       startNode = startNode.parent!;
     }
+
+    // This would mean the given range is empty.
     if (startNode === this.root) {
-      return startNode;
+      return null;
+      // return startNode;
     }
     return startNode.nextSibling!;
   }
@@ -293,28 +313,38 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
       ) {
         nodeAfterEnd = nodeAfterEnd.nextSibling;
       }
+
       if (nodeAfterEnd) {
         return nodeAfterEnd;
       }
     }
+
     nodeAfterEnd = position.parent;
     if (!nodeAfterEnd) {
       return null;
     }
+
     while (!nodeAfterEnd.nextSibling && nodeAfterEnd !== this.root) {
       nodeAfterEnd = nodeAfterEnd.parent!;
     }
+
     if (nodeAfterEnd === this.root) {
       return null;
     }
+
     nodeAfterEnd = nodeAfterEnd.nextSibling;
     if (nodeAfterEnd === startNode) {
       return nodeAfterEnd.nextSibling;
     }
+
     return nodeAfterEnd;
   }
 
   private traverseChildren(traverseType: TraverseType): ModelNode | null {
+    if (!this._currentNode) {
+      return null;
+    }
+
     let node = this.getChild(this._currentNode, traverseType);
     while (node) {
       const result = this.filterNode(node);
@@ -330,12 +360,14 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
       } else {
         throw new NotImplementedError('Unknown filter result');
       }
+
       while (node) {
         const sibling = this.getSibling(node, traverseType);
         if (sibling) {
           node = sibling;
           break;
         }
+
         const parent: ModelElement | null = node.parent;
         if (!parent || parent === this.root || parent === this._currentNode) {
           return null;
@@ -343,10 +375,15 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
         node = parent;
       }
     }
+
     return null;
   }
 
   private traverseSiblings(traverseType: TraverseType): ModelNode | null {
+    if (!this._currentNode) {
+      return null;
+    }
+
     let node: ModelNode | null = this._currentNode;
     if (node === this.root) {
       return null;
@@ -362,15 +399,18 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
           this._currentNode = node;
           return node;
         }
+
         sibling = this.getChild(node, traverseType);
         if (result === FilterResult.FILTER_REJECT || !sibling) {
           sibling = this.getSibling(node, traverseType);
         }
       }
+
       node = node.parent;
       if (!node || node === this.root) {
         return null;
       }
+
       if (this.filterNode(node) === FilterResult.FILTER_ACCEPT) {
         return null;
       }

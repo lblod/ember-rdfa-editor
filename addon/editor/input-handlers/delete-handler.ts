@@ -8,9 +8,9 @@ import BackspaceDeleteHandler from './backspace-delete-handler';
  * @class EnterHandler
  * @constructor
  */
-export default class BackspaceHandler extends BackspaceDeleteHandler {
-  direction = -1;
+export default class DeleteHandler extends BackspaceDeleteHandler {
+  direction = 1;
   isHandlerFor(event: Event) {
-    return isKeyDownEvent(event) && event.key === 'Backspace';
+    return isKeyDownEvent(event) && event.key === 'Delete';
   }
 }

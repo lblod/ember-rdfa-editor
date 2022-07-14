@@ -549,6 +549,74 @@ module('Unit | model | utils | gen-tree-walker-test', function (hooks) {
         assert.strictEqual(nodes[3], rangeStart);
         assert.strictEqual(nodes[4], n3);
       });
+      test('Range does not contain any nodes 1', function (assert) {
+        const {
+          textNodes: { first, second },
+        } = vdom`
+        <div>
+          <p><text __id="first">first</text></p>
+          <text __id="second">second</text>
+        </div>
+      `;
+        const pos1 = ModelPosition.fromAfterNode(first);
+        const pos2 = ModelPosition.fromBeforeNode(second);
+        const range = new ModelRange(pos1, pos2);
+        const walker = GenTreeWalker.fromRange({ range, reverse: false });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 0);
+      });
+      test('Range does not contain any nodes 1 - reverse', function (assert) {
+        const {
+          textNodes: { first, second },
+        } = vdom`
+        <div>
+          <text __id="first">first</text>
+          <p><text __id="second">second</text></p>
+        </div>
+      `;
+        const pos1 = ModelPosition.fromAfterNode(first);
+        const pos2 = ModelPosition.fromBeforeNode(second);
+        const range = new ModelRange(pos1, pos2);
+        const walker = GenTreeWalker.fromRange({ range, reverse: true });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 0);
+      });
+      test('Range does not contain any nodes 2', function (assert) {
+        const {
+          elements: { first },
+          textNodes: { second },
+        } = vdom`
+        <div __id='first'>
+          <div>
+            <text __id='second'>test</text>
+          </div>
+        </div>
+      `;
+        const pos1 = ModelPosition.fromAfterNode(second);
+        const pos2 = ModelPosition.fromAfterNode(first);
+        const range = new ModelRange(pos1, pos2);
+        const walker = GenTreeWalker.fromRange({ range });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 0);
+      });
+      test('Range does not contain any nodes 2 - reverse', function (assert) {
+        const {
+          elements: { first },
+          textNodes: { second },
+        } = vdom`
+        <div __id='first'>
+          <div>
+            <text __id='second'>test</text>
+          </div>
+        </div>
+      `;
+        const pos1 = ModelPosition.fromBeforeNode(second);
+        const pos2 = ModelPosition.fromBeforeNode(first);
+        const range = new ModelRange(pos1, pos2);
+        const walker = GenTreeWalker.fromRange({ range, reverse: true });
+        const nodes = [...walker.nodes()];
+        assert.strictEqual(nodes.length, 0);
+      });
     }
   );
   module(

@@ -51,8 +51,8 @@ export default class ArrayUtils {
     return array.reduce((a, b) => a + b, 0);
   }
 
-  static all<T>(array: Array<T>, fun: (a: T) => boolean): boolean {
-    return !array.some((val: T) => !fun(val));
+  static all<T>(array: Array<T>, condition: (e: T) => boolean) {
+    return !array.some((e) => !condition(e));
   }
 }
 

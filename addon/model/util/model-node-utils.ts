@@ -5,6 +5,7 @@ import {
   INVISIBLE_SPACE,
   LIST_CONTAINERS,
   LIST_TYPES,
+  LUMP_NODE_PROPERTY,
   PLACEHOLDER_CLASS,
   TABLE_CELLS,
   VISUAL_NODES,
@@ -97,6 +98,10 @@ export default class ModelNodeUtils {
     return 0;
   }
 
+  static isVisible(node: ModelNode): boolean {
+    return this.getVisualLength(node) > 0;
+  }
+
   /**
    * Determines the index in the text node after having took a number of visual steps in a specific direction
    * from either the start or the end of the text node
@@ -153,5 +158,24 @@ export default class ModelNodeUtils {
     } else {
       return '';
     }
+  }
+
+  static parentIsLumpNode(modelNode: ModelNode): boolean {
+    while (modelNode.parent) {
+      const properties = modelNode.parent.getRdfaAttributes().properties;
+      if (properties && properties.includes(LUMP_NODE_PROPERTY)) {
+        return true;
+      }
+      modelNode = modelNode.parent;
+    }
+    return false;
+  }
+
+  static isLumpNode(modelElement: ModelElement): boolean {
+    const properties = modelElement.getRdfaAttributes().properties;
+    if (properties && properties.includes(LUMP_NODE_PROPERTY)) {
+      return true;
+    }
+    return false;
   }
 }

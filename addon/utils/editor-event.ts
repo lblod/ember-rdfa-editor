@@ -136,7 +136,20 @@ interface InsertionPayload {
   _markCheckNodes: ModelNode[];
 }
 
-type ContentChangedPayload = InsertionPayload | MovePayload | UnknownPayload;
+interface RemovePayload {
+  type: 'remove';
+  oldRange: ModelRange;
+  newRange: ModelRange;
+  overwrittenNodes: ModelNode[];
+  insertedNodes: ModelNode[];
+  _markCheckNodes: ModelNode[];
+}
+
+type ContentChangedPayload =
+  | InsertionPayload
+  | MovePayload
+  | RemovePayload
+  | UnknownPayload;
 
 export class ContentChangedEvent extends AbstractEditorEvent<ContentChangedPayload> {
   _name: EditorEventName = 'contentChanged';

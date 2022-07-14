@@ -1,10 +1,10 @@
 import { action } from '@ember/object';
+import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import { createEditor, Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
-import { EditorInputHandler } from '../../input/input-handler';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
-import { inject as service } from '@ember/service';
+import { EditorInputHandler } from '../../input/input-handler';
 
 interface FeatureService {
   isEnabled(key: string): boolean;
@@ -15,7 +15,7 @@ interface ContentEditableArgs {
 
   editorInit(editor: Editor): void;
 
-  plugins: EditorPlugin[];
+  plugins: ResolvedPluginConfig[];
 
   baseIRI?: string;
 

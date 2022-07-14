@@ -16,6 +16,7 @@ import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelElement from '../model/model-element';
 import ModelText from '../model/model-text';
 import { PropertyState } from '../model/util/types';
+import { INVISIBLE_SPACE } from '../model/util/constants';
 
 export interface MakeListCommandArgs {
   listType?: 'ul' | 'ol';
@@ -50,7 +51,7 @@ export default class MakeListCommand
       throw new MisbehavedSelectionError();
     }
 
-    const range = selection.lastRange;
+    const range = selection.lastRange.clone();
     const wasCollapsed = range.collapsed;
     const blocks = this.getBlocksFromRange(range, state.document);
 
@@ -106,6 +107,9 @@ export default class MakeListCommand
   ): ModelNode[][] {
     // Expand range until it is bound by blocks.
     let current: ModelNode | null = range.start.nodeAfter();
+    if (!current && !range.start.nodeBefore()?.isBlock) {
+      current = range.start.nodeBefore();
+    }
     if (current) {
       range.start.parentOffset = current.getOffset();
 
@@ -173,7 +177,7 @@ export default class MakeListCommand
       }
     }
     if (result[0].length === 0) {
-      result[0].push(new ModelText());
+      result[0].push(new ModelText(INVISIBLE_SPACE));
     }
 
     return result;
