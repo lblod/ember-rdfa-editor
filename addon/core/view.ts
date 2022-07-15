@@ -4,7 +4,11 @@ import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
 import { Difference } from '../model/util/tree-differ';
 import HtmlWriter from '../model/writers/html-writer';
-import { domPosToModelPos, modelPosToDomPos } from '../utils/dom-helpers';
+import {
+  domPosToModelPos,
+  isTextNode,
+  modelPosToDomPos,
+} from '../utils/dom-helpers';
 import { PositionError } from '../utils/errors';
 import { createLogger, Logger } from '../utils/logging-utils';
 
@@ -79,7 +83,10 @@ export function modelToView(
 ): Node {
   const modelPosition = ModelPosition.fromBeforeNode(modelNode);
   const domPosition = modelPosToDomPos(state, viewRoot, modelPosition);
-  if (typeof domPosition.offset === 'number') {
+  if (
+    typeof domPosition.offset === 'number' &&
+    !isTextNode(domPosition.container)
+  ) {
     return domPosition.container.childNodes[domPosition.offset];
   } else {
     return domPosition.container;
