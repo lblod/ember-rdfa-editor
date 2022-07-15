@@ -761,10 +761,10 @@ export function domOffsetToModelOffset(
 
 export function modelOffsetToDomOffset(
   state: State,
-  modelOffset: number,
+  modelOffset: number | undefined,
   node: Node
 ): number | undefined {
-  if (!modelOffset) {
+  if (!(typeof modelOffset === 'number')) {
     return undefined;
   }
   let childNode: ChildNode | null = node.firstChild;
