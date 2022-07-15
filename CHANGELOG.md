@@ -20,6 +20,18 @@
 
 
 
+
+## 0.61.0-0 (2022-07-15)
+
+#### :rocket: Enhancement
+* [#286](https://github.com/lblod/ember-rdfa-editor/pull/286) Vdom-based deletion ([@Asergey91](https://github.com/Asergey91))
+* [#288](https://github.com/lblod/ember-rdfa-editor/pull/288) Feature/tab handler vdom ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Sergey Andreev ([@Asergey91](https://github.com/Asergey91))
+
+
 ## 0.60.5 (2022-07-14)
 
 #### :rocket: Enhancement
