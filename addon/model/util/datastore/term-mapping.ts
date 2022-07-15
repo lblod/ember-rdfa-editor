@@ -5,8 +5,6 @@ import {
   PrefixMapping,
 } from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
 import { first, isEmpty, flatMap, map, filter, execPipe } from 'iter-tools';
-// import { first, from, isEmpty, single } from 'ix/iterable';
-// import { filter, flatMap, map } from 'ix/iterable/operators';
 import { TermSpec } from '@lblod/ember-rdfa-editor/model/util/datastore/term-spec';
 import { single } from '../iterator-utils';
 

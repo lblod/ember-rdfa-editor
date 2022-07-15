@@ -10,8 +10,7 @@ import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import { from, isEmpty, last, first } from 'ix/iterable';
-import { filter } from 'ix/iterable/operators';
+import { isEmpty, takeLast, first, filter } from 'iter-tools';
 import { ImpossibleModelStateError } from '../../errors';
 
 /**
@@ -61,12 +60,9 @@ export default class ListTabInputPlugin implements TabInputPlugin {
       if (!list) {
         throw new ImpossibleModelStateError('Li element cannot be root');
       }
-      const lis = from(list.children).pipe(
-        filter(ModelNodeUtils.isListElement)
-      );
-
+      const lis = filter(ModelNodeUtils.isListElement, list.children);
       const firstLi = first(lis);
-      const lastLi = last(lis);
+      const lastLi = takeLast(lis);
 
       if (
         selection.lastRange?.start.sameAs(
@@ -147,7 +143,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
     direction: Direction,
     editor: RawEditor
   ): void => {
-    const lis = from(list.children).pipe(filter(ModelNodeUtils.isListElement));
+    const lis = filter(ModelNodeUtils.isListElement, list.children);
 
     // This branch creates a new LI, but not really sure if we want that.
     if (isEmpty(lis)) {
@@ -158,7 +154,7 @@ export default class ListTabInputPlugin implements TabInputPlugin {
         const li = first(lis)!;
         pos = ModelPosition.fromInNode(li, 0);
       } else {
-        const li = last(lis)!;
+        const li = takeLast(lis)!;
         pos = ModelPosition.fromInNode(li, li.getMaxOffset());
       }
       setCursorAtPos(pos, editor);
