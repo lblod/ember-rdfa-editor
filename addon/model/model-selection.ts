@@ -2,14 +2,9 @@ import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { SelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { analyse } from '@lblod/marawa/rdfa-context-scanner';
-import ModelNodeFinder from '@lblod/ember-rdfa-editor/model/util/model-node-finder';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import {
-  Direction,
-  FilterAndPredicate,
-  PropertyState,
-} from '@lblod/ember-rdfa-editor/model/util/types';
+import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import { nodeIsElementOfType } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';

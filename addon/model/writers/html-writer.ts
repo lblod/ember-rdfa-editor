@@ -31,7 +31,7 @@ export default class HtmlWriter {
     this.htmlInlineComponentWriter = new HtmlInlineComponentWriter();
   }
 
-  write2(state: State, view: View, node: ModelNode, changes: Set<DirtyType>) {
+  write(state: State, view: View, node: ModelNode, changes: Set<DirtyType>) {
     const currentView = modelToView(state, view.domRoot, node);
     if (!currentView)
       throw new WriterError('corresponding view to modelNode not found');
@@ -59,10 +59,25 @@ export default class HtmlWriter {
       if (changes.has('content')) {
         updatedView.textContent = node.content;
       }
+    } else if (ModelNode.isModelInlineComponent(node)) {
+      if (!isElement(currentView))
+        throw new WriterError(
+          'corresponding view to modelInlineComponent is not an HTML Element'
+        );
+      const updatedView = this.parseInlineComponent(node, state);
+      if (state.inlineComponentsRegistry.activeComponents.has(node)) {
+        state.inlineComponentsRegistry.updateComponentInstanceNode(
+          node,
+          updatedView
+        );
+      } else {
+        state.inlineComponentsRegistry.addComponentInstance(
+          updatedView,
+          node.spec.name,
+          node
+        );
+      }
     }
-    // else if (ModelNode.isModelInlineComponent(node)) {
-
-    // }
   }
   private parseNode(modelNode: ModelNode, state: State): Node {
     if (ModelNode.isModelElement(modelNode)) {

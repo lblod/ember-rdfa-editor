@@ -2,8 +2,6 @@ import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import State from '../core/state';
 import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
-import GenTreeWalker from '../model/util/gen-tree-walker';
-import { toFilterSkipFalse } from '../model/util/model-tree-walker';
 
 /**
  * Fake class to list helper functions.

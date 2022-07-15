@@ -64,14 +64,14 @@ export class EditorView implements View {
     this.logger('Updating view with state:', state);
     const writer = new HtmlWriter();
     differences.forEach((difference) => {
-      writer.write2(
+      writer.write(
         state,
         this,
         difference.node,
         difference.changes || new Set()
       );
     });
-    // state.inlineComponentsRegistry.clearComponentInstances();
+    state.inlineComponentsRegistry.clean();
     const selectionWriter = new SelectionWriter();
     selectionWriter.write(state, this.domRoot, state.selection);
   }

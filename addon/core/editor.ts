@@ -1,3 +1,4 @@
+import { tracked } from '@glimmer/tracking';
 import Command, {
   CommandMap,
   CommandName,
@@ -113,7 +114,7 @@ export interface Editor {
  * Default implementation of the editor interface. Is a class for convenience and clearer `this` semantics.
  * */
 class SayEditor implements Editor {
-  private _state: State;
+  @tracked private _state: State;
   view: View;
   dispatchUpdate: Dispatch;
   dispatchNoUpdate: Dispatch;
