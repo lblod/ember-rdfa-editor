@@ -1,6 +1,9 @@
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import ModelTreeWalker, {
+  toFilterSkipFalse,
+} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import RangeMapper, {
   LeftOrRight,
@@ -22,13 +25,10 @@ const cantMergeIntoTypes = new Set<string>([
   'th',
   'thead',
   'tbody',
-  'ul',
 ]);
 
 const cantRemoveOpeningTagNodeTypes = new Set<string>([
   'a',
-  'ul',
-  'li',
   'td',
   'tr',
   'table',
@@ -71,8 +71,11 @@ export default class OperationAlgorithms {
     //grab all nodes inside the range
     //assumption: the only partial nodes that treewalker grabs are the ones that have opening tags in the selection
     //assumption: opening tag nodes are always parents of the last node in range
-    const walker = new ModelTreeWalker({ range: range });
-    const allNodes = [...walker];
+    const walker = GenTreeWalker.fromRange({
+      range: range,
+      filter: toFilterSkipFalse((node) => ModelNode.isModelElement(node)),
+    });
+    const allNodes = [...walker.nodes()];
 
     //get all nodes that are fully contained in the range
     //ie [<span><text>abc</text>]</span>
@@ -81,8 +84,8 @@ export default class OperationAlgorithms {
     const confinedRanges = range.getMinimumConfinedRanges();
     for (const range of confinedRanges) {
       if (!range.collapsed) {
-        const walker = new ModelTreeWalker({ range: range });
-        confinedNodes.push(...walker);
+        const walker = GenTreeWalker.fromRange({ range: range });
+        confinedNodes.push(...walker.nodes());
       }
     }
 
@@ -102,7 +105,7 @@ export default class OperationAlgorithms {
     //dont do this to rdfa either
     //collect those nodes
 
-    const cantRemoveOpeningTagNodes = [];
+    const cantRemoveOpeningTagNodes: ModelNode[] = [];
 
     openingTagNodes.forEach((opNode) => {
       //check if we can remove it
@@ -171,8 +174,12 @@ export default class OperationAlgorithms {
     }
 
     //not sure i did this correcctly
+    const removedOpeningTagNodes = openingTagNodes.filter((node) => {
+      return !cantRemoveOpeningTagNodes.includes(node);
+    });
+
     return {
-      removedNodes: [...confinedNodes, ...openingTagNodes],
+      removedNodes: [...confinedNodes, ...removedOpeningTagNodes],
       mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
     };
   }

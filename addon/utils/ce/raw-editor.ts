@@ -1,6 +1,7 @@
 import Command from '@lblod/ember-rdfa-editor/commands/command';
 import IndentListCommand from '@lblod/ember-rdfa-editor/commands/indent-list-command';
 import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
+import RemoveCommand from '@lblod/ember-rdfa-editor/commands/remove-command';
 import InsertNewLiCommand from '@lblod/ember-rdfa-editor/commands/insert-newLi-command';
 import InsertNewLineCommand from '@lblod/ember-rdfa-editor/commands/insert-newLine-command';
 import InsertTableCommand from '@lblod/ember-rdfa-editor/commands/insert-table-command';
@@ -200,6 +201,7 @@ export default class RawEditor {
     this.registerCommand(new RemoveTableColumnCommand(this.model));
     this.registerCommand(new RemoveTableCommand(this.model));
     this.registerCommand(new InsertHtmlCommand(this.model));
+    this.registerCommand(new RemoveCommand(this.model));
     this.registerCommand(new InsertXmlCommand(this.model));
     this.registerCommand(new InsertTextCommand(this.model));
     this.registerCommand(new DeleteSelectionCommand(this.model));

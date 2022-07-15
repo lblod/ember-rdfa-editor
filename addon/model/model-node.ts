@@ -148,6 +148,14 @@ export default abstract class ModelNode implements Walkable {
     return 1;
   }
 
+  get connected(): boolean {
+    if (this.parent) {
+      return this.parent.children.indexOf(this) !== -1;
+    } else {
+      return true;
+    }
+  }
+
   setDirty(...dirtyTypes: DirtyType[]) {
     this.dirtiness = new Set<DirtyType>(dirtyTypes);
   }

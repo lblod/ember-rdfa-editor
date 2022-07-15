@@ -3,6 +3,7 @@ import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import BackspaceHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/backspace-handler';
+import DeleteHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/delete-handler';
 import BoldItalicUnderlineHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/bold-italic-underline-handler';
 import EnterHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/enter-handler';
 import EscapeHandler from '@lblod/ember-rdfa-editor/editor/input-handlers/escape-handler';
@@ -127,6 +128,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
     this.defaultHandlers = [
       new EnterHandler({ rawEditor }),
       new BackspaceHandler({ rawEditor }),
+      new DeleteHandler({ rawEditor }),
       new TabHandler({ rawEditor }),
       new TextInputHandler({ rawEditor }),
       new SidewayArrowsHandler({ rawEditor }),

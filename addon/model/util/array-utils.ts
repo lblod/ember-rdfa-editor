@@ -58,6 +58,10 @@ export default class ArrayUtils {
   static sum(array: Array<number>): number {
     return array.reduce((a, b) => a + b, 0);
   }
+
+  static all<T>(array: Array<T>, condition: (e: T) => boolean) {
+    return !array.some((e) => !condition(e));
+  }
 }
 
 export function pushOrExpand<T>(parent: T[], child: T | T[]): void {

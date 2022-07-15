@@ -772,5 +772,81 @@ module('Unit | model | model-position', function () {
       assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
+    test('shifted by amount - lump node', function (assert) {
+      const {
+        textNodes: { baz, foo },
+      } = vdom`
+      <modelRoot>
+        <text __id="baz">baz</text>
+        <div property="http://lblod.data.gift/vocabularies/editor/isLumpNode">
+            <text>bar</text>
+        </div>
+        <text __id="foo">foo</text>
+      </modelRoot>`;
+      const referencePosLeft = ModelPosition.fromInTextNode(foo, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(baz, 3);
+
+      const oneLeft = ModelPosition.fromInTextNode(baz, 3);
+
+      const oneRight = ModelPosition.fromInTextNode(foo, 0);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
+    test('shifted by amount - div before and after lump node', function (assert) {
+      const {
+        textNodes: { baz, foo },
+        elements: { lump },
+      } = vdom`
+      <modelRoot>
+        <div><text __id="baz">baz</text></div>
+        <div __id="lump" property="http://lblod.data.gift/vocabularies/editor/isLumpNode">
+            <text>bar</text>
+        </div>
+        <div><text __id="foo">foo</text></div>
+      </modelRoot>`;
+      const referencePosLeft = ModelPosition.fromInTextNode(foo, 0);
+      const referencePosRight = ModelPosition.fromInTextNode(baz, 3);
+
+      const oneLeft = ModelPosition.fromBeforeNode(lump);
+
+      const oneRight = ModelPosition.fromInTextNode(foo, 0);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
+    test('shifted by amount - br between divs', function (assert) {
+      const {
+        textNodes: { foo },
+        elements: { br },
+      } = vdom`
+      <modelRoot>
+        <div>
+          <text __id="baz">baz</text>
+        </div>
+        <br __id="br"/>
+        <div>
+          <text __id="foo">foo</text>
+        </div>
+      </modelRoot>`;
+      const referencePosLeft = ModelPosition.fromInTextNode(foo, 0);
+      const referencePosRight = ModelPosition.fromBeforeNode(br);
+
+      const oneLeft = ModelPosition.fromBeforeNode(br);
+
+      const oneRight = ModelPosition.fromInTextNode(foo, 0);
+
+      const shiftedLeft = referencePosLeft.shiftedVisually(-1);
+      const shiftedRight = referencePosRight.shiftedVisually(1);
+
+      assert.true(oneLeft.sameAs(shiftedLeft), shiftedLeft.path.toString());
+      assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
+    });
   });
 });

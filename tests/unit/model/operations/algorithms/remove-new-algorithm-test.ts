@@ -402,16 +402,47 @@ module(
       <div>
         <div vocab="http://xmlns.com/foaf/0.1/" typeof="Person" __id="div1"> <!-- about:alice -->
         </div>
-        <ul>
-          <li>    
-          </li>
-        </ul>
         <text __id="text4">test</text>
       </div>
       `;
 
       const start1 = ModelPosition.fromBeforeNode(p1);
       const end1 = ModelPosition.fromAfterNode(text3);
+      OperationAlgorithms.removeNew(new ModelRange(start1, end1));
+      assert.expect(1);
+      assert.true(initial.sameAs(expected));
+    });
+
+    test('bug tests', function (assert) {
+      // language=XML
+      const {
+        root: initial,
+        textNodes: { text1 },
+        elements: { p1 },
+      } = vdom`
+      <div>
+        <span>
+          <p __id="p1">
+            <text __id="text1">
+              test
+            </text>
+          </p>
+        </span>
+      </div>
+      `;
+      const { root: expected } = vdom`
+      <div>
+        <span>
+          <p __id="p1">
+            <text __id="text1">
+              test
+            </text>
+          </p>
+        </span>
+      </div>
+      `;
+      const start1 = ModelPosition.fromAfterNode(text1);
+      const end1 = ModelPosition.fromAfterNode(p1);
       OperationAlgorithms.removeNew(new ModelRange(start1, end1));
       assert.expect(1);
       assert.true(initial.sameAs(expected));

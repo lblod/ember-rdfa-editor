@@ -87,8 +87,8 @@ export default class ModelNodeUtils {
 
   static getVisualLength(node: ModelNode): number {
     if (ModelNode.isModelText(node)) {
-      node.content.split('').filter((c) => c !== INVISIBLE_SPACE).length;
-      return node.length;
+      return node.content.split('').filter((c) => c !== INVISIBLE_SPACE).length;
+      // return node.length;
     } else if (
       (ModelNode.isModelElement(node) && VISUAL_NODES.has(node.type)) ||
       ModelNode.isModelInlineComponent(node)
@@ -97,6 +97,10 @@ export default class ModelNodeUtils {
     }
 
     return 0;
+  }
+
+  static isVisible(node: ModelNode): boolean {
+    return this.getVisualLength(node) > 0;
   }
 
   /**
@@ -162,6 +166,25 @@ export default class ModelNodeUtils {
     } else {
       return '';
     }
+  }
+
+  static parentIsLumpNode(modelNode: ModelNode): boolean {
+    while (modelNode.parent) {
+      const properties = modelNode.parent.getRdfaAttributes().properties;
+      if (properties && properties.includes(LUMP_NODE_PROPERTY)) {
+        return true;
+      }
+      modelNode = modelNode.parent;
+    }
+    return false;
+  }
+
+  static isLumpNode(modelElement: ModelElement): boolean {
+    const properties = modelElement.getRdfaAttributes().properties;
+    if (properties && properties.includes(LUMP_NODE_PROPERTY)) {
+      return true;
+    }
+    return false;
   }
   static isInLumpNode(node: ModelNode): boolean {
     return !!ModelNodeUtils.getParentLumpNode(node);
