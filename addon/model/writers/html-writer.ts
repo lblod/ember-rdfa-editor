@@ -5,143 +5,64 @@ import ModelNode, {
   DirtyType,
 } from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import HtmlElementWriter, {
-  parentIsLumpNode,
-} from '@lblod/ember-rdfa-editor/model/writers/html-element-writer';
 import {
   isElement,
   isTextNode,
-  tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
+import {
+  NotImplementedError,
+  WriterError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
+import ModelNodeUtils from '../util/model-node-utils';
 import { isTextOrElement, TextOrElement } from '../util/types';
 import HtmlAdjacentTextWriter from './html-adjacent-text-writer';
 import HtmlInlineComponentWriter from './html-inline-component-writer';
-type Difference = 'type' | 'tag' | 'attrs' | 'content' | 'none';
 
 /**
  * Top-level {@link Writer} for HTML documents.
  */
 export default class HtmlWriter {
   private htmlAdjacentTextWriter: HtmlAdjacentTextWriter;
-  private htmlElementWriter: HtmlElementWriter;
   private htmlInlineComponentWriter: HtmlInlineComponentWriter;
 
   constructor() {
     this.htmlAdjacentTextWriter = new HtmlAdjacentTextWriter();
-    this.htmlElementWriter = new HtmlElementWriter();
     this.htmlInlineComponentWriter = new HtmlInlineComponentWriter();
   }
 
   write2(state: State, view: View, node: ModelNode, changes: Set<DirtyType>) {
     const currentView = modelToView(state, view.domRoot, node);
-    let updatedView = currentView;
+    if (!currentView)
+      throw new WriterError('corresponding view to modelNode not found');
+
     if (ModelNode.isModelElement(node)) {
+      if (!isElement(currentView))
+        throw new WriterError(
+          'corresponding view to modelElement is not an HTML Element'
+        );
+      let updatedView = currentView;
       if (changes.has('node')) {
         updatedView = this.parseElement(node);
-        this.swapElement(
-          currentView as HTMLElement,
-          updatedView as HTMLElement
-        );
+        this.swapElement(currentView, updatedView);
       }
       if (changes.has('content')) {
         const parsedChildren = this.parseChildren(node.children, state);
-        (updatedView as HTMLElement).replaceChildren(...parsedChildren);
+        updatedView.replaceChildren(...parsedChildren);
       }
     } else if (ModelNode.isModelText(node)) {
+      if (!isTextNode(currentView))
+        throw new WriterError(
+          'corresponding view to modelElement is not an HTML Element'
+        );
+      const updatedView = currentView;
       if (changes.has('content')) {
-        (updatedView as Text).textContent = node.content;
+        updatedView.textContent = node.content;
       }
     }
     // else if (ModelNode.isModelInlineComponent(node)) {
 
     // }
-  }
-
-  write(state: State, view: View) {
-    const domRoot = view.domRoot;
-    const modelRoot = state.document;
-    if (modelRoot.children.length !== domRoot.childNodes.length) {
-      const parsedChildren = this.parseChildren(modelRoot.children, state);
-      domRoot.replaceChildren(...parsedChildren);
-    } else {
-      modelRoot.children.forEach((child, index) => {
-        this.writeRec(child, domRoot.childNodes[index], state);
-      });
-    }
-  }
-  private writeRec(modelNode: ModelNode, domNode: Node, state: State) {
-    const parsedNode = this.parseNode(modelNode, state);
-    const diff = this.compareNodes(parsedNode, domNode);
-    switch (diff) {
-      case 'type':
-        (domNode as HTMLElement | Text).replaceWith(
-          this.parseSubTree(modelNode, state)
-        );
-        break;
-      case 'tag':
-        (domNode as HTMLElement | Text).replaceWith(
-          this.parseSubTree(modelNode, state)
-        );
-        break;
-      case 'attrs':
-        this.swapElement(domNode as HTMLElement, parsedNode as HTMLElement);
-        break;
-      case 'content':
-        (domNode as HTMLElement | Text).replaceWith(
-          this.parseSubTree(modelNode, state)
-        );
-        break;
-      case 'none':
-        if (ModelNode.isModelElement(modelNode)) {
-          modelNode.children.forEach((child, index) => {
-            this.writeRec(child, domNode.childNodes[index], state);
-          });
-        } else if (ModelNode.isModelInlineComponent(modelNode)) {
-          if (isElement(domNode)) {
-            state.inlineComponentsRegistry.addComponentInstance(
-              domNode,
-              modelNode.spec.name,
-              modelNode
-            );
-          } else {
-            throw new NotImplementedError(
-              'Inline component should have an htmlelement as root'
-            );
-          }
-        }
-        break;
-    }
-  }
-  private compareNodes(parsedNode: Node, domNode: Node): Difference {
-    if (parsedNode.nodeType !== domNode.nodeType) {
-      return 'type';
-    }
-    if (isElement(parsedNode)) {
-      if (tagName(parsedNode) !== tagName(domNode)) {
-        return 'tag';
-      }
-      if (parsedNode.childNodes.length !== domNode.childNodes.length) {
-        return 'content';
-      } else if (
-        !this.areDomAttributesSame(
-          parsedNode.attributes,
-          (domNode as Element).attributes
-        )
-      ) {
-        return 'attrs';
-      } else if (parsedNode.textContent !== domNode.textContent) {
-        return 'content';
-      }
-    } else if (isTextNode(parsedNode)) {
-      if (parsedNode.textContent !== domNode.textContent) {
-        return 'content';
-      }
-    } else {
-      throw new NotImplementedError('unsupported node type');
-    }
-    return 'none';
   }
   private parseNode(modelNode: ModelNode, state: State): Node {
     if (ModelNode.isModelElement(modelNode)) {
@@ -187,21 +108,6 @@ export default class HtmlWriter {
   private parseTextNodes(modelTexts: ModelText[]): Set<Node> {
     return new Set(this.htmlAdjacentTextWriter.write(modelTexts));
   }
-  private areDomAttributesSame(
-    left: NamedNodeMap,
-    right: NamedNodeMap
-  ): boolean {
-    if (left.length !== right.length) {
-      return false;
-    }
-    for (const leftAttr of left) {
-      const rightAttr = right.getNamedItem(leftAttr.name);
-      if (!rightAttr || rightAttr.value !== leftAttr.value) {
-        return false;
-      }
-    }
-    return true;
-  }
 
   private parseElement(element: ModelElement): HTMLElement {
     const result = document.createElement(element.type);
@@ -212,7 +118,7 @@ export default class HtmlWriter {
       result.contentEditable = 'false';
     }
     if (element.type === 'td' || element.type === 'th') {
-      if (parentIsLumpNode(element)) {
+      if (ModelNodeUtils.parentIsLumpNode(element)) {
         result.contentEditable = 'false';
       } else {
         result.contentEditable = 'true';
