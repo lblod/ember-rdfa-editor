@@ -1,11 +1,12 @@
-import { isEmpty, from, IterableX, single } from 'ix/iterable';
-import { map } from 'ix/iterable/operators';
+import { isEmpty, map } from 'iter-tools';
+import { Iterable } from 'iter-tools';
+import { single } from '../iterator-utils';
 
 export class ResultSet<I> implements Iterable<I> {
-  private engine: IterableX<I>;
+  private engine: Iterable<I>;
 
   constructor(iterable: Iterable<I>) {
-    this.engine = from(iterable);
+    this.engine = iterable;
   }
 
   single(): I | undefined {
@@ -13,7 +14,7 @@ export class ResultSet<I> implements Iterable<I> {
   }
 
   map<T>(mappingFunc: (item: I) => T): ResultSet<T> {
-    return new ResultSet<T>(this.engine.pipe(map(mappingFunc)));
+    return new ResultSet<T>(map(mappingFunc, this.engine));
   }
 
   isEmpty(): boolean {
