@@ -21,6 +21,7 @@ export type EDITOR_EVENT_MAP = {
   deleteContentBackward: DeleteContentBackwardEvent;
   deleteContentForward: DeleteContentForwardEvent;
   liveMarkSetUpdated: LiveMarkSetUpdatedEvent;
+  configUpdated: ConfigUpdatedEvent;
 };
 
 export type EventWithName<N extends EditorEventName | string> =
@@ -172,6 +173,14 @@ export class SelectionChangedEvent extends AbstractEditorEvent<ModelSelection> {
 
 export class LiveMarkSetUpdatedEvent extends VoidEvent {
   _name: EditorEventName = 'liveMarkSetUpdated';
+}
+export interface ConfigUpdatedEventPayload {
+  changedKey: string;
+  oldValue: string | null;
+  newValue: string | null;
+}
+export class ConfigUpdatedEvent extends AbstractEditorEvent<ConfigUpdatedEventPayload> {
+  _name: EditorEventName = 'configUpdated';
 }
 
 export interface PasteEventPayload {

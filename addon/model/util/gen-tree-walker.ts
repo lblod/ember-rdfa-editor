@@ -40,6 +40,10 @@ export interface StartEndTreeWalkerConfig<T extends Walkable>
   end?: T;
   root: T;
 }
+export interface ModelPositionTreeWalkerConfig
+  extends BaseTreeWalkerConfig<ModelNode> {
+  position: ModelPosition;
+}
 
 export interface ModelRangeTreeWalkerConfig
   extends BaseTreeWalkerConfig<ModelNode> {
@@ -119,6 +123,21 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
 
   static fromStartEnd<U extends Walkable>(config: StartEndTreeWalkerConfig<U>) {
     return new GenTreeWalker<U>(config);
+  }
+  static fromPosition(config: ModelPositionTreeWalkerConfig) {
+    let end, start;
+    const root = config.position.root;
+    if (config.reverse) {
+      end = config.position;
+      start = ModelPosition.fromPath(root, [0]);
+    } else {
+      start = config.position;
+      end = ModelPosition.fromInNode(root, root.getMaxOffset());
+    }
+    return GenTreeWalker.fromRange({
+      range: new ModelRange(start, end),
+      ...config,
+    });
   }
 
   static fromRange(
@@ -248,12 +267,13 @@ export default class GenTreeWalker<T extends Walkable = Walkable> {
     return this._currentNode as T | null;
   }
 
-  *nodes(): Generator<T> {
+  *nodes(): Generator<T, null, void> {
     let result = this.nextNode();
     while (result) {
       yield result;
       result = this.nextNode();
     }
+    return null;
   }
 
   /**

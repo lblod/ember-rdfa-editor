@@ -91,6 +91,7 @@ export default class RawEditor {
   registeredCommands: Map<string, Command> = new Map<string, Command>();
   modelSelectionTracker!: ModelSelectionTracker;
   logger: Logger;
+  config: Map<string, string | null> = new Map();
 
   private _model?: Model;
   private _datastore!: Datastore;
