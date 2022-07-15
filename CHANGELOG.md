@@ -17,6 +17,39 @@
 
 
 
+
+
+## 0.60.4 (2022-07-13)
+
+#### :rocket: Enhancement
+* [#297](https://github.com/lblod/ember-rdfa-editor/pull/297) Allow plugins to send arguments to their components ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
+## 0.60.3 (2022-07-11)
+
+#### :bug: Bug Fix
+* [#294](https://github.com/lblod/ember-rdfa-editor/pull/294) when storing the previous selection, clone the anchor nodes ([@elpoelma](https://github.com/elpoelma))
+* [#296](https://github.com/lblod/ember-rdfa-editor/pull/296) Remove erroneous check to avoid duplicate selectionchange events ([@abeforgit](https://github.com/abeforgit))
+* [#293](https://github.com/lblod/ember-rdfa-editor/pull/293) Null check on the parent of the range in live mark set ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+## 0.60.2 (2022-07-08)
+
+#### :bug: Bug Fix
+* [#295](https://github.com/lblod/ember-rdfa-editor/pull/295) Insert empty space when inserting an li above another one ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#292](https://github.com/lblod/ember-rdfa-editor/pull/292) Bump parse-url from 6.0.0 to 6.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 0.60.1 (2022-07-07)
 
 #### :rocket: Enhancement

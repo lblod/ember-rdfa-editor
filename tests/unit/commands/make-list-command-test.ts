@@ -146,4 +146,61 @@ module('Unit | commands | make-list-command', function (hooks) {
     command.execute('ul');
     assert.true(ctx.model.rootModelNode.sameAs(expected));
   });
+  test('create list from line with link in it', function (assert) {
+    const {
+      root: initial,
+      textNodes: { link },
+    } = vdom`
+      <modelRoot>
+        <text>line before list</text><a><text __id="link">link</text></a>
+      </modelRoot>
+    `;
+
+    const { root: expected } = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+            <text>line before list</text><a><text __id="link">link</text></a>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(link, 2, 2);
+    ctx.model.selectRange(range);
+
+    command.execute('ul');
+    assert.true(ctx.model.rootModelNode.sameAs(expected));
+  });
+  test('create list from line with nested nodes', function (assert) {
+    const {
+      root: initial,
+      textNodes: { link2 },
+    } = vdom`
+      <modelRoot>
+        <text>first</text><a><text>link1</text></a><text>second</text><a><span><text __id="link2">link2</text></span></a><text>third</text>
+      </modelRoot>
+    `;
+
+    const { root: expected } = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+          <text>first</text><a><text>link1</text></a><text>second</text><a><span><text __id="link2">link2</text></span></a><text>third</text>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInTextNode(link2, 2, 2);
+    ctx.model.selectRange(range);
+
+    command.execute('ul');
+    assert.true(
+      ctx.model.rootModelNode.sameAs(expected),
+      QUnit.dump.parse(ctx.model.rootModelNode)
+    );
+  });
 });

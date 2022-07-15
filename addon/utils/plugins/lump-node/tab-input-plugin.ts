@@ -1,17 +1,14 @@
 import {
-  TabHandlerManipulation,
-  TabInputPlugin,
-} from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import {
   Manipulation,
   ManipulationGuidance,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {
-  isInLumpNode,
-  getParentLumpNode,
-} from '@lblod/ember-rdfa-editor/utils/ce/lump-node-utils';
-import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
-import { isTextNode } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+  TabHandlerManipulation,
+  TabInputPlugin,
+} from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import RawEditor from '../../ce/raw-editor';
 
 /**
@@ -30,15 +27,16 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
   }
 
   guidanceForManipulation(
-    manipulation: TabHandlerManipulation
+    manipulation: TabHandlerManipulation,
+    editor: RawEditor
   ): ManipulationGuidance | null {
     if (!this.isSupportedManipulation(manipulation)) {
       return null;
     }
 
     const element = manipulation.node;
-    const rootNode = element.getRootNode(); //Assuming here that node is attached.
-    const isElementInLumpNode = isInLumpNode(element, rootNode as HTMLElement);
+    const modelElement = editor.model.viewToModel(element);
+    const isElementInLumpNode = ModelNodeUtils.isInLumpNode(modelElement);
 
     if (
       manipulation.type === 'moveCursorToStartOfElement' &&
@@ -66,23 +64,16 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     editor: RawEditor
   ): void => {
     const node = manipulation.node;
-    const rootNode = node.getRootNode() as HTMLElement;
-    const element = getParentLumpNode(node, rootNode); // We can safely assume this.
+    const modelNode = editor.model.viewToModel(node);
+    const element = ModelNodeUtils.getParentLumpNode(modelNode); // We can safely assume this.
     if (!element) {
       throw new Error('No parent lump node found');
     }
 
-    let textNode;
-    if (element.nextSibling && isTextNode(element.nextSibling)) {
-      textNode = element.nextSibling;
-    } else {
-      textNode = document.createTextNode('');
-      element.after(textNode);
-    }
+    const resultPos = ModelPosition.fromAfterNode(element);
 
-    textNode = ensureValidTextNodeForCaret(textNode);
-    window.getSelection()?.collapse(textNode, 0);
-    editor.model.read(true);
+    editor.selection.selectRange(new ModelRange(resultPos, resultPos));
+    editor.model.write();
   };
 
   jumpOverLumpNodeBackwards = (
@@ -90,22 +81,15 @@ export default class LumpNodeTabInputPlugin implements TabInputPlugin {
     editor: RawEditor
   ): void => {
     const node = manipulation.node;
-    const rootNode = node.getRootNode() as HTMLElement;
-    const element = getParentLumpNode(node, rootNode);
+    const modelNode = editor.model.viewToModel(node);
+    const element = ModelNodeUtils.getParentLumpNode(modelNode); // We can safely assume this.
     if (!element) {
       throw new Error('No parent lump node found');
     }
 
-    let textNode;
-    if (element.previousSibling && isTextNode(element.previousSibling)) {
-      textNode = element.previousSibling;
-    } else {
-      textNode = document.createTextNode('');
-      element.before(textNode);
-    }
+    const resultPos = ModelPosition.fromBeforeNode(element);
 
-    textNode = ensureValidTextNodeForCaret(textNode);
-    window.getSelection()?.collapse(textNode, textNode.length);
-    editor.model.read(true);
+    editor.selection.selectRange(new ModelRange(resultPos, resultPos));
+    editor.model.write();
   };
 }

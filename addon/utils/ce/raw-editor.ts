@@ -92,6 +92,7 @@ export default class RawEditor {
   registeredCommands: Map<string, Command> = new Map<string, Command>();
   modelSelectionTracker!: ModelSelectionTracker;
   logger: Logger;
+  config: Map<string, string | null> = new Map();
 
   private _model?: Model;
   private _datastore!: Datastore;
@@ -160,6 +161,9 @@ export default class RawEditor {
 
   async initialize(rootNode: HTMLElement, plugins: ResolvedPluginConfig[]) {
     this.registeredCommands = new Map<string, Command>();
+    this.widgetMap.set('toolbar', []);
+    this.widgetMap.set('sidebar', []);
+    this.widgetMap.set('insertSidebar', []);
     if (this.modelSelectionTracker) {
       this.modelSelectionTracker.stopTracking();
     }

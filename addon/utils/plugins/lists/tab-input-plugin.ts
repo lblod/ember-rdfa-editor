@@ -1,19 +1,18 @@
+import { ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
 import {
   TabHandlerManipulation,
   TabInputPlugin,
 } from '@lblod/ember-rdfa-editor/editor/input-handlers/tab-handler';
-import { ManipulationGuidance } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-import {
-  isList,
-  isLI,
-  getAllLisFromList,
-  isEmptyList,
-  siblingLis,
-  findLastLi,
-  isTextNode,
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { ensureValidTextNodeForCaret } from '@lblod/ember-rdfa-editor/editor/utils';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
+import { from, isEmpty, last, first } from 'ix/iterable';
+import { filter } from 'ix/iterable/operators';
+import { ImpossibleModelStateError } from '../../errors';
 
 /**
  * Current behaviour
@@ -28,74 +27,113 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   label = 'Tab input plugin for handling List interaction';
 
   guidanceForManipulation(
-    manipulation: TabHandlerManipulation
+    manipulation: TabHandlerManipulation,
+    editor: RawEditor
   ): ManipulationGuidance | null {
+    const modelNode = editor.model.viewToModelSafe(manipulation.node);
+    if (!modelNode) {
+      return null;
+    }
+    const { direction } = manipulation;
+    const { selection } = editor;
     if (manipulation.type === 'moveCursorToStartOfElement') {
-      if (isList(manipulation.node)) {
-        return { allow: true, executor: this.jumpIntoFirstLi };
+      if (ModelNodeUtils.isListContainer(modelNode)) {
+        return {
+          allow: true,
+          executor: () => this.jumpIntoList(modelNode, direction, editor),
+        };
+      }
+    } else if (manipulation.type === 'moveCursorToEndOfElement') {
+      if (ModelNodeUtils.isListContainer(modelNode)) {
+        return {
+          allow: true,
+          executor: () => this.jumpIntoList(modelNode, direction, editor),
+        };
       }
     } else if (
       manipulation.type === 'moveCursorAfterElement' &&
-      isLI(manipulation.node)
+      ModelNodeUtils.isListElement(modelNode)
     ) {
       // Some choices have been made. Let's try to follow more or less the most popular html editor.
-      const listItem = manipulation.node as HTMLElement;
 
       // If cursor at beginning of LI, then do the indent.
-      if (!manipulation.selection) {
-        throw new Error('Manipulation has no selection');
+      const list = modelNode.parent;
+      if (!list) {
+        throw new ImpossibleModelStateError('Li element cannot be root');
       }
+      const lis = from(list.children).pipe(
+        filter(ModelNodeUtils.isListElement)
+      );
+
+      const firstLi = first(lis);
+      const lastLi = last(lis);
 
       if (
-        manipulation.selection.anchorOffset === 0 &&
-        manipulation.selection.anchorNode &&
-        manipulation.selection.anchorNode.isSameNode(
-          manipulation.node.firstChild
+        selection.lastRange?.start.sameAs(
+          ModelPosition.fromInNode(modelNode, 0)
         )
       ) {
-        return { allow: true, executor: this.indentLiContent };
-      } else {
-        const list = manipulation.node.parentElement as
-          | HTMLUListElement
-          | HTMLOListElement;
-        const lastLi = findLastLi(list);
-
-        if (lastLi && lastLi.isSameNode(listItem)) {
-          return { allow: true, executor: this.jumpOutOfList };
+        if (firstLi && firstLi.sameAs(modelNode)) {
+          return {
+            allow: true,
+            executor: () => this.jumpToNextLi(modelNode, direction, editor),
+          };
         } else {
-          return { allow: true, executor: this.jumpToNextLi };
+          return { allow: true, executor: this.indentLiContent };
         }
-      }
-    } else if (manipulation.type === 'moveCursorToEndOfElement') {
-      if (isList(manipulation.node)) {
-        return { allow: true, executor: this.jumpIntoLastLi };
+      } else {
+        if (lastLi && lastLi.sameAs(modelNode)) {
+          return {
+            allow: true,
+            executor: () => this.jumpOutOfList(list, direction, editor),
+          };
+        } else {
+          return {
+            allow: true,
+            executor: () => this.jumpToNextLi(modelNode, direction, editor),
+          };
+        }
       }
     } else if (
       manipulation.type === 'moveCursorBeforeElement' &&
-      isLI(manipulation.node)
+      ModelNodeUtils.isListElement(modelNode)
     ) {
-      const listItem = manipulation.node as HTMLElement;
       // If cursor at beginning of LI, then do the unindent.
       // Note: this might be surprising and we also might want the cursor to be at the end of the LI.
       if (
-        manipulation.selection &&
-        manipulation.selection.anchorOffset === 0 &&
-        manipulation.selection.anchorNode &&
-        manipulation.selection.anchorNode.isSameNode(listItem.firstChild)
+        selection.lastRange?.start.sameAs(
+          ModelPosition.fromInNode(modelNode, 0)
+        )
       ) {
         return { allow: true, executor: this.unindentLiContent };
       } else {
-        const list = listItem.parentElement as
-          | HTMLUListElement
-          | HTMLOListElement;
-        const firstLi = getAllLisFromList(list)[0];
+        const list = modelNode.parent;
+        if (!list) {
+          throw new ImpossibleModelStateError('Li element cannot be root');
+        }
+        const firstLi = list.children.find(ModelNodeUtils.isListElement);
 
-        if (firstLi.isSameNode(listItem)) {
-          return { allow: true, executor: this.jumpOutOfListToStart };
+        if (firstLi && firstLi.sameAs(modelNode)) {
+          return {
+            allow: true,
+            executor: () => this.jumpOutOfList(list, direction, editor),
+          };
         } else {
-          return { allow: true, executor: this.jumpToPreviousLi };
+          return {
+            allow: true,
+            executor: () => this.jumpToNextLi(modelNode, direction, editor),
+          };
         }
       }
+    } else if (
+      (manipulation.type === 'moveCursorBeforeElement' ||
+        manipulation.type === 'moveCursorAfterElement') &&
+      ModelNodeUtils.isListContainer(modelNode)
+    ) {
+      return {
+        allow: true,
+        executor: () => this.jumpOutOfList(modelNode, direction, editor),
+      };
     }
 
     return null;
@@ -104,44 +142,27 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   /**
    * Sets the cursor in the first <li></li>. If list is empty, creates an <li></li>.
    */
-  jumpIntoFirstLi = (
-    manipulation: TabHandlerManipulation,
+  jumpIntoList = (
+    list: ModelElement,
+    direction: Direction,
     editor: RawEditor
   ): void => {
-    const list = manipulation.node as HTMLUListElement | HTMLOListElement;
-    let firstLi;
+    const lis = from(list.children).pipe(filter(ModelNodeUtils.isListElement));
 
     // This branch creates a new LI, but not really sure if we want that.
-    if (isEmptyList(list)) {
-      firstLi = document.createElement('li');
-      list.append(firstLi);
+    if (isEmpty(lis)) {
+      editor.executeCommand('insert-newLi', ModelRange.fromInNode(list));
     } else {
-      firstLi = getAllLisFromList(list)[0];
+      let pos;
+      if (direction === Direction.FORWARDS) {
+        const li = first(lis)!;
+        pos = ModelPosition.fromInNode(li, 0);
+      } else {
+        const li = last(lis)!;
+        pos = ModelPosition.fromInNode(li, li.getMaxOffset());
+      }
+      setCursorAtPos(pos, editor);
     }
-
-    setCursorAtStartOfLi(firstLi, editor);
-  };
-
-  /**
-   * Sets the cursor in the last <li></li>. If list is empty, creates an <li></li>.
-   */
-  jumpIntoLastLi = (
-    manipulation: TabHandlerManipulation,
-    editor: RawEditor
-  ): void => {
-    const list = manipulation.node as HTMLUListElement | HTMLOListElement;
-    let lastLi;
-
-    // This branch creates a new LI, but not really sure if we want that.
-    if (isEmptyList(list)) {
-      lastLi = document.createElement('li');
-      list.append(lastLi);
-    } else {
-      const liList = getAllLisFromList(list);
-      lastLi = liList[liList.length - 1];
-    }
-
-    setCursorAtEndOfLi(lastLi, editor);
   };
 
   /**
@@ -161,110 +182,72 @@ export default class ListTabInputPlugin implements TabInputPlugin {
   unindentLiContent = (_: TabHandlerManipulation, editor: RawEditor): void => {
     editor.executeCommand('unindent-list');
   };
-
-  /**
-   * Jumps to next List item. Assumes there is one and current LI is not the last.
-   */
   jumpToNextLi = (
-    manipulation: TabHandlerManipulation,
+    fromLi: ModelElement,
+    direction: Direction,
     editor: RawEditor
-  ): void => {
-    //Assumes the LI is not the last one
-    const listItem = manipulation.node as HTMLLIElement;
-    const listItems = siblingLis(listItem);
-    const indexOfLi = listItems.indexOf(listItem);
-    setCursorAtStartOfLi(listItems[indexOfLi + 1], editor);
-  };
-
-  /**
-   * Jumps to next List item. Assumes there is one and current LI is not the first.
-   */
-  jumpToPreviousLi = (
-    manipulation: TabHandlerManipulation,
-    editor: RawEditor
-  ): void => {
-    // Assumes the LI is not the last one
-    const listItem = manipulation.node as HTMLLIElement;
-    const listItems = siblingLis(listItem);
-    const indexOfLi = listItems.indexOf(listItem);
-    setCursorAtEndOfLi(listItems[indexOfLi - 1], editor);
+  ) => {
+    let cur = ModelNodeUtils.siblingInDirection(fromLi, direction);
+    while (cur && !ModelNodeUtils.isListElement(cur)) {
+      cur = ModelNodeUtils.siblingInDirection(fromLi, direction);
+    }
+    if (cur) {
+      setCursorAtPos(
+        ModelPosition.fromInNode(
+          cur,
+          direction === Direction.FORWARDS ? 0 : cur.getMaxOffset()
+        ),
+        editor
+      );
+    } else {
+      this.jumpOutOfList(fromLi.parent!, direction, editor);
+    }
   };
 
   /**
    * Jumps outside of list.
    */
   jumpOutOfList = (
-    manipulation: TabHandlerManipulation,
+    list: ModelElement,
+    direction: Direction,
     editor: RawEditor
   ): void => {
-    const element = manipulation.node.parentElement; // This is the list.
-    if (!element) {
-      throw new Error('Tab-input-handler expected list to be attached to DOM');
-    }
-
-    let textNode;
-    if (element.nextSibling && isTextNode(element.nextSibling)) {
-      textNode = element.nextSibling;
+    const sibling = ModelNodeUtils.siblingInDirection(list, direction);
+    if (sibling) {
+      if (sibling.isLeaf) {
+        setCursorAtPos(
+          direction === Direction.FORWARDS
+            ? ModelPosition.fromBeforeNode(sibling)
+            : ModelPosition.fromAfterNode(sibling),
+          editor
+        );
+      } else {
+        setCursorAtPos(
+          direction === Direction.FORWARDS
+            ? ModelPosition.fromInNode(sibling, 0)
+            : // SAFETY: non-leaf nodes are currently always elements
+              ModelPosition.fromInNode(
+                sibling,
+                (sibling as ModelElement).getMaxOffset()
+              ),
+          editor
+        );
+      }
     } else {
-      textNode = document.createTextNode('');
-      element.after(textNode);
+      const insertPos =
+        direction === Direction.FORWARDS
+          ? ModelPosition.fromBeforeNode(list)
+          : ModelPosition.fromAfterNode(list);
+      editor.executeCommand(
+        'insert-text',
+        INVISIBLE_SPACE,
+        new ModelRange(insertPos, insertPos)
+      );
     }
-
-    textNode = ensureValidTextNodeForCaret(textNode);
-    window.getSelection()?.collapse(textNode, 0);
-    editor.model.read(true);
-  };
-
-  /**
-   * Jumps outside of at the start.
-   */
-  jumpOutOfListToStart = (
-    manipulation: TabHandlerManipulation,
-    editor: RawEditor
-  ): void => {
-    const element = manipulation.node.parentElement; // This is the list.
-    if (!element) {
-      throw new Error('Tab-input-handler expected list to be attached to DOM');
-    }
-
-    let textNode;
-    if (element.previousSibling && isTextNode(element.previousSibling)) {
-      textNode = element.previousSibling;
-    } else {
-      textNode = document.createTextNode('');
-      element.before(textNode);
-    }
-
-    textNode = ensureValidTextNodeForCaret(textNode);
-    window.getSelection()?.collapse(textNode, textNode.length);
-    editor.model.read(true);
   };
 }
 
-function setCursorAtStartOfLi(listItem: HTMLElement, editor: RawEditor): void {
-  let textNode;
-  if (listItem.firstChild && isTextNode(listItem.firstChild)) {
-    textNode = listItem.firstChild;
-  } else {
-    textNode = document.createTextNode('');
-    listItem.prepend(textNode);
-  }
-
-  textNode = ensureValidTextNodeForCaret(textNode);
-  window.getSelection()?.collapse(textNode, 0);
-  editor.model.read(true);
-}
-
-function setCursorAtEndOfLi(listItem: HTMLElement, editor: RawEditor): void {
-  let textNode;
-  if (listItem.lastChild && isTextNode(listItem.lastChild)) {
-    textNode = listItem.lastChild;
-  } else {
-    textNode = document.createTextNode('');
-    listItem.append(textNode);
-  }
-
-  textNode = ensureValidTextNodeForCaret(textNode);
-  window.getSelection()?.collapse(textNode, textNode.length);
-  editor.model.read(true);
+function setCursorAtPos(pos: ModelPosition, editor: RawEditor) {
+  editor.selection.selectRange(new ModelRange(pos, pos));
+  editor.model.writeSelection(true);
 }

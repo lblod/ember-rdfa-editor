@@ -4,7 +4,10 @@ import {
   NotImplementedError,
   PositionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
+import {
+  Direction,
+  RelativePosition,
+} from '@lblod/ember-rdfa-editor/model/util/types';
 import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import arrayEquals from '../utils/array-equals';
@@ -338,6 +341,14 @@ export default class ModelPosition {
    */
   nodeBefore(): ModelNode | null {
     return this.parent.childAtOffset(this.parentOffset - 1) || null;
+  }
+
+  nodeInDirection(direction: Direction): ModelNode | null {
+    if (direction === Direction.FORWARDS) {
+      return this.nodeAfter();
+    } else {
+      return this.nodeBefore();
+    }
   }
 
   /**
