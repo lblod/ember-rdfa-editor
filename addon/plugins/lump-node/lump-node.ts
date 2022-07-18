@@ -32,7 +32,9 @@ export default class LumpNodePlugin implements EditorPlugin {
         this.lumpNodePreviouslyBeforeCursor &&
         !this.lastPosition?.equals(newPosition) &&
         this.lumpNodePreviouslyBeforeCursor.connected &&
-        this.lumpNodePreviouslyBeforeCursor.attributeMap.has('remove-property')
+        this.lumpNodePreviouslyBeforeCursor.attributeMap.has(
+          'data-flagged-remove'
+        )
       ) {
         this.controller?.executeCommand(
           'remove-property',
