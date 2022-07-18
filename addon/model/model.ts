@@ -126,13 +126,16 @@ export default class Model {
   }
 
   readSelection(domSelection: Selection = getWindowSelection()) {
-    this._selection = this.selectionReader.read(domSelection);
-    this.emitSelectionChanged();
-    const modelSelectionUpdatedEvent = new CustomEvent<ModelSelection>(
-      'richSelectionUpdated',
-      { detail: this.selection }
-    );
-    document.dispatchEvent(modelSelectionUpdatedEvent);
+    const newSelection = this.selectionReader.read(domSelection);
+    if (!this._selection.sameAs(newSelection)) {
+      this._selection = newSelection;
+      this.emitSelectionChanged();
+      const modelSelectionUpdatedEvent = new CustomEvent<ModelSelection>(
+        'richSelectionUpdated',
+        { detail: this.selection }
+      );
+      document.dispatchEvent(modelSelectionUpdatedEvent);
+    }
   }
 
   emitSelectionChanged() {
@@ -278,6 +281,7 @@ export default class Model {
 
   selectRange(range: ModelRange) {
     this.selection.selectRange(range);
+    this.emitSelectionChanged();
   }
 
   toXml(): Node {
