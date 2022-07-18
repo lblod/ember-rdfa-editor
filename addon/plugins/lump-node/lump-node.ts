@@ -27,12 +27,12 @@ export default class LumpNodePlugin implements EditorPlugin {
     console.log(selection);
     if (selection?.isCollapsed) {
       const lumpNode = lumpNodeBeforeCursor(selection);
-      console.log('LUMP', lumpNode);
       const newPosition = selection.lastRange?.start;
       if (
         this.lumpNodePreviouslyBeforeCursor &&
         !this.lastPosition?.equals(newPosition) &&
-        this.lumpNodePreviouslyBeforeCursor.connected
+        this.lumpNodePreviouslyBeforeCursor.connected &&
+        this.lumpNodePreviouslyBeforeCursor.attributeMap.has('remove-property')
       ) {
         this.controller?.executeCommand(
           'remove-property',

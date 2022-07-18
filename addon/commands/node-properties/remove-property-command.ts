@@ -12,8 +12,8 @@ export default class RemovePropertyCommand extends Command {
 
   @logExecute
   execute(element: ModelElement, property: string) {
-    this.model.change((mutator) => {
-      mutator.removeProperty(element, property);
+    this.model.change(() => {
+      element.removeAttribute(property);
     });
   }
 }

@@ -12,8 +12,8 @@ export default class SetPropertyCommand extends Command {
 
   @logExecute
   execute(property: string, value: string, element: ModelElement) {
-    this.model.change((mutator) => {
-      mutator.setProperty(element, property, value);
+    this.model.change(() => {
+      element.setAttribute(property, value);
     });
   }
 }
