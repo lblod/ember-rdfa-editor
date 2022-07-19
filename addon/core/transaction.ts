@@ -26,7 +26,7 @@ import { EditorStore } from '../model/util/datastore/datastore';
 import { AttributeSpec } from '../model/util/render-spec';
 import RemoveOperation from '../model/operations/remove-operation';
 import Command, { CommandMap, CommandName } from '../commands/command';
-import { OperationResult } from '../model/operations/operation';
+import SelectionOperation from '../model/operations/selection-operation';
 interface TextInsertion {
   range: ModelRange;
   text: string;
@@ -42,7 +42,7 @@ export type TransactionListener = (transaction: Transaction) => void;
 export default class Transaction {
   initialState: State;
   private _workingCopy: State;
-  operations: Operation[];
+  operations: Operation<object>[];
   rangeMapper: RangeMapper;
 
   constructor(state: State) {
@@ -162,7 +162,12 @@ export default class Transaction {
     const clone = this.cloneSelection(selection);
     const changed = !clone.sameAs(this._workingCopy.selection);
     if (changed) {
-      this._workingCopy.selection = clone;
+      const op = new SelectionOperation(
+        undefined,
+        this._workingCopy.selection,
+        clone.ranges
+      );
+      this.executeOperation(op);
     }
     return changed;
   }
@@ -201,12 +206,15 @@ export default class Transaction {
     const op = new RemoveOperation(undefined, clonedRange, ...nodes);
     return this.executeOperation(op).defaultRange;
   }
-  private executeOperation(op: Operation): OperationResult {
+  private executeOperation<R extends object>(op: Operation<R>): R {
     this.operations.push(op);
     return op.execute();
   }
   selectRange(range: ModelRange): void {
-    this._workingCopy.selection.selectRange(this.cloneRange(range));
+    const op = new SelectionOperation(undefined, this._workingCopy.selection, [
+      range,
+    ]);
+    this.executeOperation(op);
   }
   addMarkToSelection(mark: Mark) {
     this._workingCopy.selection.activeMarks.add(mark);

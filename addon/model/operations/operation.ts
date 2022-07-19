@@ -7,7 +7,9 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
-export default abstract class Operation<R> {
+export default abstract class Operation<
+  R extends object = Record<string, never>
+> {
   protected logger: Logger;
 
   private eventBus?: EventBus;

@@ -3,7 +3,7 @@ import ModelRange from '../model-range';
 import ModelSelection from '../model-selection';
 import Operation from './operation';
 
-export default class SelectionOperation extends Operation<void> {
+export default class SelectionOperation extends Operation {
   private selection: ModelSelection;
   private ranges: ModelRange[];
   constructor(
@@ -15,7 +15,8 @@ export default class SelectionOperation extends Operation<void> {
     this.selection = selection;
     this.ranges = ranges;
   }
-  execute(): void {
+  execute() {
     this.selection.selectRanges(...this.ranges);
+    return {};
   }
 }
