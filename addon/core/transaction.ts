@@ -26,7 +26,7 @@ import { EditorStore } from '../model/util/datastore/datastore';
 import { AttributeSpec } from '../model/util/render-spec';
 import RemoveOperation from '../model/operations/remove-operation';
 import Command, { CommandMap, CommandName } from '../commands/command';
-
+import { OperationResult } from '../model/operations/operation';
 interface TextInsertion {
   range: ModelRange;
   text: string;
@@ -81,7 +81,7 @@ export default class Transaction {
       'add'
     );
     this.createSnapshot();
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
   }
 
   /**
@@ -148,7 +148,7 @@ export default class Transaction {
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const op = new InsertOperation(undefined, this.cloneRange(range), ...nodes);
     this.createSnapshot();
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
   }
 
   /**
@@ -195,12 +195,11 @@ export default class Transaction {
   removeNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const clonedRange = this.cloneRange(range);
     const op = new RemoveOperation(undefined, clonedRange, ...nodes);
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
   }
-  private executeOperation(op: Operation): ModelRange {
-    const { defaultRange } = op.execute();
-    // this.mapper.appendMapper(mapper);
-    return defaultRange;
+  private executeOperation(op: Operation): OperationResult {
+    this.operations.push(op);
+    return op.execute();
   }
   selectRange(range: ModelRange): void {
     this._workingCopy.selection.selectRange(this.cloneRange(range));
@@ -216,7 +215,7 @@ export default class Transaction {
     const rangeClone = this.cloneRange(rangeToMove);
     const posClone = this.clonePos(targetPosition);
     const op = new MoveOperation(undefined, rangeClone, posClone);
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
   }
   removeMarkFromSelection(markname: string) {
     for (const mark of this._workingCopy.selection.activeMarks) {
@@ -343,7 +342,7 @@ export default class Transaction {
       splitParent
     );
     this.createSnapshot();
-    return this.executeOperation(op).start;
+    return this.executeOperation(op).defaultRange.start;
   }
 
   insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange {
@@ -359,7 +358,7 @@ export default class Transaction {
   delete(range: ModelRange): ModelRange {
     const op = new InsertOperation(undefined, this.cloneRange(range));
     this.createSnapshot();
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
   }
   /**
    * Clone a range and set its root in the new state.
@@ -410,7 +409,7 @@ export default class Transaction {
       this.cloneRange(srcRange),
       this.clonePos(target)
     );
-    const resultRange = this.executeOperation(op);
+    const resultRange = this.executeOperation(op).defaultRange;
     this.deleteNode(resultRange.end.nodeAfter()!);
 
     if (ensureBlock) {
@@ -452,7 +451,7 @@ export default class Transaction {
       'remove'
     );
     this.createSnapshot();
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
   }
 
   canExecuteCommand<C extends keyof CommandMap>(
