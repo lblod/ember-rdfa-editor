@@ -12,9 +12,7 @@ export default class UndoCommand implements Command<void, void> {
   }
 
   @logExecute
-  execute({ state, dispatch }: CommandContext): void {
-    const tr = state.createTransaction();
-    tr.restoreSnapshot(1);
-    dispatch(tr);
+  execute({ transaction }: CommandContext): void {
+    transaction.restoreSnapshot(1);
   }
 }

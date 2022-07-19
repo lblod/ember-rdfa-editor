@@ -10,9 +10,12 @@ export default class MakeStrikethroughCommand extends SetTextPropertyCommand<voi
   }
 
   @logExecute
-  execute({ state, dispatch }: CommandContext) {
-    const tr = state.createTransaction();
-    super.setTextProperty(tr, 'strikethrough', true, state.selection);
-    dispatch(tr);
+  execute({ transaction }: CommandContext) {
+    super.setTextProperty(
+      transaction,
+      'strikethrough',
+      true,
+      transaction.workingCopy.selection
+    );
   }
 }

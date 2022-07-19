@@ -9,9 +9,12 @@ export default class RemoveBoldCommand extends SetTextPropertyCommand<void> {
     return true;
   }
   @logExecute
-  execute({state, dispatch}: CommandContext) {
-    const tr = state.createTransaction();
-    super.setTextProperty(tr, 'bold', false, state.selection);
-    dispatch(tr);
+  execute({ transaction }: CommandContext) {
+    super.setTextProperty(
+      transaction,
+      'bold',
+      false,
+      transaction.workingCopy.selection
+    );
   }
 }

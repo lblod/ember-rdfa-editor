@@ -19,8 +19,10 @@ export default class RemoveTableColumnCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
-    { selection = state.selection }: RemoveTableColumnCommandArgs
+    { transaction }: CommandContext,
+    {
+      selection = transaction.workingCopy.selection,
+    }: RemoveTableColumnCommandArgs
   ): void {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
@@ -43,9 +45,8 @@ export default class RemoveTableColumnCommand
     }
 
     const tableDimensions = table.getDimensions();
-    const tr = state.createTransaction();
     if (position.x === 0 && tableDimensions.x === 1) {
-      table.removeTable(tr);
+      table.removeTable(transaction);
     } else {
       const cellXToSelect =
         position.x === tableDimensions.x - 1 ? position.x - 1 : position.x;
@@ -53,10 +54,9 @@ export default class RemoveTableColumnCommand
       const cellToSelect = table.getCell(cellXToSelect, position.y);
 
       if (cellToSelect) {
-        tr.collapseIn(cellToSelect);
+        transaction.collapseIn(cellToSelect);
       }
-      table.removeColumn(tr, position.x);
+      table.removeColumn(transaction, position.x);
     }
-    dispatch(tr);
   }
 }

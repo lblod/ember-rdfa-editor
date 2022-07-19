@@ -22,8 +22,10 @@ export default abstract class InsertTableColumnCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
-    { selection = state.selection }: InsertTableColumnCommandArgs
+    { transaction }: CommandContext,
+    {
+      selection = transaction.workingCopy.selection,
+    }: InsertTableColumnCommandArgs
   ) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
@@ -44,11 +46,8 @@ export default abstract class InsertTableColumnCommand
       //Shouldn't happen
       throw new Error('Position is null');
     }
-    const tr = state.createTransaction();
 
     const insertPosition = this.insertBefore ? position.x : position.x + 1;
-    table.addColumn(tr, insertPosition);
-
-    dispatch(tr);
+    table.addColumn(transaction, insertPosition);
   }
 }

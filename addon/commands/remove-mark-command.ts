@@ -17,7 +17,7 @@ export default class RemoveMarkCommand
     return true;
   }
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { mark }: RemoveMarkCommandArgs
   ): boolean {
     const node = mark.node;
@@ -25,13 +25,11 @@ export default class RemoveMarkCommand
       if (!node.hasMark(mark)) {
         return false;
       }
-      const tr = state.createTransaction();
-      tr.removeMark(
+      transaction.removeMark(
         ModelRange.fromAroundNode(node),
         mark.spec,
         mark.attributes
       );
-      dispatch(tr);
       return true;
     }
     return false;

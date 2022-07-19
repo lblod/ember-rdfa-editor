@@ -25,20 +25,18 @@ export default class RemoveMarksFromRangesCommand
     return true;
   }
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { ranges, markConfigs }: RemoveMarkFromRangeArgs
   ): void {
-    const tr = state.createTransaction();
     for (const { name, attributes } of markConfigs) {
-      const spec = state.marksRegistry.lookupMark(name);
+      const spec = transaction.workingCopy.marksRegistry.lookupMark(name);
       if (spec) {
         for (const range of ranges) {
-          tr.removeMark(range, spec, attributes);
+          transaction.removeMark(range, spec, attributes);
         }
       } else {
         throw new ModelError(`Unrecognized mark: ${name}`);
       }
     }
-    dispatch(tr);
   }
 }

@@ -10,9 +10,12 @@ export default class MakeItalicCommand extends SetTextPropertyCommand<void> {
   }
 
   @logExecute
-  execute({ state, dispatch }: CommandContext) {
-    const tr = state.createTransaction();
-    super.setTextProperty(tr, 'italic', true, state.selection);
-    dispatch(tr);
+  execute({ transaction }: CommandContext) {
+    super.setTextProperty(
+      transaction,
+      'italic',
+      true,
+      transaction.workingCopy.selection
+    );
   }
 }

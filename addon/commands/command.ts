@@ -1,6 +1,6 @@
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
-import { Dispatch } from '../core/editor';
 import State from '../core/state';
+import Transaction from '../core/transaction';
 import AddMarkToRangeCommand from './add-mark-to-range-command';
 import AddMarkToSelectionCommand from './add-mark-to-selection-command';
 import DeleteSelectionCommand from './delete-selection-command';
@@ -72,8 +72,7 @@ export type CommandMap = {
 export type CommandName = keyof CommandMap;
 
 export interface CommandContext {
-  dispatch: Dispatch;
-  state: State;
+  transaction: Transaction;
 }
 
 /**
@@ -94,7 +93,7 @@ export default interface Command<A, R> {
   name: string;
   arguments: string[];
 
-  canExecute(context: Omit<CommandContext, 'dispatch'>, args: A): boolean;
+  canExecute(state: State, args: A): boolean;
 
   execute(context: CommandContext, args: A): R;
 }

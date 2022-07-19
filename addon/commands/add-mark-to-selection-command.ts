@@ -26,15 +26,16 @@ export default class AddMarkToSelectionCommand
   }
 
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { markName, markAttributes = {} }: AddMarkToSelectionCommandArgs
   ): void {
-    const selection = state.selection;
-    const spec = state.marksRegistry.lookupMark(markName);
-    const tr = state.createTransaction();
+    const selection = transaction.workingCopy.selection;
+    const spec = transaction.workingCopy.marksRegistry.lookupMark(markName);
     if (spec) {
       if (selection.isCollapsed) {
-        tr.addMarkToSelection(new Mark<AttributeSpec>(spec, markAttributes));
+        transaction.addMarkToSelection(
+          new Mark<AttributeSpec>(spec, markAttributes)
+        );
 
         // TODO
         // this.model.rootNode.focus();
@@ -43,18 +44,17 @@ export default class AddMarkToSelectionCommand
         if (!ModelSelection.isWellBehaved(selection)) {
           throw new MisbehavedSelectionError();
         }
-        const resultRange = tr.addMark(
+        const resultRange = transaction.addMark(
           selection.lastRange,
           spec,
           markAttributes
         );
-        tr.selectRange(resultRange);
+        transaction.selectRange(resultRange);
       }
-      const newState = dispatch(tr);
-      state.eventBus.emit(
+      transaction.workingCopy.eventBus.emit(
         new SelectionChangedEvent({
           owner: CORE_OWNER,
-          payload: newState.selection,
+          payload: transaction.workingCopy.selection,
         })
       );
     } else {

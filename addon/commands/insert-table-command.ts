@@ -22,10 +22,9 @@ export default class InsertTableCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
-
+    { transaction }: CommandContext,
     {
-      selection = state.selection,
+      selection = transaction.workingCopy.selection,
       rows = 2,
       columns = 2,
     }: InsertTableCommandArgs
@@ -36,10 +35,8 @@ export default class InsertTableCommand
 
     const table = new ModelTable(rows, columns);
     const firstCell = table.getCell(0, 0) as ModelElement;
-    const tr = state.createTransaction();
 
-    tr.insertNodes(selection.lastRange, table);
-    tr.collapseIn(firstCell);
-    dispatch(tr);
+    transaction.insertNodes(selection.lastRange, table);
+    transaction.collapseIn(firstCell);
   }
 }

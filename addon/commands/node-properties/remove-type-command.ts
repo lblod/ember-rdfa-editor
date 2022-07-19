@@ -4,7 +4,6 @@ import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 
 export interface RemoveTypeCommandArgs {
   type: string;
@@ -14,6 +13,7 @@ export default class RemoveTypeCommand
   implements Command<RemoveTypeCommandArgs, void>
 {
   name = 'remove-type';
+  arguments = ['type', 'element'];
 
   canExecute(): boolean {
     return true;
@@ -21,16 +21,14 @@ export default class RemoveTypeCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { type, element }: RemoveTypeCommandArgs
   ) {
     const oldTypeof = element.getAttribute('typeof');
     const typesArray = oldTypeof ? oldTypeof.split(' ') : [];
     const newTypeof = typesArray.filter((t) => t !== type).join(' ');
-    const tr = state.createTransaction();
-    const newNode = tr.setProperty(element, 'typeof', newTypeof);
-    tr.selectRange(ModelRange.fromInElement(newNode, 0, 0));
-    dispatch(tr);
+    const newNode = transaction.setProperty(element, 'typeof', newTypeof);
+    transaction.selectRange(ModelRange.fromInElement(newNode, 0, 0));
     return newNode;
   }
 }

@@ -30,15 +30,16 @@ export default class InsertNewLineCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
-    { range = state.selection.lastRange }: InsertNewLineCommandArgs
+    { transaction }: CommandContext,
+    {
+      range = transaction.workingCopy.selection.lastRange,
+    }: InsertNewLineCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
 
     const br = new ModelElement('br');
-    const tr = state.createTransaction();
     const nodeBefore = range.start.nodeBefore();
     // If we have a text node with a singe invisible space before us, extend the range
     // so it will be overwritten (this is mainly to clean up after ourselves).
@@ -49,7 +50,7 @@ export default class InsertNewLineCommand
       range.start = ModelPosition.fromBeforeNode(nodeBefore);
     }
 
-    tr.insertNodes(range, br);
+    transaction.insertNodes(range, br);
     const cursorPos = ModelPosition.fromAfterNode(br);
     let newRange = new ModelRange(cursorPos, cursorPos);
 
@@ -61,10 +62,9 @@ export default class InsertNewLineCommand
     // Thanks to the magic of the dom spec, so we insert a good old invisible space.
     if (br.parent.isBlock && br === br.parent.lastChild) {
       const dummyText = new ModelText(INVISIBLE_SPACE);
-      newRange = tr.insertNodes(newRange, dummyText);
+      newRange = transaction.insertNodes(newRange, dummyText);
     }
 
-    tr.selectRange(newRange);
-    dispatch(tr);
+    transaction.selectRange(newRange);
   }
 }

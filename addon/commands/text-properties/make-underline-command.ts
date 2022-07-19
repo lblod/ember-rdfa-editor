@@ -9,9 +9,12 @@ export default class MakeUnderlineCommand extends SetTextPropertyCommand<void> {
   }
 
   @logExecute
-  execute({ state, dispatch }: CommandContext) {
-    const tr = state.createTransaction();
-    super.setTextProperty(tr, 'underline', true, state.selection);
-    dispatch(tr);
+  execute({ transaction }: CommandContext) {
+    super.setTextProperty(
+      transaction,
+      'underline',
+      true,
+      transaction.workingCopy.selection
+    );
   }
 }

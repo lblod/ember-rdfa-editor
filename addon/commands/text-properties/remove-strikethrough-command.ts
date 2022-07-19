@@ -10,9 +10,12 @@ export default class RemoveStrikethroughCommand extends SetTextPropertyCommand<v
   }
 
   @logExecute
-  execute({ state, dispatch }: CommandContext) {
-    const tr = state.createTransaction();
-    super.setTextProperty(tr, 'strikethrough', false, state.selection);
-    dispatch(tr);
+  execute({ transaction }: CommandContext) {
+    super.setTextProperty(
+      transaction,
+      'strikethrough',
+      false,
+      transaction.workingCopy.selection
+    );
   }
 }

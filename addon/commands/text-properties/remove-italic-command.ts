@@ -7,10 +7,14 @@ export default class RemoveItalicCommand extends SetTextPropertyCommand<void> {
   canExecute(): boolean {
     return true;
   }
+
   @logExecute
-  execute({ state, dispatch }: CommandContext) {
-    const tr = state.createTransaction();
-    super.setTextProperty(tr, 'italic', false, state.selection);
-    dispatch(tr);
+  execute({ transaction }: CommandContext) {
+    super.setTextProperty(
+      transaction,
+      'italic',
+      false,
+      transaction.workingCopy.selection
+    );
   }
 }

@@ -1,3 +1,4 @@
+import State from '@lblod/ember-rdfa-editor/core/state';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
@@ -18,7 +19,7 @@ export default abstract class SetTextPropertyCommand<A>
   implements Command<A, void>
 {
   abstract name: string;
-  abstract canExecute(context: CommandContext, args: A): boolean;
+  abstract canExecute(state: State, args: A): boolean;
   abstract execute(context: CommandContext, args: A): void;
 
   protected setTextProperty(

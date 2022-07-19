@@ -25,9 +25,7 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
   }
 
   @logExecute
-  execute({ dispatch, state }: CommandContext, { range }: RemoveCommandArgs) {
-    const tr = state.createTransaction();
-
+  execute({ transaction }: CommandContext, { range }: RemoveCommandArgs) {
     // we only have to consider ancestors of the end of the range since we always merge
     // towards the left
     // SAFETY: filter guarantees results to be elements
@@ -43,38 +41,37 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
       // so we can safely merge  the remaining content after the end of the range but within the li
       // without destroying the rest of the list
       const { adjustedRange, rightSideOfSplit } = isolateLowestLi(
-        tr,
+        transaction,
         highestLi,
         lowestLi,
         range
       );
       // perform the deletion
-      rangeAfterDelete = tr.removeNodes(adjustedRange);
+      rangeAfterDelete = transaction.removeNodes(adjustedRange);
       if (
         rightSideOfSplit &&
         ModelNodeUtils.isListContainer(rightSideOfSplit)
       ) {
         // If we did split inside a nested list, the rightside will
         // now have nested list as the first element, which is not allowed, so we flatten it
-        flattenList(tr, rightSideOfSplit);
+        flattenList(transaction, rightSideOfSplit);
       }
-      rangeAfterDelete = cleanupRangeAfterDelete(tr, rangeAfterDelete);
+      rangeAfterDelete = cleanupRangeAfterDelete(transaction, rangeAfterDelete);
     } else {
-      rangeAfterDelete = tr.removeNodes(range);
+      rangeAfterDelete = transaction.removeNodes(range);
     }
 
     if (rangeAfterDelete.start.parent.length === 0) {
-      const finalRange = tr.insertText({
+      const finalRange = transaction.insertText({
         range: rangeAfterDelete,
         text: '',
         marks: new MarkSet(),
       });
-      tr.selectRange(finalRange);
+      transaction.selectRange(finalRange);
     } else {
-      tr.selectRange(rangeAfterDelete);
+      transaction.selectRange(rangeAfterDelete);
     }
     // this.model.emitSelectionChanged();
-    dispatch(tr);
   }
 }
 function isolateLowestLi(

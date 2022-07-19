@@ -17,12 +17,13 @@ import {
   SelectionChangedEvent,
 } from '../utils/editor-event';
 import { InitializedPlugin } from '../utils/editor-plugin';
+import { NotImplementedError } from '../utils/errors';
 import EventBus, {
   AnyEventName,
   EditorEventListener,
   ListenerConfig,
 } from '../utils/event-bus';
-import Transaction from './transaction';
+import Transaction, { TransactionListener } from './transaction';
 import { EditorView, View } from './view';
 export type Dispatcher = (view: View, updateView?: boolean) => Dispatch;
 export type Dispatch = (transaction: Transaction) => State;
@@ -106,6 +107,10 @@ export interface Editor {
     callback: EditorEventListener<E>,
     config?: ListenerConfig
   ): void;
+
+  onTransactionUpdate(callback: TransactionListener): void;
+
+  offTransactionUpdate(callback: TransactionListener): void;
 }
 
 /**
@@ -150,13 +155,15 @@ class SayEditor implements Editor {
   ): CommandReturn<C> | void {
     const command: Command<CommandArgs<C>, CommandReturn<C> | void> = this.state
       .commands[commandName];
+    const transaction = this.state.createTransaction();
     const result = command.execute(
       {
-        dispatch: updateView ? this.dispatchUpdate : this.dispatchNoUpdate,
-        state: this.state,
+        transaction,
       },
       args
     );
+    const dispatch = updateView ? this.dispatchUpdate : this.dispatchNoUpdate;
+    dispatch(transaction);
     return result;
   }
   canExecuteCommand<C extends keyof CommandMap>(
@@ -165,7 +172,7 @@ class SayEditor implements Editor {
   ): boolean {
     const command: Command<CommandArgs<CommandName>, CommandReturn<C>> = this
       .state.commands[commandName];
-    return command.canExecute({ state: this.state }, args);
+    return command.canExecute(this.state, args);
   }
   defaultDispatcher =
     (view: View, updateView = true) =>
@@ -217,6 +224,14 @@ class SayEditor implements Editor {
     config?: ListenerConfig
   ) {
     this.eventbus.off(eventName, callback, config);
+  }
+
+  onTransactionUpdate(callback: TransactionListener): void {
+    throw new NotImplementedError();
+  }
+
+  offTransactionUpdate(callback: TransactionListener): void {
+    throw new NotImplementedError();
   }
 }
 /**
