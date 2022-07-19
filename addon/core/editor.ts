@@ -17,12 +17,12 @@ import {
   SelectionChangedEvent,
 } from '../utils/editor-event';
 import { InitializedPlugin } from '../utils/editor-plugin';
-import { NotImplementedError } from '../utils/errors';
 import EventBus, {
   AnyEventName,
   EditorEventListener,
   ListenerConfig,
 } from '../utils/event-bus';
+import TransactionOperationNotifier from '../utils/transaction-operation-notifier';
 import Transaction, { TransactionListener } from './transaction';
 import { EditorView, View } from './view';
 export type Dispatcher = (view: View, updateView?: boolean) => Dispatch;
@@ -122,15 +122,21 @@ class SayEditor implements Editor {
   dispatchUpdate: Dispatch;
   dispatchNoUpdate: Dispatch;
   eventbus: EventBus;
-  transactionListeners: TransactionListener[] = [];
+  transactionOperationNotifier: TransactionOperationNotifier;
 
   constructor(args: EditorArgs) {
     const { domRoot } = args;
     this.view = new EditorView(domRoot);
     this.eventbus = new EventBus();
+    this.transactionOperationNotifier = new TransactionOperationNotifier();
 
-    let initialState = emptyState(this.eventbus);
-    const tr = new Transaction(initialState);
+    let initialState = emptyState(
+      this.eventbus,
+      this.transactionOperationNotifier
+    );
+    const tr = new Transaction(initialState, (tr, op) =>
+      this.transactionOperationNotifier.notify(tr, op)
+    );
     tr.readFromView(this.view);
     tr.setBaseIRI(args.baseIRI ?? document.baseURI);
     tr.setPathFromDomRoot(getPathFromRoot(domRoot, false));
@@ -228,14 +234,11 @@ class SayEditor implements Editor {
   }
 
   onTransactionUpdate(callback: TransactionListener): void {
-    this.transactionListeners.push(callback);
+    this.transactionOperationNotifier.addListener(callback);
   }
 
   offTransactionUpdate(callback: TransactionListener): void {
-    const index = this.transactionListeners.indexOf(callback);
-    if (index >= 0) {
-      this.transactionListeners = this.transactionListeners.splice(index, 1);
-    }
+    this.transactionOperationNotifier.removeListener(callback);
   }
 }
 /**

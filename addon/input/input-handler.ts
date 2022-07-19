@@ -166,7 +166,8 @@ export class EditorInputHandler implements InputHandler {
       this.editor.view.domRoot,
       currentSelection
     );
-    const tr = new Transaction(this.editor.state);
+
+    const tr = this.editor.state.createTransaction();
     tr.setSelection(newSelection);
     this.editor.dispatchTransaction(tr, false);
   }

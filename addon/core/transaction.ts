@@ -33,7 +33,10 @@ interface TextInsertion {
   marks?: MarkSet;
 }
 
-export type TransactionListener = (transaction: Transaction) => void;
+export type TransactionListener = (
+  transaction: Transaction,
+  operation: Operation
+) => void;
 
 /**
  * This is the main way to produce a new state based on an initial state.
@@ -42,11 +45,16 @@ export type TransactionListener = (transaction: Transaction) => void;
 export default class Transaction {
   initialState: State;
   private _workingCopy: State;
-  operations: Operation<object>[];
+  operations: Operation[];
   rangeMapper: RangeMapper;
+  operationCallback: (operation: Operation) => void;
 
-  constructor(state: State) {
+  constructor(
+    state: State,
+    operationCallback: (transaction: Transaction, operation: Operation) => void
+  ) {
     this.initialState = state;
+    this.operationCallback = (operation) => operationCallback(this, operation);
     /*
      * Current implementation is heavily influenced by time and complexity constraints.
      * By simply copying the state and then mutating the copy, most logic could be ported over verbatim.
@@ -208,7 +216,9 @@ export default class Transaction {
   }
   private executeOperation<R extends object>(op: Operation<R>): R {
     this.operations.push(op);
-    return op.execute();
+    const result = op.execute();
+    this.operationCallback(op);
+    return result;
   }
   selectRange(range: ModelRange): void {
     const op = new SelectionOperation(undefined, this._workingCopy.selection, [

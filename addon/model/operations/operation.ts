@@ -7,12 +7,13 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
-export default abstract class Operation<
-  R extends object = Record<string, never>
-> {
+export type OperationType = 'content-operation' | 'selection-operation';
+export default abstract class Operation<R extends object = object> {
   protected logger: Logger;
 
   private eventBus?: EventBus;
+
+  public abstract type: OperationType;
 
   protected constructor(eventBus: EventBus | undefined) {
     this.eventBus = eventBus;

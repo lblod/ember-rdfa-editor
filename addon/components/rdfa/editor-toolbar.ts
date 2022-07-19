@@ -1,8 +1,10 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
+import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 
@@ -35,32 +37,33 @@ export default class EditorToolbar extends Component<Args> {
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
-    this.args.controller.onEvent(
-      'selectionChanged',
-      this.updateProperties.bind(this)
-    );
+    this.args.controller.onTransactionUpdate(this.transactionUpdate.bind(this));
   }
 
-  updateProperties(event: SelectionChangedEvent) {
-    console.log('Toolbar is handling selectionchanged', event);
-    this.isBold = event.payload.bold === PropertyState.enabled;
-    this.isItalic = event.payload.italic === PropertyState.enabled;
-    this.isUnderline = event.payload.underline === PropertyState.enabled;
-    this.isStrikethrough =
-      event.payload.strikethrough === PropertyState.enabled;
-    this.isInList = event.payload.inListState === PropertyState.enabled;
+  transactionUpdate(transaction: Transaction, operation: Operation) {
+    if (operation.type === 'selection-operation') {
+      this.updateProperties(transaction.currentSelection);
+    }
+  }
+
+  updateProperties(selection: ModelSelection) {
+    this.isBold = selection.bold === PropertyState.enabled;
+    this.isItalic = selection.italic === PropertyState.enabled;
+    this.isUnderline = selection.underline === PropertyState.enabled;
+    this.isStrikethrough = selection.strikethrough === PropertyState.enabled;
+    this.isInList = selection.inListState === PropertyState.enabled;
     this.canInsertList = this.args.controller.canExecuteCommand(
       'make-list',
       {}
     );
-    this.isInTable = event.payload.inTableState === PropertyState.enabled;
+    this.isInTable = selection.inTableState === PropertyState.enabled;
     this.canIndent =
       this.isInList &&
       this.args.controller.canExecuteCommand('indent-list', {});
     this.canUnindent =
       this.isInList &&
       this.args.controller.canExecuteCommand('unindent-list', {});
-    this.selection = event.payload;
+    this.selection = selection;
   }
 
   @action

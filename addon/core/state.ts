@@ -52,6 +52,7 @@ import { underlineMarkSpec } from '../plugins/basic-styles/marks/underline';
 import { isElement, isTextNode } from '../utils/dom-helpers';
 import { NotImplementedError } from '../utils/errors';
 import EventBus from '../utils/event-bus';
+import TransactionOperationNotifier from '../utils/transaction-operation-notifier';
 import Transaction from './transaction';
 
 export interface StateArgs {
@@ -68,6 +69,7 @@ export interface StateArgs {
   baseIRI: string;
   keymap?: KeyMap;
   eventBus: EventBus;
+  transactionOperationNotifier: TransactionOperationNotifier;
 }
 export interface NodeParseResult {
   type: 'mark' | 'text' | 'element';
@@ -97,6 +99,7 @@ export default interface State {
   createTransaction(): Transaction;
   parseNode(node: Node): NodeParseResult;
   eventBus: EventBus;
+  transactionOperationNotifier: TransactionOperationNotifier;
 }
 export class SayState implements State {
   document: ModelElement;
@@ -107,6 +110,7 @@ export class SayState implements State {
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
   eventBus: EventBus;
+  transactionOperationNotifier: TransactionOperationNotifier;
   /**
    * The previous "relevant" state. This is not necessarily
    * the state directly preceding this one. It is up to the discretion
@@ -146,12 +150,15 @@ export class SayState implements State {
     this.baseIRI = args.baseIRI;
     this.keymap = args.keymap ?? defaultKeyMap;
     this.eventBus = args.eventBus;
+    this.transactionOperationNotifier = args.transactionOperationNotifier;
   }
   /**
    * Create a new @link{Transaction} with this state as its initial state.
    * */
   createTransaction(): Transaction {
-    return new Transaction(this);
+    return new Transaction(this, (tr, op) =>
+      this.transactionOperationNotifier.notify(tr, op)
+    );
   }
   /**
    * Given the current state, determine how a certain html node
@@ -217,7 +224,10 @@ export type CommandArgs<C extends CommandName> = Parameters<
   CommandMap[C]['execute']
 >[1];
 
-export function emptyState(eventBus: EventBus): State {
+export function emptyState(
+  eventBus: EventBus,
+  transactionOperationNotifier: TransactionOperationNotifier
+): State {
   return new SayState({
     document: new ModelElement('div'),
     selection: new ModelSelection(),
@@ -231,6 +241,7 @@ export function emptyState(eventBus: EventBus): State {
     baseIRI: 'http://example.org',
     keymap: defaultKeyMap,
     eventBus: eventBus,
+    transactionOperationNotifier: transactionOperationNotifier,
   });
 }
 
@@ -250,6 +261,7 @@ export function cloneState(state: State): State {
     pathFromDomRoot: state.pathFromDomRoot,
     keymap: state.keymap,
     eventBus: state.eventBus,
+    transactionOperationNotifier: state.transactionOperationNotifier,
     baseIRI: state.baseIRI,
   });
 }

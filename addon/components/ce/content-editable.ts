@@ -3,7 +3,6 @@ import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import { createEditor, Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import { EditorInputHandler } from '../../input/input-handler';
 
 interface FeatureService {

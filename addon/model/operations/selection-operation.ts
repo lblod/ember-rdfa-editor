@@ -1,9 +1,10 @@
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import ModelRange from '../model-range';
 import ModelSelection from '../model-selection';
-import Operation from './operation';
+import Operation, { OperationType } from './operation';
 
 export default class SelectionOperation extends Operation {
+  public type: OperationType = 'selection-operation';
   private selection: ModelSelection;
   private ranges: ModelRange[];
   constructor(
