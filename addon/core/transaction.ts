@@ -62,6 +62,10 @@ export default class Transaction {
     return this._workingCopy;
   }
 
+  get currentSelection() {
+    return this._workingCopy.selection;
+  }
+
   setPlugins(plugins: InitializedPlugin[]): void {
     this._workingCopy.plugins = plugins;
   }
@@ -142,7 +146,7 @@ export default class Transaction {
       marks || new MarkSet()
     );
     this.createSnapshot();
-    return operation.execute().defaultRange;
+    return this.executeOperation(operation).defaultRange;
   }
 
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {

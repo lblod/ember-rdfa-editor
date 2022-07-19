@@ -1,6 +1,3 @@
-import Operation, {
-  OperationResult,
-} from '@lblod/ember-rdfa-editor/model/operations/operation';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
 import { UnconfinedRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
@@ -17,9 +14,10 @@ import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event
 import RangeMapper from '@lblod/ember-rdfa-editor/model/range-mapper';
 import { AttributeSpec } from '../util/render-spec';
 import GenTreeWalker from '../util/gen-tree-walker';
+import ContentOperation, { ContentOperationResult } from './content-operation';
 
 type MarkAction = 'add' | 'remove';
-export default class MarkOperation extends Operation {
+export default class MarkOperation extends ContentOperation {
   private _action: MarkAction;
   private _spec: MarkSpec;
   private _attributes: AttributeSpec;
@@ -78,7 +76,7 @@ export default class MarkOperation extends Operation {
     }
   }
 
-  execute(): OperationResult {
+  execute(): ContentOperationResult {
     if (!this.canExecute()) {
       throw new UnconfinedRangeError();
     }

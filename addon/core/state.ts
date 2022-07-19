@@ -22,6 +22,10 @@ import InsertTableRowBelowCommand from '../commands/insert-table-row-below-comma
 import InsertXmlCommand from '../commands/insert-xml-command';
 import MakeListCommand from '../commands/make-list-command';
 import MatchTextCommand from '../commands/match-text-command';
+import AddTypeCommand from '../commands/node-properties/add-type-command';
+import RemovePropertyCommand from '../commands/node-properties/remove-property-command';
+import RemoveTypeCommand from '../commands/node-properties/remove-type-command';
+import SetPropertyCommand from '../commands/node-properties/set-property-command';
 import ReadSelectionCommand from '../commands/read-selection-command';
 import RemoveCommand from '../commands/remove-command';
 import RemoveComponentCommand from '../commands/remove-component-command';
@@ -172,6 +176,7 @@ export function defaultCommands(): CommandMap {
   return {
     'add-mark-to-range': new AddMarkToRangeCommand(),
     'add-mark-to-selection': new AddMarkToSelectionCommand(),
+    'add-type': new AddTypeCommand(),
     'delete-selection': new DeleteSelectionCommand(),
     'indent-list': new IndentListCommand(),
     'insert-component': new InsertComponentCommand(),
@@ -194,12 +199,15 @@ export function defaultCommands(): CommandMap {
     'remove-mark-from-range': new RemoveMarkFromRangeCommand(),
     'remove-mark-from-selection': new RemoveMarkFromSelectionCommand(),
     'remove-marks-from-ranges': new RemoveMarksFromRangesCommand(),
+    'remove-property': new RemovePropertyCommand(),
     'remove-table-column': new RemoveTableColumnCommand(),
     'remove-table-row': new RemoveTableRowCommand(),
     'remove-table': new RemoveTableCommand(),
+    'remove-type': new RemoveTypeCommand(),
     undo: new UndoCommand(),
     'unindent-list': new UnindentListCommand(),
     remove: new RemoveCommand(),
+    'set-property': new SetPropertyCommand(),
   };
 }
 export type CommandReturn<C extends CommandName> = ReturnType<

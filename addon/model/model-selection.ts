@@ -2,14 +2,9 @@ import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { SelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { analyse } from '@lblod/marawa/rdfa-context-scanner';
-import ModelNodeFinder from '@lblod/ember-rdfa-editor/model/util/model-node-finder';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import {
-  Direction,
-  FilterAndPredicate,
-  PropertyState,
-} from '@lblod/ember-rdfa-editor/model/util/types';
+import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 import { nodeIsElementOfType } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
@@ -152,6 +147,7 @@ export default class ModelSelection {
   clearRanges() {
     this._isRightToLeft = false;
     this._ranges = [];
+    this._activeMarks = new MarkSet();
   }
 
   selectRange(range: ModelRange, rightToLeft = false) {
@@ -159,6 +155,17 @@ export default class ModelSelection {
     this.addRange(range);
     this.activeMarks = range.getMarks();
     this._isRightToLeft = rightToLeft;
+  }
+
+  selectRanges(...ranges: ModelRange[]) {
+    this.clearRanges();
+    this.ranges.push(...ranges);
+
+    if (ranges.length) {
+      this.activeMarks = ranges[0]
+        .getMarks()
+        .intersection(...ranges.map((range) => range.getMarks()).slice(1));
+    }
   }
 
   /**
