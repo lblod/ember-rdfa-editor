@@ -122,6 +122,7 @@ class SayEditor implements Editor {
   dispatchUpdate: Dispatch;
   dispatchNoUpdate: Dispatch;
   eventbus: EventBus;
+  transactionListeners: TransactionListener[] = [];
 
   constructor(args: EditorArgs) {
     const { domRoot } = args;
@@ -227,11 +228,14 @@ class SayEditor implements Editor {
   }
 
   onTransactionUpdate(callback: TransactionListener): void {
-    throw new NotImplementedError();
+    this.transactionListeners.push(callback);
   }
 
   offTransactionUpdate(callback: TransactionListener): void {
-    throw new NotImplementedError();
+    const index = this.transactionListeners.indexOf(callback);
+    if (index >= 0) {
+      this.transactionListeners = this.transactionListeners.splice(index, 1);
+    }
   }
 }
 /**
