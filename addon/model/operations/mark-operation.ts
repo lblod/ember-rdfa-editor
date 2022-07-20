@@ -121,7 +121,7 @@ export default class MarkOperation extends Operation {
 
       const walker = GenTreeWalker.fromRange({
         range: this.range,
-        filter: toFilterSkipFalse(ModelNode.isModelText),
+        filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       });
       const textNodes = [...walker.nodes()] as ModelText[];
       const _markCheckNodes: ModelNode[] = [...textNodes];

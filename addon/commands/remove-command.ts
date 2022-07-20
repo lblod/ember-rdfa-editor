@@ -144,7 +144,7 @@ function findNestedListFromPos(
       pos,
       ModelPosition.fromInNode(inLi, inLi.getMaxOffset())
     ),
-    filter: toFilterSkipFalse(ModelNodeUtils.isListContainer),
+    filter: toFilterSkipFalse<ModelNode>(ModelNodeUtils.isListContainer),
   }).nextNode();
 }
 /**

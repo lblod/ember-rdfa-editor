@@ -69,7 +69,6 @@ export default class PlaceHolderPlugin implements EditorPlugin {
 //   }
 // }
 
-
 /**
  * @class PlaceholderTextInputPlugin
  * @module plugins/placeholder-text
