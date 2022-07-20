@@ -7,6 +7,7 @@ export interface RemoveHighlightCommandArgs {
   selection?: ModelSelection;
 }
 export default class RemoveHighlightCommand extends SetTextPropertyCommand<RemoveHighlightCommandArgs> {
+  arguments: string[] = ['selection'];
   name = 'remove-highlight';
 
   canExecute(): boolean {

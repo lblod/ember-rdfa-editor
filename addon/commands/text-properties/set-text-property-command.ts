@@ -17,6 +17,7 @@ export type TextAttribute =
 export default abstract class SetTextPropertyCommand<A>
   implements Command<A, void>
 {
+  abstract arguments: string[];
   abstract name: string;
   abstract canExecute(context: CommandContext, args: A): boolean;
   abstract execute(context: CommandContext, args: A): void;

@@ -11,6 +11,7 @@ export interface RemovePropertyCommandArgs {
 export default class RemovePropertyCommand
   implements Command<RemovePropertyCommandArgs, void>
 {
+  arguments: string[] = ['element', 'property'];
   name = 'remove-property';
 
   canExecute(): boolean {

@@ -3,6 +3,7 @@ import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { CommandContext } from '../command';
 
 export default class MakeUnderlineCommand extends SetTextPropertyCommand<void> {
+  arguments: string[] = [];
   name = 'make-underline';
   canExecute(): boolean {
     return true;

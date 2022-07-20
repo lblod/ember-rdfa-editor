@@ -3,6 +3,7 @@ import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { CommandContext } from '../command';
 
 export default class MakeBoldCommand extends SetTextPropertyCommand<void> {
+  arguments: string[] = [];
   name = 'make-bold';
 
   canExecute(): boolean {

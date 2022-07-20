@@ -7,6 +7,7 @@ export interface MakeHighlightCommandArgs {
 }
 
 export default class MakeHighlightCommand extends SetTextPropertyCommand<MakeHighlightCommandArgs> {
+  arguments: string[] = [];
   name = 'make-highlight';
   canExecute(): boolean {
     return true;

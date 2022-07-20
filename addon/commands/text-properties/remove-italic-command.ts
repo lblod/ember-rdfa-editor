@@ -3,6 +3,7 @@ import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { CommandContext } from '../command';
 
 export default class RemoveItalicCommand extends SetTextPropertyCommand<void> {
+  arguments: string[] = [];
   name = 'remove-italic';
   canExecute(): boolean {
     return true;
