@@ -1,5 +1,5 @@
 import Command, {
-    CommandContext
+  CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
@@ -9,7 +9,10 @@ export interface AddTypeCommandArgs {
   element: ModelElement;
 }
 
-export default class AddTypeCommand implements Command<AddTypeCommandArgs, void> {
+export default class AddTypeCommand
+  implements Command<AddTypeCommandArgs, void>
+{
+  arguments: string[] = ['type', 'element'];
   name = 'add-type';
 
   canExecute(): boolean {

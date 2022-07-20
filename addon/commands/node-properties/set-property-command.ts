@@ -11,6 +11,7 @@ export interface SetPropertyCommandArgs {
 export default class SetPropertyCommand
   implements Command<SetPropertyCommandArgs, void>
 {
+  arguments: string[] = ['property', 'value', 'element'];
   name = 'set-property';
 
   canExecute(): boolean {
