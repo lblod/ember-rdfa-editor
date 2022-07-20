@@ -1,5 +1,4 @@
 import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import RemoveTableColumnCommand from '@lblod/ember-rdfa-editor/commands/remove-table-column-command';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
