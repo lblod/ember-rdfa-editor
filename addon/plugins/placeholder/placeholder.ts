@@ -74,28 +74,28 @@ export default class PlaceHolderPlugin implements EditorPlugin {
  * @class PlaceholderTextInputPlugin
  * @module plugins/placeholder-text
  */
-export default class PlaceholderTextInputPlugin implements TextInputPlugin {
-  label = 'Text input plugin for handling RDFA specific logic';
+// export default class PlaceholderTextInputPlugin implements TextInputPlugin {
+//   label = 'Text input plugin for handling RDFA specific logic';
 
-  guidanceForManipulation(
-    manipulation: TextHandlerManipulation
-  ): ManipulationGuidance | null {
-    const { range: originalRange, text } = manipulation;
-    let range = originalRange;
+//   guidanceForManipulation(
+//     manipulation: TextHandlerManipulation
+//   ): ManipulationGuidance | null {
+//     const { range: originalRange, text } = manipulation;
+//     let range = originalRange;
 
-    if (
-      ModelNodeUtils.isPlaceHolder(originalRange.start.parent) ||
-      ModelNodeUtils.isPlaceHolder(originalRange.end.parent)
-    ) {
-      range = ModelRangeUtils.getExtendedToPlaceholder(originalRange);
-      return {
-        allow: true,
-        executor: (_, rawEditor: RawEditor) => {
-          rawEditor.executeCommand('insert-text', text, range);
-        },
-      };
-    }
+//     if (
+//       ModelNodeUtils.isPlaceHolder(originalRange.start.parent) ||
+//       ModelNodeUtils.isPlaceHolder(originalRange.end.parent)
+//     ) {
+//       range = ModelRangeUtils.getExtendedToPlaceholder(originalRange);
+//       return {
+//         allow: true,
+//         executor: (_, rawEditor: RawEditor) => {
+//           rawEditor.executeCommand('insert-text', text, range);
+//         },
+//       };
+//     }
 
-    return null;
-  }
-}
+//     return null;
+//   }
+// }
