@@ -63,7 +63,7 @@
     "ember-truth-helpers": "^3.0.0",
     "handlebars": "^4.7.7",
     "handlebars-loader": "^1.7.2",
-    "ix": "^4.5.2",
+    "iter-tools": "^7.4.0",
     "mdn-polyfills": "^5.16.0",
     "rdf-data-factory": "^1.1.0",
     "relative-to-absolute-iri": "^1.0.6",
