@@ -1,5 +1,4 @@
 import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
-import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import { handleUndo } from '@lblod/ember-rdfa-editor/input/history';
 import {
   handleInsertLineBreak,
@@ -166,10 +165,11 @@ export class EditorInputHandler implements InputHandler {
       this.editor.view.domRoot,
       currentSelection
     );
-
-    const tr = this.editor.state.createTransaction();
-    tr.setSelection(newSelection);
-    this.editor.dispatchTransaction(tr, false);
+    if (!this.editor.state.selection.sameAs(newSelection)) {
+      const tr = this.editor.state.createTransaction();
+      tr.setSelection(newSelection);
+      this.editor.dispatchTransaction(tr, false);
+    }
   }
 }
 

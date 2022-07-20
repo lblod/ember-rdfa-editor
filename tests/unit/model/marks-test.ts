@@ -2,6 +2,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
 import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
+import computeDifference from '@lblod/ember-rdfa-editor/model/util/tree-differ';
 import {
   domStripped,
   vdom,
@@ -148,7 +149,10 @@ module('Unit | model | marks-test', function () {
     tr.addMark(range2, boldMarkSpec, {});
     const resultState = tr.apply();
     const view = testView();
-    view.update(resultState);
+    view.update(
+      resultState,
+      computeDifference(state.document, resultState.document)
+    );
     const result = view.domRoot;
 
     console.log(result);

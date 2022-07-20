@@ -252,7 +252,10 @@ export function cloneState(state: State): State {
   return new SayState({
     document: documentClone,
     marksRegistry: state.marksRegistry,
-    inlineComponentsRegistry: state.inlineComponentsRegistry,
+    inlineComponentsRegistry: state.inlineComponentsRegistry.clone(
+      state.document,
+      documentClone
+    ),
     plugins: [...state.plugins],
     commands: state.commands,
     selection: selectionClone,

@@ -8,6 +8,7 @@ import Controller, {
   InternalWidgetSpec,
 } from '@lblod/ember-rdfa-editor/model/controller';
 import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
+import { ModelInlineComponent } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
 import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
 import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
@@ -70,7 +71,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
   @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
-  @tracked inlineComponents = tracked<ActiveComponentEntry>([]);
+  // @tracked inlineComponents = tracked(
+  //   new Map<ModelInlineComponent, ActiveComponentEntry>()
+  // );
 
   @tracked editorLoading = true;
   private owner: ApplicationInstance;
@@ -159,9 +162,17 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   }
 
   initializeComponents() {
-    if (this.editor) {
-      this.inlineComponents =
-        this.editor.state.inlineComponentsRegistry.componentInstances;
-    }
+    // if (this.editor) {
+    //   this.inlineComponents =
+    //     this.editor.state.inlineComponentsRegistry.componentInstances;
+    // }
+  }
+
+  get inlineComponents(): ActiveComponentEntry[] {
+    const result =
+      this.editor?.state.inlineComponentsRegistry.activeComponents ||
+      new Map<ModelInlineComponent, ActiveComponentEntry>();
+    console.log('GET', result.values());
+    return [...result.values()];
   }
 }

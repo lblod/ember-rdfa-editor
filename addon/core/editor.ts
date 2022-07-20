@@ -1,3 +1,4 @@
+import { tracked } from '@glimmer/tracking';
 import Command, {
   CommandMap,
   CommandName,
@@ -10,6 +11,7 @@ import State, {
 import { ResolvedPluginConfig } from '../components/rdfa/rdfa-editor';
 import { EditorControllerCompat } from '../model/controller';
 import { CORE_OWNER } from '../model/util/constants';
+import computeDifference from '../model/util/tree-differ';
 import { getPathFromRoot } from '../utils/dom-helpers';
 import {
   ContentChangedEvent,
@@ -125,7 +127,7 @@ export interface Editor {
  * Default implementation of the editor interface. Is a class for convenience and clearer `this` semantics.
  * */
 class SayEditor implements Editor {
-  private _state: State;
+  @tracked private _state: State;
   view: View;
   dispatchUpdate: Dispatch;
   dispatchNoUpdate: Dispatch;
@@ -138,7 +140,7 @@ class SayEditor implements Editor {
     this.eventbus = new EventBus();
     this.transactionOperationNotifier = new TransactionOperationNotifier();
 
-    let initialState = emptyState(
+    const initialState = emptyState(
       this.eventbus,
       this.transactionOperationNotifier
     );
@@ -148,9 +150,13 @@ class SayEditor implements Editor {
     tr.readFromView(this.view);
     tr.setBaseIRI(args.baseIRI ?? document.baseURI);
     tr.setPathFromDomRoot(getPathFromRoot(domRoot, false));
-    initialState = tr.apply();
-    this.view.update(initialState);
-    this._state = initialState;
+    const newState = tr.apply();
+    const differences = computeDifference(
+      initialState.document,
+      newState.document
+    );
+    this.view.update(newState, differences);
+    this._state = newState;
     const dispatcher = args.dispatcher || this.defaultDispatcher;
     this.dispatchUpdate = dispatcher(this.view, true);
     this.dispatchNoUpdate = dispatcher(this.view, false);
@@ -160,7 +166,7 @@ class SayEditor implements Editor {
     return this._state;
   }
   set state(value: State) {
-    console.log('Setting state', value.document.toXml());
+    // console.log('Setting state', value.document.toXml());
     this._state = value;
   }
 
@@ -199,9 +205,13 @@ class SayEditor implements Editor {
     (view: View, updateView = true) =>
     (transaction: Transaction): State => {
       const newState = transaction.apply();
+      const differences = computeDifference(
+        this.state.document,
+        newState.document
+      );
       this.state = newState;
       if (updateView) {
-        view.update(this.state);
+        view.update(this.state, differences);
       }
       if (!newState.document.sameAs(transaction.initialState.document)) {
         this.emitEvent(

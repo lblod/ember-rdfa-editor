@@ -1,6 +1,6 @@
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { TagMatch } from '../mark';
-import { tracked } from 'tracked-built-ins';
+import { tracked, TrackedMap } from 'tracked-built-ins';
 import MapUtils from '../util/map-utils';
 import {
   InlineComponentSpec,
@@ -9,6 +9,17 @@ import {
 import Controller from '../controller';
 import { ComponentNotFoundError } from '@lblod/ember-rdfa-editor/utils/errors';
 import InlineComponentController from './inline-component-controller';
+import ModelElement from '../model-element';
+import { toFilterSkipFalse } from '../util/model-tree-walker';
+import GenTreeWalker from '../util/gen-tree-walker';
+import ModelNode from '../model-node';
+
+export interface InlineComponentsRegistryArgs {
+  registeredComponents?: Map<string, InlineComponentSpec>;
+  componentMatchMap?: Map<TagMatch, InlineComponentSpec[]>;
+  activeComponents?: Map<ModelInlineComponent, ActiveComponentEntry>;
+}
+
 export type ActiveComponentEntry = {
   emberComponentName: string;
   node: HTMLElement;
@@ -16,13 +27,23 @@ export type ActiveComponentEntry = {
   editorController: Controller;
 };
 export default class InlineComponentsRegistry {
-  private registeredComponents: Map<string, InlineComponentSpec> = new Map();
-  private componentMatchMap: Map<TagMatch, InlineComponentSpec[]> = new Map<
-    keyof HTMLElementTagNameMap,
-    InlineComponentSpec[]
-  >();
+  private registeredComponents: Map<string, InlineComponentSpec>;
+  private componentMatchMap: Map<TagMatch, InlineComponentSpec[]>;
+  @tracked activeComponents: TrackedMap<
+    ModelInlineComponent,
+    ActiveComponentEntry
+  >;
 
-  activeComponents = tracked<ActiveComponentEntry>([]);
+  constructor(args?: InlineComponentsRegistryArgs) {
+    this.registeredComponents =
+      args?.registeredComponents ?? new Map<string, InlineComponentSpec>();
+    this.componentMatchMap =
+      args?.componentMatchMap ?? new Map<TagMatch, InlineComponentSpec[]>();
+    this.activeComponents = tracked(
+      args?.activeComponents ??
+        new Map<ModelInlineComponent, ActiveComponentEntry>()
+    );
+  }
 
   matchInlineComponentSpec(node: Node): InlineComponentSpec | null {
     const potentialMatches =
@@ -59,7 +80,7 @@ export default class InlineComponentsRegistry {
   }
 
   clearComponentInstances() {
-    this.activeComponents.length = 0;
+    this.activeComponents.clear();
   }
 
   addComponentInstance(
@@ -70,7 +91,7 @@ export default class InlineComponentsRegistry {
     const componentSpec = this.lookUpComponent(emberComponentName);
     if (componentSpec) {
       const componentController = new InlineComponentController(model, node);
-      this.activeComponents.push({
+      this.activeComponents.set(model, {
         emberComponentName,
         node,
         componentController,
@@ -83,7 +104,70 @@ export default class InlineComponentsRegistry {
     }
   }
 
+  updateComponentInstanceNode(model: ModelInlineComponent, node: HTMLElement) {
+    const entry = this.activeComponents.get(model);
+    if (entry) {
+      entry.node = node;
+    }
+  }
+
+  clone(oldDocument: ModelElement, newDocument: ModelElement) {
+    const updatedActiveComponents = new Map<
+      ModelInlineComponent,
+      ActiveComponentEntry
+    >();
+    const oldInlineComponentModels = GenTreeWalker.fromSubTree({
+      root: oldDocument,
+      filter: toFilterSkipFalse((node: ModelNode) =>
+        ModelNode.isModelInlineComponent(node)
+      ),
+    });
+    const newInlineComponentModels = GenTreeWalker.fromSubTree({
+      root: newDocument,
+      filter: toFilterSkipFalse((node: ModelNode) =>
+        ModelNode.isModelInlineComponent(node)
+      ),
+    });
+    let oldInlineComponent =
+        oldInlineComponentModels.nextNode() as ModelInlineComponent,
+      newInlineComponent =
+        newInlineComponentModels.nextNode() as ModelInlineComponent;
+    while (oldInlineComponent && newInlineComponent) {
+      const oldComponentEntry = this.componentInstances.get(oldInlineComponent);
+      if (oldComponentEntry) {
+        const newComponentEntry: ActiveComponentEntry = {
+          node: oldComponentEntry.node,
+          componentController: new InlineComponentController(
+            newInlineComponent,
+            oldComponentEntry.node
+          ),
+          emberComponentName: oldComponentEntry.emberComponentName,
+          editorController: oldComponentEntry.editorController,
+        };
+        updatedActiveComponents.set(newInlineComponent, newComponentEntry);
+      }
+
+      oldInlineComponent =
+        oldInlineComponentModels.nextNode() as ModelInlineComponent;
+      newInlineComponent =
+        newInlineComponentModels.nextNode() as ModelInlineComponent;
+    }
+    return new InlineComponentsRegistry({
+      registeredComponents: this.registeredComponents,
+      componentMatchMap: this.componentMatchMap,
+      activeComponents: updatedActiveComponents,
+    });
+  }
+
   get componentInstances() {
     return this.activeComponents;
+  }
+
+  clean() {
+    this.componentInstances.forEach((entry, model) => {
+      if (!entry.node.isConnected) {
+        this.componentInstances.delete(model);
+      }
+    });
   }
 }

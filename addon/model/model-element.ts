@@ -1,4 +1,5 @@
 import ModelNode, {
+  DirtyType,
   ModelNodeType,
   NodeCompareOpts,
   NodeConfig,
@@ -517,5 +518,41 @@ export default class ModelElement
       this.attributeMap,
       other.attributeMap
     );
+  }
+
+  diff(other: ModelNode): Set<DirtyType> {
+    const dirtiness: Set<DirtyType> = new Set();
+    if (!ModelElement.isModelElement(other)) {
+      dirtiness.add('node');
+      dirtiness.add('content');
+    } else {
+      if (
+        (this.type !== other.type ||
+          !ModelNodeUtils.areAttributeMapsSame(
+            this.attributeMap,
+            other.attributeMap
+          )) &&
+        !(other === other.root)
+      ) {
+        dirtiness.add('node');
+      }
+      if (this.length !== other.length) {
+        dirtiness.add('content');
+      } else {
+        for (let i = 0; i < this.length; i++) {
+          const child1 = this.children[i];
+          const child2 = other.children[i];
+          if (ModelNode.isModelText(child1) || ModelNode.isModelText(child2)) {
+            const diff = child1.diff(child2);
+            if (diff.has('mark') || diff.has('node')) {
+              dirtiness.add('content');
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    return dirtiness;
   }
 }

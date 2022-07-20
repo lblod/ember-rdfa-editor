@@ -3,7 +3,7 @@ import { tracked } from 'tracked-built-ins';
 import Controller from '../controller';
 import { DomNodeMatcher } from '../mark';
 import ModelElement from '../model-element';
-import { ModelNodeType } from '../model-node';
+import ModelNode, { DirtyType, ModelNodeType } from '../model-node';
 import { AttributeSpec, Serializable } from '../util/render-spec';
 
 export type Properties = Record<string, Serializable | undefined>;
@@ -103,5 +103,19 @@ export class ModelInlineComponent<
 
   get isLeaf() {
     return true;
+  }
+
+  diff(other: ModelNode): Set<DirtyType> {
+    const dirtiness: Set<DirtyType> = new Set();
+    if (
+      !ModelNode.isModelInlineComponent(other) ||
+      this.type !== other.type ||
+      this.spec !== other.spec ||
+      this.props !== other.props
+    ) {
+      dirtiness.add('node');
+    }
+
+    return dirtiness;
   }
 }

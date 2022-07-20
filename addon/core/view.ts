@@ -2,8 +2,13 @@ import State from '@lblod/ember-rdfa-editor/core/state';
 import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
 import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
+import { Difference } from '../model/util/tree-differ';
 import HtmlWriter from '../model/writers/html-writer';
-import { domPosToModelPos, modelPosToDomPos } from '../utils/dom-helpers';
+import {
+  domPosToModelPos,
+  isTextNode,
+  modelPosToDomPos,
+} from '../utils/dom-helpers';
 import { PositionError } from '../utils/errors';
 import { createLogger, Logger } from '../utils/logging-utils';
 
@@ -33,7 +38,7 @@ export interface View {
   /**
    * Update the DOM to represent the given state
    * */
-  update(state: State): void;
+  update(state: State, differences: Difference[]): void;
 }
 
 /**
@@ -55,11 +60,18 @@ export class EditorView implements View {
     return viewToModel(state, this.domRoot, domNode);
   }
 
-  update(state: State): void {
+  update(state: State, differences: Difference[]): void {
     this.logger('Updating view with state:', state);
-    state.inlineComponentsRegistry.clearComponentInstances();
     const writer = new HtmlWriter();
-    writer.write(state, this);
+    differences.forEach((difference) => {
+      writer.write(
+        state,
+        this,
+        difference.node,
+        difference.changes || new Set()
+      );
+    });
+    state.inlineComponentsRegistry.clean();
     const selectionWriter = new SelectionWriter();
     selectionWriter.write(state, this.domRoot, state.selection);
   }
@@ -71,8 +83,14 @@ export function modelToView(
 ): Node {
   const modelPosition = ModelPosition.fromBeforeNode(modelNode);
   const domPosition = modelPosToDomPos(state, viewRoot, modelPosition);
-  const domNode = domPosition.container;
-  return domNode;
+  if (
+    typeof domPosition.offset === 'number' &&
+    !isTextNode(domPosition.container)
+  ) {
+    return domPosition.container.childNodes[domPosition.offset];
+  } else {
+    return domPosition.container;
+  }
 }
 
 export function viewToModel(

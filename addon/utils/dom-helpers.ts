@@ -2,8 +2,6 @@ import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import State from '../core/state';
 import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
-import GenTreeWalker from '../model/util/gen-tree-walker';
-import { toFilterSkipFalse } from '../model/util/model-tree-walker';
 
 /**
  * Fake class to list helper functions.
@@ -666,7 +664,7 @@ function domNodeFromPath(
     return cur;
   }
   for (let index of path.slice(0, -1)) {
-    index = modelOffsetToDomOffset(state, index, cur);
+    index = modelOffsetToDomOffset(state, index, cur) ?? 0;
     if (isElement(cur)) {
       cur = cur.childNodes[index];
     } else {
@@ -700,7 +698,8 @@ function domNodeFromPath(
         );
       }
     } else {
-      const index = modelOffsetToDomOffset(state, path[path.length - 1], cur);
+      const index =
+        modelOffsetToDomOffset(state, path[path.length - 1], cur) ?? 0;
 
       cur = cur.childNodes[index];
     }
@@ -737,7 +736,7 @@ export function domOffsetToModelOffset(
   state: State,
   domOffset: number,
   modelNode: Node
-) {
+): number {
   let childNode: ChildNode | null = modelNode.firstChild;
   if (childNode) {
     let modelOffset = 0;
@@ -760,9 +759,12 @@ export function domOffsetToModelOffset(
 
 export function modelOffsetToDomOffset(
   state: State,
-  modelOffset: number,
+  modelOffset: number | undefined,
   node: Node
-): number {
+): number | undefined {
+  if (!(typeof modelOffset === 'number')) {
+    return undefined;
+  }
   let childNode: ChildNode | null = node.firstChild;
   if (childNode) {
     let domOffset = 0;
@@ -785,7 +787,7 @@ export function modelPosToDomPos(
   state: State,
   domRoot: Element,
   pos: ModelPosition
-): { container: Node; offset: number } {
+): { container: Node; offset: number | undefined } {
   const path = pos.path;
   let cur: ModelNode = state.document;
   const indexPath = [];
@@ -826,6 +828,6 @@ export function modelPosToDomPos(
   );
   return {
     container: container,
-    offset: domOffset ?? 0,
+    offset: domOffset,
   };
 }
