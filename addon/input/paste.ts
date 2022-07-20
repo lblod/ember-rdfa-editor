@@ -3,11 +3,9 @@ import ModelRangeUtils from '../model/util/model-range-utils';
 import { PropertyState } from '../model/util/types';
 import { MisbehavedSelectionError } from '../utils/errors';
 import HTMLInputParser, { LIMITED_SAFE_TAGS } from '../utils/html-input-parser';
+import { createLogger } from '../utils/logging-utils';
 
-// export function handlePaste(editor: Editor, event: PasteEvent) {
-//   throw new NotImplementedError();
-// }
-
+const logger = createLogger('handlePaste');
 export default function handlePaste(
   editor: Editor,
   event: ClipboardEvent,
@@ -17,8 +15,8 @@ export default function handlePaste(
   const clipboardData = event.clipboardData;
 
   if (!clipboardData) {
-    // this.logger('No clipboardData object found, ignoring paste.');
-    return { allowPropagation: false, allowBrowserDefault: false };
+    logger('No clipboardData object found, ignoring paste.');
+    return;
   }
 
   const isInTable =
