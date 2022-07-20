@@ -62,7 +62,7 @@ export default class LiveMarkSet {
 
   private update = (transaction: Transaction) => {
     const { matchesToAdd, matchesToRemove } = this.calculateRanges(
-      transaction.workingCopy.datastore
+      transaction.getCurrentDataStore()
     );
     const marksRegistry = transaction.workingCopy.marksRegistry;
 

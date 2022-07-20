@@ -261,11 +261,7 @@ export function cloneState(state: State): State {
     selection: selectionClone,
     previousState: state.previousState,
     widgetMap: state.widgetMap,
-    datastore: EditorStore.fromParse({
-      modelRoot: documentClone,
-      baseIRI: state.baseIRI,
-      pathFromDomRoot: state.pathFromDomRoot,
-    }),
+    datastore: state.datastore,
     pathFromDomRoot: state.pathFromDomRoot,
     keymap: state.keymap,
     eventBus: state.eventBus,

@@ -51,6 +51,7 @@ export default class Transaction {
   operations: Operation[];
   rangeMapper: RangeMapper;
   operationCallback: (operation: Operation) => void;
+  rdfInvalid = true;
 
   constructor(state: State, operationCallback: OperationCallback) {
     this.initialState = state;
@@ -66,12 +67,28 @@ export default class Transaction {
     this.rangeMapper = new RangeMapper();
   }
 
+  get currentDocument() {
+    return this._workingCopy.document;
+  }
+
   get workingCopy() {
     return this._workingCopy;
   }
 
   get currentSelection() {
     return this._workingCopy.selection;
+  }
+
+  getCurrentDataStore() {
+    if (this.rdfInvalid) {
+      this._workingCopy.datastore = EditorStore.fromParse({
+        modelRoot: this._workingCopy.document,
+        baseIRI: this._workingCopy.baseIRI,
+        pathFromDomRoot: this._workingCopy.pathFromDomRoot,
+      });
+      this.rdfInvalid = false;
+    }
+    return this._workingCopy.datastore;
   }
 
   setPlugins(plugins: InitializedPlugin[]): void {
@@ -137,17 +154,9 @@ export default class Transaction {
       this.initialState.pathFromDomRoot !== this._workingCopy.pathFromDomRoot ||
       this._workingCopy !== this.initialState
     ) {
-      this.updateDatastore();
+      this.getCurrentDataStore();
     }
     return this._workingCopy;
-  }
-
-  updateDatastore() {
-    this._workingCopy.datastore = EditorStore.fromParse({
-      modelRoot: this._workingCopy.document,
-      baseIRI: this._workingCopy.baseIRI,
-      pathFromDomRoot: this._workingCopy.pathFromDomRoot,
-    });
   }
 
   insertText({ range, text, marks }: TextInsertion): ModelRange {
@@ -222,7 +231,7 @@ export default class Transaction {
     this.operations.push(op);
     const result = op.execute();
     if (op.type === 'content-operation') {
-      this.updateDatastore();
+      this.rdfInvalid = true;
     }
     this.operationCallback(op);
     return result;
