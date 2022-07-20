@@ -31,9 +31,12 @@ export class LumpNodeBackspaceDeleteInputPlugin
         return {
           allow: true,
           executor: () => {
-            editor.model.change(() => {
-              lumpNode.setAttribute('data-flagged-remove', 'complete');
-            });
+            editor.executeCommand(
+              'set-property',
+              'data-flagged-remove',
+              'complete',
+              lumpNode
+            );
           },
         };
       }
