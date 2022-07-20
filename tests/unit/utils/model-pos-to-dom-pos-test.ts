@@ -22,7 +22,7 @@ module('Unit | model | model-pos-to-dom-pos', function () {
       ModelPosition.fromPath(root as ModelElement, [])
     );
     const container = dom;
-    const expectedPos = { container, offset: 0 };
+    const expectedPos = { container, offset: undefined };
     assert.strictEqual(resultPos.container, expectedPos.container);
     assert.strictEqual(resultPos.offset, expectedPos.offset);
   });

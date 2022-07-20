@@ -29,7 +29,7 @@ module('Unit | model | writers | selection-writer', function () {
 function parseRangeInVdom(root: ModelNode, range: ModelRange): Range {
   const state = testState({ document: root });
   const view = testView();
-  view.update(state);
+  view.update(state, [{ node: root, changes: new Set(['content']) }]);
   const writer = new SelectionWriter();
   return writer.writeDomRange(state, view.domRoot, range);
 }
