@@ -9,6 +9,8 @@ import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { TextMatch } from '@lblod/ember-rdfa-editor/utils/match-text';
 import { AttributeSpec } from './util/render-spec';
 import Transaction from '../core/transaction';
+import Operation from './operations/operation';
+import MarkOperation from './operations/mark-operation';
 
 export type LiveMarkSpec =
   | string
@@ -60,11 +62,20 @@ export default class LiveMarkSet {
     return this._liveMarkSpecs;
   }
 
-  private update = (transaction: Transaction) => {
+  private update = (transaction: Transaction, operation: Operation) => {
+    const marksRegistry = transaction.workingCopy.marksRegistry;
+    if (operation instanceof MarkOperation) {
+      const liveMarkSpecNames = this.liveMarkSpecs.map((spec) =>
+        typeof spec === 'string' ? spec : spec.name
+      );
+      if (liveMarkSpecNames.includes(operation.spec.name)) {
+        return;
+      }
+    }
+    console.log('LIVE MARK UPDATE');
     const { matchesToAdd, matchesToRemove } = this.calculateRanges(
       transaction.getCurrentDataStore()
     );
-    const marksRegistry = transaction.workingCopy.marksRegistry;
 
     for (const match of matchesToRemove) {
       // Conservative check which determines if range in its current form still exists

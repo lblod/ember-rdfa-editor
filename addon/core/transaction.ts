@@ -3,7 +3,10 @@ import State, {
   CommandArgs,
   CommandReturn,
 } from '@lblod/ember-rdfa-editor/core/state';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange, {
+  ModelRangeFactory,
+  RangeFactory,
+} from '@lblod/ember-rdfa-editor/model/model-range';
 import { Mark, MarkSet, MarkSpec } from '../model/mark';
 import ModelNode from '../model/model-node';
 import ModelSelection from '../model/model-selection';
@@ -77,6 +80,10 @@ export default class Transaction {
 
   get currentSelection() {
     return this._workingCopy.selection;
+  }
+
+  get rangeFactory(): RangeFactory {
+    return new ModelRangeFactory(this.currentDocument);
   }
 
   getCurrentDataStore() {
