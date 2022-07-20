@@ -35,13 +35,16 @@ import RemoveTableRowCommand from './remove-table-row-command';
 import UndoCommand from './undo-command';
 import UnindentListCommand from './unindent-list-command';
 
+export type CommandMap = DefaultCommandMap &
+  Record<Exclude<string, keyof DefaultCommandMap>, Command<unknown, unknown>>;
+
 /**
  * A registry of all existing commands in type-space.
  * TODO: figure out and document how plugins can extend this, refer to
  * https://typed-ember.gitbook.io/glint/using-glint/ember/template-registry
  * for an example of this pattern
  * */
-export type CommandMap = {
+export type DefaultCommandMap = {
   'add-mark-to-range': AddMarkToRangeCommand;
   'add-mark-to-selection': AddMarkToSelectionCommand;
   'add-type': AddTypeCommand;
@@ -77,8 +80,7 @@ export type CommandMap = {
   'unindent-list': UnindentListCommand;
   remove: RemoveCommand;
 };
-export type CommandName = keyof CommandMap;
-
+export type CommandName = keyof DefaultCommandMap;
 export interface CommandContext {
   transaction: Transaction;
 }

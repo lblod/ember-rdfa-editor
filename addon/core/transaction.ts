@@ -476,6 +476,10 @@ export default class Transaction {
     return this.executeOperation(op).defaultRange;
   }
 
+  registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
+    this.workingCopy.commands[command.name] = command;
+  }
+
   canExecuteCommand<C extends keyof CommandMap>(
     commandName: C,
     args: CommandArgs<C>

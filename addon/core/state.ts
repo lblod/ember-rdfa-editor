@@ -1,6 +1,7 @@
-import {
+import Command, {
   CommandMap,
   CommandName,
+  DefaultCommandMap,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
@@ -179,7 +180,7 @@ export class SayState implements State {
   }
 }
 
-export function defaultCommands(): CommandMap {
+export function defaultCommands(): DefaultCommandMap {
   return {
     'add-mark-to-range': new AddMarkToRangeCommand(),
     'add-mark-to-selection': new AddMarkToSelectionCommand(),

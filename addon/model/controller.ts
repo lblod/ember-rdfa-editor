@@ -194,7 +194,7 @@ export class EditorController implements Controller {
     return new LiveMarkSet(this, args);
   }
   registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
-    throw new Error('Method not implemented.');
+    this._editor.registerCommand(command);
   }
   registerWidget(spec: WidgetSpec): void {
     MapUtils.setOrPush(this._editor.state.widgetMap, spec.desiredLocation, {

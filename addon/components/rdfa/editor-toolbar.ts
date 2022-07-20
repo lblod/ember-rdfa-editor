@@ -6,7 +6,6 @@ import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
-import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 
 interface Args {
   showTextStyleButtons: boolean;

@@ -61,6 +61,8 @@ export interface Editor {
   state: State;
   view: View;
 
+  registerCommand<A extends unknown[], R>(command: Command<A, R>): void;
+
   /**
    * Executes a {@link Command} by name. Command will recieve the editor's current state
    * as part of its context argument.
@@ -154,6 +156,12 @@ class SayEditor implements Editor {
   set state(value: State) {
     console.log('Setting state', value.document.toXml());
     this._state = value;
+  }
+
+  registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
+    const tr = this.state.createTransaction();
+    tr.registerCommand(command);
+    this.dispatchNoUpdate(tr);
   }
   executeCommand<C extends CommandName>(
     commandName: C,
