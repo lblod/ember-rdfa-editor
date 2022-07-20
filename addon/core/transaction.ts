@@ -8,7 +8,7 @@ import { Mark, MarkSet, MarkSpec } from '../model/mark';
 import ModelNode from '../model/model-node';
 import ModelSelection from '../model/model-selection';
 import InsertTextOperation from '../model/operations/insert-text-operation';
-import Operation from '../model/operations/operation';
+import Operation, { OperationType } from '../model/operations/operation';
 import RangeMapper from '../model/range-mapper';
 import HtmlReader, { HtmlReaderContext } from '../model/readers/html-reader';
 import SelectionReader from '../model/readers/selection-reader';
@@ -32,11 +32,14 @@ interface TextInsertion {
   text: string;
   marks?: MarkSet;
 }
-
-export type TransactionListener = (
+export type OperationCallback = (
   transaction: Transaction,
   operation: Operation
 ) => void;
+
+export type TransactionListenerOptions = {
+  filter: OperationType | OperationType[];
+};
 
 /**
  * This is the main way to produce a new state based on an initial state.
@@ -49,10 +52,7 @@ export default class Transaction {
   rangeMapper: RangeMapper;
   operationCallback: (operation: Operation) => void;
 
-  constructor(
-    state: State,
-    operationCallback: (transaction: Transaction, operation: Operation) => void
-  ) {
+  constructor(state: State, operationCallback: OperationCallback) {
     this.initialState = state;
     this.operationCallback = (operation) => operationCallback(this, operation);
     /*
@@ -137,13 +137,17 @@ export default class Transaction {
       this.initialState.pathFromDomRoot !== this._workingCopy.pathFromDomRoot ||
       this._workingCopy !== this.initialState
     ) {
-      this._workingCopy.datastore = EditorStore.fromParse({
-        modelRoot: this._workingCopy.document,
-        baseIRI: this._workingCopy.baseIRI,
-        pathFromDomRoot: this._workingCopy.pathFromDomRoot,
-      });
+      this.updateDatastore();
     }
     return this._workingCopy;
+  }
+
+  updateDatastore() {
+    this._workingCopy.datastore = EditorStore.fromParse({
+      modelRoot: this._workingCopy.document,
+      baseIRI: this._workingCopy.baseIRI,
+      pathFromDomRoot: this._workingCopy.pathFromDomRoot,
+    });
   }
 
   insertText({ range, text, marks }: TextInsertion): ModelRange {
@@ -217,6 +221,9 @@ export default class Transaction {
   private executeOperation<R extends object>(op: Operation<R>): R {
     this.operations.push(op);
     const result = op.execute();
+    if (op.type === 'content-operation') {
+      this.updateDatastore();
+    }
     this.operationCallback(op);
     return result;
   }

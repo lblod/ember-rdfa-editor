@@ -4,7 +4,6 @@ import { tracked } from '@glimmer/tracking';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
 import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
 
 interface Args {
@@ -36,16 +35,13 @@ export default class EditorToolbar extends Component<Args> {
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
-    this.args.controller.onTransactionUpdate(this.transactionUpdate.bind(this));
+    this.args.controller.onTransactionUpdate(this.updateProperties.bind(this), {
+      filter: 'selection-operation',
+    });
   }
 
-  transactionUpdate(transaction: Transaction, operation: Operation) {
-    if (operation.type === 'selection-operation') {
-      this.updateProperties(transaction.currentSelection);
-    }
-  }
-
-  updateProperties(selection: ModelSelection) {
+  updateProperties(transaction: Transaction) {
+    const selection = transaction.currentSelection;
     this.isBold = selection.bold === PropertyState.enabled;
     this.isItalic = selection.italic === PropertyState.enabled;
     this.isUnderline = selection.underline === PropertyState.enabled;

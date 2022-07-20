@@ -23,7 +23,10 @@ import EventBus, {
   ListenerConfig,
 } from '../utils/event-bus';
 import TransactionOperationNotifier from '../utils/transaction-operation-notifier';
-import Transaction, { TransactionListener } from './transaction';
+import Transaction, {
+  OperationCallback,
+  TransactionListenerOptions,
+} from './transaction';
 import { EditorView, View } from './view';
 export type Dispatcher = (view: View, updateView?: boolean) => Dispatch;
 export type Dispatch = (transaction: Transaction) => State;
@@ -110,9 +113,12 @@ export interface Editor {
     config?: ListenerConfig
   ): void;
 
-  onTransactionUpdate(callback: TransactionListener): void;
+  onTransactionUpdate(
+    callback: OperationCallback,
+    options?: TransactionListenerOptions
+  ): void;
 
-  offTransactionUpdate(callback: TransactionListener): void;
+  offTransactionUpdate(callback: OperationCallback): void;
 }
 
 /**
@@ -241,11 +247,14 @@ class SayEditor implements Editor {
     this.eventbus.off(eventName, callback, config);
   }
 
-  onTransactionUpdate(callback: TransactionListener): void {
-    this.transactionOperationNotifier.addListener(callback);
+  onTransactionUpdate(
+    callback: OperationCallback,
+    options?: TransactionListenerOptions
+  ): void {
+    this.transactionOperationNotifier.addListener(callback, options);
   }
 
-  offTransactionUpdate(callback: TransactionListener): void {
+  offTransactionUpdate(callback: OperationCallback): void {
     this.transactionOperationNotifier.removeListener(callback);
   }
 }

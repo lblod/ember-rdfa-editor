@@ -1,4 +1,4 @@
-import Command, {
+import {
   CommandMap,
   CommandName,
   DefaultCommandMap,
@@ -258,7 +258,11 @@ export function cloneState(state: State): State {
     selection: selectionClone,
     previousState: state.previousState,
     widgetMap: state.widgetMap,
-    datastore: state.datastore,
+    datastore: EditorStore.fromParse({
+      modelRoot: documentClone,
+      baseIRI: state.baseIRI,
+      pathFromDomRoot: state.pathFromDomRoot,
+    }),
     pathFromDomRoot: state.pathFromDomRoot,
     keymap: state.keymap,
     eventBus: state.eventBus,
