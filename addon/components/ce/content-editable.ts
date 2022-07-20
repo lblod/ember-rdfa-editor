@@ -2,7 +2,6 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import { createEditor, Editor } from '@lblod/ember-rdfa-editor/core/editor';
-import { InputHandler } from '@lblod/ember-rdfa-editor/editor/input-handlers/input-handler';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { EditorInputHandler } from '../../input/input-handler';
 import { ResolvedPluginConfig } from '../rdfa/rdfa-editor';
@@ -12,8 +11,6 @@ interface FeatureService {
 }
 
 interface ContentEditableArgs {
-  externalHandlers: InputHandler[];
-
   editorInit(editor: Editor): void;
 
   plugins: ResolvedPluginConfig[];
