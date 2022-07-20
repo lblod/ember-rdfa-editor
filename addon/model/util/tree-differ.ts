@@ -1,46 +1,29 @@
-import ModelElement from '../model-element';
 import ModelNode, { DirtyType } from '../model-node';
-import ModelNodeUtils from './model-node-utils';
 
 export type Difference = {
   node: ModelNode;
   changes?: Set<DirtyType>;
 };
 
-export default class TreeDiffer {
-  oldDocument: ModelElement;
-  newDocument: ModelElement;
-
-  constructor(oldDocument: ModelElement, newDocument: ModelElement) {
-    this.oldDocument = oldDocument;
-    this.newDocument = newDocument;
-  }
-
-  getDifference(): Difference[] {
-    const difference = _computeDifference(this.oldDocument, this.newDocument);
-    return difference;
-  }
-}
-
-function _computeDifference(
-  oldNode: ModelNode,
-  newNode: ModelNode
+export default function computeDifference(
+  oldDocument: ModelNode,
+  newDocument: ModelNode
 ): Difference[] {
   const result = [];
-  const difference: Difference = { node: newNode };
-  const changes = oldNode.diff(newNode);
+  const difference: Difference = { node: newDocument };
+  const changes = oldDocument.diff(newDocument);
   if (changes) {
     difference.changes = changes;
   }
   if (
-    ModelNode.isModelElement(oldNode) &&
-    ModelNode.isModelElement(newNode) &&
+    ModelNode.isModelElement(oldDocument) &&
+    ModelNode.isModelElement(newDocument) &&
     !changes.has('content')
   ) {
-    for (let i = 0; i < oldNode.length; i++) {
-      const differenceRec = _computeDifference(
-        oldNode.children[i],
-        newNode.children[i]
+    for (let i = 0; i < oldDocument.length; i++) {
+      const differenceRec = computeDifference(
+        oldDocument.children[i],
+        newDocument.children[i]
       );
       result.push(...differenceRec);
     }

@@ -1,5 +1,4 @@
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import TreeDiffer from '@lblod/ember-rdfa-editor/model/util/tree-differ';
+import computeDifference from '@lblod/ember-rdfa-editor/model/util/tree-differ';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import { module, test } from 'qunit';
 
@@ -18,11 +17,8 @@ module('Unit | utils | array-utils', function () {
           <span><text>test</text></span>
         </modelRoot>
       `;
-      const differ = new TreeDiffer(
-        initial as ModelElement,
-        expected as ModelElement
-      );
-      assert.strictEqual(differ.getDifference().length, 0);
+      const difference = computeDifference(initial, expected);
+      assert.strictEqual(difference.length, 0);
     });
     test('different amount of children', function (assert) {
       const { root: initial } = vdom`
@@ -38,11 +34,7 @@ module('Unit | utils | array-utils', function () {
           <text>text</text>
         </modelRoot>
       `;
-      const differ = new TreeDiffer(
-        initial as ModelElement,
-        expected as ModelElement
-      );
-      const differences = differ.getDifference();
+      const differences = computeDifference(initial, expected);
       assert.strictEqual(differences.length, 1);
       assert.strictEqual(differences[0].node, expected);
       assert.true(differences[0].changes?.has('content'));
@@ -63,11 +55,7 @@ module('Unit | utils | array-utils', function () {
           <span><text>test</text></span>
         </modelRoot>
       `;
-      const differ = new TreeDiffer(
-        initial as ModelElement,
-        expected as ModelElement
-      );
-      const differences = differ.getDifference();
+      const differences = computeDifference(initial, expected);
       assert.strictEqual(differences.length, 1);
       assert.strictEqual(differences[0].node, text);
       assert.true(differences[0].changes?.has('content'));
@@ -85,11 +73,7 @@ module('Unit | utils | array-utils', function () {
           <span><text>test</text></span>
         </modelRoot>
       `;
-      const differ = new TreeDiffer(
-        initial as ModelElement,
-        expected as ModelElement
-      );
-      const differences = differ.getDifference();
+      const differences = computeDifference(initial, expected);
       assert.strictEqual(differences.length, 1);
       assert.strictEqual(differences[0].node, expected);
       assert.true(differences[0].changes?.has('content'));
@@ -107,11 +91,7 @@ module('Unit | utils | array-utils', function () {
           <span><text>test</text></span>
         </modelRoot>
       `;
-      const differ = new TreeDiffer(
-        initial as ModelElement,
-        expected as ModelElement
-      );
-      const differences = differ.getDifference();
+      const differences = computeDifference(initial, expected);
       assert.strictEqual(differences.length, 0);
     });
 
@@ -136,11 +116,7 @@ module('Unit | utils | array-utils', function () {
         </ul>
       </modelRoot>
       `;
-      const differ = new TreeDiffer(
-        initial as ModelElement,
-        expected as ModelElement
-      );
-      const differences = differ.getDifference();
+      const differences = computeDifference(initial, expected);
       assert.strictEqual(differences.length, 1);
       assert.strictEqual(differences[0].node, list);
       assert.true(differences[0].changes?.has('content'));
@@ -165,11 +141,7 @@ module('Unit | utils | array-utils', function () {
         </ul>
       </modelRoot>
       `;
-      const differ = new TreeDiffer(
-        initial as ModelElement,
-        expected as ModelElement
-      );
-      const differences = differ.getDifference();
+      const differences = computeDifference(initial, expected);
       assert.strictEqual(differences.length, 1);
       assert.strictEqual(differences[0].node, text);
       assert.true(differences[0].changes?.has('content'));
@@ -218,11 +190,7 @@ module('Unit | utils | array-utils', function () {
           </p>
         </div>
       `;
-      const differ = new TreeDiffer(
-        initial as ModelElement,
-        expected as ModelElement
-      );
-      const differences = differ.getDifference();
+      const differences = computeDifference(initial, expected);
       assert.strictEqual(differences.length, 1);
       assert.strictEqual(differences[0].node, span1);
       assert.strictEqual(differences[0].changes?.size, 1);
@@ -270,11 +238,7 @@ module('Unit | utils | array-utils', function () {
           <text __id="text4">te</text>
         </div>
       `;
-      const differ = new TreeDiffer(
-        initial as ModelElement,
-        expected as ModelElement
-      );
-      const differences = differ.getDifference();
+      const differences = computeDifference(initial, expected);
       assert.strictEqual(differences.length, 4);
 
       assert.strictEqual(differences[0].node, div1);

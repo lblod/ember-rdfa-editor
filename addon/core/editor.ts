@@ -11,7 +11,7 @@ import State, {
 import { ResolvedPluginConfig } from '../components/rdfa/rdfa-editor';
 import { EditorControllerCompat } from '../model/controller';
 import { CORE_OWNER } from '../model/util/constants';
-import TreeDiffer from '../model/util/tree-differ';
+import computeDifference from '../model/util/tree-differ';
 import { getPathFromRoot } from '../utils/dom-helpers';
 import {
   ContentChangedEvent,
@@ -131,10 +131,10 @@ class SayEditor implements Editor {
     tr.setBaseIRI(args.baseIRI ?? document.baseURI);
     tr.setPathFromDomRoot(getPathFromRoot(domRoot, false));
     const newState = tr.apply();
-    const differences = new TreeDiffer(
+    const differences = computeDifference(
       initialState.document,
       newState.document
-    ).getDifference();
+    );
     this.view.update(newState, differences);
     this._state = newState;
     const dispatcher = args.dispatcher || this.defaultDispatcher;
@@ -177,10 +177,10 @@ class SayEditor implements Editor {
     (view: View, updateView = true) =>
     (transaction: Transaction): State => {
       const newState = transaction.apply();
-      const differences = new TreeDiffer(
+      const differences = computeDifference(
         this.state.document,
         newState.document
-      ).getDifference();
+      );
       this.state = newState;
       if (updateView) {
         view.update(this.state, differences);
