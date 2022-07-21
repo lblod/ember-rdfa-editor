@@ -37,9 +37,15 @@ export default class SelectionWriter {
     );
     if (domSelection.anchorNode && moveSelectionIntoView) {
       if (isElement(domSelection.anchorNode)) {
-        domSelection.anchorNode.scrollIntoView();
+        domSelection.anchorNode.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
       } else {
-        domSelection.anchorNode.parentElement?.scrollIntoView();
+        domSelection.anchorNode.parentElement?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
       }
     }
   }

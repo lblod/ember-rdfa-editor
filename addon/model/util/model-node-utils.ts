@@ -12,6 +12,7 @@ import {
 } from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelText from '../model-text';
 import StringUtils from './string-utils';
+import { Direction } from './types';
 
 export default class ModelNodeUtils {
   static DEFAULT_IGNORED_ATTRS: Set<string> = new Set([
@@ -86,8 +87,8 @@ export default class ModelNodeUtils {
 
   static getVisualLength(node: ModelNode): number {
     if (ModelNode.isModelText(node)) {
-      node.content.split('').filter((c) => c !== INVISIBLE_SPACE).length;
-      return node.length;
+      return node.content.split('').filter((c) => c !== INVISIBLE_SPACE).length;
+      // return node.length;
     } else if (
       (ModelNode.isModelElement(node) && VISUAL_NODES.has(node.type)) ||
       ModelNode.isModelInlineComponent(node)
@@ -145,6 +146,13 @@ export default class ModelNodeUtils {
   static getIndex(node: ModelText, steps: number, forwards: boolean) {
     return forwards ? steps : node.content.length - steps;
   }
+  static siblingInDirection(node: ModelNode, direction: Direction) {
+    if (direction === Direction.FORWARDS) {
+      return node.nextSibling;
+    } else {
+      return node.previousSibling;
+    }
+  }
 
   static getTextContent(node: ModelNode): string {
     if (ModelNode.isModelElement(node)) {
@@ -177,5 +185,23 @@ export default class ModelNodeUtils {
       return true;
     }
     return false;
+  }
+  static isInLumpNode(node: ModelNode): boolean {
+    return !!ModelNodeUtils.getParentLumpNode(node);
+  }
+  static getParentLumpNode(node: ModelNode): ModelElement | void {
+    // SAFETY: hesLumpNodeProperty filters out non-element nodes
+    return node.findSelfOrAncestors(ModelNodeUtils.hasLumpNodeProperty).next()
+      .value as ModelElement;
+  }
+  static hasLumpNodeProperty(node: ModelNode): node is ModelElement {
+    if (!ModelNode.isModelElement(node)) {
+      return false;
+    }
+    const attrs = node.getRdfaAttributes();
+    if (!attrs.properties) {
+      return false;
+    }
+    return attrs.properties.indexOf(LUMP_NODE_PROPERTY) > -1;
   }
 }

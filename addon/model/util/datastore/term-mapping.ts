@@ -4,9 +4,9 @@ import {
   conciseToRdfjs,
   PrefixMapping,
 } from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
-import { first, from, isEmpty, single } from 'ix/iterable';
-import { filter, flatMap, map } from 'ix/iterable/operators';
+import { first, isEmpty, flatMap, map, filter, execPipe } from 'iter-tools';
 import { TermSpec } from '@lblod/ember-rdfa-editor/model/util/datastore/term-spec';
+import { single } from '../iterator-utils';
 
 /**
  * Utility class to represent a collection of terms with their
@@ -42,25 +42,25 @@ export class TermMapping<T extends RDF.Term>
   single(): { term: T; nodes: ModelNode[] } | null {
     return (
       single(
-        from(this.termMap.entries()).pipe(
-          map((entry) => ({
+        map(
+          (entry) => ({
             term: entry[0],
             nodes: entry[1],
-          }))
+          }),
+          this.termMap.entries()
         )
       ) || null
     );
   }
 
   [Symbol.iterator]() {
-    return from(this.termMap.entries())
-      .pipe(
-        map((entry) => ({
-          term: entry[0],
-          nodes: entry[1],
-        }))
-      )
-      [Symbol.iterator]();
+    return map(
+      (entry) => ({
+        term: entry[0],
+        nodes: entry[1],
+      }),
+      this.termMap.entries()
+    )[Symbol.iterator]();
   }
 
   /**
@@ -73,7 +73,8 @@ export class TermMapping<T extends RDF.Term>
     ) as T;
     return (
       first(
-        from(this.termMap.entries()).pipe(
+        execPipe(
+          this.termMap.entries(),
           filter((entry) => entry[0].equals(convertedTerm)),
           map((entry) => entry[1])
         )
@@ -88,17 +89,18 @@ export class TermMapping<T extends RDF.Term>
   map<R>(
     mappingFunc: (entry: { term: T; nodes: ModelNode[] }) => R
   ): Iterable<R> {
-    return from(this.termMap.entries()).pipe(
+    return execPipe(
+      this.termMap.entries(),
       map((entry) => ({ term: entry[0], nodes: entry[1] })),
       map(mappingFunc)
     );
   }
 
   nodes(): Iterable<ModelNode> {
-    return from(this.termMap.entries()).pipe(flatMap((entry) => entry[1]));
+    return flatMap((entry) => entry[1], this.termMap.entries());
   }
 
   isEmpty(): boolean {
-    return isEmpty(from(this.termMap.entries()));
+    return isEmpty(this.termMap.entries());
   }
 }

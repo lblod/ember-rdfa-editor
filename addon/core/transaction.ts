@@ -167,6 +167,9 @@ export default class Transaction {
     return newNode;
   }
 
+  setConfig(key: string, value: string | null): void {
+    this.workingCopy.config.set(key, value);
+  }
   removeProperty(element: ModelElement, key: string): ModelElement {
     const oldNode = element;
     if (!oldNode) throw new Error('no element in range');

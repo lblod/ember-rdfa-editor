@@ -1,3 +1,5 @@
+import { filter, takeLastOr } from 'iter-tools';
+
 export default class ArrayUtils {
   static findCommonSlice<T>(array1: T[], array2: T[]): T[] {
     let i = 0;
@@ -6,6 +8,12 @@ export default class ArrayUtils {
       i++;
     }
     return array1.slice(0, i);
+  }
+  /**
+   * Like Array.find, but starts searching from the end
+   */
+  static findLast<T>(array: T[], predicate: (item: T) => boolean): T | null {
+    return takeLastOr(null, filter(predicate, array));
   }
 
   static pushOrCreate<T>(array: T[][], position: number, item: T) {

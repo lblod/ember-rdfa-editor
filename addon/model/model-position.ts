@@ -4,7 +4,10 @@ import {
   NotImplementedError,
   PositionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
+import {
+  Direction,
+  RelativePosition,
+} from '@lblod/ember-rdfa-editor/model/util/types';
 import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import arrayEquals from '../utils/array-equals';
@@ -198,7 +201,9 @@ export default class ModelPosition {
    * @param other
    */
   sameAs(other: ModelPosition): boolean {
-    return this.compare(other) === RelativePosition.EQUAL;
+    return (
+      this.root === other.root && this.compare(other) === RelativePosition.EQUAL
+    );
   }
 
   /**
@@ -337,6 +342,14 @@ export default class ModelPosition {
     return this.parent.childAtOffset(this.parentOffset - 1) || null;
   }
 
+  nodeInDirection(direction: Direction): ModelNode | null {
+    if (direction === Direction.FORWARDS) {
+      return this.nodeAfter();
+    } else {
+      return this.nodeBefore();
+    }
+  }
+
   /**
    * Collects the characters before the position until either one of the following happens:
    * - an element is encountered
@@ -454,6 +467,7 @@ export default class ModelPosition {
           ModelNodeUtils.getVisualLength(node) > 0 &&
           !ModelNodeUtils.parentIsLumpNode(node)
       ),
+      visitParentUpwards: true,
     });
 
     while (stepsToShift > 0) {
@@ -512,7 +526,11 @@ export default class ModelPosition {
             );
           }
           blockNodeFound = true;
+          const previousNode = nextNode;
           nextNode = walker.nextNode();
+          if (nextNode && !previousNode.parent?.sameAs(nextNode)) {
+            break;
+          }
         }
         if (nextNode) {
           if (ModelElement.isModelText(nextNode)) {
@@ -532,7 +550,12 @@ export default class ModelPosition {
             // If the next leaf is a node, set the position after or before the node based on the direction
             if (blockNodeFound && !nextNode.isLeaf) {
               //TODO: Check correctness
-              currentPos = ModelPosition.fromAfterNode(nextNode);
+              currentPos = ModelPosition.fromInNode(
+                nextNode,
+                (nextNode.lastChild?.getOffset() || 0) +
+                  (nextNode.lastChild?.offsetSize || 0)
+              );
+              // currentPos = ModelPosition.fromAfterNode(nextNode);
             } else {
               if (nextNode.previousSibling) {
                 currentPos = ModelPosition.fromAfterNode(
@@ -568,6 +591,7 @@ export default class ModelPosition {
           ModelNodeUtils.getVisualLength(node) > 0 &&
           !ModelNodeUtils.parentIsLumpNode(node)
       ),
+      visitParentUpwards: true,
     });
 
     while (stepsToShift > 0) {
@@ -619,7 +643,11 @@ export default class ModelPosition {
             );
           }
           blockNodeFound = true;
+          const previousNode = nextNode;
           nextNode = walker.nextNode();
+          if (nextNode && !previousNode.parent?.sameAs(nextNode)) {
+            break;
+          }
         }
         if (nextNode) {
           if (ModelElement.isModelText(nextNode)) {
@@ -639,12 +667,7 @@ export default class ModelPosition {
             // If the next leaf is a node, set the position after or before the node based on the direction
 
             if (blockNodeFound && !nextNode.isLeaf) {
-              // if (nextNode.isLeaf) {
-              //   currentPos = ModelPosition.fromAfterNode(nextNode);
-              // } else {
-              currentPos = ModelPosition.fromBeforeNode(nextNode);
-              // }
-              // currentPos = ModelPosition.fromInNode(nextNode, 0);
+              currentPos = ModelPosition.fromInNode(nextNode, 0);
             } else {
               if (nextNode.nextSibling) {
                 currentPos = ModelPosition.fromInNode(nextNode.nextSibling, 0);
@@ -675,187 +698,6 @@ export default class ModelPosition {
       ? this._shiftedVisuallyBackwards(Math.abs(steps))
       : this._shiftedVisuallyForwards(steps);
   }
-
-  // shiftedVisuallyOld(steps: number) {
-  //   let stepsToShift = steps;
-  //   let currentPos: ModelPosition = this.clone();
-  //   let searchRange: ModelRange;
-  //   const forwards = steps > 0;
-  //   const direction = forwards ? 1 : -1;
-  //   if (forwards) {
-  //     const endOfDoc = ModelPosition.fromInNode(
-  //       currentPos.root,
-  //       currentPos.root.getMaxOffset()
-  //     );
-  //     searchRange = new ModelRange(currentPos, endOfDoc);
-  //   } else {
-  //     const startOfDoc = ModelPosition.fromInNode(currentPos.root, 0);
-  //     searchRange = new ModelRange(startOfDoc, currentPos);
-  //   }
-  //   const walker = GenTreeWalker.fromRange({
-  //     range: searchRange,
-  //     reverse: !forwards,
-  //     filter: toFilterSkipFalse(
-  //       (node) => ModelNodeUtils.getVisualLength(node) > 0
-  //     ),
-  //   });
-
-  //   while (stepsToShift !== 0) {
-  //     // Check if there are any direct parent elements to the current position which are not visible and traverse out of them.
-  //     while (
-  //       ModelNodeUtils.getVisualLength(currentPos.parent) === 0 &&
-  //       !currentPos.parent.sameAs(this.root)
-  //     ) {
-  //       if (
-  //         forwards &&
-  //         currentPos.parentOffset === currentPos.parent.getMaxOffset()
-  //       ) {
-  //         currentPos = ModelPosition.fromAfterNode(currentPos.parent);
-  //       } else if (!forwards && currentPos.parentOffset === 0) {
-  //         currentPos = ModelPosition.fromBeforeNode(currentPos.parent);
-  //       } else {
-  //         break;
-  //       }
-  //     }
-  //     if (currentPos.isInsideText()) {
-  //       // If the current position is situated inside a text node, traverse in the right direction
-  //       let nextChar;
-  //       if (forwards) {
-  //         nextChar = currentPos.charactersAfter(1);
-  //       } else {
-  //         nextChar = currentPos.charactersBefore(1);
-  //       }
-  //       if (nextChar !== INVISIBLE_SPACE) {
-  //         stepsToShift -= direction;
-  //       }
-  //       currentPos = currentPos.shiftedBy(direction);
-  //     } else {
-  //       // Check if the current position has a direct parent which is visible (such as li, p, header elements)
-  //       // Adjust the number of steps to shift
-  //       let blockNodeFound = false;
-  //       if (ModelNodeUtils.getVisualLength(currentPos.parent) > 0) {
-  //         if (
-  //           currentPos.parentOffset === currentPos.parent.getMaxOffset() &&
-  //           forwards
-  //         ) {
-  //           stepsToShift = Math.max(
-  //             stepsToShift - ModelNodeUtils.getVisualLength(currentPos.parent),
-  //             0
-  //           );
-  //           blockNodeFound = true;
-  //         } else if (currentPos.parentOffset === 0 && !forwards) {
-  //           stepsToShift = Math.min(
-  //             stepsToShift + ModelNodeUtils.getVisualLength(currentPos.parent),
-  //             0
-  //           );
-  //           blockNodeFound = true;
-  //         }
-  //       }
-  //       // Get the next leaf node in the step direction
-  //       let nextNode = walker.nextNode();
-  //       // Assert the next leaf is not the node the current position is currently situated on
-  //       if (forwards) {
-  //         while (nextNode && currentPos.nodeBefore() === nextNode) {
-  //           nextNode = walker.nextNode();
-  //         }
-  //       } else {
-  //         while (nextNode && currentPos.nodeAfter() === nextNode) {
-  //           nextNode = walker.nextNode();
-  //         }
-  //       }
-
-  //       while (nextNode && !nextNode.isLeaf) {
-  //         if (ModelNode.isModelElement(nextNode)) {
-  //           if (forwards) {
-  //             currentPos = ModelPosition.fromInNode(nextNode, 0);
-  //             if (!blockNodeFound) {
-  //               stepsToShift = Math.max(
-  //                 stepsToShift - ModelNodeUtils.getVisualLength(nextNode),
-  //                 0
-  //               );
-  //             }
-  //             blockNodeFound = true;
-  //           } else {
-  //             currentPos = ModelPosition.fromInNode(
-  //               nextNode,
-  //               nextNode.lastChild.getOffset() + nextNode.lastChild.offsetSize
-  //             );
-  //             if (!blockNodeFound) {
-  //               stepsToShift = Math.min(
-  //                 stepsToShift + ModelNodeUtils.getVisualLength(nextNode),
-  //                 0
-  //               );
-  //             }
-  //             blockNodeFound = true;
-  //           }
-  //         }
-  //         nextNode = walker.nextNode();
-  //       }
-  //       if (nextNode) {
-  //         if (ModelElement.isModelText(nextNode)) {
-  //           // If the next leaf is text, determine the correct next position based on the number of steps to take
-  //           currentPos = ModelPosition.fromInNode(
-  //             nextNode,
-  //             ModelNodeUtils.getVisibleIndex(
-  //               nextNode,
-  //               Math.abs(stepsToShift),
-  //               forwards
-  //             )
-  //           );
-  //         } else if (
-  //           ModelNode.isModelElement(nextNode) ||
-  //           ModelNode.isModelInlineComponent(nextNode)
-  //         ) {
-  //           // If the next leaf is a node, set the position after or before the node based on the direction
-  //           if (forwards) {
-  //             if (blockNodeFound) {
-  //               currentPos = ModelPosition.fromInNode(nextNode, 0);
-  //             } else {
-  //               if (nextNode.nextSibling) {
-  //                 currentPos = ModelPosition.fromInNode(
-  //                   nextNode.nextSibling,
-  //                   0
-  //                 );
-  //               } else {
-  //                 currentPos = ModelPosition.fromAfterNode(nextNode);
-  //               }
-  //             }
-  //           } else {
-  //             if (blockNodeFound) {
-  //               currentPos = ModelPosition.fromInNode(
-  //                 nextNode,
-  //                 ModelNodeUtils.getVisualLength(nextNode)
-  //               );
-  //             } else {
-  //               if (nextNode.previousSibling) {
-  //                 currentPos = ModelPosition.fromAfterNode(
-  //                   nextNode.previousSibling
-  //                 );
-  //               } else {
-  //                 currentPos = ModelPosition.fromBeforeNode(nextNode);
-  //               }
-  //             }
-  //           }
-  //         }
-  //         // Update the number of steps to shift based on the visual length of the leaf
-  //         if (forwards) {
-  //           stepsToShift = Math.max(
-  //             stepsToShift - ModelNodeUtils.getVisualLength(nextNode),
-  //             0
-  //           );
-  //         } else {
-  //           stepsToShift = Math.min(
-  //             stepsToShift + ModelNodeUtils.getVisualLength(nextNode),
-  //             0
-  //           );
-  //         }
-  //       } else {
-  //         break;
-  //       }
-  //     }
-  //   }
-  //   return currentPos;
-  // }
 
   /**
    * This returns true if the position is inside a text node (not right before not right after).

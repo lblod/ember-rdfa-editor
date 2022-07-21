@@ -33,13 +33,18 @@ import Transaction from '../core/transaction';
 import { CommandArgs, CommandReturn } from '../core/state';
 import { AttributeSpec } from './util/render-spec';
 import MapUtils from './util/map-utils';
+import ModelNode from './model-node';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
 export interface WidgetSpec {
   componentName: string;
   desiredLocation: WidgetLocation;
-  plugin: EditorPlugin;
+  /**
+   * @deprecated use widgetArgs instead
+   * */
+  plugin?: EditorPlugin;
+  widgetArgs?: unknown;
 }
 
 export type InternalWidgetSpec = WidgetSpec & {
@@ -107,6 +112,8 @@ export default interface Controller {
 
   registerInlineComponent(component: InlineComponentSpec): void;
 
+  modelToView(node: ModelNode): Node | null;
+
   onEvent<E extends AnyEventName>(
     eventName: E,
     callback: EditorEventListener<E>,
@@ -118,6 +125,10 @@ export default interface Controller {
     callback: EditorEventListener<E>,
     config?: ListenerConfig
   ): void;
+
+  getConfig(key: string): string | null;
+
+  setConfig(key: string, value: string | null): void;
 }
 
 export class EditorController implements Controller {
@@ -151,6 +162,10 @@ export class EditorController implements Controller {
   get modelRoot(): ModelElement {
     return this._editor.state.document;
   }
+  get domRoot(): Element {
+    return this._editor.view.domRoot;
+  }
+
   get marksRegistry(): MarksRegistry {
     return this._editor.state.marksRegistry;
   }
@@ -165,6 +180,9 @@ export class EditorController implements Controller {
     args: CommandArgs<N>
   ): ReturnType<CommandMap[N]['execute']> {
     return this._editor.executeCommand(commandName, args);
+  }
+  createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
+    return new LiveMarkSet(this, args);
   }
 
   createModelElement(type: ElementType): ModelElement {
@@ -186,9 +204,6 @@ export class EditorController implements Controller {
   getMarksFor(owner: string): Set<Mark<AttributeSpec>> {
     return this.marksRegistry.getMarksFor(owner);
   }
-  createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
-    return new LiveMarkSet(this, args);
-  }
   registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
     throw new Error('Method not implemented.');
   }
@@ -200,6 +215,16 @@ export class EditorController implements Controller {
   }
   registerMark(spec: MarkSpec<AttributeSpec>): void {
     this.marksRegistry.registerMark(spec);
+  }
+  getConfig(key: string): string | null {
+    return this._editor.state.config.get(key) || null;
+  }
+  setConfig(key: string, value: string | null): void {
+    const tr = this._editor.state.createTransaction();
+    tr.setConfig(key, value);
+  }
+  modelToView(node: ModelNode): Node | null {
+    return this._editor.view.modelToView(this._editor.state, node);
   }
   onEvent<E extends string>(
     eventName: E,

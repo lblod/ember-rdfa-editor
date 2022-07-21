@@ -46,6 +46,10 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   inputHandler: EditorInputHandler | null = null;
 
   @service declare features: FeatureService;
+  rootNode?: HTMLElement;
+  get stealFocus(): boolean {
+    return this.args.stealFocus || false;
+  }
 
   @action
   afterSelectionChange() {
@@ -102,13 +106,25 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @action
   async insertedEditorElement(element: HTMLElement) {
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    document.addEventListener('selectionchange', this.afterSelectionChange);
-    this.editor = await createEditor({
-      domRoot: element,
-      plugins: this.args.plugins,
-    });
-    this.inputHandler = new EditorInputHandler(this.editor);
-    this.args.editorInit(this.editor);
+    this.rootNode = element;
+    await this.initialize();
+  }
+
+  @action
+  async initialize() {
+    if (this.rootNode) {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      document.addEventListener('selectionchange', this.afterSelectionChange);
+      this.editor = await createEditor({
+        domRoot: this.rootNode,
+        plugins: this.args.plugins,
+      });
+      this.inputHandler = new EditorInputHandler(this.editor);
+      this.args.editorInit(this.editor);
+      if (this.stealFocus) {
+        this.rootNode.focus();
+      }
+    }
   }
 
   @action

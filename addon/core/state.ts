@@ -65,6 +65,7 @@ export interface StateArgs {
   baseIRI: string;
   keymap?: KeyMap;
   eventBus: EventBus;
+  config?: Map<string, string | null>;
 }
 export interface NodeParseResult {
   type: 'mark' | 'text' | 'element';
@@ -94,6 +95,7 @@ export default interface State {
   createTransaction(): Transaction;
   parseNode(node: Node): NodeParseResult;
   eventBus: EventBus;
+  config: Map<string, string | null>;
 }
 export class SayState implements State {
   document: ModelElement;
@@ -123,6 +125,7 @@ export class SayState implements State {
    * A mapping of keycodes to their handler functions
    * */
   keymap: KeyMap;
+  config: Map<string, string | null>;
   constructor(args: StateArgs) {
     const { previousState = null } = args;
     this.document = args.document;
@@ -143,6 +146,7 @@ export class SayState implements State {
     this.baseIRI = args.baseIRI;
     this.keymap = args.keymap ?? defaultKeyMap;
     this.eventBus = args.eventBus;
+    this.config = args.config || new Map<string, string | null>();
   }
   /**
    * Create a new @link{Transaction} with this state as its initial state.
@@ -217,6 +221,7 @@ export function emptyState(eventBus: EventBus): State {
     selection: new ModelSelection(),
     plugins: [],
     commands: defaultCommands(),
+    config: new Map<string, string | null>(),
     marksRegistry: new MarksRegistry(),
     inlineComponentsRegistry: new InlineComponentsRegistry(),
     widgetMap: new Map<WidgetLocation, InternalWidgetSpec[]>(),
@@ -248,5 +253,6 @@ export function cloneState(state: State): State {
     keymap: state.keymap,
     eventBus: state.eventBus,
     baseIRI: state.baseIRI,
+    config: state.config,
   });
 }

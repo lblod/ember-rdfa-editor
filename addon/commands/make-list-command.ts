@@ -17,6 +17,7 @@ import ModelElement from '../model/model-element';
 import ModelText from '../model/model-text';
 import { PropertyState } from '../model/util/types';
 import { INVISIBLE_SPACE } from '../model/util/constants';
+import GenTreeWalker from '../model/util/gen-tree-walker';
 
 export interface MakeListCommandArgs {
   listType?: 'ul' | 'ol';
@@ -106,55 +107,58 @@ export default class MakeListCommand
     documentRoot: ModelElement
   ): ModelNode[][] {
     // Expand range until it is bound by blocks.
-    let current: ModelNode | null = range.start.nodeAfter();
-    if (!current && !range.start.nodeBefore()?.isBlock) {
-      current = range.start.nodeBefore();
-    }
-    if (current) {
-      range.start.parentOffset = current.getOffset();
-
-      while (current?.previousSibling && !current.previousSibling.isBlock) {
-        current = current.previousSibling;
-        range.start.parentOffset = current.getOffset();
-      }
-
-      if (range.start.parentOffset === 0) {
-        if (range.start.parent === documentRoot) {
-          // Expanded to the start of the root node.
-          range.start = ModelPosition.fromInElement(documentRoot, 0);
-        } else {
-          range.start = ModelPosition.fromInElement(
-            range.start.parent.parent!,
-            range.start.parent.getOffset()
-          );
-        }
-      }
+    let walker = GenTreeWalker.fromRange({
+      range: new ModelRange(
+        ModelPosition.fromInNode(range.root, 0),
+        range.start
+      ),
+      reverse: true,
+    });
+    let nextNode = walker.nextNode();
+    while (nextNode && !nextNode.isBlock) {
+      range.start = ModelPosition.fromInNode(nextNode, 0);
+      nextNode = walker.nextNode();
     }
 
-    current = range.end.nodeBefore();
-
-    if (current) {
-      range.end.parentOffset = current.getOffset() + current.offsetSize;
-      while (current?.nextSibling && !current.nextSibling.isBlock) {
-        current = current.nextSibling;
-        range.end.parentOffset = current.getOffset() + current.offsetSize;
-      }
-
-      if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
-        if (range.end.parent === documentRoot) {
-          // Expanded to the end of root node.
-          range.end = ModelPosition.fromInElement(
-            documentRoot,
-            documentRoot.getMaxOffset()
-          );
-        } else {
-          range.end = ModelPosition.fromInElement(
-            range.end.parent.parent!,
-            range.end.parent.getOffset() + range.end.parent.offsetSize
-          );
-        }
+    if (range.start.parentOffset === 0) {
+      if (range.start.parent === documentRoot) {
+        // Expanded to the start of the root node.
+        range.start = ModelPosition.fromInElement(documentRoot, 0);
+      } else {
+        range.start = ModelPosition.fromInElement(
+          range.start.parent.parent!,
+          range.start.parent.getOffset()
+        );
       }
     }
+
+    walker = GenTreeWalker.fromRange({
+      range: new ModelRange(
+        range.end,
+        ModelPosition.fromInNode(range.root, range.root.getMaxOffset())
+      ),
+    });
+    nextNode = walker.nextNode();
+    while (nextNode && !nextNode.isBlock) {
+      range.end = ModelPosition.fromAfterNode(nextNode);
+      nextNode = walker.nextNode();
+    }
+
+    if (range.end.parentOffset === range.end.parent.getMaxOffset()) {
+      if (range.end.parent === documentRoot) {
+        // Expanded to the end of root node.
+        range.end = ModelPosition.fromInElement(
+          documentRoot,
+          documentRoot.getMaxOffset()
+        );
+      } else {
+        range.end = ModelPosition.fromInElement(
+          range.end.parent.parent!,
+          range.end.parent.getOffset() + range.end.parent.offsetSize
+        );
+      }
+    }
+    // }
 
     const confinedRanges = range.getMinimumConfinedRanges();
     const result: ModelNode[][] = [[]];

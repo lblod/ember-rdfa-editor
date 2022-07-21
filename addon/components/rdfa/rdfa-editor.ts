@@ -21,6 +21,7 @@ import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
 import type IntlService from 'ember-intl/services/intl';
 import { tracked } from 'tracked-built-ins';
 import { default as RdfaDocumentController } from '../../utils/rdfa/rdfa-document';
+import ShowActiveRdfaPlugin from '@lblod/ember-rdfa-editor/plugins/show-active-rdfa/show-active-rdfa';
 
 export type PluginConfig =
   | string
@@ -129,6 +130,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     const plugins: ResolvedPluginConfig[] = [
       { instance: new BasicStyles(), options: null },
       { instance: new LumpNodePlugin(), options: null },
+      { instance: new ShowActiveRdfaPlugin(), options: null },
     ];
     for (const config of pluginConfigs) {
       let name;
@@ -155,10 +157,13 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   @action
   toggleRdfaBlocks() {
-    this.showRdfaBlocks = !this.showRdfaBlocks;
-    // if (this.editor?.model) {
-    //   this.editor.model.writeSelection();
-    // }
+    if (!this.toolbarController!.getConfig('showRdfaBlocks')) {
+      this.showRdfaBlocks = true;
+      this.toolbarController!.setConfig('showRdfaBlocks', 'true');
+    } else {
+      this.showRdfaBlocks = false;
+      this.toolbarController!.setConfig('showRdfaBlocks', null);
+    }
   }
 
   initializeComponents() {

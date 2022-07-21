@@ -4,6 +4,11 @@ Removing text is a fundamental function of a text editor. While it seems like a 
 in an html-context, and especially rdfa-enriched html, there are quite a lot of choices to be made.
 
 The goal here is to define a "sensible" default behavior for the removal of a text range.
+This RFC handles the general notion of removing any range, and not the specific behavior when 
+pressing either backspace or delete. We model the behavior of those as first calculating 
+a range containing the next "visual step", and then deleting that range with the logic 
+described in this document.
+
 We will look from the perspective of an expert user who is aware of the knowledge in the document.
 This is currently a fiction, since we don't have the tooling to make the user aware yet.
 
@@ -12,8 +17,7 @@ This is currently a fiction, since we don't have the tooling to make the user aw
 All document structure examples will use our custom xml spec unless otherwise stated.
 
 The range to be deleted will be indicated with `[]` markers.
-In this context, we will only consider the removal of a non-collapsed range, and consider
-the removal of a collapsed range to be a no-op.
+The removal of an empty range is considered a no-op.
 
 To denote a node containing rdfa-knowlegde, we will use the fictional `<rdfa>` node.
 
