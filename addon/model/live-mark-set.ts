@@ -10,7 +10,6 @@ import { TextMatch } from '@lblod/ember-rdfa-editor/utils/match-text';
 import { AttributeSpec } from './util/render-spec';
 import Transaction from '../core/transaction';
 import Operation from './operations/operation';
-import MarkOperation from './operations/mark-operation';
 
 export type LiveMarkSpec =
   | string
@@ -43,9 +42,7 @@ export default class LiveMarkSet {
     this._controller = controller;
     this._datastoreQuery = datastoreQuery;
     this._privateBus = new EventBus();
-    this._controller.addTransactionListener(this.update, {
-      filter: 'content-operation',
-    });
+    this._controller.addTransactionListener(this.update);
     this._liveMarkSpecs = liveMarkSpecs;
     this._activeMatches = new Map<string, TextMatch>();
   }
@@ -62,17 +59,10 @@ export default class LiveMarkSet {
     return this._liveMarkSpecs;
   }
 
-  private update = (transaction: Transaction, operation: Operation) => {
+  private update = (transaction: Transaction, operations: Operation[]) => {
     const marksRegistry = transaction.workingCopy.marksRegistry;
-    if (operation instanceof MarkOperation) {
-      const liveMarkSpecNames = this.liveMarkSpecs.map((spec) =>
-        typeof spec === 'string' ? spec : spec.name
-      );
-      if (liveMarkSpecNames.includes(operation.spec.name)) {
-        return;
-      }
-    }
-    console.log('LIVE MARK UPDATE');
+    if (!operations.some((operation) => operation.type === 'content-operation'))
+      return;
     const { matchesToAdd, matchesToRemove } = this.calculateRanges(
       transaction.getCurrentDataStore()
     );
