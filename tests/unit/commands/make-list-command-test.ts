@@ -154,12 +154,10 @@ module('Unit | commands | make-list-command', function () {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(link, 2, 2);
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('create list from line with nested nodes', function (assert) {
     const {
@@ -181,14 +179,9 @@ module('Unit | commands | make-list-command', function () {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(link2, 2, 2);
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
   });
 });
