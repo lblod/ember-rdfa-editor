@@ -79,7 +79,6 @@ export type DefaultCommandMap = {
   undo: UndoCommand;
   'unindent-list': UnindentListCommand;
   remove: RemoveCommand;
-  'remove-property': RemovePropertyCommand;
 };
 export type CommandName = keyof DefaultCommandMap;
 export interface CommandContext {

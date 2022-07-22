@@ -13,7 +13,6 @@ export default class RemovePropertyCommand
 {
   arguments: string[] = ['element', 'property'];
   name = 'remove-property';
-  arguments = ['element', 'property'];
 
   canExecute(): boolean {
     return true;

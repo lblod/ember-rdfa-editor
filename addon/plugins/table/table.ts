@@ -59,7 +59,6 @@ export default class TablePlugin implements EditorPlugin {
 //   return false;
 // }
 
-
 // /**
 //  *
 //  * @class TableBackspacePlugin
@@ -223,5 +222,43 @@ export default class TablePlugin implements EditorPlugin {
 //     tr.collapseIn(newSelectedCell);
 //     selection.collapseIn(newSelectedCell);
 //     editor.dispatchTransaction(tr);
+//   }
+// }
+
+// export class TableBackspaceDeleteInputPlugin implements BackspaceDeletePlugin {
+//   label = 'Backspace/Delete plugin for handling table cells in a range';
+//   guidanceForManipulation(
+//     manipulation: BackspaceDeleteHandlerManipulation,
+//     _editor: rawEditor
+//   ): ManipulationGuidance | null {
+//     const { range, direction } = manipulation;
+//     const startCell =
+//       range.start.parent.findSelfOrAncestors(ModelNodeUtils.isTableCell).next()
+//         .value || null;
+//     const endCell =
+//       range.end.parent.findSelfOrAncestors(ModelNodeUtils.isTableCell).next()
+//         .value || null;
+//     if (!startCell && !endCell) {
+//       return null;
+//     }
+//     if (startCell && endCell && startCell === endCell) {
+//       return null;
+//     } else {
+//       if (direction === 1) {
+//         return {
+//           allow: true,
+//           executor: () => {
+//             return;
+//           },
+//         };
+//       } else {
+//         return {
+//           allow: true,
+//           executor: () => {
+//             return;
+//           },
+//         };
+//       }
+//     }
 //   }
 // }

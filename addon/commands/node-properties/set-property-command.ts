@@ -13,7 +13,6 @@ export default class SetPropertyCommand
 {
   arguments: string[] = ['property', 'value', 'element'];
   name = 'set-property';
-  arguments = ['property', 'value', 'element'];
 
   canExecute(): boolean {
     return true;

@@ -83,6 +83,7 @@ export function testState({
   const baseIRI = 'http://example.org';
   return new SayState({
     document,
+    transactionListeners: [],
     commands,
     marksRegistry,
     inlineComponentsRegistry,

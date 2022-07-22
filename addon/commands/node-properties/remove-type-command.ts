@@ -14,7 +14,6 @@ export default class RemoveTypeCommand
 {
   arguments: string[] = ['type', 'element'];
   name = 'remove-type';
-  arguments = ['type', 'element'];
 
   canExecute(): boolean {
     return true;
