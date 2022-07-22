@@ -11,7 +11,7 @@ import { Mark, MarkSet, MarkSpec } from '../model/mark';
 import ModelNode from '../model/model-node';
 import ModelSelection from '../model/model-selection';
 import InsertTextOperation from '../model/operations/insert-text-operation';
-import Operation, { OperationType } from '../model/operations/operation';
+import Operation from '../model/operations/operation';
 import RangeMapper from '../model/range-mapper';
 import HtmlReader, { HtmlReaderContext } from '../model/readers/html-reader';
 import SelectionReader from '../model/readers/selection-reader';
@@ -35,14 +35,10 @@ interface TextInsertion {
   text: string;
   marks?: MarkSet;
 }
-export type OperationCallback = (
+export type TransactionListener = (
   transaction: Transaction,
-  operation: Operation
+  operations: Operation[]
 ) => void;
-
-export type TransactionListenerOptions = {
-  filter: OperationType | OperationType[];
-};
 
 /**
  * This is the main way to produce a new state based on an initial state.
@@ -51,14 +47,12 @@ export type TransactionListenerOptions = {
 export default class Transaction {
   initialState: State;
   private _workingCopy: State;
-  operations: Operation[];
+  private _operations: Operation[];
   rangeMapper: RangeMapper;
-  operationCallback: (operation: Operation) => void;
   rdfInvalid = true;
 
-  constructor(state: State, operationCallback: OperationCallback) {
+  constructor(state: State) {
     this.initialState = state;
-    this.operationCallback = (operation) => operationCallback(this, operation);
     /*
      * Current implementation is heavily influenced by time and complexity constraints.
      * By simply copying the state and then mutating the copy, most logic could be ported over verbatim.
@@ -66,7 +60,7 @@ export default class Transaction {
      * so is an immediate target for improvement later.
      */
     this._workingCopy = cloneState(state);
-    this.operations = [];
+    this._operations = [];
     this.rangeMapper = new RangeMapper();
   }
 
@@ -84,6 +78,14 @@ export default class Transaction {
 
   get rangeFactory(): RangeFactory {
     return new ModelRangeFactory(this.currentDocument);
+  }
+
+  get size() {
+    return this._operations.length;
+  }
+
+  get operations() {
+    return this._operations;
   }
 
   getCurrentDataStore() {
@@ -106,6 +108,17 @@ export default class Transaction {
   }
   setPathFromDomRoot(path: Node[]) {
     this._workingCopy.pathFromDomRoot = path;
+  }
+
+  addListener(listener: TransactionListener) {
+    this._workingCopy.transactionListeners.push(listener);
+  }
+
+  removeListener(listener: TransactionListener) {
+    const index = this._workingCopy.transactionListeners.indexOf(listener);
+    if (index !== -1) {
+      this._workingCopy.transactionListeners.splice(index, 1);
+    }
   }
 
   addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
@@ -235,12 +248,11 @@ export default class Transaction {
     return this.executeOperation(op).defaultRange;
   }
   private executeOperation<R extends object>(op: Operation<R>): R {
-    this.operations.push(op);
+    this._operations.push(op);
     const result = op.execute();
     if (op.type === 'content-operation') {
       this.rdfInvalid = true;
     }
-    this.operationCallback(op);
     return result;
   }
   selectRange(range: ModelRange): void {

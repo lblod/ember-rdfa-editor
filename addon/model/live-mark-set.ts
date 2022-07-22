@@ -43,7 +43,7 @@ export default class LiveMarkSet {
     this._controller = controller;
     this._datastoreQuery = datastoreQuery;
     this._privateBus = new EventBus();
-    this._controller.onTransactionUpdate(this.update, {
+    this._controller.addTransactionListener(this.update, {
       filter: 'content-operation',
     });
     this._liveMarkSpecs = liveMarkSpecs;
@@ -153,6 +153,6 @@ export default class LiveMarkSet {
   }
 
   destroy() {
-    this.controller.offTransactionUpdate(this.update);
+    this.controller.removeTransactionListener(this.update);
   }
 }

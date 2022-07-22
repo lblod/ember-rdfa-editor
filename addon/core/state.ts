@@ -53,13 +53,13 @@ import { underlineMarkSpec } from '../plugins/basic-styles/marks/underline';
 import { isElement, isTextNode } from '../utils/dom-helpers';
 import { NotImplementedError } from '../utils/errors';
 import EventBus from '../utils/event-bus';
-import TransactionOperationNotifier from '../utils/transaction-operation-notifier';
-import Transaction from './transaction';
+import Transaction, { TransactionListener } from './transaction';
 
 export interface StateArgs {
   document: ModelElement;
   selection: ModelSelection;
   plugins: InitializedPlugin[];
+  transactionListeners: TransactionListener[];
   commands: CommandMap;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
@@ -70,7 +70,6 @@ export interface StateArgs {
   baseIRI: string;
   keymap?: KeyMap;
   eventBus: EventBus;
-  transactionOperationNotifier: TransactionOperationNotifier;
 }
 export interface NodeParseResult {
   type: 'mark' | 'text' | 'element';
@@ -100,7 +99,7 @@ export default interface State {
   createTransaction(): Transaction;
   parseNode(node: Node): NodeParseResult;
   eventBus: EventBus;
-  transactionOperationNotifier: TransactionOperationNotifier;
+  transactionListeners: TransactionListener[];
 }
 export class SayState implements State {
   document: ModelElement;
@@ -111,7 +110,7 @@ export class SayState implements State {
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
   eventBus: EventBus;
-  transactionOperationNotifier: TransactionOperationNotifier;
+  transactionListeners: TransactionListener[];
   /**
    * The previous "relevant" state. This is not necessarily
    * the state directly preceding this one. It is up to the discretion
@@ -151,15 +150,13 @@ export class SayState implements State {
     this.baseIRI = args.baseIRI;
     this.keymap = args.keymap ?? defaultKeyMap;
     this.eventBus = args.eventBus;
-    this.transactionOperationNotifier = args.transactionOperationNotifier;
+    this.transactionListeners = args.transactionListeners;
   }
   /**
    * Create a new @link{Transaction} with this state as its initial state.
    * */
   createTransaction(): Transaction {
-    return new Transaction(this, (tr, op) =>
-      this.transactionOperationNotifier.notify(tr, op)
-    );
+    return new Transaction(this);
   }
   /**
    * Given the current state, determine how a certain html node
@@ -225,10 +222,7 @@ export type CommandArgs<C extends CommandName> = Parameters<
   CommandMap[C]['execute']
 >[1];
 
-export function emptyState(
-  eventBus: EventBus,
-  transactionOperationNotifier: TransactionOperationNotifier
-): State {
+export function emptyState(eventBus: EventBus): State {
   return new SayState({
     document: new ModelElement('div'),
     selection: new ModelSelection(),
@@ -242,7 +236,7 @@ export function emptyState(
     baseIRI: 'http://example.org',
     keymap: defaultKeyMap,
     eventBus: eventBus,
-    transactionOperationNotifier: transactionOperationNotifier,
+    transactionListeners: [],
   });
 }
 
@@ -265,7 +259,7 @@ export function cloneState(state: State): State {
     pathFromDomRoot: state.pathFromDomRoot,
     keymap: state.keymap,
     eventBus: state.eventBus,
-    transactionOperationNotifier: state.transactionOperationNotifier,
+    transactionListeners: state.transactionListeners,
     baseIRI: state.baseIRI,
   });
 }

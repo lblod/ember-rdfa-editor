@@ -24,11 +24,7 @@ import EventBus, {
   EditorEventListener,
   ListenerConfig,
 } from '../utils/event-bus';
-import TransactionOperationNotifier from '../utils/transaction-operation-notifier';
-import Transaction, {
-  OperationCallback,
-  TransactionListenerOptions,
-} from './transaction';
+import Transaction, { TransactionListener } from './transaction';
 import { EditorView, View } from './view';
 export type Dispatcher = (view: View, updateView?: boolean) => Dispatch;
 export type Dispatch = (transaction: Transaction) => State;
@@ -115,12 +111,9 @@ export interface Editor {
     config?: ListenerConfig
   ): void;
 
-  onTransactionUpdate(
-    callback: OperationCallback,
-    options?: TransactionListenerOptions
-  ): void;
+  addTransactionListener(callback: TransactionListener): void;
 
-  offTransactionUpdate(callback: OperationCallback): void;
+  removeTransactionListener(callback: TransactionListener): void;
 }
 
 /**
@@ -132,21 +125,14 @@ class SayEditor implements Editor {
   dispatchUpdate: Dispatch;
   dispatchNoUpdate: Dispatch;
   eventbus: EventBus;
-  transactionOperationNotifier: TransactionOperationNotifier;
 
   constructor(args: EditorArgs) {
     const { domRoot } = args;
     this.view = new EditorView(domRoot);
     this.eventbus = new EventBus();
-    this.transactionOperationNotifier = new TransactionOperationNotifier();
 
-    const initialState = emptyState(
-      this.eventbus,
-      this.transactionOperationNotifier
-    );
-    const tr = new Transaction(initialState, (tr, op) =>
-      this.transactionOperationNotifier.notify(tr, op)
-    );
+    const initialState = emptyState(this.eventbus);
+    const tr = new Transaction(initialState);
     tr.readFromView(this.view);
     tr.setBaseIRI(args.baseIRI ?? document.baseURI);
     tr.setPathFromDomRoot(getPathFromRoot(domRoot, false));
@@ -204,6 +190,28 @@ class SayEditor implements Editor {
   defaultDispatcher =
     (view: View, updateView = true) =>
     (transaction: Transaction): State => {
+      // notify listeners while there are new operations added to the transaction
+      let newOperations = transaction.size > 0;
+      const handledOperations = new Array<number>(
+        transaction.workingCopy.transactionListeners.length
+      );
+      while (newOperations) {
+        newOperations = false;
+        transaction.workingCopy.transactionListeners.forEach((listener, i) => {
+          const oldTransactionSize = transaction.size;
+          if (handledOperations[i] < transaction.size) {
+            // notify listener of new operations
+            listener(
+              transaction,
+              transaction.operations.slice(handledOperations[i])
+            );
+            handledOperations[i] = transaction.size;
+          }
+          if (transaction.size > oldTransactionSize) {
+            newOperations = true;
+          }
+        });
+      }
       const newState = transaction.apply();
       const differences = computeDifference(
         this.state.document,
@@ -257,15 +265,16 @@ class SayEditor implements Editor {
     this.eventbus.off(eventName, callback, config);
   }
 
-  onTransactionUpdate(
-    callback: OperationCallback,
-    options?: TransactionListenerOptions
-  ): void {
-    this.transactionOperationNotifier.addListener(callback, options);
+  addTransactionListener(callback: TransactionListener): void {
+    const tr = this.state.createTransaction();
+    tr.addListener(callback);
+    this.dispatchTransaction(tr, false);
   }
 
-  offTransactionUpdate(callback: OperationCallback): void {
-    this.transactionOperationNotifier.removeListener(callback);
+  removeTransactionListener(callback: TransactionListener): void {
+    const tr = this.state.createTransaction();
+    tr.removeListener(callback);
+    this.dispatchTransaction(tr, false);
   }
 }
 /**

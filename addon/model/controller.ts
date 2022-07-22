@@ -29,10 +29,7 @@ import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 import { InlineComponentSpec } from './inline-components/model-inline-component';
 import { Editor } from '../core/editor';
-import Transaction, {
-  OperationCallback,
-  TransactionListenerOptions,
-} from '../core/transaction';
+import Transaction, { TransactionListener } from '../core/transaction';
 import { CommandArgs, CommandReturn } from '../core/state';
 import { AttributeSpec } from './util/render-spec';
 import MapUtils from './util/map-utils';
@@ -122,12 +119,9 @@ export default interface Controller {
     config?: ListenerConfig
   ): void;
 
-  onTransactionUpdate(
-    callback: OperationCallback,
-    options?: TransactionListenerOptions
-  ): void;
+  addTransactionListener(callback: TransactionListener): void;
 
-  offTransactionUpdate(callback: OperationCallback): void;
+  removeTransactionListener(callback: TransactionListener): void;
 }
 
 export class EditorController implements Controller {
@@ -226,15 +220,12 @@ export class EditorController implements Controller {
     this._editor.offEvent(eventName, callback, config);
   }
 
-  onTransactionUpdate(
-    callback: OperationCallback,
-    options?: TransactionListenerOptions
-  ): void {
-    this._editor.onTransactionUpdate(callback, options);
+  addTransactionListener(callback: TransactionListener): void {
+    this._editor.addTransactionListener(callback);
   }
 
-  offTransactionUpdate(callback: OperationCallback): void {
-    this._editor.offTransactionUpdate(callback);
+  removeTransactionListener(callback: TransactionListener): void {
+    this._editor.removeTransactionListener(callback);
   }
 }
 
