@@ -10,6 +10,7 @@ import { TextMatch } from '@lblod/ember-rdfa-editor/utils/match-text';
 import { AttributeSpec } from './util/render-spec';
 import Transaction from '../core/transaction';
 import Operation from './operations/operation';
+import ModelRangeUtils from './util/model-range-utils';
 
 export type LiveMarkSpec =
   | string
@@ -70,9 +71,8 @@ export default class LiveMarkSet {
     for (const match of matchesToRemove) {
       // Conservative check which determines if range in its current form still exists
       // TODO: The range should ideally be mapped to a correct new range which does exist
-      match.range.start.invalidateParentCache();
-      match.range.end.invalidateParentCache();
-      if (match.range.start.parent && match.range.end.parent) {
+      const range = transaction.cloneRange(match.range);
+      if (ModelRangeUtils.isValid(range)) {
         for (const liveSpec of this.liveMarkSpecs) {
           let markSpec;
           if (typeof liveSpec === 'string') {
@@ -83,7 +83,7 @@ export default class LiveMarkSet {
           if (markSpec) {
             // TODO this is a hack to workaround the current awkwardness of removing marks
             // needs a rethink
-            transaction.removeMark(match.range, markSpec, {
+            transaction.removeMark(range, markSpec, {
               setBy: this.controller.name,
             });
           } else {
