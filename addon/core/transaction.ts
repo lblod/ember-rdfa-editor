@@ -257,7 +257,7 @@ export default class Transaction {
   }
   selectRange(range: ModelRange): void {
     const op = new SelectionOperation(undefined, this._workingCopy.selection, [
-      range,
+      this.cloneRange(range),
     ]);
     this.executeOperation(op);
   }
