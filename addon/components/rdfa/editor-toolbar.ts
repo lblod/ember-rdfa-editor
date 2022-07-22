@@ -46,7 +46,6 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   update(transaction: Transaction, operations: Operation[]) {
-    console.log('UPDATE TOOLBAR');
     if (this.modifiesSelection(operations)) {
       this.updateProperties(transaction.currentSelection);
     }
