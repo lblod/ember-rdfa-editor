@@ -194,7 +194,7 @@ class SayEditor implements Editor {
       let newOperations = transaction.size > 0;
       const handledOperations = new Array<number>(
         transaction.workingCopy.transactionListeners.length
-      );
+      ).fill(0);
       while (newOperations) {
         newOperations = false;
         transaction.workingCopy.transactionListeners.forEach((listener, i) => {
