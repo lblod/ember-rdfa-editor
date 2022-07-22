@@ -38,14 +38,12 @@ export default abstract class SelectionCommand
   }
 
   execute(
-    { state, dispatch }: CommandContext,
-    { selection = state.selection }: SelectionCommandArgs
+    { transaction }: CommandContext,
+    { selection = transaction.workingCopy.selection }: SelectionCommandArgs
   ): ModelNode[] {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
-
-    const tr = state.createTransaction();
 
     let modelNodes: ModelNode[] = [];
     const range = selection.lastRange;
@@ -72,7 +70,7 @@ export default abstract class SelectionCommand
       commonAncestor = newAncestor;
     }
 
-    let contentRange = tr.splitRangeUntilElements(
+    let contentRange = transaction.splitRangeUntilElements(
       range,
       commonAncestor,
       commonAncestor
@@ -95,8 +93,7 @@ export default abstract class SelectionCommand
     modelNodes = [...treeWalker];
 
     if (this.deleteSelection) {
-      tr.selectRange(tr.insertNodes(contentRange));
-      dispatch(tr);
+      transaction.selectRange(transaction.insertNodes(contentRange));
     }
     // when deleteSelection is false, we simply don't dispatch the transaction
     // and the state will remain unchanged

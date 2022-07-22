@@ -22,7 +22,7 @@ export default class MatchTextCommand
   }
 
   execute(
-    {}: CommandContext,
+    _: CommandContext,
     { limitRange, regex }: MatchTextCommandArgs
   ): TextMatch[] {
     return matchText(limitRange, regex);

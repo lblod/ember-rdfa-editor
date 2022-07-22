@@ -8,6 +8,9 @@ import EventBus, {
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { TextMatch } from '@lblod/ember-rdfa-editor/utils/match-text';
 import { AttributeSpec } from './util/render-spec';
+import Transaction from '../core/transaction';
+import Operation from './operations/operation';
+import ModelRangeUtils from './util/model-range-utils';
 
 export type LiveMarkSpec =
   | string
@@ -40,7 +43,7 @@ export default class LiveMarkSet {
     this._controller = controller;
     this._datastoreQuery = datastoreQuery;
     this._privateBus = new EventBus();
-    this._controller.onEvent('contentChanged', this.update);
+    this._controller.addTransactionListener(this.update);
     this._liveMarkSpecs = liveMarkSpecs;
     this._activeMatches = new Map<string, TextMatch>();
   }
@@ -57,17 +60,19 @@ export default class LiveMarkSet {
     return this._liveMarkSpecs;
   }
 
-  private update = () => {
-    const { matchesToAdd, matchesToRemove } = this.calculateRanges();
-    const mutator = this.controller.getMutator();
-    const marksRegistry = this.controller.marksRegistry;
+  private update = (transaction: Transaction, operations: Operation[]) => {
+    const marksRegistry = transaction.workingCopy.marksRegistry;
+    if (!operations.some((operation) => operation.type === 'content-operation'))
+      return;
+    const { matchesToAdd, matchesToRemove } = this.calculateRanges(
+      transaction.getCurrentDataStore()
+    );
 
     for (const match of matchesToRemove) {
       // Conservative check which determines if range in its current form still exists
       // TODO: The range should ideally be mapped to a correct new range which does exist
-      match.range.start.invalidateParentCache();
-      match.range.end.invalidateParentCache();
-      if (match.range.start.parent && match.range.end.parent) {
+      const range = transaction.cloneRange(match.range);
+      if (ModelRangeUtils.isValid(range)) {
         for (const liveSpec of this.liveMarkSpecs) {
           let markSpec;
           if (typeof liveSpec === 'string') {
@@ -78,7 +83,7 @@ export default class LiveMarkSet {
           if (markSpec) {
             // TODO this is a hack to workaround the current awkwardness of removing marks
             // needs a rethink
-            mutator.removeMark(match.range, markSpec, {
+            transaction.removeMark(range, markSpec, {
               setBy: this.controller.name,
             });
           } else {
@@ -101,7 +106,7 @@ export default class LiveMarkSet {
           }
         }
         if (markSpec) {
-          mutator.addMark(match.range, markSpec, attributes);
+          transaction.addMark(match.range, markSpec, attributes);
         } else {
           throw new ModelError(`Unrecognized mark: ${liveSpec.toString()}`);
         }
@@ -112,8 +117,8 @@ export default class LiveMarkSet {
     // this.controller.write();
   };
 
-  calculateRanges(): TextMatchDiff {
-    const newMatches = this.datastoreQuery(this.controller.datastore);
+  calculateRanges(datastore: Datastore): TextMatchDiff {
+    const newMatches = this.datastoreQuery(datastore);
 
     return {
       matchesToAdd: new Set(newMatches),
@@ -138,6 +143,6 @@ export default class LiveMarkSet {
   }
 
   destroy() {
-    this.controller.offEvent('contentChanged', this.update);
+    this.controller.removeTransactionListener(this.update);
   }
 }

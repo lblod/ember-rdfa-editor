@@ -24,7 +24,7 @@ import EventBus, {
   EditorEventListener,
   ListenerConfig,
 } from '../utils/event-bus';
-import Transaction from './transaction';
+import Transaction, { TransactionListener } from './transaction';
 import { EditorView, View } from './view';
 export type Dispatcher = (view: View, updateView?: boolean) => Dispatch;
 export type Dispatch = (transaction: Transaction) => State;
@@ -61,6 +61,8 @@ export interface Editor {
    * */
   state: State;
   view: View;
+
+  registerCommand<A extends unknown[], R>(command: Command<A, R>): void;
 
   /**
    * Executes a {@link Command} by name. Command will recieve the editor's current state
@@ -108,6 +110,10 @@ export interface Editor {
     callback: EditorEventListener<E>,
     config?: ListenerConfig
   ): void;
+
+  addTransactionListener(callback: TransactionListener): void;
+
+  removeTransactionListener(callback: TransactionListener): void;
 }
 
 /**
@@ -149,6 +155,12 @@ class SayEditor implements Editor {
     // console.log('Setting state', value.document.toXml());
     this._state = value;
   }
+
+  registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
+    const tr = this.state.createTransaction();
+    tr.registerCommand(command);
+    this.dispatchNoUpdate(tr);
+  }
   executeCommand<C extends CommandName>(
     commandName: C,
     args: CommandArgs<C>,
@@ -156,13 +168,15 @@ class SayEditor implements Editor {
   ): CommandReturn<C> | void {
     const command: Command<CommandArgs<C>, CommandReturn<C> | void> = this.state
       .commands[commandName];
+    const transaction = this.state.createTransaction();
     const result = command.execute(
       {
-        dispatch: updateView ? this.dispatchUpdate : this.dispatchNoUpdate,
-        state: this.state,
+        transaction,
       },
       args
     );
+    const dispatch = updateView ? this.dispatchUpdate : this.dispatchNoUpdate;
+    dispatch(transaction);
     return result;
   }
   canExecuteCommand<C extends keyof CommandMap>(
@@ -171,11 +185,33 @@ class SayEditor implements Editor {
   ): boolean {
     const command: Command<CommandArgs<CommandName>, CommandReturn<C>> = this
       .state.commands[commandName];
-    return command.canExecute({ state: this.state }, args);
+    return command.canExecute(this.state, args);
   }
   defaultDispatcher =
     (view: View, updateView = true) =>
     (transaction: Transaction): State => {
+      // notify listeners while there are new operations added to the transaction
+      let newOperations = transaction.size > 0;
+      const handledOperations = new Array<number>(
+        transaction.workingCopy.transactionListeners.length
+      ).fill(0);
+      while (newOperations) {
+        newOperations = false;
+        transaction.workingCopy.transactionListeners.forEach((listener, i) => {
+          const oldTransactionSize = transaction.size;
+          if (handledOperations[i] < transaction.size) {
+            // notify listener of new operations
+            listener(
+              transaction,
+              transaction.operations.slice(handledOperations[i])
+            );
+            handledOperations[i] = transaction.size;
+          }
+          if (transaction.size > oldTransactionSize) {
+            newOperations = true;
+          }
+        });
+      }
       const newState = transaction.apply();
       const differences = computeDifference(
         this.state.document,
@@ -227,6 +263,18 @@ class SayEditor implements Editor {
     config?: ListenerConfig
   ) {
     this.eventbus.off(eventName, callback, config);
+  }
+
+  addTransactionListener(callback: TransactionListener): void {
+    const tr = this.state.createTransaction();
+    tr.addListener(callback);
+    this.dispatchTransaction(tr, false);
+  }
+
+  removeTransactionListener(callback: TransactionListener): void {
+    const tr = this.state.createTransaction();
+    tr.removeListener(callback);
+    this.dispatchTransaction(tr, false);
   }
 }
 /**

@@ -786,7 +786,8 @@ export function modelOffsetToDomOffset(
 export function modelPosToDomPos(
   state: State,
   domRoot: Element,
-  pos: ModelPosition
+  pos: ModelPosition,
+  collapseIntoText = true
 ): { container: Node; offset: number | undefined } {
   const path = pos.path;
   let cur: ModelNode = state.document;
@@ -803,16 +804,18 @@ export function modelPosToDomPos(
     if (ModelNode.isModelText(cur)) {
       indexPath.push(path[path.length - 1] - cur.getOffset());
       endsInText = true;
-    } else if (pos.nodeAfter() && ModelNode.isModelText(pos.nodeAfter())) {
-      cur = pos.nodeAfter()!;
-      indexPath[indexPath.length - 1] += 1;
-      indexPath.push(path[path.length - 1] - cur.getOffset());
-      endsInText = true;
-    } else if (pos.nodeBefore() && ModelNode.isModelText(pos.nodeBefore())) {
-      cur = pos.nodeBefore()!;
-      indexPath[indexPath.length - 1] -= 1;
-      indexPath.push(path[path.length - 1] - cur.getOffset());
-      endsInText = true;
+    } else if (collapseIntoText) {
+      if (pos.nodeAfter() && ModelNode.isModelText(pos.nodeAfter())) {
+        cur = pos.nodeAfter()!;
+        indexPath[indexPath.length - 1] += 1;
+        indexPath.push(path[path.length - 1] - cur.getOffset());
+        endsInText = true;
+      } else if (pos.nodeBefore() && ModelNode.isModelText(pos.nodeBefore())) {
+        cur = pos.nodeBefore()!;
+        indexPath[indexPath.length - 1] -= 1;
+        indexPath.push(path[path.length - 1] - cur.getOffset());
+        endsInText = true;
+      }
     }
   }
   const container = domNodeFromPath(

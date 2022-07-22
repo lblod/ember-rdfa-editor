@@ -1,5 +1,12 @@
-import State, { cloneState } from '@lblod/ember-rdfa-editor/core/state';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import State, {
+  cloneState,
+  CommandArgs,
+  CommandReturn,
+} from '@lblod/ember-rdfa-editor/core/state';
+import ModelRange, {
+  ModelRangeFactory,
+  RangeFactory,
+} from '@lblod/ember-rdfa-editor/model/model-range';
 import { Mark, MarkSet, MarkSpec } from '../model/mark';
 import ModelNode from '../model/model-node';
 import ModelSelection from '../model/model-selection';
@@ -21,12 +28,17 @@ import MoveOperation from '../model/operations/move-operation';
 import { EditorStore } from '../model/util/datastore/datastore';
 import { AttributeSpec } from '../model/util/render-spec';
 import RemoveOperation from '../model/operations/remove-operation';
-
+import Command, { CommandMap, CommandName } from '../commands/command';
+import SelectionOperation from '../model/operations/selection-operation';
 interface TextInsertion {
   range: ModelRange;
   text: string;
   marks?: MarkSet;
 }
+export type TransactionListener = (
+  transaction: Transaction,
+  operations: Operation[]
+) => void;
 
 /**
  * This is the main way to produce a new state based on an initial state.
@@ -34,9 +46,10 @@ interface TextInsertion {
  * */
 export default class Transaction {
   initialState: State;
-  private workingCopy: State;
-  operations: Operation[];
+  private _workingCopy: State;
+  private _operations: Operation[];
   rangeMapper: RangeMapper;
+  rdfInvalid = true;
 
   constructor(state: State) {
     this.initialState = state;
@@ -46,19 +59,66 @@ export default class Transaction {
      * However this simplicity comes at a cost of awkward workarounds in certain situations,
      * so is an immediate target for improvement later.
      */
-    this.workingCopy = cloneState(state);
-    this.operations = [];
+    this._workingCopy = cloneState(state);
+    this._operations = [];
     this.rangeMapper = new RangeMapper();
   }
 
+  get currentDocument() {
+    return this._workingCopy.document;
+  }
+
+  get workingCopy() {
+    return this._workingCopy;
+  }
+
+  get currentSelection() {
+    return this._workingCopy.selection;
+  }
+
+  get rangeFactory(): RangeFactory {
+    return new ModelRangeFactory(this.currentDocument);
+  }
+
+  get size() {
+    return this._operations.length;
+  }
+
+  get operations() {
+    return this._operations;
+  }
+
+  getCurrentDataStore() {
+    if (this.rdfInvalid) {
+      this._workingCopy.datastore = EditorStore.fromParse({
+        modelRoot: this._workingCopy.document,
+        baseIRI: this._workingCopy.baseIRI,
+        pathFromDomRoot: this._workingCopy.pathFromDomRoot,
+      });
+      this.rdfInvalid = false;
+    }
+    return this._workingCopy.datastore;
+  }
+
   setPlugins(plugins: InitializedPlugin[]): void {
-    this.workingCopy.plugins = plugins;
+    this._workingCopy.plugins = plugins;
   }
   setBaseIRI(iri: string): void {
-    this.workingCopy.baseIRI = iri;
+    this._workingCopy.baseIRI = iri;
   }
   setPathFromDomRoot(path: Node[]) {
-    this.workingCopy.pathFromDomRoot = path;
+    this._workingCopy.pathFromDomRoot = path;
+  }
+
+  addListener(listener: TransactionListener) {
+    this._workingCopy.transactionListeners.push(listener);
+  }
+
+  removeListener(listener: TransactionListener) {
+    const index = this._workingCopy.transactionListeners.indexOf(listener);
+    if (index !== -1) {
+      this._workingCopy.transactionListeners.splice(index, 1);
+    }
   }
 
   addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
@@ -70,7 +130,7 @@ export default class Transaction {
       'add'
     );
     this.createSnapshot();
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
   }
 
   /**
@@ -80,8 +140,8 @@ export default class Transaction {
   readFromView(view: View): void {
     const htmlReader = new HtmlReader();
     const context = new HtmlReaderContext({
-      marksRegistry: this.workingCopy.marksRegistry,
-      inlineComponentsRegistry: this.workingCopy.inlineComponentsRegistry,
+      marksRegistry: this._workingCopy.marksRegistry,
+      inlineComponentsRegistry: this._workingCopy.inlineComponentsRegistry,
     });
     const parsedNodes = htmlReader.read(view.domRoot, context);
     if (parsedNodes.length !== 1) {
@@ -93,13 +153,13 @@ export default class Transaction {
     }
     const selectionReader = new SelectionReader();
     const newSelection = selectionReader.read(
-      this.workingCopy,
+      this._workingCopy,
       view.domRoot,
       getWindowSelection()
     );
 
-    this.workingCopy.document = newVdom;
-    this.workingCopy.selection = newSelection;
+    this._workingCopy.document = newVdom;
+    this._workingCopy.selection = newSelection;
     this.createSnapshot();
   }
 
@@ -110,17 +170,13 @@ export default class Transaction {
    * */
   apply(): State {
     if (
-      this.initialState.baseIRI !== this.workingCopy.baseIRI ||
-      this.initialState.pathFromDomRoot !== this.workingCopy.pathFromDomRoot ||
-      this.workingCopy !== this.initialState
+      this.initialState.baseIRI !== this._workingCopy.baseIRI ||
+      this.initialState.pathFromDomRoot !== this._workingCopy.pathFromDomRoot ||
+      this._workingCopy !== this.initialState
     ) {
-      this.workingCopy.datastore = EditorStore.fromParse({
-        modelRoot: this.workingCopy.document,
-        baseIRI: this.workingCopy.baseIRI,
-        pathFromDomRoot: this.workingCopy.pathFromDomRoot,
-      });
+      this.getCurrentDataStore();
     }
-    return this.workingCopy;
+    return this._workingCopy;
   }
 
   insertText({ range, text, marks }: TextInsertion): ModelRange {
@@ -131,13 +187,13 @@ export default class Transaction {
       marks || new MarkSet()
     );
     this.createSnapshot();
-    return operation.execute().defaultRange;
+    return this.executeOperation(operation).defaultRange;
   }
 
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const op = new InsertOperation(undefined, this.cloneRange(range), ...nodes);
     this.createSnapshot();
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
   }
 
   /**
@@ -145,9 +201,14 @@ export default class Transaction {
    * */
   setSelection(selection: ModelSelection) {
     const clone = this.cloneSelection(selection);
-    const changed = !clone.sameAs(this.workingCopy.selection);
+    const changed = !clone.sameAs(this._workingCopy.selection);
     if (changed) {
-      this.workingCopy.selection = clone;
+      const op = new SelectionOperation(
+        undefined,
+        this._workingCopy.selection,
+        clone.ranges
+      );
+      this.executeOperation(op);
     }
     return changed;
   }
@@ -187,18 +248,24 @@ export default class Transaction {
   removeNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const clonedRange = this.cloneRange(range);
     const op = new RemoveOperation(undefined, clonedRange, ...nodes);
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
   }
-  private executeOperation(op: Operation): ModelRange {
-    const { defaultRange } = op.execute();
-    // this.mapper.appendMapper(mapper);
-    return defaultRange;
+  private executeOperation<R extends object>(op: Operation<R>): R {
+    this._operations.push(op);
+    const result = op.execute();
+    if (op.type === 'content-operation') {
+      this.rdfInvalid = true;
+    }
+    return result;
   }
   selectRange(range: ModelRange): void {
-    this.workingCopy.selection.selectRange(this.cloneRange(range));
+    const op = new SelectionOperation(undefined, this._workingCopy.selection, [
+      this.cloneRange(range),
+    ]);
+    this.executeOperation(op);
   }
   addMarkToSelection(mark: Mark) {
-    this.workingCopy.selection.activeMarks.add(mark);
+    this._workingCopy.selection.activeMarks.add(mark);
     this.createSnapshot();
   }
   moveToPosition(
@@ -208,12 +275,12 @@ export default class Transaction {
     const rangeClone = this.cloneRange(rangeToMove);
     const posClone = this.clonePos(targetPosition);
     const op = new MoveOperation(undefined, rangeClone, posClone);
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
   }
   removeMarkFromSelection(markname: string) {
-    for (const mark of this.workingCopy.selection.activeMarks) {
+    for (const mark of this._workingCopy.selection.activeMarks) {
       if (mark.name === markname) {
-        this.workingCopy.selection.activeMarks.delete(mark);
+        this._workingCopy.selection.activeMarks.delete(mark);
       }
     }
     this.createSnapshot();
@@ -223,15 +290,15 @@ export default class Transaction {
    * in the history and can be recalled later.
    * */
   createSnapshot() {
-    this.workingCopy.previousState = this.initialState;
+    this._workingCopy.previousState = this.initialState;
     return this.initialState;
   }
   /**
    * Reset this transaction, discarding any changes made
    * */
   rollback() {
-    this.workingCopy = this.initialState;
-    return this.workingCopy;
+    this._workingCopy = this.initialState;
+    return this._workingCopy;
   }
 
   /**
@@ -270,7 +337,6 @@ export default class Transaction {
         ModelPosition.fromInElement(endPos.parent, endPos.parent.getMaxOffset())
       );
     }
-    this.createSnapshot();
   }
 
   splitUntilElement(
@@ -336,7 +402,7 @@ export default class Transaction {
       splitParent
     );
     this.createSnapshot();
-    return this.executeOperation(op).start;
+    return this.executeOperation(op).defaultRange.start;
   }
 
   insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange {
@@ -352,7 +418,7 @@ export default class Transaction {
   delete(range: ModelRange): ModelRange {
     const op = new InsertOperation(undefined, this.cloneRange(range));
     this.createSnapshot();
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
   }
   /**
    * Clone a range and set its root in the new state.
@@ -360,8 +426,8 @@ export default class Transaction {
    * which depended on stateful logic, but should eventually become private or dissapear
    * */
   cloneRange(range: ModelRange): ModelRange {
-    if (range.root !== this.workingCopy.document) {
-      return range.clone(this.workingCopy.document);
+    if (range.root !== this._workingCopy.document) {
+      return range.clone(this._workingCopy.document);
     } else {
       return range;
     }
@@ -370,17 +436,17 @@ export default class Transaction {
    * Position version of @link{cloneRange}
    * */
   clonePos(pos: ModelPosition): ModelPosition {
-    return pos.clone(this.workingCopy.document);
+    return pos.clone(this._workingCopy.document);
   }
   /**
    * Selection version of @link{cloneRange}
    * */
   cloneSelection(selection: ModelSelection): ModelSelection {
-    return selection.clone(this.workingCopy.document);
+    return selection.clone(this._workingCopy.document);
   }
   collapseIn(node: ModelNode, offset = 0) {
-    this.workingCopy.selection.clearRanges();
-    this.workingCopy.selection.addRange(
+    this._workingCopy.selection.clearRanges();
+    this._workingCopy.selection.addRange(
       this.cloneRange(ModelRange.fromInNode(node, offset, offset))
     );
   }
@@ -403,7 +469,7 @@ export default class Transaction {
       this.cloneRange(srcRange),
       this.clonePos(target)
     );
-    const resultRange = this.executeOperation(op);
+    const resultRange = this.executeOperation(op).defaultRange;
     this.deleteNode(resultRange.end.nodeAfter()!);
 
     if (ensureBlock) {
@@ -445,7 +511,30 @@ export default class Transaction {
       'remove'
     );
     this.createSnapshot();
-    return this.executeOperation(op);
+    return this.executeOperation(op).defaultRange;
+  }
+
+  registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
+    this.workingCopy.commands[command.name] = command;
+  }
+
+  canExecuteCommand<C extends keyof CommandMap>(
+    commandName: C,
+    args: CommandArgs<C>
+  ): boolean {
+    const command: Command<CommandArgs<CommandName>, CommandReturn<C>> = this
+      .workingCopy.commands[commandName];
+    return command.canExecute(this.workingCopy, args);
+  }
+
+  executeCommand<C extends CommandName>(
+    commandName: C,
+    args: CommandArgs<C>
+  ): CommandReturn<C> | void {
+    const command: Command<CommandArgs<C>, CommandReturn<C> | void> = this
+      ._workingCopy.commands[commandName];
+    const result = command.execute({ transaction: this }, args);
+    return result;
   }
   /**
    * Restore a state from the history
@@ -455,12 +544,12 @@ export default class Transaction {
     let prev: State | null = this.initialState;
     let reverts = 0;
     while (prev && reverts < steps) {
-      this.workingCopy = prev;
+      this._workingCopy = prev;
       prev = prev.previousState;
       reverts++;
     }
     if (prev) {
-      this.workingCopy = prev;
+      this._workingCopy = prev;
     }
   }
 
@@ -469,7 +558,7 @@ export default class Transaction {
    * TODO: this is a shortcut, should ultimately not be needed
    * */
   inWorkingCopy<N extends ModelNode>(node: N): N {
-    if (node.root === this.workingCopy.document) {
+    if (node.root === this._workingCopy.document) {
       return node;
     }
     const pos = this.clonePos(ModelPosition.fromBeforeNode(node));

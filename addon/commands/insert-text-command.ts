@@ -26,20 +26,19 @@ export default class InsertTextCommand
 
   @logExecute
   execute(
-    { dispatch, state }: CommandContext,
+    { transaction }: CommandContext,
     {
       text,
       range,
-      marks = state.selection.lastRange &&
-      range?.sameAs(state.selection.lastRange)
-        ? state.selection.activeMarks
+      marks = transaction.workingCopy.selection.lastRange &&
+      range?.sameAs(transaction.workingCopy.selection.lastRange)
+        ? transaction.workingCopy.selection.activeMarks
         : range?.getMarks() || new MarkSet(),
     }: InsertTextCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-    const transaction = state.createTransaction();
 
     const newLines = text.matchAll(/\n/g);
     let resultRange = range;
@@ -72,6 +71,5 @@ export default class InsertTextCommand
     }
     resultRange.collapse(false);
     transaction.selectRange(resultRange);
-    dispatch(transaction);
   }
 }

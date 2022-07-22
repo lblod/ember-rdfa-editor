@@ -29,7 +29,7 @@ import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 import { InlineComponentSpec } from './inline-components/model-inline-component';
 import { Editor } from '../core/editor';
-import Transaction from '../core/transaction';
+import Transaction, { TransactionListener } from '../core/transaction';
 import { CommandArgs, CommandReturn } from '../core/state';
 import { AttributeSpec } from './util/render-spec';
 import MapUtils from './util/map-utils';
@@ -129,6 +129,10 @@ export default interface Controller {
   getConfig(key: string): string | null;
 
   setConfig(key: string, value: string | null): void;
+
+  addTransactionListener(callback: TransactionListener): void;
+
+  removeTransactionListener(callback: TransactionListener): void;
 }
 
 export class EditorController implements Controller {
@@ -205,7 +209,7 @@ export class EditorController implements Controller {
     return this.marksRegistry.getMarksFor(owner);
   }
   registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
-    throw new Error('Method not implemented.');
+    this._editor.registerCommand(command);
   }
   registerWidget(spec: WidgetSpec): void {
     MapUtils.setOrPush(this._editor.state.widgetMap, spec.desiredLocation, {
@@ -239,6 +243,14 @@ export class EditorController implements Controller {
     config?: ListenerConfig
   ): void {
     this._editor.offEvent(eventName, callback, config);
+  }
+
+  addTransactionListener(callback: TransactionListener): void {
+    this._editor.addTransactionListener(callback);
+  }
+
+  removeTransactionListener(callback: TransactionListener): void {
+    this._editor.removeTransactionListener(callback);
   }
 }
 

@@ -28,7 +28,7 @@ export default class InsertComponentCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     {
       componentName,
       props = {},
@@ -36,29 +36,29 @@ export default class InsertComponentCommand
       createSnapshot = true,
     }: InsertComponentCommandArgs
   ): void {
-    const selection = state.selection;
+    const selection = transaction.workingCopy.selection;
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
     const componentSpec =
-      state.inlineComponentsRegistry.lookUpComponent(componentName);
+      transaction.workingCopy.inlineComponentsRegistry.lookUpComponent(
+        componentName
+      );
     if (componentSpec) {
       const component = new ModelInlineComponent(
         componentSpec,
         props,
         componentState
       );
-      const tr = state.createTransaction();
-      const newRange = tr.insertNodes(selection.lastRange, component);
+      const newRange = transaction.insertNodes(selection.lastRange, component);
       newRange.collapse();
       const brAfterComponent = new ModelElement('br');
       brAfterComponent.setAttribute('class', 'trailing');
-      tr.insertNodes(newRange, brAfterComponent);
-      tr.selectRange(newRange);
+      transaction.insertNodes(newRange, brAfterComponent);
+      transaction.selectRange(newRange);
       if (createSnapshot) {
-        tr.createSnapshot();
+        transaction.createSnapshot();
       }
-      dispatch(tr);
     } else {
       throw new ModelError(`Unrecognized component: ${componentName}`);
     }

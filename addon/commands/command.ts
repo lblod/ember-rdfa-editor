@@ -1,6 +1,6 @@
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
-import { Dispatch } from '../core/editor';
 import State from '../core/state';
+import Transaction from '../core/transaction';
 import AddMarkToRangeCommand from './add-mark-to-range-command';
 import AddMarkToSelectionCommand from './add-mark-to-selection-command';
 import DeleteSelectionCommand from './delete-selection-command';
@@ -17,7 +17,10 @@ import InsertTableRowBelowCommand from './insert-table-row-below-command';
 import InsertXmlCommand from './insert-xml-command';
 import MakeListCommand from './make-list-command';
 import MatchTextCommand from './match-text-command';
+import AddTypeCommand from './node-properties/add-type-command';
 import RemovePropertyCommand from './node-properties/remove-property-command';
+import RemoveTypeCommand from './node-properties/remove-type-command';
+import SetPropertyCommand from './node-properties/set-property-command';
 import ReadSelectionCommand from './read-selection-command';
 import RemoveCommand from './remove-command';
 import RemoveComponentCommand from './remove-component-command';
@@ -32,15 +35,19 @@ import RemoveTableRowCommand from './remove-table-row-command';
 import UndoCommand from './undo-command';
 import UnindentListCommand from './unindent-list-command';
 
+export type CommandMap = DefaultCommandMap &
+  Record<Exclude<string, keyof DefaultCommandMap>, Command<unknown, unknown>>;
+
 /**
  * A registry of all existing commands in type-space.
  * TODO: figure out and document how plugins can extend this, refer to
  * https://typed-ember.gitbook.io/glint/using-glint/ember/template-registry
  * for an example of this pattern
  * */
-export type CommandMap = {
+export type DefaultCommandMap = {
   'add-mark-to-range': AddMarkToRangeCommand;
   'add-mark-to-selection': AddMarkToSelectionCommand;
+  'add-type': AddTypeCommand;
   'delete-selection': DeleteSelectionCommand;
   'indent-list': IndentListCommand;
   'insert-component': InsertComponentCommand;
@@ -63,19 +70,20 @@ export type CommandMap = {
   'remove-mark-from-range': RemoveMarkFromRangeCommand;
   'remove-mark-from-selection': RemoveMarkFromSelectionCommand;
   'remove-marks-from-ranges': RemoveMarksFromRangesCommand;
+  'remove-property': RemovePropertyCommand;
   'remove-table-column': RemoveTableColumnCommand;
   'remove-table-row': RemoveTableRowCommand;
   'remove-table': RemoveTableCommand;
+  'remove-type': RemoveTypeCommand;
+  'set-property': SetPropertyCommand;
   undo: UndoCommand;
   'unindent-list': UnindentListCommand;
   remove: RemoveCommand;
   'remove-property': RemovePropertyCommand;
 };
-export type CommandName = keyof CommandMap;
-
+export type CommandName = keyof DefaultCommandMap;
 export interface CommandContext {
-  dispatch: Dispatch;
-  state: State;
+  transaction: Transaction;
 }
 
 /**
@@ -96,7 +104,7 @@ export default interface Command<A, R> {
   name: string;
   arguments: string[];
 
-  canExecute(context: Omit<CommandContext, 'dispatch'>, args: A): boolean;
+  canExecute(state: State, args: A): boolean;
 
   execute(context: CommandContext, args: A): R;
 }

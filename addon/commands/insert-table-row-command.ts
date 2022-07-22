@@ -23,8 +23,8 @@ export default abstract class InsertTableRowCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
-    { selection = state.selection }: InsertTableRowCommandArgs
+    { transaction }: CommandContext,
+    { selection = transaction.workingCopy.selection }: InsertTableRowCommandArgs
   ) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
@@ -47,10 +47,7 @@ export default abstract class InsertTableRowCommand
     }
 
     const insertPosition = this.insertAbove ? position.y : position.y + 1;
-    const tr = state.createTransaction();
 
-    table.addRow(tr, insertPosition);
-
-    dispatch(tr);
+    table.addRow(transaction, insertPosition);
   }
 }

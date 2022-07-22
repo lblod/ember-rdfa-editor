@@ -13,6 +13,7 @@ export default class RemovePropertyCommand
 {
   arguments: string[] = ['element', 'property'];
   name = 'remove-property';
+  arguments = ['element', 'property'];
 
   canExecute(): boolean {
     return true;
@@ -20,11 +21,9 @@ export default class RemovePropertyCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { element, property }: RemovePropertyCommandArgs
   ) {
-    const tr = state.createTransaction();
-    tr.removeProperty(element, property);
-    dispatch(tr);
+    transaction.removeProperty(element, property);
   }
 }

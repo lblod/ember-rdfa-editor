@@ -15,12 +15,12 @@ export default class RemoveHighlightCommand extends SetTextPropertyCommand<Remov
   }
 
   @logExecute
-  execute(
-    { state, dispatch }: CommandContext,
-    { selection = state.selection }: RemoveHighlightCommandArgs
-  ) {
-    const tr = state.createTransaction();
-    this.setTextProperty(tr, 'highlighted', false, selection);
-    dispatch(tr);
+  execute({ transaction }: CommandContext) {
+    super.setTextProperty(
+      transaction,
+      'highlighted',
+      false,
+      transaction.workingCopy.selection
+    );
   }
 }

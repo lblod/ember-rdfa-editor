@@ -8,10 +8,14 @@ export default class RemoveUnderlineCommand extends SetTextPropertyCommand<void>
   canExecute(): boolean {
     return true;
   }
+
   @logExecute
-  execute({ state, dispatch }: CommandContext) {
-    const tr = state.createTransaction();
-    super.setTextProperty(tr, 'underline', false, state.selection);
-    dispatch(tr);
+  execute({ transaction }: CommandContext) {
+    super.setTextProperty(
+      transaction,
+      'underline',
+      false,
+      transaction.workingCopy.selection
+    );
   }
 }

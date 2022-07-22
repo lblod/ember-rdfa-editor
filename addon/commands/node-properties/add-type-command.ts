@@ -12,8 +12,8 @@ export interface AddTypeCommandArgs {
 export default class AddTypeCommand
   implements Command<AddTypeCommandArgs, void>
 {
-  arguments: string[] = ['type', 'element'];
   name = 'add-type';
+  arguments = ['type', 'element'];
 
   canExecute(): boolean {
     return true;
@@ -21,15 +21,13 @@ export default class AddTypeCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { type, element }: AddTypeCommandArgs
   ) {
     let oldTypeof = element.getAttribute('typeof');
     if (!oldTypeof) oldTypeof = '';
-    const tr = state.createTransaction();
     const newType = `${oldTypeof} ${type}`;
-    const newNode = tr.setProperty(element, 'typeof', newType);
-    tr.selectRange(ModelRange.fromInElement(newNode, 0, 0));
-    dispatch(tr);
+    const newNode = transaction.setProperty(element, 'typeof', newType);
+    transaction.selectRange(ModelRange.fromInElement(newNode, 0, 0));
   }
 }

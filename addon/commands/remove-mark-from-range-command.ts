@@ -20,14 +20,12 @@ export default class RemoveMarkFromRangeCommand
   }
 
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { range, markName, attributes }: RemoveMarkFromRangeCommandArgs
   ): void {
-    const tr = state.createTransaction();
-    const spec = state.marksRegistry.lookupMark(markName);
+    const spec = transaction.workingCopy.marksRegistry.lookupMark(markName);
     if (spec) {
-      tr.removeMark(range, spec, attributes);
-      dispatch(tr);
+      transaction.removeMark(range, spec, attributes);
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);
     }

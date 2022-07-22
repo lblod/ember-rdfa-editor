@@ -18,6 +18,7 @@ import ModelText from '../model/model-text';
 import { PropertyState } from '../model/util/types';
 import { INVISIBLE_SPACE } from '../model/util/constants';
 import GenTreeWalker from '../model/util/gen-tree-walker';
+import State from '../core/state';
 
 export interface MakeListCommandArgs {
   listType?: 'ul' | 'ol';
@@ -33,7 +34,7 @@ export default class MakeListCommand
   arguments: string[] = ['listType', 'selection'];
 
   canExecute(
-    { state }: CommandContext,
+    state: State,
     { selection = state.selection }: MakeListCommandArgs
   ) {
     return (
@@ -44,9 +45,12 @@ export default class MakeListCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
 
-    { listType = 'ul', selection = state.selection }: MakeListCommandArgs
+    {
+      listType = 'ul',
+      selection = transaction.workingCopy.selection,
+    }: MakeListCommandArgs
   ) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
@@ -54,7 +58,10 @@ export default class MakeListCommand
 
     const range = selection.lastRange.clone();
     const wasCollapsed = range.collapsed;
-    const blocks = this.getBlocksFromRange(range, state.document);
+    const blocks = this.getBlocksFromRange(
+      range,
+      transaction.workingCopy.document
+    );
 
     const list = new ModelElement(listType);
     for (const block of blocks) {
@@ -63,13 +70,12 @@ export default class MakeListCommand
       li.appendChildren(...block.map((node) => node.clone()));
       list.addChild(li);
     }
-    const tr = state.createTransaction();
 
-    tr.insertNodes(range, list);
+    transaction.insertNodes(range, list);
     if (!list.firstChild || !list.lastChild) {
       throw new ModelError('List without list item.');
     }
-    const newState = tr.apply();
+    const newState = transaction.apply();
 
     const fullRange = ModelRange.fromInElement(
       newState.document,
@@ -77,7 +83,7 @@ export default class MakeListCommand
       newState.document.getMaxOffset()
     );
     const cleaner = new ListCleaner();
-    cleaner.clean(fullRange, tr);
+    cleaner.clean(fullRange, transaction);
 
     let resultRange;
     if (wasCollapsed) {
@@ -98,8 +104,7 @@ export default class MakeListCommand
       resultRange = new ModelRange(start, end);
     }
 
-    tr.selectRange(resultRange);
-    dispatch(tr);
+    transaction.selectRange(resultRange);
   }
 
   private getBlocksFromRange(

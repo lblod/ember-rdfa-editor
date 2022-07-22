@@ -11,9 +11,12 @@ export default class MakeBoldCommand extends SetTextPropertyCommand<void> {
   }
 
   @logExecute
-  execute({ state, dispatch }: CommandContext) {
-    const tr = state.createTransaction();
-    this.setTextProperty(tr, 'bold', true, state.selection);
-    dispatch(tr);
+  execute({ transaction }: CommandContext) {
+    this.setTextProperty(
+      transaction,
+      'bold',
+      true,
+      transaction.workingCopy.selection
+    );
   }
 }

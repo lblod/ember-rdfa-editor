@@ -5,6 +5,7 @@ import ModelTreeWalker, {
   toFilterSkipFalse,
 } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelPositionUtils from './model-position-utils';
 
 export default class ModelRangeUtils {
   static getExtendedToPlaceholder(range: ModelRange): ModelRange {
@@ -61,5 +62,12 @@ export default class ModelRangeUtils {
       range: range,
       descend,
     });
+  }
+
+  static isValid(range: ModelRange) {
+    return (
+      ModelPositionUtils.isValid(range.start) &&
+      ModelPositionUtils.isValid(range.end)
+    );
   }
 }

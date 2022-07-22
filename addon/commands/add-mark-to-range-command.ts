@@ -21,17 +21,15 @@ export default class AddMarkToRangeCommand
   }
 
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { range, markName, markAttributes = {} }: AddMarkToRangeCommandArgs
   ): void {
-    const spec = state.marksRegistry.lookupMark(markName);
-    const tr = state.createTransaction();
+    const spec = transaction.workingCopy.marksRegistry.lookupMark(markName);
     if (spec) {
-      const resultRange = tr.addMark(range, spec, markAttributes);
-      tr.selectRange(resultRange);
+      const resultRange = transaction.addMark(range, spec, markAttributes);
+      transaction.selectRange(resultRange);
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);
     }
-    dispatch(tr);
   }
 }

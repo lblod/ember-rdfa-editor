@@ -18,11 +18,9 @@ export default class RemoveComponentCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { component }: RemoveComponentCommandArgs
   ): void {
-    const tr = state.createTransaction();
-    tr.deleteNode(component);
-    dispatch(tr);
+    transaction.deleteNode(component);
   }
 }

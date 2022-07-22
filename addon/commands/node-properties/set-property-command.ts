@@ -13,6 +13,7 @@ export default class SetPropertyCommand
 {
   arguments: string[] = ['property', 'value', 'element'];
   name = 'set-property';
+  arguments = ['property', 'value', 'element'];
 
   canExecute(): boolean {
     return true;
@@ -20,11 +21,9 @@ export default class SetPropertyCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { property, value, element }: SetPropertyCommandArgs
   ) {
-    const tr = state.createTransaction();
-    tr.setProperty(element, property, value);
-    dispatch(tr);
+    transaction.setProperty(element, property, value);
   }
 }

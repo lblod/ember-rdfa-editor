@@ -15,11 +15,9 @@ export default class MakeHighlightCommand extends SetTextPropertyCommand<MakeHig
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
-    { selection = state.selection }: MakeHighlightCommandArgs
+    { transaction }: CommandContext,
+    { selection = transaction.workingCopy.selection }: MakeHighlightCommandArgs
   ) {
-    const tr = state.createTransaction();
-    this.setTextProperty(tr, 'highlighted', true, selection);
-    dispatch(tr);
+    this.setTextProperty(transaction, 'highlighted', true, selection);
   }
 }

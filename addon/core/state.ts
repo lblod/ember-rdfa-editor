@@ -1,6 +1,7 @@
 import {
   CommandMap,
   CommandName,
+  DefaultCommandMap,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
@@ -22,7 +23,10 @@ import InsertTableRowBelowCommand from '../commands/insert-table-row-below-comma
 import InsertXmlCommand from '../commands/insert-xml-command';
 import MakeListCommand from '../commands/make-list-command';
 import MatchTextCommand from '../commands/match-text-command';
+import AddTypeCommand from '../commands/node-properties/add-type-command';
 import RemovePropertyCommand from '../commands/node-properties/remove-property-command';
+import RemoveTypeCommand from '../commands/node-properties/remove-type-command';
+import SetPropertyCommand from '../commands/node-properties/set-property-command';
 import ReadSelectionCommand from '../commands/read-selection-command';
 import RemoveCommand from '../commands/remove-command';
 import RemoveComponentCommand from '../commands/remove-component-command';
@@ -49,12 +53,13 @@ import { underlineMarkSpec } from '../plugins/basic-styles/marks/underline';
 import { isElement, isTextNode } from '../utils/dom-helpers';
 import { NotImplementedError } from '../utils/errors';
 import EventBus from '../utils/event-bus';
-import Transaction from './transaction';
+import Transaction, { TransactionListener } from './transaction';
 
 export interface StateArgs {
   document: ModelElement;
   selection: ModelSelection;
   plugins: InitializedPlugin[];
+  transactionListeners: TransactionListener[];
   commands: CommandMap;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
@@ -96,6 +101,7 @@ export default interface State {
   parseNode(node: Node): NodeParseResult;
   eventBus: EventBus;
   config: Map<string, string | null>;
+  transactionListeners: TransactionListener[];
 }
 export class SayState implements State {
   document: ModelElement;
@@ -106,6 +112,7 @@ export class SayState implements State {
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
   eventBus: EventBus;
+  transactionListeners: TransactionListener[];
   /**
    * The previous "relevant" state. This is not necessarily
    * the state directly preceding this one. It is up to the discretion
@@ -147,6 +154,7 @@ export class SayState implements State {
     this.keymap = args.keymap ?? defaultKeyMap;
     this.eventBus = args.eventBus;
     this.config = args.config || new Map<string, string | null>();
+    this.transactionListeners = args.transactionListeners;
   }
   /**
    * Create a new @link{Transaction} with this state as its initial state.
@@ -173,10 +181,11 @@ export class SayState implements State {
   }
 }
 
-export function defaultCommands(): CommandMap {
+export function defaultCommands(): DefaultCommandMap {
   return {
     'add-mark-to-range': new AddMarkToRangeCommand(),
     'add-mark-to-selection': new AddMarkToSelectionCommand(),
+    'add-type': new AddTypeCommand(),
     'delete-selection': new DeleteSelectionCommand(),
     'indent-list': new IndentListCommand(),
     'insert-component': new InsertComponentCommand(),
@@ -199,13 +208,15 @@ export function defaultCommands(): CommandMap {
     'remove-mark-from-range': new RemoveMarkFromRangeCommand(),
     'remove-mark-from-selection': new RemoveMarkFromSelectionCommand(),
     'remove-marks-from-ranges': new RemoveMarksFromRangesCommand(),
+    'remove-property': new RemovePropertyCommand(),
     'remove-table-column': new RemoveTableColumnCommand(),
     'remove-table-row': new RemoveTableRowCommand(),
     'remove-table': new RemoveTableCommand(),
+    'remove-type': new RemoveTypeCommand(),
     undo: new UndoCommand(),
     'unindent-list': new UnindentListCommand(),
     remove: new RemoveCommand(),
-    'remove-property': new RemovePropertyCommand(),
+    'set-property': new SetPropertyCommand(),
   };
 }
 export type CommandReturn<C extends CommandName> = ReturnType<
@@ -230,6 +241,7 @@ export function emptyState(eventBus: EventBus): State {
     baseIRI: 'http://example.org',
     keymap: defaultKeyMap,
     eventBus: eventBus,
+    transactionListeners: [],
   });
 }
 
@@ -252,6 +264,7 @@ export function cloneState(state: State): State {
     pathFromDomRoot: state.pathFromDomRoot,
     keymap: state.keymap,
     eventBus: state.eventBus,
+    transactionListeners: state.transactionListeners,
     baseIRI: state.baseIRI,
     config: state.config,
   });

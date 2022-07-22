@@ -26,22 +26,23 @@ export default class InsertXmlCommand
   }
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
 
-    { xml, range = state.selection.lastRange }: InsertXmlCommandArgs
+    {
+      xml,
+      range = transaction.workingCopy.selection.lastRange,
+    }: InsertXmlCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
 
-    const tr = state.createTransaction();
     const parsedModelNodes = parseXmlSiblings(xml);
     //All nodes are marked as dirty by default when inserted but not in the xml writer
     // as we need to set dirtiness statuses in the tests, in order to solve bugs related to
     // nodes not being properly inserted we set them all dirty in this function below
     parsedModelNodes.forEach((node) => setNodeAndChildDirty(node));
-    const newRange = tr.insertNodes(range, ...parsedModelNodes);
-    tr.selectRange(newRange);
-    dispatch(tr);
+    const newRange = transaction.insertNodes(range, ...parsedModelNodes);
+    transaction.selectRange(newRange);
   }
 }
