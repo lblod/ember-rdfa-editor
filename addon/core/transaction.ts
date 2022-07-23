@@ -1,8 +1,4 @@
-import State, {
-  cloneState,
-  CommandArgs,
-  CommandReturn,
-} from '@lblod/ember-rdfa-editor/core/state';
+import State, { cloneState } from '@lblod/ember-rdfa-editor/core/state';
 import ModelRange, {
   ModelRangeFactory,
   RangeFactory,
@@ -28,13 +24,13 @@ import MoveOperation from '../model/operations/move-operation';
 import { EditorStore } from '../model/util/datastore/datastore';
 import { AttributeSpec } from '../model/util/render-spec';
 import RemoveOperation from '../model/operations/remove-operation';
-import Command, { CommandMap, CommandName } from '../commands/command';
 import SelectionOperation from '../model/operations/selection-operation';
 import {
   CommandExecutor,
   commandMapToCommandExecutor,
 } from '../commands/command-manager';
 import { Commands } from '@lblod/ember-rdfa-editor';
+import { CommandName } from '@lblod/ember-rdfa-editor';
 interface TextInsertion {
   range: ModelRange;
   text: string;
@@ -520,8 +516,8 @@ export default class Transaction {
     return this.executeOperation(op).defaultRange;
   }
 
-  registerCommand<N extends CommandName>(command: Commands[N]): void {
-    this.workingCopy.commands[command.name as N] = command;
+  registerCommand<N extends CommandName>(name: N, command: Commands[N]): void {
+    this.workingCopy.commands[name] = command;
     this._commandCache = undefined;
   }
 

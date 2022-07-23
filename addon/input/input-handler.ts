@@ -8,6 +8,7 @@ import {
 import { mapKeyEvent } from '@lblod/ember-rdfa-editor/input/keymap';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import Controller, { EditorController } from '../model/controller';
 import { NotImplementedError } from '../utils/errors';
 import handleCutCopy from './cut-copy';
 import { handleDelete } from './delete';
@@ -41,9 +42,11 @@ export interface InputHandler {
 
 export class EditorInputHandler implements InputHandler {
   private editor: Editor;
+  private inputController: Controller;
 
   constructor(editor: Editor) {
     this.editor = editor;
+    this.inputController = new EditorController('inputController', editor);
   }
   keydown(event: KeyboardEvent) {
     mapKeyEvent(this.editor, event);
@@ -57,7 +60,7 @@ export class EditorInputHandler implements InputHandler {
     pasteExtendedHTML?: boolean
   ) {
     event.preventDefault();
-    handlePaste(this.editor, event, pasteHTML, pasteExtendedHTML);
+    handlePaste(this.inputController, event, pasteHTML, pasteExtendedHTML);
   }
 
   cut(event: ClipboardEvent) {
