@@ -82,6 +82,8 @@ export default interface Controller {
 
   perform<R>(action: (transaction: Transaction) => R): R;
 
+  dryRun<R>(action: (transaction: Transaction) => R): R;
+
   dispatchTransaction(tr: Transaction): void;
 
   registerCommand<N extends CommandName>(name: N, command: Commands[N]): void;
@@ -160,6 +162,11 @@ export class EditorController implements Controller {
     const tr = this.createTransaction();
     const result = action(tr);
     this.dispatchTransaction(tr);
+    return result;
+  }
+  dryRun<R>(action: (transaction: Transaction) => R): R {
+    const tr = this.createTransaction();
+    const result = action(tr);
     return result;
   }
   dispatchTransaction(tr: Transaction): void {

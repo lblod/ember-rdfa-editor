@@ -6,11 +6,12 @@ import {
   ExecuteReturn,
 } from '@lblod/ember-rdfa-editor';
 import Transaction from '../core/transaction';
+export type WrappedCommand<N extends CommandName> = {
+  (args: ExecuteArgs<N>): ExecuteReturn<N>;
+  canExecute: (args: CanExecuteArgs<N>) => boolean;
+};
 export type CommandExecutor = {
-  [key in keyof Commands]: {
-    execute: (args: ExecuteArgs<key>) => ExecuteReturn<key>;
-    canExecute: (args: CanExecuteArgs<key>) => boolean;
-  };
+  [key in keyof Commands]: WrappedCommand<key>;
 };
 export default class CommandManager {}
 export function wrapCommand<N extends CommandName>(
@@ -18,19 +19,15 @@ export function wrapCommand<N extends CommandName>(
   command: Commands[N],
   transaction: Transaction
 ) {
-  return [
-    name,
-    {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      canExecute(args: any) {
-        return command.canExecute(transaction.workingCopy, args);
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      execute(args: any) {
-        return command.execute({ transaction }, args);
-      },
-    },
-  ];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const wrapped = function (args: any) {
+    return command.execute({ transaction }, args);
+  } as WrappedCommand<N>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  wrapped.canExecute = function (args: any) {
+    return command.canExecute(transaction.workingCopy, args);
+  };
+  return [name, wrapped];
 }
 
 export function commandMapToCommandExecutor(
@@ -43,16 +40,7 @@ export function commandMapToCommandExecutor(
   ][];
   const mapped = entries.map(([commandName, command]) => [
     commandName,
-    {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      canExecute(args: any) {
-        return command.canExecute(transaction.workingCopy, args);
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      execute(args: any) {
-        return command.execute({ transaction }, args);
-      },
-    },
+    wrapCommand(commandName, command, transaction),
   ]);
   return Object.fromEntries(mapped) as CommandExecutor;
 }
