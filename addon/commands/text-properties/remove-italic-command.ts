@@ -1,5 +1,4 @@
 import SetTextPropertyCommand from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
-import state from '@lblod/ember-rdfa-editor/core/state';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { CommandContext } from '../command';
 

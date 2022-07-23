@@ -1,5 +1,4 @@
 import { tracked } from '@glimmer/tracking';
-import { CommandName, Commands } from '@lblod/ember-rdfa-editor';
 import State, { emptyState } from '@lblod/ember-rdfa-editor/core/state';
 import { ResolvedPluginConfig } from '../components/rdfa/rdfa-editor';
 import { EditorController } from '../model/controller';

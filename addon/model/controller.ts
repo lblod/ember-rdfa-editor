@@ -1,6 +1,3 @@
-import { CommandName } from '@lblod/ember-rdfa-editor';
-import { Commands } from '@lblod/ember-rdfa-editor';
-import Command from '@lblod/ember-rdfa-editor/commands/command';
 import LiveMarkSet, {
   LiveMarkSetArgs,
 } from '@lblod/ember-rdfa-editor/model/live-mark-set';
@@ -85,8 +82,6 @@ export default interface Controller {
   dryRun<R>(action: (transaction: Transaction) => R): R;
 
   dispatchTransaction(tr: Transaction): void;
-
-  registerCommand<N extends CommandName>(name: N, command: Commands[N]): void;
 
   registerWidget(spec: WidgetSpec): void;
 
@@ -188,9 +183,6 @@ export class EditorController implements Controller {
   }
   getMarksFor(owner: string): Set<Mark<AttributeSpec>> {
     return this.marksRegistry.getMarksFor(owner);
-  }
-  registerCommand<N extends CommandName>(name: N, command: Commands[N]): void {
-    this._editor.registerCommand(name, command);
   }
   registerWidget(spec: WidgetSpec): void {
     MapUtils.setOrPush(this._editor.state.widgetMap, spec.desiredLocation, {
