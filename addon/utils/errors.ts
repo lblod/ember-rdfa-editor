@@ -101,6 +101,11 @@ export class ParseError extends CustomError {}
  * Thrown when a method is invoked with an argument which it can not reasonably deal with
  */
 export class IllegalArgumentError extends CustomError {}
+export class UnkownCommandError extends IllegalArgumentError {
+  constructor(name: string) {
+    super(`Could not find command with name ${name}`);
+  }
+}
 
 /**
  * Thrown when an object or map does not have the expected key

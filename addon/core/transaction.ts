@@ -30,6 +30,11 @@ import { AttributeSpec } from '../model/util/render-spec';
 import RemoveOperation from '../model/operations/remove-operation';
 import Command, { CommandMap, CommandName } from '../commands/command';
 import SelectionOperation from '../model/operations/selection-operation';
+import {
+  CommandExecutor,
+  commandMapToCommandExecutor,
+} from '../commands/command-manager';
+import { Commands } from '@lblod/ember-rdfa-editor';
 interface TextInsertion {
   range: ModelRange;
   text: string;
@@ -50,6 +55,7 @@ export default class Transaction {
   private _operations: Operation[];
   rangeMapper: RangeMapper;
   rdfInvalid = true;
+  private _commandCache?: CommandExecutor;
 
   constructor(state: State) {
     this.initialState = state;
@@ -514,28 +520,38 @@ export default class Transaction {
     return this.executeOperation(op).defaultRange;
   }
 
-  registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
-    this.workingCopy.commands[command.name] = command;
+  registerCommand<N extends CommandName>(command: Commands[N]): void {
+    this.workingCopy.commands[command.name as N] = command;
+    this._commandCache = undefined;
   }
 
-  canExecuteCommand<C extends keyof CommandMap>(
-    commandName: C,
-    args: CommandArgs<C>
-  ): boolean {
-    const command: Command<CommandArgs<CommandName>, CommandReturn<C>> = this
-      .workingCopy.commands[commandName];
-    return command.canExecute(this.workingCopy, args);
+  get commands(): CommandExecutor {
+    if (!this._commandCache) {
+      this._commandCache = commandMapToCommandExecutor(
+        this.workingCopy.commands,
+        this
+      );
+    }
+    return this._commandCache;
   }
+  // canExecuteCommand<C extends keyof CommandMap>(
+  //   commandName: C,
+  //   args: CommandArgs<C>
+  // ): boolean {
+  //   const command: Command<CommandArgs<CommandName>, CommandReturn<C>> = this
+  //     .workingCopy.commands[commandName];
+  //   return command.canExecute(this.workingCopy, args);
+  // }
 
-  executeCommand<C extends CommandName>(
-    commandName: C,
-    args: CommandArgs<C>
-  ): CommandReturn<C> | void {
-    const command: Command<CommandArgs<C>, CommandReturn<C> | void> = this
-      ._workingCopy.commands[commandName];
-    const result = command.execute({ transaction: this }, args);
-    return result;
-  }
+  // executeCommand<C extends CommandName>(
+  //   commandName: C,
+  //   args: CommandArgs<C>
+  // ): CommandReturn<C> | void {
+  //   const command: Command<CommandArgs<C>, CommandReturn<C> | void> = this
+  //     ._workingCopy.commands[commandName];
+  //   const result = command.execute({ transaction: this }, args);
+  //   return result;
+  // }
   /**
    * Restore a state from the history
    * @param steps Amount of steps to look back

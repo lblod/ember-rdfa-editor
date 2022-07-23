@@ -80,7 +80,6 @@ export type DefaultCommandMap = {
   'unindent-list': UnindentListCommand;
   remove: RemoveCommand;
 };
-export type CommandName = keyof DefaultCommandMap;
 export interface CommandContext {
   transaction: Transaction;
 }
@@ -100,9 +99,6 @@ export interface CommandContext {
  * this insight.
  * */
 export default interface Command<A, R> {
-  name: string;
-  arguments: string[];
-
   canExecute(state: State, args: A): boolean;
 
   execute(context: CommandContext, args: A): R;

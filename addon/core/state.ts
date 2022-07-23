@@ -1,8 +1,4 @@
-import {
-  CommandMap,
-  CommandName,
-  DefaultCommandMap,
-} from '@lblod/ember-rdfa-editor/commands/command';
+import { Commands } from '@lblod/ember-rdfa-editor';
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
@@ -60,7 +56,7 @@ export interface StateArgs {
   selection: ModelSelection;
   plugins: InitializedPlugin[];
   transactionListeners: TransactionListener[];
-  commands: CommandMap;
+  commands: Commands;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState?: State | null;
@@ -88,7 +84,7 @@ export default interface State {
   document: ModelElement;
   selection: ModelSelection;
   plugins: InitializedPlugin[];
-  commands: CommandMap;
+  commands: Commands;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState: State | null;
@@ -107,7 +103,7 @@ export class SayState implements State {
   document: ModelElement;
   selection: ModelSelection;
   plugins: InitializedPlugin[];
-  commands: CommandMap;
+  commands: Commands;
   datastore: Datastore;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
@@ -181,7 +177,7 @@ export class SayState implements State {
   }
 }
 
-export function defaultCommands(): DefaultCommandMap {
+export function defaultCommands(): Commands {
   return {
     'add-mark-to-range': new AddMarkToRangeCommand(),
     'add-mark-to-selection': new AddMarkToSelectionCommand(),
@@ -219,12 +215,6 @@ export function defaultCommands(): DefaultCommandMap {
     'set-property': new SetPropertyCommand(),
   };
 }
-export type CommandReturn<C extends CommandName> = ReturnType<
-  CommandMap[C]['execute']
->;
-export type CommandArgs<C extends CommandName> = Parameters<
-  CommandMap[C]['execute']
->[1];
 
 export function emptyState(eventBus: EventBus): State {
   return new SayState({
