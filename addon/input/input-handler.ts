@@ -65,12 +65,12 @@ export class EditorInputHandler implements InputHandler {
 
   cut(event: ClipboardEvent) {
     event.preventDefault();
-    handleCutCopy(this.editor, event, true);
+    handleCutCopy(this.inputController, event, true);
   }
 
   copy(event: ClipboardEvent) {
     event.preventDefault();
-    handleCutCopy(this.editor, event, false);
+    handleCutCopy(this.inputController, event, false);
   }
 
   afterInput(event: InputEvent): void {
