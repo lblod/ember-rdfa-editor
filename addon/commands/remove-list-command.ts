@@ -10,15 +10,18 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeList: RemoveListCommand;
+  }
+}
 export interface RemoveListCommandArgs {
   range?: ModelRange | null;
 }
+
 export default class RemoveListCommand
   implements Command<RemoveListCommandArgs, void>
 {
-  name = 'remove-list';
-  arguments: string[] = ['range'];
-
   canExecute(): boolean {
     return true;
   }

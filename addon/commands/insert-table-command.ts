@@ -4,6 +4,11 @@ import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertTable: InsertTableCommand;
+  }
+}
 export interface InsertTableCommandArgs {
   selection?: ModelSelection;
   rows?: number;
@@ -13,9 +18,6 @@ export interface InsertTableCommandArgs {
 export default class InsertTableCommand
   implements Command<InsertTableCommandArgs, void>
 {
-  name = 'insert-table';
-  arguments: string[] = ['selection', 'rows', 'columns'];
-
   canExecute(): boolean {
     return true;
   }

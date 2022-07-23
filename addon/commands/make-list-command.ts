@@ -19,6 +19,11 @@ import { PropertyState } from '../model/util/types';
 import { INVISIBLE_SPACE } from '../model/util/constants';
 import GenTreeWalker from '../model/util/gen-tree-walker';
 import State from '../core/state';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    makeList: MakeListCommand;
+  }
+}
 
 export interface MakeListCommandArgs {
   listType?: 'ul' | 'ol';
@@ -30,9 +35,6 @@ export interface MakeListCommandArgs {
 export default class MakeListCommand
   implements Command<MakeListCommandArgs, void>
 {
-  name = 'make-list';
-  arguments: string[] = ['listType', 'selection'];
-
   canExecute(
     state: State,
     { selection = state.selection }: MakeListCommandArgs

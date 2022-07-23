@@ -9,12 +9,14 @@ export interface AddTypeCommandArgs {
   element: ModelElement;
 }
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    addType: AddTypeCommand;
+  }
+}
 export default class AddTypeCommand
   implements Command<AddTypeCommandArgs, void>
 {
-  name = 'add-type';
-  arguments = ['type', 'element'];
-
   canExecute(): boolean {
     return true;
   }

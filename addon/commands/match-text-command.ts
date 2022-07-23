@@ -6,6 +6,11 @@ import {
   matchText,
   TextMatch,
 } from '@lblod/ember-rdfa-editor/utils/match-text';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    matchText: MatchTextCommand;
+  }
+}
 export interface MatchTextCommandArgs {
   limitRange: ModelRange;
   regex: RegExp;
@@ -14,9 +19,6 @@ export interface MatchTextCommandArgs {
 export default class MatchTextCommand
   implements Command<MatchTextCommandArgs, TextMatch[]>
 {
-  name = 'match-text';
-  arguments: string[] = ['limitRange', 'regex'];
-
   canExecute(): boolean {
     return true;
   }

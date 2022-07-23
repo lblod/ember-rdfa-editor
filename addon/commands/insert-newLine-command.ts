@@ -10,6 +10,11 @@ import {
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelElement from '../model/model-element';
 import Command, { CommandContext } from './command';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertNewLine: InsertNewLineCommand;
+  }
+}
 export interface InsertNewLineCommandArgs {
   range?: ModelRange | null;
 }
@@ -22,8 +27,6 @@ export interface InsertNewLineCommandArgs {
 export default class InsertNewLineCommand
   implements Command<InsertNewLineCommandArgs, void>
 {
-  name = 'insert-newLine';
-  arguments: string[] = ['range'];
   canExecute(): boolean {
     return true;
   }

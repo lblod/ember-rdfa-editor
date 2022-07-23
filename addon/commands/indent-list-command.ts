@@ -15,6 +15,11 @@ import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import State from '../core/state';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    indentList: IndentListCommand;
+  }
+}
 
 export interface IndentListCommandArgs {
   range?: ModelRange | null;
@@ -22,9 +27,6 @@ export interface IndentListCommandArgs {
 export default class IndentListCommand
   implements Command<IndentListCommandArgs, void>
 {
-  name = 'indent-list';
-  arguments = ['range'];
-
   canExecute(
     state: State,
     { range = state.selection.lastRange }: IndentListCommandArgs

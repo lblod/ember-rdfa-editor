@@ -31,8 +31,6 @@ export default abstract class SelectionCommand
   protected constructor(createSnapshot: boolean) {
     this.deleteSelection = createSnapshot;
   }
-  name = 'selection-command';
-  arguments: string[] = ['selection'];
   canExecute(): boolean {
     return true;
   }

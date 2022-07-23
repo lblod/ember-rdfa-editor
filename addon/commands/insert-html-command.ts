@@ -7,16 +7,19 @@ import HtmlReader, {
 } from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import ModelRange from '../model/model-range';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertHtml: InsertHtmlCommand;
+  }
+}
 export interface InsertHtmlCommandArgs {
   htmlString: string;
   range?: ModelRange | null;
 }
+
 export default class InsertHtmlCommand
   implements Command<InsertHtmlCommandArgs, void>
 {
-  name = 'insert-html';
-  arguments = ['htmlString', 'range'];
-
   canExecute(): boolean {
     return true;
   }

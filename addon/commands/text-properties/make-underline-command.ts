@@ -2,13 +2,15 @@ import SetTextPropertyCommand from '@lblod/ember-rdfa-editor/commands/text-prope
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { CommandContext } from '../command';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    makeUnderline: MakeUnderlineCommand;
+  }
+}
 export default class MakeUnderlineCommand extends SetTextPropertyCommand<void> {
-  arguments: string[] = [];
-  name = 'make-underline';
   canExecute(): boolean {
     return true;
   }
-
   @logExecute
   execute({ transaction }: CommandContext) {
     super.setTextProperty(

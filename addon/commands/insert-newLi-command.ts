@@ -13,6 +13,11 @@ import State from '../core/state';
 import Transaction from '../core/transaction';
 import Command, { CommandContext } from './command';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertNewLi: InsertNewLiCommand;
+  }
+}
 export interface InsertNewLiCommandArgs {
   range?: ModelRange | null;
 }
@@ -20,8 +25,6 @@ export interface InsertNewLiCommandArgs {
 export default class InsertNewLiCommand
   implements Command<InsertNewLiCommandArgs, void>
 {
-  name = 'insert-newLi';
-  arguments: string[] = ['range'];
   canExecute(state: State, { range = state.selection.lastRange }): boolean {
     if (!range) {
       return false;

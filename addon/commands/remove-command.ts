@@ -12,20 +12,22 @@ import GenTreeWalker from '../model/util/gen-tree-walker';
 import ModelNodeUtils from '../model/util/model-node-utils';
 import { toFilterSkipFalse } from '../model/util/model-tree-walker';
 import { ImpossibleModelStateError } from '../utils/errors';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    remove: RemoveCommand;
+  }
+}
 
 export interface RemoveCommandArgs {
   range: ModelRange;
 }
 export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
-  name = 'remove';
-  arguments: string[] = ['range'];
-
   canExecute(): boolean {
     return true;
   }
 
   @logExecute
-  execute({ transaction }: CommandContext, { range }: RemoveCommandArgs) {
+  execute({ transaction }: CommandContext, { range }: RemoveCommandArgs): void {
     // we only have to consider ancestors of the end of the range since we always merge
     // towards the left
     // SAFETY: filter guarantees results to be elements

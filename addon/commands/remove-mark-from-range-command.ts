@@ -5,16 +5,20 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { AttributeSpec } from '../model/util/render-spec';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeMarkFromRange: RemoveMarkFromRangeCommand;
+  }
+}
 export interface RemoveMarkFromRangeCommandArgs {
   range: ModelRange;
   markName: string;
   attributes: AttributeSpec;
 }
+
 export default class RemoveMarkFromRangeCommand
   implements Command<RemoveMarkFromRangeCommandArgs, void>
 {
-  name = 'remove-mark-from-range';
-  arguments: string[] = ['range', 'markName', 'attributes'];
   canExecute(): boolean {
     return true;
   }

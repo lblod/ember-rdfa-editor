@@ -15,6 +15,11 @@ import {
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import State from '../core/state';
 import ModelPosition from '../model/model-position';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    unindentList: UnindentListCommand;
+  }
+}
 export interface UnindentListCommandArgs {
   range?: ModelRange | null;
 }
@@ -22,9 +27,6 @@ export interface UnindentListCommandArgs {
 export default class UnindentListCommand
   implements Command<UnindentListCommandArgs, void>
 {
-  name = 'unindent-list';
-  arguments: string[] = ['range'];
-
   canExecute(state: State, { range = state.selection.lastRange }): boolean {
     if (!range) {
       return false;

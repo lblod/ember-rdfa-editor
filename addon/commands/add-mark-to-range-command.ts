@@ -5,17 +5,20 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { Serializable } from '../model/util/render-spec';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    addMarkToRange: AddMarkToRangeCommand;
+  }
+}
 export interface AddMarkToRangeCommandArgs {
   range: ModelRange;
   markName: string;
   markAttributes?: Record<string, Serializable>;
 }
+
 export default class AddMarkToRangeCommand
   implements Command<AddMarkToRangeCommandArgs, void>
 {
-  name = 'add-mark-to-range';
-  arguments = ['range', 'markName', 'markAttributes'];
-
   canExecute(): boolean {
     return true;
   }

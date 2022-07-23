@@ -10,6 +10,11 @@ import { CORE_OWNER } from '../model/util/constants';
 import { AttributeSpec } from '../model/util/render-spec';
 import { SelectionChangedEvent } from '../utils/editor-event';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeMarkFromSelection: RemoveMarkFromSelectionCommand;
+  }
+}
 export interface RemoveMarkFromSelectionCommandArgs {
   markName: string;
   markAttributes?: AttributeSpec;
@@ -18,9 +23,6 @@ export interface RemoveMarkFromSelectionCommandArgs {
 export default class RemoveMarkFromSelectionCommand
   implements Command<RemoveMarkFromSelectionCommandArgs, void>
 {
-  name = 'remove-mark-from-selection';
-  arguments: string[] = ['markName', 'markAttributes'];
-
   canExecute(): boolean {
     return true;
   }

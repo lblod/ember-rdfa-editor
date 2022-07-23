@@ -11,16 +11,19 @@ import { AttributeSpec, Serializable } from '../model/util/render-spec';
 import { CORE_OWNER } from '../model/util/constants';
 import { SelectionChangedEvent } from '../utils/editor-event';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    addMarkToSelection: AddMarkToSelectionCommand;
+  }
+}
 export interface AddMarkToSelectionCommandArgs {
   markName: string;
   markAttributes?: Record<string, Serializable>;
 }
+
 export default class AddMarkToSelectionCommand
   implements Command<AddMarkToSelectionCommandArgs, void>
 {
-  arguments = ['markName', 'markAttributes'];
-  name = 'add-mark-to-selection';
-
   canExecute(): boolean {
     return true;
   }

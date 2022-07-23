@@ -3,6 +3,11 @@ import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Command, { CommandContext } from './command';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeTable: RemoveTableCommand;
+  }
+}
 export interface RemoveTableCommandArgs {
   selection?: ModelSelection;
 }
@@ -10,9 +15,6 @@ export interface RemoveTableCommandArgs {
 export default class RemoveTableCommand
   implements Command<RemoveTableCommandArgs, void>
 {
-  name = 'remove-table';
-  arguments: string[] = ['selection'];
-
   canExecute(): boolean {
     return true;
   }

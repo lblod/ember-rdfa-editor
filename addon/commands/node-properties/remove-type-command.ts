@@ -5,16 +5,19 @@ import Command, {
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeType: RemoveTypeCommand;
+  }
+}
 export interface RemoveTypeCommandArgs {
   type: string;
   element: ModelElement;
 }
+
 export default class RemoveTypeCommand
   implements Command<RemoveTypeCommandArgs, void>
 {
-  arguments: string[] = ['type', 'element'];
-  name = 'remove-type';
-
   canExecute(): boolean {
     return true;
   }

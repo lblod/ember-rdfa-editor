@@ -7,6 +7,11 @@ import { parseXmlSiblings } from '@lblod/ember-rdfa-editor/model/util/xml-utils'
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertXml: InsertXmlCommand;
+  }
+}
 export interface InsertXmlCommandArgs {
   xml: string;
   range?: ModelRange | null;
@@ -18,9 +23,6 @@ export interface InsertXmlCommandArgs {
 export default class InsertXmlCommand
   implements Command<InsertXmlCommandArgs, void>
 {
-  name = 'insert-xml';
-  arguments: string[] = ['xml', 'range'];
-
   canExecute(): boolean {
     return true;
   }

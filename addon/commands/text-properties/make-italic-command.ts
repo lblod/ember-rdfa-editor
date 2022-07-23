@@ -2,10 +2,12 @@ import SetTextPropertyCommand from './set-text-property-command';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { CommandContext } from '../command';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    makeItalic: MakeItalicCommand;
+  }
+}
 export default class MakeItalicCommand extends SetTextPropertyCommand<void> {
-  arguments: string[] = [];
-  name = 'make-italic';
-
   canExecute(): boolean {
     return true;
   }

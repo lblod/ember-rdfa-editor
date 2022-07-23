@@ -7,6 +7,11 @@ import ModelElement from '../model/model-element';
 import { logExecute } from '../utils/logging-utils';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertText: InsertTextCommand;
+  }
+}
 export interface InsertTextCommandArgs {
   text: string;
   range: ModelRange | null;
@@ -17,9 +22,6 @@ export interface InsertTextCommandArgs {
 export default class InsertTextCommand
   implements Command<InsertTextCommandArgs, void>
 {
-  name = 'insert-text';
-  arguments: string[] = ['text', 'range', 'marks', 'needsToWrite'];
-
   canExecute(): boolean {
     return true;
   }

@@ -2,9 +2,12 @@ import SetTextPropertyCommand from '@lblod/ember-rdfa-editor/commands/text-prope
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { CommandContext } from '../command';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeUnderline: RemoveUnderlineCommand;
+  }
+}
 export default class RemoveUnderlineCommand extends SetTextPropertyCommand<void> {
-  arguments: string[] = [];
-  name = 'remove-underline';
   canExecute(): boolean {
     return true;
   }

@@ -9,6 +9,11 @@ import { MisbehavedSelectionError, ModelError } from '../utils/errors';
 import { logExecute } from '../utils/logging-utils';
 import Command, { CommandContext } from './command';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertComponent: InsertComponentCommand;
+  }
+}
 export interface InsertComponentCommandArgs {
   componentName: string;
   props?: Properties;
@@ -19,9 +24,6 @@ export interface InsertComponentCommandArgs {
 export default class InsertComponentCommand
   implements Command<InsertComponentCommandArgs, void>
 {
-  name = 'insert-component';
-  arguments = ['componentName', 'props', 'componentState', 'createSnapshot'];
-
   canExecute(): boolean {
     return true;
   }
