@@ -11,7 +11,6 @@ import {
   RangeFactory,
 } from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
 import Datastore from '@lblod/ember-rdfa-editor/model/util/datastore/datastore';
 import GenTreeWalker, {
   TreeWalkerFactory,
@@ -182,9 +181,6 @@ export class EditorController implements Controller {
   registerInlineComponent(component: InlineComponentSpec) {
     this._editor.state.inlineComponentsRegistry.registerComponent(component);
     // this._rawEditor.registerComponent(component);
-  }
-  getMutator(): ImmediateModelMutator {
-    throw new Error('Method not implemented.');
   }
   getMarksFor(owner: string): Set<Mark<AttributeSpec>> {
     return this.marksRegistry.getMarksFor(owner);
