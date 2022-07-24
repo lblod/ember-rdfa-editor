@@ -87,16 +87,16 @@ export class EditorInputHandler implements InputHandler {
         handleInsertText(this.inputController, event);
         break;
       case 'insertLineBreak':
-        handleInsertLineBreak(this.editor, event);
+        handleInsertLineBreak(this.inputController, event);
         break;
       case 'insertParagraph':
-        handleInsertLineBreak(this.editor, event);
+        handleInsertLineBreak(this.inputController, event);
         break;
       case 'insertOrderedList':
-        handleInsertListItem(this.editor, event, 'ol');
+        handleInsertListItem(this.inputController, event, 'ol');
         break;
       case 'insertUnorderedList':
-        handleInsertListItem(this.editor, event, 'ul');
+        handleInsertListItem(this.inputController, event, 'ul');
         break;
       case 'insertHorizontalRule':
         break;
@@ -105,10 +105,10 @@ export class EditorInputHandler implements InputHandler {
       case 'insertFromPaste':
         break;
       case 'deleteWordBackward':
-        handleDelete(this.editor, event, -1);
+        handleDelete(this.inputController, event, -1);
         break;
       case 'deleteWordForward':
-        handleDelete(this.editor, event, 1);
+        handleDelete(this.inputController, event, 1);
         break;
       case 'deleteSoftLineBackward':
         break;
@@ -126,13 +126,13 @@ export class EditorInputHandler implements InputHandler {
         event.preventDefault();
         break;
       case 'deleteContentBackward':
-        handleDelete(this.editor, event, -1);
+        handleDelete(this.inputController, event, -1);
         break;
       case 'deleteContentForward':
-        handleDelete(this.editor, event, 1);
+        handleDelete(this.inputController, event, 1);
         break;
       case 'historyUndo':
-        handleUndo(this.editor, event);
+        handleUndo(this.inputController, event);
         break;
       case 'historyRedo':
         event.preventDefault();

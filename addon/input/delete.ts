@@ -1,14 +1,15 @@
-import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
+import Controller from '../model/controller';
 import ModelRange from '../model/model-range';
 import { eventTargetRange } from './utils';
 
 export function handleDelete(
-  editor: Editor,
+  controller: Controller,
   event: InputEvent,
   direction: number
 ): void {
   event.preventDefault();
-  let range = eventTargetRange(editor.state, editor.view.domRoot, event);
+  const tr = controller.createTransaction();
+  let range = eventTargetRange(tr.workingCopy, controller.view.domRoot, event);
   if (range.collapsed) {
     const shifted = range.start.shiftedVisually(direction);
     range =
@@ -16,5 +17,6 @@ export function handleDelete(
         ? new ModelRange(shifted, range.start)
         : new ModelRange(range.start, shifted);
   }
-  editor.executeCommand('remove', { range });
+  tr.commands.remove({ range });
+  controller.dispatchTransaction(tr);
 }

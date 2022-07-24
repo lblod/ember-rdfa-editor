@@ -4,13 +4,18 @@ import ModelNodeUtils from '../model/util/model-node-utils';
 import ModelRangeUtils from '../model/util/model-range-utils';
 import { eventTargetRange } from './utils';
 
-export function handleInsertLineBreak(editor: Editor, event: InputEvent): void {
-  event.preventDefault();
-  if (editor.canExecuteCommand('insert-newLi', {})) {
-    editor.executeCommand('insert-newLi', {}, true);
-  } else {
-    editor.executeCommand('insert-newLine', {}, true);
-  }
+export function handleInsertLineBreak(
+  controller: Controller,
+  event: InputEvent
+): void {
+  controller.perform((tr) => {
+    event.preventDefault();
+    if (tr.commands.insertNewLi.canExecute({})) {
+      tr.commands.insertNewLi({});
+    } else {
+      tr.commands.insertNewLine({});
+    }
+  });
 }
 
 export function handleInsertText(
@@ -46,16 +51,14 @@ export function handleInsertText(
   });
 }
 export function handleInsertListItem(
-  editor: Editor,
+  controller: Controller,
   event: InputEvent,
   _listType: 'ul' | 'ol'
 ) {
   event.preventDefault();
-  editor.executeCommand(
-    'insert-newLi',
-    {
+  controller.perform((tr) => {
+    tr.commands.insertNewLi({
       range: eventTargetRange(editor.state, editor.view.domRoot, event),
-    },
-    true
-  );
+    });
+  });
 }
