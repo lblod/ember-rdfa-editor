@@ -56,7 +56,7 @@ export interface StateArgs {
   selection: ModelSelection;
   plugins: InitializedPlugin[];
   transactionListeners: TransactionListener[];
-  commands: Commands;
+  commands: Partial<Commands>;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState?: State | null;
@@ -84,7 +84,7 @@ export default interface State {
   document: ModelElement;
   selection: ModelSelection;
   plugins: InitializedPlugin[];
-  commands: Commands;
+  commands: Partial<Commands>;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState: State | null;
@@ -103,7 +103,7 @@ export class SayState implements State {
   document: ModelElement;
   selection: ModelSelection;
   plugins: InitializedPlugin[];
-  commands: Commands;
+  commands: Partial<Commands>;
   datastore: Datastore;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
@@ -177,42 +177,42 @@ export class SayState implements State {
   }
 }
 
-export function defaultCommands(): Commands {
+export function defaultCommands(): Partial<Commands> {
   return {
-    'add-mark-to-range': new AddMarkToRangeCommand(),
-    'add-mark-to-selection': new AddMarkToSelectionCommand(),
-    'add-type': new AddTypeCommand(),
-    'delete-selection': new DeleteSelectionCommand(),
-    'indent-list': new IndentListCommand(),
-    'insert-component': new InsertComponentCommand(),
-    'insert-html': new InsertHtmlCommand(),
-    'insert-newLi': new InsertNewLiCommand(),
-    'insert-newLine': new InsertNewLineCommand(),
-    'insert-table-column-after': new InsertTableColumnAfterCommand(),
-    'insert-table-column-before': new InsertTableColumnBeforeCommand(),
-    'insert-table': new InsertTableCommand(),
-    'insert-table-row-above': new InsertTableRowAboveCommand(),
-    'insert-table-row-below': new InsertTableRowBelowCommand(),
-    'insert-text': new InsertTextCommand(),
-    'insert-xml': new InsertXmlCommand(),
-    'make-list': new MakeListCommand(),
-    'match-text': new MatchTextCommand(),
-    'read-selection': new ReadSelectionCommand(),
-    'remove-component': new RemoveComponentCommand(),
-    'remove-list': new RemoveListCommand(),
-    'remove-mark': new RemoveMarkCommand(),
-    'remove-mark-from-range': new RemoveMarkFromRangeCommand(),
-    'remove-mark-from-selection': new RemoveMarkFromSelectionCommand(),
-    'remove-marks-from-ranges': new RemoveMarksFromRangesCommand(),
-    'remove-property': new RemovePropertyCommand(),
-    'remove-table-column': new RemoveTableColumnCommand(),
-    'remove-table-row': new RemoveTableRowCommand(),
-    'remove-table': new RemoveTableCommand(),
-    'remove-type': new RemoveTypeCommand(),
+    addMarkToRange: new AddMarkToRangeCommand(),
+    addMarkToSelection: new AddMarkToSelectionCommand(),
+    addType: new AddTypeCommand(),
+    deleteSelection: new DeleteSelectionCommand(),
+    indentList: new IndentListCommand(),
+    insertComponent: new InsertComponentCommand(),
+    insertHtml: new InsertHtmlCommand(),
+    insertNewLi: new InsertNewLiCommand(),
+    insertNewLine: new InsertNewLineCommand(),
+    insertTableColumnAfter: new InsertTableColumnAfterCommand(),
+    insertTableColumnBefore: new InsertTableColumnBeforeCommand(),
+    insertTable: new InsertTableCommand(),
+    insertTableRowAbove: new InsertTableRowAboveCommand(),
+    insertTableRowBelow: new InsertTableRowBelowCommand(),
+    insertText: new InsertTextCommand(),
+    insertXml: new InsertXmlCommand(),
+    makeList: new MakeListCommand(),
+    matchText: new MatchTextCommand(),
+    readSelection: new ReadSelectionCommand(),
+    removeComponent: new RemoveComponentCommand(),
+    removeList: new RemoveListCommand(),
+    removeMark: new RemoveMarkCommand(),
+    removeMarkFromRange: new RemoveMarkFromRangeCommand(),
+    removeMarkFromSelection: new RemoveMarkFromSelectionCommand(),
+    removeMarksFromRanges: new RemoveMarksFromRangesCommand(),
+    removeProperty: new RemovePropertyCommand(),
+    removeTableColumn: new RemoveTableColumnCommand(),
+    removeTableRow: new RemoveTableRowCommand(),
+    removeTable: new RemoveTableCommand(),
+    removeType: new RemoveTypeCommand(),
     undo: new UndoCommand(),
-    'unindent-list': new UnindentListCommand(),
+    unindentList: new UnindentListCommand(),
     remove: new RemoveCommand(),
-    'set-property': new SetPropertyCommand(),
+    setProperty: new SetPropertyCommand(),
   };
 }
 

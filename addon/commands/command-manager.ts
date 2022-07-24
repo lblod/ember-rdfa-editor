@@ -31,16 +31,15 @@ export function wrapCommand<N extends CommandName>(
 }
 
 export function commandMapToCommandExecutor(
-  commands: Commands,
+  commands: Partial<Commands>,
   transaction: Transaction
 ): CommandExecutor {
   const entries = Object.entries(commands) as [
     CommandName,
     Commands[CommandName]
   ][];
-  const mapped = entries.map(([commandName, command]) => [
-    commandName,
-    wrapCommand(commandName, command, transaction),
-  ]);
+  const mapped = entries.map(([commandName, command]) =>
+    wrapCommand(commandName, command, transaction)
+  );
   return Object.fromEntries(mapped) as CommandExecutor;
 }

@@ -25,6 +25,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { Editor } from '../core/editor';
 import Transaction, { TransactionListener } from '../core/transaction';
+import { View } from '../core/view';
 import { InlineComponentSpec } from './inline-components/model-inline-component';
 import ModelNode from './model-node';
 import MapUtils from './util/map-utils';
@@ -68,6 +69,7 @@ export default interface Controller {
   get modelRoot(): ModelElement;
 
   get marksRegistry(): MarksRegistry;
+  get view(): View;
 
   getMarksFor(owner: string): Set<Mark>;
 
@@ -149,6 +151,9 @@ export class EditorController implements Controller {
 
   get marksRegistry(): MarksRegistry {
     return this._editor.state.marksRegistry;
+  }
+  get view(): View {
+    return this._editor.view;
   }
   createTransaction(): Transaction {
     return this._editor.state.createTransaction();

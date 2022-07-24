@@ -81,10 +81,10 @@ export class EditorInputHandler implements InputHandler {
     console.log('handling beforeInput with type', event.inputType);
     switch (event.inputType) {
       case 'insertText':
-        handleInsertText(this.editor, event);
+        handleInsertText(this.inputController, event);
         break;
       case 'insertReplacementText':
-        handleInsertText(this.editor, event);
+        handleInsertText(this.inputController, event);
         break;
       case 'insertLineBreak':
         handleInsertLineBreak(this.editor, event);
