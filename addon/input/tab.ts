@@ -59,7 +59,7 @@ export default function handleTab() {
 
     const tr = controller.createTransaction();
     tr.readFromView(controller.view);
-    controller.dispatchTransaction(tr);
+    controller.dispatchTransaction(tr, false);
   };
 }
 
@@ -82,7 +82,7 @@ function handleNativeManipulation(
     window.getSelection()?.collapse(textNode, textNode.length);
     const tr = controller.createTransaction();
     tr.readFromView(controller.view);
-    controller.dispatchTransaction(tr);
+    controller.dispatchTransaction(tr, false);
   } else if (manipulation.type == 'moveCursorBeforeElement') {
     const element = manipulation.node;
 
@@ -98,7 +98,7 @@ function handleNativeManipulation(
     window.getSelection()?.collapse(textNode, textNode.length);
     const tr = controller.createTransaction();
     tr.readFromView(controller.view);
-    controller.dispatchTransaction(tr);
+    controller.dispatchTransaction(tr, false);
   } else if (manipulation.type === 'moveCursorBeforeEditor') {
     //TODO: this could be moved to a plugin eventually.
     console.warn(
@@ -120,7 +120,7 @@ function handleNativeManipulation(
     window.getSelection()?.collapse(textNode, 0);
     const tr = controller.createTransaction();
     tr.readFromView(controller.view);
-    controller.dispatchTransaction(tr);
+    controller.dispatchTransaction(tr, false);
   } else if (manipulation.type === 'moveCursorAfterElement') {
     const element = manipulation.node;
 
@@ -136,7 +136,7 @@ function handleNativeManipulation(
     window.getSelection()?.collapse(textNode, 0);
     const tr = controller.createTransaction();
     tr.readFromView(controller.view);
-    controller.dispatchTransaction(tr);
+    controller.dispatchTransaction(tr, false);
   } else if (manipulation.type === 'moveCursorAfterEditor') {
     //TODO: this could be moved to a plugin eventually.
     console.warn(

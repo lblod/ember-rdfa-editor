@@ -86,7 +86,7 @@ export default interface Controller {
 
   dryRun<R>(action: (transaction: Transaction) => R): R;
 
-  dispatchTransaction(tr: Transaction): void;
+  dispatchTransaction(tr: Transaction, updateView?: boolean): void;
 
   registerWidget(spec: WidgetSpec): void;
 
@@ -176,8 +176,8 @@ export class EditorController implements Controller {
     const result = action(tr);
     return result;
   }
-  dispatchTransaction(tr: Transaction): void {
-    this._editor.dispatchTransaction(tr);
+  dispatchTransaction(tr: Transaction, updateView = true): void {
+    this._editor.dispatchTransaction(tr, updateView);
   }
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
     return new LiveMarkSet(this, args);
