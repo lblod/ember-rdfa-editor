@@ -1,7 +1,7 @@
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
 declare module '@lblod/ember-rdfa-editor' {
@@ -10,7 +10,7 @@ declare module '@lblod/ember-rdfa-editor' {
   }
 }
 export interface RemovePropertyCommandArgs {
-  element: ModelElement;
+  node: ModelNode;
   property: string;
 }
 
@@ -24,8 +24,8 @@ export default class RemovePropertyCommand
   @logExecute
   execute(
     { transaction }: CommandContext,
-    { element, property }: RemovePropertyCommandArgs
+    { node, property }: RemovePropertyCommandArgs
   ) {
-    transaction.removeProperty(element, property);
+    transaction.removeProperty(node, property);
   }
 }

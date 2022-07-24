@@ -23,6 +23,7 @@ import {
   ListenerConfig,
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { Editor } from '../core/editor';
+import State from '../core/state';
 import Transaction, { TransactionListener } from '../core/transaction';
 import { View } from '../core/view';
 import { InlineComponentSpec } from './inline-components/model-inline-component';
@@ -68,7 +69,10 @@ export default interface Controller {
   get modelRoot(): ModelElement;
 
   get marksRegistry(): MarksRegistry;
+
   get view(): View;
+
+  get currentState(): State;
 
   getMarksFor(owner: string): Set<Mark>;
 
@@ -153,6 +157,10 @@ export class EditorController implements Controller {
   }
   get view(): View {
     return this._editor.view;
+  }
+
+  get currentState(): State {
+    return this._editor.state;
   }
   createTransaction(): Transaction {
     return this._editor.state.createTransaction();

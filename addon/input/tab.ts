@@ -1,5 +1,5 @@
-import { Editor } from '../core/editor';
 import { ensureValidTextNodeForCaret } from '../editor/utils';
+import Controller from '../model/controller';
 import {
   isElement,
   isTextNode,
@@ -24,16 +24,16 @@ export type TabHandlerManipulation =
   | MoveCursorAfterEditorManipulation;
 
 export default function handleTab() {
-  return function (editor: Editor, event: KeyboardEvent) {
+  return function (controller: Controller, event: KeyboardEvent) {
     const selection = window.getSelection();
 
     if (
       selection !== null &&
       selection.isCollapsed &&
-      editor.view.domRoot.contains(selection.anchorNode)
+      controller.view.domRoot.contains(selection.anchorNode)
     )
       event.preventDefault();
-    const manipulation = getNextManipulation(editor, event);
+    const manipulation = getNextManipulation(controller, event);
     // // Check if we can execute it.
     // const { mayExecute, dispatchedExecutor } = checkManipulationByPlugins(
     //   editor,
@@ -54,18 +54,18 @@ export default function handleTab() {
     //   // NOTE: We should pass some sort of editor interface here in the future.
     //   dispatchedExecutor(manipulation, editor);
     // } else {
-    handleNativeManipulation(manipulation, editor);
+    handleNativeManipulation(manipulation, controller);
     // }
 
-    const tr = editor.state.createTransaction();
-    tr.readFromView(editor.view);
-    editor.dispatchTransaction(tr, false);
+    const tr = controller.createTransaction();
+    tr.readFromView(controller.view);
+    controller.dispatchTransaction(tr);
   };
 }
 
 function handleNativeManipulation(
   manipulation: TabHandlerManipulation,
-  editor: Editor
+  controller: Controller
 ) {
   /************************ SHIFT TAB ************************/
   if (manipulation.type === 'moveCursorToEndOfElement') {
@@ -80,9 +80,9 @@ function handleNativeManipulation(
 
     textNode = ensureValidTextNodeForCaret(textNode);
     window.getSelection()?.collapse(textNode, textNode.length);
-    const tr = editor.state.createTransaction();
-    tr.readFromView(editor.view);
-    editor.dispatchTransaction(tr, false);
+    const tr = controller.createTransaction();
+    tr.readFromView(controller.view);
+    controller.dispatchTransaction(tr);
   } else if (manipulation.type == 'moveCursorBeforeElement') {
     const element = manipulation.node;
 
@@ -96,9 +96,9 @@ function handleNativeManipulation(
 
     textNode = ensureValidTextNodeForCaret(textNode);
     window.getSelection()?.collapse(textNode, textNode.length);
-    const tr = editor.state.createTransaction();
-    tr.readFromView(editor.view);
-    editor.dispatchTransaction(tr, false);
+    const tr = controller.createTransaction();
+    tr.readFromView(controller.view);
+    controller.dispatchTransaction(tr);
   } else if (manipulation.type === 'moveCursorBeforeEditor') {
     //TODO: this could be moved to a plugin eventually.
     console.warn(
@@ -118,9 +118,9 @@ function handleNativeManipulation(
 
     textNode = ensureValidTextNodeForCaret(textNode);
     window.getSelection()?.collapse(textNode, 0);
-    const tr = editor.state.createTransaction();
-    tr.readFromView(editor.view);
-    editor.dispatchTransaction(tr, false);
+    const tr = controller.createTransaction();
+    tr.readFromView(controller.view);
+    controller.dispatchTransaction(tr);
   } else if (manipulation.type === 'moveCursorAfterElement') {
     const element = manipulation.node;
 
@@ -134,9 +134,9 @@ function handleNativeManipulation(
 
     textNode = ensureValidTextNodeForCaret(textNode);
     window.getSelection()?.collapse(textNode, 0);
-    const tr = editor.state.createTransaction();
-    tr.readFromView(editor.view);
-    editor.dispatchTransaction(tr, false);
+    const tr = controller.createTransaction();
+    tr.readFromView(controller.view);
+    controller.dispatchTransaction(tr);
   } else if (manipulation.type === 'moveCursorAfterEditor') {
     //TODO: this could be moved to a plugin eventually.
     console.warn(
@@ -150,7 +150,7 @@ function handleNativeManipulation(
 }
 
 function getNextManipulation(
-  editor: Editor,
+  controller: Controller,
   event: KeyboardEvent
 ): TabHandlerManipulation {
   const selection = window.getSelection();
@@ -159,15 +159,15 @@ function getNextManipulation(
   }
 
   if (event.shiftKey) {
-    return helpGetShiftTabNextManipulation(selection, editor);
+    return helpGetShiftTabNextManipulation(selection, controller);
   } else {
-    return helpGetTabNextManipulation(selection, editor);
+    return helpGetTabNextManipulation(selection, controller);
   }
 }
 
 function helpGetShiftTabNextManipulation(
   selection: Selection,
-  editor: Editor
+  controller: Controller
 ): TabHandlerManipulation {
   const { anchorNode } = selection;
   if (!(anchorNode && anchorNode.parentElement)) {
@@ -214,7 +214,7 @@ function helpGetShiftTabNextManipulation(
 
   if (
     nextManipulation.type === 'moveCursorBeforeElement' &&
-    nextManipulation.node.isSameNode(editor.view.domRoot)
+    nextManipulation.node.isSameNode(controller.view.domRoot)
   ) {
     nextManipulation = {
       type: 'moveCursorBeforeEditor',
@@ -227,7 +227,7 @@ function helpGetShiftTabNextManipulation(
 
 function helpGetTabNextManipulation(
   selection: Selection,
-  editor: Editor
+  controller: Controller
 ): TabHandlerManipulation {
   const { anchorNode } = selection;
   if (!(anchorNode && anchorNode.parentElement)) {
@@ -272,7 +272,7 @@ function helpGetTabNextManipulation(
 
   if (
     nextManipulation.type === 'moveCursorAfterElement' &&
-    nextManipulation.node.isSameNode(editor.view.domRoot)
+    nextManipulation.node.isSameNode(controller.view.domRoot)
   ) {
     nextManipulation = {
       type: 'moveCursorAfterEditor',

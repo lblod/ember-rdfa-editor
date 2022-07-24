@@ -1,4 +1,3 @@
-import { Editor } from '../core/editor';
 import Controller from '../model/controller';
 import ModelNodeUtils from '../model/util/model-node-utils';
 import ModelRangeUtils from '../model/util/model-range-utils';
@@ -58,7 +57,7 @@ export function handleInsertListItem(
   event.preventDefault();
   controller.perform((tr) => {
     tr.commands.insertNewLi({
-      range: eventTargetRange(editor.state, editor.view.domRoot, event),
+      range: eventTargetRange(tr.workingCopy, controller.view.domRoot, event),
     });
   });
 }

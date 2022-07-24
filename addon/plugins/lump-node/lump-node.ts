@@ -1,14 +1,12 @@
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
-import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 export default class LumpNodePlugin implements EditorPlugin {
   controller?: Controller;
@@ -24,36 +22,33 @@ export default class LumpNodePlugin implements EditorPlugin {
     return Promise.resolve();
   }
 
-  onTransactionStep(transaction: Transaction, operation: Operation) {
-    const selection = transaction.currentSelection;
-  }
-
   selectionChanged() {
-    const selection = this.controller?.selection;
-    console.log(selection);
-    if (selection?.isCollapsed) {
-      const lumpNode = lumpNodeBeforeCursor(selection);
-      const newPosition = selection.lastRange?.start;
-      if (
-        this.lumpNodePreviouslyBeforeCursor &&
-        !this.lastPosition?.equals(newPosition) &&
-        this.lumpNodePreviouslyBeforeCursor.connected &&
-        this.lumpNodePreviouslyBeforeCursor.attributeMap.has(
-          'data-flagged-remove'
-        )
-      ) {
-        this.controller?.executeCommand(
-          'remove-property',
-          this.lumpNodePreviouslyBeforeCursor,
-          'data-flagged-remove'
-        );
+    this.controller?.perform((tr) => {
+      const selection = tr.currentSelection;
+      console.log(selection);
+      if (selection?.isCollapsed) {
+        const lumpNode = lumpNodeBeforeCursor(selection);
+        const newPosition = selection.lastRange?.start;
+        if (
+          this.lumpNodePreviouslyBeforeCursor &&
+          !this.lastPosition?.equals(newPosition) &&
+          this.lumpNodePreviouslyBeforeCursor.connected &&
+          this.lumpNodePreviouslyBeforeCursor.attributeMap.has(
+            'data-flagged-remove'
+          )
+        ) {
+          tr.commands.removeProperty({
+            node: this.lumpNodePreviouslyBeforeCursor,
+            property: 'data-flagged-remove',
+          });
+        }
+        this.lumpNodePreviouslyBeforeCursor = lumpNode;
+        this.lastPosition = selection.lastRange?.start;
+      } else {
+        this.lumpNodePreviouslyBeforeCursor = undefined;
+        this.lastPosition = undefined;
       }
-      this.lumpNodePreviouslyBeforeCursor = lumpNode;
-      this.lastPosition = selection.lastRange?.start;
-    } else {
-      this.lumpNodePreviouslyBeforeCursor = undefined;
-      this.lastPosition = undefined;
-    }
+    });
   }
 }
 

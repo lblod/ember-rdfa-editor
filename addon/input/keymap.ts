@@ -1,4 +1,4 @@
-import { Editor } from '../core/editor';
+import Controller from '../model/controller';
 import ModelRange from '../model/model-range';
 import handleEscape from './escape';
 import { handleBasicStyle } from './format';
@@ -49,7 +49,7 @@ type ModifierCode =
   | `${Modifier}-${Modifier}-${Modifier}`;
 
 export type KeyCode = `${ModifierCode}-${Key}` | `${Key}`;
-export type KeyHandler = (editor: Editor, event: KeyboardEvent) => void;
+export type KeyHandler = (controller: Controller, event: KeyboardEvent) => void;
 /**
  * A map of keycodes to their handlers.
  * Keycodes follow https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values
@@ -70,9 +70,12 @@ export const defaultKeyMap: KeyMap = {
 /**
  * Parse a @link{KeyboardEvent} into a string that can be used to index a @link{KeyMap}
  * */
-export function mapKeyEvent(editor: Editor, event: KeyboardEvent): void {
+export function mapKeyEvent(
+  controller: Controller,
+  event: KeyboardEvent
+): void {
   console.log(event);
-  const keymap = editor.state.keymap;
+  const keymap = controller.currentState.keymap;
   if (event.isComposing) {
     return;
   }
@@ -93,12 +96,12 @@ export function mapKeyEvent(editor: Editor, event: KeyboardEvent): void {
   codestr += event.key === ' ' ? 'Space' : event.key;
   const handler = keymap[codestr as KeyCode];
   if (handler) {
-    handler(editor, event);
+    handler(controller, event);
   }
 }
 function moveCursor(steps: number) {
-  return function (editor: Editor, event: KeyboardEvent) {
-    const range = editor.state.selection.lastRange;
+  return function (controller: Controller, event: KeyboardEvent) {
+    const range = controller.selection.lastRange;
     if (!range) {
       return;
     }
@@ -107,9 +110,9 @@ function moveCursor(steps: number) {
       const start = range.start;
       const newPosition = start.shiftedVisually(steps);
       const resultRange = new ModelRange(newPosition);
-      const tr = editor.state.createTransaction();
+      const tr = controller.createTransaction();
       tr.selectRange(resultRange);
-      editor.dispatchTransaction(tr);
+      controller.dispatchTransaction(tr);
     }
   };
 }

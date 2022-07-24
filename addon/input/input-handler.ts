@@ -49,7 +49,7 @@ export class EditorInputHandler implements InputHandler {
     this.inputController = new EditorController('inputController', editor);
   }
   keydown(event: KeyboardEvent) {
-    mapKeyEvent(this.editor, event);
+    mapKeyEvent(this.inputController, event);
   }
   dragstart(event: DragEvent) {
     event.preventDefault();
