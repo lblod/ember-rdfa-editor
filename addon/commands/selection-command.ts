@@ -92,6 +92,8 @@ export default abstract class SelectionCommand
 
     if (this.deleteSelection) {
       transaction.selectRange(transaction.insertNodes(contentRange));
+    } else {
+      transaction.rollback();
     }
     // when deleteSelection is false, we simply don't dispatch the transaction
     // and the state will remain unchanged
