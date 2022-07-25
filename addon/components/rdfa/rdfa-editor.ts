@@ -23,6 +23,7 @@ import { tracked } from 'tracked-built-ins';
 import { default as RdfaDocumentController } from '../../utils/rdfa/rdfa-document';
 import ShowActiveRdfaPlugin from '@lblod/ember-rdfa-editor/plugins/show-active-rdfa/show-active-rdfa';
 import PlaceHolderPlugin from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
+import { AnchorPlugin } from '@lblod/ember-rdfa-editor/plugins/anchor/anchor';
 
 export type PluginConfig =
   | string
@@ -133,6 +134,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       { instance: new LumpNodePlugin(), options: null },
       { instance: new ShowActiveRdfaPlugin(), options: null },
       { instance: new PlaceHolderPlugin(), options: null },
+      { instance: new AnchorPlugin(), options: null },
     ];
     for (const config of pluginConfigs) {
       let name;
