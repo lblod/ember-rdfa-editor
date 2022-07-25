@@ -11,6 +11,7 @@
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 
 export interface EditorPlugin {
+  controller?: Controller;
   /**
    * Name of the plugin. Should be unique.
    * Convention is to use kebab-case for plugin names and to not repeat the word "plugin".
@@ -42,5 +43,7 @@ export interface EditorPlugin {
    * @param controller Each plugin receives a unique controller instance. It is their only interface to the editor.
    */
   initialize(controller: Controller, options: unknown): Promise<void>;
+
+  handleEvent?(event: InputEvent): { handled: boolean };
 }
 export type InitializedPlugin = Omit<EditorPlugin, 'initialize'>;
