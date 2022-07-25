@@ -20,7 +20,7 @@ export default class LumpNodePlugin implements EditorPlugin {
 
   initialize(controller: Controller): Promise<void> {
     this.controller = controller;
-    controller.onEvent('selectionChanged', this.selectionChanged.bind(this));
+    // controller.onEvent('selectionChanged', this.selectionChanged.bind(this));
     return Promise.resolve();
   }
 
