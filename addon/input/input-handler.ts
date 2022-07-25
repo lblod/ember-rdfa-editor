@@ -79,14 +79,14 @@ export class EditorInputHandler implements InputHandler {
 
   beforeInput(event: InputEvent): void {
     // check manipulation by plugins
-    this.editor.state.plugins.forEach((plugin) => {
+    for (const plugin of this.editor.state.plugins) {
       if (plugin.handleEvent) {
         const { handled } = plugin.handleEvent(event);
         if (handled) {
           return;
         }
       }
-    });
+    }
     console.log('handling beforeInput with type', event.inputType);
     switch (event.inputType) {
       case 'insertText':

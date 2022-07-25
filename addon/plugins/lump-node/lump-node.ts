@@ -1,4 +1,6 @@
+import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
@@ -9,7 +11,7 @@ import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tre
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 export default class LumpNodePlugin implements EditorPlugin {
-  controller?: Controller;
+  controller!: Controller;
   lumpNodePreviouslyBeforeCursor?: ModelNode | null;
   lastPosition?: ModelPosition;
   get name() {
@@ -49,6 +51,47 @@ export default class LumpNodePlugin implements EditorPlugin {
         this.lastPosition = undefined;
       }
     });
+  }
+
+  handleEvent(event: InputEvent): { handled: boolean } {
+    switch (event.inputType) {
+      case 'deleteContentBackward':
+        return this.handleDelete(event, -1);
+      case 'deleteContentForward':
+        return this.handleDelete(event, 1);
+      default:
+        return { handled: false };
+    }
+  }
+
+  handleDelete(event: InputEvent, direction: number): { handled: boolean } {
+    const range = eventTargetRange(
+      this.controller.currentState,
+      this.controller.view.domRoot,
+      event
+    );
+    const lumpNode = GenTreeWalker.fromRange({
+      range,
+      reverse: direction === -1,
+      filter: toFilterSkipFalse(
+        (node) =>
+          ModelNode.isModelElement(node) && ModelNodeUtils.isLumpNode(node)
+      ),
+    }).nextNode();
+    if (lumpNode) {
+      if (lumpNode.getAttribute('data-flagged-remove') !== 'complete') {
+        this.controller.perform((tr) => {
+          tr.commands.setProperty({
+            property: 'data-flagged-remove',
+            value: 'complete',
+            element: lumpNode as ModelElement,
+          });
+        });
+        event.preventDefault();
+        return { handled: true };
+      }
+    }
+    return { handled: false };
   }
 }
 
