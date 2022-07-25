@@ -34,28 +34,7 @@ export default function handleTab() {
     )
       event.preventDefault();
     const manipulation = getNextManipulation(controller, event);
-    // // Check if we can execute it.
-    // const { mayExecute, dispatchedExecutor } = checkManipulationByPlugins(
-    //   editor,
-    //   manipulation,
-    //   PLUGINS
-    // );
-
-    // Error if we're not allowed to execute.
-    // if (!mayExecute) {
-    //   warn(`Not allowed to execute manipulation`, {
-    //     id: 'tab-input-handler-manipulation-not-allowed',
-    //   });
-    //   return;
-    // }
-
-    // // Run the manipulation.
-    // if (dispatchedExecutor) {
-    //   // NOTE: We should pass some sort of editor interface here in the future.
-    //   dispatchedExecutor(manipulation, editor);
-    // } else {
     handleNativeManipulation(manipulation, controller);
-    // }
 
     const tr = controller.createTransaction();
     tr.readFromView(controller.view);
