@@ -775,7 +775,12 @@ export function modelPosToDomPos(
   const indexPath = [];
   for (const offset of path) {
     if (ModelNode.isModelElement(cur)) {
-      const index = cur.offsetToIndex(offset, true);
+      let index;
+      if (offset === 0) {
+        index = 0;
+      } else {
+        index = cur.offsetToIndex(offset);
+      }
       indexPath.push(index);
       cur = cur.children[index];
     }
