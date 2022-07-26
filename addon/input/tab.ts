@@ -4,6 +4,7 @@ import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
 import ModelRange from '../model/model-range';
 import GenTreeWalker from '../model/util/gen-tree-walker';
+import ModelNodeUtils from '../model/util/model-node-utils';
 import { toFilterSkipFalse } from '../model/util/model-tree-walker';
 import { Direction } from '../model/util/types';
 
@@ -25,12 +26,15 @@ export default function handleTab(
   if (controller.getConfig('showRdfaBlocks')) {
     filter = toFilterSkipFalse(
       (node: ModelNode) =>
-        ModelNode.isModelText(node) ||
-        (ModelNode.isModelElement(node) && !node.getRdfaAttributes().isEmpty)
+        (ModelNode.isModelText(node) ||
+          (ModelNode.isModelElement(node) &&
+            !node.getRdfaAttributes().isEmpty)) &&
+        !ModelNodeUtils.parentIsLumpNode(node)
     );
   } else {
-    filter = toFilterSkipFalse((node: ModelNode) =>
-      ModelNode.isModelText(node)
+    filter = toFilterSkipFalse(
+      (node: ModelNode) =>
+        ModelNode.isModelText(node) && !ModelNodeUtils.parentIsLumpNode(node)
     );
   }
 
