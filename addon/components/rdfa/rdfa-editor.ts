@@ -25,6 +25,7 @@ import ShowActiveRdfaPlugin from '@lblod/ember-rdfa-editor/plugins/show-active-r
 import PlaceHolderPlugin from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
 import { AnchorPlugin } from '@lblod/ember-rdfa-editor/plugins/anchor/anchor';
 import TablePlugin from '@lblod/ember-rdfa-editor/plugins/table/table';
+import ListPlugin from '@lblod/ember-rdfa-editor/plugins/list/list';
 
 export type PluginConfig =
   | string
@@ -137,6 +138,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       { instance: new PlaceHolderPlugin(), options: null },
       { instance: new AnchorPlugin(), options: null },
       { instance: new TablePlugin(), options: null },
+      { instance: new ListPlugin(), options: null },
     ];
     for (const config of pluginConfigs) {
       let name;

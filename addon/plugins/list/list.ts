@@ -1,13 +1,76 @@
+import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 export default class ListPlugin implements EditorPlugin {
+  controller!: Controller;
   get name() {
     return 'list';
   }
 
   initialize(_controller: Controller, _options: unknown): Promise<void> {
+    this.controller = _controller;
     return Promise.resolve();
+  }
+
+  handleEvent(event: InputEvent) {
+    switch (event.inputType) {
+      case 'deleteContentBackward':
+        return this.handleDelete(event, -1);
+      case 'deleteContentForward':
+        return this.handleDelete(event, 1);
+      default:
+        return { handled: false };
+    }
+  }
+
+  handleDelete(event: InputEvent, direction: number) {
+    const range = eventTargetRange(
+      this.controller.currentState,
+      this.controller.view.domRoot,
+      event
+    );
+    if (range.collapsed && direction === -1) {
+      const lis = [
+        ...range.end.parent.findSelfOrAncestors(ModelNodeUtils.isListElement),
+      ] as ModelElement[];
+      const highestLi = lis[lis.length - 1];
+      if (highestLi) {
+        const topUl = highestLi.parent;
+        //check if the li is just at the beginning of the document and adjust the start of the range accordingly
+
+        if (topUl && ArrayUtils.all(range.start.path, (i) => i === 0)) {
+          event.preventDefault();
+          const start = ModelPosition.fromBeforeNode(topUl);
+          this.controller.perform((tr) => {
+            tr.commands.remove({ range: new ModelRange(start, range.end) });
+          });
+          return { handled: true };
+        }
+      }
+    }
+    const nodeAfter = range.end.nodeAfter();
+    if (ModelNode.isModelElement(nodeAfter) && nodeAfter.type === 'li') {
+      event.preventDefault();
+      this.controller.perform((tr) => {
+        tr.commands.remove({
+          range: new ModelRange(
+            range.start,
+            ModelPosition.fromInNode(nodeAfter, 0)
+          ),
+        });
+      });
+      return {
+        handled: true,
+      };
+    }
+    return { handled: false };
   }
 }
 // TODO
