@@ -1,63 +1,63 @@
+import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import { domPosToModelPos } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 export default class TablePlugin implements EditorPlugin {
+  controller!: Controller;
   get name() {
     return 'table';
   }
   initialize(_controller: Controller, _options: unknown): Promise<void> {
+    this.controller = _controller;
     return Promise.resolve();
+  }
+
+  handleEvent(event: InputEvent): { handled: boolean } {
+    switch (event.inputType) {
+      case 'deleteContentBackward':
+        return this.handleDelete(event, -1);
+      case 'deleteContentForward':
+        return this.handleDelete(event, 1);
+      default:
+        return { handled: false };
+    }
+  }
+
+  handleDelete(event: InputEvent, direction: number) {
+    const range = eventTargetRange(
+      this.controller.currentState,
+      this.controller.view.domRoot,
+      event
+    );
+    if (direction === 1) {
+      range.end = range.start.shiftedVisually(1);
+    } else {
+      range.start = range.end.shiftedVisually(-1);
+    }
+
+    const startCell =
+      range.start.parent.findSelfOrAncestors(ModelNodeUtils.isTableCell).next()
+        .value || null;
+    const endCell =
+      range.end.parent.findSelfOrAncestors(ModelNodeUtils.isTableCell).next()
+        .value || null;
+    if (!startCell && !endCell) {
+      return { handled: false };
+    }
+    if (startCell && endCell && startCell === endCell) {
+      this.controller.perform((tr) => {
+        tr.commands.remove({ range });
+      });
+      return { handled: true };
+    } else {
+      event.preventDefault();
+      return { handled: true };
+    }
   }
 }
 // TODO
-// guidanceForManipulation(
-//   manipulation: BackspaceHandlerManipulation,
-//   editor: Editor
-// ): ManipulationGuidance | null {
-//   const voidExecutor = {
-//     allow: false,
-//     executor: undefined,
-//   };
-
-//   const selection = editor.state.selection;
-//   if (selection.inTableState === PropertyState.enabled) {
-//     if (
-//       manipulation.type === 'moveCursorBeforeElement' ||
-//       manipulation.type === 'removeEmptyElement'
-//     ) {
-//       return voidExecutor;
-//     } else if (manipulation.type === 'removeEmptyTextNode') {
-//       if (manipulation.node.parentElement?.childElementCount === 0) {
-//         return voidExecutor;
-//       }
-//     }
-//   }
-
-//   return null;
-// }
-
-// /**
-//  * If the handler has been executed we had done nothing so we should return true if not we return false.
-//  * @method detectChange
-//  */
-// detectChange(
-//   manipulation: BackspaceHandlerManipulation,
-//   editor: Editor
-// ): boolean {
-//   const selection = editor.state.selection;
-//   if (selection.inTableState === PropertyState.enabled) {
-//     if (
-//       manipulation.type === 'moveCursorBeforeElement' ||
-//       manipulation.type === 'removeEmptyElement'
-//     ) {
-//       return true;
-//     } else if (manipulation.type === 'removeEmptyTextNode') {
-//       return manipulation.node.parentElement?.childElementCount === 0;
-//     }
-//   }
-
-//   return false;
-// }
 
 // /**
 //  *
