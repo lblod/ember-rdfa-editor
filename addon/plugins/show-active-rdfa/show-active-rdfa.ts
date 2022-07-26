@@ -1,6 +1,10 @@
-import { EditorController } from '@lblod/ember-rdfa-editor/model/controller';
+import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
+import Controller, {
+  EditorController,
+} from '@lblod/ember-rdfa-editor/model/controller';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 // import { ConfigUpdatedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
@@ -11,11 +15,13 @@ const RDFA_PATH_MARKER = 'data-editor-rdfa-position-level';
 
 export default class ShowActiveRdfaPlugin implements EditorPlugin {
   private activeElement: ModelElement | null = null;
+  controller!: Controller;
   get name() {
     return 'show-active-rdfa';
   }
   // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: EditorController) {
+    this.controller = controller;
     // TODO: reimplement this with transaction listener
     // controller.onEvent('configUpdated', (event: ConfigUpdatedEvent) => {
     //   if (event.payload.changedKey === 'showRdfaBlocks') {
@@ -27,30 +33,42 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
     //     }
     //   }
     // });
-    controller.onEvent('selectionChanged', () => {
-      removePathAttributes();
-      const ancestryPath =
-        controller.selection.lastRange?.findCommonAncestorsWhere(
-          ModelNode.isModelElement
+    // controller.addTransactionListener(this.onTransactionDispatch.bind(this));
+  }
+
+  onTransactionDispatch(transaction: Transaction, operations: Operation[]) {
+    if (operations.some((op) => op.type === 'selection-operation')) {
+      this.updateAttributes(transaction);
+    }
+  }
+
+  updateAttributes(transaction: Transaction) {
+    removePathAttributes();
+    const ancestryPath =
+      transaction.currentSelection.lastRange?.findCommonAncestorsWhere(
+        ModelNode.isModelElement
+      );
+    if (ancestryPath) {
+      let level = 0;
+      let rdfaLevel = 0;
+
+      for (const element of ancestryPath) {
+        const domNode = this.controller.view.modelToView(
+          transaction.workingCopy,
+          element
         );
-      if (ancestryPath) {
-        let level = 0;
-        let rdfaLevel = 0;
 
-        for (const element of ancestryPath) {
-          const domNode = controller.modelToView(element);
-
-          if (domNode && isElement(domNode)) {
-            if (!element.getRdfaAttributes().isEmpty) {
-              domNode.setAttribute(RDFA_PATH_MARKER, rdfaLevel.toString());
-              rdfaLevel += 1;
-            }
-            domNode.setAttribute(PATH_MARKER, level.toString());
-            level += 1;
+        if (domNode && isElement(domNode)) {
+          if (!element.getRdfaAttributes().isEmpty) {
+            domNode.setAttribute(RDFA_PATH_MARKER, rdfaLevel.toString());
+            rdfaLevel += 1;
           }
+          domNode.setAttribute(PATH_MARKER, level.toString());
+          level += 1;
         }
       }
-    });
+    }
+    transaction.readFromView(this.controller.view);
   }
 }
 function removePathAttributes() {

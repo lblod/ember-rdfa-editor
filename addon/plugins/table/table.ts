@@ -1,7 +1,6 @@
 import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import { domPosToModelPos } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 export default class TablePlugin implements EditorPlugin {
@@ -59,11 +58,6 @@ export default class TablePlugin implements EditorPlugin {
 }
 // TODO
 
-// /**
-//  *
-//  * @class TableBackspacePlugin
-//  * @module plugins/table
-//  */
 // export default class TableTabInputPlugin implements TabInputPlugin {
 //   label = 'Backspace plugin for handling table nodes';
 
@@ -222,43 +216,5 @@ export default class TablePlugin implements EditorPlugin {
 //     tr.collapseIn(newSelectedCell);
 //     selection.collapseIn(newSelectedCell);
 //     editor.dispatchTransaction(tr);
-//   }
-// }
-
-// export class TableBackspaceDeleteInputPlugin implements BackspaceDeletePlugin {
-//   label = 'Backspace/Delete plugin for handling table cells in a range';
-//   guidanceForManipulation(
-//     manipulation: BackspaceDeleteHandlerManipulation,
-//     _editor: rawEditor
-//   ): ManipulationGuidance | null {
-//     const { range, direction } = manipulation;
-//     const startCell =
-//       range.start.parent.findSelfOrAncestors(ModelNodeUtils.isTableCell).next()
-//         .value || null;
-//     const endCell =
-//       range.end.parent.findSelfOrAncestors(ModelNodeUtils.isTableCell).next()
-//         .value || null;
-//     if (!startCell && !endCell) {
-//       return null;
-//     }
-//     if (startCell && endCell && startCell === endCell) {
-//       return null;
-//     } else {
-//       if (direction === 1) {
-//         return {
-//           allow: true,
-//           executor: () => {
-//             return;
-//           },
-//         };
-//       } else {
-//         return {
-//           allow: true,
-//           executor: () => {
-//             return;
-//           },
-//         };
-//       }
-//     }
 //   }
 // }

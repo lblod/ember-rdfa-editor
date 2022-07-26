@@ -1,56 +1,65 @@
+import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 export default class RdfaConfirmationPlugin implements EditorPlugin {
+  controller!: Controller;
   get name() {
     return 'rdfa-confirmation';
   }
   initialize(_controller: Controller, _options: unknown): Promise<void> {
+    this.controller = _controller;
     return Promise.resolve();
+  }
+
+  handleEvent(event: InputEvent) {
+    switch (event.inputType) {
+      case 'deleteContentBackward':
+        return this.handleDelete(event, -1);
+      case 'deleteContentForward':
+        return this.handleDelete(event, 1);
+      default:
+        return { handled: false };
+    }
+  }
+
+  handleDelete(event: InputEvent, direction: number) {
+    const range = eventTargetRange(
+      this.controller.currentState,
+      this.controller.view.domRoot,
+      event
+    );
+
+    const walker = GenTreeWalker.fromRange({
+      range,
+      reverse: direction === -1,
+    });
+    const nodes = [...walker.nodes()];
+    if (
+      ArrayUtils.all(
+        nodes,
+        (node) =>
+          ModelNode.isModelElement(node) && !node.getRdfaAttributes().isEmpty
+      ) &&
+      nodes.length
+    ) {
+      event.preventDefault();
+      this.controller.perform((tr) => {
+        tr.selectRange(
+          new ModelRange(direction === -1 ? range.start : range.end)
+        );
+      });
+      return { handled: true };
+    }
+    return { handled: false };
   }
 }
 
 // TODO
-// export class RdfaBackspaceDeleteInputPlugin implements BackspaceDeletePlugin {
-//   label = 'Backspace/Delete plugin for handling rdfa in a range';
-//   guidanceForManipulation(
-//     manipulation: BackspaceDeleteHandlerManipulation,
-//     editor: rawEditor
-//   ): ManipulationGuidance | null {
-//     const walker = GenTreeWalker.fromRange({
-//       range: manipulation.range,
-//       reverse: manipulation.direction === -1,
-//     });
-//     const nodes = [...walker.nodes()];
-//     if (
-//       ArrayUtils.all(
-//         nodes,
-//         (node) =>
-//           ModelNode.isModelElement(node) && !node.getRdfaAttributes().isEmpty
-//       ) &&
-//       nodes.length
-//     ) {
-//       const executor = () => {
-//         editor.model.change(() => {
-//           editor.model.selectRange(
-//             new ModelRange(
-//               manipulation.direction === -1
-//                 ? manipulation.range.start
-//                 : manipulation.range.end
-//             )
-//           );
-//         });
-//       };
-//       return { allow: true, executor };
-//     }
-//     return null;
-//   }
-// }
-//
-//
-//
-//
-//
 // /**
 //  * Class responsible for the handling of RDFA.
 //  *

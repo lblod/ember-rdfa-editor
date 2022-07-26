@@ -216,36 +216,46 @@ export default class Transaction {
   }
 
   setProperty(element: ModelElement, key: string, value: string): ModelElement {
-    const oldNode = element;
-    if (!oldNode) throw new Error('no element in range');
-    const newNode = oldNode.clone();
-    newNode.setAttribute(key, value);
-    const oldNodeRange = ModelRange.fromAroundNode(oldNode);
-    const op = new InsertOperation(
-      undefined,
-      this.cloneRange(oldNodeRange),
-      newNode
-    );
-    this.executeOperation(op);
-    return newNode;
+    const node = this.inWorkingCopy(element);
+
+    if (!node) throw new Error('no element in range');
+    node.setAttribute(key, value);
+    return node;
+    // const oldNode = element;
+    // if (!oldNode) throw new Error('no element in range');
+    // const newNode = oldNode.clone();
+    // newNode.setAttribute(key, value);
+    // const oldNodeRange = ModelRange.fromAroundNode(oldNode);
+    // const op = new InsertOperation(
+    //   undefined,
+    //   this.cloneRange(oldNodeRange),
+    //   newNode
+    // );
+    // this.executeOperation(op);
+    // return newNode;
   }
 
   setConfig(key: string, value: string | null): void {
     this.workingCopy.config.set(key, value);
   }
   removeProperty(element: ModelNode, key: string): ModelNode {
-    const oldNode = element;
-    if (!oldNode) throw new Error('no element in range');
-    const newNode = oldNode.clone();
-    newNode.removeAttribute(key);
-    const oldNodeRange = ModelRange.fromAroundNode(oldNode);
-    const op = new InsertOperation(
-      undefined,
-      this.cloneRange(oldNodeRange),
-      newNode
-    );
-    this.executeOperation(op);
-    return newNode;
+    const node = this.inWorkingCopy(element);
+
+    if (!node) throw new Error('no element in range');
+    node.removeAttribute(key);
+    return node;
+    // const oldNode = element;
+    // if (!oldNode) throw new Error('no element in range');
+    // const newNode = oldNode.clone();
+    // newNode.removeAttribute(key);
+    // const oldNodeRange = ModelRange.fromAroundNode(oldNode);
+    // const op = new InsertOperation(
+    //   undefined,
+    //   this.cloneRange(oldNodeRange),
+    //   newNode
+    // );
+    // this.executeOperation(op);
+    // return newNode;
   }
   removeNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const clonedRange = this.cloneRange(range);
