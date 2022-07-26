@@ -61,7 +61,7 @@ export const defaultKeyMap: KeyMap = {
   ArrowLeft: moveCursor(-1),
   ArrowRight: moveCursor(1),
   Escape: handleEscape(),
-  Tab: handleTab(),
+  Tab: handleTab,
   'C-b': handleBasicStyle('bold'),
   'C-i': handleBasicStyle('italic'),
   'C-u': handleBasicStyle('underline'),
