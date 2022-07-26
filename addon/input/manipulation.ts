@@ -36,7 +36,6 @@ interface HTMLWbrElement extends HTMLElement {
   tagName: 'wbr' | 'WBR';
 }
 
-
 /**
  * Base type for any manipulation, ensuring the type interface exists.
  */
@@ -206,4 +205,3 @@ export interface InsertTextIntoRange extends Manipulation {
   range: ModelRange;
   text: string;
 }
-

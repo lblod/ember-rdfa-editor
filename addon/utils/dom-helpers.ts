@@ -634,25 +634,6 @@ export function domPosToModelPos(
   return ModelPosition.fromPath(state.document, offsetPath);
 }
 
-function getDomNodeAtModelIndex(state: State, parent: Node, index: number) {
-  for (const child of parent.childNodes) {
-    if (state.parseNode(child).type === 'mark') {
-      const leafs = getLeafChildren(child);
-      if (leafs.length <= index) {
-        index -= leafs.length;
-      } else {
-        return leafs[index];
-      }
-      //search in subchildren
-    } else {
-      index -= 1;
-    }
-    if (index === -1) {
-      return child;
-    }
-  }
-  throw new Error('Index out of range in node');
-}
 function domNodeFromPath(
   state: State,
   path: number[],
