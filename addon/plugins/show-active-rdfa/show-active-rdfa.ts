@@ -1,17 +1,17 @@
+import ConfigStep from '@lblod/ember-rdfa-editor/core/steps/config_step';
+import Step from '@lblod/ember-rdfa-editor/core/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import Controller, {
   EditorController,
 } from '@lblod/ember-rdfa-editor/model/controller';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-// import { ConfigUpdatedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 const PATH_MARKER = 'data-editor-position-level';
 const RDFA_PATH_MARKER = 'data-editor-rdfa-position-level';
-// const SHOW_RDFA_CLASS = 'show-rdfa-path';
+const SHOW_RDFA_CLASS = 'show-rdfa-path';
 
 export default class ShowActiveRdfaPlugin implements EditorPlugin {
   private activeElement: ModelElement | null = null;
@@ -22,22 +22,25 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
   // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: EditorController) {
     this.controller = controller;
+
     // TODO: reimplement this with transaction listener
-    // controller.onEvent('configUpdated', (event: ConfigUpdatedEvent) => {
-    //   if (event.payload.changedKey === 'showRdfaBlocks') {
-    //     const rootNode = controller.domRoot;
-    //     if (event.payload.newValue) {
-    //       rootNode.classList.add(SHOW_RDFA_CLASS);
-    //     } else {
-    //       rootNode.classList.remove(SHOW_RDFA_CLASS);
-    //     }
-    //   }
-    // });
-    // controller.addTransactionListener(this.onTransactionDispatch.bind(this));
+    controller.addTransactionListener(this.onTransactionDispatch.bind(this));
   }
 
-  onTransactionDispatch(transaction: Transaction, operations: Operation[]) {
-    if (operations.some((op) => op.type === 'selection-operation')) {
+  onTransactionDispatch(transaction: Transaction, steps: Step[]) {
+    const configSteps: ConfigStep[] = steps.filter(
+      (step) => Step.isConfigStep(step) && step.key === 'showRdfaBlocks'
+    ) as ConfigStep[];
+    if (configSteps.length) {
+      const lastStep = configSteps[configSteps.length - 1];
+      const rootNode = this.controller.view.domRoot;
+      if (lastStep.value) {
+        rootNode.classList.add(SHOW_RDFA_CLASS);
+      } else {
+        rootNode.classList.remove(SHOW_RDFA_CLASS);
+      }
+    }
+    if (steps.some(Step.isSelectionStep)) {
       this.updateAttributes(transaction);
     }
   }
@@ -68,7 +71,6 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
         }
       }
     }
-    transaction.readFromView(this.controller.view);
   }
 }
 function removePathAttributes() {
