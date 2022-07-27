@@ -1,4 +1,7 @@
-import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
+import {
+  deleteTargetRange,
+  eventTargetRange,
+} from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
@@ -65,11 +68,7 @@ export default class LumpNodePlugin implements EditorPlugin {
   }
 
   handleDelete(event: InputEvent, direction: number): { handled: boolean } {
-    const range = eventTargetRange(
-      this.controller.currentState,
-      this.controller.view.domRoot,
-      event
-    );
+    const range = deleteTargetRange(this.controller.currentState, direction);
     const lumpNode = GenTreeWalker.fromRange({
       range,
       reverse: direction === -1,

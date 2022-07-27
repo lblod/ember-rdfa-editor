@@ -1,4 +1,7 @@
-import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
+import {
+  deleteTargetRange,
+  eventTargetRange,
+} from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
@@ -18,8 +21,9 @@ export default class PlaceHolderPlugin implements EditorPlugin {
   handleEvent(event: InputEvent) {
     switch (event.inputType) {
       case 'deleteContentBackward':
+        return this.handleDelete(event, -1);
       case 'deleteContentForward':
-        return this.handleDelete(event);
+        return this.handleDelete(event, 1);
       case 'insertText':
         return this.handleInsertText(event);
       default:
@@ -27,12 +31,8 @@ export default class PlaceHolderPlugin implements EditorPlugin {
     }
   }
 
-  handleDelete(event: InputEvent) {
-    const range = eventTargetRange(
-      this.controller.currentState,
-      this.controller.view.domRoot,
-      event
-    );
+  handleDelete(event: InputEvent, direction: number) {
+    const range = deleteTargetRange(this.controller.currentState, direction);
     if (
       ModelNodeUtils.isPlaceHolder(range.start.parent) ||
       ModelNodeUtils.isPlaceHolder(range.end.parent)

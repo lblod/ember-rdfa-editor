@@ -1,4 +1,4 @@
-import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
+import { deleteTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
@@ -28,12 +28,7 @@ export default class RdfaConfirmationPlugin implements EditorPlugin {
   }
 
   handleDelete(event: InputEvent, direction: number) {
-    const range = eventTargetRange(
-      this.controller.currentState,
-      this.controller.view.domRoot,
-      event
-    );
-
+    const range = deleteTargetRange(this.controller.currentState, direction);
     const walker = GenTreeWalker.fromRange({
       range,
       reverse: direction === -1,
@@ -48,13 +43,15 @@ export default class RdfaConfirmationPlugin implements EditorPlugin {
       nodes.length
     ) {
       event.preventDefault();
+      const resultingRange = new ModelRange(
+        direction === -1 ? range.start : range.end
+      );
       this.controller.perform((tr) => {
-        tr.selectRange(
-          new ModelRange(direction === -1 ? range.start : range.end)
-        );
+        tr.selectRange(resultingRange);
       });
       return { handled: true };
     }
+
     return { handled: false };
   }
 }

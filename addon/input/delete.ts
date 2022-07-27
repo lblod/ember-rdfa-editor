@@ -1,6 +1,5 @@
 import Controller from '../model/controller';
-import ModelRange from '../model/model-range';
-import { eventTargetRange } from './utils';
+import { deleteTargetRange, eventTargetRange } from './utils';
 
 export function handleDelete(
   controller: Controller,
@@ -9,14 +8,8 @@ export function handleDelete(
 ): void {
   event.preventDefault();
   const tr = controller.createTransaction();
-  let range = eventTargetRange(tr.workingCopy, controller.view.domRoot, event);
-  if (range.collapsed) {
-    const shifted = range.start.shiftedVisually(direction);
-    range =
-      direction === -1
-        ? new ModelRange(shifted, range.start)
-        : new ModelRange(range.start, shifted);
-  }
+  const range = deleteTargetRange(tr.workingCopy, direction);
   tr.commands.remove({ range });
   controller.dispatchTransaction(tr);
+  // let range = eventTargetRange(tr.workingCopy, controller.view.domRoot, event);
 }

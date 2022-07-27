@@ -1,4 +1,7 @@
-import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
+import {
+  deleteTargetRange,
+  eventTargetRange,
+} from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
@@ -25,16 +28,7 @@ export default class TablePlugin implements EditorPlugin {
   }
 
   handleDelete(event: InputEvent, direction: number) {
-    const range = eventTargetRange(
-      this.controller.currentState,
-      this.controller.view.domRoot,
-      event
-    );
-    if (direction === 1) {
-      range.end = range.start.shiftedVisually(1);
-    } else {
-      range.start = range.end.shiftedVisually(-1);
-    }
+    const range = deleteTargetRange(this.controller.currentState, direction);
 
     const startCell =
       range.start.parent.findSelfOrAncestors(ModelNodeUtils.isTableCell).next()
