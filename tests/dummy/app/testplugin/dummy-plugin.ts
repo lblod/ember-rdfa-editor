@@ -13,7 +13,7 @@ export interface DummyPluginOptions {
 }
 
 export default class DummyPlugin implements EditorPlugin {
-  private controller!: Controller;
+  controller!: Controller;
   private logger: Logger = createLogger(this.constructor.name);
 
   // eslint-disable-next-line @typescript-eslint/require-await

@@ -134,24 +134,21 @@ class SayEditor implements Editor {
     (view: View, updateView = true) =>
     (transaction: Transaction): State => {
       // notify listeners while there are new operations added to the transaction
-      let newOperations = transaction.size > 0;
-      const handledOperations = new Array<number>(
+      let newSteps = transaction.size > 0;
+      const handledSteps = new Array<number>(
         transaction.workingCopy.transactionListeners.length
       ).fill(0);
-      while (newOperations) {
-        newOperations = false;
+      while (newSteps) {
+        newSteps = false;
         transaction.workingCopy.transactionListeners.forEach((listener, i) => {
           const oldTransactionSize = transaction.size;
-          if (handledOperations[i] < transaction.size) {
+          if (handledSteps[i] < transaction.size) {
             // notify listener of new operations
-            listener(
-              transaction,
-              transaction.operations.slice(handledOperations[i])
-            );
-            handledOperations[i] = transaction.size;
+            listener(transaction, transaction.steps.slice(handledSteps[i]));
+            handledSteps[i] = transaction.size;
           }
           if (transaction.size > oldTransactionSize) {
-            newOperations = true;
+            newSteps = true;
           }
         });
       }

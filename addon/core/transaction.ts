@@ -7,7 +7,6 @@ import { Mark, MarkSet, MarkSpec } from '../model/mark';
 import ModelNode from '../model/model-node';
 import ModelSelection from '../model/model-selection';
 import InsertTextOperation from '../model/operations/insert-text-operation';
-import Operation from '../model/operations/operation';
 import RangeMapper from '../model/range-mapper';
 import HtmlReader, { HtmlReaderContext } from '../model/readers/html-reader';
 import SelectionReader from '../model/readers/selection-reader';
@@ -24,13 +23,16 @@ import MoveOperation from '../model/operations/move-operation';
 import { EditorStore } from '../model/util/datastore/datastore';
 import { AttributeSpec } from '../model/util/render-spec';
 import RemoveOperation from '../model/operations/remove-operation';
-import SelectionOperation from '../model/operations/selection-operation';
 import {
   CommandExecutor,
   commandMapToCommandExecutor,
 } from '../commands/command-manager';
 import { Commands } from '@lblod/ember-rdfa-editor';
 import { CommandName } from '@lblod/ember-rdfa-editor';
+import Step, { StepResult } from './steps/step';
+import SelectionStep from './steps/selection_step';
+import OperationStep from './steps/operation_step';
+import ConfigStep from './steps/config_step';
 interface TextInsertion {
   range: ModelRange;
   text: string;
@@ -38,7 +40,7 @@ interface TextInsertion {
 }
 export type TransactionListener = (
   transaction: Transaction,
-  operations: Operation[]
+  steps: Step[]
 ) => void;
 
 /**
@@ -48,7 +50,7 @@ export type TransactionListener = (
 export default class Transaction {
   initialState: State;
   private _workingCopy: State;
-  private _operations: Operation[];
+  private _steps: Step[];
   rangeMapper: RangeMapper;
   rdfInvalid = true;
   private _commandCache?: CommandExecutor;
@@ -62,7 +64,7 @@ export default class Transaction {
      * so is an immediate target for improvement later.
      */
     this._workingCopy = cloneState(state);
-    this._operations = [];
+    this._steps = [];
     this.rangeMapper = new RangeMapper();
   }
 
@@ -83,11 +85,11 @@ export default class Transaction {
   }
 
   get size() {
-    return this._operations.length;
+    return this._steps.length;
   }
 
-  get operations() {
-    return this._operations;
+  get steps() {
+    return this._steps;
   }
 
   getCurrentDataStore() {
@@ -132,7 +134,7 @@ export default class Transaction {
       'add'
     );
     this.createSnapshot();
-    return this.executeOperation(op).defaultRange;
+    return this.executeStep(new OperationStep(op)).defaultRange;
   }
 
   /**
@@ -189,13 +191,13 @@ export default class Transaction {
       marks || new MarkSet()
     );
     this.createSnapshot();
-    return this.executeOperation(operation).defaultRange;
+    return this.executeStep(new OperationStep(operation)).defaultRange;
   }
 
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const op = new InsertOperation(undefined, this.cloneRange(range), ...nodes);
     this.createSnapshot();
-    return this.executeOperation(op).defaultRange;
+    return this.executeStep(new OperationStep(op)).defaultRange;
   }
 
   /**
@@ -205,12 +207,7 @@ export default class Transaction {
     const clone = this.cloneSelection(selection);
     const changed = !clone.sameAs(this._workingCopy.selection);
     if (changed) {
-      const op = new SelectionOperation(
-        undefined,
-        this._workingCopy.selection,
-        clone.ranges
-      );
-      this.executeOperation(op);
+      this.executeStep(new SelectionStep(clone.ranges));
     }
     return changed;
   }
@@ -236,7 +233,7 @@ export default class Transaction {
   }
 
   setConfig(key: string, value: string | null): void {
-    this.workingCopy.config.set(key, value);
+    this.executeStep(new ConfigStep(key, value));
   }
   removeProperty(element: ModelNode, key: string): ModelNode {
     const node = this.inWorkingCopy(element);
@@ -260,21 +257,23 @@ export default class Transaction {
   removeNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const clonedRange = this.cloneRange(range);
     const op = new RemoveOperation(undefined, clonedRange, ...nodes);
-    return this.executeOperation(op).defaultRange;
+    return this.executeStep(new OperationStep(op)).defaultRange;
   }
-  private executeOperation<R extends object>(op: Operation<R>): R {
-    this._operations.push(op);
-    const result = op.execute();
-    if (op.type === 'content-operation') {
+  private executeStep<R extends StepResult>(step: Step<R>): R {
+    this._steps.push(step);
+    const result = step.execute(this.workingCopy);
+    this._workingCopy = result.state;
+    if (Step.isOperationStep(step)) {
       this.rdfInvalid = true;
     }
     return result;
   }
   selectRange(range: ModelRange): void {
-    const op = new SelectionOperation(undefined, this._workingCopy.selection, [
-      this.cloneRange(range),
-    ]);
-    this.executeOperation(op);
+    // const op = new SelectionOperation(undefined, this._workingCopy.selection, [
+    //   this.cloneRange(range),
+    // ]);
+    // this.executeOperation(op);
+    this.executeStep(new SelectionStep([this.cloneRange(range)]));
   }
   addMarkToSelection(mark: Mark) {
     this._workingCopy.selection.activeMarks.add(mark);
@@ -287,7 +286,7 @@ export default class Transaction {
     const rangeClone = this.cloneRange(rangeToMove);
     const posClone = this.clonePos(targetPosition);
     const op = new MoveOperation(undefined, rangeClone, posClone);
-    return this.executeOperation(op).defaultRange;
+    return this.executeStep(new OperationStep(op)).defaultRange;
   }
   removeMarkFromSelection(markname: string) {
     for (const mark of this._workingCopy.selection.activeMarks) {
@@ -403,10 +402,11 @@ export default class Transaction {
     }
 
     this.createSnapshot();
-    return this.executeSplitOperation(position, splitParent);
+
+    return this.executeSplitStep(position, splitParent);
   }
 
-  private executeSplitOperation(position: ModelPosition, splitParent = true) {
+  private executeSplitStep(position: ModelPosition, splitParent = true) {
     const range = new ModelRange(position, position);
     const op = new SplitOperation(
       undefined,
@@ -414,7 +414,7 @@ export default class Transaction {
       splitParent
     );
     this.createSnapshot();
-    return this.executeOperation(op).defaultRange.start;
+    return this.executeStep(new OperationStep(op)).defaultRange.start;
   }
 
   insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange {
@@ -430,7 +430,7 @@ export default class Transaction {
   delete(range: ModelRange): ModelRange {
     const op = new InsertOperation(undefined, this.cloneRange(range));
     this.createSnapshot();
-    return this.executeOperation(op).defaultRange;
+    return this.executeStep(new OperationStep(op)).defaultRange;
   }
   /**
    * Clone a range and set its root in the new state.
@@ -481,7 +481,7 @@ export default class Transaction {
       this.cloneRange(srcRange),
       this.clonePos(target)
     );
-    const resultRange = this.executeOperation(op).defaultRange;
+    const resultRange = this.executeStep(new OperationStep(op)).defaultRange;
     this.deleteNode(resultRange.end.nodeAfter()!);
 
     if (ensureBlock) {
@@ -523,7 +523,7 @@ export default class Transaction {
       'remove'
     );
     this.createSnapshot();
-    return this.executeOperation(op).defaultRange;
+    return this.executeStep(new OperationStep(op)).defaultRange;
   }
 
   registerCommand<N extends CommandName>(name: N, command: Commands[N]): void {
@@ -540,26 +540,7 @@ export default class Transaction {
     }
     return this._commandCache;
   }
-  // canExecuteCommand<C extends keyof CommandMap>(
-  //   commandName: C,
-  //   args: CommandArgs<C>
-  // ): boolean {
-  //   const command: Command<CommandArgs<CommandName>, CommandReturn<C>> = this
-  //     .workingCopy.commands[commandName];
-  //   return command.canExecute(this.workingCopy, args);
-  // }
-
-  // executeCommand<C extends CommandName>(
-  //   commandName: C,
-  //   args: CommandArgs<C>
-  // ): CommandReturn<C> | void {
-  //   const command: Command<CommandArgs<C>, CommandReturn<C> | void> = this
-  //     ._workingCopy.commands[commandName];
-  //   const result = command.execute({ transaction: this }, args);
-  //   return result;
-  // }
-  /**
-   * Restore a state from the history
+  /* Restore a state from the history
    * @param steps Amount of steps to look back
    * */
   restoreSnapshot(steps: number) {

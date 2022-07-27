@@ -4,9 +4,9 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
-import ContentOperation, { ContentOperationResult } from './content-operation';
+import Operation from './operation';
 
-export default class SplitOperation extends ContentOperation {
+export default class SplitOperation extends Operation {
   private _splitParent: boolean;
 
   constructor(
@@ -26,7 +26,7 @@ export default class SplitOperation extends ContentOperation {
     this._splitParent = value;
   }
 
-  execute(): ContentOperationResult {
+  execute() {
     if (this.range.collapsed) {
       const { position, mapper } = this.doSplit(this.range.start);
       const newRange = new ModelRange(position, position);

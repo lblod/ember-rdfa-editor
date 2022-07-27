@@ -206,8 +206,7 @@ export class EditorController implements Controller {
     return this._editor.state.config.get(key) || null;
   }
   setConfig(key: string, value: string | null): void {
-    const tr = this._editor.state.createTransaction();
-    tr.setConfig(key, value);
+    this.perform((tr) => tr.setConfig(key, value));
   }
   modelToView(node: ModelNode): Node | null {
     return this._editor.view.modelToView(this._editor.state, node);
