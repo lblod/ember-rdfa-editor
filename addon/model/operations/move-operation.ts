@@ -5,9 +5,9 @@ import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
-import ContentOperation, { ContentOperationResult } from './content-operation';
+import Operation from './operation';
 
-export default class MoveOperation extends ContentOperation {
+export default class MoveOperation extends Operation {
   private _targetPosition: ModelPosition;
 
   constructor(
@@ -31,7 +31,7 @@ export default class MoveOperation extends ContentOperation {
     return !this.targetPosition.isBetween(this.range.start, this.range.end);
   }
 
-  execute(): ContentOperationResult {
+  execute() {
     if (!this.canExecute()) {
       throw new OperationError('Cannot move to target inside source range');
     }

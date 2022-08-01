@@ -259,3 +259,9 @@ export function cloneState(state: State): State {
     config: state.config,
   });
 }
+
+export function cloneStateShallow(state: State): State {
+  return new SayState({
+    ...state,
+  });
+}

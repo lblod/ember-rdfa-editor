@@ -5,9 +5,9 @@ import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
 import RangeMapper from '@lblod/ember-rdfa-editor/model/range-mapper';
-import ContentOperation, { ContentOperationResult } from './content-operation';
+import Operation from './operation';
 
-export default class RemoveOperation extends ContentOperation {
+export default class RemoveOperation extends Operation {
   private _nodes: ModelNode[];
 
   constructor(
@@ -27,7 +27,7 @@ export default class RemoveOperation extends ContentOperation {
     this._nodes = value;
   }
 
-  execute(): ContentOperationResult {
+  execute() {
     const _markCheckNodes: ModelNode[] = [];
 
     const { mapper, removedNodes } = OperationAlgorithms.removeNew(this.range);

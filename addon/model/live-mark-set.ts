@@ -9,8 +9,8 @@ import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { TextMatch } from '@lblod/ember-rdfa-editor/utils/match-text';
 import { AttributeSpec } from './util/render-spec';
 import Transaction from '../core/transaction';
-import Operation from './operations/operation';
 import ModelRangeUtils from './util/model-range-utils';
+import Step from '../core/steps/step';
 
 export type LiveMarkSpec =
   | string
@@ -60,10 +60,9 @@ export default class LiveMarkSet {
     return this._liveMarkSpecs;
   }
 
-  private update = (transaction: Transaction, operations: Operation[]) => {
+  private update = (transaction: Transaction, steps: Step[]) => {
     const marksRegistry = transaction.workingCopy.marksRegistry;
-    if (!operations.some((operation) => operation.type === 'content-operation'))
-      return;
+    if (!steps.some(Step.isOperationStep)) return;
     const { matchesToAdd, matchesToRemove } = this.calculateRanges(
       transaction.getCurrentDataStore()
     );

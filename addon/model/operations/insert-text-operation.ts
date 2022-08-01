@@ -6,9 +6,9 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
-import ContentOperation, { ContentOperationResult } from './content-operation';
+import Operation from './operation';
 
-export default class InsertTextOperation extends ContentOperation {
+export default class InsertTextOperation extends Operation {
   private _text: string;
   private _marks: MarkSet;
 
@@ -39,7 +39,7 @@ export default class InsertTextOperation extends ContentOperation {
     this._marks = value;
   }
 
-  execute(): ContentOperationResult {
+  execute() {
     let newText = new ModelText(this.text);
     for (const mark of this.marks) {
       newText.addMark(mark.clone());

@@ -1,24 +1,39 @@
+import { EventWithName } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import EventBus, {
   AnyEventName,
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
-import { EventWithName } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import ModelRange from '../model-range';
+import RangeMapper from '../range-mapper';
 
-export type OperationType = 'content-operation' | 'selection-operation';
-export default abstract class Operation<R extends object = object> {
+export interface OperationResult {
+  mapper: RangeMapper;
+  defaultRange: ModelRange;
+}
+
+export default abstract class Operation {
+  private _range: ModelRange;
+  protected eventBus?: EventBus;
   protected logger: Logger;
 
-  private eventBus?: EventBus;
-
-  public abstract type: OperationType;
-
-  protected constructor(eventBus: EventBus | undefined) {
+  protected constructor(eventBus: EventBus | undefined, range: ModelRange) {
     this.eventBus = eventBus;
     this.logger = createLogger(this.constructor.name);
+    this._range = range;
   }
+
+  get range(): ModelRange {
+    return this._range;
+  }
+
+  set range(value: ModelRange) {
+    this._range = value;
+  }
+
+  abstract execute(): OperationResult;
 
   emit<E extends AnyEventName>(event: EventWithName<E>): void {
     if (this.eventBus) {
@@ -29,10 +44,4 @@ export default abstract class Operation<R extends object = object> {
       );
     }
   }
-
-  canExecute(): boolean {
-    return true;
-  }
-
-  abstract execute(): R;
 }
