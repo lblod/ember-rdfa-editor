@@ -8,7 +8,6 @@
 >
   {{#if this.toolbarController}}
     <Rdfa::EditorToolbar
-      @editor={{this.editor}}
       @showTextStyleButtons='{{if @toolbarOptions.showTextStyleButtons "true"}}'
       @showListButtons='{{if @toolbarOptions.showListButtons "true"}}'
       @showIndentButtons='{{if @toolbarOptions.showIndentButtons "true"}}'
@@ -25,6 +24,7 @@
           widget.componentName
           controller=widget.controller
           plugin=widget.plugin
+          widgetArgs=widget.widgetArgs
         }}
       {{/each}}
     </Rdfa::EditorToolbar>
@@ -64,6 +64,7 @@
                 widget.componentName
                 controller=widget.controller
                 plugin=widget.plugin
+                widgetArgs=widget.widgetArgs
               }}
             {{/each}}
           </Rdfa::PluginWrapper>
@@ -75,6 +76,7 @@
                 widget.componentName
                 controller=widget.controller
                 plugin=widget.plugin
+                widgetArgs=widget.widgetArgs
               }}
             </li>
           {{/each}}

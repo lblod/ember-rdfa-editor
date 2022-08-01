@@ -7,6 +7,11 @@ import ModelElement from '../model/model-element';
 import { logExecute } from '../utils/logging-utils';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertText: InsertTextCommand;
+  }
+}
 export interface InsertTextCommandArgs {
   text: string;
   range: ModelRange | null;
@@ -17,29 +22,25 @@ export interface InsertTextCommandArgs {
 export default class InsertTextCommand
   implements Command<InsertTextCommandArgs, void>
 {
-  name = 'insert-text';
-  arguments: string[] = ['text', 'range', 'marks', 'needsToWrite'];
-
   canExecute(): boolean {
     return true;
   }
 
   @logExecute
   execute(
-    { dispatch, state }: CommandContext,
+    { transaction }: CommandContext,
     {
       text,
       range,
-      marks = state.selection.lastRange &&
-      range?.sameAs(state.selection.lastRange)
-        ? state.selection.activeMarks
+      marks = transaction.workingCopy.selection.lastRange &&
+      range?.sameAs(transaction.workingCopy.selection.lastRange)
+        ? transaction.workingCopy.selection.activeMarks
         : range?.getMarks() || new MarkSet(),
     }: InsertTextCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-    const transaction = state.createTransaction();
 
     const newLines = text.matchAll(/\n/g);
     let resultRange = range;
@@ -72,6 +73,5 @@ export default class InsertTextCommand
     }
     resultRange.collapse(false);
     transaction.selectRange(resultRange);
-    dispatch(transaction);
   }
 }

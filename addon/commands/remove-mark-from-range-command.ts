@@ -5,29 +5,31 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { AttributeSpec } from '../model/util/render-spec';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeMarkFromRange: RemoveMarkFromRangeCommand;
+  }
+}
 export interface RemoveMarkFromRangeCommandArgs {
   range: ModelRange;
   markName: string;
   attributes: AttributeSpec;
 }
+
 export default class RemoveMarkFromRangeCommand
   implements Command<RemoveMarkFromRangeCommandArgs, void>
 {
-  name = 'remove-mark-from-range';
-  arguments: string[] = ['range', 'markName', 'attributes'];
   canExecute(): boolean {
     return true;
   }
 
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { range, markName, attributes }: RemoveMarkFromRangeCommandArgs
   ): void {
-    const tr = state.createTransaction();
-    const spec = state.marksRegistry.lookupMark(markName);
+    const spec = transaction.workingCopy.marksRegistry.lookupMark(markName);
     if (spec) {
-      tr.removeMark(range, spec, attributes);
-      dispatch(tr);
+      transaction.removeMark(range, spec, attributes);
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);
     }

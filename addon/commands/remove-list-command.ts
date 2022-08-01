@@ -10,28 +10,32 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeList: RemoveListCommand;
+  }
+}
 export interface RemoveListCommandArgs {
   range?: ModelRange | null;
 }
+
 export default class RemoveListCommand
   implements Command<RemoveListCommandArgs, void>
 {
-  name = 'remove-list';
-  arguments: string[] = ['range'];
-
   canExecute(): boolean {
     return true;
   }
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
-    { range = state.selection.lastRange }: RemoveListCommandArgs
+    { transaction }: CommandContext,
+    {
+      range = transaction.workingCopy.selection.lastRange,
+    }: RemoveListCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-    const tr = state.createTransaction();
-    const clonedRange = tr.cloneRange(range);
+    const clonedRange = transaction.cloneRange(range);
 
     const endLis = clonedRange.end.findAncestors(ModelNodeUtils.isListElement);
     const highestEndLi = endLis[endLis.length - 1];
@@ -66,7 +70,7 @@ export default class RemoveListCommand
     // Split the surrounding lists, such that everything before and after the original range
     // remains a valid list with the same structure.
     // Resulting range contains everything in between.
-    const newRange = tr.splitRangeUntilElements(
+    const newRange = transaction.splitRangeUntilElements(
       new ModelRange(startSplit, endSplit),
       startLimit,
       endLimit
@@ -84,7 +88,7 @@ export default class RemoveListCommand
     let resultRange;
     for (const node of nodesInRange) {
       if (ModelNodeUtils.isListRelated(node)) {
-        resultRange = tr.unwrap(node, true);
+        resultRange = transaction.unwrap(node, true);
       } else if (ModelNode.isModelText(node)) {
         unwrappedNodes.push(node);
       }
@@ -97,12 +101,11 @@ export default class RemoveListCommand
       const end = ModelPosition.fromAfterNode(
         unwrappedNodes[unwrappedNodes.length - 1]
       );
-      tr.selectRange(new ModelRange(start, end));
+      transaction.selectRange(new ModelRange(start, end));
     } else if (resultRange) {
-      tr.selectRange(resultRange);
+      transaction.selectRange(resultRange);
     } else {
       throw new SelectionError('No sensible selection possible');
     }
-    dispatch(tr);
   }
 }

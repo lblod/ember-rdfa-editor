@@ -1,45 +1,46 @@
-import Command, {
-  CommandMap,
-  CommandName,
-} from '@lblod/ember-rdfa-editor/commands/command';
-import {
-  AnyEventName,
-  EditorEventListener,
-  ListenerConfig,
-} from '@lblod/ember-rdfa-editor/utils/event-bus';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import LiveMarkSet, {
+  LiveMarkSetArgs,
+} from '@lblod/ember-rdfa-editor/model/live-mark-set';
+import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
+import ModelElement, {
+  ElementType,
+} from '@lblod/ember-rdfa-editor/model/model-element';
 import {
   ModelRangeFactory,
   RangeFactory,
 } from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import Datastore from '@lblod/ember-rdfa-editor/model/util/datastore/datastore';
 import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import ModelElement, {
-  ElementType,
-} from '@lblod/ember-rdfa-editor/model/model-element';
-import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
-import LiveMarkSet, {
-  LiveMarkSetArgs,
-} from '@lblod/ember-rdfa-editor/model/live-mark-set';
-import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
-import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
-import { InlineComponentSpec } from './inline-components/model-inline-component';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import {
+  AnyEventName,
+  EditorEventListener,
+  ListenerConfig,
+} from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { Editor } from '../core/editor';
-import Transaction from '../core/transaction';
-import { CommandArgs, CommandReturn } from '../core/state';
-import { AttributeSpec } from './util/render-spec';
+import State from '../core/state';
+import Transaction, { TransactionListener } from '../core/transaction';
+import { View } from '../core/view';
+import { InlineComponentSpec } from './inline-components/model-inline-component';
+import ModelNode from './model-node';
 import MapUtils from './util/map-utils';
+import { AttributeSpec } from './util/render-spec';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
 export interface WidgetSpec {
   componentName: string;
   desiredLocation: WidgetLocation;
-  plugin: EditorPlugin;
+  /**
+   * @deprecated use widgetArgs instead
+   * */
+  plugin?: EditorPlugin;
+  widgetArgs?: unknown;
 }
 
 export type InternalWidgetSpec = WidgetSpec & {
@@ -69,6 +70,10 @@ export default interface Controller {
 
   get marksRegistry(): MarksRegistry;
 
+  get view(): View;
+
+  get currentState(): State;
+
   getMarksFor(owner: string): Set<Mark>;
 
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet;
@@ -77,35 +82,19 @@ export default interface Controller {
 
   createTransaction(): Transaction;
 
-  dispatchTransaction(tr: Transaction): void;
+  perform<R>(action: (transaction: Transaction) => R): R;
 
-  executeCommand<N extends CommandName>(
-    commandName: N,
-    args: CommandArgs<N>
-  ): CommandReturn<N>;
+  dryRun<R>(action: (transaction: Transaction) => R): R;
 
-  executeCommand<N extends CommandName>(
-    commandName: N,
-    ...args: unknown[]
-  ): CommandReturn<N>;
-
-  canExecuteCommand<N extends CommandName>(
-    commandName: N,
-    args: CommandArgs<N>
-  ): boolean;
-
-  canExecuteCommand<N extends CommandName>(
-    commandName: N,
-    ...args: unknown[]
-  ): boolean;
-
-  registerCommand<A extends unknown[], R>(command: Command<A, R>): void;
+  dispatchTransaction(tr: Transaction, updateView?: boolean): void;
 
   registerWidget(spec: WidgetSpec): void;
 
   registerMark(spec: MarkSpec): void;
 
   registerInlineComponent(component: InlineComponentSpec): void;
+
+  modelToView(node: ModelNode): Node | null;
 
   onEvent<E extends AnyEventName>(
     eventName: E,
@@ -118,6 +107,14 @@ export default interface Controller {
     callback: EditorEventListener<E>,
     config?: ListenerConfig
   ): void;
+
+  getConfig(key: string): string | null;
+
+  setConfig(key: string, value: string | null): void;
+
+  addTransactionListener(callback: TransactionListener): void;
+
+  removeTransactionListener(callback: TransactionListener): void;
 }
 
 export class EditorController implements Controller {
@@ -151,20 +148,39 @@ export class EditorController implements Controller {
   get modelRoot(): ModelElement {
     return this._editor.state.document;
   }
+  get domRoot(): Element {
+    return this._editor.view.domRoot;
+  }
+
   get marksRegistry(): MarksRegistry {
     return this._editor.state.marksRegistry;
+  }
+  get view(): View {
+    return this._editor.view;
+  }
+
+  get currentState(): State {
+    return this._editor.state;
   }
   createTransaction(): Transaction {
     return this._editor.state.createTransaction();
   }
-  dispatchTransaction(tr: Transaction): void {
-    this._editor.dispatchTransaction(tr);
+  perform<R>(action: (transaction: Transaction) => R): R {
+    const tr = this.createTransaction();
+    const result = action(tr);
+    this.dispatchTransaction(tr);
+    return result;
   }
-  executeCommand<N extends keyof CommandMap>(
-    commandName: N,
-    args: CommandArgs<N>
-  ): ReturnType<CommandMap[N]['execute']> {
-    return this._editor.executeCommand(commandName, args);
+  dryRun<R>(action: (transaction: Transaction) => R): R {
+    const tr = this.createTransaction();
+    const result = action(tr);
+    return result;
+  }
+  dispatchTransaction(tr: Transaction, updateView = true): void {
+    this._editor.dispatchTransaction(tr, updateView);
+  }
+  createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
+    return new LiveMarkSet(this, args);
   }
 
   createModelElement(type: ElementType): ModelElement {
@@ -174,23 +190,8 @@ export class EditorController implements Controller {
     this._editor.state.inlineComponentsRegistry.registerComponent(component);
     // this._rawEditor.registerComponent(component);
   }
-  canExecuteCommand<N extends keyof CommandMap>(
-    commandName: N,
-    args: CommandArgs<N>
-  ): boolean {
-    return this._editor.canExecuteCommand(commandName, args);
-  }
-  getMutator(): ImmediateModelMutator {
-    throw new Error('Method not implemented.');
-  }
   getMarksFor(owner: string): Set<Mark<AttributeSpec>> {
     return this.marksRegistry.getMarksFor(owner);
-  }
-  createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
-    return new LiveMarkSet(this, args);
-  }
-  registerCommand<A extends unknown[], R>(command: Command<A, R>): void {
-    throw new Error('Method not implemented.');
   }
   registerWidget(spec: WidgetSpec): void {
     MapUtils.setOrPush(this._editor.state.widgetMap, spec.desiredLocation, {
@@ -200,6 +201,15 @@ export class EditorController implements Controller {
   }
   registerMark(spec: MarkSpec<AttributeSpec>): void {
     this.marksRegistry.registerMark(spec);
+  }
+  getConfig(key: string): string | null {
+    return this._editor.state.config.get(key) || null;
+  }
+  setConfig(key: string, value: string | null): void {
+    this.perform((tr) => tr.setConfig(key, value));
+  }
+  modelToView(node: ModelNode): Node | null {
+    return this._editor.view.modelToView(this._editor.state, node);
   }
   onEvent<E extends string>(
     eventName: E,
@@ -215,36 +225,12 @@ export class EditorController implements Controller {
   ): void {
     this._editor.offEvent(eventName, callback, config);
   }
-}
 
-export class EditorControllerCompat extends EditorController {
-  executeCommand<N extends keyof CommandMap>(
-    commandName: N,
-    ...args: unknown[]
-  ): ReturnType<CommandMap[N]['execute']> {
-    const command: Command<CommandArgs<N>, CommandReturn<N>> = this._editor
-      .state.commands[commandName];
-    const objectArgs = parsePositionalToNamed(command.arguments, ...args);
-    return super.executeCommand(commandName, objectArgs);
+  addTransactionListener(callback: TransactionListener): void {
+    this._editor.addTransactionListener(callback);
   }
 
-  canExecuteCommand<N extends keyof CommandMap>(
-    commandName: N,
-    ...args: unknown[]
-  ): boolean {
-    const command: Command<CommandArgs<N>, CommandReturn<N>> = this._editor
-      .state.commands[commandName];
-    const objectArgs = parsePositionalToNamed(command.arguments, ...args);
-    return super.canExecuteCommand(commandName, objectArgs);
+  removeTransactionListener(callback: TransactionListener): void {
+    this._editor.removeTransactionListener(callback);
   }
-}
-
-function parsePositionalToNamed(argument_names: string[], ...args: unknown[]) {
-  let objectArgs: { [key: string]: unknown } = {};
-  objectArgs = {};
-  for (let i = 0; i < Math.min(argument_names.length, args.length); i++) {
-    const k = argument_names[i];
-    objectArgs[k] = args[i];
-  }
-  return objectArgs;
 }

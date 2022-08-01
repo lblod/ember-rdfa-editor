@@ -83,6 +83,7 @@ export function testState({
   const baseIRI = 'http://example.org';
   return new SayState({
     document,
+    transactionListeners: [],
     commands,
     marksRegistry,
     inlineComponentsRegistry,
@@ -112,20 +113,14 @@ export interface CommandResult<R> {
 export function makeTestExecute<A, R>(command: Command<A, R>) {
   return function (state: State, args: A): CommandResult<R> {
     let resultState: State | null = null;
-    function dispatch(transaction: Transaction): State {
-      resultState = transaction.apply();
-      return resultState;
-    }
+    const transaction = state.createTransaction();
     const resultValue = command.execute(
       {
-        dispatch,
-        state,
+        transaction,
       },
       args
     );
-    if (!resultState) {
-      resultState = state;
-    }
+    resultState = transaction.apply();
     return { resultValue, resultState };
   };
 }

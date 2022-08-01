@@ -1,3 +1,5 @@
+import ArrayUtils from './array-utils';
+
 type HashFunction<I> = (item: I) => unknown;
 
 interface HashSetConfig<I> {
@@ -105,11 +107,11 @@ export default class HashSet<I> implements Set<I> {
     return this.items.values();
   }
 
-  intersection(other: HashSet<I>): this {
+  intersection(...others: HashSet<I>[]): this {
     const result = this.clone();
     result.clear();
     for (const item of this) {
-      if (other.has(item)) {
+      if (ArrayUtils.all(others, (e) => e.has(item))) {
         result.add(item);
       }
     }

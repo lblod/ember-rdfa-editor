@@ -13,7 +13,13 @@ import {
   TypeAssertionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import State from '../core/state';
 import ModelPosition from '../model/model-position';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    unindentList: UnindentListCommand;
+  }
+}
 export interface UnindentListCommandArgs {
   range?: ModelRange | null;
 }
@@ -21,13 +27,7 @@ export interface UnindentListCommandArgs {
 export default class UnindentListCommand
   implements Command<UnindentListCommandArgs, void>
 {
-  name = 'unindent-list';
-  arguments: string[] = ['range'];
-
-  canExecute(
-    { state }: CommandContext,
-    { range = state.selection.lastRange }
-  ): boolean {
+  canExecute(state: State, { range = state.selection.lastRange }): boolean {
     if (!range) {
       return false;
     }
@@ -57,14 +57,15 @@ export default class UnindentListCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
-    { range = state.selection.lastRange }: UnindentListCommandArgs
+    { transaction }: CommandContext,
+    {
+      range = transaction.workingCopy.selection.lastRange,
+    }: UnindentListCommandArgs
   ): void {
-    const tr = state.createTransaction();
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-    const cloneRange = tr.cloneRange(range);
+    const cloneRange = transaction.cloneRange(range);
 
     const treeWalker = ModelRangeUtils.findModelNodes(
       cloneRange,
@@ -123,13 +124,13 @@ export default class UnindentListCommand
 
           if (parent.length === 1) {
             // Remove parent ul/ol if node is only child.
-            tr.deleteNode(li);
+            transaction.deleteNode(li);
             const positionToInsert = ModelPosition.fromInElement(
               greatGrandParent,
               grandParent.index + 1
             );
-            tr.insertAtPosition(positionToInsert, li);
-            tr.deleteNode(parent);
+            transaction.insertAtPosition(positionToInsert, li);
+            transaction.deleteNode(parent);
           } else {
             if (liIndex === null) {
               throw new IllegalExecutionStateError(
@@ -140,14 +141,14 @@ export default class UnindentListCommand
 
             // Remove empty uls.
             if (split.left.length === 0) {
-              tr.deleteNode(split.left);
+              transaction.deleteNode(split.left);
             }
 
             if (split.right.length >= 1) {
               //Select li's AFTER the li that is unindenting
               const otherLis = split.right.children.slice(1);
               //Remove unindenting li and all next ones, they are relocating
-              tr.deleteNode(split.right);
+              transaction.deleteNode(split.right);
 
               //Add a new sublist to the li of the elements that previously followed that li as a child element
               const sublist = new ModelElement(parent.type);
@@ -155,13 +156,15 @@ export default class UnindentListCommand
               li.addChild(sublist);
 
               //After the parent li, add the unindenting li (and its sublist at once)
-              tr.insertAtPosition(ModelPosition.fromAfterNode(grandParent), li);
+              transaction.insertAtPosition(
+                ModelPosition.fromAfterNode(grandParent),
+                li
+              );
             }
           }
         }
       }
     }
-    dispatch(tr);
   }
 
   private relatedChunks(

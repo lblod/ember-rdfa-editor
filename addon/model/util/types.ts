@@ -12,8 +12,8 @@ export interface Cloneable<T> {
 }
 
 export enum Direction {
-  FORWARDS,
-  BACKWARDS,
+  FORWARDS = 'forwards',
+  BACKWARDS = 'backwards',
 }
 
 export enum RelativePosition {
@@ -44,3 +44,4 @@ export function isTextOrElement(
     (node.nodeType === Node.TEXT_NODE || node.nodeType === node.ELEMENT_NODE)
   );
 }
+export type ValuesOf<T> = T[keyof T];

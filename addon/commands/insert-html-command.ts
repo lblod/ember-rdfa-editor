@@ -7,25 +7,31 @@ import HtmlReader, {
 } from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import ModelRange from '../model/model-range';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertHtml: InsertHtmlCommand;
+  }
+}
 export interface InsertHtmlCommandArgs {
   htmlString: string;
   range?: ModelRange | null;
 }
+
 export default class InsertHtmlCommand
   implements Command<InsertHtmlCommandArgs, void>
 {
-  name = 'insert-html';
-  arguments = ['htmlString', 'range'];
-
   canExecute(): boolean {
     return true;
   }
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
 
-    { htmlString, range = state.selection.lastRange }: InsertHtmlCommandArgs
+    {
+      htmlString,
+      range = transaction.workingCopy.selection.lastRange,
+    }: InsertHtmlCommandArgs
   ) {
     if (!range) {
       return;
@@ -42,9 +48,10 @@ export default class InsertHtmlCommand
       const parsed = reader.read(
         node,
         new HtmlReaderContext({
-          marksRegistry: state.marksRegistry,
+          marksRegistry: transaction.workingCopy.marksRegistry,
           shouldConvertWhitespace: true,
-          inlineComponentsRegistry: state.inlineComponentsRegistry,
+          inlineComponentsRegistry:
+            transaction.workingCopy.inlineComponentsRegistry,
         })
       );
       if (parsed) {
@@ -52,9 +59,7 @@ export default class InsertHtmlCommand
       }
     });
 
-    const tr = state.createTransaction();
-    const newRange = tr.insertNodes(range, ...modelNodes);
-    tr.selectRange(newRange);
-    dispatch(tr);
+    const newRange = transaction.insertNodes(range, ...modelNodes);
+    transaction.selectRange(newRange);
   }
 }

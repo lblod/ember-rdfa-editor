@@ -5,33 +5,34 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { Serializable } from '../model/util/render-spec';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    addMarkToRange: AddMarkToRangeCommand;
+  }
+}
 export interface AddMarkToRangeCommandArgs {
   range: ModelRange;
   markName: string;
   markAttributes?: Record<string, Serializable>;
 }
+
 export default class AddMarkToRangeCommand
   implements Command<AddMarkToRangeCommandArgs, void>
 {
-  name = 'add-mark-to-range';
-  arguments = ['range', 'markName', 'markAttributes'];
-
   canExecute(): boolean {
     return true;
   }
 
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { range, markName, markAttributes = {} }: AddMarkToRangeCommandArgs
   ): void {
-    const spec = state.marksRegistry.lookupMark(markName);
-    const tr = state.createTransaction();
+    const spec = transaction.workingCopy.marksRegistry.lookupMark(markName);
     if (spec) {
-      const resultRange = tr.addMark(range, spec, markAttributes);
-      tr.selectRange(resultRange);
+      const resultRange = transaction.addMark(range, spec, markAttributes);
+      transaction.selectRange(resultRange);
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);
     }
-    dispatch(tr);
   }
 }

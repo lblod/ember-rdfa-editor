@@ -341,7 +341,7 @@ export default class ModelElement
    * or right after that offset
    * @param offset
    */
-  offsetToIndex(offset: number, inclusive = true): number {
+  offsetToIndex(offset: number): number {
     if (offset < 0 || offset > this.getMaxOffset()) {
       throw new OffsetOutOfRangeError(offset, this.getMaxOffset());
     }
@@ -350,10 +350,7 @@ export default class ModelElement
     let indexCounter = 0;
     for (const child of this.children) {
       offsetCounter += child.offsetSize;
-      if (
-        (inclusive && offsetCounter > offset) ||
-        (!inclusive && offsetCounter >= offset)
-      ) {
+      if (offsetCounter > offset) {
         return indexCounter;
       }
       indexCounter++;

@@ -1,5 +1,4 @@
 import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import RemoveTableRowCommand from '@lblod/ember-rdfa-editor/commands/remove-table-row-command';
 import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
@@ -8,7 +7,6 @@ import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 module('Unit | commands | remove-table-row-command-test', function () {
   const command = new RemoveTableRowCommand();
   const executeCommand = makeTestExecute(command);
-
 
   test('removes only row', function (assert) {
     // language=XML
@@ -41,7 +39,6 @@ module('Unit | commands | remove-table-row-command-test', function () {
     const initialState = stateWithRange(initial, range);
     const { resultState } = executeCommand(initialState, {});
     assert.true(resultState.document.sameAs(expected));
-
   });
 
   test('removes first row', function (assert) {

@@ -4,6 +4,11 @@ import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors'
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Command, { CommandContext } from './command';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeTableRow: RemoveTableRowCommand;
+  }
+}
 export interface RemoveTableRowCommandArgs {
   selection?: ModelSelection;
 }
@@ -11,17 +16,14 @@ export interface RemoveTableRowCommandArgs {
 export default class RemoveTableRowCommand
   implements Command<RemoveTableRowCommandArgs, void>
 {
-  name = 'remove-table-row';
-  arguments: string[] = ['selection'];
-
   canExecute(): boolean {
     return true;
   }
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
-    { selection = state.selection }: RemoveTableRowCommandArgs
+    { transaction }: CommandContext,
+    { selection = transaction.workingCopy.selection }: RemoveTableRowCommandArgs
   ): void {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
@@ -44,9 +46,8 @@ export default class RemoveTableRowCommand
     }
 
     const tableDimensions = table.getDimensions();
-    const tr = state.createTransaction();
     if (position.y === 0 && tableDimensions.y === 1) {
-      table.removeTable(tr);
+      table.removeTable(transaction);
     } else {
       const cellYToSelect =
         position.y === tableDimensions.y - 1 ? position.y - 1 : position.y;
@@ -54,10 +55,9 @@ export default class RemoveTableRowCommand
       const cellToSelect = table.getCell(position.x, cellYToSelect);
 
       if (cellToSelect) {
-        tr.collapseIn(cellToSelect);
+        transaction.collapseIn(cellToSelect);
       }
-      table.removeRow(tr, position.y);
+      table.removeRow(transaction, position.y);
     }
-    dispatch(tr);
   }
 }

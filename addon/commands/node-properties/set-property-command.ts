@@ -3,27 +3,29 @@ import Command, {
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    setProperty: SetPropertyCommand;
+  }
+}
 export interface SetPropertyCommandArgs {
   property: string;
   value: string;
   element: ModelElement;
 }
+
 export default class SetPropertyCommand
   implements Command<SetPropertyCommandArgs, void>
 {
-  name = 'set-property';
-
   canExecute(): boolean {
     return true;
   }
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { property, value, element }: SetPropertyCommandArgs
   ) {
-    const tr = state.createTransaction();
-    tr.setProperty(element, property, value);
-    dispatch(tr);
+    transaction.setProperty(element, property, value);
   }
 }

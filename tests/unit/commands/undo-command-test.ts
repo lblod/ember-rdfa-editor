@@ -17,9 +17,6 @@ module('Unit | commands | undo-command-test', function () {
     `;
 
     const initialState = testState({ document: initial });
-    const { root: next } = vdom`
-      <modelRoot/>
-    `;
 
     const tr = initialState.createTransaction();
     tr.insertNodes(ModelRange.fromInNode(initial));
@@ -38,7 +35,6 @@ module('Unit | commands | undo-command-test', function () {
     const initialState = testState({ document: initial });
 
     const {
-      root: next,
       textNodes: { text },
     } = vdom`
       <modelRoot>

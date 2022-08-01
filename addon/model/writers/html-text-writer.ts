@@ -1,5 +1,4 @@
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { TextView } from '@lblod/ember-rdfa-editor/model/node-view';
 import {
@@ -13,7 +12,6 @@ import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
  * This takes care of converting the textattributes into HTML elements
  */
 export default class HtmlTextWriter implements Writer<ModelText, TextView> {
-
   write(modelNode: ModelText): TextView {
     const contentRoot: Text = new Text(modelNode.content);
     let current: TextOrElement = contentRoot;

@@ -1,6 +1,7 @@
 import State from '../core/state';
 import ModelRange from '../model/model-range';
 import SelectionReader from '../model/readers/selection-reader';
+import { SelectionError } from '../utils/errors';
 
 export function eventTargetRange(
   state: State,
@@ -13,4 +14,19 @@ export function eventTargetRange(
     viewRoot,
     event.getTargetRanges()[0]
   )!;
+}
+
+export function deleteTargetRange(state: State, direction: number) {
+  let range = state.selection.lastRange;
+  if (range) {
+    if (range.collapsed) {
+      const shifted = range.start.shiftedVisually(direction);
+      range =
+        direction === -1
+          ? new ModelRange(shifted, range.start)
+          : new ModelRange(range.start, shifted);
+    }
+    return range;
+  }
+  throw new SelectionError();
 }

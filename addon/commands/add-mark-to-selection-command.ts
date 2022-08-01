@@ -11,30 +11,34 @@ import { AttributeSpec, Serializable } from '../model/util/render-spec';
 import { CORE_OWNER } from '../model/util/constants';
 import { SelectionChangedEvent } from '../utils/editor-event';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    addMarkToSelection: AddMarkToSelectionCommand;
+  }
+}
 export interface AddMarkToSelectionCommandArgs {
   markName: string;
   markAttributes?: Record<string, Serializable>;
 }
+
 export default class AddMarkToSelectionCommand
   implements Command<AddMarkToSelectionCommandArgs, void>
 {
-  arguments = ['markName', 'markAttributes'];
-  name = 'add-mark-to-selection';
-
   canExecute(): boolean {
     return true;
   }
 
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { markName, markAttributes = {} }: AddMarkToSelectionCommandArgs
   ): void {
-    const selection = state.selection;
-    const spec = state.marksRegistry.lookupMark(markName);
-    const tr = state.createTransaction();
+    const selection = transaction.workingCopy.selection;
+    const spec = transaction.workingCopy.marksRegistry.lookupMark(markName);
     if (spec) {
       if (selection.isCollapsed) {
-        tr.addMarkToSelection(new Mark<AttributeSpec>(spec, markAttributes));
+        transaction.addMarkToSelection(
+          new Mark<AttributeSpec>(spec, markAttributes)
+        );
 
         // TODO
         // this.model.rootNode.focus();
@@ -43,18 +47,17 @@ export default class AddMarkToSelectionCommand
         if (!ModelSelection.isWellBehaved(selection)) {
           throw new MisbehavedSelectionError();
         }
-        const resultRange = tr.addMark(
+        const resultRange = transaction.addMark(
           selection.lastRange,
           spec,
           markAttributes
         );
-        tr.selectRange(resultRange);
+        transaction.selectRange(resultRange);
       }
-      const newState = dispatch(tr);
-      state.eventBus.emit(
+      transaction.workingCopy.eventBus.emit(
         new SelectionChangedEvent({
           owner: CORE_OWNER,
-          payload: newState.selection,
+          payload: transaction.workingCopy.selection,
         })
       );
     } else {

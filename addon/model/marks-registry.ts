@@ -72,7 +72,7 @@ export default class MarksRegistry {
     for (const node of nodes) {
       const walker = GenTreeWalker.fromSubTree({
         root: node,
-        filter: toFilterSkipFalse(ModelNode.isModelText),
+        filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       });
       for (const textNode of walker.nodes() as Generator<ModelText>) {
         for (const mark of textNode.marks) {
@@ -96,7 +96,7 @@ export default class MarksRegistry {
     for (const node of nodes) {
       const walker = GenTreeWalker.fromSubTree({
         root: node,
-        filter: toFilterSkipFalse(ModelNode.isModelText),
+        filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       });
       for (const textNode of walker.nodes() as Generator<ModelText>) {
         for (const mark of textNode.marks) {

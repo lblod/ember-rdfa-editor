@@ -3,6 +3,11 @@ import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeMark: RemoveMarkCommand;
+  }
+}
 export interface RemoveMarkCommandArgs {
   mark: Mark;
 }
@@ -10,14 +15,11 @@ export interface RemoveMarkCommandArgs {
 export default class RemoveMarkCommand
   implements Command<RemoveMarkCommandArgs, boolean>
 {
-  name = 'remove-mark';
-  arguments: string[] = ['mark'];
-
   canExecute(): boolean {
     return true;
   }
   execute(
-    { state, dispatch }: CommandContext,
+    { transaction }: CommandContext,
     { mark }: RemoveMarkCommandArgs
   ): boolean {
     const node = mark.node;
@@ -25,13 +27,11 @@ export default class RemoveMarkCommand
       if (!node.hasMark(mark)) {
         return false;
       }
-      const tr = state.createTransaction();
-      tr.removeMark(
+      transaction.removeMark(
         ModelRange.fromAroundNode(node),
         mark.spec,
         mark.attributes
       );
-      dispatch(tr);
       return true;
     }
     return false;

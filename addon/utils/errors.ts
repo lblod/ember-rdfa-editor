@@ -1,5 +1,3 @@
-import { Manipulation } from '@lblod/ember-rdfa-editor/editor/input-handlers/manipulation';
-
 export abstract class CustomError extends Error {
   constructor(message?: string) {
     super(message);
@@ -103,10 +101,9 @@ export class ParseError extends CustomError {}
  * Thrown when a method is invoked with an argument which it can not reasonably deal with
  */
 export class IllegalArgumentError extends CustomError {}
-
-export class UnsupportedManipulationError extends CustomError {
-  constructor(manipulation: Manipulation) {
-    super(`Manipulation with type ${manipulation.type} not supported here.`);
+export class UnkownCommandError extends IllegalArgumentError {
+  constructor(name: string) {
+    super(`Could not find command with name ${name}`);
   }
 }
 

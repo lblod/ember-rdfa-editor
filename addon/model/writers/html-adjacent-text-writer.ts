@@ -54,7 +54,7 @@ export default class HtmlAdjacentTextWriter
             marksInCommon,
             marksToIgnore
           );
-          views.forEach((view) => {
+          views.forEach(() => {
             result.push(parent);
           });
         }
@@ -79,7 +79,7 @@ export default class HtmlAdjacentTextWriter
         marksInCommon,
         marksToIgnore
       );
-      views.forEach((view) => {
+      views.forEach(() => {
         result.push(parent);
       });
     }

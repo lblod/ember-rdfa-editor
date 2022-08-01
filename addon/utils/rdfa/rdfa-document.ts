@@ -59,7 +59,10 @@ export default class RdfaDocumentController
   set htmlContent(html: string) {
     const root = this._editor.state.document;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
-    this._editor.executeCommand('insert-html', { htmlString: html, range });
+    this.perform((tr) => {
+      console.log(JSON.stringify(tr.commands));
+      tr.commands.insertHtml({ htmlString: html, range });
+    });
   }
 
   get xmlContent() {
@@ -69,7 +72,7 @@ export default class RdfaDocumentController
   set xmlContent(xml: string) {
     const root = this._editor.state.document;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
-    this.executeCommand('insert-xml', { xml, range });
+    this.perform((tr) => tr.commands.insertXml({ xml, range }));
   }
 
   get xmlContentPrettified() {

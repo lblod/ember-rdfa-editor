@@ -2,15 +2,22 @@ import SetTextPropertyCommand from '@lblod/ember-rdfa-editor/commands/text-prope
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { CommandContext } from '../command';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeItalic: RemoveItalicCommand;
+  }
+}
 export default class RemoveItalicCommand extends SetTextPropertyCommand<void> {
-  name = 'remove-italic';
   canExecute(): boolean {
     return true;
   }
   @logExecute
-  execute({ state, dispatch }: CommandContext) {
-    const tr = state.createTransaction();
-    super.setTextProperty(tr, 'italic', false, state.selection);
-    dispatch(tr);
+  execute({ transaction }: CommandContext) {
+    super.setTextProperty(
+      transaction,
+      'italic',
+      false,
+      transaction.workingCopy.selection
+    );
   }
 }

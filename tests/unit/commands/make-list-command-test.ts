@@ -134,4 +134,54 @@ module('Unit | commands | make-list-command', function () {
     const { resultState } = executeCommand(initialState, { listType: 'ul' });
     assert.true(resultState.document.sameAs(expected));
   });
+  test('create list from line with link in it', function (assert) {
+    const {
+      root: initial,
+      textNodes: { link },
+    } = vdom`
+      <modelRoot>
+        <text>line before list</text><a><text __id="link">link</text></a>
+      </modelRoot>
+    `;
+
+    const { root: expected } = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+            <text>line before list</text><a><text __id="link">link</text></a>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    const range = ModelRange.fromInTextNode(link, 2, 2);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
+  });
+  test('create list from line with nested nodes', function (assert) {
+    const {
+      root: initial,
+      textNodes: { link2 },
+    } = vdom`
+      <modelRoot>
+        <text>first</text><a><text>link1</text></a><text>second</text><a><span><text __id="link2">link2</text></span></a><text>third</text>
+      </modelRoot>
+    `;
+
+    const { root: expected } = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+          <text>first</text><a><text>link1</text></a><text>second</text><a><span><text __id="link2">link2</text></span></a><text>third</text>
+          </li>
+        </ul>
+      </modelRoot>
+    `;
+
+    const range = ModelRange.fromInTextNode(link2, 2, 2);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
+  });
 });

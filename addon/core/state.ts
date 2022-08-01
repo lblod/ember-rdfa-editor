@@ -1,7 +1,4 @@
-import {
-  CommandMap,
-  CommandName,
-} from '@lblod/ember-rdfa-editor/commands/command';
+import { Commands } from '@lblod/ember-rdfa-editor';
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
@@ -22,6 +19,10 @@ import InsertTableRowBelowCommand from '../commands/insert-table-row-below-comma
 import InsertXmlCommand from '../commands/insert-xml-command';
 import MakeListCommand from '../commands/make-list-command';
 import MatchTextCommand from '../commands/match-text-command';
+import AddTypeCommand from '../commands/node-properties/add-type-command';
+import RemovePropertyCommand from '../commands/node-properties/remove-property-command';
+import RemoveTypeCommand from '../commands/node-properties/remove-type-command';
+import SetPropertyCommand from '../commands/node-properties/set-property-command';
 import ReadSelectionCommand from '../commands/read-selection-command';
 import RemoveCommand from '../commands/remove-command';
 import RemoveComponentCommand from '../commands/remove-component-command';
@@ -48,13 +49,14 @@ import { underlineMarkSpec } from '../plugins/basic-styles/marks/underline';
 import { isElement, isTextNode } from '../utils/dom-helpers';
 import { NotImplementedError } from '../utils/errors';
 import EventBus from '../utils/event-bus';
-import Transaction from './transaction';
+import Transaction, { TransactionListener } from './transaction';
 
 export interface StateArgs {
   document: ModelElement;
   selection: ModelSelection;
   plugins: InitializedPlugin[];
-  commands: CommandMap;
+  transactionListeners: TransactionListener[];
+  commands: Partial<Commands>;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState?: State | null;
@@ -64,6 +66,7 @@ export interface StateArgs {
   baseIRI: string;
   keymap?: KeyMap;
   eventBus: EventBus;
+  config?: Map<string, string | null>;
 }
 export interface NodeParseResult {
   type: 'mark' | 'text' | 'element';
@@ -81,7 +84,7 @@ export default interface State {
   document: ModelElement;
   selection: ModelSelection;
   plugins: InitializedPlugin[];
-  commands: CommandMap;
+  commands: Partial<Commands>;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState: State | null;
@@ -93,16 +96,19 @@ export default interface State {
   createTransaction(): Transaction;
   parseNode(node: Node): NodeParseResult;
   eventBus: EventBus;
+  config: Map<string, string | null>;
+  transactionListeners: TransactionListener[];
 }
 export class SayState implements State {
   document: ModelElement;
   selection: ModelSelection;
   plugins: InitializedPlugin[];
-  commands: CommandMap;
+  commands: Partial<Commands>;
   datastore: Datastore;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
   eventBus: EventBus;
+  transactionListeners: TransactionListener[];
   /**
    * The previous "relevant" state. This is not necessarily
    * the state directly preceding this one. It is up to the discretion
@@ -122,6 +128,7 @@ export class SayState implements State {
    * A mapping of keycodes to their handler functions
    * */
   keymap: KeyMap;
+  config: Map<string, string | null>;
   constructor(args: StateArgs) {
     const { previousState = null } = args;
     this.document = args.document;
@@ -142,6 +149,8 @@ export class SayState implements State {
     this.baseIRI = args.baseIRI;
     this.keymap = args.keymap ?? defaultKeyMap;
     this.eventBus = args.eventBus;
+    this.config = args.config || new Map<string, string | null>();
+    this.transactionListeners = args.transactionListeners;
   }
   /**
    * Create a new @link{Transaction} with this state as its initial state.
@@ -168,46 +177,44 @@ export class SayState implements State {
   }
 }
 
-export function defaultCommands(): CommandMap {
+export function defaultCommands(): Partial<Commands> {
   return {
-    'add-mark-to-range': new AddMarkToRangeCommand(),
-    'add-mark-to-selection': new AddMarkToSelectionCommand(),
-    'delete-selection': new DeleteSelectionCommand(),
-    'indent-list': new IndentListCommand(),
-    'insert-component': new InsertComponentCommand(),
-    'insert-html': new InsertHtmlCommand(),
-    'insert-newLi': new InsertNewLiCommand(),
-    'insert-newLine': new InsertNewLineCommand(),
-    'insert-table-column-after': new InsertTableColumnAfterCommand(),
-    'insert-table-column-before': new InsertTableColumnBeforeCommand(),
-    'insert-table': new InsertTableCommand(),
-    'insert-table-row-above': new InsertTableRowAboveCommand(),
-    'insert-table-row-below': new InsertTableRowBelowCommand(),
-    'insert-text': new InsertTextCommand(),
-    'insert-xml': new InsertXmlCommand(),
-    'make-list': new MakeListCommand(),
-    'match-text': new MatchTextCommand(),
-    'read-selection': new ReadSelectionCommand(),
-    'remove-component': new RemoveComponentCommand(),
-    'remove-list': new RemoveListCommand(),
-    'remove-mark': new RemoveMarkCommand(),
-    'remove-mark-from-range': new RemoveMarkFromRangeCommand(),
-    'remove-mark-from-selection': new RemoveMarkFromSelectionCommand(),
-    'remove-marks-from-ranges': new RemoveMarksFromRangesCommand(),
-    'remove-table-column': new RemoveTableColumnCommand(),
-    'remove-table-row': new RemoveTableRowCommand(),
-    'remove-table': new RemoveTableCommand(),
+    addMarkToRange: new AddMarkToRangeCommand(),
+    addMarkToSelection: new AddMarkToSelectionCommand(),
+    addType: new AddTypeCommand(),
+    deleteSelection: new DeleteSelectionCommand(),
+    indentList: new IndentListCommand(),
+    insertComponent: new InsertComponentCommand(),
+    insertHtml: new InsertHtmlCommand(),
+    insertNewLi: new InsertNewLiCommand(),
+    insertNewLine: new InsertNewLineCommand(),
+    insertTableColumnAfter: new InsertTableColumnAfterCommand(),
+    insertTableColumnBefore: new InsertTableColumnBeforeCommand(),
+    insertTable: new InsertTableCommand(),
+    insertTableRowAbove: new InsertTableRowAboveCommand(),
+    insertTableRowBelow: new InsertTableRowBelowCommand(),
+    insertText: new InsertTextCommand(),
+    insertXml: new InsertXmlCommand(),
+    makeList: new MakeListCommand(),
+    matchText: new MatchTextCommand(),
+    readSelection: new ReadSelectionCommand(),
+    removeComponent: new RemoveComponentCommand(),
+    removeList: new RemoveListCommand(),
+    removeMark: new RemoveMarkCommand(),
+    removeMarkFromRange: new RemoveMarkFromRangeCommand(),
+    removeMarkFromSelection: new RemoveMarkFromSelectionCommand(),
+    removeMarksFromRanges: new RemoveMarksFromRangesCommand(),
+    removeProperty: new RemovePropertyCommand(),
+    removeTableColumn: new RemoveTableColumnCommand(),
+    removeTableRow: new RemoveTableRowCommand(),
+    removeTable: new RemoveTableCommand(),
+    removeType: new RemoveTypeCommand(),
     undo: new UndoCommand(),
-    'unindent-list': new UnindentListCommand(),
+    unindentList: new UnindentListCommand(),
     remove: new RemoveCommand(),
+    setProperty: new SetPropertyCommand(),
   };
 }
-export type CommandReturn<C extends CommandName> = ReturnType<
-  CommandMap[C]['execute']
->;
-export type CommandArgs<C extends CommandName> = Parameters<
-  CommandMap[C]['execute']
->[1];
 
 export function emptyState(eventBus: EventBus): State {
   return new SayState({
@@ -215,6 +222,7 @@ export function emptyState(eventBus: EventBus): State {
     selection: new ModelSelection(),
     plugins: [],
     commands: defaultCommands(),
+    config: new Map<string, string | null>(),
     marksRegistry: new MarksRegistry(),
     inlineComponentsRegistry: new InlineComponentsRegistry(),
     widgetMap: new Map<WidgetLocation, InternalWidgetSpec[]>(),
@@ -223,6 +231,7 @@ export function emptyState(eventBus: EventBus): State {
     baseIRI: 'http://example.org',
     keymap: defaultKeyMap,
     eventBus: eventBus,
+    transactionListeners: [],
   });
 }
 
@@ -245,6 +254,14 @@ export function cloneState(state: State): State {
     pathFromDomRoot: state.pathFromDomRoot,
     keymap: state.keymap,
     eventBus: state.eventBus,
+    transactionListeners: state.transactionListeners,
     baseIRI: state.baseIRI,
+    config: state.config,
+  });
+}
+
+export function cloneStateShallow(state: State): State {
+  return new SayState({
+    ...state,
   });
 }

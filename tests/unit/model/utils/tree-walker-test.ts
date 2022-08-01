@@ -399,7 +399,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [0], [0, 0]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -416,7 +416,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [7, 6], [8]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -433,7 +433,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [7, 3], [8]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -450,7 +450,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [7], [8]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -467,7 +467,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [4], [8]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -484,7 +484,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [0], [0, 4]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -501,7 +501,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [0], [1]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -518,7 +518,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [0], [2]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];

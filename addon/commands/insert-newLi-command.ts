@@ -9,9 +9,15 @@ import {
   TypeAssertionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import State from '../core/state';
 import Transaction from '../core/transaction';
 import Command, { CommandContext } from './command';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertNewLi: InsertNewLiCommand;
+  }
+}
 export interface InsertNewLiCommandArgs {
   range?: ModelRange | null;
 }
@@ -19,12 +25,7 @@ export interface InsertNewLiCommandArgs {
 export default class InsertNewLiCommand
   implements Command<InsertNewLiCommandArgs, void>
 {
-  name = 'insert-newLi';
-  arguments: string[] = ['range'];
-  canExecute(
-    { state }: CommandContext,
-    { range = state.selection.lastRange }
-  ): boolean {
+  canExecute(state: State, { range = state.selection.lastRange }): boolean {
     if (!range) {
       return false;
     }
@@ -34,8 +35,10 @@ export default class InsertNewLiCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
-    { range = state.selection.lastRange }: InsertNewLiCommandArgs
+    { transaction }: CommandContext,
+    {
+      range = transaction.workingCopy.selection.lastRange,
+    }: InsertNewLiCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
@@ -51,23 +54,21 @@ export default class InsertNewLiCommand
     if (!startParentLi || !endParentLi) {
       throw new IllegalExecutionStateError("Couldn't locate parent lis");
     }
-    const tr = state.createTransaction();
 
     // Collapsed selection case
     if (range.collapsed) {
-      this.insertLi(tr, range.start);
+      this.insertLi(transaction, range.start);
     }
     // Single li expanded selection case
     else if (startParentLi === endParentLi) {
-      tr.insertNodes(range);
-      this.insertLi(tr, range.start);
+      transaction.insertNodes(range);
+      this.insertLi(transaction, range.start);
     }
     // Multiple lis selected case
     else {
-      const newRange = tr.insertNodes(range);
-      tr.selectRange(newRange);
+      const newRange = transaction.insertNodes(range);
+      transaction.selectRange(newRange);
     }
-    dispatch(tr);
   }
 
   private insertLi(tr: Transaction, position: ModelPosition) {

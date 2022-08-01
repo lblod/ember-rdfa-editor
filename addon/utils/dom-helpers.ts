@@ -634,25 +634,6 @@ export function domPosToModelPos(
   return ModelPosition.fromPath(state.document, offsetPath);
 }
 
-function getDomNodeAtModelIndex(state: State, parent: Node, index: number) {
-  for (const child of parent.childNodes) {
-    if (state.parseNode(child).type === 'mark') {
-      const leafs = getLeafChildren(child);
-      if (leafs.length <= index) {
-        index -= leafs.length;
-      } else {
-        return leafs[index];
-      }
-      //search in subchildren
-    } else {
-      index -= 1;
-    }
-    if (index === -1) {
-      return child;
-    }
-  }
-  throw new Error('Index out of range in node');
-}
 function domNodeFromPath(
   state: State,
   path: number[],
@@ -786,14 +767,20 @@ export function modelOffsetToDomOffset(
 export function modelPosToDomPos(
   state: State,
   domRoot: Element,
-  pos: ModelPosition
+  pos: ModelPosition,
+  collapseIntoText = true
 ): { container: Node; offset: number | undefined } {
   const path = pos.path;
   let cur: ModelNode = state.document;
   const indexPath = [];
   for (const offset of path) {
     if (ModelNode.isModelElement(cur)) {
-      const index = cur.offsetToIndex(offset, true);
+      let index;
+      if (offset === 0) {
+        index = 0;
+      } else {
+        index = cur.offsetToIndex(offset);
+      }
       indexPath.push(index);
       cur = cur.children[index];
     }
@@ -803,16 +790,18 @@ export function modelPosToDomPos(
     if (ModelNode.isModelText(cur)) {
       indexPath.push(path[path.length - 1] - cur.getOffset());
       endsInText = true;
-    } else if (pos.nodeAfter() && ModelNode.isModelText(pos.nodeAfter())) {
-      cur = pos.nodeAfter()!;
-      indexPath[indexPath.length - 1] += 1;
-      indexPath.push(path[path.length - 1] - cur.getOffset());
-      endsInText = true;
-    } else if (pos.nodeBefore() && ModelNode.isModelText(pos.nodeBefore())) {
-      cur = pos.nodeBefore()!;
-      indexPath[indexPath.length - 1] -= 1;
-      indexPath.push(path[path.length - 1] - cur.getOffset());
-      endsInText = true;
+    } else if (collapseIntoText) {
+      if (pos.nodeAfter() && ModelNode.isModelText(pos.nodeAfter())) {
+        cur = pos.nodeAfter()!;
+        indexPath[indexPath.length - 1] += 1;
+        indexPath.push(path[path.length - 1] - cur.getOffset());
+        endsInText = true;
+      } else if (pos.nodeBefore() && ModelNode.isModelText(pos.nodeBefore())) {
+        cur = pos.nodeBefore()!;
+        indexPath[indexPath.length - 1] -= 1;
+        indexPath.push(path[path.length - 1] - cur.getOffset());
+        endsInText = true;
+      }
     }
   }
   const container = domNodeFromPath(

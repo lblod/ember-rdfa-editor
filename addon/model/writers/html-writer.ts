@@ -91,7 +91,11 @@ export default class HtmlWriter {
     }
   }
   parseSubTree(modelNode: ModelNode, state: State): Node {
-    if (modelNode.isLeaf) {
+    if (
+      modelNode.isLeaf &&
+      ModelNode.isModelElement(modelNode) &&
+      !ModelNodeUtils.isLumpNode(modelNode)
+    ) {
       return this.parseNode(modelNode, state);
     } else {
       const result = this.parseNode(modelNode, state) as HTMLElement;
@@ -138,6 +142,9 @@ export default class HtmlWriter {
       } else {
         result.contentEditable = 'true';
       }
+    }
+    if (ModelNodeUtils.isLumpNode(element)) {
+      result.contentEditable = 'false';
     }
 
     for (const item of element.attributeMap.entries()) {

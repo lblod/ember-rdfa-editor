@@ -88,6 +88,7 @@ export const VISUAL_NODES = new Set([
   'img',
   'hr',
   'li',
+  'td',
   'p',
   'h1',
   'h2',

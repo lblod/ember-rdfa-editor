@@ -1,19 +1,32 @@
-import { Editor } from '../core/editor';
+import Controller from '../model/controller';
 import ModelNodeUtils from '../model/util/model-node-utils';
 import ModelRangeUtils from '../model/util/model-range-utils';
 import { eventTargetRange } from './utils';
 
-export function handleInsertLineBreak(editor: Editor, event: InputEvent): void {
-  event.preventDefault();
-  if (editor.canExecuteCommand('insert-newLi', {})) {
-    editor.executeCommand('insert-newLi', {}, true);
-  } else {
-    editor.executeCommand('insert-newLine', {}, true);
-  }
+export function handleInsertLineBreak(
+  controller: Controller,
+  event: InputEvent
+): void {
+  controller.perform((tr) => {
+    event.preventDefault();
+    if (tr.commands.insertNewLi.canExecute({})) {
+      tr.commands.insertNewLi({});
+    } else {
+      tr.commands.insertNewLine({});
+    }
+  });
 }
 
-export function handleInsertText(editor: Editor, event: InputEvent): void {
-  const range = eventTargetRange(editor.state, editor.view.domRoot, event);
+export function handleInsertText(
+  controller: Controller,
+  event: InputEvent
+): void {
+  const tr = controller.createTransaction();
+  const range = eventTargetRange(
+    tr.workingCopy,
+    controller.view.domRoot,
+    event
+  );
   const text = event.data || '';
   if (
     ModelNodeUtils.isPlaceHolder(range.start.parent) ||
@@ -21,37 +34,37 @@ export function handleInsertText(editor: Editor, event: InputEvent): void {
   ) {
     event.preventDefault();
     const extendedRange = ModelRangeUtils.getExtendedToPlaceholder(range);
-    editor.executeCommand('insert-text', { range: extendedRange, text }, true);
+    tr.commands.insertText({ range: extendedRange, text });
+    controller.dispatchTransaction(tr);
   } else {
-    let updateView = false;
     if (
-      editor.state.selection.lastRange?.sameAs(range) &&
-      editor.state.selection.activeMarks.size !== 0
+      tr.currentSelection.lastRange?.sameAs(range) &&
+      tr.currentSelection.activeMarks.size !== 0
     ) {
       event.preventDefault();
-      updateView = true;
-    }
-    editor.executeCommand(
-      'insert-text',
-      {
-        range: eventTargetRange(editor.state, editor.view.domRoot, event),
+      tr.commands.insertText({
+        range: eventTargetRange(tr.workingCopy, controller.view.domRoot, event),
         text,
-      },
-      updateView
-    );
+      });
+      controller.dispatchTransaction(tr);
+    } else {
+      tr.commands.insertText({
+        range: eventTargetRange(tr.workingCopy, controller.view.domRoot, event),
+        text,
+      });
+      controller.dispatchTransaction(tr, false);
+    }
   }
 }
 export function handleInsertListItem(
-  editor: Editor,
+  controller: Controller,
   event: InputEvent,
   _listType: 'ul' | 'ol'
 ) {
   event.preventDefault();
-  editor.executeCommand(
-    'insert-newLi',
-    {
-      range: eventTargetRange(editor.state, editor.view.domRoot, event),
-    },
-    true
-  );
+  controller.perform((tr) => {
+    tr.commands.insertNewLi({
+      range: eventTargetRange(tr.workingCopy, controller.view.domRoot, event),
+    });
+  });
 }

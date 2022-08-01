@@ -1,5 +1,4 @@
 import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
-import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import { handleUndo } from '@lblod/ember-rdfa-editor/input/history';
 import {
   handleInsertLineBreak,
@@ -9,12 +8,8 @@ import {
 import { mapKeyEvent } from '@lblod/ember-rdfa-editor/input/keymap';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { InputPlugin } from '../editor/input-handlers/input-handler';
-import {
-  Manipulation,
-  ManipulationExecutor,
-} from '../editor/input-handlers/manipulation';
-import { editorDebug } from '../editor/utils';
+import Controller, { EditorController } from '../model/controller';
+import { NotImplementedError } from '../utils/errors';
 import handleCutCopy from './cut-copy';
 import { handleDelete } from './delete';
 import handlePaste from './paste';
@@ -47,12 +42,14 @@ export interface InputHandler {
 
 export class EditorInputHandler implements InputHandler {
   private editor: Editor;
+  private inputController: Controller;
 
   constructor(editor: Editor) {
     this.editor = editor;
+    this.inputController = new EditorController('inputController', editor);
   }
   keydown(event: KeyboardEvent) {
-    mapKeyEvent(this.editor, event);
+    mapKeyEvent(this.inputController, event);
   }
   dragstart(event: DragEvent) {
     event.preventDefault();
@@ -63,41 +60,52 @@ export class EditorInputHandler implements InputHandler {
     pasteExtendedHTML?: boolean
   ) {
     event.preventDefault();
-    handlePaste(this.editor, event, pasteHTML, pasteExtendedHTML);
+    handlePaste(this.inputController, event, pasteHTML, pasteExtendedHTML);
   }
 
   cut(event: ClipboardEvent) {
     event.preventDefault();
-    handleCutCopy(this.editor, event, true);
+    handleCutCopy(this.inputController, event, true);
   }
 
   copy(event: ClipboardEvent) {
     event.preventDefault();
-    handleCutCopy(this.editor, event, false);
+    handleCutCopy(this.inputController, event, false);
   }
 
-  afterInput(event: InputEvent): void {}
+  afterInput(event: InputEvent): void {
+    throw new NotImplementedError(`Did not handle ${event.type}`);
+  }
 
   beforeInput(event: InputEvent): void {
+    // check manipulation by plugins
+    for (const plugin of this.editor.state.plugins) {
+      if (plugin.handleEvent) {
+        const { handled } = plugin.handleEvent(event);
+        if (handled) {
+          return;
+        }
+      }
+    }
     console.log('handling beforeInput with type', event.inputType);
     switch (event.inputType) {
       case 'insertText':
-        handleInsertText(this.editor, event);
+        handleInsertText(this.inputController, event);
         break;
       case 'insertReplacementText':
-        handleInsertText(this.editor, event);
+        handleInsertText(this.inputController, event);
         break;
       case 'insertLineBreak':
-        handleInsertLineBreak(this.editor, event);
+        handleInsertLineBreak(this.inputController, event);
         break;
       case 'insertParagraph':
-        handleInsertLineBreak(this.editor, event);
+        handleInsertLineBreak(this.inputController, event);
         break;
       case 'insertOrderedList':
-        handleInsertListItem(this.editor, event, 'ol');
+        handleInsertListItem(this.inputController, event, 'ol');
         break;
       case 'insertUnorderedList':
-        handleInsertListItem(this.editor, event, 'ul');
+        handleInsertListItem(this.inputController, event, 'ul');
         break;
       case 'insertHorizontalRule':
         break;
@@ -106,10 +114,10 @@ export class EditorInputHandler implements InputHandler {
       case 'insertFromPaste':
         break;
       case 'deleteWordBackward':
-        event.preventDefault();
+        handleDelete(this.inputController, event, -1);
         break;
       case 'deleteWordForward':
-        event.preventDefault();
+        handleDelete(this.inputController, event, 1);
         break;
       case 'deleteSoftLineBackward':
         break;
@@ -127,13 +135,13 @@ export class EditorInputHandler implements InputHandler {
         event.preventDefault();
         break;
       case 'deleteContentBackward':
-        handleDelete(this.editor, event, -1);
+        handleDelete(this.inputController, event, -1);
         break;
       case 'deleteContentForward':
-        handleDelete(this.editor, event, 1);
+        handleDelete(this.inputController, event, 1);
         break;
       case 'historyUndo':
-        handleUndo(this.editor, event);
+        handleUndo(this.inputController, event);
         break;
       case 'historyRedo':
         event.preventDefault();
@@ -145,7 +153,9 @@ export class EditorInputHandler implements InputHandler {
     }
   }
 
-  beforeSelectionChange(event: Event): void {}
+  beforeSelectionChange(event: Event): void {
+    throw new NotImplementedError(`did not handle ${event.type}`);
+  }
 
   afterSelectionChange(): void {
     console.log('handling selectionChanged');
@@ -167,96 +177,9 @@ export class EditorInputHandler implements InputHandler {
       currentSelection
     );
     if (!this.editor.state.selection.sameAs(newSelection)) {
-      const tr = new Transaction(this.editor.state);
+      const tr = this.editor.state.createTransaction();
       tr.setSelection(newSelection);
       this.editor.dispatchTransaction(tr, false);
     }
   }
-}
-
-/**
- * Checks whether all plugins agree the manipulation is allowed.
- *
- * This method asks each plugin individually if the manipulation is
- * allowed. If it is not allowed by *any* plugin, it yields a
- * negative response, otherwise it yields a positive response.
- *
- * We expect this method to be extended in the future with more rich
- * responses from plugins. Something like "skip" or "merge" to
- * indicate this manipulation should be lumped together with a
- * previous manipulation. Plugins may also want to execute the
- * changes themselves to ensure correct behaviour.
- *
- * @function checkManipulationByPlugins
- *
- * @param {Editor} editor
- * @param {Manipulation} manipulation DOM manipulation which will be
- * checked by plugins.
- * @param {InputPlugin[]} plugins The plugins which need to check the DOM manipulation
- *
- **/
-export function checkManipulationByPlugins(
-  editor: Editor,
-  manipulation: Manipulation,
-  plugins: InputPlugin[]
-): {
-  mayExecute: boolean;
-  dispatchedExecutor: ManipulationExecutor | null;
-} {
-  // Calculate reports submitted by each plugin.
-  const reports: Array<{
-    plugin: InputPlugin;
-    allow: boolean;
-    executor: ManipulationExecutor | undefined;
-  }> = [];
-  for (const plugin of plugins) {
-    const guidance = plugin.guidanceForManipulation(manipulation, editor);
-    if (guidance) {
-      const allow = guidance.allow === undefined ? true : guidance.allow;
-      const executor = guidance.executor;
-
-      reports.push({ plugin, allow, executor });
-    }
-  }
-
-  // Filter reports based on our interests.
-  const reportsNoExecute = reports.filter(({ allow }) => !allow);
-  const reportsWithExecutor = reports.filter(({ executor }) => executor);
-
-  // Debug reporting.
-  if (reports.length > 1) {
-    console.warn(`Multiple plugins want to alter this manipulation`, reports);
-  }
-
-  if (reportsNoExecute.length > 1 && reportsWithExecutor.length > 1) {
-    console.error(
-      `Some plugins don't want execution, others want custom execution`,
-      {
-        reportsNoExecute,
-        reportsWithExecutor,
-      }
-    );
-  }
-
-  if (reportsWithExecutor.length > 1) {
-    console.warn(
-      `Multiple plugins want to execute this plugin. First entry in the list wins: ${reportsWithExecutor[0].plugin.label}`
-    );
-  }
-
-  for (const { plugin } of reportsNoExecute) {
-    editorDebug(
-      `checkManipulationByPlugins`,
-      `Was not allowed to execute text manipulation by plugin ${plugin.label}`,
-      { manipulation, plugin }
-    );
-  }
-
-  // Yield result.
-  return {
-    mayExecute: reportsNoExecute.length === 0,
-    dispatchedExecutor: reportsWithExecutor.length
-      ? (reportsWithExecutor[0].executor as ManipulationExecutor)
-      : null,
-  };
 }

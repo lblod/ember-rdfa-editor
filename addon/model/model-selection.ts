@@ -147,6 +147,7 @@ export default class ModelSelection {
   clearRanges() {
     this._isRightToLeft = false;
     this._ranges = [];
+    this._activeMarks = new MarkSet();
   }
 
   selectRange(range: ModelRange, rightToLeft = false) {
@@ -154,6 +155,17 @@ export default class ModelSelection {
     this.addRange(range);
     this.activeMarks = range.getMarks();
     this._isRightToLeft = rightToLeft;
+  }
+
+  selectRanges(...ranges: ModelRange[]) {
+    this.clearRanges();
+    this.ranges.push(...ranges);
+
+    if (ranges.length) {
+      this.activeMarks = ranges[0]
+        .getMarks()
+        .intersection(...ranges.map((range) => range.getMarks()).slice(1));
+    }
   }
 
   /**

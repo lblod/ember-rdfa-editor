@@ -14,6 +14,12 @@ import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-uti
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import State from '../core/state';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    indentList: IndentListCommand;
+  }
+}
 
 export interface IndentListCommandArgs {
   range?: ModelRange | null;
@@ -21,11 +27,8 @@ export interface IndentListCommandArgs {
 export default class IndentListCommand
   implements Command<IndentListCommandArgs, void>
 {
-  name = 'indent-list';
-  arguments = ['range'];
-
   canExecute(
-    { state }: CommandContext,
+    state: State,
     { range = state.selection.lastRange }: IndentListCommandArgs
   ): boolean {
     if (!range) {
@@ -49,13 +52,14 @@ export default class IndentListCommand
 
   @logExecute
   execute(
-    { state, dispatch }: CommandContext,
-    { range = state.selection.lastRange }: IndentListCommandArgs
+    { transaction }: CommandContext,
+    {
+      range = transaction.workingCopy.selection.lastRange,
+    }: IndentListCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-    const tr = state.createTransaction();
 
     const treeWalker = ModelRangeUtils.findModelNodes(
       range,
@@ -91,14 +95,14 @@ export default class IndentListCommand
       }
 
       for (const li of lis) {
-        tr.deleteNode(li);
+        transaction.deleteNode(li);
       }
 
       //First check for already existing sublist on the new parent
       //If it exists, just add the elements to it, otherwise create a new sublist
       const possibleNewList = this.hasSublist(newParent);
       if (possibleNewList) {
-        tr.insertAtPosition(
+        transaction.insertAtPosition(
           ModelPosition.fromInElement(
             possibleNewList,
             possibleNewList.getMaxOffset()
@@ -108,13 +112,12 @@ export default class IndentListCommand
       } else {
         const newList = new ModelElement(parent.type);
         newList.appendChildren(...lis);
-        tr.insertAtPosition(
+        transaction.insertAtPosition(
           ModelPosition.fromInElement(newParent, newParent.getMaxOffset()),
           newList
         );
       }
     }
-    dispatch(tr);
   }
 
   hasSublist(listElement: ModelElement): ModelElement | undefined {
