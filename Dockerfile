@@ -4,6 +4,7 @@ LABEL maintainer="info@redpencil.io"
 
 WORKDIR /app
 COPY package.json package-lock.json ./
+COPY public ./public/
 RUN npm ci
 COPY . .
 EXPOSE 80
