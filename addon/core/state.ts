@@ -46,10 +46,13 @@ import { boldMarkSpec } from '../plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '../plugins/basic-styles/marks/italic';
 import { strikethroughMarkSpec } from '../plugins/basic-styles/marks/strikethrough';
 import { underlineMarkSpec } from '../plugins/basic-styles/marks/underline';
-import { isElement, isTextNode } from '../utils/dom-helpers';
+import { getPathFromRoot, isElement, isTextNode } from '../utils/dom-helpers';
 import { NotImplementedError } from '../utils/errors';
 import Transaction, { TransactionListener } from './transaction';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
+import HtmlReader, {
+  HtmlReaderContext,
+} from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 
 export interface StateArgs {
   document: ModelElement;
@@ -310,5 +313,24 @@ export function createState({
     baseIRI,
     keymap,
     transactionListeners,
+  });
+}
+
+export function createNewStateFromHtmlElement(element: Element) {
+  const reader = new HtmlReader();
+  const marksRegistry = new MarksRegistry();
+  const inlineComponentsRegistry = new InlineComponentsRegistry();
+  const doc = reader.read(
+    element,
+    new HtmlReaderContext({
+      marksRegistry,
+      inlineComponentsRegistry,
+    })
+  )[0] as ModelElement;
+  return createState({
+    document: doc,
+    marksRegistry,
+    inlineComponentsRegistry,
+    pathFromDomRoot: getPathFromRoot(element, false),
   });
 }

@@ -12,6 +12,11 @@ import {
 import { PositionError } from '../utils/errors';
 import { createLogger, Logger } from '../utils/logging-utils';
 import Transaction from './transaction';
+import HtmlReader, {
+  HtmlReaderContext,
+} from '@lblod/ember-rdfa-editor/model/readers/html-reader';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { flatMap } from 'iter-tools';
 
 export type Dispatch = (transaction: Transaction) => void;
 
@@ -95,22 +100,82 @@ export class EditorView implements View {
   }
 
   handleMutation(mutations: MutationRecord[], _observer: MutationObserver) {
+    if (!mutations.length) {
+      return;
+    }
+    const tr = this.currentState.createTransaction();
     for (const mutation of mutations) {
+      this.logger(mutation);
       switch (mutation.type) {
         case 'characterData': {
-          break;
-        }
-        case 'childList': {
+          const oldNode = viewToModel(
+            tr.workingCopy,
+            this.domRoot,
+            mutation.target
+          );
+          tr.insertText({
+            range: ModelRange.fromInNode(oldNode),
+            text: mutation.target.textContent ?? '',
+          });
+
           break;
         }
         case 'attributes': {
           break;
         }
-        default: {
+        case 'childList': {
+          this.replaceChildren(tr, mutation.target);
           break;
         }
       }
     }
+    // if (finalRange) {
+    //   finalRange.collapse();
+    //   tr.selectRange(finalRange);
+    // }
+    tr.setSelectionFromView(this);
+    this.stateOnlyDispatch(tr);
+  }
+
+  private replaceChildren(tr: Transaction, node: Node) {
+    const reader = new HtmlReader();
+    const newNodes = flatMap(
+      (child: Node) =>
+        reader.read(
+          child,
+          new HtmlReaderContext({
+            marksRegistry: tr.workingCopy.marksRegistry,
+            inlineComponentsRegistry: tr.workingCopy.inlineComponentsRegistry,
+          })
+        ),
+      node.childNodes
+    );
+    const oldModelNode = viewToModel(tr.workingCopy, this.domRoot, node);
+    return tr.insertNodes(ModelRange.fromInNode(oldModelNode), ...newNodes);
+  }
+
+  private stateOnlyDispatch(transaction: Transaction) {
+    let newSteps = transaction.size > 0;
+    const handledSteps = new Array<number>(
+      transaction.workingCopy.transactionListeners.length
+    ).fill(0);
+    while (newSteps) {
+      newSteps = false;
+      transaction.workingCopy.transactionListeners.forEach((listener, i) => {
+        const oldTransactionSize = transaction.size;
+        if (handledSteps[i] < transaction.size) {
+          // notify listener of new operations
+          listener(transaction, transaction.steps.slice(handledSteps[i]));
+          handledSteps[i] = transaction.size;
+        }
+        if (transaction.size > oldTransactionSize) {
+          newSteps = true;
+        }
+      });
+    }
+    const newState = transaction.apply();
+    this.currentState = newState;
+    this.update(this.currentState, []);
   }
 
   defaultDispatch = (transaction: Transaction) => {
@@ -144,6 +209,7 @@ export class EditorView implements View {
 
   update(state: State, differences: Difference[]): void {
     this.logger('Updating view with state:', state);
+    this.logger('With differences:', differences);
     this.observer.disconnect();
     const writer = new HtmlWriter();
     differences.forEach((difference) => {
@@ -183,6 +249,9 @@ export function viewToModel(
   viewRoot: Element,
   domNode: Node
 ): ModelNode {
+  if (domNode === viewRoot) {
+    return state.document;
+  }
   const position = domPosToModelPos(state, viewRoot, domNode, 0);
   const node = position.nodeAfter();
   if (!node) {

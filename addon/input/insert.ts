@@ -1,12 +1,11 @@
 import Controller from '../model/controller';
-import ModelNodeUtils from '../model/util/model-node-utils';
-import ModelRangeUtils from '../model/util/model-range-utils';
 import { eventTargetRange } from './utils';
 
 export function handleInsertLineBreak(
   controller: Controller,
   event: InputEvent
 ): void {
+  return;
   controller.perform((tr) => {
     event.preventDefault();
     if (tr.commands.insertNewLi.canExecute({})) {
@@ -21,41 +20,17 @@ export function handleInsertText(
   controller: Controller,
   event: InputEvent
 ): void {
-  const tr = controller.createTransaction();
-  const range = eventTargetRange(
-    tr.workingCopy,
-    controller.view.domRoot,
-    event
-  );
-  const text = event.data || '';
-  if (
-    ModelNodeUtils.isPlaceHolder(range.start.parent) ||
-    ModelNodeUtils.isPlaceHolder(range.start.parent)
-  ) {
+  if (controller.selection.activeMarks.size !== 0) {
     event.preventDefault();
-    const extendedRange = ModelRangeUtils.getExtendedToPlaceholder(range);
-    tr.commands.insertText({ range: extendedRange, text });
-    controller.dispatchTransaction(tr);
-  } else {
-    if (
-      tr.currentSelection.lastRange?.sameAs(range) &&
-      tr.currentSelection.activeMarks.size !== 0
-    ) {
-      event.preventDefault();
+    controller.perform((tr) => {
       tr.commands.insertText({
-        range: eventTargetRange(tr.workingCopy, controller.view.domRoot, event),
-        text,
+        range: controller.selection.lastRange!,
+        text: event.data ?? '',
       });
-      controller.dispatchTransaction(tr);
-    } else {
-      tr.commands.insertText({
-        range: eventTargetRange(tr.workingCopy, controller.view.domRoot, event),
-        text,
-      });
-      controller.dispatchTransaction(tr, false);
-    }
+    });
   }
 }
+
 export function handleInsertListItem(
   controller: Controller,
   event: InputEvent,

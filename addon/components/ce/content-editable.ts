@@ -6,7 +6,7 @@ import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { EditorInputHandler } from '../../input/input-handler';
 import { ResolvedPluginConfig } from '../rdfa/rdfa-editor';
 import { Dispatch, View } from '@lblod/ember-rdfa-editor/core/view';
-import { createState } from '@lblod/ember-rdfa-editor/core/state';
+import { createNewStateFromHtmlElement } from '@lblod/ember-rdfa-editor/core/state';
 import { ViewController } from '@lblod/ember-rdfa-editor/model/controller';
 
 interface FeatureService {
@@ -124,7 +124,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   async insertedEditorElement(element: HTMLElement) {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     document.addEventListener('selectionchange', this.afterSelectionChange);
-    const initialState = createState({});
+    const initialState = createNewStateFromHtmlElement(element);
     const editorView = await createEditorView({
       domRoot: element,
       plugins: this.args.plugins,

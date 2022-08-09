@@ -27,17 +27,18 @@ import {
   CommandExecutor,
   commandMapToCommandExecutor,
 } from '../commands/command-manager';
-import { Commands } from '@lblod/ember-rdfa-editor';
-import { CommandName } from '@lblod/ember-rdfa-editor';
+import { CommandName, Commands } from '@lblod/ember-rdfa-editor';
 import Step, { StepResult } from './steps/step';
 import SelectionStep from './steps/selection_step';
 import OperationStep from './steps/operation_step';
 import ConfigStep from './steps/config_step';
+
 interface TextInsertion {
   range: ModelRange;
   text: string;
   marks?: MarkSet;
 }
+
 export type TransactionListener = (
   transaction: Transaction,
   steps: Step[]
@@ -107,9 +108,11 @@ export default class Transaction {
   setPlugins(plugins: InitializedPlugin[]): void {
     this._workingCopy.plugins = plugins;
   }
+
   setBaseIRI(iri: string): void {
     this._workingCopy.baseIRI = iri;
   }
+
   setPathFromDomRoot(path: Node[]) {
     this._workingCopy.pathFromDomRoot = path;
   }
@@ -165,6 +168,17 @@ export default class Transaction {
     this._workingCopy.document = newVdom;
     this._workingCopy.selection = newSelection;
     this.createSnapshot();
+  }
+
+  setSelectionFromView(view: View): void {
+    const selectionReader = new SelectionReader();
+    const newSelection = selectionReader.read(
+      this._workingCopy,
+      view.domRoot,
+      getWindowSelection()
+    );
+
+    this._workingCopy.selection = newSelection;
   }
 
   /**
@@ -235,6 +249,7 @@ export default class Transaction {
   setConfig(key: string, value: string | null): void {
     this.executeStep(new ConfigStep(key, value));
   }
+
   removeProperty(element: ModelNode, key: string): ModelNode {
     const node = this.inWorkingCopy(element);
 
@@ -254,11 +269,13 @@ export default class Transaction {
     // this.executeOperation(op);
     // return newNode;
   }
+
   removeNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     const clonedRange = this.cloneRange(range);
     const op = new RemoveOperation(undefined, clonedRange, ...nodes);
     return this.executeStep(new OperationStep(op)).defaultRange;
   }
+
   private executeStep<R extends StepResult>(step: Step<R>): R {
     this._steps.push(step);
     const result = step.execute(this.workingCopy);
@@ -268,6 +285,7 @@ export default class Transaction {
     }
     return result;
   }
+
   selectRange(range: ModelRange): void {
     // const op = new SelectionOperation(undefined, this._workingCopy.selection, [
     //   this.cloneRange(range),
@@ -275,10 +293,12 @@ export default class Transaction {
     // this.executeOperation(op);
     this.executeStep(new SelectionStep([this.cloneRange(range)]));
   }
+
   addMarkToSelection(mark: Mark) {
     this._workingCopy.selection.activeMarks.add(mark);
     this.createSnapshot();
   }
+
   moveToPosition(
     rangeToMove: ModelRange,
     targetPosition: ModelPosition
@@ -288,6 +308,7 @@ export default class Transaction {
     const op = new MoveOperation(undefined, rangeClone, posClone);
     return this.executeStep(new OperationStep(op)).defaultRange;
   }
+
   removeMarkFromSelection(markname: string) {
     for (const mark of this._workingCopy.selection.activeMarks) {
       if (mark.name === markname) {
@@ -296,6 +317,7 @@ export default class Transaction {
     }
     this.createSnapshot();
   }
+
   /**
    * Make a snapshot of the new state, meaning that it will be registered
    * in the history and can be recalled later.
@@ -304,6 +326,7 @@ export default class Transaction {
     this._workingCopy.previousState = this.initialState;
     return this.initialState;
   }
+
   /**
    * Reset this transaction, discarding any changes made
    * */
@@ -422,16 +445,19 @@ export default class Transaction {
     this.createSnapshot();
     return this.insertNodes(new ModelRange(posClone, posClone), ...nodes);
   }
+
   deleteNode(node: ModelNode): ModelRange {
     const range = this.cloneRange(ModelRange.fromAroundNode(node));
     this.createSnapshot();
     return this.delete(range);
   }
+
   delete(range: ModelRange): ModelRange {
     const op = new InsertOperation(undefined, this.cloneRange(range));
     this.createSnapshot();
     return this.executeStep(new OperationStep(op)).defaultRange;
   }
+
   /**
    * Clone a range and set its root in the new state.
    * This is currently public to provide a workaround for various editing implementations
@@ -444,18 +470,21 @@ export default class Transaction {
       return range;
     }
   }
+
   /**
    * Position version of @link{cloneRange}
    * */
   clonePos(pos: ModelPosition): ModelPosition {
     return pos.clone(this._workingCopy.document);
   }
+
   /**
    * Selection version of @link{cloneRange}
    * */
   cloneSelection(selection: ModelSelection): ModelSelection {
     return selection.clone(this._workingCopy.document);
   }
+
   collapseIn(node: ModelNode, offset = 0) {
     this._workingCopy.selection.clearRanges();
     this._workingCopy.selection.addRange(
@@ -540,6 +569,7 @@ export default class Transaction {
     }
     return this._commandCache;
   }
+
   /* Restore a state from the history
    * @param steps Amount of steps to look back
    * */
