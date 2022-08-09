@@ -48,8 +48,8 @@ import { strikethroughMarkSpec } from '../plugins/basic-styles/marks/strikethrou
 import { underlineMarkSpec } from '../plugins/basic-styles/marks/underline';
 import { isElement, isTextNode } from '../utils/dom-helpers';
 import { NotImplementedError } from '../utils/errors';
-import EventBus from '../utils/event-bus';
 import Transaction, { TransactionListener } from './transaction';
+import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 
 export interface StateArgs {
   document: ModelElement;
@@ -61,13 +61,16 @@ export interface StateArgs {
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState?: State | null;
   datastore: Datastore;
+  eventBus: EventBus;
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]>;
   pathFromDomRoot: Node[];
   baseIRI: string;
   keymap?: KeyMap;
-  eventBus: EventBus;
   config?: Map<string, string | null>;
 }
+
+export type InitialStateArgs = Omit<Partial<StateArgs>, 'datastore'>;
+
 export interface NodeParseResult {
   type: 'mark' | 'text' | 'element';
 }
@@ -93,12 +96,16 @@ export default interface State {
   pathFromDomRoot: Node[];
   baseIRI: string;
   keymap: KeyMap;
+
   createTransaction(): Transaction;
+
   parseNode(node: Node): NodeParseResult;
+
   eventBus: EventBus;
   config: Map<string, string | null>;
   transactionListeners: TransactionListener[];
 }
+
 export class SayState implements State {
   document: ModelElement;
   selection: ModelSelection;
@@ -129,6 +136,7 @@ export class SayState implements State {
    * */
   keymap: KeyMap;
   config: Map<string, string | null>;
+
   constructor(args: StateArgs) {
     const { previousState = null } = args;
     this.document = args.document;
@@ -152,12 +160,14 @@ export class SayState implements State {
     this.config = args.config || new Map<string, string | null>();
     this.transactionListeners = args.transactionListeners;
   }
+
   /**
    * Create a new @link{Transaction} with this state as its initial state.
    * */
   createTransaction(): Transaction {
     return new Transaction(this);
   }
+
   /**
    * Given the current state, determine how a certain html node
    * would be interpreted. This is used for internal logic,
@@ -216,7 +226,7 @@ export function defaultCommands(): Partial<Commands> {
   };
 }
 
-export function emptyState(eventBus: EventBus): State {
+export function emptyState(eventBus = new EventBus()): State {
   return new SayState({
     document: new ModelElement('div'),
     selection: new ModelSelection(),
@@ -229,8 +239,8 @@ export function emptyState(eventBus: EventBus): State {
     datastore: EditorStore.empty(),
     pathFromDomRoot: [],
     baseIRI: 'http://example.org',
+    eventBus,
     keymap: defaultKeyMap,
-    eventBus: eventBus,
     transactionListeners: [],
   });
 }
@@ -263,5 +273,42 @@ export function cloneState(state: State): State {
 export function cloneStateShallow(state: State): State {
   return new SayState({
     ...state,
+  });
+}
+
+export function createState({
+  document = new ModelElement('div'),
+  selection = new ModelSelection(),
+  plugins = [],
+  commands = defaultCommands(),
+  config = new Map(),
+  marksRegistry = new MarksRegistry(),
+  inlineComponentsRegistry = new InlineComponentsRegistry(),
+  widgetMap = new Map(),
+  eventBus = new EventBus(),
+  pathFromDomRoot = [],
+  baseIRI = window.document.baseURI,
+  keymap = defaultKeyMap,
+  transactionListeners = [],
+}: InitialStateArgs): State {
+  return new SayState({
+    document,
+    selection,
+    plugins,
+    commands,
+    config,
+    marksRegistry,
+    inlineComponentsRegistry,
+    widgetMap,
+    eventBus,
+    datastore: EditorStore.fromParse({
+      pathFromDomRoot,
+      baseIRI,
+      modelRoot: document,
+    }),
+    pathFromDomRoot,
+    baseIRI,
+    keymap,
+    transactionListeners,
   });
 }

@@ -22,7 +22,6 @@ import {
   EditorEventListener,
   ListenerConfig,
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
-import { Editor } from '../core/editor';
 import State from '../core/state';
 import Transaction, { TransactionListener } from '../core/transaction';
 import { View } from '../core/view';
@@ -117,68 +116,84 @@ export default interface Controller {
   removeTransactionListener(callback: TransactionListener): void;
 }
 
-export class EditorController implements Controller {
+export class ViewController implements Controller {
   private _name: string;
-  protected _editor: Editor;
-  constructor(name: string, editor: Editor) {
-    this._name = name;
-    this._editor = editor;
-  }
-  get name(): string {
-    return this._name;
-  }
-  get selection(): ModelSelection {
-    return this._editor.state.selection;
-  }
-  get rangeFactory(): RangeFactory {
-    return new ModelRangeFactory(this._editor.state.document);
-  }
-  get treeWalkerFactory(): TreeWalkerFactory {
-    return GenTreeWalker;
-  }
-  get datastore(): Datastore {
-    return this._editor.state.datastore;
-  }
-  get util(): EditorUtils {
-    throw new Error('Method not implemented.');
-  }
-  get ownMarks(): Set<Mark<AttributeSpec>> {
-    return this.getMarksFor(this.name);
-  }
-  get modelRoot(): ModelElement {
-    return this._editor.state.document;
-  }
-  get domRoot(): Element {
-    return this._editor.view.domRoot;
-  }
+  protected _view: View;
 
-  get marksRegistry(): MarksRegistry {
-    return this._editor.state.marksRegistry;
-  }
-  get view(): View {
-    return this._editor.view;
+  constructor(name: string, view: View) {
+    this._name = name;
+    this._view = view;
   }
 
   get currentState(): State {
-    return this._editor.state;
+    return this._view.currentState;
   }
+
+  get name(): string {
+    return this._name;
+  }
+
+  get selection(): ModelSelection {
+    return this.currentState.selection;
+  }
+
+  get rangeFactory(): RangeFactory {
+    return new ModelRangeFactory(this.currentState.document);
+  }
+
+  get treeWalkerFactory(): TreeWalkerFactory {
+    return GenTreeWalker;
+  }
+
+  get datastore(): Datastore {
+    return this.currentState.datastore;
+  }
+
+  get util(): EditorUtils {
+    throw new Error('Method not implemented.');
+  }
+
+  get ownMarks(): Set<Mark<AttributeSpec>> {
+    return this.getMarksFor(this.name);
+  }
+
+  get modelRoot(): ModelElement {
+    return this.currentState.document;
+  }
+
+  get domRoot(): Element {
+    return this._view.domRoot;
+  }
+
+  get marksRegistry(): MarksRegistry {
+    return this.currentState.marksRegistry;
+  }
+
+  get view(): View {
+    return this._view;
+  }
+
   createTransaction(): Transaction {
-    return this._editor.state.createTransaction();
+    return this.currentState.createTransaction();
   }
+
   perform<R>(action: (transaction: Transaction) => R): R {
     const tr = this.createTransaction();
     const result = action(tr);
     this.dispatchTransaction(tr);
     return result;
   }
+
   dryRun<R>(action: (transaction: Transaction) => R): R {
     const tr = this.createTransaction();
     const result = action(tr);
     return result;
   }
-  dispatchTransaction(tr: Transaction, updateView = true): void {
-    this._editor.dispatchTransaction(tr, updateView);
+
+  dispatchTransaction(tr: Transaction): void {
+    this.view.dispatch(tr);
   }
+
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
     return new LiveMarkSet(this, args);
   }
@@ -186,51 +201,64 @@ export class EditorController implements Controller {
   createModelElement(type: ElementType): ModelElement {
     return new ModelElement(type);
   }
+
   registerInlineComponent(component: InlineComponentSpec) {
-    this._editor.state.inlineComponentsRegistry.registerComponent(component);
+    this.currentState.inlineComponentsRegistry.registerComponent(component);
     // this._rawEditor.registerComponent(component);
   }
+
   getMarksFor(owner: string): Set<Mark<AttributeSpec>> {
     return this.marksRegistry.getMarksFor(owner);
   }
+
   registerWidget(spec: WidgetSpec): void {
-    MapUtils.setOrPush(this._editor.state.widgetMap, spec.desiredLocation, {
+    MapUtils.setOrPush(this.currentState.widgetMap, spec.desiredLocation, {
       controller: this,
       ...spec,
     });
   }
+
   registerMark(spec: MarkSpec<AttributeSpec>): void {
     this.marksRegistry.registerMark(spec);
   }
+
   getConfig(key: string): string | null {
-    return this._editor.state.config.get(key) || null;
+    return this.currentState.config.get(key) || null;
   }
+
   setConfig(key: string, value: string | null): void {
     this.perform((tr) => tr.setConfig(key, value));
   }
+
   modelToView(node: ModelNode): Node | null {
-    return this._editor.view.modelToView(this._editor.state, node);
+    return this._view.modelToView(this.currentState, node);
   }
+
   onEvent<E extends string>(
     eventName: E,
     callback: EditorEventListener<E>,
     config?: ListenerConfig
   ): void {
-    this._editor.onEvent(eventName, callback, config);
+    this.currentState.eventBus.on(eventName, callback, config);
   }
+
   offEvent<E extends string>(
     eventName: E,
     callback: EditorEventListener<E>,
     config?: ListenerConfig
   ): void {
-    this._editor.offEvent(eventName, callback, config);
+    this.currentState.eventBus.off(eventName, callback, config);
   }
 
   addTransactionListener(callback: TransactionListener): void {
-    this._editor.addTransactionListener(callback);
+    const tr = this.createTransaction();
+    tr.addListener(callback);
+    this.dispatchTransaction(tr);
   }
 
   removeTransactionListener(callback: TransactionListener): void {
-    this._editor.removeTransactionListener(callback);
+    const tr = this.createTransaction();
+    tr.removeListener(callback);
+    this.dispatchTransaction(tr);
   }
 }

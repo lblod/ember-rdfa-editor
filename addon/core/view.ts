@@ -2,7 +2,7 @@ import State from '@lblod/ember-rdfa-editor/core/state';
 import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
 import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
-import { Difference } from '../model/util/tree-differ';
+import computeDifference, { Difference } from '../model/util/tree-differ';
 import HtmlWriter from '../model/writers/html-writer';
 import {
   domPosToModelPos,
@@ -11,6 +11,15 @@ import {
 } from '../utils/dom-helpers';
 import { PositionError } from '../utils/errors';
 import { createLogger, Logger } from '../utils/logging-utils';
+import Transaction from './transaction';
+
+export type Dispatch = (transaction: Transaction) => void;
+
+export interface ViewArgs {
+  domRoot: Element;
+  initialState: State;
+  dispatch?: Dispatch;
+}
 
 /**
  * This interface controls the interaction with the html DOM
@@ -22,6 +31,11 @@ export interface View {
    * The html element that the editor will render in
    * */
   domRoot: Element;
+
+  /**
+   * The modelstate represented by the current html document
+   * */
+  currentState: State;
 
   /**
    * Get the domNode that corresponds to the given modelNode
@@ -39,6 +53,12 @@ export interface View {
    * Update the DOM to represent the given state
    * */
   update(state: State, differences: Difference[]): void;
+
+  /**
+   * Manually dispatch a transaction
+   * @param transaction
+   */
+  dispatch(transaction: Transaction): void;
 }
 
 /**
@@ -47,21 +67,84 @@ export interface View {
 export class EditorView implements View {
   domRoot: Element;
   logger: Logger;
+  observer: MutationObserver;
+  observerConfig: MutationObserverInit;
+  currentState: State;
+  dispatch: Dispatch;
 
-  constructor(domRoot: Element) {
+  constructor({ domRoot, dispatch, initialState }: ViewArgs) {
     this.logger = createLogger('editorView');
     this.domRoot = domRoot;
+    this.observer = new MutationObserver(this.handleMutation.bind(this));
+    this.observerConfig = {
+      characterData: true,
+      subtree: true,
+      childList: true,
+    };
+    this.currentState = initialState;
+    this.observer.observe(this.domRoot, this.observerConfig);
+    this.dispatch = dispatch ?? this.defaultDispatch;
   }
 
   modelToView(state: State, modelNode: ModelNode): Node | null {
     return modelToView(state, this.domRoot, modelNode);
   }
+
   viewToModel(state: State, domNode: Node): ModelNode {
     return viewToModel(state, this.domRoot, domNode);
   }
 
+  handleMutation(mutations: MutationRecord[], _observer: MutationObserver) {
+    for (const mutation of mutations) {
+      switch (mutation.type) {
+        case 'characterData': {
+          break;
+        }
+        case 'childList': {
+          break;
+        }
+        case 'attributes': {
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+  }
+
+  defaultDispatch = (transaction: Transaction) => {
+    // notify listeners while there are new operations added to the transaction
+    let newSteps = transaction.size > 0;
+    const handledSteps = new Array<number>(
+      transaction.workingCopy.transactionListeners.length
+    ).fill(0);
+    while (newSteps) {
+      newSteps = false;
+      transaction.workingCopy.transactionListeners.forEach((listener, i) => {
+        const oldTransactionSize = transaction.size;
+        if (handledSteps[i] < transaction.size) {
+          // notify listener of new operations
+          listener(transaction, transaction.steps.slice(handledSteps[i]));
+          handledSteps[i] = transaction.size;
+        }
+        if (transaction.size > oldTransactionSize) {
+          newSteps = true;
+        }
+      });
+    }
+    const newState = transaction.apply();
+    const differences = computeDifference(
+      this.currentState.document,
+      newState.document
+    );
+    this.currentState = newState;
+    this.update(this.currentState, differences);
+  };
+
   update(state: State, differences: Difference[]): void {
     this.logger('Updating view with state:', state);
+    this.observer.disconnect();
     const writer = new HtmlWriter();
     differences.forEach((difference) => {
       writer.write(
@@ -74,8 +157,10 @@ export class EditorView implements View {
     state.inlineComponentsRegistry.clean();
     const selectionWriter = new SelectionWriter();
     selectionWriter.write(state, this.domRoot, state.selection);
+    this.observer.observe(this.domRoot, this.observerConfig);
   }
 }
+
 export function modelToView(
   state: State,
   viewRoot: Element,
@@ -104,4 +189,13 @@ export function viewToModel(
     throw new PositionError('no node found after position');
   }
   return node;
+}
+
+export function createView({
+  domRoot,
+  dispatch,
+  initialState,
+}: ViewArgs): View {
+  const result = new EditorView({ domRoot, dispatch, initialState });
+  return result;
 }

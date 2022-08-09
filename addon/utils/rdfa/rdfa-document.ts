@@ -1,4 +1,4 @@
-import { EditorController } from '@lblod/ember-rdfa-editor/model/controller';
+import { ViewController } from '@lblod/ember-rdfa-editor/model/controller';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 import {
@@ -47,17 +47,17 @@ interface RdfaDocument {
  * This is both to protect the internal dom of the editor and to remove internals
  */
 export default class RdfaDocumentController
-  extends EditorController
+  extends ViewController
   implements RdfaDocument
 {
   get htmlContent() {
     const htmlWriter = new HTMLExportWriter();
-    const output = htmlWriter.write(this._editor.state.document) as HTMLElement;
+    const output = htmlWriter.write(this.currentState.document) as HTMLElement;
     return output.innerHTML;
   }
 
   set htmlContent(html: string) {
-    const root = this._editor.state.document;
+    const root = this.currentState.document;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
     this.perform((tr) => {
       console.log(JSON.stringify(tr.commands));
@@ -66,17 +66,17 @@ export default class RdfaDocumentController
   }
 
   get xmlContent() {
-    return (this._editor.state.document.toXml() as Element).innerHTML;
+    return (this.currentState.document.toXml() as Element).innerHTML;
   }
 
   set xmlContent(xml: string) {
-    const root = this._editor.state.document;
+    const root = this.currentState.document;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
     this.perform((tr) => tr.commands.insertXml({ xml, range }));
   }
 
   get xmlContentPrettified() {
-    const root = this._editor.state.document.toXml() as Element;
+    const root = this.currentState.document.toXml() as Element;
     let result = '';
     for (const child of root.childNodes) {
       let formatted;

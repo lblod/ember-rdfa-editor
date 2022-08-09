@@ -47,28 +47,34 @@ export function delayMs(ms: number): Promise<void> {
  * @returns A promise which renders the editor
  */
 export async function renderEditor() {
-  await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+  await render(hbs`
+      <Rdfa::RdfaEditor
+              @rdfaEditorInit={{this.rdfaEditorInit}}
+              @profile="default"
+              class="rdfa-playground"
+              @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                    showRdfaHighlight="true" showRdfaHover="true"}}
+              @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+      />`);
   return getEditorElement();
 }
+
 type OptionalStateArgs = Omit<Partial<StateArgs>, 'document'> & {
   document?: ModelNode;
 };
+
 function createModelRoot(): ModelElement {
   const el = new ModelElement('div');
   el.setAttribute('contenteditable', '');
   el.setAttribute('class', 'say-editor_inner say_content');
   return el;
 }
+
 export function testView() {
   const root = document.createElement('div');
-  return new EditorView(root);
+  return new EditorView({ domRoot: root, initialState: testState({}) });
 }
+
 export function testState({
   document = createModelRoot(),
   commands = defaultCommands(),
@@ -96,20 +102,24 @@ export function testState({
     widgetMap: new Map<WidgetLocation, InternalWidgetSpec[]>(),
   });
 }
+
 export function stateFromDom(root: Element, stateArgs: OptionalStateArgs = {}) {
   const state = testState(stateArgs);
   const tr = state.createTransaction();
-  const view = new EditorView(root);
+  const view = new EditorView({ domRoot: root, initialState: state });
   tr.readFromView(view);
   return tr.apply();
 }
+
 export function testDispatch(transaction: Transaction): State {
   return transaction.apply();
 }
+
 export interface CommandResult<R> {
   resultValue: R;
   resultState: State;
 }
+
 export function makeTestExecute<A, R>(command: Command<A, R>) {
   return function (state: State, args: A): CommandResult<R> {
     let resultState: State | null = null;
@@ -124,6 +134,7 @@ export function makeTestExecute<A, R>(command: Command<A, R>) {
     return { resultValue, resultState };
   };
 }
+
 export function stateWithRange(root: ModelNode, range: ModelRange) {
   let initialState = testState({ document: root });
   const tr = initialState.createTransaction();
@@ -131,6 +142,7 @@ export function stateWithRange(root: ModelNode, range: ModelRange) {
   initialState = tr.apply();
   return initialState;
 }
+
 export function vdomToDom(vdom: ModelNode): Node {
   const state = testState({ document: vdom });
   const view = testView();

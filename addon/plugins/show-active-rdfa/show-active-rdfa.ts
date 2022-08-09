@@ -1,9 +1,7 @@
 import ConfigStep from '@lblod/ember-rdfa-editor/core/steps/config_step';
 import Step from '@lblod/ember-rdfa-editor/core/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
-import Controller, {
-  EditorController,
-} from '@lblod/ember-rdfa-editor/model/controller';
+import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
@@ -16,14 +14,14 @@ const SHOW_RDFA_CLASS = 'show-rdfa-path';
 export default class ShowActiveRdfaPlugin implements EditorPlugin {
   private activeElement: ModelElement | null = null;
   controller!: Controller;
+
   get name() {
     return 'show-active-rdfa';
   }
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async initialize(controller: EditorController) {
-    this.controller = controller;
 
-    // TODO: reimplement this with transaction listener
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async initialize(controller: Controller) {
+    this.controller = controller;
     controller.addTransactionListener(this.onTransactionDispatch.bind(this));
   }
 
@@ -73,6 +71,7 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
     }
   }
 }
+
 function removePathAttributes() {
   // clean old marks
   for (const oldNode of document.querySelectorAll(`[${PATH_MARKER}]`)) {

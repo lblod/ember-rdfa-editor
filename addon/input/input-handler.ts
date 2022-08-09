@@ -1,4 +1,3 @@
-import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import { handleUndo } from '@lblod/ember-rdfa-editor/input/history';
 import {
   handleInsertLineBreak,
@@ -8,8 +7,9 @@ import {
 import { mapKeyEvent } from '@lblod/ember-rdfa-editor/input/keymap';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import Controller, { EditorController } from '../model/controller';
+import Controller from '../model/controller';
 import { NotImplementedError } from '../utils/errors';
+import { createLogger } from '../utils/logging-utils';
 import handleCutCopy from './cut-copy';
 import { handleDelete } from './delete';
 import handlePaste from './paste';
@@ -20,6 +20,7 @@ import handlePaste from './paste';
  * */
 export interface InputHandler {
   keydown(event: KeyboardEvent): void;
+
   dragstart(event: DragEvent): void;
 
   /**
@@ -31,29 +32,32 @@ export interface InputHandler {
    * Using these to capture input is always preferred if possible
    * */
   beforeInput(event: InputEvent): void;
+
   afterInput(event: InputEvent): void;
 
   /**
    * Corresponds to the "selectionstart" event
    * */
   beforeSelectionChange(event: Event): void;
+
   afterSelectionChange(event: Event): void;
 }
 
 export class EditorInputHandler implements InputHandler {
-  private editor: Editor;
   private inputController: Controller;
 
-  constructor(editor: Editor) {
-    this.editor = editor;
-    this.inputController = new EditorController('inputController', editor);
+  constructor(controller: Controller) {
+    this.inputController = controller;
   }
+
   keydown(event: KeyboardEvent) {
     mapKeyEvent(this.inputController, event);
   }
+
   dragstart(event: DragEvent) {
     event.preventDefault();
   }
+
   paste(
     event: ClipboardEvent,
     pasteHTML?: boolean,
@@ -74,12 +78,16 @@ export class EditorInputHandler implements InputHandler {
   }
 
   afterInput(event: InputEvent): void {
-    throw new NotImplementedError(`Did not handle ${event.type}`);
+    const logger = createLogger('afterInput');
+    logger(JSON.stringify(event));
+    logger(event);
+    logger(event.target);
+    logger(event.getTargetRanges());
   }
 
   beforeInput(event: InputEvent): void {
     // check manipulation by plugins
-    for (const plugin of this.editor.state.plugins) {
+    for (const plugin of this.inputController.currentState.plugins) {
       if (plugin.handleEvent) {
         const { handled } = plugin.handleEvent(event);
         if (handled) {
@@ -160,7 +168,7 @@ export class EditorInputHandler implements InputHandler {
   afterSelectionChange(): void {
     console.log('handling selectionChanged');
     const currentSelection = getWindowSelection();
-    const viewRoot = this.editor.view.domRoot;
+    const viewRoot = this.inputController.view.domRoot;
     if (
       !viewRoot.contains(currentSelection.anchorNode) ||
       !viewRoot.contains(currentSelection.focusNode) ||
@@ -172,14 +180,14 @@ export class EditorInputHandler implements InputHandler {
     }
     const selectionReader = new SelectionReader();
     const newSelection = selectionReader.read(
-      this.editor.state,
-      this.editor.view.domRoot,
+      this.inputController.currentState,
+      this.inputController.view.domRoot,
       currentSelection
     );
-    if (!this.editor.state.selection.sameAs(newSelection)) {
-      const tr = this.editor.state.createTransaction();
+    if (!this.inputController.currentState.selection.sameAs(newSelection)) {
+      const tr = this.inputController.createTransaction();
       tr.setSelection(newSelection);
-      this.editor.dispatchTransaction(tr, false);
+      this.inputController.dispatchTransaction(tr, false);
     }
   }
 }

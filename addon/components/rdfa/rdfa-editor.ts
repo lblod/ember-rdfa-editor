@@ -2,10 +2,9 @@ import ApplicationInstance from '@ember/application/instance';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { Editor } from '@lblod/ember-rdfa-editor/core/editor';
 import Controller, {
-  EditorController,
   InternalWidgetSpec,
+  ViewController,
 } from '@lblod/ember-rdfa-editor/model/controller';
 import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
 import { ModelInlineComponent } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
@@ -27,6 +26,7 @@ import { AnchorPlugin } from '@lblod/ember-rdfa-editor/plugins/anchor/anchor';
 import TablePlugin from '@lblod/ember-rdfa-editor/plugins/table/table';
 import ListPlugin from '@lblod/ember-rdfa-editor/plugins/list/list';
 import RdfaConfirmationPlugin from '@lblod/ember-rdfa-editor/plugins/rdfa-confirmation/rdfa-confirmation';
+import { View } from '@lblod/ember-rdfa-editor/core/view';
 
 export type PluginConfig =
   | string
@@ -39,6 +39,7 @@ export interface ResolvedPluginConfig {
   instance: EditorPlugin;
   options: unknown;
 }
+
 interface RdfaEditorArgs {
   /**
    * callback that is called with an interface to the editor after editor init completed
@@ -88,14 +89,15 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   get plugins(): PluginConfig[] {
     return this.args.plugins || [];
   }
+
   get editorPlugins(): ResolvedPluginConfig[] {
     return this.getPlugins();
   }
 
   /**
-   * editor controller
+   * editor view
    */
-  @tracked editor?: Editor;
+  @tracked controller?: Controller;
 
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
@@ -110,19 +112,22 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    *
    * @method handleRawEditorInit
    *
-   * @param {RawEditor} editor, the editor interface
+   * @param {RawEditor} view, the editor interface
    *
    * @private
    */
   @action
-  handleRawEditorInit(editor: Editor) {
-    this.editor = editor;
-    this.toolbarWidgets = editor.state.widgetMap.get('toolbar') || [];
-    this.sidebarWidgets = editor.state.widgetMap.get('sidebar') || [];
+  handleRawEditorInit(view: View) {
+    this.controller = new ViewController('rdfaEditorComponent', view);
+    this.toolbarWidgets =
+      this.controller.currentState.widgetMap.get('toolbar') || [];
+    this.sidebarWidgets =
+      this.controller.currentState.widgetMap.get('sidebar') || [];
     this.insertSidebarWidgets =
-      editor.state.widgetMap.get('insertSidebar') || [];
-    this.toolbarController = new EditorController('toolbar', editor);
-    const rdfaDocument = new RdfaDocumentController('host-controller', editor);
+      this.controller.currentState.widgetMap.get('insertSidebar') || [];
+    this.toolbarController = new ViewController('toolbar', view);
+    const rdfaDocument = new RdfaDocumentController('host', view);
+    window.__EDITOR = new RdfaDocumentController('debug', view);
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
@@ -185,7 +190,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   get inlineComponents(): ActiveComponentEntry[] {
     const result =
-      this.editor?.state.inlineComponentsRegistry.activeComponents ||
+      this.controller?.currentState.inlineComponentsRegistry.activeComponents ||
       new Map<ModelInlineComponent, ActiveComponentEntry>();
     console.log('GET', result.values());
     return [...result.values()];

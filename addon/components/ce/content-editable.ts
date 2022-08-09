@@ -1,23 +1,30 @@
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { createEditor, Editor } from '@lblod/ember-rdfa-editor/core/editor';
+import { createEditorView } from '@lblod/ember-rdfa-editor/core/editor';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { EditorInputHandler } from '../../input/input-handler';
 import { ResolvedPluginConfig } from '../rdfa/rdfa-editor';
+import { Dispatch, View } from '@lblod/ember-rdfa-editor/core/view';
+import { createState } from '@lblod/ember-rdfa-editor/core/state';
+import { ViewController } from '@lblod/ember-rdfa-editor/model/controller';
 
 interface FeatureService {
   isEnabled(key: string): boolean;
 }
 
 interface ContentEditableArgs {
-  editorInit(editor: Editor): void;
+  editorInit(editor: View): void;
 
   plugins: ResolvedPluginConfig[];
 
   baseIRI?: string;
 
   stealFocus?: boolean;
+
+  initialContent?: string;
+
+  dispatch?: Dispatch;
 }
 
 /**
@@ -42,11 +49,10 @@ interface ContentEditableArgs {
  * @extends Component
  */
 export default class ContentEditable extends Component<ContentEditableArgs> {
-  editor: Editor | null = null;
   inputHandler: EditorInputHandler | null = null;
 
   @service declare features: FeatureService;
-  rootNode?: HTMLElement;
+
   get stealFocus(): boolean {
     return this.args.stealFocus || false;
   }
@@ -64,12 +70,21 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       this.inputHandler.beforeInput(event);
     }
   }
+
+  @action
+  afterInput(event: InputEvent) {
+    if (this.inputHandler) {
+      this.inputHandler.afterInput(event);
+    }
+  }
+
   @action
   keydown(event: KeyboardEvent) {
     if (this.inputHandler) {
       this.inputHandler.keydown(event);
     }
   }
+
   @action
   paste(event: ClipboardEvent) {
     if (this.inputHandler) {
@@ -80,12 +95,14 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       );
     }
   }
+
   @action
   cut(event: ClipboardEvent) {
     if (this.inputHandler) {
       this.inputHandler.cut(event);
     }
   }
+
   @action
   copy(event: ClipboardEvent) {
     if (this.inputHandler) {
@@ -106,24 +123,19 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   @action
   async insertedEditorElement(element: HTMLElement) {
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    this.rootNode = element;
-    await this.initialize();
-  }
-
-  @action
-  async initialize() {
-    if (this.rootNode) {
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      document.addEventListener('selectionchange', this.afterSelectionChange);
-      this.editor = await createEditor({
-        domRoot: this.rootNode,
-        plugins: this.args.plugins,
-      });
-      this.inputHandler = new EditorInputHandler(this.editor);
-      this.args.editorInit(this.editor);
-      if (this.stealFocus) {
-        this.rootNode.focus();
-      }
+    document.addEventListener('selectionchange', this.afterSelectionChange);
+    const initialState = createState({});
+    const editorView = await createEditorView({
+      domRoot: element,
+      plugins: this.args.plugins,
+      initialState,
+    });
+    this.inputHandler = new EditorInputHandler(
+      new ViewController('input', editorView)
+    );
+    this.args.editorInit(editorView);
+    if (this.stealFocus) {
+      element.focus();
     }
   }
 
