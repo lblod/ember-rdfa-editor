@@ -1,7 +1,4 @@
-import {
-  deleteTargetRange,
-  eventTargetRange,
-} from '@lblod/ember-rdfa-editor/input/utils';
+import { deleteTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
@@ -13,6 +10,7 @@ import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 export default class ListPlugin implements EditorPlugin {
   controller!: Controller;
+
   get name() {
     return 'list';
   }

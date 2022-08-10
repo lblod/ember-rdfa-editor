@@ -3,6 +3,7 @@ import ModelRange from '../model/model-range';
 import handleEscape from './escape';
 import { handleBasicStyle } from './format';
 import handleTab from './tab';
+
 type Modifier = 'C' | 'M' | 'S' | 'A';
 
 type Alphabet =
@@ -61,7 +62,8 @@ export const defaultKeyMap: KeyMap = {
   ArrowLeft: moveCursor(-1),
   ArrowRight: moveCursor(1),
   Escape: handleEscape(),
-  Tab: handleTab,
+  Tab: handleTab(1),
+  'S-Tab': handleTab(-1),
   'C-b': handleBasicStyle('bold'),
   'C-i': handleBasicStyle('italic'),
   'C-u': handleBasicStyle('underline'),
@@ -99,6 +101,7 @@ export function mapKeyEvent(
     handler(controller, event);
   }
 }
+
 function moveCursor(steps: number) {
   return function (controller: Controller, event: KeyboardEvent) {
     const range = controller.selection.lastRange;

@@ -32,6 +32,7 @@ import Step, { StepResult } from './steps/step';
 import SelectionStep from './steps/selection_step';
 import OperationStep from './steps/operation_step';
 import ConfigStep from './steps/config_step';
+import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
 interface TextInsertion {
   range: ModelRange;
@@ -54,6 +55,7 @@ export default class Transaction {
   private _steps: Step[];
   rangeMapper: RangeMapper;
   rdfInvalid = true;
+  logger = createLogger('transaction');
   private _commandCache?: CommandExecutor;
 
   constructor(state: State) {
@@ -95,6 +97,7 @@ export default class Transaction {
 
   getCurrentDataStore() {
     if (this.rdfInvalid) {
+      this.logger('Recalculating datastore');
       this._workingCopy.datastore = EditorStore.fromParse({
         modelRoot: this._workingCopy.document,
         baseIRI: this._workingCopy.baseIRI,
