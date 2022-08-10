@@ -154,31 +154,21 @@ export class EditorView implements View {
     return tr.insertNodes(ModelRange.fromInNode(oldModelNode), ...newNodes);
   }
 
+  /**
+   * Only update the state, without calculating diff with the dom
+   * For internal use.
+   * @param transaction
+   * @private
+   */
   private stateOnlyDispatch(transaction: Transaction) {
-    let newSteps = transaction.size > 0;
-    const handledSteps = new Array<number>(
-      transaction.workingCopy.transactionListeners.length
-    ).fill(0);
-    while (newSteps) {
-      newSteps = false;
-      transaction.workingCopy.transactionListeners.forEach((listener, i) => {
-        const oldTransactionSize = transaction.size;
-        if (handledSteps[i] < transaction.size) {
-          // notify listener of new operations
-          listener(transaction, transaction.steps.slice(handledSteps[i]));
-          handledSteps[i] = transaction.size;
-        }
-        if (transaction.size > oldTransactionSize) {
-          newSteps = true;
-        }
-      });
-    }
-    const newState = transaction.apply();
-    this.currentState = newState;
-    this.update(this.currentState, []);
+    this.doDispatch(transaction, false);
   }
 
   defaultDispatch = (transaction: Transaction) => {
+    this.doDispatch(transaction, true);
+  };
+
+  private doDispatch(transaction: Transaction, calculateDiffs = true) {
     // notify listeners while there are new operations added to the transaction
     let newSteps = transaction.size > 0;
     const handledSteps = new Array<number>(
@@ -199,13 +189,12 @@ export class EditorView implements View {
       });
     }
     const newState = transaction.apply();
-    const differences = computeDifference(
-      this.currentState.document,
-      newState.document
-    );
+    const differences = calculateDiffs
+      ? computeDifference(this.currentState.document, newState.document)
+      : [];
     this.currentState = newState;
     this.update(this.currentState, differences);
-  };
+  }
 
   update(state: State, differences: Difference[]): void {
     this.logger('Updating view with state:', state);
