@@ -5,7 +5,6 @@ export function handleInsertLineBreak(
   controller: Controller,
   event: InputEvent
 ): void {
-  return;
   controller.perform((tr) => {
     event.preventDefault();
     if (tr.commands.insertNewLi.canExecute({})) {
