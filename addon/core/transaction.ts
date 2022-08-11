@@ -245,7 +245,7 @@ export default class Transaction {
     const clone = this.cloneSelection(selection);
     const changed = !clone.sameAs(this._workingCopy.selection);
     if (changed) {
-      this.executeStep(new SelectionStep(clone.ranges));
+      this.executeStep(new SelectionStep(clone));
     }
     return changed;
   }
@@ -318,7 +318,10 @@ export default class Transaction {
     //   this.cloneRange(range),
     // ]);
     // this.executeOperation(op);
-    this.executeStep(new SelectionStep([this.cloneRange(range)]));
+    const clone = this.cloneSelection(this.workingCopy.selection);
+    clone.selectRange(range, clone.isRightToLeft);
+    clone.isRightToLeft = this.workingCopy.selection.isRightToLeft;
+    this.executeStep(new SelectionStep(clone));
   }
 
   addMarkToSelection(mark: Mark) {

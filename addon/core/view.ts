@@ -163,10 +163,11 @@ export class EditorView implements View {
       );
       writeCounts++;
     });
-    this.logger(`Wrote ${writeCounts} times`);
+    this.logger(`Wrote ${writeCounts} times to document`);
     state.inlineComponentsRegistry.clean();
     const selectionWriter = new SelectionWriter();
     selectionWriter.write(state, this.domRoot, state.selection);
+    this.logger('Wrote selection:', state.selection);
     this.inputHandler.resume();
   }
 

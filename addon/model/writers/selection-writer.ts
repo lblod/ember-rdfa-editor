@@ -1,12 +1,12 @@
-import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {
+  getWindowSelection,
+  isElement,
+  modelPosToDomPos,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import State from '@lblod/ember-rdfa-editor/core/state';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import {
-  getWindowSelection,
-  modelPosToDomPos,
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 /**
  * Writer to convert a {@link ModelSelection} to a {@link Selection}
@@ -29,12 +29,21 @@ export default class SelectionWriter {
     const { startContainer, startOffset, endContainer, endOffset } =
       this.writeDomRange(state, viewRoot, relevantRange);
 
-    domSelection.setBaseAndExtent(
-      startContainer,
-      startOffset,
-      endContainer,
-      endOffset
-    );
+    if (modelSelection.isRightToLeft) {
+      domSelection.setBaseAndExtent(
+        endContainer,
+        endOffset,
+        startContainer,
+        startOffset
+      );
+    } else {
+      domSelection.setBaseAndExtent(
+        startContainer,
+        startOffset,
+        endContainer,
+        endOffset
+      );
+    }
     if (domSelection.anchorNode && moveSelectionIntoView) {
       if (isElement(domSelection.anchorNode)) {
         domSelection.anchorNode.scrollIntoView({

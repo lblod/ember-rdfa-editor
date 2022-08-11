@@ -304,14 +304,18 @@ export default class ModelSelection {
 
   clone(modelRoot?: ModelElement) {
     const modelSelection = new ModelSelection();
-    modelSelection.isRightToLeft = this._isRightToLeft;
     modelSelection.ranges = this.ranges.map((range) => range.clone(modelRoot));
     modelSelection.activeMarks = this._activeMarks.clone();
+    modelSelection.isRightToLeft = this._isRightToLeft;
 
     return modelSelection;
   }
+
   sameAs(other: ModelSelection): boolean {
     if (this.ranges.length !== other.ranges.length) {
+      return false;
+    }
+    if (this.isRightToLeft !== other.isRightToLeft) {
       return false;
     }
     for (let i = 0; i < this.ranges.length; i++) {
