@@ -38,6 +38,7 @@ export default class EditorToolbar extends Component<Args> {
     super(parent, args);
     this.args.controller.addTransactionListener(this.update.bind(this));
   }
+
   get controller() {
     return this.args.controller;
   }
@@ -134,19 +135,21 @@ export default class EditorToolbar extends Component<Args> {
   @action
   setMark(value: boolean, markName: string, attributes = {}) {
     if (value) {
-      this.controller.perform((tr) =>
+      this.controller.perform((tr: Transaction) => {
         tr.commands.addMarkToSelection({
           markName,
           markAttributes: attributes,
-        })
-      );
+        });
+        tr.focus();
+      });
     } else {
-      this.controller.perform((tr) =>
+      this.controller.perform((tr: Transaction) => {
         tr.commands.removeMarkFromSelection({
           markName,
           markAttributes: attributes,
-        })
-      );
+        });
+        tr.focus();
+      });
     }
   }
 

@@ -53,6 +53,7 @@ export default class Transaction {
   initialState: State;
   private _workingCopy: State;
   private _steps: Step[];
+  private _shouldFocus: boolean;
   rangeMapper: RangeMapper;
   // we clone the nodes, so rdfa is invalid even if nothing happens to them
   // TODO: improve this
@@ -71,6 +72,7 @@ export default class Transaction {
     this._workingCopy = cloneStateShallow(state);
     this._steps = [];
     this.rangeMapper = new RangeMapper();
+    this._shouldFocus = false;
   }
 
   get currentDocument() {
@@ -95,6 +97,10 @@ export default class Transaction {
 
   get steps() {
     return this._steps;
+  }
+
+  get shouldFocus(): boolean {
+    return this._shouldFocus;
   }
 
   private deepClone() {
@@ -325,8 +331,9 @@ export default class Transaction {
   }
 
   addMarkToSelection(mark: Mark) {
-    this.deepClone();
-    this._workingCopy.selection.activeMarks.add(mark);
+    const clone = this.cloneSelection(this.workingCopy.selection);
+    clone.activeMarks.add(mark);
+    this.executeStep(new SelectionStep(clone));
     this.createSnapshot();
   }
 
@@ -342,12 +349,14 @@ export default class Transaction {
   }
 
   removeMarkFromSelection(markname: string) {
-    this.deepClone();
+    const clone = this.cloneSelection(this.workingCopy.selection);
+
     for (const mark of this._workingCopy.selection.activeMarks) {
       if (mark.name === markname) {
-        this._workingCopy.selection.activeMarks.delete(mark);
+        clone.activeMarks.delete(mark);
       }
     }
+    this.executeStep(new SelectionStep(clone));
     this.createSnapshot();
   }
 
@@ -646,5 +655,13 @@ export default class Transaction {
     }
     const pos = this.clonePos(ModelPosition.fromBeforeNode(node));
     return pos.nodeAfter()! as N;
+  }
+
+  /**
+   * Tell the view that it needs to focus the viewRoot after applying changes.
+   * Mostly needed for things like toolbar buttons which steal the focus.
+   */
+  focus() {
+    this._shouldFocus = true;
   }
 }

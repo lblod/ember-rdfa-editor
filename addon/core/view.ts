@@ -145,10 +145,10 @@ export class EditorView implements View {
         ? computeDifference(this.currentState.document, newState.document)
         : [];
     this.currentState = newState;
-    this.update(this.currentState, differences);
+    this.update(this.currentState, differences, transaction.shouldFocus);
   }
 
-  update(state: State, differences: Difference[]): void {
+  update(state: State, differences: Difference[], shouldFocus = false): void {
     this.logger('Updating view with state:', state);
     this.logger('With differences:', differences);
     this.inputHandler.pause();
@@ -168,6 +168,9 @@ export class EditorView implements View {
     const selectionWriter = new SelectionWriter();
     selectionWriter.write(state, this.domRoot, state.selection);
     this.logger('Wrote selection:', state.selection);
+    if (shouldFocus) {
+      (this.domRoot as HTMLElement).focus();
+    }
     this.inputHandler.resume();
   }
 
