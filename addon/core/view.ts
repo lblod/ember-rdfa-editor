@@ -120,6 +120,8 @@ export class EditorView implements View {
     const handledSteps = new Array<number>(
       transaction.workingCopy.transactionListeners.length
     ).fill(0);
+    // keep track if any listeners added any steps at all
+    let listenersAddedSteps = false;
     while (newSteps) {
       newSteps = false;
       transaction.workingCopy.transactionListeners.forEach((listener, i) => {
@@ -131,13 +133,17 @@ export class EditorView implements View {
         }
         if (transaction.size > oldTransactionSize) {
           newSteps = true;
+          listenersAddedSteps = true;
         }
       });
     }
     const newState = transaction.apply();
-    const differences = calculateDiffs
-      ? computeDifference(this.currentState.document, newState.document)
-      : [];
+    const differences =
+      // we can only optimize for browserdefault flow if
+      // no listeners added any steps
+      calculateDiffs || listenersAddedSteps
+        ? computeDifference(this.currentState.document, newState.document)
+        : [];
     this.currentState = newState;
     this.update(this.currentState, differences);
   }
