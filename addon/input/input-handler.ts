@@ -93,16 +93,17 @@ export class EditorInputHandler implements InputHandler {
   }
 
   pause = (): void => {
-    document.removeEventListener('selectionchange', this.afterSelectionChange);
-    this.observer.takeRecords();
+    const records = this.observer.takeRecords();
+    this.handleMutation(records, this.observer);
+
     this.observer.disconnect();
+    document.removeEventListener('selectionchange', this.afterSelectionChange);
     this.logger('paused');
   };
 
   resume = (): void => {
     document.addEventListener('selectionchange', this.afterSelectionChange);
     this.observer.observe(this.domRoot, this.observerConfig);
-    this.observer.takeRecords();
     this.logger('resumed');
   };
 
@@ -151,7 +152,7 @@ export class EditorInputHandler implements InputHandler {
         }
       }
     }
-    console.log('handling beforeInput with type', event.inputType);
+    this.logger('Handling beforeInput event', event);
     switch (event.inputType) {
       case 'insertText':
         handleInsertText(this.inputController, event);

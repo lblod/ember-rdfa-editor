@@ -6,7 +6,6 @@ import { EditorInputHandler } from '../../input/input-handler';
 import { ResolvedPluginConfig } from '../rdfa/rdfa-editor';
 import { Dispatch, View } from '@lblod/ember-rdfa-editor/core/view';
 import { createNewStateFromHtmlElement } from '@lblod/ember-rdfa-editor/core/state';
-import { ViewController } from '@lblod/ember-rdfa-editor/model/controller';
 
 interface FeatureService {
   isEnabled(key: string): boolean;
@@ -70,9 +69,6 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
       plugins: this.args.plugins,
       initialState,
     });
-    this.inputHandler = new EditorInputHandler(
-      new ViewController('input', this.editorView)
-    );
     this.args.editorInit(this.editorView);
     if (this.stealFocus) {
       element.focus();
