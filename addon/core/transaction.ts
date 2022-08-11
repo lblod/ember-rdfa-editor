@@ -1,4 +1,4 @@
-import State, { cloneState } from '@lblod/ember-rdfa-editor/core/state';
+import State, { cloneStateShallow } from '@lblod/ember-rdfa-editor/core/state';
 import ModelRange, {
   ModelRangeFactory,
   RangeFactory,
@@ -54,6 +54,8 @@ export default class Transaction {
   private _workingCopy: State;
   private _steps: Step[];
   rangeMapper: RangeMapper;
+  // we clone the nodes, so rdfa is invalid even if nothing happens to them
+  // TODO: improve this
   rdfInvalid = true;
   logger = createLogger('transaction');
   private _commandCache?: CommandExecutor;
@@ -66,7 +68,7 @@ export default class Transaction {
      * However this simplicity comes at a cost of awkward workarounds in certain situations,
      * so is an immediate target for improvement later.
      */
-    this._workingCopy = cloneState(state);
+    this._workingCopy = cloneStateShallow(state);
     this._steps = [];
     this.rangeMapper = new RangeMapper();
   }
@@ -93,6 +95,21 @@ export default class Transaction {
 
   get steps() {
     return this._steps;
+  }
+
+  private deepClone() {
+    if (this._workingCopy.document === this.initialState.document) {
+      this.logger('Performing deepclone');
+      const documentClone = this.initialState.document.clone();
+      this._workingCopy.document = documentClone;
+      this._workingCopy.selection =
+        this.initialState.selection.clone(documentClone);
+      this._workingCopy.inlineComponentsRegistry =
+        this.initialState.inlineComponentsRegistry.clone(
+          this.initialState.document,
+          documentClone
+        );
+    }
   }
 
   getCurrentDataStore() {
@@ -132,6 +149,7 @@ export default class Transaction {
   }
 
   addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
+    this.deepClone();
     const op = new MarkOperation(
       undefined,
       this.cloneRange(range),
@@ -148,6 +166,7 @@ export default class Transaction {
    * Typically done as (one of) the first transaction upon loading the editor.
    * */
   readFromView(view: View): void {
+    this.deepClone();
     const htmlReader = new HtmlReader();
     const context = new HtmlReaderContext({
       marksRegistry: this._workingCopy.marksRegistry,
@@ -193,7 +212,7 @@ export default class Transaction {
     if (
       this.initialState.baseIRI !== this._workingCopy.baseIRI ||
       this.initialState.pathFromDomRoot !== this._workingCopy.pathFromDomRoot ||
-      this._workingCopy !== this.initialState
+      this._workingCopy.document !== this.initialState.document
     ) {
       this.getCurrentDataStore();
     }
@@ -201,6 +220,7 @@ export default class Transaction {
   }
 
   insertText({ range, text, marks }: TextInsertion): ModelRange {
+    this.deepClone();
     const operation = new InsertTextOperation(
       undefined,
       this.cloneRange(range),
@@ -212,6 +232,7 @@ export default class Transaction {
   }
 
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
+    this.deepClone();
     const op = new InsertOperation(undefined, this.cloneRange(range), ...nodes);
     this.createSnapshot();
     return this.executeStep(new OperationStep(op)).defaultRange;
@@ -230,6 +251,7 @@ export default class Transaction {
   }
 
   setProperty(element: ModelElement, key: string, value: string): ModelElement {
+    this.deepClone();
     const node = this.inWorkingCopy(element);
 
     if (!node) throw new Error('no element in range');
@@ -254,6 +276,7 @@ export default class Transaction {
   }
 
   removeProperty(element: ModelNode, key: string): ModelNode {
+    this.deepClone();
     const node = this.inWorkingCopy(element);
 
     if (!node) throw new Error('no element in range');
@@ -274,6 +297,7 @@ export default class Transaction {
   }
 
   removeNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
+    this.deepClone();
     const clonedRange = this.cloneRange(range);
     const op = new RemoveOperation(undefined, clonedRange, ...nodes);
     return this.executeStep(new OperationStep(op)).defaultRange;
@@ -298,6 +322,7 @@ export default class Transaction {
   }
 
   addMarkToSelection(mark: Mark) {
+    this.deepClone();
     this._workingCopy.selection.activeMarks.add(mark);
     this.createSnapshot();
   }
@@ -306,6 +331,7 @@ export default class Transaction {
     rangeToMove: ModelRange,
     targetPosition: ModelPosition
   ): ModelRange {
+    this.deepClone();
     const rangeClone = this.cloneRange(rangeToMove);
     const posClone = this.clonePos(targetPosition);
     const op = new MoveOperation(undefined, rangeClone, posClone);
@@ -313,6 +339,7 @@ export default class Transaction {
   }
 
   removeMarkFromSelection(markname: string) {
+    this.deepClone();
     for (const mark of this._workingCopy.selection.activeMarks) {
       if (mark.name === markname) {
         this._workingCopy.selection.activeMarks.delete(mark);
@@ -333,8 +360,17 @@ export default class Transaction {
   /**
    * Reset this transaction, discarding any changes made
    * */
-  rollback() {
+  rollback(): State {
     this._workingCopy = this.initialState;
+    return this._workingCopy;
+  }
+
+  /**
+   * Reset only the document
+   */
+  rollbackDocument(): State {
+    this.logger('Rolling back document');
+    this._workingCopy.document = this.initialState.document;
     return this._workingCopy;
   }
 
@@ -353,6 +389,7 @@ export default class Transaction {
     endLimit: ModelElement,
     splitAtEnds = false
   ) {
+    this.deepClone();
     const clonedRange = this.cloneRange(range);
     const endPos = this.splitUntilElement(
       clonedRange.end,
@@ -381,6 +418,7 @@ export default class Transaction {
     limitElement: ModelElement,
     splitAtEnds = false
   ): ModelPosition {
+    this.deepClone();
     this.createSnapshot();
     return this.splitUntil(
       position,
@@ -394,6 +432,7 @@ export default class Transaction {
     untilPredicate: (element: ModelElement) => boolean,
     splitAtEnds = false
   ): ModelPosition {
+    this.deepClone();
     let pos = position;
 
     // Execute split at least once
@@ -444,18 +483,21 @@ export default class Transaction {
   }
 
   insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange {
+    this.deepClone();
     const posClone = this.clonePos(position);
     this.createSnapshot();
     return this.insertNodes(new ModelRange(posClone, posClone), ...nodes);
   }
 
   deleteNode(node: ModelNode): ModelRange {
+    this.deepClone();
     const range = this.cloneRange(ModelRange.fromAroundNode(node));
     this.createSnapshot();
     return this.delete(range);
   }
 
   delete(range: ModelRange): ModelRange {
+    this.deepClone();
     const op = new InsertOperation(undefined, this.cloneRange(range));
     this.createSnapshot();
     return this.executeStep(new OperationStep(op)).defaultRange;
@@ -502,6 +544,7 @@ export default class Transaction {
    * @param ensureBlock ensure the unwrapped children are rendered as a block by surrounding them with br elements when necessary
    */
   unwrap(element: ModelElement, ensureBlock = false): ModelRange {
+    this.deepClone();
     const srcRange = ModelRange.fromInElement(
       element,
       0,
@@ -547,6 +590,7 @@ export default class Transaction {
   }
 
   removeMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
+    this.deepClone();
     const op = new MarkOperation(
       undefined,
       this.cloneRange(range),

@@ -9,10 +9,17 @@ import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-re
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import Controller from '../model/controller';
 import { NotImplementedError } from '../utils/errors';
-import { createLogger } from '../utils/logging-utils';
+import { createLogger, Logger } from '../utils/logging-utils';
 import handleCutCopy from './cut-copy';
 import { handleDelete } from './delete';
 import handlePaste from './paste';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { viewToModel } from '@lblod/ember-rdfa-editor/core/view';
+import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
+import HtmlReader, {
+  HtmlReaderContext,
+} from '@lblod/ember-rdfa-editor/model/readers/html-reader';
+import { flatMap } from 'iter-tools';
 
 /**
  * Represents an object which collects all the various dom-events
@@ -41,51 +48,100 @@ export interface InputHandler {
   beforeSelectionChange(event: Event): void;
 
   afterSelectionChange(event: Event): void;
+
+  pause(): void;
+
+  resume(): void;
+
+  tearDown(): void;
 }
 
 export class EditorInputHandler implements InputHandler {
-  private inputController: Controller;
+  private readonly inputController: Controller;
+  private logger: Logger = createLogger('InputHandler');
+  private observer: MutationObserver;
+  private readonly observerConfig: MutationObserverInit;
+  private rootHandlers: Map<string, EventListenerOrEventListenerObject>;
 
   constructor(controller: Controller) {
     this.inputController = controller;
+    this.observer = new MutationObserver(this.handleMutation);
+    this.observerConfig = {
+      characterData: true,
+      subtree: true,
+      childList: true,
+    };
+    this.observer.observe(this.domRoot, this.observerConfig);
+    this.rootHandlers = new Map<string, EventListenerOrEventListenerObject>([
+      ['beforeinput', this.beforeInput],
+      // ['input', this.afterInput],
+      ['paste', this.paste],
+      ['cut', this.cut],
+      ['copy', this.copy],
+      ['dragstart', this.dragstart],
+      ['keydown', this.keydown],
+    ]);
+    this.rootHandlers.forEach((handler, event) =>
+      this.domRoot.addEventListener(event, handler)
+    );
+
+    document.addEventListener('selectionchange', this.afterSelectionChange);
   }
 
-  keydown(event: KeyboardEvent) {
+  get domRoot() {
+    return this.inputController.view.domRoot;
+  }
+
+  pause = (): void => {
+    document.removeEventListener('selectionchange', this.afterSelectionChange);
+    this.observer.takeRecords();
+    this.observer.disconnect();
+    this.logger('paused');
+  };
+
+  resume = (): void => {
+    document.addEventListener('selectionchange', this.afterSelectionChange);
+    this.observer.observe(this.domRoot, this.observerConfig);
+    this.observer.takeRecords();
+    this.logger('resumed');
+  };
+
+  keydown = (event: KeyboardEvent) => {
     mapKeyEvent(this.inputController, event);
-  }
+  };
 
-  dragstart(event: DragEvent) {
+  dragstart = (event: DragEvent) => {
     event.preventDefault();
-  }
+  };
 
-  paste(
+  paste = (
     event: ClipboardEvent,
     pasteHTML?: boolean,
     pasteExtendedHTML?: boolean
-  ) {
+  ) => {
     event.preventDefault();
     handlePaste(this.inputController, event, pasteHTML, pasteExtendedHTML);
-  }
+  };
 
-  cut(event: ClipboardEvent) {
+  cut = (event: ClipboardEvent) => {
     event.preventDefault();
     handleCutCopy(this.inputController, event, true);
-  }
+  };
 
-  copy(event: ClipboardEvent) {
+  copy = (event: ClipboardEvent) => {
     event.preventDefault();
     handleCutCopy(this.inputController, event, false);
-  }
+  };
 
-  afterInput(event: InputEvent): void {
+  afterInput = (event: InputEvent): void => {
     const logger = createLogger('afterInput');
     logger(JSON.stringify(event));
     logger(event);
     logger(event.target);
     logger(event.getTargetRanges());
-  }
+  };
 
-  beforeInput(event: InputEvent): void {
+  beforeInput = (event: InputEvent): void => {
     // check manipulation by plugins
     for (const plugin of this.inputController.currentState.plugins) {
       if (plugin.handleEvent) {
@@ -159,16 +215,16 @@ export class EditorInputHandler implements InputHandler {
         console.warn('Unhandled beforeinput event type:', event.inputType);
         break;
     }
-  }
+  };
 
-  beforeSelectionChange(event: Event): void {
+  beforeSelectionChange = (event: Event): void => {
     throw new NotImplementedError(`did not handle ${event.type}`);
-  }
+  };
 
-  afterSelectionChange(): void {
-    console.log('handling selectionChanged');
+  afterSelectionChange = (): void => {
+    this.logger('Handling selectionChanged');
     const currentSelection = getWindowSelection();
-    const viewRoot = this.inputController.view.domRoot;
+    const viewRoot = this.domRoot;
     if (
       !viewRoot.contains(currentSelection.anchorNode) ||
       !viewRoot.contains(currentSelection.focusNode) ||
@@ -176,18 +232,85 @@ export class EditorInputHandler implements InputHandler {
         viewRoot === currentSelection.anchorNode &&
         currentSelection.anchorOffset === currentSelection.focusOffset)
     ) {
+      this.logger('Selection was not inside editor');
       return;
     }
     const selectionReader = new SelectionReader();
     const newSelection = selectionReader.read(
       this.inputController.currentState,
-      this.inputController.view.domRoot,
+      this.domRoot,
       currentSelection
     );
     if (!this.inputController.currentState.selection.sameAs(newSelection)) {
       const tr = this.inputController.createTransaction();
       tr.setSelection(newSelection);
-      this.inputController.dispatchTransaction(tr, false);
+      this.inputController.dispatchTransaction(tr);
     }
+  };
+
+  handleMutation = (
+    mutations: MutationRecord[],
+    _observer: MutationObserver
+  ) => {
+    if (!mutations.length) {
+      return;
+    }
+    const tr = this.inputController.currentState.createTransaction();
+    for (const mutation of mutations) {
+      this.logger(mutation);
+      switch (mutation.type) {
+        case 'characterData': {
+          const oldNode = viewToModel(
+            tr.workingCopy,
+            this.domRoot,
+            mutation.target
+          );
+          tr.insertText({
+            range: ModelRange.fromInNode(oldNode),
+            text: mutation.target.textContent ?? '',
+          });
+
+          break;
+        }
+        case 'attributes': {
+          break;
+        }
+        case 'childList': {
+          this.replaceChildren(tr, mutation.target);
+          break;
+        }
+      }
+    }
+    // if (finalRange) {
+    //   finalRange.collapse();
+    //   tr.selectRange(finalRange);
+    // }
+    tr.setSelectionFromView(this.inputController.view);
+    this.inputController.view.stateOnlyDispatch(tr);
+  };
+
+  private replaceChildren(tr: Transaction, node: Node) {
+    const reader = new HtmlReader();
+    const newNodes = flatMap(
+      (child: Node) =>
+        reader.read(
+          child,
+          new HtmlReaderContext({
+            marksRegistry: tr.workingCopy.marksRegistry,
+            inlineComponentsRegistry: tr.workingCopy.inlineComponentsRegistry,
+          })
+        ),
+      node.childNodes
+    );
+    const oldModelNode = viewToModel(tr.workingCopy, this.domRoot, node);
+    return tr.insertNodes(ModelRange.fromInNode(oldModelNode), ...newNodes);
+  }
+
+  tearDown() {
+    this.rootHandlers.forEach((handler, event) =>
+      this.domRoot.removeEventListener(event, handler)
+    );
+    document.removeEventListener('selectionchange', this.afterSelectionChange);
+    this.observer.disconnect();
   }
 }
