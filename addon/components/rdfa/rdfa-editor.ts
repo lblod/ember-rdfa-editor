@@ -192,7 +192,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     const result =
       this.controller?.currentState.inlineComponentsRegistry.activeComponents ||
       new Map<ModelInlineComponent, ActiveComponentEntry>();
-    console.log('GET', result.values());
     return [...result.values()];
   }
 }

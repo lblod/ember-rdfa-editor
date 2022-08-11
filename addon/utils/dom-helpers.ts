@@ -630,7 +630,6 @@ export function domPosToModelPos(
     }
   }
 
-  console.log('PATH', offsetPath);
   return ModelPosition.fromPath(state.document, offsetPath);
 }
 

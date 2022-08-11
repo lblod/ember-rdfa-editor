@@ -60,7 +60,6 @@ export default class RdfaDocumentController
     const root = this.currentState.document;
     const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
     this.perform((tr) => {
-      console.log(JSON.stringify(tr.commands));
       tr.commands.insertHtml({ htmlString: html, range });
     });
   }
