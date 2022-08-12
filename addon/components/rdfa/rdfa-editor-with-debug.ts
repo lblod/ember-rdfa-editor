@@ -34,9 +34,9 @@ if (
     EditorView: Newable<BasicSetup.EditorView>;
   };
   // eslint-disable-next-line no-var
-  var { xml } = importSync('@codemirror/lang-xml') as {
-    xml: () => LanguageSupport;
-  };
+  // var { xml } = importSync('@codemirror/lang-xml') as {
+  //   xml: () => LanguageSupport;
+  // };
   // eslint-disable-next-line no-var
   var { html } = importSync('@codemirror/lang-html') as {
     html: () => LanguageSupport;
@@ -91,18 +91,18 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
     this.debug = info;
   }
 
-  @action
-  setupXmlEditor(element: HTMLElement) {
-    this.xmlEditor = new EditorView({
-      state: EditorState.create({
-        extensions: [basicSetup, xml()],
-      }),
-      parent: element,
-    });
-    this.xmlEditor.dispatch({
-      changes: { from: 0, insert: this.debuggerContent },
-    });
-  }
+  // @action
+  // setupXmlEditor(element: HTMLElement) {
+  //   this.xmlEditor = new EditorView({
+  //     state: EditorState.create({
+  //       extensions: [basicSetup, xml()],
+  //     }),
+  //     parent: element,
+  //   });
+  //   this.xmlEditor.dispatch({
+  //     changes: { from: 0, insert: this.debuggerContent },
+  //   });
+  // }
 
   @action
   setupHtmlEditor(element: HTMLElement) {
