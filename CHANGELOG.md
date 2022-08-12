@@ -22,6 +22,16 @@
 
 
 
+
+## 0.61.1 (2022-08-12)
+
+#### :bug: Bug Fix
+* [#309](https://github.com/lblod/ember-rdfa-editor/pull/309) Remove the appuniversum SASS includePath ([@Windvis](https://github.com/Windvis))
+
+#### Committers: 1
+- Sam Van Campenhout ([@Windvis](https://github.com/Windvis))
+
+
 ## 0.61.0 (2022-08-12)
 
 #### :bug: Bug Fix
