@@ -21,6 +21,23 @@
 
 
 
+
+## 0.61.0 (2022-08-12)
+
+#### :bug: Bug Fix
+* [#303](https://github.com/lblod/ember-rdfa-editor/pull/303) Reduce selectionChanged events ([@elpoelma](https://github.com/elpoelma))
+* [#304](https://github.com/lblod/ember-rdfa-editor/pull/304) Fix/lump node plugin selection ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#308](https://github.com/lblod/ember-rdfa-editor/pull/308) Bump used node version and builder image ([@abeforgit](https://github.com/abeforgit))
+* [#305](https://github.com/lblod/ember-rdfa-editor/pull/305) Bump terser from 4.8.0 to 4.8.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#300](https://github.com/lblod/ember-rdfa-editor/pull/300) Replace ix by itertools ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
 ## 0.61.0-0 (2022-07-15)
 
 #### :rocket: Enhancement
