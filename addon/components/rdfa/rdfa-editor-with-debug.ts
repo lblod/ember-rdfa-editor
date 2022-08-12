@@ -1,4 +1,8 @@
-import { importSync, dependencySatisfies } from '@embroider/macros';
+import {
+  importSync,
+  dependencySatisfies,
+  macroCondition,
+} from '@embroider/macros';
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
@@ -12,10 +16,12 @@ export type Newable<T> = {
   create(...args: unknown[]): T;
 };
 if (
-  dependencySatisfies('xml-formatter', '*') &&
-  dependencySatisfies('@codemirror/basic-setup', '*') &&
-  dependencySatisfies('@codemirror/lang-xml', '*') &&
-  dependencySatisfies('@codemirror/lang-html', '*')
+  macroCondition(
+    dependencySatisfies('xml-formatter', '*') &&
+      dependencySatisfies('@codemirror/basic-setup', '*') &&
+      dependencySatisfies('@codemirror/lang-xml', '*') &&
+      dependencySatisfies('@codemirror/lang-html', '*')
+  )
 ) {
   // eslint-disable-next-line no-var
   var xmlFormat = importSync('xml-formatter') as (a: string) => string;

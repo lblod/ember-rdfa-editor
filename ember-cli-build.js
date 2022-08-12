@@ -40,6 +40,14 @@ module.exports = function (defaults) {
         },
       },
     },
+    '@embroider/macros': {
+      setOwnConfig: {
+        // your config goes here
+      },
+      setConfig: {
+        //
+      },
+    },
   });
 
   /*
