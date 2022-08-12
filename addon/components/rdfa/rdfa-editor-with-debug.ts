@@ -1,12 +1,46 @@
+import { importSync, dependencySatisfies } from '@embroider/macros';
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
-import xmlFormat from 'xml-formatter';
-import { basicSetup, EditorState, EditorView } from '@codemirror/basic-setup';
-import { xml } from '@codemirror/lang-xml';
-import { html } from '@codemirror/lang-html';
+import type * as BasicSetup from '@codemirror/basic-setup';
+import type { Extension } from '@codemirror/state';
+import type { LanguageSupport } from '@codemirror/language';
+export type Newable<T> = {
+  new (...args: unknown[]): T;
+  create(...args: unknown[]): T;
+};
+if (
+  dependencySatisfies('xml-formatter', '*') &&
+  dependencySatisfies('@codemirror/basic-setup', '*') &&
+  dependencySatisfies('@codemirror/lang-xml', '*') &&
+  dependencySatisfies('@codemirror/lang-html', '*')
+) {
+  // eslint-disable-next-line no-var
+  var xmlFormat = importSync('xml-formatter') as (a: string) => string;
+  // eslint-disable-next-line no-var
+  var { EditorState, EditorView, basicSetup } = importSync(
+    '@codemirror/basic-setup'
+  ) as {
+    basicSetup: Extension;
+    EditorState: Newable<BasicSetup.EditorState>;
+    EditorView: Newable<BasicSetup.EditorView>;
+  };
+  // eslint-disable-next-line no-var
+  var { xml } = importSync('@codemirror/lang-xml') as {
+    xml: () => LanguageSupport;
+  };
+  // eslint-disable-next-line no-var
+  var { html } = importSync('@codemirror/lang-html') as {
+    html: () => LanguageSupport;
+  };
+} else {
+  throw new Error(
+    `You can not use the rdfa-editor-with-debug component without installing: xml-formatter, @codemirror/basic-setup, @codemirror/lang-xml and @codemirror/lang-html`
+  );
+}
+
 import sampleData from '../../config/sample-data';
 
 interface FeaturesService {
@@ -28,8 +62,8 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   @tracked sampleData = sampleData;
   @tracked exportContent = '';
   private unloadListener?: () => void;
-  private xmlEditor?: EditorView;
-  private htmlEditor?: EditorView;
+  private xmlEditor?: BasicSetup.EditorView;
+  private htmlEditor?: BasicSetup.EditorView;
 
   @action
   setup() {
