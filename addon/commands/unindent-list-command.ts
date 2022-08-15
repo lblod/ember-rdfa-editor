@@ -65,6 +65,7 @@ export default class UnindentListCommand
     if (!range) {
       throw new MisbehavedSelectionError();
     }
+    transaction.deepClone();
     const cloneRange = transaction.cloneRange(range);
 
     const treeWalker = ModelRangeUtils.findModelNodes(

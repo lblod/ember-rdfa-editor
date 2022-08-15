@@ -15,6 +15,7 @@ import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import State from '../core/state';
+
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
     indentList: IndentListCommand;
@@ -24,6 +25,7 @@ declare module '@lblod/ember-rdfa-editor' {
 export interface IndentListCommandArgs {
   range?: ModelRange | null;
 }
+
 export default class IndentListCommand
   implements Command<IndentListCommandArgs, void>
 {
@@ -60,6 +62,8 @@ export default class IndentListCommand
     if (!range) {
       throw new MisbehavedSelectionError();
     }
+    transaction.deepClone();
+    range = transaction.cloneRange(range);
 
     const treeWalker = ModelRangeUtils.findModelNodes(
       range,

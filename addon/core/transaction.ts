@@ -103,7 +103,7 @@ export default class Transaction {
     return this._shouldFocus;
   }
 
-  private deepClone() {
+  deepClone() {
     if (this._workingCopy.document === this.initialState.document) {
       this.logger('Performing deepclone');
       const documentClone = this.initialState.document.clone();

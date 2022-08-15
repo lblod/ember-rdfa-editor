@@ -199,6 +199,7 @@ module('Unit | core | transaction-test', function () {
         `;
       const initialState = testState({ document: initial });
       const tr = initialState.createTransaction();
+      tr.deepClone();
       const n0c = tr.inWorkingCopy(n0);
       const n1c = tr.inWorkingCopy(n1);
       const n2c = tr.inWorkingCopy(n2);
