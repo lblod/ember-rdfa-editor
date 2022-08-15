@@ -35,6 +35,7 @@ export default class RemoveListCommand
     if (!range) {
       throw new MisbehavedSelectionError();
     }
+    transaction.deepClone();
     const clonedRange = transaction.cloneRange(range);
 
     const endLis = clonedRange.end.findAncestors(ModelNodeUtils.isListElement);
