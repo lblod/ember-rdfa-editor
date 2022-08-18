@@ -185,32 +185,6 @@ export default abstract class ModelNode implements Walkable {
   }
 
   abstract hasVisibleText(): boolean;
-
-  /**
-   * Get the path of indices from root
-   * @deprecated prefer using offsets instead of indices
-   */
-  getIndexPath(): number[] {
-    const result = [];
-    // this is deprecated so I won't fix this
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let child: ModelNode = this;
-    let parent = this.parent;
-    while (parent) {
-      const index = parent.getChildIndex(child);
-
-      if (index === null) {
-        break;
-      }
-
-      result.unshift(index);
-      child = parent;
-      parent = parent.parent;
-    }
-
-    return result;
-  }
-
   /**
    * Debugging utility
    */
@@ -252,32 +226,6 @@ export default abstract class ModelNode implements Walkable {
   setTextAttribute(_key: TextAttribute, _value: boolean) {
     //no-op function
   }
-
-  /**
-   * @deprecated TODO evaluate whether we need this or not
-   */
-  findAncestor(
-    predicate: (node: ModelNode) => boolean,
-    includeSelf = true
-  ): ModelNode | null {
-    if (includeSelf) {
-      if (predicate(this)) {
-        return this;
-      }
-    }
-
-    let cur = this.parent;
-    while (cur && !predicate(cur)) {
-      cur = cur.parent;
-    }
-
-    if (cur && !predicate(cur)) {
-      return null;
-    }
-
-    return cur;
-  }
-
   *findSelfOrAncestors(
     predicate: Predicate<ModelNode>
   ): Generator<ModelNode, void, void> {
@@ -322,24 +270,6 @@ export default abstract class ModelNode implements Walkable {
 
     return oldParent;
   }
-
-  /**
-   * Splits the parent such that this node ends up as an only child. If the node is already
-   * an only child, this does nothing.
-   * Throws if node has no parent, or if parent is root
-   */
-  isolate() {
-    const parent = this.parent;
-    if (!parent) {
-      throw new NoParentError();
-    }
-    if (!parent.parent) {
-      throw new OutsideRootError();
-    }
-    const index = this.index!;
-    parent.isolateChildAt(index);
-  }
-
   remove() {
     if (!this.parent) {
       throw new ModelError('Cannot remove root');
