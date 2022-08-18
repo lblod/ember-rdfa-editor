@@ -40,7 +40,6 @@ export default class XmlElementReader
     }
     const dirtyFlags = from.attributes.getNamedItem('__dirty');
     const dirtyConfig = (dirtyFlags?.value.split(',') || []) as DirtyType[];
-    rslt.setDirty(...dirtyConfig);
     return rslt;
   }
 }

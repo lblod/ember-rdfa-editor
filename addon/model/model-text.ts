@@ -8,7 +8,6 @@ import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
-import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
 
 const NON_BREAKING_SPACE = '\u00A0';
 
@@ -28,7 +27,6 @@ export default class ModelText extends ModelNode {
 
   set content(value: string) {
     this._content = value;
-    this.addDirty('content');
   }
 
   get marks(): MarkSet {
@@ -37,7 +35,6 @@ export default class ModelText extends ModelNode {
 
   set marks(value: MarkSet) {
     this._marks = value;
-    this.addDirty('mark');
   }
 
   get length() {
@@ -66,12 +63,10 @@ export default class ModelText extends ModelNode {
 
   addMark(mark: Mark) {
     this.marks.add(mark);
-    this.addDirty('mark');
   }
 
   removeMarkByName(markName: string) {
     this.marks.deleteHash(markName);
-    this.addDirty('mark');
   }
 
   insertTextNodeAt(index: number): ModelText {
@@ -147,12 +142,10 @@ export default class ModelText extends ModelNode {
 
   sameAs(other: ModelNode, compareOpts?: NodeCompareOpts): boolean {
     let ignoredAttributes = ModelNodeUtils.DEFAULT_IGNORED_ATTRS;
-    let ignoreDirtyness: boolean | undefined = true;
     if (compareOpts) {
       if (compareOpts.ignoredAttributes) {
         ignoredAttributes = compareOpts.ignoredAttributes;
       }
-      ignoreDirtyness = compareOpts.ignoreDirtiness;
     }
     if (!ModelNode.isModelText(other)) {
       return false;
@@ -162,11 +155,6 @@ export default class ModelText extends ModelNode {
     }
     if (!this.marks.hasSameHashes(other.marks)) {
       return false;
-    }
-    if (!ignoreDirtyness) {
-      if (!SetUtils.areSetsSame(this.dirtiness, other.dirtiness)) {
-        return false;
-      }
     }
     return ModelNodeUtils.areAttributeMapsSame(
       this.attributeMap,

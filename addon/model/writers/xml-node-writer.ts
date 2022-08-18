@@ -22,10 +22,6 @@ export default class XmlNodeWriter implements Writer<ModelNode, Node> {
     } else {
       throw new NotImplementedError();
     }
-    if (modelNode.dirtiness.size) {
-      const dirtyness = Array.from(modelNode.dirtiness).join(',');
-      result.setAttribute('__dirty', dirtyness);
-    }
     return result;
   }
 }

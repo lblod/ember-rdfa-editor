@@ -125,7 +125,6 @@ export default class MarkOperation extends Operation {
       const _markCheckNodes: ModelNode[] = [...textNodes];
 
       for (const node of textNodes) {
-        node.parent?.addDirty('content');
         this.markAction(node, this.spec, this.attributes, this.action);
       }
       OperationAlgorithms.mergeTextNodes(textNodes);

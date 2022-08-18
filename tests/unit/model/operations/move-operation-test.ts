@@ -34,7 +34,7 @@ module('Unit | model | operations | move-operation-test', function () {
     const op = new MoveOperation(undefined, srcRange, targetPos);
     const resultRange = op.execute().defaultRange;
 
-    assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
+    assert.true(initial.sameAs(expected));
     assert.true(
       resultRange.sameAs(
         ModelRange.fromPaths(initial as ModelElement, [0, 0], [0, 4])

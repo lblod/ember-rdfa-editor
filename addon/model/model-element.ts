@@ -20,7 +20,6 @@ import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils
 import { parsePrefixString } from '@lblod/ember-rdfa-editor/model/util/rdfa-utils';
 import RdfaAttributes from '@lblod/marawa/rdfa-attributes';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
-import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
@@ -47,7 +46,6 @@ export default class ModelElement
 
   set type(value: ElementType) {
     this._type = value;
-    this.addDirty('node');
   }
 
   set className(value: string) {
@@ -69,7 +67,6 @@ export default class ModelElement
 
   set children(value: ModelNode[]) {
     this._children = value;
-    this.addDirty('content');
   }
 
   get childCount() {
@@ -94,6 +91,7 @@ export default class ModelElement
   get isBlock() {
     return !NON_BLOCK_NODES.has(this.type);
   }
+
   get isLeaf() {
     //TODO: Check correctness
     const properties = this.getRdfaAttributes().properties;
@@ -165,7 +163,6 @@ export default class ModelElement
     }
 
     child.parent = this;
-    this.addDirty('content');
   }
 
   insertChildAtOffset(child: ModelNode, offset: number) {
@@ -214,7 +211,6 @@ export default class ModelElement
         this.children[index - 1] || null;
     }
     this.children.splice(index, 1);
-    this.addDirty('content');
   }
 
   getChildIndex(child: ModelNode): number | null {
@@ -251,7 +247,6 @@ export default class ModelElement
     }
 
     this.children = leftChildren;
-    this.addDirty('content');
     const right = this.clone();
     right.children = [];
     right.appendChildren(...rightChildren);
@@ -447,7 +442,6 @@ export default class ModelElement
     if (key === 'prefix') {
       this.updateRdfaPrefixes();
     }
-    this.addDirty('node');
   }
 
   /**
@@ -472,16 +466,9 @@ export default class ModelElement
     }
 
     let ignoredAttributes = ModelNodeUtils.DEFAULT_IGNORED_ATTRS;
-    let ignoreDirtyness: boolean | undefined = true;
     if (compareOpts) {
       if (compareOpts.ignoredAttributes) {
         ignoredAttributes = compareOpts.ignoredAttributes;
-      }
-      ignoreDirtyness = compareOpts.ignoreDirtiness;
-    }
-    if (!ignoreDirtyness) {
-      if (!SetUtils.areSetsSame(this.dirtiness, other.dirtiness)) {
-        return false;
       }
     }
 

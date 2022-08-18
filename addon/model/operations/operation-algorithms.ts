@@ -220,7 +220,6 @@ export default class OperationAlgorithms {
 
     if (!range.collapsed && newStartNode) {
       newStartNode.remove();
-      newStartNode.parent!.removeDirty('content');
     }
     for (const node of nodesToRemove.filter(
       (node) => node !== newStartNode && node !== newEndNode
@@ -229,7 +228,6 @@ export default class OperationAlgorithms {
     }
     if (!range.collapsed && newEndNode) {
       newEndNode.remove();
-      newEndNode.parent!.removeDirty('content');
     }
 
     let newEndPos;
@@ -367,7 +365,6 @@ export default class OperationAlgorithms {
       const before = position.nodeBefore();
       if (before) {
         const leftSideChildren = parent.children.splice(0, before.index!);
-        parent.addDirty('content');
         if (parent.firstChild) {
           parent.firstChild.previousSibling = null;
         }
@@ -393,7 +390,6 @@ export default class OperationAlgorithms {
       const after = position.nodeAfter();
       if (after) {
         const rightSideChildren = parent.children.splice(after.index!);
-        parent.addDirty('content');
         if (parent.lastChild) {
           parent.lastChild.nextSibling = null;
         }
