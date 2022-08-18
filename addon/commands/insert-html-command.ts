@@ -59,7 +59,6 @@ export default class InsertHtmlCommand
       }
     });
 
-    const newRange = transaction.insertNodes(range, ...modelNodes);
-    transaction.selectRange(newRange);
+    transaction.insertNodes(range, ...modelNodes);
   }
 }

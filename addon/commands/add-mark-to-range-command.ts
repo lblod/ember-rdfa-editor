@@ -29,8 +29,7 @@ export default class AddMarkToRangeCommand
   ): void {
     const spec = transaction.workingCopy.marksRegistry.lookupMark(markName);
     if (spec) {
-      const resultRange = transaction.addMark(range, spec, markAttributes);
-      transaction.selectRange(resultRange);
+      transaction.addMark(range, spec, markAttributes);
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);
     }

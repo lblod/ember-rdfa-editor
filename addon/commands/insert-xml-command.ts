@@ -11,10 +11,12 @@ declare module '@lblod/ember-rdfa-editor' {
     insertXml: InsertXmlCommand;
   }
 }
+
 export interface InsertXmlCommandArgs {
   xml: string;
   range?: ModelRange | null;
 }
+
 /**
  * Allows you to insert model nodes from an xml string.
  * Particularly useful for testing and debugging.
@@ -25,10 +27,10 @@ export default class InsertXmlCommand
   canExecute(): boolean {
     return true;
   }
+
   @logExecute
   execute(
     { transaction }: CommandContext,
-
     {
       xml,
       range = transaction.workingCopy.selection.lastRange,
@@ -39,10 +41,6 @@ export default class InsertXmlCommand
     }
 
     const parsedModelNodes = parseXmlSiblings(xml);
-    //All nodes are marked as dirty by default when inserted but not in the xml writer
-    // as we need to set dirtiness statuses in the tests, in order to solve bugs related to
-    // nodes not being properly inserted we set them all dirty in this function below
-    const newRange = transaction.insertNodes(range, ...parsedModelNodes);
-    transaction.selectRange(newRange);
+    transaction.insertNodes(range, ...parsedModelNodes);
   }
 }

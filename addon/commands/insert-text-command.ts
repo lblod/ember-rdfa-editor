@@ -12,6 +12,7 @@ declare module '@lblod/ember-rdfa-editor' {
     insertText: InsertTextCommand;
   }
 }
+
 export interface InsertTextCommandArgs {
   text: string;
   range: ModelRange | null;
@@ -63,15 +64,14 @@ export default class InsertTextCommand
         previousIndex = position + 1;
       }
       const lastLine = text.substring(previousIndex, text.length);
-      resultRange = transaction.insertText({
+      transaction.insertText({
         range: resultRange,
         text: lastLine,
         marks,
       });
     } else {
-      resultRange = transaction.insertText({ range, text, marks });
+      transaction.insertText({ range, text, marks });
     }
-    resultRange.collapse(false);
-    transaction.selectRange(resultRange);
+    transaction.collapseSelection();
   }
 }

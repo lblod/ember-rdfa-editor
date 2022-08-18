@@ -520,6 +520,12 @@ export default class Transaction {
     return this.executeOperation(op);
   }
 
+  collapseSelection(left = false) {
+    const sel = this.cloneSelection(this.currentSelection);
+    sel.lastRange?.collapse(left);
+    this.setSelection(sel);
+  }
+
   /**
    * Clone a range and set its root in the new state.
    * This is currently public to provide a workaround for various editing implementations

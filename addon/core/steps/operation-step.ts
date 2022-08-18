@@ -2,7 +2,10 @@ import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
 import State from '../state';
 import { BaseStep, StepType } from './step';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
+import {
+  NotImplementedError,
+  OperationError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import RangeMapper from '@lblod/ember-rdfa-editor/model/range-mapper';
 
@@ -13,9 +16,13 @@ export default class OperationStep implements BaseStep {
   private readonly mapper: RangeMapper;
 
   constructor(initialState: State, readonly operation: Operation) {
+    if (initialState.document !== operation.range.root) {
+      throw new OperationError();
+    }
     const { mapper, defaultRange } = this.operation.execute();
     this.mapper = mapper;
     this._defaultRange = defaultRange;
+    initialState.selection = this.mapper.mapSelection(initialState.selection);
     this._resultState = initialState;
   }
 

@@ -10,11 +10,13 @@ import {
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelElement from '../model/model-element';
 import Command, { CommandContext } from './command';
+
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
     insertNewLine: InsertNewLineCommand;
   }
 }
+
 export interface InsertNewLineCommandArgs {
   range?: ModelRange | null;
 }
@@ -55,7 +57,7 @@ export default class InsertNewLineCommand
 
     transaction.insertNodes(range, br);
     const cursorPos = ModelPosition.fromAfterNode(br);
-    let newRange = new ModelRange(cursorPos, cursorPos);
+    const newRange = new ModelRange(cursorPos, cursorPos);
 
     if (!br.parent) {
       throw new ImpossibleModelStateError();
@@ -65,9 +67,7 @@ export default class InsertNewLineCommand
     // Thanks to the magic of the dom spec, so we insert a good old invisible space.
     if (br.parent.isBlock && br === br.parent.lastChild) {
       const dummyText = new ModelText(INVISIBLE_SPACE);
-      newRange = transaction.insertNodes(newRange, dummyText);
+      transaction.insertNodes(newRange, dummyText);
     }
-
-    transaction.selectRange(newRange);
   }
 }

@@ -16,6 +16,7 @@ declare module '@lblod/ember-rdfa-editor' {
     addMarkToSelection: AddMarkToSelectionCommand;
   }
 }
+
 export interface AddMarkToSelectionCommandArgs {
   markName: string;
   markAttributes?: Record<string, Serializable>;
@@ -47,12 +48,7 @@ export default class AddMarkToSelectionCommand
         if (!ModelSelection.isWellBehaved(selection)) {
           throw new MisbehavedSelectionError();
         }
-        const resultRange = transaction.addMark(
-          selection.lastRange,
-          spec,
-          markAttributes
-        );
-        transaction.selectRange(resultRange);
+        transaction.addMark(selection.lastRange, spec, markAttributes);
       }
       transaction.workingCopy.eventBus.emit(
         new SelectionChangedEvent({

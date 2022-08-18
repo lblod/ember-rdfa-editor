@@ -15,6 +15,7 @@ declare module '@lblod/ember-rdfa-editor' {
     removeMarkFromSelection: RemoveMarkFromSelectionCommand;
   }
 }
+
 export interface RemoveMarkFromSelectionCommandArgs {
   markName: string;
   markAttributes?: AttributeSpec;
@@ -26,6 +27,7 @@ export default class RemoveMarkFromSelectionCommand
   canExecute(): boolean {
     return true;
   }
+
   execute(
     { transaction }: CommandContext,
     { markName, markAttributes = {} }: RemoveMarkFromSelectionCommandArgs
@@ -42,12 +44,7 @@ export default class RemoveMarkFromSelectionCommand
         throw new MisbehavedSelectionError();
       }
       if (spec) {
-        const resultRange = transaction.removeMark(
-          selection.lastRange,
-          spec,
-          markAttributes
-        );
-        transaction.selectRange(resultRange);
+        transaction.removeMark(selection.lastRange, spec, markAttributes);
       } else {
         throw new ModelError(`Unrecognized mark: ${markName}`);
       }
