@@ -28,11 +28,12 @@ import {
   commandMapToCommandExecutor,
 } from '../commands/command-manager';
 import { CommandName, Commands } from '@lblod/ember-rdfa-editor';
-import Step, { StepResult } from './steps/step';
-import SelectionStep from './steps/selection_step';
-import OperationStep from './steps/operation_step';
-import ConfigStep from './steps/config_step';
+import { isOperationStep, Step } from './steps/step';
+import SelectionStep from './steps/selection-step';
+import OperationStep from './steps/operation-step';
+import ConfigStep from './steps/config-step';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
 
 interface TextInsertion {
   range: ModelRange;
@@ -164,7 +165,7 @@ export default class Transaction {
       'add'
     );
     this.createSnapshot();
-    return this.executeStep(new OperationStep(op)).defaultRange;
+    return this.executeOperation(op);
   }
 
   /**
@@ -234,14 +235,14 @@ export default class Transaction {
       marks || new MarkSet()
     );
     this.createSnapshot();
-    return this.executeStep(new OperationStep(operation)).defaultRange;
+    return this.executeOperation(operation);
   }
 
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     this.deepClone();
     const op = new InsertOperation(undefined, this.cloneRange(range), ...nodes);
     this.createSnapshot();
-    return this.executeStep(new OperationStep(op)).defaultRange;
+    return this.executeOperation(op);
   }
 
   /**
@@ -251,7 +252,7 @@ export default class Transaction {
     const clone = this.cloneSelection(selection);
     const changed = !clone.sameAs(this._workingCopy.selection);
     if (changed) {
-      this.executeStep(new SelectionStep(clone));
+      this.commitStep(new SelectionStep(this.workingCopy, clone));
     }
     return changed;
   }
@@ -278,7 +279,7 @@ export default class Transaction {
   }
 
   setConfig(key: string, value: string | null): void {
-    this.executeStep(new ConfigStep(key, value));
+    this.commitStep(new ConfigStep(this.workingCopy, key, value));
   }
 
   removeProperty(element: ModelNode, key: string): ModelNode {
@@ -306,17 +307,21 @@ export default class Transaction {
     this.deepClone();
     const clonedRange = this.cloneRange(range);
     const op = new RemoveOperation(undefined, clonedRange, ...nodes);
-    return this.executeStep(new OperationStep(op)).defaultRange;
+    return this.executeOperation(op);
   }
 
-  private executeStep<R extends StepResult>(step: Step<R>): R {
+  private executeOperation(op: Operation): ModelRange {
+    const step = new OperationStep(this.workingCopy, op);
+    this.commitStep(step);
+    return step.defaultRange;
+  }
+
+  private commitStep(step: Step): void {
     this._steps.push(step);
-    const result = step.execute(this.workingCopy);
-    this._workingCopy = result.state;
-    if (Step.isOperationStep(step)) {
+    this._workingCopy = step.resultState;
+    if (isOperationStep(step)) {
       this.rdfInvalid = true;
     }
-    return result;
   }
 
   selectRange(range: ModelRange): void {
@@ -327,13 +332,13 @@ export default class Transaction {
     const clone = this.cloneSelection(this.workingCopy.selection);
     clone.selectRange(range, clone.isRightToLeft);
     clone.isRightToLeft = this.workingCopy.selection.isRightToLeft;
-    this.executeStep(new SelectionStep(clone));
+    this.commitStep(new SelectionStep(this.workingCopy, clone));
   }
 
   addMarkToSelection(mark: Mark) {
     const clone = this.cloneSelection(this.workingCopy.selection);
     clone.activeMarks.add(mark);
-    this.executeStep(new SelectionStep(clone));
+    this.commitStep(new SelectionStep(this.workingCopy, clone));
     this.createSnapshot();
   }
 
@@ -345,7 +350,7 @@ export default class Transaction {
     const rangeClone = this.cloneRange(rangeToMove);
     const posClone = this.clonePos(targetPosition);
     const op = new MoveOperation(undefined, rangeClone, posClone);
-    return this.executeStep(new OperationStep(op)).defaultRange;
+    return this.executeOperation(op);
   }
 
   removeMarkFromSelection(markname: string) {
@@ -356,7 +361,7 @@ export default class Transaction {
         clone.activeMarks.delete(mark);
       }
     }
-    this.executeStep(new SelectionStep(clone));
+    this.commitStep(new SelectionStep(this.workingCopy, clone));
     this.createSnapshot();
   }
 
@@ -480,10 +485,10 @@ export default class Transaction {
 
     this.createSnapshot();
 
-    return this.executeSplitStep(position, splitParent);
+    return this.executeSplitOperation(position, splitParent);
   }
 
-  private executeSplitStep(position: ModelPosition, splitParent = true) {
+  private executeSplitOperation(position: ModelPosition, splitParent = true) {
     const range = new ModelRange(position, position);
     const op = new SplitOperation(
       undefined,
@@ -491,7 +496,7 @@ export default class Transaction {
       splitParent
     );
     this.createSnapshot();
-    return this.executeStep(new OperationStep(op)).defaultRange.start;
+    return this.executeOperation(op).start;
   }
 
   insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange {
@@ -512,7 +517,7 @@ export default class Transaction {
     this.deepClone();
     const op = new InsertOperation(undefined, this.cloneRange(range));
     this.createSnapshot();
-    return this.executeStep(new OperationStep(op)).defaultRange;
+    return this.executeOperation(op);
   }
 
   /**
@@ -568,7 +573,7 @@ export default class Transaction {
       this.cloneRange(srcRange),
       this.clonePos(target)
     );
-    const resultRange = this.executeStep(new OperationStep(op)).defaultRange;
+    const resultRange = this.executeOperation(op);
     this.deleteNode(resultRange.end.nodeAfter()!);
 
     if (ensureBlock) {
@@ -611,7 +616,7 @@ export default class Transaction {
       'remove'
     );
     this.createSnapshot();
-    return this.executeStep(new OperationStep(op)).defaultRange;
+    return this.executeOperation(op);
   }
 
   registerCommand<N extends CommandName>(name: N, command: Commands[N]): void {

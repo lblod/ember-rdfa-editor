@@ -1,4 +1,4 @@
-import ConfigStep from '@lblod/ember-rdfa-editor/core/steps/config_step';
+import ConfigStep from '@lblod/ember-rdfa-editor/core/steps/config-step';
 import Step from '@lblod/ember-rdfa-editor/core/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';

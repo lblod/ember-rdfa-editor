@@ -1,26 +1,30 @@
 import State from '../state';
-import ConfigStep from './config_step';
-import OperationStep from './operation_step';
-import SelectionStep from './selection_step';
+import ConfigStep from './config-step';
+import OperationStep from './operation-step';
+import SelectionStep from './selection-step';
+import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+
+export interface BaseStep {
+  readonly type: StepType;
+  readonly resultState: State;
+
+  mapPosition(position: ModelPosition): ModelPosition;
+}
 
 export type StepType = 'operation-step' | 'selection-step' | 'config-step';
 
-export default abstract class Step<R extends StepResult = StepResult> {
-  abstract type: StepType;
+export type Step = SelectionStep | OperationStep | ConfigStep;
 
-  abstract execute(state: State): R;
+export function isSelectionStep(step: Step): step is SelectionStep {
+  return step.type === 'selection-step';
+}
 
-  static isSelectionStep(step: Step): step is SelectionStep {
-    return step.type === 'selection-step';
-  }
+export function isConfigStep(step: Step): step is ConfigStep {
+  return step.type === 'config-step';
+}
 
-  static isConfigStep(step: Step): step is ConfigStep {
-    return step.type === 'config-step';
-  }
-
-  static isOperationStep(step: Step): step is OperationStep {
-    return step.type === 'operation-step';
-  }
+export function isOperationStep(step: Step): step is OperationStep {
+  return step.type === 'operation-step';
 }
 
 export type StepResult = {
