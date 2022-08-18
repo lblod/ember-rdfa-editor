@@ -26,21 +26,31 @@ export default class SelectionWriter {
       return;
     }
 
-    const { startContainer, startOffset, endContainer, endOffset } =
-      this.writeDomRange(state, viewRoot, relevantRange);
+    const { anchor: startAnchor, offset: startOffset } = this.writeDomPosition(
+      state,
+      viewRoot,
+      relevantRange.start
+    );
+    const { anchor: endAnchor, offset: endOffset } = this.writeDomPosition(
+      state,
+      viewRoot,
+      relevantRange.end
+    );
 
     if (modelSelection.isRightToLeft) {
+      // see https://developer.mozilla.org/en-US/docs/Web/API/Selection/setBaseAndExtent#parameters
+      // as to why we also have to invert the offsets on top of swapping args
       domSelection.setBaseAndExtent(
-        endContainer,
-        endOffset,
-        startContainer,
-        startOffset
+        endAnchor,
+        endAnchor.childNodes.length - endOffset,
+        startAnchor,
+        startAnchor.childNodes.length - startOffset
       );
     } else {
       domSelection.setBaseAndExtent(
-        startContainer,
+        startAnchor,
         startOffset,
-        endContainer,
+        endAnchor,
         endOffset
       );
     }

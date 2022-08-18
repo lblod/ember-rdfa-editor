@@ -207,7 +207,7 @@ export default class Transaction {
       getWindowSelection()
     );
 
-    this._workingCopy.selection = newSelection;
+    this.commitStep(new SelectionStep(this.workingCopy, newSelection));
   }
 
   /**

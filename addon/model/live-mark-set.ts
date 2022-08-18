@@ -10,7 +10,7 @@ import { TextMatch } from '@lblod/ember-rdfa-editor/utils/match-text';
 import { AttributeSpec } from './util/render-spec';
 import Transaction from '../core/transaction';
 import ModelRangeUtils from './util/model-range-utils';
-import Step from '../core/steps/step';
+import { isOperationStep, Step } from '../core/steps/step';
 
 export type LiveMarkSpec =
   | string
@@ -62,7 +62,7 @@ export default class LiveMarkSet {
 
   private update = (transaction: Transaction, steps: Step[]) => {
     const marksRegistry = transaction.workingCopy.marksRegistry;
-    if (!steps.some(Step.isOperationStep)) return;
+    if (!steps.some(isOperationStep)) return;
     const { matchesToAdd, matchesToRemove } = this.calculateRanges(
       transaction.getCurrentDataStore()
     );

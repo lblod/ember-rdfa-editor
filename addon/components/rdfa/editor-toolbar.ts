@@ -1,7 +1,10 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import Step from '@lblod/ember-rdfa-editor/core/steps/step';
+import {
+  isSelectionStep,
+  Step,
+} from '@lblod/ember-rdfa-editor/core/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
@@ -44,7 +47,7 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   modifiesSelection(steps: Step[]) {
-    return steps.some(Step.isSelectionStep);
+    return steps.some(isSelectionStep);
   }
 
   update(transaction: Transaction, steps: Step[]) {

@@ -7,8 +7,10 @@ import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 export default class SelectionStep implements BaseStep {
   private readonly _type: StepType = 'selection-step';
   private readonly _resultState: State;
+  readonly selection: ModelSelection;
 
-  constructor(initialState: State, readonly selection: ModelSelection) {
+  constructor(initialState: State, selection: ModelSelection) {
+    this.selection = selection;
     const newState = cloneStateShallow(initialState);
     newState.selection = this.selection;
     this._resultState = newState;

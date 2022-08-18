@@ -1,5 +1,9 @@
 import ConfigStep from '@lblod/ember-rdfa-editor/core/steps/config-step';
-import Step from '@lblod/ember-rdfa-editor/core/steps/step';
+import {
+  isConfigStep,
+  isSelectionStep,
+  Step,
+} from '@lblod/ember-rdfa-editor/core/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
@@ -27,7 +31,7 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
 
   onTransactionDispatch(transaction: Transaction, steps: Step[]) {
     const configSteps: ConfigStep[] = steps.filter(
-      (step) => Step.isConfigStep(step) && step.key === 'showRdfaBlocks'
+      (step) => isConfigStep(step) && step.key === 'showRdfaBlocks'
     ) as ConfigStep[];
     if (configSteps.length) {
       const lastStep = configSteps[configSteps.length - 1];
@@ -38,7 +42,7 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
         rootNode.classList.remove(SHOW_RDFA_CLASS);
       }
     }
-    if (steps.some(Step.isSelectionStep)) {
+    if (steps.some(isSelectionStep)) {
       this.updateAttributes(transaction);
     }
   }
