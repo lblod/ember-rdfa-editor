@@ -1,7 +1,6 @@
 import State, { SayState } from '../state';
 import { BaseStep, StepType } from './step';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 export default class ConfigStep implements BaseStep {
   private readonly _type: StepType = 'config-step';
@@ -17,11 +16,10 @@ export default class ConfigStep implements BaseStep {
     this.key = key;
     const newConfig = new Map(initialState.config);
     newConfig.set(this.key, this.value);
-    const newState = new SayState({
+    this._resultState = new SayState({
       ...initialState,
       config: newConfig,
     });
-    this._resultState = newState;
   }
 
   get type(): StepType {
@@ -33,6 +31,6 @@ export default class ConfigStep implements BaseStep {
   }
 
   mapPosition(position: ModelPosition): ModelPosition {
-    throw new NotImplementedError();
+    return position;
   }
 }

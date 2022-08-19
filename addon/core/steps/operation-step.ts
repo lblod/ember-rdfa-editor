@@ -2,10 +2,7 @@ import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
 import State from '../state';
 import { BaseStep, StepType } from './step';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import {
-  NotImplementedError,
-  OperationError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
+import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import RangeMapper from '@lblod/ember-rdfa-editor/model/range-mapper';
 
@@ -39,6 +36,6 @@ export default class OperationStep implements BaseStep {
   }
 
   mapPosition(position: ModelPosition): ModelPosition {
-    throw new NotImplementedError();
+    return this.mapper.mapPosition(position);
   }
 }
