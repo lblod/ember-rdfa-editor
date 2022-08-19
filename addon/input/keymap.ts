@@ -76,7 +76,6 @@ export function mapKeyEvent(
   controller: Controller,
   event: KeyboardEvent
 ): void {
-  console.log(event);
   const keymap = controller.currentState.keymap;
   if (event.isComposing) {
     return;

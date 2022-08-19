@@ -4,7 +4,6 @@ type FontStyle = 'bold' | 'italic' | 'underline' | 'strikethrough';
 
 export function handleBasicStyle(style: FontStyle) {
   return function (controller: Controller, event: KeyboardEvent) {
-    console.log(event);
     event.preventDefault();
     controller.perform((tr) => {
       const selection = tr.currentSelection;
