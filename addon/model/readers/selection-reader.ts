@@ -4,7 +4,10 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { domPosToModelPos } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
+import {
+  ModelError,
+  SelectionError,
+} from '@lblod/ember-rdfa-editor/utils/errors';
 
 /**
  * Reader to convert a {@link Selection} to a {@link ModelSelection}.
@@ -35,6 +38,8 @@ export default class SelectionReader {
   /**
    * Convert a {@link Range} to a {@link ModelRange}.
    * Can be null when the {@link Selection} is empty.
+   * @param state
+   * @param viewRoot
    * @param range
    */
   readDomRange(
@@ -68,6 +73,8 @@ export default class SelectionReader {
   /**
    * Convert a DOM position to a {@link ModelPosition}.
    * Can be null when the {@link Selection} is empty.
+   * @param state
+   * @param viewRoot
    * @param container
    * @param domOffset
    */
@@ -104,16 +111,18 @@ export default class SelectionReader {
    * @param selection
    * @private
    */
-  private static isReverseSelection(selection: Selection): boolean {
-    if (!selection.anchorNode || !selection.focusNode) return false;
-    const position = selection.anchorNode.compareDocumentPosition(
-      selection.focusNode
-    );
+  static isReverseSelection(selection: Selection): boolean {
+    if (!selection.anchorNode || !selection.focusNode) {
+      throw new SelectionError('Selection without anchor or focus');
+    }
+    const range = selection.getRangeAt(0);
+    const startIsFocus =
+      range.startContainer === selection.focusNode &&
+      range.startOffset === selection.focusOffset;
+    const endIsAnchor =
+      range.endContainer === selection.anchorNode &&
+      range.endOffset === selection.anchorOffset;
 
-    // Position == 0 if nodes are the same.
-    return (
-      (!position && selection.anchorOffset > selection.focusOffset) ||
-      position === Node.DOCUMENT_POSITION_PRECEDING
-    );
+    return startIsFocus && endIsAnchor;
   }
 }

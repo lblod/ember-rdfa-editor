@@ -38,13 +38,11 @@ export default class SelectionWriter {
     );
 
     if (modelSelection.isRightToLeft) {
-      // see https://developer.mozilla.org/en-US/docs/Web/API/Selection/setBaseAndExtent#parameters
-      // as to why we also have to invert the offsets on top of swapping args
       domSelection.setBaseAndExtent(
         endAnchor,
-        endAnchor.childNodes.length - endOffset,
+        endOffset,
         startAnchor,
-        startAnchor.childNodes.length - startOffset
+        startOffset
       );
     } else {
       domSelection.setBaseAndExtent(
@@ -71,6 +69,8 @@ export default class SelectionWriter {
 
   /**
    * Convert a single {@link ModelRange} to a {@link Range}
+   * @param state
+   * @param viewRoot
    * @param range
    */
   writeDomRange(state: State, viewRoot: Element, range: ModelRange): Range {
@@ -86,6 +86,8 @@ export default class SelectionWriter {
   /**
    * Convert a single {@link ModelPosition} to a DOM position.
    * (aka a {@link Node} and an offset).
+   * @param state
+   * @param viewRoot
    * @param position
    */
   writeDomPosition(

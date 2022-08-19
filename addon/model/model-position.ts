@@ -201,9 +201,7 @@ export default class ModelPosition {
    * @param other
    */
   sameAs(other: ModelPosition): boolean {
-    return (
-      this.root === other.root && this.compare(other) === RelativePosition.EQUAL
-    );
+    return this.compare(other) === RelativePosition.EQUAL;
   }
 
   /**
@@ -685,6 +683,7 @@ export default class ModelPosition {
     }
     return currentPos;
   }
+
   /**
    * Return a new position which is this position shifted by a certain
    * amount of "visual steps" aka what an end user would expect to happen
