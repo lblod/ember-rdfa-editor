@@ -264,7 +264,7 @@ export default class ModelRange {
    * not so janky debug function
    * @trim to trim the whole document to only the internded range
    */
-  visualize(truncate = true): void {
+  visualize(truncate = true): string {
     let root = this.root;
     while (root.parent) {
       root = root.parent;
@@ -356,7 +356,7 @@ export default class ModelRange {
       }
       modelString = modelString.substring(startIndex, endIndex);
     }
-    console.log(modelString, '\n');
+    return modelString;
   }
 
   getCommonPosition(): ModelPosition | null {
