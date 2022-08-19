@@ -4,10 +4,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { domPosToModelPos } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import {
-  ModelError,
-  SelectionError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
+import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 /**
  * Reader to convert a {@link Selection} to a {@link ModelSelection}.
@@ -113,7 +110,7 @@ export default class SelectionReader {
    */
   static isReverseSelection(selection: Selection): boolean {
     if (!selection.anchorNode || !selection.focusNode) {
-      throw new SelectionError('Selection without anchor or focus');
+      return false;
     }
     const range = selection.getRangeAt(0);
     const startIsFocus =
