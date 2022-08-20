@@ -98,7 +98,6 @@ export default class ModelSelection {
   }
 
   set ranges(value: ModelRange[]) {
-    this._isRightToLeft = false;
     this._ranges = value;
   }
 
