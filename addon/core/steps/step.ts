@@ -3,12 +3,16 @@ import ConfigStep from './config-step';
 import OperationStep from './operation-step';
 import SelectionStep from './selection-step';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { LeftOrRight } from '@lblod/ember-rdfa-editor/model/range-mapper';
 
 export interface BaseStep {
   readonly type: StepType;
   readonly resultState: State;
 
-  mapPosition(position: ModelPosition): ModelPosition;
+  mapPosition(position: ModelPosition, bias?: LeftOrRight): ModelPosition;
+
+  mapRange(range: ModelRange, bias?: LeftOrRight): ModelRange;
 }
 
 export type StepType = 'operation-step' | 'selection-step' | 'config-step';

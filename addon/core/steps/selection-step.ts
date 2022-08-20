@@ -2,6 +2,7 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import State, { cloneStateShallow } from '../state';
 import { BaseStep, StepType } from './step';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 
 export default class SelectionStep implements BaseStep {
   private readonly _type: StepType = 'selection-step';
@@ -25,5 +26,9 @@ export default class SelectionStep implements BaseStep {
 
   mapPosition(position: ModelPosition): ModelPosition {
     return position;
+  }
+
+  mapRange(range: ModelRange): ModelRange {
+    return range;
   }
 }

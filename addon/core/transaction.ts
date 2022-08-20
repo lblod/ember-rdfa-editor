@@ -7,7 +7,7 @@ import { Mark, MarkSet, MarkSpec } from '../model/mark';
 import ModelNode from '../model/model-node';
 import ModelSelection from '../model/model-selection';
 import InsertTextOperation from '../model/operations/insert-text-operation';
-import RangeMapper from '../model/range-mapper';
+import RangeMapper, { LeftOrRight } from '../model/range-mapper';
 import HtmlReader, { HtmlReaderContext } from '../model/readers/html-reader';
 import SelectionReader from '../model/readers/selection-reader';
 import { getWindowSelection } from '../utils/dom-helpers';
@@ -666,6 +666,26 @@ export default class Transaction {
     }
     const pos = this.clonePos(ModelPosition.fromBeforeNode(node));
     return pos.nodeAfter()! as N;
+  }
+
+  mapSelection(
+    selection: ModelSelection,
+    bias: LeftOrRight = 'right'
+  ): ModelSelection {
+    const clone = this.cloneSelection(selection);
+    for (const step of this.steps) {
+      clone.ranges = clone.ranges.map((range) => step.mapRange(range, bias));
+    }
+    return clone;
+  }
+
+  mapInitialSelection(bias: LeftOrRight = 'right'): ModelSelection {
+    return this.mapSelection(this.initialState.selection, bias);
+  }
+
+  mapInitialSelectionAndSet(bias: LeftOrRight = 'right'): void {
+    const result = this.mapInitialSelection(bias);
+    this.setSelection(result);
   }
 
   /**
