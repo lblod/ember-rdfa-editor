@@ -13,7 +13,6 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import State from '../core/state';
 
 declare module '@lblod/ember-rdfa-editor' {
@@ -97,31 +96,21 @@ export default class IndentListCommand
           "First selected li doesn't have previous sibling"
         );
       }
-
-      for (const li of lis) {
-        transaction.deleteNode(li);
-      }
+      const newParentClone = newParent.clone();
 
       //First check for already existing sublist on the new parent
       //If it exists, just add the elements to it, otherwise create a new sublist
-      const possibleNewList = this.hasSublist(newParent);
+      const possibleNewList = this.hasSublist(newParentClone);
       if (possibleNewList) {
-        transaction.insertAtPosition(
-          ModelPosition.fromInElement(
-            possibleNewList,
-            possibleNewList.getMaxOffset()
-          ),
-          ...lis
-        );
+        possibleNewList.appendChildren(...lis);
       } else {
         const newList = new ModelElement(parent.type);
         newList.appendChildren(...lis);
-        transaction.insertAtPosition(
-          ModelPosition.fromInElement(newParent, newParent.getMaxOffset()),
-          newList
-        );
+        newParentClone.appendChildren(newList);
       }
+      transaction.replaceNode(newParent, newParentClone);
     }
+    transaction.mapInitialSelectionAndSet('left');
   }
 
   hasSublist(listElement: ModelElement): ModelElement | undefined {

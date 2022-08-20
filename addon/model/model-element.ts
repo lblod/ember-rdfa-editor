@@ -139,6 +139,9 @@ export default class ModelElement
   addChild(child: ModelNode, position?: number) {
     let prev;
     let next = null;
+    if (child.parent) {
+      child.parent.removeChild(child);
+    }
     if (position === undefined) {
       prev = this.children[this.childCount - 1];
       this._children.push(child);
@@ -267,7 +270,7 @@ export default class ModelElement
     }
 
     let insertIndex = this.index! + 1;
-    for (const child of this.children) {
+    for (const child of [...this.children]) {
       this.parent?.addChild(child, insertIndex);
       insertIndex++;
       if (withBreaks) {

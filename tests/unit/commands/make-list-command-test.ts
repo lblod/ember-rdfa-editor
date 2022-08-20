@@ -132,7 +132,10 @@ module('Unit | commands | make-list-command', function () {
     const range = ModelRange.fromInTextNode(firstLine, 1, 3);
     const initialState = stateWithRange(initial, range);
     const { resultState } = executeCommand(initialState, { listType: 'ul' });
-    assert.true(resultState.document.sameAs(expected));
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
   });
   test('create list from line with link in it', function (assert) {
     const {
@@ -140,7 +143,10 @@ module('Unit | commands | make-list-command', function () {
       textNodes: { link },
     } = vdom`
       <modelRoot>
-        <text>line before list</text><a><text __id="link">link</text></a>
+        <text>line before list</text>
+        <a>
+          <text __id="link">link</text>
+        </a>
       </modelRoot>
     `;
 
@@ -148,7 +154,10 @@ module('Unit | commands | make-list-command', function () {
       <modelRoot>
         <ul>
           <li>
-            <text>line before list</text><a><text __id="link">link</text></a>
+            <text>line before list</text>
+            <a>
+              <text __id="link">link</text>
+            </a>
           </li>
         </ul>
       </modelRoot>
@@ -165,7 +174,17 @@ module('Unit | commands | make-list-command', function () {
       textNodes: { link2 },
     } = vdom`
       <modelRoot>
-        <text>first</text><a><text>link1</text></a><text>second</text><a><span><text __id="link2">link2</text></span></a><text>third</text>
+        <text>first</text>
+        <a>
+          <text>link1</text>
+        </a>
+        <text>second</text>
+        <a>
+          <span>
+            <text __id="link2">link2</text>
+          </span>
+        </a>
+        <text>third</text>
       </modelRoot>
     `;
 
@@ -173,7 +192,17 @@ module('Unit | commands | make-list-command', function () {
       <modelRoot>
         <ul>
           <li>
-          <text>first</text><a><text>link1</text></a><text>second</text><a><span><text __id="link2">link2</text></span></a><text>third</text>
+            <text>first</text>
+            <a>
+              <text>link1</text>
+            </a>
+            <text>second</text>
+            <a>
+              <span>
+                <text __id="link2">link2</text>
+              </span>
+            </a>
+            <text>third</text>
           </li>
         </ul>
       </modelRoot>

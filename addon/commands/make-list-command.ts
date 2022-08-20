@@ -19,6 +19,7 @@ import { PropertyState } from '../model/util/types';
 import { INVISIBLE_SPACE } from '../model/util/constants';
 import GenTreeWalker from '../model/util/gen-tree-walker';
 import State from '../core/state';
+
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
     makeList: MakeListCommand;
@@ -29,6 +30,7 @@ export interface MakeListCommandArgs {
   listType?: 'ul' | 'ol';
   selection?: ModelSelection;
 }
+
 /**
  * Command will convert all nodes in the selection to a list, if they are not already in a list.
  */
@@ -48,7 +50,6 @@ export default class MakeListCommand
   @logExecute
   execute(
     { transaction }: CommandContext,
-
     {
       listType = 'ul',
       selection = transaction.workingCopy.selection,
@@ -59,11 +60,7 @@ export default class MakeListCommand
     }
 
     const range = selection.lastRange.clone();
-    const wasCollapsed = range.collapsed;
-    const blocks = this.getBlocksFromRange(
-      range,
-      transaction.workingCopy.document
-    );
+    const blocks = this.getBlocksFromRange(range, transaction.currentDocument);
 
     const list = new ModelElement(listType);
     for (const block of blocks) {
@@ -77,36 +74,14 @@ export default class MakeListCommand
     if (!list.firstChild || !list.lastChild) {
       throw new ModelError('List without list item.');
     }
-    const newState = transaction.apply();
 
     const fullRange = ModelRange.fromInElement(
-      newState.document,
+      transaction.currentDocument,
       0,
-      newState.document.getMaxOffset()
+      transaction.currentDocument.getMaxOffset()
     );
     const cleaner = new ListCleaner();
     cleaner.clean(fullRange, transaction);
-
-    let resultRange;
-    if (wasCollapsed) {
-      const firstChild = list.firstChild as ModelElement;
-      resultRange = ModelRange.fromInElement(
-        firstChild,
-        0,
-        firstChild.getMaxOffset()
-      );
-    } else {
-      const firstChild = list.firstChild as ModelElement;
-      const lastChild = list.lastChild as ModelElement;
-      const start = ModelPosition.fromInElement(firstChild, 0);
-      const end = ModelPosition.fromInElement(
-        lastChild,
-        lastChild.getMaxOffset()
-      );
-      resultRange = new ModelRange(start, end);
-    }
-
-    transaction.selectRange(resultRange);
   }
 
   private getBlocksFromRange(

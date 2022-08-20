@@ -612,6 +612,10 @@ export default class Transaction {
     return resultRange;
   }
 
+  replaceNode(oldNode: ModelNode, ...newNodes: ModelNode[]): void {
+    this.insertNodes(ModelRange.fromAroundNode(oldNode), ...newNodes);
+  }
+
   removeMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
     this.deepClone();
     const op = new MarkOperation(
