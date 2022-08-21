@@ -101,8 +101,7 @@ In every web application there is an idea of "rendering", or taking some form of
 This input, in its entirety, is what we call the "state". It is all the input needed to draw a frame
 (abstract, not going to pretend I know how browsers work) of our application.
 
-An example of what the state may contain (the exact contents are subject to change, it's the idea that counts: _
-everything_):
+An example of what the state may contain (the exact contents are subject to change, it's the idea that counts: _everything_):
 
 ```ts
 export default interface State {
