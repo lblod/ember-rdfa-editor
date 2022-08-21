@@ -17,7 +17,7 @@ context.
 
 Throughout the development of this project, the biggest challenge at every point has been to
 manage the complexity of making changes to a large, complex html document. Essentially we are dealing
-with a free-from tree structure, where the outcome of any operations on the structure heavily depend on
+with a free-form tree structure, where the outcome of any operations on the structure heavily depend on
 the location they are performed, and the metadata of the nodes in the vicinity of the transformation.
 
 We have seen a steady evolution of the codebase in search of more control and abstraction,
