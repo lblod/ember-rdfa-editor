@@ -60,7 +60,7 @@ This lead to transactional edits.
 #### Every state change must happen in a transaction
 
 Direct modification of the state outside a transaction means that we lose
-all guarantees transactions provide us. It also provides a true single point of entry for state changes,
+all guarantees transactions provide us. Requiring everything to pass through transactions also provides a true single point of entry for state changes,
 as opposed to "a few points of entry" in the operation era.
 
 "Every" means _literally every change of any part of the entire state_. 
