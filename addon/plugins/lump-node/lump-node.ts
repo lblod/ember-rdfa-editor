@@ -1,7 +1,4 @@
-import {
-  deleteTargetRange,
-  eventTargetRange,
-} from '@lblod/ember-rdfa-editor/input/utils';
+import { deleteTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
@@ -17,6 +14,7 @@ export default class LumpNodePlugin implements EditorPlugin {
   controller!: Controller;
   lumpNodePreviouslyBeforeCursor?: ModelNode | null;
   lastPosition?: ModelPosition;
+
   get name() {
     return 'lump-node';
   }
@@ -111,6 +109,7 @@ function lumpNodeBeforeCursor(
   }
   return;
 }
+
 //   guidanceForManipulation(
 //     manipulation: TabHandlerManipulation
 //   ): ManipulationGuidance | null {

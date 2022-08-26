@@ -3,7 +3,6 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import XmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/xml-node-reader';
 import { XmlNodeRegistry } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { DirtyType } from '@lblod/ember-rdfa-editor/model/model-node';
 
 export default class XmlElementReader
   implements Reader<Element, ModelElement, void>
@@ -38,8 +37,6 @@ export default class XmlElementReader
         rslt.addChild(child);
       }
     }
-    const dirtyFlags = from.attributes.getNamedItem('__dirty');
-    const dirtyConfig = (dirtyFlags?.value.split(',') || []) as DirtyType[];
     return rslt;
   }
 }
