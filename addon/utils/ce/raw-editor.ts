@@ -261,6 +261,10 @@ export default class RawEditor {
     return this._datastore;
   }
 
+  getComponentInstances(filter?: { componentName: string }) {
+    return this.model.getComponentInstances(filter);
+  }
+
   /**
    * Register a command for use with {@link executeCommand}.
    * @param command

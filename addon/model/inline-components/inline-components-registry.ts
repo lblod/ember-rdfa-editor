@@ -86,4 +86,16 @@ export default class InlineComponentsRegistry {
   get componentInstances() {
     return this.activeComponents;
   }
+
+  getComponentInstances(filter?: { componentName: string }) {
+    if (filter) {
+      return tracked<ActiveComponentEntry>(
+        this.activeComponents.filter(
+          (entry) => entry.emberComponentName === filter.componentName
+        )
+      );
+    } else {
+      return this.activeComponents;
+    }
+  }
 }

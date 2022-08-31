@@ -189,6 +189,11 @@ export class RawEditorController implements Controller {
       })
     );
   }
+
+  getComponentInstances(filter?: { componentName: string }) {
+    return this._rawEditor.getComponentInstances(filter);
+  }
+
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
     return new LiveMarkSet(this, args);
   }

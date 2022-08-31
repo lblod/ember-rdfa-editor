@@ -163,7 +163,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   initializeComponents() {
     if (this.editor) {
-      this.inlineComponents = this.editor.model.componentInstances;
+      this.inlineComponents = this.editor.getComponentInstances();
     }
   }
 }
