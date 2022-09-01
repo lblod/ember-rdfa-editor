@@ -23,6 +23,21 @@
 
 
 
+
+## 0.62.0 (2022-09-01)
+
+#### :boom: Breaking Change
+* [#312](https://github.com/lblod/ember-rdfa-editor/pull/312) Replace selection arg by range arg in insert-component-command ([@elpoelma](https://github.com/elpoelma))
+
+#### :rocket: Enhancement
+* [#313](https://github.com/lblod/ember-rdfa-editor/pull/313) Improved inline components management ([@elpoelma](https://github.com/elpoelma))
+
+#### :bug: Bug Fix
+* [#312](https://github.com/lblod/ember-rdfa-editor/pull/312) Replace selection arg by range arg in insert-component-command ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 0.61.1 (2022-08-12)
 
 #### :bug: Bug Fix
