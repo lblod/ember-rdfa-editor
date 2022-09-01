@@ -12,7 +12,7 @@ export default class UnpollutedHtmlTextWriter {
   write(modelNode: ModelText): Node {
     const clone = modelNode.clone();
     clone.content = preWrapToNormalWhiteSpace(modelNode.content);
-    const current = this.textWriter.write(clone).viewRoot;
+    const current = this.textWriter.write(clone);
     return current;
   }
 }

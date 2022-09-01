@@ -1,6 +1,5 @@
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { TextView } from '@lblod/ember-rdfa-editor/model/node-view';
 import {
   isTextOrElement,
   TextOrElement,
@@ -11,8 +10,10 @@ import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
  * Writer responsible for converting {@link ModelText} nodes into HTML subtrees
  * This takes care of converting the textattributes into HTML elements
  */
-export default class HtmlTextWriter implements Writer<ModelText, TextView> {
-  write(modelNode: ModelText): TextView {
+export default class HtmlTextWriter
+  implements Writer<ModelText, TextOrElement>
+{
+  write(modelNode: ModelText): TextOrElement {
     const contentRoot: Text = new Text(modelNode.content);
     let current: TextOrElement = contentRoot;
 
@@ -28,6 +29,6 @@ export default class HtmlTextWriter implements Writer<ModelText, TextView> {
         );
       }
     }
-    return { contentRoot, viewRoot: current };
+    return current;
   }
 }
