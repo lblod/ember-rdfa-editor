@@ -36,6 +36,7 @@ export default class HtmlInlineComponentReader
       viewRoot: element,
       contentRoot: element,
     });
+    context.model.addComponentInstance(element, component.spec.name, component);
     return [component];
   }
 }

@@ -40,9 +40,11 @@ export default class InsertComponentCommand extends Command {
         (mutator) => {
           const resultingRange = mutator.insertNodes(range, component);
           resultingRange.collapse();
-          const brAfterComponent = new ModelElement('br');
-          brAfterComponent.setAttribute('class', 'trailing');
-          mutator.insertNodes(resultingRange, brAfterComponent);
+          if (!component.nextSibling) {
+            const brAfterComponent = new ModelElement('br');
+            brAfterComponent.setAttribute('class', 'trailing');
+            mutator.insertNodes(resultingRange, brAfterComponent);
+          }
           this.model.selectRange(resultingRange);
         },
         true,

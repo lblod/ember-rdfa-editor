@@ -101,6 +101,7 @@ export default class Model {
    */
   read(readSelection = true, shouldConvertWhitespace = false) {
     this.marksRegistry.clear();
+    this._inlineComponentsRegistry.clearComponentInstances();
     const parsedNodes = this.reader.read(
       this.rootNode,
       shouldConvertWhitespace
@@ -194,8 +195,8 @@ export default class Model {
     );
   }
 
-  get componentInstances() {
-    return this._inlineComponentsRegistry.componentInstances;
+  getComponentInstances(filter?: { componentName: string }) {
+    return this._inlineComponentsRegistry.getComponentInstances(filter);
   }
 
   writeSelection(moveSelectionIntoView = false) {
