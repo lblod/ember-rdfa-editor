@@ -2,8 +2,9 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import HtmlReader, {
+import {
   HtmlReaderContext,
+  readHtml,
 } from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import ModelRange from '../model/model-range';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
@@ -40,12 +41,11 @@ export default class InsertHtmlCommand
     const parser = new DOMParser();
     const html = parser.parseFromString(htmlString, 'text/html');
     const bodyContent = html.body.childNodes;
-    const reader = new HtmlReader();
 
     // dom NodeList doesn't have a map method
     const modelNodes: ModelNode[] = [];
     bodyContent.forEach((node) => {
-      const parsed = reader.read(
+      const parsed = readHtml(
         node,
         new HtmlReaderContext({
           marksRegistry: transaction.workingCopy.marksRegistry,

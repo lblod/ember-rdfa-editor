@@ -16,8 +16,9 @@ import handlePaste from './paste';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { viewToModel } from '@lblod/ember-rdfa-editor/core/view';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
-import HtmlReader, {
+import {
   HtmlReaderContext,
+  readHtml,
 } from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import { flatMap } from 'iter-tools';
 
@@ -291,10 +292,9 @@ export class EditorInputHandler implements InputHandler {
   };
 
   private replaceChildren(tr: Transaction, node: Node) {
-    const reader = new HtmlReader();
     const newNodes = flatMap(
       (child: Node) =>
-        reader.read(
+        readHtml(
           child,
           new HtmlReaderContext({
             marksRegistry: tr.workingCopy.marksRegistry,

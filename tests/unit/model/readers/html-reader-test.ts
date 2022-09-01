@@ -5,8 +5,9 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import HtmlReader, {
+import {
   HtmlReaderContext,
+  readHtml,
 } from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 import {
   dom,
@@ -20,7 +21,6 @@ import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles
 import { module, test } from 'qunit';
 
 module('Unit | model | readers | html-reader', function () {
-  const reader = new HtmlReader();
   const marksRegistry = new MarksRegistry();
   const inlineComponentsRegistry = new InlineComponentsRegistry();
   marksRegistry.registerMark(boldMarkSpec);
@@ -28,12 +28,12 @@ module('Unit | model | readers | html-reader', function () {
   marksRegistry.registerMark(underlineMarkSpec);
   marksRegistry.registerMark(strikethroughMarkSpec);
   marksRegistry.registerMark(highlightMarkSpec);
-  function readHtml(node: Node): ModelNode[] {
+  function read(node: Node): ModelNode[] {
     const ctx = new HtmlReaderContext({
       marksRegistry,
       inlineComponentsRegistry,
     });
-    return reader.read(node, ctx);
+    return readHtml(node, ctx);
   }
 
   test('read simple tree', function (assert) {
@@ -44,7 +44,7 @@ module('Unit | model | readers | html-reader', function () {
         <text>abc</text>
       </p>`;
 
-    const actual = readHtml(doc);
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
   test('read tree with textStyle elements', function (assert) {
@@ -57,7 +57,7 @@ module('Unit | model | readers | html-reader', function () {
       </span>
     `;
 
-    const actual = readHtml(doc);
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
 
@@ -73,7 +73,7 @@ module('Unit | model | readers | html-reader', function () {
       </span>
     `;
 
-    const actual = readHtml(doc);
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
 
@@ -90,7 +90,7 @@ module('Unit | model | readers | html-reader', function () {
       </span>
     `;
 
-    const actual = readHtml(doc);
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
 
@@ -125,7 +125,7 @@ module('Unit | model | readers | html-reader', function () {
       </span>
     `;
 
-    const actual = readHtml(doc);
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
   test('read tree with highlights', function (assert) {
@@ -146,7 +146,7 @@ module('Unit | model | readers | html-reader', function () {
       </span>
     `;
 
-    const actual = readHtml(doc);
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
   test('reads table', function (assert) {
@@ -189,7 +189,7 @@ module('Unit | model | readers | html-reader', function () {
       </table>
     `;
 
-    const actual = readHtml(doc);
+    const actual = read(doc);
 
     assert.true(actual[0].sameAs(expected));
     assert.strictEqual(
@@ -210,7 +210,7 @@ module('Unit | model | readers | html-reader', function () {
         'mu: http://mu.semte.ch/vocabularies/core/ eli: http://data.europa.eu/eli/ontology#'
       );
       parent.appendChild(child);
-      const actual = readHtml(child)[0] as ModelElement;
+      const actual = read(child)[0] as ModelElement;
       assert.true(actual.getRdfaPrefixes().has('mu'));
       assert.true(actual.getRdfaPrefixes().has('eli'));
       assert.strictEqual(
@@ -234,7 +234,7 @@ module('Unit | model | readers | html-reader', function () {
       const parent = document.createElement('div');
       parent.setAttribute('vocab', 'http://data.europa.eu/eli/ontology#');
       parent.appendChild(child);
-      const actual = readHtml(child)[0] as ModelElement;
+      const actual = read(child)[0] as ModelElement;
       assert.strictEqual(actual.getRdfaAttributes().properties.length, 1);
       assert.strictEqual(
         actual.getRdfaAttributes().properties[0],
@@ -248,7 +248,7 @@ module('Unit | model | readers | html-reader', function () {
       const parent = document.createElement('div');
       parent.setAttribute('vocab', 'http://data.europa.eu/eli/ontology#');
       parent.appendChild(child);
-      const root = readHtml(child)[0] as ModelElement;
+      const root = read(child)[0] as ModelElement;
       const actual = root.firstChild as ModelElement;
       assert.strictEqual(actual.getRdfaAttributes().properties.length, 1);
       assert.strictEqual(

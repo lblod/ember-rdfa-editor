@@ -1,9 +1,8 @@
-import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import ModelElement, {
   ElementType,
 } from '@lblod/ember-rdfa-editor/model/model-element';
 import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
+import readHtmlNode from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import { copyAttributes } from '@lblod/ember-rdfa-editor/model/readers/reader-utils';
 import { HtmlReaderContext } from './html-reader';
 
@@ -12,34 +11,25 @@ import { HtmlReaderContext } from './html-reader';
  * NOTE: currently enforces the permitted content constraints very aggressively by ignoring any
  * children which are not <li> elements.
  */
-export default class HtmlListReader
-  implements
-    Reader<
-      HTMLUListElement | HTMLOListElement,
-      ModelElement[],
-      HtmlReaderContext
-    >
-{
-  read(
-    from: HTMLUListElement | HTMLOListElement,
-    context: HtmlReaderContext
-  ): ModelElement[] {
-    const wrapper = new ModelElement(tagName(from) as ElementType);
-    const nodeReader = new HtmlNodeReader();
-    for (const child of from.childNodes) {
-      // non-li childnodes are not allowed
-      if (isElement(child) && tagName(child) === 'li') {
-        const parsedChildren = nodeReader.read(child, context);
-        if (parsedChildren) {
-          wrapper.appendChildren(...parsedChildren);
-        }
+
+export default function readHtmlList(
+  element: HTMLUListElement | HTMLOListElement,
+  context: HtmlReaderContext
+) {
+  const wrapper = new ModelElement(tagName(element) as ElementType);
+  for (const child of element.childNodes) {
+    // non-li childnodes are not allowed
+    if (isElement(child) && tagName(child) === 'li') {
+      const parsedChildren = readHtmlNode(child, context);
+      if (parsedChildren) {
+        wrapper.appendChildren(...parsedChildren);
       }
     }
-    // empty lists are useless
-    if (!wrapper.length) {
-      return [];
-    }
-    copyAttributes(from, wrapper);
-    return [wrapper];
   }
+  // empty lists are useless
+  if (!wrapper.length) {
+    return [];
+  }
+  copyAttributes(element, wrapper);
+  return [wrapper];
 }

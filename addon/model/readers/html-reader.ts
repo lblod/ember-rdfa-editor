@@ -4,7 +4,7 @@ import MarksRegistry, {
 } from '@lblod/ember-rdfa-editor/model/marks-registry';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
+import readHtmlNode from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import InlineComponentsRegistry from '../inline-components/inline-components-registry';
 import { calculateRdfaPrefixes } from '../util/rdfa-utils';
 import { AttributeSpec } from '../util/render-spec';
@@ -72,11 +72,9 @@ export class HtmlReaderContext {
 /**
  * Top-level reader for HTML documents
  */
-export default class HtmlReader {
-  read(from: Node, context: HtmlReaderContext): ModelNode[] {
-    const prefixes = calculateRdfaPrefixes(from);
-    context.rdfaPrefixes = prefixes;
-    const nodeReader = new HtmlNodeReader();
-    return nodeReader.read(from, context);
-  }
+
+export function readHtml(from: Node, context: HtmlReaderContext): ModelNode[] {
+  const prefixes = calculateRdfaPrefixes(from);
+  context.rdfaPrefixes = prefixes;
+  return readHtmlNode(from, context);
 }

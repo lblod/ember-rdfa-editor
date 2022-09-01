@@ -50,8 +50,9 @@ import { getPathFromRoot, isElement, isTextNode } from '../utils/dom-helpers';
 import { NotImplementedError } from '../utils/errors';
 import Transaction, { TransactionListener } from './transaction';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
-import HtmlReader, {
+import {
   HtmlReaderContext,
+  readHtml,
 } from '@lblod/ember-rdfa-editor/model/readers/html-reader';
 
 export interface StateArgs {
@@ -317,10 +318,9 @@ export function createState({
 }
 
 export function createNewStateFromHtmlElement(element: Element) {
-  const reader = new HtmlReader();
   const marksRegistry = new MarksRegistry();
   const inlineComponentsRegistry = new InlineComponentsRegistry();
-  const doc = reader.read(
+  const doc = readHtml(
     element,
     new HtmlReaderContext({
       marksRegistry,

@@ -1,20 +1,17 @@
-import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
-import HtmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
+import readHtmlNode from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import { copyAttributes } from '@lblod/ember-rdfa-editor/model/readers/reader-utils';
 import { HtmlReaderContext } from './html-reader';
 
-export default class HtmlTableReader
-  implements Reader<HTMLElement, ModelTable[], HtmlReaderContext>
-{
-  read(from: HTMLTableElement, context: HtmlReaderContext): ModelTable[] {
-    const table = new ModelTable();
-    copyAttributes(from, table);
-    const nodeReader = new HtmlNodeReader();
-    for (const child of from.childNodes) {
-      const parsedChildren = nodeReader.read(child, context);
-      table.appendChildren(...parsedChildren);
-    }
-    return [table];
+export default function readHtmlTable(
+  from: HTMLTableElement,
+  context: HtmlReaderContext
+): ModelTable[] {
+  const table = new ModelTable();
+  copyAttributes(from, table);
+  for (const child of from.childNodes) {
+    const parsedChildren = readHtmlNode(child, context);
+    table.appendChildren(...parsedChildren);
   }
+  return [table];
 }

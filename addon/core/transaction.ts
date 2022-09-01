@@ -8,7 +8,7 @@ import ModelNode from '../model/model-node';
 import ModelSelection from '../model/model-selection';
 import InsertTextOperation from '../model/operations/insert-text-operation';
 import RangeMapper, { LeftOrRight } from '../model/range-mapper';
-import HtmlReader, { HtmlReaderContext } from '../model/readers/html-reader';
+import { HtmlReaderContext, readHtml } from '../model/readers/html-reader';
 import SelectionReader from '../model/readers/selection-reader';
 import { getWindowSelection } from '../utils/dom-helpers';
 import { InitializedPlugin } from '../utils/editor-plugin';
@@ -174,12 +174,11 @@ export default class Transaction {
    * */
   readFromView(view: View): void {
     this.deepClone();
-    const htmlReader = new HtmlReader();
     const context = new HtmlReaderContext({
       marksRegistry: this._workingCopy.marksRegistry,
       inlineComponentsRegistry: this._workingCopy.inlineComponentsRegistry,
     });
-    const parsedNodes = htmlReader.read(view.domRoot, context);
+    const parsedNodes = readHtml(view.domRoot, context);
     if (parsedNodes.length !== 1) {
       throw new NotImplementedError();
     }
