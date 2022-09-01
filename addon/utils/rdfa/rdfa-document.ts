@@ -1,6 +1,6 @@
 import { ViewController } from '@lblod/ember-rdfa-editor/model/controller';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
+import { writeExportedHtml } from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 import {
   AnyEventName,
   EditorEventListener,
@@ -51,8 +51,7 @@ export default class RdfaDocumentController
   implements RdfaDocument
 {
   get htmlContent() {
-    const htmlWriter = new HTMLExportWriter();
-    const output = htmlWriter.write(this.currentState.document) as HTMLElement;
+    const output = writeExportedHtml(this.currentState.document) as HTMLElement;
     return output.innerHTML;
   }
 

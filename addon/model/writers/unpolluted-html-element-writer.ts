@@ -1,4 +1,3 @@
-import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 
 const INTERNAL_ATTRIBUTES = [
@@ -8,17 +7,15 @@ const INTERNAL_ATTRIBUTES = [
   'contenteditable',
 ];
 
-export default class UnpollutedHtmlElementWriter
-  implements Writer<ModelElement, HTMLElement>
-{
-  write(modelNode: ModelElement): HTMLElement {
-    const result = document.createElement(modelNode.type);
+export function writeUnpollutedHtmlElement(
+  modelNode: ModelElement
+): HTMLElement {
+  const result = document.createElement(modelNode.type);
 
-    for (const [key, value] of modelNode.attributeMap.entries()) {
-      if (!INTERNAL_ATTRIBUTES.includes(key)) {
-        result.setAttribute(key, value);
-      }
+  for (const [key, value] of modelNode.attributeMap.entries()) {
+    if (!INTERNAL_ATTRIBUTES.includes(key)) {
+      result.setAttribute(key, value);
     }
-    return result;
   }
+  return result;
 }

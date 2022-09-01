@@ -3,7 +3,7 @@ import Controller from '../model/controller';
 import ModelNode from '../model/model-node';
 import GenTreeWalker from '../model/util/gen-tree-walker';
 import { toFilterSkipFalse } from '../model/util/model-tree-walker';
-import HTMLExportWriter from '../model/writers/html-export-writer';
+import { writeExportedHtml } from '../model/writers/html-export-writer';
 
 export default function handleCutCopy(
   controller: Controller,
@@ -11,7 +11,6 @@ export default function handleCutCopy(
   deleteSelection: boolean
 ) {
   controller.perform((tr) => {
-    const htmlExportWriter = new HTMLExportWriter();
     const command: CommandName = deleteSelection
       ? 'deleteSelection'
       : 'readSelection';
@@ -52,7 +51,7 @@ export default function handleCutCopy(
         textString += modelNode.content;
       }
 
-      const node = htmlExportWriter.write(modelNode);
+      const node = writeExportedHtml(modelNode);
       if (node instanceof HTMLElement) {
         xmlString += node.outerHTML;
         htmlString += node.outerHTML;

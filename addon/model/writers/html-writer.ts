@@ -16,21 +16,13 @@ import {
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
 import ModelNodeUtils from '../util/model-node-utils';
 import { isTextOrElement, TextOrElement } from '../util/types';
-import HtmlAdjacentTextWriter from './html-adjacent-text-writer';
-import HtmlInlineComponentWriter from './html-inline-component-writer';
+import { writeAdjacentHtmlText } from './html-adjacent-text-writer';
+import { writeHtmlInlineComponent } from './html-inline-component-writer';
 
 /**
  * Top-level {@link Writer} for HTML documents.
  */
 export default class HtmlWriter {
-  private htmlAdjacentTextWriter: HtmlAdjacentTextWriter;
-  private htmlInlineComponentWriter: HtmlInlineComponentWriter;
-
-  constructor() {
-    this.htmlAdjacentTextWriter = new HtmlAdjacentTextWriter();
-    this.htmlInlineComponentWriter = new HtmlInlineComponentWriter();
-  }
-
   write(state: State, view: View, node: ModelNode, changes: Set<DirtyType>) {
     const currentView = modelToView(state, view.domRoot, node);
     if (!currentView)
@@ -125,7 +117,7 @@ export default class HtmlWriter {
     return parsedChildren;
   }
   private parseTextNodes(modelTexts: ModelText[]): Set<Node> {
-    return new Set(this.htmlAdjacentTextWriter.write(modelTexts));
+    return new Set(writeAdjacentHtmlText(modelTexts));
   }
 
   private parseElement(element: ModelElement): HTMLElement {
@@ -172,7 +164,7 @@ export default class HtmlWriter {
   }
 
   private parseInlineComponent(component: ModelInlineComponent, state: State) {
-    const node = this.htmlInlineComponentWriter.write(component, true);
+    const node = writeHtmlInlineComponent(component, true);
     if (isElement(node)) {
       state.inlineComponentsRegistry.addComponentInstance(
         node,
