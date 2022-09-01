@@ -1,15 +1,13 @@
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import { createEditorView } from '@lblod/ember-rdfa-editor/core/editor';
-import { EditorInputHandler } from '../../input/input-handler';
 import { ResolvedPluginConfig } from '../rdfa/rdfa-editor';
 import { Dispatch, View } from '@lblod/ember-rdfa-editor/core/view';
 import { createNewStateFromHtmlElement } from '@lblod/ember-rdfa-editor/core/state';
 
-interface FeatureService {
-  isEnabled(key: string): boolean;
-}
+// interface FeatureService {
+//   isEnabled(key: string): boolean;
+// }
 
 interface ContentEditableArgs {
   editorInit(editor: View): void;
@@ -47,10 +45,9 @@ interface ContentEditableArgs {
  * @extends Component
  */
 export default class ContentEditable extends Component<ContentEditableArgs> {
-  inputHandler: EditorInputHandler | null = null;
   editorView: View | null = null;
 
-  @service declare features: FeatureService;
+  // @service declare features: FeatureService;
 
   get stealFocus(): boolean {
     return this.args.stealFocus || false;
