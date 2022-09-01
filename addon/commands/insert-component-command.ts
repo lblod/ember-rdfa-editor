@@ -5,8 +5,8 @@ import {
 } from '../model/inline-components/model-inline-component';
 import Model from '../model/model';
 import ModelElement from '../model/model-element';
-import ModelSelection from '../model/model-selection';
-import { MisbehavedSelectionError, ModelError } from '../utils/errors';
+import ModelRange from '../model/model-range';
+import { ModelError } from '../utils/errors';
 import { logExecute } from '../utils/logging-utils';
 import Command from './command';
 
@@ -27,10 +27,10 @@ export default class InsertComponentCommand extends Command {
     props: Properties = {},
     state: State = {},
     createSnapshot = true,
-    selection: ModelSelection = this.model.selection
+    range: ModelRange | null = this.model.selection.lastRange
   ): void {
-    if (!ModelSelection.isWellBehaved(selection)) {
-      throw new MisbehavedSelectionError();
+    if (!range) {
+      return;
     }
     const componentSpec =
       this.model.inlineComponentsRegistry.lookUpComponent(componentName);
@@ -38,10 +38,7 @@ export default class InsertComponentCommand extends Command {
       const component = new ModelInlineComponent(componentSpec, props, state);
       this.model.change(
         (mutator) => {
-          const resultingRange = mutator.insertNodes(
-            selection.lastRange,
-            component
-          );
+          const resultingRange = mutator.insertNodes(range, component);
           resultingRange.collapse();
           const brAfterComponent = new ModelElement('br');
           brAfterComponent.setAttribute('class', 'trailing');
