@@ -112,8 +112,6 @@ export default class LiveMarkSet {
       }
       this._activeMatches.set(match.range.toString(), match);
     }
-    // this.controller.selection.selectRange(mutator.mapRange(currentRange));
-    // this.controller.write();
   };
 
   calculateRanges(datastore: Datastore): TextMatchDiff {
