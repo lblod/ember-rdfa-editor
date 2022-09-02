@@ -85,15 +85,6 @@
       {{yield}}
     </div>
   </div>
-  {{!-- {{#each this.inlineComponents as |compEntry|}}
-    {{#in-element compEntry.node insertBefore=null}}
-      {{component
-        compEntry.emberComponentName
-        componentController=compEntry.componentController
-        editorController=compEntry.editorController
-      }}
-    {{/in-element}}
-  {{/each}} --}}
   {{#if this.inlineComponentController}}
     <Rdfa::InlineComponentManager
       @controller={{this.inlineComponentController}}

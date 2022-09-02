@@ -184,13 +184,4 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       this.toolbarController!.setConfig('showRdfaBlocks', null);
     }
   }
-
-  get inlineComponents(): ActiveComponentEntry[] {
-    console.log('GET ICs');
-    console.log(this.controller);
-    const result =
-      this.controller?.currentState.inlineComponentsRegistry.activeComponents ||
-      new Map<ModelInlineComponent, ActiveComponentEntry>();
-    return [...result.values()];
-  }
 }
