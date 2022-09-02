@@ -32,7 +32,7 @@ export default function readHtmlNode(
     const tag = tagName(from) as ElementType;
     const inlineComponent = context.matchInlineComponent(from);
     if (inlineComponent) {
-      result = readHtmlInlineComponent(from, inlineComponent);
+      result = readHtmlInlineComponent(from, inlineComponent, context);
     } else {
       const marks = context.matchMark(from);
       if (marks.size) {

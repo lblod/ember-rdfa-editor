@@ -4,10 +4,12 @@ import {
   Properties,
   State,
 } from '../inline-components/model-inline-component';
+import { HtmlReaderContext } from './html-reader';
 
 export default function readHtmlInlineComponent(
   element: HTMLElement,
-  spec: InlineComponentSpec
+  spec: InlineComponentSpec,
+  context: HtmlReaderContext
 ) {
   const propsAttribute = element.dataset['__props'];
   let props: Properties = {};
@@ -20,5 +22,6 @@ export default function readHtmlInlineComponent(
     state = JSON.parse(stateAttribute) as State;
   }
   const component = new ModelInlineComponent(spec, props, state);
+  context.addComponentInstance(element, component.spec.name, component);
   return [component];
 }

@@ -194,6 +194,12 @@ export class ViewController implements Controller {
     this.view.dispatch(tr);
   }
 
+  getComponentInstances(filter?: { componentName: string }) {
+    return this.currentState.inlineComponentsRegistry.getComponentInstances(
+      filter
+    );
+  }
+
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
     return new LiveMarkSet(this, args);
   }

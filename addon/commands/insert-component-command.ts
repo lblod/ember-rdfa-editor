@@ -4,8 +4,8 @@ import {
   State,
 } from '../model/inline-components/model-inline-component';
 import ModelElement from '../model/model-element';
-import ModelSelection from '../model/model-selection';
-import { MisbehavedSelectionError, ModelError } from '../utils/errors';
+import ModelRange from '../model/model-range';
+import { ModelError } from '../utils/errors';
 import { logExecute } from '../utils/logging-utils';
 import Command, { CommandContext } from './command';
 
@@ -19,6 +19,7 @@ export interface InsertComponentCommandArgs {
   props?: Properties;
   componentState?: State;
   createSnapshot?: boolean;
+  range: ModelRange | null;
 }
 
 export default class InsertComponentCommand
@@ -36,11 +37,11 @@ export default class InsertComponentCommand
       props = {},
       componentState = {},
       createSnapshot = true,
+      range = transaction.workingCopy.selection.lastRange,
     }: InsertComponentCommandArgs
   ): void {
-    const selection = transaction.workingCopy.selection;
-    if (!ModelSelection.isWellBehaved(selection)) {
-      throw new MisbehavedSelectionError();
+    if (!range) {
+      return;
     }
     const componentSpec =
       transaction.workingCopy.inlineComponentsRegistry.lookUpComponent(
@@ -52,11 +53,14 @@ export default class InsertComponentCommand
         props,
         componentState
       );
-      const newRange = transaction.insertNodes(selection.lastRange, component);
+      const newRange = transaction.insertNodes(range, component);
       newRange.collapse();
-      const brAfterComponent = new ModelElement('br');
-      brAfterComponent.setAttribute('class', 'trailing');
-      transaction.insertNodes(newRange, brAfterComponent);
+      if (!component.nextSibling) {
+        const brAfterComponent = new ModelElement('br');
+        brAfterComponent.setAttribute('class', 'trailing');
+        transaction.insertNodes(newRange, brAfterComponent);
+      }
+
       transaction.selectRange(newRange);
       if (createSnapshot) {
         transaction.createSnapshot();

@@ -6,6 +6,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import readHtmlNode from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import InlineComponentsRegistry from '../inline-components/inline-components-registry';
+import { ModelInlineComponent } from '../inline-components/model-inline-component';
 import { calculateRdfaPrefixes } from '../util/rdfa-utils';
 import { AttributeSpec } from '../util/render-spec';
 
@@ -66,6 +67,18 @@ export class HtmlReaderContext {
     attributes: A
   ) {
     return this.marksRegistry.addMark(node, spec, attributes);
+  }
+
+  addComponentInstance(
+    element: HTMLElement,
+    componentName: string,
+    component: ModelInlineComponent
+  ) {
+    this.inlineComponentsRegistry.addComponentInstance(
+      element,
+      componentName,
+      component
+    );
   }
 }
 

@@ -170,4 +170,16 @@ export default class InlineComponentsRegistry {
       }
     });
   }
+
+  getComponentInstances(filter?: { componentName: string }) {
+    const activeComponentModels = [...this.activeComponents.keys()];
+
+    if (filter) {
+      return activeComponentModels.filter(
+        (model) => model.spec.name === filter.componentName
+      );
+    } else {
+      return activeComponentModels;
+    }
+  }
 }
