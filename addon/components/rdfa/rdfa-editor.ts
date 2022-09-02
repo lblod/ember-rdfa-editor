@@ -131,7 +131,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
-    this.initializeComponents();
     this.editorLoading = false;
   }
 
@@ -181,14 +180,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     }
   }
 
-  initializeComponents() {
-    // if (this.editor) {
-    //   this.inlineComponents =
-    //     this.editor.state.inlineComponentsRegistry.componentInstances;
-    // }
-  }
-
   get inlineComponents(): ActiveComponentEntry[] {
+    console.log('GET ICs');
+    console.log(this.controller);
     const result =
       this.controller?.currentState.inlineComponentsRegistry.activeComponents ||
       new Map<ModelInlineComponent, ActiveComponentEntry>();

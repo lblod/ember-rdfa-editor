@@ -17,6 +17,7 @@ import {
   InputHandler,
 } from '@lblod/ember-rdfa-editor/input/input-handler';
 import { ViewController } from '@lblod/ember-rdfa-editor/model/controller';
+import { tracked } from 'tracked-built-ins';
 
 export type Dispatch = (transaction: Transaction) => void;
 
@@ -79,7 +80,7 @@ export interface View {
 export class EditorView implements View {
   domRoot: Element;
   logger: Logger;
-  currentState: State;
+  @tracked currentState: State;
   dispatch: Dispatch;
   inputHandler: InputHandler;
 
