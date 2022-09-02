@@ -1,0 +1,10 @@
+{{#each this.inlineComponents as |compEntry|}}
+  <p>test</p>
+  {{#in-element compEntry.node insertBefore=null}}
+    {{component
+      compEntry.emberComponentName
+      componentController=compEntry.componentController
+      editorController=compEntry.editorController
+    }}
+  {{/in-element}}
+{{/each}}

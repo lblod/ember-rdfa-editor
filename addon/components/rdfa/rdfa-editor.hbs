@@ -85,7 +85,7 @@
       {{yield}}
     </div>
   </div>
-  {{#each this.inlineComponents as |compEntry|}}
+  {{!-- {{#each this.inlineComponents as |compEntry|}}
     {{#in-element compEntry.node insertBefore=null}}
       {{component
         compEntry.emberComponentName
@@ -93,5 +93,10 @@
         editorController=compEntry.editorController
       }}
     {{/in-element}}
-  {{/each}}
+  {{/each}} --}}
+  {{#if this.inlineComponentController}}
+    <Rdfa::InlineComponentManager
+      @controller={{this.inlineComponentController}}
+    />
+  {{/if}}
 </div>

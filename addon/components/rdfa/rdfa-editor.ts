@@ -78,6 +78,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
   @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
+  @tracked inlineComponentController: Controller | null = null;
   // @tracked inlineComponents = tracked(
   //   new Map<ModelInlineComponent, ActiveComponentEntry>()
   // );
@@ -126,6 +127,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     this.insertSidebarWidgets =
       this.controller.currentState.widgetMap.get('insertSidebar') || [];
     this.toolbarController = new ViewController('toolbar', view);
+    this.inlineComponentController = new ViewController(
+      'inline-component-manager',
+      view
+    );
     const rdfaDocument = new RdfaDocumentController('host', view);
     window.__EDITOR = new RdfaDocumentController('debug', view);
     if (this.args.rdfaEditorInit) {
