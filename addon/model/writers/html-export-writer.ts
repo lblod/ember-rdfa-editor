@@ -1,10 +1,10 @@
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { WriterError } from '@lblod/ember-rdfa-editor/utils/errors';
-import { writeUnpollutedHtmlElement } from './unpolluted-html-element-writer';
-import { writeUnpollutedHtmlInlineComponent } from './unpolluted-html-inline-component-writer';
-import { writeUnpollutedHtmlText } from './unpolluted-html-text-writer';
+import writeUnpollutedHtmlElement from './unpolluted-html-element-writer';
+import writeUnpollutedHtmlInlineComponent from './unpolluted-html-inline-component-writer';
+import writeUnpollutedHtmlText from './unpolluted-html-text-writer';
 
-export function writeExportedHtml(modelNode: ModelNode): Node {
+export default function writeExportedHtml(modelNode: ModelNode): Node {
   let result = null;
 
   if (ModelNode.isModelElement(modelNode)) {

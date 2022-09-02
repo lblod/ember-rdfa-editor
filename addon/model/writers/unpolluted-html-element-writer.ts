@@ -7,7 +7,7 @@ const INTERNAL_ATTRIBUTES = [
   'contenteditable',
 ];
 
-export function writeUnpollutedHtmlElement(
+export default function writeUnpollutedHtmlElement(
   modelNode: ModelElement
 ): HTMLElement {
   const result = document.createElement(modelNode.type);

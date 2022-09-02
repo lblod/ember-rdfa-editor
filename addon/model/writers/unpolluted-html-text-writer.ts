@@ -1,4 +1,4 @@
-import { writeHtmlText } from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
+import writeHtmlText from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
 import { preWrapToNormalWhiteSpace } from '@lblod/ember-rdfa-editor/utils/whitespace-collapsing';
 import ModelText from '../model-text';
 
@@ -7,7 +7,7 @@ import ModelText from '../model-text';
  * This takes care of converting the textattributes into HTML elements
  */
 
-export function writeUnpollutedHtmlText(modelNode: ModelText): Node {
+export default function writeUnpollutedHtmlText(modelNode: ModelText): Node {
   const clone = modelNode.clone();
   clone.content = preWrapToNormalWhiteSpace(modelNode.content);
   const current = writeHtmlText(clone);

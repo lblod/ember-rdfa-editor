@@ -9,7 +9,7 @@ import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
  * Writer responsible for converting {@link ModelText} nodes into HTML subtrees
  * This takes care of converting the textattributes into HTML elements
  */
-export function writeHtmlText(modelNode: ModelText): TextOrElement {
+export default function writeHtmlText(modelNode: ModelText): TextOrElement {
   const contentRoot: Text = new Text(modelNode.content);
   let current: TextOrElement = contentRoot;
 

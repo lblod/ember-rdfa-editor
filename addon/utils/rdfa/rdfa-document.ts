@@ -1,6 +1,6 @@
 import { ViewController } from '@lblod/ember-rdfa-editor/model/controller';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { writeExportedHtml } from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
+import writeExportedHtml from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 import {
   AnyEventName,
   EditorEventListener,

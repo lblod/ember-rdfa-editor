@@ -26,7 +26,7 @@ function handleSplit(
   return { views: viewsRec, parent: parent };
 }
 
-export function writeAdjacentHtmlText(
+export default function writeAdjacentHtmlText(
   modelNodes: ModelText[],
   marksToIgnore: MarkSet = new MarkSet()
 ): Node[] {

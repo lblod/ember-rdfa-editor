@@ -16,8 +16,8 @@ import {
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
 import ModelNodeUtils from '../util/model-node-utils';
 import { isTextOrElement, TextOrElement } from '../util/types';
-import { writeAdjacentHtmlText } from './html-adjacent-text-writer';
-import { writeHtmlInlineComponent } from './html-inline-component-writer';
+import writeAdjacentHtmlText from './html-adjacent-text-writer';
+import writeHtmlInlineComponent from './html-inline-component-writer';
 
 /**
  * Top-level {@link Writer} for HTML documents.
