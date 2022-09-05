@@ -13,7 +13,6 @@
  * UTILITIES: Single function helper classes (namespace: '.au-u-...')
  * SHAME: Quick fixes
  */
-
 // VARIABLES
 @import "ember-appuniversum/a-settings";
 
@@ -22,6 +21,10 @@
 
 // OBJECTS
 @import "ember-appuniversum/a-objects";
+
+@import "ember-appuniversum/a-generic";
+@import "ember-appuniversum/a-elements";
+@import "ember-appuniversum/a-components";
 
 // CUSTOM COMPONENTS
 @import 'ember-rdfa-editor/a-custom-components';
