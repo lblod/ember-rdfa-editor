@@ -24,6 +24,15 @@
 
 
 
+
+## 0.62.1 (2022-09-05)
+
+#### :bug: Bug Fix
+* [#316](https://github.com/lblod/ember-rdfa-editor/pull/316) Fix getRdfaAttributes() behaviour ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 0.62.0 (2022-09-01)
 
 #### :boom: Breaking Change
