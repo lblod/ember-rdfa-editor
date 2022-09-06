@@ -26,7 +26,7 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
   // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: Controller) {
     this.controller = controller;
-    controller.addTransactionListener(this.onTransactionDispatch.bind(this));
+    controller.addTransactionStepListener(this.onTransactionDispatch.bind(this));
   }
 
   onTransactionDispatch(transaction: Transaction, steps: Step[]) {

@@ -41,11 +41,12 @@ interface TextInsertion {
   marks?: MarkSet;
 }
 
-export type TransactionListener = (
+export type TransactionStepListener = (
   transaction: Transaction,
   steps: Step[]
 ) => void;
 
+export type TransactionDispatchListener = (transaction: Transaction) => void;
 /**
  * This is the main way to produce a new state based on an initial state.
  * As such, this class implements all editing primitives available.
@@ -144,14 +145,26 @@ export default class Transaction {
     this._workingCopy.pathFromDomRoot = path;
   }
 
-  addListener(listener: TransactionListener) {
-    this._workingCopy.transactionListeners.push(listener);
+  addTransactionStepListener(listener: TransactionStepListener) {
+    this._workingCopy.transactionStepListeners.push(listener);
   }
 
-  removeListener(listener: TransactionListener) {
-    const index = this._workingCopy.transactionListeners.indexOf(listener);
+  removeTransactionStepListener(listener: TransactionStepListener) {
+    const index = this._workingCopy.transactionStepListeners.indexOf(listener);
     if (index !== -1) {
-      this._workingCopy.transactionListeners.splice(index, 1);
+      this._workingCopy.transactionStepListeners.splice(index, 1);
+    }
+  }
+
+  addTransactionDispatchListener(listener: TransactionDispatchListener) {
+    this._workingCopy.transactionDispatchListeners.push(listener);
+  }
+
+  removeTransactionDispatchListener(listener: TransactionDispatchListener) {
+    const index =
+      this._workingCopy.transactionDispatchListeners.indexOf(listener);
+    if (index !== -1) {
+      this._workingCopy.transactionDispatchListeners.splice(index, 1);
     }
   }
 

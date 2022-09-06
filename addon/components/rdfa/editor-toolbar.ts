@@ -40,7 +40,7 @@ export default class EditorToolbar extends Component<Args> {
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
-    this.args.controller.addTransactionListener(this.update.bind(this));
+    this.args.controller.addTransactionStepListener(this.update.bind(this));
   }
 
   get controller() {

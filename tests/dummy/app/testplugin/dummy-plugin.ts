@@ -23,7 +23,7 @@ export default class DummyPlugin implements EditorPlugin {
   ): Promise<void> {
     this.logger('recieved options: ', options);
     this.controller = controller;
-    this.controller.addTransactionListener((tr) => {
+    this.controller.addTransactionStepListener((tr) => {
       for (const mark of this.controller.ownMarks) {
         tr.commands.removeMark({ mark });
       }

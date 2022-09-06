@@ -43,7 +43,7 @@ export default class LiveMarkSet {
     this._controller = controller;
     this._datastoreQuery = datastoreQuery;
     this._privateBus = new EventBus();
-    this._controller.addTransactionListener(this.update);
+    this._controller.addTransactionStepListener(this.update);
     this._liveMarkSpecs = liveMarkSpecs;
     this._activeMatches = new Map<string, TextMatch>();
   }
@@ -140,6 +140,6 @@ export default class LiveMarkSet {
   }
 
   destroy() {
-    this.controller.removeTransactionListener(this.update);
+    this.controller.removeTransactionStepListener(this.update);
   }
 }

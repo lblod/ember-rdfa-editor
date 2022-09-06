@@ -6,8 +6,6 @@ import Controller, {
   InternalWidgetSpec,
   ViewController,
 } from '@lblod/ember-rdfa-editor/model/controller';
-import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
-import { ModelInlineComponent } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
 import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
 import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';

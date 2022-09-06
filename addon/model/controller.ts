@@ -23,7 +23,10 @@ import {
   ListenerConfig,
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
 import State from '../core/state';
-import Transaction, { TransactionListener } from '../core/transaction';
+import Transaction, {
+  TransactionDispatchListener,
+  TransactionStepListener,
+} from '../core/transaction';
 import { View } from '../core/view';
 import { InlineComponentSpec } from './inline-components/model-inline-component';
 import ModelNode from './model-node';
@@ -111,9 +114,15 @@ export default interface Controller {
 
   setConfig(key: string, value: string | null): void;
 
-  addTransactionListener(callback: TransactionListener): void;
+  addTransactionStepListener(callback: TransactionStepListener): void;
 
-  removeTransactionListener(callback: TransactionListener): void;
+  removeTransactionStepListener(callback: TransactionStepListener): void;
+
+  addTransactionDispatchListener(callback: TransactionDispatchListener): void;
+
+  removeTransactionDispatchListener(
+    callback: TransactionDispatchListener
+  ): void;
 }
 
 export class ViewController implements Controller {
@@ -256,15 +265,29 @@ export class ViewController implements Controller {
     this.currentState.eventBus.off(eventName, callback, config);
   }
 
-  addTransactionListener(callback: TransactionListener): void {
+  addTransactionStepListener(callback: TransactionStepListener): void {
     const tr = this.createTransaction();
-    tr.addListener(callback);
+    tr.addTransactionStepListener(callback);
     this.dispatchTransaction(tr);
   }
 
-  removeTransactionListener(callback: TransactionListener): void {
+  removeTransactionStepListener(callback: TransactionStepListener): void {
     const tr = this.createTransaction();
-    tr.removeListener(callback);
+    tr.removeTransactionStepListener(callback);
+    this.dispatchTransaction(tr);
+  }
+
+  addTransactionDispatchListener(callback: TransactionDispatchListener): void {
+    const tr = this.createTransaction();
+    tr.addTransactionDispatchListener(callback);
+    this.dispatchTransaction(tr);
+  }
+
+  removeTransactionDispatchListener(
+    callback: TransactionDispatchListener
+  ): void {
+    const tr = this.createTransaction();
+    tr.removeTransactionDispatchListener(callback);
     this.dispatchTransaction(tr);
   }
 }

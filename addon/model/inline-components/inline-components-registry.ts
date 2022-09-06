@@ -1,6 +1,5 @@
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { TagMatch } from '../mark';
-import { tracked, TrackedMap } from 'tracked-built-ins';
 import MapUtils from '../util/map-utils';
 import {
   InlineComponentSpec,
@@ -29,20 +28,16 @@ export type ActiveComponentEntry = {
 export default class InlineComponentsRegistry {
   private registeredComponents: Map<string, InlineComponentSpec>;
   private componentMatchMap: Map<TagMatch, InlineComponentSpec[]>;
-  @tracked activeComponents: TrackedMap<
-    ModelInlineComponent,
-    ActiveComponentEntry
-  >;
+  activeComponents: Map<ModelInlineComponent, ActiveComponentEntry>;
 
   constructor(args?: InlineComponentsRegistryArgs) {
     this.registeredComponents =
       args?.registeredComponents ?? new Map<string, InlineComponentSpec>();
     this.componentMatchMap =
       args?.componentMatchMap ?? new Map<TagMatch, InlineComponentSpec[]>();
-    this.activeComponents = tracked(
+    this.activeComponents =
       args?.activeComponents ??
-        new Map<ModelInlineComponent, ActiveComponentEntry>()
-    );
+      new Map<ModelInlineComponent, ActiveComponentEntry>();
   }
 
   matchInlineComponentSpec(node: Node): InlineComponentSpec | null {

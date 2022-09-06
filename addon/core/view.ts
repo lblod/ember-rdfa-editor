@@ -17,7 +17,6 @@ import {
   InputHandler,
 } from '@lblod/ember-rdfa-editor/input/input-handler';
 import { ViewController } from '@lblod/ember-rdfa-editor/model/controller';
-import { tracked } from 'tracked-built-ins';
 
 export type Dispatch = (transaction: Transaction) => void;
 
@@ -80,7 +79,7 @@ export interface View {
 export class EditorView implements View {
   domRoot: Element;
   logger: Logger;
-  @tracked currentState: State;
+  currentState: State;
   dispatch: Dispatch;
   inputHandler: InputHandler;
 
@@ -119,24 +118,26 @@ export class EditorView implements View {
     // notify listeners while there are new operations added to the transaction
     let newSteps = transaction.size > 0;
     const handledSteps = new Array<number>(
-      transaction.workingCopy.transactionListeners.length
+      transaction.workingCopy.transactionStepListeners.length
     ).fill(0);
     // keep track if any listeners added any steps at all
     let listenersAddedSteps = false;
     while (newSteps) {
       newSteps = false;
-      transaction.workingCopy.transactionListeners.forEach((listener, i) => {
-        const oldTransactionSize = transaction.size;
-        if (handledSteps[i] < transaction.size) {
-          // notify listener of new operations
-          listener(transaction, transaction.steps.slice(handledSteps[i]));
-          handledSteps[i] = transaction.size;
+      transaction.workingCopy.transactionStepListeners.forEach(
+        (listener, i) => {
+          const oldTransactionSize = transaction.size;
+          if (handledSteps[i] < transaction.size) {
+            // notify listener of new operations
+            listener(transaction, transaction.steps.slice(handledSteps[i]));
+            handledSteps[i] = transaction.size;
+          }
+          if (transaction.size > oldTransactionSize) {
+            newSteps = true;
+            listenersAddedSteps = true;
+          }
         }
-        if (transaction.size > oldTransactionSize) {
-          newSteps = true;
-          listenersAddedSteps = true;
-        }
-      });
+      );
     }
     const newState = transaction.apply();
     const differences =
@@ -147,6 +148,9 @@ export class EditorView implements View {
         : [];
     this.currentState = newState;
     this.update(this.currentState, differences, transaction.shouldFocus);
+    this.currentState.transactionDispatchListeners.forEach((listener) => {
+      listener(transaction);
+    });
   }
 
   update(state: State, differences: Difference[], shouldFocus = false): void {

@@ -48,7 +48,10 @@ import { strikethroughMarkSpec } from '../plugins/basic-styles/marks/strikethrou
 import { underlineMarkSpec } from '../plugins/basic-styles/marks/underline';
 import { getPathFromRoot, isElement, isTextNode } from '../utils/dom-helpers';
 import { NotImplementedError } from '../utils/errors';
-import Transaction, { TransactionListener } from './transaction';
+import Transaction, {
+  TransactionDispatchListener,
+  TransactionStepListener,
+} from './transaction';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import {
   HtmlReaderContext,
@@ -59,7 +62,8 @@ export interface StateArgs {
   document: ModelElement;
   selection: ModelSelection;
   plugins: InitializedPlugin[];
-  transactionListeners: TransactionListener[];
+  transactionStepListeners: TransactionStepListener[];
+  transactionDispatchListeners: TransactionDispatchListener[];
   commands: Partial<Commands>;
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
@@ -107,7 +111,8 @@ export default interface State {
 
   eventBus: EventBus;
   config: Map<string, string | null>;
-  transactionListeners: TransactionListener[];
+  transactionStepListeners: TransactionStepListener[];
+  transactionDispatchListeners: TransactionDispatchListener[];
 }
 
 export class SayState implements State {
@@ -119,7 +124,8 @@ export class SayState implements State {
   marksRegistry: MarksRegistry;
   inlineComponentsRegistry: InlineComponentsRegistry;
   eventBus: EventBus;
-  transactionListeners: TransactionListener[];
+  transactionStepListeners: TransactionStepListener[];
+  transactionDispatchListeners: TransactionDispatchListener[];
   /**
    * The previous "relevant" state. This is not necessarily
    * the state directly preceding this one. It is up to the discretion
@@ -162,7 +168,8 @@ export class SayState implements State {
     this.keymap = args.keymap ?? defaultKeyMap;
     this.eventBus = args.eventBus;
     this.config = args.config || new Map<string, string | null>();
-    this.transactionListeners = args.transactionListeners;
+    this.transactionStepListeners = args.transactionStepListeners;
+    this.transactionDispatchListeners = args.transactionDispatchListeners;
   }
 
   /**
@@ -245,7 +252,8 @@ export function emptyState(eventBus = new EventBus()): State {
     baseIRI: 'http://example.org',
     eventBus,
     keymap: defaultKeyMap,
-    transactionListeners: [],
+    transactionStepListeners: [],
+    transactionDispatchListeners: [],
   });
 }
 
@@ -268,7 +276,8 @@ export function cloneState(state: State): State {
     pathFromDomRoot: state.pathFromDomRoot,
     keymap: state.keymap,
     eventBus: state.eventBus,
-    transactionListeners: state.transactionListeners,
+    transactionStepListeners: state.transactionStepListeners,
+    transactionDispatchListeners: state.transactionDispatchListeners,
     baseIRI: state.baseIRI,
     config: state.config,
   });
@@ -293,7 +302,8 @@ export function createState({
   pathFromDomRoot = [],
   baseIRI = window.document.baseURI,
   keymap = defaultKeyMap,
-  transactionListeners = [],
+  transactionStepListeners: transactionStepListeners = [],
+  transactionDispatchListeners: transactionDispatchListeners = [],
 }: InitialStateArgs): State {
   return new SayState({
     document,
@@ -313,7 +323,8 @@ export function createState({
     pathFromDomRoot,
     baseIRI,
     keymap,
-    transactionListeners,
+    transactionStepListeners: transactionStepListeners,
+    transactionDispatchListeners: transactionDispatchListeners,
   });
 }
 
