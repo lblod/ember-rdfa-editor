@@ -64,6 +64,7 @@ replace(root, oldNode, newNode):
     clone = node.shallowClone()
     current.replaceChild(node, clone)
     newParser.visit(clone);
+    current = clone 
     
   current.replaceChild(oldNode, newNode);
   
