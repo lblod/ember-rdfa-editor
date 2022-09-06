@@ -25,6 +25,22 @@
 
 
 
+
+## 0.62.2 (2022-09-06)
+
+#### :bug: Bug Fix
+* [#318](https://github.com/lblod/ember-rdfa-editor/pull/318) Modify emit order of selectionChangedEvents and modelReadEvents ([@elpoelma](https://github.com/elpoelma))
+
+#### :memo: Documentation
+* [#315](https://github.com/lblod/ember-rdfa-editor/pull/315) RFC: Efficient datastore calculations ([@abeforgit](https://github.com/abeforgit))
+* [#314](https://github.com/lblod/ember-rdfa-editor/pull/314) RFC: ModelNode rework ([@abeforgit](https://github.com/abeforgit))
+* [#311](https://github.com/lblod/ember-rdfa-editor/pull/311) RFC: Transactional Edits ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
 ## 0.62.1 (2022-09-05)
 
 #### :bug: Bug Fix
