@@ -1,3 +1,5 @@
+import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+
 /**
  * this is used when reading the full editor document to fetch any prefixes defined above the editor
  * NOTE: it adds the active vocab as a prefix with an empty string as key, which makes it a bit easier to pass down
@@ -5,17 +7,20 @@
  * This is highly reliant on the internals of that class and may stop working at some point.
  */
 export function calculateRdfaPrefixes(start: Node): Map<string, string> {
-  const parents: HTMLElement[] = [];
+  const nodes: HTMLElement[] = [];
+  if (isElement(start)) {
+    nodes.push(start);
+  }
   let currentNode = start.parentElement;
   while (currentNode !== null) {
-    parents.push(currentNode);
+    nodes.push(currentNode);
     currentNode = currentNode.parentElement;
   }
 
   // parse parents top down
   let currentPrefixes: Map<string, string> = new Map<string, string>();
   let vocab = '';
-  for (const element of parents.reverse()) {
+  for (const element of nodes.reverse()) {
     const prefixString: string = element.getAttribute('prefix') || '';
     currentPrefixes = new Map([
       ...currentPrefixes,
@@ -39,7 +44,7 @@ export function parsePrefixString(prefixString: string) {
   const parts = prefixString.split(' ');
   const prefixes: Map<string, string> = new Map<string, string>();
   for (let i = 0; i < parts.length; i = i + 2) {
-    const key = parts[i].substr(0, parts[i].length - 1);
+    const key = parts[i].substring(0, parts[i].length - 1);
     prefixes.set(key, parts[i + 1]);
   }
   return prefixes;
