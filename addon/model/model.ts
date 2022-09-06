@@ -118,11 +118,11 @@ export default class Model {
     this._rootModelNode = newRoot;
 
     // This is essential, we change the root so we need to make sure the selection uses the new root.
-    if (readSelection) {
-      this.readSelection();
-    }
     if (this._eventBus) {
       this._eventBus.emit(new ModelReadEvent());
+    }
+    if (readSelection) {
+      this.readSelection();
     }
   }
 
