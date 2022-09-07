@@ -1,12 +1,11 @@
 import Controller from '@ember/controller';
-import {action} from '@ember/object';
-import {tracked} from '@glimmer/tracking';
+import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: RdfaDocument;
-  @tracked plugins = [{name: 'dummy', options: {testKey: 'hello'}}];
-
+  @tracked plugins = [{ name: 'dummy', options: { testKey: 'hello' } }];
 
   @action
   rdfaEditorInit(rdfaEditor: RdfaDocument) {
@@ -16,5 +15,4 @@ export default class IndexController extends Controller {
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }
-
 }
