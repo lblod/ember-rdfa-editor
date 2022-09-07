@@ -37,12 +37,17 @@
     "postpack": "ember ts:clean"
   },
   "dependencies": {
+    "@codemirror/lang-html": "^6.1.1",
+    "@codemirror/lang-xml": "^6.0.0",
+    "@codemirror/view": "codemirror/view#ddac2d27f42839dc3d84f46ef8bc65d1a99c3140",
+    "@codemirror/state": "^6.1.1",
     "@ember/optional-features": "^2.0.0",
     "@ember/render-modifiers": "^2.0.4",
     "@glimmer/tracking": "^1.0.4",
     "@graphy/memory.dataset.fast": "4.3.3",
     "@lblod/marawa": "^0.8.0-beta.2",
     "@types/diff-match-patch": "^1.0.32",
+    "codemirror": "^6.0.1",
     "common-tags": "^1.8.0",
     "crypto-browserify": "^3.12.0",
     "debug": "^4.3.4",
@@ -68,13 +73,11 @@
     "rdf-data-factory": "^1.1.0",
     "relative-to-absolute-iri": "^1.0.6",
     "stream-browserify": "^3.0.0",
-    "tracked-built-ins": "^2.0.1"
+    "tracked-built-ins": "^2.0.1",
+    "xml-formatter": "^2.6.1"
   },
   "devDependencies": {
     "@appuniversum/ember-appuniversum": "^1.5.0",
-    "@codemirror/basic-setup": ">=0.20.0",
-    "@codemirror/lang-html": ">=0.20.0",
-    "@codemirror/lang-xml": ">=0.20.0",
     "@ember/test-helpers": "^2.6.0",
     "@embroider/test-setup": "^1.5.0",
     "@glimmer/component": "^1.0.4",
@@ -105,6 +108,7 @@
     "@types/ember-resolver": "^5.0.11",
     "@types/htmlbars-inline-precompile": "^3.0.0",
     "@types/qunit": "^2.11.3",
+    "@types/responselike": "^1.0.0",
     "@types/rsvp": "^4.0.4",
     "@types/sinon": "^10.0.11",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
@@ -148,29 +152,10 @@
     "sinon": "^14.0.0",
     "svg-symbols": "^1.0.5",
     "typescript": "^4.6.3",
-    "webpack": "^5.70.0",
-    "xml-formatter": "^2.6.1"
+    "webpack": "^5.70.0"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^1.5.0",
-    "@codemirror/basic-setup": ">=0.19.0",
-    "@codemirror/lang-html": ">=0.19.4",
-    "@codemirror/lang-xml": ">=0.19.2",
-    "xml-formatter": "^2.4.0"
-  },
-  "peerDependenciesMeta": {
-    "@codemirror/basic-setup": {
-      "optional": true
-    },
-    "@codemirror/lang-html": {
-      "optional": true
-    },
-    "@codemirror/lang-xml": {
-      "optional": true
-    },
-    "xml-formatter": {
-      "optional": true
-    }
+    "@appuniversum/ember-appuniversum": "^1.5.0"
   },
   "engines": {
     "node": "14.* || >= 16"
