@@ -26,6 +26,31 @@
 
 
 
+
+## 0.63.0 (2022-09-07)
+
+#### :boom: Breaking Change
+* [#319](https://github.com/lblod/ember-rdfa-editor/pull/319) Fix/ember appuniversum ([@abeforgit](https://github.com/abeforgit))
+
+#### :house: Internal
+* [#336](https://github.com/lblod/ember-rdfa-editor/pull/336) Bump parse-path, release-it and release-it-lerna-changelog ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#333](https://github.com/lblod/ember-rdfa-editor/pull/333) Bump @typescript-eslint/parser from 5.22.0 to 5.36.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#332](https://github.com/lblod/ember-rdfa-editor/pull/332) Bump ember-cli-typescript from 5.1.0 to 5.1.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#330](https://github.com/lblod/ember-rdfa-editor/pull/330) Bump @types/ember__utils from 4.0.0 to 4.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#329](https://github.com/lblod/ember-rdfa-editor/pull/329) Bump @types/ember__array from 4.0.1 to 4.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#326](https://github.com/lblod/ember-rdfa-editor/pull/326) Bump @types/ember__engine from 4.0.0 to 4.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#328](https://github.com/lblod/ember-rdfa-editor/pull/328) Bump @types/ember from 4.0.0 to 4.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#327](https://github.com/lblod/ember-rdfa-editor/pull/327) Bump prettier from 2.6.2 to 2.7.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#325](https://github.com/lblod/ember-rdfa-editor/pull/325) Bump sinon from 13.0.2 to 14.0.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#320](https://github.com/lblod/ember-rdfa-editor/pull/320) Bump ember-cli-htmlbars from 5.7.2 to 6.1.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#324](https://github.com/lblod/ember-rdfa-editor/pull/324) Bump ember-cli-autoprefixer from 1.0.3 to 2.0.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#323](https://github.com/lblod/ember-rdfa-editor/pull/323) Bump @embroider/test-setup from 1.6.0 to 1.8.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#321](https://github.com/lblod/ember-rdfa-editor/pull/321) Bump @typescript-eslint/eslint-plugin from 5.22.0 to 5.36.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.62.2 (2022-09-06)
 
 #### :bug: Bug Fix
