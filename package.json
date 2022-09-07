@@ -39,8 +39,8 @@
   "dependencies": {
     "@codemirror/lang-html": "^6.1.1",
     "@codemirror/lang-xml": "^6.0.0",
-    "@codemirror/view": "codemirror/view#ddac2d27f42839dc3d84f46ef8bc65d1a99c3140",
     "@codemirror/state": "^6.1.1",
+    "@codemirror/view": "codemirror/view#ddac2d27f42839dc3d84f46ef8bc65d1a99c3140",
     "@ember/optional-features": "^2.0.0",
     "@ember/render-modifiers": "^2.0.4",
     "@glimmer/tracking": "^1.0.4",
@@ -136,7 +136,7 @@
     "ember-template-lint": "^3.15.0",
     "ember-test-selectors": "^6.0.0",
     "ember-try": "^2.0.0",
-    "eslint": "^8.12.0",
+    "eslint": "8.22.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-ember": "^10.5.9",
     "eslint-plugin-node": "^11.1.0",
