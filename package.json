@@ -39,6 +39,7 @@
   "dependencies": {
     "@codemirror/lang-html": "^6.1.1",
     "@codemirror/lang-xml": "^6.0.0",
+    "@codemirror/view": "codemirror/view#ddac2d27f42839dc3d84f46ef8bc65d1a99c3140",
     "@codemirror/state": "^6.1.1",
     "@ember/optional-features": "^2.0.0",
     "@ember/render-modifiers": "^2.0.4",
