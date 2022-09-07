@@ -27,6 +27,21 @@
 
 
 
+
+## 0.63.1 (2022-09-07)
+
+#### :house: Internal
+* [#342](https://github.com/lblod/ember-rdfa-editor/pull/342) build(deps-dev): bump eslint-plugin-ember from 10.6.1 to 11.0.6 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#340](https://github.com/lblod/ember-rdfa-editor/pull/340) Bump eslint-plugin-qunit from 7.2.0 to 7.3.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#339](https://github.com/lblod/ember-rdfa-editor/pull/339) Bump @types/sinon from 10.0.11 to 10.0.13 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#338](https://github.com/lblod/ember-rdfa-editor/pull/338) Bump @embroider/test-setup from 1.6.0 to 1.8.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#341](https://github.com/lblod/ember-rdfa-editor/pull/341) Update to new codemirror name and fix associated problems ([@abeforgit](https://github.com/abeforgit))
+* [#337](https://github.com/lblod/ember-rdfa-editor/pull/337) Bump prettier from 2.6.2 to 2.7.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.63.0 (2022-09-07)
 
 #### :boom: Breaking Change
