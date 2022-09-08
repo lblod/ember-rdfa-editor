@@ -115,7 +115,7 @@
     "@typescript-eslint/parser": "^5.21.0",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
-    "ember-cli": "~3.28.5",
+    "ember-cli": "~4.7.0",
     "ember-cli-app-version": "^5.0.0",
     "ember-cli-autoprefixer": "^2.0.0",
     "ember-cli-code-coverage": "^1.0.0",
