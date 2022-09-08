@@ -108,7 +108,7 @@
     "@types/ember-resolver": "^5.0.11",
     "@types/htmlbars-inline-precompile": "^3.0.0",
     "@types/qunit": "^2.11.3",
-    "@types/responselike": "^1.0.0",
+    "@types/responselike": "^3.0.0",
     "@types/rsvp": "^4.0.4",
     "@types/sinon": "^10.0.11",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
