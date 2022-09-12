@@ -11,10 +11,6 @@ export type AnyEventName = EditorEventName | string;
 export type EditorEventListener<E extends AnyEventName> = (
   event: EventWithName<E>
 ) => void;
-export type DebouncedEmitter<E extends AnyEventName> = (
-  delayMs: number,
-  event: EventWithName<E>
-) => void;
 export const eventListenerPriorities: EventListenerPriority[] = [
   'highest',
   'high',
