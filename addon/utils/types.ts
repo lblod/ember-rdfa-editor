@@ -1,10 +1,3 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import {
-  ModelNodeFinderFilter,
-  ModelNodeFinderPredicate,
-} from '@lblod/ember-rdfa-editor/utils/model-node-finder';
-import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
-
 export type HtmlTag = keyof HTMLElementTagNameMap;
 
 export interface Cloneable<T> {
@@ -28,12 +21,6 @@ export enum PropertyState {
   unknown = 'unknown',
 }
 
-export interface FilterAndPredicate<T extends ModelNode> {
-  filter?: ModelNodeFinderFilter<T>;
-  predicate?: ModelNodeFinderPredicate<T>;
-}
-
-export type RdfaEditorInitializer = (rdfaEditor: RdfaDocument) => void;
 export type TextOrElement = Text | HTMLElement;
 
 export function isTextOrElement(
@@ -44,4 +31,5 @@ export function isTextOrElement(
     (node.nodeType === Node.TEXT_NODE || node.nodeType === node.ELEMENT_NODE)
   );
 }
+
 export type ValuesOf<T> = T[keyof T];
