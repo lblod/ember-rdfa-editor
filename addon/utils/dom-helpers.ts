@@ -1,6 +1,6 @@
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 import State from '../core/state';
-import ModelNode from '../model/model-node';
+import ModelNode from '../model/nodes/model-node';
 import ModelPosition from '../model/model-position';
 
 /**

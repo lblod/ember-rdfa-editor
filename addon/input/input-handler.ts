@@ -7,7 +7,7 @@ import {
 import { mapKeyEvent } from '@lblod/ember-rdfa-editor/input/keymap';
 import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import Controller from '../model/controller';
+import Controller from '../core/controllers/controller';
 import { NotImplementedError } from '../utils/errors';
 import { createLogger, Logger } from '../utils/logging-utils';
 import handleCutCopy from './cut-copy';

@@ -1,10 +1,10 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import ModelTreeWalker, {
   FilterResult,
 } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelText from '../model/model-text';
+import ModelText from '../model/nodes/model-text';
 import ModelPosition from '../model/model-position';
 import { IllegalArgumentError } from './errors';
 

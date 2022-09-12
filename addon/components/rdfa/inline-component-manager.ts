@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
 import { ModelInlineComponent } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
 import { tracked } from '@glimmer/tracking';

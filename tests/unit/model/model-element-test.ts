@@ -1,5 +1,5 @@
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { IndexOutOfRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { module, test } from 'qunit';

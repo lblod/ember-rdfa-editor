@@ -1,7 +1,7 @@
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import {
   createLogger,

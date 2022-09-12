@@ -1,11 +1,11 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import XmlElementReader from '@lblod/ember-rdfa-editor/model/readers/xml-element-reader';
 import XmlTextReader from '@lblod/ember-rdfa-editor/model/readers/xml-text-reader';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { XmlNodeRegistry } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import XmlTableReader from '@lblod/ember-rdfa-editor/model/readers/xml-table-reader';
 
 export default class XmlNodeReader

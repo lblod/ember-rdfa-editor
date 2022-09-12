@@ -1,5 +1,5 @@
 import MatchTextCommand from '@lblod/ember-rdfa-editor/commands/match-text-command';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';

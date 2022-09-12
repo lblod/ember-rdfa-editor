@@ -1,5 +1,5 @@
-import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import { MarkSet } from '@lblod/ember-rdfa-editor/model/marks/mark';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';

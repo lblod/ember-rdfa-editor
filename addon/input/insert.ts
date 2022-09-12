@@ -1,4 +1,4 @@
-import Controller from '../model/controller';
+import Controller from '../core/controllers/controller';
 import { eventTargetRange } from './utils';
 
 export function handleInsertLineBreak(

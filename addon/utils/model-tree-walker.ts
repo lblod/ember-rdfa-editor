@@ -5,8 +5,8 @@
  *
  * Extensions include support for stopping at an end node, the implementation of the Iterable interface.
  */
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';

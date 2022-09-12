@@ -1,11 +1,11 @@
 import LiveMarkSet, {
   LiveMarkSetArgs,
-} from '@lblod/ember-rdfa-editor/model/live-mark-set';
-import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
-import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
+} from '@lblod/ember-rdfa-editor/model/marks/live-mark-set';
+import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/marks/mark';
+import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks/marks-registry';
 import ModelElement, {
   ElementType,
-} from '@lblod/ember-rdfa-editor/model/model-element';
+} from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import {
   ModelRangeFactory,
   RangeFactory,
@@ -22,16 +22,16 @@ import {
   EditorEventListener,
   ListenerConfig,
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
-import State from '../core/state';
+import State from '../state';
 import Transaction, {
   TransactionDispatchListener,
   TransactionStepListener,
-} from '../core/transaction';
-import { View } from '../core/view';
-import { InlineComponentSpec } from './inline-components/model-inline-component';
-import ModelNode from './model-node';
-import MapUtils from '../utils/map-utils';
-import { AttributeSpec } from '../utils/render-spec';
+} from '../transaction';
+import { View } from '../view';
+import { InlineComponentSpec } from '../../model/inline-components/model-inline-component';
+import ModelNode from '../../model/nodes/model-node';
+import MapUtils from '../../utils/map-utils';
+import { AttributeSpec } from '../../utils/render-spec';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 

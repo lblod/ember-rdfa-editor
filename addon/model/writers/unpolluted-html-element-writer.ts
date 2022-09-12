@@ -1,4 +1,4 @@
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 
 const INTERNAL_ATTRIBUTES = [
   'data-editor-highlight',

@@ -1,4 +1,4 @@
-import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import { MarkSpec } from '@lblod/ember-rdfa-editor/model/marks/mark';
 import { RenderSpec, SLOT } from '@lblod/ember-rdfa-editor/utils/render-spec';
 
 export const boldMarkSpec: MarkSpec = {

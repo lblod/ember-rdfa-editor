@@ -1,4 +1,4 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';

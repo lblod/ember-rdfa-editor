@@ -1,4 +1,4 @@
-import { Mark } from '@lblod/ember-rdfa-editor/model/mark';
+import { Mark } from '@lblod/ember-rdfa-editor/model/marks/mark';
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';

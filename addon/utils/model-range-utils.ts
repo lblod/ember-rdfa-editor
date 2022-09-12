@@ -4,7 +4,7 @@ import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import ModelTreeWalker, {
   toFilterSkipFalse,
 } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import ModelPositionUtils from './model-position-utils';
 
 export default class ModelRangeUtils {

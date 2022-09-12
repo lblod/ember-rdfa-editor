@@ -7,7 +7,7 @@ import {
   Step,
 } from '@lblod/ember-rdfa-editor/core/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { PropertyState } from '@lblod/ember-rdfa-editor/utils/types';
 

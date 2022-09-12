@@ -1,7 +1,7 @@
 import XmlReader, {
   XmlReaderResult,
 } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import XmlWriter from '@lblod/ember-rdfa-editor/model/writers/xml-writer';
 import { oneLineTrim } from 'common-tags';
 

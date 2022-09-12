@@ -1,5 +1,5 @@
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import ModelTreeWalker, {
   toFilterSkipFalse,
@@ -9,7 +9,7 @@ import RangeMapper, {
   LeftOrRight,
 } from '@lblod/ember-rdfa-editor/model/range-mapper';
 import { RelativePosition } from '@lblod/ember-rdfa-editor/utils/types';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 
 export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
 /**

@@ -1,9 +1,9 @@
 import ReadSelectionCommand from '@lblod/ember-rdfa-editor/commands/read-selection-command';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';

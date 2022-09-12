@@ -1,5 +1,5 @@
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { MarkSet } from '../mark';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
+import { MarkSet } from '../marks/mark';
 
 /**
  * Writer responsible for converting {@link ModelText} nodes into HTML subtrees

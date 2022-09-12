@@ -1,4 +1,4 @@
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Command, {
   CommandContext,

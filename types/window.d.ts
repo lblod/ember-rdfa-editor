@@ -1,5 +1,5 @@
 import State from '@lblod/ember-rdfa-editor/core/state';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 
 declare global {
   interface Window {

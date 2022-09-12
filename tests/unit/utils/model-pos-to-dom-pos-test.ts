@@ -1,4 +1,4 @@
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { domStripped, vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { modelPosToDomPos } from '@lblod/ember-rdfa-editor/utils/dom-helpers';

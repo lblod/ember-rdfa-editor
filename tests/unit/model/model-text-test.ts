@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { Mark } from '@lblod/ember-rdfa-editor/model/mark';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
+import { Mark } from '@lblod/ember-rdfa-editor/model/marks/mark';
 import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
 
 module('Unit | model | model-text-test', function () {

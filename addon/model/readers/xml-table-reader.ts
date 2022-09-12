@@ -1,8 +1,8 @@
 import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
-import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
+import ModelTable from '@lblod/ember-rdfa-editor/model/nodes/model-table';
 import { XmlNodeRegistry } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import XmlNodeReader from '@lblod/ember-rdfa-editor/model/readers/xml-node-reader';
 
 export default class XmlTableReader

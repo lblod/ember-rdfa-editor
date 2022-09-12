@@ -3,11 +3,11 @@ import ModelNode, {
   ModelNodeType,
   NodeCompareOpts,
   NodeConfig,
-} from '@lblod/ember-rdfa-editor/model/model-node';
+} from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { stringToVisibleText } from '@lblod/ember-rdfa-editor/utils/editor-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
-import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
+import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/marks/mark';
 
 const NON_BREAKING_SPACE = '\u00A0';
 

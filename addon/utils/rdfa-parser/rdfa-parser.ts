@@ -12,7 +12,7 @@ import { IRdfaPattern } from './rdfa-pattern';
 import { IRdfaFeatures, RDFA_FEATURES, RdfaProfile } from './rdfa-profile';
 import { Util } from './util';
 import { CustomError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import {
   isElement,

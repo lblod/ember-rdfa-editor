@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import MoveOperation from '@lblod/ember-rdfa-editor/model/operations/move-operation';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';
 

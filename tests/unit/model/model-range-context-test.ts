@@ -5,7 +5,7 @@ import ModelRange, {
 } from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 
 module('Unit | model | model-range | contextNodes', function () {
   //language=XML

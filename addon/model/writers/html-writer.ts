@@ -1,10 +1,10 @@
 import State from '@lblod/ember-rdfa-editor/core/state';
 import { modelToView, View } from '@lblod/ember-rdfa-editor/core/view';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import ModelNode, {
   DirtyType,
-} from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+} from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import {
   isElement,
   isTextNode,

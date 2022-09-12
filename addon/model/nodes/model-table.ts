@@ -1,9 +1,9 @@
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import Transaction from '../core/transaction';
-import ModelPosition from './model-position';
-import ModelSelection from './model-selection';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import Transaction from '../../core/transaction';
+import ModelPosition from '../model-position';
+import ModelSelection from '../model-selection';
 import ModelText from './model-text';
-import { INVISIBLE_SPACE } from '../utils/constants';
+import { INVISIBLE_SPACE } from '../../utils/constants';
 
 type TableIndex = {
   x: number;

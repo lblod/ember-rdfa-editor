@@ -1,5 +1,5 @@
-import { highlightMarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
-import { SpecAttributes } from '@lblod/ember-rdfa-editor/model/marks-registry';
+import { highlightMarkSpec } from '@lblod/ember-rdfa-editor/model/marks/mark';
+import { SpecAttributes } from '@lblod/ember-rdfa-editor/model/marks/marks-registry';
 import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
 import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline';

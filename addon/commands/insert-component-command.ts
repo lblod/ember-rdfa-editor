@@ -3,7 +3,7 @@ import {
   Properties,
   State,
 } from '../model/inline-components/model-inline-component';
-import ModelElement from '../model/model-element';
+import ModelElement from '../model/nodes/model-element';
 import ModelRange from '../model/model-range';
 import { ModelError } from '../utils/errors';
 import { logExecute } from '../utils/logging-utils';

@@ -1,4 +1,4 @@
-import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
+import ModelTable from '@lblod/ember-rdfa-editor/model/nodes/model-table';
 import readHtmlNode from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import { copyAttributes } from '@lblod/ember-rdfa-editor/model/readers/reader-utils';
 import { HtmlReaderContext } from './html-reader';

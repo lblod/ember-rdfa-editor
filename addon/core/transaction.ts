@@ -3,8 +3,8 @@ import ModelRange, {
   ModelRangeFactory,
   RangeFactory,
 } from '@lblod/ember-rdfa-editor/model/model-range';
-import { Mark, MarkSet, MarkSpec } from '../model/mark';
-import ModelNode from '../model/model-node';
+import { Mark, MarkSet, MarkSpec } from '../model/marks/mark';
+import ModelNode from '../model/nodes/model-node';
 import ModelSelection from '../model/model-selection';
 import InsertTextOperation from '../model/operations/insert-text-operation';
 import RangeMapper, { LeftOrRight } from '../model/range-mapper';
@@ -15,7 +15,7 @@ import { InitializedPlugin } from '../model/editor-plugin';
 import { NotImplementedError } from '../utils/errors';
 import { View } from './view';
 import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
-import ModelElement from '../model/model-element';
+import ModelElement from '../model/nodes/model-element';
 import MarkOperation from '../model/operations/mark-operation';
 import ModelPosition from '../model/model-position';
 import SplitOperation from '../model/operations/split-operation';

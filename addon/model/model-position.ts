@@ -1,5 +1,5 @@
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import {
   NotImplementedError,
   PositionError,
@@ -9,7 +9,7 @@ import {
   RelativePosition,
 } from '@lblod/ember-rdfa-editor/utils/types';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import arrayEquals from '../utils/array-equals';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';

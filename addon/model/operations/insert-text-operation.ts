@@ -2,10 +2,10 @@ import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import { MarkSet } from '@lblod/ember-rdfa-editor/model/marks/mark';
 import Operation from './operation';
 
 export default class InsertTextOperation extends Operation {

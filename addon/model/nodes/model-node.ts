@@ -1,5 +1,5 @@
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import {
   ModelError,
   NoParentError,
@@ -9,7 +9,7 @@ import XmlWriter from '@lblod/ember-rdfa-editor/model/writers/xml-writer';
 import { Walkable } from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import { Predicate } from '@lblod/ember-rdfa-editor/utils/predicate-utils';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
-import { ModelInlineComponent } from './inline-components/model-inline-component';
+import { ModelInlineComponent } from '../inline-components/model-inline-component';
 
 export type ModelNodeType =
   | 'TEXT'

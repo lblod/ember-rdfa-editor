@@ -5,7 +5,7 @@ import Component from '@glimmer/component';
 import Controller, {
   InternalWidgetSpec,
   ViewController,
-} from '@lblod/ember-rdfa-editor/model/controller';
+} from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
 import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
@@ -13,11 +13,11 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
+import RdfaDocument from '@lblod/ember-rdfa-editor/core/controllers/rdfa-document';
 
 import type IntlService from 'ember-intl/services/intl';
 import { tracked } from 'tracked-built-ins';
-import { default as RdfaDocumentController } from '../../utils/rdfa/rdfa-document';
+import { default as RdfaDocumentController } from '../../core/controllers/rdfa-document';
 import ShowActiveRdfaPlugin from '@lblod/ember-rdfa-editor/plugins/show-active-rdfa/show-active-rdfa';
 import PlaceHolderPlugin from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
 import { AnchorPlugin } from '@lblod/ember-rdfa-editor/plugins/anchor/anchor';

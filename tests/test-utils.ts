@@ -10,11 +10,11 @@ import { EditorView } from '@lblod/ember-rdfa-editor/core/view';
 import {
   InternalWidgetSpec,
   WidgetLocation,
-} from '@lblod/ember-rdfa-editor/model/controller';
+} from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import InlineComponentsRegistry from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
-import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks/marks-registry';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { EditorStore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';

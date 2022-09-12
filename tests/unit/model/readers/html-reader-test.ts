@@ -1,10 +1,10 @@
 import InlineComponentsRegistry from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
-import { highlightMarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
-import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { highlightMarkSpec } from '@lblod/ember-rdfa-editor/model/marks/mark';
+import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks/marks-registry';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelTable from '@lblod/ember-rdfa-editor/model/nodes/model-table';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import {
   HtmlReaderContext,
   readHtml,

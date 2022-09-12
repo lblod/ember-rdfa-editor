@@ -3,9 +3,9 @@ import Command, {
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelElement from '../model/model-element';
+import ModelElement from '../model/nodes/model-element';
 import { logExecute } from '../utils/logging-utils';
-import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
+import { MarkSet } from '@lblod/ember-rdfa-editor/model/marks/mark';
 
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {

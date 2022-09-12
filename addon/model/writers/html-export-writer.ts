@@ -1,4 +1,4 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import { WriterError } from '@lblod/ember-rdfa-editor/utils/errors';
 import writeUnpollutedHtmlElement from './unpolluted-html-element-writer';
 import writeUnpollutedHtmlInlineComponent from './unpolluted-html-inline-component-writer';

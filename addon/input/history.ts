@@ -1,4 +1,4 @@
-import Controller from '../model/controller';
+import Controller from '../core/controllers/controller';
 
 export function handleUndo(controller: Controller, event: InputEvent) {
   event.preventDefault();

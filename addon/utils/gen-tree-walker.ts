@@ -1,6 +1,6 @@
 import { FilterResult } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import {
   AssertionError,
   NotImplementedError,

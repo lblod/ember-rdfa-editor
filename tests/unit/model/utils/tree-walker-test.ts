@@ -2,12 +2,12 @@ import { module, test } from 'qunit';
 import ModelTreeWalker, {
   toFilterSkipFalse,
 } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 
 module('Unit | model | utils | tree-walker-test', function () {
   test('finds root when its the only node and position starts there', function (assert) {

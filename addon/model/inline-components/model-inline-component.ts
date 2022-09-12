@@ -1,9 +1,9 @@
 import Handlebars from 'handlebars';
 import { tracked } from 'tracked-built-ins';
-import Controller from '../controller';
-import { DomNodeMatcher } from '../mark';
-import ModelElement from '../model-element';
-import ModelNode, { DirtyType, ModelNodeType } from '../model-node';
+import Controller from '../../core/controllers/controller';
+import { DomNodeMatcher } from '../marks/mark';
+import ModelElement from '../nodes/model-element';
+import ModelNode, { DirtyType, ModelNodeType } from '../nodes/model-node';
 import { AttributeSpec, Serializable } from '../../utils/render-spec';
 
 export type Properties = Record<string, Serializable | undefined>;

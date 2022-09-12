@@ -1,5 +1,5 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { ElementType } from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import { ElementType } from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import readHtmlList from '@lblod/ember-rdfa-editor/model/readers/html-list-reader';
 import {
   isElement,

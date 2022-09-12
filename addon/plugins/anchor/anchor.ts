@@ -1,5 +1,5 @@
 import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
 

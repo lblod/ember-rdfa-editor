@@ -4,7 +4,7 @@
  * Copyright © 2019 Ruben Taelman
  */
 import { IRdfaPattern } from './rdfa-pattern';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import {
   ModelBlankNode,
   ModelNamedNode,

@@ -1,4 +1,4 @@
-import Controller from '../controller';
+import Controller from '../../core/controllers/controller';
 import { Serializable } from '../../utils/render-spec';
 import {
   ModelInlineComponent,

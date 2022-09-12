@@ -5,9 +5,9 @@ import {
   Step,
 } from '@lblod/ember-rdfa-editor/core/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
 

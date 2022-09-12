@@ -3,8 +3,8 @@ import ModelNode, {
   ModelNodeType,
   NodeCompareOpts,
   NodeConfig,
-} from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+} from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import { Cloneable } from '@lblod/ember-rdfa-editor/utils/types';
 import {
   LEAF_NODES,

@@ -1,6 +1,6 @@
 import { deleteTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';

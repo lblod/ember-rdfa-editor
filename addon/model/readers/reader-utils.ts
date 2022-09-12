@@ -1,4 +1,4 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 
 export function copyAttributes(from: Element, to: ModelNode) {
   for (const attr of from.attributes) {

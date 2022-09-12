@@ -1,12 +1,12 @@
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/marks/mark';
 import { UnconfinedRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import {
   CORE_OWNER,
   INVISIBLE_SPACE,
 } from '@lblod/ember-rdfa-editor/utils/constants';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';

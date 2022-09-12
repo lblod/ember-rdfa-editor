@@ -1,5 +1,5 @@
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import XmlNodeWriter from '@lblod/ember-rdfa-editor/model/writers/xml-node-writer';
 
 export default class XmlElementWriter implements Writer<ModelElement, Element> {

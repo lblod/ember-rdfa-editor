@@ -1,4 +1,4 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';

@@ -1,6 +1,6 @@
 import State from '@lblod/ember-rdfa-editor/core/state';
 import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
-import ModelNode from '../model/model-node';
+import ModelNode from '../model/nodes/model-node';
 import ModelPosition from '../model/model-position';
 import computeDifference, { Difference } from '../utils/tree-differ';
 import HtmlWriter from '../model/writers/html-writer';
@@ -16,7 +16,7 @@ import {
   EditorInputHandler,
   InputHandler,
 } from '@lblod/ember-rdfa-editor/input/input-handler';
-import { ViewController } from '@lblod/ember-rdfa-editor/model/controller';
+import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/controller';
 
 export type Dispatch = (transaction: Transaction) => void;
 

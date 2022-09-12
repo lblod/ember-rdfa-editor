@@ -1,6 +1,6 @@
 import ModelElement, {
   ElementType,
-} from '@lblod/ember-rdfa-editor/model/model-element';
+} from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import readHtmlNode from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import { copyAttributes } from '@lblod/ember-rdfa-editor/model/readers/reader-utils';

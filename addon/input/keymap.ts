@@ -1,4 +1,4 @@
-import Controller from '../model/controller';
+import Controller from '../core/controllers/controller';
 import ModelRange from '../model/model-range';
 import handleEscape from './escape';
 import { handleBasicStyle } from './format';

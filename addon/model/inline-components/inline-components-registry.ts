@@ -1,17 +1,17 @@
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { TagMatch } from '../mark';
+import { TagMatch } from '../marks/mark';
 import MapUtils from '../../utils/map-utils';
 import {
   InlineComponentSpec,
   ModelInlineComponent,
 } from './model-inline-component';
-import Controller from '../controller';
+import Controller from '../../core/controllers/controller';
 import { ComponentNotFoundError } from '@lblod/ember-rdfa-editor/utils/errors';
 import InlineComponentController from './inline-component-controller';
-import ModelElement from '../model-element';
+import ModelElement from '../nodes/model-element';
 import { toFilterSkipFalse } from '../../utils/model-tree-walker';
 import GenTreeWalker from '../../utils/gen-tree-walker';
-import ModelNode from '../model-node';
+import ModelNode from '../nodes/model-node';
 
 export interface InlineComponentsRegistryArgs {
   registeredComponents?: Map<string, InlineComponentSpec>;

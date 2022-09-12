@@ -1,6 +1,6 @@
 import writeHtmlText from '@lblod/ember-rdfa-editor/model/writers/html-text-writer';
 import { preWrapToNormalWhiteSpace } from '@lblod/ember-rdfa-editor/utils/whitespace-collapsing';
-import ModelText from '../model-text';
+import ModelText from '../nodes/model-text';
 
 /**
  * Writer responsible for converting {@link ModelText} nodes into HTML subtrees

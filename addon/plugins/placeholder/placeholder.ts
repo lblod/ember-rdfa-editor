@@ -1,5 +1,5 @@
 import { deleteTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import ModelRangeUtils from '@lblod/ember-rdfa-editor/utils/model-range-utils';

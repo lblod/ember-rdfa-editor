@@ -1,4 +1,4 @@
-import Controller from '../model/controller';
+import Controller from '../core/controllers/controller';
 import ModelRangeUtils from '../utils/model-range-utils';
 import { PropertyState } from '../utils/types';
 import { MisbehavedSelectionError } from '../utils/errors';

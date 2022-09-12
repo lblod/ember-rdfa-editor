@@ -3,7 +3,7 @@ import { action } from '@ember/object';
 import { guidFor } from '@ember/object/internals';
 import { tracked } from '@glimmer/tracking';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/editor-utils';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 
 interface Args {
   controller: Controller;

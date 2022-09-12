@@ -8,7 +8,7 @@
  * There is however no real distinction between them and "external" plugins,
  * they use the exact same interface to do their thing.
  */
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 
 export interface EditorPlugin {
   controller?: Controller;

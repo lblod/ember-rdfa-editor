@@ -2,7 +2,7 @@ import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
+import ModelTable from '@lblod/ember-rdfa-editor/model/nodes/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 export interface InsertTableRowCommandArgs {

@@ -3,9 +3,9 @@ import Command, {
 } from '@lblod/ember-rdfa-editor/commands/command';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Transaction from '../core/transaction';
-import { MarkSet } from '../model/mark';
-import ModelElement from '../model/model-element';
-import ModelNode from '../model/model-node';
+import { MarkSet } from '../model/marks/mark';
+import ModelElement from '../model/nodes/model-element';
+import ModelNode from '../model/nodes/model-node';
 import ModelPosition from '../model/model-position';
 import ModelRange from '../model/model-range';
 import GenTreeWalker from '../utils/gen-tree-walker';

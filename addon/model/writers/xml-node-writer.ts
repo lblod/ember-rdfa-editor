@@ -1,5 +1,5 @@
 import Writer from '@lblod/ember-rdfa-editor/model/writers/writer';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import XmlElementWriter from '@lblod/ember-rdfa-editor/model/writers/xml-element-writer';
 import XmlTextWriter from '@lblod/ember-rdfa-editor/model/writers/xml-text-writer';

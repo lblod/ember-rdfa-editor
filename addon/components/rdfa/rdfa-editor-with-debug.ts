@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
-import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
+import RdfaDocument from '@lblod/ember-rdfa-editor/core/controllers/rdfa-document';
 import xmlFormat from 'xml-formatter';
 import { basicSetup, EditorView } from 'codemirror';
 import { xml } from '@codemirror/lang-xml';

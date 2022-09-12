@@ -1,13 +1,13 @@
 import HashSet from '@lblod/ember-rdfa-editor/utils/hash-set';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
 import renderFromSpec, {
   AttributeSpec,
   RenderSpec,
   Serializable,
   SLOT,
-} from '../utils/render-spec';
+} from '../../utils/render-spec';
 
 export type TagMatch = keyof HTMLElementTagNameMap | '*';
 

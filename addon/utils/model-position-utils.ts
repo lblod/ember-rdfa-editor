@@ -1,4 +1,4 @@
-import ModelNode from '../model/model-node';
+import ModelNode from '../model/nodes/model-node';
 import ModelPosition from '../model/model-position';
 
 export default class ModelPositionUtils {

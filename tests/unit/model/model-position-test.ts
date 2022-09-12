@@ -1,8 +1,8 @@
 import { module, test } from 'qunit';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { RelativePosition } from '@lblod/ember-rdfa-editor/utils/types';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';

@@ -1,5 +1,5 @@
 import State from '@lblod/ember-rdfa-editor/core/state';
-import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
+import { MarkSet } from '@lblod/ember-rdfa-editor/model/marks/mark';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';

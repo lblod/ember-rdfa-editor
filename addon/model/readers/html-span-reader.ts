@@ -1,5 +1,5 @@
 import readHtmlElement from '@lblod/ember-rdfa-editor/model/readers/html-element-reader';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import { HtmlReaderContext } from './html-reader';
 
 export default function readHtmlSpan(

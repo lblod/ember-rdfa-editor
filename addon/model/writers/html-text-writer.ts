@@ -1,4 +1,4 @@
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import {
   isTextOrElement,
   TextOrElement,

@@ -1,8 +1,8 @@
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import ListCleaner from '@lblod/ember-rdfa-editor/model/cleaners/list-cleaner';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ListCleaner from '@lblod/ember-rdfa-editor/utils/list-cleaner';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
@@ -13,8 +13,8 @@ import {
   ModelError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import ModelElement from '../model/model-element';
-import ModelText from '../model/model-text';
+import ModelElement from '../model/nodes/model-element';
+import ModelText from '../model/nodes/model-text';
 import { PropertyState } from '../utils/types';
 import { INVISIBLE_SPACE } from '../utils/constants';
 import GenTreeWalker from '../utils/gen-tree-walker';

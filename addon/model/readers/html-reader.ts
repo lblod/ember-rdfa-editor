@@ -1,9 +1,9 @@
-import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
+import { MarkSpec } from '@lblod/ember-rdfa-editor/model/marks/mark';
 import MarksRegistry, {
   SpecAttributes,
-} from '@lblod/ember-rdfa-editor/model/marks-registry';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+} from '@lblod/ember-rdfa-editor/model/marks/marks-registry';
+import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
 import readHtmlNode from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import InlineComponentsRegistry from '../inline-components/inline-components-registry';
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
