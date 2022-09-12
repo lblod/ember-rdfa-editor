@@ -40,7 +40,7 @@
     "@codemirror/lang-html": "^6.1.1",
     "@codemirror/lang-xml": "^6.0.0",
     "@codemirror/state": "^6.1.1",
-    "@codemirror/view": "codemirror/view#ddac2d27f42839dc3d84f46ef8bc65d1a99c3140",
+    "@codemirror/view": "^6.2.3",
     "@ember/optional-features": "^2.0.0",
     "@ember/render-modifiers": "^2.0.4",
     "@glimmer/tracking": "^1.0.4",
@@ -73,7 +73,7 @@
     "rdf-data-factory": "^1.1.0",
     "relative-to-absolute-iri": "^1.0.6",
     "stream-browserify": "^3.0.0",
-    "tracked-built-ins": "^2.0.1",
+    "tracked-built-ins": "^3.1.0",
     "xml-formatter": "^2.6.1"
   },
   "devDependencies": {
