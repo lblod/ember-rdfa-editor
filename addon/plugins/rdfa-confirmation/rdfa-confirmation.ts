@@ -4,7 +4,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
 
 export default class RdfaConfirmationPlugin implements EditorPlugin {
   controller!: Controller;

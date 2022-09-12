@@ -6,7 +6,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
 
 export default class ListPlugin implements EditorPlugin {
   controller!: Controller;

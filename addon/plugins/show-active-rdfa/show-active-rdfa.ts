@@ -9,7 +9,7 @@ import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
 
 const PATH_MARKER = 'data-editor-position-level';
 const RDFA_PATH_MARKER = 'data-editor-rdfa-position-level';
@@ -26,7 +26,9 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
   // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: Controller) {
     this.controller = controller;
-    controller.addTransactionStepListener(this.onTransactionDispatch.bind(this));
+    controller.addTransactionStepListener(
+      this.onTransactionDispatch.bind(this)
+    );
   }
 
   onTransactionDispatch(transaction: Transaction, steps: Step[]) {

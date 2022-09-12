@@ -1,7 +1,7 @@
 import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
 
 export class AnchorPlugin implements EditorPlugin {
   controller!: Controller;

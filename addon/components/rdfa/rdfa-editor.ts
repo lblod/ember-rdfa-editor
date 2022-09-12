@@ -8,7 +8,7 @@ import Controller, {
 } from '@lblod/ember-rdfa-editor/model/controller';
 import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
 import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
 import {
   createLogger,
   Logger,

@@ -2,7 +2,7 @@ import { Commands } from '@lblod/ember-rdfa-editor';
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { InitializedPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import { InitializedPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
 import AddMarkToRangeCommand from '../commands/add-mark-to-range-command';
 import AddMarkToSelectionCommand from '../commands/add-mark-to-selection-command';
 import DeleteSelectionCommand from '../commands/delete-selection-command';

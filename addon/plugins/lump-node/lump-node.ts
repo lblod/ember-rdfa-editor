@@ -8,7 +8,7 @@ import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
 
 export default class LumpNodePlugin implements EditorPlugin {
   controller!: Controller;

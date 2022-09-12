@@ -11,7 +11,7 @@ import RangeMapper, { LeftOrRight } from '../model/range-mapper';
 import { HtmlReaderContext, readHtml } from '../model/readers/html-reader';
 import SelectionReader from '../model/readers/selection-reader';
 import { getWindowSelection } from '../utils/dom-helpers';
-import { InitializedPlugin } from '../utils/editor-plugin';
+import { InitializedPlugin } from '../model/editor-plugin';
 import { NotImplementedError } from '../utils/errors';
 import { View } from './view';
 import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';

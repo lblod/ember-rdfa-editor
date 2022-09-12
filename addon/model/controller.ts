@@ -16,7 +16,7 @@ import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
 import {
   AnyEventName,
   EditorEventListener,
