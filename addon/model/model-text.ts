@@ -5,7 +5,7 @@ import ModelNode, {
   NodeConfig,
 } from '@lblod/ember-rdfa-editor/model/model-node';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
-import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
+import { stringToVisibleText } from '@lblod/ember-rdfa-editor/utils/editor-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
@@ -89,6 +89,7 @@ export default class ModelText extends ModelNode {
    * Mostly for internal use, prefer using {@link ModelPosition.split} where
    * possible.
    * @param index
+   * @param keepRight
    */
   split(
     index: number,
