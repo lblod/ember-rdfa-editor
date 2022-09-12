@@ -96,6 +96,8 @@ export function testState({
     plugins,
     selection,
     baseIRI,
+    transactionDispatchListeners: [],
+    config: new Map(),
     datastore: EditorStore.fromParse({ baseIRI, modelRoot: document }),
     eventBus: new EventBus(),
     pathFromDomRoot: [],
